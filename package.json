@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "http://git.dev.sh.ctripcorp.com/flight-replay-tools/replay-front-end.git"
+    "url": "https://github.com/arextest/arex-front-end.git"
   },
   "author": "x_qi",
   "license": "ISC",
@@ -59,9 +59,9 @@
   },
   "proxy": {
     "FAT": {
-      "report_api": "http://arex.report.fws.qa.nt.ctripcorp.com/api",
-      "config_api": "http://arex.config.fws.qa.nt.ctripcorp.com/api",
-      "schedule_api": "http://arex.schedule.report.fat3.qa.nt.ctripcorp.com/api"
+      "report_api": "http://10.3.2.42:8088/report_api",
+      "config_api": "http://10.3.2.42:8088/config_api",
+      "schedule_api": "http://10.3.2.42:8088/schedule_api"
     },
     "UAT": {
       "report_api": "http://10.3.2.42:8088/report_api",

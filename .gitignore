@@ -5,4 +5,4 @@ dist-ssr
 *.local
 *-lock.json
 .idea
-*.log
+logs
