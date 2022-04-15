@@ -1,0 +1,86 @@
+@import "./normalize";
+
+/*:root -> 获取根元素html*/
+:root {
+  --color-text: #333333;
+  --color-low-text: rgba(0, 0, 0, 0.45);
+  --color-antd-text: rgba(0, 0, 0, 0.65);
+  --color-title-text: rgba(0, 0, 0, 0.85);
+  --color-high-text: #0086F6;
+  --color-background: #F6F8FA;
+  --color-card: #fff;
+  --color-success: #00BB74;
+  --color-error: #F44236;
+  --color-warning: #FF8B26;
+  --color-border: #DDDDDD;
+  --color-line: #E4E4E4;
+  --color-disabled: #BBBBBB;
+  --color-table-background: #F2F8FE;
+  --color-option-background: #F5F5F5;
+  --color-selected-background: #EAF2F9;
+  --font-size: 14px;
+  --line-height: 1.5;
+  --min-width: 993px;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  --antd-wave-shadow-color: var(--color-high-text);
+}
+
+body {
+  font-family: PingFangSC-Medium,PingFangSC-Regular,PingFangSC-Semibold,"Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+  user-select: auto; /* 禁止用户鼠标在页面上选中文字/图片等 */
+  -webkit-tap-highlight-color: transparent; /* webkit是苹果浏览器引擎，tap点击，highlight背景高亮，color颜色，颜色用数值调节 */
+  background: var(--color-background);
+  color: var(--color-text);
+  /* rem vw/vh */
+  width: 100vh;
+  min-width: var(--min-width);
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--color-high-text);
+  text-decoration: none;
+}
+
+.clear-fix::after {
+  clear: both;
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  visibility: hidden;
+}
+
+.clear-fix {
+  zoom: 1;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+/*清除chrome浏览器中自带input样式input:-internal-autofill-selected*/
+input:-webkit-autofill{
+  -webkit-box-shadow:0 0 0 1000px var(--color-card) inset !important;
+}
+/*input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-transition-delay: 111111s;
+  -webkit-transition: color 11111s ease-out, background-color 111111s ease-out;
+}*/
