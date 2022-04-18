@@ -5,7 +5,7 @@
 ***
 # QUICK START
 [quick start](https://github.com/arextest/dev-ops#arex-install)\
-[documentions](url)
+[documentions](./documents/introduction.md)
 
 # FETURE
 - Out-of-order comparsion\
