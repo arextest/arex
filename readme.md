@@ -1,5 +1,5 @@
-<center><font size=22>AREX-UI</font></center>
-<center>auto replay X</center>
+<font size=22>AREX-UI</font>\
+auto replay X -- a “Differential Testing” and “Record and Replay Testing” Tool
 
 
 ***

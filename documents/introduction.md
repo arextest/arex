@@ -1,5 +1,3 @@
-[TOC]
-
 # DASHBOARD
 # REPLAYS
 ## applications list
