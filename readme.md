@@ -1,13 +1,13 @@
-<font size=22>AREX-UI</font>\
-auto replay X -- a “Differential Testing” and “Record and Replay Testing” Tool
+<div align="center"><h1>AREX-UI</h1></div>
+<div align="center">auto replay X -- a “Differential Testing” and “Record and Replay Testing” Tool</div>
 
 
 ***
-# QUICK START
+## QUICK START
 [quick start](https://github.com/arextest/dev-ops#arex-install)\
 [documentions](./documents/introduction.md)
 
-# FETURE
+## FETURE
 - Out-of-order comparsion\
 Supports out-of-order comparison of arrays with limited configuration. [more detail](url)
 - Exclusion/Inclusion\
@@ -17,7 +17,7 @@ Exclusion means that you can specify nodes in the interface you want to ignore.
 Temporarily only supports json format comparison
 
 
-# LICENSE
+## LICENSE
 ```text
 Copyright (C) 2022 ArexTest
 
