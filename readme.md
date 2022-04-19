@@ -1,8 +1,6 @@
 <div align="center"><h1>AREX-UI</h1></div>
 <div align="center">auto replay X -- a “Differential Testing” and “Record and Replay Testing” Tool</div>
 
-
-***
 ## QUICK START
 [quick start](https://github.com/arextest/dev-ops#arex-install)\
 [documentions](./documents/introduction.md)
