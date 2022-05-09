@@ -1,26 +1,29 @@
 <template>
   <div >
-<!--    图例-->
-    <div class="MsgWithDiffLegend">
-      <div>
-        <div class="color-tag-green"></div>
-        <span>{{$t('oneMoreNodeThan')}}</span>
+    <!--    图例-->
+    <div style="display:flex;justify-content: space-between">
+      <div class="MsgWithDiffLegend">
+        <div>
+          <div class="color-tag-green"></div>
+          <span>{{$t('oneMoreNodeThan')}}</span>
+        </div>
+        <div>
+          <div class="color-tag-pink"></div>
+          <span>{{$t('sameNodeDifference')}}</span>
+        </div>
+        <div>
+          <div class="color-tag-grey"></div>
+          <span>{{$t('igNode')}}</span>
+        </div>
       </div>
-      <div>
-        <div class="color-tag-pink"></div>
-        <span>{{$t('sameNodeDifference')}}</span>
-      </div>
-      <div>
-        <div class="color-tag-grey"></div>
-        <span>{{$t('igNode')}}</span>
-      </div>
+      <a-button style="margin-bottom: 10px" @click="onShowFullMessageExternal()">{{ $t("fullMsg") }}</a-button>
     </div>
-<!--    主对比界面-->
+    <!--    主对比界面-->
     <div id="MsgWithDiffJsonEditorWrapper">
       <div id="containerLeft" ref="containerLeftRef"></div>
       <div id="containerRight" ref=containerRightRef></div>
     </div>
-<!--    list key对话框-->
+    <!--    list key对话框-->
     <ListKeyModal
         v-if="props.planItem.appId"
         :visible="listKeyModalVisible"
@@ -87,7 +90,7 @@ export default {
       default: ''
     },
   },
-  setup(props) {
+  setup(props,{emit}) {
     const {t} = useI18n();
     function genAllDiff(logs) {
       const allDiff = []
@@ -353,7 +356,6 @@ export default {
         function callbackRight() {
           callback('#containerRight .jse-navigation-bar-item')
         }
-        // 监听listPath
         listPathObserver(callbackLeft)
         listPathObserverRight(callbackRight)
         setTimeout(() => {
@@ -366,7 +368,6 @@ export default {
           }
           window.editor.expand(isExpand)
           window.rightEditor.expand(isExpand)
-          // 滚动到第一个差异点
           const leftArr = []
           for (let i = 0; i < logs[0].pathPair.leftUnmatchedPath.length; i++) {
             leftArr.push(logs[0].pathPair.leftUnmatchedPath[i].nodeName ? logs[0].pathPair.leftUnmatchedPath[i].nodeName : logs[0].pathPair.leftUnmatchedPath[i].index)
@@ -382,22 +383,20 @@ export default {
           container.addEventListener('contextmenu', function (e) {
             if (e.button === 2){
               setTimeout(()=>{
-
-                // 忽略节点逻辑
                 for (let i = 0; i < igDetailsList.value.length; i++) {
                   if (JSON.stringify(igDetailsList.value[i].pathValue[0].split('/')) === JSON.stringify(listPath.value.split('/'))){
                     document.querySelector("#containerLeft > div.absolute-popup > div > div > div:nth-child(1) > button").innerHTML = document.querySelector("#containerLeft > div.absolute-popup > div > div > div:nth-child(1) > button").innerHTML.split(t('omission'))[0] + t('cancelIgnore')
                   }
                 }
-
-
               },0)
             }
           })
         }, 100)
       })
     }
-    // watch
+    function onShowFullMessageExternal() {
+      emit('onShowFullMessageExternal',{})
+    }
     watch(() => props.queryMsg, () => {
       renderEditor()
     }, {immediate: false})
@@ -411,7 +410,8 @@ export default {
       changeVisible:function (val) {
         listKeyModalVisible.value = val.visible
       },
-      listKeyModalIsArr
+      listKeyModalIsArr,
+      onShowFullMessageExternal
     }
   }
 }
@@ -467,7 +467,6 @@ export default {
   }
 }
 
-//所有value置为黑色
 div.jsoneditor-value.jsoneditor-string {
   color: #000000;
 }
@@ -486,7 +485,7 @@ div.jsoneditor-value.jsoneditor-null {
 
 .MsgWithDiffLegend{
   display: flex;
-  margin-bottom: 14px;
+  margin: 10px 0 0 10px;
 }
 
 .MsgWithDiffLegend > div{

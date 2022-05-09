@@ -254,5 +254,8 @@
   "keyFormula": "Key Formula",
   "add": "Add",
   "select": "Select",
-  "application": "Application"
+  "application": "Application",
+  "selectDifferencePoint": "Please select a difference point",
+  "previous": "Previous",
+  "next": "Next"
 }

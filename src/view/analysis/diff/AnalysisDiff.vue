@@ -1,12 +1,5 @@
 <template>
   <div>
-    <div slot="title" class="diff-title flex">
-      <span class="diff-title-name">{{ $t("diffDetail") }}</span>
-      <span class="diff-title-remark">{{ $t("diffDetailMark") }}</span>
-      <div class="diff-title-right-button">
-        <a-button @click="onShowFullMessage(props.scenes[0].compareResultId)">{{ $t("fullMsg") }}</a-button>
-      </div>
-    </div>
     <div id="analysisDiffContent">
       <a-row>
         <a-col span="3" class="scene-list">
@@ -21,11 +14,11 @@
             </template>
           </a-list>
         </a-col>
-        <a-col span="1">
-          <a-divider type="vertical" class="diff-divider"/>
-        </a-col>
-        <a-col span="20">
-          <NewMsgWithDiffJsonEditor :planItem="planItem" :compareResultId="compareResultId" :query-msg="queryMsg"></NewMsgWithDiffJsonEditor>
+        <a-col span="21">
+          <NewMsgWithDiffJsonEditor
+              :planItem="planItem" :compareResultId="compareResultId" :query-msg="queryMsg"
+              @onShowFullMessageExternal="onShowFullMessage(props.scenes[0].compareResultId)"
+          ></NewMsgWithDiffJsonEditor>
         </a-col>
       </a-row>
     </div>
@@ -90,7 +83,7 @@ export default {
 }
 
 .scene-list {
-  width: 272px;
+  width: 200px;
   .diff-content-height
 }
 

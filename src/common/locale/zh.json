@@ -251,5 +251,8 @@
   "keyFormula": "Key Formula",
   "add": "新增",
   "select": "选择",
-  "application": "应用"
+  "application": "应用",
+  "selectDifferencePoint": "请选择差异点",
+  "previous": "上一个",
+  "next": "下一个"
 }

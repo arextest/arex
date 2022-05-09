@@ -4,13 +4,6 @@
       <main-select class="setting-config-select" :select="select" @onSelect="onChange" />
       <sort ref="sortRef" :label="$t('failureRate')" sort-key="failureRate" @onClick="onChange" />
     </div>
-    <div class="flex menu-setting-action">
-      <a-checkbox class="setting-action-select" :checked="hasSelectedAll" @change="onSelectAll" />
-      <a class="setting-action-plus" :class="{ 'disabled-a': !hasSelected }">
-        <plus-outlined /> {{ $t("newOmission") }}
-      </a>
-      <a>{{ $t("omissionDetails") }}</a>
-    </div>
   </div>
 </template>
 
@@ -44,21 +37,21 @@ export default defineComponent({
 </script>
 
 <style scoped lang="less">
-  .menu-setting .menu-setting-action {
-    margin-top: 16px;
-  }
+.menu-setting .menu-setting-action {
+  margin-top: 16px;
+}
 
-  .menu-setting .setting-config-select {
-    flex: 1;
-    margin-right: 24px;
-  }
+.menu-setting .setting-config-select {
+  flex: 1;
+  margin-right: 24px;
+}
 
-  .menu-setting .setting-action-select {
-    flex: 1;
-    margin-left: 8px;
-  }
+.menu-setting .setting-action-select {
+  flex: 1;
+  margin-left: 8px;
+}
 
-  .menu-setting .setting-action-plus {
-    flex: 4;
-  }
+.menu-setting .setting-action-plus {
+  flex: 4;
+}
 </style>

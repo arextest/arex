@@ -1,5 +1,5 @@
 import {ref, watch} from "vue";
-import { queryMsgShowByScene, queryMsgWithDiff} from "@/request/analysis";
+import { queryMsgWithDiff} from "@/request/analysis";
 
 export default (props: any) => {
   const msgDetailResult = ref({});
@@ -29,19 +29,10 @@ export default (props: any) => {
 
     if (scene) {
       compareResultId.value = scene.compareResultId
-          let params = {
+      let params = {
         compareResultId: scene.compareResultId,
         logIndexes: scene.logIndexes
       };
-      queryMsgShowByScene(params).then((res: any) => {
-        if (res && res.result) {
-          console.log(res.result)
-          msgDetailResult.value = res.result;
-        }
-      }).catch((err: any) => {
-        console.error(err);
-      });
-
       queryMsgWithDiff(params).then(res=>{
         queryMsg.value = res
       })

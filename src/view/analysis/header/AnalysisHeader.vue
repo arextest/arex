@@ -6,7 +6,6 @@
     <component is="state-progress" class="analysis-header-state" :index="planItem.status" :percent="planItem.percent"/>
     <header-more-info ref="headerMoreInfoRef"/>
     <div class="analysis-header-action">
-      <a-button class="analysis-header-action-defect">{{ $t("createDefects") }}</a-button>
       <a-button @click="onShowAllCases">{{ $t("case") }}</a-button>
     </div>
     <analysis-modal ref="allCasesModalRef" :planItemId="planItem.planItemId"/>

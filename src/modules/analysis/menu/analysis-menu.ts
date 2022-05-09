@@ -12,13 +12,12 @@ export default (props: any, {emit}: any) => {
   const hasSelected = ref(false);
 
   let operations: any = [];
-
   const onSetOperations = (planItemId: string) => {
-    querySlaveOperations({planItemId}).then(({categoryTypeStatisticList: resOperations}: any) => {
+    querySlaveOperations({planItemId}).then(({categoryStatisticList: resOperations}: any) => {
       if (resOperations && resOperations.length > 0) {
         operations = resOperations;
         operations.forEach((operation: any) => {
-          operation.typeLabel = operation.categoryType;
+          operation.typeLabel = operation.categoryName;
           operation.totalCaseCount = operation.totalCaseCount || 0;
           operation.failCaseCount = operation.failCaseCount || 0;
           operation.failureRate = getPercent(operation.failCaseCount, operation.totalCaseCount, false);
@@ -27,18 +26,18 @@ export default (props: any, {emit}: any) => {
       onSetFilteredOperations();
     })
   };
-
   const onSetFilteredOperations = () => {
-    let categoryType = menuSettingRef.value.select.value;
+    let categoryName = menuSettingRef.value.select.value;
     filteredOperations.value = operations.filter((operation: any) => {
       operation.isSelected = false;
-      if (operation.failCaseCount && (categoryType === -1 ||
-        operation.categoryType === menuSettingRef.value.select.value)) {
+      if (operation.failCaseCount && (categoryName === -1 ||
+          operation.categoryName === menuSettingRef.value.select.value)) {
+
         let filter = menuSettingRef.value.select.options.filter((opt: any) => {
-          return opt.value === operation.categoryType
+          return opt.value === operation.categoryName
         })
         if (filter.length === 0) {
-          menuSettingRef.value.select.options.push({label: operation.categoryType, value: operation.categoryType})
+          menuSettingRef.value.select.options.push({label: operation.categoryName, value: operation.categoryName})
         }
         return true;
       }
@@ -53,18 +52,15 @@ export default (props: any, {emit}: any) => {
       onClickOperation(0);
     }
   };
-
   const onSetCurrentOperations = () => {
     currentOperations.value = paginationRef.value.onSlice(filteredOperations.value);
     onClickOperation(0);
   }
-
   const onClickOperation = (operationIndex: number) => {
     currentOperationIndex.value = operationIndex;
     let operation: any = getCurrentOperation();
-    emit("onSelectOperation", {categoryType: operation.categoryType, operationName: operation.operationName});
+    emit("onSelectOperation", {categoryName: operation.categoryName, operationName: operation.operationName});
   };
-
   const onSelectOperations = (operationItem?: any, checked?: boolean) => {
     if (operationItem) {
       operationItem.isSelected = !operationItem.isSelected;
@@ -74,9 +70,7 @@ export default (props: any, {emit}: any) => {
       })
     }
   }
-
   const getCurrentOperation = () => currentOperations.value[currentOperationIndex.value];
-
   watch(filteredOperations, () => {
     hasSelected.value = false;
     hasSelectedAll.value = true;
@@ -96,7 +90,6 @@ export default (props: any, {emit}: any) => {
     paginationRef,
     hasSelected,
     hasSelectedAll,
-
     onSetOperations,
     onSetFilteredOperations,
     onSetCurrentOperations,
