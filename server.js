@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const { createProxyMiddleware } = require('http-proxy-middleware')
 const proxy = require('./config/proxy')
-const envMap = require('./config/envMap.json')
+// const envMap = require('./config/envMap.json')
 const { config = {} } = require('./package.json')
 let { port = 8080, env = 'FAT' } = config
 
