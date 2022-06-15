@@ -7,7 +7,6 @@ const service = axios.create({
 
 const err = (error: any) => {
   if (error.response) {
-
   }
   return Promise.reject(error);
 };

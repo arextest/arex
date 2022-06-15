@@ -6,8 +6,6 @@ export default [
   {
     path: "/",
     element: <MainBox />,
-    children: [
-      { path: "/home", element: <Home /> },
-    ],
+    children: [{ path: "/home", element: <Home /> }],
   },
 ];

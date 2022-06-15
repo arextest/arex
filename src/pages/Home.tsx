@@ -1,5 +1,8 @@
+import {useState} from "react";
+
 const Home = () => {
-  return <div>
+  const [count, setCount] = useState(0);
+  return <div style={{fontStyle:'12px'}}>
     1234
   </div>;
 };
