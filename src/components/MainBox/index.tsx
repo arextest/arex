@@ -1,42 +1,64 @@
-import type { RadioChangeEvent } from "antd";
-import { Radio, Space, Tabs } from "antd";
-import React, { useState } from "react";
+import {
+  AppstoreOutlined,
+  ContainerOutlined,
+  DesktopOutlined,
+  MailOutlined,
+  PieChartOutlined,
+  SettingOutlined
+} from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { Menu } from 'antd';
+import React from 'react';
+import {Outlet, useNavigate} from "react-router-dom";
+import Header from '../Header';
 
-const { TabPane } = Tabs;
+type MenuItem = Required<MenuProps>['items'][number];
 
-type TabPosition = "left" | "right" | "top" | "bottom";
+function getItem(
+  label: React.ReactNode,
+  key?: React.Key | null,
+  icon?: React.ReactNode,
+  children?: MenuItem[],
+  type?: 'group',
+): MenuItem {
+  return {
+    key,
+    icon,
+    children,
+    label,
+    type,
+  } as MenuItem;
+}
 
-const App: React.FC = () => {
-  const [tabPosition, setTabPosition] = useState<TabPosition>("left");
+const items: MenuItem[] = [
+  getItem('常规', 'normal', <PieChartOutlined />),
+  getItem('对比', 'compare', <DesktopOutlined />),
+  getItem('回放', 'replay', <ContainerOutlined />),
+  getItem('设置', 'setting', <ContainerOutlined />),
+];
 
-  const changeTabPosition = (e: RadioChangeEvent) => {
-    setTabPosition(e.target.value);
+
+const MainBox: React.FC = () => {
+  const s = useNavigate()
+  const onClick: MenuProps['onClick'] = e => {
+    console.log('click', e);
+    // useNavigate().push(e.key);
+
+    s(`/${e.key}`)
   };
 
   return (
-    <>
-      <Space style={{ marginBottom: 24 }}>
-        Tab position:
-        <Radio.Group value={tabPosition} onChange={changeTabPosition}>
-          <Radio.Button value="top">top</Radio.Button>
-          <Radio.Button value="bottom">bottom</Radio.Button>
-          <Radio.Button value="left">left</Radio.Button>
-          <Radio.Button value="right">right</Radio.Button>
-        </Radio.Group>
-      </Space>
-      <Tabs tabPosition={tabPosition}>
-        <TabPane tab="Tab 1" key="1">
-          Content of Tab 1
-        </TabPane>
-        <TabPane tab="Tab 2" key="2">
-          Content of Tab 2
-        </TabPane>
-        <TabPane tab="Tab 3" key="3">
-          Content of Tab 3
-        </TabPane>
-      </Tabs>
-    </>
-  );
-};
+    <div>
+      <Header></Header>
+      <div style={{display:'flex'}}>
+        <Menu onClick={onClick} style={{ width: 150 }} mode="vertical" items={items} />
+        <div style={{flex:'1'}}>
+          <Outlet />
+        </div>
+      </div>
 
-export default App;
+    </div>
+  );
+}
+
+export default MainBox;

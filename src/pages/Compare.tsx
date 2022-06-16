@@ -2,7 +2,7 @@ import {useState} from "react";
 import Collection from "../components/Collection";
 import {Col, Row} from "antd";
 
-const Home = () => {
+const Compare = () => {
   const [count, setCount] = useState(0);
   return <div style={{fontStyle:'12px'}}>
     <Row>
@@ -18,4 +18,4 @@ const Home = () => {
   </div>;
 };
 
-export default Home;
+export default Compare;
