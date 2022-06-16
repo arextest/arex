@@ -11,11 +11,15 @@ import {
 import { FC, useState } from "react";
 import {
   CheckOutlined,
+  CodeOutlined,
+  CopyOutlined,
   DeleteOutlined,
   DownOutlined,
   EditOutlined,
+  LinkOutlined,
   PlusOutlined,
   QuestionCircleOutlined,
+  SaveOutlined,
 } from "@ant-design/icons";
 import styled from "@emotion/styled";
 import { css, jsx } from "@emotion/react";
@@ -151,14 +155,17 @@ const Http: FC = () => {
                 {
                   key: "1",
                   label: "导入URL",
+                  icon: <LinkOutlined />,
                 },
                 {
                   key: "2",
                   label: "显示代码",
+                  icon: <CodeOutlined />,
                 },
                 {
                   key: "3",
                   label: "全部清除",
+                  icon: <DeleteOutlined />,
                 },
               ]}
             />
@@ -185,14 +192,17 @@ const Http: FC = () => {
                 {
                   key: "1",
                   label: "复制链接",
+                  icon: <CopyOutlined />,
                 },
                 {
                   key: "2",
                   label: "View my links",
+                  icon: <LinkOutlined />,
                 },
                 {
                   key: "3",
                   label: "另存为",
+                  icon: <SaveOutlined />,
                 },
               ]}
             />
