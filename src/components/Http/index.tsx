@@ -21,6 +21,7 @@ import {
 import styled from "@emotion/styled";
 import { css, jsx } from "@emotion/react";
 import { ColumnsType } from "antd/es/table";
+import { UnControlled as CodeMirror } from "react-codemirror2";
 
 const { TabPane } = Tabs;
 
@@ -195,9 +196,19 @@ const Http: FC = () => {
           />
         </TabPane>
         <TabPane tab="请求体" key="1">
-          <div
-            id={"editor-request-body"}
-            style={{ height: "500px", width: "800px" }}
+          {/*<div*/}
+          {/*  id={"editor-request-body"}*/}
+          {/*  style={{ height: "500px", width: "800px" }}*/}
+          {/*/>*/}
+          <CodeMirror
+            value=""
+            options={{
+              mode: "json",
+              theme: "material",
+              lineNumbers: true,
+            }}
+            onChange={(editor, data, value) => {}}
+            onBeforeChange={() => {}}
           />
         </TabPane>
         <TabPane tab="请求头" key="2">
@@ -210,19 +221,40 @@ const Http: FC = () => {
           />
         </TabPane>
         <TabPane tab="授权" key="3">
-          <div
-            id={"editor-authorization"}
-            style={{ height: "500px", width: "800px" }}
+          <CodeMirror
+            value=""
+            options={{
+              mode: "json",
+              theme: "material",
+              lineNumbers: true,
+            }}
+            onChange={(editor, data, value) => {}}
+            onBeforeChange={() => {}}
           />
         </TabPane>
         <TabPane tab="预请求脚本" key="4">
-          <div
-            id={"editor-pre-request-script"}
-            style={{ height: "500px", width: "800px" }}
+          <CodeMirror
+            value=""
+            options={{
+              mode: "javascript",
+              theme: "material",
+              lineNumbers: true,
+            }}
+            onChange={(editor, data, value) => {}}
+            onBeforeChange={() => {}}
           />
         </TabPane>
         <TabPane tab="测试" key="5">
-          <div id={"editor-test"} style={{ height: "500px", width: "800px" }} />
+          <CodeMirror
+            value=""
+            options={{
+              mode: "javascript",
+              theme: "material",
+              lineNumbers: true,
+            }}
+            onChange={(editor, data, value) => {}}
+            onBeforeChange={() => {}}
+          />
         </TabPane>
       </Tabs>
     </div>
