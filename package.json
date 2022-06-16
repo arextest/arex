@@ -27,6 +27,7 @@
     "npm": "^8.12.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-resize-observer": "^1.1.1",
     "react-router-dom": "^6.3.0",
     "zustand": "^4.0.0-rc.1"
   },

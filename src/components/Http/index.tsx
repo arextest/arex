@@ -28,6 +28,7 @@ import { ColumnsType } from "antd/es/table";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import { javascript } from "@codemirror/lang-javascript";
+import AnimateAutoHeight from "../AnimateAutoHeight";
 
 const { TabPane } = Tabs;
 
@@ -141,7 +142,7 @@ const Http: FC = () => {
   ];
 
   return (
-    <div>
+    <AnimateAutoHeight>
       <HeaderWrapper>
         <Select
           value={requestType}
@@ -269,7 +270,7 @@ const Http: FC = () => {
           />
         </TabPane>
       </Tabs>
-    </div>
+    </AnimateAutoHeight>
   );
 };
 
