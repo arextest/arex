@@ -1,6 +1,6 @@
-import {useState} from "react";
+import { useState } from "react";
 import Collection from "../components/Collection";
-import {Col, Row} from "antd";
+import { Col, Row } from "antd";
 import Http from "../components/Http";
 
 const Normal = () => {

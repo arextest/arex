@@ -1,6 +1,6 @@
-import {useState} from "react";
+import { useState } from "react";
 import Collection from "../components/Collection";
-import {Col, Row} from "antd";
+import { Col, Row } from "antd";
 
 const Setting = () => {
   const [count, setCount] = useState(0);

@@ -1,11 +1,205 @@
-import { Button } from "antd";
-import {useState} from "react";
+import {
+  Button,
+  Dropdown,
+  Input,
+  Menu,
+  Select,
+  Space,
+  Table,
+  Tabs,
+  Tooltip,
+} from "antd";
+import { FC, useState } from "react";
+import {
+  CheckOutlined,
+  DeleteOutlined,
+  DownOutlined,
+  EditOutlined,
+  PlusOutlined,
+  QuestionCircleOutlined,
+} from "@ant-design/icons";
+import styled from "@emotion/styled";
+import { css, jsx } from "@emotion/react";
+import { ColumnsType } from "antd/es/table";
 
-const Http = () => {
-  const [count, setCount] = useState(0);
-  return <div style={{fontStyle:'12px'}}>
-<Button>s</Button>
-  </div>;
+const { TabPane } = Tabs;
+
+const RequestTypeOptions = [
+  { label: "GET", value: "GET" },
+  { label: "POST", value: "POST" },
+  { label: "PUT", value: "PUT" },
+  { label: "DELETE", value: "DELETE" },
+  { label: "PATCH", value: "PATCH" },
+];
+
+const HeaderWrapper = styled.div`
+  display: flex;
+
+  .ant-select > .ant-select-selector {
+    width: 80px;
+    left: 1px;
+    border-radius: 2px 0 0 2px;
+  }
+  .ant-input {
+    border-radius: 0 2px 2px 0;
+  }
+  .ant-btn-group {
+    margin-left: 16px;
+  }
+`;
+
+const Http: FC = () => {
+  const [requestType, setRequestType] = useState("GET");
+
+  const dataSource = [
+    {
+      key: "1",
+      value: 32,
+    },
+    {
+      key: "2",
+      value: 42,
+    },
+  ];
+
+  const columns: ColumnsType = [
+    {
+      title: "参数",
+      dataIndex: "key",
+      key: "key",
+    },
+    {
+      title: "值",
+      dataIndex: "value",
+      key: "value",
+    },
+    {
+      title: "操作",
+      key: "actions",
+      width: 80,
+      align: "center",
+      render: (text, record) => (
+        <Space size={16}>
+          <CheckOutlined />
+          <DeleteOutlined />
+        </Space>
+      ),
+    },
+  ];
+
+  return (
+    <div style={{ padding: "16px" }}>
+      <HeaderWrapper>
+        <Select value={requestType} options={RequestTypeOptions} />
+        <Input style={{ width: "100%" }} />
+        <Dropdown.Button
+          icon={<DownOutlined />}
+          overlay={
+            <Menu
+              items={[
+                {
+                  key: "1",
+                  label: "导入URL",
+                },
+                {
+                  key: "2",
+                  label: "显示代码",
+                },
+                {
+                  key: "3",
+                  label: "全部清除",
+                },
+              ]}
+            />
+          }
+        >
+          发送
+        </Dropdown.Button>
+
+        <Dropdown.Button
+          icon={<DownOutlined />}
+          overlay={
+            <div>
+              <Input value={"Untitled request"} />
+              <Menu
+                items={[
+                  {
+                    key: "1",
+                    label: "复制链接",
+                  },
+                  {
+                    key: "2",
+                    label: "View my links",
+                  },
+                  {
+                    key: "3",
+                    label: "另存为",
+                  },
+                ]}
+              />
+            </div>
+          }
+        >
+          保存
+        </Dropdown.Button>
+      </HeaderWrapper>
+
+      <Tabs defaultActiveKey="0">
+        <TabPane tab="参数" key="0">
+          <div
+            css={css`
+              display: flex;
+              justify-content: space-between;
+              position: relative;
+              top: -8px;
+            `}
+          >
+            <span
+              css={css`
+                font-size: 13px;
+                color: #888;
+              `}
+            >
+              查询参数
+            </span>
+            <Space size={12}>
+              <Tooltip title="帮助">
+                <QuestionCircleOutlined />
+              </Tooltip>
+
+              <Tooltip title="全部清除">
+                <DeleteOutlined />
+              </Tooltip>
+
+              <Tooltip title="批量编辑">
+                <EditOutlined />
+              </Tooltip>
+
+              <Tooltip title="新增">
+                <PlusOutlined />
+              </Tooltip>
+            </Space>
+          </div>
+          <Table bordered dataSource={dataSource} columns={columns} />;
+        </TabPane>
+        <TabPane tab="请求体" key="1">
+          Content of Tab Pane 请求体
+        </TabPane>
+        <TabPane tab="请求头" key="2">
+          Content of Tab Pane 请求头
+        </TabPane>
+        <TabPane tab="授权" key="3">
+          Content of Tab Pane 授权
+        </TabPane>
+        <TabPane tab="预请求脚本" key="4">
+          Content of Tab Pane 预请求脚本
+        </TabPane>
+        <TabPane tab="测试" key="5">
+          Content of Tab Pane 测试
+        </TabPane>
+      </Tabs>
+    </div>
+  );
 };
 
 export default Http;

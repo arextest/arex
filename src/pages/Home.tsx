@@ -1,13 +1,14 @@
-import {useState} from "react";
+import { useState } from "react";
 import Collection from "../components/Collection";
-import {Col, Row} from "antd";
+import { Col, Row } from "antd";
+import Http from "../components/Http";
 
 const Home = () => {
   const [count, setCount] = useState(0);
   return <div style={{fontStyle:'12px'}}>
     <Row>
       <Col className="gutter-row" span={18}>
-        <div>http</div>
+        <Http/>
       </Col>
       <Col className="gutter-row" span={6}>
         <div>

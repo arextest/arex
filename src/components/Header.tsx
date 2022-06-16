@@ -1,6 +1,6 @@
-import {useState} from "react";
+import { useState } from "react";
 import Collection from "../components/Collection";
-import {Col, Row, Select} from "antd";
+import { Col, Row, Select } from "antd";
 const { Option } = Select;
 const Header = () => {
   const [count, setCount] = useState(0);

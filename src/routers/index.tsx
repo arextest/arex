@@ -14,7 +14,7 @@ export default [
       { path: "/setting", element: <Setting /> },
       { path: "/normal", element: <Normal /> },
       { path: "/compare", element: <Compare /> },
-      { path: "/replay", element: <Replay /> }
+      { path: "/replay", element: <Replay /> },
     ],
   },
 ];
