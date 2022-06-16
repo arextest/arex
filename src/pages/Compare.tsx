@@ -2,7 +2,7 @@ import { useState } from "react";
 import Collection from "../components/Collection";
 import { Col, Divider, Row } from "antd";
 import CompareBottomComponent from "../components/Http/CompareBottomComponent";
-import Http from "../components/Http";
+import Http from "../components/Http/indexCopy";
 
 const Compare = () => {
   const [count, setCount] = useState(0);
