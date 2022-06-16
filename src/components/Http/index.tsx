@@ -62,7 +62,47 @@ const Http: FC = () => {
     },
   ];
 
-  const columns: ColumnsType<typeof dataSource> = [
+  const FormHeader = () => (
+    <div
+      css={css`
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        top: -8px;
+      `}
+    >
+      <span
+        css={css`
+          font-size: 13px;
+          color: #888;
+        `}
+      >
+        查询参数
+      </span>
+      <Space size={12}>
+        <Tooltip title="帮助">
+          <QuestionCircleOutlined />
+        </Tooltip>
+
+        <Tooltip title="全部清除">
+          <DeleteOutlined />
+        </Tooltip>
+
+        <Tooltip title="批量编辑">
+          <EditOutlined />
+        </Tooltip>
+
+        <Tooltip title="新增">
+          <PlusOutlined />
+        </Tooltip>
+      </Space>
+    </div>
+  );
+
+  const columns: ColumnsType<{
+    key: string;
+    value: number;
+  }> = [
     {
       title: "参数",
       dataIndex: "key",
@@ -88,7 +128,7 @@ const Http: FC = () => {
   ];
 
   return (
-    <div style={{ padding: "16px" }}>
+    <div>
       <HeaderWrapper>
         <Select value={requestType} options={RequestTypeOptions} />
         <Input style={{ width: "100%" }} />
@@ -146,62 +186,43 @@ const Http: FC = () => {
 
       <Tabs defaultActiveKey="0">
         <TabPane tab="参数" key="0">
-          <div
-            css={css`
-              display: flex;
-              justify-content: space-between;
-              position: relative;
-              top: -8px;
-            `}
-          >
-            <span
-              css={css`
-                font-size: 13px;
-                color: #888;
-              `}
-            >
-              查询参数
-            </span>
-            <Space size={12}>
-              <Tooltip title="帮助">
-                <QuestionCircleOutlined />
-              </Tooltip>
-
-              <Tooltip title="全部清除">
-                <DeleteOutlined />
-              </Tooltip>
-
-              <Tooltip title="批量编辑">
-                <EditOutlined />
-              </Tooltip>
-
-              <Tooltip title="新增">
-                <PlusOutlined />
-              </Tooltip>
-            </Space>
-          </div>
+          <FormHeader />
           <Table
             size="small"
             bordered
             dataSource={dataSource}
             columns={columns}
           />
-          ;
         </TabPane>
         <TabPane tab="请求体" key="1">
-          Content of Tab Pane 请求体
+          <div
+            id={"editor-request-body"}
+            style={{ height: "500px", width: "800px" }}
+          />
         </TabPane>
         <TabPane tab="请求头" key="2">
-          Content of Tab Pane 请求头
+          <FormHeader />
+          <Table
+            size="small"
+            bordered
+            dataSource={dataSource}
+            columns={columns}
+          />
         </TabPane>
         <TabPane tab="授权" key="3">
-          Content of Tab Pane 授权
+          <div
+            id={"editor-authorization"}
+            style={{ height: "500px", width: "800px" }}
+          />
         </TabPane>
         <TabPane tab="预请求脚本" key="4">
-          Content of Tab Pane 预请求脚本
+          <div
+            id={"editor-pre-request-script"}
+            style={{ height: "500px", width: "800px" }}
+          />
         </TabPane>
         <TabPane tab="测试" key="5">
-          Content of Tab Pane 测试
+          <div id={"editor-test"} style={{ height: "500px", width: "800px" }} />
         </TabPane>
       </Tabs>
     </div>
