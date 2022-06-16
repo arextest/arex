@@ -13,6 +13,7 @@
     "@ant-design/icons": "^4.7.0",
     "antd": "^4.21.2",
     "axios": "^0.27.2",
+    "codemirror": "^5.65.4",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.3.0",

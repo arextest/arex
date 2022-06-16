@@ -5,6 +5,16 @@ import "./index.css";
 import "antd/dist/antd.min.css";
 import { BrowserRouter } from "react-router-dom";
 
+// @ts-ignore
+import codemirror from 'codemirror'
+// @ts-ignore
+window.CodeMirror = codemirror
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/mode/javascript/javascript.js'
+import 'codemirror/mode/vue/vue.js'
+import 'codemirror/mode/jsx/jsx.js'
+import 'codemirror/theme/idea.css'
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <App />

@@ -1,6 +1,6 @@
 import {useState} from "react";
 import Collection from "../components/Collection";
-import {Col, Row} from "antd";
+import {Col, Divider, Row} from "antd";
 
 const Compare = () => {
   const [count, setCount] = useState(0);
