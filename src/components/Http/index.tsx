@@ -1,4 +1,5 @@
 import {
+  Button,
   Dropdown,
   Input,
   Menu,
@@ -84,28 +85,30 @@ const Http: FC = () => {
       <span
         css={css`
           font-size: 13px;
-          color: #888;
+          line-height: 32px;
+          font-weight: 500;
+          color: #9d9d9d;
         `}
       >
         查询参数
       </span>
-      <Space size={12}>
+      <div>
         <Tooltip title="帮助">
-          <QuestionCircleOutlined />
+          <Button type="text" icon={<QuestionCircleOutlined />} />
         </Tooltip>
 
         <Tooltip title="全部清除">
-          <DeleteOutlined />
+          <Button type="text" icon={<DeleteOutlined />} />
         </Tooltip>
 
         <Tooltip title="批量编辑">
-          <EditOutlined />
+          <Button type="text" icon={<EditOutlined />} />
         </Tooltip>
 
         <Tooltip title="新增">
-          <PlusOutlined />
+          <Button type="text" icon={<PlusOutlined />} />
         </Tooltip>
-      </Space>
+      </div>
     </div>
   );
 
@@ -126,12 +129,12 @@ const Http: FC = () => {
     {
       title: "操作",
       key: "actions",
-      width: 80,
+      width: 100,
       align: "center",
       render: (text, record) => (
-        <Space size={16}>
-          <CheckOutlined />
-          <DeleteOutlined />
+        <Space>
+          <Button type="text" icon={<CheckOutlined />} />
+          <Button type="text" icon={<DeleteOutlined />} />
         </Space>
       ),
     },
