@@ -11,6 +11,7 @@ export default [
     path: "/",
     element: <MainBox />,
     children: [
+      { path: "/", element: <Normal /> },
       { path: "/setting", element: <Setting /> },
       { path: "/normal", element: <Normal /> },
       { path: "/compare", element: <Compare /> },
