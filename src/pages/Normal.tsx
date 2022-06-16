@@ -2,6 +2,7 @@ import {useState} from "react";
 import Collection from "../components/Collection";
 import {Col, Row} from "antd";
 import Http from "../components/Http";
+import t from './../assets/img/t.jpeg'
 
 const Normal = () => {
   const [count, setCount] = useState(0);
@@ -9,6 +10,7 @@ const Normal = () => {
     <Row>
       <Col className="gutter-row" span={18}>
         <div>
+          <img style={{width:'100%'}} src={t} alt=""/>
           <Http></Http>
         </div>
       </Col>

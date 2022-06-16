@@ -1,35 +1,92 @@
-import {useEffect, useState} from "react";
-import Collection from "../components/Collection";
-import {Col, Row} from "antd";
+import { Space, Table, Tag } from 'antd';
+import type { ColumnsType } from 'antd/lib/table';
+import React, {useState} from 'react';
 
+interface DataType {
+  key: string;
+  name: string;
+  age: number;
+  address: string;
+  tags: string[];
+}
+
+const columns: ColumnsType<DataType> = [
+  {
+    title: 'Application',
+    dataIndex: 'name',
+    key: 'name',
+    render: text => <a>{text}</a>,
+  },
+  {
+    title: 'Recordable',
+    dataIndex: 'age',
+    key: 'age',
+  },
+  {
+    title: 'Replayable',
+    dataIndex: 'address',
+    key: 'address',
+  },
+  {
+    title: 'Access CI',
+    dataIndex: 'address',
+    key: 'address',
+  },
+  {
+    title: 'Configuration Items',
+    key: 'action',
+    render: (_, record) => (
+      <Space size="middle">
+        <a>Import(*.yaml)</a>
+        <a>Record</a>
+        <a>Replay</a>
+        <a>Diff</a>
+      </Space>
+    ),
+  },
+];
+
+const data: DataType[] = [
+  {
+    key: '1',
+    name: 'spring-demo_unknown app name',
+    age: 32,
+    address: 'OFF',
+    tags: ['0'],
+  },
+  {
+    key: '1',
+    name: 'spring-demo_unknown app name',
+    age: 32,
+    address: 'OFF',
+    tags: ['0'],
+  },
+  {
+    key: '1',
+    name: 'spring-demo_unknown app name',
+    age: 32,
+    address: 'OFF',
+    tags: ['0'],
+  },
+  {
+    key: '1',
+    name: 'spring-demo_unknown app name',
+    age: 32,
+    address: 'OFF',
+    tags: ['0'],
+  },
+  {
+    key: '1',
+    name: 'spring-demo_unknown app name',
+    age: 32,
+    address: 'OFF',
+    tags: ['0'],
+  },
+];
 const Setting = () => {
   const [count, setCount] = useState(0);
-  // https://codemirror.net/5/ codemirror5文档
-  useEffect(() => {
-    const el: any = document.querySelector('#codemirror-editor')
-    // @ts-ignore
-    const myCodeMirror: any = CodeMirror(el, {
-      value: 'const a=1',
-      mode: 'javascript',
-      lineNumbers: true,
-      theme: 'idea',
-    })
-    myCodeMirror.setSize('auto', 'auto')
-    myCodeMirror.setOption('readOnly', 'nocursor')
-  }, [])
-
   return <div style={{fontStyle:'12px'}}>
-    <Row>
-      <Col className="gutter-row" span={18}>
-        <div id={'codemirror-editor'}>
-        </div>
-      </Col>
-      <Col className="gutter-row" span={6}>
-        <div>
-          <Collection></Collection>
-        </div>
-      </Col>
-    </Row>
+    <Table columns={columns} dataSource={data} />
   </div>;
 };
 

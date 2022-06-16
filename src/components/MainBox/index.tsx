@@ -34,7 +34,7 @@ const items: MenuItem[] = [
   getItem('常规', 'normal', <PieChartOutlined />),
   getItem('对比', 'compare', <DesktopOutlined />),
   getItem('回放', 'replay', <ContainerOutlined />),
-  getItem('设置', 'setting', <ContainerOutlined />),
+  getItem('API', 'setting', <ContainerOutlined />),
 ];
 
 
@@ -52,7 +52,7 @@ const MainBox: React.FC = () => {
       <Header></Header>
       <div style={{display:'flex'}}>
         <Menu onClick={onClick} style={{ width: 150 }} mode="vertical" items={items} />
-        <div style={{flex:'1'}}>
+        <div style={{flex:'1',padding:'14px'}}>
           <Outlet />
         </div>
       </div>
