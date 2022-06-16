@@ -14,7 +14,6 @@
     "@babel/core": "^7.18.5",
     "@codemirror/lang-javascript": "^6.0.0",
     "@codemirror/lang-json": "^6.0.0",
-    "@codemirror/language": "^6.0.0",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@uiw/react-codemirror": "^4.8.1",

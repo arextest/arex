@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Collection from "../components/Collection";
-import { Col, Row } from "antd";
+import { Col, Divider, Row } from "antd";
 import Http from "../components/Http";
 import BottomComponent from "../components/Http/BottomComponent";
 
@@ -12,6 +12,7 @@ const Normal = () => {
         <Col className="gutter-row" span={18}>
           <div>
             <Http />
+            <Divider />
             <BottomComponent />
           </div>
         </Col>

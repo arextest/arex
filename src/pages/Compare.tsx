@@ -2,7 +2,7 @@ import { useState } from "react";
 import Collection from "../components/Collection";
 import { Col, Divider, Row } from "antd";
 import CompareBottomComponent from "../components/Http/CompareBottomComponent";
-import Http from "../components/Http/indexCopy";
+import Http from "../components/Http/index";
 
 const Compare = () => {
   const [count, setCount] = useState(0);
@@ -11,6 +11,7 @@ const Compare = () => {
       <Row>
         <Col className="gutter-row" span={18}>
           <Http />
+          <Divider />
           <CompareBottomComponent />
         </Col>
         <Col className="gutter-row" span={6}>

@@ -1,5 +1,4 @@
 import {
-  Button,
   Dropdown,
   Input,
   Menu,
@@ -24,7 +23,6 @@ import { ColumnsType } from "antd/es/table";
 import CodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import { javascript } from "@codemirror/lang-javascript";
-import { StreamLanguage } from "@codemirror/language";
 
 const { TabPane } = Tabs;
 
@@ -40,9 +38,12 @@ const HeaderWrapper = styled.div`
   display: flex;
 
   .ant-select > .ant-select-selector {
-    width: 80px;
+    width: 120px;
     left: 1px;
     border-radius: 2px 0 0 2px;
+    .ant-select-selection-item {
+      font-weight: 500;
+    }
   }
   .ant-input {
     border-radius: 0 2px 2px 0;
@@ -54,6 +55,7 @@ const HeaderWrapper = styled.div`
 
 const Http: FC = () => {
   const [requestType, setRequestType] = useState("GET");
+  const [requestSavedName, setRequestSavedName] = useState("Untitled request");
 
   const dataSource = [
     {
@@ -134,9 +136,14 @@ const Http: FC = () => {
   return (
     <div>
       <HeaderWrapper>
-        <Select value={requestType} options={RequestTypeOptions} />
+        <Select
+          value={requestType}
+          options={RequestTypeOptions}
+          onChange={setRequestType}
+        />
         <Input style={{ width: "100%" }} />
         <Dropdown.Button
+          type="primary"
           icon={<DownOutlined />}
           overlay={
             <Menu
@@ -163,25 +170,32 @@ const Http: FC = () => {
         <Dropdown.Button
           icon={<DownOutlined />}
           overlay={
-            <div>
-              <Input value={"Untitled request"} />
-              <Menu
-                items={[
-                  {
-                    key: "1",
-                    label: "复制链接",
-                  },
-                  {
-                    key: "2",
-                    label: "View my links",
-                  },
-                  {
-                    key: "3",
-                    label: "另存为",
-                  },
-                ]}
-              />
-            </div>
+            <Menu
+              items={[
+                {
+                  key: "0",
+                  label: (
+                    <Input
+                      value={requestSavedName}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => setRequestSavedName(e.target.value)}
+                    />
+                  ),
+                },
+                {
+                  key: "1",
+                  label: "复制链接",
+                },
+                {
+                  key: "2",
+                  label: "View my links",
+                },
+                {
+                  key: "3",
+                  label: "另存为",
+                },
+              ]}
+            />
           }
         >
           保存
@@ -192,8 +206,9 @@ const Http: FC = () => {
         <TabPane tab="参数" key="0">
           <FormHeader />
           <Table
-            size="small"
             bordered
+            size="small"
+            pagination={false}
             dataSource={dataSource}
             columns={columns}
           />
@@ -209,8 +224,9 @@ const Http: FC = () => {
         <TabPane tab="请求头" key="2">
           <FormHeader />
           <Table
-            size="small"
             bordered
+            size="small"
+            pagination={false}
             dataSource={dataSource}
             columns={columns}
           />
