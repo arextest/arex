@@ -1,17 +1,5 @@
 import {
-  Button,
-  Dropdown,
-  Input,
-  Menu,
-  Select,
-  Space,
-  Table,
-  Tabs,
-  Tooltip,
-} from "antd";
-import { FC, useState } from "react";
-import {
-  CheckOutlined,
+  CheckCircleOutlined,
   CodeOutlined,
   CopyOutlined,
   DeleteOutlined,
@@ -21,14 +9,40 @@ import {
   PlusOutlined,
   QuestionCircleOutlined,
   SaveOutlined,
+  StopOutlined,
 } from "@ant-design/icons";
-import styled from "@emotion/styled";
-import { css, jsx } from "@emotion/react";
-import { ColumnsType } from "antd/es/table";
-import CodeMirror from "@uiw/react-codemirror";
-import { json } from "@codemirror/lang-json";
 import { javascript } from "@codemirror/lang-javascript";
+import { json } from "@codemirror/lang-json";
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
+import CodeMirror from "@uiw/react-codemirror";
+import { useRequest } from "ahooks";
+import {
+  Button,
+  Dropdown,
+  Input,
+  Menu,
+  Select,
+  Space,
+  Table,
+  TableProps,
+  Tabs,
+  Tooltip,
+} from "antd";
+import { ColumnsType } from "antd/es/table";
+import axios from "axios";
+import { FC, useState } from "react";
+import { useImmer } from "use-immer";
+import { v4 as uuidv4 } from "uuid";
+
 import AnimateAutoHeight from "../AnimateAutoHeight";
+
+type ParamsType = {
+  id: string;
+  key: string;
+  value: string | number;
+  disabled: boolean;
+};
 
 const { TabPane } = Tabs;
 
@@ -59,21 +73,52 @@ const HeaderWrapper = styled.div`
   }
 `;
 
+const StyledTable = styled(Table)<TableProps<ParamsType>>`
+  .ant-table-thead {
+    display: none;
+  }
+  .ant-table-cell {
+    padding: 0 1px !important;
+  }
+`;
+
 const Http: FC = () => {
   const [requestType, setRequestType] = useState("GET");
   const [requestSavedName, setRequestSavedName] = useState("Untitled request");
 
-  const dataSource = [
+  const [url, setUrl] = useState("");
+  const [params, setParams] = useImmer<ParamsType[]>([
+    { id: uuidv4(), key: "", value: "", disabled: false },
+  ]);
+  const [header, setHeader] = useState([
     {
-      key: "1",
-      value: 32,
+      id: uuidv4(),
+      key: "",
+      value: "",
+      disabled: false,
     },
-    {
-      key: "2",
-      value: 42,
-    },
-  ];
+  ]);
+  const [requestBody, setRequestBody] = useState("");
 
+  const { run: request } = useRequest(axios, {
+    manual: true,
+  });
+  const handleRequest = () => {
+    request(url, {
+      method: requestType,
+      [requestType === "GET" ? "params" : "data"]:
+        requestType === "GET"
+          ? params.reduce<{
+              [key: string]: string | number;
+            }>((acc, { key, value }) => {
+              if (key) {
+                acc[key] = value;
+              }
+              return acc;
+            }, {})
+          : JSON.parse(requestBody),
+    });
+  };
   const FormHeader = () => (
     <div
       css={css`
@@ -99,7 +144,11 @@ const Http: FC = () => {
         </Tooltip>
 
         <Tooltip title="全部清除">
-          <Button type="text" icon={<DeleteOutlined />} />
+          <Button
+            type="text"
+            icon={<DeleteOutlined />}
+            onClick={() => setParams([])}
+          />
         </Tooltip>
 
         <Tooltip title="批量编辑">
@@ -107,40 +156,102 @@ const Http: FC = () => {
         </Tooltip>
 
         <Tooltip title="新增">
-          <Button type="text" icon={<PlusOutlined />} />
+          <Button
+            type="text"
+            icon={<PlusOutlined />}
+            onClick={() =>
+              setParams((params) => {
+                params.push({
+                  id: uuidv4(),
+                  key: "",
+                  value: "",
+                  disabled: false,
+                });
+              })
+            }
+          />
         </Tooltip>
       </div>
     </div>
   );
 
-  const columns: ColumnsType<{
-    key: string;
-    value: number;
-  }> = [
+  const columns: ColumnsType<ParamsType> = [
     {
       title: "参数",
       dataIndex: "key",
       key: "key",
+      render: (text, record, i) => (
+        <Input
+          value={text}
+          bordered={false}
+          placeholder="参数"
+          disabled={record.disabled}
+          onChange={(e) => {
+            setParams((params) => {
+              params[i].key = e.target.value;
+            });
+          }}
+        />
+      ),
     },
     {
       title: "值",
       dataIndex: "value",
       key: "value",
+      render: (text, record, i) => (
+        <Input
+          value={text}
+          bordered={false}
+          placeholder="值"
+          disabled={record.disabled}
+          onChange={(e) => {
+            setParams((params) => {
+              params[i].value = e.target.value;
+            });
+          }}
+        />
+      ),
     },
     {
       title: "操作",
       key: "actions",
-      width: 100,
+      width: 72,
       align: "center",
-      render: (text, record) => (
+      className: "actions",
+      render: (text, record, i) => (
         <Space>
-          <Button type="text" icon={<CheckOutlined />} />
-          <Button type="text" icon={<DeleteOutlined />} />
+          <Tooltip title={record.disabled ? "开启" : "关闭"}>
+            <Button
+              type="text"
+              size="small"
+              icon={
+                record.disabled ? <StopOutlined /> : <CheckCircleOutlined />
+              }
+              onClick={() => {
+                setParams((params) => {
+                  params[i].disabled = !record.disabled;
+                });
+              }}
+            />
+          </Tooltip>
+          <Tooltip title="移除">
+            <Button
+              type="text"
+              size="small"
+              icon={<DeleteOutlined />}
+              onClick={() =>
+                setParams((params) => {
+                  params.splice(i, 1);
+                })
+              }
+            />
+          </Tooltip>
         </Space>
       ),
     },
   ];
 
+  // @ts-ignore
   return (
     <AnimateAutoHeight>
       <HeaderWrapper>
@@ -149,10 +260,11 @@ const Http: FC = () => {
           options={RequestTypeOptions}
           onChange={setRequestType}
         />
-        <Input style={{ width: "100%" }} />
+        <Input value={url} onChange={(e) => setUrl(e.target.value)} />
         <Dropdown.Button
           type="primary"
           icon={<DownOutlined />}
+          onClick={handleRequest}
           overlay={
             <Menu
               items={[
@@ -219,55 +331,43 @@ const Http: FC = () => {
       <Tabs defaultActiveKey="0">
         <TabPane tab="参数" key="0">
           <FormHeader />
-          <Table
+          <StyledTable
             bordered
             size="small"
+            rowKey="id"
             pagination={false}
-            dataSource={dataSource}
+            dataSource={params}
+            // @ts-ignore
             columns={columns}
           />
         </TabPane>
         <TabPane tab="请求体" key="1">
           <CodeMirror
-            value=""
+            value={requestBody}
             extensions={[json()]}
             height="300px"
-            onChange={(value) => {}}
+            onChange={setRequestBody}
           />
         </TabPane>
         <TabPane tab="请求头" key="2">
           <FormHeader />
-          <Table
+          <StyledTable
             bordered
             size="small"
             pagination={false}
-            dataSource={dataSource}
+            dataSource={header}
+            // @ts-ignore
             columns={columns}
           />
         </TabPane>
         <TabPane tab="授权" key="3">
-          <CodeMirror
-            value=""
-            extensions={[json()]}
-            height="300px"
-            onChange={(value) => {}}
-          />
+          <CodeMirror value="" extensions={[json()]} height="300px" />
         </TabPane>
         <TabPane tab="预请求脚本" key="4">
-          <CodeMirror
-            value=""
-            height="300px"
-            extensions={[javascript()]}
-            onChange={(value) => {}}
-          />
+          <CodeMirror value="" height="300px" extensions={[javascript()]} />
         </TabPane>
         <TabPane tab="测试" key="5">
-          <CodeMirror
-            value=""
-            height="300px"
-            extensions={[javascript()]}
-            onChange={(value) => {}}
-          />
+          <CodeMirror value="" height="300px" extensions={[javascript()]} />
         </TabPane>
       </Tabs>
     </AnimateAutoHeight>
