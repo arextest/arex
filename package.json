@@ -12,8 +12,12 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@babel/core": "^7.18.5",
+    "@codemirror/lang-javascript": "^6.0.0",
+    "@codemirror/lang-json": "^6.0.0",
+    "@codemirror/language": "^6.0.0",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
+    "@uiw/react-codemirror": "^4.8.1",
     "ahooks": "^3.4.1",
     "antd": "^4.21.2",
     "axios": "^0.27.2",
@@ -23,7 +27,6 @@
     "lodash": "^4.17.21",
     "npm": "^8.12.2",
     "react": "^18.0.0",
-    "react-codemirror2": "^7.2.1",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.3.0",
     "zustand": "^4.0.0-rc.1"

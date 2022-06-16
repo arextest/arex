@@ -21,7 +21,10 @@ import {
 import styled from "@emotion/styled";
 import { css, jsx } from "@emotion/react";
 import { ColumnsType } from "antd/es/table";
-import { UnControlled as CodeMirror } from "react-codemirror2";
+import CodeMirror from "@uiw/react-codemirror";
+import { json } from "@codemirror/lang-json";
+import { javascript } from "@codemirror/lang-javascript";
+import { StreamLanguage } from "@codemirror/language";
 
 const { TabPane } = Tabs;
 
@@ -196,19 +199,11 @@ const Http: FC = () => {
           />
         </TabPane>
         <TabPane tab="请求体" key="1">
-          {/*<div*/}
-          {/*  id={"editor-request-body"}*/}
-          {/*  style={{ height: "500px", width: "800px" }}*/}
-          {/*/>*/}
           <CodeMirror
             value=""
-            options={{
-              mode: "json",
-              theme: "material",
-              lineNumbers: true,
-            }}
-            onChange={(editor, data, value) => {}}
-            onBeforeChange={() => {}}
+            extensions={[json()]}
+            height="300px"
+            onChange={(value) => {}}
           />
         </TabPane>
         <TabPane tab="请求头" key="2">
@@ -223,37 +218,25 @@ const Http: FC = () => {
         <TabPane tab="授权" key="3">
           <CodeMirror
             value=""
-            options={{
-              mode: "json",
-              theme: "material",
-              lineNumbers: true,
-            }}
-            onChange={(editor, data, value) => {}}
-            onBeforeChange={() => {}}
+            extensions={[json()]}
+            height="300px"
+            onChange={(value) => {}}
           />
         </TabPane>
         <TabPane tab="预请求脚本" key="4">
           <CodeMirror
             value=""
-            options={{
-              mode: "javascript",
-              theme: "material",
-              lineNumbers: true,
-            }}
-            onChange={(editor, data, value) => {}}
-            onBeforeChange={() => {}}
+            height="300px"
+            extensions={[javascript()]}
+            onChange={(value) => {}}
           />
         </TabPane>
         <TabPane tab="测试" key="5">
           <CodeMirror
             value=""
-            options={{
-              mode: "javascript",
-              theme: "material",
-              lineNumbers: true,
-            }}
-            onChange={(editor, data, value) => {}}
-            onBeforeChange={() => {}}
+            height="300px"
+            extensions={[javascript()]}
+            onChange={(value) => {}}
           />
         </TabPane>
       </Tabs>

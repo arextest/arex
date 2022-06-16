@@ -92,7 +92,7 @@ const Http: FC = () => {
       <HeaderWrapper>
         <Select value={requestType} options={RequestTypeOptions} />
         <Input style={{ width: "45%" }} />
-        <Input style={{ width: "45%",marginLeft:'10px' }} />
+        <Input style={{ width: "45%", marginLeft: "10px" }} />
         <Dropdown.Button
           icon={<DownOutlined />}
           overlay={
