@@ -62,7 +62,7 @@ const Http: FC = () => {
     },
   ];
 
-  const columns: ColumnsType = [
+  const columns: ColumnsType<typeof dataSource> = [
     {
       title: "参数",
       dataIndex: "key",
@@ -180,7 +180,13 @@ const Http: FC = () => {
               </Tooltip>
             </Space>
           </div>
-          <Table bordered dataSource={dataSource} columns={columns} />;
+          <Table
+            size="small"
+            bordered
+            dataSource={dataSource}
+            columns={columns}
+          />
+          ;
         </TabPane>
         <TabPane tab="请求体" key="1">
           Content of Tab Pane 请求体
