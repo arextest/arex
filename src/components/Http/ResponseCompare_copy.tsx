@@ -9,7 +9,7 @@ const { TabPane } = Tabs;
 const onChange = (key: string) => {
   console.log(key);
 };
-const CompareBottomComponent = () => {
+const ResponseCompare = () => {
   // https://codemirror.net/5/ codemirror5文档
   useMount(() => {
     const containerLeft = document.getElementById("containerLeft");
@@ -97,4 +97,4 @@ const CompareBottomComponent = () => {
   );
 };
 
-export default CompareBottomComponent;
+export default ResponseCompare;

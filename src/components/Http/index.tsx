@@ -18,6 +18,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { useRequest } from "ahooks";
 import {
   Button,
+  Divider,
   Dropdown,
   Input,
   Menu,
@@ -37,6 +38,8 @@ import { useImmer } from "use-immer";
 import { v4 as uuidv4 } from "uuid";
 
 import AnimateAutoHeight from "../AnimateAutoHeight";
+import Response from "./Response";
+import ResponseCompare from "./ResponseCompare";
 
 type ParamsType = {
   id: string;
@@ -101,7 +104,7 @@ const FormHeaderWrapper = styled.div`
   }
 `;
 
-const Http: FC = () => {
+const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
   const [requestType, setRequestType] = useState("GET");
   const [requestSavedName, setRequestSavedName] = useState("Untitled request");
 
@@ -117,7 +120,7 @@ const Http: FC = () => {
       }, 0),
     [params]
   );
-  const [header, setHeader] = useState([
+  const [requestHeader, setRequestHeader] = useImmer([
     {
       id: uuidv4(),
       key: "",
@@ -127,7 +130,7 @@ const Http: FC = () => {
   ]);
   const headerCount = useMemo(
     () =>
-      header.reduce((count, h) => {
+      requestHeader.reduce((count, h) => {
         h.key && count++;
         return count;
       }, 0),
@@ -171,267 +174,303 @@ const Http: FC = () => {
     });
   };
 
-  const FormHeader = () => (
-    <FormHeaderWrapper>
-      <span>查询参数</span>
-      <div>
-        <Tooltip title="帮助">
-          <Button type="text" icon={<QuestionCircleOutlined />} />
-        </Tooltip>
+  const FormHeader: FC<{ target: "params" | "requestHeader" }> = ({
+    target = "params",
+  }) => {
+    const handleAddParam = () => {
+      const newValue = {
+        id: uuidv4(),
+        key: "",
+        value: "",
+        disabled: false,
+      };
+      if (target === "params") {
+        setParams((params) => {
+          params.push(newValue);
+        });
+      } else {
+        setRequestHeader((requestHeader) => {
+          requestHeader.push(newValue);
+        });
+      }
+    };
+    const handleClearAllParams = () =>
+      target === "params" ? setParams([]) : setRequestHeader([]);
 
-        <Tooltip title="全部清除">
-          <Button
-            type="text"
-            icon={<DeleteOutlined />}
-            onClick={() => setParams([])}
-          />
-        </Tooltip>
-
-        <Tooltip title="批量编辑">
-          <Button type="text" icon={<EditOutlined />} />
-        </Tooltip>
-
-        <Tooltip title="新增">
-          <Button
-            type="text"
-            icon={<PlusOutlined />}
-            onClick={() =>
-              setParams((params) => {
-                params.push({
-                  id: uuidv4(),
-                  key: "",
-                  value: "",
-                  disabled: false,
-                });
-              })
-            }
-          />
-        </Tooltip>
-      </div>
-    </FormHeaderWrapper>
-  );
-
-  const columns: ColumnsType<ParamsType> = [
-    {
-      title: "参数",
-      dataIndex: "key",
-      key: "key",
-      render: (text, record, i) => (
-        <Input
-          value={text}
-          bordered={false}
-          placeholder="参数"
-          disabled={record.disabled}
-          onChange={(e) => {
-            setParams((params) => {
-              params[i].key = e.target.value;
-            });
-          }}
-        />
-      ),
-    },
-    {
-      title: "值",
-      dataIndex: "value",
-      key: "value",
-      render: (text, record, i) => (
-        <Input
-          value={text}
-          bordered={false}
-          placeholder="值"
-          disabled={record.disabled}
-          onChange={(e) => {
-            setParams((params) => {
-              params[i].value = e.target.value;
-            });
-          }}
-        />
-      ),
-    },
-    {
-      title: "操作",
-      key: "actions",
-      width: 72,
-      align: "center",
-      className: "actions",
-      render: (text, record, i) => (
-        <Space>
-          <Tooltip title={record.disabled ? "开启" : "关闭"}>
-            <Button
-              type="text"
-              size="small"
-              icon={
-                record.disabled ? <StopOutlined /> : <CheckCircleOutlined />
-              }
-              onClick={() => {
-                setParams((params) => {
-                  params[i].disabled = !record.disabled;
-                });
-              }}
-            />
+    return (
+      <FormHeaderWrapper>
+        <span>查询参数</span>
+        <div>
+          <Tooltip title="帮助">
+            <Button type="text" icon={<QuestionCircleOutlined />} />
           </Tooltip>
-          <Tooltip title="移除">
+
+          <Tooltip title="全部清除">
             <Button
               type="text"
-              size="small"
               icon={<DeleteOutlined />}
-              onClick={() =>
-                setParams((params) => {
-                  params.splice(i, 1);
-                })
-              }
+              onClick={handleClearAllParams}
             />
           </Tooltip>
-        </Space>
-      ),
-    },
-  ];
+
+          <Tooltip title="批量编辑">
+            <Button type="text" icon={<EditOutlined />} />
+          </Tooltip>
+
+          <Tooltip title="新增">
+            <Button
+              type="text"
+              icon={<PlusOutlined />}
+              onClick={handleAddParam}
+            />
+          </Tooltip>
+        </div>
+      </FormHeaderWrapper>
+    );
+  };
+
+  const getColumns = (
+    target: "params" | "requestHeader"
+  ): ColumnsType<ParamsType> => {
+    const handleChange = (i: number, attr: "key" | "value", value: string) => {
+      if (target === "params") {
+        setParams((params) => {
+          params[i][attr] = value;
+        });
+      } else {
+        setRequestHeader((requestHeader) => {
+          requestHeader[i][attr] = value;
+        });
+      }
+    };
+
+    const handleDisable = (i: number) => {
+      if (target === "params") {
+        setParams((params) => {
+          params[i].disabled = !params[i].disabled;
+        });
+      } else {
+        setRequestHeader((requestHeader) => {
+          requestHeader[i].disabled = !params[i].disabled;
+        });
+      }
+    };
+
+    return [
+      {
+        title: "参数",
+        dataIndex: "key",
+        key: "key",
+        render: (text, record, i) => (
+          <Input
+            value={text}
+            bordered={false}
+            placeholder="参数"
+            disabled={record.disabled}
+            onChange={(e) => handleChange(i, "key", e.target.value)}
+          />
+        ),
+      },
+      {
+        title: "值",
+        dataIndex: "value",
+        key: "value",
+        render: (text, record, i) => (
+          <Input
+            value={text}
+            bordered={false}
+            placeholder="值"
+            disabled={record.disabled}
+            onChange={(e) => handleChange(i, "value", e.target.value)}
+          />
+        ),
+      },
+      {
+        title: "操作",
+        key: "actions",
+        width: 72,
+        align: "center",
+        className: "actions",
+        render: (text, record, i) => (
+          <Space>
+            <Tooltip title={record.disabled ? "开启" : "关闭"}>
+              <Button
+                type="text"
+                size="small"
+                icon={
+                  record.disabled ? <StopOutlined /> : <CheckCircleOutlined />
+                }
+                onClick={() => handleDisable(i)}
+              />
+            </Tooltip>
+            <Tooltip title="移除">
+              <Button
+                type="text"
+                size="small"
+                icon={<DeleteOutlined />}
+                onClick={() =>
+                  setParams((params) => {
+                    params.splice(i, 1);
+                  })
+                }
+              />
+            </Tooltip>
+          </Space>
+        ),
+      },
+    ];
+  };
 
   return (
-    <AnimateAutoHeight>
-      <HeaderWrapper>
-        <Select
-          value={requestType}
-          options={RequestTypeOptions}
-          onChange={setRequestType}
-        />
-        <Input value={url} onChange={(e) => setUrl(e.target.value)} />
-        <Dropdown.Button
-          type="primary"
-          icon={<DownOutlined />}
-          onClick={handleRequest}
-          overlay={
-            <Menu
-              items={[
-                {
-                  key: "1",
-                  label: "导入URL",
-                  icon: <LinkOutlined />,
-                },
-                {
-                  key: "2",
-                  label: "显示代码",
-                  icon: <CodeOutlined />,
-                },
-                {
-                  key: "3",
-                  label: "全部清除",
-                  icon: <DeleteOutlined />,
-                },
-              ]}
-            />
-          }
-        >
-          发送
-        </Dropdown.Button>
-
-        <Dropdown.Button
-          icon={<DownOutlined />}
-          overlay={
-            <Menu
-              items={[
-                {
-                  key: "0",
-                  label: (
-                    <Input
-                      value={requestSavedName}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => setRequestSavedName(e.target.value)}
-                    />
-                  ),
-                },
-                {
-                  key: "1",
-                  label: "复制链接",
-                  icon: <CopyOutlined />,
-                },
-                {
-                  key: "2",
-                  label: "View my links",
-                  icon: <LinkOutlined />,
-                },
-                {
-                  key: "3",
-                  label: "另存为",
-                  icon: <SaveOutlined />,
-                },
-              ]}
-            />
-          }
-        >
-          保存
-        </Dropdown.Button>
-      </HeaderWrapper>
-
-      <Tabs defaultActiveKey="0">
-        <TabPane
-          tab={
-            <span>
-              参数 {!!paramsCount && <CountTag>{paramsCount}</CountTag>}
-            </span>
-          }
-          key="0"
-        >
-          <FormHeader />
-          <StyledTable
-            bordered
-            size="small"
-            rowKey="id"
-            pagination={false}
-            dataSource={params}
-            // @ts-ignore
-            columns={columns}
+    <>
+      <AnimateAutoHeight>
+        <HeaderWrapper>
+          <Select
+            value={requestType}
+            options={RequestTypeOptions}
+            onChange={setRequestType}
           />
-        </TabPane>
-        <TabPane tab="请求体" key="1">
-          <FormHeaderWrapper>
-            <span>
-              内容类型
-              <Select
-                disabled
-                value={"json"}
-                size={"small"}
-                options={[{ value: "json", label: "application/json" }]}
-                style={{ width: "140px", marginLeft: "8px" }}
+          <Input value={url} onChange={(e) => setUrl(e.target.value)} />
+          <Dropdown.Button
+            type="primary"
+            icon={<DownOutlined />}
+            onClick={handleRequest}
+            overlay={
+              <Menu
+                items={[
+                  {
+                    key: "1",
+                    label: "导入URL",
+                    icon: <LinkOutlined />,
+                  },
+                  {
+                    key: "2",
+                    label: "显示代码",
+                    icon: <CodeOutlined />,
+                  },
+                  {
+                    key: "3",
+                    label: "全部清除",
+                    icon: <DeleteOutlined />,
+                  },
+                ]}
               />
-            </span>
-          </FormHeaderWrapper>
-          <CodeMirror
-            value={requestBody}
-            extensions={[json()]}
-            height="300px"
-            onChange={setRequestBody}
-          />
-        </TabPane>
-        <TabPane
-          tab={
-            <span>
-              请求头 {!!headerCount && <CountTag>{headerCount}</CountTag>}
-            </span>
-          }
-          key="2"
-        >
-          <FormHeader />
-          <StyledTable
-            bordered
-            size="small"
-            pagination={false}
-            dataSource={header}
-            // @ts-ignore
-            columns={columns}
-          />
-        </TabPane>
-        <TabPane tab="授权" key="3">
-          <CodeMirror value="" extensions={[json()]} height="300px" />
-        </TabPane>
-        <TabPane tab="预请求脚本" key="4">
-          <CodeMirror value="" height="300px" extensions={[javascript()]} />
-        </TabPane>
-        <TabPane tab="测试" key="5">
-          <CodeMirror value="" height="300px" extensions={[javascript()]} />
-        </TabPane>
-      </Tabs>
-    </AnimateAutoHeight>
+            }
+          >
+            发送
+          </Dropdown.Button>
+
+          <Dropdown.Button
+            icon={<DownOutlined />}
+            overlay={
+              <Menu
+                items={[
+                  {
+                    key: "0",
+                    label: (
+                      <Input
+                        value={requestSavedName}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => setRequestSavedName(e.target.value)}
+                      />
+                    ),
+                  },
+                  {
+                    key: "1",
+                    label: "复制链接",
+                    icon: <CopyOutlined />,
+                  },
+                  {
+                    key: "2",
+                    label: "View my links",
+                    icon: <LinkOutlined />,
+                  },
+                  {
+                    key: "3",
+                    label: "另存为",
+                    icon: <SaveOutlined />,
+                  },
+                ]}
+              />
+            }
+          >
+            保存
+          </Dropdown.Button>
+        </HeaderWrapper>
+
+        <Tabs defaultActiveKey="0">
+          <TabPane
+            tab={
+              <span>
+                参数 {!!paramsCount && <CountTag>{paramsCount}</CountTag>}
+              </span>
+            }
+            key="0"
+          >
+            <FormHeader target="params" />
+            <StyledTable
+              bordered
+              size="small"
+              rowKey="id"
+              pagination={false}
+              dataSource={params}
+              // @ts-ignore
+              columns={getColumns("params")}
+            />
+          </TabPane>
+          <TabPane tab="请求体" key="1">
+            <FormHeaderWrapper>
+              <span>
+                内容类型
+                <Select
+                  disabled
+                  value={"json"}
+                  size={"small"}
+                  options={[{ value: "json", label: "application/json" }]}
+                  style={{ width: "140px", marginLeft: "8px" }}
+                />
+              </span>
+            </FormHeaderWrapper>
+            <CodeMirror
+              value={requestBody}
+              extensions={[json()]}
+              height="300px"
+              onChange={setRequestBody}
+            />
+          </TabPane>
+          <TabPane
+            tab={
+              <span>
+                请求头 {!!headerCount && <CountTag>{headerCount}</CountTag>}
+              </span>
+            }
+            key="2"
+          >
+            <FormHeader target="requestHeader" />
+            <StyledTable
+              bordered
+              size="small"
+              pagination={false}
+              dataSource={requestHeader}
+              // @ts-ignore
+              columns={getColumns("requestHeader")}
+            />
+          </TabPane>
+          <TabPane tab="授权" key="3">
+            <CodeMirror value="" extensions={[json()]} height="300px" />
+          </TabPane>
+          <TabPane tab="预请求脚本" key="4">
+            <CodeMirror value="" height="300px" extensions={[javascript()]} />
+          </TabPane>
+          <TabPane tab="测试" key="5">
+            <CodeMirror value="" height="300px" extensions={[javascript()]} />
+          </TabPane>
+        </Tabs>
+      </AnimateAutoHeight>
+      <Divider />
+
+      {mode === "normal" ? <Response /> : <ResponseCompare />}
+    </>
   );
 };
 

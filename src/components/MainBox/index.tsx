@@ -65,6 +65,7 @@ const MainBox: React.FC = () => {
       <Header />
       <div style={{ display: "flex", minHeight: "calc(100% - 56px)" }}>
         <Menu
+          activeKey="normal"
           onClick={onClick}
           style={{ width: 150 }}
           mode="vertical"
