@@ -13,7 +13,6 @@ import {
 } from "@ant-design/icons";
 import { javascript } from "@codemirror/lang-javascript";
 import { json } from "@codemirror/lang-json";
-import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import CodeMirror from "@uiw/react-codemirror";
 import { useRequest } from "ahooks";

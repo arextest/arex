@@ -1,21 +1,9 @@
-import {Button, Tabs} from "antd";
-import {useEffect, useState} from "react";
+import { javascript } from "@codemirror/lang-javascript";
+import CodeMirror from "@uiw/react-codemirror";
+import { Tabs } from "antd";
 const { TabPane } = Tabs;
-import {useMount} from 'ahooks'
-const onChange = (key: string) => {
-  console.log(key);
-};
-const BottomComponent = () => {
 
-
-  // https://codemirror.net/5/ codemirror5文档
-  useMount(() => {
-    setTimeout(()=>{
-      const el: any = document.querySelector('#codemirror-editor1')
-      console.log(el,'el')
-      // @ts-ignore
-      const myCodeMirror: any = CodeMirror(el, {
-        value: `{
+const response = `{
   "method": "GET",
   "args": {
 
@@ -43,38 +31,47 @@ const BottomComponent = () => {
   },
   "path": "/",
   "isBase64Encoded": true
-}`,
-        mode: 'javascript',
-        lineNumbers: true,
-        theme: 'idea',
-      })
-      myCodeMirror.setSize('auto', 'auto')
-      myCodeMirror.setOption('readOnly', 'nocursor')
-    },100)
-  })
+}`;
 
-  return <div style={{fontStyle:'12px'}}>
-    <div style={{display:'flex'}}>
-      <p style={{marginRight:'14px'}}>状态：<span style={{color:'#10b981'}}>200 OK</span></p>
-      <p style={{marginRight:'14px'}}>时间：<span style={{color:'#10b981'}}>200 OK</span></p>
-      <p style={{marginRight:'14px'}}>大小：<span style={{color:'#10b981'}}>200 OK</span></p>
+const BottomComponent = () => {
+  const onChange = (key: string) => {
+    console.log(key);
+  };
+
+  return (
+    <div style={{ fontStyle: "12px" }}>
+      <div style={{ display: "flex" }}>
+        <p style={{ marginRight: "14px" }}>
+          状态：<span style={{ color: "#10b981" }}>200 OK</span>
+        </p>
+        <p style={{ marginRight: "14px" }}>
+          时间：<span style={{ color: "#10b981" }}>200 OK</span>
+        </p>
+        <p style={{ marginRight: "14px" }}>
+          大小：<span style={{ color: "#10b981" }}>200 OK</span>
+        </p>
+      </div>
+      <Tabs defaultActiveKey="1" onChange={onChange}>
+        <TabPane tab="HTML" key="1">
+          <CodeMirror
+            value={response}
+            extensions={[javascript()]}
+            width="100%"
+            height="500px"
+          />
+        </TabPane>
+        <TabPane tab="原始内容" key="2">
+          Content of Tab Pane 2
+        </TabPane>
+        <TabPane tab="响应头" key="3">
+          Content of Tab Pane 3
+        </TabPane>
+        <TabPane tab="测试结果" key="4">
+          Content of Tab Pane 3
+        </TabPane>
+      </Tabs>
     </div>
-    <Tabs defaultActiveKey="1" onChange={onChange}>
-      <TabPane tab="HTML" key="1">
-        <div id={'codemirror-editor1'} style={{height:'500px',width:'800px'}}>
-        </div>
-      </TabPane>
-      <TabPane tab="原始内容" key="2">
-        Content of Tab Pane 2
-      </TabPane>
-      <TabPane tab="响应头" key="3">
-        Content of Tab Pane 3
-      </TabPane>
-      <TabPane tab="测试结果" key="4">
-        Content of Tab Pane 3
-      </TabPane>
-    </Tabs>
-  </div>;
+  );
 };
 
 export default BottomComponent;
