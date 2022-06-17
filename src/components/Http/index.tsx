@@ -22,16 +22,18 @@ import {
   Dropdown,
   Input,
   Menu,
+  message,
   Select,
   Space,
   Table,
   TableProps,
   Tabs,
+  Tag,
   Tooltip,
 } from "antd";
 import { ColumnsType } from "antd/es/table";
 import axios from "axios";
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { useImmer } from "use-immer";
 import { v4 as uuidv4 } from "uuid";
 
@@ -82,6 +84,24 @@ const StyledTable = styled(Table)<TableProps<ParamsType>>`
   }
 `;
 
+const CountTag = styled(Tag)`
+  border-radius: 8px;
+  padding: 0 6px;
+`;
+
+const FormHeaderWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  top: -8px;
+  & > span:first-child {
+    font-size: 13px;
+    line-height: 32px;
+    font-weight: 500;
+    color: #9d9d9d;
+  }
+`;
+
 const Http: FC = () => {
   const [requestType, setRequestType] = useState("GET");
   const [requestSavedName, setRequestSavedName] = useState("Untitled request");
@@ -90,6 +110,14 @@ const Http: FC = () => {
   const [params, setParams] = useImmer<ParamsType[]>([
     { id: uuidv4(), key: "", value: "", disabled: false },
   ]);
+  const paramsCount = useMemo(
+    () =>
+      params.reduce((count, param) => {
+        param.key && count++;
+        return count;
+      }, 0),
+    [params]
+  );
   const [header, setHeader] = useState([
     {
       id: uuidv4(),
@@ -98,46 +126,55 @@ const Http: FC = () => {
       disabled: false,
     },
   ]);
+  const headerCount = useMemo(
+    () =>
+      header.reduce((count, h) => {
+        h.key && count++;
+        return count;
+      }, 0),
+    [params]
+  );
+
   const [requestBody, setRequestBody] = useState("");
 
-  const { run: request } = useRequest(axios, {
+  const { data: response, run: request } = useRequest(axios, {
     manual: true,
+    onSuccess: (res) => {
+      console.log(res);
+    },
   });
+
   const handleRequest = () => {
+    !url && message.warn("Please input url");
+
+    const data: Partial<Record<"params" | "data", object>> = {};
+    if (requestType === "GET") {
+      data.params = params.reduce<{
+        [key: string]: string | number;
+      }>((acc, { key, value }) => {
+        if (key) {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+    } else {
+      try {
+        data.data = JSON.parse(requestBody);
+      } catch (e) {
+        message.warn("Invalid JSON");
+        return new Error("Invalid JSON");
+      }
+    }
+
     request(url, {
       method: requestType,
-      [requestType === "GET" ? "params" : "data"]:
-        requestType === "GET"
-          ? params.reduce<{
-              [key: string]: string | number;
-            }>((acc, { key, value }) => {
-              if (key) {
-                acc[key] = value;
-              }
-              return acc;
-            }, {})
-          : JSON.parse(requestBody),
+      ...data,
     });
   };
+
   const FormHeader = () => (
-    <div
-      css={css`
-        display: flex;
-        justify-content: space-between;
-        position: relative;
-        top: -8px;
-      `}
-    >
-      <span
-        css={css`
-          font-size: 13px;
-          line-height: 32px;
-          font-weight: 500;
-          color: #9d9d9d;
-        `}
-      >
-        查询参数
-      </span>
+    <FormHeaderWrapper>
+      <span>查询参数</span>
       <div>
         <Tooltip title="帮助">
           <Button type="text" icon={<QuestionCircleOutlined />} />
@@ -172,7 +209,7 @@ const Http: FC = () => {
           />
         </Tooltip>
       </div>
-    </div>
+    </FormHeaderWrapper>
   );
 
   const columns: ColumnsType<ParamsType> = [
@@ -251,7 +288,6 @@ const Http: FC = () => {
     },
   ];
 
-  // @ts-ignore
   return (
     <AnimateAutoHeight>
       <HeaderWrapper>
@@ -329,7 +365,14 @@ const Http: FC = () => {
       </HeaderWrapper>
 
       <Tabs defaultActiveKey="0">
-        <TabPane tab="参数" key="0">
+        <TabPane
+          tab={
+            <span>
+              参数 {!!paramsCount && <CountTag>{paramsCount}</CountTag>}
+            </span>
+          }
+          key="0"
+        >
           <FormHeader />
           <StyledTable
             bordered
@@ -342,6 +385,18 @@ const Http: FC = () => {
           />
         </TabPane>
         <TabPane tab="请求体" key="1">
+          <FormHeaderWrapper>
+            <span>
+              内容类型
+              <Select
+                disabled
+                value={"json"}
+                size={"small"}
+                options={[{ value: "json", label: "application/json" }]}
+                style={{ width: "140px", marginLeft: "8px" }}
+              />
+            </span>
+          </FormHeaderWrapper>
           <CodeMirror
             value={requestBody}
             extensions={[json()]}
@@ -349,7 +404,14 @@ const Http: FC = () => {
             onChange={setRequestBody}
           />
         </TabPane>
-        <TabPane tab="请求头" key="2">
+        <TabPane
+          tab={
+            <span>
+              请求头 {!!headerCount && <CountTag>{headerCount}</CountTag>}
+            </span>
+          }
+          key="2"
+        >
           <FormHeader />
           <StyledTable
             bordered
