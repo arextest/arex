@@ -33,7 +33,7 @@ const response = `{
   "isBase64Encoded": true
 }`;
 
-const BottomComponent = () => {
+const Response = () => {
   const onChange = (key: string) => {
     console.log(key);
   };
@@ -74,4 +74,4 @@ const BottomComponent = () => {
   );
 };
 
-export default BottomComponent;
+export default Response;

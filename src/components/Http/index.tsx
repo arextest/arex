@@ -18,6 +18,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { useRequest } from "ahooks";
 import {
   Button,
+  Divider,
   Dropdown,
   Input,
   Menu,
@@ -37,6 +38,8 @@ import { useImmer } from "use-immer";
 import { v4 as uuidv4 } from "uuid";
 
 import AnimateAutoHeight from "../AnimateAutoHeight";
+import Response from "./Response";
+import ResponseCompare from "./ResponseCompare";
 
 type ParamsType = {
   id: string;
@@ -101,7 +104,7 @@ const FormHeaderWrapper = styled.div`
   }
 `;
 
-const Http: FC = () => {
+const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
   const [requestType, setRequestType] = useState("GET");
   const [requestSavedName, setRequestSavedName] = useState("Untitled request");
 
@@ -431,6 +434,10 @@ const Http: FC = () => {
           <CodeMirror value="" height="300px" extensions={[javascript()]} />
         </TabPane>
       </Tabs>
+
+      <Divider />
+
+      {mode === "normal" ? <Response /> : <ResponseCompare />}
     </AnimateAutoHeight>
   );
 };

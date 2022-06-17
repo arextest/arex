@@ -1,28 +1,18 @@
-import { useState } from "react";
+import { Col, Row } from "antd";
+
 import Collection from "../components/Collection";
-import { Col, Divider, Row } from "antd";
 import Http from "../components/Http";
-import BottomComponent from "../components/Http/BottomComponent";
 
 const Normal = () => {
-  const [count, setCount] = useState(0);
   return (
-    <div style={{ fontStyle: "12px" }}>
-      <Row>
-        <Col className="gutter-row" span={18}>
-          <div>
-            <Http />
-            <Divider />
-            <BottomComponent />
-          </div>
-        </Col>
-        <Col className="gutter-row" span={6}>
-          <div>
-            <Collection />
-          </div>
-        </Col>
-      </Row>
-    </div>
+    <Row>
+      <Col span={18}>
+        <Http />
+      </Col>
+      <Col span={6}>
+        <Collection />
+      </Col>
+    </Row>
   );
 };
 
