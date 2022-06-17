@@ -12,6 +12,9 @@ import React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import Header from "../Header";
+import {useMount} from "ahooks";
+import {FileSystemService} from "../../api/FileSystemService";
+import { useStore } from './../../store'
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -47,8 +50,18 @@ const MainBox: React.FC = () => {
     s(`/${e.key}`);
   };
 
+  const setWorkspaces = useStore((state) => state.setWorkspaces)
+
+  useMount(()=>{
+    init()
+  })
+  function init() {
+    FileSystemService.queryWorkspacesByUser({}).then(res=>{
+      setWorkspaces(res.body.workspaces)
+    })
+  }
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
+    <div>
       <Header />
       <div style={{ display: "flex", minHeight: "calc(100% - 56px)" }}>
         <Menu

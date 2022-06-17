@@ -25,7 +25,7 @@ const CompareBottomComponent = () => {
     }
 
     const optionsLeft = {
-      mode: "tree",
+      mode: "",
       onClassName,
       onChangeJSON: function (j) {
         jsonLeft = j;

@@ -5,6 +5,10 @@ interface BaseState {
   removeAllBears: () => void;
   userinfo: any;
   setUserinfo: (a: any) => void;
+    workspaces: any;
+    setWorkspaces: (a: any) => void;
+    currentWorkspaceId:any,
+    setCurrentWorkspaceId:(a: any) => void
 }
 export const useStore = create<BaseState>(
   (set) => ({
@@ -16,5 +20,13 @@ export const useStore = create<BaseState>(
       console.log(a);
       return set((state) => ({ userinfo: a }));
     },
+      currentWorkspaceId:'',
+      setCurrentWorkspaceId:(currentWorkspaceId: any) => {
+          return set((state) => ({ currentWorkspaceId: currentWorkspaceId }));
+      },
+      workspaces:[],
+      setWorkspaces:(workspaces: any) => {
+          return set((state) => ({ workspaces: workspaces }));
+      }
   }),
 );
