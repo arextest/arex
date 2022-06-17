@@ -151,8 +151,8 @@ const Http: FC = () => {
     if (requestType === "GET") {
       data.params = params.reduce<{
         [key: string]: string | number;
-      }>((acc, { key, value }) => {
-        if (key) {
+      }>((acc, { key, value, disabled }) => {
+        if (key && !disabled) {
           acc[key] = value;
         }
         return acc;
