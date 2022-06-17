@@ -145,7 +145,7 @@ const Http: FC = () => {
   });
 
   const handleRequest = () => {
-    !url && message.warn("Please input url");
+    if (!url) return message.warn("Please input url");
 
     const data: Partial<Record<"params" | "data", object>> = {};
     if (requestType === "GET") {
