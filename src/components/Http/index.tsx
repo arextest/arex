@@ -20,6 +20,7 @@ import {
   Button,
   Divider,
   Dropdown,
+  Empty,
   Input,
   Menu,
   message,
@@ -104,11 +105,20 @@ const FormHeaderWrapper = styled.div`
   }
 `;
 
+const ResponseWrapper = styled.div`
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
   const [requestType, setRequestType] = useState("GET");
   const [requestSavedName, setRequestSavedName] = useState("Untitled request");
 
   const [url, setUrl] = useState("");
+  const [sent, setSent] = useState(false);
+  const [response, setResponse] = useState<any>();
   const [params, setParams] = useImmer<ParamsType[]>([
     { id: uuidv4(), key: "", value: "", disabled: false },
   ]);
@@ -139,10 +149,17 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
 
   const [requestBody, setRequestBody] = useState("");
 
-  const { data: response, run: request } = useRequest(axios, {
+  const { data: res, run: request } = useRequest(axios, {
     manual: true,
+    onBefore: () => {
+      setSent(false);
+    },
     onSuccess: (res) => {
       console.log(res);
+      setResponse(res);
+    },
+    onFinally: () => {
+      setSent(true);
     },
   });
 
@@ -434,7 +451,8 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
             <CodeMirror
               value={requestBody}
               extensions={[json()]}
-              height="300px"
+              height="auto"
+              minHeight={"100px"}
               onChange={setRequestBody}
             />
           </TabPane>
@@ -468,8 +486,22 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
         </Tabs>
       </AnimateAutoHeight>
       <Divider />
-
-      {mode === "normal" ? <Response /> : <ResponseCompare />}
+      <div>
+        {sent ? (
+          mode === "normal" ? (
+            <Response
+              res={res}
+              status={{ code: response.status, text: response.statusText }}
+            />
+          ) : (
+            <ResponseCompare />
+          )
+        ) : (
+          <ResponseWrapper>
+            <Empty description="Enter the URL and click Send to get a response" />
+          </ResponseWrapper>
+        )}
+      </div>
     </>
   );
 };

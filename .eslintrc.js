@@ -36,5 +36,6 @@ module.exports = {
     quotes: [0, "double"],
     semi: [0, "always"],
     "space-before-function-paren": [0, "never"],
+    "multiline-ternary": "off",
   },
 };
