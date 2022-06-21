@@ -1,8 +1,9 @@
 import React from "react";
-import MainBox from "../components/MainBox";
+
+import MainBox from "../layout/MainBox";
+import Compare from "../pages/Compare";
 import Home from "../pages/Home";
 import Normal from "../pages/Normal";
-import Compare from "../pages/Compare";
 import Replay from "../pages/Replay";
 import Setting from "../pages/Setting";
 

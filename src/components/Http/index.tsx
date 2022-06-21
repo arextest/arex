@@ -97,7 +97,7 @@ const FormHeaderWrapper = styled.div`
   justify-content: space-between;
   position: relative;
   top: -8px;
-  & > span:first-child {
+  & > span:first-of-type {
     font-size: 13px;
     line-height: 32px;
     font-weight: 500;

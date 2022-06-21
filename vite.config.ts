@@ -1,5 +1,6 @@
-import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+import requireTransform from "vite-plugin-require-transform";
 
 import proxy from "./config/proxy";
 
@@ -30,6 +31,7 @@ export default defineConfig({
         plugins: ["@emotion/babel-plugin"],
       },
     }),
+    requireTransform({}),
   ],
   server: {
     proxy: convertProxyConfig,
