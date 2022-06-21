@@ -5,7 +5,10 @@ export class FileSystemService {
     }
     static async queryWorkspaceById({ id }: any): Promise<any> {
         return requset.post(`http://10.5.153.1:8090/api/filesystem/queryWorkspaceById`,{
-            "id": "62ab189bbf79d0746fc74268"
+            "id": id
         });
     }
+  static async addItem(params: any): Promise<any> {
+    return requset.post(`http://10.5.153.1:8090/api/filesystem/addItem`,params);
+  }
 }

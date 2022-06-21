@@ -13,7 +13,7 @@ import { ParamsType } from "./index";
 
 const FormTable = styled(Table)<TableProps<ParamsType>>`
   .ant-table-thead {
-    display: none;
+    display: ${ props => props.showHeader ? 'table-header-group' : 'none' };
   }
   .ant-table-cell {
     padding: 0 1px !important;

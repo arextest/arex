@@ -1,4 +1,5 @@
 import { javascript } from "@codemirror/lang-javascript";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import CodeMirror from "@uiw/react-codemirror";
 import { Tabs } from "antd";
@@ -19,7 +20,7 @@ const Response: FC<{
   res: any;
   status: { code: number; text: string };
   time?: number;
-  size?: number;
+  size?: number;Ï
 }> = (props) => {
   const onChange = (key: string) => {
     console.log(key);
@@ -28,7 +29,9 @@ const Response: FC<{
   return (
     <>
       <StatusWrapper>
-        <div>
+        <div css={css`
+color: #ff51ab;
+`}>
           状态：
           <span>
             {props.status.code} {props.status.text}
