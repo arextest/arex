@@ -154,8 +154,18 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
       }
     }
 
+    const headers = requestHeader.reduce<{
+      [key: string]: string | number;
+    }>((acc, header) => {
+      if (header.key) {
+        acc[header.key] = header.value;
+      }
+      return acc;
+    }, {});
+
     request(url, {
       method: requestType,
+      headers,
       ...data,
     });
   };
