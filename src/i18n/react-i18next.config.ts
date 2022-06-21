@@ -30,8 +30,8 @@ i18n
   .init({
     // 初始化
     resources, // 本地多语言数据
-    lng: localStorage.getItem("i18nextLng") || "zh-CN",
-    fallbackLng: "cn",
+    lng: localStorage.getItem("i18nextLng") || "en-US",
+    fallbackLng: "en",
     detection: {
       caches: ["localStorage"], // 'sessionStorage', 'cookie'
     },

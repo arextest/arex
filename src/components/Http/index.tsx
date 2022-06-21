@@ -74,7 +74,8 @@ const HeaderWrapper = styled.div`
   .ant-input {
     border-radius: 0 2px 2px 0;
   }
-  .ant-btn-group {
+  .ant-btn-group,
+  .ant-btn {
     margin-left: 16px;
   }
 `;
@@ -356,71 +357,73 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
             onChange={setRequestType}
           />
           <Input value={url} onChange={(e) => setUrl(e.target.value)} />
-          <Dropdown.Button
+          <Button
+            // DropdownButton
             type="primary"
-            icon={<DownOutlined />}
+            // icon={<DownOutlined />}
             onClick={handleRequest}
-            overlay={
-              <Menu
-                items={[
-                  {
-                    key: "1",
-                    label: t_components("http.importUrl"),
-                    icon: <LinkOutlined />,
-                  },
-                  {
-                    key: "2",
-                    label: t_components("http.showCode"),
-                    icon: <CodeOutlined />,
-                  },
-                  {
-                    key: "3",
-                    label: t_components("http.clearAll"),
-                    icon: <DeleteOutlined />,
-                  },
-                ]}
-              />
-            }
+            // overlay={
+            //   <Menu
+            //     items={[
+            //       {
+            //         key: "1",
+            //         label: t_components("http.importUrl"),
+            //         icon: <LinkOutlined />,
+            //       },
+            //       {
+            //         key: "2",
+            //         label: t_components("http.showCode"),
+            //         icon: <CodeOutlined />,
+            //       },
+            //       {
+            //         key: "3",
+            //         label: t_components("http.clearAll"),
+            //         icon: <DeleteOutlined />,
+            //       },
+            //     ]}
+            //   />
+            // }
           >
             {t_common("send")}
-          </Dropdown.Button>
+          </Button>
 
-          <Dropdown.Button
-            icon={<DownOutlined />}
-            overlay={
-              <Menu
-                items={[
-                  {
-                    key: "0",
-                    label: (
-                      <Input
-                        value={requestSavedName}
-                        onClick={(e) => e.stopPropagation()}
-                        onChange={(e) => setRequestSavedName(e.target.value)}
-                      />
-                    ),
-                  },
-                  {
-                    key: "1",
-                    label: t_components("http.copyLink"),
-                    icon: <CopyOutlined />,
-                  },
-                  {
-                    key: "2",
-                    label: t_components("http.viewMyLinks"),
-                    icon: <LinkOutlined />,
-                  },
-                  {
-                    key: "3",
-                    label: t_components("http.saveAs"),
-                    icon: <SaveOutlined />,
-                  },
-                ]}
-              />
-            }
+          <Button
+          // DropdownButton
+          // icon={<DownOutlined />}
+          // overlay={
+          //   <Menu
+          //     items={[
+          //       {
+          //         key: "0",
+          //         label: (
+          //           <Input
+          //             value={requestSavedName}
+          //             onClick={(e) => e.stopPropagation()}
+          //             onChange={(e) => setRequestSavedName(e.target.value)}
+          //           />
+          //         ),
+          //       },
+          //       {
+          //         key: "1",
+          //         label: t_components("http.copyLink"),
+          //         icon: <CopyOutlined />,
+          //       },
+          //       {
+          //         key: "2",
+          //         label: t_components("http.viewMyLinks"),
+          //         icon: <LinkOutlined />,
+          //       },
+          //       {
+          //         key: "3",
+          //         label: t_components("http.saveAs"),
+          //         icon: <SaveOutlined />,
+          //       },
+          //     ]}
+          //   />
+          // }
           >
             {t_common("save")}
-          </Dropdown.Button>
+          </Button>
         </HeaderWrapper>
 
         <Tabs defaultActiveKey="0">
@@ -484,13 +487,17 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
               columns={getColumns("requestHeader")}
             />
           </TabPane>
-          <TabPane tab={t_components("http.authorization")} key="3">
+          <TabPane tab={t_components("http.authorization")} key="3" disabled>
             <CodeMirror value="" extensions={[json()]} height="300px" />
           </TabPane>
-          <TabPane tab={t_components("http.pre-requestScript")} key="4">
+          <TabPane
+            tab={t_components("http.pre-requestScript")}
+            key="4"
+            disabled
+          >
             <CodeMirror value="" height="300px" extensions={[javascript()]} />
           </TabPane>
-          <TabPane tab={t_components("http.test")} key="5">
+          <TabPane tab={t_components("http.test")} key="5" disabled>
             <CodeMirror value="" height="300px" extensions={[javascript()]} />
           </TabPane>
         </Tabs>

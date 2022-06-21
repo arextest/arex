@@ -4,10 +4,10 @@ import {
   PieChartOutlined,
 } from "@ant-design/icons";
 import styled from "@emotion/styled";
-import { useMount, useRequest } from "ahooks";
+import { useRequest } from "ahooks";
 import type { MenuProps } from "antd";
 import { Menu } from "antd";
-import React, { useMemo } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet, useNavigate } from "react-router-dom";
 
@@ -27,34 +27,25 @@ const MainBoxWrapper = styled.div`
   }
 `;
 
-function getItem(
-  label: React.ReactNode,
-  key?: React.Key | null,
-  icon?: React.ReactNode,
-  children?: MenuItem[],
-  type?: "group"
-): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    label,
-    type,
-  } as MenuItem;
-}
-
 const MainBox: React.FC = () => {
   const to = useNavigate();
   const { t } = useTranslation("layout");
-  const items: MenuItem[] = useMemo(
-    () => [
-      getItem(t("sideMenu.normal"), "normal", <PieChartOutlined />),
-      getItem(t("sideMenu.compare"), "compare", <DesktopOutlined />),
-      getItem(t("sideMenu.replay"), "replay", <ContainerOutlined />),
-      getItem("API", "setting", <ContainerOutlined />),
-    ],
-    []
-  );
+  const items: MenuItem[] = [
+    { key: "normal", label: t("sideMenu.normal"), icon: <PieChartOutlined /> },
+    { key: "compare", label: t("sideMenu.compare"), icon: <DesktopOutlined /> },
+    {
+      key: "replay",
+      label: t("sideMenu.replay"),
+      icon: <ContainerOutlined />,
+      disabled: true,
+    },
+    {
+      key: "setting",
+      label: "API",
+      icon: <ContainerOutlined />,
+      disabled: true,
+    },
+  ];
 
   const setWorkspaces = useStore((state) => state.setWorkspaces);
   useRequest(() => FileSystemService.queryWorkspacesByUser({}), {
