@@ -1,13 +1,3 @@
-import {
-  CheckCircleOutlined,
-  CodeOutlined,
-  CopyOutlined,
-  DeleteOutlined,
-  DownOutlined,
-  LinkOutlined,
-  SaveOutlined,
-  StopOutlined,
-} from "@ant-design/icons";
 import { javascript } from "@codemirror/lang-javascript";
 import { json } from "@codemirror/lang-json";
 import styled from "@emotion/styled";
@@ -16,20 +6,14 @@ import { useRequest } from "ahooks";
 import {
   Button,
   Divider,
-  Dropdown,
+  // Dropdown,
   Empty,
   Input,
-  Menu,
   message,
   Select,
-  Space,
-  Table,
-  TableProps,
   Tabs,
   Tag,
-  Tooltip,
 } from "antd";
-import { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import { FC, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -37,11 +21,19 @@ import { useImmer } from "use-immer";
 import { v4 as uuidv4 } from "uuid";
 
 import AnimateAutoHeight from "../AnimateAutoHeight";
-import FormHeader, { FormHeaderWrapper, ParamsType } from "./FormHeader";
+import FormHeader, { FormHeaderWrapper } from "./FormHeader";
+import FormTable, { getColumns } from "./FormTable";
 import Response from "./Response";
 import ResponseCompare from "./ResponseCompare";
 
 const { TabPane } = Tabs;
+
+export type ParamsType = {
+  id: string;
+  key: string;
+  value: string | number;
+  disabled: boolean;
+};
 
 const RequestTypeOptions = [
   { label: "GET", value: "GET" },
@@ -71,18 +63,10 @@ const HeaderWrapper = styled.div`
   }
 `;
 
-const StyledTable = styled(Table)<TableProps<ParamsType>>`
-  .ant-table-thead {
-    display: none;
-  }
-  .ant-table-cell {
-    padding: 0 1px !important;
-  }
-`;
-
 const CountTag = styled(Tag)`
   border-radius: 8px;
   padding: 0 6px;
+  margin-left: 4px;
 `;
 
 const ResponseWrapper = styled.div`
@@ -97,9 +81,9 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
   const { t: t_components } = useTranslation("components");
 
   const [requestType, setRequestType] = useState("GET");
-  const [requestSavedName, setRequestSavedName] = useState<string>(
-    t_components("http.untitledRequest")
-  );
+  // const [requestSavedName, setRequestSavedName] = useState<string>(
+  //   t_components("http.untitledRequest")
+  // );
 
   const [url, setUrl] = useState("");
   const [sent, setSent] = useState(false);
@@ -174,100 +158,6 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
       method: requestType,
       ...data,
     });
-  };
-
-  const getColumns = (
-    target: "params" | "requestHeader"
-  ): ColumnsType<ParamsType> => {
-    const handleChange = (i: number, attr: "key" | "value", value: string) => {
-      if (target === "params") {
-        setParams((params) => {
-          params[i][attr] = value;
-        });
-      } else {
-        setRequestHeader((requestHeader) => {
-          requestHeader[i][attr] = value;
-        });
-      }
-    };
-
-    const handleDisable = (i: number) => {
-      if (target === "params") {
-        setParams((params) => {
-          params[i].disabled = !params[i].disabled;
-        });
-      } else {
-        setRequestHeader((requestHeader) => {
-          requestHeader[i].disabled = !params[i].disabled;
-        });
-      }
-    };
-
-    return [
-      {
-        title: t_common("key"),
-        dataIndex: "key",
-        key: "key",
-        render: (text, record, i) => (
-          <Input
-            value={text}
-            bordered={false}
-            placeholder={t_common("key")}
-            disabled={record.disabled}
-            onChange={(e) => handleChange(i, "key", e.target.value)}
-          />
-        ),
-      },
-      {
-        title: t_common("value"),
-        dataIndex: "value",
-        key: "value",
-        render: (text, record, i) => (
-          <Input
-            value={text}
-            bordered={false}
-            placeholder={t_common("value")}
-            disabled={record.disabled}
-            onChange={(e) => handleChange(i, "value", e.target.value)}
-          />
-        ),
-      },
-      {
-        title: "操作",
-        key: "actions",
-        width: 72,
-        align: "center",
-        className: "actions",
-        render: (text, record, i) => (
-          <Space>
-            <Tooltip
-              title={record.disabled ? t_common("enable") : t_common("disable")}
-            >
-              <Button
-                type="text"
-                size="small"
-                icon={
-                  record.disabled ? <StopOutlined /> : <CheckCircleOutlined />
-                }
-                onClick={() => handleDisable(i)}
-              />
-            </Tooltip>
-            <Tooltip title={t_common("remove")}>
-              <Button
-                type="text"
-                size="small"
-                icon={<DeleteOutlined />}
-                onClick={() =>
-                  setParams((params) => {
-                    params.splice(i, 1);
-                  })
-                }
-              />
-            </Tooltip>
-          </Space>
-        ),
-      },
-    ];
   };
 
   return (
@@ -360,14 +250,14 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
             key="0"
           >
             <FormHeader update={setParams} />
-            <StyledTable
+            <FormTable
               bordered
               size="small"
               rowKey="id"
               pagination={false}
               dataSource={params}
               // @ts-ignore
-              columns={getColumns("params")}
+              columns={getColumns(setParams)}
             />
           </TabPane>
           <TabPane tab={t_components("http.requestBody")} key="1">
@@ -401,13 +291,13 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
             key="2"
           >
             <FormHeader update={setRequestHeader} />
-            <StyledTable
+            <FormTable
               bordered
               size="small"
               pagination={false}
               dataSource={requestHeader}
               // @ts-ignore
-              columns={getColumns("requestHeader")}
+              columns={getColumns(setRequestHeader)}
             />
           </TabPane>
           <TabPane tab={t_components("http.authorization")} key="3" disabled>

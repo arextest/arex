@@ -6,16 +6,13 @@ import {
 } from "@ant-design/icons";
 import styled from "@emotion/styled";
 import { Button, Tooltip } from "antd";
+import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Updater } from "use-immer";
 import { v4 as uuidv4 } from "uuid";
 
-export type ParamsType = {
-  id: string;
-  key: string;
-  value: string | number;
-  disabled: boolean;
-};
+import { ParamsType } from "./index";
+
 export const FormHeaderWrapper = styled.div`
   display: flex;
   justify-content: space-between;
@@ -29,7 +26,7 @@ export const FormHeaderWrapper = styled.div`
   }
 `;
 
-function FormHeader(props: { update: Updater<ParamsType[]> }) {
+const FormHeader: FC<{ update: Updater<ParamsType[]> }> = (props) => {
   const { t: t_common } = useTranslation("common");
   const { t: t_components } = useTranslation("components");
 
@@ -77,6 +74,6 @@ function FormHeader(props: { update: Updater<ParamsType[]> }) {
       </div>
     </FormHeaderWrapper>
   );
-}
+};
 
 export default FormHeader;
