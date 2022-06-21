@@ -11,14 +11,16 @@ const resources = {
   //   translation: tw
   // },
   "zh-CN": {
-    layout: require("./zh-cn/layout.json"),
-    components: require("./zh-cn/components.json"),
-    page: require("./zh-cn/page.json"),
+    common: await import("./locales/zh-cn/common.json"),
+    components: await import("./locales/zh-cn/components.json"),
+    layout: await import("./locales/zh-cn/layout.json"),
+    page: await import("./locales/zh-cn/page.json"),
   },
   "en-US": {
-    layout: require("./en-us/layout.json"),
-    components: require("./en-us/components.json"),
-    page: require("./en-us/page.json"),
+    common: await import("./locales/en-us/common.json"),
+    components: await import("./locales/en-us/components.json"),
+    layout: await import("./locales/en-us/layout.json"),
+    page: await import("./locales/en-us/page.json"),
   },
 };
 

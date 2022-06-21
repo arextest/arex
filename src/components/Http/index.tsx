@@ -35,6 +35,7 @@ import {
 import { ColumnsType } from "antd/es/table";
 import axios from "axios";
 import { FC, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useImmer } from "use-immer";
 import { v4 as uuidv4 } from "uuid";
 
@@ -113,8 +114,13 @@ const ResponseWrapper = styled.div`
 `;
 
 const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
+  const { t: t_common } = useTranslation("common");
+  const { t: t_components } = useTranslation("components");
+
   const [requestType, setRequestType] = useState("GET");
-  const [requestSavedName, setRequestSavedName] = useState("Untitled request");
+  const [requestSavedName, setRequestSavedName] = useState(
+    t_components("http.untitledRequest")
+  );
 
   const [url, setUrl] = useState("");
   const [sent, setSent] = useState(false);
@@ -216,13 +222,13 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
 
     return (
       <FormHeaderWrapper>
-        <span>查询参数</span>
+        <span>{t_components("http.queryParams")}</span>
         <div>
-          <Tooltip title="帮助">
+          <Tooltip title={t_common("help")}>
             <Button type="text" icon={<QuestionCircleOutlined />} />
           </Tooltip>
 
-          <Tooltip title="全部清除">
+          <Tooltip title={t_common("clearAll")}>
             <Button
               type="text"
               icon={<DeleteOutlined />}
@@ -230,11 +236,11 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
             />
           </Tooltip>
 
-          <Tooltip title="批量编辑">
+          <Tooltip title={t_common("batchEdit")}>
             <Button type="text" icon={<EditOutlined />} />
           </Tooltip>
 
-          <Tooltip title="新增">
+          <Tooltip title={t_common("add")}>
             <Button
               type="text"
               icon={<PlusOutlined />}
@@ -275,28 +281,28 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
 
     return [
       {
-        title: "参数",
+        title: t_common("key"),
         dataIndex: "key",
         key: "key",
         render: (text, record, i) => (
           <Input
             value={text}
             bordered={false}
-            placeholder="参数"
+            placeholder={t_common("key")}
             disabled={record.disabled}
             onChange={(e) => handleChange(i, "key", e.target.value)}
           />
         ),
       },
       {
-        title: "值",
+        title: t_common("value"),
         dataIndex: "value",
         key: "value",
         render: (text, record, i) => (
           <Input
             value={text}
             bordered={false}
-            placeholder="值"
+            placeholder={t_common("value")}
             disabled={record.disabled}
             onChange={(e) => handleChange(i, "value", e.target.value)}
           />
@@ -310,7 +316,9 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
         className: "actions",
         render: (text, record, i) => (
           <Space>
-            <Tooltip title={record.disabled ? "开启" : "关闭"}>
+            <Tooltip
+              title={record.disabled ? t_common("enable") : t_common("disable")}
+            >
               <Button
                 type="text"
                 size="small"
@@ -320,7 +328,7 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
                 onClick={() => handleDisable(i)}
               />
             </Tooltip>
-            <Tooltip title="移除">
+            <Tooltip title={t_common("remove")}>
               <Button
                 type="text"
                 size="small"
@@ -357,24 +365,24 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
                 items={[
                   {
                     key: "1",
-                    label: "导入URL",
+                    label: t_components("http.importUrl"),
                     icon: <LinkOutlined />,
                   },
                   {
                     key: "2",
-                    label: "显示代码",
+                    label: t_components("http.showCode"),
                     icon: <CodeOutlined />,
                   },
                   {
                     key: "3",
-                    label: "全部清除",
+                    label: t_components("http.clearAll"),
                     icon: <DeleteOutlined />,
                   },
                 ]}
               />
             }
           >
-            发送
+            {t_common("send")}
           </Dropdown.Button>
 
           <Dropdown.Button
@@ -394,24 +402,24 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
                   },
                   {
                     key: "1",
-                    label: "复制链接",
+                    label: t_components("http.copyLink"),
                     icon: <CopyOutlined />,
                   },
                   {
                     key: "2",
-                    label: "View my links",
+                    label: t_components("http.viewMyLinks"),
                     icon: <LinkOutlined />,
                   },
                   {
                     key: "3",
-                    label: "另存为",
+                    label: t_components("http.saveAs"),
                     icon: <SaveOutlined />,
                   },
                 ]}
               />
             }
           >
-            保存
+            {t_common("save")}
           </Dropdown.Button>
         </HeaderWrapper>
 
@@ -419,7 +427,8 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
           <TabPane
             tab={
               <span>
-                参数 {!!paramsCount && <CountTag>{paramsCount}</CountTag>}
+                {t_components("http.params")}
+                {!!paramsCount && <CountTag>{paramsCount}</CountTag>}
               </span>
             }
             key="0"
@@ -435,10 +444,10 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
               columns={getColumns("params")}
             />
           </TabPane>
-          <TabPane tab="请求体" key="1">
+          <TabPane tab={t_components("http.requestBody")} key="1">
             <FormHeaderWrapper>
               <span>
-                内容类型
+                {t_components("http.contentType")}
                 <Select
                   disabled
                   value={"json"}
@@ -459,7 +468,8 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
           <TabPane
             tab={
               <span>
-                请求头 {!!headerCount && <CountTag>{headerCount}</CountTag>}
+                {t_components("http.requestHeader")}{" "}
+                {!!headerCount && <CountTag>{headerCount}</CountTag>}
               </span>
             }
             key="2"
@@ -474,13 +484,13 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
               columns={getColumns("requestHeader")}
             />
           </TabPane>
-          <TabPane tab="授权" key="3">
+          <TabPane tab={t_components("http.authorization")} key="3">
             <CodeMirror value="" extensions={[json()]} height="300px" />
           </TabPane>
-          <TabPane tab="预请求脚本" key="4">
+          <TabPane tab={t_components("http.pre-requestScript")} key="4">
             <CodeMirror value="" height="300px" extensions={[javascript()]} />
           </TabPane>
-          <TabPane tab="测试" key="5">
+          <TabPane tab={t_components("http.test")} key="5">
             <CodeMirror value="" height="300px" extensions={[javascript()]} />
           </TabPane>
         </Tabs>
@@ -498,7 +508,7 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
           )
         ) : (
           <ResponseWrapper>
-            <Empty description="Enter the URL and click Send to get a response" />
+            <Empty description={t_components("http.responseNotReady")} />
           </ResponseWrapper>
         )}
       </div>

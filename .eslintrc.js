@@ -37,5 +37,6 @@ module.exports = {
     semi: [0, "always"],
     "space-before-function-paren": [0, "never"],
     "multiline-ternary": "off",
+    camelcase: "off",
   },
 };

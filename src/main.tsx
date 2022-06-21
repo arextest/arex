@@ -7,7 +7,7 @@ import "codemirror/mode/vue/vue.js";
 import "codemirror/mode/jsx/jsx.js";
 import "codemirror/theme/idea.css";
 import "jsoneditor/dist/jsoneditor.min.css";
-import "./i18n/react-i18next.config";
+import "./i18n";
 
 // @ts-ignore
 import codemirror from "codemirror";

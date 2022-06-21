@@ -1,0 +1,24 @@
+{
+  "http": {
+    "importUrl": "Import URL",
+    "showCode": "Show Code",
+    "clearAll": "Clear All",
+    "untitledRequest": "Untitled Request",
+    "copyLink": "Copy Link",
+    "viewMyLinks": "View My Links",
+    "saveAs": "Save As",
+    "params": "Params",
+    "requestBody": "RequestBody",
+    "requestHeader": "RequestHeader",
+    "authorization": "Authorization",
+    "pre-requestScript": "Pre-requestScript",
+    "test": "Test",
+    "queryParams": "QueryParams",
+    "contentType": "ContentType",
+    "responseNotReady": "Enter the URL and click Send to get a response"
+  },
+  "collectionMenu": {
+    "collection": "Collection",
+    "environment": "Environment"
+  }
+}

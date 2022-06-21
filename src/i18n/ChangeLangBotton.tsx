@@ -11,9 +11,8 @@ function HeaderButtons() {
   const handleLangChange = () => {
     const nl = nextLng();
     setLng(nl[1]);
-    i18n.changeLanguage(nl[0]).then(() => {
-      console.log(i18n.language);
-    });
+    i18n.changeLanguage(nl[0]);
+    window.location.reload();
   };
   return (
     <Button type="text" icon={<span>{lng}</span>} onClick={handleLangChange} />
