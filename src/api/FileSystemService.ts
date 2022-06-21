@@ -11,4 +11,7 @@ export class FileSystemService {
   static async addItem(params: any): Promise<any> {
     return requset.post(`http://10.5.153.1:8090/api/filesystem/addItem`,params);
   }
+    static async removeItem(params: any): Promise<any> {
+        return requset.post(`http://10.5.153.1:8090/api/filesystem/removeItem`,params);
+    }
 }

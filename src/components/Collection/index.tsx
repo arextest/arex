@@ -83,14 +83,7 @@ const Collection = () => {
     return (
       <Menu
         items={[
-          {
-            key: '1',
-            label: (
-              <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-                新增请求
-              </a>
-            ),
-          },
+
           {
             key: '2',
             label: (
@@ -99,8 +92,23 @@ const Collection = () => {
               }}>
                 新增文件夹
               </a>
+            )
+          },
+          {
+            key: '3',
+            label: (
+                <a style={{color:'red'}} onClick={()=>{
+                  FileSystemService.removeItem({
+                    id:currentWorkspaceId,
+                    removeNodePath:findPathbyKey(treeData,key).join('.')
+                  }).then(res=>{
+
+                    fetchWorkspaceData()
+                  })
+                }}>
+                  删除
+                </a>
             ),
-            icon: <SmileOutlined />,
           },
         ]}
       />

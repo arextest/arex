@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Divider, Select } from "antd";
+import {Button, Divider, Select} from "antd";
 import { useEffect, useState } from "react";
 
 import ChangeLangBotton from "../i18n/ChangeLangBotton";
@@ -66,6 +66,7 @@ const Header = () => {
               );
             })}
           </Select>
+          <Button type={'primary'}>新增workspace</Button>
         </HeaderMenu>
       </HeaderWrapper>
 
