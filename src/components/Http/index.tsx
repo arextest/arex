@@ -4,10 +4,7 @@ import {
   CopyOutlined,
   DeleteOutlined,
   DownOutlined,
-  EditOutlined,
   LinkOutlined,
-  PlusOutlined,
-  QuestionCircleOutlined,
   SaveOutlined,
   StopOutlined,
 } from "@ant-design/icons";
@@ -40,15 +37,9 @@ import { useImmer } from "use-immer";
 import { v4 as uuidv4 } from "uuid";
 
 import AnimateAutoHeight from "../AnimateAutoHeight";
+import FormHeader, { FormHeaderWrapper, ParamsType } from "./FormHeader";
 import Response from "./Response";
 import ResponseCompare from "./ResponseCompare";
-
-type ParamsType = {
-  id: string;
-  key: string;
-  value: string | number;
-  disabled: boolean;
-};
 
 const { TabPane } = Tabs;
 
@@ -94,19 +85,6 @@ const CountTag = styled(Tag)`
   padding: 0 6px;
 `;
 
-const FormHeaderWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  position: relative;
-  top: -8px;
-  & > span:first-of-type {
-    font-size: 13px;
-    line-height: 32px;
-    font-weight: 500;
-    color: #9d9d9d;
-  }
-`;
-
 const ResponseWrapper = styled.div`
   height: 600px;
   display: flex;
@@ -119,7 +97,7 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
   const { t: t_components } = useTranslation("components");
 
   const [requestType, setRequestType] = useState("GET");
-  const [requestSavedName, setRequestSavedName] = useState(
+  const [requestSavedName, setRequestSavedName] = useState<string>(
     t_components("http.untitledRequest")
   );
 
@@ -137,7 +115,7 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
       }, 0),
     [params]
   );
-  const [requestHeader, setRequestHeader] = useImmer([
+  const [requestHeader, setRequestHeader] = useImmer<ParamsType[]>([
     {
       id: uuidv4(),
       key: "",
@@ -171,7 +149,7 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
   });
 
   const handleRequest = () => {
-    if (!url) return message.warn("Please input url");
+    if (!url) return message.warn(t_components("http.urlEmpty"));
 
     const data: Partial<Record<"params" | "data", object>> = {};
     if (requestType === "GET") {
@@ -196,61 +174,6 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
       method: requestType,
       ...data,
     });
-  };
-
-  const FormHeader: FC<{ target: "params" | "requestHeader" }> = ({
-    target = "params",
-  }) => {
-    const handleAddParam = () => {
-      const newValue = {
-        id: uuidv4(),
-        key: "",
-        value: "",
-        disabled: false,
-      };
-      if (target === "params") {
-        setParams((params) => {
-          params.push(newValue);
-        });
-      } else {
-        setRequestHeader((requestHeader) => {
-          requestHeader.push(newValue);
-        });
-      }
-    };
-    const handleClearAllParams = () =>
-      target === "params" ? setParams([]) : setRequestHeader([]);
-
-    return (
-      <FormHeaderWrapper>
-        <span>{t_components("http.queryParams")}</span>
-        <div>
-          <Tooltip title={t_common("help")}>
-            <Button type="text" icon={<QuestionCircleOutlined />} />
-          </Tooltip>
-
-          <Tooltip title={t_common("clearAll")}>
-            <Button
-              type="text"
-              icon={<DeleteOutlined />}
-              onClick={handleClearAllParams}
-            />
-          </Tooltip>
-
-          <Tooltip title={t_common("batchEdit")}>
-            <Button type="text" icon={<EditOutlined />} />
-          </Tooltip>
-
-          <Tooltip title={t_common("add")}>
-            <Button
-              type="text"
-              icon={<PlusOutlined />}
-              onClick={handleAddParam}
-            />
-          </Tooltip>
-        </div>
-      </FormHeaderWrapper>
-    );
   };
 
   const getColumns = (
@@ -436,7 +359,7 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
             }
             key="0"
           >
-            <FormHeader target="params" />
+            <FormHeader update={setParams} />
             <StyledTable
               bordered
               size="small"
@@ -477,7 +400,7 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
             }
             key="2"
           >
-            <FormHeader target="requestHeader" />
+            <FormHeader update={setRequestHeader} />
             <StyledTable
               bordered
               size="small"
