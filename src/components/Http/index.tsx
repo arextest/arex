@@ -94,7 +94,7 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
   const paramsCount = useMemo(
     () =>
       params.reduce((count, param) => {
-        param.key && count++;
+        param.key && !param.disabled && count++;
         return count;
       }, 0),
     [params]
@@ -109,11 +109,11 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
   ]);
   const headerCount = useMemo(
     () =>
-      requestHeader.reduce((count, h) => {
-        h.key && count++;
+      requestHeader.reduce((count, header) => {
+        header.key && !header.disabled && count++;
         return count;
       }, 0),
-    [params]
+    [requestHeader]
   );
 
   const [requestBody, setRequestBody] = useState("");
@@ -294,6 +294,7 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
             <FormTable
               bordered
               size="small"
+              rowKey="id"
               pagination={false}
               dataSource={requestHeader}
               // @ts-ignore
