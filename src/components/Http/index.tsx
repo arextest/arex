@@ -1,9 +1,11 @@
 import { javascript } from "@codemirror/lang-javascript";
 import { json } from "@codemirror/lang-json";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import CodeMirror from "@uiw/react-codemirror";
 import { useRequest } from "ahooks";
 import {
+  Badge,
   Button,
   Divider,
   // Dropdown,
@@ -270,7 +272,19 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
               columns={getColumns(setParams)}
             />
           </TabPane>
-          <TabPane tab={t_components("http.requestBody")} key="1">
+          <TabPane
+            tab={
+              <span>
+                <Badge
+                  dot={!!requestBody}
+                  status={requestType === "POST" ? "success" : "default"}
+                >
+                  {t_components("http.requestBody")}
+                </Badge>
+              </span>
+            }
+            key="1"
+          >
             <FormHeaderWrapper>
               <span>
                 {t_components("http.contentType")}
