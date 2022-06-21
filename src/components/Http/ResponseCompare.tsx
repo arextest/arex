@@ -7,6 +7,7 @@ import "codemirror/addon/fold/foldcode";
 import "codemirror/addon/fold/foldgutter";
 import "codemirror/addon/fold/brace-fold";
 
+import { css } from "@emotion/react";
 import { Tabs } from "antd";
 import CodeMirror from "codemirror";
 import DiffMatchPatch from "diff-match-patch";
@@ -26,7 +27,7 @@ const onChange = (key: string) => {
   console.log(key);
 };
 
-const jsonLeft = `{
+const valueLeft = {
   arrayOfArrays: [1, 2, 999, [3, 4, 5]],
   someField: true,
   boolean: true,
@@ -41,9 +42,9 @@ const jsonLeft = `{
   string: "Hello World",
   url: "http://jsoneditoronline.org",
   "[0]": "zero",
-}`;
+};
 
-const jsonRight = `{
+const valueRight = {
   arrayOfArrays: [1, 2, [3, 4, 5]],
   boolean: true,
   htmlcode: "&quot;",
@@ -57,20 +58,21 @@ const jsonRight = `{
   string: "Hello World",
   url: "http://jsoneditoronline.org",
   "[0]": "zero",
-}`;
+};
 
 const ResponseCompare = () => {
   const diffView = useRef<HTMLDivElement>();
 
   useEffect(() => {
     if (!diffView.current) return;
-    CodeMirror.MergeView(diffView.current, {
+    const mergeView = CodeMirror.MergeView(diffView.current, {
       readOnly: true, // 只读
       lineNumbers: true, // 显示行号
       theme: "neat", // 设置主题
-      value: jsonLeft, // 左边的内容（新内容）
-      orig: jsonRight, // 右边的内容（旧内容）
+      value: JSON.stringify(valueLeft, null, 2), // 左边的内容（新内容）
+      orig: JSON.stringify(valueRight, null, 2), // 右边的内容（旧内容）
       mode: "javascript", // 代码模式为js模式
+      viewportMargin: Infinity, // 允许滚动的距离
       highlightDifferences: true, // 有差异的地方是否高亮
       revertButtons: false, // revert按钮设置为true可以回滚
       styleActiveLine: true, // 光标所在的位置代码高亮
@@ -87,6 +89,7 @@ const ResponseCompare = () => {
         // },
       },
     });
+    // mergeView.editor().setSize(null, "100%");
   }, []);
   return (
     <div>
@@ -94,7 +97,15 @@ const ResponseCompare = () => {
         <TabPane tab="对比结果" key="1">
           <div id="wrapper">
             <div className="react-diff-code-view" style={{ height: "100%" }}>
-              <div ref={diffView} style={{ height: "500px" }} />
+              <div
+                ref={diffView}
+                css={css`
+                  .CodeMirror,
+                  .CodeMirror-merge {
+                    height: 600px;
+                  }
+                `}
+              />
             </div>
           </div>
         </TabPane>
