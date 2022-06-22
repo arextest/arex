@@ -66,7 +66,7 @@ const Header = () => {
               );
             })}
           </Select>
-          <Button type={'primary'}>新增workspace</Button>
+          {/*<Button type={'primary'}>新增workspace</Button>*/}
         </HeaderMenu>
       </HeaderWrapper>
 

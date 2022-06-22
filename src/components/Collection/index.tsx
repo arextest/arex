@@ -1,5 +1,5 @@
 import { useMount } from "ahooks";
-import {Dropdown, List, Menu, Space, Tabs, Tree} from "antd";
+import {Button, Dropdown, Empty, List, Menu, Space, Tabs, Tree} from "antd";
 import type { DirectoryTreeProps } from "antd/lib/tree";
 import React, {useEffect, useRef, useState} from "react";
 import { useTranslation } from "react-i18next";
@@ -88,9 +88,19 @@ const Collection = () => {
             key: '2',
             label: (
               <a target="_blank" rel="noopener noreferrer" onClick={()=>{
-                createAndUpdateFolderRef.current.changeVal({path:findPathbyKey(treeData,key)})
+                createAndUpdateFolderRef.current.changeVal({path:findPathbyKey(treeData,key),mode:'create'})
               }}>
                 新增文件夹
+              </a>
+            )
+          },
+          {
+            key: '1',
+            label: (
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>{
+                createAndUpdateFolderRef.current.changeVal({path:findPathbyKey(treeData,key),mode:'update'})
+              }}>
+                重命名
               </a>
             )
           },
@@ -123,7 +133,7 @@ const Collection = () => {
         <Dropdown overlay={menu(val.key)} trigger={['click']}>
         <span onClick={event => event.stopPropagation()}>
           <Space>
-            <MoreOutlined />
+            <MoreOutlined/>
           </Space>
         </span>
         </Dropdown>
@@ -171,8 +181,11 @@ const Collection = () => {
             treeData={treeData}
             titleRender={(val)=><TitleRender val={val}></TitleRender>}
           />
+          <Empty style={{display:treeData.length>0?'none':'block'}}>
+            <Button type="primary" onClick={()=>{createAndUpdateFolderRef.current.changeVal({path:[]})}}>Create Now</Button>
+          </Empty>
         </TabPane>
-        <TabPane tab={t("collectionMenu.environment")} key="3">
+        <TabPane tab={t("collectionMenu.environment")} key="3" disabled>
           <List
             itemLayout="horizontal"
             dataSource={data}
@@ -186,7 +199,7 @@ const Collection = () => {
           />
         </TabPane>
       </Tabs>
-      <CreateAndUpdateFolder ref={createAndUpdateFolderRef}></CreateAndUpdateFolder>
+      <CreateAndUpdateFolder ref={createAndUpdateFolderRef} reFe={()=>{fetchWorkspaceData()}}></CreateAndUpdateFolder>
     </div>
   );
 };

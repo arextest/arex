@@ -14,4 +14,8 @@ export class FileSystemService {
     static async removeItem(params: any): Promise<any> {
         return requset.post(`/api/filesystem/removeItem`,params);
     }
+
+  static async rename(params: any): Promise<any> {
+    return requset.post(`/api/filesystem/rename`,params);
+  }
 }
