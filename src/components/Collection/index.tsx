@@ -1,8 +1,9 @@
 import "./index.less";
 
 import {
+  ApiOutlined,
   DownOutlined,
-  FolderOutlined,
+  FolderOutlined, FrownFilled,
   MoreOutlined,
   SmileOutlined,
 } from "@ant-design/icons";
@@ -189,6 +190,7 @@ const Collection = ({ changeSelectedRequest }:any) => {
               key: nodes[value].infoId,
               isLeaf: nodes[value].nodeType !== 3,
               children: [],
+              icon:nodes[value].nodeType !== 3?<ApiOutlined />:null
             });
             if (
               nodes[value].children &&
