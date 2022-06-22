@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { FileSystemService } from "../../api/FileSystemService";
 import {useStore} from "../../store";
 import './index.less'
-import {DownOutlined, MoreOutlined, SmileOutlined} from "@ant-design/icons";
+import {DownOutlined, FolderOutlined, MoreOutlined, SmileOutlined} from "@ant-design/icons";
 import CreateAndUpdateFolder from "./CreateAndUpdateFolder";
 
 function findPathbyKey(tree,key,path){
@@ -68,7 +68,7 @@ const Collection = ({changeSelectedRequest}) => {
     fetchWorkspaceData()
   },[currentWorkspaceId])
 
-  const menu = (key)=>{
+  const menu = (val)=>{
     return (
       <Menu
         items={[
@@ -77,17 +77,29 @@ const Collection = ({changeSelectedRequest}) => {
             key: '2',
             label: (
               <a target="_blank" rel="noopener noreferrer" onClick={()=>{
-                createAndUpdateFolderRef.current.changeVal({path:findPathbyKey(treeData,key),mode:'create'})
+                createAndUpdateFolderRef.current.changeVal({path:findPathbyKey(treeData,val.key),mode:'create'})
               }}>
                 新增文件夹
               </a>
-            )
+            ),
+            disabled:val.isLeaf?true:false
+          },
+          {
+            key: '5',
+            label: (
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>{
+                createAndUpdateFolderRef.current.changeVal({path:findPathbyKey(treeData,val.key),mode:'createRequest'})
+              }}>
+                新增请求
+              </a>
+            ),
+            disabled:val.isLeaf?true:false
           },
           {
             key: '1',
             label: (
               <a target="_blank" rel="noopener noreferrer" onClick={()=>{
-                createAndUpdateFolderRef.current.changeVal({path:findPathbyKey(treeData,key),mode:'update'})
+                createAndUpdateFolderRef.current.changeVal({path:findPathbyKey(treeData,val.key),mode:'update'})
               }}>
                 重命名
               </a>
@@ -99,7 +111,7 @@ const Collection = ({changeSelectedRequest}) => {
                 <a style={{color:'red'}} onClick={()=>{
                   FileSystemService.removeItem({
                     id:currentWorkspaceId,
-                    removeNodePath:findPathbyKey(treeData,key).join('.')
+                    removeNodePath:findPathbyKey(treeData,val.key).join('.')
                   }).then(res=>{
 
                     fetchWorkspaceData()
@@ -108,16 +120,6 @@ const Collection = ({changeSelectedRequest}) => {
                   删除
                 </a>
             ),
-          },
-          {
-            key: '5',
-            label: (
-              <a target="_blank" rel="noopener noreferrer" onClick={()=>{
-                createAndUpdateFolderRef.current.changeVal({path:findPathbyKey(treeData,key),mode:'createRequest'})
-              }}>
-                新增请求
-              </a>
-            )
           },
         ]}
       />
@@ -145,7 +147,7 @@ const Collection = ({changeSelectedRequest}) => {
           }
 
         }}><div className={'ellipsis'}>{val.title}</div>{currentSelectLeaf === val.key?<Badge style={{marginLeft:'8px'}} status="processing" />:null}</div>
-        <Dropdown overlay={menu(val.key)} trigger={['click']}>
+        <Dropdown overlay={menu(val)} trigger={['click']}>
         <span onClick={event => event.stopPropagation()}>
           <Space>
             <MoreOutlined/>
@@ -187,7 +189,7 @@ const Collection = ({changeSelectedRequest}) => {
   return (
     <div className={'collection'}>
       <Tabs defaultActiveKey="2" onChange={onChange} tabPosition={"left"}>
-        <TabPane tab={t("collectionMenu.collection")} key="2">
+        <TabPane tab={<FolderOutlined />} key="2">
           {/*<Input.Search style={{width:'80px'}}></Input.Search>*/}
           <a className={'new-btn'} onClick={()=>{createAndUpdateFolderRef.current.changeVal({path:[],mode:'create'})}}>+<span style={{marginLeft:'8px'}}>新增</span></a>
           <Divider/>
@@ -204,19 +206,6 @@ const Collection = ({changeSelectedRequest}) => {
             <Button type="primary" onClick={()=>{createAndUpdateFolderRef.current.changeVal({path:[],mode:'create'})}}>Create Now</Button>
           </Empty>
           {/*<p>{currentSelectPath.join('/')}</p>*/}
-        </TabPane>
-        <TabPane tab={t("collectionMenu.environment")} key="3" disabled>
-          <List
-            itemLayout="horizontal"
-            dataSource={[]}
-            renderItem={(item) => (
-              <List.Item>
-                <List.Item.Meta
-                  title={<a href="https://ant.design">{item.title}</a>}
-                />
-              </List.Item>
-            )}
-          />
         </TabPane>
       </Tabs>
       <CreateAndUpdateFolder ref={createAndUpdateFolderRef} reFe={()=>{fetchWorkspaceData()}}></CreateAndUpdateFolder>
