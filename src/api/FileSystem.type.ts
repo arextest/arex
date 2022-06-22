@@ -24,7 +24,7 @@ export interface SaveInterfaceReq {
     authType: string;
     token: string;
   } | null;
-  body: object;
+  body: { contentType: string; body: string | null };
   endpoint: string;
   headers: KeyValueType[];
   id: string;

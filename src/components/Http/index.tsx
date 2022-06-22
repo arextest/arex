@@ -147,6 +147,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
     [requestHeaders]
   );
 
+  const [contentType, setContentType] = useState("application/json");
   const [requestBody, setRequestBody] = useState("");
   const getBody = () => {
     try {
@@ -189,7 +190,8 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
       setRequestHeaders(
         res.body.headers.map((h) => ({ id: uuidv4(), ...h })) || []
       );
-      setRequestBody(JSON.stringify(res.body.body || {}, null, 2));
+      setContentType(res.body.body.contentType);
+      setRequestBody(JSON.stringify(res.body.body.body || {}));
     },
   });
 
@@ -218,9 +220,13 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
   };
 
   const handleSave = () => {
+    console.log(requestBody);
     saveInterface({
       auth: null,
-      body: getBody(),
+      body: {
+        contentType,
+        body: requestBody,
+      },
       endpoint: url,
       headers: requestHeaders,
       id,
@@ -356,9 +362,12 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
                 {t_components("http.contentType")}
                 <Select
                   disabled
-                  value={"json"}
+                  value={contentType}
                   size={"small"}
-                  options={[{ value: "json", label: "application/json" }]}
+                  options={[
+                    { value: "application/json", label: "application/json" },
+                  ]}
+                  onChange={setContentType}
                   style={{ width: "140px", marginLeft: "8px" }}
                 />
               </span>
