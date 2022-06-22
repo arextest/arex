@@ -1,23 +1,33 @@
 import { Col, Row } from "antd";
+import { useState } from "react";
 
 import Collection from "../components/Collection";
 import Http from "../components/Http";
-import {useState} from "react";
 
 const Normal = () => {
-  const [selectedRequest,setSelectedRequest] = useState<{id:string,path:[]}>({
-    id:'',
-    path:[]
-  })
+  const [selectedRequest, setSelectedRequest] = useState<{
+    id: string;
+    path: string[];
+  }>({
+    id: "",
+    path: [],
+  });
+
   return (
     <Row>
-      <Col span={18} >
-        <div style={{borderRight:'1px solid #f0f0f0',paddingRight:'14px'}}>
-          <Http selectedRequest={selectedRequest}/>
-        </div>
+      <Col
+        lg={{ span: 18 }}
+        md={{ span: 16 }}
+        style={{ borderRight: "1px solid #f0f0f0", paddingRight: "14px" }}
+      >
+        <Http id={selectedRequest.id} path={selectedRequest.path} />
       </Col>
-      <Col span={6}>
-        <Collection changeSelectedRequest={(r)=>{setSelectedRequest(r)}}/>
+      <Col lg={{ span: 6 }} md={{ span: 8 }}>
+        <Collection
+          changeSelectedRequest={(r) => {
+            setSelectedRequest(r);
+          }}
+        />
       </Col>
     </Row>
   );

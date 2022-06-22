@@ -10,7 +10,7 @@
     "saveAs": "Save As",
     "params": "Params",
     "requestBody": "RequestBody",
-    "requestHeader": "RequestHeader",
+    "requestHeaders": "RequestHeaders",
     "authorization": "Authorization",
     "pre-requestScript": "Pre-requestScript",
     "test": "Test",

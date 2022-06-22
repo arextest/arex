@@ -1,6 +1,5 @@
 import { javascript } from "@codemirror/lang-javascript";
 import { json } from "@codemirror/lang-json";
-import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import CodeMirror from "@uiw/react-codemirror";
 import { useRequest } from "ahooks";
@@ -23,6 +22,8 @@ import { useTranslation } from "react-i18next";
 import { useImmer } from "use-immer";
 import { v4 as uuidv4 } from "uuid";
 
+import { FileSystemService } from "../../api/FileSystem.service";
+import { METHODS } from "../../constant";
 import AnimateAutoHeight from "../AnimateAutoHeight";
 import FormHeader, { FormHeaderWrapper } from "./FormHeader";
 import FormTable, { getColumns } from "./FormTable";
@@ -31,20 +32,25 @@ import ResponseCompare from "./ResponseCompare";
 
 const { TabPane } = Tabs;
 
-export type ParamsType = {
+export type HttpProps = {
+  mode?: "normal" | "compare";
   id: string;
-  key: string;
-  value: string | number;
-  disabled: boolean;
+  path: string[];
 };
 
-const RequestTypeOptions = [
-  { label: "GET", value: "GET" },
-  { label: "POST", value: "POST" },
-  { label: "PUT", value: "PUT" },
-  { label: "DELETE", value: "DELETE" },
-  { label: "PATCH", value: "PATCH" },
-];
+export type KeyValueType = {
+  id: string;
+  key: string;
+  value: string;
+  active: boolean;
+};
+
+export type ParamsObject = { [key: string]: string };
+
+const RequestTypeOptions = METHODS.map((method) => ({
+  label: method,
+  value: method,
+}));
 
 const HeaderWrapper = styled.div`
   display: flex;
@@ -79,47 +85,78 @@ const ResponseWrapper = styled.div`
   align-items: center;
 `;
 
-const Http: FC<{ mode?: "normal" | "compare" ,selectedRequest:{id:string,path:[]}}> = ({ mode = "normal",selectedRequest }) => {
+const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
   const { t: t_common } = useTranslation("common");
   const { t: t_components } = useTranslation("components");
 
-  const [requestType, setRequestType] = useState("GET");
+  const [method, setMethod] = useState<typeof METHODS[number]>("GET");
   // const [requestSavedName, setRequestSavedName] = useState<string>(
   //   t_components("http.untitledRequest")
   // );
 
   const [url, setUrl] = useState("");
   const [sent, setSent] = useState(false);
-  const [response, setResponse] = useState<any>();
-  const [params, setParams] = useImmer<ParamsType[]>([
-    { id: uuidv4(), key: "", value: "", disabled: false },
+  const [response, setResponse] = useState<any>(); // 响应完整数据
+  const [requestParams, setRequestParams] = useImmer<KeyValueType[]>([
+    { id: uuidv4(), key: "", value: "", active: true },
   ]);
+  const params = useMemo(
+    () =>
+      requestParams.reduce<ParamsObject>((acc, { key, value, active }) => {
+        if (key && active) {
+          acc[key] = value;
+        }
+        return acc;
+      }, {}),
+    []
+  );
   const paramsCount = useMemo(
     () =>
-      params.reduce((count, param) => {
-        param.key && !param.disabled && count++;
+      requestParams.reduce((count, param) => {
+        param.key && param.active && count++;
         return count;
       }, 0),
-    [params]
+    [requestParams]
   );
-  const [requestHeader, setRequestHeader] = useImmer<ParamsType[]>([
+  const [requestHeaders, setRequestHeaders] = useImmer<KeyValueType[]>([
     {
       id: uuidv4(),
       key: "",
       value: "",
-      disabled: false,
+      active: true,
     },
   ]);
+  const headers = useMemo(
+    () =>
+      requestHeaders.reduce<{
+        [key: string]: string | number;
+      }>((acc, header) => {
+        if (header.key) {
+          acc[header.key] = header.value;
+        }
+        return acc;
+      }, {}),
+    []
+  );
   const headerCount = useMemo(
     () =>
-      requestHeader.reduce((count, header) => {
-        header.key && !header.disabled && count++;
+      requestHeaders.reduce((count, header) => {
+        header.key && header.active && count++;
         return count;
       }, 0),
-    [requestHeader]
+    [requestHeaders]
   );
 
   const [requestBody, setRequestBody] = useState("");
+  const getBody = () => {
+    try {
+      console.log(JSON.parse(requestBody || "{}"));
+      return JSON.parse(requestBody || "{}");
+    } catch (e) {
+      message.warn(t_common("invalidJSON"));
+      return new Error(t_common("invalidJSON"));
+    }
+  };
 
   const { data: res, run: request } = useRequest(axios, {
     manual: true,
@@ -130,8 +167,36 @@ const Http: FC<{ mode?: "normal" | "compare" ,selectedRequest:{id:string,path:[]
       console.log(res);
       setResponse(res);
     },
+    onError(err) {
+      console.log(err);
+      setResponse(err?.response);
+    },
     onFinally: () => {
+      console.log("finally", res);
       setSent(true);
+    },
+  });
+
+  useRequest(() => FileSystemService.queryInterface({ id }), {
+    refreshDeps: [id],
+    onSuccess(res) {
+      console.log(res);
+      setUrl(res.body.endpoint || "");
+      setMethod(res.body.method || "GET");
+      setRequestParams(
+        res.body.params.map((p) => ({ id: uuidv4(), ...p })) || []
+      );
+      setRequestHeaders(
+        res.body.headers.map((h) => ({ id: uuidv4(), ...h })) || []
+      );
+      setRequestBody(JSON.stringify(res.body.body || {}, null, 2));
+    },
+  });
+
+  const { run: saveInterface } = useRequest(FileSystemService.saveInterface, {
+    manual: true,
+    onSuccess(res) {
+      console.log(res);
     },
   });
 
@@ -139,53 +204,47 @@ const Http: FC<{ mode?: "normal" | "compare" ,selectedRequest:{id:string,path:[]
     if (!url) return message.warn(t_components("http.urlEmpty"));
 
     const data: Partial<Record<"params" | "data", object>> = {};
-    if (requestType === "GET") {
-      data.params = params.reduce<{
-        [key: string]: string | number;
-      }>((acc, { key, value, disabled }) => {
-        if (key && !disabled) {
-          acc[key] = value;
-        }
-        return acc;
-      }, {});
-    } else {
-      try {
-        data.data = JSON.parse(requestBody);
-      } catch (e) {
-        message.warn("Invalid JSON");
-        return new Error("Invalid JSON");
-      }
+    if (method === "GET") {
+      data.params = params;
+    } else if (requestBody) {
+      data.data = getBody();
     }
 
-    const headers = requestHeader.reduce<{
-      [key: string]: string | number;
-    }>((acc, header) => {
-      if (header.key) {
-        acc[header.key] = header.value;
-      }
-      return acc;
-    }, {});
-
     request(url, {
-      method: requestType,
+      method,
       headers,
       ...data,
+    });
+  };
+
+  const handleSave = () => {
+    saveInterface({
+      auth: null,
+      body: getBody(),
+      endpoint: url,
+      headers: requestHeaders,
+      id,
+      method,
+      params: requestParams,
+      preRequestScript: null,
+      testScript: null,
     });
   };
 
   return (
     <>
       <AnimateAutoHeight>
-        <Breadcrumb style={{paddingBottom:'14px',paddingTop:'14px'}}>
-          {selectedRequest.path.map(i=>{
-            return <Breadcrumb.Item>{i}</Breadcrumb.Item>
-          })}
+        <Breadcrumb style={{ paddingBottom: "14px", paddingTop: "14px" }}>
+          {path.map((i) => (
+            <Breadcrumb.Item>{i}</Breadcrumb.Item>
+          ))}
         </Breadcrumb>
+
         <HeaderWrapper>
           <Select
-            value={requestType}
+            value={method}
             options={RequestTypeOptions}
-            onChange={setRequestType}
+            onChange={setMethod}
           />
           <Input value={url} onChange={(e) => setUrl(e.target.value)} />
           <Button
@@ -219,39 +278,40 @@ const Http: FC<{ mode?: "normal" | "compare" ,selectedRequest:{id:string,path:[]
           </Button>
 
           <Button
-          // DropdownButton
-          // icon={<DownOutlined />}
-          // overlay={
-          //   <Menu
-          //     items={[
-          //       {
-          //         key: "0",
-          //         label: (
-          //           <Input
-          //             value={requestSavedName}
-          //             onClick={(e) => e.stopPropagation()}
-          //             onChange={(e) => setRequestSavedName(e.target.value)}
-          //           />
-          //         ),
-          //       },
-          //       {
-          //         key: "1",
-          //         label: t_components("http.copyLink"),
-          //         icon: <CopyOutlined />,
-          //       },
-          //       {
-          //         key: "2",
-          //         label: t_components("http.viewMyLinks"),
-          //         icon: <LinkOutlined />,
-          //       },
-          //       {
-          //         key: "3",
-          //         label: t_components("http.saveAs"),
-          //         icon: <SaveOutlined />,
-          //       },
-          //     ]}
-          //   />
-          // }
+            // DropdownButton
+            // icon={<DownOutlined />}
+            // overlay={
+            //   <Menu
+            //     items={[
+            //       {
+            //         key: "0",
+            //         label: (
+            //           <Input
+            //             value={requestSavedName}
+            //             onClick={(e) => e.stopPropagation()}
+            //             onChange={(e) => setRequestSavedName(e.target.value)}
+            //           />
+            //         ),
+            //       },
+            //       {
+            //         key: "1",
+            //         label: t_components("http.copyLink"),
+            //         icon: <CopyOutlined />,
+            //       },
+            //       {
+            //         key: "2",
+            //         label: t_components("http.viewMyLinks"),
+            //         icon: <LinkOutlined />,
+            //       },
+            //       {
+            //         key: "3",
+            //         label: t_components("http.saveAs"),
+            //         icon: <SaveOutlined />,
+            //       },
+            //     ]}
+            //   />
+            // }
+            onClick={handleSave}
           >
             {t_common("save")}
           </Button>
@@ -267,15 +327,15 @@ const Http: FC<{ mode?: "normal" | "compare" ,selectedRequest:{id:string,path:[]
             }
             key="0"
           >
-            <FormHeader update={setParams} />
+            <FormHeader update={setRequestParams} />
             <FormTable
               bordered
               size="small"
               rowKey="id"
               pagination={false}
-              dataSource={params}
+              dataSource={requestParams}
               // @ts-ignore
-              columns={getColumns(setParams)}
+              columns={getColumns(setRequestParams)}
             />
           </TabPane>
           <TabPane
@@ -283,7 +343,7 @@ const Http: FC<{ mode?: "normal" | "compare" ,selectedRequest:{id:string,path:[]
               <span>
                 <Badge
                   dot={!!requestBody}
-                  status={requestType === "POST" ? "success" : "default"}
+                  status={method === "POST" ? "success" : "default"}
                 >
                   {t_components("http.requestBody")}
                 </Badge>
@@ -314,21 +374,21 @@ const Http: FC<{ mode?: "normal" | "compare" ,selectedRequest:{id:string,path:[]
           <TabPane
             tab={
               <span>
-                {t_components("http.requestHeader")}{" "}
+                {t_components("http.requestHeaders")}{" "}
                 {!!headerCount && <CountTag>{headerCount}</CountTag>}
               </span>
             }
             key="2"
           >
-            <FormHeader update={setRequestHeader} />
+            <FormHeader update={setRequestHeaders} />
             <FormTable
               bordered
               size="small"
               rowKey="id"
               pagination={false}
-              dataSource={requestHeader}
+              dataSource={requestHeaders}
               // @ts-ignore
-              columns={getColumns(setRequestHeader)}
+              columns={getColumns(setRequestHeaders)}
             />
           </TabPane>
           <TabPane tab={t_components("http.authorization")} key="3" disabled>
@@ -346,12 +406,14 @@ const Http: FC<{ mode?: "normal" | "compare" ,selectedRequest:{id:string,path:[]
           </TabPane>
         </Tabs>
       </AnimateAutoHeight>
+
       <Divider />
+
       <div>
         {sent ? (
           mode === "normal" ? (
             <Response
-              res={res}
+              res={response?.data || response?.statusText}
               status={{ code: response.status, text: response.statusText }}
             />
           ) : (

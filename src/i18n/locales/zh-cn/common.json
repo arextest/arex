@@ -9,5 +9,7 @@
   "disable": "禁用",
   "remove": "移除",
   "key": "参数",
-  "value": "值"
+  "value": "值",
+  "invalidJSON": "无效JSON"
+
 }

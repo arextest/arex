@@ -9,11 +9,11 @@ import { ColumnsType } from "antd/es/table";
 import { useTranslation } from "react-i18next";
 import { Updater } from "use-immer";
 
-import { ParamsType } from "./index";
+import { KeyValueType } from "./index";
 
-const FormTable = styled(Table)<TableProps<ParamsType>>`
+const FormTable = styled(Table)<TableProps<KeyValueType>>`
   .ant-table-thead {
-    display: ${ props => props.showHeader ? 'table-header-group' : 'none' };
+    display: ${(props) => (props.showHeader ? "table-header-group" : "none")};
   }
   .ant-table-cell {
     padding: 0 1px !important;
@@ -21,8 +21,8 @@ const FormTable = styled(Table)<TableProps<ParamsType>>`
 `;
 
 export const getColumns = (
-  update: Updater<ParamsType[]>
-): ColumnsType<ParamsType> => {
+  update: Updater<KeyValueType[]>
+): ColumnsType<KeyValueType> => {
   const { t } = useTranslation("common");
   const handleChange = (i: number, attr: "key" | "value", value: string) => {
     update((params) => {
@@ -32,7 +32,7 @@ export const getColumns = (
 
   const handleDisable = (i: number) => {
     update((params) => {
-      params[i].disabled = !params[i].disabled;
+      params[i].active = !params[i].active;
     });
   };
 
@@ -46,7 +46,7 @@ export const getColumns = (
           value={text}
           bordered={false}
           placeholder={t("key")}
-          disabled={record.disabled}
+          disabled={!record.active}
           onChange={(e) => handleChange(i, "key", e.target.value)}
         />
       ),
@@ -60,7 +60,7 @@ export const getColumns = (
           value={text}
           bordered={false}
           placeholder={t("value")}
-          disabled={record.disabled}
+          disabled={!record.active}
           onChange={(e) => handleChange(i, "value", e.target.value)}
         />
       ),
@@ -73,13 +73,11 @@ export const getColumns = (
       className: "actions",
       render: (text, record, i) => (
         <Space>
-          <Tooltip title={record.disabled ? t("enable") : t("disable")}>
+          <Tooltip title={record.active ? t("disable") : t("enable")}>
             <Button
               type="text"
               size="small"
-              icon={
-                record.disabled ? <StopOutlined /> : <CheckCircleOutlined />
-              }
+              icon={record.active ? <StopOutlined /> : <CheckCircleOutlined />}
               onClick={() => handleDisable(i)}
             />
           </Tooltip>

@@ -9,5 +9,6 @@
   "disable": "Disable",
   "remove": "Remove",
   "key": "Key",
-  "value": "Value"
+  "value": "Value",
+  "invalidJSON": "Invalid JSON"
 }
