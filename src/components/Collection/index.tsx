@@ -1,29 +1,40 @@
+import "./index.less";
+
+import { DownOutlined, MoreOutlined, SmileOutlined } from "@ant-design/icons";
 import { useMount } from "ahooks";
-import {Badge, Button, Dropdown, Empty, List, Menu, Space, Tabs, Tree} from "antd";
+import {
+  Badge,
+  Button,
+  Dropdown,
+  Empty,
+  List,
+  Menu,
+  Space,
+  Tabs,
+  Tree,
+} from "antd";
 import type { DirectoryTreeProps } from "antd/lib/tree";
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { FileSystemService } from "../../api/FileSystemService";
-import {useStore} from "../../store";
-import './index.less'
-import {DownOutlined, MoreOutlined, SmileOutlined} from "@ant-design/icons";
+import { FileSystemService } from "../../api/FileSystem.service";
+import { useStore } from "../../store";
 import CreateAndUpdateFolder from "./CreateAndUpdateFolder";
 
-function findPathbyKey(tree,key,path){
-  if(typeof path=='undefined'){
-    path=[]
+function findPathbyKey(tree, key, path) {
+  if (typeof path === "undefined") {
+    path = [];
   }
-  for(var i=0;i<tree.length;i++){
-    var tempPath=[...path]
-    tempPath.push(tree[i].title)
-    if(tree[i].key==key){
-      return tempPath
+  for (let i = 0; i < tree.length; i++) {
+    const tempPath = [...path];
+    tempPath.push(tree[i].title);
+    if (tree[i].key == key) {
+      return tempPath;
     }
-    if(tree[i].children){
-      let reuslt=findPathbyKey(tree[i].children,key,tempPath)
-      if(reuslt){
-        return reuslt
+    if (tree[i].children) {
+      const reuslt = findPathbyKey(tree[i].children, key, tempPath);
+      if (reuslt) {
+        return reuslt;
       }
     }
   }
@@ -52,9 +63,7 @@ const onChange = (key: string) => {
 
 const { DirectoryTree } = Tree;
 
-
-
-const Collection = ({changeSelectedRequest}) => {
+const Collection = ({ changeSelectedRequest }) => {
   const { t } = useTranslation("components");
   const [treeData, setTreeData] = useState([]);
   const currentWorkspaceId = useStore((state) => state.currentWorkspaceId);
@@ -62,7 +71,7 @@ const Collection = ({changeSelectedRequest}) => {
     console.log("Trigger Select", keys, info);
   };
 
-  const [currentSelectLeaf, setCurrentSelectLeaf] = useState('');
+  const [currentSelectLeaf, setCurrentSelectLeaf] = useState("");
   const [currentSelectPath, setCurrentSelectPath] = useState([]);
 
   const createAndUpdateFolderRef = useRef();
@@ -70,136 +79,166 @@ const Collection = ({changeSelectedRequest}) => {
   const onExpand: DirectoryTreeProps["onExpand"] = (keys, info) => {
     console.log("Trigger Expand", keys, info);
 
-    console.log(findPathbyKey(treeData,'asfasfas'))
+    console.log(findPathbyKey(treeData, "asfasfas"));
   };
 
-
   useMount(() => {
-    fetchWorkspaceData()
+    fetchWorkspaceData();
   });
 
-  useEffect(()=>{
-    fetchWorkspaceData()
-  },[currentWorkspaceId])
+  useEffect(() => {
+    fetchWorkspaceData();
+  }, [currentWorkspaceId]);
 
-  const menu = (key)=>{
+  const menu = (key) => {
     return (
       <Menu
         items={[
-
           {
-            key: '2',
+            key: "2",
             label: (
-              <a target="_blank" rel="noopener noreferrer" onClick={()=>{
-                createAndUpdateFolderRef.current.changeVal({path:findPathbyKey(treeData,key),mode:'create'})
-              }}>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  createAndUpdateFolderRef.current.changeVal({
+                    path: findPathbyKey(treeData, key),
+                    mode: "create",
+                  });
+                }}
+              >
                 新增文件夹
               </a>
-            )
-          },
-          {
-            key: '1',
-            label: (
-              <a target="_blank" rel="noopener noreferrer" onClick={()=>{
-                createAndUpdateFolderRef.current.changeVal({path:findPathbyKey(treeData,key),mode:'update'})
-              }}>
-                重命名
-              </a>
-            )
-          },
-          {
-            key: '3',
-            label: (
-                <a style={{color:'red'}} onClick={()=>{
-                  FileSystemService.removeItem({
-                    id:currentWorkspaceId,
-                    removeNodePath:findPathbyKey(treeData,key).join('.')
-                  }).then(res=>{
-
-                    fetchWorkspaceData()
-                  })
-                }}>
-                  删除
-                </a>
             ),
           },
           {
-            key: '5',
+            key: "1",
             label: (
-              <a target="_blank" rel="noopener noreferrer" onClick={()=>{
-                createAndUpdateFolderRef.current.changeVal({path:findPathbyKey(treeData,key),mode:'createRequest'})
-              }}>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  createAndUpdateFolderRef.current.changeVal({
+                    path: findPathbyKey(treeData, key),
+                    mode: "update",
+                  });
+                }}
+              >
+                重命名
+              </a>
+            ),
+          },
+          {
+            key: "3",
+            label: (
+              <a
+                style={{ color: "red" }}
+                onClick={() => {
+                  FileSystemService.removeItem({
+                    id: currentWorkspaceId,
+                    removeNodePath: findPathbyKey(treeData, key).join("."),
+                  }).then((res) => {
+                    fetchWorkspaceData();
+                  });
+                }}
+              >
+                删除
+              </a>
+            ),
+          },
+          {
+            key: "5",
+            label: (
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  createAndUpdateFolderRef.current.changeVal({
+                    path: findPathbyKey(treeData, key),
+                    mode: "createRequest",
+                  });
+                }}
+              >
                 新增请求
               </a>
-            )
+            ),
           },
         ]}
       />
-    )
+    );
   };
 
-  function TitleRender({val}) {
+  function TitleRender({ val }) {
+    return (
+      <div className={"title-render"}>
+        <div className={"wrap"}>
+          <div
+            style={{ flex: 1 }}
+            onClick={() => {
+              console.log(val, "val", findPathbyKey(treeData, val.key));
+              if (val.isLeaf) {
+                changeSelectedRequest({
+                  id: val.key,
+                  path: findPathbyKey(treeData, val.key),
+                });
 
-    return <div className={'title-render'}>
-      <div className={'wrap'}>
-        <div style={{flex:1}} onClick={()=>{
-          console.log(val,'val',findPathbyKey(treeData,val.key))
-          if (val.isLeaf){
-
-            changeSelectedRequest({
-              id:val.key,
-              path:findPathbyKey(treeData,val.key)
-            })
-
-            setCurrentSelectLeaf(val.key)
-            setCurrentSelectPath(findPathbyKey(treeData,val.key))
-            FileSystemService.queryInterface({id:val.key}).then(res=>{
-              console.log(res)
-            })
-          }
-
-        }}>{val.title}{currentSelectLeaf === val.key?<Badge style={{marginLeft:'8px'}} status="processing" />:null}</div>
-        <Dropdown overlay={menu(val.key)} trigger={['click']}>
-        <span onClick={event => event.stopPropagation()}>
-          <Space>
-            <MoreOutlined/>
-          </Space>
-        </span>
-        </Dropdown>
+                setCurrentSelectLeaf(val.key);
+                setCurrentSelectPath(findPathbyKey(treeData, val.key));
+                FileSystemService.queryInterface({ id: val.key }).then(
+                  (res) => {
+                    console.log(res);
+                  }
+                );
+              }
+            }}
+          >
+            {val.title}
+            {currentSelectLeaf === val.key ? (
+              <Badge style={{ marginLeft: "8px" }} status="processing" />
+            ) : null}
+          </div>
+          <Dropdown overlay={menu(val.key)} trigger={["click"]}>
+            <span onClick={(event) => event.stopPropagation()}>
+              <Space>
+                <MoreOutlined />
+              </Space>
+            </span>
+          </Dropdown>
+        </div>
       </div>
-    </div>
+    );
   }
 
   function fetchWorkspaceData() {
-    FileSystemService.queryWorkspaceById({id:currentWorkspaceId}).then((res) => {
-      function dg(nodes, nodeList = []) {
-        Object.keys(nodes).forEach((value, index, array) => {
-          nodeList.push({
-            title: nodes[value].nodeName,
-            key: nodes[value].infoId,
-            isLeaf:nodes[value].nodeType !==3,
-            children: [],
+    FileSystemService.queryWorkspaceById({ id: currentWorkspaceId }).then(
+      (res) => {
+        function dg(nodes, nodeList = []) {
+          Object.keys(nodes).forEach((value, index, array) => {
+            nodeList.push({
+              title: nodes[value].nodeName,
+              key: nodes[value].infoId,
+              isLeaf: nodes[value].nodeType !== 3,
+              children: [],
+            });
+            if (
+              nodes[value].children &&
+              Object.keys(nodes[value].children).length > 0
+            ) {
+              dg(nodes[value].children, nodeList[index].children);
+            }
           });
-          if (
-            nodes[value].children &&
-            Object.keys(nodes[value].children).length > 0
-          ) {
-            dg(nodes[value].children, nodeList[index].children);
-          }
-        });
 
-        return nodeList;
+          return nodeList;
+        }
+        try {
+          setTreeData(dg(res.body.fsTree.roots));
+        } catch (e) {}
       }
-      try {
-        setTreeData(dg(res.body.fsTree.roots));
-      } catch (e) {
-
-      }
-    });
+    );
   }
 
   return (
-    <div className={'collection'}>
+    <div className={"collection"}>
       <Tabs defaultActiveKey="2" onChange={onChange} tabPosition={"left"}>
         <TabPane tab={t("collectionMenu.collection")} key="2">
           <DirectoryTree
@@ -209,12 +248,19 @@ const Collection = ({changeSelectedRequest}) => {
             onSelect={onSelect}
             onExpand={onExpand}
             treeData={treeData}
-            titleRender={(val)=><TitleRender val={val}></TitleRender>}
+            titleRender={(val) => <TitleRender val={val}></TitleRender>}
           />
-          <Empty style={{display:treeData.length>0?'none':'block'}}>
-            <Button type="primary" onClick={()=>{createAndUpdateFolderRef.current.changeVal({path:[]})}}>Create Now</Button>
+          <Empty style={{ display: treeData.length > 0 ? "none" : "block" }}>
+            <Button
+              type="primary"
+              onClick={() => {
+                createAndUpdateFolderRef.current.changeVal({ path: [] });
+              }}
+            >
+              Create Now
+            </Button>
           </Empty>
-          {/*<p>{currentSelectPath.join('/')}</p>*/}
+          {/* <p>{currentSelectPath.join('/')}</p> */}
         </TabPane>
         <TabPane tab={t("collectionMenu.environment")} key="3" disabled>
           <List
@@ -230,7 +276,12 @@ const Collection = ({changeSelectedRequest}) => {
           />
         </TabPane>
       </Tabs>
-      <CreateAndUpdateFolder ref={createAndUpdateFolderRef} reFe={()=>{fetchWorkspaceData()}}></CreateAndUpdateFolder>
+      <CreateAndUpdateFolder
+        ref={createAndUpdateFolderRef}
+        reFe={() => {
+          fetchWorkspaceData();
+        }}
+      ></CreateAndUpdateFolder>
     </div>
   );
 };

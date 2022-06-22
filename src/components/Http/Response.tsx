@@ -20,7 +20,7 @@ const Response: FC<{
   res: any;
   status: { code: number; text: string };
   time?: number;
-  size?: number;Ï
+  size?: number;
 }> = (props) => {
   const onChange = (key: string) => {
     console.log(key);
@@ -29,9 +29,11 @@ const Response: FC<{
   return (
     <>
       <StatusWrapper>
-        <div css={css`
-color: #ff51ab;
-`}>
+        <div
+          css={css`
+            color: #ff51ab;
+          `}
+        >
           状态：
           <span>
             {props.status.code} {props.status.text}

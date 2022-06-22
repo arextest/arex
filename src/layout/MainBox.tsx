@@ -11,7 +11,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet, useNavigate } from "react-router-dom";
 
-import { FileSystemService } from "../api/FileSystemService";
+import { FileSystemService } from "../api/FileSystem.service";
 import { useStore } from "../store";
 import Header from "./Header";
 

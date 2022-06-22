@@ -10,7 +10,7 @@
     "saveAs": "另存为",
     "params": "参数",
     "requestBody": "请求体",
-    "requestHeader": "请求头",
+    "requestHeaders": "请求头",
     "authorization": "授权",
     "pre-requestScript": "预请求脚本",
     "test": "测试",

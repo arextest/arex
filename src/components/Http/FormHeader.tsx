@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { Updater } from "use-immer";
 import { v4 as uuidv4 } from "uuid";
 
-import { ParamsType } from "./index";
+import { KeyValueType } from "./index";
 
 export const FormHeaderWrapper = styled.div`
   display: flex;
@@ -26,12 +26,12 @@ export const FormHeaderWrapper = styled.div`
   }
 `;
 
-const FormHeader: FC<{ update: Updater<ParamsType[]> }> = (props) => {
+const FormHeader: FC<{ update: Updater<KeyValueType[]> }> = (props) => {
   const { t: t_common } = useTranslation("common");
   const { t: t_components } = useTranslation("components");
 
   const handleAddParam = () => {
-    const newValue: ParamsType = {
+    const newValue: KeyValueType = {
       id: uuidv4(),
       key: "",
       value: "",
