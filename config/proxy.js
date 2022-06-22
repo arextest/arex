@@ -2,16 +2,16 @@
 module.exports = {
   FAT: {
     '/api': {
-      target: 'http://127.0.0.1:8080',
+      target: 'http://10.5.153.1:8090',
       changeOrigin: true,
-      pathRewrite: { '/api': '/' },
+      pathRewrite: { '/api': '/api' },
     },
   },
   PROD: {
     '/api': {
-      target: 'http://qingkong-v2.rico.org.cn',
+      target: 'http://10.5.153.1:8090',
       changeOrigin: true,
-      pathRewrite: { '/api': '/' },
+      pathRewrite: { '/api': '/api' },
     }
   },
 }
