@@ -130,7 +130,12 @@ const Http: FC<{ mode?: "normal" | "compare" ,selectedRequest:{id:string,path:[]
       console.log(res);
       setResponse(res);
     },
+    onError(err) {
+      console.log(err);
+      setResponse(err?.response);
+    },
     onFinally: () => {
+      console.log("finally", res);
       setSent(true);
     },
   });
@@ -148,12 +153,12 @@ const Http: FC<{ mode?: "normal" | "compare" ,selectedRequest:{id:string,path:[]
         }
         return acc;
       }, {});
-    } else {
+    } else if (requestBody) {
       try {
         data.data = JSON.parse(requestBody);
       } catch (e) {
-        message.warn("Invalid JSON");
-        return new Error("Invalid JSON");
+        message.warn(t_common("invalidJSON"));
+        return new Error(t_common("invalidJSON"));
       }
     }
 
@@ -351,7 +356,7 @@ const Http: FC<{ mode?: "normal" | "compare" ,selectedRequest:{id:string,path:[]
         {sent ? (
           mode === "normal" ? (
             <Response
-              res={res}
+              res={response?.data || response?.statusText}
               status={{ code: response.status, text: response.statusText }}
             />
           ) : (
