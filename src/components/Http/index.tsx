@@ -6,6 +6,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { useRequest } from "ahooks";
 import {
   Badge,
+  Breadcrumb,
   Button,
   Divider,
   // Dropdown,
@@ -78,7 +79,7 @@ const ResponseWrapper = styled.div`
   align-items: center;
 `;
 
-const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
+const Http: FC<{ mode?: "normal" | "compare" ,selectedRequest:{id:string,path:[]}}> = ({ mode = "normal",selectedRequest }) => {
   const { t: t_common } = useTranslation("common");
   const { t: t_components } = useTranslation("components");
 
@@ -175,6 +176,11 @@ const Http: FC<{ mode?: "normal" | "compare" }> = ({ mode = "normal" }) => {
   return (
     <>
       <AnimateAutoHeight>
+        <Breadcrumb style={{paddingBottom:'14px',paddingTop:'14px'}}>
+          {selectedRequest.path.map(i=>{
+            return <Breadcrumb.Item>{i}</Breadcrumb.Item>
+          })}
+        </Breadcrumb>
         <HeaderWrapper>
           <Select
             value={requestType}

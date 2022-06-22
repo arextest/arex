@@ -66,7 +66,7 @@ const MainBox: React.FC = () => {
           items={items}
         />
         <div
-          style={{ flex: "1", padding: "14px", width: "calc(100vw - 150px)" }}
+          style={{ flex: "1", padding: "0 14px", width: "calc(100vw - 150px)" }}
         >
           <Outlet />
         </div>

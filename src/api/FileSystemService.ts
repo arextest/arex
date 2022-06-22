@@ -18,4 +18,7 @@ export class FileSystemService {
   static async rename(params: any): Promise<any> {
     return requset.post(`/api/filesystem/rename`,params);
   }
+  static async queryInterface(params: any): Promise<any> {
+    return requset.post(`/api/filesystem/queryInterface`,params);
+  }
 }

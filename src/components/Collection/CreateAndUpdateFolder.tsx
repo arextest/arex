@@ -37,13 +37,25 @@ const CreateAndUpdateFolder: React.FC = ({reFe},ref) => {
         setIsModalVisible(false);
         reFe()
       })
-    } else {
+    } else if (mode === 'update') {
       FileSystemService.rename({
         "id": "62ab189bbf79d0746fc74268",
         // "nodeName": folderName,
         // "nodeType": 3,
         "path": currOpePath.join('.'),
         "newName": folderName,
+      }).then(()=>{
+        setIsModalVisible(false);
+        reFe()
+      })
+    } else if (mode ==='createRequest'){
+      FileSystemService.addItem({
+        "id": "62ab189bbf79d0746fc74268",
+        "nodeName": folderName,
+        "nodeType": 1,
+        "parentPath": currOpePath.join('.'),
+        "userName": "zt",
+        // "workspaceName": "string"
       }).then(()=>{
         setIsModalVisible(false);
         reFe()
@@ -60,9 +72,9 @@ const CreateAndUpdateFolder: React.FC = ({reFe},ref) => {
 
   return (
     <>
-      <Button type="primary" onClick={showModal}>
-        {currOpePath}
-      </Button>
+      {/*<Button type="primary" onClick={showModal}>*/}
+      {/*  {currOpePath}*/}
+      {/*</Button>*/}
       <Modal title={mode} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <p>{folderName}</p>
         <Input value={folderName} onChange={(e)=>{

@@ -1,5 +1,5 @@
 import { useMount } from "ahooks";
-import {Button, Dropdown, Empty, List, Menu, Space, Tabs, Tree} from "antd";
+import {Badge, Button, Dropdown, Empty, List, Menu, Space, Tabs, Tree} from "antd";
 import type { DirectoryTreeProps } from "antd/lib/tree";
 import React, {useEffect, useRef, useState} from "react";
 import { useTranslation } from "react-i18next";
@@ -54,13 +54,16 @@ const { DirectoryTree } = Tree;
 
 
 
-const Collection = () => {
+const Collection = ({changeSelectedRequest}) => {
   const { t } = useTranslation("components");
   const [treeData, setTreeData] = useState([]);
   const currentWorkspaceId = useStore((state) => state.currentWorkspaceId);
   const onSelect: DirectoryTreeProps["onSelect"] = (keys, info) => {
     console.log("Trigger Select", keys, info);
   };
+
+  const [currentSelectLeaf, setCurrentSelectLeaf] = useState('');
+  const [currentSelectPath, setCurrentSelectPath] = useState([]);
 
   const createAndUpdateFolderRef = useRef();
 
@@ -120,6 +123,16 @@ const Collection = () => {
                 </a>
             ),
           },
+          {
+            key: '5',
+            label: (
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>{
+                createAndUpdateFolderRef.current.changeVal({path:findPathbyKey(treeData,key),mode:'createRequest'})
+              }}>
+                新增请求
+              </a>
+            )
+          },
         ]}
       />
     )
@@ -129,7 +142,23 @@ const Collection = () => {
 
     return <div className={'title-render'}>
       <div className={'wrap'}>
-        <div>{val.title}</div>
+        <div style={{flex:1}} onClick={()=>{
+          console.log(val,'val',findPathbyKey(treeData,val.key))
+          if (val.isLeaf){
+
+            changeSelectedRequest({
+              id:val.key,
+              path:findPathbyKey(treeData,val.key)
+            })
+
+            setCurrentSelectLeaf(val.key)
+            setCurrentSelectPath(findPathbyKey(treeData,val.key))
+            FileSystemService.queryInterface({id:val.key}).then(res=>{
+              console.log(res)
+            })
+          }
+
+        }}>{val.title}{currentSelectLeaf === val.key?<Badge style={{marginLeft:'8px'}} status="processing" />:null}</div>
         <Dropdown overlay={menu(val.key)} trigger={['click']}>
         <span onClick={event => event.stopPropagation()}>
           <Space>
@@ -148,6 +177,7 @@ const Collection = () => {
           nodeList.push({
             title: nodes[value].nodeName,
             key: nodes[value].infoId,
+            isLeaf:nodes[value].nodeType !==3,
             children: [],
           });
           if (
@@ -184,6 +214,7 @@ const Collection = () => {
           <Empty style={{display:treeData.length>0?'none':'block'}}>
             <Button type="primary" onClick={()=>{createAndUpdateFolderRef.current.changeVal({path:[]})}}>Create Now</Button>
           </Empty>
+          {/*<p>{currentSelectPath.join('/')}</p>*/}
         </TabPane>
         <TabPane tab={t("collectionMenu.environment")} key="3" disabled>
           <List
