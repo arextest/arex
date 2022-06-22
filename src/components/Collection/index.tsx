@@ -23,55 +23,32 @@ import {
 import type { DirectoryTreeProps } from "antd/lib/tree";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-
 import { FileSystemService } from "../../api/FileSystem.service";
 import { useStore } from "../../store";
 import CreateAndUpdateFolder from "./CreateAndUpdateFolder";
+import {findPathbyKey} from "./util";
 
-function findPathbyKey(tree, key, path) {
-  if (typeof path === "undefined") {
-    path = [];
-  }
-  for (let i = 0; i < tree.length; i++) {
-    const tempPath = [...path];
-    tempPath.push(tree[i].title);
-    if (tree[i].key == key) {
-      return tempPath;
-    }
-    if (tree[i].children) {
-      const reuslt = findPathbyKey(tree[i].children, key, tempPath);
-      if (reuslt) {
-        return reuslt;
-      }
-    }
-  }
-}
+
 
 const { TabPane } = Tabs;
-
 const onChange = (key: string) => {
   console.log(key);
 };
 
 const { DirectoryTree } = Tree;
 
-const Collection = ({ changeSelectedRequest }) => {
+const Collection = ({ changeSelectedRequest }:any) => {
   const { t } = useTranslation("components");
   const [treeData, setTreeData] = useState([]);
   const currentWorkspaceId = useStore((state) => state.currentWorkspaceId);
   const onSelect: DirectoryTreeProps["onSelect"] = (keys, info) => {
     console.log("Trigger Select", keys, info);
   };
-
   const [currentSelectLeaf, setCurrentSelectLeaf] = useState("");
-  const [currentSelectPath, setCurrentSelectPath] = useState([]);
-
-  const createAndUpdateFolderRef = useRef();
+  const createAndUpdateFolderRef = useRef<any>();
 
   const onExpand: DirectoryTreeProps["onExpand"] = (keys, info) => {
     console.log("Trigger Expand", keys, info);
-
-    console.log(findPathbyKey(treeData, "asfasfas"));
   };
 
   useMount(() => {
@@ -82,7 +59,7 @@ const Collection = ({ changeSelectedRequest }) => {
     fetchWorkspaceData();
   }, [currentWorkspaceId]);
 
-  const menu = (val) => {
+  const menu = (val:any) => {
     return (
       <Menu
         items={[
@@ -162,7 +139,7 @@ const Collection = ({ changeSelectedRequest }) => {
     );
   };
 
-  function TitleRender({ val }) {
+  function TitleRender({ val }:any) {
     return (
       <div className={"title-render"}>
         <div className={"wrap"}>
@@ -177,7 +154,6 @@ const Collection = ({ changeSelectedRequest }) => {
                 });
 
                 setCurrentSelectLeaf(val.key);
-                setCurrentSelectPath(findPathbyKey(treeData, val.key));
                 FileSystemService.queryInterface({ id: val.key }).then(
                   (res) => {
                     console.log(res);
@@ -206,7 +182,7 @@ const Collection = ({ changeSelectedRequest }) => {
   function fetchWorkspaceData() {
     FileSystemService.queryWorkspaceById({ id: currentWorkspaceId }).then(
       (res) => {
-        function dg(nodes, nodeList = []) {
+        function generateTreeData(nodes:any, nodeList:any = []) {
           Object.keys(nodes).forEach((value, index, array) => {
             nodeList.push({
               title: nodes[value].nodeName,
@@ -218,14 +194,14 @@ const Collection = ({ changeSelectedRequest }) => {
               nodes[value].children &&
               Object.keys(nodes[value].children).length > 0
             ) {
-              dg(nodes[value].children, nodeList[index].children);
+              generateTreeData(nodes[value].children, nodeList[index].children);
             }
           });
 
           return nodeList;
         }
         try {
-          setTreeData(dg(res.body.fsTree.roots));
+          setTreeData(generateTreeData(res.body.fsTree.roots));
         } catch (e) {}
       }
     );
@@ -235,7 +211,6 @@ const Collection = ({ changeSelectedRequest }) => {
     <div className={"collection"}>
       <Tabs defaultActiveKey="2" onChange={onChange} tabPosition={"left"}>
         <TabPane tab={<FolderOutlined />} key="2">
-          {/* <Input.Search style={{width:'80px'}}></Input.Search> */}
           <a
             className={"new-btn"}
             onClick={() => {
@@ -270,15 +245,14 @@ const Collection = ({ changeSelectedRequest }) => {
               Create Now
             </Button>
           </Empty>
-          {/* <p>{currentSelectPath.join('/')}</p> */}
         </TabPane>
       </Tabs>
       <CreateAndUpdateFolder
         ref={createAndUpdateFolderRef}
-        reFe={() => {
+        updateParentComponent={() => {
           fetchWorkspaceData();
         }}
-      ></CreateAndUpdateFolder>
+      />
     </div>
   );
 };

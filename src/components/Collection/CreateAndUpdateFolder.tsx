@@ -3,16 +3,15 @@ import React, { forwardRef, useImperativeHandle, useState } from "react";
 
 import { FileSystemService } from "../../api/FileSystem.service";
 
-const CreateAndUpdateFolder: React.FC = ({ reFe }, ref) => {
+const CreateAndUpdateFolder: React.FC<{updateParentComponent:any}> = ({ updateParentComponent }:any, ref) => {
   const [folderName, setFolderName] = useState("");
   const [currOpePath, setCurrOpePath] = useState([]);
   const [mode, setMode] = useState("create");
   // 此处注意useImperativeHandle方法的的第一个参数是目标元素的ref引用
   useImperativeHandle(ref, () => ({
     // changeVal 就是暴露给父组件的方法
-    changeVal: (newVal) => {
+    changeVal: (newVal:any) => {
       setMode(newVal.mode);
-      // console.log(newVal.key,'newVal')
       setCurrOpePath(newVal.path);
       showModal();
     },
@@ -25,7 +24,6 @@ const CreateAndUpdateFolder: React.FC = ({ reFe }, ref) => {
 
   const handleOk = () => {
     console.log(folderName, "folderName");
-
     if (mode === "create") {
       FileSystemService.addItem({
         id: "62ab189bbf79d0746fc74268",
@@ -33,21 +31,18 @@ const CreateAndUpdateFolder: React.FC = ({ reFe }, ref) => {
         nodeType: 3,
         parentPath: currOpePath.join("."),
         userName: "zt",
-        // "workspaceName": "string"
       }).then(() => {
         setIsModalVisible(false);
-        reFe();
+        updateParentComponent();
       });
     } else if (mode === "update") {
       FileSystemService.rename({
         id: "62ab189bbf79d0746fc74268",
-        // "nodeName": folderName,
-        // "nodeType": 3,
         path: currOpePath.join("."),
         newName: folderName,
       }).then(() => {
         setIsModalVisible(false);
-        reFe();
+        updateParentComponent();
       });
     } else if (mode === "createRequest") {
       FileSystemService.addItem({
@@ -56,14 +51,11 @@ const CreateAndUpdateFolder: React.FC = ({ reFe }, ref) => {
         nodeType: 1,
         parentPath: currOpePath.join("."),
         userName: "zt",
-        // "workspaceName": "string"
       }).then(() => {
         setIsModalVisible(false);
-        reFe();
+        updateParentComponent();
       });
     }
-
-    // setIsModalVisible(false);
   };
 
   const handleCancel = () => {
@@ -72,9 +64,6 @@ const CreateAndUpdateFolder: React.FC = ({ reFe }, ref) => {
 
   return (
     <>
-      {/* <Button type="primary" onClick={showModal}> */}
-      {/*  {currOpePath} */}
-      {/* </Button> */}
       <Modal
         title={mode}
         visible={isModalVisible}
@@ -84,7 +73,6 @@ const CreateAndUpdateFolder: React.FC = ({ reFe }, ref) => {
         <Input
           value={folderName}
           onChange={(e) => {
-            // console.log(e.target.value,'e.target.value')
             setFolderName(e.target.value);
           }}
         />
