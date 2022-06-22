@@ -48,11 +48,10 @@ const Header = () => {
     <>
       <HeaderWrapper>
         <Logo>AREX</Logo>
-
         <HeaderMenu>
           <ChangeLangBotton />
-
           <Select
+            disabled
             value={currentWorkspaceId}
             placeholder={"请选择workspace"}
             style={{ width: 160 }}
@@ -66,10 +65,8 @@ const Header = () => {
               );
             })}
           </Select>
-          {/*<Button type={'primary'}>新增workspace</Button>*/}
         </HeaderMenu>
       </HeaderWrapper>
-
       <Divider style={{ margin: "0" }} />
     </>
   );

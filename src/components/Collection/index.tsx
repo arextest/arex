@@ -1,5 +1,5 @@
 import { useMount } from "ahooks";
-import {Badge, Button, Dropdown, Empty, List, Menu, Space, Tabs, Tree} from "antd";
+import {Badge, Button, Divider, Dropdown, Empty, Input, List, Menu, Space, Tabs, Tree} from "antd";
 import type { DirectoryTreeProps } from "antd/lib/tree";
 import React, {useEffect, useRef, useState} from "react";
 import { useTranslation } from "react-i18next";
@@ -31,20 +31,6 @@ function findPathbyKey(tree,key,path){
 
 const { TabPane } = Tabs;
 
-const data = [
-  {
-    title: "Ant Design Title 1",
-  },
-  {
-    title: "Ant Design Title 2",
-  },
-  {
-    title: "Ant Design Title 3",
-  },
-  {
-    title: "Ant Design Title 4",
-  },
-];
 
 const onChange = (key: string) => {
   console.log(key);
@@ -142,7 +128,7 @@ const Collection = ({changeSelectedRequest}) => {
 
     return <div className={'title-render'}>
       <div className={'wrap'}>
-        <div style={{flex:1}} onClick={()=>{
+        <div className={'title'} onClick={()=>{
           console.log(val,'val',findPathbyKey(treeData,val.key))
           if (val.isLeaf){
 
@@ -158,7 +144,7 @@ const Collection = ({changeSelectedRequest}) => {
             })
           }
 
-        }}>{val.title}{currentSelectLeaf === val.key?<Badge style={{marginLeft:'8px'}} status="processing" />:null}</div>
+        }}><div className={'ellipsis'}>{val.title}</div>{currentSelectLeaf === val.key?<Badge style={{marginLeft:'8px'}} status="processing" />:null}</div>
         <Dropdown overlay={menu(val.key)} trigger={['click']}>
         <span onClick={event => event.stopPropagation()}>
           <Space>
@@ -202,6 +188,9 @@ const Collection = ({changeSelectedRequest}) => {
     <div className={'collection'}>
       <Tabs defaultActiveKey="2" onChange={onChange} tabPosition={"left"}>
         <TabPane tab={t("collectionMenu.collection")} key="2">
+          {/*<Input.Search style={{width:'80px'}}></Input.Search>*/}
+          <a className={'new-btn'} onClick={()=>{createAndUpdateFolderRef.current.changeVal({path:[],mode:'create'})}}>+<span style={{marginLeft:'8px'}}>新增</span></a>
+          <Divider/>
           <DirectoryTree
             selectable={false}
             multiple
@@ -212,14 +201,14 @@ const Collection = ({changeSelectedRequest}) => {
             titleRender={(val)=><TitleRender val={val}></TitleRender>}
           />
           <Empty style={{display:treeData.length>0?'none':'block'}}>
-            <Button type="primary" onClick={()=>{createAndUpdateFolderRef.current.changeVal({path:[]})}}>Create Now</Button>
+            <Button type="primary" onClick={()=>{createAndUpdateFolderRef.current.changeVal({path:[],mode:'create'})}}>Create Now</Button>
           </Empty>
           {/*<p>{currentSelectPath.join('/')}</p>*/}
         </TabPane>
         <TabPane tab={t("collectionMenu.environment")} key="3" disabled>
           <List
             itemLayout="horizontal"
-            dataSource={data}
+            dataSource={[]}
             renderItem={(item) => (
               <List.Item>
                 <List.Item.Meta

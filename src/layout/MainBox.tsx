@@ -32,7 +32,7 @@ const MainBox: React.FC = () => {
   const { t } = useTranslation("layout");
   const items: MenuItem[] = [
     { key: "normal", label: t("sideMenu.normal"), icon: <PieChartOutlined /> },
-    { key: "compare", label: t("sideMenu.compare"), icon: <DesktopOutlined /> },
+    { key: "compare", label: t("sideMenu.compare"), icon: <DesktopOutlined /> ,disabled: true,},
     {
       key: "replay",
       label: t("sideMenu.replay"),
