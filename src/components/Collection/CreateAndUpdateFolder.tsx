@@ -76,7 +76,6 @@ const CreateAndUpdateFolder: React.FC = ({reFe},ref) => {
       {/*  {currOpePath}*/}
       {/*</Button>*/}
       <Modal title={mode} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        <p>{folderName}</p>
         <Input value={folderName} onChange={(e)=>{
           // console.log(e.target.value,'e.target.value')
           setFolderName(e.target.value)
