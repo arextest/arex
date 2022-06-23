@@ -51,7 +51,6 @@ const Header = () => {
         <HeaderMenu>
           <ChangeLangBotton />
           <Select
-            disabled
             value={currentWorkspaceId}
             placeholder={"请选择workspace"}
             style={{ width: 160 }}

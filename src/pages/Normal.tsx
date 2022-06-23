@@ -18,7 +18,7 @@ const Normal = () => {
       <Col
         lg={{ span: 18 }}
         md={{ span: 16 }}
-        style={{ borderRight: "1px solid #f0f0f0", paddingRight: "14px" }}
+        style={{ borderRight: "1px solid #f0f0f0", paddingRight: "14px",paddingTop:'14px' }}
       >
         <Http id={selectedRequest.id} path={selectedRequest.path} />
       </Col>

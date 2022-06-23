@@ -4,7 +4,7 @@ export function findPathbyKey(tree:any, key:any, path?:any):any {
   }
   for (let i = 0; i < tree.length; i++) {
     const tempPath = [...path];
-    tempPath.push(tree[i].title);
+    tempPath.push(tree[i].key);
     if (tree[i].key == key) {
       return tempPath;
     }

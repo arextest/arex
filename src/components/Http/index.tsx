@@ -240,11 +240,11 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
   return (
     <>
       <AnimateAutoHeight>
-        <Breadcrumb style={{ paddingBottom: "14px", paddingTop: "14px" }}>
-          {path.map((i) => (
-            <Breadcrumb.Item>{i}</Breadcrumb.Item>
-          ))}
-        </Breadcrumb>
+        {/*<Breadcrumb style={{ paddingBottom: "14px", paddingTop: "14px" }}>*/}
+        {/*  {path.map((i) => (*/}
+        {/*    <Breadcrumb.Item>{i}</Breadcrumb.Item>*/}
+        {/*  ))}*/}
+        {/*</Breadcrumb>*/}
 
         <HeaderWrapper>
           <Select
@@ -252,7 +252,10 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
             options={RequestTypeOptions}
             onChange={setMethod}
           />
-          <Input value={url} onChange={(e) => setUrl(e.target.value)} />
+          <Input placeholder={'Enter request URL'} value={url} onChange={(e) => setUrl(e.target.value)} />
+          {
+            mode === 'compare'?<Input placeholder={'Enter compare request URL'} style={{marginLeft:'8px'}}/>:null
+          }
           <Button
             // DropdownButton
             type="primary"

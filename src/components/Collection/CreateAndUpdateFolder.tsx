@@ -26,10 +26,10 @@ const CreateAndUpdateFolder: React.FC<{updateParentComponent:any}> = ({ updatePa
     console.log(folderName, "folderName");
     if (mode === "create") {
       FileSystemService.addItem({
-        id: "62ab189bbf79d0746fc74268",
+        id: "62b3fc610c4d613355bd2b5b",
         nodeName: folderName,
         nodeType: 3,
-        parentPath: currOpePath.join("."),
+        parentPath: currOpePath,
         userName: "zt",
       }).then(() => {
         setIsModalVisible(false);
@@ -37,8 +37,8 @@ const CreateAndUpdateFolder: React.FC<{updateParentComponent:any}> = ({ updatePa
       });
     } else if (mode === "update") {
       FileSystemService.rename({
-        id: "62ab189bbf79d0746fc74268",
-        path: currOpePath.join("."),
+        id: "62b3fc610c4d613355bd2b5b",
+        path: currOpePath,
         newName: folderName,
       }).then(() => {
         setIsModalVisible(false);
@@ -46,10 +46,10 @@ const CreateAndUpdateFolder: React.FC<{updateParentComponent:any}> = ({ updatePa
       });
     } else if (mode === "createRequest") {
       FileSystemService.addItem({
-        id: "62ab189bbf79d0746fc74268",
+        id: "62b3fc610c4d613355bd2b5b",
         nodeName: folderName,
         nodeType: 1,
-        parentPath: currOpePath.join("."),
+        parentPath: currOpePath,
         userName: "zt",
       }).then(() => {
         setIsModalVisible(false);
