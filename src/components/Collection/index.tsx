@@ -72,7 +72,7 @@ const Collection = ({ changeSelectedRequest }:any) => {
                         e.domEvent.stopPropagation()
                         // se
                         setVisible(false)
-                        notification.info({message:'成功'})
+                        // notification.info({message:'成功'})
                     }}
                     items={[
                         {
