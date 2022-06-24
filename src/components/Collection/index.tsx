@@ -9,17 +9,17 @@ import {
 } from "@ant-design/icons";
 import { useMount } from "ahooks";
 import {
-  Badge,
-  Button,
-  Divider,
-  Dropdown,
-  Empty,
-  Input,
-  List,
-  Menu,
-  Space,
-  Tabs,
-  Tree,
+    Badge,
+    Button,
+    Divider,
+    Dropdown,
+    Empty,
+    Input,
+    List,
+    Menu, notification,
+    Space,
+    Tabs,
+    Tree,
 } from "antd";
 import type { DirectoryTreeProps } from "antd/lib/tree";
 import React, { useEffect, useRef, useState } from "react";
@@ -60,87 +60,96 @@ const Collection = ({ changeSelectedRequest }:any) => {
     fetchWorkspaceData();
   }, [currentWorkspaceId]);
 
-  const menu = (val:any) => {
-    return (
-      <Menu
-        items={[
-          {
-            key: "2",
-            label: (
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => {
-                  createAndUpdateFolderRef.current.changeVal({
-                    path: findPathbyKey(treeData, val.key),
-                    mode: "create",
-                  });
-                }}
-              >
-                新增文件夹
-              </a>
-            ),
-            disabled: !!val.isLeaf,
-          },
-          {
-            key: "5",
-            label: (
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => {
-                  createAndUpdateFolderRef.current.changeVal({
-                    path: findPathbyKey(treeData, val.key),
-                    mode: "createRequest",
-                  });
-                }}
-              >
-                新增请求
-              </a>
-            ),
-            disabled: !!val.isLeaf,
-          },
-          {
-            key: "1",
-            label: (
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => {
-                  createAndUpdateFolderRef.current.changeVal({
-                    path: findPathbyKey(treeData, val.key),
-                    mode: "update",
-                  });
-                }}
-              >
-                重命名
-              </a>
-            ),
-          },
-          {
-            key: "3",
-            label: (
-              <a
-                style={{ color: "red" }}
-                onClick={() => {
-                  FileSystemService.removeItem({
-                    id: currentWorkspaceId,
-                    removeNodePath: findPathbyKey(treeData, val.key).join("."),
-                  }).then((res) => {
-                    fetchWorkspaceData();
-                  });
-                }}
-              >
-                删除
-              </a>
-            ),
-          },
-        ]}
-      />
-    );
-  };
-
-  function TitleRender({ val }:any) {
+    function TitleRender({ val }:any) {
+        const [visible,setVisible] = useState(false)
+        const handleVisibleChange = (flag: boolean) => {
+            setVisible(flag);
+        };
+        const menu = (val:any) => {
+            return (
+                <Menu
+                    onClick={(e)=>{
+                        e.domEvent.stopPropagation()
+                        // se
+                        setVisible(false)
+                        notification.info({message:'成功'})
+                    }}
+                    items={[
+                        {
+                            key: "2",
+                            label: (
+                                <a
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => {
+                                        createAndUpdateFolderRef.current.changeVal({
+                                            path: findPathbyKey(treeData, val.key),
+                                            mode: "create",
+                                        });
+                                    }}
+                                >
+                                    新增文件夹
+                                </a>
+                            ),
+                            disabled: !!val.isLeaf,
+                        },
+                        {
+                            key: "5",
+                            label: (
+                                <a
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => {
+                                        createAndUpdateFolderRef.current.changeVal({
+                                            path: findPathbyKey(treeData, val.key),
+                                            mode: "createRequest",
+                                        });
+                                    }}
+                                >
+                                    新增请求
+                                </a>
+                            ),
+                            disabled: !!val.isLeaf,
+                        },
+                        {
+                            key: "1",
+                            label: (
+                                <a
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={() => {
+                                        createAndUpdateFolderRef.current.changeVal({
+                                            path: findPathbyKey(treeData, val.key),
+                                            mode: "update",
+                                        });
+                                    }}
+                                >
+                                    重命名
+                                </a>
+                            ),
+                        },
+                        {
+                            key: "3",
+                            label: (
+                                <a
+                                    style={{ color: "red" }}
+                                    onClick={() => {
+                                        FileSystemService.removeItem({
+                                            id: currentWorkspaceId,
+                                            removeNodePath: findPathbyKey(treeData, val.key),
+                                        }).then((res) => {
+                                            fetchWorkspaceData();
+                                        });
+                                    }}
+                                >
+                                    删除
+                                </a>
+                            ),
+                        },
+                    ]}
+                />
+            );
+        };
     return (
       <div className={"title-render"}>
         <div className={"wrap"}>
@@ -168,7 +177,7 @@ const Collection = ({ changeSelectedRequest }:any) => {
               <Badge style={{ marginLeft: "8px" }} status="processing" />
             ) : null}
           </div>
-          <Dropdown overlay={menu(val)} trigger={["click"]}>
+          <Dropdown overlay={menu(val)} trigger={["click"]} visible={visible} onVisibleChange={handleVisibleChange}>
             <span onClick={(event) => event.stopPropagation()}>
               <Space>
                 <MoreOutlined />
