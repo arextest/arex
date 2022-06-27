@@ -25,6 +25,7 @@ const Normal = () => {
       <Col lg={{ span: 6 }} md={{ span: 8 }}>
         <Collection
           changeSelectedRequest={(r) => {
+            console.log(r)
             setSelectedRequest(r);
           }}
         />

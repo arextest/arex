@@ -55,6 +55,17 @@ const CreateAndUpdateFolder: React.FC<{updateParentComponent:any}> = ({ updatePa
         setIsModalVisible(false);
         updateParentComponent();
       });
+    } else if (mode === "createCase"){
+      FileSystemService.addItem({
+        id: "62b3fc610c4d613355bd2b5b",
+        nodeName: folderName,
+        nodeType: 2,
+        parentPath: currOpePath,
+        userName: "zt",
+      }).then(() => {
+        setIsModalVisible(false);
+        updateParentComponent();
+      });
     }
   };
 

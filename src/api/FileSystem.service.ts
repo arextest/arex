@@ -43,4 +43,18 @@ export class FileSystemService {
       params
     );
   }
+
+  static async saveCase(params: SaveInterfaceReq) {
+    return request.post<SaveInterfaceRes>(
+      `/api/filesystem/saveCase`,
+      params
+    );
+  }
+
+  static async queryCase(params: any) {
+    return request.post<any>(
+      `/api/filesystem/queryCase`,
+      params
+    );
+  }
 }
