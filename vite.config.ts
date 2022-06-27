@@ -31,7 +31,18 @@ export default defineConfig({
       },
     }),
   ],
-  server: {
+
+  css: {
+    preprocessorOptions: {
+      less: {
+        modifyVars: {
+          // 此处也可设置直角、边框色、字体大小等
+          'primary-color': '#603BE3'
+        },
+        javascriptEnabled: true
+      }}
+  },
+    server: {
     proxy: convertProxyConfig,
     host: "0.0.0.0",
     port: 8888,

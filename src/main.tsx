@@ -1,5 +1,5 @@
 import "./index.css";
-import "antd/dist/antd.min.css";
+import "antd/dist/antd.less";
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/javascript/javascript.js";
 // import 'codemirror/mode/js'

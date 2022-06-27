@@ -151,7 +151,6 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
   const [requestBody, setRequestBody] = useState("");
   const getBody = () => {
     try {
-      console.log(JSON.parse(requestBody || "{}"));
       return JSON.parse(requestBody || "{}");
     } catch (e) {
       message.warn(t_common("invalidJSON"));
@@ -165,15 +164,12 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
       setSent(false);
     },
     onSuccess: (res) => {
-      console.log(res);
       setResponse(res);
     },
     onError(err) {
-      console.log(err);
       setResponse(err?.response);
     },
     onFinally: () => {
-      console.log("finally", res);
       setSent(true);
     },
   });
@@ -181,9 +177,8 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
   useRequest(() => FileSystemService.queryInterface({ id }), {
     refreshDeps: [id],
     onSuccess(res) {
-      console.log(res);
-      setUrl(res.body.endpoint || "");
-      setMethod(res.body.method || "GET");
+      setUrl(res.body.address?.endpoint || "");
+      setMethod(res.body.address?.method || "GET");
       setRequestParams(
         res.body.params.map((p) => ({ id: uuidv4(), ...p })) || []
       );
@@ -191,14 +186,13 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
         res.body.headers.map((h) => ({ id: uuidv4(), ...h })) || []
       );
       setContentType(res.body.body.contentType);
-      setRequestBody(JSON.stringify(res.body.body.body || {}));
+      setRequestBody(res.body.body.body);
     },
   });
 
   const { run: saveInterface } = useRequest(FileSystemService.saveInterface, {
     manual: true,
     onSuccess(res) {
-      console.log(res);
     },
   });
 
@@ -220,17 +214,20 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
   };
 
   const handleSave = () => {
-    console.log(requestBody);
     saveInterface({
       auth: null,
       body: {
         contentType,
         body: requestBody,
       },
-      endpoint: url,
+
+      address:{
+        endpoint: url,
+        method,
+      },
       headers: requestHeaders,
       id,
-      method,
+
       params: requestParams,
       preRequestScript: null,
       testScript: null,
