@@ -217,7 +217,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
         function generateTreeData(nodes:any, nodeList:any = []) {
           const iconMap = {
             '1':<ApiOutlined />,
-            '2': <span className={'tree-icon'}>case</span>,
+            '2': <div style={{display:'flex',alignItems:'center',justifyContent:'center'}}><span className={'tree-icon'}>case</span></div>,
             '3':undefined
           }
 
