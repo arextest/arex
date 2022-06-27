@@ -1,7 +1,10 @@
 import react from "@vitejs/plugin-react";
+import themePreprocessorPlugin from "@zougt/vite-plugin-theme-preprocessor";
+import path from "path";
 import { defineConfig } from "vite";
 
 import proxy from "./config/proxy";
+import themePreprocessorOptions from "./config/themePreprocessorOptions";
 
 const env = "FAT";
 const convertProxyConfig: any = {};
@@ -30,7 +33,20 @@ export default defineConfig({
         plugins: ["@emotion/babel-plugin"],
       },
     }),
+    themePreprocessorPlugin(themePreprocessorOptions),
   ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+      },
+    },
+  },
   server: {
     proxy: convertProxyConfig,
     host: "0.0.0.0",
