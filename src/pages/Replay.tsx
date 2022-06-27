@@ -66,7 +66,7 @@ const Replay = () => {
     <Table
       bordered
       columns={columns}
-      dataSource={data.map((item) => item.application)}
+      dataSource={data?.map((item) => item.application) || []}
       style={{ marginTop: "16px" }}
     />
   );
