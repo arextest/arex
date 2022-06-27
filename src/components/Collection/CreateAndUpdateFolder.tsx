@@ -19,6 +19,7 @@ const CreateAndUpdateFolder: React.FC<{updateParentComponent:any}> = ({ updatePa
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const showModal = () => {
+    setFolderName('')
     setIsModalVisible(true);
   };
 
