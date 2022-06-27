@@ -15,6 +15,7 @@ import {
   Select,
   Tabs,
   Tag,
+  Typography,
 } from "antd";
 import axios from "axios";
 import { FC, useMemo, useState } from "react";
@@ -458,7 +459,13 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
           )
         ) : (
           <ResponseWrapper>
-            <Empty description={t_components("http.responseNotReady")} />
+            <Empty
+              description={
+                <Typography.Text type="secondary">
+                  {t_components("http.responseNotReady")}
+                </Typography.Text>
+              }
+            />
           </ResponseWrapper>
         )}
       </div>
