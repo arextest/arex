@@ -43,4 +43,12 @@ export class FileSystemService {
       params
     );
   }
+
+  static async regressionList() {
+    return request
+      .get<any>(
+        `http://10.5.153.151:8088/config_api/config/application/regressionList`
+      )
+      .then((res) => Promise.resolve(res.body));
+  }
 }

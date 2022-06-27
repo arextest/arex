@@ -42,7 +42,7 @@ const MainBox: React.FC = () => {
       key: "replay",
       label: t("sideMenu.replay"),
       icon: <ContainerOutlined />,
-      disabled: true,
+      disabled: false,
     },
     {
       key: "setting",
