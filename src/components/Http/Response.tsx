@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 import CodeMirror from "@uiw/react-codemirror";
 import { Tabs } from "antd";
 import { FC } from "react";
+import {useStore} from "../../store";
 const { TabPane } = Tabs;
 
 const StatusWrapper = styled.div`
@@ -25,6 +26,8 @@ const Response: FC<{
   const onChange = (key: string) => {
     console.log(key);
   };
+
+  const theme = useStore((state) => state.theme);
 
   return (
     <>
@@ -54,6 +57,7 @@ const Response: FC<{
             extensions={[javascript()]}
             width="100%"
             height="500px"
+            theme={theme}
           />
         </TabPane>
         <TabPane tab="Raw" key="2">
