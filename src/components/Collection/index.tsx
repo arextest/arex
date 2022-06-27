@@ -1,7 +1,7 @@
 import "./index.less";
 
 import {
-  ApiOutlined,
+  ApiOutlined, BlockOutlined,
   DownOutlined,
   FolderOutlined,
   FrownFilled,
@@ -35,7 +35,6 @@ import { findPathbyKey } from "./util";
 
 const { TabPane } = Tabs;
 const onChange = (key: string) => {
-  console.log(key);
 };
 
 const { DirectoryTree } = Tree;
@@ -45,13 +44,12 @@ const Collection = ({ changeSelectedRequest }: any) => {
   const [treeData, setTreeData] = useState([]);
   const currentWorkspaceId = useStore((state) => state.currentWorkspaceId);
   const onSelect: DirectoryTreeProps["onSelect"] = (keys, info) => {
-    console.log("Trigger Select", keys, info);
   };
   const [currentSelectLeaf, setCurrentSelectLeaf] = useState("");
   const createAndUpdateFolderRef = useRef<any>();
 
   const onExpand: DirectoryTreeProps["onExpand"] = (keys, info) => {
-    console.log("Trigger Expand", keys, info);
+
   };
 
   useMount(() => {
@@ -61,7 +59,6 @@ const Collection = ({ changeSelectedRequest }: any) => {
   useEffect(() => {
     fetchWorkspaceData();
   }, [currentWorkspaceId]);
-
   function TitleRender({ val }: any) {
     const [visible, setVisible] = useState(false);
     const handleVisibleChange = (flag: boolean) => {
@@ -85,7 +82,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
                   rel="noopener noreferrer"
                   onClick={() => {
                     createAndUpdateFolderRef.current.changeVal({
-                      path: findPathbyKey(treeData, val.key),
+                      path: findPathbyKey(treeData, val.key).map(i=>i.key),
                       mode: "create",
                     });
                   }}
@@ -103,12 +100,30 @@ const Collection = ({ changeSelectedRequest }: any) => {
                   rel="noopener noreferrer"
                   onClick={() => {
                     createAndUpdateFolderRef.current.changeVal({
-                      path: findPathbyKey(treeData, val.key),
+                      path: findPathbyKey(treeData, val.key).map(i=>i.key),
                       mode: "createRequest",
                     });
                   }}
                 >
                   新增请求
+                </a>
+              ),
+              disabled: !!val.isLeaf,
+            },
+            {
+              key: "6",
+              label: (
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    createAndUpdateFolderRef.current.changeVal({
+                      path: findPathbyKey(treeData, val.key).map(i=>i.key),
+                      mode: "createCase",
+                    });
+                  }}
+                >
+                  新增Case
                 </a>
               ),
               disabled: !!val.isLeaf,
@@ -121,7 +136,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
                   rel="noopener noreferrer"
                   onClick={() => {
                     createAndUpdateFolderRef.current.changeVal({
-                      path: findPathbyKey(treeData, val.key),
+                      path: findPathbyKey(treeData, val.key).map(i=>i.key),
                       mode: "update",
                     });
                   }}
@@ -138,7 +153,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
                   onClick={() => {
                     FileSystemService.removeItem({
                       id: currentWorkspaceId,
-                      removeNodePath: findPathbyKey(treeData, val.key),
+                      removeNodePath: findPathbyKey(treeData, val.key).map(i=>i.key),
                     }).then((res) => {
                       fetchWorkspaceData();
                     });
@@ -158,8 +173,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
           <div
             className={"title"}
             onClick={() => {
-              console.log(val, "val", findPathbyKey(treeData, val.key));
-              if (val.isLeaf) {
+              if (val.nodeType === 1) {
                 changeSelectedRequest({
                   id: val.key,
                   path: findPathbyKey(treeData, val.key),
@@ -168,7 +182,17 @@ const Collection = ({ changeSelectedRequest }: any) => {
                 setCurrentSelectLeaf(val.key);
                 FileSystemService.queryInterface({ id: val.key }).then(
                   (res) => {
-                    console.log(res);
+                  }
+                );
+              } else if (val.nodeType === 2){
+                changeSelectedRequest({
+                  id: val.key,
+                  path: findPathbyKey(treeData, val.key),
+                });
+
+                setCurrentSelectLeaf(val.key);
+                FileSystemService.queryCase({ id: val.key }).then(
+                  (res) => {
                   }
                 );
               }
@@ -199,14 +223,20 @@ const Collection = ({ changeSelectedRequest }: any) => {
   function fetchWorkspaceData() {
     FileSystemService.queryWorkspaceById({ id: currentWorkspaceId }).then(
       (res) => {
-        function generateTreeData(nodes: any, nodeList: any = []) {
+        function generateTreeData(nodes:any, nodeList:any = []) {
+          const iconMap = {
+            '1':<ApiOutlined />,
+            '2':<BlockOutlined />,
+            '3':undefined
+          }
+
           Object.keys(nodes).forEach((value, index, array) => {
             nodeList.push({
               title: nodes[value].nodeName,
               key: nodes[value].infoId,
-              isLeaf: nodes[value].nodeType !== 3,
+              nodeType: nodes[value].nodeType,
               children: [],
-              icon: nodes[value].nodeType !== 3 ? <ApiOutlined /> : null,
+              icon:iconMap[nodes[value].nodeType]
             });
             if (
               nodes[value].children &&
@@ -258,7 +288,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
             onSelect={onSelect}
             onExpand={onExpand}
             treeData={treeData}
-            titleRender={(val) => <TitleRender val={val}></TitleRender>}
+            titleRender={(val) => <TitleRender val={val}/>}
           />
           <Empty style={{ display: treeData.length > 0 ? "none" : "block" }}>
             <Button

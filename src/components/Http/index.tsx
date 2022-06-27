@@ -177,7 +177,16 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
     },
   });
 
-  useRequest(() => FileSystemService.queryInterface({ id }), {
+  useRequest(() => {
+    const {nodeType,key:id} = path[path.length - 1]
+    console.log(path[path.length - 1])
+    if (nodeType === 1){
+      return FileSystemService.queryInterface({ id })
+    } else if (nodeType === 2) {
+      return FileSystemService.queryCase({ id })
+    }
+
+  }, {
     refreshDeps: [id],
     onSuccess(res) {
       setUrl(res.body.address?.endpoint || "");
@@ -189,11 +198,18 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
         res.body.headers.map((h) => ({ id: uuidv4(), ...h })) || []
       );
       setContentType(res.body.body.contentType);
-      setRequestBody(res.body.body.body);
+      setRequestBody(res.body.body.body||'');
     },
   });
 
-  const { run: saveInterface } = useRequest(FileSystemService.saveInterface, {
+  const { run: saveInterface } = useRequest((s)=>{
+    const {nodeType,key:id} = path[path.length - 1]
+    if (nodeType === 1){
+      return FileSystemService.saveInterface(s).then((res:any)=>message.success('保存成功'))
+    } else if (nodeType === 2) {
+      return FileSystemService.saveCase(s).then((res:any)=>message.success('保存成功'))
+    }
+  }, {
     manual: true,
     onSuccess(res) {},
   });
@@ -239,10 +255,9 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
   return (
     <>
       <AnimateAutoHeight>
-        <Breadcrumb style={{ paddingBottom: "14px" }}>
+        <Breadcrumb style={{ paddingBottom: "14px", paddingTop: "14px" }}>
           {path.map((i) => (
-            <Breadcrumb.Item>{i}</Breadcrumb.Item>
-          ))}
+            <Breadcrumb.Item>{i.title}</Breadcrumb.Item>))}
         </Breadcrumb>
 
         <HeaderWrapper>
@@ -332,7 +347,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
           </Button>
         </HeaderWrapper>
 
-        <Tabs defaultActiveKey="0">
+        <Tabs defaultActiveKey="1">
           <TabPane
             tab={
               <span>
