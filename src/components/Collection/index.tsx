@@ -87,7 +87,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
                     });
                   }}
                 >
-                  新增文件夹
+                  New Folder
                 </a>
               ),
               disabled: val.nodeType !== 3,
@@ -105,7 +105,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
                     });
                   }}
                 >
-                  新增请求
+                  New Request
                 </a>
               ),
               disabled: val.nodeType !== 3,
@@ -123,7 +123,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
                     });
                   }}
                 >
-                  新增Case
+                  New Case
                 </a>
               ),
               disabled: val.nodeType !== 1,
@@ -141,7 +141,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
                     });
                   }}
                 >
-                  重命名
+                  Rename
                 </a>
               ),
             },
@@ -159,7 +159,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
                     });
                   }}
                 >
-                  删除
+                  Delete
                 </a>
               ),
             },
@@ -269,7 +269,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
               });
             }}
           >
-            +<span style={{ marginLeft: "8px" }}>新增</span>
+            +<span style={{ marginLeft: "8px" }}>New</span>
           </a>
           <Divider />
           <DirectoryTree
