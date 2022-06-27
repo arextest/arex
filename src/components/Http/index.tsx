@@ -195,8 +195,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
 
   const { run: saveInterface } = useRequest(FileSystemService.saveInterface, {
     manual: true,
-    onSuccess(res) {
-    },
+    onSuccess(res) {},
   });
 
   const handleRequest = () => {
@@ -224,7 +223,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
         body: requestBody,
       },
 
-      address:{
+      address: {
         endpoint: url,
         method,
       },
@@ -253,7 +252,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
             onChange={setMethod}
           />
           <Input
-            placeholder={"Enter request URL"}
+            placeholder={t_components("http.enterRequestUrl")}
             value={url}
             onChange={(e) => setUrl(e.target.value)}
           />

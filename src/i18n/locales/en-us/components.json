@@ -1,6 +1,7 @@
 {
   "http": {
     "urlEmpty": "Please input url",
+    "enterRequestUrl": "Enter request URL",
     "importUrl": "Import URL",
     "showCode": "Show Code",
     "clearAll": "Clear All",

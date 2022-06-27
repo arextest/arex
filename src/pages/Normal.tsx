@@ -16,7 +16,7 @@ const Normal = () => {
   });
 
   return (
-    <Row>
+    <Row style={{ height: "100%" }}>
       <Col
         lg={{ span: 18 }}
         md={{ span: 16 }}
