@@ -24,6 +24,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { FileSystemService } from "../../api/FileSystem.service";
 import { METHODS } from "../../constant";
+import { useStore } from "../../store";
 import AnimateAutoHeight from "../AnimateAutoHeight";
 import FormHeader, { FormHeaderWrapper } from "./FormHeader";
 import FormTable, { getColumns } from "./FormTable";
@@ -86,6 +87,7 @@ const ResponseWrapper = styled.div`
 `;
 
 const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
+  const theme = useStore((state) => state.theme);
   const { t: t_common } = useTranslation("common");
   const { t: t_components } = useTranslation("components");
 
@@ -385,6 +387,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
             <CodeMirror
               value={requestBody}
               extensions={[json()]}
+              theme={theme}
               height="auto"
               minHeight={"100px"}
               onChange={setRequestBody}
@@ -411,17 +414,32 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
             />
           </TabPane>
           <TabPane tab={t_components("http.authorization")} key="3" disabled>
-            <CodeMirror value="" extensions={[json()]} height="300px" />
+            <CodeMirror
+              value=""
+              extensions={[json()]}
+              theme={theme}
+              height="300px"
+            />
           </TabPane>
           <TabPane
             tab={t_components("http.pre-requestScript")}
             key="4"
             disabled
           >
-            <CodeMirror value="" height="300px" extensions={[javascript()]} />
+            <CodeMirror
+              value=""
+              height="300px"
+              extensions={[javascript()]}
+              theme={theme}
+            />
           </TabPane>
           <TabPane tab={t_components("http.test")} key="5" disabled>
-            <CodeMirror value="" height="300px" extensions={[javascript()]} />
+            <CodeMirror
+              value=""
+              height="300px"
+              extensions={[javascript()]}
+              theme={theme}
+            />
           </TabPane>
         </Tabs>
       </AnimateAutoHeight>
