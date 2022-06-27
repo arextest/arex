@@ -5,6 +5,7 @@ import { defineConfig } from "vite";
 
 import proxy from "./config/proxy";
 import themePreprocessorOptions from "./config/themePreprocessorOptions";
+import { Color } from "./src/style/theme";
 
 const env = "FAT";
 const convertProxyConfig: any = {};
@@ -45,7 +46,7 @@ export default defineConfig({
       less: {
         modifyVars: {
           // 此处也可设置直角、边框色、字体大小等
-          'primary-color': '#603BE3'
+          "primary-color": Color.primaryColor,
         },
         javascriptEnabled: true,
       },

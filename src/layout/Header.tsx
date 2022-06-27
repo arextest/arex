@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { Button, Divider, Select } from "antd";
 import { useEffect, useState } from "react";
 
-import ChangeLangBotton from "../i18n/ChangeLangBotton";
+import ChangeLangButton from "../i18n/ChangeLangButton";
 import { useStore } from "../store";
 
 const HeaderWrapper = styled.div`
@@ -58,7 +58,7 @@ const Header = () => {
             icon={theme === "light" ? "🌛" : "🌞"}
             onClick={() => changeTheme()}
           />
-          <ChangeLangBotton />
+          <ChangeLangButton />
           <Select
             value={currentWorkspaceId}
             placeholder={"请选择workspace"}

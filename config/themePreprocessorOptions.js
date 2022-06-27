@@ -2,7 +2,7 @@
 // https://github.com/GitOfZGT/vite-plugin-theme-preprocessor/blob/master/README.zh.md#%E9%A2%84%E8%AE%BE%E4%B8%BB%E9%A2%98%E6%A8%A1%E5%BC%8F
 import path from "path";
 
-import { DefaultTheme } from "../src/style/theme";
+import { Color, DefaultTheme } from "../src/style/theme";
 
 const includeStyles = {
   ".ant-btn-text": {
@@ -15,6 +15,10 @@ const includeStyles = {
     backgroundColor: "transparent",
     border: "none",
     boxShadow: "none",
+  },
+  ".ant-btn-primary": {
+    borderColor: Color.primaryColor,
+    background: Color.primaryColor,
   },
 };
 

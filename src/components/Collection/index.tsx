@@ -3,33 +3,35 @@ import "./index.less";
 import {
   ApiOutlined,
   DownOutlined,
-  FolderOutlined, FrownFilled,
+  FolderOutlined,
+  FrownFilled,
   MoreOutlined,
   SmileOutlined,
 } from "@ant-design/icons";
+import { css } from "@emotion/react";
 import { useMount } from "ahooks";
 import {
-    Badge,
-    Button,
-    Divider,
-    Dropdown,
-    Empty,
-    Input,
-    List,
-    Menu, notification,
-    Space,
-    Tabs,
-    Tree,
+  Badge,
+  Button,
+  Divider,
+  Dropdown,
+  Empty,
+  Input,
+  List,
+  Menu,
+  notification,
+  Space,
+  Tabs,
+  Tree,
 } from "antd";
 import type { DirectoryTreeProps } from "antd/lib/tree";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+
 import { FileSystemService } from "../../api/FileSystem.service";
 import { useStore } from "../../store";
 import CreateAndUpdateFolder from "./CreateAndUpdateFolder";
-import {findPathbyKey} from "./util";
-
-
+import { findPathbyKey } from "./util";
 
 const { TabPane } = Tabs;
 const onChange = (key: string) => {
@@ -38,7 +40,7 @@ const onChange = (key: string) => {
 
 const { DirectoryTree } = Tree;
 
-const Collection = ({ changeSelectedRequest }:any) => {
+const Collection = ({ changeSelectedRequest }: any) => {
   const { t } = useTranslation("components");
   const [treeData, setTreeData] = useState([]);
   const currentWorkspaceId = useStore((state) => state.currentWorkspaceId);
@@ -60,96 +62,96 @@ const Collection = ({ changeSelectedRequest }:any) => {
     fetchWorkspaceData();
   }, [currentWorkspaceId]);
 
-    function TitleRender({ val }:any) {
-        const [visible,setVisible] = useState(false)
-        const handleVisibleChange = (flag: boolean) => {
-            setVisible(flag);
-        };
-        const menu = (val:any) => {
-            return (
-                <Menu
-                    onClick={(e)=>{
-                        e.domEvent.stopPropagation()
-                        // se
-                        setVisible(false)
-                        // notification.info({message:'成功'})
-                    }}
-                    items={[
-                        {
-                            key: "2",
-                            label: (
-                                <a
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={() => {
-                                        createAndUpdateFolderRef.current.changeVal({
-                                            path: findPathbyKey(treeData, val.key),
-                                            mode: "create",
-                                        });
-                                    }}
-                                >
-                                    新增文件夹
-                                </a>
-                            ),
-                            disabled: !!val.isLeaf,
-                        },
-                        {
-                            key: "5",
-                            label: (
-                                <a
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={() => {
-                                        createAndUpdateFolderRef.current.changeVal({
-                                            path: findPathbyKey(treeData, val.key),
-                                            mode: "createRequest",
-                                        });
-                                    }}
-                                >
-                                    新增请求
-                                </a>
-                            ),
-                            disabled: !!val.isLeaf,
-                        },
-                        {
-                            key: "1",
-                            label: (
-                                <a
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={() => {
-                                        createAndUpdateFolderRef.current.changeVal({
-                                            path: findPathbyKey(treeData, val.key),
-                                            mode: "update",
-                                        });
-                                    }}
-                                >
-                                    重命名
-                                </a>
-                            ),
-                        },
-                        {
-                            key: "3",
-                            label: (
-                                <a
-                                    style={{ color: "red" }}
-                                    onClick={() => {
-                                        FileSystemService.removeItem({
-                                            id: currentWorkspaceId,
-                                            removeNodePath: findPathbyKey(treeData, val.key),
-                                        }).then((res) => {
-                                            fetchWorkspaceData();
-                                        });
-                                    }}
-                                >
-                                    删除
-                                </a>
-                            ),
-                        },
-                    ]}
-                />
-            );
-        };
+  function TitleRender({ val }: any) {
+    const [visible, setVisible] = useState(false);
+    const handleVisibleChange = (flag: boolean) => {
+      setVisible(flag);
+    };
+    const menu = (val: any) => {
+      return (
+        <Menu
+          onClick={(e) => {
+            e.domEvent.stopPropagation();
+            // se
+            setVisible(false);
+            // notification.info({message:'成功'})
+          }}
+          items={[
+            {
+              key: "2",
+              label: (
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    createAndUpdateFolderRef.current.changeVal({
+                      path: findPathbyKey(treeData, val.key),
+                      mode: "create",
+                    });
+                  }}
+                >
+                  新增文件夹
+                </a>
+              ),
+              disabled: !!val.isLeaf,
+            },
+            {
+              key: "5",
+              label: (
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    createAndUpdateFolderRef.current.changeVal({
+                      path: findPathbyKey(treeData, val.key),
+                      mode: "createRequest",
+                    });
+                  }}
+                >
+                  新增请求
+                </a>
+              ),
+              disabled: !!val.isLeaf,
+            },
+            {
+              key: "1",
+              label: (
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    createAndUpdateFolderRef.current.changeVal({
+                      path: findPathbyKey(treeData, val.key),
+                      mode: "update",
+                    });
+                  }}
+                >
+                  重命名
+                </a>
+              ),
+            },
+            {
+              key: "3",
+              label: (
+                <a
+                  style={{ color: "red" }}
+                  onClick={() => {
+                    FileSystemService.removeItem({
+                      id: currentWorkspaceId,
+                      removeNodePath: findPathbyKey(treeData, val.key),
+                    }).then((res) => {
+                      fetchWorkspaceData();
+                    });
+                  }}
+                >
+                  删除
+                </a>
+              ),
+            },
+          ]}
+        />
+      );
+    };
     return (
       <div className={"title-render"}>
         <div className={"wrap"}>
@@ -177,7 +179,12 @@ const Collection = ({ changeSelectedRequest }:any) => {
               <Badge style={{ marginLeft: "8px" }} status="processing" />
             ) : null}
           </div>
-          <Dropdown overlay={menu(val)} trigger={["click"]} visible={visible} onVisibleChange={handleVisibleChange}>
+          <Dropdown
+            overlay={menu(val)}
+            trigger={["click"]}
+            visible={visible}
+            onVisibleChange={handleVisibleChange}
+          >
             <span onClick={(event) => event.stopPropagation()}>
               <Space>
                 <MoreOutlined />
@@ -192,14 +199,14 @@ const Collection = ({ changeSelectedRequest }:any) => {
   function fetchWorkspaceData() {
     FileSystemService.queryWorkspaceById({ id: currentWorkspaceId }).then(
       (res) => {
-        function generateTreeData(nodes:any, nodeList:any = []) {
+        function generateTreeData(nodes: any, nodeList: any = []) {
           Object.keys(nodes).forEach((value, index, array) => {
             nodeList.push({
               title: nodes[value].nodeName,
               key: nodes[value].infoId,
               isLeaf: nodes[value].nodeType !== 3,
               children: [],
-              icon:nodes[value].nodeType !== 3?<ApiOutlined />:null
+              icon: nodes[value].nodeType !== 3 ? <ApiOutlined /> : null,
             });
             if (
               nodes[value].children &&
@@ -220,7 +227,17 @@ const Collection = ({ changeSelectedRequest }:any) => {
 
   return (
     <div className={"collection"}>
-      <Tabs defaultActiveKey="2" onChange={onChange} tabPosition={"left"}>
+      <Tabs
+        defaultActiveKey="2"
+        onChange={onChange}
+        tabPosition={"left"}
+        css={css`
+          .ant-tabs-tab {
+            padding: 8px !important;
+            left: 10px;
+          }
+        `}
+      >
         <TabPane tab={<FolderOutlined />} key="2">
           <a
             className={"new-btn"}

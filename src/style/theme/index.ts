@@ -4,3 +4,7 @@ export enum Theme {
 }
 
 export const DefaultTheme = Theme.light;
+
+export const Color = {
+  primaryColor: "#603BE3",
+};
