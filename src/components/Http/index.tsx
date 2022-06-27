@@ -179,11 +179,22 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
 
   useRequest(() => {
     const {nodeType,key:id} = path[path.length - 1]
-    console.log(path[path.length - 1])
+    const {key:pid} = path[path.length - 2]
     if (nodeType === 1){
       return FileSystemService.queryInterface({ id })
     } else if (nodeType === 2) {
-      return FileSystemService.queryCase({ id })
+      return new Promise((resolve, reject) => {
+        FileSystemService.queryInterface({ id:pid }).then(r=>{
+          FileSystemService.queryCase({ id }).then(r1=>{
+            resolve({
+              body:{
+                ...r.body,
+                ...r1.body
+              }
+            })
+          })
+        })
+      })
     }
 
   }, {

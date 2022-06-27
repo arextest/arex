@@ -90,7 +90,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
                   新增文件夹
                 </a>
               ),
-              disabled: !!val.isLeaf,
+              disabled: val.nodeType !== 3,
             },
             {
               key: "5",
@@ -108,7 +108,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
                   新增请求
                 </a>
               ),
-              disabled: !!val.isLeaf,
+              disabled: val.nodeType !== 3,
             },
             {
               key: "6",
@@ -126,7 +126,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
                   新增Case
                 </a>
               ),
-              disabled: !!val.isLeaf,
+              disabled: val.nodeType !== 1,
             },
             {
               key: "1",
@@ -180,21 +180,12 @@ const Collection = ({ changeSelectedRequest }: any) => {
                 });
 
                 setCurrentSelectLeaf(val.key);
-                FileSystemService.queryInterface({ id: val.key }).then(
-                  (res) => {
-                  }
-                );
               } else if (val.nodeType === 2){
                 changeSelectedRequest({
                   id: val.key,
                   path: findPathbyKey(treeData, val.key),
                 });
-
                 setCurrentSelectLeaf(val.key);
-                FileSystemService.queryCase({ id: val.key }).then(
-                  (res) => {
-                  }
-                );
               }
             }}
           >

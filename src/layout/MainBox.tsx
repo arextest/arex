@@ -7,7 +7,7 @@ import styled from "@emotion/styled";
 import { useRequest } from "ahooks";
 import type { MenuProps } from "antd";
 import { Menu } from "antd";
-import React from "react";
+import React, {useState} from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet, useNavigate } from "react-router-dom";
 
@@ -57,14 +57,19 @@ const MainBox: React.FC = () => {
     onSuccess: (res) => setWorkspaces(res.body.workspaces),
   });
 
-  const onClick: MenuProps["onClick"] = (e) => to(`/${e.key}`);
+  const [activeKey,setActiveKey] = useState('normal')
+
+  const onClick: MenuProps["onClick"] = (e) => {
+    setActiveKey(e.key)
+    to(`/${e.key}`);
+  }
 
   return (
     <MainBoxWrapper>
       <Header />
       <div style={{ display: "flex", height: "calc(100vh - 56px)" }}>
         <Menu
-          activeKey="normal"
+          activeKey={activeKey}
           onClick={onClick}
           style={{ width: 150 }}
           mode="vertical"
