@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import ChangeLangButton from "../i18n/ChangeLangButton";
 import { useStore } from "../store";
+import AppGitHubStarButton from "./GitHubStarButton";
 
 const HeaderWrapper = styled.div`
   height: 56px;
@@ -16,6 +17,8 @@ const Logo = styled.span`
   line-height: 32px;
   font-weight: bolder;
   margin-left: 16px;
+  display: flex;
+  align-items: center;
 `;
 
 const HeaderMenu = styled.div`
@@ -51,7 +54,10 @@ const Header = () => {
   return (
     <>
       <HeaderWrapper>
-        <Logo>AREX</Logo>
+        <Logo>
+          <span style={{marginRight:"8px"}}>AREX</span>
+          <AppGitHubStarButton></AppGitHubStarButton>
+        </Logo>
         <HeaderMenu>
           <Button
             type="text"

@@ -52,6 +52,9 @@ export default defineConfig({
       },
     },
   },
+  esbuild: {
+    logOverride: { 'this-is-undefined-in-esm': 'silent' }
+  },
   server: {
     proxy: convertProxyConfig,
     host: "0.0.0.0",
