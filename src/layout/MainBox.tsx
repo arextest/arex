@@ -32,7 +32,12 @@ const MainBox: React.FC = () => {
   const { t } = useTranslation("layout");
   const items: MenuItem[] = [
     { key: "normal", label: t("sideMenu.normal"), icon: <PieChartOutlined /> },
-    { key: "compare", label: t("sideMenu.compare"), icon: <DesktopOutlined /> ,disabled: false,},
+    {
+      key: "compare",
+      label: t("sideMenu.compare"),
+      icon: <DesktopOutlined />,
+      disabled: false,
+    },
     {
       key: "replay",
       label: t("sideMenu.replay"),
@@ -57,7 +62,7 @@ const MainBox: React.FC = () => {
   return (
     <MainBoxWrapper>
       <Header />
-      <div style={{ display: "flex", minHeight: "calc(100% - 56px)" }}>
+      <div style={{ display: "flex", height: "calc(100vh - 56px)" }}>
         <Menu
           activeKey="normal"
           onClick={onClick}

@@ -1,9 +1,8 @@
-import "./index.css";
+import "./style/index.less";
 import "antd/dist/antd.less";
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/javascript/javascript.js";
 // import 'codemirror/mode/js'
-import "codemirror/mode/vue/vue.js";
 import "codemirror/mode/jsx/jsx.js";
 import "codemirror/theme/idea.css";
 import "jsoneditor/dist/jsoneditor.min.css";

@@ -15,6 +15,7 @@ import {
   Select,
   Tabs,
   Tag,
+  Typography,
 } from "antd";
 import axios from "axios";
 import { FC, useMemo, useState } from "react";
@@ -24,6 +25,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { FileSystemService } from "../../api/FileSystem.service";
 import { METHODS } from "../../constant";
+import { useStore } from "../../store";
 import AnimateAutoHeight from "../AnimateAutoHeight";
 import FormHeader, { FormHeaderWrapper } from "./FormHeader";
 import FormTable, { getColumns } from "./FormTable";
@@ -86,6 +88,7 @@ const ResponseWrapper = styled.div`
 `;
 
 const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
+  const theme = useStore((state) => state.theme);
   const { t: t_common } = useTranslation("common");
   const { t: t_components } = useTranslation("components");
 
@@ -195,7 +198,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
         res.body.headers.map((h) => ({ id: uuidv4(), ...h })) || []
       );
       setContentType(res.body.body.contentType);
-      setRequestBody(res.body.body.body);
+      setRequestBody(res.body.body.body||'');
     },
   });
 
@@ -208,9 +211,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
     }
   }, {
     manual: true,
-    onSuccess(res) {
-      console.log(res,'res')
-    },
+    onSuccess(res) {},
   });
 
   const handleRequest = () => {
@@ -238,7 +239,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
         body: requestBody,
       },
 
-      address:{
+      address: {
         endpoint: url,
         method,
       },
@@ -256,8 +257,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
       <AnimateAutoHeight>
         <Breadcrumb style={{ paddingBottom: "14px", paddingTop: "14px" }}>
           {path.map((i) => (
-            <Breadcrumb.Item>{i.title}</Breadcrumb.Item>
-          ))}
+            <Breadcrumb.Item>{i.title}</Breadcrumb.Item>))}
         </Breadcrumb>
 
         <HeaderWrapper>
@@ -266,10 +266,17 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
             options={RequestTypeOptions}
             onChange={setMethod}
           />
-          <Input placeholder={'Enter request URL'} value={url} onChange={(e) => setUrl(e.target.value)} />
-          {
-            mode === 'compare'?<Input placeholder={'Enter compare request URL'} style={{marginLeft:'8px'}}/>:null
-          }
+          <Input
+            placeholder={t_components("http.enterRequestUrl")}
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+          />
+          {mode === "compare" ? (
+            <Input
+              placeholder={"Enter compare request URL"}
+              style={{ marginLeft: "8px" }}
+            />
+          ) : null}
           <Button
             // DropdownButton
             type="primary"
@@ -392,6 +399,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
             <CodeMirror
               value={requestBody}
               extensions={[json()]}
+              theme={theme}
               height="auto"
               minHeight={"100px"}
               onChange={setRequestBody}
@@ -418,17 +426,32 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
             />
           </TabPane>
           <TabPane tab={t_components("http.authorization")} key="3" disabled>
-            <CodeMirror value="" extensions={[json()]} height="300px" />
+            <CodeMirror
+              value=""
+              extensions={[json()]}
+              theme={theme}
+              height="300px"
+            />
           </TabPane>
           <TabPane
             tab={t_components("http.pre-requestScript")}
             key="4"
             disabled
           >
-            <CodeMirror value="" height="300px" extensions={[javascript()]} />
+            <CodeMirror
+              value=""
+              height="300px"
+              extensions={[javascript()]}
+              theme={theme}
+            />
           </TabPane>
           <TabPane tab={t_components("http.test")} key="5" disabled>
-            <CodeMirror value="" height="300px" extensions={[javascript()]} />
+            <CodeMirror
+              value=""
+              height="300px"
+              extensions={[javascript()]}
+              theme={theme}
+            />
           </TabPane>
         </Tabs>
       </AnimateAutoHeight>
@@ -447,7 +470,13 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
           )
         ) : (
           <ResponseWrapper>
-            <Empty description={t_components("http.responseNotReady")} />
+            <Empty
+              description={
+                <Typography.Text type="secondary">
+                  {t_components("http.responseNotReady")}
+                </Typography.Text>
+              }
+            />
           </ResponseWrapper>
         )}
       </div>

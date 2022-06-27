@@ -7,15 +7,12 @@ export const local = new Map([
   ["en-US", "En"],
 ]);
 
-export function useLocalGenerator() {
+export function useNextLang() {
   const defaultLng = i18n.language;
   const localArr = Array.from(local);
-  let next: number;
-  return () => {
-    const cur = localArr.findIndex((l) => l[0] === defaultLng);
-    next = cur === localArr.length - 1 ? 0 : cur + 1;
-    return localArr[next];
-  };
+  const cur = localArr.findIndex((l) => l[0] === defaultLng);
+  const next = cur === localArr.length - 1 ? 0 : cur + 1;
+  return localArr[next];
 }
 
 export default i18n;

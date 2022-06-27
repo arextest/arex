@@ -1,7 +1,11 @@
 import react from "@vitejs/plugin-react";
+import themePreprocessorPlugin from "@zougt/vite-plugin-theme-preprocessor";
+import path from "path";
 import { defineConfig } from "vite";
 
 import proxy from "./config/proxy";
+import themePreprocessorOptions from "./config/themePreprocessorOptions";
+import { Color } from "./src/style/theme";
 
 const env = "FAT";
 const convertProxyConfig: any = {};
@@ -30,19 +34,25 @@ export default defineConfig({
         plugins: ["@emotion/babel-plugin"],
       },
     }),
+    themePreprocessorPlugin(themePreprocessorOptions),
   ],
-
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
   css: {
     preprocessorOptions: {
       less: {
         modifyVars: {
           // 此处也可设置直角、边框色、字体大小等
-          'primary-color': '#603BE3'
+          "primary-color": Color.primaryColor,
         },
-        javascriptEnabled: true
-      }}
+        javascriptEnabled: true,
+      },
+    },
   },
-    server: {
+  server: {
     proxy: convertProxyConfig,
     host: "0.0.0.0",
     port: 8888,

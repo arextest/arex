@@ -1,6 +1,7 @@
 {
   "http": {
     "urlEmpty": "请输入URL",
+    "enterRequestUrl": "请输入请求URL",
     "importUrl": "导入URL",
     "showCode": "显示代码",
     "clearAll": "全部清除",
