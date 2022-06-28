@@ -111,7 +111,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
         }
         return acc;
       }, {}),
-    []
+    [requestParams]
   );
   const paramsCount = useMemo(
     () =>
@@ -177,53 +177,62 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
     },
   });
 
-  useRequest(() => {
-    const {nodeType,key:id} = path[path.length - 1]
-    const {key:pid} = path[path.length - 2]
-    if (nodeType === 1){
-      return FileSystemService.queryInterface({ id })
-    } else if (nodeType === 2) {
-      return new Promise((resolve, reject) => {
-        FileSystemService.queryInterface({ id:pid }).then(r=>{
-          FileSystemService.queryCase({ id }).then(r1=>{
-            resolve({
-              body:{
-                ...r.body,
-                ...r1.body
-              }
-            })
-          })
-        })
-      })
-    }
-
-  }, {
-    refreshDeps: [id],
-    onSuccess(res) {
-      setUrl(res.body.address?.endpoint || "");
-      setMethod(res.body.address?.method || "GET");
-      setRequestParams(
-        res.body.params.map((p) => ({ id: uuidv4(), ...p })) || []
-      );
-      setRequestHeaders(
-        res.body.headers.map((h) => ({ id: uuidv4(), ...h })) || []
-      );
-      setContentType(res.body.body.contentType);
-      setRequestBody(res.body.body.body||'');
+  useRequest(
+    () => {
+      const { nodeType, key: id } = path[path.length - 1];
+      const { key: pid } = path[path.length - 2];
+      if (nodeType === 1) {
+        return FileSystemService.queryInterface({ id });
+      } else if (nodeType === 2) {
+        return new Promise((resolve, reject) => {
+          FileSystemService.queryInterface({ id: pid }).then((r) => {
+            FileSystemService.queryCase({ id }).then((r1) => {
+              resolve({
+                body: {
+                  ...r.body,
+                  ...r1.body,
+                },
+              });
+            });
+          });
+        });
+      }
     },
-  });
-
-  const { run: saveInterface } = useRequest((s)=>{
-    const {nodeType,key:id} = path[path.length - 1]
-    if (nodeType === 1){
-      return FileSystemService.saveInterface(s).then((res:any)=>message.success('保存成功'))
-    } else if (nodeType === 2) {
-      return FileSystemService.saveCase(s).then((res:any)=>message.success('保存成功'))
+    {
+      refreshDeps: [id],
+      onSuccess(res) {
+        setUrl(res.body.address?.endpoint || "");
+        setMethod(res.body.address?.method || "GET");
+        setRequestParams(
+          res.body.params.map((p) => ({ id: uuidv4(), ...p })) || []
+        );
+        setRequestHeaders(
+          res.body.headers.map((h) => ({ id: uuidv4(), ...h })) || []
+        );
+        setContentType(res.body.body.contentType);
+        setRequestBody(res.body.body.body || "");
+      },
     }
-  }, {
-    manual: true,
-    onSuccess(res) {},
-  });
+  );
+
+  const { run: saveInterface } = useRequest(
+    (s) => {
+      const { nodeType, key: id } = path[path.length - 1];
+      if (nodeType === 1) {
+        return FileSystemService.saveInterface(s).then((res: any) =>
+          message.success("保存成功")
+        );
+      } else if (nodeType === 2) {
+        return FileSystemService.saveCase(s).then((res: any) =>
+          message.success("保存成功")
+        );
+      }
+    },
+    {
+      manual: true,
+      onSuccess(res) {},
+    }
+  );
 
   const handleRequest = () => {
     if (!url) return message.warn(t_components("http.urlEmpty"));
@@ -268,7 +277,8 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
       <AnimateAutoHeight>
         <Breadcrumb style={{ paddingBottom: "14px", paddingTop: "14px" }}>
           {path.map((i) => (
-            <Breadcrumb.Item>{i.title}</Breadcrumb.Item>))}
+            <Breadcrumb.Item>{i.title}</Breadcrumb.Item>
+          ))}
         </Breadcrumb>
 
         <HeaderWrapper>
