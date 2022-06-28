@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { Button, Divider, Select } from "antd";
 import { useEffect, useState } from "react";
 
-import AppGitHubStarButton from "../components/GitHubStarButton";
+import GitHubStarButton from "../components/GitHubStarButton";
 import ChangeLangButton from "../i18n/ChangeLangButton";
 import { useStore } from "../store";
 
@@ -56,7 +56,7 @@ const Header = () => {
       <HeaderWrapper>
         <Logo>
           <span>AREX</span>
-          <AppGitHubStarButton />
+          <GitHubStarButton />
         </Logo>
         <HeaderMenu>
           <Button

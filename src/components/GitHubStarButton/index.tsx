@@ -2,7 +2,7 @@ import GitHubButton from "react-github-btn";
 
 import { useStore } from "../../store";
 
-const AppGitHubStarButton = () => {
+const GitHubStarButton = () => {
   const theme = useStore((state) => state.theme);
   return (
     <div style={{ height: "22px", marginLeft: "16px" }}>
@@ -18,4 +18,4 @@ const AppGitHubStarButton = () => {
   );
 };
 
-export default AppGitHubStarButton;
+export default GitHubStarButton;

@@ -35,7 +35,7 @@ const FormHeader: FC<{ update: Updater<KeyValueType[]> }> = (props) => {
       id: uuidv4(),
       key: "",
       value: "",
-      disabled: false,
+      active: true,
     };
     props.update((state) => {
       state.push(newValue);
