@@ -287,8 +287,9 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
   };
 
   const handleUpdateUrl = () => {
+    const invalidValues = ["", undefined];
     const query = requestParams
-      .filter((param) => param.active)
+      .filter((param) => param.active && !invalidValues.includes(param.key))
       .reduce((pre, cur, i) => {
         pre += `${i === 0 ? "?" : "&"}${cur.key}=${cur.value}`;
         return pre;
