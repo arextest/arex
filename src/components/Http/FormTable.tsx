@@ -6,6 +6,7 @@ import {
 import styled from "@emotion/styled";
 import { Button, Input, Space, Table, TableProps, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
+import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { Updater } from "use-immer";
 
@@ -21,17 +22,17 @@ const FormTable = styled(Table)<TableProps<KeyValueType>>`
 `;
 
 export const getColumns = (
-  update: Updater<KeyValueType[]>
+  paramsUpdater: Updater<KeyValueType[]>
 ): ColumnsType<KeyValueType> => {
   const { t } = useTranslation("common");
   const handleChange = (i: number, attr: "key" | "value", value: string) => {
-    update((params) => {
+    paramsUpdater((params) => {
       params[i][attr] = value;
     });
   };
 
   const handleDisable = (i: number) => {
-    update((params) => {
+    paramsUpdater((params) => {
       params[i].active = !params[i].active;
     });
   };
@@ -87,7 +88,7 @@ export const getColumns = (
               size="small"
               icon={<DeleteOutlined />}
               onClick={() =>
-                update((params) => {
+                paramsUpdater((params) => {
                   params.splice(i, 1);
                 })
               }

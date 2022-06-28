@@ -18,7 +18,7 @@ import {
   Typography,
 } from "antd";
 import axios from "axios";
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useImmer } from "use-immer";
 import { v4 as uuidv4 } from "uuid";
@@ -41,7 +41,6 @@ export type HttpProps = {
 };
 
 export type KeyValueType = {
-  id: string;
   key: string;
   value: string;
   active: boolean;
@@ -101,8 +100,13 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
   const [sent, setSent] = useState(false);
   const [response, setResponse] = useState<any>(); // 响应完整数据
   const [requestParams, setRequestParams] = useImmer<KeyValueType[]>([
-    { id: uuidv4(), key: "", value: "", active: true },
+    { key: "", value: "", active: true },
   ]);
+
+  useEffect(() => {
+    handleUpdateUrl();
+  }, [requestParams]);
+
   const params = useMemo(
     () =>
       requestParams.reduce<ParamsObject>((acc, { key, value, active }) => {
@@ -123,7 +127,6 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
   );
   const [requestHeaders, setRequestHeaders] = useImmer<KeyValueType[]>([
     {
-      id: uuidv4(),
       key: "",
       value: "",
       active: true,
@@ -253,23 +256,44 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
 
   const handleSave = () => {
     saveInterface({
+      id,
       auth: null,
       body: {
         contentType,
         body: requestBody,
       },
-
       address: {
         endpoint: url,
         method,
       },
       headers: requestHeaders,
-      id,
-
       params: requestParams,
       preRequestScript: null,
       testScript: null,
     });
+  };
+
+  const handleUrlChange = (value: string) => {
+    setUrl(value);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_, queryStr] = value.split("?");
+    if (queryStr) {
+      const query = queryStr.split("&").map((q) => {
+        const [key, value] = q.split("=");
+        return { key, value, active: true };
+      });
+      setRequestParams(query);
+    }
+  };
+
+  const handleUpdateUrl = () => {
+    const query = requestParams
+      .filter((param) => param.active)
+      .reduce((pre, cur, i) => {
+        pre += `${i === 0 ? "?" : "&"}${cur.key}=${cur.value}`;
+        return pre;
+      }, "");
+    setUrl(url.split("?")[0] + query);
   };
 
   return (
@@ -290,7 +314,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
           <Input
             placeholder={t_components("http.enterRequestUrl")}
             value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            onChange={(e) => handleUrlChange(e.target.value)}
           />
           {mode === "compare" ? (
             <Input

@@ -32,7 +32,6 @@ const FormHeader: FC<{ update: Updater<KeyValueType[]> }> = (props) => {
 
   const handleAddParam = () => {
     const newValue: KeyValueType = {
-      id: uuidv4(),
       key: "",
       value: "",
       active: true,
