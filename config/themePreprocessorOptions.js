@@ -11,7 +11,6 @@ const includeStyles = {
     boxShadow: "none",
   },
   ".ant-input-borderless": {
-    color: "transparent",
     backgroundColor: "transparent",
     border: "none",
     boxShadow: "none",
