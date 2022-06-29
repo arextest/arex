@@ -98,12 +98,6 @@ const ResponseCompare = ({ responses }) => {
     // mergeView.editor().setSize(null, "100%");
   }, [responses]);
 
-  // useEffect(() => {
-  //   if (!mergeView) return;
-  //   console.log(mergeView);
-  //   mergeView.editor().setOption("theme", theme === "light" ? "neat" : "gruvbox-dark");
-  // }, [theme]);
-
   return (
     <div>
       <Tabs defaultActiveKey="1" onChange={onChange}>
