@@ -301,11 +301,13 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
   return (
     <>
       <AnimateAutoHeight>
-        <Breadcrumb style={{ paddingBottom: "14px", paddingTop: "14px" }}>
-          {path.map((i) => (
-            <Breadcrumb.Item>{i.title}</Breadcrumb.Item>
-          ))}
-        </Breadcrumb>
+        {!!path.length && (
+          <Breadcrumb style={{ paddingBottom: "14px" }}>
+            {path.map((i) => (
+              <Breadcrumb.Item>{i.title}</Breadcrumb.Item>
+            ))}
+          </Breadcrumb>
+        )}
 
         <HeaderWrapper>
           <Select
