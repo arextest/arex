@@ -158,13 +158,10 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
   const [contentType, setContentType] = useState("application/json");
   const [requestBody, setRequestBody] = useState("");
 
-  const {
-    data: res,
-    loading: requesting,
-    run: request,
-  } = useRequest(axios, {
+  const { loading: requesting, run: request } = useRequest(axios, {
     manual: true,
     onSuccess: (res) => {
+      console.log(res);
       setResponse(res);
     },
     onError(err) {
@@ -415,7 +412,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
               pagination={false}
               dataSource={requestParams}
               // @ts-ignore
-              columns={getColumns(setRequestParams)}
+              columns={getColumns(setRequestParams, true)}
             />
           </TabPane>
           <TabPane
@@ -475,7 +472,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
               pagination={false}
               dataSource={requestHeaders}
               // @ts-ignore
-              columns={getColumns(setRequestHeaders)}
+              columns={getColumns(setRequestHeaders, true)}
             />
           </TabPane>
           <TabPane tab={t_components("http.authorization")} key="3" disabled>
@@ -516,6 +513,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
           <Spin spinning={requesting}>
             {mode === "normal" ? (
               <Response
+                responseHeaders={response?.headers}
                 res={response?.data || response?.statusText}
                 status={{ code: response.status, text: response.statusText }}
               />

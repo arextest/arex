@@ -3,8 +3,10 @@ import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import CodeMirror from "@uiw/react-codemirror";
 import { Tabs } from "antd";
-import { FC } from "react";
-import {useStore} from "../../store";
+import { FC, useEffect, useMemo } from "react";
+
+import { useStore } from "../../store";
+import FormTable, { getColumns } from "./FormTable";
 const { TabPane } = Tabs;
 
 const StatusWrapper = styled.div`
@@ -22,12 +24,27 @@ const Response: FC<{
   status: { code: number; text: string };
   time?: number;
   size?: number;
+  responseHeaders?: object;
 }> = (props) => {
   const onChange = (key: string) => {
     console.log(key);
   };
 
   const theme = useStore((state) => state.theme);
+  const headers = useMemo(
+    () =>
+      props.responseHeaders
+        ? Object.entries(props.responseHeaders).map((h) => ({
+            key: h[0],
+            value: h[1],
+          }))
+        : [],
+    [props.responseHeaders]
+  );
+
+  useEffect(() => {
+    console.log(headers);
+  }, [headers]);
 
   return (
     <>
@@ -66,7 +83,16 @@ const Response: FC<{
           </span>
         </TabPane>
         <TabPane tab="Header" key="3">
-          Content of Tab Pane 3
+          <FormTable
+            bordered
+            showHeader
+            size="small"
+            rowKey="id"
+            pagination={false}
+            dataSource={headers}
+            // @ts-ignore
+            columns={getColumns()}
+          />
         </TabPane>
         <TabPane tab="Test Results" key="4">
           Content of Tab Pane 3
