@@ -1,18 +1,28 @@
 // 根据id查询返回每一级数据
-export function findPathbyKey(tree:any, key:any, path?:any):any {
+import { Root, RootParadigmKey } from "../../api/FileSystem.type";
+
+export function findPathByKey(
+  tree: Root<RootParadigmKey>[],
+  key: string,
+  path?: Root<RootParadigmKey>[]
+): any {
   if (typeof path === "undefined") {
     path = [];
   }
   for (let i = 0; i < tree.length; i++) {
     const tempPath = [...path];
     tempPath.push(tree[i]);
-    if (tree[i].key == key) {
+    if (tree[i].key === key) {
       return tempPath;
     }
     if (tree[i].children) {
-      const reuslt = findPathbyKey(tree[i].children, key, tempPath);
-      if (reuslt) {
-        return reuslt;
+      const result = findPathByKey(
+        tree[i].children as Root<RootParadigmKey>[],
+        key,
+        tempPath
+      );
+      if (result) {
+        return result;
       }
     }
   }

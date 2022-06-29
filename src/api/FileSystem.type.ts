@@ -1,5 +1,34 @@
-import { KeyValueType, ParamsObject } from "../components/Http";
-import { METHODS } from "../constant";
+import { ReactNode } from "react";
+
+import { KeyValueType } from "../components/Http";
+import { METHODS, NodeType } from "../constant";
+
+// ------ /api/filesystem/queryWorkspaceById ------
+export interface QueryWorkspaceByIdReq {
+  id: string;
+}
+export type RootParadigmNode = {
+  infoId: string;
+  nodeName: string;
+};
+export type RootParadigmKey = {
+  key: string;
+  title: string;
+  icon?: ReactNode;
+};
+export type Root<T = RootParadigmNode | RootParadigmKey> = {
+  nodeType: NodeType;
+  children: Root<T>[] | null;
+} & T;
+type FsTree = {
+  id: string;
+  roots: Root<RootParadigmNode>[];
+  userName: string;
+  workspaceName: string;
+};
+export interface QueryWorkspaceByIdRes {
+  fsTree: FsTree;
+}
 
 // ------ /api/filesystem/saveInterface ------
 export interface QueryInterfaceReq {

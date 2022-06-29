@@ -2,6 +2,8 @@ import request from "./axios";
 import {
   QueryInterfaceReq,
   QueryInterfaceRes,
+  QueryWorkspaceByIdReq,
+  QueryWorkspaceByIdRes,
   SaveInterfaceReq,
   SaveInterfaceRes,
 } from "./FileSystem.type";
@@ -12,10 +14,13 @@ export class FileSystemService {
     });
   }
 
-  static async queryWorkspaceById({ id }: any): Promise<any> {
-    return request.post(`/api/filesystem/queryWorkspaceById`, {
-      id,
-    });
+  static async queryWorkspaceById({ id }: QueryWorkspaceByIdReq) {
+    return request.post<QueryWorkspaceByIdRes>(
+      `/api/filesystem/queryWorkspaceById`,
+      {
+        id,
+      }
+    );
   }
 
   static async addItem(params: any): Promise<any> {
@@ -45,17 +50,11 @@ export class FileSystemService {
   }
 
   static async saveCase(params: SaveInterfaceReq) {
-    return request.post<SaveInterfaceRes>(
-      `/api/filesystem/saveCase`,
-      params
-    );
+    return request.post<SaveInterfaceRes>(`/api/filesystem/saveCase`, params);
   }
 
   static async queryCase(params: any) {
-    return request.post<any>(
-      `/api/filesystem/queryCase`,
-      params
-    );
+    return request.post<any>(`/api/filesystem/queryCase`, params);
   }
 
   static async regressionList() {

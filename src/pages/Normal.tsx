@@ -1,6 +1,7 @@
 import { Col, Row } from "antd";
 import { useState } from "react";
 
+import { Root, RootParadigmKey } from "../api/FileSystem.type";
 import Collection from "../components/Collection";
 import Http from "../components/Http";
 import { useStore } from "../store";
@@ -9,7 +10,7 @@ const Normal = () => {
   const theme = useStore((state) => state.theme);
   const [selectedRequest, setSelectedRequest] = useState<{
     id: string;
-    path: string[];
+    path: Root<RootParadigmKey>[];
   }>({
     id: "",
     path: [],
@@ -29,12 +30,7 @@ const Normal = () => {
         <Http id={selectedRequest.id} path={selectedRequest.path} />
       </Col>
       <Col lg={{ span: 6 }} md={{ span: 8 }}>
-        <Collection
-          changeSelectedRequest={(r) => {
-            console.log(r)
-            setSelectedRequest(r);
-          }}
-        />
+        <Collection changeSelectedRequest={setSelectedRequest} />
       </Col>
     </Row>
   );

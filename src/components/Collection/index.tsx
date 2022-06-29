@@ -1,13 +1,6 @@
 import "./index.less";
 
-import {
-  ApiOutlined, BlockOutlined,
-  DownOutlined,
-  FolderOutlined,
-  FrownFilled,
-  MoreOutlined,
-  SmileOutlined,
-} from "@ant-design/icons";
+import { ApiOutlined, FolderOutlined, MoreOutlined } from "@ant-design/icons";
 import { css } from "@emotion/react";
 import { useMount } from "ahooks";
 import {
@@ -16,12 +9,10 @@ import {
   Divider,
   Dropdown,
   Empty,
-  Input,
-  List,
   Menu,
-  notification,
   Space,
   Tabs,
+  Tooltip,
   Tree,
 } from "antd";
 import type { DirectoryTreeProps } from "antd/lib/tree";
@@ -29,28 +20,29 @@ import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { FileSystemService } from "../../api/FileSystem.service";
+import {
+  Root,
+  RootParadigmKey,
+  RootParadigmNode,
+} from "../../api/FileSystem.type";
+import { NodeType } from "../../constant";
 import { useStore } from "../../store";
 import CreateAndUpdateFolder from "./CreateAndUpdateFolder";
-import { findPathbyKey } from "./util";
+import { findPathByKey } from "./util";
 
 const { TabPane } = Tabs;
-const onChange = (key: string) => {
-};
 
 const { DirectoryTree } = Tree;
 
 const Collection = ({ changeSelectedRequest }: any) => {
   const { t } = useTranslation("components");
-  const [treeData, setTreeData] = useState([]);
+  const [treeData, setTreeData] = useState<Root<RootParadigmKey>[]>([]);
   const currentWorkspaceId = useStore((state) => state.currentWorkspaceId);
-  const onSelect: DirectoryTreeProps["onSelect"] = (keys, info) => {
-  };
+  const onSelect: DirectoryTreeProps["onSelect"] = (keys, info) => {};
   const [currentSelectLeaf, setCurrentSelectLeaf] = useState("");
   const createAndUpdateFolderRef = useRef<any>();
 
-  const onExpand: DirectoryTreeProps["onExpand"] = (keys, info) => {
-
-  };
+  const onExpand: DirectoryTreeProps["onExpand"] = (keys, info) => {};
 
   useMount(() => {
     fetchWorkspaceData();
@@ -79,10 +71,9 @@ const Collection = ({ changeSelectedRequest }: any) => {
               label: (
                 <a
                   target="_blank"
-                  rel="noopener noreferrer"
                   onClick={() => {
                     createAndUpdateFolderRef.current.changeVal({
-                      path: findPathbyKey(treeData, val.key).map(i=>i.key),
+                      path: findPathByKey(treeData, val.key).map((i) => i.key),
                       mode: "create",
                     });
                   }}
@@ -97,10 +88,9 @@ const Collection = ({ changeSelectedRequest }: any) => {
               label: (
                 <a
                   target="_blank"
-                  rel="noopener noreferrer"
                   onClick={() => {
                     createAndUpdateFolderRef.current.changeVal({
-                      path: findPathbyKey(treeData, val.key).map(i=>i.key),
+                      path: findPathByKey(treeData, val.key).map((i) => i.key),
                       mode: "createRequest",
                     });
                   }}
@@ -115,10 +105,9 @@ const Collection = ({ changeSelectedRequest }: any) => {
               label: (
                 <a
                   target="_blank"
-                  rel="noopener noreferrer"
                   onClick={() => {
                     createAndUpdateFolderRef.current.changeVal({
-                      path: findPathbyKey(treeData, val.key).map(i=>i.key),
+                      path: findPathByKey(treeData, val.key).map((i) => i.key),
                       mode: "createCase",
                     });
                   }}
@@ -133,10 +122,9 @@ const Collection = ({ changeSelectedRequest }: any) => {
               label: (
                 <a
                   target="_blank"
-                  rel="noopener noreferrer"
                   onClick={() => {
                     createAndUpdateFolderRef.current.changeVal({
-                      path: findPathbyKey(treeData, val.key).map(i=>i.key),
+                      path: findPathByKey(treeData, val.key).map((i) => i.key),
                       mode: "update",
                     });
                   }}
@@ -153,7 +141,9 @@ const Collection = ({ changeSelectedRequest }: any) => {
                   onClick={() => {
                     FileSystemService.removeItem({
                       id: currentWorkspaceId,
-                      removeNodePath: findPathbyKey(treeData, val.key).map(i=>i.key),
+                      removeNodePath: findPathByKey(treeData, val.key).map(
+                        (i) => i.key
+                      ),
                     }).then((res) => {
                       fetchWorkspaceData();
                     });
@@ -173,17 +163,10 @@ const Collection = ({ changeSelectedRequest }: any) => {
           <div
             className={"title"}
             onClick={() => {
-              if (val.nodeType === 1) {
+              if (val.nodeType !== NodeType.folder) {
                 changeSelectedRequest({
                   id: val.key,
-                  path: findPathbyKey(treeData, val.key),
-                });
-
-                setCurrentSelectLeaf(val.key);
-              } else if (val.nodeType === 2){
-                changeSelectedRequest({
-                  id: val.key,
-                  path: findPathbyKey(treeData, val.key),
+                  path: findPathByKey(treeData, val.key),
                 });
                 setCurrentSelectLeaf(val.key);
               }
@@ -214,20 +197,34 @@ const Collection = ({ changeSelectedRequest }: any) => {
   function fetchWorkspaceData() {
     FileSystemService.queryWorkspaceById({ id: currentWorkspaceId }).then(
       (res) => {
-        function generateTreeData(nodes:any, nodeList:any = []) {
+        function generateTreeData(
+          nodes: Root<RootParadigmNode>[],
+          nodeList: Root<RootParadigmKey>[] = []
+        ) {
           const iconMap = {
-            '1':<ApiOutlined />,
-            '2': <div style={{display:'flex',alignItems:'center',justifyContent:'center'}}><span className={'tree-icon'}>case</span></div>,
-            '3':undefined
-          }
+            [NodeType.interface]: <ApiOutlined />,
+            [NodeType.case]: (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <span className={"tree-icon"}>case</span>
+              </div>
+            ),
+            [NodeType.folder]: undefined,
+          };
 
+          // TODO Object.keys => Array.map
           Object.keys(nodes).forEach((value, index, array) => {
             nodeList.push({
               title: nodes[value].nodeName,
               key: nodes[value].infoId,
               nodeType: nodes[value].nodeType,
               children: [],
-              icon:iconMap[nodes[value].nodeType]
+              icon: iconMap[nodes[value].nodeType],
             });
             if (
               nodes[value].children &&
@@ -250,7 +247,6 @@ const Collection = ({ changeSelectedRequest }: any) => {
     <div className={"collection"}>
       <Tabs
         defaultActiveKey="2"
-        onChange={onChange}
         tabPosition={"left"}
         css={css`
           .ant-tabs-tab {
@@ -259,7 +255,14 @@ const Collection = ({ changeSelectedRequest }: any) => {
           }
         `}
       >
-        <TabPane tab={<FolderOutlined />} key="2">
+        <TabPane
+          tab={
+            <Tooltip title={t("collectionMenu.collection")}>
+              <FolderOutlined />
+            </Tooltip>
+          }
+          key="2"
+        >
           <a
             className={"new-btn"}
             onClick={() => {
@@ -269,9 +272,12 @@ const Collection = ({ changeSelectedRequest }: any) => {
               });
             }}
           >
-            +<span style={{ marginLeft: "8px" }}>New</span>
+            +
+            <span style={{ marginLeft: "8px" }}>
+              {t("collectionMenu.newCreate")}
+            </span>
           </a>
-          <Divider />
+          <Divider style={{ margin: "8px" }} />
           <DirectoryTree
             selectable={false}
             multiple
@@ -279,7 +285,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
             onSelect={onSelect}
             onExpand={onExpand}
             treeData={treeData}
-            titleRender={(val) => <TitleRender val={val}/>}
+            titleRender={(val) => <TitleRender val={val} />}
           />
           <Empty style={{ display: treeData.length > 0 ? "none" : "block" }}>
             <Button
@@ -291,7 +297,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
                 });
               }}
             >
-              Create Now
+              {t("collectionMenu.newCreate")}
             </Button>
           </Empty>
         </TabPane>

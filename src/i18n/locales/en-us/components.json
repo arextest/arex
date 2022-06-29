@@ -21,6 +21,7 @@
   },
   "collectionMenu": {
     "collection": "Collection",
-    "environment": "Environment"
+    "environment": "Environment",
+    "newCreate": "New"
   }
 }

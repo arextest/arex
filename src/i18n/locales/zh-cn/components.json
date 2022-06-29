@@ -21,6 +21,8 @@
   },
   "collectionMenu": {
     "collection": "集合",
-    "environment": "环境"
+    "environment": "环境",
+    "newCreate": "新建"
+
   }
 }

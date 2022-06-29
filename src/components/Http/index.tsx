@@ -22,10 +22,10 @@ import axios from "axios";
 import { FC, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useImmer } from "use-immer";
-import { v4 as uuidv4 } from "uuid";
 
 import { FileSystemService } from "../../api/FileSystem.service";
-import { METHODS } from "../../constant";
+import { Root, RootParadigmKey } from "../../api/FileSystem.type";
+import { METHODS, NodeType } from "../../constant";
 import { useStore } from "../../store";
 import { tryParseJsonString, tryPrettierJsonString } from "../../utils";
 import AnimateAutoHeight from "../AnimateAutoHeight";
@@ -39,7 +39,7 @@ const { TabPane } = Tabs;
 export type HttpProps = {
   mode?: "normal" | "compare";
   id: string;
-  path: string[];
+  path: Root<RootParadigmKey>[];
 };
 
 export type KeyValueType = {
@@ -88,7 +88,7 @@ const ResponseWrapper = styled.div`
   align-items: center;
 `;
 
-const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
+const Http: FC<HttpProps> = ({ mode = "normal", id, path = [] }) => {
   const theme = useStore((state) => state.theme);
   const { t: t_common } = useTranslation("common");
   const { t: t_components } = useTranslation("components");
@@ -176,16 +176,16 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
     () => {
       const { nodeType, key: id } = path[path.length - 1];
       const { key: pid } = path[path.length - 2];
-      if (nodeType === 1) {
+      if (nodeType === NodeType.interface) {
         return FileSystemService.queryInterface({ id });
-      } else if (nodeType === 2) {
-        return new Promise((resolve, reject) => {
-          FileSystemService.queryInterface({ id: pid }).then((r) => {
-            FileSystemService.queryCase({ id }).then((r1) => {
+      } else {
+        return new Promise((resolve) => {
+          FileSystemService.queryInterface({ id: pid }).then((interfaceRes) => {
+            FileSystemService.queryCase({ id }).then((CaseRes) => {
               resolve({
                 body: {
-                  ...r.body,
-                  ...r1.body,
+                  ...interfaceRes.body,
+                  ...CaseRes.body,
                 },
               });
             });
@@ -195,37 +195,30 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
     },
     {
       refreshDeps: [id],
-      onSuccess(res) {
+      onSuccess(res: any) {
         setUrl(res.body.address?.endpoint || "");
         setMethod(res.body.address?.method || "GET");
-        setRequestParams(
-          res.body.params.map((p) => ({ id: uuidv4(), ...p })) || []
-        );
-        setRequestHeaders(
-          res.body.headers.map((h) => ({ id: uuidv4(), ...h })) || []
-        );
-        setContentType(res.body.body.contentType);
+        setRequestParams(res.body?.params || []);
+        setRequestHeaders(res.body?.headers || []);
         setRequestBody(res.body.body.body || "");
       },
     }
   );
 
   const { run: saveInterface } = useRequest(
-    (s) => {
-      const { nodeType, key: id } = path[path.length - 1];
-      if (nodeType === 1) {
-        return FileSystemService.saveInterface(s).then((res: any) =>
+    (params, nodeType: NodeType) => {
+      if (nodeType === NodeType.interface) {
+        return FileSystemService.saveInterface(params).then(() =>
           message.success("保存成功")
         );
-      } else if (nodeType === 2) {
-        return FileSystemService.saveCase(s).then((res: any) =>
+      } else if (nodeType === NodeType.case) {
+        return FileSystemService.saveCase(params).then(() =>
           message.success("保存成功")
         );
       }
     },
     {
       manual: true,
-      onSuccess(res) {},
     }
   );
 
@@ -256,22 +249,25 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
   };
 
   const handleSave = () => {
-    saveInterface({
-      id,
-      auth: null,
-      body: {
-        contentType,
-        body: requestBody,
+    saveInterface(
+      {
+        id,
+        auth: null,
+        body: {
+          contentType,
+          body: requestBody,
+        },
+        address: {
+          endpoint: url,
+          method,
+        },
+        headers: requestHeaders,
+        params: requestParams,
+        preRequestScript: null,
+        testScript: null,
       },
-      address: {
-        endpoint: url,
-        method,
-      },
-      headers: requestHeaders,
-      params: requestParams,
-      preRequestScript: null,
-      testScript: null,
-    });
+      path[path.length - 1]
+    );
   };
 
   const handleUrlChange = (value: string) => {
