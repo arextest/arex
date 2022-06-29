@@ -61,9 +61,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
         <Menu
           onClick={(e) => {
             e.domEvent.stopPropagation();
-            // se
             setVisible(false);
-            // notification.info({message:'成功'})
           }}
           items={[
             {
@@ -179,7 +177,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
           </div>
           <Dropdown
             overlay={menu(val)}
-            trigger={["click"]}
+            trigger={["hover"]}
             visible={visible}
             onVisibleChange={handleVisibleChange}
           >

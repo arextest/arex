@@ -63,18 +63,20 @@ const valueRight = {
   "[0]": "zero",
 };
 
-const ResponseCompare = () => {
+const ResponseCompare = ({ responses }) => {
   const diffView = useRef<HTMLDivElement>();
   const theme = useStore((store) => store.theme);
   let mergeView;
   useEffect(() => {
     if (!diffView.current) return;
+
+    document.querySelector(".diffView").innerHTML = "";
     mergeView = CodeMirror.MergeView(diffView.current, {
       readOnly: true, // 只读
       lineNumbers: true, // 显示行号
       theme: theme === "light" ? "neat" : "gruvbox-dark", // 设置主题
-      value: JSON.stringify(valueLeft, null, 2), // 左边的内容（新内容）
-      orig: JSON.stringify(valueRight, null, 2), // 右边的内容（旧内容）
+      value: JSON.stringify(responses[0], null, 2), // 左边的内容（新内容）
+      orig: JSON.stringify(responses[1], null, 2), // 右边的内容（旧内容）
       mode: "javascript", // 代码模式为js模式
       viewportMargin: Infinity, // 允许滚动的距离
       highlightDifferences: true, // 有差异的地方是否高亮
@@ -94,7 +96,7 @@ const ResponseCompare = () => {
       },
     });
     // mergeView.editor().setSize(null, "100%");
-  }, []);
+  }, [responses]);
 
   // useEffect(() => {
   //   if (!mergeView) return;
@@ -109,6 +111,7 @@ const ResponseCompare = () => {
           <div id="wrapper">
             <div className="react-diff-code-view" style={{ height: "100%" }}>
               <div
+                className={"diffView"}
                 ref={diffView}
                 css={css`
                   .CodeMirror,
