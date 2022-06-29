@@ -1,7 +1,7 @@
-// import "./index.less";
 import "codemirror/addon/merge/merge.css";
 import "codemirror/addon/merge/merge.js";
 import "codemirror/theme/neat.css";
+import "codemirror/theme/gruvbox-dark.css";
 import "codemirror/mode/javascript/javascript";
 import "codemirror/addon/fold/foldcode";
 import "codemirror/addon/fold/foldgutter";
@@ -12,6 +12,9 @@ import { Tabs } from "antd";
 import CodeMirror from "codemirror";
 import DiffMatchPatch from "diff-match-patch";
 import { useEffect, useRef } from "react";
+
+import { useStore } from "../../store";
+
 const { TabPane } = Tabs;
 
 // @ts-ignore
@@ -62,13 +65,14 @@ const valueRight = {
 
 const ResponseCompare = () => {
   const diffView = useRef<HTMLDivElement>();
-
+  const theme = useStore((store) => store.theme);
+  let mergeView;
   useEffect(() => {
     if (!diffView.current) return;
-    const mergeView = CodeMirror.MergeView(diffView.current, {
+    mergeView = CodeMirror.MergeView(diffView.current, {
       readOnly: true, // 只读
       lineNumbers: true, // 显示行号
-      theme: "neat", // 设置主题
+      theme: theme === "light" ? "neat" : "gruvbox-dark", // 设置主题
       value: JSON.stringify(valueLeft, null, 2), // 左边的内容（新内容）
       orig: JSON.stringify(valueRight, null, 2), // 右边的内容（旧内容）
       mode: "javascript", // 代码模式为js模式
@@ -91,6 +95,13 @@ const ResponseCompare = () => {
     });
     // mergeView.editor().setSize(null, "100%");
   }, []);
+
+  // useEffect(() => {
+  //   if (!mergeView) return;
+  //   console.log(mergeView);
+  //   mergeView.editor().setOption("theme", theme === "light" ? "neat" : "gruvbox-dark");
+  // }, [theme]);
+
   return (
     <div>
       <Tabs defaultActiveKey="1" onChange={onChange}>
@@ -103,6 +114,7 @@ const ResponseCompare = () => {
                   .CodeMirror,
                   .CodeMirror-merge {
                     height: 600px;
+                    border: none;
                   }
                 `}
               />
