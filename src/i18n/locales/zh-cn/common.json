@@ -10,6 +10,6 @@
   "remove": "移除",
   "key": "参数",
   "value": "值",
-  "invalidJSON": "无效JSON"
-
+  "invalidJSON": "无效JSON",
+  "prettier": "格式化"
 }

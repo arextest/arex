@@ -13,6 +13,7 @@ import {
   Input,
   message,
   Select,
+  Spin,
   Tabs,
   Tag,
   Typography,
@@ -26,6 +27,7 @@ import { v4 as uuidv4 } from "uuid";
 import { FileSystemService } from "../../api/FileSystem.service";
 import { METHODS } from "../../constant";
 import { useStore } from "../../store";
+import { tryParseJsonString, tryPrettierJsonString } from "../../utils";
 import AnimateAutoHeight from "../AnimateAutoHeight";
 import FormHeader, { FormHeaderWrapper } from "./FormHeader";
 import FormTable, { getColumns } from "./FormTable";
@@ -155,20 +157,13 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
 
   const [contentType, setContentType] = useState("application/json");
   const [requestBody, setRequestBody] = useState("");
-  const getBody = () => {
-    try {
-      return JSON.parse(requestBody || "{}");
-    } catch (e) {
-      message.warn(t_common("invalidJSON"));
-      return new Error(t_common("invalidJSON"));
-    }
-  };
 
-  const { data: res, run: request } = useRequest(axios, {
+  const {
+    data: res,
+    loading: requesting,
+    run: request,
+  } = useRequest(axios, {
     manual: true,
-    onBefore: () => {
-      setSent(false);
-    },
     onSuccess: (res) => {
       setResponse(res);
     },
@@ -237,6 +232,14 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
     }
   );
 
+  const handlePrettier = () => {
+    const prettier = tryPrettierJsonString(
+      requestBody,
+      t_common("invalidJSON")
+    );
+    prettier && setRequestBody(prettier);
+  };
+
   const handleRequest = () => {
     if (!url) return message.warn(t_components("http.urlEmpty"));
 
@@ -244,7 +247,8 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
     if (method === "GET") {
       data.params = params;
     } else if (requestBody) {
-      data.data = getBody();
+      const body = tryParseJsonString(requestBody, t_common("invalidJSON"));
+      body && (data.data = body);
     }
 
     request(url, {
@@ -441,6 +445,9 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
                   style={{ width: "140px", marginLeft: "8px" }}
                 />
               </span>
+              <Button size="small" onClick={handlePrettier}>
+                {t_common("prettier")}
+              </Button>
             </FormHeaderWrapper>
             <CodeMirror
               value={requestBody}
@@ -506,23 +513,27 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path }) => {
 
       <div>
         {sent ? (
-          mode === "normal" ? (
-            <Response
-              res={response?.data || response?.statusText}
-              status={{ code: response.status, text: response.statusText }}
-            />
-          ) : (
-            <ResponseCompare />
-          )
+          <Spin spinning={requesting}>
+            {mode === "normal" ? (
+              <Response
+                res={response?.data || response?.statusText}
+                status={{ code: response.status, text: response.statusText }}
+              />
+            ) : (
+              <ResponseCompare />
+            )}
+          </Spin>
         ) : (
           <ResponseWrapper>
-            <Empty
-              description={
-                <Typography.Text type="secondary">
-                  {t_components("http.responseNotReady")}
-                </Typography.Text>
-              }
-            />
+            <Spin spinning={requesting}>
+              <Empty
+                description={
+                  <Typography.Text type="secondary">
+                    {t_components("http.responseNotReady")}
+                  </Typography.Text>
+                }
+              />
+            </Spin>
           </ResponseWrapper>
         )}
       </div>

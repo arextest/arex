@@ -10,5 +10,6 @@
   "remove": "Remove",
   "key": "Key",
   "value": "Value",
-  "invalidJSON": "Invalid JSON"
+  "invalidJSON": "Invalid JSON",
+  "prettier": "Prettier"
 }
