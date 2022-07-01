@@ -7,16 +7,62 @@ import "codemirror/addon/fold/foldcode";
 import "codemirror/addon/fold/foldgutter";
 import "codemirror/addon/fold/brace-fold";
 
-import { css } from "@emotion/react";
+import styled from "@emotion/styled";
 import { Tabs } from "antd";
 import CodeMirror from "codemirror";
 import DiffMatchPatch from "diff-match-patch";
 import { useEffect, useRef } from "react";
 
 import { useStore } from "../../store";
+import { Theme } from "../../style/theme";
 
 const { TabPane } = Tabs;
+const DiffView = styled.div<{ theme: Theme }>`
+  // 主体样式
+  .CodeMirror,
+  .CodeMirror-merge {
+    height: 600px;
+    border-color: ${({ theme }) =>
+      theme === Theme.light ? "#f0f0f0" : "#303030"};
+  }
 
+  // 左右文本差异高亮样式
+  .CodeMirror-merge-r-chunk-start {
+    border-top: 1px solid
+      ${({ theme = Theme.light }) =>
+        theme === Theme.light ? "#ee8" : "#959582"};
+  }
+  .CodeMirror-merge-r-chunk-end {
+    border-bottom: 1px solid
+      ${({ theme = Theme.light }) =>
+        theme === Theme.light ? "#ee8" : "#959582"};
+  }
+  .CodeMirror-merge-r-chunk {
+    background-color: ${({ theme = Theme.light }) =>
+      theme === Theme.light ? "#ffffe0" : "#787869"};
+  }
+
+  // 中间分隔区样式
+  .CodeMirror-merge-gap {
+    border-color: ${({ theme }) =>
+      theme === Theme.light ? "inherit" : "#959582"};
+    background-color: ${({ theme = Theme.light }) =>
+      theme === Theme.light ? "#f8f8f8" : "#282828"} !important;
+    path {
+      stroke: ${({ theme = Theme.light }) =>
+        theme === Theme.light ? "#ee8" : "#959582"};
+      fill: ${({ theme = Theme.light }) =>
+        theme === Theme.light ? "#ffffe0" : "#787869"};
+    }
+  }
+
+  // 水平滚动条样式 （垂直滚动条样式已在全局样式中设置）
+  .CodeMirror-hscrollbar {
+    height: 6px;
+    border-radius: 3px;
+    background: #88888844;
+  }
+`;
 // @ts-ignore
 window.diff_match_patch = DiffMatchPatch;
 // @ts-ignore
@@ -28,39 +74,6 @@ window.DIFF_EQUAL = 0;
 
 const onChange = (key: string) => {
   console.log(key);
-};
-
-const valueLeft = {
-  arrayOfArrays: [1, 2, 999, [3, 4, 5]],
-  someField: true,
-  boolean: true,
-  htmlcode: "&quot;",
-  escaped_unicode: "\\u20b9",
-  unicode: "\u20b9,\uD83D\uDCA9",
-  return: "\n",
-  null: null,
-  thisObjectDoesntExistOnTheRight: { key: "value" },
-  number: 123,
-  object: { a: "b", new: 4, c: "d", e: [1, 2, 3] },
-  string: "Hello World",
-  url: "http://jsoneditoronline.org",
-  "[0]": "zero",
-};
-
-const valueRight = {
-  arrayOfArrays: [1, 2, [3, 4, 5]],
-  boolean: true,
-  htmlcode: "&quot;",
-  escaped_unicode: "\\u20b9",
-  thisFieldDoesntExistOnTheLeft: "foobar",
-  unicode: "\u20b9,\uD83D\uDCA9",
-  return: "\n",
-  null: null,
-  number: 123,
-  object: { a: "b", c: "d", e: [1, 2, 3] },
-  string: "Hello World",
-  url: "http://jsoneditoronline.org",
-  "[0]": "zero",
 };
 
 const ResponseCompare = ({ responses }) => {
@@ -104,17 +117,7 @@ const ResponseCompare = ({ responses }) => {
         <TabPane tab="对比结果" key="1">
           <div id="wrapper">
             <div className="react-diff-code-view" style={{ height: "100%" }}>
-              <div
-                className={"diffView"}
-                ref={diffView}
-                css={css`
-                  .CodeMirror,
-                  .CodeMirror-merge {
-                    height: 600px;
-                    border: none;
-                  }
-                `}
-              />
+              <DiffView className={"diffView"} ref={diffView} theme={theme} />
             </div>
           </div>
         </TabPane>

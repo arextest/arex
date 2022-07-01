@@ -1,6 +1,5 @@
 import { javascript } from "@codemirror/lang-javascript";
 import { json } from "@codemirror/lang-json";
-import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import CodeMirror from "@uiw/react-codemirror";
 import { useRequest } from "ahooks";
@@ -29,7 +28,7 @@ import { Root, RootParadigmKey } from "../../api/FileSystem.type";
 import { METHODS, NodeType } from "../../constant";
 import { useStore } from "../../store";
 import { tryParseJsonString, tryPrettierJsonString } from "../../utils";
-import AnimateAutoHeight from "../AnimateAutoHeight";
+import { AnimateAutoHeight } from "../index";
 import FormHeader, { FormHeaderWrapper } from "./FormHeader";
 import FormTable, { getColumns } from "./FormTable";
 import Response from "./Response";

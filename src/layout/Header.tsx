@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { Button, Card, Divider, Select } from "antd";
 import { FC, useEffect, useState } from "react";
 
-import GitHubStarButton from "../components/GitHubStarButton";
+import { GitHubStarButton } from "../components";
 import ChangeLangButton from "../i18n/ChangeLangButton";
 import { useStore } from "../store";
 
