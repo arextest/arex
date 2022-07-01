@@ -8,7 +8,7 @@ import { useRequest } from "ahooks";
 import { Layout, Menu, MenuProps } from "antd";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { FileSystemService } from "../api/FileSystem.service";
 import { useStore } from "../store";
@@ -19,26 +19,32 @@ const { Content, Sider } = Layout;
 type MenuItem = Required<MenuProps>["items"][number];
 
 const MainBox: React.FC = () => {
+  const location = useLocation();
   const [collapsed, setCollapsed] = useState(true);
   const theme = useStore((state) => state.theme);
   const to = useNavigate();
   const { t } = useTranslation("layout");
   const items: MenuItem[] = [
-    { key: "normal", label: t("sideMenu.normal"), icon: <PieChartOutlined /> },
     {
-      key: "compare",
+      key: "/normal",
+      label: t("sideMenu.normal"),
+      icon: <PieChartOutlined />,
+      disabled: false,
+    },
+    {
+      key: "/compare",
       label: t("sideMenu.compare"),
       icon: <DesktopOutlined />,
       disabled: false,
     },
     {
-      key: "replay",
+      key: "/replay",
       label: t("sideMenu.replay"),
       icon: <ContainerOutlined />,
       disabled: false,
     },
     {
-      key: "setting",
+      key: "/setting",
       label: "API",
       icon: <ContainerOutlined />,
       disabled: true,
@@ -50,11 +56,11 @@ const MainBox: React.FC = () => {
     onSuccess: (res) => setWorkspaces(res.body.workspaces),
   });
 
-  const [activeKey, setActiveKey] = useState("normal");
+  const [activeKey, setActiveKey] = useState(location.pathname || "/normal");
 
-  const onClick: MenuProps["onClick"] = (e) => {
-    setActiveKey(e.key);
-    to(`/${e.key}`);
+  const onClick: MenuProps["onClick"] = ({ key }) => {
+    setActiveKey(key);
+    to(key);
   };
 
   return (
@@ -78,6 +84,7 @@ const MainBox: React.FC = () => {
           `}
         >
           <Menu
+            defaultSelectedKeys={[activeKey]}
             activeKey={activeKey}
             onClick={onClick}
             mode="vertical"
