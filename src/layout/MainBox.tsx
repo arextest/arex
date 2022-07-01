@@ -1,6 +1,8 @@
 import {
+  ApiOutlined,
   ContainerOutlined,
   DesktopOutlined,
+  FileOutlined,
   PieChartOutlined,
 } from "@ant-design/icons";
 import { css } from "@emotion/react";
@@ -28,7 +30,7 @@ const MainBox: React.FC = () => {
     {
       key: "/normal",
       label: t("sideMenu.normal"),
-      icon: <PieChartOutlined />,
+      icon: <ApiOutlined />,
       disabled: false,
     },
     {
@@ -40,7 +42,7 @@ const MainBox: React.FC = () => {
     {
       key: "/replay",
       label: t("sideMenu.replay"),
-      icon: <ContainerOutlined />,
+      icon: <FileOutlined />,
       disabled: false,
     },
     {
