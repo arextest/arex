@@ -1,5 +1,6 @@
 import { javascript } from "@codemirror/lang-javascript";
 import { json } from "@codemirror/lang-json";
+import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import CodeMirror from "@uiw/react-codemirror";
 import { useRequest } from "ahooks";
@@ -233,8 +234,8 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [] }) => {
         setRequestParams(res.body?.params || []);
         setRequestHeaders(res.body?.headers || []);
         setRequestBody(res.body?.body?.body || "");
-        setTestUrl(res.body.baseAddress?.endpoint || "")
-        setBaseUrl(res.body.testAddress?.endpoint || "")
+        setTestUrl(res.body.baseAddress?.endpoint || "");
+        setBaseUrl(res.body.testAddress?.endpoint || "");
       },
     }
   );
@@ -282,7 +283,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [] }) => {
     });
   };
 
-  const handleCompareRequest = ()=>{
+  const handleCompareRequest = () => {
     if (!baseUrl) return message.warn(t_components("http.urlEmpty"));
     if (!testUrl) return message.warn(t_components("http.urlEmpty"));
 
@@ -305,7 +306,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [] }) => {
       headers,
       ...data,
     });
-  }
+  };
 
   const handleSave = () => {
     saveInterface(
@@ -372,142 +373,133 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [] }) => {
           </Breadcrumb>
         )}
 
-        {/*普通请求*/}
-        {
-          mode === 'normal'?<HeaderWrapper>
+        {/* 普通请求 */}
+        {mode === "normal" ? (
+          <HeaderWrapper>
             <Select
-                value={method}
-                options={RequestTypeOptions}
-                onChange={setMethod}
+              value={method}
+              options={RequestTypeOptions}
+              onChange={setMethod}
             />
             <Input
-                placeholder={t_components("http.enterRequestUrl")}
-                value={url}
-                onChange={(e) => handleUrlChange(e.target.value)}
+              placeholder={t_components("http.enterRequestUrl")}
+              value={url}
+              onChange={(e) => handleUrlChange(e.target.value)}
             />
             <Button
-                // DropdownButton
-                type="primary"
-                // icon={<DownOutlined />}
-                onClick={handleRequest}
-                // overlay={
-                //   <Menu
-                //     items={[
-                //       {
-                //         key: "1",
-                //         label: t_components("http.importUrl"),
-                //         icon: <LinkOutlined />,
-                //       },
-                //       {
-                //         key: "2",
-                //         label: t_components("http.showCode"),
-                //         icon: <CodeOutlined />,
-                //       },
-                //       {
-                //         key: "3",
-                //         label: t_components("http.clearAll"),
-                //         icon: <DeleteOutlined />,
-                //       },
-                //     ]}
-                //   />
-                // }
+              // DropdownButton
+              type="primary"
+              // icon={<DownOutlined />}
+              onClick={handleRequest}
+              // overlay={
+              //   <Menu
+              //     items={[
+              //       {
+              //         key: "1",
+              //         label: t_components("http.importUrl"),
+              //         icon: <LinkOutlined />,
+              //       },
+              //       {
+              //         key: "2",
+              //         label: t_components("http.showCode"),
+              //         icon: <CodeOutlined />,
+              //       },
+              //       {
+              //         key: "3",
+              //         label: t_components("http.clearAll"),
+              //         icon: <DeleteOutlined />,
+              //       },
+              //     ]}
+              //   />
+              // }
             >
               {t_common("send")}
             </Button>
 
             <Button
-                // DropdownButton
-                // icon={<DownOutlined />}
-                // overlay={
-                //   <Menu
-                //     items={[
-                //       {
-                //         key: "0",
-                //         label: (
-                //           <Input
-                //             value={requestSavedName}
-                //             onClick={(e) => e.stopPropagation()}
-                //             onChange={(e) => setRequestSavedName(e.target.value)}
-                //           />
-                //         ),
-                //       },
-                //       {
-                //         key: "1",
-                //         label: t_components("http.copyLink"),
-                //         icon: <CopyOutlined />,
-                //       },
-                //       {
-                //         key: "2",
-                //         label: t_components("http.viewMyLinks"),
-                //         icon: <LinkOutlined />,
-                //       },
-                //       {
-                //         key: "3",
-                //         label: t_components("http.saveAs"),
-                //         icon: <SaveOutlined />,
-                //       },
-                //     ]}
-                //   />
-                // }
-                onClick={handleSave}
+              // DropdownButton
+              // icon={<DownOutlined />}
+              // overlay={
+              //   <Menu
+              //     items={[
+              //       {
+              //         key: "0",
+              //         label: (
+              //           <Input
+              //             value={requestSavedName}
+              //             onClick={(e) => e.stopPropagation()}
+              //             onChange={(e) => setRequestSavedName(e.target.value)}
+              //           />
+              //         ),
+              //       },
+              //       {
+              //         key: "1",
+              //         label: t_components("http.copyLink"),
+              //         icon: <CopyOutlined />,
+              //       },
+              //       {
+              //         key: "2",
+              //         label: t_components("http.viewMyLinks"),
+              //         icon: <LinkOutlined />,
+              //       },
+              //       {
+              //         key: "3",
+              //         label: t_components("http.saveAs"),
+              //         icon: <SaveOutlined />,
+              //       },
+              //     ]}
+              //   />
+              // }
+              onClick={handleSave}
             >
               {t_common("save")}
             </Button>
-          </HeaderWrapper>:
-              <div>
-                {/*对比请求*/}
-                <HeaderWrapper style={{marginTop:'10px'}}>
-                  <Select
-                      value={method}
-                      options={RequestTypeOptions}
-                      onChange={setMethod}
-                  />
-                  <Input
-                      placeholder={t_components("http.enterRequestUrl")}
-                      value={baseUrl}
-                      onChange={(e) => setBaseUrl(e.target.value)}
-                  />
-                  <Button
-                      type="primary"
-                      onClick={handleCompareRequest}
-                  >
-                    {t_common("send")}
-                  </Button>
+          </HeaderWrapper>
+        ) : (
+          <div>
+            {/* 对比请求 */}
+            <HeaderWrapper style={{ marginTop: "10px" }}>
+              <Select
+                value={method}
+                options={RequestTypeOptions}
+                onChange={setMethod}
+              />
+              <Input
+                placeholder={t_components("http.enterRequestUrl")}
+                value={baseUrl}
+                onChange={(e) => setBaseUrl(e.target.value)}
+              />
+              <Button type="primary" onClick={handleCompareRequest}>
+                {t_common("send")}
+              </Button>
 
-                  <Button
-                      onClick={handleSave}
-                  >
-                    {t_common("save")}
-                  </Button>
-                </HeaderWrapper>
-                <HeaderWrapper style={{marginTop:'10px'}}>
-                  <Select
-                      value={method}
-                      options={RequestTypeOptions}
-                      onChange={setMethod}
-                  />
-                  <Input
-                      placeholder={t_components("http.enterRequestUrl")}
-                      value={testUrl}
-                      onChange={(e) => setTestUrl(e.target.value)}
-                  />
-                  <Button
-                      style={{visibility:'hidden'}}
-                      type="primary"
-                      onClick={handleRequest}
-                  >
-                    {t_common("send")}
-                  </Button>
+              <Button onClick={handleSave}>{t_common("save")}</Button>
+            </HeaderWrapper>
+            <HeaderWrapper style={{ marginTop: "10px" }}>
+              <Select
+                value={method}
+                options={RequestTypeOptions}
+                onChange={setMethod}
+              />
+              <Input
+                placeholder={t_components("http.enterRequestUrl")}
+                value={testUrl}
+                onChange={(e) => setTestUrl(e.target.value)}
+              />
+              <Button
+                style={{ visibility: "hidden" }}
+                type="primary"
+                onClick={handleRequest}
+              >
+                {t_common("send")}
+              </Button>
 
-                  <Button
-                      style={{visibility:'hidden'}}
-                      onClick={handleSave}
-                  >
-                    {t_common("save")}
-                  </Button>
-                </HeaderWrapper>
-              </div>
-        }
+              <Button style={{ visibility: "hidden" }} onClick={handleSave}>
+                {t_common("save")}
+              </Button>
+            </HeaderWrapper>
+          </div>
+        )}
         <Tabs defaultActiveKey="1">
           <TabPane
             tab={
@@ -531,14 +523,17 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [] }) => {
           </TabPane>
           <TabPane
             tab={
-              <span>
+              <>
+                {/* span 若移动至 Badge 中将失去继承的主题色 */}
+                <span>{t_components("http.requestBody")}</span>
                 <Badge
                   dot={!!requestBody}
                   status={method === "POST" ? "success" : "default"}
                 >
-                  {t_components("http.requestBody")}
+                  {/* 空格符撑起 Badge 内部 */}
+                  &nbsp;
                 </Badge>
-              </span>
+              </>
             }
             key="1"
           >
@@ -632,7 +627,9 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [] }) => {
                 status={{ code: response.status, text: response.statusText }}
               />
             ) : (
-              <ResponseCompare responses={[baseResponse?.data,testResponse?.data]} />
+              <ResponseCompare
+                responses={[baseResponse?.data, testResponse?.data]}
+              />
             )}
           </Spin>
         ) : (
