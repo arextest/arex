@@ -1,24 +1,25 @@
 import styled from "@emotion/styled";
-import { Button, Divider, Select } from "antd";
-import { useEffect, useState } from "react";
+import { Button, Card, Divider, Select } from "antd";
+import { FC, useEffect, useState } from "react";
 
 import GitHubStarButton from "../components/GitHubStarButton";
 import ChangeLangButton from "../i18n/ChangeLangButton";
 import { useStore } from "../store";
 
 const HeaderWrapper = styled.div`
-  height: 56px;
+  height: 48px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 `;
 
-const Logo = styled.span`
+const Logo = styled.span<{ collapsed?: boolean }>`
   line-height: 32px;
   font-weight: bolder;
-  margin-left: 16px;
+  margin-left: ${(props) => (props.collapsed ? "22px" : "16px")};
   display: flex;
   align-items: center;
+  transition: all 0.2s;
 `;
 
 const HeaderMenu = styled.div`
@@ -33,7 +34,8 @@ const HeaderMenu = styled.div`
 `;
 
 const { Option } = Select;
-const Header = () => {
+
+const Header: FC<{ collapsed?: boolean }> = ({ collapsed }) => {
   const [workspaceId, setWorkspaceId] = useState("");
   const workspaces = useStore((state) => state.workspaces);
   const { theme, changeTheme, currentWorkspaceId, setCurrentWorkspaceId } =
@@ -52,12 +54,13 @@ const Header = () => {
     localStorage.getItem("theme") !== theme && changeTheme();
   }, []);
   return (
-    <>
+    <Card bordered={false} bodyStyle={{ padding: 0 }}>
       <HeaderWrapper>
-        <Logo>
+        <Logo collapsed={collapsed}>
           <span>AREX</span>
-          <GitHubStarButton />
+          {!collapsed && <GitHubStarButton />}
         </Logo>
+
         <HeaderMenu>
           <Button
             type="text"
@@ -82,7 +85,7 @@ const Header = () => {
         </HeaderMenu>
       </HeaderWrapper>
       <Divider style={{ margin: "0" }} />
-    </>
+    </Card>
   );
 };
 
