@@ -3,7 +3,6 @@
   .ellipsis{
     white-space: nowrap;
     text-overflow: ellipsis;
-    //width: 120px;
     width: 100%;
     overflow: hidden;
   }
@@ -27,16 +26,27 @@
     width: 30px;
   }
 
-  .ant-tree-node-content-wrapper.ant-tree-node-content-wrapper-normal{
-    display: flex;
+  .collection-title-render{
+    width: 100%;
+    .wrap{
+      display: flex;
+      justify-content: space-between;
+      font-weight: bolder;
+      .title{
+        display: flex;
+        flex: 1;
+      }
+    }
   }
-  .ant-tree-node-content-wrapper.ant-tree-node-content-wrapper-close{
-    display: flex;
+
+
+  //以下保证宽度百分百
+  .ant-tree-list-holder-inner>div{
+    width: 100%;
   }
-  .ant-tree-node-content-wrapper.ant-tree-node-content-wrapper-open{
-    display: flex;
-  }
-  .ant-tree-title{
+
+  .ant-tree-node-content-wrapper{
     flex: 1;
   }
+  //以上保证宽度百分百
 }
