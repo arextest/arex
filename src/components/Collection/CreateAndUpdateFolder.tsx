@@ -1,91 +1,49 @@
-import { Button, Input, Modal } from "antd";
-import React, { forwardRef, useImperativeHandle, useState } from "react";
+import { Input, Modal } from "antd";
+import React from "react";
 
 import { FileSystemService } from "../../api/FileSystem.service";
+import { useStore } from "../../store";
+import { findPathByKey } from "./util";
 
-const CreateAndUpdateFolder: React.FC<{updateParentComponent:any}> = ({ updateParentComponent }:any, ref) => {
-  const [folderName, setFolderName] = useState("");
-  const [currOpePath, setCurrOpePath] = useState([]);
-  const [mode, setMode] = useState("create");
-  // 此处注意useImperativeHandle方法的的第一个参数是目标元素的ref引用
-  useImperativeHandle(ref, () => ({
-    // changeVal 就是暴露给父组件的方法
-    changeVal: (newVal:any) => {
-      setMode(newVal.mode);
-      setCurrOpePath(newVal.path);
-      showModal();
-    },
-  }));
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const showModal = () => {
-    setFolderName('')
-    setIsModalVisible(true);
-  };
-
+const CreateAndUpdateFolder: React.FC<any> = ({ updateDirectorytreeData }) => {
+  const collectionTree = useStore(state => state.collectionTree)
+  const collectionCreateAndUpdateModalVisible = useStore(state => state.collectionCreateAndUpdateModalVisible)
+  const collectionCreateAndUpdateModalFolderName = useStore(state => state.collectionCreateAndUpdateModalFolderName)
+  const collectionCreateAndUpdateModalMode = useStore(state => state.collectionCreateAndUpdateModalMode)
+  const collectionCreateAndUpdateModalId = useStore(state => state.collectionCreateAndUpdateModalId)
+  const setCollectionCreateAndUpdateModalVisible = useStore(state => state.setCollectionCreateAndUpdateModalVisible)
+  const setCollectionCreateAndUpdateModalFolderName = useStore(state => state.setCollectionCreateAndUpdateModalFolderName)
   const handleOk = () => {
-    console.log(folderName, "folderName");
-    if (mode === "create") {
-      FileSystemService.addItem({
-        id: "62b3fc610c4d613355bd2b5b",
-        nodeName: folderName,
-        nodeType: 3,
-        parentPath: currOpePath,
-        userName: "zt",
-      }).then(() => {
-        setIsModalVisible(false);
-        updateParentComponent();
-      });
-    } else if (mode === "update") {
-      FileSystemService.rename({
-        id: "62b3fc610c4d613355bd2b5b",
-        path: currOpePath,
-        newName: folderName,
-      }).then(() => {
-        setIsModalVisible(false);
-        updateParentComponent();
-      });
-    } else if (mode === "createRequest") {
-      FileSystemService.addItem({
-        id: "62b3fc610c4d613355bd2b5b",
-        nodeName: folderName,
-        nodeType: 1,
-        parentPath: currOpePath,
-        userName: "zt",
-      }).then(() => {
-        setIsModalVisible(false);
-        updateParentComponent();
-      });
-    } else if (mode === "createCase"){
-      FileSystemService.addItem({
-        id: "62b3fc610c4d613355bd2b5b",
-        nodeName: folderName,
-        nodeType: 2,
-        parentPath: currOpePath,
-        userName: "zt",
-      }).then(() => {
-        setIsModalVisible(false);
-        updateParentComponent();
-      });
-    }
+    const paths = findPathByKey(collectionTree, collectionCreateAndUpdateModalId)
+    FileSystemService.rename({
+      id: '62b3fc610c4d613355bd2b5b',
+      newName: collectionCreateAndUpdateModalFolderName,
+      path: paths.map(i => i.key)
+    }).then(res => {
+      console.log(res)
+      setCollectionCreateAndUpdateModalVisible(false)
+      setCollectionCreateAndUpdateModalFolderName('')
+      updateDirectorytreeData()
+    })
   };
 
   const handleCancel = () => {
-    setIsModalVisible(false);
+    setCollectionCreateAndUpdateModalVisible(false)
+    // setIsModalVisible(false);
   };
 
   return (
     <>
       <Modal
-        title={mode}
-        visible={isModalVisible}
+        title={collectionCreateAndUpdateModalMode}
+        visible={collectionCreateAndUpdateModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
       >
         <Input
-          value={folderName}
+          value={collectionCreateAndUpdateModalFolderName}
           onChange={(e) => {
-            setFolderName(e.target.value);
+            setCollectionCreateAndUpdateModalFolderName(e.target.value)
           }}
         />
       </Modal>
@@ -93,4 +51,4 @@ const CreateAndUpdateFolder: React.FC<{updateParentComponent:any}> = ({ updatePa
   );
 };
 
-export default forwardRef(CreateAndUpdateFolder);
+export default CreateAndUpdateFolder;
