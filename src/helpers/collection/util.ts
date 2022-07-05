@@ -65,3 +65,28 @@ export function collectionTreeToArr(data:any) {
   })
   return result;
 }
+
+// 保存请求
+
+export function collectionOriginalTreeToAntdTreeSelectData(tree: any, nodeList = []) {
+  console.log(nodeList,'nodeList')
+  const nodes = tree
+  Object.keys(nodes).forEach((value, index, array) => {
+    nodeList.push({
+      title: nodes[value].title,
+      value: nodes[value].key,
+      disabled: nodes[value].nodeType !==3,
+      children: []
+    });
+
+    console.log(nodes[value].children,'nodes[value].children')
+    if (
+      nodes[value].children &&
+      Object.keys(nodes[value].children).length > 0
+    ) {
+      console.log(1233332)
+      collectionOriginalTreeToAntdTreeSelectData(nodes[value].children, nodeList[index].children);
+    }
+  });
+  return nodeList
+}

@@ -24,7 +24,7 @@ const Normal = () => {
   const add = () => {
     const randomKey = String(Math.random())
     const copyHttpPanes = JSON.parse(JSON.stringify(httpPanes))
-    copyHttpPanes.push({ title: 'New Request', key: randomKey })
+    copyHttpPanes.push({ title: 'New Request', key: randomKey, isNew: true })
     setHttpPanes(copyHttpPanes)
     setHttpActiveKey(randomKey)
   };
@@ -59,13 +59,13 @@ const Normal = () => {
             httpPanes.map((httpPane: any) => {
               // 重要：
               // 根据key查询该节点对应的path数组
-              const paths = findPathByKey(collectionTree, httpPane.key)||[].map(i => ({
+              const paths = findPathByKey(collectionTree, httpPane.key) || [].map(i => ({
                 key: i.key,
                 nodeType: i.nodeType
               }))
               return <TabPane tab={httpPane.title} key={httpPane.key} closable={httpPane.closable}
                               style={{ height: '500px' }}>
-                <Http id={httpPane.key} path={paths} />
+                <Http id={httpPane.key} path={paths} isNew={httpPane.isNew} />
               </TabPane>
             })
           }
