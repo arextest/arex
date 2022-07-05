@@ -23,5 +23,8 @@
     "collection": "Collection",
     "environment": "Environment",
     "newCreate": "New"
+  },
+  "applicationsMenu": {
+    "appFilterPlaceholder": "Search Applications"
   }
 }

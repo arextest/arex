@@ -302,9 +302,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
       </Tabs>
       <CreateAndUpdateFolder
         ref={createAndUpdateFolderRef}
-        updateParentComponent={() => {
-          fetchWorkspaceData();
-        }}
+        updateParentComponent={fetchWorkspaceData}
       />
     </div>
   );
