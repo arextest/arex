@@ -4,9 +4,10 @@ import { Button, Empty, Space, Tag } from "antd";
 import React, { FC } from "react";
 
 import { ApplicationDataType } from "../../api/FileSystem.type";
+import { FlexCenterWrapper } from "../StyledComponents";
 import Results from "./Results";
 
-const SubTitle = styled.div`
+const AppTitle = styled.div`
   height: 22px;
   display: flex;
   justify-content: flex-end;
@@ -24,7 +25,7 @@ const Replay: FC<{ curApp?: ApplicationDataType }> = ({ curApp }) => {
     <>
       {curApp ? (
         <Space direction="vertical" size="middle" style={{ display: "flex" }}>
-          <SubTitle>
+          <AppTitle>
             <h1 className="app-name">{`${curApp.appId}_${curApp.appName}`}</h1>
             <span>
               <label>Access CI: </label>
@@ -44,20 +45,13 @@ const Replay: FC<{ curApp?: ApplicationDataType }> = ({ curApp }) => {
             </span>
             <Button size="small">Start replay</Button>
             <Button size="small">Latest report</Button>
-          </SubTitle>
+          </AppTitle>
           <Results appId={curApp.appId} />
         </Space>
       ) : (
-        <div
-          style={{
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <FlexCenterWrapper>
           <Empty description={"Please select an application"} />
-        </div>
+        </FlexCenterWrapper>
       )}
     </>
   );
