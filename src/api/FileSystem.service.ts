@@ -74,6 +74,12 @@ export class FileSystemService {
         `http://10.5.153.151:8088/report_api/report/queryPlanStatistics`,
         params
       )
-      .then((res) => Promise.resolve(res.body.planStatisticList));
+      .then((res) =>
+        Promise.resolve(
+          res.body.planStatisticList.sort(
+            (a, b) => b.replayStartTime - a.replayStartTime
+          )
+        )
+      );
   }
 }

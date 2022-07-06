@@ -5,6 +5,7 @@ import React, { FC } from "react";
 
 import { ApplicationDataType } from "../../api/FileSystem.type";
 import { FlexCenterWrapper } from "../StyledComponents";
+import Report from "./Report";
 import Results from "./Results";
 
 const AppTitle = styled.div`
@@ -21,39 +22,40 @@ const AppTitle = styled.div`
 `;
 
 const Replay: FC<{ curApp?: ApplicationDataType }> = ({ curApp }) => {
-  return (
-    <>
-      {curApp ? (
-        <Space direction="vertical" size="middle" style={{ display: "flex" }}>
-          <AppTitle>
-            <h1 className="app-name">{`${curApp.appId}_${curApp.appName}`}</h1>
-            <span>
-              <label>Access CI: </label>
-              <Tag
-                css={css`
-                  height: 18px;
-                  line-height: 18px;
-                  border-radius: 8px;
-                `}
-              >
-                {(curApp.features & 1) === 1 ? "ON" : "OFF"}
-              </Tag>
-            </span>
-            <span>
-              <label>Case Count: </label>
-              <span>{curApp.recordedCaseCount}</span>
-            </span>
-            <Button size="small">Start replay</Button>
-            <Button size="small">Latest report</Button>
-          </AppTitle>
-          <Results appId={curApp.appId} />
-        </Space>
-      ) : (
-        <FlexCenterWrapper>
-          <Empty description={"Please select an application"} />
-        </FlexCenterWrapper>
-      )}
-    </>
+  return curApp ? (
+    <Space direction="vertical" size="middle" style={{ display: "flex" }}>
+      <AppTitle>
+        <h1 className="app-name">{`${curApp.appId}_${curApp.appName}`}</h1>
+        <span>
+          <label>Access CI: </label>
+          <Tag
+            css={css`
+              height: 18px;
+              line-height: 18px;
+              border-radius: 8px;
+            `}
+          >
+            {(curApp.features & 1) === 1 ? "ON" : "OFF"}
+          </Tag>
+        </span>
+        <span>
+          <label>Case Count: </label>
+          <span>{curApp.recordedCaseCount}</span>
+        </span>
+        <Button size="small">Start replay</Button>
+        <Button size="small">Latest report</Button>
+      </AppTitle>
+
+      {/* Report component  */}
+      <Results appId={curApp.appId} />
+      <Report />
+
+      {/* TODO Configuration */}
+    </Space>
+  ) : (
+    <FlexCenterWrapper>
+      <Empty description={"Please select an application"} />
+    </FlexCenterWrapper>
   );
 };
 
