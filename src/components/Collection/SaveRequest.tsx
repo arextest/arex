@@ -20,10 +20,22 @@ const CollectionSaveRequest = () => {
   };
 
   const handleOk = () => {
-    setCollectionSaveRequest({
-      ...collectionSaveRequest,
-      isModalVisible: false
-    });
+
+    form
+        .validateFields()
+        .then(values => {
+          form.resetFields();
+          console.log(values,'va')
+          // onCreate(values);
+        })
+        .catch(info => {
+          console.log('Validate Failed:', info);
+        });
+
+    // setCollectionSaveRequest({
+    //   ...collectionSaveRequest,
+    //   isModalVisible: false
+    // });
   };
 
   const handleCancel = () => {
@@ -38,6 +50,8 @@ const CollectionSaveRequest = () => {
   const onChange = (newValue: string) => {
     setValue(newValue);
   };
+
+  const [form] = Form.useForm();
 
   // const treeData = [
   //   {
@@ -62,6 +76,7 @@ const CollectionSaveRequest = () => {
   return <div>
     <Modal title="SAVE REQUEST" visible={collectionSaveRequest.isModalVisible} onOk={handleOk} onCancel={handleCancel}>
       <Form
+          form={form}
         layout="vertical"
         name="basic"
         labelCol={{ span: 8 }}
