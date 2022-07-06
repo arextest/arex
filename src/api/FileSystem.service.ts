@@ -69,9 +69,11 @@ export class FileSystemService {
   }
 
   static async queryPlanStatistics(params: QueryPlanStatisticsReq) {
-    return request.post<QueryPlanStatisticsRes>(
-      `http://10.5.153.151:8088/report_api/report/queryPlanStatistics`,
-      params
-    );
+    return request
+      .post<QueryPlanStatisticsRes>(
+        `http://10.5.153.151:8088/report_api/report/queryPlanStatistics`,
+        params
+      )
+      .then((res) => Promise.resolve(res.body.planStatisticList));
   }
 }

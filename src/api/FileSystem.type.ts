@@ -132,6 +132,7 @@ export type PlanStatistics = {
   failOperationCount: number | null;
   waitOperationCount: number | null;
   totalServiceCount: number | null;
+  percent?: number;
 };
 export interface QueryPlanStatisticsRes {
   totalCount: number;
