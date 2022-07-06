@@ -21,7 +21,7 @@ const Normal = () => {
   const add = () => {
     const randomKey = String(Math.random())
     const copyHttpPanes = JSON.parse(JSON.stringify(httpPanes))
-    copyHttpPanes.push({ title: 'New Request', key: randomKey })
+    copyHttpPanes.push({ title: 'New Request', key: randomKey, isNew: true })
     setHttpPanes(copyHttpPanes)
     setHttpActiveKey(randomKey)
   };
@@ -41,6 +41,7 @@ const Normal = () => {
   };
 
   return (
+<<<<<<< HEAD
     <WorkSpace
       Main={ <Tabs type="editable-card" activeKey={httpActiveKey} onEdit={onEdit} onChange={onChange}>
         {
@@ -60,6 +61,39 @@ const Normal = () => {
       </Tabs>}
       Side={<Collection />}
     />
+=======
+    <Row style={{ height: "100%" }}>
+      <Col
+        lg={{ span: 18 }}
+        md={{ span: 16 }}
+        style={{
+          borderRight: `1px solid ${theme === "light" ? "#f0f0f0" : "#303030"}`,
+          paddingRight: "14px",
+          paddingTop: "14px",
+        }}
+      >
+        <Tabs type="editable-card" activeKey={httpActiveKey} onEdit={onEdit} onChange={onChange}>
+          {
+            httpPanes.map((httpPane: any) => {
+              // 重要：
+              // 根据key查询该节点对应的path数组
+              const paths = findPathByKey(collectionTree, httpPane.key) || [].map(i => ({
+                key: i.key,
+                nodeType: i.nodeType
+              }))
+              return <TabPane tab={httpPane.title} key={httpPane.key} closable={httpPane.closable}
+                              style={{ height: '500px' }}>
+                <Http id={httpPane.key} path={paths} isNew={httpPane.isNew} />
+              </TabPane>
+            })
+          }
+        </Tabs>
+      </Col>
+      <Col lg={{ span: 6 }} md={{ span: 8 }}>
+        <Collection />
+      </Col>
+    </Row>
+>>>>>>> c64433e (upd)
   );
 };
 

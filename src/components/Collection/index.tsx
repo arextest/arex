@@ -43,17 +43,21 @@ const Collection = ({ changeSelectedRequest }: any) => {
 
   const onExpand: DirectoryTreeProps["onExpand"] = (keys, info) => {};
   const onSelect: DirectoryTreeProps["onSelect"] = (keys, info) => {
-    console.log(keys,'keys')
+    console.log(keys, 'keys')
     const [key] = keys
     const findHttpPanes = httpPanes.find(pane => pane.key === key)
-    console.log(findHttpPanes,'findHttpPanes')
+    console.log(findHttpPanes, 'findHttpPanes')
     // 1.数组里没有
     if (!findHttpPanes) {
       const copyHttpPanes = JSON.parse(JSON.stringify(httpPanes))
-      console.log(collections.find(i => i.key === key).type,'collections.find(i => i.key === key).type')
-      copyHttpPanes.push({ title: collections.find(i => i.key === key).title, key,nodeType: collections.find(i => i.key === key).type })
-      setHttpPanes(copyHttpPanes)
-      setHttpActiveKey(key)
+
+      console.log(collections.find(i => i.key === key),'collections.find(i => i.key === key).type')
+
+      if (collections.find(i => i.key === key).type !== 3) {
+        copyHttpPanes.push({ title: collections.find(i => i.key === key).title, key, nodeType: collections.find(i => i.key === key).type, isNew: false })
+        setHttpPanes(copyHttpPanes)
+        setHttpActiveKey(key)
+      }
     } else {
       setHttpActiveKey(key)
     }

@@ -30,6 +30,10 @@ interface BaseState {
   setCollectionCreateAndUpdateModalMode: (a: any) => void;
   collectionCreateAndUpdateModalId: '',
   setCollectionCreateAndUpdateModalId: (a: any) => void;
+  collectionSaveRequest: {
+    isModalVisible: boolean
+  },
+  setCollectionSaveRequest: (a: any) => void;
 }
 export const useStore = create<BaseState>((set, get) => ({
   theme: DefaultTheme,
@@ -90,5 +94,12 @@ export const useStore = create<BaseState>((set, get) => ({
   collectionCreateAndUpdateModalId: '',
   setCollectionCreateAndUpdateModalId: (collectionCreateAndUpdateModalId:any) => {
     return set(() => ({ collectionCreateAndUpdateModalId }));
+  },
+  // CollectionSaveRequest
+  collectionSaveRequest: {
+    isModalVisible: false
+  },
+  setCollectionSaveRequest: (collectionSaveRequest:any) => {
+    return set(() => ({ collectionSaveRequest }));
   },
 }));

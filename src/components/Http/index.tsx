@@ -28,6 +28,7 @@ import { Root, RootParadigmKey } from "../../api/FileSystem.type";
 import { METHODS, NodeType } from "../../constant";
 import { useStore } from "../../store";
 import { tryParseJsonString, tryPrettierJsonString } from "../../utils";
+import CollectionSaveRequest from "../Collection/SaveRequest";
 import { AnimateAutoHeight } from "../index";
 import FormHeader, { FormHeaderWrapper } from "./FormHeader";
 import FormTable, { getColumns } from "./FormTable";
@@ -88,10 +89,12 @@ const ResponseWrapper = styled.div`
   align-items: center;
 `;
 
-const Http: FC<HttpProps> = ({ mode = "normal", id, path = [] }) => {
+const Http: FC<HttpProps> = ({ mode = "normal", id, path = [], isNew }) => {
   const theme = useStore((state) => state.theme);
   const { t: t_common } = useTranslation("common");
   const { t: t_components } = useTranslation("components");
+  const setCollectionSaveRequest = useStore(state => state.setCollectionSaveRequest);
+  const collectionSaveRequest = useStore(state => state.collectionSaveRequest);
 
   const [method, setMethod] = useState<typeof METHODS[number]>("GET");
   // const [requestSavedName, setRequestSavedName] = useState<string>(
@@ -308,33 +311,42 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [] }) => {
   };
 
   const handleSave = () => {
-    saveInterface(
-      {
-        id,
-        auth: null,
-        body: {
-          contentType,
-          body: requestBody,
+    console.log(isNew, 'isNew')
+
+    if (isNew) {
+      setCollectionSaveRequest({
+        ...collectionSaveRequest,
+        isModalVisible: true
+      })
+    } else {
+      saveInterface(
+        {
+          id,
+          auth: null,
+          body: {
+            contentType,
+            body: requestBody,
+          },
+          address: {
+            endpoint: url,
+            method,
+          },
+          baseAddress: {
+            endpoint: baseUrl,
+            method,
+          },
+          testAddress: {
+            endpoint: testUrl,
+            method,
+          },
+          headers: requestHeaders,
+          params: requestParams,
+          preRequestScript: null,
+          testScript: null,
         },
-        address: {
-          endpoint: url,
-          method,
-        },
-        baseAddress: {
-          endpoint: baseUrl,
-          method,
-        },
-        testAddress: {
-          endpoint: testUrl,
-          method,
-        },
-        headers: requestHeaders,
-        params: requestParams,
-        preRequestScript: null,
-        testScript: null,
-      },
-      path[path.length - 1].nodeType
-    );
+        path[path.length - 1].nodeType
+      );
+    }
   };
 
   const handleUrlChange = (value: string) => {
@@ -645,6 +657,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [] }) => {
           </ResponseWrapper>
         )}
       </div>
+      <CollectionSaveRequest/>
     </>
   );
 };
