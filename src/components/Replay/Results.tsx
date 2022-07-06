@@ -19,13 +19,9 @@ export const states = [
 
 const columns: ColumnsType<PlanStatistics> = [
   {
-    title: "Application",
-    key: "appId",
-    render: (_, record) => <a>{`${record.appId}_${record.appName}`}</a>,
-  },
-  {
     title: "Report Name",
     dataIndex: "planName",
+    render: (text) => <a>{text}</a>,
   },
   {
     title: "State",
