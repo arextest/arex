@@ -41,6 +41,7 @@ export type HttpProps = {
   mode?: "normal" | "compare";
   id: string;
   path: Root<RootParadigmKey>[];
+  isNew: boolean
 };
 
 export type KeyValueType = {

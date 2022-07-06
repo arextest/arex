@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FileSystemService } from "../../api/FileSystem.service";
 import { collectionOriginalTreeToAntdTreeSelectData } from "../../helpers/collection/util";
 import { useStore } from "../../store";
+import {findPathByKey} from "./util";
 
 const { TreeNode } = TreeSelect;
 
@@ -68,9 +69,19 @@ const CollectionSaveRequest = () => {
         initialValues={{ remember: true }}
         autoComplete="off"
         onFinish={() => {
-
+          console.log('1234')
+          const paths = findPathByKey(collectionTree, value)
           // TODO: 新建保存需要两个接口，必须得先定义结构体，字段命名需要长一些cardtype
-          // FileSystemService.addItem()
+          FileSystemService.addItem({
+            id: "62b3fc610c4d613355bd2b5b",
+            nodeName: 'New Request',
+            nodeType: 1,
+            parentPath: paths.map(item=>item.key),
+            userName: "zt",
+          }).then(() => {
+            console.log('12345')
+            // updateDirectorytreeData()
+          });
 
         }}
       >
@@ -100,6 +111,7 @@ const CollectionSaveRequest = () => {
           >
           </TreeSelect>
         </Form.Item>
+
       </Form>
 
     </Modal>
