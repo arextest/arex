@@ -66,7 +66,6 @@ const Normal = () => {
                 closable={httpPane.closable}
                 style={{ height: "500px" }}
               >
-                <p>{JSON.stringify(httpPane)}</p>
                 <Http id={httpPane.key} path={paths} isNew={httpPane.isNew} />
               </TabPane>
             );

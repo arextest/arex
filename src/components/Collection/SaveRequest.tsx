@@ -88,7 +88,6 @@ const CollectionSaveRequest = () => {
         initialValues={{ remember: true }}
         autoComplete="off"
         onFinish={() => {
-          console.log('1234')
           const paths = findPathByKey(collectionTree, value)
           // TODO: 新建保存需要两个接口，必须得先定义结构体，字段命名需要长一些cardtype
           FileSystemService.addItem({
@@ -98,11 +97,6 @@ const CollectionSaveRequest = () => {
             parentPath: paths.map(item => item.key),
             userName: "zt",
           }).then(() => {
-            console.log('12345')
-            // updateDirectorytreeData()
-
-            setHttp
-
           });
         }}
       >

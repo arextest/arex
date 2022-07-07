@@ -18,6 +18,7 @@ interface BaseState {
   httpPanes: {
     title:string
     key:string
+    isNew: boolean
   }[];
   setHttpPanes: (a: any) => void;
   httpActiveKey: any;
@@ -67,7 +68,11 @@ export const useStore = create<BaseState>((set, get) => ({
     return set(() => ({ workspaces }));
   },
   // Rest
-  httpPanes: [],
+  httpPanes: [{
+    isNew: true,
+    title: 'New Request',
+    key: '0'
+  }],
   httpActiveKey: "0",
   setHttpPanes: (httpPanes: any) => {
     return set(() => ({ httpPanes }));
