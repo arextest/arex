@@ -61,7 +61,7 @@ const columns: ColumnsType<PlanStatistics> = [
     dataIndex: "waitCaseCount",
   },
   {
-    title: "Action",
+    title: "Executor",
     dataIndex: "creator",
   },
   {
@@ -90,7 +90,7 @@ const Results: FC<{
   onSelectedPlanChange: (selectedPlan: PlanStatistics) => void;
 }> = ({ appId, onSelectedPlanChange }) => {
   const theme = useStore((state) => state.theme);
-  const [selectRow, setSelectRow] = useState<number>();
+  const [selectRow, setSelectRow] = useState<number>(0);
   const { data: planStatistics } = useRequest(
     () =>
       FileSystemService.queryPlanStatistics({
@@ -117,7 +117,10 @@ const Results: FC<{
         columns={columns}
         onRow={(record, index) => {
           return {
-            onClick: () => setSelectRow(index),
+            onClick: () => {
+              setSelectRow(index);
+              onSelectedPlanChange(record);
+            },
           };
         }}
         rowClassName={(record, index) => {

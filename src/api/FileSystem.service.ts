@@ -2,6 +2,8 @@ import request from "./axios";
 import {
   QueryInterfaceReq,
   QueryInterfaceRes,
+  QueryPlanItemStatisticsReq,
+  QueryPlanItemStatisticsRes,
   QueryPlanStatisticsReq,
   QueryPlanStatisticsRes,
   QueryWorkspaceByIdReq,
@@ -81,5 +83,14 @@ export class FileSystemService {
           )
         )
       );
+  }
+
+  static async queryPlanItemStatistics(params: QueryPlanItemStatisticsReq) {
+    return request
+      .post<QueryPlanItemStatisticsRes>(
+        `http://10.5.153.151:8088/report_api/report/queryPlanItemStatistics`,
+        params
+      )
+      .then((res) => Promise.resolve(res.body.planItemStatisticList));
   }
 }

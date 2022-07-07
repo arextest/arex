@@ -1,5 +1,7 @@
 import { message } from "antd";
-import { useTranslation } from "react-i18next";
+
+import * as ChartUtils from "./chart";
+export { ChartUtils };
 
 export const getLocalStorage = (key: string) => {
   const raw = window.localStorage.getItem(key);
@@ -29,4 +31,13 @@ export const tryPrettierJsonString = (
   } catch (e) {
     message.warn(errorTip);
   }
+};
+
+export const getPercent = (
+  num: number,
+  den: number,
+  showPercentSign: boolean = true
+) => {
+  const value = num && den ? parseFloat(((num / den) * 100).toFixed(0)) : 0;
+  return showPercentSign ? value + "%" : value;
 };
