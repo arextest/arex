@@ -1,9 +1,9 @@
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
 import { Button, Empty, Space, Tag } from "antd";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 
-import { ApplicationDataType } from "../../api/FileSystem.type";
+import { ApplicationDataType, PlanStatistics } from "../../api/FileSystem.type";
 import { FlexCenterWrapper } from "../StyledComponents";
 import Report from "./Report";
 import Results from "./Results";
@@ -22,6 +22,7 @@ const AppTitle = styled.div`
 `;
 
 const Replay: FC<{ curApp?: ApplicationDataType }> = ({ curApp }) => {
+  const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
   return curApp ? (
     <Space direction="vertical" size="middle" style={{ display: "flex" }}>
       <AppTitle>
@@ -47,8 +48,8 @@ const Replay: FC<{ curApp?: ApplicationDataType }> = ({ curApp }) => {
       </AppTitle>
 
       {/* Report component  */}
-      <Results appId={curApp.appId} />
-      <Report />
+      <Results appId={curApp.appId} onSelectedPlanChange={setSelectedPlan} />
+      <Report selectedPlan={selectedPlan} />
 
       {/* TODO Configuration */}
     </Space>

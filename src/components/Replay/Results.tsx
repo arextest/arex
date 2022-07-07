@@ -50,7 +50,7 @@ const columns: ColumnsType<PlanStatistics> = [
   },
   {
     title: "Failed",
-    dataIndex: "failedCaseCount",
+    dataIndex: "failCaseCount",
   },
   {
     title: "Invalid",
@@ -61,7 +61,7 @@ const columns: ColumnsType<PlanStatistics> = [
     dataIndex: "waitCaseCount",
   },
   {
-    title: "Action",
+    title: "Executor",
     dataIndex: "creator",
   },
   {
@@ -74,7 +74,7 @@ const columns: ColumnsType<PlanStatistics> = [
 ];
 
 const AppTable = styled(Table)<{ theme: Theme }>`
-  // 被选中的表格行的样式
+  // highlight selected row
   .clickRowStyl {
     background-color: ${(props) =>
       props.theme === Theme.light ? "#f6efff" : "#171528"};
@@ -84,9 +84,13 @@ const AppTable = styled(Table)<{ theme: Theme }>`
       props.theme === Theme.light ? "#f6efff88" : "#17152888"}!important;
   }
 `;
-const Results: FC<{ appId?: string }> = ({ appId }) => {
+
+const Results: FC<{
+  appId?: string;
+  onSelectedPlanChange: (selectedPlan: PlanStatistics) => void;
+}> = ({ appId, onSelectedPlanChange }) => {
   const theme = useStore((state) => state.theme);
-  const [selectRow, setSelectRow] = useState<number>();
+  const [selectRow, setSelectRow] = useState<number>(0);
   const { data: planStatistics } = useRequest(
     () =>
       FileSystemService.queryPlanStatistics({
@@ -99,7 +103,7 @@ const Results: FC<{ appId?: string }> = ({ appId }) => {
       ready: !!appId,
       refreshDeps: [appId],
       onSuccess(res) {
-        console.log(res);
+        res.length && onSelectedPlanChange(res[0]);
       },
     }
   );
@@ -113,9 +117,9 @@ const Results: FC<{ appId?: string }> = ({ appId }) => {
         columns={columns}
         onRow={(record, index) => {
           return {
-            onClick: (event) => {
-              console.log(record, index);
+            onClick: () => {
               setSelectRow(index);
+              onSelectedPlanChange(record);
             },
           };
         }}

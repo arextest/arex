@@ -138,3 +138,35 @@ export interface QueryPlanStatisticsRes {
   totalCount: number;
   planStatisticList: PlanStatistics[];
 }
+
+// ------ /report_api/report/queryPlanItemStatistics ------
+export interface QueryPlanItemStatisticsReq {
+  planId: number;
+}
+
+export type PlanItemStatistics = {
+  planItemId: number;
+  planId: number;
+  operationId: number;
+  operationName: string;
+  serviceName: string;
+  appId: string;
+  status: number;
+  replayStartTime: number;
+  replayEndTime: number;
+  sourceHost: string | null;
+  sourceEnv: string | null;
+  targetHost: string;
+  targetEnv: string | null;
+  caseSourceType: number;
+  caseStartTime: number;
+  caseEndTime: number;
+  totalCaseCount: number;
+  errorCaseCount: number;
+  successCaseCount: number;
+  failCaseCount: number;
+  waitCaseCount: number;
+};
+export interface QueryPlanItemStatisticsRes {
+  planItemStatisticList: PlanItemStatistics[];
+}
