@@ -2,7 +2,17 @@ import "chart.js/auto";
 
 import { css } from "@emotion/react";
 import { useRequest } from "ahooks";
-import { Badge, Button, Card, Col, Row, Statistic, Table, Tag } from "antd";
+import {
+  Badge,
+  Button,
+  Card,
+  Col,
+  Row,
+  Statistic,
+  Table,
+  Tag,
+  Typography,
+} from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { FC, useMemo } from "react";
 import { Pie } from "react-chartjs-2";
@@ -12,6 +22,8 @@ import { PlanItemStatistics, PlanStatistics } from "../../api/FileSystem.type";
 import { Color } from "../../style/theme";
 import { getPercent } from "../../utils";
 import { states } from "./Results";
+
+const { Text } = Typography;
 
 const chartOptions = {
   responsive: true,
@@ -61,18 +73,22 @@ const columns: ColumnsType<PlanItemStatistics> = [
   {
     title: "Passed",
     dataIndex: "successCaseCount",
+    render: (text) => <Text type="success">{text}</Text>,
   },
   {
     title: "Failed",
     dataIndex: "failCaseCount",
+    render: (text) => <Text type="danger">{text}</Text>,
   },
   {
     title: "Invalid",
     dataIndex: "errorCaseCount",
+    render: (text) => <Text type="secondary">{text}</Text>,
   },
   {
     title: "Blocked",
     dataIndex: "waitCaseCount",
+    render: (text) => <Text type="secondary">{text}</Text>,
   },
   {
     title: "Action",
@@ -115,6 +131,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     <Card size="small" title={"Report: " + selectedPlan.planName}>
       <Row gutter={12}>
         <Col span={12}>
+          <b style={{ color: "gray" }}>Basic Information</b>
           <div
             css={css`
               display: flex;
@@ -142,14 +159,14 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           <div>Report Name: {selectedPlan.planName}</div>
           <div>Target Host: {selectedPlan.targetHost}</div>
           <div>Executor: {selectedPlan.creator}</div>
-          <div>Record version: {selectedPlan.caseRecordVersion}</div>
-          <div>Replay version: {selectedPlan.coreVersion}</div>
+          <span>Record version: {selectedPlan.caseRecordVersion}</span>
+          <span>Replay version: {selectedPlan.coreVersion}</span>
         </Col>
 
         <Col span={12}>
-          <div>Replay Pass Rate</div>
+          <b style={{ color: "gray" }}>Replay Pass Rate</b>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <div style={{ height: "160px", width: "100%" }}>
+            <div style={{ height: "160px", width: "100%", padding: "16px 0" }}>
               <Pie
                 data={{
                   labels: ["Passed", "Failed", "Invalid", "Blocked"],
@@ -187,7 +204,9 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
         </Col>
       </Row>
 
-      <Table columns={columns} dataSource={planItemData} />
+      <br />
+
+      <Table size="small" columns={columns} dataSource={planItemData} />
     </Card>
   ) : (
     <></>

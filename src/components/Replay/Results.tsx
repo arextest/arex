@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { useRequest } from "ahooks";
-import { Badge, Table, Tag } from "antd";
+import { Badge, Table, Tag, Typography } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { FC, useState } from "react";
 
@@ -8,6 +8,7 @@ import { FileSystemService } from "../../api/FileSystem.service";
 import { PlanStatistics } from "../../api/FileSystem.type";
 import { useStore } from "../../store";
 import { Theme } from "../../style/theme";
+const { Text } = Typography;
 
 export const states = [
   { label: "init", color: "grey", value: 0 },
@@ -47,18 +48,22 @@ const columns: ColumnsType<PlanStatistics> = [
   {
     title: "Passed",
     dataIndex: "successCaseCount",
+    render: (text) => <Text type="success">{text}</Text>,
   },
   {
     title: "Failed",
     dataIndex: "failCaseCount",
+    render: (text) => <Text type="danger">{text}</Text>,
   },
   {
     title: "Invalid",
     dataIndex: "errorCaseCount",
+    render: (text) => <Text type="secondary">{text}</Text>,
   },
   {
     title: "Blocked",
     dataIndex: "waitCaseCount",
+    render: (text) => <Text type="secondary">{text}</Text>,
   },
   {
     title: "Executor",
@@ -110,7 +115,6 @@ const Results: FC<{
   return (
     <div>
       <AppTable
-        bordered
         size="small"
         theme={theme}
         pagination={false}
