@@ -312,42 +312,33 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [], isNew }) => {
   };
 
   const handleSave = () => {
-    console.log(isNew, 'isNew')
-
-    if (isNew) {
-      setCollectionSaveRequest({
-        ...collectionSaveRequest,
-        isModalVisible: true
-      })
-    } else {
-      saveInterface(
-        {
-          id,
-          auth: null,
-          body: {
-            contentType,
-            body: requestBody,
-          },
-          address: {
-            endpoint: url,
-            method,
-          },
-          baseAddress: {
-            endpoint: baseUrl,
-            method,
-          },
-          testAddress: {
-            endpoint: testUrl,
-            method,
-          },
-          headers: requestHeaders,
-          params: requestParams,
-          preRequestScript: null,
-          testScript: null,
+    saveInterface(
+      {
+        id,
+        auth: null,
+        body: {
+          contentType,
+          body: requestBody,
         },
-        path[path.length - 1].nodeType
-      );
-    }
+        address: {
+          endpoint: url,
+          method,
+        },
+        baseAddress: {
+          endpoint: baseUrl,
+          method,
+        },
+        testAddress: {
+          endpoint: testUrl,
+          method,
+        },
+        headers: requestHeaders,
+        params: requestParams,
+        preRequestScript: null,
+        testScript: null,
+      },
+      path[path.length - 1].nodeType
+    );
   };
 
   const handleUrlChange = (value: string) => {
@@ -658,7 +649,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [], isNew }) => {
           </ResponseWrapper>
         )}
       </div>
-      <CollectionSaveRequest/>
+      {/*<CollectionSaveRequest/>*/}
     </>
   );
 };

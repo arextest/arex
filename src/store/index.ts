@@ -32,6 +32,7 @@ interface BaseState {
   setCollectionCreateAndUpdateModalId: (a: any) => void;
   collectionSaveRequest: {
     isModalVisible: boolean
+    randomId: string
   },
   setCollectionSaveRequest: (a: any) => void;
 }
@@ -97,7 +98,8 @@ export const useStore = create<BaseState>((set, get) => ({
   },
   // CollectionSaveRequest
   collectionSaveRequest: {
-    isModalVisible: false
+    isModalVisible: false,
+    randomId: ''
   },
   setCollectionSaveRequest: (collectionSaveRequest:any) => {
     return set(() => ({ collectionSaveRequest }));

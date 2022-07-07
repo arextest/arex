@@ -52,7 +52,8 @@ export function collectionTreeToArr(data:any) {
       result.push({
         key: data.key,
         title: data.title,
-        pid: data.pid
+        pid: data.pid,
+        nodeType: data.nodeType
       });
       const child = data.children
       if (child) {
