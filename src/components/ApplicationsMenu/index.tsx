@@ -34,9 +34,14 @@ const ApplicationsMenu: FC<{
   const { t } = useTranslation("components");
 
   const [filterKeyword, setFilterKeyword] = useState("");
+  const [selectedKey, setSelectedKey] = useState<string>("");
   const { data: apps = [] } = useRequest(FileSystemService.regressionList, {
     onSuccess(res) {
-      console.log(res);
+      if (res.length) {
+        // select the first app by default
+        setSelectedKey(res[0].application.appId);
+        props.onAppSelect(res[0].application);
+      }
     },
   });
   const filteredApps = useMemo(
@@ -55,8 +60,10 @@ const ApplicationsMenu: FC<{
     const app: ApplicationDataType | undefined = apps.find(
       (app) => app.application.appId === value.key
     )?.application;
-    console.log(app);
-    app && props.onAppSelect(app);
+    if (app) {
+      props.onAppSelect(app);
+      setSelectedKey(app.appId);
+    }
   };
   return (
     <ApplicationsMenuWrapper>
@@ -66,6 +73,7 @@ const ApplicationsMenu: FC<{
         onChange={(e) => setFilterKeyword(e.target.value)}
       />
       <AppList
+        selectedKeys={[selectedKey]}
         items={filteredApps.map((app) => ({
           label: `${app.application.appId}_${app.application.appName}`,
           key: app.application.appId,
