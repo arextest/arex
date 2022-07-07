@@ -1,5 +1,5 @@
 import { MoreOutlined } from "@ant-design/icons";
-import { Dropdown, Menu, Space } from "antd";
+import {Dropdown, Menu, Popconfirm, Space} from "antd";
 import { useState } from "react";
 import { FileSystemService } from "../../api/FileSystem.service";
 import { useStore } from "../../store";
@@ -43,7 +43,7 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
                   });
                 }}
               >
-                新增文件夹
+                New Folder
               </a>
             ),
             // 只有类型为3才能新增文件夹
@@ -66,7 +66,7 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
                   });
                 }}
               >
-                新增request
+                New Request
               </a>
             ),
             disabled: val.type !== 3,
@@ -88,7 +88,7 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
                   });
                 }}
               >
-                新增eg
+                New Case
               </a>
             ),
             disabled: val.type !== 1,
@@ -105,24 +105,24 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
                   setCollectionCreateAndUpdateModalFolderName(val.title)
                 }}
               >
-                重命名
+                Rename
               </a>
             ),
           },
           {
             key: "5",
             label: (
-              <a
-                style={{ color: 'red' }}
-                target="_blank"
-                onClick={() => {
-                  FileSystemService.removeItem({ id: '62b3fc610c4d613355bd2b5b', removeNodePath: paths.map(i => i.key) }).then(res => {
-                    updateDirectorytreeData()
-                  })
-                }}
-              >
-                删除
-              </a>
+
+          <Popconfirm title="Are you sure？" okText="Yes" cancelText="No" onConfirm={() => {
+            FileSystemService.removeItem({ id: '62b3fc610c4d613355bd2b5b', removeNodePath: paths.map(i => i.key) }).then(res => {
+              updateDirectorytreeData()
+            })
+          }}>
+            <a
+              style={{ color: 'red' }}>
+              Delete
+            </a>
+          </Popconfirm>
             ),
           },
         ]}
