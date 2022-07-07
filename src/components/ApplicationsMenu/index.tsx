@@ -17,6 +17,7 @@ const AppList = styled(Menu)`
     margin: 0 !important;
     height: 32px;
     line-height: 32px;
+    border-radius: 2px;
   }
   .ant-menu-item-selected {
     background-color: #2d244f;
