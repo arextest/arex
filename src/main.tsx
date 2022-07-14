@@ -1,20 +1,9 @@
-import "./style/index.less";
-import "antd/dist/antd.less";
-import "codemirror/lib/codemirror.css";
-import "codemirror/mode/javascript/javascript.js";
-import "codemirror/mode/jsx/jsx.js";
-import "codemirror/theme/idea.css";
-import "jsoneditor/dist/jsoneditor.min.css";
-import "./i18n";
-import codemirror from "codemirror";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
 import App from "./App";
-// @ts-ignore
-window.CodeMirror = codemirror;
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
+import "antd/dist/antd.css";
+import { BrowserRouter } from "react-router-dom";
+
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+  <BrowserRouter><App /></BrowserRouter>,
 );

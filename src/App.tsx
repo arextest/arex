@@ -1,12 +1,10 @@
-import React from "react";
-import routerConfig from "./routers";
-import { useRoutes } from "react-router-dom";
+import "./components/app/index.less";
+import "./components/collection/index.less";
+import "./components/environment/index.less";
+import MainBox from "./layouts/mainbox";
 
-interface IProps {}
-
-const App: React.FC<IProps> = () => {
-  const useRoutesRouterConfig = useRoutes(routerConfig);
-  return <div>{useRoutesRouterConfig}</div>;
-};
+function App() {
+  return <MainBox />;
+}
 
 export default App;
