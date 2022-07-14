@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { Button, Card, Divider, Select } from "antd";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 
 import { GitHubStarButton } from "../components";
 import ChangeLangButton from "../i18n/ChangeLangButton";
@@ -36,7 +36,6 @@ const HeaderMenu = styled.div`
 const { Option } = Select;
 
 const Header: FC<{ collapsed?: boolean }> = ({ collapsed }) => {
-  const [workspaceId, setWorkspaceId] = useState("");
   const workspaces = useStore((state) => state.workspaces);
   const { theme, changeTheme, currentWorkspaceId, setCurrentWorkspaceId } =
     useStore();
@@ -74,13 +73,11 @@ const Header: FC<{ collapsed?: boolean }> = ({ collapsed }) => {
             style={{ width: 160 }}
             onChange={handleChange}
           >
-            {workspaces.map((i, index) => {
-              return (
-                <Option key={index} value={i.id}>
-                  {i.workspaceName}
-                </Option>
-              );
-            })}
+            {workspaces.map((item, index: number) => (
+              <Option key={index} value={item.id}>
+                {item.workspaceName}
+              </Option>
+            ))}
           </Select>
         </HeaderMenu>
       </HeaderWrapper>

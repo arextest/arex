@@ -2,7 +2,6 @@ import React from "react";
 
 import MainBox from "../layout/MainBox";
 import Compare from "../pages/Compare";
-import Home from "../pages/Home";
 import Normal from "../pages/Normal";
 import Replay from "../pages/Replay";
 import Setting from "../pages/Setting";

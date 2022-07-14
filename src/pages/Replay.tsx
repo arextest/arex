@@ -1,16 +1,31 @@
 import React, { useState } from "react";
 
-import { ApplicationDataType } from "../api/FileSystem.type";
-import ApplicationsMenu from "../components/ApplicationsMenu";
-import ReplayMain from "../components/Replay";
-import WorkSpace from "../layout/WorkSpace";
+import ReplayService from "../api/Replay.service";
+import { ApplicationDataType } from "../api/Replay.type";
+import { MenuSelect, Replay as ReplayMain } from "../components";
+import { WorkSpace } from "../layout";
 
 const Replay = () => {
   const [curApp, setCurApp] = useState<ApplicationDataType>();
   return (
     <WorkSpace
       Main={<ReplayMain curApp={curApp} />}
-      Side={<ApplicationsMenu onAppSelect={setCurApp} />}
+      Side={
+        <MenuSelect<ApplicationDataType>
+          defaultSelectFirst
+          rowKey="appId"
+          onAppSelect={setCurApp}
+          placeholder="applicationsMenu.appFilterPlaceholder"
+          request={ReplayService.regressionList}
+          filterFn={(keyword, app) =>
+            app.appName.includes(keyword) || app.appId.includes(keyword)
+          }
+          itemRender={(app) => ({
+            label: `${app.appId}_${app.appName}`,
+            key: app.appId,
+          })}
+        />
+      }
     />
   );
 };

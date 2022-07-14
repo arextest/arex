@@ -13,7 +13,7 @@ export default class ReplayService {
   static async regressionList() {
     return request
       .get<RegressionListRes>(`/config/application/regressionList`)
-      .then((res) => Promise.resolve(res.body));
+      .then((res) => Promise.resolve(res.body.map((item) => item.application)));
   }
 
   static async queryPlanStatistics(params: QueryPlanStatisticsReq) {

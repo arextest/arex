@@ -2,7 +2,7 @@ import { Tabs } from "antd";
 
 import { Collection, Http } from "../components";
 import { findPathByKey } from "../components/Collection/util";
-import WorkSpace from "../layout/WorkSpace";
+import { WorkSpace } from "../layout";
 import { useStore } from "../store";
 const { TabPane } = Tabs;
 

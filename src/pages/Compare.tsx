@@ -1,9 +1,8 @@
 import { useState } from "react";
 
 import { Root, RootParadigmKey } from "../api/FileSystem.type";
-import Collection from "../components/Collection";
-import Http from "../components/Http";
-import WorkSpace from "../layout/WorkSpace";
+import { Collection, Http } from "../components";
+import { WorkSpace } from "../layout";
 
 const Compare = () => {
   const [selectedRequest, setSelectedRequest] = useState<{
