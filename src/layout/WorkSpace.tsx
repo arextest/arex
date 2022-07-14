@@ -23,7 +23,7 @@ const WorkSpace: FC<{ Main: ReactNode; Side: ReactNode }> = ({
         {Main}
       </Col>
       <Col lg={{ span: 6 }} md={{ span: 8 }}>
-        {Side}
+        <div style={{ padding: "16px 0 0 16px" }}> {Side}</div>
       </Col>
     </Row>
   );

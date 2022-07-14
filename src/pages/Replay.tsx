@@ -14,13 +14,13 @@ const Replay = () => {
         <MenuSelect<ApplicationDataType>
           defaultSelectFirst
           rowKey="appId"
-          onAppSelect={setCurApp}
+          onSelect={setCurApp}
           placeholder="applicationsMenu.appFilterPlaceholder"
           request={ReplayService.regressionList}
-          filterFn={(keyword, app) =>
+          filter={(keyword: string, app: ApplicationDataType) =>
             app.appName.includes(keyword) || app.appId.includes(keyword)
           }
-          itemRender={(app) => ({
+          itemRender={(app: ApplicationDataType) => ({
             label: `${app.appId}_${app.appName}`,
             key: app.appId,
           })}

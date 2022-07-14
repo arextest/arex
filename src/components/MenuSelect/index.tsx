@@ -4,20 +4,17 @@ import { Input, Menu } from "antd";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-type ApplicationsMenuProps<T> = {
+type MenuSelectProps<T> = {
   rowKey: string;
-  onAppSelect: (app: T) => void;
-  filterFn: (keyword: string, app: T) => boolean;
+  onSelect: (app: T) => void;
+  filter: (keyword: string, app: T) => boolean;
   request: () => Promise<T[]>;
   placeholder?: string; // from i18n namespace "components"
   defaultSelectFirst?: boolean;
-  itemRender?: (app: T) => { label: string; key: React.Key };
+  itemRender?: (app: T, index: number) => { label: string; key: React.Key };
 };
 
-const ApplicationsMenuWrapper = styled.div`
-  margin: 16px 0 0 16px;
-`;
-const AppList = styled(Menu)`
+const MenuList = styled(Menu)`
   background-color: transparent !important;
   border: none !important;
   .ant-menu-item {
@@ -30,30 +27,29 @@ const AppList = styled(Menu)`
     background-color: #2d244f;
   }
 `;
-const AppFilter = styled(Input.Search)`
-  //padding: 0 8px;
+const MenuFilter = styled(Input.Search)`
   margin-bottom: 8px;
 `;
 
 function MenuSelect<T extends { [key: string]: any }>(
-  props: ApplicationsMenuProps<T>
+  props: MenuSelectProps<T>
 ) {
   const { t } = useTranslation("components");
 
   const [filterKeyword, setFilterKeyword] = useState("");
-  const [selectedKey, setSelectedKey] = useState<string>("");
+  const [selectedKey, setSelectedKey] = useState<string>();
   const { data: apps = [] } = useRequest<T[], any | undefined>(props.request, {
     onSuccess(res) {
       if (res.length && props.defaultSelectFirst) {
         setSelectedKey(res[0][props.rowKey]);
-        props.onAppSelect(res[0]);
+        props.onSelect(res[0]);
       }
     },
   });
   const filteredApps = useMemo(
     () =>
       filterKeyword
-        ? apps.filter((app) => props.filterFn(filterKeyword, app))
+        ? apps.filter((app) => props.filter(filterKeyword, app))
         : apps,
     [filterKeyword, apps]
   );
@@ -63,19 +59,20 @@ function MenuSelect<T extends { [key: string]: any }>(
       (app) => app[props.rowKey] === value.key
     );
     if (app) {
-      props.onAppSelect(app);
+      props.onSelect(app);
       setSelectedKey(app[props.rowKey]);
     }
   };
   return (
-    <ApplicationsMenuWrapper>
-      <AppFilter
+    <>
+      <MenuFilter
         value={filterKeyword}
         placeholder={props.placeholder && t(props.placeholder)}
         onChange={(e) => setFilterKeyword(e.target.value)}
       />
-      <AppList
-        selectedKeys={[selectedKey]}
+
+      <MenuList
+        selectedKeys={selectedKey ? [selectedKey] : []}
         items={filteredApps.map(
           props.itemRender
             ? props.itemRender
@@ -86,7 +83,7 @@ function MenuSelect<T extends { [key: string]: any }>(
         )}
         onSelect={handleAppMenuClick}
       />
-    </ApplicationsMenuWrapper>
+    </>
   );
 }
 

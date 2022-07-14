@@ -108,7 +108,29 @@ export interface QueryPlanItemStatisticsRes {
 export interface QueryResponseTypeStatisticReq {
   planItemId: number;
 }
-export type CategoryStatistic = {};
+export type CategoryStatistic = {
+  categoryName: string;
+  errorCaseCount: number;
+  failCaseCount: number;
+  operationName: string;
+  successCaseCount: number;
+  totalCaseCount: number;
+};
 export interface QueryResponseTypeStatisticRes {
   categoryStatisticList: CategoryStatistic[];
+}
+
+// ------ /report_api/report/queryDifferences ------
+export interface QueryDifferencesReq {
+  categoryName: string;
+  operationName: string;
+  planItemId: number;
+}
+export type Difference = {
+  differenceName: string;
+  sceneCount: number;
+  caseCount: number;
+};
+export interface QueryDifferencesRes {
+  differences: Difference[];
 }

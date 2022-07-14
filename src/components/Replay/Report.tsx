@@ -14,7 +14,7 @@ import {
   Typography,
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState } from "react";
 import { Pie } from "react-chartjs-2";
 
 import ReplayService from "../../api/Replay.service";
@@ -36,75 +36,9 @@ const chartOptions = {
   },
 } as const;
 
-const columns: ColumnsType<PlanItemStatistics> = [
-  { title: "Plan Item ID", dataIndex: "planItemId", key: "planItemId" },
-  { title: "API", dataIndex: "operationName", key: "operationName" },
-  {
-    title: "State",
-    render: (_, record) => {
-      const state = states.find((s) => s.value === record.status);
-      return state ? (
-        <Tag color={state.color}>
-          {state.label}
-          {record.status === 1 && (
-            <>
-              <Badge status="processing" />
-              {record.percent && (
-                <span>{record.percent > 99 ? 99 : record.percent}</span>
-              )}
-            </>
-          )}
-        </Tag>
-      ) : (
-        <Tag>Unknown State</Tag>
-      );
-    },
-  },
-  {
-    title: "Time consumed(s)",
-    render: (_, record) =>
-      (record.replayEndTime -
-        (record.replayStartTime || record.replayEndTime)) /
-      1000,
-  },
-  {
-    title: "Total Cases",
-    dataIndex: "totalCaseCount",
-  },
-  {
-    title: "Passed",
-    dataIndex: "successCaseCount",
-    render: (text) => <Text type="success">{text}</Text>,
-  },
-  {
-    title: "Failed",
-    dataIndex: "failCaseCount",
-    render: (text) => <Text type="danger">{text}</Text>,
-  },
-  {
-    title: "Invalid",
-    dataIndex: "errorCaseCount",
-    render: (text) => <Text type="secondary">{text}</Text>,
-  },
-  {
-    title: "Blocked",
-    dataIndex: "waitCaseCount",
-    render: (text) => <Text type="secondary">{text}</Text>,
-  },
-  {
-    title: "Action",
-    render: (_, record) => [
-      <Button type="text" size="small" style={{ color: Color.primaryColor }}>
-        Result
-      </Button>,
-      <Button type="text" size="small" danger>
-        Rerun
-      </Button>,
-    ],
-  },
-];
-
 const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
+  const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
+
   const { data: planItemData } = useRequest(
     () =>
       ReplayService.queryPlanItemStatistics({
@@ -128,6 +62,89 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     () => countData.reduce((a, b) => (a || 0) + (b || 0), 0),
     [countData]
   );
+
+  const columns: ColumnsType<PlanItemStatistics> = [
+    { title: "Plan Item ID", dataIndex: "planItemId", key: "planItemId" },
+    { title: "API", dataIndex: "operationName", key: "operationName" },
+    {
+      title: "State",
+      render: (_, record) => {
+        const state = states.find((s) => s.value === record.status);
+        return state ? (
+          <Tag color={state.color}>
+            {state.label}
+            {record.status === 1 && (
+              <>
+                <Badge status="processing" />
+                {record.percent && (
+                  <span>{record.percent > 99 ? 99 : record.percent}</span>
+                )}
+              </>
+            )}
+          </Tag>
+        ) : (
+          <Tag>Unknown State</Tag>
+        );
+      },
+    },
+    {
+      title: "Time consumed(s)",
+      render: (_, record) =>
+        (record.replayEndTime -
+          (record.replayStartTime || record.replayEndTime)) /
+        1000,
+    },
+    {
+      title: "Total Cases",
+      dataIndex: "totalCaseCount",
+    },
+    {
+      title: "Passed",
+      dataIndex: "successCaseCount",
+      render: (text) => <Text type="success">{text}</Text>,
+    },
+    {
+      title: "Failed",
+      dataIndex: "failCaseCount",
+      render: (text) => <Text type="danger">{text}</Text>,
+    },
+    {
+      title: "Invalid",
+      dataIndex: "errorCaseCount",
+      render: (text) => <Text type="secondary">{text}</Text>,
+    },
+    {
+      title: "Blocked",
+      dataIndex: "waitCaseCount",
+      render: (text) => <Text type="secondary">{text}</Text>,
+    },
+    {
+      title: "Action",
+      width: 124,
+      align: "center",
+      render: (_, record) => [
+        <Button
+          type="text"
+          size="small"
+          style={{ color: Color.primaryColor }}
+          onClick={() =>
+            // only expend one row at a time
+            setExpandedRowKeys(
+              expandedRowKeys[0] === record.planItemId
+                ? []
+                : [record.planItemId]
+            )
+          }
+        >
+          Result
+        </Button>,
+        <Button type="text" size="small" danger>
+          Rerun
+        </Button>,
+      ],
+    },
+  ];
+
   return selectedPlan ? (
     <Card size="small" title={"Report: " + selectedPlan.planName}>
       <Row gutter={12}>
@@ -213,6 +230,8 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
         columns={columns}
         dataSource={planItemData}
         expandable={{
+          expandedRowKeys,
+          showExpandColumn: false,
           expandedRowRender: (record) => (
             <Analysis planItemId={record.planItemId} />
           ),

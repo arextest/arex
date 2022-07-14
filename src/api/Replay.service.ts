@@ -1,5 +1,7 @@
 import request from "./axios";
 import {
+  QueryDifferencesReq,
+  QueryDifferencesRes,
   QueryPlanItemStatisticsReq,
   QueryPlanItemStatisticsRes,
   QueryPlanStatisticsReq,
@@ -40,9 +42,17 @@ export default class ReplayService {
   static async queryResponseTypeStatistic(
     params: QueryResponseTypeStatisticReq
   ) {
-    return request.post<QueryResponseTypeStatisticRes>(
-      `/report/queryResponseTypeStatistic`,
-      params
-    );
+    return request
+      .post<QueryResponseTypeStatisticRes>(
+        `/report/queryResponseTypeStatistic`,
+        params
+      )
+      .then((res) => Promise.resolve(res.body.categoryStatisticList || []));
+  }
+
+  static async queryDifferences(params: QueryDifferencesReq) {
+    return request
+      .post<QueryDifferencesRes>(`report/queryDifferences`, params)
+      .then((res) => Promise.resolve(res.body.differences));
   }
 }
