@@ -4,8 +4,8 @@ import { Badge, Table, Tag, Typography } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { FC, useState } from "react";
 
-import { FileSystemService } from "../../api/FileSystem.service";
-import { PlanStatistics } from "../../api/FileSystem.type";
+import ReplayService from "../../api/Replay.service";
+import { PlanStatistics } from "../../api/Replay.type";
 import { useStore } from "../../store";
 import { Theme } from "../../style/theme";
 const { Text } = Typography;
@@ -98,7 +98,7 @@ const Results: FC<{
   const [selectRow, setSelectRow] = useState<number>(0);
   const { data: planStatistics } = useRequest(
     () =>
-      FileSystemService.queryPlanStatistics({
+      ReplayService.queryPlanStatistics({
         appId,
         needTotal: true,
         pageSize: 100,
@@ -118,18 +118,21 @@ const Results: FC<{
         size="small"
         theme={theme}
         pagination={false}
+        // @ts-ignore
         columns={columns}
         onRow={(record, index) => {
           return {
             onClick: () => {
-              setSelectRow(index);
-              onSelectedPlanChange(record);
+              if (typeof index === "number") {
+                setSelectRow(index);
+                onSelectedPlanChange(record as PlanStatistics);
+              }
             },
           };
         }}
-        rowClassName={(record, index) => {
-          return index === selectRow ? "clickRowStyl" : "";
-        }}
+        rowClassName={(record, index) =>
+          index === selectRow ? "clickRowStyl" : ""
+        }
         dataSource={planStatistics}
       />
     </div>

@@ -17,10 +17,11 @@ import { ColumnsType } from "antd/lib/table";
 import { FC, useMemo } from "react";
 import { Pie } from "react-chartjs-2";
 
-import { FileSystemService } from "../../api/FileSystem.service";
-import { PlanItemStatistics, PlanStatistics } from "../../api/FileSystem.type";
+import ReplayService from "../../api/Replay.service";
+import { PlanItemStatistics, PlanStatistics } from "../../api/Replay.type";
 import { Color } from "../../style/theme";
 import { getPercent } from "../../utils";
+import Analysis from "./Analysis";
 import { states } from "./Results";
 
 const { Text } = Typography;
@@ -106,7 +107,7 @@ const columns: ColumnsType<PlanItemStatistics> = [
 const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
   const { data: planItemData } = useRequest(
     () =>
-      FileSystemService.queryPlanItemStatistics({
+      ReplayService.queryPlanItemStatistics({
         planId: selectedPlan!.planId,
       }),
     {
@@ -206,7 +207,17 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
 
       <br />
 
-      <Table size="small" columns={columns} dataSource={planItemData} />
+      <Table
+        size="small"
+        rowKey="planItemId"
+        columns={columns}
+        dataSource={planItemData}
+        expandable={{
+          expandedRowRender: (record) => (
+            <Analysis planItemId={record.planItemId} />
+          ),
+        }}
+      />
     </Card>
   ) : (
     <></>

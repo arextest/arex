@@ -1,9 +1,8 @@
-import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { Button, Empty, Space, Tag } from "antd";
+import { Button, Empty, Space } from "antd";
 import React, { FC, useState } from "react";
 
-import { ApplicationDataType, PlanStatistics } from "../../api/FileSystem.type";
+import { ApplicationDataType, PlanStatistics } from "../../api/Replay.type";
 import { FlexCenterWrapper } from "../StyledComponents";
 import Report from "./Report";
 import Results from "./Results";

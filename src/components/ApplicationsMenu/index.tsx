@@ -4,8 +4,8 @@ import { Input, Menu } from "antd";
 import { FC, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { FileSystemService } from "../../api/FileSystem.service";
-import { ApplicationDataType } from "../../api/FileSystem.type";
+import ReplayService from "../../api/Replay.service";
+import { ApplicationDataType } from "../../api/Replay.type";
 
 const ApplicationsMenuWrapper = styled.div`
   margin: 16px 0 0 16px;
@@ -35,7 +35,7 @@ const ApplicationsMenu: FC<{
 
   const [filterKeyword, setFilterKeyword] = useState("");
   const [selectedKey, setSelectedKey] = useState<string>("");
-  const { data: apps = [] } = useRequest(FileSystemService.regressionList, {
+  const { data: apps = [] } = useRequest(ReplayService.regressionList, {
     onSuccess(res) {
       if (res.length) {
         // select the first app by default
@@ -56,7 +56,7 @@ const ApplicationsMenu: FC<{
     [filterKeyword, apps]
   );
 
-  const handleAppMenuClick = (value) => {
+  const handleAppMenuClick = (value: { key: string }) => {
     const app: ApplicationDataType | undefined = apps.find(
       (app) => app.application.appId === value.key
     )?.application;
