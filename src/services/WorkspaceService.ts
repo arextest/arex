@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export class WorkspaceService {
-  static queryWorkspacesByUser(){
+  static listWorkspace(){
     return axios.post(`/api/filesystem/queryWorkspacesByUser`, {
       userName: "zt",
     })

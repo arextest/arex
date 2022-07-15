@@ -11,6 +11,9 @@ import {useEffect, useState} from "react";
 import { WorkspaceService} from "../services/WorkspaceService";
 import {GlobalOutlined} from "@ant-design/icons";
 import './mainbox.less'
+import {useMount} from "ahooks";
+import {CollectionService} from "../services/CollectionService";
+import {collectionOriginalTreeToAntdTreeData} from "../helpers/collection/util";
 
 const { TabPane } = Tabs;
 // 静态数据
@@ -45,6 +48,8 @@ const initialPanes = [
 ];
 
 const MainBox = () => {
+  // workspaces 数据
+  const [workspaces,setWorkspaces] = useState([])
   const [panes, setPanes] = useState(initialPanes);
   // 数据状态全部定义在这里
 
@@ -53,11 +58,6 @@ const MainBox = () => {
   const [collectionTreeData,setCollectionTreeData] = useState([])
   const [collectionLoading,setCollectionLoading] = useState(false)
   const fetchCollectionData = ()=>{
-    setCollectionLoading(true)
-    WorkspaceService.queryWorkspacesByUser().then(res=>{
-      setCollectionTreeData(res)
-      setCollectionLoading(false)
-    })
   }
 
   const add = () => {
@@ -81,10 +81,25 @@ const MainBox = () => {
     }
   };
 
+
+  // const [WorkspaceService] = useState([])
+
+  useMount(()=>{
+    // 获取所有workspace
+    WorkspaceService.listWorkspace().then(res=>{
+      setWorkspaces(res.data.body.workspaces)
+    })
+    //  获取集合
+    CollectionService.listCollection({"id":"62b3fc610c4d613355bd2b5b"}).then(res=>{
+      const roots = res?.data?.body?.fsTree?.roots || []
+      setCollectionTreeData(collectionOriginalTreeToAntdTreeData(roots))
+    })
+  })
+
   return (
     <div className={'main-box'}>
       {/*AppHeader部分*/}
-      <AppHeader userinfo={userinfo} />
+      <AppHeader userinfo={userinfo} workspaces={workspaces} />
       <Divider style={{margin:'0'}}/>
       <Layout>
         {/*侧边栏*/}
