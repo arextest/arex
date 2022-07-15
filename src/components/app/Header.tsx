@@ -1,40 +1,45 @@
 import {Avatar, Button, Dropdown, Menu, Space} from "antd";
 import AppGitHubStarButton from "./GitHubStarButton";
-import {DownOutlined} from "@ant-design/icons";
+import {DownOutlined, SettingOutlined} from "@ant-design/icons";
 
-const menu = (
-    <Menu
-        items={[
-          {
-            key: '1',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-                  1st menu item
-                </a>
-            ),
-          },
-        ]}
-    />
-);
+// const menu = (
+//
+// );
 
-const AppHeader = ({userinfo}) => {
+const AppHeader = ({userinfo,workspaces}) => {
   return <div className={'app-header'}>
     <Space className={'left'}>
       <a className={'app-name'}>
         AREX
       </a>
       <AppGitHubStarButton/>
-      <Dropdown overlay={menu}>
-        <a onClick={e => e.preventDefault()}>
+      <Dropdown overlay={    <Menu
+          items={workspaces.map(workspace=>{
+              return {
+                  key: workspace.id,
+                  label: (
+                      <a onClick={()=>{
+                      }}>
+                          {workspace.workspaceName}
+                      </a>
+                  ),
+              }
+          })}
+      />}>
+        <span onClick={e => e.preventDefault()}>
           <Space>
             Workspaces
             <DownOutlined />
           </Space>
-        </a>
+        </span>
       </Dropdown>
     </Space>
 
     <div className={'right'}>
+        <div className="hover-wrap">
+            <SettingOutlined style={{color:'#6B6B6B'}}/>
+        </div>
+
       <Avatar src="https://joeschmoe.io/api/v1/random" size={20} style={{marginRight:'8px'}}/>
     </div>
   </div>;

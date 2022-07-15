@@ -11,6 +11,9 @@ import {useEffect, useState} from "react";
 import { WorkspaceService} from "../services/WorkspaceService";
 import {GlobalOutlined} from "@ant-design/icons";
 import './mainbox.less'
+import {useMount} from "ahooks";
+import {CollectionService} from "../services/CollectionService";
+import {collectionOriginalTreeToAntdTreeData} from "../helpers/collection/util";
 
 const { TabPane } = Tabs;
 // 静态数据
@@ -34,17 +37,19 @@ const items: MenuItem[] = [
 ];
 
 const initialPanes = [
-  { title: 'Tab 1', content: 'Content of Tab 1', key: '1' },
-  { title: 'Tab 2', content: 'Content of Tab 2', key: '2' },
   {
-    title: 'Tab 3',
-    content: 'Content of Tab 3',
-    key: '3',
-    closable: false,
+    title: 'Tab 1',
+    content: 'Content of Tab 1',
+    closable:true,
+    key: '1',
+    paneType:'request',
+    qid:'62b9a5e47e3ecb480e675a97'
   },
 ];
 
 const MainBox = () => {
+  // workspaces 数据
+  const [workspaces,setWorkspaces] = useState([])
   const [panes, setPanes] = useState(initialPanes);
   // 数据状态全部定义在这里
 
@@ -53,17 +58,48 @@ const MainBox = () => {
   const [collectionTreeData,setCollectionTreeData] = useState([])
   const [collectionLoading,setCollectionLoading] = useState(false)
   const fetchCollectionData = ()=>{
-    setCollectionLoading(true)
-    WorkspaceService.queryWorkspacesByUser().then(res=>{
-      setCollectionTreeData(res)
-      setCollectionLoading(false)
-    })
   }
+
+  const add = () => {
+    console.log('123')
+    const newActiveKey = String(Math.random());
+    const newPanes = [...panes];
+    newPanes.push({ title: newActiveKey, content: 'Content of new Tab', key: newActiveKey });
+    setPanes(newPanes);
+    // setActiveKey(newActiveKey);
+  };
+
+  const remove = (targetKey: string) => {
+  };
+
+  const onEdit = (targetKey: string, action: 'add' | 'remove') => {
+    console.log(targetKey,action)
+    if (action === 'add') {
+      add();
+    } else {
+      remove(targetKey);
+    }
+  };
+
+
+  // const [WorkspaceService] = useState([])
+
+  useMount(()=>{
+    // 获取所有workspace
+    WorkspaceService.listWorkspace().then(res=>{
+      setWorkspaces(res.data.body.workspaces)
+    })
+    //  获取集合
+    CollectionService.listCollection({"id":"62b3fc610c4d613355bd2b5b"}).then(res=>{
+      const roots = res?.data?.body?.fsTree?.roots || []
+      setCollectionTreeData(collectionOriginalTreeToAntdTreeData(roots))
+    })
+  })
 
   return (
     <div className={'main-box'}>
       {/*AppHeader部分*/}
-      <AppHeader userinfo={userinfo} />
+      <AppHeader userinfo={userinfo} workspaces={workspaces} />
       <Divider style={{margin:'0'}}/>
       <Layout>
         {/*侧边栏*/}
@@ -93,15 +129,19 @@ const MainBox = () => {
         {/*主区域*/}
         <Content>
           <div>
-            <Tabs type="editable-card">
+            <Tabs type="editable-card" onEdit={onEdit}>
               {panes.map(pane => (
                   <TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
-                    {pane.content}
+                    {
+                      pane.paneType === 'request'?<RequestPage data={pane} />:null
+                    }
+                    {/*{*/}
+                    {/*  pane.paneType === 'report'?<ReportPage data={pane} />:null*/}
+                    {/*}*/}
                   </TabPane>
               ))}
             </Tabs>
-            <ComparePage />
-            <RequestPage />
+            {/*<ComparePage />*/}
           </div>
         </Content>
       </Layout>
