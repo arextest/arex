@@ -10,21 +10,27 @@ import {
   Row,
   Statistic,
   Table,
+  Tabs,
   Tag,
   Typography,
 } from "antd";
 import { ColumnsType } from "antd/lib/table";
-import { FC, useMemo, useState } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { Pie } from "react-chartjs-2";
 
 import ReplayService from "../../api/Replay.service";
-import { PlanItemStatistics, PlanStatistics } from "../../api/Replay.type";
-import { Color } from "../../style/theme";
+import {
+  PlanItemStatistics,
+  PlanStatistics,
+  ReplayCase,
+} from "../../api/Replay.type";
 import { getPercent } from "../../utils";
-import Analysis from "./Analysis";
+import SmallTextButton from "../SmallTextButton";
+import Analysis, { TableWrapper } from "./Analysis";
 import { states } from "./Results";
 
 const { Text } = Typography;
+const { TabPane } = Tabs;
 
 const chartOptions = {
   responsive: true,
@@ -38,6 +44,8 @@ const chartOptions = {
 
 const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
   const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
+  const [activeDetailTabsKey, setActiveDetailTabsKey] =
+    useState<string>("result");
 
   const { data: planItemData } = useRequest(
     () =>
@@ -47,11 +55,19 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     {
       ready: !!selectedPlan?.planId,
       refreshDeps: [selectedPlan?.planId],
-      onSuccess(res) {
-        console.log(res);
-      },
+      cacheKey: "queryPlanItemStatistics",
     }
   );
+
+  const { data: caseData = [] } = useRequest(
+    () => ReplayService.queryReplayCase({ planItemId: expandedRowKeys[0] }),
+    {
+      ready: !!expandedRowKeys.length && activeDetailTabsKey === "case",
+      refreshDeps: [expandedRowKeys[0]],
+      cacheKey: "queryReplayCase",
+    }
+  );
+
   const countData = [
     selectedPlan?.successCaseCount,
     selectedPlan?.failCaseCount,
@@ -60,6 +76,22 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
   ];
   const countSum = useMemo(
     () => countData.reduce((a, b) => (a || 0) + (b || 0), 0),
+    [countData]
+  );
+
+  const pieProps = useMemo(
+    () => ({
+      data: {
+        labels: ["Passed", "Failed", "Invalid", "Blocked"],
+        datasets: [
+          {
+            data: countData,
+            backgroundColor: ["#91cc75", "#ef6566", "#73c0de", "#fac858"],
+          },
+        ],
+      },
+      options: chartOptions,
+    }),
     [countData]
   );
 
@@ -120,13 +152,11 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     },
     {
       title: "Action",
-      width: 124,
+      width: 180,
       align: "center",
       render: (_, record) => [
-        <Button
-          type="text"
-          size="small"
-          style={{ color: Color.primaryColor }}
+        <SmallTextButton
+          title="Detail"
           onClick={() =>
             // only expend one row at a time
             setExpandedRowKeys(
@@ -135,9 +165,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
                 : [record.planItemId]
             )
           }
-        >
-          Result
-        </Button>,
+        />,
         <Button type="text" size="small" danger>
           Rerun
         </Button>,
@@ -145,8 +173,34 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     },
   ];
 
+  const columnsCase: ColumnsType<ReplayCase> = [
+    {
+      title: "Record ID",
+      dataIndex: "recordId",
+    },
+    {
+      title: "Replay ID",
+      dataIndex: "replayId",
+    },
+    {
+      title: "Status",
+      render: (_, record) => (
+        <Tag color={record.diffResultCode ? "error" : "success"}>
+          {record.diffResultCode ? "Failed" : "Success"}
+        </Tag>
+      ),
+    },
+    {
+      title: "Action",
+      render: (_, record) => [
+        <SmallTextButton title="Replay Log" />,
+        <SmallTextButton title="Detail" />,
+      ],
+    },
+  ];
+
   return selectedPlan ? (
-    <Card size="small" title={"Report: " + selectedPlan.planName}>
+    <Card size="small" title={`Report: ${selectedPlan.planName}`}>
       <Row gutter={12}>
         <Col span={12}>
           <b style={{ color: "gray" }}>Basic Information</b>
@@ -185,23 +239,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           <b style={{ color: "gray" }}>Replay Pass Rate</b>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ height: "160px", width: "100%", padding: "16px 0" }}>
-              <Pie
-                data={{
-                  labels: ["Passed", "Failed", "Invalid", "Blocked"],
-                  datasets: [
-                    {
-                      data: countData,
-                      backgroundColor: [
-                        "#91cc75",
-                        "#ef6566",
-                        "#73c0de",
-                        "#fac858",
-                      ],
-                    },
-                  ],
-                }}
-                options={chartOptions}
-              />
+              <Pie {...pieProps} />
             </div>
             <div
               style={{
@@ -233,7 +271,26 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           expandedRowKeys,
           showExpandColumn: false,
           expandedRowRender: (record) => (
-            <Analysis planItemId={record.planItemId} />
+            <Tabs
+              size="small"
+              activeKey={activeDetailTabsKey}
+              onChange={setActiveDetailTabsKey}
+              style={{ marginTop: "-8px" }}
+            >
+              <TabPane tab="Result" key="result">
+                <Analysis planItemId={record.planItemId} />
+              </TabPane>
+
+              <TabPane tab="Case" key="case">
+                <TableWrapper>
+                  <Table
+                    columns={columnsCase}
+                    dataSource={caseData}
+                    pagination={false}
+                  />
+                </TableWrapper>
+              </TabPane>
+            </Tabs>
           ),
         }}
       />

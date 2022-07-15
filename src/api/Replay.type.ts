@@ -134,3 +134,20 @@ export type Difference = {
 export interface QueryDifferencesRes {
   differences: Difference[];
 }
+
+// ------ /report_api/report/queryReplayCase ------
+export interface QueryReplayCaseReq {
+  needTotal?: boolean;
+  pageIndex?: number;
+  pageSize?: number;
+  planItemId: number;
+}
+export type ReplayCase = {
+  replayId: string;
+  recordId: string;
+  diffResultCode: number;
+};
+export interface QueryReplayCaseRes {
+  result: ReplayCase[];
+  totalCount: number;
+}

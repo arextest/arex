@@ -1,39 +1,23 @@
-import { css } from "@emotion/react";
-import { useRequest } from "ahooks";
-import { Button, Col, Row, Table } from "antd";
+import styled from "@emotion/styled";
+import { useRequest, useToggle } from "ahooks";
+import { Col, Drawer, Row, Table, Tabs } from "antd";
 import { ColumnsType } from "antd/es/table";
 import React, { FC, useState } from "react";
 
 import ReplayService from "../../api/Replay.service";
 import { CategoryStatistic, Difference } from "../../api/Replay.type";
-import { Color } from "../../style/theme";
 import { MenuSelect } from "../index";
+import SmallTextButton from "../SmallTextButton";
 
-const categoryColumns: ColumnsType<Difference> = [
-  {
-    title: "Point of difference",
-    dataIndex: "differenceName",
-  },
-  {
-    title: "Scene Count",
-    dataIndex: "sceneCount",
-  },
-  {
-    title: "Case Count",
-    dataIndex: "caseCount",
-  },
-  {
-    title: "Action",
-    render: (_, record) => (
-      <Button type="text" size="small" style={{ color: Color.primaryColor }}>
-        Scenes
-      </Button>
-    ),
-  },
-];
+export const TableWrapper = styled.div`
+  .ant-table {
+    margin: -8px 0 0 8px !important;
+  }
+`;
 
 const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
+  const [visibleScene, { toggle: toggleVisibleScene }] = useToggle(false);
   const { data: differenceData = [] } = useRequest(
     () =>
       ReplayService.queryDifferences({
@@ -46,6 +30,28 @@ const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
       refreshDeps: [selectedCategory],
     }
   );
+
+  const categoryColumns: ColumnsType<Difference> = [
+    {
+      title: "Point of difference",
+      dataIndex: "differenceName",
+    },
+    {
+      title: "Scene Count",
+      dataIndex: "sceneCount",
+    },
+    {
+      title: "Case Count",
+      dataIndex: "caseCount",
+    },
+    {
+      title: "Action",
+      render: (_, record) => (
+        <SmallTextButton title="Scenes" onClick={() => toggleVisibleScene()} />
+      ),
+    },
+  ];
+
   return (
     <Row style={{ padding: "0 8px" }} gutter={8}>
       <Col span={6}>
@@ -68,21 +74,24 @@ const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
       </Col>
 
       <Col span={18}>
-        <div
-          css={css`
-            .ant-table {
-              margin: -8px 0 0 8px !important;
-            }
-          `}
-        >
+        <TableWrapper>
           <Table
             columns={categoryColumns}
             dataSource={differenceData}
             pagination={false}
             size="small"
           />
-        </div>
+        </TableWrapper>
       </Col>
+
+      <Drawer
+        title="Diff Detail"
+        visible={visibleScene}
+        onClose={toggleVisibleScene}
+      >
+        {/* TODO */}
+        Scene content
+      </Drawer>
     </Row>
   );
 };

@@ -6,6 +6,8 @@ import {
   QueryPlanItemStatisticsRes,
   QueryPlanStatisticsReq,
   QueryPlanStatisticsRes,
+  QueryReplayCaseReq,
+  QueryReplayCaseRes,
   QueryResponseTypeStatisticReq,
   QueryResponseTypeStatisticRes,
   RegressionListRes,
@@ -14,13 +16,13 @@ import {
 export default class ReplayService {
   static async regressionList() {
     return request
-      .get<RegressionListRes>(`/config/application/regressionList`)
+      .get<RegressionListRes>("/config/application/regressionList")
       .then((res) => Promise.resolve(res.body.map((item) => item.application)));
   }
 
   static async queryPlanStatistics(params: QueryPlanStatisticsReq) {
     return request
-      .post<QueryPlanStatisticsRes>(`/report/queryPlanStatistics`, params)
+      .post<QueryPlanStatisticsRes>("/report/queryPlanStatistics", params)
       .then((res) =>
         Promise.resolve(
           res.body.planStatisticList.sort(
@@ -33,7 +35,7 @@ export default class ReplayService {
   static async queryPlanItemStatistics(params: QueryPlanItemStatisticsReq) {
     return request
       .post<QueryPlanItemStatisticsRes>(
-        `/report/queryPlanItemStatistics`,
+        "/report/queryPlanItemStatistics",
         params
       )
       .then((res) => Promise.resolve(res.body.planItemStatisticList));
@@ -44,7 +46,7 @@ export default class ReplayService {
   ) {
     return request
       .post<QueryResponseTypeStatisticRes>(
-        `/report/queryResponseTypeStatistic`,
+        "/report/queryResponseTypeStatistic",
         params
       )
       .then((res) => Promise.resolve(res.body.categoryStatisticList || []));
@@ -52,7 +54,23 @@ export default class ReplayService {
 
   static async queryDifferences(params: QueryDifferencesReq) {
     return request
-      .post<QueryDifferencesRes>(`report/queryDifferences`, params)
+      .post<QueryDifferencesRes>("report/queryDifferences", params)
       .then((res) => Promise.resolve(res.body.differences));
+  }
+
+  static async queryReplayCase({
+    planItemId,
+    needTotal = false,
+    pageIndex = 1,
+    pageSize = 99,
+  }: QueryReplayCaseReq) {
+    return request
+      .post<QueryReplayCaseRes>("report/queryReplayCase", {
+        needTotal,
+        pageIndex,
+        pageSize,
+        planItemId,
+      })
+      .then((res) => Promise.resolve(res.body.result));
   }
 }
