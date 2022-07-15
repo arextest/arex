@@ -19,6 +19,9 @@ const includeStyles = {
     borderColor: Color.primaryColor,
     background: Color.primaryColor,
   },
+  ".ant-menu": {
+    boxShadow: "none",
+  },
 };
 
 module.exports = {
