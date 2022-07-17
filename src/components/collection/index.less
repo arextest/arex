@@ -3,14 +3,40 @@
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
+    margin-bottom: 10px;
     .collection-header-create{
-      // font-size: 20px;
-      // background-color: red;
-      padding: 0 10px;
+      margin: 0 5px;
+      font-weight: bold;
     }
     .collection-header-search{
-      // width: 220px;
-      padding: 0 10px;
+      
+    }
+    .collection-header-view{
+      margin: 0 5px;
     }
   }
+
+  .collection-title-render{
+    width: 100%;
+    .wrap{
+      display: flex;
+      justify-content: space-between;
+      font-weight: bolder;
+      .title{
+        display: flex;
+        flex: 1;
+      }
+    }
+  }
+
+  
+  //以下保证宽度百分百
+  .ant-tree-list-holder-inner>div{
+    width: 100%;
+  }
+
+  .ant-tree-node-content-wrapper{
+    flex: 1;
+  }
+  //以上保证宽度百分百
 }
