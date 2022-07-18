@@ -13,7 +13,6 @@ import {GlobalOutlined} from "@ant-design/icons";
 import './mainbox.less'
 import {useMount} from "ahooks";
 import {CollectionService} from "../services/CollectionService";
-import {collectionOriginalTreeToAntdTreeData} from "../helpers/collection/util";
 
 const { TabPane } = Tabs;
 // 静态数据
@@ -51,11 +50,11 @@ const MainBox = () => {
   // workspaces 数据
   const [workspaces,setWorkspaces] = useState([])
   const [panes, setPanes] = useState(initialPanes);
+  const [currentWorkspaceId,setcurrentWorkspaceId]= useState('')
   // 数据状态全部定义在这里
 
   // 集合Collection的状态
   const [siderMenuSelectedKey,setSiderMenuSelectedKey] = useState('collection')
-  const [collectionTreeData,setCollectionTreeData] = useState([])
   const [collectionLoading,setCollectionLoading] = useState(false)
   const fetchCollectionData = ()=>{
   }
@@ -87,12 +86,8 @@ const MainBox = () => {
   useMount(()=>{
     // 获取所有workspace
     WorkspaceService.listWorkspace().then(res=>{
+      setcurrentWorkspaceId(res.data.body.workspaces[0].id)
       setWorkspaces(res.data.body.workspaces)
-    })
-    //  获取集合
-    CollectionService.listCollection({"id":"62b3fc610c4d613355bd2b5b"}).then(res=>{
-      const roots = res?.data?.body?.fsTree?.roots || []
-      setCollectionTreeData(collectionOriginalTreeToAntdTreeData(roots))
     })
   })
 
@@ -118,7 +113,7 @@ const MainBox = () => {
             }} />
             <div>
               <div style={{display:siderMenuSelectedKey==='collection'?'block':'none'}}>
-                <Collection treeData={collectionTreeData} loading={collectionLoading} fetchData={fetchCollectionData}/>
+                <Collection currentWorkspaceId={currentWorkspaceId} loading={collectionLoading} fetchData={fetchCollectionData}/>
               </div>
               <div style={{display:siderMenuSelectedKey==='environment'?'block':'none'}}>
                 <Environment/>
