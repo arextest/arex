@@ -91,7 +91,7 @@ const ResponseWrapper = styled.div`
 `;
 
 const Http: FC<HttpProps> = ({ mode = "normal", id, path = [], isNew }) => {
-  const theme = useStore((state) => state.theme);
+  const { theme, extensionInstalled } = useStore();
   const { t: t_common } = useTranslation("common");
   const { t: t_components } = useTranslation("components");
   const setCollectionSaveRequest = useStore(
@@ -170,8 +170,25 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [], isNew }) => {
   const [contentType, setContentType] = useState("application/json");
   const [requestBody, setRequestBody] = useState("");
 
-  const { loading: requesting, run: request } = useRequest(AgentAxios, {
+  const validationRequest = (cancel: () => void) => {
+    if (!url) {
+      message.warn(t_components("http.urlEmpty"));
+      cancel();
+    } else if (!extensionInstalled) {
+      message.warn(t_components("http.extensionNotInstalled"));
+      cancel();
+    }
+  };
+
+  const {
+    loading: requesting,
+    run: request,
+    cancel: cancelRequest,
+  } = useRequest(AgentAxios, {
     manual: true,
+    onBefore: () => {
+      validationRequest(cancelRequest);
+    },
     onSuccess: (res) => {
       console.log("123321", res);
       setResponse(res);
@@ -184,8 +201,15 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [], isNew }) => {
     },
   });
 
-  const { loading: baseRequesting, run: baseRequest } = useRequest(AgentAxios, {
+  const {
+    loading: baseRequesting,
+    run: baseRequest,
+    cancel: cancelBaseRequest,
+  } = useRequest(AgentAxios, {
     manual: true,
+    onBefore: () => {
+      validationRequest(cancelBaseRequest);
+    },
     onSuccess: (res) => {
       console.log(res);
       setBaseResponse(res);
@@ -198,8 +222,15 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [], isNew }) => {
     },
   });
 
-  const { loading: testRequesting, run: testRequest } = useRequest(AgentAxios, {
+  const {
+    loading: testRequesting,
+    run: testRequest,
+    cancel: cancelTestRequest,
+  } = useRequest(AgentAxios, {
     manual: true,
+    onBefore: () => {
+      validationRequest(cancelTestRequest);
+    },
     onSuccess: (res) => {
       console.log(res);
       setTestResponse(res);
@@ -273,8 +304,6 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [], isNew }) => {
   };
 
   const handleRequest = () => {
-    if (!url) return message.warn(t_components("http.urlEmpty"));
-
     const data: Partial<Record<"params" | "data", object>> = {};
     if (method === "GET") {
       data.params = params;

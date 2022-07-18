@@ -6,7 +6,6 @@ export function findPathByKey(
   key: string,
   path?: Root<RootParadigmKey>[]
 ): any {
-  console.log(tree,key)
   if (typeof path === "undefined") {
     path = [];
   }

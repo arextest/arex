@@ -1,12 +1,16 @@
 import React from "react";
 import routerConfig from "./routers";
 import { useRoutes } from "react-router-dom";
+import CheckChromeExtension from "./components/CheckChromeExtension";
 
-interface IProps {}
-
-const App: React.FC<IProps> = () => {
+const App: React.FC = () => {
   const useRoutesRouterConfig = useRoutes(routerConfig);
-  return <div>{useRoutesRouterConfig}</div>;
+  return (
+    <>
+      <CheckChromeExtension />
+      {useRoutesRouterConfig}
+    </>
+  );
 };
 
 export default App;

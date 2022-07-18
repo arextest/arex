@@ -7,36 +7,38 @@ import { DefaultTheme, Theme } from "../style/theme";
 interface BaseState {
   theme: Theme;
   changeTheme: (theme?: Theme) => void;
+  extensionInstalled: boolean;
   userinfo: any;
   setUserinfo: (a: any) => void;
   workspaces: any;
   setWorkspaces: (a: any) => void;
   currentWorkspaceId: any;
   setCurrentWorkspaceId: (a: any) => void;
-  collectionTree:any
-  setCollectionTree:(a: any) => void
+  collectionTree: any;
+  setCollectionTree: (a: any) => void;
   httpPanes: {
-    title:string
-    key:string
-    isNew: boolean
+    title: string;
+    key: string;
+    isNew: boolean;
   }[];
   setHttpPanes: (a: any) => void;
   httpActiveKey: any;
   setHttpActiveKey: (a: any) => void;
-  collectionCreateAndUpdateModalVisible: boolean,
-  setCollectionCreateAndUpdateModalVisible:(a: any) => void;
-  collectionCreateAndUpdateModalFolderName: '',
+  collectionCreateAndUpdateModalVisible: boolean;
+  setCollectionCreateAndUpdateModalVisible: (a: any) => void;
+  collectionCreateAndUpdateModalFolderName: "";
   setCollectionCreateAndUpdateModalFolderName: (a: any) => void;
-  collectionCreateAndUpdateModalMode: 'create',
+  collectionCreateAndUpdateModalMode: "create";
   setCollectionCreateAndUpdateModalMode: (a: any) => void;
-  collectionCreateAndUpdateModalId: '',
+  collectionCreateAndUpdateModalId: "";
   setCollectionCreateAndUpdateModalId: (a: any) => void;
   collectionSaveRequest: {
-    isModalVisible: boolean
-    randomId: string
-  },
+    isModalVisible: boolean;
+    randomId: string;
+  };
   setCollectionSaveRequest: (a: any) => void;
 }
+
 export const useStore = create<BaseState>((set, get) => ({
   theme: DefaultTheme,
   changeTheme: (theme?: Theme) => {
@@ -52,6 +54,7 @@ export const useStore = create<BaseState>((set, get) => ({
       };
     });
   },
+  extensionInstalled: false,
   userinfo: {},
   setUserinfo: (a: any) => {
     console.log(a);
@@ -68,11 +71,13 @@ export const useStore = create<BaseState>((set, get) => ({
     return set(() => ({ workspaces }));
   },
   // Rest
-  httpPanes: [{
-    isNew: true,
-    title: 'New Request',
-    key: '0'
-  }],
+  httpPanes: [
+    {
+      isNew: true,
+      title: "New Request",
+      key: "0",
+    },
+  ],
   httpActiveKey: "0",
   setHttpPanes: (httpPanes: any) => {
     return set(() => ({ httpPanes }));
@@ -82,31 +87,39 @@ export const useStore = create<BaseState>((set, get) => ({
   },
   // Collection
   collectionTree: [],
-  setCollectionTree: (collectionTree:any) => {
+  setCollectionTree: (collectionTree: any) => {
     return set(() => ({ collectionTree }));
   },
   collectionCreateAndUpdateModalVisible: false,
-  setCollectionCreateAndUpdateModalVisible: (collectionCreateAndUpdateModalVisible:any) => {
+  setCollectionCreateAndUpdateModalVisible: (
+    collectionCreateAndUpdateModalVisible: any
+  ) => {
     return set(() => ({ collectionCreateAndUpdateModalVisible }));
   },
-  collectionCreateAndUpdateModalFolderName: '',
-  setCollectionCreateAndUpdateModalFolderName: (collectionCreateAndUpdateModalFolderName:any) => {
+  collectionCreateAndUpdateModalFolderName: "",
+  setCollectionCreateAndUpdateModalFolderName: (
+    collectionCreateAndUpdateModalFolderName: any
+  ) => {
     return set(() => ({ collectionCreateAndUpdateModalFolderName }));
   },
-  collectionCreateAndUpdateModalMode: 'create',
-  setCollectionCreateAndUpdateModalMode: (collectionCreateAndUpdateModalMode:any) => {
+  collectionCreateAndUpdateModalMode: "create",
+  setCollectionCreateAndUpdateModalMode: (
+    collectionCreateAndUpdateModalMode: any
+  ) => {
     return set(() => ({ collectionCreateAndUpdateModalMode }));
   },
-  collectionCreateAndUpdateModalId: '',
-  setCollectionCreateAndUpdateModalId: (collectionCreateAndUpdateModalId:any) => {
+  collectionCreateAndUpdateModalId: "",
+  setCollectionCreateAndUpdateModalId: (
+    collectionCreateAndUpdateModalId: any
+  ) => {
     return set(() => ({ collectionCreateAndUpdateModalId }));
   },
   // CollectionSaveRequest
   collectionSaveRequest: {
     isModalVisible: false,
-    randomId: ''
+    randomId: "",
   },
-  setCollectionSaveRequest: (collectionSaveRequest:any) => {
+  setCollectionSaveRequest: (collectionSaveRequest: any) => {
     return set(() => ({ collectionSaveRequest }));
   },
 }));
