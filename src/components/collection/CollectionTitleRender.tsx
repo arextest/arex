@@ -5,22 +5,23 @@ import { CollectionService } from "../../services/CollectionService";
 import { findPathByKey } from "../../helpers/collection/util";
 import CreateAndUpdateFolder from "./CreateAndUpdateFolder";
 
-function CollectionTitleRender({ val, updateDirectorytreeData ,treeData, currentWorkspaceId}: any) {
+function CollectionTitleRender(
+  { val, updateDirectorytreeData, treeData, currentWorkspaceId }: any,
+) {
   const [visible, setVisible] = useState(false);
   const handleVisibleChange = (flag: boolean) => {
     setVisible(flag);
   };
-  const [CollectionCreateAndUpdateModal,setCollectionCreateAndUpdateModal] = useState({})
+  const [CollectionCreateAndUpdateModal, setCollectionCreateAndUpdateModal] =
+    useState({});
   const menu = (val: any) => {
-    const paths = findPathByKey(treeData, val.key)
+    const paths = findPathByKey(treeData, val.key);
     return (
       <Menu
-        onClick={
-          (e) => {
-            e.domEvent.stopPropagation();
-            setVisible(false);
-          }
-        }
+        onClick={(e) => {
+          e.domEvent.stopPropagation();
+          setVisible(false);
+        }}
         items={[
           {
             key: "1",
@@ -30,12 +31,12 @@ function CollectionTitleRender({ val, updateDirectorytreeData ,treeData, current
                 onClick={() => {
                   CollectionService.addItem({
                     id: currentWorkspaceId,
-                    nodeName: 'New Collection',
+                    nodeName: "New Collection",
                     nodeType: 3,
-                    parentPath: paths.map((i:any)=> i.key),
+                    parentPath: paths.map((i: any) => i.key),
                     userName: "zt",
                   }).then(() => {
-                    updateDirectorytreeData()
+                    updateDirectorytreeData();
                   });
                 }}
               >
@@ -53,12 +54,12 @@ function CollectionTitleRender({ val, updateDirectorytreeData ,treeData, current
                 onClick={() => {
                   CollectionService.addItem({
                     id: currentWorkspaceId,
-                    nodeName: 'New Request',
+                    nodeName: "New Request",
                     nodeType: 1,
-                    parentPath: paths.map((i:any)=> i.key),
+                    parentPath: paths.map((i: any) => i.key),
                     userName: "zt",
                   }).then(() => {
-                    updateDirectorytreeData()
+                    updateDirectorytreeData();
                   });
                 }}
               >
@@ -75,12 +76,12 @@ function CollectionTitleRender({ val, updateDirectorytreeData ,treeData, current
                 onClick={() => {
                   CollectionService.addItem({
                     id: currentWorkspaceId,
-                    nodeName: 'eg',
+                    nodeName: "eg",
                     nodeType: 2,
-                    parentPath: paths.map((i:any) => i.key),
+                    parentPath: paths.map((i: any) => i.key),
                     userName: "zt",
                   }).then(() => {
-                    updateDirectorytreeData()
+                    updateDirectorytreeData();
                   });
                 }}
               >
@@ -95,13 +96,15 @@ function CollectionTitleRender({ val, updateDirectorytreeData ,treeData, current
               <a
                 target="_blank"
                 onClick={() => {
-                  const collectionCreateAndUpdateModal={
-                    collectionCreateAndUpdateModalVisible:true,
-                    collectionCreateAndUpdateModalMode:'rename',
-                    collectionCreateAndUpdateModalId:val.key,
-                    collectionCreateAndUpdateModalFolderName:val.title
-                  }
-                  setCollectionCreateAndUpdateModal(collectionCreateAndUpdateModal);
+                  const collectionCreateAndUpdateModal = {
+                    collectionCreateAndUpdateModalVisible: true,
+                    collectionCreateAndUpdateModalMode: "rename",
+                    collectionCreateAndUpdateModalId: val.key,
+                    collectionCreateAndUpdateModalFolderName: val.title,
+                  };
+                  setCollectionCreateAndUpdateModal(
+                    collectionCreateAndUpdateModal,
+                  );
                 }}
               >
                 Rename
@@ -111,17 +114,21 @@ function CollectionTitleRender({ val, updateDirectorytreeData ,treeData, current
           {
             key: "5",
             label: (
-
-          <Popconfirm title="Are you sure？" okText="Yes" cancelText="No" onConfirm={() => {
-            CollectionService.removeItem({ id: currentWorkspaceId, removeNodePath: paths.map((i:any) => i.key) }).then(res => {
-              updateDirectorytreeData();
-            })
-          }}>
-            <a
-              style={{ color: 'red' }}>
-              Delete
-            </a>
-          </Popconfirm>
+              <Popconfirm
+                title="Are you sure？"
+                okText="Yes"
+                cancelText="No"
+                onConfirm={() => {
+                  CollectionService.removeItem({
+                    id: currentWorkspaceId,
+                    removeNodePath: paths.map((i: any) => i.key),
+                  }).then((res) => {
+                    updateDirectorytreeData();
+                  });
+                }}
+              >
+                <a style={{ color: "red" }}>Delete</a>
+              </Popconfirm>
             ),
           },
         ]}
@@ -132,12 +139,12 @@ function CollectionTitleRender({ val, updateDirectorytreeData ,treeData, current
     <div className={"collection-title-render"}>
       <div className={"wrap"}>
         <div>
-          {
-            val.nodeType===1&&val.type === 1 ? <span style={{ color: '#10B981', marginRight: '12px' }}>GET</span> : null
-          }
-          {
-            val.nodeType ===2 ? <span style={{ color: '#5C4033', marginRight: '12px' }}>eg</span> : null
-          }
+          {val.nodeType === 1 && val.type === 1 ? (
+            <span style={{ color: "#10B981", marginRight: "12px" }}>GET</span>
+          ) : null}
+          {val.nodeType === 2 ? (
+            <span style={{ color: "#5C4033", marginRight: "12px" }}>eg</span>
+          ) : null}
           {val.title}
         </div>
         <Dropdown
@@ -146,14 +153,18 @@ function CollectionTitleRender({ val, updateDirectorytreeData ,treeData, current
           visible={visible}
           onVisibleChange={handleVisibleChange}
         >
-                <span onClick={(event) => event.stopPropagation()}>
-                  <Space>
-                    <MoreOutlined size={100} style={{ fontSize: '16px' }}/>
-                  </Space>
-                </span>
+          <span onClick={(event) => event.stopPropagation()}>
+            <Space>
+              <MoreOutlined size={100} style={{ fontSize: "16px" }} />
+            </Space>
+          </span>
         </Dropdown>
       </div>
-      <CreateAndUpdateFolder updateDirectorytreeData={updateDirectorytreeData} collectionTree={treeData} collectionCreateAndUpdateModal={CollectionCreateAndUpdateModal}></CreateAndUpdateFolder>
+      <CreateAndUpdateFolder
+        updateDirectorytreeData={updateDirectorytreeData}
+        collectionTree={treeData}
+        collectionCreateAndUpdateModal={CollectionCreateAndUpdateModal}
+      ></CreateAndUpdateFolder>
     </div>
   );
 }

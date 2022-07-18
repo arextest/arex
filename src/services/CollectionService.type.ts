@@ -3,9 +3,9 @@ import { ReactNode } from "react";
 // import { KeyValueType } from "../components/Http";
 // import { METHODS, NodeType } from "../constant";
 export enum NodeType {
-  "interface" = 1,
-  "case" = 2,
-  "folder" = 3,
+  interface = 1,
+  case = 2,
+  folder = 3,
 }
 
 // ------ /api/filesystem/queryWorkspaceById ------
@@ -21,10 +21,12 @@ export type RootParadigmKey = {
   title: string;
   icon?: ReactNode;
 };
-export type Root<T = RootParadigmNode | RootParadigmKey> = {
-  nodeType: NodeType;
-  children: Root<T>[] | null;
-} & T;
+export type Root<T = RootParadigmNode | RootParadigmKey> =
+  & {
+    nodeType: NodeType;
+    children: Root<T>[] | null;
+  }
+  & T;
 type FsTree = {
   id: string;
   roots: Root<RootParadigmNode>[];
@@ -34,7 +36,6 @@ type FsTree = {
 export interface QueryWorkspaceByIdRes {
   fsTree: FsTree;
 }
-
 // ------ /api/filesystem/saveInterface ------
 // export interface QueryInterfaceReq {
 //   id: string;
