@@ -7,6 +7,7 @@ import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
 import Collection from "../components/collection";
 import Environment from "../components/environment";
+import Login from "../components/login";
 import {useEffect, useState} from "react";
 import { WorkspaceService} from "../services/WorkspaceService";
 import {GlobalOutlined} from "@ant-design/icons";
@@ -47,10 +48,12 @@ const initialPanes = [
 ];
 
 const MainBox = () => {
+  //登录状态
+  const [islogin,setIslogin] = useState<boolean>(true);
   // workspaces 数据
   const [workspaces,setWorkspaces] = useState([])
   const [panes, setPanes] = useState(initialPanes);
-  const [currentWorkspaceId,setcurrentWorkspaceId]= useState('')
+  const [currentWorkspaceId,setcurrentWorkspaceId]= useState<string>('')
   // 数据状态全部定义在这里
 
   // 集合Collection的状态
@@ -79,8 +82,15 @@ const MainBox = () => {
       remove(targetKey);
     }
   };
-
-
+  
+  const checkLoginStatus = () => {
+    if(localStorage.getItem('email')){
+      setIslogin(true);
+    }else{
+      setIslogin(false);
+    } 
+  }
+  
   // const [WorkspaceService] = useState([])
 
   useMount(()=>{
@@ -89,9 +99,17 @@ const MainBox = () => {
       setcurrentWorkspaceId(res.data.body.workspaces[0].id)
       setWorkspaces(res.data.body.workspaces)
     })
+    if(localStorage.getItem('email')){
+      setIslogin(true);
+    }else{
+      setIslogin(false);
+    } 
   })
 
   return (
+  <>
+    {!islogin?
+    <Login checkLoginStatus={checkLoginStatus}></Login>:
     <div className={'main-box'}>
       {/*AppHeader部分*/}
       <AppHeader userinfo={userinfo} workspaces={workspaces} />
@@ -140,7 +158,8 @@ const MainBox = () => {
           </div>
         </Content>
       </Layout>
-    </div>
+    </div>}
+  </>
   );
 };
 export default MainBox;
