@@ -1,30 +1,21 @@
-import axios from "axios";
+function AgentAxios<T>(params: any) {
+  return new Promise<T>((resolve) => {
+    window.postMessage(
+      {
+        type: "__AREX_EXTENSION_REQUEST__",
+        payload: params,
+      },
+      "*"
+    );
+    window.addEventListener("message", receiveMessage);
 
-// 创建 axios 实例
-const service = axios.create({
-  timeout: 10000, // 请求超时时间
-},);
+    function receiveMessage(ev: any) {
+      if (ev.data.type === "__AREX_EXTENSION_RES__") {
+        window.removeEventListener("message", receiveMessage, false);
+        resolve(ev.data.res);
+      }
+    }
+  });
+}
 
-const err = (error: any) => {
-  if (error.response) {
-  }
-  return Promise.reject(error);
-};
-
-// request interceptor
-service.interceptors.request.use(
-  (config) => {
-    return config;
-  },
-  err,
-);
-
-service.interceptors.response.use(
-  (response) => {
-    const { data } = response;
-    return data;
-  },
-  err,
-);
-
-export default service;
+export default AgentAxios;

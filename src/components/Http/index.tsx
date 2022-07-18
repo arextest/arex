@@ -18,7 +18,6 @@ import {
   Tag,
   Typography,
 } from "antd";
-import axios from "axios";
 import { FC, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useImmer } from "use-immer";
@@ -28,6 +27,7 @@ import { Root, RootParadigmKey } from "../../api/FileSystem.type";
 import { METHODS, NodeType } from "../../constant";
 import { useStore } from "../../store";
 import { tryParseJsonString, tryPrettierJsonString } from "../../utils";
+import AgentAxios from "../../utils/request";
 import CollectionSaveRequest from "../Collection/SaveRequest";
 import { AnimateAutoHeight } from "../index";
 import FormHeader, { FormHeaderWrapper } from "./FormHeader";
@@ -41,7 +41,7 @@ export type HttpProps = {
   mode?: "normal" | "compare";
   id: string;
   path: Root<RootParadigmKey>[];
-  isNew: boolean
+  isNew: boolean;
 };
 
 export type KeyValueType = {
@@ -94,8 +94,12 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [], isNew }) => {
   const theme = useStore((state) => state.theme);
   const { t: t_common } = useTranslation("common");
   const { t: t_components } = useTranslation("components");
-  const setCollectionSaveRequest = useStore(state => state.setCollectionSaveRequest);
-  const collectionSaveRequest = useStore(state => state.collectionSaveRequest);
+  const setCollectionSaveRequest = useStore(
+    (state) => state.setCollectionSaveRequest
+  );
+  const collectionSaveRequest = useStore(
+    (state) => state.collectionSaveRequest
+  );
 
   const [method, setMethod] = useState<typeof METHODS[number]>("GET");
   // const [requestSavedName, setRequestSavedName] = useState<string>(
@@ -166,10 +170,10 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [], isNew }) => {
   const [contentType, setContentType] = useState("application/json");
   const [requestBody, setRequestBody] = useState("");
 
-  const { loading: requesting, run: request } = useRequest(axios, {
+  const { loading: requesting, run: request } = useRequest(AgentAxios, {
     manual: true,
     onSuccess: (res) => {
-      console.log(res);
+      console.log("123321", res);
       setResponse(res);
     },
     onError(err) {
@@ -180,7 +184,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [], isNew }) => {
     },
   });
 
-  const { loading: baseRequesting, run: baseRequest } = useRequest(axios, {
+  const { loading: baseRequesting, run: baseRequest } = useRequest(AgentAxios, {
     manual: true,
     onSuccess: (res) => {
       console.log(res);
@@ -194,7 +198,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [], isNew }) => {
     },
   });
 
-  const { loading: testRequesting, run: testRequest } = useRequest(axios, {
+  const { loading: testRequesting, run: testRequest } = useRequest(AgentAxios, {
     manual: true,
     onSuccess: (res) => {
       console.log(res);
@@ -279,7 +283,8 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [], isNew }) => {
       body && (data.data = body);
     }
 
-    request(url, {
+    request({
+      url,
       method,
       headers,
       ...data,
@@ -298,13 +303,15 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [], isNew }) => {
       body && (data.data = body);
     }
 
-    baseRequest(baseUrl, {
+    baseRequest({
+      url: baseUrl,
       method,
       headers,
       ...data,
     });
 
-    testRequest(testUrl, {
+    testRequest({
+      url: testUrl,
       method,
       headers,
       ...data,
@@ -649,7 +656,7 @@ const Http: FC<HttpProps> = ({ mode = "normal", id, path = [], isNew }) => {
           </ResponseWrapper>
         )}
       </div>
-      {/*<CollectionSaveRequest/>*/}
+      {/* <CollectionSaveRequest/> */}
     </>
   );
 };
