@@ -1,9 +1,11 @@
-import { Tabs } from "antd";
+import { Tabs as Tabs } from "antd";
 
 import { Collection, Http } from "../components";
 import { findPathByKey } from "../components/Collection/util";
 import { WorkSpace } from "../layout";
 import { useStore } from "../store";
+import { css } from "@emotion/react";
+
 const { TabPane } = Tabs;
 
 const Normal = () => {
@@ -49,6 +51,15 @@ const Normal = () => {
           activeKey={httpActiveKey}
           onEdit={onEdit}
           onChange={onChange}
+          size="small"
+          tabPosition="top"
+          tabBarGutter={-1}
+          tabBarStyle={{ margin: "-15px -15px 16px -17px" }}
+          css={css`
+            .ant-tabs-nav-operations {
+              margin: 0 0 0 0 !important;
+            }
+          `}
         >
           {httpPanes.map((httpPane: any) => {
             // 重要：
