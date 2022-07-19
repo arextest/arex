@@ -1,7 +1,7 @@
 import { Button, ButtonProps } from "antd";
 import { FC } from "react";
 
-import { Color } from "../style/theme";
+import { Color } from "../../style/theme";
 
 const SmallTextButton: FC<{ title: string } & ButtonProps> = ({
   title,

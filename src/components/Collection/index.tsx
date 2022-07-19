@@ -3,10 +3,11 @@ import {
   FolderOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
+import styled from "@emotion/styled";
 import { useMount } from "ahooks";
 import { Button, ButtonProps, Divider, Empty, Tabs, Tooltip, Tree } from "antd";
 import type { DirectoryTreeProps } from "antd/lib/tree";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { FileSystemService } from "../../api/FileSystem.service";
@@ -17,8 +18,6 @@ import {
 import { useStore } from "../../store";
 import CollectionTitle from "./CollectionTitle";
 import CreateAndUpdateFolder from "./CreateAndUpdateFolder";
-import { Color } from "../../style/theme";
-import styled from "@emotion/styled";
 
 const { TabPane } = Tabs;
 const CollectionTabs = styled(Tabs)`
@@ -47,7 +46,7 @@ const CollectionTabs = styled(Tabs)`
 const AddNewButton = styled((props: ButtonProps) => (
   <Button icon={<PlusCircleOutlined />} type="text" {...props} />
 ))`
-  color: ${Color.primaryColor}!important;
+  color: ${(props) => props.theme.color.primary}!important;
   padding: 0 8px;
   margin: 4px 0 4px 9px;
   height: 26px;
