@@ -1,5 +1,5 @@
 import { MoreOutlined } from "@ant-design/icons";
-import {Dropdown, Menu, Popconfirm, Space} from "antd";
+import { Button, Dropdown, Menu, Popconfirm, Space } from "antd";
 import { useState } from "react";
 import { FileSystemService } from "../../api/FileSystem.service";
 import { useStore } from "../../store";
@@ -11,20 +11,26 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
   const handleVisibleChange = (flag: boolean) => {
     setVisible(flag);
   };
-  const setCollectionCreateAndUpdateModalVisible = useStore(state => state.setCollectionCreateAndUpdateModalVisible)
-  const setCollectionCreateAndUpdateModalFolderName = useStore(state => state.setCollectionCreateAndUpdateModalFolderName)
-  const setCollectionCreateAndUpdateModalMode = useStore(state => state.setCollectionCreateAndUpdateModalMode)
-  const setCollectionCreateAndUpdateModalId = useStore(state => state.setCollectionCreateAndUpdateModalId)
+  const setCollectionCreateAndUpdateModalVisible = useStore(
+    (state) => state.setCollectionCreateAndUpdateModalVisible
+  );
+  const setCollectionCreateAndUpdateModalFolderName = useStore(
+    (state) => state.setCollectionCreateAndUpdateModalFolderName
+  );
+  const setCollectionCreateAndUpdateModalMode = useStore(
+    (state) => state.setCollectionCreateAndUpdateModalMode
+  );
+  const setCollectionCreateAndUpdateModalId = useStore(
+    (state) => state.setCollectionCreateAndUpdateModalId
+  );
   const menu = (val: any) => {
-    const paths = findPathByKey(collectionTree, val.key)
+    const paths = findPathByKey(collectionTree, val.key);
     return (
       <Menu
-        onClick={
-          (e) => {
-            e.domEvent.stopPropagation();
-            setVisible(false);
-          }
-        }
+        onClick={(e) => {
+          e.domEvent.stopPropagation();
+          setVisible(false);
+        }}
         items={[
           {
             key: "1",
@@ -34,12 +40,12 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
                 onClick={() => {
                   FileSystemService.addItem({
                     id: "62b3fc610c4d613355bd2b5b",
-                    nodeName: 'New Collection',
+                    nodeName: "New Collection",
                     nodeType: 3,
-                    parentPath: paths.map(i => i.key),
+                    parentPath: paths.map((i) => i.key),
                     userName: "zt",
                   }).then(() => {
-                    updateDirectorytreeData()
+                    updateDirectorytreeData();
                   });
                 }}
               >
@@ -57,12 +63,12 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
                 onClick={() => {
                   FileSystemService.addItem({
                     id: "62b3fc610c4d613355bd2b5b",
-                    nodeName: 'New Request',
+                    nodeName: "New Request",
                     nodeType: 1,
-                    parentPath: paths.map(i => i.key),
+                    parentPath: paths.map((i) => i.key),
                     userName: "zt",
                   }).then(() => {
-                    updateDirectorytreeData()
+                    updateDirectorytreeData();
                   });
                 }}
               >
@@ -79,12 +85,12 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
                 onClick={() => {
                   FileSystemService.addItem({
                     id: "62b3fc610c4d613355bd2b5b",
-                    nodeName: 'eg',
+                    nodeName: "eg",
                     nodeType: 2,
-                    parentPath: paths.map(i => i.key),
+                    parentPath: paths.map((i) => i.key),
                     userName: "zt",
                   }).then(() => {
-                    updateDirectorytreeData()
+                    updateDirectorytreeData();
                   });
                 }}
               >
@@ -99,10 +105,10 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
               <a
                 target="_blank"
                 onClick={() => {
-                  setCollectionCreateAndUpdateModalVisible(true)
-                  setCollectionCreateAndUpdateModalMode('rename')
-                  setCollectionCreateAndUpdateModalId(val.key)
-                  setCollectionCreateAndUpdateModalFolderName(val.title)
+                  setCollectionCreateAndUpdateModalVisible(true);
+                  setCollectionCreateAndUpdateModalMode("rename");
+                  setCollectionCreateAndUpdateModalId(val.key);
+                  setCollectionCreateAndUpdateModalFolderName(val.title);
                 }}
               >
                 Rename
@@ -112,17 +118,27 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
           {
             key: "5",
             label: (
-
-          <Popconfirm title="Are you sure？" okText="Yes" cancelText="No" onConfirm={() => {
-            FileSystemService.removeItem({ id: '62b3fc610c4d613355bd2b5b', removeNodePath: paths.map(i => i.key) }).then(res => {
-              updateDirectorytreeData()
-            })
-          }}>
-            <a
-              style={{ color: 'red' }}>
-              Delete
-            </a>
-          </Popconfirm>
+              <Popconfirm
+                title="Are you sure？"
+                okText="Yes"
+                cancelText="No"
+                placement="left"
+                onConfirm={() => {
+                  FileSystemService.removeItem({
+                    id: "62b3fc610c4d613355bd2b5b",
+                    removeNodePath: paths.map((i) => i.key),
+                  }).then((res) => {
+                    updateDirectorytreeData();
+                  });
+                }}
+              >
+                <a
+                  style={{ color: "red" }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Delete
+                </a>
+              </Popconfirm>
             ),
           },
         ]}
@@ -132,23 +148,20 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
   return (
     <div className={"collection-title-render"}>
       <div className={"wrap"}>
-        <div>
-          {
-            val.type === 1 ? <span style={{ color: '#10B981', marginRight: '12px' }}>GET</span> : null
-          }
-          {val.title}
-        </div>
+        {val.type === 1 ? (
+          <span style={{ color: "#10B981", marginRight: "8px" }}>GET</span>
+        ) : null}
+        <span className="title">{val.title}</span>
+
         <Dropdown
           overlay={menu(val)}
           trigger={["click"]}
           visible={visible}
           onVisibleChange={handleVisibleChange}
         >
-                <span onClick={(event) => event.stopPropagation()}>
-                  <Space>
-                    <MoreOutlined size={100} style={{ fontSize: '16px' }}/>
-                  </Space>
-                </span>
+          <span onClick={(event) => event.stopPropagation()}>
+            <MoreOutlined style={{ fontSize: "16px" }} />
+          </span>
         </Dropdown>
       </div>
     </div>

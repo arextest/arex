@@ -91,6 +91,11 @@ const MainBox: React.FC = () => {
             mode="vertical"
             items={items}
             theme={theme}
+            css={css`
+              li.ant-menu-item {
+                margin: 0 !important;
+              }
+            `}
           />
         </Sider>
 
