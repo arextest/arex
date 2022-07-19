@@ -1,22 +1,12 @@
+import styled from "@emotion/styled";
 import { Button, ButtonProps } from "antd";
-import { FC } from "react";
 
-import { Color } from "../../style/theme";
-
-const SmallTextButton: FC<{ title: string } & ButtonProps> = ({
-  title,
-  ...buttonProps
-}) => {
-  return (
-    <Button
-      type="text"
-      size="small"
-      style={{ color: Color.primaryColor }}
-      {...buttonProps}
-    >
-      {title}
-    </Button>
-  );
-};
+const SmallTextButton = styled((props: ButtonProps) => (
+  <Button type="text" size="small">
+    {props.title}
+  </Button>
+))<{ title: string } & ButtonProps>`
+  color: ${(props) => props.theme.color.primary};
+`;
 
 export default SmallTextButton;
