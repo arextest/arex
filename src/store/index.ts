@@ -20,6 +20,7 @@ interface BaseState {
     title: string;
     key: string;
     isNew: boolean;
+    closable: boolean;
   }[];
   setHttpPanes: (a: any) => void;
   httpActiveKey: any;
@@ -76,6 +77,7 @@ export const useStore = create<BaseState>((set, get) => ({
       isNew: true,
       title: "New Request",
       key: "0",
+      closable: true,
     },
   ],
   httpActiveKey: "0",

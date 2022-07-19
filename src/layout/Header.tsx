@@ -5,6 +5,7 @@ import { FC, useEffect } from "react";
 import { GitHubStarButton } from "../components";
 import ChangeLangButton from "../i18n/ChangeLangButton";
 import { useStore } from "../store";
+import { Theme, ThemeIcon } from "../style/theme";
 
 const HeaderWrapper = styled.div`
   height: 48px;
@@ -63,7 +64,7 @@ const Header: FC<{ collapsed?: boolean }> = ({ collapsed }) => {
         <HeaderMenu>
           <Button
             type="text"
-            icon={theme === "light" ? "🌛" : "🌞"}
+            icon={theme === Theme.light ? ThemeIcon.dark : ThemeIcon.light}
             onClick={() => changeTheme()}
           />
           <ChangeLangButton />
