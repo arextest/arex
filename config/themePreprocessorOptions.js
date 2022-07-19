@@ -6,21 +6,24 @@ import { Color, DefaultTheme } from "../src/style/theme";
 
 const includeStyles = {
   ".ant-btn-text": {
-    backgroundColor: "transparent",
     border: "none",
-    boxShadow: "none",
+    "background-color": "transparent",
+    "box-shadow": "none",
   },
   ".ant-input-borderless": {
-    backgroundColor: "transparent",
     border: "none",
-    boxShadow: "none",
+    "background-color": "transparent",
+    "box-shadow": "none",
   },
   ".ant-btn-primary": {
-    borderColor: Color.primaryColor,
-    background: Color.primaryColor,
+    "background-color": Color.primaryColor,
+    "border-color": Color.primaryColor,
   },
   ".ant-menu": {
-    boxShadow: "none",
+    "box-shadow": "none",
+  },
+  ".ant-tree-switcher": {
+    "background-color": "inherit!important",
   },
 };
 

@@ -108,7 +108,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
           .ant-tabs-nav-list {
             .ant-tabs-tab,
             .ant-tabs-ink-bar {
-              height: 40px !important;
+              height: 35px !important;
             }
           }
         `}
@@ -128,8 +128,9 @@ const Collection = ({ changeSelectedRequest }: any) => {
             style={{
               textAlign: "left",
               color: Color.primaryColor,
-              padding: "0 17px",
-              margin: "4px 0",
+              padding: "0 8px",
+              margin: "4px 0 4px 9px",
+              height: "26px",
             }}
           >
             {t("collectionMenu.newCreate")}

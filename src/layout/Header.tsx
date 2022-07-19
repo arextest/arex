@@ -53,7 +53,7 @@ const Header: FC<{ collapsed?: boolean }> = ({ collapsed }) => {
     localStorage.getItem("theme") !== theme && changeTheme();
   }, []);
   return (
-    <Card bordered={false} bodyStyle={{ padding: 0 }}>
+    <Card bordered={false} bodyStyle={{ padding: 0 }} style={{ zIndex: 100 }}>
       <HeaderWrapper>
         <Logo collapsed={collapsed}>
           <span>AREX</span>

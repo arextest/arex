@@ -5,10 +5,12 @@ import { findPathByKey } from "../components/Collection/util";
 import { WorkSpace } from "../layout";
 import { useStore } from "../store";
 import { css } from "@emotion/react";
+import { Theme } from "../style/theme";
 
 const { TabPane } = Tabs;
 
 const Normal = () => {
+  const theme = useStore((state) => state.theme);
   const httpActiveKey = useStore((state) => state.httpActiveKey);
   const httpPanes = useStore((state) => state.httpPanes);
   const collectionTree = useStore((state) => state.collectionTree);
@@ -58,6 +60,11 @@ const Normal = () => {
           css={css`
             .ant-tabs-nav-operations {
               margin: 0 0 0 0 !important;
+              height: 36px;
+              border-left: 1px solid
+                ${theme === Theme.light
+                  ? "rgba(0, 0, 0, 0.06)"
+                  : "rgba(255, 255, 255, 0.06)"} !important;
             }
           `}
         >

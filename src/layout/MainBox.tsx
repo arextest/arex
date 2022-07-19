@@ -76,7 +76,11 @@ const MainBox: React.FC = () => {
           collapsed={collapsed}
           onCollapse={setCollapsed}
           css={css`
-            border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
+            z-index: 10;
+            border-right: 1px solid
+              ${theme === Theme.light
+                ? "rgba(0, 0, 0, 0.06)"
+                : "rgba(255, 255, 255, 0.06)"} !important;
             .ant-menu-root,
             .ant-layout-sider-trigger {
               background: inherit !important;
@@ -94,6 +98,11 @@ const MainBox: React.FC = () => {
             css={css`
               li.ant-menu-item {
                 margin: 0 !important;
+                height: 35px;
+                span {
+                  position: relative;
+                  top: -2px;
+                }
               }
             `}
           />
