@@ -1,3 +1,5 @@
+// 使用 chrome 插件代理请求方法，用于解决跨域问题
+// https://zhangtao25.github.io/arex-help/docs/browser-extension/
 function AgentAxios<T>(params: any) {
   return new Promise<T>((resolve) => {
     window.postMessage(
