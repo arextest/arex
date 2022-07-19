@@ -28,7 +28,6 @@ const DraggableLayout = (props: any) => {
   const firstRef = useRef(null);
   const secondRef = useRef(null);
   const { dir } = props;
-  console.log(props.children[0]);
   const drag = () => {
     const draggableDom: any = draggableLineRef.current;
     const contentDom: any = draggableLayoutRef.current;

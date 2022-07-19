@@ -1,25 +1,16 @@
 import AppHeader from "../components/app/Header";
-// import ComparePage from "../pages/compare";
 import RequestPage from "../pages/request";
 import {
   Button,
-  Col,
   Divider,
-  Layout,
   Menu,
-  Popconfirm,
-  Row,
   Space,
-  Spin,
   Tabs,
 } from "antd";
-import MenuItem from "antd/es/menu/MenuItem";
-import Sider from "antd/es/layout/Sider";
-import { Content } from "antd/es/layout/layout";
 import Collection from "../components/collection";
 import Environment from "../components/environment";
 import Login from "../components/login";
-import { useEffect, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import { WorkspaceService } from "../services/WorkspaceService";
 import { GlobalOutlined } from "@ant-design/icons";
 import "./mainbox.less";
@@ -27,6 +18,9 @@ import { useMount } from "ahooks";
 import { CollectionService } from "../services/CollectionService";
 import ReplayPage from "../pages/replay";
 import DraggableLayout from "./DraggableLayout";
+import { NodeList } from "../vite-env";
+import { collectionOriginalTreeToAntdTreeData } from "../helpers/collection/util";
+import {useNavigate, useParams, useRoutes} from "react-router-dom";
 
 const { TabPane } = Tabs;
 // 静态数据
@@ -60,25 +54,39 @@ const initialPanes = [
   },
 ];
 
+
 const MainBox = () => {
-  //登录状态
+  const _useParams = useParams()
+  const _useNavigate = useNavigate()
+  // *************登录状态**************************
   const [islogin, setIslogin] = useState<boolean>(true);
-  // workspaces 数据
-  const [workspaces, setWorkspaces] = useState([]);
-  const [panes, setPanes] = useState(initialPanes);
-  const [currentWorkspaceId, setcurrentWorkspaceId] = useState<string>("");
-  // 数据状态全部定义在这里
 
-  // 集合Collection的状态
+  // *************侧边栏**************************
   const [siderMenuSelectedKey, setSiderMenuSelectedKey] = useState(
-    "collection",
+      "collection",
   );
-  const [collectionLoading, setCollectionLoading] = useState(false);
-  const fetchCollectionData = () => {};
 
-  // 添加tab
+  // *************workspaces**************************
+  const [workspaces, setWorkspaces] = useState([]);
+
+  // *************panes**************************
+  const [panes, setPanes] = useState(initialPanes);
+
+  // *************collection**************************
+  const [collectionTreeData, setCollectionTreeData] = useState<NodeList[]>([]);
+  const [collectionLoading, setCollectionLoading] = useState(false);
+
+  function fetchCollectionTreeData() {
+    CollectionService.listCollection({ id: _useParams.workspaceId }).then((res) => {
+      const roots = res?.data?.body?.fsTree?.roots || [];
+      setCollectionTreeData(collectionOriginalTreeToAntdTreeData(roots));
+    });
+  }
+
+
+  // *tab相关
+  const [activeKey, setActiveKey] = useState("");
   const add = () => {
-    console.log("123");
     const newActiveKey = String(Math.random());
     const newPanes = [...panes];
     newPanes.push({
@@ -90,13 +98,13 @@ const MainBox = () => {
       qid: "62b9a5e47e3ecb480e675a97",
     });
     setPanes(newPanes);
-    // setActiveKey(newActiveKey);
   };
 
-  const remove = (targetKey: string) => {};
+  const remove = (targetKey: string) => {
+    setPanes(panes.filter(i=>i.key !== targetKey))
+  };
 
   const onEdit: any = (targetKey: string, action: "add" | "remove") => {
-    console.log(targetKey, action);
     if (action === "add") {
       add();
     } else {
@@ -112,23 +120,33 @@ const MainBox = () => {
     }
   };
 
+  // mount
   useMount(() => {
+
+  });
+
+  // 监听params
+  useEffect(()=>{
     // 获取所有workspace
     WorkspaceService.listWorkspace()
-      .then((res) => {
-        setcurrentWorkspaceId(res.data.body.workspaces[0].id);
-        setWorkspaces(res.data.body.workspaces);
-      });
+        .then((workspaces) => {
+          setWorkspaces(workspaces)
+          if (_useParams.workspaceName && _useParams.workspaceId){
+            fetchCollectionTreeData()
+          } else {
+            _useNavigate(`/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}`)
+          }
+        });
     if (localStorage.getItem("email")) {
       setIslogin(true);
     } else {
       setIslogin(false);
     }
-  });
+  },[_useParams])
 
   return (
     <>
-    {!islogin ? <Login checkLoginStatus={checkLoginStatus}></Login> : (
+    {!islogin ? <Login checkLoginStatus={checkLoginStatus}/> : (
       <div className={"main-box"}>
         {/*AppHeader部分*/}
         <AppHeader userinfo={userinfo} workspaces={workspaces} />
@@ -170,9 +188,12 @@ const MainBox = () => {
                     }}
                   >
                     <Collection
-                      currentWorkspaceId={currentWorkspaceId}
+                      treeData={collectionTreeData}
+                      setMainBoxPanes={setPanes}
+                      mainBoxPanes={panes}
+                      setMainBoxActiveKey={setActiveKey}
                       loading={collectionLoading}
-                      fetchData={fetchCollectionData}
+                      fetchTreeData={()=>{fetchCollectionTreeData()}}
                     />
                   </div>
                   <div
@@ -188,7 +209,7 @@ const MainBox = () => {
             </div>
             {/*主区域*/}
             <div style={{ padding: "10px" }}>
-              <Tabs type="editable-card" onEdit={onEdit}>
+              <Tabs type="editable-card" onEdit={onEdit} activeKey={activeKey}>
                 {panes.map(
                   (pane) => (
                     <TabPane
@@ -197,7 +218,7 @@ const MainBox = () => {
                       closable={pane.closable}
                     >
                       {pane.paneType === "request" ? (
-                        <RequestPage data={pane} />
+                        <RequestPage data={pane} collectionTreeData={collectionTreeData} />
                       ) : null}
                       {pane.paneType === "replay" ? (
                         <ReplayPage data={pane} />

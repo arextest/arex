@@ -8,6 +8,7 @@ import { collectionOriginalTreeToAntdTreeData } from "../../helpers/collection/u
 import type { DirectoryTreeProps } from "antd/lib/tree";
 import type { DataNode } from "antd/es/tree";
 import { useMount } from "ahooks";
+import {useNavigate, useParams} from "react-router-dom";
 const { Search } = Input;
 
 const dataList: { key: React.Key; title: string }[] = [];
@@ -38,23 +39,59 @@ const getParentKey = (key: React.Key, tree: DataNode[]): React.Key => {
 };
 
 type Props = {
-  fetchData: () => void;
+  treeData:any
+  fetchTreeData: () => void;
   loading: boolean;
-  currentWorkspaceId: string;
+  setMainBoxPanes: (p:any) => void;
+  mainBoxPanes: any[];
+  setMainBoxActiveKey: (p:any) => void;
 };
 
-const Collection: FC<Props> = ({ fetchData, loading, currentWorkspaceId }) => {
+const Collection: FC<Props> = (
+  {
+    treeData,
+    fetchTreeData,
+    loading,
+    setMainBoxPanes,
+    mainBoxPanes,
+    setMainBoxActiveKey,
+  },
+) => {
+  const _useParams = useParams()
+  const _useNavigate = useNavigate()
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [searchValue, setSearchValue] = useState("");
   const [autoExpandParent, setAutoExpandParent] = useState(true);
-  const [treeData, setCollectionTreeData] = useState([]);
   const onExpand: any = (newExpandedKeys: string[]) => {
     setExpandedKeys(newExpandedKeys);
     setAutoExpandParent(false);
   };
 
   const onSelect: DirectoryTreeProps["onSelect"] = (keys, info) => {
-    console.log(keys, "keys");
+    if (
+      keys[0] &&
+      info.node.type !== 3 &&
+      !mainBoxPanes.map((i) => i.key).includes(keys[0])
+    ) {
+      // const newActiveKey = String(Math.random());
+      const newPanes = [...mainBoxPanes];
+      newPanes.push({
+        closable: true,
+        title: info.node.title,
+        content: "Content of new Tab",
+        key: keys[0],
+        paneType: "request",
+        qid: keys[0],
+        //
+        // 其实nodeType应该得通过qid拿到
+        nodeType: info.node.type,
+      });
+      // setPanes(newPanes);
+      setMainBoxPanes(newPanes);
+    }
+    if (keys[0]) {
+      setMainBoxActiveKey(keys[0]);
+    }
   };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,17 +112,6 @@ const Collection: FC<Props> = ({ fetchData, loading, currentWorkspaceId }) => {
     setAutoExpandParent(true);
   };
 
-  function fetchDirectoryTreeData() {
-    CollectionService.listCollection({ id: currentWorkspaceId }).then((res) => {
-      const roots = res?.data?.body?.fsTree?.roots || [];
-      setCollectionTreeData(collectionOriginalTreeToAntdTreeData(roots));
-    });
-  }
-
-  useEffect(() => {
-    fetchDirectoryTreeData();
-  }, [currentWorkspaceId]);
-
   useEffect(() => {
     generateList(treeData);
   }, [treeData]);
@@ -104,13 +130,13 @@ const Collection: FC<Props> = ({ fetchData, loading, currentWorkspaceId }) => {
             size="small"
             onClick={() => {
               CollectionService.addItem({
-                id: currentWorkspaceId,
+                id: _useParams.workspaceId,
                 nodeName: "New Collection",
                 nodeType: 3,
                 parentPath: [],
                 userName: "zt",
               }).then(() => {
-                fetchDirectoryTreeData();
+                fetchTreeData();
               });
             }}
           >
@@ -144,10 +170,11 @@ const Collection: FC<Props> = ({ fetchData, loading, currentWorkspaceId }) => {
         treeData={treeData}
         titleRender={(val) => (
           <CollectionTitleRender
-            updateDirectorytreeData={fetchDirectoryTreeData}
+            updateDirectorytreeData={() => {
+              fetchTreeData();
+            }}
             val={val}
             treeData={treeData}
-            currentWorkspaceId={currentWorkspaceId}
           />
         )}
       />
@@ -156,13 +183,13 @@ const Collection: FC<Props> = ({ fetchData, loading, currentWorkspaceId }) => {
           type="primary"
           onClick={() => {
             CollectionService.addItem({
-              id: "62b3fc610c4d613355bd2b5b",
+              id: _useParams.workspaceId,
               nodeName: "New Collection",
               nodeType: 3,
               parentPath: [],
               userName: "zt",
             }).then(() => {
-              fetchDirectoryTreeData();
+              fetchTreeData();
             });
           }}
         >

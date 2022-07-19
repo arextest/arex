@@ -3,17 +3,22 @@ import AppGitHubStarButton from "./GitHubStarButton";
 import { DownOutlined, SettingOutlined } from "@ant-design/icons";
 import Setting from "../setting";
 import { FC, useState } from "react";
+import {useNavigate} from "react-router-dom";
 type Props = {
   userinfo: any;
   workspaces: any[];
 };
 const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
+    const _useNavigate =useNavigate()
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
   return (
     <>
     <div className={"app-header"}>
       <Space className={"left"}>
-        <a className={"app-name"}>AREX</a>
+        <a className={"app-name"} onClick={()=>{
+            // useNavigate()('/')
+            _useNavigate('/')
+        }}>AREX</a>
         <AppGitHubStarButton />
         <Dropdown
           overlay={

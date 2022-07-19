@@ -1,5 +1,6 @@
 // 数组转树通用方法
-
+// import ss from '.../../../vv'
+import { NodeList } from "../../vite-env";
 export function arrToTree(arr: any, pid = 0) {
   const newArr: any = [];
   arr.forEach((item: any) => {
@@ -21,7 +22,6 @@ export function findPathByKey(
   key: string,
   path?: Root<RootParadigmKey>[],
 ): any {
-  // console.log(tree,key)
   if (typeof path === "undefined") {
     path = [];
   }
@@ -44,21 +44,24 @@ export function findPathByKey(
   }
 }
 
-export function collectionOriginalTreeToAntdTreeData(tree: any, nodeList = []) {
+export function collectionOriginalTreeToAntdTreeData(
+  tree: any,
+  nodeList: NodeList[] = [],
+): NodeList[] {
   const nodes = tree;
   // const nodeList = []
   Object.keys(nodes)
     .forEach((value, index, array) => {
       nodeList.push({
+        id: nodes[value].infoId,
+        children: [],
+        // 自定义
         title: nodes[value].nodeName,
         key: nodes[value].infoId,
-        type: nodes[value].nodeType,
         nodeType: nodes[value].nodeType,
-        children: [],
         // isLeaf: nodes[value].nodeType === 2||nodes[value].children==null
         // icon: iconMap[nodes[value].nodeType],
       });
-      console.log(index, nodeList);
       if (
         nodes[value].children && Object.keys(nodes[value].children).length > 0
       ) {
@@ -68,8 +71,6 @@ export function collectionOriginalTreeToAntdTreeData(tree: any, nodeList = []) {
         );
       }
     });
-
-  // console.log(nodeList,'nodeList')
   return nodeList;
 }
 
@@ -97,34 +98,4 @@ export function collectionTreeToArr(data: any) {
     loop(item);
   });
   return result;
-}
-
-// 保存请求
-
-export function collectionOriginalTreeToAntdTreeSelectData(
-  tree: any,
-  nodeList = [],
-) {
-  console.log(nodeList, "nodeList");
-  const nodes = tree;
-  Object.keys(nodes).forEach((value, index, array) => {
-    nodeList.push({
-      title: nodes[value].title,
-      value: nodes[value].key,
-      disabled: nodes[value].nodeType !== 3,
-      children: [],
-    });
-
-    console.log(nodes[value].children, "nodes[value].children");
-    if (
-      nodes[value].children && Object.keys(nodes[value].children).length > 0
-    ) {
-      console.log(1233332);
-      collectionOriginalTreeToAntdTreeSelectData(
-        nodes[value].children,
-        nodeList[index].children,
-      );
-    }
-  });
-  return nodeList;
 }

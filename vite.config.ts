@@ -1,11 +1,12 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-
+import {themePreprocessorPlugin} from "@zougt/vite-plugin-theme-preprocessor";
+import themePreprocessorOptions from "./config/themePreprocessorOptions";
 import proxy from "./config/proxy";
-
 const env = "FAT";
 const convertProxyConfig: any = {};
 const proxyConfig = proxy[env];
+import { Color } from "./src/style/theme";
 
 for (const proxyConfigKey in proxyConfig) {
   const rewriteKey = Object.keys(proxyConfig[proxyConfigKey].pathRewrite)[0];
@@ -23,7 +24,29 @@ for (const proxyConfigKey in proxyConfig) {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      jsxImportSource: "@emotion/react",
+      babel: {
+        plugins: ["@emotion/babel-plugin"],
+      },
+    }),
+    themePreprocessorPlugin(themePreprocessorOptions),
+  ],
+  css: {
+    preprocessorOptions: {
+      less: {
+        modifyVars: {
+          // 此处也可设置直角、边框色、字体大小等
+          "primary-color": Color.primaryColor,
+        },
+        javascriptEnabled: true,
+      },
+    },
+  },
+  esbuild: {
+    logOverride: { 'this-is-undefined-in-esm': 'silent' }
+  },
   server: {
     proxy: convertProxyConfig,
     host: "0.0.0.0",

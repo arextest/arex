@@ -4,10 +4,13 @@ import { useState } from "react";
 import { CollectionService } from "../../services/CollectionService";
 import { findPathByKey } from "../../helpers/collection/util";
 import CreateAndUpdateFolder from "./CreateAndUpdateFolder";
+import {useNavigate, useParams} from "react-router-dom";
 
 function CollectionTitleRender(
-  { val, updateDirectorytreeData, treeData, currentWorkspaceId }: any,
+  { val, updateDirectorytreeData, treeData }: any,
 ) {
+    const _useParams = useParams()
+    const _useNavigate = useNavigate()
   const [visible, setVisible] = useState(false);
   const handleVisibleChange = (flag: boolean) => {
     setVisible(flag);
@@ -30,7 +33,7 @@ function CollectionTitleRender(
                 target="_blank"
                 onClick={() => {
                   CollectionService.addItem({
-                    id: currentWorkspaceId,
+                    id: _useParams.workspaceId,
                     nodeName: "New Collection",
                     nodeType: 3,
                     parentPath: paths.map((i: any) => i.key),
@@ -53,7 +56,7 @@ function CollectionTitleRender(
                 target="_blank"
                 onClick={() => {
                   CollectionService.addItem({
-                    id: currentWorkspaceId,
+                    id: _useParams.workspaceId,
                     nodeName: "New Request",
                     nodeType: 1,
                     parentPath: paths.map((i: any) => i.key),
@@ -75,7 +78,7 @@ function CollectionTitleRender(
                 target="_blank"
                 onClick={() => {
                   CollectionService.addItem({
-                    id: currentWorkspaceId,
+                    id: _useParams.workspaceId,
                     nodeName: "eg",
                     nodeType: 2,
                     parentPath: paths.map((i: any) => i.key),
@@ -120,7 +123,7 @@ function CollectionTitleRender(
                 cancelText="No"
                 onConfirm={() => {
                   CollectionService.removeItem({
-                    id: currentWorkspaceId,
+                    id: _useParams.workspaceId,
                     removeNodePath: paths.map((i: any) => i.key),
                   }).then((res) => {
                     updateDirectorytreeData();
