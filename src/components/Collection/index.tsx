@@ -1,13 +1,10 @@
-import "./index.less";
-
 import {
   CaretDownOutlined,
   FolderOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
-import { css } from "@emotion/react";
 import { useMount } from "ahooks";
-import { Button, Divider, Empty, Tabs, Tooltip, Tree } from "antd";
+import { Button, ButtonProps, Divider, Empty, Tabs, Tooltip, Tree } from "antd";
 import type { DirectoryTreeProps } from "antd/lib/tree";
 import React, { useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -18,11 +15,43 @@ import {
   collectionTreeToArr,
 } from "../../helpers/collection/util";
 import { useStore } from "../../store";
-import CollectionTitleRender from "./CollectionTitleRender";
+import CollectionTitle from "./CollectionTitle";
 import CreateAndUpdateFolder from "./CreateAndUpdateFolder";
 import { Color } from "../../style/theme";
+import styled from "@emotion/styled";
 
 const { TabPane } = Tabs;
+const CollectionTabs = styled(Tabs)`
+  margin-top: -16px;
+  .ant-tabs-nav {
+    min-width: 32px !important;
+  }
+  .ant-tabs-tab {
+    padding: 0 !important;
+  }
+  .ant-tabs-tabpane {
+    padding-left: 8px !important;
+  }
+  .ant-tabs-nav-list {
+    .ant-tabs-tab,
+    .ant-tabs-ink-bar {
+      height: 35px !important;
+    }
+  }
+  .ant-tree-treenode,
+  .ant-tree-node-content-wrapper {
+    width: 228px;
+  }
+`;
+
+const AddNewButton = styled((props: ButtonProps) => (
+  <Button icon={<PlusCircleOutlined />} type="text" {...props} />
+))`
+  color: ${Color.primaryColor}!important;
+  padding: 0 8px;
+  margin: 4px 0 4px 9px;
+  height: 26px;
+`;
 
 const Collection = ({ changeSelectedRequest }: any) => {
   const { t } = useTranslation("components");
@@ -81,6 +110,7 @@ const Collection = ({ changeSelectedRequest }: any) => {
       fetchDirectoryTreeData();
     });
   }
+
   function fetchDirectoryTreeData() {
     FileSystemService.queryWorkspaceById({ id: currentWorkspaceId }).then(
       (res) => {
@@ -91,51 +121,22 @@ const Collection = ({ changeSelectedRequest }: any) => {
   }
 
   return (
-    <div className={"collection"}>
-      <Tabs
-        defaultActiveKey="2"
-        tabPosition={"left"}
-        css={css`
-          .ant-tabs-nav {
-            min-width: 32px !important;
-          }
-          .ant-tabs-tab {
-            padding: 0 !important;
-          }
-          .ant-tabs-tabpane {
-            padding-left: 8px !important;
-          }
-          .ant-tabs-nav-list {
-            .ant-tabs-tab,
-            .ant-tabs-ink-bar {
-              height: 35px !important;
-            }
-          }
-        `}
+    <CollectionTabs defaultActiveKey="2" tabPosition={"left"}>
+      <TabPane
+        tab={
+          <Tooltip title={t("collectionMenu.collection")}>
+            <FolderOutlined />
+          </Tooltip>
+        }
+        key="2"
       >
-        <TabPane
-          tab={
-            <Tooltip title={t("collectionMenu.collection")}>
-              <FolderOutlined />
-            </Tooltip>
-          }
-          key="2"
-        >
-          <Button
-            icon={<PlusCircleOutlined />}
-            type="text"
-            onClick={handleAddItem}
-            style={{
-              textAlign: "left",
-              color: Color.primaryColor,
-              padding: "0 8px",
-              margin: "4px 0 4px 9px",
-              height: "26px",
-            }}
-          >
-            {t("collectionMenu.newCreate")}
-          </Button>
-          <Divider style={{ margin: "0 0 8px 0" }} />
+        <AddNewButton onClick={handleAddItem}>
+          {t("collectionMenu.newCreate")}
+        </AddNewButton>
+
+        <Divider style={{ margin: "0 0 8px 0" }} />
+
+        {collectionTree.length > 0 ? (
           <Tree
             showLine
             switcherIcon={<CaretDownOutlined />}
@@ -143,16 +144,13 @@ const Collection = ({ changeSelectedRequest }: any) => {
             onExpand={onExpand}
             treeData={collectionTree}
             titleRender={(val) => (
-              <CollectionTitleRender
-                updateDirectorytreeData={fetchDirectoryTreeData}
+              <CollectionTitle
+                updateDirectoryTreeData={fetchDirectoryTreeData}
                 val={val}
               />
             )}
-            style={{ padding: "0 12px", display: "block" }}
           />
-          <CreateAndUpdateFolder
-            updateDirectorytreeData={fetchDirectoryTreeData}
-          />
+        ) : (
           <Empty
             style={{ display: collectionTree.length > 0 ? "none" : "block" }}
           >
@@ -173,9 +171,13 @@ const Collection = ({ changeSelectedRequest }: any) => {
               {t("collectionMenu.newCreate")}
             </Button>
           </Empty>
-        </TabPane>
-      </Tabs>
-    </div>
+        )}
+
+        <CreateAndUpdateFolder
+          updateDirectoryTreeData={fetchDirectoryTreeData}
+        />
+      </TabPane>
+    </CollectionTabs>
   );
 };
 

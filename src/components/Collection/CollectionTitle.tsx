@@ -1,11 +1,36 @@
 import { MoreOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Menu, Popconfirm, Space } from "antd";
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
+import { Dropdown, Menu, Popconfirm } from "antd";
 import { useState } from "react";
+
 import { FileSystemService } from "../../api/FileSystem.service";
+import { METHODS } from "../../constant";
 import { useStore } from "../../store";
 import { findPathByKey } from "./util";
 
-function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
+const CollectionTitleWrapper = styled.div`
+  font-weight: 500;
+  & > *:last-of-type {
+    font-size: 16px;
+    float: right;
+    margin-top: 4px;
+  }
+`;
+
+const RequestMethod = (props: { method: typeof METHODS[number] }) => (
+  <span
+    css={css`
+      color: #10b981;
+      margin-right: 8px;
+      font-size: 12px;
+    `}
+  >
+    {props.method}
+  </span>
+);
+
+function CollectionTitle({ val, updateDirectoryTreeData }: any) {
   const collectionTree = useStore((state) => state.collectionTree);
   const [visible, setVisible] = useState(false);
   const handleVisibleChange = (flag: boolean) => {
@@ -45,7 +70,7 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
                     parentPath: paths.map((i) => i.key),
                     userName: "zt",
                   }).then(() => {
-                    updateDirectorytreeData();
+                    updateDirectoryTreeData();
                   });
                 }}
               >
@@ -68,7 +93,7 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
                     parentPath: paths.map((i) => i.key),
                     userName: "zt",
                   }).then(() => {
-                    updateDirectorytreeData();
+                    updateDirectoryTreeData();
                   });
                 }}
               >
@@ -90,7 +115,7 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
                     parentPath: paths.map((i) => i.key),
                     userName: "zt",
                   }).then(() => {
-                    updateDirectorytreeData();
+                    updateDirectoryTreeData();
                   });
                 }}
               >
@@ -128,7 +153,7 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
                     id: "62b3fc610c4d613355bd2b5b",
                     removeNodePath: paths.map((i) => i.key),
                   }).then((res) => {
-                    updateDirectorytreeData();
+                    updateDirectoryTreeData();
                   });
                 }}
               >
@@ -146,26 +171,20 @@ function CollectionTitleRender({ val, updateDirectorytreeData }: any) {
     );
   };
   return (
-    <div className={"collection-title-render"}>
-      <div className={"wrap"}>
-        {val.type === 1 ? (
-          <span style={{ color: "#10B981", marginRight: "8px" }}>GET</span>
-        ) : null}
-        <span className="title">{val.title}</span>
+    <CollectionTitleWrapper>
+      {val.type === 1 ? <RequestMethod method="GET" /> : null}
+      <span>{val.title}</span>
 
-        <Dropdown
-          overlay={menu(val)}
-          trigger={["click"]}
-          visible={visible}
-          onVisibleChange={handleVisibleChange}
-        >
-          <span onClick={(event) => event.stopPropagation()}>
-            <MoreOutlined style={{ fontSize: "16px" }} />
-          </span>
-        </Dropdown>
-      </div>
-    </div>
+      <Dropdown
+        overlay={menu(val)}
+        trigger={["click"]}
+        visible={visible}
+        onVisibleChange={handleVisibleChange}
+      >
+        <MoreOutlined onClick={(e) => e.stopPropagation()} />
+      </Dropdown>
+    </CollectionTitleWrapper>
   );
 }
 
-export default CollectionTitleRender;
+export default CollectionTitle;
