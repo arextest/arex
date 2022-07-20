@@ -7,14 +7,14 @@ module.exports = {
       pathRewrite: { "/api": "/api" },
     },
     "/config": {
-      target: "http://10.5.153.151:8088",
+      target: "http://10.5.153.151:8091",
       changeOrigin: true,
-      pathRewrite: { "/config": "/config_api/config" },
+      pathRewrite: { "/config": "/api/config" },
     },
     "/report": {
-      target: "http://10.5.153.151:8088",
+      target: "http://10.5.153.151:8090",
       changeOrigin: true,
-      pathRewrite: { "/report": "/report_api/report" },
+      pathRewrite: { "/report": "/api/report" },
     },
   },
   PROD: {
@@ -24,14 +24,14 @@ module.exports = {
       pathRewrite: { "/api": "/api" },
     },
     "/config": {
-      target: "http://10.5.153.151:8088",
+      target: "http://10.5.153.151:8091",
       changeOrigin: true,
-      pathRewrite: { "/config": "/config_api/config" },
+      pathRewrite: { "/config": "/api/config" },
     },
     "/report": {
-      target: "http://10.5.153.151:8088",
+      target: "http://10.5.153.151:8090",
       changeOrigin: true,
-      pathRewrite: { "/report": "/report_api/report" },
+      pathRewrite: { "/report": "/api/report" },
     },
   },
 };
