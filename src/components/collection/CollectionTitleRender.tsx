@@ -2,9 +2,10 @@ import { MoreOutlined } from "@ant-design/icons";
 import { Dropdown, Menu, Popconfirm, Space } from "antd";
 import { useState } from "react";
 import { CollectionService } from "../../services/CollectionService";
-import { findPathByKey } from "../../helpers/collection/util";
+// import { findPathByKey } from "../../helpers/collection/util";
 import CreateAndUpdateFolder from "./CreateAndUpdateFolder";
 import { useNavigate, useParams } from "react-router-dom";
+import { treeFindPath } from "../../helpers/collection/util";
 
 function CollectionTitleRender(
   { val, updateDirectorytreeData, treeData }: any,
@@ -18,7 +19,7 @@ function CollectionTitleRender(
   const [CollectionCreateAndUpdateModal, setCollectionCreateAndUpdateModal] =
     useState({});
   const menu = (val: any) => {
-    const paths = findPathByKey(treeData, val.key);
+    const paths = treeFindPath(treeData, (node) => node.key === val.key);
     return (
       <Menu
         onClick={(e) => {

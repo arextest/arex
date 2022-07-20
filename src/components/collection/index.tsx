@@ -79,7 +79,7 @@ const Collection: FC<Props> = (
         closable: true,
         title: info.node.title,
         key: keys[0],
-        paneType: "request",
+        pageType: "request",
         qid: keys[0],
         //
         // 其实nodeType应该得通过qid拿到

@@ -1,0 +1,31 @@
+{
+  "http": {
+    "urlEmpty": "请输入URL",
+    "extensionNotInstalled": "插件未安装",
+    "enterRequestUrl": "请输入请求URL",
+    "importUrl": "导入URL",
+    "showCode": "显示代码",
+    "clearAll": "全部清除",
+    "untitledRequest": "未命名请求",
+    "copyLink": "复制链接",
+    "viewMyLinks": "我的链接",
+    "saveAs": "另存为",
+    "params": "参数",
+    "requestBody": "请求体",
+    "requestHeaders": "请求头",
+    "authorization": "授权",
+    "pre-requestScript": "预请求脚本",
+    "test": "测试",
+    "queryParams": "查询参数",
+    "contentType": "内容类型",
+    "responseNotReady": "请求未发送，当前无响应"
+  },
+  "collectionMenu": {
+    "collection": "集合",
+    "environment": "环境",
+    "newCreate": "新建"
+  },
+  "applicationsMenu": {
+    "appFilterPlaceholder": "搜索应用"
+  }
+}

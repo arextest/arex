@@ -1,11 +1,11 @@
 import HttpRequest from "../components/http/index";
 import { useMount } from "ahooks";
-import { RequestService } from "../services/RequestService";
 import { useEffect, useState } from "react";
-import { findPathByKey } from "../components/collection/util";
+import { treeFindPath } from "../helpers/collection/util";
 
-// 这个组件应和对比组件公用一种，id从上层获取
-const RequestPage = ({ data, collectionTreeData,activateNewRequestInPane }) => {
+const RequestPage = (
+  { data, collectionTreeData, activateNewRequestInPane },
+) => {
   const [request, setRequest] = useState({});
   useMount(() => {});
   return (
@@ -15,8 +15,8 @@ const RequestPage = ({ data, collectionTreeData,activateNewRequestInPane }) => {
         collectionTreeData={collectionTreeData}
         mode={"normal"}
         id={data.qid}
-        path={findPathByKey(collectionTreeData, data.qid)}
-        isNew={false}
+        isNew={data.isNew}
+        pageType={data.pageType}
         activateNewRequestInPane={(p)=>activateNewRequestInPane(p)}
       />
     </div>

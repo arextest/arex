@@ -28,7 +28,9 @@ const Response: FC<
     responseHeaders?: object;
   }
 > = (props) => {
-  const onChange = (key: string) => {};
+  const onChange = (key: string) => {
+    console.log(key);
+  };
 
   const theme = useStore((state) => state.theme);
   const headers = useMemo(
@@ -42,7 +44,9 @@ const Response: FC<
     [props.responseHeaders],
   );
 
-  useEffect(() => {}, [headers]);
+  useEffect(() => {
+    console.log(headers);
+  }, [headers]);
 
   return (
     <>

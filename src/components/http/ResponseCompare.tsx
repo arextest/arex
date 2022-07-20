@@ -76,7 +76,9 @@ window.DIFF_INSERT = 1;
 // @ts-ignore
 window.DIFF_EQUAL = 0;
 
-const onChange = (key: string) => {};
+const onChange = (key: string) => {
+  console.log(key);
+};
 
 const ResponseCompare = ({ responses }) => {
   const diffView = useRef<HTMLDivElement>();

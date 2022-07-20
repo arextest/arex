@@ -73,10 +73,7 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
             </span>
           </Dropdown>
         </div>
-        <Avatar
-          size={20}
-          style={{ marginRight: "8px" }}
-        />
+        <Avatar size={20} style={{ marginRight: "8px" }} />
       </div>
     </div>
     {/*模态框*/}

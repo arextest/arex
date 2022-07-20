@@ -8,10 +8,11 @@ import {
   Typography,
 } from "antd";
 import React, { useMemo, useState } from "react";
-import { findPathByKey } from "./util";
+// import { findPathByKey } from "./util";
 import { CollectionService } from "../../services/CollectionService";
 import { useParams } from "react-router-dom";
 import { FileSystemService } from "../../api/FileSystem.service";
+import { treeFindPath } from "../../helpers/collection/util";
 const { Text, Link } = Typography;
 const treeData = [
   {
@@ -35,7 +36,7 @@ const treeData = [
 ];
 
 const CollectionSaveRequest = (
-  { show, onCreate, onCancel, collectionTreeData,activateNewRequestInPane },
+  { show, onCreate, onCancel, collectionTreeData, activateNewRequestInPane, reqParams },
 ) => {
   const _useParams = useParams();
   const [form] = Form.useForm();
@@ -50,7 +51,7 @@ const CollectionSaveRequest = (
   const mapTree = (tree) => {
     const haveChildren =
       Array.isArray(tree.children) && tree.children.length > 0;
-    console.log(tree, "rrr");
+    // console.log(tree, "rrr");
     return {
       ...tree,
       disabled: tree.nodeType !== 3,
@@ -79,29 +80,22 @@ const CollectionSaveRequest = (
               id: _useParams.workspaceId,
               nodeName: values.requestName,
               nodeType: 1,
-              parentPath: findPathByKey(collectionTreeData, value)?.map(
-                (i) => i.key,
-              ),
+              parentPath: treeFindPath(
+                collectionTreeData,
+                (node) => node.key === value,
+              )?.map((i) => i.key),
               userName: "zt",
             }).then((res) => {
-              // console.log(res.data.body.infoId,'res')
-              // updateDirectorytreeData();
               FileSystemService.saveInterface({
+                ...reqParams,
                 id: res.data.body.infoId,
-                auth: null,
-                body: { contentType: "application/json", body: "" },
-                address: { endpoint: "nihao", method: "GET" },
-                baseAddress: { endpoint: "", method: "GET" },
-                testAddress: { endpoint: "", method: "GET" },
-                headers: [],
-                params: [],
-                preRequestScript: null,
-                testScript: null,
               })
                 .then((r) => {
-                  activateNewRequestInPane({key:res.data.body.infoId})
                   // 通知父组件
-                  // activateNewRequestInPane
+                  activateNewRequestInPane({
+                    key: res.data.body.infoId,
+                    title: values.requestName,
+                  });
                 });
             });
             // onCreate(values);
@@ -135,8 +129,10 @@ const CollectionSaveRequest = (
         <p>
           Save to
           <Text type="secondary">
-
-            {findPathByKey(collectionTreeData, value)
+            {JSON.stringify(
+              treeFindPath(collectionTreeData, (node) => node.key === value),
+            )}
+            {treeFindPath(collectionTreeData, (node) => node.key === value)
               ?.map((i) => i.title)
               .join(" / ")}
           </Text>

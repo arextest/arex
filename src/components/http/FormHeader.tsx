@@ -9,7 +9,7 @@ import { Button, Tooltip } from "antd";
 import { FC } from "react";
 import { useTranslation } from "react-i18next";
 import { Updater } from "use-immer";
-// import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 
 import { KeyValueType } from "./index";
 

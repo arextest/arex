@@ -29,13 +29,11 @@ import { useStore } from "../../store";
 import { tryParseJsonString, tryPrettierJsonString } from "../../utils";
 import AgentAxios from "../../utils/request";
 // import CollectionSaveRequest from "../Collection/SaveRequest";
-import AnimateAutoHeight  from "../AnimateAutoHeight/index";
+import AnimateAutoHeight from "../AnimateAutoHeight/index";
 import FormHeader, { FormHeaderWrapper } from "./FormHeader";
 import FormTable, { getColumns } from "./FormTable";
 import Response from "./Response";
 import ResponseCompare from "./ResponseCompare";
-import { NodeList } from "../../vite-env";
-import {treeFindPath} from "../../helpers/collection/util";
 import CollectionSaveRequest from "../collection/SaveRequest";
 
 const { TabPane } = Tabs;
@@ -43,10 +41,8 @@ const { TabPane } = Tabs;
 export type HttpProps = {
   mode?: "normal" | "compare";
   id: string;
+  path: Root<RootParadigmKey>[];
   isNew: boolean;
-  collectionTreeData: NodeList[];
-  pageType: string
-  activateNewRequestInPane:(p:{key:string,title:string})=>void
 };
 
 export type KeyValueType = {
@@ -97,40 +93,30 @@ const ResponseWrapper = styled.div`
   align-items: center;
 `;
 
-// 注
-// mode：有两种模式，normal、compare
-// id：request的id，组件加载时拉一次数据
-// isNew：是否为新增的request
-// collectionTreeData：集合树形结构数据。作用是通过id可查询出节点路径，用于显示面包屑之类的
-// pageType：页面类型
 const Http: FC<HttpProps> = (
-  { mode = "normal", id, isNew, collectionTreeData ,pageType,activateNewRequestInPane},
+  {
+    mode = "normal",
+    id,
+    path = [],
+    isNew,
+    collectionTreeData,
+    activateNewRequestInPane,
+  },
 ) => {
   const { theme, extensionInstalled } = useStore();
   const { t: t_common } = useTranslation("common");
   const { t: t_components } = useTranslation("components");
-
-  const path = []
-
-
-  // 如果是case(2)类型的话，就一定有一个父节点，类型也一定是request(1)
-  const nodeInfoInCollectionTreeData = useMemo(()=>{
-    const paths = treeFindPath(collectionTreeData,node=>node.key === id)
-
-    return {
-      self:paths[paths.length-1],
-      parent:paths[paths.length-2]
-    }
-
-  },[collectionTreeData])
-  const [showSaveRequestModal, setShowSaveRequestModal] = useState(false);
-  console.log(nodeInfoInCollectionTreeData,'nodeInfoInCollectionTreeData')
-
-  // const
-
-  // const
+  const setCollectionSaveRequest = useStore(
+    (state) => state.setCollectionSaveRequest,
+  );
+  const collectionSaveRequest = useStore(
+    (state) => state.collectionSaveRequest,
+  );
 
   const [method, setMethod] = useState<typeof METHODS[number]>("GET");
+  // const [requestSavedName, setRequestSavedName] = useState<string>(
+  //   t_components("http.untitledRequest")
+  // );
 
   const [url, setUrl] = useState("");
   const [baseUrl, setBaseUrl] = useState("");
@@ -142,6 +128,10 @@ const Http: FC<HttpProps> = (
   const [requestParams, setRequestParams] = useImmer<KeyValueType[]>([
     { key: "", value: "", active: true },
   ]);
+
+  // new
+
+  const [showSaveRequestModal, setShowSaveRequestModal] = useState(false);
 
   useEffect(() => {
     handleUpdateUrl();
@@ -218,7 +208,6 @@ const Http: FC<HttpProps> = (
       validationRequest(cancelRequest);
     },
     onSuccess: (res) => {
-      console.log("123321", res);
       setResponse(res);
     },
     onError(err) {
@@ -239,7 +228,6 @@ const Http: FC<HttpProps> = (
       validationRequest(cancelBaseRequest);
     },
     onSuccess: (res) => {
-      console.log(res);
       setBaseResponse(res);
     },
     onError(err) {
@@ -260,7 +248,6 @@ const Http: FC<HttpProps> = (
       validationRequest(cancelTestRequest);
     },
     onSuccess: (res) => {
-      console.log(res);
       setTestResponse(res);
     },
     onError(err) {
@@ -272,31 +259,28 @@ const Http: FC<HttpProps> = (
   });
 
   useRequest(() => {
-    if (isNew || !nodeInfoInCollectionTreeData.self){
-      return new Promise((resolve, reject) => {resolve({
-        body:{}
-      })})
-    }
-    const { nodeType, key: id } = nodeInfoInCollectionTreeData.self
-    const { key: pid } = nodeInfoInCollectionTreeData.parent;
-    if (nodeType === NodeType.interface) {
-      return FileSystemService.queryInterface({ id });
-    } else {
-      return new Promise((resolve) => {
-        FileSystemService.queryInterface({ id: pid }).then((interfaceRes) => {
-          FileSystemService.queryCase({ id }).then((CaseRes) => {
-            resolve({
-              body: {
-                ...interfaceRes.body,
-                ...CaseRes.body,
-              },
+    try {
+      const { nodeType, key: id } = path[path.length - 1];
+      const { key: pid } = path[path.length - 2];
+      if (nodeType === NodeType.interface) {
+        return FileSystemService.queryInterface({ id });
+      } else {
+        return new Promise((resolve) => {
+          FileSystemService.queryInterface({ id: pid }).then((interfaceRes) => {
+            FileSystemService.queryCase({ id }).then((CaseRes) => {
+              resolve({
+                body: {
+                  ...interfaceRes.body,
+                  ...CaseRes.body,
+                },
+              });
             });
           });
         });
-      });
-    }
+      }
+    } catch (e) {}
   }, {
-    refreshDeps: [nodeInfoInCollectionTreeData],
+    refreshDeps: [id],
     onSuccess(res: any) {
       setUrl(res.body.address?.endpoint || "");
       setMethod(res.body.address?.method || "GET");
@@ -407,7 +391,7 @@ const Http: FC<HttpProps> = (
         preRequestScript: null,
         testScript: null,
       },
-        nodeInfoInCollectionTreeData.self.nodeType,
+      path[path.length - 1].nodeType,
     );
   };
 
@@ -438,11 +422,12 @@ const Http: FC<HttpProps> = (
   return (
     <>
     <AnimateAutoHeight>
+      <p>{JSON.stringify(id)}{JSON.stringify(isNew)}</p>
       {!!path.length && (
         <Breadcrumb style={{ paddingBottom: "14px" }}>
           {path.map(
-            (i) => (
-              <Breadcrumb.Item>
+            (i, index) => (
+              <Breadcrumb.Item key={index}>
                 {i.title}
               </Breadcrumb.Item>
             ),
@@ -492,51 +477,28 @@ const Http: FC<HttpProps> = (
             {t_common("send")}
           </Button>
           {isNew ? (
-              <Button
-                  onClick={() => {
-                    console.log(123);
-                    setShowSaveRequestModal(true);
-                  }}
-              >
-                保存为
-              </Button>
+            <Button
+              onClick={() => {
+                console.log(123);
+                setShowSaveRequestModal(true);
+              }}
+            >
+              保存为
+            </Button>
           ) : <Button onClick={handleSave}>{t_common("save")}</Button>}
           <CollectionSaveRequest
-              reqParams={{
-                auth: null,
-                body: {
-                  contentType,
-                  body: requestBody,
-                },
-                address: {
-                  endpoint: url,
-                  method,
-                },
-                baseAddress: {
-                  endpoint: baseUrl,
-                  method,
-                },
-                testAddress: {
-                  endpoint: testUrl,
-                  method,
-                },
-                headers: requestHeaders,
-                params: requestParams,
-                preRequestScript: null,
-                testScript: null,
-              }}
-              collectionTreeData={collectionTreeData}
-              show={showSaveRequestModal}
-              onCancel={() => {
-                setShowSaveRequestModal(false);
-              }}
-              onCreate={() => {
-                setShowSaveRequestModal(false);
-              }}
-              activateNewRequestInPane={(p) => {
-                activateNewRequestInPane(p);
-              }}
-          />
+            collectionTreeData={collectionTreeData}
+            show={showSaveRequestModal}
+            onCancel={() => {
+              setShowSaveRequestModal(false);
+            }}
+            onCreate={() => {
+              setShowSaveRequestModal(false);
+            }}
+            activateNewRequestInPane={(p) => {
+              activateNewRequestInPane(p);
+            }}
+          ></CollectionSaveRequest>
         </HeaderWrapper>
       ) : (
         <div>

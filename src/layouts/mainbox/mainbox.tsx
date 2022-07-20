@@ -13,7 +13,10 @@ import { CollectionService } from "../../services/CollectionService";
 import ReplayPage from "../../pages/replay";
 import DraggableLayout from "../DraggableLayout";
 import { NodeList } from "../../vite-env";
-import { collectionOriginalTreeToAntdTreeData } from "../../helpers/collection/util";
+import {
+  collectionOriginalTreeToAntdTreeData,
+  treeFind,
+} from "../../helpers/collection/util";
 import { useNavigate, useParams, useRoutes } from "react-router-dom";
 import PaneAreaEmpty from "./Empty";
 
@@ -79,13 +82,15 @@ const MainBox = () => {
       closable: true,
       title: "New Request",
       key: newActiveKey,
-      paneType: "request",
+      pageType: "request",
       qid: newActiveKey,
+      isNew: true,
       //
       // 其实nodeType应该得通过qid拿到
       nodeType: 3,
     });
     setPanes(newPanes);
+    setActiveKey(newActiveKey);
   };
 
   const remove = (targetKey: string) => {
@@ -215,45 +220,45 @@ const MainBox = () => {
                       key={pane.key}
                       closable={pane.closable}
                     >
-                      {pane.paneType === "request" ? (
+                      {(pane.pageType === "request"||pane.pageType === "case") ? (
                         <RequestPage
-                            activateNewRequestInPane={(p)=>{
-                              console.log('终于传到我这里了',p)
-                              fetchCollectionTreeData()
+                          activateNewRequestInPane={(p) => {
+                            console.log("终于传到我这里了", p);
+                            fetchCollectionTreeData();
 
-
-
-                              // const newActiveKey = String(Math.random());
-                              // 关闭当前
-                              const newPanes = [...(panes.filter(i=>i.key !== activeKey))];
-                              newPanes.push({
-                                closable: true,
-                                title: 'info.node.title',
-                                key: p.key,
-                                paneType: "request",
-                                qid: p.key,
-                                //
-                                // 其实nodeType应该得通过qid拿到
-                                nodeType: 3,
-                              });
-                              // setPanes(newPanes);
-                              setPanes(newPanes);
-
-
-                            }}
+                            // const newActiveKey = String(Math.random());
+                            // 关闭当前
+                            const newPanes = [
+                              ...(panes.filter((i) => i.key !== activeKey)),
+                            ];
+                            newPanes.push({
+                              closable: true,
+                              title: p.title,
+                              key: p.key,
+                              pageType: "request",
+                              qid: p.key,
+                              //
+                              // 其实nodeType应该得通过qid拿到
+                              nodeType: 3,
+                            });
+                            // setPanes(newPanes);
+                            setPanes(newPanes);
+                            setActiveKey(p.key);
+                          }}
                           data={pane}
                           collectionTreeData={collectionTreeData}
                         />
                       ) : null}
-                      {pane.paneType === "replay" ? (
+                      {pane.pageType === "replay" ? (
                         <ReplayPage data={pane} />
                       ) : null}
                     </TabPane>
                   ),
                 )}
               </Tabs>
-              {panes.length===0?<PaneAreaEmpty add={add}></PaneAreaEmpty>:null}
-
+              {panes.length === 0 ? (
+                <PaneAreaEmpty add={add}></PaneAreaEmpty>
+              ) : null}
             </div>
           </DraggableLayout>
         </div>

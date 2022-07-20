@@ -2,7 +2,8 @@ import { Input, Modal } from "antd";
 import React, { useState, useEffect } from "react";
 
 import { CollectionService } from "../../services/CollectionService";
-import { findPathByKey } from "../../helpers/collection/util";
+import { treeFindPath } from "../../helpers/collection/util";
+// import { findPathByKey } from "../../helpers/collection/util";
 
 const CreateAndUpdateFolder: React.FC<any> = (
   { updateDirectorytreeData, collectionTree, collectionCreateAndUpdateModal },
@@ -30,9 +31,9 @@ const CreateAndUpdateFolder: React.FC<any> = (
   }, [collectionCreateAndUpdateModal]);
 
   const handleOk = () => {
-    const paths = findPathByKey(
+    const paths = treeFindPath(
       collectionTree,
-      collectionCreateAndUpdateModal.collectionCreateAndUpdateModalId,
+      node.key === collectionCreateAndUpdateModal.collectionCreateAndUpdateModalId,
     );
     CollectionService.rename({
       id: "62b3fc610c4d613355bd2b5b",
