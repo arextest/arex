@@ -156,7 +156,7 @@ const MainBox = () => {
                 }}
               >
                 <div>
-                  <GlobalOutlined style={{ marginRight: "8px" }} />Canyon
+                  <GlobalOutlined style={{ marginRight: "8px" }} />test
                 </div>
                 <Space>
                   <Button size={"small"} type="default">New</Button>

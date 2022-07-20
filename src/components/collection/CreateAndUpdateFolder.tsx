@@ -33,7 +33,7 @@ const CreateAndUpdateFolder: React.FC<any> = (
   const handleOk = () => {
     const paths = treeFindPath(
       collectionTree,
-      node.key === collectionCreateAndUpdateModal.collectionCreateAndUpdateModalId,
+      node=>node.key === collectionCreateAndUpdateModal.collectionCreateAndUpdateModalId,
     );
     CollectionService.rename({
       id: "62b3fc610c4d613355bd2b5b",
