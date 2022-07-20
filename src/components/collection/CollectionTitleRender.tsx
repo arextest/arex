@@ -48,7 +48,7 @@ function CollectionTitleRender(
               </a>
             ),
             // 只有类型为3才能新增文件夹
-            disabled: val.type !== 3,
+            disabled: val.nodeType !== 3,
           },
           {
             key: "2",
@@ -70,7 +70,7 @@ function CollectionTitleRender(
                 New Request
               </a>
             ),
-            disabled: val.type !== 3,
+            disabled: val.nodeType !== 3,
           },
           {
             key: "3",
@@ -92,7 +92,7 @@ function CollectionTitleRender(
                 New Case
               </a>
             ),
-            disabled: val.type !== 1,
+            disabled: val.nodeType !== 1,
           },
           {
             key: "4",
@@ -143,7 +143,7 @@ function CollectionTitleRender(
     <div className={"collection-title-render"}>
       <div className={"wrap"}>
         <div>
-          {val.nodeType === 1 && val.type === 1 ? (
+          {val.nodeType === 1 && val.nodeType === 1 ? (
             <span style={{ color: "#10B981", marginRight: "12px" }}>GET</span>
           ) : null}
           {val.nodeType === 2 ? (
