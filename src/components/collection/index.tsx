@@ -8,7 +8,7 @@ import { collectionOriginalTreeToAntdTreeData } from "../../helpers/collection/u
 import type { DirectoryTreeProps } from "antd/lib/tree";
 import type { DataNode } from "antd/es/tree";
 import { useMount } from "ahooks";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 const { Search } = Input;
 
 const dataList: { key: React.Key; title: string }[] = [];
@@ -39,12 +39,12 @@ const getParentKey = (key: React.Key, tree: DataNode[]): React.Key => {
 };
 
 type Props = {
-  treeData:any
+  treeData: any;
   fetchTreeData: () => void;
   loading: boolean;
-  setMainBoxPanes: (p:any) => void;
+  setMainBoxPanes: (p: any) => void;
   mainBoxPanes: any[];
-  setMainBoxActiveKey: (p:any) => void;
+  setMainBoxActiveKey: (p: any) => void;
 };
 
 const Collection: FC<Props> = (
@@ -57,8 +57,8 @@ const Collection: FC<Props> = (
     setMainBoxActiveKey,
   },
 ) => {
-  const _useParams = useParams()
-  const _useNavigate = useNavigate()
+  const _useParams = useParams();
+  const _useNavigate = useNavigate();
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [searchValue, setSearchValue] = useState("");
   const [autoExpandParent, setAutoExpandParent] = useState(true);
@@ -70,7 +70,7 @@ const Collection: FC<Props> = (
   const onSelect: DirectoryTreeProps["onSelect"] = (keys, info) => {
     if (
       keys[0] &&
-      info.node.type !== 3 &&
+      info.node.nodeType !== 3 &&
       !mainBoxPanes.map((i) => i.key).includes(keys[0])
     ) {
       // const newActiveKey = String(Math.random());
@@ -78,13 +78,12 @@ const Collection: FC<Props> = (
       newPanes.push({
         closable: true,
         title: info.node.title,
-        content: "Content of new Tab",
         key: keys[0],
         paneType: "request",
         qid: keys[0],
         //
         // 其实nodeType应该得通过qid拿到
-        nodeType: info.node.type,
+        nodeType: info.node.nodeType,
       });
       // setPanes(newPanes);
       setMainBoxPanes(newPanes);

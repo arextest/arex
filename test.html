@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+</body>
+<script>
+    const depth1 = (node, nodeList = []) => {
+        // console.log(node,nodeList)
+        // console.log(nodeList,'nodeList1')
+        if (node !== null) {
+            const s = JSON.parse(JSON.stringify(node))
+            // console.log(node)
+            nodeList.push({
+                ...s,
+                name:s.index
+            })
+            const children = node.children || []
+            for (let i = 0; i < children.length; i++) {
+                //递归调用
+                // console.log(nodeList,'nodeList2')
+                depth1(children[i], nodeList)
+            }
+        }
+        return nodeList
+    }
+
+    // obj
+    let obj = {
+        children: [{
+            index: 0,
+            children: [{
+                index: 1,
+                children: [{
+                    index: 3
+                }]
+            }]
+        }, {
+            index: 4
+        }, {
+            index: 5,
+            children: [{
+                index: 7,
+                children: [{
+                    index: 8
+                }]
+            }]
+        }, {
+            index: 6
+        }]
+    }
+
+    console.log(depth1(obj),'depth1(obj)')
+
+</script>
+</html>

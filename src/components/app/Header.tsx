@@ -3,22 +3,27 @@ import AppGitHubStarButton from "./GitHubStarButton";
 import { DownOutlined, SettingOutlined } from "@ant-design/icons";
 import Setting from "../setting";
 import { FC, useState } from "react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 type Props = {
   userinfo: any;
   workspaces: any[];
 };
 const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
-    const _useNavigate =useNavigate()
+  const _useNavigate = useNavigate();
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
   return (
     <>
     <div className={"app-header"}>
       <Space className={"left"}>
-        <a className={"app-name"} onClick={()=>{
+        <a
+          className={"app-name"}
+          onClick={() => {
             // useNavigate()('/')
-            _useNavigate('/')
-        }}>AREX</a>
+            _useNavigate("/");
+          }}
+        >
+          AREX
+        </a>
         <AppGitHubStarButton />
         <Dropdown
           overlay={
@@ -69,7 +74,6 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
           </Dropdown>
         </div>
         <Avatar
-          src="https://joeschmoe.io/api/v1/random"
           size={20}
           style={{ marginRight: "8px" }}
         />
@@ -79,7 +83,7 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
     <Setting
       isModalVisible={isSettingModalVisible}
       setModalVisible={setIsSettingModalVisible}
-    ></Setting>
+    />
     </>
   );
 };

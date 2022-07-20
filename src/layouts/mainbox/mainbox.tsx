@@ -1,26 +1,21 @@
-import AppHeader from "../components/app/Header";
-import RequestPage from "../pages/request";
-import {
-  Button,
-  Divider,
-  Menu,
-  Space,
-  Tabs,
-} from "antd";
-import Collection from "../components/collection";
-import Environment from "../components/environment";
-import Login from "../components/login";
-import {useEffect, useMemo, useState} from "react";
-import { WorkspaceService } from "../services/WorkspaceService";
+import AppHeader from "../../components/app/Header";
+import RequestPage from "../../pages/request";
+import { Button, Divider, Menu, Space, Tabs } from "antd";
+import Collection from "../../components/collection";
+import Environment from "../../components/environment";
+import Login from "../../components/login";
+import { useEffect, useMemo, useState } from "react";
+import { WorkspaceService } from "../../services/WorkspaceService";
 import { GlobalOutlined } from "@ant-design/icons";
 import "./mainbox.less";
 import { useMount } from "ahooks";
-import { CollectionService } from "../services/CollectionService";
-import ReplayPage from "../pages/replay";
-import DraggableLayout from "./DraggableLayout";
-import { NodeList } from "../vite-env";
-import { collectionOriginalTreeToAntdTreeData } from "../helpers/collection/util";
-import {useNavigate, useParams, useRoutes} from "react-router-dom";
+import { CollectionService } from "../../services/CollectionService";
+import ReplayPage from "../../pages/replay";
+import DraggableLayout from "../DraggableLayout";
+import { NodeList } from "../../vite-env";
+import { collectionOriginalTreeToAntdTreeData } from "../../helpers/collection/util";
+import { useNavigate, useParams, useRoutes } from "react-router-dom";
+import PaneAreaEmpty from "./Empty";
 
 const { TabPane } = Tabs;
 // 静态数据
@@ -43,27 +38,17 @@ const items = [
   },
 ];
 
-const initialPanes = [
-  {
-    title: "Tab 1",
-    content: "Content of Tab 1",
-    closable: true,
-    key: "1",
-    paneType: "request",
-    qid: "62b9a5e47e3ecb480e675a97",
-  },
-];
-
+const initialPanes = [];
 
 const MainBox = () => {
-  const _useParams = useParams()
-  const _useNavigate = useNavigate()
+  const _useParams = useParams();
+  const _useNavigate = useNavigate();
   // *************登录状态**************************
   const [islogin, setIslogin] = useState<boolean>(true);
 
   // *************侧边栏**************************
   const [siderMenuSelectedKey, setSiderMenuSelectedKey] = useState(
-      "collection",
+    "collection",
   );
 
   // *************workspaces**************************
@@ -77,12 +62,13 @@ const MainBox = () => {
   const [collectionLoading, setCollectionLoading] = useState(false);
 
   function fetchCollectionTreeData() {
-    CollectionService.listCollection({ id: _useParams.workspaceId }).then((res) => {
+    CollectionService.listCollection({ id: _useParams.workspaceId }).then((
+      res,
+    ) => {
       const roots = res?.data?.body?.fsTree?.roots || [];
       setCollectionTreeData(collectionOriginalTreeToAntdTreeData(roots));
     });
   }
-
 
   // *tab相关
   const [activeKey, setActiveKey] = useState("");
@@ -91,17 +77,19 @@ const MainBox = () => {
     const newPanes = [...panes];
     newPanes.push({
       closable: true,
-      title: newActiveKey,
-      content: "Content of new Tab",
+      title: "New Request",
       key: newActiveKey,
-      paneType: "replay",
-      qid: "62b9a5e47e3ecb480e675a97",
+      paneType: "request",
+      qid: newActiveKey,
+      //
+      // 其实nodeType应该得通过qid拿到
+      nodeType: 3,
     });
     setPanes(newPanes);
   };
 
   const remove = (targetKey: string) => {
-    setPanes(panes.filter(i=>i.key !== targetKey))
+    setPanes(panes.filter((i) => i.key !== targetKey));
   };
 
   const onEdit: any = (targetKey: string, action: "add" | "remove") => {
@@ -121,32 +109,32 @@ const MainBox = () => {
   };
 
   // mount
-  useMount(() => {
-
-  });
+  useMount(() => {});
 
   // 监听params
-  useEffect(()=>{
+  useEffect(() => {
     // 获取所有workspace
     WorkspaceService.listWorkspace()
-        .then((workspaces) => {
-          setWorkspaces(workspaces)
-          if (_useParams.workspaceName && _useParams.workspaceId){
-            fetchCollectionTreeData()
-          } else {
-            _useNavigate(`/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}`)
-          }
-        });
+      .then((workspaces) => {
+        setWorkspaces(workspaces);
+        if (_useParams.workspaceName && _useParams.workspaceId) {
+          fetchCollectionTreeData();
+        } else {
+          _useNavigate(
+            `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}`,
+          );
+        }
+      });
     if (localStorage.getItem("email")) {
       setIslogin(true);
     } else {
       setIslogin(false);
     }
-  },[_useParams])
+  }, [_useParams]);
 
   return (
     <>
-    {!islogin ? <Login checkLoginStatus={checkLoginStatus}/> : (
+    {!islogin ? <Login checkLoginStatus={checkLoginStatus} /> : (
       <div className={"main-box"}>
         {/*AppHeader部分*/}
         <AppHeader userinfo={userinfo} workspaces={workspaces} />
@@ -193,7 +181,9 @@ const MainBox = () => {
                       mainBoxPanes={panes}
                       setMainBoxActiveKey={setActiveKey}
                       loading={collectionLoading}
-                      fetchTreeData={()=>{fetchCollectionTreeData()}}
+                      fetchTreeData={() => {
+                        fetchCollectionTreeData();
+                      }}
                     />
                   </div>
                   <div
@@ -209,7 +199,15 @@ const MainBox = () => {
             </div>
             {/*主区域*/}
             <div style={{ padding: "10px" }}>
-              <Tabs type="editable-card" onEdit={onEdit} activeKey={activeKey}>
+              <Tabs
+                type="editable-card"
+                onEdit={onEdit}
+                activeKey={activeKey}
+                onChange={(_activeKey) => {
+                  console.log(_activeKey);
+                  setActiveKey(_activeKey);
+                }}
+              >
                 {panes.map(
                   (pane) => (
                     <TabPane
@@ -218,7 +216,34 @@ const MainBox = () => {
                       closable={pane.closable}
                     >
                       {pane.paneType === "request" ? (
-                        <RequestPage data={pane} collectionTreeData={collectionTreeData} />
+                        <RequestPage
+                            activateNewRequestInPane={(p)=>{
+                              console.log('终于传到我这里了',p)
+                              fetchCollectionTreeData()
+
+
+
+                              // const newActiveKey = String(Math.random());
+                              // 关闭当前
+                              const newPanes = [...(panes.filter(i=>i.key !== activeKey))];
+                              newPanes.push({
+                                closable: true,
+                                title: 'info.node.title',
+                                key: p.key,
+                                paneType: "request",
+                                qid: p.key,
+                                //
+                                // 其实nodeType应该得通过qid拿到
+                                nodeType: 3,
+                              });
+                              // setPanes(newPanes);
+                              setPanes(newPanes);
+
+
+                            }}
+                          data={pane}
+                          collectionTreeData={collectionTreeData}
+                        />
                       ) : null}
                       {pane.paneType === "replay" ? (
                         <ReplayPage data={pane} />
@@ -227,6 +252,8 @@ const MainBox = () => {
                   ),
                 )}
               </Tabs>
+              {panes.length===0?<PaneAreaEmpty add={add}></PaneAreaEmpty>:null}
+
             </div>
           </DraggableLayout>
         </div>

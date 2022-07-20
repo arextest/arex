@@ -34,6 +34,7 @@ import FormHeader, { FormHeaderWrapper } from "./FormHeader";
 import FormTable, { getColumns } from "./FormTable";
 import Response from "./Response";
 import ResponseCompare from "./ResponseCompare";
+import CollectionSaveRequest from "../collection/SaveRequest";
 
 const { TabPane } = Tabs;
 
@@ -93,7 +94,7 @@ const ResponseWrapper = styled.div`
 `;
 
 const Http: FC<HttpProps> = (
-  { mode = "normal", id, path = [], isNew },
+  { mode = "normal", id, path = [], isNew, collectionTreeData,activateNewRequestInPane },
 ) => {
   const { theme, extensionInstalled } = useStore();
   const { t: t_common } = useTranslation("common");
@@ -120,6 +121,10 @@ const Http: FC<HttpProps> = (
   const [requestParams, setRequestParams] = useImmer<KeyValueType[]>([
     { key: "", value: "", active: true },
   ]);
+
+  // new
+
+  const [showSaveRequestModal, setShowSaveRequestModal] = useState(false);
 
   useEffect(() => {
     handleUpdateUrl();
@@ -247,24 +252,26 @@ const Http: FC<HttpProps> = (
   });
 
   useRequest(() => {
-    const { nodeType, key: id } = path[path.length - 1];
-    const { key: pid } = path[path.length - 2];
-    if (nodeType === NodeType.interface) {
-      return FileSystemService.queryInterface({ id });
-    } else {
-      return new Promise((resolve) => {
-        FileSystemService.queryInterface({ id: pid }).then((interfaceRes) => {
-          FileSystemService.queryCase({ id }).then((CaseRes) => {
-            resolve({
-              body: {
-                ...interfaceRes.body,
-                ...CaseRes.body,
-              },
+    try {
+      const { nodeType, key: id } = path[path.length - 1];
+      const { key: pid } = path[path.length - 2];
+      if (nodeType === NodeType.interface) {
+        return FileSystemService.queryInterface({ id });
+      } else {
+        return new Promise((resolve) => {
+          FileSystemService.queryInterface({ id: pid }).then((interfaceRes) => {
+            FileSystemService.queryCase({ id }).then((CaseRes) => {
+              resolve({
+                body: {
+                  ...interfaceRes.body,
+                  ...CaseRes.body,
+                },
+              });
             });
           });
         });
-      });
-    }
+      }
+    } catch (e) {}
   }, {
     refreshDeps: [id],
     onSuccess(res: any) {
@@ -408,6 +415,7 @@ const Http: FC<HttpProps> = (
   return (
     <>
     <AnimateAutoHeight>
+      <p>{JSON.stringify(id)}</p>
       {!!path.length && (
         <Breadcrumb style={{ paddingBottom: "14px" }}>
           {path.map(
@@ -499,6 +507,27 @@ const Http: FC<HttpProps> = (
           >
             {t_common("save")}
           </Button>
+          <Button
+            onClick={() => {
+              console.log(123);
+              setShowSaveRequestModal(true);
+            }}
+          >
+            保存为
+          </Button>
+          <CollectionSaveRequest
+            collectionTreeData={collectionTreeData}
+            show={showSaveRequestModal}
+            onCancel={() => {
+              setShowSaveRequestModal(false);
+            }}
+            onCreate={() => {
+              setShowSaveRequestModal(false);
+            }}
+            activateNewRequestInPane={(p)=>{
+              activateNewRequestInPane(p)
+            }}
+          ></CollectionSaveRequest>
         </HeaderWrapper>
       ) : (
         <div>

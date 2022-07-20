@@ -4,13 +4,13 @@ import { useState } from "react";
 import { CollectionService } from "../../services/CollectionService";
 import { findPathByKey } from "../../helpers/collection/util";
 import CreateAndUpdateFolder from "./CreateAndUpdateFolder";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function CollectionTitleRender(
   { val, updateDirectorytreeData, treeData }: any,
 ) {
-    const _useParams = useParams()
-    const _useNavigate = useNavigate()
+  const _useParams = useParams();
+  const _useNavigate = useNavigate();
   const [visible, setVisible] = useState(false);
   const handleVisibleChange = (flag: boolean) => {
     setVisible(flag);
