@@ -12,8 +12,9 @@ import {
   Empty,
   Input,
   message,
-  Select,
-  Spin,
+  Radio,
+  Select, Space,
+  Spin, Switch,
   Tabs,
   Tag,
   Typography,
@@ -104,11 +105,12 @@ const ResponseWrapper = styled.div`
 // collectionTreeData：集合树形结构数据。作用是通过id可查询出节点路径，用于显示面包屑之类的
 // pageType：页面类型
 const Http: FC<HttpProps> = (
-  { mode = "normal", id, isNew, collectionTreeData ,pageType,activateNewRequestInPane},
+  { id, isNew, collectionTreeData ,pageType,activateNewRequestInPane},
 ) => {
   const { theme, extensionInstalled } = useStore();
   const { t: t_common } = useTranslation("common");
   const { t: t_components } = useTranslation("components");
+  const [mode,setMode] = useState('normal')
 
   const path = []
 
@@ -119,7 +121,8 @@ const Http: FC<HttpProps> = (
 
     return {
       self:paths[paths.length-1],
-      parent:paths[paths.length-2]
+      parent:paths[paths.length-2],
+      raw:paths
     }
 
   },[collectionTreeData])
@@ -438,17 +441,41 @@ const Http: FC<HttpProps> = (
   return (
     <>
     <AnimateAutoHeight>
-      {!!path.length && (
-        <Breadcrumb style={{ paddingBottom: "14px" }}>
-          {path.map(
-            (i) => (
-              <Breadcrumb.Item>
-                {i.title}
-              </Breadcrumb.Item>
-            ),
-          )}
-        </Breadcrumb>
-      )}
+
+
+      <div style={{display:'flex',justifyContent:"space-between"}}>
+        {!!nodeInfoInCollectionTreeData.raw.length && (
+            <Breadcrumb style={{ paddingBottom: "14px" }}>
+              {nodeInfoInCollectionTreeData.raw.map(
+                  (i,index) => (
+                      <Breadcrumb.Item key={index}>
+                        {i.title}
+                      </Breadcrumb.Item>
+                  ),
+              )}
+            </Breadcrumb>
+        )}
+        <div>
+          {isNew ? (
+              <Button
+                  onClick={() => {
+                    console.log(123);
+                    setShowSaveRequestModal(true);
+                  }}
+              >
+                保存为
+              </Button>
+          ) : <Button onClick={handleSave}>{t_common("save")}</Button>}
+          <Divider type={'vertical'}/>
+          <Select options={[
+            { label: 'Normal', value: 'normal' },
+            { label: 'Compare', value: 'compare' }
+          ]}    value={mode} onChange={(val)=>{
+            setMode(val)
+          }} />
+        </div>
+      </div>
+      <Divider style={{margin:'0',marginBottom:'8px'}}/>
       {/* 普通请求 */}
       {mode === "normal" ? (
         <HeaderWrapper>
@@ -491,16 +518,7 @@ const Http: FC<HttpProps> = (
           >
             {t_common("send")}
           </Button>
-          {isNew ? (
-              <Button
-                  onClick={() => {
-                    console.log(123);
-                    setShowSaveRequestModal(true);
-                  }}
-              >
-                保存为
-              </Button>
-          ) : <Button onClick={handleSave}>{t_common("save")}</Button>}
+
           <CollectionSaveRequest
               reqParams={{
                 auth: null,

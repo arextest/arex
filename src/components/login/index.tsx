@@ -1,13 +1,14 @@
 import { Button, Input, message, Alert } from "antd";
 import { UserOutlined, LockOutlined, DownOutlined } from "@ant-design/icons";
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, {FC, useContext, useEffect, useMemo, useState} from "react";
 import "./index.less";
 import { LoginService } from "../../services/LoginService";
-type Props = {
-  checkLoginStatus: any;
-};
+import {GlobalContext} from "../../App";
+import {WorkspaceService} from "../../services/WorkspaceService";
+
 let timeChange: any;
-const Login: FC<Props> = ({ checkLoginStatus }) => {
+const Login = () => {
+  const value = useContext(GlobalContext)
   const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState<string>("");
   const [emailchecked, setEmailchecked] = useState<boolean>(true);
@@ -49,8 +50,29 @@ const Login: FC<Props> = ({ checkLoginStatus }) => {
       }
     });
   };
+  // 用户进入前初始化
+  const initBeforeUserEntry = (userName)=>{
+    WorkspaceService.listWorkspace({
+      userName:userName
+    }).then(workspaces=>{
+      if (workspaces.length ===0){
+        const params = {
+          userName: userName,
+          workspaceName:"Default"
+        }
+        WorkspaceService.createWorkspace(params).then(res=>{
+          localStorage.setItem("email", email);
+          value.dispatch({ type: "login",payload:email })
+        })
+      } else {
+        localStorage.setItem("email", email);
+        value.dispatch({ type: "login",payload:email })
+      }
+    })
+  }
 
   const login = () => {
+
     if (!emailchecked || email == "") {
       message.error("请检查邮箱");
       return;
@@ -58,18 +80,30 @@ const Login: FC<Props> = ({ checkLoginStatus }) => {
       message.error("请填写验证码");
       return;
     }
-    LoginService.loginVerify({
-      email: email,
-      verificationCode: verificationCode,
-    }).then((res) => {
-      if (res.data.body.success == true) {
-        message.success("登录成功");
-        localStorage.setItem("email", email);
-        checkLoginStatus();
-      } else {
-        message.error("登录失败");
-      }
-    });
+
+    message.success("登录成功");
+
+
+
+    initBeforeUserEntry(email)
+
+    // LoginService.loginVerify({
+    //   email: email,
+    //   verificationCode: verificationCode,
+    // }).then((res) => {
+    //   if (res.data.body.success == true) {
+    //     message.success("登录成功");
+    //
+    //
+    //
+    //     initBeforeUserEntry(email)
+    //
+    //
+    //
+    //   } else {
+    //     message.error("登录失败");
+    //   }
+    // });
   };
   useEffect(() => {
     if (count >= 0 && count < 60) {
@@ -88,7 +122,7 @@ const Login: FC<Props> = ({ checkLoginStatus }) => {
         showIcon
       />
       <div className={"login"}>
-        <div className={"login-title"}>AreX</div>
+        <div className={"login-title"}>AREX</div>
         <Input
           size="large"
           placeholder="请输入邮箱号！"

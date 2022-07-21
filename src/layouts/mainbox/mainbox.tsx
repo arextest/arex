@@ -4,7 +4,7 @@ import { Button, Divider, Menu, Space, Tabs } from "antd";
 import Collection from "../../components/collection";
 import Environment from "../../components/environment";
 import Login from "../../components/login";
-import { useEffect, useMemo, useState } from "react";
+import {useContext, useEffect, useMemo, useState} from "react";
 import { WorkspaceService } from "../../services/WorkspaceService";
 import { GlobalOutlined } from "@ant-design/icons";
 import "./mainbox.less";
@@ -19,6 +19,7 @@ import {
 } from "../../helpers/collection/util";
 import { useNavigate, useParams, useRoutes } from "react-router-dom";
 import PaneAreaEmpty from "./Empty";
+import {GlobalContext} from "../../App";
 
 const { TabPane } = Tabs;
 // 静态数据
@@ -46,8 +47,8 @@ const initialPanes = [];
 const MainBox = () => {
   const _useParams = useParams();
   const _useNavigate = useNavigate();
-  // *************登录状态**************************
-  const [islogin, setIslogin] = useState<boolean>(true);
+
+  const value = useContext(GlobalContext)
 
   // *************侧边栏**************************
   const [siderMenuSelectedKey, setSiderMenuSelectedKey] = useState(
@@ -105,13 +106,6 @@ const MainBox = () => {
     }
   };
 
-  const checkLoginStatus = () => {
-    if (localStorage.getItem("email")) {
-      setIslogin(true);
-    } else {
-      setIslogin(false);
-    }
-  };
 
   // mount
   useMount(() => {});
@@ -119,28 +113,29 @@ const MainBox = () => {
   // 监听params
   useEffect(() => {
     // 获取所有workspace
-    WorkspaceService.listWorkspace()
-      .then((workspaces) => {
-        setWorkspaces(workspaces);
-        if (_useParams.workspaceName && _useParams.workspaceId) {
-          fetchCollectionTreeData();
-        } else {
-          _useNavigate(
-            `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}`,
-          );
-        }
-      });
-    if (localStorage.getItem("email")) {
-      setIslogin(true);
-    } else {
-      setIslogin(false);
+    console.log(localStorage.getItem('email'))
+    if (localStorage.getItem('email')){
+      WorkspaceService.listWorkspace({userName:localStorage.getItem('email')})
+          .then((workspaces) => {
+            setWorkspaces(workspaces);
+            if (_useParams.workspaceName && _useParams.workspaceId) {
+              fetchCollectionTreeData();
+            } else {
+              _useNavigate(
+                  `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}`,
+              );
+            }
+          });
     }
+
+
   }, [_useParams]);
 
   return (
     <>
-    {!islogin ? <Login checkLoginStatus={checkLoginStatus} /> : (
+    {!value.state.isLogin ? <Login/> : (
       <div className={"main-box"}>
+        {JSON.stringify(value.state)}
         {/*AppHeader部分*/}
         <AppHeader userinfo={userinfo} workspaces={workspaces} />
         <Divider style={{ margin: "0" }} />
@@ -156,7 +151,7 @@ const MainBox = () => {
                 }}
               >
                 <div>
-                  <GlobalOutlined style={{ marginRight: "8px" }} />test
+                  <GlobalOutlined style={{ marginRight: "8px" }} />{_useParams.workspaceName}
                 </div>
                 <Space>
                   <Button size={"small"} type="default">New</Button>
