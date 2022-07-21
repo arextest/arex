@@ -471,6 +471,7 @@ const Http: FC<HttpProps> = (
             { label: 'Normal', value: 'normal' },
             { label: 'Compare', value: 'compare' }
           ]}    value={mode} onChange={(val)=>{
+            setSent(false)
             setMode(val)
           }} />
         </div>
