@@ -3,11 +3,14 @@ import React, { useState, useEffect } from "react";
 
 import { CollectionService } from "../../services/CollectionService";
 import { treeFindPath } from "../../helpers/collection/util";
+import {useNavigate, useParams} from "react-router-dom";
 // import { findPathByKey } from "../../helpers/collection/util";
 
 const CreateAndUpdateFolder: React.FC<any> = (
   { updateDirectorytreeData, collectionTree, collectionCreateAndUpdateModal },
 ) => {
+  const _useParams = useParams();
+  const _useNavigate = useNavigate();
   const [
     CollectionCreateAndUpdateModalVisible,
     setCollectionCreateAndUpdateModalVisible,
@@ -36,7 +39,7 @@ const CreateAndUpdateFolder: React.FC<any> = (
       node=>node.key === collectionCreateAndUpdateModal.collectionCreateAndUpdateModalId,
     );
     CollectionService.rename({
-      id: "62b3fc610c4d613355bd2b5b",
+      id: _useParams.workspaceId,
       newName: CollectionCreateAndUpdateModalFolderName,
       path: paths.map((i: any) => i.key),
     }).then((res) => {

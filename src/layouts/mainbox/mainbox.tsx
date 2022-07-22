@@ -4,7 +4,7 @@ import { Button, Divider, Menu, Space, Tabs } from "antd";
 import Collection from "../../components/Collection";
 import Environment from "../../components/environment";
 import Login from "../../components/login";
-import { useEffect, useState } from "react";
+import {useContext, useEffect, useMemo, useState} from "react";
 import { WorkspaceService } from "../../services/WorkspaceService";
 import { GlobalOutlined } from "@ant-design/icons";
 import "./mainbox.less";
@@ -31,6 +31,7 @@ type PaneProps = {
     isNew: true,
     nodeType: NodeType,
 }
+import {GlobalContext} from "../../App";
 
 const { TabPane } = Tabs;
 // 静态数据
@@ -63,8 +64,8 @@ const menuItems = [
 const MainBox = () => {
   const _useParams = useParams();
   const _useNavigate = useNavigate();
-  // *************登录状态**************************
-  const [isLogin, setIsLogin] = useState<boolean>(true);
+
+  const value = useContext(GlobalContext)
 
   // *************侧边栏**************************
   const [siderMenuSelectedKey, setSiderMenuSelectedKey] =
@@ -120,13 +121,6 @@ const MainBox = () => {
     }
   };
 
-  const checkLoginStatus = () => {
-    if (localStorage.getItem("email")) {
-      setIsLogin(true);
-    } else {
-      setIsLogin(false);
-    }
-  };
 
   // mount
   useMount(() => {});
@@ -134,121 +128,111 @@ const MainBox = () => {
   // 监听params
   useEffect(() => {
     // 获取所有workspace
-    WorkspaceService.listWorkspace().then((workspaces) => {
-      setWorkspaces(workspaces);
-      if (_useParams.workspaceName && _useParams.workspaceId) {
-        fetchCollectionTreeData();
-      } else {
-        _useNavigate(
-          `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}`
-        );
-      }
-    });
-    if (localStorage.getItem("email")) {
-      setIsLogin(true);
-    } else {
-      setIsLogin(false);
+    console.log(localStorage.getItem('email'))
+    if (localStorage.getItem('email')){
+      WorkspaceService.listWorkspace({userName:localStorage.getItem('email')})
+          .then((workspaces) => {
+            setWorkspaces(workspaces);
+            if (_useParams.workspaceName && _useParams.workspaceId) {
+              fetchCollectionTreeData();
+            } else {
+              _useNavigate(
+                  `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}`,
+              );
+            }
+          });
     }
   }, [_useParams]);
 
   return (
     <>
-      {!isLogin ? (
-        <Login checkLoginStatus={checkLoginStatus} />
-      ) : (
-        <div className={"main-box"}>
-          {/*AppHeader部分*/}
-          <AppHeader userinfo={userinfo} workspaces={workspaces} />
-          <Divider style={{ margin: "0" }} />
-          <div style={{height: "100%"}}>
-            <DraggableLayout dir={"horizontal"}>
-              {/*侧边栏*/}
-              <div style={{ backgroundColor: "white" }}>
-                <Space
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    padding: "10px",
-                  }}
-                >
-                  <div>
-                    <GlobalOutlined style={{ marginRight: "8px" }} />
-                    test
-                  </div>
-                  <Space>
-                    <Button size={"small"} type="default">
-                      New
-                    </Button>
-                    <Button size={"small"} type="default">
-                      Import
-                    </Button>
-                  </Space>
+    {!value.state.isLogin ? <Login/> : (
+      <div className={"main-box"}>
+        {JSON.stringify(value.state)}
+        {/*AppHeader部分*/}
+        <AppHeader userinfo={userinfo} workspaces={workspaces} />
+        <Divider style={{ margin: "0" }} />
+        <div>
+          <DraggableLayout dir={"horizontal"}>
+            {/*侧边栏*/}
+            <div style={{ backgroundColor: "white" }}>
+              <Space
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  padding: "10px",
+                }}
+              >
+                <div>
+                  <GlobalOutlined style={{ marginRight: "8px" }} />{_useParams.workspaceName}
+                </div>
+                <Space>
+                  <Button size={"small"} type="default">New</Button>
+                  <Button size={"small"} type="default">Import</Button>
                 </Space>
-                <Divider style={{ margin: "0" }} />
-                <div style={{ display: "flex" }} className={"tool-table"}>
-                  <Menu
-                    mode="vertical"
-                    items={menuItems}
-                    selectedKeys={[siderMenuSelectedKey]}
-                    onSelect={(val) => {
-                      setSiderMenuSelectedKey(val.key);
+              </Space>
+              <Divider style={{ margin: "0" }} />
+              <div style={{ display: "flex" }} className={"tool-table"}>
+                <Menu
+                  mode="vertical"
+                  items={menuItems}
+                  selectedKeys={[siderMenuSelectedKey]}
+                  onSelect={(val) => {
+                    setSiderMenuSelectedKey(val.key);
+                  }}
+                />
+                <div>
+                  <div
+                    style={{
+                      display:
+                        siderMenuSelectedKey === "collection" ? "block" : "none",
                     }}
-                  />
-                  <div>
-                    <div
-                      style={{
-                        display:
-                          siderMenuSelectedKey === "collection"
-                            ? "block"
-                            : "none",
+                  >
+                    <Collection
+                      treeData={collectionTreeData}
+                      setMainBoxPanes={setPanes}
+                      mainBoxPanes={panes}
+                      setMainBoxActiveKey={setActiveKey}
+                      loading={collectionLoading}
+                      fetchTreeData={() => {
+                        fetchCollectionTreeData();
                       }}
-                    >
-                      <Collection
-                        treeData={collectionTreeData}
-                        setMainBoxPanes={setPanes}
-                        mainBoxPanes={panes}
-                        setMainBoxActiveKey={setActiveKey}
-                        loading={collectionLoading}
-                        fetchTreeData={() => {
-                          fetchCollectionTreeData();
-                        }}
-                      />
-                    </div>
-                    <div
-                      style={{
-                        display:
-                          siderMenuSelectedKey === "replay"
-                            ? "block"
-                            : "none",
-                      }}
-                    >
-                      <ReplayMenu  onSelect={() => {}}/>
-                    </div>
-                    <div
-                      style={{
-                        display:
-                          siderMenuSelectedKey === "environment"
-                            ? "block"
-                            : "none",
-                      }}
-                    >
-                      <Environment />
-                    </div>
+                    />
+                  </div>
+                  <div
+                    style={{
+                      display:
+                        siderMenuSelectedKey === "environment" ? "block" : "none",
+                    }}
+                  >
+                    <Environment />
+                  </div>
+                  <div
+                    style={{
+                      display:
+                        siderMenuSelectedKey === "environment"
+                          ? "block"
+                          : "none",
+                    }}
+                  >
+                    <Environment />
                   </div>
                 </div>
               </div>
-              {/*主区域*/}
-              <div style={{ padding: "10px" }}>
-                <Tabs
-                  type="editable-card"
-                  onEdit={onEdit}
-                  activeKey={activeKey}
-                  onChange={(_activeKey) => {
-                    console.log(_activeKey);
-                    setActiveKey(_activeKey);
-                  }}
-                >
-                  {panes.map((pane) => (
+            </div>
+            {/*主区域*/}
+            <div style={{ padding: "10px" }}>
+              <Tabs
+                type="editable-card"
+                onEdit={onEdit}
+                activeKey={activeKey}
+                onChange={(_activeKey) => {
+                  console.log(_activeKey);
+                  setActiveKey(_activeKey);
+                }}
+              >
+                {panes.map(
+                  (pane) => (
                     <TabPane
                       tab={pane.title}
                       key={pane.key}
@@ -272,7 +256,6 @@ const MainBox = () => {
                               key: p.key,
                               pageType: "request",
                               qid: p.key,
-                              //
                               // 其实nodeType应该得通过qid拿到
                               nodeType: 3,
                             });
@@ -291,7 +274,7 @@ const MainBox = () => {
                   ))}
                 </Tabs>
                 {panes.length === 0 ? (
-                  <PaneAreaEmpty add={add}></PaneAreaEmpty>
+                  <PaneAreaEmpty add={add}/>
                 ) : null}
               </div>
             </DraggableLayout>

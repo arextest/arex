@@ -32,7 +32,9 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
                 items={workspaces.map((workspace) => {
                   return {
                     key: workspace.id,
-                    label: <a onClick={() => {}}>{workspace.workspaceName}</a>,
+                    label: <a onClick={() => {
+                        window.location.href = `/${workspace.id}/workspace/${workspace.workspaceName}`
+                    }}>{workspace.workspaceName}</a>,
                   };
                 })}
               />
@@ -73,7 +75,39 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
             </span>
           </Dropdown>
         </div>
-        <Avatar size={20} style={{ marginRight: "8px" }} />
+
+          <div className={'hover-wrap'}>
+              <Dropdown
+                  overlay={
+                      (
+                          <Menu
+                              items={[
+                                  {
+                                      key:"Sign Out",
+                                      label: <a
+                                          onClick={() => {
+                                              localStorage.removeItem('email');
+                                              // value.dispatch({ type: "login"})
+                                              // _useNavigate('/')
+                                              window.location.href = '/'
+                                          }}
+                                      >
+                                          Sign Out
+                                      </a>
+                                  }]}
+                          />
+                      )
+                  }
+              >
+            <span onClick={(e) => e.preventDefault()}>
+              <Space>
+                  <Avatar size={20} style={{ marginRight: "8px" }} />
+              </Space>
+            </span>
+              </Dropdown>
+
+          </div>
+
       </div>
     </div>
     {/*模态框*/}
