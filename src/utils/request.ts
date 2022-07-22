@@ -1,22 +1,19 @@
 function AgentAxios<T>(params: any) {
 
   return new Promise<T>((resolve) => {
+    const tid = String(Math.random())
     window.postMessage(
       {
         type: "__AREX_EXTENSION_REQUEST__",
-        payload: params,
+        tid:tid,
+        payload: params
       },
       "*",
     );
     window.addEventListener("message", receiveMessage);
-
     function receiveMessage(ev: any) {
-      if (ev.data.type === "__AREX_EXTENSION_RES__") {
+      if (ev.data.type === "__AREX_EXTENSION_RES__" && ev.data.tid == tid) {
         window.removeEventListener("message", receiveMessage, false);
-        console.log({
-          params,
-          res:ev.data.res
-        })
         resolve(ev.data.res);
       }
     }
