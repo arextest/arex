@@ -1,5 +1,5 @@
 import "./components/app/index.less";
-import "./components/collection/index.less";
+import "./components/Collection/index.less";
 import "./components/environment/index.less";
 
 import CheckChromeExtension from "./components/CheckChromeExtension";

@@ -37,7 +37,7 @@ import Response from "./Response";
 import ResponseCompare from "./ResponseCompare";
 import { NodeList } from "../../vite-env";
 import {treeFindPath} from "../../helpers/collection/util";
-import CollectionSaveRequest from "../collection/SaveRequest";
+import CollectionSaveRequest from "../Collection/SaveRequest";
 
 const { TabPane } = Tabs;
 

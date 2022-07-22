@@ -1,4 +1,4 @@
-import HttpRequest from "../components/http/index";
+import HttpRequest from "../components/Http/index";
 import { useMount } from "ahooks";
 import { useEffect, useState } from "react";
 import { treeFindPath } from "../helpers/collection/util";
