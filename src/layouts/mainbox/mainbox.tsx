@@ -252,7 +252,7 @@ const MainBox = () => {
                 )}
               </Tabs>
               {panes.length === 0 ? (
-                <PaneAreaEmpty add={add}></PaneAreaEmpty>
+                <PaneAreaEmpty add={add}/>
               ) : null}
             </div>
           </DraggableLayout>

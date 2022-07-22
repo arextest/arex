@@ -242,7 +242,7 @@ const Http: FC<HttpProps> = (
       validationRequest(cancelBaseRequest);
     },
     onSuccess: (res) => {
-      console.log(res);
+      console.log(res,'base');
       setBaseResponse(res);
     },
     onError(err) {
@@ -263,7 +263,7 @@ const Http: FC<HttpProps> = (
       validationRequest(cancelTestRequest);
     },
     onSuccess: (res) => {
-      console.log(res);
+      console.log(res,'test');
       setTestResponse(res);
     },
     onError(err) {
@@ -306,8 +306,8 @@ const Http: FC<HttpProps> = (
       setRequestParams(res.body?.params || []);
       setRequestHeaders(res.body?.headers || []);
       setRequestBody(res.body?.body?.body || "");
-      setTestUrl(res.body.baseAddress?.endpoint || "");
-      setBaseUrl(res.body.testAddress?.endpoint || "");
+      setTestUrl(res.body.testAddress?.endpoint || "");
+      setBaseUrl(res.body.baseAddress?.endpoint || "");
     },
   });
 
@@ -566,6 +566,7 @@ const Http: FC<HttpProps> = (
               options={RequestTypeOptions}
               onChange={setMethod}
             />
+            base
             <Input
               placeholder={t_components("http.enterRequestUrl")}
               value={baseUrl}
@@ -582,6 +583,7 @@ const Http: FC<HttpProps> = (
               options={RequestTypeOptions}
               onChange={setMethod}
             />
+            test
             <Input
               placeholder={t_components("http.enterRequestUrl")}
               value={testUrl}

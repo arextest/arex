@@ -81,6 +81,7 @@ const onChange = (key: string) => {
 };
 
 const ResponseCompare = ({ responses }) => {
+  console.log(responses,'responses')
   const diffView = useRef<HTMLDivElement>();
   const theme = useStore((store) => store.theme);
   let mergeView;

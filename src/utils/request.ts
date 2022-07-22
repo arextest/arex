@@ -1,4 +1,5 @@
 function AgentAxios<T>(params: any) {
+
   return new Promise<T>((resolve) => {
     window.postMessage(
       {
@@ -12,6 +13,10 @@ function AgentAxios<T>(params: any) {
     function receiveMessage(ev: any) {
       if (ev.data.type === "__AREX_EXTENSION_RES__") {
         window.removeEventListener("message", receiveMessage, false);
+        console.log({
+          params,
+          res:ev.data.res
+        })
         resolve(ev.data.res);
       }
     }

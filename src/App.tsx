@@ -12,17 +12,10 @@ const initState = {
     email:localStorage.getItem('email')
   },
   isLogin:localStorage.getItem('email')?true:false,
-  b: "22222"
 }
 const reducer = (prevState, action) => {
   let newState = { ...prevState }
   switch (action.type) {
-    case "child2":
-      newState.a = "aaaa";
-      return newState;
-    case "child3":
-      newState.b = "bbbb";
-      return newState;
     case 'login':
       console.log(action,'aaa')
       newState.userinfo.email = action.payload
@@ -45,7 +38,6 @@ function App() {
     <CheckChromeExtension />
     {useRoutesRouterConfig}
   </GlobalContext.Provider>
-  // return <><CheckChromeExtension />{useRoutesRouterConfig}</>;
 }
 
 export default App;
