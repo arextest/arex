@@ -34,7 +34,7 @@ import FormHeader, { FormHeaderWrapper } from "./FormHeader";
 import FormTable, { getColumns } from "./FormTable";
 import Response from "./Response";
 import ResponseCompare from "./ResponseCompare";
-import CollectionSaveRequest from "../collection/SaveRequest";
+import CollectionSaveRequest from "../Collection/SaveRequest";
 
 const { TabPane } = Tabs;
 

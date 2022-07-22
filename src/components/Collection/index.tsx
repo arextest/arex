@@ -3,7 +3,7 @@ import { MenuOutlined, DashOutlined, DownOutlined } from "@ant-design/icons";
 import React, { FC, useEffect, useMemo, useState } from "react";
 import "./index.less";
 import { CollectionService } from "../../services/CollectionService";
-import CollectionTitleRender from "./CollectionTitleRender";
+import CollectionTitleRender from "./CollectionTitleRender"; 
 import { collectionOriginalTreeToAntdTreeData } from "../../helpers/collection/util";
 import type { DirectoryTreeProps } from "antd/lib/tree";
 import type { DataNode } from "antd/es/tree";
