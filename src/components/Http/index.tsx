@@ -111,10 +111,6 @@ const Http: FC<HttpProps> = (
   const { t: t_common } = useTranslation("common");
   const { t: t_components } = useTranslation("components");
   const [mode,setMode] = useState('normal')
-
-  const path = []
-
-
   // 如果是case(2)类型的话，就一定有一个父节点，类型也一定是request(1)
   const nodeInfoInCollectionTreeData = useMemo(()=>{
     const paths = treeFindPath(collectionTreeData,node=>node.key === id)
@@ -127,11 +123,6 @@ const Http: FC<HttpProps> = (
 
   },[collectionTreeData])
   const [showSaveRequestModal, setShowSaveRequestModal] = useState(false);
-  console.log(nodeInfoInCollectionTreeData,'nodeInfoInCollectionTreeData')
-
-  // const
-
-  // const
 
   const [method, setMethod] = useState<typeof METHODS[number]>("GET");
 
@@ -441,19 +432,27 @@ const Http: FC<HttpProps> = (
   return (
     <>
     <AnimateAutoHeight>
-
-
       <div style={{display:'flex',justifyContent:"space-between"}}>
-        {!!nodeInfoInCollectionTreeData.raw.length && (
-            <Breadcrumb style={{ paddingBottom: "14px" }}>
-              {nodeInfoInCollectionTreeData.raw.map(
-                  (i,index) => (
-                      <Breadcrumb.Item key={index}>
-                        {i.title}
-                      </Breadcrumb.Item>
-                  ),
-              )}
-            </Breadcrumb>
+        {nodeInfoInCollectionTreeData.raw.length>0 ? (
+            <div>
+              <Breadcrumb style={{ paddingBottom: "14px" }}>
+                {nodeInfoInCollectionTreeData.raw.map(
+                    (i,index) => (
+                        <Breadcrumb.Item key={index}>
+                          {i.title}
+                        </Breadcrumb.Item>
+                    ),
+                )}
+              </Breadcrumb>
+            </div>
+        ):(
+            <div>
+              <Breadcrumb  style={{ paddingBottom: "14px" }}>
+                <Breadcrumb.Item key={'new'}>
+                  New Request
+                </Breadcrumb.Item>
+              </Breadcrumb>
+            </div>
         )}
         <div>
           {isNew ? (

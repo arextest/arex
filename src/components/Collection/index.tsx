@@ -1,15 +1,12 @@
 import { Button, Spin, Input, Tooltip, Tree, Empty } from "antd";
 import { MenuOutlined, DashOutlined, DownOutlined } from "@ant-design/icons";
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import "./index.less";
 import { CollectionService } from "../../services/CollectionService";
-import CollectionTitleRender from "./CollectionTitleRender"; 
-import { collectionOriginalTreeToAntdTreeData } from "../../helpers/collection/util";
+import CollectionTitleRender from "./CollectionTitleRender";
 import type { DirectoryTreeProps } from "antd/lib/tree";
 import type { DataNode } from "antd/es/tree";
-import { useMount } from "ahooks";
-import { useNavigate, useParams } from "react-router-dom";
-const { Search } = Input;
+import { useParams } from "react-router-dom";
 
 const dataList: { key: React.Key; title: string }[] = [];
 const generateList = (data: DataNode[]) => {
@@ -58,7 +55,6 @@ const Collection: FC<Props> = (
   },
 ) => {
   const _useParams = useParams();
-  const _useNavigate = useNavigate();
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [searchValue, setSearchValue] = useState("");
   const [autoExpandParent, setAutoExpandParent] = useState(true);
@@ -73,7 +69,6 @@ const Collection: FC<Props> = (
       info.node.nodeType !== 3 &&
       !mainBoxPanes.map((i) => i.key).includes(keys[0])
     ) {
-      // const newActiveKey = String(Math.random());
       const newPanes = [...mainBoxPanes];
       newPanes.push({
         closable: true,
@@ -81,11 +76,8 @@ const Collection: FC<Props> = (
         key: keys[0],
         pageType: "request",
         qid: keys[0],
-        //
-        // 其实nodeType应该得通过qid拿到
         nodeType: info.node.nodeType,
       });
-      // setPanes(newPanes);
       setMainBoxPanes(newPanes);
     }
     if (keys[0]) {
@@ -164,7 +156,6 @@ const Collection: FC<Props> = (
         onSelect={onSelect}
         expandedKeys={expandedKeys}
         autoExpandParent={autoExpandParent}
-        // showLine
         switcherIcon={<DownOutlined />}
         treeData={treeData}
         titleRender={(val) => (
