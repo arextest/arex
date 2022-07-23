@@ -1,6 +1,6 @@
 import AppHeader from "../../components/app/Header";
 import RequestPage from "../../pages/request";
-import { Button, Divider, Menu, Space, Tabs } from "antd";
+import {Alert, Button, Divider, Menu, Space, Tabs} from "antd";
 import Collection from "../../components/Collection";
 import Environment from "../../components/environment";
 import Login from "../../components/login";
@@ -32,6 +32,7 @@ type PaneProps = {
   nodeType: NodeType;
 };
 import { GlobalContext } from "../../App";
+import AppFooter from "../../components/app/Footer";
 
 const { TabPane } = Tabs;
 // 静态数据
@@ -149,7 +150,10 @@ const MainBox = () => {
         <Login />
       ) : (
         <div className={"main-box"}>
-          {JSON.stringify(value.state)}
+          {
+            window.__AREX_EXTENSION_INSTALLED__?null:<Alert message={'注意：Chrome插件可突破浏览器跨域限制，请先安装Chrome插件后再运行。'}/>
+          }
+
           {/*AppHeader部分*/}
           <AppHeader userinfo={userinfo} workspaces={workspaces} />
           <Divider style={{ margin: "0" }} />
@@ -292,6 +296,7 @@ const MainBox = () => {
           </div>
         </div>
       )}
+      <AppFooter></AppFooter>
     </>
   );
 };
