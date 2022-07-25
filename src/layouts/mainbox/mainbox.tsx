@@ -6,7 +6,7 @@ import Environment from "../../components/environment";
 import Login from "../../components/login";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { WorkspaceService } from "../../services/WorkspaceService";
-import { GlobalOutlined } from "@ant-design/icons";
+import {FileOutlined, GlobalOutlined, GoldOutlined} from "@ant-design/icons";
 import "./mainbox.less";
 import { useMount } from "ahooks";
 import { CollectionService } from "../../services/CollectionService";
@@ -50,13 +50,13 @@ const menuItems = [
   {
     key: "replay",
     label: "Replay",
-    icon: <GlobalOutlined />,
+    icon: <FileOutlined />,
     disabled: false,
   },
   {
     key: "environment",
     label: "Environment",
-    icon: <GlobalOutlined />,
+    icon: <GoldOutlined />,
     disabled: false,
   },
 ];
@@ -151,7 +151,11 @@ const MainBox = () => {
       ) : (
         <div className={"main-box"}>
           {
-            window.__AREX_EXTENSION_INSTALLED__?null:<Alert message={'注意：Chrome插件可突破浏览器跨域限制，请先安装Chrome插件后再运行。'}/>
+            window.__AREX_EXTENSION_INSTALLED__?null:<Alert message={
+              <div>注意：Chrome插件可突破浏览器跨域限制，请先安装
+                <a href="https://chrome.google.com/webstore/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj" target={'_blank'}>Chrome插件</a>
+                后再运行。</div>
+            }/>
           }
 
           {/*AppHeader部分*/}
@@ -173,17 +177,18 @@ const MainBox = () => {
                     {_useParams.workspaceName}
                   </div>
                   <Space>
-                    <Button size={"small"} type="default">
-                      New
-                    </Button>
-                    <Button size={"small"} type="default">
-                      Import
-                    </Button>
+                    {/*<Button size={"small"} type="default">*/}
+                    {/*  New*/}
+                    {/*</Button>*/}
+                    {/*<Button size={"small"} type="default">*/}
+                    {/*  Import*/}
+                    {/*</Button>*/}
                   </Space>
                 </Space>
                 <Divider style={{ margin: "0" }} />
                 <div style={{ display: "flex" }} className={"tool-table"}>
                   <Menu
+                      className={'left-menu'}
                     mode="vertical"
                     items={menuItems}
                     selectedKeys={[siderMenuSelectedKey]}
@@ -191,7 +196,7 @@ const MainBox = () => {
                       setSiderMenuSelectedKey(val.key);
                     }}
                   />
-                  <div>
+                  <div style={{flex:'1'}}>
                     <div
                       style={{
                         display:
@@ -259,7 +264,6 @@ const MainBox = () => {
                       pane.pageType === "case" ? (
                         <RequestPage
                           activateNewRequestInPane={(p) => {
-                            console.log("终于传到我这里了", p);
                             fetchCollectionTreeData();
 
                             // const newActiveKey = String(Math.random());
@@ -296,7 +300,7 @@ const MainBox = () => {
           </div>
         </div>
       )}
-      <AppFooter></AppFooter>
+      <AppFooter/>
     </>
   );
 };

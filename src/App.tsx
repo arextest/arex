@@ -5,7 +5,7 @@ import "./components/environment/index.less";
 import CheckChromeExtension from "./components/CheckChromeExtension";
 import { useRoutes } from "react-router-dom";
 import routerConfig from "./routers";
-import React, {useContext, useReducer} from 'react'
+import React, { useReducer} from 'react'
 export const GlobalContext = React.createContext({})
 const initState = {
   userinfo: {
@@ -17,7 +17,6 @@ const reducer = (prevState, action) => {
   let newState = { ...prevState }
   switch (action.type) {
     case 'login':
-      console.log(action,'aaa')
       newState.userinfo.email = action.payload
       newState.isLogin = true
       return newState

@@ -81,29 +81,17 @@ const Login = () => {
       return;
     }
 
-    message.success("登录成功");
-
-
-
-    initBeforeUserEntry(email)
-
-    // LoginService.loginVerify({
-    //   email: email,
-    //   verificationCode: verificationCode,
-    // }).then((res) => {
-    //   if (res.data.body.success == true) {
-    //     message.success("登录成功");
-    //
-    //
-    //
-    //     initBeforeUserEntry(email)
-    //
-    //
-    //
-    //   } else {
-    //     message.error("登录失败");
-    //   }
-    // });
+    LoginService.loginVerify({
+      email: email,
+      verificationCode: verificationCode,
+    }).then((res) => {
+      if (res.data.body.success == true) {
+        message.success("登录成功");
+        initBeforeUserEntry(email)
+      } else {
+        message.error("登录失败");
+      }
+    });
   };
   useEffect(() => {
     if (count >= 0 && count < 60) {
@@ -116,11 +104,13 @@ const Login = () => {
 
   return (
     <div className={"login-layout"}>
-      <Alert
-        message="Arex 浏览器扩展用于 Web 版接口调试，须使用 Chrome 浏览器，请下载至本地安装。"
-        type="info"
-        showIcon
-      />
+      {
+        window.__AREX_EXTENSION_INSTALLED__?null:<Alert message={
+          <div>注意：Chrome插件可突破浏览器跨域限制，请先安装
+            <a href="https://chrome.google.com/webstore/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj" target={'_blank'}>Chrome插件</a>
+            后再运行。</div>
+        }/>
+      }
       <div className={"login"}>
         <div className={"login-title"}>AREX</div>
         <Input

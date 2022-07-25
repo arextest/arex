@@ -29,7 +29,6 @@ import { METHODS, NodeType } from "../../constant";
 import { useStore } from "../../store";
 import { tryParseJsonString, tryPrettierJsonString } from "../../utils";
 import AgentAxios from "../../utils/request";
-// import CollectionSaveRequest from "../Collection/SaveRequest";
 import AnimateAutoHeight  from "../AnimateAutoHeight/index";
 import FormHeader, { FormHeaderWrapper } from "./FormHeader";
 import FormTable, { getColumns } from "./FormTable";
@@ -462,7 +461,7 @@ const Http: FC<HttpProps> = (
                     setShowSaveRequestModal(true);
                   }}
               >
-                保存为
+                Save As
               </Button>
           ) : <Button onClick={handleSave}>{t_common("save")}</Button>}
           <Divider type={'vertical'}/>
@@ -749,7 +748,6 @@ const Http: FC<HttpProps> = (
         </ResponseWrapper>
       )}
     </div>
-    {/* <CollectionSaveRequest/> */}
     </>
   );
 };

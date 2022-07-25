@@ -1,4 +1,4 @@
-import { MoreOutlined } from "@ant-design/icons";
+import {ApiOutlined, MoreOutlined} from "@ant-design/icons";
 import { Dropdown, Menu, Popconfirm, Space } from "antd";
 import { useState } from "react";
 import { CollectionService } from "../../services/CollectionService";
@@ -142,12 +142,12 @@ function CollectionTitleRender(
   return (
     <div className={"collection-title-render"}>
       <div className={"wrap"}>
-        <div>
+        <div className={'title'}>
           {val.nodeType === 1 && val.nodeType === 1 ? (
-            <span style={{ color: "#10B981", marginRight: "12px" }}>GET</span>
+              <ApiOutlined style={{ color: "#5C4033", marginRight: "8px" }}/>
           ) : null}
           {val.nodeType === 2 ? (
-            <span style={{ color: "#5C4033", marginRight: "12px" }}>eg</span>
+            <span style={{ color: "#5C4033", marginRight: "8px" }}>eg</span>
           ) : null}
           {val.title}
         </div>

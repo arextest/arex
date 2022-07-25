@@ -9,7 +9,7 @@
       font-weight: bold;
     }
     .collection-header-search{
-      
+
     }
     .collection-header-view{
       margin: 0 5px;
@@ -17,19 +17,21 @@
   }
 
   .collection-title-render{
-    width: 100%;
     .wrap{
       display: flex;
       justify-content: space-between;
       font-weight: bolder;
+      overflow: hidden;
       .title{
-        display: flex;
-        flex: 1;
+        width: 200px;
+        overflow:hidden; //超出的文本隐藏
+        text-overflow:ellipsis; //溢出用省略号显示
+        white-space:nowrap; //溢出不换行
       }
     }
   }
 
-  
+
   //以下保证宽度百分百
   .ant-tree-list-holder-inner>div{
     width: 100%;

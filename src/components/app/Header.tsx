@@ -49,6 +49,7 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
       <div className={"right"}>
         <div className="hover-wrap">
           <Dropdown
+              trigger={['click']}
             overlay={
               (
                 <Menu
@@ -78,6 +79,7 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
 
           <div className={'hover-wrap'}>
               <Dropdown
+                  trigger={['click']}
                   overlay={
                       (
                           <Menu
@@ -101,7 +103,9 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
               >
             <span onClick={(e) => e.preventDefault()}>
               <Space>
-                  <Avatar size={20} style={{ marginRight: "8px" }} />
+                  <Avatar size={20}>
+                      {userinfo.email[0]}
+                  </Avatar>
               </Space>
             </span>
               </Dropdown>

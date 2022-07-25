@@ -22,7 +22,6 @@ for (const proxyConfigKey in proxyConfig) {
       path.replace(rewriteKey, rewriteValue);
 }
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react({
@@ -37,7 +36,6 @@ export default defineConfig({
     preprocessorOptions: {
       less: {
         modifyVars: {
-          // 此处也可设置直角、边框色、字体大小等
           "primary-color": Color.primaryColor,
         },
         javascriptEnabled: true,

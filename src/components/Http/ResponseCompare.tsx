@@ -8,13 +8,16 @@ import "codemirror/addon/fold/foldgutter";
 import "codemirror/addon/fold/brace-fold";
 
 import styled from "@emotion/styled";
-import { Tabs } from "antd";
+import {Radio, Table, Tabs } from "antd";
 import CodeMirror from "codemirror";
 import DiffMatchPatch from "diff-match-patch";
-import { useEffect, useRef } from "react";
+import {useEffect, useRef, useState} from "react";
 
 import { useStore } from "../../store";
 import { Theme } from "../../style/theme";
+import {useMount} from "ahooks";
+import {RequestService} from "../../services/RequestService";
+import axios from "axios";
 
 const { TabPane } = Tabs;
 const DiffView = styled.div<{ theme: Theme }>`
@@ -118,13 +121,94 @@ const ResponseCompare = ({ responses }) => {
     // mergeView.editor().setSize(null, "100%");
   }, [responses]);
 
+
+  const columns = [
+
+    {
+      title: 'Left Path',
+      dataIndex: 'pathPair',
+      key: 'pathPair',
+      render(pathPair){
+        const leftArr = []
+        for (let i = 0; i < pathPair.leftUnmatchedPath.length; i++) {
+          leftArr.push(pathPair.leftUnmatchedPath[i].nodeName ? pathPair.leftUnmatchedPath[i].nodeName : pathPair.leftUnmatchedPath[i].index)
+        }
+        return <div>
+          {JSON.stringify(leftArr)}
+        </div>
+      }
+    },
+    {
+      title: 'Right Path',
+      dataIndex: 'pathPair',
+      key: 'pathPair',
+      render(pathPair){
+        const rightArr = []
+        for (let i = 0; i < pathPair.rightUnmatchedPath.length; i++) {
+          rightArr.push(pathPair.rightUnmatchedPath[i].nodeName ? pathPair.rightUnmatchedPath[i].nodeName : pathPair.rightUnmatchedPath[i].index)
+        }
+        return <div>
+          {JSON.stringify(rightArr)}
+        </div>
+      }
+    },
+    {
+      title: 'Left Value',
+      dataIndex: 'baseValue',
+      key: 'baseValue',
+    },
+    {
+      title: 'Right Value',
+      dataIndex: 'testValue',
+      key: 'testValue',
+    },
+    {
+      title: 'Difference',
+      dataIndex: 'logInfo',
+      key: 'logInfo',
+    },
+  ];
+
+  const [activeRadio,setActiveRadio] = useState<string>('table')
+  const [dataSource,setDataSource] = useState<any>([])
+  const optionsWithDisabled = [
+    { label: 'Table', value: 'table' },
+    { label: 'JSON', value: 'json' }
+  ];
+  useMount(()=>{
+    const params = {
+      "msgCombination": {
+        "baseMsg": "{\"responseStatusType\":{\"responseCode\":0,\"responseDesc\":\"success\",\"timestamp\":1658734962467},\"body\":{\"fsTree\":null}}",
+        "testMsg": "{\"responseStatusType\":{\"responseCode\":0,\"responseDesc\":\"success\",\"timestamp\":1658734962577},\"body\":{\"workspaces\":[{\"id\":\"62d915d10efea227ca854c68\",\"workspaceName\":\"aaaaa\"},{\"id\":\"62d918f40efea227ca854c6a\",\"workspaceName\":\"Default\"},{\"id\":\"62d918ff0efea227ca854c6c\",\"workspaceName\":\"Default\"}]}}"
+      }
+    }
+    axios.post('/api/compare/quickCompare',params).then(res=>{
+      console.log(res.data)
+    })
+  })
   return (
     <div>
       <Tabs defaultActiveKey="1" onChange={onChange}>
         <TabPane tab="对比结果" key="1">
           <div id="wrapper">
+
+            <Radio.Group
+                options={optionsWithDisabled}
+                onChange={(val)=>{
+                  console.log(val,'val')
+                  setActiveRadio(val.target.value)
+                }}
+                value={activeRadio}
+                optionType="button"
+                buttonStyle="solid"
+            />
+
             <div className="react-diff-code-view" style={{ height: "100%" }}>
               <DiffView className={"diffView"} ref={diffView} theme={theme} />
+            </div>
+
+            <div>
+              <Table dataSource={dataSource} columns={columns} />;
             </div>
           </div>
         </TabPane>
