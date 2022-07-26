@@ -209,7 +209,7 @@ const ResponseCompare = ({ responses }) => {
   return (
     <div>
       <Tabs defaultActiveKey="1" onChange={onChange}>
-        <TabPane tab="对比结果" key="1">
+        <TabPane tab="Compare Result" key="1">
           <div id="wrapper">
             <div  style={{textAlign:'right',marginBottom:'10px'}}>
               <Radio.Group

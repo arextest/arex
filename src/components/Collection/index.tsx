@@ -133,6 +133,7 @@ const Collection: FC<Props> = (
           </Button>
         </Tooltip>
         <Input
+            disabled={true}
           className={"collection-header-search"}
           size="small"
           placeholder=""
