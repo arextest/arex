@@ -10,6 +10,6 @@ export class RequestService {
   }
 
   static quickCompare(params: any) {
-    return axios.post(`/api/compare/quickCompare`, params)
+    return axios.post(`/api/compare/quickCompare`, params);
   }
 }

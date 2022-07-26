@@ -32,7 +32,7 @@ const MenuFilter = styled(Input.Search)`
 `;
 
 function MenuSelect<T extends { [key: string]: any }>(
-  props: MenuSelectProps<T>
+  props: MenuSelectProps<T>,
 ) {
   const { t } = useTranslation("components");
 
@@ -46,17 +46,14 @@ function MenuSelect<T extends { [key: string]: any }>(
       }
     },
   });
-  const filteredApps = useMemo(
-    () =>
-      filterKeyword
-        ? apps.filter((app) => props.filter(filterKeyword, app))
-        : apps,
-    [filterKeyword, apps]
-  );
+  const filteredApps = useMemo(() =>
+    filterKeyword ? apps.filter(
+      (app) => props.filter(filterKeyword, app),
+    ) : apps, [filterKeyword, apps]);
 
   const handleAppMenuClick = (value: { key: string }) => {
     const app: T | undefined = apps.find(
-      (app) => app[props.rowKey] === value.key
+      (app) => app[props.rowKey] === value.key,
     );
     if (app) {
       props.onSelect(app);
@@ -65,24 +62,21 @@ function MenuSelect<T extends { [key: string]: any }>(
   };
   return (
     <>
-      <MenuFilter
-        value={filterKeyword}
-        placeholder={props.placeholder && t(props.placeholder)}
-        onChange={(e) => setFilterKeyword(e.target.value)}
-      />
-
-      <MenuList
-        selectedKeys={selectedKey ? [selectedKey] : []}
-        items={filteredApps.map(
-          props.itemRender
-            ? props.itemRender
-            : (app) => ({
-                label: app[props.rowKey],
-                key: app[props.rowKey],
-              })
-        )}
-        onSelect={handleAppMenuClick}
-      />
+    <MenuFilter
+      value={filterKeyword}
+      placeholder={props.placeholder && t(props.placeholder)}
+      onChange={(e) => setFilterKeyword(e.target.value)}
+    />
+    <MenuList
+      selectedKeys={selectedKey ? [selectedKey] : []}
+      items={filteredApps.map(
+        props.itemRender ? props.itemRender : (app) => ({
+          label: app[props.rowKey],
+          key: app[props.rowKey],
+        }),
+      )}
+      onSelect={handleAppMenuClick}
+    />
     </>
   );
 }

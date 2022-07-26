@@ -1,14 +1,14 @@
 import { Button, Input, message, Alert } from "antd";
 import { UserOutlined, LockOutlined, DownOutlined } from "@ant-design/icons";
-import React, {FC, useContext, useEffect, useMemo, useState} from "react";
+import React, { FC, useContext, useEffect, useMemo, useState } from "react";
 import "./index.less";
 import { LoginService } from "../../services/LoginService";
-import {GlobalContext} from "../../App";
-import {WorkspaceService} from "../../services/WorkspaceService";
+import { GlobalContext } from "../../App";
+import { WorkspaceService } from "../../services/WorkspaceService";
 
 let timeChange: any;
 const Login = () => {
-  const value = useContext(GlobalContext)
+  const value = useContext(GlobalContext);
   const [email, setEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState<string>("");
   const [emailchecked, setEmailchecked] = useState<boolean>(true);
@@ -51,28 +51,27 @@ const Login = () => {
     });
   };
   // 用户进入前初始化
-  const initBeforeUserEntry = (userName)=>{
+  const initBeforeUserEntry = (userName) => {
     WorkspaceService.listWorkspace({
-      userName:userName
-    }).then(workspaces=>{
-      if (workspaces.length ===0){
+      userName: userName,
+    }).then((workspaces) => {
+      if (workspaces.length === 0) {
         const params = {
           userName: userName,
-          workspaceName:"Default"
-        }
-        WorkspaceService.createWorkspace(params).then(res=>{
+          workspaceName: "Default",
+        };
+        WorkspaceService.createWorkspace(params).then((res) => {
           localStorage.setItem("email", email);
-          value.dispatch({ type: "login",payload:email })
-        })
+          value.dispatch({ type: "login", payload: email });
+        });
       } else {
         localStorage.setItem("email", email);
-        value.dispatch({ type: "login",payload:email })
+        value.dispatch({ type: "login", payload: email });
       }
-    })
-  }
+    });
+  };
 
   const login = () => {
-
     if (!emailchecked || email == "") {
       message.error("请检查邮箱");
       return;
@@ -87,7 +86,7 @@ const Login = () => {
     }).then((res) => {
       if (res.data.body.success == true) {
         message.success("登录成功");
-        initBeforeUserEntry(email)
+        initBeforeUserEntry(email);
       } else {
         message.error("登录失败");
       }
@@ -104,13 +103,24 @@ const Login = () => {
 
   return (
     <div className={"login-layout"}>
-      {
-        window.__AREX_EXTENSION_INSTALLED__?null:<Alert message={
-          <div>注意：Chrome插件可突破浏览器跨域限制，请先安装
-            <a href="https://chrome.google.com/webstore/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj" target={'_blank'}>Chrome插件</a>
-            后再运行。</div>
-        }/>
-      }
+      {window.__AREX_EXTENSION_INSTALLED__ ? null : (
+        <Alert
+          message={
+            (
+              <div>
+                注意：Chrome插件可突破浏览器跨域限制，请先安装
+                <a
+                  href="https://chrome.google.com/webstore/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj"
+                  target={"_blank"}
+                >
+                  Chrome插件
+                </a>
+                后再运行。
+              </div>
+            )
+          }
+        />
+      )}
       <div className={"login"}>
         <div className={"login-title"}>AREX</div>
         <Input

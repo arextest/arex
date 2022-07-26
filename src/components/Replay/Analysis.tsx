@@ -28,7 +28,7 @@ const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
     {
       ready: !!selectedCategory,
       refreshDeps: [selectedCategory],
-    }
+    },
   );
 
   const categoryColumns: ColumnsType<Difference> = [
@@ -61,18 +61,15 @@ const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
           onSelect={setSelectedCategory}
           placeholder="applicationsMenu.appFilterPlaceholder"
           request={() =>
-            ReplayService.queryResponseTypeStatistic({ planItemId })
-          }
+            ReplayService.queryResponseTypeStatistic({ planItemId })}
           filter={(keyword: string, app: CategoryStatistic) =>
-            app.operationName.includes(keyword)
-          }
+            app.operationName.includes(keyword)}
           itemRender={(item: CategoryStatistic) => ({
             label: item.operationName,
             key: item.operationName,
           })}
         />
       </Col>
-
       <Col span={18}>
         <TableWrapper>
           <Table
@@ -83,14 +80,12 @@ const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
           />
         </TableWrapper>
       </Col>
-
       <Drawer
         title="Diff Detail"
         visible={visibleScene}
         onClose={toggleVisibleScene}
       >
-        {/* TODO */}
-        Scene content
+        {/* TODO */}Scene content
       </Drawer>
     </Row>
   );

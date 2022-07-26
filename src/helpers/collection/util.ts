@@ -24,7 +24,7 @@ export function treeFindPath(tree: any, func: any, path: any = []): any {
     path.push({
       title: data.title,
       key: data.key,
-      nodeType:data.nodeType
+      nodeType: data.nodeType,
     });
     if (func(data)) {
       return path;
@@ -68,7 +68,7 @@ export function collectionOriginalTreeToAntdTreeData(
       // 自定义
       title: nodes[value].nodeName,
       key: nodes[value].infoId,
-      nodeType: nodes[value].nodeType
+      nodeType: nodes[value].nodeType,
       // isLeaf: nodes[value].nodeType === 2||nodes[value].children==null
       // icon: iconMap[nodes[value].nodeType],
     });

@@ -5,14 +5,14 @@ import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
 // 引入需要实现国际化的简体、繁体、英文三种数据的json文件
-import zhCnCommonJson from './locales/zh-cn/common.json'
-import zhCnComponentsJson from './locales/zh-cn/components.json'
-import zhCnLayoutJson from './locales/zh-cn/layout.json'
-import zhCnPageJson from './locales/zh-cn/page.json'
-import enUsCommonJson from './locales/en-us/common.json'
-import enUsComponentsJson from './locales/en-us/components.json'
-import enUsLayoutJson from './locales/en-us/layout.json'
-import enUsPageJson from './locales/en-us/page.json'
+import zhCnCommonJson from "./locales/zh-cn/common.json";
+import zhCnComponentsJson from "./locales/zh-cn/components.json";
+import zhCnLayoutJson from "./locales/zh-cn/layout.json";
+import zhCnPageJson from "./locales/zh-cn/page.json";
+import enUsCommonJson from "./locales/en-us/common.json";
+import enUsComponentsJson from "./locales/en-us/components.json";
+import enUsLayoutJson from "./locales/en-us/layout.json";
+import enUsPageJson from "./locales/en-us/page.json";
 
 const resources = {
   "zh-CN": {

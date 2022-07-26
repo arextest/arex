@@ -32,9 +32,15 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
                 items={workspaces.map((workspace) => {
                   return {
                     key: workspace.id,
-                    label: <a onClick={() => {
-                        window.location.href = `/${workspace.id}/workspace/${workspace.workspaceName}`
-                    }}>{workspace.workspaceName}</a>,
+                    label: (
+                      <a
+                        onClick={() => {
+                          window.location.href = `/${workspace.id}/workspace/${workspace.workspaceName}`;
+                        }}
+                      >
+                        {workspace.workspaceName}
+                      </a>
+                    ),
                   };
                 })}
               />
@@ -49,7 +55,7 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
       <div className={"right"}>
         <div className="hover-wrap">
           <Dropdown
-              trigger={['click']}
+            trigger={["click"]}
             overlay={
               (
                 <Menu
@@ -76,42 +82,38 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
             </span>
           </Dropdown>
         </div>
-
-          <div className={'hover-wrap'}>
-              <Dropdown
-                  trigger={['click']}
-                  overlay={
-                      (
-                          <Menu
-                              items={[
-                                  {
-                                      key:"Sign Out",
-                                      label: <a
-                                          onClick={() => {
-                                              localStorage.removeItem('email');
-                                              // value.dispatch({ type: "login"})
-                                              // _useNavigate('/')
-                                              window.location.href = '/'
-                                          }}
-                                      >
-                                          Sign Out
-                                      </a>
-                                  }]}
-                          />
-                      )
-                  }
-              >
+        <div className={"hover-wrap"}>
+          <Dropdown
+            trigger={["click"]}
+            overlay={
+              (
+                <Menu
+                  items={[
+                    {
+                      key: "Sign Out",
+                      label: (
+                        <a
+                          onClick={() => {
+                            localStorage.removeItem("email");
+                            // value.dispatch({ type: "login"})
+                            // _useNavigate('/')
+                            window.location.href = "/";
+                          }}
+                        >
+                          Sign Out
+                        </a>
+                      ),
+                    },
+                  ]}
+                />
+              )
+            }
+          >
             <span onClick={(e) => e.preventDefault()}>
-              <Space>
-                  <Avatar size={20}>
-                      {userinfo.email[0]}
-                  </Avatar>
-              </Space>
+              <Space><Avatar size={20}>{userinfo.email[0]}</Avatar></Space>
             </span>
-              </Dropdown>
-
-          </div>
-
+          </Dropdown>
+        </div>
       </div>
     </div>
     {/*模态框*/}

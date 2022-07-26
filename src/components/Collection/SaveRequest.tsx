@@ -64,14 +64,13 @@ const CollectionSaveRequest = (
               FileSystemService.saveInterface({
                 ...reqParams,
                 id: res.data.body.infoId,
-              })
-                .then((r) => {
-                  // 通知父组件
-                  activateNewRequestInPane({
-                    key: res.data.body.infoId,
-                    title: values.requestName,
-                  });
+              }).then((r) => {
+                // 通知父组件
+                activateNewRequestInPane({
+                  key: res.data.body.infoId,
+                  title: values.requestName,
                 });
+              });
             });
             // onCreate(values);
           })

@@ -152,7 +152,7 @@ const Collection: FC<Props> = (
         </Tooltip>
       </div>
       <Tree
-          blockNode={true}
+        blockNode={true}
         onExpand={onExpand}
         onSelect={onSelect}
         expandedKeys={expandedKeys}

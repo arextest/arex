@@ -33,16 +33,14 @@ const columns: ColumnsType<PlanStatistics> = [
           {state.label}
           {record.status === 1 && (
             <>
-              <Badge status="processing" />
-              {record.percent && (
-                <span>{record.percent > 99 ? 99 : record.percent}</span>
-              )}
+            <Badge status="processing" />
+            {record.percent && (
+              <span>{record.percent > 99 ? 99 : record.percent}</span>
+            )}
             </>
           )}
         </Tag>
-      ) : (
-        <Tag>Unknown State</Tag>
-      );
+      ) : <Tag>Unknown State</Tag>;
     },
   },
   {
@@ -81,19 +79,23 @@ const columns: ColumnsType<PlanStatistics> = [
 const AppTable = styled(Table)<{ theme: Theme }>`
   // highlight selected row
   .clickRowStyl {
-    background-color: ${(props) =>
-      props.theme === Theme.light ? "#f6efff" : "#171528"};
+    background-color: ${
+  (props) => props.theme === Theme.light ? "#f6efff" : "#171528"
+};
   }
   .ant-table-tbody > tr > td.ant-table-cell-row-hover {
-    background-color: ${(props) =>
-      props.theme === Theme.light ? "#f6efff88" : "#17152888"}!important;
+    background-color: ${
+  (props) => props.theme === Theme.light ? "#f6efff88" : "#17152888"
+}!important;
   }
 `;
 
-const Results: FC<{
-  appId?: string;
-  onSelectedPlanChange: (selectedPlan: PlanStatistics) => void;
-}> = ({ appId, onSelectedPlanChange }) => {
+const Results: FC<
+  {
+    appId?: string;
+    onSelectedPlanChange: (selectedPlan: PlanStatistics) => void;
+  }
+> = ({ appId, onSelectedPlanChange }) => {
   const theme = useStore((state) => state.theme);
   const [selectRow, setSelectRow] = useState<number>(0);
   const { data: planStatistics } = useRequest(
@@ -110,7 +112,7 @@ const Results: FC<{
       onSuccess(res) {
         res.length && onSelectedPlanChange(res[0]);
       },
-    }
+    },
   );
   return (
     <div>
@@ -131,8 +133,7 @@ const Results: FC<{
           };
         }}
         rowClassName={(record, index) =>
-          index === selectRow ? "clickRowStyl" : ""
-        }
+          index === selectRow ? "clickRowStyl" : ""}
         dataSource={planStatistics}
       />
     </div>

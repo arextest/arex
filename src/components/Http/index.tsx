@@ -13,8 +13,10 @@ import {
   Input,
   message,
   Radio,
-  Select, Space,
-  Spin, Switch,
+  Select,
+  Space,
+  Spin,
+  Switch,
   Tabs,
   Tag,
   Typography,
@@ -29,13 +31,13 @@ import { METHODS, NodeType } from "../../constant";
 import { useStore } from "../../store";
 import { tryParseJsonString, tryPrettierJsonString } from "../../utils";
 import AgentAxios from "../../utils/request";
-import AnimateAutoHeight  from "../AnimateAutoHeight/index";
+import AnimateAutoHeight from "../AnimateAutoHeight/index";
 import FormHeader, { FormHeaderWrapper } from "./FormHeader";
 import FormTable, { getColumns } from "./FormTable";
 import Response from "./Response";
 import ResponseCompare from "./ResponseCompare";
 import { NodeList } from "../../vite-env";
-import {treeFindPath} from "../../helpers/collection/util";
+import { treeFindPath } from "../../helpers/collection/util";
 import CollectionSaveRequest from "../Collection/SaveRequest";
 
 const { TabPane } = Tabs;
@@ -45,8 +47,8 @@ export type HttpProps = {
   id: string;
   isNew: boolean;
   collectionTreeData: NodeList[];
-  pageType: string
-  activateNewRequestInPane:(p:{key:string,title:string})=>void
+  pageType: string;
+  activateNewRequestInPane: (p: { key: string; title: string }) => void;
 };
 
 export type KeyValueType = {
@@ -104,23 +106,22 @@ const ResponseWrapper = styled.div`
 // collectionTreeData：集合树形结构数据。作用是通过id可查询出节点路径，用于显示面包屑之类的
 // pageType：页面类型
 const Http: FC<HttpProps> = (
-  { id, isNew, collectionTreeData ,pageType,activateNewRequestInPane},
+  { id, isNew, collectionTreeData, pageType, activateNewRequestInPane },
 ) => {
   const { theme, extensionInstalled } = useStore();
   const { t: t_common } = useTranslation("common");
   const { t: t_components } = useTranslation("components");
-  const [mode,setMode] = useState('normal')
+  const [mode, setMode] = useState("normal");
   // 如果是case(2)类型的话，就一定有一个父节点，类型也一定是request(1)
-  const nodeInfoInCollectionTreeData = useMemo(()=>{
-    const paths = treeFindPath(collectionTreeData,node=>node.key === id)
+  const nodeInfoInCollectionTreeData = useMemo(() => {
+    const paths = treeFindPath(collectionTreeData, (node) => node.key === id);
 
     return {
-      self:paths[paths.length-1],
-      parent:paths[paths.length-2],
-      raw:paths
-    }
-
-  },[collectionTreeData])
+      self: paths[paths.length - 1],
+      parent: paths[paths.length - 2],
+      raw: paths,
+    };
+  }, [collectionTreeData]);
   const [showSaveRequestModal, setShowSaveRequestModal] = useState(false);
 
   const [method, setMethod] = useState<typeof METHODS[number]>("GET");
@@ -232,7 +233,7 @@ const Http: FC<HttpProps> = (
       validationRequest(cancelBaseRequest);
     },
     onSuccess: (res) => {
-      console.log(res,'base');
+      console.log(res, "base");
       setBaseResponse(res);
     },
     onError(err) {
@@ -253,7 +254,7 @@ const Http: FC<HttpProps> = (
       validationRequest(cancelTestRequest);
     },
     onSuccess: (res) => {
-      console.log(res,'test');
+      console.log(res, "test");
       setTestResponse(res);
     },
     onError(err) {
@@ -265,12 +266,14 @@ const Http: FC<HttpProps> = (
   });
 
   useRequest(() => {
-    if (isNew || !nodeInfoInCollectionTreeData.self){
-      return new Promise((resolve, reject) => {resolve({
-        body:{}
-      })})
+    if (isNew || !nodeInfoInCollectionTreeData.self) {
+      return new Promise((resolve, reject) => {
+        resolve({
+          body: {},
+        });
+      });
     }
-    const { nodeType, key: id } = nodeInfoInCollectionTreeData.self
+    const { nodeType, key: id } = nodeInfoInCollectionTreeData.self;
     const { key: pid } = nodeInfoInCollectionTreeData.parent;
     if (nodeType === NodeType.interface) {
       return FileSystemService.queryInterface({ id });
@@ -400,7 +403,7 @@ const Http: FC<HttpProps> = (
         preRequestScript: null,
         testScript: null,
       },
-        nodeInfoInCollectionTreeData.self.nodeType,
+      nodeInfoInCollectionTreeData.self.nodeType,
     );
   };
 
@@ -431,50 +434,52 @@ const Http: FC<HttpProps> = (
   return (
     <>
     <AnimateAutoHeight>
-      <div style={{display:'flex',justifyContent:"space-between"}}>
-        {nodeInfoInCollectionTreeData.raw.length>0 ? (
-            <div>
-              <Breadcrumb style={{ paddingBottom: "14px" }}>
-                {nodeInfoInCollectionTreeData.raw.map(
-                    (i,index) => (
-                        <Breadcrumb.Item key={index}>
-                          {i.title}
-                        </Breadcrumb.Item>
-                    ),
-                )}
-              </Breadcrumb>
-            </div>
-        ):(
-            <div>
-              <Breadcrumb  style={{ paddingBottom: "14px" }}>
-                <Breadcrumb.Item key={'new'}>
-                  New Request
-                </Breadcrumb.Item>
-              </Breadcrumb>
-            </div>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        {nodeInfoInCollectionTreeData.raw.length > 0 ? (
+          <div>
+            <Breadcrumb style={{ paddingBottom: "14px" }}>
+              {nodeInfoInCollectionTreeData.raw.map(
+                (i, index) => (
+                  <Breadcrumb.Item key={index}>
+                    {i.title}
+                  </Breadcrumb.Item>
+                ),
+              )}
+            </Breadcrumb>
+          </div>
+        ) : (
+          <div>
+            <Breadcrumb style={{ paddingBottom: "14px" }}>
+              <Breadcrumb.Item key={"new"}>New Request</Breadcrumb.Item>
+            </Breadcrumb>
+          </div>
         )}
         <div>
           {isNew ? (
-              <Button
-                  onClick={() => {
-                    console.log(123);
-                    setShowSaveRequestModal(true);
-                  }}
-              >
-                Save As
-              </Button>
+            <Button
+              onClick={() => {
+                console.log(123);
+                setShowSaveRequestModal(true);
+              }}
+            >
+              Save As
+            </Button>
           ) : <Button onClick={handleSave}>{t_common("save")}</Button>}
-          <Divider type={'vertical'}/>
-          <Select options={[
-            { label: 'Normal', value: 'normal' },
-            { label: 'Compare', value: 'compare' }
-          ]}    value={mode} onChange={(val)=>{
-            setSent(false)
-            setMode(val)
-          }} />
+          <Divider type={"vertical"} />
+          <Select
+            options={[
+              { label: "Normal", value: "normal" },
+              { label: "Compare", value: "compare" },
+            ]}
+            value={mode}
+            onChange={(val) => {
+              setSent(false);
+              setMode(val);
+            }}
+          />
         </div>
       </div>
-      <Divider style={{margin:'0',marginBottom:'8px'}}/>
+      <Divider style={{ margin: "0", marginBottom: "8px" }} />
       {/* 普通请求 */}
       {mode === "normal" ? (
         <HeaderWrapper>
@@ -517,42 +522,41 @@ const Http: FC<HttpProps> = (
           >
             {t_common("send")}
           </Button>
-
           <CollectionSaveRequest
-              reqParams={{
-                auth: null,
-                body: {
-                  contentType,
-                  body: requestBody,
-                },
-                address: {
-                  endpoint: url,
-                  method,
-                },
-                baseAddress: {
-                  endpoint: baseUrl,
-                  method,
-                },
-                testAddress: {
-                  endpoint: testUrl,
-                  method,
-                },
-                headers: requestHeaders,
-                params: requestParams,
-                preRequestScript: null,
-                testScript: null,
-              }}
-              collectionTreeData={collectionTreeData}
-              show={showSaveRequestModal}
-              onCancel={() => {
-                setShowSaveRequestModal(false);
-              }}
-              onCreate={() => {
-                setShowSaveRequestModal(false);
-              }}
-              activateNewRequestInPane={(p) => {
-                activateNewRequestInPane(p);
-              }}
+            reqParams={{
+              auth: null,
+              body: {
+                contentType,
+                body: requestBody,
+              },
+              address: {
+                endpoint: url,
+                method,
+              },
+              baseAddress: {
+                endpoint: baseUrl,
+                method,
+              },
+              testAddress: {
+                endpoint: testUrl,
+                method,
+              },
+              headers: requestHeaders,
+              params: requestParams,
+              preRequestScript: null,
+              testScript: null,
+            }}
+            collectionTreeData={collectionTreeData}
+            show={showSaveRequestModal}
+            onCancel={() => {
+              setShowSaveRequestModal(false);
+            }}
+            onCreate={() => {
+              setShowSaveRequestModal(false);
+            }}
+            activateNewRequestInPane={(p) => {
+              activateNewRequestInPane(p);
+            }}
           />
         </HeaderWrapper>
       ) : (
@@ -560,12 +564,8 @@ const Http: FC<HttpProps> = (
           {/* 对比请求 */}
           <HeaderWrapper style={{ marginTop: "10px" }}>
             <Select
-              value={method}
-              options={RequestTypeOptions}
-              onChange={setMethod}
-            />
-            base
-            <Input
+            value={method} options={RequestTypeOptions} onChange={setMethod} />
+            base<Input
               placeholder={t_components("http.enterRequestUrl")}
               value={baseUrl}
               onChange={(e) => setBaseUrl(e.target.value)}
@@ -577,12 +577,8 @@ const Http: FC<HttpProps> = (
           </HeaderWrapper>
           <HeaderWrapper style={{ marginTop: "10px" }}>
             <Select
-              value={method}
-              options={RequestTypeOptions}
-              onChange={setMethod}
-            />
-            test
-            <Input
+            value={method} options={RequestTypeOptions} onChange={setMethod} />
+            test<Input
               placeholder={t_components("http.enterRequestUrl")}
               value={testUrl}
               onChange={(e) => setTestUrl(e.target.value)}

@@ -6,4 +6,9 @@ export enum NodeType {
   folder = 3,
 }
 
-export type PageType = "request" | "replay" | "collection" | "environment" | "login";
+export type PageType =
+  | "request"
+  | "replay"
+  | "collection"
+  | "environment"
+  | "login";

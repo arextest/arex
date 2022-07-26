@@ -44,11 +44,9 @@ const Replay: FC<{ curApp?: ApplicationDataType }> = ({ curApp }) => {
         </span>
         <Button size="small">Start replay</Button>
       </AppTitle>
-
       {/* Report component  */}
       <Results appId={curApp.appId} onSelectedPlanChange={setSelectedPlan} />
       <Report selectedPlan={selectedPlan} />
-
       {/* TODO Configuration */}
     </Space>
   ) : (

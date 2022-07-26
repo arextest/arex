@@ -56,17 +56,15 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
       ready: !!selectedPlan?.planId,
       refreshDeps: [selectedPlan?.planId],
       cacheKey: "queryPlanItemStatistics",
-    }
+    },
   );
 
-  const { data: caseData = [] } = useRequest(
-    () => ReplayService.queryReplayCase({ planItemId: expandedRowKeys[0] }),
-    {
-      ready: !!expandedRowKeys.length && activeDetailTabsKey === "case",
-      refreshDeps: [expandedRowKeys[0]],
-      cacheKey: "queryReplayCase",
-    }
-  );
+  const { data: caseData = [] } = useRequest(() =>
+    ReplayService.queryReplayCase({ planItemId: expandedRowKeys[0] }), {
+    ready: !!expandedRowKeys.length && activeDetailTabsKey === "case",
+    refreshDeps: [expandedRowKeys[0]],
+    cacheKey: "queryReplayCase",
+  });
 
   const countData = [
     selectedPlan?.successCaseCount,
@@ -74,10 +72,8 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     selectedPlan?.errorCaseCount,
     selectedPlan?.waitCaseCount,
   ];
-  const countSum = useMemo(
-    () => countData.reduce((a, b) => (a || 0) + (b || 0), 0),
-    [countData]
-  );
+  const countSum = useMemo(() =>
+    countData.reduce((a, b) => (a || 0) + (b || 0), 0), [countData]);
 
   const pieProps = useMemo(
     () => ({
@@ -92,7 +88,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
       },
       options: chartOptions,
     }),
-    [countData]
+    [countData],
   );
 
   const columns: ColumnsType<PlanItemStatistics> = [
@@ -107,24 +103,24 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
             {state.label}
             {record.status === 1 && (
               <>
-                <Badge status="processing" />
-                {record.percent && (
-                  <span>{record.percent > 99 ? 99 : record.percent}</span>
-                )}
+              <Badge status="processing" />
+              {record.percent && (
+                <span>{record.percent > 99 ? 99 : record.percent}</span>
+              )}
               </>
             )}
           </Tag>
-        ) : (
-          <Tag>Unknown State</Tag>
-        );
+        ) : <Tag>Unknown State</Tag>;
       },
     },
     {
       title: "Time consumed(s)",
       render: (_, record) =>
-        (record.replayEndTime -
-          (record.replayStartTime || record.replayEndTime)) /
-        1000,
+        (
+          record.replayEndTime - (
+            record.replayStartTime || record.replayEndTime
+          )
+        ) / 1000,
     },
     {
       title: "Total Cases",
@@ -155,20 +151,19 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
       width: 180,
       align: "center",
       render: (_, record) => [
-        <SmallTextButton
-          title="Detail"
-          onClick={() =>
-            // only expend one row at a time
-            setExpandedRowKeys(
-              expandedRowKeys[0] === record.planItemId
-                ? []
-                : [record.planItemId]
-            )
-          }
-        />,
-        <Button type="text" size="small" danger>
-          Rerun
-        </Button>,
+        (
+          <SmallTextButton
+            title="Detail"
+            onClick={() =>
+              // only expend one row at a time
+              setExpandedRowKeys(
+                expandedRowKeys[0] === record.planItemId ? [] : [
+                  record.planItemId,
+                ],
+              )}
+          />
+        ),
+        <Button type="text" size="small" danger>Rerun</Button>,
       ],
     },
   ];
@@ -205,36 +200,36 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
         <Col span={12}>
           <b style={{ color: "gray" }}>Basic Information</b>
           <div
-            css={css`
+            css={
+              css`
               display: flex;
               & > * {
                 flex: 1;
               }
-            `}
+            `
+            }
           >
             <Statistic
               title="Pass Rate"
               value={getPercent(
                 selectedPlan.successCaseCount,
-                selectedPlan.totalCaseCount
+                selectedPlan.totalCaseCount,
               )}
             />
             <Statistic
               title="API Pass Rate"
               value={getPercent(
                 selectedPlan.successOperationCount,
-                selectedPlan.totalOperationCount
+                selectedPlan.totalOperationCount,
               )}
             />
           </div>
-
           <div>Report Name: {selectedPlan.planName}</div>
           <div>Target Host: {selectedPlan.targetHost}</div>
           <div>Executor: {selectedPlan.creator}</div>
           <span>Record version: {selectedPlan.caseRecordVersion}</span>
           <span>Replay version: {selectedPlan.coreVersion}</span>
         </Col>
-
         <Col span={12}>
           <b style={{ color: "gray" }}>Replay Pass Rate</b>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -259,9 +254,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           </div>
         </Col>
       </Row>
-
       <br />
-
       <Table
         size="small"
         rowKey="planItemId"
@@ -280,7 +273,6 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
               <TabPane tab="Result" key="result">
                 <Analysis planItemId={record.planItemId} />
               </TabPane>
-
               <TabPane tab="Case" key="case">
                 <TableWrapper>
                   <Table
@@ -295,9 +287,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
         }}
       />
     </Card>
-  ) : (
-    <></>
-  );
+  ) : <></>;
 };
 
 export default Report;

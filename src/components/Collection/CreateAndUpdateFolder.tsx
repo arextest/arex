@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 
 import { CollectionService } from "../../services/CollectionService";
 import { treeFindPath } from "../../helpers/collection/util";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 // import { findPathByKey } from "../../helpers/collection/util";
 
 const CreateAndUpdateFolder: React.FC<any> = (
@@ -36,7 +36,8 @@ const CreateAndUpdateFolder: React.FC<any> = (
   const handleOk = () => {
     const paths = treeFindPath(
       collectionTree,
-      node=>node.key === collectionCreateAndUpdateModal.collectionCreateAndUpdateModalId,
+      (node) =>
+        node.key === collectionCreateAndUpdateModal.collectionCreateAndUpdateModalId,
     );
     CollectionService.rename({
       id: _useParams.workspaceId,

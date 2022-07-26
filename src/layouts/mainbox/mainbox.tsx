@@ -1,12 +1,12 @@
 import AppHeader from "../../components/app/Header";
 import RequestPage from "../../pages/request";
-import {Alert, Button, Divider, Menu, Space, Tabs} from "antd";
+import { Alert, Button, Divider, Menu, Space, Tabs } from "antd";
 import Collection from "../../components/Collection";
 import Environment from "../../components/environment";
 import Login from "../../components/login";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { WorkspaceService } from "../../services/WorkspaceService";
-import {FileOutlined, GlobalOutlined, GoldOutlined} from "@ant-design/icons";
+import { FileOutlined, GlobalOutlined, GoldOutlined } from "@ant-design/icons";
 import "./mainbox.less";
 import { useMount } from "ahooks";
 import { CollectionService } from "../../services/CollectionService";
@@ -82,12 +82,12 @@ const MainBox = () => {
   const [collectionLoading, setCollectionLoading] = useState(false);
 
   function fetchCollectionTreeData() {
-    CollectionService.listCollection({ id: _useParams.workspaceId }).then(
-      (res) => {
-        const roots = res?.data?.body?.fsTree?.roots || [];
-        setCollectionTreeData(collectionOriginalTreeToAntdTreeData(roots));
-      }
-    );
+    CollectionService.listCollection({ id: _useParams.workspaceId }).then((
+      res,
+    ) => {
+      const roots = res?.data?.body?.fsTree?.roots || [];
+      setCollectionTreeData(collectionOriginalTreeToAntdTreeData(roots));
+    });
   }
 
   // *tab相关
@@ -137,7 +137,7 @@ const MainBox = () => {
           fetchCollectionTreeData();
         } else {
           _useNavigate(
-            `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}`
+            `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}`,
           );
         }
       });
@@ -146,123 +146,125 @@ const MainBox = () => {
 
   return (
     <>
-      {!value.state.isLogin ? (
-        <Login />
-      ) : (
-        <div className={"main-box"}>
-          {
-            window.__AREX_EXTENSION_INSTALLED__?null:<Alert message={
-              <div>注意：Chrome插件可突破浏览器跨域限制，请先安装
-                <a href="https://chrome.google.com/webstore/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj" target={'_blank'}>Chrome插件</a>
-                后再运行。</div>
-            }/>
-          }
-
-          {/*AppHeader部分*/}
-          <AppHeader userinfo={userinfo} workspaces={workspaces} />
-          <Divider style={{ margin: "0" }} />
-          <div>
-            <DraggableLayout dir={"horizontal"}>
-              {/*侧边栏*/}
-              <div style={{ backgroundColor: "white" }}>
-                <Space
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    padding: "10px",
-                  }}
-                >
-                  <div>
-                    <GlobalOutlined style={{ marginRight: "8px" }} />
-                    {_useParams.workspaceName}
-                  </div>
-                  <Space>
-                    {/*<Button size={"small"} type="default">*/}
-                    {/*  New*/}
-                    {/*</Button>*/}
-                    {/*<Button size={"small"} type="default">*/}
-                    {/*  Import*/}
-                    {/*</Button>*/}
-                  </Space>
+    {!value.state.isLogin ? <Login /> : (
+      <div className={"main-box"}>
+        {window.__AREX_EXTENSION_INSTALLED__ ? null : (
+          <Alert
+            message={
+              (
+                <div>
+                  注意：Chrome插件可突破浏览器跨域限制，请先安装
+                  <a
+                    href="https://chrome.google.com/webstore/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj"
+                    target={"_blank"}
+                  >
+                    Chrome插件
+                  </a>
+                  后再运行。
+                </div>
+              )
+            }
+          />
+        )}
+        {/*AppHeader部分*/}
+        <AppHeader userinfo={userinfo} workspaces={workspaces} />
+        <Divider style={{ margin: "0" }} />
+        <div>
+          <DraggableLayout dir={"horizontal"}>
+            {/*侧边栏*/}
+            <div style={{ backgroundColor: "white" }}>
+              <Space
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  padding: "10px",
+                }}
+              >
+                <div>
+                  <GlobalOutlined style={{ marginRight: "8px" }} />
+                  {_useParams.workspaceName}
+                </div>
+                <Space>
+                  {/*<Button size={"small"} type="default">*/}
+                  {/*  New*/}
+                  {/*</Button>*/}
+                  {/*<Button size={"small"} type="default">*/}
+                  {/*  Import*/}
+                  {/*</Button>*/}
                 </Space>
-                <Divider style={{ margin: "0" }} />
-                <div style={{ display: "flex" }} className={"tool-table"}>
-                  <Menu
-                      className={'left-menu'}
-                    mode="vertical"
-                    items={menuItems}
-                    selectedKeys={[siderMenuSelectedKey]}
-                    onSelect={(val) => {
-                      setSiderMenuSelectedKey(val.key);
+              </Space>
+              <Divider style={{ margin: "0" }} />
+              <div style={{ display: "flex" }} className={"tool-table"}>
+                <Menu
+                  className={"left-menu"}
+                  mode="vertical"
+                  items={menuItems}
+                  selectedKeys={[siderMenuSelectedKey]}
+                  onSelect={(val) => {
+                    setSiderMenuSelectedKey(val.key);
+                  }}
+                />
+                {/*flex布局需要overflow:'hidden'内部元素出滚动条*/}
+                <div style={{ flex: "1", overflow: "hidden" }}>
+                  <div
+                    style={{
+                      display:
+                        siderMenuSelectedKey === "collection" ? "block" : "none",
                     }}
-                  />
-                  {/*flex布局需要overflow:'hidden'内部元素出滚动条*/}
-                  <div style={{flex:'1',overflow:'hidden'}}>
-                    <div
-                      style={{
-                        display:
-                          siderMenuSelectedKey === "collection"
-                            ? "block"
-                            : "none",
+                  >
+                    <Collection
+                      treeData={collectionTreeData}
+                      setMainBoxPanes={setPanes}
+                      mainBoxPanes={panes}
+                      setMainBoxActiveKey={setActiveKey}
+                      loading={collectionLoading}
+                      fetchTreeData={() => {
+                        fetchCollectionTreeData();
                       }}
-                    >
-                      <Collection
-                        treeData={collectionTreeData}
-                        setMainBoxPanes={setPanes}
-                        mainBoxPanes={panes}
-                        setMainBoxActiveKey={setActiveKey}
-                        loading={collectionLoading}
-                        fetchTreeData={() => {
-                          fetchCollectionTreeData();
-                        }}
-                      />
-                    </div>
-
-                    <div
-                      style={{
-                        display:
-                          siderMenuSelectedKey === "environment"
-                            ? "block"
-                            : "none",
+                    />
+                  </div>
+                  <div
+                    style={{
+                      display:
+                        siderMenuSelectedKey === "environment" ? "block" : "none",
+                    }}
+                  >
+                    <Environment />
+                  </div>
+                  <div
+                    style={{
+                      display:
+                        siderMenuSelectedKey === "replay" ? "block" : "none",
+                    }}
+                  >
+                    <ReplayMenu
+                      onSelect={(app) => {
+                        console.log(app);
                       }}
-                    >
-                      <Environment />
-                    </div>
-
-                    <div
-                      style={{
-                        display:
-                          siderMenuSelectedKey === "replay" ? "block" : "none",
-                      }}
-                    >
-                      <ReplayMenu
-                        onSelect={(app) => {
-                          console.log(app);
-                        }}
-                      />
-                    </div>
+                    />
                   </div>
                 </div>
               </div>
-              {/*主区域*/}
-              <div style={{ padding: "10px" }}>
-                <Tabs
-                  type="editable-card"
-                  onEdit={onEdit}
-                  activeKey={activeKey}
-                  onChange={(_activeKey) => {
-                    console.log(_activeKey);
-                    setActiveKey(_activeKey);
-                  }}
-                >
-                  {panes.map((pane) => (
+            </div>
+            {/*主区域*/}
+            <div style={{ padding: "10px" }}>
+              <Tabs
+                type="editable-card"
+                onEdit={onEdit}
+                activeKey={activeKey}
+                onChange={(_activeKey) => {
+                  console.log(_activeKey);
+                  setActiveKey(_activeKey);
+                }}
+              >
+                {panes.map(
+                  (pane) => (
                     <TabPane
                       tab={pane.title}
                       key={pane.key}
                       closable={pane.closable}
                     >
-                      {pane.pageType === "request" ||
-                      pane.pageType === "case" ? (
+                      {pane.pageType === "request" || pane.pageType === "case" ? (
                         <RequestPage
                           activateNewRequestInPane={(p) => {
                             fetchCollectionTreeData();
@@ -293,15 +295,16 @@ const MainBox = () => {
                         <ReplayPage data={pane} />
                       ) : null}
                     </TabPane>
-                  ))}
-                </Tabs>
-                {panes.length === 0 ? <PaneAreaEmpty add={add} /> : null}
-              </div>
-            </DraggableLayout>
-          </div>
+                  ),
+                )}
+              </Tabs>
+              {panes.length === 0 ? <PaneAreaEmpty add={add} /> : null}
+            </div>
+          </DraggableLayout>
         </div>
-      )}
-      <AppFooter/>
+      </div>
+    )}
+    <AppFooter />
     </>
   );
 };

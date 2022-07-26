@@ -17,7 +17,7 @@ const RequestPage = (
         id={data.qid}
         isNew={data.isNew}
         pageType={data.pageType}
-        activateNewRequestInPane={(p)=>activateNewRequestInPane(p)}
+        activateNewRequestInPane={(p) => activateNewRequestInPane(p)}
       />
     </div>
   );

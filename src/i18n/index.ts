@@ -11,7 +11,7 @@ export function useNextLang() {
   const defaultLng = i18n.language;
   const localArr = Array.from(local);
   const cur = localArr.findIndex((l) => l[0] === defaultLng);
-  const next = cur === localArr.length - 1 ? 0 : cur + 1;
+  const next = cur === (localArr.length - 1) ? 0 : cur + 1;
   return localArr[next];
 }
 
