@@ -127,7 +127,6 @@ const MainBox = () => {
   // 监听params
   useEffect(() => {
     // 获取所有workspace
-    console.log(localStorage.getItem("email"));
     if (localStorage.getItem("email")) {
       WorkspaceService.listWorkspace({
         userName: localStorage.getItem("email"),
@@ -239,7 +238,6 @@ const MainBox = () => {
                   >
                     <ReplayMenu
                       onSelect={(app) => {
-                        console.log(app);
                         const newActiveKey = String(Math.random());
                         const newPanes = [...panes];
                         newPanes.push({
@@ -252,7 +250,6 @@ const MainBox = () => {
                           // 其实nodeType应该得通过qid拿到
                           curApp: app,
                         });
-                        console.log({newPanes})
                         setPanes(newPanes);
                         setActiveKey(newActiveKey);
                       }}
@@ -268,7 +265,6 @@ const MainBox = () => {
                 onEdit={onEdit}
                 activeKey={activeKey}
                 onChange={(_activeKey) => {
-                  console.log(_activeKey);
                   setActiveKey(_activeKey);
                 }}
               >

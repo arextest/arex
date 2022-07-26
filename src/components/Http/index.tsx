@@ -212,7 +212,6 @@ const Http: FC<HttpProps> = (
       validationRequest(cancelRequest);
     },
     onSuccess: (res) => {
-      console.log("123321", res);
       setResponse(res);
     },
     onError(err) {
@@ -233,7 +232,6 @@ const Http: FC<HttpProps> = (
       validationRequest(cancelBaseRequest);
     },
     onSuccess: (res) => {
-      console.log(res, "base");
       setBaseResponse(res);
     },
     onError(err) {
@@ -254,7 +252,6 @@ const Http: FC<HttpProps> = (
       validationRequest(cancelTestRequest);
     },
     onSuccess: (res) => {
-      console.log(res, "test");
       setTestResponse(res);
     },
     onError(err) {
@@ -458,7 +455,6 @@ const Http: FC<HttpProps> = (
           {isNew ? (
             <Button
               onClick={() => {
-                console.log(123);
                 setShowSaveRequestModal(true);
               }}
             >
