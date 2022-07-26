@@ -1,5 +1,9 @@
+import { MenuSelect, Replay as ReplayMain } from "../components";
 const ReplayPage = ({ data }) => {
-  return <div>我是replay页面</div>;
+  console.log(data,'data')
+  return <div>
+    <ReplayMain curApp={data.curApp} />
+  </div>;
 };
 
 export default ReplayPage;

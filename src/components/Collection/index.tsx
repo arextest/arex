@@ -79,8 +79,6 @@ const Collection: FC<Props> = (
         nodeType: info.node.nodeType,
       });
       setMainBoxPanes(newPanes);
-    }
-    if (keys[0]) {
       setMainBoxActiveKey(keys[0]);
     }
   };

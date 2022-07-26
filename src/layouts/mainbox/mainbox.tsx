@@ -57,7 +57,7 @@ const menuItems = [
     key: "environment",
     label: "Environment",
     icon: <GoldOutlined />,
-    disabled: false,
+    disabled: true,
   },
 ];
 
@@ -240,6 +240,21 @@ const MainBox = () => {
                     <ReplayMenu
                       onSelect={(app) => {
                         console.log(app);
+                        const newActiveKey = String(Math.random());
+                        const newPanes = [...panes];
+                        newPanes.push({
+                          closable: true,
+                          title: app.appId,
+                          key: newActiveKey,
+                          pageType: "replay",
+                          qid: newActiveKey,
+                          isNew: true,
+                          // 其实nodeType应该得通过qid拿到
+                          curApp: app,
+                        });
+                        console.log({newPanes})
+                        setPanes(newPanes);
+                        setActiveKey(newActiveKey);
                       }}
                     />
                   </div>

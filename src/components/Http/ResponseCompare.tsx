@@ -135,7 +135,7 @@ const ResponseCompare = ({ responses }) => {
             ].nodeName : pathPair.leftUnmatchedPath[i].index,
           );
         }
-        return <div>{JSON.stringify(leftArr)}</div>;
+        return <div>{leftArr.join('.')}</div>;
       },
     },
     {
@@ -151,7 +151,7 @@ const ResponseCompare = ({ responses }) => {
               .nodeName : pathPair.rightUnmatchedPath[i].index,
           );
         }
-        return <div>{JSON.stringify(rightArr)}</div>;
+        return <div>{rightArr.join('.')}</div>;
       },
     },
     {
@@ -171,44 +171,64 @@ const ResponseCompare = ({ responses }) => {
     },
   ];
 
-  const [activeRadio, setActiveRadio] = useState<string>("table");
+  const [activeRadio, setActiveRadio] = useState<string>("json");
   const [dataSource, setDataSource] = useState<any>([]);
   const optionsWithDisabled = [
-    { label: "Table", value: "table" },
     { label: "JSON", value: "json" },
+    { label: "Table", value: "table" },
+
   ];
-  useMount(() => {
-    const params = {
-      msgCombination: {
-        baseMsg:
-          '{"responseStatusType":{"responseCode":0,"responseDesc":"success","timestamp":1658734962467},"body":{"fsTree":null}}',
-        testMsg:
-          '{"responseStatusType":{"responseCode":0,"responseDesc":"success","timestamp":1658734962577},"body":{"workspaces":[{"id":"62d915d10efea227ca854c68","workspaceName":"aaaaa"},{"id":"62d918f40efea227ca854c6a","workspaceName":"Default"},{"id":"62d918ff0efea227ca854c6c","workspaceName":"Default"}]}}',
-      },
-    };
-    axios.post("/api/compare/quickCompare", params).then((res) => {
-      console.log(res.data);
-    });
-  });
+
+  function abc(aa){
+    for( var key in aa){
+      if(aa[key]===null){
+        aa[key]=""
+      }
+      if(typeof aa[key] == "object"){
+        abc(aa[key])
+      }
+    }
+    return aa
+  }
+  useEffect(() => {
+    if (responses[0]&&responses[1]){
+      // console.log(responses[0],responses[1],abc(responses[0]))
+      const params = {
+        msgCombination: {
+          baseMsg:JSON.stringify(abc(responses[0])),
+          testMsg:JSON.stringify(abc(responses[1]))
+        },
+      };
+      axios.post("/api/compare/quickCompare", params).then((res) => {
+        console.log(res.data);
+        setDataSource(res.data.body.logs)
+      });
+    }
+
+  },[responses]);
   return (
     <div>
       <Tabs defaultActiveKey="1" onChange={onChange}>
         <TabPane tab="对比结果" key="1">
           <div id="wrapper">
-            <Radio.Group
-              options={optionsWithDisabled}
-              onChange={(val) => {
-                console.log(val, "val");
-                setActiveRadio(val.target.value);
-              }}
-              value={activeRadio}
-              optionType="button"
-              buttonStyle="solid"
-            />
-            <div className="react-diff-code-view" style={{ height: "100%" }}>
+            <div  style={{textAlign:'right',marginBottom:'10px'}}>
+              <Radio.Group
+                  size={'small'}
+                  options={optionsWithDisabled}
+                  onChange={(val) => {
+                    console.log(val, "val");
+                    setActiveRadio(val.target.value);
+                  }}
+                  value={activeRadio}
+                  optionType="button"
+                  buttonStyle="solid"
+              />
+            </div>
+
+            <div className="react-diff-code-view" style={{ height: "100%",display: activeRadio === 'json'?'block':'none' }}>
               <DiffView className={"diffView"} ref={diffView} theme={theme} />
             </div>
-            <div><Table dataSource={dataSource} columns={columns} />;</div>
+            <div style={{ display: activeRadio === 'table'?'block':'none' }}><Table dataSource={dataSource} columns={columns} /></div>
           </div>
         </TabPane>
       </Tabs>

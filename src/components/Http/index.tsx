@@ -565,7 +565,7 @@ const Http: FC<HttpProps> = (
           <HeaderWrapper style={{ marginTop: "10px" }}>
             <Select
             value={method} options={RequestTypeOptions} onChange={setMethod} />
-            base<Input
+            <Input
               placeholder={t_components("http.enterRequestUrl")}
               value={baseUrl}
               onChange={(e) => setBaseUrl(e.target.value)}
@@ -578,7 +578,7 @@ const Http: FC<HttpProps> = (
           <HeaderWrapper style={{ marginTop: "10px" }}>
             <Select
             value={method} options={RequestTypeOptions} onChange={setMethod} />
-            test<Input
+            <Input
               placeholder={t_components("http.enterRequestUrl")}
               value={testUrl}
               onChange={(e) => setTestUrl(e.target.value)}
