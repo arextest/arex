@@ -59,8 +59,8 @@ const Collection: FC<Props> = (
   const [searchValue, setSearchValue] = useState("");
   const [autoExpandParent, setAutoExpandParent] = useState(true);
   const onExpand: any = (newExpandedKeys: string[]) => {
-    setExpandedKeys(newExpandedKeys);
-    setAutoExpandParent(false);
+    // setExpandedKeys(newExpandedKeys);
+    // setAutoExpandParent(false);
   };
 
   const onSelect: DirectoryTreeProps["onSelect"] = (keys, info) => {
@@ -79,6 +79,9 @@ const Collection: FC<Props> = (
         nodeType: info.node.nodeType,
       });
       setMainBoxPanes(newPanes);
+    }
+
+    if (keys[0]){
       setMainBoxActiveKey(keys[0]);
     }
   };
@@ -140,22 +143,20 @@ const Collection: FC<Props> = (
           prefix={<MenuOutlined />}
           onChange={onChange}
         />
-        <Tooltip
-          placement="bottomLeft"
-          title={"View more actions"}
-          mouseEnterDelay={0.5}
-        >
-          <Button className={"collection-header-view"} type="text" size="small">
-            <DashOutlined />
-          </Button>
-        </Tooltip>
+        {/*<Tooltip*/}
+        {/*  placement="bottomLeft"*/}
+        {/*  title={"View more actions"}*/}
+        {/*  mouseEnterDelay={0.5}*/}
+        {/*>*/}
+        {/*  <Button className={"collection-header-view"} type="text" size="small">*/}
+        {/*    <DashOutlined />*/}
+        {/*  </Button>*/}
+        {/*</Tooltip>*/}
       </div>
       <Tree
         blockNode={true}
         onExpand={onExpand}
         onSelect={onSelect}
-        expandedKeys={expandedKeys}
-        autoExpandParent={autoExpandParent}
         switcherIcon={<DownOutlined />}
         treeData={treeData}
         titleRender={(val) => (

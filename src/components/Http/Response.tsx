@@ -58,10 +58,10 @@ const Response: FC<
           `
         }
       >
-        状态：<span>{props.status.code} {props.status.text}</span>
+        Status：<span>{props.status.code} {props.status.text}</span>
       </div>
-      <div>时间：<span>{props.time || 0} ms</span></div>
-      <div>大小：<span>{props.size || 0} KB</span></div>
+      <div>Time：<span>{props.time || 0} ms</span></div>
+      <div>Size：<span>{props.size || 0} KB</span></div>
     </StatusWrapper>
     <Tabs defaultActiveKey="1" onChange={onChange}>
       <TabPane tab="Pretty" key="1">

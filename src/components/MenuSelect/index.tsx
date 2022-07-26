@@ -75,7 +75,7 @@ function MenuSelect<T extends { [key: string]: any }>(
           key: app[props.rowKey],
         }),
       )}
-      onSelect={handleAppMenuClick}
+      onClick={handleAppMenuClick}
     />
     </>
   );

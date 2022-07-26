@@ -8,7 +8,6 @@ const ReplayMenu: FC<{ onSelect: (app: ApplicationDataType) => void }> = (
 ) => {
   return (
     <MenuSelect<ApplicationDataType>
-      defaultSelectFirst
       rowKey="appId"
       onSelect={props.onSelect}
       placeholder="applicationsMenu.appFilterPlaceholder"

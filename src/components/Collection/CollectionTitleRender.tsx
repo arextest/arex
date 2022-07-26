@@ -80,7 +80,7 @@ function CollectionTitleRender(
                 onClick={() => {
                   CollectionService.addItem({
                     id: _useParams.workspaceId,
-                    nodeName: "eg",
+                    nodeName: "case",
                     nodeType: 2,
                     parentPath: paths.map((i: any) => i.key),
                     userName: "zt",
@@ -147,7 +147,7 @@ function CollectionTitleRender(
           <ApiOutlined style={{ color: "#5C4033", marginRight: "8px" }} />
         ) : null}
         {val.nodeType === 2 ? (
-          <span style={{ color: "#5C4033", marginRight: "8px" }}>eg</span>
+          <span style={{ color: "#5C4033", marginRight: "8px",border:'1px solid #5C4033',fontSize:'10px',display:'block',lineHeight:'12px' }}>case</span>
         ) : null}
         <div className={"content"}>{val.title}</div>
       </div>

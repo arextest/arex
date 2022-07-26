@@ -6,7 +6,9 @@ const PaneAreaEmpty: FC<any> = ({ add }) => {
   const value = useContext(GlobalContext);
   return (
     <Empty>
-      <Button type="primary" onClick={() => add()}>{value.title}</Button>
+      <Button type="primary" onClick={() => add()}>
+          New Request
+      </Button>
     </Empty>
   );
 };

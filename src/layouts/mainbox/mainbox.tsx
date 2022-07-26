@@ -238,20 +238,22 @@ const MainBox = () => {
                   >
                     <ReplayMenu
                       onSelect={(app) => {
-                        const newActiveKey = String(Math.random());
                         const newPanes = [...panes];
-                        newPanes.push({
-                          closable: true,
-                          title: app.appId,
-                          key: newActiveKey,
-                          pageType: "replay",
-                          qid: newActiveKey,
-                          isNew: true,
-                          // 其实nodeType应该得通过qid拿到
-                          curApp: app,
-                        });
-                        setPanes(newPanes);
-                        setActiveKey(newActiveKey);
+                        const f = newPanes.find(i=>i.key === app.appId)
+                        if (!f){
+                          newPanes.push({
+                            closable: true,
+                            title: app.appId,
+                            key: app.appId,
+                            pageType: "replay",
+                            qid: app.appId,
+                            isNew: true,
+                            // 其实nodeType应该得通过qid拿到
+                            curApp: app,
+                          });
+                          setPanes(newPanes);
+                          setActiveKey(app.appId);
+                        }
                       }}
                     />
                   </div>
