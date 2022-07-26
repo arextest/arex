@@ -100,11 +100,8 @@ const CollectionSaveRequest = (
           <Input />
         </Form.Item>
         <p>
-          Save to
+          <span>Save to </span>
           <Text type="secondary">
-            {JSON.stringify(
-              treeFindPath(collectionTreeData, (node) => node.key === value),
-            )}
             {treeFindPath(collectionTreeData, (node) => node.key === value)
               ?.map((i) => i.title)
               .join(" / ")}
