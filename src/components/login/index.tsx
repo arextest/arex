@@ -35,7 +35,7 @@ const Login = () => {
 
   const sendVerificationCode = () => {
     if (!emailchecked || email == "") {
-      message.error("邮箱错误");
+      message.error("email error");
       return;
     }
     setLoadings(true);
@@ -44,9 +44,9 @@ const Login = () => {
     }, 1000);
     LoginService.sendVerifyCodeByEmail(email).then((res) => {
       if (res.data.body.success == true) {
-        message.success("验证码获取成功");
+        message.success("The verification code has been sent to the email.");
       } else {
-        message.error("验证码获取失败");
+        message.error("Authentication failed.");
       }
     });
   };
@@ -73,10 +73,10 @@ const Login = () => {
 
   const login = () => {
     if (!emailchecked || email == "") {
-      message.error("请检查邮箱");
+      message.error("Please check your email");
       return;
     } else if (verificationCode == "") {
-      message.error("请填写验证码");
+      message.error("Please fill in the verification code");
       return;
     }
 
@@ -85,10 +85,10 @@ const Login = () => {
       verificationCode: verificationCode,
     }).then((res) => {
       if (res.data.body.success == true) {
-        message.success("登录成功");
+        message.success("Login succeeded");
         initBeforeUserEntry(email);
       } else {
-        message.error("登录失败");
+        message.error("Login failed");
       }
     });
   };
@@ -108,14 +108,14 @@ const Login = () => {
           message={
             (
               <div>
-                注意：Chrome插件可突破浏览器跨域限制，请先安装
+                Be careful：The Chrome Extension can break the cross-domain limit of the browser. Please install the
                 <a
                   href="https://chrome.google.com/webstore/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj"
                   target={"_blank"}
                 >
-                  Chrome插件
+                  Chrome Extension
                 </a>
-                后再运行。
+                before you run it.
               </div>
             )
           }
@@ -125,31 +125,32 @@ const Login = () => {
         <div className={"login-title"}>AREX</div>
         <Input
           size="large"
-          placeholder="请输入邮箱号！"
+          placeholder="Please enter your email！"
           prefix={<UserOutlined />}
           onChange={getEmail}
           status={emailchecked ? "" : "error"}
           allowClear
         />
         {emailchecked ? <div className={"login-email-tip"}></div> : (
-          <div className={"login-email-tip"}>请输入正确的邮箱号!</div>
+          <div className={"login-email-tip"}>Please enter the correct email!</div>
         )}
         <div className={"login-verificationCode"}>
           <Input
             size="large"
-            placeholder="请输入验证码！"
+            placeholder="Please enter a verification code！"
             prefix={<LockOutlined />}
             onChange={getVerificationCode}
           />
           <Button
+              style={{marginLeft:'8px'}}
             size="large"
             onClick={sendVerificationCode}
             disabled={loadings}
           >
-            {loadings ? count + "s" : ""}获取验证码
+            {loadings ? count + "s" : ""}Verification code
           </Button>
         </div>
-        <Button type="primary" block size="large" onClick={login}>登录</Button>
+        <Button type="primary" block size="large" onClick={login}>Login</Button>
       </div>
     </div>
   );
