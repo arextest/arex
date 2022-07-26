@@ -60,7 +60,7 @@ const Response: FC<
       >
         状态：<span>{props.status.code} {props.status.text}</span>
       </div>
-      <div>时间：<span>{props.time || 0} mm</span></div>
+      <div>时间：<span>{props.time || 0} ms</span></div>
       <div>大小：<span>{props.size || 0} KB</span></div>
     </StatusWrapper>
     <Tabs defaultActiveKey="1" onChange={onChange}>
