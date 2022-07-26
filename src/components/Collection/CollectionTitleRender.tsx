@@ -140,36 +140,44 @@ function CollectionTitleRender(
     );
   };
   return (
+<>
     <div className={"collection-title-render"}>
-      <div className={"wrap"}>
-        <div className={'title'}>
-          {val.nodeType === 1 && val.nodeType === 1 ? (
-              <ApiOutlined style={{ color: "#5C4033", marginRight: "8px" }}/>
-          ) : null}
-          {val.nodeType === 2 ? (
-            <span style={{ color: "#5C4033", marginRight: "8px" }}>eg</span>
-          ) : null}
-          {val.title}
+        <div className={'left'}>
+            {val.nodeType === 1 && val.nodeType === 1 ? (
+                <ApiOutlined style={{ color: "#5C4033", marginRight: "8px" }}/>
+            ) : null}
+            {val.nodeType === 2 ? (
+                <span style={{ color: "#5C4033", marginRight: "8px" }}>eg</span>
+            ) : null}
+            <div className={'content'}>{val.title}</div>
         </div>
-        <Dropdown
-          overlay={menu(val)}
-          trigger={["click"]}
-          visible={visible}
-          onVisibleChange={handleVisibleChange}
-        >
+
+
+
+
+        <div className="right">
+            <Dropdown
+                overlay={menu(val)}
+                trigger={["click"]}
+                visible={visible}
+                onVisibleChange={handleVisibleChange}
+            >
           <span onClick={(event) => event.stopPropagation()}>
             <Space>
               <MoreOutlined size={100} style={{ fontSize: "16px" }} />
             </Space>
           </span>
-        </Dropdown>
-      </div>
-      <CreateAndUpdateFolder
+            </Dropdown>
+        </div>
+
+
+    </div>
+    <CreateAndUpdateFolder
         updateDirectorytreeData={updateDirectorytreeData}
         collectionTree={treeData}
         collectionCreateAndUpdateModal={CollectionCreateAndUpdateModal}
-      ></CreateAndUpdateFolder>
-    </div>
+    />
+</>
   );
 }
 

@@ -17,28 +17,30 @@
   }
 
   .collection-title-render{
-    .wrap{
-      display: flex;
-      justify-content: space-between;
-      font-weight: bolder;
+
+    //border: 1px solid black;
+    display: flex;
+    .right{
+      //width: 100px;
+      //height: 100px;
+      //margin: 10px;
+      //border: 1px solid #ccc;
+    }
+    .left{
+      flex: 1;
       overflow: hidden;
-      .title{
-        width: 200px;
+      display: flex;
+      align-items: center;
+      .content{
         overflow:hidden; //超出的文本隐藏
         text-overflow:ellipsis; //溢出用省略号显示
         white-space:nowrap; //溢出不换行
       }
     }
   }
-
-
-  //以下保证宽度百分百
-  .ant-tree-list-holder-inner>div{
-    width: 100%;
-  }
-
   .ant-tree-node-content-wrapper{
-    flex: 1;
+    overflow:hidden; //超出的文本隐藏
+    text-overflow:ellipsis; //溢出用省略号显示
+    white-space:nowrap; //溢出不换行
   }
-  //以上保证宽度百分百
 }

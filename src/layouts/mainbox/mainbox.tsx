@@ -196,7 +196,8 @@ const MainBox = () => {
                       setSiderMenuSelectedKey(val.key);
                     }}
                   />
-                  <div style={{flex:'1'}}>
+                  {/*flex布局需要overflow:'hidden'内部元素出滚动条*/}
+                  <div style={{flex:'1',overflow:'hidden'}}>
                     <div
                       style={{
                         display:

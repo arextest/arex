@@ -62,7 +62,6 @@ const DraggableLayout = (props: any) => {
                   contentDom.offsetWidth - 10
                 )
               ) * 100;
-
             firstDom.style.width = `calc(${baifenbi1}% - 5px)`;
             secondDom.style.width = `calc(${baifenbi2}% - 5px)`;
             break;
