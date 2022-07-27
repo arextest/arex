@@ -4,7 +4,7 @@ import { Alert, Button, Divider, Menu, Space, Tabs } from 'antd';
 import Collection from '../../components/Collection';
 import Environment from '../../components/environment';
 import Login from '../../components/login';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { WorkspaceService } from '../../services/WorkspaceService';
 import { FileOutlined, GlobalOutlined, GoldOutlined } from '@ant-design/icons';
 import './mainbox.less';
@@ -30,6 +30,7 @@ type PaneProps = {
 };
 import { GlobalContext } from '../../App';
 import AppFooter from '../../components/app/Footer';
+import FolderPage from '../../pages/folder';
 
 const { TabPane } = Tabs;
 // 静态数据
@@ -104,7 +105,15 @@ const MainBox = () => {
   };
 
   const remove = (targetKey: string) => {
-    setPanes(panes.filter((i) => i.key !== targetKey));
+    const f = panes.filter((i) => i.key !== targetKey);
+    setPanes(f);
+
+    if (f.length > 0) {
+      setActiveKey(f[f.length - 1].key);
+      updateChildState([f[f.length - 1].key]);
+    } else {
+      updateChildState([]);
+    }
   };
 
   const onEdit: any = (targetKey: string, action: 'add' | 'remove') => {
@@ -117,6 +126,12 @@ const MainBox = () => {
 
   // mount
   useMount(() => {});
+
+  const childRef = useRef();
+  const updateChildState = (keys) => {
+    // changeVal就是子组件暴露给父组件的方法
+    childRef.current.changeVal(keys);
+  };
 
   // 监听params
   useEffect(() => {
@@ -212,6 +227,7 @@ const MainBox = () => {
                         fetchTreeData={() => {
                           fetchCollectionTreeData();
                         }}
+                        cRef={childRef}
                       />
                     </div>
                     <div
@@ -261,7 +277,11 @@ const MainBox = () => {
                   }}
                 >
                   {panes.map((pane) => (
-                    <TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
+                    <TabPane
+                      tab={treeFind(collectionTreeData, (node) => node.key === pane.key).title}
+                      key={pane.key}
+                      closable={pane.closable}
+                    >
                       {pane.pageType === 'request' || pane.pageType === 'case' ? (
                         <RequestPage
                           activateNewRequestInPane={(p) => {
@@ -288,6 +308,7 @@ const MainBox = () => {
                         />
                       ) : null}
                       {pane.pageType === 'replay' ? <ReplayPage data={pane} /> : null}
+                      {pane.pageType === 'folder' ? <FolderPage /> : null}
                     </TabPane>
                   ))}
                 </Tabs>

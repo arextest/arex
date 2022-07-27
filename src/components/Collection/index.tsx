@@ -1,6 +1,6 @@
 import { Button, Spin, Input, Tooltip, Tree, Empty } from 'antd';
 import { MenuOutlined, DashOutlined, DownOutlined } from '@ant-design/icons';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useImperativeHandle, useState } from 'react';
 import './index.less';
 import { CollectionService } from '../../services/CollectionService';
 import CollectionTitleRender from './CollectionTitleRender';
@@ -51,7 +51,15 @@ const Collection: FC<Props> = ({
   setMainBoxPanes,
   mainBoxPanes,
   setMainBoxActiveKey,
+  cRef,
 }) => {
+  // 此处注意useImperativeHandle方法的的第一个参数是目标元素的ref引用
+  useImperativeHandle(cRef, () => ({
+    // changeVal 就是暴露给父组件的方法
+    changeVal: (newVal) => {
+      setSelectedKeys(newVal);
+    },
+  }));
   const _useParams = useParams();
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
@@ -76,6 +84,19 @@ const Collection: FC<Props> = ({
         pageType: 'request',
         qid: keys[0],
         nodeType: info.node.nodeType,
+      });
+      setMainBoxPanes(newPanes);
+    }
+
+    if (keys[0] && info.node.nodeType === 3 && !mainBoxPanes.map((i) => i.key).includes(keys[0])) {
+      const newPanes = [...mainBoxPanes];
+      newPanes.push({
+        closable: true,
+        title: info.node.title,
+        key: keys[0],
+        pageType: 'folder',
+        qid: keys[0],
+        nodeType: 3,
       });
       setMainBoxPanes(newPanes);
     }
