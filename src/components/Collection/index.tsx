@@ -1,12 +1,13 @@
-import { Button, Spin, Input, Tooltip, Tree, Empty } from "antd";
-import { MenuOutlined, DashOutlined, DownOutlined } from "@ant-design/icons";
-import React, { FC, useEffect, useState } from "react";
-import "./index.less";
-import { CollectionService } from "../../services/CollectionService";
-import CollectionTitleRender from "./CollectionTitleRender";
-import type { DirectoryTreeProps } from "antd/lib/tree";
-import type { DataNode } from "antd/es/tree";
-import { useParams } from "react-router-dom";
+import { Button, Spin, Input, Tooltip, Tree, Empty } from 'antd';
+import { MenuOutlined, DashOutlined, DownOutlined } from '@ant-design/icons';
+import React, { FC, useEffect, useState } from 'react';
+import './index.less';
+import { CollectionService } from '../../services/CollectionService';
+import CollectionTitleRender from './CollectionTitleRender';
+import type { DirectoryTreeProps } from 'antd/lib/tree';
+import type { DataNode } from 'antd/es/tree';
+import { useParams } from 'react-router-dom';
+import {treeFindPath} from "../../helpers/collection/util";
 
 const dataList: { key: React.Key; title: string }[] = [];
 const generateList = (data: DataNode[]) => {
@@ -44,44 +45,43 @@ type Props = {
   setMainBoxActiveKey: (p: any) => void;
 };
 
-const Collection: FC<Props> = (
-  {
-    treeData,
-    fetchTreeData,
-    loading,
-    setMainBoxPanes,
-    mainBoxPanes,
-    setMainBoxActiveKey,
-  },
-) => {
+const Collection: FC<Props> = ({
+  treeData,
+  fetchTreeData,
+  loading,
+  setMainBoxPanes,
+  mainBoxPanes,
+  setMainBoxActiveKey,
+}) => {
   const _useParams = useParams();
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
-  const [searchValue, setSearchValue] = useState("");
+  const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
+  const [searchValue, setSearchValue] = useState('');
   const [autoExpandParent, setAutoExpandParent] = useState(true);
   const onExpand: any = (newExpandedKeys: string[]) => {
-    // setExpandedKeys(newExpandedKeys);
+    setExpandedKeys(newExpandedKeys);
     // setAutoExpandParent(false);
   };
 
-  const onSelect: DirectoryTreeProps["onSelect"] = (keys, info) => {
-    if (
-      keys[0] &&
-      info.node.nodeType !== 3 &&
-      !mainBoxPanes.map((i) => i.key).includes(keys[0])
-    ) {
+  const onSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
+    if (keys.length > 0) {
+      setSelectedKeys(keys);
+    }
+
+    if (keys[0] && info.node.nodeType !== 3 && !mainBoxPanes.map((i) => i.key).includes(keys[0])) {
       const newPanes = [...mainBoxPanes];
       newPanes.push({
         closable: true,
         title: info.node.title,
         key: keys[0],
-        pageType: "request",
+        pageType: 'request',
         qid: keys[0],
         nodeType: info.node.nodeType,
       });
       setMainBoxPanes(newPanes);
     }
 
-    if (keys[0]){
+    if (keys[0]) {
       setMainBoxActiveKey(keys[0]);
     }
   };
@@ -89,44 +89,50 @@ const Collection: FC<Props> = (
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     let newExpandedKeys;
-    if (value == "") {
+    if (value == '') {
       newExpandedKeys = dataList.map((item) => item.title);
     } else {
-      newExpandedKeys = dataList.map((item) => {
-        if (item.title.indexOf(value) > -1) {
-          return getParentKey(item.key, treeData);
-        }
-        return null;
-      }).filter((item, i, self) => item && self.indexOf(item) === i);
+      newExpandedKeys = dataList
+        .map((item) => {
+          if (item.title.indexOf(value) > -1) {
+            return getParentKey(item.key, treeData);
+          }
+          return null;
+        })
+        .filter((item, i, self) => item && self.indexOf(item) === i);
     }
     setExpandedKeys(newExpandedKeys as React.Key[]);
     setSearchValue(value);
     setAutoExpandParent(true);
   };
 
+  // 对外的函数
+  // 展开指定的数组
+  function expandSpecifyKeys(keys: string[],p) {
+    console.log([...expandedKeys, ...keys],p)
+    setExpandedKeys([...expandedKeys, p[p.length -1]]);
+    setSelectedKeys([...keys])
+  }
+
   useEffect(() => {
     generateList(treeData);
   }, [treeData]);
 
   return (
-    <div className={"collection"}>
-      <div className={"collection-header"}>
-        <Tooltip
-          placement="bottomLeft"
-          title={"Create New"}
-          mouseEnterDelay={0.5}
-        >
+    <div className={'collection'}>
+      <div className={'collection-header'}>
+        <Tooltip placement='bottomLeft' title={'Create New'} mouseEnterDelay={0.5}>
           <Button
-            className={"collection-header-create"}
-            type="text"
-            size="small"
+            className={'collection-header-create'}
+            type='text'
+            size='small'
             onClick={() => {
               CollectionService.addItem({
                 id: _useParams.workspaceId,
-                nodeName: "New Collection",
+                nodeName: 'New Collection',
                 nodeType: 3,
                 parentPath: [],
-                userName: "zt",
+                userName: 'zt',
               }).then(() => {
                 fetchTreeData();
               });
@@ -136,10 +142,10 @@ const Collection: FC<Props> = (
           </Button>
         </Tooltip>
         <Input
-            disabled={true}
-          className={"collection-header-search"}
-          size="small"
-          placeholder=""
+          disabled={true}
+          className={'collection-header-search'}
+          size='small'
+          placeholder=''
           prefix={<MenuOutlined />}
           onChange={onChange}
         />
@@ -154,7 +160,10 @@ const Collection: FC<Props> = (
         {/*</Tooltip>*/}
       </div>
       <Tree
+          autoExpandParent
         blockNode={true}
+        selectedKeys={selectedKeys}
+        expandedKeys={expandedKeys}
         onExpand={onExpand}
         onSelect={onSelect}
         switcherIcon={<DownOutlined />}
@@ -166,19 +175,20 @@ const Collection: FC<Props> = (
             }}
             val={val}
             treeData={treeData}
+            callbackOfNewRequest={expandSpecifyKeys}
           />
         )}
       />
-      <Empty style={{ display: treeData.length > 0 ? "none" : "block" }}>
+      <Empty style={{ display: treeData.length > 0 ? 'none' : 'block' }}>
         <Button
-          type="primary"
+          type='primary'
           onClick={() => {
             CollectionService.addItem({
               id: _useParams.workspaceId,
-              nodeName: "New Collection",
+              nodeName: 'New Collection',
               nodeType: 3,
               parentPath: [],
-              userName: "zt",
+              userName: 'zt',
             }).then(() => {
               fetchTreeData();
             });

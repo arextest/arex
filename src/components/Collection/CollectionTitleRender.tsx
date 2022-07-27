@@ -1,23 +1,25 @@
-import { ApiOutlined, MoreOutlined } from "@ant-design/icons";
-import { Dropdown, Menu, Popconfirm, Space } from "antd";
-import { useState } from "react";
-import { CollectionService } from "../../services/CollectionService";
+import { ApiOutlined, MoreOutlined } from '@ant-design/icons';
+import { Dropdown, Menu, Popconfirm, Space } from 'antd';
+import { useState } from 'react';
+import { CollectionService } from '../../services/CollectionService';
 // import { findPathByKey } from "../../helpers/collection/util";
-import CreateAndUpdateFolder from "./CreateAndUpdateFolder";
-import { useNavigate, useParams } from "react-router-dom";
-import { treeFindPath } from "../../helpers/collection/util";
+import CreateAndUpdateFolder from './CreateAndUpdateFolder';
+import { useNavigate, useParams } from 'react-router-dom';
+import { treeFindPath } from '../../helpers/collection/util';
 
-function CollectionTitleRender(
-  { val, updateDirectorytreeData, treeData }: any,
-) {
+function CollectionTitleRender({
+  val,
+  updateDirectorytreeData,
+  treeData,
+  callbackOfNewRequest,
+}: any) {
   const _useParams = useParams();
   const _useNavigate = useNavigate();
   const [visible, setVisible] = useState(false);
   const handleVisibleChange = (flag: boolean) => {
     setVisible(flag);
   };
-  const [CollectionCreateAndUpdateModal, setCollectionCreateAndUpdateModal] =
-    useState({});
+  const [CollectionCreateAndUpdateModal, setCollectionCreateAndUpdateModal] = useState({});
   const menu = (val: any) => {
     const paths = treeFindPath(treeData, (node) => node.key === val.key);
     return (
@@ -28,17 +30,17 @@ function CollectionTitleRender(
         }}
         items={[
           {
-            key: "1",
+            key: '1',
             label: (
               <a
-                target="_blank"
+                target='_blank'
                 onClick={() => {
                   CollectionService.addItem({
                     id: _useParams.workspaceId,
-                    nodeName: "New Collection",
+                    nodeName: 'New Collection',
                     nodeType: 3,
                     parentPath: paths.map((i: any) => i.key),
-                    userName: "zt",
+                    userName: 'zt',
                   }).then(() => {
                     updateDirectorytreeData();
                   });
@@ -51,19 +53,24 @@ function CollectionTitleRender(
             disabled: val.nodeType !== 3,
           },
           {
-            key: "2",
+            key: '2',
             label: (
               <a
-                target="_blank"
+                target='_blank'
                 onClick={() => {
                   CollectionService.addItem({
                     id: _useParams.workspaceId,
-                    nodeName: "New Request",
+                    nodeName: 'New Request',
                     nodeType: 1,
                     parentPath: paths.map((i: any) => i.key),
-                    userName: "zt",
-                  }).then(() => {
+                    userName: 'zt',
+                  }).then((res) => {
+                    console.log(res.data.body.infoId);
                     updateDirectorytreeData();
+                    callbackOfNewRequest(
+                      [res.data.body.infoId],
+                      paths.map((i: any) => i.key),
+                    );
                   });
                 }}
               >
@@ -73,17 +80,17 @@ function CollectionTitleRender(
             disabled: val.nodeType !== 3,
           },
           {
-            key: "3",
+            key: '3',
             label: (
               <a
-                target="_blank"
+                target='_blank'
                 onClick={() => {
                   CollectionService.addItem({
                     id: _useParams.workspaceId,
-                    nodeName: "case",
+                    nodeName: 'case',
                     nodeType: 2,
                     parentPath: paths.map((i: any) => i.key),
-                    userName: "zt",
+                    userName: 'zt',
                   }).then(() => {
                     updateDirectorytreeData();
                   });
@@ -95,20 +102,18 @@ function CollectionTitleRender(
             disabled: val.nodeType !== 1,
           },
           {
-            key: "4",
+            key: '4',
             label: (
               <a
-                target="_blank"
+                target='_blank'
                 onClick={() => {
                   const collectionCreateAndUpdateModal = {
                     collectionCreateAndUpdateModalVisible: true,
-                    collectionCreateAndUpdateModalMode: "rename",
+                    collectionCreateAndUpdateModalMode: 'rename',
                     collectionCreateAndUpdateModalId: val.key,
                     collectionCreateAndUpdateModalFolderName: val.title,
                   };
-                  setCollectionCreateAndUpdateModal(
-                    collectionCreateAndUpdateModal,
-                  );
+                  setCollectionCreateAndUpdateModal(collectionCreateAndUpdateModal);
                 }}
               >
                 Rename
@@ -116,12 +121,12 @@ function CollectionTitleRender(
             ),
           },
           {
-            key: "5",
+            key: '5',
             label: (
               <Popconfirm
-                title="Are you sure？"
-                okText="Yes"
-                cancelText="No"
+                title='Are you sure？'
+                okText='Yes'
+                cancelText='No'
                 onConfirm={() => {
                   CollectionService.removeItem({
                     id: _useParams.workspaceId,
@@ -131,7 +136,7 @@ function CollectionTitleRender(
                   });
                 }}
               >
-                <a style={{ color: "red" }}>Delete</a>
+                <a style={{ color: 'red' }}>Delete</a>
               </Popconfirm>
             ),
           },
@@ -141,36 +146,49 @@ function CollectionTitleRender(
   };
   return (
     <>
-    <div className={"collection-title-render"}>
-      <div className={"left"}>
-        {val.nodeType === 1 && val.nodeType === 1 ? (
-          <ApiOutlined style={{ color: "#5C4033", marginRight: "8px" }} />
-        ) : null}
-        {val.nodeType === 2 ? (
-          <span style={{ color: "#5C4033", marginRight: "8px",border:'1px solid #5C4033',fontSize:'10px',display:'block',lineHeight:'12px' }}>case</span>
-        ) : null}
-        <div className={"content"}>{val.title}</div>
+      <div className={'collection-title-render'}>
+        <div className={'left'}>
+          {val.nodeType === 1 && val.nodeType === 1 ? (
+            <ApiOutlined style={{ color: '#5C4033', marginRight: '8px' }} />
+          ) : null}
+          {val.nodeType === 2 ? (
+            <span
+              style={{
+                color: '#5C4033',
+                marginRight: '8px',
+                border: '1px solid #5C4033',
+                fontSize: '10px',
+                display: 'block',
+                lineHeight: '12px',
+              }}
+            >
+              case
+            </span>
+          ) : null}
+          <div className={'content'}>
+            {val.title}
+          </div>
+        </div>
+        <div className='right'>
+          <Dropdown
+            overlay={menu(val)}
+            trigger={['click']}
+            visible={visible}
+            onVisibleChange={handleVisibleChange}
+          >
+            <span onClick={(event) => event.stopPropagation()}>
+              <Space>
+                <MoreOutlined size={100} style={{ fontSize: '16px' }} />
+              </Space>
+            </span>
+          </Dropdown>
+        </div>
       </div>
-      <div className="right">
-        <Dropdown
-          overlay={menu(val)}
-          trigger={["click"]}
-          visible={visible}
-          onVisibleChange={handleVisibleChange}
-        >
-          <span onClick={(event) => event.stopPropagation()}>
-            <Space>
-              <MoreOutlined size={100} style={{ fontSize: "16px" }} />
-            </Space>
-          </span>
-        </Dropdown>
-      </div>
-    </div>
-    <CreateAndUpdateFolder
-      updateDirectorytreeData={updateDirectorytreeData}
-      collectionTree={treeData}
-      collectionCreateAndUpdateModal={CollectionCreateAndUpdateModal}
-    />
+      <CreateAndUpdateFolder
+        updateDirectorytreeData={updateDirectorytreeData}
+        collectionTree={treeData}
+        collectionCreateAndUpdateModal={CollectionCreateAndUpdateModal}
+      />
     </>
   );
 }
