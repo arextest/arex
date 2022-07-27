@@ -569,7 +569,7 @@ const Http: FC<HttpProps> = (
             <Button type="primary" onClick={handleCompareRequest}>
               {t_common("send")}
             </Button>
-            <Button onClick={handleSave}>{t_common("save")}</Button>
+            <Button onClick={handleSave} style={{ display: "none" }}>{t_common("save")}</Button>
           </HeaderWrapper>
           <HeaderWrapper style={{ marginTop: "10px" }}>
             <Select
@@ -580,7 +580,7 @@ const Http: FC<HttpProps> = (
               onChange={(e) => setTestUrl(e.target.value)}
             />
             <Button
-              style={{ visibility: "hidden" }}
+                style={{ display: "none" }}
               type="primary"
               onClick={handleRequest}
             >
