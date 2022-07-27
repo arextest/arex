@@ -278,7 +278,7 @@ const MainBox = () => {
                 >
                   {panes.map((pane) => (
                     <TabPane
-                      tab={treeFind(collectionTreeData, (node) => node.key === pane.key).title}
+                      tab={treeFind(collectionTreeData, (node) => node.key === pane.key)?.title||pane.title}
                       key={pane.key}
                       closable={pane.closable}
                     >
