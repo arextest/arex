@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import React, { FC, PropsWithChildren } from "react";
+import React, { FC, PropsWithChildren } from 'react';
 
 export type PropsWithChildrenOnly = PropsWithChildren<unknown>;
 export type ReactFCWithChildren = React.FC<PropsWithChildrenOnly>;

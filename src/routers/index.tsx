@@ -1,12 +1,12 @@
-import MainBox from "../layouts/mainbox/mainbox";
+import MainBox from '../layouts/mainbox/mainbox';
 
 export default [
   {
-    path: "/",
+    path: '/',
     element: <MainBox />,
   },
   {
-    path: "/:workspaceId/workspace/:workspaceName/*",
+    path: '/:workspaceId/workspace/:workspaceName/*',
     element: <MainBox />,
   },
 ];

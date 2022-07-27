@@ -1,4 +1,4 @@
-import request from "./axios";
+import request from './axios';
 import {
   QueryInterfaceReq,
   QueryInterfaceRes,
@@ -6,21 +6,18 @@ import {
   QueryWorkspaceByIdRes,
   SaveInterfaceReq,
   SaveInterfaceRes,
-} from "./FileSystem.type";
+} from './FileSystem.type';
 export class FileSystemService {
   static async queryWorkspacesByUser({ id }: any): Promise<any> {
     return request.post(`/api/filesystem/queryWorkspacesByUser`, {
-      userName: "zt",
+      userName: 'zt',
     });
   }
 
   static async queryWorkspaceById({ id }: QueryWorkspaceByIdReq) {
-    return request.post<QueryWorkspaceByIdRes>(
-      `/api/filesystem/queryWorkspaceById`,
-      {
-        id,
-      },
-    );
+    return request.post<QueryWorkspaceByIdRes>(`/api/filesystem/queryWorkspaceById`, {
+      id,
+    });
   }
 
   static async addItem(params: any): Promise<any> {
@@ -36,17 +33,11 @@ export class FileSystemService {
   }
 
   static async queryInterface(params: QueryInterfaceReq) {
-    return request.post<QueryInterfaceRes>(
-      `/api/filesystem/queryInterface`,
-      params,
-    );
+    return request.post<QueryInterfaceRes>(`/api/filesystem/queryInterface`, params);
   }
 
   static async saveInterface(params: SaveInterfaceReq) {
-    return request.post<SaveInterfaceRes>(
-      `/api/filesystem/saveInterface`,
-      params,
-    );
+    return request.post<SaveInterfaceRes>(`/api/filesystem/saveInterface`, params);
   }
 
   static async saveCase(params: SaveInterfaceReq) {

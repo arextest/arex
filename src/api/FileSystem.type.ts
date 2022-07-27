@@ -1,7 +1,7 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
-import { KeyValueType } from "../components/Http";
-import { METHODS, NodeType } from "../constant";
+import { KeyValueType } from '../components/Http';
+import { METHODS, NodeType } from '../constant';
 
 // ------ /api/filesystem/queryWorkspaceById ------
 export interface QueryWorkspaceByIdReq {
@@ -16,12 +16,10 @@ export type RootParadigmKey = {
   title: string;
   icon?: ReactNode;
 };
-export type Root<T = RootParadigmNode | RootParadigmKey> =
-  & {
-    nodeType: NodeType;
-    children: Root<T>[] | null;
-  }
-  & T;
+export type Root<T = RootParadigmNode | RootParadigmKey> = {
+  nodeType: NodeType;
+  children: Root<T>[] | null;
+} & T;
 type FsTree = {
   id: string;
   roots: Root<RootParadigmNode>[];
@@ -50,13 +48,11 @@ export interface QueryInterfaceRes {
 
 // ------ /api/filesystem/saveInterface ------
 export interface SaveInterfaceReq {
-  auth:
-    | {
-      authActive: boolean;
-      authType: string;
-      token: string;
-    }
-    | null;
+  auth: {
+    authActive: boolean;
+    authType: string;
+    token: string;
+  } | null;
   body: { contentType: string; body: string | null };
   endpoint: string;
   headers: KeyValueType[];

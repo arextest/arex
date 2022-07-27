@@ -15,17 +15,15 @@ export interface ApplicationDataType {
   organizationName: string;
   recordedCaseCount: number;
 }
-export type RegressionListRes = Array<
-  {
-    application: ApplicationDataType;
-    regressionConfiguration: {
-      appId: string;
-      offsetDays: number;
-      sendMaxQps: number;
-      targetEnv: any[];
-    };
-  }
->;
+export type RegressionListRes = Array<{
+  application: ApplicationDataType;
+  regressionConfiguration: {
+    appId: string;
+    offsetDays: number;
+    sendMaxQps: number;
+    targetEnv: any[];
+  };
+}>;
 
 export interface QueryPlanStatisticsReq {
   appId?: string;

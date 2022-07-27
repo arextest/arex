@@ -1,8 +1,8 @@
 // axios.ts
-import { message } from "antd";
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { message } from 'antd';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-import { showMessage } from "./status";
+import { showMessage } from './status';
 
 // 自定义实例级别的拦截器接口
 interface IRequestInterceptors<T = AxiosResponse> {
@@ -24,7 +24,7 @@ type IAxiosResponse<T> = {
   ResponseStatus: {
     responseStatusType: {
       responseCode: number;
-      responseDesc: "success" | "failure";
+      responseDesc: 'success' | 'failure';
       timestamp: number;
     };
   };
@@ -68,7 +68,7 @@ export class Request {
           showMessage(response.status); // 传入响应码，匹配响应码对应信息
           return Promise.reject(response.data);
         } else {
-          message.warning("网络连接异常,请稍后再试!");
+          message.warning('网络连接异常,请稍后再试!');
         }
       },
     );
@@ -111,7 +111,7 @@ export class Request {
     return this.request<Res>({
       url,
       data: params,
-      method: "POST",
+      method: 'POST',
     });
   }
 
@@ -120,7 +120,7 @@ export class Request {
     return this.request<Res>({
       url,
       data: params,
-      method: "PATCH",
+      method: 'PATCH',
     });
   }
 
@@ -129,7 +129,7 @@ export class Request {
     return this.request<Res>({
       url,
       data: params,
-      method: "DELETE",
+      method: 'DELETE',
     });
   }
 }

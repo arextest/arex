@@ -1,22 +1,22 @@
-import "./components/app/index.less";
-import "./components/Collection/index.less";
-import "./components/environment/index.less";
+import './components/app/index.less';
+import './components/Collection/index.less';
+import './components/environment/index.less';
 
-import CheckChromeExtension from "./components/CheckChromeExtension";
-import { useRoutes } from "react-router-dom";
-import routerConfig from "./routers";
-import React, { useReducer } from "react";
+import CheckChromeExtension from './components/CheckChromeExtension';
+import { useRoutes } from 'react-router-dom';
+import routerConfig from './routers';
+import React, { useReducer } from 'react';
 export const GlobalContext = React.createContext({});
 const initState = {
   userinfo: {
-    email: localStorage.getItem("email"),
+    email: localStorage.getItem('email'),
   },
-  isLogin: localStorage.getItem("email") ? true : false,
+  isLogin: localStorage.getItem('email') ? true : false,
 };
 const reducer = (prevState, action) => {
-  let newState = { ...prevState };
+  const newState = { ...prevState };
   switch (action.type) {
-    case "login":
+    case 'login':
       newState.userinfo.email = action.payload;
       newState.isLogin = true;
       return newState;

@@ -1,8 +1,5 @@
-import axios from "axios";
-import {
-  QueryWorkspaceByIdReq,
-  QueryWorkspaceByIdRes,
-} from "./CollectionService.type";
+import axios from 'axios';
+import { QueryWorkspaceByIdReq, QueryWorkspaceByIdRes } from './CollectionService.type';
 export class CollectionService {
   static listCollection(params: { id: string }) {
     return axios.post(`/api/filesystem/queryWorkspaceById`, params);
@@ -21,11 +18,8 @@ export class CollectionService {
   }
 
   static async queryWorkspaceById({ id }: QueryWorkspaceByIdReq) {
-    return axios.post<QueryWorkspaceByIdRes>(
-      `/api/filesystem/queryWorkspaceById`,
-      {
-        id,
-      },
-    );
+    return axios.post<QueryWorkspaceByIdRes>(`/api/filesystem/queryWorkspaceById`, {
+      id,
+    });
   }
 }

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 export class LoginService {
   static sendVerifyCodeByEmail(email: string) {
     return axios.get(`/api/login/getVerificationCode/${email}`);

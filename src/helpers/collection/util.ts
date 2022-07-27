@@ -1,5 +1,5 @@
 // 数组转树通用方法
-import { NodeList } from "../../vite-env";
+import { NodeList } from '../../vite-env';
 export function arrToTree(arr: any, pid = 0) {
   const newArr: any = [];
   arr.forEach((item: any) => {
@@ -72,13 +72,8 @@ export function collectionOriginalTreeToAntdTreeData(
       // isLeaf: nodes[value].nodeType === 2||nodes[value].children==null
       // icon: iconMap[nodes[value].nodeType],
     });
-    if (
-      nodes[value].children && Object.keys(nodes[value].children).length > 0
-    ) {
-      collectionOriginalTreeToAntdTreeData(
-        nodes[value].children,
-        nodeList[index].children,
-      );
+    if (nodes[value].children && Object.keys(nodes[value].children).length > 0) {
+      collectionOriginalTreeToAntdTreeData(nodes[value].children, nodeList[index].children);
     }
   });
   return nodeList;

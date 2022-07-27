@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
 // import { KeyValueType } from "../components/Http";
 // import { METHODS, NodeType } from "../constant";
@@ -21,12 +21,10 @@ export type RootParadigmKey = {
   title: string;
   icon?: ReactNode;
 };
-export type Root<T = RootParadigmNode | RootParadigmKey> =
-  & {
-    nodeType: NodeType;
-    children: Root<T>[] | null;
-  }
-  & T;
+export type Root<T = RootParadigmNode | RootParadigmKey> = {
+  nodeType: NodeType;
+  children: Root<T>[] | null;
+} & T;
 type FsTree = {
   id: string;
   roots: Root<RootParadigmNode>[];
