@@ -70,6 +70,7 @@ function CollectionTitleRender({
                     callbackOfNewRequest(
                       [res.data.body.infoId],
                       paths.map((i: any) => i.key),
+                      1,
                     );
                   });
                 }}
@@ -91,8 +92,13 @@ function CollectionTitleRender({
                     nodeType: 2,
                     parentPath: paths.map((i: any) => i.key),
                     userName: 'zt',
-                  }).then(() => {
+                  }).then((res) => {
                     updateDirectorytreeData();
+                    callbackOfNewRequest(
+                      [res.data.body.infoId],
+                      paths.map((i: any) => i.key),
+                      2,
+                    );
                   });
                 }}
               >
@@ -165,9 +171,7 @@ function CollectionTitleRender({
               case
             </span>
           ) : null}
-          <div className={'content'}>
-            {val.title}
-          </div>
+          <div className={'content'}>{val.title}</div>
         </div>
         <div className='right'>
           <Dropdown

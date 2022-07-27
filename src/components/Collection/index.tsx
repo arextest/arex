@@ -7,7 +7,6 @@ import CollectionTitleRender from './CollectionTitleRender';
 import type { DirectoryTreeProps } from 'antd/lib/tree';
 import type { DataNode } from 'antd/es/tree';
 import { useParams } from 'react-router-dom';
-import {treeFindPath} from "../../helpers/collection/util";
 
 const dataList: { key: React.Key; title: string }[] = [];
 const generateList = (data: DataNode[]) => {
@@ -108,10 +107,23 @@ const Collection: FC<Props> = ({
 
   // 对外的函数
   // 展开指定的数组
-  function expandSpecifyKeys(keys: string[],p) {
-    console.log([...expandedKeys, ...keys],p)
-    setExpandedKeys([...expandedKeys, p[p.length -1]]);
-    setSelectedKeys([...keys])
+  function expandSpecifyKeys(keys: string[], p, nodeType) {
+    console.log([...expandedKeys, ...keys], p);
+    setExpandedKeys([...expandedKeys, p[p.length - 1]]);
+    setSelectedKeys([...keys]);
+
+    const newPanes = [...mainBoxPanes];
+    newPanes.push({
+      closable: true,
+      title: nodeType === 1 ? 'New Request' : 'New Case',
+      key: keys[0],
+      pageType: nodeType === 1 ? 'request' : 'case',
+      qid: keys[0],
+      nodeType: nodeType,
+    });
+    setMainBoxPanes(newPanes);
+    setMainBoxActiveKey(keys[0]);
+    // se
   }
 
   useEffect(() => {
@@ -160,7 +172,7 @@ const Collection: FC<Props> = ({
         {/*</Tooltip>*/}
       </div>
       <Tree
-          autoExpandParent
+        autoExpandParent
         blockNode={true}
         selectedKeys={selectedKeys}
         expandedKeys={expandedKeys}
