@@ -1,11 +1,11 @@
-import styled from "@emotion/styled";
-import { Button, Empty, Space } from "antd";
-import React, { FC, useState } from "react";
+import styled from '@emotion/styled';
+import { Button, Empty, Space } from 'antd';
+import React, { FC, useState } from 'react';
 
-import { ApplicationDataType, PlanStatistics } from "../../api/Replay.type";
-import { FlexCenterWrapper } from "../StyledComponents";
-import Report from "./Report";
-import Results from "./Results";
+import { ApplicationDataType, PlanStatistics } from '../../api/Replay.type';
+import { FlexCenterWrapper } from '../StyledComponents';
+import Report from './Report';
+import Results from './Results';
 
 const AppTitle = styled.div`
   height: 22px;
@@ -23,9 +23,9 @@ const AppTitle = styled.div`
 const Replay: FC<{ curApp?: ApplicationDataType }> = ({ curApp }) => {
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
   return curApp ? (
-    <Space direction="vertical" size="middle" style={{ display: "flex" }}>
+    <Space direction='vertical' size='middle' style={{ display: 'flex' }}>
       <AppTitle>
-        <h1 className="app-name">{`${curApp.appId}_${curApp.appName}`}</h1>
+        <h1 className='app-name'>{`${curApp.appId}_${curApp.appName}`}</h1>
         {/* <span> */}
         {/*  <label>Access CI: </label> */}
         {/*  <Tag */}
@@ -42,16 +42,20 @@ const Replay: FC<{ curApp?: ApplicationDataType }> = ({ curApp }) => {
           <label>Case Count: </label>
           <span>{curApp.recordedCaseCount}</span>
         </span>
-        <Button size="small">Start replay</Button>
+        <Button size='small'>Start replay</Button>
       </AppTitle>
       {/* Report component  */}
-      <Results appId={curApp.appId} onSelectedPlanChange={setSelectedPlan} />
+      <Results
+        // defaultSelectFirst
+        appId={curApp.appId}
+        onSelectedPlanChange={setSelectedPlan}
+      />
       <Report selectedPlan={selectedPlan} />
       {/* TODO Configuration */}
     </Space>
   ) : (
     <FlexCenterWrapper>
-      <Empty description={"Please select an application"} />
+      <Empty description={'Please select an application'} />
     </FlexCenterWrapper>
   );
 };
