@@ -8,10 +8,11 @@ import React, { FC, useMemo, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 
 import ReplayService from '../../api/Replay.service';
-import { PlanItemStatistics, PlanStatistics, ReplayCase } from '../../api/Replay.type';
+import { PlanItemStatistics, PlanStatistics } from '../../api/Replay.type';
 import { getPercent } from '../../utils';
 import { SmallTextButton } from '../StyledComponents';
 import Analysis, { TableWrapper } from './Analysis';
+import Case from './Case';
 import { states } from './Results';
 
 const { Text } = Typography;
@@ -40,15 +41,6 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
       ready: !!selectedPlan?.planId,
       refreshDeps: [selectedPlan?.planId],
       cacheKey: 'queryPlanItemStatistics',
-    },
-  );
-
-  const { data: caseData = [] } = useRequest(
-    () => ReplayService.queryReplayCase({ planItemId: expandedRowKeys[0] }),
-    {
-      ready: !!expandedRowKeys.length && activeDetailTabsKey === 'case',
-      refreshDeps: [expandedRowKeys[0]],
-      cacheKey: 'queryReplayCase',
     },
   );
 
@@ -160,32 +152,6 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     },
   ];
 
-  const columnsCase: ColumnsType<ReplayCase> = [
-    {
-      title: 'Record ID',
-      dataIndex: 'recordId',
-    },
-    {
-      title: 'Replay ID',
-      dataIndex: 'replayId',
-    },
-    {
-      title: 'Status',
-      render: (_, record) => (
-        <Tag color={record.diffResultCode ? 'error' : 'success'}>
-          {record.diffResultCode ? 'Failed' : 'Success'}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Action',
-      render: (_, record) => [
-        <SmallTextButton key='replayLog' title='Replay Log' />,
-        <SmallTextButton key='detail' title='Detail' />,
-      ],
-    },
-  ];
-
   return selectedPlan ? (
     <Card size='small' title={`Report: ${selectedPlan.planName}`}>
       <Row gutter={12}>
@@ -264,7 +230,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
               </TabPane>
               <TabPane tab='Case' key='case'>
                 <TableWrapper>
-                  <Table columns={columnsCase} dataSource={caseData} pagination={false} />
+                  <Case planItemId={record.planItemId} />
                 </TableWrapper>
               </TabPane>
             </Tabs>
