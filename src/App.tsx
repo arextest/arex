@@ -1,5 +1,5 @@
 import './components/app/index.less';
-import './components/Collection/index.less';
+import './components/HttpRequest/CollectionMenu/index.less';
 import './components/Environment/index.less';
 
 import React, { useReducer } from 'react';

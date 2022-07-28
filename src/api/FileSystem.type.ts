@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { KeyValueType } from '../components/Http';
+import { KeyValueType } from '../components/HttpRequest';
 import { METHODS, NodeType } from '../constant';
 
 // ------ /api/filesystem/queryWorkspaceById ------

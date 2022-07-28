@@ -1,12 +1,20 @@
 import './index.less';
 
 import { FileOutlined, GlobalOutlined, GoldOutlined } from '@ant-design/icons';
-import { useMount } from 'ahooks';
 import { Divider, Menu, Space, Tabs } from 'antd';
-import { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { AppHeader, Collection, Environment, Login, Replay, ReplayMenu } from '../../components';
+import {
+  AppFooter,
+  AppHeader,
+  CollectionMenu,
+  Environment,
+  HttpRequest,
+  Login,
+  Replay,
+  ReplayMenu,
+} from '../../components';
 import { NodeType, PageTypeEnum } from '../../constant';
 import { collectionOriginalTreeToAntdTreeData, treeFind } from '../../helpers/collection/util';
 import { CollectionService } from '../../services/CollectionService';
@@ -16,7 +24,6 @@ import DraggableLayout from '../DraggableLayout';
 import PaneAreaEmpty from './Empty';
 
 type PaneProps = {
-  closable: boolean;
   title: string;
   key: string;
   pageType: PageTypeEnum;
@@ -25,9 +32,9 @@ type PaneProps = {
   nodeType: NodeType;
 };
 import { GlobalContext } from '../../App';
-import AppFooter from '../../components/app/Footer';
-import HttpRequest, { HttpMode } from '../../components/Http';
-import FolderPage from '../../pages/folder';
+import { HttpMode } from '../../components/HttpRequest';
+import { CollectionRef } from '../../components/HttpRequest/CollectionMenu';
+import FolderPage from '../../pages/Folder';
 
 const { TabPane } = Tabs;
 
@@ -57,7 +64,7 @@ const menuItems = [
   },
 ];
 
-const Index = () => {
+const MainBox = () => {
   const _useParams = useParams();
   const _useNavigate = useNavigate();
 
@@ -85,11 +92,10 @@ const Index = () => {
 
   // *tab相关
   const [activeKey, setActiveKey] = useState('');
-  const add = () => {
+  const addTab = () => {
     const newActiveKey = String(Math.random());
     const newPanes = [...panes];
     newPanes.push({
-      closable: true,
       title: 'New Request',
       key: newActiveKey,
       pageType: PageTypeEnum.Request,
@@ -102,33 +108,34 @@ const Index = () => {
     setActiveKey(newActiveKey);
   };
 
-  const remove = (targetKey: string) => {
+  const removeTab = (targetKey: string) => {
     const f = panes.filter((i) => i.key !== targetKey);
     setPanes(f);
 
     if (f.length > 0) {
       setActiveKey(f[f.length - 1].key);
-      updateChildState([f[f.length - 1].key]);
+      updateCollectionMenuKeys([f[f.length - 1].key]);
     } else {
-      updateChildState([]);
+      updateCollectionMenuKeys([]);
     }
   };
 
-  const onEdit: any = (targetKey: string, action: 'add' | 'remove') => {
+  const handleTabsEdit: any = (targetKey: string, action: 'add' | 'remove') => {
     if (action === 'add') {
-      add();
+      addTab();
     } else {
-      remove(targetKey);
+      removeTab(targetKey);
     }
   };
 
-  // mount
-  useMount(() => {});
+  const handleTabsChange = (activeKey: string) => {
+    setActiveKey(activeKey);
+    updateCollectionMenuKeys([activeKey]);
+  };
 
-  const childRef = useRef();
-  const updateChildState = (keys) => {
-    // changeVal就是子组件暴露给父组件的方法
-    childRef.current.changeVal(keys);
+  const collectionRef = useRef<CollectionRef>(null);
+  const updateCollectionMenuKeys = (keys: React.Key[]) => {
+    collectionRef?.current?.setSelectedKeys(keys);
   };
 
   // 监听params
@@ -200,7 +207,7 @@ const Index = () => {
                       display: siderMenuSelectedKey === 'collection' ? 'block' : 'none',
                     }}
                   >
-                    <Collection
+                    <CollectionMenu
                       treeData={collectionTreeData}
                       setMainBoxPanes={setPanes}
                       mainBoxPanes={panes}
@@ -209,7 +216,7 @@ const Index = () => {
                       fetchTreeData={() => {
                         fetchCollectionTreeData();
                       }}
-                      cRef={childRef}
+                      ref={collectionRef}
                     />
                   </div>
                   <div
@@ -230,13 +237,11 @@ const Index = () => {
                         const f = newPanes.find((i) => i.key === app.appId);
                         if (!f) {
                           newPanes.push({
-                            closable: true,
                             title: app.appId,
                             key: app.appId,
                             pageType: PageTypeEnum.Replay,
                             qid: app.appId,
                             isNew: true,
-                            // 其实nodeType应该得通过qid拿到
                             curApp: app,
                           });
                           setPanes(newPanes);
@@ -255,24 +260,22 @@ const Index = () => {
                 size='small'
                 type='editable-card'
                 tabBarGutter={-1}
-                onEdit={onEdit}
+                onEdit={handleTabsEdit}
                 activeKey={activeKey}
-                onChange={(_activeKey) => {
-                  setActiveKey(_activeKey);
-                }}
+                onChange={handleTabsChange}
                 tabBarStyle={{
-                  left: ' -11px',
-                  top: ' -1px',
+                  left: '-11px',
+                  top: '-1px',
                 }}
               >
                 {panes.map((pane) => (
                   <TabPane
+                    closable
                     tab={
                       treeFind(collectionTreeData, (node) => node.key === pane.key)?.title ||
                       pane.title + pane.pageType
                     }
                     key={pane.key}
-                    closable={pane.closable}
                   >
                     {pane.pageType === PageTypeEnum.Request && (
                       <HttpRequest
@@ -280,12 +283,11 @@ const Index = () => {
                         mode={HttpMode.Normal}
                         id={pane.qid}
                         isNew={pane.isNew}
-                        activateNewRequestInPane={(p) => {
+                        onSaveAs={(p) => {
                           fetchCollectionTreeData();
                           const newPanes = [...panes.filter((i) => i.key !== activeKey)];
                           newPanes.push({
                             isNew: true,
-                            closable: true,
                             title: p.title,
                             key: p.key,
                             pageType: PageTypeEnum.Request,
@@ -303,7 +305,7 @@ const Index = () => {
                   </TabPane>
                 ))}
               </Tabs>
-              {!panes.length && <PaneAreaEmpty add={add} />}
+              {!panes.length && <PaneAreaEmpty add={addTab} />}
             </div>
           </DraggableLayout>
         </div>
@@ -312,4 +314,5 @@ const Index = () => {
     </>
   );
 };
-export default Index;
+
+export default MainBox;

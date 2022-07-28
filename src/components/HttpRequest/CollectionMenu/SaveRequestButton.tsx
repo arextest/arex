@@ -2,10 +2,10 @@ import { Button, Form, Input, Modal, TreeSelect, Typography } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { FileSystemService } from '../../api/FileSystem.service';
-import { ContentTypeEnum } from '../../constant';
-import { treeFindPath } from '../../helpers/collection/util';
-import { CollectionService } from '../../services/CollectionService';
+import { FileSystemService } from '../../../api/FileSystem.service';
+import { ContentTypeEnum } from '../../../constant';
+import { treeFindPath } from '../../../helpers/collection/util';
+import { CollectionService } from '../../../services/CollectionService';
 const { Text } = Typography;
 
 type SaveRequestButtonProps = {
@@ -33,12 +33,12 @@ type SaveRequestButtonProps = {
     testScript: unknown;
   };
   collectionTreeData: any;
-  activateNewRequestInPane: any;
+  onSaveAs: any;
 };
 const SaveRequestButton: FC<SaveRequestButtonProps> = ({
   reqParams,
   collectionTreeData,
-  activateNewRequestInPane,
+  onSaveAs,
 }) => {
   const _useParams = useParams();
   const [form] = Form.useForm();
@@ -90,7 +90,7 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
                   id: res.data.body.infoId,
                 }).then((r) => {
                   // 通知父组件
-                  activateNewRequestInPane({
+                  onSaveAs({
                     key: res.data.body.infoId,
                     title: values.requestName,
                   });

@@ -2,8 +2,8 @@ import { Input, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { treeFindPath } from '../../helpers/collection/util';
-import { CollectionService } from '../../services/CollectionService';
+import { treeFindPath } from '../../../helpers/collection/util';
+import { CollectionService } from '../../../services/CollectionService';
 
 const CreateAndUpdateFolder: React.FC<any> = ({
   updateDirectorytreeData,

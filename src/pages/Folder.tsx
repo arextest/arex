@@ -1,13 +1,9 @@
-import { useMount } from 'ahooks';
-import { Input, Select, Tabs, Typography } from 'antd';
-import { useEffect, useState } from 'react';
+import { Select, Tabs, Typography } from 'antd';
 
-import HttpRequest from '../components/Http/index';
-import { treeFindPath } from '../helpers/collection/util';
 const { TabPane } = Tabs;
-const { Text, Link } = Typography;
+const { Text } = Typography;
 
-const FolderPage = () => {
+const Folder = () => {
   const onChange = (key: string) => {
     console.log(key);
   };
@@ -55,4 +51,4 @@ const FolderPage = () => {
   );
 };
 
-export default FolderPage;
+export default Folder;

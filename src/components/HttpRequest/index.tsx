@@ -29,7 +29,7 @@ import { tryParseJsonString, tryPrettierJsonString } from '../../utils';
 import AgentAxios from '../../utils/request';
 import { NodeList } from '../../vite-env';
 import AnimateAutoHeight from '../AnimateAutoHeight/index';
-import SaveRequestButton from '../Collection/SaveRequestButton';
+import SaveRequestButton from './CollectionMenu/SaveRequestButton';
 import FormHeader, { FormHeaderWrapper } from './FormHeader';
 import FormTable, { getColumns } from './FormTable';
 import Response from './Response';
@@ -47,7 +47,7 @@ export type HttpProps = {
   id: string;
   isNew: boolean;
   collectionTreeData: NodeList[];
-  activateNewRequestInPane: (p: { key: string; title: string }) => void;
+  onSaveAs: (p: { key: string; title: string }) => void;
 };
 
 export type KeyValueType = {
@@ -106,7 +106,7 @@ const Http: FC<HttpProps> = ({
   isNew,
   collectionTreeData,
   mode: defaultMode = HttpMode.Normal,
-  activateNewRequestInPane,
+  onSaveAs,
 }) => {
   const { theme, extensionInstalled } = useStore();
   const { t: t_common } = useTranslation('common');
@@ -467,9 +467,7 @@ const Http: FC<HttpProps> = ({
                   testScript: null,
                 }}
                 collectionTreeData={collectionTreeData}
-                activateNewRequestInPane={(p) => {
-                  activateNewRequestInPane(p);
-                }}
+                onSaveAs={onSaveAs}
               />
             ) : (
               <Button onClick={handleSave}>{t_common('save')}</Button>
