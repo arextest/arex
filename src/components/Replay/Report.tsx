@@ -30,7 +30,7 @@ const chartOptions = {
 
 const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
   const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
-  const [activeDetailTabsKey, setActiveDetailTabsKey] = useState<string>('result');
+  const [activeDetailTabsKey, setActiveDetailTabsKey] = useState<string>('analysis');
 
   const { data: planItemData } = useRequest(
     () =>
@@ -129,23 +129,10 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           title='Detail'
           onClick={() =>
             // only expend one row at a time
-            {
-              console.log(record.planItemId);
-              setExpandedRowKeys(
-                expandedRowKeys[0] === record.planItemId ? [] : [record.planItemId],
-              );
-            }
+            setExpandedRowKeys(expandedRowKeys[0] === record.planItemId ? [] : [record.planItemId])
           }
         />,
-        <Button
-          key='rerun'
-          type='text'
-          size='small'
-          danger
-          onClick={() => {
-            console.log(record.planItemId);
-          }}
-        >
+        <Button danger key='rerun' type='text' size='small'>
           Rerun
         </Button>,
       ],
@@ -225,7 +212,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
               onChange={setActiveDetailTabsKey}
               style={{ marginTop: '-8px' }}
             >
-              <TabPane tab='Result' key='result'>
+              <TabPane tab='Analysis' key='analysis'>
                 <Analysis planItemId={record.planItemId} />
               </TabPane>
               <TabPane tab='Case' key='case'>

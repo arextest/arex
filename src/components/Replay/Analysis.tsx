@@ -68,6 +68,7 @@ const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
           })}
         />
       </Col>
+
       <Col span={18}>
         <TableWrapper>
           <Table
@@ -78,6 +79,7 @@ const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
           />
         </TableWrapper>
       </Col>
+
       <Drawer title='Diff Detail' visible={visibleScene} onClose={toggleVisibleScene}>
         {/* TODO */}Scene content
       </Drawer>
