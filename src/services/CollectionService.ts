@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { QueryWorkspaceByIdReq, QueryWorkspaceByIdRes } from './CollectionService.type';
 export class CollectionService {
   static listCollection(params: { id: string }) {

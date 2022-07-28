@@ -14,10 +14,10 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    "ecmaVersion": "latest",
+    "ecmaVersion": 2021,
     "sourceType": "module"
   },
-  "plugins": ["react", "@typescript-eslint", "import", "jsx-a11y", "react-hooks", "prettier"],
+  "plugins": ["react", "@typescript-eslint", "import", "simple-import-sort", "jsx-a11y", "react-hooks", "prettier"],
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
@@ -29,10 +29,17 @@
         "caughtErrorsIgnorePattern": "^_"
       }
     ],
-
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
-
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "linebreak-style": "off",
+    "comma-dangle": [0, "always-multiline"],
+    "quotes": [0, "double"],
+    "semi": [0, "always"],
+    "space-before-function-paren": [0, "never"],
+    "multiline-ternary": "off",
+    "camelcase": "off",
     "prettier/prettier": [
       "warn",
       {

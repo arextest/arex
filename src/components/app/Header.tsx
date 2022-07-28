@@ -1,9 +1,10 @@
-import { Avatar, Dropdown, Menu, Space } from "antd";
-import AppGitHubStarButton from "./GitHubStarButton";
-import { DownOutlined, SettingOutlined } from "@ant-design/icons";
-import Setting from "../setting";
-import { FC, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { DownOutlined, SettingOutlined } from '@ant-design/icons';
+import { Avatar, Dropdown, Menu, Space } from 'antd';
+import { FC, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import Setting from '../setting';
+import AppGitHubStarButton from './GitHubStarButton';
 type Props = {
   userinfo: any;
   workspaces: any[];
@@ -13,21 +14,20 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
   return (
     <>
-    <div className={"app-header"}>
-      <Space className={"left"}>
-        <a
-          className={"app-name"}
-          onClick={() => {
-            // useNavigate()('/')
-            _useNavigate("/");
-          }}
-        >
-          AREX
-        </a>
-        <AppGitHubStarButton />
-        <Dropdown
-          overlay={
-            (
+      <div className={'app-header'}>
+        <Space className={'left'}>
+          <a
+            className={'app-name'}
+            onClick={() => {
+              // useNavigate()('/')
+              _useNavigate('/');
+            }}
+          >
+            AREX
+          </a>
+          <AppGitHubStarButton />
+          <Dropdown
+            overlay={
               <Menu
                 items={workspaces.map((workspace) => {
                   return {
@@ -44,22 +44,23 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
                   };
                 })}
               />
-            )
-          }
-        >
-          <span onClick={(e) => e.preventDefault()}>
-            <Space>Workspaces<DownOutlined /></Space>
-          </span>
-        </Dropdown>
-      </Space>
-      <div className={"right"}>
-        <div className="hover-wrap">
-          <Dropdown
-            trigger={["click"]}
-            overlay={
-              (
+            }
+          >
+            <span onClick={(e) => e.preventDefault()}>
+              <Space>
+                Workspaces
+                <DownOutlined />
+              </Space>
+            </span>
+          </Dropdown>
+        </Space>
+        <div className={'right'}>
+          <div className='hover-wrap'>
+            <Dropdown
+              trigger={['click']}
+              overlay={
                 <Menu
-                  items={["Setting"].map((workspace) => {
+                  items={['Setting'].map((workspace) => {
                     return {
                       key: workspace,
                       label: (
@@ -74,30 +75,30 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
                     };
                   })}
                 />
-              )
-            }
-          >
-            <span onClick={(e) => e.preventDefault()}>
-              <Space><SettingOutlined style={{ color: "#6B6B6B" }} /></Space>
-            </span>
-          </Dropdown>
-        </div>
-        <div className={"hover-wrap"}>
-          <Dropdown
-            trigger={["click"]}
-            overlay={
-              (
+              }
+            >
+              <span onClick={(e) => e.preventDefault()}>
+                <Space>
+                  <SettingOutlined style={{ color: '#6B6B6B' }} />
+                </Space>
+              </span>
+            </Dropdown>
+          </div>
+          <div className={'hover-wrap'}>
+            <Dropdown
+              trigger={['click']}
+              overlay={
                 <Menu
                   items={[
                     {
-                      key: "Sign Out",
+                      key: 'Sign Out',
                       label: (
                         <a
                           onClick={() => {
-                            localStorage.removeItem("email");
+                            localStorage.removeItem('email');
                             // value.dispatch({ type: "login"})
                             // _useNavigate('/')
-                            window.location.href = "/";
+                            window.location.href = '/';
                           }}
                         >
                           Sign Out
@@ -106,21 +107,19 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
                     },
                   ]}
                 />
-              )
-            }
-          >
-            <span onClick={(e) => e.preventDefault()}>
-              <Space><Avatar size={20}>{userinfo.email[0]}</Avatar></Space>
-            </span>
-          </Dropdown>
+              }
+            >
+              <span onClick={(e) => e.preventDefault()}>
+                <Space>
+                  <Avatar size={20}>{userinfo.email[0]}</Avatar>
+                </Space>
+              </span>
+            </Dropdown>
+          </div>
         </div>
       </div>
-    </div>
-    {/*模态框*/}
-    <Setting
-      isModalVisible={isSettingModalVisible}
-      setModalVisible={setIsSettingModalVisible}
-    />
+      {/*模态框*/}
+      <Setting isModalVisible={isSettingModalVisible} setModalVisible={setIsSettingModalVisible} />
     </>
   );
 };

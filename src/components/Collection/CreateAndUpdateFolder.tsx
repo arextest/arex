@@ -1,28 +1,21 @@
-import { Input, Modal } from "antd";
-import React, { useState, useEffect } from "react";
+import { Input, Modal } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { CollectionService } from "../../services/CollectionService";
-import { treeFindPath } from "../../helpers/collection/util";
-import { useNavigate, useParams } from "react-router-dom";
-// import { findPathByKey } from "../../helpers/collection/util";
+import { treeFindPath } from '../../helpers/collection/util';
+import { CollectionService } from '../../services/CollectionService';
 
-const CreateAndUpdateFolder: React.FC<any> = (
-  { updateDirectorytreeData, collectionTree, collectionCreateAndUpdateModal },
-) => {
+const CreateAndUpdateFolder: React.FC<any> = ({
+  updateDirectorytreeData,
+  collectionTree,
+  collectionCreateAndUpdateModal,
+}) => {
   const _useParams = useParams();
   const _useNavigate = useNavigate();
-  const [
-    CollectionCreateAndUpdateModalVisible,
-    setCollectionCreateAndUpdateModalVisible,
-  ] = useState(
-    collectionCreateAndUpdateModal.collectionCreateAndUpdateModalVisible,
-  );
-  const [
-    CollectionCreateAndUpdateModalFolderName,
-    setCollectionCreateAndUpdateModalFolderName,
-  ] = useState(
-    collectionCreateAndUpdateModal.collectionCreateAndUpdateModalFolderName,
-  );
+  const [CollectionCreateAndUpdateModalVisible, setCollectionCreateAndUpdateModalVisible] =
+    useState(collectionCreateAndUpdateModal.collectionCreateAndUpdateModalVisible);
+  const [CollectionCreateAndUpdateModalFolderName, setCollectionCreateAndUpdateModalFolderName] =
+    useState(collectionCreateAndUpdateModal.collectionCreateAndUpdateModalFolderName);
 
   useEffect(() => {
     setCollectionCreateAndUpdateModalFolderName(
@@ -36,8 +29,7 @@ const CreateAndUpdateFolder: React.FC<any> = (
   const handleOk = () => {
     const paths = treeFindPath(
       collectionTree,
-      (node) =>
-        node.key === collectionCreateAndUpdateModal.collectionCreateAndUpdateModalId,
+      (node) => node.key === collectionCreateAndUpdateModal.collectionCreateAndUpdateModalId,
     );
     CollectionService.rename({
       id: _useParams.workspaceId,
@@ -45,7 +37,7 @@ const CreateAndUpdateFolder: React.FC<any> = (
       path: paths.map((i: any) => i.key),
     }).then((res) => {
       setCollectionCreateAndUpdateModalVisible(false);
-      setCollectionCreateAndUpdateModalFolderName("");
+      setCollectionCreateAndUpdateModalFolderName('');
       updateDirectorytreeData();
     });
   };
@@ -56,19 +48,19 @@ const CreateAndUpdateFolder: React.FC<any> = (
 
   return (
     <>
-    <Modal
-      title={collectionCreateAndUpdateModal.collectionCreateAndUpdateModalMode}
-      visible={CollectionCreateAndUpdateModalVisible}
-      onOk={handleOk}
-      onCancel={handleCancel}
-    >
-      <Input
-        value={CollectionCreateAndUpdateModalFolderName}
-        onChange={(e) => {
-          setCollectionCreateAndUpdateModalFolderName(e.target.value);
-        }}
-      />
-    </Modal>
+      <Modal
+        title={collectionCreateAndUpdateModal.collectionCreateAndUpdateModalMode}
+        visible={CollectionCreateAndUpdateModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Input
+          value={CollectionCreateAndUpdateModalFolderName}
+          onChange={(e) => {
+            setCollectionCreateAndUpdateModalFolderName(e.target.value);
+          }}
+        />
+      </Modal>
     </>
   );
 };

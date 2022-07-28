@@ -2,10 +2,11 @@ import './components/app/index.less';
 import './components/Collection/index.less';
 import './components/environment/index.less';
 
-import CheckChromeExtension from './components/CheckChromeExtension';
-import { useRoutes } from 'react-router-dom';
-import routerConfig from './routers';
 import React, { useReducer } from 'react';
+import { useRoutes } from 'react-router-dom';
+
+import CheckChromeExtension from './components/CheckChromeExtension';
+import routerConfig from './routers';
 export const GlobalContext = React.createContext({});
 const initState = {
   userinfo: {

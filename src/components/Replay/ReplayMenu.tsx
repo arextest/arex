@@ -1,19 +1,17 @@
-import { ApplicationDataType } from "../../api/Replay.type";
-import ReplayService from "../../api/Replay.service";
-import MenuSelect from "../MenuSelect";
-import { FC } from "react";
+import { FC } from 'react';
 
-const ReplayMenu: FC<{ onSelect: (app: ApplicationDataType) => void }> = (
-  props,
-) => {
+import ReplayService from '../../api/Replay.service';
+import { ApplicationDataType } from '../../api/Replay.type';
+import MenuSelect from '../MenuSelect';
+
+const ReplayMenu: FC<{ onSelect: (app: ApplicationDataType) => void }> = (props) => {
   return (
     <MenuSelect<ApplicationDataType>
-      rowKey="appId"
+      rowKey='appId'
       onSelect={props.onSelect}
-      placeholder="applicationsMenu.appFilterPlaceholder"
+      placeholder='applicationsMenu.appFilterPlaceholder'
       request={ReplayService.regressionList}
-      filter={(keyword, app) =>
-        app.appName.includes(keyword) || app.appId.includes(keyword)}
+      filter={(keyword, app) => app.appName.includes(keyword) || app.appId.includes(keyword)}
       itemRender={(app) => ({
         label: `${app.appId}_${app.appName}`,
         key: app.appId,

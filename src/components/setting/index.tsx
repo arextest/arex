@@ -1,5 +1,5 @@
-import { Modal } from "antd";
-import { FC } from "react";
+import { Modal } from 'antd';
+import { FC } from 'react';
 
 type Props = {
   isModalVisible: boolean;
@@ -15,12 +15,7 @@ const Setting: FC<Props> = ({ isModalVisible, setModalVisible }) => {
   }
   return (
     <div>
-      <Modal
-        title="SETTINGS"
-        visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
+      <Modal title='SETTINGS' visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <p>Some contents...</p>
         <p>Some contents...</p>
         <p>Some contents...</p>

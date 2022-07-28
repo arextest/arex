@@ -1,26 +1,24 @@
-import { Button, Input, message, Alert } from "antd";
-import { UserOutlined, LockOutlined, DownOutlined } from "@ant-design/icons";
-import React, { FC, useContext, useEffect, useMemo, useState } from "react";
-import "./index.less";
-import { LoginService } from "../../services/LoginService";
-import { GlobalContext } from "../../App";
-import { WorkspaceService } from "../../services/WorkspaceService";
+import './index.less';
+
+import { DownOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Alert, Button, Input, message } from 'antd';
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
+
+import { GlobalContext } from '../../App';
+import { LoginService } from '../../services/LoginService';
+import { WorkspaceService } from '../../services/WorkspaceService';
 
 let timeChange: any;
 const Login = () => {
   const value = useContext(GlobalContext);
-  const [email, setEmail] = useState("");
-  const [verificationCode, setVerificationCode] = useState<string>("");
+  const [email, setEmail] = useState('');
+  const [verificationCode, setVerificationCode] = useState<string>('');
   const [emailchecked, setEmailchecked] = useState<boolean>(true);
   const [loadings, setLoadings] = useState<boolean>(false);
   const [count, setCount] = useState<number>(60);
   const getEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    if (
-      value.match(
-        /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/,
-      )
-    ) {
+    if (value.match(/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/)) {
       setEmailchecked(true);
     } else {
       setEmailchecked(false);
@@ -34,8 +32,8 @@ const Login = () => {
   };
 
   const sendVerificationCode = () => {
-    if (!emailchecked || email == "") {
-      message.error("email error");
+    if (!emailchecked || email == '') {
+      message.error('email error');
       return;
     }
     setLoadings(true);
@@ -44,9 +42,9 @@ const Login = () => {
     }, 1000);
     LoginService.sendVerifyCodeByEmail(email).then((res) => {
       if (res.data.body.success == true) {
-        message.success("The verification code has been sent to the email.");
+        message.success('The verification code has been sent to the email.');
       } else {
-        message.error("Authentication failed.");
+        message.error('Authentication failed.');
       }
     });
   };
@@ -58,25 +56,25 @@ const Login = () => {
       if (workspaces.length === 0) {
         const params = {
           userName: userName,
-          workspaceName: "Default",
+          workspaceName: 'Default',
         };
         WorkspaceService.createWorkspace(params).then((res) => {
-          localStorage.setItem("email", email);
-          value.dispatch({ type: "login", payload: email });
+          localStorage.setItem('email', email);
+          value.dispatch({ type: 'login', payload: email });
         });
       } else {
-        localStorage.setItem("email", email);
-        value.dispatch({ type: "login", payload: email });
+        localStorage.setItem('email', email);
+        value.dispatch({ type: 'login', payload: email });
       }
     });
   };
 
   const login = () => {
-    if (!emailchecked || email == "") {
-      message.error("Please check your email");
+    if (!emailchecked || email == '') {
+      message.error('Please check your email');
       return;
-    } else if (verificationCode == "") {
-      message.error("Please fill in the verification code");
+    } else if (verificationCode == '') {
+      message.error('Please fill in the verification code');
       return;
     }
 
@@ -85,10 +83,10 @@ const Login = () => {
       verificationCode: verificationCode,
     }).then((res) => {
       if (res.data.body.success == true) {
-        message.success("Login succeeded");
+        message.success('Login succeeded');
         initBeforeUserEntry(email);
       } else {
-        message.error("Login failed");
+        message.error('Login failed');
       }
     });
   };
@@ -102,55 +100,59 @@ const Login = () => {
   }, [count]);
 
   return (
-    <div className={"login-layout"}>
+    <div className={'login-layout'}>
       {window.__AREX_EXTENSION_INSTALLED__ ? null : (
         <Alert
           message={
-            (
-              <div>
-                Be careful：The Chrome Extension can break the cross-domain limit of the browser. Please install the
-                <a
-                  href="https://chrome.google.com/webstore/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj"
-                  target={"_blank"}
-                >
-                  Chrome Extension
-                </a>
-                before you run it.
-              </div>
-            )
+            <div>
+              Be careful：The Chrome Extension can break the cross-domain limit of the browser.
+              Please install the
+              <a
+                href='https://chrome.google.com/webstore/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj'
+                target={'_blank'}
+                rel='noreferrer'
+              >
+                Chrome Extension
+              </a>
+              before you run it.
+            </div>
           }
         />
       )}
-      <div className={"login"}>
-        <div className={"login-title"}>AREX</div>
+      <div className={'login'}>
+        <div className={'login-title'}>AREX</div>
         <Input
-          size="large"
-          placeholder="Please enter your email！"
+          size='large'
+          placeholder='Please enter your email！'
           prefix={<UserOutlined />}
           onChange={getEmail}
-          status={emailchecked ? "" : "error"}
+          status={emailchecked ? '' : 'error'}
           allowClear
         />
-        {emailchecked ? <div className={"login-email-tip"}></div> : (
-          <div className={"login-email-tip"}>Please enter the correct email!</div>
+        {emailchecked ? (
+          <div className={'login-email-tip'}></div>
+        ) : (
+          <div className={'login-email-tip'}>Please enter the correct email!</div>
         )}
-        <div className={"login-verificationCode"}>
+        <div className={'login-verificationCode'}>
           <Input
-            size="large"
-            placeholder="Please enter a verification code！"
+            size='large'
+            placeholder='Please enter a verification code！'
             prefix={<LockOutlined />}
             onChange={getVerificationCode}
           />
           <Button
-              style={{marginLeft:'8px'}}
-            size="large"
+            style={{ marginLeft: '8px' }}
+            size='large'
             onClick={sendVerificationCode}
             disabled={loadings}
           >
-            {loadings ? count + "s" : ""}Verification code
+            {loadings ? count + 's' : ''}Verification code
           </Button>
         </div>
-        <Button type="primary" block size="large" onClick={login}>Login</Button>
+        <Button type='primary' block size='large' onClick={login}>
+          Login
+        </Button>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { Button, Empty } from 'antd';
 import { FC, useContext } from 'react';
+
 import { GlobalContext } from '../../App';
 
 const PaneAreaEmpty: FC<any> = ({ add }) => {

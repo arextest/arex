@@ -1,21 +1,18 @@
-import {
-  Button,
-  Form,
-  Input,
-  Modal,
-  Radio,
-  TreeSelect,
-  Typography,
-} from "antd";
-import React, { useMemo, useState } from "react";
-import { CollectionService } from "../../services/CollectionService";
-import { useParams } from "react-router-dom";
-import { FileSystemService } from "../../api/FileSystem.service";
-import { treeFindPath } from "../../helpers/collection/util";
+import { Button, Form, Input, Modal, Radio, TreeSelect, Typography } from 'antd';
+import React, { useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
+import { FileSystemService } from '../../api/FileSystem.service';
+import { treeFindPath } from '../../helpers/collection/util';
+import { CollectionService } from '../../services/CollectionService';
 const { Text, Link } = Typography;
-const CollectionSaveRequest = (
-  { show, onCancel, collectionTreeData, activateNewRequestInPane, reqParams },
-) => {
+const CollectionSaveRequest = ({
+  show,
+  onCancel,
+  collectionTreeData,
+  activateNewRequestInPane,
+  reqParams,
+}) => {
   const _useParams = useParams();
   const [form] = Form.useForm();
   const [value, setValue] = useState<string>();
@@ -26,8 +23,7 @@ const CollectionSaveRequest = (
 
   // 深度优先遍历
   const mapTree = (tree) => {
-    const haveChildren =
-      Array.isArray(tree.children) && tree.children.length > 0;
+    const haveChildren = Array.isArray(tree.children) && tree.children.length > 0;
     return {
       ...tree,
       disabled: tree.nodeType !== 3,
@@ -36,15 +32,15 @@ const CollectionSaveRequest = (
   };
 
   const collectionTreeSelectData = useMemo(() => {
-    return mapTree({ children: collectionTreeData })["children"];
+    return mapTree({ children: collectionTreeData })['children'];
   }, [collectionTreeData]);
 
   return (
     <Modal
       visible={show}
-      title="SAVE REQUEST"
-      okText="Create"
-      cancelText="Cancel"
+      title='SAVE REQUEST'
+      okText='Create'
+      cancelText='Cancel'
       onCancel={onCancel}
       onOk={() => {
         form
@@ -55,11 +51,10 @@ const CollectionSaveRequest = (
               id: _useParams.workspaceId,
               nodeName: values.requestName,
               nodeType: 1,
-              parentPath: treeFindPath(
-                collectionTreeData,
-                (node) => node.key === value,
-              )?.map((i) => i.key),
-              userName: "zt",
+              parentPath: treeFindPath(collectionTreeData, (node) => node.key === value)?.map(
+                (i) => i.key,
+              ),
+              userName: 'zt',
             }).then((res) => {
               FileSystemService.saveInterface({
                 ...reqParams,
@@ -75,25 +70,25 @@ const CollectionSaveRequest = (
             // onCreate(values);
           })
           .catch((info) => {
-            console.log("Validate Failed:", info);
+            console.log('Validate Failed:', info);
           });
       }}
     >
       <Form
         form={form}
-        layout="vertical"
-        name="form_in_modal"
+        layout='vertical'
+        name='form_in_modal'
         initialValues={{
-          modifier: "public",
+          modifier: 'public',
         }}
       >
         <Form.Item
-          name="requestName"
-          label="Request name"
+          name='requestName'
+          label='Request name'
           rules={[
             {
               required: true,
-              message: "Please input the title of collection!",
+              message: 'Please input the title of collection!',
             },
           ]}
         >
@@ -101,29 +96,29 @@ const CollectionSaveRequest = (
         </Form.Item>
         <p>
           <span>Save to </span>
-          <Text type="secondary">
+          <Text type='secondary'>
             {treeFindPath(collectionTreeData, (node) => node.key === value)
               ?.map((i) => i.title)
-              .join(" / ")}
+              .join(' / ')}
           </Text>
         </p>
         <Form.Item
-          name="savePath"
-          label=""
+          name='savePath'
+          label=''
           rules={[
             {
               required: true,
-              message: "Please input the title of collection!",
+              message: 'Please input the title of collection!',
             },
           ]}
         >
           <TreeSelect
-            fieldNames={{ label: "title", value: "key" }}
-            style={{ width: "100%" }}
+            fieldNames={{ label: 'title', value: 'key' }}
+            style={{ width: '100%' }}
             value={value}
-            dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
             treeData={collectionTreeSelectData}
-            placeholder="Please select"
+            placeholder='Please select'
             treeDefaultExpandAll
             onChange={onChange}
           />

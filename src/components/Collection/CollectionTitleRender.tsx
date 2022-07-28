@@ -1,11 +1,12 @@
 import { ApiOutlined, MoreOutlined } from '@ant-design/icons';
 import { Dropdown, Menu, Popconfirm, Space } from 'antd';
 import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import { treeFindPath } from '../../helpers/collection/util';
 import { CollectionService } from '../../services/CollectionService';
 // import { findPathByKey } from "../../helpers/collection/util";
 import CreateAndUpdateFolder from './CreateAndUpdateFolder';
-import { useNavigate, useParams } from 'react-router-dom';
-import { treeFindPath } from '../../helpers/collection/util';
 
 function CollectionTitleRender({
   val,

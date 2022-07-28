@@ -1,6 +1,7 @@
+import './DraggableLayout.less';
+
 import { useMount } from 'ahooks';
 import { useRef } from 'react';
-import './DraggableLayout.less';
 
 const styleMap: any = {
   horizontal: {

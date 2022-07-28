@@ -1,6 +1,7 @@
-import HttpRequest from '../components/Http/index';
 import { useMount } from 'ahooks';
 import { useEffect, useState } from 'react';
+
+import HttpRequest from '../components/Http/index';
 import { treeFindPath } from '../helpers/collection/util';
 
 const RequestPage = ({ data, collectionTreeData, activateNewRequestInPane }) => {

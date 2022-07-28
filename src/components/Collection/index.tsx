@@ -1,12 +1,14 @@
-import { Button, Spin, Input, Tooltip, Tree, Empty } from 'antd';
-import { MenuOutlined, DashOutlined, DownOutlined } from '@ant-design/icons';
-import React, { FC, useEffect, useImperativeHandle, useState } from 'react';
 import './index.less';
+
+import { DashOutlined, DownOutlined, MenuOutlined } from '@ant-design/icons';
+import { Button, Empty, Input, Spin, Tooltip, Tree } from 'antd';
+import type { DataNode } from 'antd/es/tree';
+import type { DirectoryTreeProps } from 'antd/lib/tree';
+import React, { FC, useEffect, useImperativeHandle, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
 import { CollectionService } from '../../services/CollectionService';
 import CollectionTitleRender from './CollectionTitleRender';
-import type { DirectoryTreeProps } from 'antd/lib/tree';
-import type { DataNode } from 'antd/es/tree';
-import { useParams } from 'react-router-dom';
 
 const dataList: { key: React.Key; title: string }[] = [];
 const generateList = (data: DataNode[]) => {

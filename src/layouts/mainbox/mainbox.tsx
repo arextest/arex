@@ -1,23 +1,25 @@
-import AppHeader from '../../components/app/Header';
-import RequestPage from '../../pages/request';
+import './mainbox.less';
+
+import { FileOutlined, GlobalOutlined, GoldOutlined } from '@ant-design/icons';
+import { useMount } from 'ahooks';
 import { Alert, Button, Divider, Menu, Space, Tabs } from 'antd';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate, useParams, useRoutes } from 'react-router-dom';
+
+import AppHeader from '../../components/app/Header';
 import Collection from '../../components/Collection';
 import Environment from '../../components/environment';
 import Login from '../../components/login';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { WorkspaceService } from '../../services/WorkspaceService';
-import { FileOutlined, GlobalOutlined, GoldOutlined } from '@ant-design/icons';
-import './mainbox.less';
-import { useMount } from 'ahooks';
-import { CollectionService } from '../../services/CollectionService';
-import ReplayPage from '../../pages/replay';
-import DraggableLayout from '../DraggableLayout';
-import { NodeList } from '../../vite-env';
-import { collectionOriginalTreeToAntdTreeData, treeFind } from '../../helpers/collection/util';
-import { useNavigate, useParams, useRoutes } from 'react-router-dom';
-import PaneAreaEmpty from './Empty';
-import { NodeType, PageType } from '../../constant';
 import ReplayMenu from '../../components/Replay/ReplayMenu';
+import { NodeType, PageType } from '../../constant';
+import { collectionOriginalTreeToAntdTreeData, treeFind } from '../../helpers/collection/util';
+import ReplayPage from '../../pages/replay';
+import RequestPage from '../../pages/request';
+import { CollectionService } from '../../services/CollectionService';
+import { WorkspaceService } from '../../services/WorkspaceService';
+import { NodeList } from '../../vite-env';
+import DraggableLayout from '../DraggableLayout';
+import PaneAreaEmpty from './Empty';
 
 type PaneProps = {
   closable: boolean;
@@ -278,7 +280,10 @@ const MainBox = () => {
                 >
                   {panes.map((pane) => (
                     <TabPane
-                      tab={treeFind(collectionTreeData, (node) => node.key === pane.key)?.title||pane.title}
+                      tab={
+                        treeFind(collectionTreeData, (node) => node.key === pane.key)?.title ||
+                        pane.title
+                      }
                       key={pane.key}
                       closable={pane.closable}
                     >
