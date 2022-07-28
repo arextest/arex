@@ -133,13 +133,27 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
       align: 'center',
       render: (_, record) => [
         <SmallTextButton
+          key='detail'
           title='Detail'
           onClick={() =>
             // only expend one row at a time
-            setExpandedRowKeys(expandedRowKeys[0] === record.planItemId ? [] : [record.planItemId])
+            {
+              console.log(record.planItemId);
+              setExpandedRowKeys(
+                expandedRowKeys[0] === record.planItemId ? [] : [record.planItemId],
+              );
+            }
           }
         />,
-        <Button type='text' size='small' danger>
+        <Button
+          key='rerun'
+          type='text'
+          size='small'
+          danger
+          onClick={() => {
+            console.log(record.planItemId);
+          }}
+        >
           Rerun
         </Button>,
       ],
@@ -166,8 +180,8 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     {
       title: 'Action',
       render: (_, record) => [
-        <SmallTextButton title='Replay Log' />,
-        <SmallTextButton title='Detail' />,
+        <SmallTextButton key='replayLog' title='Replay Log' />,
+        <SmallTextButton key='detail' title='Detail' />,
       ],
     },
   ];
@@ -227,7 +241,9 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           </div>
         </Col>
       </Row>
+
       <br />
+
       <Table
         size='small'
         rowKey='planItemId'
