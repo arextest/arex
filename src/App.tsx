@@ -7,12 +7,13 @@ import { useRoutes } from 'react-router-dom';
 
 import CheckChromeExtension from './components/CheckChromeExtension';
 import routerConfig from './routers';
+
 export const GlobalContext = React.createContext({});
 const initState = {
   userinfo: {
     email: localStorage.getItem('email'),
   },
-  isLogin: localStorage.getItem('email') ? true : false,
+  isLogin: !!localStorage.getItem('email'),
 };
 const reducer = (prevState, action) => {
   const newState = { ...prevState };
@@ -25,14 +26,15 @@ const reducer = (prevState, action) => {
       return newState;
   }
 };
+
 function App() {
   const [state, dispatch] = useReducer(reducer, initState);
   const useRoutesRouterConfig = useRoutes(routerConfig);
   return (
     <GlobalContext.Provider
       value={{
-        state: state,
-        dispatch: dispatch,
+        state,
+        dispatch,
       }}
     >
       <CheckChromeExtension />

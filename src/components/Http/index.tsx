@@ -12,11 +12,8 @@ import {
   Empty,
   Input,
   message,
-  Radio,
   Select,
-  Space,
   Spin,
-  Switch,
   Tabs,
   Tag,
   Typography,
@@ -26,7 +23,6 @@ import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
 import { FileSystemService } from '../../api/FileSystem.service';
-import { Root, RootParadigmKey } from '../../api/FileSystem.type';
 import { METHODS, NodeType } from '../../constant';
 import { treeFindPath } from '../../helpers/collection/util';
 import { useStore } from '../../store';
