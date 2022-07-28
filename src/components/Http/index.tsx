@@ -8,7 +8,6 @@ import {
   Breadcrumb,
   Button,
   Divider,
-  // Dropdown,
   Empty,
   Input,
   message,
@@ -23,14 +22,14 @@ import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
 import { FileSystemService } from '../../api/FileSystem.service';
-import { METHODS, NodeType } from '../../constant';
+import { ContentTypeEnum, MethodEnum, METHODS, NodeType } from '../../constant';
 import { treeFindPath } from '../../helpers/collection/util';
 import { useStore } from '../../store';
 import { tryParseJsonString, tryPrettierJsonString } from '../../utils';
 import AgentAxios from '../../utils/request';
 import { NodeList } from '../../vite-env';
 import AnimateAutoHeight from '../AnimateAutoHeight/index';
-import CollectionSaveRequest from '../Collection/SaveRequest';
+import SaveRequestButton from '../Collection/SaveRequestButton';
 import FormHeader, { FormHeaderWrapper } from './FormHeader';
 import FormTable, { getColumns } from './FormTable';
 import Response from './Response';
@@ -38,12 +37,16 @@ import ResponseCompare from './ResponseCompare';
 
 const { TabPane } = Tabs;
 
+export enum HttpMode {
+  Normal = 'normal',
+  Compare = 'compare',
+}
+
 export type HttpProps = {
-  mode?: 'normal' | 'compare';
+  mode?: HttpMode;
   id: string;
   isNew: boolean;
   collectionTreeData: NodeList[];
-  pageType: string;
   activateNewRequestInPane: (p: { key: string; title: string }) => void;
 };
 
@@ -98,18 +101,18 @@ const ResponseWrapper = styled.div`
 // id：request的id，组件加载时拉一次数据
 // isNew：是否为新增的request
 // collectionTreeData：集合树形结构数据。作用是通过id可查询出节点路径，用于显示面包屑之类的
-// pageType：页面类型
 const Http: FC<HttpProps> = ({
   id,
   isNew,
   collectionTreeData,
-  pageType,
+  mode: defaultMode = HttpMode.Normal,
   activateNewRequestInPane,
 }) => {
   const { theme, extensionInstalled } = useStore();
   const { t: t_common } = useTranslation('common');
   const { t: t_components } = useTranslation('components');
-  const [mode, setMode] = useState('normal');
+
+  const [mode, setMode] = useState(defaultMode);
   // 如果是case(2)类型的话，就一定有一个父节点，类型也一定是request(1)
   const nodeInfoInCollectionTreeData = useMemo(() => {
     const paths = treeFindPath(collectionTreeData, (node) => node.key === id);
@@ -120,9 +123,7 @@ const Http: FC<HttpProps> = ({
       raw: paths,
     };
   }, [collectionTreeData]);
-  const [showSaveRequestModal, setShowSaveRequestModal] = useState(false);
-
-  const [method, setMethod] = useState<typeof METHODS[number]>('GET');
+  const [method, setMethod] = useState<typeof METHODS[number]>(MethodEnum.GET);
 
   const [url, setUrl] = useState('');
   const [baseUrl, setBaseUrl] = useState('');
@@ -185,7 +186,7 @@ const Http: FC<HttpProps> = ({
     [requestHeaders],
   );
 
-  const [contentType, setContentType] = useState('application/json');
+  const [contentType, setContentType] = useState(ContentTypeEnum.applicationJson);
   const [requestBody, setRequestBody] = useState('');
 
   const validationRequest = (cancel: () => void) => {
@@ -290,7 +291,7 @@ const Http: FC<HttpProps> = ({
       refreshDeps: [nodeInfoInCollectionTreeData],
       onSuccess(res: any) {
         setUrl(res.body.address?.endpoint || '');
-        setMethod(res.body.address?.method || 'GET');
+        setMethod(res.body.address?.method || MethodEnum.GET);
         setRequestParams(res.body?.params || []);
         setRequestHeaders(res.body?.headers || []);
         setRequestBody(res.body?.body?.body || '');
@@ -320,7 +321,7 @@ const Http: FC<HttpProps> = ({
 
   const handleRequest = () => {
     const data: Partial<Record<'params' | 'data', object>> = {};
-    if (method === 'GET') {
+    if (method === MethodEnum.GET) {
       data.params = params;
     } else if (requestBody) {
       const body = tryParseJsonString(requestBody, t_common('invalidJSON'));
@@ -344,7 +345,7 @@ const Http: FC<HttpProps> = ({
     }
 
     const data: Partial<Record<'params' | 'data', object>> = {};
-    if (method === 'GET') {
+    if (method === MethodEnum.GET) {
       data.params = params;
     } else if (requestBody) {
       const body = tryParseJsonString(requestBody, t_common('invalidJSON'));
@@ -441,21 +442,43 @@ const Http: FC<HttpProps> = ({
           )}
           <div>
             {isNew ? (
-              <Button
-                onClick={() => {
-                  setShowSaveRequestModal(true);
+              <SaveRequestButton
+                reqParams={{
+                  auth: null,
+                  body: {
+                    contentType,
+                    body: requestBody,
+                  },
+                  address: {
+                    endpoint: url,
+                    method,
+                  },
+                  baseAddress: {
+                    endpoint: baseUrl,
+                    method,
+                  },
+                  testAddress: {
+                    endpoint: testUrl,
+                    method,
+                  },
+                  headers: requestHeaders,
+                  params: requestParams,
+                  preRequestScript: null,
+                  testScript: null,
                 }}
-              >
-                Save As
-              </Button>
+                collectionTreeData={collectionTreeData}
+                activateNewRequestInPane={(p) => {
+                  activateNewRequestInPane(p);
+                }}
+              />
             ) : (
               <Button onClick={handleSave}>{t_common('save')}</Button>
             )}
             <Divider type={'vertical'} />
             <Select
               options={[
-                { label: 'Normal', value: 'normal' },
-                { label: 'Compare', value: 'compare' },
+                { label: 'Normal', value: HttpMode.Normal },
+                { label: 'Compare', value: HttpMode.Compare },
               ]}
               value={mode}
               onChange={(val) => {
@@ -467,7 +490,7 @@ const Http: FC<HttpProps> = ({
         </div>
         <Divider style={{ margin: '0', marginBottom: '8px' }} />
         {/* 普通请求 */}
-        {mode === 'normal' ? (
+        {mode === HttpMode.Normal ? (
           <HeaderWrapper>
             <Select value={method} options={RequestTypeOptions} onChange={setMethod} />
             <Input
@@ -475,71 +498,9 @@ const Http: FC<HttpProps> = ({
               value={url}
               onChange={(e) => handleUrlChange(e.target.value)}
             />
-            <Button
-              // DropdownButton
-              type='primary'
-              // icon={<DownOutlined />}
-              onClick={handleRequest}
-              // overlay={
-              //   <Menu
-              //     items={[
-              //       {
-              //         key: "1",
-              //         label: t_components("http.importUrl"),
-              //         icon: <LinkOutlined />,
-              //       },
-              //       {
-              //         key: "2",
-              //         label: t_components("http.showCode"),
-              //         icon: <CodeOutlined />,
-              //       },
-              //       {
-              //         key: "3",
-              //         label: t_components("http.clearAll"),
-              //         icon: <DeleteOutlined />,
-              //       },
-              //     ]}
-              //   />
-              // }
-            >
+            <Button type='primary' onClick={handleRequest}>
               {t_common('send')}
             </Button>
-            <CollectionSaveRequest
-              reqParams={{
-                auth: null,
-                body: {
-                  contentType,
-                  body: requestBody,
-                },
-                address: {
-                  endpoint: url,
-                  method,
-                },
-                baseAddress: {
-                  endpoint: baseUrl,
-                  method,
-                },
-                testAddress: {
-                  endpoint: testUrl,
-                  method,
-                },
-                headers: requestHeaders,
-                params: requestParams,
-                preRequestScript: null,
-                testScript: null,
-              }}
-              collectionTreeData={collectionTreeData}
-              show={showSaveRequestModal}
-              onCancel={() => {
-                setShowSaveRequestModal(false);
-              }}
-              onCreate={() => {
-                setShowSaveRequestModal(false);
-              }}
-              activateNewRequestInPane={(p) => {
-                activateNewRequestInPane(p);
-              }}
-            />
           </HeaderWrapper>
         ) : (
           <div>
@@ -591,7 +552,6 @@ const Http: FC<HttpProps> = ({
               rowKey='id'
               pagination={false}
               dataSource={requestParams}
-              // @ts-ignore
               columns={getColumns(setRequestParams, true)}
             />
           </TabPane>
@@ -648,7 +608,6 @@ const Http: FC<HttpProps> = ({
               rowKey='id'
               pagination={false}
               dataSource={requestHeaders}
-              // @ts-ignore
               columns={getColumns(setRequestHeaders, true)}
             />
           </TabPane>
@@ -667,7 +626,7 @@ const Http: FC<HttpProps> = ({
       <div>
         {sent ? (
           <Spin spinning={requesting}>
-            {mode === 'normal' ? (
+            {mode === HttpMode.Normal ? (
               <Response
                 responseHeaders={response?.headers}
                 res={response?.data || response?.statusText}

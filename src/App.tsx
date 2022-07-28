@@ -1,6 +1,6 @@
 import './components/app/index.less';
 import './components/Collection/index.less';
-import './components/environment/index.less';
+import './components/Environment/index.less';
 
 import React, { useReducer } from 'react';
 import { useRoutes } from 'react-router-dom';

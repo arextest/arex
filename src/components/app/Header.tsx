@@ -3,7 +3,7 @@ import { Avatar, Dropdown, Menu, Space } from 'antd';
 import { FC, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import Setting from '../setting';
+import Setting from '../Setting';
 import AppGitHubStarButton from './GitHubStarButton';
 type Props = {
   userinfo: any;

@@ -1,19 +1,14 @@
-import './mainbox.less';
+import './index.less';
 
 import { FileOutlined, GlobalOutlined, GoldOutlined } from '@ant-design/icons';
 import { useMount } from 'ahooks';
-import { Alert, Button, Divider, Menu, Space, Tabs } from 'antd';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useParams, useRoutes } from 'react-router-dom';
+import { Divider, Menu, Space, Tabs } from 'antd';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import AppHeader from '../../components/app/Header';
-import Collection from '../../components/Collection';
-import Environment from '../../components/environment';
-import Login from '../../components/login';
-import ReplayMenu from '../../components/Replay/ReplayMenu';
-import { NodeType, PageType } from '../../constant';
+import { AppHeader, Collection, Environment, Login, Replay, ReplayMenu } from '../../components';
+import { NodeType, PageTypeEnum } from '../../constant';
 import { collectionOriginalTreeToAntdTreeData, treeFind } from '../../helpers/collection/util';
-import ReplayPage from '../../pages/replay';
 import { CollectionService } from '../../services/CollectionService';
 import { WorkspaceService } from '../../services/WorkspaceService';
 import { NodeList } from '../../vite-env';
@@ -24,17 +19,18 @@ type PaneProps = {
   closable: boolean;
   title: string;
   key: string;
-  pageType: PageType;
+  pageType: PageTypeEnum;
   qid: string;
   isNew: true;
   nodeType: NodeType;
 };
 import { GlobalContext } from '../../App';
 import AppFooter from '../../components/app/Footer';
-import HttpRequest from '../../components/Http';
+import HttpRequest, { HttpMode } from '../../components/Http';
 import FolderPage from '../../pages/folder';
 
 const { TabPane } = Tabs;
+
 // 静态数据
 const userinfo = {
   email: 'tzhangm@trip.com',
@@ -61,7 +57,7 @@ const menuItems = [
   },
 ];
 
-const MainBox = () => {
+const Index = () => {
   const _useParams = useParams();
   const _useNavigate = useNavigate();
 
@@ -96,7 +92,7 @@ const MainBox = () => {
       closable: true,
       title: 'New Request',
       key: newActiveKey,
-      pageType: PageType.request,
+      pageType: PageTypeEnum.Request,
       qid: newActiveKey,
       isNew: true,
       // 其实nodeType应该得通过qid拿到
@@ -218,14 +214,14 @@ const MainBox = () => {
                   </div>
                   <div
                     style={{
-                      display: siderMenuSelectedKey === PageType.environment ? 'block' : 'none',
+                      display: siderMenuSelectedKey === PageTypeEnum.Environment ? 'block' : 'none',
                     }}
                   >
                     <Environment />
                   </div>
                   <div
                     style={{
-                      display: siderMenuSelectedKey === PageType.replay ? 'block' : 'none',
+                      display: siderMenuSelectedKey === PageTypeEnum.Replay ? 'block' : 'none',
                     }}
                   >
                     <ReplayMenu
@@ -237,7 +233,7 @@ const MainBox = () => {
                             closable: true,
                             title: app.appId,
                             key: app.appId,
-                            pageType: PageType.replay,
+                            pageType: PageTypeEnum.Replay,
                             qid: app.appId,
                             isNew: true,
                             // 其实nodeType应该得通过qid拿到
@@ -254,31 +250,36 @@ const MainBox = () => {
             </div>
 
             {/*主区域*/}
-            <div style={{ padding: '10px' }}>
+            <div>
               <Tabs
+                size='small'
                 type='editable-card'
+                tabBarGutter={-1}
                 onEdit={onEdit}
                 activeKey={activeKey}
                 onChange={(_activeKey) => {
                   setActiveKey(_activeKey);
+                }}
+                tabBarStyle={{
+                  left: ' -11px',
+                  top: ' -1px',
                 }}
               >
                 {panes.map((pane) => (
                   <TabPane
                     tab={
                       treeFind(collectionTreeData, (node) => node.key === pane.key)?.title ||
-                      pane.title
+                      pane.title + pane.pageType
                     }
                     key={pane.key}
                     closable={pane.closable}
                   >
-                    {pane.pageType === PageType.request || pane.pageType === PageType.replay ? (
+                    {pane.pageType === PageTypeEnum.Request && (
                       <HttpRequest
                         collectionTreeData={collectionTreeData}
-                        mode={'normal'}
+                        mode={HttpMode.Normal}
                         id={pane.qid}
                         isNew={pane.isNew}
-                        pageType={pane.pageType}
                         activateNewRequestInPane={(p) => {
                           fetchCollectionTreeData();
                           const newPanes = [...panes.filter((i) => i.key !== activeKey)];
@@ -287,7 +288,7 @@ const MainBox = () => {
                             closable: true,
                             title: p.title,
                             key: p.key,
-                            pageType: PageType.request,
+                            pageType: PageTypeEnum.Request,
                             qid: p.key,
                             // 其实nodeType应该得通过qid拿到
                             nodeType: 3,
@@ -296,13 +297,13 @@ const MainBox = () => {
                           setActiveKey(p.key);
                         }}
                       />
-                    ) : null}
-                    {pane.pageType === PageType.replay ? <ReplayPage data={pane} /> : null}
-                    {pane.pageType === PageType.folder ? <FolderPage /> : null}
+                    )}
+                    {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}
+                    {pane.pageType === PageTypeEnum.Folder && <FolderPage />}
                   </TabPane>
                 ))}
               </Tabs>
-              {panes.length === 0 ? <PaneAreaEmpty add={add} /> : null}
+              {!panes.length && <PaneAreaEmpty add={add} />}
             </div>
           </DraggableLayout>
         </div>
@@ -311,4 +312,4 @@ const MainBox = () => {
     </>
   );
 };
-export default MainBox;
+export default Index;
