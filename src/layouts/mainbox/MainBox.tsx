@@ -65,7 +65,7 @@ const MainBox = () => {
   const _useParams = useParams();
   const _useNavigate = useNavigate();
 
-  const value = useContext(GlobalContext);
+  const { state: globalState } = useContext(GlobalContext);
 
   // *************侧边栏**************************
   const [siderMenuSelectedKey, setSiderMenuSelectedKey] = useState('collection');
@@ -154,7 +154,7 @@ const MainBox = () => {
 
   return (
     <>
-      {!value.state.isLogin ? (
+      {!globalState.isLogin ? (
         <Login />
       ) : (
         <div className={'main-box'}>
