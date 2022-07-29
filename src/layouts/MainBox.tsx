@@ -22,6 +22,7 @@ import { CollectionService } from '../services/CollectionService';
 import { WorkspaceService } from '../services/WorkspaceService';
 import { NodeList } from '../vite-env';
 import DraggableLayout from './DraggableLayout';
+import EnvironmentPage from "../pages/Environment";
 
 type PaneProps = {
   title: string;
@@ -70,7 +71,7 @@ const menuItems = [
     key: 'environment',
     label: 'Environment',
     icon: <GoldOutlined />,
-    disabled: true,
+    disabled: false,
   },
 ];
 
@@ -147,6 +148,20 @@ const MainBox = () => {
   const updateCollectionMenuKeys = (keys: React.Key[]) => {
     collectionRef?.current?.setSelectedKeys(keys);
   };
+
+  function activeEnvironmentPane() {
+    const newPanes = [...panes];
+    newPanes.push({
+      title: 'title',
+      key: 'key',
+      pageType: PageTypeEnum.Environment,
+      qid: 'key',
+      isNew: true,
+      curApp: {},
+    });
+    setPanes(newPanes);
+    setActiveKey('key');
+  }
 
   // 监听params
   useEffect(() => {
@@ -233,7 +248,7 @@ const MainBox = () => {
                       display: siderMenuSelectedKey === PageTypeEnum.Environment ? 'block' : 'none',
                     }}
                   >
-                    <Environment />
+                    <Environment  activePane={activeEnvironmentPane} />
                   </div>
                   <div
                     style={{
@@ -311,6 +326,7 @@ const MainBox = () => {
                     )}
                     {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}
                     {pane.pageType === PageTypeEnum.Folder && <Folder />}
+                    {pane.pageType === PageTypeEnum.Environment && <EnvironmentPage />}
                   </TabPane>
                 ))}
               </Tabs>
