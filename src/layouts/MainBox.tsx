@@ -186,118 +186,122 @@ const MainBox = () => {
 
           <Divider style={{ margin: '0' }} />
 
-          <DraggableLayout dir={'horizontal'}>
-            {/*侧边栏*/}
-            <div style={{ display: 'flex' }}>
-              <MainMenu tabPosition='left'>
-                <MainMenuItem
-                  tab={<MenuTitle icon={<ApiOutlined />} title='Collection' />}
-                  key='collection'
-                >
-                  <CollectionMenu
-                    treeData={collectionTreeData}
-                    setMainBoxPanes={setPanes}
-                    mainBoxPanes={panes}
-                    setMainBoxActiveKey={setActiveKey}
-                    fetchTreeData={() => {
-                      fetchCollectionTreeData();
-                    }}
-                    ref={collectionRef}
-                  />
-                </MainMenuItem>
-                <MainMenuItem
-                  tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}
-                  key='replay'
-                >
-                  <ReplayMenu
-                    onSelect={(app) => {
-                      const newPanes = [...panes];
-                      const f = newPanes.find((i) => i.key === app.appId);
-                      if (!f) {
-                        newPanes.push({
-                          title: app.appId,
-                          key: app.appId,
-                          pageType: PageTypeEnum.Replay,
-                          qid: app.appId,
-                          isNew: true,
-                          curApp: app,
-                        });
-                        setPanes(newPanes);
-                        setActiveKey(app.appId);
-                      }
-                    }}
-                  />
-                </MainMenuItem>
-                <MainMenuItem
-                  tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
-                  key='environment'
-                >
-                  <EnvironmentMenu activePane={activeEnvironmentPane} />
-                </MainMenuItem>
-              </MainMenu>
-            </div>
-
-            {/*主区域*/}
-            <div>
-              <Tabs
-                size='small'
-                type='editable-card'
-                tabBarGutter={-1}
-                onEdit={handleTabsEdit}
-                activeKey={activeKey}
-                onChange={handleTabsChange}
-                tabBarStyle={{
-                  left: '-11px',
-                  top: '-1px',
-                }}
-              >
-                {panes.map((pane) => (
-                  <TabPane
-                    closable
-                    tab={
-                      treeFind(collectionTreeData, (node) => node.key === pane.key)?.title ||
-                      pane.title + pane.pageType
-                    }
-                    key={pane.key}
+          <DraggableLayout
+            direction={'horizontal'}
+            limitRange={[30, 40]}
+            firstNode={
+              <div style={{ display: 'flex' }}>
+                <MainMenu tabPosition='left'>
+                  <MainMenuItem
+                    tab={<MenuTitle icon={<ApiOutlined />} title='Collection' />}
+                    key='collection'
                   >
-                    {pane.pageType === PageTypeEnum.Request && (
-                      <HttpRequest
-                        collectionTreeData={collectionTreeData}
-                        mode={HttpRequestMode.Normal}
-                        id={pane.qid}
-                        isNew={pane.isNew}
-                        onSaveAs={(p) => {
-                          fetchCollectionTreeData();
-                          const newPanes = [...panes.filter((i) => i.key !== activeKey)];
+                    <CollectionMenu
+                      treeData={collectionTreeData}
+                      setMainBoxPanes={setPanes}
+                      mainBoxPanes={panes}
+                      setMainBoxActiveKey={setActiveKey}
+                      fetchTreeData={() => {
+                        fetchCollectionTreeData();
+                      }}
+                      ref={collectionRef}
+                    />
+                  </MainMenuItem>
+                  <MainMenuItem
+                    tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}
+                    key='replay'
+                  >
+                    <ReplayMenu
+                      onSelect={(app) => {
+                        const newPanes = [...panes];
+                        const f = newPanes.find((i) => i.key === app.appId);
+                        if (!f) {
                           newPanes.push({
+                            title: app.appId,
+                            key: app.appId,
+                            pageType: PageTypeEnum.Replay,
+                            qid: app.appId,
                             isNew: true,
-                            title: p.title,
-                            key: p.key,
-                            pageType: PageTypeEnum.Request,
-                            qid: p.key,
-                            // 其实nodeType应该得通过qid拿到
-                            nodeType: 3,
+                            curApp: app,
                           });
                           setPanes(newPanes);
-                          setActiveKey(p.key);
-                        }}
-                      />
-                    )}
-                    {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}
-                    {pane.pageType === PageTypeEnum.Folder && <Folder />}
-                    {pane.pageType === PageTypeEnum.Environment && <Environment />}
-                  </TabPane>
-                ))}
-              </Tabs>
-              {!panes.length && (
-                <Empty>
-                  <Button type='primary' onClick={addTab}>
-                    New Request
-                  </Button>
-                </Empty>
-              )}
-            </div>
-          </DraggableLayout>
+                          setActiveKey(app.appId);
+                        }
+                      }}
+                    />
+                  </MainMenuItem>
+                  <MainMenuItem
+                    tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
+                    key='environment'
+                  >
+                    <EnvironmentMenu activePane={activeEnvironmentPane} />
+                  </MainMenuItem>
+                </MainMenu>
+              </div>
+            }
+            secondNode={
+              <>
+                <Tabs
+                  size='small'
+                  type='editable-card'
+                  tabBarGutter={-1}
+                  onEdit={handleTabsEdit}
+                  activeKey={activeKey}
+                  onChange={handleTabsChange}
+                  tabBarStyle={{
+                    left: '-5px',
+                    top: '-1px',
+                  }}
+                >
+                  {panes.map((pane) => (
+                    <TabPane
+                      closable
+                      tab={
+                        treeFind(collectionTreeData, (node) => node.key === pane.key)?.title ||
+                        pane.title + pane.pageType
+                      }
+                      key={pane.key}
+                      style={{ padding: '0 8px' }}
+                    >
+                      {pane.pageType === PageTypeEnum.Request && (
+                        <HttpRequest
+                          collectionTreeData={collectionTreeData}
+                          mode={HttpRequestMode.Normal}
+                          id={pane.qid}
+                          isNew={pane.isNew}
+                          onSaveAs={(p) => {
+                            fetchCollectionTreeData();
+                            const newPanes = [...panes.filter((i) => i.key !== activeKey)];
+                            newPanes.push({
+                              isNew: true,
+                              title: p.title,
+                              key: p.key,
+                              pageType: PageTypeEnum.Request,
+                              qid: p.key,
+                              // 其实nodeType应该得通过qid拿到
+                              nodeType: 3,
+                            });
+                            setPanes(newPanes);
+                            setActiveKey(p.key);
+                          }}
+                        />
+                      )}
+                      {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}
+                      {pane.pageType === PageTypeEnum.Folder && <Folder />}
+                      {pane.pageType === PageTypeEnum.Environment && <Environment />}
+                    </TabPane>
+                  ))}
+                </Tabs>
+                {!panes.length && (
+                  <Empty>
+                    <Button type='primary' onClick={addTab}>
+                      New Request
+                    </Button>
+                  </Empty>
+                )}
+              </>
+            }
+          />
         </div>
       )}
       <AppFooter />
