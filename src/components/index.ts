@@ -1,9 +1,8 @@
+export { default as AnimateAutoHeight } from './AnimateAutoHeight';
 export { default as AppFooter } from './app/Footer';
 export { default as AppHeader } from './app/Header';
 export { default as Environment } from './Environment';
-export { default as HttpRequest } from './HttpRequest';
-export { default as CollectionMenu } from './HttpRequest/CollectionMenu';
+export { default as CollectionMenu } from './httpRequest/CollectionMenu';
 export { default as Login } from './Login';
 export { default as MenuSelect } from './MenuSelect';
-export { default as Replay } from './Replay';
-export { default as ReplayMenu } from './Replay/ReplayMenu';
+export { default as ReplayMenu } from './replay/ReplayMenu';

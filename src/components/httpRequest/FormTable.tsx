@@ -5,7 +5,7 @@ import { ColumnsType } from 'antd/es/table';
 import { useTranslation } from 'react-i18next';
 import { Updater } from 'use-immer';
 
-import { KeyValueType } from './index';
+import { KeyValueType } from '../../pages';
 
 const FormTable = styled(Table)<TableProps<KeyValueType> & { showHeader?: boolean }>`
   .ant-table-thead {

@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { Updater } from 'use-immer';
 import { v4 as uuidv4 } from 'uuid';
 
-import { KeyValueType } from './index';
+import { KeyValueType } from '../../pages';
 
 export const FormHeaderWrapper = styled.div`
   display: flex;

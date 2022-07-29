@@ -21,29 +21,33 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
-import { FileSystemService } from '../../api/FileSystem.service';
-import { ContentTypeEnum, MethodEnum, METHODS, NodeType } from '../../constant';
-import { treeFindPath } from '../../helpers/collection/util';
-import { useStore } from '../../store';
-import { tryParseJsonString, tryPrettierJsonString } from '../../utils';
-import AgentAxios from '../../utils/request';
-import { NodeList } from '../../vite-env';
-import AnimateAutoHeight from '../AnimateAutoHeight/index';
-import SaveRequestButton from './CollectionMenu/SaveRequestButton';
-import FormHeader, { FormHeaderWrapper } from './FormHeader';
-import FormTable, { getColumns } from './FormTable';
-import Response from './Response';
-import ResponseCompare from './ResponseCompare';
+import { FileSystemService } from '../api/FileSystem.service';
+import { AnimateAutoHeight } from '../components';
+import {
+  FormHeader,
+  FormHeaderWrapper,
+  FormTable,
+  getColumns,
+  Response,
+  ResponseCompare,
+  SaveRequestButton,
+} from '../components/httpRequest';
+import { ContentTypeEnum, MethodEnum, METHODS, NodeType } from '../constant';
+import { treeFindPath } from '../helpers/collection/util';
+import { useStore } from '../store';
+import { tryParseJsonString, tryPrettierJsonString } from '../utils';
+import AgentAxios from '../utils/request';
+import { NodeList } from '../vite-env';
 
 const { TabPane } = Tabs;
 
-export enum HttpMode {
+export enum HttpRequestMode {
   Normal = 'normal',
   Compare = 'compare',
 }
 
-export type HttpProps = {
-  mode?: HttpMode;
+export type HttpRequestProps = {
+  mode?: HttpRequestMode;
   id: string;
   isNew: boolean;
   collectionTreeData: NodeList[];
@@ -101,11 +105,11 @@ const ResponseWrapper = styled.div`
 // id：request的id，组件加载时拉一次数据
 // isNew：是否为新增的request
 // collectionTreeData：集合树形结构数据。作用是通过id可查询出节点路径，用于显示面包屑之类的
-const Http: FC<HttpProps> = ({
+const HttpRequest: FC<HttpRequestProps> = ({
   id,
   isNew,
   collectionTreeData,
-  mode: defaultMode = HttpMode.Normal,
+  mode: defaultMode = HttpRequestMode.Normal,
   onSaveAs,
 }) => {
   const { theme, extensionInstalled } = useStore();
@@ -475,8 +479,8 @@ const Http: FC<HttpProps> = ({
             <Divider type={'vertical'} />
             <Select
               options={[
-                { label: 'Normal', value: HttpMode.Normal },
-                { label: 'Compare', value: HttpMode.Compare },
+                { label: 'Normal', value: HttpRequestMode.Normal },
+                { label: 'Compare', value: HttpRequestMode.Compare },
               ]}
               value={mode}
               onChange={(val) => {
@@ -488,7 +492,7 @@ const Http: FC<HttpProps> = ({
         </div>
         <Divider style={{ margin: '0', marginBottom: '8px' }} />
         {/* 普通请求 */}
-        {mode === HttpMode.Normal ? (
+        {mode === HttpRequestMode.Normal ? (
           <HeaderWrapper>
             <Select value={method} options={RequestTypeOptions} onChange={setMethod} />
             <Input
@@ -624,7 +628,7 @@ const Http: FC<HttpProps> = ({
       <div>
         {sent ? (
           <Spin spinning={requesting}>
-            {mode === HttpMode.Normal ? (
+            {mode === HttpRequestMode.Normal ? (
               <Response
                 responseHeaders={response?.headers}
                 res={response?.data || response?.statusText}
@@ -652,4 +656,4 @@ const Http: FC<HttpProps> = ({
   );
 };
 
-export default Http;
+export default HttpRequest;

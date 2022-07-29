@@ -14,6 +14,9 @@ type MenuSelectProps<T> = {
   itemRender?: (app: T, index: number) => { label: string; key: React.Key };
 };
 
+const MenuSelectWrapper = styled.div`
+  padding: 8px;
+`;
 const MenuList = styled(Menu)`
   background-color: transparent !important;
   border: none !important;
@@ -57,7 +60,7 @@ function MenuSelect<T extends { [key: string]: any }>(props: MenuSelectProps<T>)
     }
   };
   return (
-    <>
+    <MenuSelectWrapper>
       <MenuFilter
         value={filterKeyword}
         placeholder={props.placeholder && t(props.placeholder)}
@@ -75,7 +78,7 @@ function MenuSelect<T extends { [key: string]: any }>(props: MenuSelectProps<T>)
         )}
         onClick={handleAppMenuClick}
       />
-    </>
+    </MenuSelectWrapper>
   );
 }
 

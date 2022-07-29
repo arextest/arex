@@ -5,7 +5,7 @@ import React, { FC } from 'react';
 
 import ReplayService from '../../api/Replay.service';
 import { ReplayCase } from '../../api/Replay.type';
-import { SmallTextButton } from '../StyledComponents';
+import { SmallTextButton } from '../styledComponents';
 
 type CaseProps = {
   planItemId: number;

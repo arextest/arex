@@ -1,27 +1,27 @@
-import './index.less';
-
 import { FileOutlined, GlobalOutlined, GoldOutlined } from '@ant-design/icons';
-import { Divider, Menu, Space, Tabs } from 'antd';
+import styled from '@emotion/styled';
+import { Button, Divider, Empty, Menu, Space, Tabs } from 'antd';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { GlobalContext } from '../App';
 import {
   AppFooter,
   AppHeader,
   CollectionMenu,
   Environment,
-  HttpRequest,
   Login,
-  Replay,
   ReplayMenu,
-} from '../../components';
-import { NodeType, PageTypeEnum } from '../../constant';
-import { collectionOriginalTreeToAntdTreeData, treeFind } from '../../helpers/collection/util';
-import { CollectionService } from '../../services/CollectionService';
-import { WorkspaceService } from '../../services/WorkspaceService';
-import { NodeList } from '../../vite-env';
-import DraggableLayout from '../DraggableLayout';
-import PaneAreaEmpty from './Empty';
+} from '../components';
+import { CollectionRef } from '../components/httpRequest/CollectionMenu';
+import { NodeType, PageTypeEnum } from '../constant';
+import { collectionOriginalTreeToAntdTreeData, treeFind } from '../helpers/collection/util';
+import { Folder, HttpRequest, Replay } from '../pages';
+import { HttpRequestMode } from '../pages/HttpRequest';
+import { CollectionService } from '../services/CollectionService';
+import { WorkspaceService } from '../services/WorkspaceService';
+import { NodeList } from '../vite-env';
+import DraggableLayout from './DraggableLayout';
 
 type PaneProps = {
   title: string;
@@ -31,12 +31,22 @@ type PaneProps = {
   isNew: true;
   nodeType: NodeType;
 };
-import { GlobalContext } from '../../App';
-import { HttpMode } from '../../components/HttpRequest';
-import { CollectionRef } from '../../components/HttpRequest/CollectionMenu';
-import FolderPage from '../../pages/Folder';
 
 const { TabPane } = Tabs;
+const MainMenu = styled(Menu)`
+  .ant-menu-item {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    height: 55px !important;
+    justify-content: center;
+    width: 100px;
+  }
+  .ant-menu-title-content {
+    line-height: 30px;
+    margin-left: 0;
+  }
+`;
 
 // 静态数据
 const userinfo = {
@@ -160,7 +170,7 @@ const MainBox = () => {
       {!globalState.isLogin ? (
         <Login />
       ) : (
-        <div className={'main-box'}>
+        <div>
           {/*AppHeader部分*/}
           <AppHeader userinfo={userinfo} workspaces={workspaces} />
 
@@ -190,9 +200,8 @@ const MainBox = () => {
                 </Space>
               </Space>
               <Divider style={{ margin: '0' }} />
-              <div style={{ display: 'flex' }} className={'tool-table'}>
-                <Menu
-                  className={'left-menu'}
+              <div style={{ display: 'flex' }}>
+                <MainMenu
                   mode='vertical'
                   items={menuItems}
                   selectedKeys={[siderMenuSelectedKey]}
@@ -280,7 +289,7 @@ const MainBox = () => {
                     {pane.pageType === PageTypeEnum.Request && (
                       <HttpRequest
                         collectionTreeData={collectionTreeData}
-                        mode={HttpMode.Normal}
+                        mode={HttpRequestMode.Normal}
                         id={pane.qid}
                         isNew={pane.isNew}
                         onSaveAs={(p) => {
@@ -301,11 +310,17 @@ const MainBox = () => {
                       />
                     )}
                     {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}
-                    {pane.pageType === PageTypeEnum.Folder && <FolderPage />}
+                    {pane.pageType === PageTypeEnum.Folder && <Folder />}
                   </TabPane>
                 ))}
               </Tabs>
-              {!panes.length && <PaneAreaEmpty add={addTab} />}
+              {!panes.length && (
+                <Empty>
+                  <Button type='primary' onClick={addTab}>
+                    New Request
+                  </Button>
+                </Empty>
+              )}
             </div>
           </DraggableLayout>
         </div>

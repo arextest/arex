@@ -10,7 +10,7 @@ import { useStore } from '../../store';
 import { Theme } from '../../style/theme';
 const { Text } = Typography;
 
-export const states = [
+export const resultsStates = [
   { label: 'init', color: 'grey', value: 0 },
   { label: 'running', color: 'orange', value: 1 },
   { label: 'done', color: 'green', value: 2 },
@@ -27,7 +27,7 @@ const columns: ColumnsType<PlanStatistics> = [
   {
     title: 'State',
     render: (_, record) => {
-      const state = states.find((s) => s.value === record.status);
+      const state = resultsStates.find((s) => s.value === record.status);
       return state ? (
         <Tag color={state.color}>
           {state.label}
@@ -76,7 +76,7 @@ const columns: ColumnsType<PlanStatistics> = [
   },
 ];
 
-const AppTable = styled(Table)<{ theme: Theme }>`
+const AppTable = styled(Table)<{ theme?: Theme }>`
   // highlight selected row
   .clickRowStyl {
     background-color: ${(props) => (props.theme === Theme.light ? '#f6efff' : '#171528')};
@@ -116,7 +116,6 @@ const Results: FC<{
         size='small'
         theme={theme}
         pagination={false}
-        // @ts-ignore
         columns={columns}
         onRow={(record, index) => {
           return {

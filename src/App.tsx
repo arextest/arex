@@ -1,5 +1,5 @@
 import './components/app/index.less';
-import './components/HttpRequest/CollectionMenu/index.less';
+import './components/httpRequest/CollectionMenu/index.less';
 import './components/Environment/index.less';
 
 import { ThemeProvider } from '@emotion/react';

@@ -2,10 +2,9 @@ import styled from '@emotion/styled';
 import { Button, Empty, Space } from 'antd';
 import React, { FC, useState } from 'react';
 
-import { ApplicationDataType, PlanStatistics } from '../../api/Replay.type';
-import { FlexCenterWrapper } from '../StyledComponents';
-import Report from './Report';
-import Results from './Results';
+import { ApplicationDataType, PlanStatistics } from '../api/Replay.type';
+import { Report, Results } from '../components/replay';
+import { FlexCenterWrapper } from '../components/styledComponents';
 
 const AppTitle = styled.div`
   height: 22px;
@@ -26,23 +25,13 @@ const Replay: FC<{ curApp?: ApplicationDataType }> = ({ curApp }) => {
     <Space direction='vertical' size='middle' style={{ display: 'flex' }}>
       <AppTitle>
         <h1 className='app-name'>{`${curApp.appId}_${curApp.appName}`}</h1>
-        {/* <span> */}
-        {/*  <label>Access CI: </label> */}
-        {/*  <Tag */}
-        {/*    css={css` */}
-        {/*      height: 18px; */}
-        {/*      line-height: 18px; */}
-        {/*      border-radius: 8px; */}
-        {/*    `} */}
-        {/*  > */}
-        {/*    {(curApp.features & 1) === 1 ? "ON" : "OFF"} */}
-        {/*  </Tag> */}
-        {/* </span> */}
         <span>
           <label>Case Count: </label>
           <span>{curApp.recordedCaseCount}</span>
         </span>
-        <Button size='small'>Start replay</Button>
+        <Button size='small' type='primary'>
+          Start replay
+        </Button>
       </AppTitle>
       {/* Report component  */}
       <Results

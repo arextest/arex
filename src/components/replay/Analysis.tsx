@@ -1,19 +1,12 @@
-import styled from '@emotion/styled';
 import { useRequest, useToggle } from 'ahooks';
-import { Col, Drawer, Row, Table, Tabs } from 'antd';
+import { Col, Drawer, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { FC, useState } from 'react';
 
 import ReplayService from '../../api/Replay.service';
 import { CategoryStatistic, Difference } from '../../api/Replay.type';
 import { MenuSelect } from '../index';
-import { SmallTextButton } from '../StyledComponents';
-
-export const TableWrapper = styled.div`
-  .ant-table {
-    margin: -8px 0 0 8px !important;
-  }
-`;
+import { SmallTextButton, TableWrapper } from '../styledComponents';
 
 const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();

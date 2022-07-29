@@ -10,10 +10,9 @@ import { Pie } from 'react-chartjs-2';
 import ReplayService from '../../api/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../api/Replay.type';
 import { getPercent } from '../../utils';
-import { SmallTextButton } from '../StyledComponents';
-import Analysis, { TableWrapper } from './Analysis';
-import Case from './Case';
-import { states } from './Results';
+import { SmallTextButton, TableWrapper } from '../styledComponents';
+import { Analysis, Case } from './index';
+import { resultsStates } from './Results';
 
 const { Text } = Typography;
 const { TabPane } = Tabs;
@@ -74,7 +73,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     {
       title: 'State',
       render: (_, record) => {
-        const state = states.find((s) => s.value === record.status);
+        const state = resultsStates.find((s) => s.value === record.status);
         return state ? (
           <Tag color={state.color}>
             {state.label}
