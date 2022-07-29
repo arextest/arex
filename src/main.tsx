@@ -1,5 +1,5 @@
 import './i18n';
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.variable.min.css';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/javascript/javascript.js';
 import 'codemirror/mode/jsx/jsx.js';

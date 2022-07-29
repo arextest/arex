@@ -2,16 +2,14 @@ import './components/app/index.less';
 import './components/httpRequest/CollectionMenu/index.less';
 import './components/Environment/index.less';
 
-import { ThemeProvider } from '@emotion/react';
 import React, { useReducer } from 'react';
 import { useRoutes } from 'react-router-dom';
 
 import CheckChromeExtension from './components/CheckChromeExtension';
 import routerConfig from './routers';
-import { Theme, themeCreator } from './style/theme';
+import ThemeProvider from './style/theme';
 
 export const GlobalContext = React.createContext({});
-const theme = themeCreator(Theme.light); // TODO theme support
 
 const initState = {
   userinfo: {
@@ -33,9 +31,10 @@ const reducer = (prevState, action) => {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initState);
-  const useRoutesRouterConfig = useRoutes(routerConfig);
+  const routesContent = useRoutes(routerConfig);
+
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider>
       <GlobalContext.Provider
         value={{
           state,
@@ -43,7 +42,7 @@ function App() {
         }}
       >
         <CheckChromeExtension />
-        {useRoutesRouterConfig}
+        {routesContent}
       </GlobalContext.Provider>
     </ThemeProvider>
   );

@@ -1,4 +1,8 @@
 // https://emotion.sh/docs/theming
+import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
+import { ConfigProvider } from 'antd';
+import { FC, PropsWithChildren, useEffect } from 'react';
+
 export enum Theme {
   light = 'light',
   dark = 'dark',
@@ -41,3 +45,18 @@ declare module '@emotion/react' {
     };
   }
 }
+
+const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
+  const theme = themeCreator(Theme.light); // TODO theme support
+
+  useEffect(() => {
+    ConfigProvider.config({
+      theme: {
+        primaryColor: theme.color.primary,
+      },
+    });
+  }, [theme]);
+  return <EmotionThemeProvider theme={theme}>{children}</EmotionThemeProvider>;
+};
+
+export default ThemeProvider;

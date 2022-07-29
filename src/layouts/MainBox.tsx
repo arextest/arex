@@ -18,12 +18,12 @@ import { CollectionRef } from '../components/httpRequest/CollectionMenu';
 import { NodeType, PageTypeEnum } from '../constant';
 import { collectionOriginalTreeToAntdTreeData, treeFind } from '../helpers/collection/util';
 import { Folder, HttpRequest, Replay } from '../pages';
+import EnvironmentPage from '../pages/Environment';
 import { HttpRequestMode } from '../pages/HttpRequest';
 import { CollectionService } from '../services/CollectionService';
 import { WorkspaceService } from '../services/WorkspaceService';
 import { NodeList } from '../vite-env';
 import DraggableLayout from './DraggableLayout';
-import EnvironmentPage from "../pages/Environment";
 
 type PaneProps = {
   title: string;
@@ -52,12 +52,13 @@ const MainMenuItem = styled(TabPane)`
   padding: 0 !important;
 `;
 
-const MenuTitle = styled((props) => (
+type MenuTitleProps = { title: string; icon?: ReactNode };
+const MenuTitle = styled((props: MenuTitleProps) => (
   <div {...props}>
     <i>{props.icon}</i>
     <span>{props.title}</span>
   </div>
-))<{ title: string; icon?: ReactNode }>`
+))<MenuTitleProps>`
   display: flex;
   flex-direction: column;
   justify-content: center;
