@@ -1,7 +1,9 @@
 import { FileOutlined, GlobalOutlined, GoldOutlined } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import colorLib from '@kurkle/color';
 import { Button, Divider, Empty, Menu, Space, Tabs } from 'antd';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { GlobalContext } from '../App';
@@ -9,7 +11,7 @@ import {
   AppFooter,
   AppHeader,
   CollectionMenu,
-  Environment,
+  EnvironmentMenu,
   Login,
   ReplayMenu,
 } from '../components';
@@ -33,18 +35,36 @@ type PaneProps = {
 };
 
 const { TabPane } = Tabs;
-const MainMenu = styled(Menu)`
-  .ant-menu-item {
-    display: flex !important;
-    flex-direction: column;
-    align-items: center;
-    height: 55px !important;
-    justify-content: center;
-    width: 100px;
+const MainMenu = styled(Tabs)`
+  .ant-tabs-nav-list {
+    .ant-tabs-tab {
+      margin: 0 !important;
+      .ant-tabs-tab-btn {
+        margin: 0 auto;
+      }
+    }
+    .ant-tabs-tab-active {
+      background-color: ${(props) => colorLib(props.theme.color.primary).alpha(0.1).rgbString()};
+    }
   }
-  .ant-menu-title-content {
-    line-height: 30px;
-    margin-left: 0;
+`;
+const MainMenuItem = styled(TabPane)`
+  padding: 0 !important;
+`;
+
+const MenuTitle = styled((props) => (
+  <div {...props}>
+    <i>{props.icon}</i>
+    <span>{props.title}</span>
+  </div>
+))<{ title: string; icon?: ReactNode }>`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  i {
+    width: 14px;
+    height: 24px;
   }
 `;
 
@@ -53,26 +73,6 @@ const userinfo = {
   email: 'tzhangm@trip.com',
   avatar: 'https://joeschmoe.io/api/v1/random',
 };
-const menuItems = [
-  {
-    key: 'collection',
-    label: 'Collection',
-    icon: <GlobalOutlined />,
-    disabled: false,
-  },
-  {
-    key: 'replay',
-    label: 'Replay',
-    icon: <FileOutlined />,
-    disabled: false,
-  },
-  {
-    key: 'environment',
-    label: 'Environment',
-    icon: <GoldOutlined />,
-    disabled: true,
-  },
-];
 
 const MainBox = () => {
   const _useParams = useParams();
@@ -178,89 +178,79 @@ const MainBox = () => {
 
           <DraggableLayout dir={'horizontal'}>
             {/*侧边栏*/}
-            <div style={{ backgroundColor: 'white' }}>
-              <Space
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  padding: '10px',
-                }}
-              >
-                <div>
-                  <GlobalOutlined style={{ marginRight: '8px' }} />
-                  {_useParams.workspaceName}
-                </div>
-                <Space>
-                  {/*<Button size={"small"} type="default">*/}
-                  {/*  New*/}
-                  {/*</Button>*/}
-                  {/*<Button size={"small"} type="default">*/}
-                  {/*  Import*/}
-                  {/*</Button>*/}
-                </Space>
-              </Space>
-              <Divider style={{ margin: '0' }} />
-              <div style={{ display: 'flex' }}>
-                <MainMenu
-                  mode='vertical'
-                  items={menuItems}
-                  selectedKeys={[siderMenuSelectedKey]}
-                  onSelect={(val) => {
-                    setSiderMenuSelectedKey(val.key);
-                  }}
-                />
-                {/*flex布局需要overflow:'hidden'内部元素出滚动条*/}
-                <div style={{ flex: '1', overflow: 'hidden' }}>
-                  <div
-                    style={{
-                      display: siderMenuSelectedKey === 'collection' ? 'block' : 'none',
+            {/* TODO 建议该部分与 workspace 选择器整合 */}
+            {/*<Space*/}
+            {/*  style={{*/}
+            {/*    display: 'flex',*/}
+            {/*    justifyContent: 'space-between',*/}
+            {/*    padding: '10px',*/}
+            {/*  }}*/}
+            {/*>*/}
+            {/*  <div>*/}
+            {/*    <GlobalOutlined style={{ marginRight: '8px' }} />*/}
+            {/*    {_useParams.workspaceName}*/}
+            {/*  </div>*/}
+            {/*  <Space>*/}
+            {/*    /!*<Button size={"small"} type="default">*!/*/}
+            {/*    /!*  New*!/*/}
+            {/*    /!*</Button>*!/*/}
+            {/*    /!*<Button size={"small"} type="default">*!/*/}
+            {/*    /!*  Import*!/*/}
+            {/*    /!*</Button>*!/*/}
+            {/*  </Space>*/}
+            {/*</Space>*/}
+
+            {/*<Divider style={{ margin: '0' }} />*/}
+
+            <div style={{ display: 'flex' }}>
+              <MainMenu tabPosition='left'>
+                <MainMenuItem
+                  tab={<MenuTitle icon={<GlobalOutlined />} title='Collection' />}
+                  key='collection'
+                >
+                  <CollectionMenu
+                    treeData={collectionTreeData}
+                    setMainBoxPanes={setPanes}
+                    mainBoxPanes={panes}
+                    setMainBoxActiveKey={setActiveKey}
+                    loading={collectionLoading}
+                    fetchTreeData={() => {
+                      fetchCollectionTreeData();
                     }}
-                  >
-                    <CollectionMenu
-                      treeData={collectionTreeData}
-                      setMainBoxPanes={setPanes}
-                      mainBoxPanes={panes}
-                      setMainBoxActiveKey={setActiveKey}
-                      loading={collectionLoading}
-                      fetchTreeData={() => {
-                        fetchCollectionTreeData();
-                      }}
-                      ref={collectionRef}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      display: siderMenuSelectedKey === PageTypeEnum.Environment ? 'block' : 'none',
+                    ref={collectionRef}
+                  />
+                </MainMenuItem>
+                <MainMenuItem
+                  tab={<MenuTitle icon={<GlobalOutlined />} title='Replay' />}
+                  key='replay'
+                >
+                  <ReplayMenu
+                    onSelect={(app) => {
+                      const newPanes = [...panes];
+                      const f = newPanes.find((i) => i.key === app.appId);
+                      if (!f) {
+                        newPanes.push({
+                          title: app.appId,
+                          key: app.appId,
+                          pageType: PageTypeEnum.Replay,
+                          qid: app.appId,
+                          isNew: true,
+                          curApp: app,
+                        });
+                        setPanes(newPanes);
+                        setActiveKey(app.appId);
+                      }
                     }}
-                  >
-                    <Environment />
-                  </div>
-                  <div
-                    style={{
-                      display: siderMenuSelectedKey === PageTypeEnum.Replay ? 'block' : 'none',
-                    }}
-                  >
-                    <ReplayMenu
-                      onSelect={(app) => {
-                        const newPanes = [...panes];
-                        const f = newPanes.find((i) => i.key === app.appId);
-                        if (!f) {
-                          newPanes.push({
-                            title: app.appId,
-                            key: app.appId,
-                            pageType: PageTypeEnum.Replay,
-                            qid: app.appId,
-                            isNew: true,
-                            curApp: app,
-                          });
-                          setPanes(newPanes);
-                          setActiveKey(app.appId);
-                        }
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
+                  />
+                </MainMenuItem>
+                <MainMenuItem
+                  disabled
+                  tab={<MenuTitle icon={<GlobalOutlined />} title='Environment' />}
+                  key='environment'
+                >
+                  <EnvironmentMenu />
+                </MainMenuItem>
+              </MainMenu>
             </div>
 
             {/*主区域*/}
