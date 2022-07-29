@@ -1,13 +1,41 @@
 import { DownOutlined, SettingOutlined } from '@ant-design/icons';
-import { Avatar, Dropdown, Menu, Space } from 'antd';
+import { Avatar, Button, Dropdown, Menu, Popover, Space } from 'antd';
 import { FC, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+const { Item } = Menu;
 
 import Setting from '../Setting';
 import AppGitHubStarButton from './GitHubStarButton';
 type Props = {
   userinfo: any;
   workspaces: any[];
+};
+const WorkspacesContent = ({ workspaces }) => {
+  const _useParams = useParams();
+
+  return (
+    <div>
+      <Button>创建</Button>
+      <p>All workspaces</p>
+      <div>
+        <Menu
+          onSelect={(val) => {
+            console.log(val);
+            const key = val.key;
+            const label = workspaces.find((i) => i.id === key).workspaceName;
+            window.location.href = `/${key}/workspace/${label}`;
+          }}
+          activeKey={_useParams.workspaceId}
+          items={workspaces.map((workspace) => {
+            return {
+              key: workspace.id,
+              label: workspace.workspaceName,
+            };
+          })}
+        />
+      </div>
+    </div>
+  );
 };
 const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
   const _useNavigate = useNavigate();
@@ -53,6 +81,14 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
               </Space>
             </span>
           </Dropdown>
+          {/*workspace*/}
+          <Popover
+            content={<WorkspacesContent workspaces={workspaces}></WorkspacesContent>}
+            title={false}
+            trigger='click'
+          >
+            <Button>Click me</Button>
+          </Popover>
         </Space>
         <div className={'right'}>
           <div className='hover-wrap'>

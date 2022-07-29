@@ -1,5 +1,4 @@
 import { FileOutlined, GlobalOutlined, GoldOutlined } from '@ant-design/icons';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import colorLib from '@kurkle/color';
 import { Button, Divider, Empty, Menu, Space, Tabs } from 'antd';
@@ -24,6 +23,7 @@ import { CollectionService } from '../services/CollectionService';
 import { WorkspaceService } from '../services/WorkspaceService';
 import { NodeList } from '../vite-env';
 import DraggableLayout from './DraggableLayout';
+import EnvironmentPage from "../pages/Environment";
 
 type PaneProps = {
   title: string;
@@ -148,6 +148,20 @@ const MainBox = () => {
     collectionRef?.current?.setSelectedKeys(keys);
   };
 
+  function activeEnvironmentPane() {
+    const newPanes = [...panes];
+    newPanes.push({
+      title: 'title',
+      key: 'key',
+      pageType: PageTypeEnum.Environment,
+      qid: 'key',
+      isNew: true,
+      curApp: {},
+    });
+    setPanes(newPanes);
+    setActiveKey('key');
+  }
+
   // 监听params
   useEffect(() => {
     // 获取所有workspace
@@ -244,11 +258,10 @@ const MainBox = () => {
                   />
                 </MainMenuItem>
                 <MainMenuItem
-                  disabled
                   tab={<MenuTitle icon={<GlobalOutlined />} title='Environment' />}
                   key='environment'
                 >
-                  <EnvironmentMenu />
+                  <EnvironmentMenu activePane={activeEnvironmentPane} />
                 </MainMenuItem>
               </MainMenu>
             </div>
@@ -301,6 +314,7 @@ const MainBox = () => {
                     )}
                     {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}
                     {pane.pageType === PageTypeEnum.Folder && <Folder />}
+                    {pane.pageType === PageTypeEnum.Environment && <EnvironmentPage />}
                   </TabPane>
                 ))}
               </Tabs>
