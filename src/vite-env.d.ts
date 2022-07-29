@@ -1,8 +1,7 @@
 /// <reference types="vite/client" />
 import React, { FC, PropsWithChildren } from 'react';
 
-export type PropsWithChildrenOnly = PropsWithChildren<unknown>;
-export type ReactFCWithChildren = React.FC<PropsWithChildrenOnly>;
+export type ReactFCWithChildren = React.FC<PropsWithChildren>;
 
 // Custom Type for a React functional component with props AND CHILDREN
 export type FCC<P = {}> = FC<PropsWithChildren<P>>;
