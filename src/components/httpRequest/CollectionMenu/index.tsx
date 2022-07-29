@@ -40,7 +40,7 @@ const getParentKey = (key: React.Key, tree: DataNode[]): React.Key => {
 export type CollectionProps = {
   treeData: any;
   fetchTreeData: () => void;
-  loading: boolean;
+  loading?: boolean;
   setMainBoxPanes: (p: any) => void;
   mainBoxPanes: any[];
   setMainBoxActiveKey: (p: any) => void;

@@ -1,8 +1,8 @@
-import { FileOutlined, GlobalOutlined, GoldOutlined } from '@ant-design/icons';
+import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import colorLib from '@kurkle/color';
-import { Button, Divider, Empty, Menu, Space, Tabs } from 'antd';
-import React, { FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import { Button, Divider, Empty, Tabs } from 'antd';
+import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { GlobalContext } from '../App';
@@ -81,9 +81,6 @@ const MainBox = () => {
 
   const { state: globalState } = useContext(GlobalContext);
 
-  // *************侧边栏**************************
-  const [siderMenuSelectedKey, setSiderMenuSelectedKey] = useState('collection');
-
   // *************workspaces**************************
   const [workspaces, setWorkspaces] = useState([]);
 
@@ -92,7 +89,6 @@ const MainBox = () => {
 
   // *************collection**************************
   const [collectionTreeData, setCollectionTreeData] = useState<NodeList[]>([]);
-  const [collectionLoading, setCollectionLoading] = useState(false);
 
   function fetchCollectionTreeData() {
     CollectionService.listCollection({ id: _useParams.workspaceId }).then((res) => {
@@ -193,34 +189,10 @@ const MainBox = () => {
 
           <DraggableLayout dir={'horizontal'}>
             {/*侧边栏*/}
-            {/* TODO 建议该部分与 workspace 选择器整合 */}
-            {/*<Space*/}
-            {/*  style={{*/}
-            {/*    display: 'flex',*/}
-            {/*    justifyContent: 'space-between',*/}
-            {/*    padding: '10px',*/}
-            {/*  }}*/}
-            {/*>*/}
-            {/*  <div>*/}
-            {/*    <GlobalOutlined style={{ marginRight: '8px' }} />*/}
-            {/*    {_useParams.workspaceName}*/}
-            {/*  </div>*/}
-            {/*  <Space>*/}
-            {/*    /!*<Button size={"small"} type="default">*!/*/}
-            {/*    /!*  New*!/*/}
-            {/*    /!*</Button>*!/*/}
-            {/*    /!*<Button size={"small"} type="default">*!/*/}
-            {/*    /!*  Import*!/*/}
-            {/*    /!*</Button>*!/*/}
-            {/*  </Space>*/}
-            {/*</Space>*/}
-
-            {/*<Divider style={{ margin: '0' }} />*/}
-
             <div style={{ display: 'flex' }}>
               <MainMenu tabPosition='left'>
                 <MainMenuItem
-                  tab={<MenuTitle icon={<GlobalOutlined />} title='Collection' />}
+                  tab={<MenuTitle icon={<ApiOutlined />} title='Collection' />}
                   key='collection'
                 >
                   <CollectionMenu
@@ -228,7 +200,6 @@ const MainBox = () => {
                     setMainBoxPanes={setPanes}
                     mainBoxPanes={panes}
                     setMainBoxActiveKey={setActiveKey}
-                    loading={collectionLoading}
                     fetchTreeData={() => {
                       fetchCollectionTreeData();
                     }}
@@ -236,7 +207,7 @@ const MainBox = () => {
                   />
                 </MainMenuItem>
                 <MainMenuItem
-                  tab={<MenuTitle icon={<GlobalOutlined />} title='Replay' />}
+                  tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}
                   key='replay'
                 >
                   <ReplayMenu
@@ -259,7 +230,7 @@ const MainBox = () => {
                   />
                 </MainMenuItem>
                 <MainMenuItem
-                  tab={<MenuTitle icon={<GlobalOutlined />} title='Environment' />}
+                  tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
                   key='environment'
                 >
                   <EnvironmentMenu activePane={activeEnvironmentPane} />
