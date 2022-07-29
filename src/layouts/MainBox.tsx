@@ -17,8 +17,7 @@ import {
 import { CollectionRef } from '../components/httpRequest/CollectionMenu';
 import { NodeType, PageTypeEnum } from '../constant';
 import { collectionOriginalTreeToAntdTreeData, treeFind } from '../helpers/collection/util';
-import { Folder, HttpRequest, Replay } from '../pages';
-import EnvironmentPage from '../pages/Environment';
+import { Environment, Folder, HttpRequest, Replay } from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
 import { CollectionService } from '../services/CollectionService';
 import { WorkspaceService } from '../services/WorkspaceService';
@@ -286,7 +285,7 @@ const MainBox = () => {
                     )}
                     {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}
                     {pane.pageType === PageTypeEnum.Folder && <Folder />}
-                    {pane.pageType === PageTypeEnum.Environment && <EnvironmentPage />}
+                    {pane.pageType === PageTypeEnum.Environment && <Environment />}
                   </TabPane>
                 ))}
               </Tabs>
