@@ -75,10 +75,10 @@ const menuItems = [
 
 type MenuTitleProps = { title: string; icon?: ReactNode };
 const MenuTitle = styled((props: MenuTitleProps) => (
-  <div {...props}>
-    <i>{props.icon}</i>
-    <span>{props.title}</span>
-  </div>
+    <div {...props}>
+      <i>{props.icon}</i>
+      <span>{props.title}</span>
+    </div>
 ))<MenuTitleProps>`
   display: flex;
   flex-direction: column;
@@ -214,301 +214,301 @@ const MainBox = () => {
   }
 
   return (
-    <>
-      {!globalState.isLogin ? (
-        <Login />
-      ) : (
-        <div className={'main-box'}>
-          {/*AppHeader部分*/}
-          <AppHeader userinfo={userinfo} workspaces={workspaces} />
-          {/*分割线*/}
-          <Divider style={{ margin: '0' }} />
-          <div className='requester-contents'>
-            <DraggableLayout dir={'horizontal'}>
-              {/*侧边栏*/}
-              {/*requester-left-sidebar-wrapper*/}
-              <div
-                style={{ backgroundColor: 'white' }}
-                className={'requester-left-sidebar-wrapper'}
-              >
-                <div className={'requester-sidebar-horizontal-header'}>
-                  <div className='requester-sidebar-horizontal-header__left-container'>
-                    <Tooltip
-                      title={`open overview of ${_useParams.workspaceName}`}
-                      placement={'topRight'}
-                    >
-                      <a
-                        onClick={openWorkspaceOverviewPage}
-                        className='requester-sidebar-horizontal-header__active-workspace-name'
-                      >
-                        <GlobalOutlined style={{ marginRight: '8px' }} />
-                        {_useParams.workspaceName}
-                      </a>
-                    </Tooltip>
-                  </div>
-                  <div className='requester-sidebar-horizontal-header__right-container'>
-                    <Space className={'actions-container'}>
-                      <Button size={'small'} type='default' disabled>
-                        New
-                      </Button>
-                      <Button size={'small'} type='default' disabled>
-                        Import
-                      </Button>
-                    </Space>
-                  </div>
-                </div>
-                <Divider style={{ margin: '0' }} />
-                <div className={'requester-left-sidebar-container'} style={{ display: 'flex' }}>
-                  <MainMenu
-                    className={'requester-left-sidebar__header'}
-                    mode='vertical'
-                    items={menuItems}
-                    selectedKeys={[siderMenuSelectedKey]}
-                    onSelect={(val) => {
-                      setSiderMenuSelectedKey(val.key);
-                    }}
-                  />
-                  {/*flex布局需要overflow:'hidden'内部元素出滚动条*/}
+      <>
+        {!globalState.isLogin ? (
+            <Login />
+        ) : (
+            <div className={'main-box'}>
+              {/*AppHeader部分*/}
+              <AppHeader userinfo={userinfo} workspaces={workspaces} />
+              {/*分割线*/}
+              <Divider style={{ margin: '0' }} />
+              <div className='requester-contents'>
+                <DraggableLayout dir={'horizontal'}>
+                  {/*侧边栏*/}
+                  {/*requester-left-sidebar-wrapper*/}
                   <div
-                    className={'requester-left-sidebar'}
-                    style={{ flex: '1', overflow: 'hidden' }}
+                      style={{ backgroundColor: 'white' }}
+                      className={'requester-left-sidebar-wrapper'}
                   >
-                    <div
-                      style={{
-                        display: siderMenuSelectedKey === 'collection' ? 'block' : 'none',
-                      }}
-                    >
-                      <CollectionMenu
-                        treeData={collectionTreeData}
-                        setMainBoxPanes={setPanes}
-                        mainBoxPanes={panes}
-                        setMainBoxActiveKey={setActiveKey}
-                        loading={true}
-                        fetchTreeData={() => {
-                          fetchCollectionTreeData();
-                        }}
-                        ref={collectionRef}
-                      />
+                    <div className={'requester-sidebar-horizontal-header'}>
+                      <div className='requester-sidebar-horizontal-header__left-container'>
+                        <Tooltip
+                            title={`open overview of ${_useParams.workspaceName}`}
+                            placement={'topRight'}
+                        >
+                          <a
+                              onClick={openWorkspaceOverviewPage}
+                              className='requester-sidebar-horizontal-header__active-workspace-name'
+                          >
+                            <GlobalOutlined style={{ marginRight: '8px' }} />
+                            {_useParams.workspaceName}
+                          </a>
+                        </Tooltip>
+                      </div>
+                      <div className='requester-sidebar-horizontal-header__right-container'>
+                        <Space className={'actions-container'}>
+                          <Button size={'small'} type='default' disabled>
+                            New
+                          </Button>
+                          <Button size={'small'} type='default' disabled>
+                            Import
+                          </Button>
+                        </Space>
+                      </div>
                     </div>
-                    <div
-                      style={{
-                        display:
-                          siderMenuSelectedKey === PageTypeEnum.Environment ? 'block' : 'none',
-                      }}
-                    >
-                      <Environment activePane={activeEnvironmentPane} />
-                    </div>
-                    <div
-                      style={{
-                        display: siderMenuSelectedKey === PageTypeEnum.Replay ? 'block' : 'none',
-                      }}
-                    >
-                      <ReplayMenu
-                        onSelect={(app) => {
-                          const newPanes = [...panes];
-                          const f = newPanes.find((i) => i.key === app.appId);
-                          if (!f) {
-                            newPanes.push({
-                              title: app.appId,
-                              key: app.appId,
-                              pageType: PageTypeEnum.Replay,
-                              qid: app.appId,
-                              isNew: true,
-                              curApp: app,
-                            });
-                            setPanes(newPanes);
-                            setActiveKey(app.appId);
-                          }
-                        }}
+                    <Divider style={{ margin: '0' }} />
+                    <div className={'requester-left-sidebar-container'} style={{ display: 'flex' }}>
+                      <MainMenu
+                          className={'requester-left-sidebar__header'}
+                          mode='vertical'
+                          items={menuItems}
+                          selectedKeys={[siderMenuSelectedKey]}
+                          onSelect={(val) => {
+                            setSiderMenuSelectedKey(val.key);
+                          }}
                       />
+                      {/*flex布局需要overflow:'hidden'内部元素出滚动条*/}
+                      <div
+                          className={'requester-left-sidebar'}
+                          style={{ flex: '1', overflow: 'hidden' }}
+                      >
+                        <div
+                            style={{
+                              display: siderMenuSelectedKey === 'collection' ? 'block' : 'none',
+                            }}
+                        >
+                          <CollectionMenu
+                              treeData={collectionTreeData}
+                              setMainBoxPanes={setPanes}
+                              mainBoxPanes={panes}
+                              setMainBoxActiveKey={setActiveKey}
+                              loading={true}
+                              fetchTreeData={() => {
+                                fetchCollectionTreeData();
+                              }}
+                              ref={collectionRef}
+                          />
+                        </div>
+                        <div
+                            style={{
+                              display:
+                                  siderMenuSelectedKey === PageTypeEnum.Environment ? 'block' : 'none',
+                            }}
+                        >
+                          <Environment activePane={activeEnvironmentPane} />
+                        </div>
+                        <div
+                            style={{
+                              display: siderMenuSelectedKey === PageTypeEnum.Replay ? 'block' : 'none',
+                            }}
+                        >
+                          <ReplayMenu
+                              onSelect={(app) => {
+                                const newPanes = [...panes];
+                                const f = newPanes.find((i) => i.key === app.appId);
+                                if (!f) {
+                                  newPanes.push({
+                                    title: app.appId,
+                                    key: app.appId,
+                                    pageType: PageTypeEnum.Replay,
+                                    qid: app.appId,
+                                    isNew: true,
+                                    curApp: app,
+                                  });
+                                  setPanes(newPanes);
+                                  setActiveKey(app.appId);
+                                }
+                              }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              {/*主区域*/}
-              <div className={'requester-builder'}>
-                <Tabs
-                  size='small'
-                  type='editable-card'
-                  tabBarGutter={-1}
-                  onEdit={handleTabsEdit}
-                  activeKey={activeKey}
-                  onChange={handleTabsChange}
-                  tabBarStyle={{
-                    left: '-11px',
-                    top: '-1px',
-                  }}
-                >
-                  {panes.map((pane) => (
-                    <TabPane
-                      closable
-                      tab={
-                        treeFind(collectionTreeData, (node) => node.key === pane.key)?.title ||
-                        pane.title + pane.pageType
-                      }
-                      key={pane.key}
+                  {/*主区域*/}
+                  <div className={'requester-builder'}>
+                    <Tabs
+                        size='small'
+                        type='editable-card'
+                        tabBarGutter={-1}
+                        onEdit={handleTabsEdit}
+                        activeKey={activeKey}
+                        onChange={handleTabsChange}
+                        tabBarStyle={{
+                          left: '-11px',
+                          top: '-1px',
+                        }}
                     >
-                      {pane.pageType === PageTypeEnum.Request && (
-                        <HttpRequest
-                          collectionTreeData={collectionTreeData}
-                          mode={HttpRequestMode.Normal}
-                          id={pane.qid}
-                          isNew={pane.isNew}
-                          onSaveAs={(p) => {
-                            fetchCollectionTreeData();
-                            const newPanes = [...panes.filter((i) => i.key !== activeKey)];
-                            newPanes.push({
-                              isNew: true,
-                              title: p.title,
-                              key: p.key,
-                              pageType: PageTypeEnum.Request,
-                              qid: p.key,
-                              // 其实nodeType应该得通过qid拿到
-                              nodeType: 3,
-                            });
-                            setPanes(newPanes);
-                            setActiveKey(p.key);
-                          }}
-                        />
-                      )}
-                      {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}
-                      {pane.pageType === PageTypeEnum.Folder && <Folder />}
-                      {pane.pageType === PageTypeEnum.Environment && <EnvironmentPage />}
-                      {pane.pageType === PageTypeEnum.WorkspaceOverview && (
-                        <WorkspaceOverviewPage />
-                      )}
+                      {panes.map((pane) => (
+                          <TabPane
+                              closable
+                              tab={
+                                  treeFind(collectionTreeData, (node) => node.key === pane.key)?.title ||
+                                  pane.title + pane.pageType
+                              }
+                              key={pane.key}
+                          >
+                            {pane.pageType === PageTypeEnum.Request && (
+                                <HttpRequest
+                                    collectionTreeData={collectionTreeData}
+                                    mode={HttpRequestMode.Normal}
+                                    id={pane.qid}
+                                    isNew={pane.isNew}
+                                    onSaveAs={(p) => {
+                                      fetchCollectionTreeData();
+                                      const newPanes = [...panes.filter((i) => i.key !== activeKey)];
+                                      newPanes.push({
+                                        isNew: true,
+                                        title: p.title,
+                                        key: p.key,
+                                        pageType: PageTypeEnum.Request,
+                                        qid: p.key,
+                                        // 其实nodeType应该得通过qid拿到
+                                        nodeType: 3,
+                                      });
+                                      setPanes(newPanes);
+                                      setActiveKey(p.key);
+                                    }}
+                                />
+                            )}
+                            {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}
+                            {pane.pageType === PageTypeEnum.Folder && <Folder />}
+                            {pane.pageType === PageTypeEnum.Environment && <EnvironmentPage />}
+                            {pane.pageType === PageTypeEnum.WorkspaceOverview && (
+                                <WorkspaceOverviewPage />
+                            )}
 
-                      {/*WorkspaceOverview*/}
-                    </TabPane>
-                  ))}
-                </Tabs>
-                {!panes.length && (
-                  <Empty>
-                    <Button type='primary' onClick={addTab}>
-                      New Request
-                    </Button>
-                  </Empty>
-                )}
+                            {/*WorkspaceOverview*/}
+                          </TabPane>
+                      ))}
+                    </Tabs>
+                    {!panes.length && (
+                        <Empty>
+                          <Button type='primary' onClick={addTab}>
+                            New Request
+                          </Button>
+                        </Empty>
+                    )}
+                  </div>
+                </DraggableLayout>
               </div>
-            </DraggableLayout>
-          </div>
 
-          {/*<DraggableLayout dir={'horizontal'}>*/}
-          {/*  /!*侧边栏*!/*/}
-          {/*  <div style={{ display: 'flex' }}>*/}
-          {/*    <MainMenu tabPosition='left'>*/}
-          {/*      <MainMenuItem*/}
-          {/*        tab={<MenuTitle icon={<ApiOutlined />} title='Collection' />}*/}
-          {/*        key='collection'*/}
-          {/*      >*/}
-          {/*        <CollectionMenu*/}
-          {/*          treeData={collectionTreeData}*/}
-          {/*          setMainBoxPanes={setPanes}*/}
-          {/*          mainBoxPanes={panes}*/}
-          {/*          setMainBoxActiveKey={setActiveKey}*/}
-          {/*          fetchTreeData={() => {*/}
-          {/*            fetchCollectionTreeData();*/}
-          {/*          }}*/}
-          {/*          ref={collectionRef}*/}
-          {/*        />*/}
-          {/*      </MainMenuItem>*/}
-          {/*      <MainMenuItem*/}
-          {/*        tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}*/}
-          {/*        key='replay'*/}
-          {/*      >*/}
-          {/*        <ReplayMenu*/}
-          {/*          onSelect={(app) => {*/}
-          {/*            const newPanes = [...panes];*/}
-          {/*            const f = newPanes.find((i) => i.key === app.appId);*/}
-          {/*            if (!f) {*/}
-          {/*              newPanes.push({*/}
-          {/*                title: app.appId,*/}
-          {/*                key: app.appId,*/}
-          {/*                pageType: PageTypeEnum.Replay,*/}
-          {/*                qid: app.appId,*/}
-          {/*                isNew: true,*/}
-          {/*                curApp: app,*/}
-          {/*              });*/}
-          {/*              setPanes(newPanes);*/}
-          {/*              setActiveKey(app.appId);*/}
-          {/*            }*/}
-          {/*          }}*/}
-          {/*        />*/}
-          {/*      </MainMenuItem>*/}
-          {/*      <MainMenuItem*/}
-          {/*        tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}*/}
-          {/*        key='environment'*/}
-          {/*      >*/}
-          {/*        <EnvironmentMenu activePane={activeEnvironmentPane} />*/}
-          {/*      </MainMenuItem>*/}
-          {/*    </MainMenu>*/}
-          {/*  </div>*/}
+              {/*<DraggableLayout dir={'horizontal'}>*/}
+              {/*  /!*侧边栏*!/*/}
+              {/*  <div style={{ display: 'flex' }}>*/}
+              {/*    <MainMenu tabPosition='left'>*/}
+              {/*      <MainMenuItem*/}
+              {/*        tab={<MenuTitle icon={<ApiOutlined />} title='Collection' />}*/}
+              {/*        key='collection'*/}
+              {/*      >*/}
+              {/*        <CollectionMenu*/}
+              {/*          treeData={collectionTreeData}*/}
+              {/*          setMainBoxPanes={setPanes}*/}
+              {/*          mainBoxPanes={panes}*/}
+              {/*          setMainBoxActiveKey={setActiveKey}*/}
+              {/*          fetchTreeData={() => {*/}
+              {/*            fetchCollectionTreeData();*/}
+              {/*          }}*/}
+              {/*          ref={collectionRef}*/}
+              {/*        />*/}
+              {/*      </MainMenuItem>*/}
+              {/*      <MainMenuItem*/}
+              {/*        tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}*/}
+              {/*        key='replay'*/}
+              {/*      >*/}
+              {/*        <ReplayMenu*/}
+              {/*          onSelect={(app) => {*/}
+              {/*            const newPanes = [...panes];*/}
+              {/*            const f = newPanes.find((i) => i.key === app.appId);*/}
+              {/*            if (!f) {*/}
+              {/*              newPanes.push({*/}
+              {/*                title: app.appId,*/}
+              {/*                key: app.appId,*/}
+              {/*                pageType: PageTypeEnum.Replay,*/}
+              {/*                qid: app.appId,*/}
+              {/*                isNew: true,*/}
+              {/*                curApp: app,*/}
+              {/*              });*/}
+              {/*              setPanes(newPanes);*/}
+              {/*              setActiveKey(app.appId);*/}
+              {/*            }*/}
+              {/*          }}*/}
+              {/*        />*/}
+              {/*      </MainMenuItem>*/}
+              {/*      <MainMenuItem*/}
+              {/*        tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}*/}
+              {/*        key='environment'*/}
+              {/*      >*/}
+              {/*        <EnvironmentMenu activePane={activeEnvironmentPane} />*/}
+              {/*      </MainMenuItem>*/}
+              {/*    </MainMenu>*/}
+              {/*  </div>*/}
 
-          {/*  /!*主区域*!/*/}
-          {/*  <div>*/}
-          {/*    <Tabs*/}
-          {/*      size='small'*/}
-          {/*      type='editable-card'*/}
-          {/*      tabBarGutter={-1}*/}
-          {/*      onEdit={handleTabsEdit}*/}
-          {/*      activeKey={activeKey}*/}
-          {/*      onChange={handleTabsChange}*/}
-          {/*      tabBarStyle={{*/}
-          {/*        left: '-11px',*/}
-          {/*        top: '-1px',*/}
-          {/*      }}*/}
-          {/*    >*/}
-          {/*      {panes.map((pane) => (*/}
-          {/*        <TabPane*/}
-          {/*          closable*/}
-          {/*          tab={*/}
-          {/*            treeFind(collectionTreeData, (node) => node.key === pane.key)?.title ||*/}
-          {/*            pane.title + pane.pageType*/}
-          {/*          }*/}
-          {/*          key={pane.key}*/}
-          {/*        >*/}
-          {/*          {pane.pageType === PageTypeEnum.Request && (*/}
-          {/*            <HttpRequest*/}
-          {/*              collectionTreeData={collectionTreeData}*/}
-          {/*              mode={HttpRequestMode.Normal}*/}
-          {/*              id={pane.qid}*/}
-          {/*              isNew={pane.isNew}*/}
-          {/*              onSaveAs={(p) => {*/}
-          {/*                fetchCollectionTreeData();*/}
-          {/*                const newPanes = [...panes.filter((i) => i.key !== activeKey)];*/}
-          {/*                newPanes.push({*/}
-          {/*                  isNew: true,*/}
-          {/*                  title: p.title,*/}
-          {/*                  key: p.key,*/}
-          {/*                  pageType: PageTypeEnum.Request,*/}
-          {/*                  qid: p.key,*/}
-          {/*                  // 其实nodeType应该得通过qid拿到*/}
-          {/*                  nodeType: 3,*/}
-          {/*                });*/}
-          {/*                setPanes(newPanes);*/}
-          {/*                setActiveKey(p.key);*/}
-          {/*              }}*/}
-          {/*            />*/}
-          {/*          )}*/}
-          {/*          {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}*/}
-          {/*          {pane.pageType === PageTypeEnum.Folder && <Folder />}*/}
-          {/*          {pane.pageType === PageTypeEnum.Environment && <Environment />}*/}
-          {/*        </TabPane>*/}
-          {/*      ))}*/}
-          {/*    </Tabs>*/}
-          {/*    {!panes.length && (*/}
-          {/*      <Empty>*/}
-          {/*        <Button type='primary' onClick={addTab}>*/}
-          {/*          New Request*/}
-          {/*        </Button>*/}
-          {/*      </Empty>*/}
-          {/*    )}*/}
-          {/*  </div>*/}
-          {/*</DraggableLayout>*/}
-        </div>
-      )}
-      {/*<AppFooter />*/}
-    </>
+              {/*  /!*主区域*!/*/}
+              {/*  <div>*/}
+              {/*    <Tabs*/}
+              {/*      size='small'*/}
+              {/*      type='editable-card'*/}
+              {/*      tabBarGutter={-1}*/}
+              {/*      onEdit={handleTabsEdit}*/}
+              {/*      activeKey={activeKey}*/}
+              {/*      onChange={handleTabsChange}*/}
+              {/*      tabBarStyle={{*/}
+              {/*        left: '-11px',*/}
+              {/*        top: '-1px',*/}
+              {/*      }}*/}
+              {/*    >*/}
+              {/*      {panes.map((pane) => (*/}
+              {/*        <TabPane*/}
+              {/*          closable*/}
+              {/*          tab={*/}
+              {/*            treeFind(collectionTreeData, (node) => node.key === pane.key)?.title ||*/}
+              {/*            pane.title + pane.pageType*/}
+              {/*          }*/}
+              {/*          key={pane.key}*/}
+              {/*        >*/}
+              {/*          {pane.pageType === PageTypeEnum.Request && (*/}
+              {/*            <HttpRequest*/}
+              {/*              collectionTreeData={collectionTreeData}*/}
+              {/*              mode={HttpRequestMode.Normal}*/}
+              {/*              id={pane.qid}*/}
+              {/*              isNew={pane.isNew}*/}
+              {/*              onSaveAs={(p) => {*/}
+              {/*                fetchCollectionTreeData();*/}
+              {/*                const newPanes = [...panes.filter((i) => i.key !== activeKey)];*/}
+              {/*                newPanes.push({*/}
+              {/*                  isNew: true,*/}
+              {/*                  title: p.title,*/}
+              {/*                  key: p.key,*/}
+              {/*                  pageType: PageTypeEnum.Request,*/}
+              {/*                  qid: p.key,*/}
+              {/*                  // 其实nodeType应该得通过qid拿到*/}
+              {/*                  nodeType: 3,*/}
+              {/*                });*/}
+              {/*                setPanes(newPanes);*/}
+              {/*                setActiveKey(p.key);*/}
+              {/*              }}*/}
+              {/*            />*/}
+              {/*          )}*/}
+              {/*          {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}*/}
+              {/*          {pane.pageType === PageTypeEnum.Folder && <Folder />}*/}
+              {/*          {pane.pageType === PageTypeEnum.Environment && <Environment />}*/}
+              {/*        </TabPane>*/}
+              {/*      ))}*/}
+              {/*    </Tabs>*/}
+              {/*    {!panes.length && (*/}
+              {/*      <Empty>*/}
+              {/*        <Button type='primary' onClick={addTab}>*/}
+              {/*          New Request*/}
+              {/*        </Button>*/}
+              {/*      </Empty>*/}
+              {/*    )}*/}
+              {/*  </div>*/}
+              {/*</DraggableLayout>*/}
+            </div>
+        )}
+        {/*<AppFooter />*/}
+      </>
   );
 };
 

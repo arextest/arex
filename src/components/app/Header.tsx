@@ -44,15 +44,7 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
     <>
       <div className={'app-header'}>
         <Space className={'left'}>
-          <a
-            className={'app-name'}
-            onClick={() => {
-              // useNavigate()('/')
-              _useNavigate('/');
-            }}
-          >
-            AREX
-          </a>
+          <span className={'app-name'}>AREX</span>
           <AppGitHubStarButton />
           <Dropdown
             overlay={
