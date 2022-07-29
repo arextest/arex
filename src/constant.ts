@@ -20,6 +20,7 @@ export enum PageTypeEnum {
   Collection = 'collection',
   Environment = 'environment',
   Login = 'login',
+  WorkspaceOverview = 'workspaceOverview'
 }
 
 export enum ContentTypeEnum {

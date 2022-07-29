@@ -97,7 +97,7 @@ const DraggableLayout = (props: any) => {
     <div
       ref={draggableLayoutRef}
       className={'draggable-layout'}
-      style={{ display: dir === 'horizontal' ? 'flex' : 'block', height: '100%' }}
+      style={{ display: dir === 'horizontal' ? 'flex' : 'block' }}
     >
       <div ref={firstRef} style={styleMap[dir].firstStyle}>
         {props.children[0]}
