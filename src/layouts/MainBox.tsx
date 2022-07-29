@@ -35,6 +35,7 @@ type PaneProps = {
 
 const { TabPane } = Tabs;
 const MainMenu = styled(Tabs)`
+  height: 100%;
   .ant-tabs-nav-list {
     .ant-tabs-tab {
       margin: 0 !important;
@@ -180,7 +181,7 @@ const MainBox = () => {
       {!globalState.isLogin ? (
         <Login />
       ) : (
-        <div>
+        <>
           {/*AppHeader部分*/}
           <AppHeader userinfo={userinfo} workspaces={workspaces} />
 
@@ -190,54 +191,52 @@ const MainBox = () => {
             direction={'horizontal'}
             limitRange={[30, 40]}
             firstNode={
-              <div style={{ display: 'flex' }}>
-                <MainMenu tabPosition='left'>
-                  <MainMenuItem
-                    tab={<MenuTitle icon={<ApiOutlined />} title='Collection' />}
-                    key='collection'
-                  >
-                    <CollectionMenu
-                      treeData={collectionTreeData}
-                      setMainBoxPanes={setPanes}
-                      mainBoxPanes={panes}
-                      setMainBoxActiveKey={setActiveKey}
-                      fetchTreeData={() => {
-                        fetchCollectionTreeData();
-                      }}
-                      ref={collectionRef}
-                    />
-                  </MainMenuItem>
-                  <MainMenuItem
-                    tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}
-                    key='replay'
-                  >
-                    <ReplayMenu
-                      onSelect={(app) => {
-                        const newPanes = [...panes];
-                        const f = newPanes.find((i) => i.key === app.appId);
-                        if (!f) {
-                          newPanes.push({
-                            title: app.appId,
-                            key: app.appId,
-                            pageType: PageTypeEnum.Replay,
-                            qid: app.appId,
-                            isNew: true,
-                            curApp: app,
-                          });
-                          setPanes(newPanes);
-                          setActiveKey(app.appId);
-                        }
-                      }}
-                    />
-                  </MainMenuItem>
-                  <MainMenuItem
-                    tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
-                    key='environment'
-                  >
-                    <EnvironmentMenu activePane={activeEnvironmentPane} />
-                  </MainMenuItem>
-                </MainMenu>
-              </div>
+              <MainMenu tabPosition='left'>
+                <MainMenuItem
+                  tab={<MenuTitle icon={<ApiOutlined />} title='Collection' />}
+                  key='collection'
+                >
+                  <CollectionMenu
+                    treeData={collectionTreeData}
+                    setMainBoxPanes={setPanes}
+                    mainBoxPanes={panes}
+                    setMainBoxActiveKey={setActiveKey}
+                    fetchTreeData={() => {
+                      fetchCollectionTreeData();
+                    }}
+                    ref={collectionRef}
+                  />
+                </MainMenuItem>
+                <MainMenuItem
+                  tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}
+                  key='replay'
+                >
+                  <ReplayMenu
+                    onSelect={(app) => {
+                      const newPanes = [...panes];
+                      const f = newPanes.find((i) => i.key === app.appId);
+                      if (!f) {
+                        newPanes.push({
+                          title: app.appId,
+                          key: app.appId,
+                          pageType: PageTypeEnum.Replay,
+                          qid: app.appId,
+                          isNew: true,
+                          curApp: app,
+                        });
+                        setPanes(newPanes);
+                        setActiveKey(app.appId);
+                      }
+                    }}
+                  />
+                </MainMenuItem>
+                <MainMenuItem
+                  tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
+                  key='environment'
+                >
+                  <EnvironmentMenu activePane={activeEnvironmentPane} />
+                </MainMenuItem>
+              </MainMenu>
             }
             secondNode={
               <>
@@ -302,7 +301,7 @@ const MainBox = () => {
               </>
             }
           />
-        </div>
+        </>
       )}
       <AppFooter />
     </>
