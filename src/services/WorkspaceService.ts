@@ -18,4 +18,19 @@ export class WorkspaceService {
       })
       .then((res) => res);
   }
+
+  static renameWorkspace({ workspaceId,newName }) {
+    return axios
+      .post(`/api/filesystem/renameWorkspace`, {
+        "id": workspaceId,
+        "workspaceName": newName
+      })
+      .then((res) => res);
+  }
+
+  static deleteWorkspace({ workspaceId }) {
+    return axios
+      .delete(`/api/filesystem/workspace/${workspaceId}`)
+      .then((res) => res);
+  }
 }

@@ -23,6 +23,7 @@ import { CollectionService } from '../services/CollectionService';
 import { WorkspaceService } from '../services/WorkspaceService';
 import { NodeList } from '../vite-env';
 import DraggableLayout from './DraggableLayout';
+import WorkspaceOverviewPage from "../pages/WorkspaceOverview";
 
 type PaneProps = {
   title: string;
@@ -169,6 +170,18 @@ const MainBox = () => {
         setWorkspaces(workspaces);
         if (_useParams.workspaceName && _useParams.workspaceId) {
           fetchCollectionTreeData();
+          const newPanes = [...panes];
+          newPanes.push({
+            isNew: true,
+            title: _useParams.workspaceName,
+            key: _useParams.workspaceId,
+            pageType: PageTypeEnum.WorkspaceOverview,
+            qid: _useParams.workspaceId,
+            // 其实nodeType应该得通过qid拿到
+            nodeType: 3,
+          });
+          setPanes(newPanes)
+          setActiveKey(_useParams.workspaceId)
         } else {
           _useNavigate(`/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}`);
         }
@@ -247,17 +260,13 @@ const MainBox = () => {
                           onEdit={handleTabsEdit}
                           activeKey={activeKey}
                           onChange={handleTabsChange}
-                          tabBarStyle={{
-                            left: '-5px',
-                            top: '-1px',
-                          }}
                       >
                         {panes.map((pane) => (
                             <TabPane
                                 closable
                                 tab={
                                     treeFind(collectionTreeData, (node) => node.key === pane.key)?.title ||
-                                    pane.title + pane.pageType
+                                    pane.title
                                 }
                                 key={pane.key}
                                 style={{ padding: '0 8px' }}
@@ -288,6 +297,7 @@ const MainBox = () => {
                               {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}
                               {pane.pageType === PageTypeEnum.Folder && <Folder />}
                               {pane.pageType === PageTypeEnum.Environment && <Environment />}
+                              {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverviewPage />}
                             </TabPane>
                         ))}
                       </Tabs>

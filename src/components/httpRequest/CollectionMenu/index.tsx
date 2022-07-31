@@ -152,13 +152,12 @@ const Collection = forwardRef(
         closable: true,
         title: nodeType === 1 ? 'New Request' : 'New Case',
         key: keys[0],
-        pageType: nodeType === 1 ? 'request' : 'case',
+        pageType: 'request',
         qid: keys[0],
         nodeType: nodeType,
       });
       setMainBoxPanes(newPanes);
       setMainBoxActiveKey(keys[0]);
-      // se
     }
 
     useEffect(() => {

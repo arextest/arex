@@ -6,6 +6,7 @@ const { Item } = Menu;
 
 import Setting from '../Setting';
 import AppGitHubStarButton from './GitHubStarButton';
+import AddWorkspace from "../workspace/AddWorkspace";
 type Props = {
   userinfo: any;
   workspaces: any[];
@@ -15,10 +16,10 @@ const WorkspacesContent = ({ workspaces }) => {
 
   return (
     <div>
-      <Button>创建</Button>
-      <p>All workspaces</p>
+      <AddWorkspace></AddWorkspace>
       <div>
         <Menu
+          style={{border:'none',width:'200px'}}
           onSelect={(val) => {
             console.log(val);
             const key = val.key;
@@ -39,6 +40,7 @@ const WorkspacesContent = ({ workspaces }) => {
 };
 const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
   const _useNavigate = useNavigate();
+  const _useParams = useParams();
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
   return (
     <>
@@ -46,44 +48,20 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
         <Space className={'left'}>
           <span className={'app-name'}>AREX</span>
           <AppGitHubStarButton />
-          <Dropdown
-            overlay={
-              <Menu
-                items={workspaces.map((workspace) => {
-                  return {
-                    key: workspace.id,
-                    label: (
-                      <a
-                        onClick={() => {
-                          window.location.href = `/${workspace.id}/workspace/${workspace.workspaceName}`;
-                        }}
-                      >
-                        {workspace.workspaceName}
-                      </a>
-                    ),
-                  };
-                })}
-              />
-            }
-          >
-            <span onClick={(e) => e.preventDefault()}>
-              <Space>
-                Workspaces
-                <DownOutlined />
-              </Space>
-            </span>
-          </Dropdown>
           {/*workspace*/}
           <Popover
             content={<WorkspacesContent workspaces={workspaces}></WorkspacesContent>}
             title={false}
             trigger='click'
           >
-            <Button>Click me</Button>
+            <Space style={{cursor:'pointer'}}>
+              Workspaces
+              <DownOutlined />
+            </Space>
           </Popover>
         </Space>
         <div className={'right'}>
-          <div className='hover-wrap'>
+          <div className='hover-wrap' style={{display:'none'}}>
             <Dropdown
               trigger={['click']}
               overlay={
