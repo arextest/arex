@@ -4,8 +4,10 @@ import { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 const { Item } = Menu;
 
+import { useStore } from '../../store';
+import { Theme, ThemeIcon } from '../../style/theme';
 import Setting from '../Setting';
-import AppGitHubStarButton from './GitHubStarButton';
+import GitHubStarButton from './GitHubStarButton';
 type Props = {
   userinfo: any;
   workspaces: any[];
@@ -39,13 +41,14 @@ const WorkspacesContent = ({ workspaces }) => {
 };
 const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
   const _useNavigate = useNavigate();
+  const { theme, changeTheme } = useStore();
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
   return (
     <>
       <div className={'app-header'}>
         <Space className={'left'}>
           <span className={'app-name'}>AREX</span>
-          <AppGitHubStarButton />
+          <GitHubStarButton />
           <Dropdown
             overlay={
               <Menu
@@ -82,7 +85,14 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
             <Button>Click me</Button>
           </Popover>
         </Space>
+
         <div className={'right'}>
+          <Button
+            type='text'
+            icon={theme === Theme.light ? ThemeIcon.dark : ThemeIcon.light}
+            onClick={() => changeTheme()}
+          />
+
           <div className='hover-wrap'>
             <Dropdown
               trigger={['click']}
