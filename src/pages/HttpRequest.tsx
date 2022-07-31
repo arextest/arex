@@ -190,7 +190,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
     [requestHeaders],
   );
 
-  const [contentType, setContentType] = useState(ContentTypeEnum.applicationJson);
+  const [contentType, setContentType] = useState(ContentTypeEnum.ApplicationJson);
   const [requestBody, setRequestBody] = useState('');
 
   const validationRequest = (cancel: () => void) => {

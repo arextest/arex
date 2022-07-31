@@ -4,9 +4,11 @@ import { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 const { Item } = Menu;
 
+import { useStore } from '../../store';
+import { Theme, ThemeIcon } from '../../style/theme';
 import Setting from '../Setting';
+import AddWorkspace from '../workspace/AddWorkspace';
 import AppGitHubStarButton from './GitHubStarButton';
-import AddWorkspace from "../workspace/AddWorkspace";
 type Props = {
   userinfo: any;
   workspaces: any[];
@@ -19,7 +21,7 @@ const WorkspacesContent = ({ workspaces }) => {
       <AddWorkspace></AddWorkspace>
       <div>
         <Menu
-          style={{border:'none',width:'200px'}}
+          style={{ border: 'none', width: '200px' }}
           onSelect={(val) => {
             console.log(val);
             const key = val.key;
@@ -41,6 +43,7 @@ const WorkspacesContent = ({ workspaces }) => {
 const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
   const _useNavigate = useNavigate();
   const _useParams = useParams();
+  const { theme, changeTheme } = useStore();
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
   return (
     <>
@@ -54,14 +57,22 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
             title={false}
             trigger='click'
           >
-            <Space style={{cursor:'pointer'}}>
+            <Space style={{ cursor: 'pointer' }}>
               Workspaces
               <DownOutlined />
             </Space>
           </Popover>
         </Space>
+
         <div className={'right'}>
-          <div className='hover-wrap' style={{display:'none'}}>
+          <div className='hover-wrap'>
+            <Button
+              type='text'
+              icon={theme === Theme.light ? ThemeIcon.dark : ThemeIcon.light}
+              onClick={() => changeTheme()}
+            ></Button>
+          </div>
+          <div className='hover-wrap'>
             <Dropdown
               trigger={['click']}
               overlay={
