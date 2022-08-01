@@ -1,0 +1,46 @@
+.collection{
+  .collection-header{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    .collection-header-create{
+      margin: 0 5px;
+      font-weight: bold;
+    }
+    .collection-header-search{
+
+    }
+    .collection-header-view{
+      margin: 0 5px;
+    }
+  }
+
+  .collection-title-render{
+
+    //border: 1px solid black;
+    display: flex;
+    .right{
+      //width: 100px;
+      //height: 100px;
+      //margin: 10px;
+      //border: 1px solid #ccc;
+    }
+    .left{
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      .content{
+        overflow:hidden; //超出的文本隐藏
+        text-overflow:ellipsis; //溢出用省略号显示
+        white-space:nowrap; //溢出不换行
+      }
+    }
+  }
+  .ant-tree-node-content-wrapper{
+    overflow:hidden; //超出的文本隐藏
+    text-overflow:ellipsis; //溢出用省略号显示
+    white-space:nowrap; //溢出不换行
+  }
+}

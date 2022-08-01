@@ -1,14 +1,21 @@
-import GitHubButton from "react-github-btn";
+import GitHubButton from 'react-github-btn';
 
-const AppGitHubStarButton = () => {
-  return <div style={{height:'26px',paddingTop:'2px'}}>
+import { useStore } from '../../store';
+
+const GitHubStarButton = () => {
+  const theme = useStore((state) => state.theme);
+  return (
+    <div style={{ height: '22px' }}>
       <GitHubButton
-          data-text={'Star'}
-          aria-label={'Star Purpleheart on GitHub'}
-          data-show-count={true}
-          title={'Star Purpleheart'}
-          href="https://hoppscotch.io/"/>
-  </div>;
+        data-text={'Star'}
+        aria-label={'Star Arex on GitHub'}
+        data-show-count={true}
+        data-color-scheme={theme}
+        title={'Star Arex'}
+        href='https://github.com/arextest/arex'
+      />
+    </div>
+  );
 };
 
-export default AppGitHubStarButton;
+export default GitHubStarButton;

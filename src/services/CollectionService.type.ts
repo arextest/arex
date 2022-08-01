@@ -1,11 +1,11 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
 // import { KeyValueType } from "../components/Http";
 // import { METHODS, NodeType } from "../constant";
 export enum NodeType {
-  "interface" = 1,
-  "case" = 2,
-  "folder" = 3,
+  interface = 1,
+  case = 2,
+  folder = 3,
 }
 
 // ------ /api/filesystem/queryWorkspaceById ------
@@ -34,7 +34,6 @@ type FsTree = {
 export interface QueryWorkspaceByIdRes {
   fsTree: FsTree;
 }
-
 // ------ /api/filesystem/saveInterface ------
 // export interface QueryInterfaceReq {
 //   id: string;
