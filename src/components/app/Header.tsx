@@ -18,7 +18,7 @@ const WorkspacesContent = ({ workspaces }) => {
 
   return (
     <div>
-      <AddWorkspace></AddWorkspace>
+      <AddWorkspace />
       <div>
         <Menu
           style={{ border: 'none', width: '200px' }}
@@ -53,7 +53,7 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
           <AppGitHubStarButton />
           {/*workspace*/}
           <Popover
-            content={<WorkspacesContent workspaces={workspaces}></WorkspacesContent>}
+            content={<WorkspacesContent workspaces={workspaces} />}
             title={false}
             trigger='click'
           >
