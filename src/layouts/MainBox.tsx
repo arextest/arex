@@ -190,7 +190,7 @@ const MainBox = () => {
         }
       });
     }
-  }, [_useParams]);
+  }, [_useParams.workspaceId]);
 
   return (
     <>
