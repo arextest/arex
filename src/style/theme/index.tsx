@@ -1,5 +1,6 @@
 // https://emotion.sh/docs/theming
 import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
+import colorLib from '@kurkle/color';
 import { ConfigProvider } from 'antd';
 import { FC, PropsWithChildren, useEffect } from 'react';
 
@@ -21,12 +22,28 @@ export const Color = {
 const themeDark = {
   color: {
     primary: '#603BE3',
+    active: '#f5f5f5',
+    selected: colorLib('#603BE3').alpha(0.1).rgbString(),
+    text: {
+      primary: '#000000D9',
+      secondary: '#000000D9',
+      disabled: '#000000D9',
+      highlight: '#603BE3',
+    },
   },
 };
 
 const themeLight = {
   color: {
     primary: '#603BE3',
+    active: '#f5f5f5',
+    selected: colorLib('#603BE3').alpha(0.1).rgbString(),
+    text: {
+      primary: '#000000D9',
+      secondary: '#000000D9',
+      disabled: '#000000D9',
+      highlight: '#603BE3',
+    },
   },
 };
 
@@ -42,6 +59,14 @@ declare module '@emotion/react' {
   export interface Theme {
     color: {
       primary: string;
+      active: string;
+      selected: string;
+      text: {
+        primary: string;
+        secondary: string;
+        disabled: string;
+        highlight: string;
+      };
     };
   }
 }

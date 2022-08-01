@@ -47,12 +47,15 @@ const MainMenu = styled(Tabs)`
       }
     }
     .ant-tabs-tab-active {
-      background-color: ${(props) => colorLib(props.theme.color.primary).alpha(0.1).rgbString()};
+      background-color: ${(props) => props.theme.color.selected};
     }
   }
 `;
 const MainMenuItem = styled(TabPane)`
   padding: 0 8px !important;
+  .ant-tree-node-selected {
+    color: ${(props) => props.theme.color.text.highlight};
+  }
 `;
 
 type MenuTitleProps = { title: string; icon?: ReactNode };
