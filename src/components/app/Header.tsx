@@ -72,7 +72,7 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
               onClick={() => changeTheme()}
             ></Button>
           </div>
-          <div className='hover-wrap'>
+          <div className='hover-wrap' style={{display:'none'}}>
             <Dropdown
               trigger={['click']}
               overlay={
