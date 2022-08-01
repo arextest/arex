@@ -1,9 +1,21 @@
 import axios from 'axios';
 
+import request from '../api/axios';
+import { collectionOriginalTreeToAntdTreeData } from '../helpers/collection/util';
 import { QueryWorkspaceByIdReq, QueryWorkspaceByIdRes } from './CollectionService.type';
+
 export class CollectionService {
   static listCollection(params: { id: string }) {
-    return axios.post(`/api/filesystem/queryWorkspaceById`, params);
+    return request
+      .post<{
+        fsTree: {
+          id: string;
+          roots: any[];
+          userName: string;
+          workspaceName: string;
+        };
+      }>(`/api/filesystem/queryWorkspaceById`, params)
+      .then((res) => Promise.resolve(collectionOriginalTreeToAntdTreeData(res.body.fsTree.roots)));
   }
 
   static async addItem(params: any): Promise<any> {

@@ -1,13 +1,16 @@
 import './index.less';
 
 import { DownOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
+import { useRequest } from 'ahooks';
 import { Button, Empty, Input, Tooltip, Tree } from 'antd';
 import type { DataNode } from 'antd/es/tree';
 import type { DirectoryTreeProps } from 'antd/lib/tree';
 import React, { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { collectionOriginalTreeToAntdTreeData } from '../../../helpers/collection/util';
 import { CollectionService } from '../../../services/CollectionService';
+import { NodeList } from '../../../vite-env';
 import CollectionTitleRender from './CollectionTitleRender';
 
 const dataList: { key: React.Key; title: string }[] = [];
@@ -53,14 +56,7 @@ export type CollectionRef = {
 // eslint-disable-next-line react/display-name
 const Collection = forwardRef(
   (
-    {
-      treeData,
-      fetchTreeData,
-      loading,
-      setMainBoxPanes,
-      mainBoxPanes,
-      setMainBoxActiveKey,
-    }: CollectionProps,
+    { fetchTreeData, loading, setMainBoxPanes, mainBoxPanes, setMainBoxActiveKey }: CollectionProps,
     ref: ForwardedRef<CollectionRef>,
   ) => {
     // 此处注意useImperativeHandle方法的的第一个参数是目标元素的ref引用
@@ -69,10 +65,16 @@ const Collection = forwardRef(
     }));
 
     const _useParams = useParams();
+
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
     const [searchValue, setSearchValue] = useState('');
     const [autoExpandParent, setAutoExpandParent] = useState(true);
+
+    const { treeData } = useRequest(() =>
+      CollectionService.listCollection({ id: _useParams.workspaceId }),
+    );
+
     const onExpand: any = (newExpandedKeys: string[]) => {
       setExpandedKeys(newExpandedKeys);
       // setAutoExpandParent(false);
@@ -187,7 +189,7 @@ const Collection = forwardRef(
             />
           </Tooltip>
           <Input
-            disabled={true}
+            // disabled={true}
             className={'collection-header-search'}
             size='small'
             placeholder=''

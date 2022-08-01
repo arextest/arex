@@ -93,16 +93,6 @@ const MainBox = () => {
   // *************panes**************************
   const [panes, setPanes] = useImmer<PaneProps[]>([]);
 
-  // *************collection**************************
-  const [collectionTreeData, setCollectionTreeData] = useState<NodeList[]>([]);
-
-  function fetchCollectionTreeData() {
-    CollectionService.listCollection({ id: _useParams.workspaceId }).then((res) => {
-      const roots = res?.data?.body?.fsTree?.roots || [];
-      setCollectionTreeData(collectionOriginalTreeToAntdTreeData(roots));
-    });
-  }
-
   // *tab相关
   const [activeKey, setActiveKey] = useState('');
   useEffect(()=>{
@@ -213,6 +203,7 @@ const MainBox = () => {
               key={MenuTypeEnum.Collection}
             >
               <CollectionMenu
+                workspaceId={_useParams.workspaceId}
                 treeData={collectionTreeData}
                 setMainBoxPanes={setPanes}
                 mainBoxPanes={panes}
@@ -269,15 +260,7 @@ const MainBox = () => {
               }}
             >
               {panes.map((pane) => (
-                <TabPane
-                  closable
-                  tab={
-                    treeFind(collectionTreeData, (node) => node.key === pane.key)?.title ||
-                    pane.title
-                  }
-                  key={pane.key}
-                  style={{ padding: '0 8px' }}
-                >
+                <TabPane closable tab={pane.title} key={pane.key} style={{ padding: '0 8px' }}>
                   {pane.pageType === PageTypeEnum.Request && (
                     <HttpRequest
                       collectionTreeData={collectionTreeData}
@@ -285,7 +268,7 @@ const MainBox = () => {
                       id={pane.qid}
                       isNew={pane.isNew}
                       onSaveAs={(p) => {
-                        fetchCollectionTreeData();
+                        // fetchCollectionTreeData(); // TODO
                         const newPanes = [...panes.filter((i) => i.key !== activeKey)];
                         newPanes.push({
                           isNew: true,
