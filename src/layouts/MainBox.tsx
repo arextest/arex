@@ -38,8 +38,10 @@ const { TabPane } = Tabs;
 const MainMenu = styled(Tabs)`
   height: 100%;
   .ant-tabs-nav-list {
+    width: 100px;
     .ant-tabs-tab {
       margin: 0 !important;
+      padding: 12px 0 !important;
       .ant-tabs-tab-btn {
         margin: 0 auto;
       }
