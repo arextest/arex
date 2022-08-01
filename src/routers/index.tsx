@@ -1,9 +1,14 @@
+import { Login } from '../components';
 import MainBox from '../layouts/MainBox';
 
 export default [
   {
     path: '/',
     element: <MainBox />,
+  },
+  {
+    path: '/login',
+    element: <Login />,
   },
   {
     path: '/:workspaceId/workspace/:workspaceName/*',

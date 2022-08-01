@@ -2,8 +2,6 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import React, { FC, ReactNode, useEffect, useRef } from 'react';
 
-// import { Color } from '../style/theme';
-
 type Direction = 'horizontal' | 'vertical';
 
 const DividerLine = styled.div<{ direction: Direction }>`
@@ -105,17 +103,13 @@ const DraggableLayout: FC<{
   return (
     <div
       ref={draggableLayoutRef}
-      style={{ display: direction === 'horizontal' ? 'flex' : 'block', height: '100%' }}
+      style={{
+        display: direction === 'horizontal' ? 'flex' : 'block',
+        height: 'calc(100% - 72px)',
+      }}
     >
       <div ref={firstRef} style={styleMap[direction].firstStyle}>
-        <div
-          css={css`
-            width: calc(100% + ${lineWidth}px);
-            height: 100%;
-          `}
-        >
-          {firstNode}
-        </div>
+        {firstNode}
       </div>
 
       <div
@@ -124,21 +118,13 @@ const DraggableLayout: FC<{
           cursor: ${direction === 'horizontal' ? 'ew-resize' : 'ns-resize'};
           padding: ${direction === 'horizontal' ? `0 ${lineWidth}px` : `${lineWidth}px 0`};
           z-index: 100;
-          //background-color: salmon;
         `}
       >
         <DividerLine direction={direction} />
       </div>
 
       <div ref={secondRef} style={styleMap[direction].secondStyle}>
-        <div
-          css={css`
-            width: calc(100% + ${lineWidth}px);
-            transform: translateX(-${lineWidth}px);
-          `}
-        >
-          {secondNode}
-        </div>
+        {secondNode}
       </div>
     </div>
   );

@@ -4,13 +4,21 @@ import create from 'zustand';
 
 import { DefaultTheme, Theme, ThemeKey } from '../style/theme';
 
-interface BaseState {
+type UserInfo = {
+  email: string | null;
+};
+
+type BaseState = {
   theme: Theme;
   changeTheme: (theme?: Theme) => void;
   extensionInstalled: boolean;
-}
+  userInfo?: UserInfo;
+  setUserInfo: (userInfo: UserInfo) => void;
+};
 
 export const useStore = create<BaseState>((set, get) => ({
+  userInfo: { email: localStorage.getItem('email') },
+  setUserInfo: (userInfo: BaseState['userInfo']) => set({ userInfo }),
   theme: (localStorage.getItem(ThemeKey) as Theme) || DefaultTheme,
   changeTheme: (theme?: Theme) => {
     set((state) => {

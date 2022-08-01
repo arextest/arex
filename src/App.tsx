@@ -3,39 +3,25 @@ import './style/index.less';
 import './components/app/index.less';
 
 import { ThemeProvider } from '@emotion/react';
-import React, { useEffect, useMemo, useReducer } from 'react';
-import { useRoutes } from 'react-router-dom';
+import React, { useEffect, useMemo } from 'react';
+import { useNavigate, useRoutes } from 'react-router-dom';
 
 import CheckChromeExtension from './components/CheckChromeExtension';
 import routerConfig from './routers';
 import { useStore } from './store';
-import { Theme, themeCreator } from './style/theme';
-
-export const GlobalContext = React.createContext({});
-
-const initState = {
-  userinfo: {
-    email: localStorage.getItem('email'),
-  },
-  isLogin: !!localStorage.getItem('email'),
-};
-const reducer = (prevState, action) => {
-  const newState = { ...prevState };
-  switch (action.type) {
-    case 'login':
-      newState.userinfo.email = action.payload;
-      newState.isLogin = true;
-      return newState;
-    default:
-      return newState;
-  }
-};
+import { themeCreator } from './style/theme';
 
 function App() {
-  const [state, dispatch] = useReducer(reducer, initState);
   const routesContent = useRoutes(routerConfig);
-  const { theme: themeName, changeTheme } = useStore();
+  const { theme: themeName, changeTheme, userInfo } = useStore();
   const theme = useMemo(() => themeCreator(themeName), [themeName]);
+
+  // checkout if the user is logged in
+  const nav = useNavigate();
+  useEffect(() => {
+    console.log(userInfo);
+    !userInfo?.email && nav('/login');
+  }, [userInfo?.email]);
 
   // init theme
   useEffect(() => {
@@ -44,15 +30,8 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <GlobalContext.Provider
-        value={{
-          state,
-          dispatch,
-        }}
-      >
-        <CheckChromeExtension />
-        {routesContent}
-      </GlobalContext.Provider>
+      <CheckChromeExtension />
+      {routesContent}
     </ThemeProvider>
   );
 }
