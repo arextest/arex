@@ -101,24 +101,6 @@ const Login = () => {
 
   return (
     <div className={'login-layout'}>
-      {window.__AREX_EXTENSION_INSTALLED__ ? null : (
-        <Alert
-          message={
-            <div>
-              Be careful：The Chrome Extension can break the cross-domain limit of the browser.
-              Please install the&nbsp;
-              <a
-                href='https://chrome.google.com/webstore/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj'
-                target={'_blank'}
-                rel='noreferrer'
-              >
-                Chrome Extension
-              </a>
-              &nbsp;before you run it.
-            </div>
-          }
-        />
-      )}
       <div className={'login'}>
         <div className={'login-title'}>AREX</div>
         <Input

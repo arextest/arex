@@ -19,11 +19,11 @@ import { NodeType, PageTypeEnum } from '../constant';
 import { collectionOriginalTreeToAntdTreeData, treeFind } from '../helpers/collection/util';
 import { Environment, Folder, HttpRequest, Replay } from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
+import WorkspaceOverviewPage from '../pages/WorkspaceOverview';
 import { CollectionService } from '../services/CollectionService';
 import { WorkspaceService } from '../services/WorkspaceService';
 import { NodeList } from '../vite-env';
 import DraggableLayout from './DraggableLayout';
-import WorkspaceOverviewPage from "../pages/WorkspaceOverview";
 
 type PaneProps = {
   title: string;
@@ -50,7 +50,7 @@ const MainMenu = styled(Tabs)`
   }
 `;
 const MainMenuItem = styled(TabPane)`
-  padding: 0 !important;
+  padding: 0 8px !important;
 `;
 
 type MenuTitleProps = { title: string; icon?: ReactNode };
@@ -242,6 +242,7 @@ const MainBox = () => {
                   />
                 </MainMenuItem>
                 <MainMenuItem
+                  disabled
                   tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
                   key='environment'
                 >
@@ -259,7 +260,7 @@ const MainBox = () => {
                   activeKey={activeKey}
                   onChange={handleTabsChange}
                   tabBarStyle={{
-                    left: '-5px',
+                    left: '-1px',
                     top: '-1px',
                   }}
                 >
@@ -299,7 +300,9 @@ const MainBox = () => {
                       {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}
                       {pane.pageType === PageTypeEnum.Folder && <Folder />}
                       {pane.pageType === PageTypeEnum.Environment && <Environment />}
-                      {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverviewPage />}
+                      {pane.pageType === PageTypeEnum.WorkspaceOverview && (
+                        <WorkspaceOverviewPage />
+                      )}
                     </TabPane>
                   ))}
                 </Tabs>

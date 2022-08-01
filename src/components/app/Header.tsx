@@ -18,7 +18,7 @@ const WorkspacesContent = ({ workspaces }) => {
 
   return (
     <div>
-      <AddWorkspace></AddWorkspace>
+      <AddWorkspace />
       <div>
         <Menu
           style={{ border: 'none', width: '200px' }}
@@ -53,7 +53,7 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
           <AppGitHubStarButton />
           {/*workspace*/}
           <Popover
-            content={<WorkspacesContent workspaces={workspaces}></WorkspacesContent>}
+            content={<WorkspacesContent workspaces={workspaces} />}
             title={false}
             trigger='click'
           >
@@ -70,9 +70,9 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
               type='text'
               icon={theme === Theme.light ? ThemeIcon.dark : ThemeIcon.light}
               onClick={() => changeTheme()}
-            ></Button>
+            />
           </div>
-          <div className='hover-wrap'>
+          <div className='hover-wrap' style={{display:'none'}}>
             <Dropdown
               trigger={['click']}
               overlay={
