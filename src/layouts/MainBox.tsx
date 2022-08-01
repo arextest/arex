@@ -242,6 +242,7 @@ const MainBox = () => {
                   />
                 </MainMenuItem>
                 <MainMenuItem
+                  disabled
                   tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
                   key='environment'
                 >
