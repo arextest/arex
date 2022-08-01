@@ -105,6 +105,12 @@ const MainBox = () => {
 
   // *tab相关
   const [activeKey, setActiveKey] = useState('');
+  useEffect(()=>{
+    const pageType = panes.find(i=>i.key === activeKey)?.pageType
+    if (pageType && activeKey){
+      _useNavigate(`/${_useParams.workspaceId}/workspace/${_useParams.workspaceName}/${pageType}/${activeKey}`)
+    }
+  },[activeKey])
   const addTab = () => {
     const newActiveKey = String(Math.random());
     setPanes((panes) => {
