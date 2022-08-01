@@ -41,12 +41,7 @@ const getParentKey = (key: React.Key, tree: DataNode[]): React.Key => {
 };
 
 export type CollectionProps = {
-  treeData: any;
-  fetchTreeData: () => void;
-  loading?: boolean;
-  setMainBoxPanes: (p: any) => void;
-  mainBoxPanes: any[];
-  setMainBoxActiveKey: (p: any) => void;
+  workspaceId: string;
 };
 
 export type CollectionRef = {
@@ -55,10 +50,7 @@ export type CollectionRef = {
 
 // eslint-disable-next-line react/display-name
 const Collection = forwardRef(
-  (
-    { fetchTreeData, loading, setMainBoxPanes, mainBoxPanes, setMainBoxActiveKey }: CollectionProps,
-    ref: ForwardedRef<CollectionRef>,
-  ) => {
+  ({ workspaceId }: CollectionProps, ref: ForwardedRef<CollectionRef>) => {
     // 此处注意useImperativeHandle方法的的第一个参数是目标元素的ref引用
     useImperativeHandle(ref, () => ({
       setSelectedKeys,
@@ -71,8 +63,11 @@ const Collection = forwardRef(
     const [searchValue, setSearchValue] = useState('');
     const [autoExpandParent, setAutoExpandParent] = useState(true);
 
-    const { treeData } = useRequest(() =>
-      CollectionService.listCollection({ id: _useParams.workspaceId }),
+    const { data: treeData } = useRequest(
+      () => CollectionService.listCollection({ id: workspaceId }),
+      {
+        refreshDeps: [workspaceId],
+      },
     );
 
     const onExpand: any = (newExpandedKeys: string[]) => {

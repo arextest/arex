@@ -202,17 +202,7 @@ const MainBox = () => {
               tab={<MenuTitle icon={<ApiOutlined />} title='Collection' />}
               key={MenuTypeEnum.Collection}
             >
-              <CollectionMenu
-                workspaceId={_useParams.workspaceId}
-                treeData={collectionTreeData}
-                setMainBoxPanes={setPanes}
-                mainBoxPanes={panes}
-                setMainBoxActiveKey={setActiveKey}
-                fetchTreeData={() => {
-                  fetchCollectionTreeData();
-                }}
-                ref={collectionRef}
-              />
+              <CollectionMenu workspaceId={_useParams.workspaceId} ref={collectionRef} />
             </MainMenuItem>
             <MainMenuItem
               tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}
