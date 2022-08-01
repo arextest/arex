@@ -1,6 +1,6 @@
 import './index.less';
 
-import { DashOutlined, DownOutlined, MenuOutlined } from '@ant-design/icons';
+import { DashOutlined, DownOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Empty, Input, Spin, Tooltip, Tree } from 'antd';
 import type { DataNode } from 'antd/es/tree';
 import type { DirectoryTreeProps } from 'antd/lib/tree';
@@ -170,6 +170,7 @@ const Collection = forwardRef(
           <Tooltip placement='bottomLeft' title={'Create New'} mouseEnterDelay={0.5}>
             <Button
               className={'collection-header-create'}
+              icon={<PlusOutlined />}
               type='text'
               size='small'
               onClick={() => {
@@ -183,9 +184,7 @@ const Collection = forwardRef(
                   fetchTreeData();
                 });
               }}
-            >
-              +
-            </Button>
+            />
           </Tooltip>
           <Input
             disabled={true}

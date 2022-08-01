@@ -70,7 +70,7 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
               type='text'
               icon={theme === Theme.light ? ThemeIcon.dark : ThemeIcon.light}
               onClick={() => changeTheme()}
-            ></Button>
+            />
           </div>
           <div className='hover-wrap'>
             <Dropdown
