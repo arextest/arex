@@ -1,12 +1,15 @@
+import 'antd/dist/antd.less';
 import './style/index.less';
 import './components/app/index.less';
 
-import React, { useReducer } from 'react';
+import { ThemeProvider } from '@emotion/react';
+import React, { useEffect, useMemo, useReducer } from 'react';
 import { useRoutes } from 'react-router-dom';
 
 import CheckChromeExtension from './components/CheckChromeExtension';
 import routerConfig from './routers';
-import ThemeProvider from './style/theme';
+import { useStore } from './store';
+import { Theme, themeCreator } from './style/theme';
 
 export const GlobalContext = React.createContext({});
 
@@ -31,9 +34,16 @@ const reducer = (prevState, action) => {
 function App() {
   const [state, dispatch] = useReducer(reducer, initState);
   const routesContent = useRoutes(routerConfig);
+  const { theme: themeName, changeTheme } = useStore();
+  const theme = useMemo(() => themeCreator(themeName), [themeName]);
+
+  // init theme
+  useEffect(() => {
+    changeTheme(themeName);
+  }, []);
 
   return (
-    <ThemeProvider>
+    <ThemeProvider theme={theme}>
       <GlobalContext.Provider
         value={{
           state,
