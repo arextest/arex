@@ -8,6 +8,7 @@ import type { DirectoryTreeProps } from 'antd/lib/tree';
 import React, { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { NodeType } from '../../../constant';
 import { CollectionService } from '../../../services/CollectionService';
 import CollectionTitleRender from './CollectionTitleRender';
 
@@ -38,9 +39,14 @@ const getParentKey = (key: React.Key, tree: DataNode[]): React.Key => {
   return parentKey!;
 };
 
+export type nodeType = {
+  title: string;
+  key: string;
+  nodeType: NodeType;
+};
 export type CollectionProps = {
   workspaceId?: string;
-  onSelect: DirectoryTreeProps['onSelect'];
+  onSelect: (key: string, node: nodeType) => void;
 };
 
 export type CollectionRef = {
@@ -76,8 +82,13 @@ const Collection = forwardRef(
     };
 
     const handleSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
-      keys.length > 0 && setSelectedKeys(keys);
-      onSelect && onSelect(keys, info);
+      setSelectedKeys(keys);
+      onSelect &&
+        onSelect(keys[0] as string, {
+          title: info.node.title,
+          key: info.node.key,
+          nodeType: info.node.nodeType,
+        });
     };
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {

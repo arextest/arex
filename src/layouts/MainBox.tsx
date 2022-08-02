@@ -6,9 +6,10 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useImmer } from 'use-immer';
 
+import { ApplicationDataType } from '../api/Replay.type';
 import { AppFooter, AppHeader, CollectionMenu, EnvironmentMenu, ReplayMenu } from '../components';
-import { CollectionRef } from '../components/httpRequest/CollectionMenu';
-import { MenuTypeEnum, NodeType, PageTypeEnum } from '../constant';
+import { CollectionProps, CollectionRef, nodeType } from '../components/httpRequest/CollectionMenu';
+import { MenuTypeEnum, PageTypeEnum } from '../constant';
 import { Environment, Folder, HttpRequest, Replay } from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
 import WorkspaceOverviewPage from '../pages/WorkspaceOverview';
@@ -16,13 +17,12 @@ import { Workspace, WorkspaceService } from '../services/WorkspaceService';
 import { useStore } from '../store';
 import DraggableLayout from './DraggableLayout';
 
-type PaneProps = {
+export type PaneType = {
   title: string;
   key: string;
   pageType: PageTypeEnum;
-  qid: string;
   isNew?: boolean;
-  nodeType: NodeType;
+  data?: nodeType | ApplicationDataType; // 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
 };
 
 const { TabPane } = Tabs;
@@ -86,7 +86,7 @@ const MainBox = () => {
 
   // *************panes**************************
   // TODO 数据结构待规范
-  const [panes, setPanes] = useImmer<PaneProps[]>([]);
+  const [panes, setPanes] = useImmer<PaneType[]>([]);
 
   // *tab相关
   const [activeKey, setActiveKey] = useState('');
@@ -101,13 +101,10 @@ const MainBox = () => {
     const newActiveKey = String(Math.random());
     setPanes((panes) => {
       panes.push({
-        title: 'New Request',
         key: newActiveKey,
+        title: 'New Request',
         pageType: PageTypeEnum.Request,
-        qid: newActiveKey,
         isNew: true,
-        // 其实nodeType应该得通过qid拿到
-        nodeType: 3,
       });
     });
     setActiveKey(newActiveKey);
@@ -117,20 +114,17 @@ const MainBox = () => {
     const f = panes.filter((i) => i.key !== targetKey);
     setPanes(f);
 
-    if (f.length > 0) {
-      setActiveKey(f[f.length - 1].key);
-      updateCollectionMenuKeys([f[f.length - 1].key]);
+    if (f.length) {
+      const lastKey = f[f.length - 1].key;
+      setActiveKey(lastKey);
+      updateCollectionMenuKeys([lastKey]);
     } else {
       updateCollectionMenuKeys([]);
     }
   };
 
   const handleTabsEdit: any = (targetKey: string, action: 'add' | 'remove') => {
-    if (action === 'add') {
-      addTab();
-    } else {
-      removeTab(targetKey);
-    }
+    action === 'add' ? addTab() : removeTab(targetKey);
   };
 
   const handleTabsChange = (activeKey: string) => {
@@ -149,59 +143,53 @@ const MainBox = () => {
         title: 'title',
         key: 'key',
         pageType: PageTypeEnum.Environment,
-        qid: 'key',
         isNew: true,
-        curApp: {},
       });
     });
     setActiveKey('key');
   }
 
-  const handleCollectionMenuClick = (keys, info) => {
-    if (keys[0] && info.node.nodeType !== 3 && !panes.map((i) => i.key).includes(keys[0])) {
+  const handleCollectionMenuClick: CollectionProps['onSelect'] = (key, node) => {
+    if (!panes.map((i) => i.key).includes(key)) {
       setPanes((panes) => {
         panes.push({
-          title: info.node.title,
-          key: keys[0],
-          pageType: PageTypeEnum.Request,
-          qid: keys[0],
-          nodeType: info.node.nodeType,
+          key,
+          title: node.title,
+          pageType: node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
+          isNew: false,
+          data: node,
         });
       });
     }
-
-    if (keys[0] && info.node.nodeType === 3 && !panes.map((i) => i.key).includes(keys[0])) {
-      setPanes((panes) => {
-        panes.push({
-          title: info.node.title,
-          key: keys[0],
-          pageType: PageTypeEnum.Folder,
-          qid: keys[0],
-          nodeType: 3,
-          isNew: true,
-        });
-      });
-    }
-
-    if (keys[0]) {
-      setActiveKey(keys[0]);
-    }
+    setActiveKey(key);
   };
 
-  const handleReplayMenuClick = (app) => {
+  const handleReplayMenuClick = (app: ApplicationDataType) => {
     if (!panes.find((i) => i.key === app.appId)) {
       setPanes((panes) => {
         panes.push({
           title: app.appId,
           key: app.appId,
           pageType: PageTypeEnum.Replay,
-          qid: app.appId,
           isNew: true,
-          curApp: app,
+          data: app,
         });
       });
     }
     setActiveKey(app.appId);
+  };
+
+  const handleInterfaceSaveAs = (pane: PaneType) => {
+    // fetchCollectionTreeData(); // TODO 更新 Collection 数据
+    const newPanes = [...panes.filter((i) => i.key !== activeKey)];
+    newPanes.push({
+      key: pane.key,
+      isNew: true,
+      title: pane.title,
+      pageType: PageTypeEnum.Request,
+    });
+    setPanes(newPanes);
+    setActiveKey(pane.key);
   };
 
   useRequest(
@@ -210,17 +198,16 @@ const MainBox = () => {
         userName: userInfo!.email as string,
       }),
     {
-      ready: !!userInfo?.email,
+      ready: !!userInfo?.email && !!params.workspaceId,
       refreshDeps: [params.workspaceId],
       onSuccess(workspaces) {
         setWorkspaces(workspaces);
         if (params.workspaceName && params.workspaceId) {
           setPanes((panes) => {
             panes.push({
-              title: params.workspaceName,
-              key: params.workspaceId,
+              title: params.workspaceName as string,
+              key: params.workspaceId as string,
               pageType: PageTypeEnum.WorkspaceOverview,
-              qid: params.workspaceId,
               isNew: true,
             });
           });
@@ -294,26 +281,14 @@ const MainBox = () => {
                     <HttpRequest
                       collectionTreeData={[]} // TODO 建议存放至全局state
                       mode={HttpRequestMode.Normal}
-                      id={pane.qid}
+                      id={pane.key}
                       isNew={pane.isNew}
-                      onSaveAs={(p) => {
-                        // fetchCollectionTreeData(); // TODO
-                        const newPanes = [...panes.filter((i) => i.key !== activeKey)];
-                        newPanes.push({
-                          isNew: true,
-                          title: p.title,
-                          key: p.key,
-                          pageType: PageTypeEnum.Request,
-                          qid: p.key,
-                          // 其实nodeType应该得通过qid拿到
-                          nodeType: 3,
-                        });
-                        setPanes(newPanes);
-                        setActiveKey(p.key);
-                      }}
+                      onSaveAs={handleInterfaceSaveAs}
                     />
                   )}
-                  {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}
+                  {pane.pageType === PageTypeEnum.Replay && (
+                    <Replay data={pane.data as ApplicationDataType} />
+                  )}
                   {pane.pageType === PageTypeEnum.Folder && <Folder />}
                   {pane.pageType === PageTypeEnum.Environment && <Environment />}
                   {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverviewPage />}

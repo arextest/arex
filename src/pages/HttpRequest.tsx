@@ -34,6 +34,7 @@ import {
 } from '../components/httpRequest';
 import { ContentTypeEnum, MethodEnum, METHODS, NodeType } from '../constant';
 import { treeFindPath } from '../helpers/collection/util';
+import { PaneType } from '../layouts/MainBox';
 import { useStore } from '../store';
 import { tryParseJsonString, tryPrettierJsonString } from '../utils';
 import AgentAxios from '../utils/request';
@@ -51,7 +52,7 @@ export type HttpRequestProps = {
   id: string;
   isNew?: boolean;
   collectionTreeData: NodeList[];
-  onSaveAs: (p: { key: string; title: string }) => void;
+  onSaveAs: (pane: PaneType) => void;
 };
 
 export type KeyValueType = {
