@@ -111,11 +111,11 @@ const MainBox = () => {
   };
 
   const removeTab = (targetKey: string) => {
-    const f = panes.filter((i) => i.key !== targetKey);
-    setPanes(f);
+    const filteredPanes = panes.filter((i) => i.key !== targetKey);
+    setPanes(filteredPanes);
 
-    if (f.length) {
-      const lastKey = f[f.length - 1].key;
+    if (filteredPanes.length) {
+      const lastKey = filteredPanes[filteredPanes.length - 1].key;
       setActiveKey(lastKey);
       updateCollectionMenuKeys([lastKey]);
     } else {
@@ -202,7 +202,11 @@ const MainBox = () => {
       refreshDeps: [params.workspaceId],
       onSuccess(workspaces) {
         setWorkspaces(workspaces);
-        if (params.workspaceName && params.workspaceId) {
+        if (
+          params.workspaceName &&
+          params.workspaceId &&
+          !panes.map((pane) => pane.pageType).includes(PageTypeEnum.WorkspaceOverview)
+        ) {
           setPanes((panes) => {
             panes.push({
               title: params.workspaceName as string,

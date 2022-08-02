@@ -19,14 +19,14 @@ export const Color = {
 
 const themeDark = {
   color: {
-    primary: '#603BE3',
+    primary: '#955cf4',
     active: '#f5f5f5',
-    selected: colorLib('#603BE3').alpha(0.1).rgbString(),
+    selected: colorLib('#955cf4').alpha(0.1).rgbString(),
     text: {
       primary: '#000000D9',
       secondary: '#000000D9',
       disabled: '#000000D9',
-      highlight: '#603BE3',
+      highlight: '#955cf4',
     },
     border: {
       primary: '#303030',
