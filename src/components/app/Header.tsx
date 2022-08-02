@@ -27,7 +27,7 @@ const WorkspacesContent: FC<{ workspaces: Workspace[] }> = ({ workspaces }) => {
           console.log(val);
           const key = val.key;
           const label = workspaces.find((i) => i.id === key)?.workspaceName;
-          label && nav(`/${key}/workspace/${label}`);
+          label && (window.location.href = `/${key}/workspace/${label}`);
         }}
         activeKey={params.workspaceId}
         items={workspaces.map((workspace) => {
