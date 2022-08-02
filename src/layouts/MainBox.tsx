@@ -198,7 +198,8 @@ const MainBox = () => {
         userName: userInfo!.email as string,
       }),
     {
-      ready: !!userInfo?.email && !!params.workspaceId,
+      // "/"路由时需拉去第一个workspace
+      // ready: !!userInfo?.email && !!params.workspaceId,
       refreshDeps: [params.workspaceId],
       onSuccess(workspaces) {
         setWorkspaces(workspaces);

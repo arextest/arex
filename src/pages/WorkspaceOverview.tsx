@@ -54,7 +54,7 @@ const WorkspaceOverviewPage = () => {
 
           <Form.Item>
             <Button type='primary' htmlType='submit'>
-              Submit
+              Update
             </Button>
           </Form.Item>
         </Form>
