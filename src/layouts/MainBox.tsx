@@ -2,7 +2,7 @@ import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-des
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Empty, TabPaneProps, Tabs } from 'antd';
-import React, { ReactNode, useRef, useState } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useImmer } from 'use-immer';
 
@@ -90,12 +90,13 @@ const MainBox = () => {
 
   // *tab相关
   const [activeKey, setActiveKey] = useState('');
-  useEffect(()=>{
-    const pageType = panes.find(i=>i.key === activeKey)?.pageType
-    if (pageType && activeKey){
-      _useNavigate(`/${_useParams.workspaceId}/workspace/${_useParams.workspaceName}/${pageType}/${activeKey}`)
+  useEffect(() => {
+    const pageType = panes.find((i) => i.key === activeKey)?.pageType;
+    if (pageType && activeKey) {
+      nav(`/${params.workspaceId}/workspace/${params.workspaceName}/${pageType}/${activeKey}`);
     }
-  },[activeKey])
+  }, [activeKey]);
+
   const addTab = () => {
     const newActiveKey = String(Math.random());
     setPanes((panes) => {
