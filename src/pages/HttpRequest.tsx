@@ -49,7 +49,7 @@ export enum HttpRequestMode {
 export type HttpRequestProps = {
   mode?: HttpRequestMode;
   id: string;
-  isNew: boolean;
+  isNew?: boolean;
   collectionTreeData: NodeList[];
   onSaveAs: (p: { key: string; title: string }) => void;
 };
