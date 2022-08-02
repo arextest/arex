@@ -6,7 +6,7 @@ import { treeFindPath } from '../../../helpers/collection/util';
 import { CollectionService } from '../../../services/CollectionService';
 
 const CreateAndUpdateFolder: React.FC<any> = ({
-  updateDirectorytreeData,
+  updateDirectoryTreeData,
   collectionTree,
   collectionCreateAndUpdateModal,
 }) => {
@@ -38,7 +38,7 @@ const CreateAndUpdateFolder: React.FC<any> = ({
     }).then((res) => {
       setCollectionCreateAndUpdateModalVisible(false);
       setCollectionCreateAndUpdateModalFolderName('');
-      updateDirectorytreeData();
+      updateDirectoryTreeData();
     });
   };
 

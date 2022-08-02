@@ -81,6 +81,7 @@ const MainBox = () => {
   const params = useParams();
   const nav = useNavigate();
   const userInfo = useStore((store) => store.userInfo);
+  const collectionTreeData = useStore((state) => state.collectionTreeData);
   // *************workspaces**************************
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
 
@@ -284,7 +285,7 @@ const MainBox = () => {
                   {/* TODO 工作区自定义组件待规范，参考 menuItem */}
                   {pane.pageType === PageTypeEnum.Request && (
                     <HttpRequest
-                      collectionTreeData={[]} // TODO 建议存放至全局state
+                      collectionTreeData={collectionTreeData} // TODO 建议存放至全局state
                       mode={HttpRequestMode.Normal}
                       id={pane.key}
                       isNew={pane.isNew}

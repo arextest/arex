@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom';
 import { NodeType } from '../../../constant';
 import { CollectionService } from '../../../services/CollectionService';
 import CollectionTitleRender from './CollectionTitleRender';
+import {useStore} from "../../../store";
 
 const dataList: { key: React.Key; title: string }[] = [];
 const generateList = (data: DataNode[]) => {
@@ -63,6 +64,7 @@ const Collection = forwardRef(
 
     const _useParams = useParams();
 
+    const setCollectionTreeData = useStore(state=>state.setCollectionTreeData)
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
     const [searchValue, setSearchValue] = useState('');
@@ -75,6 +77,15 @@ const Collection = forwardRef(
         refreshDeps: [workspaceId],
       },
     );
+
+    useEffect(()=>{
+      // setColl
+      if (treeData.length>0){
+        setCollectionTreeData(treeData)
+        console.log(treeData,'ree')
+      }
+
+    },[treeData])
 
     const onExpand: any = (newExpandedKeys: string[]) => {
       setExpandedKeys(newExpandedKeys);

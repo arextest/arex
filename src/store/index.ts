@@ -14,6 +14,8 @@ type BaseState = {
   extensionInstalled: boolean;
   userInfo?: UserInfo;
   setUserInfo: (userInfo: UserInfo) => void;
+  collectionTreeData: any
+  setCollectionTreeData: (collectionTreeData: any) => void;
 };
 
 export const useStore = create<BaseState>((set, get) => ({
@@ -33,4 +35,6 @@ export const useStore = create<BaseState>((set, get) => ({
     });
   },
   extensionInstalled: false,
+  collectionTreeData: [],
+  setCollectionTreeData: (collectionTreeData) => set({ collectionTreeData }),
 }));
