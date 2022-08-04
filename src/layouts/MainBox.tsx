@@ -4,7 +4,6 @@ import { useRequest } from 'ahooks';
 import { Button, Empty, TabPaneProps, Tabs } from 'antd';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useImmer } from 'use-immer';
 
 import { ApplicationDataType } from '../api/Replay.type';
 import { AppFooter, AppHeader, CollectionMenu, EnvironmentMenu, ReplayMenu } from '../components';
@@ -17,6 +16,7 @@ import { Workspace, WorkspaceService } from '../services/WorkspaceService';
 import { useStore } from '../store';
 import DraggableLayout from './DraggableLayout';
 
+// TODO 数据结构待规范
 export type PaneType = {
   title: string;
   key: string;
@@ -80,35 +80,29 @@ const EmptyWrapper = styled(Empty)`
 const MainBox = () => {
   const params = useParams();
   const nav = useNavigate();
-  const userInfo = useStore((store) => store.userInfo);
-  const collectionTreeData = useStore((state) => state.collectionTreeData);
-  // *************workspaces**************************
+  const { userInfo, panes, setPanes, activePane, setActivePane, collectionTreeData } = useStore();
+  // *************workspaces**************************// TODO 放置全局 store
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
 
-  // *************panes**************************
-  // TODO 数据结构待规范
-  const [panes, setPanes] = useImmer<PaneType[]>([]);
-
-  // *tab相关
-  const [activeKey, setActiveKey] = useState('');
   useEffect(() => {
-    const pageType = panes.find((i) => i.key === activeKey)?.pageType;
-    if (pageType && activeKey) {
-      nav(`/${params.workspaceId}/workspace/${params.workspaceName}/${pageType}/${activeKey}`);
+    const pageType = panes.find((i) => i.key === activePane)?.pageType;
+    if (pageType && activePane) {
+      nav(`/${params.workspaceId}/workspace/${params.workspaceName}/${pageType}/${activePane}`);
     }
-  }, [activeKey]);
+  }, [activePane]);
 
   const addTab = () => {
     const newActiveKey = String(Math.random());
-    setPanes((panes) => {
-      panes.push({
+    setPanes(
+      {
         key: newActiveKey,
         title: 'New Request',
         pageType: PageTypeEnum.Request,
         isNew: true,
-      });
-    });
-    setActiveKey(newActiveKey);
+      },
+      'push',
+    );
+    setActivePane(newActiveKey);
   };
 
   const removeTab = (targetKey: string) => {
@@ -117,7 +111,7 @@ const MainBox = () => {
 
     if (filteredPanes.length) {
       const lastKey = filteredPanes[filteredPanes.length - 1].key;
-      setActiveKey(lastKey);
+      setActivePane(lastKey);
       updateCollectionMenuKeys([lastKey]);
     } else {
       updateCollectionMenuKeys([]);
@@ -128,9 +122,9 @@ const MainBox = () => {
     action === 'add' ? addTab() : removeTab(targetKey);
   };
 
-  const handleTabsChange = (activeKey: string) => {
-    setActiveKey(activeKey);
-    updateCollectionMenuKeys([activeKey]);
+  const handleTabsChange = (activePane: string) => {
+    setActivePane(activePane);
+    updateCollectionMenuKeys([activePane]);
   };
 
   const collectionRef = useRef<CollectionRef>(null);
@@ -139,50 +133,53 @@ const MainBox = () => {
   };
 
   function activeEnvironmentPane() {
-    setPanes((panes) => {
-      panes.push({
+    setPanes(
+      {
         title: 'title',
         key: 'key',
         pageType: PageTypeEnum.Environment,
         isNew: true,
-      });
-    });
-    setActiveKey('key');
+      },
+      'push',
+    );
+    setActivePane('key');
   }
 
   const handleCollectionMenuClick: CollectionProps['onSelect'] = (key, node) => {
     if (!panes.map((i) => i.key).includes(key)) {
-      setPanes((panes) => {
-        panes.push({
+      setPanes(
+        {
           key,
           title: node.title,
           pageType: node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
           isNew: false,
           data: node,
-        });
-      });
+        },
+        'push',
+      );
     }
-    setActiveKey(key);
+    setActivePane(key);
   };
 
   const handleReplayMenuClick = (app: ApplicationDataType) => {
     if (!panes.find((i) => i.key === app.appId)) {
-      setPanes((panes) => {
-        panes.push({
+      setPanes(
+        {
           title: app.appId,
           key: app.appId,
           pageType: PageTypeEnum.Replay,
           isNew: true,
           data: app,
-        });
-      });
+        },
+        'push',
+      );
     }
-    setActiveKey(app.appId);
+    setActivePane(app.appId);
   };
 
   const handleInterfaceSaveAs = (pane: PaneType) => {
     // fetchCollectionTreeData(); // TODO 更新 Collection 数据
-    const newPanes = [...panes.filter((i) => i.key !== activeKey)];
+    const newPanes = [...panes.filter((i) => i.key !== activePane)];
     newPanes.push({
       key: pane.key,
       isNew: true,
@@ -190,7 +187,7 @@ const MainBox = () => {
       pageType: PageTypeEnum.Request,
     });
     setPanes(newPanes);
-    setActiveKey(pane.key);
+    setActivePane(pane.key);
   };
 
   useRequest(
@@ -209,15 +206,16 @@ const MainBox = () => {
           params.workspaceId &&
           !panes.map((pane) => pane.pageType).includes(PageTypeEnum.WorkspaceOverview)
         ) {
-          setPanes((panes) => {
-            panes.push({
+          setPanes(
+            {
               title: params.workspaceName as string,
               key: params.workspaceId as string,
               pageType: PageTypeEnum.WorkspaceOverview,
               isNew: true,
-            });
-          });
-          setActiveKey(params.workspaceId);
+            },
+            'push',
+          );
+          setActivePane(params.workspaceId);
         } else {
           nav(`/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}`);
         }
@@ -273,7 +271,7 @@ const MainBox = () => {
               type='editable-card'
               tabBarGutter={-1}
               onEdit={handleTabsEdit}
-              activeKey={activeKey}
+              activeKey={activePane}
               onChange={handleTabsChange}
               tabBarStyle={{
                 left: '-11px',
@@ -285,7 +283,7 @@ const MainBox = () => {
                   {/* TODO 工作区自定义组件待规范，参考 menuItem */}
                   {pane.pageType === PageTypeEnum.Request && (
                     <HttpRequest
-                      collectionTreeData={collectionTreeData} // TODO 建议存放至全局state
+                      collectionTreeData={collectionTreeData}
                       mode={HttpRequestMode.Normal}
                       id={pane.key}
                       isNew={pane.isNew}
