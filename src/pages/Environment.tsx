@@ -1,5 +1,5 @@
-import './Environment.less'
-import { Table, Button,Input,Form, Select } from 'antd';
+import './Environment.less';
+import { Table, Button, Input, Form, Select } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import update from 'immutability-helper';
 import React, { useCallback, useEffect, useRef, useState, useContext } from 'react';
@@ -8,7 +8,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 const type = 'DraggableBodyRow';
 import { css } from '@emotion/react';
 import type { FormInstance } from 'antd/es/form';
-import EnvironmentService from '../api/Environment.service'
+import EnvironmentService from '../api/Environment.service';
 
 //拖拽
 const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }) => {
@@ -48,18 +48,17 @@ const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }) =>
   return (
     <Form form={form} component={false}>
       <EditableContext.Provider value={form}>
-      <tr
-        ref={ref}
-        className={`${className}${isOver ? dropClassName : ''}`}
-        style={{
-          cursor: 'move',
-          ...style,
-        }}
-        {...restProps}
-      />
+        <tr
+          ref={ref}
+          className={`${className}${isOver ? dropClassName : ''}`}
+          style={{
+            cursor: 'move',
+            ...style,
+          }}
+          {...restProps}
+        />
       </EditableContext.Provider>
     </Form>
-   
   );
 };
 
@@ -121,10 +120,14 @@ const EditableCell: React.FC<EditableCellProps> = ({
         //   },
         // ]}
       >
-        <Input ref={inputRef} onPressEnter={save} onBlur={save}/>
+        <Input ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
     ) : (
-      <div className="editable-cell-value-wrap" style={{ paddingRight: 24,height:32 }} onClick={toggleEdit}>
+      <div
+        className='editable-cell-value-wrap'
+        style={{ paddingRight: 24, height: 32 }}
+        onClick={toggleEdit}
+      >
         {children}
       </div>
     );
@@ -133,9 +136,9 @@ const EditableCell: React.FC<EditableCellProps> = ({
   return <td {...restProps}>{childNode}</td>;
 };
 
-const EnvironmentPage = ({curEnvironment}:any) => {
+const EnvironmentPage = ({ curEnvironment }: any) => {
   const [data, setData] = useState<[]>([]);
-  const [isActive,setIsActive]= useState<[]>([]);
+  const [isActive, setIsActive] = useState<[]>([]);
   const defaultColumns = [
     {
       title: 'VARIABLE',
@@ -151,11 +154,11 @@ const EnvironmentPage = ({curEnvironment}:any) => {
     },
     {
       title: 'operation',
-      render: (text) => <a onClick={()=>deleteEnvironmentItem(text)}>Delete</a>,
-    }
+      render: (text) => <a onClick={() => deleteEnvironmentItem(text)}>Delete</a>,
+    },
   ];
 
-  const columns = defaultColumns.map(col => {
+  const columns = defaultColumns.map((col) => {
     if (!col.editable) {
       return col;
     }
@@ -178,29 +181,29 @@ const EnvironmentPage = ({curEnvironment}:any) => {
     },
   };
 
-  useEffect(()=>{
-    if(curEnvironment.length>0){
-      let EnvironmentActive:string[]=[];
-      curEnvironment[0].keyValues.map((e:any,index:number)=>{
-        if(e.key!==index){
-          e.keys=e.key;
+  useEffect(() => {
+    if (curEnvironment.length > 0) {
+      let EnvironmentActive: string[] = [];
+      curEnvironment[0].keyValues.map((e: any, index: number) => {
+        if (e.key !== index) {
+          e.keys = e.key;
         }
-        e.key=index;
-        if(e.active){
+        e.key = index;
+        if (e.active) {
           EnvironmentActive.push(e.key);
         }
-      })
-      
+      });
+
       setData(curEnvironment[0].keyValues);
-      setCount(curEnvironment[0].keyValues.length+1);
+      setCount(curEnvironment[0].keyValues.length + 1);
       setIsActive(EnvironmentActive);
-    } 
-  },[curEnvironment])
+    }
+  }, [curEnvironment]);
 
   //输入框数据保存
   const handleSave = (row: DataType) => {
     const newData = [...data];
-    const index = newData.findIndex(item => row.key === item.key);
+    const index = newData.findIndex((item) => row.key === item.key);
     const item = newData[index];
     newData.splice(index, 1, {
       ...item,
@@ -208,7 +211,6 @@ const EnvironmentPage = ({curEnvironment}:any) => {
     });
     setData(newData);
   };
-
 
   //拖拽
   const moveRow = useCallback(
@@ -226,17 +228,17 @@ const EnvironmentPage = ({curEnvironment}:any) => {
     [data],
   );
 
- //多选框
+  //多选框
   const rowSelection = {
     selectedRowKeys: isActive,
-    columnWidth:'200px',
-    onSelect:(record,selected) => {
-      if(selected){
-        setIsActive([...isActive,record.key]);
-      }else{
-        setIsActive(isActive.filter(e=>e!=record.key)); 
+    columnWidth: '200px',
+    onSelect: (record, selected) => {
+      if (selected) {
+        setIsActive([...isActive, record.key]);
+      } else {
+        setIsActive(isActive.filter((e) => e != record.key));
       }
-    }
+    },
   };
 
   //添加
@@ -245,47 +247,50 @@ const EnvironmentPage = ({curEnvironment}:any) => {
     const newData: DataType = {
       key: count,
       value: '',
-      keys:'',
-      active:'false'
+      keys: '',
+      active: 'false',
     };
     setData([...data, newData]);
     setCount(count + 1);
   };
 
   //删除
-  const deleteEnvironmentItem = (text) =>{
-    const newData = data.filter(item => item.key !== text.key);
+  const deleteEnvironmentItem = (text) => {
+    const newData = data.filter((item) => item.key !== text.key);
     setData(newData);
-  }
+  };
 
   //保存
-  const SaveEnvironment = () =>{
-    const newdata=data.map((e:any)=>{
-      if(isActive.includes(e.key)){
-        e.active=true;
-        return {key:e.keys,active:e.active,value:e.value}
-      }else{
-        e.active=false;
-        return {key:e.keys,active:e.active,value:e.value}
+  const SaveEnvironment = () => {
+    const newdata = data.map((e: any) => {
+      if (isActive.includes(e.key)) {
+        e.active = true;
+        return { key: e.keys, active: e.active, value: e.value };
+      } else {
+        e.active = false;
+        return { key: e.keys, active: e.active, value: e.value };
       }
-    })
-    curEnvironment[0].keyValues=newdata;
-    EnvironmentService.saveEnvironment({env:curEnvironment[0]}).then(res=>{
-      if(res.body.success==true){
-
+    });
+    curEnvironment[0].keyValues = newdata;
+    EnvironmentService.saveEnvironment({ env: curEnvironment[0] }).then((res) => {
+      if (res.body.success == true) {
       }
-    })
-  }
+    });
+  };
 
   return (
     <>
-      <div css={css`
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-          `}>
-        <div>{curEnvironment.length>0&&curEnvironment[0].envName}</div>
-        <div><Button onClick={handleAdd}>Add</Button> <Button onClick={SaveEnvironment}>Save</Button></div>
+      <div
+        css={css`
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 10px;
+        `}
+      >
+        <div>{curEnvironment.length > 0 && curEnvironment[0].envName}</div>
+        <div>
+          <Button onClick={handleAdd}>Add</Button> <Button onClick={SaveEnvironment}>Save</Button>
+        </div>
       </div>
       <DndProvider backend={HTML5Backend}>
         <Table
@@ -302,7 +307,7 @@ const EnvironmentPage = ({curEnvironment}:any) => {
             return attr;
           }}
           rowSelection={{
-            hideSelectAll:true,
+            hideSelectAll: true,
             ...rowSelection,
           }}
         />

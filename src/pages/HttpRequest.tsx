@@ -39,7 +39,7 @@ import { useStore } from '../store';
 import { tryParseJsonString, tryPrettierJsonString } from '../utils';
 import AgentAxios from '../utils/request';
 import { NodeList } from '../vite-env';
-import { runTestScript } from "../helpers/sandbox";
+import { runTestScript } from '../helpers/sandbox';
 
 const { TabPane } = Tabs;
 
@@ -177,11 +177,11 @@ const HttpRequest: FC<HttpRequestProps> = ({
 
   useEffect(() => {
     handleUpdateUrl();
-    runTestScript(cmValue,{
+    runTestScript(cmValue, {
       status: 200,
       body: 'hoi',
       headers: [],
-    }).then( res =>{
+    }).then((res) => {
       console.log(res);
     });
   }, [requestParams]);

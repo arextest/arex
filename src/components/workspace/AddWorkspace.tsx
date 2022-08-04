@@ -1,70 +1,77 @@
-import {Button, Form, Input, Modal, TreeSelect} from "antd";
-import {CollectionService} from "../../services/CollectionService";
-import {treeFindPath} from "../../helpers/collection/util";
-import {FileSystemService} from "../../api/FileSystem.service";
-import {useParams} from "react-router-dom";
-import {useState} from "react";
-import {WorkspaceService} from "../../services/WorkspaceService";
+import { Button, Form, Input, Modal, TreeSelect } from 'antd';
+import { CollectionService } from '../../services/CollectionService';
+import { treeFindPath } from '../../helpers/collection/util';
+import { FileSystemService } from '../../api/FileSystem.service';
+import { useParams } from 'react-router-dom';
+import { useState } from 'react';
+import { WorkspaceService } from '../../services/WorkspaceService';
 
-const AddWorkspace = ()=>{
+const AddWorkspace = () => {
   const _useParams = useParams();
   const [form] = Form.useForm();
   const [value, setValue] = useState<string>();
   const [visible, setVisible] = useState<boolean>(false);
 
-  return     <>
-    <Button style={{width:'100%'}} type={'primary'} onClick={() => setVisible(true)}>Create Workspace</Button>
-    <Modal
-      zIndex={10001}
-      visible={visible}
-      title='Create workspace'
-      okText='Create'
-      cancelText='Cancel'
-      onCancel={() => setVisible(false)}
-      onOk={() => {
-        form
-          .validateFields()
-          .then((values) => {
-            console.log(values,'va')
-            WorkspaceService.createWorkspace({userName:localStorage.getItem('email'),workspaceName:values.name}).then(res=>{
-              console.log(res,'fff')
-              const workspaceId = ''
-              const workspaceName = ''
-              if (res.data.body.success){
-                // window.location.href = `/${workspaceId}/workspace/${workspaceName}`
-                window.location.reload()
-              }
+  return (
+    <>
+      <Button style={{ width: '100%' }} type={'primary'} onClick={() => setVisible(true)}>
+        Create Workspace
+      </Button>
+      <Modal
+        zIndex={10001}
+        visible={visible}
+        title='Create workspace'
+        okText='Create'
+        cancelText='Cancel'
+        onCancel={() => setVisible(false)}
+        onOk={() => {
+          form
+            .validateFields()
+            .then((values) => {
+              console.log(values, 'va');
+              WorkspaceService.createWorkspace({
+                userName: localStorage.getItem('email'),
+                workspaceName: values.name,
+              }).then((res) => {
+                console.log(res, 'fff');
+                const workspaceId = '';
+                const workspaceName = '';
+                if (res.data.body.success) {
+                  // window.location.href = `/${workspaceId}/workspace/${workspaceName}`
+                  window.location.reload();
+                }
+              });
+              // onCreate(values);
             })
-            // onCreate(values);
-          })
-          .catch((info) => {
-            console.log('Validate Failed:', info);
-          });
-      }}
-    >
-      <Form
-        form={form}
-        layout='vertical'
-        name='form_in_modal'
-        initialValues={{
-          modifier: 'public',
+            .catch((info) => {
+              console.log('Validate Failed:', info);
+            });
         }}
       >
-        <Form.Item
-          name='name'
-          label='Name'
-          rules={[
-            {
-              required: true,
-              message: 'Please input the name of workspace!',
-            },
-          ]}
+        <Form
+          form={form}
+          layout='vertical'
+          name='form_in_modal'
+          initialValues={{
+            modifier: 'public',
+          }}
         >
-          <Input />
-        </Form.Item>
-      </Form>
-    </Modal>
-  </>
-}
+          <Form.Item
+            name='name'
+            label='Name'
+            rules={[
+              {
+                required: true,
+                message: 'Please input the name of workspace!',
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </>
+  );
+};
 
-export default AddWorkspace
+export default AddWorkspace;

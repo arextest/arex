@@ -12,7 +12,10 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-    "*": "prettier --write \"src/**/*.{ts,tsx}\""
+    "*": [
+      "prettier --write \"src/**/*.{ts,tsx}\"",
+      "git add ."
+    ]
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",

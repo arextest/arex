@@ -36,7 +36,7 @@ export class WorkspaceService {
     return axios.delete(`/api/filesystem/workspace/${workspaceId}`).then((res) => res);
   }
 
-  static inviteToWorkspace(params){
-    return axios.post(`/api/filesystem/inviteToWorkspace`,params)
+  static inviteToWorkspace(params) {
+    return axios.post(`/api/filesystem/inviteToWorkspace`, params);
   }
 }

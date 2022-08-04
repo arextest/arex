@@ -9,7 +9,7 @@ import { Theme, ThemeIcon } from '../../style/theme';
 import Setting from '../Setting';
 import AddWorkspace from '../workspace/AddWorkspace';
 import AppGitHubStarButton from './GitHubStarButton';
-import InviteWorkspace from "../workspace/Invite";
+import InviteWorkspace from '../workspace/Invite';
 
 type AppHeaderProps = {
   workspaces: Workspace[];
@@ -74,7 +74,7 @@ const AppHeader: FC<AppHeaderProps> = ({ workspaces }) => {
         </Space>
 
         <div className={'right'}>
-          <InviteWorkspace/>
+          <InviteWorkspace />
           <Button
             type='text'
             icon={theme === Theme.light ? ThemeIcon.dark : ThemeIcon.light}
