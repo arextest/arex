@@ -1,16 +1,18 @@
 import './index.less';
 
-import { DownOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Alert, Button, Input, message } from 'antd';
-import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Input, message } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { GlobalContext } from '../../App';
 import { LoginService } from '../../services/LoginService';
 import { WorkspaceService } from '../../services/WorkspaceService';
+import { useStore } from '../../store';
 
 let timeChange: any;
 const Login = () => {
-  const value = useContext(GlobalContext);
+  const nav = useNavigate();
+  const { setUserInfo } = useStore();
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState<string>('');
   const [emailchecked, setEmailchecked] = useState<boolean>(true);
@@ -49,7 +51,7 @@ const Login = () => {
     });
   };
   // 用户进入前初始化
-  const initBeforeUserEntry = (userName) => {
+  const initBeforeUserEntry = (userName: string) => {
     WorkspaceService.listWorkspace({
       userName: userName,
     }).then((workspaces) => {
@@ -60,11 +62,13 @@ const Login = () => {
         };
         WorkspaceService.createWorkspace(params).then((res) => {
           localStorage.setItem('email', email);
-          value.dispatch({ type: 'login', payload: email });
+          setUserInfo({ email });
+          nav('/');
         });
       } else {
         localStorage.setItem('email', email);
-        value.dispatch({ type: 'login', payload: email });
+        setUserInfo({ email });
+        nav('/');
       }
     });
   };
@@ -103,6 +107,7 @@ const Login = () => {
     <div className={'login-layout'}>
       <div className={'login'}>
         <div className={'login-title'}>AREX</div>
+        {/* TODO 使用 Form 组件做数据校验以及表单提交 */}
         <Input
           size='large'
           placeholder='Please enter your email！'

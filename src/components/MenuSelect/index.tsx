@@ -18,7 +18,6 @@ const MenuSelectWrapper = styled.div`
   padding: 8px;
 `;
 const MenuList = styled(Menu)`
-  background-color: transparent !important;
   border: none !important;
   .ant-menu-item {
     margin: 0 !important;
@@ -26,8 +25,15 @@ const MenuList = styled(Menu)`
     line-height: 32px;
     border-radius: 2px;
   }
+  .ant-menu-item-active {
+    color: inherit !important;
+    background-color: ${(props) => props.theme.color.active} !important;
+  }
   .ant-menu-item-selected {
-    background-color: #2d244f;
+    background-color: ${(props) => props.theme.color.selected} !important;
+  }
+  .ant-menu-item-active.ant-menu-item-selected {
+    color: ${(props) => props.theme.color.primary} !important;
   }
 `;
 const MenuFilter = styled(Input.Search)`

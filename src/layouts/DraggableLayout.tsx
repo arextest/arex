@@ -2,14 +2,12 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import React, { FC, ReactNode, useEffect, useRef } from 'react';
 
-// import { Color } from '../style/theme';
-
 type Direction = 'horizontal' | 'vertical';
 
 const DividerLine = styled.div<{ direction: Direction }>`
   width: ${(props) => (props.direction === 'vertical' ? '100%' : '1px')};
   height: ${(props) => (props.direction === 'vertical' ? '1px' : '100%')};
-  background-color: #eee;
+  background-color: ${(props) => props.theme.color.border.primary};
   transition: box-shadow 0.2s;
 }
 `;
@@ -39,11 +37,11 @@ const DraggableLayout: FC<{
     horizontal: {
       firstStyle: {
         width: `calc(${(max + min) / 2}% - ${lineWidth}px)`,
-        height:"100%"
+        height: '100%',
       },
       secondStyle: {
         width: `calc(${100 - (max + min) / 2}% - ${lineWidth}px)`,
-        height:"100%"
+        height: '100%',
       },
     },
     vertical: {
@@ -105,18 +103,13 @@ const DraggableLayout: FC<{
   return (
     <div
       ref={draggableLayoutRef}
-      className={props.className}
-      style={{ display: direction === 'horizontal' ? 'flex' : 'block',height:'100%' }}
+      style={{
+        display: direction === 'horizontal' ? 'flex' : 'block',
+        height: 'calc(100% - 72px)',
+      }}
     >
       <div ref={firstRef} style={styleMap[direction].firstStyle}>
-        <div
-          css={css`
-            width: calc(100% + ${lineWidth}px);
-            height: 100%;
-          `}
-        >
-          {firstNode}
-        </div>
+        {firstNode}
       </div>
 
       <div
@@ -125,21 +118,13 @@ const DraggableLayout: FC<{
           cursor: ${direction === 'horizontal' ? 'ew-resize' : 'ns-resize'};
           padding: ${direction === 'horizontal' ? `0 ${lineWidth}px` : `${lineWidth}px 0`};
           z-index: 100;
-          //background-color: salmon;
         `}
       >
         <DividerLine direction={direction} />
       </div>
 
       <div ref={secondRef} style={styleMap[direction].secondStyle}>
-        <div
-          css={css`
-            width: calc(100% + ${lineWidth}px);
-            transform: translateX(-${lineWidth}px);
-          `}
-        >
-          {secondNode}
-        </div>
+        {secondNode}
       </div>
     </div>
   );

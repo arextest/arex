@@ -113,6 +113,7 @@ const Results: FC<{
   return (
     <div>
       <AppTable
+        rowKey='planId'
         size='small'
         theme={theme}
         pagination={false}

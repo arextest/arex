@@ -19,15 +19,15 @@ const AppTitle = styled.div`
   }
 `;
 
-const Replay: FC<{ curApp?: ApplicationDataType }> = ({ curApp }) => {
+const Replay: FC<{ data?: ApplicationDataType }> = ({ data }) => {
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
-  return curApp ? (
+  return data ? (
     <Space direction='vertical' size='middle' style={{ display: 'flex' }}>
       <AppTitle>
-        <h1 className='app-name'>{`${curApp.appId}_${curApp.appName}`}</h1>
+        <h1 className='app-name'>{`${data.appId}_${data.appName}`}</h1>
         <span>
           <label>Case Count: </label>
-          <span>{curApp.recordedCaseCount}</span>
+          <span>{data.recordedCaseCount}</span>
         </span>
         <Button size='small' type='primary'>
           Start replay
@@ -36,7 +36,7 @@ const Replay: FC<{ curApp?: ApplicationDataType }> = ({ curApp }) => {
       {/* Report component  */}
       <Results
         // defaultSelectFirst
-        appId={curApp.appId}
+        appId={data.appId}
         onSelectedPlanChange={setSelectedPlan}
       />
       <Report selectedPlan={selectedPlan} />
