@@ -5,6 +5,7 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type MenuSelectProps<T> = {
+  small?: boolean;
   rowKey: string;
   onSelect: (app: T) => void;
   filter: (keyword: string, app: T) => boolean;
@@ -42,9 +43,7 @@ const MenuFilter = styled(Input.Search)`
   margin-bottom: 8px;
 `;
 
-function MenuSelect<T extends { [key: string]: any }>(
-  props: MenuSelectProps<T> & { small?: boolean },
-) {
+function MenuSelect<T extends { [key: string]: any }>(props: MenuSelectProps<T>) {
   const { t } = useTranslation('components');
 
   const [filterKeyword, setFilterKeyword] = useState('');

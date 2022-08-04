@@ -49,6 +49,7 @@ const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
     <Row style={{ padding: '0 8px' }} gutter={8}>
       <Col span={6}>
         <MenuSelect<CategoryStatistic>
+          small
           defaultSelectFirst
           rowKey='operationName'
           onSelect={setSelectedCategory}
