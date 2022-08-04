@@ -10,7 +10,7 @@ import CreateAndUpdateFolder from './CreateAndUpdateFolder';
 
 function CollectionTitleRender({
   val,
-  updateDirectorytreeData,
+  updateDirectoryTreeData,
   treeData,
   callbackOfNewRequest,
 }: any) {
@@ -43,7 +43,7 @@ function CollectionTitleRender({
                     parentPath: paths.map((i: any) => i.key),
                     userName: 'zt',
                   }).then(() => {
-                    updateDirectorytreeData();
+                    updateDirectoryTreeData();
                   });
                 }}
               >
@@ -67,7 +67,7 @@ function CollectionTitleRender({
                     userName: 'zt',
                   }).then((res) => {
                     console.log(res.data.body.infoId);
-                    updateDirectorytreeData();
+                    updateDirectoryTreeData();
                     callbackOfNewRequest(
                       [res.data.body.infoId],
                       paths.map((i: any) => i.key),
@@ -94,7 +94,7 @@ function CollectionTitleRender({
                     parentPath: paths.map((i: any) => i.key),
                     userName: 'zt',
                   }).then((res) => {
-                    updateDirectorytreeData();
+                    updateDirectoryTreeData();
                     callbackOfNewRequest(
                       [res.data.body.infoId],
                       paths.map((i: any) => i.key),
@@ -139,7 +139,7 @@ function CollectionTitleRender({
                     id: _useParams.workspaceId,
                     removeNodePath: paths.map((i: any) => i.key),
                   }).then((res) => {
-                    updateDirectorytreeData();
+                    updateDirectoryTreeData();
                   });
                 }}
               >
@@ -190,7 +190,7 @@ function CollectionTitleRender({
         </div>
       </div>
       <CreateAndUpdateFolder
-        updateDirectorytreeData={updateDirectorytreeData}
+        updateDirectoryTreeData={updateDirectoryTreeData}
         collectionTree={treeData}
         collectionCreateAndUpdateModal={CollectionCreateAndUpdateModal}
       />

@@ -13,6 +13,12 @@ export enum NodeType {
   folder = 3,
 }
 
+export enum MenuTypeEnum {
+  Collection = 'collection',
+  Replay = 'replay',
+  Environment = 'environment',
+}
+
 export enum PageTypeEnum {
   Request = 'request',
   Replay = 'replay',
@@ -20,7 +26,7 @@ export enum PageTypeEnum {
   Collection = 'collection',
   Environment = 'environment',
   Login = 'login',
-  WorkspaceOverview = 'workspaceOverview'
+  WorkspaceOverview = 'workspaceOverview',
 }
 
 export enum ContentTypeEnum {

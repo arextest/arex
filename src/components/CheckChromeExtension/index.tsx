@@ -1,5 +1,5 @@
 import { Alert } from 'antd';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import { useStore } from '../../store';
 
@@ -20,15 +20,16 @@ const CheckChromeExtension = () => {
     <Alert
       message={
         <div>
-          注意：Chrome插件可突破浏览器跨域限制，请先安装
+          Be careful：The Chrome Extension can break the cross-domain limit of the browser.
+          Please install the&nbsp;
           <a
             href='https://chrome.google.com/webstore/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj'
             target={'_blank'}
             rel='noreferrer'
           >
-            Chrome插件
+            Chrome Extension
           </a>
-          后再运行。
+          &nbsp;before you run it.
         </div>
       }
     />

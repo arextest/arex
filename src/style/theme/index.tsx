@@ -1,7 +1,5 @@
 // https://emotion.sh/docs/theming
-import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
-import { ConfigProvider } from 'antd';
-import { FC, PropsWithChildren, useEffect } from 'react';
+import colorLib from '@kurkle/color';
 
 export enum Theme {
   light = 'light',
@@ -12,6 +10,7 @@ export enum ThemeIcon {
   dark = '🌛',
 }
 
+export const ThemeKey = 'theme';
 export const DefaultTheme = Theme.light;
 
 export const Color = {
@@ -20,19 +19,41 @@ export const Color = {
 
 const themeDark = {
   color: {
-    primary: '#603BE3',
+    primary: '#955cf4',
+    active: '#f5f5f5',
+    selected: colorLib('#955cf4').alpha(0.1).rgbString(),
+    text: {
+      primary: '#000000D9',
+      secondary: '#000000D9',
+      disabled: '#000000D9',
+      highlight: '#955cf4',
+    },
+    border: {
+      primary: '#303030',
+    },
   },
 };
 
 const themeLight = {
   color: {
     primary: '#603BE3',
+    active: '#f5f5f5',
+    selected: colorLib('#603BE3').alpha(0.1).rgbString(),
+    text: {
+      primary: '#000000D9',
+      secondary: '#000000D9',
+      disabled: '#000000D9',
+      highlight: '#603BE3',
+    },
+    border: {
+      primary: '#F0F0F0',
+    },
   },
 };
 
 const themeMap = {
-  [Theme.light]: themeDark,
-  [Theme.dark]: themeLight,
+  [Theme.light]: themeLight,
+  [Theme.dark]: themeDark,
 };
 
 export const themeCreator = (theme: Theme) => themeMap[theme];
@@ -42,21 +63,17 @@ declare module '@emotion/react' {
   export interface Theme {
     color: {
       primary: string;
+      active: string;
+      selected: string;
+      text: {
+        primary: string;
+        secondary: string;
+        disabled: string;
+        highlight: string;
+      };
+      border: {
+        primary: string;
+      };
     };
   }
 }
-
-const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
-  const theme = themeCreator(Theme.light); // TODO theme support
-
-  useEffect(() => {
-    ConfigProvider.config({
-      theme: {
-        primaryColor: theme.color.primary,
-      },
-    });
-  }, [theme]);
-  return <EmotionThemeProvider theme={theme}>{children}</EmotionThemeProvider>;
-};
-
-export default ThemeProvider;

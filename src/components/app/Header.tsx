@@ -1,50 +1,59 @@
 import { DownOutlined, SettingOutlined } from '@ant-design/icons';
-import { Avatar, Button, Dropdown, Menu, Popover, Space } from 'antd';
-import { FC, useState } from 'react';
+import { Avatar, Button, Divider, Dropdown, Menu, Popover, Space } from 'antd';
+import React, { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-const { Item } = Menu;
 
+import { Workspace } from '../../services/WorkspaceService';
 import { useStore } from '../../store';
 import { Theme, ThemeIcon } from '../../style/theme';
 import Setting from '../Setting';
 import AddWorkspace from '../workspace/AddWorkspace';
 import AppGitHubStarButton from './GitHubStarButton';
-type Props = {
-  userinfo: any;
-  workspaces: any[];
+import InviteWorkspace from "../workspace/Invite";
+
+type AppHeaderProps = {
+  workspaces: Workspace[];
 };
-const WorkspacesContent = ({ workspaces }) => {
-  const _useParams = useParams();
+
+const WorkspacesContent: FC<{ workspaces: Workspace[] }> = ({ workspaces }) => {
+  const params = useParams();
+  const nav = useNavigate();
 
   return (
-    <div>
-      <AddWorkspace></AddWorkspace>
-      <div>
-        <Menu
-          style={{ border: 'none', width: '200px' }}
-          onSelect={(val) => {
-            console.log(val);
-            const key = val.key;
-            const label = workspaces.find((i) => i.id === key).workspaceName;
-            window.location.href = `/${key}/workspace/${label}`;
-          }}
-          activeKey={_useParams.workspaceId}
-          items={workspaces.map((workspace) => {
-            return {
-              key: workspace.id,
-              label: workspace.workspaceName,
-            };
-          })}
-        />
-      </div>
-    </div>
+    <>
+      <AddWorkspace />
+      <Menu
+        style={{ border: 'none', width: '200px' }}
+        onSelect={(val) => {
+          console.log(val);
+          const key = val.key;
+          const label = workspaces.find((i) => i.id === key)?.workspaceName;
+          label && (window.location.href = `/${key}/workspace/${label}`);
+        }}
+        activeKey={params.workspaceId}
+        items={workspaces.map((workspace) => {
+          return {
+            key: workspace.id,
+            label: workspace.workspaceName,
+          };
+        })}
+      />
+    </>
   );
 };
-const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
-  const _useNavigate = useNavigate();
-  const _useParams = useParams();
-  const { theme, changeTheme } = useStore();
+
+const AppHeader: FC<AppHeaderProps> = ({ workspaces }) => {
+  const nav = useNavigate();
+
+  const store = useStore();
+  const { theme, changeTheme, userInfo } = useStore();
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem('email');
+    store.userInfo = undefined;
+    nav('/');
+  };
   return (
     <>
       <div className={'app-header'}>
@@ -53,7 +62,7 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
           <AppGitHubStarButton />
           {/*workspace*/}
           <Popover
-            content={<WorkspacesContent workspaces={workspaces}></WorkspacesContent>}
+            content={<WorkspacesContent workspaces={workspaces} />}
             title={false}
             trigger='click'
           >
@@ -65,76 +74,67 @@ const AppHeader: FC<Props> = ({ userinfo, workspaces }) => {
         </Space>
 
         <div className={'right'}>
-          <div className='hover-wrap'>
+          <InviteWorkspace/>
+          <Button
+            type='text'
+            icon={theme === Theme.light ? ThemeIcon.dark : ThemeIcon.light}
+            onClick={() => changeTheme()}
+          />
+          <Dropdown
+            trigger={['click']}
+            overlay={
+              <Menu
+                items={['Setting'].map((workspace) => {
+                  return {
+                    key: workspace,
+                    label: (
+                      <span
+                        onClick={() => {
+                          setIsSettingModalVisible(true);
+                        }}
+                      >
+                        {workspace}
+                      </span>
+                    ),
+                  };
+                })}
+              />
+            }
+          >
             <Button
               type='text'
-              icon={theme === Theme.light ? ThemeIcon.dark : ThemeIcon.light}
-              onClick={() => changeTheme()}
-            ></Button>
-          </div>
-          <div className='hover-wrap'>
-            <Dropdown
-              trigger={['click']}
-              overlay={
-                <Menu
-                  items={['Setting'].map((workspace) => {
-                    return {
-                      key: workspace,
-                      label: (
-                        <a
-                          onClick={() => {
-                            setIsSettingModalVisible(true);
-                          }}
-                        >
-                          {workspace}
-                        </a>
-                      ),
-                    };
-                  })}
-                />
-              }
+              icon={<SettingOutlined />}
+              onClick={(e) => e.preventDefault()}
+              style={{ color: '#6B6B6B' }}
+            />
+          </Dropdown>
+
+          <Dropdown
+            trigger={['click']}
+            overlay={
+              <Menu
+                items={[
+                  {
+                    key: 'Sign Out',
+                    label: <span onClick={handleLogout}>Sign Out</span>,
+                  },
+                ]}
+              />
+            }
+          >
+            <Avatar
+              size={20}
+              src={'https://joeschmoe.io/api/v1/random'}
+              style={{ marginLeft: '8px' }}
             >
-              <span onClick={(e) => e.preventDefault()}>
-                <Space>
-                  <SettingOutlined style={{ color: '#6B6B6B' }} />
-                </Space>
-              </span>
-            </Dropdown>
-          </div>
-          <div className={'hover-wrap'}>
-            <Dropdown
-              trigger={['click']}
-              overlay={
-                <Menu
-                  items={[
-                    {
-                      key: 'Sign Out',
-                      label: (
-                        <a
-                          onClick={() => {
-                            localStorage.removeItem('email');
-                            // value.dispatch({ type: "login"})
-                            // _useNavigate('/')
-                            window.location.href = '/';
-                          }}
-                        >
-                          Sign Out
-                        </a>
-                      ),
-                    },
-                  ]}
-                />
-              }
-            >
-              <span onClick={(e) => e.preventDefault()}>
-                <Space>
-                  <Avatar size={20}>{userinfo.email[0]}</Avatar>
-                </Space>
-              </span>
-            </Dropdown>
-          </div>
+              {userInfo?.email}
+            </Avatar>
+          </Dropdown>
         </div>
       </div>
+
+      <Divider style={{ margin: '0' }} />
+
       {/*模态框*/}
       <Setting isModalVisible={isSettingModalVisible} setModalVisible={setIsSettingModalVisible} />
     </>
