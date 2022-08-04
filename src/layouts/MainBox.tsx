@@ -1,7 +1,7 @@
 import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import colorLib from '@kurkle/color';
-import { Button, Divider, Empty, Tabs } from 'antd';
+import { Button, Divider, Empty, Tabs, Select } from 'antd';
 import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -24,6 +24,8 @@ import { CollectionService } from '../services/CollectionService';
 import { WorkspaceService } from '../services/WorkspaceService';
 import { NodeList } from '../vite-env';
 import DraggableLayout from './DraggableLayout';
+import EnvironmentService from '../api/Environment.service'
+
 
 type PaneProps = {
   title: string;
@@ -146,20 +148,6 @@ const MainBox = () => {
     collectionRef?.current?.setSelectedKeys(keys);
   };
 
-  function activeEnvironmentPane() {
-    const newPanes = [...panes];
-    newPanes.push({
-      title: 'title',
-      key: 'key',
-      pageType: PageTypeEnum.Environment,
-      qid: 'key',
-      isNew: true,
-      curApp: {},
-    });
-    setPanes(newPanes);
-    setActiveKey('key');
-  }
-
   // 监听params
   useEffect(() => {
     // 获取所有workspace
@@ -170,6 +158,7 @@ const MainBox = () => {
         setWorkspaces(workspaces);
         if (_useParams.workspaceName && _useParams.workspaceId) {
           fetchCollectionTreeData();
+          fetchEnvironmentData();
           const newPanes = [...panes];
           newPanes.push({
             title: _useParams.workspaceName,
@@ -186,6 +175,46 @@ const MainBox = () => {
       });
     }
   }, [_useParams]);
+
+  //environment
+  const { Option } = Select;
+  const [environmentData,setEnvironmentData]=useState<[]>();
+  const [nowEnvironment,setNowEnvironment]=useState<string>('0');
+  const [environmentselected,setEnvironmentselected]=useState<[]>([]);
+  const setEnvironmentSelectedData = (e) =>{
+    setEnvironmentselected(e)
+  }
+
+  //获取environment
+  function fetchEnvironmentData() {
+    console.log(panes);
+    console.log(environmentData);
+    
+    EnvironmentService.getEnvironment({ workspaceId: _useParams.workspaceId }).then((res) => {
+      setEnvironmentData(res.body.environments);
+    });
+  }
+
+  //切换environment
+  const selectEnvironment = (e:string) => {
+    setNowEnvironment(e);
+  }
+
+  //添加environment
+  function activeEnvironmentPane() {
+    const CreateEnvironment ={env:{envName:'New Environment',workspaceId:_useParams.workspaceId,keyValues:[]}}
+    EnvironmentService.saveEnvironment(CreateEnvironment).then(res=>{
+      if(res.body.success==true){
+        fetchEnvironmentData();
+      }
+    })
+  }
+
+  const setCurEnvironment = (e:string) =>{
+    console.log(1);
+    
+    setNowEnvironment(e);
+  }
 
   return (
     <>
@@ -242,11 +271,21 @@ const MainBox = () => {
                   />
                 </MainMenuItem>
                 <MainMenuItem
-                  disabled
                   tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
                   key='environment'
                 >
-                  <EnvironmentMenu activePane={activeEnvironmentPane} />
+                  <EnvironmentMenu 
+                    activePane={activeEnvironmentPane} 
+                    EnvironmentData={environmentData} 
+                    setMainBoxPanes={setPanes}  
+                    mainBoxPanes={panes} 
+                    setMainBoxActiveKey={setActiveKey}
+                    activeKey={activeKey}
+                    setEnvironmentSelectedData={setEnvironmentSelectedData}
+                    fetchEnvironmentDatas={()=>{fetchEnvironmentData()}}
+                    nowEnvironment={nowEnvironment}
+                    setCurEnvironment={setCurEnvironment}
+                    />
                 </MainMenuItem>
               </MainMenu>
             }
@@ -259,6 +298,14 @@ const MainBox = () => {
                   onEdit={handleTabsEdit}
                   activeKey={activeKey}
                   onChange={handleTabsChange}
+                  tabBarExtraContent={
+                    <Select value={nowEnvironment} style={{ width: 200, borderLeft:'1px solid #eee'}} allowClear bordered={false} onChange={(e)=>selectEnvironment(e)}>
+                      <Option value="0">No Environment</Option>
+                      {environmentData?.map((e:{id:string,envName:string})=>{
+                        return  <Option key={e.id} value={e.id}>{e.envName}</Option>
+                      })}
+                    </Select>
+                  }
                   tabBarStyle={{
                     left: '-1px',
                     top: '-1px',
@@ -299,7 +346,7 @@ const MainBox = () => {
                       )}
                       {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}
                       {pane.pageType === PageTypeEnum.Folder && <Folder />}
-                      {pane.pageType === PageTypeEnum.Environment && <Environment />}
+                      {pane.pageType === PageTypeEnum.Environment && <Environment curEnvironment={environmentselected}/>}
                       {pane.pageType === PageTypeEnum.WorkspaceOverview && (
                         <WorkspaceOverviewPage />
                       )}
