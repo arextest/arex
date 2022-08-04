@@ -19,11 +19,13 @@ const MenuSelectWrapper = styled.div`
 `;
 const MenuList = styled(Menu)`
   border: none !important;
+  background: transparent !important;
   .ant-menu-item {
-    margin: 0 !important;
+    margin: 2px 0 !important;
     height: 32px;
     line-height: 32px;
     border-radius: 2px;
+    background: transparent !important;
   }
   .ant-menu-item-active {
     color: inherit !important;
