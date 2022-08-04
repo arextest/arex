@@ -17,13 +17,13 @@ type MenuSelectProps<T> = {
 const MenuSelectWrapper = styled.div`
   padding: 8px;
 `;
-const MenuList = styled(Menu)`
+const MenuList = styled(Menu)<{ small?: boolean }>`
   border: none !important;
   background: transparent !important;
   .ant-menu-item {
-    margin: 2px 0 !important;
-    height: 32px;
-    line-height: 32px;
+    margin: 4px 0 !important;
+    height: ${(props) => (props.small ? '24px' : '32px')};
+    line-height: ${(props) => (props.small ? '24px' : '32px')};
     border-radius: 2px;
     background: transparent !important;
   }
@@ -42,7 +42,9 @@ const MenuFilter = styled(Input.Search)`
   margin-bottom: 8px;
 `;
 
-function MenuSelect<T extends { [key: string]: any }>(props: MenuSelectProps<T>) {
+function MenuSelect<T extends { [key: string]: any }>(
+  props: MenuSelectProps<T> & { small?: boolean },
+) {
   const { t } = useTranslation('components');
 
   const [filterKeyword, setFilterKeyword] = useState('');
@@ -75,6 +77,7 @@ function MenuSelect<T extends { [key: string]: any }>(props: MenuSelectProps<T>)
         onChange={(e) => setFilterKeyword(e.target.value)}
       />
       <MenuList
+        small={props.small}
         selectedKeys={selectedKey ? [selectedKey] : []}
         items={filteredApps.map(
           props.itemRender
