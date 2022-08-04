@@ -3,9 +3,8 @@ import { toggleTheme } from '@zougt/vite-plugin-theme-preprocessor/dist/browser-
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import { PaneType } from '../layouts/MainBox';
+import {PaneType, Workspace} from '../layouts/MainBox';
 import { DefaultTheme, Theme, ThemeKey } from '../style/theme';
-import { getLocalStorage, setLocalStorage } from '../utils';
 
 type UserInfo = {
   email: string | null;
@@ -26,6 +25,9 @@ type BaseState = {
 
   collectionTreeData: any;
   setCollectionTreeData: (collectionTreeData: any) => void;
+
+  workspaces: Workspace[];
+  setWorkspaces: (workspaces: Workspace[]) => void;
 };
 
 export const useStore = create(
@@ -48,28 +50,28 @@ export const useStore = create(
     },
     extensionInstalled: false,
 
-    activePane: getLocalStorage('activePane') || [],
+    activePane: '',
     setActivePane: (key: string) => {
       set({ activePane: key });
-      setLocalStorage('activePane', key);
     },
-    panes: getLocalStorage('panes') || [],
+    panes: [],
     setPanes: (panes, mode) => {
       if (!mode) {
         set({ panes: panes as PaneType[] });
-        setLocalStorage('panes', panes);
       }
 
       if (mode === 'push') {
         // immer update
         set((state) => {
           state.panes.push(panes as PaneType);
-          setLocalStorage('panes', [...state.panes, panes]);
         });
       }
     },
 
     collectionTreeData: [],
     setCollectionTreeData: (collectionTreeData) => set({ collectionTreeData }),
+
+    workspaces: [],
+    setWorkspaces: (workspaces) => set({ workspaces }),
   })),
 );

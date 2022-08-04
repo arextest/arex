@@ -1,10 +1,11 @@
-import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-design/icons';
+import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined, GlobalOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Empty, TabPaneProps, Tabs, Select } from 'antd';
+import { Button, Empty, Select, TabPaneProps, Tabs, Tooltip } from 'antd';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import EnvironmentService from '../api/Environment.service';
 import { ApplicationDataType } from '../api/Replay.type';
 import { AppFooter, AppHeader, CollectionMenu, EnvironmentMenu, ReplayMenu } from '../components';
 import { CollectionProps, CollectionRef, nodeType } from '../components/httpRequest/CollectionMenu';
@@ -12,8 +13,6 @@ import { MenuTypeEnum, PageTypeEnum } from '../constant';
 import { Environment, Folder, HttpRequest, Replay } from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
 import WorkspaceOverviewPage from '../pages/WorkspaceOverview';
-import { Workspace, WorkspaceService } from '../services/WorkspaceService';
-import EnvironmentService from '../api/Environment.service'
 import { useStore } from '../store';
 import DraggableLayout from './DraggableLayout';
 
@@ -24,6 +23,11 @@ export type PaneType = {
   pageType: PageTypeEnum;
   isNew?: boolean;
   data?: nodeType | ApplicationDataType; // 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
+};
+
+export type Workspace = {
+  id: string;
+  workspaceName: string;
 };
 
 const { TabPane } = Tabs;
@@ -71,6 +75,23 @@ const MenuTitle = styled((props: MenuTitleProps) => (
   }
 `;
 
+const RequesterSidebarHorizontalHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+  border-bottom: 1px solid #EDEDED;
+`;
+const RequesterSidebarHorizontalHeaderLeftContainer = styled.div`
+  cursor: pointer;
+  .anticon {
+    margin-right: 4px;
+  }
+`;
+const RequesterSidebarHorizontalHeaderRightContainer = styled.div`
+  padding: 6.5px;
+`;
+
 const EmptyWrapper = styled(Empty)`
   height: 100%;
   display: flex;
@@ -86,12 +107,16 @@ const MainBox = () => {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
 
   useEffect(() => {
-    const pageType = panes.find((i) => i.key === activePane)?.pageType;
-    if (pageType && activePane) {
-      nav(`/${params.workspaceId}/workspace/${params.workspaceName}/${pageType}/${activePane}`);
+    // const pageType = panes.find((i) => i.key === activePane)?.pageType;
+    // if (pageType && activePane) {
+    //   nav(`/${params.workspaceId}/workspace/${params.workspaceName}/${pageType}/${activePane}`);
+    // }
+    // fetchEnvironmentData();
+    console.log(params.workspaceId, params.workspaceName,'params.workspaceId && params.workspaceName')
+    if (params.workspaceId && params.workspaceName){
+      handleHeaderMenuClick()
     }
-    fetchEnvironmentData();
-  }, [activePane]);
+  }, [params.workspaceId,params.workspaceName]);
 
   const addTab = () => {
     const newActiveKey = String(Math.random());
@@ -134,7 +159,6 @@ const MainBox = () => {
     collectionRef?.current?.setSelectedKeys(keys);
   };
 
-
   const handleCollectionMenuClick: CollectionProps['onSelect'] = (key, node) => {
     if (!panes.map((i) => i.key).includes(key)) {
       setPanes(
@@ -167,6 +191,22 @@ const MainBox = () => {
     setActivePane(app.appId);
   };
 
+  const handleHeaderMenuClick = () => {
+    if (!panes.find((i) => i.key === params.workspaceId)){
+      setPanes(
+        {
+          title: 'app.appId',
+          key: params.workspaceId,
+          pageType: PageTypeEnum.WorkspaceOverview,
+          isNew: true,
+          data: 'app',
+        },
+        'push',
+      );
+    }
+    setActivePane(params.workspaceId);
+  };
+
   const handleInterfaceSaveAs = (pane: PaneType) => {
     // fetchCollectionTreeData(); // TODO 更新 Collection 数据
     const newPanes = [...panes.filter((i) => i.key !== activePane)];
@@ -180,47 +220,47 @@ const MainBox = () => {
     setActivePane(pane.key);
   };
 
-  useRequest(
-    () =>
-      WorkspaceService.listWorkspace({
-        userName: userInfo!.email as string,
-      }),
-    {
-      // "/"路由时需拉去第一个workspace
-      // ready: !!userInfo?.email && !!params.workspaceId,
-      refreshDeps: [params.workspaceId],
-      onSuccess(workspaces) {
-        setWorkspaces(workspaces);
-        if (
-          params.workspaceName &&
-          params.workspaceId &&
-          !panes.map((pane) => pane.pageType).includes(PageTypeEnum.WorkspaceOverview)
-        ) {
-          setPanes(
-            {
-              title: params.workspaceName as string,
-              key: params.workspaceId as string,
-              pageType: PageTypeEnum.WorkspaceOverview,
-              isNew: true,
-            },
-            'push',
-          );
-          setActivePane(params.workspaceId);
-        } else {
-          nav(`/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}`);
-        }
-      },
-    },
-  );
+  // useRequest(
+  //   () =>
+  //     WorkspaceService.listWorkspace({
+  //       userName: userInfo!.email as string,
+  //     }),
+  //   {
+  //     // "/"路由时需拉去第一个workspace
+  //     // ready: !!userInfo?.email && !!params.workspaceId,
+  //     refreshDeps: [params.workspaceId],
+  //     onSuccess(workspaces) {
+  //       setWorkspaces(workspaces);
+  //       if (
+  //         params.workspaceName &&
+  //         params.workspaceId &&
+  //         !panes.map((pane) => pane.pageType).includes(PageTypeEnum.WorkspaceOverview)
+  //       ) {
+  //         setPanes(
+  //           {
+  //             title: params.workspaceName as string,
+  //             key: params.workspaceId as string,
+  //             pageType: PageTypeEnum.WorkspaceOverview,
+  //             isNew: true,
+  //           },
+  //           'push',
+  //         );
+  //         setActivePane(params.workspaceId);
+  //       } else {
+  //         nav(`/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}`);
+  //       }
+  //     },
+  //   },
+  // );
 
   //environment
   const { Option } = Select;
-  const [environmentData,setEnvironmentData]=useState<[]>();
-  const [nowEnvironment,setNowEnvironment]=useState<string>('0');
-  const [environmentselected,setEnvironmentselected]=useState<[]>([]);
-  const setEnvironmentSelectedData = (e) =>{
-    setEnvironmentselected(e)
-  }
+  const [environmentData, setEnvironmentData] = useState<[]>();
+  const [nowEnvironment, setNowEnvironment] = useState<string>('0');
+  const [environmentselected, setEnvironmentselected] = useState<[]>([]);
+  const setEnvironmentSelectedData = (e) => {
+    setEnvironmentselected(e);
+  };
 
   //获取environment
   function fetchEnvironmentData() {
@@ -230,23 +270,25 @@ const MainBox = () => {
   }
 
   //切换environment
-  const selectEnvironment = (e:string) => {
+  const selectEnvironment = (e: string) => {
     setNowEnvironment(e);
-  }
+  };
 
   //添加environment
   function addEnvironmentPane() {
-    const CreateEnvironment ={env:{envName:'New Environment',workspaceId:params.workspaceId,keyValues:[]}}
-    EnvironmentService.saveEnvironment(CreateEnvironment).then(res=>{
-      if(res.body.success==true){
+    const CreateEnvironment = {
+      env: { envName: 'New Environment', workspaceId: params.workspaceId, keyValues: [] },
+    };
+    EnvironmentService.saveEnvironment(CreateEnvironment).then((res) => {
+      if (res.body.success == true) {
         fetchEnvironmentData();
       }
-    })
+    });
   }
 
-  const setCurEnvironment = (e:string) =>{
+  const setCurEnvironment = (e: string) => {
     setNowEnvironment(e);
-  }
+  };
 
   return (
     <>
@@ -257,47 +299,65 @@ const MainBox = () => {
         direction={'horizontal'}
         limitRange={[30, 40]}
         firstNode={
-          // 左侧菜单区
-          <MainMenu tabPosition='left'>
-            {/* menuItem 自定义子组件命名规定: XxxMenu, 表示xx功能的左侧主菜单 */}
-            {/* menuItem 自定义子组件 props 约定，便于之后封装  */}
-            {/* 1. ref?: 组件ref对象，用于调用组件自身属性方法。尽量不使用，使用前请思考是否还有别的方法 */}
-            {/* 1. xxId?: 涉及组件初始化的全局id，之后可以将该参数置于全局状态管理存储 */}
-            {/* 2. onSelect: 选中 menu item 时触发，参数（结构待规范）为选中节点的相关信息，点击后的逻辑不在 Menu 组件中处理 */}
-            <MainMenuItem
-              tab={<MenuTitle icon={<ApiOutlined />} title='Collection' />}
-              key={MenuTypeEnum.Collection}
-              menuItem={
-                <CollectionMenu
-                  workspaceId={params.workspaceId}
-                  onSelect={handleCollectionMenuClick}
-                  ref={collectionRef}
-                />
-              }
-            />
-            <MainMenuItem
-              tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}
-              key={MenuTypeEnum.Replay}
-              menuItem={<ReplayMenu onSelect={handleReplayMenuClick} />}
-            />
-            <MainMenuItem
-              tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
-              key={MenuTypeEnum.Environment}
-              menuItem={
-              <EnvironmentMenu 
-                activePane={addEnvironmentPane} 
-                EnvironmentData={environmentData} 
-                setMainBoxPanes={setPanes}  
-                mainBoxPanes={panes} 
-                setMainBoxActiveKey={setActivePane}
-                activeKey={activePane}
-                setEnvironmentSelectedData={setEnvironmentSelectedData}
-                fetchEnvironmentDatas={()=>{fetchEnvironmentData()}}
-                nowEnvironment={nowEnvironment}
-                setCurEnvironment={setCurEnvironment}
-                />}
-            />
-          </MainMenu>
+          <>
+            <RequesterSidebarHorizontalHeader>
+              <RequesterSidebarHorizontalHeaderLeftContainer onClick={()=>{handleHeaderMenuClick()}}>
+                <Tooltip title={`Open overview of ${params.workspaceName}`} placement={'topRight'}>
+                  <GlobalOutlined />
+                  <span>Canyon</span>
+                </Tooltip>
+
+              </RequesterSidebarHorizontalHeaderLeftContainer>
+              <RequesterSidebarHorizontalHeaderRightContainer>
+                <Button size={'small'}>
+                  Import
+                </Button>
+              </RequesterSidebarHorizontalHeaderRightContainer>
+            </RequesterSidebarHorizontalHeader>
+            <MainMenu tabPosition='left'>
+              {/* menuItem 自定义子组件命名规定: XxxMenu, 表示xx功能的左侧主菜单 */}
+              {/* menuItem 自定义子组件 props 约定，便于之后封装  */}
+              {/* 1. ref?: 组件ref对象，用于调用组件自身属性方法。尽量不使用，使用前请思考是否还有别的方法 */}
+              {/* 1. xxId?: 涉及组件初始化的全局id，之后可以将该参数置于全局状态管理存储 */}
+              {/* 2. onSelect: 选中 menu item 时触发，参数（结构待规范）为选中节点的相关信息，点击后的逻辑不在 Menu 组件中处理 */}
+              <MainMenuItem
+                tab={<MenuTitle icon={<ApiOutlined />} title='Collection' />}
+                key={MenuTypeEnum.Collection}
+                menuItem={
+                  <CollectionMenu
+                    workspaceId={params.workspaceId}
+                    onSelect={handleCollectionMenuClick}
+                    ref={collectionRef}
+                  />
+                }
+              />
+              <MainMenuItem
+                tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}
+                key={MenuTypeEnum.Replay}
+                menuItem={<ReplayMenu onSelect={handleReplayMenuClick} />}
+              />
+              <MainMenuItem
+                tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
+                key={MenuTypeEnum.Environment}
+                menuItem={
+                  <EnvironmentMenu
+                    activePane={addEnvironmentPane}
+                    EnvironmentData={environmentData}
+                    setMainBoxPanes={setPanes}
+                    mainBoxPanes={panes}
+                    setMainBoxActiveKey={setActivePane}
+                    activeKey={activePane}
+                    setEnvironmentSelectedData={setEnvironmentSelectedData}
+                    fetchEnvironmentDatas={() => {
+                      fetchEnvironmentData();
+                    }}
+                    nowEnvironment={nowEnvironment}
+                    setCurEnvironment={setCurEnvironment}
+                  />
+                }
+              />
+            </MainMenu>
+          </>
         }
         secondNode={
           // 右侧工作区
@@ -310,10 +370,20 @@ const MainBox = () => {
               activeKey={activePane}
               onChange={handleTabsChange}
               tabBarExtraContent={
-                <Select value={nowEnvironment} style={{ width: 200, borderLeft:'1px solid #eee'}} allowClear bordered={false} onChange={(e)=>selectEnvironment(e)}>
-                  <Option value="0">No Environment</Option>
-                  {environmentData?.map((e:{id:string,envName:string})=>{
-                    return  <Option key={e.id} value={e.id}>{e.envName}</Option>
+                <Select
+                  value={nowEnvironment}
+                  style={{ width: 200, borderLeft: '1px solid #eee' }}
+                  allowClear
+                  bordered={false}
+                  onChange={(e) => selectEnvironment(e)}
+                >
+                  <Option value='0'>No Environment</Option>
+                  {environmentData?.map((e: { id: string; envName: string }) => {
+                    return (
+                      <Option key={e.id} value={e.id}>
+                        {e.envName}
+                      </Option>
+                    );
                   })}
                 </Select>
               }
@@ -338,7 +408,9 @@ const MainBox = () => {
                     <Replay data={pane.data as ApplicationDataType} />
                   )}
                   {pane.pageType === PageTypeEnum.Folder && <Folder />}
-                  {pane.pageType === PageTypeEnum.Environment && <Environment curEnvironment={environmentselected}/>}
+                  {pane.pageType === PageTypeEnum.Environment && (
+                    <Environment curEnvironment={environmentselected} />
+                  )}
                   {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverviewPage />}
                 </TabPane>
               ))}
