@@ -6619,18 +6619,6 @@ packages:
     version: 1.0.2
     dev: true
 
-  registry.npmmirror.com/has-flag/4.0.0:
-    resolution:
-      {
-        integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==,
-        registry: https://registry.npm.taobao.org/,
-        tarball: https://registry.npmmirror.com/has-flag/-/has-flag-4.0.0.tgz,
-      }
-    name: has-flag
-    version: 4.0.0
-    engines: { node: '>=8' }
-    dev: true
-
   registry.npmmirror.com/has-property-descriptors/1.0.0:
     resolution:
       {
@@ -10241,7 +10229,7 @@ packages:
     version: 7.2.0
     engines: { node: '>=8' }
     dependencies:
-      has-flag: registry.npmmirror.com/has-flag/4.0.0
+      has-flag: 4.0.0
     dev: true
 
   registry.npmmirror.com/supports-preserve-symlinks-flag/1.0.0:

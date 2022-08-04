@@ -1,9 +1,10 @@
-import { Dropdown, Menu, Modal, Space, Input } from 'antd';
-import { useState } from 'react';
-import { css } from '@emotion/react';
 import { CheckCircleOutlined, DashOutlined } from '@ant-design/icons';
-import EnvironmentService from '../../api/Environment.service';
+import { css } from '@emotion/react';
+import { Dropdown, Input, Menu, Modal, Space } from 'antd';
 import ListBody from 'antd/lib/transfer/ListBody';
+import { useState } from 'react';
+
+import EnvironmentService from '../../api/Environment.service';
 
 const btnCss = css`
   width: 20px;
