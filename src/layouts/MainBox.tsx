@@ -1,7 +1,7 @@
 import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Empty, TabPaneProps, Tabs, Select } from 'antd';
+import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -13,7 +13,6 @@ import { Environment, Folder, HttpRequest, Replay } from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
 import WorkspaceOverviewPage from '../pages/WorkspaceOverview';
 import { Workspace, WorkspaceService } from '../services/WorkspaceService';
-import EnvironmentService from '../api/Environment.service'
 import { useStore } from '../store';
 import DraggableLayout from './DraggableLayout';
 
@@ -71,6 +70,33 @@ const MenuTitle = styled((props: MenuTitleProps) => (
   }
 `;
 
+const MainTabs = styled((props: TabsProps) => (
+  <Tabs
+    size='small'
+    type='editable-card'
+    tabBarGutter={-1}
+    tabBarStyle={{
+      left: '-11px',
+      top: '-1px',
+    }}
+    {...props}
+  >
+    {props.children}
+  </Tabs>
+))<TabsProps>`
+  height: 100%;
+  .ant-tabs-content-holder {
+    overflow: auto;
+  }
+`;
+
+const MainTabPane = styled((props: TabPaneProps) => (
+  <TabPane {...props}>{props.children}</TabPane>
+))<TabPaneProps>`
+  padding: 0 8px;
+  overflow: auto;
+`;
+
 const EmptyWrapper = styled(Empty)`
   height: 100%;
   display: flex;
@@ -90,7 +116,6 @@ const MainBox = () => {
     if (pageType && activePane) {
       nav(`/${params.workspaceId}/workspace/${params.workspaceName}/${pageType}/${activePane}`);
     }
-    fetchEnvironmentData();
   }, [activePane]);
 
   const addTab = () => {
@@ -134,6 +159,18 @@ const MainBox = () => {
     collectionRef?.current?.setSelectedKeys(keys);
   };
 
+  function activeEnvironmentPane() {
+    setPanes(
+      {
+        title: 'title',
+        key: 'key',
+        pageType: PageTypeEnum.Environment,
+        isNew: true,
+      },
+      'push',
+    );
+    setActivePane('key');
+  }
 
   const handleCollectionMenuClick: CollectionProps['onSelect'] = (key, node) => {
     if (!panes.map((i) => i.key).includes(key)) {
@@ -167,6 +204,7 @@ const MainBox = () => {
     setActivePane(app.appId);
   };
 
+  // TODO 建议放到 HttpRequest 组件中
   const handleInterfaceSaveAs = (pane: PaneType) => {
     // fetchCollectionTreeData(); // TODO 更新 Collection 数据
     const newPanes = [...panes.filter((i) => i.key !== activePane)];
@@ -180,6 +218,7 @@ const MainBox = () => {
     setActivePane(pane.key);
   };
 
+  // TODO 建议放到和 workspaces 强关联的 WorkspacesContent 组件中
   useRequest(
     () =>
       WorkspaceService.listWorkspace({
@@ -212,41 +251,6 @@ const MainBox = () => {
       },
     },
   );
-
-  //environment
-  const { Option } = Select;
-  const [environmentData,setEnvironmentData]=useState<[]>();
-  const [nowEnvironment,setNowEnvironment]=useState<string>('0');
-  const [environmentselected,setEnvironmentselected]=useState<[]>([]);
-  const setEnvironmentSelectedData = (e) =>{
-    setEnvironmentselected(e)
-  }
-
-  //获取environment
-  function fetchEnvironmentData() {
-    EnvironmentService.getEnvironment({ workspaceId: params.workspaceId }).then((res) => {
-      setEnvironmentData(res.body.environments);
-    });
-  }
-
-  //切换environment
-  const selectEnvironment = (e:string) => {
-    setNowEnvironment(e);
-  }
-
-  //添加environment
-  function addEnvironmentPane() {
-    const CreateEnvironment ={env:{envName:'New Environment',workspaceId:params.workspaceId,keyValues:[]}}
-    EnvironmentService.saveEnvironment(CreateEnvironment).then(res=>{
-      if(res.body.success==true){
-        fetchEnvironmentData();
-      }
-    })
-  }
-
-  const setCurEnvironment = (e:string) =>{
-    setNowEnvironment(e);
-  }
 
   return (
     <>
@@ -281,49 +285,19 @@ const MainBox = () => {
               menuItem={<ReplayMenu onSelect={handleReplayMenuClick} />}
             />
             <MainMenuItem
+              disabled
               tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
               key={MenuTypeEnum.Environment}
-              menuItem={
-              <EnvironmentMenu 
-                activePane={addEnvironmentPane} 
-                EnvironmentData={environmentData} 
-                setMainBoxPanes={setPanes}  
-                mainBoxPanes={panes} 
-                setMainBoxActiveKey={setActivePane}
-                activeKey={activePane}
-                setEnvironmentSelectedData={setEnvironmentSelectedData}
-                fetchEnvironmentDatas={()=>{fetchEnvironmentData()}}
-                nowEnvironment={nowEnvironment}
-                setCurEnvironment={setCurEnvironment}
-                />}
+              menuItem={<EnvironmentMenu activePane={activeEnvironmentPane} />}
             />
           </MainMenu>
         }
         secondNode={
           // 右侧工作区
           panes.length ? (
-            <Tabs
-              size='small'
-              type='editable-card'
-              tabBarGutter={-1}
-              onEdit={handleTabsEdit}
-              activeKey={activePane}
-              onChange={handleTabsChange}
-              tabBarExtraContent={
-                <Select value={nowEnvironment} style={{ width: 200, borderLeft:'1px solid #eee'}} allowClear bordered={false} onChange={(e)=>selectEnvironment(e)}>
-                  <Option value="0">No Environment</Option>
-                  {environmentData?.map((e:{id:string,envName:string})=>{
-                    return  <Option key={e.id} value={e.id}>{e.envName}</Option>
-                  })}
-                </Select>
-              }
-              tabBarStyle={{
-                left: '-11px',
-                top: '-1px',
-              }}
-            >
+            <MainTabs onEdit={handleTabsEdit} activeKey={activePane} onChange={handleTabsChange}>
               {panes.map((pane) => (
-                <TabPane closable tab={pane.title} key={pane.key} style={{ padding: '0 8px' }}>
+                <MainTabPane tab={pane.title} key={pane.key}>
                   {/* TODO 工作区自定义组件待规范，参考 menuItem */}
                   {pane.pageType === PageTypeEnum.Request && (
                     <HttpRequest
@@ -338,11 +312,11 @@ const MainBox = () => {
                     <Replay data={pane.data as ApplicationDataType} />
                   )}
                   {pane.pageType === PageTypeEnum.Folder && <Folder />}
-                  {pane.pageType === PageTypeEnum.Environment && <Environment curEnvironment={environmentselected}/>}
+                  {pane.pageType === PageTypeEnum.Environment && <Environment />}
                   {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverviewPage />}
-                </TabPane>
+                </MainTabPane>
               ))}
-            </Tabs>
+            </MainTabs>
           ) : (
             <EmptyWrapper>
               <Button type='primary' onClick={addTab}>
