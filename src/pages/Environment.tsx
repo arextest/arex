@@ -1,34 +1,70 @@
-import './Environment.less';
-
-import type { InputRef } from 'antd';
-import { Button, Form, Input, Popconfirm, Table } from 'antd';
+import './Environment.less'
+import { Table, Button,Input,Form, Select } from 'antd';
+import { MenuOutlined } from '@ant-design/icons';
+import update from 'immutability-helper';
+import React, { useCallback, useEffect, useRef, useState, useContext } from 'react';
+import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+const type = 'DraggableBodyRow';
+import { css } from '@emotion/react';
 import type { FormInstance } from 'antd/es/form';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import EnvironmentService from '../api/Environment.service'
 
-const EditableContext = React.createContext<FormInstance<any> | null>(null);
-
-interface Item {
-  key: string;
-  name: string;
-  age: string;
-  address: string;
-}
-
-interface EditableRowProps {
-  index: number;
-}
-
-const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
+//拖拽
+const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }) => {
   const [form] = Form.useForm();
+  const ref = useRef(null);
+  const [{ isOver, dropClassName }, drop] = useDrop({
+    accept: type,
+    collect: (monitor) => {
+      const { index: dragIndex } = monitor.getItem() || {};
+
+      if (dragIndex === index) {
+        return {};
+      }
+
+      return {
+        isOver: monitor.isOver(),
+        dropClassName: dragIndex < index ? ' drop-over-downward' : ' drop-over-upward',
+      };
+    },
+    drop: (item) => {
+      moveRow(item.index, index);
+    },
+  });
+
+  const [, drag] = useDrag({
+    type,
+    item: {
+      index,
+    },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  drop(drag(ref));
+  // restProps.children[0].ref=ref
   return (
     <Form form={form} component={false}>
       <EditableContext.Provider value={form}>
-        <tr {...props} />
+      <tr
+        ref={ref}
+        className={`${className}${isOver ? dropClassName : ''}`}
+        style={{
+          cursor: 'move',
+          ...style,
+        }}
+        {...restProps}
+      />
       </EditableContext.Provider>
     </Form>
+   
   );
 };
 
+//显示框
+const EditableContext = React.createContext<FormInstance<any> | null>(null);
 interface EditableCellProps {
   title: React.ReactNode;
   editable: boolean;
@@ -65,7 +101,6 @@ const EditableCell: React.FC<EditableCellProps> = ({
   const save = async () => {
     try {
       const values = await form.validateFields();
-
       toggleEdit();
       handleSave({ ...record, ...values });
     } catch (errInfo) {
@@ -74,23 +109,22 @@ const EditableCell: React.FC<EditableCellProps> = ({
   };
 
   let childNode = children;
-
   if (editable) {
     childNode = editing ? (
       <Form.Item
         style={{ margin: 0 }}
         name={dataIndex}
-        rules={[
-          {
-            required: true,
-            message: `${title} is required.`,
-          },
-        ]}
+        // rules={[
+        //   {
+        //     required: true,
+        //     message: `${title} is required.`,
+        //   },
+        // ]}
       >
-        <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+        <Input ref={inputRef} onPressEnter={save} onBlur={save}/>
       </Form.Item>
     ) : (
-      <div className='editable-cell-value-wrap' style={{ paddingRight: 24 }} onClick={toggleEdit}>
+      <div className="editable-cell-value-wrap" style={{ paddingRight: 24,height:32 }} onClick={toggleEdit}>
         {children}
       </div>
     );
@@ -99,97 +133,29 @@ const EditableCell: React.FC<EditableCellProps> = ({
   return <td {...restProps}>{childNode}</td>;
 };
 
-type EditableTableProps = Parameters<typeof Table>[0];
-
-interface DataType {
-  key: React.Key;
-  name: string;
-  age: string;
-  address: string;
-}
-
-type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
-
-const EnvironmentPage: React.FC = () => {
-  const [dataSource, setDataSource] = useState<DataType[]>([
+const EnvironmentPage = ({curEnvironment}:any) => {
+  const [data, setData] = useState<[]>([]);
+  const [isActive,setIsActive]= useState<[]>([]);
+  const defaultColumns = [
     {
-      key: '0',
-      name: 'Edward King 0',
-      age: '32',
-      address: 'London, Park Lane no. 0',
-    },
-    {
-      key: '1',
-      name: 'Edward King 1',
-      age: '32',
-      address: 'London, Park Lane no. 1',
-    },
-  ]);
-
-  const [count, setCount] = useState(2);
-
-  const handleDelete = (key: React.Key) => {
-    const newData = dataSource.filter((item) => item.key !== key);
-    setDataSource(newData);
-  };
-
-  const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
-    {
-      title: 'name',
-      dataIndex: 'name',
-      width: '30%',
+      title: 'VARIABLE',
+      dataIndex: 'keys',
+      width: '40%',
       editable: true,
     },
     {
-      title: 'age',
-      dataIndex: 'age',
-    },
-    {
-      title: 'address',
-      dataIndex: 'address',
+      title: 'VALUE',
+      dataIndex: 'value',
+      width: '45%',
+      editable: true,
     },
     {
       title: 'operation',
-      dataIndex: 'operation',
-      render: (_, record: { key: React.Key }) =>
-        dataSource.length >= 1 ? (
-          <Popconfirm title='Sure to delete?' onConfirm={() => handleDelete(record.key)}>
-            <a>Delete</a>
-          </Popconfirm>
-        ) : null,
-    },
+      render: (text) => <a onClick={()=>deleteEnvironmentItem(text)}>Delete</a>,
+    }
   ];
 
-  const handleAdd = () => {
-    const newData: DataType = {
-      key: count,
-      name: `Edward King ${count}`,
-      age: '32',
-      address: `London, Park Lane no. ${count}`,
-    };
-    setDataSource([...dataSource, newData]);
-    setCount(count + 1);
-  };
-
-  const handleSave = (row: DataType) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.key);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    setDataSource(newData);
-  };
-
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell,
-    },
-  };
-
-  const columns = defaultColumns.map((col) => {
+  const columns = defaultColumns.map(col => {
     if (!col.editable) {
       return col;
     }
@@ -205,20 +171,143 @@ const EnvironmentPage: React.FC = () => {
     };
   });
 
+  const components = {
+    body: {
+      row: DraggableBodyRow,
+      cell: EditableCell,
+    },
+  };
+
+  useEffect(()=>{
+    if(curEnvironment.length>0){
+      let EnvironmentActive:string[]=[];
+      curEnvironment[0].keyValues.map((e:any,index:number)=>{
+        if(e.key!==index){
+          e.keys=e.key;
+        }
+        e.key=index;
+        if(e.active){
+          EnvironmentActive.push(e.key);
+        }
+      })
+      
+      setData(curEnvironment[0].keyValues);
+      setCount(curEnvironment[0].keyValues.length+1);
+      setIsActive(EnvironmentActive);
+    } 
+  },[curEnvironment])
+
+  //输入框数据保存
+  const handleSave = (row: DataType) => {
+    const newData = [...data];
+    const index = newData.findIndex(item => row.key === item.key);
+    const item = newData[index];
+    newData.splice(index, 1, {
+      ...item,
+      ...row,
+    });
+    setData(newData);
+  };
+
+
+  //拖拽
+  const moveRow = useCallback(
+    (dragIndex, hoverIndex) => {
+      const dragRow = data[dragIndex];
+      setData(
+        update(data, {
+          $splice: [
+            [dragIndex, 1],
+            [hoverIndex, 0, dragRow],
+          ],
+        }),
+      );
+    },
+    [data],
+  );
+
+ //多选框
+  const rowSelection = {
+    selectedRowKeys: isActive,
+    columnWidth:'200px',
+    onSelect:(record,selected) => {
+      if(selected){
+        setIsActive([...isActive,record.key]);
+      }else{
+        setIsActive(isActive.filter(e=>e!=record.key)); 
+      }
+    }
+  };
+
+  //添加
+  const [count, setCount] = useState(0);
+  const handleAdd = () => {
+    const newData: DataType = {
+      key: count,
+      value: '',
+      keys:'',
+      active:'false'
+    };
+    setData([...data, newData]);
+    setCount(count + 1);
+  };
+
+  //删除
+  const deleteEnvironmentItem = (text) =>{
+    const newData = data.filter(item => item.key !== text.key);
+    setData(newData);
+  }
+
+  //保存
+  const SaveEnvironment = () =>{
+    const newdata=data.map((e:any)=>{
+      if(isActive.includes(e.key)){
+        e.active=true;
+        return {key:e.keys,active:e.active,value:e.value}
+      }else{
+        e.active=false;
+        return {key:e.keys,active:e.active,value:e.value}
+      }
+    })
+    curEnvironment[0].keyValues=newdata;
+    EnvironmentService.saveEnvironment({env:curEnvironment[0]}).then(res=>{
+      if(res.body.success==true){
+
+      }
+    })
+  }
+
   return (
-    <div>
-      <Button onClick={handleAdd} type='primary' style={{ marginBottom: 16 }}>
-        Add a row
-      </Button>
-      <div>{JSON.stringify(dataSource)}</div>
-      <Table
-        components={components}
-        rowClassName={() => 'editable-row'}
-        bordered
-        dataSource={dataSource}
-        columns={columns as ColumnTypes}
-      />
-    </div>
+    <>
+      <div css={css`
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+          `}>
+        <div>{curEnvironment.length>0&&curEnvironment[0].envName}</div>
+        <div><Button onClick={handleAdd}>Add</Button> <Button onClick={SaveEnvironment}>Save</Button></div>
+      </div>
+      <DndProvider backend={HTML5Backend}>
+        <Table
+          bordered
+          rowClassName={() => 'editable-row'}
+          columns={columns}
+          dataSource={data}
+          components={components}
+          onRow={(_, index) => {
+            const attr = {
+              index,
+              moveRow,
+            };
+            return attr;
+          }}
+          rowSelection={{
+            hideSelectAll:true,
+            ...rowSelection,
+          }}
+        />
+      </DndProvider>
+    </>
   );
 };
 
