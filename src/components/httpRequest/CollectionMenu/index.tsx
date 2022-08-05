@@ -8,7 +8,7 @@ import type { DirectoryTreeProps } from 'antd/lib/tree';
 import React, { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { NodeType } from '../../../constant';
+import {MenuTypeEnum, NodeType, PageTypeEnum} from '../../../constant';
 import { CollectionService } from '../../../services/CollectionService';
 import CollectionTitleRender from './CollectionTitleRender';
 import { useStore } from '../../../store';
@@ -65,10 +65,14 @@ const Collection = forwardRef(
     const _useParams = useParams();
 
     const setCollectionTreeData = useStore((state) => state.setCollectionTreeData);
+    const setPanes = useStore((state) => state.setPanes);
+    const panes = useStore((state) => state.panes);
+    const setActivePane = useStore(state=>state.setActivePane)
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
     const [searchValue, setSearchValue] = useState('');
     const [autoExpandParent, setAutoExpandParent] = useState(true);
+    // const {setPanes} = useStore{state=>state.setPanes}
 
     const { data: treeData = [], run: fetchTreeData } = useRequest(
       () => CollectionService.listCollection({ id: workspaceId as string }),
@@ -123,23 +127,27 @@ const Collection = forwardRef(
 
     // 对外的函数
     // 展开指定的数组
-    // function expandSpecifyKeys(keys: string[], p, nodeType) {
-    //   console.log([...expandedKeys, ...keys], p);
-    //   setExpandedKeys([...expandedKeys, p[p.length - 1]]);
-    //   setSelectedKeys([...keys]);
-    //
-    //   const newPanes = [...mainBoxPanes];
-    //   newPanes.push({
-    //     closable: true,
-    //     title: nodeType === 1 ? 'New Request' : 'New Case',
-    //     key: keys[0],
-    //     pageType: 'request',
-    //     qid: keys[0],
-    //     nodeType: nodeType,
-    //   });
-    //   setMainBoxPanes(newPanes);
-    //   setMainBoxActiveKey(keys[0]);
-    // }
+    function expandSpecifyKeys(keys: string[], p, nodeType) {
+      const maps = {
+       '1':'New Request',
+       '2':'New Case',
+       '3':'New Folder'
+      }
+        setExpandedKeys([...expandedKeys, p[p.length - 1]]);
+        setSelectedKeys([...keys]);
+      const key = keys[0]
+      setPanes(
+        {
+          key,
+          title: maps[nodeType],
+          menuType: MenuTypeEnum.Collection,
+          pageType: nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
+          isNew: false,
+        },
+        'push',
+      );
+      setActivePane(key)
+    }
 
     const { run: createCollection } = useRequest(
       () =>
@@ -148,7 +156,7 @@ const Collection = forwardRef(
           nodeName: 'New Collection',
           nodeType: 3,
           parentPath: [],
-          userName: 'zt',
+          userName: localStorage.getItem('email'),
         }),
       {
         manual: true,
@@ -201,8 +209,8 @@ const Collection = forwardRef(
               updateDirectoryTreeData={fetchTreeData}
               val={val}
               treeData={treeData}
-              // callbackOfNewRequest={expandSpecifyKeys} // TODO 暂时禁用待优化
-              callbackOfNewRequest={() => {}}
+              callbackOfNewRequest={expandSpecifyKeys} // TODO 暂时禁用待优化
+              // callbackOfNewRequest={() => {}}
             />
           )}
         />

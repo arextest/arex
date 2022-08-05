@@ -41,7 +41,7 @@ function CollectionTitleRender({
                     nodeName: 'New Collection',
                     nodeType: 3,
                     parentPath: paths.map((i: any) => i.key),
-                    userName: 'zt',
+                    userName: localStorage.getItem('email'),
                   }).then(() => {
                     updateDirectoryTreeData();
                   });
@@ -64,7 +64,7 @@ function CollectionTitleRender({
                     nodeName: 'New Request',
                     nodeType: 1,
                     parentPath: paths.map((i: any) => i.key),
-                    userName: 'zt',
+                    userName: localStorage.getItem('email'),
                   }).then((res) => {
                     console.log(res.data.body.infoId);
                     updateDirectoryTreeData();
@@ -92,7 +92,7 @@ function CollectionTitleRender({
                     nodeName: 'case',
                     nodeType: 2,
                     parentPath: paths.map((i: any) => i.key),
-                    userName: 'zt',
+                    userName: localStorage.getItem('email'),
                   }).then((res) => {
                     updateDirectoryTreeData();
                     callbackOfNewRequest(
@@ -138,6 +138,7 @@ function CollectionTitleRender({
                   CollectionService.removeItem({
                     id: _useParams.workspaceId,
                     removeNodePath: paths.map((i: any) => i.key),
+                    userName:localStorage.getItem('email')
                   }).then((res) => {
                     updateDirectoryTreeData();
                   });

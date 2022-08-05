@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 import request from '../api/axios';
+import { Workspace } from '../layouts/MainBox';
 
-export type Workspace = { id: string; role: number; workspaceName: string };
 
 export class WorkspaceService {
   static listWorkspace({ userName }: { userName: string }) {
@@ -13,14 +13,13 @@ export class WorkspaceService {
       .then((res) => res.body.workspaces);
   }
   static createWorkspace({ userName, workspaceName }) {
-    return axios
+    return request
       .post(`/api/filesystem/addItem`, {
         nodeName: 'New Collection',
         nodeType: '3',
         userName: userName,
         workspaceName: workspaceName,
       })
-      .then((res) => res);
   }
 
   static renameWorkspace({ workspaceId, newName }) {
@@ -33,7 +32,10 @@ export class WorkspaceService {
   }
 
   static deleteWorkspace({ workspaceId }) {
-    return axios.delete(`/api/filesystem/workspace/${workspaceId}`).then((res) => res);
+    return axios.post(`/api/filesystem/deleteWorkspace`,{
+      "userName": localStorage.getItem('email'),
+      "workspaceId": workspaceId
+    }).then((res) => res);
   }
 
   static inviteToWorkspace(params) {

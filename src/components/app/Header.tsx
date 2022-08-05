@@ -1,9 +1,10 @@
 import { DownOutlined, SettingOutlined } from '@ant-design/icons';
+import { useMount, useRequest } from 'ahooks';
 import { Avatar, Button, Divider, Dropdown, Menu, Popover, Space } from 'antd';
 import React, { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { Workspace } from '../../services/WorkspaceService';
+import { WorkspaceService } from '../../services/WorkspaceService';
 import { useStore } from '../../store';
 import { Theme, ThemeIcon } from '../../style/theme';
 import Setting from '../Setting';
@@ -11,43 +12,68 @@ import AddWorkspace from '../workspace/AddWorkspace';
 import InviteWorkspace from '../workspace/Invite';
 import AppGitHubStarButton from './GitHubStarButton';
 
-type AppHeaderProps = {
-  workspaces: Workspace[];
-};
 
-const WorkspacesContent: FC<{ workspaces: Workspace[] }> = ({ workspaces }) => {
-  const params = useParams();
+const AppHeader = () => {
   const nav = useNavigate();
-
-  return (
-    <>
-      <AddWorkspace />
-      <Menu
-        style={{ border: 'none', width: '200px' }}
-        onSelect={(val) => {
-          console.log(val);
-          const key = val.key;
-          const label = workspaces.find((i) => i.id === key)?.workspaceName;
-          label && (window.location.href = `/${key}/workspace/${label}`);
-        }}
-        activeKey={params.workspaceId}
-        items={workspaces.map((workspace) => {
-          return {
-            key: workspace.id,
-            label: workspace.workspaceName,
-          };
-        })}
-      />
-    </>
-  );
-};
-
-const AppHeader: FC<AppHeaderProps> = ({ workspaces }) => {
-  const nav = useNavigate();
+  const params = useParams()
+  // const params = useParams();
+  const workspaces = useStore((state) => state.workspaces);
+  const setWorkspaces = useStore((state) => state.setWorkspaces);
 
   const store = useStore();
   const { theme, changeTheme, userInfo } = useStore();
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
+
+  const { run } = useRequest(
+    () => WorkspaceService.listWorkspace({ userName: 'tzhangm@trip.com' }),
+    {
+      manual: true,
+      onSuccess(data) {
+        setWorkspaces(data);
+        if (params.workspaceId && params.workspaceName){
+          // nav(`/${data[0].id}/workspace/${data[0].workspaceName}/workspaceOverview/${data[0].id}`)
+        } else {
+          nav(`/${data[0].id}/workspace/${data[0].workspaceName}/workspaceOverview/${data[0].id}`)
+          console.log('123')
+        }
+
+      },
+    },
+  );
+
+  const WorkspacesContent = () => {
+
+
+    return (
+      <>
+        <AddWorkspace />
+        <p>{params.workspaceId}</p>
+        <Menu
+          style={{ border: 'none', width: '200px' }}
+          onSelect={(val) => {
+            console.log(val);
+            const key = val.key;
+            const label = workspaces.find((i) => i.id === key)?.workspaceName;
+            label && (window.location.href = `/${key}/workspace/${label}`);
+          }}
+          activeKey={params.workspaceId}
+          items={workspaces.map((workspace) => {
+            return {
+              key: workspace.id,
+              label: workspace.workspaceName,
+            };
+          })}
+        />
+      </>
+    );
+  };
+
+
+  // 在AppHeader内执行应用必要的初始化函数
+  useMount(() => {
+    // 1.获取workspaces
+    run();
+  });
 
   const handleLogout = () => {
     localStorage.removeItem('email');
@@ -61,13 +87,9 @@ const AppHeader: FC<AppHeaderProps> = ({ workspaces }) => {
           <span className={'app-name'}>AREX</span>
           <AppGitHubStarButton />
           {/*workspace*/}
-          <Popover
-            content={<WorkspacesContent workspaces={workspaces} />}
-            title={false}
-            trigger='click'
-          >
+          <Popover content={<WorkspacesContent />} title={false} trigger='click'>
             <Space style={{ cursor: 'pointer' }}>
-              Workspaces
+              Workspaces/{params.workspaceName}/{params.workspaceId}
               <DownOutlined />
             </Space>
           </Popover>

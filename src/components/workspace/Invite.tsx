@@ -13,6 +13,7 @@ const InviteWorkspace = () => {
   return (
     <>
       <Button
+        disabled
         style={{ marginRight: '8px' }}
         type={'primary'}
         size={'small'}

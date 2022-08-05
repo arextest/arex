@@ -10,7 +10,7 @@ import {
 export class FileSystemService {
   static async queryWorkspacesByUser({ id }: any): Promise<any> {
     return request.post(`/api/filesystem/queryWorkspacesByUser`, {
-      userName: 'zt',
+      userName: localStorage.getItem('email'),
     });
   }
 

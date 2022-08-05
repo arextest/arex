@@ -1,15 +1,11 @@
-import { Button, Form, Input, Modal, TreeSelect } from 'antd';
-import { CollectionService } from '../../services/CollectionService';
-import { treeFindPath } from '../../helpers/collection/util';
-import { FileSystemService } from '../../api/FileSystem.service';
-import { useParams } from 'react-router-dom';
+import { Button, Form, Input, Modal } from 'antd';
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { WorkspaceService } from '../../services/WorkspaceService';
 
 const AddWorkspace = () => {
   const _useParams = useParams();
   const [form] = Form.useForm();
-  const [value, setValue] = useState<string>();
   const [visible, setVisible] = useState<boolean>(false);
 
   return (
@@ -28,20 +24,17 @@ const AddWorkspace = () => {
           form
             .validateFields()
             .then((values) => {
-              console.log(values, 'va');
               WorkspaceService.createWorkspace({
                 userName: localStorage.getItem('email'),
                 workspaceName: values.name,
               }).then((res) => {
-                console.log(res, 'fff');
-                const workspaceId = '';
-                const workspaceName = '';
-                if (res.data.body.success) {
-                  // window.location.href = `/${workspaceId}/workspace/${workspaceName}`
-                  window.location.reload();
+                if (res.body.success) {
+                  const key = res.body.infoId
+                  const label = values.name
+                  //TODO 这边要返回workspaceId
+                  // window.location.href = `/${key}/workspace/${label}`
                 }
               });
-              // onCreate(values);
             })
             .catch((info) => {
               console.log('Validate Failed:', info);
@@ -52,9 +45,6 @@ const AddWorkspace = () => {
           form={form}
           layout='vertical'
           name='form_in_modal'
-          initialValues={{
-            modifier: 'public',
-          }}
         >
           <Form.Item
             name='name'
