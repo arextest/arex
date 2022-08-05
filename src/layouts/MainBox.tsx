@@ -49,6 +49,9 @@ const MainMenu = styled(Tabs)`
     .ant-tabs-tab-active {
       background-color: ${(props) => props.theme.color.selected};
     }
+    .ant-tabs-ink-bar {
+      left: 0;
+    }
   }
 `;
 
@@ -94,6 +97,17 @@ const MainTabs = styled((props: TabsProps) => (
   </Tabs>
 ))<TabsProps>`
   height: 100%;
+  // tabs-ink-bar
+  .ant-tabs-tab-active:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: ${(props) => props.theme.color.primary};
+    transition: all 0.2s ease-in-out;
+  }
   .ant-tabs-content-holder {
     overflow: auto;
   }
