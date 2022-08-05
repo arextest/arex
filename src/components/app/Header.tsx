@@ -47,7 +47,6 @@ const AppHeader = () => {
     return (
       <>
         <AddWorkspace />
-        <p>{params.workspaceId}</p>
         <Menu
           style={{ border: 'none', width: '200px' }}
           onSelect={(val) => {
@@ -89,7 +88,7 @@ const AppHeader = () => {
           {/*workspace*/}
           <Popover content={<WorkspacesContent />} title={false} trigger='click'>
             <Space style={{ cursor: 'pointer' }}>
-              Workspaces/{params.workspaceName}/{params.workspaceId}
+              Workspaces
               <DownOutlined />
             </Space>
           </Popover>
