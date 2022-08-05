@@ -10,8 +10,8 @@ import { useParams } from 'react-router-dom';
 
 import { NodeType } from '../../../constant';
 import { CollectionService } from '../../../services/CollectionService';
-import CollectionTitleRender from './CollectionTitleRender';
 import { useStore } from '../../../store';
+import CollectionTitleRender from './CollectionTitleRender';
 
 const dataList: { key: React.Key; title: string }[] = [];
 const generateList = (data: DataNode[]) => {
@@ -66,6 +66,7 @@ const Collection = forwardRef(
 
     const setCollectionTreeData = useStore((state) => state.setCollectionTreeData);
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
+    // TODO 抽取公共 selectedKeys 至全局 store，并实现与 MenuSelect 的共用，方便panesChange时触发更改相应的 MainMenu 并高亮
     const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
     const [searchValue, setSearchValue] = useState('');
     const [autoExpandParent, setAutoExpandParent] = useState(true);
