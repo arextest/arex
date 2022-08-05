@@ -10,6 +10,7 @@ const WorkspaceOverviewPage = () => {
     WorkspaceService.renameWorkspace({
       workspaceId: _useParams.workspaceId,
       newName: values.name,
+      userName: localStorage.getItem('email')
     }).then((res) => {
       console.log(res);
       window.location.href = `/${_useParams.workspaceId}/workspace/${values.name}`;
