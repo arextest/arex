@@ -24,7 +24,7 @@ const AppHeader = () => {
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
 
   const { run } = useRequest(
-    () => WorkspaceService.listWorkspace({ userName: 'tzhangm@trip.com' }),
+    () => WorkspaceService.listWorkspace({ userName: localStorage.getItem('email') }),
     {
       manual: true,
       onSuccess(data) {
