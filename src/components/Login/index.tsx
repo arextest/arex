@@ -83,7 +83,7 @@ const Login = () => {
     }
 
     LoginService.loginVerify({
-      email: email,
+      userName: email,
       verificationCode: verificationCode,
     }).then((res) => {
       if (res.data.body.success == true) {
