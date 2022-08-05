@@ -20,11 +20,12 @@ export class WorkspaceService {
     });
   }
 
-  static renameWorkspace({ workspaceId, newName }) {
+  static renameWorkspace({ workspaceId, newName,userName }) {
     return axios
       .post(`/api/filesystem/renameWorkspace`, {
         id: workspaceId,
         workspaceName: newName,
+        userName
       })
       .then((res) => res);
   }
