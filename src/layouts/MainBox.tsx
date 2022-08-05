@@ -5,7 +5,7 @@ import {
   GlobalOutlined,
 } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Button, Empty, TabPaneProps, Tabs, TabsProps, Tooltip } from 'antd';
+import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps, Tooltip } from 'antd';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -116,21 +116,11 @@ const MainTabPane = styled((props: TabPaneProps) => (
   overflow: auto;
 `;
 
-const RequesterSidebarHorizontalHeader = styled.div`
+const WorkspacesMenu = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 10px;
-  border-bottom: 1px solid #ededed;
-`;
-const RequesterSidebarHorizontalHeaderLeftContainer = styled.div`
-  cursor: pointer;
-  .anticon {
-    margin-right: 4px;
-  }
-`;
-const RequesterSidebarHorizontalHeaderRightContainer = styled.div`
-  padding: 6.5px;
+  padding: 8px 10px;
 `;
 
 const EmptyWrapper = styled(Empty)`
@@ -319,19 +309,25 @@ const MainBox = () => {
         limitRange={[30, 40]}
         firstNode={
           <>
-            <RequesterSidebarHorizontalHeader>
-              <RequesterSidebarHorizontalHeaderLeftContainer onClick={handleHeaderMenuClick}>
-                <Tooltip title={`Open overview of ${params.workspaceName}`} placement={'topRight'}>
-                  <GlobalOutlined />
-                  <span>Canyon</span>
-                </Tooltip>
-              </RequesterSidebarHorizontalHeaderLeftContainer>
-              <RequesterSidebarHorizontalHeaderRightContainer>
-                <Button size={'small'} disabled>
-                  Import
+            {/* TODO 和 AppHeader 中的 WorkspaceSelect 合并 */}
+            <WorkspacesMenu>
+              <Tooltip title={`Open overview of ${params.workspaceName}`} placement={'right'}>
+                <Button
+                  size='small'
+                  type='text'
+                  icon={<GlobalOutlined />}
+                  onClick={handleHeaderMenuClick}
+                >
+                  Canyon
                 </Button>
-              </RequesterSidebarHorizontalHeaderRightContainer>
-            </RequesterSidebarHorizontalHeader>
+              </Tooltip>
+              <Button size='small' disabled>
+                Import
+              </Button>
+            </WorkspacesMenu>
+
+            <Divider style={{ margin: '0', width: 'calc(100% + 10px)' }} />
+
             <MainMenu tabPosition='left'>
               {/* menuItem 自定义子组件命名规定: XxxMenu, 表示xx功能的左侧主菜单 */}
               {/* menuItem 自定义子组件 props 约定，便于之后封装  */}
