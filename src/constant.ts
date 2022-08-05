@@ -25,8 +25,9 @@ export enum PageTypeEnum {
   Folder = 'folder',
   Collection = 'collection',
   Environment = 'environment',
-  Login = 'login',
   WorkspaceOverview = 'workspaceOverview',
+  ReplayAnalysis = 'replayAnalysis',
+  ReplayCase = 'ReplayCase',
 }
 
 export enum ContentTypeEnum {

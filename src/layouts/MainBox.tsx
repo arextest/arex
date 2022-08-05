@@ -93,8 +93,10 @@ const MainTabs = styled((props: TabsProps) => (
   </Tabs>
 ))<TabsProps>`
   height: 100%;
-  // tabs-ink-bar
-  .ant-tabs-tab-active:after {
+  // 添加高亮条 tabs-ink-bar
+  // 注意当前的作用范围很广，目前的作用对象为工作区所有的可编辑可删除卡片式 Tab
+  // .ant-tabs-tab-with-remove 类是为了避免污染一般的 Tabs
+  .ant-tabs-tab-with-remove.ant-tabs-tab-active:after {
     content: '';
     position: absolute;
     top: 0;
