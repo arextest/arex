@@ -132,8 +132,15 @@ const EmptyWrapper = styled(Empty)`
 
 const MainBox = () => {
   const params = useParams();
-  const { panes, setPanes, activePane, setActivePane, collectionTreeData, setActiveMenu } =
-    useStore();
+  const {
+    panes,
+    setPanes,
+    activePane,
+    setActivePane,
+    collectionTreeData,
+    activeMenu,
+    setActiveMenu,
+  } = useStore();
 
   // TODO 移动至子组件
   useEffect(() => {
@@ -328,7 +335,11 @@ const MainBox = () => {
 
             <Divider style={{ margin: '0', width: 'calc(100% + 10px)' }} />
 
-            <MainMenu tabPosition='left'>
+            <MainMenu
+              tabPosition='left'
+              activeKey={activeMenu}
+              onChange={(key) => setActiveMenu(key as MenuTypeEnum)}
+            >
               {/* menuItem 自定义子组件命名规定: XxxMenu, 表示xx功能的左侧主菜单 */}
               {/* menuItem 自定义子组件 props 约定，便于之后封装  */}
               {/* 1. ref?: 组件ref对象，用于调用组件自身属性方法。尽量不使用，使用前请思考是否还有别的方法 */}
