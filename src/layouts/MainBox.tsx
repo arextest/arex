@@ -10,26 +10,16 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { AppFooter, AppHeader, CollectionMenu, EnvironmentMenu, ReplayMenu } from '../components';
-import { CollectionProps, CollectionRef, nodeType } from '../components/httpRequest/CollectionMenu';
+import { CollectionProps, CollectionRef } from '../components/httpRequest/CollectionMenu';
 import { MenuTypeEnum, PageTypeEnum } from '../constant';
-import { Environment, Folder, HttpRequest, Replay, ReplayAnalysis } from '../pages';
+import { Environment, Folder, HttpRequest, Replay, ReplayAnalysis, ReplayCase } from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
 import WorkspaceOverviewPage from '../pages/WorkspaceOverview';
 import EnvironmentService from '../services/Environment.service';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
-import { useStore } from '../store';
+import { PaneType, useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
-
-// TODO 数据结构待规范
-export type PaneType = {
-  title: string;
-  key: string;
-  menuType: MenuTypeEnum;
-  pageType: PageTypeEnum;
-  isNew?: boolean;
-  data?: nodeType | ApplicationDataType; // 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
-};
 
 const { TabPane } = Tabs;
 const MainMenu = styled(Tabs)`
@@ -207,38 +197,33 @@ const MainBox = () => {
   };
 
   const handleCollectionMenuClick: CollectionProps['onSelect'] = (key, node) => {
-    if (!panes.map((i) => i.key).includes(key)) {
-      setPanes(
-        {
-          key,
-          title: node.title,
-          menuType: MenuTypeEnum.Collection,
-          pageType: node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
-          isNew: false,
-          data: node,
-        },
-        'push',
-      );
-    }
-    setActivePane(key);
+    setPanes(
+      {
+        key,
+        title: node.title,
+        menuType: MenuTypeEnum.Collection,
+        pageType: node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
+        isNew: false,
+        data: node,
+      },
+      'push',
+    );
   };
 
   const handleReplayMenuClick = (app: ApplicationDataType) => {
-    if (!panes.find((i) => i.key === app.appId)) {
-      params.workspaceId &&
-        params.workspaceName &&
-        setPanes(
-          {
-            title: app.appId,
-            key: app.appId,
-            menuType: MenuTypeEnum.Replay,
-            pageType: PageTypeEnum.Replay,
-            isNew: false,
-            data: app,
-          },
-          'push',
-        );
-    }
+    params.workspaceId &&
+      params.workspaceName &&
+      setPanes(
+        {
+          title: app.appId,
+          key: app.appId,
+          menuType: MenuTypeEnum.Replay,
+          pageType: PageTypeEnum.Replay,
+          isNew: false,
+          data: app,
+        },
+        'push',
+      );
   };
 
   // TODO 建议放到 HttpRequest 组件中
@@ -256,20 +241,18 @@ const MainBox = () => {
   };
 
   const handleHeaderMenuClick = () => {
-    if (!panes.find((i) => i.key === params.workspaceId)) {
-      params.workspaceName &&
-        params.workspaceId &&
-        setPanes(
-          {
-            title: params.workspaceName,
-            key: params.workspaceId,
-            menuType: MenuTypeEnum.Collection,
-            pageType: PageTypeEnum.WorkspaceOverview,
-            isNew: true,
-          },
-          'push',
-        );
-    }
+    params.workspaceName &&
+      params.workspaceId &&
+      setPanes(
+        {
+          title: params.workspaceName,
+          key: params.workspaceId,
+          menuType: MenuTypeEnum.Collection,
+          pageType: PageTypeEnum.WorkspaceOverview,
+          isNew: true,
+        },
+        'push',
+      );
   };
 
   //environment
@@ -359,7 +342,7 @@ const MainBox = () => {
                 }
               />
               <MainMenuItem
-                tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}
+                tab={<MenuTitle icon={<FieldTimeOutlined />} title='Index' />}
                 key={MenuTypeEnum.Replay}
                 menuItem={<ReplayMenu onSelect={handleReplayMenuClick} />}
               />
@@ -405,6 +388,9 @@ const MainBox = () => {
                   )}
                   {pane.pageType === PageTypeEnum.ReplayAnalysis && (
                     <ReplayAnalysis data={pane.data as PlanItemStatistics} />
+                  )}
+                  {pane.pageType === PageTypeEnum.ReplayCase && (
+                    <ReplayCase data={pane.data as PlanItemStatistics} />
                   )}
                   {pane.pageType === PageTypeEnum.Folder && <Folder />}
                   {pane.pageType === PageTypeEnum.Environment && <Environment />}

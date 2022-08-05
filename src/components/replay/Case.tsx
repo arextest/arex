@@ -17,7 +17,7 @@ const columnsCase: ColumnsType<ReplayCase> = [
     dataIndex: 'recordId',
   },
   {
-    title: 'Replay ID',
+    title: 'Index ID',
     dataIndex: 'replayId',
   },
   {
@@ -31,7 +31,7 @@ const columnsCase: ColumnsType<ReplayCase> = [
   {
     title: 'Action',
     render: (_, record) => [
-      <SmallTextButton key='replayLog' title='Replay Log' />,
+      <SmallTextButton key='replayLog' title='Index Log' />,
       <SmallTextButton key='detail' title='Detail' />,
     ],
   },

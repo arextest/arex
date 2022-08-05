@@ -22,7 +22,7 @@ export type PaneType = {
   isNew?: boolean;
   data?: // 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
   | nodeType // PageTypeEnum.Request 时的数据
-    | ApplicationDataType // PageTypeEnum.Replay 时的数据
+    | ApplicationDataType // PageTypeEnum.Index 时的数据
     | PlanItemStatistics; // PageTypeEnum.ReplayAnalysis 时的数据
 };
 
@@ -85,10 +85,13 @@ export const useStore = create(
       }
 
       if (mode === 'push') {
-        // immer update and set activePane
+        // immer push new pane and set activePane
+        const pane = panes as PaneType;
         set((state) => {
-          state.panes.push(panes as PaneType);
-          state.activePane = (panes as PaneType).key;
+          if (!state.panes.find((i) => i.key === pane.key)) {
+            state.panes.push(pane);
+          }
+          state.activePane = pane.key;
         });
       }
     },

@@ -2,9 +2,9 @@ import 'chart.js/auto';
 
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { Badge, Button, Card, Col, Row, Statistic, Table, Tabs, Tag, Typography } from 'antd';
+import { Badge, Button, Card, Col, Row, Statistic, Table, Tag, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 
 import { MenuTypeEnum, PageTypeEnum } from '../../constant';
@@ -12,12 +12,10 @@ import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
 import { getPercent, uuid } from '../../utils';
-import { SmallTextButton, TableWrapper } from '../styledComponents';
-import { Analysis, Case } from './index';
+import { SmallTextButton } from '../styledComponents';
 import { resultsStates } from './Results';
 
 const { Text } = Typography;
-const { TabPane } = Tabs;
 
 const chartOptions = {
   responsive: true,
@@ -31,9 +29,6 @@ const chartOptions = {
 
 const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
   const { setPanes } = useStore();
-
-  const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
-  const [activeDetailTabsKey, setActiveDetailTabsKey] = useState<string>('analysis');
 
   const { data: planItemData } = useRequest(
     () =>
@@ -124,35 +119,30 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     },
     {
       title: 'Action',
-      width: 180,
+      width: 200,
       align: 'center',
       render: (_, record) => [
         <SmallTextButton
           key='analysis'
           title='Analysis'
           onClick={() =>
-            // only expend one row at a time
-            // setExpandedRowKeys(expandedRowKeys[0] === record.planItemId ? [] : [record.planItemId])
-            {
-              console.log(record);
-              setPanes(
-                {
-                  key: uuid(),
-                  title: `Analysis - ${record.planItemId}`,
-                  pageType: PageTypeEnum.ReplayAnalysis,
-                  menuType: MenuTypeEnum.Replay,
-                  isNew: false,
-                  data: record,
-                },
-                'push',
-              );
-            }
+            setPanes(
+              {
+                key: uuid(),
+                title: `Analysis - ${record.planItemId}`,
+                pageType: PageTypeEnum.ReplayAnalysis,
+                menuType: MenuTypeEnum.Replay,
+                isNew: false,
+                data: record,
+              },
+              'push',
+            )
           }
         />,
         <SmallTextButton
           key='case'
           title='Case'
-          onClick={() => {
+          onClick={() =>
             setPanes(
               {
                 key: uuid(),
@@ -163,16 +153,19 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
                 data: record,
               },
               'push',
-            );
-          }}
+            )
+          }
         />,
-        <Button danger key='rerun' type='text' size='small'>
+        <Button danger key='rerun' type='text' size='small' onClick={handleRerun}>
           Rerun
         </Button>,
       ],
     },
   ];
 
+  const handleRerun = () => {
+    console.log('rerun');
+  };
   return selectedPlan ? (
     <Card size='small' title={`Report: ${selectedPlan.planName}`}>
       <Row gutter={12}>
@@ -231,33 +224,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
 
       <br />
 
-      <Table
-        size='small'
-        rowKey='planItemId'
-        columns={columns}
-        dataSource={planItemData}
-        // expandable={{
-        //   expandedRowKeys,
-        //   showExpandColumn: false,
-        //   expandedRowRender: (record) => (
-        //     <Tabs
-        //       size='small'
-        //       activeKey={activeDetailTabsKey}
-        //       onChange={setActiveDetailTabsKey}
-        //       style={{ marginTop: '-8px' }}
-        //     >
-        //       <TabPane tab='Analysis' key='analysis'>
-        //         <Analysis planItemId={record.planItemId} />
-        //       </TabPane>
-        //       <TabPane tab='Case' key='case'>
-        //         <TableWrapper>
-        //           <Case planItemId={record.planItemId} />
-        //         </TableWrapper>
-        //       </TabPane>
-        //     </Tabs>
-        //   ),
-        // }}
-      />
+      <Table size='small' rowKey='planItemId' columns={columns} dataSource={planItemData} />
     </Card>
   ) : (
     <></>
