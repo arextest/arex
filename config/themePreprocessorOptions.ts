@@ -7,7 +7,7 @@ import { DefaultTheme } from '../src/style/theme';
 const includeStyles = {
   '.ant-btn-text': {
     border: 'none',
-    boxShadow: 'none',
+    'box-shadow': 'none',
   },
   '.ant-input-borderless': {
     border: 'none',
