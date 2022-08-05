@@ -1,16 +1,12 @@
-import { Button, Form, Input, Modal, TreeSelect } from 'antd';
+import { Button, Form, Input, Modal } from 'antd';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { treeFindPath } from '../../helpers/collection/util';
-import { CollectionService } from '../../services/CollectionService';
-import { FileSystemService } from '../../services/FileSystem.service';
-import { WorkspaceService } from '../../services/WorkspaceService';
+import { WorkspaceService } from '../../services/Workspace.service';
 
 const AddWorkspace = () => {
   const _useParams = useParams();
   const [form] = Form.useForm();
-  const [value, setValue] = useState<string>();
   const [visible, setVisible] = useState<boolean>(false);
 
   return (
@@ -29,34 +25,24 @@ const AddWorkspace = () => {
           form
             .validateFields()
             .then((values) => {
-              console.log(values, 'va');
               WorkspaceService.createWorkspace({
                 userName: localStorage.getItem('email'),
                 workspaceName: values.name,
               }).then((res) => {
-                console.log(res, 'fff');
-                const workspaceId = '';
-                const workspaceName = '';
-                if (res.data.body.success) {
-                  // window.location.href = `/${workspaceId}/workspace/${workspaceName}`
-                  window.location.reload();
+                if (res.body.success) {
+                  const key = res.body.infoId;
+                  const label = values.name;
+                  //TODO 这边要返回workspaceId
+                  // window.location.href = `/${key}/workspace/${label}`
                 }
               });
-              // onCreate(values);
             })
             .catch((info) => {
               console.log('Validate Failed:', info);
             });
         }}
       >
-        <Form
-          form={form}
-          layout='vertical'
-          name='form_in_modal'
-          initialValues={{
-            modifier: 'public',
-          }}
-        >
+        <Form form={form} layout='vertical' name='form_in_modal'>
           <Form.Item
             name='name'
             label='Name'

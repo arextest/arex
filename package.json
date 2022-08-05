@@ -36,6 +36,7 @@
     "click-to-react-component": "^1.0.8",
     "codemirror": "5.65.6",
     "diff-match-patch": "^1.0.5",
+    "husky": "^8.0.1",
     "i18next": "^21.6.6",
     "i18next-browser-languagedetector": "^6.1.2",
     "immer": "^9.0.15",

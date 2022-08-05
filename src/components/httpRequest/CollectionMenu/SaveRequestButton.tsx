@@ -83,7 +83,7 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
                 parentPath: treeFindPath(collectionTreeData, (node) => node.key === value)?.map(
                   (i) => i.key,
                 ),
-                userName: 'zt',
+                userName: localStorage.getItem('email'),
               }).then((res) => {
                 FileSystemService.saveInterface({
                   ...reqParams,

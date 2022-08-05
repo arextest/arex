@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { LoginService } from '../../services/LoginService';
-import { WorkspaceService } from '../../services/WorkspaceService';
+import { WorkspaceService } from '../../services/Workspace.service';
 import { useStore } from '../../store';
 
 let timeChange: any;
