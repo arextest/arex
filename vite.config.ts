@@ -2,7 +2,7 @@ import react from '@vitejs/plugin-react';
 import { themePreprocessorPlugin } from '@zougt/vite-plugin-theme-preprocessor';
 import { defineConfig } from 'vite';
 
-import proxy from './config/proxy';
+import proxy from './config/proxy.js';
 import themePreprocessorOptions from './config/themePreprocessorOptions';
 import { Color } from './src/style/theme';
 
