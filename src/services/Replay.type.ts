@@ -159,6 +159,8 @@ export interface CreatePlanReq {
   targetEnv: string;
   operator: string;
   replayPlanType: number;
+  caseSourceType?: number;
+  operationCaseInfoList?: { operationId: number }[];
 }
 
 export interface CreatePlanRes {

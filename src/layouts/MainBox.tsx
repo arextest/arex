@@ -342,7 +342,7 @@ const MainBox = () => {
                 }
               />
               <MainMenuItem
-                tab={<MenuTitle icon={<FieldTimeOutlined />} title='Index' />}
+                tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}
                 key={MenuTypeEnum.Replay}
                 menuItem={<ReplayMenu onSelect={handleReplayMenuClick} />}
               />

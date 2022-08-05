@@ -2,7 +2,18 @@ import 'chart.js/auto';
 
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { Badge, Button, Card, Col, Row, Statistic, Table, Tag, Typography } from 'antd';
+import {
+  Badge,
+  Button,
+  Card,
+  Col,
+  notification,
+  Row,
+  Statistic,
+  Table,
+  Tag,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
@@ -156,18 +167,56 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
             )
           }
         />,
-        <Button danger key='rerun' type='text' size='small' onClick={handleRerun}>
+        <Button
+          danger
+          key='rerun'
+          type='text'
+          size='small'
+          onClick={() => handleRerun(record.operationId)}
+        >
           Rerun
         </Button>,
       ],
     },
   ];
 
-  const handleRerun = () => {
-    console.log('rerun');
+  const { run: rerun } = useRequest(ReplayService.createPlan, {
+    manual: true,
+    onSuccess(res) {
+      if (res.result === 1) {
+        notification.success({ message: 'Success', description: res.desc });
+      } else {
+        console.error(res.desc);
+        notification.error({
+          message: 'Error',
+          description: res.desc,
+        });
+      }
+    },
+  });
+
+  const handleRerun = (operationId?: number) => {
+    rerun({
+      appId: selectedPlan!.appId,
+      caseSourceType: operationId && 0,
+      operationCaseInfoList: operationId !== undefined ? [{ operationId }] : undefined,
+      operator: 'Visitor',
+      replayPlanType: operationId !== undefined ? 1 : 0,
+      sourceEnv: 'pro',
+      targetEnv: selectedPlan!.targetHost as string,
+    });
   };
+
   return selectedPlan ? (
-    <Card size='small' title={`Report: ${selectedPlan.planName}`}>
+    <Card
+      size='small'
+      title={`Report: ${selectedPlan.planName}`}
+      extra={
+        <Button danger type='text' onClick={() => handleRerun()}>
+          Rerun
+        </Button>
+      }
+    >
       <Row gutter={12}>
         <Col span={12}>
           <b style={{ color: 'gray' }}>Basic Information</b>

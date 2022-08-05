@@ -41,7 +41,7 @@ const AppTitle: FC<AppTitleProps> = ({ data }) => {
         form.resetFields();
         setModalVisible(false);
       } else {
-        console.log(res);
+        console.error(res.desc);
         notification.error({
           message: 'Start Failed',
           description: res.desc,

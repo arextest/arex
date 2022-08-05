@@ -32,10 +32,10 @@ const columns: ColumnsType<PlanStatistics> = [
         <Tag color={state.color}>
           {state.label}
           {record.status === 1 && (
-            <>
+            <span style={{ marginLeft: '8px' }}>
               <Badge status='processing' />
               {record.percent && <span>{record.percent > 99 ? 99 : record.percent}</span>}
-            </>
+            </span>
           )}
         </Tag>
       ) : (
@@ -116,7 +116,7 @@ const Results: FC<{
         rowKey='planId'
         size='small'
         theme={theme}
-        pagination={false}
+        pagination={{ pageSize: 5 }}
         columns={columns}
         onRow={(record, index) => {
           return {
