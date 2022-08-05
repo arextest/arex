@@ -4,9 +4,9 @@ import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 import { MenuTypeEnum } from '../constant';
-import { PaneType, Workspace } from '../layouts/MainBox';
+import { PaneType } from '../layouts/MainBox';
+import { Workspace } from '../services/Workspace.type';
 import { DefaultTheme, Theme, ThemeKey } from '../style/theme';
-import { getLocalStorage, setLocalStorage } from '../utils';
 
 type UserInfo = {
   email: string | null;
@@ -34,6 +34,12 @@ type BaseState = {
   setWorkspaces: (workspaces: Workspace[]) => void;
 };
 
+/**
+ * TODO 全局store模块拆分
+ * 1. 用户信息，用户配置等相关
+ * 2. 主菜单/工作区（MainBox）相关
+ * 3. ......
+ */
 export const useStore = create(
   immer<BaseState>((set, get) => ({
     userInfo: { email: localStorage.getItem('email') },
