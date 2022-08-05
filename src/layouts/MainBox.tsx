@@ -20,6 +20,7 @@ import DraggableLayout from './DraggableLayout';
 export type PaneType = {
   title: string;
   key: string;
+  menuType: MenuTypeEnum;
   pageType: PageTypeEnum;
   isNew?: boolean;
   data?: nodeType | ApplicationDataType; // 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
@@ -107,16 +108,16 @@ const EmptyWrapper = styled(Empty)`
 const MainBox = () => {
   const params = useParams();
   const nav = useNavigate();
-  const { userInfo, panes, setPanes, activePane, setActivePane, collectionTreeData } = useStore();
-  // *************workspaces**************************// TODO 放置全局 store
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
-
-  useEffect(() => {
-    const pageType = panes.find((i) => i.key === activePane)?.pageType;
-    if (pageType && activePane) {
-      nav(`/${params.workspaceId}/workspace/${params.workspaceName}/${pageType}/${activePane}`);
-    }
-  }, [activePane]);
+  const {
+    userInfo,
+    panes,
+    setPanes,
+    activePane,
+    setActivePane,
+    activeMenu,
+    setActiveMenu,
+    collectionTreeData,
+  } = useStore();
 
   const addTab = () => {
     const newActiveKey = String(Math.random());
@@ -125,6 +126,7 @@ const MainBox = () => {
         key: newActiveKey,
         title: 'New Request',
         pageType: PageTypeEnum.Request,
+        menuType: MenuTypeEnum.Collection,
         isNew: true,
       },
       'push',
@@ -150,7 +152,9 @@ const MainBox = () => {
   };
 
   const handleTabsChange = (activePane: string) => {
+    const pane = panes.find((i) => i.key === activePane);
     setActivePane(activePane);
+    setActiveMenu(pane?.menuType || MenuTypeEnum.Collection);
     updateCollectionMenuKeys([activePane]);
   };
 
@@ -164,6 +168,7 @@ const MainBox = () => {
       {
         title: 'title',
         key: 'key',
+        menuType: MenuTypeEnum.Environment,
         pageType: PageTypeEnum.Environment,
         isNew: true,
       },
@@ -178,6 +183,7 @@ const MainBox = () => {
         {
           key,
           title: node.title,
+          menuType: MenuTypeEnum.Collection,
           pageType: node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
           isNew: false,
           data: node,
@@ -194,6 +200,7 @@ const MainBox = () => {
         {
           title: app.appId,
           key: app.appId,
+          menuType: MenuTypeEnum.Replay,
           pageType: PageTypeEnum.Replay,
           isNew: true,
           data: app,
@@ -212,6 +219,7 @@ const MainBox = () => {
       key: pane.key,
       isNew: true,
       title: pane.title,
+      menuType: MenuTypeEnum.Collection,
       pageType: PageTypeEnum.Request,
     });
     setPanes(newPanes);
@@ -219,6 +227,13 @@ const MainBox = () => {
   };
 
   // TODO 建议放到和 workspaces 强关联的 WorkspacesContent 组件中
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([]); // TODO 放置全局 store
+  useEffect(() => {
+    const pageType = panes.find((i) => i.key === activePane)?.pageType;
+    if (pageType && activePane) {
+      nav(`/${params.workspaceId}/workspace/${params.workspaceName}/${pageType}/${activePane}`);
+    }
+  }, [activePane]);
   useRequest(
     () =>
       WorkspaceService.listWorkspace({
@@ -239,6 +254,7 @@ const MainBox = () => {
             {
               title: params.workspaceName as string,
               key: params.workspaceId as string,
+              menuType: MenuTypeEnum.Collection,
               pageType: PageTypeEnum.WorkspaceOverview,
               isNew: true,
             },
@@ -252,6 +268,10 @@ const MainBox = () => {
     },
   );
 
+  const handleMenuChange = (activeKey: string) => {
+    setActiveMenu(activeKey as MenuTypeEnum);
+  };
+
   return (
     <>
       {/*AppHeader部分*/}
@@ -262,7 +282,7 @@ const MainBox = () => {
         limitRange={[30, 40]}
         firstNode={
           // 左侧菜单区
-          <MainMenu tabPosition='left'>
+          <MainMenu activeKey={activeMenu} tabPosition='left' onChange={handleMenuChange}>
             {/* menuItem 自定义子组件命名规定: XxxMenu, 表示xx功能的左侧主菜单 */}
             {/* menuItem 自定义子组件 props 约定，便于之后封装  */}
             {/* 1. ref?: 组件ref对象，用于调用组件自身属性方法。尽量不使用，使用前请思考是否还有别的方法 */}

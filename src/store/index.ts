@@ -3,6 +3,7 @@ import { toggleTheme } from '@zougt/vite-plugin-theme-preprocessor/dist/browser-
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
+import { MenuTypeEnum } from '../constant';
 import { PaneType } from '../layouts/MainBox';
 import { DefaultTheme, Theme, ThemeKey } from '../style/theme';
 import { getLocalStorage, setLocalStorage } from '../utils';
@@ -21,6 +22,8 @@ type BaseState = {
   activePane: string;
   setActivePane: (key: string) => void;
   setUserInfo: (userInfo: UserInfo) => void;
+  activeMenu: MenuTypeEnum;
+  setActiveMenu: (menu: MenuTypeEnum) => void;
   panes: PaneType[];
   setPanes: (panes: PaneType | PaneType[], mode?: 'push') => void;
 
@@ -48,6 +51,11 @@ export const useStore = create(
     },
     extensionInstalled: false,
 
+    activeMenu: getLocalStorage('activeMenu') || MenuTypeEnum.Collection,
+    setActiveMenu: (key: MenuTypeEnum) => {
+      set({ activeMenu: key });
+      setLocalStorage('activeMenu', key);
+    },
     activePane: getLocalStorage('activePane') || [],
     setActivePane: (key: string) => {
       set({ activePane: key });

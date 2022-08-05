@@ -8,8 +8,8 @@ import { useStore } from '../../store';
 import { Theme, ThemeIcon } from '../../style/theme';
 import Setting from '../Setting';
 import AddWorkspace from '../workspace/AddWorkspace';
-import AppGitHubStarButton from './GitHubStarButton';
 import InviteWorkspace from '../workspace/Invite';
+import AppGitHubStarButton from './GitHubStarButton';
 
 type AppHeaderProps = {
   workspaces: Workspace[];
