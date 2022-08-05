@@ -7,9 +7,11 @@ import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useMemo, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 
+import { MenuTypeEnum, PageTypeEnum } from '../../constant';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
-import { getPercent } from '../../utils';
+import { useStore } from '../../store';
+import { getPercent, uuid } from '../../utils';
 import { SmallTextButton, TableWrapper } from '../styledComponents';
 import { Analysis, Case } from './index';
 import { resultsStates } from './Results';
@@ -28,6 +30,8 @@ const chartOptions = {
 } as const;
 
 const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
+  const { setPanes } = useStore();
+
   const [expandedRowKeys, setExpandedRowKeys] = useState<number[]>([]);
   const [activeDetailTabsKey, setActiveDetailTabsKey] = useState<string>('analysis');
 
@@ -124,12 +128,43 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
       align: 'center',
       render: (_, record) => [
         <SmallTextButton
-          key='detail'
-          title='Detail'
+          key='analysis'
+          title='Analysis'
           onClick={() =>
             // only expend one row at a time
-            setExpandedRowKeys(expandedRowKeys[0] === record.planItemId ? [] : [record.planItemId])
+            // setExpandedRowKeys(expandedRowKeys[0] === record.planItemId ? [] : [record.planItemId])
+            {
+              console.log(record);
+              setPanes(
+                {
+                  key: uuid(),
+                  title: `Analysis - ${record.planItemId}`,
+                  pageType: PageTypeEnum.ReplayAnalysis,
+                  menuType: MenuTypeEnum.Replay,
+                  isNew: false,
+                  data: record,
+                },
+                'push',
+              );
+            }
           }
+        />,
+        <SmallTextButton
+          key='case'
+          title='Case'
+          onClick={() => {
+            setPanes(
+              {
+                key: uuid(),
+                title: `Case - ${record.planItemId}`,
+                pageType: PageTypeEnum.ReplayCase,
+                menuType: MenuTypeEnum.Replay,
+                isNew: false,
+                data: record,
+              },
+              'push',
+            );
+          }}
         />,
         <Button danger key='rerun' type='text' size='small'>
           Rerun
@@ -201,27 +236,27 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
         rowKey='planItemId'
         columns={columns}
         dataSource={planItemData}
-        expandable={{
-          expandedRowKeys,
-          showExpandColumn: false,
-          expandedRowRender: (record) => (
-            <Tabs
-              size='small'
-              activeKey={activeDetailTabsKey}
-              onChange={setActiveDetailTabsKey}
-              style={{ marginTop: '-8px' }}
-            >
-              <TabPane tab='Analysis' key='analysis'>
-                <Analysis planItemId={record.planItemId} />
-              </TabPane>
-              <TabPane tab='Case' key='case'>
-                <TableWrapper>
-                  <Case planItemId={record.planItemId} />
-                </TableWrapper>
-              </TabPane>
-            </Tabs>
-          ),
-        }}
+        // expandable={{
+        //   expandedRowKeys,
+        //   showExpandColumn: false,
+        //   expandedRowRender: (record) => (
+        //     <Tabs
+        //       size='small'
+        //       activeKey={activeDetailTabsKey}
+        //       onChange={setActiveDetailTabsKey}
+        //       style={{ marginTop: '-8px' }}
+        //     >
+        //       <TabPane tab='Analysis' key='analysis'>
+        //         <Analysis planItemId={record.planItemId} />
+        //       </TabPane>
+        //       <TabPane tab='Case' key='case'>
+        //         <TableWrapper>
+        //           <Case planItemId={record.planItemId} />
+        //         </TableWrapper>
+        //       </TabPane>
+        //     </Tabs>
+        //   ),
+        // }}
       />
     </Card>
   ) : (

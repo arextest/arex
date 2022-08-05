@@ -12,12 +12,13 @@ import { useParams } from 'react-router-dom';
 import { AppFooter, AppHeader, CollectionMenu, EnvironmentMenu, ReplayMenu } from '../components';
 import { CollectionProps, CollectionRef, nodeType } from '../components/httpRequest/CollectionMenu';
 import { MenuTypeEnum, PageTypeEnum } from '../constant';
-import { Environment, Folder, HttpRequest, Replay } from '../pages';
+import { Environment, Folder, HttpRequest, Replay, ReplayAnalysis } from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
 import WorkspaceOverviewPage from '../pages/WorkspaceOverview';
 import EnvironmentService from '../services/Environment.service';
-import { ApplicationDataType } from '../services/Replay.type';
+import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { useStore } from '../store';
+import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
 
 // TODO 数据结构待规范
@@ -162,7 +163,7 @@ const MainBox = () => {
   }, [params.workspaceId, params.workspaceName]);
 
   const addTab = () => {
-    const newActiveKey = String(Math.random());
+    const newActiveKey = uuid();
     setPanes(
       {
         key: newActiveKey,
@@ -173,7 +174,6 @@ const MainBox = () => {
       },
       'push',
     );
-    setActivePane(newActiveKey);
   };
 
   const removeTab = (targetKey: string) => {
@@ -190,6 +190,7 @@ const MainBox = () => {
   };
 
   const handleTabsEdit: any = (targetKey: string, action: 'add' | 'remove') => {
+    console.log(targetKey, action);
     action === 'add' ? addTab() : removeTab(targetKey);
   };
 
@@ -232,13 +233,12 @@ const MainBox = () => {
             key: app.appId,
             menuType: MenuTypeEnum.Replay,
             pageType: PageTypeEnum.Replay,
-            isNew: true,
+            isNew: false,
             data: app,
           },
           'push',
         );
     }
-    setActivePane(app.appId);
   };
 
   // TODO 建议放到 HttpRequest 组件中
@@ -253,23 +253,23 @@ const MainBox = () => {
       pageType: PageTypeEnum.Request,
     });
     setPanes(newPanes);
-    setActivePane(pane.key);
   };
 
   const handleHeaderMenuClick = () => {
     if (!panes.find((i) => i.key === params.workspaceId)) {
-      setPanes(
-        {
-          title: params.workspaceName,
-          key: params.workspaceId,
-          menuType: MenuTypeEnum.Collection,
-          pageType: PageTypeEnum.WorkspaceOverview,
-          isNew: true,
-        },
-        'push',
-      );
+      params.workspaceName &&
+        params.workspaceId &&
+        setPanes(
+          {
+            title: params.workspaceName,
+            key: params.workspaceId,
+            menuType: MenuTypeEnum.Collection,
+            pageType: PageTypeEnum.WorkspaceOverview,
+            isNew: true,
+          },
+          'push',
+        );
     }
-    params.workspaceId && setActivePane(params.workspaceId);
   };
 
   //environment
@@ -402,6 +402,9 @@ const MainBox = () => {
                   )}
                   {pane.pageType === PageTypeEnum.Replay && (
                     <Replay data={pane.data as ApplicationDataType} />
+                  )}
+                  {pane.pageType === PageTypeEnum.ReplayAnalysis && (
+                    <ReplayAnalysis data={pane.data as PlanItemStatistics} />
                   )}
                   {pane.pageType === PageTypeEnum.Folder && <Folder />}
                   {pane.pageType === PageTypeEnum.Environment && <Environment />}

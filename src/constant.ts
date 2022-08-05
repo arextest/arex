@@ -21,13 +21,13 @@ export enum MenuTypeEnum {
 
 export enum PageTypeEnum {
   Request = 'request',
-  Replay = 'replay',
   Folder = 'folder',
   Collection = 'collection',
   Environment = 'environment',
   WorkspaceOverview = 'workspaceOverview',
+  Replay = 'replay',
   ReplayAnalysis = 'replayAnalysis',
-  ReplayCase = 'ReplayCase',
+  ReplayCase = 'replayCase',
 }
 
 export enum ContentTypeEnum {

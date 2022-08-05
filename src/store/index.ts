@@ -3,13 +3,27 @@ import { toggleTheme } from '@zougt/vite-plugin-theme-preprocessor/dist/browser-
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import { MenuTypeEnum } from '../constant';
-import { PaneType } from '../layouts/MainBox';
+import { nodeType } from '../components/httpRequest/CollectionMenu';
+import { MenuTypeEnum, PageTypeEnum } from '../constant';
+import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
 import { DefaultTheme, Theme, ThemeKey } from '../style/theme';
 
 type UserInfo = {
   email: string | null;
+};
+
+// TODO 数据结构待规范
+export type PaneType = {
+  title: string;
+  key: string;
+  menuType: MenuTypeEnum;
+  pageType: PageTypeEnum;
+  isNew?: boolean;
+  data?: // 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
+  | nodeType // PageTypeEnum.Request 时的数据
+    | ApplicationDataType // PageTypeEnum.Replay 时的数据
+    | PlanItemStatistics; // PageTypeEnum.ReplayAnalysis 时的数据
 };
 
 type BaseState = {
@@ -71,9 +85,10 @@ export const useStore = create(
       }
 
       if (mode === 'push') {
-        // immer update
+        // immer update and set activePane
         set((state) => {
           state.panes.push(panes as PaneType);
+          state.activePane = (panes as PaneType).key;
         });
       }
     },
