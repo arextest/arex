@@ -48,7 +48,7 @@ export default class ReplayService {
 
   static async queryDifferences(params: QueryDifferencesReq) {
     return request
-      .post<QueryDifferencesRes>('report/queryDifferences', params)
+      .post<QueryDifferencesRes>('/report/queryDifferences', params)
       .then((res) => Promise.resolve(res.body.differences));
   }
 
@@ -59,7 +59,7 @@ export default class ReplayService {
     pageSize = 99,
   }: QueryReplayCaseReq) {
     return request
-      .post<QueryReplayCaseRes>('report/queryReplayCase', {
+      .post<QueryReplayCaseRes>('/report/queryReplayCase', {
         needTotal,
         pageIndex,
         pageSize,
