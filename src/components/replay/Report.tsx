@@ -7,8 +7,8 @@ import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useMemo, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 
-import ReplayService from '../../api/Replay.service';
-import { PlanItemStatistics, PlanStatistics } from '../../api/Replay.type';
+import ReplayService from '../../services/Replay.service';
+import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { getPercent } from '../../utils';
 import { SmallTextButton, TableWrapper } from '../styledComponents';
 import { Analysis, Case } from './index';

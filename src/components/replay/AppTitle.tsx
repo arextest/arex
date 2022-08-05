@@ -1,7 +1,9 @@
 import styled from '@emotion/styled';
-import { Button, Input, Modal } from 'antd';
+import { useRequest } from 'ahooks';
+import { Button, Form, Input, message, Modal, notification } from 'antd';
 import React, { FC, useState } from 'react';
 
+import ReplayService from '../../services/Replay.service';
 import { Label } from '../styledComponents';
 
 type AppTitleData = {
@@ -26,11 +28,43 @@ const AppTitleWrapper = styled.div`
 `;
 
 const AppTitle: FC<AppTitleProps> = ({ data }) => {
-  const [host, setHost] = useState('');
+  const [form] = Form.useForm<{ targetEnv: string }>();
   const [modalVisible, setModalVisible] = useState(false);
+
+  const { run: createPlan } = useRequest(ReplayService.createPlan, {
+    manual: true,
+    onSuccess(res) {
+      if (res.result === 1) {
+        notification.success({
+          message: 'Started Successfully',
+        });
+        form.resetFields();
+        setModalVisible(false);
+      } else {
+        console.log(res);
+        notification.error({
+          message: 'Start Failed',
+          description: res.desc,
+        });
+      }
+    },
+  });
   const handleStartReplay = () => {
-    setModalVisible(true);
-    console.log('start replay');
+    form
+      .validateFields()
+      .then((values) => {
+        createPlan({
+          appId: data.id,
+          sourceEnv: 'pro',
+          targetEnv: values.targetEnv,
+          operator: 'Visitor',
+          replayPlanType: 0,
+        });
+        console.log('Received values of form: ', values);
+      })
+      .catch((info) => {
+        console.log('Validate Failed:', info);
+      });
   };
   return (
     <AppTitleWrapper>
@@ -39,24 +73,25 @@ const AppTitle: FC<AppTitleProps> = ({ data }) => {
         <Label htmlFor='case-count'>Case Count</Label>
         <span id='case-count'>{data.count}</span>
       </span>
-      <Button size='small' type='primary' onClick={handleStartReplay}>
+      <Button size='small' type='primary' onClick={() => setModalVisible(true)}>
         Start replay
       </Button>
       <Modal
         title={`Start replay - ${data.id}`}
         visible={modalVisible}
+        onOk={handleStartReplay}
         onCancel={() => setModalVisible(false)}
+        bodyStyle={{ paddingBottom: '12px' }}
       >
-        <span>
-          <Label htmlFor='target-host'>Target Host</Label>
-          <Input
-            id='target-host'
-            type='text'
-            value={host}
-            onChange={(e) => setHost(e.target.value)}
-            style={{ width: '360px' }}
-          />
-        </span>
+        <Form name='startReplay' form={form} autoComplete='off'>
+          <Form.Item
+            label='Target Host'
+            name='targetEnv'
+            rules={[{ required: true, message: "Target Host can't be empty" }]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
       </Modal>
     </AppTitleWrapper>
   );

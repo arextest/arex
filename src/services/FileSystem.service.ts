@@ -1,4 +1,4 @@
-import request from './axios';
+import request from '../api/axios';
 import {
   QueryInterfaceReq,
   QueryInterfaceRes,

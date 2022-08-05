@@ -151,3 +151,17 @@ export interface QueryReplayCaseRes {
   result: ReplayCase[];
   totalCount: number;
 }
+
+// ------ /schedule/createPlan ------
+export interface CreatePlanReq {
+  appId: string;
+  sourceEnv: string;
+  targetEnv: string;
+  operator: string;
+  replayPlanType: number;
+}
+
+export interface CreatePlanRes {
+  desc: string;
+  result: number;
+}

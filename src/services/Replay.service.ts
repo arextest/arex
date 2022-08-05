@@ -1,5 +1,9 @@
-import request from './axios';
+import axios from 'axios';
+
+import request from '../api/axios';
 import {
+  CreatePlanReq,
+  CreatePlanRes,
   QueryDifferencesReq,
   QueryDifferencesRes,
   QueryPlanItemStatisticsReq,
@@ -62,5 +66,14 @@ export default class ReplayService {
         planItemId,
       })
       .then((res) => Promise.resolve(res.body.result));
+  }
+
+  static async createPlan(params: CreatePlanReq) {
+    return new Promise<CreatePlanRes>((resolve, reject) => {
+      return axios
+        .post<any, { data: CreatePlanRes }>('/schedule/createPlan', params)
+        .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
+    });
   }
 }

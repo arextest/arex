@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
-import ReplayService from '../../api/Replay.service';
-import { ApplicationDataType } from '../../api/Replay.type';
+import ReplayService from '../../services/Replay.service';
+import { ApplicationDataType } from '../../services/Replay.type';
 import MenuSelect from '../MenuSelect';
 
 const ReplayMenu: FC<{ onSelect: (app: ApplicationDataType) => void }> = (props) => {

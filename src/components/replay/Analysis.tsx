@@ -3,8 +3,8 @@ import { Col, Drawer, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { FC, useState } from 'react';
 
-import ReplayService from '../../api/Replay.service';
-import { CategoryStatistic, Difference } from '../../api/Replay.type';
+import ReplayService from '../../services/Replay.service';
+import { CategoryStatistic, Difference } from '../../services/Replay.type';
 import { MenuSelect } from '../index';
 import { SmallTextButton, TableWrapper } from '../styledComponents';
 

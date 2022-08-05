@@ -15,6 +15,11 @@ export default {
       changeOrigin: true,
       pathRewrite: { '/report': '/report_api/report' },
     },
+    '/schedule': {
+      target: 'http://10.5.153.151:8088',
+      changeOrigin: true,
+      pathRewrite: { '/schedule': '/schedule_api' },
+    },
   },
   PROD: {
     '/api': {
@@ -31,6 +36,11 @@ export default {
       target: 'http://10.5.153.151:8088',
       changeOrigin: true,
       pathRewrite: { '/report': '/report_api/report' },
+    },
+    '/schedule': {
+      target: 'http://10.5.153.151:8088',
+      changeOrigin: true,
+      pathRewrite: { '/report': '/schedule_api' },
     },
   },
 };

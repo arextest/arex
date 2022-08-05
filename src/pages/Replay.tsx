@@ -1,9 +1,9 @@
 import { Empty, Space } from 'antd';
 import React, { FC, useState } from 'react';
 
-import { ApplicationDataType, PlanStatistics } from '../api/Replay.type';
 import { AppTitle, Report, Results } from '../components/replay';
 import { FlexCenterWrapper } from '../components/styledComponents';
+import { ApplicationDataType, PlanStatistics } from '../services/Replay.type';
 
 const Replay: FC<{ data?: ApplicationDataType }> = ({ data }) => {
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();

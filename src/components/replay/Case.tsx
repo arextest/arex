@@ -3,8 +3,8 @@ import { Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC } from 'react';
 
-import ReplayService from '../../api/Replay.service';
-import { ReplayCase } from '../../api/Replay.type';
+import ReplayService from '../../services/Replay.service';
+import { ReplayCase } from '../../services/Replay.type';
 import { SmallTextButton } from '../styledComponents';
 
 type CaseProps = {

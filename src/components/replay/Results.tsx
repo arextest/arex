@@ -4,8 +4,8 @@ import { Badge, Table, Tag, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { FC, useState } from 'react';
 
-import ReplayService from '../../api/Replay.service';
-import { PlanStatistics } from '../../api/Replay.type';
+import ReplayService from '../../services/Replay.service';
+import { PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
 import { Theme } from '../../style/theme';
 const { Text } = Typography;

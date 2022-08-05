@@ -1,14 +1,16 @@
 import './Environment.less';
-import { Table, Button, Input, Form, Select } from 'antd';
+
 import { MenuOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Select, Table } from 'antd';
 import update from 'immutability-helper';
-import React, { useCallback, useEffect, useRef, useState, useContext } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 const type = 'DraggableBodyRow';
 import { css } from '@emotion/react';
 import type { FormInstance } from 'antd/es/form';
-import EnvironmentService from '../api/Environment.service';
+
+import EnvironmentService from '../services/Environment.service';
 
 //拖拽
 const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }) => {
@@ -183,7 +185,7 @@ const EnvironmentPage = ({ curEnvironment }: any) => {
 
   useEffect(() => {
     if (curEnvironment.length > 0) {
-      let EnvironmentActive: string[] = [];
+      const EnvironmentActive: string[] = [];
       curEnvironment[0].keyValues.map((e: any, index: number) => {
         if (e.key !== index) {
           e.keys = e.key;

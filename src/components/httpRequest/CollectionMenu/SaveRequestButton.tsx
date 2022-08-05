@@ -2,10 +2,10 @@ import { Button, Form, Input, Modal, TreeSelect, Typography } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { FileSystemService } from '../../../api/FileSystem.service';
 import { ContentTypeEnum } from '../../../constant';
 import { treeFindPath } from '../../../helpers/collection/util';
 import { CollectionService } from '../../../services/CollectionService';
+import { FileSystemService } from '../../../services/FileSystem.service';
 const { Text } = Typography;
 
 type SaveRequestButtonProps = {

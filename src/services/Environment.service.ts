@@ -1,5 +1,5 @@
-import request from './axios';
-import { EnvironmentSave, GetEnvironmentRes, EnvironmentSaveReq } from './Environment.type';
+import request from '../api/axios';
+import { EnvironmentSave, EnvironmentSaveReq, GetEnvironmentRes } from './Environment.type';
 
 export default class EnvironmentService {
   static async getEnvironment(params: GetEnvironmentRes): Promise<any> {

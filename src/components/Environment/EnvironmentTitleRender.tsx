@@ -4,7 +4,7 @@ import { Dropdown, Input, Menu, Modal, Space } from 'antd';
 import ListBody from 'antd/lib/transfer/ListBody';
 import { useState } from 'react';
 
-import EnvironmentService from '../../api/Environment.service';
+import EnvironmentService from '../../services/Environment.service';
 
 const btnCss = css`
   width: 20px;

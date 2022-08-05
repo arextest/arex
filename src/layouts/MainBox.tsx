@@ -5,13 +5,13 @@ import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { ApplicationDataType } from '../api/Replay.type';
 import { AppFooter, AppHeader, CollectionMenu, EnvironmentMenu, ReplayMenu } from '../components';
 import { CollectionProps, CollectionRef, nodeType } from '../components/httpRequest/CollectionMenu';
 import { MenuTypeEnum, PageTypeEnum } from '../constant';
 import { Environment, Folder, HttpRequest, Replay } from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
 import WorkspaceOverviewPage from '../pages/WorkspaceOverview';
+import { ApplicationDataType } from '../services/Replay.type';
 import { Workspace, WorkspaceService } from '../services/WorkspaceService';
 import { useStore } from '../store';
 import DraggableLayout from './DraggableLayout';
