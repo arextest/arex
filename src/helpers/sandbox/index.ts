@@ -1,4 +1,4 @@
-import { runTestScript as _runTestScript} from 'purple-js-sandbox';
+import { runTestScript as _runTestScript } from 'purple-js-sandbox';
 import { TestDescriptor, TestResponse } from 'purple-js-sandbox/lib/test-runner';
 
 // This will return 4 lines on the test report, grouped under "Arithmetic operations"
@@ -17,7 +17,10 @@ import { TestDescriptor, TestResponse } from 'purple-js-sandbox/lib/test-runner'
 // 源码参考 https://github.com/hoppscotch/hoppscotch/blob/v2.1.0/packages/hoppscotch-js-sandbox/src/demo.ts
 // _tag = Left时是脚本错误，Right是成功
 
-export function runTestScript(testScript: string, testResponse: TestResponse): Promise<TestDescriptor> {
+export function runTestScript(
+  testScript: string,
+  testResponse: TestResponse,
+): Promise<TestDescriptor> {
   return new Promise((resolve, reject) => {
     return _runTestScript(testScript, testResponse)().then((res) => {
       if (res._tag === 'Right') {

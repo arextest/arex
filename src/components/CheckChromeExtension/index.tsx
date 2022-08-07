@@ -20,8 +20,8 @@ const CheckChromeExtension = () => {
     <Alert
       message={
         <div>
-          Be careful：The Chrome Extension can break the cross-domain limit of the browser.
-          Please install the&nbsp;
+          Be careful：The Chrome Extension can break the cross-domain limit of the browser. Please
+          install the&nbsp;
           <a
             href='https://chrome.google.com/webstore/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj'
             target={'_blank'}

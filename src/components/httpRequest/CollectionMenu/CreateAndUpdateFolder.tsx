@@ -35,6 +35,7 @@ const CreateAndUpdateFolder: React.FC<any> = ({
       id: _useParams.workspaceId,
       newName: CollectionCreateAndUpdateModalFolderName,
       path: paths.map((i: any) => i.key),
+      userName: localStorage.getItem('email'),
     }).then((res) => {
       setCollectionCreateAndUpdateModalVisible(false);
       setCollectionCreateAndUpdateModalFolderName('');

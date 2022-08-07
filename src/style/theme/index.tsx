@@ -20,7 +20,7 @@ export const Color = {
 const themeDark = {
   color: {
     primary: '#955cf4',
-    active: '#f5f5f5',
+    active: 'rgba(255, 255, 255, 0.08)',
     selected: colorLib('#955cf4').alpha(0.1).rgbString(),
     text: {
       primary: '#000000D9',

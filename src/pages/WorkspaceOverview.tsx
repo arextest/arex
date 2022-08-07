@@ -1,7 +1,7 @@
 import { Button, Divider, Form, Input, Popconfirm, Space, Typography } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { WorkspaceService } from '../services/WorkspaceService';
+import { WorkspaceService } from '../services/Workspace.service';
 const { Text } = Typography;
 const WorkspaceOverviewPage = () => {
   const _useParams = useParams();
@@ -10,6 +10,7 @@ const WorkspaceOverviewPage = () => {
     WorkspaceService.renameWorkspace({
       workspaceId: _useParams.workspaceId,
       newName: values.name,
+      userName: localStorage.getItem('email'),
     }).then((res) => {
       console.log(res);
       window.location.href = `/${_useParams.workspaceId}/workspace/${values.name}`;

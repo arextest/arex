@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 import request from '../api/axios';
-
-export type Workspace = { id: string; role: number; workspaceName: string };
+import { Workspace } from './Workspace.type';
 
 export class WorkspaceService {
   static listWorkspace({ userName }: { userName: string }) {
@@ -13,30 +12,34 @@ export class WorkspaceService {
       .then((res) => res.body.workspaces);
   }
   static createWorkspace({ userName, workspaceName }) {
-    return axios
-      .post(`/api/filesystem/addItem`, {
-        nodeName: 'New Collection',
-        nodeType: '3',
-        userName: userName,
-        workspaceName: workspaceName,
-      })
-      .then((res) => res);
+    return request.post(`/api/filesystem/addItem`, {
+      nodeName: 'New Collection',
+      nodeType: '3',
+      userName: userName,
+      workspaceName: workspaceName,
+    });
   }
 
-  static renameWorkspace({ workspaceId, newName }) {
+  static renameWorkspace({ workspaceId, newName, userName }) {
     return axios
       .post(`/api/filesystem/renameWorkspace`, {
         id: workspaceId,
         workspaceName: newName,
+        userName,
       })
       .then((res) => res);
   }
 
   static deleteWorkspace({ workspaceId }) {
-    return axios.delete(`/api/filesystem/workspace/${workspaceId}`).then((res) => res);
+    return axios
+      .post(`/api/filesystem/deleteWorkspace`, {
+        userName: localStorage.getItem('email'),
+        workspaceId: workspaceId,
+      })
+      .then((res) => res);
   }
 
-  static inviteToWorkspace(params){
-    return axios.post(`/api/filesystem/inviteToWorkspace`,params)
+  static inviteToWorkspace(params) {
+    return axios.post(`/api/filesystem/inviteToWorkspace`, params);
   }
 }

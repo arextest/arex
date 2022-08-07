@@ -21,7 +21,6 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
-import { FileSystemService } from '../api/FileSystem.service';
 import { AnimateAutoHeight } from '../components';
 import {
   FormHeader,
@@ -34,12 +33,13 @@ import {
 } from '../components/httpRequest';
 import { ContentTypeEnum, MethodEnum, METHODS, NodeType } from '../constant';
 import { treeFindPath } from '../helpers/collection/util';
+import { runTestScript } from '../helpers/sandbox';
 import { PaneType } from '../layouts/MainBox';
+import { FileSystemService } from '../services/FileSystem.service';
 import { useStore } from '../store';
 import { tryParseJsonString, tryPrettierJsonString } from '../utils';
 import AgentAxios from '../utils/request';
 import { NodeList } from '../vite-env';
-import { runTestScript } from "../helpers/sandbox";
 
 const { TabPane } = Tabs;
 
@@ -177,11 +177,11 @@ const HttpRequest: FC<HttpRequestProps> = ({
 
   useEffect(() => {
     handleUpdateUrl();
-    runTestScript(cmValue,{
+    runTestScript(cmValue, {
       status: 200,
       body: 'hoi',
       headers: [],
-    }).then( res =>{
+    }).then((res) => {
       console.log(res);
     });
   }, [requestParams]);

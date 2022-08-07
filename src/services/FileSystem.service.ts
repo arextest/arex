@@ -1,4 +1,4 @@
-import request from './axios';
+import request from '../api/axios';
 import {
   QueryInterfaceReq,
   QueryInterfaceRes,
@@ -7,10 +7,11 @@ import {
   SaveInterfaceReq,
   SaveInterfaceRes,
 } from './FileSystem.type';
+
 export class FileSystemService {
   static async queryWorkspacesByUser({ id }: any): Promise<any> {
     return request.post(`/api/filesystem/queryWorkspacesByUser`, {
-      userName: 'zt',
+      userName: localStorage.getItem('email'),
     });
   }
 
