@@ -5,9 +5,10 @@ import { Button, Input, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { LoginService } from '../../services/LoginService';
+import { AuthService } from '../../services/AuthService';
 import { WorkspaceService } from '../../services/Workspace.service';
 import { useStore } from '../../store';
+import {useMount} from "ahooks";
 
 let timeChange: any;
 const Login = () => {
@@ -42,7 +43,7 @@ const Login = () => {
     timeChange = setInterval(() => {
       setCount((t: number) => --t);
     }, 1000);
-    LoginService.sendVerifyCodeByEmail(email).then((res) => {
+    AuthService.sendVerifyCodeByEmail(email).then((res) => {
       if (res.data.body.success == true) {
         message.success('The verification code has been sent to the email.');
       } else {
@@ -82,15 +83,19 @@ const Login = () => {
       return;
     }
 
-    LoginService.loginVerify({
+    AuthService.loginVerify({
       userName: email,
       verificationCode: verificationCode,
     }).then((res) => {
       if (res.data.body.success == true) {
+        localStorage.setItem('accessToken',res.data.body.accessToken)
+        localStorage.setItem('refreshToken',res.data.body.refreshToken)
         message.success('Login succeeded');
         initBeforeUserEntry(email);
       } else {
-        message.error('Login failed');
+        if (res.data.responseStatusType.responseCode === 2){
+          message.error(res.data.responseStatusType.responseDesc)
+        }
       }
     });
   };

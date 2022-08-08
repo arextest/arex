@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import request from '../api/axios';
 import { collectionOriginalTreeToAntdTreeData } from '../helpers/collection/util';
 import { QueryWorkspaceByIdReq, QueryWorkspaceByIdRes } from './CollectionService.type';
@@ -18,12 +16,11 @@ export class CollectionService {
       }>(`/api/filesystem/queryWorkspaceById`, params)
       .then((res) => Promise.resolve(collectionOriginalTreeToAntdTreeData(res.body.fsTree.roots)));
   }
-
   static async addItem(params: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      axios.post(`/api/filesystem/addItem`, params).then((res) => {
-        if (res.data.responseStatusType.responseCode === 2) {
-          message.error(res.data.responseStatusType.responseDesc);
+      request.post(`/api/filesystem/addItem`, params).then((res) => {
+        if (res.responseStatusType.responseCode === 2) {
+          message.error(res.responseStatusType.responseDesc);
           reject('e');
         } else {
           resolve(res);
@@ -31,18 +28,10 @@ export class CollectionService {
       });
     });
   }
-
   static async removeItem(params: any): Promise<any> {
-    return axios.post(`/api/filesystem/removeItem`, params);
+    return request.post(`/api/filesystem/removeItem`, params);
   }
-
   static async rename(params: any): Promise<any> {
-    return axios.post(`/api/filesystem/rename`, params);
-  }
-
-  static async queryWorkspaceById({ id }: QueryWorkspaceByIdReq) {
-    return axios.post<QueryWorkspaceByIdRes>(`/api/filesystem/queryWorkspaceById`, {
-      id,
-    });
+    return request.post(`/api/filesystem/rename`, params);
   }
 }

@@ -2,32 +2,11 @@ import request from '../api/axios';
 import {
   QueryInterfaceReq,
   QueryInterfaceRes,
-  QueryWorkspaceByIdReq,
-  QueryWorkspaceByIdRes,
   SaveInterfaceReq,
   SaveInterfaceRes,
 } from './FileSystem.type';
 
 export class FileSystemService {
-  static async queryWorkspacesByUser({ id }: any): Promise<any> {
-    return request.post(`/api/filesystem/queryWorkspacesByUser`, {
-      userName: localStorage.getItem('email'),
-    });
-  }
-
-  static async queryWorkspaceById({ id }: QueryWorkspaceByIdReq) {
-    return request.post<QueryWorkspaceByIdRes>(`/api/filesystem/queryWorkspaceById`, {
-      id,
-    });
-  }
-
-  static async addItem(params: any): Promise<any> {
-    return request.post(`/api/filesystem/addItem`, params);
-  }
-
-  static async removeItem(params: any): Promise<any> {
-    return request.post(`/api/filesystem/removeItem`, params);
-  }
 
   static async rename(params: any): Promise<any> {
     return request.post(`/api/filesystem/rename`, params);
