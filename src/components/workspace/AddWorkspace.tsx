@@ -32,8 +32,7 @@ const AddWorkspace = () => {
                 if (res.body.success) {
                   const key = res.body.infoId;
                   const label = values.name;
-                  //TODO 这边要返回workspaceId
-                  // window.location.href = `/${key}/workspace/${label}`
+                  window.location.href = `/${key}/workspace/${label}`
                 }
               });
             })
