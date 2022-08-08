@@ -30,15 +30,12 @@ const AppHeader = () => {
       onSuccess(data) {
         setWorkspaces(data);
         if (params.workspaceId && params.workspaceName) {
-          // nav(`/${data[0].id}/workspace/${data[0].workspaceName}/workspaceOverview/${data[0].id}`)
         } else {
           nav(`/${data[0].id}/workspace/${data[0].workspaceName}/workspaceOverview/${data[0].id}`);
-          console.log('123');
         }
       },
     },
   );
-
   const WorkspacesContent = () => {
     return (
       <>
@@ -70,9 +67,9 @@ const AppHeader = () => {
   });
 
   const handleLogout = () => {
-    localStorage.removeItem('email');
+    localStorage.clear()
     store.userInfo = undefined;
-    nav('/');
+    window.location.href = '/login'
   };
   return (
     <>

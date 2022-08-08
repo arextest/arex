@@ -1,5 +1,16 @@
 # AREX前端
 
+## axios封装
+
+直接return response.data
+
+request拦截器
+
+response拦截器
+
+## 鉴权
+
+
 ## 前端应用架构
 
 | 区域     | 功能                                     |
@@ -18,4 +29,3 @@
 | helpers    | 与components对应，存放components组件中复杂的一些逻辑处理代码                     |
 | pages      | 主区域的页面组件，类似于路由的pages。命名规范：Environment.tsx，组件名EnvironmentPage |
 | layouts    | MainBox.tsx是主要容器                                             |
-0
