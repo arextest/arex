@@ -6,13 +6,11 @@ const { Text } = Typography;
 const WorkspaceOverviewPage = () => {
   const _useParams = useParams();
   const onFinish = (values: any) => {
-    console.log('Success:', values);
     WorkspaceService.renameWorkspace({
       workspaceId: _useParams.workspaceId,
       newName: values.name,
       userName: localStorage.getItem('email'),
     }).then((res) => {
-      console.log(res);
       window.location.href = `/${_useParams.workspaceId}/workspace/${values.name}`;
     });
   };
@@ -23,20 +21,8 @@ const WorkspaceOverviewPage = () => {
 
   return (
     <div>
-      {/*<div>*/}
-      {/*  <h1>Canyon</h1>*/}
-
-      {/*  <div>*/}
-      {/*    Workspace Settings*/}
-      {/*  </div>*/}
-      {/*</div>*/}
-
       <div style={{ width: '440px', margin: '0 auto' }}>
-        {/*<a>*/}
-        {/*  Overview*/}
-        {/*</a>*/}
         <h1>Workspace settings</h1>
-
         <Form
           layout='vertical'
           name='basic'
@@ -73,7 +59,6 @@ const WorkspaceOverviewPage = () => {
             onConfirm={() => {
               WorkspaceService.deleteWorkspace({ workspaceId: _useParams.workspaceId }).then(
                 (res) => {
-                  console.log(res);
                   window.location.href = '/';
                 },
               );

@@ -1,3 +1,5 @@
+// TODO 错误直接使用后段返回的
+// {"responseStatusType":{"responseCode":2,"responseDesc":"Authentication verification failed","timestamp":1659941177377},"body":null}
 export const showMessage = (status: number | string): string => {
   let message = '';
   switch (status) {

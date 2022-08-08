@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import request from '../api/axios';
 import { Workspace } from './Workspace.type';
 
@@ -21,7 +19,7 @@ export class WorkspaceService {
   }
 
   static renameWorkspace({ workspaceId, newName, userName }) {
-    return axios
+    return request
       .post(`/api/filesystem/renameWorkspace`, {
         id: workspaceId,
         workspaceName: newName,
@@ -31,7 +29,7 @@ export class WorkspaceService {
   }
 
   static deleteWorkspace({ workspaceId }) {
-    return axios
+    return request
       .post(`/api/filesystem/deleteWorkspace`, {
         userName: localStorage.getItem('email'),
         workspaceId: workspaceId,
@@ -40,6 +38,6 @@ export class WorkspaceService {
   }
 
   static inviteToWorkspace(params) {
-    return axios.post(`/api/filesystem/inviteToWorkspace`, params);
+    return request.post(`/api/filesystem/inviteToWorkspace`, params);
   }
 }

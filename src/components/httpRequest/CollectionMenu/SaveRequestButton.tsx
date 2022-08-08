@@ -87,11 +87,11 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
               }).then((res) => {
                 FileSystemService.saveInterface({
                   ...reqParams,
-                  id: res.data.body.infoId,
+                  id: res.body.infoId,
                 }).then((r) => {
                   // 通知父组件
                   onSaveAs({
-                    key: res.data.body.infoId,
+                    key: res.body.infoId,
                     title: values.requestName,
                   });
                   form.resetFields();

@@ -7,7 +7,7 @@ import {
 import styled from '@emotion/styled';
 import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps, Tooltip } from 'antd';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 
 import { AppFooter, AppHeader, CollectionMenu, EnvironmentMenu, ReplayMenu } from '../components';
 import { CollectionProps, CollectionRef } from '../components/httpRequest/CollectionMenu';
@@ -20,6 +20,7 @@ import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type
 import { PaneType, useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
+import {useMount} from "ahooks";
 
 const { TabPane } = Tabs;
 const MainMenu = styled(Tabs)`
@@ -124,6 +125,7 @@ const EmptyWrapper = styled(Empty)`
 `;
 
 const MainBox = () => {
+  const nav = useNavigate()
   const params = useParams();
   const {
     panes,
@@ -151,6 +153,15 @@ const MainBox = () => {
       handleHeaderMenuClick();
     }
   }, [params.workspaceId, params.workspaceName]);
+
+  // 必须和路由搭配起来，在切换的时候附着上去
+  useEffect(()=>{
+    const findActivePane = panes.find(i=>i.key === activePane)
+    if (findActivePane){
+      nav(`/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.key}`)
+    }
+
+  },[activePane])
 
   const addTab = () => {
     const newActiveKey = uuid();

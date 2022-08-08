@@ -1,5 +1,16 @@
 # AREX前端
 
+## axios封装
+
+直接return response.data
+
+request拦截器
+
+response拦截器
+
+## 鉴权
+
+
 ## 前端应用架构
 
 | 区域     | 功能                                     |
