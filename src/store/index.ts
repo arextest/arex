@@ -46,6 +46,12 @@ type BaseState = {
 
   workspaces: Workspace[];
   setWorkspaces: (workspaces: Workspace[]) => void;
+
+  environmentTreeData: any;
+  setEnvironmentTreeData: (environmentTreeData: any) => void;
+
+  environment: string;
+  setEnvironment: (environment: any) => void;
 };
 
 /**
@@ -105,5 +111,11 @@ export const useStore = create(
 
     workspaces: [],
     setWorkspaces: (workspaces) => set({ workspaces }),
+
+    environmentTreeData: [],
+    setEnvironmentTreeData: (environmentTreeData) => set({ environmentTreeData }),
+
+    environment: '0',
+    setEnvironment: (environment) => set({ environment }),
   })),
 );

@@ -19,7 +19,7 @@ const btnCss = css`
 export type Environmentprops = {
   val: any;
   titleRadius: string;
-  updateDirectorytreeData: (p: any) => void;
+  updateDirectorytreeData: () => void;
   nowEnvironment: string;
   setNowEnvironment: (p: any) => void;
 };
