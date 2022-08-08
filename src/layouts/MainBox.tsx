@@ -385,7 +385,7 @@ const MainBox = () => {
               <MainMenuItem
                 tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
                 key={MenuTypeEnum.Environment}
-                // disabled
+                disabled
                 menuItem={
                   <EnvironmentMenu
                     workspaceId={params.workspaceId}
