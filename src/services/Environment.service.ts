@@ -3,7 +3,9 @@ import { EnvironmentSave, EnvironmentSaveReq, GetEnvironmentRes } from './Enviro
 
 export default class EnvironmentService {
   static async getEnvironment(params: GetEnvironmentRes): Promise<any> {
-    return request.post(`/api/environment/queryEnvsByWorkspace`, params);
+    return request
+      .post(`/api/environment/queryEnvsByWorkspace`, params)
+      .then((res: any) => Promise.resolve(res.body.environments));
   }
 
   static async saveEnvironment(params: EnvironmentSave): Promise<any> {
