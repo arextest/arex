@@ -5,6 +5,7 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type MenuSelectProps<T> = {
+  small?: boolean;
   rowKey: string;
   onSelect: (app: T) => void;
   filter: (keyword: string, app: T) => boolean;
@@ -17,17 +18,25 @@ type MenuSelectProps<T> = {
 const MenuSelectWrapper = styled.div`
   padding: 8px;
 `;
-const MenuList = styled(Menu)`
-  background-color: transparent !important;
+const MenuList = styled(Menu)<{ small?: boolean }>`
   border: none !important;
+  background: transparent !important;
   .ant-menu-item {
-    margin: 0 !important;
-    height: 32px;
-    line-height: 32px;
+    margin: 4px 0 !important;
+    height: ${(props) => (props.small ? '24px' : '32px')};
+    line-height: ${(props) => (props.small ? '24px' : '32px')};
     border-radius: 2px;
+    background: transparent !important;
+  }
+  .ant-menu-item-active {
+    color: inherit !important;
+    background-color: ${(props) => props.theme.color.active} !important;
   }
   .ant-menu-item-selected {
-    background-color: #2d244f;
+    background-color: ${(props) => props.theme.color.selected} !important;
+  }
+  .ant-menu-item-active.ant-menu-item-selected {
+    color: ${(props) => props.theme.color.primary} !important;
   }
 `;
 const MenuFilter = styled(Input.Search)`
@@ -67,6 +76,7 @@ function MenuSelect<T extends { [key: string]: any }>(props: MenuSelectProps<T>)
         onChange={(e) => setFilterKeyword(e.target.value)}
       />
       <MenuList
+        small={props.small}
         selectedKeys={selectedKey ? [selectedKey] : []}
         items={filteredApps.map(
           props.itemRender

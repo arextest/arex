@@ -4,8 +4,8 @@ import { Badge, Table, Tag, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { FC, useState } from 'react';
 
-import ReplayService from '../../api/Replay.service';
-import { PlanStatistics } from '../../api/Replay.type';
+import ReplayService from '../../services/Replay.service';
+import { PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
 import { Theme } from '../../style/theme';
 const { Text } = Typography;
@@ -32,10 +32,10 @@ const columns: ColumnsType<PlanStatistics> = [
         <Tag color={state.color}>
           {state.label}
           {record.status === 1 && (
-            <>
+            <span style={{ marginLeft: '8px' }}>
               <Badge status='processing' />
               {record.percent && <span>{record.percent > 99 ? 99 : record.percent}</span>}
-            </>
+            </span>
           )}
         </Tag>
       ) : (
@@ -113,9 +113,10 @@ const Results: FC<{
   return (
     <div>
       <AppTable
+        rowKey='planId'
         size='small'
         theme={theme}
-        pagination={false}
+        pagination={{ pageSize: 5 }}
         columns={columns}
         onRow={(record, index) => {
           return {

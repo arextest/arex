@@ -1,11 +1,13 @@
 import { message } from 'antd';
+import { v4 as uuid } from 'uuid';
+export { uuid };
 
 import * as ChartUtils from './chart';
 export { ChartUtils };
 
 export const getLocalStorage = (key: string) => {
   const raw = window.localStorage.getItem(key);
-  return raw ? JSON.parse(raw) : undefined;
+  return !raw || raw === 'undefined' || raw === 'null' ? undefined : JSON.parse(raw);
 };
 
 export const setLocalStorage = (key: string, value: any) =>

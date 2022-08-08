@@ -10,7 +10,7 @@ import CreateAndUpdateFolder from './CreateAndUpdateFolder';
 
 function CollectionTitleRender({
   val,
-  updateDirectorytreeData,
+  updateDirectoryTreeData,
   treeData,
   callbackOfNewRequest,
 }: any) {
@@ -41,9 +41,9 @@ function CollectionTitleRender({
                     nodeName: 'New Collection',
                     nodeType: 3,
                     parentPath: paths.map((i: any) => i.key),
-                    userName: 'zt',
+                    userName: localStorage.getItem('email'),
                   }).then(() => {
-                    updateDirectorytreeData();
+                    updateDirectoryTreeData();
                   });
                 }}
               >
@@ -64,10 +64,10 @@ function CollectionTitleRender({
                     nodeName: 'New Request',
                     nodeType: 1,
                     parentPath: paths.map((i: any) => i.key),
-                    userName: 'zt',
+                    userName: localStorage.getItem('email'),
                   }).then((res) => {
                     console.log(res.data.body.infoId);
-                    updateDirectorytreeData();
+                    updateDirectoryTreeData();
                     callbackOfNewRequest(
                       [res.data.body.infoId],
                       paths.map((i: any) => i.key),
@@ -92,9 +92,9 @@ function CollectionTitleRender({
                     nodeName: 'case',
                     nodeType: 2,
                     parentPath: paths.map((i: any) => i.key),
-                    userName: 'zt',
+                    userName: localStorage.getItem('email'),
                   }).then((res) => {
-                    updateDirectorytreeData();
+                    updateDirectoryTreeData();
                     callbackOfNewRequest(
                       [res.data.body.infoId],
                       paths.map((i: any) => i.key),
@@ -138,8 +138,9 @@ function CollectionTitleRender({
                   CollectionService.removeItem({
                     id: _useParams.workspaceId,
                     removeNodePath: paths.map((i: any) => i.key),
+                    userName: localStorage.getItem('email'),
                   }).then((res) => {
-                    updateDirectorytreeData();
+                    updateDirectoryTreeData();
                   });
                 }}
               >
@@ -190,7 +191,7 @@ function CollectionTitleRender({
         </div>
       </div>
       <CreateAndUpdateFolder
-        updateDirectorytreeData={updateDirectorytreeData}
+        updateDirectoryTreeData={updateDirectoryTreeData}
         collectionTree={treeData}
         collectionCreateAndUpdateModal={CollectionCreateAndUpdateModal}
       />

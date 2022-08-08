@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 import { METHODS, NodeType } from '../constant';
-import { KeyValueType } from '../pages';
+import { KeyValueType } from '../pages/HttpRequest';
 
 // ------ /api/filesystem/queryWorkspaceById ------
 export interface QueryWorkspaceByIdReq {

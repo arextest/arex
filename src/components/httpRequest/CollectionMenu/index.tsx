@@ -1,13 +1,16 @@
 import './index.less';
 
-import { DashOutlined, DownOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Empty, Input, Spin, Tooltip, Tree } from 'antd';
+import { DownOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
+import { useRequest } from 'ahooks';
+import { Button, Empty, Input, Tooltip, Tree } from 'antd';
 import type { DataNode } from 'antd/es/tree';
 import type { DirectoryTreeProps } from 'antd/lib/tree';
 import React, { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { MenuTypeEnum, NodeType, PageTypeEnum } from '../../../constant';
 import { CollectionService } from '../../../services/CollectionService';
+import { useStore } from '../../../store';
 import CollectionTitleRender from './CollectionTitleRender';
 
 const dataList: { key: React.Key; title: string }[] = [];
@@ -37,13 +40,14 @@ const getParentKey = (key: React.Key, tree: DataNode[]): React.Key => {
   return parentKey!;
 };
 
+export type nodeType = {
+  title: string;
+  key: string;
+  nodeType: NodeType;
+};
 export type CollectionProps = {
-  treeData: any;
-  fetchTreeData: () => void;
-  loading?: boolean;
-  setMainBoxPanes: (p: any) => void;
-  mainBoxPanes: any[];
-  setMainBoxActiveKey: (p: any) => void;
+  workspaceId?: string;
+  onSelect: (key: string, node: nodeType) => void;
 };
 
 export type CollectionRef = {
@@ -52,72 +56,54 @@ export type CollectionRef = {
 
 // eslint-disable-next-line react/display-name
 const Collection = forwardRef(
-  (
-    {
-      treeData,
-      fetchTreeData,
-      loading,
-      setMainBoxPanes,
-      mainBoxPanes,
-      setMainBoxActiveKey,
-    }: CollectionProps,
-    ref: ForwardedRef<CollectionRef>,
-  ) => {
+  ({ workspaceId, onSelect }: CollectionProps, ref: ForwardedRef<CollectionRef>) => {
     // 此处注意useImperativeHandle方法的的第一个参数是目标元素的ref引用
     useImperativeHandle(ref, () => ({
       setSelectedKeys,
     }));
 
     const _useParams = useParams();
+
+    const setCollectionTreeData = useStore((state) => state.setCollectionTreeData);
+    const setPanes = useStore((state) => state.setPanes);
+    const panes = useStore((state) => state.panes);
+    const setActivePane = useStore((state) => state.setActivePane);
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
+    // TODO 抽取公共 selectedKeys 至全局 store，并实现与 MenuSelect 的共用，方便panesChange时触发更改相应的 MainMenu 并高亮
     const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
     const [searchValue, setSearchValue] = useState('');
     const [autoExpandParent, setAutoExpandParent] = useState(true);
+    // const {setPanes} = useStore{state=>state.setPanes}
+
+    const { data: treeData = [], run: fetchTreeData } = useRequest(
+      () => CollectionService.listCollection({ id: workspaceId as string }),
+      {
+        ready: !!workspaceId,
+        refreshDeps: [workspaceId],
+      },
+    );
+
+    useEffect(() => {
+      // setColl
+      if (treeData.length > 0) {
+        setCollectionTreeData(treeData);
+        console.log(treeData, 'ree');
+      }
+    }, [treeData]);
+
     const onExpand: any = (newExpandedKeys: string[]) => {
       setExpandedKeys(newExpandedKeys);
       // setAutoExpandParent(false);
     };
 
-    const onSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
-      if (keys.length > 0) {
-        setSelectedKeys(keys);
-      }
-
-      if (
-        keys[0] &&
-        info.node.nodeType !== 3 &&
-        !mainBoxPanes.map((i) => i.key).includes(keys[0])
-      ) {
-        const newPanes = [...mainBoxPanes];
-        newPanes.push({
+    const handleSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
+      setSelectedKeys(keys);
+      onSelect &&
+        onSelect(keys[0] as string, {
           title: info.node.title,
-          key: keys[0],
-          pageType: 'request',
-          qid: keys[0],
+          key: info.node.key,
           nodeType: info.node.nodeType,
         });
-        setMainBoxPanes(newPanes);
-      }
-
-      if (
-        keys[0] &&
-        info.node.nodeType === 3 &&
-        !mainBoxPanes.map((i) => i.key).includes(keys[0])
-      ) {
-        const newPanes = [...mainBoxPanes];
-        newPanes.push({
-          title: info.node.title,
-          key: keys[0],
-          pageType: 'folder',
-          qid: keys[0],
-          nodeType: 3,
-        });
-        setMainBoxPanes(newPanes);
-      }
-
-      if (keys[0]) {
-        setMainBoxActiveKey(keys[0]);
-      }
     };
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -143,22 +129,43 @@ const Collection = forwardRef(
     // 对外的函数
     // 展开指定的数组
     function expandSpecifyKeys(keys: string[], p, nodeType) {
-      console.log([...expandedKeys, ...keys], p);
+      const maps = {
+        '1': 'New Request',
+        '2': 'New Case',
+        '3': 'New Folder',
+      };
       setExpandedKeys([...expandedKeys, p[p.length - 1]]);
       setSelectedKeys([...keys]);
-
-      const newPanes = [...mainBoxPanes];
-      newPanes.push({
-        closable: true,
-        title: nodeType === 1 ? 'New Request' : 'New Case',
-        key: keys[0],
-        pageType: 'request',
-        qid: keys[0],
-        nodeType: nodeType,
-      });
-      setMainBoxPanes(newPanes);
-      setMainBoxActiveKey(keys[0]);
+      const key = keys[0];
+      setPanes(
+        {
+          key,
+          title: maps[nodeType],
+          menuType: MenuTypeEnum.Collection,
+          pageType: nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
+          isNew: false,
+        },
+        'push',
+      );
+      setActivePane(key);
     }
+
+    const { run: createCollection } = useRequest(
+      () =>
+        CollectionService.addItem({
+          id: _useParams.workspaceId,
+          nodeName: 'New Collection',
+          nodeType: 3,
+          parentPath: [],
+          userName: localStorage.getItem('email'),
+        }),
+      {
+        manual: true,
+        onSuccess() {
+          fetchTreeData();
+        },
+      },
+    );
 
     useEffect(() => {
       generateList(treeData);
@@ -173,33 +180,18 @@ const Collection = forwardRef(
               icon={<PlusOutlined />}
               type='text'
               size='small'
-              onClick={() => {
-                CollectionService.addItem({
-                  id: _useParams.workspaceId,
-                  nodeName: 'New Collection',
-                  nodeType: 3,
-                  parentPath: [],
-                  userName: 'zt',
-                }).then(() => {
-                  fetchTreeData();
-                });
-              }}
+              onClick={createCollection}
             />
           </Tooltip>
           <Input
-            disabled={true}
             className={'collection-header-search'}
             size='small'
             placeholder=''
             prefix={<MenuOutlined />}
             onChange={onChange}
           />
-          {/*<Tooltip*/}
-          {/*  placement="bottomLeft"*/}
-          {/*  title={"View more actions"}*/}
-          {/*  mouseEnterDelay={0.5}*/}
-          {/*>*/}
-          {/*  <Button className={"collection-header-view"} type="text" size="small">*/}
+          {/*<Tooltip placement='bottomLeft' title={'View more actions'} mouseEnterDelay={0.5}>*/}
+          {/*  <Button className={'collection-header-view'} type='text' size='small'>*/}
           {/*    <DashOutlined />*/}
           {/*  </Button>*/}
           {/*</Tooltip>*/}
@@ -210,35 +202,21 @@ const Collection = forwardRef(
           selectedKeys={selectedKeys}
           expandedKeys={expandedKeys}
           onExpand={onExpand}
-          onSelect={onSelect}
+          onSelect={handleSelect}
           switcherIcon={<DownOutlined />}
           treeData={treeData}
           titleRender={(val) => (
             <CollectionTitleRender
-              updateDirectorytreeData={() => {
-                fetchTreeData();
-              }}
+              updateDirectoryTreeData={fetchTreeData}
               val={val}
               treeData={treeData}
-              callbackOfNewRequest={expandSpecifyKeys}
+              callbackOfNewRequest={expandSpecifyKeys} // TODO 暂时禁用待优化
+              // callbackOfNewRequest={() => {}}
             />
           )}
         />
         <Empty style={{ display: treeData.length > 0 ? 'none' : 'block' }}>
-          <Button
-            type='primary'
-            onClick={() => {
-              CollectionService.addItem({
-                id: _useParams.workspaceId,
-                nodeName: 'New Collection',
-                nodeType: 3,
-                parentPath: [],
-                userName: 'zt',
-              }).then(() => {
-                fetchTreeData();
-              });
-            }}
-          >
+          <Button type='primary' onClick={createCollection}>
             New
           </Button>
         </Empty>

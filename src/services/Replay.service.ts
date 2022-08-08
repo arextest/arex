@@ -1,5 +1,9 @@
-import request from './axios';
+import axios from 'axios';
+
+import request from '../api/axios';
 import {
+  CreatePlanReq,
+  CreatePlanRes,
   QueryDifferencesReq,
   QueryDifferencesRes,
   QueryPlanItemStatisticsReq,
@@ -44,7 +48,7 @@ export default class ReplayService {
 
   static async queryDifferences(params: QueryDifferencesReq) {
     return request
-      .post<QueryDifferencesRes>('report/queryDifferences', params)
+      .post<QueryDifferencesRes>('/report/queryDifferences', params)
       .then((res) => Promise.resolve(res.body.differences));
   }
 
@@ -55,12 +59,21 @@ export default class ReplayService {
     pageSize = 99,
   }: QueryReplayCaseReq) {
     return request
-      .post<QueryReplayCaseRes>('report/queryReplayCase', {
+      .post<QueryReplayCaseRes>('/report/queryReplayCase', {
         needTotal,
         pageIndex,
         pageSize,
         planItemId,
       })
       .then((res) => Promise.resolve(res.body.result));
+  }
+
+  static async createPlan(params: CreatePlanReq) {
+    return new Promise<CreatePlanRes>((resolve, reject) => {
+      return axios
+        .post<any, { data: CreatePlanRes }>('/schedule/createPlan', params)
+        .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
+    });
   }
 }

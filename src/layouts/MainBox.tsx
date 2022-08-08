@@ -1,56 +1,55 @@
-import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-design/icons';
-import styled from '@emotion/styled';
-import colorLib from '@kurkle/color';
-import { Button, Divider, Empty, Tabs } from 'antd';
-import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-
-import { GlobalContext } from '../App';
 import {
-  AppFooter,
-  AppHeader,
-  CollectionMenu,
-  EnvironmentMenu,
-  Login,
-  ReplayMenu,
-} from '../components';
-import { CollectionRef } from '../components/httpRequest/CollectionMenu';
-import { NodeType, PageTypeEnum } from '../constant';
-import { collectionOriginalTreeToAntdTreeData, treeFind } from '../helpers/collection/util';
-import { Environment, Folder, HttpRequest, Replay } from '../pages';
+  ApiOutlined,
+  DeploymentUnitOutlined,
+  FieldTimeOutlined,
+  GlobalOutlined,
+} from '@ant-design/icons';
+import styled from '@emotion/styled';
+import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps, Tooltip } from 'antd';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
+import { AppFooter, AppHeader, CollectionMenu, EnvironmentMenu, ReplayMenu } from '../components';
+import { CollectionProps, CollectionRef } from '../components/httpRequest/CollectionMenu';
+import { MenuTypeEnum, PageTypeEnum } from '../constant';
+import { Environment, Folder, HttpRequest, Replay, ReplayAnalysis, ReplayCase } from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
 import WorkspaceOverviewPage from '../pages/WorkspaceOverview';
-import { CollectionService } from '../services/CollectionService';
-import { WorkspaceService } from '../services/WorkspaceService';
-import { NodeList } from '../vite-env';
+import EnvironmentService from '../services/Environment.service';
+import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
+import { PaneType, useStore } from '../store';
+import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
-
-type PaneProps = {
-  title: string;
-  key: string;
-  pageType: PageTypeEnum;
-  qid: string;
-  isNew: true;
-  nodeType: NodeType;
-};
 
 const { TabPane } = Tabs;
 const MainMenu = styled(Tabs)`
   height: 100%;
   .ant-tabs-nav-list {
+    width: 100px;
     .ant-tabs-tab {
       margin: 0 !important;
+      padding: 12px 0 !important;
       .ant-tabs-tab-btn {
         margin: 0 auto;
       }
     }
     .ant-tabs-tab-active {
-      background-color: ${(props) => colorLib(props.theme.color.primary).alpha(0.1).rgbString()};
+      background-color: ${(props) => props.theme.color.selected};
+    }
+    .ant-tabs-ink-bar {
+      left: 0;
     }
   }
 `;
-const MainMenuItem = styled(TabPane)`
+
+type MainMenuItemProps = TabPaneProps & { menuItem: ReactNode };
+const MainMenuItem = styled((props: MainMenuItemProps) => (
+  <TabPane {...props}>{props.menuItem}</TabPane>
+))<MainMenuItemProps>`
   padding: 0 8px !important;
+  .ant-tree-node-selected {
+    color: ${(props) => props.theme.color.text.highlight};
+  }
 `;
 
 type MenuTitleProps = { title: string; icon?: ReactNode };
@@ -70,75 +69,126 @@ const MenuTitle = styled((props: MenuTitleProps) => (
   }
 `;
 
-// 静态数据
-const userinfo = {
-  email: 'tzhangm@trip.com',
-  avatar: 'https://joeschmoe.io/api/v1/random',
-};
+const MainTabs = styled((props: TabsProps) => (
+  <Tabs
+    size='small'
+    type='editable-card'
+    tabBarGutter={-1}
+    tabBarStyle={{
+      left: '-11px',
+      top: '-1px',
+    }}
+    {...props}
+  >
+    {props.children}
+  </Tabs>
+))<TabsProps>`
+  height: 100%;
+  // 添加高亮条 tabs-ink-bar
+  // 注意当前的作用范围很广，目前的作用对象为工作区所有的可编辑可删除卡片式 Tab
+  // .ant-tabs-tab-with-remove 类是为了避免污染一般的 Tabs
+  .ant-tabs-tab-with-remove.ant-tabs-tab-active:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: ${(props) => props.theme.color.primary};
+    transition: all 0.2s ease-in-out;
+  }
+  .ant-tabs-content-holder {
+    overflow: auto;
+  }
+`;
+
+const MainTabPane = styled((props: TabPaneProps) => (
+  <TabPane {...props}>{props.children}</TabPane>
+))<TabPaneProps>`
+  padding: 0 8px;
+  overflow: auto;
+`;
+
+const WorkspacesMenu = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+`;
+
+const EmptyWrapper = styled(Empty)`
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+`;
 
 const MainBox = () => {
-  const _useParams = useParams();
-  const _useNavigate = useNavigate();
+  const params = useParams();
+  const {
+    panes,
+    setPanes,
+    activePane,
+    setActivePane,
+    collectionTreeData,
+    activeMenu,
+    setActiveMenu,
+  } = useStore();
 
-  const { state: globalState } = useContext(GlobalContext);
+  // TODO 移动至子组件
+  useEffect(() => {
+    // const pageType = panes.find((i) => i.key === activePane)?.pageType;
+    // if (pageType && activePane) {
+    //   nav(`/${params.workspaceId}/workspace/${params.workspaceName}/${pageType}/${activePane}`);
+    // }
+    // fetchEnvironmentData();
+    console.log(
+      params.workspaceId,
+      params.workspaceName,
+      'params.workspaceId && params.workspaceName',
+    );
+    if (params.workspaceId && params.workspaceName) {
+      handleHeaderMenuClick();
+    }
+  }, [params.workspaceId, params.workspaceName]);
 
-  // *************workspaces**************************
-  const [workspaces, setWorkspaces] = useState([]);
-
-  // *************panes**************************
-  const [panes, setPanes] = useState<PaneProps[]>([]);
-
-  // *************collection**************************
-  const [collectionTreeData, setCollectionTreeData] = useState<NodeList[]>([]);
-
-  function fetchCollectionTreeData() {
-    CollectionService.listCollection({ id: _useParams.workspaceId }).then((res) => {
-      const roots = res?.data?.body?.fsTree?.roots || [];
-      setCollectionTreeData(collectionOriginalTreeToAntdTreeData(roots));
-    });
-  }
-
-  // *tab相关
-  const [activeKey, setActiveKey] = useState('');
   const addTab = () => {
-    const newActiveKey = String(Math.random());
-    const newPanes = [...panes];
-    newPanes.push({
-      title: 'New Request',
-      key: newActiveKey,
-      pageType: PageTypeEnum.Request,
-      qid: newActiveKey,
-      isNew: true,
-      // 其实nodeType应该得通过qid拿到
-      nodeType: 3,
-    });
-    setPanes(newPanes);
-    setActiveKey(newActiveKey);
+    const newActiveKey = uuid();
+    setPanes(
+      {
+        key: newActiveKey,
+        title: 'New Request',
+        pageType: PageTypeEnum.Request,
+        menuType: MenuTypeEnum.Collection,
+        isNew: true,
+      },
+      'push',
+    );
   };
 
   const removeTab = (targetKey: string) => {
-    const f = panes.filter((i) => i.key !== targetKey);
-    setPanes(f);
+    const filteredPanes = panes.filter((i) => i.key !== targetKey);
+    setPanes(filteredPanes);
 
-    if (f.length > 0) {
-      setActiveKey(f[f.length - 1].key);
-      updateCollectionMenuKeys([f[f.length - 1].key]);
+    if (filteredPanes.length) {
+      const lastKey = filteredPanes[filteredPanes.length - 1].key;
+      setActivePane(lastKey);
+      updateCollectionMenuKeys([lastKey]);
     } else {
       updateCollectionMenuKeys([]);
     }
   };
 
   const handleTabsEdit: any = (targetKey: string, action: 'add' | 'remove') => {
-    if (action === 'add') {
-      addTab();
-    } else {
-      removeTab(targetKey);
-    }
+    console.log(targetKey, action);
+    action === 'add' ? addTab() : removeTab(targetKey);
   };
 
-  const handleTabsChange = (activeKey: string) => {
-    setActiveKey(activeKey);
-    updateCollectionMenuKeys([activeKey]);
+  const handleTabsChange = (activePane: string) => {
+    const pane = panes.find((i) => i.key === activePane);
+    setActivePane(activePane);
+    setActiveMenu(pane?.menuType || MenuTypeEnum.Collection);
+    updateCollectionMenuKeys([activePane]);
   };
 
   const collectionRef = useRef<CollectionRef>(null);
@@ -146,178 +196,219 @@ const MainBox = () => {
     collectionRef?.current?.setSelectedKeys(keys);
   };
 
-  function activeEnvironmentPane() {
-    const newPanes = [...panes];
+  const handleCollectionMenuClick: CollectionProps['onSelect'] = (key, node) => {
+    setPanes(
+      {
+        key,
+        title: node.title,
+        menuType: MenuTypeEnum.Collection,
+        pageType: node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
+        isNew: false,
+        data: node,
+      },
+      'push',
+    );
+  };
+
+  const handleReplayMenuClick = (app: ApplicationDataType) => {
+    params.workspaceId &&
+      params.workspaceName &&
+      setPanes(
+        {
+          title: app.appId,
+          key: app.appId,
+          menuType: MenuTypeEnum.Replay,
+          pageType: PageTypeEnum.Replay,
+          isNew: false,
+          data: app,
+        },
+        'push',
+      );
+  };
+
+  // TODO 建议放到 HttpRequest 组件中
+  const handleInterfaceSaveAs = (pane: PaneType) => {
+    // fetchCollectionTreeData(); // TODO 更新 Collection 数据
+    const newPanes = [...panes.filter((i) => i.key !== activePane)];
     newPanes.push({
-      title: 'title',
-      key: 'key',
-      pageType: PageTypeEnum.Environment,
-      qid: 'key',
+      key: pane.key,
       isNew: true,
-      curApp: {},
+      title: pane.title,
+      menuType: MenuTypeEnum.Collection,
+      pageType: PageTypeEnum.Request,
     });
     setPanes(newPanes);
-    setActiveKey('key');
+  };
+
+  const handleHeaderMenuClick = () => {
+    params.workspaceName &&
+      params.workspaceId &&
+      setPanes(
+        {
+          title: params.workspaceName,
+          key: params.workspaceId,
+          menuType: MenuTypeEnum.Collection,
+          pageType: PageTypeEnum.WorkspaceOverview,
+          isNew: true,
+        },
+        'push',
+      );
+  };
+
+  //environment
+  const [environmentData, setEnvironmentData] = useState<[]>();
+  const [nowEnvironment, setNowEnvironment] = useState<string>('0');
+  const [environmentselected, setEnvironmentselected] = useState<[]>([]);
+  const setEnvironmentSelectedData = (e) => {
+    setEnvironmentselected(e);
+  };
+
+  //获取environment // TODO 这些操作是否应该放在子组件中
+  function fetchEnvironmentData() {
+    EnvironmentService.getEnvironment({ workspaceId: params.workspaceId }).then((res) => {
+      setEnvironmentData(res.body.environments);
+    });
   }
 
-  // 监听params
-  useEffect(() => {
-    // 获取所有workspace
-    if (localStorage.getItem('email')) {
-      WorkspaceService.listWorkspace({
-        userName: localStorage.getItem('email'),
-      }).then((workspaces) => {
-        setWorkspaces(workspaces);
-        if (_useParams.workspaceName && _useParams.workspaceId) {
-          fetchCollectionTreeData();
-          const newPanes = [...panes];
-          newPanes.push({
-            title: _useParams.workspaceName,
-            key: _useParams.workspaceId,
-            pageType: PageTypeEnum.WorkspaceOverview,
-            qid: _useParams.workspaceId,
-            isNew: true,
-          });
-          setPanes(newPanes);
-          setActiveKey(_useParams.workspaceId);
-        } else {
-          _useNavigate(`/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}`);
-        }
-      });
-    }
-  }, [_useParams]);
+  //切换environment
+  const selectEnvironment = (e: string) => {
+    setNowEnvironment(e);
+  };
+
+  //添加environment
+  function addEnvironmentPane() {
+    const CreateEnvironment = {
+      env: { envName: 'New Environment', workspaceId: params.workspaceId, keyValues: [] },
+    };
+    EnvironmentService.saveEnvironment(CreateEnvironment).then((res) => {
+      if (res.body.success == true) {
+        fetchEnvironmentData();
+      }
+    });
+  }
+
+  const setCurEnvironment = (e: string) => {
+    setNowEnvironment(e);
+  };
 
   return (
     <>
-      {!globalState.isLogin ? (
-        <Login />
-      ) : (
-        <>
-          {/*AppHeader部分*/}
-          <AppHeader userinfo={userinfo} workspaces={workspaces} />
+      {/*AppHeader部分*/}
+      <AppHeader />
 
-          <Divider style={{ margin: '0' }} />
-
-          <DraggableLayout
-            direction={'horizontal'}
-            limitRange={[30, 40]}
-            firstNode={
-              <MainMenu tabPosition='left'>
-                <MainMenuItem
-                  tab={<MenuTitle icon={<ApiOutlined />} title='Collection' />}
-                  key='collection'
+      <DraggableLayout
+        direction={'horizontal'}
+        limitRange={[30, 40]}
+        firstNode={
+          <>
+            {/* TODO 和 AppHeader 中的 WorkspaceSelect 合并 */}
+            <WorkspacesMenu>
+              <Tooltip title={`Open overview of ${params.workspaceName}`} placement={'right'}>
+                <Button
+                  size='small'
+                  type='text'
+                  icon={<GlobalOutlined />}
+                  onClick={handleHeaderMenuClick}
                 >
+                  Canyon
+                </Button>
+              </Tooltip>
+              <Button size='small' disabled>
+                Import
+              </Button>
+            </WorkspacesMenu>
+
+            <Divider style={{ margin: '0', width: 'calc(100% + 10px)' }} />
+
+            <MainMenu
+              tabPosition='left'
+              activeKey={activeMenu}
+              onChange={(key) => setActiveMenu(key as MenuTypeEnum)}
+            >
+              {/* menuItem 自定义子组件命名规定: XxxMenu, 表示xx功能的左侧主菜单 */}
+              {/* menuItem 自定义子组件 props 约定，便于之后封装  */}
+              {/* 1. ref?: 组件ref对象，用于调用组件自身属性方法。尽量不使用，使用前请思考是否还有别的方法 */}
+              {/* 1. xxId?: 涉及组件初始化的全局id，之后可以将该参数置于全局状态管理存储 */}
+              {/* 2. onSelect: 选中 menu item 时触发，参数（结构待规范）为选中节点的相关信息，点击后的逻辑不在 Menu 组件中处理 */}
+              <MainMenuItem
+                tab={<MenuTitle icon={<ApiOutlined />} title='Collection' />}
+                key={MenuTypeEnum.Collection}
+                menuItem={
                   <CollectionMenu
-                    treeData={collectionTreeData}
-                    setMainBoxPanes={setPanes}
-                    mainBoxPanes={panes}
-                    setMainBoxActiveKey={setActiveKey}
-                    fetchTreeData={() => {
-                      fetchCollectionTreeData();
-                    }}
+                    workspaceId={params.workspaceId}
+                    onSelect={handleCollectionMenuClick}
                     ref={collectionRef}
                   />
-                </MainMenuItem>
-                <MainMenuItem
-                  tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}
-                  key='replay'
-                >
-                  <ReplayMenu
-                    onSelect={(app) => {
-                      const newPanes = [...panes];
-                      const f = newPanes.find((i) => i.key === app.appId);
-                      if (!f) {
-                        newPanes.push({
-                          title: app.appId,
-                          key: app.appId,
-                          pageType: PageTypeEnum.Replay,
-                          qid: app.appId,
-                          isNew: true,
-                          curApp: app,
-                        });
-                        setPanes(newPanes);
-                        setActiveKey(app.appId);
-                      }
-                    }}
+                }
+              />
+              <MainMenuItem
+                tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}
+                key={MenuTypeEnum.Replay}
+                menuItem={<ReplayMenu onSelect={handleReplayMenuClick} />}
+              />
+              <MainMenuItem
+                tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
+                key={MenuTypeEnum.Environment}
+                disabled
+                menuItem={
+                  <EnvironmentMenu
+                    activePane={addEnvironmentPane}
+                    EnvironmentData={environmentData}
+                    setMainBoxPanes={setPanes} // TODO 这些参数应从全局store中获取
+                    mainBoxPanes={panes} // TODO 这些参数应从全局store中获取
+                    setMainBoxActiveKey={setActivePane} // TODO 这些参数应从全局store中获取
+                    activeKey={activePane} // TODO 这些参数应从全局store中获取
+                    setEnvironmentSelectedData={setEnvironmentSelectedData}
+                    fetchEnvironmentDatas={fetchEnvironmentData}
+                    nowEnvironment={nowEnvironment}
+                    setCurEnvironment={setCurEnvironment}
                   />
-                </MainMenuItem>
-                <MainMenuItem
-                  disabled
-                  tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
-                  key='environment'
-                >
-                  <EnvironmentMenu activePane={activeEnvironmentPane} />
-                </MainMenuItem>
-              </MainMenu>
-            }
-            secondNode={
-              <>
-                <Tabs
-                  size='small'
-                  type='editable-card'
-                  tabBarGutter={-1}
-                  onEdit={handleTabsEdit}
-                  activeKey={activeKey}
-                  onChange={handleTabsChange}
-                  tabBarStyle={{
-                    left: '-1px',
-                    top: '-1px',
-                  }}
-                >
-                  {panes.map((pane) => (
-                    <TabPane
-                      closable
-                      tab={
-                        treeFind(collectionTreeData, (node) => node.key === pane.key)?.title ||
-                        pane.title
-                      }
-                      key={pane.key}
-                      style={{ padding: '0 8px' }}
-                    >
-                      {pane.pageType === PageTypeEnum.Request && (
-                        <HttpRequest
-                          collectionTreeData={collectionTreeData}
-                          mode={HttpRequestMode.Normal}
-                          id={pane.qid}
-                          isNew={pane.isNew}
-                          onSaveAs={(p) => {
-                            fetchCollectionTreeData();
-                            const newPanes = [...panes.filter((i) => i.key !== activeKey)];
-                            newPanes.push({
-                              isNew: true,
-                              title: p.title,
-                              key: p.key,
-                              pageType: PageTypeEnum.Request,
-                              qid: p.key,
-                              // 其实nodeType应该得通过qid拿到
-                              nodeType: 3,
-                            });
-                            setPanes(newPanes);
-                            setActiveKey(p.key);
-                          }}
-                        />
-                      )}
-                      {pane.pageType === PageTypeEnum.Replay && <Replay curApp={pane.curApp} />}
-                      {pane.pageType === PageTypeEnum.Folder && <Folder />}
-                      {pane.pageType === PageTypeEnum.Environment && <Environment />}
-                      {pane.pageType === PageTypeEnum.WorkspaceOverview && (
-                        <WorkspaceOverviewPage />
-                      )}
-                    </TabPane>
-                  ))}
-                </Tabs>
-                {!panes.length && (
-                  <Empty>
-                    <Button type='primary' onClick={addTab}>
-                      New Request
-                    </Button>
-                  </Empty>
-                )}
-              </>
-            }
-          />
-        </>
-      )}
+                }
+              />
+            </MainMenu>
+          </>
+        }
+        secondNode={
+          // 右侧工作区
+          panes.length ? (
+            <MainTabs onEdit={handleTabsEdit} activeKey={activePane} onChange={handleTabsChange}>
+              {panes.map((pane) => (
+                <MainTabPane tab={pane.title} key={pane.key}>
+                  {/* TODO 工作区自定义组件待规范，参考 menuItem */}
+                  {pane.pageType === PageTypeEnum.Request && (
+                    <HttpRequest
+                      collectionTreeData={collectionTreeData}
+                      mode={HttpRequestMode.Normal}
+                      id={pane.key}
+                      isNew={pane.isNew}
+                      onSaveAs={handleInterfaceSaveAs}
+                    />
+                  )}
+                  {pane.pageType === PageTypeEnum.Replay && (
+                    <Replay data={pane.data as ApplicationDataType} />
+                  )}
+                  {pane.pageType === PageTypeEnum.ReplayAnalysis && (
+                    <ReplayAnalysis data={pane.data as PlanItemStatistics} />
+                  )}
+                  {pane.pageType === PageTypeEnum.ReplayCase && (
+                    <ReplayCase data={pane.data as PlanItemStatistics} />
+                  )}
+                  {pane.pageType === PageTypeEnum.Folder && <Folder />}
+                  {pane.pageType === PageTypeEnum.Environment && <Environment />}
+                  {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverviewPage />}
+                </MainTabPane>
+              ))}
+            </MainTabs>
+          ) : (
+            <EmptyWrapper>
+              <Button type='primary' onClick={addTab}>
+                New Request
+              </Button>
+            </EmptyWrapper>
+          )
+        }
+      />
+
       <AppFooter />
     </>
   );
