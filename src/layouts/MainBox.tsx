@@ -310,7 +310,7 @@ const MainBox = () => {
                   icon={<GlobalOutlined />}
                   onClick={handleHeaderMenuClick}
                 >
-                  Canyon
+                  {params.workspaceName}
                 </Button>
               </Tooltip>
               <Button size='small' disabled>
