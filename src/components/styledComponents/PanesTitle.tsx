@@ -3,18 +3,18 @@ import { ReactNode } from 'react';
 
 export type PanesTitleProps = {
   title: ReactNode;
-  extra: ReactNode;
+  extra?: ReactNode;
 };
 const PanesTitle = styled((props: PanesTitleProps) => {
   const { title, extra, ...extraProps } = props;
   return (
-    <div className='title-wrapper' {...extraProps}>
+    <div {...extraProps}>
       <h2>{title}</h2>
-      <span>{extra}</span>
+      {extra && <span>{extra}</span>}
     </div>
   );
 })<PanesTitleProps>`
-  height: 22px;
+  height: 32px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
