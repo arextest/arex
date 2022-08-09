@@ -26,7 +26,7 @@ function CollectionTitleRender({
     return (
       <Menu
         onClick={(e) => {
-          console.log('1222',e)
+          console.log('1222')
           e.domEvent.stopPropagation();
           setVisible(false);
         }}
@@ -37,6 +37,7 @@ function CollectionTitleRender({
               <a
                 target='_blank'
                 onClick={() => {
+                  console.log(123,'334')
                   CollectionService.addItem({
                     id: _useParams.workspaceId,
                     nodeName: 'New Collection',

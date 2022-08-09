@@ -2,7 +2,7 @@ import {
   ApiOutlined,
   DeploymentUnitOutlined,
   FieldTimeOutlined,
-  GlobalOutlined,
+  GlobalOutlined, UserOutlined,
 } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps, Tooltip, Select } from 'antd';
@@ -334,7 +334,7 @@ const MainBox = () => {
 
       <DraggableLayout
         direction={'horizontal'}
-        limitRange={[30, 40]}
+        limitRange={[15, 40]}
         firstNode={
           <>
             {/* TODO 和 AppHeader 中的 WorkspaceSelect 合并 */}
@@ -343,7 +343,7 @@ const MainBox = () => {
                 <Button
                   size='small'
                   type='text'
-                  icon={<GlobalOutlined />}
+                  icon={<UserOutlined />}
                   onClick={handleHeaderMenuClick}
                 >
                   {params.workspaceName}

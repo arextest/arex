@@ -97,9 +97,10 @@ const Collection = forwardRef(
     };
 
     const handleSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
-      // console.log(info.nativeEvent.target.getAttribute('class'),'info')
+      // @ts-ignore
+      const selectKeyClassName = info.nativeEvent.target.getAttribute('class')
       // 必须有选中的才可以触发
-      if (keys[0]){
+      if (keys[0] && selectKeyClassName === 'left'){
         setSelectedKeys(keys);
         onSelect &&
         onSelect(keys[0] as string, {
