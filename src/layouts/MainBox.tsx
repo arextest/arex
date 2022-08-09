@@ -6,13 +6,23 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps, Tooltip, Select } from 'antd';
+import {
+  Button,
+  Divider,
+  Empty,
+  TabPaneProps,
+  Tabs,
+  TabsProps,
+  Tooltip,
+  Select,
+  Typography,
+} from 'antd';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { AppFooter, AppHeader, CollectionMenu, EnvironmentMenu, ReplayMenu } from '../components';
 import { CollectionProps, CollectionRef, nodeType } from '../components/httpRequest/CollectionMenu';
-import { MenuTypeEnum, PageTypeEnum } from '../constant';
+import { MenuTypeEnum, PageTypeEnum, RoleEnum } from '../constant';
 import { Environment, Folder, HttpRequest, Replay, ReplayAnalysis, ReplayCase } from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
 import WorkspaceOverviewPage from '../pages/WorkspaceOverview';
@@ -23,7 +33,7 @@ import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
 import { useRequest } from 'ahooks';
 import { useMount } from 'ahooks';
-
+const { Text, Link } = Typography;
 const { Option } = Select;
 const { TabPane } = Tabs;
 const MainMenu = styled(Tabs)`
@@ -142,6 +152,7 @@ const MainBox = () => {
     environmentTreeData,
     setEnvironment,
     setEnvironmentTreeData,
+    workspaces,
   } = useStore();
 
   // TODO 移动至子组件
@@ -317,6 +328,17 @@ const MainBox = () => {
     }
   }, [EnvironmentData]);
 
+  const roleDisplay = (() => {
+    return `(${
+      {
+        [RoleEnum.Admin]: 'Admin',
+        [RoleEnum.Editor]: 'Editor',
+        [RoleEnum.Viewer]: 'Viewer',
+        // @ts-ignore
+      }[workspaces.find((i) => i.id === params.workspaceId)?.role]
+    })`;
+  })();
+
   return (
     <>
       {/*AppHeader部分*/}
@@ -337,6 +359,9 @@ const MainBox = () => {
                   onClick={handleHeaderMenuClick}
                 >
                   {params.workspaceName}
+                  <Text style={{ marginLeft: '4px' }} type='secondary'>
+                    {roleDisplay}
+                  </Text>
                 </Button>
               </Tooltip>
               <Button type='text' size='small' disabled>
