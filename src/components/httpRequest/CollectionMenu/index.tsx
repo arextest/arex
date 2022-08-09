@@ -84,23 +84,20 @@ const Collection = forwardRef(
     );
 
     useEffect(() => {
-      // setColl
       if (treeData.length > 0) {
         setCollectionTreeData(treeData);
-        console.log(treeData, 'ree');
       }
     }, [treeData]);
 
     const onExpand: any = (newExpandedKeys: string[]) => {
       setExpandedKeys(newExpandedKeys);
-      // setAutoExpandParent(false);
     };
 
     const handleSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
       // @ts-ignore
       const selectKeyClassName = info.nativeEvent.target.getAttribute('class') || '';
       // 必须有选中的才可以触发
-      if (keys[0] && !selectKeyClassName.includes('ant-dropdown-menu')) {
+      if (keys[0] && !selectKeyClassName.includes('dropdown-click-target')) {
         setSelectedKeys(keys);
         onSelect &&
           onSelect(keys[0] as string, {
