@@ -1,11 +1,10 @@
-import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Card, Col, Collapse, Row, Space } from 'antd';
 import React, { FC, useState } from 'react';
 
-import DiffViewer from '../../components/DiffViewer';
 import MenuSelect from '../../components/MenuSelect';
 import Analysis from '../../components/replay/Analysis';
+import CollapseTable from '../../components/styledComponents/CollapseTable';
 import PanesTitle from '../../components/styledComponents/PanesTitle';
 import ReplayService from '../../services/Replay.service';
 import {
@@ -48,32 +47,18 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   return (
     <Space direction='vertical' style={{ display: 'flex' }}>
       <PanesTitle title={<span>Main Service API: {data.operationName}</span>} />
-      <Collapse
-        activeKey={selectedDiff && 'report'}
-        css={css`
-          .ant-collapse-header {
-            cursor: default !important;
-            //background: #fff !important;
-          }
-          .ant-collapse-content-box {
-            padding-top: 0 !important;
-            .ant-card-head-title {
-              font-size: 16px;
-            }
-          }
-        `}
-      >
-        <Panel
-          key='report'
-          showArrow={false}
-          header={<Analysis planItemId={data.planItemId} onScenes={handleScenes} />}
-        >
+
+      <CollapseTable
+        active={!!selectedDiff}
+        table={<Analysis planItemId={data.planItemId} onScenes={handleScenes} />}
+        panel={
           <Card bordered={false} title='Diff Detail' bodyStyle={{ padding: '8px 0' }}>
             <Row>
               <Col span={6}>
                 <MenuSelect<Scene>
                   small
                   defaultSelectFirst
+                  rowKey='sceneName'
                   filter='sceneName'
                   onSelect={handleDiffChange}
                   request={() =>
@@ -84,7 +69,6 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                       planItemId: data.planItemId.toString(),
                     })
                   }
-                  rowKey='sceneName'
                 />
               </Col>
               <Col span={18}>
@@ -95,8 +79,8 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
               </Col>
             </Row>
           </Card>
-        </Panel>
-      </Collapse>
+        }
+      />
     </Space>
   );
 };
