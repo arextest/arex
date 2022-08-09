@@ -18,7 +18,7 @@ export default {
     '/schedule': {
       target: 'http://10.5.153.1:8092',
       changeOrigin: true,
-      pathRewrite: { '/schedule': '/api/schedule' },
+      pathRewrite: { '/schedule': '/api' },
     },
   },
   PROD: {
@@ -40,7 +40,7 @@ export default {
     '/schedule': {
       target: 'http://10.5.153.1:8092',
       changeOrigin: true,
-      pathRewrite: { '/schedule': '/api/schedule' },
+      pathRewrite: { '/schedule': '/api' },
     },
   },
 };
