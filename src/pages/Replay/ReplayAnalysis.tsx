@@ -52,8 +52,8 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
         active={!!selectedDiff}
         table={<Analysis planItemId={data.planItemId} onScenes={handleScenes} />}
         panel={
-          <Card bordered={false} title='Diff Detail' bodyStyle={{ padding: '8px 0' }}>
-            <Row>
+          <Card bordered={false} title='Diff Detail' bodyStyle={{ padding: '8px 16px' }}>
+            <Row gutter={16}>
               <Col span={6}>
                 <MenuSelect<Scene>
                   small

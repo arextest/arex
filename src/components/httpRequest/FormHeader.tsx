@@ -17,7 +17,9 @@ export const FormHeaderWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   position: relative;
-  top: -8px;
+  .ant-btn-sm {
+    margin: 4px 0;
+  }
   & > span:first-of-type {
     font-size: 13px;
     line-height: 32px;

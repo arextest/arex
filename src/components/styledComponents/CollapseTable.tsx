@@ -15,12 +15,13 @@ const CollapseTable: FC<CollapseTableProps> = (props) => {
     <Collapse
       activeKey={props.active ? 'report' : 'none'}
       css={css`
+        margin-bottom: 16px;
         .ant-collapse-header {
           cursor: default !important;
           //background: #fff !important;
         }
         .ant-collapse-content-box {
-          padding-top: 0 !important;
+          padding: 0 !important;
           .ant-card-head-title {
             font-size: 16px;
           }

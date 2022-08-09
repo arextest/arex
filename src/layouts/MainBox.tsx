@@ -11,6 +11,7 @@ import {
   Divider,
   Empty,
   Select,
+  SelectProps,
   TabPaneProps,
   Tabs,
   TabsProps,
@@ -112,6 +113,26 @@ const MainTabs = styled((props: TabsProps) => (
   }
   .ant-tabs-content-holder {
     overflow: auto;
+  }
+  .ant-tabs-nav-more {
+    height: 36px;
+    border-left: #000c17 1px solid;
+  }
+`;
+
+const EnvironmentSelect = styled((props: SelectProps) => (
+  <Select allowClear bordered={false} {...props} />
+))`
+  height: 36px;
+  width: 150px;
+  box-sizing: content-box;
+  border-left: 1px solid ${(props) => props.theme.color.border.primary};
+  margin-left: -1px;
+  .ant-select-selector {
+    height: 100%;
+    .ant-select-selection-item {
+      line-height: 34px;
+    }
   }
 `;
 
@@ -422,11 +443,8 @@ const MainBox = () => {
               activeKey={activePane}
               onChange={handleTabsChange}
               tabBarExtraContent={
-                <Select
+                <EnvironmentSelect
                   value={environment}
-                  style={{ width: 200, borderLeft: '1px solid #eee' }}
-                  allowClear
-                  bordered={false}
                   onChange={(e) => {
                     setEnvironment(e);
                   }}
@@ -439,7 +457,7 @@ const MainBox = () => {
                       </Option>
                     );
                   })}
-                </Select>
+                </EnvironmentSelect>
               }
             >
               {panes.map((pane) => (
