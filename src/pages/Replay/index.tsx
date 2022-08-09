@@ -10,9 +10,6 @@ const { Panel } = Collapse;
 
 const Replay: FC<{ data?: ApplicationDataType }> = ({ data }) => {
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
-  const onChange = (key: string | string[]) => {
-    console.log(key);
-  };
   const handleSelectPlan = (plan: PlanStatistics) => {
     plan.planId === selectedPlan?.planId ? setSelectedPlan(undefined) : setSelectedPlan(plan);
   };
@@ -22,7 +19,6 @@ const Replay: FC<{ data?: ApplicationDataType }> = ({ data }) => {
 
       <Collapse
         activeKey={selectedPlan && 'report'}
-        onChange={onChange}
         css={css`
           .ant-collapse-header {
             cursor: default !important;

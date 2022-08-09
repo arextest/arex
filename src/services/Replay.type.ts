@@ -167,3 +167,46 @@ export interface CreatePlanRes {
   desc: string;
   result: number;
 }
+
+// ------ /report/queryScenes ------
+export interface QueryScenesReq {
+  categoryName: string;
+  differenceName: string;
+  operationName: string;
+  planItemId: string;
+}
+
+export type Scene = {
+  compareResultId: string;
+  logIndexes: string;
+  sceneName: string;
+};
+
+export interface QueryScenesRes {
+  scenes: Scene[];
+}
+
+// ------ /report/queryMsgWithDiff ------
+export interface QueryMsgWithDiffReq {
+  compareResultId: string;
+  logIndexes: string;
+}
+
+export type QueryMsgWithDiffLog = {
+  addRefPkNodePathLeft: null;
+  addRefPkNodePathRight: null;
+  baseValue: unknown;
+  logInfo: string;
+  logTag: { lv: number; ig: boolean };
+  path: string;
+  pathPair: any;
+  testValue: null;
+};
+export type QueryMsgWithDiffRes = {
+  baseMsg: string;
+  diffResultCode: number;
+  logs: QueryMsgWithDiffLog[];
+  recordId: string;
+  replayId: string;
+  testMsg: string;
+};

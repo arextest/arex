@@ -2,19 +2,21 @@ import { css } from '@emotion/react';
 import { CSSInterpolation } from '@emotion/serialize/types';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
+import { Options } from 'ahooks/lib/useRequest/src/types';
 import { Input, Menu } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type MenuSelectProps<T> = {
+type MenuSelectProps<D, P extends any[]> = {
   small?: boolean;
   rowKey: string;
-  onSelect: (app: T) => void;
-  filter: (keyword: string, app: T) => boolean;
-  request: () => Promise<T[]>;
+  onSelect: (app: D) => void;
+  filter?: ((keyword: string, app: D) => boolean) | string;
+  request: () => Promise<D[]>;
+  requestOptions?: Options<D[], P>;
   placeholder?: string; // from i18n namespace "components"
   defaultSelectFirst?: boolean;
-  itemRender?: (app: T, index: number) => { label: string; key: React.Key };
+  itemRender?: (app: D, index: number) => { label: string; key: React.Key };
 };
 
 const MenuSelectWrapper = styled.div`
@@ -25,8 +27,8 @@ const MenuList = styled(Menu)<{ small?: boolean }>`
   background: transparent !important;
   .ant-menu-item {
     margin: 4px 0 !important;
-    height: ${(props) => (props.small ? '24px' : '32px')};
-    line-height: ${(props) => (props.small ? '24px' : '32px')};
+    height: ${(props) => (props.small ? '24px' : '28px')};
+    line-height: ${(props) => (props.small ? '24px' : '28px')};
     border-radius: 2px;
     background: transparent !important;
   }
@@ -45,28 +47,38 @@ const MenuFilter = styled(Input.Search)`
   margin-bottom: 8px;
 `;
 
-function MenuSelect<T extends { [key: string]: any }>(
-  props: MenuSelectProps<T> & { sx?: CSSInterpolation },
+function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
+  props: MenuSelectProps<D, P> & { sx?: CSSInterpolation },
 ) {
   const { t } = useTranslation('components');
 
   const [filterKeyword, setFilterKeyword] = useState('');
   const [selectedKey, setSelectedKey] = useState<string>();
-  const { data: apps = [] } = useRequest<T[], any | undefined>(props.request, {
+  const { data: apps = [] } = useRequest<D[], P>(props.request, {
     onSuccess(res) {
       if (res.length && props.defaultSelectFirst) {
         setSelectedKey(res[0][props.rowKey]);
         props.onSelect(res[0]);
       }
     },
+    ...props.requestOptions,
   });
   const filteredApps = useMemo(
-    () => (filterKeyword ? apps.filter((app) => props.filter(filterKeyword, app)) : apps),
+    () =>
+      filterKeyword && props.filter
+        ? apps.filter((app) => {
+            if (typeof props.filter === 'string') {
+              return app[props.filter].includes(filterKeyword);
+            } else {
+              return props.filter && props.filter(filterKeyword, app);
+            }
+          })
+        : apps,
     [filterKeyword, apps],
   );
 
   const handleAppMenuClick = (value: { key: string }) => {
-    const app: T | undefined = apps.find((app) => app[props.rowKey] === value.key);
+    const app: D | undefined = apps.find((app) => app[props.rowKey] === value.key);
     if (app) {
       props.onSelect(app);
       setSelectedKey(app[props.rowKey]);
@@ -74,11 +86,14 @@ function MenuSelect<T extends { [key: string]: any }>(
   };
   return (
     <MenuSelectWrapper css={css(props.sx)}>
-      <MenuFilter
-        value={filterKeyword}
-        placeholder={props.placeholder && t(props.placeholder)}
-        onChange={(e) => setFilterKeyword(e.target.value)}
-      />
+      {props.filter && (
+        <MenuFilter
+          size={props.small ? 'small' : 'middle'}
+          value={filterKeyword}
+          placeholder={props.placeholder && t(props.placeholder)}
+          onChange={(e) => setFilterKeyword(e.target.value)}
+        />
+      )}
       <MenuList
         small={props.small}
         selectedKeys={selectedKey ? [selectedKey] : []}
