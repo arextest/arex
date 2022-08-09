@@ -46,7 +46,7 @@ const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
   ];
 
   return (
-    <Row style={{ padding: '0 8px' }} gutter={8}>
+    <Row style={{ padding: '8px', border: '1px solid #000' }} gutter={8}>
       <Col span={6}>
         <MenuSelect<CategoryStatistic>
           small
@@ -60,6 +60,9 @@ const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
             label: item.operationName,
             key: item.operationName,
           })}
+          sx={`
+            padding: 0;
+          `}
         />
       </Col>
 

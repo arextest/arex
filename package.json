@@ -24,6 +24,7 @@
     "@codemirror/lang-json": "^6.0.0",
     "@codemirror/view": "^6.1.0",
     "@emotion/react": "^11.9.3",
+    "@emotion/serialize": "^1.0.4",
     "@emotion/styled": "^11.9.3",
     "@kurkle/color": "^0.2.1",
     "@uiw/react-codemirror": "^4.8.1",

@@ -7,7 +7,6 @@ import {
 } from './FileSystem.type';
 
 export class FileSystemService {
-
   static async rename(params: any): Promise<any> {
     return request.post(`/api/filesystem/rename`, params);
   }

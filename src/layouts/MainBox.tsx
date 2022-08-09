@@ -7,7 +7,7 @@ import {
 import styled from '@emotion/styled';
 import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps, Tooltip, Select } from 'antd';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { AppFooter, AppHeader, CollectionMenu, EnvironmentMenu, ReplayMenu } from '../components';
 import { CollectionProps, CollectionRef, nodeType } from '../components/httpRequest/CollectionMenu';
@@ -20,7 +20,7 @@ import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type
 import { PaneType, useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
-import {useMount} from "ahooks";
+import { useMount } from 'ahooks';
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -124,7 +124,7 @@ const WorkspacesMenu = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 10px;
+  padding: 5px 10px;
 `;
 
 const EmptyWrapper = styled(Empty)`
@@ -135,7 +135,7 @@ const EmptyWrapper = styled(Empty)`
 `;
 
 const MainBox = () => {
-  const nav = useNavigate()
+  const nav = useNavigate();
   const params = useParams();
   const {
     panes,
@@ -169,13 +169,14 @@ const MainBox = () => {
   }, [params.workspaceId, params.workspaceName]);
 
   // 必须和路由搭配起来，在切换的时候附着上去
-  useEffect(()=>{
-    const findActivePane = panes.find(i=>i.key === activePane)
-    if (findActivePane){
-      nav(`/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.key}`)
+  useEffect(() => {
+    const findActivePane = panes.find((i) => i.key === activePane);
+    if (findActivePane) {
+      nav(
+        `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.key}`,
+      );
     }
-
-  },[activePane])
+  }, [activePane]);
 
   const addTab = () => {
     const newActiveKey = uuid();
@@ -349,7 +350,7 @@ const MainBox = () => {
                   {params.workspaceName}
                 </Button>
               </Tooltip>
-              <Button size='small' disabled>
+              <Button type='text' size='small' disabled>
                 Import
               </Button>
             </WorkspacesMenu>

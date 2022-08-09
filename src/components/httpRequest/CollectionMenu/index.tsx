@@ -103,11 +103,11 @@ const Collection = forwardRef(
       if (keys[0] && selectKeyClassName === 'left'){
         setSelectedKeys(keys);
         onSelect &&
-        onSelect(keys[0] as string, {
-          title: info.node.title,
-          key: info.node.key,
-          nodeType: info.node.nodeType,
-        });
+          onSelect(keys[0] as string, {
+            title: info.node.title,
+            key: info.node.key,
+            nodeType: info.node.nodeType,
+          });
       }
     };
 

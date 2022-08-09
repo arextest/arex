@@ -67,9 +67,9 @@ const AppHeader = () => {
   });
 
   const handleLogout = () => {
-    localStorage.clear()
+    localStorage.clear();
     store.userInfo = undefined;
-    window.location.href = '/login'
+    window.location.href = '/login';
   };
   return (
     <>
