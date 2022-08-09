@@ -47,6 +47,7 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   return (
     <Space direction='vertical' style={{ display: 'flex' }}>
       <PanesTitle title={<span>Main Service API: {data.operationName}</span>} />
+
       <CollapseTable
         active={!!selectedDiff}
         table={<Analysis planItemId={data.planItemId} onScenes={handleScenes} />}
