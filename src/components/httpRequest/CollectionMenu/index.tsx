@@ -98,9 +98,9 @@ const Collection = forwardRef(
 
     const handleSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
       // @ts-ignore
-      const selectKeyClassName = info.nativeEvent.target.getAttribute('class')
+      const selectKeyClassName = info.nativeEvent.target.getAttribute('class') || '';
       // 必须有选中的才可以触发
-      if (keys[0] && selectKeyClassName === 'left'){
+      if (keys[0] && !selectKeyClassName.includes('ant-dropdown-menu')) {
         setSelectedKeys(keys);
         onSelect &&
           onSelect(keys[0] as string, {

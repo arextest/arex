@@ -43,7 +43,6 @@ const AppHeader = () => {
         <Menu
           style={{ border: 'none', width: '200px' }}
           onSelect={(val) => {
-            console.log(val);
             const key = val.key;
             const label = workspaces.find((i) => i.id === key)?.workspaceName;
             label && (window.location.href = `/${key}/workspace/${label}`);

@@ -33,10 +33,10 @@ function CollectionTitleRender({
           {
             key: '1',
             label: (
+              //必须要用a标签，不然无法disable
               <a
                 target='_blank'
                 onClick={() => {
-                  console.log(123,'334')
                   CollectionService.addItem({
                     id: _useParams.workspaceId,
                     nodeName: 'New Collection',

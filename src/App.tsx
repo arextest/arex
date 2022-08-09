@@ -21,7 +21,6 @@ function App() {
   // checkout if the user is logged in
   const nav = useNavigate();
   useEffect(() => {
-    console.log(userInfo);
     !userInfo?.email && nav('/login');
   }, [userInfo?.email]);
 
@@ -44,7 +43,6 @@ function App() {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
       } else {
-        console.log(window.location.pathname);
         if (window.location.pathname.includes('login')) {
         } else {
           localStorage.clear();
