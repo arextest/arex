@@ -6,3 +6,4 @@ export { default as FormTable } from './FormTable';
 export { getColumns } from './FormTable';
 export { default as Response } from './Response';
 export { default as ResponseCompare } from './ResponseCompare';
+export { default as ResponseTest } from './ResponseTest';

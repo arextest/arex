@@ -31,6 +31,7 @@ import {
   Response,
   ResponseCompare,
   SaveRequestButton,
+  ResponseTest,
 } from '../components/httpRequest';
 import { Label } from '../components/styledComponents';
 import { ContentTypeEnum, MethodEnum, METHODS, NodeType } from '../constant';
@@ -178,14 +179,15 @@ const HttpRequest: FC<HttpRequestProps> = ({
 
   useEffect(() => {
     handleUpdateUrl();
-    runTestScript(cmValue, {
-      status: 200,
-      body: 'hoi',
-      headers: [],
-    }).then((res) => {
-      console.log(res);
-    });
-  }, [requestParams]);
+    response &&
+      runTestScript(TestVal, {
+        status: response.status,
+        body: response.body,
+        headers: response.headers,
+      }).then((res: any) => {
+        setTestResult(res.children);
+      });
+  }, [response]);
 
   const params = useMemo(
     () =>
@@ -375,7 +377,6 @@ const HttpRequest: FC<HttpRequestProps> = ({
       const body = tryParseJsonString(requestBody, t_common('invalidJSON'));
       body && (data.data = body);
     }
-
     request({
       url,
       method,
@@ -467,6 +468,13 @@ const HttpRequest: FC<HttpRequestProps> = ({
         return pre;
       }, '');
     setUrl(url.split('?')[0] + query);
+  };
+
+  //test
+  const [TestVal, setTestVal] = useState<string>('');
+  const [TestResult, setTestResult] = useState<[]>([]);
+  const getTestVal = (e: string) => {
+    setTestVal(e);
   };
 
   return (
@@ -671,8 +679,9 @@ const HttpRequest: FC<HttpRequestProps> = ({
           <TabPane tab={t_components('http.pre-requestScript')} key='4' disabled>
             <CodeMirror value='' height='300px' extensions={[javascript()]} theme={theme} />
           </TabPane>
-          <TabPane tab={t_components('http.test')} key='5' disabled>
-            <CodeMirror value='' height='300px' extensions={[javascript()]} theme={theme} />
+          <TabPane tab={t_components('http.test')} key='5'>
+            {/* <CodeMirror value='' height='300px' extensions={[javascript()]} theme={theme}*/}
+            <ResponseTest getTestVal={getTestVal}></ResponseTest>
           </TabPane>
         </Tabs>
       </AnimateAutoHeight>
@@ -685,6 +694,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
                 responseHeaders={response?.headers}
                 res={response?.data || response?.statusText}
                 status={{ code: response.status, text: response.statusText }}
+                TestResult={TestResult}
               />
             ) : (
               <ResponseCompare responses={[baseResponse?.data, testResponse?.data]} />
