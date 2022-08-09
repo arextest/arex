@@ -1,11 +1,9 @@
 import { Button, Form, Input, Modal } from 'antd';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 import { WorkspaceService } from '../../services/Workspace.service';
 
 const AddWorkspace = () => {
-  const _useParams = useParams();
   const [form] = Form.useForm();
   const [visible, setVisible] = useState<boolean>(false);
 
@@ -30,7 +28,7 @@ const AddWorkspace = () => {
                 workspaceName: values.name,
               }).then((res) => {
                 if (res.body.success) {
-                  const key = res.body.infoId;
+                  const key = res.body.workspaceId;
                   const label = values.name;
                   window.location.href = `/${key}/workspace/${label}`;
                 }

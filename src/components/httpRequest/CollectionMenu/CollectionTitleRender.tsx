@@ -79,7 +79,15 @@ function CollectionTitleRender({
               };
               setCollectionCreateAndUpdateModal(collectionCreateAndUpdateModal);
               break;
-            case '5':
+            case '6':
+              CollectionService.duplicate({
+                id: _useParams.workspaceId,
+                path: paths.map((i: any) => i.key),
+                userName: localStorage.getItem('email'),
+              }).then((res) => {
+                console.log(res);
+                updateDirectoryTreeData();
+              });
           }
           e.domEvent.stopPropagation();
           setVisible(false);
@@ -89,24 +97,28 @@ function CollectionTitleRender({
             key: '3',
             label: (
               //必须要用a标签，不然无法disable
-              <span className={'dropdown-click-target'}>New Folder</span>
+              <span className={'dropdown-click-target'}>Add Folder</span>
             ),
             // 只有类型为3才能新增文件夹
             disabled: val.nodeType !== 3,
           },
           {
             key: '1',
-            label: <span className={'dropdown-click-target'}>New Request</span>,
+            label: <span className={'dropdown-click-target'}>Add Request</span>,
             disabled: val.nodeType !== 3,
           },
           {
             key: '2',
-            label: <span className={'dropdown-click-target'}>New Case</span>,
+            label: <span className={'dropdown-click-target'}>Add Case</span>,
             disabled: val.nodeType !== 1,
           },
           {
             key: '4',
             label: <span className={'dropdown-click-target'}>Rename</span>,
+          },
+          {
+            key: '6',
+            label: <span className={'dropdown-click-target'}>Duplicate</span>,
           },
           {
             key: '5',
