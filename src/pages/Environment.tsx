@@ -264,7 +264,7 @@ const EnvironmentPage = ({ curEnvironment }: any) => {
         return { key: e.key, active: e.active, value: e.value };
       }
     });
-    let env = { ...curEnvironment[0] };
+    const env = { ...curEnvironment[0] };
     env.keyValues = newdata;
     EnvironmentService.saveEnvironment({ env: env }).then((res) => {
       if (res.body.success == true) {

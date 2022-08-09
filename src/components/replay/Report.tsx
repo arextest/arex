@@ -209,6 +209,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
 
   return selectedPlan ? (
     <Card
+      bordered={false}
       size='small'
       title={`Report: ${selectedPlan.planName}`}
       extra={

@@ -122,7 +122,7 @@ const Results: FC<{
           return {
             onClick: () => {
               if (typeof index === 'number') {
-                setSelectRow(index);
+                setSelectRow(index === selectRow ? -1 : index);
                 onSelectedPlanChange(record as PlanStatistics);
               }
             },

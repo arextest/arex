@@ -42,7 +42,7 @@ const Case: FC<CaseProps> = ({ planItemId }) => {
     refreshDeps: [planItemId],
     cacheKey: 'queryReplayCase',
   });
-  return <Table columns={columnsCase} dataSource={caseData} pagination={false} />;
+  return <Table size='small' columns={columnsCase} dataSource={caseData} pagination={false} />;
 };
 
 export default Case;

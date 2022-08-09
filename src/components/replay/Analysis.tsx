@@ -46,7 +46,7 @@ const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
   ];
 
   return (
-    <Row style={{ padding: '8px', border: '1px solid #000' }} gutter={8}>
+    <Row style={{ padding: '8px' }} gutter={8}>
       <Col span={6}>
         <MenuSelect<CategoryStatistic>
           small

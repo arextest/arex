@@ -5,7 +5,8 @@ import {
   GlobalOutlined,
 } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps, Tooltip, Select } from 'antd';
+import { useMount } from 'ahooks';
+import { Button, Divider, Empty, Select, TabPaneProps, Tabs, TabsProps, Tooltip } from 'antd';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -20,7 +21,6 @@ import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type
 import { PaneType, useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
-import { useMount } from 'ahooks';
 
 const { Option } = Select;
 const { TabPane } = Tabs;

@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { message } from 'antd';
+import axios from 'axios';
 
 // 创建 axios 实例
 const service = axios.create({

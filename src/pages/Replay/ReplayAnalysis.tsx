@@ -1,9 +1,9 @@
+import { Space } from 'antd';
 import { FC } from 'react';
 
 import Analysis from '../../components/replay/Analysis';
-import { PlanItemStatistics } from '../../services/Replay.type';
 import PanesTitle from '../../components/styledComponents/PanesTitle';
-import { Space } from 'antd';
+import { PlanItemStatistics } from '../../services/Replay.type';
 
 const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   return (
