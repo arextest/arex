@@ -3,6 +3,7 @@ import { css } from '@emotion/react';
 import { Dropdown, Input, Menu, Modal, Space } from 'antd';
 import ListBody from 'antd/lib/transfer/ListBody';
 import { useState } from 'react';
+import { useStore } from '../../store';
 
 import EnvironmentService from '../../services/Environment.service';
 
@@ -20,26 +21,20 @@ export type Environmentprops = {
   val: any;
   titleRadius: string;
   updateDirectorytreeData: () => void;
-  nowEnvironment: string;
-  setNowEnvironment: (p: any) => void;
 };
 
-function EnvironmentTitleRender({
-  val,
-  titleRadius,
-  updateDirectorytreeData,
-  nowEnvironment,
-  setNowEnvironment,
-}: Environmentprops) {
+function EnvironmentTitleRender({ val, titleRadius, updateDirectorytreeData }: Environmentprops) {
+  const environment = useStore((state) => state.environment);
+  const setEnvironment = useStore((state) => state.setEnvironment);
   const [visible, setVisible] = useState(false);
   const [isRenameVisible, setIsRenameVisible] = useState<boolean>(false);
   const [environmentname, setEnvironmentname] = useState<string>(val.envName);
 
   const selectEnvironment = () => {
-    if (val.id == nowEnvironment) {
-      setNowEnvironment('0');
+    if (val.id == environment) {
+      setEnvironment('0');
     } else {
-      setNowEnvironment(val.id);
+      setEnvironment(val.id);
     }
   };
 
@@ -69,8 +64,8 @@ function EnvironmentTitleRender({
         }
       });
     } else if (e == 'rename') {
-      val.envName = environmentname;
-      EnvironmentService.saveEnvironment({ env: val }).then((res) => {
+      const env = { ...val, envName: environmentname };
+      EnvironmentService.saveEnvironment({ env: env }).then((res) => {
         if (res.body.success == true) {
           updateDirectorytreeData();
           setIsRenameVisible(false);
@@ -154,7 +149,7 @@ function EnvironmentTitleRender({
           align-items: center;
         `}
       >
-        {val.id == titleRadius || nowEnvironment == val.id ? (
+        {val.id == titleRadius || environment == val.id ? (
           <div css={btnCss} onClick={(event) => event.stopPropagation()}>
             <CheckCircleOutlined onClick={selectEnvironment} />
           </div>
