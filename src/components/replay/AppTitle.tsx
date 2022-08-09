@@ -1,11 +1,9 @@
-import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Form, Input, message, Modal, notification } from 'antd';
+import { Button, Form, Input, Modal, notification } from 'antd';
 import React, { FC, useState } from 'react';
 
 import ReplayService from '../../services/Replay.service';
-import { Label } from '../styledComponents';
-import PanesTitle from '../styledComponents/PanesTitle';
+import { Label, PanesTitle } from '../styledComponents';
 
 type AppTitleData = {
   id: string;

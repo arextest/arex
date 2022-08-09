@@ -2,17 +2,28 @@ import {
   ApiOutlined,
   DeploymentUnitOutlined,
   FieldTimeOutlined,
-  GlobalOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps, Tooltip, Select } from 'antd';
+import { useRequest } from 'ahooks';
+import {
+  Button,
+  Divider,
+  Empty,
+  Select,
+  SelectProps,
+  TabPaneProps,
+  Tabs,
+  TabsProps,
+  Tooltip,
+  Typography,
+} from 'antd';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { AppFooter, AppHeader, CollectionMenu, EnvironmentMenu, ReplayMenu } from '../components';
-import { CollectionProps, CollectionRef, nodeType } from '../components/httpRequest/CollectionMenu';
-import { MenuTypeEnum, PageTypeEnum } from '../constant';
+import { CollectionProps, CollectionRef } from '../components/httpRequest/CollectionMenu';
+import { MenuTypeEnum, PageTypeEnum, RoleEnum } from '../constant';
 import { Environment, Folder, HttpRequest, Replay, ReplayAnalysis, ReplayCase } from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
 import WorkspaceOverviewPage from '../pages/WorkspaceOverview';
@@ -21,8 +32,7 @@ import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type
 import { PaneType, useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
-import { useRequest } from 'ahooks';
-import { useMount } from 'ahooks';
+const { Text } = Typography;
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -104,6 +114,26 @@ const MainTabs = styled((props: TabsProps) => (
   .ant-tabs-content-holder {
     overflow: auto;
   }
+  .ant-tabs-nav-more {
+    height: 36px;
+    border-left: #000c17 1px solid;
+  }
+`;
+
+const EnvironmentSelect = styled((props: SelectProps) => (
+  <Select allowClear bordered={false} {...props} />
+))`
+  height: 36px;
+  width: 150px;
+  box-sizing: content-box;
+  border-left: 1px solid ${(props) => props.theme.color.border.primary};
+  margin-left: -1px;
+  .ant-select-selector {
+    height: 100%;
+    .ant-select-selection-item {
+      line-height: 34px;
+    }
+  }
 `;
 
 const MainTabPane = styled((props: TabPaneProps) => (
@@ -142,6 +172,7 @@ const MainBox = () => {
     environmentTreeData,
     setEnvironment,
     setEnvironmentTreeData,
+    workspaces,
   } = useStore();
 
   // TODO 移动至子组件
@@ -317,6 +348,17 @@ const MainBox = () => {
     }
   }, [EnvironmentData]);
 
+  const roleDisplay = (() => {
+    return `(${
+      {
+        [RoleEnum.Admin]: 'Admin',
+        [RoleEnum.Editor]: 'Editor',
+        [RoleEnum.Viewer]: 'Viewer',
+        // @ts-ignore
+      }[workspaces.find((i) => i.id === params.workspaceId)?.role]
+    })`;
+  })();
+
   return (
     <>
       {/*AppHeader部分*/}
@@ -337,6 +379,9 @@ const MainBox = () => {
                   onClick={handleHeaderMenuClick}
                 >
                   {params.workspaceName}
+                  <Text style={{ marginLeft: '4px' }} type='secondary'>
+                    {roleDisplay}
+                  </Text>
                 </Button>
               </Tooltip>
               <Button type='text' size='small' disabled>
@@ -398,11 +443,8 @@ const MainBox = () => {
               activeKey={activePane}
               onChange={handleTabsChange}
               tabBarExtraContent={
-                <Select
+                <EnvironmentSelect
                   value={environment}
-                  style={{ width: 200, borderLeft: '1px solid #eee' }}
-                  allowClear
-                  bordered={false}
                   onChange={(e) => {
                     setEnvironment(e);
                   }}
@@ -415,7 +457,7 @@ const MainBox = () => {
                       </Option>
                     );
                   })}
-                </Select>
+                </EnvironmentSelect>
               }
             >
               {panes.map((pane) => (

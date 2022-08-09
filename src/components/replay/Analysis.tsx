@@ -1,5 +1,5 @@
-import { useRequest, useToggle } from 'ahooks';
-import { Col, Drawer, Row, Table } from 'antd';
+import { useRequest } from 'ahooks';
+import { Col, Row, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { FC, useState } from 'react';
 
@@ -8,9 +8,11 @@ import { CategoryStatistic, Difference } from '../../services/Replay.type';
 import { MenuSelect } from '../index';
 import { SmallTextButton, TableWrapper } from '../styledComponents';
 
-const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
+const Analysis: FC<{
+  planItemId: number;
+  onScenes?: (diff: Difference, category?: CategoryStatistic) => void;
+}> = ({ planItemId, onScenes }) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
-  const [visibleScene, { toggle: toggleVisibleScene }] = useToggle(false);
   const { data: differenceData = [] } = useRequest(
     () =>
       ReplayService.queryDifferences({
@@ -40,13 +42,16 @@ const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
     {
       title: 'Action',
       render: (_, record) => (
-        <SmallTextButton title='Scenes' onClick={() => toggleVisibleScene()} />
+        <SmallTextButton
+          title='Scenes'
+          onClick={() => onScenes && onScenes(record, selectedCategory)}
+        />
       ),
     },
   ];
 
   return (
-    <Row style={{ padding: '8px', border: '1px solid #000' }} gutter={8}>
+    <Row style={{ padding: '8px' }} gutter={8}>
       <Col span={6}>
         <MenuSelect<CategoryStatistic>
           small
@@ -55,7 +60,7 @@ const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
           onSelect={setSelectedCategory}
           placeholder='applicationsMenu.appFilterPlaceholder'
           request={() => ReplayService.queryResponseTypeStatistic({ planItemId })}
-          filter={(keyword: string, app: CategoryStatistic) => app.operationName.includes(keyword)}
+          filter='operationName'
           itemRender={(item: CategoryStatistic) => ({
             label: item.operationName,
             key: item.operationName,
@@ -76,10 +81,6 @@ const Analysis: FC<{ planItemId: number }> = ({ planItemId }) => {
           />
         </TableWrapper>
       </Col>
-
-      <Drawer title='Diff Detail' visible={visibleScene} onClose={toggleVisibleScene}>
-        {/* TODO */}Scene content
-      </Drawer>
     </Row>
   );
 };

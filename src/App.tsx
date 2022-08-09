@@ -3,15 +3,15 @@ import './style/index.less';
 import './components/app/index.less';
 
 import { ThemeProvider } from '@emotion/react';
+import { useMount } from 'ahooks';
 import React, { useEffect, useMemo } from 'react';
 import { useNavigate, useRoutes } from 'react-router-dom';
 
 import CheckChromeExtension from './components/CheckChromeExtension';
 import routerConfig from './routers';
+import { AuthService } from './services/AuthService';
 import { useStore } from './store';
 import { themeCreator } from './style/theme';
-import { useMount } from 'ahooks';
-import { AuthService } from './services/AuthService';
 
 function App() {
   const routesContent = useRoutes(routerConfig);

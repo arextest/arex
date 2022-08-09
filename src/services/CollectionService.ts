@@ -1,7 +1,8 @@
+import { message } from 'antd';
+
 import request from '../api/axios';
 import { collectionOriginalTreeToAntdTreeData } from '../helpers/collection/util';
 import { QueryWorkspaceByIdReq, QueryWorkspaceByIdRes } from './CollectionService.type';
-import { message } from 'antd';
 
 export class CollectionService {
   static listCollection(params: { id: string }) {
@@ -33,5 +34,8 @@ export class CollectionService {
   }
   static async rename(params: any): Promise<any> {
     return request.post(`/api/filesystem/rename`, params);
+  }
+  static async duplicate(params: any): Promise<any> {
+    return request.post(`/api/filesystem/duplicate`, params);
   }
 }

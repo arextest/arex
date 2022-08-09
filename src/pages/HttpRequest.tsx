@@ -1,5 +1,6 @@
 import { javascript } from '@codemirror/lang-javascript';
 import { json } from '@codemirror/lang-json';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import CodeMirror from '@uiw/react-codemirror';
 import { useRequest } from 'ahooks';
@@ -32,10 +33,10 @@ import {
   SaveRequestButton,
   ResponseTest,
 } from '../components/httpRequest';
+import { Label } from '../components/styledComponents';
 import { ContentTypeEnum, MethodEnum, METHODS, NodeType } from '../constant';
 import { treeFindPath } from '../helpers/collection/util';
 import { runTestScript } from '../helpers/sandbox';
-import { PaneType } from '../layouts/MainBox';
 import { FileSystemService } from '../services/FileSystem.service';
 import { useStore } from '../store';
 import { tryParseJsonString, tryPrettierJsonString } from '../utils';
@@ -588,7 +589,14 @@ const HttpRequest: FC<HttpRequestProps> = ({
             </HeaderWrapper>
           </div>
         )}
-        <Tabs defaultActiveKey='1'>
+        <Tabs
+          defaultActiveKey='1'
+          css={css`
+            .ant-tabs-nav {
+              margin-bottom: 0px;
+            }
+          `}
+        >
           <TabPane
             tab={
               <span>
@@ -622,9 +630,10 @@ const HttpRequest: FC<HttpRequestProps> = ({
           >
             <FormHeaderWrapper>
               <span>
-                {t_components('http.contentType')}
+                <Label offset={-12}>{t_components('http.contentType')}</Label>
                 <Select
                   disabled
+                  bordered={false}
                   value={contentType}
                   size={'small'}
                   options={[{ value: 'application/json', label: 'application/json' }]}

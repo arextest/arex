@@ -7,7 +7,6 @@ import MenuSelect from '../MenuSelect';
 const ReplayMenu: FC<{ onSelect: (app: ApplicationDataType) => void }> = (props) => {
   return (
     <MenuSelect<ApplicationDataType>
-      small
       rowKey='appId'
       onSelect={props.onSelect}
       placeholder='applicationsMenu.appFilterPlaceholder'

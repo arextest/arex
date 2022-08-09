@@ -6,6 +6,8 @@ import {
   CreatePlanRes,
   QueryDifferencesReq,
   QueryDifferencesRes,
+  QueryMsgWithDiffReq,
+  QueryMsgWithDiffRes,
   QueryPlanItemStatisticsReq,
   QueryPlanItemStatisticsRes,
   QueryPlanStatisticsReq,
@@ -14,6 +16,8 @@ import {
   QueryReplayCaseRes,
   QueryResponseTypeStatisticReq,
   QueryResponseTypeStatisticRes,
+  QueryScenesReq,
+  QueryScenesRes,
   RegressionListRes,
 } from './Replay.type';
 
@@ -75,5 +79,17 @@ export default class ReplayService {
         .then((res) => resolve(res.data))
         .catch((err) => reject(err));
     });
+  }
+
+  static async queryScenes(params: QueryScenesReq) {
+    return request
+      .post<QueryScenesRes>('/report/queryScenes', params)
+      .then((res) => Promise.resolve(res.body.scenes));
+  }
+
+  static async queryMsgWithDiff(params: QueryMsgWithDiffReq) {
+    return request
+      .post<QueryMsgWithDiffRes>('/report/queryMsgWithDiff', params)
+      .then((res) => Promise.resolve(res.body));
   }
 }
