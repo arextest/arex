@@ -2,17 +2,27 @@ import {
   ApiOutlined,
   DeploymentUnitOutlined,
   FieldTimeOutlined,
-  GlobalOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { useMount } from 'ahooks';
-import { Button, Divider, Empty, Select, TabPaneProps, Tabs, TabsProps, Tooltip } from 'antd';
+import { useRequest } from 'ahooks';
+import {
+  Button,
+  Divider,
+  Empty,
+  Select,
+  TabPaneProps,
+  Tabs,
+  TabsProps,
+  Tooltip,
+  Typography,
+} from 'antd';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { AppFooter, AppHeader, CollectionMenu, EnvironmentMenu, ReplayMenu } from '../components';
-import { CollectionProps, CollectionRef, nodeType } from '../components/httpRequest/CollectionMenu';
-import { MenuTypeEnum, PageTypeEnum } from '../constant';
+import { CollectionProps, CollectionRef } from '../components/httpRequest/CollectionMenu';
+import { MenuTypeEnum, PageTypeEnum, RoleEnum } from '../constant';
 import { Environment, Folder, HttpRequest, Replay, ReplayAnalysis, ReplayCase } from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
 import WorkspaceOverviewPage from '../pages/WorkspaceOverview';
@@ -21,6 +31,7 @@ import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type
 import { PaneType, useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
+const { Text } = Typography;
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -80,15 +91,6 @@ const MainTabs = styled((props: TabsProps) => (
       left: '-11px',
       top: '-1px',
     }}
-    tabBarExtraContent={
-      // <Select value={props.environment} style={{ width: 200, borderLeft:'1px solid #eee'}} allowClear bordered={false} onChange={(e)=>props.setEnvironment(e)}>
-      //   <Option value="0">No Environment</Option>
-      //   {props.environmentTreeData?.map((e:{id:string,envName:string})=>{
-      //     return  <Option key={e.id} value={e.id}>{e.envName}</Option>
-      //   })}
-      // </Select>
-      <></>
-    }
     {...props}
   >
     {props.children}
@@ -149,6 +151,7 @@ const MainBox = () => {
     environmentTreeData,
     setEnvironment,
     setEnvironmentTreeData,
+    workspaces,
   } = useStore();
 
   // TODO 移动至子组件
@@ -300,33 +303,40 @@ const MainBox = () => {
   };
 
   //environment
-  const [environmentData, setEnvironmentData] = useState<[]>();
-  const [nowEnvironment, setNowEnvironment] = useState<string>('0');
   const [environmentselected, setEnvironmentselected] = useState<[]>([]);
   const setEnvironmentSelectedData = (e) => {
     setEnvironmentselected(e);
   };
+
   const environmentRef = useRef<CollectionRef>(null);
   const updateEnvironmentMenuKeys = (keys: React.Key[]) => {
     environmentRef?.current?.setSelectedKeys(keys);
   };
 
-  //获取environment // TODO 这些操作是否应该放在子组件中
-  // function fetchEnvironmentData() {
-  //   EnvironmentService.getEnvironment({ workspaceId: params.workspaceId }).then((res) => {
-  //     setEnvironmentTreeData(res.body.environments);
-  //     // setEnvironmentData(res.body.environments);
-  //   });
-  // }
+  const { data: EnvironmentData = [], run: fetchEnvironmentData } = useRequest(
+    () => EnvironmentService.getEnvironment({ workspaceId: params.workspaceId }),
+    {
+      ready: !!params.workspaceId,
+      refreshDeps: [params.workspaceId],
+    },
+  );
 
-  //切换environment
-  const selectEnvironment = (e: string) => {
-    setNowEnvironment(e);
-  };
+  useEffect(() => {
+    if (EnvironmentData.length > 0) {
+      setEnvironmentTreeData(EnvironmentData);
+    }
+  }, [EnvironmentData]);
 
-  const setCurEnvironment = (e: string) => {
-    setNowEnvironment(e);
-  };
+  const roleDisplay = (() => {
+    return `(${
+      {
+        [RoleEnum.Admin]: 'Admin',
+        [RoleEnum.Editor]: 'Editor',
+        [RoleEnum.Viewer]: 'Viewer',
+        // @ts-ignore
+      }[workspaces.find((i) => i.id === params.workspaceId)?.role]
+    })`;
+  })();
 
   return (
     <>
@@ -335,7 +345,7 @@ const MainBox = () => {
 
       <DraggableLayout
         direction={'horizontal'}
-        limitRange={[30, 40]}
+        limitRange={[15, 40]}
         firstNode={
           <>
             {/* TODO 和 AppHeader 中的 WorkspaceSelect 合并 */}
@@ -344,10 +354,13 @@ const MainBox = () => {
                 <Button
                   size='small'
                   type='text'
-                  icon={<GlobalOutlined />}
+                  icon={<UserOutlined />}
                   onClick={handleHeaderMenuClick}
                 >
                   {params.workspaceName}
+                  <Text style={{ marginLeft: '4px' }} type='secondary'>
+                    {roleDisplay}
+                  </Text>
                 </Button>
               </Tooltip>
               <Button type='text' size='small' disabled>
@@ -389,20 +402,11 @@ const MainBox = () => {
                 disabled
                 menuItem={
                   <EnvironmentMenu
+                    ref={environmentRef}
                     workspaceId={params.workspaceId}
                     onSelect={handleEnvionmentMenuClick}
                     setEnvironmentSelectedData={setEnvironmentSelectedData}
-                    ref={environmentRef}
-                    // activePane={addEnvironmentPane}
-                    // EnvironmentData={environmentData}
-                    // setMainBoxPanes={setPanes} // TODO 这些参数应从全局store中获取
-                    // mainBoxPanes={panes} // TODO 这些参数应从全局store中获取
-                    // setMainBoxActiveKey={setActivePane} // TODO 这些参数应从全局store中获取
-                    // activeKey={activePane} // TODO 这些参数应从全局store中获取
-
-                    // fetchEnvironmentDatas={fetchEnvironmentData}
-                    nowEnvironment={nowEnvironment}
-                    setCurEnvironment={setCurEnvironment}
+                    fetchEnvironmentData={fetchEnvironmentData}
                   />
                 }
               />
@@ -417,7 +421,26 @@ const MainBox = () => {
               onEdit={handleTabsEdit}
               activeKey={activePane}
               onChange={handleTabsChange}
-              environment={environment}
+              tabBarExtraContent={
+                <Select
+                  value={environment}
+                  style={{ width: 200, borderLeft: '1px solid #eee' }}
+                  allowClear
+                  bordered={false}
+                  onChange={(e) => {
+                    setEnvironment(e);
+                  }}
+                >
+                  <Option value='0'>No Environment</Option>
+                  {environmentTreeData?.map((e: { id: string; envName: string }) => {
+                    return (
+                      <Option key={e.id} value={e.id}>
+                        {e.envName}
+                      </Option>
+                    );
+                  })}
+                </Select>
+              }
             >
               {panes.map((pane) => (
                 <MainTabPane tab={pane.title} key={pane.key}>
@@ -442,7 +465,10 @@ const MainBox = () => {
                   )}
                   {pane.pageType === PageTypeEnum.Folder && <Folder />}
                   {pane.pageType === PageTypeEnum.Environment && (
-                    <Environment curEnvironment={environmentselected} />
+                    <Environment
+                      curEnvironment={environmentselected}
+                      fetchEnvironmentData={fetchEnvironmentData}
+                    />
                   )}
                   {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverviewPage />}
                 </MainTabPane>

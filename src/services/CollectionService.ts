@@ -35,4 +35,7 @@ export class CollectionService {
   static async rename(params: any): Promise<any> {
     return request.post(`/api/filesystem/rename`, params);
   }
+  static async duplicate(params: any): Promise<any> {
+    return request.post(`/api/filesystem/duplicate`, params);
+  }
 }

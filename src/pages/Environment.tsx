@@ -129,7 +129,12 @@ const EditableCell: React.FC<EditableCellProps> = ({
   return <td {...restProps}>{childNode}</td>;
 };
 
-const EnvironmentPage = ({ curEnvironment }: any) => {
+export type Environmentprops = {
+  curEnvironment: (p: any) => void;
+  fetchEnvironmentData: () => void;
+};
+
+const EnvironmentPage = ({ curEnvironment, fetchEnvironmentData }: Environmentprops) => {
   const [data, setData] = useState<[]>([]);
   const [isActive, setIsActive] = useState<[]>([]);
   const [title, setTitle] = useState<string>('');
@@ -176,8 +181,6 @@ const EnvironmentPage = ({ curEnvironment }: any) => {
   };
 
   useEffect(() => {
-    console.log(curEnvironment);
-
     if (curEnvironment.length > 0) {
       const EnvironmentActive: string[] = [];
       const EnvironmnetKeyValues = curEnvironment[0].keyValues.map((e: any, index: number) => {
@@ -189,14 +192,14 @@ const EnvironmentPage = ({ curEnvironment }: any) => {
       setData(EnvironmnetKeyValues);
       setCount(EnvironmnetKeyValues.length + 1);
       setIsActive(EnvironmentActive);
-      setTitle(curEnvironment[0].envName);
+      setTitle(curEnvironment[0].title || curEnvironment[0].envName);
     }
   }, [curEnvironment]);
 
   //输入框数据保存
   const handleSave = (row: DataType) => {
     const newData = [...data];
-    const index = newData.findIndex((item) => row.key === item.key);
+    const index = newData.findIndex((item) => row.keys === item.keys);
     const item = newData[index];
     newData.splice(index, 1, {
       ...item,
@@ -268,6 +271,7 @@ const EnvironmentPage = ({ curEnvironment }: any) => {
     env.keyValues = newdata;
     EnvironmentService.saveEnvironment({ env: env }).then((res) => {
       if (res.body.success == true) {
+        fetchEnvironmentData();
       }
     });
   };

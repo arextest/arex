@@ -11,16 +11,8 @@ import EnvironmentTitleRender from './EnvironmentTitleRender';
 
 export type Environmentprops = {
   workspaceId?: string;
-  // activePane: () => void;
-  // EnvironmentData: [] | undefined;
-  setMainBoxPanes: (p: any) => void;
-  mainBoxPanes: any[];
-  setMainBoxActiveKey: (p: any) => void;
-  activeKey: string;
   setEnvironmentSelectedData: (p: any) => void;
-  // fetchEnvironmentDatas: () => void;
-  nowEnvironment: string;
-  setCurEnvironment: (p: any) => void;
+  fetchEnvironmentData: () => void;
   onSelect: (key: string, node: {}) => void;
 };
 
@@ -29,52 +21,38 @@ const Environment = forwardRef(
     {
       workspaceId,
       onSelect,
-      setCurEnvironment,
       activeKey,
       setEnvironmentSelectedData,
-      // fetchEnvironmentDatas,
-      nowEnvironment,
+      fetchEnvironmentData,
     }: Environmentprops,
     ref,
   ) => {
     useImperativeHandle(ref, () => ({
       setSelectedKeys,
     }));
-    const setEnvironmentTreeData = useStore((state) => state.setEnvironmentTreeData);
-    const setPanes = useStore((state) => state.setPanes);
+    const environmentTreeData = useStore((state) => state.environmentTreeData);
     const panes = useStore((state) => state.panes);
     const setActivePane = useStore((state) => state.setActivePane);
     const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
     const [titleRadius, setTitleRadius] = useState<string>('');
-    const { data: EnvironmentData = [], run: fetchEnvironmentData } = useRequest(
-      () => EnvironmentService.getEnvironment({ workspaceId: workspaceId as string }),
-      {
-        ready: !!workspaceId,
-        refreshDeps: [workspaceId],
-      },
-    );
-
-    useEffect(() => {
-      if (EnvironmentData.length > 0) {
-        setEnvironmentTreeData(EnvironmentData);
-      }
-    }, [EnvironmentData]);
 
     const handleSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
-      setEnvironmentSelectedData(info.selectedNodes);
-      setSelectedKeys(keys);
-      onSelect &&
-        onSelect(keys[0] as string, {
-          title: info.node.envName,
-          key: keys[0],
-          pageType: 'environment',
-          qid: keys[0],
-          isNew: true,
-          keyValues: info.node.keyValues,
-        });
+      if (keys[0]) {
+        setEnvironmentSelectedData(info.selectedNodes);
+        setSelectedKeys(keys);
+        onSelect &&
+          onSelect(keys[0] as string, {
+            title: info.node.envName,
+            key: keys[0],
+            pageType: 'environment',
+            qid: keys[0],
+            isNew: true,
+            keyValues: info.node.keyValues,
+          });
+      }
     };
     useEffect(() => {
-      setEnvironmentSelectedData(EnvironmentData?.filter((e) => e.id == activeKey));
+      setEnvironmentSelectedData(environmentTreeData?.filter((e) => e.id == activeKey));
       setSelectedKeys([activeKey]);
     }, [activeKey]);
     return (
@@ -126,7 +104,7 @@ const Environment = forwardRef(
             setTitleRadius('');
           }}
           onSelect={handleSelect}
-          treeData={EnvironmentData}
+          treeData={environmentTreeData}
           titleRender={(val) => (
             <EnvironmentTitleRender
               titleRadius={titleRadius}
@@ -134,8 +112,6 @@ const Environment = forwardRef(
                 fetchEnvironmentData();
               }}
               val={val}
-              nowEnvironment={nowEnvironment}
-              setNowEnvironment={setCurEnvironment}
             />
           )}
         />
