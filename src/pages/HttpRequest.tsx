@@ -221,7 +221,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
         }
         return acc;
       }, {}),
-    [],
+    [requestHeaders],
   );
   const headerCount = useMemo(
     () =>
@@ -251,7 +251,8 @@ const HttpRequest: FC<HttpRequestProps> = ({
     cancel: cancelRequest,
   } = useRequest(AgentAxios, {
     manual: true,
-    onBefore: () => {
+    onBefore: (params) => {
+      console.log(params);
       validationRequest(cancelRequest);
     },
     onSuccess: (res) => {
