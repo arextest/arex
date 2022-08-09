@@ -27,3 +27,4 @@ response 拦截器
 | helpers    | 与 components 对应，存放 components 组件中复杂的一些逻辑处理代码                        |
 | pages      | 主区域的页面组件，类似于路由的 pages。命名规范：Environment.tsx，组件名 EnvironmentPage |
 | layouts    | MainBox.tsx 是主要容器                                                                  |
+1
