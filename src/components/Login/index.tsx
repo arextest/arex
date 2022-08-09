@@ -93,9 +93,7 @@ const Login = () => {
         message.success('Login succeeded');
         initBeforeUserEntry(email);
       } else {
-        if (res.data.responseStatusType.responseCode === 2) {
-          message.error(res.data.responseStatusType.responseDesc);
-        }
+        message.error(res.data.responseStatusType.responseDesc)
       }
     });
   };

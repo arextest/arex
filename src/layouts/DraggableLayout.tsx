@@ -106,7 +106,7 @@ const DraggableLayout: FC<{
       style={{
         display: direction === 'horizontal' ? 'flex' : 'block',
         height: 'calc(100% - 74px)',
-        overflow: 'hidden', // 工作区域溢出隐藏，内容溢出请设置子组件样式 overflow: 'auto'
+        overflow: 'hidden',
       }}
     >
       <div ref={firstRef} style={styleMap[direction].firstStyle}>
