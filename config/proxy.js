@@ -6,19 +6,19 @@ export default {
       pathRewrite: { '/api': '/api' },
     },
     '/config': {
-      target: 'http://10.5.153.151:8088',
+      target: 'http://10.5.153.1:8091',
       changeOrigin: true,
-      pathRewrite: { '/config': '/config_api/config' },
+      pathRewrite: { '/config': '/api/config' },
     },
     '/report': {
-      target: 'http://10.5.153.151:8088',
+      target: 'http://10.5.153.1:8090',
       changeOrigin: true,
-      pathRewrite: { '/report': '/report_api/report' },
+      pathRewrite: { '/report': '/api/report' },
     },
     '/schedule': {
-      target: 'http://10.5.153.151:8088',
+      target: 'http://10.5.153.1:8092',
       changeOrigin: true,
-      pathRewrite: { '/schedule': '/schedule_api/schedule' },
+      pathRewrite: { '/schedule': '/api/schedule' },
     },
   },
   PROD: {
@@ -28,19 +28,19 @@ export default {
       pathRewrite: { '/api': '/api' },
     },
     '/config': {
-      target: 'http://10.5.153.151:8088',
+      target: 'http://10.5.153.1:8091',
       changeOrigin: true,
-      pathRewrite: { '/config': '/config_api/config' },
+      pathRewrite: { '/config': '/api/config' },
     },
     '/report': {
-      target: 'http://10.5.153.151:8088',
+      target: 'http://10.5.153.1:8090',
       changeOrigin: true,
-      pathRewrite: { '/report': '/report_api/report' },
+      pathRewrite: { '/report': '/api/report' },
     },
     '/schedule': {
-      target: 'http://10.5.153.151:8088',
+      target: 'http://10.5.153.1:8092',
       changeOrigin: true,
-      pathRewrite: { '/schedule': '/schedule_api/schedule' },
+      pathRewrite: { '/schedule': '/api/schedule' },
     },
   },
 };
