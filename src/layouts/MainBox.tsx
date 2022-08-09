@@ -2,7 +2,7 @@ import {
   ApiOutlined,
   DeploymentUnitOutlined,
   FieldTimeOutlined,
-  GlobalOutlined,
+  GlobalOutlined, UserOutlined,
 } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps, Tooltip, Select } from 'antd';
@@ -21,6 +21,7 @@ import { PaneType, useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
 import { useRequest } from 'ahooks';
+import { useMount } from 'ahooks';
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -115,7 +116,7 @@ const WorkspacesMenu = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 10px;
+  padding: 5px 10px;
 `;
 
 const EmptyWrapper = styled(Empty)`
@@ -322,7 +323,7 @@ const MainBox = () => {
 
       <DraggableLayout
         direction={'horizontal'}
-        limitRange={[30, 40]}
+        limitRange={[15, 40]}
         firstNode={
           <>
             {/* TODO 和 AppHeader 中的 WorkspaceSelect 合并 */}
@@ -331,13 +332,13 @@ const MainBox = () => {
                 <Button
                   size='small'
                   type='text'
-                  icon={<GlobalOutlined />}
+                  icon={<UserOutlined />}
                   onClick={handleHeaderMenuClick}
                 >
                   {params.workspaceName}
                 </Button>
               </Tooltip>
-              <Button size='small' disabled>
+              <Button type='text' size='small' disabled>
                 Import
               </Button>
             </WorkspacesMenu>

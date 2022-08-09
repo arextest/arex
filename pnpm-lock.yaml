@@ -10,6 +10,7 @@ specifiers:
   '@commitlint/config-conventional': ^17.0.3
   '@emotion/babel-plugin': ^11.9.2
   '@emotion/react': ^11.9.3
+  '@emotion/serialize': ^1.0.4
   '@emotion/styled': ^11.9.3
   '@kurkle/color': ^0.2.1
   '@types/react': ^18.0.15
@@ -70,6 +71,7 @@ dependencies:
   '@codemirror/lang-json': 6.0.0
   '@codemirror/view': 6.1.0
   '@emotion/react': 11.9.3_dekd3qhq25os2zmp2sxj6oaoou
+  '@emotion/serialize': 1.0.4
   '@emotion/styled': 11.9.3_hwog4nhqzlszxdrlehqblnhgoa
   '@kurkle/color': 0.2.1
   '@uiw/react-codemirror': 4.11.4_qvvohrpe54jb4sawbo73zueuaa

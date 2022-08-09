@@ -29,8 +29,8 @@ service.interceptors.request.use((config) => {
 service.interceptors.response.use((response) => {
   const { status: code, data, statusText: msg } = response;
   // 只要有接口鉴权失败就重定向到/login
-  if (data.responseStatusType.responseCode === 2){
-    localStorage.clear()
+  if (data.responseStatusType.responseCode === 2) {
+    localStorage.clear();
     // TODO这里需要确定responseCode的类型
     // window.location.href = '/login'
   }

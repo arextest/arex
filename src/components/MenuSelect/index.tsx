@@ -3,6 +3,8 @@ import { useRequest } from 'ahooks';
 import { Input, Menu } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { CSSInterpolation } from '@emotion/serialize/types';
+import { css } from '@emotion/react';
 
 type MenuSelectProps<T> = {
   small?: boolean;
@@ -43,7 +45,9 @@ const MenuFilter = styled(Input.Search)`
   margin-bottom: 8px;
 `;
 
-function MenuSelect<T extends { [key: string]: any }>(props: MenuSelectProps<T>) {
+function MenuSelect<T extends { [key: string]: any }>(
+  props: MenuSelectProps<T> & { sx?: CSSInterpolation },
+) {
   const { t } = useTranslation('components');
 
   const [filterKeyword, setFilterKeyword] = useState('');
@@ -69,7 +73,7 @@ function MenuSelect<T extends { [key: string]: any }>(props: MenuSelectProps<T>)
     }
   };
   return (
-    <MenuSelectWrapper>
+    <MenuSelectWrapper css={css(props.sx)}>
       <MenuFilter
         value={filterKeyword}
         placeholder={props.placeholder && t(props.placeholder)}
