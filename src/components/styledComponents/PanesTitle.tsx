@@ -18,10 +18,10 @@ const PanesTitle = styled((props: PanesTitleProps) => {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  .h2 {
+  h2 {
     margin: 0 auto 0 0;
   }
-  & > *:not(h2) {
+  & > span > *:not(h2) {
     margin-left: 16px;
   }
 `;

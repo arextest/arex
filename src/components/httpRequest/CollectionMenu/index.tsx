@@ -99,14 +99,14 @@ const Collection = forwardRef(
     const handleSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
       // console.log(info.nativeEvent.target.getAttribute('class'),'info')
       // 必须有选中的才可以触发
-      if (keys[0]){
+      if (keys[0]) {
         setSelectedKeys(keys);
         onSelect &&
-        onSelect(keys[0] as string, {
-          title: info.node.title,
-          key: info.node.key,
-          nodeType: info.node.nodeType,
-        });
+          onSelect(keys[0] as string, {
+            title: info.node.title,
+            key: info.node.key,
+            nodeType: info.node.nodeType,
+          });
       }
     };
 

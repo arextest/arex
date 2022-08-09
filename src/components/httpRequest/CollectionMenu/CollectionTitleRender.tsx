@@ -26,7 +26,7 @@ function CollectionTitleRender({
     return (
       <Menu
         onClick={(e) => {
-          console.log('1222',e)
+          console.log('1222', e);
           e.domEvent.stopPropagation();
           setVisible(false);
         }}

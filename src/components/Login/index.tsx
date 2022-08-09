@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthService } from '../../services/AuthService';
 import { WorkspaceService } from '../../services/Workspace.service';
 import { useStore } from '../../store';
-import {useMount} from "ahooks";
+import { useMount } from 'ahooks';
 
 let timeChange: any;
 const Login = () => {
@@ -88,12 +88,12 @@ const Login = () => {
       verificationCode: verificationCode,
     }).then((res) => {
       if (res.data.body.success == true) {
-        localStorage.setItem('accessToken',res.data.body.accessToken)
-        localStorage.setItem('refreshToken',res.data.body.refreshToken)
+        localStorage.setItem('accessToken', res.data.body.accessToken);
+        localStorage.setItem('refreshToken', res.data.body.refreshToken);
         message.success('Login succeeded');
         initBeforeUserEntry(email);
       } else {
-        message.error(res.data.responseStatusType.responseDesc)
+        message.error(res.data.responseStatusType.responseDesc);
       }
     });
   };
