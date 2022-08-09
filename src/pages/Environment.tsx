@@ -112,16 +112,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
   let childNode = children;
   if (editable) {
     childNode = editing ? (
-      <Form.Item
-        style={{ margin: 0 }}
-        name={dataIndex}
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: `${title} is required.`,
-        //   },
-        // ]}
-      >
+      <Form.Item style={{ margin: 0 }} name={dataIndex}>
         <Input ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
     ) : (
@@ -138,13 +129,19 @@ const EditableCell: React.FC<EditableCellProps> = ({
   return <td {...restProps}>{childNode}</td>;
 };
 
-const EnvironmentPage = ({ curEnvironment }: any) => {
+export type Environmentprops = {
+  curEnvironment: (p: any) => void;
+  fetchEnvironmentData: () => void;
+};
+
+const EnvironmentPage = ({ curEnvironment, fetchEnvironmentData }: Environmentprops) => {
   const [data, setData] = useState<[]>([]);
   const [isActive, setIsActive] = useState<[]>([]);
+  const [title, setTitle] = useState<string>('');
   const defaultColumns = [
     {
       title: 'VARIABLE',
-      dataIndex: 'keys',
+      dataIndex: 'key',
       width: '40%',
       editable: true,
     },
@@ -186,26 +183,23 @@ const EnvironmentPage = ({ curEnvironment }: any) => {
   useEffect(() => {
     if (curEnvironment.length > 0) {
       const EnvironmentActive: string[] = [];
-      curEnvironment[0].keyValues.map((e: any, index: number) => {
-        if (e.key !== index) {
-          e.keys = e.key;
-        }
-        e.key = index;
+      const EnvironmnetKeyValues = curEnvironment[0].keyValues.map((e: any, index: number) => {
         if (e.active) {
-          EnvironmentActive.push(e.key);
+          EnvironmentActive.push(index);
         }
+        return { ...e, keys: index };
       });
-
-      setData(curEnvironment[0].keyValues);
-      setCount(curEnvironment[0].keyValues.length + 1);
+      setData(EnvironmnetKeyValues);
+      setCount(EnvironmnetKeyValues.length + 1);
       setIsActive(EnvironmentActive);
+      setTitle(curEnvironment[0].title || curEnvironment[0].envName);
     }
   }, [curEnvironment]);
 
   //输入框数据保存
   const handleSave = (row: DataType) => {
     const newData = [...data];
-    const index = newData.findIndex((item) => row.key === item.key);
+    const index = newData.findIndex((item) => row.keys === item.keys);
     const item = newData[index];
     newData.splice(index, 1, {
       ...item,
@@ -236,9 +230,9 @@ const EnvironmentPage = ({ curEnvironment }: any) => {
     columnWidth: '200px',
     onSelect: (record, selected) => {
       if (selected) {
-        setIsActive([...isActive, record.key]);
+        setIsActive([...isActive, record.keys]);
       } else {
-        setIsActive(isActive.filter((e) => e != record.key));
+        setIsActive(isActive.filter((e) => e != record.keys));
       }
     },
   };
@@ -247,9 +241,9 @@ const EnvironmentPage = ({ curEnvironment }: any) => {
   const [count, setCount] = useState(0);
   const handleAdd = () => {
     const newData: DataType = {
-      key: count,
+      key: '',
       value: '',
-      keys: '',
+      keys: count,
       active: 'false',
     };
     setData([...data, newData]);
@@ -265,17 +259,19 @@ const EnvironmentPage = ({ curEnvironment }: any) => {
   //保存
   const SaveEnvironment = () => {
     const newdata = data.map((e: any) => {
-      if (isActive.includes(e.key)) {
+      if (isActive.includes(e.keys)) {
         e.active = true;
-        return { key: e.keys, active: e.active, value: e.value };
+        return { key: e.key, active: e.active, value: e.value };
       } else {
         e.active = false;
-        return { key: e.keys, active: e.active, value: e.value };
+        return { key: e.key, active: e.active, value: e.value };
       }
     });
-    curEnvironment[0].keyValues = newdata;
-    EnvironmentService.saveEnvironment({ env: curEnvironment[0] }).then((res) => {
+    let env = { ...curEnvironment[0] };
+    env.keyValues = newdata;
+    EnvironmentService.saveEnvironment({ env: env }).then((res) => {
       if (res.body.success == true) {
+        fetchEnvironmentData();
       }
     });
   };
@@ -289,13 +285,14 @@ const EnvironmentPage = ({ curEnvironment }: any) => {
           margin-bottom: 10px;
         `}
       >
-        <div>{curEnvironment.length > 0 && curEnvironment[0].envName}</div>
+        <div>{title}</div>
         <div>
           <Button onClick={handleAdd}>Add</Button> <Button onClick={SaveEnvironment}>Save</Button>
         </div>
       </div>
       <DndProvider backend={HTML5Backend}>
         <Table
+          rowKey='keys'
           bordered
           rowClassName={() => 'editable-row'}
           columns={columns}

@@ -26,6 +26,7 @@ function CollectionTitleRender({
     return (
       <Menu
         onClick={(e) => {
+          console.log('1222', e);
           e.domEvent.stopPropagation();
           setVisible(false);
         }}
@@ -66,10 +67,9 @@ function CollectionTitleRender({
                     parentPath: paths.map((i: any) => i.key),
                     userName: localStorage.getItem('email'),
                   }).then((res) => {
-                    console.log(res.data.body.infoId);
                     updateDirectoryTreeData();
                     callbackOfNewRequest(
-                      [res.data.body.infoId],
+                      [res.body.infoId],
                       paths.map((i: any) => i.key),
                       1,
                     );
@@ -96,7 +96,7 @@ function CollectionTitleRender({
                   }).then((res) => {
                     updateDirectoryTreeData();
                     callbackOfNewRequest(
-                      [res.data.body.infoId],
+                      [res.body.infoId],
                       paths.map((i: any) => i.key),
                       2,
                     );
