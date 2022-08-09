@@ -43,11 +43,14 @@ const Case: FC<CaseProps> = (props) => {
     },
   ];
 
-  const { data: caseData = [] } = useRequest(() => ReplayService.queryReplayCase({ planItemId }), {
-    ready: !!props.planItemId,
-    refreshDeps: [props.planItemId],
-    cacheKey: 'queryReplayCase',
-  });
+  const { data: caseData = [] } = useRequest(
+    () => ReplayService.queryReplayCase({ planItemId: props.planItemId }),
+    {
+      ready: !!props.planItemId,
+      refreshDeps: [props.planItemId],
+      cacheKey: 'queryReplayCase',
+    },
+  );
   return <Table size='small' columns={columnsCase} dataSource={caseData} pagination={false} />;
 };
 

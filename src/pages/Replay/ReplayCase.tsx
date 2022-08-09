@@ -11,6 +11,8 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
 
   const handleClickRecord = (record: ReplayCaseType) => {
+    console.log(selectedRecord);
+    console.log(record);
     setSelectedRecord(selectedRecord?.recordId === record.replayId ? undefined : record);
   };
   return (
