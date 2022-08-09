@@ -111,22 +111,22 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     {
       title: 'Passed',
       dataIndex: 'successCaseCount',
-      render: (text) => <Text type='success'>{text}</Text>,
+      render: (text) => <Text style={{ color: '#91cc75' }}>{text}</Text>,
     },
     {
       title: 'Failed',
       dataIndex: 'failCaseCount',
-      render: (text) => <Text type='danger'>{text}</Text>,
+      render: (text) => <Text style={{ color: '#ef6566' }}>{text}</Text>,
     },
     {
       title: 'Invalid',
       dataIndex: 'errorCaseCount',
-      render: (text) => <Text type='secondary'>{text}</Text>,
+      render: (text) => <Text style={{ color: '#73c0de' }}>{text}</Text>,
     },
     {
       title: 'Blocked',
       dataIndex: 'waitCaseCount',
-      render: (text) => <Text type='secondary'>{text}</Text>,
+      render: (text) => <Text style={{ color: '#fac858' }}>{text}</Text>,
     },
     {
       title: 'Action',
