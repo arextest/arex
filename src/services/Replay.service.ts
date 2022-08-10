@@ -6,6 +6,8 @@ import {
   CreatePlanRes,
   QueryDifferencesReq,
   QueryDifferencesRes,
+  QueryFullLinkMsgReq,
+  QueryFullLinkMsgRes,
   QueryMsgWithDiffReq,
   QueryMsgWithDiffRes,
   QueryPlanItemStatisticsReq,
@@ -91,5 +93,24 @@ export default class ReplayService {
     return request
       .post<QueryMsgWithDiffRes>('/report/queryMsgWithDiff', params)
       .then((res) => Promise.resolve(res.body));
+  }
+
+  static async queryFullLinkMsg(params: QueryFullLinkMsgReq) {
+    return request.post<QueryFullLinkMsgRes>('/report/queryFullLinkMsg', params).then((res) =>
+      Promise.resolve(
+        res.body.compareResults.map((item) => {
+          const type: 'html' | 'json' = item.baseMsg.includes('<html>') ? 'html' : 'json';
+          return {
+            ...item,
+            baseMsg:
+              type === 'html' ? item.baseMsg : JSON.stringify(JSON.parse(item.baseMsg), null, 2),
+            testMsg:
+              type === 'html' ? item.testMsg : JSON.stringify(JSON.parse(item.testMsg), null, 2),
+            type,
+          };
+        }),
+      ),
+    );
+    //  TODO parsing msg
   }
 }

@@ -210,3 +210,27 @@ export type QueryMsgWithDiffRes = {
   replayId: string;
   testMsg: string;
 };
+
+// ------ /report/queryFullLinkMsg ------
+export interface QueryFullLinkMsgReq {
+  recordId: string;
+}
+
+export type CompareResult = {
+  planId: number;
+  operationId: number;
+  serviceName: string;
+  categoryName: string;
+  diffResultCode: number;
+  operationName: string;
+  replayId: string;
+  recordId: string;
+  baseMsg: string;
+  testMsg: string;
+  planItemId: number;
+  logs: string | null;
+  type: 'html' | 'json';
+};
+export interface QueryFullLinkMsgRes {
+  compareResults: CompareResult[];
+}

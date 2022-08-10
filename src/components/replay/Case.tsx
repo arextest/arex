@@ -51,7 +51,15 @@ const Case: FC<CaseProps> = (props) => {
       cacheKey: 'queryReplayCase',
     },
   );
-  return <Table size='small' columns={columnsCase} dataSource={caseData} pagination={false} />;
+  return (
+    <Table
+      size='small'
+      rowKey='recordId'
+      columns={columnsCase}
+      dataSource={caseData}
+      pagination={false}
+    />
+  );
 };
 
 export default Case;
