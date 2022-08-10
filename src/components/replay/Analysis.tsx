@@ -13,7 +13,7 @@ const Analysis: FC<{
   onScenes?: (diff: Difference, category?: CategoryStatistic) => void;
 }> = ({ planItemId, onScenes }) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
-  const { data: differenceData = [] } = useRequest(
+  const { data: differenceData = [], loading } = useRequest(
     () =>
       ReplayService.queryDifferences({
         categoryName: selectedCategory!.categoryName,
@@ -79,6 +79,7 @@ const Analysis: FC<{
       <Col span={18}>
         <TableWrapper>
           <Table
+            loading={loading}
             columns={categoryColumns}
             dataSource={differenceData}
             pagination={false}

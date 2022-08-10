@@ -94,7 +94,7 @@ const Results: FC<{
 }> = ({ appId, defaultSelectFirst, onSelectedPlanChange }) => {
   const theme = useStore((state) => state.theme);
   const [selectRow, setSelectRow] = useState<number>(defaultSelectFirst ? 0 : -1);
-  const { data: planStatistics } = useRequest(
+  const { data: planStatistics, loading } = useRequest(
     () =>
       ReplayService.queryPlanStatistics({
         appId,
@@ -116,6 +116,7 @@ const Results: FC<{
         rowKey='planId'
         size='small'
         theme={theme}
+        loading={loading}
         pagination={{ pageSize: 5 }}
         columns={columns}
         onRow={(record, index) => {

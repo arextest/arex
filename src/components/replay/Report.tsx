@@ -41,7 +41,7 @@ const chartOptions = {
 const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
   const { setPanes } = useStore();
 
-  const { data: planItemData } = useRequest(
+  const { data: planItemData, loading: loadingData } = useRequest(
     () =>
       ReplayService.queryPlanItemStatistics({
         planId: selectedPlan!.planId,
@@ -274,7 +274,13 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
 
       <br />
 
-      <Table size='small' rowKey='planItemId' columns={columns} dataSource={planItemData} />
+      <Table
+        size='small'
+        rowKey='planItemId'
+        loading={loadingData}
+        columns={columns}
+        dataSource={planItemData}
+      />
     </Card>
   ) : (
     <></>

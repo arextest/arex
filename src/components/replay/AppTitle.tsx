@@ -18,7 +18,7 @@ const AppTitle: FC<AppTitleProps> = ({ data }) => {
   const [form] = Form.useForm<{ targetEnv: string }>();
   const [modalVisible, setModalVisible] = useState(false);
 
-  const { run: createPlan } = useRequest(ReplayService.createPlan, {
+  const { run: createPlan, loading: confirmLoading } = useRequest(ReplayService.createPlan, {
     manual: true,
     onSuccess(res) {
       if (res.result === 1) {
@@ -76,6 +76,7 @@ const AppTitle: FC<AppTitleProps> = ({ data }) => {
         onOk={handleStartReplay}
         onCancel={() => setModalVisible(false)}
         bodyStyle={{ paddingBottom: '12px' }}
+        confirmLoading={confirmLoading}
       >
         <Form name='startReplay' form={form} autoComplete='off'>
           <Form.Item

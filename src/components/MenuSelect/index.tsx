@@ -3,7 +3,7 @@ import { CSSInterpolation } from '@emotion/serialize/types';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Options } from 'ahooks/lib/useRequest/src/types';
-import { Input, Menu } from 'antd';
+import { Input, Menu, Spin } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -54,7 +54,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
 
   const [filterKeyword, setFilterKeyword] = useState('');
   const [selectedKey, setSelectedKey] = useState<string>();
-  const { data: apps = [] } = useRequest<D[], P>(props.request, {
+  const { data: apps = [], loading } = useRequest<D[], P>(props.request, {
     onSuccess(res) {
       if (res.length && props.defaultSelectFirst) {
         setSelectedKey(res[0][props.rowKey]);
@@ -94,19 +94,21 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
           onChange={(e) => setFilterKeyword(e.target.value)}
         />
       )}
-      <MenuList
-        small={props.small}
-        selectedKeys={selectedKey ? [selectedKey] : []}
-        items={filteredApps.map(
-          props.itemRender
-            ? props.itemRender
-            : (app) => ({
-                label: app[props.rowKey],
-                key: app[props.rowKey],
-              }),
-        )}
-        onClick={handleAppMenuClick}
-      />
+      <Spin spinning={loading}>
+        <MenuList
+          small={props.small}
+          selectedKeys={selectedKey ? [selectedKey] : []}
+          items={filteredApps.map(
+            props.itemRender
+              ? props.itemRender
+              : (app) => ({
+                  label: app[props.rowKey],
+                  key: app[props.rowKey],
+                }),
+          )}
+          onClick={handleAppMenuClick}
+        />
+      </Spin>
     </MenuSelectWrapper>
   );
 }
