@@ -30,19 +30,26 @@ import {
   getColumns,
   Response,
   ResponseCompare,
-  SaveRequestButton,
   ResponseTest,
+  SaveRequestButton,
 } from '../components/httpRequest';
 import { Label } from '../components/styledComponents';
-import { ContentTypeEnum, MethodEnum, METHODS, NodeType } from '../constant';
+import {
+  ContentTypeEnum,
+  MenuTypeEnum,
+  MethodEnum,
+  METHODS,
+  NodeType,
+  PageTypeEnum,
+} from '../constant';
 import { treeFindPath } from '../helpers/collection/util';
+import { readableBytes } from '../helpers/http/responseMeta';
 import { runTestScript } from '../helpers/sandbox';
 import { FileSystemService } from '../services/FileSystem.service';
-import { useStore } from '../store';
+import { PaneType, useStore } from '../store';
 import { tryParseJsonString, tryPrettierJsonString } from '../utils';
 import AgentAxios from '../utils/request';
 import { NodeList } from '../vite-env';
-import { readableBytes } from '../helpers/http/responseMeta';
 
 const { TabPane } = Tabs;
 
@@ -55,8 +62,6 @@ export type HttpRequestProps = {
   mode?: HttpRequestMode;
   id: string;
   isNew?: boolean;
-  collectionTreeData: NodeList[];
-  onSaveAs: (pane: PaneType) => void;
 };
 
 export type KeyValueType = {
@@ -109,15 +114,12 @@ const ResponseWrapper = styled.div`
 // mode：有两种模式，normal、compare
 // id：request的id，组件加载时拉一次数据
 // isNew：是否为新增的request
-// collectionTreeData：集合树形结构数据。作用是通过id可查询出节点路径，用于显示面包屑之类的
 const HttpRequest: FC<HttpRequestProps> = ({
   id,
   isNew,
-  collectionTreeData,
   mode: defaultMode = HttpRequestMode.Normal,
-  onSaveAs,
 }) => {
-  const { theme, extensionInstalled } = useStore();
+  const { theme, collectionTreeData, extensionInstalled, setPanes } = useStore();
   const { t: t_common } = useTranslation('common');
   const { t: t_components } = useTranslation('components');
 
@@ -131,7 +133,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
       parent: paths[paths.length - 2],
       raw: paths,
     };
-  }, [collectionTreeData]);
+  }, [collectionTreeData, id]);
   const [method, setMethod] = useState<typeof METHODS[number]>(MethodEnum.GET);
 
   const [url, setUrl] = useState('');
@@ -428,9 +430,22 @@ const HttpRequest: FC<HttpRequestProps> = ({
     setSavedTestVal(TestVal);
   };
 
+  const handleInterfaceSaveAs = (pane: PaneType) => {
+    // fetchCollectionTreeData(); // TODO 更新 Collection 数据
+    setPanes(
+      {
+        key: pane.key,
+        isNew: true,
+        title: pane.title,
+        menuType: MenuTypeEnum.Collection,
+        pageType: PageTypeEnum.Request,
+      },
+      'push',
+    );
+  };
+
   const handleUrlChange = (value: string) => {
     setUrl(value);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, queryStr] = value.split('?');
     if (queryStr) {
       const query = queryStr.split('&').map((q) => {
@@ -506,7 +521,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
                   testScript: null,
                 }}
                 collectionTreeData={collectionTreeData}
-                onSaveAs={onSaveAs}
+                onSaveAs={handleInterfaceSaveAs}
               />
             ) : (
               <Button onClick={handleSave}>{t_common('save')}</Button>

@@ -162,14 +162,12 @@ const MainBox = () => {
     setPanes,
     activePane,
     setActivePane,
-    collectionTreeData,
     activeMenu,
     setActiveMenu,
     environment,
     environmentTreeData,
     setEnvironment,
     setEnvironmentTreeData,
-    workspaces,
   } = useStore();
 
   // 必须和路由搭配起来，在切换的时候附着上去
@@ -272,20 +270,6 @@ const MainBox = () => {
         },
         'push',
       );
-  };
-
-  // TODO 建议放到 HttpRequest 组件中
-  const handleInterfaceSaveAs = (pane: PaneType) => {
-    // fetchCollectionTreeData(); // TODO 更新 Collection 数据
-    const newPanes = [...panes.filter((i) => i.key !== activePane)];
-    newPanes.push({
-      key: pane.key,
-      isNew: true,
-      title: pane.title,
-      menuType: MenuTypeEnum.Collection,
-      pageType: PageTypeEnum.Request,
-    });
-    setPanes(newPanes);
   };
 
   //environment
@@ -400,13 +384,7 @@ const MainBox = () => {
                 <MainTabPane tab={pane.title} key={pane.key}>
                   {/* TODO 工作区自定义组件待规范，参考 menuItem */}
                   {pane.pageType === PageTypeEnum.Request && (
-                    <HttpRequest
-                      collectionTreeData={collectionTreeData}
-                      mode={HttpRequestMode.Normal}
-                      id={pane.key}
-                      isNew={pane.isNew}
-                      onSaveAs={handleInterfaceSaveAs}
-                    />
+                    <HttpRequest id={pane.key} mode={HttpRequestMode.Normal} isNew={pane.isNew} />
                   )}
                   {pane.pageType === PageTypeEnum.Replay && (
                     <Replay data={pane.data as ApplicationDataType} />
