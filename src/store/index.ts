@@ -11,6 +11,12 @@ import { DefaultTheme, Theme, ThemeKey } from '../style/theme';
 
 type UserInfo = {
   email: string | null;
+  profile: {
+    background: string;
+    accentColor: string;
+    fontSize: string;
+    language: string;
+  };
 };
 
 // TODO 数据结构待规范
@@ -60,9 +66,18 @@ type BaseState = {
  * 2. 主菜单/工作区（MainBox）相关
  * 3. ......
  */
+
 export const useStore = create(
   immer<BaseState>((set, get) => ({
-    userInfo: { email: localStorage.getItem('email') },
+    userInfo: {
+      email: localStorage.getItem('email'),
+      profile: {
+        background: 'light',
+        accentColor: '#603BE3',
+        fontSize: 'small',
+        language: 'english',
+      },
+    },
     setUserInfo: (userInfo: BaseState['userInfo']) => set({ userInfo }),
 
     theme: (localStorage.getItem(ThemeKey) as Theme) || DefaultTheme,
