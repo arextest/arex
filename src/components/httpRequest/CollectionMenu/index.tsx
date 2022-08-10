@@ -130,7 +130,7 @@ const Collection = forwardRef(
       refreshDeps: [workspaceId],
       onSuccess: (res) => {
         if (res.length) {
-          setCollectionTreeData(treeData);
+          setCollectionTreeData(res);
           generateList(treeData);
         }
       },
