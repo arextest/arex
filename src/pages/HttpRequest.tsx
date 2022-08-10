@@ -153,12 +153,14 @@ const HttpRequest: FC<HttpRequestProps> = ({
         status: response.status,
         body: response.body,
         headers: response.headers,
-      }).then((res: any) => {
-        setTestResult(res.children);
-        setIsTestResult(true);
-      }).catch(e=>{
-        setIsTestResult(false);
-      });
+      })
+        .then((res: any) => {
+          setTestResult(res.children);
+          setIsTestResult(true);
+        })
+        .catch((e) => {
+          setIsTestResult(false);
+        });
   }, [response]);
 
   const params = useMemo(
@@ -453,7 +455,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
   //Test
   const [TestVal, setTestVal] = useState<string>('');
   const [TestResult, setTestResult] = useState<[]>([]);
-  const [savedTestVal,setSavedTestVal] = useState<string>('');
+  const [savedTestVal, setSavedTestVal] = useState<string>('');
   const getTestVal = (e: string) => {
     setTestVal(e);
   };
@@ -462,7 +464,6 @@ const HttpRequest: FC<HttpRequestProps> = ({
     <>
       <AnimateAutoHeight>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          {JSON.stringify(responseMeta)}
           {nodeInfoInCollectionTreeData.raw.length > 0 ? (
             <div>
               <Breadcrumb style={{ paddingBottom: '14px' }}>
@@ -661,11 +662,25 @@ const HttpRequest: FC<HttpRequestProps> = ({
           <TabPane tab={t_components('http.pre-requestScript')} key='4' disabled>
             <CodeMirror value='' height='300px' extensions={[javascript()]} theme={theme} />
           </TabPane>
-          <TabPane tab={
-              savedTestVal!==TestVal?<Badge dot={true} offset={[-1, 11]} color='#10B981' >
-              <div css={css`padding-right: 10px;`}>{t_components('http.test')}</div>
-            </Badge>:<>{t_components('http.test')}</>
-            } key='5' disabled={mode===HttpRequestMode.Compare}>
+          <TabPane
+            tab={
+              savedTestVal !== TestVal ? (
+                <Badge dot={true} offset={[-1, 11]} color='#10B981'>
+                  <div
+                    css={css`
+                      padding-right: 10px;
+                    `}
+                  >
+                    {t_components('http.test')}
+                  </div>
+                </Badge>
+              ) : (
+                <>{t_components('http.test')}</>
+              )
+            }
+            key='5'
+            disabled={mode === HttpRequestMode.Compare}
+          >
             <ResponseTest getTestVal={getTestVal} OldTestVal={TestVal}></ResponseTest>
           </TabPane>
         </Tabs>

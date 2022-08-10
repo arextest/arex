@@ -35,18 +35,18 @@ export const ResponseTestWrapper = styled.div`
       margin-top: 15px;
       margin-bottom: 10px;
     }
-    & > span:nth-of-type(n+2) {
-      display:inline-block;
-      color: #10B981;
+    & > span:nth-of-type(n + 2) {
+      display: inline-block;
+      color: #10b981;
       cursor: pointer;
       font-weight: bold;
       margin-left: 18px;
       margin-top: 10px;
       &:hover {
         color: #059669;
-        transform:translateX(6px);
+        transform: translateX(6px);
         transition: all 0.2s ease 0s;
-     }
+      }
     }
   }
 `;
@@ -56,23 +56,23 @@ export type ResponseTestprops = {
   getTestVal: (p: any) => void;
 };
 
-const ResponseTest = ({ getTestVal,OldTestVal }: ResponseTestprops) => {
+const ResponseTest = ({ getTestVal, OldTestVal }: ResponseTestprops) => {
   const { t: t_common } = useTranslation('common');
   const { t: t_components } = useTranslation('components');
   const [TestVal, setTestval] = useState<string>('');
   const { theme, extensionInstalled } = useStore();
-  const codeSnippet=[
+  const codeSnippet = [
     {
-      name:"Response: Status code is 200",
+      name: 'Response: Status code is 200',
       text: `
 // Check status code is 200
 pw.test("Status code is 200", ()=> {
     pw.expect(pw.response.status).toBe(200);
 });
-`
-    }
-  ]
-  const addTest = (text:string) => {
+`,
+    },
+  ];
+  const addTest = (text: string) => {
     getTestVal(TestVal + text);
     setTestval(TestVal + text);
   };
@@ -80,13 +80,11 @@ pw.test("Status code is 200", ()=> {
     getTestVal(instance);
     setTestval(instance);
   };
-  const feedLine = ()=>{
-  
-  }
+  const feedLine = () => {};
 
-  useEffect(()=>{
+  useEffect(() => {
     setTestval(OldTestVal);
-  },[OldTestVal])
+  }, [OldTestVal]);
   return (
     <>
       <ResponseTestHeader>
@@ -96,11 +94,7 @@ pw.test("Status code is 200", ()=> {
             <Button disabled type='text' icon={<QuestionCircleOutlined />} />
           </Tooltip>
           <Tooltip title={t_common('lineFeed')}>
-            <Button
-              type='text'
-              icon={<PicRightOutlined />}
-              onClick={feedLine}
-            />
+            <Button type='text' icon={<PicRightOutlined />} onClick={feedLine} />
           </Tooltip>
           <Tooltip title={t_common('clearAll')}>
             <Button type='text' icon={<DeleteOutlined />} onClick={() => setTestval('')} />
@@ -117,11 +111,13 @@ pw.test("Status code is 200", ()=> {
           theme={theme}
           style={{ width: '65%' }}
           // options = {{
-          //   lineWrapping:true, 
+          //   lineWrapping:true,
           // }}
         />
         <div>
-          <div>Test scripts are written in JavaScript, and are run after the response is received.</div>
+          <div>
+            Test scripts are written in JavaScript, and are run after the response is received.
+          </div>
           <span
             style={{ cursor: 'pointer' }}
             onClick={() => window.open('https://docs.hoppscotch.io/features/tests')}
@@ -132,7 +128,11 @@ pw.test("Status code is 200", ()=> {
           {/* <div>测试脚本使用JavaScript编写,并再受到响应后执行</div>
           <span>阅读文档</span>
           <div>代码片段</div> */}
-          {codeSnippet.map((e,i)=> <span key={i} onClick={()=>addTest(e.text)}>{e.name}</span>)}
+          {codeSnippet.map((e, i) => (
+            <span key={i} onClick={() => addTest(e.text)}>
+              {e.name}
+            </span>
+          ))}
         </div>
       </ResponseTestWrapper>
     </>
