@@ -30,17 +30,22 @@ const Analysis: FC<{
     {
       title: 'Point of difference',
       dataIndex: 'differenceName',
+      ellipsis: true,
     },
     {
       title: 'Scene Count',
       dataIndex: 'sceneCount',
+      width: '110px',
     },
     {
       title: 'Case Count',
       dataIndex: 'caseCount',
+      width: '110px',
     },
     {
       title: 'Action',
+      align: 'center',
+      width: '80px',
       render: (_, record) => (
         <SmallTextButton
           title='Scenes'
