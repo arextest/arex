@@ -151,12 +151,14 @@ const HttpRequest: FC<HttpRequestProps> = ({
         status: response.status,
         body: response.body,
         headers: response.headers,
-      }).then((res: any) => {
-        setTestResult(res.children);
-        setIsTestResult(true);
-      }).catch(e=>{
-        setIsTestResult(false);
-      });
+      })
+        .then((res: any) => {
+          setTestResult(res.children);
+          setIsTestResult(true);
+        })
+        .catch((e) => {
+          setIsTestResult(false);
+        });
   }, [response]);
 
   const params = useMemo(
@@ -650,7 +652,11 @@ const HttpRequest: FC<HttpRequestProps> = ({
           <TabPane tab={t_components('http.pre-requestScript')} key='4' disabled>
             <CodeMirror value='' height='300px' extensions={[javascript()]} theme={theme} />
           </TabPane>
-          <TabPane tab={t_components('http.test')} key='5' disabled={mode===HttpRequestMode.Compare}>
+          <TabPane
+            tab={t_components('http.test')}
+            key='5'
+            disabled={mode === HttpRequestMode.Compare}
+          >
             <ResponseTest getTestVal={getTestVal} OldTestVal={TestVal}></ResponseTest>
           </TabPane>
         </Tabs>

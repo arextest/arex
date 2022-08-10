@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { Button, Form, Input, message, Modal, Radio, RadioChangeEvent, Select, Tabs } from 'antd';
-import { FC, useState } from 'react';
+import { Form, message, Modal, Radio, Select, Tabs } from 'antd';
+import { FC } from 'react';
 const { TabPane } = Tabs;
 import { useMount, useRequest } from 'ahooks';
 import { SketchPicker } from 'react-color';
@@ -37,7 +37,6 @@ const ColorInput = ({ value = {}, onChange = () => {} }) => {
 const Setting: FC<Props> = ({ isModalVisible, setModalVisible }) => {
   const plainOptions = ['light', 'dark'];
   const [form] = Form.useForm();
-  const userInfo = useStore((state) => state.userInfo);
   const setUserInfo = useStore((state) => state.setUserInfo);
   function handleOk() {
     form
@@ -47,7 +46,7 @@ const Setting: FC<Props> = ({ isModalVisible, setModalVisible }) => {
           profile: JSON.stringify(values),
           userName: localStorage.getItem('email'),
         });
-
+        // 同步store
         setUserInfo({
           email: localStorage.getItem('email'),
           profile: {
@@ -65,11 +64,6 @@ const Setting: FC<Props> = ({ isModalVisible, setModalVisible }) => {
   function handleCancel() {
     setModalVisible(false);
   }
-  const onFinish = (values: any) => {};
-
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
-  };
   const { run: userProfileRequestRun } = useRequest(() => UserService.userProfile(), {
     onSuccess(res) {
       const profile = res.profile;
