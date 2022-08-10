@@ -1,6 +1,5 @@
-import './index.less';
-
 import { DownOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
+import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Empty, Input, Spin, Tooltip, Tree } from 'antd';
 import type { DataNode } from 'antd/es/tree';
@@ -13,6 +12,55 @@ import { CollectionService } from '../../../services/CollectionService';
 import { useStore } from '../../../store';
 import { TooltipButton } from '../../index';
 import CollectionTitle from './CollectionTitle';
+
+const CollectionMenuWrapper = styled.div`
+  height: 100%;
+  .ant-spin-nested-loading,
+  .ant-spin {
+    height: 100%;
+    max-height: 100% !important;
+  }
+
+  .collection-header {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    .collection-header-create {
+      margin-right: 5px;
+      span.action {
+        font-weight: bold;
+      }
+    }
+    .collection-header-search {
+    }
+    .collection-header-view {
+      margin: 0 5px;
+    }
+  }
+
+  .collection-title-render {
+    display: flex;
+    .right {
+    }
+    .left {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      .content {
+        overflow: hidden; //超出的文本隐藏
+        text-overflow: ellipsis; //溢出用省略号显示
+        white-space: nowrap; //溢出不换行
+      }
+    }
+  }
+  .ant-tree-node-content-wrapper {
+    overflow: hidden; //超出的文本隐藏
+    text-overflow: ellipsis; //溢出用省略号显示
+    white-space: nowrap; //溢出不换行
+  }
+`;
 
 const dataList: { key: React.Key; title: string }[] = [];
 const generateList = (data: DataNode[]) => {
@@ -164,7 +212,7 @@ const Collection = forwardRef(
     );
 
     return (
-      <div className={'collection'}>
+      <CollectionMenuWrapper>
         <Spin spinning={loading}>
           {!loading && !treeData.length ? (
             <Empty>
@@ -219,7 +267,7 @@ const Collection = forwardRef(
             </>
           )}
         </Spin>
-      </div>
+      </CollectionMenuWrapper>
     );
   },
 );

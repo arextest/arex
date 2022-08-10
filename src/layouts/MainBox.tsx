@@ -51,6 +51,9 @@ const MainMenu = styled(Tabs)`
       left: 0;
     }
   }
+  .ant-tabs-content {
+    height: 100%;
+  }
 `;
 
 type MainMenuItemProps = TabPaneProps & { menuItem: ReactNode };
@@ -178,7 +181,7 @@ const MainBox = () => {
         `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.key}`,
       );
     }
-  }, [activePane]);
+  }, [activePane, panes, params.workspaceId, params.workspaceName]);
 
   const addTab = () => {
     const newActiveKey = uuid();

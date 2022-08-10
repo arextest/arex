@@ -20,7 +20,13 @@ type MenuSelectProps<D, P extends any[]> = {
 };
 
 const MenuSelectWrapper = styled.div`
+  height: 100%;
   padding: 8px;
+  .ant-spin-nested-loading,
+  .ant-spin {
+    height: 100%;
+    max-height: 100% !important;
+  }
 `;
 const MenuList = styled(Menu)<{ small?: boolean }>`
   border: none !important;
@@ -86,15 +92,15 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   };
   return (
     <MenuSelectWrapper css={css(props.sx)}>
-      {props.filter && (
-        <MenuFilter
-          size={props.small ? 'small' : 'middle'}
-          value={filterKeyword}
-          placeholder={props.placeholder && t(props.placeholder)}
-          onChange={(e) => setFilterKeyword(e.target.value)}
-        />
-      )}
       <Spin spinning={loading}>
+        {props.filter && (
+          <MenuFilter
+            size={props.small ? 'small' : 'middle'}
+            value={filterKeyword}
+            placeholder={props.placeholder && t(props.placeholder)}
+            onChange={(e) => setFilterKeyword(e.target.value)}
+          />
+        )}
         <MenuList
           small={props.small}
           selectedKeys={selectedKey ? [selectedKey] : []}
