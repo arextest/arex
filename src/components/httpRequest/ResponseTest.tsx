@@ -87,13 +87,13 @@ pw.test("Status code is 200", ()=> {
   return (
     <>
       <ResponseTestHeader>
-        <span>{t_components('JavaScript代码')}</span>
+        <span>{t_components('JavaScript Code')}</span>
         <div>
           <Tooltip title={t_common('help')}>
-            <Button type='text' icon={<QuestionCircleOutlined />} />
+            <Button disabled type='text' icon={<QuestionCircleOutlined />} />
           </Tooltip>
           <Tooltip title={t_common('lineFeed')}>
-            <Button type='text' icon={<PicRightOutlined />} />
+            <Button disabled type='text' icon={<PicRightOutlined />} />
           </Tooltip>
           <Tooltip title={t_common('clearAll')}>
             <Button type='text' icon={<DeleteOutlined />} onClick={() => setTestval('')} />
@@ -111,14 +111,16 @@ pw.test("Status code is 200", ()=> {
           style={{ width: '65%' }}
         />
         <div>
-          <div>测试脚本使用JavaScript编写,并再受到响应后执行</div>
+          <div>
+            Test scripts are written in JavaScript, and are run after the response is received.
+          </div>
           <span
             style={{ cursor: 'pointer' }}
             onClick={() => window.open('https://docs.hoppscotch.io/features/tests')}
           >
-            阅读文档
+            Read documentation
           </span>
-          <div>代码片段</div>
+          <div>Snippets</div>
           {codeSnippet.map((e, i) => (
             <span key={i} onClick={() => addTest(e.text)}>
               {e.name}

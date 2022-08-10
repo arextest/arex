@@ -86,7 +86,7 @@ const Response: FC<{
           Time：<span>{props.time || 0} ms</span>
         </div>
         <div>
-          Size：<span>{props.size || 0} KB</span>
+          Size：<span>{props.size || 0} </span>
         </div>
       </StatusWrapper>
       <Tabs defaultActiveKey='1' onChange={onChange}>
@@ -201,7 +201,7 @@ const Response: FC<{
                         `}
                       />
                     )}
-                    {item.message}——{item.status == 'pass' ? '测试成功' : '测试失败'}
+                    {item.message}——{item.status == 'pass' ? 'test passed' : 'test failed'}
                   </List.Item>
                 )}
               />
@@ -209,8 +209,11 @@ const Response: FC<{
           ) : (
             <TestError>
               <img src={'https://hoppscotch.io/images/states/light/youre_lost.svg'}></img>
-              <div>无法执行请求脚本</div>
-              <div>测试脚本似乎有一个错误，请修复错误并再次运行测试</div>
+              <div>Could not execute post-request script</div>
+              <div>
+                There seems to be an error with test script. Please fix the errors and run tests
+                again
+              </div>
             </TestError>
           )}
         </TabPane>
