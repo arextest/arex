@@ -11,7 +11,7 @@ const { Option } = Select;
 
 type Props = {
   isModalVisible: boolean;
-  setModalVisible: (isVisible: boolean) => void;
+  onClose: () => void;
 };
 
 const SettingTabs = styled(Tabs)`
@@ -34,7 +34,7 @@ const ColorInput = ({ value = {}, onChange = () => {} }) => {
   );
 };
 
-const Setting: FC<Props> = ({ isModalVisible, setModalVisible }) => {
+const Setting: FC<Props> = ({ isModalVisible, onClose }) => {
   const plainOptions = ['light', 'dark'];
   const [form] = Form.useForm();
   const setUserInfo = useStore((state) => state.setUserInfo);
@@ -62,7 +62,7 @@ const Setting: FC<Props> = ({ isModalVisible, setModalVisible }) => {
       });
   }
   function handleCancel() {
-    setModalVisible(false);
+    onClose();
   }
   const { run: userProfileRequestRun } = useRequest(() => UserService.userProfile(), {
     onSuccess(res) {

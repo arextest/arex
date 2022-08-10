@@ -157,7 +157,12 @@ const AppHeader = () => {
       <Divider style={{ margin: '0' }} />
 
       {/*模态框*/}
-      <Setting isModalVisible={isSettingModalVisible} setModalVisible={setIsSettingModalVisible} />
+      <Setting
+        isModalVisible={isSettingModalVisible}
+        onClose={() => {
+          setIsSettingModalVisible(false);
+        }}
+      />
     </>
   );
 };
