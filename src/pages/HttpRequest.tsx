@@ -318,6 +318,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
         setTestUrl(res.body.testAddress?.endpoint || '');
         setBaseUrl(res.body.baseAddress?.endpoint || '');
         setTestVal(res.body.testScript || '');
+        setSavedTestVal(res.body.testScript || '');
       },
     },
   );
@@ -415,6 +416,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
       },
       nodeInfoInCollectionTreeData.self.nodeType,
     );
+    setSavedTestVal(TestVal);
   };
 
   const handleUrlChange = (value: string) => {
@@ -444,6 +446,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
   //Test
   const [TestVal, setTestVal] = useState<string>('');
   const [TestResult, setTestResult] = useState<[]>([]);
+  const [savedTestVal,setSavedTestVal] = useState<string>('');
   const getTestVal = (e: string) => {
     setTestVal(e);
   };
@@ -650,7 +653,11 @@ const HttpRequest: FC<HttpRequestProps> = ({
           <TabPane tab={t_components('http.pre-requestScript')} key='4' disabled>
             <CodeMirror value='' height='300px' extensions={[javascript()]} theme={theme} />
           </TabPane>
-          <TabPane tab={t_components('http.test')} key='5' disabled={mode===HttpRequestMode.Compare}>
+          <TabPane tab={
+              savedTestVal!==TestVal?<Badge dot={true} offset={[-3, 7]} >
+              <div css={css`padding-right: 10px;`}>{t_components('http.test')}</div>
+            </Badge>:<>{t_components('http.test')}</>
+            } key='5' disabled={mode===HttpRequestMode.Compare}>
             <ResponseTest getTestVal={getTestVal} OldTestVal={TestVal}></ResponseTest>
           </TabPane>
         </Tabs>

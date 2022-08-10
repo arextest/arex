@@ -87,7 +87,7 @@ pw.test("Status code is 200", ()=> {
   return (
     <>
       <ResponseTestHeader>
-        <span>{t_components('JavaScript代码')}</span>
+        <span>{t_components('http.javaScriptCode')}</span>
         <div>
           <Tooltip title={t_common('help')}>
             <Button type='text' icon={<QuestionCircleOutlined />} />
@@ -114,9 +114,12 @@ pw.test("Status code is 200", ()=> {
           style={{ width: '65%' }}
         />
         <div>
-          <div>测试脚本使用JavaScript编写,并再受到响应后执行</div>
+          <div>Test scripts are written in JavaScript, and are run after the response is received.</div>
+          <span>Read documentation</span>
+          <div>Snippets</div>
+          {/* <div>测试脚本使用JavaScript编写,并再受到响应后执行</div>
           <span>阅读文档</span>
-          <div>代码片段</div>
+          <div>代码片段</div> */}
           {codeSnippet.map((e,i)=> <span key={i} onClick={()=>addTest(e.text)}>{e.name}</span>)}
         </div>
       </ResponseTestWrapper>

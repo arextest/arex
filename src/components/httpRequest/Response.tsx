@@ -2,9 +2,9 @@ import { javascript } from '@codemirror/lang-javascript';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import CodeMirror from '@uiw/react-codemirror';
-import { Tabs, List, Progress } from 'antd';
+import { Tabs, List, Progress, Badge } from 'antd';
 import { FC, useEffect, useMemo, useState } from 'react';
-
+import { useTranslation } from 'react-i18next';
 import { useStore } from '../../store';
 import FormTable, { getColumns } from './FormTable';
 const { TabPane } = Tabs;
@@ -44,7 +44,7 @@ const Response: FC<{
   const onChange = (key: string) => {
     console.log(key);
   };
-
+  const { t: t_components } = useTranslation('components');
   const theme = useStore((state) => state.theme);
   const headers = useMemo(
     () =>
@@ -68,6 +68,8 @@ const Response: FC<{
       arrPass.push(e.expectResults.filter((a:any)=>a.status=='pass').length);
     })
     setTestPass(arrPass);
+    console.log(props.TestResult);
+    
   }, [props.TestResult]);
   return (
     <>
@@ -114,7 +116,11 @@ const Response: FC<{
             columns={getColumns()}
           />
         </TabPane>
-        <TabPane tab='Test Results' key='4'>
+        <TabPane tab={
+          props.TestResult&&props.TestResult.length?
+          <Badge dot={true} offset={[-3, 7]} >
+            <div css={css`padding-right: 10px `}>Test Results</div>
+          </Badge>:'Test Results'} key='4'>
           {props.isTestResult?props.TestResult?.map((e: any, i) => (
             <List
             key={i}
@@ -149,14 +155,16 @@ const Response: FC<{
                   ) : (
                     <CloseOutlined css={css`color: #EF4444; margin-right: 15px`}/>
                   )}
-                  {item.message}——{item.status == 'pass' ? '测试成功' : '测试失败'}
+                  {item.message}——{item.status == 'pass' ? t_components('http.testPassed') : t_components('http.testFailed')}
                 </List.Item>
               )}
             />
           )):<TestError>
               <img src={'https://hoppscotch.io/images/states/light/youre_lost.svg'}></img>
-              <div>无法执行请求脚本</div>
-              <div>测试脚本似乎有一个错误，请修复错误并再次运行测试</div>
+              <div>Could not execute post-request script</div>
+              <div>There seems to be an error with test script. Please fix the errors and run tests again</div>
+              {/* <div>无法执行请求脚本</div>
+              <div>测试脚本似乎有一个错误，请修复错误并再次运行测试</div> */}
             </TestError>}
         </TabPane>
       </Tabs>
