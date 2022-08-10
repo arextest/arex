@@ -1,6 +1,5 @@
 import 'antd/dist/antd.less';
 import './style/index.less';
-import './components/app/index.less';
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { ThemeProvider } from '@emotion/react';

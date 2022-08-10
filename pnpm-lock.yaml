@@ -15,6 +15,7 @@ specifiers:
   '@emotion/styled': ^11.9.3
   '@kurkle/color': ^0.2.1
   '@types/react': ^18.0.15
+  '@types/react-color': ^3.0.6
   '@types/react-dom': ^18.0.6
   '@types/uuid': ^8.3.4
   '@typescript-eslint/eslint-plugin': ^5.30.7
@@ -113,6 +114,7 @@ devDependencies:
   '@commitlint/config-conventional': 17.0.3
   '@emotion/babel-plugin': 11.10.0_@babel+core@7.18.10
   '@types/react': 18.0.15
+  '@types/react-color': 3.0.6
   '@types/react-dom': 18.0.6
   '@types/uuid': 8.3.4
   '@typescript-eslint/eslint-plugin': 5.32.0_iosr3hrei2tubxveewluhu5lhy
@@ -1458,6 +1460,16 @@ packages:
         integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==,
       }
 
+  /@types/react-color/3.0.6:
+    resolution:
+      {
+        integrity: sha512-OzPIO5AyRmLA7PlOyISlgabpYUa3En74LP8mTMa0veCA719SvYQov4WLMsHvCgXP+L+KI9yGhYnqZafVGG0P4w==,
+      }
+    dependencies:
+      '@types/react': 18.0.15
+      '@types/reactcss': 1.2.6
+    dev: true
+
   /@types/react-dom/18.0.6:
     resolution:
       {
@@ -1476,6 +1488,15 @@ packages:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
       csstype: 3.1.0
+
+  /@types/reactcss/1.2.6:
+    resolution:
+      {
+        integrity: sha512-qaIzpCuXNWomGR1Xq8SCFTtF4v8V27Y6f+b9+bzHiv087MylI/nTCqqdChNeWS7tslgROmYB7yeiruWX7WnqNg==,
+      }
+    dependencies:
+      '@types/react': 18.0.15
+    dev: true
 
   /@types/scheduler/0.16.2:
     resolution:

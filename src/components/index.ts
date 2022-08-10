@@ -6,3 +6,5 @@ export { default as CollectionMenu } from './httpRequest/CollectionMenu';
 export { default as Login } from './Login';
 export { default as MenuSelect } from './MenuSelect';
 export { default as ReplayMenu } from './replay/ReplayMenu';
+export { default as TooltipButton } from './TooltipButton';
+export { default as WorkspacesMenu } from './workspace/WorkspacesMenu';
