@@ -1,7 +1,7 @@
 import './Environment.less';
 
 import { MenuOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Select, Table } from 'antd';
+import { Button, Form, Input, message, Table } from 'antd';
 import update from 'immutability-helper';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
@@ -272,6 +272,9 @@ const EnvironmentPage = ({ curEnvironment, fetchEnvironmentData }: Environmentpr
     EnvironmentService.saveEnvironment({ env: env }).then((res) => {
       if (res.body.success == true) {
         fetchEnvironmentData();
+        message.success('保存成功');
+      } else {
+        message.error('保存失败');
       }
     });
   };

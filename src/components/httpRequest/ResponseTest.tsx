@@ -1,7 +1,7 @@
 import { DeleteOutlined, QuestionCircleOutlined, PicRightOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Tooltip } from 'antd';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { javascript } from '@codemirror/lang-javascript';
 import { json } from '@codemirror/lang-json';
@@ -29,33 +29,61 @@ export const ResponseTestWrapper = styled.div`
     border-left: 1px solid #eee;
     padding-left: 20px;
     & > span:first-of-type {
-      color: #737373;
+      color: #603be3;
     }
     & > div:nth-of-type(2) {
       margin-top: 15px;
+      margin-bottom: 10px;
+    }
+    & > span:nth-of-type(n + 2) {
+      display: inline-block;
+      color: #10b981;
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 18px;
+      margin-top: 10px;
+      &:hover {
+        color: #059669;
+        transform: translateX(6px);
+        transition: all 0.2s ease 0s;
+      }
     }
   }
 `;
 
-const ResponseTest: FC<{}> = ({ getTestVal }: any) => {
+export type ResponseTestprops = {
+  OldTestVal: string;
+  getTestVal: (p: any) => void;
+};
+
+const ResponseTest = ({ getTestVal, OldTestVal }: ResponseTestprops) => {
   const { t: t_common } = useTranslation('common');
   const { t: t_components } = useTranslation('components');
   const [TestVal, setTestval] = useState<string>('');
   const { theme, extensionInstalled } = useStore();
-  const addTest = () => {
-    const test = `
+  const codeSnippet = [
+    {
+      name: 'Response: Status code is 200',
+      text: `
 // Check status code is 200
 pw.test("Status code is 200", ()=> {
     pw.expect(pw.response.status).toBe(200);
 });
-    `;
-    getTestVal(TestVal + test);
-    setTestval(TestVal + test);
+`,
+    },
+  ];
+  const addTest = (text: string) => {
+    getTestVal(TestVal + text);
+    setTestval(TestVal + text);
   };
   const CodeMirrorChange = (instance: string) => {
     getTestVal(instance);
     setTestval(instance);
   };
+
+  useEffect(() => {
+    setTestval(OldTestVal);
+  }, [OldTestVal]);
   return (
     <>
       <ResponseTestHeader>
@@ -65,13 +93,7 @@ pw.test("Status code is 200", ()=> {
             <Button type='text' icon={<QuestionCircleOutlined />} />
           </Tooltip>
           <Tooltip title={t_common('lineFeed')}>
-            <Button
-              type='text'
-              icon={<PicRightOutlined />}
-              onClick={() => {
-                console.log(TestVal);
-              }}
-            />
+            <Button type='text' icon={<PicRightOutlined />} />
           </Tooltip>
           <Tooltip title={t_common('clearAll')}>
             <Button type='text' icon={<DeleteOutlined />} onClick={() => setTestval('')} />
@@ -90,9 +112,18 @@ pw.test("Status code is 200", ()=> {
         />
         <div>
           <div>测试脚本使用JavaScript编写,并再受到响应后执行</div>
-          <span>阅读文档</span>
+          <span
+            style={{ cursor: 'pointer' }}
+            onClick={() => window.open('https://docs.hoppscotch.io/features/tests')}
+          >
+            阅读文档
+          </span>
           <div>代码片段</div>
-          <div onClick={addTest}>Response: Status code is 200</div>
+          {codeSnippet.map((e, i) => (
+            <span key={i} onClick={() => addTest(e.text)}>
+              {e.name}
+            </span>
+          ))}
         </div>
       </ResponseTestWrapper>
     </>

@@ -143,40 +143,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
   const [requestParams, setRequestParams] = useImmer<KeyValueType[]>([
     { key: '', value: '', active: true },
   ]);
-
-  const cmValue = `    pw.test("Arithmetic operations and toBe", () => {
-      const size = 500 + 500;
-      pw.expect(size).toBe(1000);
-      pw.expect(size - 500).toBe(500);
-      pw.expect(size * 4).toBe(4000);
-      pw.expect(size / 4).toBe(250);
-    });
-    pw.test("toBeLevelxxx", () => {
-      pw.expect(200).toBeLevel2xx();
-      pw.expect(204).toBeLevel2xx();
-      pw.expect(300).not.toBeLevel2xx();
-      pw.expect(300).toBeLevel3xx();
-      pw.expect(304).toBeLevel3xx();
-      pw.expect(204).not.toBeLevel3xx();
-      pw.expect(401).toBeLevel4xx();
-      pw.expect(404).toBeLevel4xx();
-      pw.expect(204).not.toBeLevel4xx();
-      pw.expect(501).toBeLevel5xx();
-      pw.expect(504).toBeLevel5xx();
-      pw.expect(204).not.toBeLevel5xx();
-    });
-    pw.test("toBeType", () => {
-      pw.expect("hello").toBeType("string");
-      pw.expect(10).toBeType("number");
-      pw.expect(true).toBeType("boolean");
-      pw.expect("deffonotanumber").not.toBeType("number");
-    });
-    pw.test("toHaveLength", () => {
-      const arr = [1, 2, 3];
-      pw.expect(arr).toHaveLength(3);
-      pw.expect(arr).not.toHaveLength(3);
-    });`;
-
+  const [isTestResult, setIsTestResult] = useState(true);
   useEffect(() => {
     handleUpdateUrl();
     response &&
@@ -184,9 +151,14 @@ const HttpRequest: FC<HttpRequestProps> = ({
         status: response.status,
         body: response.body,
         headers: response.headers,
-      }).then((res: any) => {
-        setTestResult(res.children);
-      });
+      })
+        .then((res: any) => {
+          setTestResult(res.children);
+          setIsTestResult(true);
+        })
+        .catch((e) => {
+          setIsTestResult(false);
+        });
   }, [response]);
 
   const params = useMemo(
@@ -347,6 +319,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
         setRequestBody(res.body?.body?.body || '');
         setTestUrl(res.body.testAddress?.endpoint || '');
         setBaseUrl(res.body.baseAddress?.endpoint || '');
+        setTestVal(res.body.testScript || '');
       },
     },
   );
@@ -440,7 +413,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
         headers: requestHeaders,
         params: requestParams,
         preRequestScript: null,
-        testScript: null,
+        testScript: TestVal,
       },
       nodeInfoInCollectionTreeData.self.nodeType,
     );
@@ -470,7 +443,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
     setUrl(url.split('?')[0] + query);
   };
 
-  //test
+  //Test
   const [TestVal, setTestVal] = useState<string>('');
   const [TestResult, setTestResult] = useState<[]>([]);
   const getTestVal = (e: string) => {
@@ -679,9 +652,12 @@ const HttpRequest: FC<HttpRequestProps> = ({
           <TabPane tab={t_components('http.pre-requestScript')} key='4' disabled>
             <CodeMirror value='' height='300px' extensions={[javascript()]} theme={theme} />
           </TabPane>
-          <TabPane tab={t_components('http.test')} key='5'>
-            {/* <CodeMirror value='' height='300px' extensions={[javascript()]} theme={theme}*/}
-            <ResponseTest getTestVal={getTestVal}></ResponseTest>
+          <TabPane
+            tab={t_components('http.test')}
+            key='5'
+            disabled={mode === HttpRequestMode.Compare}
+          >
+            <ResponseTest getTestVal={getTestVal} OldTestVal={TestVal}></ResponseTest>
           </TabPane>
         </Tabs>
       </AnimateAutoHeight>
@@ -695,6 +671,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
                 res={response?.data || response?.statusText}
                 status={{ code: response.status, text: response.statusText }}
                 TestResult={TestResult}
+                isTestResult={isTestResult}
               />
             ) : (
               <ResponseCompare responses={[baseResponse?.data, testResponse?.data]} />

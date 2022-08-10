@@ -93,23 +93,35 @@ const AppHeader = () => {
             onClick={() => changeTheme()}
           />
           <Dropdown
+            overlayStyle={{ width: '170px' }}
             trigger={['click']}
             overlay={
               <Menu
-                items={['Setting'].map((workspace) => {
-                  return {
-                    key: workspace,
-                    label: (
-                      <span
-                        onClick={() => {
-                          setIsSettingModalVisible(true);
-                        }}
-                      >
-                        {workspace}
-                      </span>
-                    ),
-                  };
-                })}
+                onClick={(e) => {
+                  console.log(e);
+                  if (e.key === 'settings') {
+                    setIsSettingModalVisible(true);
+                  }
+                }}
+                items={[
+                  {
+                    key: 'settings',
+                    label: <span>Settings</span>,
+                  },
+                  {
+                    type: 'divider',
+                  },
+                  {
+                    key: '1',
+                    label: <span>Privacy Policy</span>,
+                    disabled: true,
+                  },
+                  {
+                    key: '2',
+                    label: <span>Terms</span>,
+                    disabled: true,
+                  },
+                ]}
               />
             }
           >
@@ -123,6 +135,7 @@ const AppHeader = () => {
 
           <Dropdown
             trigger={['click']}
+            overlayStyle={{ width: '170px' }}
             overlay={
               <Menu
                 items={[
@@ -134,11 +147,7 @@ const AppHeader = () => {
               />
             }
           >
-            <Avatar
-              size={20}
-              src={'https://joeschmoe.io/api/v1/random'}
-              style={{ marginLeft: '8px' }}
-            >
+            <Avatar size={20} style={{ marginLeft: '8px', cursor: 'pointer' }}>
               {userInfo?.email}
             </Avatar>
           </Dropdown>
