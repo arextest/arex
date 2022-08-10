@@ -1,3 +1,4 @@
+export { default as CheckOrCloseIcon } from './CheckOrCloseIcon';
 export { default as CollapseTable } from './CollapseTable';
 export { default as FlexCenterWrapper } from './FlexCenterWrapper';
 export { default as Label } from './Label';
