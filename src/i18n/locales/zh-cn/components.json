@@ -18,7 +18,10 @@
     "test": "测试",
     "queryParams": "查询参数",
     "contentType": "内容类型",
-    "responseNotReady": "请求未发送，当前无响应"
+    "responseNotReady": "请求未发送，当前无响应",
+    "testPassed": "测试成功",
+    "testFailed": "测试失败",
+    "javaScriptCode": "JavaScript代码"
   },
   "collectionMenu": {
     "collection": "集合",

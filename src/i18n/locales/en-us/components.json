@@ -18,7 +18,10 @@
     "test": "Test",
     "queryParams": "QueryParams",
     "contentType": "ContentType",
-    "responseNotReady": "Enter the URL and click Send to get a response"
+    "responseNotReady": "Enter the URL and click Send to get a response",
+    "testPassed": "test passed",
+    "testFailed": "test failed",
+    "javaScriptCode": "JavaScript Code"
   },
   "collectionMenu": {
     "collection": "Collection",
