@@ -140,7 +140,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
             setPanes(
               {
                 key: uuid(),
-                title: `Analysis - ${record.planItemId}`,
+                title: `Analysis - ${record.operationName}`,
                 pageType: PageTypeEnum.ReplayAnalysis,
                 menuType: MenuTypeEnum.Replay,
                 isNew: false,
@@ -157,7 +157,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
             setPanes(
               {
                 key: uuid(),
-                title: `Case - ${record.planItemId}`,
+                title: `Case - ${record.operationName}`,
                 pageType: PageTypeEnum.ReplayCase,
                 menuType: MenuTypeEnum.Replay,
                 isNew: false,

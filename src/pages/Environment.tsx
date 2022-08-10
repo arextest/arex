@@ -273,7 +273,7 @@ const EnvironmentPage = ({ curEnvironment, fetchEnvironmentData }: Environmentpr
       if (res.body.success == true) {
         fetchEnvironmentData();
         message.success('保存成功');
-      }else{
+      } else {
         message.error('保存失败');
       }
     });

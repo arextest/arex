@@ -13,17 +13,19 @@ const { Panel } = Collapse;
 const CollapseTable: FC<CollapseTableProps> = (props) => {
   return (
     <Collapse
+      className='collapse-table'
       activeKey={props.active ? 'report' : 'none'}
       css={css`
-        margin-bottom: 16px;
-        .ant-collapse-header {
-          cursor: default !important;
-          //background: #fff !important;
-        }
         .ant-collapse-content-box {
           padding: 0 !important;
           .ant-card-head-title {
             font-size: 16px;
+          }
+        }
+        &.collapse-table {
+          margin-bottom: 16px;
+          & > .ant-collapse-item > .ant-collapse-header {
+            cursor: default; // 只作用于顶层
           }
         }
       `}

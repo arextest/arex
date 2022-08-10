@@ -1,5 +1,6 @@
-import { CheckCircleOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
+
+import CheckOrCloseIcon from '../styledComponents/CheckOrCloseIcon';
 
 const FooterWrapper = styled.div`
   height: 26px;
@@ -26,12 +27,10 @@ const AppFooter = () => {
     <FooterWrapper>
       <div className='footer_left'></div>
       <div className='footer_right'>
-        {window.__AREX_EXTENSION_INSTALLED__ ? (
-          <>
-            <CheckCircleOutlined />
-            <span>Browser Agent</span>
-          </>
-        ) : null}
+        <span>
+          <CheckOrCloseIcon checked={window.__AREX_EXTENSION_INSTALLED__} />
+          Browser Agent
+        </span>
       </div>
     </FooterWrapper>
   );

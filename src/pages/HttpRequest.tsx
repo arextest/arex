@@ -42,6 +42,7 @@ import { useStore } from '../store';
 import { tryParseJsonString, tryPrettierJsonString } from '../utils';
 import AgentAxios from '../utils/request';
 import { NodeList } from '../vite-env';
+import { readableBytes } from '../helpers/http/responseMeta';
 
 const { TabPane } = Tabs;
 
@@ -138,6 +139,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
   const [testUrl, setTestUrl] = useState('');
   const [sent, setSent] = useState(false);
   const [response, setResponse] = useState<any>(); // 响应完整数据
+  const [responseMeta, setResponseMeta] = useState<any>({ time: 0, size: '' }); // 响应的其他信息
   const [baseResponse, setBaseResponse] = useState<any>(); // base响应完整数据
   const [testResponse, setTestResponse] = useState<any>(); // test响应完整数据
   const [requestParams, setRequestParams] = useImmer<KeyValueType[]>([
@@ -229,6 +231,10 @@ const HttpRequest: FC<HttpRequestProps> = ({
       validationRequest(cancelRequest);
     },
     onSuccess: (res) => {
+      setResponseMeta({
+        time: new Date().getTime() - responseMeta.time,
+        size: readableBytes(JSON.stringify(res.data).length),
+      });
       setResponse(res);
     },
     onError(err) {
@@ -349,6 +355,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
       const body = tryParseJsonString(requestBody, t_common('invalidJSON'));
       body && (data.data = body);
     }
+    setResponseMeta({ time: new Date().getTime() });
     request({
       url,
       method,
@@ -455,6 +462,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
     <>
       <AnimateAutoHeight>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          {JSON.stringify(responseMeta)}
           {nodeInfoInCollectionTreeData.raw.length > 0 ? (
             <div>
               <Breadcrumb style={{ paddingBottom: '14px' }}>
@@ -654,7 +662,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
             <CodeMirror value='' height='300px' extensions={[javascript()]} theme={theme} />
           </TabPane>
           <TabPane tab={
-              savedTestVal!==TestVal?<Badge dot={true} offset={[-3, 7]} >
+              savedTestVal!==TestVal?<Badge dot={true} offset={[-1, 11]} color='#10B981' >
               <div css={css`padding-right: 10px;`}>{t_components('http.test')}</div>
             </Badge>:<>{t_components('http.test')}</>
             } key='5' disabled={mode===HttpRequestMode.Compare}>
@@ -673,6 +681,8 @@ const HttpRequest: FC<HttpRequestProps> = ({
                 status={{ code: response.status, text: response.statusText }}
                 TestResult={TestResult}
                 isTestResult={isTestResult}
+                time={responseMeta.time > 10000 ? 0 : responseMeta.time}
+                size={responseMeta.size}
               />
             ) : (
               <ResponseCompare responses={[baseResponse?.data, testResponse?.data]} />

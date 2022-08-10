@@ -23,10 +23,10 @@ const StatusWrapper = styled.div`
 const TestError = styled.div`
   text-align: center;
   & > div:first-of-type {
-    color: #737373;
+    color: ${(props) => props.theme.color.text.secondary};
   }
   & > div:nth-of-type(2) {
-    color: #A3A3A3;
+    color: ${(props) => props.theme.color.text.secondary};
     margin-top: 10px;
   }
 
@@ -68,7 +68,6 @@ const Response: FC<{
       arrPass.push(e.expectResults.filter((a:any)=>a.status=='pass').length);
     })
     setTestPass(arrPass);
-    console.log(props.TestResult);
     
   }, [props.TestResult]);
   return (
@@ -88,7 +87,7 @@ const Response: FC<{
           Time：<span>{props.time || 0} ms</span>
         </div>
         <div>
-          Size：<span>{props.size || 0} KB</span>
+          Size：<span>{props.size || 0} </span>
         </div>
       </StatusWrapper>
       <Tabs defaultActiveKey='1' onChange={onChange}>
@@ -118,7 +117,7 @@ const Response: FC<{
         </TabPane>
         <TabPane tab={
           props.TestResult&&props.TestResult.length?
-          <Badge dot={true} offset={[-3, 7]} >
+          <Badge dot={true} offset={[-1, 11]} color='#10B981' >
             <div css={css`padding-right: 10px `}>Test Results</div>
           </Badge>:'Test Results'} key='4'>
           {props.isTestResult?props.TestResult?.map((e: any, i) => (
