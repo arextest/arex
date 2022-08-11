@@ -155,14 +155,12 @@ const HttpRequest: FC<HttpRequestProps> = ({
         status: response.status,
         body: response.body,
         headers: response.headers,
-      })
-        .then((res: any) => {
-          setTestResult(res.children);
-          setIsTestResult(true);
-        })
-        .catch((e) => {
-          setIsTestResult(false);
-        });
+      }).then((res: any) => {
+        setTestResult(res.children);
+        setIsTestResult(true);
+      }).catch(e=>{
+        setIsTestResult(false);
+      });
   }, [response]);
 
   const params = useMemo(
@@ -442,6 +440,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
       },
       'push',
     );
+
   };
 
   const handleUrlChange = (value: string) => {
@@ -471,6 +470,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
   const [TestVal, setTestVal] = useState<string>('');
   const [TestResult, setTestResult] = useState<[]>([]);
   const [savedTestVal, setSavedTestVal] = useState<string>('');
+
   const getTestVal = (e: string) => {
     setTestVal(e);
   };
