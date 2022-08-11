@@ -14,7 +14,7 @@ import {
   WorkspacesMenu,
 } from '../components';
 import { CollectionProps, CollectionRef } from '../components/httpRequest/CollectionMenu';
-import { MenuTypeEnum, PageTypeEnum, RoleEnum } from '../constant';
+import { MenuTypeEnum, PageTypeEnum } from '../constant';
 import {
   Environment,
   Folder,
@@ -27,7 +27,7 @@ import {
 import { HttpRequestMode } from '../pages/HttpRequest';
 import EnvironmentService from '../services/Environment.service';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
-import { PaneType, useStore } from '../store';
+import { useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
 
@@ -150,7 +150,11 @@ const MainTabPane = styled((props: TabPaneProps) => (
   overflow: auto;
 `;
 
-const EmptyWrapper = styled(Empty)`
+const EmptyWrapper = styled(
+  (props: { empty: boolean; emptyContent: ReactNode; children: ReactNode }) => (
+    <div {...props}>{props.empty ? <Empty>{props.emptyContent}</Empty> : props.children}</div>
+  ),
+)`
   height: 100%;
   display: flex;
   flex-flow: column;
@@ -359,8 +363,14 @@ const MainBox = () => {
         }
         secondNode={
           // 右侧工作区
-          panes.length ? (
-            // environmentTreeData={environmentTreeData} setEnvironment={setEnvironment}
+          <EmptyWrapper
+            empty={!panes.length}
+            emptyContent={
+              <Button type='primary' onClick={addTab}>
+                New Request
+              </Button>
+            }
+          >
             <MainTabs
               onEdit={handleTabsEdit}
               activeKey={activePane}
@@ -409,13 +419,7 @@ const MainBox = () => {
                 </MainTabPane>
               ))}
             </MainTabs>
-          ) : (
-            <EmptyWrapper>
-              <Button type='primary' onClick={addTab}>
-                New Request
-              </Button>
-            </EmptyWrapper>
-          )
+          </EmptyWrapper>
         }
       />
 

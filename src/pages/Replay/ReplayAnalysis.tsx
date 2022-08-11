@@ -1,5 +1,5 @@
 import { useRequest } from 'ahooks';
-import { Card, Col, Collapse, Row, Space } from 'antd';
+import { Card, Col, Row, Space } from 'antd';
 import React, { FC, useState } from 'react';
 
 import MenuSelect from '../../components/MenuSelect';
@@ -13,8 +13,6 @@ import {
   PlanItemStatistics,
   Scene,
 } from '../../services/Replay.type';
-
-const { Panel } = Collapse;
 
 const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   const [selectedDiff, setSelectedDiff] = useState<Difference>();
