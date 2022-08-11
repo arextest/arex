@@ -227,7 +227,7 @@ const EnvironmentPage = ({ curEnvironment, fetchEnvironmentData }: Environmentpr
   //多选框
   const rowSelection = {
     selectedRowKeys: isActive,
-    columnWidth: '200px',
+    columnWidth: '60px',
     onSelect: (record, selected) => {
       if (selected) {
         setIsActive([...isActive, record.keys]);
@@ -235,6 +235,7 @@ const EnvironmentPage = ({ curEnvironment, fetchEnvironmentData }: Environmentpr
         setIsActive(isActive.filter((e) => e != record.keys));
       }
     },
+    // renderCell:(checked, record, index, originNode)=><div css={css`display:flex;justify-content:space-between`}><div css={css`display:flex;align-items:center`}><MenuOutlined/></div>{originNode}</div>,
   };
 
   //添加

@@ -326,7 +326,6 @@ const HttpRequest: FC<HttpRequestProps> = ({
         setTestUrl(res.body.testAddress?.endpoint || '');
         setBaseUrl(res.body.baseAddress?.endpoint || '');
         setTestVal(res.body.testScript || '');
-        setSavedTestVal(res.body.testScript || '');
       },
     },
   );
@@ -425,7 +424,6 @@ const HttpRequest: FC<HttpRequestProps> = ({
       },
       nodeInfoInCollectionTreeData.self.nodeType,
     );
-    setSavedTestVal(TestVal);
   };
 
   const handleInterfaceSaveAs = (pane: PaneType) => {
@@ -469,7 +467,6 @@ const HttpRequest: FC<HttpRequestProps> = ({
   //Test
   const [TestVal, setTestVal] = useState<string>('');
   const [TestResult, setTestResult] = useState<[]>([]);
-  const [savedTestVal, setSavedTestVal] = useState<string>('');
 
   const getTestVal = (e: string) => {
     setTestVal(e);
@@ -679,7 +676,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
           </TabPane>
           <TabPane
             tab={
-              savedTestVal !== TestVal ? (
+              TestVal ? (
                 <Badge dot={true} offset={[-1, 11]} color='#10B981'>
                   <div
                     css={css`
