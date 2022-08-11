@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { javascript } from '@codemirror/lang-javascript';
 import { json } from '@codemirror/lang-json';
 import CodeMirror from '@uiw/react-codemirror';
+import { EditorView } from "@codemirror/view";
 import { useStore } from '../../store';
 
 export const ResponseTestHeader = styled.div`
@@ -61,6 +62,7 @@ const ResponseTest = ({ getTestVal,OldTestVal }: ResponseTestprops) => {
   const { t: t_components } = useTranslation('components');
   const [TestVal, setTestval] = useState<string>('');
   const { theme, extensionInstalled } = useStore();
+  const [islineWrapping,setIslineWrapping] = useState<boolean>(true);
   const codeSnippet=[
     {
       name:"Response: Status code is 200",
@@ -81,7 +83,7 @@ pw.test("Status code is 200", ()=> {
     setTestval(instance);
   };
   const feedLine = ()=>{
-  
+    setIslineWrapping(!islineWrapping);
   }
 
   useEffect(()=>{
@@ -113,12 +115,9 @@ pw.test("Status code is 200", ()=> {
           height='auto'
           minHeight='300px'
           onChange={(e: string) => CodeMirrorChange(e)}
-          extensions={[javascript()]}
+          extensions={islineWrapping?[javascript()]:[EditorView.lineWrapping,javascript()]}
           theme={theme}
           style={{ width: '65%' }}
-          // options = {{
-          //   lineWrapping:true, 
-          // }}
         />
         <div>
           <div>Test scripts are written in JavaScript, and are run after the response is received.</div>
