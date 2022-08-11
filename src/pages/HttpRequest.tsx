@@ -471,6 +471,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
   const [TestVal, setTestVal] = useState<string>('');
   const [TestResult, setTestResult] = useState<[]>([]);
   const [savedTestVal, setSavedTestVal] = useState<string>('');
+
   const getTestVal = (e: string) => {
     setTestVal(e);
   };
