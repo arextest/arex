@@ -47,7 +47,7 @@ type BaseState = {
   setActiveMenu: (menu: MenuTypeEnum) => void;
   panes: PaneType[];
   setPanes: (panes: PaneType | PaneType[], mode?: 'push') => void;
-
+  resetPanes: () => void;
   collectionTreeData: any;
   setCollectionTreeData: (collectionTreeData: any) => void;
 
@@ -120,6 +120,9 @@ export const useStore = create(
     activeMenu: MenuTypeEnum.Collection,
     setActiveMenu: (key: MenuTypeEnum) => {
       set({ activeMenu: key });
+    },
+    resetPanes: () => {
+      set({ panes: [], activePane: '', activeMenu: MenuTypeEnum.Collection });
     },
 
     logout: () => {

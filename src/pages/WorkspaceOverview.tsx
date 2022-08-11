@@ -1,12 +1,16 @@
 import { Button, Divider, Form, Input, Popconfirm, Space, Typography } from 'antd';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { WorkspaceService } from '../services/Workspace.service';
+import { useStore } from '../store';
 
 const { Text } = Typography;
 
 const WorkspaceOverview = () => {
   const params = useParams();
+  const nav = useNavigate();
+  const { workspaces, resetPanes } = useStore();
+
   const onFinish = (values: any) => {
     WorkspaceService.renameWorkspace({
       workspaceId: params.workspaceId,
@@ -60,10 +64,12 @@ const WorkspaceOverview = () => {
             title='Are you sure to delete this workspace?'
             onConfirm={() => {
               WorkspaceService.deleteWorkspace({ workspaceId: params.workspaceId }).then((res) => {
-                window.location.href = '/';
+                resetPanes();
+                nav(
+                  `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,
+                );
               });
             }}
-            onCancel={() => {}}
             okText='Yes'
             cancelText='No'
           >

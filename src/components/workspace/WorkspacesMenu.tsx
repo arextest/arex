@@ -36,22 +36,28 @@ const WorkspacesMenuWrapper = styled.div`
 const WorkspacesMenu = () => {
   const params = useParams();
   const nav = useNavigate();
-  const { userInfo, workspaces, setWorkspaces, setPanes, setActivePane } = useStore();
+  const { userInfo, workspaces, setWorkspaces, setPanes, resetPanes } = useStore();
   const [editMode, setEditMode] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [status, setStatus] = useState<'' | 'error'>('');
 
-  // 在AppHeader内执行应用必要的初始化函数
-  useRequest(() => WorkspaceService.listWorkspace({ userName: userInfo!.email as string }), {
-    ready: !!userInfo?.email,
-    onSuccess(data) {
-      setWorkspaces(data);
-      if (params.workspaceId && params.workspaceName) {
-      } else {
-        nav(`/${data[0].id}/workspace/${data[0].workspaceName}/workspaceOverview/${data[0].id}`);
-      }
+  const { run: getWorkspaces } = useRequest(
+    (to?: { workspaceId: string; workspaceName: string }) =>
+      WorkspaceService.listWorkspace({ userName: userInfo!.email as string }),
+    {
+      ready: !!userInfo?.email,
+      onSuccess(data, _params) {
+        setWorkspaces(data);
+        if (_params.length) {
+          reset();
+          resetPanes();
+          nav(`/${_params[0]!.workspaceId}/workspace/${_params[0]!.workspaceName}`);
+        } else if (!params.workspaceId || !params.workspaceName) {
+          nav(`/${data[0].id}/workspace/${data[0].workspaceName}/workspaceOverview/${data[0].id}`);
+        }
+      },
     },
-  });
+  );
 
   const handleAddWorkspace = () => {
     if (newWorkspaceName === '') {
@@ -84,9 +90,8 @@ const WorkspacesMenu = () => {
     manual: true,
     onSuccess: (res, params) => {
       if (res.success) {
-        reset();
         const workspaceId = res.workspaceId;
-        nav(`/${workspaceId}/workspace/${params[0].workspaceName}`);
+        getWorkspaces({ workspaceId, workspaceName: params[0].workspaceName });
       }
     },
   });
@@ -94,8 +99,7 @@ const WorkspacesMenu = () => {
   const handleChangeWorkspace = (workspaceId: string) => {
     const label = workspaces.find((i) => i.id === workspaceId)?.workspaceName;
     if (label) {
-      setPanes([]);
-      setActivePane('');
+      resetPanes();
       nav(`/${workspaceId}/workspace/${label}`);
     }
   };
@@ -137,13 +141,11 @@ const WorkspacesMenu = () => {
           <Select
             size='small'
             bordered={false}
-            value={currentWorkspaceName}
-            options={workspaces
-              .filter((ws) => ws.id !== params.workspaceId)
-              .map((ws) => ({
-                value: ws.id,
-                label: ws.workspaceName,
-              }))}
+            value={params.workspaceId}
+            options={workspaces.map((ws) => ({
+              value: ws.id,
+              label: ws.workspaceName,
+            }))}
             onChange={handleChangeWorkspace}
             style={{ width: '80%' }}
           />
