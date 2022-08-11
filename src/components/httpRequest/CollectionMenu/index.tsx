@@ -1,8 +1,7 @@
-import './index.less';
-
 import { DownOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
+import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Empty, Input, Tooltip, Tree } from 'antd';
+import { Button, Empty, Input, Spin, Tooltip, Tree } from 'antd';
 import type { DataNode } from 'antd/es/tree';
 import type { DirectoryTreeProps } from 'antd/lib/tree';
 import React, { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useState } from 'react';
@@ -11,7 +10,57 @@ import { useParams } from 'react-router-dom';
 import { MenuTypeEnum, NodeType, PageTypeEnum } from '../../../constant';
 import { CollectionService } from '../../../services/CollectionService';
 import { useStore } from '../../../store';
-import CollectionTitleRender from './CollectionTitleRender';
+import { TooltipButton } from '../../index';
+import CollectionTitle from './CollectionTitle';
+
+const CollectionMenuWrapper = styled.div`
+  height: 100%;
+  .ant-spin-nested-loading,
+  .ant-spin {
+    height: 100%;
+    max-height: 100% !important;
+  }
+
+  .collection-header {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    .collection-header-create {
+      margin-right: 5px;
+      span.action {
+        font-weight: bold;
+      }
+    }
+    .collection-header-search {
+    }
+    .collection-header-view {
+      margin: 0 5px;
+    }
+  }
+
+  .collection-title-render {
+    display: flex;
+    .right {
+    }
+    .left {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      .content {
+        overflow: hidden; //超出的文本隐藏
+        text-overflow: ellipsis; //溢出用省略号显示
+        white-space: nowrap; //溢出不换行
+      }
+    }
+  }
+  .ant-tree-node-content-wrapper {
+    overflow: hidden; //超出的文本隐藏
+    text-overflow: ellipsis; //溢出用省略号显示
+    white-space: nowrap; //溢出不换行
+  }
+`;
 
 const dataList: { key: React.Key; title: string }[] = [];
 const generateList = (data: DataNode[]) => {
@@ -58,43 +107,36 @@ export type CollectionRef = {
 const Collection = forwardRef(
   ({ workspaceId, onSelect }: CollectionProps, ref: ForwardedRef<CollectionRef>) => {
     // 此处注意useImperativeHandle方法的的第一个参数是目标元素的ref引用
+    // TODO 移除
     useImperativeHandle(ref, () => ({
       setSelectedKeys,
     }));
 
-    const _useParams = useParams();
+    const params = useParams();
 
-    const setCollectionTreeData = useStore((state) => state.setCollectionTreeData);
-    const setPanes = useStore((state) => state.setPanes);
-    const panes = useStore((state) => state.panes);
-    const setActivePane = useStore((state) => state.setActivePane);
+    const { setPanes, setActivePane, setCollectionTreeData } = useStore();
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
     // TODO 抽取公共 selectedKeys 至全局 store，并实现与 MenuSelect 的共用，方便panesChange时触发更改相应的 MainMenu 并高亮
     const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
     const [searchValue, setSearchValue] = useState('');
     const [autoExpandParent, setAutoExpandParent] = useState(true);
-    // const {setPanes} = useStore{state=>state.setPanes}
 
-    const { data: treeData = [], run: fetchTreeData } = useRequest(
-      () => CollectionService.listCollection({ id: workspaceId as string }),
-      {
-        ready: !!workspaceId,
-        refreshDeps: [workspaceId],
+    const {
+      data: treeData = [],
+      loading,
+      run: fetchTreeData,
+    } = useRequest(() => CollectionService.listCollection({ id: workspaceId as string }), {
+      ready: !!workspaceId,
+      refreshDeps: [workspaceId],
+      onSuccess: (res) => {
+        if (res.length) {
+          setCollectionTreeData(res);
+          generateList(treeData);
+        }
       },
-    );
-
-    useEffect(() => {
-      if (treeData.length > 0) {
-        setCollectionTreeData(treeData);
-      }
-    }, [treeData]);
-
-    const onExpand: any = (newExpandedKeys: string[]) => {
-      setExpandedKeys(newExpandedKeys);
-    };
+    });
 
     const handleSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
-      // @ts-ignore
       const selectKeyClassName = info.nativeEvent.target.getAttribute('class') || '';
       // 必须有选中的才可以触发
       if (keys[0] && !selectKeyClassName.includes('dropdown-click-target')) {
@@ -155,7 +197,7 @@ const Collection = forwardRef(
     const { run: createCollection } = useRequest(
       () =>
         CollectionService.addItem({
-          id: _useParams.workspaceId,
+          id: params.workspaceId,
           nodeName: 'New Collection',
           nodeType: 3,
           parentPath: [],
@@ -169,60 +211,63 @@ const Collection = forwardRef(
       },
     );
 
-    useEffect(() => {
-      generateList(treeData);
-    }, [treeData]);
-
     return (
-      <div className={'collection'}>
-        <div className={'collection-header'}>
-          <Tooltip placement='bottomLeft' title={'Create New'} mouseEnterDelay={0.5}>
-            <Button
-              className={'collection-header-create'}
-              icon={<PlusOutlined />}
-              type='text'
-              size='small'
-              onClick={createCollection}
-            />
-          </Tooltip>
-          <Input
-            className={'collection-header-search'}
-            size='small'
-            placeholder=''
-            prefix={<MenuOutlined />}
-            onChange={onChange}
-          />
-          {/*<Tooltip placement='bottomLeft' title={'View more actions'} mouseEnterDelay={0.5}>*/}
-          {/*  <Button className={'collection-header-view'} type='text' size='small'>*/}
-          {/*    <DashOutlined />*/}
-          {/*  </Button>*/}
-          {/*</Tooltip>*/}
-        </div>
-        <Tree
-          autoExpandParent
-          blockNode={true}
-          selectedKeys={selectedKeys}
-          expandedKeys={expandedKeys}
-          onExpand={onExpand}
-          onSelect={handleSelect}
-          switcherIcon={<DownOutlined />}
-          treeData={treeData}
-          titleRender={(val) => (
-            <CollectionTitleRender
-              updateDirectoryTreeData={fetchTreeData}
-              val={val}
-              treeData={treeData}
-              callbackOfNewRequest={expandSpecifyKeys} // TODO 暂时禁用待优化
-              // callbackOfNewRequest={() => {}}
-            />
+      <CollectionMenuWrapper>
+        <Spin spinning={loading}>
+          {!loading && !treeData.length ? (
+            <Empty>
+              <Button type='primary' onClick={createCollection}>
+                New
+              </Button>
+            </Empty>
+          ) : (
+            <>
+              <div className={'collection-header'}>
+                <TooltipButton
+                  icon={<PlusOutlined />}
+                  type='text'
+                  size='small'
+                  className={'collection-header-create'}
+                  onClick={createCollection}
+                  placement='bottomLeft'
+                  title={'Create New'}
+                />
+                <Input
+                  className={'collection-header-search'}
+                  size='small'
+                  placeholder=''
+                  prefix={<MenuOutlined />}
+                  onChange={onChange}
+                />
+                {/*<Tooltip placement='bottomLeft' title={'View more actions'} mouseEnterDelay={0.5}>*/}
+                {/*  <Button className={'collection-header-view'} type='text' size='small'>*/}
+                {/*    <DashOutlined />*/}
+                {/*  </Button>*/}
+                {/*</Tooltip>*/}
+              </div>
+
+              <Tree
+                autoExpandParent
+                blockNode={true}
+                selectedKeys={selectedKeys}
+                expandedKeys={expandedKeys}
+                onExpand={setExpandedKeys}
+                onSelect={handleSelect}
+                switcherIcon={<DownOutlined />}
+                treeData={treeData}
+                titleRender={(val) => (
+                  <CollectionTitle
+                    updateDirectoryTreeData={fetchTreeData}
+                    val={val}
+                    treeData={treeData}
+                    callbackOfNewRequest={expandSpecifyKeys} // TODO 暂时禁用待优化
+                  />
+                )}
+              />
+            </>
           )}
-        />
-        <Empty style={{ display: treeData.length > 0 ? 'none' : 'block' }}>
-          <Button type='primary' onClick={createCollection}>
-            New
-          </Button>
-        </Empty>
-      </div>
+        </Spin>
+      </CollectionMenuWrapper>
     );
   },
 );

@@ -1,5 +1,5 @@
 import request from '../api/axios';
-import { Workspace } from './Workspace.type';
+import { CreateWorkspaceReq, CreateWorkspaceRes, Workspace } from './Workspace.type';
 
 export class WorkspaceService {
   static listWorkspace({ userName }: { userName: string }) {
@@ -9,13 +9,15 @@ export class WorkspaceService {
       })
       .then((res) => res.body.workspaces);
   }
-  static createWorkspace({ userName, workspaceName }) {
-    return request.post(`/api/filesystem/addItem`, {
-      nodeName: 'New Collection',
-      nodeType: '3',
-      userName: userName,
-      workspaceName: workspaceName,
-    });
+  static createWorkspace({ userName, workspaceName }: CreateWorkspaceReq) {
+    return request
+      .post<CreateWorkspaceRes>(`/api/filesystem/addItem`, {
+        nodeName: 'New Collection',
+        nodeType: '3',
+        userName: userName,
+        workspaceName: workspaceName,
+      })
+      .then((res) => Promise.resolve(res.body));
   }
 
   static renameWorkspace({ workspaceId, newName, userName }) {

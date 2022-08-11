@@ -15,6 +15,7 @@ specifiers:
   '@emotion/styled': ^11.9.3
   '@kurkle/color': ^0.2.1
   '@types/react': ^18.0.15
+  '@types/react-color': ^3.0.6
   '@types/react-dom': ^18.0.6
   '@types/uuid': ^8.3.4
   '@typescript-eslint/eslint-plugin': ^5.30.7
@@ -111,8 +112,9 @@ dependencies:
 devDependencies:
   '@commitlint/cli': 17.0.3
   '@commitlint/config-conventional': 17.0.3
-  '@emotion/babel-plugin': 11.9.2_@babel+core@7.18.10
-  '@types/react': 18.0.16
+  '@emotion/babel-plugin': 11.10.0_@babel+core@7.18.10
+  '@types/react': 18.0.15
+  '@types/react-color': 3.0.
   '@types/react-dom': 18.0.6
   '@types/uuid': 8.3.4
   '@typescript-eslint/eslint-plugin': 5.32.0_u54i2zwnyr77bua47cradpdvoe
@@ -1085,6 +1087,16 @@ packages:
   /@types/prop-types/15.7.5:
     resolution: {integrity: sha1-XxnSuFqY6VWANvajysyIGUIPBc8=, tarball: '@types/prop-types/download/@types/prop-types-15.7.5.tgz'}
 
+  /@types/react-color/3.0.6:
+    resolution:
+      {
+        integrity: sha512-OzPIO5AyRmLA7PlOyISlgabpYUa3En74LP8mTMa0veCA719SvYQov4WLMsHvCgXP+L+KI9yGhYnqZafVGG0P4w==,
+      }
+    dependencies:
+      '@types/react': 18.0.15
+      '@types/reactcss': 1.2.6
+    dev: true
+
   /@types/react-dom/18.0.6:
     resolution: {integrity: sha1-NmUpAAJIQrdGB6F3hrZmLdHhA6E=, tarball: '@types/react-dom/download/@types/react-dom-18.0.6.tgz'}
     dependencies:
@@ -1097,6 +1109,15 @@ packages:
       '@types/prop-types': 15.7.5
       '@types/scheduler': 0.16.2
       csstype: 3.1.0
+
+  /@types/reactcss/1.2.6:
+    resolution:
+      {
+        integrity: sha512-qaIzpCuXNWomGR1Xq8SCFTtF4v8V27Y6f+b9+bzHiv087MylI/nTCqqdChNeWS7tslgROmYB7yeiruWX7WnqNg==,
+      }
+    dependencies:
+      '@types/react': 18.0.15
+    dev: true
 
   /@types/scheduler/0.16.2:
     resolution: {integrity: sha1-GmL4lSVyPd4kuhsBsJK/XfitTTk=, tarball: '@types/scheduler/download/@types/scheduler-0.16.2.tgz'}

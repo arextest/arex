@@ -3,7 +3,7 @@ import { CSSInterpolation } from '@emotion/serialize/types';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Options } from 'ahooks/lib/useRequest/src/types';
-import { Input, Menu } from 'antd';
+import { Input, Menu, Spin } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -20,7 +20,13 @@ type MenuSelectProps<D, P extends any[]> = {
 };
 
 const MenuSelectWrapper = styled.div`
+  height: 100%;
   padding: 8px;
+  .ant-spin-nested-loading,
+  .ant-spin {
+    height: 100%;
+    max-height: 100% !important;
+  }
 `;
 const MenuList = styled(Menu)<{ small?: boolean }>`
   border: none !important;
@@ -54,7 +60,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
 
   const [filterKeyword, setFilterKeyword] = useState('');
   const [selectedKey, setSelectedKey] = useState<string>();
-  const { data: apps = [] } = useRequest<D[], P>(props.request, {
+  const { data: apps = [], loading } = useRequest<D[], P>(props.request, {
     onSuccess(res) {
       if (res.length && props.defaultSelectFirst) {
         setSelectedKey(res[0][props.rowKey]);
@@ -86,27 +92,29 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   };
   return (
     <MenuSelectWrapper css={css(props.sx)}>
-      {props.filter && (
-        <MenuFilter
-          size={props.small ? 'small' : 'middle'}
-          value={filterKeyword}
-          placeholder={props.placeholder && t(props.placeholder)}
-          onChange={(e) => setFilterKeyword(e.target.value)}
-        />
-      )}
-      <MenuList
-        small={props.small}
-        selectedKeys={selectedKey ? [selectedKey] : []}
-        items={filteredApps.map(
-          props.itemRender
-            ? props.itemRender
-            : (app) => ({
-                label: app[props.rowKey],
-                key: app[props.rowKey],
-              }),
+      <Spin spinning={loading}>
+        {props.filter && (
+          <MenuFilter
+            size={props.small ? 'small' : 'middle'}
+            value={filterKeyword}
+            placeholder={props.placeholder && t(props.placeholder)}
+            onChange={(e) => setFilterKeyword(e.target.value)}
+          />
         )}
-        onClick={handleAppMenuClick}
-      />
+        <MenuList
+          small={props.small}
+          selectedKeys={selectedKey ? [selectedKey] : []}
+          items={filteredApps.map(
+            props.itemRender
+              ? props.itemRender
+              : (app) => ({
+                  label: app[props.rowKey],
+                  key: app[props.rowKey],
+                }),
+          )}
+          onClick={handleAppMenuClick}
+        />
+      </Spin>
     </MenuSelectWrapper>
   );
 }

@@ -8,12 +8,7 @@ import { CollectionService } from '../../../services/CollectionService';
 // import { findPathByKey } from "../../helpers/collection/util";
 import CreateAndUpdateFolder from './CreateAndUpdateFolder';
 
-function CollectionTitleRender({
-  val,
-  updateDirectoryTreeData,
-  treeData,
-  callbackOfNewRequest,
-}: any) {
+function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNewRequest }: any) {
   const _useParams = useParams();
   const _useNavigate = useNavigate();
   const [visible, setVisible] = useState(false);
@@ -192,4 +187,4 @@ function CollectionTitleRender({
   );
 }
 
-export default CollectionTitleRender;
+export default CollectionTitle;

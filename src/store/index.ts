@@ -37,6 +37,7 @@ type BaseState = {
   changeTheme: (theme?: Theme) => void;
   extensionInstalled: boolean;
   userInfo?: UserInfo;
+  logout: () => void;
 
   // 工作区 panes
   activePane: string;
@@ -119,6 +120,11 @@ export const useStore = create(
     activeMenu: MenuTypeEnum.Collection,
     setActiveMenu: (key: MenuTypeEnum) => {
       set({ activeMenu: key });
+    },
+
+    logout: () => {
+      localStorage.removeItem('email');
+      set({ userInfo: undefined, panes: [], activePane: '' });
     },
 
     collectionTreeData: [],

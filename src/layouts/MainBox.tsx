@@ -1,38 +1,35 @@
-import {
-  ApiOutlined,
-  DeploymentUnitOutlined,
-  FieldTimeOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import {
-  Button,
-  Divider,
-  Empty,
-  Select,
-  SelectProps,
-  TabPaneProps,
-  Tabs,
-  TabsProps,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Button, Divider, Empty, Select, SelectProps, TabPaneProps, Tabs, TabsProps } from 'antd';
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { AppFooter, AppHeader, CollectionMenu, EnvironmentMenu, ReplayMenu } from '../components';
+import {
+  AppFooter,
+  AppHeader,
+  CollectionMenu,
+  EnvironmentMenu,
+  ReplayMenu,
+  WorkspacesMenu,
+} from '../components';
 import { CollectionProps, CollectionRef } from '../components/httpRequest/CollectionMenu';
 import { MenuTypeEnum, PageTypeEnum, RoleEnum } from '../constant';
-import { Environment, Folder, HttpRequest, Replay, ReplayAnalysis, ReplayCase } from '../pages';
+import {
+  Environment,
+  Folder,
+  HttpRequest,
+  Replay,
+  ReplayAnalysis,
+  ReplayCase,
+  WorkspaceOverview,
+} from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
-import WorkspaceOverviewPage from '../pages/WorkspaceOverview';
 import EnvironmentService from '../services/Environment.service';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { PaneType, useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
-const { Text } = Typography;
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -53,6 +50,9 @@ const MainMenu = styled(Tabs)`
     .ant-tabs-ink-bar {
       left: 0;
     }
+  }
+  .ant-tabs-content {
+    height: 100%;
   }
 `;
 
@@ -98,18 +98,25 @@ const MainTabs = styled((props: TabsProps) => (
   </Tabs>
 ))<TabsProps>`
   height: 100%;
-  // 添加高亮条 tabs-ink-bar
-  // 注意当前的作用范围很广，目前的作用对象为工作区所有的可编辑可删除卡片式 Tab
-  // .ant-tabs-tab-with-remove 类是为了避免污染一般的 Tabs
-  .ant-tabs-tab-with-remove.ant-tabs-tab-active:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: ${(props) => props.theme.color.primary};
-    transition: all 0.2s ease-in-out;
+  .ant-tabs-tab-with-remove {
+    padding: 6px 12px !important;
+    // 添加高亮条 tabs-ink-bar
+    // 注意当前的作用范围很广，目前的作用对象为工作区所有的可编辑可删除卡片式 Tab
+    // .ant-tabs-tab-with-remove 类是为了避免污染一般的 Tabs
+    &.ant-tabs-tab-active:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: ${(props) => props.theme.color.primary};
+      transition: all 0.2s ease-in-out;
+    }
+    .ant-tabs-tab-remove {
+      margin-left: 0;
+      padding-right: 0;
+    }
   }
   .ant-tabs-content-holder {
     overflow: auto;
@@ -143,13 +150,6 @@ const MainTabPane = styled((props: TabPaneProps) => (
   overflow: auto;
 `;
 
-const WorkspacesMenu = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 10px;
-`;
-
 const EmptyWrapper = styled(Empty)`
   height: 100%;
   display: flex;
@@ -165,32 +165,13 @@ const MainBox = () => {
     setPanes,
     activePane,
     setActivePane,
-    collectionTreeData,
     activeMenu,
     setActiveMenu,
     environment,
     environmentTreeData,
     setEnvironment,
     setEnvironmentTreeData,
-    workspaces,
   } = useStore();
-
-  // TODO 移动至子组件
-  useEffect(() => {
-    // const pageType = panes.find((i) => i.key === activePane)?.pageType;
-    // if (pageType && activePane) {
-    //   nav(`/${params.workspaceId}/workspace/${params.workspaceName}/${pageType}/${activePane}`);
-    // }
-    // fetchEnvironmentData();
-    console.log(
-      params.workspaceId,
-      params.workspaceName,
-      'params.workspaceId && params.workspaceName',
-    );
-    if (params.workspaceId && params.workspaceName) {
-      handleHeaderMenuClick();
-    }
-  }, [params.workspaceId, params.workspaceName]);
 
   // 必须和路由搭配起来，在切换的时候附着上去
   useEffect(() => {
@@ -200,7 +181,7 @@ const MainBox = () => {
         `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.key}`,
       );
     }
-  }, [activePane]);
+  }, [activePane, panes, params.workspaceId, params.workspaceName]);
 
   const addTab = () => {
     const newActiveKey = uuid();
@@ -294,35 +275,6 @@ const MainBox = () => {
       );
   };
 
-  // TODO 建议放到 HttpRequest 组件中
-  const handleInterfaceSaveAs = (pane: PaneType) => {
-    // fetchCollectionTreeData(); // TODO 更新 Collection 数据
-    const newPanes = [...panes.filter((i) => i.key !== activePane)];
-    newPanes.push({
-      key: pane.key,
-      isNew: true,
-      title: pane.title,
-      menuType: MenuTypeEnum.Collection,
-      pageType: PageTypeEnum.Request,
-    });
-    setPanes(newPanes);
-  };
-
-  const handleHeaderMenuClick = () => {
-    params.workspaceName &&
-      params.workspaceId &&
-      setPanes(
-        {
-          title: params.workspaceName,
-          key: params.workspaceId,
-          menuType: MenuTypeEnum.Collection,
-          pageType: PageTypeEnum.WorkspaceOverview,
-          isNew: true,
-        },
-        'push',
-      );
-  };
-
   //environment
   const [environmentselected, setEnvironmentselected] = useState<[]>([]);
   const setEnvironmentSelectedData = (e) => {
@@ -348,17 +300,6 @@ const MainBox = () => {
     }
   }, [EnvironmentData]);
 
-  const roleDisplay = (() => {
-    return `(${
-      {
-        [RoleEnum.Admin]: 'Admin',
-        [RoleEnum.Editor]: 'Editor',
-        [RoleEnum.Viewer]: 'Viewer',
-        // @ts-ignore
-      }[workspaces.find((i) => i.id === params.workspaceId)?.role]
-    })`;
-  })();
-
   return (
     <>
       {/*AppHeader部分*/}
@@ -369,25 +310,7 @@ const MainBox = () => {
         limitRange={[15, 40]}
         firstNode={
           <>
-            {/* TODO 和 AppHeader 中的 WorkspaceSelect 合并 */}
-            <WorkspacesMenu>
-              <Tooltip title={`Open overview of ${params.workspaceName}`} placement={'right'}>
-                <Button
-                  size='small'
-                  type='text'
-                  icon={<UserOutlined />}
-                  onClick={handleHeaderMenuClick}
-                >
-                  {params.workspaceName}
-                  <Text style={{ marginLeft: '4px' }} type='secondary'>
-                    {roleDisplay}
-                  </Text>
-                </Button>
-              </Tooltip>
-              <Button type='text' size='small' disabled>
-                Import
-              </Button>
-            </WorkspacesMenu>
+            <WorkspacesMenu />
 
             <Divider style={{ margin: '0', width: 'calc(100% + 10px)' }} />
 
@@ -464,13 +387,7 @@ const MainBox = () => {
                 <MainTabPane tab={pane.title} key={pane.key}>
                   {/* TODO 工作区自定义组件待规范，参考 menuItem */}
                   {pane.pageType === PageTypeEnum.Request && (
-                    <HttpRequest
-                      collectionTreeData={collectionTreeData}
-                      mode={HttpRequestMode.Normal}
-                      id={pane.key}
-                      isNew={pane.isNew}
-                      onSaveAs={handleInterfaceSaveAs}
-                    />
+                    <HttpRequest id={pane.key} mode={HttpRequestMode.Normal} isNew={pane.isNew} />
                   )}
                   {pane.pageType === PageTypeEnum.Replay && (
                     <Replay data={pane.data as ApplicationDataType} />
@@ -488,7 +405,7 @@ const MainBox = () => {
                       fetchEnvironmentData={fetchEnvironmentData}
                     />
                   )}
-                  {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverviewPage />}
+                  {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverview />}
                 </MainTabPane>
               ))}
             </MainTabs>

@@ -1,17 +1,19 @@
 import { Button, Divider, Form, Input, Popconfirm, Space, Typography } from 'antd';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { WorkspaceService } from '../services/Workspace.service';
+
 const { Text } = Typography;
-const WorkspaceOverviewPage = () => {
-  const _useParams = useParams();
+
+const WorkspaceOverview = () => {
+  const params = useParams();
   const onFinish = (values: any) => {
     WorkspaceService.renameWorkspace({
-      workspaceId: _useParams.workspaceId,
+      workspaceId: params.workspaceId,
       newName: values.name,
       userName: localStorage.getItem('email'),
     }).then((res) => {
-      window.location.href = `/${_useParams.workspaceId}/workspace/${values.name}`;
+      window.location.href = `/${params.workspaceId}/workspace/${values.name}`;
     });
   };
 
@@ -26,7 +28,7 @@ const WorkspaceOverviewPage = () => {
         <Form
           layout='vertical'
           name='basic'
-          initialValues={{ name: _useParams.workspaceName }}
+          initialValues={{ name: params.workspaceName }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete='off'
@@ -57,11 +59,9 @@ const WorkspaceOverviewPage = () => {
           <Popconfirm
             title='Are you sure to delete this workspace?'
             onConfirm={() => {
-              WorkspaceService.deleteWorkspace({ workspaceId: _useParams.workspaceId }).then(
-                (res) => {
-                  window.location.href = '/';
-                },
-              );
+              WorkspaceService.deleteWorkspace({ workspaceId: params.workspaceId }).then((res) => {
+                window.location.href = '/';
+              });
             }}
             onCancel={() => {}}
             okText='Yes'
@@ -75,4 +75,4 @@ const WorkspaceOverviewPage = () => {
   );
 };
 
-export default WorkspaceOverviewPage;
+export default WorkspaceOverview;

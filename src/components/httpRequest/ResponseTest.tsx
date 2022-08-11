@@ -86,6 +86,7 @@ pw.test("Status code is 200", ()=> {
     setIslineWrapping(!islineWrapping);
   }
 
+
   useEffect(()=>{
     setTestval(OldTestVal);
   },[OldTestVal])
@@ -118,6 +119,9 @@ pw.test("Status code is 200", ()=> {
           extensions={islineWrapping?[javascript()]:[EditorView.lineWrapping,javascript()]}
           theme={theme}
           style={{ width: '65%' }}
+          // options = {{
+          //   lineWrapping:true,
+          // }}
         />
         <div>
           <div>Test scripts are written in JavaScript, and are run after the response is received.</div>
@@ -131,7 +135,11 @@ pw.test("Status code is 200", ()=> {
           {/* <div>测试脚本使用JavaScript编写,并再受到响应后执行</div>
           <span>阅读文档</span>
           <div>代码片段</div> */}
-          {codeSnippet.map((e,i)=> <span key={i} onClick={()=>addTest(e.text)}>{e.name}</span>)}
+          {codeSnippet.map((e, i) => (
+            <span key={i} onClick={() => addTest(e.text)}>
+              {e.name}
+            </span>
+          ))}
         </div>
       </ResponseTestWrapper>
     </>

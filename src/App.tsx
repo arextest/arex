@@ -1,9 +1,10 @@
 import 'antd/dist/antd.less';
 import './style/index.less';
-import './components/app/index.less';
 
+import { LoadingOutlined } from '@ant-design/icons';
 import { ThemeProvider } from '@emotion/react';
 import { useMount } from 'ahooks';
+import { Spin } from 'antd';
 import React, { useEffect, useMemo } from 'react';
 import { useNavigate, useRoutes } from 'react-router-dom';
 
@@ -12,6 +13,8 @@ import routerConfig from './routers';
 import { AuthService } from './services/AuthService';
 import { useStore } from './store';
 import { themeCreator } from './style/theme';
+
+Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 24 }} spin />);
 
 function App() {
   const routesContent = useRoutes(routerConfig);

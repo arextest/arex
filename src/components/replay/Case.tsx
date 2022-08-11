@@ -43,7 +43,7 @@ const Case: FC<CaseProps> = (props) => {
     },
   ];
 
-  const { data: caseData = [] } = useRequest(
+  const { data: caseData = [], loading } = useRequest(
     () => ReplayService.queryReplayCase({ planItemId: props.planItemId }),
     {
       ready: !!props.planItemId,
@@ -55,6 +55,7 @@ const Case: FC<CaseProps> = (props) => {
     <Table
       size='small'
       rowKey='recordId'
+      loading={loading}
       columns={columnsCase}
       dataSource={caseData}
       pagination={false}

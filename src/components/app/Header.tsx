@@ -1,136 +1,98 @@
-import { DownOutlined, SettingOutlined } from '@ant-design/icons';
-import { useMount, useRequest } from 'ahooks';
-import { Avatar, Button, Divider, Dropdown, Menu, Popover, Space } from 'antd';
-import React, { FC, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { SettingOutlined } from '@ant-design/icons';
+import styled from '@emotion/styled';
+import { Avatar, Button, Divider, Dropdown, Menu } from 'antd';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { WorkspaceService } from '../../services/Workspace.service';
+import Setting from '../../pages/Setting';
 import { useStore } from '../../store';
 import { Theme, ThemeIcon } from '../../style/theme';
-import Setting from '../Setting';
-import AddWorkspace from '../workspace/AddWorkspace';
 import InviteWorkspace from '../workspace/Invite';
 import AppGitHubStarButton from './GitHubStarButton';
 
+const HeaderWrapper = styled.div`
+  .app-header {
+    height: 46px;
+    padding: 7px;
+    display: flex;
+    justify-content: space-between;
+
+    .left,
+    .right {
+      display: flex;
+      align-items: center;
+    }
+    .app-name {
+      width: 90px;
+      text-align: center;
+      font-weight: 600;
+      display: inline-block;
+      border-radius: 0.25rem;
+      font-size: 14px;
+      cursor: default;
+    }
+  }
+`;
+
 const AppHeader = () => {
   const nav = useNavigate();
-  const params = useParams();
-  // const params = useParams();
-  const workspaces = useStore((state) => state.workspaces);
-  const setWorkspaces = useStore((state) => state.setWorkspaces);
-
-  const store = useStore();
-  const { theme, changeTheme, userInfo } = useStore();
+  const { theme, changeTheme, userInfo, logout } = useStore();
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
 
-  const { run } = useRequest(
-    () => WorkspaceService.listWorkspace({ userName: localStorage.getItem('email') }),
-    {
-      manual: true,
-      onSuccess(data) {
-        setWorkspaces(data);
-        if (params.workspaceId && params.workspaceName) {
-        } else {
-          nav(`/${data[0].id}/workspace/${data[0].workspaceName}/workspaceOverview/${data[0].id}`);
-        }
-      },
-    },
-  );
-  const WorkspacesContent = () => {
-    return (
-      <>
-        <AddWorkspace />
-        <Menu
-          style={{ border: 'none', width: '200px' }}
-          onSelect={(val) => {
-            const key = val.key;
-            const label = workspaces.find((i) => i.id === key)?.workspaceName;
-            label && (window.location.href = `/${key}/workspace/${label}`);
-          }}
-          activeKey={params.workspaceId}
-          items={workspaces.map((workspace) => {
-            return {
-              key: workspace.id,
-              label: workspace.workspaceName,
-            };
-          })}
-        />
-      </>
-    );
-  };
-
-  // 在AppHeader内执行应用必要的初始化函数
-  useMount(() => {
-    // 1.获取workspaces
-    run();
-  });
-
   const handleLogout = () => {
-    localStorage.clear();
-    store.userInfo = undefined;
-    window.location.href = '/login';
+    logout();
+    nav('/login');
   };
   return (
-    <>
+    <HeaderWrapper>
       <div className={'app-header'}>
-        <Space className={'left'}>
+        <div className={'left'}>
           <span className={'app-name'}>AREX</span>
           <AppGitHubStarButton />
-          {/*workspace*/}
-          <Popover content={<WorkspacesContent />} title={false} trigger='click'>
-            <Space style={{ cursor: 'pointer' }}>
-              Workspaces
-              <DownOutlined />
-            </Space>
-          </Popover>
-        </Space>
+        </div>
 
         <div className={'right'}>
           <InviteWorkspace />
+
           <Button
             type='text'
             icon={theme === Theme.light ? ThemeIcon.dark : ThemeIcon.light}
             onClick={() => changeTheme()}
           />
+
           <Dropdown
             overlayStyle={{ width: '170px' }}
             trigger={['click']}
             overlay={
               <Menu
-                onClick={(e) => {
-                  console.log(e);
-                  if (e.key === 'settings') {
-                    setIsSettingModalVisible(true);
-                  }
-                }}
                 items={[
                   {
                     key: 'settings',
-                    label: <span>Settings</span>,
+                    label: 'Settings',
                   },
                   {
                     type: 'divider',
                   },
                   {
                     key: '1',
-                    label: <span>Privacy Policy</span>,
+                    label: 'Privacy Policy',
                     disabled: true,
                   },
                   {
                     key: '2',
-                    label: <span>Terms</span>,
+                    label: 'Terms',
                     disabled: true,
                   },
                 ]}
+                onClick={(e) => {
+                  if (e.key === 'settings') {
+                    setIsSettingModalVisible(true);
+                  }
+                }}
               />
             }
           >
-            <Button
-              type='text'
-              icon={<SettingOutlined />}
-              onClick={(e) => e.preventDefault()}
-              style={{ color: '#6B6B6B' }}
-            />
+            <Button type='text' icon={<SettingOutlined />} style={{ color: '#6B6B6B' }} />
           </Dropdown>
 
           <Dropdown
@@ -140,10 +102,15 @@ const AppHeader = () => {
               <Menu
                 items={[
                   {
-                    key: 'Sign Out',
-                    label: <span onClick={handleLogout}>Sign Out</span>,
+                    key: 'signOut',
+                    label: 'Sign Out',
                   },
                 ]}
+                onClick={(e) => {
+                  if (e.key === 'signOut') {
+                    handleLogout();
+                  }
+                }}
               />
             }
           >
@@ -157,13 +124,8 @@ const AppHeader = () => {
       <Divider style={{ margin: '0' }} />
 
       {/*模态框*/}
-      <Setting
-        isModalVisible={isSettingModalVisible}
-        onClose={() => {
-          setIsSettingModalVisible(false);
-        }}
-      />
-    </>
+      <Setting visible={isSettingModalVisible} onCancel={() => setIsSettingModalVisible(false)} />
+    </HeaderWrapper>
   );
 };
 

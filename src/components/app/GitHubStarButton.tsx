@@ -5,7 +5,7 @@ import { useStore } from '../../store';
 const GitHubStarButton = () => {
   const theme = useStore((state) => state.theme);
   return (
-    <div style={{ height: '22px' }}>
+    <div style={{ height: '20px', marginLeft: '8px' }}>
       <GitHubButton
         data-text={'Star'}
         aria-label={'Star Arex on GitHub'}

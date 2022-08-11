@@ -1,17 +1,17 @@
 import styled from '@emotion/styled';
-import { Form, message, Modal, Radio, Select, Tabs } from 'antd';
-import { FC } from 'react';
+import { Form, message, Modal, ModalProps, Radio, Select, Switch, Tabs } from 'antd';
+import { FC, useState } from 'react';
 const { TabPane } = Tabs;
 import { useMount, useRequest } from 'ahooks';
-import { SketchPicker } from 'react-color';
+import { CirclePicker } from 'react-color';
 
-import { UserService } from '../../services/UserService';
-import { useStore } from '../../store';
+import { UserService } from '../services/UserService';
+import { useStore } from '../store';
 const { Option } = Select;
 
-type Props = {
-  isModalVisible: boolean;
-  onClose: () => void;
+type SettingProps = {
+  visible: boolean;
+  onCancel: ModalProps['onCancel'];
 };
 
 const SettingTabs = styled(Tabs)`
@@ -20,24 +20,11 @@ const SettingTabs = styled(Tabs)`
   }
 `;
 
-const ColorInput = ({ value = {}, onChange = () => {} }) => {
-  return (
-    <div>
-      <SketchPicker
-        width={'260px'}
-        color={value}
-        onChangeComplete={(color) => {
-          onChange(color.hex);
-        }}
-      />
-    </div>
-  );
-};
-
-const Setting: FC<Props> = ({ isModalVisible, onClose }) => {
-  const plainOptions = ['light', 'dark'];
+const Setting: FC<SettingProps> = (props) => {
+  const [color, setColor] = useState<string>();
   const [form] = Form.useForm();
   const setUserInfo = useStore((state) => state.setUserInfo);
+
   function handleOk() {
     form
       .validateFields()
@@ -61,9 +48,7 @@ const Setting: FC<Props> = ({ isModalVisible, onClose }) => {
         console.log('Validate Failed:', info);
       });
   }
-  function handleCancel() {
-    onClose();
-  }
+
   const { run: userProfileRequestRun } = useRequest(() => UserService.userProfile(), {
     onSuccess(res) {
       const profile = res.profile;
@@ -98,21 +83,31 @@ const Setting: FC<Props> = ({ isModalVisible, onClose }) => {
         width={720}
         bodyStyle={{ padding: '0', height: '65vh', overflowY: 'scroll' }}
         title='SETTINGS'
-        visible={isModalVisible}
+        visible={props.visible}
         onOk={handleOk}
-        onCancel={handleCancel}
+        onCancel={props.onCancel}
         forceRender
       >
         <SettingTabs defaultActiveKey='1' onChange={() => {}}>
           <TabPane tab='Themes' key='1'>
             <div style={{ padding: '20px' }}>
-              <Form name='basic' layout={'vertical'} form={form}>
-                <Form.Item label='Background' name='background'>
-                  <Radio.Group optionType={'button'} options={plainOptions} />
+              <Form name='basic' form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+                <Form.Item label='Dark Mode' name='darkMode'>
+                  <Switch />
                 </Form.Item>
 
                 <Form.Item label='Accent color' name='accentColor'>
-                  <ColorInput></ColorInput>
+                  <div style={{ padding: '8px 0 0 0' }}>
+                    <CirclePicker
+                      width={'300px'}
+                      circleSize={20}
+                      color={color}
+                      onChangeComplete={(color) => {
+                        console.log(color);
+                        setColor(color.hex);
+                      }}
+                    />
+                  </div>
                 </Form.Item>
 
                 <Form.Item label='Font size' name='fontSize'>
