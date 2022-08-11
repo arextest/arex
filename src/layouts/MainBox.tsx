@@ -25,6 +25,7 @@ import {
   WorkspaceOverview,
 } from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
+import Setting from '../pages/Setting';
 import EnvironmentService from '../services/Environment.service';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { useStore } from '../store';
@@ -394,7 +395,7 @@ const MainBox = () => {
               }
             >
               {panes.map((pane) => (
-                <MainTabPane tab={pane.title} key={pane.key}>
+                <MainTabPane className='main-tab-pane' tab={pane.title} key={pane.key}>
                   {/* TODO 工作区自定义组件待规范，参考 menuItem */}
                   {pane.pageType === PageTypeEnum.Request && (
                     <HttpRequest id={pane.key} mode={HttpRequestMode.Normal} isNew={pane.isNew} />
@@ -416,6 +417,7 @@ const MainBox = () => {
                     />
                   )}
                   {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverview />}
+                  {pane.pageType === PageTypeEnum.Setting && <Setting />}
                 </MainTabPane>
               ))}
             </MainTabs>

@@ -20,6 +20,7 @@ export enum MenuTypeEnum {
 }
 
 export enum PageTypeEnum {
+  Setting = 'setting',
   Request = 'request',
   Folder = 'folder',
   Collection = 'collection',

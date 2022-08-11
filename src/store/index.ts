@@ -23,7 +23,7 @@ type UserInfo = {
 export type PaneType = {
   title: string;
   key: string;
-  menuType: MenuTypeEnum;
+  menuType?: MenuTypeEnum;
   pageType: PageTypeEnum;
   isNew?: boolean;
   data?: // 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
