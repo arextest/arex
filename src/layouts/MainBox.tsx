@@ -14,7 +14,7 @@ import {
   WorkspacesMenu,
 } from '../components';
 import { CollectionProps, CollectionRef } from '../components/httpRequest/CollectionMenu';
-import { MenuTypeEnum, PageTypeEnum, RoleEnum } from '../constant';
+import { MenuTypeEnum, PageTypeEnum } from '../constant';
 import {
   Environment,
   Folder,
@@ -25,9 +25,10 @@ import {
   WorkspaceOverview,
 } from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
+import Setting from '../pages/Setting';
 import EnvironmentService from '../services/Environment.service';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
-import { PaneType, useStore } from '../store';
+import { useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
 
@@ -150,7 +151,12 @@ const MainTabPane = styled((props: TabPaneProps) => (
   overflow: auto;
 `;
 
-const EmptyWrapper = styled(Empty)`
+const EmptyWrapper = styled(
+  (props: { empty: boolean; emptyContent: ReactNode; children: ReactNode }) => {
+    const { empty, emptyContent, children, ...restProps } = props;
+    return <div {...restProps}>{empty ? <Empty>{emptyContent}</Empty> : children}</div>;
+  },
+)`
   height: 100%;
   display: flex;
   flex-flow: column;
@@ -171,6 +177,7 @@ const MainBox = () => {
     environmentTreeData,
     setEnvironment,
     setEnvironmentTreeData,
+    setCollectionTreeData,
   } = useStore();
 
   // 必须和路由搭配起来，在切换的时候附着上去
@@ -198,40 +205,36 @@ const MainBox = () => {
   };
 
   const removeTab = (targetKey: string) => {
+    const menuType = activeMenu[0];
     const filteredPanes = panes.filter((i) => i.key !== targetKey);
     setPanes(filteredPanes);
 
     if (filteredPanes.length) {
-      const lastKey = filteredPanes[filteredPanes.length - 1].key;
+      const lastPane = filteredPanes[filteredPanes.length - 1];
+      const lastKey = lastPane.key;
       setActivePane(lastKey);
-      updateCollectionMenuKeys([lastKey]);
       updateEnvironmentMenuKeys([lastKey]);
+      setActiveMenu(lastPane.menuType || MenuTypeEnum.Collection, lastKey);
     } else {
-      updateCollectionMenuKeys([]);
+      setActiveMenu(menuType);
       updateEnvironmentMenuKeys([]);
     }
   };
 
   const handleTabsEdit: any = (targetKey: string, action: 'add' | 'remove') => {
-    console.log(targetKey, action);
     action === 'add' ? addTab() : removeTab(targetKey);
   };
 
   const handleTabsChange = (activePane: string) => {
     const pane = panes.find((i) => i.key === activePane);
     setActivePane(activePane);
-    setActiveMenu(pane?.menuType || MenuTypeEnum.Collection);
-    updateCollectionMenuKeys([activePane]);
+    setActiveMenu(pane?.menuType || MenuTypeEnum.Collection, activePane);
     updateEnvironmentMenuKeys([activePane]);
     pane?.menuType == 'environment' && setEnvironmentselected([pane.data]);
   };
 
-  const collectionRef = useRef<CollectionRef>(null);
-  const updateCollectionMenuKeys = (keys: React.Key[]) => {
-    collectionRef?.current?.setSelectedKeys(keys);
-  };
-
   const handleCollectionMenuClick: CollectionProps['onSelect'] = (key, node) => {
+    setActiveMenu(MenuTypeEnum.Collection, key);
     setPanes(
       {
         key,
@@ -260,19 +263,18 @@ const MainBox = () => {
   };
 
   const handleReplayMenuClick = (app: ApplicationDataType) => {
-    params.workspaceId &&
-      params.workspaceName &&
-      setPanes(
-        {
-          title: app.appId,
-          key: app.appId,
-          menuType: MenuTypeEnum.Replay,
-          pageType: PageTypeEnum.Replay,
-          isNew: false,
-          data: app,
-        },
-        'push',
-      );
+    setActiveMenu(MenuTypeEnum.Replay, app.appId);
+    setPanes(
+      {
+        title: app.appId,
+        key: app.appId,
+        menuType: MenuTypeEnum.Replay,
+        pageType: PageTypeEnum.Replay,
+        isNew: false,
+        data: app,
+      },
+      'push',
+    );
   };
 
   //environment
@@ -316,7 +318,7 @@ const MainBox = () => {
 
             <MainMenu
               tabPosition='left'
-              activeKey={activeMenu}
+              activeKey={activeMenu[0]}
               onChange={(key) => setActiveMenu(key as MenuTypeEnum)}
             >
               {/* menuItem 自定义子组件命名规定: XxxMenu, 表示xx功能的左侧主菜单 */}
@@ -329,16 +331,16 @@ const MainBox = () => {
                 key={MenuTypeEnum.Collection}
                 menuItem={
                   <CollectionMenu
-                    workspaceId={params.workspaceId}
+                    value={activeMenu[1]}
                     onSelect={handleCollectionMenuClick}
-                    ref={collectionRef}
+                    onGetData={setCollectionTreeData}
                   />
                 }
               />
               <MainMenuItem
                 tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}
                 key={MenuTypeEnum.Replay}
-                menuItem={<ReplayMenu onSelect={handleReplayMenuClick} />}
+                menuItem={<ReplayMenu value={activeMenu[1]} onSelect={handleReplayMenuClick} />}
               />
               <MainMenuItem
                 tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
@@ -359,8 +361,14 @@ const MainBox = () => {
         }
         secondNode={
           // 右侧工作区
-          panes.length ? (
-            // environmentTreeData={environmentTreeData} setEnvironment={setEnvironment}
+          <EmptyWrapper
+            empty={!panes.length}
+            emptyContent={
+              <Button type='primary' onClick={addTab}>
+                New Request
+              </Button>
+            }
+          >
             <MainTabs
               onEdit={handleTabsEdit}
               activeKey={activePane}
@@ -384,7 +392,7 @@ const MainBox = () => {
               }
             >
               {panes.map((pane) => (
-                <MainTabPane tab={pane.title} key={pane.key}>
+                <MainTabPane className='main-tab-pane' tab={pane.title} key={pane.key}>
                   {/* TODO 工作区自定义组件待规范，参考 menuItem */}
                   {pane.pageType === PageTypeEnum.Request && (
                     <HttpRequest id={pane.key} mode={HttpRequestMode.Normal} isNew={pane.isNew} />
@@ -406,16 +414,11 @@ const MainBox = () => {
                     />
                   )}
                   {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverview />}
+                  {pane.pageType === PageTypeEnum.Setting && <Setting />}
                 </MainTabPane>
               ))}
             </MainTabs>
-          ) : (
-            <EmptyWrapper>
-              <Button type='primary' onClick={addTab}>
-                New Request
-              </Button>
-            </EmptyWrapper>
-          )
+          </EmptyWrapper>
         }
       />
 

@@ -29,7 +29,6 @@ const TestError = styled.div`
     color: ${(props) => props.theme.color.text.secondary};
     margin-top: 10px;
   }
-
 `;
 
 const Response: FC<{
@@ -39,7 +38,7 @@ const Response: FC<{
   size?: number;
   responseHeaders?: object;
   TestResult?: [];
-  isTestResult:boolean;
+  isTestResult: boolean;
 }> = (props) => {
   const onChange = (key: string) => {
     console.log(key);
@@ -61,14 +60,14 @@ const Response: FC<{
     console.log(headers);
   }, [headers]);
 
-  const [testPass,setTestPass] = useState<number[]>([]);
+  const [testPass, setTestPass] = useState<number[]>([]);
   useEffect(() => {
-    const arrPass:number[]=[];
-    props.TestResult&&props.TestResult.map((e:any)=>{
-      arrPass.push(e.expectResults.filter((a:any)=>a.status=='pass').length);
-    })
+    const arrPass: number[] = [];
+    props.TestResult &&
+      props.TestResult.map((e: any) => {
+        arrPass.push(e.expectResults.filter((a: any) => a.status == 'pass').length);
+      });
     setTestPass(arrPass);
-    
   }, [props.TestResult]);
   return (
     <>

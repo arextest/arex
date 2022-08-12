@@ -4,9 +4,12 @@ import { Avatar, Button, Divider, Dropdown, Menu } from 'antd';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { MenuTypeEnum, PageTypeEnum } from '../../constant';
 import Setting from '../../pages/Setting';
 import { useStore } from '../../store';
 import { Theme, ThemeIcon } from '../../style/theme';
+import { uuid } from '../../utils';
+import { TooltipButton } from '../index';
 import InviteWorkspace from '../workspace/Invite';
 import AppGitHubStarButton from './GitHubStarButton';
 
@@ -36,9 +39,20 @@ const HeaderWrapper = styled.div`
 
 const AppHeader = () => {
   const nav = useNavigate();
-  const { theme, changeTheme, userInfo, logout } = useStore();
+  const { theme, changeTheme, userInfo, logout, setPanes } = useStore();
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
 
+  const handleSetting = () => {
+    setPanes(
+      {
+        key: uuid(),
+        title: 'Setting',
+        pageType: PageTypeEnum.Setting,
+        isNew: false,
+      },
+      'push',
+    );
+  };
   const handleLogout = () => {
     logout();
     nav('/login');
@@ -60,40 +74,7 @@ const AppHeader = () => {
             onClick={() => changeTheme()}
           />
 
-          <Dropdown
-            overlayStyle={{ width: '170px' }}
-            trigger={['click']}
-            overlay={
-              <Menu
-                items={[
-                  {
-                    key: 'settings',
-                    label: 'Settings',
-                  },
-                  {
-                    type: 'divider',
-                  },
-                  {
-                    key: '1',
-                    label: 'Privacy Policy',
-                    disabled: true,
-                  },
-                  {
-                    key: '2',
-                    label: 'Terms',
-                    disabled: true,
-                  },
-                ]}
-                onClick={(e) => {
-                  if (e.key === 'settings') {
-                    setIsSettingModalVisible(true);
-                  }
-                }}
-              />
-            }
-          >
-            <Button type='text' icon={<SettingOutlined />} style={{ color: '#6B6B6B' }} />
-          </Dropdown>
+          <TooltipButton icon={<SettingOutlined />} title='Setting' onClick={handleSetting} />
 
           <Dropdown
             trigger={['click']}
@@ -122,9 +103,6 @@ const AppHeader = () => {
       </div>
 
       <Divider style={{ margin: '0' }} />
-
-      {/*模态框*/}
-      <Setting visible={isSettingModalVisible} onCancel={() => setIsSettingModalVisible(false)} />
     </HeaderWrapper>
   );
 };

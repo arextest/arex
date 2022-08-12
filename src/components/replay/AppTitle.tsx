@@ -12,9 +12,10 @@ type AppTitleData = {
 };
 type AppTitleProps = {
   data: AppTitleData;
+  onCreatePlan?: () => void;
 };
 
-const AppTitle: FC<AppTitleProps> = ({ data }) => {
+const AppTitle: FC<AppTitleProps> = ({ data, onCreatePlan }) => {
   const [form] = Form.useForm<{ targetEnv: string }>();
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -26,7 +27,7 @@ const AppTitle: FC<AppTitleProps> = ({ data }) => {
           message: 'Started Successfully',
         });
         form.resetFields();
-        setModalVisible(false);
+        onCreatePlan && onCreatePlan();
       } else {
         console.error(res.desc);
         notification.error({
@@ -34,6 +35,15 @@ const AppTitle: FC<AppTitleProps> = ({ data }) => {
           description: res.desc,
         });
       }
+    },
+    onError(e) {
+      notification.error({
+        message: 'Start Failed',
+        description: e.message,
+      });
+    },
+    onFinally() {
+      setModalVisible(false);
     },
   });
   const handleStartReplay = () => {

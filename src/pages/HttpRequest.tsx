@@ -49,7 +49,6 @@ import { FileSystemService } from '../services/FileSystem.service';
 import { PaneType, useStore } from '../store';
 import { tryParseJsonString, tryPrettierJsonString } from '../utils';
 import AgentAxios from '../utils/request';
-import { NodeList } from '../vite-env';
 
 const { TabPane } = Tabs;
 
@@ -155,12 +154,14 @@ const HttpRequest: FC<HttpRequestProps> = ({
         status: response.status,
         body: response.body,
         headers: response.headers,
-      }).then((res: any) => {
-        setTestResult(res.children);
-        setIsTestResult(true);
-      }).catch(e=>{
-        setIsTestResult(false);
-      });
+      })
+        .then((res: any) => {
+          setTestResult(res.children);
+          setIsTestResult(true);
+        })
+        .catch((e) => {
+          setIsTestResult(false);
+        });
   }, [response]);
 
   const params = useMemo(
@@ -438,7 +439,6 @@ const HttpRequest: FC<HttpRequestProps> = ({
       },
       'push',
     );
-
   };
 
   const handleUrlChange = (value: string) => {

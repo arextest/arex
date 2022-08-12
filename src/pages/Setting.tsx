@@ -1,26 +1,14 @@
-import styled from '@emotion/styled';
-import { Form, message, Modal, ModalProps, Radio, Select, Switch, Tabs } from 'antd';
-import { FC, useState } from 'react';
-const { TabPane } = Tabs;
-import { useMount, useRequest } from 'ahooks';
+import { useRequest } from 'ahooks';
+import { Anchor, Form, message, Select, Switch } from 'antd';
+import { FC, useEffect, useState } from 'react';
 import { CirclePicker } from 'react-color';
 
 import { UserService } from '../services/UserService';
 import { useStore } from '../store';
 const { Option } = Select;
+const { Link } = Anchor;
 
-type SettingProps = {
-  visible: boolean;
-  onCancel: ModalProps['onCancel'];
-};
-
-const SettingTabs = styled(Tabs)`
-  .ant-tabs-nav-list {
-    margin-left: 12px;
-  }
-`;
-
-const Setting: FC<SettingProps> = (props) => {
+const Setting: FC = () => {
   const [color, setColor] = useState<string>();
   const [form] = Form.useForm();
   const setUserInfo = useStore((state) => state.setUserInfo);
@@ -49,7 +37,7 @@ const Setting: FC<SettingProps> = (props) => {
       });
   }
 
-  const { run: userProfileRequestRun } = useRequest(() => UserService.userProfile(), {
+  useRequest(() => UserService.userProfile(), {
     onSuccess(res) {
       const profile = res.profile;
       setUserInfo({
@@ -65,6 +53,7 @@ const Setting: FC<SettingProps> = (props) => {
     },
     manual: true,
   });
+
   const { run: updateUserProfileRequestRun } = useRequest(
     (params) => UserService.updateUserProfile(params),
     {
@@ -74,61 +63,70 @@ const Setting: FC<SettingProps> = (props) => {
       manual: true,
     },
   );
-  useMount(() => {
-    userProfileRequestRun();
-  });
+
+  const [targetOffset, setTargetOffset] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    setTargetOffset(window.innerHeight / 2);
+  }, []);
+
   return (
     <div>
-      <Modal
-        width={720}
-        bodyStyle={{ padding: '0', height: '65vh', overflowY: 'scroll' }}
-        title='SETTINGS'
-        visible={props.visible}
-        onOk={handleOk}
-        onCancel={props.onCancel}
-        forceRender
-      >
-        <SettingTabs defaultActiveKey='1' onChange={() => {}}>
-          <TabPane tab='Themes' key='1'>
-            <div style={{ padding: '20px' }}>
-              <Form name='basic' form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-                <Form.Item label='Dark Mode' name='darkMode'>
-                  <Switch />
-                </Form.Item>
+      <Anchor targetOffset={targetOffset} style={{ position: 'absolute', right: '40px' }}>
+        <Link href='#user-interface' title='User Interface'>
+          <Link href='#dark-mode' title='Dark Mode' />
+          <Link href='#primary-color' title='Primary Color' />
+          <Link href='#font-size' title='Font Size' />
+          <Link href='#language' title='Language' />
+        </Link>
+      </Anchor>
 
-                <Form.Item label='Accent color' name='accentColor'>
-                  <div style={{ padding: '8px 0 0 0' }}>
-                    <CirclePicker
-                      width={'300px'}
-                      circleSize={20}
-                      color={color}
-                      onChangeComplete={(color) => {
-                        console.log(color);
-                        setColor(color.hex);
-                      }}
-                    />
-                  </div>
-                </Form.Item>
+      <Form name='form' form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+        <h2 id='user-interface'>User Interface</h2>
 
-                <Form.Item label='Font size' name='fontSize'>
-                  <Select style={{ width: 120 }}>
-                    <Option value='small'>Small</Option>
-                    <Option value='medium'>Medium</Option>
-                    <Option value='large'>Large</Option>
-                  </Select>
-                </Form.Item>
+        <div id='dark-mode'>
+          <Form.Item label='Dark Mode' name='darkMode'>
+            <Switch />
+          </Form.Item>
+        </div>
 
-                <Form.Item label='Language' name='language'>
-                  <Select style={{ width: 120 }}>
-                    <Option value='english'>English</Option>
-                    <Option value='chinese'>简体中文</Option>
-                  </Select>
-                </Form.Item>
-              </Form>
+        <div>
+          <Form.Item id='primary-color' label='Accent color' name='accentColor'>
+            <div style={{ padding: '8px 0 0 0' }}>
+              <CirclePicker
+                width={'320px'}
+                circleSize={20}
+                color={color}
+                onChangeComplete={(color) => {
+                  console.log(color);
+                  setColor(color.hex);
+                }}
+              />
             </div>
-          </TabPane>
-        </SettingTabs>
-      </Modal>
+          </Form.Item>
+        </div>
+
+        <div id='font-size'>
+          <Form.Item label='Font size' name='fontSize'>
+            <Select style={{ width: 120 }}>
+              <Option value='small'>Small</Option>
+              <Option value='medium'>Medium</Option>
+              <Option value='large'>Large</Option>
+            </Select>
+          </Form.Item>
+        </div>
+
+        <div id='language'>
+          <Form.Item label='Language' name='language'>
+            <Select style={{ width: 120 }}>
+              <Option value='english'>English</Option>
+              <Option value='chinese'>简体中文</Option>
+            </Select>
+          </Form.Item>
+        </div>
+      </Form>
+
+      <div style={{ height: '800px' }}></div>
     </div>
   );
 };

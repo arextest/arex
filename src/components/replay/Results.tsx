@@ -90,8 +90,9 @@ const AppTable = styled(Table)<{ theme?: Theme }>`
 const Results: FC<{
   appId?: string;
   defaultSelectFirst?: boolean;
+  refreshDep?: React.Key;
   onSelectedPlanChange: (selectedPlan: PlanStatistics) => void;
-}> = ({ appId, defaultSelectFirst, onSelectedPlanChange }) => {
+}> = ({ appId, defaultSelectFirst, refreshDep, onSelectedPlanChange }) => {
   const theme = useStore((state) => state.theme);
   const [selectRow, setSelectRow] = useState<number>(defaultSelectFirst ? 0 : -1);
   const { data: planStatistics, loading } = useRequest(
@@ -104,7 +105,7 @@ const Results: FC<{
       }),
     {
       ready: !!appId,
-      refreshDeps: [appId],
+      refreshDeps: [appId, refreshDep],
       onSuccess(res) {
         res.length && defaultSelectFirst && onSelectedPlanChange(res[0]);
       },
