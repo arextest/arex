@@ -28,7 +28,9 @@ const MenuSelectWrapper = styled.div`
     max-height: 100% !important;
   }
 `;
-const MenuList = styled(Menu)<{ small?: boolean }>`
+const MenuList = styled(Menu, { shouldForwardProp: (propName) => propName !== 'small' })<{
+  small?: boolean;
+}>`
   border: none !important;
   background: transparent !important;
   .ant-menu-item {

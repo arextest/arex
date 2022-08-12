@@ -152,9 +152,10 @@ const MainTabPane = styled((props: TabPaneProps) => (
 `;
 
 const EmptyWrapper = styled(
-  (props: { empty: boolean; emptyContent: ReactNode; children: ReactNode }) => (
-    <div {...props}>{props.empty ? <Empty>{props.emptyContent}</Empty> : props.children}</div>
-  ),
+  (props: { empty: boolean; emptyContent: ReactNode; children: ReactNode }) => {
+    const { empty, emptyContent, children, ...restProps } = props;
+    return <div {...restProps}>{empty ? <Empty>{emptyContent}</Empty> : children}</div>;
+  },
 )`
   height: 100%;
   display: flex;

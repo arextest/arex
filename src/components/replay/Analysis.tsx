@@ -80,6 +80,7 @@ const Analysis: FC<{
         <TableWrapper>
           <Table
             loading={loading}
+            rowKey='differenceName'
             columns={categoryColumns}
             dataSource={differenceData}
             pagination={false}

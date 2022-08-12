@@ -2,10 +2,9 @@ import { useRequest } from 'ahooks';
 import { Card, Col, Row, Space } from 'antd';
 import React, { FC, useState } from 'react';
 
-import MenuSelect from '../../components/MenuSelect';
-import Analysis from '../../components/replay/Analysis';
-import CollapseTable from '../../components/styledComponents/CollapseTable';
-import PanesTitle from '../../components/styledComponents/PanesTitle';
+import { MenuSelect } from '../../components';
+import { Analysis } from '../../components/replay';
+import { CollapseTable, PanesTitle } from '../../components/styledComponents';
 import ReplayService from '../../services/Replay.service';
 import {
   CategoryStatistic,
@@ -18,7 +17,6 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   const [selectedDiff, setSelectedDiff] = useState<Difference>();
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
   const handleScenes = (diff: Difference, category?: CategoryStatistic) => {
-    console.log(diff, category);
     if (selectedDiff?.differenceName !== diff.differenceName) {
       setSelectedDiff(diff);
       setSelectedCategory(category);
@@ -29,13 +27,9 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
 
   const { data: msgWithDiff, run: queryMsgWithDiff } = useRequest(ReplayService.queryMsgWithDiff, {
     manual: true,
-    onSuccess(res) {
-      console.log(res);
-    },
   });
 
   const handleDiffChange = (scene: Scene) => {
-    console.log(scene);
     queryMsgWithDiff({
       compareResultId: scene.compareResultId,
       logIndexes: scene.logIndexes,
