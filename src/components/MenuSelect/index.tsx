@@ -4,7 +4,8 @@ import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Options } from 'ahooks/lib/useRequest/src/types';
 import { Input, Menu, Spin } from 'antd';
-import React, { useMemo, useState } from 'react';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
+import React, { ReactNode, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type MenuSelectProps<D, P extends any[]> = {
@@ -19,7 +20,7 @@ type MenuSelectProps<D, P extends any[]> = {
   requestOptions?: Options<D[], P>;
   placeholder?: string; // from i18n namespace "components"
   defaultSelectFirst?: boolean;
-  itemRender?: (app: D, index: number) => { label: string; key: React.Key };
+  itemRender?: (app: D, index: number) => { label: ReactNode; key: React.Key };
 };
 
 const MenuSelectWrapper = styled.div`
@@ -79,7 +80,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
     },
     ...props.requestOptions,
   });
-  const filteredApps = useMemo(() => {
+  const filteredApps = useMemo<ItemType[]>(() => {
     const filtered =
       filterKeyword && props.filter
         ? apps.filter((app) => {
@@ -90,7 +91,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
             }
           })
         : apps;
-    return filtered.map(
+    return filtered.map<ItemType>(
       props.itemRender
         ? props.itemRender
         : (app) => ({

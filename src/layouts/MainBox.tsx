@@ -1,8 +1,7 @@
 import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { useRequest } from 'ahooks';
-import { Button, Divider, Empty, Select, SelectProps, TabPaneProps, Tabs, TabsProps } from 'antd';
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
+import { ReactNode, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
@@ -10,10 +9,11 @@ import {
   AppHeader,
   CollectionMenu,
   EnvironmentMenu,
+  EnvironmentSelect,
   ReplayMenu,
   WorkspacesMenu,
 } from '../components';
-import { CollectionProps, CollectionRef } from '../components/httpRequest/CollectionMenu';
+import { CollectionProps } from '../components/httpRequest/CollectionMenu';
 import { MenuTypeEnum, PageTypeEnum } from '../constant';
 import {
   Environment,
@@ -26,13 +26,11 @@ import {
 } from '../pages';
 import { HttpRequestMode } from '../pages/HttpRequest';
 import Setting from '../pages/Setting';
-import EnvironmentService from '../services/Environment.service';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
 
-const { Option } = Select;
 const { TabPane } = Tabs;
 const MainMenu = styled(Tabs)`
   height: 100%;
@@ -128,22 +126,6 @@ const MainTabs = styled((props: TabsProps) => (
   }
 `;
 
-const EnvironmentSelect = styled((props: SelectProps) => (
-  <Select allowClear bordered={false} {...props} />
-))`
-  height: 36px;
-  width: 150px;
-  box-sizing: content-box;
-  border-left: 1px solid ${(props) => props.theme.color.border.primary};
-  margin-left: -1px;
-  .ant-select-selector {
-    height: 100%;
-    .ant-select-selection-item {
-      line-height: 34px;
-    }
-  }
-`;
-
 const MainTabPane = styled((props: TabPaneProps) => (
   <TabPane {...props}>{props.children}</TabPane>
 ))<TabPaneProps>`
@@ -173,10 +155,7 @@ const MainBox = () => {
     setActivePane,
     activeMenu,
     setActiveMenu,
-    environment,
-    environmentTreeData,
-    setEnvironment,
-    setEnvironmentTreeData,
+    setActiveEnvironment,
     setCollectionTreeData,
   } = useStore();
 
@@ -213,11 +192,9 @@ const MainBox = () => {
       const lastPane = filteredPanes[filteredPanes.length - 1];
       const lastKey = lastPane.key;
       setActivePane(lastKey);
-      updateEnvironmentMenuKeys([lastKey]);
       setActiveMenu(lastPane.menuType || MenuTypeEnum.Collection, lastKey);
     } else {
       setActiveMenu(menuType);
-      updateEnvironmentMenuKeys([]);
     }
   };
 
@@ -226,11 +203,10 @@ const MainBox = () => {
   };
 
   const handleTabsChange = (activePane: string) => {
+    console.log('handleTabsChange', activePane);
     const pane = panes.find((i) => i.key === activePane);
     setActivePane(activePane);
     setActiveMenu(pane?.menuType || MenuTypeEnum.Collection, activePane);
-    updateEnvironmentMenuKeys([activePane]);
-    pane?.menuType == 'environment' && setEnvironmentselected([pane.data]);
   };
 
   const handleCollectionMenuClick: CollectionProps['onSelect'] = (key, node) => {
@@ -241,20 +217,6 @@ const MainBox = () => {
         title: node.title,
         menuType: MenuTypeEnum.Collection,
         pageType: node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
-        isNew: false,
-        data: node,
-      },
-      'push',
-    );
-  };
-
-  const handleEnvionmentMenuClick = (key: string, node: {}) => {
-    setPanes(
-      {
-        key,
-        title: node.title,
-        menuType: MenuTypeEnum.Environment,
-        pageType: PageTypeEnum.Environment,
         isNew: false,
         data: node,
       },
@@ -278,29 +240,22 @@ const MainBox = () => {
   };
 
   //environment
-  const [environmentselected, setEnvironmentselected] = useState<[]>([]);
-  const setEnvironmentSelectedData = (e) => {
-    setEnvironmentselected(e);
+  const handleEnvironmentMenuClick = (key: string, node) => {
+    console.log('handleEnvironmentMenuClick', key, node);
+    setActiveEnvironment(key);
+    setActiveMenu(MenuTypeEnum.Environment, key);
+    setPanes(
+      {
+        key,
+        title: node.title,
+        menuType: MenuTypeEnum.Environment,
+        pageType: PageTypeEnum.Environment,
+        isNew: false,
+        data: node,
+      },
+      'push',
+    );
   };
-
-  const environmentRef = useRef<CollectionRef>(null);
-  const updateEnvironmentMenuKeys = (keys: React.Key[]) => {
-    environmentRef?.current?.setSelectedKeys(keys);
-  };
-
-  const { data: EnvironmentData = [], run: fetchEnvironmentData } = useRequest(
-    () => EnvironmentService.getEnvironment({ workspaceId: params.workspaceId }),
-    {
-      ready: !!params.workspaceId,
-      refreshDeps: [params.workspaceId],
-    },
-  );
-
-  useEffect(() => {
-    if (EnvironmentData.length > 0) {
-      setEnvironmentTreeData(EnvironmentData);
-    }
-  }, [EnvironmentData]);
 
   return (
     <>
@@ -323,8 +278,7 @@ const MainBox = () => {
             >
               {/* menuItem 自定义子组件命名规定: XxxMenu, 表示xx功能的左侧主菜单 */}
               {/* menuItem 自定义子组件 props 约定，便于之后封装  */}
-              {/* 1. ref?: 组件ref对象，用于调用组件自身属性方法。尽量不使用，使用前请思考是否还有别的方法 */}
-              {/* 1. xxId?: 涉及组件初始化的全局id，之后可以将该参数置于全局状态管理存储 */}
+              {/* 1. value: 选中 menu item 的 id */}
               {/* 2. onSelect: 选中 menu item 时触发，参数（结构待规范）为选中节点的相关信息，点击后的逻辑不在 Menu 组件中处理 */}
               <MainMenuItem
                 tab={<MenuTitle icon={<ApiOutlined />} title='Collection' />}
@@ -345,15 +299,8 @@ const MainBox = () => {
               <MainMenuItem
                 tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
                 key={MenuTypeEnum.Environment}
-                disabled
                 menuItem={
-                  <EnvironmentMenu
-                    ref={environmentRef}
-                    workspaceId={params.workspaceId}
-                    onSelect={handleEnvionmentMenuClick}
-                    setEnvironmentSelectedData={setEnvironmentSelectedData}
-                    fetchEnvironmentData={fetchEnvironmentData}
-                  />
+                  <EnvironmentMenu value={activeMenu[1]} onSelect={handleEnvironmentMenuClick} />
                 }
               />
             </MainMenu>
@@ -373,23 +320,7 @@ const MainBox = () => {
               onEdit={handleTabsEdit}
               activeKey={activePane}
               onChange={handleTabsChange}
-              tabBarExtraContent={
-                <EnvironmentSelect
-                  value={environment}
-                  onChange={(e) => {
-                    setEnvironment(e);
-                  }}
-                >
-                  <Option value='0'>No Environment</Option>
-                  {environmentTreeData?.map((e: { id: string; envName: string }) => {
-                    return (
-                      <Option key={e.id} value={e.id}>
-                        {e.envName}
-                      </Option>
-                    );
-                  })}
-                </EnvironmentSelect>
-              }
+              tabBarExtraContent={<EnvironmentSelect />}
             >
               {panes.map((pane) => (
                 <MainTabPane className='main-tab-pane' tab={pane.title} key={pane.key}>
@@ -407,12 +338,7 @@ const MainBox = () => {
                     <ReplayCase data={pane.data as PlanItemStatistics} />
                   )}
                   {pane.pageType === PageTypeEnum.Folder && <Folder />}
-                  {pane.pageType === PageTypeEnum.Environment && (
-                    <Environment
-                      curEnvironment={environmentselected}
-                      fetchEnvironmentData={fetchEnvironmentData}
-                    />
-                  )}
+                  {pane.pageType === PageTypeEnum.Environment && <Environment id={pane.key} />}
                   {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverview />}
                   {pane.pageType === PageTypeEnum.Setting && <Setting />}
                 </MainTabPane>

@@ -1,10 +1,10 @@
 import request from '../api/axios';
-import { EnvironmentSave, EnvironmentSaveReq, GetEnvironmentRes } from './Environment.type';
+import { EnvironmentSave, GetEnvironmentReq, GetEnvironmentRes } from './Environment.type';
 
 export default class EnvironmentService {
-  static async getEnvironment(params: GetEnvironmentRes): Promise<any> {
+  static async getEnvironment(params: GetEnvironmentReq) {
     return request
-      .post(`/api/environment/queryEnvsByWorkspace`, params)
+      .post<GetEnvironmentRes>(`/api/environment/queryEnvsByWorkspace`, params)
       .then((res: any) => Promise.resolve(res.body.environments));
   }
 

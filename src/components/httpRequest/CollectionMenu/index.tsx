@@ -2,8 +2,7 @@ import { DownOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Empty, Input, Spin, Tree } from 'antd';
-import type { DataNode } from 'antd/es/tree';
-import type { DirectoryTreeProps } from 'antd/lib/tree';
+import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import React, { FC, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
