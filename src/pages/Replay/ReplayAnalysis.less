@@ -1,0 +1,107 @@
+#MsgWithDiffJsonEditorWrapper {
+  display: flex;
+  height: calc(100vh - 240px);
+
+  #containerLeft {
+    height: 100%;
+    width: 50%;
+    margin-right: 14px;
+  }
+
+  #containerRight {
+    height: 100%;
+    width: 50%;
+  }
+
+  #containerRight .different_element {
+    background-color: pink;
+  }
+
+  #containerLeft .different_element {
+    background-color: #00bb74;
+  }
+
+  #containerLeft .different_element_ig {
+    background-color: rgb(191, 191, 191);
+  }
+
+  #containerRight .different_element_ig {
+    background-color: rgb(191, 191, 191);
+  }
+
+  .jsoneditor-main {
+    border: 1px solid #eee;
+
+    .value {
+      color: #1a1a1a;
+    }
+  }
+}
+
+div.jsoneditor-value.jsoneditor-string {
+  color: #000000;
+}
+
+div.jsoneditor-value.jsoneditor-number {
+  color: #000000;
+}
+
+div.jsoneditor-value.jsoneditor-boolean {
+  color: #000000;
+}
+
+div.jsoneditor-value.jsoneditor-null {
+  color: #000000;
+}
+
+.MsgWithDiffLegend {
+  display: flex;
+  margin: 10px;
+}
+
+.MsgWithDiffLegend > div {
+  display: flex;
+  margin-right: 14px;
+}
+
+.MsgWithDiffLegend > div > .color-tag-pink {
+  width: 20px;
+  height: 20px;
+  background-color: pink;
+  margin-right: 8px;
+}
+
+.MsgWithDiffLegend > div > .color-tag-green {
+  width: 20px;
+  height: 20px;
+  background-color: #00bb74;
+  margin-right: 8px;
+}
+
+.MsgWithDiffLegend > div > .color-tag-grey {
+  width: 20px;
+  height: 20px;
+  background-color: rgba(0, 0, 0, 0.25);
+  margin-right: 8px;
+}
+
+.jsoneditor-contextmenu > div:nth-child(2) {
+}
+
+.insert-area {
+  display: none !important;
+}
+
+.context-menu-button-anchor {
+  display: none;
+}
+.jse-navigation-bar {
+  height: 32px !important;
+}
+.jsoneditor-contextmenu .row {
+  width: 150px;
+  padding: 4px 0;
+}
+.jsoneditor-contextmenu .row button {
+  text-align: left;
+}
