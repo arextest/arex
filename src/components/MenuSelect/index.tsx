@@ -8,9 +8,12 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type MenuSelectProps<D, P extends any[]> = {
+  sx?: CSSInterpolation;
   small?: boolean;
   rowKey: string;
+  selectedKeys?: string[];
   onSelect: (app: D) => void;
+  onClick?: (info: any) => void;
   filter?: ((keyword: string, app: D) => boolean) | string;
   request: () => Promise<D[]>;
   requestOptions?: Options<D[], P>;
@@ -56,12 +59,17 @@ const MenuFilter = styled(Input.Search)`
 `;
 
 function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
-  props: MenuSelectProps<D, P> & { sx?: CSSInterpolation },
+  props: MenuSelectProps<D, P>,
 ) {
   const { t } = useTranslation('components');
 
-  const [filterKeyword, setFilterKeyword] = useState('');
   const [selectedKey, setSelectedKey] = useState<string>();
+  const selectedKeys = useMemo(
+    () => props.selectedKeys || (selectedKey ? [selectedKey] : undefined),
+    [props.selectedKeys, selectedKey],
+  );
+
+  const [filterKeyword, setFilterKeyword] = useState('');
   const { data: apps = [], loading } = useRequest<D[], P>(props.request, {
     onSuccess(res) {
       if (res.length && props.defaultSelectFirst) {
@@ -71,8 +79,8 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
     },
     ...props.requestOptions,
   });
-  const filteredApps = useMemo(
-    () =>
+  const filteredApps = useMemo(() => {
+    const filtered =
       filterKeyword && props.filter
         ? apps.filter((app) => {
             if (typeof props.filter === 'string') {
@@ -81,9 +89,16 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
               return props.filter && props.filter(filterKeyword, app);
             }
           })
-        : apps,
-    [filterKeyword, apps],
-  );
+        : apps;
+    return filtered.map(
+      props.itemRender
+        ? props.itemRender
+        : (app) => ({
+            label: app[props.rowKey],
+            key: app[props.rowKey],
+          }),
+    );
+  }, [filterKeyword, props, apps]);
 
   const handleAppMenuClick = (value: { key: string }) => {
     const app: D | undefined = apps.find((app) => app[props.rowKey] === value.key);
@@ -105,15 +120,8 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
         )}
         <MenuList
           small={props.small}
-          selectedKeys={selectedKey ? [selectedKey] : []}
-          items={filteredApps.map(
-            props.itemRender
-              ? props.itemRender
-              : (app) => ({
-                  label: app[props.rowKey],
-                  key: app[props.rowKey],
-                }),
-          )}
+          selectedKeys={selectedKeys}
+          items={filteredApps}
           onClick={handleAppMenuClick}
         />
       </Spin>

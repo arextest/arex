@@ -49,7 +49,6 @@ import { FileSystemService } from '../services/FileSystem.service';
 import { PaneType, useStore } from '../store';
 import { tryParseJsonString, tryPrettierJsonString } from '../utils';
 import AgentAxios from '../utils/request';
-import { NodeList } from '../vite-env';
 
 const { TabPane } = Tabs;
 

@@ -1,5 +1,6 @@
 // @ts-ignore
 import { toggleTheme } from '@zougt/vite-plugin-theme-preprocessor/dist/browser-utils';
+import React from 'react';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
@@ -39,13 +40,18 @@ type BaseState = {
   userInfo?: UserInfo;
   logout: () => void;
 
-  // 工作区 panes
   activePane: string;
   setActivePane: (key: string) => void;
   setUserInfo: (userInfo: UserInfo) => void;
-  activeMenu: MenuTypeEnum;
-  setActiveMenu: (menu: MenuTypeEnum) => void;
+  activeMenu: [MenuTypeEnum, string | undefined]; // [菜单id, 菜单项目id]
+  setActiveMenu: (menuKey: MenuTypeEnum, menuItemKey?: string) => void;
   panes: PaneType[];
+
+  /*
+   * 修改工作区标签页数据
+   * @param panes 工作区标签页数据
+   * @param mode 添加模式：push，替换模式：undefined
+   * */
   setPanes: (panes: PaneType | PaneType[], mode?: 'push') => void;
   resetPanes: () => void;
   collectionTreeData: any;
@@ -100,6 +106,7 @@ export const useStore = create(
     setActivePane: (key: string) => {
       set({ activePane: key });
     },
+
     panes: [],
     setPanes: (panes, mode) => {
       if (!mode) {
@@ -117,12 +124,12 @@ export const useStore = create(
         });
       }
     },
-    activeMenu: MenuTypeEnum.Collection,
-    setActiveMenu: (key: MenuTypeEnum) => {
-      set({ activeMenu: key });
+    activeMenu: [MenuTypeEnum.Collection, undefined],
+    setActiveMenu: (menuKey, menuItemKey) => {
+      set({ activeMenu: [menuKey, menuItemKey] });
     },
     resetPanes: () => {
-      set({ panes: [], activePane: '', activeMenu: MenuTypeEnum.Collection });
+      set({ panes: [], activePane: '', activeMenu: [MenuTypeEnum.Collection, undefined] });
     },
 
     logout: () => {
