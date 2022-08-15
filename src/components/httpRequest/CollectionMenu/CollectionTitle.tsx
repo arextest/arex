@@ -1,21 +1,18 @@
 import { ApiOutlined, MoreOutlined } from '@ant-design/icons';
-import { Dropdown, Menu, Popconfirm, Space } from 'antd';
+import { Dropdown, Input, Menu, Popconfirm, Space } from 'antd';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-
+import { useParams } from 'react-router-dom';
 import { treeFindPath } from '../../../helpers/collection/util';
 import { CollectionService } from '../../../services/CollectionService';
-// import { findPathByKey } from "../../helpers/collection/util";
-import CreateAndUpdateFolder from './CreateAndUpdateFolder';
 
 function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNewRequest }: any) {
   const _useParams = useParams();
-  const _useNavigate = useNavigate();
   const [visible, setVisible] = useState(false);
   const handleVisibleChange = (flag: boolean) => {
     setVisible(flag);
   };
-  const [CollectionCreateAndUpdateModal, setCollectionCreateAndUpdateModal] = useState({});
+  const [renameKey, setRenameKey] = useState('');
+  const [renameValue, setRenameValue] = useState('');
   const menu = (val: any) => {
     const paths = treeFindPath(treeData, (node) => node.key === val.key);
     return (
@@ -66,13 +63,8 @@ function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNew
               });
               break;
             case '4':
-              const collectionCreateAndUpdateModal = {
-                collectionCreateAndUpdateModalVisible: true,
-                collectionCreateAndUpdateModalMode: 'rename',
-                collectionCreateAndUpdateModalId: val.key,
-                collectionCreateAndUpdateModalFolderName: val.title,
-              };
-              setCollectionCreateAndUpdateModal(collectionCreateAndUpdateModal);
+              setRenameKey(val.id);
+              setRenameValue(val.title);
               break;
             case '6':
               CollectionService.duplicate({
@@ -140,6 +132,19 @@ function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNew
       />
     );
   };
+  const rename = () => {
+    const paths = treeFindPath(treeData, (node) => node.key === val.key);
+    CollectionService.rename({
+      id: _useParams.workspaceId,
+      newName: renameValue,
+      path: paths.map((i: any) => i.key),
+      userName: localStorage.getItem('email'),
+    }).then((res) => {
+      updateDirectoryTreeData();
+      setRenameValue('');
+      setRenameKey('');
+    });
+  };
   return (
     <>
       <div className={'collection-title-render'}>
@@ -161,7 +166,24 @@ function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNew
               case
             </span>
           ) : null}
-          <div className={'content'}>{val.title}</div>
+          <div className={'content'}>
+            {renameKey === val.id ? (
+              <Input
+                width={'100%'}
+                style={{ padding: '0 4px', width: '100%' }}
+                value={renameValue}
+                onPressEnter={() => {
+                  rename();
+                }}
+                onBlur={() => {
+                  rename();
+                }}
+                onChange={(val) => setRenameValue(val.target.value)}
+              />
+            ) : (
+              <span>{val.title}</span>
+            )}
+          </div>
         </div>
         <div className='right'>
           <Dropdown
@@ -178,11 +200,6 @@ function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNew
           </Dropdown>
         </div>
       </div>
-      <CreateAndUpdateFolder
-        updateDirectoryTreeData={updateDirectoryTreeData}
-        collectionTree={treeData}
-        collectionCreateAndUpdateModal={CollectionCreateAndUpdateModal}
-      />
     </>
   );
 }

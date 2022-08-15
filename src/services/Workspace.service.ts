@@ -42,4 +42,8 @@ export class WorkspaceService {
   static inviteToWorkspace(params) {
     return request.post(`/api/filesystem/inviteToWorkspace`, params);
   }
+
+  static validInvitation(params) {
+    return request.post(`/api/filesystem/validInvitation`, params);
+  }
 }
