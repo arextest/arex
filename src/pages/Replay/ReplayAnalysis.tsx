@@ -87,6 +87,7 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
       }, 200);
     }
   }, [selectedDiff, msgWithDiff]);
+
   return (
     <Space direction='vertical' style={{ display: 'flex' }}>
       <PanesTitle title={<span>Main Service API: {data.operationName}</span>} />
