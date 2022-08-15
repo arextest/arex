@@ -41,6 +41,7 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
     });
   };
 
+  // TODO 使用工具函数 utils/tryParseJsonString
   function strConvertToJson(str: string) {
     try {
       return JSON.parse(str);

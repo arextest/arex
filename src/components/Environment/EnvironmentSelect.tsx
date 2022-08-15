@@ -24,9 +24,12 @@ const EnvironmentSelectWrapper = styled((props: SelectProps) => (
 
 const EnvironmentSelect = () => {
   const { activeEnvironment, environmentTreeData, setActiveEnvironment } = useStore();
-
+  const handleChange = (value: string) => {
+    console.log(value);
+    setActiveEnvironment(value);
+  };
   return (
-    <EnvironmentSelectWrapper value={activeEnvironment.id} onChange={setActiveEnvironment}>
+    <EnvironmentSelectWrapper value={activeEnvironment?.id} onChange={handleChange}>
       <Option value='0'>No Environment</Option>
       {environmentTreeData?.map((e: { id: string; envName: string }) => {
         return (

@@ -1,6 +1,7 @@
 // @ts-ignore
 import { toggleTheme } from '@zougt/vite-plugin-theme-preprocessor/dist/browser-utils';
 import React from 'react';
+import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
@@ -158,3 +159,7 @@ export const useStore = create(
     },
   })),
 );
+
+if (process.env.NODE_ENV === 'development') {
+  mountStoreDevtool('Store', useStore);
+}
