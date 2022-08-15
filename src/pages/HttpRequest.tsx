@@ -241,12 +241,15 @@ const HttpRequest: FC<HttpRequestProps> = ({
         size: readableBytes(JSON.stringify(res.data).length),
       });
       setResponse(res);
+      setSent(true);
     },
     onError(err) {
-      setResponse(err?.response);
-    },
-    onFinally: () => {
-      setSent(true);
+      if (err?.response) {
+        setResponse(err?.response);
+        setSent(true);
+      } else {
+        message.error('Failed to send, please check');
+      }
     },
   });
 
@@ -261,13 +264,17 @@ const HttpRequest: FC<HttpRequestProps> = ({
     },
     onSuccess: (res) => {
       setBaseResponse(res);
-    },
-    onError(err) {
-      setBaseResponse(err?.response);
-    },
-    onFinally: () => {
       setSent(true);
     },
+    onError(err) {
+      if (err?.response) {
+        setBaseResponse(err?.response);
+        setSent(true);
+      } else {
+        message.error('Failed to send, please check');
+      }
+    },
+    onFinally: () => {},
   });
 
   const {
@@ -281,13 +288,17 @@ const HttpRequest: FC<HttpRequestProps> = ({
     },
     onSuccess: (res) => {
       setTestResponse(res);
-    },
-    onError(err) {
-      setTestResponse(err?.response);
-    },
-    onFinally: () => {
       setSent(true);
     },
+    onError(err) {
+      if (err?.response) {
+        setTestResponse(err?.response);
+        setSent(true);
+      } else {
+        message.error('Failed to send, please check');
+      }
+    },
+    onFinally: () => {},
   });
 
   useRequest(
