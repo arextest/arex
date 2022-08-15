@@ -1,7 +1,7 @@
 import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
@@ -169,6 +169,13 @@ const MainBox = () => {
     }
   }, [activePane, panes, params.workspaceId, params.workspaceName]);
 
+  const collectionMenuRef = useRef();
+
+  const fetchCollectionTreeData = () => {
+    // @ts-ignore
+    collectionMenuRef.current.fetchTreeData();
+  };
+
   const addTab = () => {
     const newActiveKey = uuid();
     setPanes(
@@ -288,6 +295,7 @@ const MainBox = () => {
                     value={activeMenu[1]}
                     onSelect={handleCollectionMenuClick}
                     onGetData={setCollectionTreeData}
+                    cRef={collectionMenuRef}
                   />
                 }
               />
@@ -326,7 +334,12 @@ const MainBox = () => {
                 <MainTabPane className='main-tab-pane' tab={pane.title} key={pane.key}>
                   {/* TODO 工作区自定义组件待规范，参考 menuItem */}
                   {pane.pageType === PageTypeEnum.Request && (
-                    <HttpRequest id={pane.key} mode={HttpRequestMode.Normal} isNew={pane.isNew} />
+                    <HttpRequest
+                      id={pane.key}
+                      mode={HttpRequestMode.Normal}
+                      isNew={pane.isNew}
+                      fetchCollectionTreeData={fetchCollectionTreeData}
+                    />
                   )}
                   {pane.pageType === PageTypeEnum.Replay && (
                     <Replay data={pane.data as ApplicationDataType} />

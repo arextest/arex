@@ -61,6 +61,7 @@ export type HttpRequestProps = {
   mode?: HttpRequestMode;
   id: string;
   isNew?: boolean;
+  fetchCollectionTreeData: () => void;
 };
 
 export type KeyValueType = {
@@ -117,6 +118,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
   id,
   isNew,
   mode: defaultMode = HttpRequestMode.Normal,
+  fetchCollectionTreeData,
 }) => {
   const { theme, collectionTreeData, extensionInstalled, setPanes } = useStore();
   const { t: t_common } = useTranslation('common');
@@ -428,7 +430,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
   };
 
   const handleInterfaceSaveAs = (pane: PaneType) => {
-    // fetchCollectionTreeData(); // TODO 更新 Collection 数据
+    fetchCollectionTreeData(); // TODO 更新 Collection 数据
     setPanes(
       {
         key: pane.key,

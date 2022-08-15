@@ -94,6 +94,7 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
                     key: res.body.infoId,
                     title: values.requestName,
                   });
+                  setVisible(false);
                   form.resetFields();
                 });
               });

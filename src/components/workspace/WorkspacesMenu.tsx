@@ -17,6 +17,7 @@ import { WorkspaceService } from '../../services/Workspace.service';
 import { Workspace } from '../../services/Workspace.type';
 import { useStore } from '../../store';
 import { TooltipButton } from '../index';
+import { css } from '@emotion/react';
 
 const WorkspacesMenuWrapper = styled.div`
   display: flex;
@@ -144,7 +145,27 @@ const WorkspacesMenu = () => {
             value={params.workspaceId}
             options={workspaces.map((ws) => ({
               value: ws.id,
-              label: ws.workspaceName,
+              label: (
+                <div>
+                  {ws.workspaceName}
+                  <span
+                    css={css`
+                      color: #bdbdbd;
+                      margin-left: 4px;
+                    `}
+                  >
+                    (
+                    {
+                      {
+                        [RoleEnum.Admin]: 'Admin',
+                        [RoleEnum.Editor]: 'Editor',
+                        [RoleEnum.Viewer]: 'Viewer',
+                      }[ws.role]
+                    }
+                    )
+                  </span>
+                </div>
+              ),
             }))}
             onChange={handleChangeWorkspace}
             style={{ width: '80%' }}
