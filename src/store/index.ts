@@ -135,7 +135,7 @@ export const useStore = create(
     },
 
     logout: () => {
-      localStorage.removeItem('email');
+      localStorage.clear();
       set({ userInfo: undefined, panes: [], activePane: '' });
     },
 

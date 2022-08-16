@@ -23,9 +23,12 @@ const ValidInvitation = () => {
         workspaceId: decodeData.workSpaceId,
       }).then((res) => {
         if (res.body.success) {
+          localStorage.setItem('email', decodeData.mail);
+          localStorage.setItem('accessToken', res.body.accessToken);
+          localStorage.setItem('refreshToken', res.body.refreshToken);
           message.success('Verify successfully');
           setTimeout(() => {
-            nav('/');
+            window.location.href = '/';
           }, 1000);
         } else {
           message.error('Verification failed');
