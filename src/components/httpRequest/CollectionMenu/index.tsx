@@ -2,7 +2,7 @@ import { DownOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Empty, Input, Spin, Tree } from 'antd';
-import type { DirectoryTreeProps , DataNode, TreeProps} from 'antd/lib/tree';
+import type { DirectoryTreeProps, DataNode, TreeProps } from 'antd/lib/tree';
 import React, { FC, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -102,7 +102,7 @@ export type CollectionProps = {
 
 const defaultData: DataNode[] = [];
 
-const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData }) => {
+const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) => {
   const params = useParams();
 
   const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
@@ -198,28 +198,28 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData }) => {
   );
 
   // 树拖拽
-  let nodelocation=1;
-  let curlocation=0;
-  const calculateTree=(data:any,Key:string|number)=>{
+  let nodelocation = 1;
+  let curlocation = 0;
+  const calculateTree = (data: any, Key: string | number) => {
     for (let i = 0; i < data.length; i++) {
-        if (data[i].key === Key) {
-          curlocation=nodelocation;
-        }
-        nodelocation+=1;
-        if(data[i].children){
-          calculateTree(data[i].children,Key);
-        }
+      if (data[i].key === Key) {
+        curlocation = nodelocation;
       }
-     return curlocation;
-  }
+      nodelocation += 1;
+      if (data[i].children) {
+        calculateTree(data[i].children, Key);
+      }
+    }
+    return curlocation;
+  };
 
-  const onDragEnter: TreeProps['onDragEnter'] = info => {
+  const onDragEnter: TreeProps['onDragEnter'] = (info) => {
     // console.log(treeData,'000');
     // expandedKeys 需要受控时设置
     // setExpandedKeys(info.expandedKeys)
   };
 
-  const onDrop: TreeProps['onDrop'] = info => {
+  const onDrop: TreeProps['onDrop'] = (info) => {
     const dropKey = info.node.key;
     const dragKey = info.dragNode.key;
     const dragNodeType = info.dragNode.nodeType;
@@ -227,26 +227,25 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData }) => {
     const dropToGap = info.dropToGap;
     const dropPos = info.node.pos.split('-');
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
-    
+
     //case
-    if(dragNodeType===2&&dropNodeType!==1){
+    if (dragNodeType === 2 && dropNodeType !== 1) {
       return;
     }
     //request
-    if(dragNodeType===1&&dropNodeType===3&&dropToGap){
+    if (dragNodeType === 1 && dropNodeType === 3 && dropToGap) {
       return;
     }
     //folder
-    if(dragNodeType===3&&dropNodeType!==3){
+    if (dragNodeType === 3 && dropNodeType !== 3) {
       return;
     }
-    
+
     const loop = (
       data: DataNode[],
       key: React.Key,
       callback: (node: DataNode, i: number, data: DataNode[]) => void,
     ) => {
-      
       for (let i = 0; i < data.length; i++) {
         if (data[i].key === key) {
           return callback(data[i], i, data);
@@ -256,27 +255,28 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData }) => {
         }
       }
     };
-    
-    let d={fromNode:0,toNode:0}
-    d.fromNode=calculateTree(treeData,dragKey);
-    nodelocation=1;
-    curlocation=0;
+
+    let d = { fromNode: 0, toNode: 0 };
+    d.fromNode = calculateTree(treeData, dragKey);
+    nodelocation = 1;
+    curlocation = 0;
     // const data = [...treeData];
-    const data = [...treeData.map(e => {
-      return Object.assign({}, e)
-    })]
-    
-    
+    const data = [
+      ...treeData.map((e) => {
+        return Object.assign({}, e);
+      }),
+    ];
+
     // Find dragObject
     let dragObj: DataNode;
     loop(data, dragKey, (item, index, arr) => {
       arr.splice(index, 1);
       dragObj = item;
     });
-    
+
     if (!info.dropToGap) {
       // Drop on the content
-      loop(data, dropKey, item => {
+      loop(data, dropKey, (item) => {
         item.children = item.children || [];
         // where to insert 示例添加到头部，可以是随意位置
         item.children.unshift(dragObj);
@@ -286,7 +286,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData }) => {
       (info.node as any).props.expanded && // Is expanded
       dropPosition === 1 // On the bottom gap
     ) {
-      loop(data, dropKey, item => {
+      loop(data, dropKey, (item) => {
         item.children = item.children || [];
         // where to insert 示例添加到头部，可以是随意位置
         item.children.unshift(dragObj);
@@ -307,11 +307,10 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData }) => {
       }
     }
 
-    d.toNode=calculateTree(data,dragKey);
-    nodelocation=1;
-    curlocation=0;
+    d.toNode = calculateTree(data, dragKey);
+    nodelocation = 1;
+    curlocation = 0;
     console.log(d);
-    
   };
 
   return (

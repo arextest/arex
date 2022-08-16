@@ -1,10 +1,10 @@
 import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
-import { ReactNode, useEffect, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import {
   AppFooter,
@@ -67,7 +67,7 @@ const DraggableTabNode = ({ index, children, moveNode }: DraggableTabPaneProps) 
   const ref = useRef<HTMLDivElement>(null);
   const [{ isOver, dropClassName }, drop] = useDrop({
     accept: type,
-    collect: monitor => {
+    collect: (monitor) => {
       const { index: dragIndex } = monitor.getItem() || {};
       if (dragIndex === index) {
         return {};
@@ -84,7 +84,7 @@ const DraggableTabNode = ({ index, children, moveNode }: DraggableTabPaneProps) 
   const [, drag] = useDrag({
     type,
     item: { index },
-    collect: monitor => ({
+    collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
   });
@@ -97,7 +97,7 @@ const DraggableTabNode = ({ index, children, moveNode }: DraggableTabPaneProps) 
   );
 };
 
-const DraggableTabs: React.FC<{ children: React.ReactNode }> = props => {
+const DraggableTabs: React.FC<{ children: React.ReactNode }> = (props) => {
   const { children } = props;
   const [order, setOrder] = useState<React.Key[]>([]);
 
@@ -121,7 +121,7 @@ const DraggableTabs: React.FC<{ children: React.ReactNode }> = props => {
 
   const renderTabBar: TabsProps['renderTabBar'] = (tabBarProps, DefaultTabBar) => (
     <DefaultTabBar {...tabBarProps}>
-      {node => (
+      {(node) => (
         <DraggableTabNode key={node.key} index={node.key!} moveNode={moveTabNode}>
           {node}
         </DraggableTabNode>
@@ -156,15 +156,12 @@ const DraggableTabs: React.FC<{ children: React.ReactNode }> = props => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Tabs renderTabBar={renderTabBar} {...props}  type="editable-card">
-          {orderTabs}
+      <Tabs renderTabBar={renderTabBar} {...props} type='editable-card'>
+        {orderTabs}
       </Tabs>
     </DndProvider>
   );
 };
-
-
-
 
 type MainMenuItemProps = TabPaneProps & { menuItem: ReactNode };
 const MainMenuItem = styled((props: MainMenuItemProps) => (
