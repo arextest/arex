@@ -11,11 +11,3 @@ declare global {
     __AREX_EXTENSION_INSTALLED__: boolean; // 是否安装了arex-chrome-extension
   }
 }
-
-interface NodeList {
-  id: string;
-  children: NodeList[];
-  title: string;
-  key: string;
-  nodeType: number;
-}

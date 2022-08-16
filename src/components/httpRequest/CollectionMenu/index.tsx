@@ -2,9 +2,8 @@ import { DownOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Empty, Input, Spin, Tree } from 'antd';
-import type { DataNode, TreeProps } from 'antd/es/tree';
-import type { DirectoryTreeProps } from 'antd/lib/tree';
-import React, { FC, useMemo, useState } from 'react';
+import type { DirectoryTreeProps , DataNode, TreeProps} from 'antd/lib/tree';
+import React, { FC, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { NodeType } from '../../../constant';
@@ -98,6 +97,7 @@ export type CollectionProps = {
   value?: string;
   onSelect: (key: string, node: nodeType) => void;
   onGetData: (data: NodeList[]) => void;
+  cRef: any;
 };
 
 const defaultData: DataNode[] = [];
@@ -110,6 +110,12 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData }) => {
   // TODO
   const [searchValue, setSearchValue] = useState('');
   const [autoExpandParent, setAutoExpandParent] = useState(true);
+
+  useImperativeHandle(cRef, () => ({
+    fetchTreeData: () => {
+      fetchTreeData();
+    },
+  }));
 
   const {
     data: treeData = [],

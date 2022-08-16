@@ -3,9 +3,9 @@ import { css } from '@emotion/react';
 import { Dropdown, Input, Menu, Modal, Space } from 'antd';
 import ListBody from 'antd/lib/transfer/ListBody';
 import { useState } from 'react';
-import { useStore } from '../../store';
 
 import EnvironmentService from '../../services/Environment.service';
+import { useStore } from '../../store';
 
 const btnCss = css`
   width: 20px;
@@ -150,6 +150,8 @@ function EnvironmentTitleRender({ val, titleRadius, updateDirectorytreeData }: E
         `}
       >
         {val.id == titleRadius || environment == val.id ? (
+          //  TODO 避免写类似hover这种涉及全局统一风范的样式，如写确保风格统一
+          // 此处建议使用 <Button type="text" icon={<CheckCircleOutlined/>}>
           <div css={btnCss} onClick={(event) => event.stopPropagation()}>
             <CheckCircleOutlined onClick={selectEnvironment} />
           </div>

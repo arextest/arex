@@ -39,7 +39,7 @@ function App() {
     // - 在header带上（refresh-token:具体的字符串），请求/refresh/{username}接口，该接口会验证refreshToken是否过期，
     //   没有过期返回新的accessToken和refreshToken。过期返回responseDesc:Authentication verification failed
     // - 在/refresh/{username}接口返回responseDesc:Authentication verification failed，跳转到登录页面
-    AuthService.refreshToken({ userName: 'tzhangm@trip.com' }).then((res) => {
+    AuthService.refreshToken({ userName: localStorage.getItem('email') }).then((res) => {
       if (res.data.body) {
         const accessToken = res.data.body.accessToken;
         const refreshToken = res.data.body.refreshToken;

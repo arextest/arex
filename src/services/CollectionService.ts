@@ -4,6 +4,14 @@ import request from '../api/axios';
 import { collectionOriginalTreeToAntdTreeData } from '../helpers/collection/util';
 import { QueryWorkspaceByIdReq, QueryWorkspaceByIdRes } from './CollectionService.type';
 
+export interface NodeList {
+  id: string;
+  children: NodeList[];
+  title: string;
+  key: string;
+  nodeType: number;
+}
+
 export class CollectionService {
   static listCollection(params: { id: string }) {
     return request

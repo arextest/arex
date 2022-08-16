@@ -23,6 +23,17 @@ export interface EnvironmentSaveReq {
   };
 }
 
-export type GetEnvironmentRes = {
+export interface GetEnvironmentReq {
+  workspaceId: string;
+}
+
+export type EnvironmentKeyValues = { key: string; value: string; active: boolean };
+export type Environment = {
+  envName: string;
+  id: string;
+  keyValues: EnvironmentKeyValues[];
   workspaceId: string;
 };
+export interface GetEnvironmentRes {
+  environments: Environment[];
+}

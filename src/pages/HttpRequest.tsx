@@ -1,3 +1,4 @@
+import { EditOutlined } from '@ant-design/icons';
 import { javascript } from '@codemirror/lang-javascript';
 import { json } from '@codemirror/lang-json';
 import { css } from '@emotion/react';
@@ -20,6 +21,7 @@ import {
 } from 'antd';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { useImmer } from 'use-immer';
 
 import { AnimateAutoHeight } from '../components';
@@ -45,6 +47,7 @@ import {
 import { treeFindPath } from '../helpers/collection/util';
 import { readableBytes } from '../helpers/http/responseMeta';
 import { runTestScript } from '../helpers/sandbox';
+import { CollectionService } from '../services/CollectionService';
 import { FileSystemService } from '../services/FileSystem.service';
 import { PaneType, useStore } from '../store';
 import { tryParseJsonString, tryPrettierJsonString } from '../utils';
@@ -61,6 +64,7 @@ export type HttpRequestProps = {
   mode?: HttpRequestMode;
   id: string;
   isNew?: boolean;
+  fetchCollectionTreeData: () => void;
 };
 
 export type KeyValueType = {
@@ -109,6 +113,20 @@ const ResponseWrapper = styled.div`
   align-items: center;
 `;
 
+const BreadcrumbHeader = styled.div`
+  cursor: pointer;
+  display: flex;
+  .tool {
+    margin-left: 8px;
+    visibility: hidden;
+  }
+  &:hover {
+    .tool {
+      visibility: unset;
+    }
+  }
+`;
+
 // 注
 // mode：有两种模式，normal、compare
 // id：request的id，组件加载时拉一次数据
@@ -117,11 +135,14 @@ const HttpRequest: FC<HttpRequestProps> = ({
   id,
   isNew,
   mode: defaultMode = HttpRequestMode.Normal,
+  fetchCollectionTreeData,
 }) => {
   const { theme, collectionTreeData, extensionInstalled, setPanes } = useStore();
   const { t: t_common } = useTranslation('common');
   const { t: t_components } = useTranslation('components');
-
+  const _useParams = useParams();
+  const [renameKey, setRenameKey] = useState('');
+  const [renameValue, setRenameValue] = useState('');
   const [mode, setMode] = useState(defaultMode);
   // 如果是case(2)类型的话，就一定有一个父节点，类型也一定是request(1)
   const nodeInfoInCollectionTreeData = useMemo(() => {
@@ -222,6 +243,18 @@ const HttpRequest: FC<HttpRequestProps> = ({
       cancel();
     }
   };
+  const rename = () => {
+    const paths = treeFindPath(collectionTreeData, (node) => node.key === id);
+    CollectionService.rename({
+      id: _useParams.workspaceId,
+      newName: renameValue,
+      path: paths.map((i: any) => i.key),
+      userName: localStorage.getItem('email'),
+    }).then((res) => {
+      fetchCollectionTreeData();
+      setRenameKey('');
+    });
+  };
 
   const {
     loading: requesting,
@@ -239,12 +272,15 @@ const HttpRequest: FC<HttpRequestProps> = ({
         size: readableBytes(JSON.stringify(res.data).length),
       });
       setResponse(res);
+      setSent(true);
     },
     onError(err) {
-      setResponse(err?.response);
-    },
-    onFinally: () => {
-      setSent(true);
+      if (err?.response) {
+        setResponse(err?.response);
+        setSent(true);
+      } else {
+        message.error('Failed to send, please check');
+      }
     },
   });
 
@@ -259,13 +295,17 @@ const HttpRequest: FC<HttpRequestProps> = ({
     },
     onSuccess: (res) => {
       setBaseResponse(res);
-    },
-    onError(err) {
-      setBaseResponse(err?.response);
-    },
-    onFinally: () => {
       setSent(true);
     },
+    onError(err) {
+      if (err?.response) {
+        setBaseResponse(err?.response);
+        setSent(true);
+      } else {
+        message.error('Failed to send, please check');
+      }
+    },
+    onFinally: () => {},
   });
 
   const {
@@ -279,13 +319,17 @@ const HttpRequest: FC<HttpRequestProps> = ({
     },
     onSuccess: (res) => {
       setTestResponse(res);
-    },
-    onError(err) {
-      setTestResponse(err?.response);
-    },
-    onFinally: () => {
       setSent(true);
     },
+    onError(err) {
+      if (err?.response) {
+        setTestResponse(err?.response);
+        setSent(true);
+      } else {
+        message.error('Failed to send, please check');
+      }
+    },
+    onFinally: () => {},
   });
 
   useRequest(
@@ -428,7 +472,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
   };
 
   const handleInterfaceSaveAs = (pane: PaneType) => {
-    // fetchCollectionTreeData(); // TODO 更新 Collection 数据
+    fetchCollectionTreeData(); // TODO 更新 Collection 数据
     setPanes(
       {
         key: pane.key,
@@ -477,13 +521,34 @@ const HttpRequest: FC<HttpRequestProps> = ({
       <AnimateAutoHeight>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           {nodeInfoInCollectionTreeData.raw.length > 0 ? (
-            <div>
-              <Breadcrumb style={{ paddingBottom: '14px' }}>
-                {nodeInfoInCollectionTreeData.raw.map((i, index) => (
-                  <Breadcrumb.Item key={index}>{i.title}</Breadcrumb.Item>
-                ))}
-              </Breadcrumb>
-            </div>
+            <BreadcrumbHeader>
+              {renameKey === '' ? (
+                <>
+                  <Breadcrumb style={{ paddingBottom: '14px' }}>
+                    {nodeInfoInCollectionTreeData.raw.map((i, index) => (
+                      <Breadcrumb.Item key={index}>{i.title}</Breadcrumb.Item>
+                    ))}
+                  </Breadcrumb>
+                  <div
+                    className={'tool'}
+                    onClick={() => {
+                      setRenameKey(id);
+                      setRenameValue(nodeInfoInCollectionTreeData.self.title);
+                    }}
+                  >
+                    <EditOutlined />
+                  </div>
+                </>
+              ) : (
+                <Input
+                  value={renameValue}
+                  onChange={(val) => setRenameValue(val.target.value)}
+                  onBlur={rename}
+                  onPressEnter={rename}
+                  autoFocus
+                />
+              )}
+            </BreadcrumbHeader>
           ) : (
             <div>
               <Breadcrumb style={{ paddingBottom: '14px' }}>

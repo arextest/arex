@@ -1,11 +1,13 @@
 // @ts-ignore
 import { toggleTheme } from '@zougt/vite-plugin-theme-preprocessor/dist/browser-utils';
 import React from 'react';
+import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 import { nodeType } from '../components/httpRequest/CollectionMenu';
 import { MenuTypeEnum, PageTypeEnum } from '../constant';
+import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
 import { DefaultTheme, Theme, ThemeKey } from '../style/theme';
@@ -60,11 +62,11 @@ type BaseState = {
   workspaces: Workspace[];
   setWorkspaces: (workspaces: Workspace[]) => void;
 
-  environmentTreeData: any;
-  setEnvironmentTreeData: (environmentTreeData: any) => void;
+  environmentTreeData: Environment[];
+  setEnvironmentTreeData: (environmentTreeData: Environment[]) => void;
 
-  environment: string;
-  setEnvironment: (environment: any) => void;
+  activeEnvironment?: Environment;
+  setActiveEnvironment: (environment: Environment | string) => void;
 };
 
 /**
@@ -146,7 +148,18 @@ export const useStore = create(
     environmentTreeData: [],
     setEnvironmentTreeData: (environmentTreeData) => set({ environmentTreeData }),
 
-    environment: '0',
-    setEnvironment: (environment) => set({ environment }),
+    activeEnvironment: undefined,
+    setActiveEnvironment: (environment) => {
+      if (typeof environment === 'string') {
+        const environmentTreeData = get().environmentTreeData;
+        set({ activeEnvironment: environmentTreeData.find((i) => i.id === environment) });
+      } else {
+        set({ activeEnvironment: environment });
+      }
+    },
   })),
 );
+
+if (process.env.NODE_ENV === 'development') {
+  mountStoreDevtool('Store', useStore);
+}

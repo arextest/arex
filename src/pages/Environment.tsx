@@ -1,16 +1,19 @@
 import './Environment.less';
 
 import { MenuOutlined } from '@ant-design/icons';
-import { Button, Form, Input, message, Table } from 'antd';
+import { Button, Form, Input, InputRef, message, Table } from 'antd';
 import update from 'immutability-helper';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 const type = 'DraggableBodyRow';
 import { css } from '@emotion/react';
+import { useRequest } from 'ahooks';
 import type { FormInstance } from 'antd/es/form';
+import { useParams } from 'react-router-dom';
 
 import EnvironmentService from '../services/Environment.service';
+import { useStore } from '../store';
 
 
 //拖拽
@@ -152,12 +155,14 @@ const EditableCell: React.FC<EditableCellProps> = ({
   return <td {...restProps}>{childNode}</td>;
 };
 
-export type Environmentprops = {
-  curEnvironment: (p: any) => void;
-  fetchEnvironmentData: () => void;
+export type EnvironmentProps = {
+  id: string;
 };
 
-const EnvironmentPage = ({ curEnvironment, fetchEnvironmentData }: Environmentprops) => {
+const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
+  const parmas = useParams();
+  const { activeEnvironment, setEnvironmentTreeData } = useStore();
+
   const [data, setData] = useState<[]>([]);
   const [isActive, setIsActive] = useState<[]>([]);
   const [title, setTitle] = useState<string>('');
@@ -209,20 +214,20 @@ const EnvironmentPage = ({ curEnvironment, fetchEnvironmentData }: Environmentpr
   };
 
   useEffect(() => {
-    if (curEnvironment.length > 0) {
+    if (activeEnvironment) {
       const EnvironmentActive: string[] = [];
-      const EnvironmnetKeyValues = curEnvironment[0].keyValues.map((e: any, index: number) => {
+      const EnvironmentKeyValues = activeEnvironment.keyValues.map((e: any, index: number) => {
         if (e.active) {
           EnvironmentActive.push(index);
         }
         return { ...e, keys: index };
       });
-      setData(EnvironmnetKeyValues);
-      setCount(EnvironmnetKeyValues.length + 1);
+      setData(EnvironmentKeyValues);
+      setCount(EnvironmentKeyValues.length + 1);
       setIsActive(EnvironmentActive);
-      setTitle(curEnvironment[0].title || curEnvironment[0].envName);
+      setTitle(activeEnvironment.title || activeEnvironment.envName);
     }
-  }, [curEnvironment]);
+  }, [activeEnvironment]);
 
   //输入框数据保存
   const handleSave = (row: DataType) => {
@@ -287,7 +292,7 @@ const EnvironmentPage = ({ curEnvironment, fetchEnvironmentData }: Environmentpr
 
   //保存
   const SaveEnvironment = () => {
-    const newdata = data.map((e: any) => {
+    const newData = data.map((e: any) => {
       if (isActive.includes(e.keys)) {
         e.active = true;
         return { key: e.key, active: e.active, value: e.value };
@@ -296,8 +301,8 @@ const EnvironmentPage = ({ curEnvironment, fetchEnvironmentData }: Environmentpr
         return { key: e.key, active: e.active, value: e.value };
       }
     });
-    const env = { ...curEnvironment[0] };
-    env.keyValues = newdata;
+    const env = { ...activeEnvironment };
+    env.keyValues = newData;
     EnvironmentService.saveEnvironment({ env: env }).then((res) => {
       if (res.body.success == true) {
         fetchEnvironmentData();
@@ -307,6 +312,17 @@ const EnvironmentPage = ({ curEnvironment, fetchEnvironmentData }: Environmentpr
       }
     });
   };
+
+  const { run: fetchEnvironmentData } = useRequest(
+    () => EnvironmentService.getEnvironment({ workspaceId: parmas.workspaceId as string }),
+    {
+      ready: !!parmas.workspaceId,
+      refreshDeps: [parmas.workspaceId],
+      onSuccess(res) {
+        setEnvironmentTreeData(res);
+      },
+    },
+  );
 
   return (
     <>
