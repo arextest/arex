@@ -1,3 +1,4 @@
+import { EditOutlined } from '@ant-design/icons';
 import { javascript } from '@codemirror/lang-javascript';
 import { json } from '@codemirror/lang-json';
 import { css } from '@emotion/react';
@@ -20,6 +21,7 @@ import {
 } from 'antd';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { useImmer } from 'use-immer';
 
 import { AnimateAutoHeight } from '../components';
@@ -45,6 +47,7 @@ import {
 import { treeFindPath } from '../helpers/collection/util';
 import { readableBytes } from '../helpers/http/responseMeta';
 import { runTestScript } from '../helpers/sandbox';
+import { CollectionService } from '../services/CollectionService';
 import { FileSystemService } from '../services/FileSystem.service';
 import { PaneType, useStore } from '../store';
 import { tryParseJsonString, tryPrettierJsonString } from '../utils';
@@ -110,6 +113,20 @@ const ResponseWrapper = styled.div`
   align-items: center;
 `;
 
+const BreadcrumbHeader = styled.div`
+  cursor: pointer;
+  display: flex;
+  .tool {
+    margin-left: 8px;
+    visibility: hidden;
+  }
+  &:hover {
+    .tool {
+      visibility: unset;
+    }
+  }
+`;
+
 // 注
 // mode：有两种模式，normal、compare
 // id：request的id，组件加载时拉一次数据
@@ -123,7 +140,9 @@ const HttpRequest: FC<HttpRequestProps> = ({
   const { theme, collectionTreeData, extensionInstalled, setPanes } = useStore();
   const { t: t_common } = useTranslation('common');
   const { t: t_components } = useTranslation('components');
-
+  const _useParams = useParams();
+  const [renameKey, setRenameKey] = useState('');
+  const [renameValue, setRenameValue] = useState('');
   const [mode, setMode] = useState(defaultMode);
   // 如果是case(2)类型的话，就一定有一个父节点，类型也一定是request(1)
   const nodeInfoInCollectionTreeData = useMemo(() => {
@@ -223,6 +242,18 @@ const HttpRequest: FC<HttpRequestProps> = ({
       message.warn(t_components('http.extensionNotInstalled'));
       cancel();
     }
+  };
+  const rename = () => {
+    const paths = treeFindPath(collectionTreeData, (node) => node.key === id);
+    CollectionService.rename({
+      id: _useParams.workspaceId,
+      newName: renameValue,
+      path: paths.map((i: any) => i.key),
+      userName: localStorage.getItem('email'),
+    }).then((res) => {
+      fetchCollectionTreeData();
+      setRenameKey('');
+    });
   };
 
   const {
@@ -490,13 +521,34 @@ const HttpRequest: FC<HttpRequestProps> = ({
       <AnimateAutoHeight>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           {nodeInfoInCollectionTreeData.raw.length > 0 ? (
-            <div>
-              <Breadcrumb style={{ paddingBottom: '14px' }}>
-                {nodeInfoInCollectionTreeData.raw.map((i, index) => (
-                  <Breadcrumb.Item key={index}>{i.title}</Breadcrumb.Item>
-                ))}
-              </Breadcrumb>
-            </div>
+            <BreadcrumbHeader>
+              {renameKey === '' ? (
+                <>
+                  <Breadcrumb style={{ paddingBottom: '14px' }}>
+                    {nodeInfoInCollectionTreeData.raw.map((i, index) => (
+                      <Breadcrumb.Item key={index}>{i.title}</Breadcrumb.Item>
+                    ))}
+                  </Breadcrumb>
+                  <div
+                    className={'tool'}
+                    onClick={() => {
+                      setRenameKey(id);
+                      setRenameValue(nodeInfoInCollectionTreeData.self.title);
+                    }}
+                  >
+                    <EditOutlined />
+                  </div>
+                </>
+              ) : (
+                <Input
+                  value={renameValue}
+                  onChange={(val) => setRenameValue(val.target.value)}
+                  onBlur={rename}
+                  onPressEnter={rename}
+                  autoFocus
+                />
+              )}
+            </BreadcrumbHeader>
           ) : (
             <div>
               <Breadcrumb style={{ paddingBottom: '14px' }}>

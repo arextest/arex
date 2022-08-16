@@ -169,6 +169,7 @@ function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNew
           <div className={'content'}>
             {renameKey === val.id ? (
               <Input
+                autoFocus
                 width={'100%'}
                 style={{ padding: '0 4px', width: '100%' }}
                 value={renameValue}
