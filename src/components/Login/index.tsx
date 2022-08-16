@@ -93,7 +93,7 @@ const Login = () => {
         message.success('Login succeeded');
         initBeforeUserEntry(email);
       } else {
-        message.error(res.data.responseStatusType.responseDesc);
+        message.error('Verification code error');
       }
     });
   };
