@@ -22,6 +22,7 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   const [selectedDiff, setSelectedDiff] = useState<Difference>();
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
   const handleScenes = (diff: Difference, category?: CategoryStatistic) => {
+    console.log('s');
     if (selectedDiff?.differenceName !== diff.differenceName) {
       setSelectedDiff(diff);
       setSelectedCategory(category);
@@ -100,6 +101,9 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
               <Col span={6}>
                 <MenuSelect<Scene>
                   small
+                  requestOptions={{
+                    refreshDeps: [selectedCategory, selectedDiff, data.planItemId],
+                  }}
                   defaultSelectFirst
                   rowKey='sceneName'
                   filter='sceneName'
