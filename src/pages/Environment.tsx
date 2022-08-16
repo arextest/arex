@@ -17,7 +17,7 @@ import { useStore } from '../store';
 
 
 //拖拽
-const DraggableBodyRow = ({ index, moveRow, className, style,children, ...restProps }) => {
+const DraggableBodyRow = ({ index, moveRow, className, style, children, ...restProps }) => {
   const [form] = Form.useForm();
   const ref = useRef(null);
   const [{ isOver, dropClassName }, drop] = useDrop({
@@ -36,7 +36,7 @@ const DraggableBodyRow = ({ index, moveRow, className, style,children, ...restPr
     },
     drop: (item) => {
       console.log(item);
-      
+
       moveRow(item.index, index);
     },
   });
@@ -52,8 +52,8 @@ const DraggableBodyRow = ({ index, moveRow, className, style,children, ...restPr
   });
   // drag(ref);
   // console.log(collected);
-  drop(drag(ref))
-  const measuredRef = collected?dragPreview:drop
+  drop(drag(ref));
+  const measuredRef = collected ? dragPreview : drop;
   // drop(dragPreview)
   return (
     <Form form={form} component={false}>
