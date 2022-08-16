@@ -1,30 +1,36 @@
-# AREX 前端
+<div align="center"><h1>AREX-UI</h1></div>
+<div align="center">auto replay X -- a "Differential Testing" and "Record and Replay Testing" Tool</div>
 
-## axios 封装
+## QUICK START
 
-直接 return response.data
+[quick start](https://github.com/arextest/dev-ops#arex-install)\
+[documentions](./documents/introduction.md)
 
-request 拦截器
+## FETURE
 
-response 拦截器
+- Out-of-order comparsion\
+  Supports out-of-order comparison of arrays with limited configuration. [more detail](url)
+- Exclusion/Inclusion\
+  Inclusion means that you can specify nodes in the interface you want to compare.\
+  Exclusion means that you can specify nodes in the interface you want to ignore.
+- Supporting comparsion type\
+  Temporarily only supports json format comparison
 
-## 鉴权
+## LICENSE
 
-## 前端应用架构
+```text
+Copyright (C) 2022 ArexTest
 
-| 区域        | 功能                                                                       |
-| ----------- | -------------------------------------------------------------------------- |
-| Header      | workspace 选择区、应用设置入口、个人信息入口                               |
-| 左侧 tab 栏 | 选择需要操作的功能模块，例如集合、环境变量，选完以后向右侧主区域 push 数据 |
-| 主区域      | 多 tab 栏形式，可同时容纳多个不同页面，可关闭，带有状态（编辑过）          |
-| 底部操作栏  | 提供折叠按钮入口、应用代理请求的方式（chrome 插件/http 代理）              |
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
 
-## 项目文件结构
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-| 区域       | 功能                                                                                    |
-| ---------- | --------------------------------------------------------------------------------------- |
-| components | 页面所有的组件                                                                          |
-| helpers    | 与 components 对应，存放 components 组件中复杂的一些逻辑处理代码                        |
-| pages      | 主区域的页面组件，类似于路由的 pages。命名规范：Environment.tsx，组件名 EnvironmentPage |
-| layouts    | MainBox.tsx 是主要容器                                                                  |
-1
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see https://www.gnu.org/licenses/.
+```
