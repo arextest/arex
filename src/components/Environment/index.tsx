@@ -39,7 +39,7 @@ const Environment = forwardRef(
     const handleSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
       // @ts-ignore
       const selectKeyClassName = info.nativeEvent.target.getAttribute('class') || '';
-      if (keys[0] && selectKeyClassName.includes('css-1fcl3s9-EnvironmentTitleRender')) {
+      if (keys[0] && (selectKeyClassName.includes('css-1fcl3s9-EnvironmentTitleRender')||selectKeyClassName===' ')) {
         setEnvironmentSelectedData(info.selectedNodes);
         setSelectedKeys(keys);
         onSelect &&

@@ -12,8 +12,9 @@ import type { FormInstance } from 'antd/es/form';
 
 import EnvironmentService from '../services/Environment.service';
 
+
 //拖拽
-const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }) => {
+const DraggableBodyRow = ({ index, moveRow, className, style,children, ...restProps }) => {
   const [form] = Form.useForm();
   const ref = useRef(null);
   const [{ isOver, dropClassName }, drop] = useDrop({
@@ -31,34 +32,56 @@ const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }) =>
       };
     },
     drop: (item) => {
+      console.log(item);
+      
       moveRow(item.index, index);
     },
   });
-
-  const [, drag] = useDrag({
+  const [collected, drag, dragPreview] = useDrag({
     type,
     item: {
       index,
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
+
     }),
   });
-
-  drop(drag(ref));
-  // restProps.children[0].ref=ref
+  // drag(ref);
+  // console.log(collected);
+  drop(drag(ref))
+  const measuredRef = collected?dragPreview:drop
+  // drop(dragPreview)
   return (
     <Form form={form} component={false}>
       <EditableContext.Provider value={form}>
-        <tr
-          ref={ref}
+      <tr
+          ref={ref}   
+          className={`${className}${isOver ? dropClassName : ''}`}
+          style={{
+            cursor: 'move',
+            ...style,
+          }}
+          children={children}
+          {...restProps}
+        />
+        {/* <tr
+          ref={dragPreview}   
           className={`${className}${isOver ? dropClassName : ''}`}
           style={{
             cursor: 'move',
             ...style,
           }}
           {...restProps}
-        />
+        >        
+        <td>
+        <div ref={ref} css={css`display:flex;justify-content:space-between`}><div css={css`display:flex;align-items:center`}><MenuOutlined/></div></div>
+        </td>
+        {children[0]}
+        {children[2]}
+        {children[3]}
+        {children[4]}
+        </tr> */}
       </EditableContext.Provider>
     </Form>
   );
@@ -139,6 +162,11 @@ const EnvironmentPage = ({ curEnvironment, fetchEnvironmentData }: Environmentpr
   const [isActive, setIsActive] = useState<[]>([]);
   const [title, setTitle] = useState<string>('');
   const defaultColumns = [
+    // {
+    //   title: '',
+    //   // dataIndex: 'key',
+    //   // width: '40%',
+    // },
     {
       title: 'VARIABLE',
       dataIndex: 'key',
@@ -235,7 +263,7 @@ const EnvironmentPage = ({ curEnvironment, fetchEnvironmentData }: Environmentpr
         setIsActive(isActive.filter((e) => e != record.keys));
       }
     },
-    // renderCell:(checked, record, index, originNode)=><div css={css`display:flex;justify-content:space-between`}><div css={css`display:flex;align-items:center`}><MenuOutlined/></div>{originNode}</div>,
+    // renderCell:(checked, record, index, originNode)=><div css={css`display:flex;justify-content:space-between`}><div css={css`display:flex;align-items:center`}></div>{originNode}</div>,
   };
 
   //添加
