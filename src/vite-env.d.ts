@@ -11,3 +11,15 @@ declare global {
     __AREX_EXTENSION_INSTALLED__: boolean; // 是否安装了arex-chrome-extension
   }
 }
+
+declare module '@zougt/vite-plugin-theme-preprocessor/dist/browser-utils' {
+  export function toggleTheme(options: {
+    scopeName?: string;
+    customLinkHref?: (href: string) => string;
+  });
+
+  export function addClassNameToHtmlTag(options: {
+    scopeName?: string;
+    multipleScopeVars: { scopeName: string; path?: string }[];
+  });
+}

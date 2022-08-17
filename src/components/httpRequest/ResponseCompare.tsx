@@ -76,7 +76,8 @@ const onChange = (key: string) => {
 const ResponseCompare = ({ responses }) => {
   console.log(responses, 'responses');
   const diffView = useRef<HTMLDivElement>();
-  const theme = useStore((store) => store.theme);
+  const theme = useStore((store) => store.userInfo.profile.theme);
+
   let mergeView;
   useEffect(() => {
     if (!diffView.current) {

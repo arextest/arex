@@ -1,4 +1,3 @@
-// @ts-ignore
 import { toggleTheme } from '@zougt/vite-plugin-theme-preprocessor/dist/browser-utils';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
@@ -35,10 +34,10 @@ export type PaneType = {
 };
 
 type BaseState = {
-  theme: Theme;
+  // theme: Theme;
   changeTheme: (theme?: Theme) => void;
   extensionInstalled: boolean;
-  userInfo?: UserInfo;
+  userInfo: UserInfo;
   logout: () => void;
 
   activePane: string;
@@ -80,25 +79,24 @@ export const useStore = create(
     userInfo: {
       email: localStorage.getItem('email'),
       profile: {
-        background: 'light',
-        accentColor: '#603BE3',
+        theme: DefaultTheme,
+        primaryColor: '#603BE3',
         fontSize: 'small',
-        language: 'english',
+        language: 'en-US',
       },
     },
     setUserInfo: (userInfo: BaseState['userInfo']) => set({ userInfo }),
 
-    theme: (localStorage.getItem(ThemeKey) as Theme) || DefaultTheme,
+    // theme: (localStorage.getItem(ThemeKey) as Theme) || DefaultTheme,
     changeTheme: (theme?: Theme) => {
       set((state) => {
-        const newTheme = theme || (state.theme === Theme.light ? Theme.dark : Theme.light);
+        const newTheme =
+          theme || (state.userInfo?.profile.theme === Theme.light ? Theme.dark : Theme.light);
         toggleTheme({
           scopeName: newTheme,
         });
         localStorage.setItem(ThemeKey, newTheme);
-        return {
-          theme: newTheme,
-        };
+        state.userInfo!.profile.theme = newTheme;
       });
     },
     extensionInstalled: false,
