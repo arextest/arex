@@ -4,7 +4,6 @@ import { defineConfig } from 'vite';
 
 import proxy from './config/proxy.js';
 import themePreprocessorOptions from './config/themePreprocessorOptions';
-import { Color } from './src/style/theme';
 
 const env = 'FAT';
 const convertProxyConfig: any = {};

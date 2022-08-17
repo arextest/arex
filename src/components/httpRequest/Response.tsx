@@ -2,9 +2,10 @@ import { javascript } from '@codemirror/lang-javascript';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import CodeMirror from '@uiw/react-codemirror';
-import { Tabs, List, Progress, Badge } from 'antd';
+import { Badge, List, Progress, Tabs } from 'antd';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
 import { useStore } from '../../store';
 import FormTable, { getColumns } from './FormTable';
 const { TabPane } = Tabs;
@@ -44,7 +45,7 @@ const Response: FC<{
     console.log(key);
   };
   const { t: t_components } = useTranslation('components');
-  const theme = useStore((state) => state.theme);
+  const theme = useStore((state) => state.userInfo.profile.theme);
   const headers = useMemo(
     () =>
       props.responseHeaders

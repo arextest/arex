@@ -93,7 +93,7 @@ const Results: FC<{
   refreshDep?: React.Key;
   onSelectedPlanChange: (selectedPlan: PlanStatistics) => void;
 }> = ({ appId, defaultSelectFirst, refreshDep, onSelectedPlanChange }) => {
-  const theme = useStore((state) => state.theme);
+  const theme = useStore((state) => state.userInfo.profile.theme);
   const [selectRow, setSelectRow] = useState<number>(defaultSelectFirst ? 0 : -1);
   const { data: planStatistics, loading } = useRequest(
     () =>

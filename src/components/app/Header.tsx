@@ -1,17 +1,15 @@
 import { SettingOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Avatar, Button, Divider, Dropdown, Menu } from 'antd';
-import React, { useState } from 'react';
+import { Avatar, Divider, Dropdown, Menu } from 'antd';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { MenuTypeEnum, PageTypeEnum } from '../../constant';
+import { PageTypeEnum } from '../../constant';
 import Setting from '../../pages/Setting';
 import { useStore } from '../../store';
-import { Theme, ThemeIcon } from '../../style/theme';
-import { uuid } from '../../utils';
+import GitHubStarButton from '../GitHubStarButton';
 import { TooltipButton } from '../index';
 import InviteWorkspace from '../workspace/Invite';
-import AppGitHubStarButton from './GitHubStarButton';
 
 const HeaderWrapper = styled.div`
   .app-header {
@@ -39,7 +37,14 @@ const HeaderWrapper = styled.div`
 
 const AppHeader = () => {
   const nav = useNavigate();
-  const { theme, changeTheme, userInfo, logout, setPanes } = useStore();
+  const {
+    userInfo: {
+      email,
+      profile: { theme },
+    },
+    logout,
+    setPanes,
+  } = useStore();
 
   const handleSetting = () => {
     setPanes(
@@ -61,17 +66,11 @@ const AppHeader = () => {
       <div className={'app-header'}>
         <div className={'left'}>
           <span className={'app-name'}>AREX</span>
-          <AppGitHubStarButton />
+          <GitHubStarButton theme={theme} />
         </div>
 
         <div className={'right'}>
           <InviteWorkspace />
-
-          <Button
-            type='text'
-            icon={theme === Theme.light ? ThemeIcon.dark : ThemeIcon.light}
-            onClick={() => changeTheme()}
-          />
 
           <TooltipButton icon={<SettingOutlined />} title='Setting' onClick={handleSetting} />
 
@@ -95,7 +94,7 @@ const AppHeader = () => {
             }
           >
             <Avatar size={20} style={{ marginLeft: '8px', cursor: 'pointer' }}>
-              {userInfo?.email}
+              {email}
             </Avatar>
           </Dropdown>
         </div>

@@ -45,7 +45,8 @@ const CodeViewer = styled(
 `;
 
 const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
-  const theme = useStore((state) => state.theme);
+  const theme = useStore((state) => state.userInfo.profile.theme);
+
   const [onlyFailed, setOnlyFailed] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
 
