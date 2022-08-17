@@ -1,8 +1,8 @@
 import request from '../api/axios';
 
 export class UserService {
-  static userProfile() {
-    return request.get(`/api/login/userProfile/${localStorage.getItem('email')}`).then((res) => {
+  static userProfile(email: string) {
+    return request.get(`/api/login/userProfile/${email}`).then((res) => {
       let profile: any = {};
       try {
         profile = JSON.parse(res.body.profile);

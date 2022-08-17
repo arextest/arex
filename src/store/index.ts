@@ -79,7 +79,7 @@ export const useStore = create(
     userInfo: {
       email: localStorage.getItem('email'),
       profile: {
-        theme: DefaultTheme,
+        theme: (localStorage.getItem(ThemeKey) as Theme) || DefaultTheme,
         primaryColor: '#603BE3',
         fontSize: 'small',
         language: 'en-US',
@@ -87,7 +87,6 @@ export const useStore = create(
     },
     setUserInfo: (userInfo: BaseState['userInfo']) => set({ userInfo }),
 
-    // theme: (localStorage.getItem(ThemeKey) as Theme) || DefaultTheme,
     changeTheme: (theme?: Theme) => {
       set((state) => {
         const newTheme =

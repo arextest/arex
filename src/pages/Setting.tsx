@@ -1,11 +1,12 @@
 import { useRequest } from 'ahooks';
-import { Anchor, Form, message, Select, Switch } from 'antd';
+import { Anchor, Form, message, Select, Spin, Switch } from 'antd';
 import { FC, useEffect, useState } from 'react';
 import { CirclePicker } from 'react-color';
 
 import { UserService } from '../services/UserService';
 import { useStore } from '../store';
-import { Theme } from '../style/theme';
+import { Theme, ThemeKey } from '../style/theme';
+import { setLocalStorage } from '../utils';
 const { Option } = Select;
 const { Link } = Anchor;
 
@@ -35,16 +36,21 @@ const ColorPicker: FC<ColorPickerProps> = ({ value, onChange }) => (
 );
 
 const Setting: FC = () => {
+  const [initLoading, setInitLoading] = useState(true);
   const [form] = Form.useForm<SettingForm>();
-  const setUserInfo = useStore((state) => state.setUserInfo);
+  const {
+    userInfo: { email },
+    setUserInfo,
+  } = useStore();
 
   const handleFormChange = () => {
     form
       .validateFields()
       .then((values) => {
-        console.log(values);
+        const theme = values.darkMode ? Theme.dark : Theme.light;
+        setLocalStorage(ThemeKey, theme);
         const profile = {
-          theme: values.darkMode ? Theme.dark : Theme.light,
+          theme,
           primaryColor: values.primaryColor,
           fontSize: values.fontSize,
           language: values.language,
@@ -60,7 +66,8 @@ const Setting: FC = () => {
       });
   };
 
-  const { run: getUserProfile } = useRequest(() => UserService.userProfile(), {
+  const { run: getUserProfile } = useRequest(() => UserService.userProfile(email as string), {
+    ready: !!email,
     onSuccess(res) {
       const profile = res.profile;
       setUserInfo({
@@ -78,6 +85,7 @@ const Setting: FC = () => {
         fontSize: profile.fontSize,
         language: profile.language,
       });
+      setInitLoading(false);
     },
   });
 
@@ -99,7 +107,7 @@ const Setting: FC = () => {
   }, []);
 
   return (
-    <>
+    <Spin spinning={initLoading}>
       {/* TODO DEBUG */}
       <Anchor targetOffset={targetOffset} style={{ position: 'absolute', right: '40px' }}>
         <Link href='#user-interface' title='User Interface'>
@@ -150,7 +158,7 @@ const Setting: FC = () => {
           </Form.Item>
         </div>
       </Form>
-    </>
+    </Spin>
   );
 };
 export default Setting;
