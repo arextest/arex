@@ -5,8 +5,6 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useNavigate, useParams } from 'react-router-dom';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import {
   AppFooter,
@@ -415,7 +413,7 @@ const MainBox = () => {
                 menuItem={<ReplayMenu value={activeMenu[1]} onSelect={handleReplayMenuClick} />}
               />
               <MainMenuItem
-                disabled
+                // disabled
                 tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
                 key={MenuTypeEnum.Environment}
                 menuItem={
