@@ -1,6 +1,6 @@
 import './Environment.less';
-
-import { MenuOutlined } from '@ant-design/icons';
+import styled from '@emotion/styled';
+import { MenuOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Button, Form, Input, InputRef, message, Table } from 'antd';
 import update from 'immutability-helper';
 import React, { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -15,10 +15,27 @@ import { useParams } from 'react-router-dom';
 import EnvironmentService from '../services/Environment.service';
 import { useStore } from '../store';
 
+
+const MainTable = styled(Table)`
+  .ant-table-cell {
+    &.noLeftBorder {
+      border-left: none !important;
+    }
+    &.noRightBorder {
+      border-right: none !important;
+      text-align: left !important;
+    }
+  }
+  .hide{
+    opacity:0;
+  }
+`;
 //拖拽
-const DraggableBodyRow = ({ index, moveRow, className, style, children, ...restProps }) => {
+let dragRow=-1;
+const DraggableBodyRow = ({ index, moveRow, className, style, children, rowactiveindex, ...restProps }) => {
   const [form] = Form.useForm();
   const ref = useRef(null);
+  const dropTargetAndView = useRef(null);
   const [{ isOver, dropClassName }, drop] = useDrop({
     accept: type,
     collect: (monitor) => {
@@ -34,8 +51,7 @@ const DraggableBodyRow = ({ index, moveRow, className, style, children, ...restP
       };
     },
     drop: (item) => {
-      console.log(item);
-
+      dragRow=index;
       moveRow(item.index, index);
     },
   });
@@ -46,43 +62,28 @@ const DraggableBodyRow = ({ index, moveRow, className, style, children, ...restP
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
+
     }),
   });
-  // drag(ref);
-  // console.log(collected);
-  drop(drag(ref));
-  const measuredRef = collected ? dragPreview : drop;
-  // drop(dragPreview)
+  drag(ref);
+  drop(dropTargetAndView);
+  dragPreview(dropTargetAndView);
   return (
     <Form form={form} component={false}>
       <EditableContext.Provider value={form}>
-        <tr
-          ref={ref}
-          className={`${className}${isOver ? dropClassName : ''}`}
-          style={{
-            cursor: 'move',
-            ...style,
-          }}
-          children={children}
-          {...restProps}
-        />
-        {/* <tr
-          ref={dragPreview}   
-          className={`${className}${isOver ? dropClassName : ''}`}
-          style={{
-            cursor: 'move',
-            ...style,
-          }}
-          {...restProps}
-        >        
-        <td>
-        <div ref={ref} css={css`display:flex;justify-content:space-between`}><div css={css`display:flex;align-items:center`}><MenuOutlined/></div></div>
-        </td>
-        {children[0]}
+      <tr
+        ref={dropTargetAndView}   
+        className={`${className}${isOver ? dropClassName : ''}`}
+        style={{
+          ...style,
+        }}
+        {...restProps}
+        >       
+        {children.length&&<td><table><tbody><tr><td><MenuOutlined className={index !== rowactiveindex ? 'hide' : ''} css={css`cursor: move;display:`} ref={ref}/></td>{children[0]}</tr></tbody></table></td>}
+        {children[1]}
         {children[2]}
         {children[3]}
-        {children[4]}
-        </tr> */}
+      </tr>
       </EditableContext.Provider>
     </Form>
   );
@@ -164,12 +165,8 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
   const [data, setData] = useState<[]>([]);
   const [isActive, setIsActive] = useState<[]>([]);
   const [title, setTitle] = useState<string>('');
+  const [rowActiveIndex, setRowActiveIndex] = useState<number>(-1);
   const defaultColumns = [
-    // {
-    //   title: '',
-    //   // dataIndex: 'key',
-    //   // width: '40%',
-    // },
     {
       title: 'VARIABLE',
       dataIndex: 'key',
@@ -181,10 +178,13 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
       dataIndex: 'value',
       width: '45%',
       editable: true,
+      colSpan:2,
+      className: 'noRightBorder',
     },
     {
       title: 'operation',
-      render: (text) => <a onClick={() => deleteEnvironmentItem(text)}>Delete</a>,
+      colSpan:0,
+      render: (text,record,index) => <a className={index !== rowActiveIndex ? 'hide' : ''} onClick={() => deleteEnvironmentItem(text)}>X</a>
     },
   ];
 
@@ -266,7 +266,7 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
         setIsActive(isActive.filter((e) => e != record.keys));
       }
     },
-    // renderCell:(checked, record, index, originNode)=><div css={css`display:flex;justify-content:space-between`}><div css={css`display:flex;align-items:center`}></div>{originNode}</div>,
+    renderCell:(checked, record, index, originNode)=><div css={css`display:flex;justify-content:space-between`}><div css={css`display:flex;align-items:center`}></div>{originNode}</div>,
   };
 
   //添加
@@ -322,6 +322,7 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
     },
   );
 
+
   return (
     <>
       <div
@@ -337,15 +338,28 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
         </div>
       </div>
       <DndProvider backend={HTML5Backend}>
-        <Table
+        <MainTable
           rowKey='keys'
           bordered
           rowClassName={() => 'editable-row'}
           columns={columns}
           dataSource={data}
           components={components}
+          pagination={false}
           onRow={(_, index) => {
             const attr = {
+              onMouseEnter: (event) => {
+                if(dragRow==-1){
+                  setRowActiveIndex(index);   
+                }else{
+                  setRowActiveIndex(dragRow);     
+                  dragRow=-1;   
+                }           
+              },
+              onMouseLeave: (event) => {
+                setRowActiveIndex(-1);   
+              },
+              rowactiveindex:rowActiveIndex,
               index,
               moveRow,
             };

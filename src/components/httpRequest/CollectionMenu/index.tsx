@@ -54,7 +54,10 @@ const CollectionMenuWrapper = styled.div`
     }
   }
   .ant-tree-node-content-wrapper {
-    overflow: hidden; //超出的文本隐藏
+    width: 10%;
+    overflow-y: visible;
+    overflow-x: clip; //解决拖拽图标被隐藏
+    // overflow-x: hidden; //超出的文本隐藏
     text-overflow: ellipsis; //溢出用省略号显示
     white-space: nowrap; //溢出不换行
   }
@@ -99,8 +102,6 @@ export type CollectionProps = {
   onGetData: (data: NodeList[]) => void;
   cRef: any;
 };
-
-const defaultData: DataNode[] = [];
 
 const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) => {
   const params = useParams();
@@ -213,11 +214,6 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     return curlocation;
   };
 
-  const onDragEnter: TreeProps['onDragEnter'] = (info) => {
-    // console.log(treeData,'000');
-    // expandedKeys 需要受控时设置
-    // setExpandedKeys(info.expandedKeys)
-  };
 
   const onDrop: TreeProps['onDrop'] = (info) => {
     const dropKey = info.node.key;
@@ -227,17 +223,16 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     const dropToGap = info.dropToGap;
     const dropPos = info.node.pos.split('-');
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
-
     //case
-    if (dragNodeType === 2 && dropNodeType !== 1) {
+    if (dragNodeType === 2 && dropNodeType !== 1 && !(dropNodeType===2 && dropToGap)) {
       return;
     }
     //request
-    if (dragNodeType === 1 && dropNodeType === 3 && dropToGap) {
+    if (dragNodeType === 1 && (dropNodeType !== 3 || (dropNodeType === 3 && dropToGap)) && !(dropNodeType===1 && dropToGap)) {
       return;
     }
     //folder
-    if (dragNodeType === 3 && dropNodeType !== 3) {
+    if (dragNodeType === 3 && dropNodeType !== 3 && !(dropNodeType===1 && dropToGap)) {
       return;
     }
 
@@ -256,16 +251,8 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
       }
     };
 
-    let d = { fromNode: 0, toNode: 0 };
-    d.fromNode = calculateTree(treeData, dragKey);
-    nodelocation = 1;
-    curlocation = 0;
     // const data = [...treeData];
-    const data = [
-      ...treeData.map((e) => {
-        return Object.assign({}, e);
-      }),
-    ];
+    const data = JSON.parse(JSON.stringify(treeData)); 
 
     // Find dragObject
     let dragObj: DataNode;
@@ -282,8 +269,8 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
         item.children.unshift(dragObj);
       });
     } else if (
-      ((info.node as any).props.children || []).length > 0 && // Has children
-      (info.node as any).props.expanded && // Is expanded
+      ((info.node as any).children || []).length > 0 && // Has children
+      (info.node as any).expanded && // Is expanded
       dropPosition === 1 // On the bottom gap
     ) {
       loop(data, dropKey, (item) => {
@@ -306,7 +293,10 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
         ar.splice(i! + 1, 0, dragObj!);
       }
     }
-
+    let d = { fromNode: 0, toNode: 0 };
+    d.fromNode = calculateTree(treeData, dragKey);
+    nodelocation = 1;
+    curlocation = 0;
     d.toNode = calculateTree(data, dragKey);
     nodelocation = 1;
     curlocation = 0;
@@ -359,8 +349,6 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
               treeData={treeData}
               // onDrop={onDrop}
               // draggable={{icon:false}}
-              // onDragEnter={onDragEnter}
-              // className="draggable-tree"
               titleRender={(val) => (
                 <CollectionTitle
                   updateDirectoryTreeData={fetchTreeData}
