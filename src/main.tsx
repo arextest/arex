@@ -12,6 +12,8 @@ import { BrowserRouter } from 'react-router-dom';
 
 import App from './App';
 
+import './assets/css/jsoneditor.less';
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <BrowserRouter>
     <App />

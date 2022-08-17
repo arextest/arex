@@ -4,7 +4,6 @@ import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Card, Col, Row, Space } from 'antd';
 import JSONEditor from 'jsoneditor';
-import _ from 'lodash';
 import { FC, useEffect, useState } from 'react';
 
 import { MenuSelect } from '../../components';
@@ -60,13 +59,66 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
       setTimeout(() => {
         containerLeft.innerHTML = '';
         containerRight.innerHTML = '';
+        function genAllDiffByType(logs) {
+          const allDiff = {
+            diff012: [],
+            diff3: [],
+            diff012Ig: [],
+            diff3Ig: [],
+          };
+          for (let j = 0; j < logs.length; j++) {
+            const leftArr = [];
+            for (let i = 0; i < logs[j].pathPair.leftUnmatchedPath.length; i++) {
+              leftArr.push(
+                logs[j].pathPair.leftUnmatchedPath[i].nodeName
+                  ? logs[j].pathPair.leftUnmatchedPath[i].nodeName
+                  : logs[j].pathPair.leftUnmatchedPath[i].index,
+              );
+            }
+            const rightArr = [];
+            for (let i = 0; i < logs[j].pathPair.rightUnmatchedPath.length; i++) {
+              rightArr.push(
+                logs[j].pathPair.rightUnmatchedPath[i].nodeName
+                  ? logs[j].pathPair.rightUnmatchedPath[i].nodeName
+                  : logs[j].pathPair.rightUnmatchedPath[i].index,
+              );
+            }
+            const unmatchedTypes = [0, 1, 2];
+            if (logs[j].logTag.ig) {
+              if (unmatchedTypes.includes(logs[j].pathPair.unmatchedType)) {
+                allDiff.diff012Ig.push(leftArr.length > rightArr.length ? leftArr : rightArr);
+              } else {
+                allDiff.diff3Ig.push(leftArr);
+                allDiff.diff3Ig.push(rightArr);
+              }
+            } else {
+              if (unmatchedTypes.includes(logs[j].pathPair.unmatchedType)) {
+                allDiff.diff012.push(leftArr.length > rightArr.length ? leftArr : rightArr);
+              } else {
+                allDiff.diff3.push(leftArr);
+                allDiff.diff3.push(rightArr);
+              }
+            }
+          }
+          return allDiff;
+        }
+        const allDiffByType = genAllDiffByType(msgWithDiff.logs);
         function onClassName({ path }) {
-          const leftValue = _.get(jsonRight, path);
-          const rightValue = _.get(jsonLeft, path);
-          return _.isEqual(leftValue, rightValue) ? 'the_same_element' : 'different_element';
+          // 只能返回一种ClassName
+          if (
+            allDiffByType.diff012.map((item) => JSON.stringify(item)).includes(JSON.stringify(path))
+          ) {
+            return 'different_element_012';
+          }
+          if (
+            allDiffByType.diff3.map((item) => JSON.stringify(item)).includes(JSON.stringify(path))
+          ) {
+            return 'different_element';
+          }
         }
         const optionsLeft = {
-          mode: 'tree',
+          mode: 'view',
+          theme: 'twitlighjt',
           onClassName: onClassName,
           onChangeJSON: function (j) {
             jsonLeft = j;
@@ -74,7 +126,7 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
           },
         };
         const optionsRight = {
-          mode: 'tree',
+          mode: 'view',
           onClassName: onClassName,
           onChangeJSON: function (j) {
             jsonRight = j;
@@ -85,6 +137,8 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
         let jsonRight = strConvertToJson(msgWithDiff?.testMsg);
         window.editorLeft = new JSONEditor(containerLeft, optionsLeft, jsonLeft);
         window.editorRight = new JSONEditor(containerRight, optionsRight, jsonRight);
+        window.editorLeft.expandAll();
+        window.editorRight.expandAll();
       }, 200);
     }
   }, [selectedDiff, msgWithDiff]);
