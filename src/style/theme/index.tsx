@@ -18,25 +18,9 @@ export const Color = {
   primaryColor: '#603BE3',
 };
 
-const themeMap = {
+export const themeMap = {
   [Theme.light]: themeLight,
   [Theme.dark]: themeDark,
-};
-
-export const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const {
-    changeTheme,
-    userInfo: {
-      profile: { theme: themeName },
-    },
-  } = useStore();
-  const theme = useMemo<EmotionTheme>(() => themeMap[themeName], [themeName]);
-
-  useEffect(() => {
-    changeTheme(themeName);
-  }, [themeName]);
-
-  return <EmotionThemeProvider theme={theme}>{children}</EmotionThemeProvider>;
 };
 
 // https://emotion.sh/docs/typescript#define-a-theme
