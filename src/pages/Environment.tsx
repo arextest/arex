@@ -15,7 +15,6 @@ import { useParams } from 'react-router-dom';
 import EnvironmentService from '../services/Environment.service';
 import { useStore } from '../store';
 
-
 const MainTable = styled(Table)`
   .ant-table-cell {
     &.noLeftBorder {
@@ -26,13 +25,21 @@ const MainTable = styled(Table)`
       text-align: left !important;
     }
   }
-  .hide{
-    opacity:0;
+  .hide {
+    opacity: 0;
   }
 `;
 //拖拽
-let dragRow=-1;
-const DraggableBodyRow = ({ index, moveRow, className, style, children, rowactiveindex, ...restProps }) => {
+const DraggableBodyRow = ({
+  index,
+  moveRow,
+  className,
+  style,
+  children,
+  rowactiveindex,
+  keys,
+  ...restProps
+}) => {
   const [form] = Form.useForm();
   const ref = useRef(null);
   const dropTargetAndView = useRef(null);
@@ -51,7 +58,6 @@ const DraggableBodyRow = ({ index, moveRow, className, style, children, rowactiv
       };
     },
     drop: (item) => {
-      dragRow=index;
       moveRow(item.index, index);
     },
   });
@@ -62,7 +68,6 @@ const DraggableBodyRow = ({ index, moveRow, className, style, children, rowactiv
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
-
     }),
   });
   drag(ref);
@@ -71,19 +76,41 @@ const DraggableBodyRow = ({ index, moveRow, className, style, children, rowactiv
   return (
     <Form form={form} component={false}>
       <EditableContext.Provider value={form}>
-      <tr
-        ref={dropTargetAndView}   
-        className={`${className}${isOver ? dropClassName : ''}`}
-        style={{
-          ...style,
-        }}
-        {...restProps}
-        >       
-        {children.length&&<td><table><tbody><tr><td><MenuOutlined className={index !== rowactiveindex ? 'hide' : ''} css={css`cursor: move;display:`} ref={ref}/></td>{children[0]}</tr></tbody></table></td>}
-        {children[1]}
-        {children[2]}
-        {children[3]}
-      </tr>
+        <tr
+          ref={dropTargetAndView}
+          className={`${className}${isOver ? dropClassName : ''}`}
+          style={{
+            ...style,
+          }}
+          {...restProps}
+        >
+          {children.length ? (
+            <td>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <MenuOutlined
+                        className={keys !== rowactiveindex ? 'hide' : ''}
+                        css={css`
+                          cursor: move;
+                          display: ;
+                        `}
+                        ref={ref}
+                      />
+                    </td>
+                    {children[0]}
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          ) : (
+            children
+          )}
+          {children[1]}
+          {children[2]}
+          {children[3]}
+        </tr>
       </EditableContext.Provider>
     </Form>
   );
@@ -178,13 +205,21 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
       dataIndex: 'value',
       width: '45%',
       editable: true,
-      colSpan:2,
+      colSpan: 2,
       className: 'noRightBorder',
     },
     {
       title: 'operation',
-      colSpan:0,
-      render: (text,record,index) => <a className={index !== rowActiveIndex ? 'hide' : ''} onClick={() => deleteEnvironmentItem(text)}>X</a>
+      width: '110px',
+      colSpan: 0,
+      render: (text, record, index) => (
+        <a
+          className={record.keys !== rowActiveIndex ? 'hide' : ''}
+          onClick={() => deleteEnvironmentItem(text)}
+        >
+          X
+        </a>
+      ),
     },
   ];
 
@@ -258,7 +293,7 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
   //多选框
   const rowSelection = {
     selectedRowKeys: isActive,
-    columnWidth: '60px',
+    columnWidth: '88px',
     onSelect: (record, selected) => {
       if (selected) {
         setIsActive([...isActive, record.keys]);
@@ -266,7 +301,7 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
         setIsActive(isActive.filter((e) => e != record.keys));
       }
     },
-    renderCell:(checked, record, index, originNode)=><div css={css`display:flex;justify-content:space-between`}><div css={css`display:flex;align-items:center`}></div>{originNode}</div>,
+    renderCell: (checked, record, index, originNode) => <div>{originNode}</div>,
   };
 
   //添加
@@ -284,7 +319,7 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
 
   //删除
   const deleteEnvironmentItem = (text) => {
-    const newData = data.filter((item) => item.key !== text.key);
+    const newData = data.filter((item) => item.keys !== text.keys);
     setData(newData);
   };
 
@@ -322,7 +357,6 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
     },
   );
 
-
   return (
     <>
       <div
@@ -348,20 +382,16 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
           pagination={false}
           onRow={(_, index) => {
             const attr = {
-              onMouseEnter: (event) => {
-                if(dragRow==-1){
-                  setRowActiveIndex(index);   
-                }else{
-                  setRowActiveIndex(dragRow);     
-                  dragRow=-1;   
-                }           
+              onMouseOver: (event) => {
+                setRowActiveIndex(_.keys);
               },
-              onMouseLeave: (event) => {
-                setRowActiveIndex(-1);   
+              onMouseOut: (event) => {
+                setRowActiveIndex(-1);
               },
-              rowactiveindex:rowActiveIndex,
+              rowactiveindex: rowActiveIndex,
               index,
               moveRow,
+              keys: _.keys,
             };
             return attr;
           }}

@@ -214,7 +214,6 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     return curlocation;
   };
 
-
   const onDrop: TreeProps['onDrop'] = (info) => {
     const dropKey = info.node.key;
     const dragKey = info.dragNode.key;
@@ -224,15 +223,19 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     const dropPos = info.node.pos.split('-');
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
     //case
-    if (dragNodeType === 2 && dropNodeType !== 1 && !(dropNodeType===2 && dropToGap)) {
+    if (dragNodeType === 2 && dropNodeType !== 1 && !(dropNodeType === 2 && dropToGap)) {
       return;
     }
     //request
-    if (dragNodeType === 1 && (dropNodeType !== 3 || (dropNodeType === 3 && dropToGap)) && !(dropNodeType===1 && dropToGap)) {
+    if (
+      dragNodeType === 1 &&
+      (dropNodeType !== 3 || (dropNodeType === 3 && dropToGap)) &&
+      !(dropNodeType === 1 && dropToGap)
+    ) {
       return;
     }
     //folder
-    if (dragNodeType === 3 && dropNodeType !== 3 && !(dropNodeType===1 && dropToGap)) {
+    if (dragNodeType === 3 && dropNodeType !== 3 && !(dropNodeType === 1 && dropToGap)) {
       return;
     }
 
@@ -252,7 +255,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     };
 
     // const data = [...treeData];
-    const data = JSON.parse(JSON.stringify(treeData)); 
+    const data = JSON.parse(JSON.stringify(treeData));
 
     // Find dragObject
     let dragObj: DataNode;
