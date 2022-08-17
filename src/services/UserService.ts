@@ -10,10 +10,10 @@ export class UserService {
       return {
         email: localStorage.getItem('email'),
         profile: {
-          background: profile.background || 'light',
-          accentColor: profile.accentColor || '#603BE3',
+          theme: profile.theme || 'light',
+          primaryColor: profile.primaryColor || '#603BE3',
           fontSize: profile.fontSize || 'small',
-          language: profile.language || 'english',
+          language: profile.language || 'en-US',
         },
       };
     });

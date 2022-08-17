@@ -40,12 +40,11 @@ const HeaderWrapper = styled.div`
 const AppHeader = () => {
   const nav = useNavigate();
   const { theme, changeTheme, userInfo, logout, setPanes } = useStore();
-  const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
 
   const handleSetting = () => {
     setPanes(
       {
-        key: uuid(),
+        key: '__setting__',
         title: 'Setting',
         pageType: PageTypeEnum.Setting,
         isNew: false,
