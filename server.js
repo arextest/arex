@@ -15,7 +15,7 @@ app.use(
 app.use(
   '/config',
   createProxyMiddleware({
-    target: process.env.SERVICE_REPORT_URL,
+    target: process.env.SERVICE_CONFIG_URL,
     changeOrigin: true,
     pathRewrite: { '/config': '/api/config' },
   }),
@@ -24,7 +24,7 @@ app.use(
 app.use(
   '/report',
   createProxyMiddleware({
-    target: process.env.SERVICE_CONFIG_URL,
+    target: process.env.SERVICE_REPORT_URL,
     changeOrigin: true,
     pathRewrite: { '/report': '/api/report' },
   }),
