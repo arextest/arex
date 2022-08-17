@@ -56,7 +56,7 @@ const CollectionMenuWrapper = styled.div`
   .ant-tree-node-content-wrapper {
     width: 10%;
     overflow-y: visible;
-    overflow-x: clip;
+    overflow-x: clip; //解决拖拽图标被隐藏
     // overflow-x: hidden; //超出的文本隐藏
     text-overflow: ellipsis; //溢出用省略号显示
     white-space: nowrap; //溢出不换行
@@ -347,9 +347,8 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
               onSelect={handleSelect}
               switcherIcon={<DownOutlined />}
               treeData={treeData}
-              onDrop={onDrop}
-              draggable={{icon:false}}
-              // className="draggable-tree"
+              // onDrop={onDrop}
+              // draggable={{icon:false}}
               titleRender={(val) => (
                 <CollectionTitle
                   updateDirectoryTreeData={fetchTreeData}
