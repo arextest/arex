@@ -1,6 +1,5 @@
 // @ts-ignore
 import { toggleTheme } from '@zougt/vite-plugin-theme-preprocessor/dist/browser-utils';
-import React from 'react';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
@@ -15,10 +14,10 @@ import { DefaultTheme, Theme, ThemeKey } from '../style/theme';
 type UserInfo = {
   email: string | null;
   profile: {
-    background: string;
-    accentColor: string;
+    theme: Theme;
+    primaryColor: string;
     fontSize: string;
-    language: string;
+    language: 'en-US' | 'zh-CN';
   };
 };
 

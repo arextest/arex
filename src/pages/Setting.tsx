@@ -5,62 +5,90 @@ import { CirclePicker } from 'react-color';
 
 import { UserService } from '../services/UserService';
 import { useStore } from '../store';
+import { Theme } from '../style/theme';
 const { Option } = Select;
 const { Link } = Anchor;
 
+type SettingForm = {
+  darkMode: boolean;
+  primaryColor: string;
+  fontSize: 'small' | 'medium' | 'large';
+  language: 'zh-CN' | 'en-US';
+};
+
+// Custom form item component
+type ColorPickerProps = {
+  value?: string;
+  onChange?: (color: string) => void;
+};
+const ColorPicker: FC<ColorPickerProps> = ({ value, onChange }) => (
+  <div style={{ padding: '8px 0 0 0' }}>
+    <CirclePicker
+      width={'320px'}
+      circleSize={20}
+      color={value}
+      onChangeComplete={(color) => {
+        onChange && onChange(color.hex);
+      }}
+    />
+  </div>
+);
+
 const Setting: FC = () => {
-  const [color, setColor] = useState<string>();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<SettingForm>();
   const setUserInfo = useStore((state) => state.setUserInfo);
 
-  function handleOk() {
+  const handleFormChange = () => {
     form
       .validateFields()
       .then((values) => {
+        console.log(values);
+        const profile = {
+          theme: values.darkMode ? Theme.dark : Theme.light,
+          primaryColor: values.primaryColor,
+          fontSize: values.fontSize,
+          language: values.language,
+        };
         updateUserProfileRequestRun({
-          profile: JSON.stringify(values),
+          profile: JSON.stringify(profile),
           userName: localStorage.getItem('email'),
         });
-        // 同步store
-        setUserInfo({
-          email: localStorage.getItem('email'),
-          profile: {
-            background: values.background,
-            accentColor: values.accentColor,
-            fontSize: values.fontSize,
-            language: values.language,
-          },
-        });
+        getUserProfile();
       })
       .catch((info) => {
         console.log('Validate Failed:', info);
       });
-  }
+  };
 
-  useRequest(() => UserService.userProfile(), {
+  const { run: getUserProfile } = useRequest(() => UserService.userProfile(), {
     onSuccess(res) {
       const profile = res.profile;
       setUserInfo({
         email: localStorage.getItem('email'),
         profile: {
-          background: profile.background,
-          accentColor: profile.accentColor,
+          theme: profile.theme,
+          primaryColor: profile.primaryColor,
           fontSize: profile.fontSize,
           language: profile.language,
         },
       });
-      form.setFieldsValue(profile);
+      form.setFieldsValue({
+        darkMode: profile.theme === Theme.dark,
+        primaryColor: profile.primaryColor,
+        fontSize: profile.fontSize,
+        language: profile.language,
+      });
     },
-    manual: true,
   });
 
   const { run: updateUserProfileRequestRun } = useRequest(
     (params) => UserService.updateUserProfile(params),
     {
-      onSuccess(res) {
-        message.success('修改成功');
-      },
       manual: true,
+      onError(err) {
+        message.error('Update profile failed');
+        console.error(err);
+      },
     },
   );
 
@@ -71,7 +99,8 @@ const Setting: FC = () => {
   }, []);
 
   return (
-    <div>
+    <>
+      {/* TODO DEBUG */}
       <Anchor targetOffset={targetOffset} style={{ position: 'absolute', right: '40px' }}>
         <Link href='#user-interface' title='User Interface'>
           <Link href='#dark-mode' title='Dark Mode' />
@@ -81,28 +110,24 @@ const Setting: FC = () => {
         </Link>
       </Anchor>
 
-      <Form name='form' form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+      <Form
+        name='form'
+        form={form}
+        labelCol={{ span: 4 }}
+        wrapperCol={{ span: 20 }}
+        onValuesChange={handleFormChange}
+      >
         <h2 id='user-interface'>User Interface</h2>
 
         <div id='dark-mode'>
-          <Form.Item label='Dark Mode' name='darkMode'>
+          <Form.Item label='Dark Mode' name='darkMode' valuePropName='checked'>
             <Switch />
           </Form.Item>
         </div>
 
-        <div>
-          <Form.Item id='primary-color' label='Accent color' name='accentColor'>
-            <div style={{ padding: '8px 0 0 0' }}>
-              <CirclePicker
-                width={'320px'}
-                circleSize={20}
-                color={color}
-                onChangeComplete={(color) => {
-                  console.log(color);
-                  setColor(color.hex);
-                }}
-              />
-            </div>
+        <div id='primary-color'>
+          <Form.Item label='Primary Colorr' name='primaryColor'>
+            <ColorPicker />
           </Form.Item>
         </div>
 
@@ -119,15 +144,13 @@ const Setting: FC = () => {
         <div id='language'>
           <Form.Item label='Language' name='language'>
             <Select style={{ width: 120 }}>
-              <Option value='english'>English</Option>
-              <Option value='chinese'>简体中文</Option>
+              <Option value='en-US'>English</Option>
+              <Option value='zh-CN'>简体中文</Option>
             </Select>
           </Form.Item>
         </div>
       </Form>
-
-      <div style={{ height: '800px' }}></div>
-    </div>
+    </>
   );
 };
 export default Setting;
