@@ -9,6 +9,7 @@ import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
 import { DefaultTheme, Theme, ThemeKey } from '../style/theme';
+import { getLocalStorage, setLocalStorage } from '../utils';
 
 type UserInfo = {
   email: string | null;
@@ -77,9 +78,9 @@ type BaseState = {
 export const useStore = create(
   immer<BaseState>((set, get) => ({
     userInfo: {
-      email: localStorage.getItem('email'),
+      email: getLocalStorage('email'),
       profile: {
-        theme: (localStorage.getItem(ThemeKey) as Theme) || DefaultTheme,
+        theme: (getLocalStorage(ThemeKey) as Theme) || DefaultTheme,
         primaryColor: '#603BE3',
         fontSize: 'small',
         language: 'en-US',
@@ -94,7 +95,7 @@ export const useStore = create(
         toggleTheme({
           scopeName: newTheme,
         });
-        localStorage.setItem(ThemeKey, newTheme);
+        setLocalStorage(ThemeKey, newTheme);
         state.userInfo!.profile.theme = newTheme;
       });
     },

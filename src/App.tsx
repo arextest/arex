@@ -43,7 +43,7 @@ function App() {
 
   useEffect(() => {
     changeTheme(themeName);
-  }, [themeName]);
+  }, []);
 
   return <ThemeProvider theme={theme}>{routesContent}</ThemeProvider>;
 }

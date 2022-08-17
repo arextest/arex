@@ -1,8 +1,10 @@
 import { useRequest } from 'ahooks';
 import { Anchor, Form, message, Select, Spin, Switch } from 'antd';
+import { changeLanguage } from 'i18next';
 import { FC, useEffect, useState } from 'react';
 import { CirclePicker } from 'react-color';
 
+import { local } from '../i18n';
 import { UserService } from '../services/UserService';
 import { useStore } from '../store';
 import { Theme, ThemeKey } from '../style/theme';
@@ -41,9 +43,13 @@ const Setting: FC = () => {
   const {
     userInfo: { email },
     setUserInfo,
+    changeTheme,
   } = useStore();
 
-  const handleFormChange = () => {
+  const handleFormChange = (value: Partial<SettingForm>) => {
+    value.darkMode !== undefined && changeTheme();
+    value.language !== undefined && changeLanguage(value.language);
+
     form
       .validateFields()
       .then((values) => {
@@ -57,7 +63,7 @@ const Setting: FC = () => {
         };
         updateUserProfileRequestRun({
           profile: JSON.stringify(profile),
-          userName: localStorage.getItem('email'),
+          userName: email,
         });
         getUserProfile();
       })
@@ -71,7 +77,7 @@ const Setting: FC = () => {
     onSuccess(res) {
       const profile = res.profile;
       setUserInfo({
-        email: localStorage.getItem('email'),
+        email,
         profile: {
           theme: profile.theme,
           primaryColor: profile.primaryColor,
@@ -152,8 +158,11 @@ const Setting: FC = () => {
         <div id='language'>
           <Form.Item label='Language' name='language'>
             <Select style={{ width: 120 }}>
-              <Option value='en-US'>English</Option>
-              <Option value='zh-CN'>简体中文</Option>
+              {local.map((lng) => (
+                <Option key={lng.key} value={lng.key}>
+                  {lng.name}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
         </div>
@@ -161,4 +170,5 @@ const Setting: FC = () => {
     </Spin>
   );
 };
+
 export default Setting;

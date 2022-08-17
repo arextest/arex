@@ -137,7 +137,14 @@ const HttpRequest: FC<HttpRequestProps> = ({
   mode: defaultMode = HttpRequestMode.Normal,
   fetchCollectionTreeData,
 }) => {
-  const { theme, collectionTreeData, extensionInstalled, setPanes } = useStore();
+  const {
+    userInfo: {
+      profile: { theme },
+    },
+    collectionTreeData,
+    extensionInstalled,
+    setPanes,
+  } = useStore();
   const { t: t_common } = useTranslation('common');
   const { t: t_components } = useTranslation('components');
   const _useParams = useParams();

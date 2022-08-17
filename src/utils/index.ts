@@ -7,7 +7,7 @@ export { ChartUtils };
 
 export const getLocalStorage = (key: string) => {
   const raw = window.localStorage.getItem(key);
-  return !raw || raw === 'undefined' || raw === 'null' ? undefined : JSON.parse(raw);
+  return !raw || raw === 'undefined' || raw === 'null' ? undefined : tryParseJsonString(raw);
 };
 
 export const setLocalStorage = (key: string, value: any) =>
