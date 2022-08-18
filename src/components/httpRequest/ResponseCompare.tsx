@@ -8,48 +8,44 @@ import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
 
 import styled from '@emotion/styled';
-import { useMount } from 'ahooks';
 import { Radio, Table, Tabs } from 'antd';
 import axios from 'axios';
 import CodeMirror from 'codemirror';
 import DiffMatchPatch from 'diff-match-patch';
 import { useEffect, useRef, useState } from 'react';
 
-import { RequestService } from '../../services/RequestService';
 import { useStore } from '../../store';
-import { Theme } from '../../style/theme';
+import { ThemeClassify } from '../../style/theme';
 
 const { TabPane } = Tabs;
-const DiffView = styled.div<{ theme: Theme }>`
+const DiffView = styled.div<{ theme: ThemeClassify }>`
   // 主体样式
   .CodeMirror,
   .CodeMirror-merge {
     height: 600px;
-    border-color: ${({ theme }) => (theme === Theme.light ? '#f0f0f0' : '#303030')};
+    border-color: ${({ theme }) => (theme === ThemeClassify.light ? '#f0f0f0' : '#303030')};
   }
 
   // 左右文本差异高亮样式
   .CodeMirror-merge-r-chunk-start {
-    border-top: 1px solid
-      ${({ theme = Theme.light }) => (theme === Theme.light ? '#ee8' : '#959582')};
+    border-top: 1px solid ${({ theme }) => (theme === ThemeClassify.light ? '#ee8' : '#959582')};
   }
   .CodeMirror-merge-r-chunk-end {
-    border-bottom: 1px solid
-      ${({ theme = Theme.light }) => (theme === Theme.light ? '#ee8' : '#959582')};
+    border-bottom: 1px solid ${({ theme }) => (theme === ThemeClassify.light ? '#ee8' : '#959582')};
   }
   .CodeMirror-merge-r-chunk {
-    background-color: ${({ theme = Theme.light }) =>
-      theme === Theme.light ? '#ffffe0' : '#787869'};
+    background-color: ${({ theme = ThemeClassify.light }) =>
+      theme === ThemeClassify.light ? '#ffffe0' : '#787869'};
   }
 
   // 中间分隔区样式
   .CodeMirror-merge-gap {
-    border-color: ${({ theme }) => (theme === Theme.light ? 'inherit' : '#959582')};
-    background-color: ${({ theme = Theme.light }) =>
-      theme === Theme.light ? '#f8f8f8' : '#282828'} !important;
+    border-color: ${({ theme }) => (theme === ThemeClassify.light ? 'inherit' : '#959582')};
+    background-color: ${({ theme }) =>
+      theme === ThemeClassify.light ? '#f8f8f8' : '#282828'} !important;
     path {
-      stroke: ${({ theme = Theme.light }) => (theme === Theme.light ? '#ee8' : '#959582')};
-      fill: ${({ theme = Theme.light }) => (theme === Theme.light ? '#ffffe0' : '#787869')};
+      stroke: ${({ theme }) => (theme === ThemeClassify.light ? '#ee8' : '#959582')};
+      fill: ${({ theme }) => (theme === ThemeClassify.light ? '#ffffe0' : '#787869')};
     }
   }
 
@@ -76,7 +72,7 @@ const onChange = (key: string) => {
 const ResponseCompare = ({ responses }) => {
   console.log(responses, 'responses');
   const diffView = useRef<HTMLDivElement>();
-  const theme = useStore((store) => store.userInfo.profile.theme);
+  const { themeClassify } = useStore();
 
   let mergeView;
   useEffect(() => {
@@ -88,7 +84,7 @@ const ResponseCompare = ({ responses }) => {
     mergeView = CodeMirror.MergeView(diffView.current, {
       readOnly: true, // 只读
       lineNumbers: true, // 显示行号
-      theme: theme === 'light' ? 'neat' : 'gruvbox-dark', // 设置主题
+      theme: themeClassify === ThemeClassify.light ? 'neat' : 'gruvbox-dark', // 设置主题
       value: JSON.stringify(responses[0], null, 2), // 左边的内容（新内容）
       orig: JSON.stringify(responses[1], null, 2), // 右边的内容（旧内容）
       mode: 'javascript', // 代码模式为js模式
@@ -218,7 +214,7 @@ const ResponseCompare = ({ responses }) => {
               className='react-diff-code-view'
               style={{ height: '100%', display: activeRadio === 'json' ? 'block' : 'none' }}
             >
-              <DiffView className={'diffView'} ref={diffView} theme={theme} />
+              <DiffView className={'diffView'} ref={diffView} theme={themeClassify} />
             </div>
             <div style={{ display: activeRadio === 'table' ? 'block' : 'none' }}>
               <Table dataSource={dataSource} columns={columns} />

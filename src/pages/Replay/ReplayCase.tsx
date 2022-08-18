@@ -17,11 +17,11 @@ import {
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, ReplayCase as ReplayCaseType } from '../../services/Replay.type';
 import { useStore } from '../../store';
-import { Theme } from '../../style/theme';
+import { ThemeClassify } from '../../style/theme';
 
 const { Panel } = Collapse;
 const CodeViewer = styled(
-  (props: ReactCodeMirrorProps & { type: 'json' | 'html'; themeKey: Theme }) => (
+  (props: ReactCodeMirrorProps & { type: 'json' | 'html'; themeKey: ThemeClassify }) => (
     <CodeMirror
       readOnly
       height='300px'
@@ -45,7 +45,7 @@ const CodeViewer = styled(
 `;
 
 const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
-  const theme = useStore((state) => state.userInfo.profile.theme);
+  const { themeClassify } = useStore();
 
   const [onlyFailed, setOnlyFailed] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
@@ -98,7 +98,7 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                     <CodeViewer
                       type={result.type}
                       value={result?.baseMsg}
-                      themeKey={theme}
+                      themeKey={themeClassify}
                       remark='Benchmark'
                     />
                   </Col>
@@ -106,7 +106,7 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                     <CodeViewer
                       type={result.type}
                       value={result?.testMsg}
-                      themeKey={theme}
+                      themeKey={themeClassify}
                       remark='Test'
                     />
                   </Col>

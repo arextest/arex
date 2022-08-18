@@ -4,11 +4,10 @@ import { changeLanguage } from 'i18next';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { CirclePicker } from 'react-color';
 
-import { primaryColorPalette } from '../constant';
 import { local } from '../i18n';
 import { UserService } from '../services/UserService';
 import { useStore } from '../store';
-import { Theme, ThemeKey } from '../style/theme';
+import { primaryColorPalette, ThemeClassify, ThemeKey } from '../style/theme';
 import { setLocalStorage } from '../utils';
 const { Option } = Select;
 const { Link } = Anchor;
@@ -23,11 +22,11 @@ type SettingForm = {
 // Custom form item component
 type ColorPickerProps = {
   value?: string;
-  theme: Theme;
+  theme: ThemeClassify;
   onChange?: (color: string) => void;
 };
 const ColorPicker: FC<ColorPickerProps> = ({ value, onChange, theme }) => {
-  const colors = useMemo(() => primaryColorPalette[theme], [theme]);
+  const colors = useMemo(() => primaryColorPalette[theme].map((color) => color.key), [theme]);
 
   return (
     <div style={{ padding: '8px 0 0 0' }}>
@@ -48,26 +47,39 @@ const Setting: FC = () => {
   const [initLoading, setInitLoading] = useState(true);
   const [form] = Form.useForm<SettingForm>();
   const {
-    userInfo: {
-      email,
-      profile: { theme },
-    },
+    userInfo: { email },
+    themeClassify,
     setUserInfo,
     changeTheme,
   } = useStore();
 
-  const handleFormChange = (value: Partial<SettingForm>) => {
-    value.darkMode !== undefined && changeTheme();
+  const handleFormChange = (value: Partial<SettingForm>, allValue: SettingForm) => {
+    // 设置目标的 ThemeClassify
+    const themeMode = allValue.darkMode ? ThemeClassify.dark : ThemeClassify.light;
+    // 设置状态更新前的 ThemeClassify
+    const oldTheme =
+      value.darkMode !== undefined // 当修改的值为 darkMode 时，说明 themeClassify 发生变更，否则沿用原有的 themeClassify
+        ? themeMode === ThemeClassify.dark
+          ? ThemeClassify.light
+          : ThemeClassify.dark
+        : themeMode;
+    const primaryColorIndex = primaryColorPalette[oldTheme].findIndex(
+      (color) => color.key === allValue.primaryColor,
+    );
+    const { name: theme, key: primaryColor } = primaryColorPalette[themeMode][primaryColorIndex];
+
+    // 原理上 darkMode 和 primaryColor 都是为了指定设置一个主题
+    (value.darkMode !== undefined || value.primaryColor !== undefined) && changeTheme(theme);
     value.language !== undefined && changeLanguage(value.language);
+
+    // value.primaryColor !== undefined && changeTheme(theme, primaryColor);
 
     form
       .validateFields()
       .then((values) => {
-        const theme = values.darkMode ? Theme.dark : Theme.light;
         setLocalStorage(ThemeKey, theme);
         const profile = {
           theme,
-          primaryColor: values.primaryColor,
           fontSize: values.fontSize,
           language: values.language,
         };
@@ -75,29 +87,45 @@ const Setting: FC = () => {
           profile: JSON.stringify(profile),
           userName: email,
         });
-        getUserProfile();
+
+        // 此处没有调用 UserService.userProfile 而是采用本地更新的方式
+        setUserInfo({
+          email,
+          profile: {
+            theme,
+            fontSize: profile.fontSize,
+            language: profile.language,
+          },
+        });
+        form.setFieldsValue({
+          darkMode: themeMode === ThemeClassify.dark,
+          primaryColor,
+          fontSize: profile.fontSize,
+          language: profile.language,
+        });
       })
       .catch((info) => {
         console.log('Validate Failed:', info);
       });
   };
 
-  const { run: getUserProfile } = useRequest(() => UserService.userProfile(email as string), {
+  useRequest(() => UserService.userProfile(email as string), {
     ready: !!email,
     onSuccess(res) {
       const profile = res.profile;
+      const [themeMode] = profile.theme.split('-');
       setUserInfo({
         email,
         profile: {
           theme: profile.theme,
-          primaryColor: profile.primaryColor,
           fontSize: profile.fontSize,
           language: profile.language,
         },
       });
       form.setFieldsValue({
-        darkMode: profile.theme === Theme.dark,
-        primaryColor: profile.primaryColor,
+        darkMode: themeMode === ThemeClassify.dark,
+        primaryColor: primaryColorPalette[themeMode].find((color) => color.name === profile.theme)
+          ?.key,
         fontSize: profile.fontSize,
         language: profile.language,
       });
@@ -150,8 +178,8 @@ const Setting: FC = () => {
         </div>
 
         <div id='primary-color'>
-          <Form.Item label='Primary Colorr' name='primaryColor'>
-            <ColorPicker theme={theme} />
+          <Form.Item label='Primary Color' name='primaryColor'>
+            <ColorPicker theme={themeClassify} />
           </Form.Item>
         </div>
 

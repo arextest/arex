@@ -38,10 +38,8 @@ const HeaderWrapper = styled.div`
 const AppHeader = () => {
   const nav = useNavigate();
   const {
-    userInfo: {
-      email,
-      profile: { theme },
-    },
+    userInfo: { email },
+    themeClassify,
     logout,
     setPanes,
   } = useStore();
@@ -66,7 +64,7 @@ const AppHeader = () => {
       <div className={'app-header'}>
         <div className={'left'}>
           <span className={'app-name'}>AREX</span>
-          <GitHubStarButton theme={theme} />
+          <GitHubStarButton theme={themeClassify} />
         </div>
 
         <div className={'right'}>

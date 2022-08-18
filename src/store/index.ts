@@ -8,14 +8,20 @@ import { MenuTypeEnum, PageTypeEnum } from '../constant';
 import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
-import { DefaultTheme, Theme, ThemeKey } from '../style/theme';
+import {
+  DefaultTheme,
+  DefaultThemeClassify,
+  PrimaryColor,
+  ThemeClassify,
+  ThemeKey,
+  ThemeName,
+} from '../style/theme';
 import { getLocalStorage, setLocalStorage } from '../utils';
 
 type UserInfo = {
   email: string | null;
   profile: {
-    theme: Theme;
-    primaryColor: string;
+    theme: ThemeName;
     fontSize: string;
     language: 'en-US' | 'zh-CN';
   };
@@ -35,8 +41,8 @@ export type PaneType = {
 };
 
 type BaseState = {
-  // theme: Theme;
-  changeTheme: (theme?: Theme) => void;
+  themeClassify: ThemeClassify;
+  changeTheme: (theme?: ThemeName) => void;
   extensionInstalled: boolean;
   userInfo: UserInfo;
   logout: () => void;
@@ -80,23 +86,31 @@ export const useStore = create(
     userInfo: {
       email: getLocalStorage('email'),
       profile: {
-        theme: (getLocalStorage(ThemeKey) as Theme) || DefaultTheme,
-        primaryColor: '#603BE3',
+        theme: (getLocalStorage(ThemeKey) as ThemeName) || DefaultTheme,
         fontSize: 'small',
         language: 'en-US',
       },
     },
     setUserInfo: (userInfo: BaseState['userInfo']) => set({ userInfo }),
 
-    changeTheme: (theme?: Theme) => {
+    themeClassify: getLocalStorage(ThemeKey)?.split('-')?.at(0) || DefaultThemeClassify,
+    changeTheme: (theme?: ThemeName) => {
       set((state) => {
-        const newTheme =
-          theme || (state.userInfo?.profile.theme === Theme.light ? Theme.dark : Theme.light);
+        let newTheme = theme;
+        if (!theme) {
+          const [themeMode, primaryColor] = state.userInfo.profile.theme.split('-');
+          const newThemeMode =
+            themeMode === ThemeClassify.light ? ThemeClassify.dark : ThemeClassify.light;
+          newTheme = `${newThemeMode}-${primaryColor as PrimaryColor}`;
+        }
+
+        const themeName = newTheme as ThemeName;
         toggleTheme({
           scopeName: newTheme,
         });
         setLocalStorage(ThemeKey, newTheme);
-        state.userInfo!.profile.theme = newTheme;
+        state.userInfo!.profile.theme = themeName;
+        state.themeClassify = themeName.split('-')[0] as ThemeClassify;
       });
     },
     extensionInstalled: false,

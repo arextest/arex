@@ -26,13 +26,23 @@ export default {
     // 此处配置自己的主题文件
     multipleScopeVars: [
       {
-        scopeName: 'light',
-        path: path.resolve('src/style/theme/light.less'),
+        scopeName: 'light-purple',
+        path: path.resolve('src/style/theme/lightPurple/index.less'),
         includeStyles,
       },
       {
-        scopeName: 'dark',
-        path: path.resolve('src/style/theme/dark.less'),
+        scopeName: 'dark-purple',
+        path: path.resolve('src/style/theme/darkPurple/index.less'),
+        includeStyles,
+      },
+      {
+        scopeName: 'light-red',
+        path: path.resolve('src/style/theme/lightRed/index.less'),
+        includeStyles,
+      },
+      {
+        scopeName: 'dark-red',
+        path: path.resolve('src/style/theme/darkRed/index.less'),
         includeStyles,
       },
     ],

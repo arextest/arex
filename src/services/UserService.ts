@@ -10,7 +10,7 @@ export class UserService {
       return {
         email: localStorage.getItem('email'),
         profile: {
-          theme: profile.theme || 'light',
+          theme: profile.theme,
           primaryColor: profile.primaryColor || '#603BE3',
           fontSize: profile.fontSize || 'small',
           language: profile.language || 'en-US',

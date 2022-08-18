@@ -1,4 +1,4 @@
-import { Theme } from './style/theme';
+import { ThemeClassify, ThemeName } from './style/theme';
 
 export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
 export enum MethodEnum {
@@ -42,8 +42,3 @@ export enum RoleEnum {
   Editor = 2,
   Viewer = 3,
 }
-
-export const primaryColorPalette: { [themeName: string]: string[] } = {
-  [Theme.dark]: ['#955cf4', '#ff4d4f'],
-  [Theme.light]: ['#603BE3', '#cf1322'],
-};

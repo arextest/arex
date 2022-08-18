@@ -12,7 +12,7 @@ import { useAuth, useCheckChromeExtension } from './hooks';
 import routerConfig from './routers';
 import { UserService } from './services/UserService';
 import { useStore } from './store';
-import { ThemeKey, themeMap } from './style/theme';
+import { Theme, ThemeKey, themeMap } from './style/theme';
 
 Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 24 }} spin />);
 
@@ -37,6 +37,8 @@ function App() {
       const themeName = res.profile.theme;
       const themeLS = localStorage.getItem(ThemeKey);
       // 如果localStorage中的theme与当前的theme不一致，则更新localStorage中的theme
+      // TODO
+      // themeName in Theme &&
       themeLS !== themeName && changeTheme(themeName);
     },
   });
