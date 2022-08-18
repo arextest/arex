@@ -1,9 +1,10 @@
 import { useRequest } from 'ahooks';
 import { Anchor, Form, message, Select, Spin, Switch } from 'antd';
 import { changeLanguage } from 'i18next';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { CirclePicker } from 'react-color';
 
+import { primaryColorPalette } from '../constant';
 import { local } from '../i18n';
 import { UserService } from '../services/UserService';
 import { useStore } from '../store';
@@ -22,26 +23,35 @@ type SettingForm = {
 // Custom form item component
 type ColorPickerProps = {
   value?: string;
+  theme: Theme;
   onChange?: (color: string) => void;
 };
-const ColorPicker: FC<ColorPickerProps> = ({ value, onChange }) => (
-  <div style={{ padding: '8px 0 0 0' }}>
-    <CirclePicker
-      width={'320px'}
-      circleSize={20}
-      color={value}
-      onChangeComplete={(color) => {
-        onChange && onChange(color.hex);
-      }}
-    />
-  </div>
-);
+const ColorPicker: FC<ColorPickerProps> = ({ value, onChange, theme }) => {
+  const colors = useMemo(() => primaryColorPalette[theme], [theme]);
+
+  return (
+    <div style={{ padding: '8px 0 0 0' }}>
+      <CirclePicker
+        width={'320px'}
+        circleSize={20}
+        color={value}
+        colors={colors}
+        onChangeComplete={(color) => {
+          onChange && onChange(color.hex);
+        }}
+      />
+    </div>
+  );
+};
 
 const Setting: FC = () => {
   const [initLoading, setInitLoading] = useState(true);
   const [form] = Form.useForm<SettingForm>();
   const {
-    userInfo: { email },
+    userInfo: {
+      email,
+      profile: { theme },
+    },
     setUserInfo,
     changeTheme,
   } = useStore();
@@ -141,7 +151,7 @@ const Setting: FC = () => {
 
         <div id='primary-color'>
           <Form.Item label='Primary Colorr' name='primaryColor'>
-            <ColorPicker />
+            <ColorPicker theme={theme} />
           </Form.Item>
         </div>
 
