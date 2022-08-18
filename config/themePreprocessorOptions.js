@@ -5,8 +5,10 @@ import path from 'path';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { DefaultTheme } from '../src/style/theme';
+import DarkGreen from '../src/style/theme/darkGreen';
 import DarkPurple from '../src/style/theme/darkPurple';
 import DarkRed from '../src/style/theme/darkRed';
+import LightGreen from '../src/style/theme/lightGreen';
 import LightPurple from '../src/style/theme/lightPurple';
 import LightRed from '../src/style/theme/lightRed';
 
@@ -47,6 +49,16 @@ export default {
       {
         scopeName: DarkRed.name,
         path: path.resolve('src/style/theme/darkRed/index.less'),
+        includeStyles,
+      },
+      {
+        scopeName: LightGreen.name,
+        path: path.resolve('src/style/theme/lightGreen/index.less'),
+        includeStyles,
+      },
+      {
+        scopeName: DarkGreen.name,
+        path: path.resolve('src/style/theme/darkGreen/index.less'),
         includeStyles,
       },
     ],

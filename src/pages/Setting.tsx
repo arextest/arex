@@ -66,7 +66,6 @@ const Setting: FC = () => {
     const primaryColorIndex = primaryColorPalette[oldTheme].findIndex(
       (color) => color.key.toLocaleLowerCase() === allValue.primaryColor.toLocaleLowerCase(),
     );
-    console.log(primaryColorPalette, allValue, primaryColorIndex, oldTheme);
     const { name: theme, key: primaryColor } = primaryColorPalette[themeMode][primaryColorIndex];
 
     // 原理上 darkMode 和 primaryColor 都是为了指定设置一个主题

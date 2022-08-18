@@ -1,8 +1,10 @@
 // https://emotion.sh/docs/theming
 import { Theme as EmotionTheme } from '@emotion/react';
 
+import DarkGreen from './darkGreen';
 import DarkPurple from './darkPurple';
 import DarkRed from './darkRed';
+import LightGreen from './lightGreen';
 import LightPurple from './lightPurple';
 import LightRed from './lightRed';
 
@@ -13,6 +15,7 @@ export enum ThemeClassify {
 export enum PrimaryColor {
   purple = 'purple',
   red = 'red',
+  green = 'green',
 }
 
 export const DefaultThemeClassify = ThemeClassify.light;
@@ -23,6 +26,8 @@ export const Theme: { [theme: string]: ThemeName } = {
   darkPurple: DarkPurple.name,
   lightRed: LightRed.name,
   darkRed: DarkRed.name,
+  lightGreen: LightGreen.name,
+  darkGreen: DarkGreen.name,
 };
 
 export const ThemeKey = 'theme';
@@ -36,10 +41,12 @@ export const primaryColorPalette: { [themeName: string]: { key: string; name: Th
   [ThemeClassify.dark]: [
     { key: DarkPurple.primaryColor, name: DarkPurple.name },
     { key: DarkRed.primaryColor, name: DarkRed.name },
+    { key: DarkGreen.primaryColor, name: DarkGreen.name },
   ],
   [ThemeClassify.light]: [
     { key: LightPurple.primaryColor, name: LightPurple.name },
     { key: LightRed.primaryColor, name: LightRed.name },
+    { key: LightGreen.primaryColor, name: LightGreen.name },
   ],
 };
 
@@ -48,6 +55,8 @@ export const themeMap: { [themeName: string]: EmotionTheme } = {
   [Theme.darkPurple]: DarkPurple.theme,
   [Theme.lightRed]: LightRed.theme,
   [Theme.darkRed]: DarkRed.theme,
+  [Theme.lightGreen]: LightGreen.theme,
+  [Theme.darkGreen]: DarkGreen.theme,
 };
 
 // https://emotion.sh/docs/typescript#define-a-theme
