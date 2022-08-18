@@ -60,12 +60,16 @@ const Analysis: FC<{
       <Col span={6}>
         <MenuSelect<CategoryStatistic>
           small
+          forceFilter
           defaultSelectFirst
           rowKey='operationName'
           onSelect={setSelectedCategory}
           placeholder='applicationsMenu.appFilterPlaceholder'
           request={() => ReplayService.queryResponseTypeStatistic({ planItemId })}
-          filter='operationName'
+          filter={(keyword, record) =>
+            record.errorCaseCount + record.failCaseCount > 0 &&
+            record.operationName.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())
+          }
           itemRender={(item: CategoryStatistic) => ({
             label: item.operationName,
             key: item.operationName,

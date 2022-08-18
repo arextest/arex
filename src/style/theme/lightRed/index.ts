@@ -18,7 +18,7 @@ const theme = {
       secondary: 'rgba(0,0,0,0.6)',
       disabled: 'rgba(0,0,0,0.38)',
       watermark: 'rgba(0,0,0,0.1)',
-      highlight: '#603BE3',
+      highlight: primaryColor,
     },
     border: {
       primary: '#F0F0F0',

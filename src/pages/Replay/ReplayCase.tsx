@@ -51,7 +51,11 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
 
   const { data: compareResults = [] } = useRequest(
-    () => ReplayService.queryFullLinkMsg({ recordId: selectedRecord!.recordId }),
+    () =>
+      ReplayService.queryFullLinkMsg({
+        recordId: selectedRecord!.recordId,
+        planItemId: data.planItemId,
+      }),
     {
       ready: !!selectedRecord,
       refreshDeps: [selectedRecord?.recordId],

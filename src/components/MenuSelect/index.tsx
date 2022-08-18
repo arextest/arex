@@ -16,8 +16,9 @@ type MenuSelectProps<D, P extends any[]> = {
   onSelect: (app: D) => void;
   onClick?: (info: any) => void;
   filter?: ((keyword: string, app: D) => boolean) | string;
+  forceFilter?: boolean; // filtering even if the keyword is empty
   request: () => Promise<D[]>;
-  requestOptions?: Options<D[], P>;
+  requestOptions?: Options<D[], P>; // ahooks request options
   placeholder?: string; // from i18n namespace "components"
   defaultSelectFirst?: boolean;
   itemRender?: (app: D, index: number) => { label: ReactNode; key: React.Key };
@@ -74,18 +75,26 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   const { data: apps = [], loading } = useRequest<D[], P>(props.request, {
     onSuccess(res) {
       if (res.length && props.defaultSelectFirst) {
-        setSelectedKey(res[0][props.rowKey]);
-        props.onSelect(res[0]);
+        if (props.forceFilter) {
+          // TODO select first filtered item
+          setSelectedKey(res[0][props.rowKey]);
+          props.onSelect(res[0]);
+        } else {
+          setSelectedKey(res[0][props.rowKey]);
+          props.onSelect(res[0]);
+        }
       }
     },
     ...props.requestOptions,
   });
   const filteredApps = useMemo<ItemType[]>(() => {
     const filtered =
-      filterKeyword && props.filter
+      (props.forceFilter || filterKeyword) && props.filter
         ? apps.filter((app) => {
             if (typeof props.filter === 'string') {
-              return app[props.filter].includes(filterKeyword);
+              return app[props.filter]
+                .toLocaleLowerCase()
+                .includes(filterKeyword.toLocaleLowerCase());
             } else {
               return props.filter && props.filter(filterKeyword, app);
             }

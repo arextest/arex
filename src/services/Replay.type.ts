@@ -214,6 +214,7 @@ export type QueryMsgWithDiffRes = {
 // ------ /report/queryFullLinkMsg ------
 export interface QueryFullLinkMsgReq {
   recordId: string;
+  planItemId: number;
 }
 
 export type CompareResult = {
