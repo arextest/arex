@@ -74,8 +74,8 @@ const ResponseTest = ({ getTestVal, OldTestVal }: ResponseTestProps) => {
       name: 'Response: Status code is 200',
       text: `
 // Check status code is 200
-pw.test("Status code is 200", ()=> {
-    pw.expect(pw.response.status).toBe(200);
+arex.test("Status code is 200", ()=> {
+    arex.expect(arex.response.status).toBe(200);
 });
 `,
     },
