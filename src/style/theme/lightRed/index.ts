@@ -1,10 +1,14 @@
 import colorLib from '@kurkle/color';
 
-const themeLight = {
+import { ThemeName } from '../index';
+
+const name = 'light-red' as ThemeName;
+const primaryColor = '#cf1322';
+const theme = {
   color: {
-    primary: '#cf1322',
+    primary: primaryColor,
     active: '#f5f5f5',
-    selected: colorLib('#cf1322').alpha(0.1).rgbString(),
+    selected: colorLib(primaryColor).alpha(0.1).rgbString(),
     success: '#66bb6a',
     info: '#29b6f6',
     warning: '#ffa726',
@@ -22,4 +26,4 @@ const themeLight = {
   },
 };
 
-export default themeLight;
+export default { name, theme, primaryColor };

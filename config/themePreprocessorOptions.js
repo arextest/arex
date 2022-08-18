@@ -5,6 +5,10 @@ import path from 'path';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { DefaultTheme } from '../src/style/theme';
+import DarkPurple from '../src/style/theme/darkPurple';
+import DarkRed from '../src/style/theme/darkRed';
+import LightPurple from '../src/style/theme/lightPurple';
+import LightRed from '../src/style/theme/lightRed';
 
 const includeStyles = {
   '.ant-btn-text': {
@@ -26,22 +30,22 @@ export default {
     // 此处配置自己的主题文件
     multipleScopeVars: [
       {
-        scopeName: 'light-purple',
+        scopeName: LightPurple.name,
         path: path.resolve('src/style/theme/lightPurple/index.less'),
         includeStyles,
       },
       {
-        scopeName: 'dark-purple',
+        scopeName: DarkPurple.name,
         path: path.resolve('src/style/theme/darkPurple/index.less'),
         includeStyles,
       },
       {
-        scopeName: 'light-red',
+        scopeName: LightRed.name,
         path: path.resolve('src/style/theme/lightRed/index.less'),
         includeStyles,
       },
       {
-        scopeName: 'dark-red',
+        scopeName: DarkRed.name,
         path: path.resolve('src/style/theme/darkRed/index.less'),
         includeStyles,
       },

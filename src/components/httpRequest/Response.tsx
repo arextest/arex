@@ -45,7 +45,7 @@ const Response: FC<{
     console.log(key);
   };
   const { t: t_components } = useTranslation('components');
-  const theme = useStore((state) => state.userInfo.profile.theme);
+  const { themeClassify } = useStore();
   const headers = useMemo(
     () =>
       props.responseHeaders
@@ -97,7 +97,7 @@ const Response: FC<{
             extensions={[javascript()]}
             width='100%'
             height='500px'
-            theme={theme}
+            theme={themeClassify}
           />
         </TabPane>
         <TabPane tab='Raw' key='2'>

@@ -1,10 +1,14 @@
 import colorLib from '@kurkle/color';
 
-const themeDark = {
+import { ThemeName } from '../index';
+
+const name = 'dark-purple' as ThemeName;
+const primaryColor = '#955cf4';
+const theme = {
   color: {
-    primary: '#955cf4',
+    primary: primaryColor,
     active: 'rgba(255, 255, 255, 0.08)',
-    selected: colorLib('#955cf4').alpha(0.1).rgbString(),
+    selected: colorLib(primaryColor).alpha(0.1).rgbString(),
     success: '#2e7d32',
     info: '#0288d1',
     warning: '#ed6c02',
@@ -22,4 +26,4 @@ const themeDark = {
   },
 };
 
-export default themeDark;
+export default { name, theme, primaryColor };

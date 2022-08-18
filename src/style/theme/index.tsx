@@ -1,10 +1,10 @@
 // https://emotion.sh/docs/theming
 import { Theme as EmotionTheme } from '@emotion/react';
 
-import darkPurple from './darkPurple';
-import darkRed from './darkRed';
-import lightPurple from './lightPurple';
-import lightRed from './lightRed';
+import DarkPurple from './darkPurple';
+import DarkRed from './darkRed';
+import LightPurple from './lightPurple';
+import LightRed from './lightRed';
 
 export enum ThemeClassify {
   light = 'light',
@@ -14,13 +14,15 @@ export enum PrimaryColor {
   purple = 'purple',
   red = 'red',
 }
+
 export const DefaultThemeClassify = ThemeClassify.light;
+
 export type ThemeName = `${ThemeClassify}-${PrimaryColor}`;
 export const Theme: { [theme: string]: ThemeName } = {
-  lightPurple: 'light-purple',
-  darkPurple: 'dark-purple',
-  lightRed: 'light-red',
-  darkRed: 'dark-red',
+  lightPurple: LightPurple.name,
+  darkPurple: DarkPurple.name,
+  lightRed: LightRed.name,
+  darkRed: DarkRed.name,
 };
 
 export const ThemeKey = 'theme';
@@ -32,20 +34,20 @@ export const Color = {
 
 export const primaryColorPalette: { [themeName: string]: { key: string; name: ThemeName }[] } = {
   [ThemeClassify.dark]: [
-    { key: '#955cf4', name: 'dark-purple' },
-    { key: '#ff4d4f', name: 'dark-red' },
+    { key: DarkPurple.primaryColor, name: DarkPurple.name },
+    { key: DarkRed.primaryColor, name: DarkRed.name },
   ],
   [ThemeClassify.light]: [
-    { key: '#603be3', name: 'light-purple' },
-    { key: '#cf1322', name: 'light-red' },
+    { key: LightPurple.primaryColor, name: LightPurple.name },
+    { key: LightRed.primaryColor, name: LightRed.name },
   ],
 };
 
 export const themeMap: { [themeName: string]: EmotionTheme } = {
-  [Theme.lightPurple]: lightPurple,
-  [Theme.darkPurple]: darkPurple,
-  [Theme.lightRed]: lightRed,
-  [Theme.darkRed]: darkRed,
+  [Theme.lightPurple]: LightPurple.theme,
+  [Theme.darkPurple]: DarkPurple.theme,
+  [Theme.lightRed]: LightRed.theme,
+  [Theme.darkRed]: DarkRed.theme,
 };
 
 // https://emotion.sh/docs/typescript#define-a-theme

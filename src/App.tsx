@@ -12,7 +12,7 @@ import { useAuth, useCheckChromeExtension } from './hooks';
 import routerConfig from './routers';
 import { UserService } from './services/UserService';
 import { useStore } from './store';
-import { Theme, ThemeKey, themeMap } from './style/theme';
+import { ThemeKey, themeMap } from './style/theme';
 
 Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 24 }} spin />);
 

@@ -137,14 +137,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
   mode: defaultMode = HttpRequestMode.Normal,
   fetchCollectionTreeData,
 }) => {
-  const {
-    userInfo: {
-      profile: { theme },
-    },
-    collectionTreeData,
-    extensionInstalled,
-    setPanes,
-  } = useStore();
+  const { themeClassify, collectionTreeData, extensionInstalled, setPanes } = useStore();
   const { t: t_common } = useTranslation('common');
   const { t: t_components } = useTranslation('components');
   const _useParams = useParams();
@@ -715,7 +708,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
             <CodeMirror
               value={requestBody}
               extensions={[json()]}
-              theme={theme}
+              theme={themeClassify}
               height='auto'
               minHeight={'100px'}
               onChange={setRequestBody}
@@ -741,10 +734,10 @@ const HttpRequest: FC<HttpRequestProps> = ({
             />
           </TabPane>
           <TabPane tab={t_components('http.authorization')} key='3' disabled>
-            <CodeMirror value='' extensions={[json()]} theme={theme} height='300px' />
+            <CodeMirror value='' extensions={[json()]} theme={themeClassify} height='300px' />
           </TabPane>
           <TabPane tab={t_components('http.pre-requestScript')} key='4' disabled>
-            <CodeMirror value='' height='300px' extensions={[javascript()]} theme={theme} />
+            <CodeMirror value='' height='300px' extensions={[javascript()]} theme={themeClassify} />
           </TabPane>
           <TabPane
             tab={
