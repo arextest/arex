@@ -223,7 +223,11 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     const dropPos = info.node.pos.split('-');
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
     //case
-    if (dragNodeType === 2 && dropNodeType !== 1 && !(dropNodeType === 2 && dropToGap)) {
+    if (
+      dragNodeType === 2 &&
+      !(dropNodeType === 2 && dropToGap) &&
+      ((dropNodeType === 1 && dropToGap) || dropNodeType !== 1)
+    ) {
       return;
     }
     //request
