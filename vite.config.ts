@@ -4,7 +4,6 @@ import { defineConfig } from 'vite';
 
 import proxy from './config/proxy.js';
 import themePreprocessorOptions from './config/themePreprocessorOptions';
-import { Color } from './src/style/theme';
 
 const env = 'FAT';
 const convertProxyConfig: any = {};
@@ -21,6 +20,10 @@ for (const proxyConfigKey in proxyConfig) {
 }
 
 export default defineConfig({
+  optimizeDeps: {
+    //【注意】 排除 import { toggleTheme } from "@zougt/vite-plugin-theme-preprocessor/dist/browser-utils"; 在vite的缓存依赖
+    exclude: ['@zougt/vite-plugin-theme-preprocessor/dist/browser-utils'],
+  },
   plugins: [
     react({
       jsxImportSource: '@emotion/react',

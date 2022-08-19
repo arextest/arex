@@ -1,83 +1,142 @@
 import { useRequest } from 'ahooks';
-import { Anchor, Form, message, Select, Switch } from 'antd';
-import { FC, useEffect, useState } from 'react';
+import { Anchor, Form, message, Select, Spin, Switch } from 'antd';
+import { changeLanguage } from 'i18next';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { CirclePicker } from 'react-color';
 
+import { FontSizeMap } from '../constant';
+import { I18nextLng, local } from '../i18n';
 import { UserService } from '../services/UserService';
 import { useStore } from '../store';
-import { Theme } from '../style/theme';
+import { primaryColorPalette, ThemeClassify, ThemeKey } from '../style/theme';
+import { setLocalStorage } from '../utils';
 const { Option } = Select;
 const { Link } = Anchor;
+
+export type FontSize = 'small' | 'medium' | 'large';
 
 type SettingForm = {
   darkMode: boolean;
   primaryColor: string;
-  fontSize: 'small' | 'medium' | 'large';
-  language: 'zh-CN' | 'en-US';
+  fontSize: FontSize;
+  language: I18nextLng;
 };
 
 // Custom form item component
 type ColorPickerProps = {
   value?: string;
+  theme: ThemeClassify;
   onChange?: (color: string) => void;
 };
-const ColorPicker: FC<ColorPickerProps> = ({ value, onChange }) => (
-  <div style={{ padding: '8px 0 0 0' }}>
-    <CirclePicker
-      width={'320px'}
-      circleSize={20}
-      color={value}
-      onChangeComplete={(color) => {
-        onChange && onChange(color.hex);
-      }}
-    />
-  </div>
-);
+const ColorPicker: FC<ColorPickerProps> = ({ value, onChange, theme }) => {
+  const colors = useMemo(() => primaryColorPalette[theme].map((color) => color.key), [theme]);
+
+  return (
+    <div style={{ padding: '8px 0 0 0' }}>
+      <CirclePicker
+        width={'320px'}
+        circleSize={20}
+        color={value}
+        colors={colors}
+        onChangeComplete={(color) => {
+          onChange && onChange(color.hex);
+        }}
+      />
+    </div>
+  );
+};
 
 const Setting: FC = () => {
+  const [initLoading, setInitLoading] = useState(true);
   const [form] = Form.useForm<SettingForm>();
-  const setUserInfo = useStore((state) => state.setUserInfo);
+  const {
+    userInfo: { email },
+    themeClassify,
+    setUserInfo,
+    changeTheme,
+  } = useStore();
 
-  const handleFormChange = () => {
+  const changeFontSize = (fontSize: FontSize) => {
+    // @ts-ignore
+    document.body.style['zoom'] = FontSizeMap[fontSize]; // Non-standard: https://developer.mozilla.org/en-US/docs/Web/CSS/zoom
+  };
+
+  const handleFormChange = (value: Partial<SettingForm>, allValue: SettingForm) => {
+    // 设置目标的 ThemeClassify
+    const themeMode = allValue.darkMode ? ThemeClassify.dark : ThemeClassify.light;
+    // 设置状态更新前的 ThemeClassify
+    const oldTheme =
+      value.darkMode !== undefined // 当修改的值为 darkMode 时，说明 themeClassify 发生变更，否则沿用原有的 themeClassify
+        ? themeMode === ThemeClassify.dark
+          ? ThemeClassify.light
+          : ThemeClassify.dark
+        : themeMode;
+    const primaryColorIndex = primaryColorPalette[oldTheme].findIndex(
+      (color) => color.key.toLocaleLowerCase() === allValue.primaryColor.toLocaleLowerCase(),
+    );
+    const { name: theme, key: primaryColor } = primaryColorPalette[themeMode][primaryColorIndex];
+
+    // 原理上 darkMode 和 primaryColor 都是为了指定设置一个主题
+    (value.darkMode !== undefined || value.primaryColor !== undefined) && changeTheme(theme);
+    value.language !== undefined && changeLanguage(value.language);
+    value.fontSize !== undefined && changeFontSize(value.fontSize);
+
     form
       .validateFields()
       .then((values) => {
-        console.log(values);
+        setLocalStorage(ThemeKey, theme);
         const profile = {
-          theme: values.darkMode ? Theme.dark : Theme.light,
-          primaryColor: values.primaryColor,
+          theme,
           fontSize: values.fontSize,
           language: values.language,
         };
         updateUserProfileRequestRun({
           profile: JSON.stringify(profile),
-          userName: localStorage.getItem('email'),
+          userName: email,
         });
-        getUserProfile();
+
+        // 此处没有调用 UserService.userProfile 而是采用本地更新的方式
+        setUserInfo({
+          email,
+          profile: {
+            theme,
+            fontSize: profile.fontSize,
+            language: profile.language,
+          },
+        });
+        form.setFieldsValue({
+          darkMode: themeMode === ThemeClassify.dark,
+          primaryColor,
+          fontSize: profile.fontSize,
+          language: profile.language,
+        });
       })
       .catch((info) => {
         console.log('Validate Failed:', info);
       });
   };
 
-  const { run: getUserProfile } = useRequest(() => UserService.userProfile(), {
+  useRequest(() => UserService.userProfile(email as string), {
+    ready: !!email,
     onSuccess(res) {
       const profile = res.profile;
+      const [themeMode] = profile.theme.split('-');
       setUserInfo({
-        email: localStorage.getItem('email'),
+        email,
         profile: {
           theme: profile.theme,
-          primaryColor: profile.primaryColor,
           fontSize: profile.fontSize,
           language: profile.language,
         },
       });
       form.setFieldsValue({
-        darkMode: profile.theme === Theme.dark,
-        primaryColor: profile.primaryColor,
+        darkMode: themeMode === ThemeClassify.dark,
+        primaryColor: primaryColorPalette[themeMode].find((color) => color.name === profile.theme)
+          ?.key,
         fontSize: profile.fontSize,
         language: profile.language,
       });
+      setInitLoading(false);
     },
   });
 
@@ -99,7 +158,7 @@ const Setting: FC = () => {
   }, []);
 
   return (
-    <>
+    <Spin spinning={initLoading}>
       {/* TODO DEBUG */}
       <Anchor targetOffset={targetOffset} style={{ position: 'absolute', right: '40px' }}>
         <Link href='#user-interface' title='User Interface'>
@@ -126,8 +185,8 @@ const Setting: FC = () => {
         </div>
 
         <div id='primary-color'>
-          <Form.Item label='Primary Colorr' name='primaryColor'>
-            <ColorPicker />
+          <Form.Item label='Primary Color' name='primaryColor'>
+            <ColorPicker theme={themeClassify} />
           </Form.Item>
         </div>
 
@@ -144,13 +203,17 @@ const Setting: FC = () => {
         <div id='language'>
           <Form.Item label='Language' name='language'>
             <Select style={{ width: 120 }}>
-              <Option value='en-US'>English</Option>
-              <Option value='zh-CN'>简体中文</Option>
+              {local.map((lng) => (
+                <Option key={lng.key} value={lng.key}>
+                  {lng.name}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
         </div>
       </Form>
-    </>
+    </Spin>
   );
 };
+
 export default Setting;

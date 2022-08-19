@@ -18,7 +18,7 @@ const ReplayMenu: FC<{ value?: string; onSelect: (app: ApplicationDataType) => v
       request={ReplayService.regressionList}
       filter={(keyword, app) => app.appName.includes(keyword) || app.appId.includes(keyword)}
       itemRender={(app) => ({
-        label: `${app.appId}_${app.appName}`,
+        label: app.appId,
         key: app.appId,
       })}
     />

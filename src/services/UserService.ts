@@ -1,19 +1,18 @@
 import request from '../api/axios';
+import { UserInfoKey } from '../constant';
+import { Profile, UserInfo } from '../store';
+import { getLocalStorage, tryParseJsonString } from '../utils';
 
 export class UserService {
-  static userProfile() {
-    return request.get(`/api/login/userProfile/${localStorage.getItem('email')}`).then((res) => {
-      let profile: any = {};
-      try {
-        profile = JSON.parse(res.body.profile);
-      } catch (e) {}
+  static userProfile(email: string) {
+    return request.get(`/api/login/userProfile/${email}`).then((res) => {
+      const profile = tryParseJsonString<Profile>(res.body.profile);
       return {
-        email: localStorage.getItem('email'),
+        email: getLocalStorage<UserInfo>(UserInfoKey)?.email,
         profile: {
-          theme: profile.theme || 'light',
-          primaryColor: profile.primaryColor || '#603BE3',
-          fontSize: profile.fontSize || 'small',
-          language: profile.language || 'en-US',
+          theme: profile?.theme,
+          fontSize: profile?.fontSize,
+          language: profile?.language,
         },
       };
     });

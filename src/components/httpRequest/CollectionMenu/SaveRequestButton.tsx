@@ -6,6 +6,7 @@ import { ContentTypeEnum } from '../../../constant';
 import { treeFindPath } from '../../../helpers/collection/util';
 import { CollectionService } from '../../../services/CollectionService';
 import { FileSystemService } from '../../../services/FileSystem.service';
+import { useStore } from '../../../store';
 const { Text } = Typography;
 
 type SaveRequestButtonProps = {
@@ -41,6 +42,9 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
   onSaveAs,
 }) => {
   const _useParams = useParams();
+  const {
+    userInfo: { email: userName },
+  } = useStore();
   const [form] = Form.useForm();
   const [value, setValue] = useState<string>();
   const [visible, setVisible] = useState<boolean>(false);
@@ -83,7 +87,7 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
                 parentPath: treeFindPath(collectionTreeData, (node) => node.key === value)?.map(
                   (i) => i.key,
                 ),
-                userName: localStorage.getItem('email'),
+                userName,
               }).then((res) => {
                 FileSystemService.saveInterface({
                   ...reqParams,

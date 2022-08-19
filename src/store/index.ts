@@ -5,20 +5,24 @@ import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 import { nodeType } from '../components/httpRequest/CollectionMenu';
-import { MenuTypeEnum, PageTypeEnum } from '../constant';
+import { MenuTypeEnum, PageTypeEnum, UserInfoKey } from '../constant';
+import DefaultConfig from '../defaultConfig';
+import { I18nextLng } from '../i18n';
+import { FontSize } from '../pages/Setting';
 import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
-import { DefaultTheme, Theme, ThemeKey } from '../style/theme';
+import { PrimaryColor, ThemeClassify, ThemeKey, ThemeName } from '../style/theme';
+import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../utils';
 
-type UserInfo = {
-  email: string | null;
-  profile: {
-    theme: Theme;
-    primaryColor: string;
-    fontSize: string;
-    language: 'en-US' | 'zh-CN';
-  };
+export type Profile = {
+  theme: ThemeName;
+  fontSize: FontSize;
+  language: I18nextLng;
+};
+export type UserInfo = {
+  email?: string;
+  profile: Profile;
 };
 
 // TODO 数据结构待规范
@@ -35,15 +39,15 @@ export type PaneType = {
 };
 
 type BaseState = {
-  theme: Theme;
-  changeTheme: (theme?: Theme) => void;
+  themeClassify: ThemeClassify;
+  changeTheme: (theme?: ThemeName) => void;
   extensionInstalled: boolean;
-  userInfo?: UserInfo;
+  userInfo: UserInfo;
   logout: () => void;
 
   activePane: string;
   setActivePane: (key: string) => void;
-  setUserInfo: (userInfo: UserInfo) => void;
+  setUserInfo: (data: UserInfo | string) => void;
   activeMenu: [MenuTypeEnum, string | undefined]; // [菜单id, 菜单项目id]
   setActiveMenu: (menuKey: MenuTypeEnum, menuItemKey?: string) => void;
   panes: PaneType[];
@@ -68,37 +72,66 @@ type BaseState = {
   setActiveEnvironment: (environment: Environment | string) => void;
 };
 
+const initUserInfo = (() => {
+  const userInfo = getLocalStorage<UserInfo>(UserInfoKey);
+  if (userInfo && userInfo?.email && userInfo?.profile) {
+    return userInfo;
+  } else {
+    return {
+      email: undefined,
+      profile: {
+        theme: DefaultConfig.theme,
+        fontSize: DefaultConfig.fontSize,
+        language: DefaultConfig.language,
+      },
+    };
+  }
+})();
+
 /**
  * TODO 全局store模块拆分
  * 1. 用户信息，用户配置等相关
  * 2. 主菜单/工作区（MainBox）相关
  * 3. ......
  */
-
 export const useStore = create(
   immer<BaseState>((set, get) => ({
-    userInfo: {
-      email: localStorage.getItem('email'),
-      profile: {
-        background: 'light',
-        accentColor: '#603BE3',
-        fontSize: 'small',
-        language: 'english',
-      },
+    userInfo: initUserInfo,
+    setUserInfo: (data) => {
+      if (typeof data === 'string') {
+        // update email
+        set((state) => {
+          state.userInfo.email = data;
+          console.log('update email', state.userInfo);
+          setLocalStorage(UserInfoKey, state.userInfo);
+        });
+      } else {
+        // overwrite userInfo
+        set({ userInfo: data });
+        setLocalStorage(UserInfoKey, data);
+      }
     },
-    setUserInfo: (userInfo: BaseState['userInfo']) => set({ userInfo }),
 
-    theme: (localStorage.getItem(ThemeKey) as Theme) || DefaultTheme,
-    changeTheme: (theme?: Theme) => {
+    themeClassify:
+      (getLocalStorage<ThemeName>(ThemeKey)?.split('-')?.at(0) as ThemeClassify | undefined) ||
+      DefaultConfig.themeClassify,
+    changeTheme: (theme) => {
       set((state) => {
-        const newTheme = theme || (state.theme === Theme.light ? Theme.dark : Theme.light);
+        let newTheme = theme;
+        if (!theme) {
+          const [themeMode, primaryColor] = state.userInfo.profile.theme.split('-');
+          const newThemeMode =
+            themeMode === ThemeClassify.light ? ThemeClassify.dark : ThemeClassify.light;
+          newTheme = `${newThemeMode}-${primaryColor as PrimaryColor}`;
+        }
+
+        const themeName = newTheme as ThemeName;
         toggleTheme({
           scopeName: newTheme,
         });
-        localStorage.setItem(ThemeKey, newTheme);
-        return {
-          theme: newTheme,
-        };
+        setLocalStorage(ThemeKey, newTheme);
+        state.userInfo!.profile.theme = themeName;
+        state.themeClassify = themeName.split('-')[0] as ThemeClassify;
       });
     },
     extensionInstalled: false,
@@ -134,7 +167,7 @@ export const useStore = create(
     },
 
     logout: () => {
-      localStorage.clear();
+      clearLocalStorage();
       set({ userInfo: undefined, panes: [], activePane: '' });
     },
 

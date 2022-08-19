@@ -6,9 +6,11 @@ import { Button, Input, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { AccessTokenKey, RefreshTokenKey } from '../../constant';
 import { AuthService } from '../../services/AuthService';
 import { WorkspaceService } from '../../services/Workspace.service';
 import { useStore } from '../../store';
+import { setLocalStorage } from '../../utils';
 
 let timeChange: any;
 const Login = () => {
@@ -62,13 +64,11 @@ const Login = () => {
           workspaceName: 'Default',
         };
         WorkspaceService.createWorkspace(params).then((res) => {
-          localStorage.setItem('email', email);
-          setUserInfo({ email });
+          setUserInfo(email);
           nav('/');
         });
       } else {
-        localStorage.setItem('email', email);
-        setUserInfo({ email });
+        setUserInfo(email);
         nav('/');
       }
     });
@@ -85,11 +85,11 @@ const Login = () => {
 
     AuthService.loginVerify({
       userName: email,
-      verificationCode: verificationCode,
+      verificationCode,
     }).then((res) => {
-      if (res.data.body.success == true) {
-        localStorage.setItem('accessToken', res.data.body.accessToken);
-        localStorage.setItem('refreshToken', res.data.body.refreshToken);
+      if (res.data.body.success) {
+        setLocalStorage(AccessTokenKey, res.data.body.accessToken);
+        setLocalStorage(RefreshTokenKey, res.data.body.refreshToken);
         message.success('Login succeeded');
         initBeforeUserEntry(email);
       } else {
@@ -98,8 +98,7 @@ const Login = () => {
     });
   };
   useEffect(() => {
-    if (count >= 0 && count < 60) {
-    } else {
+    if (!count) {
       clearInterval(timeChange);
       setCount(60);
       setLoadings(false);
@@ -137,7 +136,7 @@ const Login = () => {
             onClick={sendVerificationCode}
             disabled={loadings}
           >
-            {loadings ? count + 's' : ''}Verification code
+            {loadings ? count + 's' : 'Verification code'}
           </Button>
         </div>
         <Button type='primary' block size='large' onClick={login}>

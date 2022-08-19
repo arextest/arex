@@ -2,7 +2,9 @@ import { useMount } from 'ahooks';
 import { message } from 'antd';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import { AccessTokenKey, RefreshTokenKey } from '../../constant';
 import { WorkspaceService } from '../../services/Workspace.service';
+import { getLocalStorage, setLocalStorage } from '../../utils';
 
 const ValidInvitation = () => {
   const [searchParams] = useSearchParams();
@@ -23,9 +25,9 @@ const ValidInvitation = () => {
         workspaceId: decodeData.workSpaceId,
       }).then((res) => {
         if (res.body.success) {
-          localStorage.setItem('email', decodeData.mail);
-          localStorage.setItem('accessToken', res.body.accessToken);
-          localStorage.setItem('refreshToken', res.body.refreshToken);
+          setLocalStorage('email', decodeData.mail);
+          setLocalStorage(AccessTokenKey, res.body.accessToken);
+          setLocalStorage(RefreshTokenKey, res.body.refreshToken);
           message.success('Verify successfully');
           setTimeout(() => {
             window.location.href = '/';
