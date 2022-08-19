@@ -15,16 +15,19 @@ type AppTitleData = {
 };
 type AppTitleProps = {
   data: AppTitleData;
-  onCreatePlan?: () => void;
   onRefresh?: () => void;
 };
 
-const TitleWrapper = styled((props: { title: ReactNode; onRefresh?: () => void }) => (
-  <div {...props}>
-    <span>{props.title}</span>
-    <Button size='small' type='text' icon={<SyncOutlined />} onClick={props.onRefresh} />
-  </div>
-))`
+const TitleWrapper = styled(
+  (props: { className?: string; title: ReactNode; onRefresh?: () => void }) => (
+    <div className={props.className}>
+      <span>{props.title}</span>
+      {props.onRefresh && (
+        <Button size='small' type='text' icon={<SyncOutlined />} onClick={props.onRefresh} />
+      )}
+    </div>
+  ),
+)`
   display: flex;
   align-items: baseline;
   & > :first-of-type {
@@ -32,7 +35,7 @@ const TitleWrapper = styled((props: { title: ReactNode; onRefresh?: () => void }
   }
 `;
 
-const AppTitle: FC<AppTitleProps> = ({ data, onCreatePlan, onRefresh }) => {
+const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   const {
     userInfo: { email },
   } = useStore();
@@ -47,7 +50,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onCreatePlan, onRefresh }) => {
           message: 'Started Successfully',
         });
         form.resetFields();
-        onCreatePlan && onCreatePlan();
+        onRefresh && onRefresh();
       } else {
         console.error(res.desc);
         notification.error({

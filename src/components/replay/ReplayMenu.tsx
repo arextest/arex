@@ -11,6 +11,7 @@ const ReplayMenu: FC<{ value?: string; onSelect: (app: ApplicationDataType) => v
 
   return (
     <MenuSelect<ApplicationDataType>
+      refresh
       rowKey='appId'
       selectedKeys={selectedKeys}
       onSelect={props.onSelect}
@@ -21,6 +22,9 @@ const ReplayMenu: FC<{ value?: string; onSelect: (app: ApplicationDataType) => v
         label: app.appId,
         key: app.appId,
       })}
+      sx={{
+        padding: '8px 0 8px 8px',
+      }}
     />
   );
 };
