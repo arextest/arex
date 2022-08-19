@@ -2,12 +2,13 @@ import { DownOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Empty, Input, Spin, Tree } from 'antd';
-import type { DirectoryTreeProps, DataNode, TreeProps } from 'antd/lib/tree';
+import type { DataNode, DirectoryTreeProps, TreeProps } from 'antd/lib/tree';
 import React, { FC, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { NodeType } from '../../../constant';
 import { CollectionService } from '../../../services/CollectionService';
+import { useStore } from '../../../store';
 import { TooltipButton } from '../../index';
 import CollectionTitle from './CollectionTitle';
 
@@ -105,6 +106,9 @@ export type CollectionProps = {
 
 const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) => {
   const params = useParams();
+  const {
+    userInfo: { email: userName },
+  } = useStore();
 
   const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
@@ -188,7 +192,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
         nodeName: 'New Collection',
         nodeType: 3,
         parentPath: [],
-        userName: localStorage.getItem('email'),
+        userName,
       }),
     {
       manual: true,
@@ -296,7 +300,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
         ar.splice(i! + 1, 0, dragObj!);
       }
     }
-    let d = { fromNode: 0, toNode: 0 };
+    const d = { fromNode: 0, toNode: 0 };
     d.fromNode = calculateTree(treeData, dragKey);
     nodelocation = 1;
     curlocation = 0;

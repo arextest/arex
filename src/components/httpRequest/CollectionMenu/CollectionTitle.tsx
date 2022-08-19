@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 
 import { treeFindPath } from '../../../helpers/collection/util';
 import { CollectionService } from '../../../services/CollectionService';
+import { useStore } from '../../../store';
 
 const PrefixIcon = styled(
   (props: { icon: ReactNode; border?: boolean }) => <div {...props}>{props.icon}</div>,
@@ -21,6 +22,9 @@ const PrefixIcon = styled(
 
 function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNewRequest }: any) {
   const _useParams = useParams();
+  const {
+    userInfo: { email: userName },
+  } = useStore();
   const [visible, setVisible] = useState(false);
   const handleVisibleChange = (flag: boolean) => {
     setVisible(flag);
@@ -39,7 +43,7 @@ function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNew
                 nodeName: 'New Collection',
                 nodeType: 3,
                 parentPath: paths.map((i: any) => i.key),
-                userName: localStorage.getItem('email'),
+                userName,
               }).then(() => {
                 updateDirectoryTreeData();
               });
@@ -50,7 +54,7 @@ function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNew
                 nodeName: 'New Request',
                 nodeType: 1,
                 parentPath: paths.map((i: any) => i.key),
-                userName: localStorage.getItem('email'),
+                userName,
               }).then((res) => {
                 updateDirectoryTreeData();
                 callbackOfNewRequest(
@@ -66,7 +70,7 @@ function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNew
                 nodeName: 'case',
                 nodeType: 2,
                 parentPath: paths.map((i: any) => i.key),
-                userName: localStorage.getItem('email'),
+                userName,
               }).then((res) => {
                 updateDirectoryTreeData();
                 callbackOfNewRequest(
@@ -84,7 +88,7 @@ function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNew
               CollectionService.duplicate({
                 id: _useParams.workspaceId,
                 path: paths.map((i: any) => i.key),
-                userName: localStorage.getItem('email'),
+                userName,
               }).then((res) => {
                 console.log(res);
                 updateDirectoryTreeData();
@@ -132,7 +136,7 @@ function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNew
                   CollectionService.removeItem({
                     id: _useParams.workspaceId,
                     removeNodePath: paths.map((i: any) => i.key),
-                    userName: localStorage.getItem('email'),
+                    userName,
                   }).then((res) => {
                     updateDirectoryTreeData();
                   });
@@ -152,7 +156,7 @@ function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNew
       id: _useParams.workspaceId,
       newName: renameValue,
       path: paths.map((i: any) => i.key),
-      userName: localStorage.getItem('email'),
+      userName,
     }).then((res) => {
       updateDirectoryTreeData();
       setRenameValue('');

@@ -137,7 +137,13 @@ const HttpRequest: FC<HttpRequestProps> = ({
   mode: defaultMode = HttpRequestMode.Normal,
   fetchCollectionTreeData,
 }) => {
-  const { themeClassify, collectionTreeData, extensionInstalled, setPanes } = useStore();
+  const {
+    userInfo: { email: userName },
+    themeClassify,
+    collectionTreeData,
+    extensionInstalled,
+    setPanes,
+  } = useStore();
   const { t: t_common } = useTranslation('common');
   const { t: t_components } = useTranslation('components');
   const _useParams = useParams();
@@ -249,7 +255,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
       id: _useParams.workspaceId,
       newName: renameValue,
       path: paths.map((i: any) => i.key),
-      userName: localStorage.getItem('email'),
+      userName,
     }).then((res) => {
       fetchCollectionTreeData();
       setRenameKey('');

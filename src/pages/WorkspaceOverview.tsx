@@ -13,13 +13,17 @@ const { Text } = Typography;
 const WorkspaceOverview = () => {
   const params = useParams();
   const nav = useNavigate();
-  const { workspaces, resetPanes } = useStore();
+  const {
+    userInfo: { email: userName },
+    workspaces,
+    resetPanes,
+  } = useStore();
 
   const onFinish = (values: any) => {
     WorkspaceService.renameWorkspace({
       workspaceId: params.workspaceId,
       newName: values.name,
-      userName: localStorage.getItem('email'),
+      userName,
     }).then((res) => {
       window.location.href = `/${params.workspaceId}/workspace/${values.name}`;
     });
@@ -110,12 +114,14 @@ const WorkspaceOverview = () => {
           <Popconfirm
             title='Are you sure to delete this workspace?'
             onConfirm={() => {
-              WorkspaceService.deleteWorkspace({ workspaceId: params.workspaceId }).then((res) => {
-                resetPanes();
-                nav(
-                  `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,
-                );
-              });
+              WorkspaceService.deleteWorkspace({ workspaceId: params.workspaceId, userName }).then(
+                (res) => {
+                  resetPanes();
+                  nav(
+                    `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,
+                  );
+                },
+              );
             }}
             okText='Yes'
             cancelText='No'

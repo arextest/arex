@@ -31,11 +31,6 @@ export const Theme: { [theme: string]: ThemeName } = {
 };
 
 export const ThemeKey = 'theme';
-export const DefaultTheme = Theme.lightPurple;
-
-export const Color = {
-  primaryColor: '#603BE3',
-};
 
 export const primaryColorPalette: { [themeName: string]: { key: string; name: ThemeName }[] } = {
   [ThemeClassify.dark]: [

@@ -8,11 +8,13 @@ import { Spin } from 'antd';
 import React, { useEffect, useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 
+import { FontSizeMap } from './constant';
 import { useAuth, useCheckChromeExtension } from './hooks';
 import routerConfig from './routers';
 import { UserService } from './services/UserService';
 import { useStore } from './store';
 import { ThemeKey, themeMap } from './style/theme';
+import { getLocalStorage } from './utils';
 
 Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 24 }} spin />);
 
@@ -26,16 +28,18 @@ function App() {
     changeTheme,
     userInfo: {
       email,
-      profile: { theme: themeName },
+      profile: { theme: themeName, fontSize },
     },
+    setUserInfo,
   } = useStore();
   const theme = useMemo<EmotionTheme>(() => themeMap[themeName], [themeName]);
 
   useRequest(() => UserService.userProfile(email as string), {
     ready: !!email,
     onSuccess(res) {
+      setUserInfo(res);
       const themeName = res.profile.theme;
-      const themeLS = localStorage.getItem(ThemeKey);
+      const themeLS = getLocalStorage(ThemeKey);
       // 如果localStorage中的theme与当前的theme不一致，则更新localStorage中的theme
       // TODO
       // themeName in Theme &&
@@ -45,6 +49,9 @@ function App() {
 
   useEffect(() => {
     changeTheme(themeName);
+    console.log('fontSize', fontSize);
+    // @ts-ignore
+    document.body.style['zoom'] = FontSizeMap[fontSize]; // Non-standard: https://developer.mozilla.org/en-US/docs/Web/CSS/zoom
   }, []);
 
   return <ThemeProvider theme={theme}>{routesContent}</ThemeProvider>;

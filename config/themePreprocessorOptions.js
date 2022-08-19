@@ -2,9 +2,8 @@
 // https://github.com/GitOfZGT/vite-plugin-theme-preprocessor/blob/master/README.zh.md#%E9%A2%84%E8%AE%BE%E4%B8%BB%E9%A2%98%E6%A8%A1%E5%BC%8F
 import path from 'path';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+import defaultConfig from '../src/defaultConfig.ts';
 // @ts-ignore
-import { DefaultTheme } from '../src/style/theme';
 import DarkGreen from '../src/style/theme/darkGreen';
 import DarkPurple from '../src/style/theme/darkPurple';
 import DarkRed from '../src/style/theme/darkRed';
@@ -62,7 +61,7 @@ export default {
         includeStyles,
       },
     ],
-    defaultScopeName: DefaultTheme, // 默认取 multipleScopeVars[0].scopeName
+    defaultScopeName: defaultConfig.theme, // 默认取 multipleScopeVars[0].scopeName
     includeStyleWithColors: [
       {
         // color也可以是array，如 ["#ffffff","#000"]

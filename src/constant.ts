@@ -42,3 +42,14 @@ export enum RoleEnum {
   Editor = 2,
   Viewer = 3,
 }
+
+export enum FontSizeMap {
+  small = 0.9,
+  medium = 1,
+  large = 1.1,
+}
+
+// localStorage key
+export const UserInfoKey = 'userInfo';
+export const AccessTokenKey = 'accessToken';
+export const RefreshTokenKey = 'refreshToken';

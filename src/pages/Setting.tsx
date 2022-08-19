@@ -4,7 +4,8 @@ import { changeLanguage } from 'i18next';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { CirclePicker } from 'react-color';
 
-import { local } from '../i18n';
+import { FontSizeMap } from '../constant';
+import { I18nextLng, local } from '../i18n';
 import { UserService } from '../services/UserService';
 import { useStore } from '../store';
 import { primaryColorPalette, ThemeClassify, ThemeKey } from '../style/theme';
@@ -12,11 +13,13 @@ import { setLocalStorage } from '../utils';
 const { Option } = Select;
 const { Link } = Anchor;
 
+export type FontSize = 'small' | 'medium' | 'large';
+
 type SettingForm = {
   darkMode: boolean;
   primaryColor: string;
-  fontSize: 'small' | 'medium' | 'large';
-  language: 'zh-CN' | 'en-US';
+  fontSize: FontSize;
+  language: I18nextLng;
 };
 
 // Custom form item component
@@ -53,6 +56,11 @@ const Setting: FC = () => {
     changeTheme,
   } = useStore();
 
+  const changeFontSize = (fontSize: FontSize) => {
+    // @ts-ignore
+    document.body.style['zoom'] = FontSizeMap[fontSize]; // Non-standard: https://developer.mozilla.org/en-US/docs/Web/CSS/zoom
+  };
+
   const handleFormChange = (value: Partial<SettingForm>, allValue: SettingForm) => {
     // 设置目标的 ThemeClassify
     const themeMode = allValue.darkMode ? ThemeClassify.dark : ThemeClassify.light;
@@ -71,8 +79,7 @@ const Setting: FC = () => {
     // 原理上 darkMode 和 primaryColor 都是为了指定设置一个主题
     (value.darkMode !== undefined || value.primaryColor !== undefined) && changeTheme(theme);
     value.language !== undefined && changeLanguage(value.language);
-
-    // value.primaryColor !== undefined && changeTheme(theme, primaryColor);
+    value.fontSize !== undefined && changeFontSize(value.fontSize);
 
     form
       .validateFields()

@@ -4,14 +4,19 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { treeFindPath } from '../../../helpers/collection/util';
 import { CollectionService } from '../../../services/CollectionService';
+import { useStore } from '../../../store';
 
 const CreateAndUpdateFolder: React.FC<any> = ({
   updateDirectoryTreeData,
   collectionTree,
   collectionCreateAndUpdateModal,
 }) => {
+  const {
+    userInfo: { email: userName },
+  } = useStore();
   const _useParams = useParams();
   const _useNavigate = useNavigate();
+
   const [CollectionCreateAndUpdateModalVisible, setCollectionCreateAndUpdateModalVisible] =
     useState(collectionCreateAndUpdateModal.collectionCreateAndUpdateModalVisible);
   const [CollectionCreateAndUpdateModalFolderName, setCollectionCreateAndUpdateModalFolderName] =
@@ -35,7 +40,7 @@ const CreateAndUpdateFolder: React.FC<any> = ({
       id: _useParams.workspaceId,
       newName: CollectionCreateAndUpdateModalFolderName,
       path: paths.map((i: any) => i.key),
-      userName: localStorage.getItem('email'),
+      userName,
     }).then((res) => {
       setCollectionCreateAndUpdateModalVisible(false);
       setCollectionCreateAndUpdateModalFolderName('');

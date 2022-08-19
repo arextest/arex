@@ -1,31 +1,28 @@
+// @ts-ignore
 import { toggleTheme } from '@zougt/vite-plugin-theme-preprocessor/dist/browser-utils';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 import { nodeType } from '../components/httpRequest/CollectionMenu';
-import { MenuTypeEnum, PageTypeEnum } from '../constant';
+import { MenuTypeEnum, PageTypeEnum, UserInfoKey } from '../constant';
+import DefaultConfig from '../defaultConfig';
+import { I18nextLng } from '../i18n';
+import { FontSize } from '../pages/Setting';
 import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
-import {
-  DefaultTheme,
-  DefaultThemeClassify,
-  PrimaryColor,
-  Theme,
-  ThemeClassify,
-  ThemeKey,
-  ThemeName,
-} from '../style/theme';
-import { getLocalStorage, setLocalStorage } from '../utils';
+import { PrimaryColor, ThemeClassify, ThemeKey, ThemeName } from '../style/theme';
+import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../utils';
 
-type UserInfo = {
-  email: string | null;
-  profile: {
-    theme: ThemeName;
-    fontSize: string;
-    language: 'en-US' | 'zh-CN';
-  };
+export type Profile = {
+  theme: ThemeName;
+  fontSize: FontSize;
+  language: I18nextLng;
+};
+export type UserInfo = {
+  email?: string;
+  profile: Profile;
 };
 
 // TODO 数据结构待规范
@@ -50,7 +47,7 @@ type BaseState = {
 
   activePane: string;
   setActivePane: (key: string) => void;
-  setUserInfo: (userInfo: UserInfo) => void;
+  setUserInfo: (data: UserInfo | string) => void;
   activeMenu: [MenuTypeEnum, string | undefined]; // [菜单id, 菜单项目id]
   setActiveMenu: (menuKey: MenuTypeEnum, menuItemKey?: string) => void;
   panes: PaneType[];
@@ -75,12 +72,19 @@ type BaseState = {
   setActiveEnvironment: (environment: Environment | string) => void;
 };
 
-const initTheme = (() => {
-  const theme = getLocalStorage('theme') as ThemeName;
-  if (theme in Theme) {
-    return theme;
+const initUserInfo = (() => {
+  const userInfo = getLocalStorage<UserInfo>(UserInfoKey);
+  if (userInfo && userInfo?.email && userInfo?.profile) {
+    return userInfo;
   } else {
-    return DefaultTheme;
+    return {
+      email: undefined,
+      profile: {
+        theme: DefaultConfig.theme,
+        fontSize: DefaultConfig.fontSize,
+        language: DefaultConfig.language,
+      },
+    };
   }
 })();
 
@@ -92,18 +96,26 @@ const initTheme = (() => {
  */
 export const useStore = create(
   immer<BaseState>((set, get) => ({
-    userInfo: {
-      email: getLocalStorage('email'),
-      profile: {
-        theme: initTheme,
-        fontSize: 'small',
-        language: 'en-US',
-      },
+    userInfo: initUserInfo,
+    setUserInfo: (data) => {
+      if (typeof data === 'string') {
+        // update email
+        set((state) => {
+          state.userInfo.email = data;
+          console.log('update email', state.userInfo);
+          setLocalStorage(UserInfoKey, state.userInfo);
+        });
+      } else {
+        // overwrite userInfo
+        set({ userInfo: data });
+        setLocalStorage(UserInfoKey, data);
+      }
     },
-    setUserInfo: (userInfo: BaseState['userInfo']) => set({ userInfo }),
 
-    themeClassify: getLocalStorage(ThemeKey)?.split('-')?.at(0) || DefaultThemeClassify,
-    changeTheme: (theme?: ThemeName) => {
+    themeClassify:
+      (getLocalStorage<ThemeName>(ThemeKey)?.split('-')?.at(0) as ThemeClassify | undefined) ||
+      DefaultConfig.themeClassify,
+    changeTheme: (theme) => {
       set((state) => {
         let newTheme = theme;
         if (!theme) {
@@ -155,7 +167,7 @@ export const useStore = create(
     },
 
     logout: () => {
-      localStorage.clear();
+      clearLocalStorage();
       set({ userInfo: undefined, panes: [], activePane: '' });
     },
 
