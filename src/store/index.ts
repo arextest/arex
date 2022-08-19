@@ -12,6 +12,7 @@ import {
   DefaultTheme,
   DefaultThemeClassify,
   PrimaryColor,
+  Theme,
   ThemeClassify,
   ThemeKey,
   ThemeName,
@@ -74,19 +75,27 @@ type BaseState = {
   setActiveEnvironment: (environment: Environment | string) => void;
 };
 
+const initTheme = (() => {
+  const theme = getLocalStorage('theme') as ThemeName;
+  if (theme in Theme) {
+    return theme;
+  } else {
+    return DefaultTheme;
+  }
+})();
+
 /**
  * TODO 全局store模块拆分
  * 1. 用户信息，用户配置等相关
  * 2. 主菜单/工作区（MainBox）相关
  * 3. ......
  */
-
 export const useStore = create(
   immer<BaseState>((set, get) => ({
     userInfo: {
       email: getLocalStorage('email'),
       profile: {
-        theme: (getLocalStorage(ThemeKey) as ThemeName) || DefaultTheme,
+        theme: initTheme,
         fontSize: 'small',
         language: 'en-US',
       },
