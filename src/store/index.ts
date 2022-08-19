@@ -46,7 +46,7 @@ type BaseState = {
   logout: () => void;
 
   activePane: string;
-  setActivePane: (key: string) => void;
+  setActivePane: (activePaneKey: string, activeMenuKey?: MenuTypeEnum) => void;
   setUserInfo: (data: UserInfo | string) => void;
   activeMenu: [MenuTypeEnum, string | undefined]; // [菜单id, 菜单项目id]
   setActiveMenu: (menuKey: MenuTypeEnum, menuItemKey?: string) => void;
@@ -137,8 +137,14 @@ export const useStore = create(
     extensionInstalled: false,
 
     activePane: '',
-    setActivePane: (key: string) => {
-      set({ activePane: key });
+    setActivePane: (activePaneKey, activeMenuKey) => {
+      set((state) => {
+        const key = activeMenuKey
+          ? activeMenuKey
+          : state.panes.find((i) => i.key === activePaneKey)?.menuType || MenuTypeEnum.Collection;
+        state.activePane = activePaneKey;
+        state.activeMenu = [key, activePaneKey];
+      });
     },
 
     panes: [],
@@ -155,6 +161,7 @@ export const useStore = create(
             state.panes.push(pane);
           }
           state.activePane = pane.key;
+          state.activeMenu = [pane.menuType || MenuTypeEnum.Collection, pane.key];
         });
       }
     },
