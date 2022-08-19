@@ -1,33 +1,43 @@
-// const express = require('express')
 import express from 'express';
 const app = express();
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
-// const { createProxyMiddleware } = require('http-proxy-middleware')
-// const proxy = require('./config/proxy')
-import proxy from './config/proxy.js';
-// const envMap = require('./config/envMap.json')
-// const { config = {} } = require('./package.json')
-let { port = 8080, env = 'FAT' } = {};
-
 import history from 'connect-history-api-fallback';
-// const history = require('connect-history-api-fallback')
+app.use(
+  '/api',
+  createProxyMiddleware({
+    target: process.env.SERVICE_REPORT_URL,
+    changeOrigin: true,
+    pathRewrite: { '/api': '/api' },
+  }),
+);
 
-// 读取机器环境配置代理
-// 发布到captain上，机器内脚本会给package.json加上 port 和 env，环境枚举为 FAT LPT FWS UAT PROD
-// 由于proxy文件中不存在UAT代理，会导致下面的proxy middleware读到undifined
-if (env === 'UAT') env = 'FAT';
+app.use(
+  '/config',
+  createProxyMiddleware({
+    target: process.env.SERVICE_CONFIG_URL,
+    changeOrigin: true,
+    pathRewrite: { '/config': '/api/config' },
+  }),
+);
 
-for (const proxyKey in proxy[env]) {
-  app.use(
-    proxyKey,
-    createProxyMiddleware({
-      target: proxy[env][proxyKey].target,
-      changeOrigin: proxy[env][proxyKey].changeOrigin,
-      pathRewrite: proxy[env][proxyKey].pathRewrite,
-    }),
-  );
-}
+app.use(
+  '/report',
+  createProxyMiddleware({
+    target: process.env.SERVICE_REPORT_URL,
+    changeOrigin: true,
+    pathRewrite: { '/report': '/api/report' },
+  }),
+);
+
+app.use(
+  '/schedule',
+  createProxyMiddleware({
+    target: process.env.SERVICE_SCHEDULE_URL,
+    changeOrigin: true,
+    pathRewrite: { '/schedule': '/api' },
+  }),
+);
 
 // 健康检查
 app.get('/vi/health', (req, res) => {

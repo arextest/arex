@@ -2,12 +2,12 @@ import { runTestScript as _runTestScript } from 'purple-js-sandbox';
 import { TestDescriptor, TestResponse } from 'purple-js-sandbox/lib/test-runner';
 
 // This will return 4 lines on the test report, grouped under "Arithmetic operations"
-// pw.test("Arithmetic operations", () => {
+// arex.test("Arithmetic operations", () => {
 //   const size = 500 + 500;
-//   pw.expect(size).toBe(1000);
-//   pw.expect(size - 500).toBe(500);
-//   pw.expect(size * 4).toBe(4000);
-//   pw.expect(size / 4).toBe(250);
+//   arex.expect(size).toBe(1000);
+//   arex.expect(size - 500).toBe(500);
+//   arex.expect(size * 4).toBe(4000);
+//   arex.expect(size / 4).toBe(250);
 // });
 
 // testScript 是拿到返回值后的执行脚本
@@ -22,7 +22,8 @@ export function runTestScript(
   testResponse: TestResponse,
 ): Promise<TestDescriptor> {
   return new Promise((resolve, reject) => {
-    return _runTestScript(testScript, testResponse)().then((res) => {
+    // console.log(testScript.replace(/arex\./g,'pw.'),'testScript')
+    return _runTestScript(testScript.replace(/arex\./g, 'pw.'), testResponse)().then((res) => {
       if (res._tag === 'Right') {
         resolve(res.right);
       } else {
