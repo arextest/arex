@@ -23,8 +23,14 @@ export function getLocalStorage<T>(key: string) {
  * @param key
  * @param value
  */
-export function setLocalStorage<T>(key: string, value: T) {
-  return window.localStorage.setItem(key, JSON.stringify(value));
+export function setLocalStorage<T>(key: string, value?: T | ((state: T) => void)) {
+  let _value = value;
+  if (typeof value === 'function') {
+    const raw = getLocalStorage<T>(key);
+    raw && (value as (state: T) => void)(raw);
+    _value = raw;
+  }
+  return window.localStorage.setItem(key, JSON.stringify(_value));
 }
 
 /**

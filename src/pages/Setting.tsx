@@ -5,11 +5,11 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import { CirclePicker } from 'react-color';
 
 import { FontSizeMap } from '../constant';
+import DefaultConfig from '../defaultConfig';
 import { I18nextLng, local } from '../i18n';
 import { UserService } from '../services/UserService';
 import { useStore } from '../store';
-import { primaryColorPalette, ThemeClassify, ThemeKey } from '../style/theme';
-import { setLocalStorage } from '../utils';
+import { primaryColorPalette, ThemeClassify, themeMap, ThemeName } from '../style/theme';
 const { Option } = Select;
 const { Link } = Anchor;
 
@@ -74,7 +74,9 @@ const Setting: FC = () => {
     const primaryColorIndex = primaryColorPalette[oldTheme].findIndex(
       (color) => color.key.toLocaleLowerCase() === allValue.primaryColor.toLocaleLowerCase(),
     );
-    const { name: theme, key: primaryColor } = primaryColorPalette[themeMode][primaryColorIndex];
+    const { name: theme, key: primaryColor } = primaryColorPalette[themeMode][
+      primaryColorIndex
+    ] || { name: DefaultConfig.theme, key: DefaultConfig.themePrimaryColor };
 
     // 原理上 darkMode 和 primaryColor 都是为了指定设置一个主题
     (value.darkMode !== undefined || value.primaryColor !== undefined) && changeTheme(theme);
@@ -84,7 +86,6 @@ const Setting: FC = () => {
     form
       .validateFields()
       .then((values) => {
-        setLocalStorage(ThemeKey, theme);
         const profile = {
           theme,
           fontSize: values.fontSize,
@@ -120,7 +121,11 @@ const Setting: FC = () => {
     ready: !!email,
     onSuccess(res) {
       const profile = res.profile;
-      const [themeMode] = profile.theme.split('-');
+      let themeName = profile.theme;
+      const validTheme = (themeName || '') in themeMap;
+      !validTheme && (themeName = DefaultConfig.theme);
+      const [themeMode] = (themeName as ThemeName).split('-');
+
       setUserInfo({
         email,
         profile: {
@@ -131,8 +136,9 @@ const Setting: FC = () => {
       });
       form.setFieldsValue({
         darkMode: themeMode === ThemeClassify.dark,
-        primaryColor: primaryColorPalette[themeMode].find((color) => color.name === profile.theme)
-          ?.key,
+        primaryColor: primaryColorPalette[themeMode].find(
+          (color) => color.name === (validTheme ? profile.theme : DefaultConfig.theme),
+        )?.key,
         fontSize: profile.fontSize,
         language: profile.language,
       });

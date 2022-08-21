@@ -18,8 +18,6 @@ export enum PrimaryColor {
   green = 'green',
 }
 
-export const DefaultThemeClassify = ThemeClassify.light;
-
 export type ThemeName = `${ThemeClassify}-${PrimaryColor}`;
 export const Theme: { [theme: string]: ThemeName } = {
   lightPurple: LightPurple.name,
@@ -29,8 +27,6 @@ export const Theme: { [theme: string]: ThemeName } = {
   lightGreen: LightGreen.name,
   darkGreen: DarkGreen.name,
 };
-
-export const ThemeKey = 'theme';
 
 export const primaryColorPalette: { [themeName: string]: { key: string; name: ThemeName }[] } = {
   [ThemeClassify.dark]: [

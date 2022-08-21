@@ -12,7 +12,7 @@ import { FontSize } from '../pages/Setting';
 import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
-import { PrimaryColor, ThemeClassify, ThemeKey, ThemeName } from '../style/theme';
+import { PrimaryColor, ThemeClassify, ThemeName } from '../style/theme';
 import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../utils';
 
 export type Profile = {
@@ -113,8 +113,9 @@ export const useStore = create(
     },
 
     themeClassify:
-      (getLocalStorage<ThemeName>(ThemeKey)?.split('-')?.at(0) as ThemeClassify | undefined) ||
-      DefaultConfig.themeClassify,
+      (getLocalStorage<UserInfo>(UserInfoKey)?.profile?.theme?.split('-')?.at(0) as
+        | ThemeClassify
+        | undefined) || DefaultConfig.themeClassify,
     changeTheme: (theme) => {
       set((state) => {
         let newTheme = theme;
@@ -129,7 +130,6 @@ export const useStore = create(
         toggleTheme({
           scopeName: newTheme,
         });
-        setLocalStorage(ThemeKey, newTheme);
         state.userInfo!.profile.theme = themeName;
         state.themeClassify = themeName.split('-')[0] as ThemeClassify;
       });
