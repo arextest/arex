@@ -1,11 +1,11 @@
 import { useRequest } from 'ahooks';
-import { Table, Tag } from 'antd';
+import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC } from 'react';
 
 import ReplayService from '../../services/Replay.service';
 import { ReplayCase } from '../../services/Replay.type';
-import { SmallTextButton } from '../styledComponents';
+import { HighlightRowTable, SmallTextButton } from '../styledComponents';
 
 type CaseProps = {
   planItemId: number;
@@ -52,7 +52,7 @@ const Case: FC<CaseProps> = (props) => {
     },
   );
   return (
-    <Table
+    <HighlightRowTable
       size='small'
       rowKey='recordId'
       loading={loading}

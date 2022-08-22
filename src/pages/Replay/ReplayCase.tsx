@@ -76,7 +76,7 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
         title={<span>Main Service API: {data.operationName}</span>}
         extra={
           <span>
-            <Label>View Only Failed</Label>
+            <Label>View Failed Only</Label>
             <Switch size='small' defaultChecked={onlyFailed} onChange={setOnlyFailed} />
           </span>
         }

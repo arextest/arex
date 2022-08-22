@@ -90,6 +90,9 @@ const HeaderWrapper = styled.div`
     .ant-select-selection-item {
       font-weight: 500;
     }
+    :hover {
+      z-index: 1000;
+    }
   }
   .ant-input {
     border-radius: 0 2px 2px 0;
