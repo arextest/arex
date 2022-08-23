@@ -46,4 +46,7 @@ export class CollectionService {
   static async duplicate(params: any): Promise<any> {
     return request.post(`/api/filesystem/duplicate`, params);
   }
+  static async move(params: any): Promise<any> {
+    return request.post(`/api/filesystem/move`, params);
+  }
 }

@@ -289,7 +289,7 @@ const MainBox = () => {
                 menuItem={<ReplayMenu value={activeMenu[1]} onSelect={handleReplayMenuClick} />}
               />
               <MainMenuItem
-                disabled
+                // disabled
                 tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
                 key={MenuTypeEnum.Environment}
                 menuItem={
