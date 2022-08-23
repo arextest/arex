@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 
 import { RoleEnum } from '../../constant';
 import { WorkspaceService } from '../../services/Workspace.service';
+import { useStore } from '../../store';
 const { Text } = Typography;
 
 const { Option } = Select;
@@ -12,6 +13,9 @@ const { Option } = Select;
 const InviteWorkspace = () => {
   const _useParams = useParams();
   const [form] = Form.useForm();
+  const {
+    userInfo: { email },
+  } = useStore();
   const [visible, setVisible] = useState<boolean>(false);
 
   const handleChange = (value: string) => {
@@ -39,7 +43,7 @@ const InviteWorkspace = () => {
             .then((values) => {
               console.log(values, 'va');
               const params = {
-                invitor: localStorage.getItem('email'),
+                invitor: email,
                 role: values.role,
                 userNames: values.email,
                 workspaceId: _useParams.workspaceId,

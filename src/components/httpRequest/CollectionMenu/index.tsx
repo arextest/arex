@@ -2,8 +2,8 @@ import { DownOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Empty, Input, Spin, Tree } from 'antd';
-import type { DirectoryTreeProps, DataNode, TreeProps } from 'antd/lib/tree';
-import React, { FC, useEffect, useImperativeHandle, useMemo, useState } from 'react';
+import type { DataNode, DirectoryTreeProps, TreeProps } from 'antd/lib/tree';
+import React, { FC, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStore } from './../../../store';
 import { NodeType } from '../../../constant';
@@ -105,7 +105,11 @@ export type CollectionProps = {
 
 const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) => {
   const params = useParams();
-  const { workspaces } = useStore();
+  const {
+    userInfo: { email: userName },
+    workspaces,
+  } = useStore();
+
   const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   // TODO
@@ -188,7 +192,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
         nodeName: 'New Collection',
         nodeType: 3,
         parentPath: [],
-        userName: localStorage.getItem('email'),
+        userName,
       }),
     {
       manual: true,
@@ -208,28 +212,6 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     const dropPos = info.node.pos.split('-');
     const dragPos = info.dragNode.pos.split('-');
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
-    // console.log(info);
-
-    // //case
-    // if (
-    //   dragNodeType === 2 &&
-    //   !(dropNodeType === 2 && dropToGap) &&
-    //   ((dropNodeType === 1 && dropToGap) || dropNodeType !== 1)
-    // ) {
-    //   return;
-    // }
-    // //request
-    // if (
-    //   dragNodeType === 1 &&
-    //   (dropNodeType !== 3 || (dropNodeType === 3 && dropToGap)) &&
-    //   !(dropNodeType === 1 && dropToGap)
-    // ) {
-    //   return;
-    // }
-    // //folder
-    // if (dragNodeType === 3 && dropNodeType !== 3 && !(dropNodeType === 1 && dropToGap)) {
-    //   return;
-    // }
 
     const loop = (
       data: DataNode[],

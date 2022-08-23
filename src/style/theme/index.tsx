@@ -1,72 +1,55 @@
 // https://emotion.sh/docs/theming
-import colorLib from '@kurkle/color';
+import { Theme as EmotionTheme } from '@emotion/react';
 
-export enum Theme {
+import DarkGreen from './darkGreen';
+import DarkPurple from './darkPurple';
+import DarkRed from './darkRed';
+import LightGreen from './lightGreen';
+import LightPurple from './lightPurple';
+import LightRed from './lightRed';
+
+export enum ThemeClassify {
   light = 'light',
   dark = 'dark',
 }
-export enum ThemeIcon {
-  light = '🌞',
-  dark = '🌛',
+export enum PrimaryColor {
+  purple = 'purple',
+  red = 'red',
+  green = 'green',
 }
 
-export const ThemeKey = 'theme';
-export const DefaultTheme = Theme.light;
-
-export const Color = {
-  primaryColor: '#603BE3',
+export type ThemeName = `${ThemeClassify}-${PrimaryColor}`;
+export const Theme: { [theme: string]: ThemeName } = {
+  lightPurple: LightPurple.name,
+  darkPurple: DarkPurple.name,
+  lightRed: LightRed.name,
+  darkRed: DarkRed.name,
+  lightGreen: LightGreen.name,
+  darkGreen: DarkGreen.name,
 };
 
-const themeDark = {
-  color: {
-    primary: '#955cf4',
-    active: 'rgba(255, 255, 255, 0.08)',
-    selected: colorLib('#955cf4').alpha(0.1).rgbString(),
-    success: '#2e7d32',
-    info: '#0288d1',
-    warning: '#ed6c02',
-    error: '#d32f2f',
-    text: {
-      primary: '#fff',
-      secondary: 'rgba(255, 255, 255, 0.7)',
-      disabled: 'rgba(255, 255, 255, 0.5)',
-      watermark: 'rgba(255, 255, 255, 0.1)',
-      highlight: '#955cf4',
-    },
-    border: {
-      primary: '#303030',
-    },
-  },
+export const primaryColorPalette: { [themeName: string]: { key: string; name: ThemeName }[] } = {
+  [ThemeClassify.dark]: [
+    { key: DarkPurple.primaryColor, name: DarkPurple.name },
+    { key: DarkRed.primaryColor, name: DarkRed.name },
+    { key: DarkGreen.primaryColor, name: DarkGreen.name },
+  ],
+  [ThemeClassify.light]: [
+    { key: LightPurple.primaryColor, name: LightPurple.name },
+    { key: LightRed.primaryColor, name: LightRed.name },
+    { key: LightGreen.primaryColor, name: LightGreen.name },
+  ],
 };
 
-const themeLight = {
-  color: {
-    primary: '#603BE3',
-    active: '#f5f5f5',
-    selected: colorLib('#603BE3').alpha(0.1).rgbString(),
-    success: '#66bb6a',
-    info: '#29b6f6',
-    warning: '#ffa726',
-    error: '#f44336',
-    text: {
-      primary: 'rgba(0,0,0,0.87)',
-      secondary: 'rgba(0,0,0,0.6)',
-      disabled: 'rgba(0,0,0,0.38)',
-      watermark: 'rgba(0,0,0,0.1)',
-      highlight: '#603BE3',
-    },
-    border: {
-      primary: '#F0F0F0',
-    },
-  },
+export const themeMap: { [themeName: string]: EmotionTheme } = {
+  [Theme.lightPurple]: LightPurple.theme,
+  [Theme.darkPurple]: DarkPurple.theme,
+  [Theme.lightRed]: LightRed.theme,
+  [Theme.darkRed]: DarkRed.theme,
+  [Theme.lightGreen]: LightGreen.theme,
+  [Theme.darkGreen]: DarkGreen.theme,
 };
 
-const themeMap = {
-  [Theme.light]: themeLight,
-  [Theme.dark]: themeDark,
-};
-
-export const themeCreator = (theme: Theme) => themeMap[theme];
 // https://emotion.sh/docs/typescript#define-a-theme
 declare module '@emotion/react' {
   export interface Theme {

@@ -7,7 +7,7 @@ import React, { FC, useState } from 'react';
 import ReplayService from '../../services/Replay.service';
 import { PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
-import { Theme } from '../../style/theme';
+import { ThemeClassify } from '../../style/theme';
 const { Text } = Typography;
 
 export const resultsStates = [
@@ -76,14 +76,14 @@ const columns: ColumnsType<PlanStatistics> = [
   },
 ];
 
-const AppTable = styled(Table)<{ theme?: Theme }>`
+const AppTable = styled(Table)<{ theme?: ThemeClassify }>`
   // highlight selected row
   .clickRowStyl {
-    background-color: ${(props) => (props.theme === Theme.light ? '#f6efff' : '#171528')};
+    background-color: ${(props) => (props.theme === ThemeClassify.light ? '#f6efff' : '#171528')};
   }
   .ant-table-tbody > tr > td.ant-table-cell-row-hover {
     background-color: ${(props) =>
-      props.theme === Theme.light ? '#f6efff88' : '#17152888'}!important;
+      props.theme === ThemeClassify.light ? '#f6efff88' : '#17152888'}!important;
   }
 `;
 
@@ -93,7 +93,7 @@ const Results: FC<{
   refreshDep?: React.Key;
   onSelectedPlanChange: (selectedPlan: PlanStatistics) => void;
 }> = ({ appId, defaultSelectFirst, refreshDep, onSelectedPlanChange }) => {
-  const theme = useStore((state) => state.theme);
+  const { themeClassify } = useStore();
   const [selectRow, setSelectRow] = useState<number>(defaultSelectFirst ? 0 : -1);
   const { data: planStatistics, loading } = useRequest(
     () =>
@@ -116,7 +116,7 @@ const Results: FC<{
       <AppTable
         rowKey='planId'
         size='small'
-        theme={theme}
+        theme={themeClassify}
         loading={loading}
         pagination={{ pageSize: 5 }}
         columns={columns}

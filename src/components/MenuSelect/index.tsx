@@ -1,25 +1,29 @@
+import { SyncOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { CSSInterpolation } from '@emotion/serialize/types';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Options } from 'ahooks/lib/useRequest/src/types';
-import { Input, Menu, Spin } from 'antd';
+import { Button, Input, Menu, Spin } from 'antd';
+import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
-import React, { ReactNode, useMemo, useState } from 'react';
+import React, { ChangeEventHandler, ReactNode, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type MenuSelectProps<D, P extends any[]> = {
-  sx?: CSSInterpolation;
+  sx?: CSSInterpolation; // custom style
   small?: boolean;
+  refresh?: boolean; // show refresh button
+  defaultSelectFirst?: boolean;
   rowKey: string;
   selectedKeys?: string[];
   onSelect: (app: D) => void;
   onClick?: (info: any) => void;
   filter?: ((keyword: string, app: D) => boolean) | string;
+  forceFilter?: boolean; // filtering even if the keyword is empty
   request: () => Promise<D[]>;
-  requestOptions?: Options<D[], P>;
+  requestOptions?: Options<D[], P>; // ahooks request options
   placeholder?: string; // from i18n namespace "components"
-  defaultSelectFirst?: boolean;
   itemRender?: (app: D, index: number) => { label: ReactNode; key: React.Key };
 };
 
@@ -55,8 +59,42 @@ const MenuList = styled(Menu, { shouldForwardProp: (propName) => propName !== 's
     color: ${(props) => props.theme.color.primary} !important;
   }
 `;
-const MenuFilter = styled(Input.Search)`
+
+type MenuFilterProps = {
+  refresh?: boolean;
+  size: SizeType;
+  value: string;
+  placeholder?: string;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+  onFresh?: () => void;
+  className?: string;
+};
+const MenuFilter = styled((props: MenuFilterProps) => {
+  return (
+    <Input.Group compact className={props.className}>
+      {props.refresh && (
+        <Button
+          size={props.size}
+          icon={<SyncOutlined />}
+          onClick={props.onFresh}
+          style={{ padding: '0 8px' }}
+        />
+      )}
+      <Input.Search
+        size={props.size}
+        value={props.value}
+        placeholder={props.placeholder}
+        onChange={props.onChange}
+        style={{ width: 'auto' }}
+      />
+    </Input.Group>
+  );
+})`
   margin-bottom: 8px;
+  display: flex !important;
+  .ant-btn-icon-only {
+    color: ${(props) => props.theme.color.text.secondary} !important;
+  }
 `;
 
 function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
@@ -71,26 +109,36 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   );
 
   const [filterKeyword, setFilterKeyword] = useState('');
-  const { data: apps = [], loading } = useRequest<D[], P>(props.request, {
+
+  const filter = useCallback(
+    (data: D[]) =>
+      data.filter((app) => {
+        if (typeof props.filter === 'string') {
+          return app[props.filter].toLocaleLowerCase().includes(filterKeyword.toLocaleLowerCase());
+        } else {
+          return props.filter && props.filter(filterKeyword, app);
+        }
+      }),
+    [filterKeyword, props],
+  );
+
+  const {
+    data: apps = [],
+    loading,
+    run: reload,
+  } = useRequest<D[], P>(props.request, {
     onSuccess(res) {
       if (res.length && props.defaultSelectFirst) {
-        setSelectedKey(res[0][props.rowKey]);
-        props.onSelect(res[0]);
+        const firstRecord = props.forceFilter ? filter(res)[0] : res[0];
+        setSelectedKey(firstRecord[props.rowKey]);
+        props.onSelect(firstRecord);
       }
     },
     ...props.requestOptions,
   });
+
   const filteredApps = useMemo<ItemType[]>(() => {
-    const filtered =
-      filterKeyword && props.filter
-        ? apps.filter((app) => {
-            if (typeof props.filter === 'string') {
-              return app[props.filter].includes(filterKeyword);
-            } else {
-              return props.filter && props.filter(filterKeyword, app);
-            }
-          })
-        : apps;
+    const filtered = (props.forceFilter || filterKeyword) && props.filter ? filter(apps) : apps;
     return filtered.map<ItemType>(
       props.itemRender
         ? props.itemRender
@@ -111,12 +159,15 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   return (
     <MenuSelectWrapper css={css(props.sx)}>
       <Spin spinning={loading}>
+        {/* 目前刷新按钮的显示受限于搜索逻辑 */}
         {props.filter && (
           <MenuFilter
+            refresh={props.refresh}
             size={props.small ? 'small' : 'middle'}
             value={filterKeyword}
             placeholder={props.placeholder && t(props.placeholder)}
             onChange={(e) => setFilterKeyword(e.target.value)}
+            onFresh={reload}
           />
         )}
         <MenuList

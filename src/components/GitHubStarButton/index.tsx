@@ -1,9 +1,9 @@
+import { FC } from 'react';
 import GitHubButton from 'react-github-btn';
 
-import { useStore } from '../../store';
+import { ThemeClassify } from '../../style/theme';
 
-const GitHubStarButton = () => {
-  const theme = useStore((state) => state.theme);
+const GitHubStarButton: FC<{ theme: ThemeClassify }> = ({ theme }) => {
   return (
     <div style={{ height: '22px', marginLeft: '16px' }}>
       <GitHubButton

@@ -1,12 +1,12 @@
-import { DeleteOutlined, QuestionCircleOutlined, PicRightOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PicRightOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { javascript } from '@codemirror/lang-javascript';
+import { EditorView } from '@codemirror/view';
 import styled from '@emotion/styled';
+import CodeMirror from '@uiw/react-codemirror';
 import { Button, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { javascript } from '@codemirror/lang-javascript';
-import { json } from '@codemirror/lang-json';
-import CodeMirror from '@uiw/react-codemirror';
-import { EditorView } from '@codemirror/view';
+
 import { useStore } from '../../store';
 
 export const ResponseTestHeader = styled.div`
@@ -52,42 +52,48 @@ export const ResponseTestWrapper = styled.div`
   }
 `;
 
-export type ResponseTestprops = {
+export type ResponseTestProps = {
   OldTestVal: string;
   getTestVal: (p: any) => void;
 };
 
-const ResponseTest = ({ getTestVal, OldTestVal }: ResponseTestprops) => {
+const ResponseTest = ({ getTestVal, OldTestVal }: ResponseTestProps) => {
   const { t: t_common } = useTranslation('common');
   const { t: t_components } = useTranslation('components');
-  const [TestVal, setTestval] = useState<string>('');
-  const { theme, extensionInstalled } = useStore();
-  const [islineWrapping, setIslineWrapping] = useState<boolean>(true);
+
+  const {
+    userInfo: {
+      profile: { theme },
+    },
+  } = useStore();
+
+  const [TestVal, setTestVal] = useState<string>('');
+  const [isLineWrapping, setIsLineWrapping] = useState<boolean>(true);
   const codeSnippet = [
     {
       name: 'Response: Status code is 200',
       text: `
 // Check status code is 200
-pw.test("Status code is 200", ()=> {
-    pw.expect(pw.response.status).toBe(200);
+arex.test("Status code is 200", ()=> {
+    arex.expect(arex.response.status).toBe(200);
 });
 `,
     },
   ];
   const addTest = (text: string) => {
     getTestVal(TestVal + text);
-    setTestval(TestVal + text);
+    setTestVal(TestVal + text);
   };
   const CodeMirrorChange = (instance: string) => {
     getTestVal(instance);
-    setTestval(instance);
+    setTestVal(instance);
   };
   const feedLine = () => {
-    setIslineWrapping(!islineWrapping);
+    setIsLineWrapping(!isLineWrapping);
   };
 
   useEffect(() => {
-    setTestval(OldTestVal);
+    setTestVal(OldTestVal);
   }, [OldTestVal]);
   return (
     <>
@@ -101,7 +107,7 @@ pw.test("Status code is 200", ()=> {
             <Button type='text' icon={<PicRightOutlined />} onClick={feedLine} />
           </Tooltip>
           <Tooltip title={t_common('clearAll')}>
-            <Button type='text' icon={<DeleteOutlined />} onClick={() => setTestval('')} />
+            <Button type='text' icon={<DeleteOutlined />} onClick={() => setTestVal('')} />
           </Tooltip>
         </div>
       </ResponseTestHeader>
@@ -111,7 +117,7 @@ pw.test("Status code is 200", ()=> {
           height='auto'
           minHeight='300px'
           onChange={(e: string) => CodeMirrorChange(e)}
-          extensions={islineWrapping ? [javascript()] : [EditorView.lineWrapping, javascript()]}
+          extensions={isLineWrapping ? [javascript()] : [EditorView.lineWrapping, javascript()]}
           theme={theme}
           style={{ width: '65%' }}
           // options = {{
@@ -122,20 +128,20 @@ pw.test("Status code is 200", ()=> {
           <div>
             Test scripts are written in JavaScript, and are run after the response is received.
           </div>
-          <span
-            style={{ cursor: 'pointer' }}
+          <Button
+            type='text'
             onClick={() => window.open('https://docs.hoppscotch.io/features/tests')}
           >
             Read documentation
-          </span>
+          </Button>
           <div>Snippets</div>
           {/* <div>测试脚本使用JavaScript编写,并再受到响应后执行</div>
           <span>阅读文档</span>
           <div>代码片段</div> */}
           {codeSnippet.map((e, i) => (
-            <span key={i} onClick={() => addTest(e.text)}>
+            <Button type='text' key={i} onClick={() => addTest(e.text)}>
               {e.name}
-            </span>
+            </Button>
           ))}
         </div>
       </ResponseTestWrapper>

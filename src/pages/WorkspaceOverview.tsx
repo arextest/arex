@@ -1,6 +1,10 @@
-import { Button, Divider, Form, Input, Popconfirm, Space, Typography } from 'antd';
+import { useMount } from 'ahooks';
+import { Avatar, Button, Divider, Form, Input, List, Popconfirm, Space, Typography } from 'antd';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import request from '../api/axios';
+import { RoleEnum } from '../constant';
 import { WorkspaceService } from '../services/Workspace.service';
 import { useStore } from '../store';
 
@@ -9,13 +13,17 @@ const { Text } = Typography;
 const WorkspaceOverview = () => {
   const params = useParams();
   const nav = useNavigate();
-  const { workspaces, resetPanes } = useStore();
+  const {
+    userInfo: { email: userName },
+    workspaces,
+    resetPanes,
+  } = useStore();
 
   const onFinish = (values: any) => {
     WorkspaceService.renameWorkspace({
       workspaceId: params.workspaceId,
       newName: values.name,
-      userName: localStorage.getItem('email'),
+      userName,
     }).then((res) => {
       window.location.href = `/${params.workspaceId}/workspace/${values.name}`;
     });
@@ -24,6 +32,17 @@ const WorkspaceOverview = () => {
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
   };
+  const [workspaceUsers, setWorkspaceUsers] = useState([]);
+
+  useMount(() => {
+    request
+      .post(`/api/filesystem/queryUsersByWorkspace`, {
+        workspaceId: params.workspaceId,
+      })
+      .then((res) => {
+        setWorkspaceUsers(res.body.users);
+      });
+  });
 
   return (
     <div>
@@ -51,6 +70,38 @@ const WorkspaceOverview = () => {
             </Button>
           </Form.Item>
         </Form>
+        <Divider />
+
+        <List
+          itemLayout='horizontal'
+          dataSource={workspaceUsers}
+          renderItem={(item) => (
+            <List.Item
+              actions={[
+                <a key='list-loadmore-edit'>
+                  {
+                    {
+                      [RoleEnum.Admin]: 'Admin',
+                      [RoleEnum.Editor]: 'Editor',
+                      [RoleEnum.Viewer]: 'Viewer',
+                    }[item.role]
+                  }
+                </a>,
+              ]}
+            >
+              <List.Item.Meta
+                avatar={<Avatar src='https://joeschmoe.io/api/v1/random' />}
+                title={<span>{item.userName}</span>}
+                description={
+                  {
+                    '1': 'Not accepted',
+                    '2': 'Accepted',
+                  }[item.status]
+                }
+              />
+            </List.Item>
+          )}
+        />
 
         <Divider />
 
@@ -63,12 +114,14 @@ const WorkspaceOverview = () => {
           <Popconfirm
             title='Are you sure to delete this workspace?'
             onConfirm={() => {
-              WorkspaceService.deleteWorkspace({ workspaceId: params.workspaceId }).then((res) => {
-                resetPanes();
-                nav(
-                  `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,
-                );
-              });
+              WorkspaceService.deleteWorkspace({ workspaceId: params.workspaceId, userName }).then(
+                (res) => {
+                  resetPanes();
+                  nav(
+                    `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,
+                  );
+                },
+              );
             }}
             okText='Yes'
             cancelText='No'

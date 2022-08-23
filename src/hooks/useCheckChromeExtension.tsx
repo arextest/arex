@@ -1,24 +1,13 @@
-import { Alert } from 'antd';
+import { message } from 'antd';
 import React, { useEffect } from 'react';
 
-import { useStore } from '../../store';
+import { useStore } from '../store';
 
-const CheckChromeExtension = () => {
+const useCheckChromeExtension = () => {
   useEffect(() => {
     if (!window.__AREX_EXTENSION_INSTALLED__) {
       useStore.setState({ extensionInstalled: false });
-      console.info('[AREX] Extension not installed, please install it first.');
-    } else {
-      useStore.setState({ extensionInstalled: true });
-      console.info('[AREX] Extension installed.');
-    }
-  }, []);
-
-  return window.__AREX_EXTENSION_INSTALLED__ ? (
-    <></>
-  ) : (
-    <Alert
-      message={
+      message.info(
         <div>
           Be careful：The Chrome Extension can break the cross-domain limit of the browser. Please
           install the&nbsp;
@@ -30,10 +19,14 @@ const CheckChromeExtension = () => {
             Chrome Extension
           </a>
           &nbsp;before you run it.
-        </div>
-      }
-    />
-  );
+        </div>,
+      );
+      console.info('[AREX] Extension not installed, please install it first.');
+    } else {
+      useStore.setState({ extensionInstalled: true });
+      console.info('[AREX] Extension installed.');
+    }
+  }, []);
 };
 
-export default CheckChromeExtension;
+export default useCheckChromeExtension;

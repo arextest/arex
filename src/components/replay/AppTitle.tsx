@@ -1,8 +1,11 @@
+import { SyncOutlined } from '@ant-design/icons';
+import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Form, Input, Modal, notification } from 'antd';
-import React, { FC, useState } from 'react';
+import React, { FC, ReactNode, useState } from 'react';
 
 import ReplayService from '../../services/Replay.service';
+import { useStore } from '../../store';
 import { Label, PanesTitle } from '../styledComponents';
 
 type AppTitleData = {
@@ -12,10 +15,30 @@ type AppTitleData = {
 };
 type AppTitleProps = {
   data: AppTitleData;
-  onCreatePlan?: () => void;
+  onRefresh?: () => void;
 };
 
-const AppTitle: FC<AppTitleProps> = ({ data, onCreatePlan }) => {
+const TitleWrapper = styled(
+  (props: { className?: string; title: ReactNode; onRefresh?: () => void }) => (
+    <div className={props.className}>
+      <span>{props.title}</span>
+      {props.onRefresh && (
+        <Button size='small' type='text' icon={<SyncOutlined />} onClick={props.onRefresh} />
+      )}
+    </div>
+  ),
+)`
+  display: flex;
+  align-items: baseline;
+  & > :first-of-type {
+    margin-right: 4px;
+  }
+`;
+
+const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
+  const {
+    userInfo: { email },
+  } = useStore();
   const [form] = Form.useForm<{ targetEnv: string }>();
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -27,7 +50,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onCreatePlan }) => {
           message: 'Started Successfully',
         });
         form.resetFields();
-        onCreatePlan && onCreatePlan();
+        onRefresh && onRefresh();
       } else {
         console.error(res.desc);
         notification.error({
@@ -54,7 +77,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onCreatePlan }) => {
           appId: data.id,
           sourceEnv: 'pro',
           targetEnv: values.targetEnv,
-          operator: 'Visitor',
+          operator: email as string,
           replayPlanType: 0,
         });
         console.log('Received values of form: ', values);
@@ -66,7 +89,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onCreatePlan }) => {
   return (
     <>
       <PanesTitle
-        title={`${data.id}_${data.name}`}
+        title={<TitleWrapper title={data.id} onRefresh={onRefresh} />}
         extra={
           <>
             <span>

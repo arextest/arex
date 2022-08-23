@@ -2,9 +2,10 @@ import { javascript } from '@codemirror/lang-javascript';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import CodeMirror from '@uiw/react-codemirror';
-import { Tabs, List, Progress, Badge } from 'antd';
+import { Badge, List, Progress, Tabs } from 'antd';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
 import { useStore } from '../../store';
 import FormTable, { getColumns } from './FormTable';
 const { TabPane } = Tabs;
@@ -44,7 +45,7 @@ const Response: FC<{
     console.log(key);
   };
   const { t: t_components } = useTranslation('components');
-  const theme = useStore((state) => state.theme);
+  const { themeClassify } = useStore();
   const headers = useMemo(
     () =>
       props.responseHeaders
@@ -96,7 +97,7 @@ const Response: FC<{
             extensions={[javascript()]}
             width='100%'
             height='500px'
-            theme={theme}
+            theme={themeClassify}
           />
         </TabPane>
         <TabPane tab='Raw' key='2'>

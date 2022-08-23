@@ -30,13 +30,8 @@ export class WorkspaceService {
       .then((res) => res);
   }
 
-  static deleteWorkspace({ workspaceId }) {
-    return request
-      .post(`/api/filesystem/deleteWorkspace`, {
-        userName: localStorage.getItem('email'),
-        workspaceId: workspaceId,
-      })
-      .then((res) => res);
+  static deleteWorkspace(params: { userName: string; workspaceId: string }) {
+    return request.post(`/api/filesystem/deleteWorkspace`, params).then((res) => res);
   }
 
   static inviteToWorkspace(params) {

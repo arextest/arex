@@ -1,4 +1,6 @@
 import axios from 'axios';
+
+import { getLocalStorage } from '../utils';
 export class AuthService {
   static sendVerifyCodeByEmail(email: string) {
     return axios.get(`/api/login/getVerificationCode/${email}`, {
@@ -10,7 +12,7 @@ export class AuthService {
   }
   static refreshToken(params: { userName: string }) {
     return axios.get(`/api/login/refresh/${params.userName}`, {
-      headers: { 'refresh-token': localStorage.getItem('refreshToken') },
+      headers: { 'refresh-token': getLocalStorage<string>('refreshToken') },
     });
   }
 }

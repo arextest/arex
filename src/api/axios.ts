@@ -1,6 +1,9 @@
 import { message } from 'antd';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
+import { AccessTokenKey } from '../constant';
+import { getLocalStorage } from '../utils';
+
 // 自定义实例级别的拦截器接口
 interface IRequestInterceptors<T = AxiosResponse> {
   // 请求成功
@@ -40,7 +43,7 @@ export class Request {
     this.instance.interceptors.request.use(
       (config) => {
         config.headers = {
-          'access-token': localStorage.getItem('accessToken'),
+          'access-token': getLocalStorage<string>(AccessTokenKey) + '',
         };
 
         return config;

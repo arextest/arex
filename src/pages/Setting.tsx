@@ -1,66 +1,159 @@
 import { useRequest } from 'ahooks';
-import { Anchor, Form, message, Select, Switch } from 'antd';
-import { FC, useEffect, useState } from 'react';
+import { Anchor, Form, message, Select, Spin, Switch } from 'antd';
+import { changeLanguage } from 'i18next';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { CirclePicker } from 'react-color';
 
+import { FontSizeMap } from '../constant';
+import DefaultConfig from '../defaultConfig';
+import { I18nextLng, local } from '../i18n';
 import { UserService } from '../services/UserService';
 import { useStore } from '../store';
+import { primaryColorPalette, ThemeClassify, themeMap, ThemeName } from '../style/theme';
 const { Option } = Select;
 const { Link } = Anchor;
 
-const Setting: FC = () => {
-  const [color, setColor] = useState<string>();
-  const [form] = Form.useForm();
-  const setUserInfo = useStore((state) => state.setUserInfo);
+export type FontSize = 'small' | 'medium' | 'large';
 
-  function handleOk() {
+type SettingForm = {
+  darkMode: boolean;
+  primaryColor: string;
+  fontSize: FontSize;
+  language: I18nextLng;
+};
+
+// Custom form item component
+type ColorPickerProps = {
+  value?: string;
+  theme: ThemeClassify;
+  onChange?: (color: string) => void;
+};
+const ColorPicker: FC<ColorPickerProps> = ({ value, onChange, theme }) => {
+  const colors = useMemo(() => primaryColorPalette[theme].map((color) => color.key), [theme]);
+
+  return (
+    <div style={{ padding: '8px 0 0 0' }}>
+      <CirclePicker
+        width={'320px'}
+        circleSize={20}
+        color={value}
+        colors={colors}
+        onChangeComplete={(color) => {
+          onChange && onChange(color.hex);
+        }}
+      />
+    </div>
+  );
+};
+
+const Setting: FC = () => {
+  const [initLoading, setInitLoading] = useState(true);
+  const [form] = Form.useForm<SettingForm>();
+  const {
+    userInfo: { email },
+    themeClassify,
+    setUserInfo,
+    changeTheme,
+  } = useStore();
+
+  const changeFontSize = (fontSize: FontSize) => {
+    // @ts-ignore
+    document.body.style['zoom'] = FontSizeMap[fontSize]; // Non-standard: https://developer.mozilla.org/en-US/docs/Web/CSS/zoom
+  };
+
+  const handleFormChange = (value: Partial<SettingForm>, allValue: SettingForm) => {
+    // 设置目标的 ThemeClassify
+    const themeMode = allValue.darkMode ? ThemeClassify.dark : ThemeClassify.light;
+    // 设置状态更新前的 ThemeClassify
+    const oldTheme =
+      value.darkMode !== undefined // 当修改的值为 darkMode 时，说明 themeClassify 发生变更，否则沿用原有的 themeClassify
+        ? themeMode === ThemeClassify.dark
+          ? ThemeClassify.light
+          : ThemeClassify.dark
+        : themeMode;
+    const primaryColorIndex = primaryColorPalette[oldTheme].findIndex(
+      (color) => color.key.toLocaleLowerCase() === allValue.primaryColor.toLocaleLowerCase(),
+    );
+    const { name: theme, key: primaryColor } = primaryColorPalette[themeMode][
+      primaryColorIndex
+    ] || { name: DefaultConfig.theme, key: DefaultConfig.themePrimaryColor };
+
+    // 原理上 darkMode 和 primaryColor 都是为了指定设置一个主题
+    (value.darkMode !== undefined || value.primaryColor !== undefined) && changeTheme(theme);
+    value.language !== undefined && changeLanguage(value.language);
+    value.fontSize !== undefined && changeFontSize(value.fontSize);
+
     form
       .validateFields()
       .then((values) => {
+        const profile = {
+          theme,
+          fontSize: values.fontSize,
+          language: values.language,
+        };
         updateUserProfileRequestRun({
-          profile: JSON.stringify(values),
-          userName: localStorage.getItem('email'),
+          profile: JSON.stringify(profile),
+          userName: email,
         });
-        // 同步store
+
+        // 此处没有调用 UserService.userProfile 而是采用本地更新的方式
         setUserInfo({
-          email: localStorage.getItem('email'),
+          email,
           profile: {
-            background: values.background,
-            accentColor: values.accentColor,
-            fontSize: values.fontSize,
-            language: values.language,
+            theme,
+            fontSize: profile.fontSize,
+            language: profile.language,
           },
+        });
+        form.setFieldsValue({
+          darkMode: themeMode === ThemeClassify.dark,
+          primaryColor,
+          fontSize: profile.fontSize,
+          language: profile.language,
         });
       })
       .catch((info) => {
         console.log('Validate Failed:', info);
       });
-  }
+  };
 
-  useRequest(() => UserService.userProfile(), {
+  useRequest(() => UserService.userProfile(email as string), {
+    ready: !!email,
     onSuccess(res) {
       const profile = res.profile;
+      let themeName = profile.theme;
+      const validTheme = (themeName || '') in themeMap;
+      !validTheme && (themeName = DefaultConfig.theme);
+      const [themeMode] = (themeName as ThemeName).split('-');
+
       setUserInfo({
-        email: localStorage.getItem('email'),
+        email,
         profile: {
-          background: profile.background,
-          accentColor: profile.accentColor,
+          theme: profile.theme,
           fontSize: profile.fontSize,
           language: profile.language,
         },
       });
-      form.setFieldsValue(profile);
+      form.setFieldsValue({
+        darkMode: themeMode === ThemeClassify.dark,
+        primaryColor: primaryColorPalette[themeMode].find(
+          (color) => color.name === (validTheme ? profile.theme : DefaultConfig.theme),
+        )?.key,
+        fontSize: profile.fontSize,
+        language: profile.language,
+      });
+      setInitLoading(false);
     },
-    manual: true,
   });
 
   const { run: updateUserProfileRequestRun } = useRequest(
     (params) => UserService.updateUserProfile(params),
     {
-      onSuccess(res) {
-        message.success('修改成功');
-      },
       manual: true,
+      onError(err) {
+        message.error('Update profile failed');
+        console.error(err);
+      },
     },
   );
 
@@ -71,7 +164,8 @@ const Setting: FC = () => {
   }, []);
 
   return (
-    <div>
+    <Spin spinning={initLoading}>
+      {/* TODO DEBUG */}
       <Anchor targetOffset={targetOffset} style={{ position: 'absolute', right: '40px' }}>
         <Link href='#user-interface' title='User Interface'>
           <Link href='#dark-mode' title='Dark Mode' />
@@ -81,28 +175,24 @@ const Setting: FC = () => {
         </Link>
       </Anchor>
 
-      <Form name='form' form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+      <Form
+        name='form'
+        form={form}
+        labelCol={{ span: 4 }}
+        wrapperCol={{ span: 20 }}
+        onValuesChange={handleFormChange}
+      >
         <h2 id='user-interface'>User Interface</h2>
 
         <div id='dark-mode'>
-          <Form.Item label='Dark Mode' name='darkMode'>
+          <Form.Item label='Dark Mode' name='darkMode' valuePropName='checked'>
             <Switch />
           </Form.Item>
         </div>
 
-        <div>
-          <Form.Item id='primary-color' label='Accent color' name='accentColor'>
-            <div style={{ padding: '8px 0 0 0' }}>
-              <CirclePicker
-                width={'320px'}
-                circleSize={20}
-                color={color}
-                onChangeComplete={(color) => {
-                  console.log(color);
-                  setColor(color.hex);
-                }}
-              />
-            </div>
+        <div id='primary-color'>
+          <Form.Item label='Primary Color' name='primaryColor'>
+            <ColorPicker theme={themeClassify} />
           </Form.Item>
         </div>
 
@@ -119,15 +209,17 @@ const Setting: FC = () => {
         <div id='language'>
           <Form.Item label='Language' name='language'>
             <Select style={{ width: 120 }}>
-              <Option value='english'>English</Option>
-              <Option value='chinese'>简体中文</Option>
+              {local.map((lng) => (
+                <Option key={lng.key} value={lng.key}>
+                  {lng.name}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
         </div>
       </Form>
-
-      <div style={{ height: '800px' }}></div>
-    </div>
+    </Spin>
   );
 };
+
 export default Setting;

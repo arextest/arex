@@ -15,7 +15,7 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 
 import { MenuTypeEnum, PageTypeEnum } from '../../constant';
@@ -39,7 +39,10 @@ const chartOptions = {
 } as const;
 
 const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
-  const { setPanes } = useStore();
+  const {
+    userInfo: { email },
+    setPanes,
+  } = useStore();
 
   const { data: planItemData, loading: loadingData } = useRequest(
     () =>
@@ -107,6 +110,13 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     {
       title: 'Total Cases',
       dataIndex: 'totalCaseCount',
+      filterMultiple: false,
+      filters: [
+        { text: 'All', value: 'all' },
+        { text: 'Valid', value: 'valid' },
+      ],
+      defaultFilteredValue: ['valid'],
+      onFilter: (value, record) => value !== 'valid' || !!record.totalCaseCount,
     },
     {
       title: 'Passed',
@@ -200,7 +210,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
       appId: selectedPlan!.appId,
       caseSourceType: operationId && 0,
       operationCaseInfoList: operationId !== undefined ? [{ operationId }] : undefined,
-      operator: 'Visitor',
+      operator: email as string,
       replayPlanType: operationId !== undefined ? 1 : 0,
       sourceEnv: 'pro',
       targetEnv: selectedPlan!.targetHost as string,
@@ -213,7 +223,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
       size='small'
       title={`Report: ${selectedPlan.planName}`}
       extra={
-        <Button danger type='text' onClick={() => handleRerun()}>
+        <Button size='small' type='primary' onClick={() => handleRerun()}>
           Rerun
         </Button>
       }

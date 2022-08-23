@@ -14,7 +14,7 @@ const Replay: FC<{ data?: ApplicationDataType }> = ({ data }) => {
   };
 
   const [refreshDep, setRefreshDep] = useState<string>();
-  const handleAfterCreatePlan = () => {
+  const handleRefreshDep = () => {
     setRefreshDep(uuid()); // 触发 Results 组件请求更新
   };
 
@@ -22,7 +22,7 @@ const Replay: FC<{ data?: ApplicationDataType }> = ({ data }) => {
     <Space direction='vertical' size='middle' style={{ display: 'flex' }}>
       <AppTitle
         data={{ id: data.appId, name: data.appName, count: data.recordedCaseCount }}
-        onCreatePlan={handleAfterCreatePlan}
+        onRefresh={handleRefreshDep}
       />
 
       <CollapseTable

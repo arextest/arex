@@ -1,6 +1,7 @@
 export { default as AnimateAutoHeight } from './AnimateAutoHeight';
 export { default as AppFooter } from './app/Footer';
 export { default as AppHeader } from './app/Header';
+export { default as DraggableTabs } from './DraggableTabs';
 export { default as EnvironmentMenu } from './Environment/EnvironmentMenu';
 export { default as EnvironmentSelect } from './Environment/EnvironmentSelect';
 export { default as CollectionMenu } from './httpRequest/CollectionMenu';
