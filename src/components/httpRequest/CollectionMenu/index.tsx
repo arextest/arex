@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Empty, Input, Spin, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps, TreeProps } from 'antd/lib/tree';
-import React, { FC, useImperativeHandle, useMemo, useState } from 'react';
+import React, { FC, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useStore } from './../../../store';
 import { NodeType } from '../../../constant';
@@ -132,7 +132,8 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     onSuccess: (res) => {
       if (res.length) {
         onGetData && onGetData(res);
-        generateList(treeData);
+        // generateList(treeData);
+        generateList(res);
       }
     },
   });
@@ -207,10 +208,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     const dropKey = info.node.key;
     const dragKey = info.dragNode.key;
     const dragNodeType = info.dragNode.nodeType;
-    const dropNodeType = info.node.nodeType;
-    const dropToGap = info.dropToGap;
     const dropPos = info.node.pos.split('-');
-    const dragPos = info.dragNode.pos.split('-');
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
 
     const loop = (
@@ -426,10 +424,11 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
               onSelect={handleSelect}
               switcherIcon={<DownOutlined />}
               treeData={treeData}
-              onDrop={onDrop}
-              draggable={{ icon: false }}
+              // onDrop={onDrop}
+              // draggable={{ icon: false }}
               titleRender={(val) => (
                 <CollectionTitle
+                  searchValue={searchValue}
                   updateDirectoryTreeData={fetchTreeData}
                   val={val}
                   treeData={treeData}

@@ -76,8 +76,6 @@ const ItemLabel = styled.div`
   }
 `;
 
-const btnCss = css``;
-
 const Environment: FC<EnvironmentProps> = ({ value, onSelect }) => {
   const params = useParams();
   const [iconIsShow, setIconIsShow] = useState('');

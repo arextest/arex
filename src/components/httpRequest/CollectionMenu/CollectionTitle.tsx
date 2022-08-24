@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Dropdown, Input, Menu, Popconfirm, Space } from 'antd';
 import { ReactNode, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
+import SearchHeighLight from '../../../helpers/collection/searchHeighLight';
 import { treeFindPath } from '../../../helpers/collection/util';
 import { CollectionService } from '../../../services/CollectionService';
 import { useStore } from '../../../store';
@@ -20,7 +20,13 @@ const PrefixIcon = styled(
   line-height: 12px;
 `;
 
-function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNewRequest }: any) {
+function CollectionTitle({
+  val,
+  updateDirectoryTreeData,
+  treeData,
+  callbackOfNewRequest,
+  searchValue,
+}: any) {
   const _useParams = useParams();
   const {
     userInfo: { email: userName },
@@ -181,7 +187,7 @@ function CollectionTitle({ val, updateDirectoryTreeData, treeData, callbackOfNew
                 onChange={(val) => setRenameValue(val.target.value)}
               />
             ) : (
-              <span>{val.title}</span>
+              <SearchHeighLight text={val.title} keyword={searchValue} />
             )}
           </div>
         </div>
