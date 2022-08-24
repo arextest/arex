@@ -14,14 +14,18 @@ const theme = {
     warning: '#ffa726',
     error: '#f44336',
     text: {
-      primary: 'rgba(0,0,0,0.87)',
-      secondary: 'rgba(0,0,0,0.6)',
-      disabled: 'rgba(0,0,0,0.38)',
+      primary: 'rgba(0,0,0,0.9)',
+      secondary: 'rgba(0,0,0,0.7)',
+      disabled: 'rgba(0,0,0,0.3)',
       watermark: 'rgba(0,0,0,0.1)',
       highlight: primaryColor,
     },
     border: {
       primary: '#F0F0F0',
+    },
+    background: {
+      primary: '#ffffff',
+      active: '#fafafa',
     },
   },
 };

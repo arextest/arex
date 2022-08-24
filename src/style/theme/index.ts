@@ -71,6 +71,10 @@ declare module '@emotion/react' {
       border: {
         primary: string;
       };
+      background: {
+        primary: string;
+        active: string;
+      };
     };
   }
 }

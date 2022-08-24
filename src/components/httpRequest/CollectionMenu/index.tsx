@@ -39,6 +39,7 @@ const CollectionMenuWrapper = styled.div`
   }
 
   .collection-title-render {
+    color: ${(props) => props.theme.color.text.secondary};
     display: flex;
     .right {
     }
@@ -54,6 +55,12 @@ const CollectionMenuWrapper = styled.div`
       }
     }
   }
+  .ant-tree-node-selected {
+    .collection-title-render {
+      color: ${(props) => props.theme.color.text.primary};
+    }
+  }
+
   .ant-tree-node-content-wrapper {
     width: 10%;
     overflow-y: visible;

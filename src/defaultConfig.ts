@@ -1,6 +1,6 @@
 import { I18nextLng } from './i18n/index.js';
 import { FontSize } from './pages/Setting.js';
-import { Theme, ThemeClassify, ThemeName } from './style/theme/index.js';
+import { Theme, ThemeClassify, ThemeName } from './style/theme';
 import LightPurple from './style/theme/lightPurple';
 
 export type DefaultConfig = {

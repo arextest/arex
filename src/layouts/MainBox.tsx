@@ -47,10 +47,25 @@ const MainMenu = styled(Tabs)<{ brief?: boolean }>`
       padding: 12px 0 !important;
       .ant-tabs-tab-btn {
         margin: 0 auto;
+        color: ${(props) => props.theme.color.text.secondary};
+      }
+      &.ant-tabs-tab-disabled {
+        .ant-tabs-tab-btn {
+          color: ${(props) => props.theme.color.text.disabled};
+        }
+      }
+      :hover:not(.ant-tabs-tab-disabled) {
+        .ant-tabs-tab-btn {
+          color: ${(props) => props.theme.color.text.primary};
+        }
       }
     }
     .ant-tabs-tab-active {
-      background-color: ${(props) => props.theme.color.selected};
+      background-color: ${(props) => props.theme.color.background.active};
+      border-right: 1px solid ${(props) => props.theme.color.border.primary};
+      .ant-tabs-tab-btn {
+        color: ${(props) => props.theme.color.text.primary};
+      }
     }
     .ant-tabs-ink-bar {
       left: 0;
@@ -124,20 +139,40 @@ const MainTabs = styled((props: { collapseMenu?: boolean } & TabsProps) => (
   </DraggableTabs>
 ))<TabsProps>`
   height: 100%;
+
+  // 工作区 Tabs 全局样式调整
+  .ant-tabs-tab {
+    .ant-tabs-tab-btn {
+      color: ${(props) => props.theme.color.text.secondary}!important;
+    }
+    &.ant-tabs-tab-active {
+      border-bottom: 1px solid ${(props) => props.theme.color.background.primary}!important;
+    }
+    :hover {
+      .ant-tabs-tab-btn {
+        color: ${(props) => props.theme.color.text.primary}!important;
+      }
+    }
+  }
+
   .ant-tabs-tab-with-remove {
     padding: 6px 12px !important;
     // 添加高亮条 tabs-ink-bar
     // 注意当前的作用范围很广，目前的作用对象为工作区所有的可编辑可删除卡片式 Tab
     // .ant-tabs-tab-with-remove 类是为了避免污染一般的 Tabs
-    &.ant-tabs-tab-active:after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background-color: ${(props) => props.theme.color.primary};
-      transition: all 0.2s ease-in-out;
+    &.ant-tabs-tab-active {
+      background-color: ${(props) => props.theme.color.background.primary}!important;
+      border-bottom: 1px solid ${(props) => props.theme.color.background.primary}!important;
+      :after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: ${(props) => props.theme.color.primary};
+        transition: all 0.2s ease-in-out;
+      }
     }
     .ant-tabs-tab-remove {
       margin-left: 0;
