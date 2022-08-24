@@ -1,4 +1,10 @@
-import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-design/icons';
+import {
+  ApiOutlined,
+  DeploymentUnitOutlined,
+  FieldTimeOutlined,
+  LeftOutlined,
+  RightOutlined,
+} from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
 import React, { ReactNode, useEffect, useRef } from 'react';
@@ -32,10 +38,10 @@ import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
 
 const { TabPane } = Tabs;
-const MainMenu = styled(Tabs)`
+const MainMenu = styled(Tabs)<{ brief?: boolean }>`
   height: 100%;
   .ant-tabs-nav-list {
-    width: 100px;
+    width: ${(props) => (props.brief ? '70px' : '100px')};
     .ant-tabs-tab {
       margin: 0 !important;
       padding: 12px 0 !important;
@@ -52,6 +58,10 @@ const MainMenu = styled(Tabs)`
   }
   .ant-tabs-content {
     height: 100%;
+    display: ${(props) => (props.brief ? 'none' : 'inherit')};
+  }
+  .ant-tabs-extra-content {
+    width: 100%;
   }
 `;
 
@@ -65,11 +75,11 @@ const MainMenuItem = styled((props: MainMenuItemProps) => (
   }
 `;
 
-type MenuTitleProps = { title: string; icon?: ReactNode };
+type MenuTitleProps = { brief?: boolean; title: string; icon?: ReactNode };
 const MenuTitle = styled((props: MenuTitleProps) => (
   <div {...props}>
     <i>{props.icon}</i>
-    <span>{props.title}</span>
+    {!props.brief && <span>{props.title}</span>}
   </div>
 ))<MenuTitleProps>`
   display: flex;
@@ -82,13 +92,30 @@ const MenuTitle = styled((props: MenuTitleProps) => (
   }
 `;
 
-const MainTabs = styled((props: TabsProps) => (
+const CollapseMenuButton = styled(
+  (props: { collapse?: boolean; icon?: ReactNode; children?: ReactNode; onClick?: () => void }) => (
+    <div {...props}>
+      {props.icon}
+      {props.children}
+    </div>
+  ),
+)`
+  margin-bottom: 35px;
+  text-align: center;
+  width: 100%;
+  color: ${(props) => props.theme.color.text.watermark};
+  cursor: pointer;
+  transform: rotate(${(props) => (props.collapse ? '180deg' : '0deg')});
+  transition: all 0.2s;
+`;
+
+const MainTabs = styled((props: { collapseMenu?: boolean } & TabsProps) => (
   <DraggableTabs
     size='small'
     type='editable-card'
     tabBarGutter={-1}
     tabBarStyle={{
-      left: '-11px',
+      left: props.collapseMenu ? '-1px' : '-11px',
       top: '-1px',
     }}
     {...props}
@@ -154,6 +181,8 @@ const MainBox = () => {
     activePane,
     setActivePane,
     activeMenu,
+    collapseMenu,
+    setCollapseMenu,
     setActiveMenu,
     setActiveEnvironment,
     setCollectionTreeData,
@@ -172,6 +201,15 @@ const MainBox = () => {
   const collectionMenuRef = useRef();
   const fetchCollectionTreeData = () => {
     collectionMenuRef.current?.fetchTreeData();
+  };
+
+  const handleCollapseMenu = () => {
+    setCollapseMenu(!collapseMenu);
+  };
+
+  const handleMainMenuChange = (key: string) => {
+    setActiveMenu(key as MenuTypeEnum);
+    collapseMenu && setCollapseMenu(false);
   };
 
   const addTab = () => {
@@ -256,23 +294,30 @@ const MainBox = () => {
       <DraggableLayout
         direction={'horizontal'}
         limitRange={[15, 40]}
+        fixedFirstNode={collapseMenu}
         firstNode={
           <>
             <WorkspacesMenu />
 
-            <Divider style={{ margin: '0', width: 'calc(100% + 10px)' }} />
-
             <MainMenu
               tabPosition='left'
               activeKey={activeMenu[0]}
-              onChange={(key) => setActiveMenu(key as MenuTypeEnum)}
+              brief={collapseMenu}
+              tabBarExtraContent={
+                <CollapseMenuButton
+                  collapse={collapseMenu}
+                  icon={<LeftOutlined />}
+                  onClick={handleCollapseMenu}
+                />
+              }
+              onChange={handleMainMenuChange}
             >
               {/* menuItem 自定义子组件命名规定: XxxMenu, 表示xx功能的左侧主菜单 */}
               {/* menuItem 自定义子组件 props 约定，便于之后封装  */}
               {/* 1. value: 选中 menu item 的 id */}
               {/* 2. onSelect: 选中 menu item 时触发，参数（结构待规范）为选中节点的相关信息，点击后的逻辑不在 Menu 组件中处理 */}
               <MainMenuItem
-                tab={<MenuTitle icon={<ApiOutlined />} title='Collection' />}
+                tab={<MenuTitle icon={<ApiOutlined />} title='Collection' brief={collapseMenu} />}
                 key={MenuTypeEnum.Collection}
                 menuItem={
                   <CollectionMenu
@@ -284,13 +329,19 @@ const MainBox = () => {
                 }
               />
               <MainMenuItem
-                tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}
+                tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' brief={collapseMenu} />}
                 key={MenuTypeEnum.Replay}
                 menuItem={<ReplayMenu value={activeMenu[1]} onSelect={handleReplayMenuClick} />}
               />
               <MainMenuItem
                 disabled
-                tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
+                tab={
+                  <MenuTitle
+                    icon={<DeploymentUnitOutlined />}
+                    title='Environment'
+                    brief={collapseMenu}
+                  />
+                }
                 key={MenuTypeEnum.Environment}
                 menuItem={
                   <EnvironmentMenu value={activeMenu[1]} onSelect={handleEnvironmentMenuClick} />
@@ -310,10 +361,11 @@ const MainBox = () => {
             }
           >
             <MainTabs
-              onEdit={handleTabsEdit}
               activeKey={activePane}
-              onChange={setActivePane}
+              collapseMenu={collapseMenu}
               tabBarExtraContent={<EnvironmentSelect />}
+              onEdit={handleTabsEdit}
+              onChange={setActivePane}
             >
               {panes.map((pane) => (
                 <MainTabPane className='main-tab-pane' tab={pane.title} key={pane.key}>
