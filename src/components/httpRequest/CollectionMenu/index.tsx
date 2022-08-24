@@ -337,6 +337,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     let Dd = dfsNodeIndex(data, dragKey)[0].children;
     let tIndex = 0;
     let dIndex = 0;
+
     if (fromNode == null && toNode == null) {
       data.forEach((e: any, i: number) => {
         if (e.key == dragKey) dIndex = i;
@@ -349,6 +350,10 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
       } else {
         toIndex = dIndex;
       }
+    } else if (toNode == null || fromNode == null) {
+      data.forEach((e: any, i: number) => {
+        if (e.key == dragKey) toIndex = i;
+      });
     } else if (fromNode[0] == toNode[0]) {
       Dd.forEach((e: any, i: number) => {
         if (e.key == dragKey) dIndex = i;
