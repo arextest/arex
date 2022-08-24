@@ -424,8 +424,8 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
               onSelect={handleSelect}
               switcherIcon={<DownOutlined />}
               treeData={treeData}
-              // onDrop={onDrop}
-              // draggable={{ icon: false }}
+              onDrop={onDrop}
+              draggable={{ icon: false }}
               titleRender={(val) => (
                 <CollectionTitle
                   searchValue={searchValue}
