@@ -234,6 +234,11 @@ const Environment: FC<EnvironmentProps> = ({ value, onSelect }) => {
           onMouseLeave={() => {
             setIconIsShow('');
           }}
+          onKeyDown={(e) => {
+            if (e.key == 'Enter') {
+              e.stopPropagation();
+            }
+          }}
         >
           {renameKey === data.id ? (
             <span>
@@ -242,6 +247,7 @@ const Environment: FC<EnvironmentProps> = ({ value, onSelect }) => {
                 style={{ padding: '0 4px', width: '100%' }}
                 value={renameValue}
                 onBlur={rename}
+                onPressEnter={rename}
                 onChange={(val) => setRenameValue(val.target.value)}
               />
             </span>
