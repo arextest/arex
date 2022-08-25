@@ -1,6 +1,6 @@
 export type EnvironmentSave = {
   env: {
-    envName: string;
+    envName?: string;
     id?: string;
     keyValues?:
       | [
@@ -11,7 +11,7 @@ export type EnvironmentSave = {
           },
         ]
       | never[];
-    workspaceId: string | undefined;
+    workspaceId?: string | undefined;
   };
 };
 
@@ -29,10 +29,10 @@ export interface GetEnvironmentReq {
 
 export type EnvironmentKeyValues = { key: string; value: string; active: boolean };
 export type Environment = {
-  envName: string;
+  envName?: string;
   id: string;
-  keyValues: EnvironmentKeyValues[];
-  workspaceId: string;
+  keyValues?: EnvironmentKeyValues[];
+  workspaceId?: string;
 };
 export interface GetEnvironmentRes {
   environments: Environment[];

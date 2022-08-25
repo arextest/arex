@@ -7,10 +7,10 @@ import { useStore } from '../../store';
 const { Option } = Select;
 
 const EnvironmentSelectWrapper = styled((props: SelectProps) => (
-  <Select allowClear bordered={false} {...props} />
+  <Select bordered={false} {...props} />
 ))`
   height: 36px;
-  width: 150px;
+  width: 200px;
   box-sizing: content-box;
   border-left: 1px solid ${(props) => props.theme.color.border.primary};
   margin-left: -1px;
@@ -23,13 +23,12 @@ const EnvironmentSelectWrapper = styled((props: SelectProps) => (
 `;
 
 const EnvironmentSelect = () => {
-  const { activeEnvironment, environmentTreeData, setActiveEnvironment } = useStore();
+  const { currentEnvironment, setCurrentEnvironment, environmentTreeData } = useStore();
   const handleChange = (value: string) => {
-    console.log(value);
-    setActiveEnvironment(value);
+    setCurrentEnvironment(value);
   };
   return (
-    <EnvironmentSelectWrapper value={activeEnvironment?.id} onChange={handleChange}>
+    <EnvironmentSelectWrapper value={currentEnvironment?.id} onChange={handleChange}>
       <Option value='0'>No Environment</Option>
       {environmentTreeData?.map((e: { id: string; envName: string }) => {
         return (

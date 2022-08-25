@@ -30,7 +30,6 @@ const MainTable = styled(Table)`
   }
 `;
 //拖拽
-let dragRow = -1;
 const DraggableBodyRow = ({
   index,
   moveRow,
@@ -38,6 +37,7 @@ const DraggableBodyRow = ({
   style,
   children,
   rowactiveindex,
+  keys,
   ...restProps
 }) => {
   const [form] = Form.useForm();
@@ -58,7 +58,6 @@ const DraggableBodyRow = ({
       };
     },
     drop: (item) => {
-      dragRow = index;
       moveRow(item.index, index);
     },
   });
@@ -85,14 +84,14 @@ const DraggableBodyRow = ({
           }}
           {...restProps}
         >
-          {children.length && (
+          {children.length ? (
             <td>
               <table>
                 <tbody>
                   <tr>
                     <td>
                       <MenuOutlined
-                        className={index !== rowactiveindex ? 'hide' : ''}
+                        className={keys !== rowactiveindex ? 'hide' : ''}
                         css={css`
                           cursor: move;
                           display: ;
@@ -105,6 +104,8 @@ const DraggableBodyRow = ({
                 </tbody>
               </table>
             </td>
+          ) : (
+            children
           )}
           {children[1]}
           {children[2]}
@@ -209,10 +210,11 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
     },
     {
       title: 'operation',
+      width: '110px',
       colSpan: 0,
       render: (text, record, index) => (
         <a
-          className={index !== rowActiveIndex ? 'hide' : ''}
+          className={record.keys !== rowActiveIndex ? 'hide' : ''}
           onClick={() => deleteEnvironmentItem(text)}
         >
           X
@@ -291,7 +293,7 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
   //多选框
   const rowSelection = {
     selectedRowKeys: isActive,
-    columnWidth: '60px',
+    columnWidth: '88px',
     onSelect: (record, selected) => {
       if (selected) {
         setIsActive([...isActive, record.keys]);
@@ -299,22 +301,7 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
         setIsActive(isActive.filter((e) => e != record.keys));
       }
     },
-    renderCell: (checked, record, index, originNode) => (
-      <div
-        css={css`
-          display: flex;
-          justify-content: space-between;
-        `}
-      >
-        <div
-          css={css`
-            display: flex;
-            align-items: center;
-          `}
-        ></div>
-        {originNode}
-      </div>
-    ),
+    renderCell: (checked, record, index, originNode) => <div>{originNode}</div>,
   };
 
   //添加
@@ -332,7 +319,7 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
 
   //删除
   const deleteEnvironmentItem = (text) => {
-    const newData = data.filter((item) => item.key !== text.key);
+    const newData = data.filter((item) => item.keys !== text.keys);
     setData(newData);
   };
 
@@ -395,20 +382,16 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
           pagination={false}
           onRow={(_, index) => {
             const attr = {
-              onMouseEnter: (event) => {
-                if (dragRow == -1) {
-                  setRowActiveIndex(index);
-                } else {
-                  setRowActiveIndex(dragRow);
-                  dragRow = -1;
-                }
+              onMouseOver: (event) => {
+                setRowActiveIndex(_.keys);
               },
-              onMouseLeave: (event) => {
+              onMouseOut: (event) => {
                 setRowActiveIndex(-1);
               },
               rowactiveindex: rowActiveIndex,
               index,
               moveRow,
+              keys: _.keys,
             };
             return attr;
           }}

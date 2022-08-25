@@ -3,12 +3,11 @@ import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Empty, Input, Spin, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps, TreeProps } from 'antd/lib/tree';
-import React, { FC, useImperativeHandle, useMemo, useState } from 'react';
+import React, { FC, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
+import { useStore } from './../../../store';
 import { NodeType } from '../../../constant';
 import { CollectionService } from '../../../services/CollectionService';
-import { useStore } from '../../../store';
 import { TooltipButton } from '../../index';
 import CollectionTitle from './CollectionTitle';
 
@@ -66,8 +65,8 @@ const CollectionMenuWrapper = styled.div`
 
   .ant-tree-node-content-wrapper {
     width: 10%;
-    overflow-y: visible;
-    overflow-x: clip; //解决拖拽图标被隐藏
+    overflow-y: visible; //解决拖拽图标被隐藏
+    // overflow-x: clip;
     // overflow-x: hidden; //超出的文本隐藏
     text-overflow: ellipsis; //溢出用省略号显示
     white-space: nowrap; //溢出不换行
@@ -118,6 +117,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
   const params = useParams();
   const {
     userInfo: { email: userName },
+    workspaces,
   } = useStore();
 
   const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
@@ -142,7 +142,8 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     onSuccess: (res) => {
       if (res.length) {
         onGetData && onGetData(res);
-        generateList(treeData);
+        // generateList(treeData);
+        generateList(res);
       }
     },
   });
@@ -213,45 +214,13 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
   );
 
   // 树拖拽
-  let nodelocation = 1;
-  let curlocation = 0;
-  const calculateTree = (data: any, Key: string | number) => {
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].key === Key) {
-        curlocation = nodelocation;
-      }
-      nodelocation += 1;
-      if (data[i].children) {
-        calculateTree(data[i].children, Key);
-      }
-    }
-    return curlocation;
-  };
-
   const onDrop: TreeProps['onDrop'] = (info) => {
     const dropKey = info.node.key;
     const dragKey = info.dragNode.key;
     const dragNodeType = info.dragNode.nodeType;
-    const dropNodeType = info.node.nodeType;
-    const dropToGap = info.dropToGap;
     const dropPos = info.node.pos.split('-');
+    const dragPos = info.dragNode.pos.split('-');
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
-    //case
-    if (dragNodeType === 2 && dropNodeType !== 1 && !(dropNodeType === 2 && dropToGap)) {
-      return;
-    }
-    //request
-    if (
-      dragNodeType === 1 &&
-      (dropNodeType !== 3 || (dropNodeType === 3 && dropToGap)) &&
-      !(dropNodeType === 1 && dropToGap)
-    ) {
-      return;
-    }
-    //folder
-    if (dragNodeType === 3 && dropNodeType !== 3 && !(dropNodeType === 1 && dropToGap)) {
-      return;
-    }
 
     const loop = (
       data: DataNode[],
@@ -268,7 +237,6 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
       }
     };
 
-    // const data = [...treeData];
     const data = JSON.parse(JSON.stringify(treeData));
 
     // Find dragObject
@@ -310,14 +278,116 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
         ar.splice(i! + 1, 0, dragObj!);
       }
     }
-    const d = { fromNode: 0, toNode: 0 };
-    d.fromNode = calculateTree(treeData, dragKey);
-    nodelocation = 1;
-    curlocation = 0;
-    d.toNode = calculateTree(data, dragKey);
-    nodelocation = 1;
-    curlocation = 0;
-    console.log(d);
+
+    // fromNodePath和toParentPath
+    let fromNodePath = null;
+    let toParentPath = null;
+    let toIndex = 0;
+    let NodeAll: any[] = [];
+    const dfsNode = (d: any, key: string | number, NodeArray: any[]) => {
+      d.children.forEach((e: any) => {
+        dfsNode(e, key, [...NodeArray, e.key]);
+      });
+      if (!d.children.length) {
+        NodeAll.push(NodeArray);
+      }
+    };
+    //fromNodePath
+    treeData.map((e: any) => {
+      let arr = [e.key];
+      dfsNode(e, dragKey, arr);
+    });
+    NodeAll = NodeAll.filter((e) => e.includes(dragKey))[0];
+    fromNodePath = NodeAll.splice(0, NodeAll.indexOf(dragKey) + 1);
+    NodeAll = [];
+    //toParentPath
+    data.map((e: any) => {
+      let arr = [e.key];
+      dfsNode(e, dragKey, arr);
+    });
+    NodeAll = NodeAll.filter((e) => e.includes(dragKey))[0];
+    toParentPath = NodeAll.splice(0, NodeAll.indexOf(dragKey));
+    if (!toParentPath.length) toParentPath = null;
+    NodeAll = [];
+
+    //计算toIndex
+    const dfsNodeIndex = (d: any, key: string | number) => {
+      let arr: any = [];
+      let res = null;
+      let resP: any = [];
+      d.forEach((e: any) => {
+        arr.push(e);
+      });
+      while (arr.length) {
+        let temp = arr.shift();
+        temp.children.forEach((e: any) => {
+          if (e.key == key) {
+            resP = temp;
+            res = [temp.key];
+          }
+          arr.push(e);
+        });
+      }
+      return [resP, res];
+    };
+
+    //判断不成立的情况
+    if (dfsNodeIndex(data, dragKey)[0].nodeType) {
+      if (dragNodeType == 2 && dfsNodeIndex(data, dragKey)[0].nodeType !== 1) return;
+      if (dragNodeType == 3 && dfsNodeIndex(data, dragKey)[0].nodeType !== 3) return;
+      if (dragNodeType == 1 && dfsNodeIndex(data, dragKey)[0].nodeType !== 3) return;
+    } else {
+      if (dragNodeType !== 3) return;
+    }
+
+    let fromNode = dfsNodeIndex(treeData, dragKey)[1];
+    let toNode = dfsNodeIndex(data, dragKey)[1];
+    let Td = dfsNodeIndex(treeData, dragKey)[0].children;
+    let Dd = dfsNodeIndex(data, dragKey)[0].children;
+    let tIndex = 0;
+    let dIndex = 0;
+    if (fromNode == null && toNode == null) {
+      data.forEach((e: any, i: number) => {
+        if (e.key == dragKey) dIndex = i;
+      });
+      treeData.forEach((e: any, i: number) => {
+        if (e.key == dragKey) tIndex = i;
+      });
+      if (tIndex < dIndex) {
+        toIndex = dIndex + 1;
+      } else {
+        toIndex = dIndex;
+      }
+    } else if (toNode == null || fromNode == null) {
+      data.forEach((e: any, i: number) => {
+        if (e.key == dragKey) toIndex = i;
+      });
+    } else if (fromNode[0] == toNode[0]) {
+      Dd.forEach((e: any, i: number) => {
+        if (e.key == dragKey) dIndex = i;
+      });
+      Td.forEach((e: any, i: number) => {
+        if (e.key == dragKey) tIndex = i;
+      });
+      if (tIndex < dIndex) {
+        toIndex = dIndex + 1;
+      } else {
+        toIndex = dIndex;
+      }
+    } else {
+      Dd.forEach((e: any, i: number) => {
+        if (e.key == dragKey) toIndex = i;
+      });
+    }
+    // console.log({fromNodePath,id:workspaces[0].id,toParentPath,toIndex});
+
+    CollectionService.move({ fromNodePath, id: workspaces[0].id, toParentPath, toIndex }).then(
+      (res) => {
+        if (res.body.success) {
+          fetchTreeData();
+        }
+      },
+    );
   };
 
   return (
@@ -364,10 +434,11 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
               onSelect={handleSelect}
               switcherIcon={<DownOutlined />}
               treeData={treeData}
-              // onDrop={onDrop}
-              // draggable={{icon:false}}
+              onDrop={onDrop}
+              draggable={{ icon: false }}
               titleRender={(val) => (
                 <CollectionTitle
+                  searchValue={searchValue}
                   updateDirectoryTreeData={fetchTreeData}
                   val={val}
                   treeData={treeData}

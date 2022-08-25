@@ -72,6 +72,9 @@ type BaseState = {
 
   activeEnvironment?: Environment;
   setActiveEnvironment: (environment: Environment | string) => void;
+
+  currentEnvironment?: Environment;
+  setCurrentEnvironment: (currentEnvironment: Environment | string) => void;
 };
 
 const initUserInfo = (() => {
@@ -146,6 +149,7 @@ export const useStore = create(
 
     activePane: '',
     setActivePane: (activePaneKey, activeMenuKey) => {
+      const setActiveEnvironment = get().setActiveEnvironment;
       set((state) => {
         const key = activeMenuKey
           ? activeMenuKey
@@ -153,6 +157,7 @@ export const useStore = create(
         state.activePane = activePaneKey;
         state.activeMenu = [key, activePaneKey];
       });
+      setActiveEnvironment(activePaneKey);
     },
 
     panes: [],
@@ -202,6 +207,16 @@ export const useStore = create(
         set({ activeEnvironment: environmentTreeData.find((i) => i.id === environment) });
       } else {
         set({ activeEnvironment: environment });
+      }
+    },
+
+    currentEnvironment: { id: '0' },
+    setCurrentEnvironment: (environment) => {
+      if (environment !== '0') {
+        const environmentTreeData = get().environmentTreeData;
+        set({ currentEnvironment: environmentTreeData.find((i) => i.id === environment) });
+      } else {
+        set({ currentEnvironment: { id: '0' } });
       }
     },
   })),
