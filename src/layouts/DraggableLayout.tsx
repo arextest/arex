@@ -40,7 +40,7 @@ const DraggableLayout: FC<{
         firstStyle: {
           width: `${props.fixedFirstNode ? '69px' : `calc(${(max + min) / 2}% - ${lineWidth}px)`}`,
           height: '100%',
-          transition: 'all 0.2s',
+          transition: props.fixedFirstNode ? 'all 0.2s' : 'none',
         },
         secondStyle: {
           width: `${
@@ -49,7 +49,7 @@ const DraggableLayout: FC<{
               : `calc(${100 - (max + min) / 2}% - ${lineWidth}px)`
           }`,
           height: '100%',
-          transition: 'all 0.2s',
+          transition: props.fixedFirstNode ? 'all 0.2s' : 'none',
         },
       },
       vertical: {

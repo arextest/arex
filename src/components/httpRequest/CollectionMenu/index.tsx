@@ -54,6 +54,9 @@ const CollectionMenuWrapper = styled.div`
         white-space: nowrap; //溢出不换行
       }
     }
+    :hover {
+      color: ${(props) => props.theme.color.text.primary};
+    }
   }
   .ant-tree-node-selected {
     .collection-title-render {

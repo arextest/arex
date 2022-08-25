@@ -8,11 +8,12 @@ import React, { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 
 import DefaultConfig from './defaultConfig';
-import { useAuth, useCheckChromeExtension, useInit } from './hooks';
+import { useAuth, useCheckChromeExtension, useInterfaceInit } from './hooks';
 import routerConfig from './routers';
 import { useStore } from './store';
 import { themeMap } from './style/theme';
 
+// global Spin config
 Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 24 }} spin />);
 
 function App() {
@@ -20,7 +21,7 @@ function App() {
 
   useCheckChromeExtension();
   useAuth();
-  useInit(); // init theme, fontSize, etc.
+  useInterfaceInit(); // init theme, fontSize, etc.
 
   const {
     userInfo: {

@@ -8,7 +8,7 @@ import { UserInfo, useStore } from '../store';
 import { themeMap } from '../style/theme';
 import { getLocalStorage } from '../utils';
 
-const useInit = () => {
+const useInterfaceInit = () => {
   const {
     changeTheme,
     userInfo: {
@@ -46,4 +46,4 @@ const useInit = () => {
   }, []);
 };
 
-export default useInit;
+export default useInterfaceInit;
