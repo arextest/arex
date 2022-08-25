@@ -65,6 +65,7 @@ const ResponseTest = ({ getTestVal, OldTestVal }: ResponseTestProps) => {
     userInfo: {
       profile: { theme },
     },
+    themeClassify,
   } = useStore();
 
   const [TestVal, setTestVal] = useState<string>('');
@@ -95,6 +96,7 @@ arex.test("Status code is 200", ()=> {
   useEffect(() => {
     setTestVal(OldTestVal);
   }, [OldTestVal]);
+
   return (
     <>
       <ResponseTestHeader>
@@ -118,7 +120,7 @@ arex.test("Status code is 200", ()=> {
           minHeight='300px'
           onChange={(e: string) => CodeMirrorChange(e)}
           extensions={isLineWrapping ? [javascript()] : [EditorView.lineWrapping, javascript()]}
-          theme={theme}
+          theme={themeClassify}
           style={{ width: '65%' }}
           // options = {{
           //   lineWrapping:true,
