@@ -209,6 +209,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     const dragKey = info.dragNode.key;
     const dragNodeType = info.dragNode.nodeType;
     const dropPos = info.node.pos.split('-');
+    const dragPos = info.dragNode.pos.split('-');
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
 
     const loop = (
@@ -335,7 +336,6 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     let Dd = dfsNodeIndex(data, dragKey)[0].children;
     let tIndex = 0;
     let dIndex = 0;
-
     if (fromNode == null && toNode == null) {
       data.forEach((e: any, i: number) => {
         if (e.key == dragKey) dIndex = i;
