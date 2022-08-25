@@ -381,7 +381,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     }
     // console.log({fromNodePath,id:workspaces[0].id,toParentPath,toIndex});
 
-    CollectionService.move({ fromNodePath, id: workspaces[0].id, toParentPath, toIndex }).then(
+    CollectionService.move({ fromNodePath, id: params.workspaceId, toParentPath, toIndex }).then(
       (res) => {
         if (res.body.success) {
           fetchTreeData();
