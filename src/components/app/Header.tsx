@@ -68,8 +68,7 @@ const AppHeader = () => {
         </div>
 
         <div className={'right'}>
-          <InviteWorkspace />
-
+          {!(email || '').match('GUEST') ? <InviteWorkspace /> : null}
           <TooltipButton icon={<SettingOutlined />} title='Setting' onClick={handleSetting} />
 
           <Dropdown
