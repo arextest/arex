@@ -21,4 +21,7 @@ export class UserService {
   static updateUserProfile(params) {
     return request.post(`/api/login/updateUserProfile`, params);
   }
+  static loginAsGuest(params) {
+    return request.post(`/api/login/loginAsGuest`, params);
+  }
 }

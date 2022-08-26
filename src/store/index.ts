@@ -83,7 +83,7 @@ const initUserInfo = (() => {
     return userInfo;
   } else {
     return {
-      email: undefined,
+      email: '',
       profile: {
         theme: DefaultConfig.theme,
         fontSize: DefaultConfig.fontSize,

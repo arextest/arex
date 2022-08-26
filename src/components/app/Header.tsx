@@ -57,7 +57,7 @@ const AppHeader = () => {
   };
   const handleLogout = () => {
     logout();
-    nav('/login');
+    window.location.href = '/login';
   };
   return (
     <HeaderWrapper>
