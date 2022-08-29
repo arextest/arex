@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Card, Col, Row, Space } from 'antd';
 import JSONEditor from 'jsoneditor';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 
 import { MenuSelect } from '../../components';
 import { Analysis } from '../../components/replay';
@@ -18,6 +18,8 @@ import {
 } from '../../services/Replay.type';
 
 const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
+  const containerLeftRef = useRef();
+  const containerRightRef = useRef();
   const [selectedDiff, setSelectedDiff] = useState<Difference>();
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
   const handleScenes = (diff: Difference, category?: CategoryStatistic) => {
@@ -53,8 +55,8 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   }
 
   useEffect(() => {
-    const containerLeft = document.getElementById('containerLeft');
-    const containerRight = document.getElementById('containerRight');
+    const containerLeft = containerLeftRef.current;
+    const containerRight = containerRightRef.current;
     if (selectedDiff && msgWithDiff && containerLeft && containerRight) {
       setTimeout(() => {
         containerLeft.innerHTML = '';
@@ -200,8 +202,8 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                     </div>
                   </div>
                   <div id='MsgWithDiffJsonEditorWrapper'>
-                    <div id='containerLeft'></div>
-                    <div id='containerRight'></div>
+                    <div ref={containerLeftRef} id='containerLeft'></div>
+                    <div ref={containerRightRef} id='containerRight'></div>
                   </div>
                 </div>
               </Col>
