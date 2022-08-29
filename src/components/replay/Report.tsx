@@ -275,8 +275,8 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
               <div>Total Cases: {countSum}</div>
               <div>Passed: {countData[0]}</div>
               <div>Failed: {countData[1]}</div>
-              <div>Blocked: {countData[2]}</div>
-              <div>Invalid: {countData[3]}</div>
+              <div>Invalid: {countData[2]}</div>
+              <div>Blocked: {countData[3]}</div>
             </div>
           </div>
         </Col>
