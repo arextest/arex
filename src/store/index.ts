@@ -187,7 +187,9 @@ export const useStore = create(
     },
 
     logout: () => {
-      clearLocalStorage();
+      clearLocalStorage('accessToken');
+      clearLocalStorage('refreshToken');
+      clearLocalStorage('userInfo');
       set({ userInfo: undefined, panes: [], activePane: '' });
     },
 
