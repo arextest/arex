@@ -13,7 +13,7 @@ const ReplayMenu: FC<{
 
   return (
     <MenuSelect<ApplicationDataType>
-      defaultSelect={props.initValue}
+      initValue={props.initValue}
       refresh
       rowKey='appId'
       selectedKeys={selectedKeys}

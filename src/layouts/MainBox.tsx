@@ -235,7 +235,10 @@ const MainBox = () => {
   }, [activePane, panes]);
 
   useMount(() => {
-    setActivePane(params.rTypeId, PageTypeEnum.Replay);
+    // TODO 只做了Replay的路由刷新优化
+    if (params.rType === PageTypeEnum.Replay) {
+      setActivePane(params.rTypeId, PageTypeEnum.Replay);
+    }
   });
 
   const collectionMenuRef = useRef();
