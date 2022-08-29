@@ -36,7 +36,6 @@ const HeaderWrapper = styled.div`
 `;
 
 const AppHeader = () => {
-  const nav = useNavigate();
   const {
     userInfo: { email },
     themeClassify,

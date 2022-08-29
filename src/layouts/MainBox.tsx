@@ -36,6 +36,7 @@ import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type
 import { useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
+import { useMount } from 'ahooks';
 
 const { TabPane } = Tabs;
 const MainMenu = styled(Tabs)<{ brief?: boolean }>`
@@ -231,7 +232,14 @@ const MainBox = () => {
         `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.key}`,
       );
     }
-  }, [activePane, panes, params.workspaceId, params.workspaceName]);
+  }, [activePane, panes]);
+
+  useMount(() => {
+    // TODO 只做了Replay的路由刷新优化
+    if (params.rType === PageTypeEnum.Replay) {
+      setActivePane(params.rTypeId, PageTypeEnum.Replay);
+    }
+  });
 
   const collectionMenuRef = useRef();
   const fetchCollectionTreeData = () => {
@@ -366,7 +374,13 @@ const MainBox = () => {
               <MainMenuItem
                 tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' brief={collapseMenu} />}
                 key={MenuTypeEnum.Replay}
-                menuItem={<ReplayMenu value={activeMenu[1]} onSelect={handleReplayMenuClick} />}
+                menuItem={
+                  <ReplayMenu
+                    initValue={activeMenu[1]}
+                    value={activeMenu[1]}
+                    onSelect={handleReplayMenuClick}
+                  />
+                }
               />
               <MainMenuItem
                 tab={
