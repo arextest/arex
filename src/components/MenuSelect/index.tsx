@@ -14,7 +14,7 @@ type MenuSelectProps<D, P extends any[]> = {
   sx?: CSSInterpolation; // custom style
   small?: boolean;
   refresh?: boolean; // show refresh button
-  defaultSelectFirst?: boolean;
+  defaultSelect?: string;
   rowKey: string;
   selectedKeys?: string[];
   onSelect: (app: D) => void;
@@ -129,8 +129,8 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
     run: reload,
   } = useRequest<D[], P>(props.request, {
     onSuccess(res) {
-      if (res.length && props.defaultSelectFirst) {
-        const firstRecord = props.forceFilter ? filter(res)[0] : res[0];
+      if (res.length && props.defaultSelect) {
+        const firstRecord: any = res.find((i) => i.appId === props.defaultSelect);
         setSelectedKey(firstRecord[props.rowKey]);
         props.onSelect(firstRecord);
       }
