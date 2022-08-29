@@ -91,15 +91,9 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
       <PanesTitle
         title={<TitleWrapper title={data.id} onRefresh={onRefresh} />}
         extra={
-          <>
-            <span>
-              <Label htmlFor='case-count'>Case Count</Label>
-              <span id='case-count'>{data.count}</span>
-            </span>
-            <Button size='small' type='primary' onClick={() => setModalVisible(true)}>
-              Start replay
-            </Button>
-          </>
+          <Button size='small' type='primary' onClick={() => setModalVisible(true)}>
+            Start replay
+          </Button>
         }
       />
 
