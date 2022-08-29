@@ -25,8 +25,8 @@ const Case: FC<CaseProps> = (props) => {
     {
       title: 'Status',
       render: (_, record) => (
-        <Tag color={record.diffResultCode ? 'error' : 'success'}>
-          {record.diffResultCode ? 'Failed' : 'Success'}
+        <Tag color={['green', 'red', 'blue'][record.diffResultCode]}>
+          {['Success', 'Failed', 'Invalid'][record.diffResultCode]}
         </Tag>
       ),
     },
