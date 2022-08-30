@@ -1,7 +1,6 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { html } from '@codemirror/lang-html';
 import { javascript } from '@codemirror/lang-javascript';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import CodeMirror from '@uiw/react-codemirror';
 import { ReactCodeMirrorProps } from '@uiw/react-codemirror/src';
@@ -31,7 +30,7 @@ const CodeViewer = styled(
     <CodeMirror
       readOnly
       height='300px'
-      extensions={[props.type === 'json' ? javascript() : html()]}
+      extensions={[javascript(), html()]}
       theme={props.themeKey}
       {...props}
     />

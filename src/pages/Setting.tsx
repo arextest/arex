@@ -121,26 +121,33 @@ const Setting: FC = () => {
     ready: !!email,
     onSuccess(res) {
       const profile = res.profile;
-      let themeName = profile.theme;
-      const validTheme = (themeName || '') in themeMap;
-      !validTheme && (themeName = DefaultConfig.theme);
-      const [themeMode] = (themeName as ThemeName).split('-');
 
+      let themeName: ThemeName = profile.theme || DefaultConfig.theme;
+      const validTheme = themeName in themeMap;
+      !validTheme && (themeName = DefaultConfig.theme);
+      const [themeMode] = themeName.split('-');
+
+      const fontSize = profile.fontSize || DefaultConfig.fontSize;
+      const language = profile.language || DefaultConfig.language;
+
+      // set userInfo to global store
       setUserInfo({
         email,
         profile: {
-          theme: profile.theme,
-          fontSize: profile.fontSize,
-          language: profile.language,
+          theme: themeName,
+          fontSize,
+          language,
         },
       });
+
+      // init form value
       form.setFieldsValue({
         darkMode: themeMode === ThemeClassify.dark,
         primaryColor: primaryColorPalette[themeMode].find(
           (color) => color.name === (validTheme ? profile.theme : DefaultConfig.theme),
         )?.key,
-        fontSize: profile.fontSize,
-        language: profile.language,
+        fontSize,
+        language,
       });
       setInitLoading(false);
     },
