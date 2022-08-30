@@ -1,5 +1,7 @@
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { html } from '@codemirror/lang-html';
 import { javascript } from '@codemirror/lang-javascript';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import CodeMirror from '@uiw/react-codemirror';
 import { ReactCodeMirrorProps } from '@uiw/react-codemirror/src';
@@ -20,6 +22,10 @@ import { useStore } from '../../store';
 import { ThemeClassify } from '../../style/theme';
 
 const { Panel } = Collapse;
+const InfoIcon = styled(InfoCircleOutlined)`
+  color: ${(props) => props.theme.color.error};
+  margin-right: 8px;
+`;
 const CodeViewer = styled(
   (props: ReactCodeMirrorProps & { type: 'json' | 'html'; themeKey: ThemeClassify }) => (
     <CodeMirror
@@ -50,7 +56,7 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   const [onlyFailed, setOnlyFailed] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
 
-  const { data: compareResults = [] } = useRequest(
+  const { data: compareResults = [], mutate } = useRequest(
     () =>
       ReplayService.queryFullLinkMsg({
         recordId: selectedRecord!.recordId,
@@ -59,6 +65,9 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
     {
       ready: !!selectedRecord,
       refreshDeps: [selectedRecord?.recordId],
+      onError() {
+        mutate([]);
+      },
     },
   );
 
@@ -87,36 +96,48 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
         table={<Case planItemId={data.planItemId} onClick={handleClickRecord} />}
         panel={
           <Collapse>
-            {compareResultsFiltered.map((result, i) => (
-              <Panel
-                header={
-                  <span>
-                    <CheckOrCloseIcon checked={!result.diffResultCode} />
-                    {result?.operationName}
-                  </span>
-                }
-                key={i}
-              >
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <CodeViewer
-                      type={result.type}
-                      value={result?.baseMsg}
-                      themeKey={themeClassify}
-                      remark='Benchmark'
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <CodeViewer
-                      type={result.type}
-                      value={result?.testMsg}
-                      themeKey={themeClassify}
-                      remark='Test'
-                    />
-                  </Col>
-                </Row>
-              </Panel>
-            ))}
+            {compareResultsFiltered.map((result, i) =>
+              result.diffResultCode === 2 ? (
+                <Panel
+                  header={
+                    <span>
+                      <InfoIcon />
+                      {result.logs?.length && result.logs[0].logInfo}
+                    </span>
+                  }
+                  key={i}
+                />
+              ) : (
+                <Panel
+                  header={
+                    <span>
+                      <CheckOrCloseIcon checked={!result.diffResultCode} />
+                      {result?.operationName}
+                    </span>
+                  }
+                  key={i}
+                >
+                  <Row gutter={16}>
+                    <Col span={12}>
+                      <CodeViewer
+                        type={result.type}
+                        value={result?.baseMsg}
+                        themeKey={themeClassify}
+                        remark='Benchmark'
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <CodeViewer
+                        type={result.type}
+                        value={result?.testMsg}
+                        themeKey={themeClassify}
+                        remark='Test'
+                      />
+                    </Col>
+                  </Row>
+                </Panel>
+              ),
+            )}
           </Collapse>
         }
       />

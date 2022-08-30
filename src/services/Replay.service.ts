@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import request from '../api/axios';
+import { tryPrettierJsonString } from '../utils';
 import {
   CreatePlanReq,
   CreatePlanRes,
@@ -102,10 +103,8 @@ export default class ReplayService {
           const type: 'html' | 'json' = item.baseMsg.includes('<html>') ? 'html' : 'json';
           return {
             ...item,
-            baseMsg:
-              type === 'html' ? item.baseMsg : JSON.stringify(JSON.parse(item.baseMsg), null, 2),
-            testMsg:
-              type === 'html' ? item.testMsg : JSON.stringify(JSON.parse(item.testMsg), null, 2),
+            baseMsg: type === 'html' ? item.baseMsg : tryPrettierJsonString(item.baseMsg),
+            testMsg: type === 'html' ? item.testMsg : tryPrettierJsonString(item.testMsg),
             type,
           };
         }),
