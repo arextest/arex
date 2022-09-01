@@ -56,7 +56,7 @@ const Analysis: FC<{
           defaultSelectFirst
           rowKey='operationName'
           onSelect={setSelectedCategory}
-          placeholder='applicationsMenu.appFilterPlaceholder'
+          placeholder={''}
           request={() => ReplayService.queryResponseTypeStatistic({ planItemId })}
           filter={(keyword, record) =>
             record.errorCaseCount + record.failCaseCount > 0 &&

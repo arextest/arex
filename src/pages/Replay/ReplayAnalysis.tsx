@@ -160,6 +160,7 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                   requestOptions={{
                     refreshDeps: [selectedCategory, selectedDiff, data.planItemId],
                   }}
+                  placeholder={''}
                   defaultSelectFirst
                   rowKey='sceneName'
                   filter='sceneName'
