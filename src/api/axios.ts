@@ -54,12 +54,6 @@ export class Request {
     // 全局响应拦截
     this.instance.interceptors.response.use(
       (response) => {
-        // TODO 需要换成用code判断
-        if (response.data.responseStatusType.responseCode === 4) {
-          localStorage.clear();
-          // TODO这里需要确定responseCode的类型
-          window.location.href = '/login';
-        }
         if (response.data.responseStatusType.responseDesc === 'no permission') {
           message.error(response.data.responseStatusType.responseDesc);
         }
