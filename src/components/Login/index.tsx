@@ -10,7 +10,7 @@ import { AccessTokenKey, RefreshTokenKey } from '../../constant';
 import { AuthService } from '../../services/AuthService';
 import { WorkspaceService } from '../../services/Workspace.service';
 import { useStore } from '../../store';
-import { setLocalStorage } from '../../utils';
+import { getLocalStorage, setLocalStorage } from '../../utils';
 import styled from '@emotion/styled';
 import { UserService } from '../../services/UserService';
 const OtherLoginMethods = styled.div`
@@ -81,8 +81,9 @@ const Login = () => {
   };
 
   const guestLogin = () => {
-    UserService.loginAsGuest().then((res) => {
+    UserService.loginAsGuest({ userName: getLocalStorage('guestUserName') }).then((res) => {
       if (res.body.success) {
+        setLocalStorage('guestUserName', res.body.userName);
         setLocalStorage(AccessTokenKey, res.body.accessToken);
         setLocalStorage(RefreshTokenKey, res.body.refreshToken);
         initBeforeUserEntry(res.body.userName);
