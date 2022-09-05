@@ -37,6 +37,7 @@ import { useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
 import { useMount } from 'ahooks';
+import { treeFind } from '../helpers/collection/util';
 
 const { TabPane } = Tabs;
 const MainMenu = styled(Tabs)<{ brief?: boolean }>`
@@ -222,6 +223,7 @@ const MainBox = () => {
     setActiveMenu,
     setActiveEnvironment,
     setCollectionTreeData,
+    collectionTreeData,
   } = useStore();
 
   // 必须和路由搭配起来，在切换的时候附着上去
@@ -416,7 +418,14 @@ const MainBox = () => {
               onChange={setActivePane}
             >
               {panes.map((pane) => (
-                <MainTabPane className='main-tab-pane' tab={pane.title} key={pane.key}>
+                <MainTabPane
+                  className='main-tab-pane'
+                  tab={
+                    treeFind(collectionTreeData, (item) => item.key === pane.key)?.title ||
+                    'New Request'
+                  }
+                  key={pane.key}
+                >
                   {/* TODO 工作区自定义组件待规范，参考 menuItem */}
                   {pane.pageType === PageTypeEnum.Request && (
                     <HttpRequest
