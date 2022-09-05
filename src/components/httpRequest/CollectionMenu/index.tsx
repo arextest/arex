@@ -429,7 +429,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
               autoExpandParent
               blockNode={true}
               selectedKeys={selectedKeys}
-              expandedKeys={expandedKeys}
+              defaultExpandedKeys={expandedKeys}
               onExpand={setExpandedKeys}
               onSelect={handleSelect}
               switcherIcon={<DownOutlined />}
