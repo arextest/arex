@@ -125,6 +125,7 @@ const DiffJsonView = ({ data, visible = false, onClose }) => {
 
   return (
     <div
+      className={'json-diff'}
       css={css`
         position: fixed;
         display: ${visible ? 'block' : 'none'};
@@ -132,7 +133,6 @@ const DiffJsonView = ({ data, visible = false, onClose }) => {
         left: 0;
         width: 100vw;
         height: 100vh;
-        background-color: white;
         z-index: 1000;
       `}
     >
