@@ -4,13 +4,16 @@ import ReplayService from '../../services/Replay.service';
 import { ApplicationDataType } from '../../services/Replay.type';
 import MenuSelect from '../MenuSelect';
 
-const ReplayMenu: FC<{ value?: string; onSelect: (app: ApplicationDataType) => void }> = (
-  props,
-) => {
+const ReplayMenu: FC<{
+  initValue?: string;
+  value?: string;
+  onSelect: (app: ApplicationDataType) => void;
+}> = (props) => {
   const selectedKeys = useMemo(() => (props.value ? [props.value] : []), [props.value]);
 
   return (
     <MenuSelect<ApplicationDataType>
+      initValue={props.initValue}
       refresh
       rowKey='appId'
       selectedKeys={selectedKeys}

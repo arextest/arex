@@ -1,4 +1,10 @@
-import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-design/icons';
+import {
+  ApiOutlined,
+  DeploymentUnitOutlined,
+  FieldTimeOutlined,
+  LeftOutlined,
+  RightOutlined,
+} from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
 import React, { ReactNode, useEffect, useRef } from 'react';
@@ -30,21 +36,37 @@ import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type
 import { useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
+import { useMount } from 'ahooks';
 
 const { TabPane } = Tabs;
-const MainMenu = styled(Tabs)`
+const MainMenu = styled(Tabs)<{ brief?: boolean }>`
   height: 100%;
   .ant-tabs-nav-list {
-    width: 100px;
+    width: ${(props) => (props.brief ? '70px' : '100px')};
     .ant-tabs-tab {
       margin: 0 !important;
       padding: 12px 0 !important;
       .ant-tabs-tab-btn {
         margin: 0 auto;
+        color: ${(props) => props.theme.color.text.secondary};
+      }
+      &.ant-tabs-tab-disabled {
+        .ant-tabs-tab-btn {
+          color: ${(props) => props.theme.color.text.disabled};
+        }
+      }
+      :hover:not(.ant-tabs-tab-disabled) {
+        .ant-tabs-tab-btn {
+          color: ${(props) => props.theme.color.text.primary};
+        }
       }
     }
     .ant-tabs-tab-active {
-      background-color: ${(props) => props.theme.color.selected};
+      background-color: ${(props) => props.theme.color.background.active};
+      border-right: 1px solid ${(props) => props.theme.color.border.primary};
+      .ant-tabs-tab-btn {
+        color: ${(props) => props.theme.color.text.primary};
+      }
     }
     .ant-tabs-ink-bar {
       left: 0;
@@ -52,6 +74,10 @@ const MainMenu = styled(Tabs)`
   }
   .ant-tabs-content {
     height: 100%;
+    display: ${(props) => (props.brief ? 'none' : 'inherit')};
+  }
+  .ant-tabs-extra-content {
+    width: 100%;
   }
 `;
 
@@ -65,11 +91,11 @@ const MainMenuItem = styled((props: MainMenuItemProps) => (
   }
 `;
 
-type MenuTitleProps = { title: string; icon?: ReactNode };
+type MenuTitleProps = { brief?: boolean; title: string; icon?: ReactNode };
 const MenuTitle = styled((props: MenuTitleProps) => (
   <div {...props}>
     <i>{props.icon}</i>
-    <span>{props.title}</span>
+    {!props.brief && <span>{props.title}</span>}
   </div>
 ))<MenuTitleProps>`
   display: flex;
@@ -82,13 +108,30 @@ const MenuTitle = styled((props: MenuTitleProps) => (
   }
 `;
 
-const MainTabs = styled((props: TabsProps) => (
+const CollapseMenuButton = styled(
+  (props: { collapse?: boolean; icon?: ReactNode; children?: ReactNode; onClick?: () => void }) => (
+    <div {...props}>
+      {props.icon}
+      {props.children}
+    </div>
+  ),
+)`
+  margin-bottom: 35px;
+  text-align: center;
+  width: 100%;
+  color: ${(props) => props.theme.color.text.watermark};
+  cursor: pointer;
+  transform: rotate(${(props) => (props.collapse ? '180deg' : '0deg')});
+  transition: all 0.2s;
+`;
+
+const MainTabs = styled((props: { collapseMenu?: boolean } & TabsProps) => (
   <DraggableTabs
     size='small'
     type='editable-card'
     tabBarGutter={-1}
     tabBarStyle={{
-      left: '-11px',
+      left: props.collapseMenu ? '-1px' : '-11px',
       top: '-1px',
     }}
     {...props}
@@ -97,20 +140,40 @@ const MainTabs = styled((props: TabsProps) => (
   </DraggableTabs>
 ))<TabsProps>`
   height: 100%;
+
+  // 工作区 Tabs 全局样式调整
+  .ant-tabs-tab {
+    .ant-tabs-tab-btn {
+      color: ${(props) => props.theme.color.text.secondary}!important;
+    }
+    &.ant-tabs-tab-active {
+      border-bottom: 1px solid ${(props) => props.theme.color.background.primary}!important;
+    }
+    :hover {
+      .ant-tabs-tab-btn {
+        color: ${(props) => props.theme.color.text.primary}!important;
+      }
+    }
+  }
+
   .ant-tabs-tab-with-remove {
     padding: 6px 12px !important;
     // 添加高亮条 tabs-ink-bar
     // 注意当前的作用范围很广，目前的作用对象为工作区所有的可编辑可删除卡片式 Tab
     // .ant-tabs-tab-with-remove 类是为了避免污染一般的 Tabs
-    &.ant-tabs-tab-active:after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background-color: ${(props) => props.theme.color.primary};
-      transition: all 0.2s ease-in-out;
+    &.ant-tabs-tab-active {
+      background-color: ${(props) => props.theme.color.background.primary}!important;
+      border-bottom: 1px solid ${(props) => props.theme.color.background.primary}!important;
+      :after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: ${(props) => props.theme.color.primary};
+        transition: all 0.2s ease-in-out;
+      }
     }
     .ant-tabs-tab-remove {
       margin-left: 0;
@@ -154,6 +217,8 @@ const MainBox = () => {
     activePane,
     setActivePane,
     activeMenu,
+    collapseMenu,
+    setCollapseMenu,
     setActiveMenu,
     setActiveEnvironment,
     setCollectionTreeData,
@@ -167,11 +232,27 @@ const MainBox = () => {
         `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.key}`,
       );
     }
-  }, [activePane, panes, params.workspaceId, params.workspaceName]);
+  }, [activePane, panes]);
+
+  useMount(() => {
+    // TODO 只做了Replay的路由刷新优化
+    if (params.rType === PageTypeEnum.Replay) {
+      setActivePane(params.rTypeId, PageTypeEnum.Replay);
+    }
+  });
 
   const collectionMenuRef = useRef();
   const fetchCollectionTreeData = () => {
     collectionMenuRef.current?.fetchTreeData();
+  };
+
+  const handleCollapseMenu = () => {
+    setCollapseMenu(!collapseMenu);
+  };
+
+  const handleMainMenuChange = (key: string) => {
+    setActiveMenu(key as MenuTypeEnum);
+    collapseMenu && setCollapseMenu(false);
   };
 
   const addTab = () => {
@@ -256,23 +337,30 @@ const MainBox = () => {
       <DraggableLayout
         direction={'horizontal'}
         limitRange={[15, 40]}
+        fixedFirstNode={collapseMenu}
         firstNode={
           <>
             <WorkspacesMenu />
 
-            <Divider style={{ margin: '0', width: 'calc(100% + 10px)' }} />
-
             <MainMenu
               tabPosition='left'
               activeKey={activeMenu[0]}
-              onChange={(key) => setActiveMenu(key as MenuTypeEnum)}
+              brief={collapseMenu}
+              tabBarExtraContent={
+                <CollapseMenuButton
+                  collapse={collapseMenu}
+                  icon={<LeftOutlined />}
+                  onClick={handleCollapseMenu}
+                />
+              }
+              onChange={handleMainMenuChange}
             >
               {/* menuItem 自定义子组件命名规定: XxxMenu, 表示xx功能的左侧主菜单 */}
               {/* menuItem 自定义子组件 props 约定，便于之后封装  */}
               {/* 1. value: 选中 menu item 的 id */}
               {/* 2. onSelect: 选中 menu item 时触发，参数（结构待规范）为选中节点的相关信息，点击后的逻辑不在 Menu 组件中处理 */}
               <MainMenuItem
-                tab={<MenuTitle icon={<ApiOutlined />} title='Collection' />}
+                tab={<MenuTitle icon={<ApiOutlined />} title='Collection' brief={collapseMenu} />}
                 key={MenuTypeEnum.Collection}
                 menuItem={
                   <CollectionMenu
@@ -284,13 +372,24 @@ const MainBox = () => {
                 }
               />
               <MainMenuItem
-                tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' />}
+                tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' brief={collapseMenu} />}
                 key={MenuTypeEnum.Replay}
-                menuItem={<ReplayMenu value={activeMenu[1]} onSelect={handleReplayMenuClick} />}
+                menuItem={
+                  <ReplayMenu
+                    initValue={activeMenu[1]}
+                    value={activeMenu[1]}
+                    onSelect={handleReplayMenuClick}
+                  />
+                }
               />
               <MainMenuItem
-                // disabled
-                tab={<MenuTitle icon={<DeploymentUnitOutlined />} title='Environment' />}
+                tab={
+                  <MenuTitle
+                    icon={<DeploymentUnitOutlined />}
+                    title='Environment'
+                    brief={collapseMenu}
+                  />
+                }
                 key={MenuTypeEnum.Environment}
                 menuItem={
                   <EnvironmentMenu value={activeMenu[1]} onSelect={handleEnvironmentMenuClick} />
@@ -310,10 +409,11 @@ const MainBox = () => {
             }
           >
             <MainTabs
-              onEdit={handleTabsEdit}
               activeKey={activePane}
-              onChange={setActivePane}
+              collapseMenu={collapseMenu}
               tabBarExtraContent={<EnvironmentSelect />}
+              onEdit={handleTabsEdit}
+              onChange={setActivePane}
             >
               {panes.map((pane) => (
                 <MainTabPane className='main-tab-pane' tab={pane.title} key={pane.key}>

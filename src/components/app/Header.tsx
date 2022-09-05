@@ -36,7 +36,6 @@ const HeaderWrapper = styled.div`
 `;
 
 const AppHeader = () => {
-  const nav = useNavigate();
   const {
     userInfo: { email },
     themeClassify,
@@ -57,7 +56,7 @@ const AppHeader = () => {
   };
   const handleLogout = () => {
     logout();
-    nav('/login');
+    window.location.href = '/login';
   };
   return (
     <HeaderWrapper>
@@ -68,8 +67,7 @@ const AppHeader = () => {
         </div>
 
         <div className={'right'}>
-          <InviteWorkspace />
-
+          {!(email || '').match('GUEST') ? <InviteWorkspace /> : null}
           <TooltipButton icon={<SettingOutlined />} title='Setting' onClick={handleSetting} />
 
           <Dropdown

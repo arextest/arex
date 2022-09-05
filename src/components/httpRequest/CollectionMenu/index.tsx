@@ -38,6 +38,7 @@ const CollectionMenuWrapper = styled.div`
   }
 
   .collection-title-render {
+    color: ${(props) => props.theme.color.text.secondary};
     display: flex;
     .right {
     }
@@ -52,7 +53,16 @@ const CollectionMenuWrapper = styled.div`
         white-space: nowrap; //溢出不换行
       }
     }
+    :hover {
+      color: ${(props) => props.theme.color.text.primary};
+    }
   }
+  .ant-tree-node-selected {
+    .collection-title-render {
+      color: ${(props) => props.theme.color.text.primary};
+    }
+  }
+
   .ant-tree-node-content-wrapper {
     width: 10%;
     overflow-y: visible; //解决拖拽图标被隐藏

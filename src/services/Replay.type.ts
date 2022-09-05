@@ -229,7 +229,29 @@ export type CompareResult = {
   baseMsg: string;
   testMsg: string;
   planItemId: number;
-  logs: string | null;
+  logs:
+    | {
+        baseValue: null;
+        testValue: null;
+        logInfo: string;
+        pathPair: {
+          unmatchedType: number;
+          leftUnmatchedPath: [];
+          rightUnmatchedPath: [];
+          listKeys: null;
+          listKeyPath: [];
+          trace: null;
+        };
+        addRefPkNodePathLeft: null;
+        addRefPkNodePathRight: null;
+        warn: number;
+        path: null;
+        logTag: {
+          lv: string;
+          ig: boolean;
+        };
+      }[]
+    | null;
   type: 'html' | 'json';
 };
 export interface QueryFullLinkMsgRes {

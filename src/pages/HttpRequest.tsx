@@ -90,6 +90,9 @@ const HeaderWrapper = styled.div`
     .ant-select-selection-item {
       font-weight: 500;
     }
+    :hover {
+      z-index: 1000;
+    }
   }
   .ant-input {
     border-radius: 0 2px 2px 0;
@@ -399,6 +402,13 @@ const HttpRequest: FC<HttpRequestProps> = ({
     prettier && setRequestBody(prettier);
   };
 
+  const urlPretreatment = (url: string) => {
+    if (url.match('http')) {
+      return url;
+    } else {
+      return `http://` + url;
+    }
+  };
   const handleRequest = () => {
     const data: Partial<Record<'params' | 'data', object>> = {};
     if (method === MethodEnum.GET) {
@@ -409,7 +419,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
     }
     setResponseMeta({ time: new Date().getTime() });
     request({
-      url,
+      url: urlPretreatment(url),
       method,
       headers,
       ...data,
@@ -717,6 +727,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
               theme={themeClassify}
               height='auto'
               minHeight={'100px'}
+              maxHeight={'240px'}
               onChange={setRequestBody}
             />
           </TabPane>

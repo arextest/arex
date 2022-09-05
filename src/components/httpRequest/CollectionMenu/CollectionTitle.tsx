@@ -12,7 +12,6 @@ const PrefixIcon = styled(
   (props: { icon: ReactNode; border?: boolean }) => <div {...props}>{props.icon}</div>,
   { shouldForwardProp: (prop) => prop !== 'border' },
 )`
-  color: ${(props) => props.theme.color.primary};
   margin-right: 6px;
   border: ${(props) => (props.border ? '1px solid' : 'none')};
   font-size: 12px;

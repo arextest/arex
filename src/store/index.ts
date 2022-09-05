@@ -5,7 +5,7 @@ import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 import { nodeType } from '../components/httpRequest/CollectionMenu';
-import { MenuTypeEnum, PageTypeEnum, UserInfoKey } from '../constant';
+import { CollapseMenuKey, MenuTypeEnum, PageTypeEnum, UserInfoKey } from '../constant';
 import DefaultConfig from '../defaultConfig';
 import { I18nextLng } from '../i18n';
 import { FontSize } from '../pages/Setting';
@@ -41,6 +41,8 @@ export type PaneType = {
 type BaseState = {
   themeClassify: ThemeClassify;
   changeTheme: (theme?: ThemeName) => void;
+  collapseMenu: boolean;
+  setCollapseMenu: (collapseMenu: boolean) => void;
   extensionInstalled: boolean;
   userInfo: UserInfo;
   logout: () => void;
@@ -81,7 +83,7 @@ const initUserInfo = (() => {
     return userInfo;
   } else {
     return {
-      email: undefined,
+      email: '',
       profile: {
         theme: DefaultConfig.theme,
         fontSize: DefaultConfig.fontSize,
@@ -137,6 +139,12 @@ export const useStore = create(
         state.themeClassify = themeName.split('-')[0] as ThemeClassify;
       });
     },
+
+    collapseMenu: getLocalStorage<boolean>(CollapseMenuKey) || false,
+    setCollapseMenu: (collapseMenu) => {
+      set({ collapseMenu });
+      setLocalStorage(CollapseMenuKey, collapseMenu);
+    },
     extensionInstalled: false,
 
     activePane: '',
@@ -179,7 +187,9 @@ export const useStore = create(
     },
 
     logout: () => {
-      clearLocalStorage();
+      clearLocalStorage('accessToken');
+      clearLocalStorage('refreshToken');
+      clearLocalStorage('userInfo');
       set({ userInfo: undefined, panes: [], activePane: '' });
     },
 

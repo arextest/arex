@@ -81,10 +81,11 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
   );
 
   const columns: ColumnsType<PlanItemStatistics> = [
-    { title: 'Plan Item ID', dataIndex: 'planItemId', key: 'planItemId' },
-    { title: 'API', dataIndex: 'operationName', key: 'operationName' },
+    { title: 'Plan Item ID', dataIndex: 'planItemId', key: 'planItemId', ellipsis: true },
+    { title: 'API', dataIndex: 'operationName', key: 'operationName', ellipsis: true },
     {
       title: 'State',
+      width: 100,
       render: (_, record) => {
         const state = resultsStates.find((s) => s.value === record.status);
         return state ? (
@@ -104,12 +105,14 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     },
     {
       title: 'Time consumed(s)',
+      width: 104,
       render: (_, record) =>
         (record.replayEndTime - (record.replayStartTime || record.replayEndTime)) / 1000,
     },
     {
       title: 'Total Cases',
       dataIndex: 'totalCaseCount',
+      width: 120,
       filterMultiple: false,
       filters: [
         { text: 'All', value: 'all' },
@@ -121,21 +124,25 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     {
       title: 'Passed',
       dataIndex: 'successCaseCount',
+      width: 70,
       render: (text) => <Text style={{ color: '#91cc75' }}>{text}</Text>,
     },
     {
       title: 'Failed',
       dataIndex: 'failCaseCount',
+      width: 70,
       render: (text) => <Text style={{ color: '#ef6566' }}>{text}</Text>,
     },
     {
       title: 'Invalid',
       dataIndex: 'errorCaseCount',
+      width: 70,
       render: (text) => <Text style={{ color: '#73c0de' }}>{text}</Text>,
     },
     {
       title: 'Blocked',
       dataIndex: 'waitCaseCount',
+      width: 70,
       render: (text) => <Text style={{ color: '#fac858' }}>{text}</Text>,
     },
     {
@@ -254,13 +261,13 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           <div>Report Name: {selectedPlan.planName}</div>
           <div>Target Host: {selectedPlan.targetHost}</div>
           <div>Executor: {selectedPlan.creator}</div>
-          <span>Record version: {selectedPlan.caseRecordVersion}</span>
+          <span>Record version: {selectedPlan.caseRecordVersion}</span> &nbsp;
           <span>Replay version: {selectedPlan.coreVersion}</span>
         </Col>
         <Col span={12}>
           <b style={{ color: 'gray' }}>Replay Pass Rate</b>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div style={{ height: '160px', width: '100%', padding: '16px 0' }}>
+            <div style={{ height: '160px', width: 'calc(100% - 160px)', padding: '16px 0' }}>
               <Pie {...pieProps} />
             </div>
             <div
@@ -275,8 +282,8 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
               <div>Total Cases: {countSum}</div>
               <div>Passed: {countData[0]}</div>
               <div>Failed: {countData[1]}</div>
-              <div>Blocked: {countData[2]}</div>
-              <div>Invalid: {countData[3]}</div>
+              <div>Invalid: {countData[2]}</div>
+              <div>Blocked: {countData[3]}</div>
             </div>
           </div>
         </Col>

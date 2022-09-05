@@ -1,13 +1,11 @@
-import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Badge, Table, Tag, Typography } from 'antd';
+import { Badge, Tag, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 
 import ReplayService from '../../services/Replay.service';
 import { PlanStatistics } from '../../services/Replay.type';
-import { useStore } from '../../store';
-import { ThemeClassify } from '../../style/theme';
+import HighlightRowTable from '../styledComponents/HighlightRowTable';
 const { Text } = Typography;
 
 export const resultsStates = [
@@ -76,25 +74,19 @@ const columns: ColumnsType<PlanStatistics> = [
   },
 ];
 
-const AppTable = styled(Table)<{ theme?: ThemeClassify }>`
-  // highlight selected row
-  .clickRowStyl {
-    background-color: ${(props) => (props.theme === ThemeClassify.light ? '#f6efff' : '#171528')};
-  }
-  .ant-table-tbody > tr > td.ant-table-cell-row-hover {
-    background-color: ${(props) =>
-      props.theme === ThemeClassify.light ? '#f6efff88' : '#17152888'}!important;
-  }
-`;
-
-const Results: FC<{
+export type ResultsProps = {
   appId?: string;
   defaultSelectFirst?: boolean;
   refreshDep?: React.Key;
   onSelectedPlanChange: (selectedPlan: PlanStatistics) => void;
-}> = ({ appId, defaultSelectFirst, refreshDep, onSelectedPlanChange }) => {
-  const { themeClassify } = useStore();
-  const [selectRow, setSelectRow] = useState<number>(defaultSelectFirst ? 0 : -1);
+};
+
+const Results: FC<ResultsProps> = ({
+  appId,
+  defaultSelectFirst,
+  refreshDep,
+  onSelectedPlanChange,
+}) => {
   const { data: planStatistics, loading } = useRequest(
     () =>
       ReplayService.queryPlanStatistics({
@@ -112,28 +104,15 @@ const Results: FC<{
     },
   );
   return (
-    <div>
-      <AppTable
-        rowKey='planId'
-        size='small'
-        theme={themeClassify}
-        loading={loading}
-        pagination={{ pageSize: 5 }}
-        columns={columns}
-        onRow={(record, index) => {
-          return {
-            onClick: () => {
-              if (typeof index === 'number') {
-                setSelectRow(index === selectRow ? -1 : index);
-                onSelectedPlanChange(record as PlanStatistics);
-              }
-            },
-          };
-        }}
-        rowClassName={(record, index) => (index === selectRow ? 'clickRowStyl' : '')}
-        dataSource={planStatistics}
-      />
-    </div>
+    <HighlightRowTable<PlanStatistics>
+      rowKey='planId'
+      size='small'
+      loading={loading}
+      pagination={{ pageSize: 5 }}
+      columns={columns}
+      onRowClick={onSelectedPlanChange}
+      dataSource={planStatistics}
+    />
   );
 };
 

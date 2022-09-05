@@ -15,6 +15,7 @@ type MenuSelectProps<D, P extends any[]> = {
   small?: boolean;
   refresh?: boolean; // show refresh button
   defaultSelectFirst?: boolean;
+  initValue?: string;
   rowKey: string;
   selectedKeys?: string[];
   onSelect: (app: D) => void;
@@ -42,21 +43,22 @@ const MenuList = styled(Menu, { shouldForwardProp: (propName) => propName !== 's
   border: none !important;
   background: transparent !important;
   .ant-menu-item {
+    color: ${(props) => props.theme.color.text.secondary}!important;
     margin: 4px 0 !important;
     height: ${(props) => (props.small ? '24px' : '28px')};
     line-height: ${(props) => (props.small ? '24px' : '28px')};
     border-radius: 2px;
     background: transparent !important;
   }
+  .ant-menu-item-active,
+  .ant-menu-item-selected {
+    color: ${(props) => props.theme.color.text.primary}!important;
+  }
   .ant-menu-item-active {
-    color: inherit !important;
     background-color: ${(props) => props.theme.color.active} !important;
   }
   .ant-menu-item-selected {
     background-color: ${(props) => props.theme.color.selected} !important;
-  }
-  .ant-menu-item-active.ant-menu-item-selected {
-    color: ${(props) => props.theme.color.primary} !important;
   }
 `;
 
@@ -132,6 +134,13 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
         const firstRecord = props.forceFilter ? filter(res)[0] : res[0];
         setSelectedKey(firstRecord[props.rowKey]);
         props.onSelect(firstRecord);
+      }
+      if (res.length && props.initValue) {
+        const firstRecord = res.find((i) => i.appId === props.initValue);
+        if (firstRecord) {
+          setSelectedKey(firstRecord[props.rowKey]);
+          props.onSelect(firstRecord);
+        }
       }
     },
     ...props.requestOptions,

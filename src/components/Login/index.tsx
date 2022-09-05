@@ -10,8 +10,14 @@ import { AccessTokenKey, RefreshTokenKey } from '../../constant';
 import { AuthService } from '../../services/AuthService';
 import { WorkspaceService } from '../../services/Workspace.service';
 import { useStore } from '../../store';
-import { setLocalStorage } from '../../utils';
-
+import { getLocalStorage, setLocalStorage } from '../../utils';
+import styled from '@emotion/styled';
+import { UserService } from '../../services/UserService';
+const OtherLoginMethods = styled.div`
+  a {
+    margin-left: 4px;
+  }
+`;
 let timeChange: any;
 const Login = () => {
   const nav = useNavigate();
@@ -64,12 +70,23 @@ const Login = () => {
           workspaceName: 'Default',
         };
         WorkspaceService.createWorkspace(params).then((res) => {
-          setUserInfo(email);
+          setUserInfo(userName);
           nav('/');
         });
       } else {
-        setUserInfo(email);
+        setUserInfo(userName);
         nav('/');
+      }
+    });
+  };
+
+  const guestLogin = () => {
+    UserService.loginAsGuest({ userName: getLocalStorage('guestUserName') }).then((res) => {
+      if (res.body.success) {
+        setLocalStorage('guestUserName', res.body.userName);
+        setLocalStorage(AccessTokenKey, res.body.accessToken);
+        setLocalStorage(RefreshTokenKey, res.body.refreshToken);
+        initBeforeUserEntry(res.body.userName);
       }
     });
   };
@@ -139,9 +156,19 @@ const Login = () => {
             {loadings ? count + 's' : 'Verification code'}
           </Button>
         </div>
-        <Button type='primary' block size='large' onClick={login}>
+        <Button type='primary' block size='large' onClick={login} style={{ marginBottom: '10px' }}>
           Login
         </Button>
+        <OtherLoginMethods>
+          Login with :{' '}
+          <a
+            onClick={() => {
+              guestLogin();
+            }}
+          >
+            Guest
+          </a>
+        </OtherLoginMethods>
       </div>
     </div>
   );

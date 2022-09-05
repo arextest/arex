@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import React, { FC, ReactNode, useEffect, useRef } from 'react';
+import React, { FC, ReactNode, useEffect, useMemo, useRef } from 'react';
 
 type Direction = 'horizontal' | 'vertical';
 
@@ -19,6 +19,7 @@ const DraggableLayout: FC<{
   direction: Direction;
   limitRange?: [number, number];
   lineWidth?: number;
+  fixedFirstNode?: boolean;
 }> = (props) => {
   const {
     firstNode,
@@ -33,72 +34,85 @@ const DraggableLayout: FC<{
   const firstRef = useRef(null);
   const secondRef = useRef(null);
 
-  const styleMap = {
-    horizontal: {
-      firstStyle: {
-        width: `calc(${(max + min) / 2}% - ${lineWidth}px)`,
-        height: '100%',
+  const styleMap = useMemo(
+    () => ({
+      horizontal: {
+        firstStyle: {
+          width: `${props.fixedFirstNode ? '69px' : `calc(${(max + min) / 2}% - ${lineWidth}px)`}`,
+          height: '100%',
+          transition: props.fixedFirstNode ? 'all 0.2s' : 'none',
+        },
+        secondStyle: {
+          width: `${
+            props.fixedFirstNode
+              ? 'calc(100% - 69px)'
+              : `calc(${100 - (max + min) / 2}% - ${lineWidth}px)`
+          }`,
+          height: '100%',
+          transition: props.fixedFirstNode ? 'all 0.2s' : 'none',
+        },
       },
-      secondStyle: {
-        width: `calc(${100 - (max + min) / 2}% - ${lineWidth}px)`,
-        height: '100%',
+      vertical: {
+        firstStyle: {
+          height: `${props.fixedFirstNode ? '69px' : `calc(${100 - min}% - 5px)`}`,
+        },
+        secondStyle: {
+          height: `${props.fixedFirstNode ? 'calc(100% - 69px)' : `calc(${min}% - 5px)`}`,
+        },
       },
-    },
-    vertical: {
-      firstStyle: {
-        height: `calc(${100 - min}% - 5px)`,
-      },
-      secondStyle: {
-        height: `calc(${min}% - 5px)`,
-      },
-    },
-  };
+    }),
+    [props.fixedFirstNode],
+  );
 
   const drag = () => {
     const draggableDom: any = draggableLineRef.current;
     const contentDom: any = draggableLayoutRef.current;
     const firstDom: any = firstRef.current;
     const secondDom: any = secondRef.current;
-    draggableDom.onmousedown = (e: any) => {
-      // 设置好方向 可通过变量控制默认水平方向 horizontal | vertical
-      const startCoordinate = direction === 'horizontal' ? e.clientX : e.clientY; // 获取第一次点击的横坐标
-      const fDomStartSize =
-        direction === 'horizontal' ? firstDom.offsetWidth : firstDom.offsetHeight; // 获取到元素的宽度
-      // 移动过程中对两元素宽度计算赋值
-      document.onmousemove = (_e: any) => {
-        if (direction === 'horizontal') {
-          const moveOffset: number = _e.clientX - startCoordinate;
-          const firstPercentage =
-            ((fDomStartSize + moveOffset) / (contentDom.offsetWidth - 2 * lineWidth)) * 100;
-          const firstPercentageComputed: any = (function () {
-            if (firstPercentage > min && firstPercentage < max) {
-              return firstPercentage;
-            }
-            if (firstPercentage <= min) {
-              return min;
-            }
-            if (firstPercentage >= max) {
-              return max;
-            }
-          })();
-          // firstPercentageComputed 是减去之后的百分比
-          firstDom.style.width = `${
-            ((contentDom.offsetWidth - 2 * lineWidth) * firstPercentageComputed) / 100
-          }px`;
-          secondDom.style.width = `${
-            ((contentDom.offsetWidth - 2 * lineWidth) * (100 - firstPercentageComputed)) / 100
-          }px`;
-        }
+    if (props.fixedFirstNode) {
+      draggableDom.onmousedown = (e: any) => {};
+    } else {
+      draggableDom.onmousedown = (e: any) => {
+        // 设置好方向 可通过变量控制默认水平方向 horizontal | vertical
+        const startCoordinate = direction === 'horizontal' ? e.clientX : e.clientY; // 获取第一次点击的横坐标
+        const fDomStartSize =
+          direction === 'horizontal' ? firstDom.offsetWidth : firstDom.offsetHeight; // 获取到元素的宽度
+        // 移动过程中对两元素宽度计算赋值
+        document.onmousemove = (_e: any) => {
+          if (direction === 'horizontal') {
+            const moveOffset: number = _e.clientX - startCoordinate;
+            const firstPercentage =
+              ((fDomStartSize + moveOffset) / (contentDom.offsetWidth - 2 * lineWidth)) * 100;
+            const firstPercentageComputed: any = (function () {
+              if (firstPercentage > min && firstPercentage < max) {
+                return firstPercentage;
+              }
+              if (firstPercentage <= min) {
+                return min;
+              }
+              if (firstPercentage >= max) {
+                return max;
+              }
+            })();
+            // firstPercentageComputed 是减去之后的百分比
+            firstDom.style.width = `${
+              ((contentDom.offsetWidth - 2 * lineWidth) * firstPercentageComputed) / 100
+            }px`;
+            secondDom.style.width = `${
+              ((contentDom.offsetWidth - 2 * lineWidth) * (100 - firstPercentageComputed)) / 100
+            }px`;
+          }
+        };
+        // 在左侧和右侧元素父容器上绑定松开鼠标解绑拖拽事件
+        contentDom.onmouseup = () => {
+          document.onmousemove = null;
+        };
+        return false;
       };
-      // 在左侧和右侧元素父容器上绑定松开鼠标解绑拖拽事件
-      contentDom.onmouseup = () => {
-        document.onmousemove = null;
-      };
-      return false;
-    };
+    }
   };
 
-  useEffect(() => drag(), []);
+  useEffect(() => drag(), [props.fixedFirstNode]);
 
   return (
     <div
@@ -116,8 +130,16 @@ const DraggableLayout: FC<{
       <div
         ref={draggableLineRef}
         css={css`
-          cursor: ${direction === 'horizontal' ? 'ew-resize' : 'ns-resize'};
-          padding: ${direction === 'horizontal' ? `0 ${lineWidth}px` : `${lineWidth}px 0`};
+          cursor: ${props.fixedFirstNode
+            ? 'default'
+            : direction === 'horizontal'
+            ? 'ew-resize'
+            : 'ns-resize'};
+          padding: ${props.fixedFirstNode
+            ? '0'
+            : direction === 'horizontal'
+            ? `0 ${lineWidth}px`
+            : `${lineWidth}px 0`};
           z-index: 100;
         `}
       >

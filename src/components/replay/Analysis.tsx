@@ -1,12 +1,12 @@
 import { useRequest } from 'ahooks';
-import { Col, Row, Table } from 'antd';
+import { Col, Row } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { FC, useState } from 'react';
 
 import ReplayService from '../../services/Replay.service';
 import { CategoryStatistic, Difference } from '../../services/Replay.type';
 import { MenuSelect } from '../index';
-import { SmallTextButton, TableWrapper } from '../styledComponents';
+import { HighlightRowTable } from '../styledComponents';
 
 const Analysis: FC<{
   planItemId: number;
@@ -31,6 +31,7 @@ const Analysis: FC<{
       title: 'Point of difference',
       dataIndex: 'differenceName',
       ellipsis: true,
+      render: (text, record) => <a onClick={() => handleRowClick(record)}>{text}</a>,
     },
     {
       title: 'Scene Count',
@@ -42,18 +43,9 @@ const Analysis: FC<{
       dataIndex: 'caseCount',
       width: '110px',
     },
-    {
-      title: 'Action',
-      align: 'center',
-      width: '80px',
-      render: (_, record) => (
-        <SmallTextButton
-          title='Scenes'
-          onClick={() => onScenes && onScenes(record, selectedCategory)}
-        />
-      ),
-    },
   ];
+
+  const handleRowClick = (record: Difference) => onScenes && onScenes(record, selectedCategory);
 
   return (
     <Row style={{ padding: '8px' }} gutter={8}>
@@ -64,7 +56,7 @@ const Analysis: FC<{
           defaultSelectFirst
           rowKey='operationName'
           onSelect={setSelectedCategory}
-          placeholder='applicationsMenu.appFilterPlaceholder'
+          placeholder={''}
           request={() => ReplayService.queryResponseTypeStatistic({ planItemId })}
           filter={(keyword, record) =>
             record.errorCaseCount + record.failCaseCount > 0 &&
@@ -81,16 +73,16 @@ const Analysis: FC<{
       </Col>
 
       <Col span={18}>
-        <TableWrapper>
-          <Table
-            loading={loading}
-            rowKey='differenceName'
-            columns={categoryColumns}
-            dataSource={differenceData}
-            pagination={false}
-            size='small'
-          />
-        </TableWrapper>
+        <HighlightRowTable
+          size='small'
+          loading={loading}
+          pagination={false}
+          rowKey='differenceName'
+          columns={categoryColumns}
+          dataSource={differenceData}
+          onRowClick={handleRowClick}
+          sx={{ margin: '-8px 0 0 8px' }}
+        />
       </Col>
     </Row>
   );

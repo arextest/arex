@@ -53,3 +53,4 @@ export enum FontSizeMap {
 export const UserInfoKey = 'userInfo';
 export const AccessTokenKey = 'accessToken';
 export const RefreshTokenKey = 'refreshToken';
+export const CollapseMenuKey = 'collapseMenu';

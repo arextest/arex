@@ -6,9 +6,10 @@ import {
   PlusOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Input, message, Select, Tooltip } from 'antd';
+import { Divider, Input, message, Select, Tooltip } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -17,14 +18,16 @@ import { WorkspaceService } from '../../services/Workspace.service';
 import { Workspace } from '../../services/Workspace.type';
 import { useStore } from '../../store';
 import { TooltipButton } from '../index';
-import { css } from '@emotion/react';
 
-const WorkspacesMenuWrapper = styled.div`
+const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
+  height: 35px;
+  width: ${(props) => props.width};
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 10px;
-  margin-left: 8px;
+  padding: 5px 16px;
+  border-bottom: 1px solid ${(props) => props.theme.color.border.primary};
+  overflow: hidden;
   & > div {
     :first-of-type {
       width: 100%;
@@ -37,7 +40,7 @@ const WorkspacesMenuWrapper = styled.div`
 const WorkspacesMenu = () => {
   const params = useParams();
   const nav = useNavigate();
-  const { userInfo, workspaces, setWorkspaces, setPanes, resetPanes } = useStore();
+  const { userInfo, collapseMenu, workspaces, setWorkspaces, setPanes, resetPanes } = useStore();
   const [editMode, setEditMode] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [status, setStatus] = useState<'' | 'error'>('');
@@ -125,75 +128,84 @@ const WorkspacesMenu = () => {
   }, [params.workspaceId, workspaces]);
 
   return (
-    <WorkspacesMenuWrapper>
-      <div>
-        <Tooltip title='Current Workspace'>
-          <GlobalOutlined />
-        </Tooltip>
-        {editMode ? (
-          <Input
-            size='small'
-            value={newWorkspaceName}
-            status={status}
-            onChange={(e) => setNewWorkspaceName(e.target.value)}
-            style={{ marginLeft: '10px', width: '80%' }}
-          />
-        ) : (
-          <Select
-            size='small'
-            bordered={false}
-            value={params.workspaceId}
-            options={workspaces.map((ws) => ({
-              value: ws.id,
-              label: (
-                <div>
-                  {ws.workspaceName}
-                  <span
-                    css={css`
-                      color: #bdbdbd;
-                      margin-left: 4px;
-                    `}
-                  >
-                    (
-                    {
-                      {
-                        [RoleEnum.Admin]: 'Admin',
-                        [RoleEnum.Editor]: 'Editor',
-                        [RoleEnum.Viewer]: 'Viewer',
-                      }[ws.role]
-                    }
-                    )
-                  </span>
-                </div>
-              ),
-            }))}
-            onChange={handleChangeWorkspace}
-            style={{ width: '80%' }}
-          />
-        )}
-      </div>
-
-      <div>
-        {editMode ? (
-          <>
-            <TooltipButton icon={<CheckOutlined />} title='OK' onClick={handleAddWorkspace} />
-            <TooltipButton icon={<CloseOutlined />} title='Cancel' onClick={reset} />
-          </>
-        ) : (
-          <TooltipButton
-            icon={<PlusOutlined />}
-            title='Add Workspace'
-            onClick={() => setEditMode(true)}
-          />
-        )}
-
-        <TooltipButton
-          icon={<EditOutlined />}
-          title='Edit Workspace'
-          onClick={handleEditWorkspace}
+    <WorkspacesMenuWrapper width={collapseMenu ? '100%' : 'calc(100% + 10px)'}>
+      <Tooltip
+        title={`Workspace${collapseMenu ? ': ' + params.workspaceName : ''}`}
+        placement='right'
+      >
+        <GlobalOutlined
+          style={{ marginLeft: collapseMenu ? '12px' : '0', transition: 'all 0.2s' }}
         />
-        <TooltipButton icon={<UploadOutlined />} title='Import' />
-      </div>
+      </Tooltip>
+      {!collapseMenu && (
+        <>
+          <div>
+            {editMode ? (
+              <Input
+                size='small'
+                value={newWorkspaceName}
+                status={status}
+                onChange={(e) => setNewWorkspaceName(e.target.value)}
+                style={{ marginLeft: '10px', width: '80%' }}
+              />
+            ) : (
+              <Select
+                size='small'
+                bordered={false}
+                value={params.workspaceId}
+                options={workspaces.map((ws) => ({
+                  value: ws.id,
+                  label: (
+                    <div>
+                      {ws.workspaceName}
+                      <span
+                        css={css`
+                          color: #bdbdbd;
+                          margin-left: 4px;
+                        `}
+                      >
+                        (
+                        {
+                          {
+                            [RoleEnum.Admin]: 'Admin',
+                            [RoleEnum.Editor]: 'Editor',
+                            [RoleEnum.Viewer]: 'Viewer',
+                          }[ws.role]
+                        }
+                        )
+                      </span>
+                    </div>
+                  ),
+                }))}
+                onChange={handleChangeWorkspace}
+                style={{ width: '80%' }}
+              />
+            )}
+          </div>
+
+          <div>
+            {editMode ? (
+              <>
+                <TooltipButton icon={<CheckOutlined />} title='OK' onClick={handleAddWorkspace} />
+                <TooltipButton icon={<CloseOutlined />} title='Cancel' onClick={reset} />
+              </>
+            ) : (
+              <TooltipButton
+                icon={<PlusOutlined />}
+                title='Add Workspace'
+                onClick={() => setEditMode(true)}
+              />
+            )}
+
+            <TooltipButton
+              icon={<EditOutlined />}
+              title='Edit Workspace'
+              onClick={handleEditWorkspace}
+            />
+            <TooltipButton icon={<UploadOutlined />} title='Import' />
+          </div>
+        </>
+      )}
     </WorkspacesMenuWrapper>
   );
 };
