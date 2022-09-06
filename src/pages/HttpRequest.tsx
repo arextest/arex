@@ -219,9 +219,24 @@ const HttpRequest: FC<HttpRequestProps> = ({
       active: true,
     },
   ]);
+
+  const headerFiltered = useMemo(
+    () => requestHeaders.filter((header) => header.active),
+    [requestHeaders],
+  );
+
+  const headerCount = useMemo(
+    () =>
+      headerFiltered.reduce((count, header) => {
+        header.key && count++;
+        return count;
+      }, 0),
+    [headerFiltered],
+  );
+
   const headers = useMemo(
     () =>
-      requestHeaders.reduce<{
+      headerFiltered.reduce<{
         [key: string]: string | number;
       }>((acc, header) => {
         if (header.key) {
@@ -229,15 +244,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
         }
         return acc;
       }, {}),
-    [requestHeaders],
-  );
-  const headerCount = useMemo(
-    () =>
-      requestHeaders.reduce((count, header) => {
-        header.key && header.active && count++;
-        return count;
-      }, 0),
-    [requestHeaders],
+    [headerFiltered],
   );
 
   const [contentType, setContentType] = useState(ContentTypeEnum.ApplicationJson);
