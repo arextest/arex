@@ -14,6 +14,9 @@ function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
   const [selectRow, setSelectRow] = useState<number>(props.defaultSelectFirst ? 0 : -1);
 
   const InnerTable = styled((_props: HighlightRowTableProps<T>) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { sx, defaultSelectFirst, onRowClick, ...restProps } = _props;
+
     return (
       <Table<T>
         onRow={(record, index) => {
@@ -21,13 +24,13 @@ function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
             onClick: () => {
               if (typeof index === 'number') {
                 setSelectRow(index === selectRow ? -1 : index);
-                _props.onRowClick && _props.onRowClick(record);
+                onRowClick && onRowClick(record);
               }
             },
           };
         }}
         rowClassName={(record, index) => (index === selectRow ? 'clickRowStyle' : '')}
-        {..._props}
+        {...restProps}
       />
     );
   })`
