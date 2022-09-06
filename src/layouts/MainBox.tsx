@@ -6,6 +6,7 @@ import {
   RightOutlined,
 } from '@ant-design/icons';
 import styled from '@emotion/styled';
+import { useMount } from 'ahooks';
 import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
 import React, { ReactNode, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -22,6 +23,7 @@ import {
 } from '../components';
 import { CollectionProps } from '../components/httpRequest/CollectionMenu';
 import { MenuTypeEnum, PageTypeEnum } from '../constant';
+import { treeFind } from '../helpers/collection/util';
 import {
   Environment,
   Folder,
@@ -36,11 +38,11 @@ import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type
 import { useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
-import { useMount } from 'ahooks';
-import { treeFind } from '../helpers/collection/util';
 
 const { TabPane } = Tabs;
-const MainMenu = styled(Tabs)<{ brief?: boolean }>`
+const MainMenu = styled(Tabs, { shouldForwardProp: (propName) => propName !== 'brief' })<{
+  brief?: boolean;
+}>`
   height: 100%;
   .ant-tabs-nav-list {
     width: ${(props) => (props.brief ? '70px' : '100px')};
@@ -93,12 +95,15 @@ const MainMenuItem = styled((props: MainMenuItemProps) => (
 `;
 
 type MenuTitleProps = { brief?: boolean; title: string; icon?: ReactNode };
-const MenuTitle = styled((props: MenuTitleProps) => (
-  <div {...props}>
-    <i>{props.icon}</i>
-    {!props.brief && <span>{props.title}</span>}
-  </div>
-))<MenuTitleProps>`
+const MenuTitle = styled((props: MenuTitleProps) => {
+  const { brief, title, icon, ...restProps } = props;
+  return (
+    <div {...restProps}>
+      <i>{icon}</i>
+      {!brief && <span>{title}</span>}
+    </div>
+  );
+})<MenuTitleProps>`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -116,6 +121,7 @@ const CollapseMenuButton = styled(
       {props.children}
     </div>
   ),
+  { shouldForwardProp: (propName) => propName !== 'collapse' },
 )`
   margin-bottom: 35px;
   text-align: center;
