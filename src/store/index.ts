@@ -36,6 +36,7 @@ export type PaneType = {
   | nodeType // PageTypeEnum.Request 时的数据
     | ApplicationDataType // PageTypeEnum.Index 时的数据
     | PlanItemStatistics; // PageTypeEnum.ReplayAnalysis 时的数据
+  sortIndex?: number;
 };
 
 type BaseState = {
@@ -149,6 +150,18 @@ export const useStore = create(
 
     activePane: '',
     setActivePane: (activePaneKey, activeMenuKey) => {
+      // 每次选择tab的时候将sortIndex设置到最大，然后每次点击关闭的时候激活上最大的sort
+      set((state) => {
+        if (state.panes.length > 0) {
+          state.panes.find((i) => i.key === activePaneKey).sortIndex =
+            Math.max(
+              ...(state.panes.map((i) => i.sortIndex).length > 0
+                ? state.panes.map((i) => i.sortIndex)
+                : [0]),
+            ) + 1;
+        }
+      });
+
       const setActiveEnvironment = get().setActiveEnvironment;
       set((state) => {
         const key = activeMenuKey
@@ -171,7 +184,15 @@ export const useStore = create(
         const pane = panes as PaneType;
         set((state) => {
           if (!state.panes.find((i) => i.key === pane.key)) {
-            state.panes.push(pane);
+            state.panes.push({
+              ...pane,
+              sortIndex:
+                Math.max(
+                  ...(state.panes.map((i) => i.sortIndex).length > 0
+                    ? state.panes.map((i) => i.sortIndex)
+                    : [0]),
+                ) + 1,
+            });
           }
           state.activePane = pane.key;
           state.activeMenu = [pane.menuType || MenuTypeEnum.Collection, pane.key];

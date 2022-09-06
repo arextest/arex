@@ -3,11 +3,10 @@ import {
   DeploymentUnitOutlined,
   FieldTimeOutlined,
   LeftOutlined,
-  RightOutlined,
 } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useMount } from 'ahooks';
-import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
+import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
 import React, { ReactNode, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -282,7 +281,9 @@ const MainBox = () => {
     setPanes(filteredPanes);
 
     if (filteredPanes.length) {
-      const lastPane = filteredPanes[filteredPanes.length - 1];
+      const lastPane = JSON.parse(JSON.stringify(filteredPanes)).sort(
+        (a, b) => -(a.sortIndex - b.sortIndex),
+      )[0];
       setActivePane(lastPane.key, lastPane.menuType);
     } else {
       setActiveMenu(menuType);
@@ -335,6 +336,15 @@ const MainBox = () => {
       },
       'push',
     );
+  };
+
+  const genTabTitle = (collectionTreeData, pane) => {
+    // Request类型需要动态响应tittle修改
+    if ([PageTypeEnum.Request, PageTypeEnum.Folder].includes(pane.pageType)) {
+      return treeFind(collectionTreeData, (item) => item.key === pane.key)?.title || 'New Request';
+    } else if (pane.pageType === PageTypeEnum.Replay) {
+      return pane.title;
+    }
   };
 
   return (
@@ -426,10 +436,7 @@ const MainBox = () => {
               {panes.map((pane) => (
                 <MainTabPane
                   className='main-tab-pane'
-                  tab={
-                    treeFind(collectionTreeData, (item) => item.key === pane.key)?.title ||
-                    'New Request'
-                  }
+                  tab={genTabTitle(collectionTreeData, pane)}
                   key={pane.key}
                 >
                   {/* TODO 工作区自定义组件待规范，参考 menuItem */}
