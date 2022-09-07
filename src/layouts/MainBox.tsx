@@ -30,9 +30,9 @@ import {
   Replay,
   ReplayAnalysis,
   ReplayCase,
+  ReplaySetting,
   WorkspaceOverview,
 } from '../pages';
-import ReplaySetting from '../pages/Replay/ReplaySetting';
 import Setting from '../pages/Setting';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { useStore } from '../store';
