@@ -26,6 +26,9 @@ const CollapseTable: FC<CollapseTableProps> = (props) => {
           margin-bottom: 16px;
           & > .ant-collapse-item > .ant-collapse-header {
             cursor: default; // 只作用于顶层
+            .ant-collapse-header-text {
+              width: 100%;
+            }
           }
         }
       `}

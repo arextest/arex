@@ -131,20 +131,23 @@ const CollapseMenuButton = styled(
   transition: all 0.2s;
 `;
 
-const MainTabs = styled((props: { collapseMenu?: boolean } & TabsProps) => (
-  <DraggableTabs
-    size='small'
-    type='editable-card'
-    tabBarGutter={-1}
-    tabBarStyle={{
-      left: props.collapseMenu ? '-1px' : '-11px',
-      top: '-1px',
-    }}
-    {...props}
-  >
-    {props.children}
-  </DraggableTabs>
-))<TabsProps>`
+const MainTabs = styled((props: { collapseMenu?: boolean } & TabsProps) => {
+  const { collapseMenu, children, ...restProps } = props;
+  return (
+    <DraggableTabs
+      size='small'
+      type='editable-card'
+      tabBarGutter={-1}
+      tabBarStyle={{
+        left: collapseMenu ? '-1px' : '-11px',
+        top: '-1px',
+      }}
+      {...restProps}
+    >
+      {children}
+    </DraggableTabs>
+  );
+})<TabsProps>`
   height: 100%;
 
   // 工作区 Tabs 全局样式调整
