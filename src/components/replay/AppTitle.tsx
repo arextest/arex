@@ -1,4 +1,4 @@
-import { SyncOutlined } from '@ant-design/icons';
+import { SettingOutlined, SyncOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Form, Input, Modal, notification } from 'antd';
@@ -7,6 +7,7 @@ import React, { FC, ReactNode, useState } from 'react';
 import ReplayService from '../../services/Replay.service';
 import { useStore } from '../../store';
 import { Label, PanesTitle } from '../styledComponents';
+import TooltipButton from '../TooltipButton';
 
 type AppTitleData = {
   id: string;
@@ -19,12 +20,30 @@ type AppTitleProps = {
 };
 
 const TitleWrapper = styled(
-  (props: { className?: string; title: ReactNode; onRefresh?: () => void }) => (
+  (props: {
+    className?: string;
+    title: ReactNode;
+    onRefresh?: () => void;
+    onSetting?: () => void;
+  }) => (
     <div className={props.className}>
       <span>{props.title}</span>
       {props.onRefresh && (
-        <Button size='small' type='text' icon={<SyncOutlined />} onClick={props.onRefresh} />
+        <TooltipButton
+          size='small'
+          type='text'
+          title='refresh'
+          icon={<SyncOutlined />}
+          onClick={props.onRefresh}
+        />
       )}
+      <TooltipButton
+        size='small'
+        type='text'
+        title='setting'
+        icon={<SettingOutlined />}
+        onClick={props.onSetting}
+      />
     </div>
   ),
 )`
@@ -38,6 +57,7 @@ const TitleWrapper = styled(
 const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   const {
     userInfo: { email },
+    setPanes,
   } = useStore();
   const [form] = Form.useForm<{ targetEnv: string }>();
   const [modalVisible, setModalVisible] = useState(false);
@@ -69,6 +89,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
       setModalVisible(false);
     },
   });
+
   const handleStartReplay = () => {
     form
       .validateFields()
@@ -86,10 +107,14 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         console.log('Validate Failed:', info);
       });
   };
+
+  const handleOpenSetting = () => {
+    setPanes();
+  };
   return (
     <>
       <PanesTitle
-        title={<TitleWrapper title={data.id} onRefresh={onRefresh} />}
+        title={<TitleWrapper title={data.id} onRefresh={onRefresh} onSetting={handleOpenSetting} />}
         extra={
           <Button size='small' type='primary' onClick={() => setModalVisible(true)}>
             Start replay

@@ -32,6 +32,7 @@ import {
   ReplayCase,
   WorkspaceOverview,
 } from '../pages';
+import ReplaySetting from '../pages/Replay/ReplaySetting';
 import Setting from '../pages/Setting';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { useStore } from '../store';
@@ -459,6 +460,7 @@ const MainBox = () => {
                   {pane.pageType === PageTypeEnum.ReplayCase && (
                     <ReplayCase data={pane.data as PlanItemStatistics} />
                   )}
+                  {pane.pageType === PageTypeEnum.ReplaySetting && <ReplaySetting />}
                   {pane.pageType === PageTypeEnum.Folder && <Folder />}
                   {pane.pageType === PageTypeEnum.Environment && <Environment id={pane.key} />}
                   {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverview />}

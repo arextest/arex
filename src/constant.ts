@@ -31,6 +31,7 @@ export enum PageTypeEnum {
   Replay = 'replay',
   ReplayAnalysis = 'replayAnalysis',
   ReplayCase = 'replayCase',
+  ReplaySetting = 'replaySetting',
 }
 
 export enum ContentTypeEnum {
