@@ -29,6 +29,8 @@ export type SettingRecordProps = {
   agentVersion: string;
 };
 
+type FormItemProps<T> = { value?: T; onChange?: (value: T) => void };
+
 const durationOptions = ['Sun.', 'Mon.', 'Tues.', 'Wed.', 'Thur.', 'Fri.', 'Sat.'];
 const javaTimeClassesOptions = [
   {
@@ -57,7 +59,7 @@ const javaTimeClassesOptions = [
   },
 ];
 
-const DurationInput: FC<{ value?: string[]; onChange?: (value: string[]) => void }> = (props) => {
+const DurationInput: FC<FormItemProps<string[]>> = (props) => {
   const [value, setValue] = useState<string[]>(props.value || []);
   const [indeterminate, setIndeterminate] = useState(
     Boolean(props.value?.length && props.value?.length < 7),
@@ -88,7 +90,7 @@ const DurationInput: FC<{ value?: string[]; onChange?: (value: string[]) => void
   );
 };
 
-const IntegerStepInput: FC<{ value?: number; onChange?: (value: number) => void }> = (props) => {
+const IntegerStepSlider: FC<FormItemProps<number>> = (props) => {
   const [value, setInput] = useState(props.value || 1);
 
   const onChange = (newValue: number) => {
@@ -114,6 +116,32 @@ const IntegerStepInput: FC<{ value?: number; onChange?: (value: number) => void 
   );
 };
 
+// TODO 接口暂无该字段
+const TimeClassCheckbox: FC<FormItemProps<unknown>> = (props) => {
+  const [value, setValue] = useState<unknown>(props.value || []);
+  const handleChange = (value: unknown) => {
+    props.onChange && props.onChange(value);
+    setValue(value);
+  };
+  return (
+    <>
+      <Checkbox.Group
+        className='time-classes'
+        value={value}
+        options={javaTimeClassesOptions}
+        onChange={handleChange}
+      />
+      <Text
+        type='danger'
+        css={css`
+          margin-top: 8px;
+        `}
+      >
+        (Please confirm the time class used in the code, and use java.lang.System with caution.)
+      </Text>
+    </>
+  );
+};
 const SettingRecord: FC<SettingRecordProps> = (props) => {
   const { data, loading } = useRequest(ReplayService.queryRecordSetting, {
     defaultParams: [{ id: props.id }],
@@ -128,7 +156,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
   return (
     <>
       {loading ? (
-        <Spin></Spin>
+        <Spin />
       ) : (
         <Form
           labelCol={{ span: 4 }}
@@ -141,13 +169,23 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
             }
             .ant-checkbox-group {
             }
-            label.ant-checkbox-wrapper {
-              width: 220px;
-              margin-right: 16px;
+            .time-classes {
+              label.ant-checkbox-wrapper {
+                width: 220px;
+                margin-right: 16px;
+              }
             }
           `}
         >
-          <Collapse bordered={false} defaultActiveKey={['basic']}>
+          <Collapse
+            bordered={false}
+            defaultActiveKey={['basic']}
+            css={css`
+              .ant-collapse-header-text {
+                font-weight: 600;
+              }
+            `}
+          >
             <Panel header='Basic' key='basic'>
               <Form.Item label='Agent Version'>{props.agentVersion}</Form.Item>
 
@@ -160,7 +198,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
               </Form.Item>
 
               <Form.Item label='Frequency' name='frequency'>
-                <IntegerStepInput />
+                <IntegerStepSlider />
               </Form.Item>
             </Panel>
 
@@ -189,11 +227,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
               </Form.Item>
 
               <Form.Item label='Java Time Classes' name='timeClasses'>
-                <Checkbox.Group options={javaTimeClassesOptions} />
-                <Text type='danger'>
-                  (Please confirm the time class used in the code, and use java.lang.System with
-                  caution.)
-                </Text>
+                <TimeClassCheckbox />
               </Form.Item>
 
               {/* TODO  Dynamic Classes  */}
