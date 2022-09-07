@@ -4,6 +4,7 @@ import { useRequest } from 'ahooks';
 import { Button, Form, Input, Modal, notification } from 'antd';
 import React, { FC, ReactNode, useState } from 'react';
 
+import { MenuTypeEnum, PageTypeEnum } from '../../constant';
 import ReplayService from '../../services/Replay.service';
 import { useStore } from '../../store';
 import { Label, PanesTitle } from '../styledComponents';
@@ -109,7 +110,17 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   };
 
   const handleOpenSetting = () => {
-    setPanes();
+    setPanes(
+      {
+        title: `Setting ${data.id}`,
+        key: `SETTING__${data.id}`,
+        menuType: MenuTypeEnum.Replay,
+        pageType: PageTypeEnum.ReplaySetting,
+        isNew: false,
+        // data: app,
+      },
+      'push',
+    );
   };
   return (
     <>

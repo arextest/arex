@@ -346,7 +346,7 @@ const MainBox = () => {
     // Request类型需要动态响应tittle修改
     if ([PageTypeEnum.Request, PageTypeEnum.Folder].includes(pane.pageType)) {
       return treeFind(collectionTreeData, (item) => item.key === pane.key)?.title || 'New Request';
-    } else if (pane.pageType === PageTypeEnum.Replay) {
+    } else {
       return pane.title;
     }
   };
