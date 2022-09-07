@@ -257,3 +257,15 @@ export type CompareResult = {
 export interface QueryFullLinkMsgRes {
   compareResults: CompareResult[];
 }
+
+export interface queryRecordSettingReq {
+  id: string;
+}
+
+export interface queryRecordSettingRes {
+  allowDayOfWeeks: number;
+  allowTimeOfDayFrom: string;
+  allowTimeOfDayTo: string;
+  appId: string;
+  sampleRate: number;
+}

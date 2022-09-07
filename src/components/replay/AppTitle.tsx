@@ -6,17 +6,13 @@ import React, { FC, ReactNode, useState } from 'react';
 
 import { MenuTypeEnum, PageTypeEnum } from '../../constant';
 import ReplayService from '../../services/Replay.service';
+import { ApplicationDataType } from '../../services/Replay.type';
 import { useStore } from '../../store';
-import { Label, PanesTitle } from '../styledComponents';
+import { PanesTitle } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
 
-type AppTitleData = {
-  id: string;
-  name: string;
-  count: number;
-};
 type AppTitleProps = {
-  data: AppTitleData;
+  data: ApplicationDataType;
   onRefresh?: () => void;
 };
 
@@ -96,7 +92,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
       .validateFields()
       .then((values) => {
         createPlan({
-          appId: data.id,
+          appId: data.appId,
           sourceEnv: 'pro',
           targetEnv: values.targetEnv,
           operator: email as string,
@@ -112,12 +108,12 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   const handleOpenSetting = () => {
     setPanes(
       {
-        title: `Setting ${data.id}`,
-        key: `SETTING__${data.id}`,
+        title: `Setting ${data.appId}`,
+        key: `SETTING__${data.appId}`,
         menuType: MenuTypeEnum.Replay,
         pageType: PageTypeEnum.ReplaySetting,
         isNew: false,
-        // data: app,
+        data,
       },
       'push',
     );
@@ -125,7 +121,9 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   return (
     <>
       <PanesTitle
-        title={<TitleWrapper title={data.id} onRefresh={onRefresh} onSetting={handleOpenSetting} />}
+        title={
+          <TitleWrapper title={data.appId} onRefresh={onRefresh} onSetting={handleOpenSetting} />
+        }
         extra={
           <Button size='small' type='primary' onClick={() => setModalVisible(true)}>
             Start replay
@@ -134,7 +132,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
       />
 
       <Modal
-        title={`Start replay - ${data.id}`}
+        title={`Start replay - ${data.appId}`}
         visible={modalVisible}
         onOk={handleStartReplay}
         onCancel={() => setModalVisible(false)}

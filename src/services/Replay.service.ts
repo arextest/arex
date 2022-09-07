@@ -15,6 +15,8 @@ import {
   QueryPlanItemStatisticsRes,
   QueryPlanStatisticsReq,
   QueryPlanStatisticsRes,
+  queryRecordSettingReq,
+  queryRecordSettingRes,
   QueryReplayCaseReq,
   QueryReplayCaseRes,
   QueryResponseTypeStatisticReq,
@@ -111,5 +113,12 @@ export default class ReplayService {
       ),
     );
     //  TODO parsing msg
+  }
+
+  // 获取 Replay - record 基础设置数据
+  static async queryRecordSetting(params: queryRecordSettingReq) {
+    return request
+      .get<queryRecordSettingRes>('/config/serviceCollect/useResult/appId/' + params.id)
+      .then((res) => Promise.resolve(res.body));
   }
 }

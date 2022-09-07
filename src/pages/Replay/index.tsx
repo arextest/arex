@@ -21,10 +21,7 @@ const Replay: FC<{ data?: ApplicationDataType }> = ({ data }) => {
 
   return data ? (
     <Space direction='vertical' size='middle' style={{ display: 'flex' }}>
-      <AppTitle
-        data={{ id: data.appId, name: data.appName, count: data.recordedCaseCount }}
-        onRefresh={handleRefreshDep}
-      />
+      <AppTitle data={data} onRefresh={handleRefreshDep} />
 
       <CollapseTable
         active={!!selectedPlan}

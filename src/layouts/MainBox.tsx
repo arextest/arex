@@ -460,7 +460,9 @@ const MainBox = () => {
                   {pane.pageType === PageTypeEnum.ReplayCase && (
                     <ReplayCase data={pane.data as PlanItemStatistics} />
                   )}
-                  {pane.pageType === PageTypeEnum.ReplaySetting && <ReplaySetting />}
+                  {pane.pageType === PageTypeEnum.ReplaySetting && (
+                    <ReplaySetting data={pane.data as ApplicationDataType} />
+                  )}
                   {pane.pageType === PageTypeEnum.Folder && <Folder />}
                   {pane.pageType === PageTypeEnum.Environment && <Environment id={pane.key} />}
                   {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverview />}

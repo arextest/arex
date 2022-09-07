@@ -3,9 +3,13 @@ import { Tabs } from 'antd';
 import { FC } from 'react';
 
 import { SettingRecord } from '../../components/replay/Setting';
+import { ApplicationDataType } from '../../services/Replay.type';
 
+export type ReplaySettingProps = {
+  data: ApplicationDataType;
+};
 const { TabPane } = Tabs;
-const ReplaySetting: FC = () => {
+const ReplaySetting: FC<ReplaySettingProps> = (props) => {
   return (
     <>
       <Tabs
@@ -19,7 +23,7 @@ const ReplaySetting: FC = () => {
       >
         <TabPane tab='Record' key='record'>
           {/* SettingRecord component */}
-          <SettingRecord />
+          <SettingRecord id={props.data.appId} agentVersion={props.data.agentVersion} />
         </TabPane>
         <TabPane tab='Replay' key='replay'>
           {/* SettingReplay component */}
