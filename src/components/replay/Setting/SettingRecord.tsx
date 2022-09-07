@@ -8,6 +8,7 @@ import {
   Divider,
   Form,
   InputNumber,
+  message,
   Row,
   Select,
   Slider,
@@ -16,8 +17,10 @@ import {
   Typography,
 } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { CheckboxValueType } from 'antd/lib/checkbox/Group';
+import { CheckboxOptionType, CheckboxValueType } from 'antd/lib/checkbox/Group';
+import moment, { Moment } from 'moment';
 import { FC, useState } from 'react';
+import { useImmer } from 'use-immer';
 
 import ReplayService from '../../../services/Replay.service';
 
@@ -30,9 +33,41 @@ export type SettingRecordProps = {
 };
 
 type FormItemProps<T> = { value?: T; onChange?: (value: T) => void };
+type SettingFormType = {
+  allowDayOfWeeks: number[];
+  frequency: number;
+  period: Moment[];
+  apiNotToRecord: string[];
+  dependentApiNotToRecord: string[];
+  dependentServicesNotToRecord: string[];
+  apiToRecord: string[];
+  servicesToRecord: string[];
+};
 
-const durationOptions = ['Sun.', 'Mon.', 'Tues.', 'Wed.', 'Thur.', 'Fri.', 'Sat.'];
-const javaTimeClassesOptions = [
+const format = 'HH:mm';
+
+const defaultValues = {
+  allowDayOfWeeks: [],
+  frequency: 1,
+  period: [moment('00:01', format), moment('23:59', format)],
+  apiNotToRecord: [],
+  dependentApiNotToRecord: [],
+  dependentServicesNotToRecord: [],
+  apiToRecord: [],
+  servicesToRecord: [],
+};
+
+const durationOptions: CheckboxOptionType[] = [
+  { label: 'Sun.', value: 0 },
+  { label: 'Mon.', value: 1 },
+  { label: 'Tues.', value: 2 },
+  { label: 'Wed.', value: 3 },
+  { label: 'Thur.', value: 4 },
+  { label: 'Fri.', value: 5 },
+  { label: 'Sat.', value: 6 },
+];
+
+const javaTimeClassesOptions: CheckboxOptionType[] = [
   {
     label: 'java.time.Instant(now)',
     value: 0,
@@ -59,22 +94,26 @@ const javaTimeClassesOptions = [
   },
 ];
 
-const DurationInput: FC<FormItemProps<string[]>> = (props) => {
-  const [value, setValue] = useState<string[]>(props.value || []);
+const DurationInput: FC<FormItemProps<number[]>> = (props) => {
+  const [value, setValue] = useState<number[]>(props.value || []);
   const [indeterminate, setIndeterminate] = useState(
-    Boolean(props.value?.length && props.value?.length < 7),
+    Boolean(props.value?.length && props.value?.length < durationOptions.length),
   );
-  const [checkAll, setCheckAll] = useState(props.value?.length === 7);
+  const [checkAll, setCheckAll] = useState(props.value?.length === durationOptions.length);
 
   const onChange = (list: CheckboxValueType[]) => {
-    props.onChange && props.onChange(list as string[]);
-    setValue(list as string[]);
+    setValue(list as number[]);
+    props.onChange && props.onChange(list as number[]);
+
     setIndeterminate(!!list.length && list.length < durationOptions.length);
     setCheckAll(list.length === durationOptions.length);
   };
 
   const onCheckAllChange = (e: CheckboxChangeEvent) => {
-    setValue(e.target.checked ? durationOptions : []);
+    const _value = e.target.checked ? durationOptions.map((o) => o.value as number) : [];
+    setValue(_value);
+    props.onChange && props.onChange(_value);
+
     setIndeterminate(false);
     setCheckAll(e.target.checked);
   };
@@ -143,15 +182,70 @@ const TimeClassCheckbox: FC<FormItemProps<unknown>> = (props) => {
   );
 };
 const SettingRecord: FC<SettingRecordProps> = (props) => {
-  const { data, loading } = useRequest(ReplayService.queryRecordSetting, {
+  const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
+
+  const { loading } = useRequest(ReplayService.queryRecordSetting, {
     defaultParams: [{ id: props.id }],
     onSuccess(res) {
       console.log(res);
+      setInitialValues(() => ({
+        period: [moment(res.allowTimeOfDayFrom, format), moment(res.allowTimeOfDayTo, format)],
+        frequency: res.sampleRate,
+        allowDayOfWeeks: [],
+        apiNotToRecord: res.excludeOperationSet,
+      }));
+
+      // decode allowDayOfWeeks
+      !res.allowDayOfWeeks && (res.allowDayOfWeeks = 254);
+      res.allowDayOfWeeks
+        .toString(2)
+        .padStart(8, '0')
+        .split('')
+        .reverse()
+        .slice(1, 8)
+        .forEach(
+          (status, index) =>
+            status === '1' &&
+            setInitialValues((state) => {
+              state.allowDayOfWeeks.push(index);
+            }),
+        );
+      console.log(initialValues);
     },
   });
 
-  const onFinish = (values: any) => {
+  const { run: update } = useRequest(ReplayService.updateRecordSetting, {
+    manual: true,
+    onSuccess(res) {
+      res && message.success('Update successfully');
+    },
+  });
+
+  const onFinish = (values: SettingFormType) => {
     console.log(values);
+    const allowDayOfWeeksArr = Array(8).fill(0);
+    values.allowDayOfWeeks.forEach((item) => {
+      allowDayOfWeeksArr[item + 1] = 1;
+    });
+    let allowDayOfWeeks = parseInt(allowDayOfWeeksArr.reverse().join(''), 2);
+    !allowDayOfWeeks && (allowDayOfWeeks = 254); // allowDayOfWeeks 为 0 即无勾选时默认全选
+
+    const [allowTimeOfDayFrom, allowTimeOfDayTo] = values.period.map((m: any) => m.format(format));
+
+    const params = {
+      allowDayOfWeeks,
+      allowTimeOfDayFrom,
+      allowTimeOfDayTo,
+      appId: props.id,
+      sampleRate: values.frequency,
+      excludeDependentOperationSet: values.dependentApiNotToRecord,
+      excludeDependentServiceSet: values.dependentServicesNotToRecord,
+      excludeOperationSet: values.apiNotToRecord,
+      includeOperationSet: values.apiToRecord,
+      includeServiceSet: values.servicesToRecord,
+    };
+    console.log(params);
+    update(params);
   };
   return (
     <>
@@ -162,6 +256,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 18 }}
           layout='horizontal'
+          initialValues={initialValues}
           onFinish={onFinish}
           css={css`
             .ant-form-item-label > label {
@@ -189,12 +284,12 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
             <Panel header='Basic' key='basic'>
               <Form.Item label='Agent Version'>{props.agentVersion}</Form.Item>
 
-              <Form.Item label='Duration' name='Duration'>
+              <Form.Item label='Duration' name='allowDayOfWeeks'>
                 <DurationInput />
               </Form.Item>
 
               <Form.Item label='Period' name='period'>
-                <TimePicker.RangePicker />
+                <TimePicker.RangePicker format={format} />
               </Form.Item>
 
               <Form.Item label='Frequency' name='frequency'>

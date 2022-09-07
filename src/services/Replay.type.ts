@@ -268,4 +268,21 @@ export interface queryRecordSettingRes {
   allowTimeOfDayTo: string;
   appId: string;
   sampleRate: number;
+  excludeOperationSet: string[];
+  modifiedTime?: string;
 }
+
+export interface UpdateRecordSettingReq {
+  appId: string;
+  sampleRate: number;
+  allowDayOfWeeks: number;
+  allowTimeOfDayFrom: string;
+  allowTimeOfDayTo: string;
+  includeOperationSet?: string[];
+  excludeOperationSet?: string[];
+  excludeDependentOperationSet?: string[];
+  includeServiceSet?: string[];
+  excludeDependentServiceSet?: string[];
+}
+
+export type UpdateRecordSettingRes = boolean;

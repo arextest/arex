@@ -24,6 +24,8 @@ import {
   QueryScenesReq,
   QueryScenesRes,
   RegressionListRes,
+  UpdateRecordSettingReq,
+  UpdateRecordSettingRes,
 } from './Replay.type';
 
 export default class ReplayService {
@@ -115,10 +117,17 @@ export default class ReplayService {
     //  TODO parsing msg
   }
 
-  // 获取 Replay - record 基础设置数据
+  // 获取 Replay - record 设置数据
   static async queryRecordSetting(params: queryRecordSettingReq) {
     return request
       .get<queryRecordSettingRes>('/config/serviceCollect/useResult/appId/' + params.id)
+      .then((res) => Promise.resolve(res.body));
+  }
+
+  // 更新 Replay - record 设置数据
+  static async updateRecordSetting(params: UpdateRecordSettingReq) {
+    return request
+      .post<UpdateRecordSettingRes>('/config/serviceCollect/modify/UPDATE', params)
       .then((res) => Promise.resolve(res.body));
   }
 }
