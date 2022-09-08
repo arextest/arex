@@ -29,6 +29,8 @@ import {
   QueryScenesRes,
   queryScheduleUseResultAppIdRes,
   RegressionListRes,
+  UpdateRecordSettingReq,
+  UpdateRecordSettingRes,
 } from './Replay.type';
 
 export default class ReplayService {
@@ -120,28 +122,29 @@ export default class ReplayService {
     //  TODO parsing msg
   }
 
-  // 获取 Replay - record 基础设置数据
+  // 获取 Replay - record 设置数据
   static async queryRecordSetting(params: queryRecordSettingReq) {
     return request
       .get<queryRecordSettingRes>('/config/serviceCollect/useResult/appId/' + params.id)
       .then((res) => Promise.resolve(res.body));
   }
 
+  // 更新 Replay - record 设置数据
+  static async updateRecordSetting(params: UpdateRecordSettingReq) {
+    return request
+      .post<UpdateRecordSettingRes>('/config/serviceCollect/modify/UPDATE', params)
+      .then((res) => Promise.resolve(res.body));
+  }
+
   static async queryConfigTemplate(params: QueryConfigTemplateReq) {
     return request
-      .post<QueryConfigTemplateRes>(
-        'http://10.5.153.151:8088/report_api/config/queryConfigTemplate',
-        params,
-      )
+      .post<QueryConfigTemplateRes>('/api/config/queryConfigTemplate', params)
       .then((res) => Promise.resolve(res.body));
   }
 
   static async pushConfigTemplate(params: PushConfigTemplateReq) {
     return request
-      .post<PushConfigTemplateRes>(
-        'http://10.5.153.151:8088/report_api/config/pushConfigTemplate',
-        params,
-      )
+      .post<PushConfigTemplateRes>('/api/config/pushConfigTemplate', params)
       .then((res) => Promise.resolve(res.body));
   }
 
