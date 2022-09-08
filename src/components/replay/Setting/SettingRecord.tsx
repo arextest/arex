@@ -333,7 +333,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
             </Panel>
           </Collapse>
 
-          <Form.Item style={{ float: 'right', margin: '16px' }}>
+          <Form.Item style={{ float: 'right', margin: '16px 0' }}>
             <Button type='primary' htmlType='submit'>
               Save
             </Button>

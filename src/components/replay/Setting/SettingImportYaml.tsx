@@ -12,8 +12,8 @@ const SettingImportYaml: FC<SettingRecordProps> = (props) => {
   const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor | null>(null);
   const monacoEl = useRef(null);
   useEffect(() => {
-    // TODO 主题需要适配
-    if (monacoEl && !editor) {
+    // TODO 主题需要适配, 目前主题来回切换后仍有bug
+    if (monacoEl) {
       setEditor(
         monaco.editor.create(monacoEl.current!, {
           value: '',
@@ -32,7 +32,7 @@ const SettingImportYaml: FC<SettingRecordProps> = (props) => {
     });
 
     return () => editor?.dispose();
-  }, [monacoEl.current]);
+  }, [monacoEl.current, themeClassify]);
 
   function update() {
     ReplayService.pushConfigTemplate({
@@ -46,14 +46,14 @@ const SettingImportYaml: FC<SettingRecordProps> = (props) => {
   }
 
   return (
-    <div>
-      <div style={{ width: '100%', height: '70vh' }} ref={monacoEl}></div>
-      <div style={{ textAlign: 'right', padding: '10px' }}>
+    <>
+      <div style={{ width: '100%', height: '70vh' }} ref={monacoEl} />
+      <div style={{ textAlign: 'right', marginTop: '16px' }}>
         <Button type={'primary'} onClick={update}>
           Save
         </Button>
       </div>
-    </div>
+    </>
   );
 };
 

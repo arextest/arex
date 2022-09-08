@@ -57,7 +57,10 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ id, agentVersion }) => {
         <InputNumber />
       </Form.Item>
 
-      <Form.Item wrapperCol={{ offset: 8, span: 16 }} style={{ textAlign: 'right' }}>
+      <Form.Item
+        wrapperCol={{ offset: 8, span: 16 }}
+        style={{ textAlign: 'right', marginTop: '16px' }}
+      >
         <Button type='primary' htmlType='submit'>
           Save
         </Button>

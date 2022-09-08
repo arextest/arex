@@ -2,10 +2,8 @@ import { css } from '@emotion/react';
 import { Tabs } from 'antd';
 import { FC } from 'react';
 
-import { SettingRecord } from '../../components/replay/Setting';
+import { SettingImportYaml, SettingRecord, SettingReplay } from '../../components/replay/Setting';
 import { ApplicationDataType } from '../../services/Replay.type';
-import SettingImportYaml from '../../components/replay/Setting/SettingImportYaml';
-import SettingReplay from '../../components/replay/Setting/SettingReplay';
 
 export type ReplaySettingProps = {
   data: ApplicationDataType;
