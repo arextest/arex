@@ -269,3 +269,25 @@ export interface queryRecordSettingRes {
   appId: string;
   sampleRate: number;
 }
+
+export interface QueryConfigTemplateReq {
+  appId: string;
+}
+
+export interface QueryConfigTemplateRes {
+  configTemplate: string;
+}
+
+export interface PushConfigTemplateReq {
+  appId: string;
+  configTemplate: string;
+}
+
+export interface PushConfigTemplateRes {
+  success: boolean;
+}
+
+export interface queryScheduleUseResultAppIdRes {
+  appId: string;
+  offsetDays: string;
+}

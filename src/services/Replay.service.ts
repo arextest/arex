@@ -5,6 +5,10 @@ import { tryPrettierJsonString } from '../utils';
 import {
   CreatePlanReq,
   CreatePlanRes,
+  PushConfigTemplateReq,
+  PushConfigTemplateRes,
+  QueryConfigTemplateReq,
+  QueryConfigTemplateRes,
   QueryDifferencesReq,
   QueryDifferencesRes,
   QueryFullLinkMsgReq,
@@ -23,6 +27,7 @@ import {
   QueryResponseTypeStatisticRes,
   QueryScenesReq,
   QueryScenesRes,
+  queryScheduleUseResultAppIdRes,
   RegressionListRes,
 } from './Replay.type';
 
@@ -119,6 +124,35 @@ export default class ReplayService {
   static async queryRecordSetting(params: queryRecordSettingReq) {
     return request
       .get<queryRecordSettingRes>('/config/serviceCollect/useResult/appId/' + params.id)
+      .then((res) => Promise.resolve(res.body));
+  }
+
+  static async queryConfigTemplate(params: QueryConfigTemplateReq) {
+    return request
+      .post<QueryConfigTemplateRes>(
+        'http://10.5.153.151:8088/report_api/config/queryConfigTemplate',
+        params,
+      )
+      .then((res) => Promise.resolve(res.body));
+  }
+
+  static async pushConfigTemplate(params: PushConfigTemplateReq) {
+    return request
+      .post<PushConfigTemplateRes>(
+        'http://10.5.153.151:8088/report_api/config/pushConfigTemplate',
+        params,
+      )
+      .then((res) => Promise.resolve(res.body));
+  }
+
+  static async queryScheduleUseResultAppId(params: { id: string }) {
+    return request
+      .get<queryScheduleUseResultAppIdRes>('/config/schedule/useResult/appId/' + params.id)
+      .then((res) => Promise.resolve(res.body));
+  }
+  static async configScheduleModifyUpdate(params) {
+    return request
+      .post<any>('/config/schedule/modify/UPDATE', params)
       .then((res) => Promise.resolve(res.body));
   }
 }

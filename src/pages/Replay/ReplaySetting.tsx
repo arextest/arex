@@ -4,6 +4,8 @@ import { FC } from 'react';
 
 import { SettingRecord } from '../../components/replay/Setting';
 import { ApplicationDataType } from '../../services/Replay.type';
+import SettingImportYaml from '../../components/replay/Setting/SettingImportYaml';
+import SettingReplay from '../../components/replay/Setting/SettingReplay';
 
 export type ReplaySettingProps = {
   data: ApplicationDataType;
@@ -27,11 +29,11 @@ const ReplaySetting: FC<ReplaySettingProps> = (props) => {
         </TabPane>
         <TabPane tab='Replay' key='replay'>
           {/* SettingReplay component */}
-          Replay
+          <SettingReplay id={props.data.appId} agentVersion={props.data.agentVersion} />
         </TabPane>
         <TabPane tab='Import yaml' key='importYaml'>
           {/* SettingImportYaml component */}
-          Import yaml
+          <SettingImportYaml id={props.data.appId} agentVersion={props.data.agentVersion} />
         </TabPane>
       </Tabs>
     </>
