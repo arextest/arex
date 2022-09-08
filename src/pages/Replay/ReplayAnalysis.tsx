@@ -67,6 +67,9 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
       border: 1px solid #603be3;
     }
   `;
+  const diffMap = {
+    '3': 'Difference node',
+  };
   return (
     <Space direction='vertical' style={{ display: 'flex' }}>
       <PanesTitle title={<span>Main Service API: {data.operationName}</span>} />
@@ -77,23 +80,23 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
           <Card bordered={false} title='Diff Card' bodyStyle={{ padding: '8px 16px' }}>
             {diffs.map((diff, index) => {
               return (
-                <Card style={{ marginBottom: '8px' }}>
-                  <p>Scene Name: {sences[index]?.sceneName}</p>
+                <Card
+                  style={{ marginBottom: '8px', border: '1px solid #603be3', cursor: 'pointer' }}
+                  onClick={() => {
+                    setDiffJsonViewData({
+                      baseMsg: diff.baseMsg,
+                      testMsg: diff.testMsg,
+                      logs: diff.logs,
+                    });
+                    setDiffJsonViewVisible(true);
+                  }}
+                >
                   {diff.logs.map((log) => {
                     return (
-                      <SmallCard
-                        onClick={() => {
-                          setDiffJsonViewData({
-                            baseMsg: diff.baseMsg,
-                            testMsg: diff.testMsg,
-                            logs: [log],
-                          });
-                          setDiffJsonViewVisible(true);
-                        }}
-                      >
-                        <p>Log Info: {log.logInfo}</p>
+                      <div>
+                        <p>Unmatched Type: {diffMap[log.pathPair.unmatchedType]}</p>
                         <p>Path: {log.path}</p>
-                      </SmallCard>
+                      </div>
                     );
                   })}
                 </Card>
