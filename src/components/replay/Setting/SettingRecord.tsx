@@ -193,6 +193,10 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
         frequency: res.sampleRate,
         allowDayOfWeeks: [],
         apiNotToRecord: res.excludeOperationSet,
+        dependentApiNotToRecord: res.excludeDependentOperationSet,
+        dependentServicesNotToRecord: res.excludeDependentServiceSet,
+        apiToRecord: res.includeOperationSet,
+        servicesToRecord: res.includeServiceSet,
       }));
 
       // decode allowDayOfWeeks
