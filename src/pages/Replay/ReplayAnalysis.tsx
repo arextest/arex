@@ -107,26 +107,45 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                     </div>
                     {diff.logs.map((i, index) => {
                       return (
-                        <div key={index}>
+                        <div
+                          key={index}
+                          css={css`
+                            display: flex;
+                          `}
+                        >
                           <Tag color={diffMap[i.pathPair.unmatchedType]?.color}>
                             {diffMap[i.pathPair.unmatchedType]?.text}
                           </Tag>
-                          <span>
+                          <span
+                            css={css`
+                              display: flex;
+                              align-items: center;
+                              //width: 100%;
+                            `}
+                          >
                             Value of {i.path} is different | excepted[
                             <span
                               css={css`
                                 color: red;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+                                max-width: 200px;
                               `}
                             >
-                              {i.baseMsg}
+                              {i.baseValue}
                             </span>
                             ]. actual[
                             <span
                               css={css`
                                 color: red;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+                                max-width: 200px;
                               `}
                             >
-                              {i.testMsg}
+                              {i.testValue}
                             </span>
                             ].
                           </span>
