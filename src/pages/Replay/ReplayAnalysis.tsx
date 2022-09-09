@@ -61,12 +61,16 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
       text: 'Unknown',
       color: 'red',
     },
+    '1': {
+      text: 'LEFT_MISSING',
+      color: '#00bb74',
+    },
     '3': {
-      text: 'Difference node',
-      color: 'pink',
+      text: 'UNMATCHED',
+      color: '#FFC0CB',
     },
     '2': {
-      text: 'One more node than',
+      text: 'RIGHT_MISSING',
       color: '#00bb74',
     },
   };
@@ -78,58 +82,60 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
         table={<Analysis planItemId={data.planItemId} onScenes={handleScenes} />}
         panel={
           <Card bordered={false} title='' bodyStyle={{ padding: '8px 16px' }}>
-            {diffs.map((diff, index) => {
-              return (
-                <Card
-                  style={{ marginBottom: '8px', border: '1px solid #434343', cursor: 'pointer' }}
-                  onClick={() => {
-                    setDiffJsonViewData({
-                      baseMsg: diff.baseMsg,
-                      testMsg: diff.testMsg,
-                      logs: diff.logs,
-                    });
-                    setDiffJsonViewVisible(true);
-                  }}
-                >
-                  <div
-                    css={css`
-                      margin-bottom: 8px;
-                    `}
+            {diffs
+              .filter((i) => i.diffResultCode !== 2)
+              .map((diff, index) => {
+                return (
+                  <Card
+                    style={{ marginBottom: '8px', border: '1px solid #434343', cursor: 'pointer' }}
+                    onClick={() => {
+                      setDiffJsonViewData({
+                        baseMsg: diff.baseMsg,
+                        testMsg: diff.testMsg,
+                        logs: diff.logs,
+                      });
+                      setDiffJsonViewVisible(true);
+                    }}
                   >
-                    <span>Diff Card - {diff.logs.length} issues</span>
-                    <Button size={'small'}>Tree Mode</Button>
-                  </div>
-                  {diff.logs.map((i, index) => {
-                    return (
-                      <div key={index}>
-                        <Tag color={diffMap[i.pathPair.unmatchedType]?.color}>
-                          {diffMap[i.pathPair.unmatchedType]?.text}
-                        </Tag>
-                        <span>
-                          Value of {i.path} is diff | excepted[
-                          <span
-                            css={css`
-                              color: red;
-                            `}
-                          >
-                            {i.baseMsg}
+                    <div
+                      css={css`
+                        margin-bottom: 8px;
+                      `}
+                    >
+                      <span>Diff Card - {diff.logs.length} issues</span>
+                      <Button size={'small'}>Tree Mode</Button>
+                    </div>
+                    {diff.logs.map((i, index) => {
+                      return (
+                        <div key={index}>
+                          <Tag color={diffMap[i.pathPair.unmatchedType]?.color}>
+                            {diffMap[i.pathPair.unmatchedType]?.text}
+                          </Tag>
+                          <span>
+                            Value of {i.path} is different | excepted[
+                            <span
+                              css={css`
+                                color: red;
+                              `}
+                            >
+                              {i.baseMsg}
+                            </span>
+                            ]. actual[
+                            <span
+                              css={css`
+                                color: red;
+                              `}
+                            >
+                              {i.testMsg}
+                            </span>
+                            ].
                           </span>
-                          ]. actual[
-                          <span
-                            css={css`
-                              color: red;
-                            `}
-                          >
-                            {i.testMsg}
-                          </span>
-                          ].
-                        </span>
-                      </div>
-                    );
-                  })}
-                </Card>
-              );
-            })}
+                        </div>
+                      );
+                    })}
+                  </Card>
+                );
+              })}
             {diffJsonViewVisible ? (
               <DiffJsonView
                 visible={diffJsonViewVisible}
