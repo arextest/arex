@@ -7,7 +7,7 @@ import { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useStore } from '../../store';
-import FormTable, { getColumns } from './FormTable';
+import FormTable, { useColumns } from './FormTable';
 const { TabPane } = Tabs;
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
@@ -112,7 +112,7 @@ const Response: FC<{
             pagination={false}
             dataSource={headers}
             // @ts-ignore
-            columns={getColumns()}
+            columns={useColumns()}
           />
         </TabPane>
         <TabPane

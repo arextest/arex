@@ -23,15 +23,17 @@ const ReplaySetting: FC<ReplaySettingProps> = (props) => {
       >
         <TabPane tab='Record' key='record'>
           {/* SettingRecord component */}
-          <SettingRecord id={props.data.appId} agentVersion={props.data.agentVersion} />
+          <SettingRecord appId={props.data.appId} agentVersion={props.data.agentVersion} />
         </TabPane>
+
         <TabPane tab='Replay' key='replay'>
           {/* SettingReplay component */}
-          <SettingReplay id={props.data.appId} agentVersion={props.data.agentVersion} />
+          <SettingReplay appId={props.data.appId} agentVersion={props.data.agentVersion} />
         </TabPane>
+
         <TabPane tab='Import yaml' key='importYaml'>
           {/* SettingImportYaml component */}
-          <SettingImportYaml id={props.data.appId} agentVersion={props.data.agentVersion} />
+          <SettingImportYaml appId={props.data.appId} agentVersion={props.data.agentVersion} />
         </TabPane>
       </Tabs>
     </>

@@ -5,10 +5,10 @@ import React from 'react';
 import ReplayService from '../../../services/Replay.service';
 import { SettingRecordProps } from './SettingRecord';
 
-const SettingReplay: React.FC<SettingRecordProps> = ({ id, agentVersion }) => {
+const SettingReplay: React.FC<SettingRecordProps> = ({ appId, agentVersion }) => {
   const onFinish = (values: any) => {
     ReplayService.configScheduleModifyUpdate({
-      appId: id,
+      appId,
       offsetDays: values.offsetDays,
       targetEnv: [],
       sendMaxQps: 20,
@@ -27,7 +27,7 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ id, agentVersion }) => {
   const [form] = Form.useForm();
 
   useMount(() => {
-    ReplayService.queryScheduleUseResultAppId({ id: id }).then((res) => {
+    ReplayService.queryScheduleUseResultAppId({ id: appId }).then((res) => {
       form.setFieldsValue({
         offsetDays: res.offsetDays,
       });

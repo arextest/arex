@@ -5,7 +5,7 @@ import { ColumnsType } from 'antd/es/table';
 import { useTranslation } from 'react-i18next';
 import { Updater } from 'use-immer';
 
-import { KeyValueType } from '../../pages';
+import { KeyValueType } from '../../pages/HttpRequest';
 
 const FormTable = styled(Table)<TableProps<KeyValueType> & { showHeader?: boolean }>`
   .ant-table-thead {
@@ -16,7 +16,7 @@ const FormTable = styled(Table)<TableProps<KeyValueType> & { showHeader?: boolea
   }
 `;
 
-export const getColumns = (
+export const useColumns = (
   paramsUpdater?: Updater<KeyValueType[]>,
   editable?: boolean,
 ): ColumnsType<KeyValueType> => {

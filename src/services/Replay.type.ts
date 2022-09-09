@@ -258,18 +258,22 @@ export interface QueryFullLinkMsgRes {
   compareResults: CompareResult[];
 }
 
-export interface queryRecordSettingReq {
+export interface QueryRecordSettingReq {
   id: string;
 }
 
-export interface queryRecordSettingRes {
+export interface QueryRecordSettingRes {
   allowDayOfWeeks: number;
   allowTimeOfDayFrom: string;
   allowTimeOfDayTo: string;
   appId: string;
-  sampleRate: number;
+  excludeDependentOperationSet: string[];
+  excludeDependentServiceSet: string[];
   excludeOperationSet: string[];
-  modifiedTime?: string;
+  includeOperationSet: string[];
+  includeServiceSet: string[];
+  modifiedTime: string;
+  sampleRate: number;
 }
 
 export interface UpdateRecordSettingReq {
@@ -287,6 +291,40 @@ export interface UpdateRecordSettingReq {
 
 export type UpdateRecordSettingRes = boolean;
 
+export interface QueryRecordDynamicClassSettingReq {
+  appId: string;
+}
+
+export type DynamicClass = {
+  modifiedTime?: string;
+  id?: string;
+  appId?: string;
+  fullClassName: string;
+  methodName: string;
+  parameterTypes: string;
+  keyFormula: string;
+  configType?: number;
+};
+export type QueryRecordDynamicClassSettingRes = DynamicClass[];
+
+export interface UpdateDynamicClassSettingReq {
+  appId: string;
+  fullClassName: string;
+  methodName: string;
+  parameterTypes: string;
+  keyFormula: string;
+  configType: number;
+}
+
+export type UpdateDynamicClassSettingRes = boolean;
+
+export interface RemoveDynamicClassSettingReq {
+  appId: string;
+  id: string;
+}
+
+export type RemoveDynamicClassSettingRes = boolean;
+
 export interface QueryConfigTemplateReq {
   appId: string;
 }
@@ -297,7 +335,7 @@ export interface QueryConfigTemplateRes {
 
 export interface PushConfigTemplateReq {
   appId: string;
-  configTemplate: string;
+  configTemplate?: string;
 }
 
 export interface PushConfigTemplateRes {

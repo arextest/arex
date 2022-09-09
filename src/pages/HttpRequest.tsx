@@ -29,11 +29,11 @@ import {
   FormHeader,
   FormHeaderWrapper,
   FormTable,
-  getColumns,
   Response,
   ResponseCompare,
   ResponseTest,
   SaveRequestButton,
+  useColumns,
 } from '../components/httpRequest';
 import { Label } from '../components/styledComponents';
 import {
@@ -696,7 +696,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
               rowKey='id'
               pagination={false}
               dataSource={requestParams}
-              columns={getColumns(setRequestParams, true)}
+              columns={useColumns(setRequestParams, true)}
             />
           </TabPane>
           <TabPane
@@ -754,7 +754,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
               rowKey='id'
               pagination={false}
               dataSource={requestHeaders}
-              columns={getColumns(setRequestHeaders, true)}
+              columns={useColumns(setRequestHeaders, true)}
             />
           </TabPane>
           <TabPane tab={t_components('http.authorization')} key='3' disabled>
