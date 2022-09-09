@@ -19,8 +19,10 @@ import {
   QueryPlanItemStatisticsRes,
   QueryPlanStatisticsReq,
   QueryPlanStatisticsRes,
-  queryRecordSettingReq,
-  queryRecordSettingRes,
+  QueryRecordDynamicClassSettingReq,
+  QueryRecordDynamicClassSettingRes,
+  QueryRecordSettingReq,
+  QueryRecordSettingRes,
   QueryReplayCaseReq,
   QueryReplayCaseRes,
   QueryResponseTypeStatisticReq,
@@ -29,6 +31,10 @@ import {
   QueryScenesRes,
   queryScheduleUseResultAppIdRes,
   RegressionListRes,
+  RemoveDynamicClassSettingReq,
+  RemoveDynamicClassSettingRes,
+  UpdateDynamicClassSettingReq,
+  UpdateDynamicClassSettingRes,
   UpdateRecordSettingReq,
   UpdateRecordSettingRes,
 } from './Replay.type';
@@ -123,9 +129,9 @@ export default class ReplayService {
   }
 
   // 获取 Replay - record 设置数据
-  static async queryRecordSetting(params: queryRecordSettingReq) {
+  static async queryRecordSetting(params: QueryRecordSettingReq) {
     return request
-      .get<queryRecordSettingRes>('/config/serviceCollect/useResult/appId/' + params.id)
+      .get<QueryRecordSettingRes>('/config/serviceCollect/useResult/appId/' + params.id)
       .then((res) => Promise.resolve(res.body));
   }
 
@@ -133,6 +139,29 @@ export default class ReplayService {
   static async updateRecordSetting(params: UpdateRecordSettingReq) {
     return request
       .post<UpdateRecordSettingRes>('/config/serviceCollect/modify/UPDATE', params)
+      .then((res) => Promise.resolve(res.body));
+  }
+
+  // 获取 Replay - record Dynamic Classes 设置数据
+  static async queryRecordDynamicClassSetting(params: QueryRecordDynamicClassSettingReq) {
+    return request
+      .get<QueryRecordDynamicClassSettingRes | undefined>(
+        '/config/dynamicClass/useResultAsList/appId/' + params.appId,
+      )
+      .then((res) => Promise.resolve(res.body));
+  }
+
+  // 添加 Replay - record Dynamic Classes 设置数据
+  static async updatedDynamicClassSetting(params: UpdateDynamicClassSettingReq) {
+    return request
+      .post<UpdateDynamicClassSettingRes>('/config/dynamicClass/modify/INSERT', params)
+      .then((res) => Promise.resolve(res.body));
+  }
+
+  // 删除 Replay - record Dynamic Classes 设置数据
+  static async removeDynamicClassSetting(params: RemoveDynamicClassSettingReq) {
+    return request
+      .post<RemoveDynamicClassSettingRes>('/config/dynamicClass/modify/REMOVE', params)
       .then((res) => Promise.resolve(res.body));
   }
 

@@ -1,38 +1,21 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import {
-  Button,
-  Checkbox,
-  Col,
-  Collapse,
-  Divider,
-  Form,
-  InputNumber,
-  message,
-  Row,
-  Select,
-  Slider,
-  Spin,
-  TimePicker,
-  Typography,
-} from 'antd';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { CheckboxOptionType, CheckboxValueType } from 'antd/lib/checkbox/Group';
+import { Button, Collapse, Form, message, Select, Spin, TimePicker } from 'antd';
 import moment, { Moment } from 'moment';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { useImmer } from 'use-immer';
 
 import ReplayService from '../../../services/Replay.service';
+import { DurationInput, IntegerStepSlider, TimeClassCheckbox } from './FormItem';
+import DynamicClassesEditableTable from './FormItem/DynamicClassesEditableTable';
 
 const { Panel } = Collapse;
-const { Text } = Typography;
 
 export type SettingRecordProps = {
-  id: string;
+  appId: string;
   agentVersion: string;
 };
 
-type FormItemProps<T> = { value?: T; onChange?: (value: T) => void };
 type SettingFormType = {
   allowDayOfWeeks: number[];
   frequency: number;
@@ -57,137 +40,12 @@ const defaultValues = {
   servicesToRecord: [],
 };
 
-const durationOptions: CheckboxOptionType[] = [
-  { label: 'Sun.', value: 0 },
-  { label: 'Mon.', value: 1 },
-  { label: 'Tues.', value: 2 },
-  { label: 'Wed.', value: 3 },
-  { label: 'Thur.', value: 4 },
-  { label: 'Fri.', value: 5 },
-  { label: 'Sat.', value: 6 },
-];
-
-const javaTimeClassesOptions: CheckboxOptionType[] = [
-  {
-    label: 'java.time.Instant(now)',
-    value: 0,
-  },
-  {
-    label: 'java.time.LocalDate(now)',
-    value: 1,
-  },
-  {
-    label: 'java.time.LocalTime(now)',
-    value: 2,
-  },
-  {
-    label: 'java.time.LocalDateTime(now)',
-    value: 3,
-  },
-  {
-    label: 'java.util.Date(Date)',
-    value: 4,
-  },
-  {
-    label: 'java.lang.System(currentTimeMillis)',
-    value: 5,
-  },
-];
-
-const DurationInput: FC<FormItemProps<number[]>> = (props) => {
-  const [value, setValue] = useState<number[]>(props.value || []);
-  const [indeterminate, setIndeterminate] = useState(
-    Boolean(props.value?.length && props.value?.length < durationOptions.length),
-  );
-  const [checkAll, setCheckAll] = useState(props.value?.length === durationOptions.length);
-
-  const onChange = (list: CheckboxValueType[]) => {
-    setValue(list as number[]);
-    props.onChange && props.onChange(list as number[]);
-
-    setIndeterminate(!!list.length && list.length < durationOptions.length);
-    setCheckAll(list.length === durationOptions.length);
-  };
-
-  const onCheckAllChange = (e: CheckboxChangeEvent) => {
-    const _value = e.target.checked ? durationOptions.map((o) => o.value as number) : [];
-    setValue(_value);
-    props.onChange && props.onChange(_value);
-
-    setIndeterminate(false);
-    setCheckAll(e.target.checked);
-  };
-
-  return (
-    <div style={{ marginTop: '4px' }}>
-      <Checkbox indeterminate={indeterminate} checked={checkAll} onChange={onCheckAllChange}>
-        Every Day
-      </Checkbox>
-      <Divider style={{ margin: '12px 0', width: '500px' }} />
-      <Checkbox.Group options={durationOptions} value={value} onChange={onChange} />
-    </div>
-  );
-};
-
-const IntegerStepSlider: FC<FormItemProps<number>> = (props) => {
-  const [value, setInput] = useState(props.value || 1);
-
-  const onChange = (newValue: number) => {
-    props.onChange && props.onChange(newValue);
-    setInput(newValue);
-  };
-
-  return (
-    <Row>
-      <Col span={12}>
-        <Slider min={1} max={100} onChange={onChange} value={value} />
-      </Col>
-      <Col span={4}>
-        <InputNumber
-          min={1}
-          max={100}
-          style={{ margin: '0 16px' }}
-          value={value}
-          onChange={onChange}
-        />
-      </Col>
-    </Row>
-  );
-};
-
-// TODO 接口暂无该字段
-const TimeClassCheckbox: FC<FormItemProps<unknown>> = (props) => {
-  const [value, setValue] = useState<unknown>(props.value || []);
-  const handleChange = (value: unknown) => {
-    props.onChange && props.onChange(value);
-    setValue(value);
-  };
-  return (
-    <>
-      <Checkbox.Group
-        className='time-classes'
-        value={value}
-        options={javaTimeClassesOptions}
-        onChange={handleChange}
-      />
-      <Text
-        type='danger'
-        css={css`
-          margin-top: 8px;
-        `}
-      >
-        (Please confirm the time class used in the code, and use java.lang.System with caution.)
-      </Text>
-    </>
-  );
-};
 const SettingRecord: FC<SettingRecordProps> = (props) => {
   const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
 
   const { loading } = useRequest(ReplayService.queryRecordSetting, {
-    defaultParams: [{ id: props.id }],
+    defaultParams: [{ id: props.appId }],
     onSuccess(res) {
-      console.log(res);
       setInitialValues(() => ({
         period: [moment(res.allowTimeOfDayFrom, format), moment(res.allowTimeOfDayTo, format)],
         frequency: res.sampleRate,
@@ -214,7 +72,6 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
               state.allowDayOfWeeks.push(index);
             }),
         );
-      console.log(initialValues);
     },
   });
 
@@ -226,7 +83,6 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
   });
 
   const onFinish = (values: SettingFormType) => {
-    console.log(values);
     const allowDayOfWeeksArr = Array(8).fill(0);
     values.allowDayOfWeeks.forEach((item) => {
       allowDayOfWeeksArr[item + 1] = 1;
@@ -240,7 +96,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       allowDayOfWeeks,
       allowTimeOfDayFrom,
       allowTimeOfDayTo,
-      appId: props.id,
+      appId: props.appId,
       sampleRate: values.frequency,
       excludeDependentOperationSet: values.dependentApiNotToRecord,
       excludeDependentServiceSet: values.dependentServicesNotToRecord,
@@ -248,7 +104,6 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       includeOperationSet: values.apiToRecord,
       includeServiceSet: values.servicesToRecord,
     };
-    console.log(params);
     update(params);
   };
   return (
@@ -301,7 +156,8 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
               </Form.Item>
             </Panel>
 
-            <Panel header='Advanced' key='advanced'>
+            {/* 此处必须 forceRender，否则如果没有打开高级设置就保存，将丢失高级设置部分字段 */}
+            <Panel forceRender header='Advanced' key='advanced'>
               <Form.Item label='API to Record' name='apiToRecord'>
                 <Select mode='tags' style={{ width: '100%' }} />
               </Form.Item>
@@ -326,10 +182,13 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
               </Form.Item>
 
               <Form.Item label='Java Time Classes' name='timeClasses'>
+                {/* TODO 接口暂无该字段 */}
                 <TimeClassCheckbox />
               </Form.Item>
 
-              {/* TODO  Dynamic Classes  */}
+              <Form.Item label='Dynamic Classes'>
+                <DynamicClassesEditableTable appId={props.appId} />
+              </Form.Item>
             </Panel>
           </Collapse>
 

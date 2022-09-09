@@ -23,7 +23,7 @@ const SettingImportYaml: FC<SettingRecordProps> = (props) => {
       );
     }
 
-    ReplayService.queryConfigTemplate({ appId: props.id }).then((res) => {
+    ReplayService.queryConfigTemplate({ appId: props.appId }).then((res) => {
       editor?.setValue(res.configTemplate);
     });
 
@@ -36,7 +36,7 @@ const SettingImportYaml: FC<SettingRecordProps> = (props) => {
 
   function update() {
     ReplayService.pushConfigTemplate({
-      appId: props.id,
+      appId: props.appId,
       configTemplate: editor?.getValue(),
     }).then((res) => {
       if (res.success) {
