@@ -156,7 +156,8 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
               </Form.Item>
             </Panel>
 
-            <Panel header='Advanced' key='advanced'>
+            {/* 此处必须 forceRender，否则如果没有打开高级设置就保存，将丢失高级设置部分字段 */}
+            <Panel forceRender header='Advanced' key='advanced'>
               <Form.Item label='API to Record' name='apiToRecord'>
                 <Select mode='tags' style={{ width: '100%' }} />
               </Form.Item>
