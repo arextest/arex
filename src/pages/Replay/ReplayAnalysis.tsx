@@ -1,7 +1,8 @@
 import './ReplayAnalysis.less';
 
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Card, Space } from 'antd';
+import { Button, Card, Space, Tag } from 'antd';
 import { FC, useEffect, useState } from 'react';
 
 import { Analysis } from '../../components/replay';
@@ -13,7 +14,6 @@ import { CategoryStatistic, Difference, PlanItemStatistics } from '../../service
 const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   const [selectedDiff, setSelectedDiff] = useState<Difference>();
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
-  const [sences, setSences] = useState([]);
   const [diffs, setDiffs] = useState([]);
   const [diffJsonViewData, setDiffJsonViewData] = useState({});
   const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
@@ -39,7 +39,6 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
         operationName: selectedCategory!.operationName,
         planItemId: data.planItemId.toString(),
       }).then((s) => {
-        setSences(s);
         const arr = [];
         for (let i = 0; i < s.length; i++) {
           const sence = s[i];
@@ -57,20 +56,19 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
     }
   }, [selectedCategory, selectedDiff, data.planItemId]);
 
-  const SmallCard = styled.div`
-    border: 1px solid silver;
-    cursor: pointer;
-    padding: 24px;
-    border-radius: 2px;
-    margin-top: 24px;
-    &:hover {
-      border: 1px solid #603be3;
-    }
-  `;
   const diffMap = {
-    '0': 'Unknown',
-    '3': 'Difference node',
-    '2': 'One more node than',
+    '0': {
+      text: 'Unknown',
+      color: 'red',
+    },
+    '3': {
+      text: 'Difference node',
+      color: 'pink',
+    },
+    '2': {
+      text: 'One more node than',
+      color: '#00bb74',
+    },
   };
   return (
     <Space direction='vertical' style={{ display: 'flex' }}>
@@ -79,11 +77,11 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
         active={!!selectedDiff}
         table={<Analysis planItemId={data.planItemId} onScenes={handleScenes} />}
         panel={
-          <Card bordered={false} title='Diff Card' bodyStyle={{ padding: '8px 16px' }}>
+          <Card bordered={false} title='' bodyStyle={{ padding: '8px 16px' }}>
             {diffs.map((diff, index) => {
               return (
                 <Card
-                  style={{ marginBottom: '8px', border: '1px solid #603be3', cursor: 'pointer' }}
+                  style={{ marginBottom: '8px', border: '1px solid #434343', cursor: 'pointer' }}
                   onClick={() => {
                     setDiffJsonViewData({
                       baseMsg: diff.baseMsg,
@@ -93,11 +91,39 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                     setDiffJsonViewVisible(true);
                   }}
                 >
-                  {diff.logs.map((log) => {
+                  <div
+                    css={css`
+                      margin-bottom: 8px;
+                    `}
+                  >
+                    <span>Diff Card - {diff.logs.length} issues</span>
+                    <Button size={'small'}>Tree Mode</Button>
+                  </div>
+                  {diff.logs.map((i, index) => {
                     return (
-                      <div>
-                        <p>Unmatched Type: {diffMap[log.pathPair.unmatchedType]}</p>
-                        <p>Path: {log.path}</p>
+                      <div key={index}>
+                        <Tag color={diffMap[i.pathPair.unmatchedType]?.color}>
+                          {diffMap[i.pathPair.unmatchedType]?.text}
+                        </Tag>
+                        <span>
+                          Value of {i.path} is diff | excepted[
+                          <span
+                            css={css`
+                              color: red;
+                            `}
+                          >
+                            {i.baseMsg}
+                          </span>
+                          ]. actual[
+                          <span
+                            css={css`
+                              color: red;
+                            `}
+                          >
+                            {i.testMsg}
+                          </span>
+                          ].
+                        </span>
                       </div>
                     );
                   })}
