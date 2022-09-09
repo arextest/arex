@@ -68,7 +68,9 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
     }
   `;
   const diffMap = {
+    '0': 'Unknown',
     '3': 'Difference node',
+    '2': 'One more node than',
   };
   return (
     <Space direction='vertical' style={{ display: 'flex' }}>

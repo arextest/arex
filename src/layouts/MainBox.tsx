@@ -316,7 +316,7 @@ const MainBox = () => {
     setPanes(
       {
         title: app.appId,
-        key: app.appId,
+        key: btoa(app.appId),
         menuType: MenuTypeEnum.Replay,
         pageType: PageTypeEnum.Replay,
         isNew: false,
