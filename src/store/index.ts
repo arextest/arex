@@ -28,7 +28,7 @@ export type UserInfo = {
 // TODO 数据结构待规范
 export type PaneType = {
   title: string;
-  key: string;
+  key: string; // 为保证唯一性，此字段应由 generateGlobalPanelKey 方法生成
   menuType?: MenuTypeEnum;
   pageType: PageTypeEnum;
   isNew?: boolean;
@@ -55,11 +55,6 @@ type BaseState = {
   setActiveMenu: (menuKey: MenuTypeEnum, menuItemKey?: string) => void;
   panes: PaneType[];
 
-  /*
-   * 修改工作区标签页数据
-   * @param panes 工作区标签页数据
-   * @param mode 添加模式：push，替换模式：undefined
-   * */
   setPanes: (panes: PaneType | PaneType[], mode?: 'push') => void;
   resetPanes: () => void;
   collectionTreeData: any;
@@ -166,6 +161,11 @@ export const useStore = create(
     },
 
     panes: [],
+    /*
+     * 修改工作区标签页数据
+     * @param panes 工作区标签页数据
+     * @param mode 添加模式：push，替换模式：undefined
+     * */
     setPanes: (panes, mode) => {
       if (!mode) {
         set({ panes: panes as PaneType[] });
@@ -241,6 +241,7 @@ export const useStore = create(
   })),
 );
 
+// @ts-ignore
 if (process.env.NODE_ENV === 'development') {
   mountStoreDevtool('Store', useStore);
 }
