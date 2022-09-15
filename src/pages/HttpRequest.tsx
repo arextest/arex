@@ -35,6 +35,7 @@ import {
   SaveRequestButton,
   useColumns,
 } from '../components/httpRequest';
+import SmartEnvInput from '../components/smart/EnvInput';
 import { Label } from '../components/styledComponents';
 import {
   ContentTypeEnum,
@@ -146,6 +147,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
     collectionTreeData,
     extensionInstalled,
     setPanes,
+    currentEnvironment,
   } = useStore();
   const { t: t_common } = useTranslation('common');
   const { t: t_components } = useTranslation('components');
@@ -410,10 +412,19 @@ const HttpRequest: FC<HttpRequestProps> = ({
   };
 
   const urlPretreatment = (url: string) => {
+    // 正则匹配{{}}
+    const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
+    let replaceVar = editorValueMatch[0];
+    const env = currentEnvironment?.keyValues || [];
+    for (let i = 0; i < env.length; i++) {
+      if (env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')) {
+        replaceVar = env[i].value;
+      }
+    }
     if (url.match('http')) {
-      return url;
+      return url.replace(editorValueMatch[0], replaceVar);
     } else {
-      return `http://` + url;
+      return `http://` + url.replace(editorValueMatch[0], replaceVar);
     }
   };
   const handleRequest = () => {
@@ -509,6 +520,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
   };
 
   const handleUrlChange = (value: string) => {
+    console.log(value, 'v');
     setUrl(value);
     const [_, queryStr] = value.split('?');
     if (queryStr) {
@@ -630,11 +642,15 @@ const HttpRequest: FC<HttpRequestProps> = ({
         {mode === HttpRequestMode.Normal ? (
           <HeaderWrapper>
             <Select value={method} options={RequestTypeOptions} onChange={setMethod} />
-            <Input
-              placeholder={t_components('http.enterRequestUrl')}
+            {/*<Input*/}
+            {/*  placeholder={t_components('http.enterRequestUrl')}*/}
+            {/*  value={url}*/}
+            {/*  onChange={(e) => handleUrlChange(e.target.value)}*/}
+            {/*/>*/}
+            <SmartEnvInput
               value={url}
               onChange={(e) => handleUrlChange(e.target.value)}
-            />
+            ></SmartEnvInput>
             <Button type='primary' onClick={handleRequest}>
               {t_common('send')}
             </Button>
