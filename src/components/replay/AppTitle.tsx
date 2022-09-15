@@ -110,7 +110,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     setPanes(
       {
         title: `Setting ${data.appId}`,
-        key: generateGlobalPanelKey(data.appId, PageTypeEnum.ReplaySetting), // appId 中存在","等非法字符串，直接拼接进url后会影响
+        key: generateGlobalPanelKey(data.appId, PageTypeEnum.ReplaySetting),
         menuType: MenuTypeEnum.Replay,
         pageType: PageTypeEnum.ReplaySetting,
         isNew: false,

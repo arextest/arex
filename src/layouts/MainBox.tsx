@@ -36,7 +36,7 @@ import {
 import Setting from '../pages/Setting';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { useStore } from '../store';
-import { uuid } from '../utils';
+import { generateGlobalPanelKey, uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
 
 const { TabPane } = Tabs;
@@ -299,12 +299,13 @@ const MainBox = () => {
   };
 
   const handleCollectionMenuClick: CollectionProps['onSelect'] = (key, node) => {
+    const pageType = node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request;
     setPanes(
       {
-        key,
+        key: generateGlobalPanelKey(node.key, pageType),
         title: node.title,
         menuType: MenuTypeEnum.Collection,
-        pageType: node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
+        pageType,
         isNew: false,
         data: node,
       },
@@ -316,7 +317,7 @@ const MainBox = () => {
     setPanes(
       {
         title: app.appId,
-        key: btoa(app.appId),
+        key: generateGlobalPanelKey(app.appId, PageTypeEnum.Replay),
         menuType: MenuTypeEnum.Replay,
         pageType: PageTypeEnum.Replay,
         isNew: false,
@@ -331,7 +332,7 @@ const MainBox = () => {
     setActiveEnvironment(key);
     setPanes(
       {
-        key,
+        key: generateGlobalPanelKey(node.key, PageTypeEnum.Environment),
         title: node.title,
         menuType: MenuTypeEnum.Environment,
         pageType: PageTypeEnum.Environment,

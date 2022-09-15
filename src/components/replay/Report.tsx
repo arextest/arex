@@ -22,7 +22,7 @@ import { MenuTypeEnum, PageTypeEnum } from '../../constant';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
-import { getPercent, uuid } from '../../utils';
+import { generateGlobalPanelKey, getPercent, uuid } from '../../utils';
 import { SmallTextButton } from '../styledComponents';
 import { resultsStates } from './Results';
 
@@ -156,7 +156,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           onClick={() =>
             setPanes(
               {
-                key: uuid(),
+                key: generateGlobalPanelKey(record.planItemId, PageTypeEnum.ReplayAnalysis),
                 title: `Analysis - ${record.operationName}`,
                 pageType: PageTypeEnum.ReplayAnalysis,
                 menuType: MenuTypeEnum.Replay,
@@ -173,7 +173,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           onClick={() =>
             setPanes(
               {
-                key: uuid(),
+                key: generateGlobalPanelKey(record.planItemId, PageTypeEnum.ReplayCase),
                 title: `Case - ${record.operationName}`,
                 pageType: PageTypeEnum.ReplayCase,
                 menuType: MenuTypeEnum.Replay,
