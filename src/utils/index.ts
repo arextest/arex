@@ -2,6 +2,9 @@ import { message } from 'antd';
 import { v4 as uuid } from 'uuid';
 export { uuid };
 
+import React from 'react';
+
+import { PageTypeEnum } from '../constant';
 import * as ChartUtils from './chart';
 export { ChartUtils };
 
@@ -66,4 +69,22 @@ export const tryPrettierJsonString = (jsonString: string, errorTip?: string) => 
 export const getPercent = (num: number, den: number, showPercentSign = true) => {
   const value = num && den ? parseFloat(((num / den) * 100).toFixed(0)) : 0;
   return showPercentSign ? value + '%' : value;
+};
+
+/**
+ * 生成全局唯一的 globalPanelKey
+ * 由于 globalPanelKey 将用于 url 中，需要编码以消除非法字符串（如"."）
+ * @param key
+ * @param pageType
+ */
+export const generateGlobalPanelKey = (key: React.Key, pageType: PageTypeEnum) =>
+  `${pageType}__${btoa(key.toString())}`;
+
+/**
+ * 解析 globalPanelKey 获取真实的页面对象 key
+ * @param globalPanelKey
+ */
+export const parseGlobalPanelKey = (globalPanelKey: string) => {
+  const fragments = globalPanelKey.split('__');
+  return fragments.length === 2 ? atob(fragments[1]) : undefined;
 };
