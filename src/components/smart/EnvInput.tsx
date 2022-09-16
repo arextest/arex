@@ -2,18 +2,13 @@ import './EnvInput.less';
 
 import CodeMirror from 'codemirror';
 import { FC, useEffect, useRef, useState } from 'react';
-
-import { useStore } from '../../store';
-
 interface SmartEnvInputProps {
   value: string;
   onChange: (e: any) => void;
 }
 const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
   const [editor, setEditor] = useState(null);
-  const [count, setCount] = useState(0);
   const smartEnvInputRef = useRef(null);
-  const { themeClassify } = useStore();
   useEffect(() => {
     if (smartEnvInputRef && !editor) {
       setEditor(
@@ -67,16 +62,14 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
   }, [smartEnvInputRef.current]);
 
   useEffect(() => {
-    if (count === 0 && value) {
+    // 重要，只有在值不相等的时候set
+    if (editor?.getValue() !== value) {
       editor?.setValue(value);
-      setCount(count + 1);
     }
   }, [value]);
   return (
     <div className={'smart-env'}>
-      <textarea ref={smartEnvInputRef} id='smart-env-input'>
-        {value}
-      </textarea>
+      <textarea ref={smartEnvInputRef} id='smart-env-input' />
     </div>
   );
 };

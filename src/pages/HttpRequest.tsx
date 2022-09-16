@@ -520,7 +520,6 @@ const HttpRequest: FC<HttpRequestProps> = ({
   };
 
   const handleUrlChange = (value: string) => {
-    console.log(value, 'v');
     setUrl(value);
     const [_, queryStr] = value.split('?');
     if (queryStr) {
