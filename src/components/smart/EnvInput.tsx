@@ -1,7 +1,10 @@
-import './EnvInput.css';
+import './EnvInput.less';
 
 import CodeMirror from 'codemirror';
 import { FC, useEffect, useRef, useState } from 'react';
+
+import { useStore } from '../../store';
+
 interface SmartEnvInputProps {
   value: string;
   onChange: (e: any) => void;
@@ -10,6 +13,7 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
   const [editor, setEditor] = useState(null);
   const [count, setCount] = useState(0);
   const smartEnvInputRef = useRef(null);
+  const { themeClassify } = useStore();
   useEffect(() => {
     if (smartEnvInputRef && !editor) {
       setEditor(
@@ -22,9 +26,11 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
           },
           height: '30px', //设置初始化高度
           lineWrapping: false,
+          // theme: themeClassify === ThemeClassify.light ? 'neat' : 'gruvbox-dark'
         }),
       );
     }
+    // theme: themeClassify === ThemeClassify.light ? 'neat' : 'gruvbox-dark', // 设置主题
     editor?.on('change', () => {
       onChange({
         target: {
