@@ -1,7 +1,7 @@
 import { useRequest } from 'ahooks';
-import { Anchor, Form, message, Select, Spin, Switch } from 'antd';
+import { Form, message, Select, Spin, Switch } from 'antd';
 import { changeLanguage } from 'i18next';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { CirclePicker } from 'react-color';
 
 import { FontSizeMap } from '../constant';
@@ -11,7 +11,6 @@ import { UserService } from '../services/UserService';
 import { useStore } from '../store';
 import { primaryColorPalette, ThemeClassify, themeMap, ThemeName } from '../style/theme';
 const { Option } = Select;
-const { Link } = Anchor;
 
 export type FontSize = 'small' | 'medium' | 'large';
 
@@ -58,7 +57,7 @@ const Setting: FC = () => {
 
   const changeFontSize = (fontSize: FontSize) => {
     // @ts-ignore
-    document.body.style['zoom'] = FontSizeMap[fontSize]; // Non-standard: https://developer.mozilla.org/en-US/docs/Web/CSS/zoom
+    // document.body.style['zoom'] = FontSizeMap[fontSize]; // Non-standard: https://developer.mozilla.org/en-US/docs/Web/CSS/zoom
   };
 
   const handleFormChange = (value: Partial<SettingForm>, allValue: SettingForm) => {
@@ -164,24 +163,8 @@ const Setting: FC = () => {
     },
   );
 
-  const [targetOffset, setTargetOffset] = useState<number | undefined>(undefined);
-
-  useEffect(() => {
-    setTargetOffset(window.innerHeight / 2);
-  }, []);
-
   return (
     <Spin spinning={initLoading}>
-      {/* TODO DEBUG */}
-      <Anchor targetOffset={targetOffset} style={{ position: 'absolute', right: '40px' }}>
-        <Link href='#user-interface' title='User Interface'>
-          <Link href='#dark-mode' title='Dark Mode' />
-          <Link href='#primary-color' title='Primary Color' />
-          <Link href='#font-size' title='Font Size' />
-          <Link href='#language' title='Language' />
-        </Link>
-      </Anchor>
-
       <Form
         name='form'
         form={form}

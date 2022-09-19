@@ -63,7 +63,7 @@ const useInterfaceInit = () => {
   useEffect(() => {
     changeTheme(themeName);
     // @ts-ignore
-    document.body.style['zoom'] = FontSizeMap[fontSize]; // Non-standard: https://developer.mozilla.org/en-US/docs/Web/CSS/zoom
+    // document.body.style['zoom'] = FontSizeMap[fontSize]; // Non-standard: https://developer.mozilla.org/en-US/docs/Web/CSS/zoom
   }, []);
 };
 

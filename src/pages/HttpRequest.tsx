@@ -29,12 +29,13 @@ import {
   FormHeader,
   FormHeaderWrapper,
   FormTable,
-  getColumns,
   Response,
   ResponseCompare,
   ResponseTest,
   SaveRequestButton,
+  useColumns,
 } from '../components/httpRequest';
+import SmartEnvInput from '../components/smart/EnvInput';
 import { Label } from '../components/styledComponents';
 import {
   ContentTypeEnum,
@@ -146,6 +147,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
     collectionTreeData,
     extensionInstalled,
     setPanes,
+    currentEnvironment,
   } = useStore();
   const { t: t_common } = useTranslation('common');
   const { t: t_components } = useTranslation('components');
@@ -219,9 +221,24 @@ const HttpRequest: FC<HttpRequestProps> = ({
       active: true,
     },
   ]);
+
+  const headerFiltered = useMemo(
+    () => requestHeaders.filter((header) => header.active),
+    [requestHeaders],
+  );
+
+  const headerCount = useMemo(
+    () =>
+      headerFiltered.reduce((count, header) => {
+        header.key && count++;
+        return count;
+      }, 0),
+    [headerFiltered],
+  );
+
   const headers = useMemo(
     () =>
-      requestHeaders.reduce<{
+      headerFiltered.reduce<{
         [key: string]: string | number;
       }>((acc, header) => {
         if (header.key) {
@@ -229,15 +246,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
         }
         return acc;
       }, {}),
-    [requestHeaders],
-  );
-  const headerCount = useMemo(
-    () =>
-      requestHeaders.reduce((count, header) => {
-        header.key && header.active && count++;
-        return count;
-      }, 0),
-    [requestHeaders],
+    [headerFiltered],
   );
 
   const [contentType, setContentType] = useState(ContentTypeEnum.ApplicationJson);
@@ -403,10 +412,19 @@ const HttpRequest: FC<HttpRequestProps> = ({
   };
 
   const urlPretreatment = (url: string) => {
+    // 正则匹配{{}}
+    const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
+    let replaceVar = editorValueMatch[0];
+    const env = currentEnvironment?.keyValues || [];
+    for (let i = 0; i < env.length; i++) {
+      if (env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')) {
+        replaceVar = env[i].value;
+      }
+    }
     if (url.match('http')) {
-      return url;
+      return url.replace(editorValueMatch[0], replaceVar);
     } else {
-      return `http://` + url;
+      return `http://` + url.replace(editorValueMatch[0], replaceVar);
     }
   };
   const handleRequest = () => {
@@ -623,11 +641,15 @@ const HttpRequest: FC<HttpRequestProps> = ({
         {mode === HttpRequestMode.Normal ? (
           <HeaderWrapper>
             <Select value={method} options={RequestTypeOptions} onChange={setMethod} />
-            <Input
-              placeholder={t_components('http.enterRequestUrl')}
+            {/*<Input*/}
+            {/*  placeholder={t_components('http.enterRequestUrl')}*/}
+            {/*  value={url}*/}
+            {/*  onChange={(e) => handleUrlChange(e.target.value)}*/}
+            {/*/>*/}
+            <SmartEnvInput
               value={url}
               onChange={(e) => handleUrlChange(e.target.value)}
-            />
+            ></SmartEnvInput>
             <Button type='primary' onClick={handleRequest}>
               {t_common('send')}
             </Button>
@@ -689,7 +711,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
               rowKey='id'
               pagination={false}
               dataSource={requestParams}
-              columns={getColumns(setRequestParams, true)}
+              columns={useColumns(setRequestParams, true)}
             />
           </TabPane>
           <TabPane
@@ -747,7 +769,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
               rowKey='id'
               pagination={false}
               dataSource={requestHeaders}
-              columns={getColumns(setRequestHeaders, true)}
+              columns={useColumns(setRequestHeaders, true)}
             />
           </TabPane>
           <TabPane tab={t_components('http.authorization')} key='3' disabled>

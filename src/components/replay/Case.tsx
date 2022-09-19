@@ -58,7 +58,7 @@ const Case: FC<CaseProps> = (props) => {
       loading={loading}
       columns={columnsCase}
       dataSource={caseData}
-      pagination={false}
+      pagination={{ pageSize: 10 }}
     />
   );
 };

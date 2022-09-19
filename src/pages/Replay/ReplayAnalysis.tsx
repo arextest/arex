@@ -1,7 +1,8 @@
 import './ReplayAnalysis.less';
 
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Card, Space } from 'antd';
+import { Button, Card, Space, Tag } from 'antd';
 import { FC, useEffect, useState } from 'react';
 
 import { Analysis } from '../../components/replay';
@@ -13,7 +14,6 @@ import { CategoryStatistic, Difference, PlanItemStatistics } from '../../service
 const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   const [selectedDiff, setSelectedDiff] = useState<Difference>();
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
-  const [sences, setSences] = useState([]);
   const [diffs, setDiffs] = useState([]);
   const [diffJsonViewData, setDiffJsonViewData] = useState({});
   const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
@@ -39,7 +39,6 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
         operationName: selectedCategory!.operationName,
         planItemId: data.planItemId.toString(),
       }).then((s) => {
-        setSences(s);
         const arr = [];
         for (let i = 0; i < s.length; i++) {
           const sence = s[i];
@@ -57,16 +56,24 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
     }
   }, [selectedCategory, selectedDiff, data.planItemId]);
 
-  const SmallCard = styled.div`
-    border: 1px solid silver;
-    cursor: pointer;
-    padding: 24px;
-    border-radius: 2px;
-    margin-top: 24px;
-    &:hover {
-      border: 1px solid #603be3;
-    }
-  `;
+  const diffMap = {
+    '0': {
+      text: 'Unknown',
+      color: 'red',
+    },
+    '1': {
+      text: 'LEFT_MISSING',
+      color: '#00bb74',
+    },
+    '3': {
+      text: 'UNMATCHED',
+      color: '#FFC0CB',
+    },
+    '2': {
+      text: 'RIGHT_MISSING',
+      color: '#00bb74',
+    },
+  };
   return (
     <Space direction='vertical' style={{ display: 'flex' }}>
       <PanesTitle title={<span>Main Service API: {data.operationName}</span>} />
@@ -74,31 +81,80 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
         active={!!selectedDiff}
         table={<Analysis planItemId={data.planItemId} onScenes={handleScenes} />}
         panel={
-          <Card bordered={false} title='Diff Card' bodyStyle={{ padding: '8px 16px' }}>
-            {diffs.map((diff, index) => {
-              return (
-                <Card style={{ marginBottom: '8px' }}>
-                  <p>Scene Name: {sences[index]?.sceneName}</p>
-                  {diff.logs.map((log) => {
-                    return (
-                      <SmallCard
-                        onClick={() => {
-                          setDiffJsonViewData({
-                            baseMsg: diff.baseMsg,
-                            testMsg: diff.testMsg,
-                            logs: [log],
-                          });
-                          setDiffJsonViewVisible(true);
-                        }}
-                      >
-                        <p>Log Info: {log.logInfo}</p>
-                        <p>Path: {log.path}</p>
-                      </SmallCard>
-                    );
-                  })}
-                </Card>
-              );
-            })}
+          <Card bordered={false} title='' bodyStyle={{ padding: '8px 16px' }}>
+            {diffs
+              .filter((i) => i.diffResultCode !== 2)
+              .map((diff, index) => {
+                return (
+                  <Card
+                    style={{ marginBottom: '8px', border: '1px solid #434343', cursor: 'pointer' }}
+                    onClick={() => {
+                      setDiffJsonViewData({
+                        baseMsg: diff.baseMsg,
+                        testMsg: diff.testMsg,
+                        logs: diff.logs,
+                      });
+                      setDiffJsonViewVisible(true);
+                    }}
+                  >
+                    <div
+                      css={css`
+                        margin-bottom: 8px;
+                      `}
+                    >
+                      <span>Diff Card - {diff.logs.length} issues</span>
+                      <Button size={'small'}>Tree Mode</Button>
+                    </div>
+                    {diff.logs.map((i, index) => {
+                      return (
+                        <div
+                          key={index}
+                          css={css`
+                            display: flex;
+                          `}
+                        >
+                          <Tag color={diffMap[i.pathPair.unmatchedType]?.color}>
+                            {diffMap[i.pathPair.unmatchedType]?.text}
+                          </Tag>
+                          <span
+                            css={css`
+                              display: flex;
+                              align-items: center;
+                              //width: 100%;
+                            `}
+                          >
+                            Value of {i.path} is different | excepted[
+                            <span
+                              css={css`
+                                color: red;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+                                max-width: 200px;
+                              `}
+                            >
+                              {i.baseValue}
+                            </span>
+                            ]. actual[
+                            <span
+                              css={css`
+                                color: red;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+                                max-width: 200px;
+                              `}
+                            >
+                              {i.testValue}
+                            </span>
+                            ].
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </Card>
+                );
+              })}
             {diffJsonViewVisible ? (
               <DiffJsonView
                 visible={diffJsonViewVisible}

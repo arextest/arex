@@ -3,10 +3,10 @@ import {
   DeploymentUnitOutlined,
   FieldTimeOutlined,
   LeftOutlined,
-  RightOutlined,
 } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Button, Divider, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
+import { useMount, useRequest } from 'ahooks';
+import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
 import React, { ReactNode, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -22,6 +22,7 @@ import {
 } from '../components';
 import { CollectionProps } from '../components/httpRequest/CollectionMenu';
 import { MenuTypeEnum, PageTypeEnum } from '../constant';
+import { treeFind } from '../helpers/collection/util';
 import {
   Environment,
   Folder,
@@ -29,17 +30,20 @@ import {
   Replay,
   ReplayAnalysis,
   ReplayCase,
+  ReplaySetting,
   WorkspaceOverview,
 } from '../pages';
 import Setting from '../pages/Setting';
+import EnvironmentService from '../services/Environment.service';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { useStore } from '../store';
 import { uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
-import { useMount } from 'ahooks';
 
 const { TabPane } = Tabs;
-const MainMenu = styled(Tabs)<{ brief?: boolean }>`
+const MainMenu = styled(Tabs, { shouldForwardProp: (propName) => propName !== 'brief' })<{
+  brief?: boolean;
+}>`
   height: 100%;
   .ant-tabs-nav-list {
     width: ${(props) => (props.brief ? '70px' : '100px')};
@@ -92,12 +96,15 @@ const MainMenuItem = styled((props: MainMenuItemProps) => (
 `;
 
 type MenuTitleProps = { brief?: boolean; title: string; icon?: ReactNode };
-const MenuTitle = styled((props: MenuTitleProps) => (
-  <div {...props}>
-    <i>{props.icon}</i>
-    {!props.brief && <span>{props.title}</span>}
-  </div>
-))<MenuTitleProps>`
+const MenuTitle = styled((props: MenuTitleProps) => {
+  const { brief, title, icon, ...restProps } = props;
+  return (
+    <div {...restProps}>
+      <i>{icon}</i>
+      {!brief && <span>{title}</span>}
+    </div>
+  );
+})<MenuTitleProps>`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -115,6 +122,7 @@ const CollapseMenuButton = styled(
       {props.children}
     </div>
   ),
+  { shouldForwardProp: (propName) => propName !== 'collapse' },
 )`
   margin-bottom: 35px;
   text-align: center;
@@ -125,20 +133,23 @@ const CollapseMenuButton = styled(
   transition: all 0.2s;
 `;
 
-const MainTabs = styled((props: { collapseMenu?: boolean } & TabsProps) => (
-  <DraggableTabs
-    size='small'
-    type='editable-card'
-    tabBarGutter={-1}
-    tabBarStyle={{
-      left: props.collapseMenu ? '-1px' : '-11px',
-      top: '-1px',
-    }}
-    {...props}
-  >
-    {props.children}
-  </DraggableTabs>
-))<TabsProps>`
+const MainTabs = styled((props: { collapseMenu?: boolean } & TabsProps) => {
+  const { collapseMenu, children, ...restProps } = props;
+  return (
+    <DraggableTabs
+      size='small'
+      type='editable-card'
+      tabBarGutter={-1}
+      tabBarStyle={{
+        left: collapseMenu ? '-1px' : '-11px',
+        top: '-1px',
+      }}
+      {...restProps}
+    >
+      {children}
+    </DraggableTabs>
+  );
+})<TabsProps>`
   height: 100%;
 
   // 工作区 Tabs 全局样式调整
@@ -222,6 +233,8 @@ const MainBox = () => {
     setActiveMenu,
     setActiveEnvironment,
     setCollectionTreeData,
+    collectionTreeData,
+    setEnvironmentTreeData,
   } = useStore();
 
   // 必须和路由搭配起来，在切换的时候附着上去
@@ -232,6 +245,7 @@ const MainBox = () => {
         `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.key}`,
       );
     }
+    fetchEnvironmentData();
   }, [activePane, panes]);
 
   useMount(() => {
@@ -274,7 +288,9 @@ const MainBox = () => {
     setPanes(filteredPanes);
 
     if (filteredPanes.length) {
-      const lastPane = filteredPanes[filteredPanes.length - 1];
+      const lastPane = JSON.parse(JSON.stringify(filteredPanes)).sort(
+        (a, b) => -(a.sortIndex - b.sortIndex),
+      )[0];
       setActivePane(lastPane.key, lastPane.menuType);
     } else {
       setActiveMenu(menuType);
@@ -303,7 +319,7 @@ const MainBox = () => {
     setPanes(
       {
         title: app.appId,
-        key: app.appId,
+        key: btoa(app.appId),
         menuType: MenuTypeEnum.Replay,
         pageType: PageTypeEnum.Replay,
         isNew: false,
@@ -327,6 +343,27 @@ const MainBox = () => {
       },
       'push',
     );
+  };
+
+  // TODO 需要应用载入时就获取环境变量，此处与envPage初始化有重复代码
+  const { run: fetchEnvironmentData } = useRequest(
+    () => EnvironmentService.getEnvironment({ workspaceId: params.workspaceId as string }),
+    {
+      ready: !!params.workspaceId,
+      refreshDeps: [params.workspaceId],
+      onSuccess(res) {
+        setEnvironmentTreeData(res);
+      },
+    },
+  );
+
+  const genTabTitle = (collectionTreeData, pane) => {
+    // Request类型需要动态响应tittle修改
+    if ([PageTypeEnum.Request, PageTypeEnum.Folder].includes(pane.pageType)) {
+      return treeFind(collectionTreeData, (item) => item.key === pane.key)?.title || 'New Request';
+    } else {
+      return pane.title;
+    }
   };
 
   return (
@@ -416,7 +453,11 @@ const MainBox = () => {
               onChange={setActivePane}
             >
               {panes.map((pane) => (
-                <MainTabPane className='main-tab-pane' tab={pane.title} key={pane.key}>
+                <MainTabPane
+                  className='main-tab-pane'
+                  tab={genTabTitle(collectionTreeData, pane)}
+                  key={pane.key}
+                >
                   {/* TODO 工作区自定义组件待规范，参考 menuItem */}
                   {pane.pageType === PageTypeEnum.Request && (
                     <HttpRequest
@@ -433,6 +474,9 @@ const MainBox = () => {
                   )}
                   {pane.pageType === PageTypeEnum.ReplayCase && (
                     <ReplayCase data={pane.data as PlanItemStatistics} />
+                  )}
+                  {pane.pageType === PageTypeEnum.ReplaySetting && (
+                    <ReplaySetting data={pane.data as ApplicationDataType} />
                   )}
                   {pane.pageType === PageTypeEnum.Folder && <Folder />}
                   {pane.pageType === PageTypeEnum.Environment && <Environment id={pane.key} />}

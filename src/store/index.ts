@@ -36,6 +36,7 @@ export type PaneType = {
   | nodeType // PageTypeEnum.Request 时的数据
     | ApplicationDataType // PageTypeEnum.Index 时的数据
     | PlanItemStatistics; // PageTypeEnum.ReplayAnalysis 时的数据
+  sortIndex?: number;
 };
 
 type BaseState = {
@@ -151,9 +152,13 @@ export const useStore = create(
     setActivePane: (activePaneKey, activeMenuKey) => {
       const setActiveEnvironment = get().setActiveEnvironment;
       set((state) => {
-        const key = activeMenuKey
-          ? activeMenuKey
-          : state.panes.find((i) => i.key === activePaneKey)?.menuType || MenuTypeEnum.Collection;
+        const statePane = state.panes.find((i) => i.key === activePaneKey);
+        if (statePane) {
+          // 每次选择tab的时候将sortIndex设置到最大，然后每次点击关闭的时候激活上最大的sort
+          const sortIndexArr = state.panes.map((i) => i.sortIndex || 0);
+          statePane.sortIndex = Math.max(...(sortIndexArr.length > 0 ? sortIndexArr : [0])) + 1;
+        }
+        const key = activeMenuKey ? activeMenuKey : statePane?.menuType || MenuTypeEnum.Collection;
         state.activePane = activePaneKey;
         state.activeMenu = [key, activePaneKey];
       });
@@ -167,12 +172,24 @@ export const useStore = create(
       }
 
       if (mode === 'push') {
-        // immer push new pane and set activePane
+        // insert or update
         const pane = panes as PaneType;
         set((state) => {
-          if (!state.panes.find((i) => i.key === pane.key)) {
-            state.panes.push(pane);
+          const sortIndexArr = state.panes.map((i) => i.sortIndex || 0);
+          const statePane = state.panes.find((i) => i.key === pane.key);
+          const maxSortIndex = Math.max(...(sortIndexArr.length > 0 ? sortIndexArr : [0])) + 1;
+
+          if (statePane) {
+            // pane already exist, just update sortIndex
+            statePane.sortIndex = maxSortIndex;
+          } else {
+            // insert new pane with sortIndex
+            state.panes.push({
+              ...pane,
+              sortIndex: maxSortIndex,
+            });
           }
+
           state.activePane = pane.key;
           state.activeMenu = [pane.menuType || MenuTypeEnum.Collection, pane.key];
         });
