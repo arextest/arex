@@ -39,11 +39,27 @@ import {
   UpdateRecordSettingRes,
 } from './Replay.type';
 
+// regressionList接口前端通过encodeURI + btoa 转码作为id
+function genId(id: string) {
+  try {
+    return btoa(encodeURI(id));
+  } catch (e) {
+    return id;
+  }
+}
+
 export default class ReplayService {
   static async regressionList() {
-    return request
-      .get<RegressionListRes>('/config/application/regressionList')
-      .then((res) => Promise.resolve(res.body.map((item) => item.application)));
+    return request.get<RegressionListRes>('/config/application/regressionList').then((res) =>
+      Promise.resolve(
+        res.body.map((item) => {
+          return {
+            ...item.application,
+            id: genId(item.application.appId),
+          };
+        }),
+      ),
+    );
   }
 
   static async queryPlanStatistics(params: QueryPlanStatisticsReq) {
