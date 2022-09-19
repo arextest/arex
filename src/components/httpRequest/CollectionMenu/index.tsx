@@ -158,6 +158,11 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     }
   };
 
+  const onExpand = (newExpandedKeys: string[]) => {
+    setExpandedKeys(newExpandedKeys);
+    setAutoExpandParent(false);
+  };
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     let newExpandedKeys;
@@ -426,11 +431,11 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
             </div>
 
             <Tree
-              autoExpandParent
+              autoExpandParent={autoExpandParent}
               blockNode={true}
               selectedKeys={selectedKeys}
-              defaultExpandedKeys={expandedKeys}
-              onExpand={setExpandedKeys}
+              expandedKeys={expandedKeys}
+              onExpand={onExpand}
               onSelect={handleSelect}
               switcherIcon={<DownOutlined />}
               treeData={treeData}

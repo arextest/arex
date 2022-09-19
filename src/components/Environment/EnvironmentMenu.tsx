@@ -59,7 +59,7 @@ const MenuList = styled(Menu, { shouldForwardProp: (propName) => propName !== 's
   .btnHover {
     padding: 2px 0;
     &:hover {
-      background-color: #eee;
+      background-color: ${(props) => props.theme.color.text.disabled};
     }
   }
 `;
@@ -149,7 +149,13 @@ const Environment: FC<EnvironmentProps> = ({ value, onSelect }) => {
       setRenameKey('');
       return;
     }
-    const env: any = { ...activeEnvironmentItem, envName: renameValue };
+    let env: any;
+    if (activeEnvironment && activeEnvironment.id == activeEnvironmentItem.id) {
+      env = { ...activeEnvironment, envName: renameValue };
+    } else {
+      env = { ...activeEnvironmentItem, envName: renameValue };
+    }
+
     EnvironmentService.saveEnvironment({ env: env }).then((res) => {
       if (res.body.success == true) {
         if (activeEnvironment && activeEnvironment.id == env.id) {
@@ -182,41 +188,32 @@ const Environment: FC<EnvironmentProps> = ({ value, onSelect }) => {
         items={[
           {
             key: '1',
-            label: (
-              <a target='_blank' onClick={() => {}}>
-                share
-              </a>
-            ),
+            label: <span onClick={() => {}}>share</span>,
             disabled: true,
           },
           {
             key: '2',
-            label: (
-              <a target='_blank' onClick={() => {}}>
-                Move
-              </a>
-            ),
+            label: <span onClick={() => {}}>Move</span>,
             disabled: true,
           },
           {
             key: '3',
-            label: (
-              <a target='_blank' onClick={() => {}}>
-                Duplicate
-              </a>
-            ),
+            label: <span onClick={() => {}}>Duplicate</span>,
             disabled: true,
           },
           {
             key: '4',
-            label: <a onClick={() => environmentItemOperation('rename', data)}>Rename</a>,
+            label: <span onClick={() => environmentItemOperation('rename', data)}>Rename</span>,
           },
           {
             key: '5',
             label: (
-              <a style={{ color: 'red' }} onClick={() => environmentItemOperation('delete', data)}>
+              <span
+                style={{ color: 'red' }}
+                onClick={() => environmentItemOperation('delete', data)}
+              >
                 Delete
-              </a>
+              </span>
             ),
           },
         ]}
