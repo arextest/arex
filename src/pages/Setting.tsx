@@ -57,7 +57,7 @@ const Setting: FC = () => {
 
   const changeFontSize = (fontSize: FontSize) => {
     // @ts-ignore
-    document.body.style['zoom'] = FontSizeMap[fontSize]; // Non-standard: https://developer.mozilla.org/en-US/docs/Web/CSS/zoom
+    // document.body.style['zoom'] = FontSizeMap[fontSize]; // Non-standard: https://developer.mozilla.org/en-US/docs/Web/CSS/zoom
   };
 
   const handleFormChange = (value: Partial<SettingForm>, allValue: SettingForm) => {

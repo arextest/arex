@@ -5,7 +5,7 @@ import {
   LeftOutlined,
 } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { useMount } from 'ahooks';
+import { useMount, useRequest } from 'ahooks';
 import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
 import React, { ReactNode, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -34,6 +34,7 @@ import {
   WorkspaceOverview,
 } from '../pages';
 import Setting from '../pages/Setting';
+import EnvironmentService from '../services/Environment.service';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { useStore } from '../store';
 import { generateGlobalPanelKey, uuid } from '../utils';
@@ -233,6 +234,7 @@ const MainBox = () => {
     setActiveEnvironment,
     setCollectionTreeData,
     collectionTreeData,
+    setEnvironmentTreeData,
   } = useStore();
 
   // 必须和路由搭配起来，在切换的时候附着上去
@@ -243,6 +245,7 @@ const MainBox = () => {
         `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.key}`,
       );
     }
+    fetchEnvironmentData();
   }, [activePane, panes]);
 
   useMount(() => {
@@ -342,6 +345,18 @@ const MainBox = () => {
       'push',
     );
   };
+
+  // TODO 需要应用载入时就获取环境变量，此处与envPage初始化有重复代码
+  const { run: fetchEnvironmentData } = useRequest(
+    () => EnvironmentService.getEnvironment({ workspaceId: params.workspaceId as string }),
+    {
+      ready: !!params.workspaceId,
+      refreshDeps: [params.workspaceId],
+      onSuccess(res) {
+        setEnvironmentTreeData(res);
+      },
+    },
+  );
 
   const genTabTitle = (collectionTreeData, pane) => {
     // Request类型需要动态响应tittle修改
