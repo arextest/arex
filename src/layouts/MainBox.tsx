@@ -235,6 +235,7 @@ const MainBox = () => {
     setCollectionTreeData,
     collectionTreeData,
     setEnvironmentTreeData,
+    environmentTreeData,
   } = useStore();
 
   // 必须和路由搭配起来，在切换的时候附着上去
@@ -361,6 +362,8 @@ const MainBox = () => {
     // Request类型需要动态响应tittle修改
     if ([PageTypeEnum.Request, PageTypeEnum.Folder].includes(pane.pageType)) {
       return treeFind(collectionTreeData, (item) => item.key === pane.key)?.title || 'New Request';
+    } else if ([PageTypeEnum.Environment].includes(pane.pageType)) {
+      return treeFind(environmentTreeData, (item) => item.id === pane.key)?.envName;
     } else {
       return pane.title;
     }
