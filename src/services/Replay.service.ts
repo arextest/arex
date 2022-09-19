@@ -39,7 +39,7 @@ import {
   UpdateRecordSettingRes,
 } from './Replay.type';
 
-// regressionList接口前端通过encodeURI + btoa 转码作为id
+// regressionList接口前端通过encodeURI + btoa 转码作为id，解码需要 decodeURI(atob(str))
 function genId(id: string) {
   try {
     return btoa(encodeURI(id));
