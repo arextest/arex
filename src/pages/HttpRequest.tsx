@@ -421,11 +421,8 @@ const HttpRequest: FC<HttpRequestProps> = ({
         replaceVar = env[i].value;
       }
     }
-    if (url.match('http')) {
-      return url.replace(editorValueMatch[0], replaceVar);
-    } else {
-      return `http://` + url.replace(editorValueMatch[0], replaceVar);
-    }
+
+    return url.replace(editorValueMatch[0], replaceVar);
   };
   const handleRequest = () => {
     const data: Partial<Record<'params' | 'data', object>> = {};
