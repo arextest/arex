@@ -9,7 +9,7 @@ import {
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Divider, Input, message, Select, Tooltip } from 'antd';
+import { Input, message, Select, Tooltip } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -81,7 +81,7 @@ const WorkspacesMenu = () => {
       setPanes(
         {
           title: params.workspaceName,
-          key: params.workspaceId,
+          key: generateGlobalPanelKey(params.workspaceId, PageTypeEnum.WorkspaceOverview),
           menuType: MenuTypeEnum.Collection,
           pageType: PageTypeEnum.WorkspaceOverview,
           isNew: true,

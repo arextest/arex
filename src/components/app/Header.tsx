@@ -46,7 +46,7 @@ const AppHeader = () => {
   const handleSetting = () => {
     setPanes(
       {
-        key: '__setting__',
+        key: '__SETTING__',
         title: 'Setting',
         pageType: PageTypeEnum.Setting,
         isNew: false,
