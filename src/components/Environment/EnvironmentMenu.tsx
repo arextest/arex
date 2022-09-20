@@ -53,13 +53,13 @@ const MenuList = styled(Menu, { shouldForwardProp: (propName) => propName !== 's
   .btnSelected {
     padding: 2px 0;
     &:hover {
-      background-color: ${(props) => props.theme.color.selected} !important;
+      background-color: ${(props) => props.theme.color.background.hover} !important;
     }
   }
   .btnHover {
     padding: 2px 0;
     &:hover {
-      background-color: ${(props) => props.theme.color.text.disabled};
+      background-color: ${(props) => props.theme.color.background.hover};
     }
   }
 `;

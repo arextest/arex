@@ -74,6 +74,7 @@ declare module '@emotion/react' {
       background: {
         primary: string;
         active: string;
+        hover: string;
       };
     };
   }
