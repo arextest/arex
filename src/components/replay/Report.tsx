@@ -22,7 +22,7 @@ import { MenuTypeEnum, PageTypeEnum } from '../../constant';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
-import { getPercent, uuid } from '../../utils';
+import { generateGlobalPaneId, getPercent, uuid } from '../../utils';
 import { SmallTextButton } from '../styledComponents';
 import { resultsStates } from './Results';
 
@@ -156,12 +156,17 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           onClick={() =>
             setPanes(
               {
-                key: uuid(),
                 title: `Analysis - ${record.operationName}`,
                 pageType: PageTypeEnum.ReplayAnalysis,
                 menuType: MenuTypeEnum.Replay,
                 isNew: false,
                 data: record,
+                paneId: generateGlobalPaneId(
+                  MenuTypeEnum.Replay,
+                  PageTypeEnum.ReplayAnalysis,
+                  record.operationName,
+                ),
+                rawId: record.operationName,
               },
               'push',
             )
@@ -173,12 +178,17 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           onClick={() =>
             setPanes(
               {
-                key: uuid(),
                 title: `Case - ${record.operationName}`,
                 pageType: PageTypeEnum.ReplayCase,
                 menuType: MenuTypeEnum.Replay,
                 isNew: false,
                 data: record,
+                paneId: generateGlobalPaneId(
+                  MenuTypeEnum.Replay,
+                  PageTypeEnum.ReplayCase,
+                  record.operationName,
+                ),
+                rawId: record.operationName,
               },
               'push',
             )
