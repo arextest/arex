@@ -7,7 +7,7 @@ import {
 import styled from '@emotion/styled';
 import { useMount, useRequest } from 'ahooks';
 import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
-import React, { ReactNode, useEffect, useRef } from 'react';
+import React, { ReactNode, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
@@ -37,7 +37,7 @@ import Setting from '../pages/Setting';
 import EnvironmentService from '../services/Environment.service';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { useStore } from '../store';
-import { uuid } from '../utils';
+import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../utils';
 import DraggableLayout from './DraggableLayout';
 
 const { TabPane } = Tabs;
@@ -225,8 +225,6 @@ const MainBox = () => {
   const {
     panes,
     setPanes,
-    activePane,
-    setActivePane,
     activeMenu,
     collapseMenu,
     setCollapseMenu,
@@ -239,21 +237,21 @@ const MainBox = () => {
   } = useStore();
 
   // 必须和路由搭配起来，在切换的时候附着上去
-  useEffect(() => {
-    const findActivePane = panes.find((i) => i.key === activePane);
-    if (findActivePane) {
-      nav(
-        `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.key}`,
-      );
-    }
-    fetchEnvironmentData();
-  }, [activePane, panes]);
+  // useEffect(() => {
+  //   const findActivePane = panes.find((i) => i.key === activePane);
+  //   if (findActivePane) {
+  //     nav(
+  //       `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.key}`,
+  //     );
+  //   }
+  //   fetchEnvironmentData();
+  // }, [activePane, panes]);
 
   useMount(() => {
     // TODO 只做了Replay的路由刷新优化
-    if (params.rType === PageTypeEnum.Replay) {
-      setActivePane(params.rTypeId, PageTypeEnum.Replay);
-    }
+    // if (params.rType === PageTypeEnum.Replay) {
+    //   setActivePane(params.rTypeId, PageTypeEnum.Replay);
+    // }
   });
 
   const collectionMenuRef = useRef();
@@ -285,14 +283,14 @@ const MainBox = () => {
 
   const removeTab = (targetKey: string) => {
     const menuType = activeMenu[0];
-    const filteredPanes = panes.filter((i) => i.key !== targetKey);
+    const filteredPanes = panes.filter((i) => i.paneId !== targetKey);
     setPanes(filteredPanes);
 
     if (filteredPanes.length) {
-      const lastPane = JSON.parse(JSON.stringify(filteredPanes)).sort(
-        (a, b) => -(a.sortIndex - b.sortIndex),
-      )[0];
-      setActivePane(lastPane.key, lastPane.menuType);
+      // const lastPane = JSON.parse(JSON.stringify(filteredPanes)).sort(
+      //   (a, b) => -(a.sortIndex - b.sortIndex),
+      // )[0];
+      setActiveMenu(filteredPanes[0].menuType, filteredPanes[0].paneId);
     } else {
       setActiveMenu(menuType);
     }
@@ -305,12 +303,17 @@ const MainBox = () => {
   const handleCollectionMenuClick: CollectionProps['onSelect'] = (key, node) => {
     setPanes(
       {
-        key,
         title: node.title,
         menuType: MenuTypeEnum.Collection,
         pageType: node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
         isNew: false,
         data: node,
+        paneId: generateGlobalPaneId(
+          MenuTypeEnum.Collection,
+          node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
+          key,
+        ),
+        rawId: key,
       },
       'push',
     );
@@ -320,11 +323,12 @@ const MainBox = () => {
     setPanes(
       {
         title: app.appId,
-        key: btoa(app.appId),
         menuType: MenuTypeEnum.Replay,
         pageType: PageTypeEnum.Replay,
         isNew: false,
         data: app,
+        paneId: generateGlobalPaneId(MenuTypeEnum.Collection, PageTypeEnum.Replay, btoa(app.appId)),
+        rawId: btoa(app.appId),
       },
       'push',
     );
@@ -361,9 +365,15 @@ const MainBox = () => {
   const genTabTitle = (collectionTreeData, pane) => {
     // Request类型需要动态响应tittle修改
     if ([PageTypeEnum.Request, PageTypeEnum.Folder].includes(pane.pageType)) {
-      return treeFind(collectionTreeData, (item) => item.key === pane.key)?.title || 'New Request';
+      return (
+        treeFind(collectionTreeData, (item) => item.key === parseGlobalPaneId(pane.paneId)['rawId'])
+          ?.title || 'New Request'
+      );
     } else if ([PageTypeEnum.Environment].includes(pane.pageType)) {
-      return treeFind(environmentTreeData, (item) => item.id === pane.key)?.envName;
+      return treeFind(
+        environmentTreeData,
+        (item) => item.id === parseGlobalPaneId(pane.paneId)['rawId'],
+      )?.envName;
     } else {
       return pane.title;
     }
@@ -404,7 +414,7 @@ const MainBox = () => {
                 key={MenuTypeEnum.Collection}
                 menuItem={
                   <CollectionMenu
-                    value={activeMenu[1]}
+                    value={parseGlobalPaneId(activeMenu[1])['rawId']}
                     onSelect={handleCollectionMenuClick}
                     onGetData={setCollectionTreeData}
                     cRef={collectionMenuRef}
@@ -416,8 +426,8 @@ const MainBox = () => {
                 key={MenuTypeEnum.Replay}
                 menuItem={
                   <ReplayMenu
-                    initValue={activeMenu[1]}
-                    value={activeMenu[1]}
+                    initValue={parseGlobalPaneId(activeMenu[1])['rawId']}
+                    value={parseGlobalPaneId(activeMenu[1])['rawId']}
                     onSelect={handleReplayMenuClick}
                   />
                 }
@@ -449,17 +459,19 @@ const MainBox = () => {
             }
           >
             <MainTabs
-              activeKey={activePane}
+              activeKey={activeMenu[1]}
               collapseMenu={collapseMenu}
               tabBarExtraContent={<EnvironmentSelect />}
               onEdit={handleTabsEdit}
-              onChange={setActivePane}
+              onChange={(t) => {
+                setActiveMenu(activeMenu[0], t);
+              }}
             >
               {panes.map((pane) => (
                 <MainTabPane
                   className='main-tab-pane'
                   tab={genTabTitle(collectionTreeData, pane)}
-                  key={pane.key}
+                  key={pane.paneId}
                 >
                   {/* TODO 工作区自定义组件待规范，参考 menuItem */}
                   {pane.pageType === PageTypeEnum.Request && (
@@ -467,10 +479,11 @@ const MainBox = () => {
                       id={pane.key}
                       isNew={pane.isNew}
                       fetchCollectionTreeData={fetchCollectionTreeData}
+                      paneId={pane.paneId}
                     />
                   )}
                   {pane.pageType === PageTypeEnum.Replay && (
-                    <Replay data={pane.data as ApplicationDataType} />
+                    <Replay paneId={pane.paneId} data={pane.data as ApplicationDataType} />
                   )}
                   {pane.pageType === PageTypeEnum.ReplayAnalysis && (
                     <ReplayAnalysis data={pane.data as PlanItemStatistics} />
