@@ -327,8 +327,8 @@ const MainBox = () => {
         pageType: PageTypeEnum.Replay,
         isNew: false,
         data: app,
-        paneId: generateGlobalPaneId(MenuTypeEnum.Collection, PageTypeEnum.Replay, btoa(app.appId)),
-        rawId: btoa(app.appId),
+        paneId: generateGlobalPaneId(MenuTypeEnum.Collection, PageTypeEnum.Replay, app.id),
+        rawId: app.id,
       },
       'push',
     );
