@@ -179,6 +179,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
             onFresh={reload}
           />
         )}
+        {selectedKeys}
         <MenuList
           small={props.small}
           selectedKeys={selectedKeys}

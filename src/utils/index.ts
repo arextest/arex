@@ -2,6 +2,7 @@ import { message } from 'antd';
 import { v4 as uuid } from 'uuid';
 export { uuid };
 
+import { MenuTypeEnum, PageTypeEnum } from '../constant';
 import * as ChartUtils from './chart';
 export { ChartUtils };
 
@@ -66,4 +67,20 @@ export const tryPrettierJsonString = (jsonString: string, errorTip?: string) => 
 export const getPercent = (num: number, den: number, showPercentSign = true) => {
   const value = num && den ? parseFloat(((num / den) * 100).toFixed(0)) : 0;
   return showPercentSign ? value + '%' : value;
+};
+
+export const generateGlobalPaneId: any = (
+  menuType: MenuTypeEnum,
+  pageType: PageTypeEnum,
+  rawId: string,
+) => btoa(encodeURI(`${menuType}__${pageType}__${rawId}`));
+
+export const parseGlobalPaneId = (paneId: string) => {
+  paneId = paneId || '';
+  const arr = atob(decodeURI(paneId)).split('__');
+  return {
+    menuType: arr[0],
+    pageType: arr[1],
+    rawId: arr[2],
+  };
 };

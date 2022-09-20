@@ -8,6 +8,7 @@ import { MenuTypeEnum, PageTypeEnum } from '../../constant';
 import ReplayService from '../../services/Replay.service';
 import { ApplicationDataType } from '../../services/Replay.type';
 import { useStore } from '../../store';
+import { generateGlobalPaneId } from '../../utils';
 import { PanesTitle } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
 
@@ -109,11 +110,12 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     setPanes(
       {
         title: `Setting ${data.appId}`,
-        key: `SETTING__${data.appId}`,
         menuType: MenuTypeEnum.Replay,
         pageType: PageTypeEnum.ReplaySetting,
         isNew: false,
         data,
+        paneId: generateGlobalPaneId(MenuTypeEnum.Replay, PageTypeEnum.ReplaySetting, data.id),
+        rawId: data.id,
       },
       'push',
     );

@@ -8,7 +8,7 @@ import CollapseTable from '../../components/styledComponents/CollapseTable';
 import { ApplicationDataType, PlanStatistics } from '../../services/Replay.type';
 import { uuid } from '../../utils';
 
-const Replay: FC<{ data?: ApplicationDataType }> = ({ data }) => {
+const Replay: FC<{ data?: ApplicationDataType; paneId: any }> = ({ data }) => {
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
   const handleSelectPlan = (plan: PlanStatistics) => {
     plan.planId === selectedPlan?.planId ? setSelectedPlan(undefined) : setSelectedPlan(plan);
