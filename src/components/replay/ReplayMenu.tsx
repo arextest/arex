@@ -15,7 +15,7 @@ const ReplayMenu: FC<{
     <MenuSelect<ApplicationDataType>
       initValue={props.initValue}
       refresh
-      rowKey='appId'
+      rowKey='id'
       selectedKeys={selectedKeys}
       onSelect={props.onSelect}
       placeholder='applicationsMenu.appFilterPlaceholder'
@@ -23,7 +23,7 @@ const ReplayMenu: FC<{
       filter={(keyword, app) => app.appName.includes(keyword) || app.appId.includes(keyword)}
       itemRender={(app) => ({
         label: app.appId,
-        key: app.appId,
+        key: app.id,
       })}
       sx={{
         padding: '8px 0 8px 8px',

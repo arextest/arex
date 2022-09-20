@@ -2,9 +2,7 @@ import { message } from 'antd';
 import { v4 as uuid } from 'uuid';
 export { uuid };
 
-import React from 'react';
-
-import { PageTypeEnum } from '../constant';
+import { MenuTypeEnum, PageTypeEnum } from '../constant';
 import * as ChartUtils from './chart';
 export { ChartUtils };
 
@@ -71,20 +69,18 @@ export const getPercent = (num: number, den: number, showPercentSign = true) => 
   return showPercentSign ? value + '%' : value;
 };
 
-/**
- * 生成全局唯一的 globalPanelKey
- * 由于 globalPanelKey 将用于 url 中，需要编码以消除非法字符串（如"."）
- * @param key
- * @param pageType
- */
-export const generateGlobalPanelKey = (key: React.Key, pageType: PageTypeEnum) =>
-  `${pageType}__${btoa(key.toString())}`;
+export const generateGlobalPaneId: any = (
+  menuType: MenuTypeEnum,
+  pageType: PageTypeEnum,
+  rawId: string,
+) => btoa(encodeURI(`${menuType}__${pageType}__${rawId}`));
 
-/**
- * 解析 globalPanelKey 获取真实的页面对象 key
- * @param globalPanelKey
- */
-export const parseGlobalPanelKey = (globalPanelKey: string) => {
-  const fragments = globalPanelKey.split('__');
-  return fragments.length === 2 ? atob(fragments[1]) : undefined;
+export const parseGlobalPaneId = (paneId: string) => {
+  paneId = paneId || '';
+  const arr = atob(decodeURI(paneId)).split('__');
+  return {
+    menuType: arr[0],
+    pageType: arr[1],
+    rawId: arr[2],
+  };
 };

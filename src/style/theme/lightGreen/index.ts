@@ -26,6 +26,7 @@ const theme = {
     background: {
       primary: '#ffffff',
       active: '#fafafa',
+      hover: '#eee',
     },
   },
 };

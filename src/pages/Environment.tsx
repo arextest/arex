@@ -187,7 +187,7 @@ export type EnvironmentProps = {
 
 const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
   const parmas = useParams();
-  const { activeEnvironment, setEnvironmentTreeData } = useStore();
+  const { activeEnvironment, setEnvironmentTreeData, setActiveEnvironment } = useStore();
 
   const [data, setData] = useState<[]>([]);
   const [isActive, setIsActive] = useState<[]>([]);
@@ -339,6 +339,7 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
     EnvironmentService.saveEnvironment({ env: env }).then((res) => {
       if (res.body.success == true) {
         fetchEnvironmentData();
+        setActiveEnvironment(env);
         message.success('保存成功');
       } else {
         message.error('保存失败');

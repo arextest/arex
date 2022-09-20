@@ -158,6 +158,11 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     }
   };
 
+  const onExpand = (newExpandedKeys: string[]) => {
+    setExpandedKeys(newExpandedKeys);
+    setAutoExpandParent(false);
+  };
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     let newExpandedKeys;
@@ -214,7 +219,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
   );
 
   // 树拖拽
-  const onDrop: TreeProps['onDrop'] = (info) => {
+  const onDrop: TreeProps['onDrop'] = (info: any) => {
     const dropKey = info.node.key;
     const dragKey = info.dragNode.key;
     const dragNodeType = info.dragNode.nodeType;
@@ -254,8 +259,8 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
         item.children.unshift(dragObj);
       });
     } else if (
-      ((info.node as any).children || []).length > 0 && // Has children
-      (info.node as any).expanded && // Is expanded
+      ((info.node as any).props.children || []).length > 0 && // Has children
+      (info.node as any).props.expanded && // Is expanded
       dropPosition === 1 // On the bottom gap
     ) {
       loop(data, dropKey, (item) => {
@@ -379,8 +384,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
         if (e.key == dragKey) toIndex = i;
       });
     }
-    // console.log({fromNodePath,id:workspaces[0].id,toParentPath,toIndex});
-
+    // console.log({fromNodePath, id: params.workspaceId, toParentPath, toIndex});
     CollectionService.move({ fromNodePath, id: params.workspaceId, toParentPath, toIndex }).then(
       (res) => {
         if (res.body.success) {
@@ -426,11 +430,11 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
             </div>
 
             <Tree
-              autoExpandParent
+              autoExpandParent={autoExpandParent}
               blockNode={true}
               selectedKeys={selectedKeys}
-              defaultExpandedKeys={expandedKeys}
-              onExpand={setExpandedKeys}
+              expandedKeys={expandedKeys}
+              onExpand={onExpand}
               onSelect={handleSelect}
               switcherIcon={<DownOutlined />}
               treeData={treeData}

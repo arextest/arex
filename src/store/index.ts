@@ -28,7 +28,7 @@ export type UserInfo = {
 // TODO 数据结构待规范
 export type PaneType = {
   title: string;
-  key: string; // 为保证唯一性，此字段应由 generateGlobalPanelKey 方法生成
+  key?: string;
   menuType?: MenuTypeEnum;
   pageType: PageTypeEnum;
   isNew?: boolean;
@@ -37,6 +37,8 @@ export type PaneType = {
     | ApplicationDataType // PageTypeEnum.Index 时的数据
     | PlanItemStatistics; // PageTypeEnum.ReplayAnalysis 时的数据
   sortIndex?: number;
+  paneId?: any;
+  rawId?: any;
 };
 
 type BaseState = {
@@ -48,13 +50,18 @@ type BaseState = {
   userInfo: UserInfo;
   logout: () => void;
 
-  activePane: string;
-  setActivePane: (activePaneKey: string, activeMenuKey?: MenuTypeEnum) => void;
+  // activePane: string;
+  // setActivePane: (activePaneKey: string, activeMenuKey?: MenuTypeEnum) => void;
   setUserInfo: (data: UserInfo | string) => void;
   activeMenu: [MenuTypeEnum, string | undefined]; // [菜单id, 菜单项目id]
   setActiveMenu: (menuKey: MenuTypeEnum, menuItemKey?: string) => void;
   panes: PaneType[];
 
+  /*
+   * 修改工作区标签页数据
+   * @param panes 工作区标签页数据
+   * @param mode 添加模式：push，替换模式：undefined
+   * */
   setPanes: (panes: PaneType | PaneType[], mode?: 'push') => void;
   resetPanes: () => void;
   collectionTreeData: any;
@@ -143,29 +150,24 @@ export const useStore = create(
     },
     extensionInstalled: false,
 
-    activePane: '',
-    setActivePane: (activePaneKey, activeMenuKey) => {
-      const setActiveEnvironment = get().setActiveEnvironment;
-      set((state) => {
-        const statePane = state.panes.find((i) => i.key === activePaneKey);
-        if (statePane) {
-          // 每次选择tab的时候将sortIndex设置到最大，然后每次点击关闭的时候激活上最大的sort
-          const sortIndexArr = state.panes.map((i) => i.sortIndex || 0);
-          statePane.sortIndex = Math.max(...(sortIndexArr.length > 0 ? sortIndexArr : [0])) + 1;
-        }
-        const key = activeMenuKey ? activeMenuKey : statePane?.menuType || MenuTypeEnum.Collection;
-        state.activePane = activePaneKey;
-        state.activeMenu = [key, activePaneKey];
-      });
-      setActiveEnvironment(activePaneKey);
-    },
+    // activePane: '',
+    // setActivePane: (activePaneKey, activeMenuKey) => {
+    //   const setActiveEnvironment = get().setActiveEnvironment;
+    //   set((state) => {
+    //     const statePane = state.panes.find((i) => i.key === activePaneKey);
+    //     if (statePane) {
+    //       // 每次选择tab的时候将sortIndex设置到最大，然后每次点击关闭的时候激活上最大的sort
+    //       const sortIndexArr = state.panes.map((i) => i.sortIndex || 0);
+    //       statePane.sortIndex = Math.max(...(sortIndexArr.length > 0 ? sortIndexArr : [0])) + 1;
+    //     }
+    //     const key = activeMenuKey ? activeMenuKey : statePane?.menuType || MenuTypeEnum.Collection;
+    //     state.activePane = activePaneKey;
+    //     state.activeMenu = [key, activePaneKey];
+    //   });
+    //   setActiveEnvironment(activePaneKey);
+    // },
 
     panes: [],
-    /*
-     * 修改工作区标签页数据
-     * @param panes 工作区标签页数据
-     * @param mode 添加模式：push，替换模式：undefined
-     * */
     setPanes: (panes, mode) => {
       if (!mode) {
         set({ panes: panes as PaneType[] });
@@ -176,7 +178,7 @@ export const useStore = create(
         const pane = panes as PaneType;
         set((state) => {
           const sortIndexArr = state.panes.map((i) => i.sortIndex || 0);
-          const statePane = state.panes.find((i) => i.key === pane.key);
+          const statePane = state.panes.find((i) => i.paneId === pane.paneId);
           const maxSortIndex = Math.max(...(sortIndexArr.length > 0 ? sortIndexArr : [0])) + 1;
 
           if (statePane) {
@@ -190,8 +192,8 @@ export const useStore = create(
             });
           }
 
-          state.activePane = pane.key;
-          state.activeMenu = [pane.menuType || MenuTypeEnum.Collection, pane.key];
+          // state.activePane = pane.paneId;
+          state.activeMenu = [pane.menuType || MenuTypeEnum.Collection, pane.paneId];
         });
       }
     },
@@ -200,14 +202,14 @@ export const useStore = create(
       set({ activeMenu: [menuKey, menuItemKey] });
     },
     resetPanes: () => {
-      set({ panes: [], activePane: '', activeMenu: [MenuTypeEnum.Collection, undefined] });
+      set({ panes: [], activeMenu: [MenuTypeEnum.Collection, undefined] });
     },
 
     logout: () => {
       clearLocalStorage('accessToken');
       clearLocalStorage('refreshToken');
       clearLocalStorage('userInfo');
-      set({ userInfo: undefined, panes: [], activePane: '' });
+      set({ userInfo: undefined, panes: [] });
     },
 
     collectionTreeData: [],
@@ -241,7 +243,6 @@ export const useStore = create(
   })),
 );
 
-// @ts-ignore
 if (process.env.NODE_ENV === 'development') {
   mountStoreDevtool('Store', useStore);
 }

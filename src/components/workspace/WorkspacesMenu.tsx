@@ -9,7 +9,7 @@ import {
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Divider, Input, message, Select, Tooltip } from 'antd';
+import { Input, message, Select, Tooltip } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -17,7 +17,6 @@ import { MenuTypeEnum, PageTypeEnum, RoleEnum } from '../../constant';
 import { WorkspaceService } from '../../services/Workspace.service';
 import { Workspace } from '../../services/Workspace.type';
 import { useStore } from '../../store';
-import { generateGlobalPanelKey } from '../../utils';
 import { TooltipButton } from '../index';
 
 const WorkspacesMenuWrapper = styled.div<{ width?: string }>`

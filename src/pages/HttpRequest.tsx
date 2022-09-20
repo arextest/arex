@@ -51,7 +51,7 @@ import { runTestScript } from '../helpers/sandbox';
 import { CollectionService } from '../services/CollectionService';
 import { FileSystemService } from '../services/FileSystem.service';
 import { PaneType, useStore } from '../store';
-import { generateGlobalPanelKey, tryParseJsonString, tryPrettierJsonString } from '../utils';
+import { parseGlobalPaneId, tryParseJsonString, tryPrettierJsonString } from '../utils';
 import AgentAxios from '../utils/request';
 
 const { TabPane } = Tabs;
@@ -66,6 +66,7 @@ export type HttpRequestProps = {
   id: string;
   isNew?: boolean;
   fetchCollectionTreeData: () => void;
+  paneId?: any;
 };
 
 export type KeyValueType = {
@@ -136,10 +137,11 @@ const BreadcrumbHeader = styled.div`
 // id：request的id，组件加载时拉一次数据
 // isNew：是否为新增的request
 const HttpRequest: FC<HttpRequestProps> = ({
-  id,
+  id: _id,
   isNew,
   mode: defaultMode = HttpRequestMode.Normal,
   fetchCollectionTreeData,
+  paneId,
 }) => {
   const {
     userInfo: { email: userName },
@@ -155,6 +157,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
   const [renameKey, setRenameKey] = useState('');
   const [renameValue, setRenameValue] = useState('');
   const [mode, setMode] = useState(defaultMode);
+  const id = useMemo(() => parseGlobalPaneId(paneId)['rawId'], [paneId]);
   // 如果是case(2)类型的话，就一定有一个父节点，类型也一定是request(1)
   const nodeInfoInCollectionTreeData = useMemo(() => {
     const paths = treeFindPath(collectionTreeData, (node) => node.key === id);
@@ -506,7 +509,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
     fetchCollectionTreeData(); // TODO 更新 Collection 数据
     setPanes(
       {
-        key: generateGlobalPanelKey(pane.key, PageTypeEnum.Request),
+        key: pane.key,
         isNew: true,
         title: pane.title,
         menuType: MenuTypeEnum.Collection,
