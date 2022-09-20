@@ -18,6 +18,7 @@ import { WorkspaceService } from '../../services/Workspace.service';
 import { Workspace } from '../../services/Workspace.type';
 import { useStore } from '../../store';
 import { TooltipButton } from '../index';
+import { generateGlobalPaneId } from '../../utils';
 
 const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
   height: 35px;
@@ -81,10 +82,15 @@ const WorkspacesMenu = () => {
       setPanes(
         {
           title: params.workspaceName,
-          key: generateGlobalPanelKey(params.workspaceId, PageTypeEnum.WorkspaceOverview),
           menuType: MenuTypeEnum.Collection,
           pageType: PageTypeEnum.WorkspaceOverview,
           isNew: true,
+          paneId: generateGlobalPaneId(
+            MenuTypeEnum.Collection,
+            PageTypeEnum.WorkspaceOverview,
+            params.workspaceId,
+          ),
+          rawId: params.workspaceId,
         },
         'push',
       );
