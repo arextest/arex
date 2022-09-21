@@ -129,14 +129,29 @@ const Environment: FC<EnvironmentProps> = ({ value, onSelect }) => {
     }
   };
 
+  const duplicateEnvironment = (data: EnvironmentType) => {
+    EnvironmentService.duplicateEnvironment({ id: data.id, workspaceId: data.workspaceId }).then(
+      (res) => {
+        if (res.body.success == true) {
+          fetchEnvironmentData();
+        } else {
+          console.log(res, 'duplicaterror');
+        }
+      },
+    );
+  };
+
   const handleOk = (e: string) => {
     if (e == 'delete') {
-      EnvironmentService.deleteEnvironment(activeEnvironmentItem.id).then((res) => {
+      EnvironmentService.deleteEnvironment({
+        id: activeEnvironmentItem.id,
+        workspaceId: activeEnvironmentItem.workspaceId,
+      }).then((res) => {
         if (res.body.success == true) {
           fetchEnvironmentData();
           setIsModalVisible(false);
         } else {
-          console.log('deleteError');
+          console.log(res, 'deleteError');
         }
       });
     }
@@ -183,23 +198,21 @@ const Environment: FC<EnvironmentProps> = ({ value, onSelect }) => {
       <Menu
         onClick={(e) => {
           e.domEvent.stopPropagation();
-          // setVisible(false);
         }}
         items={[
-          {
-            key: '1',
-            label: <span onClick={() => {}}>share</span>,
-            disabled: true,
-          },
-          {
-            key: '2',
-            label: <span onClick={() => {}}>Move</span>,
-            disabled: true,
-          },
+          // {
+          //   key: '1',
+          //   label: <span onClick={() => {}}>share</span>,
+          //   disabled: true,
+          // },
+          // {
+          //   key: '2',
+          //   label: <span onClick={() => {}}>Move</span>,
+          //   disabled: true,
+          // },
           {
             key: '3',
-            label: <span onClick={() => {}}>Duplicate</span>,
-            disabled: true,
+            label: <span onClick={() => duplicateEnvironment(data)}>Duplicate</span>,
           },
           {
             key: '4',
