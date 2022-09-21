@@ -342,13 +342,12 @@ const MainBox = () => {
     setActiveEnvironment(key);
     setPanes(
       {
-        key,
         title: node.title,
         menuType: MenuTypeEnum.Environment,
         pageType: PageTypeEnum.Environment,
         isNew: false,
         data: node,
-        paneId: generateGlobalPaneId(MenuTypeEnum.Collection, PageTypeEnum.Replay, key),
+        paneId: generateGlobalPaneId(MenuTypeEnum.Environment, PageTypeEnum.Environment, key),
         rawId: key,
       },
       'push',

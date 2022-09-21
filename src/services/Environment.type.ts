@@ -37,3 +37,13 @@ export type Environment = {
 export interface GetEnvironmentRes {
   environments: Environment[];
 }
+
+export interface EnvironmentDuplicate {
+  id: string;
+  workspaceId: string;
+}
+
+export interface EnvironmentRemove {
+  id: string;
+  workspaceId: string;
+}

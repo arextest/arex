@@ -1,5 +1,11 @@
 import request from '../api/axios';
-import { EnvironmentSave, GetEnvironmentReq, GetEnvironmentRes } from './Environment.type';
+import {
+  EnvironmentSave,
+  GetEnvironmentReq,
+  GetEnvironmentRes,
+  EnvironmentDuplicate,
+  EnvironmentRemove,
+} from './Environment.type';
 
 export default class EnvironmentService {
   static async getEnvironment(params: GetEnvironmentReq) {
@@ -12,7 +18,11 @@ export default class EnvironmentService {
     return request.post(`/api/environment/saveEnvironment`, params);
   }
 
-  static async deleteEnvironment(id: string): Promise<any> {
-    return request.delete(`/api/environment/${id}`);
+  static async deleteEnvironment(params: EnvironmentRemove): Promise<any> {
+    return request.post(`/api/environment/removeEnvironment`, params);
+  }
+
+  static async duplicateEnvironment(params: EnvironmentDuplicate): Promise<any> {
+    return request.post(`/api/environment/duplicateEnvironment`, params);
   }
 }

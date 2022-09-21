@@ -129,14 +129,29 @@ const Environment: FC<EnvironmentProps> = ({ value, onSelect }) => {
     }
   };
 
+  const duplicateEnvironment = (data: EnvironmentType) => {
+    EnvironmentService.duplicateEnvironment({ id: data.id, workspaceId: data.workspaceId }).then(
+      (res) => {
+        if (res.body.success == true) {
+          fetchEnvironmentData();
+        } else {
+          console.log(res, 'duplicaterror');
+        }
+      },
+    );
+  };
+
   const handleOk = (e: string) => {
     if (e == 'delete') {
-      EnvironmentService.deleteEnvironment(activeEnvironmentItem.id).then((res) => {
+      EnvironmentService.deleteEnvironment({
+        id: activeEnvironmentItem.id,
+        workspaceId: activeEnvironmentItem.workspaceId,
+      }).then((res) => {
         if (res.body.success == true) {
           fetchEnvironmentData();
           setIsModalVisible(false);
         } else {
-          console.log('deleteError');
+          console.log(res, 'deleteError');
         }
       });
     }
@@ -182,36 +197,41 @@ const Environment: FC<EnvironmentProps> = ({ value, onSelect }) => {
     return (
       <Menu
         onClick={(e) => {
-          e.domEvent.stopPropagation();
-          // setVisible(false);
+          // e.domEvent.stopPropagation();
+          switch (e.key) {
+            case '3':
+              duplicateEnvironment(data);
+              break;
+            case '4':
+              environmentItemOperation('rename', data);
+              break;
+            case '5':
+              environmentItemOperation('delete', data);
+          }
         }}
         items={[
-          {
-            key: '1',
-            label: <span onClick={() => {}}>share</span>,
-            disabled: true,
-          },
-          {
-            key: '2',
-            label: <span onClick={() => {}}>Move</span>,
-            disabled: true,
-          },
+          // {
+          //   key: '1',
+          //   label: <span onClick={() => {}}>share</span>,
+          //   disabled: true,
+          // },
+          // {
+          //   key: '2',
+          //   label: <span onClick={() => {}}>Move</span>,
+          //   disabled: true,
+          // },
           {
             key: '3',
-            label: <span onClick={() => {}}>Duplicate</span>,
-            disabled: true,
+            label: <span className={'dropdown-click-target'}>Duplicate</span>,
           },
           {
             key: '4',
-            label: <span onClick={() => environmentItemOperation('rename', data)}>Rename</span>,
+            label: <span className={'dropdown-click-target'}>Rename</span>,
           },
           {
             key: '5',
             label: (
-              <span
-                style={{ color: 'red' }}
-                onClick={() => environmentItemOperation('delete', data)}
-              >
+              <span style={{ color: 'red' }} className={'dropdown-click-target'}>
                 Delete
               </span>
             ),
