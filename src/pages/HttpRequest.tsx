@@ -51,7 +51,12 @@ import { runTestScript } from '../helpers/sandbox';
 import { CollectionService } from '../services/CollectionService';
 import { FileSystemService } from '../services/FileSystem.service';
 import { PaneType, useStore } from '../store';
-import { parseGlobalPaneId, tryParseJsonString, tryPrettierJsonString } from '../utils';
+import {
+  generateGlobalPaneId,
+  parseGlobalPaneId,
+  tryParseJsonString,
+  tryPrettierJsonString,
+} from '../utils';
 import AgentAxios from '../utils/request';
 
 const { TabPane } = Tabs;
@@ -509,11 +514,13 @@ const HttpRequest: FC<HttpRequestProps> = ({
     fetchCollectionTreeData(); // TODO 更新 Collection 数据
     setPanes(
       {
-        key: pane.key,
+        // key: pane.key,
         isNew: true,
         title: pane.title,
         menuType: MenuTypeEnum.Collection,
         pageType: PageTypeEnum.Request,
+        paneId: generateGlobalPaneId(MenuTypeEnum.Collection, PageTypeEnum.Request, pane.key),
+        rawId: pane.key,
       },
       'push',
     );

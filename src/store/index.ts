@@ -37,8 +37,8 @@ export type PaneType = {
     | ApplicationDataType // PageTypeEnum.Index 时的数据
     | PlanItemStatistics; // PageTypeEnum.ReplayAnalysis 时的数据
   sortIndex?: number;
-  paneId?: any;
-  rawId?: any;
+  paneId: string;
+  rawId: string;
 };
 
 type BaseState = {

@@ -7,7 +7,7 @@ import {
 import styled from '@emotion/styled';
 import { useMount, useRequest } from 'ahooks';
 import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
-import React, { ReactNode, useRef } from 'react';
+import React, { ReactNode, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
@@ -237,15 +237,15 @@ const MainBox = () => {
   } = useStore();
 
   // 必须和路由搭配起来，在切换的时候附着上去
-  // useEffect(() => {
-  //   const findActivePane = panes.find((i) => i.key === activePane);
-  //   if (findActivePane) {
-  //     nav(
-  //       `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.key}`,
-  //     );
-  //   }
-  //   fetchEnvironmentData();
-  // }, [activePane, panes]);
+  useEffect(() => {
+    const findActivePane = panes.find((i) => i.paneId === activeMenu[1]);
+    if (findActivePane) {
+      nav(
+        `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.rawId}`,
+      );
+    }
+    fetchEnvironmentData();
+  }, [activeMenu, panes]);
 
   useMount(() => {
     // TODO 只做了Replay的路由刷新优化
@@ -269,6 +269,7 @@ const MainBox = () => {
   };
 
   const addTab = () => {
+    const u = uuid();
     setPanes(
       {
         key: uuid(),
@@ -276,6 +277,8 @@ const MainBox = () => {
         pageType: PageTypeEnum.Request,
         menuType: MenuTypeEnum.Collection,
         isNew: true,
+        paneId: generateGlobalPaneId(MenuTypeEnum.Collection, PageTypeEnum.Request, u),
+        rawId: u,
       },
       'push',
     );
@@ -327,8 +330,8 @@ const MainBox = () => {
         pageType: PageTypeEnum.Replay,
         isNew: false,
         data: app,
-        paneId: generateGlobalPaneId(MenuTypeEnum.Collection, PageTypeEnum.Replay, btoa(app.appId)),
-        rawId: btoa(app.appId),
+        paneId: generateGlobalPaneId(MenuTypeEnum.Collection, PageTypeEnum.Replay, app.id),
+        rawId: app.id,
       },
       'push',
     );
