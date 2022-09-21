@@ -197,7 +197,17 @@ const Environment: FC<EnvironmentProps> = ({ value, onSelect }) => {
     return (
       <Menu
         onClick={(e) => {
-          e.domEvent.stopPropagation();
+          // e.domEvent.stopPropagation();
+          switch (e.key) {
+            case '3':
+              duplicateEnvironment(data);
+              break;
+            case '4':
+              environmentItemOperation('rename', data);
+              break;
+            case '5':
+              environmentItemOperation('delete', data);
+          }
         }}
         items={[
           // {
@@ -212,19 +222,16 @@ const Environment: FC<EnvironmentProps> = ({ value, onSelect }) => {
           // },
           {
             key: '3',
-            label: <span onClick={() => duplicateEnvironment(data)}>Duplicate</span>,
+            label: <span className={'dropdown-click-target'}>Duplicate</span>,
           },
           {
             key: '4',
-            label: <span onClick={() => environmentItemOperation('rename', data)}>Rename</span>,
+            label: <span className={'dropdown-click-target'}>Rename</span>,
           },
           {
             key: '5',
             label: (
-              <span
-                style={{ color: 'red' }}
-                onClick={() => environmentItemOperation('delete', data)}
-              >
+              <span style={{ color: 'red' }} className={'dropdown-click-target'}>
                 Delete
               </span>
             ),

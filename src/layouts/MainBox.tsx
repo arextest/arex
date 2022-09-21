@@ -339,12 +339,13 @@ const MainBox = () => {
     setActiveEnvironment(key);
     setPanes(
       {
-        key,
         title: node.title,
         menuType: MenuTypeEnum.Environment,
         pageType: PageTypeEnum.Environment,
         isNew: false,
         data: node,
+        paneId: generateGlobalPaneId(MenuTypeEnum.Environment, PageTypeEnum.Environment, key),
+        rawId: key,
       },
       'push',
     );
@@ -442,7 +443,10 @@ const MainBox = () => {
                 }
                 key={MenuTypeEnum.Environment}
                 menuItem={
-                  <EnvironmentMenu value={activeMenu[1]} onSelect={handleEnvironmentMenuClick} />
+                  <EnvironmentMenu
+                    value={parseGlobalPaneId(activeMenu[1])['rawId']}
+                    onSelect={handleEnvironmentMenuClick}
+                  />
                 }
               />
             </MainMenu>
