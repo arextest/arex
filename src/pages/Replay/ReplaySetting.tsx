@@ -31,10 +31,10 @@ const ReplaySetting: FC<ReplaySettingProps> = (props) => {
           <SettingReplay appId={props.data.appId} agentVersion={props.data.agentVersion} />
         </TabPane>
 
-        <TabPane tab='Import yaml' key='importYaml'>
-          {/* SettingImportYaml component */}
-          <SettingImportYaml appId={props.data.appId} agentVersion={props.data.agentVersion} />
-        </TabPane>
+        {/*<TabPane tab='Import yaml' key='importYaml'>*/}
+        {/*  /!* SettingImportYaml component *!/*/}
+        {/*  <SettingImportYaml appId={props.data.appId} agentVersion={props.data.agentVersion} />*/}
+        {/*</TabPane>*/}
       </Tabs>
     </>
   );

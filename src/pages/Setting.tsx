@@ -188,7 +188,7 @@ const Setting: FC = () => {
 
         <div id='font-size'>
           <Form.Item label='Font size' name='fontSize'>
-            <Select style={{ width: 120 }}>
+            <Select style={{ width: 120 }} disabled>
               <Option value='small'>Small</Option>
               <Option value='medium'>Medium</Option>
               <Option value='large'>Large</Option>

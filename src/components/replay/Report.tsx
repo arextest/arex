@@ -153,10 +153,10 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
         <SmallTextButton
           key='analysis'
           title='Analysis'
-          onClick={() =>
+          onClick={() => {
             setPanes(
               {
-                title: `Analysis - ${record.operationName}`,
+                title: `Analysis - ${record.operationId}`,
                 pageType: PageTypeEnum.ReplayAnalysis,
                 menuType: MenuTypeEnum.Replay,
                 isNew: false,
@@ -164,13 +164,13 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
                 paneId: generateGlobalPaneId(
                   MenuTypeEnum.Replay,
                   PageTypeEnum.ReplayAnalysis,
-                  record.operationName,
+                  record.operationId,
                 ),
-                rawId: record.operationName,
+                rawId: record.operationId,
               },
               'push',
-            )
-          }
+            );
+          }}
         />,
         <SmallTextButton
           key='case'
@@ -178,7 +178,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           onClick={() =>
             setPanes(
               {
-                title: `Case - ${record.operationName}`,
+                title: `Case - ${record.operationId}`,
                 pageType: PageTypeEnum.ReplayCase,
                 menuType: MenuTypeEnum.Replay,
                 isNew: false,
@@ -186,9 +186,9 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
                 paneId: generateGlobalPaneId(
                   MenuTypeEnum.Replay,
                   PageTypeEnum.ReplayCase,
-                  record.operationName,
+                  record.operationId,
                 ),
-                rawId: record.operationName,
+                rawId: record.operationId,
               },
               'push',
             )

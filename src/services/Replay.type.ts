@@ -1,5 +1,6 @@
 // ------ /config/application/regressionList ------
 export interface ApplicationDataType {
+  id: string;
   status: number;
   modifiedTime: string;
   appId: string;
@@ -79,7 +80,7 @@ export interface QueryPlanItemStatisticsReq {
 export type PlanItemStatistics = {
   planItemId: number;
   planId: number;
-  operationId: number;
+  operationId: string;
   operationName: string;
   serviceName: string;
   appId: string;
