@@ -58,20 +58,15 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       }));
 
       // decode allowDayOfWeeks
-      !res.allowDayOfWeeks && (res.allowDayOfWeeks = 254);
+      const allowDayOfWeeks: number[] = [];
       res.allowDayOfWeeks
         .toString(2)
-        .padStart(8, '0')
+        .padStart(7)
         .split('')
-        .reverse()
-        .slice(1, 8)
-        .forEach(
-          (status, index) =>
-            status === '1' &&
-            setInitialValues((state) => {
-              state.allowDayOfWeeks.push(index);
-            }),
-        );
+        .forEach((status, index) => status === '1' && allowDayOfWeeks.push(index));
+      setInitialValues((state) => {
+        state.allowDayOfWeeks = allowDayOfWeeks;
+      });
     },
   });
 
@@ -83,13 +78,13 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
   });
 
   const onFinish = (values: SettingFormType) => {
-    const allowDayOfWeeksArr = Array(8).fill(0);
-    values.allowDayOfWeeks.forEach((item) => {
-      allowDayOfWeeksArr[item + 1] = 1;
-    });
-    let allowDayOfWeeks = parseInt(allowDayOfWeeksArr.reverse().join(''), 2);
-    !allowDayOfWeeks && (allowDayOfWeeks = 254); // allowDayOfWeeks 为 0 即无勾选时默认全选
-
+    const allowDayOfWeeks = parseInt(
+      Array(7)
+        .fill(0)
+        .map((n, i) => Number(values.allowDayOfWeeks.includes(i)))
+        .join(''),
+      2,
+    );
     const [allowTimeOfDayFrom, allowTimeOfDayTo] = values.period.map((m: any) => m.format(format));
 
     const params = {
@@ -104,6 +99,9 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       includeOperationSet: values.apiToRecord,
       includeServiceSet: values.servicesToRecord,
     };
+
+    console.log({ params });
+
     update(params);
   };
   return (
