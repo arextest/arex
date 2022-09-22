@@ -5,10 +5,12 @@ import { Button, Empty, Input, Spin, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps, TreeProps } from 'antd/lib/tree';
 import React, { FC, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useStore } from './../../../store';
+
 import { NodeType } from '../../../constant';
+import { treeFind } from '../../../helpers/collection/util';
 import { CollectionService } from '../../../services/CollectionService';
 import { TooltipButton } from '../../index';
+import { useStore } from './../../../store';
 import CollectionTitle from './CollectionTitle';
 
 const CollectionMenuWrapper = styled.div`
@@ -143,7 +145,17 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
       if (res.length) {
         onGetData && onGetData(res);
         // generateList(treeData);
-        generateList(res);
+        generateList(res, 'res');
+        // 首次加载，在这里加initvalue逻辑
+        const initValue = treeFind(res, (node) => node.key === params.rTypeId);
+        if (initValue) {
+          onSelect(params.rTypeId, {
+            title: initValue.title,
+            key: initValue.key,
+            nodeType: initValue.nodeType,
+          });
+          setExpandedKeys([params.rTypeId]);
+        }
       }
     },
   });
@@ -299,7 +311,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     };
     //fromNodePath
     treeData.map((e: any) => {
-      let arr = [e.key];
+      const arr = [e.key];
       dfsNode(e, dragKey, arr);
     });
     NodeAll = NodeAll.filter((e) => e.includes(dragKey))[0];
@@ -307,7 +319,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     NodeAll = [];
     //toParentPath
     data.map((e: any) => {
-      let arr = [e.key];
+      const arr = [e.key];
       dfsNode(e, dragKey, arr);
     });
     NodeAll = NodeAll.filter((e) => e.includes(dragKey))[0];
@@ -317,14 +329,14 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
 
     //计算toIndex
     const dfsNodeIndex = (d: any, key: string | number) => {
-      let arr: any = [];
+      const arr: any = [];
       let res = null;
       let resP: any = [];
       d.forEach((e: any) => {
         arr.push(e);
       });
       while (arr.length) {
-        let temp = arr.shift();
+        const temp = arr.shift();
         temp.children.forEach((e: any) => {
           if (e.key == key) {
             resP = temp;
@@ -345,10 +357,10 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
       if (dragNodeType !== 3) return;
     }
 
-    let fromNode = dfsNodeIndex(treeData, dragKey)[1];
-    let toNode = dfsNodeIndex(data, dragKey)[1];
-    let Td = dfsNodeIndex(treeData, dragKey)[0].children;
-    let Dd = dfsNodeIndex(data, dragKey)[0].children;
+    const fromNode = dfsNodeIndex(treeData, dragKey)[1];
+    const toNode = dfsNodeIndex(data, dragKey)[1];
+    const Td = dfsNodeIndex(treeData, dragKey)[0].children;
+    const Dd = dfsNodeIndex(data, dragKey)[0].children;
     let tIndex = 0;
     let dIndex = 0;
     if (fromNode == null && toNode == null) {

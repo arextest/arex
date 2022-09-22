@@ -136,7 +136,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
         props.onSelect(firstRecord);
       }
       if (res.length && props.initValue) {
-        const firstRecord = res.find((i) => i.appId === props.initValue);
+        const firstRecord = res.find((i) => i.id === props.initValue);
         if (firstRecord) {
           setSelectedKey(firstRecord[props.rowKey]);
           props.onSelect(firstRecord);

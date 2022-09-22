@@ -249,9 +249,18 @@ const MainBox = () => {
 
   useMount(() => {
     // TODO 只做了Replay的路由刷新优化
-    // if (params.rType === PageTypeEnum.Replay) {
-    //   setActivePane(params.rTypeId, PageTypeEnum.Replay);
-    // }
+    if (params.rType === PageTypeEnum.Replay) {
+      setActiveMenu(
+        MenuTypeEnum.Replay,
+        generateGlobalPaneId(MenuTypeEnum.Replay, PageTypeEnum.Replay, params.rTypeId),
+      );
+    }
+    if (params.rType === PageTypeEnum.Environment) {
+      setActiveMenu(
+        MenuTypeEnum.Environment,
+        generateGlobalPaneId(MenuTypeEnum.Environment, PageTypeEnum.Environment, params.rTypeId),
+      );
+    }
   });
 
   const collectionMenuRef = useRef();
