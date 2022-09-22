@@ -102,7 +102,13 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                         margin-bottom: 8px;
                       `}
                     >
-                      <span>Diff Card - {diff.logs.length} issues</span>
+                      <span
+                        css={css`
+                          margin-right: 8px;
+                        `}
+                      >
+                        Diff Card - {diff.logs.length} issue(s)
+                      </span>
                       <Button size={'small'}>Tree Mode</Button>
                     </div>
                     {diff.logs.map((i, index) => {
@@ -123,7 +129,16 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                               //width: 100%;
                             `}
                           >
-                            Value of {i.path} is different | excepted[
+                            Value of{' '}
+                            <span
+                              css={css`
+                                font-weight: bolder;
+                                margin: 0 10px;
+                              `}
+                            >
+                              {i.path}
+                            </span>{' '}
+                            is different | excepted[
                             <span
                               css={css`
                                 color: red;
