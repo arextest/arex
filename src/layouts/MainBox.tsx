@@ -304,10 +304,10 @@ const MainBox = () => {
     setPanes(filteredPanes);
 
     if (filteredPanes.length) {
-      // const lastPane = JSON.parse(JSON.stringify(filteredPanes)).sort(
-      //   (a, b) => -(a.sortIndex - b.sortIndex),
-      // )[0];
-      setActiveMenu(filteredPanes[0].menuType, filteredPanes[0].paneId);
+      const lastPane = JSON.parse(JSON.stringify(filteredPanes)).sort(
+        (a, b) => -(a.sortIndex - b.sortIndex),
+      )[0];
+      setActiveMenu(filteredPanes[0].menuType, lastPane.paneId);
     } else {
       setActiveMenu(menuType);
     }
