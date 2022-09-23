@@ -43,6 +43,8 @@ export type PlanStatistics = {
   targetImageId: string;
   targetImageName: string;
   caseSourceType: number;
+  caseEndTime?: number;
+  caseStartTime?: number;
   sourceEnv: string | null;
   targetEnv: string | null;
   sourceHost: string | null;
@@ -161,7 +163,9 @@ export interface CreatePlanReq {
   operator: string;
   replayPlanType: number;
   caseSourceType?: number;
-  operationCaseInfoList?: { operationId: number }[];
+  caseStartTime: number;
+  caseEndTime: number;
+  operationCaseInfoList?: { operationId: string }[];
 }
 
 export interface CreatePlanRes {

@@ -201,7 +201,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           key='rerun'
           type='text'
           size='small'
-          onClick={() => handleRerun(record.operationId)}
+          onClick={() => handleRerun(record.operationId, record.caseStartTime, record.caseEndTime)}
         >
           Rerun
         </Button>,
@@ -224,16 +224,34 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     },
   });
 
-  const handleRerun = (operationId?: number) => {
-    rerun({
-      appId: selectedPlan!.appId,
-      caseSourceType: operationId && 0,
-      operationCaseInfoList: operationId !== undefined ? [{ operationId }] : undefined,
-      operator: email as string,
-      replayPlanType: operationId !== undefined ? 1 : 0,
-      sourceEnv: 'pro',
-      targetEnv: selectedPlan!.targetHost as string,
-    });
+  const handleRerun = (operationId?: string, caseStartTime?: number, caseEndTime?: number) => {
+    if (operationId && caseStartTime && caseEndTime) {
+      rerun({
+        caseStartTime,
+        caseEndTime,
+        appId: selectedPlan!.appId,
+        caseSourceType: 0,
+        operationCaseInfoList: [{ operationId }],
+        operator: email as string,
+        replayPlanType: 1,
+        sourceEnv: 'pro',
+        targetEnv: selectedPlan!.targetHost as string,
+      });
+    } else if (
+      selectedPlan?.caseStartTime &&
+      selectedPlan?.caseEndTime &&
+      selectedPlan?.targetHost
+    ) {
+      rerun({
+        caseStartTime: selectedPlan.caseStartTime,
+        caseEndTime: selectedPlan.caseEndTime,
+        appId: selectedPlan!.appId,
+        operator: email as string,
+        replayPlanType: 0,
+        sourceEnv: 'pro',
+        targetEnv: selectedPlan!.targetHost,
+      });
+    }
   };
 
   return selectedPlan ? (
