@@ -200,6 +200,17 @@ export const useStore = create(
     },
     activeMenu: [MenuTypeEnum.Collection, undefined],
     setActiveMenu: (menuKey, menuItemKey) => {
+      set((state) => {
+        const statePane = state.panes.find((i) => i.paneId === menuItemKey);
+        if (statePane) {
+          // 每次选择tab的时候将sortIndex设置到最大，然后每次点击关闭的时候激活上最大的sort
+          const sortIndexArr = state.panes.map((i) => i.sortIndex || 0);
+          statePane.sortIndex = Math.max(...(sortIndexArr.length > 0 ? sortIndexArr : [0])) + 1;
+        }
+        const key = menuKey ? menuKey : statePane?.menuType || MenuTypeEnum.Collection;
+        state.activeMenu = [key, menuItemKey];
+      });
+
       set({ activeMenu: [menuKey, menuItemKey] });
     },
     resetPanes: () => {

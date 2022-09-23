@@ -10,6 +10,90 @@ import DiffJsonView from '../../components/replay/DiffJsonView';
 import { CollapseTable, PanesTitle } from '../../components/styledComponents';
 import ReplayService from '../../services/Replay.service';
 import { CategoryStatistic, Difference, PlanItemStatistics } from '../../services/Replay.type';
+const diffMap = {
+  '0': {
+    text: 'Unknown',
+    color: 'red',
+  },
+  '1': {
+    text: 'Left Missing',
+    color: '#faad14',
+  },
+  '3': {
+    text: 'Different Value',
+    color: '#FFC0CB',
+  },
+  '2': {
+    text: 'Right Missing',
+    color: '#faad14',
+  },
+};
+function DiffLog({ i }) {
+  if (i.pathPair.unmatchedType === 3) {
+    return (
+      <span
+        css={css`
+          display: flex;
+          align-items: center;
+          //width: 100%;
+        `}
+      >
+        Value of{' '}
+        <span
+          css={css`
+            font-weight: bolder;
+            margin: 0 10px;
+          `}
+        >
+          {i.path}
+        </span>{' '}
+        is different | excepted[
+        <span
+          css={css`
+            color: red;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 200px;
+          `}
+        >
+          {i.baseValue}
+        </span>
+        ]. actual[
+        <span
+          css={css`
+            color: red;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 200px;
+          `}
+        >
+          {i.testValue}
+        </span>
+        ].
+      </span>
+    );
+  } else {
+    return (
+      <span>
+        <span>
+          {' '}
+          Value of{' '}
+          <span
+            css={css`
+              font-weight: bolder;
+              margin: 0 10px;
+            `}
+          >
+            {i.path}
+          </span>{' '}
+        </span>
+        {diffMap[[i.pathPair.unmatchedType]].text}
+      </span>
+    );
+  }
+}
 
 const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   const [selectedDiff, setSelectedDiff] = useState<Difference>();
@@ -56,24 +140,6 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
     }
   }, [selectedCategory, selectedDiff, data.planItemId]);
 
-  const diffMap = {
-    '0': {
-      text: 'Unknown',
-      color: 'red',
-    },
-    '1': {
-      text: 'LEFT_MISSING',
-      color: '#00bb74',
-    },
-    '3': {
-      text: 'UNMATCHED',
-      color: '#FFC0CB',
-    },
-    '2': {
-      text: 'RIGHT_MISSING',
-      color: '#00bb74',
-    },
-  };
   return (
     <Space direction='vertical' style={{ display: 'flex' }}>
       <PanesTitle title={<span>Main Service API: {data.operationName}</span>} />
@@ -122,48 +188,7 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                           <Tag color={diffMap[i.pathPair.unmatchedType]?.color}>
                             {diffMap[i.pathPair.unmatchedType]?.text}
                           </Tag>
-                          <span
-                            css={css`
-                              display: flex;
-                              align-items: center;
-                              //width: 100%;
-                            `}
-                          >
-                            Value of{' '}
-                            <span
-                              css={css`
-                                font-weight: bolder;
-                                margin: 0 10px;
-                              `}
-                            >
-                              {i.path}
-                            </span>{' '}
-                            is different | excepted[
-                            <span
-                              css={css`
-                                color: red;
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-                                white-space: nowrap;
-                                max-width: 200px;
-                              `}
-                            >
-                              {i.baseValue}
-                            </span>
-                            ]. actual[
-                            <span
-                              css={css`
-                                color: red;
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-                                white-space: nowrap;
-                                max-width: 200px;
-                              `}
-                            >
-                              {i.testValue}
-                            </span>
-                            ].
-                          </span>
+                          <DiffLog i={i} />
                         </div>
                       );
                     })}
