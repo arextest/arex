@@ -148,7 +148,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
         generateList(res, 'res');
         // 首次加载，在这里加initvalue逻辑
         const initValue = treeFind(res, (node) => node.key === params.rTypeId);
-        if (initValue) {
+        if (initValue && expandedKeys.length === 0) {
           onSelect(params.rTypeId, {
             title: initValue.title,
             key: initValue.key,

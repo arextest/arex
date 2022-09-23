@@ -120,7 +120,7 @@ export const useStore = create(
         setLocalStorage(UserInfoKey, data);
       }
     },
-    extensionVersion: '1.0.3',
+    extensionVersion: '1.0.4',
     themeClassify:
       (getLocalStorage<UserInfo>(UserInfoKey)?.profile?.theme?.split('-')?.at(0) as
         | ThemeClassify
