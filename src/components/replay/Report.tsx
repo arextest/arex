@@ -107,7 +107,9 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
       title: 'Time consumed(s)',
       width: 104,
       render: (_, record) =>
-        (record.replayEndTime - (record.replayStartTime || record.replayEndTime)) / 1000,
+        record.replayEndTime && record.replayStartTime
+          ? (record.replayEndTime - record.replayStartTime) / 1000
+          : '-',
     },
     {
       title: 'Total Cases',
