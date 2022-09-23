@@ -47,6 +47,7 @@ type BaseState = {
   collapseMenu: boolean;
   setCollapseMenu: (collapseMenu: boolean) => void;
   extensionInstalled: boolean;
+  extensionVersion: string;
   userInfo: UserInfo;
   logout: () => void;
 
@@ -119,7 +120,7 @@ export const useStore = create(
         setLocalStorage(UserInfoKey, data);
       }
     },
-
+    extensionVersion: '1.0.3',
     themeClassify:
       (getLocalStorage<UserInfo>(UserInfoKey)?.profile?.theme?.split('-')?.at(0) as
         | ThemeClassify

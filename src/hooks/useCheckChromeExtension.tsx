@@ -25,6 +25,7 @@ const useCheckChromeExtension = () => {
     } else {
       useStore.setState({ extensionInstalled: true });
       console.info('[AREX] Extension installed.');
+      console.log(window.__AREX_EXTENSION_VERSION__);
     }
   }, []);
 };

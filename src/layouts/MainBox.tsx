@@ -4,10 +4,12 @@ import {
   FieldTimeOutlined,
   LeftOutlined,
 } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMount, useRequest } from 'ahooks';
-import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
+import { Alert, Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
 import React, { ReactNode, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
@@ -234,7 +236,10 @@ const MainBox = () => {
     collectionTreeData,
     setEnvironmentTreeData,
     environmentTreeData,
+    extensionVersion,
   } = useStore();
+
+  const { t: t_components } = useTranslation('components');
 
   // 必须和路由搭配起来，在切换的时候附着上去
   useEffect(() => {
@@ -391,12 +396,31 @@ const MainBox = () => {
       return pane.title;
     }
   };
-
+  // https://github.com/arextest/arex-chrome-extension/releases
   return (
     <>
+      {window.__AREX_EXTENSION_VERSION__ !== extensionVersion ? (
+        <Alert
+          type={'warning'}
+          message={
+            <span>
+              {t_components('http.extensionIncorrect')}
+              <a
+                target={'_blank'}
+                href='https://github.com/arextest/arex-chrome-extension/releases'
+                rel='noreferrer'
+                css={css`
+                  margin-left: 4px;
+                `}
+              >
+                1.0.4
+              </a>
+            </span>
+          }
+        />
+      ) : null}
       {/*AppHeader部分*/}
       <AppHeader />
-
       <DraggableLayout
         direction={'horizontal'}
         limitRange={[15, 40]}

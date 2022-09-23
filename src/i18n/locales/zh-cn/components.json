@@ -2,6 +2,7 @@
   "http": {
     "urlEmpty": "请输入URL",
     "extensionNotInstalled": "插件未安装",
+    "extensionIncorrect": "Chrome Extension 版本不正确，请安装",
     "enterRequestUrl": "请输入请求URL",
     "importUrl": "导入URL",
     "showCode": "显示代码",
