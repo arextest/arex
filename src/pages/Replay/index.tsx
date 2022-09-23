@@ -35,8 +35,6 @@ const Replay: FC<{ data?: ApplicationDataType; paneId: any }> = ({ data }) => {
         }
         panel={<Report selectedPlan={selectedPlan} />}
       />
-
-      {/* TODO Configuration */}
     </Space>
   ) : (
     <FlexCenterWrapper>
