@@ -275,6 +275,7 @@ export interface QueryRecordSettingRes {
   includeServiceSet: string[];
   modifiedTime: string;
   sampleRate: number;
+  timeMock: boolean;
 }
 
 export interface UpdateRecordSettingReq {

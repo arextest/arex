@@ -1,12 +1,13 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { Button, Collapse, Form, message, Select, Spin, TimePicker } from 'antd';
+import { Button, Checkbox, Collapse, Form, message, Select, Spin, TimePicker } from 'antd';
 import moment, { Moment } from 'moment';
 import { FC } from 'react';
 import { useImmer } from 'use-immer';
 
 import ReplayService from '../../../services/Replay.service';
-import { DurationInput, IntegerStepSlider, TimeClassCheckbox } from './FormItem';
+import { QueryRecordSettingRes } from '../../../services/Replay.type';
+import { DurationInput, IntegerStepSlider } from './FormItem';
 import DynamicClassesEditableTable from './FormItem/DynamicClassesEditableTable';
 
 const { Panel } = Collapse;
@@ -18,26 +19,34 @@ export type SettingRecordProps = {
 
 type SettingFormType = {
   allowDayOfWeeks: number[];
-  frequency: number;
+  sampleRate: number;
   period: Moment[];
-  apiNotToRecord: string[];
-  dependentApiNotToRecord: string[];
-  dependentServicesNotToRecord: string[];
-  apiToRecord: string[];
-  servicesToRecord: string[];
+  excludeOperationSet: string[];
+  excludeDependentOperationSet: string[];
+  excludeDependentServiceSet: string[];
+  includeOperationSet: string[];
+  includeServiceSet: string[];
+  timeMock: boolean;
 };
 
 const format = 'HH:mm';
 
-const defaultValues = {
+const defaultValues: Omit<
+  QueryRecordSettingRes,
+  'appId' | 'modifiedTime' | 'allowDayOfWeeks' | 'allowTimeOfDayFrom' | 'allowTimeOfDayTo'
+> & {
+  allowDayOfWeeks: number[];
+  period: Moment[];
+} = {
   allowDayOfWeeks: [],
-  frequency: 1,
+  sampleRate: 1,
   period: [moment('00:01', format), moment('23:59', format)],
-  apiNotToRecord: [],
-  dependentApiNotToRecord: [],
-  dependentServicesNotToRecord: [],
-  apiToRecord: [],
-  servicesToRecord: [],
+  excludeOperationSet: [],
+  excludeDependentOperationSet: [],
+  excludeDependentServiceSet: [],
+  includeOperationSet: [],
+  includeServiceSet: [],
+  timeMock: false,
 };
 
 const SettingRecord: FC<SettingRecordProps> = (props) => {
@@ -48,13 +57,14 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
     onSuccess(res) {
       setInitialValues(() => ({
         period: [moment(res.allowTimeOfDayFrom, format), moment(res.allowTimeOfDayTo, format)],
-        frequency: res.sampleRate,
+        sampleRate: res.sampleRate,
         allowDayOfWeeks: [],
-        apiNotToRecord: res.excludeOperationSet,
-        dependentApiNotToRecord: res.excludeDependentOperationSet,
-        dependentServicesNotToRecord: res.excludeDependentServiceSet,
-        apiToRecord: res.includeOperationSet,
-        servicesToRecord: res.includeServiceSet,
+        excludeOperationSet: res.excludeOperationSet,
+        excludeDependentOperationSet: res.excludeDependentOperationSet,
+        excludeDependentServiceSet: res.excludeDependentServiceSet,
+        includeOperationSet: res.includeOperationSet,
+        includeServiceSet: res.includeServiceSet,
+        timeMock: res.timeMock,
       }));
 
       // decode allowDayOfWeeks
@@ -92,12 +102,13 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       allowTimeOfDayFrom,
       allowTimeOfDayTo,
       appId: props.appId,
-      sampleRate: values.frequency,
-      excludeDependentOperationSet: values.dependentApiNotToRecord,
-      excludeDependentServiceSet: values.dependentServicesNotToRecord,
-      excludeOperationSet: values.apiNotToRecord,
-      includeOperationSet: values.apiToRecord,
-      includeServiceSet: values.servicesToRecord,
+      sampleRate: values.sampleRate,
+      timeMock: values.timeMock,
+      excludeDependentOperationSet: values.excludeDependentOperationSet,
+      excludeDependentServiceSet: values.excludeDependentServiceSet,
+      excludeOperationSet: values.excludeOperationSet,
+      includeOperationSet: values.includeOperationSet,
+      includeServiceSet: values.includeServiceSet,
     };
 
     console.log({ params });
@@ -149,39 +160,35 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
                 <TimePicker.RangePicker format={format} />
               </Form.Item>
 
-              <Form.Item label='Frequency' name='frequency'>
+              <Form.Item label='Frequency' name='sampleRate'>
                 <IntegerStepSlider />
               </Form.Item>
             </Panel>
 
             {/* 此处必须 forceRender，否则如果没有打开高级设置就保存，将丢失高级设置部分字段 */}
             <Panel forceRender header='Advanced' key='advanced'>
-              <Form.Item label='API to Record' name='apiToRecord'>
+              <Form.Item label='API to Record' name='includeOperationSet'>
                 <Select mode='tags' style={{ width: '100%' }} />
               </Form.Item>
 
-              <Form.Item label='API not to Record' name='apiNotToRecord'>
+              <Form.Item label='API not to Record' name='excludeOperationSet'>
                 <Select mode='tags' style={{ width: '100%' }} />
               </Form.Item>
 
-              <Form.Item label='Dependent API not to Record' name='dependentApiNotToRecord'>
+              <Form.Item label='Dependent API not to Record' name='excludeDependentOperationSet'>
                 <Select mode='tags' style={{ width: '100%' }} />
               </Form.Item>
 
-              <Form.Item label='Services to Record' name='servicesToRecord'>
+              <Form.Item label='Services to Record' name='includeServiceSet'>
                 <Select mode='tags' style={{ width: '100%' }} />
               </Form.Item>
 
-              <Form.Item
-                label='Dependent Services not to Record'
-                name='dependentServicesNotToRecord'
-              >
+              <Form.Item label='Dependent Services not to Record' name='excludeDependentServiceSet'>
                 <Select mode='tags' style={{ width: '100%' }} />
               </Form.Item>
 
-              <Form.Item label='Java Time Classes' name='timeClasses'>
-                {/* TODO 接口暂无该字段 */}
-                <TimeClassCheckbox />
+              <Form.Item label='Time Mock' name='timeMock' valuePropName='checked'>
+                <Checkbox />
               </Form.Item>
 
               <Form.Item label='Dynamic Classes'>

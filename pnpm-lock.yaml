@@ -32,6 +32,7 @@ specifiers:
   codemirror: 5.65.6
   connect-history-api-fallback: ^2.0.0
   diff-match-patch: ^1.0.5
+  draft-js: ^0.11.7
   eslint: 8.20.0
   eslint-config-prettier: ^8.5.0
   eslint-plugin-import: ^2.26.0
@@ -83,7 +84,7 @@ dependencies:
   '@emotion/serialize': 1.1.0
   '@emotion/styled': 11.10.4_lxst47gwu5lqjtx2guwl7nfnjm
   '@kurkle/color': 0.2.1
-  '@uiw/react-codemirror': 4.12.1_2h23picbsuv5zjntn7yl5hjmdq
+  '@uiw/react-codemirror': 4.12.1_5i3yigzzbgievp45cpfw7u3pha
   '@zougt/vite-plugin-theme-preprocessor': 1.4.5
   ahooks: 3.7.0_react@18.2.0
   antd: 4.21.6_biqbaboplfbrettd7655fr4n2y
@@ -93,6 +94,7 @@ dependencies:
   click-to-react-component: 1.0.8_63dfw6rfgd64rl77ptfma4cvt4
   codemirror: 5.65.6
   diff-match-patch: 1.0.5
+  draft-js: 0.11.7_biqbaboplfbrettd7655fr4n2y
   husky: 8.0.1
   i18next: 21.9.1
   i18next-browser-languagedetector: 6.1.5
@@ -106,7 +108,7 @@ dependencies:
   react: 18.2.0
   react-chartjs-2: 4.3.1_2unjvz6v6rskedwoxtmbfw2rje
   react-color: 2.19.3_react@18.2.0
-  react-dnd: 16.0.1_7v64pk2mkrohwh22gx7lrz5ive
+  react-dnd: 16.0.1_yec5w2xl5pqn5xbwduhi2valne
   react-dnd-html5-backend: 16.0.1
   react-dom: 18.2.0_react@18.2.0
   react-github-btn: 1.4.0_react@18.2.0
@@ -548,13 +550,11 @@ packages:
       '@babel/helper-validator-identifier': 7.18.6
       to-fast-properties: 2.0.0
 
-  /@codemirror/autocomplete/6.1.0_@codemirror+view@6.2.2:
+  /@codemirror/autocomplete/6.1.0:
     resolution:
       {
         integrity: sha512-wtO4O5WDyXhhCd4q4utDIDZxnQfmJ++3dGBCG9LMtI79+92OcA1DVk/n7BEupKmjIr8AzvptDz7YQ9ud6OkU+A==,
       }
-    peerDependencies:
-      '@codemirror/view': ^6.0.0
     dependencies:
       '@codemirror/language': 6.2.1
       '@codemirror/state': 6.1.1
@@ -574,18 +574,16 @@ packages:
       '@lezer/common': 1.0.1
     dev: false
 
-  /@codemirror/lang-css/6.0.0_@codemirror+view@6.2.2:
+  /@codemirror/lang-css/6.0.0:
     resolution:
       {
         integrity: sha512-jBqc+BTuwhNOTlrimFghLlSrN6iFuE44HULKWoR4qKYObhOIl9Lci1iYj6zMIte1XTQmZguNvjXMyr43LUKwSw==,
       }
     dependencies:
-      '@codemirror/autocomplete': 6.1.0_@codemirror+view@6.2.2
+      '@codemirror/autocomplete': 6.1.0
       '@codemirror/language': 6.2.1
       '@codemirror/state': 6.1.1
       '@lezer/css': 1.0.0
-    transitivePeerDependencies:
-      - '@codemirror/view'
     dev: false
 
   /@codemirror/lang-html/6.1.1:
@@ -594,8 +592,8 @@ packages:
         integrity: sha512-+hV1kVZySmr7GxCgSVM+BodaVlsgD98laEJbj/GALhgIrfnHTSiRuTz2EPTjNCKeq5uEQXeOKFY711/CxJbYrg==,
       }
     dependencies:
-      '@codemirror/autocomplete': 6.1.0_@codemirror+view@6.2.2
-      '@codemirror/lang-css': 6.0.0_@codemirror+view@6.2.2
+      '@codemirror/autocomplete': 6.1.0
+      '@codemirror/lang-css': 6.0.0
       '@codemirror/lang-javascript': 6.0.2
       '@codemirror/language': 6.2.1
       '@codemirror/state': 6.1.1
@@ -610,7 +608,7 @@ packages:
         integrity: sha512-BZRJ9u/zl16hLkSpDAWm73mrfIR7HJrr0lvnhoSOCQVea5BglguWI/slxexhvUb0CB5cXgKWuo2bM+N9EhIaZw==,
       }
     dependencies:
-      '@codemirror/autocomplete': 6.1.0_@codemirror+view@6.2.2
+      '@codemirror/autocomplete': 6.1.0
       '@codemirror/language': 6.2.1
       '@codemirror/lint': 6.0.0
       '@codemirror/state': 6.1.1
@@ -1090,7 +1088,8 @@ packages:
   /@esbuild/linux-loong64/0.15.7:
     resolution:
       {
-        integrity: sha512-IKznSJOsVUuyt7cDzzSZyqBEcZe+7WlBqTVXiF1OXP/4Nm387ToaXZ0fyLwI1iBlI/bzpxVq411QE2/Bt2XWWw==,
+        integrity: sha1-HsSvShbFVMvUAsxVfM3YdOP3vlM=,
+        tarball: '@esbuild/linux-loong64/download/@esbuild/linux-loong64-0.15.7.tgz',
       }
     engines: { node: '>=12' }
     cpu: [loong64]
@@ -1476,7 +1475,6 @@ packages:
       {
         integrity: sha512-EQHhixfu+mkqHMZl1R2Ovuvn47PUw18azMJOTwSZr9/fhzHNGXAJ0ma0dayRVchprpCj0Kc1K1xKoWaATWF1qg==,
       }
-    dev: true
 
   /@types/normalize-package-data/2.4.1:
     resolution:
@@ -1698,15 +1696,13 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@uiw/codemirror-extensions-basic-setup/4.12.1_@codemirror+view@6.2.2:
+  /@uiw/codemirror-extensions-basic-setup/4.12.1:
     resolution:
       {
         integrity: sha512-hA8RD6Xr/GpF/FI+Dr1gnhqKnu+SIwvuQIH3ZsQccacuJFo7w1pz8WxXLEkHxKLNhEJds7nhbcJ6TXQGka4qsg==,
       }
-    peerDependencies:
-      '@codemirror/view': '>=6.0.0'
     dependencies:
-      '@codemirror/autocomplete': 6.1.0_@codemirror+view@6.2.2
+      '@codemirror/autocomplete': 6.1.0
       '@codemirror/commands': 6.1.0
       '@codemirror/language': 6.2.1
       '@codemirror/lint': 6.0.0
@@ -1715,14 +1711,13 @@ packages:
       '@codemirror/view': 6.2.2
     dev: false
 
-  /@uiw/react-codemirror/4.12.1_2h23picbsuv5zjntn7yl5hjmdq:
+  /@uiw/react-codemirror/4.12.1_5i3yigzzbgievp45cpfw7u3pha:
     resolution:
       {
         integrity: sha512-2QnbaGp9qn1iMpydaw6QdV6GcLCrnxHS9NTH+9lepmGrfa0Oh02lPz04wk9QMPzfGOwTkkznw3oygu3GfNOODw==,
       }
     peerDependencies:
       '@codemirror/view': '>=6.0.0'
-      codemirror: '>=6.0.0'
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
@@ -1731,8 +1726,8 @@ packages:
       '@codemirror/state': 6.1.1
       '@codemirror/theme-one-dark': 6.0.0
       '@codemirror/view': 6.2.2
-      '@uiw/codemirror-extensions-basic-setup': 4.12.1_@codemirror+view@6.2.2
-      codemirror: 5.65.6
+      '@uiw/codemirror-extensions-basic-setup': 4.12.1
+      codemirror: 6.0.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     dev: false
@@ -2109,6 +2104,11 @@ packages:
     engines: { node: '>=0.10.0' }
     dev: true
 
+  /asap/2.0.6:
+    resolution:
+      { integrity: sha1-5QNHYR1+aQlDIIu9r+vLwvuGbUY=, tarball: asap/download/asap-2.0.6.tgz }
+    dev: false
+
   /ast-types-flow/0.0.7:
     resolution:
       {
@@ -2388,6 +2388,22 @@ packages:
       }
     dev: false
 
+  /codemirror/6.0.1:
+    resolution:
+      {
+        integrity: sha1-YrkRQtRZBFR+4+Dg5MGnkVgDWik=,
+        tarball: codemirror/download/codemirror-6.0.1.tgz,
+      }
+    dependencies:
+      '@codemirror/autocomplete': 6.1.0
+      '@codemirror/commands': 6.1.0
+      '@codemirror/language': 6.2.1
+      '@codemirror/lint': 6.0.0
+      '@codemirror/search': 6.2.0
+      '@codemirror/state': 6.1.1
+      '@codemirror/view': 6.2.2
+    dev: false
+
   /color-convert/1.9.3:
     resolution:
       {
@@ -2601,6 +2617,12 @@ packages:
     requiresBuild: true
     dev: true
 
+  /core-js/3.25.2:
+    resolution:
+      { integrity: sha1-LTZwwUVUMrU/p4AwCm/BvYMEkyw=, tarball: core-js/download/core-js-3.25.2.tgz }
+    requiresBuild: true
+    dev: false
+
   /cosmiconfig-typescript-loader/4.0.0_z2udhlfjbx4hxgpmmhrzpv3nd4:
     resolution:
       {
@@ -2644,6 +2666,18 @@ packages:
       {
         integrity: sha512-+BO9wPPi+DWTDcNYhr/W90myha8ptzftZT+LwcmUbbok0rcP/fequmFYCw8NMoH7pkAZQzU78b3kYrlua5a9eA==,
       }
+    dev: false
+
+  /cross-fetch/3.1.5:
+    resolution:
+      {
+        integrity: sha1-4TifRNnnunZ5B/evhFR4eVKrU08=,
+        tarball: cross-fetch/download/cross-fetch-3.1.5.tgz,
+      }
+    dependencies:
+      node-fetch: 2.6.7
+    transitivePeerDependencies:
+      - encoding
     dev: false
 
   /cross-spawn/7.0.3:
@@ -3056,6 +3090,25 @@ packages:
       is-obj: 2.0.0
     dev: true
 
+  /draft-js/0.11.7_biqbaboplfbrettd7655fr4n2y:
+    resolution:
+      {
+        integrity: sha1-vik6qiVcRtimZH84YKpMF4SEogY=,
+        tarball: draft-js/download/draft-js-0.11.7.tgz,
+      }
+    peerDependencies:
+      react: '>=0.14.0'
+      react-dom: '>=0.14.0'
+    dependencies:
+      fbjs: 2.0.0
+      immutable: 3.7.6
+      object-assign: 4.1.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /ee-first/1.1.1:
     resolution:
       {
@@ -3100,9 +3153,7 @@ packages:
 
   /errno/0.1.8:
     resolution:
-      {
-        integrity: sha512-dJ6oBr5SQ1VSd9qkk7ByRgb/1SH4JZjCHSW/mr63/QcXO9zLVxvJ6Oy13nio03rxpSnVDDjFor75SjVeZWPW/A==,
-      }
+      { integrity: sha1-i7Ppx9Rjvkl2/4iPdrSAnrwugR8=, tarball: errno/download/errno-0.1.8.tgz }
     hasBin: true
     requiresBuild: true
     dependencies:
@@ -3174,7 +3225,8 @@ packages:
   /esbuild-android-64/0.15.7:
     resolution:
       {
-        integrity: sha512-p7rCvdsldhxQr3YHxptf1Jcd86dlhvc3EQmQJaZzzuAxefO9PvcI0GLOa5nCWem1AJ8iMRu9w0r5TG8pHmbi9w==,
+        integrity: sha1-pSFgTYxMa+/Hr/7ciX34zN4Ym+o=,
+        tarball: esbuild-android-64/download/esbuild-android-64-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [x64]
@@ -3186,7 +3238,8 @@ packages:
   /esbuild-android-arm64/0.15.7:
     resolution:
       {
-        integrity: sha512-L775l9ynJT7rVqRM5vo+9w5g2ysbOCfsdLV4CWanTZ1k/9Jb3IYlQ06VCI1edhcosTYJRECQFJa3eAvkx72eyQ==,
+        integrity: sha1-MHuB8QiL8egd/l89HWOi0qLj5o4=,
+        tarball: esbuild-android-arm64/download/esbuild-android-arm64-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [arm64]
@@ -3198,7 +3251,8 @@ packages:
   /esbuild-darwin-64/0.15.7:
     resolution:
       {
-        integrity: sha512-KGPt3r1c9ww009t2xLB6Vk0YyNOXh7hbjZ3EecHoVDxgtbUlYstMPDaReimKe6eOEfyY4hBEEeTvKwPsiH5WZg==,
+        integrity: sha1-JwEXsMTsa8vFzzopen0RlU8AfhE=,
+        tarball: esbuild-darwin-64/download/esbuild-darwin-64-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [x64]
@@ -3210,7 +3264,8 @@ packages:
   /esbuild-darwin-arm64/0.15.7:
     resolution:
       {
-        integrity: sha512-kBIHvtVqbSGajN88lYMnR3aIleH3ABZLLFLxwL2stiuIGAjGlQW741NxVTpUHQXUmPzxi6POqc9npkXa8AcSZQ==,
+        integrity: sha1-l4UerNEdrLdxlxNgLjMZ4WIC/Hc=,
+        tarball: esbuild-darwin-arm64/download/esbuild-darwin-arm64-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [arm64]
@@ -3222,7 +3277,8 @@ packages:
   /esbuild-freebsd-64/0.15.7:
     resolution:
       {
-        integrity: sha512-hESZB91qDLV5MEwNxzMxPfbjAhOmtfsr9Wnuci7pY6TtEh4UDuevmGmkUIjX/b+e/k4tcNBMf7SRQ2mdNuK/HQ==,
+        integrity: sha1-HeFf+vWukWqpJYAKptAleZYN2MQ=,
+        tarball: esbuild-freebsd-64/download/esbuild-freebsd-64-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [x64]
@@ -3234,7 +3290,8 @@ packages:
   /esbuild-freebsd-arm64/0.15.7:
     resolution:
       {
-        integrity: sha512-dLFR0ChH5t+b3J8w0fVKGvtwSLWCv7GYT2Y2jFGulF1L5HftQLzVGN+6pi1SivuiVSmTh28FwUhi9PwQicXI6Q==,
+        integrity: sha1-DxYNv1yaMaHY3Yesu8saBLcDFZQ=,
+        tarball: esbuild-freebsd-arm64/download/esbuild-freebsd-arm64-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [arm64]
@@ -3246,7 +3303,8 @@ packages:
   /esbuild-linux-32/0.15.7:
     resolution:
       {
-        integrity: sha512-v3gT/LsONGUZcjbt2swrMjwxo32NJzk+7sAgtxhGx1+ZmOFaTRXBAi1PPfgpeo/J//Un2jIKm/I+qqeo4caJvg==,
+        integrity: sha1-Qi64UzcKXkC9zos5UlOA3hHMrew=,
+        tarball: esbuild-linux-32/download/esbuild-linux-32-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [ia32]
@@ -3258,7 +3316,8 @@ packages:
   /esbuild-linux-64/0.15.7:
     resolution:
       {
-        integrity: sha512-LxXEfLAKwOVmm1yecpMmWERBshl+Kv5YJ/1KnyAr6HRHFW8cxOEsEfisD3sVl/RvHyW//lhYUVSuy9jGEfIRAQ==,
+        integrity: sha1-+JxGhFO7MZSxTxncMuC5lhLoHSs=,
+        tarball: esbuild-linux-64/download/esbuild-linux-64-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [x64]
@@ -3270,7 +3329,8 @@ packages:
   /esbuild-linux-arm/0.15.7:
     resolution:
       {
-        integrity: sha512-JKgAHtMR5f75wJTeuNQbyznZZa+pjiUHV7sRZp42UNdyXC6TiUYMW/8z8yIBAr2Fpad8hM1royZKQisqPABPvQ==,
+        integrity: sha1-K3x4TQszOYeAE9+oK/Xq+Cx859M=,
+        tarball: esbuild-linux-arm/download/esbuild-linux-arm-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [arm]
@@ -3282,7 +3342,8 @@ packages:
   /esbuild-linux-arm64/0.15.7:
     resolution:
       {
-        integrity: sha512-P3cfhudpzWDkglutWgXcT2S7Ft7o2e3YDMrP1n0z2dlbUZghUkKCyaWw0zhp4KxEEzt/E7lmrtRu/pGWnwb9vw==,
+        integrity: sha1-aKedbrXgMu+5FooPNAzP0z1jUKE=,
+        tarball: esbuild-linux-arm64/download/esbuild-linux-arm64-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [arm64]
@@ -3294,7 +3355,8 @@ packages:
   /esbuild-linux-mips64le/0.15.7:
     resolution:
       {
-        integrity: sha512-T7XKuxl0VpeFLCJXub6U+iybiqh0kM/bWOTb4qcPyDDwNVhLUiPcGdG2/0S7F93czUZOKP57YiLV8YQewgLHKw==,
+        integrity: sha1-u4MwpQsUqoRnOBbLY8xsi5vrYsw=,
+        tarball: esbuild-linux-mips64le/download/esbuild-linux-mips64le-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [mips64el]
@@ -3306,7 +3368,8 @@ packages:
   /esbuild-linux-ppc64le/0.15.7:
     resolution:
       {
-        integrity: sha512-6mGuC19WpFN7NYbecMIJjeQgvDb5aMuvyk0PDYBJrqAEMkTwg3Z98kEKuCm6THHRnrgsdr7bp4SruSAxEM4eJw==,
+        integrity: sha1-UlROf6mSgR65lmdAkNC8QfBnoUs=,
+        tarball: esbuild-linux-ppc64le/download/esbuild-linux-ppc64le-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [ppc64]
@@ -3318,7 +3381,8 @@ packages:
   /esbuild-linux-riscv64/0.15.7:
     resolution:
       {
-        integrity: sha512-uUJsezbswAYo/X7OU/P+PuL/EI9WzxsEQXDekfwpQ23uGiooxqoLFAPmXPcRAt941vjlY9jtITEEikWMBr+F/g==,
+        integrity: sha1-pDrmBpeZK5V+RUy7Yi9+5Sl+gVk=,
+        tarball: esbuild-linux-riscv64/download/esbuild-linux-riscv64-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [riscv64]
@@ -3330,7 +3394,8 @@ packages:
   /esbuild-linux-s390x/0.15.7:
     resolution:
       {
-        integrity: sha512-+tO+xOyTNMc34rXlSxK7aCwJgvQyffqEM5MMdNDEeMU3ss0S6wKvbBOQfgd5jRPblfwJ6b+bKiz0g5nABpY0QQ==,
+        integrity: sha1-jHahJd0QqEwWYpTXdBbKr14ce2Q=,
+        tarball: esbuild-linux-s390x/download/esbuild-linux-s390x-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [s390x]
@@ -3342,7 +3407,8 @@ packages:
   /esbuild-netbsd-64/0.15.7:
     resolution:
       {
-        integrity: sha512-yVc4Wz+Pu3cP5hzm5kIygNPrjar/v5WCSoRmIjCPWfBVJkZNb5brEGKUlf+0Y759D48BCWa0WHrWXaNy0DULTQ==,
+        integrity: sha1-GbLnVEnX2cMrXYoiK6wvHgw7CP0=,
+        tarball: esbuild-netbsd-64/download/esbuild-netbsd-64-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [x64]
@@ -3354,7 +3420,8 @@ packages:
   /esbuild-openbsd-64/0.15.7:
     resolution:
       {
-        integrity: sha512-GsimbwC4FSR4lN3wf8XmTQ+r8/0YSQo21rWDL0XFFhLHKlzEA4SsT1Tl8bPYu00IU6UWSJ+b3fG/8SB69rcuEQ==,
+        integrity: sha1-E1eyv3L9A32RUOdRQgof5Mhhitc=,
+        tarball: esbuild-openbsd-64/download/esbuild-openbsd-64-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [x64]
@@ -3366,7 +3433,8 @@ packages:
   /esbuild-sunos-64/0.15.7:
     resolution:
       {
-        integrity: sha512-8CDI1aL/ts0mDGbWzjEOGKXnU7p3rDzggHSBtVryQzkSOsjCHRVe0iFYUuhczlxU1R3LN/E7HgUO4NXzGGP/Ag==,
+        integrity: sha1-h6ssYEWSqcPHY+cpadoNcrzekdI=,
+        tarball: esbuild-sunos-64/download/esbuild-sunos-64-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [x64]
@@ -3378,7 +3446,8 @@ packages:
   /esbuild-windows-32/0.15.7:
     resolution:
       {
-        integrity: sha512-cOnKXUEPS8EGCzRSFa1x6NQjGhGsFlVgjhqGEbLTPsA7x4RRYiy2RKoArNUU4iR2vHmzqS5Gr84MEumO/wxYKA==,
+        integrity: sha1-yB5ojARXZlqNRjpmnlv2CHAyPpk=,
+        tarball: esbuild-windows-32/download/esbuild-windows-32-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [ia32]
@@ -3390,7 +3459,8 @@ packages:
   /esbuild-windows-64/0.15.7:
     resolution:
       {
-        integrity: sha512-7MI08Ec2sTIDv+zH6StNBKO+2hGUYIT42GmFyW6MBBWWtJhTcQLinKS6ldIN1d52MXIbiJ6nXyCJ+LpL4jBm3Q==,
+        integrity: sha1-JCHRrjSwVhqdZ2c0azgZYSZsTv8=,
+        tarball: esbuild-windows-64/download/esbuild-windows-64-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [x64]
@@ -3402,7 +3472,8 @@ packages:
   /esbuild-windows-arm64/0.15.7:
     resolution:
       {
-        integrity: sha512-R06nmqBlWjKHddhRJYlqDd3Fabx9LFdKcjoOy08YLimwmsswlFBJV4rXzZCxz/b7ZJXvrZgj8DDv1ewE9+StMw==,
+        integrity: sha1-fV6eBgp7RUyy9X+Eo/PCPI8wt9I=,
+        tarball: esbuild-windows-arm64/download/esbuild-windows-arm64-0.15.7.tgz,
       }
     engines: { node: '>=12' }
     cpu: [arm64]
@@ -3933,6 +4004,30 @@ packages:
       reusify: 1.0.4
     dev: true
 
+  /fbjs-css-vars/1.0.2:
+    resolution:
+      {
+        integrity: sha1-IWVRE2rgL+JVkyw+yHdfGOLAeLg=,
+        tarball: fbjs-css-vars/download/fbjs-css-vars-1.0.2.tgz,
+      }
+    dev: false
+
+  /fbjs/2.0.0:
+    resolution:
+      { integrity: sha1-AfuBITjX4xgx7T43Sv4nuRae9EI=, tarball: fbjs/download/fbjs-2.0.0.tgz }
+    dependencies:
+      core-js: 3.25.2
+      cross-fetch: 3.1.5
+      fbjs-css-vars: 1.0.2
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      promise: 7.3.1
+      setimmediate: 1.0.5
+      ua-parser-js: 0.7.31
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /file-entry-cache/6.0.1:
     resolution:
       {
@@ -4085,7 +4180,8 @@ packages:
   /fsevents/2.3.2:
     resolution:
       {
-        integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==,
+        integrity: sha1-ilJveLj99GI7cJ4Ll1xSwkwC/Ro=,
+        tarball: fsevents/download/fsevents-2.3.2.tgz,
       }
     engines: { node: ^8.16.0 || ^10.6.0 || >=11.0.0 }
     os: [darwin]
@@ -4508,7 +4604,8 @@ packages:
   /image-size/0.5.5:
     resolution:
       {
-        integrity: sha512-6TDAlDPZxUFCv+fuOkIoXT/V/f3Qbq8e37p+YOiYrUv3v9cc3/6x78VdfPgFVaB9dZYeLUfKgHRebpkm/oP2VQ==,
+        integrity: sha1-Cd/Uq50g4p6xw+gLiZA3jfnjy5w=,
+        tarball: image-size/download/image-size-0.5.5.tgz,
       }
     engines: { node: '>=0.10.0' }
     hasBin: true
@@ -4528,6 +4625,15 @@ packages:
       {
         integrity: sha512-Q0QaXjPjwIju/28TsugCHNEASwoCcJSyJV3uO1sOIQGI0jKgm9f41Lvz0DZj3n46cNCyAZTsEYoY4C2bVRUzyQ==,
       }
+    dev: false
+
+  /immutable/3.7.6:
+    resolution:
+      {
+        integrity: sha1-E7TTyxK++hVIKib+Gy665kAHHks=,
+        tarball: immutable/download/immutable-3.7.6.tgz,
+      }
+    engines: { node: '>=0.8.0' }
     dev: false
 
   /import-fresh/3.3.0:
@@ -5141,7 +5247,8 @@ packages:
   /make-dir/2.1.0:
     resolution:
       {
-        integrity: sha512-LS9X+dc8KLxXCb8dni79fLIIUA5VyZoyjSMCwTluaXA0o27cCK0bhXkpgw+sTXVpPy/lSO57ilRixqk0vDmtRA==,
+        integrity: sha1-XwMQ4YuL6JjMBwCSlaMK5B6R5vU=,
+        tarball: make-dir/download/make-dir-2.1.0.tgz,
       }
     engines: { node: '>=6' }
     requiresBuild: true
@@ -5391,9 +5498,7 @@ packages:
 
   /needle/3.1.0:
     resolution:
-      {
-        integrity: sha512-gCE9weDhjVGCRqS8dwDR/D3GTAeyXLXuqp7I8EzH6DllZGXSUyxuqqLh+YX9rMAWaaTFyVAg6rHGL25dqvczKw==,
-      }
+      { integrity: sha1-O/XNCQwo6xVkQYGrZpngJ71sU8k=, tarball: needle/download/needle-3.1.0.tgz }
     engines: { node: '>= 4.4.x' }
     hasBin: true
     requiresBuild: true
@@ -5413,6 +5518,22 @@ packages:
       }
     engines: { node: '>= 0.6' }
     dev: true
+
+  /node-fetch/2.6.7:
+    resolution:
+      {
+        integrity: sha1-JN6fuoJ+O0rkTciyAlajeRYAUq0=,
+        tarball: node-fetch/download/node-fetch-2.6.7.tgz,
+      }
+    engines: { node: 4.x || >=6.0.0 }
+    peerDependencies:
+      encoding: ^0.1.0
+    peerDependenciesMeta:
+      encoding:
+        optional: true
+    dependencies:
+      whatwg-url: 5.0.0
+    dev: false
 
   /node-releases/2.0.6:
     resolution:
@@ -6180,6 +6301,13 @@ packages:
       }
     engines: { node: '>=10.13.0' }
     hasBin: true
+
+  /promise/7.3.1:
+    resolution:
+      { integrity: sha1-BktyYCsY+Q8pGSuLG8QY/9Hr078=, tarball: promise/download/promise-7.3.1.tgz }
+    dependencies:
+      asap: 2.0.6
+    dev: false
 
   /prop-types/15.8.1:
     resolution:
@@ -6960,7 +7088,7 @@ packages:
       dnd-core: 16.0.1
     dev: false
 
-  /react-dnd/16.0.1_7v64pk2mkrohwh22gx7lrz5ive:
+  /react-dnd/16.0.1_yec5w2xl5pqn5xbwduhi2valne:
     resolution:
       {
         integrity: sha512-QeoM/i73HHu2XF9aKksIUuamHPDvRglEwdHL4jsp784BgUuWcg6mzfxT0QDdQz8Wj0qyRKx2eMg8iZtWvU4E2Q==,
@@ -6980,6 +7108,7 @@ packages:
     dependencies:
       '@react-dnd/invariant': 4.0.2
       '@react-dnd/shallowequal': 4.0.2
+      '@types/node': 18.7.16
       '@types/react': 18.0.18
       dnd-core: 16.0.1
       fast-deep-equal: 3.1.3
@@ -7434,6 +7563,14 @@ packages:
       - supports-color
     dev: true
 
+  /setimmediate/1.0.5:
+    resolution:
+      {
+        integrity: sha1-KQy7Iy4waULX1+qbg3Mqt4VvgoU=,
+        tarball: setimmediate/download/setimmediate-1.0.5.tgz,
+      }
+    dev: false
+
   /setprototypeof/1.2.0:
     resolution:
       {
@@ -7875,6 +8012,11 @@ packages:
     engines: { node: '>=0.6' }
     dev: true
 
+  /tr46/0.0.3:
+    resolution:
+      { integrity: sha1-gYT9NH2snNwYWZLzpmIuFLnZq2o=, tarball: tr46/download/tr46-0.0.3.tgz }
+    dev: false
+
   /trim-newlines/3.0.1:
     resolution:
       {
@@ -8016,6 +8158,14 @@ packages:
     engines: { node: '>=4.2.0' }
     hasBin: true
     dev: true
+
+  /ua-parser-js/0.7.31:
+    resolution:
+      {
+        integrity: sha1-ZJplaxkd/6tPIdXgU+J8oXy/9cY=,
+        tarball: ua-parser-js/download/ua-parser-js-0.7.31.tgz,
+      }
+    dev: false
 
   /unbox-primitive/1.0.2:
     resolution:
@@ -8212,6 +8362,25 @@ packages:
       {
         integrity: sha512-f+fciywl1SJEniZHD6H+kUO8gOnwIr7f4ijKA6+ZvJFjeGi1r4PDLl53Ayud9O/rk64RqgoQine0feoeOU0kXg==,
       }
+    dev: false
+
+  /webidl-conversions/3.0.1:
+    resolution:
+      {
+        integrity: sha1-JFNCdeKnvGvnvIZhHMFq4KVlSHE=,
+        tarball: webidl-conversions/download/webidl-conversions-3.0.1.tgz,
+      }
+    dev: false
+
+  /whatwg-url/5.0.0:
+    resolution:
+      {
+        integrity: sha1-lmRU6HZUYuN2RNNib2dCzotwll0=,
+        tarball: whatwg-url/download/whatwg-url-5.0.0.tgz,
+      }
+    dependencies:
+      tr46: 0.0.3
+      webidl-conversions: 3.0.1
     dev: false
 
   /which-boxed-primitive/1.0.2:
