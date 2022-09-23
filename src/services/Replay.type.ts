@@ -302,9 +302,9 @@ export type DynamicClass = {
   id?: string;
   appId?: string;
   fullClassName: string;
-  methodName: string;
-  parameterTypes: string;
-  keyFormula: string;
+  methodName?: string;
+  parameterTypes?: string;
+  keyFormula?: string;
   configType?: number;
 };
 export type QueryRecordDynamicClassSettingRes = DynamicClass[];
@@ -312,9 +312,9 @@ export type QueryRecordDynamicClassSettingRes = DynamicClass[];
 export interface UpdateDynamicClassSettingReq {
   appId: string;
   fullClassName: string;
-  methodName: string;
-  parameterTypes: string;
-  keyFormula: string;
+  methodName?: string;
+  parameterTypes?: string;
+  keyFormula?: string;
   configType: number;
 }
 
