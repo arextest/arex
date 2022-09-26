@@ -112,16 +112,21 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
       setSelectedDiff(diff);
       setSelectedCategory(category);
     } else {
-      // setSelectedDiff(undefined);
+      setSelectedDiff(undefined);
     }
   };
 
+  const handleSelectCategory = () => {
+    setSelectedDiff(undefined);
+    setDiffs([]);
+  };
+
   useAsyncEffect(async () => {
-    if (selectedCategory) {
+    if (selectedCategory && selectedDiff) {
       const scenes = await ReplayService.queryScenes({
-        categoryName: selectedCategory!.categoryName,
-        differenceName: selectedDiff!.differenceName,
-        operationName: selectedCategory!.operationName,
+        categoryName: selectedCategory.categoryName,
+        differenceName: selectedDiff.differenceName,
+        operationName: selectedCategory.operationName,
         planItemId: data.planItemId.toString(),
       });
 
@@ -142,7 +147,13 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
       <PanesTitle title={<span>Main Service API: {data.operationName}</span>} />
       <CollapseTable
         active={!!selectedDiff}
-        table={<Analysis planItemId={data.planItemId} onScenes={handleScenes} />}
+        table={
+          <Analysis
+            planItemId={data.planItemId}
+            onScenes={handleScenes}
+            onSelectCategory={handleSelectCategory}
+          />
+        }
         panel={
           <Card bordered={false} title='' bodyStyle={{ padding: '8px 16px' }}>
             {diffs
