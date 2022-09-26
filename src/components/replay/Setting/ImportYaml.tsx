@@ -5,9 +5,9 @@ import { FC, useEffect, useRef, useState, VFC } from 'react';
 
 import ReplayService from '../../../services/Replay.service';
 import { useStore } from '../../../store';
-import { SettingRecordProps } from './SettingRecord';
+import { SettingRecordProps } from './Record';
 
-const SettingImportYaml: FC<SettingRecordProps> = (props) => {
+const ImportYaml: FC<SettingRecordProps> = (props) => {
   const { themeClassify } = useStore();
   const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor | null>(null);
   const monacoEl = useRef(null);
@@ -57,4 +57,4 @@ const SettingImportYaml: FC<SettingRecordProps> = (props) => {
   );
 };
 
-export default SettingImportYaml;
+export default ImportYaml;

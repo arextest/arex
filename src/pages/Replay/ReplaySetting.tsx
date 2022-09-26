@@ -2,7 +2,12 @@ import { css } from '@emotion/react';
 import { Tabs } from 'antd';
 import { FC } from 'react';
 
-import { SettingImportYaml, SettingRecord, SettingReplay } from '../../components/replay/Setting';
+import {
+  SettingImportYaml,
+  SettingNodeDifferences,
+  SettingRecord,
+  SettingReplay,
+} from '../../components/replay/Setting';
 import { ApplicationDataType } from '../../services/Replay.type';
 
 export type ReplaySettingProps = {
@@ -34,6 +39,11 @@ const ReplaySetting: FC<ReplaySettingProps> = (props) => {
         {/*<TabPane tab='Import yaml' key='importYaml'>*/}
         {/*  /!* SettingImportYaml component *!/*/}
         {/*  <SettingImportYaml appId={props.data.appId} agentVersion={props.data.agentVersion} />*/}
+        {/*</TabPane>*/}
+
+        {/*<TabPane tab='NodeDifferences' key='nodeDifferences'>*/}
+        {/*  /!* NodeDifferences component *!/*/}
+        {/*  <SettingNodeDifferences appId={props.data.appId} />*/}
         {/*</TabPane>*/}
       </Tabs>
     </>
