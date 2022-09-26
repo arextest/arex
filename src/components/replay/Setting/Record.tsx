@@ -49,7 +49,7 @@ const defaultValues: Omit<
   timeMock: false,
 };
 
-const SettingRecord: FC<SettingRecordProps> = (props) => {
+const Record: FC<SettingRecordProps> = (props) => {
   const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
 
   const { loading } = useRequest(ReplayService.queryRecordSetting, {
@@ -208,4 +208,4 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
   );
 };
 
-export default SettingRecord;
+export default Record;

@@ -30,7 +30,7 @@ const columns: ColumnsType<PlanStatistics> = [
         <Tag color={state.color}>
           {state.label}
           {record.status === 1 && (
-            <span style={{ marginLeft: '8px' }}>
+            <span style={{ margin: '0 -4px 0 8px' }}>
               <Badge status='processing' />
               {record.percent && <span>{record.percent > 99 ? 99 : record.percent}</span>}
             </span>

@@ -1,3 +1,4 @@
-export { default as SettingImportYaml } from './SettingImportYaml';
-export { default as SettingRecord } from './SettingRecord';
-export { default as SettingReplay } from './SettingReplay';
+export { default as SettingImportYaml } from './ImportYaml';
+export { default as SettingNodeDifferences } from './NodeDifferences';
+export { default as SettingRecord } from './Record';
+export { default as SettingReplay } from './Replay';

@@ -15,14 +15,14 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 
 import { MenuTypeEnum, PageTypeEnum } from '../../constant';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
-import { generateGlobalPaneId, getPercent, uuid } from '../../utils';
+import { generateGlobalPaneId, getPercent } from '../../utils';
 import { SmallTextButton } from '../styledComponents';
 import { resultsStates } from './Results';
 
@@ -92,10 +92,10 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           <Tag color={state.color}>
             {state.label}
             {record.status === 1 && (
-              <>
+              <span style={{ margin: '0 -4px 0 8px' }}>
                 <Badge status='processing' />
                 {record.percent && <span>{record.percent > 99 ? 99 : record.percent}</span>}
-              </>
+              </span>
             )}
           </Tag>
         ) : (
