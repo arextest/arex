@@ -46,7 +46,7 @@ function DiffLog({ i }) {
         `}
       >
         Value of
-        <BolderUnderlineSpan>{i.path}</BolderUnderlineSpan>
+        <BolderUnderlineSpan>&#123;{i.path}&#125;</BolderUnderlineSpan>
         is different | excepted[
         <span
           css={css`
@@ -77,7 +77,7 @@ function DiffLog({ i }) {
   } else {
     return (
       <span>
-        <BolderUnderlineSpan>{i.path}</BolderUnderlineSpan>
+        <BolderUnderlineSpan>&#123;{i.path}&#125;</BolderUnderlineSpan>
         {diffMap[[i.pathPair.unmatchedType]].desc}
       </span>
     );
