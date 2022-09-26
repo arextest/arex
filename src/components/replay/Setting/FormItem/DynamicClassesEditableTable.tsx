@@ -36,7 +36,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
 
     return [
       {
-        title: 'Full Class Name',
+        title: 'Full Class Name (e.g. java.lang.String)',
         dataIndex: 'fullClassName',
         key: 'fullClassName',
         render: (text, record) =>
