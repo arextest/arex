@@ -115,11 +115,19 @@ export default class ReplayService {
     return request.post<QueryFullLinkMsgRes>('/report/queryFullLinkMsg', params).then((res) =>
       Promise.resolve(
         res.body.compareResults.map((item) => {
-          const type: 'html' | 'json' = item.baseMsg.includes('<html>') ? 'html' : 'json';
+          const type: 'html' | 'json' = item.baseMsg?.includes('<html>') ? 'html' : 'json';
           return {
             ...item,
-            baseMsg: type === 'html' ? item.baseMsg : tryPrettierJsonString(item.baseMsg),
-            testMsg: type === 'html' ? item.testMsg : tryPrettierJsonString(item.testMsg),
+            baseMsg: item.baseMsg
+              ? type === 'html'
+                ? item.baseMsg
+                : tryPrettierJsonString(item.baseMsg)
+              : '',
+            testMsg: item.testMsg
+              ? type === 'html'
+                ? item.testMsg
+                : tryPrettierJsonString(item.testMsg)
+              : '',
             type,
           };
         }),

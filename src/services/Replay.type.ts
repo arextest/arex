@@ -231,8 +231,8 @@ export type CompareResult = {
   operationName: string;
   replayId: string;
   recordId: string;
-  baseMsg: string;
-  testMsg: string;
+  baseMsg: string | null;
+  testMsg: string | null;
   planItemId: number;
   logs:
     | {
