@@ -430,7 +430,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
       }
     }
 
-    return url.replace(editorValueMatch[0], replaceVar);
+    return url.replace(editorValueMatch[0], replaceVar).split('?')[0];
   };
   const handleRequest = () => {
     const data: Partial<Record<'params' | 'data', object>> = {};
