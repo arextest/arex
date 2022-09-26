@@ -18,6 +18,7 @@ const diffMap = {
   '1': {
     text: 'Left Missing',
     color: '#faad14',
+    desc: 'is missing on the left',
   },
   '3': {
     text: 'Different Value',
@@ -26,8 +27,14 @@ const diffMap = {
   '2': {
     text: 'Right Missing',
     color: '#faad14',
+    desc: 'is missing on the right',
   },
 };
+const BolderUnderlineSpan = styled.span`
+  font-weight: bolder;
+  margin: 0 10px;
+  text-decoration: underline;
+`;
 function DiffLog({ i }) {
   if (i.pathPair.unmatchedType === 3) {
     return (
@@ -38,15 +45,8 @@ function DiffLog({ i }) {
           //width: 100%;
         `}
       >
-        Value of{' '}
-        <span
-          css={css`
-            font-weight: bolder;
-            margin: 0 10px;
-          `}
-        >
-          {i.path}
-        </span>{' '}
+        Value of
+        <BolderUnderlineSpan>{i.path}</BolderUnderlineSpan>
         is different | excepted[
         <span
           css={css`
@@ -77,19 +77,8 @@ function DiffLog({ i }) {
   } else {
     return (
       <span>
-        <span>
-          {' '}
-          Value of{' '}
-          <span
-            css={css`
-              font-weight: bolder;
-              margin: 0 10px;
-            `}
-          >
-            {i.path}
-          </span>{' '}
-        </span>
-        {diffMap[[i.pathPair.unmatchedType]].text}
+        <BolderUnderlineSpan>{i.path}</BolderUnderlineSpan>
+        {diffMap[[i.pathPair.unmatchedType]].desc}
       </span>
     );
   }
@@ -154,14 +143,6 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                 return (
                   <Card
                     style={{ marginBottom: '8px', border: '1px solid #434343', cursor: 'pointer' }}
-                    onClick={() => {
-                      setDiffJsonViewData({
-                        baseMsg: diff.baseMsg,
-                        testMsg: diff.testMsg,
-                        logs: diff.logs,
-                      });
-                      setDiffJsonViewVisible(true);
-                    }}
                   >
                     <div
                       css={css`
@@ -175,7 +156,19 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                       >
                         Diff Card - {diff.logs.length} issue(s)
                       </span>
-                      <Button size={'small'}>Tree Mode</Button>
+                      <Button
+                        size={'small'}
+                        onClick={() => {
+                          setDiffJsonViewData({
+                            baseMsg: diff.baseMsg,
+                            testMsg: diff.testMsg,
+                            logs: diff.logs,
+                          });
+                          setDiffJsonViewVisible(true);
+                        }}
+                      >
+                        Tree Mode
+                      </Button>
                     </div>
                     {diff.logs.map((i, index) => {
                       return (
