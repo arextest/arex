@@ -2,14 +2,20 @@ import './ReplayAnalysis.less';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useAsyncEffect } from 'ahooks';
 import { Button, Card, Space, Tag } from 'antd';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 
 import { Analysis } from '../../components/replay';
 import DiffJsonView from '../../components/replay/DiffJsonView';
 import { CollapseTable, PanesTitle } from '../../components/styledComponents';
 import ReplayService from '../../services/Replay.service';
-import { CategoryStatistic, Difference, PlanItemStatistics } from '../../services/Replay.type';
+import {
+  CategoryStatistic,
+  Difference,
+  PlanItemStatistics,
+  QueryMsgWithDiffRes,
+} from '../../services/Replay.type';
 const diffMap = {
   '0': {
     text: 'Unknown',
@@ -87,7 +93,7 @@ function DiffLog({ i }) {
 const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   const [selectedDiff, setSelectedDiff] = useState<Difference>();
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
-  const [diffs, setDiffs] = useState([]);
+  const [diffs, setDiffs] = useState<QueryMsgWithDiffRes[]>([]);
   const [diffJsonViewData, setDiffJsonViewData] = useState({});
   const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
 
@@ -104,28 +110,24 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
     }
   };
 
-  useEffect(() => {
+  useAsyncEffect(async () => {
     if (selectedCategory) {
-      ReplayService.queryScenes({
+      const scenes = await ReplayService.queryScenes({
         categoryName: selectedCategory!.categoryName,
         differenceName: selectedDiff!.differenceName,
         operationName: selectedCategory!.operationName,
         planItemId: data.planItemId.toString(),
-      }).then((s) => {
-        const arr = [];
-        for (let i = 0; i < s.length; i++) {
-          const sence = s[i];
-          arr.push(
-            ReplayService.queryMsgWithDiff({
-              compareResultId: sence.compareResultId,
-              logIndexes: sence.logIndexes,
-            }),
-          );
-        }
-        Promise.all(arr).then((d) => {
-          setDiffs(d);
-        });
       });
+
+      const promiseAll = scenes.map((scene) =>
+        ReplayService.queryMsgWithDiff({
+          compareResultId: scene.compareResultId,
+          logIndexes: scene.logIndexes,
+        }),
+      );
+
+      const diffs = await Promise.all(promiseAll);
+      setDiffs(diffs);
     }
   }, [selectedCategory, selectedDiff, data.planItemId]);
 
@@ -142,6 +144,7 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
               .map((diff, index) => {
                 return (
                   <Card
+                    key={index}
                     style={{ marginBottom: '8px', border: '1px solid #434343', cursor: 'pointer' }}
                   >
                     <div
