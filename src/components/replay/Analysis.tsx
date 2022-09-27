@@ -11,7 +11,8 @@ import { HighlightRowTable } from '../styledComponents';
 const Analysis: FC<{
   planItemId: number;
   onScenes?: (diff: Difference, category?: CategoryStatistic) => void;
-}> = ({ planItemId, onScenes }) => {
+  onSelectCategory?: (category: CategoryStatistic) => void;
+}> = ({ planItemId, onScenes, onSelectCategory }) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
   const { data: differenceData = [], loading } = useRequest(
     () =>
@@ -45,6 +46,11 @@ const Analysis: FC<{
     },
   ];
 
+  const handleSelect = (item: CategoryStatistic) => {
+    onSelectCategory && onSelectCategory(item);
+    setSelectedCategory(item);
+  };
+
   const handleRowClick = (record: Difference) => onScenes && onScenes(record, selectedCategory);
 
   return (
@@ -55,7 +61,7 @@ const Analysis: FC<{
           forceFilter
           defaultSelectFirst
           rowKey='operationName'
-          onSelect={setSelectedCategory}
+          onSelect={handleSelect}
           placeholder={''}
           request={() => ReplayService.queryResponseTypeStatistic({ planItemId })}
           filter={(keyword, record) =>

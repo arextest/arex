@@ -2,15 +2,29 @@ import './ReplayAnalysis.less';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useAsyncEffect } from 'ahooks';
 import { Button, Card, Space, Tag } from 'antd';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 
 import { Analysis } from '../../components/replay';
-import DiffJsonView from '../../components/replay/DiffJsonView';
+import DiffJsonView, { DiffJsonViewProps } from '../../components/replay/DiffJsonView';
 import { CollapseTable, PanesTitle } from '../../components/styledComponents';
 import ReplayService from '../../services/Replay.service';
-import { CategoryStatistic, Difference, PlanItemStatistics } from '../../services/Replay.type';
-const diffMap = {
+import {
+  CategoryStatistic,
+  Difference,
+  PlanItemStatistics,
+  QueryMsgWithDiffLog,
+  QueryMsgWithDiffRes,
+} from '../../services/Replay.type';
+
+const diffMap: {
+  [unmatchedType: string]: {
+    text: string;
+    color: string;
+    desc?: string;
+  };
+} = {
   '0': {
     text: 'Unknown',
     color: 'red',
@@ -30,13 +44,15 @@ const diffMap = {
     desc: 'is missing on the right',
   },
 };
+
 const BolderUnderlineSpan = styled.span`
   font-weight: bolder;
   margin: 0 10px;
   text-decoration: underline;
 `;
-function DiffLog({ i }) {
-  if (i.pathPair.unmatchedType === 3) {
+
+const DiffLog: FC<{ log: QueryMsgWithDiffLog }> = (props) => {
+  if (props.log.pathPair.unmatchedType === 3) {
     return (
       <span
         css={css`
@@ -46,7 +62,7 @@ function DiffLog({ i }) {
         `}
       >
         Value of
-        <BolderUnderlineSpan>&#123;{i.path}&#125;</BolderUnderlineSpan>
+        <BolderUnderlineSpan>&#123;{props.log.path}&#125;</BolderUnderlineSpan>
         is different | excepted[
         <span
           css={css`
@@ -57,7 +73,7 @@ function DiffLog({ i }) {
             max-width: 200px;
           `}
         >
-          {i.baseValue}
+          {props.log.baseValue}
         </span>
         ]. actual[
         <span
@@ -69,7 +85,7 @@ function DiffLog({ i }) {
             max-width: 200px;
           `}
         >
-          {i.testValue}
+          {props.log.testValue}
         </span>
         ].
       </span>
@@ -77,55 +93,52 @@ function DiffLog({ i }) {
   } else {
     return (
       <span>
-        <BolderUnderlineSpan>&#123;{i.path}&#125;</BolderUnderlineSpan>
-        {diffMap[[i.pathPair.unmatchedType]].desc}
+        <BolderUnderlineSpan>&#123;{props.log.path}&#125;</BolderUnderlineSpan>
+        {diffMap[props.log.pathPair.unmatchedType].desc}
       </span>
     );
   }
-}
+};
 
 const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   const [selectedDiff, setSelectedDiff] = useState<Difference>();
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
-  const [diffs, setDiffs] = useState([]);
-  const [diffJsonViewData, setDiffJsonViewData] = useState({});
+  const [diffs, setDiffs] = useState<QueryMsgWithDiffRes[]>([]);
+  const [diffJsonViewData, setDiffJsonViewData] = useState<DiffJsonViewProps['data']>();
   const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
-
-  const closeDiffJsonView = () => {
-    setDiffJsonViewVisible(false);
-  };
 
   const handleScenes = (diff: Difference, category?: CategoryStatistic) => {
     if (selectedDiff?.differenceName !== diff.differenceName) {
       setSelectedDiff(diff);
       setSelectedCategory(category);
     } else {
-      // setSelectedDiff(undefined);
+      setSelectedDiff(undefined);
     }
   };
 
-  useEffect(() => {
-    if (selectedCategory) {
-      ReplayService.queryScenes({
-        categoryName: selectedCategory!.categoryName,
-        differenceName: selectedDiff!.differenceName,
-        operationName: selectedCategory!.operationName,
+  const handleSelectCategory = () => {
+    setSelectedDiff(undefined);
+    setDiffs([]);
+  };
+
+  useAsyncEffect(async () => {
+    if (selectedCategory && selectedDiff) {
+      const scenes = await ReplayService.queryScenes({
+        categoryName: selectedCategory.categoryName,
+        differenceName: selectedDiff.differenceName,
+        operationName: selectedCategory.operationName,
         planItemId: data.planItemId.toString(),
-      }).then((s) => {
-        const arr = [];
-        for (let i = 0; i < s.length; i++) {
-          const sence = s[i];
-          arr.push(
-            ReplayService.queryMsgWithDiff({
-              compareResultId: sence.compareResultId,
-              logIndexes: sence.logIndexes,
-            }),
-          );
-        }
-        Promise.all(arr).then((d) => {
-          setDiffs(d);
-        });
       });
+
+      const promiseAll = scenes.map((scene) =>
+        ReplayService.queryMsgWithDiff({
+          compareResultId: scene.compareResultId,
+          logIndexes: scene.logIndexes,
+        }),
+      );
+
+      const diffs = await Promise.all(promiseAll);
+      setDiffs(diffs);
     }
   }, [selectedCategory, selectedDiff, data.planItemId]);
 
@@ -134,7 +147,13 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
       <PanesTitle title={<span>Main Service API: {data.operationName}</span>} />
       <CollapseTable
         active={!!selectedDiff}
-        table={<Analysis planItemId={data.planItemId} onScenes={handleScenes} />}
+        table={
+          <Analysis
+            planItemId={data.planItemId}
+            onScenes={handleScenes}
+            onSelectCategory={handleSelectCategory}
+          />
+        }
         panel={
           <Card bordered={false} title='' bodyStyle={{ padding: '8px 16px' }}>
             {diffs
@@ -142,6 +161,7 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
               .map((diff, index) => {
                 return (
                   <Card
+                    key={index}
                     style={{ marginBottom: '8px', border: '1px solid #434343', cursor: 'pointer' }}
                   >
                     <div
@@ -170,7 +190,7 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                         Tree Mode
                       </Button>
                     </div>
-                    {diff.logs.map((i, index) => {
+                    {diff.logs.map((log, index) => {
                       return (
                         <div
                           key={index}
@@ -178,23 +198,22 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                             display: flex;
                           `}
                         >
-                          <Tag color={diffMap[i.pathPair.unmatchedType]?.color}>
-                            {diffMap[i.pathPair.unmatchedType]?.text}
+                          <Tag color={diffMap[log.pathPair.unmatchedType]?.color}>
+                            {diffMap[log.pathPair.unmatchedType]?.text}
                           </Tag>
-                          <DiffLog i={i} />
+                          <DiffLog log={log} />
                         </div>
                       );
                     })}
                   </Card>
                 );
               })}
-            {diffJsonViewVisible ? (
-              <DiffJsonView
-                visible={diffJsonViewVisible}
-                onClose={closeDiffJsonView}
-                data={diffJsonViewData}
-              />
-            ) : null}
+
+            <DiffJsonView
+              visible={diffJsonViewVisible}
+              onClose={() => setDiffJsonViewVisible(false)}
+              data={diffJsonViewData}
+            />
           </Card>
         }
       />

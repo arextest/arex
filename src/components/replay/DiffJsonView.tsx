@@ -1,11 +1,22 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
-import { useMount, useUnmount } from 'ahooks';
-import { Alert } from 'antd';
-import JSONEditor from 'jsoneditor';
-import { useEffect, useRef } from 'react';
+import { useMount } from 'ahooks';
+import JSONEditor, { JSONEditorOptions } from 'jsoneditor';
+import { FC, useEffect, useRef } from 'react';
 
-const DiffJsonView = ({ data, visible = false, onClose }) => {
+import { QueryMsgWithDiffLog } from '../../services/Replay.type';
+import { tryParseJsonString } from '../../utils';
+
+export type DiffJsonViewProps = {
+  data?: {
+    baseMsg: string;
+    testMsg: string;
+    logs: QueryMsgWithDiffLog[];
+  };
+  visible: boolean;
+  onClose: () => void;
+};
+const DiffJsonView: FC<DiffJsonViewProps> = ({ data, visible = false, onClose }) => {
   useMount(() => {
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') {
@@ -14,23 +25,10 @@ const DiffJsonView = ({ data, visible = false, onClose }) => {
     });
   });
 
-  const containerLeftRef = useRef();
-  const containerRightRef = useRef();
+  const containerLeftRef = useRef<HTMLDivElement>(null);
+  const containerRightRef = useRef<HTMLDivElement>(null);
 
   const msgWithDiff = data;
-
-  console.log(msgWithDiff, 'msgWithDiff');
-
-  // TODO 使用工具函数 utils/tryParseJsonString
-  function strConvertToJson(str: string) {
-    try {
-      return JSON.parse(str);
-    } catch (e) {
-      return {
-        content: str,
-      };
-    }
-  }
 
   useEffect(() => {
     const containerLeft = containerLeftRef.current;
@@ -39,7 +37,7 @@ const DiffJsonView = ({ data, visible = false, onClose }) => {
       setTimeout(() => {
         containerLeft.innerHTML = '';
         containerRight.innerHTML = '';
-        function genAllDiffByType(logs) {
+        function genAllDiffByType(logs: QueryMsgWithDiffLog[]) {
           const allDiff = {
             diff012: [],
             diff3: [],
@@ -96,7 +94,7 @@ const DiffJsonView = ({ data, visible = false, onClose }) => {
             return 'different_element';
           }
         }
-        const optionsLeft = {
+        const optionsLeft: JSONEditorOptions = {
           mode: 'view',
           theme: 'twitlighjt',
           onClassName: onClassName,
@@ -105,7 +103,7 @@ const DiffJsonView = ({ data, visible = false, onClose }) => {
             window.editorRight.refresh();
           },
         };
-        const optionsRight = {
+        const optionsRight: JSONEditorOptions = {
           mode: 'view',
           onClassName: onClassName,
           onChangeJSON: function (j) {
@@ -113,8 +111,10 @@ const DiffJsonView = ({ data, visible = false, onClose }) => {
             window.editorLeft.refresh();
           },
         };
-        let jsonLeft = strConvertToJson(msgWithDiff?.baseMsg);
-        let jsonRight = strConvertToJson(msgWithDiff?.testMsg);
+
+        let jsonLeft = tryParseJsonString(msgWithDiff?.baseMsg);
+        let jsonRight = tryParseJsonString(msgWithDiff?.testMsg);
+        // TODO 将 JSONEditor 挂载到 window 上是否必要
         window.editorLeft = new JSONEditor(containerLeft, optionsLeft, jsonLeft);
         window.editorRight = new JSONEditor(containerRight, optionsRight, jsonRight);
         window.editorLeft.expandAll();

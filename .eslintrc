@@ -24,7 +24,8 @@
     "simple-import-sort",
     "jsx-a11y",
     "react-hooks",
-    "prettier"
+    "prettier",
+    "@emotion"
   ],
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
