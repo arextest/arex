@@ -33,7 +33,7 @@ const Case: FC<CaseProps> = (props) => {
     {
       title: 'Action',
       render: (_, record) => [
-        <SmallTextButton key='replayLog' title='Replay Log' />,
+        // <SmallTextButton key='replayLog' title='Replay Log' />,
         <SmallTextButton
           key='detail'
           title='Detail'
