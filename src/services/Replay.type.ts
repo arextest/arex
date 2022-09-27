@@ -200,11 +200,24 @@ export interface QueryMsgWithDiffReq {
 export type QueryMsgWithDiffLog = {
   addRefPkNodePathLeft: null;
   addRefPkNodePathRight: null;
-  baseValue: unknown;
+  baseValue: string;
   logInfo: string;
   logTag: { lv: number; ig: boolean };
   path: string;
-  pathPair: any;
+  pathPair: {
+    leftUnmatchedPath: {
+      nodeName: string;
+      index: number;
+    }[];
+    listKeyPath: string[];
+    listKeys: string | null;
+    rightUnmatchedPath: {
+      nodeName: string;
+      index: number;
+    }[];
+    trace: { currentTraceLeft: null; currentTraceRight: null } | null;
+    unmatchedType: number;
+  };
   testValue: null;
 };
 export type QueryMsgWithDiffRes = {
@@ -231,8 +244,8 @@ export type CompareResult = {
   operationName: string;
   replayId: string;
   recordId: string;
-  baseMsg: string;
-  testMsg: string;
+  baseMsg: string | null;
+  testMsg: string | null;
   planItemId: number;
   logs:
     | {

@@ -120,7 +120,7 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                     <Col span={12}>
                       <CodeViewer
                         type={result.type}
-                        value={result?.baseMsg}
+                        value={result.baseMsg}
                         themeKey={themeClassify}
                         remark='Benchmark'
                       />
@@ -128,7 +128,7 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                     <Col span={12}>
                       <CodeViewer
                         type={result.type}
-                        value={result?.testMsg}
+                        value={result.testMsg}
                         themeKey={themeClassify}
                         remark='Test'
                       />
