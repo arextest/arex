@@ -26,7 +26,7 @@ const ReplaySetting: FC<ReplaySettingProps> = (props) => {
           }
         `}
       >
-        <TabPane tab='Record' key='record'>
+        <TabPane tab='Index' key='record'>
           {/* SettingRecord component */}
           <SettingRecord appId={props.data.appId} agentVersion={props.data.agentVersion} />
         </TabPane>
@@ -41,10 +41,10 @@ const ReplaySetting: FC<ReplaySettingProps> = (props) => {
         {/*  <SettingImportYaml appId={props.data.appId} agentVersion={props.data.agentVersion} />*/}
         {/*</TabPane>*/}
 
-        {/*<TabPane tab='NodeDifferences' key='nodeDifferences'>*/}
-        {/*  /!* NodeDifferences component *!/*/}
-        {/*  <SettingNodeDifferences appId={props.data.appId} />*/}
-        {/*</TabPane>*/}
+        <TabPane tab='NodeDifferences' key='nodeDifferences'>
+          {/* NodeDifferences component */}
+          <SettingNodeDifferences />
+        </TabPane>
       </Tabs>
     </>
   );
