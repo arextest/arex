@@ -1,6 +1,6 @@
+import styled from '@emotion/styled';
 import { Skeleton } from 'antd';
 import React, { FC } from 'react';
-import styled from '@emotion/styled';
 
 const EditAreaPlaceholderWrapper = styled.div`
   flex: 1;
@@ -13,7 +13,7 @@ const EditAreaPlaceholderWrapper = styled.div`
   }
   .dashed-border {
     height: 300px;
-    border: 2px gray dashed;
+    border: 2px ${(props) => props.theme.color.border.primary} dashed;
     border-radius: 8px;
     padding: 16px;
   }

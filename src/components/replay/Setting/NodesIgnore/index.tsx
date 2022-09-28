@@ -1,10 +1,10 @@
-import { css } from '@emotion/react';
-import { Col, Collapse, List, Row, Select } from 'antd';
+import { Col, Row, Select } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { tryParseJsonString } from '../../../../utils';
 import EditAreaPlaceholder from './EditAreaPlaceholder';
+import PathCollapse, { GLOBAL_KEY } from './PathCollapse';
 import ResponseRaw from './ResponseRaw';
 import ResponseTree from './ResponseTree';
 
@@ -12,10 +12,9 @@ enum IgnoredNodesEditMode {
   'Tree' = 'Tree',
   'Raw' = 'Raw',
 }
-const GLOBAL_KEY = '__global__';
 
 const MockInterfaces = ['/owners', '/owners/find'];
-const data = { parent1: { child1: { bar: '1' }, child2: '2' }, parent2: { child3: '1' } };
+const MockResponse = { parent1: { child1: { bar: '1' }, child2: '2' }, parent2: { child3: '1' } };
 
 const ignoredNodesEditModeOptions = [
   { label: 'Tree', value: IgnoredNodesEditMode.Tree },
@@ -31,7 +30,7 @@ const NodesIgnore: FC = () => {
     interfaces: {},
   });
 
-  const [rawResponse, setRawResponse] = useState<object>(data);
+  const [rawResponse, setRawResponse] = useState<object>(MockResponse);
   const rawResponseString = useMemo(() => JSON.stringify(rawResponse, null, 2), [rawResponse]);
 
   const [activeKey, setActiveKey] = useState<string>();
@@ -65,56 +64,23 @@ const NodesIgnore: FC = () => {
     <Row gutter={24} style={{ margin: 0, flexWrap: 'nowrap' }}>
       <Col span={14}>
         <h3>Global</h3>
-
-        <Collapse
+        <PathCollapse
           activeKey={activeKey}
-          css={css`
-            .ant-collapse-content-box {
-              padding: 0 !important;
-            }
-          `}
-          onChange={() => handleIgnoredNodesCollapseClick(GLOBAL_KEY)}
-        >
-          <Collapse.Panel
-            key={GLOBAL_KEY}
-            header={<div>{`Ignored Nodes: ${checkedNodes.global.length}`}</div>}
-          >
-            <List
-              size='small'
-              dataSource={checkedNodes.global}
-              renderItem={(item) => <List.Item>{item}</List.Item>}
-              locale={{ emptyText: 'No Ignored Nodes' }}
-            />
-          </Collapse.Panel>
-        </Collapse>
+          checkedNodes={checkedNodes.global}
+          onChange={handleIgnoredNodesCollapseClick}
+          onSelect={onSelect}
+        />
 
         <br />
 
         <h3>Interfaces</h3>
-        <Collapse
-          accordion
+        <PathCollapse
+          interfaces={MockInterfaces}
           activeKey={activeKey}
-          css={css`
-            .ant-collapse-content-box {
-              padding: 0 !important;
-            }
-          `}
-          onChange={(activeKey) => handleIgnoredNodesCollapseClick(activeKey as string)}
-        >
-          {MockInterfaces.map((item) => (
-            <Collapse.Panel
-              key={item}
-              header={`${item} - Ignored Nodes: ${checkedNodes.interfaces[item]?.length ?? 0}`}
-            >
-              <List
-                size='small'
-                dataSource={checkedNodes.interfaces[item]}
-                renderItem={(item) => <List.Item>{item}</List.Item>}
-                locale={{ emptyText: 'No Ignored Nodes' }}
-              />
-            </Collapse.Panel>
-          ))}
-        </Collapse>
+          checkedNodes={checkedNodes.interfaces}
+          onChange={handleIgnoredNodesCollapseClick}
+          onSelect={onSelect}
+        />
       </Col>
 
       {activeKey ? (
