@@ -41,6 +41,7 @@ export type PaneType = {
   rawId: string;
 };
 
+type ActiveMenu = [MenuTypeEnum, string | undefined]; // [菜单id, 菜单项目id]
 type BaseState = {
   themeClassify: ThemeClassify;
   changeTheme: (theme?: ThemeName) => void;
@@ -54,7 +55,7 @@ type BaseState = {
   // activePane: string;
   // setActivePane: (activePaneKey: string, activeMenuKey?: MenuTypeEnum) => void;
   setUserInfo: (data: UserInfo | string) => void;
-  activeMenu: [MenuTypeEnum, string | undefined]; // [菜单id, 菜单项目id]
+  activeMenu: ActiveMenu;
   setActiveMenu: (menuKey: MenuTypeEnum, menuItemKey?: string) => void;
   panes: PaneType[];
 

@@ -4,7 +4,7 @@ import { FC } from 'react';
 
 import {
   SettingImportYaml,
-  SettingNodeDifferences,
+  SettingNodesIgnored,
   SettingRecord,
   SettingReplay,
 } from '../../components/replay/Setting';
@@ -41,9 +41,9 @@ const ReplaySetting: FC<ReplaySettingProps> = (props) => {
         {/*  <SettingImportYaml appId={props.data.appId} agentVersion={props.data.agentVersion} />*/}
         {/*</TabPane>*/}
 
-        <TabPane tab='NodeDifferences' key='nodeDifferences'>
+        <TabPane tab='NodesIgnored' key='nodesIgnored'>
           {/* NodeDifferences component */}
-          <SettingNodeDifferences />
+          <SettingNodesIgnored />
         </TabPane>
       </Tabs>
     </>

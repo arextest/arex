@@ -15,11 +15,12 @@ const ResponseTree: FC<Omit<TreeProps, 'treeData'> & { treeData: object; title?:
   props,
 ) => {
   function getNodes(object: object, basePath = ''): DataNode[] {
-    return Object.entries(object).map(([key, value]) =>
-      value && typeof value === 'object'
-        ? { title: key, key: basePath + key + '/', children: getNodes(value, key + '/') }
-        : { title: key, key: basePath + key + '/', value },
-    );
+    return Object.entries(object).map(([key, value]) => {
+      const path = basePath + key + '/';
+      return value && typeof value === 'object'
+        ? { title: key, key: path, children: getNodes(value, path) }
+        : { title: key, key: path, value };
+    });
   }
 
   return (
