@@ -1,6 +1,7 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useMount } from 'ahooks';
+import { Modal } from 'antd';
 import JSONEditor, { JSONEditorOptions } from 'jsoneditor';
 import { FC, useEffect, useRef } from 'react';
 
@@ -125,7 +126,13 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, visible = false, onClose })
   }, [msgWithDiff]);
 
   return (
-    <FullScreen title='Press Esc to exit' visible={visible} onClose={onClose}>
+    <Modal
+      title='Press Esc to exit'
+      width={'100%'}
+      visible={visible}
+      onCancel={onClose}
+      style={{ top: 0 }}
+    >
       <div
         css={css`
           display: flex;
@@ -152,7 +159,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, visible = false, onClose })
         <div ref={containerLeftRef} id='containerLeft' />
         <div ref={containerRightRef} id='containerRight' />
       </div>
-    </FullScreen>
+    </Modal>
   );
 };
 
