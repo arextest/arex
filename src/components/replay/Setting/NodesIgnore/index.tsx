@@ -22,7 +22,7 @@ const ignoredNodesEditModeOptions = [
   { label: 'Raw', value: IgnoredNodesEditMode.Raw },
 ];
 
-const NodesIgnored: FC = () => {
+const NodesIgnore: FC = () => {
   const [checkedNodes, setCheckedNodes] = useImmer<{
     global: string[];
     interfaces: { [key: string]: string[] };
@@ -155,4 +155,4 @@ const NodesIgnored: FC = () => {
   );
 };
 
-export default NodesIgnored;
+export default NodesIgnore;

@@ -4,7 +4,8 @@ import { FC } from 'react';
 
 import {
   SettingImportYaml,
-  SettingNodesIgnored,
+  SettingNodesIgnore,
+  SettingNodesSort,
   SettingRecord,
   SettingReplay,
 } from '../../components/replay/Setting';
@@ -26,24 +27,24 @@ const ReplaySetting: FC<ReplaySettingProps> = (props) => {
           }
         `}
       >
-        <TabPane tab='Index' key='record'>
-          {/* SettingRecord component */}
+        <TabPane tab='Record' key='record'>
           <SettingRecord appId={props.data.appId} agentVersion={props.data.agentVersion} />
         </TabPane>
 
         <TabPane tab='Replay' key='replay'>
-          {/* SettingReplay component */}
           <SettingReplay appId={props.data.appId} agentVersion={props.data.agentVersion} />
         </TabPane>
 
         {/*<TabPane tab='Import yaml' key='importYaml'>*/}
-        {/*  /!* SettingImportYaml component *!/*/}
         {/*  <SettingImportYaml appId={props.data.appId} agentVersion={props.data.agentVersion} />*/}
         {/*</TabPane>*/}
 
-        <TabPane tab='NodesIgnored' key='nodesIgnored'>
-          {/* NodeDifferences component */}
-          <SettingNodesIgnored />
+        <TabPane tab='NodesIgnore' key='nodesIgnored'>
+          <SettingNodesIgnore />
+        </TabPane>
+
+        <TabPane tab='NodesSort' key='nodesSort'>
+          <SettingNodesSort />
         </TabPane>
       </Tabs>
     </>

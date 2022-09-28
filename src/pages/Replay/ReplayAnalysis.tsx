@@ -158,61 +158,43 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
           <Card bordered={false} title='' bodyStyle={{ padding: '8px 16px' }}>
             {diffs
               .filter((i) => i.diffResultCode !== 2)
-              .map((diff, index) => {
-                return (
-                  <Card
-                    key={index}
-                    style={{ marginBottom: '8px', border: '1px solid #434343', cursor: 'pointer' }}
-                  >
-                    <div
-                      css={css`
-                        margin-bottom: 8px;
-                      `}
+              .map((diff, index) => (
+                <Card key={index} style={{ cursor: 'pointer' }}>
+                  <div style={{ marginBottom: '8px' }}>
+                    <span style={{ marginRight: '8px' }}>
+                      Diff Card - {diff.logs.length} issue(s)
+                    </span>
+
+                    <Button
+                      size={'small'}
+                      onClick={() => {
+                        setDiffJsonViewData({
+                          baseMsg: diff.baseMsg,
+                          testMsg: diff.testMsg,
+                          logs: diff.logs,
+                        });
+                        setDiffJsonViewVisible(true);
+                      }}
                     >
-                      <span
-                        css={css`
-                          margin-right: 8px;
-                        `}
-                      >
-                        Diff Card - {diff.logs.length} issue(s)
-                      </span>
-                      <Button
-                        size={'small'}
-                        onClick={() => {
-                          setDiffJsonViewData({
-                            baseMsg: diff.baseMsg,
-                            testMsg: diff.testMsg,
-                            logs: diff.logs,
-                          });
-                          setDiffJsonViewVisible(true);
-                        }}
-                      >
-                        Tree Mode
-                      </Button>
+                      Tree Mode
+                    </Button>
+                  </div>
+
+                  {diff.logs.map((log, index) => (
+                    <div key={index}>
+                      <Tag color={diffMap[log.pathPair.unmatchedType]?.color}>
+                        {diffMap[log.pathPair.unmatchedType]?.text}
+                      </Tag>
+                      <DiffLog log={log} />
                     </div>
-                    {diff.logs.map((log, index) => {
-                      return (
-                        <div
-                          key={index}
-                          css={css`
-                            display: flex;
-                          `}
-                        >
-                          <Tag color={diffMap[log.pathPair.unmatchedType]?.color}>
-                            {diffMap[log.pathPair.unmatchedType]?.text}
-                          </Tag>
-                          <DiffLog log={log} />
-                        </div>
-                      );
-                    })}
-                  </Card>
-                );
-              })}
+                  ))}
+                </Card>
+              ))}
 
             <DiffJsonView
+              data={diffJsonViewData}
               visible={diffJsonViewVisible}
               onClose={() => setDiffJsonViewVisible(false)}
-              data={diffJsonViewData}
             />
           </Card>
         }
