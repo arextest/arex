@@ -3,9 +3,6 @@ import { Skeleton } from 'antd';
 import React, { FC } from 'react';
 
 const EditAreaPlaceholderWrapper = styled.div`
-  flex: 1;
-  padding: 0 16px;
-
   h3 {
     white-space: nowrap;
     overflow: hidden;

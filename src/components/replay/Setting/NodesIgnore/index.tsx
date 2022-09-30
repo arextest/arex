@@ -8,13 +8,35 @@ import PathCollapse, { GLOBAL_KEY } from './PathCollapse';
 import ResponseRaw from './ResponseRaw';
 import ResponseTree from './ResponseTree';
 
-enum IgnoredNodesEditMode {
+export enum IgnoredNodesEditMode {
   'Tree' = 'Tree',
   'Raw' = 'Raw',
 }
 
 const MockInterfaces = ['/owners', '/owners/find'];
-const MockResponse = { parent1: { child1: { bar: '1' }, child2: '2' }, parent2: { child3: '1' } };
+const MockResponse = {
+  parent1: { child1: { bar: '1' }, child2: '2', numberArray: [1, 2, 3] },
+  numberArray: [1, 2, 3],
+  stringArray: ['a', 'b', 'c'],
+  objectArray: [
+    {
+      number: 1,
+      string: 'a',
+      object: {
+        number: 11,
+        string: 'aa',
+      },
+    },
+    {
+      number: 2,
+      string: 'b',
+      object: {
+        number: 22,
+        string: 'bb',
+      },
+    },
+  ],
+};
 
 const ignoredNodesEditModeOptions = [
   { label: 'Tree', value: IgnoredNodesEditMode.Tree },
@@ -83,40 +105,44 @@ const NodesIgnore: FC = () => {
         />
       </Col>
 
-      {activeKey ? (
-        <Col span={10}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <h3>Response {ignoredNodesEditMode}</h3>
-            <Select
-              bordered={false}
-              options={ignoredNodesEditModeOptions}
-              value={ignoredNodesEditMode}
-              onChange={setIgnoredNodesEditMode}
-            />
-          </div>
+      <Col span={10}>
+        {activeKey ? (
+          <>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <h3>Response {ignoredNodesEditMode}</h3>
+              <Select
+                bordered={false}
+                options={ignoredNodesEditModeOptions}
+                value={ignoredNodesEditMode}
+                onChange={setIgnoredNodesEditMode}
+              />
+            </div>
 
-          {ignoredNodesEditMode === IgnoredNodesEditMode.Tree ? (
-            <ResponseTree
-              multiple
-              treeData={rawResponse}
-              selectedKeys={
-                activeKey === GLOBAL_KEY ? checkedNodes.global : checkedNodes.interfaces[activeKey]
-              }
-              title={activeKey}
-              onSelect={(selectKeys, info) =>
-                onSelect(
-                  activeKey,
-                  info.selectedNodes.map((node) => node.key.toString()),
-                )
-              }
-            />
-          ) : (
-            <ResponseRaw value={rawResponseString} onSave={handleResponseRawSave} />
-          )}
-        </Col>
-      ) : (
-        <EditAreaPlaceholder />
-      )}
+            {ignoredNodesEditMode === IgnoredNodesEditMode.Tree ? (
+              <ResponseTree
+                treeData={rawResponse}
+                selectedKeys={
+                  activeKey === GLOBAL_KEY
+                    ? checkedNodes.global
+                    : checkedNodes.interfaces[activeKey]
+                }
+                title={activeKey}
+                exclude='array'
+                onSelect={(selectKeys, info) =>
+                  onSelect(
+                    activeKey,
+                    info.selectedNodes.map((node) => node.key.toString()),
+                  )
+                }
+              />
+            ) : (
+              <ResponseRaw value={rawResponseString} onSave={handleResponseRawSave} />
+            )}
+          </>
+        ) : (
+          <EditAreaPlaceholder />
+        )}
+      </Col>
     </Row>
   );
 };

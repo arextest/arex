@@ -10,11 +10,6 @@ type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
   title?: string;
   exclude?: ObjectFilter;
 };
-const ResponseTreeWrapper = styled.div`
-  .ant-tree-node-selected {
-    text-decoration: line-through;
-  }
-`;
 
 const ResponseTree: FC<ResponseTreeProps> = (props) => {
   function getNodes(object: object, basePath = '', exclude?: ObjectFilter): DataNode[] {
@@ -32,20 +27,18 @@ const ResponseTree: FC<ResponseTreeProps> = (props) => {
   }
 
   return (
-    <ResponseTreeWrapper>
-      <Card
-        title={`${props.title} (click node to ignore)`}
-        bodyStyle={{ padding: '8px 16px' }}
-        headStyle={{ padding: '0 16px', margin: '-8px 0' }}
-      >
-        <Tree
-          multiple
-          defaultExpandAll
-          {...props}
-          treeData={getNodes(props.treeData, '', props.exclude)}
-        />
-      </Card>
-    </ResponseTreeWrapper>
+    <Card
+      title={`${props.title} (click node to ignore)`}
+      bodyStyle={{ padding: '8px 16px' }}
+      headStyle={{ padding: '0 16px', margin: '-8px 0' }}
+    >
+      <Tree
+        checkable
+        defaultExpandAll
+        {...props}
+        treeData={getNodes(props.treeData, '', props.exclude)}
+      />
+    </Card>
   );
 };
 
