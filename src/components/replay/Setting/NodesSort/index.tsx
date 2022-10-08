@@ -1,16 +1,26 @@
-import { Col, Row, Select } from 'antd';
+import { Button, Col, Row, Select } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { tryParseJsonString } from '../../../../utils';
-import { IgnoredNodesEditMode } from '../NodesIgnore';
 import EditAreaPlaceholder from '../NodesIgnore/EditAreaPlaceholder';
 import ResponseRaw from '../NodesIgnore/ResponseRaw';
+import ArrayTree from './ArrayTree';
 import PathCollapse from './PathCollapse';
-import ResponseTree from './ResponseTree';
+import SortTree from './SortTree';
+
+enum NodesEditMode {
+  'Tree' = 'Tree',
+  'Raw' = 'Raw',
+}
+
+enum TreeEditMode {
+  'ArrayTree' = 'ArrayTree',
+  'SortTree' = 'SortTree',
+}
 
 const MockInterfaces = ['/owners', '/owners/find'];
-const MockResponse = {
+const MockResponse: { [key: string]: any } = {
   parent1: { child1: { bar: '1' }, child2: '2' },
   numberArray: [1, 2, 3],
   stringArray: ['a', 'b', 'c'],
@@ -35,8 +45,8 @@ const MockResponse = {
 };
 
 const ignoredNodesEditModeOptions = [
-  { label: 'Tree', value: IgnoredNodesEditMode.Tree },
-  { label: 'Raw', value: IgnoredNodesEditMode.Raw },
+  { label: 'Tree', value: NodesEditMode.Tree },
+  { label: 'Raw', value: NodesEditMode.Raw },
 ];
 
 const NodesSort: FC = () => {
@@ -46,15 +56,34 @@ const NodesSort: FC = () => {
   const [activeKey, setActiveKey] = useState<string>();
   const [activeCollapseKey, setActiveCollapseKey] = useState<string>();
 
-  const [ignoredNodesEditMode, setIgnoredNodesEditMode] = useState<IgnoredNodesEditMode>(
-    IgnoredNodesEditMode.Tree,
-  );
-  const [checkedNodes, setCheckedNodes] = useImmer<{ [key: string]: string[] }>({});
+  const [nodesEditMode, setNodesEditMode] = useState<NodesEditMode>(NodesEditMode.Tree);
+  const [treeEditMode, setTreeEditMode] = useState<TreeEditMode>(TreeEditMode.ArrayTree);
 
-  const onCheck = (key: string | undefined, selected: string[]) => {
+  const [checkedNodesData, setCheckedNodesData] = useImmer<{
+    [key: string]: // interface
+    {
+      [key: string]: // path
+      string[];
+    }; // sorted keys
+  }>({});
+
+  const [sortArray, setSortArray] = useState<any[]>();
+  const handleArrayTreeChecked = (key: string | undefined, checked: string[]) => {
     key &&
-      setCheckedNodes((state) => {
-        state[key] = selected;
+      setCheckedNodesData((state) => {
+        !state[key] && (state[key] = {});
+        const keys = Object.keys(state[key]);
+        checked.forEach((k) => {
+          !keys.includes(k) && (state[key][k] = []);
+        });
+      });
+  };
+
+  const handleSortTreeChecked = (checked: string[]) => {
+    activeKey &&
+      activeCollapseKey &&
+      setCheckedNodesData((state) => {
+        state[activeKey][activeCollapseKey] = checked;
       });
   };
 
@@ -62,29 +91,63 @@ const NodesSort: FC = () => {
     if (value) {
       const res = tryParseJsonString(value);
       res && setRawResponse(res);
-      setIgnoredNodesEditMode(IgnoredNodesEditMode.Tree);
+      setNodesEditMode(NodesEditMode.Tree);
+      setTreeEditMode(TreeEditMode.ArrayTree);
     }
   };
 
-  const handleIgnoredNodesCollapseClick = (key?: string) =>
-    setActiveKey(key === activeKey ? undefined : key);
+  const handleIgnoredNodesCollapseClick = (key?: string, maintain?: boolean) => {
+    setNodesEditMode(NodesEditMode.Tree);
+    setTreeEditMode(TreeEditMode.ArrayTree);
+    setActiveKey(key !== activeKey || maintain ? key : undefined);
+    key && handleSetSortArray(key);
+  };
 
-  const handleCollapseItemEdit = (path: string, key: string) =>
-    setActiveCollapseKey(`${path}_${key}`);
+  const handleEditCollapseItem = (key?: string) => {
+    setNodesEditMode(NodesEditMode.Tree);
+    setTreeEditMode(TreeEditMode.SortTree);
+    if (key) {
+      setActiveCollapseKey(key);
+      handleSetSortArray(key);
+    }
+  };
+
+  const handleDeleteCollapseItem = (key: string) => {
+    activeKey &&
+      setCheckedNodesData((state) => {
+        delete state[activeKey][key];
+      });
+  };
+
+  // 获取待排序操作的数组结构
+  const handleSetSortArray = (key: string) => {
+    let value = undefined;
+    key
+      .split('/')
+      .filter(Boolean)
+      .forEach((k) => {
+        value = MockResponse[k];
+      });
+    setSortArray(value);
+  };
+
+  const handleSave = () => {
+    console.log('save', checkedNodesData);
+  };
 
   return (
     <>
-      <Row gutter={24} style={{ margin: 0, flexWrap: 'nowrap' }}>
-        <Col span={14}>
+      <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
+        <Col span={13}>
           <h3>Interfaces</h3>
           <PathCollapse
             interfaces={MockInterfaces}
             activeKey={activeKey}
             activeCollapseKey={activeCollapseKey}
-            checkedNodes={checkedNodes}
-            onEdit={handleCollapseItemEdit}
+            checkedNodes={checkedNodesData}
+            onEdit={handleEditCollapseItem}
             onChange={handleIgnoredNodesCollapseClick}
-            onDelete={onCheck}
+            onDelete={handleDeleteCollapseItem}
           />
         </Col>
 
@@ -92,28 +155,44 @@ const NodesSort: FC = () => {
           {activeKey ? (
             <>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <h3>Response {ignoredNodesEditMode}</h3>
+                <h3>{nodesEditMode}</h3>
                 <Select
                   bordered={false}
                   options={ignoredNodesEditModeOptions}
-                  value={ignoredNodesEditMode}
-                  onChange={setIgnoredNodesEditMode}
+                  value={nodesEditMode}
+                  onChange={setNodesEditMode}
                 />
               </div>
 
-              {ignoredNodesEditMode === IgnoredNodesEditMode.Tree ? (
-                <ResponseTree
-                  exclude='object'
-                  title={activeKey}
-                  treeData={rawResponse}
-                  checkedKeys={checkedNodes[activeKey]}
-                  onCheck={(checkedKeys, info) =>
-                    onCheck(
-                      activeKey,
-                      info.checkedNodes.map((node) => node.key.toString()),
-                    )
-                  }
-                />
+              {nodesEditMode === NodesEditMode.Tree ? (
+                treeEditMode === TreeEditMode.SortTree ? (
+                  <SortTree
+                    title={activeCollapseKey}
+                    treeData={sortArray}
+                    checkedKeys={checkedNodesData[activeKey][activeCollapseKey as string]}
+                    onCheck={(checkedKeys, info) =>
+                      handleSortTreeChecked(info.checkedNodes.map((node) => node.key.toString()))
+                    }
+                  />
+                ) : (
+                  <ArrayTree
+                    exclude='object'
+                    title={activeKey}
+                    treeData={rawResponse}
+                    checkedKeys={Object.keys(checkedNodesData[activeKey] || {})}
+                    selectedKeys={[activeCollapseKey as string]}
+                    onSelect={(selectedKeys, info) => {
+                      // 选中待排序数组对象
+                      handleEditCollapseItem(info.selectedNodes[0].key.toString());
+                    }}
+                    onCheck={(checkedKeys, info) =>
+                      handleArrayTreeChecked(
+                        activeKey,
+                        info.checkedNodes.map((node) => node.key.toString()),
+                      )
+                    }
+                  />
+                )
               ) : (
                 <ResponseRaw value={rawResponseString} onSave={handleResponseRawSave} />
               )}
@@ -123,6 +202,10 @@ const NodesSort: FC = () => {
           )}
         </Col>
       </Row>
+
+      <Button type='primary' onClick={handleSave} style={{ float: 'right', marginTop: '16px' }}>
+        Save
+      </Button>
     </>
   );
 };

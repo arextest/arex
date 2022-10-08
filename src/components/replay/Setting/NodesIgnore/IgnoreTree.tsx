@@ -5,13 +5,18 @@ import { DataNode } from 'antd/lib/tree';
 import { FC } from 'react';
 
 type ObjectFilter = 'object' | 'array';
-type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
+type IgnoreTreeProps = Omit<TreeProps, 'treeData'> & {
   treeData: object;
   title?: string;
   exclude?: ObjectFilter;
 };
+const IgnoreTreeWrapper = styled.div`
+  .ant-tree-node-selected {
+    text-decoration: line-through;
+  }
+`;
 
-const ResponseTree: FC<ResponseTreeProps> = (props) => {
+const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
   function getNodes(object: object, basePath = '', exclude?: ObjectFilter): DataNode[] {
     const entries = Object.entries(object).filter(([, value]) => {
       if (!exclude) return true;
@@ -27,19 +32,21 @@ const ResponseTree: FC<ResponseTreeProps> = (props) => {
   }
 
   return (
-    <Card
-      title={`${props.title} (click node to ignore)`}
-      bodyStyle={{ padding: '8px 16px' }}
-      headStyle={{ padding: '0 16px', margin: '-8px 0' }}
-    >
-      <Tree
-        checkable
-        defaultExpandAll
-        {...props}
-        treeData={getNodes(props.treeData, '', props.exclude)}
-      />
-    </Card>
+    <IgnoreTreeWrapper>
+      <Card
+        title={`${props.title} (click node to ignore)`}
+        bodyStyle={{ padding: '8px 16px' }}
+        headStyle={{ padding: '0 16px', margin: '-8px 0' }}
+      >
+        <Tree
+          multiple
+          defaultExpandAll
+          {...props}
+          treeData={getNodes(props.treeData, '', props.exclude)}
+        />
+      </Card>
+    </IgnoreTreeWrapper>
   );
 };
 
-export default ResponseTree;
+export default IgnoreTree;

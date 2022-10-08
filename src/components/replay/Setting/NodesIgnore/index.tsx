@@ -1,14 +1,14 @@
-import { Col, Row, Select } from 'antd';
+import { Button, Col, Row, Select } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { tryParseJsonString } from '../../../../utils';
 import EditAreaPlaceholder from './EditAreaPlaceholder';
+import IgnoreTree from './IgnoreTree';
 import PathCollapse, { GLOBAL_KEY } from './PathCollapse';
 import ResponseRaw from './ResponseRaw';
-import ResponseTree from './ResponseTree';
 
-export enum IgnoredNodesEditMode {
+enum NodesEditMode {
   'Tree' = 'Tree',
   'Raw' = 'Raw',
 }
@@ -39,12 +39,12 @@ const MockResponse = {
 };
 
 const ignoredNodesEditModeOptions = [
-  { label: 'Tree', value: IgnoredNodesEditMode.Tree },
-  { label: 'Raw', value: IgnoredNodesEditMode.Raw },
+  { label: 'Tree', value: NodesEditMode.Tree },
+  { label: 'Raw', value: NodesEditMode.Raw },
 ];
 
 const NodesIgnore: FC = () => {
-  const [checkedNodes, setCheckedNodes] = useImmer<{
+  const [checkedNodesData, setCheckedNodesData] = useImmer<{
     global: string[];
     interfaces: { [key: string]: string[] };
   }>({
@@ -56,12 +56,12 @@ const NodesIgnore: FC = () => {
   const rawResponseString = useMemo(() => JSON.stringify(rawResponse, null, 2), [rawResponse]);
 
   const [activeKey, setActiveKey] = useState<string>();
-  const [ignoredNodesEditMode, setIgnoredNodesEditMode] = useState<IgnoredNodesEditMode>(
-    IgnoredNodesEditMode.Tree,
+  const [ignoredNodesEditMode, setIgnoredNodesEditMode] = useState<NodesEditMode>(
+    NodesEditMode.Tree,
   );
 
   const onSelect = (key: string | undefined, selected: string[]) => {
-    setCheckedNodes((state) => {
+    setCheckedNodesData((state) => {
       if (key === GLOBAL_KEY) {
         state.global = selected;
       } else if (key) {
@@ -78,72 +78,81 @@ const NodesIgnore: FC = () => {
     if (value) {
       const res = tryParseJsonString(value);
       res && setRawResponse(res);
-      setIgnoredNodesEditMode(IgnoredNodesEditMode.Tree);
+      setIgnoredNodesEditMode(NodesEditMode.Tree);
     }
   };
 
+  const handleSave = () => {
+    console.log('save', checkedNodesData);
+  };
   return (
-    <Row gutter={24} style={{ margin: 0, flexWrap: 'nowrap' }}>
-      <Col span={14}>
-        <h3>Global</h3>
-        <PathCollapse
-          activeKey={activeKey}
-          checkedNodes={checkedNodes.global}
-          onChange={handleIgnoredNodesCollapseClick}
-          onSelect={onSelect}
-        />
+    <>
+      <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
+        <Col span={13}>
+          <h3>Global</h3>
+          <PathCollapse
+            activeKey={activeKey}
+            checkedNodes={checkedNodesData.global}
+            onChange={handleIgnoredNodesCollapseClick}
+            onSelect={onSelect}
+          />
 
-        <br />
+          <br />
 
-        <h3>Interfaces</h3>
-        <PathCollapse
-          interfaces={MockInterfaces}
-          activeKey={activeKey}
-          checkedNodes={checkedNodes.interfaces}
-          onChange={handleIgnoredNodesCollapseClick}
-          onSelect={onSelect}
-        />
-      </Col>
+          <h3>Interfaces</h3>
+          <PathCollapse
+            interfaces={MockInterfaces}
+            activeKey={activeKey}
+            checkedNodes={checkedNodesData.interfaces}
+            onChange={handleIgnoredNodesCollapseClick}
+            onSelect={onSelect}
+          />
+        </Col>
 
-      <Col span={10}>
-        {activeKey ? (
-          <>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <h3>Response {ignoredNodesEditMode}</h3>
-              <Select
-                bordered={false}
-                options={ignoredNodesEditModeOptions}
-                value={ignoredNodesEditMode}
-                onChange={setIgnoredNodesEditMode}
-              />
-            </div>
+        <Col span={10}>
+          {activeKey ? (
+            <>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <h3>{ignoredNodesEditMode}</h3>
+                <Select
+                  bordered={false}
+                  options={ignoredNodesEditModeOptions}
+                  value={ignoredNodesEditMode}
+                  onChange={setIgnoredNodesEditMode}
+                />
+              </div>
 
-            {ignoredNodesEditMode === IgnoredNodesEditMode.Tree ? (
-              <ResponseTree
-                treeData={rawResponse}
-                selectedKeys={
-                  activeKey === GLOBAL_KEY
-                    ? checkedNodes.global
-                    : checkedNodes.interfaces[activeKey]
-                }
-                title={activeKey}
-                exclude='array'
-                onSelect={(selectKeys, info) =>
-                  onSelect(
-                    activeKey,
-                    info.selectedNodes.map((node) => node.key.toString()),
-                  )
-                }
-              />
-            ) : (
-              <ResponseRaw value={rawResponseString} onSave={handleResponseRawSave} />
-            )}
-          </>
-        ) : (
-          <EditAreaPlaceholder />
-        )}
-      </Col>
-    </Row>
+              {ignoredNodesEditMode === NodesEditMode.Tree ? (
+                <IgnoreTree
+                  treeData={rawResponse}
+                  selectedKeys={
+                    activeKey === GLOBAL_KEY
+                      ? checkedNodesData.global
+                      : checkedNodesData.interfaces[activeKey]
+                  }
+                  title={activeKey}
+                  exclude='array'
+                  onSelect={(selectKeys, info) =>
+                    onSelect(
+                      activeKey,
+                      info.selectedNodes.map((node) => node.key.toString()),
+                    )
+                  }
+                />
+              ) : (
+                <ResponseRaw value={rawResponseString} onSave={handleResponseRawSave} />
+              )}
+            </>
+          ) : (
+            <EditAreaPlaceholder />
+          )}
+        </Col>
+      </Row>
+
+      <Button type='primary' onClick={handleSave} style={{ float: 'right', marginTop: '16px' }}>
+        Save
+      </Button>
+    </>
   );
 };
 

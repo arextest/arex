@@ -1,4 +1,4 @@
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { Button, Collapse, List } from 'antd';
 import React, { FC, useEffect, useMemo } from 'react';
@@ -53,9 +53,13 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
         return (
           <Collapse.Panel
             key={path}
-            header={`${type === IgnoreType.Interfaces ? path + ' - ' : ''}Ignored Nodes: ${
-              checkedNodes?.length ?? 0
-            }`}
+            header={`${type === IgnoreType.Interfaces ? path : 'Global'}`}
+            extra={
+              <span>
+                <span style={{ marginRight: '8px' }}>{`${checkedNodes?.length ?? 0} keys`}</span>
+                <Button size='small' type='text' icon={<EditOutlined />}></Button>
+              </span>
+            }
           >
             <List
               size='small'

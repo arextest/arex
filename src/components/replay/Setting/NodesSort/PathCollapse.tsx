@@ -1,15 +1,15 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Collapse, List } from 'antd';
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 
-type InterfacesCheckedNodes = { [key: string]: string[] };
+type InterfacesCheckedNodes = { [key: string]: { [key: string]: string[] } };
 type PathCollapseProps = {
   activeKey?: string;
   activeCollapseKey?: string;
-  onChange: (path: string) => void;
-  onEdit?: (path: string, selected: string) => void;
-  onDelete?: (path: string | undefined, selected: string[]) => void;
+  onChange: (path: string, maintain?: boolean) => void; // maintain 为 true 时点击 Panel 的 EditButton 时不折叠面板
+  onEdit?: (selected?: string) => void;
+  onDelete?: (selected: string) => void;
   interfaces: string[];
   checkedNodes: InterfacesCheckedNodes;
 };
@@ -25,17 +25,11 @@ const CollapseWrapper = styled(Collapse)`
 `;
 
 const PathCollapse: FC<PathCollapseProps> = (props) => {
-  const handleEdit = (path: string, key: string) => {
-    console.log({ path, key });
-    props.onEdit && props.onEdit(path, key);
+  const handleEdit = (key?: string) => {
+    props.onEdit && props.onEdit(key);
   };
 
-  const handleDelete = (path: string, key: string) =>
-    props.onDelete &&
-    props.onDelete(
-      path,
-      props.checkedNodes[path].filter((p) => p !== key),
-    );
+  const handleDelete = (key: string) => props.onDelete && props.onDelete(key);
 
   return (
     <CollapseWrapper
@@ -45,13 +39,28 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
     >
       {props.interfaces.map((path) => {
         return (
-          <Collapse.Panel key={path} header={path}>
+          <Collapse.Panel
+            key={path}
+            header={path}
+            extra={
+              <EditOutlined
+                onClick={(e) => {
+                  e.stopPropagation();
+                  props.onChange && props.onChange(path, true);
+                }}
+              />
+            }
+          >
             <List
               size='small'
-              dataSource={props.checkedNodes[path]}
+              dataSource={Object.keys(props.checkedNodes[path] || {})}
               renderItem={(key) => (
                 <List.Item
-                  className={props.activeCollapseKey === `${path}_${key}` ? 'active-item' : ''}
+                  className={
+                    `${props.activeKey}_${props.activeCollapseKey}` === `${path}_${key}`
+                      ? 'active-item'
+                      : ''
+                  }
                 >
                   <div
                     style={{
@@ -62,17 +71,20 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                   >
                     <span>{key}</span>
                     <span>
+                      <span style={{ marginRight: '8px' }}>
+                        {`${props.checkedNodes[path][key].length} keys`}
+                      </span>
                       <Button
                         type='text'
                         size='small'
                         icon={<EditOutlined />}
-                        onClick={() => handleEdit(path, key)}
+                        onClick={() => handleEdit(key)}
                       />
                       <Button
                         type='text'
                         size='small'
                         icon={<DeleteOutlined />}
-                        onClick={() => handleDelete(path, key)}
+                        onClick={() => handleDelete(key)}
                       />
                     </span>
                   </div>

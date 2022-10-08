@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import { Tabs } from 'antd';
 import { FC } from 'react';
 
@@ -11,13 +12,17 @@ import {
 } from '../../components/replay/Setting';
 import { ApplicationDataType } from '../../services/Replay.type';
 
+const ReplaySettingWrapper = styled.div`
+  padding-right: 8px;
+`;
+
 export type ReplaySettingProps = {
   data: ApplicationDataType;
 };
 const { TabPane } = Tabs;
 const ReplaySetting: FC<ReplaySettingProps> = (props) => {
   return (
-    <>
+    <ReplaySettingWrapper>
       <Tabs
         tabPosition='left'
         size='small'
@@ -47,7 +52,7 @@ const ReplaySetting: FC<ReplaySettingProps> = (props) => {
           <SettingNodesSort />
         </TabPane>
       </Tabs>
-    </>
+    </ReplaySettingWrapper>
   );
 };
 
