@@ -104,11 +104,16 @@ const NodesSort: FC = () => {
   };
 
   const handleEditCollapseItem = (key?: string) => {
-    setNodesEditMode(NodesEditMode.Tree);
-    setTreeEditMode(TreeEditMode.SortTree);
-    if (key) {
-      setActiveCollapseKey(key);
-      handleSetSortArray(key);
+    const alreadyChecked = Object.keys(checkedNodesData[activeKey as string] || {}).includes(
+      key as string,
+    );
+    if (alreadyChecked) {
+      setNodesEditMode(NodesEditMode.Tree);
+      setTreeEditMode(TreeEditMode.SortTree);
+      if (key) {
+        setActiveCollapseKey(key);
+        handleSetSortArray(key);
+      }
     }
   };
 
