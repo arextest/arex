@@ -1,20 +1,14 @@
 import { css } from '@emotion/react';
-import styled from '@emotion/styled';
 import { Tabs } from 'antd';
 import { FC } from 'react';
 
 import {
   SettingImportYaml,
-  SettingNodesIgnore,
-  SettingNodesSort,
+  SettingNodeDifferences,
   SettingRecord,
   SettingReplay,
 } from '../../components/replay/Setting';
 import { ApplicationDataType } from '../../services/Replay.type';
-
-const ReplaySettingWrapper = styled.div`
-  padding-right: 8px;
-`;
 
 export type ReplaySettingProps = {
   data: ApplicationDataType;
@@ -22,7 +16,7 @@ export type ReplaySettingProps = {
 const { TabPane } = Tabs;
 const ReplaySetting: FC<ReplaySettingProps> = (props) => {
   return (
-    <ReplaySettingWrapper>
+    <>
       <Tabs
         tabPosition='left'
         size='small'
@@ -33,26 +27,26 @@ const ReplaySetting: FC<ReplaySettingProps> = (props) => {
         `}
       >
         <TabPane tab='Record' key='record'>
+          {/* SettingRecord component */}
           <SettingRecord appId={props.data.appId} agentVersion={props.data.agentVersion} />
         </TabPane>
 
         <TabPane tab='Replay' key='replay'>
+          {/* SettingReplay component */}
           <SettingReplay appId={props.data.appId} agentVersion={props.data.agentVersion} />
         </TabPane>
 
         {/*<TabPane tab='Import yaml' key='importYaml'>*/}
+        {/*  /!* SettingImportYaml component *!/*/}
         {/*  <SettingImportYaml appId={props.data.appId} agentVersion={props.data.agentVersion} />*/}
         {/*</TabPane>*/}
 
-        <TabPane tab='NodesIgnore' key='nodesIgnored'>
-          <SettingNodesIgnore />
-        </TabPane>
-
-        <TabPane tab='NodesSort' key='nodesSort'>
-          <SettingNodesSort />
-        </TabPane>
+        {/*<TabPane tab='NodeDifferences' key='nodeDifferences'>*/}
+        {/*  /!* NodeDifferences component *!/*/}
+        {/*  <SettingNodeDifferences appId={props.data.appId} />*/}
+        {/*</TabPane>*/}
       </Tabs>
-    </ReplaySettingWrapper>
+    </>
   );
 };
 

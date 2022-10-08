@@ -5,8 +5,8 @@ import moment, { Moment } from 'moment';
 import { FC } from 'react';
 import { useImmer } from 'use-immer';
 
-import ReplayService from '../../../../services/Replay.service';
-import { QueryRecordSettingRes } from '../../../../services/Replay.type';
+import ReplayService from '../../../services/Replay.service';
+import { QueryRecordSettingRes } from '../../../services/Replay.type';
 import { DurationInput, IntegerStepSlider } from './FormItem';
 import DynamicClassesEditableTable from './FormItem/DynamicClassesEditableTable';
 
@@ -167,23 +167,23 @@ const Record: FC<SettingRecordProps> = (props) => {
 
             {/* 此处必须 forceRender，否则如果没有打开高级设置就保存，将丢失高级设置部分字段 */}
             <Panel forceRender header='Advanced' key='advanced'>
-              <Form.Item label='API to Index' name='includeOperationSet'>
+              <Form.Item label='API to Record' name='includeOperationSet'>
                 <Select mode='tags' style={{ width: '100%' }} />
               </Form.Item>
 
-              <Form.Item label='API not to Index' name='excludeOperationSet'>
+              <Form.Item label='API not to Record' name='excludeOperationSet'>
                 <Select mode='tags' style={{ width: '100%' }} />
               </Form.Item>
 
-              <Form.Item label='Dependent API not to Index' name='excludeDependentOperationSet'>
+              <Form.Item label='Dependent API not to Record' name='excludeDependentOperationSet'>
                 <Select mode='tags' style={{ width: '100%' }} />
               </Form.Item>
 
-              <Form.Item label='Services to Index' name='includeServiceSet'>
+              <Form.Item label='Services to Record' name='includeServiceSet'>
                 <Select mode='tags' style={{ width: '100%' }} />
               </Form.Item>
 
-              <Form.Item label='Dependent Services not to Index' name='excludeDependentServiceSet'>
+              <Form.Item label='Dependent Services not to Record' name='excludeDependentServiceSet'>
                 <Select mode='tags' style={{ width: '100%' }} />
               </Form.Item>
 
