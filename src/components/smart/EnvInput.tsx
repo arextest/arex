@@ -1,21 +1,18 @@
-import { EditorState, StateField } from '@codemirror/state';
-import { EditorView, hoverTooltip, showTooltip, Tooltip } from '@codemirror/view';
+import { hoverTooltip } from '@codemirror/view';
 import { css } from '@emotion/react';
 import { FC, useRef } from 'react';
 
 import { useEnvCodeMirror } from '../../helpers/editor/extensions/EnvCodeMirror';
+import {
+  getMarkFromToArr,
+  HOPP_ENVIRONMENT_REGEX,
+} from '../../helpers/editor/extensions/HoppEnvironment';
 import { useStore } from '../../store';
 
 interface SmartEnvInputProps {
   value: string;
   onChange: (e: any) => void;
 }
-
-function getEnvValue(text) {
-  const editorValueMatch = text.match(/\{\{(.+?)\}\}/g);
-  return editorValueMatch[0].replace('{{', '').replace('}}', '');
-}
-
 const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
   const smartEnvInputRef = useRef(null);
   const { currentEnvironment } = useStore();
@@ -27,33 +24,24 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
     extensions: [
       [
         hoverTooltip((view, pos, side) => {
-          console.log(view, pos, side);
-          const { from, to, text } = view.state.doc.lineAt(pos);
-
-          console.log(
-            text,
-            getEnvValue(text),
-            currentEnvironment.keyValues.find((i) => i.key === getEnvValue(text)),
-            'text',
-          );
-
-          if (pos < 8 || pos > 23) {
+          const { text } = view.state.doc.lineAt(pos);
+          const markArrs = getMarkFromToArr(text, HOPP_ENVIRONMENT_REGEX, currentEnvironment);
+          const index = markArrs.map((i) => pos < i.to && pos > i.from).findIndex((i) => i);
+          if (index === -1) {
             return null;
           }
-
           return {
             pos: pos,
             end: pos,
             above: true,
+            arrow: true,
             create(view) {
-              const dom = document.createElement('span');
-              const xmp = document.createElement('xmp');
-              xmp.textContent = currentEnvironment.keyValues.find(
-                (i) => i.key === getEnvValue(text),
-              ).value;
-              dom.appendChild(document.createTextNode(`${currentEnvironment.envName} `));
-              dom.appendChild(xmp);
-              dom.className = 'tooltip-theme';
+              const dom = document.createElement('div');
+              dom.innerHTML = `
+              <span class="name">${markArrs[index].matchEnv.name}</span>
+              <span class="value">${markArrs[index].matchEnv.value}</span>
+              `;
+              dom.className = 'tooltip-theme1';
               return { dom };
             },
           };
@@ -67,6 +55,7 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
         },
       });
     },
+    currentEnv: currentEnvironment,
     theme: 'dark',
   });
 
@@ -79,7 +68,6 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
         border: 1px solid #434343;
       `}
     >
-      <div>{JSON.stringify(currentEnvironment)}</div>
       <div ref={smartEnvInputRef}></div>
     </div>
   );
