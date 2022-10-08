@@ -3,7 +3,7 @@ import { Tabs } from 'antd';
 import { FC } from 'react';
 
 import {
-  SettingImportYaml,
+  // SettingImportYaml,
   SettingNodeDifferences,
   SettingRecord,
   SettingReplay,

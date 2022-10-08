@@ -30,7 +30,6 @@ import {
   FormHeaderWrapper,
   FormTable,
   Response,
-  ResponseCompare,
   ResponseTest,
   SaveRequestButton,
   useColumns,
@@ -823,7 +822,8 @@ const HttpRequest: FC<HttpRequestProps> = ({
                 size={responseMeta.size}
               />
             ) : (
-              <ResponseCompare responses={[baseResponse?.data, testResponse?.data]} />
+              <div>ResponseCompare</div>
+              // <ResponseCompare responses={[baseResponse?.data, testResponse?.data]} />
             )}
           </Spin>
         ) : (

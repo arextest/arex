@@ -5,5 +5,5 @@ export { FormHeaderWrapper } from './FormHeader';
 export { default as FormTable } from './FormTable';
 export { useColumns } from './FormTable';
 export { default as Response } from './Response';
-export { default as ResponseCompare } from './ResponseCompare';
+// export { default as ResponseCompare } from './ResponseCompare';
 export { default as ResponseTest } from './ResponseTest';
