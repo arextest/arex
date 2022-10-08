@@ -87,7 +87,7 @@ const MenuFilter = styled((props: MenuFilterProps) => {
         value={props.value}
         placeholder={props.placeholder}
         onChange={props.onChange}
-        style={{ width: 'auto' }}
+        style={{ flex: 1 }}
       />
     </Input.Group>
   );
