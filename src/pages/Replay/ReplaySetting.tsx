@@ -3,8 +3,8 @@ import { Tabs } from 'antd';
 import { FC } from 'react';
 
 import {
-  // SettingImportYaml,
-  SettingNodeDifferences,
+  NodesIgnore,
+  NodesSort,
   SettingRecord,
   SettingReplay,
 } from '../../components/replay/Setting';
@@ -27,24 +27,20 @@ const ReplaySetting: FC<ReplaySettingProps> = (props) => {
         `}
       >
         <TabPane tab='Record' key='record'>
-          {/* SettingRecord component */}
           <SettingRecord appId={props.data.appId} agentVersion={props.data.agentVersion} />
         </TabPane>
 
         <TabPane tab='Replay' key='replay'>
-          {/* SettingReplay component */}
           <SettingReplay appId={props.data.appId} agentVersion={props.data.agentVersion} />
         </TabPane>
 
-        {/*<TabPane tab='Import yaml' key='importYaml'>*/}
-        {/*  /!* SettingImportYaml component *!/*/}
-        {/*  <SettingImportYaml appId={props.data.appId} agentVersion={props.data.agentVersion} />*/}
-        {/*</TabPane>*/}
+        <TabPane tab='NodesIgnore' key='nodesIgnore'>
+          <NodesIgnore />
+        </TabPane>
 
-        {/*<TabPane tab='NodeDifferences' key='nodeDifferences'>*/}
-        {/*  /!* NodeDifferences component *!/*/}
-        {/*  <SettingNodeDifferences appId={props.data.appId} />*/}
-        {/*</TabPane>*/}
+        <TabPane tab='NodesSort' key='nodesSort'>
+          <NodesSort />
+        </TabPane>
       </Tabs>
     </>
   );

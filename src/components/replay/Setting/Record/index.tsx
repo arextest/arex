@@ -5,10 +5,9 @@ import moment, { Moment } from 'moment';
 import { FC } from 'react';
 import { useImmer } from 'use-immer';
 
-import ReplayService from '../../../services/Replay.service';
-import { QueryRecordSettingRes } from '../../../services/Replay.type';
-import { DurationInput, IntegerStepSlider } from './FormItem';
-import DynamicClassesEditableTable from './FormItem/DynamicClassesEditableTable';
+import ReplayService from '../../../../services/Replay.service';
+import { QueryRecordSettingRes } from '../../../../services/Replay.type';
+import { DurationInput, DynamicClassesEditableTable, IntegerStepSlider } from './FormItem';
 
 const { Panel } = Collapse;
 
