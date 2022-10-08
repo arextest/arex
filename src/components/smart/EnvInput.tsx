@@ -1,79 +1,86 @@
-import './EnvInput.less';
+import { EditorState, StateField } from '@codemirror/state';
+import { EditorView, hoverTooltip, showTooltip, Tooltip } from '@codemirror/view';
+import { css } from '@emotion/react';
+import { FC, useRef } from 'react';
 
-import CodeMirror from 'codemirror';
-import { FC, useEffect, useRef, useState } from 'react';
-
+import { useEnvCodeMirror } from '../../helpers/editor/extensions/EnvCodeMirror';
 import { useStore } from '../../store';
-import { ThemeClassify } from '../../style/theme';
+
 interface SmartEnvInputProps {
   value: string;
   onChange: (e: any) => void;
 }
-const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
-  const [editor, setEditor] = useState(null);
-  const smartEnvInputRef = useRef(null);
-  const { themeClassify } = useStore();
-  useEffect(() => {
-    if (smartEnvInputRef && !editor) {
-      // console.log('aaa',smartEnvInputRef,editor)
-      const _editor = CodeMirror.fromTextArea(smartEnvInputRef.current, {
-        mode: 'text',
-        styleActiveLine: true, // 当前行高亮
-        lineNumbers: false, // 显示行号
-        input: function () {
-          console.log('input');
-        },
-        height: '30px', //设置初始化高度
-        lineWrapping: false,
-        theme: themeClassify === ThemeClassify.light ? 'neat' : 'gruvbox-dark',
-      });
-      _editor?.on('change', () => {
-        onChange({
-          target: {
-            value: _editor.getValue(),
-          },
-        });
-        // 每次清除之前mark
-        _editor.doc.getAllMarks().forEach((marker) => marker.clear());
-        // 正则匹配{{}}
-        const editorValueMatch = _editor.getValue().match(/\{\{(.+?)\}\}/g);
-        // 匹配到时才mark
-        // TODO暂时只做了单个{{}}的匹配
-        if (editorValueMatch && editorValueMatch[0]) {
-          const matchValueLeftRight = _editor.getValue().split(editorValueMatch[0]);
-          // 寻找标记的起始位置
-          const start = matchValueLeftRight[0].length;
-          const end = matchValueLeftRight[0].length + editorValueMatch[0].length;
-          // 开始mark
-          _editor.getDoc().markText(
-            {
-              line: 0,
-              ch: start,
-            },
-            {
-              line: 0,
-              ch: end,
-            },
-            {
-              className: 'smart-env-input-highlight',
-            },
-          );
-        }
-      });
-      setEditor(_editor);
-    }
-    // theme: themeClassify === ThemeClassify.light ? 'neat' : 'gruvbox-dark', // 设置主题
-  }, [smartEnvInputRef]);
 
-  useEffect(() => {
-    // 重要，只有在值不相等的时候set
-    if (editor?.getValue() !== value) {
-      editor?.setValue(value);
-    }
-  }, [value]);
+function getEnvValue(text) {
+  const editorValueMatch = text.match(/\{\{(.+?)\}\}/g);
+  return editorValueMatch[0].replace('{{', '').replace('}}', '');
+}
+
+const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
+  const smartEnvInputRef = useRef(null);
+  const { currentEnvironment } = useStore();
+
+  useEnvCodeMirror({
+    container: smartEnvInputRef.current,
+    value: value,
+    height: '30px',
+    extensions: [
+      [
+        hoverTooltip((view, pos, side) => {
+          console.log(view, pos, side);
+          const { from, to, text } = view.state.doc.lineAt(pos);
+
+          console.log(
+            text,
+            getEnvValue(text),
+            currentEnvironment.keyValues.find((i) => i.key === getEnvValue(text)),
+            'text',
+          );
+
+          if (pos < 8 || pos > 23) {
+            return null;
+          }
+
+          return {
+            pos: pos,
+            end: pos,
+            above: true,
+            create(view) {
+              const dom = document.createElement('span');
+              const xmp = document.createElement('xmp');
+              xmp.textContent = currentEnvironment.keyValues.find(
+                (i) => i.key === getEnvValue(text),
+              ).value;
+              dom.appendChild(document.createTextNode(`${currentEnvironment.envName} `));
+              dom.appendChild(xmp);
+              dom.className = 'tooltip-theme';
+              return { dom };
+            },
+          };
+        }),
+      ],
+    ],
+    onChange: (val) => {
+      onChange({
+        target: {
+          value: val,
+        },
+      });
+    },
+    theme: 'dark',
+  });
+
   return (
-    <div className={'smart-env'}>
-      <textarea ref={smartEnvInputRef} id='smart-env-input'></textarea>
+    <div
+      className={'smart-env'}
+      css={css`
+        width: 100%;
+        display: inline-block;
+        border: 1px solid #434343;
+      `}
+    >
+      <div>{JSON.stringify(currentEnvironment)}</div>
+      <div ref={smartEnvInputRef}></div>
     </div>
   );
 };

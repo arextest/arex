@@ -1,12 +1,7 @@
 import './i18n';
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/mode/javascript/javascript.js';
-import 'codemirror/mode/jsx/jsx.js';
-import 'codemirror/theme/idea.css';
 import 'jsoneditor/dist/jsoneditor.min.css';
-import './libs/monaco/userWorker';
 import './assets/css/jsoneditor.less';
-import 'codemirror/theme/blackboard.css';
+
 import { ClickToComponent } from 'click-to-react-component';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
