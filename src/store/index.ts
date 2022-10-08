@@ -244,13 +244,13 @@ export const useStore = create(
       }
     },
 
-    currentEnvironment: { id: '0' },
+    currentEnvironment: { id: '0', envName: '', keyValues: [] },
     setCurrentEnvironment: (environment) => {
       if (environment !== '0') {
         const environmentTreeData = get().environmentTreeData;
         set({ currentEnvironment: environmentTreeData.find((i) => i.id === environment) });
       } else {
-        set({ currentEnvironment: { id: '0' } });
+        set({ currentEnvironment: { id: '0', envName: '', keyValues: [] } });
       }
     },
   })),
