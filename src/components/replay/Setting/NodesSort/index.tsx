@@ -1,4 +1,5 @@
 import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import { Button, Carousel, Col, Row, Select } from 'antd';
 import { CarouselRef } from 'antd/lib/carousel';
 import React, { FC, useMemo, useRef, useState } from 'react';
@@ -50,6 +51,21 @@ const ignoredNodesEditModeOptions = [
   { label: 'Tree', value: NodesEditMode.Tree },
   { label: 'Raw', value: NodesEditMode.Raw },
 ];
+
+const TreeCarousel = styled(Carousel)`
+  .slick-dots-bottom {
+    position: relative;
+    margin-top: 24px;
+  }
+  .slick-dots.slick-dots-bottom {
+    li > button {
+      background-color: ${(props) => props.theme.color.text.disabled}!important;
+    }
+    * > li.slick-active > button {
+      background-color: ${(props) => props.theme.color.text.watermark}!important;
+    }
+  }
+`;
 
 const NodesSort: FC = () => {
   const treeCarousel = useRef<CarouselRef>(null);
@@ -179,15 +195,7 @@ const NodesSort: FC = () => {
               </div>
 
               {nodesEditMode === NodesEditMode.Tree ? (
-                <Carousel
-                  ref={treeCarousel}
-                  css={css`
-                    .slick-dots-bottom {
-                      position: relative;
-                      margin-top: 24px;
-                    }
-                  `}
-                >
+                <TreeCarousel ref={treeCarousel}>
                   <div>
                     <ArrayTree
                       exclude='object'
@@ -222,7 +230,7 @@ const NodesSort: FC = () => {
                       />
                     )}
                   </div>
-                </Carousel>
+                </TreeCarousel>
               ) : (
                 <ResponseRaw value={rawResponseString} onSave={handleResponseRawSave} />
               )}
