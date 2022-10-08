@@ -88,7 +88,7 @@ const NodesIgnore: FC = () => {
   return (
     <>
       <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
-        <Col span={13}>
+        <Col span={10}>
           <h3>Global</h3>
           <PathCollapse
             activeKey={activeKey}
@@ -109,7 +109,7 @@ const NodesIgnore: FC = () => {
           />
         </Col>
 
-        <Col span={10}>
+        <Col span={13}>
           {activeKey ? (
             <>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>

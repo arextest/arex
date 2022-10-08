@@ -1,5 +1,7 @@
-import { Button, Col, Row, Select } from 'antd';
-import React, { FC, useMemo, useState } from 'react';
+import { css } from '@emotion/react';
+import { Button, Carousel, Col, Row, Select } from 'antd';
+import { CarouselRef } from 'antd/lib/carousel';
+import React, { FC, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { tryParseJsonString } from '../../../../utils';
@@ -50,6 +52,8 @@ const ignoredNodesEditModeOptions = [
 ];
 
 const NodesSort: FC = () => {
+  const treeCarousel = useRef<CarouselRef>(null);
+
   const [rawResponse, setRawResponse] = useState<object>(MockResponse);
   const rawResponseString = useMemo(() => JSON.stringify(rawResponse, null, 2), [rawResponse]);
 
@@ -93,12 +97,15 @@ const NodesSort: FC = () => {
       res && setRawResponse(res);
       setNodesEditMode(NodesEditMode.Tree);
       setTreeEditMode(TreeEditMode.ArrayTree);
+      treeCarousel.current?.goTo(0);
     }
   };
 
   const handleIgnoredNodesCollapseClick = (key?: string, maintain?: boolean) => {
     setNodesEditMode(NodesEditMode.Tree);
     setTreeEditMode(TreeEditMode.ArrayTree);
+    treeCarousel.current?.goTo(0);
+
     setActiveKey(key !== activeKey || maintain ? key : undefined);
     key && handleSetSortArray(key);
   };
@@ -110,6 +117,8 @@ const NodesSort: FC = () => {
     if (alreadyChecked) {
       setNodesEditMode(NodesEditMode.Tree);
       setTreeEditMode(TreeEditMode.SortTree);
+      treeCarousel.current?.goTo(1);
+
       if (key) {
         setActiveCollapseKey(key);
         handleSetSortArray(key);
@@ -143,7 +152,7 @@ const NodesSort: FC = () => {
   return (
     <>
       <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
-        <Col span={13}>
+        <Col span={10}>
           <h3>Interfaces</h3>
           <PathCollapse
             interfaces={MockInterfaces}
@@ -156,7 +165,7 @@ const NodesSort: FC = () => {
           />
         </Col>
 
-        <Col span={10}>
+        <Col span={13}>
           {activeKey ? (
             <>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -170,34 +179,50 @@ const NodesSort: FC = () => {
               </div>
 
               {nodesEditMode === NodesEditMode.Tree ? (
-                treeEditMode === TreeEditMode.SortTree ? (
-                  <SortTree
-                    title={activeCollapseKey}
-                    treeData={sortArray}
-                    checkedKeys={checkedNodesData[activeKey][activeCollapseKey as string]}
-                    onCheck={(checkedKeys, info) =>
-                      handleSortTreeChecked(info.checkedNodes.map((node) => node.key.toString()))
+                <Carousel
+                  ref={treeCarousel}
+                  css={css`
+                    .slick-dots-bottom {
+                      position: relative;
+                      margin-top: 24px;
                     }
-                  />
-                ) : (
-                  <ArrayTree
-                    exclude='object'
-                    title={activeKey}
-                    treeData={rawResponse}
-                    checkedKeys={Object.keys(checkedNodesData[activeKey] || {})}
-                    selectedKeys={[activeCollapseKey as string]}
-                    onSelect={(selectedKeys, info) => {
-                      // 选中待排序数组对象
-                      handleEditCollapseItem(info.selectedNodes[0].key.toString());
-                    }}
-                    onCheck={(checkedKeys, info) =>
-                      handleArrayTreeChecked(
-                        activeKey,
-                        info.checkedNodes.map((node) => node.key.toString()),
-                      )
-                    }
-                  />
-                )
+                  `}
+                >
+                  <div>
+                    <ArrayTree
+                      exclude='object'
+                      title={activeKey}
+                      treeData={rawResponse}
+                      checkedKeys={Object.keys(checkedNodesData[activeKey] || {})}
+                      selectedKeys={[activeCollapseKey as string]}
+                      onSelect={(selectedKeys, info) => {
+                        // 选中待排序数组对象
+                        handleEditCollapseItem(info.selectedNodes[0].key.toString());
+                      }}
+                      onCheck={(checkedKeys, info) =>
+                        handleArrayTreeChecked(
+                          activeKey,
+                          info.checkedNodes.map((node) => node.key.toString()),
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    {activeCollapseKey && (
+                      <SortTree
+                        title={activeCollapseKey}
+                        treeData={sortArray}
+                        checkedKeys={checkedNodesData[activeKey][activeCollapseKey as string]}
+                        onCheck={(checkedKeys, info) =>
+                          handleSortTreeChecked(
+                            info.checkedNodes.map((node) => node.key.toString()),
+                          )
+                        }
+                      />
+                    )}
+                  </div>
+                </Carousel>
               ) : (
                 <ResponseRaw value={rawResponseString} onSave={handleResponseRawSave} />
               )}
