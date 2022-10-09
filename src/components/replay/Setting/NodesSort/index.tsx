@@ -1,4 +1,3 @@
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button, Carousel, Col, Row, Select } from 'antd';
 import { CarouselRef } from 'antd/lib/carousel';
@@ -6,7 +5,7 @@ import React, { FC, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { tryParseJsonString } from '../../../../utils';
-import EditAreaPlaceholder from '../NodesIgnore/EditAreaPlaceholder';
+import { EditAreaPlaceholder } from '../../../styledComponents';
 import ResponseRaw from '../NodesIgnore/ResponseRaw';
 import ArrayTree from './ArrayTree';
 import PathCollapse from './PathCollapse';
@@ -127,19 +126,13 @@ const NodesSort: FC = () => {
   };
 
   const handleEditCollapseItem = (key?: string) => {
-    const alreadyChecked = Object.keys(checkedNodesData[activeKey as string] || {}).includes(
-      key as string,
-    );
-    if (alreadyChecked) {
-      setNodesEditMode(NodesEditMode.Tree);
-      setTreeEditMode(TreeEditMode.SortTree);
-      treeCarousel.current?.goTo(1);
-
-      if (key) {
-        setActiveCollapseKey(key);
-        handleSetSortArray(key);
-      }
+    if (key) {
+      setActiveCollapseKey(key);
+      handleSetSortArray(key);
     }
+    setNodesEditMode(NodesEditMode.Tree);
+    setTreeEditMode(TreeEditMode.SortTree);
+    treeCarousel.current?.goTo(1);
   };
 
   const handleDeleteCollapseItem = (key: string) => {
@@ -182,62 +175,59 @@ const NodesSort: FC = () => {
         </Col>
 
         <Col span={13}>
-          {activeKey ? (
-            <>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <h3>{nodesEditMode}</h3>
-                <Select
-                  bordered={false}
-                  options={ignoredNodesEditModeOptions}
-                  value={nodesEditMode}
-                  onChange={setNodesEditMode}
-                />
-              </div>
+          <EditAreaPlaceholder
+            dashedBorder
+            title='Edit Area (Click interface to start)'
+            ready={!!activeKey}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <h3>{nodesEditMode}</h3>
+              <Select
+                bordered={false}
+                options={ignoredNodesEditModeOptions}
+                value={nodesEditMode}
+                onChange={setNodesEditMode}
+              />
+            </div>
 
-              {nodesEditMode === NodesEditMode.Tree ? (
-                <TreeCarousel ref={treeCarousel}>
-                  <div>
-                    <ArrayTree
-                      exclude='object'
-                      title={activeKey}
-                      treeData={rawResponse}
-                      checkedKeys={Object.keys(checkedNodesData[activeKey] || {})}
-                      selectedKeys={[activeCollapseKey as string]}
-                      onSelect={(selectedKeys, info) => {
-                        // 选中待排序数组对象
-                        handleEditCollapseItem(info.selectedNodes[0].key.toString());
-                      }}
+            {nodesEditMode === NodesEditMode.Tree ? (
+              <TreeCarousel ref={treeCarousel}>
+                <div>
+                  <ArrayTree
+                    title={activeKey}
+                    treeData={rawResponse}
+                    checkedKeys={Object.keys(checkedNodesData[activeKey] || {})}
+                    selectedKeys={[activeCollapseKey as string]}
+                    onSelect={(selectedKeys, info) => {
+                      // 选中待排序数组对象
+                      handleEditCollapseItem(info.selectedNodes[0].key.toString());
+                    }}
+                    onCheck={(checkedKeys, info) =>
+                      handleArrayTreeChecked(
+                        activeKey,
+                        info.checkedNodes.map((node) => node.key.toString()),
+                      )
+                    }
+                  />
+                </div>
+
+                <div>
+                  {activeCollapseKey && (
+                    <SortTree
+                      title={activeCollapseKey}
+                      treeData={sortArray}
+                      checkedKeys={checkedNodesData[activeKey][activeCollapseKey as string]}
                       onCheck={(checkedKeys, info) =>
-                        handleArrayTreeChecked(
-                          activeKey,
-                          info.checkedNodes.map((node) => node.key.toString()),
-                        )
+                        handleSortTreeChecked(info.checkedNodes.map((node) => node.key.toString()))
                       }
                     />
-                  </div>
-
-                  <div>
-                    {activeCollapseKey && (
-                      <SortTree
-                        title={activeCollapseKey}
-                        treeData={sortArray}
-                        checkedKeys={checkedNodesData[activeKey][activeCollapseKey as string]}
-                        onCheck={(checkedKeys, info) =>
-                          handleSortTreeChecked(
-                            info.checkedNodes.map((node) => node.key.toString()),
-                          )
-                        }
-                      />
-                    )}
-                  </div>
-                </TreeCarousel>
-              ) : (
-                <ResponseRaw value={rawResponseString} onSave={handleResponseRawSave} />
-              )}
-            </>
-          ) : (
-            <EditAreaPlaceholder />
-          )}
+                  )}
+                </div>
+              </TreeCarousel>
+            ) : (
+              <ResponseRaw value={rawResponseString} onSave={handleResponseRawSave} />
+            )}
+          </EditAreaPlaceholder>
         </Col>
       </Row>
 

@@ -3,7 +3,7 @@ import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { tryParseJsonString } from '../../../../utils';
-import EditAreaPlaceholder from './EditAreaPlaceholder';
+import { EditAreaPlaceholder } from '../../../styledComponents';
 import IgnoreTree from './IgnoreTree';
 import PathCollapse, { GLOBAL_KEY } from './PathCollapse';
 import ResponseRaw from './ResponseRaw';
@@ -110,42 +110,42 @@ const NodesIgnore: FC = () => {
         </Col>
 
         <Col span={13}>
-          {activeKey ? (
-            <>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <h3>{ignoredNodesEditMode}</h3>
-                <Select
-                  bordered={false}
-                  options={ignoredNodesEditModeOptions}
-                  value={ignoredNodesEditMode}
-                  onChange={setIgnoredNodesEditMode}
-                />
-              </div>
+          <EditAreaPlaceholder
+            dashedBorder
+            title='Edit Area (Click interface to start)'
+            ready={!!activeKey}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <h3>{ignoredNodesEditMode}</h3>
+              <Select
+                bordered={false}
+                options={ignoredNodesEditModeOptions}
+                value={ignoredNodesEditMode}
+                onChange={setIgnoredNodesEditMode}
+              />
+            </div>
 
-              {ignoredNodesEditMode === NodesEditMode.Tree ? (
-                <IgnoreTree
-                  treeData={rawResponse}
-                  selectedKeys={
-                    activeKey === GLOBAL_KEY
-                      ? checkedNodesData.global
-                      : checkedNodesData.interfaces[activeKey]
-                  }
-                  title={activeKey}
-                  exclude='array'
-                  onSelect={(selectKeys, info) =>
-                    onSelect(
-                      activeKey,
-                      info.selectedNodes.map((node) => node.key.toString()),
-                    )
-                  }
-                />
-              ) : (
-                <ResponseRaw value={rawResponseString} onSave={handleResponseRawSave} />
-              )}
-            </>
-          ) : (
-            <EditAreaPlaceholder />
-          )}
+            {ignoredNodesEditMode === NodesEditMode.Tree ? (
+              <IgnoreTree
+                treeData={rawResponse}
+                selectedKeys={
+                  activeKey === GLOBAL_KEY
+                    ? checkedNodesData.global
+                    : checkedNodesData.interfaces[activeKey]
+                }
+                title={activeKey}
+                exclude='array'
+                onSelect={(selectKeys, info) =>
+                  onSelect(
+                    activeKey,
+                    info.selectedNodes.map((node) => node.key.toString()),
+                  )
+                }
+              />
+            ) : (
+              <ResponseRaw value={rawResponseString} onSave={handleResponseRawSave} />
+            )}
+          </EditAreaPlaceholder>
         </Col>
       </Row>
 
