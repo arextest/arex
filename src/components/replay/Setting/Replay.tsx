@@ -1,11 +1,11 @@
 import { useMount } from 'ahooks';
-import { Button, Card, Checkbox, Form, Input, InputNumber, message } from 'antd';
+import { Button, Form, InputNumber, message } from 'antd';
 import React from 'react';
 
 import ReplayService from '../../../services/Replay.service';
-import { SettingRecordProps } from './SettingRecord';
+import { SettingRecordProps } from './Record';
 
-const SettingReplay: React.FC<SettingRecordProps> = ({ appId, agentVersion }) => {
+const Replay: React.FC<SettingRecordProps> = ({ appId, agentVersion }) => {
   const onFinish = (values: any) => {
     ReplayService.configScheduleModifyUpdate({
       appId,
@@ -69,4 +69,4 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId, agentVersion }) =>
   );
 };
 
-export default SettingReplay;
+export default Replay;

@@ -1,5 +1,6 @@
 // ------ /config/application/regressionList ------
 export interface ApplicationDataType {
+  id: string;
   status: number;
   modifiedTime: string;
   appId: string;
@@ -42,6 +43,8 @@ export type PlanStatistics = {
   targetImageId: string;
   targetImageName: string;
   caseSourceType: number;
+  caseEndTime?: number;
+  caseStartTime?: number;
   sourceEnv: string | null;
   targetEnv: string | null;
   sourceHost: string | null;
@@ -79,7 +82,7 @@ export interface QueryPlanItemStatisticsReq {
 export type PlanItemStatistics = {
   planItemId: number;
   planId: number;
-  operationId: number;
+  operationId: string;
   operationName: string;
   serviceName: string;
   appId: string;
@@ -160,7 +163,9 @@ export interface CreatePlanReq {
   operator: string;
   replayPlanType: number;
   caseSourceType?: number;
-  operationCaseInfoList?: { operationId: number }[];
+  caseStartTime: number;
+  caseEndTime: number;
+  operationCaseInfoList?: { operationId: string }[];
 }
 
 export interface CreatePlanRes {
@@ -195,11 +200,24 @@ export interface QueryMsgWithDiffReq {
 export type QueryMsgWithDiffLog = {
   addRefPkNodePathLeft: null;
   addRefPkNodePathRight: null;
-  baseValue: unknown;
+  baseValue: string;
   logInfo: string;
   logTag: { lv: number; ig: boolean };
   path: string;
-  pathPair: any;
+  pathPair: {
+    leftUnmatchedPath: {
+      nodeName: string;
+      index: number;
+    }[];
+    listKeyPath: string[];
+    listKeys: string | null;
+    rightUnmatchedPath: {
+      nodeName: string;
+      index: number;
+    }[];
+    trace: { currentTraceLeft: null; currentTraceRight: null } | null;
+    unmatchedType: number;
+  };
   testValue: null;
 };
 export type QueryMsgWithDiffRes = {
@@ -226,8 +244,8 @@ export type CompareResult = {
   operationName: string;
   replayId: string;
   recordId: string;
-  baseMsg: string;
-  testMsg: string;
+  baseMsg: string | null;
+  testMsg: string | null;
   planItemId: number;
   logs:
     | {
@@ -274,6 +292,7 @@ export interface QueryRecordSettingRes {
   includeServiceSet: string[];
   modifiedTime: string;
   sampleRate: number;
+  timeMock: boolean;
 }
 
 export interface UpdateRecordSettingReq {
@@ -300,9 +319,9 @@ export type DynamicClass = {
   id?: string;
   appId?: string;
   fullClassName: string;
-  methodName: string;
-  parameterTypes: string;
-  keyFormula: string;
+  methodName?: string;
+  parameterTypes?: string;
+  keyFormula?: string;
   configType?: number;
 };
 export type QueryRecordDynamicClassSettingRes = DynamicClass[];
@@ -310,9 +329,9 @@ export type QueryRecordDynamicClassSettingRes = DynamicClass[];
 export interface UpdateDynamicClassSettingReq {
   appId: string;
   fullClassName: string;
-  methodName: string;
-  parameterTypes: string;
-  keyFormula: string;
+  methodName?: string;
+  parameterTypes?: string;
+  keyFormula?: string;
   configType: number;
 }
 

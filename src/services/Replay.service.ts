@@ -39,27 +39,11 @@ import {
   UpdateRecordSettingRes,
 } from './Replay.type';
 
-// regressionList接口前端通过encodeURI + btoa 转码作为id，解码需要 decodeURI(atob(str))
-function genId(id: string) {
-  try {
-    return btoa(encodeURI(id));
-  } catch (e) {
-    return id;
-  }
-}
-
 export default class ReplayService {
   static async regressionList() {
-    return request.get<RegressionListRes>('/config/application/regressionList').then((res) =>
-      Promise.resolve(
-        res.body.map((item) => {
-          return {
-            ...item.application,
-            id: genId(item.application.appId),
-          };
-        }),
-      ),
-    );
+    return request
+      .get<RegressionListRes>('/config/application/regressionList')
+      .then((res) => Promise.resolve(res.body.map((item) => item.application)));
   }
 
   static async queryPlanStatistics(params: QueryPlanStatisticsReq) {
@@ -131,11 +115,19 @@ export default class ReplayService {
     return request.post<QueryFullLinkMsgRes>('/report/queryFullLinkMsg', params).then((res) =>
       Promise.resolve(
         res.body.compareResults.map((item) => {
-          const type: 'html' | 'json' = item.baseMsg.includes('<html>') ? 'html' : 'json';
+          const type: 'html' | 'json' = item.baseMsg?.includes('<html>') ? 'html' : 'json';
           return {
             ...item,
-            baseMsg: type === 'html' ? item.baseMsg : tryPrettierJsonString(item.baseMsg),
-            testMsg: type === 'html' ? item.testMsg : tryPrettierJsonString(item.testMsg),
+            baseMsg: item.baseMsg
+              ? type === 'html'
+                ? item.baseMsg
+                : tryPrettierJsonString(item.baseMsg)
+              : '',
+            testMsg: item.testMsg
+              ? type === 'html'
+                ? item.testMsg
+                : tryPrettierJsonString(item.testMsg)
+              : '',
             type,
           };
         }),

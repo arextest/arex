@@ -10,39 +10,56 @@ type HighlightRowTableProps<T> = {
   defaultSelectFirst?: boolean;
 } & TableProps<T>;
 
+const HighlightRowTableWrapper = styled.div`
+  // highlight selected row
+  .clickRowStyle {
+    background-color: ${(props) => props.theme.color.selected};
+    td.ant-table-cell-row-hover {
+      background-color: transparent !important; // use clickRowStyle background color instead
+    }
+  }
+`;
+
+const defaultSelectRow = { row: 0, page: 1 };
+const invalidSelectRow = { row: -1, page: -1 };
 function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
-  const [selectRow, setSelectRow] = useState<number>(props.defaultSelectFirst ? 0 : -1);
+  const { sx, defaultSelectFirst, onRowClick, onChange, ...restProps } = props;
 
-  const InnerTable = styled((_props: HighlightRowTableProps<T>) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { sx, defaultSelectFirst, onRowClick, ...restProps } = _props;
+  const [page, setPage] = useState<number>();
+  const [selectRow, setSelectRow] = useState<{ row?: number; page?: number }>(
+    defaultSelectFirst ? defaultSelectRow : invalidSelectRow,
+  );
 
-    return (
+  const handleChange: TableProps<T>['onChange'] = (pagination, ...restParams) => {
+    setPage(pagination.current);
+    onChange && onChange(pagination, ...restParams);
+  };
+
+  return (
+    <HighlightRowTableWrapper css={css(sx)}>
       <Table<T>
         onRow={(record, index) => {
           return {
             onClick: () => {
               if (typeof index === 'number') {
-                setSelectRow(index === selectRow ? -1 : index);
+                setSelectRow(
+                  page === selectRow.page && index === selectRow.row
+                    ? invalidSelectRow
+                    : { row: index, page },
+                );
                 onRowClick && onRowClick(record);
               }
             },
           };
         }}
-        rowClassName={(record, index) => (index === selectRow ? 'clickRowStyle' : '')}
+        onChange={handleChange}
+        rowClassName={(record, index) =>
+          page === selectRow.page && index === selectRow.row ? 'clickRowStyle' : ''
+        }
         {...restProps}
       />
-    );
-  })`
-    // highlight selected row
-    .clickRowStyle {
-      background-color: ${(props) => props.theme.color.selected};
-      td.ant-table-cell-row-hover {
-        background-color: transparent !important; // use clickRowStyle background color instead
-      }
-    }
-  `;
-  return <InnerTable css={css(props.sx)} {...props} />;
+    </HighlightRowTableWrapper>
+  );
 }
 
 export default HighlightRowTable;

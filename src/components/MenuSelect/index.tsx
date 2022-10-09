@@ -87,7 +87,7 @@ const MenuFilter = styled((props: MenuFilterProps) => {
         value={props.value}
         placeholder={props.placeholder}
         onChange={props.onChange}
-        style={{ width: 'auto' }}
+        style={{ flex: 1 }}
       />
     </Input.Group>
   );
@@ -136,7 +136,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
         props.onSelect(firstRecord);
       }
       if (res.length && props.initValue) {
-        const firstRecord = res.find((i) => i.appId === props.initValue);
+        const firstRecord = res.find((i) => i.id === props.initValue);
         if (firstRecord) {
           setSelectedKey(firstRecord[props.rowKey]);
           props.onSelect(firstRecord);
@@ -179,7 +179,6 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
             onFresh={reload}
           />
         )}
-        {selectedKeys}
         <MenuList
           small={props.small}
           selectedKeys={selectedKeys}

@@ -4,7 +4,6 @@ import { changeLanguage } from 'i18next';
 import { FC, useMemo, useState } from 'react';
 import { CirclePicker } from 'react-color';
 
-import { FontSizeMap } from '../constant';
 import DefaultConfig from '../defaultConfig';
 import { I18nextLng, local } from '../i18n';
 import { UserService } from '../services/UserService';
@@ -188,7 +187,7 @@ const Setting: FC = () => {
 
         <div id='font-size'>
           <Form.Item label='Font size' name='fontSize'>
-            <Select style={{ width: 120 }}>
+            <Select style={{ width: 120 }} disabled>
               <Option value='small'>Small</Option>
               <Option value='medium'>Medium</Option>
               <Option value='large'>Large</Option>

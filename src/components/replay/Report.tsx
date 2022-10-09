@@ -15,14 +15,14 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 
 import { MenuTypeEnum, PageTypeEnum } from '../../constant';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
-import { generateGlobalPaneId, getPercent, uuid } from '../../utils';
+import { generateGlobalPaneId, getPercent } from '../../utils';
 import { SmallTextButton } from '../styledComponents';
 import { resultsStates } from './Results';
 
@@ -92,10 +92,10 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           <Tag color={state.color}>
             {state.label}
             {record.status === 1 && (
-              <>
+              <span style={{ margin: '0 -4px 0 8px' }}>
                 <Badge status='processing' />
                 {record.percent && <span>{record.percent > 99 ? 99 : record.percent}</span>}
-              </>
+              </span>
             )}
           </Tag>
         ) : (
@@ -107,7 +107,9 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
       title: 'Time consumed(s)',
       width: 104,
       render: (_, record) =>
-        (record.replayEndTime - (record.replayStartTime || record.replayEndTime)) / 1000,
+        record.replayEndTime && record.replayStartTime
+          ? (record.replayEndTime - record.replayStartTime) / 1000
+          : '-',
     },
     {
       title: 'Total Cases',
@@ -153,10 +155,10 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
         <SmallTextButton
           key='analysis'
           title='Analysis'
-          onClick={() =>
+          onClick={() => {
             setPanes(
               {
-                title: `Analysis - ${record.operationName}`,
+                title: `Analysis - ${record.operationId}`,
                 pageType: PageTypeEnum.ReplayAnalysis,
                 menuType: MenuTypeEnum.Replay,
                 isNew: false,
@@ -164,13 +166,13 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
                 paneId: generateGlobalPaneId(
                   MenuTypeEnum.Replay,
                   PageTypeEnum.ReplayAnalysis,
-                  record.operationName,
+                  record.operationId,
                 ),
-                rawId: record.operationName,
+                rawId: record.operationId,
               },
               'push',
-            )
-          }
+            );
+          }}
         />,
         <SmallTextButton
           key='case'
@@ -178,7 +180,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           onClick={() =>
             setPanes(
               {
-                title: `Case - ${record.operationName}`,
+                title: `Case - ${record.operationId}`,
                 pageType: PageTypeEnum.ReplayCase,
                 menuType: MenuTypeEnum.Replay,
                 isNew: false,
@@ -186,9 +188,9 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
                 paneId: generateGlobalPaneId(
                   MenuTypeEnum.Replay,
                   PageTypeEnum.ReplayCase,
-                  record.operationName,
+                  record.operationId,
                 ),
-                rawId: record.operationName,
+                rawId: record.operationId,
               },
               'push',
             )
@@ -199,7 +201,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           key='rerun'
           type='text'
           size='small'
-          onClick={() => handleRerun(record.operationId)}
+          onClick={() => handleRerun(record.operationId, record.caseStartTime, record.caseEndTime)}
         >
           Rerun
         </Button>,
@@ -222,16 +224,34 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     },
   });
 
-  const handleRerun = (operationId?: number) => {
-    rerun({
-      appId: selectedPlan!.appId,
-      caseSourceType: operationId && 0,
-      operationCaseInfoList: operationId !== undefined ? [{ operationId }] : undefined,
-      operator: email as string,
-      replayPlanType: operationId !== undefined ? 1 : 0,
-      sourceEnv: 'pro',
-      targetEnv: selectedPlan!.targetHost as string,
-    });
+  const handleRerun = (operationId?: string, caseStartTime?: number, caseEndTime?: number) => {
+    if (operationId && caseStartTime && caseEndTime) {
+      rerun({
+        caseStartTime,
+        caseEndTime,
+        appId: selectedPlan!.appId,
+        caseSourceType: 0,
+        operationCaseInfoList: [{ operationId }],
+        operator: email as string,
+        replayPlanType: 1,
+        sourceEnv: 'pro',
+        targetEnv: selectedPlan!.targetHost as string,
+      });
+    } else if (
+      selectedPlan?.caseStartTime &&
+      selectedPlan?.caseEndTime &&
+      selectedPlan?.targetHost
+    ) {
+      rerun({
+        caseStartTime: selectedPlan.caseStartTime,
+        caseEndTime: selectedPlan.caseEndTime,
+        appId: selectedPlan!.appId,
+        operator: email as string,
+        replayPlanType: 0,
+        sourceEnv: 'pro',
+        targetEnv: selectedPlan!.targetHost,
+      });
+    }
   };
 
   return selectedPlan ? (

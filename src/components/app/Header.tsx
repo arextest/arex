@@ -10,6 +10,7 @@ import { useStore } from '../../store';
 import GitHubStarButton from '../GitHubStarButton';
 import { TooltipButton } from '../index';
 import InviteWorkspace from '../workspace/Invite';
+import { generateGlobalPaneId } from '../../utils';
 
 const HeaderWrapper = styled.div`
   .app-header {
@@ -46,10 +47,12 @@ const AppHeader = () => {
   const handleSetting = () => {
     setPanes(
       {
-        key: '__setting__',
+        // key: '__SETTING__',
         title: 'Setting',
         pageType: PageTypeEnum.Setting,
         isNew: false,
+        paneId: generateGlobalPaneId('-', PageTypeEnum.Setting, 'SETTING'),
+        rawId: 'SETTING',
       },
       'push',
     );

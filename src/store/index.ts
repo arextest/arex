@@ -37,23 +37,25 @@ export type PaneType = {
     | ApplicationDataType // PageTypeEnum.Index 时的数据
     | PlanItemStatistics; // PageTypeEnum.ReplayAnalysis 时的数据
   sortIndex?: number;
-  paneId?: any;
-  rawId?: any;
+  paneId: string;
+  rawId: string;
 };
 
+type ActiveMenu = [MenuTypeEnum, string | undefined]; // [菜单id, 菜单项目id]
 type BaseState = {
   themeClassify: ThemeClassify;
   changeTheme: (theme?: ThemeName) => void;
   collapseMenu: boolean;
   setCollapseMenu: (collapseMenu: boolean) => void;
   extensionInstalled: boolean;
+  extensionVersion: string;
   userInfo: UserInfo;
   logout: () => void;
 
   // activePane: string;
   // setActivePane: (activePaneKey: string, activeMenuKey?: MenuTypeEnum) => void;
   setUserInfo: (data: UserInfo | string) => void;
-  activeMenu: [MenuTypeEnum, string | undefined]; // [菜单id, 菜单项目id]
+  activeMenu: ActiveMenu;
   setActiveMenu: (menuKey: MenuTypeEnum, menuItemKey?: string) => void;
   panes: PaneType[];
 
@@ -119,7 +121,7 @@ export const useStore = create(
         setLocalStorage(UserInfoKey, data);
       }
     },
-
+    extensionVersion: '1.0.4',
     themeClassify:
       (getLocalStorage<UserInfo>(UserInfoKey)?.profile?.theme?.split('-')?.at(0) as
         | ThemeClassify
@@ -199,6 +201,17 @@ export const useStore = create(
     },
     activeMenu: [MenuTypeEnum.Collection, undefined],
     setActiveMenu: (menuKey, menuItemKey) => {
+      set((state) => {
+        const statePane = state.panes.find((i) => i.paneId === menuItemKey);
+        if (statePane) {
+          // 每次选择tab的时候将sortIndex设置到最大，然后每次点击关闭的时候激活上最大的sort
+          const sortIndexArr = state.panes.map((i) => i.sortIndex || 0);
+          statePane.sortIndex = Math.max(...(sortIndexArr.length > 0 ? sortIndexArr : [0])) + 1;
+        }
+        const key = menuKey ? menuKey : statePane?.menuType || MenuTypeEnum.Collection;
+        state.activeMenu = [key, menuItemKey];
+      });
+
       set({ activeMenu: [menuKey, menuItemKey] });
     },
     resetPanes: () => {
@@ -231,13 +244,13 @@ export const useStore = create(
       }
     },
 
-    currentEnvironment: { id: '0' },
+    currentEnvironment: { id: '0', envName: '', keyValues: [] },
     setCurrentEnvironment: (environment) => {
       if (environment !== '0') {
         const environmentTreeData = get().environmentTreeData;
         set({ currentEnvironment: environmentTreeData.find((i) => i.id === environment) });
       } else {
-        set({ currentEnvironment: { id: '0' } });
+        set({ currentEnvironment: { id: '0', envName: '', keyValues: [] } });
       }
     },
   })),

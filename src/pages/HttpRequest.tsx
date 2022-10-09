@@ -30,7 +30,6 @@ import {
   FormHeaderWrapper,
   FormTable,
   Response,
-  ResponseCompare,
   ResponseTest,
   SaveRequestButton,
   useColumns,
@@ -51,7 +50,12 @@ import { runTestScript } from '../helpers/sandbox';
 import { CollectionService } from '../services/CollectionService';
 import { FileSystemService } from '../services/FileSystem.service';
 import { PaneType, useStore } from '../store';
-import { parseGlobalPaneId, tryParseJsonString, tryPrettierJsonString } from '../utils';
+import {
+  generateGlobalPaneId,
+  parseGlobalPaneId,
+  tryParseJsonString,
+  tryPrettierJsonString,
+} from '../utils';
 import AgentAxios from '../utils/request';
 
 const { TabPane } = Tabs;
@@ -425,7 +429,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
       }
     }
 
-    return url.replace(editorValueMatch[0], replaceVar);
+    return url.replace(editorValueMatch[0], replaceVar).split('?')[0];
   };
   const handleRequest = () => {
     const data: Partial<Record<'params' | 'data', object>> = {};
@@ -509,11 +513,13 @@ const HttpRequest: FC<HttpRequestProps> = ({
     fetchCollectionTreeData(); // TODO 更新 Collection 数据
     setPanes(
       {
-        key: pane.key,
+        // key: pane.key,
         isNew: true,
         title: pane.title,
         menuType: MenuTypeEnum.Collection,
         pageType: PageTypeEnum.Request,
+        paneId: generateGlobalPaneId(MenuTypeEnum.Collection, PageTypeEnum.Request, pane.key),
+        rawId: pane.key,
       },
       'push',
     );
@@ -816,7 +822,8 @@ const HttpRequest: FC<HttpRequestProps> = ({
                 size={responseMeta.size}
               />
             ) : (
-              <ResponseCompare responses={[baseResponse?.data, testResponse?.data]} />
+              <div>ResponseCompare</div>
+              // <ResponseCompare responses={[baseResponse?.data, testResponse?.data]} />
             )}
           </Spin>
         ) : (

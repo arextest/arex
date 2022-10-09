@@ -1,4 +1,3 @@
-import { css } from '@emotion/react';
 import { Empty, Space } from 'antd';
 import React, { FC, useState } from 'react';
 
@@ -35,8 +34,6 @@ const Replay: FC<{ data?: ApplicationDataType; paneId: any }> = ({ data }) => {
         }
         panel={<Report selectedPlan={selectedPlan} />}
       />
-
-      {/* TODO Configuration */}
     </Space>
   ) : (
     <FlexCenterWrapper>

@@ -75,7 +75,7 @@ export const generateGlobalPaneId: any = (
   rawId: string,
 ) => btoa(encodeURI(`${menuType}__${pageType}__${rawId}`));
 
-export const parseGlobalPaneId = (paneId: string) => {
+export const parseGlobalPaneId = (paneId?: string) => {
   paneId = paneId || '';
   const arr = atob(decodeURI(paneId)).split('__');
   return {

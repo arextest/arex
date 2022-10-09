@@ -2,6 +2,7 @@
   "http": {
     "urlEmpty": "Please input url",
     "extensionNotInstalled": "Extension not installed",
+    "extensionIncorrect": "Chrome Extension version is incorrect, please install",
     "enterRequestUrl": "Enter request URL",
     "importUrl": "Import URL",
     "showCode": "Show Code",
