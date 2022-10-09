@@ -6,3 +6,4 @@ export { default as HighlightRowTable } from './HighlightRowTable';
 export { default as Label } from './Label';
 export { default as PanesTitle } from './PanesTitle';
 export { default as SmallTextButton } from './SmallTextButton';
+export { default as SpaceBetweenWrapper } from './SpaceBetweenWrapper';

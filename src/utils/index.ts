@@ -46,7 +46,7 @@ export function clearLocalStorage(key?: string) {
   }
 }
 
-export function tryParseJsonString<T>(jsonString: string, errorTip?: string) {
+export function tryParseJsonString<T>(jsonString?: string, errorTip?: string) {
   try {
     return JSON.parse(jsonString || '{}') as T;
   } catch (e) {
@@ -84,3 +84,13 @@ export const parseGlobalPaneId = (paneId?: string) => {
     rawId: arr[2],
   };
 };
+
+/**
+ * 对象数组去重
+ * @param arr 去重对象数组
+ * @param key 去重参考 key
+ */
+export function objectArrayFilter<T extends { [key: string]: any }>(arr: T[], key: string) {
+  const res = new Map<keyof T, number>();
+  return arr.filter((item) => !res.has(item[key]) && res.set(item[key], 1));
+}

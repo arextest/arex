@@ -1,19 +1,20 @@
-import { CodepenOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { CodeOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Collapse, List } from 'antd';
 import React, { FC } from 'react';
 
+import { OperationInterface } from '../../../../services/Replay.type';
 import { TooltipButton } from '../../../index';
 
 type InterfacesCheckedNodes = { [key: string]: { [key: string]: string[] } };
 type PathCollapseProps = {
   activeKey?: string;
   activeCollapseKey?: string;
-  onChange: (path: string) => void;
+  onChange: (operationInterface?: OperationInterface, maintain?: boolean) => void;
   onEdit?: (selected?: string) => void;
   onDelete?: (selected: string) => void;
-  onEditResponse?: (path: string) => void;
-  interfaces: string[];
+  onEditResponse?: (operationInterface: OperationInterface) => void;
+  interfaces: OperationInterface[];
   checkedNodes: InterfacesCheckedNodes;
 };
 
@@ -28,43 +29,48 @@ const CollapseWrapper = styled(Collapse)`
 `;
 
 const PathCollapse: FC<PathCollapseProps> = (props) => {
-  const handleEdit = (key?: string) => {
-    props.onEdit && props.onEdit(key);
-  };
-
+  const handleEdit = (key?: string) => props.onEdit && props.onEdit(key);
   const handleDelete = (key: string) => props.onDelete && props.onDelete(key);
 
   return (
     <CollapseWrapper
       accordion
       activeKey={props.activeKey}
-      onChange={(activeKey) => props.onChange && props.onChange(activeKey as string)}
+      onChange={(id) => props.onChange && props.onChange(props.interfaces.find((i) => i.id === id))}
     >
-      {props.interfaces.map((path) => {
+      {props.interfaces.map((i) => {
         return (
           <Collapse.Panel
-            key={path}
-            header={path}
-            extra={
+            key={i.id}
+            header={i.operationName}
+            extra={[
               <TooltipButton
-                type='text'
-                size='small'
-                icon={<CodepenOutlined />}
+                key='add'
+                icon={<PlusOutlined />}
+                title='Add Sort Key'
+                onClick={(e) => {
+                  e.stopPropagation();
+                  props.onChange && props.onChange(i, true);
+                }}
+              />,
+              <TooltipButton
+                key='editResponse'
+                icon={<CodeOutlined />}
                 title='Edit Response'
                 onClick={(e) => {
                   e.stopPropagation();
-                  props.onEditResponse && props.onEditResponse(path);
+                  props.onEditResponse && props.onEditResponse(i);
                 }}
-              />
-            }
+              />,
+            ]}
           >
             <List
               size='small'
-              dataSource={Object.keys(props.checkedNodes[path] || {})}
+              dataSource={Object.keys(props.checkedNodes[i.id] || {})}
               renderItem={(key) => (
                 <List.Item
                   className={
-                    `${props.activeKey}_${props.activeCollapseKey}` === `${path}_${key}`
+                    `${props.activeKey}_${props.activeCollapseKey}` === `${i.id}_${key}`
                       ? 'active-item'
                       : ''
                   }
@@ -79,7 +85,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                     <span>{key}</span>
                     <span>
                       <span style={{ marginRight: '8px' }}>
-                        {`${props.checkedNodes[path][key].length} keys`}
+                        {`${props.checkedNodes[i.id][key].length} keys`}
                       </span>
                       <Button
                         type='text'

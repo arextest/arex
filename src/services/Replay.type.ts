@@ -361,7 +361,35 @@ export interface PushConfigTemplateRes {
   success: boolean;
 }
 
-export interface queryScheduleUseResultAppIdRes {
+export interface QueryScheduleUseResultAppIdRes {
   appId: string;
   offsetDays: string;
+}
+
+export type OperationInterface = {
+  status: number;
+  modifiedTime: number;
+  id: string;
+  appId: string;
+  serviceId: string;
+  operationName: string;
+  operationType: number;
+  operationResponse: string | null;
+  recordedCaseCount: number | null;
+};
+export type OperationData = {
+  status: number;
+  modifiedTime: number;
+  id: string;
+  appId: string;
+  serviceName: string;
+  serviceKey: string;
+  operationList: OperationInterface[];
+};
+
+export type QueryInterfacesListRes = OperationData[];
+
+export interface UpdateInterfaceResponseReq {
+  id: string;
+  operationResponse: string;
 }

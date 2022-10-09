@@ -1,10 +1,12 @@
 import axios from 'axios';
 
 import request from '../api/axios';
-import { tryPrettierJsonString } from '../utils';
+import { objectArrayFilter, tryPrettierJsonString } from '../utils';
 import {
   CreatePlanReq,
   CreatePlanRes,
+  OperationData,
+  OperationInterface,
   PushConfigTemplateReq,
   PushConfigTemplateRes,
   QueryConfigTemplateReq,
@@ -13,6 +15,7 @@ import {
   QueryDifferencesRes,
   QueryFullLinkMsgReq,
   QueryFullLinkMsgRes,
+  QueryInterfacesListRes,
   QueryMsgWithDiffReq,
   QueryMsgWithDiffRes,
   QueryPlanItemStatisticsReq,
@@ -29,12 +32,13 @@ import {
   QueryResponseTypeStatisticRes,
   QueryScenesReq,
   QueryScenesRes,
-  queryScheduleUseResultAppIdRes,
+  QueryScheduleUseResultAppIdRes,
   RegressionListRes,
   RemoveDynamicClassSettingReq,
   RemoveDynamicClassSettingRes,
   UpdateDynamicClassSettingReq,
   UpdateDynamicClassSettingRes,
+  UpdateInterfaceResponseReq,
   UpdateRecordSettingReq,
   UpdateRecordSettingRes,
 } from './Replay.type';
@@ -187,12 +191,40 @@ export default class ReplayService {
 
   static async queryScheduleUseResultAppId(params: { id: string }) {
     return request
-      .get<queryScheduleUseResultAppIdRes>('/config/schedule/useResult/appId/' + params.id)
+      .get<QueryScheduleUseResultAppIdRes>('/config/schedule/useResult/appId/' + params.id)
       .then((res) => Promise.resolve(res.body));
   }
+
   static async configScheduleModifyUpdate(params) {
     return request
       .post<any>('/config/schedule/modify/UPDATE', params)
+      .then((res) => Promise.resolve(res.body));
+  }
+
+  static async queryInterfacesList(params: { id: string }) {
+    return request
+      .get<QueryInterfacesListRes>('/config/applicationService/useResultAsList/appId/' + params.id)
+      .then((res) => {
+        const operationList = objectArrayFilter<OperationInterface>(
+          res.body.reduce<OperationInterface[]>((list, cur) => {
+            list.push(...cur.operationList);
+            return list;
+          }, []),
+          'id',
+        );
+        return Promise.resolve(operationList);
+      });
+  }
+
+  static async queryInterfaceResponse(params: { id: string }) {
+    return request
+      .get<OperationInterface>('/config/applicationOperation/useResult/operationId/' + params.id)
+      .then((res) => Promise.resolve(res.body));
+  }
+
+  static async updateInterfaceResponse(params: UpdateInterfaceResponseReq) {
+    return request
+      .post<boolean>('/config/applicationOperation/modify/UPDATE', params)
       .then((res) => Promise.resolve(res.body));
   }
 }
