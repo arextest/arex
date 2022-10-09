@@ -1,6 +1,7 @@
 import './i18n';
 import 'jsoneditor/dist/jsoneditor.min.css';
 import './assets/css/jsoneditor.less';
+import 'allotment/dist/style.css';
 
 import { ClickToComponent } from 'click-to-react-component';
 import React from 'react';

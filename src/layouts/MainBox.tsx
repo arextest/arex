@@ -4,8 +4,10 @@ import {
   FieldTimeOutlined,
   LeftOutlined,
 } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMount, useRequest } from 'ahooks';
+import { Allotment } from 'allotment';
 import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
 import React, { ReactNode, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -396,130 +398,133 @@ const MainBox = () => {
     <>
       {/*AppHeader部分*/}
       <AppHeader />
-      <DraggableLayout
-        direction={'horizontal'}
-        limitRange={[15, 40]}
-        fixedFirstNode={collapseMenu}
-        firstNode={
-          <>
-            <WorkspacesMenu />
+      <div
+        css={css`
+          height: calc(100vh - 74px);
+        `}
+      >
+        <Allotment>
+          <Allotment.Pane preferredSize={500} minSize={400}>
+            <>
+              <WorkspacesMenu />
 
-            <MainMenu
-              tabPosition='left'
-              activeKey={activeMenu[0]}
-              brief={collapseMenu}
-              tabBarExtraContent={
-                <CollapseMenuButton
-                  collapse={collapseMenu}
-                  icon={<LeftOutlined />}
-                  onClick={handleCollapseMenu}
-                />
-              }
-              onChange={handleMainMenuChange}
-            >
-              {/* menuItem 自定义子组件命名规定: XxxMenu, 表示xx功能的左侧主菜单 */}
-              {/* menuItem 自定义子组件 props 约定，便于之后封装  */}
-              {/* 1. value: 选中 menu item 的 id */}
-              {/* 2. onSelect: 选中 menu item 时触发，参数（结构待规范）为选中节点的相关信息，点击后的逻辑不在 Menu 组件中处理 */}
-              <MainMenuItem
-                tab={<MenuTitle icon={<ApiOutlined />} title='Collection' brief={collapseMenu} />}
-                key={MenuTypeEnum.Collection}
-                menuItem={
-                  <CollectionMenu
-                    value={parseGlobalPaneId(activeMenu[1])['rawId']}
-                    onSelect={handleCollectionMenuClick}
-                    onGetData={setCollectionTreeData}
-                    cRef={collectionMenuRef}
+              <MainMenu
+                tabPosition='left'
+                activeKey={activeMenu[0]}
+                brief={collapseMenu}
+                tabBarExtraContent={
+                  <CollapseMenuButton
+                    collapse={collapseMenu}
+                    icon={<LeftOutlined />}
+                    onClick={handleCollapseMenu}
                   />
                 }
-              />
-              <MainMenuItem
-                tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' brief={collapseMenu} />}
-                key={MenuTypeEnum.Replay}
-                menuItem={
-                  <ReplayMenu
-                    initValue={parseGlobalPaneId(activeMenu[1])['rawId']}
-                    value={parseGlobalPaneId(activeMenu[1])['rawId']}
-                    onSelect={handleReplayMenuClick}
-                  />
-                }
-              />
-              <MainMenuItem
-                tab={
-                  <MenuTitle
-                    icon={<DeploymentUnitOutlined />}
-                    title='Environment'
-                    brief={collapseMenu}
-                  />
-                }
-                key={MenuTypeEnum.Environment}
-                menuItem={
-                  <EnvironmentMenu
-                    value={parseGlobalPaneId(activeMenu[1])['rawId']}
-                    onSelect={handleEnvironmentMenuClick}
-                  />
-                }
-              />
-            </MainMenu>
-          </>
-        }
-        secondNode={
-          // 右侧工作区
-          <EmptyWrapper
-            empty={!panes.length}
-            emptyContent={
-              <Button type='primary' onClick={addTab}>
-                New Request
-              </Button>
-            }
-          >
-            <MainTabs
-              activeKey={activeMenu[1]}
-              collapseMenu={collapseMenu}
-              tabBarExtraContent={<EnvironmentSelect />}
-              onEdit={handleTabsEdit}
-              onChange={(t) => {
-                setActiveMenu(activeMenu[0], t);
-              }}
-            >
-              {panes.map((pane) => (
-                <MainTabPane
-                  className='main-tab-pane'
-                  tab={genTabTitle(collectionTreeData, pane)}
-                  key={pane.paneId}
-                >
-                  {/* TODO 工作区自定义组件待规范，参考 menuItem */}
-                  {pane.pageType === PageTypeEnum.Request && (
-                    <HttpRequest
-                      id={pane.key}
-                      isNew={pane.isNew}
-                      fetchCollectionTreeData={fetchCollectionTreeData}
-                      paneId={pane.paneId}
+                onChange={handleMainMenuChange}
+              >
+                {/* menuItem 自定义子组件命名规定: XxxMenu, 表示xx功能的左侧主菜单 */}
+                {/* menuItem 自定义子组件 props 约定，便于之后封装  */}
+                {/* 1. value: 选中 menu item 的 id */}
+                {/* 2. onSelect: 选中 menu item 时触发，参数（结构待规范）为选中节点的相关信息，点击后的逻辑不在 Menu 组件中处理 */}
+                <MainMenuItem
+                  tab={<MenuTitle icon={<ApiOutlined />} title='Collection' brief={collapseMenu} />}
+                  key={MenuTypeEnum.Collection}
+                  menuItem={
+                    <CollectionMenu
+                      value={parseGlobalPaneId(activeMenu[1])['rawId']}
+                      onSelect={handleCollectionMenuClick}
+                      onGetData={setCollectionTreeData}
+                      cRef={collectionMenuRef}
                     />
-                  )}
-                  {pane.pageType === PageTypeEnum.Replay && (
-                    <Replay paneId={pane.paneId} data={pane.data as ApplicationDataType} />
-                  )}
-                  {pane.pageType === PageTypeEnum.ReplayAnalysis && (
-                    <ReplayAnalysis data={pane.data as PlanItemStatistics} />
-                  )}
-                  {pane.pageType === PageTypeEnum.ReplayCase && (
-                    <ReplayCase data={pane.data as PlanItemStatistics} />
-                  )}
-                  {pane.pageType === PageTypeEnum.ReplaySetting && (
-                    <ReplaySetting data={pane.data as ApplicationDataType} />
-                  )}
-                  {pane.pageType === PageTypeEnum.Folder && <Folder />}
-                  {pane.pageType === PageTypeEnum.Environment && <Environment id={pane.key} />}
-                  {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverview />}
-                  {pane.pageType === PageTypeEnum.Setting && <Setting />}
-                </MainTabPane>
-              ))}
-            </MainTabs>
-          </EmptyWrapper>
-        }
-      />
-
+                  }
+                />
+                <MainMenuItem
+                  tab={
+                    <MenuTitle icon={<FieldTimeOutlined />} title='Replay' brief={collapseMenu} />
+                  }
+                  key={MenuTypeEnum.Replay}
+                  menuItem={
+                    <ReplayMenu
+                      initValue={parseGlobalPaneId(activeMenu[1])['rawId']}
+                      value={parseGlobalPaneId(activeMenu[1])['rawId']}
+                      onSelect={handleReplayMenuClick}
+                    />
+                  }
+                />
+                <MainMenuItem
+                  tab={
+                    <MenuTitle
+                      icon={<DeploymentUnitOutlined />}
+                      title='Environment'
+                      brief={collapseMenu}
+                    />
+                  }
+                  key={MenuTypeEnum.Environment}
+                  menuItem={
+                    <EnvironmentMenu
+                      value={parseGlobalPaneId(activeMenu[1])['rawId']}
+                      onSelect={handleEnvironmentMenuClick}
+                    />
+                  }
+                />
+              </MainMenu>
+            </>
+          </Allotment.Pane>
+          <Allotment.Pane snap>
+            <EmptyWrapper
+              empty={!panes.length}
+              emptyContent={
+                <Button type='primary' onClick={addTab}>
+                  New Request
+                </Button>
+              }
+            >
+              <MainTabs
+                activeKey={activeMenu[1]}
+                collapseMenu={collapseMenu}
+                tabBarExtraContent={<EnvironmentSelect />}
+                onEdit={handleTabsEdit}
+                onChange={(t) => {
+                  setActiveMenu(activeMenu[0], t);
+                }}
+              >
+                {panes.map((pane) => (
+                  <MainTabPane
+                    className='main-tab-pane'
+                    tab={genTabTitle(collectionTreeData, pane)}
+                    key={pane.paneId}
+                  >
+                    {/* TODO 工作区自定义组件待规范，参考 menuItem */}
+                    {pane.pageType === PageTypeEnum.Request && (
+                      <HttpRequest
+                        id={pane.key}
+                        isNew={pane.isNew}
+                        fetchCollectionTreeData={fetchCollectionTreeData}
+                        paneId={pane.paneId}
+                      />
+                    )}
+                    {pane.pageType === PageTypeEnum.Replay && (
+                      <Replay paneId={pane.paneId} data={pane.data as ApplicationDataType} />
+                    )}
+                    {pane.pageType === PageTypeEnum.ReplayAnalysis && (
+                      <ReplayAnalysis data={pane.data as PlanItemStatistics} />
+                    )}
+                    {pane.pageType === PageTypeEnum.ReplayCase && (
+                      <ReplayCase data={pane.data as PlanItemStatistics} />
+                    )}
+                    {pane.pageType === PageTypeEnum.ReplaySetting && (
+                      <ReplaySetting data={pane.data as ApplicationDataType} />
+                    )}
+                    {pane.pageType === PageTypeEnum.Folder && <Folder />}
+                    {pane.pageType === PageTypeEnum.Environment && <Environment id={pane.key} />}
+                    {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverview />}
+                    {pane.pageType === PageTypeEnum.Setting && <Setting />}
+                  </MainTabPane>
+                ))}
+              </MainTabs>
+            </EmptyWrapper>
+          </Allotment.Pane>
+        </Allotment>
+      </div>
       <AppFooter />
     </>
   );
