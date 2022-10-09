@@ -1,15 +1,18 @@
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { CodepenOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Collapse, List } from 'antd';
 import React, { FC } from 'react';
+
+import { TooltipButton } from '../../../index';
 
 type InterfacesCheckedNodes = { [key: string]: { [key: string]: string[] } };
 type PathCollapseProps = {
   activeKey?: string;
   activeCollapseKey?: string;
-  onChange: (path: string, maintain?: boolean) => void; // maintain 为 true 时点击 Panel 的 EditButton 时不折叠面板
+  onChange: (path: string) => void;
   onEdit?: (selected?: string) => void;
   onDelete?: (selected: string) => void;
+  onEditResponse?: (path: string) => void;
   interfaces: string[];
   checkedNodes: InterfacesCheckedNodes;
 };
@@ -43,10 +46,14 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
             key={path}
             header={path}
             extra={
-              <EditOutlined
+              <TooltipButton
+                type='text'
+                size='small'
+                icon={<CodepenOutlined />}
+                title='Edit Response'
                 onClick={(e) => {
                   e.stopPropagation();
-                  props.onChange && props.onChange(path, true);
+                  props.onEditResponse && props.onEditResponse(path);
                 }}
               />
             }

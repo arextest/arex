@@ -24,6 +24,9 @@ const ReplaySetting: FC<ReplaySettingProps> = (props) => {
           .ant-tabs-nav-list > .ant-tabs-tab {
             margin: 4px 0 0 0 !important;
           }
+          .ant-tabs-tabpane {
+            padding: 0 12px;
+          }
         `}
       >
         <TabPane tab='Record' key='record'>
@@ -35,11 +38,11 @@ const ReplaySetting: FC<ReplaySettingProps> = (props) => {
         </TabPane>
 
         <TabPane tab='NodesIgnore' key='nodesIgnore'>
-          <NodesIgnore />
+          <NodesIgnore appId={props.data.appId} />
         </TabPane>
 
         <TabPane tab='NodesSort' key='nodesSort'>
-          <NodesSort />
+          <NodesSort appId={props.data.appId} />
         </TabPane>
       </Tabs>
     </>

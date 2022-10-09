@@ -1,5 +1,4 @@
 import { css } from '@emotion/react';
-import styled from '@emotion/styled';
 import { Badge, Card, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
@@ -8,6 +7,7 @@ import { FC } from 'react';
 import { useStore } from '../../../../store';
 
 type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
+  sortedKeys?: { [key: string]: string[] };
   treeData: object;
   title?: string;
 };
@@ -28,7 +28,7 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
             title: key,
             key: path,
             children: getNodes(value, path),
-            icon: <Badge color={theme.split('-')[1]} />,
+            icon: props.sortedKeys?.[path]?.length && <Badge color={theme.split('-')[1]} />, // 已配置过的节点使用圆点进行提示
           }
         : { title: key, key: path, value };
     });
@@ -36,6 +36,7 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
 
   return (
     <Card
+      bordered={false}
       title={`${props.title} (click node to ignore)`}
       bodyStyle={{ padding: '8px 16px' }}
       headStyle={{ padding: '0 16px', margin: '-8px 0' }}
@@ -44,11 +45,12 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
         showIcon
         defaultExpandAll
         {...props}
+        selectedKeys={[]}
         treeData={getNodes(props.treeData, '')}
         css={css`
           .ant-tree-icon__customize {
-            float: right;
-            margin-left: 2px;
+            position: absolute;
+            left: -16px;
           }
         `}
       />

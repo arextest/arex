@@ -43,7 +43,7 @@ const ignoredNodesEditModeOptions = [
   { label: 'Raw', value: NodesEditMode.Raw },
 ];
 
-const NodesIgnore: FC = () => {
+const NodesIgnore: FC<{ appId: string }> = () => {
   const [checkedNodesData, setCheckedNodesData] = useImmer<{
     global: string[];
     interfaces: { [key: string]: string[] };

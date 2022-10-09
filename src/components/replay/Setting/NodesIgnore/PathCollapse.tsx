@@ -57,7 +57,6 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
             extra={
               <span>
                 <span style={{ marginRight: '8px' }}>{`${checkedNodes?.length ?? 0} keys`}</span>
-                <Button size='small' type='text' icon={<EditOutlined />}></Button>
               </span>
             }
           >
