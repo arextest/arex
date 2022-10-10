@@ -55,8 +55,8 @@ import {
   parseGlobalPaneId,
   tryParseJsonString,
   tryPrettierJsonString,
-} from '../utils';
-import AgentAxios from '../utils/request';
+} from '../helpers/utils';
+import AgentAxios from '../helpers/request';
 
 const { TabPane } = Tabs;
 

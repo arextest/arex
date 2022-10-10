@@ -22,7 +22,7 @@ import { MenuTypeEnum, PageTypeEnum } from '../../constant';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
-import { generateGlobalPaneId, getPercent } from '../../utils';
+import { generateGlobalPaneId, getPercent } from '../../helpers/utils';
 import { SmallTextButton } from '../styledComponents';
 import { resultsStates } from './Results';
 

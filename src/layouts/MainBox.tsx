@@ -39,7 +39,7 @@ import Setting from '../pages/Setting';
 import EnvironmentService from '../services/Environment.service';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { useStore } from '../store';
-import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../utils';
+import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../helpers/utils';
 import DraggableLayout from './DraggableLayout';
 
 const { TabPane } = Tabs;

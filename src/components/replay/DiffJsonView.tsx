@@ -6,7 +6,7 @@ import JSONEditor, { JSONEditorOptions } from 'jsoneditor';
 import { FC, useEffect, useRef } from 'react';
 
 import { QueryMsgWithDiffLog } from '../../services/Replay.type';
-import { tryParseJsonString } from '../../utils';
+import { tryParseJsonString } from '../../helpers/utils';
 import { FullScreen } from '../styledComponents';
 
 export type DiffJsonViewProps = {

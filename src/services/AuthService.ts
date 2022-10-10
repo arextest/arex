@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { getLocalStorage } from '../utils';
+import { getLocalStorage } from '../helpers/utils';
 export class AuthService {
   static sendVerifyCodeByEmail(email: string) {
     return axios.get(`/api/login/getVerificationCode/${email}`, {

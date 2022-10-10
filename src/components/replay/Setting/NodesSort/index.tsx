@@ -8,7 +8,7 @@ import { useImmer } from 'use-immer';
 
 import ReplayService from '../../../../services/Replay.service';
 import { OperationInterface } from '../../../../services/Replay.type';
-import { tryParseJsonString, tryPrettierJsonString } from '../../../../utils';
+import { tryParseJsonString, tryPrettierJsonString } from '../../../../helpers/utils';
 import { EditAreaPlaceholder, SpaceBetweenWrapper } from '../../../styledComponents';
 import ResponseRaw from '../NodesIgnore/ResponseRaw';
 import ArrayTree from './ArrayTree';

@@ -6,7 +6,7 @@ import DefaultConfig from '../defaultConfig';
 import { UserService } from '../services/UserService';
 import { UserInfo, useStore } from '../store';
 import { themeMap } from '../style/theme';
-import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../utils';
+import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { AuthService } from '../services/AuthService';
 import { useLocation, useNavigate } from 'react-router-dom';
 

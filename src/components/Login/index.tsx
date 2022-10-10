@@ -10,7 +10,7 @@ import { AccessTokenKey, RefreshTokenKey } from '../../constant';
 import { AuthService } from '../../services/AuthService';
 import { WorkspaceService } from '../../services/Workspace.service';
 import { useStore } from '../../store';
-import { getLocalStorage, setLocalStorage } from '../../utils';
+import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
 import styled from '@emotion/styled';
 import { UserService } from '../../services/UserService';
 const OtherLoginMethods = styled.div`

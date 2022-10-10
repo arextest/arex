@@ -2,7 +2,7 @@ import { Button, Col, Row, Select } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { tryParseJsonString } from '../../../../utils';
+import { tryParseJsonString } from '../../../../helpers/utils';
 import { EditAreaPlaceholder } from '../../../styledComponents';
 import IgnoreTree from './IgnoreTree';
 import PathCollapse, { GLOBAL_KEY } from './PathCollapse';

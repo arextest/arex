@@ -18,7 +18,7 @@ import { WorkspaceService } from '../../services/Workspace.service';
 import { Workspace } from '../../services/Workspace.type';
 import { useStore } from '../../store';
 import { TooltipButton } from '../index';
-import { generateGlobalPaneId } from '../../utils';
+import { generateGlobalPaneId } from '../../helpers/utils';
 
 const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
   height: 35px;

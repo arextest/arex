@@ -10,7 +10,7 @@ import { useStore } from '../../store';
 import GitHubStarButton from '../GitHubStarButton';
 import { TooltipButton } from '../index';
 import InviteWorkspace from '../workspace/Invite';
-import { generateGlobalPaneId } from '../../utils';
+import { generateGlobalPaneId } from '../../helpers/utils';
 
 const HeaderWrapper = styled.div`
   .app-header {
