@@ -45,8 +45,6 @@ type ActiveMenu = [MenuTypeEnum, string | undefined]; // [菜单id, 菜单项目
 type BaseState = {
   themeClassify: ThemeClassify;
   changeTheme: (theme?: ThemeName) => void;
-  collapseMenu: boolean;
-  setCollapseMenu: (collapseMenu: boolean) => void;
   extensionInstalled: boolean;
   extensionVersion: string;
   userInfo: UserInfo;
@@ -145,11 +143,6 @@ export const useStore = create(
       });
     },
 
-    collapseMenu: getLocalStorage<boolean>(CollapseMenuKey) || false,
-    setCollapseMenu: (collapseMenu) => {
-      set({ collapseMenu });
-      setLocalStorage(CollapseMenuKey, collapseMenu);
-    },
     extensionInstalled: false,
 
     // activePane: '',

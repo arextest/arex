@@ -5,7 +5,6 @@ import { ApplicationDataType } from '../../services/Replay.type';
 import MenuSelect from '../MenuSelect';
 
 const ReplayMenu: FC<{
-  initValue?: string;
   value?: string;
   onSelect: (app: ApplicationDataType) => void;
 }> = (props) => {
@@ -13,9 +12,9 @@ const ReplayMenu: FC<{
 
   return (
     <MenuSelect<ApplicationDataType>
-      initValue={props.initValue}
       refresh
       rowKey='id'
+      initValue={props.value}
       selectedKeys={selectedKeys}
       onSelect={props.onSelect}
       placeholder='applicationsMenu.appFilterPlaceholder'
