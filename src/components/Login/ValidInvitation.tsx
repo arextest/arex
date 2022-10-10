@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { AccessTokenKey, RefreshTokenKey } from '../../constant';
 import { WorkspaceService } from '../../services/Workspace.service';
-import { getLocalStorage, setLocalStorage } from '../../utils';
+import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
 
 const ValidInvitation = () => {
   const [searchParams] = useSearchParams();

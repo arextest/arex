@@ -25,6 +25,7 @@ import {
 import { CollectionProps } from '../components/httpRequest/CollectionMenu';
 import { MenuTypeEnum, PageTypeEnum } from '../constant';
 import { treeFind } from '../helpers/collection/util';
+import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../helpers/utils';
 import {
   Environment,
   Folder,
@@ -39,7 +40,6 @@ import Setting from '../pages/Setting';
 import EnvironmentService from '../services/Environment.service';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { useStore } from '../store';
-import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../utils';
 
 const { TabPane } = Tabs;
 const MainMenu = styled(Tabs, { shouldForwardProp: (propName) => propName !== 'brief' })<{

@@ -16,8 +16,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { MenuTypeEnum, PageTypeEnum, RoleEnum } from '../../constant';
 import { WorkspaceService } from '../../services/Workspace.service';
 import { useStore } from '../../store';
-import { generateGlobalPaneId } from '../../utils';
 import { TooltipButton } from '../index';
+import { generateGlobalPaneId } from '../../helpers/utils';
 
 const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
   height: 35px;

@@ -13,7 +13,7 @@ import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
 import { PrimaryColor, ThemeClassify, ThemeName } from '../style/theme';
-import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../utils';
+import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
 
 export type Profile = {
   theme: ThemeName;
@@ -49,14 +49,10 @@ type BaseState = {
   extensionVersion: string;
   userInfo: UserInfo;
   logout: () => void;
-
-  // activePane: string;
-  // setActivePane: (activePaneKey: string, activeMenuKey?: MenuTypeEnum) => void;
   setUserInfo: (data: UserInfo | string) => void;
   activeMenu: ActiveMenu;
   setActiveMenu: (menuKey: MenuTypeEnum, menuItemKey?: string) => void;
   panes: PaneType[];
-
   /*
    * 修改工作区标签页数据
    * @param panes 工作区标签页数据
@@ -144,30 +140,11 @@ export const useStore = create(
     },
 
     extensionInstalled: false,
-
-    // activePane: '',
-    // setActivePane: (activePaneKey, activeMenuKey) => {
-    //   const setActiveEnvironment = get().setActiveEnvironment;
-    //   set((state) => {
-    //     const statePane = state.panes.find((i) => i.key === activePaneKey);
-    //     if (statePane) {
-    //       // 每次选择tab的时候将sortIndex设置到最大，然后每次点击关闭的时候激活上最大的sort
-    //       const sortIndexArr = state.panes.map((i) => i.sortIndex || 0);
-    //       statePane.sortIndex = Math.max(...(sortIndexArr.length > 0 ? sortIndexArr : [0])) + 1;
-    //     }
-    //     const key = activeMenuKey ? activeMenuKey : statePane?.menuType || MenuTypeEnum.Collection;
-    //     state.activePane = activePaneKey;
-    //     state.activeMenu = [key, activePaneKey];
-    //   });
-    //   setActiveEnvironment(activePaneKey);
-    // },
-
     panes: [],
     setPanes: (panes, mode) => {
       if (!mode) {
         set({ panes: panes as PaneType[] });
       }
-
       if (mode === 'push') {
         // insert or update
         const pane = panes as PaneType;
@@ -186,7 +163,6 @@ export const useStore = create(
               sortIndex: maxSortIndex,
             });
           }
-
           // state.activePane = pane.paneId;
           state.activeMenu = [pane.menuType || MenuTypeEnum.Collection, pane.paneId];
         });

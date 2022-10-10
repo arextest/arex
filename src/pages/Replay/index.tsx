@@ -5,7 +5,7 @@ import { AppTitle, Report, Results } from '../../components/replay';
 import { FlexCenterWrapper } from '../../components/styledComponents';
 import CollapseTable from '../../components/styledComponents/CollapseTable';
 import { ApplicationDataType, PlanStatistics } from '../../services/Replay.type';
-import { uuid } from '../../utils';
+import { uuid } from '../../helpers/utils';
 
 const Replay: FC<{ data?: ApplicationDataType; paneId: any }> = ({ data }) => {
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
