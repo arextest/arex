@@ -1,7 +1,7 @@
 import { CodeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { Button, Collapse, List } from 'antd';
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 
 import { OperationInterface } from '../../../../services/AppSetting.type';
 import { TooltipButton } from '../../../index';
@@ -9,19 +9,13 @@ import { TooltipButton } from '../../../index';
 type PathCollapseProps = {
   activeKey?: string;
   interfaces: OperationInterface[];
-  checkedNodes: { [key: string]: string[] };
+  checkedNodes: string[];
   onChange: (path?: OperationInterface) => void;
   onSelect: (path: OperationInterface, selected: string[]) => void;
   onEditResponse: (operationInterface: OperationInterface) => void;
 };
 
 const PathCollapse: FC<PathCollapseProps> = (props) => {
-  useEffect(() => {
-    if (Array.isArray(props.interfaces) && Array.isArray(props.checkedNodes)) {
-      console.error('props checkedNodes type error');
-    }
-  }, []);
-
   return (
     <Collapse
       accordion
@@ -40,17 +34,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
               key={path.id}
               header={path.operationName}
               extra={[
-                <span key='keysCount'>
-                  <span style={{ marginRight: '8px' }}>{`${
-                    props.checkedNodes[path.id]?.length ?? 0
-                  } keys`}</span>
-                </span>,
-                <TooltipButton
-                  key='add'
-                  icon={<PlusOutlined />}
-                  title='Add Sort Key'
-                  onClick={(e) => {}}
-                />,
+                <TooltipButton key='add' icon={<PlusOutlined />} title='Add Sort Key' />,
                 <TooltipButton
                   key='editResponse'
                   icon={<CodeOutlined />}
@@ -64,7 +48,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
             >
               <List
                 size='small'
-                dataSource={props.checkedNodes[path.id]}
+                dataSource={props.checkedNodes}
                 renderItem={(key) => (
                   <List.Item>
                     <div
@@ -83,7 +67,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                           props.onSelect &&
                           props.onSelect(
                             path,
-                            props.checkedNodes[path.id].filter((p) => p !== key),
+                            props.checkedNodes.filter((p) => p !== key),
                           )
                         }
                       />

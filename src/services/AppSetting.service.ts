@@ -1,6 +1,8 @@
 import request from '../api/axios';
 import { objectArrayFilter } from '../helpers/utils';
 import {
+  IgnoreNode,
+  InsertIgnoreNodeReq,
   OperationInterface,
   QueryInterfacesListRes,
   QueryRecordDynamicClassSettingReq,
@@ -11,10 +13,11 @@ import {
   RemoveDynamicClassSettingRes,
   UpdateDynamicClassSettingReq,
   UpdateDynamicClassSettingRes,
+  UpdateIgnoreNodeReq,
+  UpdateInterfaceResponseReq,
   UpdateRecordSettingReq,
   UpdateRecordSettingRes,
 } from './AppSetting.type';
-import { UpdateInterfaceResponseReq } from './Replay.type';
 
 export default class AppSettingService {
   // 查询 Replay - record 设置数据
@@ -59,6 +62,46 @@ export default class AppSettingService {
     );
     return res.body;
   }
+  // 查询 InterfaceResponse 数据
+  static async queryInterfaceResponse(params: { id: string }) {
+    const res = await request.get<OperationInterface>(
+      '/config/applicationOperation/useResult/operationId/' + params.id,
+    );
+    return res.body;
+  }
+
+  // 更新 InterfaceResponse 数据
+  static async updateInterfaceResponse(params: UpdateInterfaceResponseReq) {
+    const res = await request.post<boolean>('/config/applicationOperation/modify/UPDATE', params);
+    return res.body;
+  }
+
+  // 获取 IgnoreNode Interface/Global 数据
+  static async queryIgnoreNode(params: { id: string }) {
+    const res = await request.get<IgnoreNode[]>(
+      '/api/config/comparison/exclusions/useResultAsList/appId/' + params.id,
+    );
+    return res.body;
+  }
+
+  // TODO insertIgnoreNode 和 updateIgnoreNode 的区别？
+  // 新增 IgnoreNode Interface/Global 数据
+  static async insertIgnoreNode(params: InsertIgnoreNodeReq) {
+    const res = await request.post<boolean>(
+      '/api/config/comparison/exclusions/modify/INSERT',
+      params,
+    );
+    return res.body;
+  }
+
+  // 更新 IgnoreNode Interface/Global 数据
+  static async updateIgnoreNode(params: UpdateIgnoreNodeReq) {
+    const res = await request.post<boolean>(
+      '/api/config/comparison/exclusions/modify/UPDATE',
+      params,
+    );
+    return res.body;
+  }
 
   // 查询 NodesSort Interfaces
   static async queryInterfacesList(params: { id: string }) {
@@ -72,19 +115,5 @@ export default class AppSettingService {
       }, []),
       'id',
     );
-  }
-
-  // 查询 InterfaceResponse 数据
-  static async queryInterfaceResponse(params: { id: string }) {
-    const res = await request.get<OperationInterface>(
-      '/config/applicationOperation/useResult/operationId/' + params.id,
-    );
-    return res.body;
-  }
-
-  // 更新 InterfaceResponse 数据
-  static async updateInterfaceResponse(params: UpdateInterfaceResponseReq) {
-    const res = await request.post<boolean>('/config/applicationOperation/modify/UPDATE', params);
-    return res.body;
   }
 }

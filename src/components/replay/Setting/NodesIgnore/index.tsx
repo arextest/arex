@@ -20,12 +20,9 @@ const GLOBAL_KEY = '__global__';
 
 const NodesIgnore: FC<{ appId: string }> = (props) => {
   const [checkedNodesData, setCheckedNodesData] = useImmer<{
-    global: string[];
-    interfaces: { [key: string]: string[] };
-  }>({
-    global: [],
-    interfaces: {},
-  });
+    operationName?: string;
+    keys: string[];
+  }>({ keys: [] });
 
   const [activeOperationInterface, setActiveOperationInterface] = useState<OperationInterface>();
   const [nodesEditMode, setNodesEditMode] = useState<NodesEditMode>(NodesEditMode.Tree);
@@ -42,20 +39,32 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
 
   const onSelect = (operationInterface: OperationInterface, selected: string[]) => {
     setCheckedNodesData((state) => {
-      if (operationInterface.id === GLOBAL_KEY) {
-        state.global = selected;
-      } else {
-        state.interfaces[operationInterface.id] = selected;
-      }
+      state.operationName = operationInterface.id;
+      state.keys = selected;
     });
   };
 
   const handleIgnoredNodesCollapseClick = (operationInterface?: OperationInterface) => {
-    operationInterface &&
-      setActiveOperationInterface(
-        operationInterface.id === activeOperationInterface?.id ? undefined : operationInterface,
-      );
+    setActiveOperationInterface(
+      operationInterface?.id === activeOperationInterface?.id ? undefined : operationInterface,
+    );
   };
+
+  /**
+   * TODO 等待接口支持 operationId 参数查询
+   * 查询 IgnoreNode
+   */
+  const { data: ignoreNodeList = [] } = useRequest(
+    () => AppSettingService.queryIgnoreNode({ id: props.appId }),
+    {
+      ready: !!activeOperationInterface,
+      refreshDeps: [activeOperationInterface],
+      onSuccess(res) {
+        console.log({ queryIgnoreNode: res });
+        // setCheckedNodesData()
+      },
+    },
+  );
 
   /**
    * 请求 InterfaceResponse
@@ -66,7 +75,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
       ready: !!activeOperationInterface?.id,
       refreshDeps: [activeOperationInterface],
       onSuccess(res) {
-        console.log(res);
+        console.log({ queryInterfaceResponse: res });
       },
     },
   );
@@ -120,10 +129,9 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
     reloadResponse && queryInterfaceResponse();
   };
 
-  const handleSave = () => {
-    console.log('save', checkedNodesData);
+  const handleIgnoreSave = () => {
+    console.log(checkedNodesData);
   };
-
   return (
     <>
       <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
@@ -143,7 +151,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
           <PathCollapse
             interfaces={operationList}
             activeKey={activeOperationInterface?.id}
-            checkedNodes={checkedNodesData.interfaces}
+            checkedNodes={checkedNodesData.keys}
             onChange={handleIgnoredNodesCollapseClick}
             onEditResponse={handleEditResponse}
             onSelect={onSelect}
@@ -160,11 +168,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
               <>
                 <IgnoreTree
                   treeData={interfaceResponseParsed}
-                  selectedKeys={
-                    activeOperationInterface?.id === GLOBAL_KEY
-                      ? checkedNodesData.global
-                      : checkedNodesData.interfaces[activeOperationInterface?.id || '']
-                  }
+                  selectedKeys={checkedNodesData.keys}
                   title={activeOperationInterface?.operationName}
                   onSelect={(selectKeys, info) =>
                     onSelect(
@@ -172,6 +176,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
                       info.selectedNodes.map((node) => node.key.toString()),
                     )
                   }
+                  onSave={handleIgnoreSave}
                 />
               </>
             ) : (
@@ -184,10 +189,6 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
           </EditAreaPlaceholder>
         </Col>
       </Row>
-
-      <Button type='primary' onClick={handleSave} style={{ float: 'right', marginTop: '16px' }}>
-        Save
-      </Button>
     </>
   );
 };

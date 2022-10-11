@@ -88,3 +88,29 @@ export type OperationData = {
 };
 
 export type QueryInterfacesListRes = OperationData[];
+
+export interface UpdateInterfaceResponseReq {
+  id: string;
+  operationResponse: string;
+}
+
+export type IgnoreNode = {
+  modifiedTime: string;
+  id: string;
+  appId: string;
+  operationId: string | null;
+  expirationType: number;
+  expirationDate: string;
+  exclusions: string[];
+};
+
+export interface InsertIgnoreNodeReq {
+  appId: string;
+  operationId: string | null; // null 时目标为 Global
+  exclusions: string[];
+}
+
+export interface UpdateIgnoreNodeReq {
+  id: string | null;
+  exclusions: string[]; // null 时目标为 Global
+}

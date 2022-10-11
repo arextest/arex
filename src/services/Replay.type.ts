@@ -294,11 +294,6 @@ export interface QueryScheduleUseResultAppIdRes {
   offsetDays: string;
 }
 
-export interface UpdateInterfaceResponseReq {
-  id: string;
-  operationResponse: string;
-}
-
 export interface UpdateConfigScheduleReq {
   appId: string;
   offsetDays: number;
