@@ -10,6 +10,7 @@ import { HighlightRowTable, SmallTextButton } from '../styledComponents';
 type CaseProps = {
   planItemId: number;
   onClick?: (record: ReplayCase) => void;
+  onClickSaveCase?: (record: ReplayCase) => void;
 };
 
 const Case: FC<CaseProps> = (props) => {
@@ -38,6 +39,11 @@ const Case: FC<CaseProps> = (props) => {
           key='detail'
           title='Detail'
           onClick={() => props.onClick && props.onClick(record)}
+        />,
+        <SmallTextButton
+          key='save'
+          title='Save'
+          onClick={() => props.onClickSaveCase && props.onClickSaveCase(record)}
         />,
       ],
     },
