@@ -142,6 +142,7 @@ const MainTabs = styled((props: TabsProps) => {
       tabBarGutter={-1}
       tabBarStyle={{
         top: '-1px',
+        marginBottom: '8px',
       }}
       {...props}
     >

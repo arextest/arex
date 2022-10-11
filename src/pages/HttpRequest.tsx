@@ -35,7 +35,7 @@ import {
   useColumns,
 } from '../components/httpRequest';
 import SmartEnvInput from '../components/smart/EnvInput';
-import { Label } from '../components/styledComponents';
+import { Label, SpaceBetweenWrapper } from '../components/styledComponents';
 import {
   ContentTypeEnum,
   MenuTypeEnum,
@@ -46,17 +46,17 @@ import {
 } from '../constant';
 import { treeFindPath } from '../helpers/collection/util';
 import { readableBytes } from '../helpers/http/responseMeta';
+import AgentAxios from '../helpers/request';
 import { runTestScript } from '../helpers/sandbox';
-import { CollectionService } from '../services/CollectionService';
-import { FileSystemService } from '../services/FileSystem.service';
-import { PaneType, useStore } from '../store';
 import {
   generateGlobalPaneId,
   parseGlobalPaneId,
   tryParseJsonString,
   tryPrettierJsonString,
 } from '../helpers/utils';
-import AgentAxios from '../helpers/request';
+import { CollectionService } from '../services/CollectionService';
+import { FileSystemService } from '../services/FileSystem.service';
+import { PaneType, useStore } from '../store';
 
 const { TabPane } = Tabs;
 
@@ -559,12 +559,12 @@ const HttpRequest: FC<HttpRequestProps> = ({
   return (
     <>
       <AnimateAutoHeight>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <SpaceBetweenWrapper>
           {nodeInfoInCollectionTreeData.raw.length > 0 ? (
             <BreadcrumbHeader>
               {renameKey === '' ? (
                 <>
-                  <Breadcrumb style={{ paddingBottom: '14px' }}>
+                  <Breadcrumb>
                     {nodeInfoInCollectionTreeData.raw.map((i, index) => (
                       <Breadcrumb.Item key={index}>{i.title}</Breadcrumb.Item>
                     ))}
@@ -585,18 +585,15 @@ const HttpRequest: FC<HttpRequestProps> = ({
                   onChange={(val) => setRenameValue(val.target.value)}
                   onBlur={rename}
                   onPressEnter={rename}
-                  autoFocus
                 />
               )}
             </BreadcrumbHeader>
           ) : (
-            <div>
-              <Breadcrumb style={{ paddingBottom: '14px' }}>
-                <Breadcrumb.Item key={'new'}>New Request</Breadcrumb.Item>
-              </Breadcrumb>
-            </div>
+            <Breadcrumb>
+              <Breadcrumb.Item key={'new'}>New Request</Breadcrumb.Item>
+            </Breadcrumb>
           )}
-          <div>
+          <SpaceBetweenWrapper>
             {isNew ? (
               <SaveRequestButton
                 reqParams={{
@@ -640,26 +637,23 @@ const HttpRequest: FC<HttpRequestProps> = ({
                 setMode(val);
               }}
             />
-          </div>
-        </div>
-        <Divider style={{ margin: '0', marginBottom: '8px' }} />
+          </SpaceBetweenWrapper>
+        </SpaceBetweenWrapper>
+
+        <Divider style={{ margin: '8px 0' }} />
+
         {/* 普通请求 */}
         {mode === HttpRequestMode.Normal ? (
-          <HeaderWrapper>
-            <Select value={method} options={RequestTypeOptions} onChange={setMethod} />
-            {/*<Input*/}
-            {/*  placeholder={t_components('http.enterRequestUrl')}*/}
-            {/*  value={url}*/}
-            {/*  onChange={(e) => handleUrlChange(e.target.value)}*/}
-            {/*/>*/}
-            <SmartEnvInput
-              value={url}
-              onChange={(e) => handleUrlChange(e.target.value)}
-            ></SmartEnvInput>
+          <SpaceBetweenWrapper>
+            <Input.Group compact style={{ display: 'flex', width: 'calc(100% - 81px)' }}>
+              <Select value={method} options={RequestTypeOptions} onChange={setMethod} />
+              <SmartEnvInput value={url} onChange={(e) => handleUrlChange(e.target.value)} />
+            </Input.Group>
+
             <Button type='primary' onClick={handleRequest}>
               {t_common('send')}
             </Button>
-          </HeaderWrapper>
+          </SpaceBetweenWrapper>
         ) : (
           <div>
             {/* 对比请求 */}
@@ -693,11 +687,16 @@ const HttpRequest: FC<HttpRequestProps> = ({
             </HeaderWrapper>
           </div>
         )}
+
         <Tabs
           defaultActiveKey='1'
           css={css`
+            margin-top: 8px;
+            .ant-tabs-tab {
+              padding: 8px 0;
+            }
             .ant-tabs-nav {
-              margin-bottom: 0px;
+              margin-bottom: 0;
             }
           `}
         >
