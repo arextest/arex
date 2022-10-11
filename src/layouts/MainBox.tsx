@@ -273,6 +273,9 @@ const MainBox = () => {
   };
 
   const handleMainMenuChange = (key: string) => {
+    if (key === PageTypeEnum.Collection) {
+      fetchCollectionTreeData();
+    }
     setActiveMenu(key as MenuTypeEnum);
     collapseMenu && setCollapseMenu(false);
   };
