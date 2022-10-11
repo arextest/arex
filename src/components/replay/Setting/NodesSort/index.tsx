@@ -6,9 +6,9 @@ import React, { FC, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
-import ReplayService from '../../../../services/Replay.service';
-import { OperationInterface } from '../../../../services/Replay.type';
 import { tryParseJsonString, tryPrettierJsonString } from '../../../../helpers/utils';
+import AppSettingService from '../../../../services/AppSetting.service';
+import { OperationInterface } from '../../../../services/AppSetting.type';
 import { EditAreaPlaceholder, SpaceBetweenWrapper } from '../../../styledComponents';
 import ResponseRaw from '../NodesIgnore/ResponseRaw';
 import ArrayTree from './ArrayTree';
@@ -67,7 +67,7 @@ const NodesSort: FC<{ appId: string }> = (props) => {
   /**
    * 请求 InterfacesList
    */
-  const { data: operationList = [] } = useRequest(ReplayService.queryInterfacesList, {
+  const { data: operationList = [] } = useRequest(AppSettingService.queryInterfacesList, {
     defaultParams: [{ id: props.appId }],
     onSuccess(res) {
       console.log(res);
@@ -78,7 +78,7 @@ const NodesSort: FC<{ appId: string }> = (props) => {
    * 请求 InterfaceResponse
    */
   const { data: interfaceResponse, run: queryInterfaceResponse } = useRequest(
-    () => ReplayService.queryInterfaceResponse({ id: activeOperationInterface!.id }),
+    () => AppSettingService.queryInterfaceResponse({ id: activeOperationInterface!.id }),
     {
       ready: !!activeOperationInterface?.id,
       refreshDeps: [activeOperationInterface],
@@ -96,7 +96,7 @@ const NodesSort: FC<{ appId: string }> = (props) => {
   /**
    * 更新 InterfaceResponse
    */
-  const { run: updateInterfaceResponse } = useRequest(ReplayService.updateInterfaceResponse, {
+  const { run: updateInterfaceResponse } = useRequest(AppSettingService.updateInterfaceResponse, {
     manual: true,
     onSuccess(success) {
       if (success) {

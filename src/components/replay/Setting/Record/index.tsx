@@ -6,8 +6,8 @@ import { FC } from 'react';
 import { useImmer } from 'use-immer';
 
 import { decodeWeekCode, encodeWeekCode } from '../../../../helpers/record/util';
-import ReplayService from '../../../../services/Replay.service';
-import { QueryRecordSettingRes } from '../../../../services/Replay.type';
+import AppSettingService from '../../../../services/AppSetting.service';
+import { QueryRecordSettingRes } from '../../../../services/AppSetting.type';
 import { DurationInput, DynamicClassesEditableTable, IntegerStepSlider } from './FormItem';
 
 const { Panel } = Collapse;
@@ -52,7 +52,7 @@ const defaultValues: Omit<
 const Record: FC<SettingRecordProps> = (props) => {
   const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
 
-  const { loading } = useRequest(ReplayService.queryRecordSetting, {
+  const { loading } = useRequest(AppSettingService.queryRecordSetting, {
     defaultParams: [{ id: props.appId }],
     onSuccess(res) {
       setInitialValues(() => ({
@@ -73,7 +73,7 @@ const Record: FC<SettingRecordProps> = (props) => {
     },
   });
 
-  const { run: update } = useRequest(ReplayService.updateRecordSetting, {
+  const { run: update } = useRequest(AppSettingService.updateRecordSetting, {
     manual: true,
     onSuccess(res) {
       res && message.success('Update successfully');

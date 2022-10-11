@@ -1,31 +1,23 @@
 import axios from 'axios';
 
 import request from '../api/axios';
-import { objectArrayFilter, tryPrettierJsonString } from '../helpers/utils';
+import { tryPrettierJsonString } from '../helpers/utils';
 import {
   CreatePlanReq,
   CreatePlanRes,
-  OperationData,
-  OperationInterface,
   PushConfigTemplateReq,
   PushConfigTemplateRes,
-  QueryConfigTemplateReq,
   QueryConfigTemplateRes,
   QueryDifferencesReq,
   QueryDifferencesRes,
   QueryFullLinkMsgReq,
   QueryFullLinkMsgRes,
-  QueryInterfacesListRes,
   QueryMsgWithDiffReq,
   QueryMsgWithDiffRes,
   QueryPlanItemStatisticsReq,
   QueryPlanItemStatisticsRes,
   QueryPlanStatisticsReq,
   QueryPlanStatisticsRes,
-  QueryRecordDynamicClassSettingReq,
-  QueryRecordDynamicClassSettingRes,
-  QueryRecordSettingReq,
-  QueryRecordSettingRes,
   QueryReplayCaseReq,
   QueryReplayCaseRes,
   QueryResponseTypeStatisticReq,
@@ -34,13 +26,7 @@ import {
   QueryScenesRes,
   QueryScheduleUseResultAppIdRes,
   RegressionListRes,
-  RemoveDynamicClassSettingReq,
-  RemoveDynamicClassSettingRes,
-  UpdateDynamicClassSettingReq,
-  UpdateDynamicClassSettingRes,
-  UpdateInterfaceResponseReq,
-  UpdateRecordSettingReq,
-  UpdateRecordSettingRes,
+  UpdateConfigScheduleReq,
 } from './Replay.type';
 
 export default class ReplayService {
@@ -137,47 +123,9 @@ export default class ReplayService {
         }),
       ),
     );
-    //  TODO parsing msg
   }
 
-  // 获取 Replay - record 设置数据
-  static async queryRecordSetting(params: QueryRecordSettingReq) {
-    return request
-      .get<QueryRecordSettingRes>('/config/serviceCollect/useResult/appId/' + params.id)
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  // 更新 Replay - record 设置数据
-  static async updateRecordSetting(params: UpdateRecordSettingReq) {
-    return request
-      .post<UpdateRecordSettingRes>('/config/serviceCollect/modify/UPDATE', params)
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  // 获取 Replay - record Dynamic Classes 设置数据
-  static async queryRecordDynamicClassSetting(params: QueryRecordDynamicClassSettingReq) {
-    return request
-      .get<QueryRecordDynamicClassSettingRes | undefined>(
-        '/config/dynamicClass/useResultAsList/appId/' + params.appId,
-      )
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  // 添加 Replay - record Dynamic Classes 设置数据
-  static async updatedDynamicClassSetting(params: UpdateDynamicClassSettingReq) {
-    return request
-      .post<UpdateDynamicClassSettingRes>('/config/dynamicClass/modify/INSERT', params)
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  // 删除 Replay - record Dynamic Classes 设置数据
-  static async removeDynamicClassSetting(params: RemoveDynamicClassSettingReq) {
-    return request
-      .post<RemoveDynamicClassSettingRes>('/config/dynamicClass/modify/REMOVE', params)
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  static async queryConfigTemplate(params: QueryConfigTemplateReq) {
+  static async queryConfigTemplate(params: { appId: string }) {
     return request
       .post<QueryConfigTemplateRes>('/api/config/queryConfigTemplate', params)
       .then((res) => Promise.resolve(res.body));
@@ -195,36 +143,9 @@ export default class ReplayService {
       .then((res) => Promise.resolve(res.body));
   }
 
-  static async configScheduleModifyUpdate(params) {
+  static async updateConfigSchedule(params: UpdateConfigScheduleReq) {
     return request
-      .post<any>('/config/schedule/modify/UPDATE', params)
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  static async queryInterfacesList(params: { id: string }) {
-    return request
-      .get<QueryInterfacesListRes>('/config/applicationService/useResultAsList/appId/' + params.id)
-      .then((res) => {
-        const operationList = objectArrayFilter<OperationInterface>(
-          res.body.reduce<OperationInterface[]>((list, cur) => {
-            list.push(...cur.operationList);
-            return list;
-          }, []),
-          'id',
-        );
-        return Promise.resolve(operationList);
-      });
-  }
-
-  static async queryInterfaceResponse(params: { id: string }) {
-    return request
-      .get<OperationInterface>('/config/applicationOperation/useResult/operationId/' + params.id)
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  static async updateInterfaceResponse(params: UpdateInterfaceResponseReq) {
-    return request
-      .post<boolean>('/config/applicationOperation/modify/UPDATE', params)
+      .post<boolean>('/config/schedule/modify/UPDATE', params)
       .then((res) => Promise.resolve(res.body));
   }
 }

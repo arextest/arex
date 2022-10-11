@@ -5,8 +5,8 @@ import { ColumnsType } from 'antd/es/table';
 import { FC, useState } from 'react';
 import { Updater, useImmer } from 'use-immer';
 
-import ReplayService from '../../../../../services/Replay.service';
-import { DynamicClass } from '../../../../../services/Replay.type';
+import AppSettingService from '../../../../../services/AppSetting.service';
+import { DynamicClass } from '../../../../../services/AppSetting.type';
 import TooltipButton from '../../../../TooltipButton';
 
 export type DynamicClassesEditableTableProps = {
@@ -130,7 +130,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
     });
   };
 
-  const { run: reload, loading } = useRequest(ReplayService.queryRecordDynamicClassSetting, {
+  const { run: reload, loading } = useRequest(AppSettingService.queryRecordDynamicClassSetting, {
     defaultParams: [{ appId: props.appId }],
     onSuccess(res) {
       setEditable(true);
@@ -138,7 +138,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
     },
   });
 
-  const { run: update } = useRequest(ReplayService.updatedDynamicClassSetting, {
+  const { run: update } = useRequest(AppSettingService.updatedDynamicClassSetting, {
     manual: true,
     onSuccess(res) {
       res ? reload({ appId: props.appId }) : message.error('saveFail');
@@ -149,7 +149,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
     },
   });
 
-  const { run: remove } = useRequest(ReplayService.removeDynamicClassSetting, {
+  const { run: remove } = useRequest(AppSettingService.removeDynamicClassSetting, {
     manual: true,
     onSuccess(res) {
       res ? reload({ appId: props.appId }) : message.error('deleteFailed');
