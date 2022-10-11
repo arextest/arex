@@ -245,13 +245,7 @@ const NodesSort: FC<{ appId: string }> = (props) => {
                 <SpaceBetweenWrapper style={{ paddingBottom: '8px' }}>
                   <h3>{TreeEditMode[treeEditMode]}</h3>
                   {treeEditMode === TreeEditModeEnum.SortTree && (
-                    <Button
-                      size='small'
-                      onClick={handleSaveSort}
-                      style={{
-                        float: 'right',
-                      }}
-                    >
+                    <Button size='small' onClick={handleSaveSort}>
                       {t('save')}
                     </Button>
                   )}
