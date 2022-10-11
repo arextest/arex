@@ -5,6 +5,7 @@ import moment, { Moment } from 'moment';
 import { FC } from 'react';
 import { useImmer } from 'use-immer';
 
+import { decodeWeekCode, encodeWeekCode } from '../../../../helpers/record/util';
 import ReplayService from '../../../../services/Replay.service';
 import { QueryRecordSettingRes } from '../../../../services/Replay.type';
 import { DurationInput, DynamicClassesEditableTable, IntegerStepSlider } from './FormItem';
@@ -66,15 +67,8 @@ const Record: FC<SettingRecordProps> = (props) => {
         timeMock: res.timeMock,
       }));
 
-      // decode allowDayOfWeeks
-      const allowDayOfWeeks: number[] = [];
-      res.allowDayOfWeeks
-        .toString(2)
-        .padStart(7)
-        .split('')
-        .forEach((status, index) => status === '1' && allowDayOfWeeks.push(index));
       setInitialValues((state) => {
-        state.allowDayOfWeeks = allowDayOfWeeks;
+        state.allowDayOfWeeks = decodeWeekCode(res.allowDayOfWeeks);
       });
     },
   });
@@ -87,13 +81,7 @@ const Record: FC<SettingRecordProps> = (props) => {
   });
 
   const onFinish = (values: SettingFormType) => {
-    const allowDayOfWeeks = parseInt(
-      Array(7)
-        .fill(0)
-        .map((n, i) => Number(values.allowDayOfWeeks.includes(i)))
-        .join(''),
-      2,
-    );
+    const allowDayOfWeeks = encodeWeekCode(values.allowDayOfWeeks);
     const [allowTimeOfDayFrom, allowTimeOfDayTo] = values.period.map((m: any) => m.format(format));
 
     const params = {
@@ -110,8 +98,6 @@ const Record: FC<SettingRecordProps> = (props) => {
       includeServiceSet: values.includeServiceSet,
     };
 
-    console.log({ params });
-
     update(params);
   };
   return (
@@ -121,7 +107,7 @@ const Record: FC<SettingRecordProps> = (props) => {
       ) : (
         <Form
           labelCol={{ span: 4 }}
-          wrapperCol={{ span: 18 }}
+          wrapperCol={{ span: 20 }}
           layout='horizontal'
           initialValues={initialValues}
           onFinish={onFinish}
