@@ -7,6 +7,27 @@ export enum MethodEnum {
   PATCH = 'PATCH',
 }
 
+export const methodMap = {
+  GET: {
+    color: '#0cbb52',
+  },
+  PUT: {
+    color: '#097bed',
+  },
+  POST: {
+    color: '#ffb400',
+  },
+  DELETE: {
+    color: '#eb2013',
+  },
+  PATCH: {
+    color: '#212121',
+  },
+  UNKNOWN: {
+    color: '#0cbb52',
+  },
+};
+
 export enum NodeType {
   interface = 1,
   case = 2,
