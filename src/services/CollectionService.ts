@@ -10,6 +10,7 @@ export interface NodeList {
   title: string;
   key: string;
   nodeType: number;
+  method: string;
 }
 
 export class CollectionService {

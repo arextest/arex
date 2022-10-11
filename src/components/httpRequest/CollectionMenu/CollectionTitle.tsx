@@ -7,6 +7,8 @@ import SearchHeighLight from '../../../helpers/collection/searchHeighLight';
 import { treeFindPath } from '../../../helpers/collection/util';
 import { CollectionService } from '../../../services/CollectionService';
 import { useStore } from '../../../store';
+import { methodMap } from '../../../constant';
+import { css } from '@emotion/react';
 
 const PrefixIcon = styled(
   (props: { icon: ReactNode; border?: boolean }) => <div {...props}>{props.icon}</div>,
@@ -172,7 +174,11 @@ function CollectionTitle({
     <>
       <div className={'collection-title-render'}>
         <div className={'left'}>
-          {val.nodeType === 1 && val.nodeType === 1 && <PrefixIcon icon={<ApiOutlined />} />}
+          {val.nodeType === 1 && (
+            <span css={css(`color:${methodMap[val.method || 'UNKNOWN'].color};margin-right:4px`)}>
+              {val.method || 'UNKNOWN'}
+            </span>
+          )}
           {val.nodeType === 2 && <PrefixIcon border icon='case' />}
           <div className={'content'}>
             {renameKey === val.id ? (
