@@ -68,7 +68,7 @@ export type RemoveDynamicClassSettingRes = boolean;
 
 export type OperationInterface = {
   status: number;
-  modifiedTime: number;
+  modifiedTime?: number;
   id: string;
   appId: string;
   serviceId: string;

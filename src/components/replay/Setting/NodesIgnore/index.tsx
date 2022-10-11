@@ -1,11 +1,14 @@
-import { Button, Col, Row, Select } from 'antd';
+import { useRequest } from 'ahooks';
+import { Button, Col, message, Row } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { tryParseJsonString } from '../../../../helpers/utils';
+import { tryParseJsonString, tryPrettierJsonString } from '../../../../helpers/utils';
+import AppSettingService from '../../../../services/AppSetting.service';
+import { OperationInterface } from '../../../../services/AppSetting.type';
 import { EditAreaPlaceholder } from '../../../styledComponents';
 import IgnoreTree from './IgnoreTree';
-import PathCollapse, { GLOBAL_KEY } from './PathCollapse';
+import PathCollapse from './PathCollapse';
 import ResponseRaw from './ResponseRaw';
 
 enum NodesEditMode {
@@ -13,37 +16,9 @@ enum NodesEditMode {
   'Raw' = 'Raw',
 }
 
-const MockInterfaces = ['/owners', '/owners/find'];
-const MockResponse = {
-  parent1: { child1: { bar: '1' }, child2: '2', numberArray: [1, 2, 3] },
-  numberArray: [1, 2, 3],
-  stringArray: ['a', 'b', 'c'],
-  objectArray: [
-    {
-      number: 1,
-      string: 'a',
-      object: {
-        number: 11,
-        string: 'aa',
-      },
-    },
-    {
-      number: 2,
-      string: 'b',
-      object: {
-        number: 22,
-        string: 'bb',
-      },
-    },
-  ],
-};
+const GLOBAL_KEY = '__global__';
 
-const ignoredNodesEditModeOptions = [
-  { label: 'Tree', value: NodesEditMode.Tree },
-  { label: 'Raw', value: NodesEditMode.Raw },
-];
-
-const NodesIgnore: FC<{ appId: string }> = () => {
+const NodesIgnore: FC<{ appId: string }> = (props) => {
   const [checkedNodesData, setCheckedNodesData] = useImmer<{
     global: string[];
     interfaces: { [key: string]: string[] };
@@ -52,59 +27,125 @@ const NodesIgnore: FC<{ appId: string }> = () => {
     interfaces: {},
   });
 
-  const [rawResponse, setRawResponse] = useState<object>(MockResponse);
-  const rawResponseString = useMemo(() => JSON.stringify(rawResponse, null, 2), [rawResponse]);
+  const [activeOperationInterface, setActiveOperationInterface] = useState<OperationInterface>();
+  const [nodesEditMode, setNodesEditMode] = useState<NodesEditMode>(NodesEditMode.Tree);
 
-  const [activeKey, setActiveKey] = useState<string>();
-  const [ignoredNodesEditMode, setIgnoredNodesEditMode] = useState<NodesEditMode>(
-    NodesEditMode.Tree,
-  );
+  /**
+   * 请求 InterfacesList
+   */
+  const { data: operationList = [] } = useRequest(AppSettingService.queryInterfacesList, {
+    defaultParams: [{ id: props.appId }],
+    onSuccess(res) {
+      console.log(res);
+    },
+  });
 
-  const onSelect = (key: string | undefined, selected: string[]) => {
+  const onSelect = (operationInterface: OperationInterface, selected: string[]) => {
     setCheckedNodesData((state) => {
-      if (key === GLOBAL_KEY) {
+      if (operationInterface.id === GLOBAL_KEY) {
         state.global = selected;
-      } else if (key) {
-        state.interfaces[key] = selected;
+      } else {
+        state.interfaces[operationInterface.id] = selected;
       }
     });
   };
 
-  const handleIgnoredNodesCollapseClick = (key?: string) => {
-    setActiveKey(key === activeKey ? undefined : key);
+  const handleIgnoredNodesCollapseClick = (operationInterface?: OperationInterface) => {
+    operationInterface &&
+      setActiveOperationInterface(
+        operationInterface.id === activeOperationInterface?.id ? undefined : operationInterface,
+      );
   };
 
-  const handleResponseRawSave = (value?: string) => {
-    if (value) {
-      const res = tryParseJsonString(value);
-      res && setRawResponse(res);
-      setIgnoredNodesEditMode(NodesEditMode.Tree);
+  /**
+   * 请求 InterfaceResponse
+   */
+  const { data: interfaceResponse, run: queryInterfaceResponse } = useRequest(
+    () => AppSettingService.queryInterfaceResponse({ id: activeOperationInterface!.id }),
+    {
+      ready: !!activeOperationInterface?.id,
+      refreshDeps: [activeOperationInterface],
+      onSuccess(res) {
+        console.log(res);
+      },
+    },
+  );
+  const interfaceResponseParsed = useMemo<{ [key: string]: any }>(() => {
+    const res = interfaceResponse?.operationResponse;
+    if (res) return tryParseJsonString<object>(res) || {};
+    else return {};
+  }, [interfaceResponse]);
+
+  /**
+   * 更新 InterfaceResponse
+   */
+  const { run: updateInterfaceResponse } = useRequest(AppSettingService.updateInterfaceResponse, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        queryInterfaceResponse();
+        message.success('Update successfully');
+      } else {
+        message.error('Update failed');
+      }
+    },
+  });
+  /**
+   * 开始编辑某个 interface 的 response
+   * @param operationInterface
+   */
+  const handleEditResponse = (operationInterface: OperationInterface) => {
+    console.log('setNodesEditMode to Raw', { operationInterface });
+    setActiveOperationInterface(operationInterface);
+
+    setNodesEditMode(NodesEditMode.Raw);
+  };
+  /**
+   * 保存某个 interface 的 response
+   * @param value
+   */
+  const handleResponseSave = (value?: string) => {
+    const parsed = value && tryParseJsonString(value, 'Invalid JSON');
+    if (parsed) {
+      updateInterfaceResponse({
+        id: activeOperationInterface!.id,
+        operationResponse: JSON.stringify(parsed),
+      });
+      handleCancelEditResponse(true);
     }
+  };
+
+  const handleCancelEditResponse = (reloadResponse?: boolean) => {
+    setNodesEditMode(NodesEditMode.Tree);
+    reloadResponse && queryInterfaceResponse();
   };
 
   const handleSave = () => {
     console.log('save', checkedNodesData);
   };
+
   return (
     <>
       <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
         <Col span={10}>
           <h3>Global</h3>
-          <PathCollapse
-            activeKey={activeKey}
-            checkedNodes={checkedNodesData.global}
-            onChange={handleIgnoredNodesCollapseClick}
-            onSelect={onSelect}
-          />
+          {/* TODO */}
+          {/*<PathCollapse*/}
+          {/*  activeKey={activeKey}*/}
+          {/*  checkedNodes={checkedNodesData.global}*/}
+          {/*  onChange={handleIgnoredNodesCollapseClick}*/}
+          {/*  onSelect={onSelect}*/}
+          {/*/>*/}
 
           <br />
 
           <h3>Interfaces</h3>
           <PathCollapse
-            interfaces={MockInterfaces}
-            activeKey={activeKey}
+            interfaces={operationList}
+            activeKey={activeOperationInterface?.id}
             checkedNodes={checkedNodesData.interfaces}
             onChange={handleIgnoredNodesCollapseClick}
+            onEditResponse={handleEditResponse}
             onSelect={onSelect}
           />
         </Col>
@@ -113,37 +154,32 @@ const NodesIgnore: FC<{ appId: string }> = () => {
           <EditAreaPlaceholder
             dashedBorder
             title='Edit Area (Click interface to start)'
-            ready={!!activeKey}
+            ready={!!activeOperationInterface}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <h3>{ignoredNodesEditMode}</h3>
-              <Select
-                bordered={false}
-                options={ignoredNodesEditModeOptions}
-                value={ignoredNodesEditMode}
-                onChange={setIgnoredNodesEditMode}
-              />
-            </div>
-
-            {ignoredNodesEditMode === NodesEditMode.Tree ? (
-              <IgnoreTree
-                treeData={rawResponse}
-                selectedKeys={
-                  activeKey === GLOBAL_KEY
-                    ? checkedNodesData.global
-                    : checkedNodesData.interfaces[activeKey]
-                }
-                title={activeKey}
-                exclude='array'
-                onSelect={(selectKeys, info) =>
-                  onSelect(
-                    activeKey,
-                    info.selectedNodes.map((node) => node.key.toString()),
-                  )
-                }
-              />
+            {nodesEditMode === NodesEditMode.Tree ? (
+              <>
+                <IgnoreTree
+                  treeData={interfaceResponseParsed}
+                  selectedKeys={
+                    activeOperationInterface?.id === GLOBAL_KEY
+                      ? checkedNodesData.global
+                      : checkedNodesData.interfaces[activeOperationInterface?.id || '']
+                  }
+                  title={activeOperationInterface?.operationName}
+                  onSelect={(selectKeys, info) =>
+                    onSelect(
+                      activeOperationInterface as OperationInterface,
+                      info.selectedNodes.map((node) => node.key.toString()),
+                    )
+                  }
+                />
+              </>
             ) : (
-              <ResponseRaw value={rawResponseString} onSave={handleResponseRawSave} />
+              <ResponseRaw
+                value={tryPrettierJsonString(interfaceResponse?.operationResponse || '')}
+                onSave={handleResponseSave}
+                onCancel={handleCancelEditResponse}
+              />
             )}
           </EditAreaPlaceholder>
         </Col>
