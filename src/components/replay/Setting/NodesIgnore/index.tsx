@@ -5,7 +5,7 @@ import { useImmer } from 'use-immer';
 
 import { tryParseJsonString, tryPrettierJsonString } from '../../../../helpers/utils';
 import AppSettingService from '../../../../services/AppSetting.service';
-import { OperationInterface } from '../../../../services/AppSetting.type';
+import { IgnoreNode, OperationInterface } from '../../../../services/AppSetting.type';
 import { EditAreaPlaceholder } from '../../../styledComponents';
 import IgnoreTree from './IgnoreTree';
 import PathCollapse from './PathCollapse';
@@ -115,7 +115,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
       }
     },
   });
-  const handleDeleteNode = (path: OperationInterface) => {
+  const handleDeleteNode = (path: IgnoreNode) => {
     console.log(path);
     deleteIgnoreNode({ id: path.id });
   };
