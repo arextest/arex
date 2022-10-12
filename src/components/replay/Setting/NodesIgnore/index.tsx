@@ -20,9 +20,10 @@ const GLOBAL_KEY = '__global__';
 
 const NodesIgnore: FC<{ appId: string }> = (props) => {
   const [checkedNodesData, setCheckedNodesData] = useImmer<{
+    operationId?: string;
     operationName?: string;
-    keys: string[];
-  }>({ keys: [] });
+    exclusionsList: string[];
+  }>({ exclusionsList: [] });
 
   const [activeOperationInterface, setActiveOperationInterface] = useState<OperationInterface>();
   const [nodesEditMode, setNodesEditMode] = useState<NodesEditMode>(NodesEditMode.Tree);
@@ -39,23 +40,32 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
 
   const onSelect = (operationInterface: OperationInterface, selected: string[]) => {
     setCheckedNodesData((state) => {
-      state.operationName = operationInterface.id;
-      state.keys = selected;
+      state.operationId = operationInterface.id;
+      state.operationName = operationInterface.operationName;
+      state.exclusionsList = selected;
     });
   };
 
   const handleIgnoredNodesCollapseClick = (operationInterface?: OperationInterface) => {
+    setIgnoreNodeList([]);
     setActiveOperationInterface(
       operationInterface?.id === activeOperationInterface?.id ? undefined : operationInterface,
     );
   };
 
   /**
-   * TODO 等待接口支持 operationId 参数查询
    * 查询 IgnoreNode
    */
-  const { data: ignoreNodeList = [] } = useRequest(
-    () => AppSettingService.queryIgnoreNode({ id: props.appId }),
+  const {
+    data: ignoreNodeList = [],
+    run: queryIgnoreNode,
+    mutate: setIgnoreNodeList,
+  } = useRequest(
+    () =>
+      AppSettingService.queryIgnoreNode({
+        appId: props.appId,
+        operationId: activeOperationInterface?.id,
+      }),
     {
       ready: !!activeOperationInterface,
       refreshDeps: [activeOperationInterface],
@@ -65,6 +75,50 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
       },
     },
   );
+
+  /**
+   * 批量新增 IgnoreNode
+   */
+  const { run: insertIgnoreNode } = useRequest(AppSettingService.batchInsertIgnoreNode, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        queryIgnoreNode();
+        message.success('Update successfully');
+      } else {
+        message.error('Update failed');
+      }
+    },
+  });
+
+  /**
+   * 更新 IgnoreNode
+   */
+  const { run: updateIgnoreNode } = useRequest(AppSettingService.updateIgnoreNode, {
+    manual: true,
+    onSuccess(res) {
+      console.log(res);
+    },
+  });
+
+  /**
+   * 删除 IgnoreNode
+   */
+  const { run: deleteIgnoreNode } = useRequest(AppSettingService.deleteIgnoreNode, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        queryIgnoreNode();
+        message.success('Delete successfully');
+      } else {
+        message.error('Delete failed');
+      }
+    },
+  });
+  const handleDeleteNode = (path: OperationInterface) => {
+    console.log(path);
+    deleteIgnoreNode({ id: path.id });
+  };
 
   /**
    * 请求 InterfaceResponse
@@ -130,8 +184,17 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
   };
 
   const handleIgnoreSave = () => {
-    console.log(checkedNodesData);
+    const { operationId = null, exclusionsList } = checkedNodesData;
+
+    insertIgnoreNode(
+      exclusionsList.map((path) => ({
+        appId: props.appId,
+        operationId, // null 时目标为 Global
+        exclusions: path.split('/').filter(Boolean),
+      })),
+    );
   };
+
   return (
     <>
       <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
@@ -151,10 +214,10 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
           <PathCollapse
             interfaces={operationList}
             activeKey={activeOperationInterface?.id}
-            checkedNodes={checkedNodesData.keys}
+            checkedNodes={ignoreNodeList}
             onChange={handleIgnoredNodesCollapseClick}
             onEditResponse={handleEditResponse}
-            onSelect={onSelect}
+            onDelete={handleDeleteNode}
           />
         </Col>
 
@@ -168,7 +231,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
               <>
                 <IgnoreTree
                   treeData={interfaceResponseParsed}
-                  selectedKeys={checkedNodesData.keys}
+                  selectedKeys={checkedNodesData.exclusionsList}
                   title={activeOperationInterface?.operationName}
                   onSelect={(selectKeys, info) =>
                     onSelect(

@@ -3,15 +3,16 @@ import { css } from '@emotion/react';
 import { Button, Collapse, List } from 'antd';
 import React, { FC } from 'react';
 
-import { OperationInterface } from '../../../../services/AppSetting.type';
+import { IgnoreNode, OperationInterface } from '../../../../services/AppSetting.type';
 import { TooltipButton } from '../../../index';
+import { SpaceBetweenWrapper } from '../../../styledComponents';
 
 type PathCollapseProps = {
   activeKey?: string;
   interfaces: OperationInterface[];
-  checkedNodes: string[];
+  checkedNodes: IgnoreNode[];
   onChange: (path?: OperationInterface) => void;
-  onSelect: (path: OperationInterface, selected: string[]) => void;
+  onDelete: (ignoreNode: IgnoreNode) => void;
   onEditResponse: (operationInterface: OperationInterface) => void;
 };
 
@@ -49,29 +50,17 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
               <List
                 size='small'
                 dataSource={props.checkedNodes}
-                renderItem={(key) => (
+                renderItem={(node) => (
                   <List.Item>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                      }}
-                    >
-                      <span>{key}</span>
+                    <SpaceBetweenWrapper width={'100%'}>
+                      <span>{node.exclusions.join('/')}</span>
                       <Button
                         type='text'
                         size='small'
                         icon={<DeleteOutlined />}
-                        onClick={() =>
-                          props.onSelect &&
-                          props.onSelect(
-                            path,
-                            props.checkedNodes.filter((p) => p !== key),
-                          )
-                        }
+                        onClick={() => props.onDelete && props.onDelete(node)}
                       />
-                    </div>
+                    </SpaceBetweenWrapper>
                   </List.Item>
                 )}
                 locale={{ emptyText: 'No Ignored Nodes' }}

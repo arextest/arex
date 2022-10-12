@@ -111,6 +111,6 @@ export interface InsertIgnoreNodeReq {
 }
 
 export interface UpdateIgnoreNodeReq {
-  id: string | null;
-  exclusions: string[]; // null 时目标为 Global
+  id: string;
+  exclusions: string[];
 }

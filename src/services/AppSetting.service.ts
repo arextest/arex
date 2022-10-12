@@ -62,6 +62,7 @@ export default class AppSettingService {
     );
     return res.body;
   }
+
   // 查询 InterfaceResponse 数据
   static async queryInterfaceResponse(params: { id: string }) {
     const res = await request.get<OperationInterface>(
@@ -77,18 +78,27 @@ export default class AppSettingService {
   }
 
   // 获取 IgnoreNode Interface/Global 数据
-  static async queryIgnoreNode(params: { id: string }) {
+  static async queryIgnoreNode(params: { appId: string; operationId?: string }) {
     const res = await request.get<IgnoreNode[]>(
-      '/api/config/comparison/exclusions/useResultAsList/appId/' + params.id,
+      '/api/config/comparison/exclusions/useResultAsList',
+      params,
     );
     return res.body;
   }
 
-  // TODO insertIgnoreNode 和 updateIgnoreNode 的区别？
-  // 新增 IgnoreNode Interface/Global 数据
+  // 单个新增 IgnoreNode Interface/Global 数据
   static async insertIgnoreNode(params: InsertIgnoreNodeReq) {
     const res = await request.post<boolean>(
       '/api/config/comparison/exclusions/modify/INSERT',
+      params,
+    );
+    return res.body;
+  }
+
+  // 批量新增 IgnoreNode Interface/Global 数据
+  static async batchInsertIgnoreNode(params: InsertIgnoreNodeReq[]) {
+    const res = await request.post<boolean>(
+      '/api/config/comparison/exclusions/batchModify/INSERT',
       params,
     );
     return res.body;
@@ -98,6 +108,15 @@ export default class AppSettingService {
   static async updateIgnoreNode(params: UpdateIgnoreNodeReq) {
     const res = await request.post<boolean>(
       '/api/config/comparison/exclusions/modify/UPDATE',
+      params,
+    );
+    return res.body;
+  }
+
+  // 删除 IgnoreNode Interface/Global 数据
+  static async deleteIgnoreNode(params: { id: string }) {
+    const res = await request.post<boolean>(
+      '/api/config/comparison/exclusions/modify/REMOVE',
       params,
     );
     return res.body;

@@ -38,7 +38,7 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
     <IgnoreTreeWrapper>
       <SpaceBetweenWrapper style={{ paddingBottom: '8px' }}>
         <h3>Tree</h3>
-        <Button size='small' onClick={() => props.onSave && props.onSave()}>
+        <Button size='small' type='primary' onClick={() => props.onSave && props.onSave()}>
           {t('save')}
         </Button>
       </SpaceBetweenWrapper>
