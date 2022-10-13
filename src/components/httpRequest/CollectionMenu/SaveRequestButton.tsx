@@ -92,6 +92,7 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
                 FileSystemService.saveInterface({
                   ...reqParams,
                   id: res.body.infoId,
+                  workspaceId: _useParams.workspaceId,
                 }).then((r) => {
                   // 通知父组件
                   onSaveAs({

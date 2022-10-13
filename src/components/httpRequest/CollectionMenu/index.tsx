@@ -12,6 +12,7 @@ import { CollectionService } from '../../../services/CollectionService';
 import { TooltipButton } from '../../index';
 import { useStore } from './../../../store';
 import CollectionTitle from './CollectionTitle';
+import CollectionImport from './Import';
 
 const CollectionMenuWrapper = styled.div`
   //height: 100%;
@@ -462,6 +463,7 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
                 />
               )}
             />
+            {/*<CollectionImport/>*/}
           </>
         )}
       </Spin>
