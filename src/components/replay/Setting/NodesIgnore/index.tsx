@@ -1,5 +1,5 @@
 import { useRequest } from 'ahooks';
-import { Button, Col, message, Row } from 'antd';
+import { Col, message, Row } from 'antd';
 import { TreeProps } from 'antd/lib/tree';
 import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
@@ -237,9 +237,9 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
             interfaces={operationList}
             activeKey={activeOperationInterface?.id}
             checkedNodes={ignoreNodeList}
-            onChange={(data) =>
+            onChange={(data, maintain) =>
               setActiveOperationInterface(
-                data?.id === activeOperationInterface?.id ? undefined : data,
+                data?.id !== activeOperationInterface?.id || maintain ? data : undefined,
               )
             }
             onEditResponse={handleEditResponse}

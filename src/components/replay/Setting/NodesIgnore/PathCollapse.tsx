@@ -11,7 +11,7 @@ type PathCollapseProps = {
   activeKey?: string;
   interfaces: OperationInterface[];
   checkedNodes: IgnoreNode[];
-  onChange: (path?: OperationInterface) => void;
+  onChange: (path?: OperationInterface, maintain?: boolean) => void;
   onDelete: (ignoreNode: IgnoreNode) => void;
   onEditResponse: (operationInterface: OperationInterface) => void;
 };
@@ -26,7 +26,13 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
           padding: 0 !important;
         }
       `}
-      onChange={(id) => props.onChange && props.onChange(props.interfaces.find((i) => i.id === id))}
+      onChange={(id) =>
+        props.onChange &&
+        props.onChange(
+          props.interfaces.find((i) => i.id === id),
+          false,
+        )
+      }
     >
       {props.interfaces && Array.isArray(props.interfaces) ? (
         props.interfaces.map((path) => {
@@ -35,7 +41,15 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
               key={path.id}
               header={path.operationName}
               extra={[
-                <TooltipButton key='add' icon={<PlusOutlined />} title='Add Sort Key' />,
+                <TooltipButton
+                  key='add'
+                  icon={<PlusOutlined />}
+                  title='Add Sort Key'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    props.onChange && props.onChange(path, true);
+                  }}
+                />,
                 <TooltipButton
                   key='editResponse'
                   icon={<CodeOutlined />}
