@@ -1,21 +1,22 @@
 import { CodeOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Button, Collapse, List } from 'antd';
+import { useRequest } from 'ahooks';
+import { Button, Collapse, List, message } from 'antd';
 import React, { FC } from 'react';
 
-import { OperationInterface } from '../../../../services/Replay.type';
+import AppSettingService from '../../../../services/AppSetting.service';
+import { OperationId, OperationInterface, SortNode } from '../../../../services/AppSetting.type';
 import { TooltipButton } from '../../../index';
 
-type InterfacesCheckedNodes = { [key: string]: { [key: string]: string[] } };
 type PathCollapseProps = {
-  activeKey?: string;
+  activeKey?: OperationId<'Interface'>;
   activeCollapseKey?: string;
-  onChange: (operationInterface?: OperationInterface, maintain?: boolean) => void;
-  onEdit?: (selected?: string) => void;
-  onDelete?: (selected: string) => void;
-  onEditResponse?: (operationInterface: OperationInterface) => void;
-  interfaces: OperationInterface[];
-  checkedNodes: InterfacesCheckedNodes;
+  onChange: (operationInterface?: OperationInterface<'Interface'>, maintain?: boolean) => void;
+  onEdit?: (sortNode?: SortNode) => void;
+  onEditResponse?: (operationInterface: OperationInterface<'Interface'>) => void;
+  interfaces: OperationInterface<'Interface'>[];
+  sortNodes: SortNode[];
+  onReloadNodes?: () => void;
 };
 
 const CollapseWrapper = styled(Collapse)`
@@ -29,19 +30,33 @@ const CollapseWrapper = styled(Collapse)`
 `;
 
 const PathCollapse: FC<PathCollapseProps> = (props) => {
-  const handleEdit = (key?: string) => props.onEdit && props.onEdit(key);
-  const handleDelete = (key: string) => props.onDelete && props.onDelete(key);
+  const handleEdit = (sortNode?: SortNode) => props.onEdit && props.onEdit(sortNode);
+
+  /**
+   * 删除 IgnoreNode
+   */
+  const { run: deleteIgnoreNode } = useRequest(AppSettingService.deleteSortNode, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        props.onReloadNodes?.();
+        message.success('Delete successfully');
+      } else {
+        message.error('Delete failed');
+      }
+    },
+  });
 
   return (
     <CollapseWrapper
       accordion
-      activeKey={props.activeKey}
+      activeKey={props.activeKey || undefined}
       onChange={(id) => props.onChange && props.onChange(props.interfaces.find((i) => i.id === id))}
     >
       {props.interfaces.map((i) => {
         return (
           <Collapse.Panel
-            key={i.id}
+            key={String(i.id)}
             header={i.operationName}
             extra={[
               <TooltipButton
@@ -66,11 +81,11 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
           >
             <List
               size='small'
-              dataSource={Object.keys(props.checkedNodes[i.id] || {})}
-              renderItem={(key) => (
+              dataSource={props.sortNodes}
+              renderItem={(sortNode) => (
                 <List.Item
                   className={
-                    `${props.activeKey}_${props.activeCollapseKey}` === `${i.id}_${key}`
+                    `${props.activeKey}_${props.activeCollapseKey}` === `${i.id}_${sortNode.id}`
                       ? 'active-item'
                       : ''
                   }
@@ -82,22 +97,22 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                       width: '100%',
                     }}
                   >
-                    <span>{key}</span>
+                    <span>{sortNode.path}</span>
                     <span>
                       <span style={{ marginRight: '8px' }}>
-                        {`${props.checkedNodes[i.id][key].length} keys`}
+                        {`${sortNode.pathKeyList.length} keys`}
                       </span>
                       <Button
                         type='text'
                         size='small'
                         icon={<EditOutlined />}
-                        onClick={() => handleEdit(key)}
+                        onClick={() => handleEdit(sortNode)}
                       />
                       <Button
                         type='text'
                         size='small'
                         icon={<DeleteOutlined />}
-                        onClick={() => handleDelete(key)}
+                        onClick={() => deleteIgnoreNode({ id: sortNode.id })}
                       />
                     </span>
                   </div>

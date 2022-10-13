@@ -21,7 +21,7 @@ const GLOBAL_OPERATION_ID = '__global__';
 
 const NodesIgnore: FC<{ appId: string }> = (props) => {
   const [checkedNodesData, setCheckedNodesData] = useImmer<{
-    operationId?: OperationId;
+    operationId?: OperationId<'Global'>;
     operationName?: string;
     exclusionsList: string[];
   }>({ exclusionsList: [] });
@@ -32,11 +32,8 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
   /**
    * 请求 InterfacesList
    */
-  const { data: operationList = [], loading: loadingOperationList } = useRequest(
-    AppSettingService.queryInterfacesList,
-    {
-      defaultParams: [{ id: props.appId }],
-    },
+  const { data: operationList = [], loading: loadingOperationList } = useRequest(() =>
+    AppSettingService.queryInterfacesList<'Global'>({ id: props.appId }),
   );
 
   const handleIgnoreTreeSelect: TreeProps['onSelect'] = (_, info) => {
@@ -50,7 +47,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
   };
 
   /**
-   * 查询 IgnoreNode
+   * 获取 IgnoreNode
    */
   const {
     data: ignoreNodeList = [],
@@ -121,7 +118,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
     run: queryInterfaceResponse,
     mutate: setInterfaceResponse,
   } = useRequest(
-    () => AppSettingService.queryInterfaceResponse({ id: activeOperationInterface!.id }),
+    () => AppSettingService.queryInterfaceResponse({ id: activeOperationInterface!.id as string }),
     {
       ready: !!activeOperationInterface?.id && activeOperationInterface?.id !== GLOBAL_OPERATION_ID,
       refreshDeps: [activeOperationInterface],
@@ -169,9 +166,9 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
    */
   const handleResponseSave = (value?: string) => {
     const parsed = value && tryParseJsonString(value, 'Invalid JSON');
-    if (parsed) {
+    if (!!activeOperationInterface?.id && parsed) {
       updateInterfaceResponse({
-        id: activeOperationInterface!.id,
+        id: activeOperationInterface.id,
         operationResponse: JSON.stringify(parsed),
       });
       handleCancelEditResponse(true);

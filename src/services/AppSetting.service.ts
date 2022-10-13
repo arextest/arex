@@ -2,16 +2,20 @@ import request from '../api/axios';
 import { objectArrayFilter } from '../helpers/utils';
 import {
   IgnoreNode,
-  InsertIgnoreNodeReq,
+  IgnoreNodeBase,
   OperationId,
   OperationInterface,
+  OperationType,
   QueryInterfacesListRes,
+  QueryNodeReq,
   QueryRecordDynamicClassSettingReq,
   QueryRecordDynamicClassSettingRes,
   QueryRecordSettingReq,
   QueryRecordSettingRes,
   RemoveDynamicClassSettingReq,
   RemoveDynamicClassSettingRes,
+  SortNode,
+  SortNodeBase,
   UpdateDynamicClassSettingReq,
   UpdateDynamicClassSettingRes,
   UpdateIgnoreNodeReq,
@@ -64,8 +68,22 @@ export default class AppSettingService {
     return res.body;
   }
 
+  // 查询 NodeIgnore/NodesSort Interfaces
+  static async queryInterfacesList<T extends OperationType>(params: { id: string }) {
+    const res = await request.get<QueryInterfacesListRes<T>>(
+      '/config/applicationService/useResultAsList/appId/' + params.id,
+    );
+    return objectArrayFilter<OperationInterface<T>>(
+      res.body.reduce<OperationInterface<T>[]>((list, cur) => {
+        list.push(...cur.operationList);
+        return list;
+      }, []),
+      'id',
+    );
+  }
+
   // 查询 InterfaceResponse 数据
-  static async queryInterfaceResponse(params: { id: OperationId }) {
+  static async queryInterfaceResponse(params: { id: OperationId<'Interface'> }) {
     const res = await request.get<OperationInterface>(
       '/config/applicationOperation/useResult/operationId/' + params.id,
     );
@@ -79,7 +97,7 @@ export default class AppSettingService {
   }
 
   // 获取 IgnoreNode Interface/Global 数据
-  static async queryIgnoreNode(params: { appId: string; operationId?: OperationId }) {
+  static async queryIgnoreNode(params: QueryNodeReq<'Global'>) {
     const res = await request.get<IgnoreNode[]>(
       '/api/config/comparison/exclusions/useResultAsList',
       { ...params, operationId: params.operationId || undefined },
@@ -91,7 +109,7 @@ export default class AppSettingService {
   }
 
   // 单个新增 IgnoreNode Interface/Global 数据
-  static async insertIgnoreNode(params: InsertIgnoreNodeReq) {
+  static async insertIgnoreNode(params: IgnoreNodeBase) {
     const res = await request.post<boolean>(
       '/api/config/comparison/exclusions/modify/INSERT',
       params,
@@ -100,7 +118,7 @@ export default class AppSettingService {
   }
 
   // 批量新增 IgnoreNode Interface/Global 数据
-  static async batchInsertIgnoreNode(params: InsertIgnoreNodeReq[]) {
+  static async batchInsertIgnoreNode(params: IgnoreNodeBase[]) {
     const res = await request.post<boolean>(
       '/api/config/comparison/exclusions/batchModify/INSERT',
       params,
@@ -135,17 +153,34 @@ export default class AppSettingService {
     return res.body;
   }
 
-  // 查询 NodesSort Interfaces
-  static async queryInterfacesList(params: { id: string }) {
-    const res = await request.get<QueryInterfacesListRes>(
-      '/config/applicationService/useResultAsList/appId/' + params.id,
+  // 获取 SortNode Interface 数据
+  static async querySortNode(params: QueryNodeReq<'Interface'>) {
+    const res = await request.get<SortNode[]>('/api/config/comparison/listsort/useResultAsList', {
+      ...params,
+      operationId: params.operationId || undefined,
+    });
+    return res.body.map<SortNode>((item) => ({
+      ...item,
+      path: item.listPath.concat(['']).join('/'),
+      pathKeyList: item.keys.map((key) => key.concat(['']).join('/')),
+    }));
+  }
+
+  // 单个新增 SortNode Interface 数据
+  static async insertSortNode(params: SortNodeBase) {
+    const res = await request.post<boolean>(
+      '/api/config/comparison/listsort/modify/INSERT',
+      params,
     );
-    return objectArrayFilter<OperationInterface>(
-      res.body.reduce<OperationInterface[]>((list, cur) => {
-        list.push(...cur.operationList);
-        return list;
-      }, []),
-      'id',
+    return res.body;
+  }
+
+  // 删除 SortNode Interface 数据
+  static async deleteSortNode(params: { id: string }) {
+    const res = await request.post<boolean>(
+      '/api/config/comparison/listsort/modify/REMOVE',
+      params,
     );
+    return res.body;
   }
 }

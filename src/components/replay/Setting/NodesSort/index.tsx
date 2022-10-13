@@ -8,7 +8,7 @@ import { useImmer } from 'use-immer';
 
 import { tryParseJsonString, tryPrettierJsonString } from '../../../../helpers/utils';
 import AppSettingService from '../../../../services/AppSetting.service';
-import { OperationInterface } from '../../../../services/AppSetting.type';
+import { OperationInterface, SortNode } from '../../../../services/AppSetting.type';
 import { EditAreaPlaceholder, SpaceBetweenWrapper } from '../../../styledComponents';
 import ResponseRaw from '../NodesIgnore/ResponseRaw';
 import ArrayTree from './ArrayTree';
@@ -48,7 +48,8 @@ const NodesSort: FC<{ appId: string }> = (props) => {
 
   const treeCarousel = useRef<CarouselRef>(null);
 
-  const [activeOperationInterface, setActiveOperationInterface] = useState<OperationInterface>();
+  const [activeOperationInterface, setActiveOperationInterface] =
+    useState<OperationInterface<'Interface'>>();
   const [activeCollapseKey, setActiveCollapseKey] = useState<string>();
 
   const [nodesEditMode, setNodesEditMode] = useState<NodesEditMode>(NodesEditMode.Tree);
@@ -67,15 +68,46 @@ const NodesSort: FC<{ appId: string }> = (props) => {
   /**
    * 请求 InterfacesList
    */
-  const { data: operationList = [] } = useRequest(AppSettingService.queryInterfacesList, {
-    defaultParams: [{ id: props.appId }],
-    onSuccess(res) {
-      console.log(res);
+  const { data: operationList = [] } = useRequest(() =>
+    AppSettingService.queryInterfacesList<'Interface'>({ id: props.appId }),
+  );
+
+  /**
+   * 获取 SortNode
+   */
+  const { data: sortNodeList = [], run: querySortNode } = useRequest(
+    () =>
+      AppSettingService.querySortNode({
+        appId: props.appId,
+        operationId: activeOperationInterface!.id,
+      }),
+    {
+      ready: !!activeOperationInterface,
+      refreshDeps: [activeOperationInterface?.id],
+      onSuccess(res) {
+        console.log(res);
+      },
+    },
+  );
+
+  /**
+   * 更新 SortNode
+   */
+  const { run: insertSortNode } = useRequest(AppSettingService.insertSortNode, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        querySortNode();
+        treeCarousel.current?.goTo(0);
+        message.success('Update successfully');
+      } else {
+        message.error('Update failed');
+      }
     },
   });
 
   /**
-   * 请求 InterfaceResponse
+   * 获取 InterfaceResponse
    */
   const { data: interfaceResponse, run: queryInterfaceResponse } = useRequest(
     () => AppSettingService.queryInterfaceResponse({ id: activeOperationInterface!.id }),
@@ -107,16 +139,18 @@ const NodesSort: FC<{ appId: string }> = (props) => {
       }
     },
   });
+
   /**
    * 开始编辑某个 interface 的 response
    * @param operationInterface
    */
-  const handleEditResponse = (operationInterface: OperationInterface) => {
+  const handleEditResponse = (operationInterface: OperationInterface<'Interface'>) => {
     console.log('setNodesEditMode to Raw', { operationInterface });
     setActiveOperationInterface(operationInterface);
 
     setNodesEditMode(NodesEditMode.Raw);
   };
+
   /**
    * 保存某个 interface 的 response
    * @param value
@@ -146,14 +180,14 @@ const NodesSort: FC<{ appId: string }> = (props) => {
    */
   const handleSortTreeChecked = (checked: string[]) => {
     // TODO 将更新操作转移至 handleSaveSort
-    activeOperationInterface &&
-      activeCollapseKey &&
+    if (activeOperationInterface && activeCollapseKey) {
       setCheckedNodesData((state) => {
         if (!state[activeOperationInterface.id]) {
           state[activeOperationInterface.id] = {};
         }
         state[activeOperationInterface.id][activeCollapseKey] = checked;
       });
+    }
   };
 
   /**
@@ -162,7 +196,7 @@ const NodesSort: FC<{ appId: string }> = (props) => {
    * @param maintain always expand panel
    */
   const handleNodesCollapseClick = (
-    operationInterface?: OperationInterface,
+    operationInterface?: OperationInterface<'Interface'>,
     maintain?: boolean,
   ) => {
     const { id } = operationInterface || {};
@@ -178,21 +212,15 @@ const NodesSort: FC<{ appId: string }> = (props) => {
     }
   };
 
-  const handleEditCollapseItem = (key?: string) => {
-    if (key) {
-      setActiveCollapseKey(key);
-      handleSetSortArray(key);
+  // TODO
+  const handleEditCollapseItem = (sortNode?: SortNode) => {
+    if (sortNode) {
+      setActiveCollapseKey(sortNode.path);
+      handleSetSortArray(sortNode.path);
     }
     setNodesEditMode(NodesEditMode.Tree);
     setTreeEditMode(TreeEditModeEnum.SortTree);
     treeCarousel.current?.goTo(1);
-  };
-
-  const handleDeleteCollapseItem = (key: string) => {
-    activeOperationInterface &&
-      setCheckedNodesData((state) => {
-        delete state[activeOperationInterface?.id][key];
-      });
   };
 
   // 获取待排序操作的数组结构
@@ -209,12 +237,17 @@ const NodesSort: FC<{ appId: string }> = (props) => {
   };
 
   const handleSaveSort = () => {
-    // TODO 转移 handleSortTreeChecked 中的更新操作
-    console.log(
-      'handleSaveSort',
-      activeOperationInterface?.operationName + '/' + activeCollapseKey,
-      checkedNodesData[activeOperationInterface?.id || '']?.[activeCollapseKey || ''],
-    );
+    const pathKeyList =
+      checkedNodesData[activeOperationInterface?.id || '']?.[activeCollapseKey || ''];
+
+    if (activeOperationInterface && activeCollapseKey) {
+      insertSortNode({
+        appId: props.appId,
+        operationId: activeOperationInterface.id,
+        listPath: activeCollapseKey?.split('/').filter(Boolean),
+        keys: pathKeyList.map((key) => key?.split('/').filter(Boolean)),
+      });
+    }
   };
 
   return (
@@ -226,11 +259,11 @@ const NodesSort: FC<{ appId: string }> = (props) => {
             interfaces={operationList}
             activeKey={activeOperationInterface?.id}
             activeCollapseKey={activeCollapseKey}
-            checkedNodes={checkedNodesData}
+            sortNodes={sortNodeList}
             onEdit={handleEditCollapseItem}
             onChange={handleNodesCollapseClick}
             onEditResponse={handleEditResponse}
-            onDelete={handleDeleteCollapseItem}
+            onReloadNodes={querySortNode}
           />
         </Col>
 
@@ -257,10 +290,11 @@ const NodesSort: FC<{ appId: string }> = (props) => {
                       <ArrayTree
                         title={activeOperationInterface?.operationName}
                         treeData={interfaceResponseParsed}
-                        selectedKeys={[activeCollapseKey as string]}
+                        selectedKeys={activeCollapseKey ? [activeCollapseKey] : []}
                         sortedKeys={checkedNodesData[activeOperationInterface?.id || '']}
                         onSelect={(selectedKeys, info) => {
-                          // 选中待排序数组对象
+                          console.log({ selectedKeys, info });
+                          // TODO 选中待排序数组对象
                           handleEditCollapseItem(info.selectedNodes[0].key.toString());
                         }}
                       />

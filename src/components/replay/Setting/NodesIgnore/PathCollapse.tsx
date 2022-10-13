@@ -28,7 +28,7 @@ const PathCollapseWrapper = styled.div`
 type PathCollapseProps = {
   appId: string;
   title?: string;
-  activeKey?: OperationId;
+  activeKey?: OperationId<'Global'>;
   interfaces: InterfacePick[];
   ignoreNodes: IgnoreNode[];
   loading?: boolean;

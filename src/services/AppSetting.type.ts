@@ -66,10 +66,11 @@ export interface RemoveDynamicClassSettingReq {
 
 export type RemoveDynamicClassSettingRes = boolean;
 
-export type OperationInterface = {
+export type OperationType = 'Global' | 'Interface';
+export type OperationInterface<T extends OperationType = 'Global'> = {
   status: number;
   modifiedTime?: number;
-  id: string | null;
+  id: OperationId<T>;
   appId: string;
   serviceId: string;
   operationName: string;
@@ -77,43 +78,67 @@ export type OperationInterface = {
   operationResponse: string | null;
   recordedCaseCount: number | null;
 };
-export type OperationData = {
+
+export type OperationData<T extends OperationType> = {
   status: number;
   modifiedTime: number;
   id: string;
   appId: string;
   serviceName: string;
   serviceKey: string;
-  operationList: OperationInterface[];
+  operationList: OperationInterface<T>[];
 };
 
-export type QueryInterfacesListRes = OperationData[];
+export type QueryInterfacesListRes<T extends OperationType> = OperationData<T>[];
 
-export type OperationId = string | null;
+type OperationIdGlobal = string | null;
+type OperationIdInterface = string;
+export type OperationId<T extends OperationType> = T extends 'Global'
+  ? OperationIdGlobal
+  : OperationIdInterface;
 
 export interface UpdateInterfaceResponseReq {
-  id: OperationId;
+  id: OperationId<'Interface'>;
   operationResponse: string;
 }
 
-export type IgnoreNode = {
-  modifiedTime: string;
-  id: string;
+export type IgnoreNodeBase = {
   appId: string;
-  operationId: OperationId;
-  expirationType: number;
-  expirationDate: string;
+  operationId: OperationId<'Global'>;
   exclusions: string[];
-  path: string;
 };
 
-export interface InsertIgnoreNodeReq {
-  appId: string;
-  operationId: string | null; // null 时目标为 Global
-  exclusions: string[];
-}
+export type IgnoreNode = IgnoreNodeBase & {
+  modifiedTime: string;
+  id: string;
+  expirationType: number;
+  expirationDate: string;
+  path: string;
+};
 
 export interface UpdateIgnoreNodeReq {
   id: string;
   exclusions: string[];
 }
+
+export interface QueryNodeReq<T extends OperationType> {
+  appId: string;
+  operationId?: OperationId<T>;
+}
+
+export type SortNodeBase = {
+  appId: string;
+  operationId: OperationId<'Interface'>;
+  listPath: string[];
+  keys: string[][];
+};
+
+export type SortNode = SortNodeBase & {
+  id: string;
+  modifiedTime: number;
+  status: number | null;
+  expirationType: number;
+  expirationDate: number;
+  path: string;
+  pathKeyList: string[];
+};
