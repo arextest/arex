@@ -83,7 +83,10 @@ export default class AppSettingService {
       '/api/config/comparison/exclusions/useResultAsList',
       params,
     );
-    return res.body;
+    return res.body.map<IgnoreNode>((item) => ({
+      ...item,
+      path: item.exclusions.concat(['']).join('/'),
+    }));
   }
 
   // 单个新增 IgnoreNode Interface/Global 数据
@@ -117,6 +120,15 @@ export default class AppSettingService {
   static async deleteIgnoreNode(params: { id: string }) {
     const res = await request.post<boolean>(
       '/api/config/comparison/exclusions/modify/REMOVE',
+      params,
+    );
+    return res.body;
+  }
+
+  // 批量删除 IgnoreNode Interface/Global 数据
+  static async batchDeleteIgnoreNode(params: { id: string }[]) {
+    const res = await request.post<boolean>(
+      '/api/config/comparison/exclusions/batchModify/REMOVE',
       params,
     );
     return res.body;

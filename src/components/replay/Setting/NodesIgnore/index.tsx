@@ -1,11 +1,12 @@
 import { useRequest } from 'ahooks';
 import { Button, Col, message, Row } from 'antd';
+import { TreeProps } from 'antd/lib/tree';
 import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { tryParseJsonString, tryPrettierJsonString } from '../../../../helpers/utils';
 import AppSettingService from '../../../../services/AppSetting.service';
-import { IgnoreNode, OperationInterface } from '../../../../services/AppSetting.type';
+import { OperationInterface } from '../../../../services/AppSetting.type';
 import { EditAreaPlaceholder } from '../../../styledComponents';
 import IgnoreTree from './IgnoreTree';
 import PathCollapse from './PathCollapse';
@@ -22,7 +23,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
   const [checkedNodesData, setCheckedNodesData] = useImmer<{
     operationId?: string;
     operationName?: string;
-    exclusionsList: string[];
+    exclusionsList: string[]; // TODO add id
   }>({ exclusionsList: [] });
 
   const [activeOperationInterface, setActiveOperationInterface] = useState<OperationInterface>();
@@ -38,19 +39,14 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
     },
   });
 
-  const onSelect = (operationInterface: OperationInterface, selected: string[]) => {
+  const handleIgnoreTreeSelect: TreeProps['onSelect'] = (_, info) => {
+    const selected = info.selectedNodes.map((node) => node.key.toString());
+
     setCheckedNodesData((state) => {
-      state.operationId = operationInterface.id;
-      state.operationName = operationInterface.operationName;
+      state.operationId = activeOperationInterface!.id;
+      state.operationName = activeOperationInterface!.operationName;
       state.exclusionsList = selected;
     });
-  };
-
-  const handleIgnoredNodesCollapseClick = (operationInterface?: OperationInterface) => {
-    setIgnoreNodeList([]);
-    setActiveOperationInterface(
-      operationInterface?.id === activeOperationInterface?.id ? undefined : operationInterface,
-    );
   };
 
   /**
@@ -69,9 +65,15 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
     {
       ready: !!activeOperationInterface,
       refreshDeps: [activeOperationInterface],
+      onBefore() {
+        setIgnoreNodeList([]);
+      },
       onSuccess(res) {
-        console.log({ queryIgnoreNode: res });
-        // setCheckedNodesData()
+        setCheckedNodesData((state) => {
+          state.operationId = activeOperationInterface!.id;
+          state.operationName = activeOperationInterface!.operationName;
+          state.exclusionsList = res.map((item) => item.path);
+        });
       },
     },
   );
@@ -79,7 +81,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
   /**
    * 批量新增 IgnoreNode
    */
-  const { run: insertIgnoreNode } = useRequest(AppSettingService.batchInsertIgnoreNode, {
+  const { run: batchInsertIgnoreNode } = useRequest(AppSettingService.batchInsertIgnoreNode, {
     manual: true,
     onSuccess(success) {
       if (success) {
@@ -104,7 +106,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
   /**
    * 删除 IgnoreNode
    */
-  const { run: deleteIgnoreNode } = useRequest(AppSettingService.deleteIgnoreNode, {
+  const { run: batchDeleteIgnoreNode } = useRequest(AppSettingService.batchDeleteIgnoreNode, {
     manual: true,
     onSuccess(success) {
       if (success) {
@@ -115,19 +117,22 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
       }
     },
   });
-  const handleDeleteNode = (path: IgnoreNode) => {
-    console.log(path);
-    deleteIgnoreNode({ id: path.id });
-  };
 
   /**
    * 请求 InterfaceResponse
    */
-  const { data: interfaceResponse, run: queryInterfaceResponse } = useRequest(
+  const {
+    data: interfaceResponse,
+    mutate: setInterfaceResponse,
+    run: queryInterfaceResponse,
+  } = useRequest(
     () => AppSettingService.queryInterfaceResponse({ id: activeOperationInterface!.id }),
     {
       ready: !!activeOperationInterface?.id,
       refreshDeps: [activeOperationInterface],
+      onBefore() {
+        setInterfaceResponse();
+      },
       onSuccess(res) {
         console.log({ queryInterfaceResponse: res });
       },
@@ -185,14 +190,31 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
 
   const handleIgnoreSave = () => {
     const { operationId = null, exclusionsList } = checkedNodesData;
+    const exclusionsListPrev = ignoreNodeList.map((item) => item.path);
 
-    insertIgnoreNode(
-      exclusionsList.map((path) => ({
-        appId: props.appId,
-        operationId, // null 时目标为 Global
-        exclusions: path.split('/').filter(Boolean),
-      })),
-    );
+    const add: string[] = [],
+      remove: string[] = [];
+
+    // 计算新旧集合的差集，分别进行增量更新和批量删除
+    Array.from(new Set([...exclusionsListPrev, ...exclusionsList])).forEach((path) => {
+      if (exclusionsListPrev.includes(path) && exclusionsList.includes(path)) return;
+      else if (exclusionsListPrev.includes(path))
+        remove.push(ignoreNodeList.find((item) => item.path === path)!.id);
+      else add.push(path);
+    });
+
+    // 增量更新
+    add.length &&
+      batchInsertIgnoreNode(
+        add.map((path) => ({
+          appId: props.appId,
+          operationId, // null 时目标为 Global
+          exclusions: path.split('/').filter(Boolean),
+        })),
+      );
+
+    // 批量删除
+    remove.length && batchDeleteIgnoreNode(remove.map((id) => ({ id })));
   };
 
   return (
@@ -205,7 +227,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
           {/*  activeKey={activeKey}*/}
           {/*  checkedNodes={checkedNodesData.global}*/}
           {/*  onChange={handleIgnoredNodesCollapseClick}*/}
-          {/*  onSelect={onSelect}*/}
+          {/*  onSelect={handleIgnoreTreeSelect}*/}
           {/*/>*/}
 
           <br />
@@ -215,9 +237,13 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
             interfaces={operationList}
             activeKey={activeOperationInterface?.id}
             checkedNodes={ignoreNodeList}
-            onChange={handleIgnoredNodesCollapseClick}
+            onChange={(data) =>
+              setActiveOperationInterface(
+                data?.id === activeOperationInterface?.id ? undefined : data,
+              )
+            }
             onEditResponse={handleEditResponse}
-            onDelete={handleDeleteNode}
+            onDelete={(path) => batchDeleteIgnoreNode([{ id: path.id }])}
           />
         </Col>
 
@@ -233,12 +259,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
                   treeData={interfaceResponseParsed}
                   selectedKeys={checkedNodesData.exclusionsList}
                   title={activeOperationInterface?.operationName}
-                  onSelect={(selectKeys, info) =>
-                    onSelect(
-                      activeOperationInterface as OperationInterface,
-                      info.selectedNodes.map((node) => node.key.toString()),
-                    )
-                  }
+                  onSelect={handleIgnoreTreeSelect}
                   onSave={handleIgnoreSave}
                 />
               </>
