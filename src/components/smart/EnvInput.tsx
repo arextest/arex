@@ -21,8 +21,8 @@ interface SmartEnvInputProps {
 }
 const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
   const smartEnvInputRef = useRef(null);
-  const { currentEnvironment } = useStore();
-
+  const { currentEnvironment, themeClassify } = useStore();
+  // console.log(themeClassify,'themeClassify')
   useEnvCodeMirror({
     container: smartEnvInputRef.current,
     value: value,
@@ -62,7 +62,7 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
       });
     },
     currentEnv: currentEnvironment,
-    theme: 'dark',
+    theme: themeClassify,
   });
 
   return (
