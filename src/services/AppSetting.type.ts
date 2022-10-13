@@ -102,6 +102,7 @@ export type IgnoreNode = {
   expirationType: number;
   expirationDate: string;
   exclusions: string[];
+  path: string;
 };
 
 export interface InsertIgnoreNodeReq {
