@@ -14,7 +14,7 @@ import { useStore } from './../../../store';
 import CollectionTitle from './CollectionTitle';
 
 const CollectionMenuWrapper = styled.div`
-  height: 100%;
+  //height: 100%;
   .ant-spin-nested-loading,
   .ant-spin {
     height: 100%;

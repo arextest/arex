@@ -45,7 +45,7 @@ const { TabPane } = Tabs;
 const MainMenu = styled(Tabs, { shouldForwardProp: (propName) => propName !== 'brief' })<{
   brief?: boolean;
 }>`
-  height: 100%;
+  height: calc(100% - 35px);
   .ant-tabs-nav-list {
     width: ${(props) => (props.brief ? '70px' : '100px')};
     .ant-tabs-tab {
@@ -90,6 +90,8 @@ type MainMenuItemProps = TabPaneProps & { menuItem: ReactNode };
 const MainMenuItem = styled((props: MainMenuItemProps) => (
   <TabPane {...props}>{props.menuItem}</TabPane>
 ))<MainMenuItemProps>`
+  height: 100%;
+  overflow-y: auto;
   padding: 0 8px !important;
   .ant-tree-node-selected {
     color: ${(props) => props.theme.color.text.highlight};
