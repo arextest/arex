@@ -471,7 +471,7 @@ const MainBox = () => {
           </MainMenu>
         </Allotment.Pane>
 
-        <Allotment.Pane snap>
+        <Allotment.Pane visible>
           <EmptyWrapper
             empty={!panes.length}
             emptyContent={
