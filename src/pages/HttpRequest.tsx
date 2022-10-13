@@ -482,6 +482,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
   const handleSave = () => {
     saveInterface(
       {
+        workspaceId: _useParams.workspaceId,
         id,
         auth: null,
         body: {
