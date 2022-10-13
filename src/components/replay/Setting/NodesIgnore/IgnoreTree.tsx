@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { SpaceBetweenWrapper } from '../../../styledComponents';
 
 type IgnoreTreeProps = Omit<TreeProps, 'treeData'> & {
+  loading?: boolean;
   treeData: object;
   title?: string;
   onSave?: () => void;
@@ -37,7 +38,7 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
   return (
     <IgnoreTreeWrapper>
       <SpaceBetweenWrapper style={{ paddingBottom: '8px' }}>
-        <h3>Tree</h3>
+        <h3>Data Structure</h3>
         <Button size='small' type='primary' onClick={() => props.onSave && props.onSave()}>
           {t('save')}
         </Button>
@@ -45,6 +46,7 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
 
       <Card
         title={`${props.title} (click node to ignore)`}
+        loading={props.loading}
         bodyStyle={{ padding: '8px 16px' }}
         headStyle={{ padding: '0 16px', margin: '-8px 0' }}
       >

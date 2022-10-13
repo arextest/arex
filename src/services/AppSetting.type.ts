@@ -69,7 +69,7 @@ export type RemoveDynamicClassSettingRes = boolean;
 export type OperationInterface = {
   status: number;
   modifiedTime?: number;
-  id: string;
+  id: string | null;
   appId: string;
   serviceId: string;
   operationName: string;
@@ -89,8 +89,10 @@ export type OperationData = {
 
 export type QueryInterfacesListRes = OperationData[];
 
+export type OperationId = string | null;
+
 export interface UpdateInterfaceResponseReq {
-  id: string;
+  id: OperationId;
   operationResponse: string;
 }
 
@@ -98,7 +100,7 @@ export type IgnoreNode = {
   modifiedTime: string;
   id: string;
   appId: string;
-  operationId: string | null;
+  operationId: OperationId;
   expirationType: number;
   expirationDate: string;
   exclusions: string[];
