@@ -44,7 +44,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
   const [ignoredKey, setIgnoredKey] = useState('');
   const [editMode, setEditMode] = useState(false);
 
-  const handleAddSortKey = (e: SyntheticEvent, path: InterfacePick) => {
+  const handleAddKey = (e: SyntheticEvent, path: InterfacePick) => {
     e.stopPropagation();
     if (props.manualEdit) {
       setEditMode(true);
@@ -53,9 +53,8 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
           cursor: 'start',
         }),
       );
-    } else {
-      props.onChange?.(path, true);
     }
+    props.onChange?.(path, true);
   };
 
   /**
@@ -82,16 +81,6 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
       exclusions: ignoredKey.split('/').filter(Boolean),
     });
   };
-
-  /**
-   * 更新 IgnoreNode
-   */
-  const { run: updateIgnoreNode } = useRequest(AppSettingService.updateIgnoreNode, {
-    manual: true,
-    onSuccess(res) {
-      console.log(res);
-    },
-  });
 
   /**
    * 删除 IgnoreNode
@@ -136,9 +125,9 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                   extra={[
                     <TooltipButton
                       key='add'
-                      title='Add Sort Key'
+                      title='Add Key'
                       icon={<PlusOutlined />}
-                      onClick={(e) => handleAddSortKey(e, path)}
+                      onClick={(e) => handleAddKey(e, path)}
                     />,
                     !props.manualEdit && (
                       <TooltipButton
