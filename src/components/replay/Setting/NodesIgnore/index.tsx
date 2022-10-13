@@ -6,10 +6,10 @@ import { useImmer } from 'use-immer';
 
 import { tryParseJsonString, tryPrettierJsonString } from '../../../../helpers/utils';
 import AppSettingService from '../../../../services/AppSetting.service';
-import { OperationInterface } from '../../../../services/AppSetting.type';
+import { OperationId } from '../../../../services/AppSetting.type';
 import { EditAreaPlaceholder } from '../../../styledComponents';
 import IgnoreTree from './IgnoreTree';
-import PathCollapse from './PathCollapse';
+import PathCollapse, { InterfacePick } from './PathCollapse';
 import ResponseRaw from './ResponseRaw';
 
 enum NodesEditMode {
@@ -17,27 +17,27 @@ enum NodesEditMode {
   'Raw' = 'Raw',
 }
 
-const GLOBAL_KEY = '__global__';
+const GLOBAL_OPERATION_ID = '__global__';
 
 const NodesIgnore: FC<{ appId: string }> = (props) => {
   const [checkedNodesData, setCheckedNodesData] = useImmer<{
-    operationId?: string;
+    operationId?: OperationId;
     operationName?: string;
-    exclusionsList: string[]; // TODO add id
+    exclusionsList: string[];
   }>({ exclusionsList: [] });
 
-  const [activeOperationInterface, setActiveOperationInterface] = useState<OperationInterface>();
+  const [activeOperationInterface, setActiveOperationInterface] = useState<InterfacePick>();
   const [nodesEditMode, setNodesEditMode] = useState<NodesEditMode>(NodesEditMode.Tree);
 
   /**
    * 请求 InterfacesList
    */
-  const { data: operationList = [] } = useRequest(AppSettingService.queryInterfacesList, {
-    defaultParams: [{ id: props.appId }],
-    onSuccess(res) {
-      console.log(res);
+  const { data: operationList = [], loading: loadingOperationList } = useRequest(
+    AppSettingService.queryInterfacesList,
+    {
+      defaultParams: [{ id: props.appId }],
     },
-  });
+  );
 
   const handleIgnoreTreeSelect: TreeProps['onSelect'] = (_, info) => {
     const selected = info.selectedNodes.map((node) => node.key.toString());
@@ -54,16 +54,20 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
    */
   const {
     data: ignoreNodeList = [],
+    loading: loadingIgnoreNode,
     run: queryIgnoreNode,
     mutate: setIgnoreNodeList,
   } = useRequest(
     () =>
       AppSettingService.queryIgnoreNode({
         appId: props.appId,
-        operationId: activeOperationInterface?.id,
+        operationId:
+          activeOperationInterface!.id === GLOBAL_OPERATION_ID
+            ? null
+            : activeOperationInterface!.id,
       }),
     {
-      ready: !!activeOperationInterface,
+      ready: activeOperationInterface !== undefined,
       refreshDeps: [activeOperationInterface],
       onBefore() {
         setIgnoreNodeList([]);
@@ -94,17 +98,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
   });
 
   /**
-   * 更新 IgnoreNode
-   */
-  const { run: updateIgnoreNode } = useRequest(AppSettingService.updateIgnoreNode, {
-    manual: true,
-    onSuccess(res) {
-      console.log(res);
-    },
-  });
-
-  /**
-   * 删除 IgnoreNode
+   * 批量删除 IgnoreNode
    */
   const { run: batchDeleteIgnoreNode } = useRequest(AppSettingService.batchDeleteIgnoreNode, {
     manual: true,
@@ -123,12 +117,13 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
    */
   const {
     data: interfaceResponse,
-    mutate: setInterfaceResponse,
+    loading: loadingInterfaceResponse,
     run: queryInterfaceResponse,
+    mutate: setInterfaceResponse,
   } = useRequest(
     () => AppSettingService.queryInterfaceResponse({ id: activeOperationInterface!.id }),
     {
-      ready: !!activeOperationInterface?.id,
+      ready: !!activeOperationInterface?.id && activeOperationInterface?.id !== GLOBAL_OPERATION_ID,
       refreshDeps: [activeOperationInterface],
       onBefore() {
         setInterfaceResponse();
@@ -162,7 +157,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
    * 开始编辑某个 interface 的 response
    * @param operationInterface
    */
-  const handleEditResponse = (operationInterface: OperationInterface) => {
+  const handleEditResponse = (operationInterface: InterfacePick) => {
     console.log('setNodesEditMode to Raw', { operationInterface });
     setActiveOperationInterface(operationInterface);
 
@@ -221,29 +216,37 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
     <>
       <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
         <Col span={10}>
-          <h3>Global</h3>
-          {/* TODO */}
-          {/*<PathCollapse*/}
-          {/*  activeKey={activeKey}*/}
-          {/*  checkedNodes={checkedNodesData.global}*/}
-          {/*  onChange={handleIgnoredNodesCollapseClick}*/}
-          {/*  onSelect={handleIgnoreTreeSelect}*/}
-          {/*/>*/}
-
-          <br />
-
-          <h3>Interfaces</h3>
           <PathCollapse
+            manualEdit
+            title='Global'
+            appId={props.appId}
+            loadingPanel={loadingIgnoreNode}
+            interfaces={[{ id: GLOBAL_OPERATION_ID, operationName: 'Global' }]}
+            activeKey={activeOperationInterface?.id}
+            ignoreNodes={ignoreNodeList}
+            onChange={(data, maintain) =>
+              setActiveOperationInterface(
+                data?.id !== activeOperationInterface?.id || maintain ? data : undefined,
+              )
+            }
+            onReloadNodes={queryIgnoreNode}
+          />
+
+          <PathCollapse
+            title='Interfaces'
+            appId={props.appId}
+            loading={loadingOperationList}
+            loadingPanel={loadingIgnoreNode}
             interfaces={operationList}
             activeKey={activeOperationInterface?.id}
-            checkedNodes={ignoreNodeList}
+            ignoreNodes={ignoreNodeList}
             onChange={(data, maintain) =>
               setActiveOperationInterface(
                 data?.id !== activeOperationInterface?.id || maintain ? data : undefined,
               )
             }
             onEditResponse={handleEditResponse}
-            onDelete={(path) => batchDeleteIgnoreNode([{ id: path.id }])}
+            onReloadNodes={queryIgnoreNode}
           />
         </Col>
 
@@ -251,14 +254,17 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
           <EditAreaPlaceholder
             dashedBorder
             title='Edit Area (Click interface to start)'
-            ready={!!activeOperationInterface}
+            ready={
+              !!activeOperationInterface && activeOperationInterface.id !== GLOBAL_OPERATION_ID
+            }
           >
             {nodesEditMode === NodesEditMode.Tree ? (
               <>
                 <IgnoreTree
+                  title={activeOperationInterface?.operationName}
                   treeData={interfaceResponseParsed}
                   selectedKeys={checkedNodesData.exclusionsList}
-                  title={activeOperationInterface?.operationName}
+                  loading={loadingInterfaceResponse}
                   onSelect={handleIgnoreTreeSelect}
                   onSave={handleIgnoreSave}
                 />

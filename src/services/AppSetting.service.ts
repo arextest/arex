@@ -3,6 +3,7 @@ import { objectArrayFilter } from '../helpers/utils';
 import {
   IgnoreNode,
   InsertIgnoreNodeReq,
+  OperationId,
   OperationInterface,
   QueryInterfacesListRes,
   QueryRecordDynamicClassSettingReq,
@@ -64,7 +65,7 @@ export default class AppSettingService {
   }
 
   // 查询 InterfaceResponse 数据
-  static async queryInterfaceResponse(params: { id: string }) {
+  static async queryInterfaceResponse(params: { id: OperationId }) {
     const res = await request.get<OperationInterface>(
       '/config/applicationOperation/useResult/operationId/' + params.id,
     );
@@ -78,10 +79,10 @@ export default class AppSettingService {
   }
 
   // 获取 IgnoreNode Interface/Global 数据
-  static async queryIgnoreNode(params: { appId: string; operationId?: string }) {
+  static async queryIgnoreNode(params: { appId: string; operationId?: OperationId }) {
     const res = await request.get<IgnoreNode[]>(
       '/api/config/comparison/exclusions/useResultAsList',
-      params,
+      { ...params, operationId: params.operationId || undefined },
     );
     return res.body.map<IgnoreNode>((item) => ({
       ...item,
