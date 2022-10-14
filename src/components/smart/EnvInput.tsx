@@ -12,7 +12,7 @@ import { useStore } from '../../store';
 const SmartEnvInputWrapper = styled.div`
   flex: 1;
   overflow: hidden;
-  border: 1px solid #434343;
+  border: 1px solid ${(props) => props.theme.color.border.primary};
 `;
 
 interface SmartEnvInputProps {

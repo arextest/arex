@@ -10,6 +10,7 @@ import { useStore } from '../../store';
 import FormTable, { useColumns } from './FormTable';
 const { TabPane } = Tabs;
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { json } from '@codemirror/lang-json';
 
 const StatusWrapper = styled.div`
   div {
@@ -94,7 +95,7 @@ const Response: FC<{
         <TabPane tab='Pretty' key='1'>
           <CodeMirror
             value={JSON.stringify(props.res, null, 2)}
-            extensions={[javascript()]}
+            extensions={[json()]}
             width='100%'
             height='500px'
             theme={themeClassify}

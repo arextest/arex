@@ -30,13 +30,21 @@ export function useEnvCodeMirror(props: UseCodeMirror) {
 
   const defaultLightThemeOption = EditorView.theme(
     {
-      '&': {
-        backgroundColor: '#202020',
-        color: 'white',
-      },
-      '.cm-scroller': {
-        fontFamily: '"Roboto Mono", monospace',
-        fontSize: '14px',
+      // '&': {
+      //   backgroundColor: '#fff',
+      // },
+      // '.cm-activeLine': {
+      //   backgroundColor: 'rgba(0,0,0,0)',
+      // },
+      // '.cm-selectionMatch':{
+      //   backgroundColor: 'rgba(0,0,0,0)',
+      // },
+      // '.cm-scroller': {
+      //   fontFamily: '"Roboto Mono", monospace',
+      //   fontSize: '14px',
+      // },
+      '.cm-gutters': {
+        display: 'none',
       },
     },
     {
@@ -44,23 +52,24 @@ export function useEnvCodeMirror(props: UseCodeMirror) {
     },
   );
   const defaultThemeOption = EditorView.theme({
-    '&': {
-      height,
-      backgroundColor: '#202020',
-      color: 'white',
-    },
-    '.cm-activeLine': {
-      // backgroundColor: '#202020',
-    },
+    // '&': {
+    //   height,
+    //   backgroundColor: '#202020',
+    //   color: 'white',
+    // },
+    // '.cm-activeLine': {
+    //   backgroundColor: '#202020',
+    // },
+    // '.cm-selectionMatch':{
+    //   backgroundColor: 'rgba(0,0,0,0)',
+    // },
+    // '.cm-scroller': {
+    //   fontFamily: '"Roboto Mono", monospace',
+    //   fontSize: '14px',
+    // },
     '.cm-gutters': {
       display: 'none',
     },
-    // '.cm-content': {
-    //   caretColor: 'green !important',
-    //   color: 'green !important',
-    //   // backgroundColor: 'green !important',
-    //   opacity: 0.25,
-    // },
   });
   const updateListener = EditorView.updateListener.of((vu: ViewUpdate) => {
     if (vu.docChanged && typeof onChange === 'function') {
@@ -71,7 +80,7 @@ export function useEnvCodeMirror(props: UseCodeMirror) {
     onStatistics && onStatistics(getStatistics(vu));
   });
 
-  let getExtensions = [updateListener, defaultThemeOption];
+  let getExtensions = [updateListener];
 
   getExtensions.unshift(basicSetup); //存疑
 
@@ -80,6 +89,7 @@ export function useEnvCodeMirror(props: UseCodeMirror) {
       getExtensions.push(defaultLightThemeOption);
       break;
     case 'dark':
+      getExtensions.push(defaultThemeOption);
       getExtensions.push(oneDark);
       break;
     default:
@@ -99,12 +109,14 @@ export function useEnvCodeMirror(props: UseCodeMirror) {
         '.cm-found-mark': {
           backgroundColor: '#7cb305',
           borderRadius: '2px',
+          color: '#fff',
         },
       });
       const notFoundMarkTheme = EditorView.baseTheme({
         '.cm-not-found-mark': {
           backgroundColor: '#EF4444',
           borderRadius: '2px',
+          color: '#fff',
         },
       });
 
