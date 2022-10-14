@@ -4,10 +4,11 @@ import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
 import { FC } from 'react';
 
+import { SortNode } from '../../../../services/AppSetting.type';
 import { useStore } from '../../../../store';
 
 type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
-  sortedKeys?: { [key: string]: string[] };
+  sortNodeList?: SortNode[];
   treeData: object;
   title?: string;
 };
@@ -28,7 +29,9 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
             title: key,
             key: path,
             children: getNodes(value, path),
-            icon: props.sortedKeys?.[path]?.length && <Badge color={theme.split('-')[1]} />, // 已配置过的节点使用圆点进行提示
+            icon: props.sortNodeList?.find((node) => node.path === path)?.listPath?.length && (
+              <Badge color={theme.split('-')[1]} />
+            ), // 已配置过的节点使用圆点进行提示
           }
         : { title: key, key: path, value };
     });

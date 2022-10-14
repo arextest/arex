@@ -79,7 +79,7 @@ export default class AppSettingService {
         return list;
       }, []),
       'id',
-    );
+    ).sort((a, b) => a.operationName.localeCompare(b.operationName));
   }
 
   // 查询 InterfaceResponse 数据
@@ -102,10 +102,12 @@ export default class AppSettingService {
       '/api/config/comparison/exclusions/useResultAsList',
       { ...params, operationId: params.operationId || undefined },
     );
-    return res.body.map<IgnoreNode>((item) => ({
-      ...item,
-      path: item.exclusions.concat(['']).join('/'),
-    }));
+    return res.body
+      .map<IgnoreNode>((item) => ({
+        ...item,
+        path: item.exclusions.concat(['']).join('/'),
+      }))
+      .sort((a, b) => a.path.localeCompare(b.path));
   }
 
   // 单个新增 IgnoreNode Interface/Global 数据
@@ -159,11 +161,13 @@ export default class AppSettingService {
       ...params,
       operationId: params.operationId || undefined,
     });
-    return res.body.map<SortNode>((item) => ({
-      ...item,
-      path: item.listPath.concat(['']).join('/'),
-      pathKeyList: item.keys.map((key) => key.concat(['']).join('/')),
-    }));
+    return res.body
+      .map<SortNode>((item) => ({
+        ...item,
+        path: item.listPath.concat(['']).join('/'),
+        pathKeyList: item.keys.map((key) => key.concat(['']).join('/')),
+      }))
+      .sort((a, b) => a.path.localeCompare(b.path));
   }
 
   // 单个新增 SortNode Interface 数据

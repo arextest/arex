@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Card, Carousel, Col, message, Row } from 'antd';
+import { Button, Card, Carousel, Col, message, Row, Space } from 'antd';
 import { CarouselRef } from 'antd/lib/carousel';
+import { TreeProps } from 'antd/lib/tree';
 import React, { FC, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
@@ -50,18 +51,14 @@ const NodesSort: FC<{ appId: string }> = (props) => {
 
   const [activeOperationInterface, setActiveOperationInterface] =
     useState<OperationInterface<'Interface'>>();
-  const [activeCollapseKey, setActiveCollapseKey] = useState<string>();
+  const [activeSortNode, setActiveSortNode] = useState<SortNode>();
+  const [checkedNodesData, setCheckedNodesData] = useImmer<{
+    path?: string;
+    pathKeyList: string[];
+  }>({ pathKeyList: [] });
 
   const [nodesEditMode, setNodesEditMode] = useState<NodesEditMode>(NodesEditMode.Tree);
   const [treeEditMode, setTreeEditMode] = useState<TreeEditModeEnum>(TreeEditModeEnum.ArrayTree);
-
-  const [checkedNodesData, setCheckedNodesData] = useImmer<{
-    [key: string]: // interface
-    {
-      [key: string]: // path
-      string[];
-    }; // sorted keys
-  }>({});
 
   const [sortArray, setSortArray] = useState<any[]>();
 
@@ -84,8 +81,8 @@ const NodesSort: FC<{ appId: string }> = (props) => {
     {
       ready: !!activeOperationInterface,
       refreshDeps: [activeOperationInterface?.id],
-      onSuccess(res) {
-        console.log(res);
+      onSuccess() {
+        handleCancelEditResponse();
       },
     },
   );
@@ -114,9 +111,6 @@ const NodesSort: FC<{ appId: string }> = (props) => {
     {
       ready: !!activeOperationInterface?.id,
       refreshDeps: [activeOperationInterface],
-      onSuccess(res) {
-        console.log(res);
-      },
     },
   );
   const interfaceResponseParsed = useMemo<{ [key: string]: any }>(() => {
@@ -145,9 +139,7 @@ const NodesSort: FC<{ appId: string }> = (props) => {
    * @param operationInterface
    */
   const handleEditResponse = (operationInterface: OperationInterface<'Interface'>) => {
-    console.log('setNodesEditMode to Raw', { operationInterface });
     setActiveOperationInterface(operationInterface);
-
     setNodesEditMode(NodesEditMode.Raw);
   };
 
@@ -163,30 +155,6 @@ const NodesSort: FC<{ appId: string }> = (props) => {
         operationResponse: JSON.stringify(parsed),
       });
       handleCancelEditResponse(true);
-    }
-  };
-
-  const handleCancelEditResponse = (reloadResponse?: boolean) => {
-    setNodesEditMode(NodesEditMode.Tree);
-    setTreeEditMode(TreeEditModeEnum.ArrayTree);
-    treeCarousel.current?.goTo(0);
-
-    reloadResponse && queryInterfaceResponse();
-  };
-
-  /**
-   *
-   * @param checked
-   */
-  const handleSortTreeChecked = (checked: string[]) => {
-    // TODO 将更新操作转移至 handleSaveSort
-    if (activeOperationInterface && activeCollapseKey) {
-      setCheckedNodesData((state) => {
-        if (!state[activeOperationInterface.id]) {
-          state[activeOperationInterface.id] = {};
-        }
-        state[activeOperationInterface.id][activeCollapseKey] = checked;
-      });
     }
   };
 
@@ -212,12 +180,19 @@ const NodesSort: FC<{ appId: string }> = (props) => {
     }
   };
 
-  // TODO
-  const handleEditCollapseItem = (sortNode?: SortNode) => {
-    if (sortNode) {
-      setActiveCollapseKey(sortNode.path);
-      handleSetSortArray(sortNode.path);
-    }
+  /**
+   * 点击 PathCollapseItem 或 ArrayTreeItem 时
+   * @param path
+   * @param sortNode 点击 ArrayTreeItem 新的未配置节点时 sortNode 为 undefined
+   */
+  const handleEditCollapseItem = (path: string, sortNode?: SortNode) => {
+    setActiveSortNode(sortNode);
+    setCheckedNodesData((state) => {
+      state.path = path;
+      state.pathKeyList = sortNode?.pathKeyList || [];
+    });
+
+    handleSetSortArray(path);
     setNodesEditMode(NodesEditMode.Tree);
     setTreeEditMode(TreeEditModeEnum.SortTree);
     treeCarousel.current?.goTo(1);
@@ -236,16 +211,44 @@ const NodesSort: FC<{ appId: string }> = (props) => {
     setSortArray(value);
   };
 
-  const handleSaveSort = () => {
-    const pathKeyList =
-      checkedNodesData[activeOperationInterface?.id || '']?.[activeCollapseKey || ''];
+  /**
+   * 取消编辑 response
+   * @param reloadResponse 是否重新加载 interfaceResponse
+   */
+  const handleCancelEditResponse = (reloadResponse?: boolean) => {
+    setNodesEditMode(NodesEditMode.Tree);
+    setTreeEditMode(TreeEditModeEnum.ArrayTree);
+    treeCarousel.current?.goTo(0);
+    setActiveSortNode(undefined);
+    reloadResponse && queryInterfaceResponse();
+  };
 
-    if (activeOperationInterface && activeCollapseKey) {
+  const handleSortTreeChecked: TreeProps['onCheck'] = (checkedKeys) => {
+    setCheckedNodesData((state) => {
+      state.pathKeyList = checkedKeys as string[];
+    });
+  };
+
+  const handleSortTreeSelected: TreeProps['onSelect'] = (selectedKeys) => {
+    const key = selectedKeys[0] as string;
+    if (key) {
+      setCheckedNodesData((state) => {
+        const includes = state.pathKeyList.includes(key);
+        state.pathKeyList = includes
+          ? state.pathKeyList.filter((pathKey) => pathKey !== key)
+          : [...state.pathKeyList, key];
+      });
+    }
+  };
+
+  const handleSaveSort = () => {
+    // TODO 1.区分 insert 和 update, 2. 添加 loading 状态
+    if (activeOperationInterface) {
       insertSortNode({
         appId: props.appId,
         operationId: activeOperationInterface.id,
-        listPath: activeCollapseKey?.split('/').filter(Boolean),
-        keys: pathKeyList.map((key) => key?.split('/').filter(Boolean)),
+        listPath: checkedNodesData?.path?.split('/').filter(Boolean) || [],
+        keys: checkedNodesData.pathKeyList.map((key) => key?.split('/').filter(Boolean)),
       });
     }
   };
@@ -254,11 +257,11 @@ const NodesSort: FC<{ appId: string }> = (props) => {
     <>
       <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
         <Col span={10}>
-          <h3>Interfaces</h3>
           <PathCollapse
+            title='Interfaces'
             interfaces={operationList}
             activeKey={activeOperationInterface?.id}
-            activeCollapseKey={activeCollapseKey}
+            activeCollapseKey={activeSortNode}
             sortNodes={sortNodeList}
             onEdit={handleEditCollapseItem}
             onChange={handleNodesCollapseClick}
@@ -278,9 +281,14 @@ const NodesSort: FC<{ appId: string }> = (props) => {
                 <SpaceBetweenWrapper style={{ paddingBottom: '8px' }}>
                   <h3>{TreeEditMode[treeEditMode]}</h3>
                   {treeEditMode === TreeEditModeEnum.SortTree && (
-                    <Button size='small' type='primary' onClick={handleSaveSort}>
-                      {t('save')}
-                    </Button>
+                    <Space>
+                      <Button size='small' onClick={() => handleCancelEditResponse()}>
+                        {t('cancel')}
+                      </Button>
+                      <Button size='small' type='primary' onClick={handleSaveSort}>
+                        {t('save')}
+                      </Button>
+                    </Space>
                   )}
                 </SpaceBetweenWrapper>
 
@@ -290,33 +298,24 @@ const NodesSort: FC<{ appId: string }> = (props) => {
                       <ArrayTree
                         title={activeOperationInterface?.operationName}
                         treeData={interfaceResponseParsed}
-                        selectedKeys={activeCollapseKey ? [activeCollapseKey] : []}
-                        sortedKeys={checkedNodesData[activeOperationInterface?.id || '']}
-                        onSelect={(selectedKeys, info) => {
-                          console.log({ selectedKeys, info });
-                          // TODO 选中待排序数组对象
-                          handleEditCollapseItem(info.selectedNodes[0].key.toString());
+                        sortNodeList={sortNodeList}
+                        onSelect={(selectedKeys) => {
+                          handleEditCollapseItem(
+                            selectedKeys[0] as string,
+                            sortNodeList.find((node) => node.path === selectedKeys[0]),
+                          );
                         }}
                       />
                     </div>
 
                     <div>
-                      {activeCollapseKey && (
-                        <SortTree
-                          title={activeCollapseKey}
-                          treeData={sortArray}
-                          checkedKeys={
-                            checkedNodesData[activeOperationInterface?.id || '']?.[
-                              activeCollapseKey
-                            ]
-                          }
-                          onCheck={(checkedKeys, info) =>
-                            handleSortTreeChecked(
-                              info.checkedNodes.map((node) => node.key.toString()),
-                            )
-                          }
-                        />
-                      )}
+                      <SortTree
+                        title={checkedNodesData.path}
+                        treeData={sortArray}
+                        checkedKeys={checkedNodesData.pathKeyList}
+                        onCheck={handleSortTreeChecked}
+                        onSelect={handleSortTreeSelected}
+                      />
                     </div>
                   </TreeCarousel>
                 </Card>
