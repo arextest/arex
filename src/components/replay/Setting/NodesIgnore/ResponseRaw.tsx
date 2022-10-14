@@ -26,7 +26,7 @@ const ResponseRaw: FC<ResponseRawProps> = (props) => {
           <Button size='small' onClick={onCancel}>
             {t('cancel')}
           </Button>
-          <Button size='small' onClick={() => onSave && onSave(value)}>
+          <Button size='small' type='primary' onClick={() => onSave && onSave(value)}>
             {t('save')}
           </Button>
         </Space>
