@@ -65,14 +65,19 @@ const NodesSort: FC<{ appId: string }> = (props) => {
   /**
    * 请求 InterfacesList
    */
-  const { data: operationList = [] } = useRequest(() =>
+  const { data: operationList = [], loading: loadingOperationList } = useRequest(() =>
     AppSettingService.queryInterfacesList<'Interface'>({ id: props.appId }),
   );
 
   /**
    * 获取 SortNode
    */
-  const { data: sortNodeList = [], run: querySortNode } = useRequest(
+  const {
+    data: sortNodeList = [],
+    loading: loadingSortNode,
+    run: querySortNode,
+    mutate: setSortNodeList,
+  } = useRequest(
     () =>
       AppSettingService.querySortNode({
         appId: props.appId,
@@ -81,6 +86,9 @@ const NodesSort: FC<{ appId: string }> = (props) => {
     {
       ready: !!activeOperationInterface,
       refreshDeps: [activeOperationInterface?.id],
+      onBefore() {
+        setSortNodeList([]);
+      },
       onSuccess() {
         handleCancelEditResponse();
       },
@@ -106,7 +114,11 @@ const NodesSort: FC<{ appId: string }> = (props) => {
   /**
    * 获取 InterfaceResponse
    */
-  const { data: interfaceResponse, run: queryInterfaceResponse } = useRequest(
+  const {
+    data: interfaceResponse,
+    run: queryInterfaceResponse,
+    loading: loadingInterfaceResponse,
+  } = useRequest(
     () => AppSettingService.queryInterfaceResponse({ id: activeOperationInterface!.id }),
     {
       ready: !!activeOperationInterface?.id,
@@ -259,6 +271,8 @@ const NodesSort: FC<{ appId: string }> = (props) => {
         <Col span={10}>
           <PathCollapse
             title='Interfaces'
+            loading={loadingOperationList}
+            loadingPanel={loadingSortNode}
             interfaces={operationList}
             activeKey={activeOperationInterface?.id}
             activeCollapseKey={activeSortNode}
@@ -298,6 +312,7 @@ const NodesSort: FC<{ appId: string }> = (props) => {
                       <ArrayTree
                         title={activeOperationInterface?.operationName}
                         treeData={interfaceResponseParsed}
+                        loading={loadingInterfaceResponse}
                         sortNodeList={sortNodeList}
                         onSelect={(selectedKeys) => {
                           handleEditCollapseItem(

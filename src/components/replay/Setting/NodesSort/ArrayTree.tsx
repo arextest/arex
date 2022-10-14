@@ -9,6 +9,7 @@ import { useStore } from '../../../../store';
 
 type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
   sortNodeList?: SortNode[];
+  loading?: boolean;
   treeData: object;
   title?: string;
 };
@@ -41,6 +42,7 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
     <Card
       bordered={false}
       title={`${props.title} (click node to ignore)`}
+      loading={props.loading}
       bodyStyle={{ padding: '8px 16px' }}
       headStyle={{ padding: '0 16px', margin: '-8px 0' }}
     >
