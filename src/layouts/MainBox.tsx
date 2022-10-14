@@ -200,6 +200,9 @@ const MainTabs = styled((props: TabsProps) => {
     height: 36px;
     border-left: #000c17 1px solid;
   }
+  .ant-tabs-content {
+    height: 100%;
+  }
 `;
 
 const MainTabPane = styled((props: TabPaneProps) => (
