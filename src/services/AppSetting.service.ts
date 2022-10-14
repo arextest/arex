@@ -22,6 +22,7 @@ import {
   UpdateInterfaceResponseReq,
   UpdateRecordSettingReq,
   UpdateRecordSettingRes,
+  UpdateSortNodeReq,
 } from './AppSetting.type';
 
 export default class AppSettingService {
@@ -174,6 +175,15 @@ export default class AppSettingService {
   static async insertSortNode(params: SortNodeBase) {
     const res = await request.post<boolean>(
       '/api/config/comparison/listsort/modify/INSERT',
+      params,
+    );
+    return res.body;
+  }
+
+  // 更新 IgnoreNode Interface/Global 数据
+  static async updateSortNode(params: UpdateSortNodeReq) {
+    const res = await request.post<boolean>(
+      '/api/config/comparison/listsort/modify/UPDATE',
       params,
     );
     return res.body;

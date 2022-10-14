@@ -14,7 +14,8 @@ const SortTree: FC<SortTreeProps> = (props) => {
 
     const sample = Array.isArray(data) ? data[0] : data;
 
-    if (['number', 'string'].includes(typeof sample)) return [{ title: '%value%', key: '%value%' }];
+    if (['number', 'string'].includes(typeof sample))
+      return [{ title: '%value%', key: '%value%/' }];
 
     const entries = Object.entries(sample);
     return entries.map(([key, value]) => {

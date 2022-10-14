@@ -126,11 +126,14 @@ export interface QueryNodeReq<T extends OperationType> {
   operationId?: OperationId<T>;
 }
 
-export type SortNodeBase = {
-  appId: string;
-  operationId: OperationId<'Interface'>;
+export type SortNodePathKey = {
   listPath: string[];
   keys: string[][];
+};
+
+export type SortNodeBase = SortNodePathKey & {
+  appId: string;
+  operationId: OperationId<'Interface'>;
 };
 
 export type SortNode = SortNodeBase & {
@@ -142,3 +145,7 @@ export type SortNode = SortNodeBase & {
   path: string;
   pathKeyList: string[];
 };
+
+export interface UpdateSortNodeReq extends SortNodePathKey {
+  id: string;
+}

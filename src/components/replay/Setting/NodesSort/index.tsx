@@ -95,12 +95,9 @@ const NodesSort: FC<{ appId: string }> = (props) => {
     },
   );
 
-  /**
-   * 更新 SortNode
-   */
-  const { run: insertSortNode } = useRequest(AppSettingService.insertSortNode, {
+  const SaveSortNodeOptions = {
     manual: true,
-    onSuccess(success) {
+    onSuccess(success: boolean) {
       if (success) {
         querySortNode();
         treeCarousel.current?.goTo(0);
@@ -109,7 +106,33 @@ const NodesSort: FC<{ appId: string }> = (props) => {
         message.error('Update failed');
       }
     },
-  });
+  };
+
+  /**
+   * 新增 SortNode
+   */
+  const { run: insertSortNode } = useRequest(AppSettingService.insertSortNode, SaveSortNodeOptions);
+
+  /**
+   * 更新 SortNode
+   */
+  const { run: updateSortNode } = useRequest(AppSettingService.updateSortNode, SaveSortNodeOptions);
+
+  const handleSaveSort = () => {
+    const params = {
+      listPath: checkedNodesData?.path?.split('/').filter(Boolean) || [],
+      keys: checkedNodesData.pathKeyList.map((key) => key?.split('/').filter(Boolean)),
+    };
+    if (activeSortNode) {
+      updateSortNode({ id: activeSortNode.id, ...params });
+    } else {
+      insertSortNode({
+        ...params,
+        appId: props.appId,
+        operationId: activeOperationInterface!.id,
+      });
+    }
+  };
 
   /**
    * 获取 InterfaceResponse
@@ -253,18 +276,6 @@ const NodesSort: FC<{ appId: string }> = (props) => {
     }
   };
 
-  const handleSaveSort = () => {
-    // TODO 1.区分 insert 和 update, 2. 添加 loading 状态
-    if (activeOperationInterface) {
-      insertSortNode({
-        appId: props.appId,
-        operationId: activeOperationInterface.id,
-        listPath: checkedNodesData?.path?.split('/').filter(Boolean) || [],
-        keys: checkedNodesData.pathKeyList.map((key) => key?.split('/').filter(Boolean)),
-      });
-    }
-  };
-
   return (
     <>
       <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
@@ -314,12 +325,12 @@ const NodesSort: FC<{ appId: string }> = (props) => {
                         treeData={interfaceResponseParsed}
                         loading={loadingInterfaceResponse}
                         sortNodeList={sortNodeList}
-                        onSelect={(selectedKeys) => {
+                        onSelect={(selectedKeys) =>
                           handleEditCollapseItem(
                             selectedKeys[0] as string,
                             sortNodeList.find((node) => node.path === selectedKeys[0]),
-                          );
-                        }}
+                          )
+                        }
                       />
                     </div>
 

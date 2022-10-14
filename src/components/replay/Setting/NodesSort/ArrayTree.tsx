@@ -30,7 +30,7 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
             title: key,
             key: path,
             children: getNodes(value, path),
-            icon: props.sortNodeList?.find((node) => node.path === path)?.listPath?.length && (
+            icon: props.sortNodeList?.find((node) => node.path === path)?.pathKeyList?.length && (
               <Badge color={theme.split('-')[1]} />
             ), // 已配置过的节点使用圆点进行提示
           }
