@@ -31,10 +31,12 @@ import {
   FormHeaderWrapper,
   FormTable,
   Response,
+  ResponseCompare,
   ResponseTest,
   SaveRequestButton,
   useColumns,
 } from '../components/httpRequest';
+import Mock from '../components/httpRequest/Mock';
 import SmartEnvInput from '../components/smart/EnvInput';
 import { Label, SpaceBetweenWrapper } from '../components/styledComponents';
 import {
@@ -818,6 +820,9 @@ const HttpRequest: FC<HttpRequestProps> = ({
               >
                 <ResponseTest getTestVal={getTestVal} OldTestVal={TestVal}></ResponseTest>
               </TabPane>
+              {/*<TabPane tab={'Mock'} key='6'>*/}
+              {/*  <Mock></Mock>*/}
+              {/*</TabPane>*/}
             </Tabs>
           </AnimateAutoHeight>
         </Allotment.Pane>
@@ -837,8 +842,8 @@ const HttpRequest: FC<HttpRequestProps> = ({
                     size={responseMeta.size}
                   />
                 ) : (
-                  <div>ResponseCompare</div>
-                  // <ResponseCompare responses={[baseResponse?.data, testResponse?.data]} />
+                  // <div>ResponseCompare</div>
+                  <ResponseCompare responses={[baseResponse?.data, testResponse?.data]} />
                 )}
               </Spin>
             ) : (

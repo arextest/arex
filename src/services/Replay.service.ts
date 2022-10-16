@@ -127,13 +127,13 @@ export default class ReplayService {
 
   static async queryConfigTemplate(params: { appId: string }) {
     return request
-      .post<QueryConfigTemplateRes>('/api/config/queryConfigTemplate', params)
+      .post<QueryConfigTemplateRes>('/api/config/yamlTemplate/queryConfigTemplate', params)
       .then((res) => Promise.resolve(res.body));
   }
 
   static async pushConfigTemplate(params: PushConfigTemplateReq) {
     return request
-      .post<PushConfigTemplateRes>('/api/config/pushConfigTemplate', params)
+      .post<PushConfigTemplateRes>('/api/config/yamlTemplate/pushConfigTemplate', params)
       .then((res) => Promise.resolve(res.body));
   }
 

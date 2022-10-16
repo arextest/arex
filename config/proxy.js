@@ -20,6 +20,11 @@ export default {
       changeOrigin: true,
       pathRewrite: { '/schedule': '/api' },
     },
+    '/storage': {
+      target: 'http://10.5.153.1:8093',
+      changeOrigin: true,
+      pathRewrite: { '/storage': '/api' },
+    },
   },
   PROD: {
     '/api': {
