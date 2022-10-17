@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Button, Checkbox, Collapse, Form, message, Select, Spin, TimePicker } from 'antd';
 import moment, { Moment } from 'moment';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { decodeWeekCode, encodeWeekCode } from '../../../../helpers/record/util';
@@ -55,9 +55,13 @@ const defaultValues: Omit<
 
 const Record: FC<SettingRecordProps> = (props) => {
   const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
+  const [loading, setLoading] = useState(false);
 
-  const { loading } = useRequest(AppSettingService.queryRecordSetting, {
+  useRequest(AppSettingService.queryRecordSetting, {
     defaultParams: [{ id: props.appId }],
+    onBefore() {
+      setLoading(true);
+    },
     onSuccess(res) {
       setInitialValues({
         period: [moment(res.allowTimeOfDayFrom, format), moment(res.allowTimeOfDayTo, format)],
@@ -73,6 +77,8 @@ const Record: FC<SettingRecordProps> = (props) => {
       setInitialValues((state) => {
         state.allowDayOfWeeks = decodeWeekCode(res.allowDayOfWeeks);
       });
+
+      setLoading(false);
     },
   });
 
