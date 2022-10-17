@@ -50,17 +50,19 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
         bodyStyle={{ padding: '8px 16px' }}
         headStyle={{ padding: '0 16px', margin: '-8px 0' }}
       >
-        {Object.keys(props.treeData).length ? (
-          <Tree multiple defaultExpandAll {...props} treeData={getNodes(props.treeData, '')} />
-        ) : (
-          <FlexCenterWrapper style={{ padding: '24px' }}>
-            <Empty description={'Empty Response'} style={{ paddingBottom: '16px' }} />
+        <Spin spinning={props.loading}>
+          {Object.keys(props.treeData).length ? (
+            <Tree multiple defaultExpandAll {...props} treeData={getNodes(props.treeData, '')} />
+          ) : (
+            <FlexCenterWrapper style={{ padding: '24px' }}>
+              <Empty description={'Empty Response'} style={{ paddingBottom: '16px' }} />
 
-            <Button size='small' type='primary' onClick={() => props.onEditResponse?.()}>
-              Config Response
-            </Button>
-          </FlexCenterWrapper>
-        )}
+              <Button size='small' type='primary' onClick={() => props.onEditResponse?.()}>
+                Config Response
+              </Button>
+            </FlexCenterWrapper>
+          )}
+        </Spin>
       </Card>
     </IgnoreTreeWrapper>
   );
