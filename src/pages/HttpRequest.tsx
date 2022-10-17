@@ -189,6 +189,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
     { key: '', value: '', active: true },
   ]);
   const [isTestResult, setIsTestResult] = useState(true);
+  const [recordId, setRecordId] = useState('');
   useEffect(() => {
     handleUpdateUrl();
     response &&
@@ -399,6 +400,8 @@ const HttpRequest: FC<HttpRequestProps> = ({
         setTestUrl(res.body.testAddress?.endpoint || '');
         setBaseUrl(res.body.baseAddress?.endpoint || '');
         setTestVal(res.body.testScript || '');
+        // console.log(res.body,'ressss')
+        setRecordId(res.body.recordId);
       },
     },
   );
@@ -568,7 +571,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
           height: 100%;
         `}
       >
-        <Allotment.Pane>
+        <Allotment.Pane preferredSize={400}>
           <AnimateAutoHeight>
             <SpaceBetweenWrapper>
               {nodeInfoInCollectionTreeData.raw.length > 0 ? (
@@ -822,9 +825,13 @@ const HttpRequest: FC<HttpRequestProps> = ({
               >
                 <ResponseTest getTestVal={getTestVal} OldTestVal={TestVal}></ResponseTest>
               </TabPane>
-              {/*<TabPane tab={'Mock'} key='6'>*/}
-              {/*  <Mock></Mock>*/}
-              {/*</TabPane>*/}
+              {recordId ? (
+                <TabPane tab={'Mock'} key='6'>
+                  <div>
+                    <Mock recordId={recordId}></Mock>
+                  </div>
+                </TabPane>
+              ) : null}
             </Tabs>
           </AnimateAutoHeight>
         </Allotment.Pane>

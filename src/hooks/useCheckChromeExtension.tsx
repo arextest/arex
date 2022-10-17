@@ -2,6 +2,7 @@ import { message } from 'antd';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { getChromeVersion } from '../helpers/utils';
 import { useStore } from '../store';
 
 const useCheckChromeExtension = () => {
@@ -40,6 +41,8 @@ const useCheckChromeExtension = () => {
         </span>,
       );
       console.info(t('http.extensionIncorrect', ` ${window.__AREX_EXTENSION_VERSION__}`));
+    } else if (getChromeVersion() < 0) {
+      message.info('Your chrome version is less than 89, please upgrade chrome.');
     } else {
       useStore.setState({ extensionInstalled: true });
       console.info(`[AREX] Extension installed, version ${window.__AREX_EXTENSION_VERSION__}`);
