@@ -66,6 +66,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
     {
       ready: activeOperationInterface !== undefined,
       refreshDeps: [activeOperationInterface],
+      loadingDelay: 100,
       onBefore() {
         setIgnoreNodeList([]);
       },
@@ -122,6 +123,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
     {
       ready: !!activeOperationInterface?.id && activeOperationInterface?.id !== GLOBAL_OPERATION_ID,
       refreshDeps: [activeOperationInterface],
+      loadingDelay: 100,
       onBefore() {
         setInterfaceResponse();
       },
