@@ -40,6 +40,7 @@
     "click-to-react-component": "^1.0.8",
     "codemirror": "^6.0.1",
     "diff-match-patch": "^1.0.5",
+    "fp-ts": "2.12.3",
     "husky": "^8.0.1",
     "i18next": "^21.6.6",
     "i18next-browser-languagedetector": "^6.1.2",
