@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Card, Carousel, Col, Empty, message, Row, Space } from 'antd';
+import { Button, Card, Carousel, Col, message, Row, Space } from 'antd';
 import { CarouselRef } from 'antd/lib/carousel';
 import { TreeProps } from 'antd/lib/tree';
 import React, { FC, useMemo, useRef, useState } from 'react';
@@ -10,11 +10,8 @@ import { useImmer } from 'use-immer';
 import { tryParseJsonString, tryPrettierJsonString } from '../../../../helpers/utils';
 import AppSettingService from '../../../../services/AppSetting.service';
 import { OperationInterface, SortNode } from '../../../../services/AppSetting.type';
-import {
-  EditAreaPlaceholder,
-  FlexCenterWrapper,
-  SpaceBetweenWrapper,
-} from '../../../styledComponents';
+import { EditAreaPlaceholder, SpaceBetweenWrapper } from '../../../styledComponents';
+import EmptyResponse from '../NodesIgnore/EmptyResponse';
 import ResponseRaw from '../NodesIgnore/ResponseRaw';
 import ArrayTree from './ArrayTree';
 import PathCollapse from './PathCollapse';
@@ -353,13 +350,7 @@ const NodesSort: FC<{ appId: string }> = (props) => {
                       </div>
                     </TreeCarousel>
                   ) : (
-                    <FlexCenterWrapper style={{ padding: '24px' }}>
-                      <Empty description={'Empty Response'} style={{ paddingBottom: '16px' }} />
-
-                      <Button size='small' type='primary' onClick={() => handleEditResponse()}>
-                        Config Response
-                      </Button>
-                    </FlexCenterWrapper>
+                    <EmptyResponse onClick={handleEditResponse} />
                   )}
                 </Card>
               </>
