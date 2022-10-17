@@ -1,14 +1,15 @@
 import { ApiOutlined, MoreOutlined } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Dropdown, Input, Menu, Popconfirm, Space } from 'antd';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+
+import { methodMap } from '../../../constant';
 import SearchHeighLight from '../../../helpers/collection/searchHeighLight';
 import { treeFindPath } from '../../../helpers/collection/util';
 import { CollectionService } from '../../../services/CollectionService';
 import { useStore } from '../../../store';
-import { methodMap } from '../../../constant';
-import { css } from '@emotion/react';
 
 const PrefixIcon = styled(
   (props: { icon: ReactNode; border?: boolean }) => <div {...props}>{props.icon}</div>,
@@ -170,14 +171,15 @@ function CollectionTitle({
       setRenameKey('');
     });
   };
+  const method = useMemo(() => {
+    return Object.keys(methodMap).includes(val.method) ? val.method : 'UNKNOWN';
+  }, [val]);
   return (
     <>
       <div className={'collection-title-render'}>
         <div className={'left'}>
           {val.nodeType === 1 && (
-            <span css={css(`color:${methodMap[val.method || 'UNKNOWN'].color};margin-right:4px`)}>
-              {val.method || 'UNKNOWN'}
-            </span>
+            <span css={css(`color:${methodMap[method].color};margin-right:4px`)}>{method}</span>
           )}
           {val.nodeType === 2 && <PrefixIcon border icon='case' />}
           <div className={'content'}>
