@@ -59,7 +59,7 @@ const Record: FC<SettingRecordProps> = (props) => {
   const { loading } = useRequest(AppSettingService.queryRecordSetting, {
     defaultParams: [{ id: props.appId }],
     onSuccess(res) {
-      setInitialValues(() => ({
+      setInitialValues({
         period: [moment(res.allowTimeOfDayFrom, format), moment(res.allowTimeOfDayTo, format)],
         sampleRate: res.sampleRate,
         allowDayOfWeeks: [],
@@ -68,7 +68,7 @@ const Record: FC<SettingRecordProps> = (props) => {
           key,
           value: value.join(','),
         })),
-      }));
+      });
 
       setInitialValues((state) => {
         state.allowDayOfWeeks = decodeWeekCode(res.allowDayOfWeeks);
@@ -84,7 +84,6 @@ const Record: FC<SettingRecordProps> = (props) => {
   });
 
   const onFinish = (values: SettingFormType) => {
-    console.log('finished', { values });
     const allowDayOfWeeks = encodeWeekCode(values.allowDayOfWeeks);
     const [allowTimeOfDayFrom, allowTimeOfDayTo] = values.period.map((m: any) => m.format(format));
 
