@@ -33,7 +33,7 @@ export default {
       pathRewrite: { '/api': '/api' },
     },
     '/config': {
-      target: 'http://10.5.153.1:8091',
+      target: 'http://10.5.153.1:8090',
       changeOrigin: true,
       pathRewrite: { '/config': '/api/config' },
     },
@@ -46,6 +46,11 @@ export default {
       target: 'http://10.5.153.1:8092',
       changeOrigin: true,
       pathRewrite: { '/schedule': '/api' },
+    },
+    '/storage': {
+      target: 'http://10.5.153.1:8093',
+      changeOrigin: true,
+      pathRewrite: { '/storage': '/api' },
     },
   },
 };
