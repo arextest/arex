@@ -1,17 +1,18 @@
 import styled from '@emotion/styled';
-import { Button, Card, Tree } from 'antd';
+import { Button, Card, Empty, Spin, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { SpaceBetweenWrapper } from '../../../styledComponents';
+import { FlexCenterWrapper, SpaceBetweenWrapper } from '../../../styledComponents';
 
 type IgnoreTreeProps = Omit<TreeProps, 'treeData'> & {
   loading?: boolean;
   treeData: object;
   title?: string;
   onSave?: () => void;
+  onEditResponse?: () => void;
 };
 const IgnoreTreeWrapper = styled.div`
   .ant-tree-node-selected {
@@ -46,11 +47,20 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
 
       <Card
         title={`${props.title} (click node to ignore)`}
-        loading={props.loading}
         bodyStyle={{ padding: '8px 16px' }}
         headStyle={{ padding: '0 16px', margin: '-8px 0' }}
       >
-        <Tree multiple defaultExpandAll {...props} treeData={getNodes(props.treeData, '')} />
+        {Object.keys(props.treeData).length ? (
+          <Tree multiple defaultExpandAll {...props} treeData={getNodes(props.treeData, '')} />
+        ) : (
+          <FlexCenterWrapper style={{ padding: '24px' }}>
+            <Empty description={'Empty Response'} style={{ paddingBottom: '16px' }} />
+
+            <Button size='small' type='primary' onClick={() => props.onEditResponse?.()}>
+              Config Response
+            </Button>
+          </FlexCenterWrapper>
+        )}
       </Card>
     </IgnoreTreeWrapper>
   );

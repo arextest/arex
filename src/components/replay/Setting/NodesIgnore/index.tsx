@@ -66,7 +66,6 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
     {
       ready: activeOperationInterface !== undefined,
       refreshDeps: [activeOperationInterface],
-      loadingDelay: 100,
       onBefore() {
         setIgnoreNodeList([]);
       },
@@ -123,7 +122,6 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
     {
       ready: !!activeOperationInterface?.id && activeOperationInterface?.id !== GLOBAL_OPERATION_ID,
       refreshDeps: [activeOperationInterface],
-      loadingDelay: 100,
       onBefore() {
         setInterfaceResponse();
       },
@@ -156,9 +154,8 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
    * 开始编辑某个 interface 的 response
    * @param operationInterface
    */
-  const handleEditResponse = (operationInterface: InterfacePick) => {
-    console.log('setNodesEditMode to Raw', { operationInterface });
-    setActiveOperationInterface(operationInterface);
+  const handleEditResponse = (operationInterface?: InterfacePick) => {
+    operationInterface && setActiveOperationInterface(operationInterface);
 
     setNodesEditMode(NodesEditMode.Raw);
   };
@@ -266,6 +263,7 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
                   loading={loadingInterfaceResponse}
                   onSelect={handleIgnoreTreeSelect}
                   onSave={handleIgnoreSave}
+                  onEditResponse={handleEditResponse}
                 />
               </>
             ) : (
