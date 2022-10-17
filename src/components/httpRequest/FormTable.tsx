@@ -16,23 +16,35 @@ const FormTable = styled(Table)<TableProps<KeyValueType> & { showHeader?: boolea
   }
 `;
 
+/**
+ * generate columns config
+ * @param paramsUpdater
+ * @param options
+ */
 export const useColumns = (
   paramsUpdater?: Updater<KeyValueType[]>,
-  editable?: boolean,
+  options?: {
+    editable?: boolean;
+    disable?: boolean;
+    placeholder?: {
+      key?: string;
+      value?: string;
+    };
+  },
 ): ColumnsType<KeyValueType> => {
+  const _disable = options?.disable ?? true;
   const { t } = useTranslation('common');
+
   const handleChange = (i: number, attr: 'key' | 'value', value: string) => {
-    paramsUpdater &&
-      paramsUpdater((params) => {
-        params[i][attr] = value;
-      });
+    paramsUpdater?.((params) => {
+      params[i][attr] = value;
+    });
   };
 
   const handleDisable = (i: number) => {
-    paramsUpdater &&
-      paramsUpdater((params) => {
-        params[i].active = !params[i].active;
-      });
+    paramsUpdater?.((params) => {
+      params[i].active = !params[i].active;
+    });
   };
 
   const keyValueColumns: ColumnsType<KeyValueType> = [
@@ -40,13 +52,13 @@ export const useColumns = (
       title: t('key'),
       dataIndex: 'key',
       key: 'key',
-      render: editable
+      render: options?.editable
         ? (text, record, i) => (
             <Input
               value={text}
               bordered={false}
-              placeholder={t('key')}
-              disabled={!record.active}
+              placeholder={options?.placeholder?.key ?? t('key')}
+              disabled={_disable && !record.active}
               onChange={(e) => handleChange(i, 'key', e.target.value)}
             />
           )
@@ -56,13 +68,13 @@ export const useColumns = (
       title: t('value'),
       dataIndex: 'value',
       key: 'value',
-      render: editable
+      render: options?.editable
         ? (text, record, i) => (
             <Input
               value={text}
               bordered={false}
-              placeholder={t('value')}
-              disabled={!record.active}
+              placeholder={options?.placeholder?.value ?? t('value')}
+              disabled={_disable && !record.active}
               onChange={(e) => handleChange(i, 'value', e.target.value)}
             />
           )
@@ -70,42 +82,44 @@ export const useColumns = (
     },
   ];
 
-  return editable
-    ? [
-        ...keyValueColumns,
-        {
-          title: '操作',
-          key: 'actions',
-          width: 72,
-          align: 'center',
-          className: 'actions',
-          render: (text, record, i) => (
-            <Space>
-              <Tooltip title={record.active ? t('disable') : t('enable')}>
-                <Button
-                  type='text'
-                  size='small'
-                  icon={record.active ? <StopOutlined /> : <CheckCircleOutlined />}
-                  onClick={() => handleDisable(i)}
-                />
-              </Tooltip>
-              <Tooltip title={t('remove')}>
-                <Button
-                  type='text'
-                  size='small'
-                  icon={<DeleteOutlined />}
-                  onClick={() =>
-                    paramsUpdater?.((params) => {
-                      params.splice(i, 1);
-                    })
-                  }
-                />
-              </Tooltip>
-            </Space>
-          ),
-        },
-      ]
-    : keyValueColumns;
+  if (options?.editable) {
+    keyValueColumns.push({
+      title: '操作',
+      key: 'actions',
+      width: 72,
+      align: 'center',
+      className: 'actions',
+      render: (text, record, i) => (
+        <Space>
+          {_disable && (
+            <Tooltip title={record.active ? t('disable') : t('enable')}>
+              <Button
+                type='text'
+                size='small'
+                icon={record.active ? <StopOutlined /> : <CheckCircleOutlined />}
+                onClick={() => handleDisable(i)}
+              />
+            </Tooltip>
+          )}
+
+          <Tooltip title={t('remove')}>
+            <Button
+              type='text'
+              size='small'
+              icon={<DeleteOutlined />}
+              onClick={() =>
+                paramsUpdater?.((params) => {
+                  params.splice(i, 1);
+                })
+              }
+            />
+          </Tooltip>
+        </Space>
+      ),
+    });
+  }
+
+  return keyValueColumns;
 };
 
 export default FormTable;

@@ -2,13 +2,19 @@ import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Button, Checkbox, Collapse, Form, message, Select, Spin, TimePicker } from 'antd';
 import moment, { Moment } from 'moment';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { decodeWeekCode, encodeWeekCode } from '../../../../helpers/record/util';
+import { KeyValueType } from '../../../../pages/HttpRequest';
 import AppSettingService from '../../../../services/AppSetting.service';
-import { QueryRecordSettingRes } from '../../../../services/AppSetting.type';
-import { DurationInput, DynamicClassesEditableTable, IntegerStepSlider } from './FormItem';
+import { ExcludeOperationMap, QueryRecordSettingRes } from '../../../../services/AppSetting.type';
+import {
+  DurationInput,
+  DynamicClassesEditableTable,
+  ExcludeOperation,
+  IntegerStepSlider,
+} from './FormItem';
 
 const { Panel } = Collapse;
 
@@ -21,11 +27,7 @@ type SettingFormType = {
   allowDayOfWeeks: number[];
   sampleRate: number;
   period: Moment[];
-  excludeOperationSet: string[];
-  excludeDependentOperationSet: string[];
-  excludeDependentServiceSet: string[];
-  includeOperationSet: string[];
-  includeServiceSet: string[];
+  excludeOperationMap: KeyValueType[];
   timeMock: boolean;
 };
 
@@ -33,43 +35,50 @@ const format = 'HH:mm';
 
 const defaultValues: Omit<
   QueryRecordSettingRes,
-  'appId' | 'modifiedTime' | 'allowDayOfWeeks' | 'allowTimeOfDayFrom' | 'allowTimeOfDayTo'
+  | 'appId'
+  | 'modifiedTime'
+  | 'allowDayOfWeeks'
+  | 'allowTimeOfDayFrom'
+  | 'allowTimeOfDayTo'
+  | 'excludeOperationMap'
 > & {
   allowDayOfWeeks: number[];
   period: Moment[];
+  excludeOperationMap: KeyValueType[];
 } = {
   allowDayOfWeeks: [],
   sampleRate: 1,
   period: [moment('00:01', format), moment('23:59', format)],
-  excludeOperationSet: [],
-  excludeDependentOperationSet: [],
-  excludeDependentServiceSet: [],
-  includeOperationSet: [],
-  includeServiceSet: [],
+  excludeOperationMap: [],
   timeMock: false,
 };
 
 const Record: FC<SettingRecordProps> = (props) => {
   const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
+  const [loading, setLoading] = useState(false);
 
-  const { loading } = useRequest(AppSettingService.queryRecordSetting, {
+  useRequest(AppSettingService.queryRecordSetting, {
     defaultParams: [{ id: props.appId }],
+    onBefore() {
+      setLoading(true);
+    },
     onSuccess(res) {
-      setInitialValues(() => ({
+      setInitialValues({
         period: [moment(res.allowTimeOfDayFrom, format), moment(res.allowTimeOfDayTo, format)],
         sampleRate: res.sampleRate,
         allowDayOfWeeks: [],
-        excludeOperationSet: res.excludeOperationSet,
-        excludeDependentOperationSet: res.excludeDependentOperationSet,
-        excludeDependentServiceSet: res.excludeDependentServiceSet,
-        includeOperationSet: res.includeOperationSet,
-        includeServiceSet: res.includeServiceSet,
         timeMock: res.timeMock,
-      }));
+        excludeOperationMap: Object.entries(res.excludeOperationMap).map(([key, value]) => ({
+          key,
+          value: value.join(','),
+        })),
+      });
 
       setInitialValues((state) => {
         state.allowDayOfWeeks = decodeWeekCode(res.allowDayOfWeeks);
       });
+
+      setLoading(false);
     },
   });
 
@@ -91,11 +100,13 @@ const Record: FC<SettingRecordProps> = (props) => {
       appId: props.appId,
       sampleRate: values.sampleRate,
       timeMock: values.timeMock,
-      excludeDependentOperationSet: values.excludeDependentOperationSet,
-      excludeDependentServiceSet: values.excludeDependentServiceSet,
-      excludeOperationSet: values.excludeOperationSet,
-      includeOperationSet: values.includeOperationSet,
-      includeServiceSet: values.includeServiceSet,
+      excludeOperationMap: values.excludeOperationMap.reduce<{ [key: string]: string[] }>(
+        (map, cur) => {
+          map[cur.key] = cur.value.split(',');
+          return map;
+        },
+        {},
+      ),
     };
 
     update(params);
@@ -152,24 +163,8 @@ const Record: FC<SettingRecordProps> = (props) => {
 
             {/* 此处必须 forceRender，否则如果没有打开高级设置就保存，将丢失高级设置部分字段 */}
             <Panel forceRender header='Advanced' key='advanced'>
-              <Form.Item label='API to Record' name='includeOperationSet'>
-                <Select mode='tags' style={{ width: '100%' }} />
-              </Form.Item>
-
-              <Form.Item label='API not to Record' name='excludeOperationSet'>
-                <Select mode='tags' style={{ width: '100%' }} />
-              </Form.Item>
-
-              <Form.Item label='Dependent API not to Record' name='excludeDependentOperationSet'>
-                <Select mode='tags' style={{ width: '100%' }} />
-              </Form.Item>
-
-              <Form.Item label='Services to Record' name='includeServiceSet'>
-                <Select mode='tags' style={{ width: '100%' }} />
-              </Form.Item>
-
-              <Form.Item label='Dependent Services not to Record' name='excludeDependentServiceSet'>
-                <Select mode='tags' style={{ width: '100%' }} />
+              <Form.Item label='Exclude Operation' name='excludeOperationMap'>
+                <ExcludeOperation />
               </Form.Item>
 
               <Form.Item label='Time Mock' name='timeMock' valuePropName='checked'>

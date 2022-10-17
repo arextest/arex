@@ -2,16 +2,13 @@ export interface QueryRecordSettingReq {
   id: string;
 }
 
+export type ExcludeOperationMap = { [key: string]: string[] };
 export interface QueryRecordSettingRes {
   allowDayOfWeeks: number;
   allowTimeOfDayFrom: string;
   allowTimeOfDayTo: string;
   appId: string;
-  excludeDependentOperationSet: string[];
-  excludeDependentServiceSet: string[];
-  excludeOperationSet: string[];
-  includeOperationSet: string[];
-  includeServiceSet: string[];
+  excludeOperationMap: ExcludeOperationMap;
   modifiedTime: string;
   sampleRate: number;
   timeMock: boolean;

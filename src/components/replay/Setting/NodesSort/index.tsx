@@ -86,6 +86,7 @@ const NodesSort: FC<{ appId: string }> = (props) => {
     {
       ready: !!activeOperationInterface,
       refreshDeps: [activeOperationInterface?.id],
+      loadingDelay: 100,
       onBefore() {
         setSortNodeList([]);
       },
@@ -146,6 +147,7 @@ const NodesSort: FC<{ appId: string }> = (props) => {
     {
       ready: !!activeOperationInterface?.id,
       refreshDeps: [activeOperationInterface],
+      loadingDelay: 100,
     },
   );
   const interfaceResponseParsed = useMemo<{ [key: string]: any }>(() => {

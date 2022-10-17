@@ -79,7 +79,7 @@ export type HttpRequestProps = {
 export type KeyValueType = {
   key: string;
   value: string;
-  active: boolean;
+  active?: boolean;
 };
 
 export type ParamsObject = { [key: string]: string };
@@ -730,7 +730,8 @@ const HttpRequest: FC<HttpRequestProps> = ({
                   rowKey='id'
                   pagination={false}
                   dataSource={requestParams}
-                  columns={useColumns(setRequestParams, true)}
+                  //@ts-ignore
+                  columns={useColumns(setRequestParams, { editable: true })}
                 />
               </TabPane>
               <TabPane
@@ -788,7 +789,8 @@ const HttpRequest: FC<HttpRequestProps> = ({
                   rowKey='id'
                   pagination={false}
                   dataSource={requestHeaders}
-                  columns={useColumns(setRequestHeaders, true)}
+                  //@ts-ignore
+                  columns={useColumns(setRequestHeaders, { editable: true })}
                 />
               </TabPane>
               <TabPane tab={t_components('http.authorization')} key='3' disabled>
