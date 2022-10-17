@@ -820,9 +820,9 @@ const HttpRequest: FC<HttpRequestProps> = ({
               >
                 <ResponseTest getTestVal={getTestVal} OldTestVal={TestVal}></ResponseTest>
               </TabPane>
-              {/*<TabPane tab={'Mock'} key='6'>*/}
-              {/*  <Mock></Mock>*/}
-              {/*</TabPane>*/}
+              <TabPane tab={'Mock'} key='6'>
+                <Mock></Mock>
+              </TabPane>
             </Tabs>
           </AnimateAutoHeight>
         </Allotment.Pane>

@@ -1,5 +1,5 @@
 import { useMount } from 'ahooks';
-import { Table } from 'antd';
+import { Col, Input, Row, Table } from 'antd';
 import { useState } from 'react';
 
 import request from '../../api/axios';
@@ -83,7 +83,24 @@ const Mock = () => {
   return (
     <div>
       {JSON.stringify(dataSource.appId)}
-      <Table dataSource={dataSource} columns={columns} />
+      {/*<Table dataSource={dataSource} columns={columns} />*/}
+
+      {dataSource.map((i) => {
+        return (
+          <div>
+            <p>{i.path}</p>
+
+            <Row>
+              <Col span={12}>
+                <Input.TextArea autoSize value={i.request} />
+              </Col>
+              <Col span={12}>
+                <Input.TextArea autoSize value={i.response} />
+              </Col>
+            </Row>
+          </div>
+        );
+      })}
     </div>
   );
 };
