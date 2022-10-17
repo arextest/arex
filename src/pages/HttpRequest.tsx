@@ -5,6 +5,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import CodeMirror from '@uiw/react-codemirror';
 import { useRequest } from 'ahooks';
+import { Allotment } from 'allotment';
 import {
   Badge,
   Breadcrumb,
@@ -35,8 +36,9 @@ import {
   SaveRequestButton,
   useColumns,
 } from '../components/httpRequest';
+import Mock from '../components/httpRequest/Mock';
 import SmartEnvInput from '../components/smart/EnvInput';
-import { Label } from '../components/styledComponents';
+import { Label, SpaceBetweenWrapper } from '../components/styledComponents';
 import {
   ContentTypeEnum,
   MenuTypeEnum,
@@ -47,17 +49,17 @@ import {
 } from '../constant';
 import { treeFindPath } from '../helpers/collection/util';
 import { readableBytes } from '../helpers/http/responseMeta';
+import AgentAxios from '../helpers/request';
 import { runTestScript } from '../helpers/sandbox';
-import { CollectionService } from '../services/CollectionService';
-import { FileSystemService } from '../services/FileSystem.service';
-import { PaneType, useStore } from '../store';
 import {
   generateGlobalPaneId,
   parseGlobalPaneId,
   tryParseJsonString,
   tryPrettierJsonString,
-} from '../utils';
-import AgentAxios from '../utils/request';
+} from '../helpers/utils';
+import { CollectionService } from '../services/CollectionService';
+import { FileSystemService } from '../services/FileSystem.service';
+import { PaneType, useStore } from '../store';
 
 const { TabPane } = Tabs;
 
@@ -77,7 +79,7 @@ export type HttpRequestProps = {
 export type KeyValueType = {
   key: string;
   value: string;
-  active: boolean;
+  active?: boolean;
 };
 
 export type ParamsObject = { [key: string]: string };
@@ -187,6 +189,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
     { key: '', value: '', active: true },
   ]);
   const [isTestResult, setIsTestResult] = useState(true);
+  const [recordId, setRecordId] = useState('');
   useEffect(() => {
     handleUpdateUrl();
     response &&
@@ -397,6 +400,8 @@ const HttpRequest: FC<HttpRequestProps> = ({
         setTestUrl(res.body.testAddress?.endpoint || '');
         setBaseUrl(res.body.baseAddress?.endpoint || '');
         setTestVal(res.body.testScript || '');
+        // console.log(res.body,'ressss')
+        setRecordId(res.body.recordId);
       },
     },
   );
@@ -483,6 +488,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
   const handleSave = () => {
     saveInterface(
       {
+        workspaceId: _useParams.workspaceId,
         id,
         auth: null,
         body: {
@@ -559,287 +565,314 @@ const HttpRequest: FC<HttpRequestProps> = ({
 
   return (
     <>
-      <AnimateAutoHeight>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          {nodeInfoInCollectionTreeData.raw.length > 0 ? (
-            <BreadcrumbHeader>
-              {renameKey === '' ? (
-                <>
-                  <Breadcrumb style={{ paddingBottom: '14px' }}>
-                    {nodeInfoInCollectionTreeData.raw.map((i, index) => (
-                      <Breadcrumb.Item key={index}>{i.title}</Breadcrumb.Item>
-                    ))}
-                  </Breadcrumb>
-                  <div
-                    className={'tool'}
-                    onClick={() => {
-                      setRenameKey(id);
-                      setRenameValue(nodeInfoInCollectionTreeData.self.title);
-                    }}
-                  >
-                    <EditOutlined />
-                  </div>
-                </>
+      <Allotment
+        vertical={true}
+        css={css`
+          height: 100%;
+        `}
+      >
+        <Allotment.Pane preferredSize={400}>
+          <AnimateAutoHeight>
+            <SpaceBetweenWrapper>
+              {nodeInfoInCollectionTreeData.raw.length > 0 ? (
+                <BreadcrumbHeader>
+                  {renameKey === '' ? (
+                    <>
+                      <Breadcrumb>
+                        {nodeInfoInCollectionTreeData.raw.map((i, index) => (
+                          <Breadcrumb.Item key={index}>{i.title}</Breadcrumb.Item>
+                        ))}
+                      </Breadcrumb>
+                      <div
+                        className={'tool'}
+                        onClick={() => {
+                          setRenameKey(id);
+                          setRenameValue(nodeInfoInCollectionTreeData.self.title);
+                        }}
+                      >
+                        <EditOutlined />
+                      </div>
+                    </>
+                  ) : (
+                    <Input
+                      value={renameValue}
+                      onChange={(val) => setRenameValue(val.target.value)}
+                      onBlur={rename}
+                      onPressEnter={rename}
+                    />
+                  )}
+                </BreadcrumbHeader>
               ) : (
-                <Input
-                  value={renameValue}
-                  onChange={(val) => setRenameValue(val.target.value)}
-                  onBlur={rename}
-                  onPressEnter={rename}
-                  autoFocus
-                />
+                <Breadcrumb>
+                  <Breadcrumb.Item key={'new'}>New Request</Breadcrumb.Item>
+                </Breadcrumb>
               )}
-            </BreadcrumbHeader>
-          ) : (
-            <div>
-              <Breadcrumb style={{ paddingBottom: '14px' }}>
-                <Breadcrumb.Item key={'new'}>New Request</Breadcrumb.Item>
-              </Breadcrumb>
-            </div>
-          )}
-          <div>
-            {isNew ? (
-              <SaveRequestButton
-                reqParams={{
-                  auth: null,
-                  body: {
-                    contentType,
-                    body: requestBody,
-                  },
-                  address: {
-                    endpoint: url,
-                    method,
-                  },
-                  baseAddress: {
-                    endpoint: baseUrl,
-                    method,
-                  },
-                  testAddress: {
-                    endpoint: testUrl,
-                    method,
-                  },
-                  headers: requestHeaders,
-                  params: requestParams,
-                  preRequestScript: null,
-                  testScript: null,
-                }}
-                collectionTreeData={collectionTreeData}
-                onSaveAs={handleInterfaceSaveAs}
-              />
-            ) : (
-              <Button onClick={handleSave}>{t_common('save')}</Button>
-            )}
-            <Divider type={'vertical'} />
-            <Select
-              options={[
-                { label: 'Normal', value: HttpRequestMode.Normal },
-                { label: 'Compare', value: HttpRequestMode.Compare },
-              ]}
-              value={mode}
-              onChange={(val) => {
-                setSent(false);
-                setMode(val);
-              }}
-            />
-          </div>
-        </div>
-        <Divider style={{ margin: '0', marginBottom: '8px' }} />
-        {/* 普通请求 */}
-        {mode === HttpRequestMode.Normal ? (
-          <HeaderWrapper>
-            <Select value={method} options={RequestTypeOptions} onChange={setMethod} />
-            {/*<Input*/}
-            {/*  placeholder={t_components('http.enterRequestUrl')}*/}
-            {/*  value={url}*/}
-            {/*  onChange={(e) => handleUrlChange(e.target.value)}*/}
-            {/*/>*/}
-            <SmartEnvInput
-              value={url}
-              onChange={(e) => handleUrlChange(e.target.value)}
-            ></SmartEnvInput>
-            <Button type='primary' onClick={handleRequest}>
-              {t_common('send')}
-            </Button>
-          </HeaderWrapper>
-        ) : (
-          <div>
-            {/* 对比请求 */}
-            <HeaderWrapper style={{ marginTop: '10px' }}>
-              <Select value={method} options={RequestTypeOptions} onChange={setMethod} />
-              <Input
-                placeholder={t_components('http.enterRequestUrl')}
-                value={baseUrl}
-                onChange={(e) => setBaseUrl(e.target.value)}
-              />
-              <Button type='primary' onClick={handleCompareRequest}>
-                {t_common('send')}
-              </Button>
-              <Button onClick={handleSave} style={{ display: 'none' }}>
-                {t_common('save')}
-              </Button>
-            </HeaderWrapper>
-            <HeaderWrapper style={{ marginTop: '10px' }}>
-              <Select value={method} options={RequestTypeOptions} onChange={setMethod} />
-              <Input
-                placeholder={t_components('http.enterRequestUrl')}
-                value={testUrl}
-                onChange={(e) => setTestUrl(e.target.value)}
-              />
-              <Button style={{ display: 'none' }} type='primary' onClick={handleRequest}>
-                {t_common('send')}
-              </Button>
-              <Button style={{ visibility: 'hidden' }} onClick={handleSave}>
-                {t_common('save')}
-              </Button>
-            </HeaderWrapper>
-          </div>
-        )}
-        <Tabs
-          defaultActiveKey='1'
-          css={css`
-            .ant-tabs-nav {
-              margin-bottom: 0px;
-            }
-          `}
-        >
-          <TabPane
-            tab={
-              <span>
-                {t_components('http.params')}
-                {!!paramsCount && <CountTag>{paramsCount}</CountTag>}
-              </span>
-            }
-            key='0'
-          >
-            <FormHeader update={setRequestParams} />
-            <FormTable
-              bordered
-              size='small'
-              rowKey='id'
-              pagination={false}
-              dataSource={requestParams}
-              columns={useColumns(setRequestParams, true)}
-            />
-          </TabPane>
-          <TabPane
-            tab={
-              <>
-                {/* span 若移动至 Badge 中将失去继承的主题色 */}
-                <span>{t_components('http.requestBody')}</span>
-                <Badge dot={!!requestBody} status={method === 'POST' ? 'success' : 'default'}>
-                  {/* 空格符撑起 Badge 内部 */}&nbsp;
-                </Badge>
-              </>
-            }
-            key='1'
-          >
-            <FormHeaderWrapper>
-              <span>
-                <Label offset={-12}>{t_components('http.contentType')}</Label>
+              <SpaceBetweenWrapper>
+                {isNew ? (
+                  <SaveRequestButton
+                    reqParams={{
+                      auth: null,
+                      body: {
+                        contentType,
+                        body: requestBody,
+                      },
+                      address: {
+                        endpoint: url,
+                        method,
+                      },
+                      baseAddress: {
+                        endpoint: baseUrl,
+                        method,
+                      },
+                      testAddress: {
+                        endpoint: testUrl,
+                        method,
+                      },
+                      headers: requestHeaders,
+                      params: requestParams,
+                      preRequestScript: null,
+                      testScript: null,
+                    }}
+                    collectionTreeData={collectionTreeData}
+                    onSaveAs={handleInterfaceSaveAs}
+                  />
+                ) : (
+                  <Button onClick={handleSave}>{t_common('save')}</Button>
+                )}
+                <Divider type={'vertical'} />
                 <Select
-                  disabled
-                  bordered={false}
-                  value={contentType}
-                  size={'small'}
-                  options={[{ value: 'application/json', label: 'application/json' }]}
-                  onChange={setContentType}
-                  style={{ width: '140px', marginLeft: '8px' }}
+                  options={[
+                    { label: 'Normal', value: HttpRequestMode.Normal },
+                    { label: 'Compare', value: HttpRequestMode.Compare },
+                  ]}
+                  value={mode}
+                  onChange={(val) => {
+                    setSent(false);
+                    setMode(val);
+                  }}
                 />
-              </span>
-              <Button size='small' onClick={handlePrettier}>
-                {t_common('prettier')}
-              </Button>
-            </FormHeaderWrapper>
-            <CodeMirror
-              value={requestBody}
-              extensions={[json()]}
-              theme={themeClassify}
-              height='auto'
-              minHeight={'100px'}
-              maxHeight={'240px'}
-              onChange={setRequestBody}
-            />
-          </TabPane>
-          <TabPane
-            tab={
-              <span>
-                {t_components('http.requestHeaders')}{' '}
-                {!!headerCount && <CountTag>{headerCount}</CountTag>}
-              </span>
-            }
-            key='2'
-          >
-            <FormHeader update={setRequestHeaders} />
-            <FormTable
-              bordered
-              size='small'
-              rowKey='id'
-              pagination={false}
-              dataSource={requestHeaders}
-              columns={useColumns(setRequestHeaders, true)}
-            />
-          </TabPane>
-          <TabPane tab={t_components('http.authorization')} key='3' disabled>
-            <CodeMirror value='' extensions={[json()]} theme={themeClassify} height='300px' />
-          </TabPane>
-          <TabPane tab={t_components('http.pre-requestScript')} key='4' disabled>
-            <CodeMirror value='' height='300px' extensions={[javascript()]} theme={themeClassify} />
-          </TabPane>
-          <TabPane
-            tab={
-              TestVal ? (
-                <Badge dot={true} offset={[-1, 11]} color='#10B981'>
-                  <div
-                    css={css`
-                      padding-right: 10px;
-                    `}
-                  >
-                    {t_components('http.test')}
-                  </div>
-                </Badge>
-              ) : (
-                <>{t_components('http.test')}</>
-              )
-            }
-            key='5'
-            disabled={mode === HttpRequestMode.Compare}
-          >
-            <ResponseTest getTestVal={getTestVal} OldTestVal={TestVal}></ResponseTest>
-          </TabPane>
-        </Tabs>
-      </AnimateAutoHeight>
-      <Divider />
-      <div>
-        {sent ? (
-          <Spin spinning={requesting}>
+              </SpaceBetweenWrapper>
+            </SpaceBetweenWrapper>
+
+            <Divider style={{ margin: '8px 0' }} />
+
+            {/* 普通请求 */}
             {mode === HttpRequestMode.Normal ? (
-              <Response
-                responseHeaders={response?.headers}
-                res={response?.data || response?.statusText}
-                status={{ code: response.status, text: response.statusText }}
-                TestResult={TestResult}
-                isTestResult={isTestResult}
-                time={responseMeta.time > 10000 ? 0 : responseMeta.time}
-                size={responseMeta.size}
-              />
+              <SpaceBetweenWrapper>
+                <Input.Group compact style={{ display: 'flex', width: 'calc(100% - 81px)' }}>
+                  <Select value={method} options={RequestTypeOptions} onChange={setMethod} />
+                  <SmartEnvInput value={url} onChange={(e) => handleUrlChange(e.target.value)} />
+                </Input.Group>
+
+                <Button type='primary' onClick={handleRequest}>
+                  {t_common('send')}
+                </Button>
+              </SpaceBetweenWrapper>
             ) : (
-              <ResponseCompare responses={[baseResponse?.data, testResponse?.data]} />
+              <div>
+                {/* 对比请求 */}
+                <HeaderWrapper style={{ marginTop: '10px' }}>
+                  <Select value={method} options={RequestTypeOptions} onChange={setMethod} />
+                  <Input
+                    placeholder={t_components('http.enterRequestUrl')}
+                    value={baseUrl}
+                    onChange={(e) => setBaseUrl(e.target.value)}
+                  />
+                  <Button type='primary' onClick={handleCompareRequest}>
+                    {t_common('send')}
+                  </Button>
+                  <Button onClick={handleSave} style={{ display: 'none' }}>
+                    {t_common('save')}
+                  </Button>
+                </HeaderWrapper>
+                <HeaderWrapper style={{ marginTop: '10px' }}>
+                  <Select value={method} options={RequestTypeOptions} onChange={setMethod} />
+                  <Input
+                    placeholder={t_components('http.enterRequestUrl')}
+                    value={testUrl}
+                    onChange={(e) => setTestUrl(e.target.value)}
+                  />
+                  <Button style={{ display: 'none' }} type='primary' onClick={handleRequest}>
+                    {t_common('send')}
+                  </Button>
+                  <Button style={{ visibility: 'hidden' }} onClick={handleSave}>
+                    {t_common('save')}
+                  </Button>
+                </HeaderWrapper>
+              </div>
             )}
-          </Spin>
-        ) : (
-          <ResponseWrapper>
-            <Spin spinning={requesting}>
-              <Empty
-                description={
-                  <Typography.Text type='secondary'>
-                    {t_components('http.responseNotReady')}
-                  </Typography.Text>
+
+            <Tabs
+              defaultActiveKey='1'
+              css={css`
+                margin-top: 8px;
+                .ant-tabs-tab {
+                  padding: 8px 0;
                 }
-              />
-            </Spin>
-          </ResponseWrapper>
-        )}
-      </div>
+                .ant-tabs-nav {
+                  margin-bottom: 0;
+                }
+              `}
+            >
+              <TabPane
+                tab={
+                  <span>
+                    {t_components('http.params')}
+                    {!!paramsCount && <CountTag>{paramsCount}</CountTag>}
+                  </span>
+                }
+                key='0'
+              >
+                <FormHeader update={setRequestParams} />
+                <FormTable
+                  bordered
+                  size='small'
+                  rowKey='id'
+                  pagination={false}
+                  dataSource={requestParams}
+                  //@ts-ignore
+                  columns={useColumns(setRequestParams, { editable: true })}
+                />
+              </TabPane>
+              <TabPane
+                tab={
+                  <>
+                    {/* span 若移动至 Badge 中将失去继承的主题色 */}
+                    <span>{t_components('http.requestBody')}</span>
+                    <Badge dot={!!requestBody} status={method === 'POST' ? 'success' : 'default'}>
+                      {/* 空格符撑起 Badge 内部 */}&nbsp;
+                    </Badge>
+                  </>
+                }
+                key='1'
+              >
+                <FormHeaderWrapper>
+                  <span>
+                    <Label offset={-12}>{t_components('http.contentType')}</Label>
+                    <Select
+                      disabled
+                      bordered={false}
+                      value={contentType}
+                      size={'small'}
+                      options={[{ value: 'application/json', label: 'application/json' }]}
+                      onChange={setContentType}
+                      style={{ width: '140px', marginLeft: '8px' }}
+                    />
+                  </span>
+                  <Button size='small' onClick={handlePrettier}>
+                    {t_common('prettier')}
+                  </Button>
+                </FormHeaderWrapper>
+                <CodeMirror
+                  value={requestBody}
+                  extensions={[json()]}
+                  theme={themeClassify}
+                  height='auto'
+                  minHeight={'100px'}
+                  maxHeight={'240px'}
+                  onChange={setRequestBody}
+                />
+              </TabPane>
+              <TabPane
+                tab={
+                  <span>
+                    {t_components('http.requestHeaders')}{' '}
+                    {!!headerCount && <CountTag>{headerCount}</CountTag>}
+                  </span>
+                }
+                key='2'
+              >
+                <FormHeader update={setRequestHeaders} />
+                <FormTable
+                  bordered
+                  size='small'
+                  rowKey='id'
+                  pagination={false}
+                  dataSource={requestHeaders}
+                  //@ts-ignore
+                  columns={useColumns(setRequestHeaders, { editable: true })}
+                />
+              </TabPane>
+              <TabPane tab={t_components('http.authorization')} key='3' disabled>
+                <CodeMirror value='' extensions={[json()]} theme={themeClassify} height='300px' />
+              </TabPane>
+              <TabPane tab={t_components('http.pre-requestScript')} key='4' disabled>
+                <CodeMirror
+                  value=''
+                  height='300px'
+                  extensions={[javascript()]}
+                  theme={themeClassify}
+                />
+              </TabPane>
+              <TabPane
+                tab={
+                  TestVal ? (
+                    <Badge dot={true} offset={[-1, 11]} color='#10B981'>
+                      <div
+                        css={css`
+                          padding-right: 10px;
+                        `}
+                      >
+                        {t_components('http.test')}
+                      </div>
+                    </Badge>
+                  ) : (
+                    <>{t_components('http.test')}</>
+                  )
+                }
+                key='5'
+                disabled={mode === HttpRequestMode.Compare}
+              >
+                <ResponseTest getTestVal={getTestVal} OldTestVal={TestVal}></ResponseTest>
+              </TabPane>
+              {recordId ? (
+                <TabPane tab={'Mock'} key='6'>
+                  <div>
+                    <Mock recordId={recordId}></Mock>
+                  </div>
+                </TabPane>
+              ) : null}
+            </Tabs>
+          </AnimateAutoHeight>
+        </Allotment.Pane>
+
+        <Allotment.Pane>
+          <div>
+            {sent ? (
+              <Spin spinning={requesting}>
+                {mode === HttpRequestMode.Normal ? (
+                  <Response
+                    responseHeaders={response?.headers}
+                    res={response?.data || response?.statusText}
+                    status={{ code: response.status, text: response.statusText }}
+                    TestResult={TestResult}
+                    isTestResult={isTestResult}
+                    time={responseMeta.time > 10000 ? 0 : responseMeta.time}
+                    size={responseMeta.size}
+                  />
+                ) : (
+                  // <div>ResponseCompare</div>
+                  <ResponseCompare responses={[baseResponse?.data, testResponse?.data]} />
+                )}
+              </Spin>
+            ) : (
+              <ResponseWrapper>
+                <Spin spinning={requesting}>
+                  <Empty
+                    description={
+                      <Typography.Text type='secondary'>
+                        {t_components('http.responseNotReady')}
+                      </Typography.Text>
+                    }
+                  />
+                </Spin>
+              </ResponseWrapper>
+            )}
+          </div>
+        </Allotment.Pane>
+      </Allotment>
+
+      {/*<Divider />*/}
     </>
   );
 };

@@ -4,10 +4,12 @@ import {
   FieldTimeOutlined,
   LeftOutlined,
 } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMount, useRequest } from 'ahooks';
+import { Allotment } from 'allotment';
 import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
-import React, { ReactNode, useEffect, useRef } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
@@ -23,6 +25,7 @@ import {
 import { CollectionProps } from '../components/httpRequest/CollectionMenu';
 import { MenuTypeEnum, PageTypeEnum } from '../constant';
 import { treeFind } from '../helpers/collection/util';
+import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../helpers/utils';
 import {
   Environment,
   Folder,
@@ -37,14 +40,12 @@ import Setting from '../pages/Setting';
 import EnvironmentService from '../services/Environment.service';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { useStore } from '../store';
-import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../utils';
-import DraggableLayout from './DraggableLayout';
 
 const { TabPane } = Tabs;
 const MainMenu = styled(Tabs, { shouldForwardProp: (propName) => propName !== 'brief' })<{
   brief?: boolean;
 }>`
-  height: 100%;
+  height: calc(100% - 35px);
   .ant-tabs-nav-list {
     width: ${(props) => (props.brief ? '70px' : '100px')};
     .ant-tabs-tab {
@@ -89,6 +90,8 @@ type MainMenuItemProps = TabPaneProps & { menuItem: ReactNode };
 const MainMenuItem = styled((props: MainMenuItemProps) => (
   <TabPane {...props}>{props.menuItem}</TabPane>
 ))<MainMenuItemProps>`
+  height: 100%;
+  overflow-y: auto;
   padding: 0 8px !important;
   .ant-tree-node-selected {
     color: ${(props) => props.theme.color.text.highlight};
@@ -133,20 +136,19 @@ const CollapseMenuButton = styled(
   transition: all 0.2s;
 `;
 
-const MainTabs = styled((props: { collapseMenu?: boolean } & TabsProps) => {
-  const { collapseMenu, children, ...restProps } = props;
+const MainTabs = styled((props: TabsProps) => {
   return (
     <DraggableTabs
       size='small'
       type='editable-card'
       tabBarGutter={-1}
       tabBarStyle={{
-        left: collapseMenu ? '-1px' : '-11px',
         top: '-1px',
+        marginBottom: '8px',
       }}
-      {...restProps}
+      {...props}
     >
-      {children}
+      {props.children}
     </DraggableTabs>
   );
 })<TabsProps>`
@@ -198,6 +200,9 @@ const MainTabs = styled((props: { collapseMenu?: boolean } & TabsProps) => {
     height: 36px;
     border-left: #000c17 1px solid;
   }
+  .ant-tabs-content {
+    height: 100%;
+  }
 `;
 
 const MainTabPane = styled((props: TabPaneProps) => (
@@ -226,8 +231,6 @@ const MainBox = () => {
     panes,
     setPanes,
     activeMenu,
-    collapseMenu,
-    setCollapseMenu,
     setActiveMenu,
     setActiveEnvironment,
     setCollectionTreeData,
@@ -235,6 +238,8 @@ const MainBox = () => {
     setEnvironmentTreeData,
     environmentTreeData,
   } = useStore();
+
+  const [collapseMenu, setCollapseMenu] = useState(false);
 
   // 必须和路由搭配起来，在切换的时候附着上去
   useEffect(() => {
@@ -273,6 +278,9 @@ const MainBox = () => {
   };
 
   const handleMainMenuChange = (key: string) => {
+    if (key === PageTypeEnum.Collection) {
+      fetchCollectionTreeData();
+    }
     setActiveMenu(key as MenuTypeEnum);
     collapseMenu && setCollapseMenu(false);
   };
@@ -391,80 +399,84 @@ const MainBox = () => {
       return pane.title;
     }
   };
+
   // https://github.com/arextest/arex-chrome-extension/releases
   return (
     <>
       {/*AppHeader部分*/}
       <AppHeader />
-      <DraggableLayout
-        direction={'horizontal'}
-        limitRange={[15, 40]}
-        fixedFirstNode={collapseMenu}
-        firstNode={
-          <>
-            <WorkspacesMenu />
 
-            <MainMenu
-              tabPosition='left'
-              activeKey={activeMenu[0]}
-              brief={collapseMenu}
-              tabBarExtraContent={
-                <CollapseMenuButton
-                  collapse={collapseMenu}
-                  icon={<LeftOutlined />}
-                  onClick={handleCollapseMenu}
+      <Allotment
+        css={css`
+          height: calc(100vh - 74px);
+        `}
+      >
+        <Allotment.Pane
+          preferredSize={400}
+          minSize={collapseMenu ? 69 : 200}
+          maxSize={collapseMenu ? 69 : 600}
+        >
+          <WorkspacesMenu brief={collapseMenu} />
+
+          <MainMenu
+            tabPosition='left'
+            activeKey={activeMenu[0]}
+            brief={collapseMenu}
+            tabBarExtraContent={
+              <CollapseMenuButton
+                collapse={collapseMenu}
+                icon={<LeftOutlined />}
+                onClick={handleCollapseMenu}
+              />
+            }
+            onChange={handleMainMenuChange}
+          >
+            {/* menuItem 自定义子组件命名规定: XxxMenu, 表示xx功能的左侧主菜单 */}
+            {/* menuItem 自定义子组件 props 约定，便于之后封装  */}
+            {/* 1. value: 选中 menu item 的 id */}
+            {/* 2. onSelect: 选中 menu item 时触发，参数（结构待规范）为选中节点的相关信息，点击后的逻辑不在 Menu 组件中处理 */}
+            <MainMenuItem
+              tab={<MenuTitle icon={<ApiOutlined />} title='Collection' brief={collapseMenu} />}
+              key={MenuTypeEnum.Collection}
+              menuItem={
+                <CollectionMenu
+                  value={parseGlobalPaneId(activeMenu[1])['rawId']}
+                  onSelect={handleCollectionMenuClick}
+                  onGetData={setCollectionTreeData}
+                  cRef={collectionMenuRef}
                 />
               }
-              onChange={handleMainMenuChange}
-            >
-              {/* menuItem 自定义子组件命名规定: XxxMenu, 表示xx功能的左侧主菜单 */}
-              {/* menuItem 自定义子组件 props 约定，便于之后封装  */}
-              {/* 1. value: 选中 menu item 的 id */}
-              {/* 2. onSelect: 选中 menu item 时触发，参数（结构待规范）为选中节点的相关信息，点击后的逻辑不在 Menu 组件中处理 */}
-              <MainMenuItem
-                tab={<MenuTitle icon={<ApiOutlined />} title='Collection' brief={collapseMenu} />}
-                key={MenuTypeEnum.Collection}
-                menuItem={
-                  <CollectionMenu
-                    value={parseGlobalPaneId(activeMenu[1])['rawId']}
-                    onSelect={handleCollectionMenuClick}
-                    onGetData={setCollectionTreeData}
-                    cRef={collectionMenuRef}
-                  />
-                }
-              />
-              <MainMenuItem
-                tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' brief={collapseMenu} />}
-                key={MenuTypeEnum.Replay}
-                menuItem={
-                  <ReplayMenu
-                    initValue={parseGlobalPaneId(activeMenu[1])['rawId']}
-                    value={parseGlobalPaneId(activeMenu[1])['rawId']}
-                    onSelect={handleReplayMenuClick}
-                  />
-                }
-              />
-              <MainMenuItem
-                tab={
-                  <MenuTitle
-                    icon={<DeploymentUnitOutlined />}
-                    title='Environment'
-                    brief={collapseMenu}
-                  />
-                }
-                key={MenuTypeEnum.Environment}
-                menuItem={
-                  <EnvironmentMenu
-                    value={parseGlobalPaneId(activeMenu[1])['rawId']}
-                    onSelect={handleEnvironmentMenuClick}
-                  />
-                }
-              />
-            </MainMenu>
-          </>
-        }
-        secondNode={
-          // 右侧工作区
+            />
+            <MainMenuItem
+              tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' brief={collapseMenu} />}
+              key={MenuTypeEnum.Replay}
+              menuItem={
+                <ReplayMenu
+                  value={parseGlobalPaneId(activeMenu[1])['rawId']}
+                  onSelect={handleReplayMenuClick}
+                />
+              }
+            />
+            <MainMenuItem
+              tab={
+                <MenuTitle
+                  icon={<DeploymentUnitOutlined />}
+                  title='Environment'
+                  brief={collapseMenu}
+                />
+              }
+              key={MenuTypeEnum.Environment}
+              menuItem={
+                <EnvironmentMenu
+                  value={parseGlobalPaneId(activeMenu[1])['rawId']}
+                  onSelect={handleEnvironmentMenuClick}
+                />
+              }
+            />
+          </MainMenu>
+        </Allotment.Pane>
+
+        <Allotment.Pane visible>
           <EmptyWrapper
             empty={!panes.length}
             emptyContent={
@@ -475,7 +487,6 @@ const MainBox = () => {
           >
             <MainTabs
               activeKey={activeMenu[1]}
-              collapseMenu={collapseMenu}
               tabBarExtraContent={<EnvironmentSelect />}
               onEdit={handleTabsEdit}
               onChange={(t) => {
@@ -517,8 +528,8 @@ const MainBox = () => {
               ))}
             </MainTabs>
           </EmptyWrapper>
-        }
-      />
+        </Allotment.Pane>
+      </Allotment>
 
       <AppFooter />
     </>

@@ -1,13 +1,12 @@
 import axios from 'axios';
 
 import request from '../api/axios';
-import { tryPrettierJsonString } from '../utils';
+import { tryPrettierJsonString } from '../helpers/utils';
 import {
   CreatePlanReq,
   CreatePlanRes,
   PushConfigTemplateReq,
   PushConfigTemplateRes,
-  QueryConfigTemplateReq,
   QueryConfigTemplateRes,
   QueryDifferencesReq,
   QueryDifferencesRes,
@@ -19,24 +18,15 @@ import {
   QueryPlanItemStatisticsRes,
   QueryPlanStatisticsReq,
   QueryPlanStatisticsRes,
-  QueryRecordDynamicClassSettingReq,
-  QueryRecordDynamicClassSettingRes,
-  QueryRecordSettingReq,
-  QueryRecordSettingRes,
   QueryReplayCaseReq,
   QueryReplayCaseRes,
   QueryResponseTypeStatisticReq,
   QueryResponseTypeStatisticRes,
   QueryScenesReq,
   QueryScenesRes,
-  queryScheduleUseResultAppIdRes,
+  QueryScheduleUseResultAppIdRes,
   RegressionListRes,
-  RemoveDynamicClassSettingReq,
-  RemoveDynamicClassSettingRes,
-  UpdateDynamicClassSettingReq,
-  UpdateDynamicClassSettingRes,
-  UpdateRecordSettingReq,
-  UpdateRecordSettingRes,
+  UpdateConfigScheduleReq,
 } from './Replay.type';
 
 export default class ReplayService {
@@ -133,66 +123,29 @@ export default class ReplayService {
         }),
       ),
     );
-    //  TODO parsing msg
   }
 
-  // 获取 Replay - record 设置数据
-  static async queryRecordSetting(params: QueryRecordSettingReq) {
+  static async queryConfigTemplate(params: { appId: string }) {
     return request
-      .get<QueryRecordSettingRes>('/config/serviceCollect/useResult/appId/' + params.id)
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  // 更新 Replay - record 设置数据
-  static async updateRecordSetting(params: UpdateRecordSettingReq) {
-    return request
-      .post<UpdateRecordSettingRes>('/config/serviceCollect/modify/UPDATE', params)
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  // 获取 Replay - record Dynamic Classes 设置数据
-  static async queryRecordDynamicClassSetting(params: QueryRecordDynamicClassSettingReq) {
-    return request
-      .get<QueryRecordDynamicClassSettingRes | undefined>(
-        '/config/dynamicClass/useResultAsList/appId/' + params.appId,
-      )
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  // 添加 Replay - record Dynamic Classes 设置数据
-  static async updatedDynamicClassSetting(params: UpdateDynamicClassSettingReq) {
-    return request
-      .post<UpdateDynamicClassSettingRes>('/config/dynamicClass/modify/INSERT', params)
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  // 删除 Replay - record Dynamic Classes 设置数据
-  static async removeDynamicClassSetting(params: RemoveDynamicClassSettingReq) {
-    return request
-      .post<RemoveDynamicClassSettingRes>('/config/dynamicClass/modify/REMOVE', params)
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  static async queryConfigTemplate(params: QueryConfigTemplateReq) {
-    return request
-      .post<QueryConfigTemplateRes>('/api/config/queryConfigTemplate', params)
+      .post<QueryConfigTemplateRes>('/api/config/yamlTemplate/queryConfigTemplate', params)
       .then((res) => Promise.resolve(res.body));
   }
 
   static async pushConfigTemplate(params: PushConfigTemplateReq) {
     return request
-      .post<PushConfigTemplateRes>('/api/config/pushConfigTemplate', params)
+      .post<PushConfigTemplateRes>('/api/config/yamlTemplate/pushConfigTemplate', params)
       .then((res) => Promise.resolve(res.body));
   }
 
   static async queryScheduleUseResultAppId(params: { id: string }) {
     return request
-      .get<queryScheduleUseResultAppIdRes>('/config/schedule/useResult/appId/' + params.id)
+      .get<QueryScheduleUseResultAppIdRes>('/config/schedule/useResult/appId/' + params.id)
       .then((res) => Promise.resolve(res.body));
   }
-  static async configScheduleModifyUpdate(params) {
+
+  static async updateConfigSchedule(params: UpdateConfigScheduleReq) {
     return request
-      .post<any>('/config/schedule/modify/UPDATE', params)
+      .post<boolean>('/config/schedule/modify/UPDATE', params)
       .then((res) => Promise.resolve(res.body));
   }
 }

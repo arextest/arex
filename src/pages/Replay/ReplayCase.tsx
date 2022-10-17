@@ -6,9 +6,10 @@ import CodeMirror from '@uiw/react-codemirror';
 import { ReactCodeMirrorProps } from '@uiw/react-codemirror/src';
 import { useRequest } from 'ahooks';
 import { Col, Collapse, Row, Space, Switch } from 'antd';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useMemo, useRef, useState } from 'react';
 
 import Case from '../../components/replay/Case';
+import SaveCase from '../../components/replay/SaveCase';
 import {
   CheckOrCloseIcon,
   CollapseTable,
@@ -55,6 +56,8 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   const [onlyFailed, setOnlyFailed] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
 
+  const saveCaseRef = useRef(null);
+
   const { data: compareResults = [], mutate } = useRequest(
     () =>
       ReplayService.queryFullLinkMsg({
@@ -78,6 +81,11 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   const handleClickRecord = (record: ReplayCaseType) => {
     setSelectedRecord(selectedRecord?.recordId === record.recordId ? undefined : record);
   };
+
+  function handleClickSaveCase(record: ReplayCaseType) {
+    saveCaseRef.current.openModal(record);
+  }
+
   return (
     <Space direction='vertical' style={{ display: 'flex', paddingBottom: '16px' }}>
       <PanesTitle
@@ -92,7 +100,13 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
 
       <CollapseTable
         active={!!selectedRecord}
-        table={<Case planItemId={data.planItemId} onClick={handleClickRecord} />}
+        table={
+          <Case
+            planItemId={data.planItemId}
+            onClick={handleClickRecord}
+            onClickSaveCase={handleClickSaveCase}
+          />
+        }
         panel={
           <Collapse>
             {compareResultsFiltered.map((result, i) =>
@@ -140,6 +154,7 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
           </Collapse>
         }
       />
+      <SaveCase cRef={saveCaseRef} />
     </Space>
   );
 };

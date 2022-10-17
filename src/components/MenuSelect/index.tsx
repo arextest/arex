@@ -87,7 +87,7 @@ const MenuFilter = styled((props: MenuFilterProps) => {
         value={props.value}
         placeholder={props.placeholder}
         onChange={props.onChange}
-        style={{ width: 'auto' }}
+        style={{ flex: 1 }}
       />
     </Input.Group>
   );
@@ -130,16 +130,16 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
     run: reload,
   } = useRequest<D[], P>(props.request, {
     onSuccess(res) {
-      if (res.length && props.defaultSelectFirst) {
-        const firstRecord = props.forceFilter ? filter(res)[0] : res[0];
-        setSelectedKey(firstRecord[props.rowKey]);
-        props.onSelect(firstRecord);
-      }
-      if (res.length && props.initValue) {
-        const firstRecord = res.find((i) => i.id === props.initValue);
-        if (firstRecord) {
-          setSelectedKey(firstRecord[props.rowKey]);
-          props.onSelect(firstRecord);
+      if (res.length && (props.defaultSelectFirst || props.initValue)) {
+        const record = props.defaultSelectFirst
+          ? props.forceFilter
+            ? filter(res)[0]
+            : res[0]
+          : res.find((i) => i.id === props.initValue);
+
+        if (record) {
+          setSelectedKey(record[props.rowKey]);
+          props.onSelect(record);
         }
       }
     },

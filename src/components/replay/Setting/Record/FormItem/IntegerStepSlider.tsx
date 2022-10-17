@@ -6,9 +6,11 @@ import { FormItemProps } from './index';
 const IntegerStepSlider: FC<FormItemProps<number>> = (props) => {
   const [value, setInput] = useState(props.value || 1);
 
-  const onChange = (newValue: number) => {
-    props.onChange && props.onChange(newValue);
-    setInput(newValue);
+  const onChange = (newValue: number | null) => {
+    if (newValue) {
+      props.onChange?.(newValue);
+      setInput(newValue);
+    }
   };
 
   return (

@@ -1,11 +1,13 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useMount } from 'ahooks';
+import { Modal } from 'antd';
 import JSONEditor, { JSONEditorOptions } from 'jsoneditor';
 import { FC, useEffect, useRef } from 'react';
 
 import { QueryMsgWithDiffLog } from '../../services/Replay.type';
-import { tryParseJsonString } from '../../utils';
+import { tryParseJsonString } from '../../helpers/utils';
+import { FullScreen } from '../styledComponents';
 
 export type DiffJsonViewProps = {
   data?: {
@@ -119,35 +121,18 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, visible = false, onClose })
         window.editorRight = new JSONEditor(containerRight, optionsRight, jsonRight);
         window.editorLeft.expandAll();
         window.editorRight.expandAll();
-      }, 200);
+      }, 20);
     }
   }, [msgWithDiff]);
 
   return (
-    <div
-      className={'json-diff'}
-      css={css`
-        position: fixed;
-        display: ${visible ? 'block' : 'none'};
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1000;
-      `}
+    <Modal
+      title='Press Esc to exit'
+      width={'100%'}
+      visible={visible}
+      onCancel={onClose}
+      style={{ top: 0 }}
     >
-      <div
-        css={css`
-          margin: 12px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        `}
-      >
-        <span>Press &quot;esc&quot; to exit</span>
-        <CloseOutlined onClick={() => onClose()}>关闭</CloseOutlined>
-      </div>
-
       <div
         css={css`
           display: flex;
@@ -156,25 +141,25 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, visible = false, onClose })
       >
         <div className='MsgWithDiffLegend'>
           <div>
-            <div className='color-tag-green'></div>
+            <div className='color-tag-green' />
             <span>One more node than</span>
           </div>
           <div>
-            <div className='color-tag-pink'></div>
+            <div className='color-tag-pink' />
             <span>Difference node</span>
           </div>
           <div>
-            <div className='color-tag-grey'></div>
+            <div className='color-tag-grey' />
             <span>Ignore node</span>
           </div>
         </div>
       </div>
 
       <div id='MsgWithDiffJsonEditorWrapper' style={{ height: '90vh' }}>
-        <div ref={containerLeftRef} id='containerLeft'></div>
-        <div ref={containerRightRef} id='containerRight'></div>
+        <div ref={containerLeftRef} id='containerLeft' />
+        <div ref={containerRightRef} id='containerRight' />
       </div>
-    </div>
+    </Modal>
   );
 };
 

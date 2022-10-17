@@ -1,5 +1,3 @@
-import { ThemeClassify, ThemeName } from './style/theme';
-
 export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
 export enum MethodEnum {
   GET = 'GET',
@@ -8,6 +6,27 @@ export enum MethodEnum {
   DELETE = 'DELETE',
   PATCH = 'PATCH',
 }
+
+export const methodMap = {
+  GET: {
+    color: '#0cbb52',
+  },
+  PUT: {
+    color: '#097bed',
+  },
+  POST: {
+    color: '#ffb400',
+  },
+  DELETE: {
+    color: '#eb2013',
+  },
+  PATCH: {
+    color: '#212121',
+  },
+  UNKNOWN: {
+    color: '#0cbb52',
+  },
+};
 
 export enum NodeType {
   interface = 1,

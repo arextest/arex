@@ -10,15 +10,14 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Input, message, Select, Tooltip } from 'antd';
-import React, { useMemo, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { MenuTypeEnum, PageTypeEnum, RoleEnum } from '../../constant';
 import { WorkspaceService } from '../../services/Workspace.service';
-import { Workspace } from '../../services/Workspace.type';
 import { useStore } from '../../store';
 import { TooltipButton } from '../index';
-import { generateGlobalPaneId } from '../../utils';
+import { generateGlobalPaneId } from '../../helpers/utils';
 
 const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
   height: 35px;
@@ -38,10 +37,10 @@ const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
   }
 `;
 
-const WorkspacesMenu = () => {
+const WorkspacesMenu: FC<{ brief?: boolean }> = (props) => {
   const params = useParams();
   const nav = useNavigate();
-  const { userInfo, collapseMenu, workspaces, setWorkspaces, setPanes, resetPanes } = useStore();
+  const { userInfo, workspaces, setWorkspaces, setPanes, resetPanes } = useStore();
   const [editMode, setEditMode] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [status, setStatus] = useState<'' | 'error'>('');
@@ -120,30 +119,17 @@ const WorkspacesMenu = () => {
     setNewWorkspaceName('');
   };
 
-  const currentWorkspaceName = useMemo(() => {
-    const roleList: { [key: string]: string } = {
-      [RoleEnum.Admin]: 'Admin',
-      [RoleEnum.Editor]: 'Editor',
-      [RoleEnum.Viewer]: 'Viewer',
-    };
-    const currentWorkspace =
-      workspaces.find((i) => i.id === params.workspaceId) || ({} as Workspace);
-    const role = workspaces.find((i) => i.id === params.workspaceId)?.role;
-    const roleName = roleList[role || RoleEnum.Viewer];
-    return currentWorkspace.workspaceName ? `${currentWorkspace.workspaceName} - ${roleName}` : '';
-  }, [params.workspaceId, workspaces]);
-
   return (
-    <WorkspacesMenuWrapper width={collapseMenu ? '100%' : 'calc(100% + 10px)'}>
+    <WorkspacesMenuWrapper width={props.brief ? '100%' : 'calc(100% + 10px)'}>
       <Tooltip
-        title={`Workspace${collapseMenu ? ': ' + params.workspaceName : ''}`}
+        title={`Workspace${props.brief ? ': ' + params.workspaceName : ''}`}
         placement='right'
       >
         <GlobalOutlined
-          style={{ marginLeft: collapseMenu ? '12px' : '0', transition: 'all 0.2s' }}
+          style={{ marginLeft: props.brief ? '12px' : '0', transition: 'all 0.2s' }}
         />
       </Tooltip>
-      {!collapseMenu && (
+      {!props.brief && (
         <>
           <div>
             {editMode ? (

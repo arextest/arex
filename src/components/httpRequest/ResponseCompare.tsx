@@ -1,111 +1,19 @@
-import 'codemirror/addon/merge/merge.css';
-import 'codemirror/addon/merge/merge.js';
-import 'codemirror/theme/neat.css';
-import 'codemirror/theme/gruvbox-dark.css';
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/addon/fold/foldcode';
-import 'codemirror/addon/fold/foldgutter';
-import 'codemirror/addon/fold/brace-fold';
-
-import styled from '@emotion/styled';
 import { Radio, Table, Tabs } from 'antd';
-import axios from 'axios';
-import CodeMirror from 'codemirror';
-import DiffMatchPatch from 'diff-match-patch';
 import { useEffect, useRef, useState } from 'react';
+import ReactDiffViewer from 'react-diff-viewer';
 
+import request from '../../api/axios';
 import { useStore } from '../../store';
-import { ThemeClassify } from '../../style/theme';
-
 const { TabPane } = Tabs;
-const DiffView = styled.div<{ theme: ThemeClassify }>`
-  // 主体样式
-  .CodeMirror,
-  .CodeMirror-merge {
-    height: 600px;
-    border-color: ${({ theme }) => (theme === ThemeClassify.light ? '#f0f0f0' : '#303030')};
-  }
 
-  // 左右文本差异高亮样式
-  .CodeMirror-merge-r-chunk-start {
-    border-top: 1px solid ${({ theme }) => (theme === ThemeClassify.light ? '#ee8' : '#959582')};
-  }
-  .CodeMirror-merge-r-chunk-end {
-    border-bottom: 1px solid ${({ theme }) => (theme === ThemeClassify.light ? '#ee8' : '#959582')};
-  }
-  .CodeMirror-merge-r-chunk {
-    background-color: ${({ theme = ThemeClassify.light }) =>
-      theme === ThemeClassify.light ? '#ffffe0' : '#787869'};
-  }
-
-  // 中间分隔区样式
-  .CodeMirror-merge-gap {
-    border-color: ${({ theme }) => (theme === ThemeClassify.light ? 'inherit' : '#959582')};
-    background-color: ${({ theme }) =>
-      theme === ThemeClassify.light ? '#f8f8f8' : '#282828'} !important;
-    path {
-      stroke: ${({ theme }) => (theme === ThemeClassify.light ? '#ee8' : '#959582')};
-      fill: ${({ theme }) => (theme === ThemeClassify.light ? '#ffffe0' : '#787869')};
-    }
-  }
-
-  // 水平滚动条样式 （垂直滚动条样式已在全局样式中设置）
-  .CodeMirror-hscrollbar {
-    height: 6px;
-    border-radius: 3px;
-    background: #88888844;
-  }
-`;
-// @ts-ignore
-window.diff_match_patch = DiffMatchPatch;
-// @ts-ignore
-window.DIFF_DELETE = -1;
-// @ts-ignore
-window.DIFF_INSERT = 1;
-// @ts-ignore
-window.DIFF_EQUAL = 0;
-
-const onChange = (key: string) => {
-  console.log(key);
-};
+const onChange = (key: string) => {};
 
 const ResponseCompare = ({ responses }) => {
-  console.log(responses, 'responses');
   const diffView = useRef<HTMLDivElement>();
-  const { themeClassify } = useStore();
-
-  let mergeView;
   useEffect(() => {
     if (!diffView.current) {
       return;
     }
-
-    document.querySelector('.diffView').innerHTML = '';
-    mergeView = CodeMirror.MergeView(diffView.current, {
-      readOnly: true, // 只读
-      lineNumbers: true, // 显示行号
-      theme: themeClassify === ThemeClassify.light ? 'neat' : 'gruvbox-dark', // 设置主题
-      value: JSON.stringify(responses[0], null, 2), // 左边的内容（新内容）
-      orig: JSON.stringify(responses[1], null, 2), // 右边的内容（旧内容）
-      mode: 'javascript', // 代码模式为js模式
-      viewportMargin: Infinity, // 允许滚动的距离
-      highlightDifferences: true, // 有差异的地方是否高亮
-      revertButtons: false, // revert按钮设置为true可以回滚
-      styleActiveLine: true, // 光标所在的位置代码高亮
-      lineWrap: false, // 文字过长时，是换行(wrap)还是滚动(scroll),默认是滚动
-      smartIndent: true, // 智能缩进
-      matchBrackets: true, // 括号匹配
-      foldGutter: true, // 代码折叠
-      gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-      // 智能提示
-      extraKeys: {
-        'Alt-/': 'autocomplete',
-        // F11: function (cm) {
-        //   cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-        // },
-      },
-    });
-    // mergeView.editor().setSize(null, "100%");
   }, [responses]);
 
   const columns = [
@@ -178,16 +86,14 @@ const ResponseCompare = ({ responses }) => {
   }
   useEffect(() => {
     if (responses[0] && responses[1]) {
-      // console.log(responses[0],responses[1],abc(responses[0]))
       const params = {
         msgCombination: {
           baseMsg: JSON.stringify(abc(responses[0])),
           testMsg: JSON.stringify(abc(responses[1])),
         },
       };
-      axios.post('/api/compare/quickCompare', params).then((res) => {
-        console.log(res.data);
-        setDataSource(res.data.body.logs);
+      request.post('/api/compare/quickCompare', params).then((res) => {
+        setDataSource(res.body.diffDetails.map((i) => i.logs[0]));
       });
     }
   }, [responses]);
@@ -201,7 +107,6 @@ const ResponseCompare = ({ responses }) => {
                 size={'small'}
                 options={optionsWithDisabled}
                 onChange={(val) => {
-                  console.log(val, 'val');
                   setActiveRadio(val.target.value);
                 }}
                 value={activeRadio}
@@ -214,7 +119,11 @@ const ResponseCompare = ({ responses }) => {
               className='react-diff-code-view'
               style={{ height: '100%', display: activeRadio === 'json' ? 'block' : 'none' }}
             >
-              <DiffView className={'diffView'} ref={diffView} theme={themeClassify} />
+              <ReactDiffViewer
+                oldValue={JSON.stringify(responses[0], null, 2)}
+                newValue={JSON.stringify(responses[1], null, 2)}
+                splitView={true}
+              />
             </div>
             <div style={{ display: activeRadio === 'table' ? 'block' : 'none' }}>
               <Table dataSource={dataSource} columns={columns} />

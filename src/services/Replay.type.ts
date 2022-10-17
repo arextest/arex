@@ -276,78 +276,6 @@ export interface QueryFullLinkMsgRes {
   compareResults: CompareResult[];
 }
 
-export interface QueryRecordSettingReq {
-  id: string;
-}
-
-export interface QueryRecordSettingRes {
-  allowDayOfWeeks: number;
-  allowTimeOfDayFrom: string;
-  allowTimeOfDayTo: string;
-  appId: string;
-  excludeDependentOperationSet: string[];
-  excludeDependentServiceSet: string[];
-  excludeOperationSet: string[];
-  includeOperationSet: string[];
-  includeServiceSet: string[];
-  modifiedTime: string;
-  sampleRate: number;
-  timeMock: boolean;
-}
-
-export interface UpdateRecordSettingReq {
-  appId: string;
-  sampleRate: number;
-  allowDayOfWeeks: number;
-  allowTimeOfDayFrom: string;
-  allowTimeOfDayTo: string;
-  includeOperationSet?: string[];
-  excludeOperationSet?: string[];
-  excludeDependentOperationSet?: string[];
-  includeServiceSet?: string[];
-  excludeDependentServiceSet?: string[];
-}
-
-export type UpdateRecordSettingRes = boolean;
-
-export interface QueryRecordDynamicClassSettingReq {
-  appId: string;
-}
-
-export type DynamicClass = {
-  modifiedTime?: string;
-  id?: string;
-  appId?: string;
-  fullClassName: string;
-  methodName?: string;
-  parameterTypes?: string;
-  keyFormula?: string;
-  configType?: number;
-};
-export type QueryRecordDynamicClassSettingRes = DynamicClass[];
-
-export interface UpdateDynamicClassSettingReq {
-  appId: string;
-  fullClassName: string;
-  methodName?: string;
-  parameterTypes?: string;
-  keyFormula?: string;
-  configType: number;
-}
-
-export type UpdateDynamicClassSettingRes = boolean;
-
-export interface RemoveDynamicClassSettingReq {
-  appId: string;
-  id: string;
-}
-
-export type RemoveDynamicClassSettingRes = boolean;
-
-export interface QueryConfigTemplateReq {
-  appId: string;
-}
-
 export interface QueryConfigTemplateRes {
   configTemplate: string;
 }
@@ -361,7 +289,14 @@ export interface PushConfigTemplateRes {
   success: boolean;
 }
 
-export interface queryScheduleUseResultAppIdRes {
+export interface QueryScheduleUseResultAppIdRes {
   appId: string;
   offsetDays: string;
+}
+
+export interface UpdateConfigScheduleReq {
+  appId: string;
+  offsetDays: number;
+  targetEnv: unknown[];
+  sendMaxQps: number;
 }

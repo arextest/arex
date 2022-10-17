@@ -8,7 +8,7 @@ import { MenuTypeEnum, PageTypeEnum } from '../../constant';
 import ReplayService from '../../services/Replay.service';
 import { ApplicationDataType } from '../../services/Replay.type';
 import { useStore } from '../../store';
-import { generateGlobalPaneId } from '../../utils';
+import { generateGlobalPaneId } from '../../helpers/utils';
 import { PanesTitle } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
 
