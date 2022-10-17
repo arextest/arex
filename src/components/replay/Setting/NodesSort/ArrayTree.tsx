@@ -1,8 +1,8 @@
 import { css } from '@emotion/react';
-import { Badge, Card, Tree } from 'antd';
+import { Badge, Card, Spin, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 import { SortNode } from '../../../../services/AppSetting.type';
 import { useStore } from '../../../../store';
@@ -12,6 +12,7 @@ type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
   loading?: boolean;
   treeData: object;
   title?: string;
+  onEditResponse?: () => void;
 };
 
 const ArrayTree: FC<ResponseTreeProps> = (props) => {
@@ -42,23 +43,24 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
     <Card
       bordered={false}
       title={`${props.title} (click node to ignore)`}
-      loading={props.loading}
       bodyStyle={{ padding: '8px 16px' }}
       headStyle={{ padding: '0 16px', margin: '-8px 0' }}
     >
-      <Tree
-        showIcon
-        defaultExpandAll
-        {...props}
-        selectedKeys={[]}
-        treeData={getNodes(props.treeData, '')}
-        css={css`
-          .ant-tree-icon__customize {
-            position: absolute;
-            left: -16px;
-          }
-        `}
-      />
+      <Spin spinning={props.loading}>
+        <Tree
+          showIcon
+          defaultExpandAll
+          {...props}
+          selectedKeys={[]}
+          treeData={getNodes(props.treeData, '')}
+          css={css`
+            .ant-tree-icon__customize {
+              position: absolute;
+              left: -16px;
+            }
+          `}
+        />
+      </Spin>
     </Card>
   );
 };

@@ -11,6 +11,7 @@ import { tryParseJsonString, tryPrettierJsonString } from '../../../../helpers/u
 import AppSettingService from '../../../../services/AppSetting.service';
 import { OperationInterface, SortNode } from '../../../../services/AppSetting.type';
 import { EditAreaPlaceholder, SpaceBetweenWrapper } from '../../../styledComponents';
+import EmptyResponse from '../NodesIgnore/EmptyResponse';
 import ResponseRaw from '../NodesIgnore/ResponseRaw';
 import ArrayTree from './ArrayTree';
 import PathCollapse from './PathCollapse';
@@ -173,8 +174,8 @@ const NodesSort: FC<{ appId: string }> = (props) => {
    * 开始编辑某个 interface 的 response
    * @param operationInterface
    */
-  const handleEditResponse = (operationInterface: OperationInterface<'Interface'>) => {
-    setActiveOperationInterface(operationInterface);
+  const handleEditResponse = (operationInterface?: OperationInterface<'Interface'>) => {
+    operationInterface && setActiveOperationInterface(operationInterface);
     setNodesEditMode(NodesEditMode.Raw);
   };
 
@@ -318,32 +319,39 @@ const NodesSort: FC<{ appId: string }> = (props) => {
                 </SpaceBetweenWrapper>
 
                 <Card bodyStyle={{ padding: 0 }}>
-                  <TreeCarousel ref={treeCarousel} beforeChange={(from, to) => setTreeEditMode(to)}>
-                    <div>
-                      <ArrayTree
-                        title={activeOperationInterface?.operationName}
-                        treeData={interfaceResponseParsed}
-                        loading={loadingInterfaceResponse}
-                        sortNodeList={sortNodeList}
-                        onSelect={(selectedKeys) =>
-                          handleEditCollapseItem(
-                            selectedKeys[0] as string,
-                            sortNodeList.find((node) => node.path === selectedKeys[0]),
-                          )
-                        }
-                      />
-                    </div>
+                  {Object.keys(interfaceResponseParsed).length ? (
+                    <TreeCarousel
+                      ref={treeCarousel}
+                      beforeChange={(from, to) => setTreeEditMode(to)}
+                    >
+                      <div>
+                        <ArrayTree
+                          title={activeOperationInterface?.operationName}
+                          treeData={interfaceResponseParsed}
+                          loading={loadingInterfaceResponse}
+                          sortNodeList={sortNodeList}
+                          onSelect={(selectedKeys) =>
+                            handleEditCollapseItem(
+                              selectedKeys[0] as string,
+                              sortNodeList.find((node) => node.path === selectedKeys[0]),
+                            )
+                          }
+                        />
+                      </div>
 
-                    <div>
-                      <SortTree
-                        title={checkedNodesData.path}
-                        treeData={sortArray}
-                        checkedKeys={checkedNodesData.pathKeyList}
-                        onCheck={handleSortTreeChecked}
-                        onSelect={handleSortTreeSelected}
-                      />
-                    </div>
-                  </TreeCarousel>
+                      <div>
+                        <SortTree
+                          title={checkedNodesData.path}
+                          treeData={sortArray}
+                          checkedKeys={checkedNodesData.pathKeyList}
+                          onCheck={handleSortTreeChecked}
+                          onSelect={handleSortTreeSelected}
+                        />
+                      </div>
+                    </TreeCarousel>
+                  ) : (
+                    <EmptyResponse onClick={handleEditResponse} />
+                  )}
                 </Card>
               </>
             ) : (
