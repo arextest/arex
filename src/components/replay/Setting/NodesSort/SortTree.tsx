@@ -10,7 +10,7 @@ type SortTreeProps = Omit<TreeProps, 'treeData'> & {
 
 const SortTree: FC<SortTreeProps> = (props) => {
   function getNodes(data?: any[] | object, basePath = ''): DataNode[] {
-    if (!data) return [];
+    if (!data || (Array.isArray(data) && !data?.length)) return [];
 
     const sample = Array.isArray(data) ? data[0] : data;
 
@@ -24,7 +24,7 @@ const SortTree: FC<SortTreeProps> = (props) => {
         ? {
             title: key,
             key: path,
-            children: getNodes(Array.isArray(value) ? value[0] || {} : value, path),
+            children: getNodes(Array.isArray(value) ? value[0] || [] : value, path),
           }
         : { title: key, key: path, value: path };
     });
