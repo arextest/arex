@@ -241,8 +241,10 @@ const NodesSort: FC<{ appId: string }> = (props) => {
       .split('/')
       .filter(Boolean)
       .forEach((k, i) => {
-        value = i === 0 ? interfaceResponseParsed[k] : value[k];
+        value =
+          i === 0 ? interfaceResponseParsed[k] : Array.isArray(value) ? value[0]?.[k] : value[k];
       });
+    console.log({ interfaceResponseParsed, key, value });
 
     setSortArray(value);
   };

@@ -21,8 +21,12 @@ const SortTree: FC<SortTreeProps> = (props) => {
     return entries.map(([key, value]) => {
       const path = basePath + key + '/';
       return value && typeof value === 'object'
-        ? { title: key, key: path, children: getNodes(value, path) }
-        : { title: key, key: path, value };
+        ? {
+            title: key,
+            key: path,
+            children: getNodes(Array.isArray(value) ? value[0] || {} : value, path),
+          }
+        : { title: key, key: path, value: path };
     });
   }
 

@@ -30,7 +30,7 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
         ? {
             title: key,
             key: path,
-            children: getNodes(value, path),
+            children: getNodes(Array.isArray(value) ? value[0] || {} : value, path),
             icon: props.sortNodeList?.find((node) => node.path === path)?.pathKeyList?.length && (
               <Badge color={theme.split('-')[1]} />
             ), // 已配置过的节点使用圆点进行提示
@@ -55,8 +55,7 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
           treeData={getNodes(props.treeData, '')}
           css={css`
             .ant-tree-icon__customize {
-              position: absolute;
-              left: -16px;
+              float: right;
             }
           `}
         />
