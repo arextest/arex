@@ -195,7 +195,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
     response &&
       runTestScript(TestVal, {
         status: response.status,
-        body: response.body,
+        body: response.data,
         headers: response.headers,
       })
         .then((res: any) => {
