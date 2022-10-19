@@ -91,7 +91,7 @@ const NodesSort: FC<{ appId: string }> = (props) => {
         setSortNodeList([]);
       },
       onSuccess() {
-        handleCancelEditResponse();
+        handleCancelEditResponse(false, false);
       },
     },
   );
@@ -140,6 +140,7 @@ const NodesSort: FC<{ appId: string }> = (props) => {
    */
   const {
     data: interfaceResponse,
+    mutate: setInterfaceResponse,
     run: queryInterfaceResponse,
     loading: loadingInterfaceResponse,
   } = useRequest(
@@ -147,6 +148,9 @@ const NodesSort: FC<{ appId: string }> = (props) => {
     {
       ready: !!activeOperationInterface?.id,
       refreshDeps: [activeOperationInterface],
+      onBefore() {
+        setInterfaceResponse(undefined);
+      },
     },
   );
   const interfaceResponseParsed = useMemo<{ [key: string]: any }>(() => {
@@ -244,7 +248,6 @@ const NodesSort: FC<{ appId: string }> = (props) => {
         value =
           i === 0 ? interfaceResponseParsed[k] : Array.isArray(value) ? value[0]?.[k] : value[k];
       });
-    console.log({ interfaceResponseParsed, key, value });
 
     setSortArray(value);
   };
@@ -253,8 +256,11 @@ const NodesSort: FC<{ appId: string }> = (props) => {
    * 取消编辑 response
    * @param reloadResponse 是否重新加载 interfaceResponse
    */
-  const handleCancelEditResponse = (reloadResponse?: boolean) => {
-    setNodesEditMode(NodesEditMode.Tree);
+  const handleCancelEditResponse = (
+    reloadResponse?: boolean,
+    nodesEditMode: NodesEditMode | false = NodesEditMode.Tree,
+  ) => {
+    nodesEditMode && setNodesEditMode(nodesEditMode);
     setTreeEditMode(TreeEditModeEnum.ArrayTree);
     treeCarousel.current?.goTo(0);
     setActiveSortNode(undefined);
