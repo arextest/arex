@@ -1,6 +1,7 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { html } from '@codemirror/lang-html';
 import { javascript } from '@codemirror/lang-javascript';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import CodeMirror from '@uiw/react-codemirror';
 import { ReactCodeMirrorProps } from '@uiw/react-codemirror/src';
@@ -132,6 +133,12 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                 >
                   <Row gutter={16}>
                     <Col span={12}>
+                      {/*解决无法渲然全的bug，误删*/}
+                      <div
+                        css={css`
+                          height: 1px;
+                        `}
+                      ></div>
                       <CodeViewer
                         type={result.type}
                         value={result.baseMsg}
@@ -140,6 +147,12 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
                       />
                     </Col>
                     <Col span={12}>
+                      {/*解决无法渲然全的bug，误删*/}
+                      <div
+                        css={css`
+                          height: 1px;
+                        `}
+                      ></div>
                       <CodeViewer
                         type={result.type}
                         value={result.testMsg}
