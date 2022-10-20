@@ -1,7 +1,6 @@
 import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-design/Icons';
 import { FC } from 'react';
 
-import { MenuTypeEnum } from '../constant';
 import CollectionMenu, { CollectionMenuRef } from './CollectionMenu';
 import EnvironmentMenu from './EnvironmentMenu';
 import ReplayMenu from './ReplayMenu';
@@ -11,6 +10,12 @@ type MenuConfig = {
   Icon: FC;
   Menu: FC;
 };
+
+export enum MenuTypeEnum {
+  Collection = 'collection',
+  Replay = 'replay',
+  Environment = 'environment',
+}
 
 const config: MenuConfig[] = [
   {

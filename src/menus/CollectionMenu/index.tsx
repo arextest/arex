@@ -7,12 +7,13 @@ import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react
 import { useParams } from 'react-router-dom';
 
 import { TooltipButton } from '../../components';
-import { MenuTypeEnum, NodeType } from '../../constant';
+import { NodeType } from '../../constant';
 import { treeFind } from '../../helpers/collection/util';
 import { generateGlobalPaneId, parseGlobalPaneId } from '../../helpers/utils';
 import { PageTypeEnum } from '../../pages';
 import { CollectionService } from '../../services/CollectionService';
 import { useStore } from '../../store';
+import { MenuTypeEnum } from '../index';
 import CollectionTitle from './CollectionTitle';
 
 const CollectionMenuWrapper = styled.div`

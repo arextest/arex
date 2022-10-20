@@ -4,10 +4,11 @@ import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import { MenuTypeEnum, UserInfoKey } from '../constant';
+import { UserInfoKey } from '../constant';
 import DefaultConfig from '../defaultConfig';
 import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { I18nextLng } from '../i18n';
+import { MenuTypeEnum } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
 import { PageTypeEnum } from '../pages';
 import { FontSize } from '../pages/Setting';

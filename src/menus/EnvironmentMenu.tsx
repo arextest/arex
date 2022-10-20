@@ -12,11 +12,11 @@ import { Button, Dropdown, Input, Menu, Modal, Tooltip } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { MenuTypeEnum } from '../constant';
 import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
 import { PageTypeEnum } from '../pages';
 import EnvironmentService from '../services/Environment.service';
 import { useStore } from '../store';
+import { MenuTypeEnum } from './index';
 
 type EnvironmentKeyValues = { key: string; value: string; active: boolean };
 type EnvironmentType = {

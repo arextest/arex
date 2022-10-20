@@ -39,7 +39,7 @@ import {
 import Mock from '../components/httpRequest/Mock';
 import SmartEnvInput from '../components/smart/EnvInput';
 import { Label, SpaceBetweenWrapper } from '../components/styledComponents';
-import { ContentTypeEnum, MenuTypeEnum, MethodEnum, METHODS, NodeType } from '../constant';
+import { ContentTypeEnum, MethodEnum, METHODS, NodeType } from '../constant';
 import { treeFindPath } from '../helpers/collection/util';
 import { readableBytes } from '../helpers/http/responseMeta';
 import AgentAxios from '../helpers/request';
@@ -50,6 +50,7 @@ import {
   tryParseJsonString,
   tryPrettierJsonString,
 } from '../helpers/utils';
+import { MenuTypeEnum } from '../menus';
 import { CollectionService } from '../services/CollectionService';
 import { FileSystemService } from '../services/FileSystem.service';
 import { Page, useStore } from '../store';

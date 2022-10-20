@@ -1,12 +1,12 @@
 import { FC, useMemo } from 'react';
 
 import MenuSelect from '../components/MenuSelect';
-import { MenuTypeEnum } from '../constant';
 import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
 import { PageTypeEnum } from '../pages';
 import ReplayService from '../services/Replay.service';
 import { ApplicationDataType } from '../services/Replay.type';
 import { useStore } from '../store';
+import { MenuTypeEnum } from './index';
 
 const ReplayMenu: FC = () => {
   const { activeMenu, setPages } = useStore();

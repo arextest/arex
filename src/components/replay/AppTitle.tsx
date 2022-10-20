@@ -4,8 +4,8 @@ import { useRequest } from 'ahooks';
 import { Button, Form, Input, Modal, notification } from 'antd';
 import React, { FC, ReactNode, useState } from 'react';
 
-import { MenuTypeEnum } from '../../constant';
 import { generateGlobalPaneId } from '../../helpers/utils';
+import { MenuTypeEnum } from '../../menus';
 import { PageTypeEnum } from '../../pages';
 import ReplayService from '../../services/Replay.service';
 import { ApplicationDataType } from '../../services/Replay.type';

@@ -18,8 +18,8 @@ import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 
-import { MenuTypeEnum } from '../../constant';
 import { generateGlobalPaneId, getPercent } from '../../helpers/utils';
+import { MenuTypeEnum } from '../../menus';
 import { PageTypeEnum } from '../../pages';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';

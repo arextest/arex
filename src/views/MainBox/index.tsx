@@ -5,8 +5,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { AppFooter, AppHeader, WorkspacesMenu } from '../../components';
-import { MenuTypeEnum } from '../../constant';
 import { generateGlobalPaneId } from '../../helpers/utils';
+import { MenuTypeEnum } from '../../menus';
 import { CollectionMenuRef } from '../../menus/CollectionMenu';
 import { PageTypeEnum } from '../../pages';
 import EnvironmentService from '../../services/Environment.service';

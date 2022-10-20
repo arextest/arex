@@ -13,8 +13,9 @@ import { Input, message, Select, Tooltip } from 'antd';
 import React, { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { MenuTypeEnum, RoleEnum } from '../../constant';
+import { RoleEnum } from '../../constant';
 import { generateGlobalPaneId } from '../../helpers/utils';
+import { MenuTypeEnum } from '../../menus';
 import { PageTypeEnum } from '../../pages';
 import { WorkspaceService } from '../../services/Workspace.service';
 import { useStore } from '../../store';

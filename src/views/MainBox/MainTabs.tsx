@@ -3,9 +3,9 @@ import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
 import React, { ReactNode } from 'react';
 
 import { DraggableTabs, EnvironmentSelect } from '../../components';
-import { MenuTypeEnum } from '../../constant';
 import { treeFind } from '../../helpers/collection/util';
 import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
+import { MenuTypeEnum } from '../../menus';
 import Pages, { PageFC, PageTypeEnum } from '../../pages';
 import { Page, PageData, useStore } from '../../store';
 
