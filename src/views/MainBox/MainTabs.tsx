@@ -6,8 +6,8 @@ import { DraggableTabs, EnvironmentSelect } from '../../components';
 import { MenuTypeEnum } from '../../constant';
 import { treeFind } from '../../helpers/collection/util';
 import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
-import Pages, { PageTypeEnum } from '../../pages';
-import { Page, useStore } from '../../store';
+import Pages, { PageFC, PageTypeEnum } from '../../pages';
+import { Page, PageData, useStore } from '../../store';
 
 const { TabPane } = Tabs;
 
@@ -86,14 +86,14 @@ const MainTabs = () => {
       >
         {pages.map((page) => {
           // TODO 支持自定义props, ref
-          const Component = Pages[page.pageType];
+          const Page: PageFC<PageData> = Pages[page.pageType];
           return (
             <MainTabPane
               className='main-tab-page'
               tab={genTabTitle(collectionTreeData, page)}
               key={page.paneId}
             >
-              <Component page={page} />
+              <Page page={page} />
             </MainTabPane>
           );
         })}
