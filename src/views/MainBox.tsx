@@ -1,9 +1,4 @@
-import {
-  ApiOutlined,
-  DeploymentUnitOutlined,
-  FieldTimeOutlined,
-  LeftOutlined,
-} from '@ant-design/icons';
+import { LeftOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMount, useRequest } from 'ahooks';
@@ -15,39 +10,27 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   AppFooter,
   AppHeader,
-  CollectionMenu,
   DraggableTabs,
-  EnvironmentMenu,
   EnvironmentSelect,
-  ReplayMenu,
   WorkspacesMenu,
 } from '../components';
-import { CollectionProps } from '../components/httpRequest/CollectionMenu';
-import { MenuTypeEnum, PageTypeEnum } from '../constant';
+import { MenuTypeEnum } from '../constant';
 import { treeFind } from '../helpers/collection/util';
+import propsHydration from '../helpers/propsHydration';
 import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../helpers/utils';
-import {
-  Environment,
-  Folder,
-  HttpRequest,
-  Replay,
-  ReplayAnalysis,
-  ReplayCase,
-  ReplaySetting,
-  WorkspaceOverview,
-} from '../pages';
-import Setting from '../pages/Setting';
+import MenuConfig from '../menus';
+import { CollectionMenuRef } from '../menus/CollectionMenu';
+import Pages, { PageProps, PageTypeEnum } from '../pages';
 import EnvironmentService from '../services/Environment.service';
-import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { useStore } from '../store';
 
 const { TabPane } = Tabs;
-const MainMenu = styled(Tabs, { shouldForwardProp: (propName) => propName !== 'brief' })<{
-  brief?: boolean;
+const MainMenu = styled(Tabs, { shouldForwardProp: (propName) => propName !== 'collapse' })<{
+  collapse?: boolean;
 }>`
   height: calc(100% - 35px);
   .ant-tabs-nav-list {
-    width: ${(props) => (props.brief ? '70px' : '100px')};
+    width: ${(props) => (props.collapse ? '70px' : '100px')};
     .ant-tabs-tab {
       margin: 0 !important;
       padding: 12px 0 !important;
@@ -79,7 +62,7 @@ const MainMenu = styled(Tabs, { shouldForwardProp: (propName) => propName !== 'b
   }
   .ant-tabs-content {
     height: 100%;
-    display: ${(props) => (props.brief ? 'none' : 'inherit')};
+    display: ${(props) => (props.collapse ? 'none' : 'inherit')};
   }
   .ant-tabs-extra-content {
     width: 100%;
@@ -98,13 +81,13 @@ const MainMenuItem = styled((props: MainMenuItemProps) => (
   }
 `;
 
-type MenuTitleProps = { brief?: boolean; title: string; icon?: ReactNode };
+type MenuTitleProps = { collapse?: boolean; title: string; icon?: ReactNode };
 const MenuTitle = styled((props: MenuTitleProps) => {
-  const { brief, title, icon, ...restProps } = props;
+  const { collapse, title, icon, ...restProps } = props;
   return (
     <div {...restProps}>
       <i>{icon}</i>
-      {!brief && <span>{title}</span>}
+      {!collapse && <span>{title}</span>}
     </div>
   );
 })<MenuTitleProps>`
@@ -153,7 +136,6 @@ const MainTabs = styled((props: TabsProps) => {
   );
 })<TabsProps>`
   height: 100%;
-
   // 工作区 Tabs 全局样式调整
   .ant-tabs-tab {
     .ant-tabs-tab-btn {
@@ -228,12 +210,10 @@ const MainBox = () => {
   const nav = useNavigate();
   const params = useParams();
   const {
-    panes,
-    setPanes,
+    pages,
+    setPages,
     activeMenu,
     setActiveMenu,
-    setActiveEnvironment,
-    setCollectionTreeData,
     collectionTreeData,
     setEnvironmentTreeData,
     environmentTreeData,
@@ -243,14 +223,14 @@ const MainBox = () => {
 
   // 必须和路由搭配起来，在切换的时候附着上去
   useEffect(() => {
-    const findActivePane = panes.find((i) => i.paneId === activeMenu[1]);
+    const findActivePane = pages.find((i) => i.paneId === activeMenu[1]);
     if (findActivePane) {
       nav(
         `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.rawId}`,
       );
     }
     fetchEnvironmentData();
-  }, [activeMenu, panes]);
+  }, [activeMenu, pages]);
 
   useMount(() => {
     // TODO 只做了Replay的路由刷新优化
@@ -268,7 +248,7 @@ const MainBox = () => {
     }
   });
 
-  const collectionMenuRef = useRef();
+  const collectionMenuRef = useRef<CollectionMenuRef>(null);
   const fetchCollectionTreeData = () => {
     collectionMenuRef.current?.fetchTreeData();
   };
@@ -287,7 +267,7 @@ const MainBox = () => {
 
   const addTab = () => {
     const u = uuid();
-    setPanes(
+    setPages(
       {
         key: uuid(),
         title: 'New Request',
@@ -303,8 +283,8 @@ const MainBox = () => {
 
   const removeTab = (targetKey: string) => {
     const menuType = activeMenu[0];
-    const filteredPanes = panes.filter((i) => i.paneId !== targetKey);
-    setPanes(filteredPanes);
+    const filteredPanes = pages.filter((i) => i.paneId !== targetKey);
+    setPages(filteredPanes);
 
     if (filteredPanes.length) {
       const lastPane = JSON.parse(JSON.stringify(filteredPanes)).sort(
@@ -320,57 +300,6 @@ const MainBox = () => {
     action === 'add' ? addTab() : removeTab(targetKey);
   };
 
-  const handleCollectionMenuClick: CollectionProps['onSelect'] = (key, node) => {
-    setPanes(
-      {
-        title: node.title,
-        menuType: MenuTypeEnum.Collection,
-        pageType: node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
-        isNew: false,
-        data: node,
-        paneId: generateGlobalPaneId(
-          MenuTypeEnum.Collection,
-          node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
-          key,
-        ),
-        rawId: key,
-      },
-      'push',
-    );
-  };
-
-  const handleReplayMenuClick = (app: ApplicationDataType) => {
-    setPanes(
-      {
-        title: app.appId,
-        menuType: MenuTypeEnum.Replay,
-        pageType: PageTypeEnum.Replay,
-        isNew: false,
-        data: app,
-        paneId: generateGlobalPaneId(MenuTypeEnum.Collection, PageTypeEnum.Replay, app.id),
-        rawId: app.id,
-      },
-      'push',
-    );
-  };
-
-  //environment
-  const handleEnvironmentMenuClick = (key: string, node) => {
-    setActiveEnvironment(key);
-    setPanes(
-      {
-        title: node.title,
-        menuType: MenuTypeEnum.Environment,
-        pageType: PageTypeEnum.Environment,
-        isNew: false,
-        data: node,
-        paneId: generateGlobalPaneId(MenuTypeEnum.Environment, PageTypeEnum.Environment, key),
-        rawId: key,
-      },
-      'push',
-    );
-  };
-
   // TODO 需要应用载入时就获取环境变量，此处与envPage初始化有重复代码
   const { run: fetchEnvironmentData } = useRequest(
     () => EnvironmentService.getEnvironment({ workspaceId: params.workspaceId as string }),
@@ -383,24 +312,23 @@ const MainBox = () => {
     },
   );
 
-  const genTabTitle = (collectionTreeData, pane) => {
+  const genTabTitle = (collectionTreeData, page) => {
     // Request类型需要动态响应tittle修改
-    if ([PageTypeEnum.Request, PageTypeEnum.Folder].includes(pane.pageType)) {
+    if ([PageTypeEnum.Request, PageTypeEnum.Folder].includes(page.pageType)) {
       return (
-        treeFind(collectionTreeData, (item) => item.key === parseGlobalPaneId(pane.paneId)['rawId'])
+        treeFind(collectionTreeData, (item) => item.key === parseGlobalPaneId(page.paneId)['rawId'])
           ?.title || 'New Request'
       );
-    } else if ([PageTypeEnum.Environment].includes(pane.pageType)) {
+    } else if ([PageTypeEnum.Environment].includes(page.pageType)) {
       return treeFind(
         environmentTreeData,
-        (item) => item.id === parseGlobalPaneId(pane.paneId)['rawId'],
+        (item) => item.id === parseGlobalPaneId(page.paneId)['rawId'],
       )?.envName;
     } else {
-      return pane.title;
+      return page.title;
     }
   };
 
-  // https://github.com/arextest/arex-chrome-extension/releases
   return (
     <>
       {/*AppHeader部分*/}
@@ -416,12 +344,12 @@ const MainBox = () => {
           minSize={collapseMenu ? 69 : 200}
           maxSize={collapseMenu ? 69 : 600}
         >
-          <WorkspacesMenu brief={collapseMenu} />
+          <WorkspacesMenu collapse={collapseMenu} />
 
           <MainMenu
             tabPosition='left'
             activeKey={activeMenu[0]}
-            brief={collapseMenu}
+            collapse={collapseMenu}
             tabBarExtraContent={
               <CollapseMenuButton
                 collapse={collapseMenu}
@@ -431,54 +359,22 @@ const MainBox = () => {
             }
             onChange={handleMainMenuChange}
           >
-            {/* menuItem 自定义子组件命名规定: XxxMenu, 表示xx功能的左侧主菜单 */}
-            {/* menuItem 自定义子组件 props 约定，便于之后封装  */}
-            {/* 1. value: 选中 menu item 的 id */}
-            {/* 2. onSelect: 选中 menu item 时触发，参数（结构待规范）为选中节点的相关信息，点击后的逻辑不在 Menu 组件中处理 */}
-            <MainMenuItem
-              tab={<MenuTitle icon={<ApiOutlined />} title='Collection' brief={collapseMenu} />}
-              key={MenuTypeEnum.Collection}
-              menuItem={
-                <CollectionMenu
-                  value={parseGlobalPaneId(activeMenu[1])['rawId']}
-                  onSelect={handleCollectionMenuClick}
-                  onGetData={setCollectionTreeData}
-                  cRef={collectionMenuRef}
-                />
-              }
-            />
-            <MainMenuItem
-              tab={<MenuTitle icon={<FieldTimeOutlined />} title='Replay' brief={collapseMenu} />}
-              key={MenuTypeEnum.Replay}
-              menuItem={
-                <ReplayMenu
-                  value={parseGlobalPaneId(activeMenu[1])['rawId']}
-                  onSelect={handleReplayMenuClick}
-                />
-              }
-            />
-            <MainMenuItem
-              tab={
-                <MenuTitle
-                  icon={<DeploymentUnitOutlined />}
-                  title='Environment'
-                  brief={collapseMenu}
-                />
-              }
-              key={MenuTypeEnum.Environment}
-              menuItem={
-                <EnvironmentMenu
-                  value={parseGlobalPaneId(activeMenu[1])['rawId']}
-                  onSelect={handleEnvironmentMenuClick}
-                />
-              }
-            />
+            {MenuConfig.map((Config) => (
+              // TODO 支持自定义props, ref
+              <MainMenuItem
+                key={Config.title}
+                tab={
+                  <MenuTitle icon={<Config.Icon />} title={Config.title} collapse={collapseMenu} />
+                }
+                menuItem={<Config.Menu />}
+              />
+            ))}
           </MainMenu>
         </Allotment.Pane>
 
         <Allotment.Pane visible>
           <EmptyWrapper
-            empty={!panes.length}
+            empty={!pages.length}
             emptyContent={
               <Button type='primary' onClick={addTab}>
                 New Request
@@ -493,39 +389,21 @@ const MainBox = () => {
                 setActiveMenu(activeMenu[0], t);
               }}
             >
-              {panes.map((pane) => (
-                <MainTabPane
-                  className='main-tab-pane'
-                  tab={genTabTitle(collectionTreeData, pane)}
-                  key={pane.paneId}
-                >
-                  {/* TODO 工作区自定义组件待规范，参考 menuItem */}
-                  {pane.pageType === PageTypeEnum.Request && (
-                    <HttpRequest
-                      id={pane.key}
-                      isNew={pane.isNew}
-                      fetchCollectionTreeData={fetchCollectionTreeData}
-                      paneId={pane.paneId}
-                    />
-                  )}
-                  {pane.pageType === PageTypeEnum.Replay && (
-                    <Replay paneId={pane.paneId} data={pane.data as ApplicationDataType} />
-                  )}
-                  {pane.pageType === PageTypeEnum.ReplayAnalysis && (
-                    <ReplayAnalysis data={pane.data as PlanItemStatistics} />
-                  )}
-                  {pane.pageType === PageTypeEnum.ReplayCase && (
-                    <ReplayCase data={pane.data as PlanItemStatistics} />
-                  )}
-                  {pane.pageType === PageTypeEnum.ReplaySetting && (
-                    <ReplaySetting data={pane.data as ApplicationDataType} />
-                  )}
-                  {pane.pageType === PageTypeEnum.Folder && <Folder />}
-                  {pane.pageType === PageTypeEnum.Environment && <Environment id={pane.key} />}
-                  {pane.pageType === PageTypeEnum.WorkspaceOverview && <WorkspaceOverview />}
-                  {pane.pageType === PageTypeEnum.Setting && <Setting />}
-                </MainTabPane>
-              ))}
+              {pages.map((page) => {
+                // TODO 支持自定义props, ref
+                const TabPane = propsHydration<PageProps>(Pages, page.pageType, {
+                  page,
+                });
+                return (
+                  <MainTabPane
+                    className='main-tab-page'
+                    tab={genTabTitle(collectionTreeData, page)}
+                    key={page.paneId}
+                  >
+                    <TabPane />
+                  </MainTabPane>
+                );
+              })}
             </MainTabs>
           </EmptyWrapper>
         </Allotment.Pane>

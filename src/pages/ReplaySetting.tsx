@@ -1,6 +1,5 @@
 import { css } from '@emotion/react';
 import { Tabs } from 'antd';
-import { FC } from 'react';
 
 import {
   NodesIgnore,
@@ -8,15 +7,13 @@ import {
   SettingImportYaml,
   SettingRecord,
   SettingReplay,
-} from '../../components/replay/Setting';
-import { ApplicationDataType } from '../../services/Replay.type';
-import ImportYaml from '../../components/replay/Setting/ImportYaml';
+} from '../components/replay/Setting';
+import { ApplicationDataType } from '../services/Replay.type';
+import { PageFC } from './index';
 
-export type ReplaySettingProps = {
-  data: ApplicationDataType;
-};
 const { TabPane } = Tabs;
-const ReplaySetting: FC<ReplaySettingProps> = (props) => {
+const ReplaySetting: PageFC<ApplicationDataType> = (props) => {
+  const data = props.page.data;
   return (
     <>
       <Tabs
@@ -32,23 +29,23 @@ const ReplaySetting: FC<ReplaySettingProps> = (props) => {
         `}
       >
         <TabPane tab='Record' key='record'>
-          <SettingRecord appId={props.data.appId} agentVersion={props.data.agentVersion} />
+          <SettingRecord appId={data.appId} agentVersion={data.agentVersion} />
         </TabPane>
 
         <TabPane tab='Replay' key='replay'>
-          <SettingReplay appId={props.data.appId} agentVersion={props.data.agentVersion} />
+          <SettingReplay appId={data.appId} agentVersion={data.agentVersion} />
         </TabPane>
 
         <TabPane tab='ImportYaml' key='importYaml'>
-          <SettingImportYaml appId={props.data.appId} agentVersion={props.data.agentVersion} />
+          <SettingImportYaml appId={data.appId} agentVersion={data.agentVersion} />
         </TabPane>
 
         <TabPane tab='NodesIgnore' key='nodesIgnore'>
-          <NodesIgnore appId={props.data.appId} />
+          <NodesIgnore appId={data.appId} />
         </TabPane>
 
         <TabPane tab='NodesSort' key='nodesSort'>
-          <NodesSort appId={props.data.appId} />
+          <NodesSort appId={data.appId} />
         </TabPane>
       </Tabs>
     </>

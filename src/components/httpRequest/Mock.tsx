@@ -3,7 +3,7 @@ import { useMount } from 'ahooks';
 import { Card, Col, Divider, Input, Row } from 'antd';
 import { useState } from 'react';
 
-import request from '../../api/axios';
+import request from '../../helpers/api/axios';
 import { tryParseJsonString } from '../../helpers/utils';
 
 const Mock = ({ recordId }) => {

@@ -13,11 +13,12 @@ import { Input, message, Select, Tooltip } from 'antd';
 import React, { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { MenuTypeEnum, PageTypeEnum, RoleEnum } from '../../constant';
+import { MenuTypeEnum, RoleEnum } from '../../constant';
+import { generateGlobalPaneId } from '../../helpers/utils';
+import { PageTypeEnum } from '../../pages';
 import { WorkspaceService } from '../../services/Workspace.service';
 import { useStore } from '../../store';
 import { TooltipButton } from '../index';
-import { generateGlobalPaneId } from '../../helpers/utils';
 
 const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
   height: 35px;
@@ -37,10 +38,10 @@ const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
   }
 `;
 
-const WorkspacesMenu: FC<{ brief?: boolean }> = (props) => {
+const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
   const params = useParams();
   const nav = useNavigate();
-  const { userInfo, workspaces, setWorkspaces, setPanes, resetPanes } = useStore();
+  const { userInfo, workspaces, setWorkspaces, setPages, resetPanes } = useStore();
   const [editMode, setEditMode] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [status, setStatus] = useState<'' | 'error'>('');
@@ -78,7 +79,7 @@ const WorkspacesMenu: FC<{ brief?: boolean }> = (props) => {
   const handleEditWorkspace = () => {
     params.workspaceName &&
       params.workspaceId &&
-      setPanes(
+      setPages(
         {
           title: params.workspaceName,
           menuType: MenuTypeEnum.Collection,
@@ -120,16 +121,16 @@ const WorkspacesMenu: FC<{ brief?: boolean }> = (props) => {
   };
 
   return (
-    <WorkspacesMenuWrapper width={props.brief ? '100%' : 'calc(100% + 10px)'}>
+    <WorkspacesMenuWrapper width={props.collapse ? '100%' : 'calc(100% + 10px)'}>
       <Tooltip
-        title={`Workspace${props.brief ? ': ' + params.workspaceName : ''}`}
+        title={`Workspace${props.collapse ? ': ' + params.workspaceName : ''}`}
         placement='right'
       >
         <GlobalOutlined
-          style={{ marginLeft: props.brief ? '12px' : '0', transition: 'all 0.2s' }}
+          style={{ marginLeft: props.collapse ? '12px' : '0', transition: 'all 0.2s' }}
         />
       </Tooltip>
-      {!props.brief && (
+      {!props.collapse && (
         <>
           <div>
             {editMode ? (

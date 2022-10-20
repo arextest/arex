@@ -4,11 +4,12 @@ import { useRequest } from 'ahooks';
 import { Button, Form, Input, Modal, notification } from 'antd';
 import React, { FC, ReactNode, useState } from 'react';
 
-import { MenuTypeEnum, PageTypeEnum } from '../../constant';
+import { MenuTypeEnum } from '../../constant';
+import { generateGlobalPaneId } from '../../helpers/utils';
+import { PageTypeEnum } from '../../pages';
 import ReplayService from '../../services/Replay.service';
 import { ApplicationDataType } from '../../services/Replay.type';
 import { useStore } from '../../store';
-import { generateGlobalPaneId } from '../../helpers/utils';
 import { PanesTitle } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
 
@@ -55,7 +56,7 @@ const TitleWrapper = styled(
 const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   const {
     userInfo: { email },
-    setPanes,
+    setPages,
   } = useStore();
   const [form] = Form.useForm<{ targetEnv: string }>();
   const [modalVisible, setModalVisible] = useState(false);
@@ -107,7 +108,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   };
 
   const handleOpenSetting = () => {
-    setPanes(
+    setPages(
       {
         title: `Setting ${data.appId}`,
         menuType: MenuTypeEnum.Replay,

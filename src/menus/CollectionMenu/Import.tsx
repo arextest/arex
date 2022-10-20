@@ -1,8 +1,8 @@
 import { Form, Input, Modal, notification, TreeSelect } from 'antd';
 import React, { useState } from 'react';
 
-import request from '../../../api/axios';
-import { treeFindPath } from '../../../helpers/collection/util';
+import request from '../../helpers/api/axios';
+import { treeFindPath } from '../../helpers/collection/util';
 
 const CollectionImport = () => {
   const [visible, setVisible] = useState<boolean>(false);

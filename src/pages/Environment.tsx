@@ -1,6 +1,7 @@
 import './Environment.less';
+
+import { DeleteOutlined, MenuOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { MenuOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Button, Form, Input, InputRef, message, Table } from 'antd';
 import update from 'immutability-helper';
 import React, { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
@@ -14,6 +15,7 @@ import { useParams } from 'react-router-dom';
 
 import EnvironmentService from '../services/Environment.service';
 import { useStore } from '../store';
+import { PageFC } from './index';
 
 const MainTable = styled(Table)`
   .ant-table-cell {
@@ -181,12 +183,8 @@ const EditableCell: React.FC<EditableCellProps> = ({
   return <td {...restProps}>{childNode}</td>;
 };
 
-export type EnvironmentProps = {
-  id: string;
-};
-
-const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
-  const parmas = useParams();
+const EnvironmentPage: PageFC = () => {
+  const params = useParams();
   const { activeEnvironment, setEnvironmentTreeData, setActiveEnvironment } = useStore();
 
   const [data, setData] = useState<[]>([]);
@@ -348,10 +346,10 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
   };
 
   const { run: fetchEnvironmentData } = useRequest(
-    () => EnvironmentService.getEnvironment({ workspaceId: parmas.workspaceId as string }),
+    () => EnvironmentService.getEnvironment({ workspaceId: params.workspaceId as string }),
     {
-      ready: !!parmas.workspaceId,
-      refreshDeps: [parmas.workspaceId],
+      ready: !!params.workspaceId,
+      refreshDeps: [params.workspaceId],
       onSuccess(res) {
         setEnvironmentTreeData(res);
       },

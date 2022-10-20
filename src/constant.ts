@@ -40,19 +40,6 @@ export enum MenuTypeEnum {
   Environment = 'environment',
 }
 
-export enum PageTypeEnum {
-  Setting = 'setting',
-  Request = 'request',
-  Folder = 'folder',
-  Collection = 'collection',
-  Environment = 'environment',
-  WorkspaceOverview = 'workspaceOverview',
-  Replay = 'replay',
-  ReplayAnalysis = 'replayAnalysis',
-  ReplayCase = 'replayCase',
-  ReplaySetting = 'replaySetting',
-}
-
 export enum ContentTypeEnum {
   ApplicationJson = 'application/json',
 }

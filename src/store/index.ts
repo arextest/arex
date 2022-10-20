@@ -4,16 +4,17 @@ import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import { nodeType } from '../components/httpRequest/CollectionMenu';
-import { CollapseMenuKey, MenuTypeEnum, PageTypeEnum, UserInfoKey } from '../constant';
+import { MenuTypeEnum, UserInfoKey } from '../constant';
 import DefaultConfig from '../defaultConfig';
+import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { I18nextLng } from '../i18n';
+import { nodeType } from '../menus/CollectionMenu';
+import { PageTypeEnum } from '../pages';
 import { FontSize } from '../pages/Setting';
 import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
 import { PrimaryColor, ThemeClassify, ThemeName } from '../style/theme';
-import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
 
 export type Profile = {
   theme: ThemeName;
@@ -25,17 +26,20 @@ export type UserInfo = {
   profile: Profile;
 };
 
-// TODO 数据结构待规范
-export type PaneType = {
+// 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
+export type PageData =
+  | undefined
+  | nodeType // PageTypeEnum.Request 时的数据
+  | ApplicationDataType // PageTypeEnum.Index 时的数据
+  | PlanItemStatistics; // PageTypeEnum.ReplayAnalysis 时的数据
+
+export type Page<D extends PageData> = {
   title: string;
   key?: string;
   menuType?: MenuTypeEnum;
   pageType: PageTypeEnum;
   isNew?: boolean;
-  data?: // 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
-  | nodeType // PageTypeEnum.Request 时的数据
-    | ApplicationDataType // PageTypeEnum.Index 时的数据
-    | PlanItemStatistics; // PageTypeEnum.ReplayAnalysis 时的数据
+  data: D;
   sortIndex?: number;
   paneId: string;
   rawId: string;
@@ -52,13 +56,13 @@ type BaseState = {
   setUserInfo: (data: UserInfo | string) => void;
   activeMenu: ActiveMenu;
   setActiveMenu: (menuKey: MenuTypeEnum, menuItemKey?: string) => void;
-  panes: PaneType[];
+  pages: Page[];
   /*
    * 修改工作区标签页数据
-   * @param panes 工作区标签页数据
+   * @param pages 工作区标签页数据
    * @param mode 添加模式：push，替换模式：undefined
    * */
-  setPanes: (panes: PaneType | PaneType[], mode?: 'push') => void;
+  setPages: (pages: Page | Page[], mode?: 'push') => void;
   resetPanes: () => void;
   collectionTreeData: any;
   setCollectionTreeData: (collectionTreeData: any) => void;
@@ -140,41 +144,41 @@ export const useStore = create(
     },
 
     extensionInstalled: false,
-    panes: [],
-    setPanes: (panes, mode) => {
+    pages: [],
+    setPages: (pages, mode) => {
       if (!mode) {
-        set({ panes: panes as PaneType[] });
+        set({ pages: pages as Page[] });
       }
       if (mode === 'push') {
         // insert or update
-        const pane = panes as PaneType;
+        const page = pages as Page;
         set((state) => {
-          const sortIndexArr = state.panes.map((i) => i.sortIndex || 0);
-          const statePane = state.panes.find((i) => i.paneId === pane.paneId);
+          const sortIndexArr = state.pages.map((i) => i.sortIndex || 0);
+          const statePane = state.pages.find((i) => i.paneId === page.paneId);
           const maxSortIndex = Math.max(...(sortIndexArr.length > 0 ? sortIndexArr : [0])) + 1;
 
           if (statePane) {
-            // pane already exist, just update sortIndex
+            // page already exist, just update sortIndex
             statePane.sortIndex = maxSortIndex;
           } else {
-            // insert new pane with sortIndex
-            state.panes.push({
-              ...pane,
+            // insert new page with sortIndex
+            state.pages.push({
+              ...page,
               sortIndex: maxSortIndex,
             });
           }
-          // state.activePane = pane.paneId;
-          state.activeMenu = [pane.menuType || MenuTypeEnum.Collection, pane.paneId];
+          // state.activePane = page.paneId;
+          state.activeMenu = [page.menuType || MenuTypeEnum.Collection, page.paneId];
         });
       }
     },
     activeMenu: [MenuTypeEnum.Collection, undefined],
     setActiveMenu: (menuKey, menuItemKey) => {
       set((state) => {
-        const statePane = state.panes.find((i) => i.paneId === menuItemKey);
+        const statePane = state.pages.find((i) => i.paneId === menuItemKey);
         if (statePane) {
           // 每次选择tab的时候将sortIndex设置到最大，然后每次点击关闭的时候激活上最大的sort
-          const sortIndexArr = state.panes.map((i) => i.sortIndex || 0);
+          const sortIndexArr = state.pages.map((i) => i.sortIndex || 0);
           statePane.sortIndex = Math.max(...(sortIndexArr.length > 0 ? sortIndexArr : [0])) + 1;
         }
         const key = menuKey ? menuKey : statePane?.menuType || MenuTypeEnum.Collection;
@@ -184,14 +188,14 @@ export const useStore = create(
       set({ activeMenu: [menuKey, menuItemKey] });
     },
     resetPanes: () => {
-      set({ panes: [], activeMenu: [MenuTypeEnum.Collection, undefined] });
+      set({ pages: [], activeMenu: [MenuTypeEnum.Collection, undefined] });
     },
 
     logout: () => {
       clearLocalStorage('accessToken');
       clearLocalStorage('refreshToken');
       clearLocalStorage('userInfo');
-      set({ userInfo: undefined, panes: [] });
+      set({ userInfo: undefined, pages: [] });
     },
 
     collectionTreeData: [],

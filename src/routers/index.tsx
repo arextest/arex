@@ -1,6 +1,4 @@
-import { Login } from '../components';
-import MainBox from '../layouts/MainBox';
-import ValidInvitation from '../components/Login/ValidInvitation';
+import { Login, MainBox, ValidInvitation } from '../views';
 
 export default [
   {

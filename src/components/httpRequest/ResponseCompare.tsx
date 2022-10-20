@@ -2,7 +2,7 @@ import { Radio, Table, Tabs } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import ReactDiffViewer from 'react-diff-viewer';
 
-import request from '../../api/axios';
+import request from '../../helpers/api/axios';
 import { useStore } from '../../store';
 const { TabPane } = Tabs;
 

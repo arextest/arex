@@ -2,7 +2,8 @@ import { message } from 'antd';
 import { v4 as uuid } from 'uuid';
 export { uuid };
 
-import { MenuTypeEnum, PageTypeEnum } from '../constant';
+import { MenuTypeEnum } from '../constant';
+import { PageTypeEnum } from '../pages';
 import * as ChartUtils from './chart';
 export { ChartUtils };
 

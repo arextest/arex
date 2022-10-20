@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import request from '../api/axios';
+import request from '../helpers/api/axios';
 import { tryPrettierJsonString } from '../helpers/utils';
 import {
   CreatePlanReq,

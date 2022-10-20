@@ -1,9 +1,10 @@
 import { Select, Tabs, Typography } from 'antd';
+import { FC } from 'react';
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
 
-const Folder = () => {
+const Folder: FC = () => {
   const onChange = (key: string) => {
     console.log(key);
   };

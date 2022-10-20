@@ -1,8 +1,8 @@
 import { message } from 'antd';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-import { AccessTokenKey } from '../constant';
-import { getLocalStorage } from '../helpers/utils';
+import { AccessTokenKey } from '../../constant';
+import { getLocalStorage } from '../utils';
 
 // 自定义实例级别的拦截器接口
 interface IRequestInterceptors<T = AxiosResponse> {

@@ -1,16 +1,16 @@
 import { useMount } from 'ahooks';
 import { Avatar, Button, Divider, Form, Input, List, Popconfirm, Space, Typography } from 'antd';
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import request from '../api/axios';
 import { RoleEnum } from '../constant';
+import request from '../helpers/api/axios';
 import { WorkspaceService } from '../services/Workspace.service';
 import { useStore } from '../store';
 
 const { Text } = Typography;
 
-const WorkspaceOverview = () => {
+const WorkspaceOverview: FC = () => {
   const params = useParams();
   const nav = useNavigate();
   const {

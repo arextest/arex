@@ -7,8 +7,8 @@ import { useStore } from '../store';
 
 const useCheckChromeExtension = () => {
   const { t } = useTranslation('components');
-
   const { extensionVersion } = useStore();
+
   useEffect(() => {
     if (!window.__AREX_EXTENSION_INSTALLED__) {
       useStore.setState({ extensionInstalled: false });

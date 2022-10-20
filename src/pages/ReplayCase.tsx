@@ -6,20 +6,16 @@ import CodeMirror from '@uiw/react-codemirror';
 import { ReactCodeMirrorProps } from '@uiw/react-codemirror/src';
 import { useRequest } from 'ahooks';
 import { Col, Collapse, Row, Space, Switch } from 'antd';
-import React, { FC, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 
-import Case from '../../components/replay/Case';
-import SaveCase from '../../components/replay/SaveCase';
-import {
-  CheckOrCloseIcon,
-  CollapseTable,
-  Label,
-  PanesTitle,
-} from '../../components/styledComponents';
-import ReplayService from '../../services/Replay.service';
-import { PlanItemStatistics, ReplayCase as ReplayCaseType } from '../../services/Replay.type';
-import { useStore } from '../../store';
-import { ThemeClassify } from '../../style/theme';
+import Case from '../components/replay/Case';
+import SaveCase, { SaveCaseRef } from '../components/replay/SaveCase';
+import { CheckOrCloseIcon, CollapseTable, Label, PanesTitle } from '../components/styledComponents';
+import ReplayService from '../services/Replay.service';
+import { PlanItemStatistics, ReplayCase as ReplayCaseType } from '../services/Replay.type';
+import { useStore } from '../store';
+import { ThemeClassify } from '../style/theme';
+import { PageFC } from './index';
 
 const { Panel } = Collapse;
 const InfoIcon = styled(InfoCircleOutlined)`
@@ -50,19 +46,19 @@ const CodeViewer = styled(
   }
 `;
 
-const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
+const ReplayCase: PageFC<PlanItemStatistics> = (props) => {
   const { themeClassify } = useStore();
 
   const [onlyFailed, setOnlyFailed] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
 
-  const saveCaseRef = useRef(null);
+  const saveCaseRef = useRef<SaveCaseRef>(null);
 
   const { data: compareResults = [], mutate } = useRequest(
     () =>
       ReplayService.queryFullLinkMsg({
         recordId: selectedRecord!.recordId,
-        planItemId: data.planItemId,
+        planItemId: props.page.data.planItemId,
       }),
     {
       ready: !!selectedRecord,
@@ -83,13 +79,13 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   };
 
   function handleClickSaveCase(record: ReplayCaseType) {
-    saveCaseRef.current.openModal(record);
+    saveCaseRef.current?.openModal(record);
   }
 
   return (
     <Space direction='vertical' style={{ display: 'flex', paddingBottom: '16px' }}>
       <PanesTitle
-        title={<span>Main Service API: {data.operationName}</span>}
+        title={<span>Main Service API: {props.page.data.operationName}</span>}
         extra={
           <span>
             <Label>View Failed Only</Label>
@@ -102,7 +98,7 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
         active={!!selectedRecord}
         table={
           <Case
-            planItemId={data.planItemId}
+            planItemId={props.page.data.planItemId}
             onClick={handleClickRecord}
             onClickSaveCase={handleClickSaveCase}
           />
@@ -154,7 +150,7 @@ const ReplayCase: FC<{ data: PlanItemStatistics }> = ({ data }) => {
           </Collapse>
         }
       />
-      <SaveCase cRef={saveCaseRef} />
+      <SaveCase ref={saveCaseRef} />
     </Space>
   );
 };

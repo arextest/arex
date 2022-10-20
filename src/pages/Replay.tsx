@@ -1,13 +1,14 @@
 import { Empty, Space } from 'antd';
 import React, { FC, useState } from 'react';
 
-import { AppTitle, Report, Results } from '../../components/replay';
-import { FlexCenterWrapper } from '../../components/styledComponents';
-import CollapseTable from '../../components/styledComponents/CollapseTable';
-import { ApplicationDataType, PlanStatistics } from '../../services/Replay.type';
-import { uuid } from '../../helpers/utils';
+import { AppTitle, Report, Results } from '../components/replay';
+import { FlexCenterWrapper } from '../components/styledComponents';
+import CollapseTable from '../components/styledComponents/CollapseTable';
+import { uuid } from '../helpers/utils';
+import { ApplicationDataType, PlanStatistics } from '../services/Replay.type';
+import { PageFC } from './index';
 
-const Replay: FC<{ data?: ApplicationDataType; paneId: any }> = ({ data }) => {
+const Replay: PageFC<ApplicationDataType> = (props) => {
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
   const handleSelectPlan = (plan: PlanStatistics) => {
     plan.planId === selectedPlan?.planId ? setSelectedPlan(undefined) : setSelectedPlan(plan);
@@ -18,16 +19,16 @@ const Replay: FC<{ data?: ApplicationDataType; paneId: any }> = ({ data }) => {
     setRefreshDep(uuid()); // 触发 Results 组件请求更新
   };
 
-  return data ? (
+  return props.page.data ? (
     <Space direction='vertical' size='middle' style={{ display: 'flex' }}>
-      <AppTitle data={data} onRefresh={handleRefreshDep} />
+      <AppTitle data={props.page.data} onRefresh={handleRefreshDep} />
 
       <CollapseTable
         active={!!selectedPlan}
         table={
           <Results
             // defaultSelectFirst
-            appId={data.appId}
+            appId={props.page.data.appId}
             refreshDep={refreshDep}
             onSelectedPlanChange={handleSelectPlan}
           />
