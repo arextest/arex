@@ -1,13 +1,12 @@
 import styled from '@emotion/styled';
 import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
-import React, { ReactNode, useCallback, useMemo } from 'react';
+import React, { ReactNode } from 'react';
 
 import { DraggableTabs, EnvironmentSelect } from '../../components';
 import { MenuTypeEnum } from '../../constant';
 import { treeFind } from '../../helpers/collection/util';
-import propsHydration from '../../helpers/propsHydration';
 import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
-import Pages, { PageProps, PageTypeEnum } from '../../pages';
+import Pages, { PageTypeEnum } from '../../pages';
 import { Page, useStore } from '../../store';
 
 const { TabPane } = Tabs;
@@ -68,26 +67,6 @@ const MainTabs = () => {
     }
   };
 
-  const MainTabPaneGroup = useMemo(
-    () =>
-      pages.map((page) => {
-        // TODO 支持自定义props, ref
-        const TabPane = propsHydration<PageProps>(Pages, page.pageType, {
-          page,
-        });
-        return (
-          <MainTabPane
-            className='main-tab-page'
-            tab={genTabTitle(collectionTreeData, page)}
-            key={page.paneId}
-          >
-            <TabPane />
-          </MainTabPane>
-        );
-      }),
-    [pages],
-  );
-
   return (
     <EmptyWrapper
       empty={!pages.length}
@@ -107,16 +86,14 @@ const MainTabs = () => {
       >
         {pages.map((page) => {
           // TODO 支持自定义props, ref
-          const TabPane = propsHydration<PageProps>(Pages, page.pageType, {
-            page,
-          });
+          const Component = Pages[page.pageType];
           return (
             <MainTabPane
               className='main-tab-page'
               tab={genTabTitle(collectionTreeData, page)}
               key={page.paneId}
             >
-              <TabPane />
+              <Component page={page} />
             </MainTabPane>
           );
         })}
@@ -193,9 +170,7 @@ const MainTabsWrapper = styled((props: TabsProps) => {
   }
 `;
 
-const MainTabPane = styled((props: TabPaneProps) => (
-  <TabPane {...props}>{props.children}</TabPane>
-))<TabPaneProps>`
+const MainTabPane = styled(TabPane)<TabPaneProps>`
   padding: 0 8px;
   overflow: auto;
 `;

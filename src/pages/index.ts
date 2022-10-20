@@ -30,7 +30,7 @@ export enum PageTypeEnum {
   WorkspaceOverview = 'WorkspaceOverview',
 }
 
-export default {
+const Pages: Record<string, FC<any>> = {
   Environment,
   Folder,
   HttpRequest,
@@ -41,3 +41,5 @@ export default {
   Setting,
   WorkspaceOverview,
 };
+
+export default Pages;

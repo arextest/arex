@@ -56,7 +56,7 @@ type BaseState = {
   setUserInfo: (data: UserInfo | string) => void;
   activeMenu: ActiveMenu;
   setActiveMenu: (menuKey: MenuTypeEnum, menuItemKey?: string) => void;
-  pages: Page[];
+  pages: Page<PageData>[];
   /*
    * 修改工作区标签页数据
    * @param pages 工作区标签页数据
