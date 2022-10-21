@@ -6,6 +6,7 @@ import {
   PlusOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
+import { ArrowLeftOutlined, DownOutlined, UpOutlined } from '@ant-design/icons/lib';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
@@ -18,11 +19,10 @@ import { generateGlobalPaneId } from '../../helpers/utils';
 import { MenuTypeEnum } from '../../menus';
 import { PageTypeEnum } from '../../pages';
 import EnvironmentService from '../../services/Environment.service';
+import { FileSystemService } from '../../services/FileSystem.service';
 import WorkspaceService from '../../services/Workspace.service';
 import { useStore } from '../../store';
 import { TooltipButton } from '../index';
-import { ArrowLeftOutlined, DownOutlined, UpOutlined } from '@ant-design/icons/lib';
-import { FileSystemService } from '../../services/FileSystem.service';
 
 const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
   height: 35px;
@@ -149,18 +149,20 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     if (params.workspaceName && params.workspaceId && importFile) {
       const param = {
         workspaceId: params.workspaceId,
-        path: 'todo',
+        path: [],
         type: 1,
         importString: importFile,
       };
       FileSystemService.importFile(param).then((res) => {
-        if (res.body && res.body.code === '0') {
+        console.log(res);
+        if (res.body && res.body.success) {
           message.success('Import success!');
           setImportView(false);
           setImportType('');
           setImportFile(undefined);
+        } else {
+          message.error('Import fail!');
         }
-        message.error('Import fail!');
         return;
       });
     }
