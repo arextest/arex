@@ -1,23 +1,22 @@
 import {
-  MenuOutlined,
-  PlusOutlined,
+  CheckCircleFilled,
   CheckCircleOutlined,
   DashOutlined,
-  CheckCircleFilled,
+  MenuOutlined,
+  PlusOutlined,
 } from '@ant-design/icons';
 import { css } from '@emotion/react';
-import { useRequest } from 'ahooks';
-import { Button, Input, Tooltip, Dropdown, Menu, Modal } from 'antd';
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import EnvironmentService from '../../services/Environment.service';
-import { useStore } from '../../store';
+import { useRequest } from 'ahooks';
+import { Button, Dropdown, Input, Menu, Modal, Tooltip } from 'antd';
+import React, { FC, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-export type EnvironmentProps = {
-  value?: string;
-  onSelect: (key: string, node: {}) => void;
-};
+import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
+import { PageTypeEnum } from '../pages';
+import EnvironmentService from '../services/Environment.service';
+import { useStore } from '../store';
+import { MenuTypeEnum } from './index';
 
 type EnvironmentKeyValues = { key: string; value: string; active: boolean };
 type EnvironmentType = {
@@ -76,16 +75,12 @@ const ItemLabel = styled.div`
   }
 `;
 
-const Environment: FC<EnvironmentProps> = ({ value, onSelect }) => {
+const Environment: FC = () => {
   const params = useParams();
-  const [iconIsShow, setIconIsShow] = useState('');
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [activeEnvironmentItem, setActiveEnvironmentItem] = useState({});
-  const [renameValue, setRenameValue] = useState('');
-  const [renameKey, setRenameKey] = useState('');
-  const [searchEnvironmentData, setSearchEnvironmentData] = useState([]);
-  const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
+
   const {
+    setPages,
+    activeMenu,
     environmentTreeData,
     setEnvironmentTreeData,
     currentEnvironment,
@@ -94,17 +89,40 @@ const Environment: FC<EnvironmentProps> = ({ value, onSelect }) => {
     setActiveEnvironment,
   } = useStore();
 
+  const [iconIsShow, setIconIsShow] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [activeEnvironmentItem, setActiveEnvironmentItem] = useState({});
+  const [renameValue, setRenameValue] = useState('');
+  const [renameKey, setRenameKey] = useState('');
+  const [searchEnvironmentData, setSearchEnvironmentData] = useState([]);
+
+  const value = parseGlobalPaneId(activeMenu[1])['rawId'];
+  const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
+
   const handleSelect = (rowData: any) => {
     const info: any = environmentTreeData.find((e) => e.id == rowData.key);
-    onSelect &&
-      onSelect(info.id as string, {
+    const data = {
+      title: info.envName,
+      key: info.id,
+      pageType: 'environment',
+      qid: info.id,
+      isNew: true,
+      keyValues: info.keyValues,
+    };
+
+    setActiveEnvironment(info.id);
+    setPages(
+      {
         title: info.envName,
-        key: info.id,
-        pageType: 'environment',
-        qid: info.id,
-        isNew: true,
-        keyValues: info.keyValues,
-      });
+        menuType: MenuTypeEnum.Environment,
+        pageType: PageTypeEnum.Environment,
+        isNew: false,
+        data,
+        paneId: generateGlobalPaneId(MenuTypeEnum.Environment, PageTypeEnum.Environment, info.id),
+        rawId: info.id,
+      },
+      'push',
+    );
   };
 
   const { run: fetchEnvironmentData } = useRequest(

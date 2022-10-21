@@ -3,8 +3,8 @@ import { message } from 'antd';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { AccessTokenKey, RefreshTokenKey } from '../../constant';
-import { WorkspaceService } from '../../services/Workspace.service';
 import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
+import WorkspaceService from '../../services/Workspace.service';
 
 const ValidInvitation = () => {
   const [searchParams] = useSearchParams();

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { RoleEnum } from '../../constant';
-import { WorkspaceService } from '../../services/Workspace.service';
+import WorkspaceService from '../../services/Workspace.service';
 import { useStore } from '../../store';
 const { Text } = Typography;
 

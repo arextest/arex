@@ -5,11 +5,11 @@ import { Dropdown, Input, Menu, Popconfirm, Space } from 'antd';
 import { ReactNode, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { methodMap } from '../../../constant';
-import SearchHeighLight from '../../../helpers/collection/searchHeighLight';
-import { treeFindPath } from '../../../helpers/collection/util';
-import { CollectionService } from '../../../services/CollectionService';
-import { useStore } from '../../../store';
+import { methodMap } from '../../constant';
+import SearchHeighLight from '../../helpers/collection/searchHeighLight';
+import { treeFindPath } from '../../helpers/collection/util';
+import { CollectionService } from '../../services/CollectionService';
+import { useStore } from '../../store';
 
 const PrefixIcon = styled(
   (props: { icon: ReactNode; border?: boolean }) => <div {...props}>{props.icon}</div>,

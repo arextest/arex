@@ -13,11 +13,14 @@ import { Button, Input, message, Modal, Select, Tooltip, Upload } from 'antd';
 import React, { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { MenuTypeEnum, PageTypeEnum, RoleEnum } from '../../constant';
-import { WorkspaceService } from '../../services/Workspace.service';
+import { RoleEnum } from '../../constant';
+import { generateGlobalPaneId } from '../../helpers/utils';
+import { MenuTypeEnum } from '../../menus';
+import { PageTypeEnum } from '../../pages';
+import EnvironmentService from '../../services/Environment.service';
+import WorkspaceService from '../../services/Workspace.service';
 import { useStore } from '../../store';
 import { TooltipButton } from '../index';
-import { generateGlobalPaneId } from '../../helpers/utils';
 import { ArrowLeftOutlined, DownOutlined, UpOutlined } from '@ant-design/icons/lib';
 import { FileSystemService } from '../../services/FileSystem.service';
 
@@ -39,10 +42,11 @@ const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
   }
 `;
 
-const WorkspacesMenu: FC<{ brief?: boolean }> = (props) => {
+const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
   const params = useParams();
   const nav = useNavigate();
-  const { userInfo, workspaces, setWorkspaces, setPanes, resetPanes } = useStore();
+  const { userInfo, workspaces, setWorkspaces, setPages, setEnvironmentTreeData, resetPanes } =
+    useStore();
   const [editMode, setEditMode] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [status, setStatus] = useState<'' | 'error'>('');
@@ -69,6 +73,18 @@ const WorkspacesMenu: FC<{ brief?: boolean }> = (props) => {
     },
   );
 
+  // TODO 需要应用载入时就获取环境变量，此处与envPage初始化有重复代码
+  useRequest(
+    () => EnvironmentService.getEnvironment({ workspaceId: params.workspaceId as string }),
+    {
+      ready: !!params.workspaceId,
+      refreshDeps: [params.workspaceId],
+      onSuccess(res) {
+        setEnvironmentTreeData(res);
+      },
+    },
+  );
+
   const handleAddWorkspace = () => {
     if (newWorkspaceName === '') {
       setStatus('error');
@@ -84,7 +100,7 @@ const WorkspacesMenu: FC<{ brief?: boolean }> = (props) => {
   const handleEditWorkspace = () => {
     params.workspaceName &&
       params.workspaceId &&
-      setPanes(
+      setPages(
         {
           title: params.workspaceName,
           menuType: MenuTypeEnum.Collection,
@@ -151,16 +167,16 @@ const WorkspacesMenu: FC<{ brief?: boolean }> = (props) => {
   };
 
   return (
-    <WorkspacesMenuWrapper width={props.brief ? '100%' : 'calc(100% + 10px)'}>
+    <WorkspacesMenuWrapper width={props.collapse ? '100%' : 'calc(100% + 10px)'}>
       <Tooltip
-        title={`Workspace${props.brief ? ': ' + params.workspaceName : ''}`}
+        title={`Workspace${props.collapse ? ': ' + params.workspaceName : ''}`}
         placement='right'
       >
         <GlobalOutlined
-          style={{ marginLeft: props.brief ? '12px' : '0', transition: 'all 0.2s' }}
+          style={{ marginLeft: props.collapse ? '12px' : '0', transition: 'all 0.2s' }}
         />
       </Tooltip>
-      {!props.brief && (
+      {!props.collapse && (
         <>
           <div>
             {editMode ? (
@@ -225,11 +241,7 @@ const WorkspacesMenu: FC<{ brief?: boolean }> = (props) => {
               title='Edit Workspace'
               onClick={handleEditWorkspace}
             />
-            <TooltipButton
-              icon={<UploadOutlined />}
-              title='Import'
-              onClick={viewImport}
-            />
+            <TooltipButton icon={<UploadOutlined />} title='Import' onClick={viewImport} />
           </div>
 
           <Modal

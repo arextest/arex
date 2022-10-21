@@ -6,7 +6,7 @@ import { FC, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { decodeWeekCode, encodeWeekCode } from '../../../../helpers/record/util';
-import { KeyValueType } from '../../../../pages/HttpRequest';
+import { KeyValueType } from '../../../../pages/HttpRequestPage';
 import AppSettingService from '../../../../services/AppSetting.service';
 import { ExcludeOperationMap, QueryRecordSettingRes } from '../../../../services/AppSetting.type';
 import {

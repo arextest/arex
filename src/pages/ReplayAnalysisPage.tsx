@@ -6,17 +6,18 @@ import { useAsyncEffect } from 'ahooks';
 import { Button, Card, Space, Tag } from 'antd';
 import { FC, useState } from 'react';
 
-import { Analysis } from '../../components/replay';
-import DiffJsonView, { DiffJsonViewProps } from '../../components/replay/DiffJsonView';
-import { CollapseTable, PanesTitle } from '../../components/styledComponents';
-import ReplayService from '../../services/Replay.service';
+import { Analysis } from '../components/replay';
+import DiffJsonView, { DiffJsonViewProps } from '../components/replay/DiffJsonView';
+import { CollapseTable, PanesTitle } from '../components/styledComponents';
+import ReplayService from '../services/Replay.service';
 import {
   CategoryStatistic,
   Difference,
   PlanItemStatistics,
   QueryMsgWithDiffLog,
   QueryMsgWithDiffRes,
-} from '../../services/Replay.type';
+} from '../services/Replay.type';
+import { PageFC } from './index';
 
 const diffMap: {
   [unmatchedType: string]: {
@@ -100,7 +101,7 @@ const DiffLog: FC<{ log: QueryMsgWithDiffLog }> = (props) => {
   }
 };
 
-const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
+const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
   const [selectedDiff, setSelectedDiff] = useState<Difference>();
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
   const [diffs, setDiffs] = useState<QueryMsgWithDiffRes[]>([]);
@@ -127,7 +128,7 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
         categoryName: selectedCategory.categoryName,
         differenceName: selectedDiff.differenceName,
         operationName: selectedCategory.operationName,
-        planItemId: data.planItemId.toString(),
+        planItemId: props.page.data.planItemId.toString(),
       });
 
       const promiseAll = scenes.map((scene) =>
@@ -140,16 +141,16 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
       const diffs = await Promise.all(promiseAll);
       setDiffs(diffs);
     }
-  }, [selectedCategory, selectedDiff, data.planItemId]);
+  }, [selectedCategory, selectedDiff, props.page.data.planItemId]);
 
   return (
     <Space direction='vertical' style={{ display: 'flex' }}>
-      <PanesTitle title={<span>Main Service API: {data.operationName}</span>} />
+      <PanesTitle title={<span>Main Service API: {props.page.data.operationName}</span>} />
       <CollapseTable
         active={!!selectedDiff}
         table={
           <Analysis
-            planItemId={data.planItemId}
+            planItemId={props.page.data.planItemId}
             onScenes={handleScenes}
             onSelectCategory={handleSelectCategory}
           />
@@ -203,4 +204,4 @@ const ReplayAnalysis: FC<{ data: PlanItemStatistics }> = ({ data }) => {
   );
 };
 
-export default ReplayAnalysis;
+export default ReplayAnalysisPage;

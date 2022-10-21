@@ -3,16 +3,18 @@ import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Empty, Input, Spin, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps, TreeProps } from 'antd/lib/tree';
-import React, { FC, useEffect, useImperativeHandle, useMemo, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { NodeType } from '../../../constant';
-import { treeFind } from '../../../helpers/collection/util';
-import { CollectionService } from '../../../services/CollectionService';
-import { TooltipButton } from '../../index';
-import { useStore } from './../../../store';
+import { TooltipButton } from '../../components';
+import { NodeType } from '../../constant';
+import { treeFind } from '../../helpers/collection/util';
+import { generateGlobalPaneId, parseGlobalPaneId } from '../../helpers/utils';
+import { PageTypeEnum } from '../../pages';
+import { CollectionService } from '../../services/CollectionService';
+import { useStore } from '../../store';
+import { MenuTypeEnum } from '../index';
 import CollectionTitle from './CollectionTitle';
-import CollectionImport from './Import';
 
 const CollectionMenuWrapper = styled.div`
   //height: 100%;
@@ -109,31 +111,22 @@ export type nodeType = {
   nodeType: NodeType;
 } & DataNode;
 
-export type CollectionProps = {
-  value?: string;
-  onSelect: (key: string, node: nodeType) => void;
-  onGetData: (data: NodeList[]) => void;
-  cRef: any;
-};
-
-const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) => {
+const CollectionMenu = () => {
   const params = useParams();
   const {
     userInfo: { email: userName },
-    workspaces,
+    activeMenu,
+    collectionLastManualUpdateTimestamp,
+    setPages,
+    setCollectionTreeData,
   } = useStore();
 
+  const value = useMemo(() => parseGlobalPaneId(activeMenu[1])['rawId'], [activeMenu]);
   const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   // TODO
   const [searchValue, setSearchValue] = useState('');
   const [autoExpandParent, setAutoExpandParent] = useState(true);
-
-  useImperativeHandle(cRef, () => ({
-    fetchTreeData: () => {
-      fetchTreeData();
-    },
-  }));
 
   const {
     data: treeData = [],
@@ -141,16 +134,16 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     run: fetchTreeData,
   } = useRequest(() => CollectionService.listCollection({ id: params.workspaceId as string }), {
     ready: !!params.workspaceId,
-    refreshDeps: [params.workspaceId],
+    refreshDeps: [params.workspaceId, collectionLastManualUpdateTimestamp],
     onSuccess: (res) => {
       if (res.length) {
-        onGetData && onGetData(res);
+        setCollectionTreeData(res);
         // generateList(treeData);
         generateList(res, 'res');
         // 首次加载，在这里加initvalue逻辑
         const initValue = treeFind(res, (node) => node.key === params.rTypeId);
         if (initValue && expandedKeys.length === 0) {
-          onSelect(params.rTypeId, {
+          handleCollectionMenuClick(params.rTypeId, {
             title: initValue.title,
             key: initValue.key,
             nodeType: initValue.nodeType,
@@ -162,8 +155,8 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
   });
 
   const handleSelect: DirectoryTreeProps<nodeType>['onSelect'] = (keys, info) => {
-    if (keys.length && onSelect) {
-      onSelect(keys[0] as string, {
+    if (keys.length) {
+      handleCollectionMenuClick(keys[0] as string, {
         title: info.node.title,
         key: info.node.key,
         nodeType: info.node.nodeType,
@@ -206,12 +199,11 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
       '3': 'New Folder',
     };
     setExpandedKeys([...expandedKeys, p[p.length - 1]]);
-    onSelect &&
-      onSelect(key, {
-        title: maps[nodeType],
-        key,
-        nodeType,
-      });
+    handleCollectionMenuClick(key, {
+      title: maps[nodeType],
+      key,
+      nodeType,
+    });
   }
 
   const { run: createCollection } = useRequest(
@@ -407,6 +399,25 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
     );
   };
 
+  const handleCollectionMenuClick = (key: string, node: nodeType) => {
+    setPages(
+      {
+        title: node.title,
+        menuType: MenuTypeEnum.Collection,
+        pageType: node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
+        isNew: false,
+        data: node,
+        paneId: generateGlobalPaneId(
+          MenuTypeEnum.Collection,
+          node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
+          key,
+        ),
+        rawId: key,
+      },
+      'push',
+    );
+  };
+
   return (
     <CollectionMenuWrapper>
       <Spin spinning={loading}>
@@ -471,4 +482,4 @@ const Collection: FC<CollectionProps> = ({ value, onSelect, onGetData, cRef }) =
   );
 };
 
-export default Collection;
+export default CollectionMenu;

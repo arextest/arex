@@ -1,18 +1,18 @@
 import './index.less';
 
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import styled from '@emotion/styled';
 import { useMount } from 'ahooks';
 import { Button, Input, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AccessTokenKey, RefreshTokenKey } from '../../constant';
-import { AuthService } from '../../services/AuthService';
-import { WorkspaceService } from '../../services/Workspace.service';
-import { useStore } from '../../store';
 import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
-import styled from '@emotion/styled';
+import { AuthService } from '../../services/AuthService';
 import { UserService } from '../../services/UserService';
+import WorkspaceService from '../../services/Workspace.service';
+import { useStore } from '../../store';
 const OtherLoginMethods = styled.div`
   a {
     margin-left: 4px;

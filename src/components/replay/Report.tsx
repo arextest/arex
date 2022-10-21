@@ -18,11 +18,12 @@ import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 
-import { MenuTypeEnum, PageTypeEnum } from '../../constant';
+import { generateGlobalPaneId, getPercent } from '../../helpers/utils';
+import { MenuTypeEnum } from '../../menus';
+import { PageTypeEnum } from '../../pages';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
-import { generateGlobalPaneId, getPercent } from '../../helpers/utils';
 import { SmallTextButton } from '../styledComponents';
 import { resultsStates } from './Results';
 
@@ -41,7 +42,7 @@ const chartOptions = {
 const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
   const {
     userInfo: { email },
-    setPanes,
+    setPages,
   } = useStore();
 
   const { data: planItemData, loading: loadingData } = useRequest(
@@ -156,7 +157,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           key='analysis'
           title='Analysis'
           onClick={() => {
-            setPanes(
+            setPages(
               {
                 title: `Analysis - ${record.operationId}`,
                 pageType: PageTypeEnum.ReplayAnalysis,
@@ -178,7 +179,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           key='case'
           title='Case'
           onClick={() =>
-            setPanes(
+            setPages(
               {
                 title: `Case - ${record.operationId}`,
                 pageType: PageTypeEnum.ReplayCase,

@@ -39,14 +39,7 @@ import {
 import Mock from '../components/httpRequest/Mock';
 import SmartEnvInput from '../components/smart/EnvInput';
 import { Label, SpaceBetweenWrapper } from '../components/styledComponents';
-import {
-  ContentTypeEnum,
-  MenuTypeEnum,
-  MethodEnum,
-  METHODS,
-  NodeType,
-  PageTypeEnum,
-} from '../constant';
+import { ContentTypeEnum, MethodEnum, METHODS, NodeType } from '../constant';
 import { treeFindPath } from '../helpers/collection/util';
 import { readableBytes } from '../helpers/http/responseMeta';
 import AgentAxios from '../helpers/request';
@@ -57,9 +50,11 @@ import {
   tryParseJsonString,
   tryPrettierJsonString,
 } from '../helpers/utils';
+import { MenuTypeEnum } from '../menus';
 import { CollectionService } from '../services/CollectionService';
 import { FileSystemService } from '../services/FileSystem.service';
-import { PaneType, useStore } from '../store';
+import { Page, useStore } from '../store';
+import { PageFC, PageTypeEnum } from './index';
 
 const { TabPane } = Tabs;
 
@@ -67,14 +62,6 @@ export enum HttpRequestMode {
   Normal = 'normal',
   Compare = 'compare',
 }
-
-export type HttpRequestProps = {
-  mode?: HttpRequestMode;
-  id: string;
-  isNew?: boolean;
-  fetchCollectionTreeData: () => void;
-  paneId?: any;
-};
 
 export type KeyValueType = {
   key: string;
@@ -143,28 +130,23 @@ const BreadcrumbHeader = styled.div`
 // mode：有两种模式，normal、compare
 // id：request的id，组件加载时拉一次数据
 // isNew：是否为新增的request
-const HttpRequest: FC<HttpRequestProps> = ({
-  id: _id,
-  isNew,
-  mode: defaultMode = HttpRequestMode.Normal,
-  fetchCollectionTreeData,
-  paneId,
-}) => {
+const HttpRequestPage: PageFC = (props) => {
   const {
     userInfo: { email: userName },
     themeClassify,
     collectionTreeData,
     extensionInstalled,
-    setPanes,
+    setPages,
     currentEnvironment,
+    setCollectionLastManualUpdateTimestamp,
   } = useStore();
   const { t: t_common } = useTranslation('common');
   const { t: t_components } = useTranslation('components');
   const _useParams = useParams();
   const [renameKey, setRenameKey] = useState('');
   const [renameValue, setRenameValue] = useState('');
-  const [mode, setMode] = useState(defaultMode);
-  const id = useMemo(() => parseGlobalPaneId(paneId)['rawId'], [paneId]);
+  const [mode, setMode] = useState(HttpRequestMode.Normal);
+  const id = useMemo(() => parseGlobalPaneId(props.page.paneId)['rawId'], [props.page.paneId]);
   // 如果是case(2)类型的话，就一定有一个父节点，类型也一定是request(1)
   const nodeInfoInCollectionTreeData = useMemo(() => {
     const paths = treeFindPath(collectionTreeData, (node) => node.key === id);
@@ -280,7 +262,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
       path: paths.map((i: any) => i.key),
       userName,
     }).then((res) => {
-      fetchCollectionTreeData();
+      props.fetchCollectionTreeData?.(); // TODO 自定义PageProps未实现
       setRenameKey('');
     });
   };
@@ -363,7 +345,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
 
   useRequest(
     () => {
-      if (isNew || !nodeInfoInCollectionTreeData.self) {
+      if (props.page.isNew || !nodeInfoInCollectionTreeData.self) {
         return new Promise((resolve, reject) => {
           resolve({
             body: {},
@@ -486,6 +468,8 @@ const HttpRequest: FC<HttpRequestProps> = ({
   };
 
   const handleSave = () => {
+    setCollectionLastManualUpdateTimestamp(new Date().getTime());
+
     saveInterface(
       {
         workspaceId: _useParams.workspaceId,
@@ -516,17 +500,18 @@ const HttpRequest: FC<HttpRequestProps> = ({
     );
   };
 
-  const handleInterfaceSaveAs = (pane: PaneType) => {
-    fetchCollectionTreeData(); // TODO 更新 Collection 数据
-    setPanes(
+  const handleInterfaceSaveAs = (page: Page) => {
+    setCollectionLastManualUpdateTimestamp(new Date().getTime());
+
+    setPages(
       {
-        // key: pane.key,
+        // key: page.key,
         isNew: true,
-        title: pane.title,
+        title: page.title,
         menuType: MenuTypeEnum.Collection,
         pageType: PageTypeEnum.Request,
-        paneId: generateGlobalPaneId(MenuTypeEnum.Collection, PageTypeEnum.Request, pane.key),
-        rawId: pane.key,
+        paneId: generateGlobalPaneId(MenuTypeEnum.Collection, PageTypeEnum.Request, page.key),
+        rawId: page.key,
       },
       'push',
     );
@@ -608,7 +593,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
                 </Breadcrumb>
               )}
               <SpaceBetweenWrapper>
-                {isNew ? (
+                {props.page.isNew ? (
                   <SaveRequestButton
                     reqParams={{
                       auth: null,
@@ -877,4 +862,4 @@ const HttpRequest: FC<HttpRequestProps> = ({
   );
 };
 
-export default HttpRequest;
+export default HttpRequestPage;

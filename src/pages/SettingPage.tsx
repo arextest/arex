@@ -44,7 +44,7 @@ const ColorPicker: FC<ColorPickerProps> = ({ value, onChange, theme }) => {
   );
 };
 
-const Setting: FC = () => {
+const SettingPage: FC = () => {
   const [initLoading, setInitLoading] = useState(true);
   const [form] = Form.useForm<SettingForm>();
   const {
@@ -211,4 +211,4 @@ const Setting: FC = () => {
   );
 };
 
-export default Setting;
+export default SettingPage;

@@ -1,13 +1,19 @@
 import { Form, Input, Modal, notification, TreeSelect, Typography } from 'antd';
-import React, { useImperativeHandle, useMemo, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import request from '../../api/axios';
+import request from '../../helpers/api/axios';
 import { treeFindPath } from '../../helpers/collection/util';
+import { ReplayCase as ReplayCaseType } from '../../services/Replay.type';
 import { useStore } from '../../store';
+
 const { Text } = Typography;
 
-const SaveCase = ({ cRef }) => {
+export type SaveCaseRef = {
+  openModal: (record: ReplayCaseType) => void;
+};
+
+const SaveCase = forwardRef<SaveCaseRef>((props, ref) => {
   const params = useParams();
   const {
     userInfo: { email: userName },
@@ -23,7 +29,7 @@ const SaveCase = ({ cRef }) => {
     setValue(newValue);
   };
 
-  useImperativeHandle(cRef, () => ({
+  useImperativeHandle(ref, () => ({
     openModal: (record) => {
       console.log(record, 'record');
       setVisible(true);
@@ -131,6 +137,6 @@ const SaveCase = ({ cRef }) => {
       </Modal>
     </>
   );
-};
+});
 
 export default SaveCase;

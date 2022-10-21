@@ -1,9 +1,8 @@
-import './Environment.less';
+import { MenuOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { MenuOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Button, Form, Input, InputRef, message, Table } from 'antd';
 import update from 'immutability-helper';
-import React, { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 const type = 'DraggableBodyRow';
@@ -14,6 +13,7 @@ import { useParams } from 'react-router-dom';
 
 import EnvironmentService from '../services/Environment.service';
 import { useStore } from '../store';
+import { PageFC } from './index';
 
 const MainTable = styled(Table)`
   .ant-table-cell {
@@ -168,11 +168,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
         <Input ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
     ) : (
-      <div
-        className='editable-cell-value-wrap'
-        style={{ paddingRight: 24, height: 32 }}
-        onClick={toggleEdit}
-      >
+      <div style={{ paddingRight: 24, lineHeight: '32px', cursor: 'pointer' }} onClick={toggleEdit}>
         {children}
       </div>
     );
@@ -181,12 +177,8 @@ const EditableCell: React.FC<EditableCellProps> = ({
   return <td {...restProps}>{childNode}</td>;
 };
 
-export type EnvironmentProps = {
-  id: string;
-};
-
-const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
-  const parmas = useParams();
+const EnvironmentPage: PageFC = () => {
+  const params = useParams();
   const { activeEnvironment, setEnvironmentTreeData, setActiveEnvironment } = useStore();
 
   const [data, setData] = useState<[]>([]);
@@ -348,10 +340,10 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
   };
 
   const { run: fetchEnvironmentData } = useRequest(
-    () => EnvironmentService.getEnvironment({ workspaceId: parmas.workspaceId as string }),
+    () => EnvironmentService.getEnvironment({ workspaceId: params.workspaceId as string }),
     {
-      ready: !!parmas.workspaceId,
-      refreshDeps: [parmas.workspaceId],
+      ready: !!params.workspaceId,
+      refreshDeps: [params.workspaceId],
       onSuccess(res) {
         setEnvironmentTreeData(res);
       },
@@ -374,8 +366,9 @@ const EnvironmentPage: FC<EnvironmentProps> = ({ id }) => {
       </div>
       <DndProvider backend={HTML5Backend}>
         <MainTable
-          rowKey='keys'
           bordered
+          rowKey='keys'
+          size='small'
           rowClassName={() => 'editable-row'}
           columns={columns}
           dataSource={data}
