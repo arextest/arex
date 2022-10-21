@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
-import React, { ReactNode, useCallback, useEffect } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 
 import { DraggableTabs, EnvironmentSelect } from '../../components';
 import { treeFind } from '../../helpers/collection/util';
@@ -71,10 +71,6 @@ const MainTabs = () => {
     },
     [environmentTreeData],
   );
-
-  useEffect(() => {
-    console.log('render tab');
-  });
 
   return (
     <EmptyWrapper

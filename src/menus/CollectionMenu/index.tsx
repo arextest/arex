@@ -115,11 +115,12 @@ export type CollectionMenuRef = {
   fetchTreeData: () => void;
 };
 
-const CollectionMenu = forwardRef<CollectionMenuRef>((props, ref) => {
+const CollectionMenu = () => {
   const params = useParams();
   const {
     userInfo: { email: userName },
     activeMenu,
+    collectionLastManualUpdateTimestamp,
     setPages,
     setCollectionTreeData,
   } = useStore();
@@ -131,19 +132,13 @@ const CollectionMenu = forwardRef<CollectionMenuRef>((props, ref) => {
   const [searchValue, setSearchValue] = useState('');
   const [autoExpandParent, setAutoExpandParent] = useState(true);
 
-  useImperativeHandle(ref, () => ({
-    fetchTreeData: () => {
-      fetchTreeData();
-    },
-  }));
-
   const {
     data: treeData = [],
     loading,
     run: fetchTreeData,
   } = useRequest(() => CollectionService.listCollection({ id: params.workspaceId as string }), {
     ready: !!params.workspaceId,
-    refreshDeps: [params.workspaceId],
+    refreshDeps: [params.workspaceId, collectionLastManualUpdateTimestamp],
     onSuccess: (res) => {
       if (res.length) {
         setCollectionTreeData(res);
@@ -489,6 +484,6 @@ const CollectionMenu = forwardRef<CollectionMenuRef>((props, ref) => {
       </Spin>
     </CollectionMenuWrapper>
   );
-});
+};
 
 export default CollectionMenu;

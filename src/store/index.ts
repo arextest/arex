@@ -1,6 +1,5 @@
 // @ts-ignore
 import { toggleTheme } from '@zougt/vite-plugin-theme-preprocessor/dist/browser-utils';
-import { extend } from 'fp-ts';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
@@ -13,6 +12,7 @@ import { MenuTypeEnum } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
 import { PageTypeEnum } from '../pages';
 import { FontSize } from '../pages/SettingPage';
+import { NodeList } from '../services/CollectionService';
 import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
@@ -41,7 +41,7 @@ export type Page<D extends PageData = undefined> = {
   menuType?: MenuTypeEnum;
   pageType: PageTypeEnum;
   isNew?: boolean;
-  data: D;
+  data?: D;
   sortIndex?: number;
   paneId: string;
   rawId: string;
@@ -70,8 +70,11 @@ type BaseState = {
     mode?: M,
   ) => void;
   resetPanes: () => void;
+
   collectionTreeData: any;
-  setCollectionTreeData: (collectionTreeData: any) => void;
+  setCollectionTreeData: (collectionTreeData: NodeList[]) => void;
+  collectionLastManualUpdateTimestamp: number;
+  setCollectionLastManualUpdateTimestamp: (timestamp: number) => void;
 
   workspaces: Workspace[];
   setWorkspaces: (workspaces: Workspace[]) => void;
@@ -150,6 +153,7 @@ export const useStore = create(
     },
 
     extensionInstalled: false,
+
     pages: [],
     setPages: (pages, mode: SetPagesMode = 'normal') => {
       if (mode === 'normal') {
@@ -177,6 +181,7 @@ export const useStore = create(
         });
       }
     },
+
     activeMenu: [MenuTypeEnum.Collection, undefined],
     setActiveMenu: (menuKey, menuItemKey) => {
       set((state) => {
@@ -192,6 +197,7 @@ export const useStore = create(
 
       set({ activeMenu: [menuKey, menuItemKey] });
     },
+
     resetPanes: () => {
       set({ pages: [], activeMenu: [MenuTypeEnum.Collection, undefined] });
     },
@@ -205,6 +211,11 @@ export const useStore = create(
 
     collectionTreeData: [],
     setCollectionTreeData: (collectionTreeData) => set({ collectionTreeData }),
+
+    collectionLastManualUpdateTimestamp: new Date().getTime(),
+    setCollectionLastManualUpdateTimestamp: (timestamp) => {
+      set({ collectionLastManualUpdateTimestamp: timestamp });
+    },
 
     workspaces: [],
     setWorkspaces: (workspaces) => set({ workspaces }),

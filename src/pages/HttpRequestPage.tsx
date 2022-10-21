@@ -138,6 +138,7 @@ const HttpRequestPage: PageFC = (props) => {
     extensionInstalled,
     setPages,
     currentEnvironment,
+    setCollectionLastManualUpdateTimestamp,
   } = useStore();
   const { t: t_common } = useTranslation('common');
   const { t: t_components } = useTranslation('components');
@@ -467,6 +468,8 @@ const HttpRequestPage: PageFC = (props) => {
   };
 
   const handleSave = () => {
+    setCollectionLastManualUpdateTimestamp(new Date().getTime());
+
     saveInterface(
       {
         workspaceId: _useParams.workspaceId,
@@ -498,7 +501,8 @@ const HttpRequestPage: PageFC = (props) => {
   };
 
   const handleInterfaceSaveAs = (page: Page) => {
-    props.fetchCollectionTreeData?.(); // TODO 自定义PageProps未实现
+    setCollectionLastManualUpdateTimestamp(new Date().getTime());
+
     setPages(
       {
         // key: page.key,

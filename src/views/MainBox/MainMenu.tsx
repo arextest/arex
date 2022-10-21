@@ -1,7 +1,7 @@
 import { LeftOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { TabPaneProps, Tabs } from 'antd';
-import React, { FC, ReactNode, useEffect, useMemo } from 'react';
+import React, { FC, ReactNode, useMemo } from 'react';
 
 import MenuConfig from '../../menus';
 import { useStore } from '../../store';
@@ -17,9 +17,6 @@ type MainMenuProps = {
 const MainMenu: FC<MainMenuProps> = (props) => {
   const { activeMenu } = useStore();
   const activeKey = useMemo(() => activeMenu[0], [activeMenu]);
-  useEffect(() => {
-    console.log('render menu');
-  });
 
   return (
     <MainMenuWrapper
