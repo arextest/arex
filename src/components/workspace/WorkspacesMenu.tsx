@@ -9,7 +9,7 @@ import {
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Input, message, Select, Tooltip } from 'antd';
+import { Button, Input, message, Modal, Select, Tooltip, Upload } from 'antd';
 import React, { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -18,6 +18,8 @@ import { WorkspaceService } from '../../services/Workspace.service';
 import { useStore } from '../../store';
 import { TooltipButton } from '../index';
 import { generateGlobalPaneId } from '../../helpers/utils';
+import { ArrowLeftOutlined, DownOutlined, UpOutlined } from '@ant-design/icons/lib';
+import { FileSystemService } from '../../services/FileSystem.service';
 
 const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
   height: 35px;
@@ -44,6 +46,10 @@ const WorkspacesMenu: FC<{ brief?: boolean }> = (props) => {
   const [editMode, setEditMode] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [status, setStatus] = useState<'' | 'error'>('');
+  const [importView, setImportView] = useState(false);
+  const [allImportItem, setAllImportItem] = useState(false);
+  const [importType, setImportType] = useState('');
+  const [importFile, setImportFile] = useState<string>();
 
   const { run: getWorkspaces } = useRequest(
     (to?: { workspaceId: string; workspaceName: string }) =>
@@ -117,6 +123,31 @@ const WorkspacesMenu: FC<{ brief?: boolean }> = (props) => {
     setEditMode(false);
     setStatus('');
     setNewWorkspaceName('');
+  };
+
+  const viewImport = () => {
+    params.workspaceName && params.workspaceId && setImportView(true);
+  };
+
+  const handleImport = () => {
+    if (params.workspaceName && params.workspaceId && importFile) {
+      const param = {
+        workspaceId: params.workspaceId,
+        path: 'todo',
+        type: 1,
+        importString: importFile,
+      };
+      FileSystemService.importFile(param).then((res) => {
+        if (res.body && res.body.code === '0') {
+          message.success('Import success!');
+          setImportView(false);
+          setImportType('');
+          setImportFile(undefined);
+        }
+        message.error('Import fail!');
+        return;
+      });
+    }
   };
 
   return (
@@ -194,8 +225,83 @@ const WorkspacesMenu: FC<{ brief?: boolean }> = (props) => {
               title='Edit Workspace'
               onClick={handleEditWorkspace}
             />
-            <TooltipButton icon={<UploadOutlined />} title='Import' />
+            <TooltipButton
+              icon={<UploadOutlined />}
+              title='Import'
+              onClick={viewImport}
+            />
           </div>
+
+          <Modal
+            visible={importView}
+            onCancel={() => setImportView(false)}
+            footer={false}
+            width={300}
+            title={
+              <div>
+                {importType != '' ? (
+                  <span style={{ marginRight: 20, float: 'left' }}>
+                    <ArrowLeftOutlined onClick={() => setImportType('')} />
+                  </span>
+                ) : null}
+                Collections
+              </div>
+            }
+          >
+            {importType != '' ? (
+              <div>
+                <div>Import {importType} file</div>
+                <Upload
+                  maxCount={1}
+                  onRemove={() => setImportFile(undefined)}
+                  beforeUpload={(file) => {
+                    const reader = new FileReader();
+                    reader.readAsText(file);
+                    reader.onload = (e) => {
+                      const content = e.target.result;
+                      try {
+                        JSON.parse(content);
+                        setImportFile(content);
+                      } catch (e) {
+                        message.warn('Not json file!');
+                      }
+                    };
+                    return false;
+                  }}
+                >
+                  <Button icon={<UploadOutlined />}>Select File</Button>
+                </Upload>
+                <Button
+                  type='primary'
+                  disabled={!importFile}
+                  style={{ width: '100%', marginTop: 15 }}
+                  onClick={handleImport}
+                >
+                  Import
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <Button type='text' onClick={() => setImportType('collection')}>
+                  Import collection
+                </Button>
+                <br />
+                <Button type='text' onClick={() => setImportType('case')}>
+                  Import cases
+                </Button>
+                <br />
+                <Button
+                  shape='round'
+                  icon={allImportItem ? <UpOutlined /> : <DownOutlined />}
+                  size='small'
+                  style={{ color: 'white', marginTop: 5, marginLeft: 16 }}
+                  onClick={() => setAllImportItem(!allImportItem)}
+                >
+                  {allImportItem ? 'less' : 'more'}
+                </Button>
+              </div>
+            )}
+          </Modal>
         </>
       )}
     </WorkspacesMenuWrapper>

@@ -26,4 +26,8 @@ export class FileSystemService {
   static async queryCase(params: any) {
     return request.post<any>(`/api/filesystem/queryCase`, params);
   }
+
+  static async importFile(params: any) {
+    return request.post<any>(`/api/filesystem/import`, params);
+  }
 }
