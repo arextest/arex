@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { RoleEnum } from '../constant';
 import request from '../helpers/api/axios';
-import { WorkspaceService } from '../services/Workspace.service';
+import WorkspaceService from '../services/Workspace.service';
 import { useStore } from '../store';
 
 const { Text } = Typography;

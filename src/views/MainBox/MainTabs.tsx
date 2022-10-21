@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
-import React, { ReactNode, useCallback } from 'react';
+import React, { ReactNode, useCallback, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { DraggableTabs, EnvironmentSelect } from '../../components';
 import { treeFind } from '../../helpers/collection/util';
@@ -12,6 +13,8 @@ import { Page, PageData, useStore } from '../../store';
 const { TabPane } = Tabs;
 
 const MainTabs = () => {
+  const nav = useNavigate();
+  const params = useParams();
   const { pages, activeMenu, setPages, setActiveMenu, environmentTreeData, collectionTreeData } =
     useStore();
 
@@ -72,6 +75,32 @@ const MainTabs = () => {
     [environmentTreeData],
   );
 
+  // 必须和路由搭配起来，在切换的时候附着上去
+  useEffect(() => {
+    const findActivePane = pages.find((i) => i.paneId === activeMenu[1]);
+    if (findActivePane) {
+      nav(
+        `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.rawId}`,
+      );
+    }
+  }, [activeMenu, pages]);
+
+  // TODO 只做了Replay的路由刷新优化
+  useEffect(() => {
+    if (params.rType === PageTypeEnum.Replay) {
+      setActiveMenu(
+        MenuTypeEnum.Replay,
+        generateGlobalPaneId(MenuTypeEnum.Replay, PageTypeEnum.Replay, params.rTypeId),
+      );
+    }
+    if (params.rType === PageTypeEnum.Environment) {
+      setActiveMenu(
+        MenuTypeEnum.Environment,
+        generateGlobalPaneId(MenuTypeEnum.Environment, PageTypeEnum.Environment, params.rTypeId),
+      );
+    }
+  }, []);
+
   return (
     <EmptyWrapper
       empty={!pages.length}
@@ -90,7 +119,6 @@ const MainTabs = () => {
         }}
       >
         {pages.map((page) => {
-          // TODO 支持自定义props, ref
           const Page: PageFC<PageData> = Pages[page.pageType];
           return (
             <MainTabPane

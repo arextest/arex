@@ -17,7 +17,8 @@ import { RoleEnum } from '../../constant';
 import { generateGlobalPaneId } from '../../helpers/utils';
 import { MenuTypeEnum } from '../../menus';
 import { PageTypeEnum } from '../../pages';
-import { WorkspaceService } from '../../services/Workspace.service';
+import EnvironmentService from '../../services/Environment.service';
+import WorkspaceService from '../../services/Workspace.service';
 import { useStore } from '../../store';
 import { TooltipButton } from '../index';
 
@@ -42,7 +43,8 @@ const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
 const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
   const params = useParams();
   const nav = useNavigate();
-  const { userInfo, workspaces, setWorkspaces, setPages, resetPanes } = useStore();
+  const { userInfo, workspaces, setWorkspaces, setPages, setEnvironmentTreeData, resetPanes } =
+    useStore();
   const [editMode, setEditMode] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [status, setStatus] = useState<'' | 'error'>('');
@@ -61,6 +63,18 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
         } else if (!params.workspaceId || !params.workspaceName) {
           nav(`/${data[0].id}/workspace/${data[0].workspaceName}/workspaceOverview/${data[0].id}`);
         }
+      },
+    },
+  );
+
+  // TODO 需要应用载入时就获取环境变量，此处与envPage初始化有重复代码
+  useRequest(
+    () => EnvironmentService.getEnvironment({ workspaceId: params.workspaceId as string }),
+    {
+      ready: !!params.workspaceId,
+      refreshDeps: [params.workspaceId],
+      onSuccess(res) {
+        setEnvironmentTreeData(res);
       },
     },
   );

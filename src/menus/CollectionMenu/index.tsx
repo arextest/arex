@@ -111,10 +111,6 @@ export type nodeType = {
   nodeType: NodeType;
 } & DataNode;
 
-export type CollectionMenuRef = {
-  fetchTreeData: () => void;
-};
-
 const CollectionMenu = () => {
   const params = useParams();
   const {

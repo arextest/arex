@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { TabPaneProps, Tabs } from 'antd';
 import React, { FC, ReactNode, useMemo } from 'react';
 
-import MenuConfig from '../../menus';
+import MenuConfig, { MenuTypeEnum } from '../../menus';
 import { useStore } from '../../store';
 
 const { TabPane } = Tabs;
@@ -15,8 +15,13 @@ type MainMenuProps = {
 };
 
 const MainMenu: FC<MainMenuProps> = (props) => {
-  const { activeMenu } = useStore();
+  const { activeMenu, setActiveMenu } = useStore();
   const activeKey = useMemo(() => activeMenu[0], [activeMenu]);
+
+  const handleMenuChange = (key: string) => {
+    setActiveMenu(key as MenuTypeEnum);
+    props.onChange?.(key);
+  };
 
   return (
     <MainMenuWrapper
@@ -30,7 +35,7 @@ const MainMenu: FC<MainMenuProps> = (props) => {
           onClick={() => props.onCollapse?.(!props.collapse)}
         />
       }
-      onChange={props.onChange}
+      onChange={handleMenuChange}
     >
       {MenuConfig.map((Config) => (
         // TODO 支持自定义props, ref
