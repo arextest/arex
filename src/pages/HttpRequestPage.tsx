@@ -130,7 +130,7 @@ const BreadcrumbHeader = styled.div`
 // mode：有两种模式，normal、compare
 // id：request的id，组件加载时拉一次数据
 // isNew：是否为新增的request
-const HttpRequest: PageFC = (props) => {
+const HttpRequestPage: PageFC = (props) => {
   const {
     userInfo: { email: userName },
     themeClassify,
@@ -858,4 +858,4 @@ const HttpRequest: PageFC = (props) => {
   );
 };
 
-export default HttpRequest;
+export default HttpRequestPage;

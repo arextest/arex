@@ -4,7 +4,7 @@ import { FC } from 'react';
 const { TabPane } = Tabs;
 const { Text } = Typography;
 
-const Folder: FC = () => {
+const FolderPage: FC = () => {
   const onChange = (key: string) => {
     console.log(key);
   };
@@ -52,4 +52,4 @@ const Folder: FC = () => {
   );
 };
 
-export default Folder;
+export default FolderPage;

@@ -22,15 +22,15 @@ const MainBox = () => {
   const [collapseMenu, setCollapseMenu] = useState(false);
 
   // 必须和路由搭配起来，在切换的时候附着上去
-  useEffect(() => {
-    const findActivePane = pages.find((i) => i.paneId === activeMenu[1]);
-    if (findActivePane) {
-      nav(
-        `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.rawId}`,
-      );
-    }
-    fetchEnvironmentData();
-  }, [activeMenu, pages]);
+  // useEffect(() => {
+  //   const findActivePane = pages.find((i) => i.paneId === activeMenu[1]);
+  //   if (findActivePane) {
+  //     nav(
+  //       `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.rawId}`,
+  //     );
+  //   }
+  //   fetchEnvironmentData();
+  // }, [activeMenu, pages]);
 
   useMount(() => {
     // TODO 只做了Replay的路由刷新优化

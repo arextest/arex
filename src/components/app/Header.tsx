@@ -5,7 +5,7 @@ import React from 'react';
 
 import { generateGlobalPaneId } from '../../helpers/utils';
 import { PageTypeEnum } from '../../pages';
-import Setting from '../../pages/Setting';
+import SettingPage from '../../pages/SettingPage';
 import { useStore } from '../../store';
 import GitHubStarButton from '../GitHubStarButton';
 import { TooltipButton } from '../index';

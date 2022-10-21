@@ -12,7 +12,7 @@ import { ApplicationDataType } from '../services/Replay.type';
 import { PageFC } from './index';
 
 const { TabPane } = Tabs;
-const ReplaySetting: PageFC<ApplicationDataType> = (props) => {
+const ReplaySettingPage: PageFC<ApplicationDataType> = (props) => {
   const data = props.page.data;
   return (
     <>
@@ -52,4 +52,4 @@ const ReplaySetting: PageFC<ApplicationDataType> = (props) => {
   );
 };
 
-export default ReplaySetting;
+export default ReplaySettingPage;

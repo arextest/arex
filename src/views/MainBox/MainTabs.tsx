@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useCallback, useEffect } from 'react';
 
 import { DraggableTabs, EnvironmentSelect } from '../../components';
 import { treeFind } from '../../helpers/collection/util';
@@ -50,22 +50,31 @@ const MainTabs = () => {
     }
   };
 
-  const genTabTitle = (collectionTreeData, page: Page<any>) => {
-    // Request类型需要动态响应tittle修改
-    if ([PageTypeEnum.Request, PageTypeEnum.Folder].includes(page.pageType)) {
-      return (
-        treeFind(collectionTreeData, (item) => item.key === parseGlobalPaneId(page.paneId)['rawId'])
-          ?.title || 'New Request'
-      );
-    } else if ([PageTypeEnum.Environment].includes(page.pageType)) {
-      return treeFind(
-        environmentTreeData,
-        (item) => item.id === parseGlobalPaneId(page.paneId)['rawId'],
-      )?.envName;
-    } else {
-      return page.title;
-    }
-  };
+  const genTabTitle = useCallback(
+    (collectionTreeData, page: Page<any>) => {
+      // Request类型需要动态响应tittle修改
+      if ([PageTypeEnum.Request, PageTypeEnum.Folder].includes(page.pageType)) {
+        return (
+          treeFind(
+            collectionTreeData,
+            (item) => item.key === parseGlobalPaneId(page.paneId)['rawId'],
+          )?.title || 'New Request'
+        );
+      } else if ([PageTypeEnum.Environment].includes(page.pageType)) {
+        return treeFind(
+          environmentTreeData,
+          (item) => item.id === parseGlobalPaneId(page.paneId)['rawId'],
+        )?.envName;
+      } else {
+        return page.title;
+      }
+    },
+    [environmentTreeData],
+  );
+
+  useEffect(() => {
+    console.log('render tab');
+  });
 
   return (
     <EmptyWrapper

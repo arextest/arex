@@ -118,7 +118,7 @@ const Environment: FC = () => {
         pageType: PageTypeEnum.Environment,
         isNew: false,
         data,
-        paneId: generateGlobalPaneId(MenuTypeEnum.Environment, PageTypeEnum.Environment, key),
+        paneId: generateGlobalPaneId(MenuTypeEnum.Environment, PageTypeEnum.Environment, info.id),
         rawId: info.id,
       },
       'push',

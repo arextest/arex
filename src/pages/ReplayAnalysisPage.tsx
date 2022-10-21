@@ -101,7 +101,7 @@ const DiffLog: FC<{ log: QueryMsgWithDiffLog }> = (props) => {
   }
 };
 
-const ReplayAnalysis: PageFC<PlanItemStatistics> = (props) => {
+const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
   const [selectedDiff, setSelectedDiff] = useState<Difference>();
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
   const [diffs, setDiffs] = useState<QueryMsgWithDiffRes[]>([]);
@@ -204,4 +204,4 @@ const ReplayAnalysis: PageFC<PlanItemStatistics> = (props) => {
   );
 };
 
-export default ReplayAnalysis;
+export default ReplayAnalysisPage;

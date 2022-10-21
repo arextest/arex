@@ -1,10 +1,8 @@
-import './Environment.less';
-
-import { DeleteOutlined, MenuOutlined } from '@ant-design/icons';
+import { MenuOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Form, Input, InputRef, message, Table } from 'antd';
 import update from 'immutability-helper';
-import React, { FC, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 const type = 'DraggableBodyRow';
@@ -170,11 +168,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
         <Input ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
     ) : (
-      <div
-        className='editable-cell-value-wrap'
-        style={{ paddingRight: 24, height: 32 }}
-        onClick={toggleEdit}
-      >
+      <div style={{ paddingRight: 24, lineHeight: '32px', cursor: 'pointer' }} onClick={toggleEdit}>
         {children}
       </div>
     );
@@ -372,8 +366,9 @@ const EnvironmentPage: PageFC = () => {
       </div>
       <DndProvider backend={HTML5Backend}>
         <MainTable
-          rowKey='keys'
           bordered
+          rowKey='keys'
+          size='small'
           rowClassName={() => 'editable-row'}
           columns={columns}
           dataSource={data}

@@ -46,7 +46,7 @@ const CodeViewer = styled(
   }
 `;
 
-const ReplayCase: PageFC<PlanItemStatistics> = (props) => {
+const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
   const { themeClassify } = useStore();
 
   const [onlyFailed, setOnlyFailed] = useState(false);
@@ -155,4 +155,4 @@ const ReplayCase: PageFC<PlanItemStatistics> = (props) => {
   );
 };
 
-export default ReplayCase;
+export default ReplayCasePage;

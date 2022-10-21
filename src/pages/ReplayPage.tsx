@@ -8,7 +8,7 @@ import { uuid } from '../helpers/utils';
 import { ApplicationDataType, PlanStatistics } from '../services/Replay.type';
 import { PageFC } from './index';
 
-const Replay: PageFC<ApplicationDataType> = (props) => {
+const ReplayPage: PageFC<ApplicationDataType> = (props) => {
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
   const handleSelectPlan = (plan: PlanStatistics) => {
     plan.planId === selectedPlan?.planId ? setSelectedPlan(undefined) : setSelectedPlan(plan);
@@ -43,4 +43,4 @@ const Replay: PageFC<ApplicationDataType> = (props) => {
   );
 };
 
-export default Replay;
+export default ReplayPage;

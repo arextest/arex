@@ -10,7 +10,7 @@ import { useStore } from '../store';
 
 const { Text } = Typography;
 
-const WorkspaceOverview: FC = () => {
+const WorkspaceOverviewPage: FC = () => {
   const params = useParams();
   const nav = useNavigate();
   const {
@@ -134,4 +134,4 @@ const WorkspaceOverview: FC = () => {
   );
 };
 
-export default WorkspaceOverview;
+export default WorkspaceOverviewPage;

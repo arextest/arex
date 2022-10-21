@@ -11,7 +11,7 @@ import { I18nextLng } from '../i18n';
 import { MenuTypeEnum } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
 import { PageTypeEnum } from '../pages';
-import { FontSize } from '../pages/Setting';
+import { FontSize } from '../pages/SettingPage';
 import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
