@@ -1,5 +1,6 @@
 // @ts-ignore
 import { toggleTheme } from '@zougt/vite-plugin-theme-preprocessor/dist/browser-utils';
+import { extend } from 'fp-ts';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
@@ -31,10 +32,10 @@ export type UserInfo = {
 export type PageData =
   | undefined
   | nodeType // PageTypeEnum.Request 时的数据
-  | ApplicationDataType // PageTypeEnum.Index 时的数据
+  | ApplicationDataType // PageTypeEnum.Replay 时的数据
   | PlanItemStatistics; // PageTypeEnum.ReplayAnalysis 时的数据
 
-export type Page<D extends PageData> = {
+export type Page<D extends PageData = undefined> = {
   title: string;
   key?: string;
   menuType?: MenuTypeEnum;
@@ -47,6 +48,7 @@ export type Page<D extends PageData> = {
 };
 
 type ActiveMenu = [MenuTypeEnum, string | undefined]; // [菜单id, 菜单项目id]
+type SetPagesMode = 'push' | 'normal';
 type BaseState = {
   themeClassify: ThemeClassify;
   changeTheme: (theme?: ThemeName) => void;
@@ -63,7 +65,10 @@ type BaseState = {
    * @param pages 工作区标签页数据
    * @param mode 添加模式：push，替换模式：undefined
    * */
-  setPages: (pages: Page | Page[], mode?: 'push') => void;
+  setPages: <D extends PageData = undefined, M extends SetPagesMode = 'normal'>(
+    pages: M extends 'push' ? Page<D> : Page<D>[],
+    mode?: M,
+  ) => void;
   resetPanes: () => void;
   collectionTreeData: any;
   setCollectionTreeData: (collectionTreeData: any) => void;
@@ -146,11 +151,10 @@ export const useStore = create(
 
     extensionInstalled: false,
     pages: [],
-    setPages: (pages, mode) => {
-      if (!mode) {
+    setPages: (pages, mode: SetPagesMode = 'normal') => {
+      if (mode === 'normal') {
         set({ pages: pages as Page[] });
-      }
-      if (mode === 'push') {
+      } else if (mode === 'push') {
         // insert or update
         const page = pages as Page;
         set((state) => {
@@ -230,6 +234,7 @@ export const useStore = create(
   })),
 );
 
+// @ts-ignore
 if (process.env.NODE_ENV === 'development') {
   mountStoreDevtool('Store', useStore);
 }
