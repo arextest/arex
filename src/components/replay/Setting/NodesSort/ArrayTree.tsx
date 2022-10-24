@@ -42,7 +42,7 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
   return (
     <Card
       bordered={false}
-      title={`${props.title} (click node to ignore)`}
+      title={`${props.title} (choose one array node)`}
       bodyStyle={{ padding: '8px 16px' }}
       headStyle={{ padding: '0 16px', margin: '-8px 0' }}
     >

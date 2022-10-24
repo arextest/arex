@@ -33,7 +33,7 @@ const SortTree: FC<SortTreeProps> = (props) => {
   return (
     <Card
       bordered={false}
-      title={`${props.title} (click node to ignore)`}
+      title={`${props.title} (choose key to sort)`}
       bodyStyle={{ padding: '8px 16px' }}
       headStyle={{ padding: '0 16px', margin: '-8px 0' }}
     >
