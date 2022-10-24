@@ -1,13 +1,11 @@
-import { CloseOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useMount } from 'ahooks';
 import { Modal } from 'antd';
 import JSONEditor, { JSONEditorOptions } from 'jsoneditor';
 import { FC, useEffect, useRef } from 'react';
 
-import { QueryMsgWithDiffLog } from '../../services/Replay.type';
 import { tryParseJsonString } from '../../helpers/utils';
-import { FullScreen } from '../styledComponents';
+import { QueryMsgWithDiffLog } from '../../services/Replay.type';
 
 export type DiffJsonViewProps = {
   data?: {
@@ -15,10 +13,10 @@ export type DiffJsonViewProps = {
     testMsg: string;
     logs: QueryMsgWithDiffLog[];
   };
-  visible: boolean;
+  open: boolean;
   onClose: () => void;
 };
-const DiffJsonView: FC<DiffJsonViewProps> = ({ data, visible = false, onClose }) => {
+const DiffJsonView: FC<DiffJsonViewProps> = ({ data, open = false, onClose }) => {
   useMount(() => {
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') {
@@ -129,7 +127,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, visible = false, onClose })
     <Modal
       title='Press Esc to exit'
       width={'100%'}
-      visible={visible}
+      open={open}
       onCancel={onClose}
       style={{ top: 0 }}
     >

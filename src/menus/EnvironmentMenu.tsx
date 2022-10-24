@@ -90,7 +90,7 @@ const Environment: FC = () => {
   } = useStore();
 
   const [iconIsShow, setIconIsShow] = useState('');
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [open, setOpen] = useState(false);
   const [activeEnvironmentItem, setActiveEnvironmentItem] = useState({});
   const [renameValue, setRenameValue] = useState('');
   const [renameKey, setRenameKey] = useState('');
@@ -140,7 +140,7 @@ const Environment: FC = () => {
   const environmentItemOperation = (e: string, data: EnvironmentType) => {
     setActiveEnvironmentItem(data);
     if (e == 'delete') {
-      setIsModalVisible(true);
+      setOpen(true);
     } else if (e == 'rename') {
       setRenameValue(data.envName);
       setRenameKey(data.id);
@@ -167,7 +167,7 @@ const Environment: FC = () => {
       }).then((res) => {
         if (res.body.success == true) {
           fetchEnvironmentData();
-          setIsModalVisible(false);
+          setOpen(false);
         } else {
           console.log(res, 'deleteError');
         }
@@ -202,7 +202,7 @@ const Environment: FC = () => {
   };
 
   const handleCancel = () => {
-    setIsModalVisible(false);
+    setOpen(false);
   };
 
   //搜索
@@ -380,7 +380,7 @@ const Environment: FC = () => {
       <Modal
         title={`Delete "${activeEnvironmentItem.envName}"`}
         okText='Delete'
-        visible={isModalVisible}
+        open={open}
         onOk={() => handleOk('delete')}
         onCancel={handleCancel}
       >

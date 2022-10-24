@@ -194,7 +194,7 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
 
             <DiffJsonView
               data={diffJsonViewData}
-              visible={diffJsonViewVisible}
+              open={diffJsonViewVisible}
               onClose={() => setDiffJsonViewVisible(false)}
             />
           </Card>

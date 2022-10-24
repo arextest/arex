@@ -247,7 +247,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
           </div>
 
           <Modal
-            visible={importView}
+            open={importView}
             onCancel={() => setImportView(false)}
             footer={false}
             width={300}

@@ -1,4 +1,4 @@
-import { ApiOutlined, MoreOutlined } from '@ant-design/icons';
+import { MoreOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Dropdown, Input, Menu, Popconfirm, Space } from 'antd';
@@ -33,10 +33,7 @@ function CollectionTitle({
   const {
     userInfo: { email: userName },
   } = useStore();
-  const [visible, setVisible] = useState(false);
-  const handleVisibleChange = (flag: boolean) => {
-    setVisible(flag);
-  };
+  const [open, setOpen] = useState(false);
   const [renameKey, setRenameKey] = useState('');
   const [renameValue, setRenameValue] = useState('');
   const menu = (val: any) => {
@@ -103,7 +100,7 @@ function CollectionTitle({
               });
           }
           e.domEvent.stopPropagation();
-          setVisible(false);
+          setOpen(false);
         }}
         items={[
           {
@@ -199,12 +196,7 @@ function CollectionTitle({
           </div>
         </div>
         <div className='right'>
-          <Dropdown
-            overlay={menu(val)}
-            trigger={['click']}
-            visible={visible}
-            onVisibleChange={handleVisibleChange}
-          >
+          <Dropdown overlay={menu(val)} trigger={['click']} open={open} onOpenChange={setOpen}>
             <span onClick={(event) => event.stopPropagation()}>
               <Space>
                 <MoreOutlined size={100} style={{ fontSize: '16px' }} />

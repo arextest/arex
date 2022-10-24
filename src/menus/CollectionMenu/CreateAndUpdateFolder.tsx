@@ -53,21 +53,19 @@ const CreateAndUpdateFolder: React.FC<any> = ({
   };
 
   return (
-    <>
-      <Modal
-        title={collectionCreateAndUpdateModal.collectionCreateAndUpdateModalMode}
-        visible={CollectionCreateAndUpdateModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <Input
-          value={CollectionCreateAndUpdateModalFolderName}
-          onChange={(e) => {
-            setCollectionCreateAndUpdateModalFolderName(e.target.value);
-          }}
-        />
-      </Modal>
-    </>
+    <Modal
+      title={collectionCreateAndUpdateModal.collectionCreateAndUpdateModalMode}
+      open={CollectionCreateAndUpdateModalVisible}
+      onOk={handleOk}
+      onCancel={handleCancel}
+    >
+      <Input
+        value={CollectionCreateAndUpdateModalFolderName}
+        onChange={(e) => {
+          setCollectionCreateAndUpdateModalFolderName(e.target.value);
+        }}
+      />
+    </Modal>
   );
 };
 

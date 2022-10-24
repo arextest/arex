@@ -1,24 +1,17 @@
-import { Form, Input, Modal, notification, TreeSelect } from 'antd';
+import { Modal } from 'antd';
 import React, { useState } from 'react';
 
-import request from '../../helpers/api/axios';
-import { treeFindPath } from '../../helpers/collection/util';
-
 const CollectionImport = () => {
-  const [visible, setVisible] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   return (
-    <div>
-      <>
-        <Modal
-          visible={visible}
-          title={`SAVE CASE - ${'title'}`}
-          okText='Create'
-          cancelText='Cancel'
-          onCancel={() => setVisible(false)}
-        ></Modal>
-      </>
-    </div>
+    <Modal
+      open={open}
+      title={`SAVE CASE - ${'title'}`}
+      okText='Create'
+      cancelText='Cancel'
+      onCancel={() => setOpen(false)}
+    />
   );
 };
 

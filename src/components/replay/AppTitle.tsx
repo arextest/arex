@@ -59,7 +59,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     setPages,
   } = useStore();
   const [form] = Form.useForm<{ targetEnv: string }>();
-  const [modalVisible, setModalVisible] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const { run: createPlan, loading: confirmLoading } = useRequest(ReplayService.createPlan, {
     manual: true,
@@ -85,7 +85,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
       });
     },
     onFinally() {
-      setModalVisible(false);
+      setOpen(false);
     },
   });
 
@@ -128,7 +128,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           <TitleWrapper title={data.appId} onRefresh={onRefresh} onSetting={handleOpenSetting} />
         }
         extra={
-          <Button size='small' type='primary' onClick={() => setModalVisible(true)}>
+          <Button size='small' type='primary' onClick={() => setOpen(true)}>
             Start replay
           </Button>
         }
@@ -136,9 +136,9 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
 
       <Modal
         title={`Start replay - ${data.appId}`}
-        visible={modalVisible}
+        open={open}
         onOk={handleStartReplay}
-        onCancel={() => setModalVisible(false)}
+        onCancel={() => setOpen(false)}
         bodyStyle={{ paddingBottom: '12px' }}
         confirmLoading={confirmLoading}
       >

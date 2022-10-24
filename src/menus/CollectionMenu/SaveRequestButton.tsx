@@ -47,7 +47,7 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
   } = useStore();
   const [form] = Form.useForm();
   const [value, setValue] = useState<string>();
-  const [visible, setVisible] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   const onChange = (newValue: string) => {
     setValue(newValue);
@@ -69,13 +69,13 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
 
   return (
     <>
-      <Button onClick={() => setVisible(true)}>Save As</Button>
+      <Button onClick={() => setOpen(true)}>Save As</Button>
       <Modal
-        visible={visible}
+        open={open}
         title='SAVE REQUEST'
         okText='Create'
         cancelText='Cancel'
-        onCancel={() => setVisible(false)}
+        onCancel={() => setOpen(false)}
         onOk={() => {
           form
             .validateFields()
@@ -99,7 +99,7 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
                     key: res.body.infoId,
                     title: values.requestName,
                   });
-                  setVisible(false);
+                  setOpen(false);
                   form.resetFields();
                 });
               });
