@@ -186,6 +186,7 @@ const MainTabsWrapper = styled((props: TabsProps) => {
   }
   .ant-tabs-content-holder {
     overflow: auto;
+    height: inherit;
   }
   .ant-tabs-nav-more {
     height: 36px;
@@ -194,6 +195,7 @@ const MainTabsWrapper = styled((props: TabsProps) => {
   .ant-tabs-content {
     height: 100%;
     .ant-tabs-tabpane {
+      height: inherit;
       padding: 0 16px;
       overflow: auto;
     }

@@ -835,38 +835,36 @@ const HttpRequestPage: PageFC = (props) => {
         </Allotment.Pane>
 
         <Allotment.Pane>
-          <div>
-            {sent ? (
+          {sent ? (
+            <Spin spinning={requesting}>
+              {mode === HttpRequestMode.Normal ? (
+                <Response
+                  responseHeaders={response?.headers}
+                  res={response?.data || response?.statusText}
+                  status={{ code: response.status, text: response.statusText }}
+                  TestResult={TestResult}
+                  isTestResult={isTestResult}
+                  time={responseMeta.time > 10000 ? 0 : responseMeta.time}
+                  size={responseMeta.size}
+                />
+              ) : (
+                // <div>ResponseCompare</div>
+                <ResponseCompare responses={[baseResponse?.data, testResponse?.data]} />
+              )}
+            </Spin>
+          ) : (
+            <ResponseWrapper>
               <Spin spinning={requesting}>
-                {mode === HttpRequestMode.Normal ? (
-                  <Response
-                    responseHeaders={response?.headers}
-                    res={response?.data || response?.statusText}
-                    status={{ code: response.status, text: response.statusText }}
-                    TestResult={TestResult}
-                    isTestResult={isTestResult}
-                    time={responseMeta.time > 10000 ? 0 : responseMeta.time}
-                    size={responseMeta.size}
-                  />
-                ) : (
-                  // <div>ResponseCompare</div>
-                  <ResponseCompare responses={[baseResponse?.data, testResponse?.data]} />
-                )}
+                <Empty
+                  description={
+                    <Typography.Text type='secondary'>
+                      {t_components('http.responseNotReady')}
+                    </Typography.Text>
+                  }
+                />
               </Spin>
-            ) : (
-              <ResponseWrapper>
-                <Spin spinning={requesting}>
-                  <Empty
-                    description={
-                      <Typography.Text type='secondary'>
-                        {t_components('http.responseNotReady')}
-                      </Typography.Text>
-                    }
-                  />
-                </Spin>
-              </ResponseWrapper>
-            )}
-          </div>
+            </ResponseWrapper>
+          )}
         </Allotment.Pane>
       </Allotment>
     </>
