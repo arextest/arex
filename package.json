@@ -34,7 +34,7 @@
     "@zougt/vite-plugin-theme-preprocessor": "^1.4.5",
     "ahooks": "^3.5.2",
     "allotment": "^1.17.0",
-    "antd": "^4.23.6",
+    "antd": "4.21.6",
     "axios": "^0.27.2",
     "chart.js": "^3.8.0",
     "click-to-react-component": "^1.0.8",
