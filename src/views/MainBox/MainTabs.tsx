@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Button, Empty, TabPaneProps, Tabs, TabsProps } from 'antd';
+import { Button, Empty, TabsProps } from 'antd';
 import React, { ReactNode, useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -10,8 +10,6 @@ import { MenuTypeEnum } from '../../menus';
 import Pages, { PageFC, PageTypeEnum } from '../../pages';
 import { Page, PageData, useStore } from '../../store';
 
-const { TabPane } = Tabs;
-
 const MainTabs = () => {
   const nav = useNavigate();
   const params = useParams();
@@ -20,9 +18,9 @@ const MainTabs = () => {
 
   const addTab = () => {
     const u = uuid();
-    setPages(
+    setPages<undefined>(
       {
-        key: uuid(),
+        key: u,
         title: 'New Request',
         pageType: PageTypeEnum.Request,
         menuType: MenuTypeEnum.Collection,
@@ -113,24 +111,19 @@ const MainTabs = () => {
       <MainTabsWrapper
         activeKey={activeMenu[1]}
         tabBarExtraContent={<EnvironmentSelect />}
+        items={pages.map((page) => {
+          const Page: PageFC<PageData> = Pages[page.pageType];
+          return {
+            label: genTabTitle(collectionTreeData, page),
+            key: page.paneId,
+            children: <Page page={page} />,
+          };
+        })}
         onEdit={handleTabsEdit}
         onChange={(t) => {
           setActiveMenu(activeMenu[0], t);
         }}
-      >
-        {pages.map((page) => {
-          const Page: PageFC<PageData> = Pages[page.pageType];
-          return (
-            <MainTabPane
-              className='main-tab-page'
-              tab={genTabTitle(collectionTreeData, page)}
-              key={page.paneId}
-            >
-              <Page page={page} />
-            </MainTabPane>
-          );
-        })}
-      </MainTabsWrapper>
+      />
     </EmptyWrapper>
   );
 };
@@ -200,12 +193,11 @@ const MainTabsWrapper = styled((props: TabsProps) => {
   }
   .ant-tabs-content {
     height: 100%;
+    .ant-tabs-tabpane {
+      padding: 0 16px;
+      overflow: auto;
+    }
   }
-`;
-
-const MainTabPane = styled(TabPane)<TabPaneProps>`
-  padding: 0 8px;
-  overflow: auto;
 `;
 
 const EmptyWrapper = styled(

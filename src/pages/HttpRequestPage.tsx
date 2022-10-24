@@ -20,7 +20,7 @@ import {
   Tag,
   Typography,
 } from 'antd';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useImmer } from 'use-immer';
@@ -55,8 +55,6 @@ import { CollectionService } from '../services/CollectionService';
 import { FileSystemService } from '../services/FileSystem.service';
 import { Page, useStore } from '../store';
 import { PageFC, PageTypeEnum } from './index';
-
-const { TabPane } = Tabs;
 
 export enum HttpRequestMode {
   Normal = 'normal',
@@ -688,7 +686,141 @@ const HttpRequestPage: PageFC = (props) => {
             )}
 
             <Tabs
-              defaultActiveKey='1'
+              defaultActiveKey='body'
+              items={[
+                {
+                  key: 'params',
+                  label: (
+                    <span>
+                      {t_components('http.params')}
+                      {!!paramsCount && <CountTag>{paramsCount}</CountTag>}
+                    </span>
+                  ),
+                  children: (
+                    <>
+                      <FormHeader update={setRequestParams} />
+                      <FormTable
+                        bordered
+                        size='small'
+                        rowKey='id'
+                        pagination={false}
+                        dataSource={requestParams}
+                        //@ts-ignore
+                        columns={useColumns(setRequestParams, { editable: true })}
+                      />
+                    </>
+                  ),
+                },
+                {
+                  key: 'body',
+                  label: (
+                    <>
+                      {/* span 若移动至 Badge 中将失去继承的主题色 */}
+                      <span>{t_components('http.requestBody')}</span>
+                      <Badge dot={!!requestBody} status={method === 'POST' ? 'success' : 'default'}>
+                        {/* 空格符撑起 Badge 内部 */}&nbsp;
+                      </Badge>
+                    </>
+                  ),
+                  children: (
+                    <>
+                      <FormHeaderWrapper>
+                        <span>
+                          <Label offset={-12}>{t_components('http.contentType')}</Label>
+                          <Select
+                            disabled
+                            bordered={false}
+                            value={contentType}
+                            size={'small'}
+                            options={[{ value: 'application/json', label: 'application/json' }]}
+                            onChange={setContentType}
+                            style={{ width: '140px', marginLeft: '8px' }}
+                          />
+                        </span>
+                        <Button size='small' onClick={handlePrettier}>
+                          {t_common('prettier')}
+                        </Button>
+                      </FormHeaderWrapper>
+                      <CodeMirror
+                        value={requestBody}
+                        extensions={[json()]}
+                        theme={themeClassify}
+                        height='auto'
+                        minHeight={'100px'}
+                        maxHeight={'240px'}
+                        onChange={setRequestBody}
+                      />
+                    </>
+                  ),
+                },
+                {
+                  key: 'header',
+                  label: (
+                    <span>
+                      {t_components('http.requestHeaders')}
+                      {!!headerCount && <CountTag>{headerCount}</CountTag>}
+                    </span>
+                  ),
+                  children: (
+                    <>
+                      <FormHeader update={setRequestHeaders} />
+                      <FormTable
+                        bordered
+                        size='small'
+                        rowKey='id'
+                        pagination={false}
+                        dataSource={requestHeaders}
+                        //@ts-ignore
+                        columns={useColumns(setRequestHeaders, { editable: true })}
+                      />
+                    </>
+                  ),
+                },
+                {
+                  key: 'authorization',
+                  label: t_components('http.authorization'),
+                  children: (
+                    <CodeMirror
+                      value=''
+                      extensions={[json()]}
+                      theme={themeClassify}
+                      height='300px'
+                    />
+                  ),
+                },
+                {
+                  key: 'pre-requestScript',
+                  label: t_components('http.pre-requestScript'),
+                  children: (
+                    <CodeMirror
+                      value=''
+                      height='300px'
+                      extensions={[javascript()]}
+                      theme={themeClassify}
+                    />
+                  ),
+                  disabled: true,
+                },
+                {
+                  key: 'test',
+                  label: TestVal ? (
+                    <Badge dot={true} offset={[-1, 11]} color='#10B981'>
+                      <div style={{ paddingRight: '10px' }}>{t_components('http.test')}</div>
+                    </Badge>
+                  ) : (
+                    <>{t_components('http.test')}</>
+                  ),
+                  children: (
+                    <ResponseTest getTestVal={getTestVal} OldTestVal={TestVal}></ResponseTest>
+                  ),
+                  disabled: mode === HttpRequestMode.Compare,
+                },
+                {
+                  key: 'mock',
+                  label: 'Mock',
+                  children: <Mock recordId={recordId} />,
+                },
+              ]}
               css={css`
                 margin-top: 8px;
                 .ant-tabs-tab {
@@ -698,126 +830,7 @@ const HttpRequestPage: PageFC = (props) => {
                   margin-bottom: 0;
                 }
               `}
-            >
-              <TabPane
-                tab={
-                  <span>
-                    {t_components('http.params')}
-                    {!!paramsCount && <CountTag>{paramsCount}</CountTag>}
-                  </span>
-                }
-                key='0'
-              >
-                <FormHeader update={setRequestParams} />
-                <FormTable
-                  bordered
-                  size='small'
-                  rowKey='id'
-                  pagination={false}
-                  dataSource={requestParams}
-                  //@ts-ignore
-                  columns={useColumns(setRequestParams, { editable: true })}
-                />
-              </TabPane>
-              <TabPane
-                tab={
-                  <>
-                    {/* span 若移动至 Badge 中将失去继承的主题色 */}
-                    <span>{t_components('http.requestBody')}</span>
-                    <Badge dot={!!requestBody} status={method === 'POST' ? 'success' : 'default'}>
-                      {/* 空格符撑起 Badge 内部 */}&nbsp;
-                    </Badge>
-                  </>
-                }
-                key='1'
-              >
-                <FormHeaderWrapper>
-                  <span>
-                    <Label offset={-12}>{t_components('http.contentType')}</Label>
-                    <Select
-                      disabled
-                      bordered={false}
-                      value={contentType}
-                      size={'small'}
-                      options={[{ value: 'application/json', label: 'application/json' }]}
-                      onChange={setContentType}
-                      style={{ width: '140px', marginLeft: '8px' }}
-                    />
-                  </span>
-                  <Button size='small' onClick={handlePrettier}>
-                    {t_common('prettier')}
-                  </Button>
-                </FormHeaderWrapper>
-                <CodeMirror
-                  value={requestBody}
-                  extensions={[json()]}
-                  theme={themeClassify}
-                  height='auto'
-                  minHeight={'100px'}
-                  maxHeight={'240px'}
-                  onChange={setRequestBody}
-                />
-              </TabPane>
-              <TabPane
-                tab={
-                  <span>
-                    {t_components('http.requestHeaders')}{' '}
-                    {!!headerCount && <CountTag>{headerCount}</CountTag>}
-                  </span>
-                }
-                key='2'
-              >
-                <FormHeader update={setRequestHeaders} />
-                <FormTable
-                  bordered
-                  size='small'
-                  rowKey='id'
-                  pagination={false}
-                  dataSource={requestHeaders}
-                  //@ts-ignore
-                  columns={useColumns(setRequestHeaders, { editable: true })}
-                />
-              </TabPane>
-              <TabPane tab={t_components('http.authorization')} key='3' disabled>
-                <CodeMirror value='' extensions={[json()]} theme={themeClassify} height='300px' />
-              </TabPane>
-              <TabPane tab={t_components('http.pre-requestScript')} key='4' disabled>
-                <CodeMirror
-                  value=''
-                  height='300px'
-                  extensions={[javascript()]}
-                  theme={themeClassify}
-                />
-              </TabPane>
-              <TabPane
-                tab={
-                  TestVal ? (
-                    <Badge dot={true} offset={[-1, 11]} color='#10B981'>
-                      <div
-                        css={css`
-                          padding-right: 10px;
-                        `}
-                      >
-                        {t_components('http.test')}
-                      </div>
-                    </Badge>
-                  ) : (
-                    <>{t_components('http.test')}</>
-                  )
-                }
-                key='5'
-                disabled={mode === HttpRequestMode.Compare}
-              >
-                <ResponseTest getTestVal={getTestVal} OldTestVal={TestVal}></ResponseTest>
-              </TabPane>
-              {recordId ? (
-                <TabPane tab={'Mock'} key='6'>
-                  <div>
-                    <Mock recordId={recordId}></Mock>
-                  </div>
-                </TabPane>
-              ) : null}
-            </Tabs>
+            />
           </AnimateAutoHeight>
         </Allotment.Pane>
 
@@ -856,8 +869,6 @@ const HttpRequestPage: PageFC = (props) => {
           </div>
         </Allotment.Pane>
       </Allotment>
-
-      {/*<Divider />*/}
     </>
   );
 };

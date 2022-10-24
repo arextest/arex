@@ -1,12 +1,10 @@
 import { LeftOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { TabPaneProps, Tabs } from 'antd';
+import { Tabs } from 'antd';
 import React, { FC, ReactNode, useMemo } from 'react';
 
 import MenuConfig, { MenuTypeEnum } from '../../menus';
 import { useStore } from '../../store';
-
-const { TabPane } = Tabs;
 
 type MainMenuProps = {
   collapse?: boolean;
@@ -35,17 +33,13 @@ const MainMenu: FC<MainMenuProps> = (props) => {
           onClick={() => props.onCollapse?.(!props.collapse)}
         />
       }
+      items={MenuConfig.map((Config) => ({
+        label: <MenuTitle icon={<Config.Icon />} title={Config.title} collapse={props.collapse} />,
+        key: Config.title,
+        children: <Config.Menu />,
+      }))}
       onChange={handleMenuChange}
-    >
-      {MenuConfig.map((Config) => (
-        // TODO 支持自定义props, ref
-        <MainMenuItem
-          key={Config.title}
-          tab={<MenuTitle icon={<Config.Icon />} title={Config.title} collapse={props.collapse} />}
-          menuItem={<Config.Menu />}
-        />
-      ))}
-    </MainMenuWrapper>
+    />
   );
 };
 
@@ -87,21 +81,17 @@ const MainMenuWrapper = styled(Tabs, { shouldForwardProp: (propName) => propName
   .ant-tabs-content {
     height: 100%;
     display: ${(props) => (props.collapse ? 'none' : 'inherit')};
+    .ant-tabs-tabpane {
+      overflow-y: auto;
+      padding: 0 8px !important;
+      .ant-tree-node-selected {
+        color: ${(props) => props.theme.color.text.highlight};
+        background-color: ${(props) => props.theme.color.selected} !important;
+      }
+    }
   }
   .ant-tabs-extra-content {
     width: 100%;
-  }
-`;
-
-type MainMenuItemProps = TabPaneProps & { menuItem: ReactNode };
-const MainMenuItem = styled((props: MainMenuItemProps) => (
-  <TabPane {...props}>{props.menuItem}</TabPane>
-))<MainMenuItemProps>`
-  height: 100%;
-  overflow-y: auto;
-  padding: 0 8px !important;
-  .ant-tree-node-selected {
-    color: ${(props) => props.theme.color.text.highlight};
   }
 `;
 

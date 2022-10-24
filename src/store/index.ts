@@ -41,7 +41,7 @@ export type Page<D extends PageData = undefined> = {
   menuType?: MenuTypeEnum;
   pageType: PageTypeEnum;
   isNew?: boolean;
-  data?: D;
+  data: D;
   sortIndex?: number;
   paneId: string;
   rawId: string;

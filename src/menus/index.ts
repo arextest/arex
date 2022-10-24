@@ -1,7 +1,7 @@
-import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-design/Icons';
+import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-design/icons';
 import { FC } from 'react';
 
-import CollectionMenu, { CollectionMenuRef } from './CollectionMenu';
+import CollectionMenu from './CollectionMenu';
 import EnvironmentMenu from './EnvironmentMenu';
 import ReplayMenu from './ReplayMenu';
 
@@ -38,5 +38,3 @@ const config: MenuConfig[] = [
 export default config;
 
 export { CollectionMenu, EnvironmentMenu, ReplayMenu };
-
-export type { CollectionMenuRef };

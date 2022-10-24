@@ -3,8 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 import ReactDiffViewer from 'react-diff-viewer';
 
 import request from '../../helpers/api/axios';
-import { useStore } from '../../store';
-const { TabPane } = Tabs;
 
 const onChange = (key: string) => {};
 
@@ -97,41 +95,48 @@ const ResponseCompare = ({ responses }) => {
       });
     }
   }, [responses]);
-  return (
-    <div>
-      <Tabs defaultActiveKey='1' onChange={onChange}>
-        <TabPane tab='Compare Result' key='1'>
-          <div id='wrapper'>
-            <div style={{ textAlign: 'right', marginBottom: '10px' }}>
-              <Radio.Group
-                size={'small'}
-                options={optionsWithDisabled}
-                onChange={(val) => {
-                  setActiveRadio(val.target.value);
-                }}
-                value={activeRadio}
-                optionType='button'
-                buttonStyle='solid'
-              />
-            </div>
 
-            <div
-              className='react-diff-code-view'
-              style={{ height: '100%', display: activeRadio === 'json' ? 'block' : 'none' }}
-            >
-              <ReactDiffViewer
-                oldValue={JSON.stringify(responses[0], null, 2)}
-                newValue={JSON.stringify(responses[1], null, 2)}
-                splitView={true}
-              />
-            </div>
-            <div style={{ display: activeRadio === 'table' ? 'block' : 'none' }}>
-              <Table dataSource={dataSource} columns={columns} />
-            </div>
-          </div>
-        </TabPane>
-      </Tabs>
-    </div>
+  return (
+    <Tabs
+      defaultActiveKey='compareResult'
+      items={[
+        {
+          key: 'compareResult',
+          label: 'Compare Result',
+          children: (
+            <>
+              <div style={{ textAlign: 'right', marginBottom: '10px' }}>
+                <Radio.Group
+                  size={'small'}
+                  options={optionsWithDisabled}
+                  onChange={(val) => {
+                    setActiveRadio(val.target.value);
+                  }}
+                  value={activeRadio}
+                  optionType='button'
+                  buttonStyle='solid'
+                />
+              </div>
+
+              <div
+                className='react-diff-code-view'
+                style={{ height: '100%', display: activeRadio === 'json' ? 'block' : 'none' }}
+              >
+                <ReactDiffViewer
+                  oldValue={JSON.stringify(responses[0], null, 2)}
+                  newValue={JSON.stringify(responses[1], null, 2)}
+                  splitView={true}
+                />
+              </div>
+              <div style={{ display: activeRadio === 'table' ? 'block' : 'none' }}>
+                <Table dataSource={dataSource} columns={columns} />
+              </div>
+            </>
+          ),
+        },
+      ]}
+      onChange={onChange}
+    />
   );
 };
 
