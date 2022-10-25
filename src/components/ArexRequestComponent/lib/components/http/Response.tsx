@@ -25,6 +25,7 @@ const HttpResponse = () => {
         flex-direction: column;
         height: 100%;
         padding-left: 16px;
+        padding-right: 16px;
       `}
     >
       <HttpResponseMeta response={store.response} />

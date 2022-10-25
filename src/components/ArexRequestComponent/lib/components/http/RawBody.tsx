@@ -1,26 +1,18 @@
 import { json } from '@codemirror/lang-json';
-import { Button } from 'antd';
+import { css } from '@emotion/react';
+import { Button, message } from 'antd';
 import { useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { useCodeMirror } from '../../helpers/editor/codemirror';
 import { HttpContext } from '../../index';
-// import { requestUseStore } from '../../store/request';
-// import { HttpContext } from "../panes/Request";
-
 const HttpRawBody = ({ data, cRef, theme }) => {
   const rawBodyParameters = useRef(null);
   const { store, dispatch } = useContext(HttpContext);
-  useEffect(() => {
-    // dispatch({
-    //   type: 'request.body.body',
-    //   payload: data?.body,
-    // });
-  }, [data]);
 
   useCodeMirror({
     container: rawBodyParameters.current,
     value: store.request.body.body,
-    height: '300px',
+    height: '100%',
     extensions: [json()],
     theme: theme,
     onChange: (val) => {
@@ -41,17 +33,26 @@ const HttpRawBody = ({ data, cRef, theme }) => {
     };
   });
   const prettifyRequestBody = () => {
-    const jsonObj = JSON.parse(store.request.body.body);
-    // dispatch({
-    //   type: 'setRequestBodyBody',
-    //   payload: JSON.stringify(jsonObj, null, 2),
-    // });
+    try {
+      const jsonObj = JSON.parse(store.request.body.body);
+      dispatch({
+        type: 'request.body.body',
+        payload: JSON.stringify(jsonObj, null, 2),
+      });
+    } catch (e) {
+      message.error(e.message);
+    }
   };
 
   const handleName = (e) => {};
 
   return (
-    <div>
+    <div
+      css={css`
+        flex: 1;
+        overflow-y: auto;
+      `}
+    >
       <div ref={rawBodyParameters}></div>
     </div>
   );

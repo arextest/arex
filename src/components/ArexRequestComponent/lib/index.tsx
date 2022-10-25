@@ -2,6 +2,7 @@ import 'allotment/dist/style.css';
 import 'antd/dist/antd.css';
 
 import { css } from '@emotion/react';
+import { useMount } from 'ahooks';
 import { Allotment } from 'allotment';
 import _ from 'lodash-es';
 import { createContext, FC, useEffect, useImperativeHandle, useReducer, useState } from 'react';
@@ -108,26 +109,21 @@ const ArexRequestComponent: FC<ArexRequestComponentProps> = ({
       type: 'locale',
       payload: localeObj[locale],
     });
-    console.log(currentRequestId, 'currentRequestId');
+  }, [locale]);
+
+  useMount(() => {
     onEdit({
       type: 'retrieve',
       payload: {
         requestId: currentRequestId,
       },
     }).then((res) => {
-      console.log(res, 'res');
       dispatch({
         type: 'request',
         payload: res,
       });
     });
-  }, [locale]);
-
-  // retrieveRequest={findRequestById}
-  // updateRequest={updateRequestById}
-  // createRequest={createRequestService}
-  // deleteRequest={findRequestById}
-
+  });
   //用useImperativeHandle暴露一些外部ref能访问的属性
   useImperativeHandle(cRef, () => {
     // 需要将暴露的接口返回出去
@@ -145,39 +141,40 @@ const ArexRequestComponent: FC<ArexRequestComponentProps> = ({
   function func() {
     return store.request;
   }
-
   return (
     <HttpContext.Provider value={{ store, dispatch }}>
-      <Allotment
-        css={css`
-          height: calc(100vh - 118px);
-        `}
-        vertical={true}
-      >
-        <Allotment.Pane preferredSize={400}>
-          <div
-            css={css`
-              height: 100%;
-              display: flex;
-              flex-direction: column;
-            `}
-          >
-            <HttpRequest
-              collectionTreeData={collectionTreeData}
-              currentRequestId={currentRequestId}
-              onEdit={onEdit}
-            ></HttpRequest>
-            <HttpRequestOptions
-              requestExtraTabItems={requestExtraTabItems}
-              data={data}
-              theme={theme}
-            ></HttpRequestOptions>
-          </div>
-        </Allotment.Pane>
-        <Allotment.Pane>
-          <HttpResponse />
-        </Allotment.Pane>
-      </Allotment>
+      {store.request.endpoint !== '' ? (
+        <Allotment
+          css={css`
+            height: calc(100vh - 118px);
+          `}
+          vertical={true}
+        >
+          <Allotment.Pane preferredSize={400}>
+            <div
+              css={css`
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+              `}
+            >
+              <HttpRequest
+                collectionTreeData={collectionTreeData}
+                currentRequestId={currentRequestId}
+                onEdit={onEdit}
+              ></HttpRequest>
+              <HttpRequestOptions
+                requestExtraTabItems={requestExtraTabItems}
+                data={data}
+                theme={theme}
+              ></HttpRequestOptions>
+            </div>
+          </Allotment.Pane>
+          <Allotment.Pane>
+            <HttpResponse />
+          </Allotment.Pane>
+        </Allotment>
+      ) : null}
     </HttpContext.Provider>
   );
 };

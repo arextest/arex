@@ -31,7 +31,6 @@ const JSONLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
         css={css`
           display: flex;
           justify-content: space-between;
-          //padding: 0 0 0 16px;
         `}
       >
         <span>Response Body</span>
@@ -54,7 +53,6 @@ const JSONLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
       <div
         css={css`
           overflow-y: auto;
-          //flex: 1;
         `}
       >
         <div ref={jsonResponse}></div>

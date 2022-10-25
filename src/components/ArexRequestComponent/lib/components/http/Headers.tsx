@@ -11,9 +11,7 @@ import { HttpContext } from '../..';
 
 const HttpHeaders = () => {
   const { store, dispatch } = useContext(HttpContext);
-  const [requestHeaders, setRequestHeaders] = useImmer<HoppRESTHeader[]>([
-    { key: '', value: '', active: true },
-  ]);
+  const [requestHeaders, setRequestHeaders] = useImmer<HoppRESTHeader[]>([]);
   useMount(() => {
     setRequestHeaders(store.request.headers);
   });
@@ -30,7 +28,7 @@ const HttpHeaders = () => {
       <FormTable
         bordered
         size='small'
-        rowKey='id'
+        rowKey={'id'}
         pagination={false}
         dataSource={requestHeaders}
         columns={useColumns(setRequestHeaders, true)}

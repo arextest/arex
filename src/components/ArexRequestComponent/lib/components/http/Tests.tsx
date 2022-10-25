@@ -23,6 +23,7 @@ export const ResponseTestHeader = styled.div`
 `;
 
 export const ResponseTestWrapper = styled.div`
+  overflow-y: auto;
   display: flex;
   justify-content: space-between;
   flex: 1;
@@ -104,7 +105,13 @@ arex.test("Status code is 200", ()=> {
   };
 
   return (
-    <div>
+    <div
+      css={css`
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      `}
+    >
       <ResponseTestHeader>
         <span>{t('preRequest.javascript_code')}</span>
         <div>

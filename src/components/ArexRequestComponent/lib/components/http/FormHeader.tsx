@@ -8,10 +8,12 @@ import styled from '@emotion/styled';
 import { Button, Tooltip } from 'antd';
 import { FC, useContext } from 'react';
 import { Updater } from 'use-immer';
-import { HttpContext } from '../../index';
+
 import { getValueByPath } from '../../helpers/utils/locale';
+import { HttpContext } from '../../index';
 
 export type KeyValueType = {
+  id: string;
   key: string;
   value: string;
   active: boolean;
@@ -41,6 +43,7 @@ const FormHeader: FC<{ update: Updater<KeyValueType[]> }> = (props) => {
       key: '',
       value: '',
       active: true,
+      id: String(Math.random()),
     };
     props.update((state) => {
       state.push(newValue);
@@ -62,7 +65,7 @@ const FormHeader: FC<{ update: Updater<KeyValueType[]> }> = (props) => {
         <Tooltip title={t('batchEdit')}>
           <Button type='text' icon={<EditOutlined />} />
         </Tooltip>
-        <Tooltip title={t('add')}>
+        <Tooltip title={t('add.new')}>
           <Button type='text' icon={<PlusOutlined />} onClick={handleAddParam} />
         </Tooltip>
       </div>

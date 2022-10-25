@@ -37,7 +37,7 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
   return (
     <div
       css={css`
-        padding: 0px;
+        padding: 16px 0 16px 0;
       `}
     >
       {response === null ? (
