@@ -6,8 +6,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { DraggableTabs, EnvironmentSelect } from '../../components';
 import { treeFind } from '../../helpers/collection/util';
 import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
-import { MenuTypeEnum } from '../../menus';
-import Pages, { PageFC, PageTypeEnum } from '../../pages';
+import { MenuType } from '../../menus';
+import Pages, { PageFC, PagesType } from '../../pages';
 import { Page, PageData, useStore } from '../../store';
 
 const MainTabs = () => {
@@ -22,10 +22,10 @@ const MainTabs = () => {
       {
         key: u,
         title: 'New Request',
-        pageType: PageTypeEnum.Request,
-        menuType: MenuTypeEnum.Collection,
+        pageType: PagesType.Request,
+        menuType: MenuType.Collection,
         isNew: true,
-        paneId: generateGlobalPaneId(MenuTypeEnum.Collection, PageTypeEnum.Request, u),
+        paneId: generateGlobalPaneId(MenuType.Collection, PagesType.Request, u),
         rawId: u,
       },
       'push',
@@ -54,14 +54,14 @@ const MainTabs = () => {
   const genTabTitle = useCallback(
     (collectionTreeData, page: Page<any>) => {
       // Request类型需要动态响应tittle修改
-      if ([PageTypeEnum.Request, PageTypeEnum.Folder].includes(page.pageType)) {
+      if ([PagesType.Request, PagesType.Folder].includes(page.pageType)) {
         return (
           treeFind(
             collectionTreeData,
             (item) => item.key === parseGlobalPaneId(page.paneId)['rawId'],
           )?.title || 'New Request'
         );
-      } else if ([PageTypeEnum.Environment].includes(page.pageType)) {
+      } else if ([PagesType.Environment].includes(page.pageType)) {
         return treeFind(
           environmentTreeData,
           (item) => item.id === parseGlobalPaneId(page.paneId)['rawId'],
@@ -85,16 +85,16 @@ const MainTabs = () => {
 
   // TODO 只做了Replay的路由刷新优化
   useEffect(() => {
-    if (params.rType === PageTypeEnum.Replay) {
+    if (params.rType === PagesType.Replay) {
       setActiveMenu(
-        MenuTypeEnum.Replay,
-        generateGlobalPaneId(MenuTypeEnum.Replay, PageTypeEnum.Replay, params.rTypeId),
+        MenuType.Replay,
+        generateGlobalPaneId(MenuType.Replay, PagesType.Replay, params.rTypeId),
       );
     }
-    if (params.rType === PageTypeEnum.Environment) {
+    if (params.rType === PagesType.Environment) {
       setActiveMenu(
-        MenuTypeEnum.Environment,
-        generateGlobalPaneId(MenuTypeEnum.Environment, PageTypeEnum.Environment, params.rTypeId),
+        MenuType.Environment,
+        generateGlobalPaneId(MenuType.Environment, PagesType.Environment, params.rTypeId),
       );
     }
   }, []);

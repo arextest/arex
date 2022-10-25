@@ -50,11 +50,11 @@ import {
   tryParseJsonString,
   tryPrettierJsonString,
 } from '../helpers/utils';
-import { MenuTypeEnum } from '../menus';
+import { MenuType } from '../menus';
 import { CollectionService } from '../services/CollectionService';
 import { FileSystemService } from '../services/FileSystem.service';
 import { Page, useStore } from '../store';
-import { PageFC, PageTypeEnum } from './index';
+import { PageFC, PagesType } from './index';
 
 export enum HttpRequestMode {
   Normal = 'normal',
@@ -506,9 +506,9 @@ const HttpRequestPage: PageFC = (props) => {
         // key: page.key,
         isNew: true,
         title: page.title,
-        menuType: MenuTypeEnum.Collection,
-        pageType: PageTypeEnum.Request,
-        paneId: generateGlobalPaneId(MenuTypeEnum.Collection, PageTypeEnum.Request, page.key),
+        menuType: MenuType.Collection,
+        pageType: PagesType.Request,
+        paneId: generateGlobalPaneId(MenuType.Collection, PagesType.Request, page.key),
         rawId: page.key,
       },
       'push',

@@ -10,10 +10,10 @@ import { TooltipButton } from '../../components';
 import { NodeType } from '../../constant';
 import { treeFind } from '../../helpers/collection/util';
 import { generateGlobalPaneId, parseGlobalPaneId } from '../../helpers/utils';
-import { PageTypeEnum } from '../../pages';
+import { PagesType } from '../../pages';
 import { CollectionService } from '../../services/CollectionService';
 import { useStore } from '../../store';
-import { MenuTypeEnum } from '../index';
+import { MenuType } from '../index';
 import CollectionTitle from './CollectionTitle';
 
 const CollectionMenuWrapper = styled.div`
@@ -403,13 +403,13 @@ const CollectionMenu = () => {
     setPages(
       {
         title: node.title,
-        menuType: MenuTypeEnum.Collection,
-        pageType: node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
+        menuType: MenuType.Collection,
+        pageType: node.nodeType === 3 ? PagesType.Folder : PagesType.Request,
         isNew: false,
         data: node,
         paneId: generateGlobalPaneId(
-          MenuTypeEnum.Collection,
-          node.nodeType === 3 ? PageTypeEnum.Folder : PageTypeEnum.Request,
+          MenuType.Collection,
+          node.nodeType === 3 ? PagesType.Folder : PagesType.Request,
           key,
         ),
         rawId: key,

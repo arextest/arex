@@ -16,8 +16,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { RoleEnum } from '../../constant';
 import { generateGlobalPaneId } from '../../helpers/utils';
-import { MenuTypeEnum } from '../../menus';
-import { PageTypeEnum } from '../../pages';
+import { MenuType } from '../../menus';
+import { PagesType } from '../../pages';
 import EnvironmentService from '../../services/Environment.service';
 import { FileSystemService } from '../../services/FileSystem.service';
 import WorkspaceService from '../../services/Workspace.service';
@@ -103,12 +103,12 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
       setPages(
         {
           title: params.workspaceName,
-          menuType: MenuTypeEnum.Collection,
-          pageType: PageTypeEnum.WorkspaceOverview,
+          menuType: MenuType.Collection,
+          pageType: PagesType.WorkspaceOverview,
           isNew: true,
           paneId: generateGlobalPaneId(
-            MenuTypeEnum.Collection,
-            PageTypeEnum.WorkspaceOverview,
+            MenuType.Collection,
+            PagesType.WorkspaceOverview,
             params.workspaceId,
           ),
           rawId: params.workspaceId,

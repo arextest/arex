@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Tabs } from 'antd';
 import React, { FC, ReactNode, useMemo } from 'react';
 
-import MenuConfig, { MenuTypeEnum } from '../../menus';
+import MenuConfig, { MenuType } from '../../menus';
 import { useStore } from '../../store';
 
 type MainMenuProps = {
@@ -17,7 +17,7 @@ const MainMenu: FC<MainMenuProps> = (props) => {
   const activeKey = useMemo(() => activeMenu[0], [activeMenu]);
 
   const handleMenuChange = (key: string) => {
-    setActiveMenu(key as MenuTypeEnum);
+    setActiveMenu(key as MenuType);
     props.onChange?.(key);
   };
 

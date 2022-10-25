@@ -2,11 +2,11 @@ import { FC, useMemo } from 'react';
 
 import MenuSelect from '../components/MenuSelect';
 import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
-import { PageTypeEnum } from '../pages';
+import { PagesType } from '../pages';
 import ReplayService from '../services/Replay.service';
 import { ApplicationDataType } from '../services/Replay.type';
 import { useStore } from '../store';
-import { MenuTypeEnum } from './index';
+import { MenuType } from './index';
 
 const ReplayMenu: FC = () => {
   const { activeMenu, setPages } = useStore();
@@ -17,11 +17,11 @@ const ReplayMenu: FC = () => {
     setPages(
       {
         title: app.appId,
-        menuType: MenuTypeEnum.Replay,
-        pageType: PageTypeEnum.Replay,
+        menuType: MenuType.Replay,
+        pageType: PagesType.Replay,
         isNew: false,
         data: app,
-        paneId: generateGlobalPaneId(MenuTypeEnum.Collection, PageTypeEnum.Replay, app.id),
+        paneId: generateGlobalPaneId(MenuType.Collection, PagesType.Replay, app.id),
         rawId: app.id,
       },
       'push',

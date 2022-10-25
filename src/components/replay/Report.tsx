@@ -19,8 +19,8 @@ import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 
 import { generateGlobalPaneId, getPercent } from '../../helpers/utils';
-import { MenuTypeEnum } from '../../menus';
-import { PageTypeEnum } from '../../pages';
+import { MenuType } from '../../menus';
+import { PagesType } from '../../pages';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
@@ -160,13 +160,13 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
             setPages(
               {
                 title: `Analysis - ${record.operationId}`,
-                pageType: PageTypeEnum.ReplayAnalysis,
-                menuType: MenuTypeEnum.Replay,
+                pageType: PagesType.ReplayAnalysis,
+                menuType: MenuType.Replay,
                 isNew: false,
                 data: record,
                 paneId: generateGlobalPaneId(
-                  MenuTypeEnum.Replay,
-                  PageTypeEnum.ReplayAnalysis,
+                  MenuType.Replay,
+                  PagesType.ReplayAnalysis,
                   record.operationId,
                 ),
                 rawId: record.operationId,
@@ -182,13 +182,13 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
             setPages(
               {
                 title: `Case - ${record.operationId}`,
-                pageType: PageTypeEnum.ReplayCase,
-                menuType: MenuTypeEnum.Replay,
+                pageType: PagesType.ReplayCase,
+                menuType: MenuType.Replay,
                 isNew: false,
                 data: record,
                 paneId: generateGlobalPaneId(
-                  MenuTypeEnum.Replay,
-                  PageTypeEnum.ReplayCase,
+                  MenuType.Replay,
+                  PagesType.ReplayCase,
                   record.operationId,
                 ),
                 rawId: record.operationId,
