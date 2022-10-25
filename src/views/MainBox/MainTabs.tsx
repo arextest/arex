@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { DraggableTabs, EnvironmentSelect } from '../../components';
 import { treeFind } from '../../helpers/collection/util';
 import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
-import { MenuType } from '../../menus';
+import { MenusType } from '../../menus';
 import Pages, { PageFC, PagesType } from '../../pages';
 import { Page, PageData, useStore } from '../../store';
 
@@ -23,9 +23,9 @@ const MainTabs = () => {
         key: u,
         title: 'New Request',
         pageType: PagesType.Request,
-        menuType: MenuType.Collection,
+        menuType: MenusType.Collection,
         isNew: true,
-        paneId: generateGlobalPaneId(MenuType.Collection, PagesType.Request, u),
+        paneId: generateGlobalPaneId(MenusType.Collection, PagesType.Request, u),
         rawId: u,
       },
       'push',
@@ -87,14 +87,14 @@ const MainTabs = () => {
   useEffect(() => {
     if (params.rType === PagesType.Replay) {
       setActiveMenu(
-        MenuType.Replay,
-        generateGlobalPaneId(MenuType.Replay, PagesType.Replay, params.rTypeId),
+        MenusType.Replay,
+        generateGlobalPaneId(MenusType.Replay, PagesType.Replay, params.rTypeId),
       );
     }
     if (params.rType === PagesType.Environment) {
       setActiveMenu(
-        MenuType.Environment,
-        generateGlobalPaneId(MenuType.Environment, PagesType.Environment, params.rTypeId),
+        MenusType.Environment,
+        generateGlobalPaneId(MenusType.Environment, PagesType.Environment, params.rTypeId),
       );
     }
   }, []);

@@ -50,7 +50,7 @@ import {
   tryParseJsonString,
   tryPrettierJsonString,
 } from '../helpers/utils';
-import { MenuType } from '../menus';
+import { MenusType } from '../menus';
 import { CollectionService } from '../services/CollectionService';
 import { FileSystemService } from '../services/FileSystem.service';
 import { Page, useStore } from '../store';
@@ -506,9 +506,9 @@ const HttpRequestPage: PageFC = (props) => {
         // key: page.key,
         isNew: true,
         title: page.title,
-        menuType: MenuType.Collection,
+        menuType: MenusType.Collection,
         pageType: PagesType.Request,
-        paneId: generateGlobalPaneId(MenuType.Collection, PagesType.Request, page.key),
+        paneId: generateGlobalPaneId(MenusType.Collection, PagesType.Request, page.key),
         rawId: page.key,
       },
       'push',

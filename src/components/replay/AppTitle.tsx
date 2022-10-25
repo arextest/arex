@@ -5,7 +5,7 @@ import { Button, Form, Input, Modal, notification } from 'antd';
 import React, { FC, ReactNode, useState } from 'react';
 
 import { generateGlobalPaneId } from '../../helpers/utils';
-import { MenuType } from '../../menus';
+import { MenusType } from '../../menus';
 import { PagesType } from '../../pages';
 import ReplayService from '../../services/Replay.service';
 import { ApplicationDataType } from '../../services/Replay.type';
@@ -111,11 +111,11 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     setPages(
       {
         title: `Setting ${data.appId}`,
-        menuType: MenuType.Replay,
+        menuType: MenusType.Replay,
         pageType: PagesType.ReplaySetting,
         isNew: false,
         data,
-        paneId: generateGlobalPaneId(MenuType.Replay, PagesType.ReplaySetting, data.id),
+        paneId: generateGlobalPaneId(MenusType.Replay, PagesType.ReplaySetting, data.id),
         rawId: data.id,
       },
       'push',

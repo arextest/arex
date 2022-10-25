@@ -13,7 +13,7 @@ import { generateGlobalPaneId, parseGlobalPaneId } from '../../helpers/utils';
 import { PagesType } from '../../pages';
 import { CollectionService } from '../../services/CollectionService';
 import { useStore } from '../../store';
-import { MenuType } from '../index';
+import { MenusType } from '../index';
 import CollectionTitle from './CollectionTitle';
 
 const CollectionMenuWrapper = styled.div`
@@ -403,12 +403,12 @@ const CollectionMenu = () => {
     setPages(
       {
         title: node.title,
-        menuType: MenuType.Collection,
+        menuType: MenusType.Collection,
         pageType: node.nodeType === 3 ? PagesType.Folder : PagesType.Request,
         isNew: false,
         data: node,
         paneId: generateGlobalPaneId(
-          MenuType.Collection,
+          MenusType.Collection,
           node.nodeType === 3 ? PagesType.Folder : PagesType.Request,
           key,
         ),

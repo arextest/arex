@@ -19,7 +19,7 @@ import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 
 import { generateGlobalPaneId, getPercent } from '../../helpers/utils';
-import { MenuType } from '../../menus';
+import { MenusType } from '../../menus';
 import { PagesType } from '../../pages';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
@@ -161,11 +161,11 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
               {
                 title: `Analysis - ${record.operationId}`,
                 pageType: PagesType.ReplayAnalysis,
-                menuType: MenuType.Replay,
+                menuType: MenusType.Replay,
                 isNew: false,
                 data: record,
                 paneId: generateGlobalPaneId(
-                  MenuType.Replay,
+                  MenusType.Replay,
                   PagesType.ReplayAnalysis,
                   record.operationId,
                 ),
@@ -183,11 +183,11 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
               {
                 title: `Case - ${record.operationId}`,
                 pageType: PagesType.ReplayCase,
-                menuType: MenuType.Replay,
+                menuType: MenusType.Replay,
                 isNew: false,
                 data: record,
                 paneId: generateGlobalPaneId(
-                  MenuType.Replay,
+                  MenusType.Replay,
                   PagesType.ReplayCase,
                   record.operationId,
                 ),

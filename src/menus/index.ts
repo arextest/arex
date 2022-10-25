@@ -11,11 +11,11 @@ type MenuConfig = {
   Menu: FC;
 };
 
-export const MenuType = {
-  Collection: 'collection',
-  Replay: 'replay',
-  Environment: 'environment',
-};
+export enum MenusType {
+  Collection = 'collection',
+  Replay = 'replay',
+  Environment = 'environment',
+}
 
 // TODO import ExtraConfig
 // import ExtraConfig from 'src/extra/menus'
@@ -23,17 +23,17 @@ const ExtraConfig: MenuConfig[] = [];
 
 const CommonConfig: MenuConfig[] = [
   {
-    title: MenuType.Collection,
+    title: MenusType.Collection,
     Icon: ApiOutlined,
     Menu: CollectionMenu,
   },
   {
-    title: MenuType.Replay,
+    title: MenusType.Replay,
     Icon: FieldTimeOutlined,
     Menu: ReplayMenu,
   },
   {
-    title: MenuType.Environment,
+    title: MenusType.Environment,
     Icon: DeploymentUnitOutlined,
     Menu: EnvironmentMenu,
   },

@@ -16,7 +16,7 @@ import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
 import { PagesType } from '../pages';
 import EnvironmentService from '../services/Environment.service';
 import { useStore } from '../store';
-import { MenuType } from './index';
+import { MenusType } from './index';
 
 type EnvironmentKeyValues = { key: string; value: string; active: boolean };
 type EnvironmentType = {
@@ -114,11 +114,11 @@ const Environment: FC = () => {
     setPages(
       {
         title: info.envName,
-        menuType: MenuType.Environment,
+        menuType: MenusType.Environment,
         pageType: PagesType.Environment,
         isNew: false,
         data,
-        paneId: generateGlobalPaneId(MenuType.Environment, PagesType.Environment, info.id),
+        paneId: generateGlobalPaneId(MenusType.Environment, PagesType.Environment, info.id),
         rawId: info.id,
       },
       'push',

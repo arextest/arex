@@ -6,7 +6,7 @@ import { PagesType } from '../pages';
 import ReplayService from '../services/Replay.service';
 import { ApplicationDataType } from '../services/Replay.type';
 import { useStore } from '../store';
-import { MenuType } from './index';
+import { MenusType } from './index';
 
 const ReplayMenu: FC = () => {
   const { activeMenu, setPages } = useStore();
@@ -17,11 +17,11 @@ const ReplayMenu: FC = () => {
     setPages(
       {
         title: app.appId,
-        menuType: MenuType.Replay,
+        menuType: MenusType.Replay,
         pageType: PagesType.Replay,
         isNew: false,
         data: app,
-        paneId: generateGlobalPaneId(MenuType.Collection, PagesType.Replay, app.id),
+        paneId: generateGlobalPaneId(MenusType.Collection, PagesType.Replay, app.id),
         rawId: app.id,
       },
       'push',
