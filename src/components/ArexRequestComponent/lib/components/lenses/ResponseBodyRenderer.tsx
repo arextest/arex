@@ -31,6 +31,7 @@ const LensesResponseBodyRenderer: FC<{ response: HoppRESTResponse }> = ({ respon
       children: <TestResult />,
     },
   ];
+  console.log(response, 'response');
   return (
     <div
       css={css`
