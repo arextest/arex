@@ -13,7 +13,12 @@ const HttpHeaders = () => {
   const { store, dispatch } = useContext(HttpContext);
   const [requestHeaders, setRequestHeaders] = useImmer<HoppRESTHeader[]>([]);
   useMount(() => {
-    setRequestHeaders(store.request.headers);
+    setRequestHeaders(
+      store.request.headers.map((i) => ({
+        ...i,
+        id: String(Math.random()),
+      })),
+    );
   });
 
   useEffect(() => {

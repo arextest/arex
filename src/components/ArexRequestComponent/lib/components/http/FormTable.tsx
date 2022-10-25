@@ -45,11 +45,11 @@ export const useColumns = (
   };
 
   const keyValueColumns: ColumnsType<KeyValueType> = [
-    {
-      title: 'id',
-      dataIndex: 'id',
-      key: 'id',
-    },
+    // {
+    //   title: 'id',
+    //   dataIndex: 'id',
+    //   key: 'id',
+    // },
     {
       title: t('key'),
       dataIndex: 'key',

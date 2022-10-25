@@ -67,7 +67,7 @@ const HttpRequest = ({ currentRequestId, onEdit, collectionTreeData }) => {
         }
       }
 
-      return url.replace(editorValueMatch[0], replaceVar).split('?')[0];
+      return url.replace(editorValueMatch[0], replaceVar);
     };
 
     console.log(
