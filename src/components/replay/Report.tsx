@@ -189,9 +189,9 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
                 paneId: generateGlobalPaneId(
                   MenusType.Replay,
                   PagesType.ReplayCase,
-                  record.operationId,
+                  record.planItemId,
                 ),
-                rawId: record.operationId,
+                rawId: record.planItemId,
               },
               'push',
             )

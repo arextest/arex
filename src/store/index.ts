@@ -1,5 +1,6 @@
 // @ts-ignore
 import { toggleTheme } from '@zougt/vite-plugin-theme-preprocessor/dist/browser-utils';
+import React from 'react';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
@@ -44,7 +45,7 @@ export type Page<D extends PageData = undefined> = {
   data: D;
   sortIndex?: number;
   paneId: string;
-  rawId: string;
+  rawId: React.Key;
 };
 
 type ActiveMenu = [MenusType, string | undefined]; // [菜单id, 菜单项目id]
