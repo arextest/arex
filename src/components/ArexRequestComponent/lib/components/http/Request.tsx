@@ -213,7 +213,6 @@ const HttpRequest = ({ currentRequestId, onEdit, collectionTreeData }) => {
           }}
         />
         <SmartEnvInput
-          theme={'dark'}
           value={store.request.endpoint}
           onChange={() => {
             // console.log('http://127.0.0.1:5173/arex-request/');

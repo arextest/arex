@@ -12,6 +12,7 @@ import HttpRequestOptions from './components/http/RequestOptions';
 import HttpResponse from './components/http/Response';
 import cn from './locales/cn.json';
 import en from './locales/en.json';
+import { themeMap } from './theme';
 
 const localeObj = {
   en,
@@ -62,7 +63,7 @@ const defaultState = {
   },
   testResult: {},
   locale: en,
-  theme: 'dark',
+  theme: themeMap.dark,
 };
 
 function reducer(state = defaultState, action) {
@@ -110,6 +111,13 @@ const ArexRequestComponent: FC<ArexRequestComponentProps> = ({
       payload: localeObj[locale],
     });
   }, [locale]);
+
+  useEffect(() => {
+    dispatch({
+      type: 'theme',
+      payload: themeMap[theme],
+    });
+  }, [theme]);
 
   useMount(() => {
     onEdit({
@@ -166,7 +174,6 @@ const ArexRequestComponent: FC<ArexRequestComponentProps> = ({
               <HttpRequestOptions
                 requestExtraTabItems={requestExtraTabItems}
                 data={data}
-                theme={theme}
               ></HttpRequestOptions>
             </div>
           </Allotment.Pane>

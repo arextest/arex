@@ -20,7 +20,7 @@ const JSONLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
     value: JSON.stringify(jsonObj, null, 2),
     height: '100%',
     extensions: [json()],
-    theme: store.theme,
+    theme: store.theme.type,
   });
   return (
     <div

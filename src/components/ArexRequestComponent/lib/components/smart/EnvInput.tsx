@@ -8,23 +8,16 @@ import {
   HOPP_ENVIRONMENT_REGEX,
 } from '../../helpers/editor/extensions/HoppEnvironment';
 import { HttpContext } from '../../index';
+import { css } from '@emotion/react';
 // import { useStore } from '../../store';
-
-const SmartEnvInputWrapper = styled.div`
-  flex: 1;
-  overflow: hidden;
-  border: 1px solid #434343;
-`;
 
 interface SmartEnvInputProps {
   value: string;
   onChange: (e: any) => void;
 }
-const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange, theme }) => {
+const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
   const smartEnvInputRef = useRef(null);
-  const { dispatch } = useContext(HttpContext);
-  // const { currentEnvironment, themeClassify } = useStore();
-  // console.log(themeClassify,'themeClassify')
+  const { dispatch, store } = useContext(HttpContext);
   useEnvCodeMirror({
     container: smartEnvInputRef.current,
     value: value,
@@ -63,13 +56,19 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange, theme }) => {
       });
     },
     currentEnv: 'currentEnvironment',
-    theme: 'light',
+    theme: store.theme.type,
   });
 
   return (
-    <SmartEnvInputWrapper className={'smart-env'}>
+    <div
+      css={css`
+        border: 1px solid ${store.theme.theme.colors.primaryBorder};
+        flex: 1;
+        overflow: hidden;
+      `}
+    >
       <div ref={smartEnvInputRef} />
-    </SmartEnvInputWrapper>
+    </div>
   );
 };
 
