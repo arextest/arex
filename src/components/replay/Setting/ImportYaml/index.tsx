@@ -1,6 +1,6 @@
 import { useRequest } from 'ahooks';
 import { Button, message } from 'antd';
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useCodeMirror } from '../../../../helpers/editor/codemirror';
@@ -30,11 +30,13 @@ const ImportYaml: FC<ImportYamlProps> = (props) => {
     },
   });
 
-  useEffect(() => {
-    ReplayService.queryConfigTemplate({ appId: props.appId }).then((res) => {
+  useRequest(ReplayService.queryConfigTemplate, {
+    defaultParams: [{ appId: props.appId }],
+    refreshDeps: [props.appId],
+    onSuccess(res) {
       setValue(res.configTemplate);
-    });
-  }, [props.appId]);
+    },
+  });
 
   const { run: updateConfigTemplate } = useRequest(
     () =>
