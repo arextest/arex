@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Button, Empty, TabsProps } from 'antd';
-import React, { ReactNode, useCallback, useEffect } from 'react';
+import React, { ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { DraggableTabs, EnvironmentSelect } from '../../components';
@@ -8,6 +8,7 @@ import { treeFind } from '../../helpers/collection/util';
 import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
 import { MenusType } from '../../menus';
 import Pages, { PageFC, PagesType } from '../../pages';
+import { NodeList } from '../../services/CollectionService';
 import { Page, PageData, useStore } from '../../store';
 
 const MainTabs = () => {
@@ -18,13 +19,14 @@ const MainTabs = () => {
 
   const addTab = () => {
     const u = uuid();
-    setPages<undefined>(
+    setPages(
       {
         key: u,
         title: 'New Request',
         pageType: PagesType.Request,
         menuType: MenusType.Collection,
         isNew: true,
+        data: undefined,
         paneId: generateGlobalPaneId(MenusType.Collection, PagesType.Request, u),
         rawId: u,
       },
@@ -42,17 +44,21 @@ const MainTabs = () => {
     setPages(filteredPanes);
 
     if (filteredPanes.length) {
-      const lastPane = JSON.parse(JSON.stringify(filteredPanes)).sort(
-        (a, b) => -(a.sortIndex - b.sortIndex),
-      )[0];
-      setActiveMenu(filteredPanes[0].menuType, lastPane.paneId);
+      const lastPane = filteredPanes.reduce((pane, cur) => {
+        if ((cur.sortIndex || 0) > (pane.sortIndex || 0)) {
+          pane = cur;
+          return pane;
+        }
+      }, filteredPanes[0]);
+
+      setActiveMenu(lastPane.menuType, lastPane.paneId);
     } else {
       setActiveMenu(menuType);
     }
   };
 
   const genTabTitle = useCallback(
-    (collectionTreeData, page: Page<any>) => {
+    (collectionTreeData: NodeList[], page: Page<any>) => {
       // Request类型需要动态响应tittle修改
       if ([PagesType.Request, PagesType.Folder].includes(page.pageType)) {
         return (
@@ -73,6 +79,19 @@ const MainTabs = () => {
     [environmentTreeData],
   );
 
+  const tabsItems = useMemo(
+    () =>
+      pages.map((page) => {
+        const Page: PageFC<PageData> = Pages[page.pageType];
+        return {
+          label: genTabTitle(collectionTreeData, page),
+          key: page.paneId,
+          children: <Page page={page} />,
+        };
+      }),
+    [pages, collectionTreeData],
+  );
+
   // 必须和路由搭配起来，在切换的时候附着上去
   useEffect(() => {
     const findActivePane = pages.find((i) => i.paneId === activeMenu[1]);
@@ -88,13 +107,17 @@ const MainTabs = () => {
     if (params.rType === PagesType.Replay) {
       setActiveMenu(
         MenusType.Replay,
-        generateGlobalPaneId(MenusType.Replay, PagesType.Replay, params.rTypeId),
+        generateGlobalPaneId(MenusType.Replay, PagesType.Replay, params.rTypeId as string),
       );
     }
     if (params.rType === PagesType.Environment) {
       setActiveMenu(
         MenusType.Environment,
-        generateGlobalPaneId(MenusType.Environment, PagesType.Environment, params.rTypeId),
+        generateGlobalPaneId(
+          MenusType.Environment,
+          PagesType.Environment,
+          params.rTypeId as string,
+        ),
       );
     }
   }, []);
@@ -111,14 +134,7 @@ const MainTabs = () => {
       <MainTabsWrapper
         activeKey={activeMenu[1]}
         tabBarExtraContent={<EnvironmentSelect />}
-        items={pages.map((page) => {
-          const Page: PageFC<PageData> = Pages[page.pageType];
-          return {
-            label: genTabTitle(collectionTreeData, page),
-            key: page.paneId,
-            children: <Page page={page} />,
-          };
-        })}
+        items={tabsItems}
         onEdit={handleTabsEdit}
         onChange={(t) => {
           setActiveMenu(activeMenu[0], t);

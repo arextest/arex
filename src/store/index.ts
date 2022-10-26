@@ -39,7 +39,7 @@ export type PageData =
 export type Page<D extends PageData = undefined> = {
   title: string;
   key?: string;
-  menuType?: MenusType;
+  menuType: MenusType;
   pageType: PageType<string>;
   isNew?: boolean;
   data: D;
@@ -72,7 +72,7 @@ type BaseState = {
   ) => void;
   resetPanes: () => void;
 
-  collectionTreeData: any;
+  collectionTreeData: NodeList[];
   setCollectionTreeData: (collectionTreeData: NodeList[]) => void;
   collectionLastManualUpdateTimestamp: number;
   setCollectionLastManualUpdateTimestamp: (timestamp: number) => void;

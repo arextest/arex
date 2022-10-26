@@ -41,20 +41,15 @@ export function treeFindPath(tree: any, func: any, path: any = []): any {
   return [];
 }
 
-export function treeFind(tree: any, func: any): any {
+export function treeFind<T>(tree: T[], func: (item: T) => boolean): T | undefined {
   for (const data of tree) {
-    //相当于func = node => node.id == '2-1'
-    if (func(data)) {
-      return data;
-    }
+    if (func(data)) return data;
     if (data.children) {
       const res = treeFind(data.children, func);
-      if (res) {
-        return res;
-      }
+      if (res) return res;
     }
   }
-  return null;
+  return undefined;
 }
 
 export function collectionOriginalTreeToAntdTreeData(
