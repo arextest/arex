@@ -4,7 +4,7 @@ import { Avatar, Divider, Dropdown, Menu } from 'antd';
 import React from 'react';
 
 import { generateGlobalPaneId } from '../../helpers/utils';
-import { PageTypeEnum } from '../../pages';
+import { PagesType } from '../../pages';
 import SettingPage from '../../pages/SettingPage';
 import { useStore } from '../../store';
 import GitHubStarButton from '../GitHubStarButton';
@@ -48,9 +48,9 @@ const AppHeader = () => {
       {
         // key: '__SETTING__',
         title: 'Setting',
-        pageType: PageTypeEnum.Setting,
+        pageType: PagesType.Setting,
         isNew: false,
-        paneId: generateGlobalPaneId('-', PageTypeEnum.Setting, 'SETTING'),
+        paneId: generateGlobalPaneId('-', PagesType.Setting, 'SETTING'),
         rawId: 'SETTING',
       },
       'push',

@@ -1,5 +1,6 @@
 // @ts-ignore
 import { toggleTheme } from '@zougt/vite-plugin-theme-preprocessor/dist/browser-utils';
+import React from 'react';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
@@ -8,9 +9,9 @@ import { UserInfoKey } from '../constant';
 import DefaultConfig from '../defaultConfig';
 import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { I18nextLng } from '../i18n';
-import { MenuTypeEnum } from '../menus';
+import { MenusType } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
-import { PageTypeEnum } from '../pages';
+import { PageType } from '../pages';
 import { FontSize } from '../pages/SettingPage';
 import { NodeList } from '../services/CollectionService';
 import { Environment } from '../services/Environment.type';
@@ -38,16 +39,16 @@ export type PageData =
 export type Page<D extends PageData = undefined> = {
   title: string;
   key?: string;
-  menuType?: MenuTypeEnum;
-  pageType: PageTypeEnum;
+  menuType: MenusType;
+  pageType: PageType<string>;
   isNew?: boolean;
   data: D;
   sortIndex?: number;
   paneId: string;
-  rawId: string;
+  rawId: React.Key;
 };
 
-type ActiveMenu = [MenuTypeEnum, string | undefined]; // [菜单id, 菜单项目id]
+type ActiveMenu = [MenusType, string | undefined]; // [菜单id, 菜单项目id]
 type SetPagesMode = 'push' | 'normal';
 type BaseState = {
   themeClassify: ThemeClassify;
@@ -58,7 +59,7 @@ type BaseState = {
   logout: () => void;
   setUserInfo: (data: UserInfo | string) => void;
   activeMenu: ActiveMenu;
-  setActiveMenu: (menuKey: MenuTypeEnum, menuItemKey?: string) => void;
+  setActiveMenu: (menuKey: MenusType, menuItemKey?: string) => void;
   pages: Page<PageData>[];
   /*
    * 修改工作区标签页数据
@@ -71,7 +72,7 @@ type BaseState = {
   ) => void;
   resetPanes: () => void;
 
-  collectionTreeData: any;
+  collectionTreeData: NodeList[];
   setCollectionTreeData: (collectionTreeData: NodeList[]) => void;
   collectionLastManualUpdateTimestamp: number;
   setCollectionLastManualUpdateTimestamp: (timestamp: number) => void;
@@ -177,12 +178,12 @@ export const useStore = create(
             });
           }
           // state.activePane = page.paneId;
-          state.activeMenu = [page.menuType || MenuTypeEnum.Collection, page.paneId];
+          state.activeMenu = [page.menuType || MenusType.Collection, page.paneId];
         });
       }
     },
 
-    activeMenu: [MenuTypeEnum.Collection, undefined],
+    activeMenu: [MenusType.Collection, undefined],
     setActiveMenu: (menuKey, menuItemKey) => {
       set((state) => {
         const statePane = state.pages.find((i) => i.paneId === menuItemKey);
@@ -191,7 +192,7 @@ export const useStore = create(
           const sortIndexArr = state.pages.map((i) => i.sortIndex || 0);
           statePane.sortIndex = Math.max(...(sortIndexArr.length > 0 ? sortIndexArr : [0])) + 1;
         }
-        const key = menuKey ? menuKey : statePane?.menuType || MenuTypeEnum.Collection;
+        const key = menuKey ? menuKey : statePane?.menuType || MenusType.Collection;
         state.activeMenu = [key, menuItemKey];
       });
 
@@ -199,7 +200,7 @@ export const useStore = create(
     },
 
     resetPanes: () => {
-      set({ pages: [], activeMenu: [MenuTypeEnum.Collection, undefined] });
+      set({ pages: [], activeMenu: [MenusType.Collection, undefined] });
     },
 
     logout: () => {

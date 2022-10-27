@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Tabs } from 'antd';
 import React, { FC, ReactNode, useMemo } from 'react';
 
-import MenuConfig, { MenuTypeEnum } from '../../menus';
+import MenuConfig, { MenusType } from '../../menus';
 import { useStore } from '../../store';
 
 type MainMenuProps = {
@@ -16,8 +16,18 @@ const MainMenu: FC<MainMenuProps> = (props) => {
   const { activeMenu, setActiveMenu } = useStore();
   const activeKey = useMemo(() => activeMenu[0], [activeMenu]);
 
+  const tabsItems = useMemo(
+    () =>
+      MenuConfig.map((Config) => ({
+        label: <MenuTitle icon={<Config.Icon />} title={Config.title} collapse={props.collapse} />,
+        key: Config.title,
+        children: <Config.Menu />,
+      })),
+    [props.collapse],
+  );
+
   const handleMenuChange = (key: string) => {
-    setActiveMenu(key as MenuTypeEnum);
+    setActiveMenu(key as MenusType);
     props.onChange?.(key);
   };
 
@@ -33,11 +43,7 @@ const MainMenu: FC<MainMenuProps> = (props) => {
           onClick={() => props.onCollapse?.(!props.collapse)}
         />
       }
-      items={MenuConfig.map((Config) => ({
-        label: <MenuTitle icon={<Config.Icon />} title={Config.title} collapse={props.collapse} />,
-        key: Config.title,
-        children: <Config.Menu />,
-      }))}
+      items={tabsItems}
       onChange={handleMenuChange}
     />
   );

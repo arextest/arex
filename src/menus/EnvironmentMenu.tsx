@@ -13,10 +13,10 @@ import React, { FC, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
-import { PageTypeEnum } from '../pages';
+import { PagesType } from '../pages';
 import EnvironmentService from '../services/Environment.service';
 import { useStore } from '../store';
-import { MenuTypeEnum } from './index';
+import { MenusType } from './index';
 
 type EnvironmentKeyValues = { key: string; value: string; active: boolean };
 type EnvironmentType = {
@@ -114,11 +114,11 @@ const Environment: FC = () => {
     setPages(
       {
         title: info.envName,
-        menuType: MenuTypeEnum.Environment,
-        pageType: PageTypeEnum.Environment,
+        menuType: MenusType.Environment,
+        pageType: PagesType.Environment,
         isNew: false,
         data,
-        paneId: generateGlobalPaneId(MenuTypeEnum.Environment, PageTypeEnum.Environment, info.id),
+        paneId: generateGlobalPaneId(MenusType.Environment, PagesType.Environment, info.id),
         rawId: info.id,
       },
       'push',

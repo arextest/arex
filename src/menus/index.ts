@@ -11,30 +11,35 @@ type MenuConfig = {
   Menu: FC;
 };
 
-export enum MenuTypeEnum {
+export enum MenusType {
   Collection = 'collection',
   Replay = 'replay',
   Environment = 'environment',
 }
 
-const config: MenuConfig[] = [
+// TODO import ExtraConfig
+// import ExtraConfig from 'src/extra/menus'
+const ExtraConfig: MenuConfig[] = [];
+
+const CommonConfig: MenuConfig[] = [
   {
-    title: MenuTypeEnum.Collection,
+    title: MenusType.Collection,
     Icon: ApiOutlined,
     Menu: CollectionMenu,
   },
   {
-    title: MenuTypeEnum.Replay,
+    title: MenusType.Replay,
     Icon: FieldTimeOutlined,
     Menu: ReplayMenu,
   },
   {
-    title: MenuTypeEnum.Environment,
+    title: MenusType.Environment,
     Icon: DeploymentUnitOutlined,
     Menu: EnvironmentMenu,
   },
 ];
 
-export default config;
+const Config = [...CommonConfig, ...ExtraConfig];
 
+export default Config;
 export { CollectionMenu, EnvironmentMenu, ReplayMenu };

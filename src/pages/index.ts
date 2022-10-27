@@ -16,30 +16,45 @@ export type PageProps<D extends PageData = undefined, P = unknown> = P & {
 };
 
 /**
- * pages 下所有组件请使用 PageFC 进行定义
+ * All components under pages folder should be defined using PageFC
  */
 export type PageFC<D extends PageData = undefined, P = unknown> = FC<PageProps<D, P>>;
 
-/**
- * PageTypeEnum 的 value 需要和对应组件同名
- */
-export enum PageTypeEnum {
-  Collection = 'CollectionPage',
-  Environment = 'EnvironmentPage',
-  Folder = 'FolderPage',
-  Request = 'HttpRequestPage',
-  Replay = 'ReplayPage',
-  ReplayAnalysis = 'ReplayAnalysisPage',
-  ReplayCase = 'ReplayCasePage',
-  ReplaySetting = 'ReplaySettingPage',
-  Setting = 'SettingPage',
-  WorkspaceOverview = 'WorkspaceOverviewPage',
-}
+export type PageType<T extends string> = `${T}Page`;
+export type PagesTypeType = { [type: string]: PageType<typeof type> };
+
+// TODO import ExtraPagesType
+// import ExtraPagesType from 'src/extra/pages'
+const ExtraPagesType: PagesTypeType = {};
 
 /**
- * 在此导出所有 page 的一级组件
+ * The value of the PageType needs to be the same name as the corresponding component
  */
-const Pages: Record<string, FC<any>> = {
+const CommonPageType: PagesTypeType = {
+  Collection: 'CollectionPage',
+  Environment: 'EnvironmentPage',
+  Folder: 'FolderPage',
+  Request: 'HttpRequestPage',
+  Replay: 'ReplayPage',
+  ReplayAnalysis: 'ReplayAnalysisPage',
+  ReplayCase: 'ReplayCasePage',
+  ReplaySetting: 'ReplaySettingPage',
+  Setting: 'SettingPage',
+  WorkspaceOverview: 'WorkspaceOverviewPage',
+};
+
+export const PagesType = Object.assign(CommonPageType, ExtraPagesType);
+
+export type PageComponents = { [pageType: string]: FC<any> };
+
+// TODO import ExtraPage
+// import ExtraPages from 'src/extra/pages'
+const ExtraPages: PageComponents = {};
+
+/**
+ * Export the first-level components of all pages
+ */
+const CommonPages: PageComponents = {
   EnvironmentPage,
   FolderPage,
   HttpRequestPage,
@@ -51,4 +66,4 @@ const Pages: Record<string, FC<any>> = {
   WorkspaceOverviewPage,
 };
 
-export default Pages;
+export default Object.assign(CommonPages, ExtraPages);
