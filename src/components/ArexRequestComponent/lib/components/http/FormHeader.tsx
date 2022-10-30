@@ -10,7 +10,7 @@ import { FC, useContext } from 'react';
 import { Updater } from 'use-immer';
 
 import { getValueByPath } from '../../helpers/utils/locale';
-import { HttpContext } from '../../index';
+import { GlobalContext, HttpContext } from '../../index';
 
 export type KeyValueType = {
   id: string;
@@ -36,7 +36,8 @@ export const FormHeaderWrapper = styled.div`
 
 const FormHeader: FC<{ update: Updater<KeyValueType[]> }> = (props) => {
   const { store } = useContext(HttpContext);
-  const t = (key) => getValueByPath(store.locale, key);
+  const { store: globalStore } = useContext(GlobalContext);
+  const t = (key) => getValueByPath(globalStore.locale.locale, key);
 
   const handleAddParam = () => {
     const newValue: KeyValueType = {

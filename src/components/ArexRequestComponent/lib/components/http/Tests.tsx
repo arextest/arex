@@ -9,7 +9,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 
 import { useCodeMirror } from '../../helpers/editor/codemirror';
 import { getValueByPath } from '../../helpers/utils/locale';
-import { HttpContext } from '../../index';
+import { GlobalContext, HttpContext } from '../../index';
 
 export const ResponseTestHeader = styled.div`
   display: flex;
@@ -59,9 +59,10 @@ export type ResponseTestProps = {
   getTestVal: (p: any) => void;
 };
 
-const HttpTests = ({ getTestVal, OldTestVal, theme }: ResponseTestProps) => {
+const HttpTests = ({ getTestVal, OldTestVal }: ResponseTestProps) => {
   const { store, dispatch } = useContext(HttpContext);
-  const t = (key) => getValueByPath(store.locale, key);
+  const { store: globalStore } = useContext(GlobalContext);
+  const t = (key) => getValueByPath(globalStore.locale.locale, key);
 
   const [TestVal, setTestVal] = useState<string>('');
   const [isLineWrapping, setIsLineWrapping] = useState<boolean>(true);
@@ -84,7 +85,7 @@ arex.test("Status code is 200", ()=> {
     value: store.request.testScript,
     height: '100%',
     extensions: [javascript()],
-    theme: theme,
+    theme: globalStore.theme.type,
     onChange: (val) => {
       dispatch({
         type: 'request.testScript',
@@ -115,15 +116,15 @@ arex.test("Status code is 200", ()=> {
       <ResponseTestHeader>
         <span>{t('preRequest.javascript_code')}</span>
         <div>
-          <Tooltip title={t('help')}>
-            <Button disabled type='text' icon={<QuestionCircleOutlined />} />
-          </Tooltip>
-          <Tooltip title={t('lineFeed')}>
-            <Button type='text' icon={<PicRightOutlined />} onClick={feedLine} />
-          </Tooltip>
-          <Tooltip title={t('clearAll')}>
-            <Button type='text' icon={<DeleteOutlined />} onClick={() => setTestVal('')} />
-          </Tooltip>
+          {/*<Tooltip title={t('help')}>*/}
+          {/*  <Button disabled type='text' icon={<QuestionCircleOutlined />} />*/}
+          {/*</Tooltip>*/}
+          {/*<Tooltip title={t('lineFeed')}>*/}
+          {/*  <Button type='text' icon={<PicRightOutlined />} onClick={feedLine} />*/}
+          {/*</Tooltip>*/}
+          {/*<Tooltip title={t('clearAll')}>*/}
+          {/*  <Button type='text' icon={<DeleteOutlined />} onClick={() => setTestVal('')} />*/}
+          {/*</Tooltip>*/}
         </div>
       </ResponseTestHeader>
       <ResponseTestWrapper>

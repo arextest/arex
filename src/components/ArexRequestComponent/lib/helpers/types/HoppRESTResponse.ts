@@ -1,6 +1,7 @@
 import { HoppRESTRequest } from '@hoppscotch/data';
 
 export type HoppRESTResponse =
+  | { type: 'null' }
   | { type: 'loading'; req: HoppRESTRequest }
   | {
       type: 'fail';

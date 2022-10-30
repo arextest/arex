@@ -4,9 +4,10 @@ import { Button, message } from 'antd';
 import { useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { useCodeMirror } from '../../helpers/editor/codemirror';
-import { HttpContext } from '../../index';
-const HttpRawBody = ({ data, cRef, theme }) => {
+import { GlobalContext, HttpContext } from '../../index';
+const HttpRawBody = ({ cRef }) => {
   const rawBodyParameters = useRef(null);
+  const { store: globalStore } = useContext(GlobalContext);
   const { store, dispatch } = useContext(HttpContext);
 
   useCodeMirror({
@@ -14,7 +15,7 @@ const HttpRawBody = ({ data, cRef, theme }) => {
     value: store.request.body.body,
     height: '100%',
     extensions: [json()],
-    theme: theme,
+    theme: globalStore.theme.type,
     onChange: (val) => {
       dispatch({
         type: 'request.body.body',

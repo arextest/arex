@@ -1,4 +1,4 @@
-import { DownOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
+import { DownOutlined, GatewayOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Empty, Input, Spin, Tree } from 'antd';
@@ -9,7 +9,7 @@ import { useParams } from 'react-router-dom';
 import { TooltipButton } from '../../components';
 import { NodeType } from '../../constant';
 import { treeFind } from '../../helpers/collection/util';
-import { generateGlobalPaneId, parseGlobalPaneId } from '../../helpers/utils';
+import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
 import { PagesType } from '../../pages';
 import { CollectionService } from '../../services/CollectionService';
 import { useStore } from '../../store';
@@ -418,6 +418,23 @@ const CollectionMenu = () => {
     );
   };
 
+  const test = () => {
+    const u = uuid();
+    setPages(
+      {
+        key: u,
+        title: 'BatchRun',
+        pageType: PagesType.BatchRun,
+        menuType: MenusType.Collection,
+        isNew: true,
+        data: undefined,
+        paneId: generateGlobalPaneId(MenusType.Collection, PagesType.BatchRun, u),
+        rawId: u,
+      },
+      'push',
+    );
+  };
+
   return (
     <CollectionMenuWrapper>
       <Spin spinning={loading}>
@@ -439,6 +456,17 @@ const CollectionMenu = () => {
                 placement='bottomLeft'
                 title={'Create New'}
               />
+
+              <TooltipButton
+                icon={<GatewayOutlined />}
+                type='text'
+                size='small'
+                className={'collection-header-create'}
+                onClick={test}
+                placement='bottomLeft'
+                title={'Run'}
+              />
+
               <Input
                 className={'collection-header-search'}
                 size='small'

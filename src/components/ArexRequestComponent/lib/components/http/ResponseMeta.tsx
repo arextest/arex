@@ -1,16 +1,17 @@
 import { css } from '@emotion/react';
-import { Spin } from 'antd';
+import { Empty, Spin, Typography } from 'antd';
 import { FC, useContext, useMemo } from 'react';
 
 import { HoppRESTResponse } from '../../helpers/types/HoppRESTResponse';
 import { getStatusCodeReasonPhrase } from '../../helpers/utils/statusCodes';
 import { getValueByPath } from '../../helpers/utils/locale';
-import { HttpContext } from '../../index';
+import { GlobalContext, HttpContext } from '../../index';
 
 const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
   const { store } = useContext(HttpContext);
+  const { store: globalStore } = useContext(GlobalContext);
 
-  const t = (key) => getValueByPath(store.locale, key);
+  const t = (key) => getValueByPath(globalStore.locale.locale, key);
   const tabCss = css`
     color: #10b981;
     font-weight: bolder;
@@ -40,8 +41,16 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
         padding: 16px 0 16px 0;
       `}
     >
-      {response === null ? (
-        <div></div>
+      {response.type === 'null' ? (
+        <div>
+          <Empty
+            description={
+              <Typography.Text type='secondary'>
+                Enter the URL and click Send to get a response
+              </Typography.Text>
+            }
+          />
+        </div>
       ) : (
         <>
           <div>

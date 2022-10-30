@@ -3,10 +3,11 @@ import './style/index.less';
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Theme as EmotionTheme, ThemeProvider } from '@emotion/react';
-import { Spin } from 'antd';
+import { ConfigProvider, Spin } from 'antd';
 import React, { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 
+import { HttpProvider } from './components/ArexRequestComponent/lib';
 import DefaultConfig from './defaultConfig';
 import { useAuth, useCheckChromeExtension, useInterfaceInit } from './hooks';
 import routerConfig from './routers';
@@ -27,13 +28,27 @@ function App() {
     userInfo: {
       profile: { theme: themeName },
     },
+    collectionTreeData,
+    themeClassify,
+    currentEnvironment,
   } = useStore();
   const theme = useMemo<EmotionTheme>(
     () => (themeName in themeMap ? themeMap[themeName] : themeMap[DefaultConfig.theme]),
     [themeName],
   );
 
-  return <ThemeProvider theme={theme}>{routesContent}</ThemeProvider>;
+  console.log(themeClassify, 'themeClassify');
+
+  return (
+    <HttpProvider
+      theme={themeClassify}
+      locale={'en'}
+      collectionTreeData={collectionTreeData}
+      environment={currentEnvironment}
+    >
+      <ThemeProvider theme={theme}>{routesContent}</ThemeProvider>
+    </HttpProvider>
+  );
 }
 
 export default App;

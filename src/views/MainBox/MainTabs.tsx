@@ -22,12 +22,12 @@ const MainTabs = () => {
     setPages(
       {
         key: u,
-        title: 'New Request',
-        pageType: PagesType.Request,
+        title: 'BatchRun',
+        pageType: PagesType.BatchRun,
         menuType: MenusType.Collection,
         isNew: true,
         data: undefined,
-        paneId: generateGlobalPaneId(MenusType.Collection, PagesType.Request, u),
+        paneId: generateGlobalPaneId(MenusType.Collection, PagesType.BatchRun, u),
         rawId: u,
       },
       'push',

@@ -2,17 +2,19 @@ import { CopyOutlined } from '@ant-design/icons';
 import { json } from '@codemirror/lang-json';
 import { css } from '@emotion/react';
 import { Button, message, Space, Tooltip } from 'antd';
-import { FC, useContext, useRef } from 'react';
 import copy from 'copy-to-clipboard';
+import { FC, useContext, useRef } from 'react';
+
 import { useCodeMirror } from '../../../helpers/editor/codemirror';
 import { HoppRESTResponse } from '../../../helpers/types/HoppRESTResponse';
-import { HttpContext } from '../../../index';
+import { GlobalContext, HttpContext } from '../../../index';
 function coppyUrl(url) {
   copy(url);
   message.success('copy success🎉');
 }
 const JSONLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
   const { store } = useContext(HttpContext);
+  const { store: globalStore } = useContext(GlobalContext);
   const jsonResponse = useRef(null);
   const jsonObj = JSON.parse(response.body || '{}');
   useCodeMirror({
@@ -20,7 +22,7 @@ const JSONLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
     value: JSON.stringify(jsonObj, null, 2),
     height: '100%',
     extensions: [json()],
-    theme: store.theme.type,
+    theme: globalStore.theme.type,
   });
   return (
     <div

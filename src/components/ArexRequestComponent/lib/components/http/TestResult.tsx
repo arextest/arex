@@ -7,7 +7,7 @@ import { useContext, useRef, useState } from 'react';
 
 import { useCodeMirror } from '../../helpers/editor/codemirror';
 import { getValueByPath } from '../../helpers/utils/locale';
-import { HttpContext } from '../../index';
+import { GlobalContext, HttpContext } from '../../index';
 const TestError = styled.div`
   text-align: center;
   & > div:first-of-type {
@@ -16,16 +16,13 @@ const TestError = styled.div`
     margin-top: 10px;
   }
 `;
-const TestResult = () => {
-  const { store, dispatch } = useContext(HttpContext);
-  const t = (key) => getValueByPath(store.locale, key);
-  // const {store,dispatch} = useContext(HttpContext)
-  const [testPass, setTestPass] = useState<number[]>([]);
-  const testResultEditor = useRef(null);
+const TestResult = ({ testResult }) => {
+  const { store } = useContext(GlobalContext);
+  console.log(store, 'store');
   return (
     <div>
       {true ? (
-        store.testResult.children?.map((e: any, i) => (
+        testResult.children?.map((e: any, i) => (
           <List
             key={i}
             size='large'

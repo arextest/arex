@@ -1,11 +1,13 @@
 import { json } from '@codemirror/lang-json';
 import { EditorView } from '@codemirror/view';
-import { FC, useRef } from 'react';
+import { FC, useContext, useRef } from 'react';
 
 import { useCodeMirror } from '../../../helpers/editor/codemirror';
 import { HoppRESTResponse } from '../../../helpers/types/HoppRESTResponse';
+import { GlobalContext } from '../../../index';
 
 const RawLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
+  const { store: globalStore } = useContext(GlobalContext);
   const jsonResponse = useRef(null);
 
   useCodeMirror({
@@ -14,7 +16,7 @@ const RawLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
     height: '300px',
     extensions: [EditorView.lineWrapping],
     lineWrapping: true,
-    theme: 'dark',
+    theme: globalStore.theme.type,
   });
   return (
     <div>

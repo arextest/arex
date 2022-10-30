@@ -8,7 +8,10 @@ import LensesHeadersRenderer from './HeadersRenderer';
 import JSONLensRenderer from './renderers/JSONLensRenderer';
 import RawLensRenderer from './renderers/RawLensRenderer';
 
-const LensesResponseBodyRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
+const LensesResponseBodyRenderer: FC<{ response: HoppRESTResponse; testResult: any }> = ({
+  response,
+  testResult,
+}) => {
   const items = [
     {
       label: 'JSON',
@@ -28,7 +31,7 @@ const LensesResponseBodyRenderer: FC<{ response: HoppRESTResponse }> = ({ respon
     {
       label: 'Result',
       key: '3',
-      children: <TestResult />,
+      children: <TestResult testResult={testResult} />,
     },
   ];
   console.log(response, 'response');

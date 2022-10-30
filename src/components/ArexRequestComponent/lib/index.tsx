@@ -10,105 +10,65 @@ import { createContext, FC, useEffect, useImperativeHandle, useReducer, useState
 import HttpRequest from './components/http/Request';
 import HttpRequestOptions from './components/http/RequestOptions';
 import HttpResponse from './components/http/Response';
+import TestResult from './components/http/TestResult';
+import { defaultState, globalDefaultState, LocaleEnum, ThemeEnum } from './default';
 import cn from './locales/cn.json';
 import en from './locales/en.json';
 import { themeMap } from './theme';
 
-const localeObj = {
-  en,
-  cn,
+export type LocaleInterface = Record<LocaleEnum, { type: string; locale: any }>;
+export type ThemeInterface = Record<ThemeEnum, { type: string; locale: any }>;
+
+const localeMap: LocaleInterface = {
+  cn: {
+    type: 'cn',
+    locale: cn,
+  },
+  en: {
+    type: 'en',
+    locale: en,
+  },
 };
 
 export const HttpContext = createContext({});
+export const GlobalContext = createContext({});
 
-const defaultState = {
-  request: {
-    preRequestScript: '',
-    v: '',
-    headers: [],
-    name: '',
-    body: {
-      contentType: 'application/json',
-      body: '',
-    },
-    testScript: '',
-    method: '',
-    auth: {
-      authURL: 'http://petstore.swagger.io/api/oauth/dialog',
-      oidcDiscoveryURL: '',
-      accessTokenURL: '',
-      clientID: '',
-      scope: 'write:pets read:pets',
-      token: '',
-      authType: 'oauth-2',
-      authActive: true,
-    },
-    endpoint: '',
-    params: [],
-  },
-  response: {
-    type: 'success',
-    headers: [],
-    statusCode: 200,
-    body: '',
-    meta: {
-      responseSize: 0,
-      responseDuration: 1,
-    },
-    error: {
-      name: '',
-      message: '',
-      stack: '',
-    },
-  },
-  testResult: {},
-  locale: en,
-  theme: themeMap.dark,
-};
-
-function reducer(state = defaultState, action) {
-  const clonestate = JSON.parse(JSON.stringify(state));
-  _.set(clonestate, action.type, action.payload);
-  return clonestate;
+function reducer(state = defaultState, action: { type: string; payload: any }) {
+  const cloneState = JSON.parse(JSON.stringify(state));
+  _.set(cloneState, action.type, action.payload);
+  return cloneState;
 }
 
-interface ArexRequestComponentProps {
-  collectionTreeData: any[];
+interface HttpProps {
   currentRequestId: string;
-  envData: [];
-  currentEnvId: string;
-  locale: string;
-  theme: string;
-  onEdit: ({ type, payload }) => any;
+  onEdit: ({ type, payload }: any) => Promise<any>;
+  onSend: () => any;
+  // ---
   requestExtraTabItems: any;
   requestExtraData: any;
   cRef: any;
 }
 
-const ArexRequestComponent: FC<ArexRequestComponentProps> = ({
-  locale = 'en',
-  theme = 'light',
-  collectionTreeData,
-  currentRequestId,
-  envData,
-  currentEnvId,
-  onEdit,
-  requestExtraTabItems,
-  cRef,
-  requestExtraData,
+interface HttpProviderProps {
+  children: any;
+  theme: ThemeEnum;
+  locale: LocaleEnum;
+  collectionTreeData: any;
+  environment: any;
+}
+
+const HttpProvider: FC<HttpProviderProps> = ({
+  children = null,
+  theme,
+  locale = LocaleEnum.en,
+  collectionTreeData = [],
+  environment,
 }) => {
-  const [store, dispatch] = useReducer(reducer, {
-    ...defaultState,
-    request: {
-      ...defaultState.request,
-      ...requestExtraTabItems[0].data,
-    },
-  }); //创建reducer
-  const [data, setData] = useState({});
+  const [store, dispatch] = useReducer(reducer, globalDefaultState);
   useEffect(() => {
     dispatch({
       type: 'locale',
-      payload: localeObj[locale],
+      payload: localeMap[locale],
     });
   }, [locale]);
 
@@ -118,6 +78,38 @@ const ArexRequestComponent: FC<ArexRequestComponentProps> = ({
       payload: themeMap[theme],
     });
   }, [theme]);
+
+  useEffect(() => {
+    dispatch({
+      type: 'environment',
+      payload: environment,
+    });
+  }, [environment]);
+
+  useEffect(() => {
+    dispatch({
+      type: 'collectionTreeData',
+      payload: collectionTreeData,
+    });
+  }, [collectionTreeData]);
+  // console.log({theme})
+  return <GlobalContext.Provider value={{ store, dispatch }}>{children}</GlobalContext.Provider>;
+};
+
+// TODO
+/*
+1. ArexRequestComponent =》 HttpRequest
+2. 核心props 全局props/locale、theme、collectionTreeData？，内部props/currentRequestId、onEdit、onSend,
+3. 字典例如 onSend以后触发的函数名称，返回值里面需要包含{testResult,response}
+4. 导出的方法
+* */
+const Http: FC<HttpProps> = ({ currentRequestId, onEdit, onSend, onSendCompare, cRef }) => {
+  const [store, dispatch] = useReducer(reducer, {
+    ...defaultState,
+    request: {
+      ...defaultState.request,
+    },
+  });
 
   useMount(() => {
     onEdit({
@@ -132,12 +124,11 @@ const ArexRequestComponent: FC<ArexRequestComponentProps> = ({
       });
     });
   });
-  //用useImperativeHandle暴露一些外部ref能访问的属性
+  // 需要将暴露的接口返回出去
   useImperativeHandle(cRef, () => {
-    // 需要将暴露的接口返回出去
     return {
       func: func,
-      setValue(value) {
+      setValue(value: any) {
         dispatch({
           type: 'request.mock',
           payload: value,
@@ -151,7 +142,7 @@ const ArexRequestComponent: FC<ArexRequestComponentProps> = ({
   }
   return (
     <HttpContext.Provider value={{ store, dispatch }}>
-      {store.request.endpoint !== '' ? (
+      {store.request.method !== '' ? (
         <Allotment
           css={css`
             height: calc(100vh - 118px);
@@ -167,14 +158,12 @@ const ArexRequestComponent: FC<ArexRequestComponentProps> = ({
               `}
             >
               <HttpRequest
-                collectionTreeData={collectionTreeData}
                 currentRequestId={currentRequestId}
                 onEdit={onEdit}
+                onSend={onSend}
+                onSendCompare={onSendCompare}
               ></HttpRequest>
-              <HttpRequestOptions
-                requestExtraTabItems={requestExtraTabItems}
-                data={data}
-              ></HttpRequestOptions>
+              <HttpRequestOptions></HttpRequestOptions>
             </div>
           </Allotment.Pane>
           <Allotment.Pane>
@@ -186,4 +175,8 @@ const ArexRequestComponent: FC<ArexRequestComponentProps> = ({
   );
 };
 
-export default ArexRequestComponent;
+export default Http;
+
+export { HttpProvider };
+
+export { TestResult };

@@ -3,12 +3,13 @@ import { Radio, RadioChangeEvent } from 'antd';
 import { useContext, useRef, useState } from 'react';
 
 import RawBody from './RawBody';
-import { HttpContext } from '../../index';
+import { GlobalContext, HttpContext } from '../../index';
 import { getValueByPath } from '../../helpers/utils/locale';
 
-const HttpBody = ({ data, theme }) => {
+const HttpBody = () => {
   const { store, dispatch } = useContext(HttpContext);
-  const t = (key) => getValueByPath(store.locale, key);
+  const { store: globalStore } = useContext(GlobalContext);
+  const t = (key) => getValueByPath(globalStore.locale.locale, key);
   const [value1, setValue1] = useState('application/json');
   const plainOptions = ['application/json'];
   const onChange1 = ({ target: { value } }: RadioChangeEvent) => {
@@ -39,7 +40,7 @@ const HttpBody = ({ data, theme }) => {
         </div>
       </div>
 
-      <RawBody theme={theme} cRef={rawBodyRef} data={data} />
+      <RawBody cRef={rawBodyRef} />
     </div>
   );
 };

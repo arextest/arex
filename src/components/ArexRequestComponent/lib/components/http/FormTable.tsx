@@ -4,7 +4,7 @@ import { Button, Input, Space, Table, TableProps, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { Updater } from 'use-immer';
 import { useContext } from 'react';
-import { HttpContext } from '../../index';
+import { GlobalContext, HttpContext } from '../../index';
 import { getValueByPath } from '../../helpers/utils/locale';
 
 export type KeyValueType = {
@@ -29,7 +29,8 @@ export const useColumns = (
   editable?: boolean,
 ): ColumnsType<KeyValueType> => {
   const { store } = useContext(HttpContext);
-  const t = (key) => getValueByPath(store.locale, key);
+  const { store: globalStore } = useContext(GlobalContext);
+  const t = (key) => getValueByPath(globalStore.locale.locale, key);
   const handleChange = (i: number, attr: 'key' | 'value', value: string) => {
     paramsUpdater &&
       paramsUpdater((params) => {

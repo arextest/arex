@@ -74,6 +74,7 @@
     "@commitlint/config-conventional": "^17.0.3",
     "@emotion/eslint-plugin": "^11.10.0",
     "@types/jsoneditor": "^9.9.0",
+    "@types/lodash-es": "^4.17.6",
     "@types/react": "^18.0.15",
     "@types/react-color": "^3.0.6",
     "@types/react-dom": "^18.0.6",
