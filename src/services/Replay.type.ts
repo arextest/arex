@@ -275,28 +275,3 @@ export type CompareResult = {
 export interface QueryFullLinkMsgRes {
   compareResults: CompareResult[];
 }
-
-export interface QueryConfigTemplateRes {
-  configTemplate: string;
-}
-
-export interface PushConfigTemplateReq {
-  appId: string;
-  configTemplate?: string;
-}
-
-export interface PushConfigTemplateRes {
-  success: boolean;
-}
-
-export interface QueryScheduleUseResultAppIdRes {
-  appId: string;
-  offsetDays: string;
-}
-
-export interface UpdateConfigScheduleReq {
-  appId: string;
-  offsetDays: number;
-  targetEnv: unknown[];
-  sendMaxQps: number;
-}

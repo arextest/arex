@@ -3,9 +3,9 @@ import { Tabs } from 'antd';
 import { useMemo } from 'react';
 
 import {
-  NodesIgnore,
-  NodesSort,
   SettingImportYaml,
+  SettingNodesIgnore,
+  SettingNodesSort,
   SettingRecord,
   SettingReplay,
 } from '../components/replay/Setting';
@@ -34,12 +34,12 @@ const ReplaySettingPage: PageFC<ApplicationDataType> = (props) => {
       {
         key: 'nodesIgnore',
         label: 'NodesIgnore',
-        children: <NodesIgnore appId={data.appId} />,
+        children: <SettingNodesIgnore appId={data.appId} />,
       },
       {
         key: 'nodesSort',
         label: 'NodesSort',
-        children: <NodesSort appId={data.appId} />,
+        children: <SettingNodesSort appId={data.appId} />,
       },
     ],
     [data],

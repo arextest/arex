@@ -4,7 +4,7 @@ import { FC, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useCodeMirror } from '../../../../helpers/editor/codemirror';
-import ReplayService from '../../../../services/Replay.service';
+import AppSettingService from '../../../../services/AppSetting.service';
 import { useStore } from '../../../../store';
 import { Label } from '../../../styledComponents';
 
@@ -30,7 +30,7 @@ const ImportYaml: FC<ImportYamlProps> = (props) => {
     },
   });
 
-  useRequest(ReplayService.queryConfigTemplate, {
+  useRequest(AppSettingService.queryConfigTemplate, {
     defaultParams: [{ appId: props.appId }],
     refreshDeps: [props.appId],
     onSuccess(res) {
@@ -40,14 +40,14 @@ const ImportYaml: FC<ImportYamlProps> = (props) => {
 
   const { run: updateConfigTemplate } = useRequest(
     () =>
-      ReplayService.pushConfigTemplate({
+      AppSettingService.updateConfigTemplate({
         appId: props.appId,
         configTemplate: value,
       }),
     {
       manual: true,
-      onSuccess(res) {
-        res.success && message.success('update success');
+      onSuccess(success) {
+        success && message.success('update success');
       },
     },
   );

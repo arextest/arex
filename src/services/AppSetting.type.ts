@@ -2,13 +2,11 @@ export interface QueryRecordSettingReq {
   id: string;
 }
 
-export type ExcludeOperationMap = { [key: string]: string[] };
 export interface QueryRecordSettingRes {
   allowDayOfWeeks: number;
   allowTimeOfDayFrom: string;
   allowTimeOfDayTo: string;
   appId: string;
-  excludeOperationMap: ExcludeOperationMap;
   modifiedTime: string;
   sampleRate: number;
   timeMock: boolean;
@@ -75,6 +73,32 @@ export type OperationInterface<T extends OperationType = 'Global'> = {
   operationResponse: string | null;
   recordedCaseCount: number | null;
 };
+
+export type ExcludeOperationMap = { [key: string]: string[] };
+
+export type QueryReplaySettingRes = {
+  status: number | null;
+  modifiedTime: number;
+  appId: string;
+  excludeOperationMap: ExcludeOperationMap;
+  offsetDays: number;
+  targetEnv: string[];
+  sendMaxQps: number;
+};
+
+export interface QueryConfigTemplateRes {
+  configTemplate: string;
+}
+
+export type UpdateReplaySettingReq = {
+  appId: string;
+  excludeOperationMap: ExcludeOperationMap;
+};
+
+export interface UpdateConfigTemplateReq {
+  appId: string;
+  configTemplate?: string;
+}
 
 export type OperationData<T extends OperationType> = {
   status: number;

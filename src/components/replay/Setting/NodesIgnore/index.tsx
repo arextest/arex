@@ -19,7 +19,7 @@ enum NodesEditMode {
 
 const GLOBAL_OPERATION_ID = '__global__';
 
-const NodesIgnore: FC<{ appId: string }> = (props) => {
+const SettingNodesIgnore: FC<{ appId: string }> = (props) => {
   const [checkedNodesData, setCheckedNodesData] = useImmer<{
     operationId?: OperationId<'Global'>;
     operationName?: string;
@@ -280,4 +280,4 @@ const NodesIgnore: FC<{ appId: string }> = (props) => {
   );
 };
 
-export default NodesIgnore;
+export default SettingNodesIgnore;

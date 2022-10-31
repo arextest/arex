@@ -6,22 +6,26 @@ import {
   OperationId,
   OperationInterface,
   OperationType,
+  QueryConfigTemplateRes,
   QueryInterfacesListRes,
   QueryNodeReq,
   QueryRecordDynamicClassSettingReq,
   QueryRecordDynamicClassSettingRes,
   QueryRecordSettingReq,
   QueryRecordSettingRes,
+  QueryReplaySettingRes,
   RemoveDynamicClassSettingReq,
   RemoveDynamicClassSettingRes,
   SortNode,
   SortNodeBase,
+  UpdateConfigTemplateReq,
   UpdateDynamicClassSettingReq,
   UpdateDynamicClassSettingRes,
   UpdateIgnoreNodeReq,
   UpdateInterfaceResponseReq,
   UpdateRecordSettingReq,
   UpdateRecordSettingRes,
+  UpdateReplaySettingReq,
   UpdateSortNodeReq,
 } from './AppSetting.type';
 
@@ -66,6 +70,35 @@ export default class AppSettingService {
       '/config/dynamicClass/modify/REMOVE',
       params,
     );
+    return res.body;
+  }
+
+  // 查询 ReplaySetting 设置数据
+  static async queryReplaySetting(params: { id: string }) {
+    const res = await request.get<QueryReplaySettingRes>(
+      '/config/schedule/useResult/appId/' + params.id,
+    );
+    return res.body;
+  }
+
+  // 更新 ReplaySetting 设置数据
+  static async updateReplaySetting(params: UpdateReplaySettingReq) {
+    const res = await request.post<boolean>('/api/config/schedule/modify/UPDATE', params);
+    return res.body;
+  }
+
+  // 查询 Yaml 配置
+  static async queryConfigTemplate(params: { appId: string }) {
+    const res = await request.post<QueryConfigTemplateRes>(
+      '/api/config/yamlTemplate/queryConfigTemplate',
+      params,
+    );
+    return res.body;
+  }
+
+  // 更新 Yaml 配置
+  static async updateConfigTemplate(params: UpdateConfigTemplateReq) {
+    const res = await request.post<boolean>('/api/config/yamlTemplate/pushConfigTemplate', params);
     return res.body;
   }
 
