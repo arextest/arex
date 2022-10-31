@@ -45,7 +45,7 @@ const TreeCarousel = styled(Carousel)`
   }
 `;
 
-const NodesSort: FC<{ appId: string }> = (props) => {
+const SettingNodesSort: FC<{ appId: string }> = (props) => {
   const { t } = useTranslation('common');
 
   const treeCarousel = useRef<CarouselRef>(null);
@@ -376,4 +376,4 @@ const NodesSort: FC<{ appId: string }> = (props) => {
   );
 };
 
-export default NodesSort;
+export default SettingNodesSort;

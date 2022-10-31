@@ -6,7 +6,7 @@ import React, { FC, useEffect, useRef } from 'react';
 import { useImmer } from 'use-immer';
 
 import { TooltipButton } from '../../../../index';
-import { FormItemProps } from './index';
+import { FormItemProps } from '../../Record/FormItem';
 
 const ExcludeOperationWrapper = styled.div`
   .ant-table-cell {
