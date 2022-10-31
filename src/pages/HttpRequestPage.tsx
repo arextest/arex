@@ -819,6 +819,7 @@ const HttpRequestPage: PageFC = (props) => {
                   key: 'mock',
                   label: 'Mock',
                   children: <Mock recordId={recordId} />,
+                  disabled: !recordId,
                 },
               ]}
               css={css`

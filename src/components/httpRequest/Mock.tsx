@@ -76,7 +76,6 @@ const Mock = ({ recordId }) => {
         overflow-y: auto;
       `}
     >
-      {JSON.stringify(dataSource.appId)}
       {dataSource.map((i) => {
         return (
           <Card style={{ margin: '0 0 10px 0' }}>
