@@ -10,7 +10,7 @@ const Mock = ({ recordId }) => {
   const [dataSource, setDataSource] = useState([]);
   useMount(() => {
     request
-      .post(`/storage/frontEnd/record/queryRecord`, {
+      .post(`/storage/frontEnd/record/queryFixedRecord`, {
         recordId: recordId,
         categoryTypes: 0,
       })
