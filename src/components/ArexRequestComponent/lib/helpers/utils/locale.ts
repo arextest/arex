@@ -7,6 +7,7 @@ export function getValueByPath(obj, path) {
     while ((prop = paths.shift())) {
       res = res[prop];
     }
+    console.log(res, 'res', typeof res);
     if (typeof res === 'string') {
       return res;
     } else {

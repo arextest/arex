@@ -1,13 +1,15 @@
+import { css } from '@emotion/react';
 import { Tabs } from 'antd';
 import { useContext, useEffect, useRef, useState } from 'react';
-import HttpBody from './Body';
-import HttpHeaders from './Headers';
-import HttpTests from './Tests';
-import HttpParameters from './Parameters';
-import { GlobalContext, HttpContext } from '../../index';
+
 import { getValueByPath } from '../../helpers/utils/locale';
-import { css } from '@emotion/react';
+import { GlobalContext, HttpContext } from '../../index';
+import HttpBody from './Body';
 import HttpCompare from './Compare';
+import HttpHeaders from './Headers';
+import HttpMock from './Mock';
+import HttpParameters from './Parameters';
+import HttpTests from './Tests';
 const HttpRequestOptions = () => {
   const { store } = useContext(HttpContext);
   const t = (key) => getValueByPath(globalStore.locale.locale, key);
@@ -22,7 +24,8 @@ const HttpRequestOptions = () => {
     { label: 'Body', key: '3', children: <HttpBody /> },
     { label: 'Tests', key: '4', children: <HttpTests /> },
     { label: 'Compare', key: '5', children: <HttpCompare /> },
-  ];
+    { label: 'Mock', key: '6', children: <HttpMock recordId={store.request.recordId} /> },
+  ].filter((i) => !(i.key === '6' && !store.request.recordId));
   return (
     <div
       css={css`

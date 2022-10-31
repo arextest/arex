@@ -264,7 +264,13 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
           >
             {importType != '' ? (
               <div>
-                <div>Import {importType} file</div>
+                <div
+                  css={css`
+                    margin-bottom: 10px;
+                  `}
+                >
+                  Import {importType}
+                </div>
                 <Upload
                   maxCount={1}
                   onRemove={() => setImportFile(undefined)}
@@ -300,19 +306,19 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
                   Import collection
                 </Button>
                 <br />
-                <Button type='text' onClick={() => setImportType('case')}>
-                  Import cases
-                </Button>
+                {/*<Button type='text' onClick={() => setImportType('case')}>*/}
+                {/*  Import cases*/}
+                {/*</Button>*/}
                 <br />
-                <Button
-                  shape='round'
-                  icon={allImportItem ? <UpOutlined /> : <DownOutlined />}
-                  size='small'
-                  style={{ color: 'white', marginTop: 5, marginLeft: 16 }}
-                  onClick={() => setAllImportItem(!allImportItem)}
-                >
-                  {allImportItem ? 'less' : 'more'}
-                </Button>
+                {/*<Button*/}
+                {/*  shape='round'*/}
+                {/*  icon={allImportItem ? <UpOutlined /> : <DownOutlined />}*/}
+                {/*  size='small'*/}
+                {/*  style={{ color: 'white', marginTop: 5, marginLeft: 16 }}*/}
+                {/*  onClick={() => setAllImportItem(!allImportItem)}*/}
+                {/*>*/}
+                {/*  {allImportItem ? 'less' : 'more'}*/}
+                {/*</Button>*/}
               </div>
             )}
           </Modal>

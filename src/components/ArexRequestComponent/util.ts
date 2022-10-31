@@ -10,7 +10,8 @@ export function convertRequestData(requestData, address) {
     testScript: requestData.body.testScript || '',
     headers: requestData.body.headers || [],
     params: requestData.body.params || [],
-    compareEndpoint: requestData.body.testAddress.endpoint,
-    compareMethod: requestData.body.testAddress.method,
+    compareEndpoint: requestData.body?.testAddress?.endpoint,
+    compareMethod: requestData.body?.testAddress?.method,
+    recordId: requestData.body?.recordId,
   };
 }

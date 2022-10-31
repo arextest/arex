@@ -34,7 +34,7 @@ export const FormHeaderWrapper = styled.div`
   }
 `;
 
-const FormHeader: FC<{ update: Updater<KeyValueType[]> }> = (props) => {
+const FormHeader: FC<{ update: Updater<KeyValueType[]>; title: string }> = (props) => {
   const { store } = useContext(HttpContext);
   const { store: globalStore } = useContext(GlobalContext);
   const t = (key) => getValueByPath(globalStore.locale.locale, key);
@@ -55,17 +55,17 @@ const FormHeader: FC<{ update: Updater<KeyValueType[]> }> = (props) => {
 
   return (
     <FormHeaderWrapper>
-      <span>{t('request.parameter_list')}</span>
+      <span>{props.title}</span>
       <div>
-        <Tooltip title={t('help')}>
-          <Button type='text' icon={<QuestionCircleOutlined />} />
-        </Tooltip>
-        <Tooltip title={t('clearAll')}>
+        {/*<Tooltip title={t('help')}>*/}
+        {/*  <Button type='text' icon={<QuestionCircleOutlined />} />*/}
+        {/*</Tooltip>*/}
+        <Tooltip title={t('action.clear_all')}>
           <Button type='text' icon={<DeleteOutlined />} onClick={handleClearAllParams} />
         </Tooltip>
-        <Tooltip title={t('batchEdit')}>
-          <Button type='text' icon={<EditOutlined />} />
-        </Tooltip>
+        {/*<Tooltip title={t('batchEdit')}>*/}
+        {/*  <Button type='text' icon={<EditOutlined />} />*/}
+        {/*</Tooltip>*/}
         <Tooltip title={t('add.new')}>
           <Button type='text' icon={<PlusOutlined />} onClick={handleAddParam} />
         </Tooltip>

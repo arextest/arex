@@ -23,6 +23,7 @@ function deepTraversal(data) {
   const result = [];
   data.forEach((item) => {
     const loop = (data) => {
+      console.log(data, 'data');
       result.push({
         id: data.id,
         key: data.key,
@@ -30,6 +31,7 @@ function deepTraversal(data) {
         method: data.method,
         nodeType: data.nodeType,
         path: treeFindPath(cloneData, (node) => node.id === data.id),
+        children: data.children,
       });
       const child = data.children;
       if (child) {
@@ -40,7 +42,8 @@ function deepTraversal(data) {
     };
     loop(item);
   });
-  return result;
+  // console.log({ result:result.filter(i=>i.nodeType === 1) });
+  return result.filter((i) => i.nodeType === 1);
 }
 
 async function assemblyData(runCases) {
@@ -72,53 +75,7 @@ async function assemblyData(runCases) {
     });
   }
 
-  // for (let i = 0; i < caseResArr.length; i++) {
-  //   // await
-  //   const r0 = caseResArr[i];
-  //
-  //   const sss = await AgentAxios({
-  //     method: r0.address.method,
-  //     url: r0.address.endpoint,
-  //     headers: r0.headers.reduce((p, c) => {
-  //       return {
-  //         ...p,
-  //         [c.key]: c.value,
-  //       };
-  //     }, {}),
-  //     data: ['GET'].includes(r0.address.method) ? undefined : JSON.parse(r0.body.body),
-  //     params: ['POST'].includes(r0.address.method)
-  //       ? undefined
-  //       : r0.params.reduce((p, c) => {
-  //           return {
-  //             ...p,
-  //             [c.key]: c.value,
-  //           };
-  //         }, {}),
-  //   }).then((res: any) => {
-  //     return runTestScript(r0.testScript, { body: res.data, headers: [], status: 200 }).then(
-  //       (r) => {
-  //         // console.log(r);
-  //
-  //         return {
-  //           endpoint: caseResArr[i].address.endpoint,
-  //           method: caseResArr[i].address.method,
-  //           title: caseResArr[i].address.endpoint,
-  //           testResult: r,
-  //         };
-  //       },
-  //     );
-  //   });
-  //   // console.log(sss);
-  //   arr.push(sss)
-  // }
-
-  console.log(arr, 'arr');
-
   return arr;
-
-  // const r0 = r[0];
-
-  // return r;
 }
 
 const CaseItem = ({ data }) => {
@@ -148,12 +105,6 @@ const BatchRunPage: React.FC = () => {
 
   const onFinishFailed = () => {
     message.error('Submit failed!');
-  };
-
-  const onFill = () => {
-    form.setFieldsValue({
-      url: 'https://taobao.com/',
-    });
   };
 
   const [checkValue, setCheckValue] = useState([]);
@@ -202,6 +153,10 @@ const BatchRunPage: React.FC = () => {
     { label: 'Orange', value: 'Orange', disabled: false },
   ];
 
+  const onCheck: TreeProps['onCheck'] = (checkedKeys, info) => {
+    console.log('onCheck', checkedKeys, info);
+  };
+
   return (
     <div>
       <Row gutter={16} style={{ padding: '20px' }}>
@@ -224,15 +179,7 @@ const BatchRunPage: React.FC = () => {
               }
             `}
           >
-            <Checkbox.Group
-              options={jiheOptions
-                .filter((i) => i.nodeType === 2)
-                .map((i) => {
-                  return { label: <CaseItem data={i}></CaseItem>, value: i.key };
-                })}
-              value={checkValue}
-              onChange={onChange}
-            />
+            <Tree treeData={jiheOptions} onCheck={onCheck} checkable />
           </div>
         </Col>
         <Col span={2}>
@@ -258,10 +205,6 @@ const BatchRunPage: React.FC = () => {
                 </Space>
               </Form.Item>
             </Form>
-
-            {/*<Button onClick={()=>{*/}
-            {/*  console.log(checkValue,'c')*/}
-            {/*}}>Run Case</Button>*/}
           </div>
         </Col>
       </Row>

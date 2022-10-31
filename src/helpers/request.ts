@@ -69,28 +69,55 @@ export const AgentAxiosAndTest = ({ request }: Test) =>
   });
 
 export const AgentAxiosCompare = ({ request }: Test) => {
-  return AgentAxios({
-    method: request.method,
-    url: request.endpoint,
-    headers: request.headers.reduce((p, c) => {
-      return {
-        ...p,
-        [c.key]: c.value,
-      };
+  return Promise.all([
+    AgentAxios({
+      method: request.method,
+      url: request.endpoint,
+      headers: request.headers.reduce((p, c) => {
+        return {
+          ...p,
+          [c.key]: c.value,
+        };
+      }, {}),
+      data: ['GET'].includes(request.method) ? undefined : JSON.parse(request.body.body || '{}'),
+      params: ['POST'].includes(request.method)
+        ? undefined
+        : request.params.reduce((p, c) => {
+            return {
+              ...p,
+              [c.key]: c.value,
+            };
+          }, {}),
+    }),
+    AgentAxios({
+      method: request.compareMethod,
+      url: request.compareEndpoint,
+      headers: request.headers.reduce((p, c) => {
+        return {
+          ...p,
+          [c.key]: c.value,
+        };
+      }, {}),
+      data: ['GET'].includes(request.method) ? undefined : JSON.parse(request.body.body || '{}'),
+      params: ['POST'].includes(request.method)
+        ? undefined
+        : request.params.reduce((p, c) => {
+            return {
+              ...p,
+              [c.key]: c.value,
+            };
+          }, {}),
+    }),
+  ]).then((res) =>
+    res.reduce((previousValue, currentValue, currentIndex) => {
+      if (currentIndex === 0) {
+        previousValue.response = currentValue;
+      }
+      if (currentIndex === 1) {
+        previousValue.compareResponse = currentValue;
+      }
+
+      return previousValue;
     }, {}),
-    data: ['GET'].includes(request.method) ? undefined : JSON.parse(request.body.body || '{}'),
-    params: ['POST'].includes(request.method)
-      ? undefined
-      : request.params.reduce((p, c) => {
-          return {
-            ...p,
-            [c.key]: c.value,
-          };
-        }, {}),
-  }).then((res) => {
-    return {
-      response: res,
-      compareResponse: res,
-    };
-  });
+  );
 };

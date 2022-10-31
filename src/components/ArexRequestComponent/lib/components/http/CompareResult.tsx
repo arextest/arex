@@ -1,13 +1,16 @@
 import { Radio, Table, Tabs } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import ReactDiffViewer from 'react-diff-viewer';
+
 import request from '../../../../../helpers/api/axios';
+import { GlobalContext, HttpContext } from '../../index';
 
 // import request from '../../helpers/api/axios';
 
 const onChange = (key: string) => {};
 
 const CompareResult = ({ responses }) => {
+  const { store: globalStore } = useContext(GlobalContext);
   console.log(responses, 'responses');
   const diffView = useRef<HTMLDivElement>();
   useEffect(() => {
@@ -100,6 +103,7 @@ const CompareResult = ({ responses }) => {
 
   return (
     <Tabs
+      style={{ height: '100%' }}
       defaultActiveKey='compareResult'
       items={[
         {
@@ -128,6 +132,7 @@ const CompareResult = ({ responses }) => {
                   oldValue={JSON.stringify(responses[0], null, 2)}
                   newValue={JSON.stringify(responses[1], null, 2)}
                   splitView={true}
+                  useDarkTheme={globalStore.theme.type === 'dark' ? true : false}
                 />
               </div>
               <div style={{ display: activeRadio === 'table' ? 'block' : 'none' }}>

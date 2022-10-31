@@ -144,7 +144,8 @@
     "message": "Message {count}",
     "parameter": "Parameter {count}",
     "protocol": "Protocol {count}",
-    "value": "Value {count}",
+    "value": "Value",
+    "key": "Key",
     "variable": "Variable {count}"
   },
   "documentation": {

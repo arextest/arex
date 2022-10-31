@@ -7,11 +7,14 @@ import FormTable, { KeyValueType, useColumns } from './FormTable';
 import { useContext, useEffect } from 'react';
 // import { HttpContext } from "../panes/Request";
 import { useMount } from 'ahooks';
-import { HttpContext } from '../..';
+import { GlobalContext, HttpContext } from '../..';
+import { getValueByPath } from '../../helpers/utils/locale';
 
 const HttpHeaders = () => {
   const { store, dispatch } = useContext(HttpContext);
   const [requestHeaders, setRequestHeaders] = useImmer<HoppRESTHeader[]>([]);
+  const t = (key) => getValueByPath(globalStore.locale.locale, key);
+  const { dispatch: globalDispatch, store: globalStore } = useContext(GlobalContext);
   useMount(() => {
     setRequestHeaders(
       store.request.headers.map((i) => ({
@@ -29,7 +32,7 @@ const HttpHeaders = () => {
   }, [requestHeaders]);
   return (
     <div>
-      <FormHeader update={setRequestHeaders} />
+      <FormHeader update={setRequestHeaders} title={t('request.header_list')} />
       <FormTable
         bordered
         size='small'

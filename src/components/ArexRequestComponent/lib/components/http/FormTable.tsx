@@ -52,7 +52,7 @@ export const useColumns = (
     //   key: 'id',
     // },
     {
-      title: t('key'),
+      title: t('count.key'),
       dataIndex: 'key',
       key: 'key',
       render: editable
@@ -60,7 +60,7 @@ export const useColumns = (
             <Input
               value={text}
               bordered={false}
-              placeholder={t('key')}
+              placeholder={t('count.key')}
               disabled={!record.active}
               onChange={(e) => handleChange(i, 'key', e.target.value)}
             />
@@ -68,7 +68,7 @@ export const useColumns = (
         : undefined,
     },
     {
-      title: t('value'),
+      title: t('count.value'),
       dataIndex: 'value',
       key: 'value',
       render: editable
@@ -76,7 +76,7 @@ export const useColumns = (
             <Input
               value={text}
               bordered={false}
-              placeholder={t('value')}
+              placeholder={t('count.value')}
               disabled={!record.active}
               onChange={(e) => handleChange(i, 'value', e.target.value)}
             />
@@ -96,7 +96,7 @@ export const useColumns = (
           className: 'actions',
           render: (text, record, i) => (
             <Space>
-              <Tooltip title={record.active ? t('disable') : t('enable')}>
+              <Tooltip title={record.active ? t('action.turn_off') : t('action.turn_on')}>
                 <Button
                   style={{ color: '#10b981' }}
                   type='text'
