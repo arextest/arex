@@ -45,10 +45,8 @@ const MainTabs = () => {
 
     if (filteredPanes.length) {
       const lastPane = filteredPanes.reduce((pane, cur) => {
-        if ((cur.sortIndex || 0) > (pane.sortIndex || 0)) {
-          pane = cur;
-          return pane;
-        }
+        if ((cur.sortIndex || 0) > (pane.sortIndex || 0)) pane = cur;
+        return pane;
       }, filteredPanes[0]);
 
       setActiveMenu(lastPane.menuType, lastPane.paneId);
