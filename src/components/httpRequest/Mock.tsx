@@ -10,7 +10,7 @@ const Mock = ({ recordId }) => {
   const [dataSource, setDataSource] = useState([]);
   useMount(() => {
     request
-      .post(`/storage/frontEnd/record/queryRecord`, {
+      .post(`/storage/frontEnd/record/queryFixedRecord`, {
         recordId: recordId,
         categoryTypes: 0,
       })
@@ -76,7 +76,6 @@ const Mock = ({ recordId }) => {
         overflow-y: auto;
       `}
     >
-      {JSON.stringify(dataSource.appId)}
       {dataSource.map((i) => {
         return (
           <Card style={{ margin: '0 0 10px 0' }}>
