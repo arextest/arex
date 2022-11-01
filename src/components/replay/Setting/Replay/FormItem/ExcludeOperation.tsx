@@ -1,10 +1,12 @@
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Button, Input, Table } from 'antd';
+import { useRequest } from 'ahooks';
+import { Button, Input, message, Select, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useEffect, useRef } from 'react';
 import { useImmer } from 'use-immer';
 
+import AppSettingService from '../../../../../services/AppSetting.service';
 import { TooltipButton } from '../../../../index';
 import { FormItemProps } from '../../Record/FormItem';
 
@@ -14,19 +16,119 @@ const ExcludeOperationWrapper = styled.div`
   }
 `;
 
-type ExcludeOperationFormItem = { key: string; value: string };
+type ExcludeOperationFormItem = { key: string; value: string[] };
 
-const ExcludeOperation: FC<FormItemProps<ExcludeOperationFormItem[]>> = (props) => {
+type ExcludeOperationProps = FormItemProps<ExcludeOperationFormItem[]> & { appId: string };
+const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
   const tableRowCount = useRef(0);
   const tableRef = useRef<HTMLDivElement>(null);
   const [value, setValue] = useImmer<ExcludeOperationFormItem[]>(
-    props.value || [{ key: '', value: '' }],
+    props.value || [{ key: '', value: [] }],
   );
 
-  const handleChange = (i: number, attr: 'key' | 'value', value: string) => {
+  const handleKeyChange = (i: number, key: string) => {
     setValue?.((params) => {
-      params[i][attr] = value;
+      params[i].key = key;
     });
+  };
+
+  const handleValueChange = (i: number, value: string[]) => {
+    setValue?.((params) => {
+      params[i].value = value;
+    });
+  };
+
+  const columns: ColumnsType<ExcludeOperationFormItem> = [
+    {
+      title: 'path',
+      dataIndex: 'key',
+      key: 'key',
+      width: '50%',
+      render: (text, record, i) => (
+        <Input
+          value={text}
+          onChange={(e) => handleKeyChange(i, e.target.value)}
+          style={{ borderColor: 'transparent' }}
+        />
+      ),
+    },
+    {
+      title: 'value',
+      dataIndex: 'value',
+      key: 'value',
+      width: '50%',
+      render: (text, record, i) => (
+        <Select
+          mode='tags'
+          value={text}
+          tokenSeparators={[',']}
+          notFoundContent={'Please enter value'}
+          onChange={(value) => handleValueChange(i, value)}
+          style={{ width: '100%', borderColor: 'transparent' }}
+        />
+      ),
+    },
+    {
+      title: (
+        <Button
+          size='small'
+          icon={<PlusOutlined />}
+          onClick={() => {
+            setValue((state) => {
+              state.push({ key: '', value: [] });
+            });
+          }}
+        >
+          Add
+        </Button>
+      ),
+      key: 'actions',
+      width: 72,
+      align: 'center',
+      className: 'actions',
+      render: (text, record, i) => (
+        <Space>
+          <TooltipButton
+            key='save'
+            title={'Save'}
+            type='text'
+            size='small'
+            icon={<SaveOutlined />}
+            onClick={onSave}
+          />
+          <TooltipButton
+            key='remove'
+            type='text'
+            size='small'
+            title='remove'
+            icon={<DeleteOutlined />}
+            onClick={() =>
+              setValue?.((params) => {
+                params.splice(i, 1);
+              })
+            }
+          />
+        </Space>
+      ),
+    },
+  ];
+
+  const { run: updateReplaySetting } = useRequest(AppSettingService.updateReplaySetting, {
+    manual: true,
+    onSuccess(res) {
+      res && message.success('update success');
+    },
+  });
+
+  const onSave = () => {
+    const params = {
+      appId: props.appId,
+      excludeOperationMap: value.reduce<{ [key: string]: string[] }>((map, cur) => {
+        map[cur['key']] = cur['value'];
+        return map;
+      }, {}),
+    };
+    updateReplaySetting(params);
   };
 
   useEffect(() => {
@@ -50,71 +152,11 @@ const ExcludeOperation: FC<FormItemProps<ExcludeOperationFormItem[]>> = (props) 
     }
   }, [value]);
 
-  const columns: ColumnsType<ExcludeOperationFormItem> = [
-    {
-      title: 'path',
-      dataIndex: 'key',
-      key: 'key',
-      render: (text, record, i) => (
-        <Input
-          value={text}
-          onChange={(e) => handleChange(i, 'key', e.target.value)}
-          style={{ borderColor: 'transparent' }}
-        />
-      ),
-    },
-    {
-      title: 'value (use , to split)',
-      dataIndex: 'value',
-      key: 'value',
-      render: (text, record, i) => (
-        <Input
-          value={text}
-          onChange={(e) => handleChange(i, 'value', e.target.value)}
-          style={{ borderColor: 'transparent' }}
-        />
-      ),
-    },
-    {
-      title: (
-        <Button
-          size='small'
-          icon={<PlusOutlined />}
-          onClick={() => {
-            setValue((state) => {
-              state.push({ key: '', value: '' });
-            });
-          }}
-        >
-          Add
-        </Button>
-      ),
-      key: 'actions',
-      width: 72,
-      align: 'center',
-      className: 'actions',
-      render: (text, record, i) => (
-        <TooltipButton
-          type='text'
-          size='small'
-          title='remove'
-          placement='left'
-          icon={<DeleteOutlined />}
-          onClick={() =>
-            setValue?.((params) => {
-              params.splice(i, 1);
-            })
-          }
-        />
-      ),
-    },
-  ];
-
   return (
     <ExcludeOperationWrapper>
       <Table<ExcludeOperationFormItem>
         ref={tableRef}
-        rowKey='id'
+        rowKey='key'
         dataSource={value}
         pagination={false}
         showHeader={true}
