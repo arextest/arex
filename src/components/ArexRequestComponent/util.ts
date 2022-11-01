@@ -1,8 +1,7 @@
 export function convertRequestData(requestData, address) {
-  console.log(requestData.body.address.method, 'req');
   return {
-    method: requestData.body[address].method || 'GET',
-    endpoint: requestData.body[address].endpoint || '',
+    method: requestData.body[address]?.method || 'GET',
+    endpoint: requestData.body[address]?.endpoint || '',
     body: requestData.body.body || {
       body: '',
       contentType: 'application/json',
