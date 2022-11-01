@@ -10,6 +10,7 @@ import ReplayPage from './ReplayPage';
 import ReplaySettingPage from './ReplaySettingPage';
 import SettingPage from './SettingPage';
 import WorkspaceOverviewPage from './WorkspaceOverviewPage';
+import BatchRunPage from './BatchRunPage';
 
 export type PageProps<D extends PageData = undefined, P = unknown> = P & {
   page: Page<D>;
@@ -41,6 +42,7 @@ const CommonPageType: PagesTypeType = {
   ReplaySetting: 'ReplaySettingPage',
   Setting: 'SettingPage',
   WorkspaceOverview: 'WorkspaceOverviewPage',
+  BatchRun: 'BatchRunPage',
 };
 
 export const PagesType = Object.assign(CommonPageType, ExtraPagesType);
@@ -64,6 +66,7 @@ const CommonPages: PageComponents = {
   ReplaySettingPage,
   SettingPage,
   WorkspaceOverviewPage,
+  BatchRunPage,
 };
 
 export default Object.assign(CommonPages, ExtraPages);
