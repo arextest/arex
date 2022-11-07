@@ -19,9 +19,8 @@ Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 24 }} spin />);
 
 function App() {
   const routesContent = useRoutes(routerConfig);
-
-  useCheckChromeExtension();
   useAuth();
+  useCheckChromeExtension();
   useInterfaceInit(); // init theme, fontSize, etc.
 
   const {
