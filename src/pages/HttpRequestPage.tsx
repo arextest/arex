@@ -29,7 +29,6 @@ const HttpRequestPage: PageFC = (props) => {
     currentEnvironment,
   } = useStore();
   const { workspaceId } = useParams();
-  const arexRequestComponentRef = useRef(null);
   const id = useMemo(() => parseGlobalPaneId(props.page.paneId)['rawId'], [props.page.paneId]);
 
   const nodeType = useMemo(() => {
@@ -111,7 +110,6 @@ const HttpRequestPage: PageFC = (props) => {
       onSendCompare={(e) => {
         return AgentAxiosCompare(e);
       }}
-      cRef={arexRequestComponentRef}
       requestExtraTabItems={[
         {
           key: '7',
@@ -123,6 +121,8 @@ const HttpRequestPage: PageFC = (props) => {
           },
         },
       ]}
+      responseExtraTabItems={[]}
+      requestExtraMethod={[]}
     />
   );
 };

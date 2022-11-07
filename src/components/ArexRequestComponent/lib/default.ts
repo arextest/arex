@@ -1,4 +1,3 @@
-import HttpCompare from './components/http/compare';
 import cn from './locales/cn.json';
 import en from './locales/en.json';
 import { themeMap } from './theme';

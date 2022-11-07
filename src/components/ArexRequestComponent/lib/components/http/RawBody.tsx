@@ -23,10 +23,7 @@ const HttpRawBody = ({ cRef }) => {
       });
     },
   });
-
-  //用useImperativeHandle暴露一些外部ref能访问的属性
   useImperativeHandle(cRef, () => {
-    // 需要将暴露的接口返回出去
     return {
       prettifyRequestBody: function () {
         prettifyRequestBody();
@@ -44,9 +41,6 @@ const HttpRawBody = ({ cRef }) => {
       message.error(e.message);
     }
   };
-
-  const handleName = (e) => {};
-
   return (
     <div
       css={css`

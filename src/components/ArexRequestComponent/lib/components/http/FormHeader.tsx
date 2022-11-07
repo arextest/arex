@@ -1,9 +1,4 @@
-import {
-  DeleteOutlined,
-  EditOutlined,
-  PlusOutlined,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Tooltip } from 'antd';
 import { FC, useContext } from 'react';
@@ -57,15 +52,9 @@ const FormHeader: FC<{ update: Updater<KeyValueType[]>; title: string }> = (prop
     <FormHeaderWrapper>
       <span>{props.title}</span>
       <div>
-        {/*<Tooltip title={t('help')}>*/}
-        {/*  <Button type='text' icon={<QuestionCircleOutlined />} />*/}
-        {/*</Tooltip>*/}
         <Tooltip title={t('action.clear_all')}>
           <Button type='text' icon={<DeleteOutlined />} onClick={handleClearAllParams} />
         </Tooltip>
-        {/*<Tooltip title={t('batchEdit')}>*/}
-        {/*  <Button type='text' icon={<EditOutlined />} />*/}
-        {/*</Tooltip>*/}
         <Tooltip title={t('add.new')}>
           <Button type='text' icon={<PlusOutlined />} onClick={handleAddParam} />
         </Tooltip>

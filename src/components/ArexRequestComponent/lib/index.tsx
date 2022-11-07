@@ -5,7 +5,7 @@ import { css } from '@emotion/react';
 import { useMount } from 'ahooks';
 import { Allotment } from 'allotment';
 import _ from 'lodash-es';
-import { createContext, FC, useEffect, useImperativeHandle, useReducer, useState } from 'react';
+import { createContext, FC, useEffect, useImperativeHandle, useReducer } from 'react';
 
 import HttpRequest from './components/http/Request';
 import HttpRequestOptions from './components/http/RequestOptions';
@@ -43,9 +43,6 @@ interface HttpProps {
   currentRequestId: string;
   onEdit: ({ type, payload }: any) => Promise<any>;
   onSend: () => any;
-  // ---
-  requestExtraTabItems: any;
-  requestExtraData: any;
   cRef: any;
 }
 

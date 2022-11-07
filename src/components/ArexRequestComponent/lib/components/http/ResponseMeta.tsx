@@ -20,15 +20,7 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
   `;
 
   const readableResponseSize = useMemo(() => {
-    // if (
-    //   response.type === "loading" ||
-    //   response.type === "network_fail" ||
-    //   response.type === "script_fail" ||
-    //   response.type === "fail"
-    // )
-    //   return undefined
     const size = response.meta.responseSize;
-
     if (size >= 100000) return (size / 1000000).toFixed(2) + ' MB';
     if (size >= 1000) return (size / 1000).toFixed(2) + ' KB';
 
@@ -61,7 +53,6 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
                   margin-bottom: 20px;
                   padding: 30px 50px;
                   text-align: center;
-                  //background: rgba(0, 0, 0, 0.05);
                   border-radius: 4px;
                   height: 100%;
                 `}

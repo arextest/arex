@@ -2,10 +2,9 @@ import { css } from '@emotion/react';
 import { DatePicker, TimePicker } from 'antd';
 import { useContext, useMemo } from 'react';
 
+import ExtraResponseTabItemCompareResult from '../../../extra/ExtraResponseTabItemCompareResult';
 import { HttpContext } from '../..';
-// import { requestUseStore } from '../../store/request';
 import LensesResponseBodyRenderer from '../lenses/ResponseBodyRenderer';
-import HttpCompareResult from './CompareResult';
 import HttpResponseMeta from './ResponseMeta';
 
 const HttpResponse = () => {
@@ -22,9 +21,9 @@ const HttpResponse = () => {
   return (
     <>
       {store.compareResponse.type !== 'null' ? (
-        <HttpCompareResult
+        <ExtraResponseTabItemCompareResult
           responses={[JSON.parse(store.response.body), JSON.parse(store.compareResponse.body)]}
-        ></HttpCompareResult>
+        ></ExtraResponseTabItemCompareResult>
       ) : (
         <div
           css={css`
