@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import { Radio, Table, Tabs } from 'antd';
 import JSONEditor from 'jsoneditor';
 import _ from 'lodash-es';
@@ -5,12 +6,6 @@ import { useContext, useEffect, useRef, useState } from 'react';
 
 import request from '../../../helpers/api/axios';
 import { GlobalContext } from '../lib';
-// import ReactDiffViewer from 'react-diff-viewer';
-
-// import request from '../../../../../helpers/api/axios';
-// import { GlobalContext, HttpContext } from '../../index';
-
-// import request from '../../helpers/api/axios';
 
 const onChange = (key: string) => {};
 
@@ -167,7 +162,12 @@ const ExtraResponseTabItemCompareResult = ({ responses }) => {
                 className='react-diff-code-view'
                 style={{ height: '100%', display: activeRadio === 'json' ? 'block' : 'none' }}
               >
-                <div id='MsgWithDiffJsonEditorWrapper' style={{ height: '90vh' }}>
+                <div
+                  id='MsgWithDiffJsonEditorWrapper'
+                  css={css`
+                    overflow: hidden;
+                  `}
+                >
                   <div ref={containerLeftRef} id='containerLeft' />
                   <div ref={containerRightRef} id='containerRight' />
                 </div>

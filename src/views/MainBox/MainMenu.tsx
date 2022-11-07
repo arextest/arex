@@ -87,8 +87,8 @@ const MainMenuWrapper = styled(Tabs, { shouldForwardProp: (propName) => propName
   .ant-tabs-content {
     height: 100%;
     display: ${(props) => (props.collapse ? 'none' : 'inherit')};
+    overflow-y: auto;
     .ant-tabs-tabpane {
-      overflow-y: auto;
       padding: 0 8px !important;
       .ant-tree-node-selected {
         color: ${(props) => props.theme.color.text.highlight};

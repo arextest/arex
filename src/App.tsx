@@ -26,7 +26,7 @@ function App() {
 
   const {
     userInfo: {
-      profile: { theme: themeName },
+      profile: { theme: themeName, language },
     },
     collectionTreeData,
     themeClassify,
@@ -37,12 +37,10 @@ function App() {
     [themeName],
   );
 
-  console.log(themeClassify, 'themeClassify');
-
   return (
     <HttpProvider
       theme={themeClassify}
-      locale={'en'}
+      locale={{ 'zh-CN': 'cn', 'en-US': 'en' }[language]}
       collectionTreeData={collectionTreeData}
       environment={currentEnvironment}
     >

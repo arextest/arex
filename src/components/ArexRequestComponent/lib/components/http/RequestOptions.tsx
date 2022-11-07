@@ -2,14 +2,14 @@ import { css } from '@emotion/react';
 import { Tabs } from 'antd';
 import { useContext, useState } from 'react';
 
+import ExtraRequestTabItemCompare from '../../../extra/ExtraRequestTabItemCompare';
+import ExtraRequestTabItemMock from '../../../extra/ExtraRequestTabItemMock';
 import { getValueByPath } from '../../helpers/utils/locale';
 import { GlobalContext, HttpContext } from '../../index';
 import HttpBody from './Body';
 import HttpHeaders from './Headers';
 import HttpParameters from './Parameters';
 import HttpTests from './Tests';
-import ExtraRequestTabItemCompare from '../../../extra/ExtraRequestTabItemCompare';
-import ExtraRequestTabItemMock from '../../../extra/ExtraRequestTabItemMock';
 const HttpRequestOptions = () => {
   const { store } = useContext(HttpContext);
   const t = (key) => getValueByPath(globalStore.locale.locale, key);
@@ -29,7 +29,7 @@ const HttpRequestOptions = () => {
       key: '6',
       children: <ExtraRequestTabItemMock recordId={store.request.recordId} />,
     },
-  ];
+  ].filter((i) => !(i.key === '6' && !store.request.recordId));
   return (
     <div
       css={css`
