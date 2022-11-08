@@ -17,7 +17,7 @@ const Instance: React.FC<SearchKeywordTextProps> = (props) => {
 
   useEffect(() => {
     if (!props.keyword) return setHtmlTxt(props.text || '');
-    const regExp = new RegExp(props.keyword, 'gi');
+    const regExp = new RegExp(props.keyword, 'i');
     const html = props.text?.replace(regExp, function (txt) {
       return `<span style=color:red>${txt}</span>`;
     });
