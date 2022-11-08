@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { Tabs } from 'antd';
+import { Badge, Tabs, Tag } from 'antd';
 import { useContext, useState } from 'react';
 
 import ExtraRequestTabItemCompare from '../../../extra/ExtraRequestTabItemCompare';
@@ -17,10 +17,38 @@ const HttpRequestOptions = () => {
   const { dispatch: globalDispatch, store: globalStore } = useContext(GlobalContext);
 
   const items = [
-    { label: t('tab.parameters'), key: '0', children: <HttpParameters /> }, // 务必填写 key
-    // { label: 'form-data', key: '1', children: '内容 2' },
-    // { label: 'x-www-form-urlencoded', key: '2', children: '内容 2' },
-    { label: t('tab.headers'), key: '1', children: <HttpHeaders /> },
+    {
+      label: (
+        <div>
+          {t('tab.parameters')}{' '}
+          <Tag
+            css={css`
+              display: ${store.request.params.length > 0 ? 'inline-block' : 'none'};
+            `}
+          >
+            {store.request.params.length}
+          </Tag>
+        </div>
+      ),
+      key: '0',
+      children: <HttpParameters />,
+    },
+    {
+      label: (
+        <div>
+          {t('tab.headers')}{' '}
+          <Tag
+            css={css`
+              display: ${store.request.headers.length > 0 ? 'inline-block' : 'none'};
+            `}
+          >
+            {store.request.headers.length}
+          </Tag>
+        </div>
+      ),
+      key: '1',
+      children: <HttpHeaders />,
+    },
     { label: t('tab.body'), key: '3', children: <HttpBody /> },
     { label: t('tab.tests'), key: '4', children: <HttpTests /> },
     { label: 'Compare', key: '5', children: <ExtraRequestTabItemCompare /> },
