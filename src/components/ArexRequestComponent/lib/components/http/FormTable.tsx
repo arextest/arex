@@ -13,8 +13,6 @@ export type KeyValueType = {
   active: boolean;
 };
 
-// import { KeyValueType } from '../../pages/HttpRequest';
-
 const FormTable = styled(Table)<TableProps<KeyValueType> & { showHeader?: boolean }>`
   .ant-table-thead {
     display: ${(props) => (props.showHeader ? 'table-header-group' : 'none')};
@@ -46,11 +44,6 @@ export const useColumns = (
   };
 
   const keyValueColumns: ColumnsType<KeyValueType> = [
-    // {
-    //   title: 'id',
-    //   dataIndex: 'id',
-    //   key: 'id',
-    // },
     {
       title: t('count.key'),
       dataIndex: 'key',

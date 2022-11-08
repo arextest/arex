@@ -5,7 +5,6 @@ import { HoppRESTHeader, HoppRESTParam } from '../../data/rest';
 import FormHeader from './FormHeader';
 import FormTable, { KeyValueType, useColumns } from './FormTable';
 import { useContext, useEffect } from 'react';
-// import { HttpContext } from "../panes/Request";
 import { useMount } from 'ahooks';
 import { GlobalContext, HttpContext } from '../..';
 import { getValueByPath } from '../../helpers/utils/locale';

@@ -3,11 +3,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Breadcrumb, Button, Dropdown, Input, Menu, MenuProps, message, Select, Space } from 'antd';
 import { useContext, useEffect, useMemo, useRef } from 'react';
-
-// import { AgentAxiosAndTest } from '../../../../../helpers/request';
-// import { runTestScript } from '../../helpers/sandbox';
 import { treeFind, treeFindPath } from '../../helpers/collection/util';
-// import AgentAxios from '../../helpers/request';
 import { getValueByPath } from '../../helpers/utils/locale';
 import { GlobalContext, HttpContext } from '../../index';
 import SmartEnvInput from '../smart/EnvInput';
@@ -25,10 +21,6 @@ const HeaderWrapper = styled.div`
   }
   .ant-input {
     border-radius: 0 2px 2px 0;
-  }
-  .ant-btn-group,
-  .ant-btn {
-    margin-left: 16px;
   }
 `;
 
@@ -195,7 +187,7 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend, onSendCompare }) => {
               });
             }}
           >
-            Save
+            {t('action.save')}
           </Button>
         </div>
       </div>
@@ -220,14 +212,20 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend, onSendCompare }) => {
         {/*  {t('action.send')}*/}
         {/*</Button>*/}
 
-        <Dropdown.Button
-          type='primary'
-          onClick={() => handleRequest({ type: null })}
-          overlay={menu}
-          icon={<DownOutlined />}
+        <div
+          css={css`
+            margin: 0 0px 0 14px;
+          `}
         >
-          {t('action.send')}
-        </Dropdown.Button>
+          <Dropdown.Button
+            type='primary'
+            onClick={() => handleRequest({ type: null })}
+            overlay={menu}
+            icon={<DownOutlined />}
+          >
+            {t('action.send')}
+          </Dropdown.Button>
+        </div>
       </HeaderWrapper>
     </div>
   );

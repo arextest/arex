@@ -2,14 +2,16 @@ import { css } from '@emotion/react';
 import { useMount } from 'ahooks';
 import { Card, Col, Divider, Input, Row } from 'antd';
 import { useState } from 'react';
+import request from '../../../helpers/api/axios';
+import { tryParseJsonString } from '../../../helpers/utils';
 
-import request from '../../../../../helpers/api/axios';
-import { tryParseJsonString } from '../../../../../helpers/utils';
+// import request from '../../../../../helpers/api/axios';
+// import { tryParseJsonString } from '../../../../../helpers/utils';
 
 // import request from '../../api/axios';
 // import { tryParseJsonString } from '../../helpers/utils';
 
-const HttpMock = ({ recordId }) => {
+const ExtraRequestTabItemMock = ({ recordId }) => {
   const [dataSource, setDataSource] = useState([]);
   useMount(() => {
     request
@@ -131,4 +133,4 @@ const HttpMock = ({ recordId }) => {
   );
 };
 
-export default HttpMock;
+export default ExtraRequestTabItemMock;

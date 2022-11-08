@@ -1,8 +1,9 @@
 import { Input, RadioChangeEvent, Select } from 'antd';
 import { useContext } from 'react';
 
-import { HttpContext } from '../../index';
+// import { HttpContext } from '../../index';
 import styled from '@emotion/styled';
+import { HttpContext } from '../lib';
 
 const HeaderWrapper = styled.div`
   display: flex;
@@ -26,7 +27,7 @@ const HeaderWrapper = styled.div`
 // compareEndpoint: '',
 //   compareMethod: '',
 const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
-const HttpCompare = () => {
+const ExtraRequestTabItemCompare = () => {
   const { store, dispatch } = useContext(HttpContext);
   return (
     <HeaderWrapper>
@@ -54,4 +55,4 @@ const HttpCompare = () => {
   );
 };
 
-export default HttpCompare;
+export default ExtraRequestTabItemCompare;

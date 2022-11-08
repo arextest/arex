@@ -1,12 +1,17 @@
+import { css } from '@emotion/react';
 import { Radio, Table, Tabs } from 'antd';
-import { useEffect, useRef, useState } from 'react';
-import ReactDiffViewer from 'react-diff-viewer';
+import JSONEditor from 'jsoneditor';
+import _ from 'lodash-es';
+import { useContext, useEffect, useRef, useState } from 'react';
 
-import request from '../../helpers/api/axios';
+import request from '../../../helpers/api/axios';
+import { GlobalContext } from '../lib';
 
 const onChange = (key: string) => {};
 
-const ResponseCompare = ({ responses }) => {
+const ExtraResponseTabItemCompareResult = ({ responses }) => {
+  const { store: globalStore } = useContext(GlobalContext);
+  console.log(responses, 'responses');
   const diffView = useRef<HTMLDivElement>();
   useEffect(() => {
     if (!diffView.current) {
@@ -71,33 +76,68 @@ const ResponseCompare = ({ responses }) => {
     { label: 'Table', value: 'table' },
   ];
 
-  function abc(aa) {
-    for (const key in aa) {
-      if (aa[key] === null) {
-        aa[key] = '';
+  function removeNull(obj) {
+    for (const key in obj) {
+      if (obj[key] === null) {
+        obj[key] = '';
       }
-      if (typeof aa[key] == 'object') {
-        abc(aa[key]);
+      if (typeof obj[key] == 'object') {
+        removeNull(obj[key]);
       }
     }
-    return aa;
+    return obj;
   }
+  const containerLeftRef = useRef<HTMLDivElement>(null);
+  const containerRightRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (responses[0] && responses[1]) {
       const params = {
         msgCombination: {
-          baseMsg: JSON.stringify(abc(responses[0])),
-          testMsg: JSON.stringify(abc(responses[1])),
+          baseMsg: JSON.stringify(removeNull(responses[0])),
+          testMsg: JSON.stringify(removeNull(responses[1])),
         },
       };
       request.post('/api/compare/quickCompare', params).then((res) => {
         setDataSource(res.body.diffDetails.map((i) => i.logs[0]));
       });
+
+      function onClassName({ path, field, value }) {
+        const leftValue = _.get(jsonRight, path);
+        const rightValue = _.get(jsonLeft, path);
+
+        return _.isEqual(leftValue, rightValue) ? 'the_same_element' : 'different_element';
+      }
+
+      const optionsLeft = {
+        mode: 'tree',
+        onClassName: onClassName,
+        onChangeJSON: function (j) {
+          jsonLeft = j;
+          window.editorRight.refresh();
+        },
+      };
+
+      const optionsRight = {
+        mode: 'tree',
+        onClassName: onClassName,
+        onChangeJSON: function (j) {
+          jsonRight = j;
+          window.editorLeft.refresh();
+        },
+      };
+
+      let jsonLeft = JSON.parse(JSON.stringify(responses[0]));
+
+      let jsonRight = JSON.parse(JSON.stringify(responses[1]));
+
+      window.editorLeft = new JSONEditor(containerLeftRef.current, optionsLeft, jsonLeft);
+      window.editorRight = new JSONEditor(containerRightRef.current, optionsRight, jsonRight);
     }
   }, [responses]);
 
   return (
     <Tabs
+      style={{ height: '100%' }}
       defaultActiveKey='compareResult'
       items={[
         {
@@ -122,11 +162,15 @@ const ResponseCompare = ({ responses }) => {
                 className='react-diff-code-view'
                 style={{ height: '100%', display: activeRadio === 'json' ? 'block' : 'none' }}
               >
-                <ReactDiffViewer
-                  oldValue={JSON.stringify(responses[0], null, 2)}
-                  newValue={JSON.stringify(responses[1], null, 2)}
-                  splitView={true}
-                />
+                <div
+                  id='MsgWithDiffJsonEditorWrapper'
+                  css={css`
+                    overflow: hidden;
+                  `}
+                >
+                  <div ref={containerLeftRef} id='containerLeft' />
+                  <div ref={containerRightRef} id='containerRight' />
+                </div>
               </div>
               <div style={{ display: activeRadio === 'table' ? 'block' : 'none' }}>
                 <Table dataSource={dataSource} columns={columns} />
@@ -140,4 +184,4 @@ const ResponseCompare = ({ responses }) => {
   );
 };
 
-export default ResponseCompare;
+export default ExtraResponseTabItemCompareResult;
