@@ -130,6 +130,7 @@ const MainTabs = () => {
       }
     >
       <MainTabsWrapper
+        className='main-tabs'
         activeKey={activeMenu[1]}
         tabBarExtraContent={<EnvironmentSelect />}
         items={tabsItems}
@@ -198,9 +199,11 @@ const MainTabsWrapper = styled((props: TabsProps) => {
       padding-right: 0;
     }
   }
-  .ant-tabs-content-holder {
+  .ant-tabs-content-holder,
+  .main-tabs {
     overflow: auto;
     height: inherit;
+    padding: 0 16px;
   }
   .ant-tabs-nav-more {
     height: 36px;
