@@ -2,7 +2,7 @@ import { SettingOutlined, SyncOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, DatePicker, Form, Input, Modal, notification } from 'antd';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import React, { FC, ReactNode, useState } from 'react';
 
 import { generateGlobalPaneId } from '../../helpers/utils';
@@ -18,6 +18,8 @@ type AppTitleProps = {
   data: ApplicationDataType;
   onRefresh?: () => void;
 };
+
+type CreatePlanForm = { targetEnv: string; caseStartTime: Moment; caseEndTime: Moment };
 
 const TitleWrapper = styled(
   (props: {
@@ -59,10 +61,11 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     userInfo: { email },
     setPages,
   } = useStore();
-  const [form] = Form.useForm<{ targetEnv: string }>();
+  const [form] = Form.useForm<CreatePlanForm>();
   const [open, setOpen] = useState(false);
 
   const initialValues = {
+    targetEnv: '',
     caseStartTime: moment().subtract(1, 'day'),
     caseEndTime: moment(),
   };
@@ -74,7 +77,6 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         notification.success({
           message: 'Started Successfully',
         });
-        form.resetFields();
         onRefresh && onRefresh();
       } else {
         console.error(res.desc);
@@ -92,6 +94,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     },
     onFinally() {
       setOpen(false);
+      form.resetFields();
     },
   });
 
@@ -103,6 +106,8 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           appId: data.appId,
           sourceEnv: 'pro',
           targetEnv: values.targetEnv,
+          caseStartTime: values.caseStartTime.valueOf(),
+          caseEndTime: values.caseEndTime.valueOf(),
           operator: email as string,
           replayPlanType: 0,
         });
