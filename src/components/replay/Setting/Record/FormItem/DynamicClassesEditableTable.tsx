@@ -36,7 +36,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
 
     return [
       {
-        title: 'Full Class Name (e.g. java.lang.String)',
+        title: 'Full Class Name',
         dataIndex: 'fullClassName',
         key: 'fullClassName',
         render: (text, record) =>
@@ -46,40 +46,28 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
             text
           ),
       },
-      // 隐藏下面三列
-      // {
-      //   title: 'Function Name',
-      //   dataIndex: 'methodName',
-      //   key: 'methodName',
-      //   render: (text, record) =>
-      //     EDIT_ROW_KEY === record.id ? (
-      //       <Input value={text} onChange={(e) => handleChange('methodName', e.target.value)} />
-      //     ) : (
-      //       text
-      //     ),
-      // },
-      // {
-      //   title: 'Parameter Types',
-      //   dataIndex: 'parameterTypes',
-      //   key: 'parameterTypes',
-      //   render: (text, record) =>
-      //     EDIT_ROW_KEY === record.id ? (
-      //       <Input value={text} onChange={(e) => handleChange('parameterTypes', e.target.value)} />
-      //     ) : (
-      //       text
-      //     ),
-      // },
-      // {
-      //   title: 'Key Formula',
-      //   dataIndex: 'keyFormula',
-      //   key: 'keyFormula',
-      //   render: (text, record) =>
-      //     EDIT_ROW_KEY === record.id ? (
-      //       <Input value={text} onChange={(e) => handleChange('keyFormula', e.target.value)} />
-      //     ) : (
-      //       text
-      //     ),
-      // },
+      {
+        title: 'Method Name',
+        dataIndex: 'methodName',
+        key: 'methodName',
+        render: (text, record) =>
+          EDIT_ROW_KEY === record.id ? (
+            <Input value={text} onChange={(e) => handleChange('methodName', e.target.value)} />
+          ) : (
+            text
+          ),
+      },
+      {
+        title: 'Parameter Types',
+        dataIndex: 'parameterTypes',
+        key: 'parameterTypes',
+        render: (text, record) =>
+          EDIT_ROW_KEY === record.id ? (
+            <Input value={text} onChange={(e) => handleChange('parameterTypes', e.target.value)} />
+          ) : (
+            text
+          ),
+      },
       {
         title: 'Action',
         key: 'actions',

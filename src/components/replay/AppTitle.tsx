@@ -1,7 +1,8 @@
 import { SettingOutlined, SyncOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Form, Input, Modal, notification } from 'antd';
+import { Button, DatePicker, Form, Input, Modal, notification } from 'antd';
+import moment, { Moment } from 'moment';
 import React, { FC, ReactNode, useState } from 'react';
 
 import { generateGlobalPaneId } from '../../helpers/utils';
@@ -17,6 +18,8 @@ type AppTitleProps = {
   data: ApplicationDataType;
   onRefresh?: () => void;
 };
+
+type CreatePlanForm = { targetEnv: string; caseStartTime: Moment; caseEndTime: Moment };
 
 const TitleWrapper = styled(
   (props: {
@@ -58,8 +61,14 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     userInfo: { email },
     setPages,
   } = useStore();
-  const [form] = Form.useForm<{ targetEnv: string }>();
+  const [form] = Form.useForm<CreatePlanForm>();
   const [open, setOpen] = useState(false);
+
+  const initialValues = {
+    targetEnv: '',
+    caseStartTime: moment().subtract(1, 'day'),
+    caseEndTime: moment(),
+  };
 
   const { run: createPlan, loading: confirmLoading } = useRequest(ReplayService.createPlan, {
     manual: true,
@@ -68,7 +77,6 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         notification.success({
           message: 'Started Successfully',
         });
-        form.resetFields();
         onRefresh && onRefresh();
       } else {
         console.error(res.desc);
@@ -86,6 +94,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     },
     onFinally() {
       setOpen(false);
+      form.resetFields();
     },
   });
 
@@ -97,6 +106,8 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           appId: data.appId,
           sourceEnv: 'pro',
           targetEnv: values.targetEnv,
+          caseStartTime: values.caseStartTime.valueOf(),
+          caseEndTime: values.caseEndTime.valueOf(),
           operator: email as string,
           replayPlanType: 0,
         });
@@ -142,13 +153,36 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         bodyStyle={{ paddingBottom: '12px' }}
         confirmLoading={confirmLoading}
       >
-        <Form name='startReplay' form={form} autoComplete='off'>
+        <Form
+          name='startReplay'
+          form={form}
+          labelCol={{ span: 6 }}
+          wrapperCol={{ span: 18 }}
+          initialValues={initialValues}
+          autoComplete='off'
+        >
           <Form.Item
             label='Target Host'
             name='targetEnv'
             rules={[{ required: true, message: "Target Host can't be empty" }]}
           >
             <Input />
+          </Form.Item>
+
+          <Form.Item
+            label='Start Time'
+            name='caseStartTime'
+            rules={[{ required: true, message: "Start Time can't be empty" }]}
+          >
+            <DatePicker style={{ width: '100%' }} />
+          </Form.Item>
+
+          <Form.Item
+            label='End Time'
+            name='caseEndTime'
+            rules={[{ required: true, message: "End Time can't be empty" }]}
+          >
+            <DatePicker style={{ width: '100%' }} />
           </Form.Item>
         </Form>
       </Modal>
