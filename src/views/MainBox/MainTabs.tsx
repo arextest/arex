@@ -22,18 +22,17 @@ const MainTabs = () => {
     setPages(
       {
         key: u,
-        title: 'BatchRun',
-        pageType: PagesType.BatchRun,
+        title: 'New Request',
+        pageType: PagesType.Request,
         menuType: MenusType.Collection,
         isNew: true,
         data: undefined,
-        paneId: generateGlobalPaneId(MenusType.Collection, PagesType.BatchRun, u),
+        paneId: generateGlobalPaneId(MenusType.Collection, PagesType.Request, u),
         rawId: u,
       },
       'push',
     );
   };
-
   const handleTabsEdit: any = (targetKey: string, action: 'add' | 'remove') => {
     action === 'add' ? addTab() : removeTab(targetKey);
   };
