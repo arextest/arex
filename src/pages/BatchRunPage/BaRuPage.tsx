@@ -3,6 +3,7 @@ import { Allotment } from 'allotment';
 import { Button, Checkbox, Col, Form, message, Row, Space, Tabs, Tree } from 'antd';
 import { Divider } from 'antd';
 import type { TreeProps } from 'antd/es/tree';
+import { GlobalContext } from 'arex-request';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 import { genCaseTreeData } from '../../helpers/BatchRun/util';
@@ -12,7 +13,6 @@ import { NodeList } from '../../services/CollectionService';
 import { FileSystemService } from '../../services/FileSystem.service';
 import { useStore } from '../../store';
 import RunResult from './RunResult';
-import { GlobalContext } from '../../components/ArexRequestComponent/lib';
 
 const BaRuPage: React.FC = () => {
   const { store: globalStore } = useContext(GlobalContext);

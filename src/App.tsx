@@ -7,12 +7,12 @@ import { ConfigProvider, Spin } from 'antd';
 import React, { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 
-import { HttpProvider } from './components/ArexRequestComponent/lib';
 import DefaultConfig from './defaultConfig';
 import { useAuth, useCheckChromeExtension, useInterfaceInit } from './hooks';
 import routerConfig from './routers';
 import { useStore } from './store';
 import { themeMap } from './style/theme';
+import { HttpProvider } from 'arex-request';
 
 // global Spin config
 Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 24 }} spin />);
