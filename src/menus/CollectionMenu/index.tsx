@@ -154,6 +154,8 @@ const CollectionMenu = () => {
     },
   });
 
+  window.globalFetchTreeData = fetchTreeData;
+
   const handleSelect: DirectoryTreeProps<nodeType>['onSelect'] = (keys, info) => {
     if (keys.length) {
       handleCollectionMenuClick(keys[0] as string, {

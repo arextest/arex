@@ -198,7 +198,6 @@ const MainTabsWrapper = styled((props: TabsProps) => {
       padding-right: 0;
     }
   }
-  .ant-tabs-content-holder,
   .main-tabs {
     overflow: auto;
     height: inherit;
