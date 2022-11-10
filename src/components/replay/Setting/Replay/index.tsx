@@ -29,7 +29,7 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId, agentVersion }) =>
         offsetDays: res.offsetDays,
         excludeOperationMap: Object.entries(res.excludeOperationMap).map(([key, value]) => ({
           key,
-          value: value.join(','),
+          value,
         })),
       });
     },
@@ -45,9 +45,10 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId, agentVersion }) =>
   const onFinish = (values: SettingFormType) => {
     const params = {
       appId,
+      offsetDays: values.offsetDays,
       excludeOperationMap: values.excludeOperationMap.reduce<{ [key: string]: string[] }>(
         (map, cur) => {
-          map[cur.key] = cur.value.split(',');
+          map[cur.key] = cur.value;
           return map;
         },
         {},
@@ -71,7 +72,7 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId, agentVersion }) =>
       </Form.Item>
 
       <Form.Item label='Exclude Operation' name='excludeOperationMap'>
-        <ExcludeOperation />
+        <ExcludeOperation appId={appId} />
       </Form.Item>
 
       <Form.Item

@@ -7,15 +7,16 @@ type SettingFormProps = FormProps & { loading: boolean; children: ReactNode };
 /**
  * Please use this component for all Forms in the Setting directory
  */
-const SettingForm = styled((props: SettingFormProps) =>
-  props.loading ? (
+const SettingForm = styled((props: SettingFormProps) => {
+  const { loading, ...restProps } = props;
+  return loading ? (
     <Spin />
   ) : (
-    <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} {...props}>
+    <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} {...restProps}>
       {props.children}
     </Form>
-  ),
-)`
+  );
+})`
   .ant-form-item-label > label {
     white-space: break-spaces;
   }

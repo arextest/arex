@@ -40,7 +40,9 @@ const SortTree: FC<SortTreeProps> = (props) => {
       <Tree
         {...props}
         checkable
+        checkStrictly
         defaultExpandAll
+        autoExpandParent
         selectedKeys={[]}
         treeData={getNodes(props.treeData, '')}
       />

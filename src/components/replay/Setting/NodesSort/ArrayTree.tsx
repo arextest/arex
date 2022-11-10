@@ -23,7 +23,7 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
   } = useStore();
 
   function getNodes(object: object, basePath = ''): DataNode[] {
-    const entries = Object.entries(object).filter(([, value]) => Array.isArray(value));
+    const entries = Object.entries(object);
     return entries.map(([key, value]) => {
       const path = basePath + key + '/';
       return value && typeof value === 'object'
@@ -31,11 +31,12 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
             title: key,
             key: path,
             children: getNodes(Array.isArray(value) ? value[0] || {} : value, path),
+            disabled: !Array.isArray(value),
             icon: props.sortNodeList?.find((node) => node.path === path)?.pathKeyList?.length && (
               <Badge color={theme.split('-')[1]} />
             ), // 已配置过的节点使用圆点进行提示
           }
-        : { title: key, key: path, value };
+        : { title: key, key: path, value, disabled: !Array.isArray(value) };
     });
   }
 

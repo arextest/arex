@@ -91,7 +91,8 @@ export interface QueryConfigTemplateRes {
 
 export type UpdateReplaySettingReq = {
   appId: string;
-  excludeOperationMap: ExcludeOperationMap;
+  offsetDays?: number;
+  excludeOperationMap?: ExcludeOperationMap;
 };
 
 export interface UpdateConfigTemplateReq {
