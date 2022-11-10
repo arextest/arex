@@ -3,7 +3,7 @@ import { useRequest } from 'ahooks';
 import { Button, Card, Carousel, Col, message, Row, Space } from 'antd';
 import { CarouselRef } from 'antd/lib/carousel';
 import { TreeProps } from 'antd/lib/tree';
-import React, { FC, useMemo, useRef, useState } from 'react';
+import React, { FC, Key, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
@@ -267,9 +267,9 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
     reloadResponse && queryInterfaceResponse();
   };
 
-  const handleSortTreeChecked: TreeProps['onCheck'] = (checkedKeys) => {
+  const handleSortTreeChecked = (checkedKeys: { checked: string[]; halfChecked: string[] }) => {
     setCheckedNodesData((state) => {
-      state.pathKeyList = checkedKeys as string[];
+      state.pathKeyList = checkedKeys.checked;
     });
   };
 

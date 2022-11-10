@@ -3,7 +3,8 @@ import './style/index.less';
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Theme as EmotionTheme, ThemeProvider } from '@emotion/react';
-import { ConfigProvider, Spin } from 'antd';
+import { Spin } from 'antd';
+import { HttpProvider } from 'arex-request';
 import React, { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 
@@ -12,7 +13,6 @@ import { useAuth, useCheckChromeExtension, useInterfaceInit } from './hooks';
 import routerConfig from './routers';
 import { useStore } from './store';
 import { themeMap } from './style/theme';
-import { HttpProvider } from 'arex-request';
 
 // global Spin config
 Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 24 }} spin />);
