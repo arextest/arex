@@ -140,7 +140,6 @@ const BaRuPage: React.FC = () => {
           gutter={16}
           css={css`
             height: 100%;
-            overflow: auto;
             padding: 14px;
           `}
         >
@@ -154,6 +153,8 @@ const BaRuPage: React.FC = () => {
             </p>
             <div
               css={css`
+                height: 360px;
+                overflow-y: scroll;
                 .ant-checkbox-group {
                   display: flex;
                   flex-direction: column;

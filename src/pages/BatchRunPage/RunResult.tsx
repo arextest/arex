@@ -14,6 +14,62 @@ interface RunResultProps {
     }[];
   }[];
 }
+function NewTestResult({ testResult }) {
+  console.log(testResult, 't');
+  return (
+    <div>
+      {testResult.children.map((i) => {
+        const isPass = i.expectResults.filter((i) => i.status === 'fail').length === 0 ? 0 : 1;
+        const r = [
+          {
+            bgc: '#0cbb52',
+            text: 'Pass',
+          },
+          {
+            bgc: '#eb2013',
+            text: 'Fail',
+          },
+        ];
+        return (
+          <div
+            css={css`
+              display: flex;
+              align-items: center;
+            `}
+          >
+            <div
+              css={css`
+                height: 16px;
+                width: 3px;
+                background-color: ${r[isPass].bgc};
+              `}
+            ></div>
+            <span
+              css={css`
+                margin-left: 14px;
+                margin-right: 14px;
+              `}
+            >
+              {r[isPass].text}
+            </span>
+            <span>{i.descriptor}</span>
+            {i.expectResults.map((ii) => {
+              return (
+                <span
+                  css={css`
+                    margin-left: 8px;
+                  `}
+                >
+                  ｜{ii.message}
+                </span>
+              );
+            })}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 const RunResult: FC<RunResultProps> = ({ result, loading }) => {
   const ssss = useMemo(() => {
     return result.filter((i) => i.children.filter((f) => f.testResult).length > 0);
@@ -80,7 +136,7 @@ const RunResult: FC<RunResultProps> = ({ result, loading }) => {
                       </div>
                       {testResultItem.testResult ? (
                         <div>
-                          <TestResult testResult={testResultItem.testResult}></TestResult>
+                          <NewTestResult testResult={testResultItem.testResult}></NewTestResult>
                         </div>
                       ) : (
                         <div

@@ -8,9 +8,10 @@ export function genCaseTreeData(data) {
       result.push({
         id: data.id,
         key: data.key,
-        title: data.title,
+        title: data.title + (data.children.length === 0 ? ' (no case)' : ''),
         method: data.method,
         nodeType: data.nodeType,
+        disabled: data.children.length === 0,
         path: treeFindPath(cloneData, (node) => node.id === data.id),
         children: data.children,
       });
