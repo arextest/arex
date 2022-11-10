@@ -1,8 +1,9 @@
 import { css } from '@emotion/react';
 import { Empty, Spin, Tag } from 'antd';
+import { TestResult } from 'arex-request';
 import { FC, useMemo } from 'react';
 
-import { TestResult } from '../../components/ArexRequestComponent/lib';
+// import { TestResult } from '../../components/ArexRequestComponent/lib';
 interface RunResultProps {
   result: {
     title: string;

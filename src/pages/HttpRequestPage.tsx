@@ -1,19 +1,15 @@
-import styled from '@emotion/styled';
-import { message, Tag } from 'antd';
-import { useMemo, useRef } from 'react';
+import { message } from 'antd';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-
-import ArexRequestComponent from '../components/ArexRequestComponent/lib';
-import Http from '../components/ArexRequestComponent/lib';
-import { convertRequestData } from '../components/ArexRequestComponent/util';
-import Mock from '../components/httpRequest/Mock';
 import { treeFind } from '../helpers/collection/util';
 import { AgentAxiosAndTest, AgentAxiosCompare } from '../helpers/request';
 import { parseGlobalPaneId } from '../helpers/utils';
 import { FileSystemService } from '../services/FileSystem.service';
 import { useStore } from '../store';
 import { PageFC } from './index';
-// import HttpRequest from '../components/ArexRequestComponent/lib/components/http/Request';
+import request from './../helpers/api/axios';
+import Http from 'arex-request';
+import { convertRequestData } from '../components/ArexRequestComponent/util';
 
 export type KeyValueType = {
   key: string;
@@ -22,12 +18,7 @@ export type KeyValueType = {
 };
 
 const HttpRequestPage: PageFC = (props) => {
-  const {
-    userInfo: { email: userName },
-    themeClassify,
-    collectionTreeData,
-    currentEnvironment,
-  } = useStore();
+  const { collectionTreeData } = useStore();
   const { workspaceId } = useParams();
   const id = useMemo(() => parseGlobalPaneId(props.page.paneId)['rawId'], [props.page.paneId]);
 
@@ -40,7 +31,6 @@ const HttpRequestPage: PageFC = (props) => {
     );
   }, [props.page.paneId]);
 
-  console.log(id, 'id');
   return (
     <Http
       currentRequestId={id}
@@ -110,19 +100,7 @@ const HttpRequestPage: PageFC = (props) => {
       onSendCompare={(e) => {
         return AgentAxiosCompare(e);
       }}
-      requestExtraTabItems={[
-        {
-          key: '7',
-          label: 'Mock',
-          children: <div>mock</div>,
-          field: 'mock',
-          data: {
-            mock: 'mock',
-          },
-        },
-      ]}
-      responseExtraTabItems={[]}
-      requestExtraMethod={[]}
+      requestaxios={request}
     />
   );
 };

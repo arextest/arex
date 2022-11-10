@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 type SearchKeywordTextProps = {
   text?: string;
@@ -17,11 +17,10 @@ const Instance: React.FC<SearchKeywordTextProps> = (props) => {
 
   useEffect(() => {
     if (!props.keyword) return setHtmlTxt(props.text || '');
-    // const regExp = new RegExp(props.keyword, 'i');
-    const html = props.text?.replace(
-      props.keyword,
-      `<span style=color:red>${props.keyword}</span>`,
-    );
+    const regExp = new RegExp(props.keyword, 'i');
+    const html = props.text?.replace(regExp, function (txt) {
+      return `<span style=color:red>${txt}</span>`;
+    });
 
     setHtmlTxt(html || '');
   }, [props.text, props.keyword]);

@@ -38,7 +38,6 @@ export type DynamicClass = {
   fullClassName: string;
   methodName?: string;
   parameterTypes?: string;
-  keyFormula?: string;
   configType?: number;
 };
 export type QueryRecordDynamicClassSettingRes = DynamicClass[];

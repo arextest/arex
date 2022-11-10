@@ -171,13 +171,14 @@ const CollectionMenu = () => {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
+    const regExp = new RegExp(value, 'i');
     let newExpandedKeys;
     if (value == '') {
       newExpandedKeys = dataList.map((item) => item.title);
     } else {
       newExpandedKeys = dataList
         .map((item) => {
-          if (item.title.indexOf(value) > -1) {
+          if (item.title.match(regExp)) {
             return getParentKey(item.key, treeData);
           }
           return null;

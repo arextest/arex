@@ -16,7 +16,7 @@ const includeStyles = {
     border: 'none',
     'box-shadow': 'none',
   },
-  '.ant-input-borderless': {
+  '.ant-input-borderless,.ant-input': {
     border: 'none',
     'box-shadow': 'none',
   },
