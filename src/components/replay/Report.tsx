@@ -82,8 +82,8 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
   );
 
   const columns: ColumnsType<PlanItemStatistics> = [
-    { title: 'Plan Item ID', dataIndex: 'planItemId', key: 'planItemId', ellipsis: true },
-    { title: 'API', dataIndex: 'operationName', key: 'operationName', ellipsis: true },
+    { title: 'Plan Item ID', dataIndex: 'planItemId', key: 'planItemId' },
+    { title: 'API', dataIndex: 'operationName', key: 'operationName' },
     {
       title: 'State',
       width: 100,
@@ -181,7 +181,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           onClick={() =>
             setPages(
               {
-                title: `Case - ${record.operationId}`,
+                title: `Case - ${record.planItemId}`,
                 pageType: PagesType.ReplayCase,
                 menuType: MenusType.Replay,
                 isNew: false,
@@ -328,6 +328,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
         loading={loadingData}
         columns={columns}
         dataSource={planItemData}
+        style={{ overflow: 'auto' }}
       />
     </Card>
   ) : (
