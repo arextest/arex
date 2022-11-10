@@ -63,6 +63,9 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
 
   const [sortArray, setSortArray] = useState<any[]>();
 
+  // 控制 SortTree 组件防止在获取到有效的 treeData 数据前渲染，导致 defaultExpandAll 失效
+  const [treeReady, setTreeReady] = useState(false);
+
   /**
    * 请求 InterfacesList
    */
@@ -150,6 +153,7 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
       refreshDeps: [activeOperationInterface],
       onBefore() {
         setInterfaceResponse(undefined);
+        setTreeReady(false);
       },
     },
   );
@@ -236,6 +240,8 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
     setNodesEditMode(NodesEditMode.Tree);
     setTreeEditMode(TreeEditModeEnum.SortTree);
     treeCarousel.current?.goTo(1);
+
+    setTreeReady(true);
   };
 
   // 获取待排序操作的数组结构
@@ -267,9 +273,9 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
     reloadResponse && queryInterfaceResponse();
   };
 
-  const handleSortTreeChecked = (checkedKeys: { checked: string[]; halfChecked: string[] }) => {
+  const handleSortTreeChecked: TreeProps['onCheck'] = (checkedKeys) => {
     setCheckedNodesData((state) => {
-      state.pathKeyList = checkedKeys.checked;
+      state.pathKeyList = (checkedKeys as { checked: string[]; halfChecked: string[] }).checked;
     });
   };
 
@@ -348,13 +354,15 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
                       </div>
 
                       <div>
-                        <SortTree
-                          title={checkedNodesData.path}
-                          treeData={sortArray}
-                          checkedKeys={checkedNodesData.pathKeyList}
-                          onCheck={handleSortTreeChecked}
-                          onSelect={handleSortTreeSelected}
-                        />
+                        {treeReady && (
+                          <SortTree
+                            title={checkedNodesData.path}
+                            treeData={sortArray}
+                            checkedKeys={checkedNodesData.pathKeyList}
+                            onCheck={handleSortTreeChecked}
+                            onSelect={handleSortTreeSelected}
+                          />
+                        )}
                       </div>
                     </TreeCarousel>
                   ) : (
