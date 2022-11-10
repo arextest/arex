@@ -1,5 +1,5 @@
-import { Button, Form, Input, Modal, TreeSelect, Typography } from 'antd';
-import React, { FC, useMemo, useState } from 'react';
+import { Form, Input, Modal, TreeSelect, Typography } from 'antd';
+import { FC, forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { ContentTypeEnum } from '../../constant';
@@ -28,19 +28,18 @@ type SaveRequestButtonProps = {
       endpoint: string;
       method;
     };
-    headers: requestHeaders;
-    params: requestParams;
+    headers: any[];
+    params: any[];
     preRequestScript: unknown;
     testScript: unknown;
   };
   collectionTreeData: any;
   onSaveAs: any;
 };
-const SaveRequestButton: FC<SaveRequestButtonProps> = ({
-  reqParams,
-  collectionTreeData,
-  onSaveAs,
-}) => {
+const SaveRequestButton: FC<SaveRequestButtonProps> = (
+  { reqParams, collectionTreeData, onSaveAs },
+  ref,
+) => {
   const _useParams = useParams();
   const {
     userInfo: { email: userName },
@@ -53,7 +52,11 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
     setValue(newValue);
   };
 
-  // 深度优先遍历
+  useImperativeHandle(ref, () => ({
+    open: () => {
+      setOpen(true);
+    },
+  }));
 
   const collectionTreeSelectData = useMemo(() => {
     const mapTree = (tree) => {
@@ -69,7 +72,6 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
 
   return (
     <>
-      <Button onClick={() => setOpen(true)}>Save As</Button>
       <Modal
         open={open}
         title='SAVE REQUEST'
@@ -90,7 +92,18 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
                 userName,
               }).then((res) => {
                 FileSystemService.saveInterface({
-                  ...reqParams,
+                  address: {
+                    endpoint: reqParams.endpoint,
+                    method: reqParams.method,
+                  },
+                  body: reqParams.body,
+                  headers: reqParams.headers,
+                  params: reqParams.params,
+                  testScript: reqParams.testScript,
+                  testAddress: {
+                    endpoint: reqParams.compareEndpoint,
+                    method: reqParams.compareMethod,
+                  },
                   id: res.body.infoId,
                   workspaceId: _useParams.workspaceId,
                 }).then((r) => {
@@ -103,7 +116,6 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
                   form.resetFields();
                 });
               });
-              // onCreate(values);
             })
             .catch((info) => {
               console.log('Validate Failed:', info);
@@ -165,4 +177,4 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
   );
 };
 
-export default SaveRequestButton;
+export default forwardRef(SaveRequestButton);
