@@ -15,7 +15,6 @@ interface RunResultProps {
   }[];
 }
 function NewTestResult({ testResult }) {
-  console.log(testResult, 't');
   return (
     <div
       css={css`

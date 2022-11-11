@@ -87,8 +87,12 @@ const BaRuPage: React.FC = () => {
   const { collectionTreeData } = useStore();
 
   const caseTreeData = useMemo(() => {
-    return genCaseTreeData(collectionTreeData.filter((i) => i.key === params.rTypeId));
-  }, [collectionTreeData]);
+    if (params.rType === 'BatchRunPage') {
+      return genCaseTreeData(collectionTreeData.filter((i) => i.key === params.rTypeId));
+    } else {
+      return [];
+    }
+  }, [collectionTreeData, params.rTypeId]);
 
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -127,7 +131,6 @@ const BaRuPage: React.FC = () => {
   }, [caseTreeData, results]);
 
   const onCheck: TreeProps['onCheck'] = (checkedKeys, info) => {
-    console.log('onCheck', checkedKeys, info);
     setCheckValue(checkedKeys);
   };
 
