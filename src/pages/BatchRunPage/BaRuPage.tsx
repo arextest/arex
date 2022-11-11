@@ -58,7 +58,7 @@ const BaRuPage: React.FC = () => {
       caseExecutionResult.push({
         key: caseResArr[i].id,
         request: {
-          endpoint: caseResArr[i].address.endpoint,
+          endpoint: urlPretreatment(caseResArr[i].address.endpoint),
           method: caseResArr[i].address.method,
           testScript: caseResArr[i].testScript,
           params: caseResArr[i].params,
