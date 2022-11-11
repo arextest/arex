@@ -5,6 +5,7 @@ import { Divider } from 'antd';
 import type { TreeProps } from 'antd/es/tree';
 import { GlobalContext } from 'arex-request';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { genCaseTreeData } from '../../helpers/BatchRun/util';
 import { treeFind } from '../../helpers/collection/util';
@@ -29,6 +30,8 @@ const BaRuPage: React.FC = () => {
 
     return url.replace(editorValueMatch[0], replaceVar);
   };
+
+  const params = useParams();
 
   async function batchExecutionCase(runCases, collectionTreeData) {
     // 1.把case过滤出来
@@ -84,7 +87,7 @@ const BaRuPage: React.FC = () => {
   const { collectionTreeData } = useStore();
 
   const caseTreeData = useMemo(() => {
-    return genCaseTreeData(collectionTreeData);
+    return genCaseTreeData(collectionTreeData.filter((i) => i.key === params.rTypeId));
   }, [collectionTreeData]);
 
   const [results, setResults] = useState([]);

@@ -8,8 +8,11 @@ import { useParams } from 'react-router-dom';
 import { methodMap } from '../../constant';
 import SearchHeighLight from '../../helpers/collection/searchHeighLight';
 import { treeFindPath } from '../../helpers/collection/util';
+import { generateGlobalPaneId, uuid } from '../../helpers/utils';
+import { PagesType } from '../../pages';
 import { CollectionService } from '../../services/CollectionService';
 import { useStore } from '../../store';
+import { MenusType } from '../index';
 
 const PrefixIcon = styled(
   (props: { icon: ReactNode; border?: boolean }) => <div {...props}>{props.icon}</div>,
@@ -32,6 +35,7 @@ function CollectionTitle({
   const _useParams = useParams();
   const {
     userInfo: { email: userName },
+    setPages,
   } = useStore();
   const [open, setOpen] = useState(false);
   const [renameKey, setRenameKey] = useState('');
@@ -98,11 +102,34 @@ function CollectionTitle({
                 console.log(res);
                 updateDirectoryTreeData();
               });
+            case '7':
+              setPages(
+                {
+                  key: val.id,
+                  title: 'BatchRun',
+                  pageType: PagesType.BatchRun,
+                  menuType: MenusType.Collection,
+                  isNew: true,
+                  data: undefined,
+                  paneId: generateGlobalPaneId(MenusType.Collection, PagesType.BatchRun, val.id),
+                  rawId: val.id,
+                },
+                'push',
+              );
           }
           e.domEvent.stopPropagation();
           setOpen(false);
         }}
         items={[
+          {
+            key: '7',
+            label: (
+              //必须要用a标签，不然无法disable
+              <span className={'dropdown-click-target'}>Run Folder</span>
+            ),
+            // 只有类型为3才能新增文件夹
+            disabled: val.nodeType !== 3,
+          },
           {
             key: '3',
             label: (

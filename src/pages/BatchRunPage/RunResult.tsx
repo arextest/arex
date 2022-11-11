@@ -17,7 +17,11 @@ interface RunResultProps {
 function NewTestResult({ testResult }) {
   console.log(testResult, 't');
   return (
-    <div>
+    <div
+      css={css`
+        margin-bottom: 12px;
+      `}
+    >
       {testResult.children.map((i) => {
         const isPass = i.expectResults.filter((i) => i.status === 'fail').length === 0 ? 0 : 1;
         const r = [
@@ -53,14 +57,14 @@ function NewTestResult({ testResult }) {
               {r[isPass].text}
             </span>
             <span>{i.descriptor}</span>
-            {i.expectResults.map((ii) => {
+            {i.expectResults.map((e) => {
               return (
                 <span
                   css={css`
                     margin-left: 8px;
                   `}
                 >
-                  ｜{ii.message}
+                  ｜{e.message}
                 </span>
               );
             })}
