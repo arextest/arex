@@ -92,7 +92,7 @@ const BaRuPage: React.FC = () => {
     } else {
       return [];
     }
-  }, [collectionTreeData, params.rTypeId]);
+  }, [collectionTreeData, params.rTypeId, params.rType]);
 
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
