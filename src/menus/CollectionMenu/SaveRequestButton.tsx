@@ -1,4 +1,4 @@
-import { Form, Input, Modal, TreeSelect, Typography } from 'antd';
+import { Form, Input, Modal, Select, TreeSelect, Typography } from 'antd';
 import { FC, forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -47,7 +47,7 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = (
   const [form] = Form.useForm();
   const [value, setValue] = useState<string>();
   const [open, setOpen] = useState<boolean>(false);
-
+  const [nodeType, setNodeType] = useState<string>('1');
   const onChange = (newValue: string) => {
     setValue(newValue);
   };
@@ -63,18 +63,19 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = (
       const haveChildren = Array.isArray(tree.children) && tree.children.length > 0;
       return {
         ...tree,
-        disabled: tree.nodeType !== 3,
+        disabled:
+          (tree.nodeType !== 3 && nodeType === '1') || (nodeType === '2' && tree.nodeType !== 1),
         children: haveChildren ? tree.children.map((i) => mapTree(i)) : [],
       };
     };
     return mapTree({ children: collectionTreeData })['children'];
-  }, [collectionTreeData]);
+  }, [collectionTreeData, nodeType]);
 
   return (
     <>
       <Modal
         open={open}
-        title='SAVE REQUEST'
+        title={`SAVE ${nodeType === '1' ? 'REQUEST' : 'CASE'}`}
         okText='Create'
         cancelText='Cancel'
         onCancel={() => setOpen(false)}
@@ -85,13 +86,17 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = (
               CollectionService.addItem({
                 id: _useParams.workspaceId,
                 nodeName: values.requestName,
-                nodeType: 1,
+                nodeType: values.nodeType,
                 parentPath: treeFindPath(collectionTreeData, (node) => node.key === value)?.map(
                   (i) => i.key,
                 ),
                 userName,
               }).then((res) => {
-                FileSystemService.saveInterface({
+                const req = {
+                  '1': FileSystemService.saveInterface,
+                  '2': FileSystemService.saveCase,
+                };
+                req[values.nodeType]({
                   address: {
                     endpoint: reqParams.endpoint,
                     method: reqParams.method,
@@ -128,8 +133,20 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = (
           name='form_in_modal'
           initialValues={{
             modifier: 'public',
+            nodeType: '1',
           }}
         >
+          <Form.Item name='nodeType' label='Type'>
+            <Select
+              options={[
+                { label: 'Request', value: '1' },
+                { label: 'Case', value: '2' },
+              ]}
+              onSelect={(val) => {
+                setNodeType(val);
+              }}
+            />
+          </Form.Item>
           <Form.Item
             name='requestName'
             label='Request name'

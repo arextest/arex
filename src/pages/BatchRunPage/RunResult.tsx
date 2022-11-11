@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { Empty, Spin, Tag } from 'antd';
-import { TestResult } from 'arex-request';
-import { FC, useMemo } from 'react';
+import { GlobalContext, TestResult } from 'arex-request';
+import { FC, useContext, useMemo } from 'react';
 
 // import { TestResult } from '../../components/ArexRequestComponent/lib';
 interface RunResultProps {
@@ -74,13 +74,27 @@ function NewTestResult({ testResult }) {
   );
 }
 const RunResult: FC<RunResultProps> = ({ result, loading }) => {
-  const ssss = useMemo(() => {
+  const { store: globalStore } = useContext(GlobalContext);
+  const realResult = useMemo(() => {
     return result.filter((i) => i.children.filter((f) => f.testResult).length > 0);
   }, [result]);
+  const urlPretreatment = (url: string) => {
+    // 正则匹配{{}}
+    const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
+    let replaceVar = editorValueMatch[0];
+    const env = globalStore.environment?.keyValues || [];
+    for (let i = 0; i < env.length; i++) {
+      if (env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')) {
+        replaceVar = env[i].value;
+      }
+    }
+
+    return url.replace(editorValueMatch[0], replaceVar);
+  };
   return (
     <Spin spinning={loading}>
-      {ssss.length > 0 ? (
-        ssss.map((resultItem) => (
+      {realResult.length > 0 ? (
+        realResult.map((resultItem) => (
           <div>
             <div
               css={css`
@@ -114,7 +128,7 @@ const RunResult: FC<RunResultProps> = ({ result, loading }) => {
                   font-size: 12px;
                 `}
               >
-                {resultItem?.request.address?.endpoint}
+                {urlPretreatment(resultItem?.request.address?.endpoint)}
               </div>
             </div>
 
