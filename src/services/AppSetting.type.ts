@@ -33,7 +33,7 @@ export interface QueryRecordDynamicClassSettingReq {
 
 export type DynamicClass = {
   modifiedTime?: string;
-  id?: string;
+  id: string;
   appId?: string;
   fullClassName: string;
   methodName?: string;
@@ -42,16 +42,20 @@ export type DynamicClass = {
 };
 export type QueryRecordDynamicClassSettingRes = DynamicClass[];
 
-export interface UpdateDynamicClassSettingReq {
+export interface InsertSettingReqInsert {
   appId: string;
   fullClassName: string;
   methodName?: string;
-  parameterTypes?: string;
-  keyFormula?: string;
+  parameterTypes?: string | null;
   configType: number;
 }
 
-export type UpdateDynamicClassSettingRes = boolean;
+export type UpdateSettingReqInsert = {
+  id: string;
+  fullClassName: string;
+  methodName?: string;
+  parameterTypes?: string | null;
+};
 
 export interface RemoveDynamicClassSettingReq {
   appId: string;
