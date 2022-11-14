@@ -79,7 +79,7 @@ const MenuFilter = styled((props: MenuFilterProps) => {
           size={props.size}
           icon={<SyncOutlined />}
           onClick={props.onFresh}
-          style={{ padding: '0 8px' }}
+          style={{ padding: '0 6px' }}
         />
       )}
       <Input.Search

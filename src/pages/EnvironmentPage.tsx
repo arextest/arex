@@ -94,7 +94,6 @@ const DraggableBodyRow = ({
                         className={keys !== rowactiveindex ? 'hide' : ''}
                         css={css`
                           cursor: move;
-                          display: ;
                         `}
                         ref={ref}
                       />

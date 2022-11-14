@@ -30,6 +30,7 @@ const ReplayMenu: FC = () => {
 
   return (
     <MenuSelect<ApplicationDataType>
+      small
       refresh
       rowKey='id'
       initValue={value}

@@ -1,4 +1,10 @@
-import { DownOutlined, GatewayOutlined, MenuOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  DownOutlined,
+  GatewayOutlined,
+  MenuOutlined,
+  PlusOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Empty, Input, Spin, Tree } from 'antd';
@@ -474,7 +480,7 @@ const CollectionMenu = () => {
                 className={'collection-header-search'}
                 size='small'
                 placeholder=''
-                prefix={<MenuOutlined />}
+                prefix={<SearchOutlined />}
                 onChange={onChange}
               />
               {/*<Tooltip placement='bottomLeft' title={'View more actions'} mouseEnterDelay={0.5}>*/}

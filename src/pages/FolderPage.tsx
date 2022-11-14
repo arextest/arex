@@ -1,9 +1,9 @@
-import { Select, Tabs, Typography } from 'antd';
-import { FC } from 'react';
+import { Tabs } from 'antd';
 
-const { Text } = Typography;
+import { Authorization, PreRequestScript } from '../components/Folder';
+import { PageFC } from './index';
 
-const FolderPage: FC = () => {
+const FolderPage: PageFC = () => {
   const onChange = (key: string) => {
     console.log(key);
   };
@@ -16,44 +16,12 @@ const FolderPage: FC = () => {
           {
             key: 'authorization',
             label: 'Authorization',
-            children: (
-              <>
-                <div style={{ marginBottom: '20px' }}>
-                  <Text>
-                    This authorization method will be used for every request in this folder. You can
-                    override this by specifying one in the request.
-                  </Text>
-                </div>
-                <div style={{ padding: '10px' }}>
-                  <div style={{ marginBottom: '20px' }}>
-                    <div style={{ width: '200px', display: 'inline-block' }}>
-                      <Text strong>Type</Text>
-                    </div>
-                    <Select
-                      style={{ width: '200px' }}
-                      options={[
-                        {
-                          value: 'parent',
-                          label: 'Inherit auth from parent',
-                        },
-                      ]}
-                      disabled
-                      value={'parent'}
-                    />
-                  </div>
-                  <Text type='secondary'>
-                    The authorization header will be automatically generated when you send the
-                    request.
-                  </Text>
-                </div>
-              </>
-            ),
+            children: <Authorization />,
           },
           {
             key: 'pre-requestScript',
             label: 'Pre-request Script',
-            children: 'Content of Pre-request Script',
-            disabled: true,
+            children: <PreRequestScript />,
           },
           {
             key: 'tests',
