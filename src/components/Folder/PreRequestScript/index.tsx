@@ -18,7 +18,7 @@ const getItems = (count: number): ScriptBlock<string>[] =>
     id: uuid(),
     type: ScriptBlockType.CustomScript,
     icon: <CodeOutlined />,
-    title: '自定义代脚本',
+    title: '自定义脚本',
     data: '',
     disabled: false,
   }));
