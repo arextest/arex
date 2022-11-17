@@ -16,9 +16,14 @@ const includeStyles = {
     border: 'none',
     'box-shadow': 'none',
   },
-  '.ant-input-borderless,.ant-input': {
+  '.ant-input-borderless': {
     border: 'none',
     'box-shadow': 'none',
+  },
+  '.ant-input-affix-wrapper>.ant-input': {
+    'font-size': 'inherit',
+    border: 'none',
+    outline: 'none',
   },
   '.ant-menu': {
     'box-shadow': 'none',
