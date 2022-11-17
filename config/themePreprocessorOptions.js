@@ -20,10 +20,8 @@ const includeStyles = {
     border: 'none',
     'box-shadow': 'none',
   },
-  '.ant-input-affix-wrapper>.ant-input': {
-    'font-size': 'inherit',
+  '.ant-input-affix-wrapper > .ant-input': {
     border: 'none',
-    outline: 'none',
   },
   '.ant-menu': {
     'box-shadow': 'none',
