@@ -118,9 +118,9 @@ const Setting: FC = () => {
   useRequest(() => UserService.userProfile(email as string), {
     ready: !!email,
     onSuccess(res) {
-      const profile = res.profile;
+      const profile: any = res.profile;
 
-      let themeName: ThemeName = profile.theme || DefaultConfig.theme;
+      let themeName: ThemeName = profile.theme;
       const validTheme = themeName in themeMap;
       !validTheme && (themeName = DefaultConfig.theme);
       const [themeMode] = themeName.split('-');
