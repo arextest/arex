@@ -120,7 +120,7 @@ const HttpRequestPage: PageFC = (props) => {
           onSendCompare={(e) => {
             return AgentAxiosCompare(e);
           }}
-          requestaxios={request}
+          requestAxios={request}
         />
         <SaveRequestButton
           reqParams={reqParams}
