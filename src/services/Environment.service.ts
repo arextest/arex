@@ -1,10 +1,10 @@
-import request from '../api/axios';
+import request from '../helpers/api/axios';
 import {
+  EnvironmentDuplicate,
+  EnvironmentRemove,
   EnvironmentSave,
   GetEnvironmentReq,
   GetEnvironmentRes,
-  EnvironmentDuplicate,
-  EnvironmentRemove,
 } from './Environment.type';
 
 export default class EnvironmentService {

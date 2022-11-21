@@ -1,7 +1,7 @@
-import request from '../api/axios';
+import request from '../helpers/api/axios';
 import { CreateWorkspaceReq, CreateWorkspaceRes, Workspace } from './Workspace.type';
 
-export class WorkspaceService {
+export default class WorkspaceService {
   static listWorkspace({ userName }: { userName: string }) {
     return request
       .post<{ workspaces: Workspace[] }>(`/api/filesystem/queryWorkspacesByUser`, {

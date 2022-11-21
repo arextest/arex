@@ -20,6 +20,9 @@ const includeStyles = {
     border: 'none',
     'box-shadow': 'none',
   },
+  '.ant-input-affix-wrapper > .ant-input': {
+    border: 'none',
+  },
   '.ant-menu': {
     'box-shadow': 'none',
   },

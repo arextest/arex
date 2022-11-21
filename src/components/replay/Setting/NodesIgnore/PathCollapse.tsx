@@ -1,98 +1,204 @@
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { css } from '@emotion/react';
-import { Button, Collapse, List } from 'antd';
-import React, { FC, useEffect, useMemo } from 'react';
+import {
+  CheckOutlined,
+  CloseOutlined,
+  CodeOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import styled from '@emotion/styled';
+import { useRequest } from 'ahooks';
+import type { InputRef } from 'antd';
+import { Button, Collapse, Input, List, message, Spin } from 'antd';
+import React, { FC, SyntheticEvent, useRef, useState } from 'react';
 
-export enum IgnoreType {
-  Global,
-  Interfaces,
-}
-export const GLOBAL_KEY = '__global__';
+import AppSettingService from '../../../../services/AppSetting.service';
+import { IgnoreNode, OperationId, OperationInterface } from '../../../../services/AppSetting.type';
+import { TooltipButton } from '../../../index';
+import { SpaceBetweenWrapper } from '../../../styledComponents';
 
-type GlobalCheckedNodes = string[];
-type InterfacesCheckedNodes = { [key: string]: string[] };
+export type InterfacePick = Pick<OperationInterface, 'id' | 'operationName'>;
+
+const PathCollapseWrapper = styled.div`
+  margin-bottom: 16px;
+  .ant-collapse-content-box {
+    padding: 0 !important;
+  }
+`;
+
 type PathCollapseProps = {
-  activeKey?: string;
-  onChange: (path: string) => void;
-  onSelect: (path: string | undefined, selected: string[]) => void;
-  interfaces?: string[]; // 当不传 interfaces 时认为是 Global 类型
-  checkedNodes: GlobalCheckedNodes | InterfacesCheckedNodes;
+  appId: string;
+  title?: string;
+  activeKey?: OperationId<'Global'>;
+  interfaces: InterfacePick[];
+  ignoreNodes: IgnoreNode[];
+  loading?: boolean;
+  loadingPanel?: boolean;
+  manualEdit?: boolean;
+  onChange: (path?: InterfacePick, maintain?: boolean) => void;
+  onReloadNodes?: () => void;
+  onEditResponse?: (operationInterface: InterfacePick) => void;
 };
 
 const PathCollapse: FC<PathCollapseProps> = (props) => {
-  const type = useMemo<IgnoreType>(
-    () => (Array.isArray(props.interfaces) ? IgnoreType.Interfaces : IgnoreType.Global),
-    [props.interfaces],
-  );
+  const editInputRef = useRef<InputRef>(null);
+  const [ignoredKey, setIgnoredKey] = useState('');
+  const [editMode, setEditMode] = useState(false);
 
-  useEffect(() => {
-    if (Array.isArray(props.interfaces) && Array.isArray(props.checkedNodes)) {
-      console.error('props checkedNodes type error');
+  const handleAddKey = (e: SyntheticEvent, path: InterfacePick) => {
+    e.stopPropagation();
+    if (props.manualEdit) {
+      setEditMode(true);
+      setTimeout(() =>
+        editInputRef.current?.focus({
+          cursor: 'start',
+        }),
+      );
     }
-  }, []);
+    props.onChange?.(path, true);
+  };
+
+  /**
+   * 新增 Global IgnoreNode 数据
+   */
+  const { run: insertIgnoreNode } = useRequest(AppSettingService.insertIgnoreNode, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        message.success('Update successfully');
+        handleExitEdit();
+        props.onReloadNodes?.();
+      }
+    },
+  });
+  const handleEditSave = () => {
+    if (!ignoredKey) {
+      message.warn('Please enter ignored key');
+      return;
+    }
+    insertIgnoreNode({
+      appId: props.appId,
+      operationId: null,
+      exclusions: ignoredKey.split('/').filter(Boolean),
+    });
+  };
+
+  /**
+   * 删除 IgnoreNode
+   */
+  const { run: deleteIgnoreNode } = useRequest(AppSettingService.deleteIgnoreNode, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        props.onReloadNodes?.();
+        message.success('Delete successfully');
+      } else {
+        message.error('Delete failed');
+      }
+    },
+  });
+
+  const handleExitEdit = () => {
+    setIgnoredKey('');
+    setEditMode(false);
+  };
 
   return (
-    <Collapse
-      accordion
-      activeKey={props.activeKey}
-      css={css`
-        .ant-collapse-content-box {
-          padding: 0 !important;
-        }
-      `}
-      onChange={(activeKey) =>
-        props.onChange &&
-        props.onChange(type === IgnoreType.Global ? GLOBAL_KEY : (activeKey as string))
-      }
-    >
-      {(type === IgnoreType.Global ? [GLOBAL_KEY] : (props.interfaces as [])).map((path) => {
-        const checkedNodes =
-          type === IgnoreType.Global
-            ? (props.checkedNodes as GlobalCheckedNodes)
-            : (props.checkedNodes as InterfacesCheckedNodes)[path];
-        return (
-          <Collapse.Panel
-            key={path}
-            header={`${type === IgnoreType.Interfaces ? path : 'Global'}`}
-            extra={
-              <span>
-                <span style={{ marginRight: '8px' }}>{`${checkedNodes?.length ?? 0} keys`}</span>
-              </span>
-            }
-          >
-            <List
-              size='small'
-              dataSource={checkedNodes}
-              renderItem={(key) => (
-                <List.Item>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      width: '100%',
-                    }}
-                  >
-                    <span>{key}</span>
-                    <Button
-                      type='text'
-                      size='small'
-                      icon={<DeleteOutlined />}
-                      onClick={() =>
-                        props.onSelect(
-                          path,
-                          checkedNodes.filter((p) => p !== key),
-                        )
-                      }
-                    />
-                  </div>
-                </List.Item>
-              )}
-              locale={{ emptyText: 'No Ignored Nodes' }}
-            />
-          </Collapse.Panel>
-        );
-      })}
-    </Collapse>
+    <PathCollapseWrapper>
+      <h3>{props.title}</h3>
+      <Spin spinning={props.loading || false}>
+        <Collapse
+          accordion
+          activeKey={props.activeKey || undefined}
+          onChange={(id) =>
+            props.onChange?.(
+              props.interfaces.find((i) => i.id === id),
+              false,
+            )
+          }
+        >
+          {props.interfaces && Array.isArray(props.interfaces) ? (
+            props.interfaces.map((path) => {
+              return (
+                <Collapse.Panel
+                  key={String(path.id)}
+                  header={path.operationName}
+                  extra={[
+                    <TooltipButton
+                      key='add'
+                      title='Add Key'
+                      icon={<PlusOutlined />}
+                      onClick={(e) => handleAddKey(e, path)}
+                    />,
+                    !props.manualEdit && (
+                      <TooltipButton
+                        key='editResponse'
+                        title='Edit Response'
+                        icon={<CodeOutlined />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          props.onEditResponse?.(path);
+                        }}
+                      />
+                    ),
+                  ]}
+                >
+                  <List
+                    size='small'
+                    dataSource={props.ignoreNodes}
+                    loading={props.loadingPanel}
+                    header={
+                      editMode && (
+                        <List.Item style={{ padding: '0 8px' }}>
+                          <SpaceBetweenWrapper width={'100%'}>
+                            <Input
+                              size='small'
+                              placeholder='Ignored key'
+                              ref={editInputRef}
+                              value={ignoredKey}
+                              onChange={(e) => setIgnoredKey(e.target.value)}
+                            />
+                            <span style={{ display: 'flex', marginLeft: '8px' }}>
+                              <Button
+                                type='text'
+                                size='small'
+                                icon={<CloseOutlined />}
+                                onClick={handleExitEdit}
+                              />
+                              <Button
+                                type='text'
+                                size='small'
+                                icon={<CheckOutlined />}
+                                onClick={handleEditSave}
+                              />
+                            </span>
+                          </SpaceBetweenWrapper>
+                        </List.Item>
+                      )
+                    }
+                    renderItem={(node) => (
+                      <List.Item>
+                        <SpaceBetweenWrapper width={'100%'}>
+                          <span>{node.exclusions.join('/')}</span>
+                          <Button
+                            type='text'
+                            size='small'
+                            icon={<DeleteOutlined />}
+                            onClick={() => deleteIgnoreNode({ id: node.id })}
+                          />
+                        </SpaceBetweenWrapper>
+                      </List.Item>
+                    )}
+                    locale={{ emptyText: 'No Ignored Nodes' }}
+                  />
+                </Collapse.Panel>
+              );
+            })
+          ) : (
+            <></>
+          )}
+        </Collapse>
+      </Spin>
+    </PathCollapseWrapper>
   );
 };
 

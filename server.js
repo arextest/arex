@@ -39,16 +39,26 @@ app.use(
   }),
 );
 
+app.use(
+  '/storage',
+  createProxyMiddleware({
+    target: process.env.SERVICE_STORAGE_URL,
+    changeOrigin: true,
+    pathRewrite: { '/storage': '/api' },
+  }),
+);
+
 // 健康检查
 app.get('/vi/health', (req, res) => {
   res.end(`365ms`);
 });
-
+// storage
 app.get('/env', (req, res) => {
   res.send({
     SERVICE_REPORT_URL: process.env.SERVICE_REPORT_URL,
     SERVICE_CONFIG_URL: process.env.SERVICE_CONFIG_URL,
     SERVICE_SCHEDULE_URL: process.env.SERVICE_SCHEDULE_URL,
+    SERVICE_STORAGE_URL: process.env.SERVICE_STORAGE_URL,
   });
 });
 

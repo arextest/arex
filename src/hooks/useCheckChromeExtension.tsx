@@ -1,13 +1,12 @@
 import { message } from 'antd';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-
 import { useStore } from '../store';
 
 const useCheckChromeExtension = () => {
   const { t } = useTranslation('components');
-
   const { extensionVersion } = useStore();
+
   useEffect(() => {
     if (!window.__AREX_EXTENSION_INSTALLED__) {
       useStore.setState({ extensionInstalled: false });

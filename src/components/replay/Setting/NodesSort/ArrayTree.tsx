@@ -1,15 +1,18 @@
 import { css } from '@emotion/react';
-import { Badge, Card, Tree } from 'antd';
+import { Badge, Card, Spin, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
-import { FC } from 'react';
+import React, { FC } from 'react';
 
+import { SortNode } from '../../../../services/AppSetting.type';
 import { useStore } from '../../../../store';
 
 type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
-  sortedKeys?: { [key: string]: string[] };
+  sortNodeList?: SortNode[];
+  loading?: boolean;
   treeData: object;
   title?: string;
+  onEditResponse?: () => void;
 };
 
 const ArrayTree: FC<ResponseTreeProps> = (props) => {
@@ -20,40 +23,44 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
   } = useStore();
 
   function getNodes(object: object, basePath = ''): DataNode[] {
-    const entries = Object.entries(object).filter(([, value]) => Array.isArray(value));
+    const entries = Object.entries(object);
     return entries.map(([key, value]) => {
       const path = basePath + key + '/';
       return value && typeof value === 'object'
         ? {
             title: key,
             key: path,
-            children: getNodes(value, path),
-            icon: props.sortedKeys?.[path]?.length && <Badge color={theme.split('-')[1]} />, // 已配置过的节点使用圆点进行提示
+            children: getNodes(Array.isArray(value) ? value[0] || {} : value, path),
+            disabled: !Array.isArray(value),
+            icon: props.sortNodeList?.find((node) => node.path === path)?.pathKeyList?.length && (
+              <Badge color={theme.split('-')[1]} />
+            ), // 已配置过的节点使用圆点进行提示
           }
-        : { title: key, key: path, value };
+        : { title: key, key: path, value, disabled: !Array.isArray(value) };
     });
   }
 
   return (
     <Card
       bordered={false}
-      title={`${props.title} (click node to ignore)`}
+      title={`${props.title} (choose one array node)`}
       bodyStyle={{ padding: '8px 16px' }}
       headStyle={{ padding: '0 16px', margin: '-8px 0' }}
     >
-      <Tree
-        showIcon
-        defaultExpandAll
-        {...props}
-        selectedKeys={[]}
-        treeData={getNodes(props.treeData, '')}
-        css={css`
-          .ant-tree-icon__customize {
-            position: absolute;
-            left: -16px;
-          }
-        `}
-      />
+      <Spin spinning={props.loading}>
+        <Tree
+          showIcon
+          defaultExpandAll
+          {...props}
+          selectedKeys={[]}
+          treeData={getNodes(props.treeData, '')}
+          css={css`
+            .ant-tree-icon__customize {
+              float: right;
+            }
+          `}
+        />
+      </Spin>
     </Card>
   );
 };

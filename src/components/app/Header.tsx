@@ -2,15 +2,14 @@ import { SettingOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Avatar, Divider, Dropdown, Menu } from 'antd';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import { PageTypeEnum } from '../../constant';
-import Setting from '../../pages/Setting';
+import { generateGlobalPaneId } from '../../helpers/utils';
+import { PagesType } from '../../pages';
+import SettingPage from '../../pages/SettingPage';
 import { useStore } from '../../store';
 import GitHubStarButton from '../GitHubStarButton';
 import { TooltipButton } from '../index';
 import InviteWorkspace from '../workspace/Invite';
-import { generateGlobalPaneId } from '../../utils';
 
 const HeaderWrapper = styled.div`
   .app-header {
@@ -41,17 +40,17 @@ const AppHeader = () => {
     userInfo: { email },
     themeClassify,
     logout,
-    setPanes,
+    setPages,
   } = useStore();
 
   const handleSetting = () => {
-    setPanes(
+    setPages(
       {
         // key: '__SETTING__',
         title: 'Setting',
-        pageType: PageTypeEnum.Setting,
+        pageType: PagesType.Setting,
         isNew: false,
-        paneId: generateGlobalPaneId('-', PageTypeEnum.Setting, 'SETTING'),
+        paneId: generateGlobalPaneId('-', PagesType.Setting, 'SETTING'),
         rawId: 'SETTING',
       },
       'push',

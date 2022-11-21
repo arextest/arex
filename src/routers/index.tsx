@@ -1,11 +1,14 @@
-import { Login } from '../components';
-import MainBox from '../layouts/MainBox';
-import ValidInvitation from '../components/Login/ValidInvitation';
+import { Login, MainBox, ValidInvitation } from '../views';
+import UpgradeBrowser from '../views/UpgradeBrowser';
 
 export default [
   {
     path: '/',
     element: <MainBox />,
+  },
+  {
+    path: '/upgradebrowser',
+    element: <UpgradeBrowser />,
   },
   {
     path: '/login',

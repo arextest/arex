@@ -6,19 +6,23 @@ import {
   PlusOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
+import { ArrowLeftOutlined, DownOutlined, UpOutlined } from '@ant-design/icons/lib';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Input, message, Select, Tooltip } from 'antd';
-import React, { useMemo, useState } from 'react';
+import { Button, Input, message, Modal, Select, Tooltip, Upload } from 'antd';
+import React, { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { MenuTypeEnum, PageTypeEnum, RoleEnum } from '../../constant';
-import { WorkspaceService } from '../../services/Workspace.service';
-import { Workspace } from '../../services/Workspace.type';
+import { RoleEnum } from '../../constant';
+import { generateGlobalPaneId } from '../../helpers/utils';
+import { MenusType } from '../../menus';
+import { PagesType } from '../../pages';
+import EnvironmentService from '../../services/Environment.service';
+import { FileSystemService } from '../../services/FileSystem.service';
+import WorkspaceService from '../../services/Workspace.service';
 import { useStore } from '../../store';
 import { TooltipButton } from '../index';
-import { generateGlobalPaneId } from '../../utils';
 
 const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
   height: 35px;
@@ -38,13 +42,18 @@ const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
   }
 `;
 
-const WorkspacesMenu = () => {
+const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
   const params = useParams();
   const nav = useNavigate();
-  const { userInfo, collapseMenu, workspaces, setWorkspaces, setPanes, resetPanes } = useStore();
+  const { userInfo, workspaces, setWorkspaces, setPages, setEnvironmentTreeData, resetPanes } =
+    useStore();
   const [editMode, setEditMode] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [status, setStatus] = useState<'' | 'error'>('');
+  const [importView, setImportView] = useState(false);
+  const [allImportItem, setAllImportItem] = useState(false);
+  const [importType, setImportType] = useState('');
+  const [importFile, setImportFile] = useState<string>();
 
   const { run: getWorkspaces } = useRequest(
     (to?: { workspaceId: string; workspaceName: string }) =>
@@ -64,6 +73,18 @@ const WorkspacesMenu = () => {
     },
   );
 
+  // TODO 需要应用载入时就获取环境变量，此处与envPage初始化有重复代码
+  useRequest(
+    () => EnvironmentService.getEnvironment({ workspaceId: params.workspaceId as string }),
+    {
+      ready: !!params.workspaceId,
+      refreshDeps: [params.workspaceId],
+      onSuccess(res) {
+        setEnvironmentTreeData(res);
+      },
+    },
+  );
+
   const handleAddWorkspace = () => {
     if (newWorkspaceName === '') {
       setStatus('error');
@@ -79,15 +100,15 @@ const WorkspacesMenu = () => {
   const handleEditWorkspace = () => {
     params.workspaceName &&
       params.workspaceId &&
-      setPanes(
+      setPages(
         {
           title: params.workspaceName,
-          menuType: MenuTypeEnum.Collection,
-          pageType: PageTypeEnum.WorkspaceOverview,
+          menuType: MenusType.Collection,
+          pageType: PagesType.WorkspaceOverview,
           isNew: true,
           paneId: generateGlobalPaneId(
-            MenuTypeEnum.Collection,
-            PageTypeEnum.WorkspaceOverview,
+            MenusType.Collection,
+            PagesType.WorkspaceOverview,
             params.workspaceId,
           ),
           rawId: params.workspaceId,
@@ -120,30 +141,44 @@ const WorkspacesMenu = () => {
     setNewWorkspaceName('');
   };
 
-  const currentWorkspaceName = useMemo(() => {
-    const roleList: { [key: string]: string } = {
-      [RoleEnum.Admin]: 'Admin',
-      [RoleEnum.Editor]: 'Editor',
-      [RoleEnum.Viewer]: 'Viewer',
-    };
-    const currentWorkspace =
-      workspaces.find((i) => i.id === params.workspaceId) || ({} as Workspace);
-    const role = workspaces.find((i) => i.id === params.workspaceId)?.role;
-    const roleName = roleList[role || RoleEnum.Viewer];
-    return currentWorkspace.workspaceName ? `${currentWorkspace.workspaceName} - ${roleName}` : '';
-  }, [params.workspaceId, workspaces]);
+  const viewImport = () => {
+    params.workspaceName && params.workspaceId && setImportView(true);
+  };
+
+  const handleImport = () => {
+    if (params.workspaceName && params.workspaceId && importFile) {
+      const param = {
+        workspaceId: params.workspaceId,
+        path: [],
+        type: 1,
+        importString: importFile,
+      };
+      FileSystemService.importFile(param).then((res) => {
+        console.log(res);
+        if (res.body && res.body.success) {
+          message.success('Import success!');
+          setImportView(false);
+          setImportType('');
+          setImportFile(undefined);
+        } else {
+          message.error('Import fail!');
+        }
+        return;
+      });
+    }
+  };
 
   return (
-    <WorkspacesMenuWrapper width={collapseMenu ? '100%' : 'calc(100% + 10px)'}>
+    <WorkspacesMenuWrapper width={props.collapse ? '100%' : 'calc(100% + 10px)'}>
       <Tooltip
-        title={`Workspace${collapseMenu ? ': ' + params.workspaceName : ''}`}
+        title={`Workspace${props.collapse ? ': ' + params.workspaceName : ''}`}
         placement='right'
       >
         <GlobalOutlined
-          style={{ marginLeft: collapseMenu ? '12px' : '0', transition: 'all 0.2s' }}
+          style={{ marginLeft: props.collapse ? '12px' : '0', transition: 'all 0.2s' }}
         />
       </Tooltip>
-      {!collapseMenu && (
+      {!props.collapse && (
         <>
           <div>
             {editMode ? (
@@ -208,8 +243,85 @@ const WorkspacesMenu = () => {
               title='Edit Workspace'
               onClick={handleEditWorkspace}
             />
-            <TooltipButton icon={<UploadOutlined />} title='Import' />
+            <TooltipButton icon={<UploadOutlined />} title='Import' onClick={viewImport} />
           </div>
+
+          <Modal
+            open={importView}
+            onCancel={() => setImportView(false)}
+            footer={false}
+            width={300}
+            title={
+              <div>
+                {importType != '' ? (
+                  <span style={{ marginRight: 20, float: 'left' }}>
+                    <ArrowLeftOutlined onClick={() => setImportType('')} />
+                  </span>
+                ) : null}
+                Collections
+              </div>
+            }
+          >
+            {importType != '' ? (
+              <div>
+                <div
+                  css={css`
+                    margin-bottom: 10px;
+                  `}
+                >
+                  Import {importType}
+                </div>
+                <Upload
+                  maxCount={1}
+                  onRemove={() => setImportFile(undefined)}
+                  beforeUpload={(file) => {
+                    const reader = new FileReader();
+                    reader.readAsText(file);
+                    reader.onload = (e) => {
+                      const content = e.target.result;
+                      try {
+                        JSON.parse(content);
+                        setImportFile(content);
+                      } catch (e) {
+                        message.warn('Not json file!');
+                      }
+                    };
+                    return false;
+                  }}
+                >
+                  <Button icon={<UploadOutlined />}>Select File</Button>
+                </Upload>
+                <Button
+                  type='primary'
+                  disabled={!importFile}
+                  style={{ width: '100%', marginTop: 15 }}
+                  onClick={handleImport}
+                >
+                  Import
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <Button type='text' onClick={() => setImportType('collection')}>
+                  Import collection
+                </Button>
+                <br />
+                {/*<Button type='text' onClick={() => setImportType('case')}>*/}
+                {/*  Import cases*/}
+                {/*</Button>*/}
+                <br />
+                {/*<Button*/}
+                {/*  shape='round'*/}
+                {/*  icon={allImportItem ? <UpOutlined /> : <DownOutlined />}*/}
+                {/*  size='small'*/}
+                {/*  style={{ color: 'white', marginTop: 5, marginLeft: 16 }}*/}
+                {/*  onClick={() => setAllImportItem(!allImportItem)}*/}
+                {/*>*/}
+                {/*  {allImportItem ? 'less' : 'more'}*/}
+                {/*</Button>*/}
+              </div>
+            )}
+          </Modal>
         </>
       )}
     </WorkspacesMenuWrapper>

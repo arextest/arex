@@ -1,5 +1,5 @@
-import { I18nextLng } from './i18n/index.js';
-import { FontSize } from './pages/Setting.js';
+import { I18nextLng } from './i18n';
+import { FontSize } from './pages/SettingPage';
 import { Theme, ThemeClassify, ThemeName } from './style/theme';
 import DarkPurple from './style/theme/darkPurple';
 

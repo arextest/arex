@@ -1,4 +1,4 @@
-import request from '../api/axios';
+import request from '../helpers/api/axios';
 import {
   QueryInterfaceReq,
   QueryInterfaceRes,
@@ -25,5 +25,9 @@ export class FileSystemService {
 
   static async queryCase(params: any) {
     return request.post<any>(`/api/filesystem/queryCase`, params);
+  }
+
+  static async importFile(params: any) {
+    return request.post<any>(`/api/filesystem/import`, params);
   }
 }

@@ -1,7 +1,7 @@
-import request from '../api/axios';
 import { UserInfoKey } from '../constant';
+import request from '../helpers/api/axios';
+import { getLocalStorage, tryParseJsonString } from '../helpers/utils';
 import { Profile, UserInfo } from '../store';
-import { getLocalStorage, tryParseJsonString } from '../utils';
 
 export class UserService {
   static userProfile(email: string) {

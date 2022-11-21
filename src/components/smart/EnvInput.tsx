@@ -1,5 +1,5 @@
 import { hoverTooltip } from '@codemirror/view';
-import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import { FC, useRef } from 'react';
 
 import { useEnvCodeMirror } from '../../helpers/editor/extensions/EnvCodeMirror';
@@ -9,14 +9,20 @@ import {
 } from '../../helpers/editor/extensions/HoppEnvironment';
 import { useStore } from '../../store';
 
+const SmartEnvInputWrapper = styled.div`
+  flex: 1;
+  overflow: hidden;
+  border: 1px solid ${(props) => props.theme.color.border.primary};
+`;
+
 interface SmartEnvInputProps {
   value: string;
   onChange: (e: any) => void;
 }
 const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
   const smartEnvInputRef = useRef(null);
-  const { currentEnvironment } = useStore();
-
+  const { currentEnvironment, themeClassify } = useStore();
+  // console.log(themeClassify,'themeClassify')
   useEnvCodeMirror({
     container: smartEnvInputRef.current,
     value: value,
@@ -56,20 +62,13 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
       });
     },
     currentEnv: currentEnvironment,
-    theme: 'dark',
+    theme: themeClassify,
   });
 
   return (
-    <div
-      className={'smart-env'}
-      css={css`
-        width: 100%;
-        display: inline-block;
-        border: 1px solid #434343;
-      `}
-    >
-      <div ref={smartEnvInputRef}></div>
-    </div>
+    <SmartEnvInputWrapper className={'smart-env'}>
+      <div ref={smartEnvInputRef} />
+    </SmartEnvInputWrapper>
   );
 };
 

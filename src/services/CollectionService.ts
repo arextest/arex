@@ -1,6 +1,6 @@
 import { message } from 'antd';
 
-import request from '../api/axios';
+import request from '../helpers/api/axios';
 import { collectionOriginalTreeToAntdTreeData } from '../helpers/collection/util';
 import { QueryWorkspaceByIdReq, QueryWorkspaceByIdRes } from './CollectionService.type';
 
@@ -10,6 +10,7 @@ export interface NodeList {
   title: string;
   key: string;
   nodeType: number;
+  method: string;
 }
 
 export class CollectionService {

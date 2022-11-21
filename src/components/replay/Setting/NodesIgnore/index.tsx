@@ -1,11 +1,15 @@
-import { Button, Col, Row, Select } from 'antd';
+import { useRequest } from 'ahooks';
+import { Col, message, Row } from 'antd';
+import { TreeProps } from 'antd/lib/tree';
 import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { tryParseJsonString } from '../../../../utils';
+import { tryParseJsonString, tryPrettierJsonString } from '../../../../helpers/utils';
+import AppSettingService from '../../../../services/AppSetting.service';
+import { OperationId } from '../../../../services/AppSetting.type';
 import { EditAreaPlaceholder } from '../../../styledComponents';
 import IgnoreTree from './IgnoreTree';
-import PathCollapse, { GLOBAL_KEY } from './PathCollapse';
+import PathCollapse, { InterfacePick } from './PathCollapse';
 import ResponseRaw from './ResponseRaw';
 
 enum NodesEditMode {
@@ -13,99 +17,232 @@ enum NodesEditMode {
   'Raw' = 'Raw',
 }
 
-const MockInterfaces = ['/owners', '/owners/find'];
-const MockResponse = {
-  parent1: { child1: { bar: '1' }, child2: '2', numberArray: [1, 2, 3] },
-  numberArray: [1, 2, 3],
-  stringArray: ['a', 'b', 'c'],
-  objectArray: [
-    {
-      number: 1,
-      string: 'a',
-      object: {
-        number: 11,
-        string: 'aa',
-      },
-    },
-    {
-      number: 2,
-      string: 'b',
-      object: {
-        number: 22,
-        string: 'bb',
-      },
-    },
-  ],
-};
+const GLOBAL_OPERATION_ID = '__global__';
 
-const ignoredNodesEditModeOptions = [
-  { label: 'Tree', value: NodesEditMode.Tree },
-  { label: 'Raw', value: NodesEditMode.Raw },
-];
-
-const NodesIgnore: FC<{ appId: string }> = () => {
+const SettingNodesIgnore: FC<{ appId: string }> = (props) => {
   const [checkedNodesData, setCheckedNodesData] = useImmer<{
-    global: string[];
-    interfaces: { [key: string]: string[] };
-  }>({
-    global: [],
-    interfaces: {},
-  });
+    operationId?: OperationId<'Global'>;
+    operationName?: string;
+    exclusionsList: string[];
+  }>({ exclusionsList: [] });
 
-  const [rawResponse, setRawResponse] = useState<object>(MockResponse);
-  const rawResponseString = useMemo(() => JSON.stringify(rawResponse, null, 2), [rawResponse]);
+  const [activeOperationInterface, setActiveOperationInterface] = useState<InterfacePick>();
+  const [nodesEditMode, setNodesEditMode] = useState<NodesEditMode>(NodesEditMode.Tree);
 
-  const [activeKey, setActiveKey] = useState<string>();
-  const [ignoredNodesEditMode, setIgnoredNodesEditMode] = useState<NodesEditMode>(
-    NodesEditMode.Tree,
+  /**
+   * 请求 InterfacesList
+   */
+  const { data: operationList = [], loading: loadingOperationList } = useRequest(() =>
+    AppSettingService.queryInterfacesList<'Global'>({ id: props.appId }),
   );
 
-  const onSelect = (key: string | undefined, selected: string[]) => {
+  const handleIgnoreTreeSelect: TreeProps['onSelect'] = (_, info) => {
+    const selected = info.selectedNodes.map((node) => node.key.toString());
+
     setCheckedNodesData((state) => {
-      if (key === GLOBAL_KEY) {
-        state.global = selected;
-      } else if (key) {
-        state.interfaces[key] = selected;
-      }
+      state.operationId = activeOperationInterface!.id;
+      state.operationName = activeOperationInterface!.operationName;
+      state.exclusionsList = selected;
     });
   };
 
-  const handleIgnoredNodesCollapseClick = (key?: string) => {
-    setActiveKey(key === activeKey ? undefined : key);
-  };
+  /**
+   * 获取 IgnoreNode
+   */
+  const {
+    data: ignoreNodeList = [],
+    loading: loadingIgnoreNode,
+    run: queryIgnoreNode,
+    mutate: setIgnoreNodeList,
+  } = useRequest(
+    () =>
+      AppSettingService.queryIgnoreNode({
+        appId: props.appId,
+        operationId:
+          activeOperationInterface!.id === GLOBAL_OPERATION_ID
+            ? null
+            : activeOperationInterface!.id,
+      }),
+    {
+      ready: activeOperationInterface !== undefined,
+      refreshDeps: [activeOperationInterface],
+      onBefore() {
+        setIgnoreNodeList([]);
+      },
+      onSuccess(res) {
+        setCheckedNodesData((state) => {
+          state.operationId = activeOperationInterface!.id;
+          state.operationName = activeOperationInterface!.operationName;
+          state.exclusionsList = res.map((item) => item.path);
+        });
+      },
+    },
+  );
 
-  const handleResponseRawSave = (value?: string) => {
-    if (value) {
-      const res = tryParseJsonString(value);
-      res && setRawResponse(res);
-      setIgnoredNodesEditMode(NodesEditMode.Tree);
+  /**
+   * 批量新增 IgnoreNode
+   */
+  const { run: batchInsertIgnoreNode } = useRequest(AppSettingService.batchInsertIgnoreNode, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        queryIgnoreNode();
+        message.success('Update successfully');
+      } else {
+        message.error('Update failed');
+      }
+    },
+  });
+
+  /**
+   * 批量删除 IgnoreNode
+   */
+  const { run: batchDeleteIgnoreNode } = useRequest(AppSettingService.batchDeleteIgnoreNode, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        queryIgnoreNode();
+        message.success('Delete successfully');
+      } else {
+        message.error('Delete failed');
+      }
+    },
+  });
+
+  /**
+   * 请求 InterfaceResponse
+   */
+  const {
+    data: interfaceResponse,
+    loading: loadingInterfaceResponse,
+    run: queryInterfaceResponse,
+    mutate: setInterfaceResponse,
+  } = useRequest(
+    () => AppSettingService.queryInterfaceResponse({ id: activeOperationInterface!.id as string }),
+    {
+      ready: !!activeOperationInterface?.id && activeOperationInterface?.id !== GLOBAL_OPERATION_ID,
+      refreshDeps: [activeOperationInterface],
+      onBefore() {
+        setInterfaceResponse();
+      },
+      onSuccess(res) {
+        console.log({ queryInterfaceResponse: res });
+      },
+    },
+  );
+  const interfaceResponseParsed = useMemo<{ [key: string]: any }>(() => {
+    const res = interfaceResponse?.operationResponse;
+    if (res) return tryParseJsonString<object>(res) || {};
+    else return {};
+  }, [interfaceResponse]);
+
+  /**
+   * 更新 InterfaceResponse
+   */
+  const { run: updateInterfaceResponse } = useRequest(AppSettingService.updateInterfaceResponse, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        queryInterfaceResponse();
+        message.success('Update successfully');
+      } else {
+        message.error('Update failed');
+      }
+    },
+  });
+  /**
+   * 开始编辑某个 interface 的 response
+   * @param operationInterface
+   */
+  const handleEditResponse = (operationInterface?: InterfacePick) => {
+    operationInterface && setActiveOperationInterface(operationInterface);
+
+    setNodesEditMode(NodesEditMode.Raw);
+  };
+  /**
+   * 保存某个 interface 的 response
+   * @param value
+   */
+  const handleResponseSave = (value?: string) => {
+    const parsed = value && tryParseJsonString(value, 'Invalid JSON');
+    if (!!activeOperationInterface?.id && parsed) {
+      updateInterfaceResponse({
+        id: activeOperationInterface.id,
+        operationResponse: JSON.stringify(parsed),
+      });
+      handleCancelEditResponse(true);
     }
   };
 
-  const handleSave = () => {
-    console.log('save', checkedNodesData);
+  const handleCancelEditResponse = (reloadResponse?: boolean) => {
+    setNodesEditMode(NodesEditMode.Tree);
+    reloadResponse && queryInterfaceResponse();
   };
+
+  const handleIgnoreSave = () => {
+    const { operationId = null, exclusionsList } = checkedNodesData;
+    const exclusionsListPrev = ignoreNodeList.map((item) => item.path);
+
+    const add: string[] = [],
+      remove: string[] = [];
+
+    // 计算新旧集合的差集，分别进行增量更新和批量删除
+    Array.from(new Set([...exclusionsListPrev, ...exclusionsList])).forEach((path) => {
+      if (exclusionsListPrev.includes(path) && exclusionsList.includes(path)) return;
+      else if (exclusionsListPrev.includes(path))
+        remove.push(ignoreNodeList.find((item) => item.path === path)!.id);
+      else add.push(path);
+    });
+
+    // 增量更新
+    add.length &&
+      batchInsertIgnoreNode(
+        add.map((path) => ({
+          appId: props.appId,
+          operationId, // null 时目标为 Global
+          exclusions: path.split('/').filter(Boolean),
+        })),
+      );
+
+    // 批量删除
+    remove.length && batchDeleteIgnoreNode(remove.map((id) => ({ id })));
+  };
+
   return (
     <>
       <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
         <Col span={10}>
-          <h3>Global</h3>
           <PathCollapse
-            activeKey={activeKey}
-            checkedNodes={checkedNodesData.global}
-            onChange={handleIgnoredNodesCollapseClick}
-            onSelect={onSelect}
+            manualEdit
+            title='Global'
+            appId={props.appId}
+            loadingPanel={loadingIgnoreNode}
+            interfaces={[{ id: GLOBAL_OPERATION_ID, operationName: 'Global' }]}
+            activeKey={activeOperationInterface?.id}
+            ignoreNodes={ignoreNodeList}
+            onChange={(data, maintain) =>
+              setActiveOperationInterface(
+                data?.id !== activeOperationInterface?.id || maintain ? data : undefined,
+              )
+            }
+            onReloadNodes={queryIgnoreNode}
           />
 
-          <br />
-
-          <h3>Interfaces</h3>
           <PathCollapse
-            interfaces={MockInterfaces}
-            activeKey={activeKey}
-            checkedNodes={checkedNodesData.interfaces}
-            onChange={handleIgnoredNodesCollapseClick}
-            onSelect={onSelect}
+            title='Interfaces'
+            appId={props.appId}
+            loading={loadingOperationList}
+            loadingPanel={loadingIgnoreNode}
+            interfaces={operationList}
+            activeKey={activeOperationInterface?.id}
+            ignoreNodes={ignoreNodeList}
+            onChange={(data, maintain) =>
+              setActiveOperationInterface(
+                data?.id !== activeOperationInterface?.id || maintain ? data : undefined,
+              )
+            }
+            onEditResponse={handleEditResponse}
+            onReloadNodes={queryIgnoreNode}
           />
         </Col>
 
@@ -113,47 +250,34 @@ const NodesIgnore: FC<{ appId: string }> = () => {
           <EditAreaPlaceholder
             dashedBorder
             title='Edit Area (Click interface to start)'
-            ready={!!activeKey}
+            ready={
+              !!activeOperationInterface && activeOperationInterface.id !== GLOBAL_OPERATION_ID
+            }
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <h3>{ignoredNodesEditMode}</h3>
-              <Select
-                bordered={false}
-                options={ignoredNodesEditModeOptions}
-                value={ignoredNodesEditMode}
-                onChange={setIgnoredNodesEditMode}
-              />
-            </div>
-
-            {ignoredNodesEditMode === NodesEditMode.Tree ? (
-              <IgnoreTree
-                treeData={rawResponse}
-                selectedKeys={
-                  activeKey === GLOBAL_KEY
-                    ? checkedNodesData.global
-                    : checkedNodesData.interfaces[activeKey]
-                }
-                title={activeKey}
-                exclude='array'
-                onSelect={(selectKeys, info) =>
-                  onSelect(
-                    activeKey,
-                    info.selectedNodes.map((node) => node.key.toString()),
-                  )
-                }
-              />
+            {nodesEditMode === NodesEditMode.Tree ? (
+              <>
+                <IgnoreTree
+                  title={activeOperationInterface?.operationName}
+                  treeData={interfaceResponseParsed}
+                  selectedKeys={checkedNodesData.exclusionsList}
+                  loading={loadingInterfaceResponse}
+                  onSelect={handleIgnoreTreeSelect}
+                  onSave={handleIgnoreSave}
+                  onEditResponse={handleEditResponse}
+                />
+              </>
             ) : (
-              <ResponseRaw value={rawResponseString} onSave={handleResponseRawSave} />
+              <ResponseRaw
+                value={tryPrettierJsonString(interfaceResponse?.operationResponse || '')}
+                onSave={handleResponseSave}
+                onCancel={handleCancelEditResponse}
+              />
             )}
           </EditAreaPlaceholder>
         </Col>
       </Row>
-
-      <Button type='primary' onClick={handleSave} style={{ float: 'right', marginTop: '16px' }}>
-        Save
-      </Button>
     </>
   );
 };
 
-export default NodesIgnore;
+export default SettingNodesIgnore;
