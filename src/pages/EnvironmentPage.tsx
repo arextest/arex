@@ -167,7 +167,10 @@ const EditableCell: React.FC<EditableCellProps> = ({
         <Input ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
     ) : (
-      <div style={{ paddingRight: 24, lineHeight: '32px', cursor: 'pointer' }} onClick={toggleEdit}>
+      <div
+        style={{ paddingRight: 24, lineHeight: '32px', cursor: 'pointer', height: '32px' }}
+        onClick={toggleEdit}
+      >
         {children}
       </div>
     );
