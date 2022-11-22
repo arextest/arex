@@ -321,7 +321,7 @@ const Environment: FC = () => {
               />
             ) : null}
             {data.id == iconIsShow ? (
-              <Dropdown overlay={menu(data)} trigger={['click']}>
+              <Dropdown menu={menu(data)} trigger={['click']}>
                 <DashOutlined
                   className={
                     activeEnvironment && activeEnvironment.id == iconIsShow

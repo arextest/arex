@@ -223,7 +223,7 @@ function CollectionTitle({
           </div>
         </div>
         <div className='right'>
-          <Dropdown overlay={menu(val)} trigger={['click']} open={open} onOpenChange={setOpen}>
+          <Dropdown menu={menu(val)} trigger={['click']} open={open} onOpenChange={setOpen}>
             <span onClick={(event) => event.stopPropagation()}>
               <Space>
                 <MoreOutlined size={100} style={{ fontSize: '16px' }} />

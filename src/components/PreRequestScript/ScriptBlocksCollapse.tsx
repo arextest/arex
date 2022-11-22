@@ -2,15 +2,15 @@ import { DeleteOutlined, MenuOutlined } from '@ant-design/icons';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button, Collapse, Popconfirm, Space, Switch } from 'antd';
-import React, { FC, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { DragDropContext, DragDropContextProps, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
 
-import ScriptBlocks, { ScriptBlock } from './scriptBlocks';
+import { ScriptBlock, ScriptBlocks } from './index';
 
 const { Panel } = Collapse;
 
-export const FlexRowReverse = styled.div`
+export const FlexRowReverseWrapper = styled.div`
   display: flex;
   flex-direction: row-reverse;
   .ant-btn-primary {
@@ -18,13 +18,14 @@ export const FlexRowReverse = styled.div`
   }
 `;
 
-export type ScriptBlocksCollapseProps = {
-  value: ScriptBlock<any>[];
+export type ScriptBlocksCollapseProps<T = string> = {
+  value: ScriptBlock<T>[];
   onDrag: (source: number, destination: number) => void;
   onChange: (id: string, value: ScriptBlock<any>) => void;
   onDelete: (id: string) => void;
 };
-const ScriptBlocksCollapse: FC<ScriptBlocksCollapseProps> = (props) => {
+
+function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
   const { t } = useTranslation('common');
   const { color } = useTheme();
 
@@ -39,7 +40,7 @@ const ScriptBlocksCollapse: FC<ScriptBlocksCollapseProps> = (props) => {
 
   const handleChange = useCallback(
     (id: string, attr: keyof ScriptBlock<any>, value: ScriptBlock<any>[typeof attr]) => {
-      const target = props.value.find((v) => v.id === id);
+      const target = props.value.find((v) => v.key === id);
       const clone = Object.assign({}, target, { [attr]: value });
       props.onChange?.(id, clone);
     },
@@ -52,7 +53,7 @@ const ScriptBlocksCollapse: FC<ScriptBlocksCollapseProps> = (props) => {
         {(provided, snapshot) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
             {props.value.map((item, index) => (
-              <Draggable key={item.id} draggableId={item.id} index={index}>
+              <Draggable key={item.key} draggableId={item.key} index={index}>
                 {(provided, snapshot) => (
                   <div ref={provided.innerRef} {...provided.draggableProps}>
                     <div
@@ -75,7 +76,7 @@ const ScriptBlocksCollapse: FC<ScriptBlocksCollapseProps> = (props) => {
                         onChange={(value) => setActiveKey(value as string)}
                       >
                         <Panel
-                          key={item.id}
+                          key={item.key}
                           header={
                             <>
                               <span css={{ color: color.primary }}> {item.icon} </span>
@@ -85,7 +86,7 @@ const ScriptBlocksCollapse: FC<ScriptBlocksCollapseProps> = (props) => {
                                   transition: 'color 0.2s ease',
                                 }}
                               >
-                                {item.title}
+                                {item.label}
                               </span>
                             </>
                           }
@@ -95,7 +96,7 @@ const ScriptBlocksCollapse: FC<ScriptBlocksCollapseProps> = (props) => {
                                 size='small'
                                 checked={!item.disabled}
                                 onChange={(checked) => {
-                                  handleChange(item.id, 'disabled', !checked);
+                                  handleChange(item.key, 'disabled', !checked);
                                 }}
                               />
                               <Popconfirm
@@ -103,7 +104,7 @@ const ScriptBlocksCollapse: FC<ScriptBlocksCollapseProps> = (props) => {
                                 cancelText='No'
                                 placement='topRight'
                                 title='Are you sure to delete this script?'
-                                onConfirm={() => props.onDelete?.(item.id)}
+                                onConfirm={() => props.onDelete?.(item.key)}
                               >
                                 <Button
                                   size='small'
@@ -116,10 +117,14 @@ const ScriptBlocksCollapse: FC<ScriptBlocksCollapseProps> = (props) => {
                           }
                         >
                           {/* Dynamic ScriptBlock Component */}
-                          {React.createElement(ScriptBlocks[item.type], {
-                            value: item.data,
-                            onChange: (value) => handleChange(item.id, 'data', value),
-                          })}
+                          {React.createElement(
+                            ScriptBlocks.find((block) => block.key === item.type)!.component,
+                            {
+                              disabled: item.disabled,
+                              value: item.data as string,
+                              onChange: (value) => handleChange(item.key, 'data', value),
+                            },
+                          )}
                         </Panel>
                       </Collapse>
                     </div>
@@ -133,6 +138,6 @@ const ScriptBlocksCollapse: FC<ScriptBlocksCollapseProps> = (props) => {
       </Droppable>
     </DragDropContext>
   );
-};
+}
 
 export default ScriptBlocksCollapse;

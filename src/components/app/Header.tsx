@@ -75,7 +75,7 @@ const AppHeader = () => {
           <Dropdown
             trigger={['click']}
             overlayStyle={{ width: '170px' }}
-            overlay={
+            menu={
               <Menu
                 items={[
                   {
