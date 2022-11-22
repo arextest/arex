@@ -18,7 +18,7 @@ const FolderPage: PageFC = () => {
       key: uuid(),
       type: block!.key,
       icon: block!.icon,
-      label: block!.key,
+      label: block!.label,
       data: '',
       disabled: false,
     });

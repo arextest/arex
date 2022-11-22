@@ -1,5 +1,5 @@
 import { CodeOutlined } from '@ant-design/icons';
-import { ReactNode } from 'react';
+import { FC, ReactNode } from 'react';
 
 import ScriptSnippets from '../ScriptSnippets';
 import PreRequestScript from './PreRequestScript';
@@ -19,7 +19,23 @@ export type ScriptBlock<T> = {
   disabled: boolean;
 };
 
-export const ScriptBlocks = [
+export type ScriptBlocksFC<V, T extends object = any> = FC<
+  {
+    disabled?: boolean;
+    height?: string;
+    value?: V;
+    onChange?: (value: V) => void;
+  } & T
+>;
+
+export type ScriptBlocksType<T> = {
+  key: string;
+  label: ReactNode;
+  icon: ReactNode;
+  component: ScriptBlocksFC<T>;
+};
+
+export const ScriptBlocks: ScriptBlocksType<string>[] = [
   {
     key: ScriptBlockType.CustomScript,
     label: 'CustomScript',

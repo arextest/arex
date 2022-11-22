@@ -3,9 +3,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import CodeMirror from '@uiw/react-codemirror';
 import { Button, Space, Spin } from 'antd';
-import React, { FC, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
 import { useStore } from '../../store';
+import { ScriptBlocksFC } from '../PreRequestScript';
 
 export type Snippet = {
   name: string;
@@ -25,12 +26,7 @@ arex.test("Status code is 200", ()=> {
 ];
 
 export type ScriptSnippetsProps = {
-  height?: string;
-  disabled?: boolean;
-  value: string;
-  disabledSnippets?: boolean;
   snippets?: false | { header?: ReactNode; data?: Snippet[] };
-  onChange?: (value: string) => void;
 };
 
 const ScriptSnippetsWrapper = styled.div<{ height?: string }>`
@@ -50,7 +46,7 @@ const ScriptSnippetsWrapper = styled.div<{ height?: string }>`
   }
 `;
 
-const ScriptSnippets: FC<ScriptSnippetsProps> = ({
+const ScriptSnippets: ScriptBlocksFC<string, ScriptSnippetsProps> = ({
   disabled,
   height = '300px',
   value,
