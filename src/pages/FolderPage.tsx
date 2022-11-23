@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import { useImmer } from 'use-immer';
 
 import { PreRequestScript } from '../components';
-import { Authorization } from '../components/Folder';
+import { Authorization } from '../components/folder';
 import { reorder, ScriptBlock, ScriptBlocks } from '../components/PreRequestScript';
 import { PreRequestScriptProps } from '../components/PreRequestScript/PreRequestScript';
 import { uuid } from '../helpers/utils';
@@ -14,14 +14,15 @@ const FolderPage: PageFC = () => {
 
   const handleAdd: PreRequestScriptProps<string>['onAdd'] = (key) => {
     const block = ScriptBlocks.find((block) => block.key === key);
-    const state = items.concat({
+    const data: ScriptBlock<string> = {
       key: uuid(),
-      type: block!.key,
+      type: block!.type,
       icon: block!.icon,
       label: block!.label,
       data: '',
       disabled: false,
-    });
+    };
+    const state = items.concat(data);
     setItems(state);
   };
 
@@ -53,38 +54,36 @@ const FolderPage: PageFC = () => {
   };
 
   return (
-    <div>
-      <Tabs
-        defaultActiveKey='authorization'
-        items={[
-          {
-            key: 'authorization',
-            label: 'Authorization',
-            children: <Authorization />,
-          },
-          {
-            key: 'pre-requestScript',
-            label: 'Pre-request Script',
-            children: (
-              <PreRequestScript
-                value={items}
-                onAdd={handleAdd}
-                onDelete={handleDelete}
-                onDrag={handleDrag}
-                onChange={handlePreRequestScriptChange}
-                onSave={handleSave}
-              />
-            ),
-          },
-          {
-            key: 'tests',
-            label: 'Tests',
-            children: 'Content of Tests',
-            disabled: true,
-          },
-        ]}
-      />
-    </div>
+    <Tabs
+      defaultActiveKey='authorization'
+      items={[
+        {
+          key: 'authorization',
+          label: 'Authorization',
+          children: <Authorization />,
+        },
+        {
+          key: 'pre-requestScript',
+          label: 'Pre-request Script',
+          children: (
+            <PreRequestScript
+              value={items}
+              onAdd={handleAdd}
+              onDelete={handleDelete}
+              onDrag={handleDrag}
+              onChange={handlePreRequestScriptChange}
+              onSave={handleSave}
+            />
+          ),
+        },
+        {
+          key: 'tests',
+          label: 'Tests',
+          children: 'Content of Tests',
+          disabled: true,
+        },
+      ]}
+    />
   );
 };
 

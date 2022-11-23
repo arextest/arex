@@ -2,19 +2,23 @@ import { CodeOutlined } from '@ant-design/icons';
 import { FC, ReactNode } from 'react';
 
 import ScriptSnippets from '../ScriptSnippets';
+import ExtraScriptBlocks from './ExtraScriptBlocks';
 import PreRequestScript from './PreRequestScript';
 
 export default PreRequestScript;
 
-export enum ScriptBlockType {
-  CustomScript = 'ScriptSnippets',
-}
+export const ScriptBlockType = {
+  CustomScript: 'ScriptSnippets',
+} as const;
 
-export type ScriptBlock<T> = {
+export type BaseScriptBlock = {
   key: string;
-  type: ScriptBlockType;
+  type: typeof ScriptBlockType[keyof typeof ScriptBlockType];
   icon: ReactNode;
   label: ReactNode;
+};
+
+export type ScriptBlock<T> = BaseScriptBlock & {
   data: T;
   disabled: boolean;
 };
@@ -28,20 +32,14 @@ export type ScriptBlocksFC<T, P extends object = any> = FC<
   } & P
 >;
 
-export type ScriptBlocksType<T> = {
-  key: string;
-  label: ReactNode;
-  icon: ReactNode;
+export type ScriptBlocksType<T> = BaseScriptBlock & {
   component: ScriptBlocksFC<T>;
 };
-
-// Start ExtraScriptBlocks
-const ExtraScriptBlocks: ScriptBlocksType<any>[] = [];
-// End ExtraScriptBlocks
 
 export const ScriptBlocks: ScriptBlocksType<any>[] = [
   {
     key: ScriptBlockType.CustomScript,
+    type: ScriptBlockType.CustomScript,
     label: 'CustomScript',
     icon: <CodeOutlined />,
     component: ScriptSnippets,
