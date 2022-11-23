@@ -19,13 +19,13 @@ export type ScriptBlock<T> = {
   disabled: boolean;
 };
 
-export type ScriptBlocksFC<V, T extends object = any> = FC<
+export type ScriptBlocksFC<T, P extends object = any> = FC<
   {
     disabled?: boolean;
     height?: string;
-    value?: V;
-    onChange?: (value: V) => void;
-  } & T
+    value?: T;
+    onChange?: (value: T) => void;
+  } & P
 >;
 
 export type ScriptBlocksType<T> = {
@@ -35,13 +35,18 @@ export type ScriptBlocksType<T> = {
   component: ScriptBlocksFC<T>;
 };
 
-export const ScriptBlocks: ScriptBlocksType<string>[] = [
+// Start ExtraScriptBlocks
+const ExtraScriptBlocks: ScriptBlocksType<any>[] = [];
+// End ExtraScriptBlocks
+
+export const ScriptBlocks: ScriptBlocksType<any>[] = [
   {
     key: ScriptBlockType.CustomScript,
     label: 'CustomScript',
     icon: <CodeOutlined />,
     component: ScriptSnippets,
   },
+  ...ExtraScriptBlocks,
 ];
 
 // a little function to help us with reordering the result
