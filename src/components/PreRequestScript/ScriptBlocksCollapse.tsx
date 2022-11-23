@@ -118,7 +118,7 @@ function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
                         >
                           {/* Dynamic ScriptBlock Component */}
                           {React.createElement(
-                            ScriptBlocks.find((block) => block.key === item.type)!.component,
+                            ScriptBlocks.find((block) => block.type === item.type)!.component,
                             {
                               disabled: item.disabled,
                               value: item.data as string,
