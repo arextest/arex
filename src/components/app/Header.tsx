@@ -43,7 +43,6 @@ const AppHeader = () => {
     setPages,
   } = useStore();
 
-  const menu = [];
   const handleSetting = () => {
     setPages(
       {
