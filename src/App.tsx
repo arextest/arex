@@ -9,7 +9,7 @@ import React, { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 
 import DefaultConfig from './defaultConfig';
-import { useAuthentication, useCheckChrome, useInterfaceInit } from './hooks';
+import { useAuthentication, useCheckChrome, useInit } from './hooks';
 import routerConfig from './routers';
 import { useStore } from './store';
 import { themeMap } from './style/theme';
@@ -18,10 +18,11 @@ import { themeMap } from './style/theme';
 Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 24 }} spin />);
 
 function App() {
-  const routesContent = useRoutes(routerConfig);
   useAuthentication();
   useCheckChrome();
-  useInterfaceInit(); // init theme, fontSize, etc.
+  useInit();
+
+  const routesContent = useRoutes(routerConfig);
 
   const {
     userInfo: {

@@ -1,16 +1,17 @@
 import { useRequest } from 'ahooks';
 import { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { FontSizeMap, UserInfoKey } from '../constant';
 import DefaultConfig from '../defaultConfig';
+import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
+import { AuthService } from '../services/AuthService';
 import { UserService } from '../services/UserService';
 import { UserInfo, useStore } from '../store';
 import { themeMap } from '../style/theme';
-import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
-import { AuthService } from '../services/AuthService';
-import { useLocation, useNavigate } from 'react-router-dom';
 
-const useInterfaceInit = () => {
+// init theme, fontSize, etc.
+const useInit = () => {
   const {
     changeTheme,
     userInfo: {
@@ -67,4 +68,4 @@ const useInterfaceInit = () => {
   }, []);
 };
 
-export default useInterfaceInit;
+export default useInit;
