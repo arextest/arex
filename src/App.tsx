@@ -18,8 +18,8 @@ import { themeMap } from './style/theme';
 Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 24 }} spin />);
 
 function App() {
-  useAuthentication();
   useCheckChrome();
+  useAuthentication();
   useInit();
 
   const routesContent = useRoutes(routerConfig);
