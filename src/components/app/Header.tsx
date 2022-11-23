@@ -43,6 +43,7 @@ const AppHeader = () => {
     setPages,
   } = useStore();
 
+  const menu = [];
   const handleSetting = () => {
     setPages(
       {
@@ -73,23 +74,20 @@ const AppHeader = () => {
           <TooltipButton icon={<SettingOutlined />} title='Setting' onClick={handleSetting} />
 
           <Dropdown
-            trigger={['click']}
             overlayStyle={{ width: '170px' }}
-            menu={
-              <Menu
-                items={[
-                  {
-                    key: 'signOut',
-                    label: 'Sign Out',
-                  },
-                ]}
-                onClick={(e) => {
-                  if (e.key === 'signOut') {
-                    handleLogout();
-                  }
-                }}
-              />
-            }
+            menu={{
+              items: [
+                {
+                  key: 'signOut',
+                  label: 'Sign Out',
+                },
+              ],
+              onClick: (e) => {
+                if (e.key === 'signOut') {
+                  handleLogout();
+                }
+              },
+            }}
           >
             <Avatar size={20} style={{ marginLeft: '8px', cursor: 'pointer' }}>
               {email}

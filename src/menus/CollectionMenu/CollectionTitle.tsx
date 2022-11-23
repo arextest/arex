@@ -42,146 +42,145 @@ function CollectionTitle({
   const [renameValue, setRenameValue] = useState('');
   const menu = (val: any) => {
     const paths = treeFindPath(treeData, (node) => node.key === val.key);
-    return (
-      <Menu
-        onClick={(e) => {
-          switch (e.key) {
-            case '3':
-              CollectionService.addItem({
-                id: _useParams.workspaceId,
-                nodeName: 'New Collection',
-                nodeType: 3,
-                parentPath: paths.map((i: any) => i.key),
-                userName,
-              }).then(() => {
-                updateDirectoryTreeData();
-              });
-              break;
-            case '1':
-              CollectionService.addItem({
-                id: _useParams.workspaceId,
-                nodeName: 'New Request',
-                nodeType: 1,
-                parentPath: paths.map((i: any) => i.key),
-                userName,
-              }).then((res) => {
-                updateDirectoryTreeData();
-                callbackOfNewRequest(
-                  [res.body.infoId],
-                  paths.map((i: any) => i.key),
-                  1,
-                );
-              });
-              break;
-            case '2':
-              CollectionService.addItem({
-                id: _useParams.workspaceId,
-                nodeName: 'case',
-                nodeType: 2,
-                parentPath: paths.map((i: any) => i.key),
-                userName,
-              }).then((res) => {
-                updateDirectoryTreeData();
-                callbackOfNewRequest(
-                  [res.body.infoId],
-                  paths.map((i: any) => i.key),
-                  2,
-                );
-              });
-              break;
-            case '4':
-              setRenameKey(val.id);
-              setRenameValue(val.title);
-              break;
-            case '6':
-              CollectionService.duplicate({
-                id: _useParams.workspaceId,
-                path: paths.map((i: any) => i.key),
-                userName,
-              }).then((res) => {
-                console.log(res);
-                updateDirectoryTreeData();
-              });
-            case '7':
-              setPages(
-                {
-                  key: val.id,
-                  title: 'BatchRun',
-                  pageType: PagesType.BatchRun,
-                  menuType: MenusType.Collection,
-                  isNew: true,
-                  data: undefined,
-                  paneId: generateGlobalPaneId(MenusType.Collection, PagesType.BatchRun, val.id),
-                  rawId: val.id,
-                },
-                'push',
+    return {
+      items: [
+        {
+          key: '7',
+          label: (
+            //必须要用a标签，不然无法disable
+            <span className={'dropdown-click-target'}>Run Folder</span>
+          ),
+          // 只有类型为3才能新增文件夹
+          disabled: val.nodeType !== 3,
+        },
+        {
+          key: '3',
+          label: (
+            //必须要用a标签，不然无法disable
+            <span className={'dropdown-click-target'}>Add Folder</span>
+          ),
+          // 只有类型为3才能新增文件夹
+          disabled: val.nodeType !== 3,
+        },
+        {
+          key: '1',
+          label: <span className={'dropdown-click-target'}>Add Request</span>,
+          disabled: val.nodeType !== 3,
+        },
+        {
+          key: '2',
+          label: <span className={'dropdown-click-target'}>Add Case</span>,
+          disabled: val.nodeType !== 1,
+        },
+        {
+          key: '4',
+          label: <span className={'dropdown-click-target'}>Rename</span>,
+        },
+        {
+          key: '6',
+          label: <span className={'dropdown-click-target'}>Duplicate</span>,
+        },
+        {
+          key: '5',
+          label: (
+            <Popconfirm
+              title='Are you sure？'
+              okText='Yes'
+              cancelText='No'
+              onConfirm={() => {
+                CollectionService.removeItem({
+                  id: _useParams.workspaceId,
+                  removeNodePath: paths.map((i: any) => i.key),
+                  userName,
+                }).then((res) => {
+                  updateDirectoryTreeData();
+                });
+              }}
+            >
+              <a style={{ color: 'red' }}>Delete</a>
+            </Popconfirm>
+          ),
+        },
+      ],
+      onClick(e) {
+        switch (e.key) {
+          case '3':
+            CollectionService.addItem({
+              id: _useParams.workspaceId,
+              nodeName: 'New Collection',
+              nodeType: 3,
+              parentPath: paths.map((i: any) => i.key),
+              userName,
+            }).then(() => {
+              updateDirectoryTreeData();
+            });
+            break;
+          case '1':
+            CollectionService.addItem({
+              id: _useParams.workspaceId,
+              nodeName: 'New Request',
+              nodeType: 1,
+              parentPath: paths.map((i: any) => i.key),
+              userName,
+            }).then((res) => {
+              updateDirectoryTreeData();
+              callbackOfNewRequest(
+                [res.body.infoId],
+                paths.map((i: any) => i.key),
+                1,
               );
-          }
-          e.domEvent.stopPropagation();
-          setOpen(false);
-        }}
-        items={[
-          {
-            key: '7',
-            label: (
-              //必须要用a标签，不然无法disable
-              <span className={'dropdown-click-target'}>Run Folder</span>
-            ),
-            // 只有类型为3才能新增文件夹
-            disabled: val.nodeType !== 3,
-          },
-          {
-            key: '3',
-            label: (
-              //必须要用a标签，不然无法disable
-              <span className={'dropdown-click-target'}>Add Folder</span>
-            ),
-            // 只有类型为3才能新增文件夹
-            disabled: val.nodeType !== 3,
-          },
-          {
-            key: '1',
-            label: <span className={'dropdown-click-target'}>Add Request</span>,
-            disabled: val.nodeType !== 3,
-          },
-          {
-            key: '2',
-            label: <span className={'dropdown-click-target'}>Add Case</span>,
-            disabled: val.nodeType !== 1,
-          },
-          {
-            key: '4',
-            label: <span className={'dropdown-click-target'}>Rename</span>,
-          },
-          {
-            key: '6',
-            label: <span className={'dropdown-click-target'}>Duplicate</span>,
-          },
-          {
-            key: '5',
-            label: (
-              <Popconfirm
-                title='Are you sure？'
-                okText='Yes'
-                cancelText='No'
-                onConfirm={() => {
-                  CollectionService.removeItem({
-                    id: _useParams.workspaceId,
-                    removeNodePath: paths.map((i: any) => i.key),
-                    userName,
-                  }).then((res) => {
-                    updateDirectoryTreeData();
-                  });
-                }}
-              >
-                <a style={{ color: 'red' }}>Delete</a>
-              </Popconfirm>
-            ),
-          },
-        ]}
-      />
-    );
+            });
+            break;
+          case '2':
+            CollectionService.addItem({
+              id: _useParams.workspaceId,
+              nodeName: 'case',
+              nodeType: 2,
+              parentPath: paths.map((i: any) => i.key),
+              userName,
+            }).then((res) => {
+              updateDirectoryTreeData();
+              callbackOfNewRequest(
+                [res.body.infoId],
+                paths.map((i: any) => i.key),
+                2,
+              );
+            });
+            break;
+          case '4':
+            setRenameKey(val.id);
+            setRenameValue(val.title);
+            break;
+          case '6':
+            CollectionService.duplicate({
+              id: _useParams.workspaceId,
+              path: paths.map((i: any) => i.key),
+              userName,
+            }).then((res) => {
+              console.log(res);
+              updateDirectoryTreeData();
+            });
+          case '7':
+            setPages(
+              {
+                key: val.id,
+                title: 'BatchRun',
+                pageType: PagesType.BatchRun,
+                menuType: MenusType.Collection,
+                isNew: true,
+                data: undefined,
+                paneId: generateGlobalPaneId(MenusType.Collection, PagesType.BatchRun, val.id),
+                rawId: val.id,
+              },
+              'push',
+            );
+        }
+        e.domEvent.stopPropagation();
+        setOpen(false);
+      },
+    };
   };
+
   const rename = () => {
     const paths = treeFindPath(treeData, (node) => node.key === val.key);
     CollectionService.rename({
