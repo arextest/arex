@@ -1,14 +1,21 @@
 import { message } from 'antd';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+
+import { getChromeVersion } from '../helpers/utils';
 import { useStore } from '../store';
 
-const useCheckChromeExtension = () => {
+const useCheckChrome = () => {
   const { t } = useTranslation('components');
   const { extensionVersion } = useStore();
+  const nav = useNavigate();
 
   useEffect(() => {
-    if (!window.__AREX_EXTENSION_INSTALLED__) {
+    if (getChromeVersion() < 0) {
+      localStorage.clear();
+      nav('/upgradebrowser');
+    } else if (!window.__AREX_EXTENSION_INSTALLED__) {
       useStore.setState({ extensionInstalled: false });
       message.info(
         <div>
@@ -46,4 +53,4 @@ const useCheckChromeExtension = () => {
   }, []);
 };
 
-export default useCheckChromeExtension;
+export default useCheckChrome;
