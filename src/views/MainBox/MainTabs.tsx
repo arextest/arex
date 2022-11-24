@@ -106,8 +106,7 @@ const MainTabs = () => {
         MenusType.Replay,
         generateGlobalPaneId(MenusType.Replay, PagesType.Replay, params.rTypeId as string),
       );
-    }
-    if (params.rType === PagesType.Environment) {
+    } else if (params.rType === PagesType.Environment) {
       setActiveMenu(
         MenusType.Environment,
         generateGlobalPaneId(

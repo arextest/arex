@@ -14,8 +14,8 @@ import { Button, Input, message, Modal, Select, Tooltip, Upload } from 'antd';
 import React, { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { RoleEnum } from '../../constant';
-import { generateGlobalPaneId } from '../../helpers/utils';
+import { EmailKey, RoleEnum } from '../../constant';
+import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
 import { MenusType } from '../../menus';
 import { PagesType } from '../../pages';
 import EnvironmentService from '../../services/Environment.service';
@@ -47,6 +47,9 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
   const nav = useNavigate();
   const { userInfo, workspaces, setWorkspaces, setPages, setEnvironmentTreeData, resetPanes } =
     useStore();
+
+  const email = getLocalStorage<string>(EmailKey);
+
   const [editMode, setEditMode] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [status, setStatus] = useState<'' | 'error'>('');
@@ -57,9 +60,9 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
 
   const { run: getWorkspaces } = useRequest(
     (to?: { workspaceId: string; workspaceName: string }) =>
-      WorkspaceService.listWorkspace({ userName: userInfo!.email as string }),
+      WorkspaceService.listWorkspace({ userName: email as string }),
     {
-      ready: !!userInfo?.email,
+      ready: !!email,
       onSuccess(data, _params) {
         setWorkspaces(data);
         if (_params.length) {

@@ -2,12 +2,11 @@ import './index.less';
 
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { useMount } from 'ahooks';
 import { Button, Input, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AccessTokenKey, RefreshTokenKey } from '../../constant';
+import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../../constant';
 import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
 import { AuthService } from '../../services/AuthService';
 import { UserService } from '../../services/UserService';
@@ -61,6 +60,8 @@ const Login = () => {
   };
   // 用户进入前初始化
   const initBeforeUserEntry = (userName: string) => {
+    setLocalStorage(EmailKey, userName);
+
     WorkspaceService.listWorkspace({
       userName: userName,
     }).then((workspaces) => {
@@ -81,9 +82,9 @@ const Login = () => {
   };
 
   const guestLogin = () => {
-    UserService.loginAsGuest({ userName: getLocalStorage('guestUserName') }).then((res) => {
+    UserService.loginAsGuest({ userName: getLocalStorage(EmailKey) }).then((res) => {
       if (res.body.success) {
-        setLocalStorage('guestUserName', res.body.userName);
+        setLocalStorage(EmailKey, res.body.userName);
         setLocalStorage(AccessTokenKey, res.body.accessToken);
         setLocalStorage(RefreshTokenKey, res.body.refreshToken);
         initBeforeUserEntry(res.body.userName);

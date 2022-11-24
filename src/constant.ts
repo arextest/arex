@@ -52,6 +52,7 @@ export enum FontSizeMap {
 
 // localStorage key
 export const UserInfoKey = 'userInfo';
+export const EmailKey = 'email'; // 初始化接口相关的 email 请使用该 key 而非 UserInfo
 export const AccessTokenKey = 'accessToken';
 export const RefreshTokenKey = 'refreshToken';
 export const CollapseMenuKey = 'collapseMenu';

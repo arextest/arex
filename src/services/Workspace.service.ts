@@ -1,5 +1,11 @@
 import request from '../helpers/api/axios';
-import { CreateWorkspaceReq, CreateWorkspaceRes, Workspace } from './Workspace.type';
+import {
+  CreateWorkspaceReq,
+  CreateWorkspaceRes,
+  ValidInvitationReq,
+  ValidInvitationRes,
+  Workspace,
+} from './Workspace.type';
 
 export default class WorkspaceService {
   static listWorkspace({ userName }: { userName: string }) {
@@ -38,7 +44,7 @@ export default class WorkspaceService {
     return request.post(`/api/filesystem/inviteToWorkspace`, params);
   }
 
-  static validInvitation(params) {
-    return request.post(`/api/filesystem/validInvitation`, params);
+  static validInvitation(params: ValidInvitationReq) {
+    return request.post<ValidInvitationRes>(`/api/filesystem/validInvitation`, params);
   }
 }

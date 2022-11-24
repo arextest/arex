@@ -10,7 +10,7 @@ import { useRoutes } from 'react-router-dom';
 
 import DefaultConfig from './defaultConfig';
 import { useAuthentication, useCheckChrome, useInit } from './hooks';
-import routerConfig from './routers';
+import routerConfig from './router';
 import { useStore } from './store';
 import { themeMap } from './style/theme';
 

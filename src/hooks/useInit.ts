@@ -2,7 +2,7 @@ import { useRequest } from 'ahooks';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { FontSizeMap, UserInfoKey } from '../constant';
+import { EmailKey, FontSizeMap, UserInfoKey } from '../constant';
 import DefaultConfig from '../defaultConfig';
 import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { AuthService } from '../services/AuthService';
@@ -15,16 +15,33 @@ const useInit = () => {
   const {
     changeTheme,
     userInfo: {
-      email,
       profile: { theme: themeName, fontSize },
     },
     setUserInfo,
   } = useStore();
   // checkout if the user is logged in
-  const userName = getLocalStorage<UserInfo>(UserInfoKey)?.email as string;
+  const email = getLocalStorage<string>(EmailKey);
 
   const nav = useNavigate();
   const { pathname } = useLocation();
+
+  const { run: refreshToken } = useRequest(AuthService.refreshToken, {
+    manual: true,
+    onSuccess(res) {
+      if (res.data.body) {
+        const accessToken = res.data.body.accessToken;
+        const refreshToken = res.data.body.refreshToken;
+        setLocalStorage('accessToken', accessToken);
+        setLocalStorage('refreshToken', refreshToken);
+        nav('/');
+      } else if (pathname !== '/login') {
+        clearLocalStorage();
+      }
+    },
+    onError() {
+      clearLocalStorage();
+    },
+  });
 
   useRequest(() => UserService.userProfile(email as string), {
     ready: !!email,
@@ -46,18 +63,8 @@ const useInit = () => {
       setUserInfo(res);
     },
     onError() {
-      //atoken过期了以后来刷新，如果还是没通过就退出
-      AuthService.refreshToken({ userName }).then((res) => {
-        if (res.data.body) {
-          const accessToken = res.data.body.accessToken;
-          const refreshToken = res.data.body.refreshToken;
-          setLocalStorage('accessToken', accessToken);
-          setLocalStorage('refreshToken', refreshToken);
-          location.href = '/';
-        } else if (pathname !== '/login') {
-          clearLocalStorage();
-        }
-      });
+      // token过期了以后来刷新，如果还是没通过就退出
+      refreshToken({ userName: email });
     },
   });
 
