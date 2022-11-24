@@ -14,6 +14,7 @@ import { FlexCenterWrapper } from '../../components/styledComponents';
 import { AccessTokenKey, RefreshTokenKey } from '../../constant';
 import { setLocalStorage, tryParseJsonString } from '../../helpers/utils';
 import WorkspaceService from '../../services/Workspace.service';
+import { useStore } from '../../store';
 
 enum Status {
   loading,
@@ -31,6 +32,7 @@ type InvitationData = {
 const ValidInvitation = () => {
   const { color } = useTheme();
   const nav = useNavigate();
+  const { setInvitedWorkspaceId } = useStore();
 
   const [status, setStatus] = useState<Status>(Status.loading);
   const [searchParams] = useSearchParams();
@@ -42,6 +44,8 @@ const ValidInvitation = () => {
         setLocalStorage('email', params[0].userName);
         setLocalStorage(AccessTokenKey, res.body.accessToken);
         setLocalStorage(RefreshTokenKey, res.body.refreshToken);
+
+        setInvitedWorkspaceId(params[0].workspaceId);
 
         setStatus(Status.success);
       } else {
@@ -55,9 +59,9 @@ const ValidInvitation = () => {
     },
   });
 
-  function decodeInvitation<T>(base64: string) {
+  function decodeInvitation() {
     try {
-      return tryParseJsonString<InvitationData>(atob(base64));
+      return tryParseJsonString<InvitationData>(atob(searchParams.getAll('upn')[0]));
     } catch (e) {
       setStatus(Status.invalidLink);
       setTimeout(() => {
@@ -67,7 +71,7 @@ const ValidInvitation = () => {
   }
 
   useEffect(() => {
-    const decodeData = decodeInvitation(searchParams.getAll('upn')[0]);
+    const decodeData = decodeInvitation();
     if (decodeData?.token) {
       validInvitation({
         token: decodeData.token,

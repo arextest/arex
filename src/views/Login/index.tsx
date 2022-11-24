@@ -23,15 +23,16 @@ const Login = () => {
   const { setUserInfo } = useStore();
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState<string>('');
-  const [emailchecked, setEmailchecked] = useState<boolean>(true);
+  const [emailChecked, setEmailChecked] = useState<boolean>(true);
   const [loadings, setLoadings] = useState<boolean>(false);
   const [count, setCount] = useState<number>(60);
+
   const getEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     if (value.match(/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/)) {
-      setEmailchecked(true);
+      setEmailChecked(true);
     } else {
-      setEmailchecked(false);
+      setEmailChecked(false);
     }
     setEmail(value);
   };
@@ -42,7 +43,7 @@ const Login = () => {
   };
 
   const sendVerificationCode = () => {
-    if (!emailchecked || email == '') {
+    if (!emailChecked || email == '') {
       message.error('email error');
       return;
     }
@@ -58,6 +59,7 @@ const Login = () => {
       }
     });
   };
+
   // 用户进入前初始化
   const initBeforeUserEntry = (userName: string) => {
     setLocalStorage(EmailKey, userName);
@@ -93,7 +95,7 @@ const Login = () => {
   };
 
   const login = () => {
-    if (!emailchecked || email == '') {
+    if (!emailChecked || email == '') {
       message.error('Please check your email');
       return;
     } else if (verificationCode == '') {
@@ -133,10 +135,10 @@ const Login = () => {
           placeholder='Please enter your email！'
           prefix={<UserOutlined />}
           onChange={getEmail}
-          status={emailchecked ? '' : 'error'}
+          status={emailChecked ? '' : 'error'}
           allowClear
         />
-        {emailchecked ? (
+        {emailChecked ? (
           <div className={'login-email-tip'}></div>
         ) : (
           <div className={'login-email-tip'}>Please enter the correct email!</div>
@@ -161,7 +163,7 @@ const Login = () => {
           Login
         </Button>
         <OtherLoginMethods>
-          Login with :{' '}
+          Login with :
           <a
             onClick={() => {
               guestLogin();

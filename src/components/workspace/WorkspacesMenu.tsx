@@ -49,6 +49,8 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     userInfo,
     workspaces,
     setWorkspaces,
+    invitedWorkspaceId,
+    setInvitedWorkspaceId,
     setPages,
     setEnvironmentTreeData,
     setCurrentEnvironment,
@@ -66,19 +68,31 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
   const [importFile, setImportFile] = useState<string>();
 
   const { run: getWorkspaces } = useRequest(
-    (to?: { workspaceId: string; workspaceName: string }) =>
-      WorkspaceService.listWorkspace({ userName: email as string }),
+    (workspaceId?: string) => WorkspaceService.listWorkspace({ userName: email as string }),
     {
       ready: !!email,
       onSuccess(data, _params) {
         setWorkspaces(data);
+
+        let targetWorkspace = data[0];
+        if (invitedWorkspaceId || _params[0]) {
+          const workspace = data.find((workspace) => {
+            const targetWorkspaceId = invitedWorkspaceId || _params[0];
+            return workspace.id === targetWorkspaceId;
+          });
+
+          workspace && (targetWorkspace = workspace);
+          invitedWorkspaceId && setInvitedWorkspaceId('');
+        }
+
         if (_params.length) {
           reset();
           resetPanes();
-          nav(`/${_params[0]!.workspaceId}/workspace/${_params[0]!.workspaceName}`);
-        } else if (!params.workspaceId || !params.workspaceName) {
-          nav(`/${data[0].id}/workspace/${data[0].workspaceName}/workspaceOverview/${data[0].id}`);
         }
+
+        nav(
+          `/${targetWorkspace.id}/workspace/${targetWorkspace.workspaceName}/workspaceOverview/${targetWorkspace.id}`,
+        );
       },
     },
   );
@@ -135,7 +149,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     onSuccess: (res, params) => {
       if (res.success) {
         const workspaceId = res.workspaceId;
-        getWorkspaces({ workspaceId, workspaceName: params[0].workspaceName });
+        getWorkspaces(workspaceId);
       }
     },
   });

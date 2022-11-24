@@ -77,6 +77,9 @@ type BaseState = {
   collectionLastManualUpdateTimestamp: number;
   setCollectionLastManualUpdateTimestamp: (timestamp: number) => void;
 
+  invitedWorkspaceId: string;
+  setInvitedWorkspaceId: (workspaceId: string) => void;
+
   workspaces: Workspace[];
   setWorkspaces: (workspaces: Workspace[]) => void;
 
@@ -217,6 +220,9 @@ export const useStore = create(
     setCollectionLastManualUpdateTimestamp: (timestamp) => {
       set({ collectionLastManualUpdateTimestamp: timestamp });
     },
+
+    invitedWorkspaceId: '',
+    setInvitedWorkspaceId: (workspaceId) => set({ invitedWorkspaceId: workspaceId }),
 
     workspaces: [],
     setWorkspaces: (workspaces) => set({ workspaces }),
