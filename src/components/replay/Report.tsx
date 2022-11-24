@@ -18,11 +18,13 @@ import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 
-import { MenuTypeEnum, PageTypeEnum } from '../../constant';
+import { EmailKey } from '../../constant';
+import { generateGlobalPaneId, getLocalStorage, getPercent } from '../../helpers/utils';
+import { MenusType } from '../../menus';
+import { PagesType } from '../../pages';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
-import { generateGlobalPaneId, getPercent } from '../../helpers/utils';
 import { SmallTextButton } from '../styledComponents';
 import { resultsStates } from './Results';
 
@@ -39,10 +41,8 @@ const chartOptions = {
 } as const;
 
 const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
-  const {
-    userInfo: { email },
-    setPanes,
-  } = useStore();
+  const { setPages } = useStore();
+  const email = getLocalStorage<string>(EmailKey);
 
   const { data: planItemData, loading: loadingData } = useRequest(
     () =>
@@ -81,8 +81,8 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
   );
 
   const columns: ColumnsType<PlanItemStatistics> = [
-    { title: 'Plan Item ID', dataIndex: 'planItemId', key: 'planItemId', ellipsis: true },
-    { title: 'API', dataIndex: 'operationName', key: 'operationName', ellipsis: true },
+    { title: 'Plan Item ID', dataIndex: 'planItemId', key: 'planItemId' },
+    { title: 'API', dataIndex: 'operationName', key: 'operationName' },
     {
       title: 'State',
       width: 100,
@@ -156,16 +156,16 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           key='analysis'
           title='Analysis'
           onClick={() => {
-            setPanes(
+            setPages(
               {
                 title: `Analysis - ${record.operationId}`,
-                pageType: PageTypeEnum.ReplayAnalysis,
-                menuType: MenuTypeEnum.Replay,
+                pageType: PagesType.ReplayAnalysis,
+                menuType: MenusType.Replay,
                 isNew: false,
                 data: record,
                 paneId: generateGlobalPaneId(
-                  MenuTypeEnum.Replay,
-                  PageTypeEnum.ReplayAnalysis,
+                  MenusType.Replay,
+                  PagesType.ReplayAnalysis,
                   record.operationId,
                 ),
                 rawId: record.operationId,
@@ -178,19 +178,19 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           key='case'
           title='Case'
           onClick={() =>
-            setPanes(
+            setPages(
               {
-                title: `Case - ${record.operationId}`,
-                pageType: PageTypeEnum.ReplayCase,
-                menuType: MenuTypeEnum.Replay,
+                title: `Case - ${record.planItemId}`,
+                pageType: PagesType.ReplayCase,
+                menuType: MenusType.Replay,
                 isNew: false,
                 data: record,
                 paneId: generateGlobalPaneId(
-                  MenuTypeEnum.Replay,
-                  PageTypeEnum.ReplayCase,
-                  record.operationId,
+                  MenusType.Replay,
+                  PagesType.ReplayCase,
+                  record.planItemId,
                 ),
-                rawId: record.operationId,
+                rawId: record.planItemId,
               },
               'push',
             )
@@ -327,6 +327,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
         loading={loadingData}
         columns={columns}
         dataSource={planItemData}
+        style={{ overflow: 'auto' }}
       />
     </Card>
   ) : (

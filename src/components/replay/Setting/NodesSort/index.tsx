@@ -3,7 +3,7 @@ import { useRequest } from 'ahooks';
 import { Button, Card, Carousel, Col, message, Row, Space } from 'antd';
 import { CarouselRef } from 'antd/lib/carousel';
 import { TreeProps } from 'antd/lib/tree';
-import React, { FC, useMemo, useRef, useState } from 'react';
+import React, { FC, Key, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
@@ -45,7 +45,7 @@ const TreeCarousel = styled(Carousel)`
   }
 `;
 
-const NodesSort: FC<{ appId: string }> = (props) => {
+const SettingNodesSort: FC<{ appId: string }> = (props) => {
   const { t } = useTranslation('common');
 
   const treeCarousel = useRef<CarouselRef>(null);
@@ -62,6 +62,9 @@ const NodesSort: FC<{ appId: string }> = (props) => {
   const [treeEditMode, setTreeEditMode] = useState<TreeEditModeEnum>(TreeEditModeEnum.ArrayTree);
 
   const [sortArray, setSortArray] = useState<any[]>();
+
+  // 控制 SortTree 组件防止在获取到有效的 treeData 数据前渲染，导致 defaultExpandAll 失效
+  const [treeReady, setTreeReady] = useState(false);
 
   /**
    * 请求 InterfacesList
@@ -91,7 +94,7 @@ const NodesSort: FC<{ appId: string }> = (props) => {
         setSortNodeList([]);
       },
       onSuccess() {
-        handleCancelEditResponse();
+        handleCancelEditResponse(false, false);
       },
     },
   );
@@ -140,6 +143,7 @@ const NodesSort: FC<{ appId: string }> = (props) => {
    */
   const {
     data: interfaceResponse,
+    mutate: setInterfaceResponse,
     run: queryInterfaceResponse,
     loading: loadingInterfaceResponse,
   } = useRequest(
@@ -147,6 +151,10 @@ const NodesSort: FC<{ appId: string }> = (props) => {
     {
       ready: !!activeOperationInterface?.id,
       refreshDeps: [activeOperationInterface],
+      onBefore() {
+        setInterfaceResponse(undefined);
+        setTreeReady(false);
+      },
     },
   );
   const interfaceResponseParsed = useMemo<{ [key: string]: any }>(() => {
@@ -232,6 +240,8 @@ const NodesSort: FC<{ appId: string }> = (props) => {
     setNodesEditMode(NodesEditMode.Tree);
     setTreeEditMode(TreeEditModeEnum.SortTree);
     treeCarousel.current?.goTo(1);
+
+    setTreeReady(true);
   };
 
   // 获取待排序操作的数组结构
@@ -241,7 +251,8 @@ const NodesSort: FC<{ appId: string }> = (props) => {
       .split('/')
       .filter(Boolean)
       .forEach((k, i) => {
-        value = i === 0 ? interfaceResponseParsed[k] : value[k];
+        value =
+          i === 0 ? interfaceResponseParsed[k] : Array.isArray(value) ? value[0]?.[k] : value[k];
       });
 
     setSortArray(value);
@@ -251,8 +262,11 @@ const NodesSort: FC<{ appId: string }> = (props) => {
    * 取消编辑 response
    * @param reloadResponse 是否重新加载 interfaceResponse
    */
-  const handleCancelEditResponse = (reloadResponse?: boolean) => {
-    setNodesEditMode(NodesEditMode.Tree);
+  const handleCancelEditResponse = (
+    reloadResponse?: boolean,
+    nodesEditMode: NodesEditMode | false = NodesEditMode.Tree,
+  ) => {
+    nodesEditMode && setNodesEditMode(nodesEditMode);
     setTreeEditMode(TreeEditModeEnum.ArrayTree);
     treeCarousel.current?.goTo(0);
     setActiveSortNode(undefined);
@@ -261,7 +275,7 @@ const NodesSort: FC<{ appId: string }> = (props) => {
 
   const handleSortTreeChecked: TreeProps['onCheck'] = (checkedKeys) => {
     setCheckedNodesData((state) => {
-      state.pathKeyList = checkedKeys as string[];
+      state.pathKeyList = (checkedKeys as { checked: string[]; halfChecked: string[] }).checked;
     });
   };
 
@@ -340,13 +354,15 @@ const NodesSort: FC<{ appId: string }> = (props) => {
                       </div>
 
                       <div>
-                        <SortTree
-                          title={checkedNodesData.path}
-                          treeData={sortArray}
-                          checkedKeys={checkedNodesData.pathKeyList}
-                          onCheck={handleSortTreeChecked}
-                          onSelect={handleSortTreeSelected}
-                        />
+                        {treeReady && (
+                          <SortTree
+                            title={checkedNodesData.path}
+                            treeData={sortArray}
+                            checkedKeys={checkedNodesData.pathKeyList}
+                            onCheck={handleSortTreeChecked}
+                            onSelect={handleSortTreeSelected}
+                          />
+                        )}
                       </div>
                     </TreeCarousel>
                   ) : (
@@ -368,4 +384,4 @@ const NodesSort: FC<{ appId: string }> = (props) => {
   );
 };
 
-export default NodesSort;
+export default SettingNodesSort;

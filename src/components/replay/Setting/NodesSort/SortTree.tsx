@@ -10,33 +10,39 @@ type SortTreeProps = Omit<TreeProps, 'treeData'> & {
 
 const SortTree: FC<SortTreeProps> = (props) => {
   function getNodes(data?: any[] | object, basePath = ''): DataNode[] {
-    if (!data) return [];
+    if (!data || (Array.isArray(data) && !data?.length)) return [];
 
     const sample = Array.isArray(data) ? data[0] : data;
 
     if (['number', 'string'].includes(typeof sample))
-      return [{ title: '%value%', key: '%value%/' }];
+      return [{ title: '%value%', key: basePath + '%value%/' }];
 
     const entries = Object.entries(sample);
     return entries.map(([key, value]) => {
       const path = basePath + key + '/';
       return value && typeof value === 'object'
-        ? { title: key, key: path, children: getNodes(value, path) }
-        : { title: key, key: path, value };
+        ? {
+            title: key,
+            key: path,
+            children: getNodes(Array.isArray(value) ? value[0] || [] : value, path),
+          }
+        : { title: key, key: path, value: path };
     });
   }
 
   return (
     <Card
       bordered={false}
-      title={`${props.title} (click node to ignore)`}
+      title={`${props.title} (choose key to sort)`}
       bodyStyle={{ padding: '8px 16px' }}
       headStyle={{ padding: '0 16px', margin: '-8px 0' }}
     >
       <Tree
         {...props}
         checkable
+        checkStrictly
         defaultExpandAll
+        autoExpandParent
         selectedKeys={[]}
         treeData={getNodes(props.treeData, '')}
       />

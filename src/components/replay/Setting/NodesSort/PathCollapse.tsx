@@ -74,7 +74,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                     title='Add Sort Key'
                     onClick={(e) => {
                       e.stopPropagation();
-                      props.onChange && props.onChange(i, true);
+                      props.onChange?.(i, true);
                     }}
                   />,
                   <TooltipButton
@@ -83,7 +83,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                     title='Edit Response'
                     onClick={(e) => {
                       e.stopPropagation();
-                      props.onEditResponse && props.onEditResponse(i);
+                      props.onEditResponse?.(i);
                     }}
                   />,
                 ]}

@@ -4,12 +4,13 @@ import './style/index.less';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Theme as EmotionTheme, ThemeProvider } from '@emotion/react';
 import { Spin } from 'antd';
+import { HttpProvider } from 'arex-request';
 import React, { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 
 import DefaultConfig from './defaultConfig';
-import { useAuth, useCheckChromeExtension, useInterfaceInit } from './hooks';
-import routerConfig from './routers';
+import { useAuthentication, useCheckChrome, useInit } from './hooks';
+import routerConfig from './router';
 import { useStore } from './store';
 import { themeMap } from './style/theme';
 
@@ -17,23 +18,35 @@ import { themeMap } from './style/theme';
 Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 24 }} spin />);
 
 function App() {
-  const routesContent = useRoutes(routerConfig);
+  useCheckChrome();
+  useAuthentication();
+  useInit();
 
-  useCheckChromeExtension();
-  useAuth();
-  useInterfaceInit(); // init theme, fontSize, etc.
+  const routesContent = useRoutes(routerConfig);
 
   const {
     userInfo: {
-      profile: { theme: themeName },
+      profile: { theme: themeName, language },
     },
+    collectionTreeData,
+    themeClassify,
+    currentEnvironment,
   } = useStore();
   const theme = useMemo<EmotionTheme>(
     () => (themeName in themeMap ? themeMap[themeName] : themeMap[DefaultConfig.theme]),
     [themeName],
   );
 
-  return <ThemeProvider theme={theme}>{routesContent}</ThemeProvider>;
+  return (
+    <HttpProvider
+      theme={themeClassify}
+      locale={{ 'zh-CN': 'cn', 'en-US': 'en' }[language]}
+      collectionTreeData={collectionTreeData}
+      environment={currentEnvironment}
+    >
+      <ThemeProvider theme={theme}>{routesContent}</ThemeProvider>
+    </HttpProvider>
+  );
 }
 
 export default App;

@@ -1,27 +1,32 @@
-import request from '../api/axios';
+import request from '../helpers/api/axios';
 import { objectArrayFilter } from '../helpers/utils';
 import {
   IgnoreNode,
   IgnoreNodeBase,
+  InsertDynamicClassSettingRes,
+  InsertSettingReqInsert,
   OperationId,
   OperationInterface,
   OperationType,
+  QueryConfigTemplateRes,
   QueryInterfacesListRes,
   QueryNodeReq,
   QueryRecordDynamicClassSettingReq,
   QueryRecordDynamicClassSettingRes,
   QueryRecordSettingReq,
   QueryRecordSettingRes,
+  QueryReplaySettingRes,
   RemoveDynamicClassSettingReq,
   RemoveDynamicClassSettingRes,
   SortNode,
   SortNodeBase,
-  UpdateDynamicClassSettingReq,
-  UpdateDynamicClassSettingRes,
+  UpdateConfigTemplateReq,
   UpdateIgnoreNodeReq,
   UpdateInterfaceResponseReq,
   UpdateRecordSettingReq,
   UpdateRecordSettingRes,
+  UpdateReplaySettingReq,
+  UpdateSettingReqInsert,
   UpdateSortNodeReq,
 } from './AppSetting.type';
 
@@ -52,11 +57,14 @@ export default class AppSettingService {
   }
 
   // 添加 Replay - record Dynamic Classes 设置数据
-  static async updatedDynamicClassSetting(params: UpdateDynamicClassSettingReq) {
-    const res = await request.post<UpdateDynamicClassSettingRes>(
-      '/config/dynamicClass/modify/INSERT',
-      params,
-    );
+  static async insertDynamicClassSetting(params: InsertSettingReqInsert) {
+    const res = await request.post<boolean>('/config/dynamicClass/modify/INSERT', params);
+    return res.body;
+  }
+
+  // 编辑 Replay - record Dynamic Classes 设置数据
+  static async updateDynamicClassSetting(params: UpdateSettingReqInsert) {
+    const res = await request.post<boolean>('/config/dynamicClass/modify/UPDATE', params);
     return res.body;
   }
 
@@ -66,6 +74,35 @@ export default class AppSettingService {
       '/config/dynamicClass/modify/REMOVE',
       params,
     );
+    return res.body;
+  }
+
+  // 查询 ReplaySetting 设置数据
+  static async queryReplaySetting(params: { id: string }) {
+    const res = await request.get<QueryReplaySettingRes>(
+      '/config/schedule/useResult/appId/' + params.id,
+    );
+    return res.body;
+  }
+
+  // 更新 ReplaySetting 设置数据
+  static async updateReplaySetting(params: UpdateReplaySettingReq) {
+    const res = await request.post<boolean>('/api/config/schedule/modify/UPDATE', params);
+    return res.body;
+  }
+
+  // 查询 Yaml 配置
+  static async queryConfigTemplate(params: { appId: string }) {
+    const res = await request.post<QueryConfigTemplateRes>(
+      '/api/config/yamlTemplate/queryConfigTemplate',
+      params,
+    );
+    return res.body;
+  }
+
+  // 更新 Yaml 配置
+  static async updateConfigTemplate(params: UpdateConfigTemplateReq) {
+    const res = await request.post<boolean>('/api/config/yamlTemplate/pushConfigTemplate', params);
     return res.body;
   }
 

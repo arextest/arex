@@ -2,7 +2,10 @@ import { message } from 'antd';
 import { v4 as uuid } from 'uuid';
 export { uuid };
 
-import { MenuTypeEnum, PageTypeEnum } from '../constant';
+import React from 'react';
+
+import { MenusType } from '../menus';
+import { PagesType, PageType } from '../pages';
 import * as ChartUtils from './chart';
 export { ChartUtils };
 
@@ -69,10 +72,10 @@ export const getPercent = (num: number, den: number, showPercentSign = true) => 
   return showPercentSign ? value + '%' : value;
 };
 
-export const generateGlobalPaneId: any = (
-  menuType: MenuTypeEnum,
-  pageType: PageTypeEnum,
-  rawId: string,
+export const generateGlobalPaneId = (
+  menuType: MenusType,
+  pageType: PageType<string>,
+  rawId: React.Key,
 ) => btoa(encodeURI(`${menuType}__${pageType}__${rawId}`));
 
 export const parseGlobalPaneId = (paneId?: string) => {

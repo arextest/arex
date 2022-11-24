@@ -16,3 +16,16 @@ export interface CreateWorkspaceRes {
   workspaceId: string;
   success: boolean;
 }
+
+// ------ /api/filesystem/validInvitation ------
+export type ValidInvitationReq = {
+  token: string;
+  userName: string;
+  workspaceId: string;
+};
+
+export type ValidInvitationRes = {
+  success: boolean;
+  accessToken: string;
+  refreshToken: string;
+};

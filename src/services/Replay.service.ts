@@ -1,13 +1,10 @@
 import axios from 'axios';
 
-import request from '../api/axios';
+import request from '../helpers/api/axios';
 import { tryPrettierJsonString } from '../helpers/utils';
 import {
   CreatePlanReq,
   CreatePlanRes,
-  PushConfigTemplateReq,
-  PushConfigTemplateRes,
-  QueryConfigTemplateRes,
   QueryDifferencesReq,
   QueryDifferencesRes,
   QueryFullLinkMsgReq,
@@ -24,9 +21,7 @@ import {
   QueryResponseTypeStatisticRes,
   QueryScenesReq,
   QueryScenesRes,
-  QueryScheduleUseResultAppIdRes,
   RegressionListRes,
-  UpdateConfigScheduleReq,
 } from './Replay.type';
 
 export default class ReplayService {
@@ -123,29 +118,5 @@ export default class ReplayService {
         }),
       ),
     );
-  }
-
-  static async queryConfigTemplate(params: { appId: string }) {
-    return request
-      .post<QueryConfigTemplateRes>('/api/config/yamlTemplate/queryConfigTemplate', params)
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  static async pushConfigTemplate(params: PushConfigTemplateReq) {
-    return request
-      .post<PushConfigTemplateRes>('/api/config/yamlTemplate/pushConfigTemplate', params)
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  static async queryScheduleUseResultAppId(params: { id: string }) {
-    return request
-      .get<QueryScheduleUseResultAppIdRes>('/config/schedule/useResult/appId/' + params.id)
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  static async updateConfigSchedule(params: UpdateConfigScheduleReq) {
-    return request
-      .post<boolean>('/config/schedule/modify/UPDATE', params)
-      .then((res) => Promise.resolve(res.body));
   }
 }

@@ -1,14 +1,30 @@
-import { useEffect, useState } from 'react';
-import { EditorView, keymap, ViewUpdate } from '@codemirror/view';
-import { basicSetup } from 'codemirror';
-import { EditorState, StateEffect } from '@codemirror/state';
-import { getStatistics } from './utils';
+import { EditorState, Extension, StateEffect, StateField } from '@codemirror/state';
 import { oneDark } from '@codemirror/theme-one-dark';
+import { EditorView, ViewUpdate } from '@codemirror/view';
+import { basicSetup } from 'codemirror';
+import { useEffect, useState } from 'react';
+
+import { ThemeClassify } from '../../style/theme';
+import { getStatistics, Statistics } from './utils';
 // import {defaultKeymap} from "@codemirror/commands"
-export interface UseCodeMirror {
+
+export interface UseCodeMirrorProps {
+  value: string;
   container?: HTMLDivElement | null;
+  initialState?: {
+    json: any;
+    fields?: { [p: string]: StateField<any> };
+  };
+  root?: Document | ShadowRoot | undefined;
+  theme: ThemeClassify | Extension;
+  extensions?: Extension[];
+  height: number | string | null;
+  onCreateEditor?: (editorView: EditorView, editorState: EditorState) => void;
+  onStatistics?: (statistics: Statistics) => void;
+  onChange?: (value: string, vu: ViewUpdate) => void;
 }
-export function useCodeMirror(props: UseCodeMirror) {
+
+export function useCodeMirror(props: UseCodeMirrorProps) {
   const {
     value,
     initialState,
@@ -52,7 +68,7 @@ export function useCodeMirror(props: UseCodeMirror) {
     onStatistics && onStatistics(getStatistics(vu));
   });
 
-  let getExtensions = [updateListener, defaultThemeOption];
+  const getExtensions = [updateListener, defaultThemeOption];
 
   getExtensions.unshift(basicSetup); //存疑
 
@@ -64,11 +80,12 @@ export function useCodeMirror(props: UseCodeMirror) {
       getExtensions.push(oneDark);
       break;
     default:
-      getExtensions.push(theme);
+      getExtensions.push(theme as Extension);
       break;
   }
 
-  getExtensions = getExtensions.concat(extensions);
+  extensions && getExtensions.push(extensions);
+
   useEffect(() => {
     if (container && !state) {
       const config = {

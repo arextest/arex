@@ -23,26 +23,27 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
   } = useStore();
 
   function getNodes(object: object, basePath = ''): DataNode[] {
-    const entries = Object.entries(object).filter(([, value]) => Array.isArray(value));
+    const entries = Object.entries(object);
     return entries.map(([key, value]) => {
       const path = basePath + key + '/';
       return value && typeof value === 'object'
         ? {
             title: key,
             key: path,
-            children: getNodes(value, path),
+            children: getNodes(Array.isArray(value) ? value[0] || {} : value, path),
+            disabled: !Array.isArray(value),
             icon: props.sortNodeList?.find((node) => node.path === path)?.pathKeyList?.length && (
               <Badge color={theme.split('-')[1]} />
             ), // 已配置过的节点使用圆点进行提示
           }
-        : { title: key, key: path, value };
+        : { title: key, key: path, value, disabled: !Array.isArray(value) };
     });
   }
 
   return (
     <Card
       bordered={false}
-      title={`${props.title} (click node to ignore)`}
+      title={`${props.title} (choose one array node)`}
       bodyStyle={{ padding: '8px 16px' }}
       headStyle={{ padding: '0 16px', margin: '-8px 0' }}
     >
@@ -55,8 +56,7 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
           treeData={getNodes(props.treeData, '')}
           css={css`
             .ant-tree-icon__customize {
-              position: absolute;
-              left: -16px;
+              float: right;
             }
           `}
         />

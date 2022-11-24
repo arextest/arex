@@ -2,15 +2,15 @@ import { SettingOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Avatar, Divider, Dropdown, Menu } from 'antd';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import { PageTypeEnum } from '../../constant';
-import Setting from '../../pages/Setting';
+import { EmailKey } from '../../constant';
+import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
+import { PagesType } from '../../pages';
+import SettingPage from '../../pages/SettingPage';
 import { useStore } from '../../store';
 import GitHubStarButton from '../GitHubStarButton';
 import { TooltipButton } from '../index';
 import InviteWorkspace from '../workspace/Invite';
-import { generateGlobalPaneId } from '../../helpers/utils';
 
 const HeaderWrapper = styled.div`
   .app-header {
@@ -37,21 +37,17 @@ const HeaderWrapper = styled.div`
 `;
 
 const AppHeader = () => {
-  const {
-    userInfo: { email },
-    themeClassify,
-    logout,
-    setPanes,
-  } = useStore();
+  const { themeClassify, logout, setPages } = useStore();
+  const email = getLocalStorage<string>(EmailKey);
 
   const handleSetting = () => {
-    setPanes(
+    setPages(
       {
         // key: '__SETTING__',
         title: 'Setting',
-        pageType: PageTypeEnum.Setting,
+        pageType: PagesType.Setting,
         isNew: false,
-        paneId: generateGlobalPaneId('-', PageTypeEnum.Setting, 'SETTING'),
+        paneId: generateGlobalPaneId('-', PagesType.Setting, 'SETTING'),
         rawId: 'SETTING',
       },
       'push',
@@ -74,23 +70,20 @@ const AppHeader = () => {
           <TooltipButton icon={<SettingOutlined />} title='Setting' onClick={handleSetting} />
 
           <Dropdown
-            trigger={['click']}
             overlayStyle={{ width: '170px' }}
-            overlay={
-              <Menu
-                items={[
-                  {
-                    key: 'signOut',
-                    label: 'Sign Out',
-                  },
-                ]}
-                onClick={(e) => {
-                  if (e.key === 'signOut') {
-                    handleLogout();
-                  }
-                }}
-              />
-            }
+            menu={{
+              items: [
+                {
+                  key: 'signOut',
+                  label: 'Sign Out',
+                },
+              ],
+              onClick: (e) => {
+                if (e.key === 'signOut') {
+                  handleLogout();
+                }
+              },
+            }}
           >
             <Avatar size={20} style={{ marginLeft: '8px', cursor: 'pointer' }}>
               {email}

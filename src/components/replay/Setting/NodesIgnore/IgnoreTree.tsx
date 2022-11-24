@@ -26,13 +26,15 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
 
   // 过滤出 object 类型的节点
   function getNodes(object: object, basePath = ''): DataNode[] {
-    const entries = Object.entries(object).filter(([, value]) => {
-      return !Array.isArray(value);
-    });
+    const entries = Object.entries(object);
     return entries.map(([key, value]) => {
       const path = basePath + key + '/';
       return value && typeof value === 'object'
-        ? { title: key, key: path, children: getNodes(value, path) }
+        ? {
+            title: key,
+            key: path,
+            children: getNodes(Array.isArray(value) ? value[0] || {} : value, path),
+          }
         : { title: key, key: path, value };
     });
   }

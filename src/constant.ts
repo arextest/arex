@@ -1,3 +1,5 @@
+export const ExtensionVersion = '1.0.4';
+
 export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
 export enum MethodEnum {
   GET = 'GET',
@@ -34,25 +36,6 @@ export enum NodeType {
   folder = 3,
 }
 
-export enum MenuTypeEnum {
-  Collection = 'collection',
-  Replay = 'replay',
-  Environment = 'environment',
-}
-
-export enum PageTypeEnum {
-  Setting = 'setting',
-  Request = 'request',
-  Folder = 'folder',
-  Collection = 'collection',
-  Environment = 'environment',
-  WorkspaceOverview = 'workspaceOverview',
-  Replay = 'replay',
-  ReplayAnalysis = 'replayAnalysis',
-  ReplayCase = 'replayCase',
-  ReplaySetting = 'replaySetting',
-}
-
 export enum ContentTypeEnum {
   ApplicationJson = 'application/json',
 }
@@ -71,6 +54,8 @@ export enum FontSizeMap {
 
 // localStorage key
 export const UserInfoKey = 'userInfo';
+export const EmailKey = 'email'; // 初始化接口相关的 email 请使用该 key 而非 UserInfo
 export const AccessTokenKey = 'accessToken';
 export const RefreshTokenKey = 'refreshToken';
 export const CollapseMenuKey = 'collapseMenu';
+export const EnvironmentKey = 'environmentId';
