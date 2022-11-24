@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { css } from '@emotion/react';
 import { Tabs } from 'antd';
 import { FC } from 'react';

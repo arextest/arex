@@ -1,7 +1,7 @@
+// @ts-nocheck
 import { hoverTooltip } from '@codemirror/view';
-import { css, useTheme } from '@emotion/react';
+import { css } from '@emotion/react';
 import { FC, useContext, useRef } from 'react';
-import useDarkMode from 'use-dark-style';
 
 import { useEnvCodeMirror } from '../../helpers/editor/extensions/EnvCodeMirror';
 import {
@@ -15,11 +15,9 @@ interface SmartEnvInputProps {
   onChange: (e: any) => void;
 }
 const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
-  const darkMode = useDarkMode();
-  const theme = useTheme();
   const smartEnvInputRef = useRef(null);
-  const { dispatch } = useContext(HttpContext);
-  const { store: globalStore } = useContext(GlobalContext);
+  const { dispatch, store } = useContext(HttpContext);
+  const { dispatch: globalDispatch, store: globalStore } = useContext(GlobalContext);
   useEnvCodeMirror({
     container: smartEnvInputRef.current,
     value: value,
@@ -59,13 +57,13 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
       });
     },
     currentEnv: globalStore.environment,
-    theme: darkMode.value ? 'dark' : 'light',
+    theme: globalStore.theme.type,
   });
 
   return (
     <div
       css={css`
-        border: 1px solid ${theme.color.border.primary};
+        border: 1px solid ${globalStore.theme.theme.colors.primaryBorder};
         flex: 1;
         overflow: hidden;
       `}

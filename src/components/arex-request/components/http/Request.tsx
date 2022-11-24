@@ -1,11 +1,11 @@
+// @ts-nocheck
 import { DownOutlined } from '@ant-design/icons';
-import { css, useTheme } from '@emotion/react';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Breadcrumb, Button, Dropdown, Menu, MenuProps, Select } from 'antd';
-import { useContext } from 'react';
-import { useTranslation } from 'react-i18next';
-
-import { treeFindPath } from '../../helpers/collection/util';
+import { Breadcrumb, Button, Dropdown, Input, Menu, MenuProps, message, Select, Space } from 'antd';
+import { useContext, useEffect, useMemo, useRef } from 'react';
+import { treeFind, treeFindPath } from '../../helpers/collection/util';
+import { getValueByPath } from '../../helpers/utils/locale';
 import { GlobalContext, HttpContext } from '../../index';
 import SmartEnvInput from '../smart/EnvInput';
 
@@ -25,31 +25,37 @@ const HeaderWrapper = styled.div`
   }
 `;
 
-const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+enum SEND_MENU_TYPE {
+  'normal' = 'normal',
+  'compare' = 'compare',
+  'arexRecord' = 'arexRecord',
+}
 
-const HttpRequest = ({ currentRequestId, onEdit, onSend }) => {
-  const { store,dispatch } = useContext(HttpContext);
-  const { store: globalStore } = useContext(GlobalContext);
+const HttpRequest = ({ currentRequestId, onEdit, onSend, onSendCompare }) => {
+  const { store, dispatch } = useContext(HttpContext);
+  const { dispatch: globalDispatch, store: globalStore } = useContext(GlobalContext);
+  const t = (key) => getValueByPath(globalStore.locale.locale, key);
 
-  const { t } = useTranslation();
-  const onMenuClick: MenuProps['onClick'] = (e) => {
+  const menu: MenuProps = {
+    onClick: (e) => {
+      handleRequest(e.key);
+    },
+    items: [
+      {
+        key: SEND_MENU_TYPE.compare,
+        label: 'Send Compare',
+      },
+      {
+        key: SEND_MENU_TYPE.arexRecord,
+        label: 'Send Arex Record',
+      },
+    ],
   };
 
-  const menu = (
-    <Menu
-      onClick={onMenuClick}
-      items={[
-        {
-          key: '1',
-          label: 'Send C',
-        },
-      ]}
-    />
-  );
-
-  const handleRequest = ({ type }) => {
-    console.log({type})
+  const handleRequest = (type) => {
     const urlPretreatment = (url: string) => {
+      // 正则匹配{{}}
       const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
       let replaceVar = editorValueMatch[0];
       const env = globalStore.environment?.keyValues || [];
@@ -61,6 +67,7 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend }) => {
 
       return url.replace(editorValueMatch[0], replaceVar);
     };
+
     dispatch({
       type: 'response.type',
       payload: 'loading',
@@ -68,15 +75,24 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend }) => {
 
     const start = new Date().getTime();
 
-    if (type === 'compare') {
-    } else {
+    if (SEND_MENU_TYPE.normal === type || SEND_MENU_TYPE.arexRecord === type) {
+      dispatch({
+        type: 'compareResponse.type',
+        payload: 'null',
+      });
+
+      const requestParams = { ...store.request, endpoint: urlPretreatment(store.request.endpoint) };
+      if (type === SEND_MENU_TYPE.arexRecord) {
+        requestParams.headers.push({
+          key: 'arex-record-id',
+          value: currentRequestId,
+          active: true,
+        });
+      }
+
       onSend({
-        request: {
-          ...store.request,
-          endpoint: urlPretreatment(store.request.endpoint),
-        },
+        request: requestParams,
       }).then((agentAxiosAndTest: any) => {
-        console.log(agentAxiosAndTest,'agentAxiosAndTest')
         dispatch({
           type: 'response.type',
           payload: 'success',
@@ -91,6 +107,7 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend }) => {
           type: 'testResult',
           payload: agentAxiosAndTest.testResult,
         });
+        console.log({ type });
         dispatch({
           type: 'response.headers',
           payload: agentAxiosAndTest.response.headers,
@@ -109,6 +126,33 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend }) => {
           payload: agentAxiosAndTest.response.status,
         });
       });
+    } else if (type === SEND_MENU_TYPE.compare) {
+      onSendCompare({
+        request: {
+          ...store.request,
+          endpoint: urlPretreatment(store.request.endpoint),
+        },
+      }).then((agentAxiosCompareResponse: any) => {
+        dispatch({
+          type: 'response.type',
+          payload: 'success',
+        });
+
+        dispatch({
+          type: 'response.body',
+          payload: JSON.stringify(agentAxiosCompareResponse.response.data),
+        });
+
+        dispatch({
+          type: 'compareResponse.type',
+          payload: 'success',
+        });
+
+        dispatch({
+          type: 'compareResponse.body',
+          payload: JSON.stringify(agentAxiosCompareResponse.compareResponse.data),
+        });
+      });
     }
   };
   return (
@@ -121,9 +165,11 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend }) => {
         css={css`
           display: flex;
           justify-content: space-between;
-          margin-bottom: 8px;
         `}
       >
+        {/*{*/}
+        {/*  JSON.stringify(treeFindPath(collectionTreeData,(node)=>node.key === currentRequestId))*/}
+        {/*}*/}
         <Breadcrumb style={{ paddingBottom: '14px' }}>
           {treeFindPath(
             globalStore.collectionTreeData,
@@ -132,25 +178,27 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend }) => {
             <Breadcrumb.Item key={index}>{i.title}</Breadcrumb.Item>
           ))}
         </Breadcrumb>
-        <div>
-          <Button
-            onClick={() => {
-              onEdit({
-                type: 'update',
-                payload: {
-                  ...store.request,
-                },
-              });
-            }}
-          >
-            {t('action.save')}
-          </Button>
-        </div>
+
+        <Button
+          size={'small'}
+          style={{ marginBottom: '8px' }}
+          onClick={() => {
+            onEdit({
+              type: 'update',
+              payload: {
+                ...store.request,
+              },
+            });
+          }}
+        >
+          {t('action.save')}
+        </Button>
       </div>
+
       <HeaderWrapper>
         <Select
           value={store.request.method}
-          options={methods.map((i) => ({ value: i, lable: i }))}
+          options={METHODS.map((i) => ({ value: i, lable: i }))}
           onChange={(value) => {
             dispatch({
               type: 'request.method',
@@ -163,16 +211,13 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend }) => {
           onChange={() => {
             // console.log('http://127.0.0.1:5173/arex-request/');
           }}
-        ></SmartEnvInput>
-        <div
-          css={css`
-            margin: 0 0px 0 14px;
-          `}
-        >
+        />
+
+        <div style={{ marginLeft: '12px' }}>
           <Dropdown.Button
             type='primary'
-            onClick={() => handleRequest({ type: null })}
-            overlay={menu}
+            onClick={() => handleRequest(SEND_MENU_TYPE.normal)}
+            menu={menu}
             icon={<DownOutlined />}
           >
             {t('action.send')}

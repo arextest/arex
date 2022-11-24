@@ -1,12 +1,12 @@
+// @ts-nocheck
 import { CheckCircleOutlined, DeleteOutlined, StopOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Input, Space, Table, TableProps, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { useContext } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Updater } from 'use-immer';
-
+import { useContext } from 'react';
 import { GlobalContext, HttpContext } from '../../index';
+import { getValueByPath } from '../../helpers/utils/locale';
 
 export type KeyValueType = {
   key: string;
@@ -27,7 +27,9 @@ export const useColumns = (
   paramsUpdater?: Updater<KeyValueType[]>,
   editable?: boolean,
 ): ColumnsType<KeyValueType> => {
-  const { t } = useTranslation();
+  const { store } = useContext(HttpContext);
+  const { store: globalStore } = useContext(GlobalContext);
+  const t = (key) => getValueByPath(globalStore.locale.locale, key);
   const handleChange = (i: number, attr: 'key' | 'value', value: string) => {
     paramsUpdater &&
       paramsUpdater((params) => {
