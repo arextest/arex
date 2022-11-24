@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { FlexCenterWrapper } from '../../components/styledComponents';
-import { AccessTokenKey, RefreshTokenKey } from '../../constant';
+import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../../constant';
 import { setLocalStorage, tryParseJsonString } from '../../helpers/utils';
 import WorkspaceService from '../../services/Workspace.service';
 import { useStore } from '../../store';
@@ -41,7 +41,7 @@ const ValidInvitation = () => {
     manual: true,
     onSuccess(res, params) {
       if (res.body.success) {
-        setLocalStorage('email', params[0].userName);
+        setLocalStorage(EmailKey, params[0].userName);
         setLocalStorage(AccessTokenKey, res.body.accessToken);
         setLocalStorage(RefreshTokenKey, res.body.refreshToken);
 
