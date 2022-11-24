@@ -18,7 +18,8 @@ import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 
-import { generateGlobalPaneId, getPercent } from '../../helpers/utils';
+import { EmailKey } from '../../constant';
+import { generateGlobalPaneId, getLocalStorage, getPercent } from '../../helpers/utils';
 import { MenusType } from '../../menus';
 import { PagesType } from '../../pages';
 import ReplayService from '../../services/Replay.service';
@@ -40,10 +41,8 @@ const chartOptions = {
 } as const;
 
 const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
-  const {
-    userInfo: { email },
-    setPages,
-  } = useStore();
+  const { setPages } = useStore();
+  const email = getLocalStorage<string>(EmailKey);
 
   const { data: planItemData, loading: loadingData } = useRequest(
     () =>

@@ -5,7 +5,7 @@ import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import { EnvironmentKey, UserInfoKey } from '../constant';
+import { AccessTokenKey, EnvironmentKey, RefreshTokenKey, UserInfoKey } from '../constant';
 import DefaultConfig from '../defaultConfig';
 import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { I18nextLng } from '../i18n';
@@ -25,7 +25,6 @@ export type Profile = {
   language: I18nextLng;
 };
 export type UserInfo = {
-  email?: string;
   profile: Profile;
 };
 
@@ -51,15 +50,16 @@ export type Page<D extends PageData = undefined> = {
 type ActiveMenu = [MenusType, string | undefined]; // [菜单id, 菜单项目id]
 type SetPagesMode = 'push' | 'normal';
 type BaseState = {
+  userInfo: UserInfo;
+  setUserInfo: (data: UserInfo) => void;
+
   themeClassify: ThemeClassify;
   changeTheme: (theme?: ThemeName) => void;
   extensionInstalled: boolean;
-  extensionVersion: string;
-  userInfo: UserInfo;
   logout: () => void;
-  setUserInfo: (data: UserInfo | string) => void;
   activeMenu: ActiveMenu;
   setActiveMenu: (menuKey: MenusType, menuItemKey?: string) => void;
+
   pages: Page<PageData>[];
   /*
    * 修改工作区标签页数据
@@ -95,11 +95,10 @@ type BaseState = {
 
 const initUserInfo = (() => {
   const userInfo = getLocalStorage<UserInfo>(UserInfoKey);
-  if (userInfo && userInfo?.email && userInfo?.profile) {
+  if (userInfo && userInfo?.profile) {
     return userInfo;
   } else {
     return {
-      email: '',
       profile: {
         theme: DefaultConfig.theme,
         fontSize: DefaultConfig.fontSize,
@@ -119,20 +118,10 @@ export const useStore = create(
   immer<BaseState>((set, get) => ({
     userInfo: initUserInfo,
     setUserInfo: (data) => {
-      if (typeof data === 'string') {
-        // update email
-        set((state) => {
-          state.userInfo.email = data;
-          console.log('update email', state.userInfo);
-          setLocalStorage(UserInfoKey, state.userInfo);
-        });
-      } else {
-        // overwrite userInfo
-        set({ userInfo: data });
-        setLocalStorage(UserInfoKey, data);
-      }
+      set({ userInfo: data });
+      setLocalStorage(UserInfoKey, data);
     },
-    extensionVersion: '1.0.4',
+
     themeClassify:
       (getLocalStorage<UserInfo>(UserInfoKey)?.profile?.theme?.split('-')?.at(0) as
         | ThemeClassify
@@ -207,9 +196,9 @@ export const useStore = create(
     },
 
     logout: () => {
-      clearLocalStorage('accessToken');
-      clearLocalStorage('refreshToken');
-      clearLocalStorage('userInfo');
+      clearLocalStorage(AccessTokenKey);
+      clearLocalStorage(RefreshTokenKey);
+      clearLocalStorage(UserInfoKey);
       set({ userInfo: undefined, pages: [] });
     },
 

@@ -5,7 +5,8 @@ import { Button, DatePicker, Form, Input, Modal, notification } from 'antd';
 import moment, { Moment } from 'moment';
 import React, { FC, ReactNode, useState } from 'react';
 
-import { generateGlobalPaneId } from '../../helpers/utils';
+import { EmailKey } from '../../constant';
+import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
 import { MenusType } from '../../menus';
 import { PagesType } from '../../pages';
 import ReplayService from '../../services/Replay.service';
@@ -57,10 +58,9 @@ const TitleWrapper = styled(
 `;
 
 const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
-  const {
-    userInfo: { email },
-    setPages,
-  } = useStore();
+  const email = getLocalStorage<string>(EmailKey);
+  const { setPages } = useStore();
+
   const [form] = Form.useForm<CreatePlanForm>();
   const [open, setOpen] = useState(false);
 

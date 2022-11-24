@@ -3,7 +3,8 @@ import styled from '@emotion/styled';
 import { Avatar, Divider, Dropdown, Menu } from 'antd';
 import React from 'react';
 
-import { generateGlobalPaneId } from '../../helpers/utils';
+import { EmailKey } from '../../constant';
+import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
 import { PagesType } from '../../pages';
 import SettingPage from '../../pages/SettingPage';
 import { useStore } from '../../store';
@@ -36,12 +37,8 @@ const HeaderWrapper = styled.div`
 `;
 
 const AppHeader = () => {
-  const {
-    userInfo: { email },
-    themeClassify,
-    logout,
-    setPages,
-  } = useStore();
+  const { themeClassify, logout, setPages } = useStore();
+  const email = getLocalStorage<string>(EmailKey);
 
   const handleSetting = () => {
     setPages(

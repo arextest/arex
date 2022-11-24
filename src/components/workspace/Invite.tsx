@@ -3,7 +3,8 @@ import { Button, Form, message, Modal, Select, Space, Typography } from 'antd';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { RoleEnum } from '../../constant';
+import { EmailKey, RoleEnum } from '../../constant';
+import { getLocalStorage } from '../../helpers/utils';
 import WorkspaceService from '../../services/Workspace.service';
 import { useStore } from '../../store';
 const { Text } = Typography;
@@ -11,11 +12,10 @@ const { Text } = Typography;
 const { Option } = Select;
 
 const InviteWorkspace = () => {
+  const email = getLocalStorage<string>(EmailKey);
   const _useParams = useParams();
+
   const [form] = Form.useForm();
-  const {
-    userInfo: { email },
-  } = useStore();
   const [open, setOpen] = useState<boolean>(false);
 
   const handleChange = (value: string) => {

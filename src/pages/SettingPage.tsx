@@ -4,7 +4,9 @@ import { changeLanguage } from 'i18next';
 import { FC, useMemo, useState } from 'react';
 import { CirclePicker } from 'react-color';
 
+import { EmailKey } from '../constant';
 import DefaultConfig from '../defaultConfig';
+import { getLocalStorage } from '../helpers/utils';
 import { I18nextLng, local } from '../i18n';
 import { UserService } from '../services/UserService';
 import { useStore } from '../store';
@@ -45,14 +47,11 @@ const ColorPicker: FC<ColorPickerProps> = ({ value, onChange, theme }) => {
 };
 
 const SettingPage: FC = () => {
+  const email = getLocalStorage<string>(EmailKey);
+  const { themeClassify, setUserInfo, changeTheme } = useStore();
+
   const [initLoading, setInitLoading] = useState(true);
   const [form] = Form.useForm<SettingForm>();
-  const {
-    userInfo: { email },
-    themeClassify,
-    setUserInfo,
-    changeTheme,
-  } = useStore();
 
   const changeFontSize = (fontSize: FontSize) => {
     // @ts-ignore
