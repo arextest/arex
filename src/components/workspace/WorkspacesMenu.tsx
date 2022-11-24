@@ -14,8 +14,8 @@ import { Button, Input, message, Modal, Select, Tooltip, Upload } from 'antd';
 import React, { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { EmailKey, RoleEnum } from '../../constant';
-import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
+import { EmailKey, EnvironmentKey, RoleEnum } from '../../constant';
+import { generateGlobalPaneId, getLocalStorage, tryParseJsonString } from '../../helpers/utils';
 import { MenusType } from '../../menus';
 import { PagesType } from '../../pages';
 import EnvironmentService from '../../services/Environment.service';
@@ -45,8 +45,15 @@ const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
 const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
   const params = useParams();
   const nav = useNavigate();
-  const { userInfo, workspaces, setWorkspaces, setPages, setEnvironmentTreeData, resetPanes } =
-    useStore();
+  const {
+    userInfo,
+    workspaces,
+    setWorkspaces,
+    setPages,
+    setEnvironmentTreeData,
+    setCurrentEnvironment,
+    resetPanes,
+  } = useStore();
 
   const email = getLocalStorage<string>(EmailKey);
 
@@ -84,6 +91,9 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
       refreshDeps: [params.workspaceId],
       onSuccess(res) {
         setEnvironmentTreeData(res);
+
+        const environmentKey = getLocalStorage<string>(EnvironmentKey);
+        environmentKey && setCurrentEnvironment(environmentKey);
       },
     },
   );
@@ -281,13 +291,10 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
                     const reader = new FileReader();
                     reader.readAsText(file);
                     reader.onload = (e) => {
-                      const content = e.target.result;
-                      try {
-                        JSON.parse(content);
-                        setImportFile(content);
-                      } catch (e) {
-                        message.warn('Not json file!');
-                      }
+                      const content =
+                        e.target?.result &&
+                        tryParseJsonString(e.target.result.toString(), 'Not json file!');
+                      content && setImportFile(content);
                     };
                     return false;
                   }}

@@ -5,7 +5,7 @@ import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import { UserInfoKey } from '../constant';
+import { EnvironmentKey, UserInfoKey } from '../constant';
 import DefaultConfig from '../defaultConfig';
 import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { I18nextLng } from '../i18n';
@@ -236,6 +236,8 @@ export const useStore = create(
 
     currentEnvironment: { id: '0', envName: '', keyValues: [] },
     setCurrentEnvironment: (environment) => {
+      setLocalStorage(EnvironmentKey, environment);
+
       if (environment !== '0') {
         const environmentTreeData = get().environmentTreeData;
         set({ currentEnvironment: environmentTreeData.find((i) => i.id === environment) });

@@ -56,3 +56,4 @@ export const EmailKey = 'email'; // 初始化接口相关的 email 请使用该 
 export const AccessTokenKey = 'accessToken';
 export const RefreshTokenKey = 'refreshToken';
 export const CollapseMenuKey = 'collapseMenu';
+export const EnvironmentKey = 'environmentId';
