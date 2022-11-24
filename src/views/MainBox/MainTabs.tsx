@@ -7,9 +7,9 @@ import { DraggableTabs, EnvironmentSelect } from '../../components';
 import { treeFind } from '../../helpers/collection/util';
 import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
 import { MenusType } from '../../menus';
-import Pages, { PageFC, PagesType } from '../../pages';
+import Pages, { PagesType } from '../../pages';
 import { NodeList } from '../../services/CollectionService';
-import { Page, PageData, useStore } from '../../store';
+import { Page, useStore } from '../../store';
 
 const MainTabs = () => {
   const nav = useNavigate();
@@ -76,14 +76,14 @@ const MainTabs = () => {
     [environmentTreeData],
   );
 
-  const tabsItems = useMemo(
+  const tabsItems = useMemo<TabsProps['items']>(
     () =>
       pages.map((page) => {
-        const Page: PageFC<PageData> = Pages[page.pageType];
         return {
+          forceRender: true,
           label: genTabTitle(collectionTreeData, page),
           key: page.paneId,
-          children: <Page page={page} />,
+          children: React.createElement(Pages[page.pageType], { page }),
         };
       }),
     [pages, collectionTreeData],
