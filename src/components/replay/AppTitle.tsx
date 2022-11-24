@@ -133,7 +133,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     );
   };
   return (
-    <>
+    <div>
       <PanesTitle
         title={
           <TitleWrapper title={data.appId} onRefresh={onRefresh} onSetting={handleOpenSetting} />
@@ -186,7 +186,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 };
 

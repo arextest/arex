@@ -13,7 +13,7 @@ const MainBox = () => {
   const handleCollapseMenu = () => setCollapseMenu(!collapseMenu);
 
   return (
-    <>
+    <div>
       <AppHeader />
 
       <Allotment
@@ -41,7 +41,7 @@ const MainBox = () => {
       </Allotment>
 
       <AppFooter />
-    </>
+    </div>
   );
 };
 

@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { message } from 'antd';
-import Http from 'arex-request';
+import Http from '../components/arex-request';
 import { useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 

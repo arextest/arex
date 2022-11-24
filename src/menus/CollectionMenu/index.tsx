@@ -454,7 +454,7 @@ const CollectionMenu = () => {
             </Button>
           </Empty>
         ) : (
-          <>
+          <div>
             <div className={'collection-header'}>
               <TooltipButton
                 icon={<PlusOutlined />}
@@ -512,7 +512,7 @@ const CollectionMenu = () => {
               )}
             />
             {/*<CollectionImport/>*/}
-          </>
+          </div>
         )}
       </Spin>
     </CollectionMenuWrapper>

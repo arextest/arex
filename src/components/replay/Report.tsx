@@ -331,7 +331,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
       />
     </Card>
   ) : (
-    <></>
+    <div></div>
   );
 };
 

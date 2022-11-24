@@ -206,7 +206,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
         />
       </Tooltip>
       {!props.collapse && (
-        <>
+        <div>
           <div>
             {editMode ? (
               <Input
@@ -253,10 +253,10 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
 
           <div>
             {editMode ? (
-              <>
+              <div>
                 <TooltipButton icon={<CheckOutlined />} title='OK' onClick={handleAddWorkspace} />
                 <TooltipButton icon={<CloseOutlined />} title='Cancel' onClick={reset} />
-              </>
+              </div>
             ) : (
               <TooltipButton
                 icon={<PlusOutlined />}
@@ -346,7 +346,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
               </div>
             )}
           </Modal>
-        </>
+        </div>
       )}
     </WorkspacesMenuWrapper>
   );

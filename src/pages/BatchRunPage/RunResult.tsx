@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { Empty, Spin, Tag } from 'antd';
-import { GlobalContext, TestResult } from 'arex-request';
+import { GlobalContext, TestResult } from '../../components/arex-request';
 import { FC, useContext, useMemo } from 'react';
 
 // import { TestResult } from '../../components/ArexRequestComponent/lib';

@@ -1,5 +1,4 @@
-// @ts-ignore
-import { toggleTheme } from '@zougt/vite-plugin-theme-preprocessor/dist/browser-utils';
+const toggleTheme = ()=>{}
 import React from 'react';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';

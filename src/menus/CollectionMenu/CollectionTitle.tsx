@@ -198,7 +198,7 @@ function CollectionTitle({
     return Object.keys(methodMap).includes(val.method) ? val.method : 'UNKNOWN';
   }, [val]);
   return (
-    <>
+    <div>
       <div className={'collection-title-render'}>
         <div className={'left'}>
           {val.nodeType === 1 && (
@@ -231,7 +231,7 @@ function CollectionTitle({
           </Dropdown>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

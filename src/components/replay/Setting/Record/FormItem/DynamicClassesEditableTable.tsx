@@ -213,7 +213,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
   });
 
   return (
-    <>
+    <div>
       <Table
         rowKey='id'
         size='small'
@@ -231,7 +231,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
       >
         Add
       </Button>
-    </>
+    </div>
   );
 };
 

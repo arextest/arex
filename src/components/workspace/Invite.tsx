@@ -23,7 +23,7 @@ const InviteWorkspace = () => {
   };
 
   return (
-    <>
+    <div>
       <Button
         style={{ marginRight: '8px' }}
         type={'primary'}
@@ -112,7 +112,7 @@ const InviteWorkspace = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 };
 

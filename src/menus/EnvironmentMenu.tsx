@@ -298,7 +298,7 @@ const Environment: FC = () => {
                   }}
                 />
               ) : (
-                <>
+                <div>
                   <CheckCircleFilled onClick={() => setCurrentEnvironment(data.id)} />
                   <span
                     css={css`
@@ -306,7 +306,7 @@ const Environment: FC = () => {
                       width: 14px;
                     `}
                   ></span>
-                </>
+                </div>
               )
             ) : data.id == iconIsShow ? (
               <CheckCircleOutlined

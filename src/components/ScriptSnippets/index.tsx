@@ -60,7 +60,7 @@ const ScriptSnippets: ScriptBlocksFC<string, ScriptSnippetsProps> = ({
   const { color } = useTheme();
 
   return (
-    <Spin indicator={<></>} spinning={!!disabled}>
+    <Spin indicator={<div></div>} spinning={!!disabled}>
       <ScriptSnippetsWrapper height={height}>
         <CodeMirror
           value={value}

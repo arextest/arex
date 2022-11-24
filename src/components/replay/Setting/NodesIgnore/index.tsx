@@ -209,7 +209,7 @@ const SettingNodesIgnore: FC<{ appId: string }> = (props) => {
   };
 
   return (
-    <>
+    <div>
       <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
         <Col span={10}>
           <PathCollapse
@@ -255,7 +255,7 @@ const SettingNodesIgnore: FC<{ appId: string }> = (props) => {
             }
           >
             {nodesEditMode === NodesEditMode.Tree ? (
-              <>
+              <div>
                 <IgnoreTree
                   title={activeOperationInterface?.operationName}
                   treeData={interfaceResponseParsed}
@@ -265,7 +265,7 @@ const SettingNodesIgnore: FC<{ appId: string }> = (props) => {
                   onSave={handleIgnoreSave}
                   onEditResponse={handleEditResponse}
                 />
-              </>
+              </div>
             ) : (
               <ResponseRaw
                 value={tryPrettierJsonString(interfaceResponse?.operationResponse || '')}
@@ -276,7 +276,7 @@ const SettingNodesIgnore: FC<{ appId: string }> = (props) => {
           </EditAreaPlaceholder>
         </Col>
       </Row>
-    </>
+    </div>
   );
 };
 

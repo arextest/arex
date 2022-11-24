@@ -19,7 +19,7 @@ const ResponseRaw: FC<ResponseRawProps> = (props) => {
   const { themeClassify } = useStore();
 
   return (
-    <>
+    <div>
       <SpaceBetweenWrapper style={{ paddingBottom: '8px' }}>
         <h3>Raw</h3>
         <Space>
@@ -41,7 +41,7 @@ const ResponseRaw: FC<ResponseRawProps> = (props) => {
         minHeight={'100px'}
         maxHeight={'600px'}
       />
-    </>
+    </div>
   );
 };
 

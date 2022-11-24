@@ -292,7 +292,7 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
   };
 
   return (
-    <>
+    <div>
       <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
         <Col span={10}>
           <PathCollapse
@@ -317,7 +317,7 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
             ready={!!activeOperationInterface}
           >
             {nodesEditMode === NodesEditMode.Tree ? (
-              <>
+              <div>
                 <SpaceBetweenWrapper style={{ paddingBottom: '8px' }}>
                   <h3>{TreeEditMode[treeEditMode]}</h3>
                   {treeEditMode === TreeEditModeEnum.SortTree && (
@@ -369,7 +369,7 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
                     <EmptyResponse onClick={handleEditResponse} />
                   )}
                 </Card>
-              </>
+              </div>
             ) : (
               <ResponseRaw
                 value={tryPrettierJsonString(interfaceResponse?.operationResponse || '')}
@@ -380,7 +380,7 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
           </EditAreaPlaceholder>
         </Col>
       </Row>
-    </>
+    </div>
   );
 };
 

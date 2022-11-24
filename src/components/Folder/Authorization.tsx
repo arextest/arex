@@ -5,7 +5,7 @@ const { Text } = Typography;
 
 const Authorization: FC = () => {
   return (
-    <>
+    <div>
       <div style={{ marginBottom: '20px' }}>
         <Text>
           This authorization method will be used for every request in this folder. You can override
@@ -33,7 +33,7 @@ const Authorization: FC = () => {
           The authorization header will be automatically generated when you send the request.
         </Text>
       </div>
-    </>
+    </div>
   );
 };
 

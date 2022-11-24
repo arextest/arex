@@ -26,7 +26,7 @@ type EditAreaPlaceholderProps = {
 
 const EditAreaPlaceholder: FC<EditAreaPlaceholderProps> = (props) => {
   return props.ready ? (
-    <>{props.children}</>
+    <div>{props.children}</div>
   ) : (
     <EditAreaPlaceholderWrapper dashedBorder={props.dashedBorder}>
       <h3> {props.title}</h3>

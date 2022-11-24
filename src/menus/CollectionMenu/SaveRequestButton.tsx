@@ -72,7 +72,7 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = (
   }, [collectionTreeData, nodeType]);
 
   return (
-    <>
+    <div>
       <Modal
         open={open}
         title={`SAVE ${nodeType === '1' ? 'REQUEST' : 'CASE'}`}
@@ -190,7 +190,7 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = (
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 };
 

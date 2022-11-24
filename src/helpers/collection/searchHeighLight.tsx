@@ -26,9 +26,9 @@ const Instance: React.FC<SearchKeywordTextProps> = (props) => {
   }, [props.text, props.keyword]);
 
   return (
-    <>
+    <div>
       <span dangerouslySetInnerHTML={{ __html: htmlTxt }}></span>
-    </>
+    </div>
   );
 };
 

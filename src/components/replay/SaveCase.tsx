@@ -81,7 +81,7 @@ const SaveCase = forwardRef<SaveCaseRef>((props, ref) => {
   };
 
   return (
-    <>
+    <div>
       <Modal
         open={open}
         title={`SAVE CASE - ${title}`}
@@ -137,7 +137,7 @@ const SaveCase = forwardRef<SaveCaseRef>((props, ref) => {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 });
 

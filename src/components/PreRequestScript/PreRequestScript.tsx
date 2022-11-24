@@ -41,7 +41,7 @@ function PreRequestScript<T>(props: PreRequestScriptProps<T>) {
   const { t } = useTranslation('common');
 
   return items.length ? (
-    <>
+    <div>
       <FlexRowReverseWrapper>
         <Button
           size='small'
@@ -59,7 +59,7 @@ function PreRequestScript<T>(props: PreRequestScriptProps<T>) {
         onDelete={props.onDelete}
       />
       <AddScriptBlockButton onAdd={props.onAdd} />
-    </>
+    </div>
   ) : (
     <FlexCenterWrapper style={{ minHeight: '400px' }}>
       <Empty description={<AddScriptBlockButton onAdd={props.onAdd} />} />

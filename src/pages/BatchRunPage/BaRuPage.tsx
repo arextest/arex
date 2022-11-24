@@ -3,7 +3,7 @@ import { Allotment } from 'allotment';
 import { Button, Checkbox, Col, Form, message, Row, Space, Tabs, Tree } from 'antd';
 import { Divider } from 'antd';
 import type { TreeProps } from 'antd/es/tree';
-import { GlobalContext } from 'arex-request';
+import { GlobalContext } from '../../components/arex-request';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 

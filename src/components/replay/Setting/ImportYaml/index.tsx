@@ -53,7 +53,7 @@ const ImportYaml: FC<ImportYamlProps> = (props) => {
   );
 
   return (
-    <>
+    <div>
       <div style={{ marginBottom: '8px' }}>
         <Label>Agent Version</Label>
         {props.agentVersion}
@@ -68,7 +68,7 @@ const ImportYaml: FC<ImportYamlProps> = (props) => {
       >
         {t('save')}
       </Button>
-    </>
+    </div>
   );
 };
 

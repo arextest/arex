@@ -194,7 +194,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
               );
             })
           ) : (
-            <></>
+            <div></div>
           )}
         </Collapse>
       </Spin>

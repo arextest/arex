@@ -353,7 +353,7 @@ const EnvironmentPage: PageFC = () => {
   );
 
   return (
-    <>
+    <div>
       <div
         css={css`
           display: flex;
@@ -397,7 +397,7 @@ const EnvironmentPage: PageFC = () => {
           }}
         />
       </DndProvider>
-    </>
+    </div>
   );
 };
 

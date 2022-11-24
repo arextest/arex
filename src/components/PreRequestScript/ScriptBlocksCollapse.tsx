@@ -78,7 +78,7 @@ function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
                         <Panel
                           key={item.key}
                           header={
-                            <>
+                            <div>
                               <span css={{ color: color.primary }}> {item.icon} </span>
                               <span
                                 css={{
@@ -88,7 +88,7 @@ function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
                               >
                                 {item.label}
                               </span>
-                            </>
+                            </div>
                           }
                           extra={
                             <Space>
