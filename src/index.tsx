@@ -8,6 +8,7 @@ import './i18n';
 // import 'jsoneditor/dist/jsoneditor.min.css';
 // import './assets/css/jsoneditor.less';
 import 'allotment/dist/style.css';
+import 'antd/dist/reset.css'
 // import './assets/css/index.less';
 
 const root = ReactDOM.createRoot(
