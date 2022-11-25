@@ -37,7 +37,7 @@ const HttpRequestPage: PageFC = (props) => {
         (node) => node.key === parseGlobalPaneId(props.page.paneId)['rawId'],
       )?.nodeType || 1
     );
-  }, [props.page.paneId]);
+  }, [props.page.paneId, collectionTreeData]);
 
   return (
     <div

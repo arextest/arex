@@ -107,6 +107,14 @@ const BaRuPage: React.FC = () => {
       .then((res) => {
         setInterfaceResponseArray(res);
       });
+    const allKeys = caseTreeData
+      .map((i) => i.children.map((ci) => ci.id))
+      .filter((i) => i.length > 0)
+      .reduce((previousValue, currentValue) => {
+        return [...currentValue, ...previousValue];
+      }, []);
+
+    setCheckValue(allKeys);
   }, [caseTreeData]);
 
   const resultData = useMemo(() => {
@@ -167,7 +175,7 @@ const BaRuPage: React.FC = () => {
                 }
               `}
             >
-              <Tree treeData={caseTreeData} onCheck={onCheck} checkable />
+              <Tree treeData={caseTreeData} checkedKeys={checkValue} onCheck={onCheck} checkable />
             </div>
           </Col>
           <Col span={2}>
