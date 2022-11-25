@@ -11,16 +11,17 @@ import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
 import { AuthService } from '../../services/AuthService';
 import { UserService } from '../../services/UserService';
 import WorkspaceService from '../../services/Workspace.service';
-import { useStore } from '../../store';
+
 const OtherLoginMethods = styled.div`
   a {
     margin-left: 4px;
   }
 `;
+
 let timeChange: any;
+
 const Login = () => {
   const nav = useNavigate();
-  const { setUserInfo } = useStore();
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState<string>('');
   const [emailChecked, setEmailChecked] = useState<boolean>(true);
@@ -73,11 +74,9 @@ const Login = () => {
           workspaceName: 'Default',
         };
         WorkspaceService.createWorkspace(params).then((res) => {
-          setUserInfo(userName);
           nav('/');
         });
       } else {
-        setUserInfo(userName);
         nav('/');
       }
     });

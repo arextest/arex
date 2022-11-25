@@ -2,7 +2,7 @@ import { useRequest } from 'ahooks';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { EmailKey, FontSizeMap, UserInfoKey } from '../constant';
+import { AccessTokenKey, EmailKey, FontSizeMap, RefreshTokenKey, UserInfoKey } from '../constant';
 import DefaultConfig from '../defaultConfig';
 import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { AuthService } from '../services/AuthService';
@@ -31,8 +31,8 @@ const useInit = () => {
       if (res.data.body) {
         const accessToken = res.data.body.accessToken;
         const refreshToken = res.data.body.refreshToken;
-        setLocalStorage('accessToken', accessToken);
-        setLocalStorage('refreshToken', refreshToken);
+        setLocalStorage(AccessTokenKey, accessToken);
+        setLocalStorage(RefreshTokenKey, refreshToken);
         nav('/');
       } else if (pathname !== '/login') {
         clearLocalStorage();
@@ -64,7 +64,7 @@ const useInit = () => {
     },
     onError() {
       // token过期了以后来刷新，如果还是没通过就退出
-      refreshToken({ userName: email });
+      email && refreshToken({ userName: email });
     },
   });
 

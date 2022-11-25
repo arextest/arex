@@ -3,12 +3,12 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import { getChromeVersion } from '../helpers/utils';
+import { ExtensionVersion } from '../constant';
+import { getChromeVersion, versionStringCompare } from '../helpers/utils';
 import { useStore } from '../store';
 
 const useCheckChrome = () => {
   const { t } = useTranslation('components');
-  const { extensionVersion } = useStore();
   const nav = useNavigate();
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const useCheckChrome = () => {
         </div>,
       );
       console.info('[AREX] Extension not installed, please install it first.');
-    } else if (window.__AREX_EXTENSION_VERSION__ !== extensionVersion) {
+    } else if (versionStringCompare(window.__AREX_EXTENSION_VERSION__, ExtensionVersion) < 0) {
       message.info(
         <span>
           {t('http.extensionIncorrect')}

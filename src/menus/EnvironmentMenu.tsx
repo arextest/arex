@@ -212,51 +212,49 @@ const Environment: FC = () => {
   };
 
   const menu = (data: EnvironmentType) => {
-    return (
-      <Menu
-        onClick={(e) => {
-          // e.domEvent.stopPropagation();
-          switch (e.key) {
-            case '3':
-              duplicateEnvironment(data);
-              break;
-            case '4':
-              environmentItemOperation('rename', data);
-              break;
-            case '5':
-              environmentItemOperation('delete', data);
-          }
-        }}
-        items={[
-          // {
-          //   key: '1',
-          //   label: <span onClick={() => {}}>share</span>,
-          //   disabled: true,
-          // },
-          // {
-          //   key: '2',
-          //   label: <span onClick={() => {}}>Move</span>,
-          //   disabled: true,
-          // },
-          {
-            key: '3',
-            label: <span className={'dropdown-click-target'}>Duplicate</span>,
-          },
-          {
-            key: '4',
-            label: <span className={'dropdown-click-target'}>Rename</span>,
-          },
-          {
-            key: '5',
-            label: (
-              <span style={{ color: 'red' }} className={'dropdown-click-target'}>
-                Delete
-              </span>
-            ),
-          },
-        ]}
-      />
-    );
+    return {
+      onClick: (e) => {
+        // e.domEvent.stopPropagation();
+        switch (e.key) {
+          case '3':
+            duplicateEnvironment(data);
+            break;
+          case '4':
+            environmentItemOperation('rename', data);
+            break;
+          case '5':
+            environmentItemOperation('delete', data);
+        }
+      },
+      items: [
+        // {
+        //   key: '1',
+        //   label: <span onClick={() => {}}>share</span>,
+        //   disabled: true,
+        // },
+        // {
+        //   key: '2',
+        //   label: <span onClick={() => {}}>Move</span>,
+        //   disabled: true,
+        // },
+        {
+          key: '3',
+          label: <span className={'dropdown-click-target'}>Duplicate</span>,
+        },
+        {
+          key: '4',
+          label: <span className={'dropdown-click-target'}>Rename</span>,
+        },
+        {
+          key: '5',
+          label: (
+            <span style={{ color: 'red' }} className={'dropdown-click-target'}>
+              Delete
+            </span>
+          ),
+        },
+      ],
+    };
   };
 
   const items = searchEnvironmentData.map((data: EnvironmentType) => {
