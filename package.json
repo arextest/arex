@@ -82,7 +82,7 @@
     "prettier": "^2.8.0"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "PORT=8000 react-app-rewired start",
     "build": "react-app-rewired build",
     "eject": "react-app-rewired eject"
   },
