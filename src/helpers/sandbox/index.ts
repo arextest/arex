@@ -1,6 +1,7 @@
+// @ts-nocheck
 // import { runTestScript as _runTestScript } from 'purple-js-sandbox';
-const _runTestScript = {}
 import { TestDescriptor, TestResponse } from 'purple-js-sandbox/lib/test-runner';
+const _runTestScript = {}
 
 // This will return 4 lines on the test report, grouped under "Arithmetic operations"
 // arex.test("Arithmetic operations", () => {

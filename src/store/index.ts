@@ -1,4 +1,3 @@
-const toggleTheme = ()=>{}
 import React from 'react';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
@@ -17,6 +16,7 @@ import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
 import { PrimaryColor, ThemeClassify, ThemeName } from '../style/theme';
+const toggleTheme = ()=>{}
 
 export type Profile = {
   theme: ThemeName;
@@ -136,9 +136,7 @@ export const useStore = create(
         }
 
         const themeName = newTheme as ThemeName;
-        toggleTheme({
-          scopeName: newTheme,
-        });
+        toggleTheme();
         state.userInfo!.profile.theme = themeName;
         state.themeClassify = themeName.split('-')[0] as ThemeClassify;
       });

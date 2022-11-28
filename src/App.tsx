@@ -7,13 +7,13 @@ import {ConfigProvider, Spin,theme } from 'antd';
 import { HttpProvider } from './components/arex-request';
 import React, { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
-const { darkAlgorithm } = theme;
 
 import DefaultConfig from './defaultConfig';
 import { useAuthentication, useCheckChrome, useInit } from './hooks';
 import routerConfig from './router';
 import { useStore } from './store';
 import { themeMap } from './style/theme';
+const { darkAlgorithm } = theme;
 
 // global Spin config
 Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 24 }} spin />);

@@ -95,6 +95,7 @@
     ]
   },
   "devDependencies": {
-    "@emotion/babel-plugin": "^11.10.5"
+    "@emotion/babel-plugin": "^11.10.5",
+    "@types/uuid": "^8.3.4"
   }
 }

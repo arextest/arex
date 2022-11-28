@@ -1,12 +1,13 @@
+// @ts-nocheck
 import { message } from 'antd';
 import { v4 as uuid } from 'uuid';
-export { uuid };
 
 import React from 'react';
 
 import { MenusType } from '../menus';
 import { PagesType, PageType } from '../pages';
 import * as ChartUtils from './chart';
+export { uuid };
 export { ChartUtils };
 
 /**

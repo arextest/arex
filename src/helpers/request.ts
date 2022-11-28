@@ -1,6 +1,7 @@
+// @ts-nocheck
 import { TestDescriptor } from 'purple-js-sandbox/lib/test-runner';
 
-import { HoppRESTRequest } from '../components/ArexRequestComponent/lib/data/rest';
+// import { HoppRESTRequest } from '../components/ArexRequestComponent/lib/data/rest';
 import { runTestScript } from './sandbox';
 
 function AgentAxios<T>(params: any) {
@@ -36,7 +37,7 @@ function AgentAxios<T>(params: any) {
 export default AgentAxios;
 
 interface Test {
-  request: HoppRESTRequest;
+  request: any;
 }
 export const AgentAxiosAndTest = ({ request }: Test) =>
   AgentAxios({
