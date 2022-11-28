@@ -67,20 +67,24 @@
     "use-immer": "^0.7.0",
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.4",
-    "zustand": "^4.0.0-rc.1"
+    "zustand": "^4.0.0-rc.1",
+    "eslint": "8.20.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.30.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.30.7",
+    "@typescript-eslint/parser": "^5.30.7",
+    "@emotion/eslint-plugin": "^11.10.0",
+    "prettier": "^2.8.0"
   },
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "eject": "react-app-rewired eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app",
-    "rules": {
-      "no-undef": "off",
-      "no-restricted-globals": "off",
-      "no-unused-vars": "off"
-    }
   },
   "browserslist": {
     "production": [
