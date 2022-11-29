@@ -1,10 +1,10 @@
-import { LeftOutlined } from '@ant-design/icons';
-import styled from '@emotion/styled';
-import { Tabs } from 'antd';
-import React, { FC, ReactNode, useMemo } from 'react';
+import { LeftOutlined } from "@ant-design/icons";
+import styled from "@emotion/styled";
+import { Tabs } from "antd";
+import React, { FC, ReactNode, useMemo } from "react";
 
-import MenuConfig, { MenusType } from '../../menus';
-import { useStore } from '../../store';
+import MenuConfig, { MenusType } from "../../menus";
+import { useStore } from "../../store";
 
 type MainMenuProps = {
   collapse?: boolean;
@@ -19,11 +19,17 @@ const MainMenu: FC<MainMenuProps> = (props) => {
   const tabsItems = useMemo(
     () =>
       MenuConfig.map((Config) => ({
-        label: <MenuTitle icon={<Config.Icon />} title={Config.title} collapse={props.collapse} />,
+        label: (
+          <MenuTitle
+            icon={<Config.Icon />}
+            title={Config.title}
+            collapse={props.collapse}
+          />
+        ),
         key: Config.title,
         children: <Config.Menu />,
       })),
-    [props.collapse],
+    [props.collapse]
   );
 
   const handleMenuChange = (key: string) => {
@@ -33,7 +39,7 @@ const MainMenu: FC<MainMenuProps> = (props) => {
 
   return (
     <MainMenuWrapper
-      tabPosition='left'
+      tabPosition="left"
       activeKey={activeKey}
       collapse={props.collapse}
       tabBarExtraContent={
@@ -49,35 +55,37 @@ const MainMenu: FC<MainMenuProps> = (props) => {
   );
 };
 
-const MainMenuWrapper = styled(Tabs, { shouldForwardProp: (propName) => propName !== 'collapse' })<{
+const MainMenuWrapper = styled(Tabs, {
+  shouldForwardProp: (propName) => propName !== "collapse",
+})<{
   collapse?: boolean;
 }>`
   height: calc(100% - 35px);
   .ant-tabs-nav-list {
-    width: ${(props) => (props.collapse ? '70px' : '100px')};
+    width: ${(props) => (props.collapse ? "70px" : "100px")};
     .ant-tabs-tab {
       margin: 0 !important;
       padding: 12px 0 !important;
       .ant-tabs-tab-btn {
         margin: 0 auto;
-        color: ${(props) => props.theme.color.text.secondary};
+        // color: ${(props) => props.theme.color.text.secondary};
       }
       &.ant-tabs-tab-disabled {
         .ant-tabs-tab-btn {
-          color: ${(props) => props.theme.color.text.disabled};
+          // color: ${(props) => props.theme.color.text.disabled};
         }
       }
       :hover:not(.ant-tabs-tab-disabled) {
         .ant-tabs-tab-btn {
-          color: ${(props) => props.theme.color.text.primary};
+          // color: ${(props) => props.theme.color.text.primary};
         }
       }
     }
     .ant-tabs-tab-active {
-      background-color: ${(props) => props.theme.color.background.active};
-      border-right: 1px solid ${(props) => props.theme.color.border.primary};
+      // background-color: ${(props) => props.theme.color.background.active};
+      // border-right: 1px solid ${(props) => props.theme.color.border.primary};
       .ant-tabs-tab-btn {
-        color: ${(props) => props.theme.color.text.primary};
+        // color: ${(props) => props.theme.color.text.primary};
       }
     }
     .ant-tabs-ink-bar {
@@ -86,13 +94,14 @@ const MainMenuWrapper = styled(Tabs, { shouldForwardProp: (propName) => propName
   }
   .ant-tabs-content {
     height: 100%;
-    display: ${(props) => (props.collapse ? 'none' : 'inherit')};
+    display: ${(props) => (props.collapse ? "none" : "inherit")};
     overflow-y: auto;
     .ant-tabs-tabpane {
       padding: 0 8px !important;
       .ant-tree-node-selected {
-        color: ${(props) => props.theme.color.text.highlight};
-        background-color: ${(props) => props.theme.color.selected} !important;
+        // color: ${(props) => props.theme.color.text.highlight};
+        // background-color: ${(props) =>
+          props.theme.color.selected} !important;
       }
     }
   }
@@ -102,20 +111,25 @@ const MainMenuWrapper = styled(Tabs, { shouldForwardProp: (propName) => propName
 `;
 
 const CollapseMenuButton = styled(
-  (props: { collapse?: boolean; icon?: ReactNode; children?: ReactNode; onClick?: () => void }) => (
+  (props: {
+    collapse?: boolean;
+    icon?: ReactNode;
+    children?: ReactNode;
+    onClick?: () => void;
+  }) => (
     <div {...props}>
       {props.icon}
       {props.children}
     </div>
   ),
-  { shouldForwardProp: (propName) => propName !== 'collapse' },
+  { shouldForwardProp: (propName) => propName !== "collapse" }
 )`
   margin-bottom: 35px;
   text-align: center;
   width: 100%;
-  color: ${(props) => props.theme.color.text.watermark};
+  //color: ${(props) => props.theme.color.text.watermark};
   cursor: pointer;
-  transform: rotate(${(props) => (props.collapse ? '180deg' : '0deg')});
+  transform: rotate(${(props) => (props.collapse ? "180deg" : "0deg")});
   transition: all 0.2s;
 `;
 

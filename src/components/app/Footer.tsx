@@ -1,13 +1,13 @@
-import styled from '@emotion/styled';
+import CheckOrCloseIcon from "../styledComponents/CheckOrCloseIcon";
+import styled from "@emotion/styled";
+import { theme } from "antd";
 
-import CheckOrCloseIcon from '../styledComponents/CheckOrCloseIcon';
-
-const FooterWrapper = styled.div`
+const FooterWrapper = styled.div<{ borderColor: string }>`
   height: 26px;
   width: 100%;
   line-height: 26px;
   font-size: 12px;
-  border-top: 1px solid ${(props) => props.theme.color.border.primary};
+  border-top: 1px solid ${(props) => props.borderColor};
   display: flex;
   justify-content: space-between;
   z-index: 1000;
@@ -17,16 +17,18 @@ const FooterWrapper = styled.div`
       color: #6b6b6b;
       margin-left: 6px;
     }
-    span[role='img'] {
+    span[role="img"] {
       color: rgb(82, 196, 26);
     }
   }
 `;
 const AppFooter = () => {
+  const { token } = theme.useToken();
+
   return (
-    <FooterWrapper>
-      <div className='footer_left'></div>
-      <div className='footer_right'>
+    <FooterWrapper borderColor={token.colorBorder}>
+      <div className="footer_left"></div>
+      <div className="footer_right">
         <span>
           <CheckOrCloseIcon checked={window.__AREX_EXTENSION_INSTALLED__} />
           Browser Agent

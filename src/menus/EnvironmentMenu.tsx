@@ -4,19 +4,19 @@ import {
   DashOutlined,
   MenuOutlined,
   PlusOutlined,
-} from '@ant-design/icons';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useRequest } from 'ahooks';
-import { Button, Dropdown, Input, Menu, Modal, Tooltip } from 'antd';
-import React, { FC, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+} from "@ant-design/icons";
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
+import { useRequest } from "ahooks";
+import { Button, Dropdown, Input, Menu, Modal, Tooltip } from "antd";
+import React, { FC, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 
-import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
-import { PagesType } from '../pages';
-import EnvironmentService from '../services/Environment.service';
-import { useStore } from '../store';
-import { MenusType } from './index';
+import { generateGlobalPaneId, parseGlobalPaneId } from "../helpers/utils";
+import { PagesType } from "../pages";
+import EnvironmentService from "../services/Environment.service";
+import { useStore } from "../store";
+import { MenusType } from "./index";
 
 type EnvironmentKeyValues = { key: string; value: string; active: boolean };
 type EnvironmentType = {
@@ -26,39 +26,42 @@ type EnvironmentType = {
   workspaceId: string;
 };
 
-const MenuList = styled(Menu, { shouldForwardProp: (propName) => propName !== 'small' })<{
+const MenuList = styled(Menu, {
+  shouldForwardProp: (propName) => propName !== "small",
+})<{
   small?: boolean;
 }>`
   border: none !important;
   background: transparent !important;
   .ant-menu-item {
     margin: 4px 0 !important;
-    height: ${(props) => (props.small ? '24px' : '28px')};
-    line-height: ${(props) => (props.small ? '24px' : '28px')};
+    height: ${(props) => (props.small ? "24px" : "28px")};
+    line-height: ${(props) => (props.small ? "24px" : "28px")};
     border-radius: 2px;
     background: transparent !important;
     padding: 0;
   }
   .ant-menu-item-active {
     color: inherit !important;
-    background-color: ${(props) => props.theme.color.active} !important;
+    // background-color: ${(props) => props.theme.color.active} !important;
   }
   .ant-menu-item-selected {
-    background-color: ${(props) => props.theme.color.selected} !important;
+    // background-color: ${(props) => props.theme.color.selected} !important;
   }
   .ant-menu-item-active.ant-menu-item-selected {
-    color: ${(props) => props.theme.color.primary} !important;
+    // color: ${(props) => props.theme.color.primary} !important;
   }
   .btnSelected {
     padding: 2px 0;
     &:hover {
-      background-color: ${(props) => props.theme.color.background.hover} !important;
+      // background-color: ${(props) =>
+        props.theme.color.background.hover} !important;
     }
   }
   .btnHover {
     padding: 2px 0;
     &:hover {
-      background-color: ${(props) => props.theme.color.background.hover};
+      // background-color: ${(props) => props.theme.color.background.hover};
     }
   }
 `;
@@ -89,14 +92,14 @@ const Environment: FC = () => {
     setActiveEnvironment,
   } = useStore();
 
-  const [iconIsShow, setIconIsShow] = useState('');
+  const [iconIsShow, setIconIsShow] = useState("");
   const [open, setOpen] = useState(false);
   const [activeEnvironmentItem, setActiveEnvironmentItem] = useState({});
-  const [renameValue, setRenameValue] = useState('');
-  const [renameKey, setRenameKey] = useState('');
+  const [renameValue, setRenameValue] = useState("");
+  const [renameKey, setRenameKey] = useState("");
   const [searchEnvironmentData, setSearchEnvironmentData] = useState([]);
 
-  const value = parseGlobalPaneId(activeMenu[1])['rawId'];
+  const value = parseGlobalPaneId(activeMenu[1])["rawId"];
   const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
 
   const handleSelect = (rowData: any) => {
@@ -104,7 +107,7 @@ const Environment: FC = () => {
     const data = {
       title: info.envName,
       key: info.id,
-      pageType: 'environment',
+      pageType: "environment",
       qid: info.id,
       isNew: true,
       keyValues: info.keyValues,
@@ -118,15 +121,22 @@ const Environment: FC = () => {
         pageType: PagesType.Environment,
         isNew: false,
         data,
-        paneId: generateGlobalPaneId(MenusType.Environment, PagesType.Environment, info.id),
+        paneId: generateGlobalPaneId(
+          MenusType.Environment,
+          PagesType.Environment,
+          info.id
+        ),
         rawId: info.id,
       },
-      'push',
+      "push"
     );
   };
 
   const { run: fetchEnvironmentData } = useRequest(
-    () => EnvironmentService.getEnvironment({ workspaceId: params.workspaceId as string }),
+    () =>
+      EnvironmentService.getEnvironment({
+        workspaceId: params.workspaceId as string,
+      }),
     {
       ready: !!params.workspaceId,
       refreshDeps: [params.workspaceId],
@@ -134,33 +144,34 @@ const Environment: FC = () => {
         setSearchEnvironmentData(res);
         setEnvironmentTreeData(res);
       },
-    },
+    }
   );
 
   const environmentItemOperation = (e: string, data: EnvironmentType) => {
     setActiveEnvironmentItem(data);
-    if (e == 'delete') {
+    if (e == "delete") {
       setOpen(true);
-    } else if (e == 'rename') {
+    } else if (e == "rename") {
       setRenameValue(data.envName);
       setRenameKey(data.id);
     }
   };
 
   const duplicateEnvironment = (data: EnvironmentType) => {
-    EnvironmentService.duplicateEnvironment({ id: data.id, workspaceId: data.workspaceId }).then(
-      (res) => {
-        if (res.body.success == true) {
-          fetchEnvironmentData();
-        } else {
-          console.log(res, 'duplicaterror');
-        }
-      },
-    );
+    EnvironmentService.duplicateEnvironment({
+      id: data.id,
+      workspaceId: data.workspaceId,
+    }).then((res) => {
+      if (res.body.success == true) {
+        fetchEnvironmentData();
+      } else {
+        console.log(res, "duplicaterror");
+      }
+    });
   };
 
   const handleOk = (e: string) => {
-    if (e == 'delete') {
+    if (e == "delete") {
       EnvironmentService.deleteEnvironment({
         id: activeEnvironmentItem.id,
         workspaceId: activeEnvironmentItem.workspaceId,
@@ -169,7 +180,7 @@ const Environment: FC = () => {
           fetchEnvironmentData();
           setOpen(false);
         } else {
-          console.log(res, 'deleteError');
+          console.log(res, "deleteError");
         }
       });
     }
@@ -178,8 +189,8 @@ const Environment: FC = () => {
   //修改envName
   const rename = () => {
     if (activeEnvironmentItem.envName == renameValue) {
-      setRenameValue('');
-      setRenameKey('');
+      setRenameValue("");
+      setRenameKey("");
       return;
     }
     let env: any;
@@ -194,8 +205,8 @@ const Environment: FC = () => {
         if (activeEnvironment && activeEnvironment.id == env.id) {
           setActiveEnvironment(env);
         }
-        setRenameValue('');
-        setRenameKey('');
+        setRenameValue("");
+        setRenameKey("");
         fetchEnvironmentData();
       }
     });
@@ -207,7 +218,9 @@ const Environment: FC = () => {
 
   //搜索
   const searchEnvironment = (val: string) => {
-    const searchData = environmentTreeData.filter((data: any) => data.envName.includes(val));
+    const searchData = environmentTreeData.filter((data: any) =>
+      data.envName.includes(val)
+    );
     setSearchEnvironmentData(searchData);
   };
 
@@ -216,14 +229,14 @@ const Environment: FC = () => {
       onClick: (e) => {
         // e.domEvent.stopPropagation();
         switch (e.key) {
-          case '3':
+          case "3":
             duplicateEnvironment(data);
             break;
-          case '4':
-            environmentItemOperation('rename', data);
+          case "4":
+            environmentItemOperation("rename", data);
             break;
-          case '5':
-            environmentItemOperation('delete', data);
+          case "5":
+            environmentItemOperation("delete", data);
         }
       },
       items: [
@@ -238,17 +251,17 @@ const Environment: FC = () => {
         //   disabled: true,
         // },
         {
-          key: '3',
-          label: <span className={'dropdown-click-target'}>Duplicate</span>,
+          key: "3",
+          label: <span className={"dropdown-click-target"}>Duplicate</span>,
         },
         {
-          key: '4',
-          label: <span className={'dropdown-click-target'}>Rename</span>,
+          key: "4",
+          label: <span className={"dropdown-click-target"}>Rename</span>,
         },
         {
-          key: '5',
+          key: "5",
           label: (
-            <span style={{ color: 'red' }} className={'dropdown-click-target'}>
+            <span style={{ color: "red" }} className={"dropdown-click-target"}>
               Delete
             </span>
           ),
@@ -265,10 +278,10 @@ const Environment: FC = () => {
             setIconIsShow(data.id);
           }}
           onMouseLeave={() => {
-            setIconIsShow('');
+            setIconIsShow("");
           }}
           onKeyDown={(e) => {
-            if (e.key == 'Enter') {
+            if (e.key == "Enter") {
               e.stopPropagation();
             }
           }}
@@ -277,7 +290,7 @@ const Environment: FC = () => {
             <span>
               <Input
                 autoFocus
-                style={{ padding: '0 4px', width: '100%' }}
+                style={{ padding: "0 4px", width: "100%" }}
                 value={renameValue}
                 onBlur={rename}
                 onPressEnter={rename}
@@ -293,13 +306,15 @@ const Environment: FC = () => {
                 <CheckCircleFilled
                   onClick={() => {
                     data.id == currentEnvironment.id
-                      ? setCurrentEnvironment('0')
+                      ? setCurrentEnvironment("0")
                       : setCurrentEnvironment(data.id);
                   }}
                 />
               ) : (
                 <div>
-                  <CheckCircleFilled onClick={() => setCurrentEnvironment(data.id)} />
+                  <CheckCircleFilled
+                    onClick={() => setCurrentEnvironment(data.id)}
+                  />
                   <span
                     css={css`
                       display: inline-block;
@@ -312,19 +327,19 @@ const Environment: FC = () => {
               <CheckCircleOutlined
                 className={
                   activeEnvironment && activeEnvironment.id == iconIsShow
-                    ? 'btnSelected'
-                    : 'btnHover'
+                    ? "btnSelected"
+                    : "btnHover"
                 }
                 onClick={() => setCurrentEnvironment(data.id)}
               />
             ) : null}
             {data.id == iconIsShow ? (
-              <Dropdown menu={menu(data)} trigger={['click']}>
+              <Dropdown menu={menu(data)} trigger={["click"]}>
                 <DashOutlined
                   className={
                     activeEnvironment && activeEnvironment.id == iconIsShow
-                      ? 'btnSelected'
-                      : 'btnHover'
+                      ? "btnSelected"
+                      : "btnHover"
                   }
                 />
               </Dropdown>
@@ -346,45 +361,60 @@ const Environment: FC = () => {
           margin-bottom: 10px;
         `}
       >
-        <Tooltip placement='bottomLeft' title={'Create New'} mouseEnterDelay={0.5}>
+        <Tooltip
+          placement="bottomLeft"
+          title={"Create New"}
+          mouseEnterDelay={0.5}
+        >
           <Button
             css={css`
               margin-right: 5px;
             `}
             icon={<PlusOutlined />}
-            type='text'
-            size='small'
+            type="text"
+            size="small"
             onClick={() => {
               const CreateEnvironment = {
-                env: { envName: 'New Environment', workspaceId: params.workspaceId, keyValues: [] },
+                env: {
+                  envName: "New Environment",
+                  workspaceId: params.workspaceId,
+                  keyValues: [],
+                },
               };
-              EnvironmentService.saveEnvironment(CreateEnvironment).then((res) => {
-                if (res.body.success == true) {
-                  fetchEnvironmentData();
+              EnvironmentService.saveEnvironment(CreateEnvironment).then(
+                (res) => {
+                  if (res.body.success == true) {
+                    fetchEnvironmentData();
+                  }
                 }
-              });
+              );
             }}
           />
         </Tooltip>
         <Input
-          className={'environment-header-search'}
-          size='small'
-          placeholder=''
+          className={"environment-header-search"}
+          size="small"
+          placeholder=""
           onChange={(val) => searchEnvironment(val.target.value)}
           prefix={<MenuOutlined />}
         />
       </div>
-      <MenuList items={items} selectedKeys={selectedKeys} onClick={handleSelect} />
+      <MenuList
+        items={items}
+        selectedKeys={selectedKeys}
+        onClick={handleSelect}
+      />
       <Modal
         title={`Delete "${activeEnvironmentItem.envName}"`}
-        okText='Delete'
+        okText="Delete"
         open={open}
-        onOk={() => handleOk('delete')}
+        onOk={() => handleOk("delete")}
         onCancel={handleCancel}
       >
         <p>
-          Deleting this environment might cause any monitors or mock servers using it to stop
-          functioning properly. Are you sure you want to continue?
+          Deleting this environment might cause any monitors or mock servers
+          using it to stop functioning properly. Are you sure you want to
+          continue?
         </p>
       </Modal>
     </div>

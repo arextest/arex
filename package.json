@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/cssinjs": "^1.0.2",
     "@ant-design/icons": "^4.7.0",
     "@babel/core": "^7.18.5",
     "@codemirror/lang-html": "^6.1.0",
@@ -26,7 +27,6 @@
     "@types/react-dom": "^18.0.9",
     "@uiw/codemirror-theme-github": "^4.12.4",
     "@uiw/react-codemirror": "^4.8.1",
-    "@zougt/vite-plugin-theme-preprocessor": "^1.4.5",
     "ahooks": "^3.5.2",
     "allotment": "^1.17.0",
     "antd": "^5.0.1",
@@ -95,6 +95,9 @@
     ]
   },
   "devDependencies": {
-    "@emotion/babel-plugin": "^11.10.5"
+    "@emotion/babel-plugin": "^11.10.5",
+    "@types/react-color": "^3.0.6",
+    "@types/uuid": "^8.3.4",
+    "prettier": "^2.8.0"
   }
 }

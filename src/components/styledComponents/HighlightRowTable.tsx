@@ -1,8 +1,8 @@
-import { css } from '@emotion/react';
-import { CSSInterpolation } from '@emotion/serialize/types';
-import styled from '@emotion/styled';
-import { Table, TableProps } from 'antd';
-import { useState } from 'react';
+import { css } from "@emotion/react";
+import { CSSInterpolation } from "@emotion/serialize/types";
+import styled from "@emotion/styled";
+import { Table, TableProps } from "antd";
+import { useState } from "react";
 
 type HighlightRowTableProps<T> = {
   sx?: CSSInterpolation;
@@ -13,7 +13,7 @@ type HighlightRowTableProps<T> = {
 const HighlightRowTableWrapper = styled.div`
   // highlight selected row
   .clickRowStyle {
-    background-color: ${(props) => props.theme.color.selected};
+    // background-color: ${(props) => props.theme.color.selected};
     td.ant-table-cell-row-hover {
       background-color: transparent !important; // use clickRowStyle background color instead
     }
@@ -27,10 +27,13 @@ function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
 
   const [page, setPage] = useState<number>();
   const [selectRow, setSelectRow] = useState<{ row?: number; page?: number }>(
-    defaultSelectFirst ? defaultSelectRow : invalidSelectRow,
+    defaultSelectFirst ? defaultSelectRow : invalidSelectRow
   );
 
-  const handleChange: TableProps<T>['onChange'] = (pagination, ...restParams) => {
+  const handleChange: TableProps<T>["onChange"] = (
+    pagination,
+    ...restParams
+  ) => {
     setPage(pagination.current);
     onChange && onChange(pagination, ...restParams);
   };
@@ -41,11 +44,11 @@ function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
         onRow={(record, index) => {
           return {
             onClick: () => {
-              if (typeof index === 'number') {
+              if (typeof index === "number") {
                 setSelectRow(
                   page === selectRow.page && index === selectRow.row
                     ? invalidSelectRow
-                    : { row: index, page },
+                    : { row: index, page }
                 );
                 onRowClick && onRowClick(record);
               }
@@ -54,7 +57,9 @@ function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
         }}
         onChange={handleChange}
         rowClassName={(record, index) =>
-          page === selectRow.page && index === selectRow.row ? 'clickRowStyle' : ''
+          page === selectRow.page && index === selectRow.row
+            ? "clickRowStyle"
+            : ""
         }
         {...restProps}
       />

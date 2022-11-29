@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import { Select, SelectProps } from 'antd';
-import React from 'react';
+import styled from "@emotion/styled";
+import { Select, SelectProps } from "antd";
+import React from "react";
 
-import { useStore } from '../../store';
+import { useStore } from "../../store";
 
 const { Option } = Select;
 
@@ -12,7 +12,7 @@ const EnvironmentSelectWrapper = styled((props: SelectProps) => (
   height: 36px;
   width: 200px;
   box-sizing: content-box;
-  border-left: 1px solid ${(props) => props.theme.color.border.primary};
+  // border-left: 1px solid ${(props) => props.theme.color.border.primary};
   margin-left: -1px;
   .ant-select-selector {
     height: 100%;
@@ -23,11 +23,15 @@ const EnvironmentSelectWrapper = styled((props: SelectProps) => (
 `;
 
 const EnvironmentSelect = () => {
-  const { currentEnvironment, setCurrentEnvironment, environmentTreeData } = useStore();
+  const { currentEnvironment, setCurrentEnvironment, environmentTreeData } =
+    useStore();
 
   return (
-    <EnvironmentSelectWrapper value={currentEnvironment?.id} onChange={setCurrentEnvironment}>
-      <Option value='0'>No Environment</Option>
+    <EnvironmentSelectWrapper
+      value={currentEnvironment?.id}
+      onChange={setCurrentEnvironment}
+    >
+      <Option value="0">No Environment</Option>
       {environmentTreeData?.map((e) => (
         <Option key={e.id} value={e.id}>
           {e.envName}

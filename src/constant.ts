@@ -1,32 +1,32 @@
-export const ExtensionVersion = '1.0.4';
+export const ExtensionVersion = "1.0.4";
 
-export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
+export const METHODS = ["GET", "POST", "PUT", "DELETE", "PATCH"] as const;
 export enum MethodEnum {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  DELETE = 'DELETE',
-  PATCH = 'PATCH',
+  GET = "GET",
+  POST = "POST",
+  PUT = "PUT",
+  DELETE = "DELETE",
+  PATCH = "PATCH",
 }
 
 export const methodMap = {
   GET: {
-    color: '#0cbb52',
+    color: "#0cbb52",
   },
   PUT: {
-    color: '#097bed',
+    color: "#097bed",
   },
   POST: {
-    color: '#ffb400',
+    color: "#ffb400",
   },
   DELETE: {
-    color: '#eb2013',
+    color: "#eb2013",
   },
   PATCH: {
-    color: '#212121',
+    color: "#212121",
   },
   UNKNOWN: {
-    color: '#0cbb52',
+    color: "#0cbb52",
   },
 };
 
@@ -37,7 +37,7 @@ export enum NodeType {
 }
 
 export enum ContentTypeEnum {
-  ApplicationJson = 'application/json',
+  ApplicationJson = "application/json",
 }
 
 export enum RoleEnum {
@@ -53,9 +53,9 @@ export enum FontSizeMap {
 }
 
 // localStorage key
-export const UserInfoKey = 'userInfo';
-export const EmailKey = 'email'; // 初始化接口相关的 email 请使用该 key 而非 UserInfo
-export const AccessTokenKey = 'accessToken';
-export const RefreshTokenKey = 'refreshToken';
-export const CollapseMenuKey = 'collapseMenu';
-export const EnvironmentKey = 'environmentId';
+export const UserProfileKey = "userProfile";
+export const EmailKey = "email"; // 初始化接口相关的 email 请使用该 key 而非 UserInfo
+export const AccessTokenKey = "accessToken";
+export const RefreshTokenKey = "refreshToken";
+export const CollapseMenuKey = "collapseMenu";
+export const EnvironmentKey = "environmentId";

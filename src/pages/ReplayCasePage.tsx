@@ -1,41 +1,54 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { html } from '@codemirror/lang-html';
-import { javascript } from '@codemirror/lang-javascript';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
-import CodeMirror from '@uiw/react-codemirror';
-import { ReactCodeMirrorProps } from '@uiw/react-codemirror/src';
-import { useRequest } from 'ahooks';
-import { Col, Collapse, Row, Space, Switch } from 'antd';
-import React, { useMemo, useRef, useState } from 'react';
+import { InfoCircleOutlined } from "@ant-design/icons";
+import { html } from "@codemirror/lang-html";
+import { javascript } from "@codemirror/lang-javascript";
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
+import CodeMirror from "@uiw/react-codemirror";
+import { ReactCodeMirrorProps } from "@uiw/react-codemirror/src";
+import { useRequest } from "ahooks";
+import { Col, Collapse, Row, Space, Switch } from "antd";
+import React, { useMemo, useRef, useState } from "react";
 
-import Case from '../components/replay/Case';
-import SaveCase, { SaveCaseRef } from '../components/replay/SaveCase';
-import { CheckOrCloseIcon, CollapseTable, Label, PanesTitle } from '../components/styledComponents';
-import ReplayService from '../services/Replay.service';
-import { PlanItemStatistics, ReplayCase as ReplayCaseType } from '../services/Replay.type';
-import { useStore } from '../store';
-import { ThemeClassify } from '../style/theme';
-import { PageFC } from './index';
+import Case from "../components/replay/Case";
+import SaveCase, { SaveCaseRef } from "../components/replay/SaveCase";
+import {
+  CheckOrCloseIcon,
+  CollapseTable,
+  Label,
+  PanesTitle,
+} from "../components/styledComponents";
+import ReplayService from "../services/Replay.service";
+import {
+  PlanItemStatistics,
+  ReplayCase as ReplayCaseType,
+} from "../services/Replay.type";
+import { useStore } from "../store";
+import { Theme } from "../style/theme";
+import { PageFC } from "./index";
 
 const { Panel } = Collapse;
 const InfoIcon = styled(InfoCircleOutlined)`
-  color: ${(props) => props.theme.color.error};
+  // color: ${(props) => props.theme.color.error};
   margin-right: 8px;
 `;
 const CodeViewer = styled(
-  (props: ReactCodeMirrorProps & { type: 'json' | 'html'; themeKey: ThemeClassify }) => (
+  (
+    props: ReactCodeMirrorProps & {
+      type: "json" | "html";
+      themeKey: Theme;
+    }
+  ) => (
     <CodeMirror
       readOnly
-      height='300px'
+      height="300px"
       extensions={[javascript(), html()]}
       theme={props.themeKey}
       {...props}
     />
-  ),
+  )
 )<{ remark?: string }>`
   :after {
-    content: '${(props) => props.remark || ''}';
+    content: "${(props) => props.remark || ""}";
     position: absolute;
     bottom: 8px;
     right: 32px;
@@ -67,16 +80,19 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
       onError() {
         mutate([]);
       },
-    },
+    }
   );
 
   const compareResultsFiltered = useMemo(
-    () => compareResults.filter((item) => !onlyFailed || item.diffResultCode !== 0),
-    [onlyFailed, compareResults],
+    () =>
+      compareResults.filter((item) => !onlyFailed || item.diffResultCode !== 0),
+    [onlyFailed, compareResults]
   );
 
   const handleClickRecord = (record: ReplayCaseType) => {
-    setSelectedRecord(selectedRecord?.recordId === record.recordId ? undefined : record);
+    setSelectedRecord(
+      selectedRecord?.recordId === record.recordId ? undefined : record
+    );
   };
 
   function handleClickSaveCase(record: ReplayCaseType) {
@@ -84,13 +100,20 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
   }
 
   return (
-    <Space direction='vertical' style={{ display: 'flex', paddingBottom: '16px' }}>
+    <Space
+      direction="vertical"
+      style={{ display: "flex", paddingBottom: "16px" }}
+    >
       <PanesTitle
         title={<span>Main Service API: {props.page.data.operationName}</span>}
         extra={
           <span>
             <Label>View Failed Only</Label>
-            <Switch size='small' defaultChecked={onlyFailed} onChange={setOnlyFailed} />
+            <Switch
+              size="small"
+              defaultChecked={onlyFailed}
+              onChange={setOnlyFailed}
+            />
           </span>
         }
       />
@@ -139,7 +162,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
                         type={result.type}
                         value={result.baseMsg}
                         themeKey={themeClassify}
-                        remark='Benchmark'
+                        remark="Benchmark"
                       />
                     </Col>
                     <Col span={12}>
@@ -153,12 +176,12 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
                         type={result.type}
                         value={result.testMsg}
                         themeKey={themeClassify}
-                        remark='Test'
+                        remark="Test"
                       />
                     </Col>
                   </Row>
                 </Panel>
-              ),
+              )
             )}
           </Collapse>
         }

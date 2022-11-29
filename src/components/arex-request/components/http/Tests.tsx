@@ -1,16 +1,20 @@
 // @ts-nocheck
-import { DeleteOutlined, PicRightOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { javascript } from '@codemirror/lang-javascript';
-import { json } from '@codemirror/lang-json';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
-import { githubDark, githubLight } from '@uiw/codemirror-theme-github';
-import { Button, Tooltip } from 'antd';
-import { useContext, useEffect, useRef, useState } from 'react';
+import {
+  DeleteOutlined,
+  PicRightOutlined,
+  QuestionCircleOutlined,
+} from "@ant-design/icons";
+import { javascript } from "@codemirror/lang-javascript";
+import { json } from "@codemirror/lang-json";
+import { css } from "@emotion/react";
+import styled from "@emotion/styled";
+import { githubDark, githubLight } from "@uiw/codemirror-theme-github";
+import { Button, Tooltip } from "antd";
+import { useContext, useEffect, useRef, useState } from "react";
 
-import { useCodeMirror } from '../../helpers/editor/codemirror';
-import { getValueByPath } from '../../helpers/utils/locale';
-import { GlobalContext, HttpContext } from '../../index';
+import { useCodeMirror } from "../../helpers/editor/codemirror";
+import { getValueByPath } from "../../helpers/utils/locale";
+import { GlobalContext, HttpContext } from "../../index";
 
 export const ResponseTestHeader = styled.div`
   display: flex;
@@ -24,7 +28,7 @@ export const ResponseTestHeader = styled.div`
 `;
 
 const ThemeColorPrimaryButton = styled(Button)`
-  color: ${(props) => props.theme.color.primary} !important;
+  // color: ${(props) => props.theme.color.primary} !important;
 `;
 
 export const ResponseTestWrapper = styled.div`
@@ -69,11 +73,11 @@ const HttpTests = ({ getTestVal, OldTestVal }: ResponseTestProps) => {
   const { store: globalStore } = useContext(GlobalContext);
   const t = (key) => getValueByPath(globalStore.locale.locale, key);
 
-  const [TestVal, setTestVal] = useState<string>('');
+  const [TestVal, setTestVal] = useState<string>("");
   const [isLineWrapping, setIsLineWrapping] = useState<boolean>(true);
   const codeSnippet = [
     {
-      name: 'Response: Status code is 200',
+      name: "Response: Status code is 200",
       text: `
 // Check status code is 200
 arex.test("Status code is 200", ()=> {
@@ -82,7 +86,7 @@ arex.test("Status code is 200", ()=> {
 `,
     },
     {
-      name: 'Response: Assert property from body',
+      name: "Response: Assert property from body",
       text: `
 // Check JSON response property
 arex.test("Check JSON response property", ()=> {
@@ -91,7 +95,7 @@ arex.test("Check JSON response property", ()=> {
 `,
     },
     {
-      name: 'Status code: Status code is 2xx',
+      name: "Status code: Status code is 2xx",
       text: `
 // Check status code is 2xx
 arex.test("Status code is 2xx", ()=> {
@@ -99,7 +103,7 @@ arex.test("Status code is 2xx", ()=> {
 });`,
     },
     {
-      name: 'Status code: Status code is 3xx',
+      name: "Status code: Status code is 3xx",
       text: `
 // Check status code is 3xx
 arex.test("Status code is 3xx", ()=> {
@@ -107,7 +111,7 @@ arex.test("Status code is 3xx", ()=> {
 });`,
     },
     {
-      name: 'Status code: Status code is 4xx',
+      name: "Status code: Status code is 4xx",
       text: `
 // Check status code is 4xx
 arex.test("Status code is 4xx", ()=> {
@@ -115,7 +119,7 @@ arex.test("Status code is 4xx", ()=> {
 });`,
     },
     {
-      name: 'Status code: Status code is 5xx',
+      name: "Status code: Status code is 5xx",
       text: `
 // Check status code is 5xx
 arex.test("Status code is 5xx", ()=> {
@@ -129,12 +133,12 @@ arex.test("Status code is 5xx", ()=> {
   useCodeMirror({
     container: codeCm.current,
     value: store.request.testScript,
-    height: '100%',
+    height: "100%",
     extensions: [javascript()],
     theme: globalStore.theme.type,
     onChange: (val) => {
       dispatch({
-        type: 'request.testScript',
+        type: "request.testScript",
         payload: val,
       });
     },
@@ -143,7 +147,7 @@ arex.test("Status code is 5xx", ()=> {
   const addTest = (text: string) => {
     // console.log(store.request.testScript + text,'store.request.testScript + text')
     dispatch({
-      type: 'request.testScript',
+      type: "request.testScript",
       payload: store.request.testScript + text,
     });
   };
@@ -160,7 +164,7 @@ arex.test("Status code is 5xx", ()=> {
       `}
     >
       <ResponseTestHeader>
-        <span>{t('preRequest.javascript_code')}</span>
+        <span>{t("preRequest.javascript_code")}</span>
         <div>
           {/*<Tooltip title={t('help')}>*/}
           {/*  <Button disabled type='text' icon={<QuestionCircleOutlined />} />*/}
@@ -177,18 +181,21 @@ arex.test("Status code is 5xx", ()=> {
         {/*{JSON.stringify(store.request.testScript)}*/}
         <div
           ref={codeCm}
-          style={{ width: '65%' }}
+          style={{ width: "65%" }}
           // options = {{
           //   lineWrapping:true,
           // }}
         />
         <div>
           <div>
-            Test scripts are written in JavaScript, and are run after the response is received.
+            Test scripts are written in JavaScript, and are run after the
+            response is received.
           </div>
           <Button
-            type='text'
-            onClick={() => window.open('https://docs.hoppscotch.io/features/tests')}
+            type="text"
+            onClick={() =>
+              window.open("https://docs.hoppscotch.io/features/tests")
+            }
           >
             Read documentation
           </Button>
@@ -197,7 +204,11 @@ arex.test("Status code is 5xx", ()=> {
           <span>阅读文档</span>
           <div>代码片段</div> */}
           {codeSnippet.map((e, i) => (
-            <ThemeColorPrimaryButton type='text' key={i} onClick={() => addTest(e.text)}>
+            <ThemeColorPrimaryButton
+              type="text"
+              key={i}
+              onClick={() => addTest(e.text)}
+            >
               {e.name}
             </ThemeColorPrimaryButton>
           ))}

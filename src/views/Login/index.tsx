@@ -1,16 +1,16 @@
-import './index.less';
+import "./index.less";
 
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import styled from '@emotion/styled';
-import { Button, Input, message } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import styled from "@emotion/styled";
+import { Button, Input, message } from "antd";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../../constant';
-import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
-import { AuthService } from '../../services/AuthService';
-import { UserService } from '../../services/UserService';
-import WorkspaceService from '../../services/Workspace.service';
+import { AccessTokenKey, EmailKey, RefreshTokenKey } from "../../constant";
+import { getLocalStorage, setLocalStorage } from "../../helpers/utils";
+import { AuthService } from "../../services/AuthService";
+import WorkspaceService from "../../services/Workspace.service";
+import { UserService } from "../../services/User.service";
 
 const OtherLoginMethods = styled.div`
   a {
@@ -22,15 +22,19 @@ let timeChange: any;
 
 const Login = () => {
   const nav = useNavigate();
-  const [email, setEmail] = useState('');
-  const [verificationCode, setVerificationCode] = useState<string>('');
+  const [email, setEmail] = useState("");
+  const [verificationCode, setVerificationCode] = useState<string>("");
   const [emailChecked, setEmailChecked] = useState<boolean>(true);
   const [loadings, setLoadings] = useState<boolean>(false);
   const [count, setCount] = useState<number>(60);
 
   const getEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    if (value.match(/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/)) {
+    if (
+      value.match(
+        /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/
+      )
+    ) {
       setEmailChecked(true);
     } else {
       setEmailChecked(false);
@@ -44,8 +48,8 @@ const Login = () => {
   };
 
   const sendVerificationCode = () => {
-    if (!emailChecked || email == '') {
-      message.error('email error');
+    if (!emailChecked || email == "") {
+      message.error("email error");
       return;
     }
     setLoadings(true);
@@ -54,9 +58,9 @@ const Login = () => {
     }, 1000);
     AuthService.sendVerifyCodeByEmail(email).then((res) => {
       if (res.data.body.success == true) {
-        message.success('The verification code has been sent to the email.');
+        message.success("The verification code has been sent to the email.");
       } else {
-        message.error('Authentication failed.');
+        message.error("Authentication failed.");
       }
     });
   };
@@ -71,34 +75,36 @@ const Login = () => {
       if (workspaces.length === 0) {
         const params = {
           userName: userName,
-          workspaceName: 'Default',
+          workspaceName: "Default",
         };
         WorkspaceService.createWorkspace(params).then((res) => {
-          nav('/');
+          nav("/");
         });
       } else {
-        nav('/');
+        nav("/");
       }
     });
   };
 
   const guestLogin = () => {
-    UserService.loginAsGuest({ userName: getLocalStorage(EmailKey) }).then((res) => {
-      if (res.body.success) {
-        setLocalStorage(EmailKey, res.body.userName);
-        setLocalStorage(AccessTokenKey, res.body.accessToken);
-        setLocalStorage(RefreshTokenKey, res.body.refreshToken);
-        initBeforeUserEntry(res.body.userName);
+    UserService.loginAsGuest({ userName: getLocalStorage(EmailKey) }).then(
+      (res) => {
+        if (res.body.success) {
+          setLocalStorage(EmailKey, res.body.userName);
+          setLocalStorage(AccessTokenKey, res.body.accessToken);
+          setLocalStorage(RefreshTokenKey, res.body.refreshToken);
+          initBeforeUserEntry(res.body.userName);
+        }
       }
-    });
+    );
   };
 
   const login = () => {
-    if (!emailChecked || email == '') {
-      message.error('Please check your email');
+    if (!emailChecked || email == "") {
+      message.error("Please check your email");
       return;
-    } else if (verificationCode == '') {
-      message.error('Please fill in the verification code');
+    } else if (verificationCode == "") {
+      message.error("Please fill in the verification code");
       return;
     }
 
@@ -109,10 +115,10 @@ const Login = () => {
       if (res.data.body.success) {
         setLocalStorage(AccessTokenKey, res.data.body.accessToken);
         setLocalStorage(RefreshTokenKey, res.data.body.refreshToken);
-        message.success('Login succeeded');
+        message.success("Login succeeded");
         initBeforeUserEntry(email);
       } else {
-        message.error('Verification code error');
+        message.error("Verification code error");
       }
     });
   };
@@ -125,40 +131,48 @@ const Login = () => {
   }, [count]);
 
   return (
-    <div className={'login-layout'}>
-      <div className={'login'}>
-        <div className={'login-title'}>AREX</div>
+    <div className={"login-layout"}>
+      <div className={"login"}>
+        <div className={"login-title"}>AREX</div>
         {/* TODO 使用 Form 组件做数据校验以及表单提交 */}
         <Input
-          size='large'
-          placeholder='Please enter your email！'
+          size="large"
+          placeholder="Please enter your email！"
           prefix={<UserOutlined />}
           onChange={getEmail}
-          status={emailChecked ? '' : 'error'}
+          status={emailChecked ? "" : "error"}
           allowClear
         />
         {emailChecked ? (
-          <div className={'login-email-tip'}></div>
+          <div className={"login-email-tip"}></div>
         ) : (
-          <div className={'login-email-tip'}>Please enter the correct email!</div>
+          <div className={"login-email-tip"}>
+            Please enter the correct email!
+          </div>
         )}
-        <div className={'login-verificationCode'}>
+        <div className={"login-verificationCode"}>
           <Input
-            size='large'
-            placeholder='Please enter a verification code！'
+            size="large"
+            placeholder="Please enter a verification code！"
             prefix={<LockOutlined />}
             onChange={getVerificationCode}
           />
           <Button
-            style={{ marginLeft: '8px' }}
-            size='large'
+            style={{ marginLeft: "8px" }}
+            size="large"
             onClick={sendVerificationCode}
             disabled={loadings}
           >
-            {loadings ? count + 's' : 'Verification code'}
+            {loadings ? count + "s" : "Verification code"}
           </Button>
         </div>
-        <Button type='primary' block size='large' onClick={login} style={{ marginBottom: '10px' }}>
+        <Button
+          type="primary"
+          block
+          size="large"
+          onClick={login}
+          style={{ marginBottom: "10px" }}
+        >
           Login
         </Button>
         <OtherLoginMethods>

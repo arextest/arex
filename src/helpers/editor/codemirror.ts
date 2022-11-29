@@ -1,11 +1,16 @@
-import { EditorState, Extension, StateEffect, StateField } from '@codemirror/state';
-import { oneDark } from '@codemirror/theme-one-dark';
-import { EditorView, ViewUpdate } from '@codemirror/view';
-import { basicSetup } from 'codemirror';
-import { useEffect, useState } from 'react';
+import {
+  EditorState,
+  Extension,
+  StateEffect,
+  StateField,
+} from "@codemirror/state";
+import { oneDark } from "@codemirror/theme-one-dark";
+import { EditorView, ViewUpdate } from "@codemirror/view";
+import { basicSetup } from "codemirror";
+import { useEffect, useState } from "react";
 
-import { ThemeClassify } from '../../style/theme';
-import { getStatistics, Statistics } from './utils';
+import { Theme } from "../../style/theme";
+import { getStatistics, Statistics } from "./utils";
 // import {defaultKeymap} from "@codemirror/commands"
 
 export interface UseCodeMirrorProps {
@@ -16,7 +21,7 @@ export interface UseCodeMirrorProps {
     fields?: { [p: string]: StateField<any> };
   };
   root?: Document | ShadowRoot | undefined;
-  theme: ThemeClassify | Extension;
+  theme: Theme | Extension;
   extensions?: Extension[];
   height: number | string | null;
   onCreateEditor?: (editorView: EditorView, editorState: EditorState) => void;
@@ -30,7 +35,7 @@ export function useCodeMirror(props: UseCodeMirrorProps) {
     initialState,
     root,
     onCreateEditor,
-    theme = 'light',
+    theme = "light",
     extensions,
     height,
     onStatistics,
@@ -42,25 +47,25 @@ export function useCodeMirror(props: UseCodeMirrorProps) {
 
   const defaultLightThemeOption = EditorView.theme(
     {
-      '&': {
-        backgroundColor: '#fff',
+      "&": {
+        backgroundColor: "#fff",
       },
-      '.cm-scroller': {
+      ".cm-scroller": {
         fontFamily: '"Roboto Mono", monospace',
-        fontSize: '14px',
+        fontSize: "14px",
       },
     },
     {
       dark: false,
-    },
+    }
   );
   const defaultThemeOption = EditorView.theme({
-    '&': {
+    "&": {
       height,
     },
   });
   const updateListener = EditorView.updateListener.of((vu: ViewUpdate) => {
-    if (vu.docChanged && typeof onChange === 'function') {
+    if (vu.docChanged && typeof onChange === "function") {
       const doc = vu.state.doc;
       const value = doc.toString();
       onChange(value, vu);
@@ -73,10 +78,10 @@ export function useCodeMirror(props: UseCodeMirrorProps) {
   getExtensions.unshift(basicSetup); //存疑
 
   switch (theme) {
-    case 'light':
+    case "light":
       getExtensions.push(defaultLightThemeOption);
       break;
-    case 'dark':
+    case "dark":
       getExtensions.push(oneDark);
       break;
     default:
@@ -124,7 +129,7 @@ export function useCodeMirror(props: UseCodeMirrorProps) {
         setView(undefined);
       }
     },
-    [view],
+    [view]
   );
 
   // 外部配置改变，更新
@@ -137,10 +142,10 @@ export function useCodeMirror(props: UseCodeMirrorProps) {
 
   // 外部value改变，更新
   useEffect(() => {
-    const currentValue = view ? view.state.doc.toString() : '';
+    const currentValue = view ? view.state.doc.toString() : "";
     if (view && value !== currentValue) {
       view.dispatch({
-        changes: { from: 0, to: currentValue.length, insert: value || '' },
+        changes: { from: 0, to: currentValue.length, insert: value || "" },
       });
     }
   }, [value, view]);

@@ -1,19 +1,18 @@
-// import 'antd/dist/antd.less';
-// import './style/index.less';
+import "./style/index.less";
 
-import { LoadingOutlined } from '@ant-design/icons';
-import { Theme as EmotionTheme, ThemeProvider } from '@emotion/react';
-import {ConfigProvider, Spin,theme } from 'antd';
-import { HttpProvider } from './components/arex-request';
-import React, { useMemo } from 'react';
-import { useRoutes } from 'react-router-dom';
-const { darkAlgorithm } = theme;
+import { LoadingOutlined } from "@ant-design/icons";
+import { ConfigProvider, Spin, theme } from "antd";
+import { HttpProvider } from "./components/arex-request";
+import React from "react";
+import { useRoutes } from "react-router-dom";
 
-import DefaultConfig from './defaultConfig';
-import { useAuthentication, useCheckChrome, useInit } from './hooks';
-import routerConfig from './router';
-import { useStore } from './store';
-import { themeMap } from './style/theme';
+import { useAuthentication, useCheckChrome, useInit } from "./hooks";
+import routerConfig from "./router";
+import { useStore } from "./store";
+import { AliasToken } from "antd/es/theme/interface";
+import useUserProfile from "./store/useUserProfile";
+
+const { darkAlgorithm, compactAlgorithm } = theme;
 
 // global Spin config
 Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 24 }} spin />);
@@ -25,39 +24,34 @@ function App() {
 
   const routesContent = useRoutes(routerConfig);
 
-  const {
-    userInfo: {
-      profile: { theme: themeName, language },
-    },
-    collectionTreeData,
-    themeClassify,
-    currentEnvironment,
-  } = useStore();
-  const theme = useMemo<EmotionTheme>(
-    () => (themeName in themeMap ? themeMap[themeName] : themeMap[DefaultConfig.theme]),
-    [themeName],
-  );
+  const { collectionTreeData, currentEnvironment } = useStore();
+  const { language, theme } = useUserProfile();
+
+  const token: Partial<AliasToken> = {
+    colorPrimary: "#cf1322",
+    colorSuccess: "#66bb6a",
+    colorInfo: "#29b6f6",
+    colorWarning: "#ffa726",
+    colorError: "#f44336",
+    colorBorder: "#F0F0F0",
+  };
 
   return (
     <ConfigProvider
       theme={{
-        token: {
-          colorPrimary: '#00b96b',
-        },
-        // 黑暗主题
-        algorithm: true ? [darkAlgorithm] : [],
+        token,
+        algorithm: [],
       }}
     >
       <HttpProvider
-        theme={themeClassify}
-        locale={{ 'zh-CN': 'cn', 'en-US': 'en' }[language]}
+        theme={theme}
+        locale={{ "zh-CN": "cn", "en-US": "en" }[language]}
         collectionTreeData={collectionTreeData}
         environment={currentEnvironment}
       >
-        <ThemeProvider theme={theme}>{routesContent}</ThemeProvider>
+        {routesContent}
       </HttpProvider>
     </ConfigProvider>
-
   );
 }
 

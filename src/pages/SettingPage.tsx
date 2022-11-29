@@ -1,19 +1,19 @@
-import { useRequest } from 'ahooks';
-import { Form, message, Select, Spin, Switch } from 'antd';
-import { changeLanguage } from 'i18next';
-import { FC, useMemo, useState } from 'react';
-import { CirclePicker } from 'react-color';
+import { useRequest } from "ahooks";
+import { Form, message, Select, Spin, Switch } from "antd";
+import { changeLanguage } from "i18next";
+import { FC, useMemo, useState } from "react";
+import { CirclePicker } from "react-color";
 
-import { EmailKey } from '../constant';
-import DefaultConfig from '../defaultConfig';
-import { getLocalStorage } from '../helpers/utils';
-import { I18nextLng, local } from '../i18n';
-import { UserService } from '../services/UserService';
-import { useStore } from '../store';
-import { primaryColorPalette, ThemeClassify, themeMap, ThemeName } from '../style/theme';
+import { EmailKey } from "../constant";
+import DefaultConfig from "../defaultConfig";
+import { getLocalStorage } from "../helpers/utils";
+import { I18nextLng, local } from "../i18n";
+import { useStore } from "../store";
+import { primaryColorPalette, Theme } from "../style/theme";
+import { UserService } from "../services/User.service";
 const { Option } = Select;
 
-export type FontSize = 'small' | 'medium' | 'large';
+export type FontSize = "small" | "medium" | "large";
 
 type SettingForm = {
   darkMode: boolean;
@@ -25,16 +25,19 @@ type SettingForm = {
 // Custom form item component
 type ColorPickerProps = {
   value?: string;
-  theme: ThemeClassify;
+  theme: Theme;
   onChange?: (color: string) => void;
 };
 const ColorPicker: FC<ColorPickerProps> = ({ value, onChange, theme }) => {
-  const colors = useMemo(() => primaryColorPalette[theme].map((color) => color.key), [theme]);
+  const colors = useMemo(
+    () => primaryColorPalette[theme].map((color) => color.key),
+    [theme]
+  );
 
   return (
-    <div style={{ padding: '8px 0 0 0' }}>
+    <div style={{ padding: "8px 0 0 0" }}>
       <CirclePicker
-        width={'320px'}
+        width={"320px"}
         circleSize={20}
         color={value}
         colors={colors}
@@ -58,25 +61,31 @@ const SettingPage: FC = () => {
     // document.body.style['zoom'] = FontSizeMap[fontSize]; // Non-standard: https://developer.mozilla.org/en-US/docs/Web/CSS/zoom
   };
 
-  const handleFormChange = (value: Partial<SettingForm>, allValue: SettingForm) => {
+  const handleFormChange = (
+    value: Partial<SettingForm>,
+    allValue: SettingForm
+  ) => {
     // 设置目标的 ThemeClassify
-    const themeMode = allValue.darkMode ? ThemeClassify.dark : ThemeClassify.light;
+    const themeMode = allValue.darkMode ? Theme.dark : Theme.light;
     // 设置状态更新前的 ThemeClassify
     const oldTheme =
       value.darkMode !== undefined // 当修改的值为 darkMode 时，说明 themeClassify 发生变更，否则沿用原有的 themeClassify
-        ? themeMode === ThemeClassify.dark
-          ? ThemeClassify.light
-          : ThemeClassify.dark
+        ? themeMode === Theme.dark
+          ? Theme.light
+          : Theme.dark
         : themeMode;
     const primaryColorIndex = primaryColorPalette[oldTheme].findIndex(
-      (color) => color.key.toLocaleLowerCase() === allValue.primaryColor.toLocaleLowerCase(),
+      (color) =>
+        color.key.toLocaleLowerCase() ===
+        allValue.primaryColor.toLocaleLowerCase()
     );
     const { name: theme, key: primaryColor } = primaryColorPalette[themeMode][
       primaryColorIndex
-    ] || { name: DefaultConfig.theme, key: DefaultConfig.themePrimaryColor };
+    ] || { name: DefaultConfig.theme, key: DefaultConfig.primaryColor };
 
     // 原理上 darkMode 和 primaryColor 都是为了指定设置一个主题
-    (value.darkMode !== undefined || value.primaryColor !== undefined) && changeTheme(theme);
+    (value.darkMode !== undefined || value.primaryColor !== undefined) &&
+      changeTheme(theme);
     value.language !== undefined && changeLanguage(value.language);
     value.fontSize !== undefined && changeFontSize(value.fontSize);
 
@@ -95,7 +104,6 @@ const SettingPage: FC = () => {
 
         // 此处没有调用 UserService.userProfile 而是采用本地更新的方式
         setUserInfo({
-          email,
           profile: {
             theme,
             fontSize: profile.fontSize,
@@ -103,14 +111,14 @@ const SettingPage: FC = () => {
           },
         });
         form.setFieldsValue({
-          darkMode: themeMode === ThemeClassify.dark,
+          darkMode: themeMode === Theme.dark,
           primaryColor,
           fontSize: profile.fontSize,
           language: profile.language,
         });
       })
       .catch((info) => {
-        console.log('Validate Failed:', info);
+        console.log("Validate Failed:", info);
       });
   };
 
@@ -122,14 +130,13 @@ const SettingPage: FC = () => {
       let themeName: ThemeName = profile.theme || DefaultConfig.theme;
       const validTheme = themeName in themeMap;
       !validTheme && (themeName = DefaultConfig.theme);
-      const [themeMode] = themeName.split('-');
+      const [themeMode] = themeName.split("-");
 
       const fontSize = profile.fontSize || DefaultConfig.fontSize;
       const language = profile.language || DefaultConfig.language;
 
       // set userInfo to global store
       setUserInfo({
-        email,
         profile: {
           theme: themeName,
           fontSize,
@@ -139,9 +146,10 @@ const SettingPage: FC = () => {
 
       // init form value
       form.setFieldsValue({
-        darkMode: themeMode === ThemeClassify.dark,
+        darkMode: themeMode === Theme.dark,
         primaryColor: primaryColorPalette[themeMode].find(
-          (color) => color.name === (validTheme ? profile.theme : DefaultConfig.theme),
+          (color) =>
+            color.name === (validTheme ? profile.theme : DefaultConfig.theme)
         )?.key,
         fontSize,
         language,
@@ -155,47 +163,47 @@ const SettingPage: FC = () => {
     {
       manual: true,
       onError(err) {
-        message.error('Update profile failed');
+        message.error("Update profile failed");
         console.error(err);
       },
-    },
+    }
   );
 
   return (
     <Spin spinning={initLoading}>
       <Form
-        name='form'
+        name="form"
         form={form}
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 20 }}
         onValuesChange={handleFormChange}
       >
-        <h2 id='user-interface'>User Interface</h2>
+        <h2 id="user-interface">User Interface</h2>
 
-        <div id='dark-mode'>
-          <Form.Item label='Dark Mode' name='darkMode' valuePropName='checked'>
+        <div id="dark-mode">
+          <Form.Item label="Dark Mode" name="darkMode" valuePropName="checked">
             <Switch />
           </Form.Item>
         </div>
 
-        <div id='primary-color'>
-          <Form.Item label='Primary Color' name='primaryColor'>
+        <div id="primary-color">
+          <Form.Item label="Primary Color" name="primaryColor">
             <ColorPicker theme={themeClassify} />
           </Form.Item>
         </div>
 
-        <div id='font-size'>
-          <Form.Item label='Font size' name='fontSize'>
+        <div id="font-size">
+          <Form.Item label="Font size" name="fontSize">
             <Select style={{ width: 120 }} disabled>
-              <Option value='small'>Small</Option>
-              <Option value='medium'>Medium</Option>
-              <Option value='large'>Large</Option>
+              <Option value="small">Small</Option>
+              <Option value="medium">Medium</Option>
+              <Option value="large">Large</Option>
             </Select>
           </Form.Item>
         </div>
 
-        <div id='language'>
-          <Form.Item label='Language' name='language'>
+        <div id="language">
+          <Form.Item label="Language" name="language">
             <Select style={{ width: 120 }}>
               {local.map((lng) => (
                 <Option key={lng.key} value={lng.key}>

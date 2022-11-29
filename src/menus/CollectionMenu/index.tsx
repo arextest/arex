@@ -4,23 +4,28 @@ import {
   MenuOutlined,
   PlusOutlined,
   SearchOutlined,
-} from '@ant-design/icons';
-import styled from '@emotion/styled';
-import { useRequest } from 'ahooks';
-import { Button, Empty, Input, Spin, Tree } from 'antd';
-import type { DataNode, DirectoryTreeProps, TreeProps } from 'antd/lib/tree';
-import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+} from "@ant-design/icons";
+import styled from "@emotion/styled";
+import { useRequest } from "ahooks";
+import { Button, Empty, Input, Spin, Tree } from "antd";
+import type { DataNode, DirectoryTreeProps, TreeProps } from "antd/lib/tree";
+import React, { useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 
-import { TooltipButton } from '../../components';
-import { NodeType } from '../../constant';
-import { treeFind } from '../../helpers/collection/util';
-import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
-import { PagesType } from '../../pages';
-import { CollectionService } from '../../services/CollectionService';
-import { useStore } from '../../store';
-import { MenusType } from '../index';
-import CollectionTitle from './CollectionTitle';
+import { TooltipButton } from "../../components";
+import { EmailKey, NodeType } from "../../constant";
+import { treeFind } from "../../helpers/collection/util";
+import {
+  generateGlobalPaneId,
+  getLocalStorage,
+  parseGlobalPaneId,
+  uuid,
+} from "../../helpers/utils";
+import { PagesType } from "../../pages";
+import { CollectionService } from "../../services/CollectionService";
+import { useStore } from "../../store";
+import { MenusType } from "../index";
+import CollectionTitle from "./CollectionTitle";
 
 const CollectionMenuWrapper = styled.div`
   //height: 100%;
@@ -49,7 +54,7 @@ const CollectionMenuWrapper = styled.div`
   }
 
   .collection-title-render {
-    color: ${(props) => props.theme.color.text.secondary};
+    // color: ${(props) => props.theme.color.text.secondary};
     display: flex;
     .right {
     }
@@ -65,12 +70,12 @@ const CollectionMenuWrapper = styled.div`
       }
     }
     :hover {
-      color: ${(props) => props.theme.color.text.primary};
+      // color: ${(props) => props.theme.color.text.primary};
     }
   }
   .ant-tree-node-selected {
     .collection-title-render {
-      color: ${(props) => props.theme.color.text.primary};
+      // color: ${(props) => props.theme.color.text.primary};
     }
   }
 
@@ -120,49 +125,62 @@ export type nodeType = {
 const CollectionMenu = () => {
   const params = useParams();
   const {
-    userInfo: { email: userName },
     activeMenu,
     collectionLastManualUpdateTimestamp,
     setPages,
     setCollectionTreeData,
   } = useStore();
+  const email = getLocalStorage<string>(EmailKey);
 
-  const value = useMemo(() => parseGlobalPaneId(activeMenu[1])['rawId'], [activeMenu]);
+  const value = useMemo(
+    () => parseGlobalPaneId(activeMenu[1])["rawId"],
+    [activeMenu]
+  );
   const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   // TODO
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
   const [autoExpandParent, setAutoExpandParent] = useState(true);
 
   const {
     data: treeData = [],
     loading,
     run: fetchTreeData,
-  } = useRequest(() => CollectionService.listCollection({ id: params.workspaceId as string }), {
-    ready: !!params.workspaceId,
-    refreshDeps: [params.workspaceId, collectionLastManualUpdateTimestamp],
-    onSuccess: (res) => {
-      if (res.length) {
-        setCollectionTreeData(res);
-        // generateList(treeData);
-        generateList(res, 'res');
-        // 首次加载，在这里加initvalue逻辑
-        const initValue = treeFind(res, (node) => node.key === params.rTypeId);
-        if (initValue && expandedKeys.length === 0) {
-          handleCollectionMenuClick(params.rTypeId, {
-            title: initValue.title,
-            key: initValue.key,
-            nodeType: initValue.nodeType,
-          });
-          setExpandedKeys([params.rTypeId]);
+  } = useRequest(
+    () =>
+      CollectionService.listCollection({ id: params.workspaceId as string }),
+    {
+      ready: !!params.workspaceId,
+      refreshDeps: [params.workspaceId, collectionLastManualUpdateTimestamp],
+      onSuccess: (res) => {
+        if (res.length) {
+          setCollectionTreeData(res);
+          // generateList(treeData);
+          generateList(res, "res");
+          // 首次加载，在这里加initvalue逻辑
+          const initValue = treeFind(
+            res,
+            (node) => node.key === params.rTypeId
+          );
+          if (initValue && expandedKeys.length === 0) {
+            handleCollectionMenuClick(params.rTypeId, {
+              title: initValue.title,
+              key: initValue.key,
+              nodeType: initValue.nodeType,
+            });
+            setExpandedKeys([params.rTypeId]);
+          }
         }
-      }
-    },
-  });
+      },
+    }
+  );
 
   window.globalFetchTreeData = fetchTreeData;
 
-  const handleSelect: DirectoryTreeProps<nodeType>['onSelect'] = (keys, info) => {
+  const handleSelect: DirectoryTreeProps<nodeType>["onSelect"] = (
+    keys,
+    info
+  ) => {
     if (keys.length) {
       handleCollectionMenuClick(keys[0] as string, {
         title: info.node.title,
@@ -179,9 +197,9 @@ const CollectionMenu = () => {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    const regExp = new RegExp(value, 'i');
+    const regExp = new RegExp(value, "i");
     let newExpandedKeys;
-    if (value == '') {
+    if (value == "") {
       newExpandedKeys = dataList.map((item) => item.title);
     } else {
       newExpandedKeys = dataList
@@ -203,9 +221,9 @@ const CollectionMenu = () => {
   function expandSpecifyKeys(keys: string[], p: string[], nodeType: NodeType) {
     const key = keys[0];
     const maps: { [key: string]: string } = {
-      '1': 'New Request',
-      '2': 'New Case',
-      '3': 'New Folder',
+      "1": "New Request",
+      "2": "New Case",
+      "3": "New Folder",
     };
     setExpandedKeys([...expandedKeys, p[p.length - 1]]);
     handleCollectionMenuClick(key, {
@@ -219,32 +237,33 @@ const CollectionMenu = () => {
     () =>
       CollectionService.addItem({
         id: params.workspaceId,
-        nodeName: 'New Collection',
+        nodeName: "New Collection",
         nodeType: 3,
         parentPath: [],
-        userName,
+        userName: email,
       }),
     {
       manual: true,
       onSuccess() {
         fetchTreeData();
       },
-    },
+    }
   );
 
   // 树拖拽
-  const onDrop: TreeProps['onDrop'] = (info: any) => {
+  const onDrop: TreeProps["onDrop"] = (info: any) => {
     const dropKey = info.node.key;
     const dragKey = info.dragNode.key;
     const dragNodeType = info.dragNode.nodeType;
-    const dropPos = info.node.pos.split('-');
-    const dragPos = info.dragNode.pos.split('-');
-    const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
+    const dropPos = info.node.pos.split("-");
+    const dragPos = info.dragNode.pos.split("-");
+    const dropPosition =
+      info.dropPosition - Number(dropPos[dropPos.length - 1]);
 
     const loop = (
       data: DataNode[],
       key: React.Key,
-      callback: (node: DataNode, i: number, data: DataNode[]) => void,
+      callback: (node: DataNode, i: number, data: DataNode[]) => void
     ) => {
       for (let i = 0; i < data.length; i++) {
         if (data[i].key === key) {
@@ -352,9 +371,12 @@ const CollectionMenu = () => {
 
     //判断不成立的情况
     if (dfsNodeIndex(data, dragKey)[0].nodeType) {
-      if (dragNodeType == 2 && dfsNodeIndex(data, dragKey)[0].nodeType !== 1) return;
-      if (dragNodeType == 3 && dfsNodeIndex(data, dragKey)[0].nodeType !== 3) return;
-      if (dragNodeType == 1 && dfsNodeIndex(data, dragKey)[0].nodeType !== 3) return;
+      if (dragNodeType == 2 && dfsNodeIndex(data, dragKey)[0].nodeType !== 1)
+        return;
+      if (dragNodeType == 3 && dfsNodeIndex(data, dragKey)[0].nodeType !== 3)
+        return;
+      if (dragNodeType == 1 && dfsNodeIndex(data, dragKey)[0].nodeType !== 3)
+        return;
     } else {
       if (dragNodeType !== 3) return;
     }
@@ -399,13 +421,16 @@ const CollectionMenu = () => {
       });
     }
     // console.log({fromNodePath, id: params.workspaceId, toParentPath, toIndex});
-    CollectionService.move({ fromNodePath, id: params.workspaceId, toParentPath, toIndex }).then(
-      (res) => {
-        if (res.body.success) {
-          fetchTreeData();
-        }
-      },
-    );
+    CollectionService.move({
+      fromNodePath,
+      id: params.workspaceId,
+      toParentPath,
+      toIndex,
+    }).then((res) => {
+      if (res.body.success) {
+        fetchTreeData();
+      }
+    });
   };
 
   const handleCollectionMenuClick = (key: string, node: nodeType) => {
@@ -419,11 +444,11 @@ const CollectionMenu = () => {
         paneId: generateGlobalPaneId(
           MenusType.Collection,
           node.nodeType === 3 ? PagesType.Folder : PagesType.Request,
-          key,
+          key
         ),
         rawId: key,
       },
-      'push',
+      "push"
     );
   };
 
@@ -432,15 +457,19 @@ const CollectionMenu = () => {
     setPages(
       {
         key: u,
-        title: 'BatchRun',
+        title: "BatchRun",
         pageType: PagesType.BatchRun,
         menuType: MenusType.Collection,
         isNew: true,
         data: undefined,
-        paneId: generateGlobalPaneId(MenusType.Collection, PagesType.BatchRun, u),
+        paneId: generateGlobalPaneId(
+          MenusType.Collection,
+          PagesType.BatchRun,
+          u
+        ),
         rawId: u,
       },
-      'push',
+      "push"
     );
   };
 
@@ -449,37 +478,37 @@ const CollectionMenu = () => {
       <Spin spinning={loading}>
         {!loading && !treeData.length ? (
           <Empty>
-            <Button type='primary' onClick={createCollection}>
+            <Button type="primary" onClick={createCollection}>
               New
             </Button>
           </Empty>
         ) : (
           <div>
-            <div className={'collection-header'}>
+            <div className={"collection-header"}>
               <TooltipButton
                 icon={<PlusOutlined />}
-                type='text'
-                size='small'
-                className={'collection-header-create'}
+                type="text"
+                size="small"
+                className={"collection-header-create"}
                 onClick={createCollection}
-                placement='bottomLeft'
-                title={'Create New'}
+                placement="bottomLeft"
+                title={"Create New"}
               />
 
               <TooltipButton
                 icon={<GatewayOutlined />}
-                type='text'
-                size='small'
-                className={'collection-header-create'}
+                type="text"
+                size="small"
+                className={"collection-header-create"}
                 onClick={test}
-                placement='bottomLeft'
-                title={'Run'}
+                placement="bottomLeft"
+                title={"Run"}
               />
 
               <Input
-                className={'collection-header-search'}
-                size='small'
-                placeholder=''
+                className={"collection-header-search"}
+                size="small"
+                placeholder=""
                 prefix={<SearchOutlined />}
                 onChange={onChange}
               />
