@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { MenuOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Form, Input, InputRef, message, Table } from 'antd';
@@ -5,7 +6,6 @@ import update from 'immutability-helper';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-const type = 'DraggableBodyRow';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import type { FormInstance } from 'antd/es/form';
@@ -14,6 +14,7 @@ import { useParams } from 'react-router-dom';
 import EnvironmentService from '../services/Environment.service';
 import { useStore } from '../store';
 import { PageFC } from './index';
+const type = 'DraggableBodyRow';
 
 const MainTable = styled(Table)`
   .ant-table-cell {

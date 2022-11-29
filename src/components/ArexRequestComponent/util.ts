@@ -1,4 +1,4 @@
-export function convertRequestData(requestData, address) {
+export function convertRequestData(requestData:any, address:any) {
   if (requestData.body) {
     return {
       method: requestData.body[address]?.method || 'GET',

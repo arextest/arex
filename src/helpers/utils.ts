@@ -1,4 +1,3 @@
-import { message } from "antd";
 import { v4 as uuid } from "uuid";
 
 import React from "react";
@@ -6,6 +5,7 @@ import React from "react";
 import { PageType } from "../pages";
 import * as ChartUtils from "./chart";
 
+export { uuid };
 export { ChartUtils, uuid };
 
 /**

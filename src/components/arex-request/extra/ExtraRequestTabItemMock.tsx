@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { css } from '@emotion/react';
 import { useMount } from 'ahooks';
 import { Card, Col, Input, message, Row } from 'antd';

@@ -1,7 +1,4 @@
-import { TestDescriptor } from 'purple-js-sandbox/lib/test-runner';
-
-import { HoppRESTRequest } from '../components/ArexRequestComponent/lib/data/rest';
-import { runTestScript } from './sandbox';
+import axios from 'axios';
 
 function AgentAxios<T>(params: any) {
   return new Promise<T>((resolve, reject) => {
@@ -12,7 +9,7 @@ function AgentAxios<T>(params: any) {
         tid: tid,
         payload: params,
       },
-      '*',
+      '*'
     );
     window.addEventListener('message', receiveMessage);
     function receiveMessage(ev: any) {
@@ -36,7 +33,7 @@ function AgentAxios<T>(params: any) {
 export default AgentAxios;
 
 interface Test {
-  request: HoppRESTRequest;
+  request: any;
 }
 export const AgentAxiosAndTest = ({ request }: Test) =>
   AgentAxios({
@@ -48,7 +45,9 @@ export const AgentAxiosAndTest = ({ request }: Test) =>
         [c.key]: c.value,
       };
     }, {}),
-    data: ['GET'].includes(request.method) ? undefined : JSON.parse(request.body.body || '{}'),
+    data: ['GET'].includes(request.method)
+      ? undefined
+      : JSON.parse(request.body.body || '{}'),
     params: ['POST'].includes(request.method)
       ? undefined
       : request.params.reduce((p, c) => {
@@ -58,14 +57,30 @@ export const AgentAxiosAndTest = ({ request }: Test) =>
           };
         }, {}),
   }).then((res: any) => {
-    return runTestScript(request.testScript, { body: res.data, headers: [], status: 200 }).then(
-      (testDescriptor) => {
-        return {
-          response: res,
-          testResult: testDescriptor,
-        };
-      },
-    );
+    // return runTestScript(request.testScript, {
+    //   body: res.data,
+    //   headers: res.headers,
+    //   status: res.status,
+    // }).then((testDescriptor) => {
+    //   return {
+    //     response: res,
+    //     testResult: testDescriptor,
+    //   };
+    // });
+
+    return axios
+      .post('http://10.5.153.1:10001/test', {
+        code: request.testScript,
+        response: {
+          body: res.data,
+          headers: res.headers,
+          status: res.status,
+        },
+      })
+      .then((r) => ({
+        testResult: r.data.caseResult,
+        response: res,
+      }));
   });
 
 export const AgentAxiosCompare = ({ request }: Test) => {
@@ -79,7 +94,9 @@ export const AgentAxiosCompare = ({ request }: Test) => {
           [c.key]: c.value,
         };
       }, {}),
-      data: ['GET'].includes(request.method) ? undefined : JSON.parse(request.body.body || '{}'),
+      data: ['GET'].includes(request.method)
+        ? undefined
+        : JSON.parse(request.body.body || '{}'),
       params: ['POST'].includes(request.method)
         ? undefined
         : request.params.reduce((p, c) => {
@@ -98,7 +115,9 @@ export const AgentAxiosCompare = ({ request }: Test) => {
           [c.key]: c.value,
         };
       }, {}),
-      data: ['GET'].includes(request.method) ? undefined : JSON.parse(request.body.body || '{}'),
+      data: ['GET'].includes(request.method)
+        ? undefined
+        : JSON.parse(request.body.body || '{}'),
       params: ['POST'].includes(request.method)
         ? undefined
         : request.params.reduce((p, c) => {
@@ -118,6 +137,6 @@ export const AgentAxiosCompare = ({ request }: Test) => {
       }
 
       return previousValue;
-    }, {}),
+    }, {})
   );
 };

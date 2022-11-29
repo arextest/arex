@@ -13,6 +13,7 @@ import { AliasToken } from "antd/es/theme/interface";
 import useUserProfile from "./store/useUserProfile";
 
 const { darkAlgorithm, compactAlgorithm } = theme;
+const { darkAlgorithm } = theme;
 
 // global Spin config
 Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 24 }} spin />);
