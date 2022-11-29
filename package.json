@@ -31,7 +31,6 @@
     "click-to-react-component": "^1.0.8",
     "codemirror": "^6.0.1",
     "copy-to-clipboard": "^3.3.2",
-    "customize-cra": "^1.0.0",
     "fp-ts": "2.12.3",
     "husky": "^8.0.1",
     "i18next": "^21.6.6",
@@ -44,7 +43,6 @@
     "moment": "^2.29.4",
     "purple-js-sandbox": "^1.0.14",
     "react": "^18.2.0",
-    "react-app-rewired": "^2.2.1",
     "react-beautiful-dnd": "^13.1.1",
     "react-chartjs-2": "^4.3.1",
     "react-color": "^2.19.3",
@@ -63,9 +61,9 @@
     "zustand": "^4.0.0-rc.1"
   },
   "scripts": {
-    "start": "PORT=8000 react-app-rewired start",
-    "build": "react-app-rewired build",
-    "eject": "react-app-rewired eject"
+    "start": "craco start",
+    "build": "craco build",
+    "eject": "craco eject"
   },
   "browserslist": {
     "production": [
@@ -80,6 +78,7 @@
     ]
   },
   "devDependencies": {
+    "@craco/craco": "^7.0.0",
     "@emotion/babel-plugin": "^11.10.5",
     "@emotion/eslint-plugin": "^11.10.0",
     "@types/jest": "^27.5.2",
