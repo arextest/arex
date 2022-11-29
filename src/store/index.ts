@@ -47,7 +47,7 @@ type BaseState = {
   logout: () => void;
 
   activeMenu: ActiveMenu;
-  setActiveMenu: (menuKey: MenusType, menuItemKey?: string) => void;
+  setActiveMenu: (menuKey?: MenusType, menuItemKey?: string) => void;
 
   pages: Page<PageData>[];
   /*

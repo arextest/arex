@@ -22,7 +22,7 @@ export type Action = {
   ) => void;
 };
 
-const initialState = {
+const initialState: State = {
   primaryColor: defaultConfig.primaryColor,
   darkMode: defaultConfig.darkMode,
   compactMode: defaultConfig.compactMode,

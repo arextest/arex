@@ -1,54 +1,43 @@
-import styled from "@emotion/styled";
-import { Button, Empty, TabsProps } from "antd";
-import React, { ReactNode, useCallback, useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import styled from '@emotion/styled';
+import { Button, Empty, TabsProps, theme } from 'antd';
+import { GlobalToken } from 'antd/lib/theme/interface';
+import React, { ReactNode, useCallback, useEffect, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { DraggableTabs, EnvironmentSelect } from "../../components";
-import { treeFind } from "../../helpers/collection/util";
-import {
-  generateGlobalPaneId,
-  parseGlobalPaneId,
-  uuid,
-} from "../../helpers/utils";
-import { MenusType } from "../../menus";
-import Pages, { PagesType } from "../../pages";
-import { NodeList } from "../../services/CollectionService";
-import { Page, useStore } from "../../store";
+import { DraggableTabs, EnvironmentSelect } from '../../components';
+import { treeFind } from '../../helpers/collection/util';
+import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
+import { MenusType } from '../../menus';
+import Pages, { PagesType } from '../../pages';
+import { NodeList } from '../../services/CollectionService';
+import { Page, useStore } from '../../store';
 
 const MainTabs = () => {
   const nav = useNavigate();
   const params = useParams();
-  const {
-    pages,
-    activeMenu,
-    setPages,
-    setActiveMenu,
-    environmentTreeData,
-    collectionTreeData,
-  } = useStore();
+  const { token } = theme.useToken();
+
+  const { pages, activeMenu, setPages, setActiveMenu, environmentTreeData, collectionTreeData } =
+    useStore();
 
   const addTab = () => {
     const u = uuid();
     setPages(
       {
         key: u,
-        title: "New Request",
+        title: 'New Request',
         pageType: PagesType.Request,
         menuType: MenusType.Collection,
         isNew: true,
         data: undefined,
-        paneId: generateGlobalPaneId(
-          MenusType.Collection,
-          PagesType.Request,
-          u
-        ),
+        paneId: generateGlobalPaneId(MenusType.Collection, PagesType.Request, u),
         rawId: u,
       },
-      "push"
+      'push',
     );
   };
-  const handleTabsEdit: any = (targetKey: string, action: "add" | "remove") => {
-    action === "add" ? addTab() : removeTab(targetKey);
+  const handleTabsEdit: any = (targetKey: string, action: 'add' | 'remove') => {
+    action === 'add' ? addTab() : removeTab(targetKey);
   };
 
   const removeTab = (targetKey: string) => {
@@ -75,22 +64,22 @@ const MainTabs = () => {
         return (
           treeFind(
             collectionTreeData,
-            (item) => item.key === parseGlobalPaneId(page.paneId)["rawId"]
-          )?.title || "New Request"
+            (item) => item.key === parseGlobalPaneId(page.paneId)['rawId'],
+          )?.title || 'New Request'
         );
       } else if ([PagesType.Environment].includes(page.pageType)) {
         return treeFind(
           environmentTreeData,
-          (item) => item.id === parseGlobalPaneId(page.paneId)["rawId"]
+          (item) => item.id === parseGlobalPaneId(page.paneId)['rawId'],
         )?.envName;
       } else {
         return page.title;
       }
     },
-    [environmentTreeData]
+    [environmentTreeData],
   );
 
-  const tabsItems = useMemo<TabsProps["items"]>(
+  const tabsItems = useMemo<TabsProps['items']>(
     () =>
       pages.map((page) => {
         return {
@@ -100,7 +89,7 @@ const MainTabs = () => {
           children: React.createElement(Pages[page.pageType], { page }),
         };
       }),
-    [pages, collectionTreeData]
+    [pages, collectionTreeData],
   );
 
   // 必须和路由搭配起来，在切换的时候附着上去
@@ -108,7 +97,7 @@ const MainTabs = () => {
     const findActivePane = pages.find((i) => i.paneId === activeMenu[1]);
     if (findActivePane) {
       nav(
-        `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.rawId}`
+        `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.rawId}`,
       );
     }
   }, [activeMenu, pages]);
@@ -118,11 +107,7 @@ const MainTabs = () => {
     if (params.rType === PagesType.Replay) {
       setActiveMenu(
         MenusType.Replay,
-        generateGlobalPaneId(
-          MenusType.Replay,
-          PagesType.Replay,
-          params.rTypeId as string
-        )
+        generateGlobalPaneId(MenusType.Replay, PagesType.Replay, params.rTypeId as string),
       );
     } else if (params.rType === PagesType.Environment) {
       setActiveMenu(
@@ -130,8 +115,8 @@ const MainTabs = () => {
         generateGlobalPaneId(
           MenusType.Environment,
           PagesType.Environment,
-          params.rTypeId as string
-        )
+          params.rTypeId as string,
+        ),
       );
     }
   }, []);
@@ -140,13 +125,14 @@ const MainTabs = () => {
     <EmptyWrapper
       empty={!pages.length}
       emptyContent={
-        <Button type="primary" onClick={addTab}>
+        <Button type='primary' onClick={addTab}>
           New Request
         </Button>
       }
     >
       <MainTabsWrapper
-        className="main-tabs"
+        className='main-tabs'
+        token={token}
         activeKey={activeMenu[1]}
         tabBarExtraContent={<EnvironmentSelect />}
         items={tabsItems}
@@ -162,32 +148,31 @@ const MainTabs = () => {
 const MainTabsWrapper = styled((props: TabsProps) => {
   return (
     <DraggableTabs
-      size="small"
-      type="editable-card"
+      size='small'
+      type='editable-card'
       tabBarGutter={-1}
       tabBarStyle={{
-        top: "-1px",
-        marginBottom: "8px",
+        top: '-1px',
+        marginBottom: '8px',
       }}
       {...props}
     >
       {props.children}
     </DraggableTabs>
   );
-})<TabsProps>`
+})<TabsProps & { token: GlobalToken }>`
   height: 100%;
   // 工作区 Tabs 全局样式调整
   .ant-tabs-tab {
     .ant-tabs-tab-btn {
-      // color: ${(props) => props.theme.color.text.secondary}!important;
+      color: ${(props) => props.token.colorTextSecondary}!important;
     }
     &.ant-tabs-tab-active {
-      //border-bottom: 1px solid ${(props) =>
-        props.theme.color.background.primary}!important;
+      border-bottom: 1px solid ${(props) => props.token.colorPrimaryBg}!important;
     }
     :hover {
       .ant-tabs-tab-btn {
-        // color: ${(props) => props.theme.color.text.primary}!important;
+        color: ${(props) => props.token.colorText}!important;
       }
     }
   }
@@ -198,18 +183,16 @@ const MainTabsWrapper = styled((props: TabsProps) => {
     // 注意当前的作用范围很广，目前的作用对象为工作区所有的可编辑可删除卡片式 Tab
     // .ant-tabs-tab-with-remove 类是为了避免污染一般的 Tabs
     &.ant-tabs-tab-active {
-      // background-color: ${(props) =>
-        props.theme.color.background.primary}!important;
-      // border-bottom: 1px solid ${(props) =>
-        props.theme.color.background.primary}!important;
+      background-color: ${(props) => props.token.colorBgContainer}!important;
+      border-bottom: 1px solid ${(props) => props.token.colorBgContainer}!important;
       :after {
-        content: "";
+        content: '';
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 2px;
-        // background-color: ${(props) => props.theme.color.primary};
+        background-color: ${(props) => props.token.colorPrimary};
         transition: all 0.2s ease-in-out;
       }
     }
@@ -231,7 +214,7 @@ const MainTabsWrapper = styled((props: TabsProps) => {
     height: 100%;
     .ant-tabs-tabpane {
       height: inherit;
-      //padding: 0 16px;
+      padding: 0 16px;
       overflow: auto;
     }
   }
@@ -240,12 +223,8 @@ const MainTabsWrapper = styled((props: TabsProps) => {
 const EmptyWrapper = styled(
   (props: { empty: boolean; emptyContent: ReactNode; children: ReactNode }) => {
     const { empty, emptyContent, children, ...restProps } = props;
-    return (
-      <div {...restProps}>
-        {empty ? <Empty>{emptyContent}</Empty> : children}
-      </div>
-    );
-  }
+    return <div {...restProps}>{empty ? <Empty>{emptyContent}</Empty> : children}</div>;
+  },
 )`
   height: 100%;
   display: flex;

@@ -2,7 +2,9 @@ import { Input, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { EmailKey } from '../../constant';
 import { treeFindPath } from '../../helpers/collection/util';
+import { getLocalStorage } from '../../helpers/utils';
 import { CollectionService } from '../../services/CollectionService';
 import { useStore } from '../../store';
 
@@ -11,9 +13,7 @@ const CreateAndUpdateFolder: React.FC<any> = ({
   collectionTree,
   collectionCreateAndUpdateModal,
 }) => {
-  const {
-    userInfo: { email: userName },
-  } = useStore();
+  const userName = getLocalStorage<string>(EmailKey);
   const _useParams = useParams();
   const _useNavigate = useNavigate();
 

@@ -1,10 +1,11 @@
-import { LeftOutlined } from "@ant-design/icons";
-import styled from "@emotion/styled";
-import { Tabs } from "antd";
-import React, { FC, ReactNode, useMemo } from "react";
+import { LeftOutlined } from '@ant-design/icons';
+import styled from '@emotion/styled';
+import { Tabs, theme } from 'antd';
+import { GlobalToken } from 'antd/lib/theme/interface';
+import React, { FC, ReactNode, useMemo } from 'react';
 
-import MenuConfig, { MenusType } from "../../menus";
-import { useStore } from "../../store";
+import MenuConfig, { MenusType } from '../../menus';
+import { useStore } from '../../store';
 
 type MainMenuProps = {
   collapse?: boolean;
@@ -13,23 +14,19 @@ type MainMenuProps = {
 };
 
 const MainMenu: FC<MainMenuProps> = (props) => {
+  const { token } = theme.useToken();
+
   const { activeMenu, setActiveMenu } = useStore();
   const activeKey = useMemo(() => activeMenu[0], [activeMenu]);
 
   const tabsItems = useMemo(
     () =>
       MenuConfig.map((Config) => ({
-        label: (
-          <MenuTitle
-            icon={<Config.Icon />}
-            title={Config.title}
-            collapse={props.collapse}
-          />
-        ),
+        label: <MenuTitle icon={<Config.Icon />} title={Config.title} collapse={props.collapse} />,
         key: Config.title,
         children: <Config.Menu />,
       })),
-    [props.collapse]
+    [props.collapse],
   );
 
   const handleMenuChange = (key: string) => {
@@ -39,11 +36,13 @@ const MainMenu: FC<MainMenuProps> = (props) => {
 
   return (
     <MainMenuWrapper
-      tabPosition="left"
+      tabPosition='left'
       activeKey={activeKey}
       collapse={props.collapse}
+      token={token}
       tabBarExtraContent={
         <CollapseMenuButton
+          color={token.colorTextQuaternary}
           collapse={props.collapse}
           icon={<LeftOutlined />}
           onClick={() => props.onCollapse?.(!props.collapse)}
@@ -56,36 +55,37 @@ const MainMenu: FC<MainMenuProps> = (props) => {
 };
 
 const MainMenuWrapper = styled(Tabs, {
-  shouldForwardProp: (propName) => propName !== "collapse",
+  shouldForwardProp: (propName) => propName !== 'collapse',
 })<{
   collapse?: boolean;
+  token: GlobalToken;
 }>`
   height: calc(100% - 35px);
   .ant-tabs-nav-list {
-    width: ${(props) => (props.collapse ? "70px" : "100px")};
+    width: ${(props) => (props.collapse ? '70px' : '100px')};
     .ant-tabs-tab {
       margin: 0 !important;
       padding: 12px 0 !important;
       .ant-tabs-tab-btn {
         margin: 0 auto;
-        // color: ${(props) => props.theme.color.text.secondary};
+        color: ${(props) => props.token.colorTextSecondary};
       }
       &.ant-tabs-tab-disabled {
         .ant-tabs-tab-btn {
-          // color: ${(props) => props.theme.color.text.disabled};
+          color: ${(props) => props.token.colorTextTertiary};
         }
       }
       :hover:not(.ant-tabs-tab-disabled) {
         .ant-tabs-tab-btn {
-          // color: ${(props) => props.theme.color.text.primary};
+          color: ${(props) => props.token.colorText};
         }
       }
     }
     .ant-tabs-tab-active {
-      // background-color: ${(props) => props.theme.color.background.active};
-      // border-right: 1px solid ${(props) => props.theme.color.border.primary};
+      background-color: ${(props) => props.token.colorPrimaryBg};
+      border-right: 1px solid ${(props) => props.token.colorBorder};
       .ant-tabs-tab-btn {
-        // color: ${(props) => props.theme.color.text.primary};
+        color: ${(props) => props.token.colorText};
       }
     }
     .ant-tabs-ink-bar {
@@ -94,15 +94,10 @@ const MainMenuWrapper = styled(Tabs, {
   }
   .ant-tabs-content {
     height: 100%;
-    display: ${(props) => (props.collapse ? "none" : "inherit")};
+    display: ${(props) => (props.collapse ? 'none' : 'inherit')};
     overflow-y: auto;
     .ant-tabs-tabpane {
       padding: 0 8px !important;
-      .ant-tree-node-selected {
-        // color: ${(props) => props.theme.color.text.highlight};
-        // background-color: ${(props) =>
-          props.theme.color.selected} !important;
-      }
     }
   }
   .ant-tabs-extra-content {
@@ -112,6 +107,7 @@ const MainMenuWrapper = styled(Tabs, {
 
 const CollapseMenuButton = styled(
   (props: {
+    color?: string;
     collapse?: boolean;
     icon?: ReactNode;
     children?: ReactNode;
@@ -122,14 +118,14 @@ const CollapseMenuButton = styled(
       {props.children}
     </div>
   ),
-  { shouldForwardProp: (propName) => propName !== "collapse" }
+  { shouldForwardProp: (propName) => propName !== 'collapse' },
 )`
   margin-bottom: 35px;
   text-align: center;
   width: 100%;
-  //color: ${(props) => props.theme.color.text.watermark};
+  color: ${(props) => props.color};
   cursor: pointer;
-  transform: rotate(${(props) => (props.collapse ? "180deg" : "0deg")});
+  transform: rotate(${(props) => (props.collapse ? '180deg' : '0deg')});
   transition: all 0.2s;
 `;
 

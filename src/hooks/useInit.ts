@@ -1,15 +1,11 @@
-import { useRequest } from "ahooks";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useRequest } from 'ahooks';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-import { AccessTokenKey, EmailKey, RefreshTokenKey } from "../constant";
-import {
-  clearLocalStorage,
-  getLocalStorage,
-  setLocalStorage,
-} from "../helpers/utils";
-import { AuthService } from "../services/AuthService";
-import useUserProfile from "../store/useUserProfile";
-import { UserService } from "../services/User.service";
+import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../constant';
+import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
+import { AuthService } from '../services/Auth.service';
+import { UserService } from '../services/User.service';
+import useUserProfile from '../store/useUserProfile';
 
 // init theme, fontSize, etc.
 const useInit = () => {
@@ -27,8 +23,8 @@ const useInit = () => {
         const refreshToken = res.data.body.refreshToken;
         setLocalStorage(AccessTokenKey, accessToken);
         setLocalStorage(RefreshTokenKey, refreshToken);
-        nav("/");
-      } else if (pathname !== "/login") {
+        nav('/');
+      } else if (pathname !== '/login') {
         clearLocalStorage();
       }
     },

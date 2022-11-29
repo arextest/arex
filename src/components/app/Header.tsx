@@ -1,16 +1,17 @@
-import { SettingOutlined } from "@ant-design/icons";
-import styled from "@emotion/styled";
-import { Avatar, Divider, Dropdown, Menu } from "antd";
-import React from "react";
+import { SettingOutlined } from '@ant-design/icons';
+import styled from '@emotion/styled';
+import { Avatar, Divider, Dropdown, Menu } from 'antd';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { EmailKey } from "../../constant";
-import { generateGlobalPaneId, getLocalStorage } from "../../helpers/utils";
-import { PagesType } from "../../pages";
-import { useStore } from "../../store";
-import GitHubStarButton from "../GitHubStarButton";
-import { TooltipButton } from "../index";
-import InviteWorkspace from "../workspace/Invite";
-import useUserProfile from "../../store/useUserProfile";
+import { EmailKey } from '../../constant';
+import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
+import { PagesType } from '../../pages';
+import { useStore } from '../../store';
+import useUserProfile from '../../store/useUserProfile';
+import GitHubStarButton from '../GitHubStarButton';
+import { TooltipButton } from '../index';
+import InviteWorkspace from '../workspace/Invite';
 
 const HeaderWrapper = styled.div`
   .app-header {
@@ -37,6 +38,7 @@ const HeaderWrapper = styled.div`
 `;
 
 const AppHeader = () => {
+  const nav = useNavigate();
   const { theme } = useUserProfile();
   const { logout, setPages } = useStore();
   const email = getLocalStorage<string>(EmailKey);
@@ -45,59 +47,57 @@ const AppHeader = () => {
     setPages(
       {
         // key: '__SETTING__',
-        title: "Setting",
+        title: 'Setting',
         pageType: PagesType.Setting,
         isNew: false,
-        paneId: generateGlobalPaneId("-", PagesType.Setting, "SETTING"),
-        rawId: "SETTING",
+        paneId: generateGlobalPaneId('-', PagesType.Setting, 'SETTING'),
+        rawId: 'SETTING',
       },
-      "push"
+      'push',
     );
   };
+
   const handleLogout = () => {
     logout();
-    window.location.href = "/login";
+    nav('/login');
   };
+
   return (
     <HeaderWrapper>
-      <div className={"app-header"}>
-        <div className={"left"}>
-          <span className={"app-name"}>AREX</span>
+      <div className={'app-header'}>
+        <div className={'left'}>
+          <span className={'app-name'}>AREX</span>
           <GitHubStarButton theme={theme} />
         </div>
 
-        <div className={"right"}>
-          {!(email || "").match("GUEST") ? <InviteWorkspace /> : null}
-          <TooltipButton
-            icon={<SettingOutlined />}
-            title="Setting"
-            onClick={handleSetting}
-          />
+        <div className={'right'}>
+          {!(email || '').match('GUEST') ? <InviteWorkspace /> : null}
+          <TooltipButton icon={<SettingOutlined />} title='Setting' onClick={handleSetting} />
 
           <Dropdown
-            overlayStyle={{ width: "170px" }}
+            overlayStyle={{ width: '170px' }}
             menu={{
               items: [
                 {
-                  key: "signOut",
-                  label: "Sign Out",
+                  key: 'signOut',
+                  label: 'Sign Out',
                 },
               ],
               onClick: (e) => {
-                if (e.key === "signOut") {
+                if (e.key === 'signOut') {
                   handleLogout();
                 }
               },
             }}
           >
-            <Avatar size={20} style={{ marginLeft: "8px", cursor: "pointer" }}>
+            <Avatar size={20} style={{ marginLeft: '8px', cursor: 'pointer' }}>
               {email}
             </Avatar>
           </Dropdown>
         </div>
       </div>
 
-      <Divider style={{ margin: "0" }} />
+      <Divider style={{ margin: '0' }} />
     </HeaderWrapper>
   );
 };
