@@ -5,7 +5,6 @@ import React from "react";
 import { PageType } from "../pages";
 import * as ChartUtils from "./chart";
 
-export { uuid };
 export { ChartUtils, uuid };
 
 /**
