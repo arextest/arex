@@ -1,9 +1,10 @@
-import create from "zustand";
-import { immer } from "zustand/middleware/immer";
-import { CompactMode, Theme, DarkMode, PrimaryColor } from "../style/theme";
-import { I18nextLng } from "../i18n";
-import defaultConfig from "../defaultConfig";
-import { mountStoreDevtool } from "simple-zustand-devtools";
+import { mountStoreDevtool } from 'simple-zustand-devtools';
+import create from 'zustand';
+import { immer } from 'zustand/middleware/immer';
+
+import defaultConfig from '../defaultConfig';
+import { I18nextLng } from '../i18n';
+import { CompactMode, DarkMode, PrimaryColor, Theme } from '../style/theme';
 
 export type UserProfile = {
   primaryColor: PrimaryColor;
@@ -18,7 +19,7 @@ export type State = UserProfile & {
 
 export type Action = {
   changeTheme: (
-    option: Pick<UserProfile, "primaryColor" | "darkMode" | "compactMode">
+    option: Pick<UserProfile, 'primaryColor' | 'darkMode' | 'compactMode'>
   ) => void;
 };
 
@@ -46,6 +47,6 @@ const useUserProfile = create(
 export default useUserProfile;
 
 // @ts-ignore
-if (process.env.NODE_ENV === "development") {
-  mountStoreDevtool("UserProfile", useUserProfile);
+if (process.env.NODE_ENV === 'development') {
+  mountStoreDevtool('UserProfile', useUserProfile);
 }

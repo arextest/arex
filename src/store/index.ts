@@ -1,26 +1,25 @@
-import React from "react";
-import { mountStoreDevtool } from "simple-zustand-devtools";
-import create from "zustand";
-import { immer } from "zustand/middleware/immer";
+import React from 'react';
+import { mountStoreDevtool } from 'simple-zustand-devtools';
+import create from 'zustand';
+import { immer } from 'zustand/middleware/immer';
 
 import {
   AccessTokenKey,
   EnvironmentKey,
   RefreshTokenKey,
   UserProfileKey,
-} from "../constant";
-import { clearLocalStorage, setLocalStorage } from "../helpers/utils";
-import { MenusType } from "../menus";
-import { nodeType } from "../menus/CollectionMenu";
-import { PageType } from "../pages";
-import { NodeList } from "../services/CollectionService";
-import { Environment } from "../services/Environment.type";
+} from '../constant';
+import { clearLocalStorage, setLocalStorage } from '../helpers/utils';
+import { MenusType } from '../menus';
+import { nodeType } from '../menus/CollectionMenu';
+import { PageType } from '../pages';
+import { NodeList } from '../services/CollectionService';
+import { Environment } from '../services/Environment.type';
 import {
   ApplicationDataType,
   PlanItemStatistics,
-} from "../services/Replay.type";
-import { Workspace } from "../services/Workspace.type";
-import { DarkMode, PrimaryColor, Theme } from "../style/theme";
+} from '../services/Replay.type';
+import { Workspace } from '../services/Workspace.type';
 
 // 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
 export type PageData =
@@ -41,8 +40,8 @@ export type Page<D extends PageData = undefined> = {
   rawId: React.Key;
 };
 
-type ActiveMenu = [MenusType, string | undefined]; // [菜单id, 菜单项目id]
-type SetPagesMode = "push" | "normal";
+type ActiveMenu = [MenusType | undefined, string | undefined]; // [菜单id, 菜单项目id]
+type SetPagesMode = 'push' | 'normal';
 type BaseState = {
   logout: () => void;
 
@@ -55,8 +54,8 @@ type BaseState = {
    * @param pages 工作区标签页数据
    * @param mode 添加模式：push，替换模式：undefined
    * */
-  setPages: <D extends PageData = undefined, M extends SetPagesMode = "normal">(
-    pages: M extends "push" ? Page<D> : Page<D>[],
+  setPages: <D extends PageData = undefined, M extends SetPagesMode = 'normal'>(
+    pages: M extends 'push' ? Page<D> : Page<D>[],
     mode?: M
   ) => void;
   resetPanes: () => void;
@@ -92,10 +91,10 @@ type BaseState = {
 export const useStore = create(
   immer<BaseState>((set, get) => ({
     pages: [],
-    setPages: (pages, mode: SetPagesMode = "normal") => {
-      if (mode === "normal") {
+    setPages: (pages, mode: SetPagesMode = 'normal') => {
+      if (mode === 'normal') {
         set({ pages: pages as Page[] });
-      } else if (mode === "push") {
+      } else if (mode === 'push') {
         // insert or update
         const page = pages as Page;
         set((state) => {
@@ -150,7 +149,7 @@ export const useStore = create(
       clearLocalStorage(AccessTokenKey);
       clearLocalStorage(RefreshTokenKey);
       clearLocalStorage(UserProfileKey);
-      set({ userInfo: undefined, pages: [] });
+      set({ pages: [] });
     },
 
     collectionTreeData: [],
@@ -161,7 +160,7 @@ export const useStore = create(
       set({ collectionLastManualUpdateTimestamp: timestamp });
     },
 
-    invitedWorkspaceId: "",
+    invitedWorkspaceId: '',
     setInvitedWorkspaceId: (workspaceId) =>
       set({ invitedWorkspaceId: workspaceId }),
 
@@ -174,7 +173,7 @@ export const useStore = create(
 
     activeEnvironment: undefined,
     setActiveEnvironment: (environment) => {
-      if (typeof environment === "string") {
+      if (typeof environment === 'string') {
         const environmentTreeData = get().environmentTreeData;
         set({
           activeEnvironment: environmentTreeData.find(
@@ -186,11 +185,11 @@ export const useStore = create(
       }
     },
 
-    currentEnvironment: { id: "0", envName: "", keyValues: [] },
+    currentEnvironment: { id: '0', envName: '', keyValues: [] },
     setCurrentEnvironment: (environment) => {
       setLocalStorage(EnvironmentKey, environment);
 
-      if (environment !== "0") {
+      if (environment !== '0') {
         const environmentTreeData = get().environmentTreeData;
         set({
           currentEnvironment: environmentTreeData.find(
@@ -198,13 +197,13 @@ export const useStore = create(
           ),
         });
       } else {
-        set({ currentEnvironment: { id: "0", envName: "", keyValues: [] } });
+        set({ currentEnvironment: { id: '0', envName: '', keyValues: [] } });
       }
     },
   }))
 );
 
 // @ts-ignore
-if (process.env.NODE_ENV === "development") {
-  mountStoreDevtool("BaseStore", useStore);
+if (process.env.NODE_ENV === 'development') {
+  mountStoreDevtool('BaseStore', useStore);
 }

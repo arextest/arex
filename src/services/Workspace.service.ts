@@ -10,9 +10,12 @@ import {
 export default class WorkspaceService {
   static listWorkspace({ userName }: { userName: string }) {
     return request
-      .post<{ workspaces: Workspace[] }>(`/api/filesystem/queryWorkspacesByUser`, {
-        userName,
-      })
+      .post<{ workspaces: Workspace[] }>(
+        `/api/filesystem/queryWorkspacesByUser`,
+        {
+          userName,
+        }
+      )
       .then((res) => res.body.workspaces);
   }
   static createWorkspace({ userName, workspaceName }: CreateWorkspaceReq) {
@@ -37,7 +40,9 @@ export default class WorkspaceService {
   }
 
   static deleteWorkspace(params: { userName: string; workspaceId: string }) {
-    return request.post(`/api/filesystem/deleteWorkspace`, params).then((res) => res);
+    return request
+      .post(`/api/filesystem/deleteWorkspace`, params)
+      .then((res) => res);
   }
 
   static inviteToWorkspace(params) {
@@ -45,6 +50,9 @@ export default class WorkspaceService {
   }
 
   static validInvitation(params: ValidInvitationReq) {
-    return request.post<ValidInvitationRes>(`/api/filesystem/validInvitation`, params);
+    return request.post<ValidInvitationRes>(
+      `/api/filesystem/validInvitation`,
+      params
+    );
   }
 }
