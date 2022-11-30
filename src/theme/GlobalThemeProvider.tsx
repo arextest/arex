@@ -13,16 +13,16 @@ declare module '@emotion/react' {
 const { defaultSeed } = theme;
 
 const GlobalThemeProvider: FC<{ theme: ThemeConfig; children: ReactNode }> = (props) => {
-  const algorithms: MappingAlgorithm[] = Array.isArray(props.theme.algorithm)
-    ? props.theme.algorithm
-    : [];
   const theme = useMemo(() => {
+    const algorithms: MappingAlgorithm[] = Array.isArray(props.theme.algorithm)
+      ? props.theme.algorithm
+      : [];
     let _theme = { ...defaultSeed, ...props.theme.token };
     algorithms.forEach((algorithm) => {
       _theme = algorithm(_theme);
     });
     return _theme;
-  }, [props.theme]);
+  }, [props.theme.token, props.theme.algorithm]);
 
   return (
     <ConfigProvider theme={props.theme}>

@@ -1,41 +1,23 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Input, message, theme } from 'antd';
+import { Button, Card, Input, message, Space, theme, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Label } from '../../components/styledComponents';
+import { FlexCenterWrapper, Label } from '../../components/styledComponents';
 import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../../constant';
 import { setLocalStorage } from '../../helpers/utils';
 import { AuthService } from '../../services/Auth.service';
 import { UserService } from '../../services/User.service';
 import WorkspaceService from '../../services/Workspace.service';
 
-const LoginWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  height: 100%;
-  .login {
-    width: 400px;
-    margin: 10% auto;
-    .login-title {
-      height: 56px;
-      font-size: 36px;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    .login-email-tip {
-      height: 30px;
-      color: red;
-    }
-    .login-verificationCode {
-      display: flex;
-      margin-bottom: 30px;
-    }
-  }
+const Logo = styled(Typography.Text)`
+  height: 64px;
+  display: block;
+  font-size: 36px;
+  font-weight: 600;
+  text-align: center;
 `;
 
 let timer: NodeJS.Timer;
@@ -46,11 +28,12 @@ const Login: FC = () => {
 
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState<string>('');
+  const [verify, setVerify] = useState(false);
   const [emailChecked, setEmailChecked] = useState<boolean>(true);
-  const [loadings, setLoadings] = useState<boolean>(false);
-  const [count, setCount] = useState<number>(60);
+  const [count, setCount] = useState<number>(0);
 
   const getEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVerify(false);
     const { value } = e.target;
     if (value.match(/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/)) {
       setEmailChecked(true);
@@ -67,6 +50,9 @@ const Login: FC = () => {
 
   const { run: sendVerifyCode } = useRequest(AuthService.sendVerifyCodeByEmail, {
     manual: true,
+    onBefore() {
+      setCount(60);
+    },
     onSuccess(res) {
       res.data.body.success
         ? message.success('The verification code has been sent to the email.')
@@ -78,11 +64,12 @@ const Login: FC = () => {
   });
 
   const sendVerificationCode = () => {
+    setVerify(true);
+
     if (!emailChecked || !email) {
       return message.error('email error');
     }
 
-    setLoadings(true);
     timer = setInterval(() => {
       setCount((t: number) => --t);
     }, 1000);
@@ -138,6 +125,7 @@ const Login: FC = () => {
   });
 
   const handleLogin = () => {
+    setVerify(true);
     if (!emailChecked || email == '') {
       message.error('Please check your email');
       return;
@@ -153,69 +141,68 @@ const Login: FC = () => {
   };
 
   useEffect(() => {
-    if (!count) {
-      clearInterval(timer);
-      setCount(60);
-      setLoadings(false);
-    }
+    !count && clearInterval(timer);
   }, [count]);
 
   return (
-    <LoginWrapper>
-      <div className={'login'}>
-        <div className={'login-title'}>AREX</div>
-        {/* TODO 使用 Form 组件做数据校验以及表单提交 */}
-        <Input
-          size='large'
-          placeholder='Please enter your email！'
-          prefix={<UserOutlined />}
-          onChange={getEmail}
-          status={emailChecked ? '' : 'error'}
-          allowClear
-        />
+    <FlexCenterWrapper>
+      <Card>
+        <Space size={26} direction='vertical'>
+          <Logo>AREX</Logo>
 
-        <div className={'login-email-tip'}>
-          {!emailChecked && 'Please enter the correct email!'}
-        </div>
-        <div className={'login-verificationCode'}>
-          <Input
-            size='large'
-            placeholder='Please enter a verification code！'
-            prefix={<LockOutlined />}
-            onChange={getVerificationCode}
-          />
-          <Button
-            size='large'
-            disabled={loadings}
-            onClick={sendVerificationCode}
-            style={{ marginLeft: '8px' }}
-          >
-            {loadings ? count + 's' : 'Send code'}
+          {/* TODO 使用 Form 组件做数据校验以及表单提交 */}
+          <div style={{ position: 'relative' }}>
+            <Input
+              size='large'
+              placeholder='Please enter your email！'
+              prefix={<UserOutlined />}
+              onChange={getEmail}
+              status={!emailChecked && verify ? 'error' : undefined}
+              allowClear
+            />
+
+            <Typography.Text
+              type='danger'
+              style={{ position: 'absolute', left: 0, bottom: '-24px' }}
+            >
+              {!emailChecked && verify && 'Please enter the correct email!'}
+            </Typography.Text>
+          </div>
+
+          <Space>
+            <Input
+              size='large'
+              placeholder='Please enter a verification code！'
+              prefix={<LockOutlined />}
+              onChange={getVerificationCode}
+            />
+            <Button
+              size='large'
+              disabled={!!count}
+              onClick={sendVerificationCode}
+              style={{ width: '120px' }}
+            >
+              {count ? count + 's' : 'Send code'}
+            </Button>
+          </Space>
+
+          <Button block size='large' type='primary' onClick={handleLogin}>
+            Login
           </Button>
-        </div>
 
-        <Button
-          block
-          type='primary'
-          size='large'
-          onClick={handleLogin}
-          style={{ marginBottom: '10px' }}
-        >
-          Login
-        </Button>
-
-        <div>
-          <Label>Login with</Label>
-          <Button
-            type='link'
-            onClick={loginAsGuest}
-            style={{ color: token.colorPrimaryText, paddingLeft: 0 }}
-          >
-            Guest
-          </Button>
-        </div>
-      </div>
-    </LoginWrapper>
+          <span>
+            <Label>Login with</Label>
+            <Button
+              type='link'
+              onClick={loginAsGuest}
+              style={{ color: token.colorPrimaryText, paddingLeft: 0 }}
+            >
+              Guest
+            </Button>
+          </span>
+        </Space>
+      </Card>
+    </FlexCenterWrapper>
   );
 };
 

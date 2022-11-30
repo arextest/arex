@@ -164,9 +164,6 @@ const MainTabsWrapper = styled((props: TabsProps) => {
     .ant-tabs-tab-btn {
       color: ${(props) => props.theme.colorTextSecondary}!important;
     }
-    &.ant-tabs-tab-active {
-      border-bottom: 1px solid ${(props) => props.theme.colorPrimaryBg}!important;
-    }
     :hover {
       .ant-tabs-tab-btn {
         color: ${(props) => props.theme.colorText}!important;
@@ -180,8 +177,6 @@ const MainTabsWrapper = styled((props: TabsProps) => {
     // 注意当前的作用范围很广，目前的作用对象为工作区所有的可编辑可删除卡片式 Tab
     // .ant-tabs-tab-with-remove 类是为了避免污染一般的 Tabs
     &.ant-tabs-tab-active {
-      background-color: ${(props) => props.theme.colorBgContainer}!important;
-      border-bottom: 1px solid ${(props) => props.theme.colorBgContainer}!important;
       :after {
         content: '';
         position: absolute;

@@ -30,6 +30,7 @@ export const lightToken: Partial<AliasToken> = {
   colorWarning: '#ffa726',
   colorError: '#f44336',
   colorBgLayout: '#fff',
+  colorTextBase: '#000000d9',
 };
 
 export const darkToken: Partial<AliasToken> = {
@@ -39,6 +40,7 @@ export const darkToken: Partial<AliasToken> = {
   colorWarning: '#ffa726',
   colorError: '#f44336',
   colorBgLayout: '#202020',
+  colorTextBase: '#ffffffd9',
 };
 
 export const tokenMap = {
