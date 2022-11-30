@@ -1,45 +1,50 @@
 import { useRequest } from 'ahooks';
-import { Form, message, Select, Spin, Switch } from 'antd';
+import { Form, message, Select, Spin, Switch, theme } from 'antd';
 import { changeLanguage } from 'i18next';
-import { FC, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { CirclePicker } from 'react-color';
 
 import { EmailKey } from '../constant';
 import DefaultConfig from '../defaultConfig';
 import { getLocalStorage } from '../helpers/utils';
+import { useRealColorPrimary } from '../hooks';
 import { I18nextLng, local } from '../i18n';
 import { UserService } from '../services/User.service';
-import { useStore } from '../store';
-import { primaryColorPalette, Theme } from '../style/theme';
+import useUserProfile, { UserProfile } from '../store/useUserProfile';
+import { ColorPrimaryPalette, colorPrimaryPalette, Theme } from '../style/theme';
+
 const { Option } = Select;
+const { defaultSeed, darkAlgorithm, defaultAlgorithm } = theme;
 
-export type FontSize = 'small' | 'medium' | 'large';
-
-type SettingForm = {
-  darkMode: boolean;
-  primaryColor: string;
-  fontSize: FontSize;
-  language: I18nextLng;
-};
+type SettingForm = Omit<UserProfile, 'colorPrimary'> & { colorPrimary: ColorPrimaryPalette };
 
 // Custom form item component
 type ColorPickerProps = {
-  value?: string;
+  value?: ColorPrimaryPalette;
   theme: Theme;
-  onChange?: (color: string) => void;
+  onChange?: (color: ColorPrimaryPalette) => void;
 };
 const ColorPicker: FC<ColorPickerProps> = ({ value, onChange, theme }) => {
-  const colors = useMemo(() => primaryColorPalette[theme].map((color) => color.key), [theme]);
+  const { darkMode } = useUserProfile();
+
+  const colors = useMemo(() => {
+    const algorithm = darkMode ? darkAlgorithm : defaultAlgorithm;
+
+    return colorPrimaryPalette.map(
+      (color) => algorithm(Object.assign(defaultSeed, { colorPrimary: color.key })).colorPrimary,
+    );
+  }, [darkMode]);
 
   return (
     <div style={{ padding: '8px 0 0 0' }}>
       <CirclePicker
         width={'320px'}
         circleSize={20}
-        color={value}
+        color={value?.key}
         colors={colors}
         onChangeComplete={(color) => {
-          onChange && onChange(color.hex);
+          const colorIndex = colors.findIndex((c) => c === color.hex);
+          onChange?.(colorPrimaryPalette[colorIndex]);
         }}
       />
     </div>
@@ -48,105 +53,50 @@ const ColorPicker: FC<ColorPickerProps> = ({ value, onChange, theme }) => {
 
 const SettingPage: FC = () => {
   const email = getLocalStorage<string>(EmailKey);
-  const { themeClassify, setUserInfo, changeTheme } = useStore();
+  const profile = useUserProfile();
+  const realColorPrimary = useRealColorPrimary();
 
-  const [initLoading, setInitLoading] = useState(true);
   const [form] = Form.useForm<SettingForm>();
 
-  const changeFontSize = (fontSize: FontSize) => {
-    // @ts-ignore
-    // document.body.style['zoom'] = FontSizeMap[fontSize]; // Non-standard: https://developer.mozilla.org/en-US/docs/Web/CSS/zoom
-  };
+  useEffect(() => {
+    // init form value
+    form.setFieldsValue({
+      darkMode: profile.darkMode,
+      colorPrimary: realColorPrimary,
+      compactMode: profile.compactMode,
+      language: profile.language,
+    });
+  }, []);
+
+  useEffect(() => {
+    form.setFieldsValue({
+      colorPrimary: realColorPrimary,
+    });
+  }, [realColorPrimary]);
 
   const handleFormChange = (value: Partial<SettingForm>, allValue: SettingForm) => {
-    // 设置目标的 ThemeClassify
-    const themeMode = allValue.darkMode ? Theme.dark : Theme.light;
-    // 设置状态更新前的 ThemeClassify
-    const oldTheme =
-      value.darkMode !== undefined // 当修改的值为 darkMode 时，说明 themeClassify 发生变更，否则沿用原有的 themeClassify
-        ? themeMode === Theme.dark
-          ? Theme.light
-          : Theme.dark
-        : themeMode;
-    const primaryColorIndex = primaryColorPalette[oldTheme].findIndex(
-      (color) => color.key.toLocaleLowerCase() === allValue.primaryColor.toLocaleLowerCase(),
-    );
-    const { name: theme, key: primaryColor } = primaryColorPalette[themeMode][
-      primaryColorIndex
-    ] || { name: DefaultConfig.theme, key: DefaultConfig.primaryColor };
-
-    // 原理上 darkMode 和 primaryColor 都是为了指定设置一个主题
-    (value.darkMode !== undefined || value.primaryColor !== undefined) && changeTheme(theme);
     value.language !== undefined && changeLanguage(value.language);
-    value.fontSize !== undefined && changeFontSize(value.fontSize);
 
     form
       .validateFields()
       .then((values) => {
-        const profile = {
-          theme,
-          fontSize: values.fontSize,
+        const profile: UserProfile = {
+          colorPrimary: values.colorPrimary.name,
+          darkMode: values.darkMode,
+          compactMode: values.compactMode,
           language: values.language,
         };
+
+        useUserProfile.setState(profile);
         updateUserProfileRequestRun({
           profile: JSON.stringify(profile),
           userName: email,
-        });
-
-        // 此处没有调用 UserService.userProfile 而是采用本地更新的方式
-        setUserInfo({
-          profile: {
-            theme,
-            fontSize: profile.fontSize,
-            language: profile.language,
-          },
-        });
-        form.setFieldsValue({
-          darkMode: themeMode === Theme.dark,
-          primaryColor,
-          fontSize: profile.fontSize,
-          language: profile.language,
         });
       })
       .catch((info) => {
         console.log('Validate Failed:', info);
       });
   };
-
-  useRequest(() => UserService.userProfile(email as string), {
-    ready: !!email,
-    onSuccess(res) {
-      const profile = res.profile;
-
-      let themeName: ThemeName = profile.theme || DefaultConfig.theme;
-      const validTheme = themeName in themeMap;
-      !validTheme && (themeName = DefaultConfig.theme);
-      const [themeMode] = themeName.split('-');
-
-      const fontSize = profile.fontSize || DefaultConfig.fontSize;
-      const language = profile.language || DefaultConfig.language;
-
-      // set userInfo to global store
-      setUserInfo({
-        profile: {
-          theme: themeName,
-          fontSize,
-          language,
-        },
-      });
-
-      // init form value
-      form.setFieldsValue({
-        darkMode: themeMode === Theme.dark,
-        primaryColor: primaryColorPalette[themeMode].find(
-          (color) => color.name === (validTheme ? profile.theme : DefaultConfig.theme),
-        )?.key,
-        fontSize,
-        language,
-      });
-      setInitLoading(false);
-    },
-  });
 
   const { run: updateUserProfileRequestRun } = useRequest(
     (params) => UserService.updateUserProfile(params),
@@ -160,51 +110,37 @@ const SettingPage: FC = () => {
   );
 
   return (
-    <Spin spinning={initLoading}>
-      <Form
-        name='form'
-        form={form}
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 20 }}
-        onValuesChange={handleFormChange}
-      >
-        <h2 id='user-interface'>User Interface</h2>
+    <Form
+      name='form'
+      form={form}
+      labelCol={{ span: 4 }}
+      wrapperCol={{ span: 20 }}
+      onValuesChange={handleFormChange}
+    >
+      <h2 id='user-interface'>User Interface</h2>
 
-        <div id='dark-mode'>
-          <Form.Item label='Dark Mode' name='darkMode' valuePropName='checked'>
-            <Switch />
-          </Form.Item>
-        </div>
+      <Form.Item label='Compact Mode' name='compactMode' valuePropName='checked'>
+        <Switch />
+      </Form.Item>
 
-        <div id='primary-color'>
-          <Form.Item label='Primary Color' name='primaryColor'>
-            <ColorPicker theme={themeClassify} />
-          </Form.Item>
-        </div>
+      <Form.Item label='Dark Mode' name='darkMode' valuePropName='checked'>
+        <Switch />
+      </Form.Item>
 
-        <div id='font-size'>
-          <Form.Item label='Font size' name='fontSize'>
-            <Select style={{ width: 120 }} disabled>
-              <Option value='small'>Small</Option>
-              <Option value='medium'>Medium</Option>
-              <Option value='large'>Large</Option>
-            </Select>
-          </Form.Item>
-        </div>
+      <Form.Item label='Primary Color' name='colorPrimary'>
+        <ColorPicker theme={profile.theme} />
+      </Form.Item>
 
-        <div id='language'>
-          <Form.Item label='Language' name='language'>
-            <Select style={{ width: 120 }}>
-              {local.map((lng) => (
-                <Option key={lng.key} value={lng.key}>
-                  {lng.name}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </div>
-      </Form>
-    </Spin>
+      <Form.Item label='Language' name='language'>
+        <Select style={{ width: 120 }}>
+          {local.map((lng) => (
+            <Option key={lng.key} value={lng.key}>
+              {lng.name}
+            </Option>
+          ))}
+        </Select>
+      </Form.Item>
+    </Form>
   );
 };
 

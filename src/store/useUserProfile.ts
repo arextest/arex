@@ -4,10 +4,10 @@ import { immer } from 'zustand/middleware/immer';
 
 import defaultConfig from '../defaultConfig';
 import { I18nextLng } from '../i18n';
-import { CompactMode, DarkMode, PrimaryColor, Theme } from '../style/theme';
+import { ColorPrimary, CompactMode, DarkMode, Theme } from '../style/theme';
 
 export type UserProfile = {
-  primaryColor: PrimaryColor;
+  colorPrimary: ColorPrimary;
   darkMode: DarkMode;
   compactMode: CompactMode;
   language: I18nextLng;
@@ -18,13 +18,11 @@ export type State = UserProfile & {
 };
 
 export type Action = {
-  changeTheme: (
-    option: Pick<UserProfile, 'primaryColor' | 'darkMode' | 'compactMode'>
-  ) => void;
+  changeTheme: (option: Pick<UserProfile, 'colorPrimary' | 'darkMode' | 'compactMode'>) => void;
 };
 
 const initialState: State = {
-  primaryColor: defaultConfig.primaryColor,
+  colorPrimary: defaultConfig.colorPrimary,
   darkMode: defaultConfig.darkMode,
   compactMode: defaultConfig.compactMode,
   language: defaultConfig.language,
@@ -41,7 +39,7 @@ const useUserProfile = create(
           theme: option.darkMode ? Theme.dark : Theme.light,
         });
     },
-  }))
+  })),
 );
 
 export default useUserProfile;

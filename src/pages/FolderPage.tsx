@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import { useImmer } from 'use-immer';
 
 import { PreRequestScript } from '../components';
-import { Authorization } from '../components/Folder';
+import { Authorization } from '../components/folder';
 import { reorder, ScriptBlock, ScriptBlocks } from '../components/PreRequestScript';
 import { PreRequestScriptProps } from '../components/PreRequestScript/PreRequestScript';
 import { uuid } from '../helpers/utils';
