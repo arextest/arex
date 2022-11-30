@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
-import { Button, Empty, TabsProps, theme } from 'antd';
-import { GlobalToken } from 'antd/lib/theme/interface';
+import { Button, Empty, TabsProps } from 'antd';
 import React, { ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -15,7 +14,6 @@ import { Page, useStore } from '../../store';
 const MainTabs = () => {
   const nav = useNavigate();
   const params = useParams();
-  const { token } = theme.useToken();
 
   const { pages, activeMenu, setPages, setActiveMenu, environmentTreeData, collectionTreeData } =
     useStore();
@@ -132,7 +130,6 @@ const MainTabs = () => {
     >
       <MainTabsWrapper
         className='main-tabs'
-        token={token}
         activeKey={activeMenu[1]}
         tabBarExtraContent={<EnvironmentSelect />}
         items={tabsItems}
@@ -160,19 +157,19 @@ const MainTabsWrapper = styled((props: TabsProps) => {
       {props.children}
     </DraggableTabs>
   );
-})<TabsProps & { token: GlobalToken }>`
+})<TabsProps>`
   height: 100%;
   // 工作区 Tabs 全局样式调整
   .ant-tabs-tab {
     .ant-tabs-tab-btn {
-      color: ${(props) => props.token.colorTextSecondary}!important;
+      color: ${(props) => props.theme.colorTextSecondary}!important;
     }
     &.ant-tabs-tab-active {
-      border-bottom: 1px solid ${(props) => props.token.colorPrimaryBg}!important;
+      border-bottom: 1px solid ${(props) => props.theme.colorPrimaryBg}!important;
     }
     :hover {
       .ant-tabs-tab-btn {
-        color: ${(props) => props.token.colorText}!important;
+        color: ${(props) => props.theme.colorText}!important;
       }
     }
   }
@@ -183,8 +180,8 @@ const MainTabsWrapper = styled((props: TabsProps) => {
     // 注意当前的作用范围很广，目前的作用对象为工作区所有的可编辑可删除卡片式 Tab
     // .ant-tabs-tab-with-remove 类是为了避免污染一般的 Tabs
     &.ant-tabs-tab-active {
-      background-color: ${(props) => props.token.colorBgContainer}!important;
-      border-bottom: 1px solid ${(props) => props.token.colorBgContainer}!important;
+      background-color: ${(props) => props.theme.colorBgContainer}!important;
+      border-bottom: 1px solid ${(props) => props.theme.colorBgContainer}!important;
       :after {
         content: '';
         position: absolute;
@@ -192,7 +189,7 @@ const MainTabsWrapper = styled((props: TabsProps) => {
         left: 0;
         width: 100%;
         height: 2px;
-        background-color: ${(props) => props.token.colorPrimary};
+        background-color: ${(props) => props.theme.colorPrimary};
         transition: all 0.2s ease-in-out;
       }
     }

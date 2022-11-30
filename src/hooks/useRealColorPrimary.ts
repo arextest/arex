@@ -2,7 +2,7 @@ import { theme } from 'antd';
 
 import defaultConfig from '../defaultConfig';
 import useUserProfile from '../store/useUserProfile';
-import { ColorPrimaryPalette, colorPrimaryPalette } from '../style/theme';
+import { ColorPrimaryPalette, colorPrimaryPalette } from '../theme';
 
 const { darkAlgorithm, defaultSeed } = theme;
 

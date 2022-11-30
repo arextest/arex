@@ -12,15 +12,3 @@ declare global {
     __AREX_EXTENSION_VERSION__: string; // arex-chrome-extension 最新版本号
   }
 }
-
-declare module '@zougt/vite-plugin-theme-preprocessor/dist/browser-utils' {
-  export function toggleTheme(options: {
-    scopeName?: string;
-    customLinkHref?: (href: string) => string;
-  });
-
-  export function addClassNameToHtmlTag(options: {
-    scopeName?: string;
-    multipleScopeVars: { scopeName: string; path?: string }[];
-  });
-}

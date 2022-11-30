@@ -1,7 +1,6 @@
 import { LeftOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Tabs, theme } from 'antd';
-import { GlobalToken } from 'antd/lib/theme/interface';
+import { Tabs } from 'antd';
 import React, { FC, ReactNode, useMemo } from 'react';
 
 import MenuConfig, { MenusType } from '../../menus';
@@ -14,8 +13,6 @@ type MainMenuProps = {
 };
 
 const MainMenu: FC<MainMenuProps> = (props) => {
-  const { token } = theme.useToken();
-
   const { activeMenu, setActiveMenu } = useStore();
   const activeKey = useMemo(() => activeMenu[0], [activeMenu]);
 
@@ -39,10 +36,8 @@ const MainMenu: FC<MainMenuProps> = (props) => {
       tabPosition='left'
       activeKey={activeKey}
       collapse={props.collapse}
-      token={token}
       tabBarExtraContent={
         <CollapseMenuButton
-          color={token.colorTextQuaternary}
           collapse={props.collapse}
           icon={<LeftOutlined />}
           onClick={() => props.onCollapse?.(!props.collapse)}
@@ -58,7 +53,6 @@ const MainMenuWrapper = styled(Tabs, {
   shouldForwardProp: (propName) => propName !== 'collapse',
 })<{
   collapse?: boolean;
-  token: GlobalToken;
 }>`
   height: calc(100% - 35px);
   .ant-tabs-nav-list {
@@ -68,24 +62,24 @@ const MainMenuWrapper = styled(Tabs, {
       padding: 12px 0 !important;
       .ant-tabs-tab-btn {
         margin: 0 auto;
-        color: ${(props) => props.token.colorTextSecondary};
+        color: ${(props) => props.theme.colorTextSecondary};
       }
       &.ant-tabs-tab-disabled {
         .ant-tabs-tab-btn {
-          color: ${(props) => props.token.colorTextTertiary};
+          color: ${(props) => props.theme.colorTextTertiary};
         }
       }
       :hover:not(.ant-tabs-tab-disabled) {
         .ant-tabs-tab-btn {
-          color: ${(props) => props.token.colorText};
+          color: ${(props) => props.theme.colorText};
         }
       }
     }
     .ant-tabs-tab-active {
-      background-color: ${(props) => props.token.colorPrimaryBg};
-      border-right: 1px solid ${(props) => props.token.colorBorder};
+      background-color: ${(props) => props.theme.colorPrimaryBg};
+      border-right: 1px solid ${(props) => props.theme.colorBorder};
       .ant-tabs-tab-btn {
-        color: ${(props) => props.token.colorText};
+        color: ${(props) => props.theme.colorText};
       }
     }
     .ant-tabs-ink-bar {
@@ -123,7 +117,7 @@ const CollapseMenuButton = styled(
   margin-bottom: 35px;
   text-align: center;
   width: 100%;
-  color: ${(props) => props.color};
+  color: ${(props) => props.theme.colorTextQuaternary};
   cursor: pointer;
   transform: rotate(${(props) => (props.collapse ? '180deg' : '0deg')});
   transition: all 0.2s;

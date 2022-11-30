@@ -4,7 +4,7 @@ import { immer } from 'zustand/middleware/immer';
 
 import defaultConfig from '../defaultConfig';
 import { I18nextLng } from '../i18n';
-import { ColorPrimary, CompactMode, DarkMode, Theme } from '../style/theme';
+import { ColorPrimary, CompactMode, DarkMode, Theme } from '../theme';
 
 export type UserProfile = {
   colorPrimary: ColorPrimary;

@@ -1,5 +1,7 @@
 import { AliasToken } from 'antd/es/theme/interface';
 
+export { default as GlobalThemeProvider } from './GlobalThemeProvider';
+
 export type DarkMode = boolean;
 export type CompactMode = boolean;
 
@@ -21,16 +23,30 @@ export const colorPrimaryPalette: ColorPrimaryPalette[] = [
   { key: '#7cb305', name: ColorPrimary.green },
 ];
 
-export const defaultToken: Partial<AliasToken> = {
-  colorPrimary: '#cf1322',
+export const lightToken: Partial<AliasToken> = {
+  colorPrimary: '#955cf4',
   colorSuccess: '#66bb6a',
   colorInfo: '#29b6f6',
   colorWarning: '#ffa726',
   colorError: '#f44336',
-  colorBorder: '#F0F0F0',
+  colorBgLayout: '#fff',
 };
 
-export const generateToken = (colorPrimary?: ColorPrimary) => ({
-  ...defaultToken,
+export const darkToken: Partial<AliasToken> = {
+  colorPrimary: '#955cf4',
+  colorSuccess: '#66bb6a',
+  colorInfo: '#29b6f6',
+  colorWarning: '#ffa726',
+  colorError: '#f44336',
+  colorBgLayout: '#202020',
+};
+
+export const tokenMap = {
+  [Theme.light]: lightToken,
+  [Theme.dark]: darkToken,
+};
+
+export const generateToken = (theme: Theme, colorPrimary?: ColorPrimary) => ({
+  ...tokenMap[theme],
   colorPrimary: colorPrimaryPalette.find((color) => color.name === colorPrimary)?.key,
 });

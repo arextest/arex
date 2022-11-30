@@ -1,9 +1,6 @@
-import './style/index.less';
-
 import { LoadingOutlined } from '@ant-design/icons';
-import { ConfigProvider, Spin, theme } from 'antd';
+import { Spin, theme } from 'antd';
 import { MappingAlgorithm } from 'antd/es/config-provider/context';
-import { AliasToken } from 'antd/lib/theme/interface';
 import React, { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 
@@ -12,7 +9,7 @@ import { useAuthentication, useCheckChrome, useInit } from './hooks';
 import routerConfig from './router';
 import { useStore } from './store';
 import useUserProfile from './store/useUserProfile';
-import { generateToken } from './style/theme';
+import { generateToken, GlobalThemeProvider } from './theme';
 
 const { darkAlgorithm, compactAlgorithm, defaultAlgorithm } = theme;
 
@@ -29,11 +26,6 @@ function App() {
   const { collectionTreeData, currentEnvironment } = useStore();
   const { language, theme, darkMode, compactMode, colorPrimary } = useUserProfile();
 
-  const token = useMemo<Partial<AliasToken>>(() => {
-    const _token = generateToken(colorPrimary);
-    console.log({ token: _token, colorPrimary });
-    return _token;
-  }, [colorPrimary]);
   const algorithm = useMemo<MappingAlgorithm[]>(() => {
     const _algorithm = [defaultAlgorithm];
     darkMode && _algorithm.push(darkAlgorithm);
@@ -42,9 +34,9 @@ function App() {
   }, [darkMode, compactMode]);
 
   return (
-    <ConfigProvider
+    <GlobalThemeProvider
       theme={{
-        token,
+        token: generateToken(theme, colorPrimary),
         algorithm,
       }}
     >
@@ -56,7 +48,7 @@ function App() {
       >
         {routesContent}
       </HttpProvider>
-    </ConfigProvider>
+    </GlobalThemeProvider>
   );
 }
 

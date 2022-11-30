@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import GitHubButton from 'react-github-btn';
 
-import { Theme } from '../../style/theme';
+import { Theme } from '../../theme';
 
 const GitHubStarButton: FC<{ theme: Theme }> = ({ theme }) => {
   return (

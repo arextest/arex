@@ -1,8 +1,7 @@
 import { DownOutlined, GatewayOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Empty, Input, Spin, theme, Tree } from 'antd';
-import { GlobalToken } from 'antd/lib/theme/interface';
+import { Button, Empty, Input, Spin, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps, TreeProps } from 'antd/lib/tree';
 import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -22,7 +21,7 @@ import { useStore } from '../../store';
 import { MenusType } from '../index';
 import CollectionTitle from './CollectionTitle';
 
-const CollectionMenuWrapper = styled.div<{ token: GlobalToken }>`
+const CollectionMenuWrapper = styled.div`
   width: 100%;
   .ant-spin-nested-loading,
   .ant-spin {
@@ -51,7 +50,7 @@ const CollectionMenuWrapper = styled.div<{ token: GlobalToken }>`
   .ant-tree-title {
     width: 100%;
     .collection-title-render {
-      color: ${(props) => props.token.colorTextSecondary};
+      color: ${(props) => props.theme.colorTextSecondary};
       display: flex;
       .right {
         float: right;
@@ -68,14 +67,14 @@ const CollectionMenuWrapper = styled.div<{ token: GlobalToken }>`
         }
       }
       :hover {
-        color: ${(props) => props.token.colorText};
+        color: ${(props) => props.theme.colorText};
       }
     }
   }
 
   .ant-tree-node-selected {
     .collection-title-render {
-      color: ${(props) => props.token.colorText};
+      color: ${(props) => props.theme.colorText};
     }
   }
 
@@ -123,7 +122,6 @@ export type nodeType = {
 } & DataNode;
 
 const CollectionMenu = () => {
-  const { token } = theme.useToken();
   const params = useParams();
   const { activeMenu, collectionLastManualUpdateTimestamp, setPages, setCollectionTreeData } =
     useStore();
@@ -450,7 +448,7 @@ const CollectionMenu = () => {
   };
 
   return (
-    <CollectionMenuWrapper token={token}>
+    <CollectionMenuWrapper>
       <Spin spinning={loading}>
         {!loading && !treeData.length ? (
           <Empty>

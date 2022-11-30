@@ -1,17 +1,16 @@
 import { useRequest } from 'ahooks';
-import { Form, message, Select, Spin, Switch, theme } from 'antd';
+import { Form, message, Select, Switch, theme } from 'antd';
 import { changeLanguage } from 'i18next';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { CirclePicker } from 'react-color';
 
 import { EmailKey } from '../constant';
-import DefaultConfig from '../defaultConfig';
 import { getLocalStorage } from '../helpers/utils';
 import { useRealColorPrimary } from '../hooks';
-import { I18nextLng, local } from '../i18n';
+import { local } from '../i18n';
 import { UserService } from '../services/User.service';
 import useUserProfile, { UserProfile } from '../store/useUserProfile';
-import { ColorPrimaryPalette, colorPrimaryPalette, Theme } from '../style/theme';
+import { ColorPrimaryPalette, colorPrimaryPalette, Theme } from '../theme';
 
 const { Option } = Select;
 const { defaultSeed, darkAlgorithm, defaultAlgorithm } = theme;
@@ -53,7 +52,7 @@ const ColorPicker: FC<ColorPickerProps> = ({ value, onChange, theme }) => {
 
 const SettingPage: FC = () => {
   const email = getLocalStorage<string>(EmailKey);
-  const profile = useUserProfile();
+  const { theme, darkMode, compactMode, language, changeTheme } = useUserProfile();
   const realColorPrimary = useRealColorPrimary();
 
   const [form] = Form.useForm<SettingForm>();
@@ -61,10 +60,10 @@ const SettingPage: FC = () => {
   useEffect(() => {
     // init form value
     form.setFieldsValue({
-      darkMode: profile.darkMode,
+      darkMode,
+      compactMode,
+      language,
       colorPrimary: realColorPrimary,
-      compactMode: profile.compactMode,
-      language: profile.language,
     });
   }, []);
 
@@ -87,7 +86,7 @@ const SettingPage: FC = () => {
           language: values.language,
         };
 
-        useUserProfile.setState(profile);
+        changeTheme(profile);
         updateUserProfileRequestRun({
           profile: JSON.stringify(profile),
           userName: email,
@@ -113,8 +112,8 @@ const SettingPage: FC = () => {
     <Form
       name='form'
       form={form}
-      labelCol={{ span: 4 }}
-      wrapperCol={{ span: 20 }}
+      labelCol={{ span: 5 }}
+      wrapperCol={{ span: 19 }}
       onValuesChange={handleFormChange}
     >
       <h2 id='user-interface'>User Interface</h2>
@@ -128,7 +127,7 @@ const SettingPage: FC = () => {
       </Form.Item>
 
       <Form.Item label='Primary Color' name='colorPrimary'>
-        <ColorPicker theme={profile.theme} />
+        <ColorPicker theme={theme} />
       </Form.Item>
 
       <Form.Item label='Language' name='language'>

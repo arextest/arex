@@ -1,5 +1,5 @@
 import { I18nextLng } from './i18n';
-import { ColorPrimary, CompactMode, DarkMode } from './style/theme';
+import { ColorPrimary, CompactMode, DarkMode } from './theme';
 
 export type DefaultConfig = {
   language: I18nextLng;
@@ -13,6 +13,6 @@ const defaultConfig: DefaultConfig = {
   colorPrimary: ColorPrimary.green,
   darkMode: false,
   compactMode: false,
-};
+} as const;
 
 export default defaultConfig;
