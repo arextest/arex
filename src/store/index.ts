@@ -3,22 +3,14 @@ import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import {
-  AccessTokenKey,
-  EnvironmentKey,
-  RefreshTokenKey,
-  UserProfileKey,
-} from '../constant';
+import { AccessTokenKey, EnvironmentKey, RefreshTokenKey, UserProfileKey } from '../constant';
 import { clearLocalStorage, setLocalStorage } from '../helpers/utils';
 import { MenusType } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
 import { PageType } from '../pages';
 import { NodeList } from '../services/CollectionService';
 import { Environment } from '../services/Environment.type';
-import {
-  ApplicationDataType,
-  PlanItemStatistics,
-} from '../services/Replay.type';
+import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
 
 // 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
@@ -43,6 +35,9 @@ export type Page<D extends PageData = undefined> = {
 type ActiveMenu = [MenusType | undefined, string | undefined]; // [菜单id, 菜单项目id]
 type SetPagesMode = 'push' | 'normal';
 type BaseState = {
+  userInfo: {
+    email: string;
+  };
   logout: () => void;
 
   activeMenu: ActiveMenu;
@@ -56,7 +51,7 @@ type BaseState = {
    * */
   setPages: <D extends PageData = undefined, M extends SetPagesMode = 'normal'>(
     pages: M extends 'push' ? Page<D> : Page<D>[],
-    mode?: M
+    mode?: M,
   ) => void;
   resetPanes: () => void;
 
@@ -90,6 +85,9 @@ type BaseState = {
  */
 export const useStore = create(
   immer<BaseState>((set, get) => ({
+    userInfo: {
+      email: 'string',
+    },
     pages: [],
     setPages: (pages, mode: SetPagesMode = 'normal') => {
       if (mode === 'normal') {
@@ -100,8 +98,7 @@ export const useStore = create(
         set((state) => {
           const sortIndexArr = state.pages.map((i) => i.sortIndex || 0);
           const statePane = state.pages.find((i) => i.paneId === page.paneId);
-          const maxSortIndex =
-            Math.max(...(sortIndexArr.length > 0 ? sortIndexArr : [0])) + 1;
+          const maxSortIndex = Math.max(...(sortIndexArr.length > 0 ? sortIndexArr : [0])) + 1;
 
           if (statePane) {
             // page already exist, just update sortIndex
@@ -114,10 +111,7 @@ export const useStore = create(
             });
           }
           // state.activePane = page.paneId;
-          state.activeMenu = [
-            page.menuType || MenusType.Collection,
-            page.paneId,
-          ];
+          state.activeMenu = [page.menuType || MenusType.Collection, page.paneId];
         });
       }
     },
@@ -129,12 +123,9 @@ export const useStore = create(
         if (statePane) {
           // 每次选择tab的时候将sortIndex设置到最大，然后每次点击关闭的时候激活上最大的sort
           const sortIndexArr = state.pages.map((i) => i.sortIndex || 0);
-          statePane.sortIndex =
-            Math.max(...(sortIndexArr.length > 0 ? sortIndexArr : [0])) + 1;
+          statePane.sortIndex = Math.max(...(sortIndexArr.length > 0 ? sortIndexArr : [0])) + 1;
         }
-        const key = menuKey
-          ? menuKey
-          : statePane?.menuType || MenusType.Collection;
+        const key = menuKey ? menuKey : statePane?.menuType || MenusType.Collection;
         state.activeMenu = [key, menuItemKey];
       });
 
@@ -161,24 +152,20 @@ export const useStore = create(
     },
 
     invitedWorkspaceId: '',
-    setInvitedWorkspaceId: (workspaceId) =>
-      set({ invitedWorkspaceId: workspaceId }),
+    setInvitedWorkspaceId: (workspaceId) => set({ invitedWorkspaceId: workspaceId }),
 
     workspaces: [],
     setWorkspaces: (workspaces) => set({ workspaces }),
 
     environmentTreeData: [],
-    setEnvironmentTreeData: (environmentTreeData) =>
-      set({ environmentTreeData }),
+    setEnvironmentTreeData: (environmentTreeData) => set({ environmentTreeData }),
 
     activeEnvironment: undefined,
     setActiveEnvironment: (environment) => {
       if (typeof environment === 'string') {
         const environmentTreeData = get().environmentTreeData;
         set({
-          activeEnvironment: environmentTreeData.find(
-            (i) => i.id === environment
-          ),
+          activeEnvironment: environmentTreeData.find((i) => i.id === environment),
         });
       } else {
         set({ activeEnvironment: environment });
@@ -192,15 +179,13 @@ export const useStore = create(
       if (environment !== '0') {
         const environmentTreeData = get().environmentTreeData;
         set({
-          currentEnvironment: environmentTreeData.find(
-            (i) => i.id === environment
-          ),
+          currentEnvironment: environmentTreeData.find((i) => i.id === environment),
         });
       } else {
         set({ currentEnvironment: { id: '0', envName: '', keyValues: [] } });
       }
     },
-  }))
+  })),
 );
 
 // @ts-ignore

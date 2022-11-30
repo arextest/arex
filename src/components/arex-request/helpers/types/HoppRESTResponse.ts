@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { HoppRESTRequest } from '@hoppscotch/data';
+import {HoppRESTRequest} from "../../data/rest";
 
 export type HoppRESTResponse =
   | { type: 'null' }

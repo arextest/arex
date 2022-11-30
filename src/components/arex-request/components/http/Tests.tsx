@@ -1,20 +1,13 @@
-// @ts-nocheck
-import {
-  DeleteOutlined,
-  PicRightOutlined,
-  QuestionCircleOutlined,
-} from "@ant-design/icons";
-import { javascript } from "@codemirror/lang-javascript";
-import { json } from "@codemirror/lang-json";
-import { css } from "@emotion/react";
-import styled from "@emotion/styled";
-import { githubDark, githubLight } from "@uiw/codemirror-theme-github";
-import { Button, Tooltip } from "antd";
-import { useContext, useEffect, useRef, useState } from "react";
+import { javascript } from '@codemirror/lang-javascript';
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
+import { Button } from 'antd';
+import { useContext, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { useCodeMirror } from "../../helpers/editor/codemirror";
-import { getValueByPath } from "../../helpers/utils/locale";
-import { GlobalContext, HttpContext } from "../../index";
+import useDarkMode from '../../../../hooks/use-dark-mode';
+import { useCodeMirror } from '../../helpers/editor/codemirror';
+import { HttpContext } from '../../index';
 
 export const ResponseTestHeader = styled.div`
   display: flex;
@@ -28,7 +21,7 @@ export const ResponseTestHeader = styled.div`
 `;
 
 const ThemeColorPrimaryButton = styled(Button)`
-  // color: ${(props) => props.theme.color.primary} !important;
+  color: ${(props) => props.theme.colorPrimary} !important;
 `;
 
 export const ResponseTestWrapper = styled.div`
@@ -63,21 +56,12 @@ export const ResponseTestWrapper = styled.div`
   }
 `;
 
-export type ResponseTestProps = {
-  OldTestVal: string;
-  getTestVal: (p: any) => void;
-};
-
-const HttpTests = ({ getTestVal, OldTestVal }: ResponseTestProps) => {
+const HttpTests = () => {
   const { store, dispatch } = useContext(HttpContext);
-  const { store: globalStore } = useContext(GlobalContext);
-  const t = (key) => getValueByPath(globalStore.locale.locale, key);
-
-  const [TestVal, setTestVal] = useState<string>("");
-  const [isLineWrapping, setIsLineWrapping] = useState<boolean>(true);
+  const { t } = useTranslation();
   const codeSnippet = [
     {
-      name: "Response: Status code is 200",
+      name: 'Response: Status code is 200',
       text: `
 // Check status code is 200
 arex.test("Status code is 200", ()=> {
@@ -86,7 +70,7 @@ arex.test("Status code is 200", ()=> {
 `,
     },
     {
-      name: "Response: Assert property from body",
+      name: 'Response: Assert property from body',
       text: `
 // Check JSON response property
 arex.test("Check JSON response property", ()=> {
@@ -95,7 +79,7 @@ arex.test("Check JSON response property", ()=> {
 `,
     },
     {
-      name: "Status code: Status code is 2xx",
+      name: 'Status code: Status code is 2xx',
       text: `
 // Check status code is 2xx
 arex.test("Status code is 2xx", ()=> {
@@ -103,7 +87,7 @@ arex.test("Status code is 2xx", ()=> {
 });`,
     },
     {
-      name: "Status code: Status code is 3xx",
+      name: 'Status code: Status code is 3xx',
       text: `
 // Check status code is 3xx
 arex.test("Status code is 3xx", ()=> {
@@ -111,7 +95,7 @@ arex.test("Status code is 3xx", ()=> {
 });`,
     },
     {
-      name: "Status code: Status code is 4xx",
+      name: 'Status code: Status code is 4xx',
       text: `
 // Check status code is 4xx
 arex.test("Status code is 4xx", ()=> {
@@ -119,7 +103,7 @@ arex.test("Status code is 4xx", ()=> {
 });`,
     },
     {
-      name: "Status code: Status code is 5xx",
+      name: 'Status code: Status code is 5xx',
       text: `
 // Check status code is 5xx
 arex.test("Status code is 5xx", ()=> {
@@ -133,26 +117,22 @@ arex.test("Status code is 5xx", ()=> {
   useCodeMirror({
     container: codeCm.current,
     value: store.request.testScript,
-    height: "100%",
+    height: '100%',
     extensions: [javascript()],
-    theme: globalStore.theme.type,
-    onChange: (val) => {
+    theme: store.darkMode ? 'dark' : 'light',
+    onChange: (val:string) => {
       dispatch({
-        type: "request.testScript",
+        type: 'request.testScript',
         payload: val,
       });
     },
   });
 
   const addTest = (text: string) => {
-    // console.log(store.request.testScript + text,'store.request.testScript + text')
     dispatch({
-      type: "request.testScript",
+      type: 'request.testScript',
       payload: store.request.testScript + text,
     });
-  };
-  const feedLine = () => {
-    setIsLineWrapping(!isLineWrapping);
   };
 
   return (
@@ -164,28 +144,11 @@ arex.test("Status code is 5xx", ()=> {
       `}
     >
       <ResponseTestHeader>
-        <span>{t("preRequest.javascript_code")}</span>
-        <div>
-          {/*<Tooltip title={t('help')}>*/}
-          {/*  <Button disabled type='text' icon={<QuestionCircleOutlined />} />*/}
-          {/*</Tooltip>*/}
-          {/*<Tooltip title={t('lineFeed')}>*/}
-          {/*  <Button type='text' icon={<PicRightOutlined />} onClick={feedLine} />*/}
-          {/*</Tooltip>*/}
-          {/*<Tooltip title={t('clearAll')}>*/}
-          {/*  <Button type='text' icon={<DeleteOutlined />} onClick={() => setTestVal('')} />*/}
-          {/*</Tooltip>*/}
-        </div>
+        <span>{t('preRequest.javascript_code')}</span>
+        <div></div>
       </ResponseTestHeader>
       <ResponseTestWrapper>
-        {/*{JSON.stringify(store.request.testScript)}*/}
-        <div
-          ref={codeCm}
-          style={{ width: "65%" }}
-          // options = {{
-          //   lineWrapping:true,
-          // }}
-        />
+        <div ref={codeCm} style={{ width: '65%' }} />
         <div>
           <div>
             Test scripts are written in JavaScript, and are run after the
@@ -194,7 +157,7 @@ arex.test("Status code is 5xx", ()=> {
           <Button
             type="text"
             onClick={() =>
-              window.open("https://docs.hoppscotch.io/features/tests")
+              window.open('https://docs.hoppscotch.io/features/tests')
             }
           >
             Read documentation

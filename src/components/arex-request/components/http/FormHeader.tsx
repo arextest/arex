@@ -1,12 +1,9 @@
-// @ts-nocheck
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Tooltip } from 'antd';
 import { FC, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Updater } from 'use-immer';
-
-import { getValueByPath } from '../../helpers/utils/locale';
-import { GlobalContext, HttpContext } from '../../index';
 
 export type KeyValueType = {
   id: string;
@@ -30,10 +27,10 @@ export const FormHeaderWrapper = styled.div`
   }
 `;
 
-const FormHeader: FC<{ update: Updater<KeyValueType[]>; title: string }> = (props) => {
-  const { store } = useContext(HttpContext);
-  const { store: globalStore } = useContext(GlobalContext);
-  const t = (key) => getValueByPath(globalStore.locale.locale, key);
+const FormHeader: FC<{ update: Updater<KeyValueType[]>; title: string }> = (
+  props
+) => {
+  const { t } = useTranslation();
 
   const handleAddParam = () => {
     const newValue: KeyValueType = {
@@ -54,10 +51,18 @@ const FormHeader: FC<{ update: Updater<KeyValueType[]>; title: string }> = (prop
       <span>{props.title}</span>
       <div>
         <Tooltip title={t('action.clear_all')}>
-          <Button type='text' icon={<DeleteOutlined />} onClick={handleClearAllParams} />
+          <Button
+            type="text"
+            icon={<DeleteOutlined />}
+            onClick={handleClearAllParams}
+          />
         </Tooltip>
         <Tooltip title={t('add.new')}>
-          <Button type='text' icon={<PlusOutlined />} onClick={handleAddParam} />
+          <Button
+            type="text"
+            icon={<PlusOutlined />}
+            onClick={handleAddParam}
+          />
         </Tooltip>
       </div>
     </FormHeaderWrapper>

@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { Environment } from '@hoppscotch/data';
+import { Environment } from "../../data/environment";
 
 export type HoppTestExpectResult = {
   status: 'fail' | 'pass' | 'error';

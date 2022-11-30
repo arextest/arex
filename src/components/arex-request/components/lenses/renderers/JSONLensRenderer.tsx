@@ -1,30 +1,28 @@
-// @ts-nocheck
 import { CopyOutlined } from '@ant-design/icons';
 import { json } from '@codemirror/lang-json';
 import { EditorView } from '@codemirror/view';
 import { css } from '@emotion/react';
 import { Button, message, Space, Tooltip } from 'antd';
-// import copy from 'copy-to-clipboard';
 import { FC, useContext, useRef } from 'react';
 
 import { useCodeMirror } from '../../../helpers/editor/codemirror';
 import { HoppRESTResponse } from '../../../helpers/types/HoppRESTResponse';
-import { GlobalContext, HttpContext } from '../../../index';
-function coppyUrl(url) {
-  // copy(url);
+import { HttpContext } from '../../../index';
+function coppyUrl() {
   message.success('copy success🎉');
 }
 const JSONLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
-  const { store } = useContext(HttpContext);
-  const { store: globalStore } = useContext(GlobalContext);
   const jsonResponse = useRef(null);
+  // @ts-ignore
   const jsonObj = JSON.parse(response.body || '{}');
+  const { store } = useContext(HttpContext);
   useCodeMirror({
     container: jsonResponse.current,
+    // @ts-ignore
     value: JSON.stringify(jsonObj, null, 2),
     height: '100%',
     extensions: [json(), EditorView.lineWrapping],
-    theme: globalStore.theme.type,
+    theme: store.darkMode ? 'dark' : 'light',
   });
   return (
     <div
@@ -49,13 +47,13 @@ const JSONLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
                   padding: 8px;
                   display: block;
                 `}
+                // @ts-ignore
                 onClick={() => coppyUrl(JSON.stringify(jsonObj, null, 2))}
               >
                 <CopyOutlined />
               </a>
             </Tooltip>
           </div>
-          {/*<Space>你好</Space>*/}
         </div>
       </div>
       <div

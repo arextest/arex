@@ -4,7 +4,6 @@ import { MappingAlgorithm } from 'antd/es/config-provider/context';
 import React, { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 
-import { HttpProvider } from './components/arex-request';
 import { useAuthentication, useCheckChrome, useInit } from './hooks';
 import routerConfig from './router';
 import { useStore } from './store';
@@ -40,14 +39,7 @@ function App() {
         algorithm,
       }}
     >
-      <HttpProvider
-        theme={theme}
-        locale={{ 'zh-CN': 'cn', 'en-US': 'en' }[language]}
-        collectionTreeData={collectionTreeData}
-        environment={currentEnvironment}
-      >
-        {routesContent}
-      </HttpProvider>
+      {routesContent}
     </GlobalThemeProvider>
   );
 }

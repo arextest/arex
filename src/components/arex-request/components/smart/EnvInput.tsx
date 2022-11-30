@@ -1,6 +1,5 @@
-// @ts-nocheck
 import { hoverTooltip } from '@codemirror/view';
-import { css } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import { FC, useContext, useRef } from 'react';
 
 import { useEnvCodeMirror } from '../../helpers/editor/extensions/EnvCodeMirror';
@@ -8,16 +7,16 @@ import {
   getMarkFromToArr,
   HOPP_ENVIRONMENT_REGEX,
 } from '../../helpers/editor/extensions/HoppEnvironment';
-import { GlobalContext, HttpContext } from '../../index';
+import { HttpContext } from '../../index';
 
 interface SmartEnvInputProps {
   value: string;
   onChange: (e: any) => void;
 }
 const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
+  const theme = useTheme();
   const smartEnvInputRef = useRef(null);
   const { dispatch, store } = useContext(HttpContext);
-  const { dispatch: globalDispatch, store: globalStore } = useContext(GlobalContext);
   useEnvCodeMirror({
     container: smartEnvInputRef.current,
     value: value,
@@ -26,8 +25,14 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
       [
         hoverTooltip((view, pos, side) => {
           const { text } = view.state.doc.lineAt(pos);
-          const markArrs = getMarkFromToArr(text, HOPP_ENVIRONMENT_REGEX, globalStore.environment);
-          const index = markArrs.map((i) => pos < i.to && pos > i.from).findIndex((i) => i);
+          const markArrs = getMarkFromToArr(
+            text,
+            HOPP_ENVIRONMENT_REGEX,
+            store.environment
+          );
+          const index = markArrs
+            .map((i) => pos < i.to && pos > i.from)
+            .findIndex((i) => i);
           if (index === -1) {
             return null;
           }
@@ -49,21 +54,21 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
         }),
       ],
     ],
-    onChange: (val) => {
+    onChange: (val: any) => {
       console.log({ val });
       dispatch({
         type: 'request.endpoint',
         payload: val,
       });
     },
-    currentEnv: globalStore.environment,
-    theme: globalStore.theme.type,
+    currentEnv: store.environment,
+    theme: store.darkMode ? 'dark' : 'light',
   });
 
   return (
     <div
       css={css`
-        border: 1px solid ${globalStore.theme.theme.colors.primaryBorder};
+        border: 1px solid ${theme.colorBorder};
         flex: 1;
         overflow: hidden;
       `}

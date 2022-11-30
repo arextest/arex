@@ -1,73 +1,58 @@
-// @ts-nocheck
 import { css } from '@emotion/react';
-import styled from '@emotion/styled';
-import { Tabs, TabsProps, Tag } from 'antd';
+import { Badge, Tabs, Tag } from 'antd';
 import { useContext, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { httpProfile } from '../../config';
-import ExtraRequestTabItemCompare from '../../extra/ExtraRequestTabItemCompare';
-import ExtraRequestTabItemMock from '../../extra/ExtraRequestTabItemMock';
-import { getValueByPath } from '../../helpers/utils/locale';
-import { GlobalContext, HttpContext } from '../../index';
+import { HttpContext } from '../../index';
 import HttpBody from './Body';
 import HttpHeaders from './Headers';
 import HttpParameters from './Parameters';
 import HttpTests from './Tests';
-
-const ParamCount = styled<{ count: number }>((props) => <Tag {...props}>{props.count}</Tag>)`
-  display: ${(props) => (props.count > 0 ? 'inline-block' : 'none')};
-  border-radius: 6px;
-  height: 18px;
-  line-height: 16px;
-  padding: 0 4px;
-  margin-left: 4px;
-`;
-
-const HttpRequestOptions = ({ requestAxios }) => {
+const HttpRequestOptions = () => {
   const { store } = useContext(HttpContext);
-  const t = (key) => getValueByPath(globalStore.locale.locale, key);
-  const [activeKey, setActiveKey] = useState('__body__');
-  const { dispatch: globalDispatch, store: globalStore } = useContext(GlobalContext);
+  const { t } = useTranslation();
+  const [activeKey, setActiveKey] = useState('3');
 
-  const items: TabsProps['items'] = [
+  const items = [
     {
       label: (
         <div>
-          {t('tab.parameters')}
-          <ParamCount count={store.request.params.length} />
+          {t('tab.parameters')}{' '}
+          <Tag
+            css={css`
+              display: ${store.request.params.length > 0
+                ? 'inline-block'
+                : 'none'};
+            `}
+          >
+            {store.request.params.length}
+          </Tag>
         </div>
       ),
-      key: '__parameters__',
+      key: '0',
       children: <HttpParameters />,
     },
     {
       label: (
         <div>
-          {t('tab.headers')}
-          <ParamCount count={store.request.headers.length} />
+          {t('tab.headers')}{' '}
+          <Tag
+            css={css`
+              display: ${store.request.headers.length > 0
+                ? 'inline-block'
+                : 'none'};
+            `}
+          >
+            {store.request.headers.length}
+          </Tag>
         </div>
       ),
-      key: '__headers__',
+      key: '1',
       children: <HttpHeaders />,
     },
-    { label: t('tab.body'), key: '__body__', children: <HttpBody /> },
-    { label: t('tab.tests'), key: '__tests__', children: <HttpTests /> },
-    {
-      label: 'Compare',
-      key: '__compare__',
-      children: <ExtraRequestTabItemCompare requestAxios={requestAxios} />,
-    },
-    {
-      label: 'Mock',
-      key: '__mock__',
-      children: (
-        <ExtraRequestTabItemMock requestAxios={requestAxios} recordId={store.request.recordId} />
-      ),
-    },
-    ...httpProfile.tabs.extra,
-  ]
-    .filter((i) => !(i.key === '__mock__' && !store.request.recordId))
-    .filter(httpProfile.tabs.filter);
+    { label: t('tab.body'), key: '3', children: <HttpBody /> },
+    { label: t('tab.tests'), key: '4', children: <HttpTests /> },
+  ];
   return (
     <div
       css={css`
@@ -89,7 +74,7 @@ const HttpRequestOptions = ({ requestAxios }) => {
         onChange={(val) => {
           setActiveKey(val);
         }}
-      />
+      ></Tabs>
     </div>
   );
 };

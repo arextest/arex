@@ -1,12 +1,12 @@
-// @ts-nocheck
 import { DownOutlined } from '@ant-design/icons';
-import { css } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Breadcrumb, Button, Dropdown, Input, Menu, MenuProps, message, Select, Space } from 'antd';
-import { useContext, useEffect, useMemo, useRef } from 'react';
-import { treeFind, treeFindPath } from '../../helpers/collection/util';
-import { getValueByPath } from '../../helpers/utils/locale';
-import { GlobalContext, HttpContext } from '../../index';
+import { Breadcrumb, Button, Dropdown, Menu, MenuProps, Select } from 'antd';
+import { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { treeFindPath } from '../../helpers/collection/util';
+import { HttpContext } from '../../index';
 import SmartEnvInput from '../smart/EnvInput';
 
 const HeaderWrapper = styled.div`
@@ -25,49 +25,44 @@ const HeaderWrapper = styled.div`
   }
 `;
 
-const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
-enum SEND_MENU_TYPE {
-  'normal' = 'normal',
-  'compare' = 'compare',
-  'arexRecord' = 'arexRecord',
-}
+const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
-const HttpRequest = ({ currentRequestId, onEdit, onSend, onSendCompare }) => {
+const HttpRequest = ({ currentRequestId, onEdit, onSend }:any) => {
   const { store, dispatch } = useContext(HttpContext);
-  const { dispatch: globalDispatch, store: globalStore } = useContext(GlobalContext);
-  const t = (key) => getValueByPath(globalStore.locale.locale, key);
 
-  const menu: MenuProps = {
-    onClick: (e) => {
-      handleRequest(e.key);
-    },
-    items: [
-      {
-        key: SEND_MENU_TYPE.compare,
-        label: 'Send Compare',
-      },
-      {
-        key: SEND_MENU_TYPE.arexRecord,
-        label: 'Send Arex Record',
-      },
-    ],
+  const { t } = useTranslation();
+  const onMenuClick: MenuProps['onClick'] = (e) => {
+    console.log(1)
   };
 
-  const handleRequest = (type) => {
+  const menu = (
+    <Menu
+      onClick={onMenuClick}
+      items={[
+        {
+          key: '1',
+          label: 'Send C',
+        },
+      ]}
+    />
+  );
+
+  const handleRequest = ({ type }:any) => {
+    console.log({ type });
     const urlPretreatment = (url: string) => {
-      // 正则匹配{{}}
       const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
       let replaceVar = editorValueMatch[0];
-      const env = globalStore.environment?.keyValues || [];
+      const env = store.environment?.variables || [];
       for (let i = 0; i < env.length; i++) {
-        if (env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')) {
+        if (
+          env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')
+        ) {
           replaceVar = env[i].value;
         }
       }
 
       return url.replace(editorValueMatch[0], replaceVar);
     };
-
     dispatch({
       type: 'response.type',
       payload: 'loading',
@@ -75,24 +70,16 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend, onSendCompare }) => {
 
     const start = new Date().getTime();
 
-    if (SEND_MENU_TYPE.normal === type || SEND_MENU_TYPE.arexRecord === type) {
-      dispatch({
-        type: 'compareResponse.type',
-        payload: 'null',
-      });
-
-      const requestParams = { ...store.request, endpoint: urlPretreatment(store.request.endpoint) };
-      if (type === SEND_MENU_TYPE.arexRecord) {
-        requestParams.headers.push({
-          key: 'arex-record-id',
-          value: currentRequestId,
-          active: true,
-        });
-      }
-
+    if (type === 'compare') {
+      console.log(1)
+    } else {
       onSend({
-        request: requestParams,
+        request: {
+          ...store.request,
+          endpoint: urlPretreatment(store.request.endpoint),
+        },
       }).then((agentAxiosAndTest: any) => {
+        console.log(agentAxiosAndTest, 'agentAxiosAndTest');
         dispatch({
           type: 'response.type',
           payload: 'success',
@@ -107,7 +94,6 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend, onSendCompare }) => {
           type: 'testResult',
           payload: agentAxiosAndTest.testResult,
         });
-        console.log({ type });
         dispatch({
           type: 'response.headers',
           payload: agentAxiosAndTest.response.headers,
@@ -116,7 +102,8 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend, onSendCompare }) => {
         dispatch({
           type: 'response.meta',
           payload: {
-            responseSize: JSON.stringify(agentAxiosAndTest.response.data).length,
+            responseSize: JSON.stringify(agentAxiosAndTest.response.data)
+              .length,
             responseDuration: new Date().getTime() - start,
           },
         });
@@ -124,33 +111,6 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend, onSendCompare }) => {
         dispatch({
           type: 'response.statusCode',
           payload: agentAxiosAndTest.response.status,
-        });
-      });
-    } else if (type === SEND_MENU_TYPE.compare) {
-      onSendCompare({
-        request: {
-          ...store.request,
-          endpoint: urlPretreatment(store.request.endpoint),
-        },
-      }).then((agentAxiosCompareResponse: any) => {
-        dispatch({
-          type: 'response.type',
-          payload: 'success',
-        });
-
-        dispatch({
-          type: 'response.body',
-          payload: JSON.stringify(agentAxiosCompareResponse.response.data),
-        });
-
-        dispatch({
-          type: 'compareResponse.type',
-          payload: 'success',
-        });
-
-        dispatch({
-          type: 'compareResponse.body',
-          payload: JSON.stringify(agentAxiosCompareResponse.compareResponse.data),
         });
       });
     }
@@ -165,40 +125,38 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend, onSendCompare }) => {
         css={css`
           display: flex;
           justify-content: space-between;
+          margin-bottom: 8px;
         `}
       >
-        {/*{*/}
-        {/*  JSON.stringify(treeFindPath(collectionTreeData,(node)=>node.key === currentRequestId))*/}
-        {/*}*/}
         <Breadcrumb style={{ paddingBottom: '14px' }}>
           {treeFindPath(
-            globalStore.collectionTreeData,
-            (node) => node.key === currentRequestId,
-          ).map((i, index) => (
+            store.collectionTreeData,
+            (node:any) => {
+              return node.relationshipRequestId === currentRequestId
+            }
+          ).map((i:any, index:number) => (
             <Breadcrumb.Item key={index}>{i.title}</Breadcrumb.Item>
           ))}
         </Breadcrumb>
-
-        <Button
-          size={'small'}
-          style={{ marginBottom: '8px' }}
-          onClick={() => {
-            onEdit({
-              type: 'update',
-              payload: {
-                ...store.request,
-              },
-            });
-          }}
-        >
-          {t('action.save')}
-        </Button>
+        <div>
+          <Button
+            onClick={() => {
+              onEdit({
+                type: 'update',
+                payload: {
+                  ...store.request,
+                },
+              });
+            }}
+          >
+            {t('action.save')}
+          </Button>
+        </div>
       </div>
-
       <HeaderWrapper>
         <Select
           value={store.request.method}
-          options={METHODS.map((i) => ({ value: i, lable: i }))}
+          options={methods.map((i) => ({ value: i, lable: i }))}
           onChange={(value) => {
             dispatch({
               type: 'request.method',
@@ -211,13 +169,16 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend, onSendCompare }) => {
           onChange={() => {
             // console.log('http://127.0.0.1:5173/arex-request/');
           }}
-        />
-
-        <div style={{ marginLeft: '12px' }}>
+        ></SmartEnvInput>
+        <div
+          css={css`
+            margin: 0 0px 0 14px;
+          `}
+        >
           <Dropdown.Button
-            type='primary'
-            onClick={() => handleRequest(SEND_MENU_TYPE.normal)}
-            menu={menu}
+            type="primary"
+            onClick={() => handleRequest({ type: null })}
+            overlay={menu}
             icon={<DownOutlined />}
           >
             {t('action.send')}

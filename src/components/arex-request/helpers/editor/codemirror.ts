@@ -1,15 +1,15 @@
-// @ts-nocheck
-import { useEffect, useState } from 'react';
+import { EditorState, StateEffect } from '@codemirror/state';
+import { oneDark } from '@codemirror/theme-one-dark';
 import { EditorView, keymap, ViewUpdate } from '@codemirror/view';
 import { basicSetup } from 'codemirror';
-import { EditorState, StateEffect } from '@codemirror/state';
+import { useEffect, useState } from 'react';
+
 import { getStatistics } from './utils';
-import { oneDark } from '@codemirror/theme-one-dark';
 // import {defaultKeymap} from "@codemirror/commands"
 export interface UseCodeMirror {
   container?: HTMLDivElement | null;
 }
-export function useCodeMirror(props: UseCodeMirror) {
+export function useCodeMirror(props: any) {
   const {
     value,
     initialState,
@@ -37,7 +37,7 @@ export function useCodeMirror(props: UseCodeMirror) {
     },
     {
       dark: false,
-    },
+    }
   );
   const defaultThemeOption = EditorView.theme({
     '&': {
@@ -108,7 +108,7 @@ export function useCodeMirror(props: UseCodeMirror) {
         setView(undefined);
       }
     },
-    [view],
+    [view]
   );
 
   // 外部配置改变，更新

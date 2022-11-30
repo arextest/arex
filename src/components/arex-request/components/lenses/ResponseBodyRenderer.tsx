@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { css } from '@emotion/react';
 import { Tabs } from 'antd';
 import { FC } from 'react';
@@ -9,10 +8,11 @@ import LensesHeadersRenderer from './HeadersRenderer';
 import JSONLensRenderer from './renderers/JSONLensRenderer';
 import RawLensRenderer from './renderers/RawLensRenderer';
 
-const LensesResponseBodyRenderer: FC<{ response: HoppRESTResponse; testResult: any }> = ({
-  response,
-  testResult,
-}) => {
+const LensesResponseBodyRenderer: FC<{
+  response: HoppRESTResponse;
+  testResult: any;
+}> = ({ response, testResult }) => {
+
   const items = [
     {
       label: 'JSON',
@@ -27,6 +27,7 @@ const LensesResponseBodyRenderer: FC<{ response: HoppRESTResponse; testResult: a
     {
       label: 'Headers',
       key: '2',
+      // @ts-ignore
       children: <LensesHeadersRenderer headers={response.headers} />,
     },
     {
@@ -35,7 +36,6 @@ const LensesResponseBodyRenderer: FC<{ response: HoppRESTResponse; testResult: a
       children: <TestResult testResult={testResult} />,
     },
   ];
-  console.log(response, 'response');
   return (
     <div
       css={css`

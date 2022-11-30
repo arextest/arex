@@ -1,27 +1,3 @@
-import cn from './locales/cn.json';
-import en from './locales/en.json';
-import { themeMap } from './theme';
-const localeMap = {
-  cn: {
-    type: 'cn',
-    locale: cn,
-  },
-  en: {
-    type: 'en',
-    locale: en,
-  },
-};
-export const globalDefaultState = {
-  theme: themeMap.light,
-  locale: localeMap.en,
-  collectionTreeData: [],
-  environment: {
-    id: '0',
-    envName: '',
-    keyValues: [],
-  },
-};
-
 export const defaultState = {
   request: {
     preRequestScript: '',
@@ -65,30 +41,8 @@ export const defaultState = {
       stack: '',
     },
   },
-  compareResponse: {
-    type: 'null',
-    headers: [],
-    statusCode: 200,
-    body: '',
-    meta: {
-      responseSize: 0,
-      responseDuration: 1,
-    },
-    error: {
-      name: '',
-      message: '',
-      stack: '',
-    },
-  },
   testResult: {},
-};
-
-export const Locale = {
-  en: 'en',
-  cn: 'cn',
-};
-
-export const Theme = {
-  light: 'light',
-  dark: 'dark',
+  environment: {},
+  collectionTreeData: [],
+  darkMode: false,
 };

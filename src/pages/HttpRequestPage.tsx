@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
 import { message } from 'antd';
-import Http from '../components/arex-request';
 import { useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import Http from '../components/arex-request';
 import { convertRequestData } from '../components/ArexRequestComponent/util';
 import { treeFind } from '../helpers/collection/util';
 import { AgentAxiosAndTest, AgentAxiosCompare } from '../helpers/request';
@@ -12,6 +12,7 @@ import { MenusType } from '../menus';
 import SaveRequestButton from '../menus/CollectionMenu/SaveRequestButton';
 import { FileSystemService } from '../services/FileSystem.service';
 import { useStore } from '../store';
+import useUserProfile from '../store/useUserProfile';
 import request from './../helpers/api/axios';
 import { PageFC, PagesType } from './index';
 
@@ -24,7 +25,7 @@ export type KeyValueType = {
 const HttpRequestPage: PageFC = (props) => {
   const { collectionTreeData, setPages, pages } = useStore();
   const { workspaceId } = useParams();
-
+  const { darkMode } = useUserProfile();
   const id = useMemo(() => parseGlobalPaneId(props.page.paneId)['rawId'], [props.page.paneId]);
 
   const [reqParams, setReqParams] = useState({});
@@ -47,7 +48,7 @@ const HttpRequestPage: PageFC = (props) => {
     >
       <div
         css={css`
-          width: calc(100% + 32px);
+          height: calc(100vh - 128px);
           border: 0px solid salmon;
           transform: translateX(-16px);
         `}
@@ -121,6 +122,9 @@ const HttpRequestPage: PageFC = (props) => {
             return AgentAxiosCompare(e);
           }}
           requestAxios={request}
+          collectionTreeData={collectionTreeData}
+          environment={{ variables: [] }}
+          darkMode={darkMode}
         />
         <SaveRequestButton
           reqParams={reqParams}

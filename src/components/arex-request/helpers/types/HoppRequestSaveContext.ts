@@ -1,5 +1,6 @@
-// @ts-nocheck
-import { HoppRESTRequest } from '@hoppscotch/data';
+// import { HoppRESTRequest } from '@hoppscotch/data';
+
+import { HoppRESTRequest } from "../../data/rest";
 
 /**
  * We use the save context to figure out

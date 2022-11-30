@@ -1,27 +1,24 @@
-// @ts-nocheck
-import { json } from '@codemirror/lang-json';
 import { EditorView } from '@codemirror/view';
 import { FC, useContext, useRef } from 'react';
 
+import { useStore } from '../../../../../store';
 import { useCodeMirror } from '../../../helpers/editor/codemirror';
 import { HoppRESTResponse } from '../../../helpers/types/HoppRESTResponse';
-import { GlobalContext } from '../../../index';
+import { HttpContext } from '../../../index';
 
 const RawLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
-  const { store: globalStore } = useContext(GlobalContext);
   const jsonResponse = useRef(null);
-
+  const { store } = useContext(HttpContext);
   useCodeMirror({
     container: jsonResponse.current,
-    value: response.body,
+    value: response.type === 'success' ? response.body : '',
     height: '300px',
     extensions: [EditorView.lineWrapping],
     lineWrapping: true,
-    theme: globalStore.theme.type,
+    theme: store.darkMode ? 'dark' : 'light',
   });
   return (
     <div>
-      {/*{JSON.stringify(response)}*/}
       <div ref={jsonResponse}></div>
     </div>
   );

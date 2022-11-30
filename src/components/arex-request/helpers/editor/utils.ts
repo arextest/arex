@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { EditorSelection, SelectionRange, Line } from '@codemirror/state';
+import { EditorSelection, Line, SelectionRange } from '@codemirror/state';
 import { ViewUpdate } from '@codemirror/view';
 
 export interface Statistics {
@@ -45,9 +44,11 @@ export const getStatistics = (view: ViewUpdate): Statistics => {
     ranges: view.state.selection.ranges,
     selectionCode: view.state.sliceDoc(
       view.state.selection.main.from,
-      view.state.selection.main.to,
+      view.state.selection.main.to
     ),
-    selections: view.state.selection.ranges.map((r) => view.state.sliceDoc(r.from, r.to)),
+    selections: view.state.selection.ranges.map((r) =>
+      view.state.sliceDoc(r.from, r.to)
+    ),
     selectedText: view.state.selection.ranges.some((r) => !r.empty),
   };
 };

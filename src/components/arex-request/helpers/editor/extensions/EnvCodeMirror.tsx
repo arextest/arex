@@ -1,7 +1,16 @@
-// @ts-nocheck
-import { EditorState, StateEffect, StateEffectType, StateField } from '@codemirror/state';
+import {
+  EditorState,
+  StateEffect,
+  StateEffectType,
+  StateField,
+} from '@codemirror/state';
 import { oneDark } from '@codemirror/theme-one-dark';
-import { Decoration, DecorationSet, EditorView, ViewUpdate } from '@codemirror/view';
+import {
+  Decoration,
+  DecorationSet,
+  EditorView,
+  ViewUpdate,
+} from '@codemirror/view';
 import { basicSetup } from 'codemirror';
 import { useEffect, useState } from 'react';
 
@@ -12,7 +21,7 @@ export interface UseCodeMirror {
   container?: HTMLDivElement | null;
 }
 
-export function useEnvCodeMirror(props: UseCodeMirror) {
+export function useEnvCodeMirror(props: any) {
   const {
     value,
     initialState,
@@ -50,7 +59,7 @@ export function useEnvCodeMirror(props: UseCodeMirror) {
     },
     {
       dark: false,
-    },
+    }
   );
   const defaultThemeOption = EditorView.theme({
     // '&': {
@@ -105,7 +114,11 @@ export function useEnvCodeMirror(props: UseCodeMirror) {
   function markFn() {
     if (view) {
       const currentValue = view ? view.state.doc.toString() : '';
-      const markArrs = getMarkFromToArr(currentValue, HOPP_ENVIRONMENT_REGEX, currentEnv);
+      const markArrs = getMarkFromToArr(
+        currentValue,
+        HOPP_ENVIRONMENT_REGEX,
+        currentEnv
+      );
       const foundMarkTheme = EditorView.baseTheme({
         '.cm-found-mark': {
           backgroundColor: '#7cb305',
@@ -159,7 +172,7 @@ export function useEnvCodeMirror(props: UseCodeMirror) {
 
             if (effect.is(filterMarks)) {
               marks = marks.update({
-                filter: effect.value,
+                filter: effect.value||undefined,
               });
             }
           }
@@ -187,6 +200,7 @@ export function useEnvCodeMirror(props: UseCodeMirror) {
         });
       } else {
         view?.dispatch({
+          // @ts-ignore
           effects: filterMarks.of((from, to) => {
             return to <= 200 || from >= 0;
           }),
@@ -235,7 +249,7 @@ export function useEnvCodeMirror(props: UseCodeMirror) {
         setView(undefined);
       }
     },
-    [view],
+    [view]
   );
 
   // 外部配置改变，更新

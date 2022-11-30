@@ -1,18 +1,13 @@
-// @ts-nocheck
 import { css } from '@emotion/react';
 import { Empty, Spin, Typography } from 'antd';
-import { FC, useContext, useMemo } from 'react';
+import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { HoppRESTResponse } from '../../helpers/types/HoppRESTResponse';
 import { getStatusCodeReasonPhrase } from '../../helpers/utils/statusCodes';
-import { getValueByPath } from '../../helpers/utils/locale';
-import { GlobalContext, HttpContext } from '../../index';
 
 const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
-  const { store } = useContext(HttpContext);
-  const { store: globalStore } = useContext(GlobalContext);
-
-  const t = (key) => getValueByPath(globalStore.locale.locale, key);
+  const { t } = useTranslation();
   const tabCss = css`
     color: #10b981;
     font-weight: bolder;
@@ -21,11 +16,14 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
   `;
 
   const readableResponseSize = useMemo(() => {
-    const size = response.meta.responseSize;
-    if (size >= 100000) return (size / 1000000).toFixed(2) + ' MB';
-    if (size >= 1000) return (size / 1000).toFixed(2) + ' KB';
-
-    return undefined;
+    if (response.type === 'success' || response.type === 'fail') {
+      const size = response.meta.responseSize;
+      if (size >= 100000) return (size / 1000000).toFixed(2) + ' MB';
+      if (size >= 1000) return (size / 1000).toFixed(2) + ' KB';
+      return undefined;
+    } else {
+      return '';
+    }
   }, [response]);
 
   return (
@@ -38,7 +36,7 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
         <div>
           <Empty
             description={
-              <Typography.Text type='secondary'>
+              <Typography.Text type="secondary">
                 Enter the URL and click Send to get a response
               </Typography.Text>
             }
@@ -75,7 +73,9 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
                 </span>
                 <span>
                   {t('response.time')}:
-                  <span css={tabCss}>{`${response.meta.responseDuration}ms`}</span>
+                  <span
+                    css={tabCss}
+                  >{`${response.meta.responseDuration}ms`}</span>
                 </span>
                 <span>
                   {t('response.size')}:
