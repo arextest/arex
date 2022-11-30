@@ -1,6 +1,6 @@
 import { SettingOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Avatar, Divider, Dropdown, Menu } from 'antd';
+import { Avatar, Divider, Dropdown, Typography } from 'antd';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,26 +14,24 @@ import { TooltipButton } from '../index';
 import InviteWorkspace from '../workspace/Invite';
 
 const HeaderWrapper = styled.div`
-  .app-header {
-    height: 46px;
-    padding: 7px;
-    display: flex;
-    justify-content: space-between;
+  height: 46px;
+  padding: 7px;
+  display: flex;
+  justify-content: space-between;
 
-    .left,
-    .right {
-      display: flex;
-      align-items: center;
-    }
-    .app-name {
-      width: 90px;
-      text-align: center;
-      font-weight: 600;
-      display: inline-block;
-      border-radius: 0.25rem;
-      font-size: 14px;
-      cursor: default;
-    }
+  .left,
+  .right {
+    display: flex;
+    align-items: center;
+  }
+  .app-name {
+    width: 90px;
+    text-align: center;
+    font-weight: 600;
+    display: inline-block;
+    border-radius: 0.25rem;
+    font-size: 14px;
+    cursor: default;
   }
 `;
 
@@ -63,15 +61,15 @@ const AppHeader = () => {
   };
 
   return (
-    <HeaderWrapper>
-      <div className={'app-header'}>
+    <>
+      <HeaderWrapper>
         <div className={'left'}>
-          <span className={'app-name'}>AREX</span>
+          <Typography.Text className={'app-name'}>AREX</Typography.Text>
           <GitHubStarButton theme={theme} />
         </div>
 
         <div className={'right'}>
-          {!(email || '').match('GUEST') ? <InviteWorkspace /> : null}
+          {!(email || '').match('GUEST') && <InviteWorkspace />}
           <TooltipButton icon={<SettingOutlined />} title='Setting' onClick={handleSetting} />
 
           <Dropdown
@@ -95,10 +93,10 @@ const AppHeader = () => {
             </Avatar>
           </Dropdown>
         </div>
-      </div>
+      </HeaderWrapper>
 
       <Divider style={{ margin: '0' }} />
-    </HeaderWrapper>
+    </>
   );
 };
 

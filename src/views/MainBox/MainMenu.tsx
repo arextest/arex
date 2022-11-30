@@ -77,13 +77,9 @@ const MainMenuWrapper = styled(Tabs, {
     }
     .ant-tabs-tab-active {
       background-color: ${(props) => props.theme.colorPrimaryBg};
-      border-right: 1px solid ${(props) => props.theme.colorBorder};
       .ant-tabs-tab-btn {
         color: ${(props) => props.theme.colorText};
       }
-    }
-    .ant-tabs-ink-bar {
-      left: 0;
     }
   }
   .ant-tabs-content {

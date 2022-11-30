@@ -1,9 +1,9 @@
-import { v4 as uuid } from "uuid";
+import { message } from 'antd';
+import React from 'react';
+import { v4 as uuid } from 'uuid';
 
-import React from "react";
-
-import { PageType } from "../pages";
-import * as ChartUtils from "./chart";
+import { PageType } from '../pages';
+import * as ChartUtils from './chart';
 
 export { ChartUtils, uuid };
 
@@ -15,9 +15,7 @@ export { ChartUtils, uuid };
  */
 export function getLocalStorage<T>(key: string) {
   const raw = window.localStorage.getItem(key);
-  return !raw || raw === "undefined" || raw === "null"
-    ? undefined
-    : tryParseJsonString<T>(raw);
+  return !raw || raw === 'undefined' || raw === 'null' ? undefined : tryParseJsonString<T>(raw);
 }
 
 /**
@@ -27,12 +25,9 @@ export function getLocalStorage<T>(key: string) {
  * @param key
  * @param value
  */
-export function setLocalStorage<T>(
-  key: string,
-  value?: T | ((state: T) => void)
-) {
+export function setLocalStorage<T>(key: string, value?: T | ((state: T) => void)) {
   let _value = value;
-  if (typeof value === "function") {
+  if (typeof value === 'function') {
     const raw = getLocalStorage<T>(key);
     raw && (value as (state: T) => void)(raw);
     _value = raw;
@@ -52,40 +47,38 @@ export function clearLocalStorage(key?: string) {
   }
 }
 
-export function tryParseJsonString<T>(jsonString?: string) {
+export function tryParseJsonString<T>(jsonString?: string, errorTip?: string) {
   try {
-    return JSON.parse(jsonString || "{}") as T;
+    return JSON.parse(jsonString || '{}') as T;
   } catch (e) {
     console.error(e);
+    errorTip && message.warning(errorTip);
   }
 }
 
-export const tryPrettierJsonString = (jsonString: string) => {
+export const tryPrettierJsonString = (jsonString: string, errorTip?: string) => {
   try {
     return JSON.stringify(JSON.parse(jsonString), null, 2);
   } catch (e) {
+    errorTip && message.warning(errorTip);
     return jsonString;
   }
 };
 
-export const getPercent = (
-  num: number,
-  den: number,
-  showPercentSign = true
-) => {
+export const getPercent = (num: number, den: number, showPercentSign = true) => {
   const value = num && den ? parseFloat(((num / den) * 100).toFixed(0)) : 0;
-  return showPercentSign ? value + "%" : value;
+  return showPercentSign ? value + '%' : value;
 };
 
 export const generateGlobalPaneId = (
   menuType: string,
   pageType: PageType<string>,
-  rawId: React.Key
+  rawId: React.Key,
 ) => btoa(encodeURI(`${menuType}__${pageType}__${rawId}`));
 
 export const parseGlobalPaneId = (paneId?: string) => {
-  paneId = paneId || "";
-  const arr = atob(decodeURI(paneId)).split("__");
+  paneId = paneId || '';
+  const arr = atob(decodeURI(paneId)).split('__');
   return {
     menuType: arr[0],
     pageType: arr[1],
@@ -98,29 +91,22 @@ export const parseGlobalPaneId = (paneId?: string) => {
  * @param arr 去重对象数组
  * @param key 去重参考 key
  */
-export function objectArrayFilter<T extends { [key: string]: any }>(
-  arr: T[],
-  key: string
-) {
+export function objectArrayFilter<T extends { [key: string]: any }>(arr: T[], key: string) {
   const res = new Map<keyof T, number>();
   return arr.filter((item) => !res.has(item[key]) && res.set(item[key], 1));
 }
 
 //版本号比较
-export const versionStringCompare = (preVersion = "", lastVersion = "") => {
-  const sources = preVersion.split(".");
-  const dests = lastVersion.split(".");
+export const versionStringCompare = (preVersion = '', lastVersion = '') => {
+  const sources = preVersion.split('.');
+  const dests = lastVersion.split('.');
   const maxL = Math.max(sources.length, dests.length);
   let result = 0;
   for (let i = 0; i < maxL; i++) {
     const preValue = sources.length > i ? sources[i] : 0;
-    const preNum = isNaN(Number(preValue))
-      ? preValue.charCodeAt()
-      : Number(preValue);
+    const preNum = isNaN(Number(preValue)) ? preValue.charCodeAt() : Number(preValue);
     const lastValue = dests.length > i ? dests[i] : 0;
-    const lastNum = isNaN(Number(lastValue))
-      ? lastValue.charCodeAt()
-      : Number(lastValue);
+    const lastNum = isNaN(Number(lastValue)) ? lastValue.charCodeAt() : Number(lastValue);
     if (preNum < lastNum) {
       result = -1;
       break;
@@ -134,14 +120,14 @@ export const versionStringCompare = (preVersion = "", lastVersion = "") => {
 
 // 检查版本号
 export function getChromeVersion() {
-  let v = "";
+  let v = '';
   try {
     v = navigator.userAgent
       .toLowerCase()
-      .match(/chrome\/[\d.]+/gi)[0]
-      .split("/")[1];
+      .match(/chrome\/[\d.]+/gi)?.[0]
+      .split('/')[1];
   } catch (e) {
     console.log(e);
   }
-  return versionStringCompare(v, "89.00.00");
+  return versionStringCompare(v, '89.00.00');
 }

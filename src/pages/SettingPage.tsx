@@ -52,7 +52,7 @@ const ColorPicker: FC<ColorPickerProps> = ({ value, onChange, theme }) => {
 
 const SettingPage: FC = () => {
   const email = getLocalStorage<string>(EmailKey);
-  const { theme, darkMode, compactMode, language, changeTheme } = useUserProfile();
+  const { theme, darkMode, compactMode, language, setUserProfile } = useUserProfile();
   const realColorPrimary = useRealColorPrimary();
 
   const [form] = Form.useForm<SettingForm>();
@@ -86,7 +86,7 @@ const SettingPage: FC = () => {
           language: values.language,
         };
 
-        changeTheme(profile);
+        setUserProfile(profile);
         updateUserProfileRequestRun({
           profile: JSON.stringify(profile),
           userName: email,

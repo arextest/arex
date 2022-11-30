@@ -2,7 +2,9 @@ import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
+import { UserProfileKey } from '../constant';
 import defaultConfig from '../defaultConfig';
+import { getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { I18nextLng } from '../i18n';
 import { ColorPrimary, CompactMode, DarkMode, Theme } from '../theme';
 
@@ -18,25 +20,32 @@ export type State = UserProfile & {
 };
 
 export type Action = {
-  changeTheme: (option: Pick<UserProfile, 'colorPrimary' | 'darkMode' | 'compactMode'>) => void;
+  setUserProfile: (userProfile: UserProfile) => void;
 };
 
-const initialState: State = {
-  colorPrimary: defaultConfig.colorPrimary,
-  darkMode: defaultConfig.darkMode,
-  compactMode: defaultConfig.compactMode,
-  language: defaultConfig.language,
-  theme: defaultConfig.darkMode ? Theme.dark : Theme.light,
-};
+const initialState: State = (() => {
+  const userProfileLS = getLocalStorage<UserProfile>(UserProfileKey);
+
+  return userProfileLS
+    ? { ...userProfileLS, theme: userProfileLS.darkMode ? Theme.dark : Theme.light }
+    : {
+        colorPrimary: defaultConfig.colorPrimary,
+        darkMode: defaultConfig.darkMode,
+        compactMode: defaultConfig.compactMode,
+        language: defaultConfig.language,
+        theme: defaultConfig.darkMode ? Theme.dark : Theme.light,
+      };
+})();
 
 const useUserProfile = create(
   immer<State & Action>((set, get) => ({
     ...initialState,
-    changeTheme(option) {
-      set(option);
-      if (option.darkMode !== undefined)
+    setUserProfile(userProfile) {
+      set(userProfile);
+      setLocalStorage(UserProfileKey, userProfile);
+      if (userProfile.darkMode !== undefined)
         set({
-          theme: option.darkMode ? Theme.dark : Theme.light,
+          theme: userProfile.darkMode ? Theme.dark : Theme.light,
         });
     },
   })),
