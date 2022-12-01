@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
-import { Divider, Select, SelectProps, theme } from 'antd';
-import React, { useEffect } from 'react';
+import { Select, SelectProps } from 'antd';
+import React from 'react';
 
 import { useStore } from '../../store';
-import useUserProfile from '../../store/useUserProfile';
 
 const { Option } = Select;
 
@@ -24,12 +23,7 @@ const EnvironmentSelectWrapper = styled((props: SelectProps) => (
 `;
 
 const EnvironmentSelect = () => {
-  const { darkMode } = useUserProfile();
   const { currentEnvironment, setCurrentEnvironment, environmentTreeData } = useStore();
-  const token = theme.useToken();
-  useEffect(() => {
-    console.log({ token: theme.darkAlgorithm(token.token) });
-  }, [darkMode]);
 
   return (
     <EnvironmentSelectWrapper value={currentEnvironment?.id} onChange={setCurrentEnvironment}>
