@@ -132,7 +132,7 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend }:any) => {
           {treeFindPath(
             store.collectionTreeData,
             (node:any) => {
-              return node.relationshipRequestId === currentRequestId
+              return node.id === currentRequestId
             }
           ).map((i:any, index:number) => (
             <Breadcrumb.Item key={index}>{i.title}</Breadcrumb.Item>
