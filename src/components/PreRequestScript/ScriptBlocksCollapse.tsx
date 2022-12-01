@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { DeleteOutlined, MenuOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Collapse, Popconfirm, Space, Switch, theme } from 'antd';

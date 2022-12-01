@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { css } from '@emotion/react';
 import { message } from 'antd';
 import { useMemo, useRef, useState } from 'react';
@@ -51,8 +52,15 @@ const HttpRequestPage: PageFC = (props) => {
           height: calc(100vh - 128px);
           border: 0px solid salmon;
           transform: translateX(-16px);
+          width: calc(100% + 32px);
+          .ant-tabs-content {
+            .ant-tabs-tabpane {
+              padding: 0 0px;
+            }
+          }
         `}
       >
+        {JSON.stringify(darkMode)}
         <Http
           currentRequestId={id}
           onEdit={(e) => {

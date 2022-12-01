@@ -1,7 +1,6 @@
 import { SettingOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Avatar, Divider, Dropdown, Typography } from 'antd';
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { EmailKey } from '../../constant';
@@ -61,7 +60,7 @@ const AppHeader = () => {
   };
 
   return (
-    <>
+    <div>
       <HeaderWrapper>
         <div className={'left'}>
           <Typography.Text className={'app-name'}>AREX</Typography.Text>
@@ -96,7 +95,7 @@ const AppHeader = () => {
       </HeaderWrapper>
 
       <Divider style={{ margin: '0' }} />
-    </>
+    </div>
   );
 };
 

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useCodeMirror } from '../../../../helpers/editor/codemirror';
 import AppSettingService from '../../../../services/AppSetting.service';
 import { useStore } from '../../../../store';
+import { Theme } from '../../../../theme';
 import { Label } from '../../../styledComponents';
 
 type ImportYamlProps = {
@@ -17,13 +18,12 @@ const ImportYaml: FC<ImportYamlProps> = (props) => {
   const { t } = useTranslation('common');
   const yamlRef = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState('');
-  const { themeClassify } = useStore();
 
   useCodeMirror({
     value,
     container: yamlRef.current,
     height: '600px',
-    theme: themeClassify,
+    theme: Theme.dark,
     extensions: [],
     onChange(value) {
       setValue(value);

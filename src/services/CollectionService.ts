@@ -28,7 +28,7 @@ export class CollectionService {
   }
   static async addItem(params: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      request.post(`/api/filesystem/addItem`, params).then((res) => {
+      request.post(`/api/filesystem/addItem`, params).then((res: any) => {
         if (res.responseStatusType.responseCode === 2) {
           message.error(res.responseStatusType.responseDesc);
           reject('e');

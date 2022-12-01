@@ -1,3 +1,4 @@
+// @ts-nocheck
 import axios from 'axios';
 
 function AgentAxios<T>(params: any) {
@@ -9,7 +10,7 @@ function AgentAxios<T>(params: any) {
         tid: tid,
         payload: params,
       },
-      '*'
+      '*',
     );
     window.addEventListener('message', receiveMessage);
     function receiveMessage(ev: any) {
@@ -45,9 +46,7 @@ export const AgentAxiosAndTest = ({ request }: Test) =>
         [c.key]: c.value,
       };
     }, {}),
-    data: ['GET'].includes(request.method)
-      ? undefined
-      : JSON.parse(request.body.body || '{}'),
+    data: ['GET'].includes(request.method) ? undefined : JSON.parse(request.body.body || '{}'),
     params: ['POST'].includes(request.method)
       ? undefined
       : request.params.reduce((p, c) => {
@@ -94,9 +93,7 @@ export const AgentAxiosCompare = ({ request }: Test) => {
           [c.key]: c.value,
         };
       }, {}),
-      data: ['GET'].includes(request.method)
-        ? undefined
-        : JSON.parse(request.body.body || '{}'),
+      data: ['GET'].includes(request.method) ? undefined : JSON.parse(request.body.body || '{}'),
       params: ['POST'].includes(request.method)
         ? undefined
         : request.params.reduce((p, c) => {
@@ -115,9 +112,7 @@ export const AgentAxiosCompare = ({ request }: Test) => {
           [c.key]: c.value,
         };
       }, {}),
-      data: ['GET'].includes(request.method)
-        ? undefined
-        : JSON.parse(request.body.body || '{}'),
+      data: ['GET'].includes(request.method) ? undefined : JSON.parse(request.body.body || '{}'),
       params: ['POST'].includes(request.method)
         ? undefined
         : request.params.reduce((p, c) => {
@@ -137,6 +132,6 @@ export const AgentAxiosCompare = ({ request }: Test) => {
       }
 
       return previousValue;
-    }, {})
+    }, {}),
   );
 };

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import styled from "@emotion/styled";
 import { useRequest } from "ahooks";
 import { Button, Card, Carousel, Col, message, Row, Space } from "antd";

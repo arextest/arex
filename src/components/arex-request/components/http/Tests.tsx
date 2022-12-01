@@ -5,7 +5,6 @@ import { Button } from 'antd';
 import { useContext, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import useDarkMode from '../../../../hooks/use-dark-mode';
 import { useCodeMirror } from '../../helpers/editor/codemirror';
 import { HttpContext } from '../../index';
 

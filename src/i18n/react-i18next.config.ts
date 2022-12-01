@@ -7,8 +7,10 @@ import { initReactI18next } from 'react-i18next';
 
 import enUsCommonJson from './locales/en-us/common.json';
 import enUsComponentsJson from './locales/en-us/components.json';
+import en from './locales/en-us/en.json';
 import enUsLayoutJson from './locales/en-us/layout.json';
 import enUsPageJson from './locales/en-us/page.json';
+import cn from './locales/zh-cn/cn.json';
 // 引入需要实现国际化的简体、繁体、英文三种数据的json文件
 import zhCnCommonJson from './locales/zh-cn/common.json';
 import zhCnComponentsJson from './locales/zh-cn/components.json';
@@ -21,12 +23,14 @@ const resources = {
     components: zhCnComponentsJson,
     layout: zhCnLayoutJson,
     page: zhCnPageJson,
+    translation: cn,
   },
   'en-US': {
     common: enUsCommonJson,
     components: enUsComponentsJson,
     layout: enUsLayoutJson,
     page: enUsPageJson,
+    translation: en,
   },
 };
 

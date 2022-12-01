@@ -1,9 +1,9 @@
+// @ts-nocheck
 import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
 import { Button, Checkbox, Col, Form, message, Row, Space, Tabs, Tree } from 'antd';
 import { Divider } from 'antd';
 import type { TreeProps } from 'antd/es/tree';
-import { GlobalContext } from '../../components/arex-request';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -16,12 +16,12 @@ import { useStore } from '../../store';
 import RunResult from './RunResult';
 
 const BaRuPage: React.FC = () => {
-  const { store: globalStore } = useContext(GlobalContext);
+  const { currentEnvironment } = useStore();
   const urlPretreatment = (url: string) => {
     // 正则匹配{{}}
     const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
     let replaceVar = editorValueMatch[0];
-    const env = globalStore.environment?.keyValues || [];
+    const env = currentEnvironment?.keyValues || [];
     for (let i = 0; i < env.length; i++) {
       if (env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')) {
         replaceVar = env[i].value;

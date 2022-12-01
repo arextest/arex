@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { css } from '@emotion/react';
 import { CSSInterpolation } from '@emotion/serialize/types';
 import styled from '@emotion/styled';

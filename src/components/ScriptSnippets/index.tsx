@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { javascript } from '@codemirror/lang-javascript';
 import styled from '@emotion/styled';
 import CodeMirror from '@uiw/react-codemirror';

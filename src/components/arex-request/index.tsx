@@ -74,10 +74,6 @@ const Http: FC<HttpProps> = ({
     <HttpContext.Provider value={{ store, dispatch }}>
       {store.request.method !== '' ? (
         <Allotment
-          css={css`
-            height: 100%;
-            width: 100vw;
-          `}
           vertical={true}
         >
           <Allotment.Pane preferredSize={400}>
