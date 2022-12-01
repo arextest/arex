@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useMount } from 'ahooks';
 import { Avatar, Button, Divider, Form, Input, List, Popconfirm, Space, Typography } from 'antd';
 import { FC, useState } from 'react';
@@ -126,7 +127,7 @@ const WorkspaceOverviewPage: FC = () => {
             okText='Yes'
             cancelText='No'
           >
-            <Button type={'danger'}>Delete Workspace</Button>
+            <Button danger>Delete Workspace</Button>
           </Popconfirm>
         </Space>
       </div>

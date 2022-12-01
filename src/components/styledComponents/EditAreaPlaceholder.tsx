@@ -1,3 +1,4 @@
+// @ts-nocheck
 import styled from '@emotion/styled';
 import { Skeleton } from 'antd';
 import React, { FC, ReactNode } from 'react';

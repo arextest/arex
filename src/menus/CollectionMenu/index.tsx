@@ -144,16 +144,17 @@ const CollectionMenu = () => {
     onSuccess: (res) => {
       if (res.length) {
         setCollectionTreeData(res);
-        // generateList(treeData);
-        generateList(res, 'res');
+        generateList(res);
         // 首次加载，在这里加initvalue逻辑
         const initValue = treeFind(res, (node) => node.key === params.rTypeId);
         if (initValue && expandedKeys.length === 0) {
+          // @ts-ignore
           handleCollectionMenuClick(params.rTypeId, {
             title: initValue.title,
             key: initValue.key,
             nodeType: initValue.nodeType,
           });
+          // @ts-ignore
           setExpandedKeys([params.rTypeId]);
         }
       }
@@ -498,6 +499,7 @@ const CollectionMenu = () => {
               blockNode={true}
               selectedKeys={selectedKeys}
               expandedKeys={expandedKeys}
+              // @ts-ignore
               onExpand={onExpand}
               onSelect={handleSelect}
               switcherIcon={<DownOutlined />}

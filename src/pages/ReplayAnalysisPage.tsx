@@ -1,3 +1,4 @@
+// @ts-nocheck
 import './ReplayAnalysis.less';
 
 import { css } from '@emotion/react';

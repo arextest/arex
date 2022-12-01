@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { DeleteOutlined, MenuOutlined } from '@ant-design/icons';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';

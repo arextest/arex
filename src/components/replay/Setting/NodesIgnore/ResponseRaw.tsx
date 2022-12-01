@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { json } from '@codemirror/lang-json';
 import CodeMirror, { ReactCodeMirrorProps } from '@uiw/react-codemirror';
 import { Button, Space } from 'antd';

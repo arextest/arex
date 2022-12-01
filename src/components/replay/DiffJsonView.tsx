@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { css } from '@emotion/react';
 import { useMount } from 'ahooks';
 import { Modal } from 'antd';

@@ -3,7 +3,6 @@ import { objectArrayFilter } from '../helpers/utils';
 import {
   IgnoreNode,
   IgnoreNodeBase,
-  InsertDynamicClassSettingRes,
   InsertSettingReqInsert,
   OperationId,
   OperationInterface,

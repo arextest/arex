@@ -72,7 +72,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
   });
   const handleEditSave = () => {
     if (!ignoredKey) {
-      message.warn('Please enter ignored key');
+      message.warning('Please enter ignored key');
       return;
     }
     insertIgnoreNode({

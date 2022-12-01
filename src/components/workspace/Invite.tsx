@@ -49,7 +49,7 @@ const InviteWorkspace = () => {
                 userNames: values.email,
                 workspaceId: _useParams.workspaceId,
               };
-              WorkspaceService.inviteToWorkspace(params).then((res) => {
+              WorkspaceService.inviteToWorkspace(params).then((res:any) => {
                 const successUsers = res.body.successUsers;
                 const failedUsers = res.body.failedUsers;
                 const successMsg =

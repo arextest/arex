@@ -12,7 +12,6 @@ const EnvironmentSelectWrapper = styled((props: SelectProps) => (
   height: 36px;
   width: 200px;
   box-sizing: content-box;
-  // border-left: 1px solid ${(props) => props.theme.color.border.primary};
   margin-left: -1px;
   .ant-select-selector {
     height: 100%;

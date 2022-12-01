@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { SyncOutlined } from "@ant-design/icons";
 import { css } from "@emotion/react";
 import { CSSInterpolation } from "@emotion/serialize/types";

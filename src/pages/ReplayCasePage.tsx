@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { html } from '@codemirror/lang-html';
 import { javascript } from '@codemirror/lang-javascript';

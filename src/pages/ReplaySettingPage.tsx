@@ -13,7 +13,7 @@ import { ApplicationDataType } from '../services/Replay.type';
 import { PageFC } from './index';
 
 const ReplaySettingPage: PageFC<ApplicationDataType> = (props) => {
-  const data = props.page.data;
+  const data: any = props.page.data;
   const TabsItems = useMemo(
     () => [
       {

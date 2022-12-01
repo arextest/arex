@@ -42,7 +42,6 @@ const CollapseWrapper = styled.div`
     padding: 0 !important;
   }
   .active-item {
-    // background-color: ${(props) => props.theme.color.selected};
     transition: background-color 200ms ease;
   }
 `;

@@ -7,6 +7,7 @@ import { useCodeMirror } from '../../../../helpers/editor/codemirror';
 import AppSettingService from '../../../../services/AppSetting.service';
 import { useStore } from '../../../../store';
 import { Label } from '../../../styledComponents';
+import { Theme } from '../../../../theme';
 
 type ImportYamlProps = {
   appId: string;
@@ -17,13 +18,12 @@ const ImportYaml: FC<ImportYamlProps> = (props) => {
   const { t } = useTranslation('common');
   const yamlRef = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState('');
-  const { themeClassify } = useStore();
 
   useCodeMirror({
     value,
     container: yamlRef.current,
     height: '600px',
-    theme: themeClassify,
+    theme: Theme.dark,
     extensions: [],
     onChange(value) {
       setValue(value);

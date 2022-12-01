@@ -4,14 +4,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { AccessTokenKey, EmailKey } from '../constant';
 import { getLocalStorage } from '../helpers/utils';
 import { authPath } from '../router';
-import { UserInfo } from '../store';
 
 // checkout if the user is logged in
 const useAuthentication = () => {
   const nav = useNavigate();
   const location = useLocation();
 
-  const accessToken = getLocalStorage<UserInfo>(AccessTokenKey);
+  const accessToken = getLocalStorage<any>(AccessTokenKey);
   const email = getLocalStorage<string>(EmailKey);
 
   useEffect(() => {

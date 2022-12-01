@@ -1,3 +1,4 @@
+// @ts-nocheck
 import styled from "@emotion/styled";
 import { Button, ButtonProps } from "antd";
 

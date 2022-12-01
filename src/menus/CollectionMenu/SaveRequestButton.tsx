@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Form, Input, Modal, Select, TreeSelect, Typography } from 'antd';
 import { FC, forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';

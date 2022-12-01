@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { javascript } from "@codemirror/lang-javascript";
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";

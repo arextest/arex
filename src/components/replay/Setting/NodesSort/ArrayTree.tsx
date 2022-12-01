@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { css } from '@emotion/react';
 import { Badge, Card, Spin, Tree } from 'antd';
 import { TreeProps } from 'antd/es';

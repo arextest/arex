@@ -14,6 +14,7 @@ export class AuthService {
   }
   static refreshToken(params: { userName: string }) {
     return axios.get(`/api/login/refresh/${params.userName}`, {
+      // @ts-ignore
       headers: { 'refresh-token': getLocalStorage<string>(RefreshTokenKey) },
     });
   }

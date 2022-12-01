@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { css } from '@emotion/react';
 import { message } from 'antd';
 import { useMemo, useRef, useState } from 'react';

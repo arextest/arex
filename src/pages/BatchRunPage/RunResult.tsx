@@ -1,9 +1,10 @@
+// @ts-nocheck
 import { css } from '@emotion/react';
 import { Empty, Spin, Tag } from 'antd';
-import { GlobalContext, TestResult } from '../../components/arex-request';
-import { FC, useContext, useMemo } from 'react';
+import { FC, useMemo } from 'react';
 
-// import { TestResult } from '../../components/ArexRequestComponent/lib';
+import { useStore } from '../../store';
+
 interface RunResultProps {
   result: {
     title: string;
@@ -74,7 +75,7 @@ function NewTestResult({ testResult }) {
   );
 }
 const RunResult: FC<RunResultProps> = ({ result, loading }) => {
-  const { store: globalStore } = useContext(GlobalContext);
+  const { currentEnvironment } = useStore();
   const realResult = useMemo(() => {
     return result.filter((i) => i.children.filter((f) => f.testResult).length > 0);
   }, [result]);
@@ -82,7 +83,7 @@ const RunResult: FC<RunResultProps> = ({ result, loading }) => {
     // 正则匹配{{}}
     const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
     let replaceVar = editorValueMatch[0];
-    const env = globalStore.environment?.keyValues || [];
+    const env = currentEnvironment?.keyValues || [];
     for (let i = 0; i < env.length; i++) {
       if (env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')) {
         replaceVar = env[i].value;

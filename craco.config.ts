@@ -6,7 +6,7 @@ export default {
     client: {
       overlay: false,
     },
-    port: 8000,
+    port: 8888,
     open: false,
   },
 };

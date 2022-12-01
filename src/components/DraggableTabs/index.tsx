@@ -51,6 +51,7 @@ const DraggableTabs: React.FC<{ children: React.ReactNode }> = (props) => {
   const moveTabNode = (dragKey: React.Key, hoverKey: React.Key) => {
     const newOrder = order.slice();
 
+    // @ts-ignore
     React.Children.forEach(children, (c: React.ReactElement) => {
       if (c.key && newOrder.indexOf(c.key) === -1) {
         newOrder.push(c.key);
@@ -77,6 +78,7 @@ const DraggableTabs: React.FC<{ children: React.ReactNode }> = (props) => {
   );
 
   const tabs: React.ReactElement[] = [];
+  // @ts-ignore
   React.Children.forEach(children, (c: React.ReactElement) => {
     tabs.push(c);
   });
