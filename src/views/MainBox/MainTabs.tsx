@@ -193,11 +193,27 @@ const MainTabsWrapper = styled((props: TabsProps) => {
       padding-right: 0;
     }
   }
+
   .main-tabs {
     overflow: auto;
     height: inherit;
     padding: 0 16px;
   }
+
+  .ant-tabs-nav-operations {
+    margin-bottom: 0 !important;
+    .ant-tabs-nav-more {
+      padding: 8px 12px;
+      border: 1px solid ${(props) => props.theme.colorBorderSecondary};
+      border-bottom-color: ${(props) => props.theme.colorBorder};
+      border-radius: ${(props) => props.theme.borderRadius}px
+        ${(props) => props.theme.borderRadius}px 0 0;
+    }
+    .ant-tabs-nav-add {
+      margin-left: -1px;
+    }
+  }
+
   .ant-tabs-nav-more {
     height: 36px;
     border-left: #000c17 1px solid;

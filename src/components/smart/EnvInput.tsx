@@ -1,18 +1,19 @@
-import { hoverTooltip } from "@codemirror/view";
-import styled from "@emotion/styled";
-import { FC, useRef } from "react";
+import { hoverTooltip } from '@codemirror/view';
+import styled from '@emotion/styled';
+import { FC, useRef } from 'react';
 
-import { useEnvCodeMirror } from "../../helpers/editor/extensions/EnvCodeMirror";
+import { useEnvCodeMirror } from '../../helpers/editor/extensions/EnvCodeMirror';
 import {
   getMarkFromToArr,
   HOPP_ENVIRONMENT_REGEX,
-} from "../../helpers/editor/extensions/HoppEnvironment";
-import { useStore } from "../../store";
+} from '../../helpers/editor/extensions/HoppEnvironment';
+import { useStore } from '../../store';
+import useUserProfile from '../../store/useUserProfile';
 
 const SmartEnvInputWrapper = styled.div`
   flex: 1;
   overflow: hidden;
-  // border: 1px solid ${(props) => props.theme.color.border.primary};
+  border: 1px solid ${(props) => props.theme.colorBorder};
 `;
 
 interface SmartEnvInputProps {
@@ -20,25 +21,22 @@ interface SmartEnvInputProps {
   onChange: (e: any) => void;
 }
 const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
+  const { currentEnvironment } = useStore();
+  const { theme } = useUserProfile();
+
   const smartEnvInputRef = useRef(null);
-  const { currentEnvironment, themeClassify } = useStore();
+
   // console.log(themeClassify,'themeClassify')
   useEnvCodeMirror({
     container: smartEnvInputRef.current,
-    value: value,
-    height: "30px",
+    value,
+    height: '30px',
     extensions: [
       [
         hoverTooltip((view, pos, side) => {
           const { text } = view.state.doc.lineAt(pos);
-          const markArrs = getMarkFromToArr(
-            text,
-            HOPP_ENVIRONMENT_REGEX,
-            currentEnvironment
-          );
-          const index = markArrs
-            .map((i) => pos < i.to && pos > i.from)
-            .findIndex((i) => i);
+          const markArrs = getMarkFromToArr(text, HOPP_ENVIRONMENT_REGEX, currentEnvironment);
+          const index = markArrs.map((i) => pos < i.to && pos > i.from).findIndex((i) => i);
           if (index === -1) {
             return null;
           }
@@ -48,12 +46,12 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
             above: true,
             arrow: true,
             create(view) {
-              const dom = document.createElement("div");
+              const dom = document.createElement('div');
               dom.innerHTML = `
               <span class="name">${markArrs[index].matchEnv.name}</span>
               <span class="value">${markArrs[index].matchEnv.value}</span>
               `;
-              dom.className = "tooltip-theme1";
+              dom.className = 'tooltip-theme1';
               return { dom };
             },
           };
@@ -68,11 +66,11 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
       });
     },
     currentEnv: currentEnvironment,
-    theme: themeClassify,
+    theme,
   });
 
   return (
-    <SmartEnvInputWrapper className={"smart-env"}>
+    <SmartEnvInputWrapper className={'smart-env'}>
       <div ref={smartEnvInputRef} />
     </SmartEnvInputWrapper>
   );

@@ -1,7 +1,6 @@
 import { DeleteOutlined, MenuOutlined } from '@ant-design/icons';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button, Collapse, Popconfirm, Space, Switch } from 'antd';
+import { Button, Collapse, Popconfirm, Space, Switch, theme } from 'antd';
 import React, { useCallback, useState } from 'react';
 import { DragDropContext, DragDropContextProps, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +26,7 @@ export type ScriptBlocksCollapseProps<T = string> = {
 
 function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
   const { t } = useTranslation('common');
-  const { color } = useTheme();
+  const { token } = theme.useToken();
 
   const [activeKey, setActiveKey] = useState<string>();
   const onDragEnd: DragDropContextProps['onDragEnd'] = (result) => {
@@ -79,10 +78,10 @@ function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
                           key={item.key}
                           header={
                             <div>
-                              <span css={{ color: color.primary }}> {item.icon} </span>
+                              <span style={{ color: token.colorPrimary }}> {item.icon} </span>
                               <span
-                                css={{
-                                  color: item.disabled ? color.text.disabled : undefined,
+                                style={{
+                                  color: item.disabled ? token.colorTextDisabled : undefined,
                                   transition: 'color 0.2s ease',
                                 }}
                               >

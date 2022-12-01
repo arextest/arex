@@ -126,7 +126,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
                 <Panel
                   header={
                     <span>
-                      <CheckOrCloseIcon size={24} checked={!result.diffResultCode} />
+                      <CheckOrCloseIcon size={14} checked={!result.diffResultCode} />
                       {result?.operationName}
                     </span>
                   }

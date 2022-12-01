@@ -1,21 +1,22 @@
-import { javascript } from "@codemirror/lang-javascript";
-import { useTheme } from "@emotion/react";
-import styled from "@emotion/styled";
-import CodeMirror from "@uiw/react-codemirror";
-import { Button, Space, Spin } from "antd";
-import React, { ReactNode } from "react";
+import { javascript } from '@codemirror/lang-javascript';
+import styled from '@emotion/styled';
+import CodeMirror from '@uiw/react-codemirror';
+import { Button, Space, Spin, theme } from 'antd';
+import React, { ReactNode } from 'react';
 
-import { useStore } from "../../store";
-import { ScriptBlocksFC } from "../PreRequestScript";
+import useUserProfile from '../../store/useUserProfile';
+import { ScriptBlocksFC } from '../PreRequestScript';
 
 export type Snippet = {
   name: string;
   script: string;
 };
 
+const { useToken } = theme;
+
 const defaultSnippet: Snippet[] = [
   {
-    name: "Response: Status code is 200",
+    name: 'Response: Status code is 200',
     script: `
 // Check status code is 200
 arex.test("Status code is 200", ()=> {
@@ -41,24 +42,23 @@ const ScriptSnippetsWrapper = styled.div<{ height?: string }>`
     flex-grow: 0;
     .snippets-header {
       margin-bottom: 8px;
-      // color: ${(props) => props.theme.color.text.secondary};
+      color: ${(props) => props.theme.colorTextSecondary};
     }
   }
 `;
 
 const ScriptSnippets: ScriptBlocksFC<string, ScriptSnippetsProps> = ({
   disabled,
-  height = "300px",
+  height = '300px',
   value,
   snippets = {
-    header:
-      "Test scripts are written in JavaScript, and are run before the request is sent.",
+    header: 'Test scripts are written in JavaScript, and are run before the request is sent.',
     data: defaultSnippet,
   },
   onChange,
 }) => {
-  const { themeClassify } = useStore();
-  const { color } = useTheme();
+  const { theme } = useUserProfile();
+  const { token } = useToken();
 
   return (
     <Spin indicator={<div></div>} spinning={!!disabled}>
@@ -67,23 +67,23 @@ const ScriptSnippets: ScriptBlocksFC<string, ScriptSnippetsProps> = ({
           value={value}
           height={height}
           extensions={[javascript()]}
-          theme={themeClassify}
+          theme={theme}
           onChange={onChange}
-          style={{ width: "60%", flexGrow: 1 }}
+          style={{ width: '60%', flexGrow: 1 }}
         />
         {snippets && (
-          <div className="snippets">
-            <div className="snippets-header">{snippets.header}</div>
-            <Space size="small" direction="vertical">
+          <div className='snippets'>
+            <div className='snippets-header'>{snippets.header}</div>
+            <Space size='small' direction='vertical'>
               {snippets.data?.map((snippet, index) => (
                 <Button
-                  type="text"
-                  size="small"
+                  type='text'
+                  size='small'
                   key={index}
                   onClick={() => {
                     onChange?.(value + snippet.script);
                   }}
-                  style={{ color: color.primary }}
+                  style={{ color: token.colorPrimary }}
                 >
                   {snippet.name}
                 </Button>

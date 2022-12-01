@@ -1,6 +1,8 @@
+import { RoleEnum } from '../constant';
+
 export type Workspace = {
   id: string;
-  role: number;
+  role: RoleEnum;
   workspaceName: string;
 };
 

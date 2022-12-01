@@ -6,16 +6,16 @@ import {
   PlusOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
-import { ArrowLeftOutlined, DownOutlined, UpOutlined } from '@ant-design/icons/lib';
+import { ArrowLeftOutlined } from '@ant-design/icons/lib';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Divider, Input, message, Modal, Select, Tooltip, Upload } from 'antd';
+import { Button, Input, message, Modal, Select, Upload } from 'antd';
 import React, { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { EmailKey, EnvironmentKey, RoleEnum } from '../../constant';
-import { generateGlobalPaneId, getLocalStorage, tryParseJsonString } from '../../helpers/utils';
+import { EmailKey, EnvironmentKey, RoleEnum, RoleMap } from '../../constant';
+import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
 import { MenusType } from '../../menus';
 import { PagesType } from '../../pages';
 import EnvironmentService from '../../services/Environment.service';
@@ -24,15 +24,23 @@ import WorkspaceService from '../../services/Workspace.service';
 import { useStore } from '../../store';
 import { TooltipButton } from '../index';
 
-const WorkspacesMenuWrapper = styled.div<{ width?: string }>`
+const Role = styled((props: { className?: string; role: RoleEnum }) => (
+  <span className={props.className}>({RoleMap[props.role]})</span>
+))`
+  margin-left: 4px;
+  color: ${(props) => props.theme.colorTextTertiary};
+`;
+
+const WorkspacesMenuWrapper = styled.div<{ collapse?: boolean }>`
   height: 35px;
-  width: ${(props) => props.width};
+  width: ${(props) => (props.collapse ? '100%' : 'calc(100% + 10px)')};
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 5px 16px;
   overflow: hidden;
   color: ${(props) => props.theme.colorText};
+  border-bottom: 1px solid ${(props) => props.theme.colorBorder};
   & > div {
     :first-of-type {
       width: 100%;
@@ -198,65 +206,49 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
   };
 
   return (
-    <>
-      <WorkspacesMenuWrapper width={props.collapse ? '100%' : 'calc(100% + 10px)'}>
-        <Tooltip
+    <WorkspacesMenuWrapper collapse={props.collapse}>
+      <>
+        <TooltipButton
+          icon={<GlobalOutlined />}
           title={`Workspace${props.collapse ? ': ' + params.workspaceName : ''}`}
           placement='right'
-        >
-          <GlobalOutlined
-            style={{
-              marginLeft: props.collapse ? '12px' : '0',
-              transition: 'all 0.2s',
-            }}
-          />
-        </Tooltip>
-        {!props.collapse && (
-          <div>
-            <div>
-              {editMode ? (
-                <Input
-                  size='small'
-                  value={newWorkspaceName}
-                  status={status}
-                  onChange={(e) => setNewWorkspaceName(e.target.value)}
-                  style={{ marginLeft: '10px', width: '80%' }}
-                />
-              ) : (
-                <Select
-                  size='small'
-                  bordered={false}
-                  value={params.workspaceId}
-                  options={workspaces.map((ws) => ({
-                    value: ws.id,
-                    label: (
-                      <div>
-                        {ws.workspaceName}
-                        <span
-                          css={css`
-                            color: #bdbdbd;
-                            margin-left: 4px;
-                          `}
-                        >
-                          (
-                          {
-                            {
-                              [RoleEnum.Admin]: 'Admin',
-                              [RoleEnum.Editor]: 'Editor',
-                              [RoleEnum.Viewer]: 'Viewer',
-                            }[ws.role]
-                          }
-                          )
-                        </span>
-                      </div>
-                    ),
-                  }))}
-                  onChange={handleChangeWorkspace}
-                  style={{ width: '80%' }}
-                />
-              )}
-            </div>
+          style={{
+            marginLeft: props.collapse ? '8px' : '0',
+            transition: 'all 0.2s',
+          }}
+        />
 
+        {!props.collapse &&
+          (editMode ? (
+            <Input
+              size='small'
+              value={newWorkspaceName}
+              status={status}
+              onChange={(e) => setNewWorkspaceName(e.target.value)}
+              style={{ marginLeft: '10px', width: '80%' }}
+            />
+          ) : (
+            <Select
+              size='small'
+              bordered={false}
+              value={params.workspaceId}
+              options={workspaces.map((ws) => ({
+                value: ws.id,
+                label: (
+                  <>
+                    {ws.workspaceName} <Role role={ws.role} />
+                  </>
+                ),
+              }))}
+              onChange={handleChangeWorkspace}
+              style={{ width: '80%' }}
+            />
+          ))}
+      </>
+
+      <>
+        {!props.collapse && (
+          <>
             <div>
               {editMode ? (
                 <div>
@@ -297,13 +289,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
             >
               {importType != '' ? (
                 <div>
-                  <div
-                    css={css`
-                      margin-bottom: 10px;
-                    `}
-                  >
-                    Import {importType}
-                  </div>
+                  <span>Import {importType}</span>
                   <Upload
                     maxCount={1}
                     onRemove={() => setImportFile(undefined)}
@@ -350,11 +336,10 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
                 </div>
               )}
             </Modal>
-          </div>
+          </>
         )}
-      </WorkspacesMenuWrapper>
-      <Divider style={{ margin: 0 }} />
-    </>
+      </>
+    </WorkspacesMenuWrapper>
   );
 };
 
