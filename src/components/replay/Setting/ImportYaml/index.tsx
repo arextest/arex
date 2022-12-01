@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { useCodeMirror } from '../../../../helpers/editor/codemirror';
 import AppSettingService from '../../../../services/AppSetting.service';
 import { useStore } from '../../../../store';
-import { Label } from '../../../styledComponents';
 import { Theme } from '../../../../theme';
+import { Label } from '../../../styledComponents';
 
 type ImportYamlProps = {
   appId: string;

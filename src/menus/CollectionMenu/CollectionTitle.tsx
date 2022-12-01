@@ -161,6 +161,7 @@ function CollectionTitle({
               console.log(res);
               updateDirectoryTreeData();
             });
+            break
           case '7':
             setPages(
               {
@@ -175,6 +176,7 @@ function CollectionTitle({
               },
               'push',
             );
+            break
         }
         e.domEvent.stopPropagation();
         setOpen(false);

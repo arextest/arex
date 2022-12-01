@@ -283,7 +283,6 @@ const Environment: FC = () => {
           {renameKey === data.id ? (
             <span>
               <Input
-                autoFocus
                 style={{ padding: '0 4px', width: '100%' }}
                 value={renameValue}
                 onBlur={rename}

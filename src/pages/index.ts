@@ -1,6 +1,7 @@
 import { FC } from 'react';
 
 import { Page, PageData } from '../store';
+import BatchRunPage from './BatchRunPage';
 import EnvironmentPage from './EnvironmentPage';
 import FolderPage from './FolderPage';
 import HttpRequestPage from './HttpRequestPage';
@@ -10,7 +11,6 @@ import ReplayPage from './ReplayPage';
 import ReplaySettingPage from './ReplaySettingPage';
 import SettingPage from './SettingPage';
 import WorkspaceOverviewPage from './WorkspaceOverviewPage';
-import BatchRunPage from './BatchRunPage';
 
 export type PageProps<D extends PageData = undefined, P = unknown> = P & {
   page: Page<D>;
