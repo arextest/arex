@@ -24,14 +24,14 @@ export type KeyValueType = {
 };
 
 const HttpRequestPage: PageFC = (props) => {
-  const { collectionTreeData, setPages, pages, activeEnvironment } = useStore();
+  const { collectionTreeData, setPages, pages, activeEnvironment, currentEnvironment } = useStore();
   const { workspaceId } = useParams();
   const { darkMode } = useUserProfile();
   const env = useMemo(() => {
-    if (activeEnvironment) {
+    if (currentEnvironment) {
       return {
-        name: activeEnvironment.envName,
-        variables: activeEnvironment.keyValues,
+        name: currentEnvironment.envName,
+        variables: currentEnvironment.keyValues,
       };
     } else {
       return {
@@ -39,7 +39,7 @@ const HttpRequestPage: PageFC = (props) => {
         variables: [],
       };
     }
-  }, [activeEnvironment]);
+  }, [currentEnvironment]);
   const id = useMemo(() => parseGlobalPaneId(props.page.paneId)['rawId'], [props.page.paneId]);
 
   const [reqParams, setReqParams] = useState({});
@@ -73,13 +73,6 @@ const HttpRequestPage: PageFC = (props) => {
           }
         `}
       >
-        <p
-          css={css`
-            margin-left: 20px;
-          `}
-        >
-          {JSON.stringify(env)}
-        </p>
         <Http
           currentRequestId={id}
           onEdit={(e) => {
