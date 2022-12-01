@@ -44,24 +44,24 @@ const MenuList = styled(Menu, {
   }
   .ant-menu-item-active {
     color: inherit !important;
-    // background-color: ${(props) => props.theme.color.active} !important;
+    background-color: ${(props) => props.theme.colorFillTertiary} !important;
   }
   .ant-menu-item-selected {
-    // background-color: ${(props) => props.theme.color.selected} !important;
+    background-color: ${(props) => props.theme.colorPrimaryBg} !important;
   }
   .ant-menu-item-active.ant-menu-item-selected {
-    // color: ${(props) => props.theme.color.primary} !important;
+    color: ${(props) => props.theme.colorPrimary} !important;
   }
   .btnSelected {
     padding: 2px 0;
     &:hover {
-      // background-color: ${(props) => props.theme.color.background.hover} !important;
+      background-color: ${(props) => props.theme.colorFillTertiary} !important;
     }
   }
   .btnHover {
     padding: 2px 0;
     &:hover {
-      // background-color: ${(props) => props.theme.color.background.hover};
+      background-color: ${(props) => props.theme.colorFillTertiary};
     }
   }
 `;
@@ -384,7 +384,7 @@ const Environment: FC = () => {
           prefix={<MenuOutlined />}
         />
       </div>
-      <MenuList items={items} selectedKeys={selectedKeys} onClick={handleSelect} />
+      <MenuList small items={items} selectedKeys={selectedKeys} onClick={handleSelect} />
       <Modal
         title={`Delete "${activeEnvironmentItem.envName}"`}
         okText='Delete'

@@ -6,7 +6,6 @@ import { useRoutes } from 'react-router-dom';
 
 import { useAuthentication, useCheckChrome, useInit } from './hooks';
 import routerConfig from './router';
-import { useStore } from './store';
 import useUserProfile from './store/useUserProfile';
 import { generateToken, GlobalThemeProvider } from './theme';
 
@@ -23,8 +22,7 @@ function App() {
 
   const routesContent = useRoutes(routerConfig);
 
-  const { collectionTreeData, currentEnvironment } = useStore();
-  const { language, theme, darkMode, compactMode, colorPrimary } = useUserProfile();
+  const { theme, darkMode, compactMode, colorPrimary } = useUserProfile();
 
   const algorithm = useMemo<MappingAlgorithm[]>(() => {
     const _algorithm = [defaultAlgorithm];
@@ -40,7 +38,7 @@ function App() {
         algorithm,
       }}
     >
-      <Layout style={{ height: '100vh' }}>
+      <Layout>
         <Content>{routesContent}</Content>
       </Layout>
     </GlobalThemeProvider>

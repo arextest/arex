@@ -11,8 +11,7 @@ const EditAreaPlaceholderWrapper = styled.div<{ dashedBorder?: boolean }>`
   }
   .dashed-border {
     height: 300px;
-    border: ${(props) =>
-      props.dashedBorder ? `2px ${props.theme.color.border.primary} dashed` : 'none'};
+    border: ${(props) => (props.dashedBorder ? `2px ${props.theme.colorBorder} dashed` : 'none')};
     border-radius: 8px;
     padding: 16px;
   }

@@ -34,6 +34,7 @@ const CollectionMenuWrapper = styled.div`
     justify-content: space-between;
     margin-top: 10px;
     margin-bottom: 10px;
+
     .collection-header-create {
       margin-right: 5px;
       span.action {
@@ -45,6 +46,10 @@ const CollectionMenuWrapper = styled.div`
     .collection-header-view {
       margin: 0 5px;
     }
+  }
+
+  .ant-tree {
+    background-color: transparent;
   }
 
   .ant-tree-title {

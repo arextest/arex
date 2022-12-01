@@ -52,12 +52,14 @@ function PreRequestScript<T>(props: PreRequestScriptProps<T>) {
           {t('save')}
         </Button>
       </FlexRowReverseWrapper>
+
       <ScriptBlocksCollapse
         value={items}
         onChange={props.onChange}
         onDrag={props.onDrag}
         onDelete={props.onDelete}
       />
+
       <AddScriptBlockButton onAdd={props.onAdd} />
     </div>
   ) : (
