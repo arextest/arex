@@ -2,7 +2,7 @@ import { SettingOutlined, SyncOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, DatePicker, Form, Input, Modal, notification } from 'antd';
-import moment, { Moment } from 'moment';
+import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, ReactNode, useState } from 'react';
 
 import { EmailKey } from '../../constant';
@@ -20,7 +20,7 @@ type AppTitleProps = {
   onRefresh?: () => void;
 };
 
-type CreatePlanForm = { targetEnv: string; caseStartTime: Moment; caseEndTime: Moment };
+type CreatePlanForm = { targetEnv: string; caseStartTime: Dayjs; caseEndTime: Dayjs };
 
 const TitleWrapper = styled(
   (props: {
@@ -66,8 +66,8 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
 
   const initialValues = {
     targetEnv: '',
-    caseStartTime: moment().subtract(1, 'day'),
-    caseEndTime: moment(),
+    caseStartTime: dayjs().subtract(1, 'day'),
+    caseEndTime: dayjs(),
   };
 
   const { run: createPlan, loading: confirmLoading } = useRequest(ReplayService.createPlan, {

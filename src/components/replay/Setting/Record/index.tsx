@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Button, Checkbox, Collapse, Form, message, TimePicker } from 'antd';
-import moment, { Moment } from 'moment';
+import dayjs, { Dayjs } from 'dayjs';
 import { FC, useState } from 'react';
 import { useImmer } from 'use-immer';
 
@@ -21,7 +21,7 @@ export type SettingRecordProps = {
 type SettingFormType = {
   allowDayOfWeeks: number[];
   sampleRate: number;
-  period: Moment[];
+  period: Dayjs[];
   timeMock: boolean;
 };
 
@@ -32,11 +32,11 @@ const defaultValues: Omit<
   'appId' | 'modifiedTime' | 'allowDayOfWeeks' | 'allowTimeOfDayFrom' | 'allowTimeOfDayTo'
 > & {
   allowDayOfWeeks: number[];
-  period: Moment[];
+  period: Dayjs[];
 } = {
   allowDayOfWeeks: [],
   sampleRate: 1,
-  period: [moment('00:01', format), moment('23:59', format)],
+  period: [dayjs('00:01', format), dayjs('23:59', format)],
   timeMock: false,
 };
 
@@ -51,7 +51,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
     },
     onSuccess(res) {
       setInitialValues({
-        period: [moment(res.allowTimeOfDayFrom, format), moment(res.allowTimeOfDayTo, format)],
+        period: [dayjs(res.allowTimeOfDayFrom, format), dayjs(res.allowTimeOfDayTo, format)],
         sampleRate: res.sampleRate,
         allowDayOfWeeks: [],
         timeMock: res.timeMock,

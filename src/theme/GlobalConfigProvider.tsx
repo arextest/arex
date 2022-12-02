@@ -1,6 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 import { ConfigProvider, theme } from 'antd';
-import { ThemeConfig } from 'antd/es/config-provider/context';
+import { ConfigProviderProps } from 'antd/lib/config-provider';
 import { AliasToken } from 'antd/lib/theme/interface';
 import { FC, ReactNode } from 'react';
 
@@ -15,10 +15,10 @@ const EmotionThemeProvider: FC<{ children: ReactNode }> = (props) => {
   return <ThemeProvider theme={token}>{props.children}</ThemeProvider>;
 };
 
-const GlobalThemeProvider: FC<{ theme: ThemeConfig; children: ReactNode }> = (props) => (
-  <ConfigProvider theme={props.theme}>
+const GlobalConfigProvider: FC<ConfigProviderProps> = (props) => (
+  <ConfigProvider {...props}>
     <EmotionThemeProvider>{props.children}</EmotionThemeProvider>
   </ConfigProvider>
 );
 
-export default GlobalThemeProvider;
+export default GlobalConfigProvider;

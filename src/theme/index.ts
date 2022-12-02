@@ -1,6 +1,6 @@
 import { AliasToken } from 'antd/es/theme/interface';
 
-export { default as GlobalThemeProvider } from './GlobalThemeProvider';
+export { default as GlobalConfigProvider } from './GlobalConfigProvider';
 
 export type DarkMode = boolean;
 export type CompactMode = boolean;

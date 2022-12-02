@@ -5,9 +5,10 @@ import React, { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 
 import { useAuthentication, useCheckChrome, useInit } from './hooks';
+import { localeMap } from './i18n';
 import routerConfig from './router';
 import useUserProfile from './store/useUserProfile';
-import { generateToken, GlobalThemeProvider } from './theme';
+import { generateToken, GlobalConfigProvider } from './theme';
 
 const { Content } = Layout;
 const { darkAlgorithm, compactAlgorithm, defaultAlgorithm } = theme;
@@ -22,7 +23,7 @@ function App() {
 
   const routesContent = useRoutes(routerConfig);
 
-  const { theme, darkMode, compactMode, colorPrimary } = useUserProfile();
+  const { theme, darkMode, compactMode, colorPrimary, language } = useUserProfile();
 
   const algorithm = useMemo<MappingAlgorithm[]>(() => {
     const _algorithm = [defaultAlgorithm];
@@ -32,16 +33,17 @@ function App() {
   }, [darkMode, compactMode]);
 
   return (
-    <GlobalThemeProvider
+    <GlobalConfigProvider
       theme={{
         token: generateToken(theme, colorPrimary),
         algorithm,
       }}
+      locale={localeMap[language]}
     >
       <Layout>
         <Content>{routesContent}</Content>
       </Layout>
-    </GlobalThemeProvider>
+    </GlobalConfigProvider>
   );
 }
 
