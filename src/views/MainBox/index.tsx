@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
 import React, { useState } from 'react';
 
-import { AppFooter, AppHeader, WorkspacesMenu } from '../../components';
+import { AppFooter, AppHeader } from '../../components';
 import MainMenu from './MainMenu';
 import MainTabs from './MainTabs';
 
@@ -26,8 +26,6 @@ const MainBox = () => {
           minSize={collapseMenu ? 69 : 200}
           maxSize={collapseMenu ? 69 : 600}
         >
-          <WorkspacesMenu collapse={collapseMenu} />
-
           <MainMenu
             collapse={collapseMenu}
             onChange={handleMainMenuChange}

@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { Tabs } from 'antd';
 import React, { FC, ReactNode, useMemo } from 'react';
 
+import { WorkspacesMenu } from '../../components';
 import MenuConfig, { MenusType } from '../../menus';
 import { useStore } from '../../store';
 
@@ -32,20 +33,23 @@ const MainMenu: FC<MainMenuProps> = (props) => {
   };
 
   return (
-    <MainMenuWrapper
-      tabPosition='left'
-      activeKey={activeKey}
-      collapse={props.collapse}
-      tabBarExtraContent={
-        <CollapseMenuButton
-          collapse={props.collapse}
-          icon={<LeftOutlined />}
-          onClick={() => props.onCollapse?.(!props.collapse)}
-        />
-      }
-      items={tabsItems}
-      onChange={handleMenuChange}
-    />
+    <>
+      <WorkspacesMenu collapse={props.collapse} />
+      <MainMenuWrapper
+        tabPosition='left'
+        activeKey={activeKey}
+        collapse={props.collapse}
+        tabBarExtraContent={
+          <CollapseMenuButton
+            collapse={props.collapse}
+            icon={<LeftOutlined />}
+            onClick={() => props.onCollapse?.(!props.collapse)}
+          />
+        }
+        items={tabsItems}
+        onChange={handleMenuChange}
+      />
+    </>
   );
 };
 
