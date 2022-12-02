@@ -13,7 +13,7 @@ export class UserService {
     return request.post(`/api/login/updateUserProfile`, params);
   }
   static async loginAsGuest() {
-    const res = await request.post<LoginAsGuestRes>(`/api/login/loginAsGuest`);
+    const res = await request.post<LoginAsGuestRes>(`/api/login/loginAsGuest`, {});
     return res.body;
   }
 }

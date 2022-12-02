@@ -1,3 +1,9 @@
+#root,
+#root > .ant-layout,
+#root > .ant-layout > .ant-layout-content {
+  height: 100vh;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
