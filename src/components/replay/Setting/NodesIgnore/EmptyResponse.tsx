@@ -10,7 +10,11 @@ type EmptyResponseProps = {
 const EmptyResponse: FC<EmptyResponseProps> = (props) => {
   return (
     <FlexCenterWrapper style={{ padding: '24px' }}>
-      <Empty description={'Empty Response'} style={{ paddingBottom: '16px' }} />
+      <Empty
+        description={'Empty Response'}
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        style={{ paddingBottom: '16px' }}
+      />
 
       <Button size='small' type='primary' onClick={() => props.onClick?.()}>
         Config Response

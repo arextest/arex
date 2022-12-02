@@ -6,6 +6,7 @@ import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useEffect, useRef } from 'react';
 import { useImmer } from 'use-immer';
 
+import { uuid } from '../../../../../helpers/utils';
 import AppSettingService from '../../../../../services/AppSetting.service';
 import { TooltipButton } from '../../../../index';
 import { FormItemProps } from '../../Record/FormItem';
@@ -16,14 +17,14 @@ const ExcludeOperationWrapper = styled.div`
   }
 `;
 
-type ExcludeOperationFormItem = { key: string; value: string[] };
-
+type ExcludeOperationFormItem = { id: string; key: string; value: string[] };
 type ExcludeOperationProps = FormItemProps<ExcludeOperationFormItem[]> & { appId: string };
+
 const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
   const tableRowCount = useRef(0);
   const tableRef = useRef<HTMLDivElement>(null);
   const [value, setValue] = useImmer<ExcludeOperationFormItem[]>(
-    props.value || [{ key: '', value: [] }],
+    props.value || [{ id: uuid(), key: '', value: [] }],
   );
 
   const handleKeyChange = (i: number, key: string) => {
@@ -156,7 +157,7 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
     <ExcludeOperationWrapper>
       <Table<ExcludeOperationFormItem>
         ref={tableRef}
-        rowKey='key'
+        rowKey='id'
         dataSource={value}
         pagination={false}
         showHeader={true}
