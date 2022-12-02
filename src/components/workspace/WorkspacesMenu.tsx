@@ -14,8 +14,8 @@ import { Button, Input, message, Modal, Select, Upload } from 'antd';
 import React, { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { EmailKey, EnvironmentKey, RoleEnum, RoleMap } from '../../constant';
-import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
+import { EmailKey, EnvironmentKey, RoleEnum, RoleMap, WorkspaceKey } from '../../constant';
+import { generateGlobalPaneId, getLocalStorage, setLocalStorage } from '../../helpers/utils';
 import { MenusType } from '../../menus';
 import { PagesType } from '../../pages';
 import EnvironmentService from '../../services/Environment.service';
@@ -82,12 +82,11 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
         setWorkspaces(data);
 
         let targetWorkspace = data[0];
-        if (invitedWorkspaceId || _params[0]) {
-          const workspace = data.find((workspace) => {
-            const targetWorkspaceId = invitedWorkspaceId || _params[0];
-            return workspace.id === targetWorkspaceId;
-          });
+        const workspaceKeyLS = getLocalStorage<string>(WorkspaceKey);
+        const targetWorkspaceId = invitedWorkspaceId || workspaceKeyLS || _params[0];
 
+        if (targetWorkspaceId) {
+          const workspace = data.find((workspace) => workspace.id === targetWorkspaceId);
           workspace && (targetWorkspace = workspace);
           invitedWorkspaceId && setInvitedWorkspaceId('');
         }
@@ -168,6 +167,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     const label = workspaces.find((i) => i.id === workspaceId)?.workspaceName;
     if (label) {
       resetPanes();
+      setLocalStorage(WorkspaceKey, workspaceId);
       nav(`/${workspaceId}/workspace/${label}`);
     }
   };

@@ -65,4 +65,5 @@ export const AccessTokenKey = 'accessToken';
 export const RefreshTokenKey = 'refreshToken';
 export const CollapseMenuKey = 'collapseMenu';
 export const EnvironmentKey = 'environmentId';
+export const WorkspaceKey = 'workspaceId';
 export const I18Key = 'i18nextLng';
