@@ -1,11 +1,12 @@
 import { useRequest } from 'ahooks';
-import { Badge, Tag, Typography } from 'antd';
+import { Badge, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC } from 'react';
 
 import ReplayService from '../../services/Replay.service';
 import { PlanStatistics } from '../../services/Replay.type';
 import HighlightRowTable from '../styledComponents/HighlightRowTable';
+
 const { Text } = Typography;
 
 export const resultsStates = [
@@ -14,16 +15,22 @@ export const resultsStates = [
   { label: 'done', color: 'green', value: 2 },
   { label: 'interrupted', color: 'red', value: 3 },
   { label: 'cancelled', color: 'blue', value: 4 },
-];
+] as const;
 
 const columns: ColumnsType<PlanStatistics> = [
   {
     title: 'Report Name',
     dataIndex: 'planName',
-    render: (text) => <a>{text}</a>,
+    ellipsis: { showTitle: false },
+    render: (text) => (
+      <Tooltip title={text}>
+        <a>{text}</a>
+      </Tooltip>
+    ),
   },
   {
     title: 'State',
+    width: 100,
     render: (_, record) => {
       const state = resultsStates.find((s) => s.value === record.status);
       return state ? (
@@ -43,21 +50,25 @@ const columns: ColumnsType<PlanStatistics> = [
   },
   {
     title: 'Passed',
+    width: 80,
     dataIndex: 'successCaseCount',
     render: (text) => <Text style={{ color: '#91cc75' }}>{text}</Text>,
   },
   {
     title: 'Failed',
+    width: 80,
     dataIndex: 'failCaseCount',
     render: (text) => <Text style={{ color: '#ef6566' }}>{text}</Text>,
   },
   {
     title: 'Invalid',
+    width: 80,
     dataIndex: 'errorCaseCount',
     render: (text) => <Text style={{ color: '#73c0de' }}>{text}</Text>,
   },
   {
     title: 'Blocked',
+    width: 80,
     dataIndex: 'waitCaseCount',
     render: (text) => <Text style={{ color: '#fac858' }}>{text}</Text>,
   },
@@ -87,6 +98,8 @@ const Results: FC<ResultsProps> = ({
   refreshDep,
   onSelectedPlanChange,
 }) => {
+  const { token } = theme.useToken();
+
   const { data: planStatistics, loading } = useRequest(
     () =>
       ReplayService.queryPlanStatistics({
@@ -112,6 +125,11 @@ const Results: FC<ResultsProps> = ({
       columns={columns}
       onRowClick={onSelectedPlanChange}
       dataSource={planStatistics}
+      sx={{
+        '.ant-table-cell-ellipsis': {
+          color: token.colorPrimary,
+        },
+      }}
     />
   );
 };

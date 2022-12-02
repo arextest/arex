@@ -1,4 +1,4 @@
-import { SettingOutlined, SyncOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, SettingOutlined, SyncOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, DatePicker, Form, Input, Modal, notification } from 'antd';
@@ -143,7 +143,12 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           <TitleWrapper title={data.appId} onRefresh={onRefresh} onSetting={handleOpenSetting} />
         }
         extra={
-          <Button size='small' type='primary' onClick={() => setOpen(true)}>
+          <Button
+            size='small'
+            type='primary'
+            icon={<PlayCircleOutlined />}
+            onClick={() => setOpen(true)}
+          >
             Start replay
           </Button>
         }

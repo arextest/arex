@@ -1,5 +1,5 @@
 import { useRequest } from 'ahooks';
-import { Col, Row } from 'antd';
+import { Col, Divider, Row, theme, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { FC, useState } from 'react';
 
@@ -13,6 +13,8 @@ const Analysis: FC<{
   onScenes?: (diff: Difference, category?: CategoryStatistic) => void;
   onSelectCategory?: (category: CategoryStatistic) => void;
 }> = ({ planItemId, onScenes, onSelectCategory }) => {
+  const { token } = theme.useToken();
+
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
   const { data: differenceData = [], loading } = useRequest(
     () =>
@@ -54,8 +56,8 @@ const Analysis: FC<{
   const handleRowClick = (record: Difference) => onScenes && onScenes(record, selectedCategory);
 
   return (
-    <Row style={{ padding: '8px' }} gutter={8}>
-      <Col span={6}>
+    <Row gutter={16}>
+      <Col span={6} style={{ borderRight: `1px solid ${token.colorBorder}` }}>
         <MenuSelect<CategoryStatistic>
           small
           forceFilter
@@ -87,7 +89,6 @@ const Analysis: FC<{
           columns={categoryColumns}
           dataSource={differenceData}
           onRowClick={handleRowClick}
-          sx={{ margin: '-8px 0 0 8px' }}
         />
       </Col>
     </Row>

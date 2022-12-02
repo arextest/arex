@@ -1,5 +1,5 @@
 import { Empty, Space } from 'antd';
-import React, { FC, useState } from 'react';
+import React, { useState } from 'react';
 
 import { AppTitle, Report, Results } from '../components/replay';
 import { FlexCenterWrapper } from '../components/styledComponents';

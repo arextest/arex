@@ -1,5 +1,6 @@
 import 'chart.js/auto';
 
+import { ContainerOutlined, FileTextOutlined, RedoOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import {
@@ -12,10 +13,13 @@ import {
   Statistic,
   Table,
   Tag,
+  theme,
+  Tooltip,
   Typography,
 } from 'antd';
+import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 import { ColumnsType } from 'antd/lib/table';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 
 import { EmailKey } from '../../constant';
@@ -26,6 +30,7 @@ import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
 import { SmallTextButton } from '../styledComponents';
+import TooltipButton from '../TooltipButton';
 import { resultsStates } from './Results';
 
 const { Text } = Typography;
@@ -43,6 +48,7 @@ const chartOptions = {
 const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
   const { setPages } = useStore();
   const email = getLocalStorage<string>(EmailKey);
+  const { token } = theme.useToken();
 
   const { data: planItemData, loading: loadingData } = useRequest(
     () =>
@@ -56,12 +62,16 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     },
   );
 
-  const countData = [
-    selectedPlan?.successCaseCount,
-    selectedPlan?.failCaseCount,
-    selectedPlan?.errorCaseCount,
-    selectedPlan?.waitCaseCount,
-  ];
+  const countData = useMemo(
+    () => [
+      selectedPlan?.successCaseCount,
+      selectedPlan?.failCaseCount,
+      selectedPlan?.errorCaseCount,
+      selectedPlan?.waitCaseCount,
+    ],
+    [selectedPlan],
+  );
+
   const countSum = useMemo(() => countData.reduce((a, b) => (a || 0) + (b || 0), 0), [countData]);
 
   const pieProps = useMemo(
@@ -81,11 +91,30 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
   );
 
   const columns: ColumnsType<PlanItemStatistics> = [
-    { title: 'Plan Item ID', dataIndex: 'planItemId', key: 'planItemId' },
-    { title: 'API', dataIndex: 'operationName', key: 'operationName' },
+    {
+      title: 'Plan Item ID',
+      dataIndex: 'planItemId',
+      key: 'planItemId',
+      ellipsis: { showTitle: false },
+      render: (value) => (
+        <Tooltip placement='topLeft' title={value}>
+          {value}
+        </Tooltip>
+      ),
+    },
+    {
+      title: 'API',
+      dataIndex: 'operationName',
+      key: 'operationName',
+      ellipsis: { showTitle: false },
+      render: (value) => (
+        <Tooltip placement='topLeft' title={value}>
+          {value}
+        </Tooltip>
+      ),
+    },
     {
       title: 'State',
-      width: 100,
       render: (_, record) => {
         const state = resultsStates.find((s) => s.value === record.status);
         return state ? (
@@ -105,16 +134,14 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     },
     {
       title: 'Time consumed(s)',
-      width: 104,
       render: (_, record) =>
         record.replayEndTime && record.replayStartTime
           ? (record.replayEndTime - record.replayStartTime) / 1000
           : '-',
     },
     {
-      title: 'Total Cases',
+      title: 'Cases',
       dataIndex: 'totalCaseCount',
-      width: 120,
       filterMultiple: false,
       filters: [
         { text: 'All', value: 'all' },
@@ -149,63 +176,74 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     },
     {
       title: 'Action',
-      width: 200,
       align: 'center',
-      render: (_, record) => [
-        <SmallTextButton
-          key='analysis'
-          title='Analysis'
-          onClick={() => {
-            setPages(
-              {
-                title: `Analysis - ${record.operationId}`,
-                pageType: PagesType.ReplayAnalysis,
-                menuType: MenusType.Replay,
-                isNew: false,
-                data: record,
-                paneId: generateGlobalPaneId(
-                  MenusType.Replay,
-                  PagesType.ReplayAnalysis,
-                  record.operationId,
-                ),
-                rawId: record.operationId,
-              },
-              'push',
-            );
-          }}
-        />,
-        <SmallTextButton
-          key='case'
-          title='Case'
-          onClick={() =>
-            setPages(
-              {
-                title: `Case - ${record.planItemId}`,
-                pageType: PagesType.ReplayCase,
-                menuType: MenusType.Replay,
-                isNew: false,
-                data: record,
-                paneId: generateGlobalPaneId(
-                  MenusType.Replay,
-                  PagesType.ReplayCase,
-                  record.planItemId,
-                ),
-                rawId: record.planItemId,
-              },
-              'push',
-            )
-          }
-        />,
-        <Button
-          danger
-          key='rerun'
-          type='text'
-          size='small'
-          onClick={() => handleRerun(record.operationId, record.caseStartTime, record.caseEndTime)}
-        >
-          Rerun
-        </Button>,
-      ],
+      render: (_, record) => (
+        <>
+          <TooltipButton
+            icon={<ContainerOutlined />}
+            title='Analysis'
+            breakpoint='xxl'
+            disabled={!(record.errorCaseCount + record.failCaseCount)}
+            onClick={() => {
+              setPages(
+                {
+                  title: `Analysis - ${record.operationId}`,
+                  pageType: PagesType.ReplayAnalysis,
+                  menuType: MenusType.Replay,
+                  isNew: false,
+                  data: record,
+                  paneId: generateGlobalPaneId(
+                    MenusType.Replay,
+                    PagesType.ReplayAnalysis,
+                    record.operationId,
+                  ),
+                  rawId: record.operationId,
+                },
+                'push',
+              );
+            }}
+            style={{
+              color:
+                record.errorCaseCount + record.failCaseCount
+                  ? token.colorPrimary
+                  : token.colorTextDisabled,
+            }}
+          />
+          <TooltipButton
+            icon={<FileTextOutlined />}
+            title='Case'
+            breakpoint='xxl'
+            onClick={() =>
+              setPages(
+                {
+                  title: `Case - ${record.planItemId}`,
+                  pageType: PagesType.ReplayCase,
+                  menuType: MenusType.Replay,
+                  isNew: false,
+                  data: record,
+                  paneId: generateGlobalPaneId(
+                    MenusType.Replay,
+                    PagesType.ReplayCase,
+                    record.planItemId,
+                  ),
+                  rawId: record.planItemId,
+                },
+                'push',
+              )
+            }
+            style={{ color: token.colorPrimary }}
+          />
+          <TooltipButton
+            icon={<RedoOutlined />}
+            title='Rerun'
+            breakpoint='xxl'
+            onClick={() =>
+              handleRerun(record.operationId, record.caseStartTime, record.caseEndTime)
+            }
+            style={{ color: token.colorPrimary }}
+          />
+        </>
+      ),
     },
   ];
 
@@ -260,7 +298,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
       size='small'
       title={`Report: ${selectedPlan.planName}`}
       extra={
-        <Button size='small' type='primary' onClick={() => handleRerun()}>
+        <Button size='small' type='primary' icon={<RedoOutlined />} onClick={() => handleRerun()}>
           Rerun
         </Button>
       }
