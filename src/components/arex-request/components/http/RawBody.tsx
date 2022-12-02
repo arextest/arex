@@ -1,19 +1,15 @@
 import { json } from '@codemirror/lang-json';
 import { css } from '@emotion/react';
 import { Button, message } from 'antd';
-import {
-  useContext,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import { useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useCodeMirror } from '../../helpers/editor/codemirror';
 import { HttpContext } from '../../index';
 const HttpRawBody = ({ cRef }: any) => {
   const rawBodyParameters = useRef(null);
   const { store, dispatch } = useContext(HttpContext);
+  const { t } = useTranslation();
   useCodeMirror({
     container: rawBodyParameters.current,
     value: store.request.body.body,
@@ -42,7 +38,7 @@ const HttpRawBody = ({ cRef }: any) => {
         payload: JSON.stringify(jsonObj, null, 2),
       });
     } catch (e) {
-      message.error('error');
+      message.error(t('error.json_prettify_invalid_body'));
     }
   };
   return (

@@ -2,13 +2,15 @@ import { CopyOutlined } from '@ant-design/icons';
 import { json } from '@codemirror/lang-json';
 import { EditorView } from '@codemirror/view';
 import { css } from '@emotion/react';
-import { Button, message, Space, Tooltip } from 'antd';
+import { message, Tooltip } from 'antd';
+import copy from 'copy-to-clipboard';
 import { FC, useContext, useRef } from 'react';
 
 import { useCodeMirror } from '../../../helpers/editor/codemirror';
 import { HoppRESTResponse } from '../../../helpers/types/HoppRESTResponse';
 import { HttpContext } from '../../../index';
-function coppyUrl() {
+function coppyUrl(str: string) {
+  copy(str);
   message.success('copy success🎉');
 }
 const JSONLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
