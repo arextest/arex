@@ -1,3 +1,4 @@
+import colorLib from '@kurkle/color';
 import { AliasToken } from 'antd/es/theme/interface';
 
 export { default as GlobalConfigProvider } from './GlobalConfigProvider';
@@ -48,7 +49,14 @@ export const tokenMap = {
   [Theme.dark]: darkToken,
 };
 
-export const generateToken = (theme: Theme, colorPrimary?: ColorPrimary) => ({
-  ...tokenMap[theme],
-  colorPrimary: colorPrimaryPalette.find((color) => color.name === colorPrimary)?.key,
-});
+export const generateToken = (theme: Theme, colorPrimary?: ColorPrimary) => {
+  const primary = colorPrimaryPalette.find((color) => color.name === colorPrimary)?.key;
+  if (primary)
+    return {
+      ...tokenMap[theme],
+      colorPrimary: primary,
+      colorLink: primary,
+      colorLinkActive: primary,
+      colorLinkHover: colorLib(primary).alpha(0.7).rgbString(),
+    };
+};

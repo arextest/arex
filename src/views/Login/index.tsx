@@ -1,7 +1,7 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Card, Input, message, Space, theme, Typography } from 'antd';
+import { Button, Card, Input, message, Space, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,7 +24,6 @@ let timer: NodeJS.Timer;
 
 const Login: FC = () => {
   const nav = useNavigate();
-  const { token } = theme.useToken();
 
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState<string>('');
@@ -146,7 +145,7 @@ const Login: FC = () => {
 
   return (
     <FlexCenterWrapper>
-      <Card>
+      <Card style={{ marginBottom: '20%' }}>
         <Space size={26} direction='vertical'>
           <Logo>AREX</Logo>
 
@@ -192,11 +191,7 @@ const Login: FC = () => {
 
           <span>
             <Label>Login with</Label>
-            <Button
-              type='link'
-              onClick={loginAsGuest}
-              style={{ color: token.colorPrimaryText, paddingLeft: 0 }}
-            >
+            <Button type='link' onClick={loginAsGuest} style={{ paddingLeft: 0 }}>
               Guest
             </Button>
           </span>
