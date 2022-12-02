@@ -117,11 +117,13 @@ function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
                           }
                         >
                           {/* Dynamic ScriptBlock Component */}
+                          {/* TODO 区分不同组件的 props 注入 */}
                           {React.createElement(
                             ScriptBlocks.find((block) => block.type === item.type)!.component,
                             {
                               disabled: item.disabled,
                               value: item.data as string,
+                              language: 'javascript',
                               onChange: (value) => handleChange(item.key, 'data', value),
                             },
                           )}

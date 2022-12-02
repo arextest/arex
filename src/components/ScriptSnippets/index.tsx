@@ -1,8 +1,9 @@
-// @ts-nocheck
 import { javascript } from '@codemirror/lang-javascript';
+import { json } from '@codemirror/lang-json';
+import { LanguageSupport } from '@codemirror/language';
 import styled from '@emotion/styled';
 import CodeMirror from '@uiw/react-codemirror';
-import { Button, Space, Spin, theme } from 'antd';
+import { Button, Divider, Spin, Typography } from 'antd';
 import React, { ReactNode } from 'react';
 
 import useUserProfile from '../../store/useUserProfile';
@@ -13,7 +14,14 @@ export type Snippet = {
   script: string;
 };
 
-const { useToken } = theme;
+export type CodeMirrorExtensions = 'javascript' | 'json';
+
+export type Snippets = { header?: ReactNode; data?: Snippet[] };
+
+export type ScriptSnippetsProps = {
+  snippets?: false | Snippets | Snippets[];
+  language?: CodeMirrorExtensions;
+};
 
 const defaultSnippet: Snippet[] = [
   {
@@ -27,9 +35,40 @@ arex.test("Status code is 200", ()=> {
   },
 ];
 
-export type ScriptSnippetsProps = {
-  snippets?: false | { header?: ReactNode; data?: Snippet[] };
+const CodeMirrorExtensionsMap: { [language in CodeMirrorExtensions]: LanguageSupport } = {
+  javascript: javascript(),
+  json: json(),
 };
+
+const SnippetBlock = styled((props: { snippet: Snippets; onChange?: (script: string) => void }) => {
+  const { snippet, onChange, ...restProps } = props;
+  return (
+    <div {...restProps}>
+      <Typography.Text type='secondary'>{snippet.header}</Typography.Text>
+
+      {snippet.data?.map((snippet, index) => (
+        <Button
+          type='text'
+          size='small'
+          key={index}
+          onClick={() => {
+            onChange?.(snippet.script);
+          }}
+        >
+          {snippet.name}
+        </Button>
+      ))}
+    </div>
+  );
+})`
+  .ant-typography-secondary {
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+  .ant-btn-text {
+    color: ${(props) => props.theme.colorPrimary};
+  }
+`;
 
 const ScriptSnippetsWrapper = styled.div<{ height?: string }>`
   display: flex;
@@ -41,14 +80,11 @@ const ScriptSnippetsWrapper = styled.div<{ height?: string }>`
     height: ${(props) => props.height};
     overflow: auto;
     flex-grow: 0;
-    .snippets-header {
-      margin-bottom: 8px;
-      color: ${(props) => props.theme.colorTextSecondary};
-    }
   }
 `;
 
 const ScriptSnippets: ScriptBlocksFC<string, ScriptSnippetsProps> = ({
+  language,
   disabled,
   height = '300px',
   value,
@@ -59,7 +95,6 @@ const ScriptSnippets: ScriptBlocksFC<string, ScriptSnippetsProps> = ({
   onChange,
 }) => {
   const { theme } = useUserProfile();
-  const { token } = useToken();
 
   return (
     <Spin indicator={<div></div>} spinning={!!disabled}>
@@ -67,29 +102,26 @@ const ScriptSnippets: ScriptBlocksFC<string, ScriptSnippetsProps> = ({
         <CodeMirror
           value={value}
           height={height}
-          extensions={[javascript()]}
+          extensions={language && [CodeMirrorExtensionsMap[language]]}
           theme={theme}
           onChange={onChange}
           style={{ width: '60%', flexGrow: 1 }}
         />
         {snippets && (
           <div className='snippets'>
-            <div className='snippets-header'>{snippets.header}</div>
-            <Space size='small' direction='vertical'>
-              {snippets.data?.map((snippet, index) => (
-                <Button
-                  type='text'
-                  size='small'
-                  key={index}
-                  onClick={() => {
-                    onChange?.(value + snippet.script);
-                  }}
-                  style={{ color: token.colorPrimary }}
-                >
-                  {snippet.name}
-                </Button>
-              ))}
-            </Space>
+            {Array.isArray(snippets) ? (
+              snippets.map((snippet, index) => (
+                <div key={index}>
+                  <SnippetBlock
+                    snippet={snippet}
+                    onChange={(script) => onChange?.(value + script)}
+                  />
+                  {index !== snippets.length - 1 && <Divider style={{ margin: '16px 0' }} />}
+                </div>
+              ))
+            ) : (
+              <SnippetBlock snippet={snippets} onChange={(script) => onChange?.(value + script)} />
+            )}
           </div>
         )}
       </ScriptSnippetsWrapper>
