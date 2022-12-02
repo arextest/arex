@@ -66,8 +66,8 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
 
   const initialValues = {
     targetEnv: '',
-    caseStartTime: dayjs().subtract(1, 'day'),
-    caseEndTime: dayjs(),
+    caseStartTime: dayjs().subtract(1, 'day').startOf('day'), // 前一天零点
+    caseEndTime: dayjs().add(1, 'day').startOf('day').subtract(1, 'second'), // 当天最后一秒
   };
 
   const { run: createPlan, loading: confirmLoading } = useRequest(ReplayService.createPlan, {
@@ -106,8 +106,12 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           appId: data.appId,
           sourceEnv: 'pro',
           targetEnv: values.targetEnv,
-          caseStartTime: values.caseStartTime.valueOf(),
-          caseEndTime: values.caseEndTime.valueOf(),
+          caseStartTime: values.caseStartTime.startOf('day').valueOf(),
+          caseEndTime: values.caseEndTime
+            .add(1, 'day')
+            .startOf('day')
+            .subtract(1, 'second')
+            .valueOf(),
           operator: email as string,
           replayPlanType: 0,
         });
