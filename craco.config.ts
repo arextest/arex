@@ -11,6 +11,9 @@ export default {
     port: 8888,
     open: false,
   },
+  typescript: {
+    enableTypeChecking: false,
+  },
   webpack: {
     alias: {
 

@@ -40,7 +40,7 @@ function CollectionTitle({
   const [renameKey, setRenameKey] = useState('');
   const [renameValue, setRenameValue] = useState('');
   const menu = (val: any) => {
-    const paths = treeFindPath(treeData, (node) => node.key === val.key);
+    const paths = treeFindPath(treeData, (node: any) => node.key === val.key);
     return {
       items: [
         {
@@ -183,7 +183,7 @@ function CollectionTitle({
   };
 
   const rename = () => {
-    const paths = treeFindPath(treeData, (node) => node.key === val.key);
+    const paths = treeFindPath(treeData, (node: any) => node.key === val.key);
     CollectionService.rename({
       id: _useParams.workspaceId,
       newName: renameValue,

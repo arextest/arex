@@ -27,6 +27,7 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId, agentVersion }) =>
     onSuccess(res) {
       setInitialValues({
         offsetDays: res.offsetDays,
+        // @ts-ignore
         excludeOperationMap: Object.entries(res.excludeOperationMap).map(([key, value]) => ({
           key,
           value,
@@ -48,6 +49,7 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId, agentVersion }) =>
       offsetDays: values.offsetDays,
       excludeOperationMap: values.excludeOperationMap.reduce<{ [key: string]: string[] }>(
         (map, cur) => {
+          // @ts-ignore
           map[cur.key] = cur.value;
           return map;
         },
