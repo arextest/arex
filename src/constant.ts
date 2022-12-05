@@ -1,5 +1,3 @@
-import {const} from "fp-ts";
-
 export const ExtensionVersion = '1.0.4';
 
 export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
