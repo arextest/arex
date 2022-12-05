@@ -231,7 +231,11 @@ const MainTabsWrapper = styled((props: TabsProps) => {
 const EmptyWrapper = styled(
   (props: { empty: boolean; emptyContent: ReactNode; children: ReactNode }) => {
     const { empty, emptyContent, children, ...restProps } = props;
-    return <div {...restProps}>{empty ? <Empty>{emptyContent}</Empty> : children}</div>;
+    return (
+      <div {...restProps}>
+        {empty ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}>{emptyContent}</Empty> : children}
+      </div>
+    );
   },
 )`
   height: 100%;

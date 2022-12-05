@@ -1,42 +1,32 @@
-// @ts-nocheck
-import styled from "@emotion/styled";
-import { useRequest } from "ahooks";
-import { Button, Card, Carousel, Col, message, Row, Space } from "antd";
-import { CarouselRef } from "antd/lib/carousel";
-import { TreeProps } from "antd/lib/tree";
-import React, { FC, Key, useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useImmer } from "use-immer";
+import styled from '@emotion/styled';
+import { useRequest } from 'ahooks';
+import { Button, Card, Carousel, Col, message, Row, Space } from 'antd';
+import { CarouselRef } from 'antd/lib/carousel';
+import { TreeProps } from 'antd/lib/tree';
+import React, { FC, Key, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useImmer } from 'use-immer';
 
-import {
-  tryParseJsonString,
-  tryPrettierJsonString,
-} from "../../../../helpers/utils";
-import AppSettingService from "../../../../services/AppSetting.service";
-import {
-  OperationInterface,
-  SortNode,
-} from "../../../../services/AppSetting.type";
-import {
-  EditAreaPlaceholder,
-  SpaceBetweenWrapper,
-} from "../../../styledComponents";
-import EmptyResponse from "../NodesIgnore/EmptyResponse";
-import ResponseRaw from "../NodesIgnore/ResponseRaw";
-import ArrayTree from "./ArrayTree";
-import PathCollapse from "./PathCollapse";
-import SortTree from "./SortTree";
+import { tryParseJsonString, tryPrettierJsonString } from '../../../../helpers/utils';
+import AppSettingService from '../../../../services/AppSetting.service';
+import { OperationInterface, SortNode } from '../../../../services/AppSetting.type';
+import { EditAreaPlaceholder, SpaceBetweenWrapper } from '../../../styledComponents';
+import EmptyResponse from '../NodesIgnore/EmptyResponse';
+import ResponseRaw from '../NodesIgnore/ResponseRaw';
+import ArrayTree from './ArrayTree';
+import PathCollapse from './PathCollapse';
+import SortTree from './SortTree';
 
 enum NodesEditMode {
-  "Tree" = "Tree",
-  "Raw" = "Raw",
+  'Tree' = 'Tree',
+  'Raw' = 'Raw',
 }
 
 enum TreeEditModeEnum {
   ArrayTree,
   SortTree,
 }
-const TreeEditMode = ["ArrayTree", "SortTree"];
+const TreeEditMode = ['ArrayTree', 'SortTree'];
 
 const TreeCarousel = styled(Carousel)`
   .slick-dots-bottom {
@@ -47,35 +37,29 @@ const TreeCarousel = styled(Carousel)`
     li > button {
       height: 4px;
       border-radius: 2px;
-      // background-color: ${(props) =>
-        props.theme.color.text.disabled}!important;
+      background-color: ${(props) => props.theme.colorTextTertiary}!important;
     }
     * > li.slick-active > button {
-      // background-color: ${(props) =>
-        props.theme.color.text.watermark}!important;
+      background-color: ${(props) => props.theme.colorTextQuaternary}!important;
     }
   }
 `;
 
 const SettingNodesSort: FC<{ appId: string }> = (props) => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation('common');
 
   const treeCarousel = useRef<CarouselRef>(null);
 
   const [activeOperationInterface, setActiveOperationInterface] =
-    useState<OperationInterface<"Interface">>();
+    useState<OperationInterface<'Interface'>>();
   const [activeSortNode, setActiveSortNode] = useState<SortNode>();
   const [checkedNodesData, setCheckedNodesData] = useImmer<{
     path?: string;
     pathKeyList: string[];
   }>({ pathKeyList: [] });
 
-  const [nodesEditMode, setNodesEditMode] = useState<NodesEditMode>(
-    NodesEditMode.Tree
-  );
-  const [treeEditMode, setTreeEditMode] = useState<TreeEditModeEnum>(
-    TreeEditModeEnum.ArrayTree
-  );
+  const [nodesEditMode, setNodesEditMode] = useState<NodesEditMode>(NodesEditMode.Tree);
+  const [treeEditMode, setTreeEditMode] = useState<TreeEditModeEnum>(TreeEditModeEnum.ArrayTree);
 
   const [sortArray, setSortArray] = useState<any[]>();
 
@@ -85,10 +69,9 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
   /**
    * 请求 InterfacesList
    */
-  const { data: operationList = [], loading: loadingOperationList } =
-    useRequest(() =>
-      AppSettingService.queryInterfacesList<"Interface">({ id: props.appId })
-    );
+  const { data: operationList = [], loading: loadingOperationList } = useRequest(() =>
+    AppSettingService.queryInterfacesList<'Interface'>({ id: props.appId }),
+  );
 
   /**
    * 获取 SortNode
@@ -113,7 +96,7 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
       onSuccess() {
         handleCancelEditResponse(false, false);
       },
-    }
+    },
   );
 
   const SaveSortNodeOptions = {
@@ -122,9 +105,9 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
       if (success) {
         querySortNode();
         treeCarousel.current?.goTo(0);
-        message.success("Update successfully");
+        message.success('Update successfully');
       } else {
-        message.error("Update failed");
+        message.error('Update failed');
       }
     },
   };
@@ -132,25 +115,17 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
   /**
    * 新增 SortNode
    */
-  const { run: insertSortNode } = useRequest(
-    AppSettingService.insertSortNode,
-    SaveSortNodeOptions
-  );
+  const { run: insertSortNode } = useRequest(AppSettingService.insertSortNode, SaveSortNodeOptions);
 
   /**
    * 更新 SortNode
    */
-  const { run: updateSortNode } = useRequest(
-    AppSettingService.updateSortNode,
-    SaveSortNodeOptions
-  );
+  const { run: updateSortNode } = useRequest(AppSettingService.updateSortNode, SaveSortNodeOptions);
 
   const handleSaveSort = () => {
     const params = {
-      listPath: checkedNodesData?.path?.split("/").filter(Boolean) || [],
-      keys: checkedNodesData.pathKeyList.map((key) =>
-        key?.split("/").filter(Boolean)
-      ),
+      listPath: checkedNodesData?.path?.split('/').filter(Boolean) || [],
+      keys: checkedNodesData.pathKeyList.map((key) => key?.split('/').filter(Boolean)),
     };
     if (activeSortNode) {
       updateSortNode({ id: activeSortNode.id, ...params });
@@ -183,7 +158,7 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
         setInterfaceResponse(undefined);
         setTreeReady(false);
       },
-    }
+    },
   );
   const interfaceResponseParsed = useMemo<{ [key: string]: any }>(() => {
     const res = interfaceResponse?.operationResponse;
@@ -194,28 +169,23 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
   /**
    * 更新 InterfaceResponse
    */
-  const { run: updateInterfaceResponse } = useRequest(
-    AppSettingService.updateInterfaceResponse,
-    {
-      manual: true,
-      onSuccess(success) {
-        if (success) {
-          queryInterfaceResponse();
-          message.success("Update successfully");
-        } else {
-          message.error("Update failed");
-        }
-      },
-    }
-  );
+  const { run: updateInterfaceResponse } = useRequest(AppSettingService.updateInterfaceResponse, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        queryInterfaceResponse();
+        message.success('Update successfully');
+      } else {
+        message.error('Update failed');
+      }
+    },
+  });
 
   /**
    * 开始编辑某个 interface 的 response
    * @param operationInterface
    */
-  const handleEditResponse = (
-    operationInterface?: OperationInterface<"Interface">
-  ) => {
+  const handleEditResponse = (operationInterface?: OperationInterface<'Interface'>) => {
     operationInterface && setActiveOperationInterface(operationInterface);
     setNodesEditMode(NodesEditMode.Raw);
   };
@@ -225,7 +195,7 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
    * @param value
    */
   const handleResponseSave = (value?: string) => {
-    const parsed = value && tryParseJsonString(value, "Invalid JSON");
+    const parsed = value && tryParseJsonString(value, 'Invalid JSON');
     if (parsed) {
       updateInterfaceResponse({
         id: activeOperationInterface!.id,
@@ -241,8 +211,8 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
    * @param maintain always expand panel
    */
   const handleNodesCollapseClick = (
-    operationInterface?: OperationInterface<"Interface">,
-    maintain?: boolean
+    operationInterface?: OperationInterface<'Interface'>,
+    maintain?: boolean,
   ) => {
     const { id } = operationInterface || {};
     setNodesEditMode(NodesEditMode.Tree);
@@ -250,9 +220,7 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
     treeCarousel.current?.goTo(0);
 
     setActiveOperationInterface(
-      id !== activeOperationInterface?.id || maintain
-        ? operationInterface
-        : undefined
+      id !== activeOperationInterface?.id || maintain ? operationInterface : undefined,
     );
     if (id) {
       handleSetSortArray(id);
@@ -283,15 +251,11 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
   const handleSetSortArray = (key: string) => {
     let value: any = undefined;
     key
-      .split("/")
+      .split('/')
       .filter(Boolean)
       .forEach((k, i) => {
         value =
-          i === 0
-            ? interfaceResponseParsed[k]
-            : Array.isArray(value)
-            ? value[0]?.[k]
-            : value[k];
+          i === 0 ? interfaceResponseParsed[k] : Array.isArray(value) ? value[0]?.[k] : value[k];
       });
 
     setSortArray(value);
@@ -303,7 +267,7 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
    */
   const handleCancelEditResponse = (
     reloadResponse?: boolean,
-    nodesEditMode: NodesEditMode | false = NodesEditMode.Tree
+    nodesEditMode: NodesEditMode | false = NodesEditMode.Tree,
   ) => {
     nodesEditMode && setNodesEditMode(nodesEditMode);
     setTreeEditMode(TreeEditModeEnum.ArrayTree);
@@ -312,15 +276,13 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
     reloadResponse && queryInterfaceResponse();
   };
 
-  const handleSortTreeChecked: TreeProps["onCheck"] = (checkedKeys) => {
+  const handleSortTreeChecked: TreeProps['onCheck'] = (checkedKeys) => {
     setCheckedNodesData((state) => {
-      state.pathKeyList = (
-        checkedKeys as { checked: string[]; halfChecked: string[] }
-      ).checked;
+      state.pathKeyList = (checkedKeys as { checked: string[]; halfChecked: string[] }).checked;
     });
   };
 
-  const handleSortTreeSelected: TreeProps["onSelect"] = (selectedKeys) => {
+  const handleSortTreeSelected: TreeProps['onSelect'] = (selectedKeys) => {
     const key = selectedKeys[0] as string;
     if (key) {
       setCheckedNodesData((state) => {
@@ -334,10 +296,10 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
 
   return (
     <div>
-      <Row justify="space-between" style={{ margin: 0, flexWrap: "nowrap" }}>
+      <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
         <Col span={10}>
           <PathCollapse
-            title="Interfaces"
+            title='Interfaces'
             loading={loadingOperationList}
             loadingPanel={loadingSortNode}
             interfaces={operationList}
@@ -354,27 +316,20 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
         <Col span={13}>
           <EditAreaPlaceholder
             dashedBorder
-            title="Edit Area (Click interface to start)"
+            title='Edit Area (Click interface to start)'
             ready={!!activeOperationInterface}
           >
             {nodesEditMode === NodesEditMode.Tree ? (
               <div>
-                <SpaceBetweenWrapper style={{ paddingBottom: "8px" }}>
+                <SpaceBetweenWrapper style={{ paddingBottom: '8px' }}>
                   <h3>{TreeEditMode[treeEditMode]}</h3>
                   {treeEditMode === TreeEditModeEnum.SortTree && (
                     <Space>
-                      <Button
-                        size="small"
-                        onClick={() => handleCancelEditResponse()}
-                      >
-                        {t("cancel")}
+                      <Button size='small' onClick={() => handleCancelEditResponse()}>
+                        {t('cancel')}
                       </Button>
-                      <Button
-                        size="small"
-                        type="primary"
-                        onClick={handleSaveSort}
-                      >
-                        {t("save")}
+                      <Button size='small' type='primary' onClick={handleSaveSort}>
+                        {t('save')}
                       </Button>
                     </Space>
                   )}
@@ -395,9 +350,7 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
                           onSelect={(selectedKeys) =>
                             handleEditCollapseItem(
                               selectedKeys[0] as string,
-                              sortNodeList.find(
-                                (node) => node.path === selectedKeys[0]
-                              )
+                              sortNodeList.find((node) => node.path === selectedKeys[0]),
                             )
                           }
                         />
@@ -422,9 +375,7 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
               </div>
             ) : (
               <ResponseRaw
-                value={tryPrettierJsonString(
-                  interfaceResponse?.operationResponse || ""
-                )}
+                value={tryPrettierJsonString(interfaceResponse?.operationResponse || '')}
                 onSave={handleResponseSave}
                 onCancel={handleCancelEditResponse}
               />

@@ -1,3 +1,5 @@
+import {const} from "fp-ts";
+
 export const ExtensionVersion = '1.0.4';
 
 export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
@@ -8,8 +10,7 @@ export enum MethodEnum {
   DELETE = 'DELETE',
   PATCH = 'PATCH',
 }
-
-export const methodMap = {
+export const MethodMap = {
   GET: {
     color: '#0cbb52',
   },
@@ -28,7 +29,7 @@ export const methodMap = {
   UNKNOWN: {
     color: '#0cbb52',
   },
-};
+} as const;
 
 export enum NodeType {
   interface = 1,
@@ -51,12 +52,6 @@ export const RoleMap = {
   [RoleEnum.Editor]: 'Editor',
   [RoleEnum.Viewer]: 'Viewer',
 };
-
-export enum FontSizeMap {
-  small = 0.9,
-  medium = 1,
-  large = 1.1,
-}
 
 // localStorage key
 export const UserProfileKey = 'userProfile';

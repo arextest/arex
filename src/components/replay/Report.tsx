@@ -17,9 +17,8 @@ import {
   Tooltip,
   Typography,
 } from 'antd';
-import useBreakpoint from 'antd/lib/grid/hooks/useBreakpoint';
 import { ColumnsType } from 'antd/lib/table';
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 
 import { EmailKey } from '../../constant';
@@ -29,7 +28,6 @@ import { PagesType } from '../../pages';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
-import { SmallTextButton } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
 import { resultsStates } from './Results';
 

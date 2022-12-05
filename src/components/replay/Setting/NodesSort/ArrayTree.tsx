@@ -1,12 +1,11 @@
-// @ts-nocheck
 import { css } from '@emotion/react';
 import { Badge, Card, Spin, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
 import React, { FC } from 'react';
 
+import { useRealColorPrimary } from '../../../../hooks';
 import { SortNode } from '../../../../services/AppSetting.type';
-import { useStore } from '../../../../store';
 
 type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
   sortNodeList?: SortNode[];
@@ -17,12 +16,7 @@ type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
 };
 
 const ArrayTree: FC<ResponseTreeProps> = (props) => {
-  const {
-    userInfo: {
-      profile: { theme },
-    },
-  } = useStore();
-
+  const color = useRealColorPrimary();
   function getNodes(object: object, basePath = ''): DataNode[] {
     const entries = Object.entries(object);
     return entries.map(([key, value]) => {
@@ -34,7 +28,7 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
             children: getNodes(Array.isArray(value) ? value[0] || {} : value, path),
             disabled: !Array.isArray(value),
             icon: props.sortNodeList?.find((node) => node.path === path)?.pathKeyList?.length && (
-              <Badge color={theme.split('-')[1]} />
+              <Badge color={color.name} />
             ), // 已配置过的节点使用圆点进行提示
           }
         : { title: key, key: path, value, disabled: !Array.isArray(value) };

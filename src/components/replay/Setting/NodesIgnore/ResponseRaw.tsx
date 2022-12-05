@@ -1,11 +1,10 @@
-// @ts-nocheck
 import { json } from '@codemirror/lang-json';
 import CodeMirror, { ReactCodeMirrorProps } from '@uiw/react-codemirror';
 import { Button, Space } from 'antd';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useStore } from '../../../../store';
+import useUserProfile from '../../../../store/useUserProfile';
 import { SpaceBetweenWrapper } from '../../../styledComponents';
 
 type ResponseRawProps = {
@@ -17,7 +16,7 @@ const ResponseRaw: FC<ResponseRawProps> = (props) => {
   const { t } = useTranslation('common');
   const [value, setValue] = useState(props.value);
   const { onSave, onCancel, ...restProps } = props;
-  const { themeClassify } = useStore();
+  const { theme } = useUserProfile();
 
   return (
     <div>
@@ -37,7 +36,7 @@ const ResponseRaw: FC<ResponseRawProps> = (props) => {
         {...restProps}
         onChange={setValue}
         extensions={[json()]}
-        theme={themeClassify}
+        theme={theme}
         height='auto'
         minHeight={'100px'}
         maxHeight={'600px'}

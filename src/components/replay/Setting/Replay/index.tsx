@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useRequest } from 'ahooks';
 import { Button, Form, InputNumber, message } from 'antd';
 import React from 'react';

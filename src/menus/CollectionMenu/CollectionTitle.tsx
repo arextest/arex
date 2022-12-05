@@ -1,13 +1,11 @@
-// @ts-nocheck
 import { MoreOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button, Dropdown, Input, Popconfirm, theme } from 'antd';
-import { GlobalToken } from 'antd/lib/theme/interface';
+import { Button, Dropdown, Input, Popconfirm } from 'antd';
 import { ReactNode, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { EmailKey, methodMap } from '../../constant';
+import { EmailKey, MethodMap } from '../../constant';
 import SearchHighLight from '../../helpers/collection/searchHighLight';
 import { treeFindPath } from '../../helpers/collection/util';
 import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
@@ -161,7 +159,7 @@ function CollectionTitle({
               console.log(res);
               updateDirectoryTreeData();
             });
-            break
+            break;
           case '7':
             setPages(
               {
@@ -176,7 +174,7 @@ function CollectionTitle({
               },
               'push',
             );
-            break
+            break;
         }
         e.domEvent.stopPropagation();
         setOpen(false);
@@ -197,14 +195,16 @@ function CollectionTitle({
       setRenameKey('');
     });
   };
+
   const method = useMemo(() => {
-    return Object.keys(methodMap).includes(val.method) ? val.method : 'UNKNOWN';
+    return Object.keys(MethodMap).includes(val.method) ? val.method : 'UNKNOWN';
   }, [val]);
+
   return (
     <div className={'collection-title-render'}>
       <div className={'left'}>
         {val.nodeType === 1 && (
-          <span css={css(`color:${methodMap[method].color};margin-right:4px`)}>{method}</span>
+          <span css={css(`color:${MethodMap[method].color};margin-right:4px`)}>{method}</span>
         )}
         {val.nodeType === 2 && <PrefixIcon border icon='case' />}
         <div className={'content'}>
@@ -224,7 +224,12 @@ function CollectionTitle({
 
       <div className='right'>
         <Dropdown menu={menu(val)} trigger={['click']} open={open} onOpenChange={setOpen}>
-          <Button type='text' size='small' icon={<MoreOutlined style={{ fontSize: '14px' }} />} />
+          <Button
+            type='text'
+            size='small'
+            icon={<MoreOutlined style={{ fontSize: '14px' }} />}
+            onClick={(e) => e.stopPropagation()}
+          />
         </Dropdown>
       </div>
     </div>
