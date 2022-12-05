@@ -123,7 +123,7 @@ function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
                               disabled: item.disabled,
                               value: item.data as string,
                               language: 'javascript',
-                              onChange: (value) => handleChange(item.key, 'data', value),
+                              onChange: (value: any) => handleChange(item.key, 'data', value),
                             },
                           )}
                         </Panel>
