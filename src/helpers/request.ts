@@ -56,30 +56,10 @@ export const AgentAxiosAndTest = ({ request }: Test) =>
           };
         }, {}),
   }).then((res: any) => {
-    // return runTestScript(request.testScript, {
-    //   body: res.data,
-    //   headers: res.headers,
-    //   status: res.status,
-    // }).then((testDescriptor) => {
-    //   return {
-    //     response: res,
-    //     testResult: testDescriptor,
-    //   };
-    // });
-
-    return axios
-      .post('http://10.5.153.1:10001/test', {
-        code: request.testScript,
-        response: {
-          body: res.data,
-          headers: res.headers,
-          status: res.status,
-        },
-      })
-      .then((r) => ({
-        testResult: r.data.caseResult,
-        response: res,
-      }));
+    return {
+      testResult: [],
+      response: res,
+    };
   });
 
 export const AgentAxiosCompare = ({ request }: Test) => {
