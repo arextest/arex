@@ -76,7 +76,7 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
           icon={<PlusOutlined />}
           onClick={() => {
             setValue((state) => {
-              state.push({ key: '', value: [] });
+              state.push({ id: '', key: '', value: [] });
             });
           }}
         >
