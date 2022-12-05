@@ -4,7 +4,7 @@ import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
 import React, { FC } from 'react';
 
-import { useRealColorPrimary } from '../../../../hooks';
+import { useColorPrimary } from '../../../../hooks';
 import { SortNode } from '../../../../services/AppSetting.type';
 
 type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
@@ -16,7 +16,7 @@ type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
 };
 
 const ArrayTree: FC<ResponseTreeProps> = (props) => {
-  const color = useRealColorPrimary();
+  const color = useColorPrimary();
   function getNodes(object: object, basePath = ''): DataNode[] {
     const entries = Object.entries(object);
     return entries.map(([key, value]) => {

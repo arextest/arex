@@ -6,7 +6,7 @@ import { CirclePicker } from 'react-color';
 
 import { EmailKey } from '../constant';
 import { getLocalStorage } from '../helpers/utils';
-import { useRealColorPrimary } from '../hooks';
+import { useColorPrimary } from '../hooks';
 import { local } from '../i18n';
 import { UserService } from '../services/User.service';
 import useUserProfile, { UserProfile } from '../store/useUserProfile';
@@ -53,7 +53,7 @@ const ColorPicker: FC<ColorPickerProps> = ({ value, onChange, theme }) => {
 const SettingPage: FC = () => {
   const email = getLocalStorage<string>(EmailKey);
   const { theme, darkMode, compactMode, language, setUserProfile } = useUserProfile();
-  const realColorPrimary = useRealColorPrimary();
+  const colorPrimary = useColorPrimary();
 
   const [form] = Form.useForm<SettingForm>();
 
@@ -63,15 +63,15 @@ const SettingPage: FC = () => {
       darkMode,
       compactMode,
       language,
-      colorPrimary: realColorPrimary,
+      colorPrimary,
     });
   }, []);
 
   useEffect(() => {
     form.setFieldsValue({
-      colorPrimary: realColorPrimary,
+      colorPrimary,
     });
-  }, [realColorPrimary]);
+  }, [colorPrimary]);
 
   const handleFormChange = (value: Partial<SettingForm>, allValue: SettingForm) => {
     value.language !== undefined && changeLanguage(value.language);
