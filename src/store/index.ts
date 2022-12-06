@@ -3,8 +3,14 @@ import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import { AccessTokenKey, EnvironmentKey, RefreshTokenKey, UserProfileKey } from '../constant';
-import { clearLocalStorage, setLocalStorage } from '../helpers/utils';
+import {
+  AccessTokenKey,
+  EmailKey,
+  EnvironmentKey,
+  RefreshTokenKey,
+  UserProfileKey,
+} from '../constant';
+import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { MenusType } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
 import { PageType } from '../pages';
@@ -137,7 +143,9 @@ export const useStore = create(
     },
 
     logout: () => {
+      const email = getLocalStorage<string>(EmailKey);
       localStorage.clear();
+      email?.startsWith('GUEST') && setLocalStorage(EmailKey, email);
       set({ pages: [] });
     },
 
