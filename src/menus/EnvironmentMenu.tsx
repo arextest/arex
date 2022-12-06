@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   CheckCircleFilled,
   CheckCircleOutlined,
@@ -400,4 +399,5 @@ const Environment: FC = () => {
     </div>
   );
 };
+
 export default Environment;

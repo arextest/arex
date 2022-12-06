@@ -1,10 +1,10 @@
-import { SyncOutlined } from '@ant-design/icons';
+import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { CSSInterpolation } from '@emotion/serialize/types';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Options } from 'ahooks/lib/useRequest/src/types';
-import { Button, Input, Menu, Space, Spin } from 'antd';
+import { Button, Input, Menu, Spin } from 'antd';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import React, { ChangeEventHandler, ReactNode, useCallback, useMemo, useState } from 'react';
@@ -14,6 +14,7 @@ type MenuSelectProps<D, P extends any[]> = {
   sx?: CSSInterpolation; // custom style
   small?: boolean;
   refresh?: boolean; // show refresh button
+  prefix?: ReactNode; // icon beside search input
   defaultSelectFirst?: boolean;
   initValue?: string;
   rowKey: string;
@@ -65,7 +66,8 @@ const MenuList = styled(Menu, {
 
 type MenuFilterProps = {
   refresh?: boolean;
-  size: SizeType;
+  prefix?: ReactNode;
+  size?: SizeType;
   value: string;
   placeholder?: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
@@ -74,32 +76,34 @@ type MenuFilterProps = {
 };
 const MenuFilter = styled((props: MenuFilterProps) => {
   return (
-    <Space.Compact block size={props.size} className={props.className}>
-      {props.refresh && (
-        <Button
-          size={props.size}
-          icon={<SyncOutlined />}
-          onClick={props.onFresh}
-          style={{ padding: '0 6px' }}
-        />
-      )}
-      <Input.Search
+    <div className={props.className}>
+      <span className='button-group'>
+        {props.prefix}
+        {props.refresh && (
+          <Button type='text' size={props.size} icon={<SyncOutlined />} onClick={props.onFresh} />
+        )}
+      </span>
+
+      <Input
+        prefix={<SearchOutlined />}
         size={props.size}
         value={props.value}
         placeholder={props.placeholder}
         onChange={props.onChange}
         style={{ flex: 1 }}
       />
-    </Space.Compact>
+    </div>
   );
 })`
-  margin-bottom: 8px;
+  margin: 2px 0 6px 0;
   display: flex !important;
-  .ant-btn-icon-only {
-    color: ${(props) => props.theme.colorTextSecondary} !important;
-    .anticon > svg {
-      height: 0.8rem;
-      width: 0.75rem;
+  .button-group {
+    margin-right: 2px;
+    .ant-btn-icon-only {
+      color: ${(props) => props.theme.colorTextSecondary} !important;
+      .anticon > svg {
+        transform: scale(0.8);
+      }
     }
   }
 `;
@@ -177,6 +181,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
         {props.filter && (
           <MenuFilter
             refresh={props.refresh}
+            prefix={props.prefix}
             size={props.small ? 'small' : 'middle'}
             value={filterKeyword}
             placeholder={props.placeholder && t(props.placeholder)}

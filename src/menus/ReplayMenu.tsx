@@ -1,3 +1,5 @@
+import { PlusOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import { FC, useMemo } from 'react';
 
 import MenuSelect from '../components/MenuSelect';
@@ -44,7 +46,7 @@ const ReplayMenu: FC = () => {
         key: app.id,
       })}
       sx={{
-        padding: '8px 0 8px 8px',
+        padding: '8px 0',
       }}
     />
   );
