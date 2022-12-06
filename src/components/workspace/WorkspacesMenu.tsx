@@ -10,7 +10,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons/lib';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Input, message, Modal, Select, Upload } from 'antd';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { EmailKey, RoleEnum, RoleMap, WorkspaceKey } from '../../constant';

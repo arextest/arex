@@ -181,7 +181,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
             icon={<ContainerOutlined />}
             title='Analysis'
             breakpoint='xxl'
-            disabled={!(record.errorCaseCount + record.failCaseCount)}
+            disabled={!record.failCaseCount}
             onClick={() => {
               setPages(
                 {
@@ -201,10 +201,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
               );
             }}
             style={{
-              color:
-                record.errorCaseCount + record.failCaseCount
-                  ? token.colorPrimary
-                  : token.colorTextDisabled,
+              color: record.failCaseCount ? token.colorPrimary : token.colorTextDisabled,
             }}
           />
           <TooltipButton
