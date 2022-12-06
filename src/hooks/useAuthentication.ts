@@ -14,7 +14,8 @@ const useAuthentication = () => {
   const email = getLocalStorage<string>(EmailKey);
 
   useEffect(() => {
-    if (!FreePath.includes(location.pathname) && (!accessToken || !email)) nav('/login');
+    if (!FreePath.includes(location.pathname) && (!accessToken || !email))
+      nav('/login?redirect=' + location.pathname);
   }, [accessToken, email, nav]);
 };
 

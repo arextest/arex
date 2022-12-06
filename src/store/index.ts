@@ -137,9 +137,7 @@ export const useStore = create(
     },
 
     logout: () => {
-      clearLocalStorage(AccessTokenKey);
-      clearLocalStorage(RefreshTokenKey);
-      clearLocalStorage(UserProfileKey);
+      localStorage.clear();
       set({ pages: [] });
     },
 

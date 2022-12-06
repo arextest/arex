@@ -34,8 +34,9 @@ const MainTabs = () => {
       'push',
     );
   };
-  const handleTabsEdit: any = (targetKey: string, action: 'add' | 'remove') => {
-    action === 'add' ? addTab() : removeTab(targetKey);
+
+  const handleTabsEdit: TabsProps['onEdit'] = (targetKey, action: 'add' | 'remove') => {
+    action === 'add' ? addTab() : removeTab(targetKey as string);
   };
 
   const removeTab = (targetKey: string) => {

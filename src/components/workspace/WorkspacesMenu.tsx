@@ -7,18 +7,16 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import { ArrowLeftOutlined } from '@ant-design/icons/lib';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Input, message, Modal, Select, Space, Upload } from 'antd';
-import React, { FC, useState } from 'react';
+import { Button, Input, message, Modal, Select, Upload } from 'antd';
+import React, { FC, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { EmailKey, EnvironmentKey, RoleEnum, RoleMap, WorkspaceKey } from '../../constant';
+import { EmailKey, RoleEnum, RoleMap, WorkspaceKey } from '../../constant';
 import { generateGlobalPaneId, getLocalStorage, setLocalStorage } from '../../helpers/utils';
 import { MenusType } from '../../menus';
 import { PagesType } from '../../pages';
-import EnvironmentService from '../../services/Environment.service';
 import { FileSystemService } from '../../services/FileSystem.service';
 import WorkspaceService from '../../services/Workspace.service';
 import { useStore } from '../../store';
@@ -52,8 +50,6 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     invitedWorkspaceId,
     setInvitedWorkspaceId,
     setPages,
-    setEnvironmentTreeData,
-    setCurrentEnvironment,
     resetPanes,
   } = useStore();
 
@@ -72,15 +68,25 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     {
       ready: !!email,
       onSuccess(data, _params) {
+        if (!data.length) {
+          return createWorkspace({
+            userName: email as string,
+            workspaceName: 'Default',
+          });
+        }
+
         setWorkspaces(data);
 
         let targetWorkspace = data[0];
-        const workspaceKeyLS = getLocalStorage<string>(WorkspaceKey);
-        const targetWorkspaceId = invitedWorkspaceId || workspaceKeyLS || _params[0];
+
+        const workspaceIdUrl = params.workspaceId;
+        const workspaceIdLS = getLocalStorage<string>(WorkspaceKey);
+        const targetWorkspaceId =
+          workspaceIdUrl || invitedWorkspaceId || workspaceIdLS || _params[0];
 
         if (targetWorkspaceId) {
           const workspace = data.find((workspace) => workspace.id === targetWorkspaceId);
-          workspace && (targetWorkspace = workspace);
+          workspace ? (targetWorkspace = workspace) : message.warning('无目标工作目录权限');
           invitedWorkspaceId && setInvitedWorkspaceId('');
         }
 
@@ -92,24 +98,6 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
         nav(
           `/${targetWorkspace.id}/workspace/${targetWorkspace.workspaceName}/workspaceOverview/${targetWorkspace.id}`,
         );
-      },
-    },
-  );
-
-  // TODO 需要应用载入时就获取环境变量，此处与envPage初始化有重复代码
-  useRequest(
-    () =>
-      EnvironmentService.getEnvironment({
-        workspaceId: params.workspaceId as string,
-      }),
-    {
-      ready: !!params.workspaceId,
-      refreshDeps: [params.workspaceId],
-      onSuccess(res) {
-        setEnvironmentTreeData(res);
-
-        const environmentKey = getLocalStorage<string>(EnvironmentKey);
-        environmentKey && setCurrentEnvironment(environmentKey);
       },
     },
   );

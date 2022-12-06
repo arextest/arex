@@ -10,7 +10,6 @@ import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../../constant';
 import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
 import { AuthService } from '../../services/Auth.service';
 import { UserService } from '../../services/User.service';
-import WorkspaceService from '../../services/Workspace.service';
 
 const Logo = styled(Typography.Text)`
   height: 64px;
@@ -76,28 +75,14 @@ const Login: FC = () => {
     sendVerifyCode(email);
   };
 
-  // 用户进入前初始化
-  const { run: listWorkspace } = useRequest(WorkspaceService.listWorkspace, {
-    manual: true,
-    onBefore(params) {
-      setLocalStorage(EmailKey, params[0].userName);
-    },
-    onSuccess(res, [{ userName }]) {
-      res.length
-        ? nav('/')
-        : createWorkspace({
-            userName,
-            workspaceName: 'Default',
-          });
-    },
-  });
+  const handleLoginSuccess = (email?: string) => {
+    const query = new URLSearchParams(location.search);
+    const redirect = query.get('redirect');
 
-  const { run: createWorkspace } = useRequest(WorkspaceService.createWorkspace, {
-    manual: true,
-    onFinally() {
-      nav('/');
-    },
-  });
+    setLocalStorage(EmailKey, email);
+
+    nav(redirect || '/');
+  };
 
   const { run: loginAsGuest } = useRequest(
     () => UserService.loginAsGuest({ userName: getLocalStorage<string>(EmailKey) }),
@@ -107,7 +92,7 @@ const Login: FC = () => {
         setLocalStorage(EmailKey, res.userName);
         setLocalStorage(AccessTokenKey, res.accessToken);
         setLocalStorage(RefreshTokenKey, res.refreshToken);
-        listWorkspace({ userName: res.userName });
+        handleLoginSuccess(res.userName);
       },
     },
   );
@@ -119,7 +104,7 @@ const Login: FC = () => {
         setLocalStorage(AccessTokenKey, res.data.body.accessToken);
         setLocalStorage(RefreshTokenKey, res.data.body.refreshToken);
         message.success('Login succeeded');
-        listWorkspace({ userName: email });
+        handleLoginSuccess(email);
       } else {
         message.error('Verification code error');
       }
@@ -128,12 +113,10 @@ const Login: FC = () => {
 
   const handleLogin = () => {
     setVerify(true);
-    if (!emailChecked || email == '') {
-      message.error('Please check your email');
-      return;
-    } else if (verificationCode == '') {
-      message.error('Please fill in the verification code');
-      return;
+    if (!emailChecked) {
+      return message.error('Please check your email');
+    } else if (verificationCode.length !== 6) {
+      return message.error('Please enter the verification code');
     }
 
     loginVerify({
@@ -148,7 +131,7 @@ const Login: FC = () => {
 
   return (
     <FlexCenterWrapper>
-      <Card style={{ marginBottom: '20%' }}>
+      <Card style={{ marginBottom: '20vh' }}>
         <Space size={26} direction='vertical'>
           <Logo>AREX</Logo>
 
