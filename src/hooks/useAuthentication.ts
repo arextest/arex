@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { AccessTokenKey, EmailKey } from '../constant';
 import { getLocalStorage } from '../helpers/utils';
-import { authPath } from '../router';
+import { FreePath } from '../router';
 
 // checkout if the user is logged in
 const useAuthentication = () => {
@@ -14,7 +14,7 @@ const useAuthentication = () => {
   const email = getLocalStorage<string>(EmailKey);
 
   useEffect(() => {
-    if (authPath.includes(location.pathname) && (!accessToken || !email)) nav('/login');
+    if (!FreePath.includes(location.pathname) && (!accessToken || !email)) nav('/login');
   }, [accessToken, email, nav]);
 };
 
