@@ -10,7 +10,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons/lib';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Input, message, Modal, Select, Upload } from 'antd';
+import { Button, Input, message, Modal, Select, Space, Upload } from 'antd';
 import React, { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -41,13 +41,6 @@ const WorkspacesMenuWrapper = styled.div<{ collapse?: boolean }>`
   overflow: hidden;
   color: ${(props) => props.theme.colorText};
   border-bottom: 1px solid ${(props) => props.theme.colorBorder};
-  & > div {
-    :first-of-type {
-      width: 100%;
-    }
-    display: flex;
-    align-items: center;
-  }
 `;
 
 const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
@@ -225,7 +218,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
               value={newWorkspaceName}
               status={status}
               onChange={(e) => setNewWorkspaceName(e.target.value)}
-              style={{ marginLeft: '10px', width: '80%' }}
+              style={{ width: '75%', margin: '0 8px' }}
             />
           ) : (
             <Select
@@ -249,25 +242,27 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
       <>
         {!props.collapse && (
           <>
-            <div>
+            <div style={{ display: 'flex' }}>
               {editMode ? (
-                <div>
+                <>
                   <TooltipButton icon={<CheckOutlined />} title='OK' onClick={handleAddWorkspace} />
                   <TooltipButton icon={<CloseOutlined />} title='Cancel' onClick={reset} />
-                </div>
+                </>
               ) : (
-                <TooltipButton
-                  icon={<PlusOutlined />}
-                  title='Add Workspace'
-                  onClick={() => setEditMode(true)}
-                />
+                <>
+                  <TooltipButton
+                    icon={<PlusOutlined />}
+                    title='Add Workspace'
+                    onClick={() => setEditMode(true)}
+                  />
+                  <TooltipButton
+                    icon={<EditOutlined />}
+                    title='Edit Workspace'
+                    onClick={handleEditWorkspace}
+                  />
+                </>
               )}
 
-              <TooltipButton
-                icon={<EditOutlined />}
-                title='Edit Workspace'
-                onClick={handleEditWorkspace}
-              />
               <TooltipButton icon={<UploadOutlined />} title='Import' onClick={viewImport} />
             </div>
 

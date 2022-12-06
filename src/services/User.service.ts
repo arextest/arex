@@ -1,7 +1,7 @@
 import request from '../helpers/api/axios';
 import { tryParseJsonString } from '../helpers/utils';
 import { State as UserProfile } from '../store/useUserProfile';
-import { LoginAsGuestRes } from './UserService.type';
+import { LoginAsGuestReq, LoginAsGuestRes } from './UserService.type';
 
 export class UserService {
   static async getUserProfile(email: string) {
@@ -12,8 +12,8 @@ export class UserService {
   static updateUserProfile(params: UserProfile) {
     return request.post(`/api/login/updateUserProfile`, params);
   }
-  static async loginAsGuest() {
-    const res = await request.post<LoginAsGuestRes>(`/api/login/loginAsGuest`, {});
+  static async loginAsGuest(params: LoginAsGuestReq) {
+    const res = await request.post<LoginAsGuestRes>(`/api/login/loginAsGuest`, params);
     return res.body;
   }
 }

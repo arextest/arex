@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { FlexCenterWrapper, Label } from '../../components/styledComponents';
 import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../../constant';
-import { setLocalStorage } from '../../helpers/utils';
+import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
 import { AuthService } from '../../services/Auth.service';
 import { UserService } from '../../services/User.service';
 import WorkspaceService from '../../services/Workspace.service';
@@ -99,15 +99,18 @@ const Login: FC = () => {
     },
   });
 
-  const { run: loginAsGuest } = useRequest(UserService.loginAsGuest, {
-    manual: true,
-    onSuccess(res) {
-      setLocalStorage(EmailKey, res.userName);
-      setLocalStorage(AccessTokenKey, res.accessToken);
-      setLocalStorage(RefreshTokenKey, res.refreshToken);
-      listWorkspace({ userName: res.userName });
+  const { run: loginAsGuest } = useRequest(
+    () => UserService.loginAsGuest({ userName: getLocalStorage<string>(EmailKey) }),
+    {
+      manual: true,
+      onSuccess(res) {
+        setLocalStorage(EmailKey, res.userName);
+        setLocalStorage(AccessTokenKey, res.accessToken);
+        setLocalStorage(RefreshTokenKey, res.refreshToken);
+        listWorkspace({ userName: res.userName });
+      },
     },
-  });
+  );
 
   const { run: loginVerify } = useRequest(AuthService.loginVerify, {
     manual: true,
