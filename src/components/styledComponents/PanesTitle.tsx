@@ -39,14 +39,15 @@ const PanesTitle = styled((props: PanesTitleProps) => {
             {title}
           </Typography.Title>
         )}
-        {editable && edit ? (
-          <Space>
-            <SmallTextButton icon={<CloseOutlined />} onClick={handleCancelEdit} />
-            <SmallTextButton icon={<CheckOutlined />} onClick={handleSaveEdit} />
-          </Space>
-        ) : (
-          <SmallTextButton icon={<EditOutlined />} onClick={() => setEdit(true)} />
-        )}
+        {editable &&
+          (edit ? (
+            <Space>
+              <SmallTextButton icon={<CloseOutlined />} onClick={handleCancelEdit} />
+              <SmallTextButton icon={<CheckOutlined />} onClick={handleSaveEdit} />
+            </Space>
+          ) : (
+            <SmallTextButton icon={<EditOutlined />} onClick={() => setEdit(true)} />
+          ))}
       </Space>
       {extra && <span>{extra}</span>}
     </div>
