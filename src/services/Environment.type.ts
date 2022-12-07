@@ -29,7 +29,7 @@ export interface GetEnvironmentReq {
 
 export type EnvironmentKeyValues = { key: string; value: string; active: boolean };
 export type Environment = {
-  envName?: string;
+  envName: string;
   id: string;
   keyValues?: EnvironmentKeyValues[];
   workspaceId?: string;

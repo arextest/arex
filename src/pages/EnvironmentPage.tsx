@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { MenuOutlined } from '@ant-design/icons';
+import { CloseOutlined, MenuOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
@@ -11,6 +10,7 @@ import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useParams } from 'react-router-dom';
 
+import { SmallTextButton } from '../components/styledComponents';
 import EnvironmentService from '../services/Environment.service';
 import { useStore } from '../store';
 import { PageFC } from './index';
@@ -180,7 +180,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
   return <td {...restProps}>{childNode}</td>;
 };
 
-const EnvironmentPage: PageFC = () => {
+const EnvironmentPage: PageFC = (props) => {
   const params = useParams();
   const { activeEnvironment, setEnvironmentTreeData, setActiveEnvironment } = useStore();
 
@@ -207,13 +207,12 @@ const EnvironmentPage: PageFC = () => {
       title: 'operation',
       width: '110px',
       colSpan: 0,
-      render: (text, record, index) => (
-        <a
+      render: (text, record) => (
+        <SmallTextButton
+          icon={<CloseOutlined />}
           className={record.keys !== rowActiveIndex ? 'hide' : ''}
           onClick={() => deleteEnvironmentItem(text)}
-        >
-          X
-        </a>
+        />
       ),
     },
   ];
@@ -362,6 +361,7 @@ const EnvironmentPage: PageFC = () => {
           margin-bottom: 10px;
         `}
       >
+        {/* TODO ADD EDIT MENUS */}
         <div>{title}</div>
         <div>
           <Button onClick={handleAdd}>Add</Button> <Button onClick={SaveEnvironment}>Save</Button>

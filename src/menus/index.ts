@@ -3,6 +3,7 @@ import { FC } from 'react';
 
 import CollectionMenu from './CollectionMenu';
 import EnvironmentMenu from './EnvironmentMenu';
+import NewEnvMenu from './NewEnvMenu';
 import ReplayMenu from './ReplayMenu';
 
 type MenuConfig = {
@@ -15,6 +16,7 @@ export enum MenusType {
   Collection = 'collection',
   Replay = 'replay',
   Environment = 'environment',
+  NewEnv = 'newEnv',
 }
 
 // TODO import ExtraConfig
@@ -36,6 +38,11 @@ const CommonConfig: MenuConfig[] = [
     title: MenusType.Environment,
     Icon: DeploymentUnitOutlined,
     Menu: EnvironmentMenu,
+  },
+  {
+    title: MenusType.NewEnv,
+    Icon: DeploymentUnitOutlined,
+    Menu: NewEnvMenu,
   },
 ];
 

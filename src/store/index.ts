@@ -3,14 +3,8 @@ import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import {
-  AccessTokenKey,
-  EmailKey,
-  EnvironmentKey,
-  RefreshTokenKey,
-  UserProfileKey,
-} from '../constant';
-import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
+import { EmailKey, EnvironmentKey } from '../constant';
+import { getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { MenusType } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
 import { PageType } from '../pages';
@@ -24,7 +18,8 @@ export type PageData =
   | undefined
   | nodeType // PageTypeEnum.Request 时的数据
   | ApplicationDataType // PageTypeEnum.Replay 时的数据
-  | PlanItemStatistics; // PageTypeEnum.ReplayAnalysis 时的数据
+  | PlanItemStatistics // PageTypeEnum.ReplayAnalysis 时的数据
+  | Environment;
 
 export type Page<D extends PageData = undefined> = {
   title: string;
