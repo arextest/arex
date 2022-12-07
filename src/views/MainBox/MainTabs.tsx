@@ -15,8 +15,15 @@ const MainTabs = () => {
   const nav = useNavigate();
   const params = useParams();
 
-  const { pages, activeMenu, setPages, setActiveMenu, environmentTreeData, collectionTreeData } =
-    useStore();
+  const {
+    pages,
+    activeMenu,
+    setPages,
+    removePage,
+    setActiveMenu,
+    environmentTreeData,
+    collectionTreeData,
+  } = useStore();
 
   const addTab = () => {
     const u = uuid();
@@ -36,24 +43,7 @@ const MainTabs = () => {
   };
 
   const handleTabsEdit: TabsProps['onEdit'] = (targetKey, action: 'add' | 'remove') => {
-    action === 'add' ? addTab() : removeTab(targetKey as string);
-  };
-
-  const removeTab = (targetKey: string) => {
-    const menuType = activeMenu[0];
-    const filteredPanes = pages.filter((i) => i.paneId !== targetKey);
-    setPages(filteredPanes);
-
-    if (filteredPanes.length) {
-      const lastPane = filteredPanes.reduce((pane, cur) => {
-        if ((cur.sortIndex || 0) > (pane.sortIndex || 0)) pane = cur;
-        return pane;
-      }, filteredPanes[0]);
-
-      setActiveMenu(lastPane.menuType, lastPane.paneId);
-    } else {
-      setActiveMenu(menuType);
-    }
+    action === 'add' ? addTab() : removePage(targetKey as string);
   };
 
   const genTabTitle = useCallback(
@@ -212,6 +202,7 @@ const MainTabsWrapper = styled((props: TabsProps) => {
     }
     .ant-tabs-nav-add {
       margin-left: -1px;
+      border-bottom-color: ${(props) => props.theme.colorBorderSecondary};
     }
   }
 

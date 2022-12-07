@@ -1,7 +1,7 @@
 import { Button, ButtonProps, Tooltip, TooltipProps } from 'antd';
 import { Breakpoint } from 'antd/es/_util/responsiveObserve';
 import useBreakpoint from 'antd/es/grid/hooks/useBreakpoint';
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 const TooltipButton: FC<
   ButtonProps & Pick<TooltipProps, 'title' | 'placement'> & { breakpoint?: Breakpoint }

@@ -22,7 +22,7 @@ function NewTestResult({ testResult }) {
         margin-bottom: 12px;
       `}
     >
-      {testResult.children.map((i,index) => {
+      {testResult.children.map((i, index) => {
         const isPass = i.expectResults.filter((i) => i.status === 'fail').length === 0 ? 0 : 1;
         const r = [
           {
@@ -58,7 +58,7 @@ function NewTestResult({ testResult }) {
               {r[isPass].text}
             </span>
             <span>{i.descriptor}</span>
-            {i.expectResults.map((e,index1) => {
+            {i.expectResults.map((e, index1) => {
               return (
                 <span
                   key={index1}
@@ -77,7 +77,7 @@ function NewTestResult({ testResult }) {
   );
 }
 const RunResult: FC<RunResultProps> = ({ result, loading }) => {
-  const { currentEnvironment } = useStore();
+  const { activeEnvironment } = useStore();
   const realResult = useMemo(() => {
     return result.filter((i) => i.children.filter((f) => f.testResult).length > 0);
   }, [result]);
@@ -85,7 +85,7 @@ const RunResult: FC<RunResultProps> = ({ result, loading }) => {
     // 正则匹配{{}}
     const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
     let replaceVar = editorValueMatch[0];
-    const env = currentEnvironment?.keyValues || [];
+    const env = activeEnvironment?.keyValues || [];
     for (let i = 0; i < env.length; i++) {
       if (env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')) {
         replaceVar = env[i].value;
@@ -97,7 +97,7 @@ const RunResult: FC<RunResultProps> = ({ result, loading }) => {
   return (
     <Spin spinning={loading}>
       {realResult.length > 0 ? (
-        realResult.map((resultItem,index) => (
+        realResult.map((resultItem, index) => (
           <div key={index}>
             <div
               css={css`
@@ -143,7 +143,7 @@ const RunResult: FC<RunResultProps> = ({ result, loading }) => {
             >
               {resultItem.children
                 .filter((i) => i.testResult)
-                .map((testResultItem,index2) => {
+                .map((testResultItem, index2) => {
                   return (
                     <div key={index2}>
                       <div

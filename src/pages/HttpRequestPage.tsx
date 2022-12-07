@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { css } from '@emotion/react';
+import React, { css } from '@emotion/react';
 import { message } from 'antd';
 import { useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -24,14 +23,14 @@ export type KeyValueType = {
 };
 
 const HttpRequestPage: PageFC = (props) => {
-  const { collectionTreeData, setPages, pages, activeEnvironment, currentEnvironment } = useStore();
+  const { collectionTreeData, setPages, pages, activeEnvironment } = useStore();
   const { workspaceId } = useParams();
   const { darkMode } = useUserProfile();
   const env = useMemo(() => {
-    if (currentEnvironment) {
+    if (activeEnvironment) {
       return {
-        name: currentEnvironment.envName,
-        variables: currentEnvironment.keyValues,
+        name: activeEnvironment.envName,
+        variables: activeEnvironment.keyValues,
       };
     } else {
       return {
@@ -39,7 +38,7 @@ const HttpRequestPage: PageFC = (props) => {
         variables: [],
       };
     }
-  }, [currentEnvironment]);
+  }, [activeEnvironment]);
   const id = useMemo(() => parseGlobalPaneId(props.page.paneId)['rawId'], [props.page.paneId]);
 
   const [reqParams, setReqParams] = useState({});
@@ -92,7 +91,7 @@ const HttpRequestPage: PageFC = (props) => {
                 saveRequestButtonRef.current.open();
               } else if (nodeType === 1) {
                 FileSystemService.saveInterface({
-                  workspaceId: workspaceId,
+                  workspaceId,
                   id: id,
                   address: {
                     endpoint: e.payload.endpoint,
@@ -113,7 +112,7 @@ const HttpRequestPage: PageFC = (props) => {
                 });
               } else if (nodeType === 2) {
                 FileSystemService.saveCase({
-                  workspaceId: workspaceId,
+                  workspaceId,
                   id: id,
                   address: {
                     endpoint: e.payload.endpoint,

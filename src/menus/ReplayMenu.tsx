@@ -1,6 +1,4 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
-import { FC, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 
 import MenuSelect from '../components/MenuSelect';
 import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';

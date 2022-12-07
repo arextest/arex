@@ -1,6 +1,7 @@
 import { SettingOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Avatar, Divider, Dropdown, Typography } from 'antd';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { EmailKey } from '../../constant';
@@ -43,10 +44,10 @@ const AppHeader = () => {
   const handleSetting = () => {
     setPages(
       {
-        // key: '__SETTING__',
         title: 'Setting',
         pageType: PagesType.Setting,
         isNew: false,
+        data: undefined,
         paneId: generateGlobalPaneId('-', PagesType.Setting, 'SETTING'),
         rawId: 'SETTING',
       },

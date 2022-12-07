@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Divider } from 'antd';
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 import CheckOrCloseIcon from '../styledComponents/CheckOrCloseIcon';
 
