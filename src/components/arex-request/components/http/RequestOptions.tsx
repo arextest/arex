@@ -1,12 +1,15 @@
 import { css } from '@emotion/react';
 import { Badge, Tabs, Tag } from 'antd';
-import { useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import axios from '../../../../helpers/api/axios';
+import ExtraRequestTabItemMock from '../../extra/ExtraRequestTabItemMock';
 import { HttpContext } from '../../index';
 import HttpBody from './Body';
 import HttpHeaders from './Headers';
 import HttpParameters from './Parameters';
+import HttpPreRequestScript from './PreRequestScript';
 import HttpTests from './Tests';
 const HttpRequestOptions = () => {
   const { store } = useContext(HttpContext);
@@ -20,9 +23,7 @@ const HttpRequestOptions = () => {
           {t('tab.parameters')}{' '}
           <Tag
             css={css`
-              display: ${store.request.params.length > 0
-                ? 'inline-block'
-                : 'none'};
+              display: ${store.request.params.length > 0 ? 'inline-block' : 'none'};
             `}
           >
             {store.request.params.length}
@@ -38,9 +39,7 @@ const HttpRequestOptions = () => {
           {t('tab.headers')}{' '}
           <Tag
             css={css`
-              display: ${store.request.headers.length > 0
-                ? 'inline-block'
-                : 'none'};
+              display: ${store.request.headers.length > 0 ? 'inline-block' : 'none'};
             `}
           >
             {store.request.headers.length}
@@ -52,6 +51,16 @@ const HttpRequestOptions = () => {
     },
     { label: t('tab.body'), key: '3', children: <HttpBody /> },
     { label: t('tab.tests'), key: '4', children: <HttpTests /> },
+    {
+      key: 'pre-requestScript',
+      label: 'Pre-request Script',
+      children: <HttpPreRequestScript />,
+    },
+    {
+      label: 'Mock',
+      key: '__mock__',
+      children: <ExtraRequestTabItemMock requestAxios={axios} recordId={store.request.recordId} />,
+    },
   ];
   return (
     <div
