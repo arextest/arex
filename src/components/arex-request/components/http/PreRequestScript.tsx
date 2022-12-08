@@ -1,22 +1,31 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { useImmer } from 'use-immer';
 
 import { uuid } from '../../../../helpers/utils';
 import { PreRequestScript } from '../../../index';
 import { reorder, ScriptBlock, ScriptBlocks } from '../../../PreRequestScript';
 import { PreRequestScriptProps } from '../../../PreRequestScript/PreRequestScript';
+import { HttpContext } from '../../index';
 
 const HttpPreRequestScript = () => {
   const [items, setItems] = useImmer<ScriptBlock<string>[]>([]);
+  const { store, dispatch } = useContext(HttpContext);
 
-  const handleAdd: PreRequestScriptProps<string>['onAdd'] = (key) => {
+  useEffect(() => {
+    dispatch({
+      type: 'request.preRequestScript',
+      payload: items.map((i) => i.data).join('\n'),
+    });
+  }, [items]);
+
+  const handleAdd: PreRequestScriptProps<string>['onAdd'] = (key, initData = '') => {
     const block = ScriptBlocks.find((block) => block.key === key);
     const data: ScriptBlock<string> = {
       key: uuid(),
       type: block!.type,
       icon: block!.icon,
       label: block!.label,
-      data: '',
+      data: initData,
       disabled: false,
     };
     const state = items.concat(data);
@@ -51,14 +60,16 @@ const HttpPreRequestScript = () => {
   };
 
   return (
-    <PreRequestScript
-      value={items}
-      onAdd={handleAdd}
-      onDelete={handleDelete}
-      onDrag={handleDrag}
-      onChange={handlePreRequestScriptChange}
-      onSave={handleSave}
-    />
+    <div>
+      <PreRequestScript
+        value={items}
+        onAdd={handleAdd}
+        onDelete={handleDelete}
+        onDrag={handleDrag}
+        onChange={handlePreRequestScriptChange}
+        onSave={handleSave}
+      />
+    </div>
   );
 };
 

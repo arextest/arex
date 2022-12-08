@@ -61,7 +61,13 @@ const HttpRequestOptions = () => {
       key: '__mock__',
       children: <ExtraRequestTabItemMock requestAxios={axios} recordId={store.request.recordId} />,
     },
-  ];
+  ].filter((i) => {
+    if (i.key === '__mock__') {
+      return !!store.request.recordId;
+    } else {
+      return true;
+    }
+  });
   return (
     <div
       css={css`
