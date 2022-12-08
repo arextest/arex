@@ -225,7 +225,13 @@ const EmptyWrapper = styled(
     const { empty, emptyContent, children, ...restProps } = props;
     return (
       <div {...restProps}>
-        {empty ? <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}>{emptyContent}</Empty> : children}
+        {empty ? (
+          <Empty description={false} image={Empty.PRESENTED_IMAGE_SIMPLE}>
+            {emptyContent}
+          </Empty>
+        ) : (
+          children
+        )}
       </div>
     );
   },
