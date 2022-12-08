@@ -3,7 +3,7 @@ import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import { EmailKey, EnvironmentKey } from '../constant';
+import { EmailKey } from '../constant';
 import { getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { MenusType } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
@@ -36,9 +36,6 @@ export type Page<D extends PageData = undefined> = {
 type ActiveMenu = [MenusType | undefined, string | undefined]; // [菜单id, 菜单项目id]
 type SetPagesMode = 'push' | 'normal';
 type BaseState = {
-  userInfo: {
-    email: string;
-  };
   logout: () => void;
 
   activeMenu: ActiveMenu;
@@ -85,9 +82,6 @@ type BaseState = {
  */
 export const useStore = create(
   immer<BaseState>((set, get) => ({
-    userInfo: {
-      email: 'string',
-    },
     pages: [],
     setPages: (pages, mode: SetPagesMode = 'normal') => {
       if (mode === 'normal') {

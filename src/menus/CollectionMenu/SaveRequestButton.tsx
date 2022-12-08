@@ -3,11 +3,11 @@ import { Form, Input, Modal, Select, TreeSelect, Typography } from 'antd';
 import { FC, forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ContentTypeEnum } from '../../constant';
+import { ContentTypeEnum, EmailKey } from '../../constant';
 import { treeFindPath } from '../../helpers/collection/util';
+import { getLocalStorage } from '../../helpers/utils';
 import { CollectionService } from '../../services/CollectionService';
 import { FileSystemService } from '../../services/FileSystem.service';
-import { useStore } from '../../store';
 const { Text } = Typography;
 
 type SaveRequestButtonProps = {
@@ -42,9 +42,8 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = (
   ref,
 ) => {
   const _useParams = useParams();
-  const {
-    userInfo: { email: userName },
-  } = useStore();
+  const userName = getLocalStorage<string>(EmailKey);
+
   const [form] = Form.useForm();
   const [value, setValue] = useState<string>();
   const [open, setOpen] = useState<boolean>(false);
