@@ -1,7 +1,7 @@
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Breadcrumb, Button, Dropdown, Menu, MenuProps, Select } from 'antd';
+import { Breadcrumb, Button, Dropdown, Menu, MenuProps, message, Select } from 'antd';
 import { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -27,36 +27,52 @@ const HeaderWrapper = styled.div`
 
 const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
-const HttpRequest = ({ currentRequestId, onEdit, onSend }:any) => {
+const HttpRequest = ({ currentRequestId, onEdit, onSend }: any) => {
   const { store, dispatch } = useContext(HttpContext);
 
   const { t } = useTranslation();
   const onMenuClick: MenuProps['onClick'] = (e) => {
-    console.log(1)
+    console.log(1);
   };
 
-  const menu = (
-    <Menu
-      onClick={onMenuClick}
-      items={[
-        {
-          key: '1',
-          label: 'Send C',
-        },
-      ]}
-    />
-  );
+  const menu: MenuProps['items'] = [
+    {
+      label: 'Send Compare',
+      key: '1',
+      disabled:true
+    },
+  ];
 
-  const handleRequest = ({ type }:any) => {
-    console.log({ type });
+  function checkRequestParams(requestParams: any) {
+    const { body } = requestParams;
+    if (body.contentType === 'application/json') {
+      try {
+        JSON.parse(body.body || '{}');
+      } catch (e) {
+        return {
+          error: true,
+          msg: 'json format error',
+        };
+      }
+    }
+    return {
+      error: false,
+      msg: '',
+    };
+  }
+
+  const handleRequest = ({ type }: any) => {
+    if (checkRequestParams(store.request).error) {
+      message.error(checkRequestParams(store.request).msg);
+      return;
+    }
+
     const urlPretreatment = (url: string) => {
       const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
       let replaceVar = editorValueMatch[0];
       const env = store.environment?.variables || [];
       for (let i = 0; i < env.length; i++) {
-        if (
-          env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')
-        ) {
+        if (env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')) {
           replaceVar = env[i].value;
         }
       }
@@ -71,7 +87,7 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend }:any) => {
     const start = new Date().getTime();
 
     if (type === 'compare') {
-      console.log(1)
+      console.log(1);
     } else {
       onSend({
         request: {
@@ -102,8 +118,7 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend }:any) => {
         dispatch({
           type: 'response.meta',
           payload: {
-            responseSize: JSON.stringify(agentAxiosAndTest.response.data)
-              .length,
+            responseSize: JSON.stringify(agentAxiosAndTest.response.data).length,
             responseDuration: new Date().getTime() - start,
           },
         });
@@ -129,12 +144,9 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend }:any) => {
         `}
       >
         <Breadcrumb style={{ paddingBottom: '14px' }}>
-          {treeFindPath(
-            store.collectionTreeData,
-            (node:any) => {
-              return node.id === currentRequestId
-            }
-          ).map((i:any, index:number) => (
+          {treeFindPath(store.collectionTreeData, (node: any) => {
+            return node.id === currentRequestId;
+          }).map((i: any, index: number) => (
             <Breadcrumb.Item key={index}>{i.title}</Breadcrumb.Item>
           ))}
         </Breadcrumb>
@@ -176,10 +188,15 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend }:any) => {
           `}
         >
           <Dropdown.Button
-            type="primary"
-            onClick={() => handleRequest({ type: null })}
-            overlay={menu}
+            type='primary'
+            menu={{
+              items: menu,
+              onClick: function (e) {
+                console.log('click', e);
+              },
+            }}
             icon={<DownOutlined />}
+            onClick={() => handleRequest({ type: null })}
           >
             {t('action.send')}
           </Dropdown.Button>

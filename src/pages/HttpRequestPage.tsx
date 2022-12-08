@@ -51,7 +51,7 @@ const HttpRequestPage: PageFC = (props) => {
         (node) => node.key === parseGlobalPaneId(props.page.paneId)['rawId'],
       )?.nodeType || 1
     );
-  }, [props.page.paneId]);
+  }, [props.page.paneId, collectionTreeData]);
 
   return (
     <div
@@ -73,6 +73,9 @@ const HttpRequestPage: PageFC = (props) => {
         `}
       >
         <Http
+          value={{
+            url:''
+          }}
           currentRequestId={id}
           onEdit={(e) => {
             if (e.type === 'retrieve') {
@@ -101,6 +104,7 @@ const HttpRequestPage: PageFC = (props) => {
                   headers: e.payload.headers,
                   params: e.payload.params,
                   testScript: e.payload.testScript,
+                  preRequestScript: e.payload.preRequestScript,
                   testAddress: {
                     endpoint: e.payload.compareEndpoint,
                     method: e.payload.compareMethod,
@@ -122,6 +126,7 @@ const HttpRequestPage: PageFC = (props) => {
                   headers: e.payload.headers,
                   params: e.payload.params,
                   testScript: e.payload.testScript,
+                  preRequestScript: e.payload.preRequestScript,
                   testAddress: {
                     endpoint: e.payload.compareEndpoint,
                     method: e.payload.compareMethod,

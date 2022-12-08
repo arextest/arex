@@ -63,7 +63,7 @@ function PreRequestScript<T>(props: PreRequestScriptProps<T>) {
       <AddScriptBlockButton onAdd={props.onAdd} />
     </div>
   ) : (
-    <FlexCenterWrapper style={{ minHeight: '400px' }}>
+    <FlexCenterWrapper style={{ minHeight: '200px' }}>
       <Empty description={<AddScriptBlockButton onAdd={props.onAdd} />} />
     </FlexCenterWrapper>
   );
