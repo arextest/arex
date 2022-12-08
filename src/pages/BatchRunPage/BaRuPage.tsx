@@ -16,12 +16,12 @@ import { useStore } from '../../store';
 import RunResult from './RunResult';
 
 const BaRuPage: React.FC = () => {
-  const { currentEnvironment } = useStore();
+  const { activeEnvironment } = useStore();
   const urlPretreatment = (url: string) => {
     // 正则匹配{{}}
     const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
     let replaceVar = editorValueMatch[0];
-    const env = currentEnvironment?.keyValues || [];
+    const env = activeEnvironment?.keyValues || [];
     for (let i = 0; i < env.length; i++) {
       if (env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')) {
         replaceVar = env[i].value;

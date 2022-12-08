@@ -3,14 +3,8 @@ import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import {
-  AccessTokenKey,
-  EmailKey,
-  EnvironmentKey,
-  RefreshTokenKey,
-  UserProfileKey,
-} from '../constant';
-import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
+import { EmailKey } from '../constant';
+import { getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { MenusType } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
 import { PageType } from '../pages';
@@ -24,7 +18,8 @@ export type PageData =
   | undefined
   | nodeType // PageTypeEnum.Request 时的数据
   | ApplicationDataType // PageTypeEnum.Replay 时的数据
-  | PlanItemStatistics; // PageTypeEnum.ReplayAnalysis 时的数据
+  | PlanItemStatistics // PageTypeEnum.ReplayAnalysis 时的数据
+  | Environment;
 
 export type Page<D extends PageData = undefined> = {
   title: string;
@@ -32,7 +27,7 @@ export type Page<D extends PageData = undefined> = {
   menuType?: MenusType;
   pageType: PageType<string>;
   isNew?: boolean;
-  data?: D;
+  data: D;
   sortIndex?: number;
   paneId: string;
   rawId: React.Key;
@@ -41,9 +36,6 @@ export type Page<D extends PageData = undefined> = {
 type ActiveMenu = [MenusType | undefined, string | undefined]; // [菜单id, 菜单项目id]
 type SetPagesMode = 'push' | 'normal';
 type BaseState = {
-  userInfo: {
-    email: string;
-  };
   logout: () => void;
 
   activeMenu: ActiveMenu;
@@ -59,11 +51,11 @@ type BaseState = {
     pages: M extends 'push' ? Page<D> : Page<D>[],
     mode?: M,
   ) => void;
+  removePage: (removePaneId: string) => void;
   resetPanes: () => void;
 
   collectionTreeData: NodeList[];
   setCollectionTreeData: (collectionTreeData: NodeList[]) => void;
-
   collectionLastManualUpdateTimestamp: number;
   setCollectionLastManualUpdateTimestamp: (timestamp: number) => void;
 
@@ -75,12 +67,11 @@ type BaseState = {
 
   environmentTreeData: Environment[];
   setEnvironmentTreeData: (environmentTreeData: Environment[]) => void;
+  environmentLastManualUpdateTimestamp: number;
+  setEnvironmentLastManualUpdateTimestamp: (timestamp: number) => void;
 
   activeEnvironment?: Environment;
   setActiveEnvironment: (environment: Environment | string) => void;
-
-  currentEnvironment?: Environment;
-  setCurrentEnvironment: (currentEnvironment: Environment | string) => void;
 };
 
 /**
@@ -91,9 +82,6 @@ type BaseState = {
  */
 export const useStore = create(
   immer<BaseState>((set, get) => ({
-    userInfo: {
-      email: 'string',
-    },
     pages: [],
     setPages: (pages, mode: SetPagesMode = 'normal') => {
       if (mode === 'normal') {
@@ -119,6 +107,22 @@ export const useStore = create(
           // state.activePane = page.paneId;
           state.activeMenu = [page.menuType || MenusType.Collection, page.paneId];
         });
+      }
+    },
+    removePage(removePaneId) {
+      const menuType = get().activeMenu[0];
+      const filteredPanes = get().pages.filter((i) => i.paneId !== removePaneId);
+      get().setPages(filteredPanes);
+
+      if (filteredPanes.length) {
+        const lastPane = filteredPanes.reduce((pane, cur) => {
+          if ((cur.sortIndex || 0) > (pane.sortIndex || 0)) pane = cur;
+          return pane;
+        }, filteredPanes[0]);
+
+        get().setActiveMenu(lastPane.menuType, lastPane.paneId);
+      } else {
+        get().setActiveMenu(menuType);
       }
     },
 
@@ -165,6 +169,10 @@ export const useStore = create(
 
     environmentTreeData: [],
     setEnvironmentTreeData: (environmentTreeData) => set({ environmentTreeData }),
+    environmentLastManualUpdateTimestamp: new Date().getTime(),
+    setEnvironmentLastManualUpdateTimestamp: (timestamp) => {
+      set({ environmentLastManualUpdateTimestamp: timestamp });
+    },
 
     activeEnvironment: undefined,
     setActiveEnvironment: (environment) => {
@@ -175,20 +183,6 @@ export const useStore = create(
         });
       } else {
         set({ activeEnvironment: environment });
-      }
-    },
-
-    currentEnvironment: { id: '0', envName: '', keyValues: [] },
-    setCurrentEnvironment: (environment) => {
-      setLocalStorage(EnvironmentKey, environment);
-
-      if (environment !== '0') {
-        const environmentTreeData = get().environmentTreeData;
-        set({
-          currentEnvironment: environmentTreeData.find((i) => i.id === environment),
-        });
-      } else {
-        set({ currentEnvironment: { id: '0', envName: '', keyValues: [] } });
       }
     },
   })),

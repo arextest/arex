@@ -1,19 +1,95 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
-import { FC, useMemo } from 'react';
+import { HeartFilled, HeartOutlined } from '@ant-design/icons';
+import styled from '@emotion/styled';
+import { useRequest, useToggle } from 'ahooks';
+import { theme } from 'antd';
+import React, { FC, useCallback, useMemo } from 'react';
 
+import { TooltipButton } from '../components';
 import MenuSelect from '../components/MenuSelect';
-import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
+import { SpaceBetweenWrapper } from '../components/styledComponents';
+import { EmailKey } from '../constant';
+import { generateGlobalPaneId, getLocalStorage, parseGlobalPaneId } from '../helpers/utils';
 import { PagesType } from '../pages';
 import ReplayService from '../services/Replay.service';
 import { ApplicationDataType } from '../services/Replay.type';
+import { UserService } from '../services/User.service';
 import { useStore } from '../store';
 import { MenusType } from './index';
 
+type MenuItemProps = {
+  app: ApplicationDataType;
+  favoriteApps?: string[];
+  onFavoriteAppsChange?: () => void;
+};
+const MenuItem = styled((props: MenuItemProps) => {
+  const { app, favoriteApps = [], onFavoriteAppsChange, ...restProps } = props;
+  const { token } = theme.useToken();
+  const email = getLocalStorage<string>(EmailKey) as string;
+
+  const { run: favoriteApp } = useRequest(
+    () => UserService.favoriteApp({ userName: email, favoriteApp: app.id }),
+    {
+      manual: true,
+      onSuccess(res) {
+        res && onFavoriteAppsChange?.();
+      },
+    },
+  );
+
+  const { run: unFavoriteApp } = useRequest(
+    () => UserService.unFavoriteApp({ userName: email, favoriteApp: app.id }),
+    {
+      manual: true,
+      onSuccess(res) {
+        res && onFavoriteAppsChange?.();
+      },
+    },
+  );
+
+  return (
+    <SpaceBetweenWrapper {...restProps}>
+      <span>{app.appId}</span>
+      <span className='menu-item-heart' onClick={(e) => e.stopPropagation()}>
+        {favoriteApps.includes(app.id) ? (
+          <HeartFilled onClick={unFavoriteApp} style={{ color: token.colorError }} />
+        ) : (
+          <HeartOutlined className='menu-item-heart-outlined' onClick={favoriteApp} />
+        )}
+      </span>
+    </SpaceBetweenWrapper>
+  );
+})`
+  .menu-item-heart {
+    padding-right: 8px;
+    .menu-item-heart-outlined {
+      display: none;
+      transition: all 0.3s;
+    }
+  }
+
+  &:hover {
+    .menu-item-heart-outlined {
+      display: inherit;
+    }
+  }
+`;
+
 const ReplayMenu: FC = () => {
+  const { token } = theme.useToken();
   const { activeMenu, setPages } = useStore();
+  const [favoriteFilter, { toggle: toggleFavoriteFilter }] = useToggle(false);
+
   const value = useMemo(() => parseGlobalPaneId(activeMenu[1])['rawId'], [activeMenu]);
   const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
+
+  const { data: favoriteApps, run: getFavoriteApps } = useRequest(
+    () => UserService.getFavoriteApp(getLocalStorage<string>(EmailKey) as string),
+    {
+      onSuccess(favoriteApps) {
+        console.log(favoriteApps);
+      },
+    },
+  );
 
   const handleReplayMenuClick = (app: ApplicationDataType) => {
     setPages(
@@ -30,23 +106,47 @@ const ReplayMenu: FC = () => {
     );
   };
 
+  const filter = useCallback(
+    (keyword: string, app: ApplicationDataType) =>
+      favoriteFilter
+        ? !!favoriteApps?.includes(app.id) &&
+          (app.appName.includes(keyword) || app.appId.includes(keyword))
+        : app.appName.includes(keyword) || app.appId.includes(keyword),
+    [favoriteFilter, favoriteApps],
+  );
+
   return (
     <MenuSelect<ApplicationDataType>
       small
       refresh
+      forceFilter
       rowKey='id'
       initValue={value}
       selectedKeys={selectedKeys}
+      prefix={
+        <TooltipButton
+          title='Filter Favorite Apps'
+          icon={
+            favoriteFilter ? <HeartFilled style={{ color: token.colorError }} /> : <HeartOutlined />
+          }
+          onClick={toggleFavoriteFilter}
+        />
+      }
       onSelect={handleReplayMenuClick}
       placeholder='applicationsMenu.appFilterPlaceholder'
       request={ReplayService.regressionList}
-      filter={(keyword, app) => app.appName.includes(keyword) || app.appId.includes(keyword)}
+      filter={filter}
       itemRender={(app) => ({
-        label: app.appId,
+        label: (
+          <MenuItem app={app} favoriteApps={favoriteApps} onFavoriteAppsChange={getFavoriteApps} />
+        ),
         key: app.id,
       })}
       sx={{
         padding: '8px 0',
+        '.ant-menu-item': {
+          paddingInlineEnd: 0, // 防止在 padding 范围内导致 :hover 失效
+        },
       }}
     />
   );

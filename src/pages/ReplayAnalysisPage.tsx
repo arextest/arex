@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useAsyncEffect } from 'ahooks';
 import { Button, Card, Space, Tag } from 'antd';
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 
 import { Analysis } from '../components/replay';
 import DiffJsonView, { DiffJsonViewProps } from '../components/replay/DiffJsonView';

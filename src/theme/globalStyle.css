@@ -1,3 +1,7 @@
+body{
+  overflow: hidden;
+}
+
 #root,
 #root > .ant-layout,
 #root > .ant-layout > .ant-layout-content {

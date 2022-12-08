@@ -4,8 +4,9 @@ import { Avatar, Button, Divider, Form, Input, List, Popconfirm, Space, Typograp
 import { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { RoleEnum } from '../constant';
+import { EmailKey, RoleEnum } from '../constant';
 import request from '../helpers/api/axios';
+import { getLocalStorage } from '../helpers/utils';
 import WorkspaceService from '../services/Workspace.service';
 import { useStore } from '../store';
 
@@ -14,11 +15,8 @@ const { Text } = Typography;
 const WorkspaceOverviewPage: FC = () => {
   const params = useParams();
   const nav = useNavigate();
-  const {
-    userInfo: { email: userName },
-    workspaces,
-    resetPanes,
-  } = useStore();
+  const { workspaces, resetPanes } = useStore();
+  const userName = getLocalStorage<string>(EmailKey);
 
   const onFinish = (values: any) => {
     WorkspaceService.renameWorkspace({

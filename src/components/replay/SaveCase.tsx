@@ -3,8 +3,10 @@ import { Form, Input, Modal, notification, TreeSelect, Typography } from 'antd';
 import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { EmailKey } from '../../constant';
 import request from '../../helpers/api/axios';
 import { treeFindPath } from '../../helpers/collection/util';
+import { getLocalStorage } from '../../helpers/utils';
 import { ReplayCase as ReplayCaseType } from '../../services/Replay.type';
 import { useStore } from '../../store';
 
@@ -16,10 +18,7 @@ export type SaveCaseRef = {
 
 const SaveCase = forwardRef<SaveCaseRef>((props, ref) => {
   const params = useParams();
-  const {
-    userInfo: { email: userName },
-    collectionTreeData,
-  } = useStore();
+  const { collectionTreeData } = useStore();
   const [form] = Form.useForm();
   const [value, setValue] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
@@ -66,7 +65,7 @@ const SaveCase = forwardRef<SaveCaseRef>((props, ref) => {
           ),
           nodeName: values.caseName,
           recordId: values.recordId,
-          userName: userName,
+          userName: getLocalStorage<string>(EmailKey),
         })
         .then((res) => {
           if (res?.body?.success) {

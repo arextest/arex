@@ -29,7 +29,7 @@ const EnvironmentSelectWrapper = styled.div`
 
 const EnvironmentSelect = () => {
   const params = useParams();
-  const { currentEnvironment, setCurrentEnvironment, environmentTreeData, setEnvironmentTreeData } =
+  const { activeEnvironment, setActiveEnvironment, environmentTreeData, setEnvironmentTreeData } =
     useStore();
 
   useRequest(
@@ -44,18 +44,14 @@ const EnvironmentSelect = () => {
         setEnvironmentTreeData(res);
 
         const environmentKey = getLocalStorage<string>(EnvironmentKey);
-        environmentKey && setCurrentEnvironment(environmentKey);
+        environmentKey && setActiveEnvironment(environmentKey);
       },
     },
   );
+
   return (
-    <EnvironmentSelectWrapper id='environment-select'>
-      <Select
-        bordered={false}
-        value={currentEnvironment?.id}
-        getPopupContainer={() => document.getElementById('environment-select') as HTMLElement}
-        onChange={setCurrentEnvironment}
-      >
+    <EnvironmentSelectWrapper>
+      <Select bordered={false} value={activeEnvironment?.id} onChange={setActiveEnvironment}>
         <Option value='0'>No Environment</Option>
         {environmentTreeData?.map((e) => (
           <Option key={e.id} value={e.id}>

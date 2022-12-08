@@ -8,3 +8,13 @@ export interface LoginAsGuestRes {
   accessToken: string;
   refreshToken: string;
 }
+
+export interface UserFavoriteAppRes {
+  userName: string;
+  favoriteApps: string[];
+}
+
+export interface FavoriteAppReq {
+  userName: string;
+  favoriteApp: string;
+}

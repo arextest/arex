@@ -5,7 +5,7 @@ const SmallTextButton = styled((props: ButtonProps) => (
   <Button type='text' size='small' {...props}>
     {props.title}
   </Button>
-))<{ title: string } & ButtonProps>`
+))<{ title?: string } & ButtonProps>`
   color: ${(props) => props.theme.colorPrimary}!important;
 `;
 
