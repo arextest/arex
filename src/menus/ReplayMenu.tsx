@@ -77,19 +77,18 @@ const MenuItem = styled((props: MenuItemProps) => {
 const ReplayMenu: FC = () => {
   const { token } = theme.useToken();
   const { activeMenu, setPages } = useStore();
+  const email = getLocalStorage<string>(EmailKey) as string;
+
   const [favoriteFilter, { toggle: toggleFavoriteFilter }] = useToggle(false);
 
   const value = useMemo(() => parseGlobalPaneId(activeMenu[1])['rawId'], [activeMenu]);
   const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
 
-  const { data: favoriteApps, run: getFavoriteApps } = useRequest(
-    () => UserService.getFavoriteApp(getLocalStorage<string>(EmailKey) as string),
-    {
-      onSuccess(favoriteApps) {
-        console.log(favoriteApps);
-      },
-    },
-  );
+  const {
+    data: favoriteApps,
+    loading: loadingFavoriteApp,
+    run: getFavoriteApps,
+  } = useRequest(() => UserService.getFavoriteApp(email));
 
   const handleReplayMenuClick = (app: ApplicationDataType) => {
     setPages(
@@ -115,6 +114,21 @@ const ReplayMenu: FC = () => {
     [favoriteFilter, favoriteApps],
   );
 
+  /**
+   * 无效的 FavoriteApp 回收策略
+   * 1. 当 regressionList 接口响应慢于 getFavoriteApp 接口: 概率触发
+   * 2. 当手动刷新 regressionList 接口: 稳定触发
+   * @param apps
+   */
+  const recycleDiscard = (apps: ApplicationDataType[]) => {
+    const discard = favoriteApps?.filter((id) => apps.findIndex((app) => app.id === id) < 0);
+    if (discard?.length) {
+      Promise.all(
+        discard.map((id) => UserService.unFavoriteApp({ userName: email, favoriteApp: id })),
+      ).then((res) => res.length && getFavoriteApps());
+    }
+  };
+
   return (
     <MenuSelect<ApplicationDataType>
       small
@@ -135,6 +149,11 @@ const ReplayMenu: FC = () => {
       onSelect={handleReplayMenuClick}
       placeholder='applicationsMenu.appFilterPlaceholder'
       request={ReplayService.regressionList}
+      requestOptions={{
+        onSuccess(res) {
+          !loadingFavoriteApp && recycleDiscard(res);
+        },
+      }}
       filter={filter}
       itemRender={(app) => ({
         label: (
