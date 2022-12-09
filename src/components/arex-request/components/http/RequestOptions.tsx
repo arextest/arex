@@ -5,14 +5,14 @@ import { useTranslation } from 'react-i18next';
 
 import axios from '../../../../helpers/api/axios';
 import ExtraRequestTabItemMock from '../../extra/ExtraRequestTabItemMock';
-import { HttpContext } from '../../index';
+import { useHttpRequestStore } from '../../store/useHttpRequestStore';
 import HttpBody from './Body';
 import HttpHeaders from './Headers';
 import HttpParameters from './Parameters';
 import HttpPreRequestScript from './PreRequestScript';
 import HttpTests from './Tests';
-const HttpRequestOptions = () => {
-  const { store } = useContext(HttpContext);
+const HttpRequestOptions = ({ config }) => {
+  const { headers, setHttpRequestStore, params } = useHttpRequestStore();
   const { t } = useTranslation();
   const [activeKey, setActiveKey] = useState('3');
 
@@ -23,10 +23,10 @@ const HttpRequestOptions = () => {
           {t('tab.parameters')}{' '}
           <Tag
             css={css`
-              display: ${store.request.params.length > 0 ? 'inline-block' : 'none'};
+              display: ${params.length > 0 ? 'inline-block' : 'none'};
             `}
           >
-            {store.request.params.length}
+            {params.length}
           </Tag>
         </div>
       ),
@@ -39,10 +39,10 @@ const HttpRequestOptions = () => {
           {t('tab.headers')}{' '}
           <Tag
             css={css`
-              display: ${store.request.headers.length > 0 ? 'inline-block' : 'none'};
+              display: ${headers.length > 0 ? 'inline-block' : 'none'};
             `}
           >
-            {store.request.headers.length}
+            {headers.length}
           </Tag>
         </div>
       ),
@@ -59,11 +59,14 @@ const HttpRequestOptions = () => {
     {
       label: 'Mock',
       key: '__mock__',
-      children: <ExtraRequestTabItemMock requestAxios={axios} recordId={store.request.recordId} />,
+      children: (
+        <ExtraRequestTabItemMock requestAxios={axios} recordId={'store.request.recordId'} />
+      ),
     },
+    ...config.tabs.extra,
   ].filter((i) => {
     if (i.key === '__mock__') {
-      return !!store.request.recordId;
+      return !!true;
     } else {
       return true;
     }

@@ -1,12 +1,16 @@
 import React, { css } from '@emotion/react';
+import { useRequest } from 'ahooks';
 import { message } from 'antd';
 import { useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Http from '../components/arex-request';
-import { convertRequestData } from '../components/ArexRequestComponent/util';
+import {
+  convertRequestData,
+  convertSaveRequestData,
+} from '../components/ArexRequestComponent/util';
 import { treeFind } from '../helpers/collection/util';
-import { AgentAxiosAndTest, AgentAxiosCompare } from '../helpers/request';
+import { AgentAxiosAndTest } from '../helpers/request';
 import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
 import { MenusType } from '../menus';
 import SaveRequestButton from '../menus/CollectionMenu/SaveRequestButton';
@@ -24,8 +28,9 @@ export type KeyValueType = {
 
 const HttpRequestPage: PageFC = (props) => {
   const { collectionTreeData, setPages, pages, activeEnvironment } = useStore();
+  // const {} = useUserProfile()
   const { workspaceId } = useParams();
-  const { darkMode } = useUserProfile();
+  const { darkMode, theme } = useUserProfile();
   const env = useMemo(() => {
     if (activeEnvironment) {
       return {
@@ -53,6 +58,11 @@ const HttpRequestPage: PageFC = (props) => {
     );
   }, [props.page.paneId, collectionTreeData]);
 
+  const { data } = useRequest(
+    () =>
+      FileSystemService.queryInterface({ id: id }).then((r) => convertRequestData(r, 'address')),
+    {},
+  );
   return (
     <div
       css={css`
@@ -73,86 +83,35 @@ const HttpRequestPage: PageFC = (props) => {
         `}
       >
         <Http
-          value={{
-            url:''
+          value={data}
+          environment={{ name: '', variables: [] }}
+          theme={theme}
+          breadcrumb={<div>breadcrumb</div>}
+          config={{
+            tabs: {
+              extra: [
+                {
+                  label: 'Json verify',
+                  key: 'jsonVerify',
+                  children: <div>jsonVerify</div>,
+                },
+              ],
+            },
           }}
-          currentRequestId={id}
-          onEdit={(e) => {
-            if (e.type === 'retrieve') {
-              if (nodeType === 1) {
-                return FileSystemService.queryInterface({ id: e.payload.requestId }).then((res) =>
-                  convertRequestData(res, 'address'),
-                );
-              } else if (nodeType === 2) {
-                return FileSystemService.queryCase({ id: e.payload.requestId }).then((res) =>
-                  convertRequestData(res, 'address'),
-                );
-              }
-            } else if (e.type === 'update') {
-              if (nodeType === 1 && id.length === 36) {
-                setReqParams(e.payload);
-                saveRequestButtonRef.current.open();
-              } else if (nodeType === 1) {
-                FileSystemService.saveInterface({
-                  workspaceId,
-                  id: id,
-                  address: {
-                    endpoint: e.payload.endpoint,
-                    method: e.payload.method,
-                  },
-                  body: e.payload.body,
-                  headers: e.payload.headers,
-                  params: e.payload.params,
-                  testScript: e.payload.testScript,
-                  preRequestScript: e.payload.preRequestScript,
-                  testAddress: {
-                    endpoint: e.payload.compareEndpoint,
-                    method: e.payload.compareMethod,
-                  },
-                }).then((res) => {
-                  if (res.body.success) {
-                    message.success('success');
-                  }
-                });
-              } else if (nodeType === 2) {
-                FileSystemService.saveCase({
-                  workspaceId,
-                  id: id,
-                  address: {
-                    endpoint: e.payload.endpoint,
-                    method: e.payload.method,
-                  },
-                  body: e.payload.body,
-                  headers: e.payload.headers,
-                  params: e.payload.params,
-                  testScript: e.payload.testScript,
-                  preRequestScript: e.payload.preRequestScript,
-                  testAddress: {
-                    endpoint: e.payload.compareEndpoint,
-                    method: e.payload.compareMethod,
-                  },
-                }).then((res) => {
-                  if (res.body.success) {
-                    message.success('success');
-                  }
-                });
-              }
-            }
+          onSend={(r) => {
+            return AgentAxiosAndTest({ request: r });
           }}
-          onSend={(e) => {
-            return AgentAxiosAndTest(e);
+          onSave={(r) => {
+            FileSystemService.saveInterface(convertSaveRequestData(id, r)).then((res) => {
+              message.success(JSON.stringify(res));
+            });
           }}
-          onSendCompare={(e) => {
-            return AgentAxiosCompare(e);
-          }}
-          requestAxios={request}
-          collectionTreeData={collectionTreeData}
-          environment={env}
-          darkMode={darkMode}
         />
         <SaveRequestButton
+          // @ts-ignore
           reqParams={reqParams}
           collectionTreeData={collectionTreeData}
+          // @ts-ignore
           onSaveAs={(node) => {
             const filteredPanes = pages.filter((i) => i.paneId !== props.page.paneId);
             setPages(filteredPanes);

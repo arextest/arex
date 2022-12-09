@@ -8,23 +8,24 @@ import { FC, useContext, useRef } from 'react';
 
 import { useCodeMirror } from '../../../helpers/editor/codemirror';
 import { HoppRESTResponse } from '../../../helpers/types/HoppRESTResponse';
-import { HttpContext } from '../../../index';
+import { useHttpStore } from '../../../store/useHttpStore';
+// import { HttpContext } from '../../../index';
 function coppyUrl(str: string) {
   copy(str);
   message.success('copy success🎉');
 }
 const JSONLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
+  const { theme } = useHttpStore();
   const jsonResponse = useRef(null);
   // @ts-ignore
-  const jsonObj = JSON.parse(response.body || '{}');
-  const { store } = useContext(HttpContext);
+  const jsonObj = response?.body;
   useCodeMirror({
     container: jsonResponse.current,
     // @ts-ignore
     value: JSON.stringify(jsonObj, null, 2),
     height: '100%',
     extensions: [json(), EditorView.lineWrapping],
-    theme: store.darkMode ? 'dark' : 'light',
+    theme: theme,
   });
   return (
     <div

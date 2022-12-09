@@ -16,6 +16,7 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
   `;
 
   const readableResponseSize = useMemo(() => {
+    console.log({ response });
     if (response.type === 'success' || response.type === 'fail') {
       const size = response.meta.responseSize;
       if (size >= 100000) return (size / 1000000).toFixed(2) + ' MB';
@@ -32,11 +33,11 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
         padding: 16px 0 16px 0;
       `}
     >
-      {response.type === 'null' ? (
+      {!response.type ? (
         <div>
           <Empty
             description={
-              <Typography.Text type="secondary">
+              <Typography.Text type='secondary'>
                 Enter the URL and click Send to get a response
               </Typography.Text>
             }
@@ -73,9 +74,7 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
                 </span>
                 <span>
                   {t('response.time')}:
-                  <span
-                    css={tabCss}
-                  >{`${response.meta.responseDuration}ms`}</span>
+                  <span css={tabCss}>{`${response.meta.responseDuration}ms`}</span>
                 </span>
                 <span>
                   {t('response.size')}:

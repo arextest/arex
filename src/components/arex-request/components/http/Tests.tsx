@@ -2,11 +2,12 @@ import { javascript } from '@codemirror/lang-javascript';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button } from 'antd';
-import { useContext, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useCodeMirror } from '../../helpers/editor/codemirror';
-import { HttpContext } from '../../index';
+import { useHttpRequestStore } from '../../store/useHttpRequestStore';
+import { useHttpStore } from '../../store/useHttpStore';
 
 export const ResponseTestHeader = styled.div`
   display: flex;
@@ -56,8 +57,9 @@ export const ResponseTestWrapper = styled.div`
 `;
 
 const HttpTests = () => {
-  const { store, dispatch } = useContext(HttpContext);
   const { t } = useTranslation();
+  const { testScript, setHttpRequestStore } = useHttpRequestStore();
+  const { theme } = useHttpStore();
   const codeSnippet = [
     {
       name: 'Response: Status code is 200',
@@ -115,22 +117,20 @@ arex.test("Status code is 5xx", ()=> {
 
   useCodeMirror({
     container: codeCm.current,
-    value: store.request.testScript,
+    value: testScript,
     height: '100%',
     extensions: [javascript()],
-    theme: store.darkMode ? 'dark' : 'light',
-    onChange: (val:string) => {
-      dispatch({
-        type: 'request.testScript',
-        payload: val,
+    theme: theme,
+    onChange: (val: string) => {
+      setHttpRequestStore((state) => {
+        state.testScript = val;
       });
     },
   });
 
   const addTest = (text: string) => {
-    dispatch({
-      type: 'request.testScript',
-      payload: store.request.testScript + text,
+    setHttpRequestStore((state) => {
+      state.testScript += text;
     });
   };
 
@@ -150,14 +150,11 @@ arex.test("Status code is 5xx", ()=> {
         <div ref={codeCm} style={{ width: '65%' }} />
         <div>
           <div>
-            Test scripts are written in JavaScript, and are run after the
-            response is received.
+            Test scripts are written in JavaScript, and are run after the response is received.
           </div>
           <Button
-            type="text"
-            onClick={() =>
-              window.open('https://docs.hoppscotch.io/features/tests')
-            }
+            type='text'
+            onClick={() => window.open('https://docs.hoppscotch.io/features/tests')}
           >
             Read documentation
           </Button>
@@ -166,11 +163,7 @@ arex.test("Status code is 5xx", ()=> {
           <span>阅读文档</span>
           <div>代码片段</div> */}
           {codeSnippet.map((e, i) => (
-            <ThemeColorPrimaryButton
-              type="text"
-              key={i}
-              onClick={() => addTest(e.text)}
-            >
+            <ThemeColorPrimaryButton type='text' key={i} onClick={() => addTest(e.text)}>
               {e.name}
             </ThemeColorPrimaryButton>
           ))}

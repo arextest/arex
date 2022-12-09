@@ -33,7 +33,7 @@ export const defaultState = {
     body: '',
     meta: {
       responseSize: 0,
-      responseDuration: 1,
+      responseDuration: 0,
     },
     error: {
       name: '',

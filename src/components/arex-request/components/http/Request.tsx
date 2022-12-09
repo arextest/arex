@@ -1,13 +1,18 @@
-import { DownOutlined, UserOutlined } from '@ant-design/icons';
-import { css, useTheme } from '@emotion/react';
+import { DownOutlined } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Breadcrumb, Button, Dropdown, Menu, MenuProps, message, Select } from 'antd';
-import { useContext } from 'react';
+import produce from 'immer';
+import { FC, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { treeFindPath } from '../../helpers/collection/util';
-import { HttpContext } from '../../index';
+import { HoppRESTRequest } from '../../data/rest';
+import { HoppRESTResponse } from '../../helpers/types/HoppRESTResponse';
+import { HoppTestResult } from '../../helpers/types/HoppTestResult';
+import { useHttpRequestStore } from '../../store/useHttpRequestStore';
+import { useHttpStore } from '../../store/useHttpStore';
 import SmartEnvInput from '../smart/EnvInput';
+import testResult from './TestResult';
 
 const HeaderWrapper = styled.div`
   display: flex;
@@ -27,19 +32,71 @@ const HeaderWrapper = styled.div`
 
 const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
-const HttpRequest = ({ currentRequestId, onEdit, onSend }: any) => {
-  const { store, dispatch } = useContext(HttpContext);
+// preRequestScript: '',
+//   v: '',
+//   headers: [],
+//   name: '',
+//   body: {
+//   contentType: 'application/json',
+//     body: '',
+// },
+// auth: {
+//   authURL: 'http://petstore.swagger.io/api/oauth/dialog',
+//     oidcDiscoveryURL: '',
+//     accessTokenURL: '',
+//     clientID: '',
+//     scope: 'write:pets read:pets',
+//     token: '',
+//     authType: 'oauth-2',
+//     authActive: true,
+// },
+// testScript: '',
+//   endpoint: '',
+//   method: '',
+//   params: [],
 
-  const { t } = useTranslation();
-  const onMenuClick: MenuProps['onClick'] = (e) => {
-    console.log(1);
+interface HttpRequestProps {
+  onSend: (
+    r: HoppRESTRequest,
+  ) => Promise<{ response: HoppRESTResponse; testResult: HoppTestResult }>;
+  onSave: (r: HoppRESTRequest) => void;
+  breadcrumb: any;
+}
+
+const HttpRequest: FC<HttpRequestProps> = ({ onSend, breadcrumb, onSave }) => {
+  const {
+    name,
+    method,
+    headers,
+    params,
+    endpoint,
+    body,
+    preRequestScript,
+    testScript,
+    v,
+    auth,
+    setHttpRequestStore,
+  } = useHttpRequestStore();
+  const { environment, setHttpStore, response: tResponse, testResult: tResult } = useHttpStore();
+  const r = {
+    name,
+    method,
+    endpoint,
+    body,
+    headers,
+    params,
+    preRequestScript,
+    testScript,
+    v,
+    auth,
   };
+  const { t } = useTranslation();
 
   const menu: MenuProps['items'] = [
     {
       label: 'Send Compare',
       key: '1',
-      disabled:true
+      disabled: true,
     },
   ];
 
@@ -62,73 +119,45 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend }: any) => {
   }
 
   const handleRequest = ({ type }: any) => {
-    if (checkRequestParams(store.request).error) {
-      message.error(checkRequestParams(store.request).msg);
+    if (checkRequestParams(r).error) {
+      message.error(checkRequestParams(r).msg);
       return;
     }
 
     const urlPretreatment = (url: string) => {
       const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
       let replaceVar = editorValueMatch[0];
-      const env = store.environment?.variables || [];
+      const env = environment?.variables || [];
       for (let i = 0; i < env.length; i++) {
         if (env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')) {
           replaceVar = env[i].value;
         }
       }
-
       return url.replace(editorValueMatch[0], replaceVar);
     };
-    dispatch({
-      type: 'response.type',
-      payload: 'loading',
-    });
 
-    const start = new Date().getTime();
-
-    if (type === 'compare') {
-      console.log(1);
-    } else {
-      onSend({
-        request: {
-          ...store.request,
-          endpoint: urlPretreatment(store.request.endpoint),
-        },
-      }).then((agentAxiosAndTest: any) => {
-        console.log(agentAxiosAndTest, 'agentAxiosAndTest');
-        dispatch({
-          type: 'response.type',
-          payload: 'success',
-        });
-
-        dispatch({
-          type: 'response.body',
-          payload: JSON.stringify(agentAxiosAndTest.response.data),
-        });
-
-        dispatch({
-          type: 'testResult',
-          payload: agentAxiosAndTest.testResult,
-        });
-        dispatch({
-          type: 'response.headers',
-          payload: agentAxiosAndTest.response.headers,
-        });
-
-        dispatch({
-          type: 'response.meta',
-          payload: {
-            responseSize: JSON.stringify(agentAxiosAndTest.response.data).length,
-            responseDuration: new Date().getTime() - start,
-          },
-        });
-
-        dispatch({
-          type: 'response.statusCode',
-          payload: agentAxiosAndTest.response.status,
-        });
+    onSend({
+      ...r,
+      endpoint: urlPretreatment(r.endpoint),
+    }).then((res) => {
+      const { response, testResult } = res;
+      console.log(response, 'response');
+      setHttpStore((state) => {
+        if (response.type === 'success') {
+          state.response = {
+            type: 'success',
+            headers: response.headers,
+            body: response.body,
+            statusCode: response.statusCode,
+            meta: {
+              responseSize: response.meta.responseSize, // in bytes
+              responseDuration: response.meta.responseDuration, // in millis
+            },
+          };
+          state.testResult = testResult;
+        }
       });
-    }
+    });
   };
   return (
     <div
@@ -143,21 +172,12 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend }: any) => {
           margin-bottom: 8px;
         `}
       >
-        <Breadcrumb style={{ paddingBottom: '14px' }}>
-          {treeFindPath(store.collectionTreeData, (node: any) => {
-            return node.id === currentRequestId;
-          }).map((i: any, index: number) => (
-            <Breadcrumb.Item key={index}>{i.title}</Breadcrumb.Item>
-          ))}
-        </Breadcrumb>
+        {breadcrumb}
         <div>
           <Button
             onClick={() => {
-              onEdit({
-                type: 'update',
-                payload: {
-                  ...store.request,
-                },
+              onSave({
+                ...r,
               });
             }}
           >
@@ -167,19 +187,20 @@ const HttpRequest = ({ currentRequestId, onEdit, onSend }: any) => {
       </div>
       <HeaderWrapper>
         <Select
-          value={store.request.method}
+          value={method}
           options={methods.map((i) => ({ value: i, lable: i }))}
           onChange={(value) => {
-            dispatch({
-              type: 'request.method',
-              payload: value,
+            setHttpRequestStore((state) => {
+              state.method = value;
             });
           }}
         />
         <SmartEnvInput
-          value={store.request.endpoint}
-          onChange={() => {
-            // console.log('http://127.0.0.1:5173/arex-request/');
+          value={endpoint}
+          onChange={(value) => {
+            setHttpRequestStore((state) => {
+              state.endpoint = value;
+            });
           }}
         ></SmartEnvInput>
         <div
