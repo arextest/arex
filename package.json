@@ -2,6 +2,25 @@
   "name": "arex",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "start": "craco start",
+    "build": "craco build",
+    "eject": "craco eject",
+    "format": "prettier --write src/**/*.ts{,x}",
+    "lint": "tsc --noEmit && eslint src/**/*.ts{,x}"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@babel/core": "^7.18.5",
@@ -24,8 +43,7 @@
     "@uiw/react-codemirror": "^4.8.1",
     "ahooks": "^3.5.2",
     "allotment": "^1.17.0",
-    "antd": "^5.0.4",
-    "arex-request": "^0.0.19",
+    "antd": "^5.0.5",
     "axios": "^0.27.2",
     "chart.js": "^3.8.0",
     "click-to-react-component": "^1.0.8",
@@ -57,26 +75,7 @@
     "use-immer": "^0.7.0",
     "uuid": "^8.3.2",
     "web-vitals": "^2.1.4",
-    "zustand": "^4.0.0-rc.1"
-  },
-  "scripts": {
-    "start": "craco start",
-    "build": "craco build",
-    "eject": "craco eject",
-    "format": "prettier --write src/**/*.ts{,x}",
-    "lint": "tsc --noEmit && eslint src/**/*.ts{,x}"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "zustand": "^4.1.5"
   },
   "devDependencies": {
     "@craco/craco": "^7.0.0",
