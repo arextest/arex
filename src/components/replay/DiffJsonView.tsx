@@ -7,6 +7,7 @@ import { FC, useEffect, useRef } from 'react';
 
 import { tryParseJsonString } from '../../helpers/utils';
 import { QueryMsgWithDiffLog } from '../../services/Replay.type';
+import useUserProfile from '../../store/useUserProfile';
 
 export type DiffJsonViewProps = {
   data?: {
@@ -18,6 +19,7 @@ export type DiffJsonViewProps = {
   onClose: () => void;
 };
 const DiffJsonView: FC<DiffJsonViewProps> = ({ data, open = false, onClose }) => {
+  const { theme } = useUserProfile();
   useMount(() => {
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') {
@@ -154,7 +156,11 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, open = false, onClose }) =>
         </div>
       </div>
 
-      <div id='MsgWithDiffJsonEditorWrapper' style={{ height: '90vh' }}>
+      <div
+        id='MsgWithDiffJsonEditorWrapper'
+        className={theme === 'dark' ? 'dark-jsoneditor' : ''}
+        style={{ height: '90vh' }}
+      >
         <div ref={containerLeftRef} id='containerLeft' />
         <div ref={containerRightRef} id='containerRight' />
       </div>

@@ -5,21 +5,22 @@ import { useContext, useEffect, useImperativeHandle, useRef, useState } from 're
 import { useTranslation } from 'react-i18next';
 
 import { useCodeMirror } from '../../helpers/editor/codemirror';
-import { HttpContext } from '../../index';
+import { useHttpRequestStore } from '../../store/useHttpRequestStore';
+import { useHttpStore } from '../../store/useHttpStore';
 const HttpRawBody = ({ cRef }: any) => {
+  const { theme, response } = useHttpStore();
+  const { body, setHttpRequestStore } = useHttpRequestStore();
   const rawBodyParameters = useRef(null);
-  const { store, dispatch } = useContext(HttpContext);
   const { t } = useTranslation();
   useCodeMirror({
     container: rawBodyParameters.current,
-    value: store.request.body.body,
+    value: body.body,
     height: '100%',
     extensions: [json()],
-    theme: store.darkMode ? 'dark' : 'light',
+    theme: theme,
     onChange: (val: string) => {
-      dispatch({
-        type: 'request.body.body',
-        payload: val,
+      setHttpRequestStore((state) => {
+        state.body.body = val;
       });
     },
   });
@@ -32,11 +33,7 @@ const HttpRawBody = ({ cRef }: any) => {
   });
   const prettifyRequestBody = () => {
     try {
-      const jsonObj = JSON.parse(store.request.body.body);
-      dispatch({
-        type: 'request.body.body',
-        payload: JSON.stringify(jsonObj, null, 2),
-      });
+      console.log()
     } catch (e) {
       message.error(t('error.json_prettify_invalid_body'));
     }

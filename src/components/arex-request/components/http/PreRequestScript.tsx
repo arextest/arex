@@ -5,19 +5,10 @@ import { uuid } from '../../../../helpers/utils';
 import { PreRequestScript } from '../../../index';
 import { reorder, ScriptBlock, ScriptBlocks } from '../../../PreRequestScript';
 import { PreRequestScriptProps } from '../../../PreRequestScript/PreRequestScript';
-import { HttpContext } from '../../index';
 
 const HttpPreRequestScript = () => {
   const [items, setItems] = useImmer<ScriptBlock<string>[]>([]);
-  const { store, dispatch } = useContext(HttpContext);
-
-  useEffect(() => {
-    dispatch({
-      type: 'request.preRequestScript',
-      payload: items.map((i) => i.data).join('\n'),
-    });
-  }, [items]);
-
+  // useEffect(() => {}, [items]);
   const handleAdd: PreRequestScriptProps<string>['onAdd'] = (key, initData = '') => {
     const block = ScriptBlocks.find((block) => block.key === key);
     const data: ScriptBlock<string> = {

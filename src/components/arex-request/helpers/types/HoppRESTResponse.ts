@@ -1,7 +1,6 @@
 import {HoppRESTRequest} from "../../data/rest";
 
 export type HoppRESTResponse =
-  | { type: 'null' }
   | { type: 'loading'; req: HoppRESTRequest }
   | {
       type: 'fail';

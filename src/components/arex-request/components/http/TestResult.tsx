@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { List, Progress } from 'antd';
 import { useContext } from 'react';
 
-import { HttpContext } from '../../index';
+// import { HttpContext } from '../../index';
 const TestError = styled.div`
   text-align: center;
   & > div:first-of-type {
@@ -14,14 +14,12 @@ const TestError = styled.div`
   }
 `;
 const TestResult = ({ testResult }: any) => {
-  const { store } = useContext(HttpContext);
-  console.log(store, 'store');
   return (
     <div>
-      {testResult.children?.map((e: any, i:any) => (
+      {testResult.children?.map((e: any, i: any) => (
         <List
           key={i}
-          size="large"
+          size='large'
           css={css`
             margin-bottom: 10px;
           `}
@@ -47,14 +45,13 @@ const TestResult = ({ testResult }: any) => {
                   percent={100}
                   success={{
                     percent: Math.round(
-                      (e.expectResults.filter((i: any) => i.status === 'pass')
-                        .length /
+                      (e.expectResults.filter((i: any) => i.status === 'pass').length /
                         e.expectResults.length) *
-                        100
+                        100,
                     ),
                     strokeColor: '#10B981',
                   }}
-                  type="circle"
+                  type='circle'
                   showInfo={false}
                 />
                 <span
@@ -63,33 +60,26 @@ const TestResult = ({ testResult }: any) => {
                   `}
                 >
                   {e.expectResults.length -
-                  e.expectResults.filter((i: any) => i.status === 'pass')
-                    .length ? (
+                  e.expectResults.filter((i: any) => i.status === 'pass').length ? (
                     <span
                       css={css`
                         color: #ef4444;
                       `}
                     >
                       {e.expectResults.length -
-                        e.expectResults.filter((i: any) => i.status === 'pass')
-                          .length}{' '}
+                        e.expectResults.filter((i: any) => i.status === 'pass').length}{' '}
                       failing,{' '}
                     </span>
                   ) : (
                     <div></div>
                   )}
-                  {e.expectResults.filter((i: any) => i.status === 'pass')
-                    .length ? (
+                  {e.expectResults.filter((i: any) => i.status === 'pass').length ? (
                     <span
                       css={css`
                         color: #10b981;
                       `}
                     >
-                      {
-                        e.expectResults.filter((i: any) => i.status === 'pass')
-                          .length
-                      }{' '}
-                      successful,{' '}
+                      {e.expectResults.filter((i: any) => i.status === 'pass').length} successful,{' '}
                     </span>
                   ) : (
                     <div></div>

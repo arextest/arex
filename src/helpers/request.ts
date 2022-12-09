@@ -1,6 +1,9 @@
 // @ts-nocheck
 import axios from 'axios';
 
+import { HoppRESTRequest } from '../components/arex-request/data/rest';
+import { HoppRESTResponse } from '../components/arex-request/helpers/types/HoppRESTResponse';
+import { HoppTestResult } from '../components/arex-request/helpers/types/HoppTestResult';
 function AgentAxios<T>(params: any) {
   return new Promise<T>((resolve, reject) => {
     const tid = String(Math.random());
@@ -33,11 +36,13 @@ function AgentAxios<T>(params: any) {
 
 export default AgentAxios;
 
-interface Test {
-  request: any;
-}
-export const AgentAxiosAndTest = ({ request }: Test) =>
-  AgentAxios({
+export const AgentAxiosAndTest = ({
+  request,
+}: {
+  request: HoppRESTRequest;
+}): Promise<{ response: HoppRESTResponse; testResult: HoppTestResult }> => {
+  const startTime = new Date().getTime();
+  return AgentAxios({
     method: request.method,
     url: request.endpoint,
     headers: request.headers.reduce((p, c) => {
@@ -56,11 +61,32 @@ export const AgentAxiosAndTest = ({ request }: Test) =>
           };
         }, {}),
   }).then((res: any) => {
-    return {
-      testResult: [],
-      response: res,
-    };
+    return axios({
+      method: 'POST',
+      url: 'http://10.5.153.1:10001/preTest',
+      data: {
+        response: '{"appId": "arex.1.20220909A"}',
+        preTestScripts: [request.testScript],
+      },
+    }).then((testRes) => {
+      console.log(testRes.data.body.caseResult, 'testRes.data.body.caseResult');
+      return {
+        testResult: testRes.data.body.caseResult,
+        response: {
+          ...res,
+          type: 'success',
+          body: res.data,
+          headers: res.headers,
+          meta: {
+            responseDuration: new Date().getTime() - startTime,
+            responseSize: JSON.stringify(res.data).length,
+          },
+          statusCode: res.status,
+        },
+      };
+    });
   });
+};
 
 export const AgentAxiosCompare = ({ request }: Test) => {
   return Promise.all([

@@ -1,4 +1,8 @@
-export function convertRequestData(requestData:any, address:any) {
+import { KeyValueType } from '../../pages/HttpRequestPage';
+import { SaveInterfaceReq } from '../../services/FileSystem.type';
+import { HoppRESTRequest } from '../arex-request/data/rest';
+
+export function convertRequestData(requestData: any, address: any): HoppRESTRequest {
   if (requestData.body) {
     return {
       method: requestData.body[address]?.method || 'GET',
@@ -8,7 +12,7 @@ export function convertRequestData(requestData:any, address:any) {
         contentType: 'application/json',
       },
       testScript: requestData.body.testScript || '',
-      preRequestScript: requestData.body.preRequestScript||'',
+      preRequestScript: requestData.body.preRequestScript || '',
       headers: requestData.body.headers || [],
       params: requestData.body.params || [],
       compareEndpoint: requestData.body?.testAddress?.endpoint || '',
@@ -32,4 +36,20 @@ export function convertRequestData(requestData:any, address:any) {
       recordId: requestData.body?.recordId,
     };
   }
+}
+
+export function convertSaveRequestData(id: string, r: HoppRESTRequest): SaveInterfaceReq {
+  return {
+    id,
+    body: r.body,
+    headers: r.headers,
+    id,
+    params: r.params,
+    preRequestScript: r.preRequestScript,
+    testScript: r.testScript,
+    address: {
+      method: r.method,
+      endpoint: r.endpoint,
+    },
+  };
 }

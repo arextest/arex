@@ -7,16 +7,15 @@ import {
   getMarkFromToArr,
   HOPP_ENVIRONMENT_REGEX,
 } from '../../helpers/editor/extensions/HoppEnvironment';
-import { HttpContext } from '../../index';
-
+import { useHttpStore } from '../../store/useHttpStore';
 interface SmartEnvInputProps {
   value: string;
   onChange: (e: any) => void;
 }
 const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
-  const theme = useTheme();
+  const antdTheme = useTheme();
+  const { theme } = useHttpStore();
   const smartEnvInputRef = useRef(null);
-  const { dispatch, store } = useContext(HttpContext);
   useEnvCodeMirror({
     container: smartEnvInputRef.current,
     value: value,
@@ -25,14 +24,11 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
       [
         hoverTooltip((view, pos, side) => {
           const { text } = view.state.doc.lineAt(pos);
-          const markArrs = getMarkFromToArr(
-            text,
-            HOPP_ENVIRONMENT_REGEX,
-            store.environment
-          );
-          const index = markArrs
-            .map((i) => pos < i.to && pos > i.from)
-            .findIndex((i) => i);
+          const markArrs = getMarkFromToArr(text, HOPP_ENVIRONMENT_REGEX, {
+            name: '',
+            variables: [],
+          });
+          const index = markArrs.map((i) => pos < i.to && pos > i.from).findIndex((i) => i);
           if (index === -1) {
             return null;
           }
@@ -55,20 +51,19 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
       ],
     ],
     onChange: (val: any) => {
-      console.log({ val });
-      dispatch({
-        type: 'request.endpoint',
-        payload: val,
-      });
+      onChange(val);
     },
-    currentEnv: store.environment,
-    theme: store.darkMode ? 'dark' : 'light',
+    currentEnv: {
+      name: '',
+      variables: [],
+    },
+    theme: theme,
   });
 
   return (
     <div
       css={css`
-        border: 1px solid ${theme.colorBorder};
+        border: 1px solid ${antdTheme.colorBorder};
         flex: 1;
         overflow: hidden;
       `}

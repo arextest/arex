@@ -4,18 +4,17 @@ import { FC, useContext, useRef } from 'react';
 import { useStore } from '../../../../../store';
 import { useCodeMirror } from '../../../helpers/editor/codemirror';
 import { HoppRESTResponse } from '../../../helpers/types/HoppRESTResponse';
-import { HttpContext } from '../../../index';
-
+import { useHttpStore } from '../../../store/useHttpStore';
 const RawLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
   const jsonResponse = useRef(null);
-  const { store } = useContext(HttpContext);
+  const { theme } = useHttpStore();
   useCodeMirror({
     container: jsonResponse.current,
-    value: response.type === 'success' ? response.body : '',
+    value: response?.type === 'success' ? JSON.stringify(response.body) : '',
     height: '300px',
     extensions: [EditorView.lineWrapping],
     lineWrapping: true,
-    theme: store.darkMode ? 'dark' : 'light',
+    theme: theme,
   });
   return (
     <div>

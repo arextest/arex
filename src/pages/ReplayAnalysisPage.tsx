@@ -1,4 +1,4 @@
-import './ReplayAnalysis.less';
+import './ReplayAnalysis.css';
 
 import { StopOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
@@ -164,7 +164,7 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
   );
 
   return (
-    <Space direction='vertical' style={{ display: 'flex' }}>
+    <Space direction='vertical' style={{ display: 'flex' }} >
       <PanesTitle title={<span>Main Service API: {props.page.data.operationName}</span>} />
       <CollapseTable
         active={!!selectedDiff}
