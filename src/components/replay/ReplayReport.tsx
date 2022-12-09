@@ -3,18 +3,7 @@ import 'chart.js/auto';
 import { ContainerOutlined, FileTextOutlined, RedoOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import {
-  Button,
-  Card,
-  Col,
-  notification,
-  Row,
-  Statistic,
-  Table,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Card, Col, notification, Row, Statistic, Table, theme, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
@@ -26,6 +15,7 @@ import { PagesType } from '../../pages';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
+import { SmallTextButton, SpaceBetweenWrapper } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
 import StatusTag from './StatusTag';
 
@@ -54,7 +44,6 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     {
       ready: !!selectedPlan?.planId,
       refreshDeps: [selectedPlan?.planId],
-      cacheKey: 'queryPlanItemStatistics',
     },
   );
 
@@ -274,14 +263,14 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       size='small'
       title={`Report: ${selectedPlan.planName}`}
       extra={
-        <Button size='small' type='primary' icon={<RedoOutlined />} onClick={() => handleRerun()}>
+        <SmallTextButton icon={<RedoOutlined />} onClick={() => handleRerun()}>
           Rerun
-        </Button>
+        </SmallTextButton>
       }
     >
       <Row gutter={12}>
         <Col span={12}>
-          <b style={{ color: 'gray' }}>Basic Information</b>
+          <Typography.Text type='secondary'>Basic Information</Typography.Text>
           <div
             css={css`
               display: flex;
@@ -309,8 +298,8 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
           <span>Replay version: {selectedPlan.coreVersion}</span>
         </Col>
         <Col span={12}>
-          <b style={{ color: 'gray' }}>Replay Pass Rate</b>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography.Text type='secondary'>Replay Pass Rate</Typography.Text>
+          <SpaceBetweenWrapper>
             <div style={{ height: '160px', width: 'calc(100% - 160px)', padding: '16px 0' }}>
               <Pie {...pieProps} />
             </div>
@@ -329,7 +318,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
               <div>Invalid: {countData[2]}</div>
               <div>Blocked: {countData[3]}</div>
             </div>
-          </div>
+          </SpaceBetweenWrapper>
         </Col>
       </Row>
 

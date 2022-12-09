@@ -54,7 +54,6 @@ const CaseTable: FC<CaseProps> = (props) => {
     {
       ready: !!props.planItemId,
       refreshDeps: [props.planItemId],
-      cacheKey: 'queryReplayCase',
     },
   );
   return (

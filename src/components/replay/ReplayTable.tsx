@@ -38,7 +38,6 @@ const ReplayTable: FC<ResultsProps> = ({
     },
     {
       title: 'State',
-      width: 100,
       render: (_, record) => <StatusTag status={record.status} />,
     },
     {
