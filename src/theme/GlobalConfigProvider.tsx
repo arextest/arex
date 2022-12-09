@@ -2,7 +2,7 @@ import { ThemeProvider } from '@emotion/react';
 import { ConfigProvider, theme } from 'antd';
 import { ConfigProviderProps } from 'antd/lib/config-provider';
 import { AliasToken } from 'antd/lib/theme/interface';
-import { FC, ReactNode } from 'react';
+import React, { FC, ReactNode } from 'react';
 
 declare module '@emotion/react' {
   export interface Theme extends AliasToken {

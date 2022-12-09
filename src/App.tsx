@@ -1,5 +1,5 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { Layout, Spin, theme } from 'antd';
+import { Empty, Layout, Spin, theme } from 'antd';
 import { MappingAlgorithm } from 'antd/es/config-provider/context';
 import React, { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
@@ -39,6 +39,7 @@ function App() {
         algorithm,
       }}
       locale={localeMap[language]}
+      renderEmpty={() => Empty.PRESENTED_IMAGE_SIMPLE}
     >
       <Layout>
         <Content>{routesContent}</Content>

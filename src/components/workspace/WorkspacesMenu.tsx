@@ -123,6 +123,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
           menuType: MenusType.Collection,
           pageType: PagesType.WorkspaceOverview,
           isNew: true,
+          data: undefined,
           paneId: generateGlobalPaneId(
             MenusType.Collection,
             PagesType.WorkspaceOverview,
