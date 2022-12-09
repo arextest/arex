@@ -83,6 +83,7 @@
     "@emotion/babel-plugin": "^11.10.5",
     "@emotion/eslint-plugin": "^11.10.0",
     "@types/jest": "^27.5.2",
+    "@types/jsoneditor": "^9.9.0",
     "@types/lodash-es": "^4.17.6",
     "@types/node": "^16.18.3",
     "@types/react": "^18.0.25",

@@ -1,9 +1,8 @@
-// @ts-nocheck
 import { css } from '@emotion/react';
 import { useMount } from 'ahooks';
 import { Modal } from 'antd';
 import JSONEditor, { JSONEditorOptions } from 'jsoneditor';
-import { FC, useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 
 import { tryParseJsonString } from '../../helpers/utils';
 import { QueryMsgWithDiffLog } from '../../services/Replay.type';
@@ -130,6 +129,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, open = false, onClose }) =>
     <Modal
       title='Press Esc to exit'
       width={'100%'}
+      footer={false}
       open={open}
       onCancel={onClose}
       style={{ top: 0 }}

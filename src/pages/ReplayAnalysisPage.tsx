@@ -2,18 +2,20 @@ import './ReplayAnalysis.css';
 
 import { StopOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { Button, Card, Collapse, Space, Spin, Tag, theme, Typography } from 'antd';
+import { Button, Card, Collapse, message, Space, Tag, theme, Typography } from 'antd';
 import React, { FC, useState } from 'react';
 
 import { TooltipButton } from '../components';
 import { Analysis } from '../components/replay';
 import DiffJsonView, { DiffJsonViewProps } from '../components/replay/DiffJsonView';
 import { CollapseTable, PanesTitle } from '../components/styledComponents';
+import AppSettingService from '../services/AppSetting.service';
 import ReplayService from '../services/Replay.service';
 import {
   CategoryStatistic,
   Difference,
   PlanItemStatistics,
+  QueryMsgWithDiffLog,
   QueryMsgWithDiffRes,
   Scene,
 } from '../services/Replay.type';
@@ -35,22 +37,25 @@ const DiffMap: {
     color: 'orange',
     desc: 'is missing on the left',
   },
-  '3': {
-    text: 'Different Value',
-    color: 'magenta',
-  },
   '2': {
     text: 'Right Missing',
     color: 'blue',
     desc: 'is missing on the right',
   },
+  '3': {
+    text: 'Different Value',
+    color: 'magenta',
+  },
 };
 
-const DiffList: FC<{ scene?: Scene; onTreeModeClick?: (diff?: QueryMsgWithDiffRes) => void }> = (
-  props,
-) => {
-  const { token } = theme.useToken();
+type DiffListType = {
+  appId: string;
+  operationId: string;
+  scene?: Scene;
+  onTreeModeClick?: (diff?: QueryMsgWithDiffRes) => void;
+};
 
+const DiffList: FC<DiffListType> = (props) => {
   const { data: diffData, loading } = useRequest(
     () =>
       ReplayService.queryMsgWithDiff({
@@ -59,11 +64,34 @@ const DiffList: FC<{ scene?: Scene; onTreeModeClick?: (diff?: QueryMsgWithDiffRe
       }),
     {
       ready: !!props.scene,
-      onSuccess(res) {
-        console.log({ res });
+    },
+  );
+
+  const { run: insertIgnoreNode } = useRequest(
+    (path) =>
+      AppSettingService.insertIgnoreNode({
+        operationId: props.operationId,
+        appId: props.appId,
+        exclusions: path,
+      }),
+    {
+      manual: true,
+      onSuccess(success) {
+        if (success) {
+          message.success('Ignore node successfully');
+        }
       },
     },
   );
+
+  function handleIgnoreNode(pathPair: QueryMsgWithDiffLog['pathPair']) {
+    const unmatchedType = pathPair.unmatchedType;
+    const path = pathPair[unmatchedType === 2 ? 'rightUnmatchedPath' : 'leftUnmatchedPath']
+      .map((p) => p.nodeName)
+      .filter(Boolean);
+
+    insertIgnoreNode(path);
+  }
 
   return (
     <Card
@@ -116,6 +144,7 @@ const DiffList: FC<{ scene?: Scene; onTreeModeClick?: (diff?: QueryMsgWithDiffRe
               breakpoint='xxl'
               title='Ignore Node'
               icon={<StopOutlined />}
+              onClick={() => handleIgnoreNode(log.pathPair)}
               style={{ float: 'right', marginLeft: 'auto' }}
             />
           </div>
@@ -164,7 +193,7 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
   );
 
   return (
-    <Space direction='vertical' style={{ display: 'flex' }} >
+    <Space direction='vertical' style={{ display: 'flex' }}>
       <PanesTitle title={<span>Main Service API: {props.page.data.operationName}</span>} />
       <CollapseTable
         active={!!selectedDiff}
@@ -187,6 +216,8 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
                 key={index}
               >
                 <DiffList
+                  appId={props.page.data.appId}
+                  operationId={props.page.data.operationId}
                   scene={scene}
                   onTreeModeClick={(diff) => {
                     if (diff) {
