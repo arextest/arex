@@ -171,8 +171,8 @@ const ReplayMenu: FC = () => {
         label: (
           <MenuItem
             app={app}
-            hiddenFavoriteIcon={favoriteFilter}
             favoriteApps={favoriteApps}
+            hiddenFavoriteIcon={favoriteFilter}
             onFavoriteAppsChange={getFavoriteApps}
           />
         ),

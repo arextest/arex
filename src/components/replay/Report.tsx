@@ -29,7 +29,7 @@ import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
 import TooltipButton from '../TooltipButton';
-import { resultsStates } from './Results';
+import StatusTag from './StatusTag';
 
 const { Text } = Typography;
 
@@ -79,7 +79,12 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
         datasets: [
           {
             data: countData,
-            backgroundColor: ['#91cc75', '#ef6566', '#73c0de', '#fac858'],
+            backgroundColor: [
+              token.colorSuccessText,
+              token.colorErrorText,
+              token.colorInfoText,
+              token.colorWarningText,
+            ],
           },
         ],
       },
@@ -113,22 +118,7 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     },
     {
       title: 'State',
-      render: (_, record) => {
-        const state = resultsStates.find((s) => s.value === record.status);
-        return state ? (
-          <Tag color={state.color}>
-            {state.label}
-            {record.status === 1 && (
-              <span style={{ margin: '0 -4px 0 8px' }}>
-                <Badge status='processing' />
-                {record.percent && <span>{record.percent > 99 ? 99 : record.percent}</span>}
-              </span>
-            )}
-          </Tag>
-        ) : (
-          <Tag>Unknown State</Tag>
-        );
-      },
+      render: (_, record) => <StatusTag status={record.status} />,
     },
     {
       title: 'Time consumed(s)',
@@ -152,25 +142,25 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
       title: 'Passed',
       dataIndex: 'successCaseCount',
       width: 70,
-      render: (text) => <Text style={{ color: '#91cc75' }}>{text}</Text>,
+      render: (text) => <Text style={{ color: token.colorSuccessText }}>{text}</Text>,
     },
     {
       title: 'Failed',
       dataIndex: 'failCaseCount',
       width: 70,
-      render: (text) => <Text style={{ color: '#ef6566' }}>{text}</Text>,
+      render: (text) => <Text style={{ color: token.colorErrorText }}>{text}</Text>,
     },
     {
       title: 'Invalid',
       dataIndex: 'errorCaseCount',
       width: 70,
-      render: (text) => <Text style={{ color: '#73c0de' }}>{text}</Text>,
+      render: (text) => <Text style={{ color: token.colorInfoText }}>{text}</Text>,
     },
     {
       title: 'Blocked',
       dataIndex: 'waitCaseCount',
       width: 70,
-      render: (text) => <Text style={{ color: '#fac858' }}>{text}</Text>,
+      render: (text) => <Text style={{ color: token.colorWarningText }}>{text}</Text>,
     },
     {
       title: 'Action',

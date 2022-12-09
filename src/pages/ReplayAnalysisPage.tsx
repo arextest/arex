@@ -1,11 +1,11 @@
 import './ReplayAnalysis.less';
 
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useAsyncEffect } from 'ahooks';
-import { Button, Card, Space, Tag } from 'antd';
+import { StopOutlined } from '@ant-design/icons';
+import { useRequest } from 'ahooks';
+import { Button, Card, Collapse, Space, Spin, Tag, theme, Typography } from 'antd';
 import React, { FC, useState } from 'react';
 
+import { TooltipButton } from '../components';
 import { Analysis } from '../components/replay';
 import DiffJsonView, { DiffJsonViewProps } from '../components/replay/DiffJsonView';
 import { CollapseTable, PanesTitle } from '../components/styledComponents';
@@ -14,12 +14,12 @@ import {
   CategoryStatistic,
   Difference,
   PlanItemStatistics,
-  QueryMsgWithDiffLog,
   QueryMsgWithDiffRes,
+  Scene,
 } from '../services/Replay.type';
 import { PageFC } from './index';
 
-const diffMap: {
+const DiffMap: {
   [unmatchedType: string]: {
     text: string;
     color: string;
@@ -28,83 +28,110 @@ const diffMap: {
 } = {
   '0': {
     text: 'Unknown',
-    color: 'red',
+    color: 'default',
   },
   '1': {
     text: 'Left Missing',
-    color: '#faad14',
+    color: 'orange',
     desc: 'is missing on the left',
   },
   '3': {
     text: 'Different Value',
-    color: '#FFC0CB',
+    color: 'magenta',
   },
   '2': {
     text: 'Right Missing',
-    color: '#faad14',
+    color: 'blue',
     desc: 'is missing on the right',
   },
 };
 
-const BolderUnderlineSpan = styled.span`
-  font-weight: bolder;
-  margin: 0 10px;
-  text-decoration: underline;
-`;
+const DiffList: FC<{ scene?: Scene; onTreeModeClick?: (diff?: QueryMsgWithDiffRes) => void }> = (
+  props,
+) => {
+  const { token } = theme.useToken();
 
-const DiffLog: FC<{ log: QueryMsgWithDiffLog }> = (props) => {
-  if (props.log.pathPair.unmatchedType === 3) {
-    return (
-      <span
-        css={css`
-          display: flex;
-          align-items: center;
-          //width: 100%;
-        `}
-      >
-        Value of
-        <BolderUnderlineSpan>&#123;{props.log.path}&#125;</BolderUnderlineSpan>
-        is different | excepted[
-        <span
-          css={css`
-            color: red;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 200px;
-          `}
+  const { data: diffData, loading } = useRequest(
+    () =>
+      ReplayService.queryMsgWithDiff({
+        compareResultId: props.scene!.compareResultId,
+        logIndexes: props.scene!.logIndexes,
+      }),
+    {
+      ready: !!props.scene,
+      onSuccess(res) {
+        console.log({ res });
+      },
+    },
+  );
+
+  return (
+    <Card
+      size='small'
+      title={!loading && `${diffData?.logs.length} issue(s)`}
+      extra={
+        <Button
+          size='small'
+          disabled={loading}
+          onClick={() => props.onTreeModeClick?.(diffData)}
+          style={{ marginLeft: '8px' }}
         >
-          {props.log.baseValue}
-        </span>
-        ]. actual[
-        <span
-          css={css`
-            color: red;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            max-width: 200px;
-          `}
-        >
-          {props.log.testValue}
-        </span>
-        ].
-      </span>
-    );
-  } else {
-    return (
-      <span>
-        <BolderUnderlineSpan>&#123;{props.log.path}&#125;</BolderUnderlineSpan>
-        {diffMap[props.log.pathPair.unmatchedType].desc}
-      </span>
-    );
-  }
+          Tree Mode
+        </Button>
+      }
+      loading={loading}
+      style={{ minHeight: '56px' }}
+    >
+      <Space direction='vertical' style={{ width: '100%' }}>
+        {diffData?.logs.map((log, index) => (
+          <div key={index} style={{ display: 'flex', flexFlow: 'row nowrap' }}>
+            <Tag color={DiffMap[log.pathPair.unmatchedType]?.color}>
+              {DiffMap[log.pathPair.unmatchedType]?.text}
+            </Tag>
+
+            {log.pathPair.unmatchedType === 3 ? (
+              <Typography.Text>
+                {'Value of '}
+                <Typography.Text code>{log.path || '[]'}</Typography.Text>
+                {' is different, excepted '}
+                <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
+                  {log.baseValue || '[]'}
+                </Typography.Text>
+                {', actual '}
+                <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
+                  {log.testValue || '[]'}
+                </Typography.Text>
+                {'.'}
+              </Typography.Text>
+            ) : (
+              <span>
+                <Typography.Text code>{log.path}</Typography.Text>
+                {DiffMap[log.pathPair.unmatchedType].desc}
+              </span>
+            )}
+
+            <TooltipButton
+              size='small'
+              type='default'
+              breakpoint='xxl'
+              title='Ignore Node'
+              icon={<StopOutlined />}
+              style={{ float: 'right', marginLeft: 'auto' }}
+            />
+          </div>
+        ))}
+      </Space>
+    </Card>
+  );
 };
 
 const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
+  const { token } = theme.useToken();
+
   const [selectedDiff, setSelectedDiff] = useState<Difference>();
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
-  const [diffs, setDiffs] = useState<QueryMsgWithDiffRes[]>([]);
+  const [activeKey, setActiveKey] = useState<string[] | string>(['0']);
+
   const [diffJsonViewData, setDiffJsonViewData] = useState<DiffJsonViewProps['data']>();
   const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
 
@@ -112,6 +139,7 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
     if (selectedDiff?.differenceName !== diff.differenceName) {
       setSelectedDiff(diff);
       setSelectedCategory(category);
+      setActiveKey(['0']);
     } else {
       setSelectedDiff(undefined);
     }
@@ -119,29 +147,21 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
 
   const handleSelectCategory = () => {
     setSelectedDiff(undefined);
-    setDiffs([]);
   };
 
-  useAsyncEffect(async () => {
-    if (selectedCategory && selectedDiff) {
-      const scenes = await ReplayService.queryScenes({
-        categoryName: selectedCategory.categoryName,
-        differenceName: selectedDiff.differenceName,
-        operationName: selectedCategory.operationName,
+  const { data: scenes = [] } = useRequest(
+    () =>
+      ReplayService.queryScenes({
+        categoryName: selectedCategory!.categoryName,
+        differenceName: selectedDiff!.differenceName,
+        operationName: selectedCategory!.operationName,
         planItemId: props.page.data.planItemId.toString(),
-      });
-
-      const promiseAll = scenes.map((scene) =>
-        ReplayService.queryMsgWithDiff({
-          compareResultId: scene.compareResultId,
-          logIndexes: scene.logIndexes,
-        }),
-      );
-
-      const diffs = await Promise.all(promiseAll);
-      setDiffs(diffs);
-    }
-  }, [selectedCategory, selectedDiff, props.page.data.planItemId]);
+      }),
+    {
+      ready: !!selectedCategory && !!selectedDiff && !!props.page.data.planItemId,
+      refreshDeps: [selectedCategory, selectedDiff, props.page.data.planItemId],
+    },
+  );
 
   return (
     <Space direction='vertical' style={{ display: 'flex' }}>
@@ -156,49 +176,39 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
           />
         }
         panel={
-          <Card bordered={false} title='' bodyStyle={{ padding: '8px 16px' }}>
-            {diffs
-              .filter((i) => i.diffResultCode !== 2)
-              .map((diff, index) => (
-                <Card key={index} style={{ cursor: 'pointer' }}>
-                  <div style={{ marginBottom: '8px' }}>
-                    <span style={{ marginRight: '8px' }}>
-                      Diff Card - {diff.logs.length} issue(s)
-                    </span>
-
-                    <Button
-                      size={'small'}
-                      onClick={() => {
-                        setDiffJsonViewData({
-                          baseMsg: diff.baseMsg,
-                          testMsg: diff.testMsg,
-                          logs: diff.logs,
-                        });
-                        setDiffJsonViewVisible(true);
-                      }}
-                    >
-                      Tree Mode
-                    </Button>
-                  </div>
-
-                  {diff.logs.map((log, index) => (
-                    <div key={index}>
-                      <Tag color={diffMap[log.pathPair.unmatchedType]?.color}>
-                        {diffMap[log.pathPair.unmatchedType]?.text}
-                      </Tag>
-                      <DiffLog log={log} />
-                    </div>
-                  ))}
-                </Card>
-              ))}
-
-            <DiffJsonView
-              data={diffJsonViewData}
-              open={diffJsonViewVisible}
-              onClose={() => setDiffJsonViewVisible(false)}
-            />
-          </Card>
+          <Collapse
+            activeKey={activeKey}
+            onChange={setActiveKey}
+            style={{ width: '100%', padding: token.padding }}
+          >
+            {scenes.map((scene, index) => (
+              <Collapse.Panel
+                header={<Typography.Text>{scene.sceneName}</Typography.Text>}
+                key={index}
+              >
+                <DiffList
+                  scene={scene}
+                  onTreeModeClick={(diff) => {
+                    if (diff) {
+                      setDiffJsonViewData({
+                        baseMsg: diff.baseMsg,
+                        testMsg: diff.testMsg,
+                        logs: diff.logs,
+                      });
+                      setDiffJsonViewVisible(true);
+                    }
+                  }}
+                />
+              </Collapse.Panel>
+            ))}
+          </Collapse>
         }
+      />
+
+      <DiffJsonView
+        data={diffJsonViewData}
+        open={diffJsonViewVisible}
+        onClose={() => setDiffJsonViewVisible(false)}
       />
     </Space>
   );

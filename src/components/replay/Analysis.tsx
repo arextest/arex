@@ -1,5 +1,5 @@
 import { useRequest } from 'ahooks';
-import { Col, Divider, Row, theme, Tooltip } from 'antd';
+import { Col, Row, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { FC, useState } from 'react';
 
@@ -84,7 +84,6 @@ const Analysis: FC<{
         <HighlightRowTable
           size='small'
           loading={loading}
-          pagination={false}
           rowKey='differenceName'
           columns={categoryColumns}
           dataSource={differenceData}

@@ -1,11 +1,11 @@
 import { AimOutlined, PlusOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { message, Space, theme } from 'antd';
+import { message, theme } from 'antd';
 import React, { FC } from 'react';
 import { useParams } from 'react-router-dom';
 
 import MenuSelect from '../components/MenuSelect';
-import { SmallTextButton } from '../components/styledComponents';
+import { SmallTextButton, SpaceBetweenWrapper } from '../components/styledComponents';
 import { generateGlobalPaneId } from '../helpers/utils';
 import { PagesType } from '../pages';
 import EnvironmentService from '../services/Environment.service';
@@ -73,10 +73,10 @@ const EnvironmentMenu: FC = () => {
       filter={(keyword, env) => env.envName?.includes(keyword)}
       itemRender={(env) => ({
         label: (
-          <Space>
+          <SpaceBetweenWrapper>
             {env.envName}
             {activeEnvironment?.id === env.id && <AimOutlined style={{ color: colorPrimary }} />}
-          </Space>
+          </SpaceBetweenWrapper>
         ),
         key: env.id,
       })}
