@@ -3,12 +3,12 @@ import { Col, Row, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { FC, useState } from 'react';
 
-import ReplayService from '../../services/Replay.service';
-import { CategoryStatistic, Difference } from '../../services/Replay.type';
-import { MenuSelect } from '../index';
-import { HighlightRowTable } from '../styledComponents';
+import ReplayService from '../../../services/Replay.service';
+import { CategoryStatistic, Difference } from '../../../services/Replay.type';
+import MenuSelect from '../../MenuSelect';
+import { HighlightRowTable } from '../../styledComponents';
 
-const Analysis: FC<{
+const DiffScenes: FC<{
   planItemId: number;
   onScenes?: (diff: Difference, category?: CategoryStatistic) => void;
   onSelectCategory?: (category: CategoryStatistic) => void;
@@ -42,7 +42,7 @@ const Analysis: FC<{
       width: '110px',
     },
     {
-      title: 'Case Count',
+      title: 'CaseTable Count',
       dataIndex: 'caseCount',
       width: '110px',
     },
@@ -94,4 +94,4 @@ const Analysis: FC<{
   );
 };
 
-export default Analysis;
+export default DiffScenes;

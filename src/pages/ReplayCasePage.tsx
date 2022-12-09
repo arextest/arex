@@ -9,8 +9,7 @@ import { useRequest } from 'ahooks';
 import { Col, Collapse, Row, Space, Switch } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
 
-import Case from '../components/replay/Case';
-import SaveCase, { SaveCaseRef } from '../components/replay/SaveCase';
+import { CaseTable, SaveCase, SaveCaseRef } from '../components/replay/Case';
 import { CheckOrCloseIcon, CollapseTable, Label, PanesTitle } from '../components/styledComponents';
 import ReplayService from '../services/Replay.service';
 import { PlanItemStatistics, ReplayCase as ReplayCaseType } from '../services/Replay.type';
@@ -64,7 +63,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
     () =>
       ReplayService.queryFullLinkMsg({
         recordId: selectedRecord!.recordId,
-        planItemId: props.page.data.planItemId,
+        planItemId: props.page.data!.planItemId,
       }),
     {
       ready: !!selectedRecord,
@@ -103,7 +102,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
       <CollapseTable
         active={!!selectedRecord}
         table={
-          <Case
+          <CaseTable
             planItemId={props.page.data.planItemId}
             onClick={handleClickRecord}
             onClickSaveCase={handleClickSaveCase}

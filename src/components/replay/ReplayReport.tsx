@@ -4,7 +4,6 @@ import { ContainerOutlined, FileTextOutlined, RedoOutlined } from '@ant-design/i
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import {
-  Badge,
   Button,
   Card,
   Col,
@@ -12,7 +11,6 @@ import {
   Row,
   Statistic,
   Table,
-  Tag,
   theme,
   Tooltip,
   Typography,
@@ -43,7 +41,7 @@ const chartOptions = {
   },
 } as const;
 
-const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
+const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
   const { setPages } = useStore();
   const email = getLocalStorage<string>(EmailKey);
   const { token } = theme.useToken();
@@ -80,10 +78,10 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           {
             data: countData,
             backgroundColor: [
-              token.colorSuccessText,
-              token.colorErrorText,
-              token.colorInfoText,
-              token.colorWarningText,
+              token.colorSuccessTextHover,
+              token.colorErrorTextHover,
+              token.colorInfoTextHover,
+              token.colorWarningTextHover,
             ],
           },
         ],
@@ -130,13 +128,6 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
     {
       title: 'Cases',
       dataIndex: 'totalCaseCount',
-      filterMultiple: false,
-      filters: [
-        { text: 'All', value: 'all' },
-        { text: 'Valid', value: 'valid' },
-      ],
-      defaultFilteredValue: ['valid'],
-      onFilter: (value, record) => value !== 'valid' || !!record.totalCaseCount,
     },
     {
       title: 'Passed',
@@ -169,13 +160,13 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
         <>
           <TooltipButton
             icon={<ContainerOutlined />}
-            title='Analysis'
+            title='DiffScenes'
             breakpoint='xxl'
             disabled={!record.failCaseCount}
             onClick={() => {
               setPages(
                 {
-                  title: `Analysis - ${record.operationId}`,
+                  title: `DiffScenes - ${record.operationId}`,
                   pageType: PagesType.ReplayAnalysis,
                   menuType: MenusType.Replay,
                   isNew: false,
@@ -196,12 +187,12 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
           />
           <TooltipButton
             icon={<FileTextOutlined />}
-            title='Case'
+            title='CaseTable'
             breakpoint='xxl'
             onClick={() =>
               setPages(
                 {
-                  title: `Case - ${record.planItemId}`,
+                  title: `CaseTable - ${record.planItemId}`,
                   pageType: PagesType.ReplayCase,
                   menuType: MenusType.Replay,
                   isNew: false,
@@ -358,4 +349,4 @@ const Report: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
   );
 };
 
-export default Report;
+export default ReplayReport;

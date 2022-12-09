@@ -1,12 +1,14 @@
+import './DiffJsonView.css';
+
 import { css } from '@emotion/react';
 import { useMount } from 'ahooks';
 import { Modal } from 'antd';
 import JSONEditor, { JSONEditorOptions } from 'jsoneditor';
 import React, { FC, useEffect, useRef } from 'react';
 
-import { tryParseJsonString } from '../../helpers/utils';
-import { QueryMsgWithDiffLog } from '../../services/Replay.type';
-import useUserProfile from '../../store/useUserProfile';
+import { tryParseJsonString } from '../../../helpers/utils';
+import { QueryMsgWithDiffLog } from '../../../services/Replay.type';
+import useUserProfile from '../../../store/useUserProfile';
 
 export type DiffJsonViewProps = {
   data?: {

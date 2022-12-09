@@ -1,6 +1,4 @@
-export { default as Analysis } from './Analysis';
 export { default as AppTitle } from './AppTitle';
-export { default as Case } from './Case';
-export { default as Report } from './Report';
-export { default as Results } from './Results';
+export { default as ReplayReport } from './ReplayReport';
+export { default as ReplayTable } from './ReplayTable';
 export * as ReplaySetting from './Setting';

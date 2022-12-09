@@ -3,9 +3,9 @@ import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC } from 'react';
 
-import ReplayService from '../../services/Replay.service';
-import { ReplayCase } from '../../services/Replay.type';
-import { HighlightRowTable, SmallTextButton } from '../styledComponents';
+import ReplayService from '../../../services/Replay.service';
+import { ReplayCase } from '../../../services/Replay.type';
+import { HighlightRowTable, SmallTextButton } from '../../styledComponents';
 
 type CaseProps = {
   planItemId: number;
@@ -13,7 +13,7 @@ type CaseProps = {
   onClickSaveCase?: (record: ReplayCase) => void;
 };
 
-const Case: FC<CaseProps> = (props) => {
+const CaseTable: FC<CaseProps> = (props) => {
   const columnsCase: ColumnsType<ReplayCase> = [
     {
       title: 'Record ID',
@@ -69,4 +69,4 @@ const Case: FC<CaseProps> = (props) => {
   );
 };
 
-export default Case;
+export default CaseTable;

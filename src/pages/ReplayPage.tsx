@@ -1,7 +1,7 @@
 import { Empty, Space } from 'antd';
 import React, { useState } from 'react';
 
-import { AppTitle, Report, Results } from '../components/replay';
+import { AppTitle, ReplayReport, ReplayTable } from '../components/replay';
 import { FlexCenterWrapper } from '../components/styledComponents';
 import CollapseTable from '../components/styledComponents/CollapseTable';
 import { uuid } from '../helpers/utils';
@@ -16,7 +16,7 @@ const ReplayPage: PageFC<ApplicationDataType> = (props) => {
 
   const [refreshDep, setRefreshDep] = useState<string>();
   const handleRefreshDep = () => {
-    setRefreshDep(uuid()); // 触发 Results 组件请求更新
+    setRefreshDep(uuid()); // 触发 ReplayTable 组件请求更新
   };
 
   return props.page.data ? (
@@ -26,14 +26,14 @@ const ReplayPage: PageFC<ApplicationDataType> = (props) => {
       <CollapseTable
         active={!!selectedPlan}
         table={
-          <Results
+          <ReplayTable
             // defaultSelectFirst
             appId={props.page.data.appId}
             refreshDep={refreshDep}
             onSelectedPlanChange={handleSelectPlan}
           />
         }
-        panel={<Report selectedPlan={selectedPlan} />}
+        panel={<ReplayReport selectedPlan={selectedPlan} />}
       />
     </Space>
   ) : (

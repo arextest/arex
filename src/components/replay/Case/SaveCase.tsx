@@ -1,14 +1,13 @@
-// @ts-nocheck
 import { Form, Input, Modal, notification, TreeSelect, Typography } from 'antd';
 import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { EmailKey } from '../../constant';
-import request from '../../helpers/api/axios';
-import { treeFindPath } from '../../helpers/collection/util';
-import { getLocalStorage } from '../../helpers/utils';
-import { ReplayCase as ReplayCaseType } from '../../services/Replay.type';
-import { useStore } from '../../store';
+import { EmailKey } from '../../../constant';
+import request from '../../../helpers/api/axios';
+import { treeFindPath } from '../../../helpers/collection/util';
+import { getLocalStorage } from '../../../helpers/utils';
+import { ReplayCase as ReplayCaseType } from '../../../services/Replay.type';
+import { useStore } from '../../../store';
 
 const { Text } = Typography;
 
@@ -96,7 +95,7 @@ const SaveCase = forwardRef<SaveCaseRef>((props, ref) => {
           </Form.Item>
           <Form.Item
             name='caseName'
-            label='Case name'
+            label='CaseTable name'
             rules={[
               {
                 required: true,

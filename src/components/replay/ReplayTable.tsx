@@ -17,7 +17,7 @@ export type ResultsProps = {
   onSelectedPlanChange: (selectedPlan: PlanStatistics) => void;
 };
 
-const Results: FC<ResultsProps> = ({
+const ReplayTable: FC<ResultsProps> = ({
   appId,
   defaultSelectFirst,
   refreshDep,
@@ -27,7 +27,7 @@ const Results: FC<ResultsProps> = ({
 
   const columns: ColumnsType<PlanStatistics> = [
     {
-      title: 'Report Name',
+      title: 'ReplayReport Name',
       dataIndex: 'planName',
       ellipsis: { showTitle: false },
       render: (text) => (
@@ -112,4 +112,4 @@ const Results: FC<ResultsProps> = ({
   );
 };
 
-export default Results;
+export default ReplayTable;
