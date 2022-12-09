@@ -2,7 +2,7 @@ import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest, useToggle } from 'ahooks';
 import { theme } from 'antd';
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 
 import { TooltipButton } from '../components';
 import MenuSelect from '../components/MenuSelect';
@@ -18,11 +18,12 @@ import { MenusType } from './index';
 
 type MenuItemProps = {
   app: ApplicationDataType;
+  hiddenFavoriteIcon?: boolean;
   favoriteApps?: string[];
   onFavoriteAppsChange?: () => void;
 };
 const MenuItem = styled((props: MenuItemProps) => {
-  const { app, favoriteApps = [], onFavoriteAppsChange, ...restProps } = props;
+  const { app, favoriteApps = [], hiddenFavoriteIcon, onFavoriteAppsChange, ...restProps } = props;
   const { token } = theme.useToken();
   const email = getLocalStorage<string>(EmailKey) as string;
 
@@ -51,7 +52,9 @@ const MenuItem = styled((props: MenuItemProps) => {
       <span>{app.appId}</span>
       <span className='menu-item-heart' onClick={(e) => e.stopPropagation()}>
         {favoriteApps.includes(app.id) ? (
-          <HeartFilled onClick={unFavoriteApp} style={{ color: token.colorError }} />
+          !hiddenFavoriteIcon && (
+            <HeartFilled onClick={unFavoriteApp} style={{ color: token.colorError }} />
+          )
         ) : (
           <HeartOutlined className='menu-item-heart-outlined' onClick={favoriteApp} />
         )}
@@ -79,7 +82,9 @@ const ReplayMenu: FC = () => {
   const { activeMenu, setPages } = useStore();
   const email = getLocalStorage<string>(EmailKey) as string;
 
-  const [favoriteFilter, { toggle: toggleFavoriteFilter }] = useToggle(false);
+  const [favoriteFilter, { toggle: toggleFavoriteFilter, setRight: disableFavoriteFilter }] =
+    useToggle(false);
+  const [favoriteAppsInitialized, setFavoriteAppsInitialized] = useState(false);
 
   const value = useMemo(() => parseGlobalPaneId(activeMenu[1])['rawId'], [activeMenu]);
   const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
@@ -88,7 +93,14 @@ const ReplayMenu: FC = () => {
     data: favoriteApps,
     loading: loadingFavoriteApp,
     run: getFavoriteApps,
-  } = useRequest(() => UserService.getFavoriteApp(email));
+  } = useRequest(() => UserService.getFavoriteApp(email), {
+    onSuccess(favoriteApps) {
+      if (!favoriteAppsInitialized) {
+        favoriteApps.length && disableFavoriteFilter();
+        setFavoriteAppsInitialized(true);
+      }
+    },
+  });
 
   const handleReplayMenuClick = (app: ApplicationDataType) => {
     setPages(
@@ -157,7 +169,12 @@ const ReplayMenu: FC = () => {
       filter={filter}
       itemRender={(app) => ({
         label: (
-          <MenuItem app={app} favoriteApps={favoriteApps} onFavoriteAppsChange={getFavoriteApps} />
+          <MenuItem
+            app={app}
+            hiddenFavoriteIcon={favoriteFilter}
+            favoriteApps={favoriteApps}
+            onFavoriteAppsChange={getFavoriteApps}
+          />
         ),
         key: app.id,
       })}
