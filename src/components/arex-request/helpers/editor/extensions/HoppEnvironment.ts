@@ -9,7 +9,7 @@ export const getMarkFromToArr = (
       key: string;
       value: string;
     }[];
-  }
+  },
 ): {
   from: number;
   to: number;
@@ -20,12 +20,11 @@ export const getMarkFromToArr = (
     value: string;
   };
 }[] => {
-  // ssss
   const editorValueMatch = text.match(reg) || [];
   const arr = [];
   for (let i = 0; i < editorValueMatch.length; i++) {
     const find = currentEnv.variables.find(
-      (f) => f.key === editorValueMatch[i].replace('{{', '').replace('}}', '')
+      (f) => f.key === editorValueMatch[i].replace('{{', '').replace('}}', ''),
     );
     arr.push({
       from: text.indexOf(editorValueMatch[i]),

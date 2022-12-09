@@ -61,29 +61,30 @@ export const AgentAxiosAndTest = ({
           };
         }, {}),
   }).then((res: any) => {
-    axios({
+    return axios({
       method: 'POST',
       url: 'http://10.5.153.1:10001/preTest',
       data: {
         response: '{"appId": "arex.1.20220909A"}',
-        preTestScripts: request.testScript,
+        preTestScripts: [request.testScript],
       },
-    });
-
-    return {
-      testResult: [],
-      response: {
-        ...res,
-        type: 'success',
-        body: res.data,
-        headers: res.headers,
-        meta: {
-          responseDuration: new Date().getTime() - startTime,
-          responseSize: JSON.stringify(res.data).length,
+    }).then((testRes) => {
+      console.log(testRes.data.body.caseResult, 'testRes.data.body.caseResult');
+      return {
+        testResult: testRes.data.body.caseResult,
+        response: {
+          ...res,
+          type: 'success',
+          body: res.data,
+          headers: res.headers,
+          meta: {
+            responseDuration: new Date().getTime() - startTime,
+            responseSize: JSON.stringify(res.data).length,
+          },
+          statusCode: res.status,
         },
-        statusCode: res.status,
-      },
-    };
+      };
+    });
   });
 };
 

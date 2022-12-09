@@ -6,7 +6,7 @@ import LensesResponseBodyRenderer from '../lenses/ResponseBodyRenderer';
 import HttpResponseMeta from './ResponseMeta';
 
 const HttpResponse = () => {
-  const { response } = useHttpStore();
+  const { response, testResult } = useHttpStore();
   const hasResponse = useMemo(
     () => response?.type === 'success' || response?.type === 'fail',
     [response],
@@ -36,7 +36,7 @@ const HttpResponse = () => {
         >
           <HttpResponseMeta response={response} />
           {!loading && hasResponse ? (
-            <LensesResponseBodyRenderer response={response} testResult={{}} />
+            <LensesResponseBodyRenderer response={response} testResult={testResult} />
           ) : null}
         </div>
       ) : null}

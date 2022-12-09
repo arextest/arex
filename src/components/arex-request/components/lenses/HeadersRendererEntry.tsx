@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {Col, Row, theme} from 'antd';
 import {FC, useEffect} from 'react';
@@ -16,11 +15,6 @@ const {useToken} = theme
 const LensesHeadersRendererEntry: FC<{ header: HoppRESTHeader }> = ({
   header,
 }) => {
-  const token = useToken();
-  const theme = useTheme();
-  useEffect(() => {
-    console.log(token.token,'token.token')
-  }, [token.token]);
   return (
     <div>
       <Row>

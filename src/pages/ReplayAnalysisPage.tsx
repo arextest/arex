@@ -1,4 +1,4 @@
-import './ReplayAnalysis.less';
+import './ReplayAnalysis.css';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -144,7 +144,7 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
   }, [selectedCategory, selectedDiff, props.page.data.planItemId]);
 
   return (
-    <Space direction='vertical' style={{ display: 'flex' }}>
+    <Space direction='vertical' style={{ display: 'flex' }} >
       <PanesTitle title={<span>Main Service API: {props.page.data.operationName}</span>} />
       <CollapseTable
         active={!!selectedDiff}

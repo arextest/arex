@@ -3,6 +3,7 @@ import './theme/globalStyle.css';
 import 'allotment/dist/style.css';
 import 'antd/dist/reset.css';
 import './assets/css/index.css';
+import 'jsoneditor/dist/jsoneditor.min.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
