@@ -1,12 +1,15 @@
-import { css } from '@emotion/react';
+import { css, jsx } from '@emotion/react';
 import { Empty, Spin, Typography } from 'antd';
 import { FC, useMemo } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { HoppRESTResponse } from '../../helpers/types/HoppRESTResponse';
 import { getStatusCodeReasonPhrase } from '../../helpers/utils/statusCodes';
 
-const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
+const HttpResponseMeta: FC<{ response: HoppRESTResponse | null }> = ({
+  response,
+}) => {
   const { t } = useTranslation();
   const tabCss = css`
     color: #10b981;
@@ -16,8 +19,7 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
   `;
 
   const readableResponseSize = useMemo(() => {
-    console.log({ response });
-    if (response.type === 'success' || response.type === 'fail') {
+    if (response?.type === 'success' || response?.type === 'fail') {
       const size = response.meta.responseSize;
       if (size >= 100000) return (size / 1000000).toFixed(2) + ' MB';
       if (size >= 1000) return (size / 1000).toFixed(2) + ' KB';
@@ -30,14 +32,14 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
   return (
     <div
       css={css`
-        padding: 16px 0 16px 0;
+        padding: 12px 0 0 0;
       `}
     >
-      {!response.type ? (
+      {response === null ? (
         <div>
           <Empty
             description={
-              <Typography.Text type='secondary'>
+              <Typography.Text type="secondary">
                 Enter the URL and click Send to get a response
               </Typography.Text>
             }
@@ -74,7 +76,9 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse }> = ({ response }) => {
                 </span>
                 <span>
                   {t('response.time')}:
-                  <span css={tabCss}>{`${response.meta.responseDuration}ms`}</span>
+                  <span
+                    css={tabCss}
+                  >{`${response.meta.responseDuration}ms`}</span>
                 </span>
                 <span>
                   {t('response.size')}:

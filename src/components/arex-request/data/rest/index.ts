@@ -46,9 +46,17 @@ export interface HoppRESTRequest {
   name: string;
   method: string;
   endpoint: string;
+  compareMethod: string;
+  compareEndpoint: string;
   params: HoppRESTParam[];
   headers: HoppRESTHeader[];
   preRequestScript: string;
+  preRequestScripts: {
+    icon: string;
+    label: string;
+    type: number;
+    value: string;
+  }[];
   testScript: string;
 
   auth: HoppRESTAuth;
@@ -79,53 +87,6 @@ function parseRequestBody(x: any): HoppRESTReqBody {
     contentType: 'application/json',
     body: '',
   };
-}
-
-export function translateToNewRequest(x: any): HoppRESTRequest {
-  if (isHoppRESTRequest(x)) {
-    return x;
-  } else {
-    // Old format
-    const endpoint = `${x?.url ?? ''}${x?.path ?? ''}`;
-
-    const headers: HoppRESTHeader[] = x?.headers ?? [];
-
-    // Remove old keys from params
-    const params: HoppRESTParam[] = (x?.params ?? []).map(
-      ({ key, value, active }: { key: string; value: string; active: boolean }) => ({
-        key,
-        value,
-        active,
-      }),
-    );
-
-    const name = x?.name ?? 'Untitled request';
-    const method = x?.method ?? '';
-
-    const preRequestScript = x?.preRequestScript ?? '';
-    const testScript = x?.testScript ?? '';
-
-    const body = parseRequestBody(x);
-
-    const auth = parseOldAuth(x);
-
-    const result: HoppRESTRequest = {
-      name,
-      endpoint,
-      headers,
-      params,
-      method,
-      preRequestScript,
-      testScript,
-      body,
-      auth,
-      v: RESTReqSchemaVersion,
-    };
-
-    if (x.id) result.id = x.id;
-
-    return result;
-  }
 }
 
 export function parseOldAuth(x: any): HoppRESTAuth {

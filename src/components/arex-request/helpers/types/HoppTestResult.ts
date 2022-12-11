@@ -1,4 +1,4 @@
-import { Environment } from "../../data/environment";
+import { Environment } from '../../data/environment';
 
 export type HoppTestExpectResult = {
   status: 'fail' | 'pass' | 'error';
@@ -20,12 +20,16 @@ export type HoppTestResult = {
   envDiff: {
     global: {
       additions: Environment['variables'];
-      updations: Array<Environment['variables'][number] & { previousValue: string }>;
+      updations: Array<
+        Environment['variables'][number] & { previousValue: string }
+      >;
       deletions: Environment['variables'];
     };
     selected: {
       additions: Environment['variables'];
-      updations: Array<Environment['variables'][number] & { previousValue: string }>;
+      updations: Array<
+        Environment['variables'][number] & { previousValue: string }
+      >;
       deletions: Environment['variables'];
     };
   };

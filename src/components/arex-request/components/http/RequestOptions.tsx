@@ -1,18 +1,17 @@
-import { css } from '@emotion/react';
+import { css, jsx } from '@emotion/react';
 import { Badge, Tabs, Tag } from 'antd';
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import axios from '../../../../helpers/api/axios';
-import ExtraRequestTabItemMock from '../../extra/ExtraRequestTabItemMock';
-import { useHttpRequestStore } from '../../store/useHttpRequestStore';
+import { HttpContext } from '../../index';
 import HttpBody from './Body';
 import HttpHeaders from './Headers';
 import HttpParameters from './Parameters';
 import HttpPreRequestScript from './PreRequestScript';
 import HttpTests from './Tests';
 const HttpRequestOptions = ({ config }) => {
-  const { headers, setHttpRequestStore, params } = useHttpRequestStore();
+  const { store } = useContext(HttpContext);
   const { t } = useTranslation();
   const [activeKey, setActiveKey] = useState('3');
 
@@ -23,10 +22,10 @@ const HttpRequestOptions = ({ config }) => {
           {t('tab.parameters')}{' '}
           <Tag
             css={css`
-              display: ${params.length > 0 ? 'inline-block' : 'none'};
+              display: ${store.request.params.length > 0 ? 'inline-block' : 'none'};
             `}
           >
-            {params.length}
+            {store.request.params.length}
           </Tag>
         </div>
       ),
@@ -39,10 +38,10 @@ const HttpRequestOptions = ({ config }) => {
           {t('tab.headers')}{' '}
           <Tag
             css={css`
-              display: ${headers.length > 0 ? 'inline-block' : 'none'};
+              display: ${store.request.headers.length > 0 ? 'inline-block' : 'none'};
             `}
           >
-            {headers.length}
+            {store.request.headers.length}
           </Tag>
         </div>
       ),
@@ -56,21 +55,7 @@ const HttpRequestOptions = ({ config }) => {
       label: 'Pre-request Script',
       children: <HttpPreRequestScript />,
     },
-    {
-      label: 'Mock',
-      key: '__mock__',
-      children: (
-        <ExtraRequestTabItemMock requestAxios={axios} recordId={'store.request.recordId'} />
-      ),
-    },
-    ...config.tabs.extra,
-  ].filter((i) => {
-    if (i.key === '__mock__') {
-      return !!true;
-    } else {
-      return true;
-    }
-  });
+  ].concat(config.tabs.extra);
   return (
     <div
       css={css`
@@ -86,7 +71,12 @@ const HttpRequestOptions = ({ config }) => {
       `}
     >
       <Tabs
-        style={{ height: '100%' }}
+        css={css`
+          height: 100%;
+          .ant-tabs-nav {
+            margin-bottom: 0;
+          }
+        `}
         activeKey={activeKey}
         items={items}
         onChange={(val) => {

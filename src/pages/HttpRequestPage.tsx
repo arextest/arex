@@ -5,19 +5,18 @@ import { useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Http from '../components/arex-request';
-import {
-  convertRequestData,
-  convertSaveRequestData,
-} from '../components/ArexRequestComponent/util';
-import { treeFind } from '../helpers/collection/util';
-import { AgentAxiosAndTest } from '../helpers/request';
+import ExtraRequestTabItemCompare from '../components/arex-request/extra/ExtraRequestTabItemCompare';
+import ExtraRequestTabItemMock from '../components/arex-request/extra/ExtraRequestTabItemMock';
+import HttpBreadcrumb from '../components/arex-request/extra/HttpBreadcrumb';
+import { treeFind, treeFindPath } from '../helpers/collection/util';
+import { convertRequestData, convertSaveRequestData } from '../helpers/http/util';
+import { runRESTRequest } from '../helpers/RequestRunner';
 import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
 import { MenusType } from '../menus';
 import SaveRequestButton from '../menus/CollectionMenu/SaveRequestButton';
 import { FileSystemService } from '../services/FileSystem.service';
 import { useStore } from '../store';
 import useUserProfile from '../store/useUserProfile';
-import request from './../helpers/api/axios';
 import { PageFC, PagesType } from './index';
 
 export type KeyValueType = {
@@ -28,9 +27,8 @@ export type KeyValueType = {
 
 const HttpRequestPage: PageFC = (props) => {
   const { collectionTreeData, setPages, pages, activeEnvironment } = useStore();
-  // const {} = useUserProfile()
   const { workspaceId } = useParams();
-  const { darkMode, theme } = useUserProfile();
+  const { theme } = useUserProfile();
   const env = useMemo(() => {
     if (activeEnvironment) {
       return {
@@ -58,11 +56,30 @@ const HttpRequestPage: PageFC = (props) => {
     );
   }, [props.page.paneId, collectionTreeData]);
 
+  const nodePaths = useMemo(() => {
+    return treeFindPath(
+      collectionTreeData,
+      (node: any) => node.key === parseGlobalPaneId(props.page.paneId)['rawId'],
+    );
+  }, [props.page.paneId, collectionTreeData]);
+
   const { data } = useRequest(
-    () =>
-      FileSystemService.queryInterface({ id: id }).then((r) => convertRequestData(r, 'address')),
-    {},
+    () => {
+      if (nodeType === 2) {
+        return FileSystemService.queryCase({ id: id }).then((r) =>
+          convertRequestData(r, 'address'),
+        );
+      } else {
+        return FileSystemService.queryInterface({ id: id }).then((r) =>
+          convertRequestData(r, 'address'),
+        );
+      }
+    },
+    {
+      refreshDeps: [nodeType],
+    },
   );
+
   return (
     <div
       css={css`
@@ -84,27 +101,56 @@ const HttpRequestPage: PageFC = (props) => {
       >
         <Http
           value={data}
-          environment={{ name: '', variables: [] }}
+          environment={env}
           theme={theme}
-          breadcrumb={<div>breadcrumb</div>}
+          breadcrumb={
+            <HttpBreadcrumb
+              nodePaths={nodePaths}
+              id={id}
+              defaultTags={data?.labelIds}
+              nodeType={nodeType}
+            />
+          }
           config={{
             tabs: {
               extra: [
                 {
-                  label: 'Json verify',
-                  key: 'jsonVerify',
-                  children: <div>jsonVerify</div>,
+                  label: 'Compare',
+                  key: 'compare',
+                  children: <ExtraRequestTabItemCompare />,
+                },
+                {
+                  label: 'Mock',
+                  key: 'mock',
+                  children: <ExtraRequestTabItemMock recordId={data?.recordId} />,
                 },
               ],
             },
           }}
           onSend={(r) => {
-            return AgentAxiosAndTest({ request: r });
+            return runRESTRequest({ request: r });
           }}
           onSave={(r) => {
-            FileSystemService.saveInterface(convertSaveRequestData(id, r)).then((res) => {
-              message.success(JSON.stringify(res));
-            });
+            if (nodeType === 1 && id.length === 36) {
+              setReqParams(r);
+              saveRequestButtonRef.current.open();
+            } else if (nodeType === 2) {
+              FileSystemService.saveCase(convertSaveRequestData(workspaceId as string, id, r)).then(
+                (res) => {
+                  message.success(JSON.stringify(res));
+                },
+              );
+            } else {
+              FileSystemService.saveInterface(
+                convertSaveRequestData(workspaceId as string, id, r),
+              ).then((res) => {
+                if (res.body.success) {
+                  message.success('success');
+                } else {
+                  message.error(res.responseStatusType.responseDesc);
+                }
+              });
+            }
           }}
         />
         <SaveRequestButton

@@ -1,25 +1,22 @@
-import {HoppRESTRequest} from "../../data/rest";
-
+// 修改点
+// 1.删除了 req HoppRESTRequest
+// 2.body 为any
 export type HoppRESTResponse =
-  | { type: 'loading'; req: HoppRESTRequest }
+  | { type: 'loading' }
   | {
       type: 'fail';
       headers: { key: string; value: string }[];
-      body: ArrayBuffer;
+      body: any;
       statusCode: number;
 
       meta: {
         responseSize: number; // in bytes
         responseDuration: number; // in millis
       };
-
-      req: HoppRESTRequest;
     }
   | {
       type: 'network_fail';
       error: Error;
-
-      req: HoppRESTRequest;
     }
   | {
       type: 'script_fail';
@@ -28,12 +25,10 @@ export type HoppRESTResponse =
   | {
       type: 'success';
       headers: { key: string; value: string }[];
-      body: ArrayBuffer;
+      body: any;
       statusCode: number;
       meta: {
         responseSize: number; // in bytes
         responseDuration: number; // in millis
       };
-
-      req: HoppRESTRequest;
     };

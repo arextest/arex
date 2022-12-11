@@ -1,7 +1,5 @@
-// @ts-nocheck
-// import { HttpContext } from '../../index';
 import styled from '@emotion/styled';
-import { Input, RadioChangeEvent, Select } from 'antd';
+import { Input, Select } from 'antd';
 import { useContext } from 'react';
 
 import { HttpContext } from '../index';
@@ -25,8 +23,6 @@ const HeaderWrapper = styled.div`
     margin-left: 16px;
   }
 `;
-// compareEndpoint: '',
-//   compareMethod: '',
 const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 const ExtraRequestTabItemCompare = () => {
   const { store, dispatch } = useContext(HttpContext);
@@ -36,9 +32,8 @@ const ExtraRequestTabItemCompare = () => {
         value={store.request.compareMethod}
         options={methods.map((i) => ({ value: i, lable: i }))}
         onChange={(value) => {
-          dispatch({
-            type: 'request.compareMethod',
-            payload: value,
+          dispatch((state) => {
+            state.request.compareMethod = value;
           });
         }}
       />
@@ -46,9 +41,8 @@ const ExtraRequestTabItemCompare = () => {
         placeholder='Basic usage'
         value={store.request.compareEndpoint}
         onChange={({ target: { value } }) => {
-          dispatch({
-            type: 'request.compareEndpoint',
-            payload: value,
+          dispatch((state) => {
+            state.request.compareEndpoint = value;
           });
         }}
       />

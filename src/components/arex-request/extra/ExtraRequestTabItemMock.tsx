@@ -1,8 +1,9 @@
-// @ts-nocheck
 import { css } from '@emotion/react';
 import { useMount } from 'ahooks';
 import { Card, Col, Input, message, Row } from 'antd';
 import { useState } from 'react';
+
+import request from '../../../helpers/api/axios';
 
 const getRequestKey = {
   '4': {
@@ -60,11 +61,11 @@ const tryPrettierJsonString = (jsonString: string, errorTip?: string) => {
   }
 };
 
-const ExtraRequestTabItemMock = ({ recordId, requestAxios }) => {
+const ExtraRequestTabItemMock = ({ recordId }) => {
   const [dataSource, setDataSource] = useState([]);
   useMount(() => {
-    requestAxios
-      .post(`/storage/frontEnd/record/queryFixedRecord`, {
+    request
+      .post(`/storage/report/record/queryRecord`, {
         recordId: recordId,
         categoryTypes: 0,
       })
@@ -87,8 +88,7 @@ const ExtraRequestTabItemMock = ({ recordId, requestAxios }) => {
       });
   });
   return (
-    <div
-    >
+    <div>
       {dataSource.map((i) => {
         return (
           <Card

@@ -7,15 +7,16 @@ import {
   getMarkFromToArr,
   HOPP_ENVIRONMENT_REGEX,
 } from '../../helpers/editor/extensions/HoppEnvironment';
-import { useHttpStore } from '../../store/useHttpStore';
+import { HttpContext } from '../../index';
+
 interface SmartEnvInputProps {
   value: string;
   onChange: (e: any) => void;
 }
 const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
-  const antdTheme = useTheme();
-  const { theme } = useHttpStore();
+  const theme = useTheme();
   const smartEnvInputRef = useRef(null);
+  const { store } = useContext(HttpContext);
   useEnvCodeMirror({
     container: smartEnvInputRef.current,
     value: value,
@@ -24,11 +25,14 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
       [
         hoverTooltip((view, pos, side) => {
           const { text } = view.state.doc.lineAt(pos);
-          const markArrs = getMarkFromToArr(text, HOPP_ENVIRONMENT_REGEX, {
-            name: '',
-            variables: [],
-          });
-          const index = markArrs.map((i) => pos < i.to && pos > i.from).findIndex((i) => i);
+          const markArrs = getMarkFromToArr(
+            text,
+            HOPP_ENVIRONMENT_REGEX,
+            store.environment
+          );
+          const index = markArrs
+            .map((i) => pos < i.to && pos > i.from)
+            .findIndex((i) => i);
           if (index === -1) {
             return null;
           }
@@ -50,20 +54,17 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
         }),
       ],
     ],
-    onChange: (val: any) => {
+    onChange: (val: string) => {
       onChange(val);
     },
-    currentEnv: {
-      name: '',
-      variables: [],
-    },
-    theme: theme,
+    currentEnv: store.environment,
+    theme: store.theme,
   });
 
   return (
     <div
       css={css`
-        border: 1px solid ${antdTheme.colorBorder};
+        border: 1px solid ${theme.colorBorder};
         flex: 1;
         overflow: hidden;
       `}

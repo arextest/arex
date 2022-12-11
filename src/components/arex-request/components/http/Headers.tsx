@@ -1,28 +1,29 @@
 import { useContext, useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
-import { useHttpRequestStore } from '../../store/useHttpRequestStore';
+import { HttpContext } from '../..';
+import { HoppRESTHeader } from '../../data/rest';
 import FormHeader from './FormHeader';
 import FormTable, { KeyValueType, useColumns } from './FormTable';
-
 const HttpHeaders = () => {
   const { t } = useTranslation();
-  const { headers, setHttpRequestStore } = useHttpRequestStore();
+  const { store, dispatch } = useContext(HttpContext);
   const [requestHeaders, setRequestHeaders] = useImmer<any>([]);
 
   useEffect(() => {
     setRequestHeaders(
-      headers.map((i: any) => ({
+      store.request.headers.map((i: any) => ({
         ...i,
         id: String(Math.random()),
-      })),
+      }))
     );
   }, []);
 
   useEffect(() => {
-    setHttpRequestStore((state) => {
-      state.headers = requestHeaders;
+    dispatch((state) => {
+      state.request.headers = requestHeaders;
     });
   }, [requestHeaders]);
 
@@ -31,7 +32,7 @@ const HttpHeaders = () => {
       <FormHeader update={setRequestHeaders} title={t('request.header_list')} />
       <FormTable
         bordered
-        size='small'
+        size="small"
         rowKey={'id'}
         pagination={false}
         dataSource={requestHeaders}

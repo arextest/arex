@@ -1,26 +1,31 @@
 import { json } from '@codemirror/lang-json';
-import { css } from '@emotion/react';
+import { css, jsx } from '@emotion/react';
 import { Button, message } from 'antd';
-import { useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import {
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useCodeMirror } from '../../helpers/editor/codemirror';
-import { useHttpRequestStore } from '../../store/useHttpRequestStore';
-import { useHttpStore } from '../../store/useHttpStore';
+import { HttpContext } from '../../index';
 const HttpRawBody = ({ cRef }: any) => {
-  const { theme, response } = useHttpStore();
-  const { body, setHttpRequestStore } = useHttpRequestStore();
   const rawBodyParameters = useRef(null);
+  const { store, dispatch } = useContext(HttpContext);
   const { t } = useTranslation();
   useCodeMirror({
     container: rawBodyParameters.current,
-    value: body.body,
+    value: store.request.body.body,
     height: '100%',
     extensions: [json()],
-    theme: theme,
-    onChange: (val: string) => {
-      setHttpRequestStore((state) => {
-        state.body.body = val;
+    theme: store.theme,
+    onChange: (value: string) => {
+      dispatch((state) => {
+        state.request.body.body = value;
       });
     },
   });
@@ -33,7 +38,10 @@ const HttpRawBody = ({ cRef }: any) => {
   });
   const prettifyRequestBody = () => {
     try {
-      console.log()
+      const jsonObj = JSON.parse(store.request.body.body as string);
+      dispatch((state) => {
+        state.request.body.body = JSON.stringify(jsonObj, null, 2);
+      });
     } catch (e) {
       message.error(t('error.json_prettify_invalid_body'));
     }

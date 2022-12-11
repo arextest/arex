@@ -39,7 +39,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "@uiw/codemirror-theme-github": "^4.12.4",
+    "@uiw/codemirror-themes-all": "^4.19.2",
     "@uiw/react-codemirror": "^4.8.1",
     "ahooks": "^3.5.2",
     "allotment": "^1.17.0",

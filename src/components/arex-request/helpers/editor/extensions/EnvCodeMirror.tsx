@@ -4,13 +4,14 @@ import {
   StateEffectType,
   StateField,
 } from '@codemirror/state';
-import { oneDark } from '@codemirror/theme-one-dark';
 import {
   Decoration,
   DecorationSet,
   EditorView,
   ViewUpdate,
 } from '@codemirror/view';
+// @ts-ignore
+import { githubDark, githubLight } from '@uiw/codemirror-themes-all';
 import { basicSetup } from 'codemirror';
 import { useEffect, useState } from 'react';
 
@@ -97,10 +98,11 @@ export function useEnvCodeMirror(props: any) {
   switch (theme) {
     case 'light':
       getExtensions.push(defaultLightThemeOption);
+      getExtensions.push(githubLight);
       break;
     case 'dark':
       getExtensions.push(defaultThemeOption);
-      getExtensions.push(oneDark);
+      getExtensions.push(githubDark);
       break;
     default:
       getExtensions.push(theme);
@@ -172,7 +174,7 @@ export function useEnvCodeMirror(props: any) {
 
             if (effect.is(filterMarks)) {
               marks = marks.update({
-                filter: effect.value||undefined,
+                filter: effect.value || undefined,
               });
             }
           }

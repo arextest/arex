@@ -7,9 +7,9 @@ import styled from '@emotion/styled';
 import { Button, Input, Space, Table, TableProps, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useContext } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Updater } from 'use-immer';
-
 export type KeyValueType = {
   key: string;
   value: string;

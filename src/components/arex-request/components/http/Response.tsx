@@ -1,19 +1,23 @@
-import { css } from '@emotion/react';
+import { css, jsx } from '@emotion/react';
+import { DatePicker, TimePicker } from 'antd';
 import { useContext, useMemo } from 'react';
+import React from 'react';
 
-import { useHttpStore } from '../../store/useHttpStore';
+import { HttpContext } from '../..';
+import { HoppRESTResponse } from '../../helpers/types/HoppRESTResponse';
+import { HoppTestResult } from '../../helpers/types/HoppTestResult';
 import LensesResponseBodyRenderer from '../lenses/ResponseBodyRenderer';
 import HttpResponseMeta from './ResponseMeta';
 
 const HttpResponse = () => {
-  const { response, testResult } = useHttpStore();
+  const { store } = useContext(HttpContext);
   const hasResponse = useMemo(
-    () => response?.type === 'success' || response?.type === 'fail',
-    [response],
+    () => store.response?.type === 'success' || store.response?.type === 'fail',
+    [store.response]
   );
   const loading = useMemo(
-    () => response?.type === null || response?.type === 'loading',
-    [response],
+    () => store.response === null || store.response.type === 'loading',
+    [store.response]
   );
 
   return (
@@ -26,19 +30,12 @@ const HttpResponse = () => {
         padding-right: 16px;
       `}
     >
-      {response ? (
-        <div
-          css={css`
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-          `}
-        >
-          <HttpResponseMeta response={response} />
-          {!loading && hasResponse ? (
-            <LensesResponseBodyRenderer response={response} testResult={testResult} />
-          ) : null}
-        </div>
+      <HttpResponseMeta response={store.response} />
+      {!loading && hasResponse ? (
+        <LensesResponseBodyRenderer
+          response={store.response as HoppRESTResponse}
+          testResult={store.testResult as HoppTestResult}
+        />
       ) : null}
     </div>
   );

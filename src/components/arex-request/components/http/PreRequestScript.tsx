@@ -1,14 +1,30 @@
+import { CodeOutlined } from '@ant-design/icons';
 import React, { useCallback, useContext, useEffect } from 'react';
 import { useImmer } from 'use-immer';
 
 import { uuid } from '../../../../helpers/utils';
 import { PreRequestScript } from '../../../index';
-import { reorder, ScriptBlock, ScriptBlocks } from '../../../PreRequestScript';
+import { reorder, ScriptBlock, ScriptBlocks, ScriptBlockType } from '../../../PreRequestScript';
 import { PreRequestScriptProps } from '../../../PreRequestScript/PreRequestScript';
+import { HttpContext } from '../../index';
 
 const HttpPreRequestScript = () => {
+  const { store, dispatch } = useContext(HttpContext);
   const [items, setItems] = useImmer<ScriptBlock<string>[]>([]);
-  // useEffect(() => {}, [items]);
+  useEffect(() => {
+    setItems(
+      store.request.preRequestScripts.map((p) => {
+        return {
+          key: uuid(),
+          type: ScriptBlockType.CustomScript,
+          label: ScriptBlockType.CustomScript,
+          data: p.value,
+          disabled: false,
+          icon: <CodeOutlined />,
+        };
+      }),
+    );
+  }, []);
   const handleAdd: PreRequestScriptProps<string>['onAdd'] = (key, initData = '') => {
     const block = ScriptBlocks.find((block) => block.key === key);
     const data: ScriptBlock<string> = {
@@ -42,6 +58,21 @@ const HttpPreRequestScript = () => {
     const output = items.filter((item) => !item.disabled);
     console.log({ output });
   };
+
+  useEffect(() => {
+    const output = items.filter((item) => !item.disabled);
+
+    dispatch((state) => {
+      state.request.preRequestScripts = output.map((i) => {
+        return {
+          icon: '',
+          label: 'CustomScript',
+          type: 0,
+          value: i.data,
+        };
+      });
+    });
+  }, [items]);
 
   const handlePreRequestScriptChange: PreRequestScriptProps<string>['onChange'] = (id, value) => {
     setItems((state) => {

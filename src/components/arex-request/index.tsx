@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
-import { FC, useEffect } from 'react';
+import produce, { Draft } from 'immer';
+import { createContext, Dispatch, FC, useEffect, useReducer } from 'react';
 
 import HttpRequest from './components/http/Request';
 import HttpRequestOptions from './components/http/RequestOptions';
@@ -8,15 +9,22 @@ import HttpResponse from './components/http/Response';
 import TestResult from './components/http/TestResult';
 import { Environment } from './data/environment';
 import { HoppRESTRequest } from './data/rest';
+import { defaultState } from './defaultState';
 import { HoppRESTResponse } from './helpers/types/HoppRESTResponse';
 import { HoppTestResult } from './helpers/types/HoppTestResult';
-import { useHttpRequestStore } from './store/useHttpRequestStore';
-import { useHttpStore } from './store/useHttpStore';
 
-interface HttpProps {
+export interface State {
+  request: HoppRESTRequest;
+  response: HoppRESTResponse | null;
+  testResult: HoppTestResult | null;
   environment: Environment;
   theme: 'dark' | 'light';
-  value: HoppRESTRequest | undefined;
+}
+
+export interface HttpProps {
+  environment: Environment;
+  theme: 'dark' | 'light';
+  value: HoppRESTRequest | null;
   breadcrumb: any;
   onSend: (
     r: HoppRESTRequest,
@@ -25,53 +33,65 @@ interface HttpProps {
   config: any;
 }
 
-const Http: FC<HttpProps> = ({ environment, theme, value, config, breadcrumb, onSend, onSave }) => {
-  const { setHttpRequestStore } = useHttpRequestStore();
-  const { setHttpStore } = useHttpStore();
+export const HttpContext = createContext<
+  { store: State } & { dispatch: Dispatch<(state: State) => void> }
+>({
+  store: defaultState,
+  dispatch: () => undefined,
+});
+function reducer(draft: Draft<State>, action: (state: State) => void) {
+  return action(draft);
+}
+
+const Http: FC<HttpProps> = ({ value, onSend, environment, onSave, theme, breadcrumb, config }) => {
+  const [store, dispatch] = useReducer(produce(reducer), defaultState);
+
   useEffect(() => {
-    if (value) {
-      setHttpRequestStore((state) => {
-        state.method = value.method;
-        state.endpoint = value.endpoint;
-        state.body = value.body;
-        state.params = value.params;
-        state.headers = value.headers;
-        state.testScript = value.testScript;
-      });
-    }
+    dispatch((state) => {
+      if (value) {
+        state.request = value;
+      }
+    });
   }, [value]);
+
   useEffect(() => {
-    setHttpStore((state) => {
+    dispatch((state) => {
       state.theme = theme;
     });
   }, [theme]);
 
+  useEffect(() => {
+    dispatch((state) => {
+      if (value) {
+        state.environment = environment;
+      }
+    });
+  }, [environment]);
   return (
-    <div
-      css={css`
-        height: 100%;
-      `}
-    >
-      {value ? (
-        <Allotment vertical={true}>
-          <Allotment.Pane preferredSize={400}>
-            <div
-              css={css`
-                height: 100%;
-                display: flex;
-                flex-direction: column;
-              `}
-            >
-              <HttpRequest breadcrumb={breadcrumb} onSend={onSend} onSave={onSave}></HttpRequest>
-              <HttpRequestOptions config={config}></HttpRequestOptions>
-            </div>
-          </Allotment.Pane>
-          <Allotment.Pane>
-            <HttpResponse />
-          </Allotment.Pane>
-        </Allotment>
-      ) : null}
-    </div>
+    <HttpContext.Provider value={{ store, dispatch }}>
+      <Allotment
+        css={css`
+          height: 100%;
+        `}
+        vertical={true}
+      >
+        <Allotment.Pane preferredSize={360}>
+          <div
+            css={css`
+              height: 100%;
+              display: flex;
+              flex-direction: column;
+            `}
+          >
+            <HttpRequest breadcrumb={breadcrumb} onSave={onSave} onSend={onSend}></HttpRequest>
+            <HttpRequestOptions config={config} />
+          </div>
+        </Allotment.Pane>
+        <Allotment.Pane>
+          <HttpResponse />
+        </Allotment.Pane>
+      </Allotment>
+    </HttpContext.Provider>
   );
 };
 
