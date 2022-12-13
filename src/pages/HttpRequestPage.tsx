@@ -1,10 +1,10 @@
 import React, { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { message } from 'antd';
+import { Button, message } from 'antd';
 import { useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import Http from '../components/arex-request';
+import Http, { HttpImperativeHandle } from '../components/arex-request';
 import ExtraRequestTabItemCompare from '../components/arex-request/extra/ExtraRequestTabItemCompare';
 import ExtraRequestTabItemMock from '../components/arex-request/extra/ExtraRequestTabItemMock';
 import HttpBreadcrumb from '../components/arex-request/extra/HttpBreadcrumb';
@@ -80,6 +80,8 @@ const HttpRequestPage: PageFC = (props) => {
     },
   );
 
+  const httpImperativeRef = useRef<HttpImperativeHandle>();
+  console.log(httpImperativeRef.current?.getRequestValue());
   return (
     <div
       css={css`
@@ -100,6 +102,7 @@ const HttpRequestPage: PageFC = (props) => {
         `}
       >
         <Http
+          ref={httpImperativeRef}
           value={data}
           environment={env}
           theme={theme}
@@ -118,11 +121,13 @@ const HttpRequestPage: PageFC = (props) => {
                   label: 'Compare',
                   key: 'compare',
                   children: <ExtraRequestTabItemCompare />,
+                  hidden: false,
                 },
                 {
                   label: 'Mock',
                   key: 'mock',
                   children: <ExtraRequestTabItemMock recordId={data?.recordId} />,
+                  hidden: false,
                 },
               ],
             },

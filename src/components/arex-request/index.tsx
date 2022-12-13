@@ -1,7 +1,15 @@
 import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
 import produce, { Draft } from 'immer';
-import { createContext, Dispatch, FC, useEffect, useReducer } from 'react';
+import {
+  createContext,
+  Dispatch,
+  FC,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useReducer,
+} from 'react';
 
 import HttpRequest from './components/http/Request';
 import HttpRequestOptions from './components/http/RequestOptions';
@@ -21,6 +29,9 @@ export interface State {
   theme: 'dark' | 'light';
 }
 
+export type HttpImperativeHandle = {
+  getRequestValue: () => State['request'];
+};
 export interface HttpProps {
   environment: Environment;
   theme: 'dark' | 'light';
@@ -31,6 +42,7 @@ export interface HttpProps {
   ) => Promise<{ response: HoppRESTResponse; testResult: HoppTestResult }>;
   onSave: (r: HoppRESTRequest) => void;
   config: any;
+  renderResponse?: boolean;
 }
 
 export const HttpContext = createContext<
@@ -43,57 +55,70 @@ function reducer(draft: Draft<State>, action: (state: State) => void) {
   return action(draft);
 }
 
-const Http: FC<HttpProps> = ({ value, onSend, environment, onSave, theme, breadcrumb, config }) => {
-  const [store, dispatch] = useReducer(produce(reducer), defaultState);
+const Http = forwardRef<HttpImperativeHandle, HttpProps>(
+  (
+    { value, onSend, environment, onSave, theme, breadcrumb, config, renderResponse = true },
+    ref,
+  ) => {
+    const [store, dispatch] = useReducer(produce(reducer), defaultState);
 
-  useEffect(() => {
-    dispatch((state) => {
-      if (value) {
-        state.request = value;
-      }
+    useImperativeHandle(ref, () => {
+      return {
+        getRequestValue: () => store.request,
+      };
     });
-  }, [value]);
 
-  useEffect(() => {
-    dispatch((state) => {
-      state.theme = theme;
-    });
-  }, [theme]);
+    useEffect(() => {
+      dispatch((state) => {
+        if (value) {
+          state.request = value;
+        }
+      });
+    }, [value]);
 
-  useEffect(() => {
-    dispatch((state) => {
-      if (value) {
-        state.environment = environment;
-      }
-    });
-  }, [environment]);
-  return (
-    <HttpContext.Provider value={{ store, dispatch }}>
-      <Allotment
-        css={css`
-          height: 100%;
-        `}
-        vertical={true}
-      >
-        <Allotment.Pane preferredSize={360}>
-          <div
-            css={css`
-              height: 100%;
-              display: flex;
-              flex-direction: column;
-            `}
-          >
-            <HttpRequest breadcrumb={breadcrumb} onSave={onSave} onSend={onSend}></HttpRequest>
-            <HttpRequestOptions config={config} />
-          </div>
-        </Allotment.Pane>
-        <Allotment.Pane>
-          <HttpResponse />
-        </Allotment.Pane>
-      </Allotment>
-    </HttpContext.Provider>
-  );
-};
+    useEffect(() => {
+      dispatch((state) => {
+        state.theme = theme;
+      });
+    }, [theme]);
+
+    useEffect(() => {
+      dispatch((state) => {
+        if (value) {
+          state.environment = environment;
+        }
+      });
+    }, [environment]);
+    return (
+      <HttpContext.Provider value={{ store, dispatch }}>
+        <Allotment
+          css={css`
+            height: 100%;
+          `}
+          vertical={true}
+        >
+          <Allotment.Pane preferredSize={'100%'}>
+            <div
+              css={css`
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+              `}
+            >
+              <HttpRequest breadcrumb={breadcrumb} onSave={onSave} onSend={onSend}></HttpRequest>
+              <HttpRequestOptions config={config} />
+            </div>
+          </Allotment.Pane>
+          {renderResponse ? (
+            <Allotment.Pane>
+              <HttpResponse />
+            </Allotment.Pane>
+          ) : null}
+        </Allotment>
+      </HttpContext.Provider>
+    );
+  },
+);
 
 export default Http;
 
