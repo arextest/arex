@@ -14,6 +14,7 @@ const useInit = () => {
 
   const nav = useNavigate();
   const { pathname } = useLocation();
+  const { setUserProfile } = useUserProfile();
 
   const { run: refreshToken } = useRequest(AuthService.refreshToken, {
     manual: true,
@@ -35,8 +36,8 @@ const useInit = () => {
 
   useRequest(() => UserService.getUserProfile(email as string), {
     ready: !!email,
-    onSuccess(res: any) {
-      useUserProfile.setState(res);
+    onSuccess(res) {
+      res && setUserProfile(res);
     },
     onError() {
       // token过期了以后来刷新，如果还是没通过就退出
