@@ -89,15 +89,9 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
           workspace ? (targetWorkspace = workspace) : message.warning('无目标工作目录权限');
           invitedWorkspaceId && setInvitedWorkspaceId('');
         }
-
-        if (_params.length) {
-          reset();
-          resetPanes();
+        if (targetWorkspace.id && !params.workspaceId) {
+          window.location.href = `/${targetWorkspace.id}/workspace/${targetWorkspace.workspaceName}/workspaceOverview/${targetWorkspace.id}`;
         }
-
-        nav(
-          `/${targetWorkspace.id}/workspace/${targetWorkspace.workspaceName}/workspaceOverview/${targetWorkspace.id}`,
-        );
       },
     },
   );
@@ -150,7 +144,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     if (label) {
       resetPanes();
       setLocalStorage(WorkspaceKey, workspaceId);
-      nav(`/${workspaceId}/workspace/${label}`);
+      window.location.href = `/${workspaceId}/workspace/${label}/WorkspaceOverviewPage/${workspaceId}`;
     }
   };
 

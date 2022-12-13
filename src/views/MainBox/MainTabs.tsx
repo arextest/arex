@@ -107,6 +107,25 @@ const MainTabs = () => {
           params.rTypeId as string,
         ),
       );
+    } else if (params.rType === PagesType.WorkspaceOverview) {
+      params.workspaceName &&
+        params.workspaceId &&
+        setPages(
+          {
+            title: params.workspaceName,
+            menuType: MenusType.Collection,
+            pageType: PagesType.WorkspaceOverview,
+            isNew: true,
+            data: undefined,
+            paneId: generateGlobalPaneId(
+              MenusType.Collection,
+              PagesType.WorkspaceOverview,
+              params.workspaceId,
+            ),
+            rawId: params.workspaceId,
+          },
+          'push',
+        );
     }
   }, []);
 

@@ -55,7 +55,7 @@ const HttpRequestOptions = ({ config }) => {
       label: 'Pre-request Script',
       children: <HttpPreRequestScript />,
     },
-  ].concat(config.tabs.extra);
+  ].concat(config.tabs.extra.filter((e) => !e.hidden));
   return (
     <div
       css={css`
