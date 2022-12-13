@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { AppFooter, AppHeader } from '../../components';
 import MainMenu from './MainMenu';
@@ -11,6 +11,15 @@ const MainBox = () => {
 
   const handleMainMenuChange = () => collapseMenu && setCollapseMenu(false);
   const handleCollapseMenu = () => setCollapseMenu(!collapseMenu);
+
+  /**
+   * 临时修复 tabs-ink-bar 在 Allotment 包裹下缺失的 bug
+   * issues: https://github.com/ant-design/ant-design/issues/39190
+   */
+  const [showMenu, setShowMenu] = useState(false);
+  useEffect(() => {
+    setShowMenu(true);
+  }, []);
 
   return (
     <>
@@ -26,11 +35,13 @@ const MainBox = () => {
           minSize={collapseMenu ? 69 : 200}
           maxSize={collapseMenu ? 69 : 600}
         >
-          <MainMenu
-            collapse={collapseMenu}
-            onChange={handleMainMenuChange}
-            onCollapse={handleCollapseMenu}
-          />
+          {showMenu && (
+            <MainMenu
+              collapse={collapseMenu}
+              onChange={handleMainMenuChange}
+              onCollapse={handleCollapseMenu}
+            />
+          )}
         </Allotment.Pane>
 
         <Allotment.Pane visible>

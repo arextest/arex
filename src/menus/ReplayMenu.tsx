@@ -18,12 +18,11 @@ import { MenusType } from './index';
 
 type MenuItemProps = {
   app: ApplicationDataType;
-  hiddenFavoriteIcon?: boolean;
   favoriteApps?: string[];
   onFavoriteAppsChange?: () => void;
 };
 const MenuItem = styled((props: MenuItemProps) => {
-  const { app, favoriteApps = [], hiddenFavoriteIcon, onFavoriteAppsChange, ...restProps } = props;
+  const { app, favoriteApps = [], onFavoriteAppsChange, ...restProps } = props;
   const { token } = theme.useToken();
   const email = getLocalStorage<string>(EmailKey) as string;
 
@@ -52,9 +51,7 @@ const MenuItem = styled((props: MenuItemProps) => {
       <span>{app.appId}</span>
       <span className='menu-item-heart' onClick={(e) => e.stopPropagation()}>
         {favoriteApps.includes(app.id) ? (
-          !hiddenFavoriteIcon && (
-            <HeartFilled onClick={unFavoriteApp} style={{ color: token.colorError }} />
-          )
+          <HeartFilled onClick={unFavoriteApp} style={{ color: token.colorError }} />
         ) : (
           <HeartOutlined className='menu-item-heart-outlined' onClick={favoriteApp} />
         )}
@@ -169,12 +166,7 @@ const ReplayMenu: FC = () => {
       filter={filter}
       itemRender={(app) => ({
         label: (
-          <MenuItem
-            app={app}
-            favoriteApps={favoriteApps}
-            hiddenFavoriteIcon={favoriteFilter}
-            onFavoriteAppsChange={getFavoriteApps}
-          />
+          <MenuItem app={app} favoriteApps={favoriteApps} onFavoriteAppsChange={getFavoriteApps} />
         ),
         key: app.id,
       })}
