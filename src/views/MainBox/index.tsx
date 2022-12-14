@@ -3,10 +3,10 @@ import { Allotment } from 'allotment';
 import React, { useEffect, useState } from 'react';
 
 import { AppFooter, AppHeader } from '../../components';
+import { CollapseMenuKey } from '../../constant';
+import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
 import MainMenu from './MainMenu';
 import MainTabs from './MainTabs';
-import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
-import { CollapseMenuKey } from '../../constant';
 
 const MainBox = () => {
   const [collapseMenu, setCollapseMenu] = useState(getLocalStorage<boolean>(CollapseMenuKey));

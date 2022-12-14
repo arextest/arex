@@ -102,6 +102,7 @@ const HttpRequestPage: PageFC = (props) => {
         `}
       >
         <Http
+          renderResponse={true}
           ref={httpImperativeRef}
           value={data}
           environment={env}
