@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import { EnvironmentKey } from '../../constant';
 import { getLocalStorage } from '../../helpers/utils';
 import EnvironmentService from '../../services/Environment.service';
-import { useStore } from '../../store';
+import { DefaultEnvironment, useStore } from '../../store';
 
 const { Option } = Select;
 
@@ -52,7 +52,7 @@ const EnvironmentSelect = () => {
   return (
     <EnvironmentSelectWrapper>
       <Select bordered={false} value={activeEnvironment?.id} onChange={setActiveEnvironment}>
-        <Option value='0'>No Environment</Option>
+        <Option value={DefaultEnvironment.id}>{DefaultEnvironment.envName}</Option>
         {environmentTreeData?.map((e) => (
           <Option key={e.id} value={e.id}>
             {e.envName}

@@ -5,12 +5,17 @@ import React, { useEffect, useState } from 'react';
 import { AppFooter, AppHeader } from '../../components';
 import MainMenu from './MainMenu';
 import MainTabs from './MainTabs';
+import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
+import { CollapseMenuKey } from '../../constant';
 
 const MainBox = () => {
-  const [collapseMenu, setCollapseMenu] = useState(false);
+  const [collapseMenu, setCollapseMenu] = useState(getLocalStorage<boolean>(CollapseMenuKey));
 
   const handleMainMenuChange = () => collapseMenu && setCollapseMenu(false);
-  const handleCollapseMenu = () => setCollapseMenu(!collapseMenu);
+  const handleCollapseMenu = () => {
+    setCollapseMenu(!collapseMenu);
+    setLocalStorage(CollapseMenuKey, !collapseMenu);
+  };
 
   /**
    * 临时修复 tabs-ink-bar 在 Allotment 包裹下缺失的 bug

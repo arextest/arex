@@ -74,6 +74,7 @@ type BaseState = {
   setActiveEnvironment: (environment: Environment | string) => void;
 };
 
+export const DefaultEnvironment = { envName: 'No Environment', id: '0' };
 /**
  * TODO 全局store模块拆分
  * 1. 用户信息，用户配置等相关
@@ -174,10 +175,11 @@ export const useStore = create(
       set({ environmentLastManualUpdateTimestamp: timestamp });
     },
 
-    activeEnvironment: undefined,
+    activeEnvironment: DefaultEnvironment,
     setActiveEnvironment: (environment) => {
       if (typeof environment === 'string') {
         const environmentTreeData = get().environmentTreeData;
+        const activeEnvironment = environmentTreeData.find((i) => i.id === environment);
         set({
           activeEnvironment: environmentTreeData.find((i) => i.id === environment),
         });
