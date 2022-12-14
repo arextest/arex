@@ -1,6 +1,6 @@
 import React, { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { Button, message } from 'antd';
+import { message } from 'antd';
 import { useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -33,7 +33,7 @@ const HttpRequestPage: PageFC = (props) => {
     if (activeEnvironment) {
       return {
         name: activeEnvironment.envName,
-        variables: activeEnvironment.keyValues,
+        variables: activeEnvironment.keyValues||[],
       };
     } else {
       return {
@@ -143,7 +143,11 @@ const HttpRequestPage: PageFC = (props) => {
             } else if (nodeType === 2) {
               FileSystemService.saveCase(convertSaveRequestData(workspaceId as string, id, r)).then(
                 (res) => {
-                  message.success(JSON.stringify(res));
+                  if (res.body.success) {
+                    message.success('success');
+                  } else {
+                    message.error(res.responseStatusType.responseDesc);
+                  }
                 },
               );
             } else {
