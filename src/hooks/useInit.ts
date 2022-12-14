@@ -1,20 +1,33 @@
 import { useRequest } from 'ahooks';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../constant';
-import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
+import {
+  clearLocalStorage,
+  generateGlobalPaneId,
+  getLocalStorage,
+  setLocalStorage,
+} from '../helpers/utils';
 import { AuthService } from '../services/Auth.service';
 import { UserService } from '../services/User.service';
 import useUserProfile from '../store/useUserProfile';
+import { useEffect } from 'react';
+import { PagesType } from '../pages';
+import { MenusType } from '../menus';
+import { useStore } from '../store';
 
 // init theme, fontSize, etc.
+// 由于使用了 useParams hook, 该 hook 只在 RouterComponent 中生效
+// (例如在 App.tsx 中无效
 const useInit = () => {
   // checkout if the user is logged in
   const email = getLocalStorage<string>(EmailKey);
 
   const nav = useNavigate();
+  const params = useParams();
   const { pathname } = useLocation();
   const { setUserProfile } = useUserProfile();
+  const { setPages, setActiveMenu, setActiveWorkspaceId } = useStore();
 
   const { run: refreshToken } = useRequest(AuthService.refreshToken, {
     manual: true,
@@ -44,6 +57,50 @@ const useInit = () => {
       email && refreshToken({ userName: email });
     },
   });
+
+  // TODO 实现通用的所用页面初始化方法
+  // 根据 url 初始化页面, 同时初始化 workspaceId
+  useEffect(() => {
+    console.log('params.workspaceId', params.workspaceId);
+    if (params.workspaceId) {
+      setActiveWorkspaceId(params.workspaceId);
+    }
+
+    if (params.rType === PagesType.Replay) {
+      setActiveMenu(
+        MenusType.Replay,
+        generateGlobalPaneId(MenusType.Replay, PagesType.Replay, params.rTypeId as string),
+      );
+    } else if (params.rType === PagesType.Environment) {
+      setActiveMenu(
+        MenusType.Environment,
+        generateGlobalPaneId(
+          MenusType.Environment,
+          PagesType.Environment,
+          params.rTypeId as string,
+        ),
+      );
+    } else if (params.rType === PagesType.WorkspaceOverview) {
+      params.workspaceName &&
+        params.workspaceId &&
+        setPages(
+          {
+            title: params.workspaceName,
+            menuType: MenusType.Collection,
+            pageType: PagesType.WorkspaceOverview,
+            isNew: true,
+            data: undefined,
+            paneId: generateGlobalPaneId(
+              MenusType.Collection,
+              PagesType.WorkspaceOverview,
+              params.workspaceId,
+            ),
+            rawId: params.workspaceId,
+          },
+          'push',
+        );
+    }
+  }, []);
 };
 
 export default useInit;

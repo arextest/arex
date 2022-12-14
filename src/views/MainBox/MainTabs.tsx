@@ -91,44 +91,6 @@ const MainTabs = () => {
     }
   }, [activeMenu, pages]);
 
-  // TODO 只做了Replay的路由刷新优化
-  useEffect(() => {
-    if (params.rType === PagesType.Replay) {
-      setActiveMenu(
-        MenusType.Replay,
-        generateGlobalPaneId(MenusType.Replay, PagesType.Replay, params.rTypeId as string),
-      );
-    } else if (params.rType === PagesType.Environment) {
-      setActiveMenu(
-        MenusType.Environment,
-        generateGlobalPaneId(
-          MenusType.Environment,
-          PagesType.Environment,
-          params.rTypeId as string,
-        ),
-      );
-    } else if (params.rType === PagesType.WorkspaceOverview) {
-      params.workspaceName &&
-        params.workspaceId &&
-        setPages(
-          {
-            title: params.workspaceName,
-            menuType: MenusType.Collection,
-            pageType: PagesType.WorkspaceOverview,
-            isNew: true,
-            data: undefined,
-            paneId: generateGlobalPaneId(
-              MenusType.Collection,
-              PagesType.WorkspaceOverview,
-              params.workspaceId,
-            ),
-            rawId: params.workspaceId,
-          },
-          'push',
-        );
-    }
-  }, []);
-
   return (
     <EmptyWrapper
       empty={!pages.length}

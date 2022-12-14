@@ -47,6 +47,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
   const {
     workspaces,
     setWorkspaces,
+    setActiveWorkspaceId,
     invitedWorkspaceId,
     setInvitedWorkspaceId,
     setPages,
@@ -90,7 +91,10 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
           invitedWorkspaceId && setInvitedWorkspaceId('');
         }
         if (targetWorkspace.id && !params.workspaceId) {
-          window.location.href = `/${targetWorkspace.id}/workspace/${targetWorkspace.workspaceName}/workspaceOverview/${targetWorkspace.id}`;
+          nav(
+            `/${targetWorkspace.id}/workspace/${targetWorkspace.workspaceName}/workspaceOverview/${targetWorkspace.id}`,
+          );
+          setActiveWorkspaceId(targetWorkspace.id);
         }
       },
     },
@@ -143,8 +147,8 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     const label = workspaces.find((i) => i.id === workspaceId)?.workspaceName;
     if (label) {
       resetPanes();
-      setLocalStorage(WorkspaceKey, workspaceId);
-      window.location.href = `/${workspaceId}/workspace/${label}/WorkspaceOverviewPage/${workspaceId}`;
+      setActiveWorkspaceId(workspaceId);
+      nav(`/${workspaceId}/workspace/${label}/WorkspaceOverviewPage/${workspaceId}`);
     }
   };
 

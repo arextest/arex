@@ -7,6 +7,7 @@ import { CollapseMenuKey } from '../../constant';
 import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
 import MainMenu from './MainMenu';
 import MainTabs from './MainTabs';
+import useInit from '../../hooks/useInit';
 
 const MainBox = () => {
   const [collapseMenu, setCollapseMenu] = useState(getLocalStorage<boolean>(CollapseMenuKey));
@@ -16,6 +17,8 @@ const MainBox = () => {
     setCollapseMenu(!collapseMenu);
     setLocalStorage(CollapseMenuKey, !collapseMenu);
   };
+
+  useInit();
 
   /**
    * 临时修复 tabs-ink-bar 在 Allotment 包裹下缺失的 bug

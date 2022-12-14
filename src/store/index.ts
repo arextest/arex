@@ -3,7 +3,7 @@ import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import { EmailKey } from '../constant';
+import { EmailKey, WorkspaceEnvironmentPairKey, WorkspaceKey } from '../constant';
 import { getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { MenusType } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
@@ -62,6 +62,8 @@ type BaseState = {
   invitedWorkspaceId: string;
   setInvitedWorkspaceId: (workspaceId: string) => void;
 
+  activeWorkspaceId: string;
+  setActiveWorkspaceId: (activeWorkspaceId: string) => void;
   workspaces: Workspace[];
   setWorkspaces: (workspaces: Workspace[]) => void;
 
@@ -71,16 +73,11 @@ type BaseState = {
   setEnvironmentLastManualUpdateTimestamp: (timestamp: number) => void;
 
   activeEnvironment?: Environment;
-  setActiveEnvironment: (environment: Environment | string) => void;
+  setActiveEnvironment: (environment?: Environment | string) => void;
 };
 
 export const DefaultEnvironment = { envName: 'No Environment', id: '0' };
-/**
- * TODO 全局store模块拆分
- * 1. 用户信息，用户配置等相关
- * 2. 主菜单/工作区（MainBox）相关
- * 3. ......
- */
+
 export const useStore = create(
   immer<BaseState>((set, get) => ({
     pages: [],
@@ -165,30 +162,76 @@ export const useStore = create(
     invitedWorkspaceId: '',
     setInvitedWorkspaceId: (workspaceId) => set({ invitedWorkspaceId: workspaceId }),
 
+    activeWorkspaceId: '',
+    setActiveWorkspaceId: (activeWorkspaceId) => {
+      set({ activeWorkspaceId });
+      setLocalStorage(WorkspaceKey, activeWorkspaceId);
+
+      // 更新 activeEnvironment 为当前 workspace 下的默认值
+      get().setActiveEnvironment();
+    },
+
     workspaces: [],
     setWorkspaces: (workspaces) => set({ workspaces }),
 
     environmentTreeData: [],
-    setEnvironmentTreeData: (environmentTreeData) => set({ environmentTreeData }),
-    environmentLastManualUpdateTimestamp: new Date().getTime(),
-    setEnvironmentLastManualUpdateTimestamp: (timestamp) => {
-      set({ environmentLastManualUpdateTimestamp: timestamp });
+    setEnvironmentTreeData: (environmentTreeData) => {
+      set({ environmentTreeData });
+
+      // 初次加载 environmentTreeData 时恢复 activeEnvironment 的缓存状态
+      get().setActiveEnvironment();
     },
+    environmentLastManualUpdateTimestamp: new Date().getTime(),
+    setEnvironmentLastManualUpdateTimestamp: (timestamp) =>
+      set({ environmentLastManualUpdateTimestamp: timestamp }),
 
     activeEnvironment: DefaultEnvironment,
     setActiveEnvironment: (environment) => {
-      if (typeof environment === 'string') {
+      // 从 localStorage 中读取工作空间的缓存值
+      if (!environment) {
+        // 先设置为默认值，后面再可能设置为有效值，避免有效值不存在时环境变量仍属于上一个工作空间
+        set({ activeEnvironment: DefaultEnvironment });
+
+        const workspaceEnvironmentPair = getLocalStorage<WorkspaceEnvironmentPair>(
+          WorkspaceEnvironmentPairKey,
+        );
+        const environmentId = workspaceEnvironmentPair?.[get().activeWorkspaceId];
+        environmentId && get().setActiveEnvironment(environmentId);
+      }
+      // 根据 id 从 environmentTreeData 中读取保存
+      else if (typeof environment === 'string') {
         const environmentTreeData = get().environmentTreeData;
         const activeEnvironment = environmentTreeData.find((i) => i.id === environment);
-        set({
-          activeEnvironment: environmentTreeData.find((i) => i.id === environment),
-        });
-      } else {
+        if (activeEnvironment) {
+          set({
+            activeEnvironment,
+          });
+          updateWorkspaceEnvironmentLS(get().activeWorkspaceId, activeEnvironment.id);
+        }
+      }
+      // 直接保存
+      else {
         set({ activeEnvironment: environment });
+        updateWorkspaceEnvironmentLS(get().activeWorkspaceId, environment.id);
       }
     },
   })),
 );
+
+type WorkspaceEnvironmentPair = { [workspaceId: string]: string };
+const updateWorkspaceEnvironmentLS = (workspaceId: string, environmentId: string) => {
+  let workspaceEnvironmentPair = getLocalStorage<WorkspaceEnvironmentPair>(
+    WorkspaceEnvironmentPairKey,
+  );
+  if (!workspaceEnvironmentPair) {
+    workspaceEnvironmentPair = { [workspaceId]: environmentId };
+  } else if (workspaceEnvironmentPair[workspaceId] === environmentId) {
+    return;
+  } else {
+    workspaceEnvironmentPair[workspaceId] = environmentId;
+  }
+  setLocalStorage(WorkspaceEnvironmentPairKey, workspaceEnvironmentPair);
+};
 
 // @ts-ignore
 if (process.env.NODE_ENV === 'development') {

@@ -60,3 +60,4 @@ export const CollapseMenuKey = 'collapseMenu';
 export const EnvironmentKey = 'environmentId';
 export const WorkspaceKey = 'workspaceId';
 export const I18Key = 'i18nextLng';
+export const WorkspaceEnvironmentPairKey = 'workspaceEnvironmentPair';
