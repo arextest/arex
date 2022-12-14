@@ -95,7 +95,7 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
           `}
           vertical={true}
         >
-          <Allotment.Pane preferredSize={'100%'}>
+          <Allotment.Pane preferredSize={renderResponse ? 360 : '100%'}>
             <div
               css={css`
                 height: 100%;
