@@ -201,7 +201,10 @@ export const useStore = create(
       // 根据 id 从 environmentTreeData 中读取保存
       else if (typeof environment === 'string') {
         const environmentTreeData = get().environmentTreeData;
-        const activeEnvironment = environmentTreeData.find((i) => i.id === environment);
+        const activeEnvironment =
+          environment === DefaultEnvironment.id
+            ? DefaultEnvironment
+            : environmentTreeData.find((i) => i.id === environment);
         if (activeEnvironment) {
           set({
             activeEnvironment,
