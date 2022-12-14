@@ -13,18 +13,16 @@ const Test = styled.div`
 `;
 
 const { useToken } = theme;
-const LensesHeadersRendererEntry: FC<{ header: HoppRESTHeader }> = ({
-  header,
-}) => {
+const LensesHeadersRendererEntry: FC<{ header: HoppRESTHeader }> = ({ header }) => {
   const token = useToken();
   return (
     <div>
       <Row>
-        <Col className="gutter-row" span={12}>
+        <Col className='gutter-row' span={12}>
           <Test>{header.key}</Test>
         </Col>
 
-        <Col className="gutter-row" span={12}>
+        <Col className='gutter-row' span={12}>
           <Test> {header.value}</Test>
         </Col>
       </Row>

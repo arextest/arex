@@ -139,16 +139,10 @@ arex.test("Status code is 5xx", ()=> {
               margin-bottom: 4px;
             `}
           >
-            Test scripts are written in JavaScript, and are run after the
-            response is received.
+            Test scripts are written in JavaScript, and are run after the response is received.
           </Text>
           <div>
-            <a
-              type="text"
-              onClick={() =>
-                window.open('https://docs.hoppscotch.io/features/tests')
-              }
-            >
+            <a type='text' onClick={() => window.open('https://docs.hoppscotch.io/features/tests')}>
               Read documentation
             </a>
           </div>
@@ -167,11 +161,7 @@ arex.test("Status code is 5xx", ()=> {
             `}
           >
             {codeSnippet.map((e, i) => (
-              <ThemeColorPrimaryButton
-                type="text"
-                key={i}
-                onClick={() => addTest(e.text)}
-              >
+              <ThemeColorPrimaryButton type='text' key={i} onClick={() => addTest(e.text)}>
                 {e.name}
               </ThemeColorPrimaryButton>
             ))}

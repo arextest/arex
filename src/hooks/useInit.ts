@@ -1,4 +1,5 @@
 import { useRequest } from 'ahooks';
+import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../constant';
@@ -8,13 +9,12 @@ import {
   getLocalStorage,
   setLocalStorage,
 } from '../helpers/utils';
+import { MenusType } from '../menus';
+import { PagesType } from '../pages';
 import { AuthService } from '../services/Auth.service';
 import { UserService } from '../services/User.service';
-import useUserProfile from '../store/useUserProfile';
-import { useEffect } from 'react';
-import { PagesType } from '../pages';
-import { MenusType } from '../menus';
 import { useStore } from '../store';
+import useUserProfile from '../store/useUserProfile';
 
 // init theme, fontSize, etc.
 // 由于使用了 useParams hook, 该 hook 只在 RouterComponent 中生效

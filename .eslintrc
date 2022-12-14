@@ -9,6 +9,11 @@
     "plugin:prettier/recommended",
     "prettier"
   ],
+  "env": {
+    "browser": true,
+    "amd": true,
+    "node": true
+  },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {

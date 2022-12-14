@@ -33,7 +33,7 @@ const HttpRequestPage: PageFC = (props) => {
     if (activeEnvironment) {
       return {
         name: activeEnvironment.envName,
-        variables: activeEnvironment.keyValues||[],
+        variables: activeEnvironment.keyValues || [],
       };
     } else {
       return {

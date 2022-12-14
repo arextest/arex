@@ -74,7 +74,7 @@ const MenuItem = styled((props: MenuItemProps) => {
   }
 `;
 
-const AppMenu: FC<{onSelect: (app: ApplicationDataType) => void}> = (props) => {
+const AppMenu: FC<{ onSelect: (app: ApplicationDataType) => void }> = (props) => {
   const { token } = theme.useToken();
   const { activeMenu } = useStore();
   const email = getLocalStorage<string>(EmailKey) as string;
@@ -99,12 +99,11 @@ const AppMenu: FC<{onSelect: (app: ApplicationDataType) => void}> = (props) => {
     },
   });
 
-
   const filter = useCallback(
     (keyword: string, app: ApplicationDataType) =>
       favoriteFilter
         ? !!favoriteApps?.includes(app.id) &&
-        (app.appName.includes(keyword) || app.appId.includes(keyword))
+          (app.appName.includes(keyword) || app.appId.includes(keyword))
         : app.appName.includes(keyword) || app.appId.includes(keyword),
     [favoriteFilter, favoriteApps],
   );

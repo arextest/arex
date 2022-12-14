@@ -8,7 +8,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../index';
 
 const onChange = (key: string) => {
-  console.log('')
+  console.log('');
 };
 
 const ExtraResponseTabItemCompareResult = ({ responses, requestAxios }) => {
@@ -104,12 +104,12 @@ const ExtraResponseTabItemCompareResult = ({ responses, requestAxios }) => {
         setDataSource(res.body.diffDetails.map((i) => i.logs[0]));
       });
 
-      function onClassName({ path, field, value }) {
+      const onClassName = ({ path, field, value }) => {
         const leftValue = _.get(jsonRight, path);
         const rightValue = _.get(jsonLeft, path);
 
         return _.isEqual(leftValue, rightValue) ? 'the_same_element' : 'different_element';
-      }
+      };
 
       const optionsLeft = {
         mode: 'tree',

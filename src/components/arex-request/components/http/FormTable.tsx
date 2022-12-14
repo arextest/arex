@@ -1,8 +1,4 @@
-import {
-  CheckCircleOutlined,
-  DeleteOutlined,
-  StopOutlined,
-} from '@ant-design/icons';
+import { CheckCircleOutlined, DeleteOutlined, StopOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Input, Space, Table, TableProps, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
@@ -16,21 +12,18 @@ export type KeyValueType = {
   active: boolean;
 };
 
-const FormTable = styled(Table)<
-  TableProps<KeyValueType> & { showHeader?: boolean }
->`
+const FormTable = styled(Table)<TableProps<KeyValueType> & { showHeader?: boolean }>`
   .ant-table-thead {
     display: ${(props) => (props.showHeader ? 'table-header-group' : 'none')};
   }
   .ant-table-cell {
-    padding: ${(props) =>
-      props.showHeader ? '4px 11px !important' : '0 1px !important'};
+    padding: ${(props) => (props.showHeader ? '4px 11px !important' : '0 1px !important')};
   }
 `;
 
 export const useColumns = (
   paramsUpdater?: Updater<KeyValueType[]>,
-  editable?: boolean
+  editable?: boolean,
 ): ColumnsType<KeyValueType> => {
   const { t } = useTranslation();
   const handleChange = (i: number, attr: 'key' | 'value', value: string) => {
@@ -93,26 +86,20 @@ export const useColumns = (
           className: 'actions',
           render: (text, record, i) => (
             <Space>
-              <Tooltip
-                title={
-                  record.active ? t('action.turn_off') : t('action.turn_on')
-                }
-              >
+              <Tooltip title={record.active ? t('action.turn_off') : t('action.turn_on')}>
                 <Button
                   style={{ color: '#10b981' }}
-                  type="text"
-                  size="small"
-                  icon={
-                    record.active ? <CheckCircleOutlined /> : <StopOutlined />
-                  }
+                  type='text'
+                  size='small'
+                  icon={record.active ? <CheckCircleOutlined /> : <StopOutlined />}
                   onClick={() => handleDisable(i)}
                 />
               </Tooltip>
               <Tooltip title={t('remove')}>
                 <Button
                   style={{ color: '#ef4444' }}
-                  type="text"
-                  size="small"
+                  type='text'
+                  size='small'
                   icon={<DeleteOutlined />}
                   onClick={() =>
                     paramsUpdater?.((params) => {

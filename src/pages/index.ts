@@ -1,6 +1,7 @@
 import { FC } from 'react';
 
 import { Page, PageData } from '../store';
+import AppSettingPage from './AppSettingPage';
 import BatchRunPage from './BatchRunPage';
 import EnvironmentPage from './EnvironmentPage';
 import FolderPage from './FolderPage';
@@ -8,7 +9,6 @@ import HttpRequestPage from './HttpRequestPage';
 import ReplayAnalysisPage from './ReplayAnalysisPage';
 import ReplayCasePage from './ReplayCasePage';
 import ReplayPage from './ReplayPage';
-import AppSettingPage from './AppSettingPage';
 import SettingPage from './SettingPage';
 import WorkspaceOverviewPage from './WorkspaceOverviewPage';
 

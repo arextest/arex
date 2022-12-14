@@ -7,9 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { HoppRESTResponse } from '../../helpers/types/HoppRESTResponse';
 import { getStatusCodeReasonPhrase } from '../../helpers/utils/statusCodes';
 
-const HttpResponseMeta: FC<{ response: HoppRESTResponse | null }> = ({
-  response,
-}) => {
+const HttpResponseMeta: FC<{ response: HoppRESTResponse | null }> = ({ response }) => {
   const { t } = useTranslation();
   const tabCss = css`
     color: #10b981;
@@ -39,7 +37,7 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse | null }> = ({
         <div>
           <Empty
             description={
-              <Typography.Text type="secondary">
+              <Typography.Text type='secondary'>
                 Enter the URL and click Send to get a response
               </Typography.Text>
             }
@@ -76,9 +74,7 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse | null }> = ({
                 </span>
                 <span>
                   {t('response.time')}:
-                  <span
-                    css={tabCss}
-                  >{`${response.meta.responseDuration}ms`}</span>
+                  <span css={tabCss}>{`${response.meta.responseDuration}ms`}</span>
                 </span>
                 <span>
                   {t('response.size')}:

@@ -20,16 +20,12 @@ export type HoppTestResult = {
   envDiff: {
     global: {
       additions: Environment['variables'];
-      updations: Array<
-        Environment['variables'][number] & { previousValue: string }
-      >;
+      updations: Array<Environment['variables'][number] & { previousValue: string }>;
       deletions: Environment['variables'];
     };
     selected: {
       additions: Environment['variables'];
-      updations: Array<
-        Environment['variables'][number] & { previousValue: string }
-      >;
+      updations: Array<Environment['variables'][number] & { previousValue: string }>;
       deletions: Environment['variables'];
     };
   };

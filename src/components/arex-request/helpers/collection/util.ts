@@ -54,10 +54,7 @@ export function treeFind(tree: any, func: any): any {
   return null;
 }
 
-export function collectionOriginalTreeToAntdTreeData(
-  tree: any,
-  nodeList: any[] = []
-): any[] {
+export function collectionOriginalTreeToAntdTreeData(tree: any, nodeList: any[] = []): any[] {
   const nodes = tree;
   Object.keys(nodes).forEach((value, index, array) => {
     nodeList.push({
@@ -70,14 +67,8 @@ export function collectionOriginalTreeToAntdTreeData(
       // isLeaf: nodes[value].nodeType === 2||nodes[value].children==null
       // icon: iconMap[nodes[value].nodeType],
     });
-    if (
-      nodes[value].children &&
-      Object.keys(nodes[value].children).length > 0
-    ) {
-      collectionOriginalTreeToAntdTreeData(
-        nodes[value].children,
-        nodeList[index].children
-      );
+    if (nodes[value].children && Object.keys(nodes[value].children).length > 0) {
+      collectionOriginalTreeToAntdTreeData(nodes[value].children, nodeList[index].children);
     }
   });
   return nodeList;

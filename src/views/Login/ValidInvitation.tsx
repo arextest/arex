@@ -3,17 +3,17 @@ import {
   LoadingOutlined,
   StopOutlined,
   WarningOutlined,
-} from "@ant-design/icons";
-import { useRequest } from "ahooks";
-import { Card, Space, theme } from "antd";
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+} from '@ant-design/icons';
+import { useRequest } from 'ahooks';
+import { Card, Space, theme } from 'antd';
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { FlexCenterWrapper } from "../../components/styledComponents";
-import { AccessTokenKey, EmailKey, RefreshTokenKey } from "../../constant";
-import { setLocalStorage, tryParseJsonString } from "../../helpers/utils";
-import WorkspaceService from "../../services/Workspace.service";
-import { useStore } from "../../store";
+import { FlexCenterWrapper } from '../../components/styledComponents';
+import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../../constant';
+import { setLocalStorage, tryParseJsonString } from '../../helpers/utils';
+import WorkspaceService from '../../services/Workspace.service';
+import { useStore } from '../../store';
 
 enum Status {
   loading,
@@ -37,40 +37,35 @@ const ValidInvitation = () => {
   const [status, setStatus] = useState<Status>(Status.loading);
   const [searchParams] = useSearchParams();
 
-  const { run: validInvitation } = useRequest(
-    WorkspaceService.validInvitation,
-    {
-      manual: true,
-      onSuccess(res, params) {
-        if (res.body.success) {
-          setLocalStorage(EmailKey, params[0].userName);
-          setLocalStorage(AccessTokenKey, res.body.accessToken);
-          setLocalStorage(RefreshTokenKey, res.body.refreshToken);
+  const { run: validInvitation } = useRequest(WorkspaceService.validInvitation, {
+    manual: true,
+    onSuccess(res, params) {
+      if (res.body.success) {
+        setLocalStorage(EmailKey, params[0].userName);
+        setLocalStorage(AccessTokenKey, res.body.accessToken);
+        setLocalStorage(RefreshTokenKey, res.body.refreshToken);
 
-          setInvitedWorkspaceId(params[0].workspaceId);
+        setInvitedWorkspaceId(params[0].workspaceId);
 
-          setStatus(Status.success);
-        } else {
-          setStatus(Status.failed);
-        }
-      },
-      onFinally() {
-        setTimeout(() => {
-          nav("/");
-        }, 1000);
-      },
-    }
-  );
+        setStatus(Status.success);
+      } else {
+        setStatus(Status.failed);
+      }
+    },
+    onFinally() {
+      setTimeout(() => {
+        nav('/');
+      }, 1000);
+    },
+  });
 
   function decodeInvitation() {
     try {
-      return tryParseJsonString<InvitationData>(
-        atob(searchParams.getAll("upn")[0])
-      );
+      return tryParseJsonString<InvitationData>(atob(searchParams.getAll('upn')[0]));
     } catch (e) {
       setStatus(Status.invalidLink);
       setTimeout(() => {
-        nav("/");
+        nav('/');
       }, 1000);
     }
   }
@@ -96,7 +91,7 @@ const ValidInvitation = () => {
           </Space>
         ) : status === Status.success ? (
           <Space>
-            <CheckCircleOutlined style={{ color: token.colorSuccess }} />{" "}
+            <CheckCircleOutlined style={{ color: token.colorSuccess }} />{' '}
             <span>Authentication success! Redirecting...</span>
           </Space>
         ) : status === Status.failed ? (

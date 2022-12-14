@@ -6,8 +6,8 @@ import React, { FC } from 'react';
 
 import AppSettingService from '../../../services/AppSetting.service';
 import { OperationId, OperationInterface, SortNode } from '../../../services/AppSetting.type';
-import TooltipButton from '../../TooltipButton';
 import { SpaceBetweenWrapper } from '../../styledComponents';
+import TooltipButton from '../../TooltipButton';
 
 type PathCollapseProps = {
   title?: string;

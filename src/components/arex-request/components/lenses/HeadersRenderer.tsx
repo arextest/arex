@@ -4,9 +4,7 @@ import React from 'react';
 import { HoppRESTHeader } from '../../data/rest';
 import LensesHeadersRendererEntry from './HeadersRendererEntry';
 
-const LensesHeadersRenderer: FC<{ headers: HoppRESTHeader[] }> = ({
-  headers,
-}) => {
+const LensesHeadersRenderer: FC<{ headers: HoppRESTHeader[] }> = ({ headers }) => {
   return (
     <div>
       {headers.map((header, index) => {

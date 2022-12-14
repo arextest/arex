@@ -5,8 +5,8 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { FC } from 'react';
-import AppSettingMenu from './AppSettingMenu';
 
+import AppSettingMenu from './AppSettingMenu';
 import CollectionMenu from './CollectionMenu';
 import EnvironmentMenu from './EnvironmentMenu';
 import ReplayMenu from './ReplayMenu';

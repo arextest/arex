@@ -17,7 +17,7 @@ const HttpHeaders = () => {
       store.request.headers.map((i: any) => ({
         ...i,
         id: String(Math.random()),
-      }))
+      })),
     );
   }, []);
 
@@ -32,7 +32,7 @@ const HttpHeaders = () => {
       <FormHeader update={setRequestHeaders} title={t('request.header_list')} />
       <FormTable
         bordered
-        size="small"
+        size='small'
         rowKey={'id'}
         pagination={false}
         dataSource={requestHeaders}

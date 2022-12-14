@@ -5,9 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { AppFooter, AppHeader, TabBarRecoverWrapper } from '../../components';
 import { CollapseMenuKey } from '../../constant';
 import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
+import useInit from '../../hooks/useInit';
 import MainMenu from './MainMenu';
 import MainTabs from './MainTabs';
-import useInit from '../../hooks/useInit';
 
 const MainBox = () => {
   useInit();

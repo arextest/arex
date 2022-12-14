@@ -38,7 +38,7 @@ export function useCodeMirror(props: any) {
     },
     {
       dark: false,
-    }
+    },
   );
   const defaultThemeOption = EditorView.theme({
     '&': {
@@ -111,7 +111,7 @@ export function useCodeMirror(props: any) {
         setView(undefined);
       }
     },
-    [view]
+    [view],
   );
 
   // 外部配置改变，更新

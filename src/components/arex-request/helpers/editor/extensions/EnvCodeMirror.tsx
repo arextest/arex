@@ -1,15 +1,5 @@
-import {
-  EditorState,
-  StateEffect,
-  StateEffectType,
-  StateField,
-} from '@codemirror/state';
-import {
-  Decoration,
-  DecorationSet,
-  EditorView,
-  ViewUpdate,
-} from '@codemirror/view';
+import { EditorState, StateEffect, StateEffectType, StateField } from '@codemirror/state';
+import { Decoration, DecorationSet, EditorView, ViewUpdate } from '@codemirror/view';
 // @ts-ignore
 import { githubDark, githubLight } from '@uiw/codemirror-themes-all';
 import { basicSetup } from 'codemirror';
@@ -60,7 +50,7 @@ export function useEnvCodeMirror(props: any) {
     },
     {
       dark: false,
-    }
+    },
   );
   const defaultThemeOption = EditorView.theme({
     // '&': {
@@ -116,11 +106,7 @@ export function useEnvCodeMirror(props: any) {
   function markFn() {
     if (view) {
       const currentValue = view ? view.state.doc.toString() : '';
-      const markArrs = getMarkFromToArr(
-        currentValue,
-        HOPP_ENVIRONMENT_REGEX,
-        currentEnv
-      );
+      const markArrs = getMarkFromToArr(currentValue, HOPP_ENVIRONMENT_REGEX, currentEnv);
       const foundMarkTheme = EditorView.baseTheme({
         '.cm-found-mark': {
           backgroundColor: '#7cb305',
@@ -251,7 +237,7 @@ export function useEnvCodeMirror(props: any) {
         setView(undefined);
       }
     },
-    [view]
+    [view],
   );
 
   // 外部配置改变，更新

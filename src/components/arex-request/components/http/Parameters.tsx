@@ -14,7 +14,7 @@ const HttpParameters = () => {
       store.request.params.map((i: any) => ({
         ...i,
         id: String(Math.random()),
-      }))
+      })),
     );
   }, []);
 
@@ -26,14 +26,11 @@ const HttpParameters = () => {
 
   return (
     <div>
-      <FormHeader
-        title={t('request.parameter_list')}
-        update={setRequestParams}
-      />
+      <FormHeader title={t('request.parameter_list')} update={setRequestParams} />
       <FormTable
         bordered
         rowKey={'id'}
-        size="small"
+        size='small'
         pagination={false}
         dataSource={requestParams}
         // @ts-ignore

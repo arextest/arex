@@ -13,8 +13,8 @@ import React, { FC, SyntheticEvent, useRef, useState } from 'react';
 
 import AppSettingService from '../../../services/AppSetting.service';
 import { IgnoreNode, OperationId, OperationInterface } from '../../../services/AppSetting.type';
-import TooltipButton from '../../TooltipButton';
 import { SpaceBetweenWrapper } from '../../styledComponents';
+import TooltipButton from '../../TooltipButton';
 
 export type InterfacePick = Pick<OperationInterface, 'id' | 'operationName'>;
 

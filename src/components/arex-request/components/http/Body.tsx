@@ -29,15 +29,9 @@ const HttpBody = () => {
           margin: 6px 0;
         `}
       >
-        <Radio.Group
-          options={plainOptions}
-          onChange={onChange1}
-          value={value1}
-        />
+        <Radio.Group options={plainOptions} onChange={onChange1} value={value1} />
         <div>
-          <a onClick={() => rawBodyRef.current.prettifyRequestBody()}>
-            {t('action.prettify')}
-          </a>
+          <a onClick={() => rawBodyRef.current.prettifyRequestBody()}>{t('action.prettify')}</a>
         </div>
       </div>
 

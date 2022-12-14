@@ -1,10 +1,11 @@
 import { FC } from 'react';
-import AppMenu from './AppMenu';
-import { useStore } from '../store';
-import { ApplicationDataType } from '../services/Replay.type';
-import { MenusType } from './index';
-import { PagesType } from '../pages';
+
 import { generateGlobalPaneId } from '../helpers/utils';
+import { PagesType } from '../pages';
+import { ApplicationDataType } from '../services/Replay.type';
+import { useStore } from '../store';
+import AppMenu from './AppMenu';
+import { MenusType } from './index';
 
 const AppSettingMenu: FC = () => {
   const { setPages } = useStore();

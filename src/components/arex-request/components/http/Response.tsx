@@ -13,11 +13,11 @@ const HttpResponse = () => {
   const { store } = useContext(HttpContext);
   const hasResponse = useMemo(
     () => store.response?.type === 'success' || store.response?.type === 'fail',
-    [store.response]
+    [store.response],
   );
   const loading = useMemo(
     () => store.response === null || store.response.type === 'loading',
-    [store.response]
+    [store.response],
   );
 
   return (
