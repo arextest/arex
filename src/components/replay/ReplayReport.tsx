@@ -181,7 +181,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
             onClick={() =>
               setPages(
                 {
-                  title: `CaseTable - ${record.planItemId}`,
+                  title: `Case - ${record.planItemId}`,
                   pageType: PagesType.ReplayCase,
                   menuType: MenusType.Replay,
                   isNew: false,
