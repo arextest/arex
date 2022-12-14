@@ -16,6 +16,7 @@ import { MenusType } from './index';
 const EnvironmentMenu: FC = () => {
   const {
     setPages,
+    activeWorkspaceId,
     activeEnvironment,
     environmentLastManualUpdateTimestamp,
     setEnvironmentLastManualUpdateTimestamp,
@@ -66,10 +67,8 @@ const EnvironmentMenu: FC = () => {
       prefix={<SmallTextButton icon={<PlusOutlined />} onClick={createNewEnvironment} />}
       onSelect={handleEnvMenuClick}
       placeholder='Search Environment'
-      request={() =>
-        EnvironmentService.getEnvironment({ workspaceId: params.workspaceId as string })
-      }
-      requestOptions={{ refreshDeps: [environmentLastManualUpdateTimestamp] }}
+      request={() => EnvironmentService.getEnvironment({ workspaceId: activeWorkspaceId })}
+      requestOptions={{ refreshDeps: [environmentLastManualUpdateTimestamp, activeWorkspaceId] }}
       filter={(keyword, env) => env.envName?.includes(keyword)}
       itemRender={(env) => ({
         label: (
