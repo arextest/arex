@@ -1,14 +1,22 @@
-import { DownOutlined, UserOutlined } from '@ant-design/icons';
+import { DownOutlined, SaveOutlined, UserOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button, Divider, Dropdown, MenuProps, message, Select } from 'antd';
+import { Button, Divider, Dropdown, MenuProps, message, Select, Space } from 'antd';
 import { FC, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { HttpContext, HttpProps } from '../../index';
 import SmartEnvInput from '../smart/EnvInput';
+
 const HeaderWrapper = styled.div`
   display: flex;
+  & > * {
+    flex-grow: 1;
+    flex: 1;
+  }
+  & > .send-request-button {
+    flex-grow: 0;
+  }
 `;
 
 const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
@@ -17,6 +25,7 @@ interface HttpRequestProps {
   onSave: HttpProps['onSave'];
   breadcrumb: any;
 }
+
 const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb }) => {
   const { store, dispatch } = useContext(HttpContext);
 
@@ -69,8 +78,7 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb }) => {
   return (
     <div
       css={css`
-        padding: 16px;
-        padding-top: 0;
+        padding: 0 16px;
       `}
     >
       <div
@@ -81,52 +89,52 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb }) => {
         `}
       >
         {breadcrumb}
-        <div>
-          <Button
-            onClick={() => {
-              onSave(store.request);
-            }}
-          >
-            {t('action.save')}
-          </Button>
-        </div>
-      </div>
-      <HeaderWrapper>
-        <Select
-          value={store.request.method}
-          options={methods.map((i) => ({ value: i, lable: i }))}
-          onChange={(value) => {
-            dispatch((state) => {
-              state.request.method = value;
-            });
+        <Button
+          size='small'
+          icon={<SaveOutlined />}
+          onClick={() => {
+            onSave(store.request);
           }}
-        />
-        <SmartEnvInput
-          value={store.request.endpoint}
-          onChange={(value) => {
-            // console.log('http://127.0.0.1:5173/arex-request/');
-            dispatch((state) => {
-              state.request.endpoint = value;
-            });
-          }}
-        ></SmartEnvInput>
-        <div
-          css={css`
-            margin: 0 0px 0 14px;
-          `}
         >
-          <Dropdown.Button
-            onClick={() => handleRequest({ type: null })}
-            type='primary'
-            menu={{
-              onClick: handleMenuClick,
-              items: items,
+          {t('action.save')}
+        </Button>
+      </div>
+
+      <HeaderWrapper>
+        <Space.Compact block>
+          <Select
+            value={store.request.method}
+            options={methods.map((i) => ({ value: i, lable: i }))}
+            onChange={(value) => {
+              dispatch((state) => {
+                state.request.method = value;
+              });
             }}
-            icon={<DownOutlined />}
-          >
-            {t('action.send')}
-          </Dropdown.Button>
-        </div>
+          />
+          <SmartEnvInput
+            value={store.request.endpoint}
+            onChange={(value) => {
+              // console.log('http://127.0.0.1:5173/arex-request/');
+              dispatch((state) => {
+                state.request.endpoint = value;
+              });
+            }}
+          />
+        </Space.Compact>
+
+        <Dropdown.Button
+          className='send-request-button'
+          type='primary'
+          icon={<DownOutlined />}
+          menu={{
+            onClick: handleMenuClick,
+            items: items,
+          }}
+          onClick={() => handleRequest({ type: null })}
+          style={{ marginLeft: '16px' }}
+        >
+          {t('action.send')}
+        </Dropdown.Button>
       </HeaderWrapper>
     </div>
   );

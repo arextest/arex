@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
 import React, { useEffect, useState } from 'react';
 
-import { AppFooter, AppHeader } from '../../components';
+import { AppFooter, AppHeader, TabBarRecoverWrapper } from '../../components';
 import { CollapseMenuKey } from '../../constant';
 import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
 import MainMenu from './MainMenu';
@@ -10,6 +10,8 @@ import MainTabs from './MainTabs';
 import useInit from '../../hooks/useInit';
 
 const MainBox = () => {
+  useInit();
+
   const [collapseMenu, setCollapseMenu] = useState(getLocalStorage<boolean>(CollapseMenuKey));
 
   const handleMainMenuChange = () => collapseMenu && setCollapseMenu(false);
@@ -17,17 +19,6 @@ const MainBox = () => {
     setCollapseMenu(!collapseMenu);
     setLocalStorage(CollapseMenuKey, !collapseMenu);
   };
-
-  useInit();
-
-  /**
-   * 临时修复 tabs-ink-bar 在 Allotment 包裹下缺失的 bug
-   * issues: https://github.com/ant-design/ant-design/issues/39190
-   */
-  const [showMenu, setShowMenu] = useState(false);
-  useEffect(() => {
-    setShowMenu(true);
-  }, []);
 
   return (
     <>
@@ -43,13 +34,13 @@ const MainBox = () => {
           minSize={collapseMenu ? 69 : 200}
           maxSize={collapseMenu ? 69 : 600}
         >
-          {showMenu && (
+          <TabBarRecoverWrapper>
             <MainMenu
               collapse={collapseMenu}
               onChange={handleMainMenuChange}
               onCollapse={handleCollapseMenu}
             />
-          )}
+          </TabBarRecoverWrapper>
         </Allotment.Pane>
 
         <Allotment.Pane visible>

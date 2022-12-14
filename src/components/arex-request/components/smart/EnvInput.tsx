@@ -25,14 +25,8 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
       [
         hoverTooltip((view, pos, side) => {
           const { text } = view.state.doc.lineAt(pos);
-          const markArrs = getMarkFromToArr(
-            text,
-            HOPP_ENVIRONMENT_REGEX,
-            store.environment
-          );
-          const index = markArrs
-            .map((i) => pos < i.to && pos > i.from)
-            .findIndex((i) => i);
+          const markArrs = getMarkFromToArr(text, HOPP_ENVIRONMENT_REGEX, store.environment);
+          const index = markArrs.map((i) => pos < i.to && pos > i.from).findIndex((i) => i);
           if (index === -1) {
             return null;
           }
@@ -65,6 +59,7 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
     <div
       css={css`
         border: 1px solid ${theme.colorBorder};
+        border-radius: 0 ${theme.borderRadius}px ${theme.borderRadius}px 0;
         flex: 1;
         overflow: hidden;
       `}
