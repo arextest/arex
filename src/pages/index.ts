@@ -8,7 +8,7 @@ import HttpRequestPage from './HttpRequestPage';
 import ReplayAnalysisPage from './ReplayAnalysisPage';
 import ReplayCasePage from './ReplayCasePage';
 import ReplayPage from './ReplayPage';
-import ReplaySettingPage from './ReplaySettingPage';
+import AppSettingPage from './AppSettingPage';
 import SettingPage from './SettingPage';
 import WorkspaceOverviewPage from './WorkspaceOverviewPage';
 
@@ -39,7 +39,7 @@ const CommonPageType: PagesTypeType = {
   Replay: 'ReplayPage',
   ReplayAnalysis: 'ReplayAnalysisPage',
   ReplayCase: 'ReplayCasePage',
-  ReplaySetting: 'ReplaySettingPage',
+  AppSetting: 'AppSettingPage',
   Setting: 'SettingPage',
   WorkspaceOverview: 'WorkspaceOverviewPage',
   BatchRun: 'BatchRunPage',
@@ -63,7 +63,7 @@ const CommonPages: PageComponents = {
   ReplayPage,
   ReplayAnalysisPage,
   ReplayCasePage,
-  ReplaySettingPage,
+  AppSettingPage,
   SettingPage,
   WorkspaceOverviewPage,
   BatchRunPage,

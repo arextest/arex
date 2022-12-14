@@ -4,8 +4,8 @@ import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
 import React, { FC } from 'react';
 
-import { useColorPrimary } from '../../../../hooks';
-import { SortNode } from '../../../../services/AppSetting.type';
+import { useColorPrimary } from '../../../hooks';
+import { SortNode } from '../../../services/AppSetting.type';
 
 type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
   sortNodeList?: SortNode[];

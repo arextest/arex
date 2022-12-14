@@ -11,10 +11,10 @@ import type { InputRef } from 'antd';
 import { Button, Collapse, Input, List, message, Spin } from 'antd';
 import React, { FC, SyntheticEvent, useRef, useState } from 'react';
 
-import AppSettingService from '../../../../services/AppSetting.service';
-import { IgnoreNode, OperationId, OperationInterface } from '../../../../services/AppSetting.type';
-import { TooltipButton } from '../../../index';
-import { SpaceBetweenWrapper } from '../../../styledComponents';
+import AppSettingService from '../../../services/AppSetting.service';
+import { IgnoreNode, OperationId, OperationInterface } from '../../../services/AppSetting.type';
+import TooltipButton from '../../TooltipButton';
+import { SpaceBetweenWrapper } from '../../styledComponents';
 
 export type InterfacePick = Pick<OperationInterface, 'id' | 'operationName'>;
 

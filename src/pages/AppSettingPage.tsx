@@ -8,11 +8,11 @@ import {
   SettingNodesSort,
   SettingRecord,
   SettingReplay,
-} from '../components/replay/Setting';
+} from '../components/appSetting';
 import { ApplicationDataType } from '../services/Replay.type';
 import { PageFC } from './index';
 
-const ReplaySettingPage: PageFC<ApplicationDataType> = (props) => {
+const AppSettingPage: PageFC<ApplicationDataType> = (props) => {
   const data: any = props.page.data;
   const TabsItems = useMemo(
     () => [
@@ -62,4 +62,4 @@ const ReplaySettingPage: PageFC<ApplicationDataType> = (props) => {
   );
 };
 
-export default ReplaySettingPage;
+export default AppSettingPage;

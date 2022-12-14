@@ -1,7 +1,7 @@
 import { Button, Empty } from 'antd';
 import React, { FC } from 'react';
 
-import { FlexCenterWrapper } from '../../../styledComponents';
+import { FlexCenterWrapper } from '../../styledComponents';
 
 type EmptyResponseProps = {
   onClick?: () => void;

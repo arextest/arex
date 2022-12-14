@@ -5,7 +5,7 @@ import { DataNode } from 'antd/lib/tree';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { SpaceBetweenWrapper } from '../../../styledComponents';
+import { SpaceBetweenWrapper } from '../../styledComponents';
 import EmptyResponse from './EmptyResponse';
 
 type IgnoreTreeProps = Omit<TreeProps, 'treeData'> & {

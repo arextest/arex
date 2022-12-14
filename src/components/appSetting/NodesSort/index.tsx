@@ -7,10 +7,10 @@ import React, { FC, Key, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
-import { tryParseJsonString, tryPrettierJsonString } from '../../../../helpers/utils';
-import AppSettingService from '../../../../services/AppSetting.service';
-import { OperationInterface, SortNode } from '../../../../services/AppSetting.type';
-import { EditAreaPlaceholder, SpaceBetweenWrapper } from '../../../styledComponents';
+import { tryParseJsonString, tryPrettierJsonString } from '../../../helpers/utils';
+import AppSettingService from '../../../services/AppSetting.service';
+import { OperationInterface, SortNode } from '../../../services/AppSetting.type';
+import { EditAreaPlaceholder, SpaceBetweenWrapper } from '../../styledComponents';
 import EmptyResponse from '../NodesIgnore/EmptyResponse';
 import ResponseRaw from '../NodesIgnore/ResponseRaw';
 import ArrayTree from './ArrayTree';

@@ -76,7 +76,7 @@ export default class AppSettingService {
     return res.body;
   }
 
-  // 查询 ReplaySetting 设置数据
+  // 查询 AppSetting 设置数据
   static async queryReplaySetting(params: { id: string }) {
     const res = await request.get<QueryReplaySettingRes>(
       '/config/schedule/useResult/appId/' + params.id,
@@ -84,7 +84,7 @@ export default class AppSettingService {
     return res.body;
   }
 
-  // 更新 ReplaySetting 设置数据
+  // 更新 AppSetting 设置数据
   static async updateReplaySetting(params: UpdateReplaySettingReq) {
     const res = await request.post<boolean>('/api/config/schedule/modify/UPDATE', params);
     return res.body;

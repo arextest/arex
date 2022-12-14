@@ -126,11 +126,11 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     setPages(
       {
         title: `Setting ${data.appId}`,
-        menuType: MenusType.Replay,
-        pageType: PagesType.ReplaySetting,
+        menuType: MenusType.AppSetting,
+        pageType: PagesType.AppSetting,
         isNew: false,
         data,
-        paneId: generateGlobalPaneId(MenusType.Replay, PagesType.ReplaySetting, data.id),
+        paneId: generateGlobalPaneId(MenusType.AppSetting, PagesType.AppSetting, data.id),
         rawId: data.id,
       },
       'push',

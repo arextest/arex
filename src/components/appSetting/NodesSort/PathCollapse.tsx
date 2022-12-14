@@ -4,10 +4,10 @@ import { useRequest } from 'ahooks';
 import { Button, Collapse, List, message, Spin } from 'antd';
 import React, { FC } from 'react';
 
-import AppSettingService from '../../../../services/AppSetting.service';
-import { OperationId, OperationInterface, SortNode } from '../../../../services/AppSetting.type';
-import { TooltipButton } from '../../../index';
-import { SpaceBetweenWrapper } from '../../../styledComponents';
+import AppSettingService from '../../../services/AppSetting.service';
+import { OperationId, OperationInterface, SortNode } from '../../../services/AppSetting.type';
+import TooltipButton from '../../TooltipButton';
+import { SpaceBetweenWrapper } from '../../styledComponents';
 
 type PathCollapseProps = {
   title?: string;

@@ -4,10 +4,10 @@ import { TreeProps } from 'antd/lib/tree';
 import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { tryParseJsonString, tryPrettierJsonString } from '../../../../helpers/utils';
-import AppSettingService from '../../../../services/AppSetting.service';
-import { OperationId } from '../../../../services/AppSetting.type';
-import { EditAreaPlaceholder } from '../../../styledComponents';
+import { tryParseJsonString, tryPrettierJsonString } from '../../../helpers/utils';
+import AppSettingService from '../../../services/AppSetting.service';
+import { OperationId } from '../../../services/AppSetting.type';
+import { EditAreaPlaceholder } from '../../styledComponents';
 import IgnoreTree from './IgnoreTree';
 import PathCollapse, { InterfacePick } from './PathCollapse';
 import ResponseRaw from './ResponseRaw';

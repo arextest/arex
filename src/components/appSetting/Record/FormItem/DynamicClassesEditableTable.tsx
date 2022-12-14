@@ -11,9 +11,9 @@ import { ColumnsType } from 'antd/es/table';
 import { FC, useCallback, useState } from 'react';
 import { Updater, useImmer } from 'use-immer';
 
-import AppSettingService from '../../../../../services/AppSetting.service';
-import { DynamicClass } from '../../../../../services/AppSetting.type';
-import TooltipButton from '../../../../TooltipButton';
+import AppSettingService from '../../../../services/AppSetting.service';
+import { DynamicClass } from '../../../../services/AppSetting.type';
+import TooltipButton from '../../../TooltipButton';
 
 export type DynamicClassesEditableTableProps = {
   appId: string;

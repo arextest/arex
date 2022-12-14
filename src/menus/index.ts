@@ -1,5 +1,11 @@
-import { ApiOutlined, DeploymentUnitOutlined, FieldTimeOutlined } from '@ant-design/icons';
+import {
+  ApiOutlined,
+  DeploymentUnitOutlined,
+  FieldTimeOutlined,
+  SettingOutlined,
+} from '@ant-design/icons';
 import { FC } from 'react';
+import AppSettingMenu from './AppSettingMenu';
 
 import CollectionMenu from './CollectionMenu';
 import EnvironmentMenu from './EnvironmentMenu';
@@ -12,9 +18,10 @@ type MenuConfig = {
 };
 
 export enum MenusType {
-  Collection = 'collection',
-  Replay = 'replay',
-  Environment = 'environment',
+  Collection = 'Collection',
+  Replay = 'Replay',
+  AppSetting = 'AppSetting',
+  Environment = 'Environment',
 }
 
 // TODO import ExtraConfig
@@ -31,6 +38,11 @@ const CommonConfig: MenuConfig[] = [
     title: MenusType.Replay,
     Icon: FieldTimeOutlined,
     Menu: ReplayMenu,
+  },
+  {
+    title: MenusType.AppSetting,
+    Icon: SettingOutlined,
+    Menu: AppSettingMenu,
   },
   {
     title: MenusType.Environment,

@@ -3,8 +3,8 @@ import { Button, Form, InputNumber, message } from 'antd';
 import React from 'react';
 import { useImmer } from 'use-immer';
 
-import { KeyValueType } from '../../../../pages/HttpRequestPage';
-import AppSettingService from '../../../../services/AppSetting.service';
+import { KeyValueType } from '../../../pages/HttpRequestPage';
+import AppSettingService from '../../../services/AppSetting.service';
 import { SettingRecordProps } from '../Record';
 import SettingForm from '../SettingForm';
 import { ExcludeOperation } from './FormItem';

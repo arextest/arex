@@ -6,9 +6,9 @@ import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useEffect, useRef } from 'react';
 import { useImmer } from 'use-immer';
 
-import { uuid } from '../../../../../helpers/utils';
-import AppSettingService from '../../../../../services/AppSetting.service';
-import { TooltipButton } from '../../../../index';
+import { uuid } from '../../../../helpers/utils';
+import AppSettingService from '../../../../services/AppSetting.service';
+import TooltipButton from '../../../TooltipButton';
 import { FormItemProps } from '../../Record/FormItem';
 
 const ExcludeOperationWrapper = styled.div`
