@@ -17,6 +17,12 @@ const HeaderWrapper = styled.div`
   & > .send-request-button {
     flex-grow: 0;
   }
+  .ant-select > .ant-select-selector {
+    width: 120px;
+    .ant-select-selection-item {
+      font-weight: 500;
+    }
+  }
 `;
 
 const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
@@ -78,6 +84,7 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb }) => {
   return (
     <div
       css={css`
+        position: relative;
         padding: 0 16px;
       `}
     >
