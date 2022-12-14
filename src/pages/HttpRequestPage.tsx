@@ -92,7 +92,7 @@ const HttpRequestPage: PageFC = (props) => {
         css={css`
           height: calc(100vh - 128px);
           border: 0px solid salmon;
-          transform: translateX(-16px);
+          margin-left: -16px;
           width: calc(100% + 32px);
           .ant-tabs-content {
             .ant-tabs-tabpane {

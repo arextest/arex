@@ -9,6 +9,17 @@ import { HttpContext, HttpProps } from '../../index';
 import SmartEnvInput from '../smart/EnvInput';
 const HeaderWrapper = styled.div`
   display: flex;
+  .ant-select > .ant-select-selector {
+    width: 120px;
+    left: 1px;
+    border-radius: 2px 0 0 2px;
+    .ant-select-selection-item {
+      font-weight: 500;
+    }
+  }
+  .ant-input {
+    border-radius: 0 2px 2px 0;
+  }
 `;
 
 const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
@@ -71,6 +82,7 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb }) => {
       css={css`
         padding: 16px;
         padding-top: 0;
+        position: relative;
       `}
     >
       <div
