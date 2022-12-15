@@ -77,6 +77,7 @@ const HttpRequestOptions = ({ config }) => {
     >
       <TabBarRecoverWrapper>
         <Tabs
+          className={'http-request-options-tab'}
           css={css`
             height: 100%;
             .ant-tabs-nav {

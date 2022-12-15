@@ -43,14 +43,14 @@ function PreRequestScript<T>(props: PreRequestScriptProps<T>) {
   return items.length ? (
     <div>
       <FlexRowReverseWrapper>
-        <Button
-          size='small'
-          type='primary'
-          icon={<SaveOutlined />}
-          onClick={() => props.onSave(props.value)}
-        >
-          {t('save')}
-        </Button>
+        {/*<Button*/}
+        {/*  size='small'*/}
+        {/*  type='primary'*/}
+        {/*  icon={<SaveOutlined />}*/}
+        {/*  onClick={() => props.onSave(props.value)}*/}
+        {/*>*/}
+        {/*  {t('save')}*/}
+        {/*</Button>*/}
       </FlexRowReverseWrapper>
 
       <ScriptBlocksCollapse
