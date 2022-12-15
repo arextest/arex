@@ -4,18 +4,21 @@ import { CSSInterpolation } from '@emotion/serialize/types';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Options } from 'ahooks/lib/useRequest/src/types';
-import { Button, Input, Menu, Spin } from 'antd';
+import { Button, Input, Menu, Spin, Typography } from 'antd';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import React, { ChangeEventHandler, ReactNode, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type MenuSelectProps<D, P extends any[]> = {
+import { FlexCenterWrapper } from '../styledComponents';
+
+export type MenuSelectProps<D, P extends any[]> = {
   sx?: CSSInterpolation; // custom style
   small?: boolean;
   refresh?: boolean; // show refresh button
-  prefix?: ReactNode; // icon beside search input
   defaultSelectFirst?: boolean;
+  limit?: number;
+  prefix?: ReactNode; // icon beside search input
   initValue?: string;
   rowKey: string;
   selectedKeys?: string[];
@@ -119,6 +122,8 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
     [props.selectedKeys, selectedKey],
   );
 
+  const [hiddenCount, setHiddenCount] = useState(0);
+
   const [filterKeyword, setFilterKeyword] = useState('');
 
   const filter = useCallback(
@@ -134,7 +139,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   );
 
   const {
-    data: apps = [],
+    data: apps,
     loading,
     run: reload,
   } = useRequest<D[], P>(props.request, {
@@ -156,8 +161,11 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   });
 
   const filteredApps = useMemo<ItemType[]>(() => {
-    const filtered = (props.forceFilter || filterKeyword) && props.filter ? filter(apps) : apps;
-    return filtered.map<ItemType>(
+    const _app = apps || [];
+    const filtered = (props.forceFilter || filterKeyword) && props.filter ? filter(_app) : _app;
+    const limitApp = typeof props.limit === 'number' ? filtered.slice(0, props.limit) : filtered;
+    setHiddenCount(filtered.length - limitApp.length);
+    return limitApp.map<ItemType>(
       props.itemRender
         ? props.itemRender
         : (app) => ({
@@ -168,7 +176,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   }, [filterKeyword, props, apps]);
 
   const handleAppMenuClick = (value: { key: string }) => {
-    const app: D | undefined = apps.find((app) => app[props.rowKey] === value.key);
+    const app: D | undefined = apps?.find((app) => app[props.rowKey] === value.key);
     if (app) {
       props.onSelect(app);
       setSelectedKey(app[props.rowKey]);
@@ -195,6 +203,11 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
           items={filteredApps}
           onClick={handleAppMenuClick}
         />
+        <FlexCenterWrapper>
+          {!!hiddenCount && (
+            <Typography.Text type='secondary'>{hiddenCount} more ...</Typography.Text>
+          )}
+        </FlexCenterWrapper>
       </Spin>
     </MenuSelectWrapper>
   );

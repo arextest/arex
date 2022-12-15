@@ -8,13 +8,11 @@ import { TooltipButton } from '../components';
 import MenuSelect from '../components/MenuSelect';
 import { SpaceBetweenWrapper } from '../components/styledComponents';
 import { EmailKey } from '../constant';
-import { generateGlobalPaneId, getLocalStorage, parseGlobalPaneId } from '../helpers/utils';
-import { PagesType } from '../pages';
+import { getLocalStorage, parseGlobalPaneId } from '../helpers/utils';
 import ReplayService from '../services/Replay.service';
 import { ApplicationDataType } from '../services/Replay.type';
 import { UserService } from '../services/User.service';
 import { useStore } from '../store';
-import { MenusType } from './index';
 
 type MenuItemProps = {
   app: ApplicationDataType;
@@ -74,7 +72,9 @@ const MenuItem = styled((props: MenuItemProps) => {
   }
 `;
 
-const AppMenu: FC<{ onSelect: (app: ApplicationDataType) => void }> = (props) => {
+const AppMenu: FC<{
+  onSelect: (app: ApplicationDataType) => void;
+}> = (props) => {
   const { token } = theme.useToken();
   const { activeMenu } = useStore();
   const email = getLocalStorage<string>(EmailKey) as string;
@@ -129,6 +129,7 @@ const AppMenu: FC<{ onSelect: (app: ApplicationDataType) => void }> = (props) =>
       refresh
       forceFilter
       rowKey='id'
+      limit={25}
       initValue={value}
       selectedKeys={selectedKeys}
       prefix={

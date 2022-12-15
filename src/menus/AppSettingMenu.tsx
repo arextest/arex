@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 import { generateGlobalPaneId } from '../helpers/utils';
 import { PagesType } from '../pages';
