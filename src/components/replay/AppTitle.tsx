@@ -40,13 +40,13 @@ const TitleWrapper = styled(
           onClick={props.onRefresh}
         />
       )}
-      <TooltipButton
-        size='small'
-        type='text'
-        title='setting'
-        icon={<SettingOutlined />}
-        onClick={props.onSetting}
-      />
+      {/*<TooltipButton*/}
+      {/*  size='small'*/}
+      {/*  type='text'*/}
+      {/*  title='setting'*/}
+      {/*  icon={<SettingOutlined />}*/}
+      {/*  onClick={props.onSetting}*/}
+      {/*/>*/}
     </div>
   ),
 )`
