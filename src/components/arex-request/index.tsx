@@ -43,6 +43,7 @@ export interface HttpProps {
   onSave: (r: HoppRESTRequest) => void;
   config: any;
   renderResponse?: boolean;
+  onPin: any;
 }
 
 export const HttpContext = createContext<
@@ -57,7 +58,7 @@ function reducer(draft: Draft<State>, action: (state: State) => void) {
 
 const Http = forwardRef<HttpImperativeHandle, HttpProps>(
   (
-    { value, onSend, environment, onSave, theme, breadcrumb, config, renderResponse = true },
+    { value, onSend, environment, onSave, theme, breadcrumb, config, renderResponse = true, onPin },
     ref,
   ) => {
     const [store, dispatch] = useReducer(produce(reducer), defaultState);
@@ -102,6 +103,7 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
                 display: flex;
                 flex-direction: column;
               `}
+              className={'http-request-and-options'}
             >
               <HttpRequest breadcrumb={breadcrumb} onSave={onSave} onSend={onSend}></HttpRequest>
               <HttpRequestOptions config={config} />
@@ -109,7 +111,7 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
           </Allotment.Pane>
           {renderResponse ? (
             <Allotment.Pane>
-              <HttpResponse />
+              <HttpResponse onPin={onPin} />
             </Allotment.Pane>
           ) : null}
         </Allotment>

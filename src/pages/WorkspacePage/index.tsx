@@ -1,19 +1,24 @@
 import { Tabs } from 'antd';
 
+// import WorkspaceOverviewPage from '../WorkspaceOverviewPage';
+import CollectionLabCustom from './CollectionLabCustom';
+
 const WorkspaceOverview = () => {
+  const item = [
+    // {
+    //   label: `Tab ${'id'}`,
+    //   key: 'id',
+    //   children: <WorkspaceOverviewPage />,
+    // },
+    {
+      label: `Lab`,
+      key: 'lab',
+      children: <CollectionLabCustom />,
+    },
+  ];
   return (
     <div>
-      <Tabs
-        tabPosition={'left'}
-        items={new Array(3).fill(null).map((_, i) => {
-          const id = String(i + 1);
-          return {
-            label: `Tab ${id}`,
-            key: id,
-            children: `Content of Tab ${id}`,
-          };
-        })}
-      />
+      <Tabs tabPosition={'left'} items={item} />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import Http, { HttpImperativeHandle } from '../components/arex-request';
 import ExtraRequestTabItemCompare from '../components/arex-request/extra/ExtraRequestTabItemCompare';
 import ExtraRequestTabItemMock from '../components/arex-request/extra/ExtraRequestTabItemMock';
 import HttpBreadcrumb from '../components/arex-request/extra/HttpBreadcrumb';
+import request from '../helpers/api/axios';
 import { treeFind, treeFindPath } from '../helpers/collection/util';
 import { convertRequestData, convertSaveRequestData } from '../helpers/http/util';
 import { runRESTRequest } from '../helpers/RequestRunner';
@@ -63,7 +64,7 @@ const HttpRequestPage: PageFC = (props) => {
     );
   }, [props.page.paneId, collectionTreeData]);
 
-  const { data } = useRequest(
+  const { data, run } = useRequest(
     () => {
       if (nodeType === 2) {
         return FileSystemService.queryCase({ id: id }).then((r) =>
@@ -80,8 +81,26 @@ const HttpRequestPage: PageFC = (props) => {
     },
   );
 
+  const { run: runPinMock } = useRequest(
+    (p) =>
+      request.post('/api/filesystem/pinMock', {
+        workspaceId: workspaceId,
+        infoId: id,
+        recordId: p.recordId,
+        nodeType: nodeType,
+      }),
+    {
+      manual: true,
+      onSuccess: (r) => {
+        if (r.body.success) {
+          message.success('pin success');
+          run();
+        }
+      },
+    },
+  );
+
   const httpImperativeRef = useRef<HttpImperativeHandle>();
-  console.log(httpImperativeRef.current?.getRequestValue());
   return (
     <div
       css={css`
@@ -128,7 +147,7 @@ const HttpRequestPage: PageFC = (props) => {
                   label: 'Mock',
                   key: 'mock',
                   children: <ExtraRequestTabItemMock recordId={data?.recordId} />,
-                  hidden: false,
+                  hidden: data?.recordId ? false : true,
                 },
               ],
             },
@@ -161,6 +180,9 @@ const HttpRequestPage: PageFC = (props) => {
                 }
               });
             }
+          }}
+          onPin={(recordId) => {
+            runPinMock({ recordId });
           }}
         />
         <SaveRequestButton

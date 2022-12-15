@@ -89,7 +89,9 @@ const BatchRunPage: React.FC = () => {
   const caseTreeData = useMemo(() => {
     if (params.rType === 'BatchRunPage') {
       if (params.rTypeId && params.rTypeId.length === 24) {
-        return genCaseTreeData(collectionTreeData.filter((i) => i.key === params.rTypeId));
+        return genCaseTreeData([
+          treeFind(collectionTreeData, (node) => node.key === params.rTypeId),
+        ]);
       } else {
         return genCaseTreeData(collectionTreeData);
       }
