@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
 import { Button, Divider, message, Popconfirm, Space } from 'antd';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useImmer } from 'use-immer';
 
@@ -20,17 +20,27 @@ import { useStore } from '../store';
 import { PageFC } from './index';
 
 const EnvironmentPage: PageFC<Environment> = (props) => {
-  const { page } = props;
+  const {
+    page: {
+      data: { id },
+    },
+  } = props;
 
   const { workspaceId } = useParams();
   const {
     removePage,
     activeEnvironment,
+    environmentTreeData,
     setActiveEnvironment,
     setEnvironmentLastManualUpdateTimestamp,
   } = useStore();
 
-  const [keyValues, setKeyValues] = useImmer(page.data?.keyValues || []);
+  const environment = useMemo(
+    () => environmentTreeData.find((env) => env.id === id) || props.page.data,
+    [id, environmentTreeData],
+  );
+
+  const [keyValues, setKeyValues] = useImmer(environment?.keyValues || []);
 
   const { run: saveEnv } = useRequest(EnvironmentService.saveEnvironment, {
     manual: true,
@@ -43,7 +53,7 @@ const EnvironmentPage: PageFC<Environment> = (props) => {
   const { run: duplicateEnvironment } = useRequest(
     () =>
       EnvironmentService.duplicateEnvironment({
-        id: page.data.id,
+        id: environment.id,
         workspaceId: workspaceId as string,
       }),
     {
@@ -60,7 +70,7 @@ const EnvironmentPage: PageFC<Environment> = (props) => {
   const { run: deleteEnvironment } = useRequest(
     () =>
       EnvironmentService.deleteEnvironment({
-        id: page.data.id,
+        id: environment.id,
         workspaceId: workspaceId as string,
       }),
     {
@@ -68,28 +78,28 @@ const EnvironmentPage: PageFC<Environment> = (props) => {
       onSuccess(res) {
         if (res.body.success == true) {
           setEnvironmentLastManualUpdateTimestamp(new Date().getTime());
-          removePage(page.paneId);
+          removePage(props.page.paneId);
         }
       },
     },
   );
 
   const handleTitleSave: PanesTitleProps['onSave'] = (envName) =>
-    saveEnv({ env: { ...page.data, keyValues, envName } });
+    saveEnv({ env: { ...environment, keyValues, envName } });
 
   return (
     <>
       <PanesTitle
         editable
-        title={page.title}
+        title={environment.envName}
         extra={
           <Space>
             <TooltipButton
-              disabled={activeEnvironment?.id === page.data.id}
+              disabled={activeEnvironment?.id === id}
               icon={<AimOutlined />}
               placement='left'
               title='Set as current environment'
-              onClick={() => setActiveEnvironment(page.data as Environment)}
+              onClick={() => setActiveEnvironment(environment as Environment)}
             />
             <TooltipButton
               icon={<CopyOutlined />}
@@ -126,7 +136,7 @@ const EnvironmentPage: PageFC<Environment> = (props) => {
             <TooltipButton
               icon={<SaveOutlined />}
               title='Save'
-              onClick={() => saveEnv({ env: { ...page.data, keyValues } })}
+              onClick={() => saveEnv({ env: { ...environment, keyValues } })}
             />
           </Space>
         }

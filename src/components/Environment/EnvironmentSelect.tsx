@@ -29,8 +29,13 @@ const EnvironmentSelectWrapper = styled.div`
 
 const EnvironmentSelect = () => {
   const params = useParams();
-  const { activeEnvironment, setActiveEnvironment, environmentTreeData, setEnvironmentTreeData } =
-    useStore();
+  const {
+    activeEnvironment,
+    setActiveEnvironment,
+    environmentTreeData,
+    setEnvironmentTreeData,
+    environmentLastManualUpdateTimestamp,
+  } = useStore();
 
   useRequest(
     () =>
@@ -39,7 +44,7 @@ const EnvironmentSelect = () => {
       }),
     {
       ready: !!params.workspaceId,
-      refreshDeps: [params.workspaceId],
+      refreshDeps: [params.workspaceId, environmentLastManualUpdateTimestamp],
       onSuccess(res) {
         setEnvironmentTreeData(res);
 

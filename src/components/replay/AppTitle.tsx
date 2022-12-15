@@ -51,7 +51,7 @@ const TitleWrapper = styled(
   ),
 )`
   display: flex;
-  align-items: baseline;
+  align-items: center;
   & > :first-of-type {
     margin-right: 4px;
   }

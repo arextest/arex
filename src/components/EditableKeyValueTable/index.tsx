@@ -1,4 +1,4 @@
-import { DeleteOutlined, LockOutlined, UnlockOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, DeleteOutlined, StopOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Input, Space, Table, TableProps, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
@@ -91,7 +91,7 @@ export const useColumns = (
                 <Button
                   type='text'
                   size='small'
-                  icon={record.active ? <LockOutlined /> : <UnlockOutlined />}
+                  icon={record.active ? <StopOutlined /> : <CheckCircleOutlined />}
                   onClick={() => handleDisable(i)}
                 />
               </Tooltip>
