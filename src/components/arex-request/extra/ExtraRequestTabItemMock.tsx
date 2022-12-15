@@ -1,135 +1,139 @@
-import { css } from '@emotion/react';
-import { useMount } from 'ahooks';
-import { Card, Col, Input, message, Row } from 'antd';
-import { useState } from 'react';
+import { SaveOutlined } from '@ant-design/icons';
+import { json } from '@codemirror/lang-json';
+import CodeMirror from '@uiw/react-codemirror';
+import { useRequest } from 'ahooks';
+import { Card, Col, message, Row, Space } from 'antd';
+import React, { FC } from 'react';
+import { useImmer } from 'use-immer';
 
-import request from '../../../helpers/api/axios';
+import request from '../../../helpers/api/request';
+import { tryParseJsonString, tryPrettierJsonString } from '../../../helpers/utils';
+import useUserProfile from '../../../store/useUserProfile';
+import TooltipButton from '../../TooltipButton';
 
-const getRequestKey = {
-  '4': {
-    operation: 'clusterName',
-    request: 'redisKey',
-    response: 'response',
-  },
-  '5': {
-    operation: 'clazzName',
-    request: 'operationKey',
-    response: 'response',
-  },
-  '6': {
-    operation: 'service',
-    request: 'request',
-    response: 'response',
-  },
-  '7': {
-    operation: 'expCode',
-    request: 'version',
-    response: 'response',
-  },
-  '13': {
-    operation: 'url',
-    request: 'request',
-    response: 'response',
-  },
-  '14': {
-    operation: 'dbName',
-    request: 'sql',
-    response: 'response',
-  },
-  '15': {
-    operation: 'path',
-    request: 'request',
-    response: 'response',
-  },
+type MockData = {
+  id: string;
+  categoryType: {
+    name: string;
+    entryPoint: boolean;
+    skipComparison: boolean;
+  };
+  replayId: string | null;
+  recordId: string;
+  appId: string;
+  recordEnvironment: number;
+  creationTime: number;
+  targetRequest: { [key: string]: any };
+  targetRequestString?: string;
+  targetResponse: { [key: string]: any };
+  targetResponseString?: string;
+  operationName: string;
 };
 
-function tryParseJsonString<T>(jsonString?: string, errorTip?: string) {
-  try {
-    return JSON.parse(jsonString || '{}') as T;
-  } catch (e) {
-    console.error(e);
-    errorTip && message.warn(errorTip);
-  }
-}
+const ExtraRequestTabItemMock: FC<{ recordId: string }> = ({ recordId }) => {
+  const { theme } = useUserProfile();
+  const [mockData, setMockData] = useImmer<MockData[]>([]);
 
-const tryPrettierJsonString = (jsonString: string, errorTip?: string) => {
-  try {
-    return JSON.stringify(JSON.parse(jsonString), null, 2);
-  } catch (e) {
-    errorTip && message.warn(errorTip);
-    return jsonString;
-  }
-};
+  const { run: getMockData } = useRequest<MockData[], []>(
+    () =>
+      request
+        .post<{ recordResult: MockData[] }>(`/storage/storage/replay/query/viewRecord`, {
+          recordId,
+          sourceProvider: 'Pinned',
+        })
+        .then((res) =>
+          Promise.resolve(
+            res.recordResult.map((result) => ({
+              ...result,
+              targetRequestString: tryPrettierJsonString(JSON.stringify(result.targetRequest)),
+              targetResponseString: tryPrettierJsonString(JSON.stringify(result.targetResponse)),
+            })),
+          ),
+        ),
+    {
+      onSuccess(res) {
+        setMockData(res);
+      },
+    },
+  );
 
-const ExtraRequestTabItemMock = ({ recordId }) => {
-  const [dataSource, setDataSource] = useState([]);
-  useMount(() => {
-    request
-      .post(`/storage/report/record/queryRecord`, {
-        recordId: recordId,
-        categoryTypes: 0,
-      })
-      .then((res) => {
-        const record = [];
-        Object.keys(res.recordResult).forEach((item) => {
-          for (let i = 0; i < res.recordResult[item].length; i++) {
-            const recordResult = tryParseJsonString(res.recordResult[item][i]);
-            record.push({
-              key: item,
-              ...recordResult,
-              request: recordResult[getRequestKey[item].request],
-              operation: recordResult[getRequestKey[item].operation],
-              requestKey: getRequestKey[item].request,
-              operationKey: getRequestKey[item].operation,
-            });
-          }
-        });
-        setDataSource(record);
-      });
-  });
+  const { run: updateMockData } = useRequest(
+    (params) =>
+      request.post<{
+        responseStatusType: {
+          responseCode: number;
+          responseDesc: string;
+          timestamp: number;
+        };
+      }>(`/storage/storage/edit/pinned/update/`, params),
+    {
+      manual: true,
+      onSuccess(res) {
+        message.success('Update successfully');
+        if (!res.responseStatusType.responseCode) {
+          getMockData();
+        }
+      },
+    },
+  );
+
+  const handleSave = (id: string) => {
+    const data = mockData.find((item) => item.id === id);
+    if (!data) return;
+
+    const { targetRequestString, targetResponseString, ...params } = data;
+    params.targetRequest = tryParseJsonString(targetRequestString) || {};
+    params.targetResponse = tryParseJsonString(targetResponseString) || {};
+
+    updateMockData(params);
+  };
+
   return (
-    <div>
-      {dataSource.map((i) => {
-        return (
-          <Card
-            key={i.recordId}
-            title={`${i.operationKey}: ${i.operation}`}
-            style={{ margin: '0 0 10px 0' }}
-          >
-            <Row gutter={16}>
-              <Col span={12} style={{ display: 'flex', flexDirection: 'column' }}>
-                <div
-                  css={css`
-                    font-weight: bolder;
-                    margin-bottom: 10px;
-                    font-size: 16px;
-                  `}
-                >
-                  {i.requestKey}
-                </div>
-                <Input.TextArea
-                  autoSize
-                  value={i.request}
-                  style={{ minHeight: '200px', flex: '1' }}
-                />
-              </Col>
-              <Col span={12}>
-                <div
-                  css={css`
-                    font-weight: bolder;
-                    margin-bottom: 10px;
-                    font-size: 16px;
-                  `}
-                >
-                  response
-                </div>
-                <Input.TextArea autoSize value={i.response} style={{ minHeight: '200px' }} />
-              </Col>
-            </Row>
-          </Card>
-        );
-      })}
-    </div>
+    <Space direction='vertical' style={{ width: '100%' }}>
+      {mockData.map((mock) => (
+        <Card
+          size='small'
+          key={mock.id}
+          title={mock.operationName}
+          extra={
+            <TooltipButton
+              icon={<SaveOutlined />}
+              title={'Save'}
+              onClick={() => handleSave(mock.id)}
+            />
+          }
+        >
+          <Row gutter={16}>
+            <Col span={12} style={{ display: 'flex', flexDirection: 'column' }}>
+              <CodeMirror
+                theme={theme}
+                extensions={[json()]}
+                value={mock.targetRequestString}
+                onChange={(value) =>
+                  setMockData((state) => {
+                    const data = state.find((item) => item.id === mock.id);
+                    data && (data.targetRequestString = value);
+                  })
+                }
+              />
+            </Col>
+            <Col span={12}>
+              <CodeMirror
+                theme={theme}
+                extensions={[json()]}
+                value={mock.targetResponseString}
+                onChange={(value) => {
+                  setMockData((state) => {
+                    const data = state.find((item) => item.id === mock.id);
+                    data && (data.targetResponseString = value);
+                  });
+                }}
+              />
+            </Col>
+          </Row>
+        </Card>
+      ))}
+    </Space>
   );
 };
 

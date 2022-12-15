@@ -13,7 +13,9 @@ import { convertRequestData, convertSaveRequestData } from '../helpers/http/util
 import { runRESTRequest } from '../helpers/RequestRunner';
 import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
 import { MenusType } from '../menus';
+import { nodeType } from '../menus/CollectionMenu';
 import SaveRequestButton from '../menus/CollectionMenu/SaveRequestButton';
+import { NodeType } from '../services/CollectionService.type';
 import { FileSystemService } from '../services/FileSystem.service';
 import { useStore } from '../store';
 import useUserProfile from '../store/useUserProfile';
@@ -25,7 +27,7 @@ export type KeyValueType = {
   active?: boolean;
 };
 
-const HttpRequestPage: PageFC = (props) => {
+const HttpRequestPage: PageFC<nodeType> = (props) => {
   const { collectionTreeData, setPages, pages, activeEnvironment } = useStore();
   const { workspaceId } = useParams();
   const { theme } = useUserProfile();

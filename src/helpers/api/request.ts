@@ -28,8 +28,7 @@ export type IAxiosResponse<T> = {
       timestamp: number;
     };
   };
-  body: T;
-};
+} & T;
 
 export class Request {
   instance: AxiosInstance;
