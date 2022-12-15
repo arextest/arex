@@ -1,6 +1,6 @@
 import { css, jsx } from '@emotion/react';
 import { Badge, Tabs, Tag } from 'antd';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { FC, useContext, useEffect, useMemo, useState } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -11,7 +11,7 @@ import HttpHeaders from './Headers';
 import HttpParameters from './Parameters';
 import HttpPreRequestScript from './PreRequestScript';
 import HttpTests from './Tests';
-const HttpRequestOptions = ({ config }) => {
+const HttpRequestOptions:FC<{config:any}> = ({ config }) => {
   const { store } = useContext(HttpContext);
   const { t } = useTranslation();
   const [activeKey, setActiveKey] = useState('3');
@@ -21,32 +21,32 @@ const HttpRequestOptions = ({ config }) => {
       [
         {
           label: (
-            <div>
+            <span>
               {t('tab.parameters')}{' '}
               <Tag
                 css={css`
-                  display: ${store.request.params.length > 0 ? 'inline-block' : 'none'};
+                  display: ${store.request.params.length > 0 ? 'inline' : 'none'};
                 `}
               >
                 {store.request.params.length}
               </Tag>
-            </div>
+            </span>
           ),
           key: '0',
           children: <HttpParameters />,
         },
         {
           label: (
-            <div>
+            <span>
               {t('tab.headers')}{' '}
               <Tag
                 css={css`
-                  display: ${store.request.headers.length > 0 ? 'inline-block' : 'none'};
+                  display: ${store.request.headers.length > 0 ? 'inline' : 'none'};
                 `}
               >
                 {store.request.headers.length}
               </Tag>
-            </div>
+            </span>
           ),
           key: '1',
           children: <HttpHeaders />,
@@ -58,8 +58,8 @@ const HttpRequestOptions = ({ config }) => {
           label: 'Pre-request Script',
           children: <HttpPreRequestScript />,
         },
-      ].concat(config.tabs.extra.filter((e) => !e.hidden)),
-    [config],
+      ].concat(config.tabs.extra.filter((e:any) => !e.hidden)),
+    [config,store.request],
   );
 
   return (

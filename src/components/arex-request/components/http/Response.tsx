@@ -1,6 +1,6 @@
 import { css, jsx } from '@emotion/react';
 import { DatePicker, TimePicker } from 'antd';
-import { useContext, useMemo } from 'react';
+import { FC, useContext, useMemo } from 'react';
 import React from 'react';
 
 import { HttpContext } from '../..';
@@ -9,7 +9,7 @@ import { HoppTestResult } from '../../helpers/types/HoppTestResult';
 import LensesResponseBodyRenderer from '../lenses/ResponseBodyRenderer';
 import HttpResponseMeta from './ResponseMeta';
 
-const HttpResponse = () => {
+const HttpResponse: FC<{ onPin: any }> = ({ onPin }) => {
   const { store } = useContext(HttpContext);
   const hasResponse = useMemo(
     () => store.response?.type === 'success' || store.response?.type === 'fail',
@@ -33,6 +33,7 @@ const HttpResponse = () => {
       <HttpResponseMeta response={store.response} />
       {!loading && hasResponse ? (
         <LensesResponseBodyRenderer
+          onPin={onPin}
           response={store.response as HoppRESTResponse}
           testResult={store.testResult as HoppTestResult}
         />

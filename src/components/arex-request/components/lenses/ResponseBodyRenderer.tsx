@@ -13,7 +13,8 @@ import RawLensRenderer from './renderers/RawLensRenderer';
 const LensesResponseBodyRenderer: FC<{
   response: HoppRESTResponse;
   testResult: HoppTestResult;
-}> = ({ response, testResult }) => {
+  onPin: any;
+}> = ({ response, testResult, onPin }) => {
   const items = [
     {
       label: 'JSON',
@@ -29,7 +30,7 @@ const LensesResponseBodyRenderer: FC<{
       label: 'Headers',
       key: '2',
       // @ts-ignore
-      children: <LensesHeadersRenderer headers={response.headers} />,
+      children: <LensesHeadersRenderer onPin={onPin} headers={response.headers} />,
     },
     {
       label: 'Result',

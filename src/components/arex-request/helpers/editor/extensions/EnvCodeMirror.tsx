@@ -250,7 +250,7 @@ export function useEnvCodeMirror(props: any) {
         setTimeout(() => {
           markFn();
           setFirstMark(false);
-        }, 100);
+        }, 450);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
