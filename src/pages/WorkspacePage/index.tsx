@@ -1,18 +1,18 @@
 import { Tabs } from 'antd';
 
-// import WorkspaceOverviewPage from '../WorkspaceOverviewPage';
 import CollectionLabCustom from './CollectionLabCustom';
+import WorkspaceSetting from './Setting';
 
 const WorkspaceOverview = () => {
   const item = [
-    // {
-    //   label: `Tab ${'id'}`,
-    //   key: 'id',
-    //   children: <WorkspaceOverviewPage />,
-    // },
     {
-      label: `Lab`,
-      key: 'lab',
+      label: 'Overview',
+      key: 'overview',
+      children: <WorkspaceSetting />,
+    },
+    {
+      label: 'Labels',
+      key: 'labels',
       children: <CollectionLabCustom />,
     },
   ];

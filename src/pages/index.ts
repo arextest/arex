@@ -10,7 +10,7 @@ import ReplayAnalysisPage from './ReplayAnalysisPage';
 import ReplayCasePage from './ReplayCasePage';
 import ReplayPage from './ReplayPage';
 import SettingPage from './SettingPage';
-import WorkspaceOverviewPage from './WorkspaceOverviewPage';
+import WorkspaceOverviewPage from './WorkspacePage';
 
 export type PageProps<D extends PageData = undefined, P = unknown> = P & {
   page: Page<D>;
