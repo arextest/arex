@@ -16,7 +16,10 @@ const Test = styled.div`
 `;
 
 const { useToken } = theme;
-const LensesHeadersRendererEntry: FC<{ header: HoppRESTHeader, onPin:any }> = ({ header, onPin }) => {
+const LensesHeadersRendererEntry: FC<{ header: HoppRESTHeader; onPin: any }> = ({
+  header,
+  onPin,
+}) => {
   return (
     <div>
       {header.key === 'arex-record-id' ? (

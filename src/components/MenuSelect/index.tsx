@@ -51,6 +51,7 @@ const MenuList = styled(Menu, {
   .ant-menu-item {
     color: ${(props) => props.theme.colorTextSecondary}!important;
     padding-left: 8px;
+    padding-right: 8px;
     height: ${(props) => (props.small ? '24px' : '28px')};
     line-height: ${(props) => (props.small ? '24px' : '28px')};
     background: transparent !important;
