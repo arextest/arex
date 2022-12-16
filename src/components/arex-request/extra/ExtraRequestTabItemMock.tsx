@@ -1,6 +1,5 @@
 import { SaveOutlined } from '@ant-design/icons';
 import { json } from '@codemirror/lang-json';
-import CodeMirror from '@uiw/react-codemirror';
 import { useRequest } from 'ahooks';
 import { Card, Col, message, Row, Space } from 'antd';
 import React, { FC } from 'react';
@@ -9,6 +8,7 @@ import { useImmer } from 'use-immer';
 import request from '../../../helpers/api/request';
 import { tryParseJsonString, tryPrettierJsonString } from '../../../helpers/utils';
 import useUserProfile from '../../../store/useUserProfile';
+import { EmptyWrapper, WatermarkCodeMirror } from '../../styledComponents';
 import TooltipButton from '../../TooltipButton';
 
 type MockData = {
@@ -34,7 +34,7 @@ const ExtraRequestTabItemMock: FC<{ recordId: string }> = ({ recordId }) => {
   const { theme } = useUserProfile();
   const [mockData, setMockData] = useImmer<MockData[]>([]);
 
-  const { run: getMockData } = useRequest<MockData[], []>(
+  const { run: getMockData, loading } = useRequest<MockData[], []>(
     () =>
       request
         .post<{ recordResult: MockData[] }>(`/storage/storage/replay/query/viewRecord`, {
@@ -90,49 +90,53 @@ const ExtraRequestTabItemMock: FC<{ recordId: string }> = ({ recordId }) => {
 
   return (
     <Space direction='vertical' style={{ width: '100%' }}>
-      {mockData.map((mock) => (
-        <Card
-          size='small'
-          key={mock.id}
-          title={mock.operationName}
-          extra={
-            <TooltipButton
-              icon={<SaveOutlined />}
-              title={'Save'}
-              onClick={() => handleSave(mock.id)}
-            />
-          }
-        >
-          <Row gutter={16}>
-            <Col span={12} style={{ display: 'flex', flexDirection: 'column' }}>
-              <CodeMirror
-                theme={theme}
-                extensions={[json()]}
-                value={mock.targetRequestString}
-                onChange={(value) =>
-                  setMockData((state) => {
-                    const data = state.find((item) => item.id === mock.id);
-                    data && (data.targetRequestString = value);
-                  })
-                }
+      <EmptyWrapper loading={loading} empty={!mockData.length}>
+        {mockData.map((mock) => (
+          <Card
+            size='small'
+            key={mock.id}
+            title={mock.operationName}
+            extra={
+              <TooltipButton
+                icon={<SaveOutlined />}
+                title={'Save'}
+                onClick={() => handleSave(mock.id)}
               />
-            </Col>
-            <Col span={12}>
-              <CodeMirror
-                theme={theme}
-                extensions={[json()]}
-                value={mock.targetResponseString}
-                onChange={(value) => {
-                  setMockData((state) => {
-                    const data = state.find((item) => item.id === mock.id);
-                    data && (data.targetResponseString = value);
-                  });
-                }}
-              />
-            </Col>
-          </Row>
-        </Card>
-      ))}
+            }
+          >
+            <Row gutter={16}>
+              <Col span={12} style={{ display: 'flex', flexDirection: 'column' }}>
+                <WatermarkCodeMirror
+                  remark='Request'
+                  themeKey={theme}
+                  extensions={[json()]}
+                  value={mock.targetRequestString}
+                  onChange={(value) =>
+                    setMockData((state) => {
+                      const data = state.find((item) => item.id === mock.id);
+                      data && (data.targetRequestString = value);
+                    })
+                  }
+                />
+              </Col>
+              <Col span={12}>
+                <WatermarkCodeMirror
+                  remark='Response'
+                  themeKey={theme}
+                  extensions={[json()]}
+                  value={mock.targetResponseString}
+                  onChange={(value) => {
+                    setMockData((state) => {
+                      const data = state.find((item) => item.id === mock.id);
+                      data && (data.targetResponseString = value);
+                    });
+                  }}
+                />
+              </Col>
+            </Row>
+          </Card>
+        ))}
+      </EmptyWrapper>
     </Space>
   );
 };

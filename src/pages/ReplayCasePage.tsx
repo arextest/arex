@@ -1,6 +1,7 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { html } from '@codemirror/lang-html';
 import { javascript } from '@codemirror/lang-javascript';
+import { json } from '@codemirror/lang-json';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import CodeMirror from '@uiw/react-codemirror';
@@ -10,7 +11,13 @@ import { Col, Collapse, Row, Space, Switch } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
 
 import { CaseTable, SaveCase, SaveCaseRef } from '../components/replay/Case';
-import { CheckOrCloseIcon, CollapseTable, Label, PanesTitle } from '../components/styledComponents';
+import {
+  CheckOrCloseIcon,
+  CollapseTable,
+  Label,
+  PanesTitle,
+  WatermarkCodeMirror,
+} from '../components/styledComponents';
 import ReplayService from '../services/Replay.service';
 import { PlanItemStatistics, ReplayCase as ReplayCaseType } from '../services/Replay.type';
 import useUserProfile from '../store/useUserProfile';
@@ -21,34 +28,6 @@ const { Panel } = Collapse;
 const InfoIcon = styled(InfoCircleOutlined)`
   color: ${(props) => props.theme.colorError};
   margin-right: 8px;
-`;
-const CodeViewer = styled(
-  (
-    props: ReactCodeMirrorProps & {
-      type: 'json' | 'html';
-      themeKey: Theme;
-    },
-  ) => (
-    <CodeMirror
-      readOnly
-      height='300px'
-      extensions={[javascript(), html()]}
-      theme={props.themeKey}
-      {...props}
-    />
-  ),
-)<{ remark?: string }>`
-  :after {
-    content: '${(props) => props.remark || ''}';
-    position: absolute;
-    bottom: 8px;
-    right: 32px;
-    font-size: 32px;
-    font-weight: 600;
-    font-style: italic;
-    color: ${(props) => props.theme.colorTextQuaternary};
-    z-index: 0;
-  }
 `;
 
 const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
@@ -139,10 +118,12 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
                           height: 1px;
                         `}
                       ></div>
-                      <CodeViewer
-                        type={result.type}
-                        value={result.baseMsg}
+                      <WatermarkCodeMirror
+                        readOnly
+                        height='300px'
                         themeKey={theme}
+                        extensions={[javascript(), html(), json()]}
+                        value={result.baseMsg}
                         remark='Benchmark'
                       />
                     </Col>
@@ -153,10 +134,12 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
                           height: 1px;
                         `}
                       ></div>
-                      <CodeViewer
-                        type={result.type}
-                        value={result.testMsg}
+                      <WatermarkCodeMirror
+                        readOnly
+                        height='300px'
                         themeKey={theme}
+                        extensions={[javascript(), html(), json()]}
+                        value={result.testMsg}
                         remark='Test'
                       />
                     </Col>

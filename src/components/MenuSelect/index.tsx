@@ -11,6 +11,7 @@ import React, { ChangeEventHandler, ReactNode, useCallback, useMemo, useState } 
 import { useTranslation } from 'react-i18next';
 
 import { FlexCenterWrapper } from '../styledComponents';
+import FullHeightSpin from '../styledComponents/FullHeightSpin';
 
 export type MenuSelectProps<D, P extends any[]> = {
   sx?: CSSInterpolation; // custom style
@@ -32,15 +33,6 @@ export type MenuSelectProps<D, P extends any[]> = {
   itemRender?: (app: D, index: number) => { label: ReactNode; key: React.Key };
 };
 
-const MenuSelectWrapper = styled.div`
-  height: 100%;
-  padding: 8px;
-  .ant-spin-nested-loading,
-  .ant-spin {
-    height: 100%;
-    max-height: 100% !important;
-  }
-`;
 const MenuList = styled(Menu, {
   shouldForwardProp: (propName) => propName !== 'small',
 })<{
@@ -184,33 +176,31 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
     }
   };
   return (
-    <MenuSelectWrapper css={css(props.sx)}>
-      <Spin spinning={loading}>
-        {/* 目前刷新按钮的显示受限于搜索逻辑 */}
-        {props.filter && (
-          <MenuFilter
-            refresh={props.refresh}
-            prefix={props.prefix}
-            size={props.small ? 'small' : 'middle'}
-            value={filterKeyword}
-            placeholder={props.placeholder && t(props.placeholder)}
-            onChange={(e) => setFilterKeyword(e.target.value)}
-            onFresh={reload}
-          />
-        )}
-        <MenuList
-          small={props.small}
-          selectedKeys={selectedKeys}
-          items={filteredApps}
-          onClick={handleAppMenuClick}
+    <FullHeightSpin spinning={loading} css={css(props.sx)}>
+      {/* 目前刷新按钮的显示受限于搜索逻辑 */}
+      {props.filter && (
+        <MenuFilter
+          refresh={props.refresh}
+          prefix={props.prefix}
+          size={props.small ? 'small' : 'middle'}
+          value={filterKeyword}
+          placeholder={props.placeholder && t(props.placeholder)}
+          onChange={(e) => setFilterKeyword(e.target.value)}
+          onFresh={reload}
         />
-        <FlexCenterWrapper>
-          {!!hiddenCount && (
-            <Typography.Text type='secondary'>{hiddenCount} more ...</Typography.Text>
-          )}
-        </FlexCenterWrapper>
-      </Spin>
-    </MenuSelectWrapper>
+      )}
+      <MenuList
+        small={props.small}
+        selectedKeys={selectedKeys}
+        items={filteredApps}
+        onClick={handleAppMenuClick}
+      />
+      <FlexCenterWrapper>
+        {!!hiddenCount && (
+          <Typography.Text type='secondary'>{hiddenCount} more ...</Typography.Text>
+        )}
+      </FlexCenterWrapper>
+    </FullHeightSpin>
   );
 }
 
