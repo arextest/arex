@@ -4,6 +4,7 @@ import React, { ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { DraggableTabs, EnvironmentSelect } from '../../components';
+import { EmptyWrapper } from '../../components/styledComponents';
 import { treeFind } from '../../helpers/collection/util';
 import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
 import { MenusType } from '../../menus';
@@ -94,7 +95,7 @@ const MainTabs = () => {
   return (
     <EmptyWrapper
       empty={!pages.length}
-      emptyContent={
+      description={
         <Button type='primary' onClick={addTab}>
           New Request
         </Button>
@@ -199,28 +200,6 @@ const MainTabsWrapper = styled((props: TabsProps) => {
       overflow: auto;
     }
   }
-`;
-
-const EmptyWrapper = styled(
-  (props: { empty: boolean; emptyContent: ReactNode; children: ReactNode }) => {
-    const { empty, emptyContent, children, ...restProps } = props;
-    return (
-      <div {...restProps}>
-        {empty ? (
-          <Empty description={false} image={Empty.PRESENTED_IMAGE_SIMPLE}>
-            {emptyContent}
-          </Empty>
-        ) : (
-          children
-        )}
-      </div>
-    );
-  },
-)`
-  height: 100%;
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
 `;
 
 export default MainTabs;

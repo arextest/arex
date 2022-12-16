@@ -4,7 +4,7 @@ import {
   FieldTimeOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 
 import AppSettingMenu from './AppSettingMenu';
 import CollectionMenu from './CollectionMenu';
@@ -12,9 +12,11 @@ import EnvironmentMenu from './EnvironmentMenu';
 import ReplayMenu from './ReplayMenu';
 
 type MenuConfig = {
-  title: string;
-  Icon: FC;
-  Menu: FC;
+  key: string;
+  label: ReactNode;
+  icon: ReactNode;
+  Menu?: FC;
+  children?: MenuConfig[];
 };
 
 export enum MenusType {
@@ -22,6 +24,7 @@ export enum MenusType {
   Replay = 'Replay',
   AppSetting = 'AppSetting',
   Environment = 'Environment',
+  Setting = 'Setting',
 }
 
 // TODO import ExtraConfig
@@ -30,24 +33,35 @@ const ExtraConfig: MenuConfig[] = [];
 
 const CommonConfig: MenuConfig[] = [
   {
-    title: MenusType.Collection,
-    Icon: ApiOutlined,
+    key: MenusType.Collection,
+    label: MenusType.Collection,
+    icon: <ApiOutlined />,
     Menu: CollectionMenu,
   },
   {
-    title: MenusType.Replay,
-    Icon: FieldTimeOutlined,
+    key: MenusType.Replay,
+    label: MenusType.Replay,
+    icon: <FieldTimeOutlined />,
     Menu: ReplayMenu,
   },
   {
-    title: MenusType.AppSetting,
-    Icon: SettingOutlined,
-    Menu: AppSettingMenu,
+    key: MenusType.Environment,
+    label: MenusType.Environment,
+    icon: <DeploymentUnitOutlined />,
+    Menu: EnvironmentMenu,
   },
   {
-    title: MenusType.Environment,
-    Icon: DeploymentUnitOutlined,
-    Menu: EnvironmentMenu,
+    key: MenusType.Setting,
+    label: MenusType.Setting,
+    icon: <SettingOutlined />,
+    children: [
+      {
+        key: MenusType.AppSetting,
+        label: MenusType.AppSetting,
+        icon: <SettingOutlined />,
+        Menu: AppSettingMenu,
+      },
+    ],
   },
 ];
 

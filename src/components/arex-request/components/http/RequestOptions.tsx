@@ -11,7 +11,7 @@ import HttpHeaders from './Headers';
 import HttpParameters from './Parameters';
 import HttpPreRequestScript from './PreRequestScript';
 import HttpTests from './Tests';
-const HttpRequestOptions:FC<{config:any}> = ({ config }) => {
+const HttpRequestOptions: FC<{ config: any }> = ({ config }) => {
   const { store } = useContext(HttpContext);
   const { t } = useTranslation();
   const [activeKey, setActiveKey] = useState('3');
@@ -58,8 +58,8 @@ const HttpRequestOptions:FC<{config:any}> = ({ config }) => {
           label: 'Pre-request Script',
           children: <HttpPreRequestScript />,
         },
-      ].concat(config.tabs.extra.filter((e:any) => !e.hidden)),
-    [config,store.request],
+      ].concat(config.tabs.extra.filter((e: any) => !e.hidden)),
+    [config, store.request],
   );
 
   return (
