@@ -2,6 +2,9 @@ import request from '../helpers/api/axios';
 import {
   CreateWorkspaceReq,
   CreateWorkspaceRes,
+  DeleteWorkspaceReq,
+  QueryUsersByWorkspaceReq,
+  QueryUsersByWorkspaceRes,
   ValidInvitationReq,
   ValidInvitationRes,
   Workspace,
@@ -15,29 +18,34 @@ export default class WorkspaceService {
       })
       .then((res) => res.body.workspaces);
   }
+
+  static queryUsersByWorkspace(params: QueryUsersByWorkspaceReq) {
+    return request
+      .post<QueryUsersByWorkspaceRes>(`/api/filesystem/queryUsersByWorkspace`, params)
+      .then((res) => res.body.users);
+  }
+
   static createWorkspace({ userName, workspaceName }: CreateWorkspaceReq) {
     return request
       .post<CreateWorkspaceRes>(`/api/filesystem/addItem`, {
         nodeName: 'New Collection',
         nodeType: '3',
-        userName: userName,
-        workspaceName: workspaceName,
+        userName,
+        workspaceName,
       })
       .then((res) => Promise.resolve(res.body));
   }
 
   static renameWorkspace({ workspaceId, newName, userName }: any) {
-    return request
-      .post(`/api/filesystem/renameWorkspace`, {
-        id: workspaceId,
-        workspaceName: newName,
-        userName,
-      })
-      .then((res) => res);
+    return request.post(`/api/filesystem/renameWorkspace`, {
+      id: workspaceId,
+      workspaceName: newName,
+      userName,
+    });
   }
 
-  static deleteWorkspace(params: { userName: string; workspaceId: string }) {
-    return request.post(`/api/filesystem/deleteWorkspace`, params).then((res) => res);
+  static deleteWorkspace(params: DeleteWorkspaceReq) {
+    return request.post<boolean>(`/api/filesystem/deleteWorkspace`, params).then((res) => res.body);
   }
 
   static inviteToWorkspace(params: any) {

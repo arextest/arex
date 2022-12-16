@@ -6,6 +6,18 @@ export type Workspace = {
   workspaceName: string;
 };
 
+export interface QueryUsersByWorkspaceReq {
+  workspaceId: string;
+}
+
+export type WorkspaceUser = {
+  userName: string | null;
+  role: number;
+  status: number;
+};
+export interface QueryUsersByWorkspaceRes {
+  users: WorkspaceUser[];
+}
 // ------ /api/filesystem/addItem ------
 
 export interface CreateWorkspaceReq {
@@ -17,6 +29,11 @@ export interface CreateWorkspaceRes {
   infoId: string;
   workspaceId: string;
   success: boolean;
+}
+
+export interface DeleteWorkspaceReq {
+  userName: string;
+  workspaceId: string;
 }
 
 // ------ /api/filesystem/validInvitation ------
