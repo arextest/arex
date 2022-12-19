@@ -9,7 +9,7 @@ import { HoppTestResult } from '../../helpers/types/HoppTestResult';
 import LensesResponseBodyRenderer from '../lenses/ResponseBodyRenderer';
 import HttpResponseMeta from './ResponseMeta';
 
-const HttpResponse: FC<{ onPin: any }> = ({ onPin }) => {
+const HttpResponse: FC<{ onPin: any,config:any }> = ({ onPin,config }) => {
   const { store } = useContext(HttpContext);
   const hasResponse = useMemo(
     () => store.response?.type === 'success' || store.response?.type === 'fail',
@@ -36,6 +36,7 @@ const HttpResponse: FC<{ onPin: any }> = ({ onPin }) => {
           onPin={onPin}
           response={store.response as HoppRESTResponse}
           testResult={store.testResult as HoppTestResult}
+          config={config}
         />
       ) : null}
     </div>

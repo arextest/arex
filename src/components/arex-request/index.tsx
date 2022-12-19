@@ -111,7 +111,7 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
           </Allotment.Pane>
           {renderResponse ? (
             <Allotment.Pane>
-              <HttpResponse onPin={onPin} />
+              <HttpResponse onPin={onPin} config={config} />
             </Allotment.Pane>
           ) : null}
         </Allotment>

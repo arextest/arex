@@ -14,7 +14,8 @@ const LensesResponseBodyRenderer: FC<{
   response: HoppRESTResponse;
   testResult: HoppTestResult;
   onPin: any;
-}> = ({ response, testResult, onPin }) => {
+  config:any
+}> = ({ response, testResult, onPin,config }) => {
   const items = [
     {
       label: 'JSON',
@@ -37,7 +38,7 @@ const LensesResponseBodyRenderer: FC<{
       key: '3',
       children: <TestResult testResult={testResult} />,
     },
-  ];
+  ].concat(config.responseTabs.extra.filter((e: any) => !e.hidden));
   return (
     <div
       css={css`
