@@ -150,7 +150,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
           </Collapse>
         }
       />
-      <SaveCase ref={saveCaseRef} />
+      <SaveCase operationId={props.page.data.operationId} ref={saveCaseRef} />
     </Space>
   );
 };

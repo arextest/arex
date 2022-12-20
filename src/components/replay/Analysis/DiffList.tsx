@@ -51,6 +51,7 @@ const DiffList: FC<DiffListType> = (props) => {
       }),
     {
       ready: !!props.scene,
+      refreshDeps: [props.scene],
     },
   );
 
