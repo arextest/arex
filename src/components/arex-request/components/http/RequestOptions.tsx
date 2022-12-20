@@ -10,12 +10,63 @@ import HttpBody from './Body';
 import HttpHeaders from './Headers';
 import HttpParameters from './Parameters';
 import HttpPreRequestScript from './PreRequestScript';
-import HttpTests from './Tests';
+
 const HttpRequestOptions: FC<{ config: any }> = ({ config }) => {
-  const { store } = useContext(HttpContext);
+  const { store, dispatch } = useContext(HttpContext);
   const { t } = useTranslation();
   const [activeKey, setActiveKey] = useState('3');
-
+  const codeSnippet = [
+    {
+      name: 'Response: Status code is 200',
+      text: `
+// Check status code is 200
+arex.test("Status code is 200", ()=> {
+    arex.expect(arex.response.status).toBe(200);
+});
+`,
+    },
+    {
+      name: 'Response: Assert property from body',
+      text: `
+// Check JSON response property
+arex.test("Check JSON response property", ()=> {
+    arex.expect(arex.response.body.age).toBe(18);
+});
+`,
+    },
+    {
+      name: 'Status code: Status code is 2xx',
+      text: `
+// Check status code is 2xx
+arex.test("Status code is 2xx", ()=> {
+    arex.expect(arex.response.status).toBeLevel2xx();
+});`,
+    },
+    {
+      name: 'Status code: Status code is 3xx',
+      text: `
+// Check status code is 3xx
+arex.test("Status code is 3xx", ()=> {
+    arex.expect(arex.response.status).toBeLevel3xx();
+});`,
+    },
+    {
+      name: 'Status code: Status code is 4xx',
+      text: `
+// Check status code is 4xx
+arex.test("Status code is 4xx", ()=> {
+    arex.expect(arex.response.status).toBeLevel4xx();
+});`,
+    },
+    {
+      name: 'Status code: Status code is 5xx',
+      text: `
+// Check status code is 5xx
+arex.test("Status code is 5xx", ()=> {
+    arex.expect(arex.response.status).toBeLevel5xx();
+});`,
+    },
+  ];
   const items = useMemo(
     () =>
       [
@@ -52,11 +103,38 @@ const HttpRequestOptions: FC<{ config: any }> = ({ config }) => {
           children: <HttpHeaders />,
         },
         { label: t('tab.body'), key: '3', children: <HttpBody /> },
-        { label: t('tab.tests'), key: '4', children: <HttpTests /> },
+
         {
           key: 'pre-requestScript',
           label: 'Pre-request Script',
-          children: <HttpPreRequestScript />,
+          children: (
+            <HttpPreRequestScript
+              mode={'multiple'}
+              value={store.request.preRequestScripts}
+              onChange={(value) => {
+                dispatch((state) => {
+                  state.request.preRequestScripts = value;
+                });
+              }}
+              codeSnippet={codeSnippet}
+            />
+          ),
+        },
+        {
+          label: t('tab.tests'),
+          key: '4',
+          children: (
+            <HttpPreRequestScript
+              mode={'multiple'}
+              value={store.request.testScripts}
+              onChange={(value) => {
+                dispatch((state) => {
+                  state.request.testScripts = value;
+                });
+              }}
+              codeSnippet={codeSnippet}
+            />
+          ),
         },
       ].concat(config.tabs.extra.filter((e: any) => !e.hidden)),
     [config, store.request],

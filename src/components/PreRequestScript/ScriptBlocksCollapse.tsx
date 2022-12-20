@@ -1,4 +1,5 @@
 import { DeleteOutlined, MenuOutlined } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button, Collapse, Popconfirm, Space, Switch, theme } from 'antd';
 import React, { useCallback, useState } from 'react';
@@ -56,10 +57,13 @@ function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
                 {(provided, snapshot) => (
                   <div ref={provided.innerRef} {...provided.draggableProps}>
                     <div
-                      style={{
-                        width: '100%',
-                        margin: '8px 0',
-                      }}
+                      css={css`
+                        margin: 8px 0;
+                        width: 100%;
+                        .ant-collapse-header-text {
+                          flex: 1 !important;
+                        }
+                      `}
                     >
                       <Collapse
                         accordion

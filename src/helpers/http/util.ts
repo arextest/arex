@@ -19,6 +19,7 @@ export function convertRequestData(requestData: any, address: any): HoppRESTRequ
       recordId: requestData.body?.recordId,
       labelIds: requestData.body?.labelIds || [],
       preRequestScripts: requestData.body?.preRequestScripts || [],
+      testScripts: requestData.body?.testScripts || [],
     };
   } else {
     return {
@@ -37,6 +38,7 @@ export function convertRequestData(requestData: any, address: any): HoppRESTRequ
       recordId: '',
       labelIds: [],
       preRequestScripts: [],
+      testScripts: [],
     };
   }
 }
@@ -55,6 +57,7 @@ export function convertSaveRequestData(
     preRequestScript: r.preRequestScript,
     preRequestScripts: r.preRequestScripts,
     testScript: r.testScript,
+    testScripts: r.testScripts,
     address: {
       method: r.method,
       endpoint: r.endpoint,

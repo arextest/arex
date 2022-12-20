@@ -89,7 +89,7 @@ function _runRESTRequestTest(request: HoppRESTRequest, response: any): Promise<H
         body: response.body,
         status: response.statusCode,
       }),
-      preTestScripts: [request.testScript],
+      preTestScripts: [request.testScripts.map(t=>t.value).join('\n')],
     },
   })
     .then((testRes) => {

@@ -153,6 +153,10 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
                 },
               ],
             },
+            responseTabs: {
+              extra: [
+              ],
+            },
           }}
           onSend={(r) => {
             return runRESTRequest({ request: r });

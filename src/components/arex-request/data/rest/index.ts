@@ -57,6 +57,12 @@ export interface HoppRESTRequest {
     type: number;
     value: string;
   }[];
+  testScripts: {
+    icon: string;
+    label: string;
+    type: number;
+    value: string;
+  }[];
   testScript: string;
 
   auth: HoppRESTAuth;

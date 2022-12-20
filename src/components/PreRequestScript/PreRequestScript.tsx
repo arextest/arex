@@ -37,7 +37,7 @@ const AddScriptBlockButton: FC<{ onAdd: (key: string) => void }> = (props) => (
 );
 
 function PreRequestScript<T>(props: PreRequestScriptProps<T>) {
-  const { value: items = [] } = props;
+  const { value: items = [],codeSnippet } = props;
   const { t } = useTranslation('common');
 
   return items.length ? (

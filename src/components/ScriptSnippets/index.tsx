@@ -26,14 +26,55 @@ export type ScriptSnippetsProps = {
 const defaultSnippet: Snippet[] = [
   {
     name: 'Response: Status code is 200',
-    script: `
+    text: `
 // Check status code is 200
 arex.test("Status code is 200", ()=> {
     arex.expect(arex.response.status).toBe(200);
 });
 `,
   },
-];
+  {
+    name: 'Response: Assert property from body',
+    text: `
+// Check JSON response property
+arex.test("Check JSON response property", ()=> {
+    arex.expect(arex.response.body.age).toBe(18);
+});
+`,
+  },
+  {
+    name: 'Status code: Status code is 2xx',
+    text: `
+// Check status code is 2xx
+arex.test("Status code is 2xx", ()=> {
+    arex.expect(arex.response.status).toBeLevel2xx();
+});`,
+  },
+  {
+    name: 'Status code: Status code is 3xx',
+    text: `
+// Check status code is 3xx
+arex.test("Status code is 3xx", ()=> {
+    arex.expect(arex.response.status).toBeLevel3xx();
+});`,
+  },
+  {
+    name: 'Status code: Status code is 4xx',
+    text: `
+// Check status code is 4xx
+arex.test("Status code is 4xx", ()=> {
+    arex.expect(arex.response.status).toBeLevel4xx();
+});`,
+  },
+  {
+    name: 'Status code: Status code is 5xx',
+    text: `
+// Check status code is 5xx
+arex.test("Status code is 5xx", ()=> {
+    arex.expect(arex.response.status).toBeLevel5xx();
+});`,
+  },
+].map((s) => ({ name: s.name, script: s.text }));
 
 const CodeMirrorExtensionsMap: { [language in CodeMirrorExtensions]: LanguageSupport } = {
   javascript: javascript(),
