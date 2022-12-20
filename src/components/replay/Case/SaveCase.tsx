@@ -15,7 +15,11 @@ export type SaveCaseRef = {
   openModal: (record: ReplayCaseType) => void;
 };
 
-const SaveCase = forwardRef<SaveCaseRef>((props, ref) => {
+export type SaveCaseProps = {
+  operationId: number;
+};
+
+const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
   const params = useParams();
   const { collectionTreeData } = useStore();
   const [form] = Form.useForm();
@@ -65,6 +69,7 @@ const SaveCase = forwardRef<SaveCaseRef>((props, ref) => {
           nodeName: values.caseName,
           recordId: values.recordId,
           userName: getLocalStorage<string>(EmailKey),
+          operationId: props.operationId,
         })
         .then((res) => {
           if (res?.body?.success) {
