@@ -117,6 +117,7 @@ arex.test("Status code is 5xx", ()=> {
                 });
               }}
               codeSnippet={codeSnippet}
+              theme={store.theme}
             />
           ),
         },
@@ -133,6 +134,7 @@ arex.test("Status code is 5xx", ()=> {
                 });
               }}
               codeSnippet={codeSnippet}
+              theme={store.theme}
             />
           ),
         },

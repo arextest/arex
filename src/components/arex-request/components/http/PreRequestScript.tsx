@@ -11,7 +11,7 @@ import { PreRequestScriptProps } from '../../../PreRequestScript/PreRequestScrip
 import SingleScriptInput from '../../../SingleScriptInput';
 import { HttpContext } from '../../index';
 
-const HttpPreRequestScript = ({ mode, value, onChange,codeSnippet }) => {
+const HttpPreRequestScript = ({ mode, value, onChange, codeSnippet,theme }) => {
   const [items, setItems] = useImmer<ScriptBlock<string>[]>([]);
   useEffect(() => {
     if (mode === 'single' && value.length === 0) {
@@ -49,7 +49,6 @@ const HttpPreRequestScript = ({ mode, value, onChange,codeSnippet }) => {
       data: initData,
       disabled: false,
     };
-    console.log(data, 'data');
     const state = items.concat(data);
     setItems(state);
   };
@@ -71,7 +70,6 @@ const HttpPreRequestScript = ({ mode, value, onChange,codeSnippet }) => {
 
   const handleSave = () => {
     const output = items.filter((item) => !item.disabled);
-    console.log({ output });
   };
 
   useEffect(() => {
@@ -98,27 +96,9 @@ const HttpPreRequestScript = ({ mode, value, onChange,codeSnippet }) => {
 
   return (
     <div>
-      <div
-        css={css`
-          display: ${mode === 'single' ? 'none' : 'block'};
-        `}
-      >
-        <PreRequestScript
-          value={items}
-          onAdd={handleAdd}
-          onDelete={handleDelete}
-          onDrag={handleDrag}
-          onChange={handlePreRequestScriptChange}
-          onSave={handleSave}
-        />
-      </div>
-      <div
-        css={css`
-          display: ${mode === 'single' ? 'block' : 'none'};
-        `}
-      >
+      {mode === 'single' ? (
         <SingleScriptInput
-          value={items.map((i) => i.data).join('\n')}
+          value={items[0]?.data}
           onChange={(value) => {
             setItems((state) => {
               if (state[0] !== undefined) {
@@ -127,8 +107,18 @@ const HttpPreRequestScript = ({ mode, value, onChange,codeSnippet }) => {
             });
           }}
           codeSnippet={codeSnippet}
-        ></SingleScriptInput>
-      </div>
+          theme={theme}
+        />
+      ) : (
+        <PreRequestScript
+          value={items}
+          onAdd={handleAdd}
+          onDelete={handleDelete}
+          onDrag={handleDrag}
+          onChange={handlePreRequestScriptChange}
+          onSave={handleSave}
+        />
+      )}
     </div>
   );
 };

@@ -35,7 +35,7 @@ export const ResponseTestWrapper = styled.div`
   }
 `;
 
-const SingleScriptInput = ({ value, onChange,codeSnippet }) => {
+const SingleScriptInput = ({ value, onChange,codeSnippet,theme }) => {
   const { t } = useTranslation();
 
 
@@ -46,7 +46,7 @@ const SingleScriptInput = ({ value, onChange,codeSnippet }) => {
     value: value,
     height: '100%',
     extensions: [javascript()],
-    theme: 'light',
+    theme: theme,
     onChange: (v: string) => {
       onChange(v);
     },
