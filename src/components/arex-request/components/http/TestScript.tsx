@@ -79,7 +79,7 @@ const TestScript: FC<TestScriptProps> = (props) => {
         .map((item) => ({
           label: item.label?.toString(),
           // type: item.type,
-          type: 0,
+          type: 0, // 暂时写死成 number
           value: item.value,
         })),
     );
