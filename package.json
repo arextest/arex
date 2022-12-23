@@ -51,7 +51,7 @@
     "@uiw/react-codemirror": "^4.8.1",
     "ahooks": "^3.5.2",
     "allotment": "^1.17.0",
-    "antd": "^5.0.7",
+    "antd": "^5.1.0",
     "axios": "^0.27.2",
     "chart.js": "^3.8.0",
     "click-to-react-component": "^1.0.8",

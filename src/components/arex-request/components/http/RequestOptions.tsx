@@ -4,7 +4,6 @@ import { FC, useContext, useMemo, useState } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { TabBarRecoverWrapper } from '../../../index';
 import { HttpContext } from '../../index';
 import HttpBody from './Body';
 import HttpHeaders from './Headers';
@@ -24,7 +23,11 @@ const HttpRequestOptions: FC<{ config: any }> = ({ config }) => {
           label: (
             <span>
               {t('tab.parameters')}
-              {!!store.request.params.length && <Tag>{store.request.params.length}</Tag>}
+              {!!store.request.params.length && (
+                <Tag style={{ borderRadius: '6px', margin: '0 0 0 4px' }}>
+                  {store.request.params.length}
+                </Tag>
+              )}
             </span>
           ),
           key: 'parameters',
@@ -34,7 +37,11 @@ const HttpRequestOptions: FC<{ config: any }> = ({ config }) => {
           label: (
             <span>
               {t('tab.headers')}
-              {!!store.request.headers.length && <Tag>{store.request.headers.length}</Tag>}
+              {!!store.request.headers.length && (
+                <Tag style={{ borderRadius: '6px', margin: '0 0 0 4px' }}>
+                  {store.request.headers.length}
+                </Tag>
+              )}
             </span>
           ),
           key: 'headers',
@@ -87,22 +94,20 @@ const HttpRequestOptions: FC<{ config: any }> = ({ config }) => {
         }
       `}
     >
-      <TabBarRecoverWrapper>
-        <Tabs
-          className={'http-request-options-tab'}
-          css={css`
-            height: 100%;
-            .ant-tabs-nav {
-              margin-bottom: 0;
-            }
-          `}
-          activeKey={activeKey}
-          items={items}
-          onChange={(val) => {
-            setActiveKey(val);
-          }}
-        />
-      </TabBarRecoverWrapper>
+      <Tabs
+        className={'http-request-options-tab'}
+        css={css`
+          height: 100%;
+          .ant-tabs-nav {
+            margin-bottom: 0;
+          }
+        `}
+        activeKey={activeKey}
+        items={items}
+        onChange={(val) => {
+          setActiveKey(val);
+        }}
+      />
     </div>
   );
 };

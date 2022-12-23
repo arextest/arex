@@ -1,8 +1,8 @@
 import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import { AppFooter, AppHeader, TabBarRecoverWrapper } from '../../components';
+import { AppFooter, AppHeader } from '../../components';
 import { CollapseMenuKey } from '../../constant';
 import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
 import useInit from '../../hooks/useInit';
@@ -34,13 +34,11 @@ const MainBox = () => {
           minSize={collapseMenu ? 69 : 200}
           maxSize={collapseMenu ? 69 : 600}
         >
-          <TabBarRecoverWrapper>
-            <MainMenu
-              collapse={collapseMenu}
-              onChange={handleMainMenuChange}
-              onCollapse={handleCollapseMenu}
-            />
-          </TabBarRecoverWrapper>
+          <MainMenu
+            collapse={collapseMenu}
+            onChange={handleMainMenuChange}
+            onCollapse={handleCollapseMenu}
+          />
         </Allotment.Pane>
 
         <Allotment.Pane visible>
