@@ -90,7 +90,7 @@ const AppHeader = () => {
           >
             <Avatar size={24} style={{ marginLeft: '8px', cursor: 'pointer' }}>
               {/*// @ts-ignore*/}
-              {email?email[0].toUpperCase():null}
+              {email ? email[0].toUpperCase() : null}
             </Avatar>
           </Dropdown>
         </div>

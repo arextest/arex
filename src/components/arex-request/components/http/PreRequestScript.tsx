@@ -11,7 +11,7 @@ import { PreRequestScriptProps } from '../../../PreRequestScript/PreRequestScrip
 import SingleScriptInput from '../../../SingleScriptInput';
 import { HttpContext } from '../../index';
 
-const HttpPreRequestScript = ({ mode, value, onChange, codeSnippet,theme }) => {
+const HttpPreRequestScript = ({ mode, value, onChange, codeSnippet, theme }) => {
   const [items, setItems] = useImmer<ScriptBlock<string>[]>([]);
   useEffect(() => {
     if (mode === 'single' && value.length === 0) {

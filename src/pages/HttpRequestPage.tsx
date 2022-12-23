@@ -112,6 +112,8 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
       <div
         css={css`
           height: calc(100vh - 128px);
+          min-height: 650px;
+          overflow-y: auto;
           border: 0px solid salmon;
           margin-left: -16px;
           width: calc(100% + 32px);
@@ -154,8 +156,7 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
               ],
             },
             responseTabs: {
-              extra: [
-              ],
+              extra: [],
             },
           }}
           onSend={(r) => {

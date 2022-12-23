@@ -14,8 +14,8 @@ const LensesResponseBodyRenderer: FC<{
   response: HoppRESTResponse;
   testResult: HoppTestResult;
   onPin: any;
-  config:any
-}> = ({ response, testResult, onPin,config }) => {
+  config: any;
+}> = ({ response, testResult, onPin, config }) => {
   const items = [
     {
       label: 'JSON',

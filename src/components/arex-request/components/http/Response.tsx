@@ -9,7 +9,7 @@ import { HoppTestResult } from '../../helpers/types/HoppTestResult';
 import LensesResponseBodyRenderer from '../lenses/ResponseBodyRenderer';
 import HttpResponseMeta from './ResponseMeta';
 
-const HttpResponse: FC<{ onPin: any,config:any }> = ({ onPin,config }) => {
+const HttpResponse: FC<{ onPin: any; config: any }> = ({ onPin, config }) => {
   const { store } = useContext(HttpContext);
   const hasResponse = useMemo(
     () => store.response?.type === 'success' || store.response?.type === 'fail',

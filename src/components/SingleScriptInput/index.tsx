@@ -35,9 +35,8 @@ export const ResponseTestWrapper = styled.div`
   }
 `;
 
-const SingleScriptInput = ({ value, onChange,codeSnippet,theme }) => {
+const SingleScriptInput = ({ value, onChange, codeSnippet, theme }) => {
   const { t } = useTranslation();
-
 
   const codeCm = useRef(null);
 
@@ -53,7 +52,7 @@ const SingleScriptInput = ({ value, onChange,codeSnippet,theme }) => {
   });
 
   const addTest = (text: string) => {
-    onChange(value+=text);
+    onChange((value += text));
   };
 
   return (
