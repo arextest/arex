@@ -3,9 +3,9 @@ import { FC, ReactNode } from 'react';
 
 import ScriptSnippets from '../ScriptSnippets';
 import ExtraScriptBlocks from './ExtraScriptBlocks';
-import PreRequestScript from './PreRequestScript';
+import ScriptBlocks from './ScriptBlocks';
 
-export default PreRequestScript;
+export default ScriptBlocks;
 
 export const ScriptBlockType = {
   CustomScript: 'ScriptSnippets',
@@ -19,7 +19,7 @@ export type BaseScriptBlock = {
 };
 
 export type ScriptBlock<T> = BaseScriptBlock & {
-  data: T;
+  value: T;
   disabled: boolean;
 };
 
@@ -36,7 +36,7 @@ export type ScriptBlocksType<T> = BaseScriptBlock & {
   component: ScriptBlocksFC<T>;
 };
 
-export const ScriptBlocks: ScriptBlocksType<any>[] = [
+export const ScriptBlocksList: ScriptBlocksType<any>[] = [
   {
     key: ScriptBlockType.CustomScript,
     type: ScriptBlockType.CustomScript,
@@ -46,6 +46,14 @@ export const ScriptBlocks: ScriptBlocksType<any>[] = [
   },
   ...ExtraScriptBlocks,
 ];
+
+export const ScriptBlocksMap = ScriptBlocksList.reduce<{ [type: string]: ScriptBlocksType<any> }>(
+  (map, block) => {
+    map[block.key] = block;
+    return map;
+  },
+  {},
+);
 
 // a little function to help us with reordering the result
 export const reorder = (list: any[], startIndex: number, endIndex: number) => {

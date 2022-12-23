@@ -34,7 +34,6 @@ function flatTree<T extends NestedTree[]>(tree: T, keyName = 'id') {
 }
 
 const FlatMenu = flatTree(MenuConfig, 'key');
-console.log({ FlatMenu });
 
 const MainMenu: FC<MainMenuProps> = (props) => {
   const { activeMenu, setActiveMenu } = useStore();
@@ -122,13 +121,7 @@ const MenuContentWrapper = styled.div`
 `;
 
 const CollapseButton = styled(
-  (props: {
-    color?: string;
-    collapse?: boolean;
-    icon?: ReactNode;
-    children?: ReactNode;
-    onClick?: () => void;
-  }) => <LeftOutlined {...props} />,
+  (props: { collapse?: boolean; children?: ReactNode }) => <LeftOutlined {...props} />,
   { shouldForwardProp: (propName) => propName !== 'collapse' },
 )`
   cursor: pointer;

@@ -1,24 +1,29 @@
 import { Tabs } from 'antd';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { PreRequestScript } from '../components';
+import { ScriptBlocks } from '../components';
 import { Authorization } from '../components/Folder';
-import { reorder, ScriptBlock, ScriptBlocks } from '../components/PreRequestScript';
-import { PreRequestScriptProps } from '../components/PreRequestScript/PreRequestScript';
+import { reorder, ScriptBlock, ScriptBlocksMap, ScriptBlockType } from '../components/ScriptBlocks';
+import { ScriptBlocksProps } from '../components/ScriptBlocks/ScriptBlocks';
 import { uuid } from '../helpers/utils';
 import { PageFC } from './index';
 
+const ScriptBlocksSource = [ScriptBlocksMap[ScriptBlockType.CustomScript]];
+
 const FolderPage: PageFC = () => {
+  const [script, setScript] = useState<string>();
   const [items, setItems] = useImmer<ScriptBlock<string>[]>([]);
 
-  const handleAdd: PreRequestScriptProps<string>['onAdd'] = (key) => {
-    const block = ScriptBlocks.find((block) => block.key === key);
+  const handleAdd: ScriptBlocksProps<string>['onAdd'] = (key) => {
+    const block = ScriptBlocksSource.find((block) => block.key === key);
+    if (!block) return;
+
     const data: ScriptBlock<string> = {
       key: uuid(),
-      type: block!.type,
-      icon: block!.icon,
-      label: block!.label,
+      type: block.type,
+      icon: block.icon,
+      label: block.label,
       data: '',
       disabled: false,
     };
@@ -26,7 +31,7 @@ const FolderPage: PageFC = () => {
     setItems(state);
   };
 
-  const handleDelete = useCallback<PreRequestScriptProps<string>['onDelete']>(
+  const handleDelete = useCallback<ScriptBlocksProps<string>['onDelete']>(
     (id) => {
       const state = items.filter((item) => item.key !== id);
       setItems(state);
@@ -34,7 +39,7 @@ const FolderPage: PageFC = () => {
     [items],
   );
 
-  const handleDrag = useCallback<PreRequestScriptProps<string>['onDrag']>(
+  const handleDrag = useCallback<ScriptBlocksProps<string>['onDrag']>(
     (source, destination) => {
       setItems(reorder(items, source, destination));
     },
@@ -46,11 +51,13 @@ const FolderPage: PageFC = () => {
     console.log({ output });
   };
 
-  const handlePreRequestScriptChange: PreRequestScriptProps<string>['onChange'] = (id, value) => {
-    setItems((state) => {
-      const index = state.findIndex((item) => item.key === id);
-      index >= 0 && (state[index] = value);
-    });
+  const handlePreRequestScriptChange: ScriptBlocksProps<string>['onChange'] = ({ id, value }) => {
+    if (typeof value === 'string') setScript(value);
+    else
+      setItems((state) => {
+        const index = state.findIndex((item) => item.key === id);
+        index >= 0 && (state[index] = value);
+      });
   };
 
   return (
@@ -66,8 +73,9 @@ const FolderPage: PageFC = () => {
           key: 'pre-requestScript',
           label: 'Pre-request Script',
           children: (
-            <PreRequestScript
+            <ScriptBlocks
               value={items}
+              blocksSource={ScriptBlocksSource}
               onAdd={handleAdd}
               onDelete={handleDelete}
               onDrag={handleDrag}

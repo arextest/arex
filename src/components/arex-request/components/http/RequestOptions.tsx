@@ -1,6 +1,6 @@
-import { css, jsx } from '@emotion/react';
-import { Badge, Tabs, Tag } from 'antd';
-import { FC, useContext, useEffect, useMemo, useState } from 'react';
+import { css } from '@emotion/react';
+import { Tabs, Tag } from 'antd';
+import { FC, useContext, useMemo, useState } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -9,132 +9,64 @@ import { HttpContext } from '../../index';
 import HttpBody from './Body';
 import HttpHeaders from './Headers';
 import HttpParameters from './Parameters';
-import HttpPreRequestScript from './PreRequestScript';
+import PreRequestScript from './PreRequestScript';
+import TestScript from './TestScript';
 
 const HttpRequestOptions: FC<{ config: any }> = ({ config }) => {
   const { store, dispatch } = useContext(HttpContext);
   const { t } = useTranslation();
-  const [activeKey, setActiveKey] = useState('3');
-  const codeSnippet = [
-    {
-      name: 'Response: Status code is 200',
-      text: `
-// Check status code is 200
-arex.test("Status code is 200", ()=> {
-    arex.expect(arex.response.status).toBe(200);
-});
-`,
-    },
-    {
-      name: 'Response: Assert property from body',
-      text: `
-// Check JSON response property
-arex.test("Check JSON response property", ()=> {
-    arex.expect(arex.response.body.age).toBe(18);
-});
-`,
-    },
-    {
-      name: 'Status code: Status code is 2xx',
-      text: `
-// Check status code is 2xx
-arex.test("Status code is 2xx", ()=> {
-    arex.expect(arex.response.status).toBeLevel2xx();
-});`,
-    },
-    {
-      name: 'Status code: Status code is 3xx',
-      text: `
-// Check status code is 3xx
-arex.test("Status code is 3xx", ()=> {
-    arex.expect(arex.response.status).toBeLevel3xx();
-});`,
-    },
-    {
-      name: 'Status code: Status code is 4xx',
-      text: `
-// Check status code is 4xx
-arex.test("Status code is 4xx", ()=> {
-    arex.expect(arex.response.status).toBeLevel4xx();
-});`,
-    },
-    {
-      name: 'Status code: Status code is 5xx',
-      text: `
-// Check status code is 5xx
-arex.test("Status code is 5xx", ()=> {
-    arex.expect(arex.response.status).toBeLevel5xx();
-});`,
-    },
-  ];
+  const [activeKey, setActiveKey] = useState('body');
+
   const items = useMemo(
     () =>
       [
         {
           label: (
             <span>
-              {t('tab.parameters')}{' '}
-              <Tag
-                css={css`
-                  display: ${store.request.params.length > 0 ? 'inline' : 'none'};
-                `}
-              >
-                {store.request.params.length}
-              </Tag>
+              {t('tab.parameters')}
+              {!!store.request.params.length && <Tag>{store.request.params.length}</Tag>}
             </span>
           ),
-          key: '0',
+          key: 'parameters',
           children: <HttpParameters />,
         },
         {
           label: (
             <span>
-              {t('tab.headers')}{' '}
-              <Tag
-                css={css`
-                  display: ${store.request.headers.length > 0 ? 'inline' : 'none'};
-                `}
-              >
-                {store.request.headers.length}
-              </Tag>
+              {t('tab.headers')}
+              {!!store.request.headers.length && <Tag>{store.request.headers.length}</Tag>}
             </span>
           ),
-          key: '1',
+          key: 'headers',
           children: <HttpHeaders />,
         },
-        { label: t('tab.body'), key: '3', children: <HttpBody /> },
+        { label: t('tab.body'), key: 'body', children: <HttpBody /> },
 
         {
           key: 'pre-requestScript',
           label: 'Pre-request Script',
           children: (
-            <HttpPreRequestScript
-              mode={'multiple'}
+            <PreRequestScript
               value={store.request.preRequestScripts}
               onChange={(value) => {
                 dispatch((state) => {
                   state.request.preRequestScripts = value;
                 });
               }}
-              codeSnippet={codeSnippet}
-              theme={store.theme}
             />
           ),
         },
         {
           label: t('tab.tests'),
-          key: '4',
+          key: 'tests',
           children: (
-            <HttpPreRequestScript
-              mode={'multiple'}
+            <TestScript
               value={store.request.testScripts}
               onChange={(value) => {
                 dispatch((state) => {
                   state.request.testScripts = value;
                 });
               }}
-              codeSnippet={codeSnippet}
-              theme={store.theme}
             />
           ),
         },

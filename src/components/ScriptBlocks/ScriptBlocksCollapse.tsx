@@ -6,7 +6,7 @@ import React, { useCallback, useState } from 'react';
 import { DragDropContext, DragDropContextProps, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
 
-import { ScriptBlock, ScriptBlocks } from './index';
+import { ScriptBlock, ScriptBlocksList } from './index';
 
 const { Panel } = Collapse;
 
@@ -20,9 +20,9 @@ export const FlexRowReverseWrapper = styled.div`
 
 export type ScriptBlocksCollapseProps<T = string> = {
   value: ScriptBlock<T>[];
-  onDrag: (source: number, destination: number) => void;
-  onChange: (id: string, value: ScriptBlock<any>) => void;
-  onDelete: (id: string) => void;
+  onDrag?: (source: number, destination: number) => void;
+  onChange?: (id: string, value: ScriptBlock<any>) => void;
+  onDelete?: (id: string) => void;
 };
 
 function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
@@ -122,12 +122,12 @@ function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
                           {/* Dynamic ScriptBlock Component */}
                           {/* TODO 区分不同组件的 props 注入 */}
                           {React.createElement(
-                            ScriptBlocks.find((block) => block.type === item.type)!.component,
+                            ScriptBlocksList.find((block) => block.type === item.type)!.component,
                             {
                               disabled: item.disabled,
-                              value: item.data as string,
+                              value: item.value as string,
                               language: 'javascript',
-                              onChange: (value: any) => handleChange(item.key, 'data', value),
+                              onChange: (value: any) => handleChange(item.key, 'value', value),
                             },
                           )}
                         </Panel>

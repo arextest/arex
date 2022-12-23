@@ -7,7 +7,7 @@ import { Button, Divider, Spin, Typography } from 'antd';
 import React, { ReactNode } from 'react';
 
 import useUserProfile from '../../store/useUserProfile';
-import { ScriptBlocksFC } from '../PreRequestScript';
+import { ScriptBlocksFC } from '../ScriptBlocks';
 
 export type Snippet = {
   name: string;

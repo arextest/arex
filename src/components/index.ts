@@ -4,7 +4,7 @@ export { default as AppHeader } from './app/Header';
 export { default as DraggableTabs } from './DraggableTabs';
 export { default as EnvironmentSelect } from './Environment/EnvironmentSelect';
 export { default as MenuSelect } from './MenuSelect';
-export { default as PreRequestScript } from './PreRequestScript';
+export { default as ScriptBlocks } from './ScriptBlocks';
 export { default as ScriptSnippets } from './ScriptSnippets';
 export { default as TabBarRecoverWrapper } from './TabBarRecoverWrapper';
 export { default as TooltipButton } from './TooltipButton';

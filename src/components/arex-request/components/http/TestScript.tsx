@@ -14,11 +14,11 @@ import { ScriptBlocksProps } from '../../../ScriptBlocks/ScriptBlocks';
 
 const ScriptBlocksSource = [ScriptBlocksMap[ScriptBlockType.CustomScript]];
 
-export type PreRequestScriptProps = Omit<ScriptBlocksProps, 'onChange'> & {
+export type TestScriptProps = Omit<ScriptBlocksProps, 'onChange'> & {
   onChange: (value: { label?: string; type: string; value: string }[]) => void;
 };
 
-const PreRequestScript: FC<PreRequestScriptProps> = (props) => {
+const TestScript: FC<TestScriptProps> = (props) => {
   const [items, setItems] = useImmer<ScriptBlock<string>[]>(
     props.multiple
       ? props.value.map((p) => {
@@ -108,7 +108,7 @@ const PreRequestScript: FC<PreRequestScriptProps> = (props) => {
   return (
     <ScriptBlocks
       {...props}
-      // multiple
+      multiple
       value={items}
       blocksSource={ScriptBlocksSource}
       onAdd={handleAdd}
@@ -119,4 +119,4 @@ const PreRequestScript: FC<PreRequestScriptProps> = (props) => {
   );
 };
 
-export default PreRequestScript;
+export default TestScript;
