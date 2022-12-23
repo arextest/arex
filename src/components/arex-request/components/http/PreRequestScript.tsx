@@ -108,7 +108,7 @@ const PreRequestScript: FC<PreRequestScriptProps> = (props) => {
   return (
     <ScriptBlocks
       {...props}
-      // multiple
+      multiple
       value={items}
       blocksSource={ScriptBlocksSource}
       onAdd={handleAdd}
