@@ -1,6 +1,5 @@
 #MsgWithDiffJsonEditorWrapper {
   display: flex;
-  height: calc(-140vh);
 }
 #MsgWithDiffJsonEditorWrapper #containerLeft {
   height: 100%;
