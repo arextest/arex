@@ -2,9 +2,7 @@
   display: flex;
   padding: 10px;
   border-radius: 3px;
-  /*padding-bottom: 0;*/
   background-color: #f5f5f5;
-  /*position: absolute;*/
 }
 
 .tooltip-theme1 .name {
@@ -16,4 +14,8 @@
   background-color: #a3a3a3;
   padding: 0 4px;
   border-radius: 2px;
+}
+
+.test123{
+  height: 100%;
 }

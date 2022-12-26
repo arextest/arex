@@ -1,20 +1,17 @@
-// @ts-nocheck
 import { css } from '@emotion/react';
-import { Radio, Table, Tabs } from 'antd';
+import { Radio, Spin, Table, Tabs } from 'antd';
 import JSONEditor from 'jsoneditor';
 import _ from 'lodash-es';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { FC, useContext, useEffect, useRef, useState } from 'react';
 
-import { GlobalContext } from '../index';
+import axios from '../../../helpers/api/axios';
+import { HttpContext } from '../index';
+// import { const } from 'fp-ts';
 
-const onChange = (key: string) => {
-  console.log('');
-};
-
-const ExtraResponseTabItemCompareResult = ({ responses, requestAxios }) => {
-  console.log(requestAxios, 'requestAxios');
-  const { store: globalStore } = useContext(GlobalContext);
-  console.log(responses, 'responses');
+const ExtraResponseTabItemCompareResult: FC<{ responses: any[]; theme: string }> = ({
+  responses,
+  theme,
+}) => {
   const diffView = useRef<HTMLDivElement>();
   useEffect(() => {
     if (!diffView.current) {
@@ -27,7 +24,7 @@ const ExtraResponseTabItemCompareResult = ({ responses, requestAxios }) => {
       title: 'Left Path',
       dataIndex: 'pathPair',
       key: 'pathPair',
-      render(pathPair) {
+      render(pathPair: any) {
         const leftArr = [];
         for (let i = 0; i < pathPair.leftUnmatchedPath.length; i++) {
           leftArr.push(
@@ -43,7 +40,7 @@ const ExtraResponseTabItemCompareResult = ({ responses, requestAxios }) => {
       title: 'Right Path',
       dataIndex: 'pathPair',
       key: 'pathPair',
-      render(pathPair) {
+      render(pathPair: any) {
         const rightArr = [];
         for (let i = 0; i < pathPair.rightUnmatchedPath.length; i++) {
           rightArr.push(
@@ -79,7 +76,7 @@ const ExtraResponseTabItemCompareResult = ({ responses, requestAxios }) => {
     { label: 'Table', value: 'table' },
   ];
 
-  function removeNull(obj) {
+  function removeNull(obj: any) {
     for (const key in obj) {
       if (obj[key] === null) {
         obj[key] = '';
@@ -93,6 +90,10 @@ const ExtraResponseTabItemCompareResult = ({ responses, requestAxios }) => {
   const containerLeftRef = useRef<HTMLDivElement>(null);
   const containerRightRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    // @ts-ignore
+    containerLeftRef.current.innerHTML = '';
+    // @ts-ignore
+    containerRightRef.current.innerHTML = '';
     if (responses[0] && responses[1]) {
       const params = {
         msgCombination: {
@@ -100,22 +101,23 @@ const ExtraResponseTabItemCompareResult = ({ responses, requestAxios }) => {
           testMsg: JSON.stringify(removeNull(responses[1])),
         },
       };
-      requestAxios.post('/api/compare/quickCompare', params).then((res) => {
-        setDataSource(res.body.diffDetails.map((i) => i.logs[0]));
+      axios.post('/api/compare/quickCompare', params).then((res) => {
+        // @ts-ignore
+        setDataSource((res.body.diffDetails || []).map((i) => i.logs[0]));
       });
 
-      const onClassName = ({ path, field, value }) => {
+      const onClassName = ({ path, field, value }: any) => {
         const leftValue = _.get(jsonRight, path);
         const rightValue = _.get(jsonLeft, path);
-
         return _.isEqual(leftValue, rightValue) ? 'the_same_element' : 'different_element';
       };
 
       const optionsLeft = {
         mode: 'tree',
         onClassName: onClassName,
-        onChangeJSON: function (j) {
+        onChangeJSON: function (j: any) {
           jsonLeft = j;
+          // @ts-ignore
           window.editorRight.refresh();
         },
       };
@@ -123,8 +125,9 @@ const ExtraResponseTabItemCompareResult = ({ responses, requestAxios }) => {
       const optionsRight = {
         mode: 'tree',
         onClassName: onClassName,
-        onChangeJSON: function (j) {
+        onChangeJSON: function (j: any) {
           jsonRight = j;
+          // @ts-ignore
           window.editorLeft.refresh();
         },
       };
@@ -132,58 +135,77 @@ const ExtraResponseTabItemCompareResult = ({ responses, requestAxios }) => {
       let jsonLeft = JSON.parse(JSON.stringify(responses[0]));
 
       let jsonRight = JSON.parse(JSON.stringify(responses[1]));
-
+      // @ts-ignore
       window.editorLeft = new JSONEditor(containerLeftRef.current, optionsLeft, jsonLeft);
+      // @ts-ignore
       window.editorRight = new JSONEditor(containerRightRef.current, optionsRight, jsonRight);
     }
   }, [responses]);
-
+  const { store } = useContext(HttpContext);
   return (
-    <Tabs
-      style={{ height: '100%' }}
-      defaultActiveKey='compareResult'
-      items={[
-        {
-          key: 'compareResult',
-          label: 'Compare Result',
-          children: (
-            <>
-              <div style={{ textAlign: 'right', marginBottom: '10px' }}>
-                <Radio.Group
-                  size={'small'}
-                  options={optionsWithDisabled}
-                  onChange={(val) => {
-                    setActiveRadio(val.target.value);
-                  }}
-                  value={activeRadio}
-                  optionType='button'
-                  buttonStyle='solid'
-                />
-              </div>
+    <div
+      css={css`
+        height: 100%;
+        //相当于最小高度
+        padding: 0 16px;
+        .ant-tabs-content-holder {
+          height: 100px;
+        }
+      `}
+    >
+      <Spin
+        wrapperClassName={'ExtraResponseTabItemCompareResult-wrapperClassName'}
+        spinning={store.compareLoading}
+      >
+        <Tabs
+          css={css`
+            height: 100%;
+          `}
+          defaultActiveKey='compareResult'
+          items={[
+            {
+              key: 'compareResult',
+              label: 'Compare Result',
+              children: (
+                <div>
+                  <div style={{ textAlign: 'right', marginBottom: '10px' }}>
+                    <Radio.Group
+                      size={'small'}
+                      options={optionsWithDisabled}
+                      onChange={(val) => {
+                        setActiveRadio(val.target.value);
+                      }}
+                      value={activeRadio}
+                      optionType='button'
+                      buttonStyle='solid'
+                    />
+                  </div>
 
-              <div
-                className='react-diff-code-view'
-                style={{ height: '100%', display: activeRadio === 'json' ? 'block' : 'none' }}
-              >
-                <div
-                  id='MsgWithDiffJsonEditorWrapper'
-                  css={css`
-                    overflow: hidden;
-                  `}
-                >
-                  <div ref={containerLeftRef} id='containerLeft' />
-                  <div ref={containerRightRef} id='containerRight' />
+                  <div
+                    className='react-diff-code-view'
+                    style={{ height: '100%', display: activeRadio === 'json' ? 'block' : 'none' }}
+                  >
+                    <div
+                      id='MsgWithDiffJsonEditorWrapper'
+                      className={theme === 'dark' ? 'dark-jsoneditor' : ''}
+                      css={css`
+                        overflow: hidden;
+                      `}
+                    >
+                      <div ref={containerLeftRef} id='containerLeft' />
+                      <div ref={containerRightRef} id='containerRight' />
+                    </div>
+                  </div>
+                  <div style={{ display: activeRadio === 'table' ? 'block' : 'none' }}>
+                    <Table dataSource={dataSource} columns={columns} />
+                  </div>
                 </div>
-              </div>
-              <div style={{ display: activeRadio === 'table' ? 'block' : 'none' }}>
-                <Table dataSource={dataSource} columns={columns} />
-              </div>
-            </>
-          ),
-        },
-      ]}
-      onChange={onChange}
-    />
+              ),
+            },
+          ]}
+        />
+      </Spin>
+    </div>
   );
 };
 

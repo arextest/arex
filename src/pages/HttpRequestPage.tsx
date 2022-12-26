@@ -5,18 +5,17 @@ import { useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Http, { HttpImperativeHandle } from '../components/arex-request';
-import ExtraRequestTabItemCompare from '../components/arex-request/extra/ExtraRequestTabItemCompare';
 import ExtraRequestTabItemMock from '../components/arex-request/extra/ExtraRequestTabItemMock';
 import HttpBreadcrumb from '../components/arex-request/extra/HttpBreadcrumb';
 import request from '../helpers/api/axios';
 import { treeFind, treeFindPath } from '../helpers/collection/util';
+import { runCompareRESTRequest } from '../helpers/CompareRequestRunner';
 import { convertRequestData, convertSaveRequestData } from '../helpers/http/util';
 import { runRESTRequest } from '../helpers/RequestRunner';
 import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
 import { MenusType } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
 import SaveRequestButton from '../menus/CollectionMenu/SaveRequestButton';
-import { NodeType } from '../services/CollectionService.type';
 import { FileSystemService } from '../services/FileSystem.service';
 import { useStore } from '../store';
 import useUserProfile from '../store/useUserProfile';
@@ -94,6 +93,7 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
     {
       manual: true,
       onSuccess: (r) => {
+        // @ts-ignore
         if (r.body.success) {
           message.success('pin success');
           run();
@@ -126,14 +126,18 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
       >
         <Http
           renderResponse={true}
+          // @ts-ignore
           ref={httpImperativeRef}
+          // @ts-ignore
           value={data}
+          // @ts-ignore
           environment={env}
           theme={theme}
           breadcrumb={
             <HttpBreadcrumb
               nodePaths={nodePaths}
               id={id}
+              // @ts-ignore
               defaultTags={data?.labelIds}
               nodeType={nodeType}
             />
@@ -142,15 +146,11 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
             tabs: {
               extra: [
                 {
-                  label: 'Compare',
-                  key: 'compare',
-                  children: <ExtraRequestTabItemCompare />,
-                  hidden: false,
-                },
-                {
                   label: 'Mock',
                   key: 'mock',
+                  // @ts-ignore
                   children: <ExtraRequestTabItemMock recordId={data?.recordId} />,
+                  // @ts-ignore
                   hidden: data?.recordId ? false : true,
                 },
               ],
@@ -162,9 +162,13 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
           onSend={(r) => {
             return runRESTRequest({ request: r });
           }}
+          onSendCompare={(r) => {
+            return runCompareRESTRequest({ request: r });
+          }}
           onSave={(r) => {
             if (nodeType === 1 && id.length === 36) {
               setReqParams(r);
+              // @ts-ignore
               saveRequestButtonRef.current.open();
             } else if (nodeType === 2) {
               FileSystemService.saveCase(convertSaveRequestData(workspaceId as string, id, r)).then(
@@ -172,6 +176,7 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
                   if (res.body.success) {
                     message.success('success');
                   } else {
+                    // @ts-ignore
                     message.error(res.responseStatusType.responseDesc);
                   }
                 },
@@ -183,11 +188,13 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
                 if (res.body.success) {
                   message.success('success');
                 } else {
+                  // @ts-ignore
                   message.error(res.responseStatusType.responseDesc);
                 }
               });
             }
           }}
+          // @ts-ignore
           onPin={(recordId) => {
             runPinMock({ recordId });
           }}
