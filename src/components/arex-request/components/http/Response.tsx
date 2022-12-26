@@ -1,5 +1,4 @@
-import { css, jsx } from '@emotion/react';
-import { DatePicker, TimePicker } from 'antd';
+import { css } from '@emotion/react';
 import { FC, useContext, useMemo } from 'react';
 import React from 'react';
 
@@ -12,7 +11,10 @@ import HttpResponseMeta from './ResponseMeta';
 const HttpResponse: FC<{ onPin: any; config: any }> = ({ onPin, config }) => {
   const { store } = useContext(HttpContext);
   const hasResponse = useMemo(
-    () => store.response?.type === 'success' || store.response?.type === 'fail',
+    () =>
+      store.response?.type === 'success' ||
+      store.response?.type === 'fail' ||
+      store.response?.type === 'empty',
     [store.response],
   );
   const loading = useMemo(
