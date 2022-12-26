@@ -4,7 +4,6 @@ import produce, { Draft } from 'immer';
 import {
   createContext,
   Dispatch,
-  FC,
   forwardRef,
   useEffect,
   useImperativeHandle,
@@ -44,6 +43,7 @@ export interface HttpProps {
   config: any;
   renderResponse?: boolean;
   onPin: any;
+  defaultDisplayResponse: boolean;
 }
 
 export const HttpContext = createContext<
@@ -58,7 +58,18 @@ function reducer(draft: Draft<State>, action: (state: State) => void) {
 
 const Http = forwardRef<HttpImperativeHandle, HttpProps>(
   (
-    { value, onSend, environment, onSave, theme, breadcrumb, config, renderResponse = true, onPin },
+    {
+      value,
+      onSend,
+      environment,
+      onSave,
+      theme,
+      breadcrumb,
+      config,
+      renderResponse = true,
+      onPin,
+      defaultDisplayResponse = false,
+    },
     ref,
   ) => {
     const [store, dispatch] = useReducer(produce(reducer), defaultState);
@@ -68,6 +79,28 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
         getRequestValue: () => store.request,
       };
     });
+
+    useEffect(() => {
+      // 控制初始状态下是否展示response
+      if (defaultDisplayResponse) {
+        dispatch((state) => {
+          state.response = {
+            type: 'empty',
+            headers: [],
+            body: '',
+            statusCode: 0,
+            meta: {
+              responseSize: 0,
+              responseDuration: 0,
+            },
+          };
+          state.testResult = {
+            // @ts-ignore
+            children: [],
+          };
+        });
+      }
+    }, [defaultDisplayResponse]);
 
     useEffect(() => {
       dispatch((state) => {
