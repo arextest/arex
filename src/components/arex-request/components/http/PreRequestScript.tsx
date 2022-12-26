@@ -21,16 +21,14 @@ export type PreRequestScriptProps = Omit<ScriptBlocksProps, 'onChange'> & {
 const PreRequestScript: FC<PreRequestScriptProps> = (props) => {
   const [items, setItems] = useImmer<ScriptBlock<string>[]>(
     props.multiple
-      ? props.value.map((p) => {
-          return {
-            key: uuid(),
-            type: ScriptBlockType.CustomScript,
-            label: ScriptBlockType.CustomScript,
-            value: p.value,
-            disabled: false,
-            icon: <CodeOutlined />,
-          };
-        })
+      ? props.value.map((p) => ({
+          key: uuid(),
+          type: ScriptBlockType.CustomScript,
+          label: ScriptBlockType.CustomScript,
+          value: p.value,
+          disabled: false,
+          icon: <CodeOutlined />,
+        }))
       : [
           {
             key: uuid(),
@@ -57,7 +55,7 @@ const PreRequestScript: FC<PreRequestScriptProps> = (props) => {
     setItems(state);
   };
 
-  const handleDelete = useCallback<ScriptBlocksProps<string>['onDelete']>(
+  const handleDelete = useCallback<Required<ScriptBlocksProps<string>>['onDelete']>(
     (id) => {
       const state = items.filter((item) => item.key !== id);
       setItems(state);
@@ -65,7 +63,7 @@ const PreRequestScript: FC<PreRequestScriptProps> = (props) => {
     [items],
   );
 
-  const handleDrag = useCallback<ScriptBlocksProps<string>['onDrag']>(
+  const handleDrag = useCallback<Required<ScriptBlocksProps<string>>['onDrag']>(
     (source, destination) => {
       setItems(reorder(items, source, destination));
     },
@@ -78,7 +76,8 @@ const PreRequestScript: FC<PreRequestScriptProps> = (props) => {
         .filter((item) => !item.disabled)
         .map((item) => ({
           label: item.label?.toString(),
-          type: item.type,
+          // type: item.type,
+          type: 0,
           value: item.value,
         })),
     );
@@ -108,7 +107,6 @@ const PreRequestScript: FC<PreRequestScriptProps> = (props) => {
   return (
     <ScriptBlocks
       {...props}
-      multiple
       value={items}
       blocksSource={ScriptBlocksSource}
       onAdd={handleAdd}
