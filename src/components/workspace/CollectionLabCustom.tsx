@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Button, Form, Input, message, Modal, Popconfirm, Table, Tag } from 'antd';
 import { Divider } from 'antd/lib';
+import React from 'react';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { CirclePicker } from 'react-color';
 import { useParams } from 'react-router-dom';
@@ -232,8 +233,8 @@ const CollectionLabCustom = () => {
           });
         }}
         ref={createAndUpdateRef}
-      ></CreateAndUpdate>
-      <Table rowKey={'id'} dataSource={data} columns={columns} />
+      />
+      <Table size='small' rowKey={'id'} dataSource={data} columns={columns} />
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import { useRequest } from 'ahooks';
 import React from 'react';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
@@ -11,6 +12,7 @@ import { PageType } from '../pages';
 import { NodeList } from '../services/CollectionService';
 import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
+import WorkspaceService from '../services/Workspace.service';
 import { Workspace } from '../services/Workspace.type';
 
 // 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
@@ -64,8 +66,11 @@ type BaseState = {
 
   activeWorkspaceId: string;
   setActiveWorkspaceId: (activeWorkspaceId: string) => void;
+
   workspaces: Workspace[];
   setWorkspaces: (workspaces: Workspace[]) => void;
+  workspacesLastManualUpdateTimestamp: number;
+  setWorkspacesLastManualUpdateTimestamp: (timestamp: number) => void;
 
   environmentTreeData: Environment[];
   setEnvironmentTreeData: (environmentTreeData: Environment[]) => void;
@@ -173,6 +178,10 @@ export const useStore = create(
 
     workspaces: [],
     setWorkspaces: (workspaces) => set({ workspaces }),
+    workspacesLastManualUpdateTimestamp: new Date().getTime(),
+    setWorkspacesLastManualUpdateTimestamp: (timestamp) => {
+      set({ workspacesLastManualUpdateTimestamp: timestamp });
+    },
 
     environmentTreeData: [],
     setEnvironmentTreeData: (environmentTreeData) => {

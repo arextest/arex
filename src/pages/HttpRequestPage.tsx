@@ -16,7 +16,6 @@ import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
 import { MenusType } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
 import SaveRequestButton from '../menus/CollectionMenu/SaveRequestButton';
-import { NodeType } from '../services/CollectionService.type';
 import { FileSystemService } from '../services/FileSystem.service';
 import { useStore } from '../store';
 import useUserProfile from '../store/useUserProfile';

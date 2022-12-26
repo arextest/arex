@@ -49,6 +49,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     setWorkspaces,
     setActiveWorkspaceId,
     invitedWorkspaceId,
+    workspacesLastManualUpdateTimestamp,
     setInvitedWorkspaceId,
     setPages,
     resetPanes,
@@ -68,6 +69,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     (workspaceId?: string) => WorkspaceService.listWorkspace({ userName: email as string }),
     {
       ready: !!email,
+      refreshDeps: [workspacesLastManualUpdateTimestamp],
       onSuccess(data, _params) {
         if (!data.length) {
           return createWorkspace({
@@ -83,14 +85,14 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
         const workspaceIdUrl = params.workspaceId;
         const workspaceIdLS = getLocalStorage<string>(WorkspaceKey);
         const targetWorkspaceId =
-          workspaceIdUrl || invitedWorkspaceId || workspaceIdLS || _params[0];
+          _params[0] || workspaceIdUrl || invitedWorkspaceId || workspaceIdLS;
 
         if (targetWorkspaceId) {
           const workspace = data.find((workspace) => workspace.id === targetWorkspaceId);
           workspace ? (targetWorkspace = workspace) : message.warning('无目标工作目录权限');
           invitedWorkspaceId && setInvitedWorkspaceId('');
         }
-        if (targetWorkspace.id && !params.workspaceId) {
+        if (targetWorkspace.id) {
           nav(
             `/${targetWorkspace.id}/workspace/${targetWorkspace.workspaceName}/workspaceOverview/${targetWorkspace.id}`,
           );
@@ -137,8 +139,10 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     manual: true,
     onSuccess: (res, params) => {
       if (res.success) {
-        const workspaceId = res.workspaceId;
-        getWorkspaces(workspaceId);
+        message.success('create workspace successfully');
+        reset();
+        resetPanes();
+        getWorkspaces(res.workspaceId);
       }
     },
   });

@@ -1,6 +1,6 @@
-// @ts-nocheck
 import { css } from '@emotion/react';
 import { Empty, Spin, Tag } from 'antd';
+import React from 'react';
 import { FC, useMemo } from 'react';
 
 import { useStore } from '../../store';

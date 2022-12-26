@@ -1,6 +1,6 @@
 import { SettingOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Avatar, Divider, Dropdown, Typography } from 'antd';
+import { Avatar, Dropdown, DropdownProps, Typography } from 'antd';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,6 +18,7 @@ const HeaderWrapper = styled.div`
   padding: 7px;
   display: flex;
   justify-content: space-between;
+  border-bottom: 1px solid ${(props) => props.theme.colorBorder};
 
   .left,
   .right {
@@ -60,44 +61,38 @@ const AppHeader = () => {
     nav('/login');
   };
 
+  const userMenu: DropdownProps['menu'] = {
+    items: [
+      {
+        key: 'signOut',
+        label: 'Sign Out',
+      },
+    ],
+    onClick: (e) => {
+      if (e.key === 'signOut') {
+        handleLogout();
+      }
+    },
+  };
+
   return (
-    <div>
-      <HeaderWrapper>
-        <div className={'left'}>
-          <Typography.Text className={'app-name'}>AREX</Typography.Text>
-          <GitHubStarButton theme={theme} />
-        </div>
+    <HeaderWrapper>
+      <div className={'left'}>
+        <Typography.Text className={'app-name'}>AREX</Typography.Text>
+        <GitHubStarButton theme={theme} />
+      </div>
 
-        <div className={'right'}>
-          {!(email || '').match('GUEST') && <InviteWorkspace />}
-          <TooltipButton icon={<SettingOutlined />} title='Setting' onClick={handleSetting} />
+      <div className={'right'}>
+        {!(email || '').match('GUEST') && <InviteWorkspace />}
+        <TooltipButton icon={<SettingOutlined />} title='Setting' onClick={handleSetting} />
 
-          <Dropdown
-            overlayStyle={{ width: '170px' }}
-            menu={{
-              items: [
-                {
-                  key: 'signOut',
-                  label: 'Sign Out',
-                },
-              ],
-              onClick: (e) => {
-                if (e.key === 'signOut') {
-                  handleLogout();
-                }
-              },
-            }}
-          >
-            <Avatar size={24} style={{ marginLeft: '8px', cursor: 'pointer' }}>
-              {/*// @ts-ignore*/}
-              {email ? email[0].toUpperCase() : null}
-            </Avatar>
-          </Dropdown>
-        </div>
-      </HeaderWrapper>
-
-      <Divider style={{ margin: '0' }} />
-    </div>
+        <Dropdown overlayStyle={{ width: '170px' }} menu={userMenu}>
+          <Avatar size={24} style={{ marginLeft: '8px', cursor: 'pointer' }}>
+            {email?.[0].toUpperCase()}
+          </Avatar>
+        </Dropdown>
+      </div>
+    </HeaderWrapper>
   );
 };
 

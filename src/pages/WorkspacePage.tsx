@@ -1,14 +1,14 @@
 import { Tabs } from 'antd';
+import React from 'react';
 
-import CollectionLabCustom from './CollectionLabCustom';
-import WorkspaceSetting from './Setting';
+import { CollectionLabCustom, Overview } from '../components/workspace';
 
 const WorkspaceOverview = () => {
   const item = [
     {
       label: 'Overview',
       key: 'overview',
-      children: <WorkspaceSetting />,
+      children: <Overview />,
     },
     {
       label: 'Labels',
@@ -16,11 +16,7 @@ const WorkspaceOverview = () => {
       children: <CollectionLabCustom />,
     },
   ];
-  return (
-    <div>
-      <Tabs tabPosition={'left'} items={item} />
-    </div>
-  );
+  return <Tabs tabPosition={'left'} items={item} />;
 };
 
 export default WorkspaceOverview;

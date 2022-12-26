@@ -1,11 +1,21 @@
-// @ts-nocheck
-import { useMount } from 'ahooks';
-import { Avatar, Button, Divider, Form, Input, List, Popconfirm, Space, Typography } from 'antd';
-import { FC, useState } from 'react';
+import { useRequest } from 'ahooks';
+import {
+  Avatar,
+  Button,
+  Divider,
+  Form,
+  Input,
+  List,
+  message,
+  Popconfirm,
+  Space,
+  Typography,
+} from 'antd';
+import React from 'react';
+import { FC } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { EmailKey, RoleEnum } from '../../constant';
-import request from '../../helpers/api/axios';
 import { getLocalStorage } from '../../helpers/utils';
 import WorkspaceService from '../../services/Workspace.service';
 import { useStore } from '../../store';
@@ -15,7 +25,13 @@ const { Text } = Typography;
 const WorkspaceSetting: FC = () => {
   const params = useParams();
   const nav = useNavigate();
-  const { workspaces, resetPanes } = useStore();
+  const {
+    workspaces,
+    resetPanes,
+    activeWorkspaceId,
+    setActiveWorkspaceId,
+    setWorkspacesLastManualUpdateTimestamp,
+  } = useStore();
   const userName = getLocalStorage<string>(EmailKey);
 
   const onFinish = (values: any) => {
@@ -28,20 +44,31 @@ const WorkspaceSetting: FC = () => {
     });
   };
 
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
-  };
-  const [workspaceUsers, setWorkspaceUsers] = useState([]);
+  const { data: workspaceUsers = [] } = useRequest(() =>
+    WorkspaceService.queryUsersByWorkspace({ workspaceId: activeWorkspaceId }),
+  );
 
-  useMount(() => {
-    request
-      .post(`/api/filesystem/queryUsersByWorkspace`, {
-        workspaceId: params.workspaceId,
-      })
-      .then((res) => {
-        setWorkspaceUsers(res.body.users);
-      });
-  });
+  const { run: handleDeleteWorkspace } = useRequest(
+    () =>
+      WorkspaceService.deleteWorkspace({
+        workspaceId: activeWorkspaceId,
+        userName: userName as string,
+      }),
+    {
+      manual: true,
+      onSuccess(success) {
+        if (success) {
+          message.success('delete workspace successfully');
+          setWorkspacesLastManualUpdateTimestamp(new Date().getTime());
+          resetPanes();
+          setActiveWorkspaceId(workspaces[0].id);
+          nav(
+            `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,
+          );
+        }
+      },
+    },
+  );
 
   return (
     <div>
@@ -52,7 +79,6 @@ const WorkspaceSetting: FC = () => {
           name='basic'
           initialValues={{ name: params.workspaceName }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete='off'
         >
           <Form.Item
@@ -74,6 +100,7 @@ const WorkspaceSetting: FC = () => {
         <List
           itemLayout='horizontal'
           dataSource={workspaceUsers}
+          locale={{ emptyText: 'no invited user' }}
           renderItem={(item) => (
             <List.Item
               actions={[
@@ -89,7 +116,9 @@ const WorkspaceSetting: FC = () => {
               ]}
             >
               <List.Item.Meta
-                avatar={<Avatar src='https://joeschmoe.io/api/v1/random' />}
+                avatar={
+                  <Avatar src='https://joeschmoe.io/api/v1/random'>{item.userName?.[0]}</Avatar>
+                }
                 title={<span>{item.userName}</span>}
                 description={
                   {
@@ -112,16 +141,7 @@ const WorkspaceSetting: FC = () => {
 
           <Popconfirm
             title='Are you sure to delete this workspace?'
-            onConfirm={() => {
-              WorkspaceService.deleteWorkspace({ workspaceId: params.workspaceId, userName }).then(
-                (res) => {
-                  resetPanes();
-                  nav(
-                    `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,
-                  );
-                },
-              );
-            }}
+            onConfirm={handleDeleteWorkspace}
             okText='Yes'
             cancelText='No'
           >
