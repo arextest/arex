@@ -517,6 +517,7 @@ const CollectionMenu = () => {
               treeData={treeData}
               onDrop={onDrop}
               draggable={{ icon: false }}
+              showLine
               titleRender={(val) => (
                 <CollectionTitle
                   searchValue={searchValue}
