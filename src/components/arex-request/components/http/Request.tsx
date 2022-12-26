@@ -50,7 +50,29 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb }) => {
     },
   ];
 
+  function checkRequestParams(requestParams: any) {
+    const { body } = requestParams;
+    if (body.contentType === 'application/json') {
+      try {
+        JSON.parse(body.body || '{}');
+      } catch (e) {
+        return {
+          error: true,
+          msg: 'json format error',
+        };
+      }
+    }
+    return {
+      error: false,
+      msg: '',
+    };
+  }
+
   const handleRequest = ({ type }: any) => {
+    if (checkRequestParams(store.request).error) {
+      message.error(checkRequestParams(store.request).msg);
+      return;
+    }
     const urlPretreatment = (url: string) => {
       const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
       let replaceVar = editorValueMatch[0];
