@@ -23,8 +23,8 @@ const PreRequestScript: FC<PreRequestScriptProps> = (props) => {
     props.multiple
       ? props.value.map((p) => ({
           key: uuid(),
-          type: ScriptBlockType.CustomScript,
-          label: ScriptBlockType.CustomScript,
+          type: p.type,
+          label: p.label,
           value: p.value,
           disabled: false,
           icon: <CodeOutlined />,

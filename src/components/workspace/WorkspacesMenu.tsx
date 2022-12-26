@@ -9,12 +9,12 @@ import {
 import { ArrowLeftOutlined } from '@ant-design/icons/lib';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Input, message, Modal, Select, Upload } from 'antd';
-import React, { FC, useState } from 'react';
+import { App, Button, Input, message, Modal, Select, Upload } from 'antd';
+import React, { FC, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { EmailKey, RoleEnum, RoleMap, WorkspaceKey } from '../../constant';
-import { generateGlobalPaneId, getLocalStorage, setLocalStorage } from '../../helpers/utils';
+import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
 import { MenusType } from '../../menus';
 import { PagesType } from '../../pages';
 import { FileSystemService } from '../../services/FileSystem.service';
@@ -42,11 +42,14 @@ const WorkspacesMenuWrapper = styled.div<{ collapse?: boolean }>`
 `;
 
 const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
+  const { message } = App.useApp();
+
   const params = useParams();
   const nav = useNavigate();
   const {
     workspaces,
     setWorkspaces,
+    activeWorkspaceId,
     setActiveWorkspaceId,
     invitedWorkspaceId,
     workspacesLastManualUpdateTimestamp,
@@ -69,7 +72,6 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     (workspaceId?: string) => WorkspaceService.listWorkspace({ userName: email as string }),
     {
       ready: !!email,
-      refreshDeps: [workspacesLastManualUpdateTimestamp],
       onSuccess(data, _params) {
         if (!data.length) {
           return createWorkspace({
@@ -82,14 +84,16 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
 
         let targetWorkspace = data[0];
 
-        const workspaceIdUrl = params.workspaceId;
         const workspaceIdLS = getLocalStorage<string>(WorkspaceKey);
         const targetWorkspaceId =
-          _params[0] || workspaceIdUrl || invitedWorkspaceId || workspaceIdLS;
-
+          _params[0] || activeWorkspaceId || invitedWorkspaceId || workspaceIdLS;
+        console.log({ param: _params[0], activeWorkspaceId, invitedWorkspaceId, workspaceIdLS });
         if (targetWorkspaceId) {
           const workspace = data.find((workspace) => workspace.id === targetWorkspaceId);
-          workspace ? (targetWorkspace = workspace) : message.warning('无目标工作目录权限');
+          console.log({ workspace, targetWorkspaceId });
+          workspace
+            ? (targetWorkspace = workspace)
+            : message.warning('无目标工作空间权限或目标工作空间无效');
           invitedWorkspaceId && setInvitedWorkspaceId('');
         }
         if (targetWorkspace.id) {
@@ -101,6 +105,16 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
       },
     },
   );
+
+  /**
+   * 作用不同与 refreshDeps:
+   * refreshDeps 等效手动触发 refresh
+   * 而 refresh 会使用上一次的 params，重新调用 run
+   * 导致 params 混乱
+   */
+  useEffect(() => {
+    getWorkspaces();
+  }, [workspacesLastManualUpdateTimestamp]);
 
   const handleAddWorkspace = () => {
     if (newWorkspaceName === '') {

@@ -24,8 +24,8 @@ const TestScript: FC<TestScriptProps> = (props) => {
       ? props.value.map((p) => {
           return {
             key: uuid(),
-            type: ScriptBlockType.CustomScript,
-            label: ScriptBlockType.CustomScript,
+            type: p.type,
+            label: p.label,
             value: p.value,
             disabled: false,
             icon: <CodeOutlined />,

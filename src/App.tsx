@@ -1,10 +1,10 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { Empty, Layout, Spin, theme } from 'antd';
+import { App as AppWrapper, Empty, Layout, Spin, theme } from 'antd';
 import { MappingAlgorithm } from 'antd/es/config-provider/context';
 import React, { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 
-import { useAuthentication, useCheckChrome, useInit } from './hooks';
+import { useAuthentication, useCheckChrome } from './hooks';
 import { localeMap } from './i18n';
 import routerConfig from './router';
 import useUserProfile from './store/useUserProfile';
@@ -40,9 +40,11 @@ function App() {
       locale={localeMap[language]}
       renderEmpty={() => Empty.PRESENTED_IMAGE_SIMPLE}
     >
-      <Layout>
-        <Content>{routesContent}</Content>
-      </Layout>
+      <AppWrapper>
+        <Layout>
+          <Content>{routesContent}</Content>
+        </Layout>
+      </AppWrapper>
     </GlobalConfigProvider>
   );
 }
