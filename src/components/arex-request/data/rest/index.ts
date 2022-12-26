@@ -50,7 +50,6 @@ export interface HoppRESTRequest {
   compareEndpoint: string;
   params: HoppRESTParam[];
   headers: HoppRESTHeader[];
-  preRequestScript: string;
   preRequestScripts: {
     icon: string;
     label: string;
@@ -63,7 +62,6 @@ export interface HoppRESTRequest {
     type: number;
     value: string;
   }[];
-  testScript: string;
 
   auth: HoppRESTAuth;
 

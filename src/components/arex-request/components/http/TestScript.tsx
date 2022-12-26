@@ -57,7 +57,7 @@ const TestScript: FC<TestScriptProps> = (props) => {
     setItems(state);
   };
 
-  const handleDelete = useCallback<ScriptBlocksProps<string>['onDelete']>(
+  const handleDelete = useCallback<Required<ScriptBlocksProps<string>>['onDelete']>(
     (id) => {
       const state = items.filter((item) => item.key !== id);
       setItems(state);
@@ -65,7 +65,7 @@ const TestScript: FC<TestScriptProps> = (props) => {
     [items],
   );
 
-  const handleDrag = useCallback<ScriptBlocksProps<string>['onDrag']>(
+  const handleDrag = useCallback<Required<ScriptBlocksProps<string>>['onDrag']>(
     (source, destination) => {
       setItems(reorder(items, source, destination));
     },
@@ -78,13 +78,14 @@ const TestScript: FC<TestScriptProps> = (props) => {
         .filter((item) => !item.disabled)
         .map((item) => ({
           label: item.label?.toString(),
-          type: item.type,
+          // type: item.type,
+          type: 0,
           value: item.value,
         })),
     );
   }, [items]);
 
-  const handlePreRequestScriptChange: ScriptBlocksProps<string>['onChange'] = ({ id, value }) => {
+  const handleTestChange: ScriptBlocksProps<string>['onChange'] = ({ id, value }) => {
     // single
     if (typeof value === 'string')
       setItems((state) => {
@@ -108,13 +109,12 @@ const TestScript: FC<TestScriptProps> = (props) => {
   return (
     <ScriptBlocks
       {...props}
-      multiple
       value={items}
       blocksSource={ScriptBlocksSource}
       onAdd={handleAdd}
       onDelete={handleDelete}
       onDrag={handleDrag}
-      onChange={handlePreRequestScriptChange}
+      onChange={handleTestChange}
     />
   );
 };

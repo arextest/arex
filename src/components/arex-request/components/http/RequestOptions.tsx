@@ -54,6 +54,7 @@ const HttpRequestOptions: FC<{ config: any }> = ({ config }) => {
           label: 'Pre-request Script',
           children: (
             <PreRequestScript
+              multiple
               value={store.request.preRequestScripts}
               onChange={(value) => {
                 dispatch((state) => {
@@ -68,6 +69,7 @@ const HttpRequestOptions: FC<{ config: any }> = ({ config }) => {
           key: 'tests',
           children: (
             <TestScript
+              multiple
               value={store.request.testScripts}
               onChange={(value) => {
                 dispatch((state) => {

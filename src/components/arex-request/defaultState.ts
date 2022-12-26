@@ -3,7 +3,6 @@ import { State } from '.';
 export const defaultState: State = {
   // @ts-ignore
   request: {
-    preRequestScript: '',
     v: '',
     headers: [],
     name: '',
@@ -22,7 +21,6 @@ export const defaultState: State = {
       authType: 'oauth-2',
       authActive: true,
     },
-    testScript: '',
     endpoint: '',
     method: '',
     params: [],
