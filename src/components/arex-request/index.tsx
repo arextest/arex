@@ -17,6 +17,7 @@ import TestResult from './components/http/TestResult';
 import { Environment } from './data/environment';
 import { HoppRESTRequest } from './data/rest';
 import { defaultState } from './defaultState';
+import ExtraResponseTabItemCompareResult from './extra/ExtraResponseTabItemCompareResult';
 import { HoppRESTResponse } from './helpers/types/HoppRESTResponse';
 import { HoppTestResult } from './helpers/types/HoppTestResult';
 
@@ -26,6 +27,9 @@ export interface State {
   testResult: HoppTestResult | null;
   environment: Environment;
   theme: 'dark' | 'light';
+  compareResult: any[];
+  mode: 'compare' | 'normal';
+  compareLoading: boolean;
 }
 
 export type HttpImperativeHandle = {
@@ -40,6 +44,7 @@ export interface HttpProps {
     r: HoppRESTRequest,
   ) => Promise<{ response: HoppRESTResponse; testResult: HoppTestResult }>;
   onSave: (r: HoppRESTRequest) => void;
+  onSendCompare: (r: any) => Promise<any>;
   config: any;
   renderResponse?: boolean;
   onPin: any;
@@ -61,6 +66,7 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
     {
       value,
       onSend,
+      onSendCompare,
       environment,
       onSave,
       theme,
@@ -138,13 +144,22 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
               `}
               className={'http-request-and-options'}
             >
-              <HttpRequest breadcrumb={breadcrumb} onSave={onSave} onSend={onSend}></HttpRequest>
+              <HttpRequest
+                breadcrumb={breadcrumb}
+                onSave={onSave}
+                onSend={onSend}
+                onSendCompare={onSendCompare}
+              ></HttpRequest>
               <HttpRequestOptions config={config} />
             </div>
           </Allotment.Pane>
           {renderResponse ? (
             <Allotment.Pane>
-              <HttpResponse onPin={onPin} config={config} />
+              {store.mode === 'compare' ? (
+                <ExtraResponseTabItemCompareResult theme={theme} responses={store.compareResult} />
+              ) : (
+                <HttpResponse onPin={onPin} config={config} />
+              )}
             </Allotment.Pane>
           ) : null}
         </Allotment>

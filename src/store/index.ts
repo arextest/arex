@@ -101,6 +101,9 @@ export const useStore = create(
             // page already exist, just update sortIndex
             statePane.sortIndex = maxSortIndex;
           } else {
+            if (state.pages.length > 9) {
+              state.pages.shift();
+            }
             // insert new page with sortIndex
             state.pages.push({
               ...page,

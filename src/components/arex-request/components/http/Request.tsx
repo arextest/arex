@@ -29,10 +29,11 @@ const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 interface HttpRequestProps {
   onSend: HttpProps['onSend'];
   onSave: HttpProps['onSave'];
+  onSendCompare: HttpProps['onSendCompare'];
   breadcrumb: any;
 }
 
-const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb }) => {
+const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendCompare }) => {
   const { store, dispatch } = useContext(HttpContext);
 
   const { t } = useTranslation();
@@ -46,12 +47,18 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb }) => {
     {
       label: 'Send Compare',
       key: '1',
-      disabled: true,
     },
   ];
 
   function checkRequestParams(requestParams: any) {
-    const { body } = requestParams;
+    const { body, endpoint } = requestParams;
+    if (endpoint === '') {
+      return {
+        error: true,
+        msg: 'please fill in endpoint.',
+      };
+    }
+
     if (body.contentType === 'application/json') {
       try {
         JSON.parse(body.body || '{}');
@@ -85,24 +92,42 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb }) => {
 
       return url.replace(editorValueMatch[0], replaceVar);
     };
-    dispatch((state) => {
-      state.response = {
-        type: 'loading',
-      };
-    });
 
-    onSend({
-      ...store.request,
-      endpoint: urlPretreatment(store.request.endpoint),
-    }).then((responseAndTestResult) => {
+    if (type === 'compare') {
       dispatch((state) => {
-        if (responseAndTestResult.response.type === 'success') {
-          state.response = responseAndTestResult.response;
-          state.testResult = responseAndTestResult.testResult;
-        }
+        state.compareLoading = true;
       });
-    });
+      onSendCompare({
+        ...store.request,
+        endpoint: urlPretreatment(store.request.endpoint),
+        compareEndpoint: urlPretreatment(store.request.compareEndpoint),
+      }).then((responseAndTestResult: any) => {
+        dispatch((state) => {
+          state.compareResult = responseAndTestResult.responses;
+          state.compareLoading = false;
+        });
+      });
+    } else {
+      dispatch((state) => {
+        state.response = {
+          type: 'loading',
+        };
+      });
+
+      onSend({
+        ...store.request,
+        endpoint: urlPretreatment(store.request.endpoint),
+      }).then((responseAndTestResult) => {
+        dispatch((state) => {
+          if (responseAndTestResult.response.type === 'success') {
+            state.response = responseAndTestResult.response;
+            state.testResult = responseAndTestResult.testResult;
+          }
+        });
+      });
+    }
   };
+
   return (
     <div
       css={css`
@@ -118,15 +143,37 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb }) => {
         `}
       >
         {breadcrumb}
-        <Button
-          size='small'
-          icon={<SaveOutlined />}
-          onClick={() => {
-            onSave(store.request);
-          }}
-        >
-          {t('action.save')}
-        </Button>
+
+        <Space>
+          <Select
+            css={css`
+              width: 100px;
+            `}
+            value={store.mode}
+            options={[
+              { label: 'Normal', value: 'normal' },
+              { label: 'Compare', value: 'compare' },
+            ]}
+            onChange={(value) => {
+              dispatch((state) => {
+                state.mode = value;
+              });
+            }}
+            size={'small'}
+          />
+
+          <Divider type={'vertical'} />
+
+          <Button
+            size='small'
+            icon={<SaveOutlined />}
+            onClick={() => {
+              onSave(store.request);
+            }}
+          >
+            {t('action.save')}
+          </Button>
+        </Space>
       </div>
 
       <HeaderWrapper>
@@ -143,7 +190,6 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb }) => {
           <SmartEnvInput
             value={store.request.endpoint}
             onChange={(value) => {
-              // console.log('http://127.0.0.1:5173/arex-request/');
               dispatch((state) => {
                 state.request.endpoint = value;
               });
@@ -159,12 +205,57 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb }) => {
             onClick: handleMenuClick,
             items: items,
           }}
-          onClick={() => handleRequest({ type: null })}
+          onClick={() => handleRequest({ type: store.mode === 'normal' ? null : 'compare' })}
           style={{ marginLeft: '16px' }}
         >
           {t('action.send')}
         </Dropdown.Button>
       </HeaderWrapper>
+
+      {store.mode === 'compare' ? (
+        <HeaderWrapper
+          css={css`
+            margin-top: 8px;
+          `}
+        >
+          <Space.Compact block>
+            <Select
+              value={store.request.compareMethod}
+              options={methods.map((i) => ({ value: i, lable: i }))}
+              onChange={(value) => {
+                dispatch((state) => {
+                  state.request.compareMethod = value;
+                });
+              }}
+            />
+            <SmartEnvInput
+              value={store.request.compareEndpoint}
+              onChange={(value) => {
+                dispatch((state) => {
+                  state.request.compareEndpoint = value;
+                });
+              }}
+            />
+          </Space.Compact>
+
+          <Dropdown.Button
+            css={css`
+              visibility: hidden;
+            `}
+            className='send-request-button'
+            type='primary'
+            icon={<DownOutlined />}
+            menu={{
+              onClick: handleMenuClick,
+              items: items,
+            }}
+            onClick={() => handleRequest({ type: null })}
+            style={{ marginLeft: '16px' }}
+          >
+            {t('action.send')}
+          </Dropdown.Button>
+        </HeaderWrapper>
+      ) : null}
     </div>
   );
 };

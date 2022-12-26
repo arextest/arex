@@ -1,6 +1,7 @@
 import { State } from '.';
 
 export const defaultState: State = {
+  // @ts-ignore
   request: {
     v: '',
     headers: [],
@@ -28,4 +29,7 @@ export const defaultState: State = {
   testResult: null,
   environment: { name: '', variables: [] },
   theme: 'light',
+  compareResult: [{}, {}],
+  mode: 'normal',
+  compareLoading: false,
 };
