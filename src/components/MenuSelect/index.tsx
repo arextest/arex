@@ -4,14 +4,11 @@ import { CSSInterpolation } from '@emotion/serialize/types';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Options } from 'ahooks/lib/useRequest/src/types';
-import { Button, Input, Menu, Typography } from 'antd';
+import { Button, Input, Menu, Spin, Typography } from 'antd';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import React, { ChangeEventHandler, ReactNode, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { FlexCenterWrapper } from '../styledComponents';
-import FullHeightSpin from '../styledComponents/FullHeightSpin';
 
 export type MenuSelectProps<D, P extends any[]> = {
   sx?: CSSInterpolation; // custom style
@@ -136,7 +133,8 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
     loading,
     run: reload,
   } = useRequest<D[], P>(props.request, {
-    onSuccess(res) {
+    ...props.requestOptions,
+    onSuccess(res, _params) {
       if (res.length && (props.defaultSelectFirst || props.initValue)) {
         const record = props.defaultSelectFirst
           ? props.forceFilter
@@ -149,8 +147,8 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
           props.onSelect(record);
         }
       }
+      props.requestOptions?.onSuccess?.(res, _params);
     },
-    ...props.requestOptions,
   });
 
   const filteredApps = useMemo<ItemType[]>(() => {
@@ -176,7 +174,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
     }
   };
   return (
-    <FullHeightSpin spinning={loading} css={css(props.sx)}>
+    <Spin spinning={loading} css={css(props.sx)}>
       {/* 目前刷新按钮的显示受限于搜索逻辑 */}
       {props.filter && (
         <MenuFilter
@@ -195,12 +193,12 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
         items={filteredApps}
         onClick={handleAppMenuClick}
       />
-      <FlexCenterWrapper>
-        {!!hiddenCount && (
+      {!!hiddenCount && (
+        <div style={{ textAlign: 'center' }}>
           <Typography.Text type='secondary'>{hiddenCount} more ...</Typography.Text>
-        )}
-      </FlexCenterWrapper>
-    </FullHeightSpin>
+        </div>
+      )}
+    </Spin>
   );
 }
 

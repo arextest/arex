@@ -32,8 +32,7 @@ const CollectionMenuWrapper = styled.div`
   .collection-header {
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 
     .collection-header-create {
       margin-right: 5px;

@@ -115,10 +115,10 @@ const StyledMenu = styled(Menu)`
 `;
 
 const MenuContentWrapper = styled.div`
-  padding: 0 8px;
+  padding: 8px;
   flex: auto;
   min-width: 0;
-  overflow: auto;
+  overflow-y: auto;
 `;
 
 const CollapseButton = styled(

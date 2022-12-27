@@ -26,7 +26,7 @@ const MainBox = () => {
 
       <Allotment
         css={css`
-          height: calc(100vh - 74px);
+          height: calc(100vh - 73px);
         `}
       >
         <Allotment.Pane
