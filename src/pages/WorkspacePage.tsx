@@ -1,7 +1,7 @@
 import { Tabs } from 'antd';
 import React from 'react';
 
-import { CollectionLabCustom, Overview } from '../components/workspace';
+import { CollectionLabel, Overview } from '../components/workspace';
 
 const WorkspaceOverview = () => {
   const item = [
@@ -13,7 +13,7 @@ const WorkspaceOverview = () => {
     {
       label: 'Labels',
       key: 'labels',
-      children: <CollectionLabCustom />,
+      children: <CollectionLabel />,
     },
   ];
   return <Tabs tabPosition={'left'} items={item} />;

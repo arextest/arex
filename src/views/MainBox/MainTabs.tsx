@@ -9,7 +9,7 @@ import { treeFind } from '../../helpers/collection/util';
 import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
 import { MenusType } from '../../menus';
 import Pages, { PagesType } from '../../pages';
-import { NodeList } from '../../services/CollectionService';
+import { NodeList } from '../../services/Collection.service';
 import { Page, useStore } from '../../store';
 
 const MainTabs = () => {

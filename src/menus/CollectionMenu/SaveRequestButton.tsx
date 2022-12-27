@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { ContentTypeEnum, EmailKey } from '../../constant';
 import { treeFindPath } from '../../helpers/collection/util';
 import { getLocalStorage } from '../../helpers/utils';
-import { CollectionService } from '../../services/CollectionService';
+import { CollectionService } from '../../services/Collection.service';
 import { FileSystemService } from '../../services/FileSystem.service';
 const { Text } = Typography;
 

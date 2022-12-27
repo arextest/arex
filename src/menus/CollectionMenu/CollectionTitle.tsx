@@ -10,7 +10,7 @@ import SearchHighLight from '../../helpers/collection/searchHighLight';
 import { treeFindPath } from '../../helpers/collection/util';
 import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
 import { PagesType } from '../../pages';
-import { CollectionService } from '../../services/CollectionService';
+import { CollectionService } from '../../services/Collection.service';
 import { useStore } from '../../store';
 import { MenusType } from '../index';
 

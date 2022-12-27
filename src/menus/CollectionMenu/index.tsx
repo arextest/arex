@@ -16,7 +16,7 @@ import {
   uuid,
 } from '../../helpers/utils';
 import { PagesType } from '../../pages';
-import { CollectionService } from '../../services/CollectionService';
+import { CollectionService } from '../../services/Collection.service';
 import { useStore } from '../../store';
 import { MenusType } from '../index';
 import CollectionTitle from './CollectionTitle';

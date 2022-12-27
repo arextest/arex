@@ -69,3 +69,32 @@ export interface QueryWorkspaceByIdRes {
 // export interface SaveInterfaceRes {
 //   success: boolean;
 // }
+
+// Labels
+
+export interface QueryLabelsReq {
+  workspaceId: string;
+}
+
+export type Label = {
+  id: string;
+  labelName: string;
+  color: string;
+  workspaceId: string;
+};
+
+export interface QueryLabelsRes {
+  labels: Label[];
+}
+
+export interface RemoveLabelsReq {
+  workspaceId: string;
+  id: string;
+}
+
+export interface SaveLabelsReq {
+  id: string;
+  workspaceId: string;
+  labelName: string;
+  color: string;
+}

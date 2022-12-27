@@ -2,6 +2,7 @@ import { message } from 'antd';
 
 import request from '../helpers/api/axios';
 import { collectionOriginalTreeToAntdTreeData } from '../helpers/collection/util';
+import { QueryLabelsReq, QueryLabelsRes, RemoveLabelsReq, SaveLabelsReq } from './Collection.type';
 
 export interface NodeList {
   id: string;
@@ -48,5 +49,21 @@ export class CollectionService {
   }
   static async move(params: any): Promise<any> {
     return request.post(`/api/filesystem/move`, params);
+  }
+
+  //   Labels
+  static async queryLabels(params: QueryLabelsReq) {
+    const res = await request.post<QueryLabelsRes>(`/api/label/queryLabelsByWorkspaceId`, params);
+    return res.body.labels;
+  }
+
+  static async removeLabels(params: RemoveLabelsReq) {
+    const res = await request.post<{ success: boolean }>(`/api/label/remove`, params);
+    return res.body.success ? Promise.resolve(res.body) : Promise.reject({ success: false });
+  }
+
+  static async saveLabels(params: SaveLabelsReq) {
+    const res = await request.post<{ success: boolean }>(`/api/label/save`, params);
+    return res.body.success ? Promise.resolve(res.body) : Promise.reject({ success: false });
   }
 }

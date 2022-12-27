@@ -1,12 +1,7 @@
 import request from '../helpers/api/axios';
 import { tryParseJsonString } from '../helpers/utils';
 import { State as UserProfile } from '../store/useUserProfile';
-import {
-  FavoriteAppReq,
-  LoginAsGuestReq,
-  LoginAsGuestRes,
-  UserFavoriteAppRes,
-} from './UserService.type';
+import { FavoriteAppReq, LoginAsGuestReq, LoginAsGuestRes, UserFavoriteAppRes } from './User.type';
 
 export class UserService {
   static async getUserProfile(email: string) {

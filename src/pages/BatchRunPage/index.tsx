@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom';
 import { genCaseTreeData } from '../../helpers/BatchRun/util';
 import { treeFind } from '../../helpers/collection/util';
 import { runRESTRequest } from '../../helpers/RequestRunner';
-import { NodeList } from '../../services/CollectionService';
+import { NodeList } from '../../services/Collection.service';
 import { FileSystemService } from '../../services/FileSystem.service';
 import { useStore } from '../../store';
 import RunResult from './RunResult';

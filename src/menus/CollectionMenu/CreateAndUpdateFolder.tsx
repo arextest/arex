@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { EmailKey } from '../../constant';
 import { treeFindPath } from '../../helpers/collection/util';
 import { getLocalStorage } from '../../helpers/utils';
-import { CollectionService } from '../../services/CollectionService';
+import { CollectionService } from '../../services/Collection.service';
 
 const CreateAndUpdateFolder: React.FC<any> = ({
   updateDirectoryTreeData,

@@ -8,7 +8,7 @@ import { getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { MenusType } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
 import { PageType } from '../pages';
-import { NodeList } from '../services/CollectionService';
+import { NodeList } from '../services/Collection.service';
 import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';

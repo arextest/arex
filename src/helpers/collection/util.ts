@@ -1,5 +1,5 @@
 // 数组转树通用方法
-import { NodeList } from '../../services/CollectionService';
+import { NodeList } from '../../services/Collection.service';
 
 export function arrToTree(arr: any, pid = 0) {
   const newArr: any = [];
