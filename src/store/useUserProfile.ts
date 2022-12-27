@@ -13,6 +13,7 @@ export type UserProfile = {
   darkMode: DarkMode;
   compactMode: CompactMode;
   language: I18nextLng;
+  avatar?: string;
 };
 
 export type State = UserProfile & {

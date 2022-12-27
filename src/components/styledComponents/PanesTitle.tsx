@@ -1,6 +1,6 @@
 import { CheckOutlined, CloseOutlined, EditOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Input, Space, Typography } from 'antd';
+import { Input, Space, theme, Typography } from 'antd';
 import React, { ReactNode, useState } from 'react';
 
 import { SmallTextButton } from './index';
@@ -13,6 +13,7 @@ export type PanesTitleProps = {
 };
 const PanesTitle = styled((props: PanesTitleProps) => {
   const { title, extra, editable, onSave, ...extraProps } = props;
+  const { token } = theme.useToken();
 
   const [editableTitle, setEditableTitle] = useState<string>(
     typeof title === 'string' ? (props.title as string) : '',
@@ -30,7 +31,7 @@ const PanesTitle = styled((props: PanesTitleProps) => {
   };
 
   return (
-    <div {...extraProps}>
+    <div style={{ marginBottom: `${token.margin}px` }} {...extraProps}>
       <Space className='title'>
         {edit ? (
           <Input value={editableTitle} onChange={(e) => setEditableTitle(e.target.value)} />

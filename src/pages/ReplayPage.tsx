@@ -1,4 +1,4 @@
-import { Empty, Space } from 'antd';
+import { Empty } from 'antd';
 import React, { useState } from 'react';
 
 import { AppTitle, ReplayReport, ReplayTable } from '../components/replay';
@@ -20,7 +20,7 @@ const ReplayPage: PageFC<ApplicationDataType> = (props) => {
   };
 
   return props.page.data ? (
-    <Space direction='vertical' size='middle' style={{ display: 'flex' }}>
+    <>
       <AppTitle data={props.page.data} onRefresh={handleRefreshDep} />
 
       <CollapseTable
@@ -35,7 +35,7 @@ const ReplayPage: PageFC<ApplicationDataType> = (props) => {
         }
         panel={<ReplayReport selectedPlan={selectedPlan} />}
       />
-    </Space>
+    </>
   ) : (
     <FlexCenterWrapper>
       <Empty description={'Please select an application'} />

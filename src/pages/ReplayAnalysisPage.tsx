@@ -1,5 +1,5 @@
 import { useRequest } from 'ahooks';
-import { Collapse, Space, theme, Typography } from 'antd';
+import { Collapse, theme, Typography } from 'antd';
 import React, { useState } from 'react';
 
 import {
@@ -52,7 +52,7 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
   );
 
   return (
-    <Space direction='vertical' style={{ display: 'flex' }}>
+    <>
       <PanesTitle title={<span>Main Service API: {props.page.data.operationName}</span>} />
       <CollapseTable
         active={!!selectedDiff}
@@ -100,7 +100,7 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
         open={diffJsonViewVisible}
         onClose={() => setDiffJsonViewVisible(false)}
       />
-    </Space>
+    </>
   );
 };
 

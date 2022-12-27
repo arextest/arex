@@ -116,9 +116,7 @@ const WorkspaceSetting: FC = () => {
               ]}
             >
               <List.Item.Meta
-                avatar={
-                  <Avatar src='https://joeschmoe.io/api/v1/random'>{item.userName?.[0]}</Avatar>
-                }
+                avatar={<Avatar>{item.userName?.[0]}</Avatar>}
                 title={<span>{item.userName}</span>}
                 description={
                   {

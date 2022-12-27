@@ -5,7 +5,7 @@ import { json } from '@codemirror/lang-json';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Col, Collapse, Row, Space, Switch } from 'antd';
+import { Col, Collapse, Row, Switch } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
 
 import { CaseTable, SaveCase, SaveCaseRef } from '../components/replay/Case';
@@ -64,7 +64,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
   }
 
   return (
-    <Space direction='vertical' style={{ display: 'flex', paddingBottom: '16px' }}>
+    <>
       <PanesTitle
         title={<span>Main Service API: {props.page.data.operationName}</span>}
         extra={
@@ -148,7 +148,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
         }
       />
       <SaveCase operationId={props.page.data.planItemId} ref={saveCaseRef} />
-    </Space>
+    </>
   );
 };
 

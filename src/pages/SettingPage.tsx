@@ -1,64 +1,34 @@
 import { useRequest } from 'ahooks';
-import { Form, message, Select, Switch, theme } from 'antd';
+import { App, Form, Select, Switch } from 'antd';
 import { changeLanguage } from 'i18next';
-import React, { FC, useEffect, useMemo } from 'react';
-import { CirclePicker } from 'react-color';
+import React, { FC, useEffect } from 'react';
 
+import { AvatarUpload, ColorPicker } from '../components/setting';
+import { PanesTitle } from '../components/styledComponents';
 import { EmailKey } from '../constant';
 import { getLocalStorage } from '../helpers/utils';
 import { useColorPrimary } from '../hooks';
 import { local } from '../i18n';
 import { UserService } from '../services/User.service';
 import useUserProfile, { UserProfile } from '../store/useUserProfile';
-import { ColorPrimaryPalette, colorPrimaryPalette } from '../theme';
+import { ColorPrimaryPalette } from '../theme';
 
 const { Option } = Select;
-const { defaultSeed, darkAlgorithm, defaultAlgorithm } = theme;
 
 type SettingForm = Omit<UserProfile, 'colorPrimary'> & { colorPrimary: ColorPrimaryPalette };
 
-// Custom form item component
-type ColorPickerProps = {
-  value?: ColorPrimaryPalette;
-  onChange?: (color: ColorPrimaryPalette) => void;
-};
-const ColorPicker: FC<ColorPickerProps> = ({ value, onChange }) => {
-  const { darkMode } = useUserProfile();
-
-  const colors = useMemo(() => {
-    const algorithm = darkMode ? darkAlgorithm : defaultAlgorithm;
-
-    return colorPrimaryPalette.map(
-      (color) => algorithm(Object.assign(defaultSeed, { colorPrimary: color.key })).colorPrimary,
-    );
-  }, [darkMode]);
-
-  return (
-    <div style={{ padding: '8px 0 0 0' }}>
-      <CirclePicker
-        width={'320px'}
-        circleSize={20}
-        color={value?.key}
-        colors={colors}
-        onChangeComplete={(color) => {
-          const colorIndex = colors.findIndex((c) => c === color.hex);
-          onChange?.(colorPrimaryPalette[colorIndex]);
-        }}
-      />
-    </div>
-  );
-};
-
 const SettingPage: FC = () => {
+  const { message } = App.useApp();
   const email = getLocalStorage<string>(EmailKey);
-  const { darkMode, compactMode, language, setUserProfile } = useUserProfile();
   const colorPrimary = useColorPrimary();
+  const { avatar, darkMode, compactMode, language, setUserProfile } = useUserProfile();
 
   const [form] = Form.useForm<SettingForm>();
 
   useEffect(() => {
     // init form value
     form.setFieldsValue({
+      avatar,
       darkMode,
       compactMode,
       language,
@@ -83,6 +53,7 @@ const SettingPage: FC = () => {
           darkMode: values.darkMode,
           compactMode: values.compactMode,
           language: values.language,
+          avatar: values.avatar,
         };
 
         setUserProfile(profile);
@@ -109,13 +80,13 @@ const SettingPage: FC = () => {
 
   return (
     <Form
-      name='form'
+      name='setting-form'
       form={form}
-      labelCol={{ span: 5 }}
-      wrapperCol={{ span: 19 }}
+      labelCol={{ span: 4 }}
+      wrapperCol={{ span: 20 }}
       onValuesChange={handleFormChange}
     >
-      <h2 id='user-interface'>User Interface</h2>
+      <PanesTitle title='User Interface' />
 
       <Form.Item label='Compact Mode' name='compactMode' valuePropName='checked'>
         <Switch />
@@ -137,6 +108,10 @@ const SettingPage: FC = () => {
             </Option>
           ))}
         </Select>
+      </Form.Item>
+
+      <Form.Item label='Avatar' name='avatar'>
+        <AvatarUpload />
       </Form.Item>
     </Form>
   );

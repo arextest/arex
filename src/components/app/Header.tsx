@@ -38,7 +38,7 @@ const HeaderWrapper = styled.div`
 
 const AppHeader = () => {
   const nav = useNavigate();
-  const { theme } = useUserProfile();
+  const { avatar, theme } = useUserProfile();
   const { logout, setPages } = useStore();
   const email = getLocalStorage<string>(EmailKey);
 
@@ -87,7 +87,7 @@ const AppHeader = () => {
         <TooltipButton icon={<SettingOutlined />} title='Setting' onClick={handleSetting} />
 
         <Dropdown overlayStyle={{ width: '170px' }} menu={userMenu}>
-          <Avatar size={24} style={{ marginLeft: '8px', cursor: 'pointer' }}>
+          <Avatar src={avatar} size={24} style={{ marginLeft: '8px', cursor: 'pointer' }}>
             {email?.[0].toUpperCase()}
           </Avatar>
         </Dropdown>
