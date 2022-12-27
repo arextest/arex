@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
@@ -33,7 +33,6 @@ const HttpParameters = () => {
         size='small'
         pagination={false}
         dataSource={requestParams}
-        // @ts-ignore
         columns={useColumns(setRequestParams, true)}
       />
     </div>

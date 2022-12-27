@@ -1,4 +1,4 @@
-import { PlayCircleOutlined, SettingOutlined, SyncOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, DatePicker, Form, Input, Modal, notification } from 'antd';

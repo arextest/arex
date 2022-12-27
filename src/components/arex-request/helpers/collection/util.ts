@@ -56,7 +56,7 @@ export function treeFind(tree: any, func: any): any {
 
 export function collectionOriginalTreeToAntdTreeData(tree: any, nodeList: any[] = []): any[] {
   const nodes = tree;
-  Object.keys(nodes).forEach((value, index, array) => {
+  Object.keys(nodes).forEach((value, index) => {
     nodeList.push({
       id: nodes[value].infoId,
       children: [],

@@ -24,14 +24,14 @@ const FolderPage: PageFC = () => {
       type: block.type,
       icon: block.icon,
       label: block.label,
-      data: '',
+      value: '',
       disabled: false,
     };
     const state = items.concat(data);
     setItems(state);
   };
 
-  const handleDelete = useCallback<ScriptBlocksProps<string>['onDelete']>(
+  const handleDelete = useCallback<Required<ScriptBlocksProps<string>>['onDelete']>(
     (id) => {
       const state = items.filter((item) => item.key !== id);
       setItems(state);
@@ -39,7 +39,7 @@ const FolderPage: PageFC = () => {
     [items],
   );
 
-  const handleDrag = useCallback<ScriptBlocksProps<string>['onDrag']>(
+  const handleDrag = useCallback<Required<ScriptBlocksProps<string>>['onDrag']>(
     (source, destination) => {
       setItems(reorder(items, source, destination));
     },

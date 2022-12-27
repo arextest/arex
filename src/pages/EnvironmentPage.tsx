@@ -44,7 +44,7 @@ const EnvironmentPage: PageFC<Environment> = (props) => {
 
   const { run: saveEnv } = useRequest(EnvironmentService.saveEnvironment, {
     manual: true,
-    onSuccess(res) {
+    onSuccess() {
       message.success('保存成功');
       setEnvironmentLastManualUpdateTimestamp(new Date().getTime());
     },

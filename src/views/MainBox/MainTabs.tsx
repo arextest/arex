@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { Button, Empty, TabsProps } from 'antd';
-import React, { ReactNode, useCallback, useEffect, useMemo } from 'react';
+import { Button, TabsProps } from 'antd';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { DraggableTabs, EnvironmentSelect } from '../../components';
@@ -79,7 +79,7 @@ const MainTabs = () => {
           children: React.createElement(Pages[page.pageType], { page }),
         };
       }),
-    [pages, collectionTreeData],
+    [pages, genTabTitle, collectionTreeData],
   );
 
   // 必须和路由搭配起来，在切换的时候附着上去

@@ -1,5 +1,5 @@
 import { EditorView } from '@codemirror/view';
-import { FC, useContext, useRef } from 'react';
+import React, { FC, useContext, useRef } from 'react';
 
 import { useCodeMirror } from '../../../helpers/editor/codemirror';
 import { HoppRESTResponse } from '../../../helpers/types/HoppRESTResponse';

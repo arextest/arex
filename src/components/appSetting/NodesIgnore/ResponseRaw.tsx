@@ -1,7 +1,7 @@
 import { json } from '@codemirror/lang-json';
 import CodeMirror, { ReactCodeMirrorProps } from '@uiw/react-codemirror';
 import { Button, Space } from 'antd';
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import useUserProfile from '../../../store/useUserProfile';

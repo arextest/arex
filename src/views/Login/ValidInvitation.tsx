@@ -6,7 +6,7 @@ import {
 } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
 import { Card, Space, theme } from 'antd';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { FlexCenterWrapper } from '../../components/styledComponents';

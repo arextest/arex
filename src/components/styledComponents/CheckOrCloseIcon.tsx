@@ -1,5 +1,6 @@
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
+import React from 'react';
 
 const CheckOrCloseIcon = styled((props: { checked: boolean }) =>
   props.checked ? <CheckCircleOutlined {...props} /> : <CloseCircleOutlined {...props} />,

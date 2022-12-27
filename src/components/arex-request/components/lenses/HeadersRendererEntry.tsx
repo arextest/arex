@@ -1,12 +1,8 @@
-import { css, useTheme } from '@emotion/react';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRequest } from 'ahooks';
-import { Button, Col, Row, theme } from 'antd';
-import { FC, useEffect } from 'react';
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import { Button, Col, Row } from 'antd';
+import React, { FC } from 'react';
 
-import request from '../../../../helpers/api/axios';
 import { HoppRESTHeader } from '../../data/rest';
 
 const Test = styled.div`
@@ -15,7 +11,6 @@ const Test = styled.div`
   padding: 6px;
 `;
 
-const { useToken } = theme;
 const LensesHeadersRendererEntry: FC<{ header: HoppRESTHeader; onPin: any }> = ({
   header,
   onPin,

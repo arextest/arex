@@ -9,7 +9,7 @@ import {
 import { ArrowLeftOutlined } from '@ant-design/icons/lib';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { App, Button, Input, message, Modal, Select, Upload } from 'antd';
+import { App, Button, Input, Modal, Select, Upload } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -64,12 +64,11 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [status, setStatus] = useState<'' | 'error'>('');
   const [importView, setImportView] = useState(false);
-  const [allImportItem, setAllImportItem] = useState(false);
   const [importType, setImportType] = useState('');
   const [importFile, setImportFile] = useState<string>();
 
   const { run: getWorkspaces } = useRequest(
-    (workspaceId?: string) => WorkspaceService.listWorkspace({ userName: email as string }),
+    (_workspaceId?: string) => WorkspaceService.listWorkspace({ userName: email as string }),
     {
       ready: !!email,
       onSuccess(data, _params) {
@@ -151,7 +150,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
 
   const { run: createWorkspace } = useRequest(WorkspaceService.createWorkspace, {
     manual: true,
-    onSuccess: (res, params) => {
+    onSuccess: (res) => {
       if (res.success) {
         message.success('create workspace successfully');
         reset();

@@ -1,6 +1,6 @@
 import { useRequest } from 'ahooks';
 import { Avatar, Button, Divider, Form, Input, List, Popconfirm, Space, Typography } from 'antd';
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { EmailKey, RoleEnum } from '../constant';
@@ -21,7 +21,7 @@ const WorkspaceOverviewPage: FC = () => {
       workspaceId: activeWorkspaceId,
       newName: values.name,
       userName,
-    }).then((res) => {
+    }).then(() => {
       nav(`/${params.workspaceId}/workspace/${values.name}`);
     });
   };

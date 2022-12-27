@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
 import produce, { Draft } from 'immer';
-import {
+import React, {
   createContext,
   Dispatch,
   forwardRef,

@@ -1,6 +1,6 @@
 import { useRequest } from 'ahooks';
 import { Button, message } from 'antd';
-import { FC, useRef, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useCodeMirror } from '../../../helpers/editor/codemirror';

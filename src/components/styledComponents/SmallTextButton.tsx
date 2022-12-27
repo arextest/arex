@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { Button, ButtonProps } from 'antd';
+import React from 'react';
 
 const SmallTextButton = styled((props: ButtonProps) => (
   <Button type='text' size='small' {...props}>

@@ -1,5 +1,5 @@
 import { Col, InputNumber, Row, Slider } from 'antd';
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 
 import { FormItemProps } from './index';
 

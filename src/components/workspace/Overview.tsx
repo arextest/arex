@@ -39,7 +39,7 @@ const WorkspaceSetting: FC = () => {
       workspaceId: params.workspaceId,
       newName: values.name,
       userName,
-    }).then((res) => {
+    }).then(() => {
       window.location.href = `/${params.workspaceId}/workspace/${values.name}`;
     });
   };

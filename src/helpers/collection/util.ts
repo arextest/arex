@@ -44,9 +44,7 @@ export function treeFindPath(tree: any, func: any, path: any = []): any {
 export function treeFind<T>(tree: T[], func: (item: T) => boolean): T | undefined {
   for (const data of tree) {
     if (func(data)) return data;
-    // @ts-ignore
     if (data.children) {
-      // @ts-ignore
       const res = treeFind(data.children, func);
       if (res) return res;
     }
@@ -59,7 +57,7 @@ export function collectionOriginalTreeToAntdTreeData(
   nodeList: NodeList[] = [],
 ): NodeList[] {
   const nodes = tree;
-  Object.keys(nodes).forEach((value, index, array) => {
+  Object.keys(nodes).forEach((value, index) => {
     nodeList.push({
       id: nodes[value].infoId,
       children: [],

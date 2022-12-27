@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Button, Checkbox, Collapse, Form, message, TimePicker } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { decodeWeekCode, encodeWeekCode } from '../../../helpers/record/util';

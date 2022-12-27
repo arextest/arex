@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { CSSInterpolation } from '@emotion/serialize/types';
 import styled from '@emotion/styled';
 import { Table, TableProps } from 'antd';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 type HighlightRowTableProps<T> = {
   sx?: CSSInterpolation;

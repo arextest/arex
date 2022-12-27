@@ -1,7 +1,7 @@
 import { useRequest } from 'ahooks';
 import { Form, message, Select, Switch, theme } from 'antd';
 import { changeLanguage } from 'i18next';
-import { FC, useEffect, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { CirclePicker } from 'react-color';
 
 import { EmailKey } from '../constant';
@@ -10,7 +10,7 @@ import { useColorPrimary } from '../hooks';
 import { local } from '../i18n';
 import { UserService } from '../services/User.service';
 import useUserProfile, { UserProfile } from '../store/useUserProfile';
-import { ColorPrimaryPalette, colorPrimaryPalette, Theme } from '../theme';
+import { ColorPrimaryPalette, colorPrimaryPalette } from '../theme';
 
 const { Option } = Select;
 const { defaultSeed, darkAlgorithm, defaultAlgorithm } = theme;
@@ -20,10 +20,9 @@ type SettingForm = Omit<UserProfile, 'colorPrimary'> & { colorPrimary: ColorPrim
 // Custom form item component
 type ColorPickerProps = {
   value?: ColorPrimaryPalette;
-  theme: Theme;
   onChange?: (color: ColorPrimaryPalette) => void;
 };
-const ColorPicker: FC<ColorPickerProps> = ({ value, onChange, theme }) => {
+const ColorPicker: FC<ColorPickerProps> = ({ value, onChange }) => {
   const { darkMode } = useUserProfile();
 
   const colors = useMemo(() => {
@@ -52,7 +51,7 @@ const ColorPicker: FC<ColorPickerProps> = ({ value, onChange, theme }) => {
 
 const SettingPage: FC = () => {
   const email = getLocalStorage<string>(EmailKey);
-  const { theme, darkMode, compactMode, language, setUserProfile } = useUserProfile();
+  const { darkMode, compactMode, language, setUserProfile } = useUserProfile();
   const colorPrimary = useColorPrimary();
 
   const [form] = Form.useForm<SettingForm>();
@@ -73,7 +72,7 @@ const SettingPage: FC = () => {
     });
   }, [colorPrimary]);
 
-  const handleFormChange = (value: Partial<SettingForm>, allValue: SettingForm) => {
+  const handleFormChange = (value: Partial<SettingForm>) => {
     value.language !== undefined && changeLanguage(value.language);
 
     form
@@ -127,7 +126,7 @@ const SettingPage: FC = () => {
       </Form.Item>
 
       <Form.Item label='Primary Color' name='colorPrimary'>
-        <ColorPicker theme={theme} />
+        <ColorPicker />
       </Form.Item>
 
       <Form.Item label='Language' name='language'>

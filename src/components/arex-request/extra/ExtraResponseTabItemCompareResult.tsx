@@ -2,11 +2,10 @@ import { css } from '@emotion/react';
 import { Radio, Spin, Table, Tabs } from 'antd';
 import JSONEditor from 'jsoneditor';
 import _ from 'lodash-es';
-import { FC, useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, useContext, useEffect, useRef, useState } from 'react';
 
 import axios from '../../../helpers/api/axios';
 import { HttpContext } from '../index';
-// import { const } from 'fp-ts';
 
 const ExtraResponseTabItemCompareResult: FC<{ responses: any[]; theme: string }> = ({
   responses,
@@ -106,7 +105,7 @@ const ExtraResponseTabItemCompareResult: FC<{ responses: any[]; theme: string }>
         setDataSource((res.body.diffDetails || []).map((i) => i.logs[0]));
       });
 
-      const onClassName = ({ path, field, value }: any) => {
+      const onClassName = ({ path }: any) => {
         const leftValue = _.get(jsonRight, path);
         const rightValue = _.get(jsonLeft, path);
         return _.isEqual(leftValue, rightValue) ? 'the_same_element' : 'different_element';

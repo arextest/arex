@@ -1,6 +1,6 @@
 import { hoverTooltip } from '@codemirror/view';
 import { css, useTheme } from '@emotion/react';
-import { FC, useContext, useRef } from 'react';
+import React, { FC, useContext, useRef } from 'react';
 
 import { useEnvCodeMirror } from '../../helpers/editor/extensions/EnvCodeMirror';
 import {
@@ -23,7 +23,7 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
     height: '30px',
     extensions: [
       [
-        hoverTooltip((view, pos, side) => {
+        hoverTooltip((view, pos) => {
           const { text } = view.state.doc.lineAt(pos);
           const markArrs = getMarkFromToArr(text, HOPP_ENVIRONMENT_REGEX, store.environment);
           const index = markArrs.map((i) => pos < i.to && pos > i.from).findIndex((i) => i);
@@ -35,7 +35,7 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
             end: pos,
             above: true,
             arrow: true,
-            create(view) {
+            create() {
               const dom = document.createElement('div');
               dom.innerHTML = `
               <span class="name">${markArrs[index].matchEnv.name}</span>

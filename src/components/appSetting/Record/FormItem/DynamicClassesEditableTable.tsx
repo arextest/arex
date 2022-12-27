@@ -8,7 +8,7 @@ import {
 import { useRequest } from 'ahooks';
 import { Button, Input, message, Popconfirm, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { Updater, useImmer } from 'use-immer';
 
 import AppSettingService from '../../../../services/AppSetting.service';

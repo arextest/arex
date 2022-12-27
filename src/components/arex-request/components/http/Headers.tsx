@@ -4,9 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
 import { HttpContext } from '../..';
-import { HoppRESTHeader } from '../../data/rest';
 import FormHeader from './FormHeader';
-import FormTable, { KeyValueType, useColumns } from './FormTable';
+import FormTable, { useColumns } from './FormTable';
 const HttpHeaders = () => {
   const { t } = useTranslation();
   const { store, dispatch } = useContext(HttpContext);
@@ -36,7 +35,6 @@ const HttpHeaders = () => {
         rowKey={'id'}
         pagination={false}
         dataSource={requestHeaders}
-        // @ts-ignore
         columns={useColumns(setRequestHeaders, true)}
       />
     </div>

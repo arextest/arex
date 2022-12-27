@@ -38,7 +38,7 @@ const initialState: State = (() => {
 })();
 
 const useUserProfile = create(
-  immer<State & Action>((set, get) => ({
+  immer<State & Action>((set) => ({
     ...initialState,
     setUserProfile(userProfile) {
       set(userProfile);

@@ -79,7 +79,7 @@ export function isHoppRESTRequest(x: any): x is HoppRESTRequest {
   return x && typeof x === 'object' && 'v' in x;
 }
 
-function parseRequestBody(x: any): HoppRESTReqBody {
+export function parseRequestBody(x: any): HoppRESTReqBody {
   if (x.contentType === 'application/json') {
     return {
       contentType: 'application/json',

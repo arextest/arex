@@ -2,7 +2,7 @@ import { MoreOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button, Dropdown, Input, Popconfirm } from 'antd';
-import { ReactNode, useMemo, useState } from 'react';
+import React, { ReactNode, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { EmailKey, MethodMap } from '../../constant';
@@ -91,7 +91,7 @@ function CollectionTitle({
                   id: _useParams.workspaceId,
                   removeNodePath: paths.map((i: any) => i.key),
                   userName,
-                }).then((res) => {
+                }).then(() => {
                   updateDirectoryTreeData();
                 });
               }}
@@ -189,7 +189,7 @@ function CollectionTitle({
       newName: renameValue,
       path: paths.map((i: any) => i.key),
       userName,
-    }).then((res) => {
+    }).then(() => {
       updateDirectoryTreeData();
       setRenameValue('');
       setRenameKey('');

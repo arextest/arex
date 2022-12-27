@@ -1,8 +1,7 @@
 import { json } from '@codemirror/lang-json';
-import { css, jsx } from '@emotion/react';
-import { Button, message } from 'antd';
-import { useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import React from 'react';
+import { css } from '@emotion/react';
+import { message } from 'antd';
+import React, { useContext, useImperativeHandle, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useCodeMirror } from '../../helpers/editor/codemirror';

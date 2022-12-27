@@ -4,8 +4,6 @@ import { javascript } from '@codemirror/lang-javascript';
 import { json } from '@codemirror/lang-json';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import CodeMirror from '@uiw/react-codemirror';
-import { ReactCodeMirrorProps } from '@uiw/react-codemirror/src';
 import { useRequest } from 'ahooks';
 import { Col, Collapse, Row, Space, Switch } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
@@ -21,7 +19,6 @@ import {
 import ReplayService from '../services/Replay.service';
 import { PlanItemStatistics, ReplayCase as ReplayCaseType } from '../services/Replay.type';
 import useUserProfile from '../store/useUserProfile';
-import { Theme } from '../theme';
 import { PageFC } from './index';
 
 const { Panel } = Collapse;

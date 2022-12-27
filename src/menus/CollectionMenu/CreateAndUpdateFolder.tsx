@@ -6,7 +6,6 @@ import { EmailKey } from '../../constant';
 import { treeFindPath } from '../../helpers/collection/util';
 import { getLocalStorage } from '../../helpers/utils';
 import { CollectionService } from '../../services/CollectionService';
-import { useStore } from '../../store';
 
 const CreateAndUpdateFolder: React.FC<any> = ({
   updateDirectoryTreeData,
@@ -41,7 +40,7 @@ const CreateAndUpdateFolder: React.FC<any> = ({
       newName: CollectionCreateAndUpdateModalFolderName,
       path: paths.map((i: any) => i.key),
       userName,
-    }).then((res) => {
+    }).then(() => {
       setCollectionCreateAndUpdateModalVisible(false);
       setCollectionCreateAndUpdateModalFolderName('');
       updateDirectoryTreeData();

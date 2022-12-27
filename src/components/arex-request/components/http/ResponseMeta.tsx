@@ -1,4 +1,4 @@
-import { css, jsx } from '@emotion/react';
+import { css } from '@emotion/react';
 import { Empty, Spin, Typography } from 'antd';
 import { FC, useMemo } from 'react';
 import React from 'react';

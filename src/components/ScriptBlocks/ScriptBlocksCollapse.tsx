@@ -50,11 +50,11 @@ function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId='droppable'>
-        {(provided, snapshot) => (
+        {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
             {props.value.map((item, index) => (
               <Draggable key={item.key} draggableId={item.key} index={index}>
-                {(provided, snapshot) => (
+                {(provided) => (
                   <div ref={provided.innerRef} {...provided.draggableProps}>
                     <div
                       css={css`

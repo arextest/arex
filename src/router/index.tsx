@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { Login, MainBox, ValidInvitation } from '../views';
 import UpgradeBrowser from '../views/UpgradeBrowser';
 

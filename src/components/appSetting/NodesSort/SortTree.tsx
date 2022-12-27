@@ -1,7 +1,7 @@
 import { Card, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 type SortTreeProps = Omit<TreeProps, 'treeData'> & {
   treeData?: any[];

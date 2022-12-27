@@ -1,5 +1,5 @@
 import { Select, Typography } from 'antd';
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 const { Text } = Typography;
 

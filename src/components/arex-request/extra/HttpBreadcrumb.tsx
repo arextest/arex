@@ -27,7 +27,6 @@ const HttpBreadcrumb: FC<{
       .post('/api/label/queryLabelsByWorkspaceId', {
         workspaceId: params.workspaceId,
       })
-      // @ts-ignore
       .then((r) => r.body.labels),
   );
 
@@ -99,8 +98,7 @@ const HttpBreadcrumb: FC<{
                 }}
                 onBlur={() => {
                   setEditAble(false);
-                  // @ts-ignore
-                  FileSystemService.saveCase({ id: id, labelIds: labelValue }).then((res) => {
+                  FileSystemService.saveCase({ id: id, labelIds: labelValue }).then(() => {
                     message.success('update label success.');
                   });
                 }}

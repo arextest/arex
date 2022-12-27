@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Spin, SpinProps } from 'antd';
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 const FullHeightSpinWrapper = styled.div`
   height: 100%;

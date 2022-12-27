@@ -1,6 +1,5 @@
-// @ts-nocheck
 import { Form, Input, Modal, Select, TreeSelect, Typography } from 'antd';
-import { FC, forwardRef, useImperativeHandle, useMemo, useState } from 'react';
+import React, { FC, forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { ContentTypeEnum, EmailKey } from '../../constant';
@@ -111,7 +110,7 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = (
                   },
                   id: res.body.infoId,
                   workspaceId: _useParams.workspaceId,
-                }).then((r) => {
+                }).then(() => {
                   // 通知父组件
                   onSaveAs({
                     key: res.body.infoId,

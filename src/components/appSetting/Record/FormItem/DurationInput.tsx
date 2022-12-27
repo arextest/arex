@@ -1,7 +1,7 @@
 import { Checkbox, Divider } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { CheckboxOptionType, CheckboxValueType } from 'antd/lib/checkbox/Group';
-import { FC, useState } from 'react';
+import React, { FC, useState } from 'react';
 
 import { FormItemProps } from './index';
 

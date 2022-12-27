@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Form, FormProps, Spin } from 'antd';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
 type SettingFormProps = FormProps & { loading: boolean; children: ReactNode };
 

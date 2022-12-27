@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { Tabs } from 'antd';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import {
   SettingImportYaml,

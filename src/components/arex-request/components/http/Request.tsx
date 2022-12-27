@@ -1,8 +1,8 @@
-import { DownOutlined, SaveOutlined, UserOutlined } from '@ant-design/icons';
+import { DownOutlined, SaveOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button, Divider, Dropdown, MenuProps, message, Select, Space } from 'antd';
-import { FC, useContext } from 'react';
+import React, { FC, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { HttpContext, HttpProps } from '../../index';

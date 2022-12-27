@@ -186,20 +186,18 @@ const CollectionLabCustom = () => {
       .then((r) => r.body.labels),
   );
 
-  const { data: labelRemoveResData, run: labelRemoveRun } = useRequest(
+  const { run: labelRemoveRun } = useRequest(
     (p) =>
       request
         .post('/api/label/remove', {
           workspaceId: params.workspaceId,
           labelId: p.labelId,
         })
-        // @ts-ignore
         .then((r) => r.body.labels),
     {
       manual: true,
-      onSuccess(res) {
+      onSuccess() {
         run();
-        // console.log(res.body.labels);
       },
       onError() {
         message.error('delete error');
@@ -207,15 +205,11 @@ const CollectionLabCustom = () => {
     },
   );
 
-  const { data: labelSaveResData, run: labelSaveRun } = useRequest(
-    (p) =>
-      request
-        .post('/api/label/save', p)
-        // @ts-ignore
-        .then((r) => r.body.labels),
+  const { run: labelSaveRun } = useRequest(
+    (p) => request.post('/api/label/save', p).then((r) => r.body.labels),
     {
       manual: true,
-      onSuccess(res) {
+      onSuccess() {
         run();
         // console.log(res.body.labels);
       },

@@ -1,5 +1,5 @@
 import { CodeOutlined } from '@ant-design/icons';
-import { FC, ReactNode } from 'react';
+import React, { FC, ReactNode } from 'react';
 
 import ScriptSnippets from '../ScriptSnippets';
 import ExtraScriptBlocks from './ExtraScriptBlocks';

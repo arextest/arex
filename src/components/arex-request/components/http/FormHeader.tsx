@@ -1,7 +1,7 @@
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Tooltip } from 'antd';
-import { FC, useContext } from 'react';
+import { FC } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Updater } from 'use-immer';

@@ -52,7 +52,7 @@ const EnvironmentMenu: FC = () => {
       }),
     {
       manual: true,
-      onSuccess(res) {
+      onSuccess() {
         message.success('success');
         setEnvironmentLastManualUpdateTimestamp(new Date().getTime());
       },

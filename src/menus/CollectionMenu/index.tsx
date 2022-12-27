@@ -1,10 +1,4 @@
-import {
-  DownOutlined,
-  GatewayOutlined,
-  PlayCircleOutlined,
-  PlusOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
+import { DownOutlined, PlayCircleOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Empty, Input, Spin, Tree } from 'antd';
@@ -250,7 +244,6 @@ const CollectionMenu = () => {
     const dragKey = info.dragNode.key;
     const dragNodeType = info.dragNode.nodeType;
     const dropPos = info.node.pos.split('-');
-    const dragPos = info.dragNode.pos.split('-');
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
 
     const loop = (

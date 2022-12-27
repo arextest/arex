@@ -1,6 +1,5 @@
 import { EditorState, StateEffect } from '@codemirror/state';
-import { EditorView, keymap, ViewUpdate } from '@codemirror/view';
-// @ts-ignore
+import { EditorView, ViewUpdate } from '@codemirror/view';
 import { githubDark, githubLight } from '@uiw/codemirror-themes-all';
 import { basicSetup } from 'codemirror';
 import { useEffect, useState } from 'react';

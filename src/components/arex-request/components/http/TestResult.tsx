@@ -1,7 +1,7 @@
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { List, Progress } from 'antd';
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { HoppTestResult } from '../../helpers/types/HoppTestResult';
