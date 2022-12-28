@@ -49,6 +49,7 @@ export interface HttpProps {
   renderResponse?: boolean;
   onPin: any;
   defaultDisplayResponse: boolean;
+  requestPanePreferredSize: number;
 }
 
 export const HttpContext = createContext<
@@ -75,6 +76,7 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
       renderResponse = true,
       onPin,
       defaultDisplayResponse = false,
+      requestPanePreferredSize = 360,
     },
     ref,
   ) => {
@@ -135,7 +137,7 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
           `}
           vertical={true}
         >
-          <Allotment.Pane preferredSize={renderResponse ? 360 : '100%'}>
+          <Allotment.Pane preferredSize={renderResponse ? requestPanePreferredSize : '100%'}>
             <div
               css={css`
                 height: 100%;
