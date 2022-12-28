@@ -7,6 +7,7 @@ import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { TooltipButton } from '../../components';
+import { EmptyWrapper } from '../../components/styledComponents';
 import { EmailKey, NodeType } from '../../constant';
 import { treeFind } from '../../helpers/collection/util';
 import {
@@ -453,77 +454,77 @@ const CollectionMenu = () => {
 
   return (
     <CollectionMenuWrapper>
-      <Spin spinning={loading}>
-        {!loading && !treeData.length ? (
-          <Empty>
-            <Button type='primary' onClick={createCollection}>
-              New
-            </Button>
-          </Empty>
-        ) : (
-          <div>
-            <div className={'collection-header'}>
-              <TooltipButton
-                icon={<PlusOutlined />}
-                type='text'
-                size='small'
-                className={'collection-header-create'}
-                onClick={createCollection}
-                placement='bottomLeft'
-                title={'Create New'}
-              />
-
-              <TooltipButton
-                icon={<PlayCircleOutlined />}
-                type='text'
-                size='small'
-                className={'collection-header-create'}
-                onClick={test}
-                placement='bottomLeft'
-                title={'Run'}
-              />
-
-              <Input
-                className={'collection-header-search'}
-                size='small'
-                placeholder=''
-                prefix={<SearchOutlined />}
-                onChange={onChange}
-              />
-              {/*<Tooltip placement='bottomLeft' title={'View more actions'} mouseEnterDelay={0.5}>*/}
-              {/*  <Button className={'collection-header-view'} type='text' size='small'>*/}
-              {/*    <DashOutlined />*/}
-              {/*  </Button>*/}
-              {/*</Tooltip>*/}
-            </div>
-
-            <Tree
-              autoExpandParent={autoExpandParent}
-              blockNode={true}
-              selectedKeys={selectedKeys}
-              expandedKeys={expandedKeys}
-              // @ts-ignore
-              onExpand={onExpand}
-              onSelect={handleSelect}
-              switcherIcon={<DownOutlined />}
-              treeData={treeData}
-              onDrop={onDrop}
-              draggable={{ icon: false }}
-              showLine
-              titleRender={(val) => (
-                <CollectionTitle
-                  searchValue={searchValue}
-                  updateDirectoryTreeData={fetchTreeData}
-                  val={val}
-                  treeData={treeData}
-                  callbackOfNewRequest={expandSpecifyKeys} // TODO 暂时禁用待优化
-                />
-              )}
+      <EmptyWrapper
+        empty={!loading && !treeData.length}
+        loading={loading}
+        description={
+          <Button type='primary' onClick={createCollection}>
+            New
+          </Button>
+        }
+      >
+        <div>
+          <div className={'collection-header'}>
+            <TooltipButton
+              icon={<PlusOutlined />}
+              type='text'
+              size='small'
+              className={'collection-header-create'}
+              onClick={createCollection}
+              placement='bottomLeft'
+              title={'Create New'}
             />
-            {/*<CollectionImport/>*/}
+
+            <TooltipButton
+              icon={<PlayCircleOutlined />}
+              type='text'
+              size='small'
+              className={'collection-header-create'}
+              onClick={test}
+              placement='bottomLeft'
+              title={'Run'}
+            />
+
+            <Input
+              className={'collection-header-search'}
+              size='small'
+              placeholder=''
+              prefix={<SearchOutlined />}
+              onChange={onChange}
+            />
+            {/*<Tooltip placement='bottomLeft' title={'View more actions'} mouseEnterDelay={0.5}>*/}
+            {/*  <Button className={'collection-header-view'} type='text' size='small'>*/}
+            {/*    <DashOutlined />*/}
+            {/*  </Button>*/}
+            {/*</Tooltip>*/}
           </div>
-        )}
-      </Spin>
+
+          <Tree
+            autoExpandParent={autoExpandParent}
+            blockNode={true}
+            selectedKeys={selectedKeys}
+            expandedKeys={expandedKeys}
+            // @ts-ignore
+            onExpand={onExpand}
+            onSelect={handleSelect}
+            switcherIcon={<DownOutlined />}
+            treeData={treeData}
+            onDrop={onDrop}
+            draggable={{ icon: false }}
+            showLine
+            titleRender={(val) => (
+              <CollectionTitle
+                searchValue={searchValue}
+                updateDirectoryTreeData={fetchTreeData}
+                val={val}
+                treeData={treeData}
+                callbackOfNewRequest={expandSpecifyKeys} // TODO 暂时禁用待优化
+              />
+            )}
+          />
+          {/*<CollectionImport/>*/}
+        </div>
+      </EmptyWrapper>
     </CollectionMenuWrapper>
   );
 };

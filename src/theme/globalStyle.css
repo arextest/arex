@@ -1,10 +1,10 @@
 body{
   overflow: hidden;
 }
-
 #root,
-#root > .ant-layout,
-#root > .ant-layout > .ant-layout-content {
+#root > .ant-app ,
+#root > .ant-app > .ant-layout,
+#root > .ant-app > .ant-layout > .ant-layout-content {
   height: 100vh;
 }
 
