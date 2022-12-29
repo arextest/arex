@@ -1,4 +1,4 @@
-import { DeleteOutlined, MenuOutlined } from '@ant-design/icons';
+import { DeleteOutlined, DownOutlined, LeftOutlined, MenuOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button, Collapse, Popconfirm, Space, Switch, theme } from 'antd';
@@ -58,7 +58,7 @@ function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
                   <div ref={provided.innerRef} {...provided.draggableProps}>
                     <div
                       css={css`
-                        margin: 8px 0;
+                        //margin: 8px 0;
                         width: 100%;
                         .ant-collapse-header-text {
                           flex: 1 !important;
@@ -116,13 +116,15 @@ function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
                                   title={t('delete')}
                                 />
                               </Popconfirm>
+                              {activeKey === item.key ? <DownOutlined /> : <LeftOutlined />}
                             </Space>
                           }
                         >
                           {/* Dynamic ScriptBlock Component */}
                           {/* TODO 区分不同组件的 props 注入 */}
                           {React.createElement(
-                            ScriptBlocksList.find((block) => block.type === item.type)!.component,
+                            ScriptBlocksList.find((block) => block.type === item.type)?.component ||
+                              ScriptBlocksList[0].component,
                             {
                               disabled: item.disabled,
                               value: item.value as string,

@@ -27,7 +27,7 @@ const AddScriptBlockButton: FC<{
   blocksSource: ScriptBlocksProps['blocksSource'];
   onAdd?: (key: string) => void;
 }> = (props) => (
-  <FlexCenterWrapper style={{ padding: '8px' }}>
+  <FlexCenterWrapper style={{ padding: '8px', height: '100px' }}>
     <Dropdown
       menu={{
         items: props.blocksSource,

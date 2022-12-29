@@ -89,17 +89,20 @@ const HttpRequestOptions: FC<{ config: any }> = ({ config }) => {
         //相当于最小高度
         padding: 0 16px;
         flex: 1;
-        display: flex;
-        flex-direction: column;
+        overflow: auto;
+        width: calc(100% - 16px);
+        //background-color: #00bb74;
+        //display: flex;
+        //flex-direction: column;
         .ant-tabs-content-holder {
-          height: 100px;
+          //height: 100px;
         }
       `}
     >
       <Tabs
         className={'http-request-options-tab'}
         css={css`
-          height: 100%;
+          //height: 100%;
           .ant-tabs-nav {
             margin-bottom: 0;
           }

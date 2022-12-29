@@ -95,7 +95,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
             : message.warning('无目标工作空间权限或目标工作空间无效');
           invitedWorkspaceId && setInvitedWorkspaceId('');
         }
-        if (targetWorkspace.id) {
+        if (targetWorkspace.id && !params.workspaceId) {
           nav(
             `/${targetWorkspace.id}/workspace/${targetWorkspace.workspaceName}/workspaceOverview/${targetWorkspace.id}`,
           );
