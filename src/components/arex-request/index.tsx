@@ -151,11 +151,11 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
                 onSave={onSave}
                 onSend={onSend}
                 onSendCompare={onSendCompare}
-              ></HttpRequest>
+              />
               <HttpRequestOptions config={config} />
             </div>
           </Allotment.Pane>
-          {renderResponse ? (
+          {renderResponse && (
             <Allotment.Pane>
               {store.mode === 'compare' ? (
                 <ExtraResponseTabItemCompareResult theme={theme} responses={store.compareResult} />
@@ -163,7 +163,7 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
                 <HttpResponse onPin={onPin} config={config} />
               )}
             </Allotment.Pane>
-          ) : null}
+          )}
         </Allotment>
       </HttpContext.Provider>
     );

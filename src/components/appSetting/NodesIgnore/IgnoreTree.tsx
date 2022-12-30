@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Button, Card, Spin, Tree } from 'antd';
+import { Button, Card, Spin, Tree, Typography } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
 import React, { FC } from 'react';
@@ -15,11 +15,11 @@ type IgnoreTreeProps = Omit<TreeProps, 'treeData'> & {
   onSave?: () => void;
   onEditResponse?: () => void;
 };
-const IgnoreTreeWrapper = styled.div`
-  .ant-tree-node-selected {
-    text-decoration: line-through;
-  }
-`;
+// const IgnoreTreeWrapper = styled.div`
+//   .ant-tree-node-selected {
+//     text-decoration: line-through;
+//   }
+// `;
 
 const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
   const { t } = useTranslation('common');
@@ -40,19 +40,16 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
   }
 
   return (
-    <IgnoreTreeWrapper>
+    // <IgnoreTreeWrapper>
+    <>
       <SpaceBetweenWrapper style={{ paddingBottom: '8px' }}>
-        <h3>Data Structure</h3>
+        <Typography.Title level={5}>Data Structure</Typography.Title>
         <Button size='small' type='primary' onClick={() => props.onSave && props.onSave()}>
           {t('save')}
         </Button>
       </SpaceBetweenWrapper>
 
-      <Card
-        title={`${props.title} (click node to ignore)`}
-        bodyStyle={{ padding: '8px 16px' }}
-        headStyle={{ padding: '0 16px', margin: '-8px 0' }}
-      >
+      <Card size='small' title={`${props.title} (click node to ignore)`}>
         <Spin spinning={props.loading}>
           {Object.keys(props.treeData).length ? (
             <Tree multiple defaultExpandAll {...props} treeData={getNodes(props.treeData, '')} />
@@ -61,7 +58,8 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
           )}
         </Spin>
       </Card>
-    </IgnoreTreeWrapper>
+    </>
+    // </IgnoreTreeWrapper>
   );
 };
 

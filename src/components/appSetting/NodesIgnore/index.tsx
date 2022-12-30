@@ -181,23 +181,23 @@ const SettingNodesIgnore: FC<{ appId: string }> = (props) => {
 
   const handleIgnoreSave = () => {
     const { operationId = null, exclusionsList } = checkedNodesData;
-    const exclusionsListPrev = ignoreNodeList.map((item) => item.path);
+    // const exclusionsListPrev = ignoreNodeList.map((item) => item.path);
 
-    const add: string[] = [],
-      remove: string[] = [];
-
-    // 计算新旧集合的差集，分别进行增量更新和批量删除
-    Array.from(new Set([...exclusionsListPrev, ...exclusionsList])).forEach((path) => {
-      if (exclusionsListPrev.includes(path) && exclusionsList.includes(path)) return;
-      else if (exclusionsListPrev.includes(path))
-        remove.push(ignoreNodeList.find((item) => item.path === path)!.id);
-      else add.push(path);
-    });
+    // const add: string[] = [],
+    //   remove: string[] = [];
+    //
+    // // 计算新旧集合的差集，分别进行增量更新和批量删除
+    // Array.from(new Set([...exclusionsListPrev, ...exclusionsList])).forEach((path) => {
+    //   if (exclusionsListPrev.includes(path) && exclusionsList.includes(path)) return;
+    //   else if (exclusionsListPrev.includes(path))
+    //     remove.push(ignoreNodeList.find((item) => item.path === path)!.id);
+    //   else add.push(path);
+    // });
 
     // 增量更新
-    add.length &&
+    exclusionsList.length &&
       batchInsertIgnoreNode(
-        add.map((path) => ({
+        exclusionsList.map((path) => ({
           appId: props.appId,
           operationId, // null 时目标为 Global
           exclusions: path.split('/').filter(Boolean),
@@ -205,7 +205,7 @@ const SettingNodesIgnore: FC<{ appId: string }> = (props) => {
       );
 
     // 批量删除
-    remove.length && batchDeleteIgnoreNode(remove.map((id) => ({ id })));
+    // remove.length && batchDeleteIgnoreNode(remove.map((id) => ({ id })));
   };
 
   return (
@@ -259,7 +259,7 @@ const SettingNodesIgnore: FC<{ appId: string }> = (props) => {
                 <IgnoreTree
                   title={activeOperationInterface?.operationName}
                   treeData={interfaceResponseParsed}
-                  selectedKeys={checkedNodesData.exclusionsList}
+                  // selectedKeys={checkedNodesData.exclusionsList}
                   loading={loadingInterfaceResponse}
                   onSelect={handleIgnoreTreeSelect}
                   onSave={handleIgnoreSave}
