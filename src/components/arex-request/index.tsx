@@ -146,13 +146,17 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
               `}
               className={'http-request-and-options'}
             >
-              <HttpRequest
-                breadcrumb={breadcrumb}
-                onSave={onSave}
-                onSend={onSend}
-                onSendCompare={onSendCompare}
-              ></HttpRequest>
-              <HttpRequestOptions config={config} />
+              {store.request.method !== '' ? (
+                <div>
+                  <HttpRequest
+                    breadcrumb={breadcrumb}
+                    onSave={onSave}
+                    onSend={onSend}
+                    onSendCompare={onSendCompare}
+                  ></HttpRequest>
+                  <HttpRequestOptions config={config} />
+                </div>
+              ) : null}
             </div>
           </Allotment.Pane>
           {renderResponse ? (

@@ -1,0 +1,85 @@
+.rhi-tooltip{
+  position: absolute;
+  top: -32px;
+  color: black;
+  z-index: 1000;
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+.rhi-tooltip .content{
+  border-radius: 2px;
+  padding: 4px;
+  background-color: rgb(245,245,245);
+  box-shadow: 0 1px 2px -2px rgba(0, 0, 0, .16), 0 3px 6px 0 rgba(0, 0, 0, .12), 0 5px 12px 4px rgba(0, 0, 0, .09);
+}
+.rhi-tooltip .shim{
+  height: 6px;
+}
+
+.rhi-tooltip .small-triangle{
+  border: 4px solid rgba(0,0,0,0);
+  width: 0;
+  height: 0;
+  border-top-color: rgb(245,245,245);
+  margin-left: 8px;
+}
+
+.highlight-input .green{
+  color: #fff;
+  background-color: #7cb305;
+  border-radius: 2px;
+}
+
+.highlight-input .red{
+  color: #fff;
+  background-color: #EF4444;
+  border-radius: 2px;
+}
+
+.highlight-input{
+  position: relative;
+  border: 1px solid #d9d9d9;
+  display: inline-block;
+  width: 100%;
+  font-size: 14px;
+  padding: 5px;
+}
+
+.highlight-input .display-input{
+  display:flex;
+  min-width: 200px;
+  width: 100%;
+  height: 20px;
+  line-height: 20px;
+}
+
+.highlight-input .real-input{
+  position: absolute;
+  outline:none;
+  top: 5px;
+  min-width: 200px;
+  width: 100%;
+  height: 20px;
+  line-height: 20px;
+  color: rgba(0,0,0,0);
+  caret-color: black;
+}
+
+
+
+/*dark theme*/
+
+.highlight-input.dark{
+  border: 1px solid #424242;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.highlight-input.dark .red{
+  color: #fff;
+  background-color: #EF4444;
+}
+
+.highlight-input.dark .real-input{
+  caret-color: rgba(255, 255, 255, 0.85);
+}
