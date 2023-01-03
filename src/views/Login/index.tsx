@@ -1,7 +1,7 @@
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Card, Input, message, Space, Typography } from 'antd';
+import { App, Button, Card, Input, Space, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,6 +23,7 @@ let timer: NodeJS.Timer;
 
 const Login: FC = () => {
   const nav = useNavigate();
+  const { message } = App.useApp();
 
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState<string>('');

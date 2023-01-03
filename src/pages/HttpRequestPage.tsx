@@ -1,6 +1,6 @@
 import React, { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { message } from 'antd';
+import { App } from 'antd';
 import { useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -28,9 +28,12 @@ export type KeyValueType = {
 };
 
 const HttpRequestPage: PageFC<nodeType> = (props) => {
-  const { collectionTreeData, setPages, pages, activeEnvironment } = useStore();
+  const { message } = App.useApp();
   const { workspaceId } = useParams();
+
   const { theme } = useUserProfile();
+  const { collectionTreeData, setPages, pages, activeEnvironment } = useStore();
+
   const env = useMemo(() => {
     if (activeEnvironment) {
       return {

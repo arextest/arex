@@ -1,7 +1,7 @@
 import { DeleteOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Input, message, Select, Space, Table } from 'antd';
+import { App, Button, Input, Select, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useEffect, useRef } from 'react';
 import { useImmer } from 'use-immer';
@@ -21,6 +21,8 @@ type ExcludeOperationFormItem = { id: string; key: string; value: string[] };
 type ExcludeOperationProps = FormItemProps<ExcludeOperationFormItem[]> & { appId: string };
 
 const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
+  const { message } = App.useApp();
+
   const tableRowCount = useRef(0);
   const tableRef = useRef<HTMLDivElement>(null);
   const [value, setValue] = useImmer<ExcludeOperationFormItem[]>(

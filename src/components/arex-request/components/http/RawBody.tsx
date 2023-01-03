@@ -1,12 +1,15 @@
 import { json } from '@codemirror/lang-json';
 import { css } from '@emotion/react';
-import { message } from 'antd';
+import { App } from 'antd';
 import React, { useContext, useImperativeHandle, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useCodeMirror } from '../../helpers/editor/codemirror';
 import { HttpContext } from '../../index';
+
 const HttpRawBody = ({ cRef }: any) => {
+  const { message } = App.useApp();
+
   const rawBodyParameters = useRef(null);
   const { store, dispatch } = useContext(HttpContext);
   const { t } = useTranslation();

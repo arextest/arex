@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { App, message } from 'antd';
 import React from 'react';
 import { v4 as uuid } from 'uuid';
 
