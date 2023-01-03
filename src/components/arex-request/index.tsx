@@ -1,8 +1,6 @@
 import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
-import { TabPaneProps, TabsProps } from 'antd';
-import TabPane from 'antd/es/tabs/TabPane';
-import { string } from 'fp-ts';
+import { TabPaneProps } from 'antd';
 import produce, { Draft } from 'immer';
 import React, {
   createContext,
@@ -20,7 +18,6 @@ import TestResult from './components/http/TestResult';
 import { Environment } from './data/environment';
 import { HoppRESTRequest } from './data/rest';
 import { defaultState } from './defaultState';
-import ExtraRequestTabItemMock from './extra/ExtraRequestTabItemMock';
 import ExtraResponseTabItemCompareResult from './extra/ExtraResponseTabItemCompareResult';
 import { HoppRESTResponse } from './helpers/types/HoppRESTResponse';
 import { HoppTestResult } from './helpers/types/HoppTestResult';
@@ -166,13 +163,17 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
               `}
               className={'http-request-and-options'}
             >
-              <HttpRequest
-                breadcrumb={breadcrumb}
-                onSave={onSave}
-                onSend={onSend}
-                onSendCompare={onSendCompare}
-              />
-              <HttpRequestOptions config={config} />
+              {store.request.method && (
+                <>
+                  <HttpRequest
+                    breadcrumb={breadcrumb}
+                    onSave={onSave}
+                    onSend={onSend}
+                    onSendCompare={onSendCompare}
+                  />
+                  <HttpRequestOptions config={config} />
+                </>
+              )}
             </div>
           </Allotment.Pane>
           {renderResponse ? (

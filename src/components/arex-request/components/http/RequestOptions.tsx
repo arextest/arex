@@ -94,6 +94,7 @@ const HttpRequestOptions: FC<Pick<HttpProps, 'config'>> = ({ config }) => {
   return (
     <div
       css={css`
+        height: 100%;
         //相当于最小高度
         padding: 0 16px;
         flex: 1;

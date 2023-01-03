@@ -34,10 +34,8 @@ interface HttpRequestProps {
 }
 
 const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendCompare }) => {
-  const { message } = App.useApp();
-
   const { store, dispatch } = useContext(HttpContext);
-
+  const { message } = App.useApp();
   const { t } = useTranslation();
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     if (e.key === '1') {
@@ -84,15 +82,17 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
     }
     const urlPretreatment = (url: string) => {
       const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
-      let replaceVar = editorValueMatch[0];
-      const env = store.environment?.variables || [];
-      for (let i = 0; i < env.length; i++) {
-        if (env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')) {
-          replaceVar = env[i].value;
+      for (let j = 0; j < editorValueMatch.length; j++) {
+        let replaceVar = editorValueMatch[j];
+        const env = store.environment?.variables || [];
+        for (let i = 0; i < env.length; i++) {
+          if (env[i].key === editorValueMatch[j].replace('{{', '').replace('}}', '')) {
+            replaceVar = env[i].value;
+            url = url.replace(editorValueMatch[j], replaceVar);
+          }
         }
       }
-
-      return url.replace(editorValueMatch[0], replaceVar);
+      return url;
     };
 
     if (type === 'compare') {

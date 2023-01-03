@@ -16,7 +16,6 @@ import RunResult from './RunResult';
 
 const BatchRunPage: React.FC = () => {
   const { message } = App.useApp();
-  s;
   const { activeEnvironment } = useStore();
   const urlPretreatment = (url: string) => {
     // 正则匹配{{}}
