@@ -1,6 +1,6 @@
 import request from '../helpers/api/axios';
 import {
-  QueryInterfaceReq,
+  QueryCaseRes,
   QueryInterfaceRes,
   SaveInterfaceReq,
   SaveInterfaceRes,
@@ -11,7 +11,7 @@ export class FileSystemService {
     return request.post(`/api/filesystem/rename`, params);
   }
 
-  static async queryInterface(params: QueryInterfaceReq) {
+  static async queryInterface(params: { id: string }) {
     return request.post<QueryInterfaceRes>(`/api/filesystem/queryInterface`, params);
   }
 
@@ -23,8 +23,8 @@ export class FileSystemService {
     return request.post<SaveInterfaceRes>(`/api/filesystem/saveCase`, params);
   }
 
-  static async queryCase(params: any) {
-    return request.post<any>(`/api/filesystem/queryCase`, params);
+  static async queryCase(params: { id: string }) {
+    return request.post<QueryCaseRes>(`/api/filesystem/queryCase`, params);
   }
 
   static async importFile(params: any) {

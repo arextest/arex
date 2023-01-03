@@ -1,5 +1,8 @@
 import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
+import { TabPaneProps, TabsProps } from 'antd';
+import TabPane from 'antd/es/tabs/TabPane';
+import { string } from 'fp-ts';
 import produce, { Draft } from 'immer';
 import React, {
   createContext,
@@ -17,6 +20,7 @@ import TestResult from './components/http/TestResult';
 import { Environment } from './data/environment';
 import { HoppRESTRequest } from './data/rest';
 import { defaultState } from './defaultState';
+import ExtraRequestTabItemMock from './extra/ExtraRequestTabItemMock';
 import ExtraResponseTabItemCompareResult from './extra/ExtraResponseTabItemCompareResult';
 import { HoppRESTResponse } from './helpers/types/HoppRESTResponse';
 import { HoppTestResult } from './helpers/types/HoppTestResult';
@@ -35,6 +39,23 @@ export interface State {
 export type HttpImperativeHandle = {
   getRequestValue: () => State['request'];
 };
+
+interface Tab extends Omit<TabPaneProps, 'tab'> {
+  key: string;
+  label: React.ReactNode;
+  hidden?: boolean;
+}
+
+type TabConfig = {
+  extra?: Tab[];
+  filter?: (key: string) => boolean;
+};
+
+type HttpConfig = {
+  requestTabs?: TabConfig;
+  responseTabs?: TabConfig;
+};
+
 export interface HttpProps {
   environment: Environment;
   theme: 'dark' | 'light';
@@ -45,7 +66,7 @@ export interface HttpProps {
   ) => Promise<{ response: HoppRESTResponse; testResult: HoppTestResult }>;
   onSave: (r: HoppRESTRequest) => void;
   onSendCompare: (r: any) => Promise<any>;
-  config: any;
+  config?: HttpConfig;
   renderResponse?: boolean;
   onPin: any;
   defaultDisplayResponse: boolean;
@@ -103,7 +124,6 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
             },
           };
           state.testResult = {
-            // @ts-ignore
             children: [],
           };
         });
@@ -151,7 +171,7 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
                 onSave={onSave}
                 onSend={onSend}
                 onSendCompare={onSendCompare}
-              ></HttpRequest>
+              />
               <HttpRequestOptions config={config} />
             </div>
           </Allotment.Pane>

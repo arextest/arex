@@ -6,11 +6,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Updater } from 'use-immer';
 
-export type KeyValueType = {
-  key: string;
-  value: string;
-  active: boolean;
-};
+import { KeyValueType } from '../../services/FileSystem.type';
 
 const EditableKeyValueTable = styled(Table)<TableProps<KeyValueType> & { showHeader?: boolean }>`
   .ant-table-thead {

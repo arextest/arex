@@ -8,11 +8,11 @@ export type DefaultConfig = {
   compactMode: CompactMode;
 };
 
-const defaultConfig: DefaultConfig = {
+const defaultConfig: Readonly<DefaultConfig> = {
   language: 'en-US',
   colorPrimary: ColorPrimary.green,
   darkMode: false,
   compactMode: false,
-} as const;
+};
 
 export default defaultConfig;

@@ -5,12 +5,8 @@ import { FC } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Updater } from 'use-immer';
-export type KeyValueType = {
-  id: string;
-  key: string;
-  value: string;
-  active: boolean;
-};
+
+import { KeyValueType } from '../../../../services/FileSystem.type';
 
 export const FormHeaderWrapper = styled.div`
   display: flex;
@@ -35,7 +31,6 @@ const FormHeader: FC<{ update: Updater<KeyValueType[]>; title: string }> = (prop
       key: '',
       value: '',
       active: true,
-      id: String(Math.random()),
     };
     props.update((state) => {
       state.push(newValue);
