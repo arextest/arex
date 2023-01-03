@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { App } from 'antd';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -7,8 +7,9 @@ import { ExtensionVersion } from '../constant';
 import { getChromeVersion, versionStringCompare } from '../helpers/utils';
 
 const useCheckChrome = () => {
-  const { t } = useTranslation('components');
   const nav = useNavigate();
+  const { message } = App.useApp();
+  const { t } = useTranslation('components');
 
   useEffect(() => {
     if (getChromeVersion() < 0) {

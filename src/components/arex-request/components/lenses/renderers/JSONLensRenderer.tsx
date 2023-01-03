@@ -2,18 +2,17 @@ import { CopyOutlined } from '@ant-design/icons';
 import { json } from '@codemirror/lang-json';
 import { EditorView } from '@codemirror/view';
 import { css } from '@emotion/react';
-import { message, Tooltip } from 'antd';
+import { App, Tooltip } from 'antd';
 import copy from 'copy-to-clipboard';
 import React, { FC, useContext, useRef } from 'react';
 
 import { useCodeMirror } from '../../../helpers/editor/codemirror';
 import { HoppRESTResponse } from '../../../helpers/types/HoppRESTResponse';
 import { HttpContext } from '../../../index';
-function coppyUrl(text: string) {
-  copy(text);
-  message.success('copy success🎉');
-}
+
 const JSONLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
+  const { message } = App.useApp();
+
   const jsonResponse = useRef(null);
   const jsonObj = response.body;
   const { store } = useContext(HttpContext);
@@ -24,6 +23,11 @@ const JSONLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
     extensions: [json(), EditorView.lineWrapping],
     theme: store.theme,
   });
+
+  function copyUrl(text: string) {
+    copy(text);
+    message.success('copy success🎉');
+  }
   return (
     <div
       css={css`
@@ -47,7 +51,7 @@ const JSONLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
                   padding-bottom: 8px;
                   display: block;
                 `}
-                onClick={() => coppyUrl(JSON.stringify(jsonObj, null, 2))}
+                onClick={() => copyUrl(JSON.stringify(jsonObj, null, 2))}
               >
                 <CopyOutlined />
               </a>

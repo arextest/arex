@@ -1,5 +1,5 @@
 import { useRequest } from 'ahooks';
-import { Col, message, Row } from 'antd';
+import { App, Col, Row } from 'antd';
 import { TreeProps } from 'antd/lib/tree';
 import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
@@ -20,6 +20,8 @@ enum NodesEditMode {
 const GLOBAL_OPERATION_ID = '__global__';
 
 const SettingNodesIgnore: FC<{ appId: string }> = (props) => {
+  const { message } = App.useApp();
+
   const [checkedNodesData, setCheckedNodesData] = useImmer<{
     operationId?: OperationId<'Global'>;
     operationName?: string;

@@ -1,5 +1,5 @@
 import { UserAddOutlined } from '@ant-design/icons';
-import { Button, Form, message, Modal, Select, Space, Typography } from 'antd';
+import { App, Button, Form, Modal, Select, Space, Typography } from 'antd';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -11,6 +11,7 @@ const { Text } = Typography;
 const { Option } = Select;
 
 const InviteWorkspace = () => {
+  const { message } = App.useApp();
   const email = getLocalStorage<string>(EmailKey);
   const _useParams = useParams();
 

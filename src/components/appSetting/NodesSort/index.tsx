@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Card, Carousel, Col, message, Row, Space } from 'antd';
+import { App, Button, Card, Carousel, Col, Row, Space } from 'antd';
 import { CarouselRef } from 'antd/lib/carousel';
 import { TreeProps } from 'antd/lib/tree';
 import React, { FC, useMemo, useRef, useState } from 'react';
@@ -46,6 +46,8 @@ const TreeCarousel = styled(Carousel)`
 `;
 
 const SettingNodesSort: FC<{ appId: string }> = (props) => {
+  const { message } = App.useApp();
+
   const { t } = useTranslation('common');
 
   const treeCarousel = useRef<CarouselRef>(null);

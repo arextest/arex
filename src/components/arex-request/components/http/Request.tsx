@@ -1,7 +1,7 @@
 import { DownOutlined, SaveOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button, Divider, Dropdown, MenuProps, message, Select, Space } from 'antd';
+import { App, Button, Divider, Dropdown, MenuProps, Select, Space } from 'antd';
 import React, { FC, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -34,6 +34,8 @@ interface HttpRequestProps {
 }
 
 const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendCompare }) => {
+  const { message } = App.useApp();
+
   const { store, dispatch } = useContext(HttpContext);
 
   const { t } = useTranslation();

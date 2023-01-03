@@ -74,6 +74,7 @@ const FolderPage: PageFC = () => {
           label: 'Pre-request Script',
           children: (
             <ScriptBlocks
+              multiple
               value={items}
               blocksSource={ScriptBlocksSource}
               onAdd={handleAdd}

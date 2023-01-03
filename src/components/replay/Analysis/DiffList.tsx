@@ -1,6 +1,6 @@
 import { StopOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { Button, Card, message, Space, Tag, Typography } from 'antd';
+import { App, Button, Card, Space, Tag, Typography } from 'antd';
 import React, { FC } from 'react';
 
 import AppSettingService from '../../../services/AppSetting.service';
@@ -43,6 +43,8 @@ export type DiffListType = {
 };
 
 const DiffList: FC<DiffListType> = (props) => {
+  const { message } = App.useApp();
+
   const { data: diffData, loading } = useRequest(
     () =>
       ReplayService.queryMsgWithDiff({

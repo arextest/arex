@@ -1,7 +1,7 @@
 import { CodeOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Collapse, List, message, Spin } from 'antd';
+import { App, Button, Collapse, List, Spin } from 'antd';
 import React, { FC } from 'react';
 
 import AppSettingService from '../../../services/AppSetting.service';
@@ -34,6 +34,8 @@ const CollapseWrapper = styled.div`
 `;
 
 const PathCollapse: FC<PathCollapseProps> = (props) => {
+  const { message } = App.useApp();
+
   const handleEdit = (sortNode: SortNode) => props.onEdit && props.onEdit(sortNode.path, sortNode);
 
   /**

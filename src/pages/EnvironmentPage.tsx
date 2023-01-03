@@ -6,7 +6,7 @@ import {
   SaveOutlined,
 } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { Button, Divider, message, Popconfirm, Space } from 'antd';
+import { App, Button, Divider, Popconfirm, Space } from 'antd';
 import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useImmer } from 'use-immer';
@@ -25,6 +25,7 @@ const EnvironmentPage: PageFC<Environment> = (props) => {
       data: { id },
     },
   } = props;
+  const { message } = App.useApp();
 
   const { workspaceId } = useParams();
   const {

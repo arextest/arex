@@ -1,6 +1,6 @@
 import { AimOutlined, PlusOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { message, theme } from 'antd';
+import { App, theme } from 'antd';
 import React, { FC } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -14,6 +14,12 @@ import { useStore } from '../store';
 import { MenusType } from './index';
 
 const EnvironmentMenu: FC = () => {
+  const params = useParams();
+  const { message } = App.useApp();
+  const {
+    token: { colorPrimary },
+  } = theme.useToken();
+
   const {
     setPages,
     activeWorkspaceId,
@@ -21,10 +27,6 @@ const EnvironmentMenu: FC = () => {
     environmentLastManualUpdateTimestamp,
     setEnvironmentLastManualUpdateTimestamp,
   } = useStore();
-  const params = useParams();
-  const {
-    token: { colorPrimary },
-  } = theme.useToken();
 
   const handleEnvMenuClick = (env: Environment) => {
     setPages(

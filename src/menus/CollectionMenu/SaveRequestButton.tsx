@@ -1,4 +1,4 @@
-import { Form, Input, Modal, Select, TreeSelect, Typography } from 'antd';
+import { App, Form, Input, Modal, Select, TreeSelect, Typography } from 'antd';
 import React, { FC, forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -41,6 +41,7 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = (
   ref,
 ) => {
   const _useParams = useParams();
+  const { message } = App.useApp();
   const userName = getLocalStorage<string>(EmailKey);
 
   const [form] = Form.useForm();
@@ -90,36 +91,40 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = (
                   (i) => i.key,
                 ),
                 userName,
-              }).then((res) => {
-                const req = {
-                  '1': FileSystemService.saveInterface,
-                  '2': FileSystemService.saveCase,
-                };
-                req[values.nodeType]({
-                  address: {
-                    endpoint: reqParams.endpoint,
-                    method: reqParams.method,
-                  },
-                  body: reqParams.body,
-                  headers: reqParams.headers,
-                  params: reqParams.params,
-                  testScript: reqParams.testScript,
-                  testAddress: {
-                    endpoint: reqParams.compareEndpoint,
-                    method: reqParams.compareMethod,
-                  },
-                  id: res.body.infoId,
-                  workspaceId: _useParams.workspaceId,
-                }).then(() => {
-                  // 通知父组件
-                  onSaveAs({
-                    key: res.body.infoId,
-                    title: values.requestName,
+              })
+                .then((res) => {
+                  const req = {
+                    '1': FileSystemService.saveInterface,
+                    '2': FileSystemService.saveCase,
+                  };
+                  req[values.nodeType]({
+                    address: {
+                      endpoint: reqParams.endpoint,
+                      method: reqParams.method,
+                    },
+                    body: reqParams.body,
+                    headers: reqParams.headers,
+                    params: reqParams.params,
+                    testScript: reqParams.testScript,
+                    testAddress: {
+                      endpoint: reqParams.compareEndpoint,
+                      method: reqParams.compareMethod,
+                    },
+                    id: res.body.infoId,
+                    workspaceId: _useParams.workspaceId,
+                  }).then(() => {
+                    // 通知父组件
+                    onSaveAs({
+                      key: res.body.infoId,
+                      title: values.requestName,
+                    });
+                    setOpen(false);
+                    form.resetFields();
                   });
-                  setOpen(false);
-                  form.resetFields();
+                })
+                .catch((e) => {
+                  message.error(e);
                 });
-              });
             })
             .catch((info) => {
               console.log('Validate Failed:', info);
