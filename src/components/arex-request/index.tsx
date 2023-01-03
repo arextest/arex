@@ -147,7 +147,11 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
               className={'http-request-and-options'}
             >
               {store.request.method !== '' ? (
-                <div>
+                <div
+                  css={css`
+                    height: 100%;
+                  `}
+                >
                   <HttpRequest
                     breadcrumb={breadcrumb}
                     onSave={onSave}

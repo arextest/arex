@@ -5,9 +5,8 @@ import { App, Button, Divider, Dropdown, MenuProps, Select, Space } from 'antd';
 import React, { FC, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { HOPP_ENVIRONMENT_REGEX } from '../../helpers/editor/extensions/HoppEnvironment';
 import { HttpContext, HttpProps } from '../../index';
-import HighlightInput from '../smart/HighlightInput';
+import SmartEnvInput from '../smart/EnvInput';
 
 const HeaderWrapper = styled.div`
   display: flex;
@@ -35,10 +34,8 @@ interface HttpRequestProps {
 }
 
 const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendCompare }) => {
-  const { message } = App.useApp();
-
   const { store, dispatch } = useContext(HttpContext);
-
+  const { message } = App.useApp();
   const { t } = useTranslation();
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     if (e.key === '1') {
@@ -133,61 +130,6 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
     }
   };
 
-  const highLightInputTooltip = {
-    pattern: HOPP_ENVIRONMENT_REGEX,
-    class: (match: any) => {
-      if (
-        store.environment.variables
-          .map((v) => v.key)
-          .includes(match.replace('{{', '').replace('}}', ''))
-      ) {
-        return 'green';
-      } else {
-        return 'red';
-      }
-    },
-    tooltip: (match: any) => {
-      const key = match.replace('{{', '').replace('}}', '');
-      const v = store.environment.variables.find((v) => v.key === key);
-
-      if (!v?.value) {
-        return (
-          <div>
-            {'Choose an Environment'}
-
-            <span
-              style={{
-                backgroundColor: 'rgb(184,187,192)',
-                padding: '0 4px',
-                marginLeft: '4px',
-                borderRadius: '2px',
-              }}
-            >
-              {'Not found'}
-            </span>
-          </div>
-        );
-      } else {
-        return (
-          <div>
-            {store.environment.name}
-
-            <span
-              style={{
-                backgroundColor: 'rgb(184,187,192)',
-                padding: '0 4px',
-                marginLeft: '4px',
-                borderRadius: '2px',
-              }}
-            >
-              {v?.value}
-            </span>
-          </div>
-        );
-      }
-    },
-  };
-
   return (
     <div
       css={css`
@@ -247,15 +189,13 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
               });
             }}
           />
-          <HighlightInput
+          <SmartEnvInput
             value={store.request.endpoint}
             onChange={(value) => {
               dispatch((state) => {
                 state.request.endpoint = value;
               });
             }}
-            highlight={highLightInputTooltip}
-            theme={store.theme}
           />
         </Space.Compact>
 
@@ -290,15 +230,13 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
                 });
               }}
             />
-            <HighlightInput
+            <SmartEnvInput
               value={store.request.compareEndpoint}
               onChange={(value) => {
                 dispatch((state) => {
                   state.request.compareEndpoint = value;
                 });
               }}
-              highlight={highLightInputTooltip}
-              theme={store.theme}
             />
           </Space.Compact>
 
