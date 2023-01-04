@@ -1,7 +1,6 @@
-// @ts-nocheck
 import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
-import { Button, Checkbox, Col, Form, message, Row, Space, Tabs, Tree } from 'antd';
+import { App, Button, Checkbox, Col, Form, Row, Space, Tabs, Tree } from 'antd';
 import { Divider } from 'antd';
 import type { TreeProps } from 'antd/es/tree';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -16,6 +15,7 @@ import { useStore } from '../../store';
 import RunResult from './RunResult';
 
 const BatchRunPage: React.FC = () => {
+  const { message } = App.useApp();
   const { activeEnvironment } = useStore();
   const urlPretreatment = (url: string) => {
     // 正则匹配{{}}

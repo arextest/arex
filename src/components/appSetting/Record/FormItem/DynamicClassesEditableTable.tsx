@@ -6,7 +6,7 @@ import {
   SaveOutlined,
 } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { Button, Input, message, Popconfirm, Space, Table } from 'antd';
+import { App, Button, Input, Popconfirm, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { FC, useCallback, useState } from 'react';
 import { Updater, useImmer } from 'use-immer';
@@ -28,6 +28,8 @@ const InitRowData = {
 };
 
 const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props) => {
+  const { message } = App.useApp();
+
   const [editableRow, setEditableRow] = useState<string>();
   const [fullClassNameInputStatus, setFullClassNameInputStatus] = useState<
     '' | 'error' | 'warning'

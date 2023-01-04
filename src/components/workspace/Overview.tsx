@@ -1,12 +1,12 @@
 import { useRequest } from 'ahooks';
 import {
+  App,
   Avatar,
   Button,
   Divider,
   Form,
   Input,
   List,
-  message,
   Popconfirm,
   Space,
   Typography,
@@ -23,6 +23,7 @@ import { useStore } from '../../store';
 const { Text } = Typography;
 
 const WorkspaceSetting: FC = () => {
+  const { message } = App.useApp();
   const params = useParams();
   const nav = useNavigate();
   const {

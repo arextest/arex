@@ -1,7 +1,7 @@
 import { DownOutlined, SaveOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button, Divider, Dropdown, MenuProps, message, Select, Space } from 'antd';
+import { App, Button, Divider, Dropdown, MenuProps, Select, Space } from 'antd';
 import React, { FC, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -35,7 +35,7 @@ interface HttpRequestProps {
 
 const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendCompare }) => {
   const { store, dispatch } = useContext(HttpContext);
-
+  const { message } = App.useApp();
   const { t } = useTranslation();
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     if (e.key === '1') {
@@ -82,15 +82,17 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
     }
     const urlPretreatment = (url: string) => {
       const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
-      let replaceVar = editorValueMatch[0];
-      const env = store.environment?.variables || [];
-      for (let i = 0; i < env.length; i++) {
-        if (env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')) {
-          replaceVar = env[i].value;
+      for (let j = 0; j < editorValueMatch.length; j++) {
+        let replaceVar = editorValueMatch[j];
+        const env = store.environment?.variables || [];
+        for (let i = 0; i < env.length; i++) {
+          if (env[i].key === editorValueMatch[j].replace('{{', '').replace('}}', '')) {
+            replaceVar = env[i].value;
+            url = url.replace(editorValueMatch[j], replaceVar);
+          }
         }
       }
-
-      return url.replace(editorValueMatch[0], replaceVar);
+      return url;
     };
 
     if (type === 'compare') {

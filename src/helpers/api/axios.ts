@@ -1,4 +1,3 @@
-import { message } from 'antd';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { AccessTokenKey } from '../../constant';
@@ -55,14 +54,11 @@ export class Request {
     this.instance.interceptors.response.use(
       (response) => {
         if (response.data.responseStatusType.responseDesc === 'no permission') {
-          message.error(response.data.responseStatusType.responseDesc);
+          return Promise.reject(response.data.responseStatusType.responseDesc);
         }
-        return response.data;
+        return Promise.resolve(response.data);
       },
       (error) => {
-        if (error.response) {
-          message.error(error.response.data.message);
-        }
         return Promise.reject(error);
       },
     );

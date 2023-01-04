@@ -8,7 +8,7 @@ import {
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import type { InputRef } from 'antd';
-import { Button, Collapse, Input, List, message, Spin } from 'antd';
+import { App, Button, Collapse, Input, List, Spin } from 'antd';
 import React, { FC, SyntheticEvent, useRef, useState } from 'react';
 
 import AppSettingService from '../../../services/AppSetting.service';
@@ -40,6 +40,8 @@ type PathCollapseProps = {
 };
 
 const PathCollapse: FC<PathCollapseProps> = (props) => {
+  const { message } = App.useApp();
+
   const editInputRef = useRef<InputRef>(null);
   const [ignoredKey, setIgnoredKey] = useState('');
   const [editMode, setEditMode] = useState(false);

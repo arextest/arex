@@ -1,7 +1,7 @@
 import { SaveOutlined } from '@ant-design/icons';
 import { json } from '@codemirror/lang-json';
 import { useRequest } from 'ahooks';
-import { Card, Col, message, Row, Space } from 'antd';
+import { App, Card, Col, Row, Space } from 'antd';
 import React, { FC } from 'react';
 import { useImmer } from 'use-immer';
 
@@ -31,6 +31,7 @@ type MockData = {
 };
 
 const ExtraRequestTabItemMock: FC<{ recordId: string }> = ({ recordId }) => {
+  const { message } = App.useApp();
   const { theme } = useUserProfile();
   const [mockData, setMockData] = useImmer<MockData[]>([]);
 

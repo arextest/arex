@@ -89,7 +89,7 @@ function ScriptBlocks<T>(props: ScriptBlocksProps<T>) {
         <ScriptSnippets
           language='javascript'
           snippets={props.snippets}
-          value={value?.[0].value as string | undefined}
+          value={value?.[0]?.value as string | undefined}
           onChange={(value) => props.onChange({ value })}
         />
       )}

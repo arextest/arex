@@ -1,5 +1,5 @@
 import { useRequest } from 'ahooks';
-import { Button, message } from 'antd';
+import { App, Button } from 'antd';
 import React, { FC, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -14,6 +14,7 @@ type ImportYamlProps = {
 };
 
 const ImportYaml: FC<ImportYamlProps> = (props) => {
+  const { message } = App.useApp();
   const { t } = useTranslation('common');
   const yamlRef = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState('');

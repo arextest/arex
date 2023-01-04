@@ -1,7 +1,7 @@
 import { MoreOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button, Dropdown, Input, Popconfirm } from 'antd';
+import { App, Button, Dropdown, Input, Popconfirm } from 'antd';
 import React, { ReactNode, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -32,6 +32,7 @@ function CollectionTitle({
   callbackOfNewRequest,
   searchValue,
 }: any) {
+  const { message } = App.useApp();
   const _useParams = useParams();
   const { setPages } = useStore();
   const userName = getLocalStorage<string>(EmailKey);
@@ -110,9 +111,11 @@ function CollectionTitle({
               nodeType: 3,
               parentPath: paths.map((i: any) => i.key),
               userName,
-            }).then(() => {
-              updateDirectoryTreeData();
-            });
+            })
+              .then(() => {
+                updateDirectoryTreeData();
+              })
+              .catch((e) => message.error(e));
             break;
           case '1':
             CollectionService.addItem({

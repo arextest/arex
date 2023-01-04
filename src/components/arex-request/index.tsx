@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
+import { TabPaneProps } from 'antd';
 import produce, { Draft } from 'immer';
 import React, {
   createContext,
@@ -35,6 +36,23 @@ export interface State {
 export type HttpImperativeHandle = {
   getRequestValue: () => State['request'];
 };
+
+interface Tab extends Omit<TabPaneProps, 'tab'> {
+  key: string;
+  label: React.ReactNode;
+  hidden?: boolean;
+}
+
+type TabConfig = {
+  extra?: Tab[];
+  filter?: (key: string) => boolean;
+};
+
+type HttpConfig = {
+  requestTabs?: TabConfig;
+  responseTabs?: TabConfig;
+};
+
 export interface HttpProps {
   environment: Environment;
   theme: 'dark' | 'light';
@@ -45,7 +63,7 @@ export interface HttpProps {
   ) => Promise<{ response: HoppRESTResponse; testResult: HoppTestResult }>;
   onSave: (r: HoppRESTRequest) => void;
   onSendCompare: (r: any) => Promise<any>;
-  config: any;
+  config?: HttpConfig;
   renderResponse?: boolean;
   onPin: any;
   defaultDisplayResponse: boolean;
@@ -103,7 +121,6 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
             },
           };
           state.testResult = {
-            // @ts-ignore
             children: [],
           };
         });
@@ -146,13 +163,17 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
               `}
               className={'http-request-and-options'}
             >
-              <HttpRequest
-                breadcrumb={breadcrumb}
-                onSave={onSave}
-                onSend={onSend}
-                onSendCompare={onSendCompare}
-              />
-              <HttpRequestOptions config={config} />
+              {store.request.method && (
+                <>
+                  <HttpRequest
+                    breadcrumb={breadcrumb}
+                    onSave={onSave}
+                    onSend={onSend}
+                    onSendCompare={onSendCompare}
+                  />
+                  <HttpRequestOptions config={config} />
+                </>
+              )}
             </div>
           </Allotment.Pane>
           {renderResponse && (

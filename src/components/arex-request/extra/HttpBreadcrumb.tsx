@@ -1,7 +1,7 @@
 import { EditOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { Breadcrumb, message, Select, Tag, Typography } from 'antd';
+import { App, Breadcrumb, Select, Tag, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -16,11 +16,11 @@ const HttpBreadcrumb: FC<{
   defaultTags: string[];
   nodeType: number;
 }> = ({ nodePaths, id, defaultTags, nodeType }) => {
-  const [editEditAble, setEditAble] = useState(false);
-
-  const [labelValue, setLabelValue] = useState<string[]>([]);
-
   const params = useParams();
+  const { message } = App.useApp();
+
+  const [editEditAble, setEditAble] = useState(false);
+  const [labelValue, setLabelValue] = useState<string[]>([]);
 
   const { data } = useRequest<{ id: string; labelName: string; color: string }[], any[]>(() =>
     request

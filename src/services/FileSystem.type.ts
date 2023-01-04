@@ -1,7 +1,18 @@
 import { ReactNode } from 'react';
 
+import { HoppRESTRequest } from '../components/arex-request/data/rest';
 import { METHODS, NodeType } from '../constant';
-import { KeyValueType } from '../pages/HttpRequestPage';
+
+export type KeyValueType = {
+  key: string;
+  value: string;
+  active?: boolean;
+};
+
+export type Address = {
+  method: typeof METHODS[number];
+  endpoint: string;
+};
 
 // ------ /api/filesystem/queryWorkspaceById ------
 export interface QueryWorkspaceByIdReq {
@@ -30,20 +41,20 @@ export interface QueryWorkspaceByIdRes {
   fsTree: FsTree;
 }
 
-// ------ /api/filesystem/saveInterface ------
-export interface QueryInterfaceReq {
-  id: string;
-}
+// ------ /api/filesystem/queryInterface ------
+
 export interface QueryInterfaceRes {
   id: string;
-  endpoint: string | null;
-  method: typeof METHODS[number] | null;
-  preRequestScript: string | null;
-  testScript: string | null;
-  body: object | null;
-  headers: object | null;
-  params: object | null;
-  auth: string | null;
+  name: string | null;
+  address: Address;
+  preRequestScripts: HoppRESTRequest['preRequestScripts'];
+  testScripts: HoppRESTRequest['testScripts'];
+  body: { [key: string]: string };
+  headers: KeyValueType[];
+  params: KeyValueType[];
+  auth: null;
+  testAddress: Address;
+  customTags: null;
 }
 
 // ------ /api/filesystem/saveInterface ------
@@ -64,4 +75,12 @@ export interface SaveInterfaceReq {
 }
 export interface SaveInterfaceRes {
   success: boolean;
+}
+
+// ------ /api/filesystem/queryCase ------
+export interface QueryCaseRes extends QueryInterfaceRes {
+  recordId: string | null;
+  comparisonMsg: null;
+  labelIds: string[];
+  description: null;
 }

@@ -1,10 +1,10 @@
 import { useRequest } from 'ahooks';
-import { Button, Form, InputNumber, message } from 'antd';
+import { App, Button, Form, InputNumber } from 'antd';
 import React from 'react';
 import { useImmer } from 'use-immer';
 
-import { KeyValueType } from '../../../pages/HttpRequestPage';
 import AppSettingService from '../../../services/AppSetting.service';
+import { KeyValueType } from '../../../services/FileSystem.type';
 import { SettingRecordProps } from '../Record';
 import SettingForm from '../SettingForm';
 import { ExcludeOperation } from './FormItem';
@@ -20,6 +20,8 @@ const defaultValues: SettingFormType = {
 };
 
 const SettingReplay: React.FC<SettingRecordProps> = ({ appId, agentVersion }) => {
+  const { message } = App.useApp();
+
   const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
 
   const { loading } = useRequest(AppSettingService.queryReplaySetting, {

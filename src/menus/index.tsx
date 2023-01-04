@@ -51,17 +51,10 @@ const CommonConfig: MenuConfig[] = [
     Menu: EnvironmentMenu,
   },
   {
-    key: MenusType.Setting,
-    label: MenusType.Setting,
+    key: MenusType.AppSetting,
+    label: MenusType.AppSetting,
     icon: <SettingOutlined />,
-    children: [
-      {
-        key: MenusType.AppSetting,
-        label: MenusType.AppSetting,
-        icon: <SettingOutlined />,
-        Menu: AppSettingMenu,
-      },
-    ],
+    Menu: AppSettingMenu,
   },
 ];
 
