@@ -11,59 +11,56 @@ const Test = styled.div`
   padding: 6px;
 `;
 
-const LensesHeadersRendererEntry: FC<{ header: HoppRESTHeader; onPin: any }> = ({
-  header,
-  onPin,
-}) => {
-  return (
-    <div>
-      {header.key === 'arex-record-id' ? (
-        <Row>
-          <Col className='gutter-row' span={12}>
-            <Test>
-              {header.key}
-              <Button
-                size={'small'}
-                css={css`
-                  visibility: hidden;
-                `}
-              >
-                Pin
-              </Button>
-            </Test>
-          </Col>
+export type LensesHeadersRendererEntryProps = {
+  header: HoppRESTHeader;
+  onPin: (recordId: string) => void;
+};
 
-          <Col className='gutter-row' span={12}>
-            <Test>
-              {' '}
-              {header.value}
-              <Button
-                css={css`
-                  margin-left: 8px;
-                `}
-                type={'primary'}
-                size={'small'}
-                onClick={() => {
-                  onPin(header.value);
-                }}
-              >
-                Pin
-              </Button>
-            </Test>
-          </Col>
-        </Row>
-      ) : (
-        <Row>
-          <Col className='gutter-row' span={12}>
-            <Test>{header.key}</Test>
-          </Col>
+const LensesHeadersRendererEntry: FC<LensesHeadersRendererEntryProps> = ({ header, onPin }) => {
+  return header.key === 'arex-record-id' ? (
+    <Row>
+      <Col className='gutter-row' span={12}>
+        <Test>
+          {header.key}
+          <Button
+            size={'small'}
+            css={css`
+              visibility: hidden;
+            `}
+          >
+            Pin
+          </Button>
+        </Test>
+      </Col>
 
-          <Col className='gutter-row' span={12}>
-            <Test> {header.value}</Test>
-          </Col>
-        </Row>
-      )}
-    </div>
+      <Col className='gutter-row' span={12}>
+        <Test>
+          {header.value}
+          <Button
+            css={css`
+              margin-left: 8px;
+            `}
+            type={'primary'}
+            size={'small'}
+            onClick={() => {
+              onPin(header.value);
+            }}
+          >
+            Pin
+          </Button>
+        </Test>
+      </Col>
+    </Row>
+  ) : (
+    <Row>
+      <Col className='gutter-row' span={12}>
+        <Test>{header.key}</Test>
+      </Col>
+
+      <Col className='gutter-row' span={12}>
+        <Test> {header.value}</Test>
+      </Col>
+    </Row>
   );
 };
 

@@ -1,7 +1,6 @@
 import { State } from '.';
 
 export const defaultState: State = {
-  // @ts-ignore
   request: {
     v: '',
     headers: [],
@@ -10,7 +9,6 @@ export const defaultState: State = {
       contentType: 'application/json',
       body: '',
     },
-
     auth: {
       authURL: 'http://petstore.swagger.io/api/oauth/dialog',
       oidcDiscoveryURL: '',
@@ -22,8 +20,12 @@ export const defaultState: State = {
       authActive: true,
     },
     endpoint: '',
-    method: '',
+    method: 'GET',
+    compareMethod: 'GET',
+    compareEndpoint: '',
     params: [],
+    preRequestScripts: [],
+    testScripts: [],
   },
   response: null,
   testResult: null,

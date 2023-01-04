@@ -1,9 +1,10 @@
 import request from '../helpers/api/axios';
 import {
+  PinkMockReq,
   QueryCaseRes,
   QueryInterfaceRes,
+  SaveCaseReq,
   SaveInterfaceReq,
-  SaveInterfaceRes,
 } from './FileSystem.type';
 
 export class FileSystemService {
@@ -12,22 +13,49 @@ export class FileSystemService {
   }
 
   static async queryInterface(params: { id: string }) {
-    return request.post<QueryInterfaceRes>(`/api/filesystem/queryInterface`, params);
+    const res = await request.post<QueryInterfaceRes>(`/api/filesystem/queryInterface`, params);
+    const {
+      body: { address, testAddress, ...rest },
+    } = res;
+    return {
+      ...rest,
+      method: address.method,
+      endpoint: address.endpoint,
+      compareMethod: testAddress.method,
+      compareEndpoint: testAddress.endpoint,
+    };
   }
 
   static async saveInterface(params: SaveInterfaceReq) {
-    return request.post<SaveInterfaceRes>(`/api/filesystem/saveInterface`, params);
+    const res = await request.post<{ success: boolean }>(`/api/filesystem/saveInterface`, params);
+    return res.body.success;
   }
 
-  static async saveCase(params: SaveInterfaceReq) {
-    return request.post<SaveInterfaceRes>(`/api/filesystem/saveCase`, params);
+  static async saveCase(params: SaveCaseReq) {
+    const res = await request.post<{ success: boolean }>(`/api/filesystem/saveCase`, params);
+    return res.body.success;
   }
 
   static async queryCase(params: { id: string }) {
-    return request.post<QueryCaseRes>(`/api/filesystem/queryCase`, params);
+    const res = await request.post<QueryCaseRes>(`/api/filesystem/queryCase`, params);
+    const {
+      body: { address, testAddress, ...rest },
+    } = res;
+    return {
+      ...rest,
+      method: address.method,
+      endpoint: address.endpoint,
+      compareMethod: testAddress.method,
+      compareEndpoint: testAddress.endpoint,
+    };
   }
 
   static async importFile(params: any) {
     return request.post<any>(`/api/filesystem/import`, params);
+  }
+
+  static async pinMock(params: PinkMockReq) {
+    const res = await request.post<{ success: boolean }>(`/api/filesystem/pinMock`, params);
+    return res.body.success;
   }
 }

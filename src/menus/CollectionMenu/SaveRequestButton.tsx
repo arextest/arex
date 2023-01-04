@@ -1,8 +1,9 @@
 import { App, Form, Input, Modal, Select, TreeSelect, Typography } from 'antd';
-import React, { FC, forwardRef, useImperativeHandle, useMemo, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ContentTypeEnum, EmailKey } from '../../constant';
+import { HoppRESTRequest } from '../../components/arex-request/data/rest';
+import { EmailKey } from '../../constant';
 import { treeFindPath } from '../../helpers/collection/util';
 import { getLocalStorage } from '../../helpers/utils';
 import { CollectionService } from '../../services/Collection.service';
@@ -10,53 +11,27 @@ import { FileSystemService } from '../../services/FileSystem.service';
 const { Text } = Typography;
 
 type SaveRequestButtonProps = {
-  reqParams: {
-    auth: unknown;
-    body: {
-      contentType: ContentTypeEnum;
-      body: string;
-    };
-    address: {
-      endpoint: string;
-      method;
-    };
-    baseAddress: {
-      endpoint: string;
-      method;
-    };
-    testAddress: {
-      endpoint: string;
-      method;
-    };
-    headers: any[];
-    params: any[];
-    preRequestScript: unknown;
-    testScript: unknown;
-  };
+  open: boolean;
+  reqParams?: HoppRESTRequest;
   collectionTreeData: any;
   onSaveAs: any;
+  onClose: () => void;
 };
-const SaveRequestButton: FC<SaveRequestButtonProps> = (
-  { reqParams, collectionTreeData, onSaveAs },
-  ref,
-) => {
-  const _useParams = useParams();
+
+const SaveRequestButton: FC<SaveRequestButtonProps> = ({
+  open,
+  reqParams,
+  collectionTreeData,
+  onSaveAs,
+  onClose,
+}) => {
+  const params = useParams();
   const { message } = App.useApp();
   const userName = getLocalStorage<string>(EmailKey);
 
   const [form] = Form.useForm();
   const [value, setValue] = useState<string>();
-  const [open, setOpen] = useState<boolean>(false);
   const [nodeType, setNodeType] = useState<string>('1');
-  const onChange = (newValue: string) => {
-    setValue(newValue);
-  };
-
-  useImperativeHandle(ref, () => ({
-    open: () => {
-      setOpen(true);
-    },
-  }));
 
   const collectionTreeSelectData = useMemo(() => {
     const mapTree = (tree) => {
@@ -71,131 +46,131 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = (
     return mapTree({ children: collectionTreeData })['children'];
   }, [collectionTreeData, nodeType]);
 
-  return (
-    <div>
-      <Modal
-        open={open}
-        title={`SAVE ${nodeType === '1' ? 'REQUEST' : 'CASE'}`}
-        okText='Create'
-        cancelText='Cancel'
-        onCancel={() => setOpen(false)}
-        onOk={() => {
-          form
-            .validateFields()
-            .then((values) => {
-              CollectionService.addItem({
-                id: _useParams.workspaceId,
-                nodeName: values.requestName,
-                nodeType: values.nodeType,
-                parentPath: treeFindPath(collectionTreeData, (node) => node.key === value)?.map(
-                  (i) => i.key,
-                ),
-                userName,
-              })
-                .then((res) => {
-                  const req = {
-                    '1': FileSystemService.saveInterface,
-                    '2': FileSystemService.saveCase,
-                  };
-                  req[values.nodeType]({
-                    address: {
-                      endpoint: reqParams.endpoint,
-                      method: reqParams.method,
-                    },
-                    body: reqParams.body,
-                    headers: reqParams.headers,
-                    params: reqParams.params,
-                    testScript: reqParams.testScript,
-                    testAddress: {
-                      endpoint: reqParams.compareEndpoint,
-                      method: reqParams.compareMethod,
-                    },
-                    id: res.body.infoId,
-                    workspaceId: _useParams.workspaceId,
-                  }).then(() => {
-                    // 通知父组件
-                    onSaveAs({
-                      key: res.body.infoId,
-                      title: values.requestName,
-                    });
-                    setOpen(false);
-                    form.resetFields();
-                  });
-                })
-                .catch((e) => {
-                  message.error(e);
-                });
-            })
-            .catch((info) => {
-              console.log('Validate Failed:', info);
+  const handleSave = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        CollectionService.addItem({
+          id: params.workspaceId,
+          nodeName: values.requestName,
+          nodeType: values.nodeType,
+          parentPath: treeFindPath(collectionTreeData, (node) => node.key === value)?.map(
+            (i) => i.key,
+          ),
+          userName,
+        })
+          .then((res) => {
+            const req = {
+              '1': FileSystemService.saveInterface,
+              '2': FileSystemService.saveCase,
+            };
+            req[values.nodeType]({
+              address: {
+                endpoint: reqParams.endpoint,
+                method: reqParams.method,
+              },
+              body: reqParams.body,
+              headers: reqParams.headers,
+              params: reqParams.params,
+              testScript: reqParams.testScript,
+              testAddress: {
+                endpoint: reqParams.compareEndpoint,
+                method: reqParams.compareMethod,
+              },
+              id: res.body.infoId,
+              workspaceId: params.workspaceId,
+            }).then(() => {
+              // 通知父组件
+              onSaveAs({
+                key: res.body.infoId,
+                title: values.requestName,
+              });
+              onClose();
+              form.resetFields();
             });
+          })
+          .catch((e) => {
+            message.error(e);
+          });
+      })
+      .catch((info) => {
+        console.log('Validate Failed:', info);
+      });
+  };
+
+  return (
+    <Modal
+      open={open}
+      title={`SAVE ${nodeType === '1' ? 'REQUEST' : 'CASE'}`}
+      okText='Create'
+      cancelText='Cancel'
+      onCancel={onClose}
+      onOk={handleSave}
+    >
+      <Form
+        form={form}
+        layout='vertical'
+        name='form_in_modal'
+        initialValues={{
+          modifier: 'public',
+          nodeType: '1',
         }}
       >
-        <Form
-          form={form}
-          layout='vertical'
-          name='form_in_modal'
-          initialValues={{
-            modifier: 'public',
-            nodeType: '1',
-          }}
+        <Form.Item name='nodeType' label='Type'>
+          <Select
+            options={[
+              { label: 'Request', value: '1' },
+              { label: 'Case', value: '2' },
+            ]}
+            onSelect={(val) => {
+              setNodeType(val);
+            }}
+          />
+        </Form.Item>
+        <Form.Item
+          name='requestName'
+          label='Request name'
+          rules={[
+            {
+              required: true,
+              message: 'Please input the title of collection!',
+            },
+          ]}
         >
-          <Form.Item name='nodeType' label='Type'>
-            <Select
-              options={[
-                { label: 'Request', value: '1' },
-                { label: 'Case', value: '2' },
-              ]}
-              onSelect={(val) => {
-                setNodeType(val);
-              }}
-            />
-          </Form.Item>
-          <Form.Item
-            name='requestName'
-            label='Request name'
-            rules={[
-              {
-                required: true,
-                message: 'Please input the title of collection!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <p>
-            <span>Save to </span>
-            <Text type='secondary'>
-              {treeFindPath(collectionTreeData, (node) => node.key === value)
-                ?.map((i) => i.title)
-                .join(' / ')}
-            </Text>
-          </p>
-          <Form.Item
-            name='savePath'
-            label=''
-            rules={[
-              {
-                required: true,
-                message: 'Please input the title of collection!',
-              },
-            ]}
-          >
-            <TreeSelect
-              fieldNames={{ label: 'title', value: 'key' }}
-              style={{ width: '100%' }}
-              value={value}
-              dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-              treeData={collectionTreeSelectData}
-              placeholder='Please select'
-              treeDefaultExpandAll
-              onChange={onChange}
-            />
-          </Form.Item>
-        </Form>
-      </Modal>
-    </div>
+          <Input />
+        </Form.Item>
+        <p>
+          <span>Save to </span>
+          <Text type='secondary'>
+            {treeFindPath(collectionTreeData, (node) => node.key === value)
+              ?.map((i) => i.title)
+              .join(' / ')}
+          </Text>
+        </p>
+        <Form.Item
+          name='savePath'
+          label=''
+          rules={[
+            {
+              required: true,
+              message: 'Please input the title of collection!',
+            },
+          ]}
+        >
+          <TreeSelect
+            treeDefaultExpandAll
+            placeholder='Please select'
+            value={value}
+            treeData={collectionTreeSelectData}
+            fieldNames={{ label: 'title', value: 'key' }}
+            onChange={setValue}
+            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+            style={{ width: '100%' }}
+          />
+        </Form.Item>
+      </Form>
+    </Modal>
   );
 };
 
-export default forwardRef(SaveRequestButton);
+export default SaveRequestButton;

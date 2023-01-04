@@ -1,3 +1,5 @@
+import { METHODS } from '../../../../constant';
+import { KeyValueType } from '../../../../services/FileSystem.type';
 import { ValidContentTypes } from './content-types';
 import { HoppRESTAuth } from './HoppRESTAuth';
 
@@ -5,18 +7,6 @@ export * from './content-types';
 export * from './HoppRESTAuth';
 
 export const RESTReqSchemaVersion = '1';
-
-export type HoppRESTParam = {
-  key: string;
-  value: string;
-  active: boolean;
-};
-
-export type HoppRESTHeader = {
-  key: string;
-  value: string;
-  active: boolean;
-};
 
 export type FormDataKeyValue = {
   key: string;
@@ -39,16 +29,20 @@ export type HoppRESTReqBody =
       body: null;
     };
 
-export interface HoppRESTRequest {
-  v: string;
-  id?: string; // Firebase Firestore ID
+export type HoppRESTHeader = {
+  key: string;
+  value: string;
+  active?: boolean;
+};
 
-  name: string;
-  method: string;
+export interface HoppRESTRequest {
+  id?: string; // Firebase Firestore ID
+  name: string | null;
+  method: typeof METHODS[number];
   endpoint: string;
-  compareMethod: string;
+  compareMethod: typeof METHODS[number];
   compareEndpoint: string;
-  params: HoppRESTParam[];
+  params: KeyValueType[];
   headers: HoppRESTHeader[];
   preRequestScripts: {
     icon: string;
@@ -63,12 +57,12 @@ export interface HoppRESTRequest {
     value: string;
   }[];
 
-  auth: HoppRESTAuth;
+  auth: HoppRESTAuth | null;
 
-  body: HoppRESTReqBody;
+  body: { [key: string]: string };
 }
 
-export function makeRESTRequest(x: Omit<HoppRESTRequest, 'v'>): HoppRESTRequest {
+export function makeRESTRequest(x: HoppRESTRequest): HoppRESTRequest & { v: string } {
   return {
     ...x,
     v: RESTReqSchemaVersion,

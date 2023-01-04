@@ -33,14 +33,14 @@ const HttpResponse: FC<{ onPin: any; config: any }> = ({ onPin, config }) => {
       `}
     >
       <HttpResponseMeta response={store.response} />
-      {!loading && hasResponse ? (
+      {!loading && hasResponse && (
         <LensesResponseBodyRenderer
           onPin={onPin}
           response={store.response as HoppRESTResponse}
           testResult={store.testResult as HoppTestResult}
           config={config}
         />
-      ) : null}
+      )}
     </div>
   );
 };

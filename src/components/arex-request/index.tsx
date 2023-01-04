@@ -15,6 +15,7 @@ import HttpRequest from './components/http/Request';
 import HttpRequestOptions from './components/http/RequestOptions';
 import HttpResponse from './components/http/Response';
 import TestResult from './components/http/TestResult';
+import { LensesHeadersRendererEntryProps } from './components/lenses/HeadersRendererEntry';
 import { Environment } from './data/environment';
 import { HoppRESTRequest } from './data/rest';
 import { defaultState } from './defaultState';
@@ -33,11 +34,11 @@ export interface State {
   compareLoading: boolean;
 }
 
-export type HttpImperativeHandle = {
+export type HttpRef = {
   getRequestValue: () => State['request'];
 };
 
-interface Tab extends Omit<TabPaneProps, 'tab'> {
+export interface Tab extends Omit<TabPaneProps, 'tab'> {
   key: string;
   label: React.ReactNode;
   hidden?: boolean;
@@ -56,18 +57,18 @@ type HttpConfig = {
 export interface HttpProps {
   environment: Environment;
   theme: 'dark' | 'light';
-  value: HoppRESTRequest | null;
+  value?: HoppRESTRequest | null;
   breadcrumb: any;
   onSend: (
-    r: HoppRESTRequest,
+    request: HoppRESTRequest,
   ) => Promise<{ response: HoppRESTResponse; testResult: HoppTestResult }>;
   onSave: (r: HoppRESTRequest) => void;
-  onSendCompare: (r: any) => Promise<any>;
+  onSendCompare: (r: HoppRESTRequest) => Promise<any>;
   config?: HttpConfig;
   renderResponse?: boolean;
-  onPin: any;
-  defaultDisplayResponse: boolean;
-  requestPanePreferredSize: number;
+  onPin: LensesHeadersRendererEntryProps['onPin'];
+  defaultDisplayResponse?: boolean;
+  requestPanePreferredSize?: number;
 }
 
 export const HttpContext = createContext<
@@ -80,7 +81,7 @@ function reducer(draft: Draft<State>, action: (state: State) => void) {
   return action(draft);
 }
 
-const Http = forwardRef<HttpImperativeHandle, HttpProps>(
+const Http = forwardRef<HttpRef, HttpProps>(
   (
     {
       value,
@@ -100,11 +101,9 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
   ) => {
     const [store, dispatch] = useReducer(produce(reducer), defaultState);
 
-    useImperativeHandle(ref, () => {
-      return {
-        getRequestValue: () => store.request,
-      };
-    });
+    useImperativeHandle(ref, () => ({
+      getRequestValue: () => store.request,
+    }));
 
     useEffect(() => {
       // 控制初始状态下是否展示response
@@ -119,9 +118,6 @@ const Http = forwardRef<HttpImperativeHandle, HttpProps>(
               responseSize: 0,
               responseDuration: 0,
             },
-          };
-          state.testResult = {
-            children: [],
           };
         });
       }

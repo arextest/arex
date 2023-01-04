@@ -2,10 +2,12 @@
 // 1.删除了 req HoppRESTRequest
 // 2.body 为any
 // 3.添加empty状态
+import { HoppRESTHeader } from '../../data/rest';
+
 export type HoppRESTResponse =
   | {
       type: 'empty';
-      headers: { key: string; value: string }[];
+      headers: HoppRESTHeader[];
       body: any;
       statusCode: number;
       meta: {
@@ -16,7 +18,7 @@ export type HoppRESTResponse =
   | { type: 'loading' }
   | {
       type: 'fail';
-      headers: { key: string; value: string }[];
+      headers: HoppRESTHeader[];
       body: any;
       statusCode: number;
 
@@ -35,7 +37,7 @@ export type HoppRESTResponse =
     }
   | {
       type: 'success';
-      headers: { key: string; value: string }[];
+      headers: HoppRESTHeader[];
       body: any;
       statusCode: number;
       meta: {

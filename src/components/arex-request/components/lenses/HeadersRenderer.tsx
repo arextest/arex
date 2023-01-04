@@ -2,18 +2,20 @@ import { FC } from 'react';
 import React from 'react';
 
 import { HoppRESTHeader } from '../../data/rest';
-import LensesHeadersRendererEntry from './HeadersRendererEntry';
+import LensesHeadersRendererEntry, {
+  LensesHeadersRendererEntryProps,
+} from './HeadersRendererEntry';
 
-const LensesHeadersRenderer: FC<{ headers: HoppRESTHeader[]; onPin: any }> = ({
-  headers,
-  onPin,
-}) => {
+const LensesHeadersRenderer: FC<{
+  headers: HoppRESTHeader[];
+  onPin: LensesHeadersRendererEntryProps['onPin'];
+}> = ({ headers, onPin }) => {
   return (
-    <div>
-      {headers.map((header, index) => {
-        return <LensesHeadersRendererEntry onPin={onPin} key={index} header={header} />;
-      })}
-    </div>
+    <>
+      {headers.map((header, index) => (
+        <LensesHeadersRendererEntry onPin={onPin} key={index} header={header} />
+      ))}
+    </>
   );
 };
 

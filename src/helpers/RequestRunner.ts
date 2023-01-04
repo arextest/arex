@@ -5,17 +5,12 @@ import { HoppRESTResponse } from '../components/arex-request/helpers/types/HoppR
 import { HoppTestResult } from '../components/arex-request/helpers/types/HoppTestResult';
 import AgentAxios from './request';
 
-export const runRESTRequest = async ({
-  request,
-}: {
-  request: HoppRESTRequest;
-}): Promise<{ response: HoppRESTResponse; testResult: HoppTestResult }> => {
+export const runRESTRequest = async (
+  request: HoppRESTRequest,
+): Promise<{ response: HoppRESTResponse; testResult: HoppTestResult }> => {
   const response = await _runRESTRequest(request, 'EXTENSIONS_ENABLED');
   const testResult = await _runRESTRequestTest(request, response);
-  console.log({
-    response,
-    testResult,
-  });
+
   return {
     response,
     testResult,

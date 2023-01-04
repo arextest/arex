@@ -1,17 +1,17 @@
 import { DownOutlined, SaveOutlined } from '@ant-design/icons';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { App, Button, Divider, Dropdown, MenuProps, Select, Space } from 'antd';
 import React, { FC, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { METHODS } from '../../../../constant';
+import { SpaceBetweenWrapper } from '../../../styledComponents';
 import { HttpContext, HttpProps } from '../../index';
 import SmartEnvInput from '../smart/EnvInput';
 
-const HeaderWrapper = styled.div`
+const RequestMethodUrlWrapper = styled.div`
   display: flex;
   & > * {
-    flex-grow: 1;
     flex: 1;
   }
   & > .send-request-button {
@@ -25,7 +25,18 @@ const HeaderWrapper = styled.div`
   }
 `;
 
-const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+const RequestModeOptions = [
+  { label: 'Normal', value: 'normal' },
+  { label: 'Compare', value: 'compare' },
+];
+
+const items: MenuProps['items'] = [
+  {
+    label: 'Send Compare',
+    key: 'compare',
+  },
+];
+
 interface HttpRequestProps {
   onSend: HttpProps['onSend'];
   onSave: HttpProps['onSave'];
@@ -42,13 +53,6 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
       handleRequest({ type: 'compare' });
     }
   };
-
-  const items: MenuProps['items'] = [
-    {
-      label: 'Send Compare',
-      key: '1',
-    },
-  ];
 
   function checkRequestParams(requestParams: any) {
     const { body, endpoint } = requestParams;
@@ -131,37 +135,26 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
   };
 
   return (
-    <div
-      css={css`
-        position: relative;
-        padding: 0 16px;
-      `}
+    <Space
+      direction='vertical'
+      style={{
+        padding: '0 16px',
+      }}
     >
-      <div
-        css={css`
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 8px;
-        `}
-      >
+      <SpaceBetweenWrapper>
         {breadcrumb}
 
         <Space>
           <Select
-            css={css`
-              width: 100px;
-            `}
+            size='small'
             value={store.mode}
-            options={[
-              { label: 'Normal', value: 'normal' },
-              { label: 'Compare', value: 'compare' },
-            ]}
+            options={RequestModeOptions}
             onChange={(value) => {
               dispatch((state) => {
                 state.mode = value;
               });
             }}
-            size={'small'}
+            style={{ width: '100%' }}
           />
 
           <Divider type={'vertical'} />
@@ -176,13 +169,13 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
             {t('action.save')}
           </Button>
         </Space>
-      </div>
+      </SpaceBetweenWrapper>
 
-      <HeaderWrapper>
+      <RequestMethodUrlWrapper>
         <Space.Compact block>
           <Select
             value={store.request.method}
-            options={methods.map((i) => ({ value: i, lable: i }))}
+            options={METHODS.map((i) => ({ value: i, label: i }))}
             onChange={(value) => {
               dispatch((state) => {
                 state.request.method = value;
@@ -200,30 +193,26 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
         </Space.Compact>
 
         <Dropdown.Button
-          className='send-request-button'
           type='primary'
+          className='send-request-button'
           icon={<DownOutlined />}
           menu={{
+            items,
             onClick: handleMenuClick,
-            items: items,
           }}
           onClick={() => handleRequest({ type: store.mode === 'normal' ? null : 'compare' })}
           style={{ marginLeft: '16px' }}
         >
           {t('action.send')}
         </Dropdown.Button>
-      </HeaderWrapper>
+      </RequestMethodUrlWrapper>
 
-      {store.mode === 'compare' ? (
-        <HeaderWrapper
-          css={css`
-            margin-top: 8px;
-          `}
-        >
-          <Space.Compact block>
+      {store.mode === 'compare' && (
+        <RequestMethodUrlWrapper>
+          <Space.Compact block style={{ marginRight: '112px' }}>
             <Select
               value={store.request.compareMethod}
-              options={methods.map((i) => ({ value: i, lable: i }))}
+              options={METHODS.map((i) => ({ value: i, label: i }))}
               onChange={(value) => {
                 dispatch((state) => {
                   state.request.compareMethod = value;
@@ -239,26 +228,9 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
               }}
             />
           </Space.Compact>
-
-          <Dropdown.Button
-            css={css`
-              visibility: hidden;
-            `}
-            className='send-request-button'
-            type='primary'
-            icon={<DownOutlined />}
-            menu={{
-              onClick: handleMenuClick,
-              items: items,
-            }}
-            onClick={() => handleRequest({ type: null })}
-            style={{ marginLeft: '16px' }}
-          >
-            {t('action.send')}
-          </Dropdown.Button>
-        </HeaderWrapper>
-      ) : null}
-    </div>
+        </RequestMethodUrlWrapper>
+      )}
+    </Space>
   );
 };
 

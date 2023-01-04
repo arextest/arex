@@ -46,15 +46,13 @@ const BatchRunPage: React.FC = () => {
     const caseExecutionResult = [];
     for (let i = 0; i < caseResArr.length; i++) {
       const agentAxiosAndTestResponse = await runRESTRequest({
-        request: {
-          endpoint: urlPretreatment(caseResArr[i].address.endpoint),
-          method: caseResArr[i].address.method,
-          testScript: caseResArr[i].testScript,
-          testScripts: caseResArr[i].testScripts,
-          params: caseResArr[i].params,
-          headers: caseResArr[i].headers,
-          body: caseResArr[i].body,
-        },
+        endpoint: urlPretreatment(caseResArr[i].address.endpoint),
+        method: caseResArr[i].address.method,
+        testScript: caseResArr[i].testScript,
+        testScripts: caseResArr[i].testScripts,
+        params: caseResArr[i].params,
+        headers: caseResArr[i].headers,
+        body: caseResArr[i].body,
       }).catch(() => ({ testResult: undefined }));
       caseExecutionResult.push({
         key: caseResArr[i].id,
@@ -183,7 +181,7 @@ const BatchRunPage: React.FC = () => {
                 }
               `}
             >
-              <Tree checkedKeys={checkValue} treeData={caseTreeData} onCheck={onCheck} checkable />
+              <Tree checkable checkedKeys={checkValue} treeData={caseTreeData} onCheck={onCheck} />
             </div>
           </Col>
           <Col span={2}>

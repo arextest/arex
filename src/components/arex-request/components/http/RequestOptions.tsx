@@ -1,10 +1,10 @@
 import { css } from '@emotion/react';
-import { Tabs, TabsProps, Tag } from 'antd';
+import { Tabs, Tag } from 'antd';
 import { FC, useContext, useMemo, useState } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { HttpContext, HttpProps } from '../../index';
+import { HttpContext, HttpProps, Tab } from '../../index';
 import HttpBody from './Body';
 import HttpHeaders from './Headers';
 import HttpParameters from './Parameters';
@@ -17,7 +17,7 @@ const HttpRequestOptions: FC<Pick<HttpProps, 'config'>> = ({ config }) => {
   const [activeKey, setActiveKey] = useState('body');
 
   const items = useMemo(() => {
-    let _item: TabsProps['items'] = [
+    let _items: Tab[] = [
       {
         label: (
           <span>
@@ -82,45 +82,35 @@ const HttpRequestOptions: FC<Pick<HttpProps, 'config'>> = ({ config }) => {
 
     // concat extra request tabs
     config?.requestTabs?.extra &&
-      _item.push(...config.requestTabs.extra.filter((tab) => !tab.hidden));
+      _items.push(...config.requestTabs.extra.filter((tab) => !tab.hidden));
 
     // filter tabs
     config?.requestTabs?.filter &&
-      (_item = _item.filter((tab) => config?.requestTabs?.filter?.(tab.key)));
+      (_items = _items.filter((tab) => config?.requestTabs?.filter?.(tab.key)));
 
-    return _item;
+    return _items;
   }, [config, store.request]);
 
   return (
     <div
       css={css`
         height: 100%;
-        //相当于最小高度
         padding: 0 16px;
         flex: 1;
         overflow: auto;
         width: calc(100% - 16px);
-        //background-color: #00bb74;
-        //display: flex;
-        //flex-direction: column;
-        .ant-tabs-content-holder {
-          //height: 100px;
-        }
       `}
     >
       <Tabs
         className={'http-request-options-tab'}
         css={css`
-          //height: 100%;
           .ant-tabs-nav {
             margin-bottom: 0;
           }
         `}
         activeKey={activeKey}
         items={items}
-        onChange={(val) => {
-          setActiveKey(val);
-        }}
+        onChange={setActiveKey}
       />
     </div>
   );

@@ -3,6 +3,7 @@ import { message } from 'antd';
 import request from '../helpers/api/axios';
 import { collectionOriginalTreeToAntdTreeData } from '../helpers/collection/util';
 import { QueryLabelsReq, QueryLabelsRes, RemoveLabelsReq, SaveLabelsReq } from './Collection.type';
+import { SaveCaseReq } from './FileSystem.type';
 
 export interface NodeList {
   id: string;

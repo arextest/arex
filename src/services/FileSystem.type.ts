@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { HoppRESTRequest } from '../components/arex-request/data/rest';
+import { HoppRESTAuth, HoppRESTRequest } from '../components/arex-request/data/rest';
 import { METHODS, NodeType } from '../constant';
 
 export type KeyValueType = {
@@ -43,7 +43,7 @@ export interface QueryWorkspaceByIdRes {
 
 // ------ /api/filesystem/queryInterface ------
 
-export interface QueryInterfaceRes {
+export type BaseInterface<T extends 'interface' | 'case'> = {
   id: string;
   name: string | null;
   address: Address;
@@ -52,35 +52,39 @@ export interface QueryInterfaceRes {
   body: { [key: string]: string };
   headers: KeyValueType[];
   params: KeyValueType[];
-  auth: null;
+  auth: HoppRESTAuth | null;
   testAddress: Address;
   customTags: null;
-}
+} & (T extends 'interface'
+  ? {
+      // interface unique attribute
+      operationId?: string | null;
+    }
+  : {
+      // case unique attribute
+      recordId?: string | null;
+      comparisonMsg?: null;
+      labelIds?: string[];
+      description?: null;
+    });
+
+export type QueryInterfaceRes = BaseInterface<'interface'>;
+export type QueryCaseRes = BaseInterface<'case'>;
 
 // ------ /api/filesystem/saveInterface ------
-export interface SaveInterfaceReq {
-  auth: {
-    authActive: boolean;
-    authType: string;
-    token: string;
-  } | null;
-  body: { contentType: string; body: string | null };
-  endpoint: string;
-  headers: KeyValueType[];
-  id: string;
-  method: string;
-  params: KeyValueType[];
-  preRequestScript: string | null;
-  testScript: string | null;
-}
-export interface SaveInterfaceRes {
-  success: boolean;
+export interface SaveInterfaceReq extends Partial<QueryInterfaceRes> {
+  workspaceId: string;
 }
 
-// ------ /api/filesystem/queryCase ------
-export interface QueryCaseRes extends QueryInterfaceRes {
-  recordId: string | null;
-  comparisonMsg: null;
-  labelIds: string[];
-  description: null;
+// ------ /api/filesystem/saveCase ------
+export type SaveCaseReq =
+  | (Partial<QueryCaseRes> & { workspaceId: string })
+  | { id: string; labelIds: string[] };
+
+//
+export interface PinkMockReq {
+  workspaceId: string;
+  infoId: string;
+  recordId: string;
+  nodeType: number;
 }

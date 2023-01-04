@@ -1,17 +1,17 @@
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import Http, { HttpImperativeHandle } from '../components/arex-request';
+import Http from '../components/arex-request';
+import { Environment } from '../components/arex-request/data/environment';
 import { HoppRESTRequest } from '../components/arex-request/data/rest';
 import ExtraRequestTabItemMock from '../components/arex-request/extra/ExtraRequestTabItemMock';
 import HttpBreadcrumb from '../components/arex-request/extra/HttpBreadcrumb';
-import request from '../helpers/api/axios';
 import { treeFind, treeFindPath } from '../helpers/collection/util';
 import { runCompareRESTRequest } from '../helpers/CompareRequestRunner';
-import { convertRequestData, convertSaveRequestData } from '../helpers/http/util';
+import { convertSaveRequestData } from '../helpers/http/util';
 import { runRESTRequest } from '../helpers/RequestRunner';
 import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
 import { MenusType } from '../menus';
@@ -44,25 +44,23 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
   const { theme } = useUserProfile();
   const { collectionTreeData, setPages, pages, activeEnvironment } = useStore();
 
-  const httpImperativeRef = useRef<HttpImperativeHandle>();
+  const [saveModalOpen, setSaveModalOpen] = useState(false);
+  const [reqParams, setReqParams] = useState<HoppRESTRequest>();
 
-  const env = useMemo(() => {
-    if (activeEnvironment) {
-      return {
-        name: activeEnvironment.envName,
-        variables: activeEnvironment.keyValues || [],
-      };
-    } else {
-      return {
-        name: undefined,
-        variables: [],
-      };
-    }
-  }, [activeEnvironment]);
+  const env = useMemo<Environment>(
+    () =>
+      activeEnvironment
+        ? {
+            name: activeEnvironment.envName,
+            variables: activeEnvironment.keyValues || [],
+          }
+        : {
+            name: '',
+            variables: [],
+          },
+    [activeEnvironment],
+  );
   const id = useMemo(() => parseGlobalPaneId(props.page.paneId)['rawId'], [props.page.paneId]);
-
-  const [reqParams, setReqParams] = useState({});
-  const saveRequestButtonRef = useRef(null);
 
   const nodeType = useMemo(() => {
     return (
@@ -76,39 +74,35 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
   const nodePaths = useMemo(() => {
     return treeFindPath(
       collectionTreeData,
-      (node: any) => node.key === parseGlobalPaneId(props.page.paneId)['rawId'],
+      (node: nodeType) => node.key === parseGlobalPaneId(props.page.paneId)['rawId'],
     );
   }, [props.page.paneId, collectionTreeData]);
 
-  const { data, run } = useRequest(
-    () => {
-      if (nodeType === 2) {
-        return FileSystemService.queryCase({ id }).then((r) => convertRequestData(r, 'address'));
-      } else {
-        return FileSystemService.queryInterface({ id }).then((r) =>
-          convertRequestData(r, 'address'),
-        );
-      }
-    },
+  const { data, run: queryInterfaceOrCase } = useRequest(
+    () =>
+      nodeType === 2
+        ? FileSystemService.queryCase({ id })
+        : FileSystemService.queryInterface({ id }),
     {
       refreshDeps: [nodeType],
     },
   );
 
   const { run: runPinMock } = useRequest(
-    (p) =>
-      request.post('/api/filesystem/pinMock', {
-        workspaceId: workspaceId,
+    (recordId) =>
+      FileSystemService.pinMock({
+        workspaceId: workspaceId as string,
         infoId: id,
-        recordId: p.recordId,
-        nodeType: nodeType,
+        recordId,
+        nodeType,
       }),
     {
       manual: true,
-      onSuccess: (r) => {
-        if (r.body.success) {
+      ready: !!workspaceId,
+      onSuccess: (success) => {
+        if (success) {
           message.success('pin success');
-          run();
+          queryInterfaceOrCase();
         }
       },
     },
@@ -121,7 +115,7 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
           {
             label: 'Mock',
             key: 'mock',
-            children: <ExtraRequestTabItemMock recordId={data?.recordId} />,
+            children: <ExtraRequestTabItemMock recordId={data?.recordId as string} />,
             hidden: !data?.recordId,
           },
         ],
@@ -133,36 +127,20 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
     [data],
   );
 
-  const handleSave = (r: HoppRESTRequest) => {
+  const handleSave = (request: HoppRESTRequest) => {
     if (nodeType === 1 && id.length === 36) {
-      setReqParams(r);
-      saveRequestButtonRef.current.open();
-    } else if (nodeType === 2) {
-      FileSystemService.saveCase(convertSaveRequestData(workspaceId as string, id, r)).then(
-        (res) => {
-          if (res.body.success) {
-            message.success('success');
-          } else {
-            // @ts-ignore
-            message.error(res.responseStatusType.responseDesc);
-          }
-        },
-      );
+      setReqParams(request);
+      setSaveModalOpen(true);
     } else {
-      FileSystemService.saveInterface(convertSaveRequestData(workspaceId as string, id, r)).then(
-        (res) => {
-          if (res.body.success) {
-            message.success('success');
-          } else {
-            // @ts-ignore
-            message.error(res.responseStatusType.responseDesc);
-          }
-        },
+      FileSystemService[nodeType === 2 ? 'saveCase' : 'saveInterface'](
+        convertSaveRequestData(workspaceId as string, id, request),
+      ).then((success) =>
+        success ? message.success('update success') : message.error('update failed'),
       );
     }
   };
 
-  const handleSaveAs = (node) => {
+  const handleSaveAs = (node: nodeType) => {
     const filteredPanes = pages.filter((i) => i.paneId !== props.page.paneId);
     setPages(filteredPanes);
     setPages(
@@ -187,8 +165,7 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
   return (
     <HttpRequestPageWrapper>
       <Http
-        renderResponse={true}
-        ref={httpImperativeRef}
+        renderResponse
         value={data}
         environment={env}
         theme={theme}
@@ -201,23 +178,18 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
           />
         }
         config={httpConfig}
-        onSend={(r) => {
-          return runRESTRequest({ request: r });
-        }}
-        onSendCompare={(r) => {
-          return runCompareRESTRequest({ request: r });
-        }}
+        onSend={runRESTRequest}
+        onSendCompare={runCompareRESTRequest}
         onSave={handleSave}
-        onPin={(recordId) => {
-          runPinMock({ recordId });
-        }}
+        onPin={runPinMock}
       />
 
       <SaveRequestButton
+        open={saveModalOpen}
         reqParams={reqParams}
         collectionTreeData={collectionTreeData}
         onSaveAs={handleSaveAs}
-        ref={saveRequestButtonRef}
+        onClose={() => setSaveModalOpen(false)}
       />
     </HttpRequestPageWrapper>
   );
