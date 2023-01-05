@@ -127,7 +127,18 @@ const Http = forwardRef<HttpRef, HttpProps>(
     useEffect(() => {
       dispatch((state) => {
         if (value) {
-          state.request = value;
+          state.request.method = value.method || 'GET';
+          state.request.endpoint = value.endpoint || '';
+          state.request.compareMethod = value.method || 'GET';
+          state.request.compareEndpoint = value.endpoint || '';
+          state.request.body = value.body || {
+            contentType: 'application/json',
+            body: '',
+          };
+          state.request.headers = value.headers || [];
+          state.request.params = value.params || [];
+          state.request.testScripts = value.testScripts || [];
+          state.request.preRequestScripts = value.preRequestScripts || [];
         }
       });
     }, [value]);

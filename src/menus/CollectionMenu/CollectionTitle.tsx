@@ -11,6 +11,7 @@ import { treeFindPath } from '../../helpers/collection/util';
 import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
 import { PagesType } from '../../pages';
 import { CollectionService } from '../../services/Collection.service';
+import { FileSystemService } from '../../services/FileSystem.service';
 import { useStore } from '../../store';
 import { MenusType } from '../index';
 
@@ -141,11 +142,24 @@ function CollectionTitle({
               parentPath: paths.map((i: any) => i.key),
               userName,
             }).then((res) => {
-              updateDirectoryTreeData();
-              callbackOfNewRequest(
-                [res.body.infoId],
-                paths.map((i: any) => i.key),
-                2,
+              FileSystemService.queryInterface({ id: paths[paths.length - 1].key }).then(
+                (parentInterface) => {
+                  FileSystemService.saveCase({
+                    workspaceId: _useParams.workspaceId as string,
+                    address: {
+                      method: parentInterface.method,
+                      endpoint: parentInterface.endpoint as string,
+                    },
+                    id: res.body.infoId,
+                  }).then((_) => {
+                    updateDirectoryTreeData();
+                    callbackOfNewRequest(
+                      [res.body.infoId],
+                      paths.map((i) => i.key),
+                      2,
+                    );
+                  });
+                },
               );
             });
             break;
