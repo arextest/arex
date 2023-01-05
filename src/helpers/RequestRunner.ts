@@ -77,7 +77,7 @@ function _runRESTRequestTest(request: HoppRESTRequest, response: any): Promise<H
 
   return axios({
     method: 'POST',
-    url: 'http://10.5.153.1:10001/preTest',
+    url: '/node/preTest',
     data: {
       response: JSON.stringify({
         headers: response.headers,

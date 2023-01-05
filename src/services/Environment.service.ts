@@ -10,19 +10,19 @@ import {
 export default class EnvironmentService {
   static async getEnvironment(params: GetEnvironmentReq) {
     return request
-      .post<GetEnvironmentRes>(`/api/environment/queryEnvsByWorkspace`, params)
+      .post<GetEnvironmentRes>(`/report/environment/queryEnvsByWorkspace`, params)
       .then((res: any) => Promise.resolve(res.body.environments));
   }
 
   static async saveEnvironment(params: EnvironmentSave): Promise<any> {
-    return request.post(`/api/environment/saveEnvironment`, params);
+    return request.post(`/report/environment/saveEnvironment`, params);
   }
 
   static async deleteEnvironment(params: EnvironmentRemove): Promise<any> {
-    return request.post(`/api/environment/removeEnvironment`, params);
+    return request.post(`/report/environment/removeEnvironment`, params);
   }
 
   static async duplicateEnvironment(params: EnvironmentDuplicate): Promise<any> {
-    return request.post(`/api/environment/duplicateEnvironment`, params);
+    return request.post(`/report/environment/duplicateEnvironment`, params);
   }
 }

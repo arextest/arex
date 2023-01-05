@@ -9,11 +9,11 @@ import {
 
 export class FileSystemService {
   static async rename(params: any): Promise<any> {
-    return request.post(`/api/filesystem/rename`, params);
+    return request.post(`/report/filesystem/rename`, params);
   }
 
   static async queryInterface(params: { id: string }) {
-    const res = await request.post<QueryInterfaceRes>(`/api/filesystem/queryInterface`, params);
+    const res = await request.post<QueryInterfaceRes>(`/report/filesystem/queryInterface`, params);
     const {
       body: { address, testAddress, ...rest },
     } = res;
@@ -27,17 +27,20 @@ export class FileSystemService {
   }
 
   static async saveInterface(params: SaveInterfaceReq) {
-    const res = await request.post<{ success: boolean }>(`/api/filesystem/saveInterface`, params);
+    const res = await request.post<{ success: boolean }>(
+      `/report/filesystem/saveInterface`,
+      params,
+    );
     return res.body.success;
   }
 
   static async saveCase(params: SaveCaseReq) {
-    const res = await request.post<{ success: boolean }>(`/api/filesystem/saveCase`, params);
+    const res = await request.post<{ success: boolean }>(`/report/filesystem/saveCase`, params);
     return res.body.success;
   }
 
   static async queryCase(params: { id: string }) {
-    const res = await request.post<QueryCaseRes>(`/api/filesystem/queryCase`, params);
+    const res = await request.post<QueryCaseRes>(`/report/filesystem/queryCase`, params);
     const {
       body: { address, testAddress, ...rest },
     } = res;
@@ -51,11 +54,11 @@ export class FileSystemService {
   }
 
   static async importFile(params: any) {
-    return request.post<any>(`/api/filesystem/import`, params);
+    return request.post<any>(`/report/filesystem/import`, params);
   }
 
   static async pinMock(params: PinkMockReq) {
-    const res = await request.post<{ success: boolean }>(`/api/filesystem/pinMock`, params);
+    const res = await request.post<{ success: boolean }>(`/report/filesystem/pinMock`, params);
     return res.body.success;
   }
 }

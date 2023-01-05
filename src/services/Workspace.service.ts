@@ -13,7 +13,7 @@ import {
 export default class WorkspaceService {
   static listWorkspace({ userName }: { userName: string }) {
     return request
-      .post<{ workspaces: Workspace[] }>(`/api/filesystem/queryWorkspacesByUser`, {
+      .post<{ workspaces: Workspace[] }>(`/report/filesystem/queryWorkspacesByUser`, {
         userName,
       })
       .then((res) => res.body.workspaces);
@@ -21,13 +21,13 @@ export default class WorkspaceService {
 
   static queryUsersByWorkspace(params: QueryUsersByWorkspaceReq) {
     return request
-      .post<QueryUsersByWorkspaceRes>(`/api/filesystem/queryUsersByWorkspace`, params)
+      .post<QueryUsersByWorkspaceRes>(`/report/filesystem/queryUsersByWorkspace`, params)
       .then((res) => res.body.users);
   }
 
   static createWorkspace({ userName, workspaceName }: CreateWorkspaceReq) {
     return request
-      .post<CreateWorkspaceRes>(`/api/filesystem/addItem`, {
+      .post<CreateWorkspaceRes>(`/report/filesystem/addItem`, {
         nodeName: 'New Collection',
         nodeType: '3',
         userName,
@@ -37,7 +37,7 @@ export default class WorkspaceService {
   }
 
   static renameWorkspace({ workspaceId, newName, userName }: any) {
-    return request.post(`/api/filesystem/renameWorkspace`, {
+    return request.post(`/report/filesystem/renameWorkspace`, {
       id: workspaceId,
       workspaceName: newName,
       userName,
@@ -45,14 +45,16 @@ export default class WorkspaceService {
   }
 
   static deleteWorkspace(params: DeleteWorkspaceReq) {
-    return request.post<boolean>(`/api/filesystem/deleteWorkspace`, params).then((res) => res.body);
+    return request
+      .post<boolean>(`/report/filesystem/deleteWorkspace`, params)
+      .then((res) => res.body);
   }
 
   static inviteToWorkspace(params: any) {
-    return request.post(`/api/filesystem/inviteToWorkspace`, params);
+    return request.post(`/report/filesystem/inviteToWorkspace`, params);
   }
 
   static validInvitation(params: ValidInvitationReq) {
-    return request.post<ValidInvitationRes>(`/api/filesystem/validInvitation`, params);
+    return request.post<ValidInvitationRes>(`/report/filesystem/validInvitation`, params);
   }
 }

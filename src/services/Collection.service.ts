@@ -24,12 +24,12 @@ export class CollectionService {
           userName: string;
           workspaceName: string;
         };
-      }>(`/api/filesystem/queryWorkspaceById`, params)
+      }>(`/report/filesystem/queryWorkspaceById`, params)
       .then((res) => Promise.resolve(collectionOriginalTreeToAntdTreeData(res.body.fsTree.roots)));
   }
   static async addItem(params: any): Promise<any> {
     return new Promise((resolve, reject) => {
-      request.post(`/api/filesystem/addItem`, params).then((res: any) => {
+      request.post(`/report/filesystem/addItem`, params).then((res: any) => {
         if (res.responseStatusType.responseCode === 2) {
           reject(res.responseStatusType.responseDesc);
         } else {
@@ -39,31 +39,34 @@ export class CollectionService {
     });
   }
   static async removeItem(params: any): Promise<any> {
-    return request.post(`/api/filesystem/removeItem`, params);
+    return request.post(`/report/filesystem/removeItem`, params);
   }
   static async rename(params: any): Promise<any> {
-    return request.post(`/api/filesystem/rename`, params);
+    return request.post(`/report/filesystem/rename`, params);
   }
   static async duplicate(params: any): Promise<any> {
-    return request.post(`/api/filesystem/duplicate`, params);
+    return request.post(`/report/filesystem/duplicate`, params);
   }
   static async move(params: any): Promise<any> {
-    return request.post(`/api/filesystem/move`, params);
+    return request.post(`/report/filesystem/move`, params);
   }
 
   //   Labels
   static async queryLabels(params: QueryLabelsReq) {
-    const res = await request.post<QueryLabelsRes>(`/api/label/queryLabelsByWorkspaceId`, params);
+    const res = await request.post<QueryLabelsRes>(
+      `/report/label/queryLabelsByWorkspaceId`,
+      params,
+    );
     return res.body.labels;
   }
 
   static async removeLabels(params: RemoveLabelsReq) {
-    const res = await request.post<{ success: boolean }>(`/api/label/remove`, params);
+    const res = await request.post<{ success: boolean }>(`/report/label/remove`, params);
     return res.body.success ? Promise.resolve(res.body) : Promise.reject({ success: false });
   }
 
   static async saveLabels(params: SaveLabelsReq) {
-    const res = await request.post<{ success: boolean }>(`/api/label/save`, params);
+    const res = await request.post<{ success: boolean }>(`/report/label/save`, params);
     return res.body.success ? Promise.resolve(res.body) : Promise.reject({ success: false });
   }
 }
