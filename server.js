@@ -2,23 +2,6 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const history = require('connect-history-api-fallback');
 const express = require('express');
 const app = express();
-app.use(
-  '/api',
-  createProxyMiddleware({
-    target: process.env.SERVICE_REPORT_URL,
-    changeOrigin: true,
-    pathRewrite: { '/api': '/api' },
-  }),
-);
-
-app.use(
-  '/config',
-  createProxyMiddleware({
-    target: process.env.SERVICE_CONFIG_URL,
-    changeOrigin: true,
-    pathRewrite: { '/config': '/api/config' },
-  }),
-);
 
 app.use(
   '/report',
@@ -47,6 +30,15 @@ app.use(
   }),
 );
 
+app.use(
+  '/node',
+  createProxyMiddleware({
+    target: process.env.SERVICE_NODE_URL,
+    changeOrigin: true,
+    pathRewrite: { '/node': '/api' },
+  }),
+);
+
 // 健康检查
 app.get('/vi/health', (req, res) => {
   res.end(`365ms`);
@@ -58,6 +50,7 @@ app.get('/env', (req, res) => {
     SERVICE_CONFIG_URL: process.env.SERVICE_CONFIG_URL,
     SERVICE_SCHEDULE_URL: process.env.SERVICE_SCHEDULE_URL,
     SERVICE_STORAGE_URL: process.env.SERVICE_STORAGE_URL,
+    SERVICE_NODE_URL:process.env.SERVICE_NODE_URL
   });
 });
 
