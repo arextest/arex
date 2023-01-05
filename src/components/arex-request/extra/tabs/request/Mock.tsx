@@ -5,11 +5,11 @@ import { App, Card, Col, Row, Space } from 'antd';
 import React, { FC } from 'react';
 import { useImmer } from 'use-immer';
 
-import request from '../../../helpers/api/request';
-import { tryParseJsonString, tryPrettierJsonString } from '../../../helpers/utils';
-import useUserProfile from '../../../store/useUserProfile';
-import { EmptyWrapper, WatermarkCodeMirror } from '../../styledComponents';
-import TooltipButton from '../../TooltipButton';
+import request from '../../../../../helpers/api/request';
+import { tryParseJsonString, tryPrettierJsonString } from '../../../../../helpers/utils';
+import useUserProfile from '../../../../../store/useUserProfile';
+import { EmptyWrapper, WatermarkCodeMirror } from '../../../../styledComponents';
+import TooltipButton from '../../../../TooltipButton';
 
 type MockData = {
   id: string;
@@ -30,7 +30,7 @@ type MockData = {
   operationName: string;
 };
 
-const ExtraRequestTabItemMock: FC<{ recordId: string }> = ({ recordId }) => {
+const Mock: FC<{ recordId: string }> = ({ recordId }) => {
   const { message } = App.useApp();
   const { theme } = useUserProfile();
   const [mockData, setMockData] = useImmer<MockData[]>([]);
@@ -144,4 +144,4 @@ const ExtraRequestTabItemMock: FC<{ recordId: string }> = ({ recordId }) => {
   );
 };
 
-export default ExtraRequestTabItemMock;
+export default Mock;

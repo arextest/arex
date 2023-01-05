@@ -7,7 +7,7 @@ import { LensesHeadersRendererEntryProps } from '../lenses/HeadersRendererEntry'
 import LensesResponseBodyRenderer from '../lenses/ResponseBodyRenderer';
 import HttpResponseMeta from './ResponseMeta';
 
-const HttpResponse: FC<{ onPin: LensesHeadersRendererEntryProps['onPin']; config?: TabConfig }> = ({
+const ResponseTabs: FC<{ onPin: LensesHeadersRendererEntryProps['onPin']; config?: TabConfig }> = ({
   onPin,
   config,
 }) => {
@@ -47,4 +47,4 @@ const HttpResponse: FC<{ onPin: LensesHeadersRendererEntryProps['onPin']; config
   );
 };
 
-export default HttpResponse;
+export default ResponseTabs;

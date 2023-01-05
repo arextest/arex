@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { METHODS } from '../../../../constant';
 import { SpaceBetweenWrapper } from '../../../styledComponents';
 import { HoppRESTRequest } from '../../data/rest';
-import HttpBreadcrumb from '../../extra/HttpBreadcrumb';
+import CollectionBreadcrumb from '../../extra/CollectionBreadcrumb';
 import { HttpContext, HttpProps, State } from '../../index';
 import SmartEnvInput from '../smart/EnvInput';
 
@@ -150,7 +150,7 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
       }}
     >
       <SpaceBetweenWrapper>
-        <HttpBreadcrumb
+        <CollectionBreadcrumb
           id={props.id}
           nodeType={props.nodeType}
           nodePath={props.nodePath}

@@ -11,15 +11,12 @@ import React, {
   useReducer,
 } from 'react';
 
-import HttpRequest from './components/http/Request';
-import HttpRequestOptions from './components/http/RequestOptions';
-import HttpResponse from './components/http/Response';
-import TestResult from './components/http/TestResult';
+import { Request, RequestTabs, ResponseTabs, TestResult } from './components/http';
 import { LensesHeadersRendererEntryProps } from './components/lenses/HeadersRendererEntry';
 import { Environment } from './data/environment';
 import { HoppRESTRequest } from './data/rest';
 import { defaultState } from './defaultState';
-import ExtraResponseTabItemCompareResult from './extra/ExtraResponseTabItemCompareResult';
+import { ExtraTabs } from './extra';
 import { HoppRESTResponse } from './helpers/types/HoppRESTResponse';
 import { HoppTestResult } from './helpers/types/HoppTestResult';
 
@@ -165,7 +162,7 @@ const Http = forwardRef<HttpRef, HttpProps>(
             >
               {store.request.method && (
                 <>
-                  <HttpRequest
+                  <Request
                     id={id}
                     labelIds={value?.labelIds}
                     nodePath={nodePath}
@@ -174,7 +171,7 @@ const Http = forwardRef<HttpRef, HttpProps>(
                     onSend={onSend}
                     onSendCompare={onSendCompare}
                   />
-                  <HttpRequestOptions config={config?.requestTabs} />
+                  <RequestTabs config={config?.requestTabs} />
                 </>
               )}
             </div>
@@ -183,9 +180,12 @@ const Http = forwardRef<HttpRef, HttpProps>(
           {renderResponse && (
             <Allotment.Pane>
               {store.mode === 'compare' ? (
-                <ExtraResponseTabItemCompareResult theme={theme} responses={store.compareResult} />
+                <ExtraTabs.ResponseTabs.CompareResult
+                  theme={theme}
+                  responses={store.compareResult}
+                />
               ) : (
-                <HttpResponse onPin={onPin} config={config?.responseTabs} />
+                <ResponseTabs onPin={onPin} config={config?.responseTabs} />
               )}
             </Allotment.Pane>
           )}

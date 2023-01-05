@@ -4,13 +4,10 @@ import JSONEditor from 'jsoneditor';
 import _ from 'lodash-es';
 import React, { FC, useContext, useEffect, useRef, useState } from 'react';
 
-import axios from '../../../helpers/api/axios';
-import { HttpContext } from '../index';
+import axios from '../../../../../helpers/api/axios';
+import { HttpContext } from '../../../index';
 
-const ExtraResponseTabItemCompareResult: FC<{ responses: any[]; theme: string }> = ({
-  responses,
-  theme,
-}) => {
+const CompareResult: FC<{ responses: any[]; theme: string }> = ({ responses, theme }) => {
   const diffView = useRef<HTMLDivElement>();
   useEffect(() => {
     if (!diffView.current) {
@@ -208,4 +205,4 @@ const ExtraResponseTabItemCompareResult: FC<{ responses: any[]; theme: string }>
   );
 };
 
-export default ExtraResponseTabItemCompareResult;
+export default CompareResult;

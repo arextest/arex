@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { Input, Select } from 'antd';
 import React, { useContext } from 'react';
 
-import { HttpContext } from '../index';
+import { HttpContext } from '../../../index';
 
 const HeaderWrapper = styled.div`
   display: flex;
@@ -24,7 +24,7 @@ const HeaderWrapper = styled.div`
   }
 `;
 const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
-const ExtraRequestTabItemCompare = () => {
+const Compare = () => {
   const { store, dispatch } = useContext(HttpContext);
   return (
     <HeaderWrapper>
@@ -50,4 +50,4 @@ const ExtraRequestTabItemCompare = () => {
   );
 };
 
-export default ExtraRequestTabItemCompare;
+export default Compare;
