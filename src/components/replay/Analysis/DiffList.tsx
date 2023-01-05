@@ -108,7 +108,7 @@ const DiffList: FC<DiffListType> = (props) => {
             </Tag>
 
             {log.pathPair.unmatchedType === 3 ? (
-              <Typography.Text>
+              <Typography.Text type='secondary'>
                 {'Value of '}
                 <Typography.Text code>{log.path || '[]'}</Typography.Text>
                 {' is different, excepted '}
@@ -122,10 +122,10 @@ const DiffList: FC<DiffListType> = (props) => {
                 {'.'}
               </Typography.Text>
             ) : (
-              <span>
+              <Typography.Text type='secondary'>
                 <Typography.Text code>{log.path}</Typography.Text>
                 {DiffMap[log.pathPair.unmatchedType].desc}
-              </span>
+              </Typography.Text>
             )}
 
             <TooltipButton
