@@ -65,7 +65,6 @@ const CollectionLabel: FC = () => {
   const { run: labelRemoveRun } = useRequest(CollectionService.removeLabels, {
     manual: true,
     onSuccess() {
-      message.success('create successfully');
       queryLabels();
     },
     onError() {

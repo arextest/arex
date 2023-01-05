@@ -1,4 +1,5 @@
 import { EditOutlined } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { App, Breadcrumb, Button, Select, Space, Tag, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
@@ -78,6 +79,9 @@ const CollectionBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTa
             </>
           ) : (
             <Select
+              css={css`
+                width: 360px;
+              `}
               autoFocus
               allowClear
               size='small'
