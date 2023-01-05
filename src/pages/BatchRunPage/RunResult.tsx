@@ -82,6 +82,7 @@ const RunResult: FC<RunResultProps> = ({ result, loading }) => {
     return result.filter((i) => i.children.filter((f) => f.testResult).length > 0);
   }, [result]);
   const urlPretreatment = (url: string) => {
+    url = url || '';
     // 正则匹配{{}}
     const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
     let replaceVar = editorValueMatch[0];

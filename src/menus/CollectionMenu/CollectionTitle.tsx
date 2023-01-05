@@ -146,10 +146,7 @@ function CollectionTitle({
                 (parentInterface) => {
                   FileSystemService.saveCase({
                     workspaceId: _useParams.workspaceId as string,
-                    address: {
-                      method: parentInterface.method,
-                      endpoint: parentInterface.endpoint as string,
-                    },
+                    ...parentInterface,
                     id: res.body.infoId,
                   }).then((_) => {
                     updateDirectoryTreeData();

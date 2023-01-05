@@ -23,6 +23,8 @@ export class FileSystemService {
       endpoint: address?.endpoint,
       compareMethod: testAddress?.method,
       compareEndpoint: testAddress?.endpoint,
+      address,
+      testAddress,
     };
   }
 
@@ -50,6 +52,8 @@ export class FileSystemService {
       endpoint: address?.endpoint,
       compareMethod: testAddress?.method,
       compareEndpoint: testAddress?.endpoint,
+      address,
+      testAddress,
     };
   }
 

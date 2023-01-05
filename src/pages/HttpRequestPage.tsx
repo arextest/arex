@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Http from '../components/arex-request';
@@ -162,7 +162,6 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
     );
     window.globalFetchTreeData();
   };
-
   return (
     <HttpRequestPageWrapper>
       <Http

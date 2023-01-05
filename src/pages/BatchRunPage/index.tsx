@@ -40,7 +40,7 @@ const BatchRunPage: React.FC = () => {
     );
     const caseResArr = await Promise.all(
       runCases.map((i) => {
-        return FileSystemService.queryCase({ id: i }).then((r) => r.body);
+        return FileSystemService.queryCase({ id: i }).then((r) => r);
       }),
     );
     const caseExecutionResult = [];
@@ -108,7 +108,7 @@ const BatchRunPage: React.FC = () => {
   useEffect(() => {
     Promise.all(caseTreeData.map((i) => FileSystemService.queryInterface({ id: i.key })))
       .then((res) => {
-        return res.map((i) => i.body);
+        return res.map((i) => i);
       })
       .then((res) => {
         setInterfaceResponseArray(res);
@@ -228,11 +228,6 @@ const BatchRunPage: React.FC = () => {
                 label: 'Test',
                 key: 'test',
                 children: <RunResult loading={loading} result={resultData} />,
-              },
-              {
-                label: 'Compare',
-                key: 'compare',
-                disabled: true,
               },
             ]}
           />

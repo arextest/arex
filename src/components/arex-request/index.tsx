@@ -129,8 +129,8 @@ const Http = forwardRef<HttpRef, HttpProps>(
         if (value) {
           state.request.method = value.method || 'GET';
           state.request.endpoint = value.endpoint || '';
-          state.request.compareMethod = value.method || 'GET';
-          state.request.compareEndpoint = value.endpoint || '';
+          state.request.compareMethod = value.compareMethod || 'GET';
+          state.request.compareEndpoint = value.compareEndpoint || '';
           state.request.body = value.body || {
             contentType: 'application/json',
             body: '',
