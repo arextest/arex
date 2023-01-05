@@ -35,7 +35,7 @@ app.use(
   createProxyMiddleware({
     target: process.env.SERVICE_NODE_URL,
     changeOrigin: true,
-    pathRewrite: { '/node': '/api' },
+    pathRewrite: { '/node': '/' },
   }),
 );
 
