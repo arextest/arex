@@ -6,7 +6,9 @@ import { useTranslation } from 'react-i18next';
 
 import { METHODS } from '../../../../constant';
 import { SpaceBetweenWrapper } from '../../../styledComponents';
-import { HttpContext, HttpProps } from '../../index';
+import { HoppRESTRequest } from '../../data/rest';
+import HttpBreadcrumb from '../../extra/HttpBreadcrumb';
+import { HttpContext, HttpProps, State } from '../../index';
 import SmartEnvInput from '../smart/EnvInput';
 
 const RequestMethodUrlWrapper = styled.div`
@@ -38,23 +40,25 @@ const items: MenuProps['items'] = [
 ];
 
 interface HttpRequestProps {
+  id: string;
+  labelIds?: string[];
+  nodeType: number;
+  nodePath: string[];
   onSend: HttpProps['onSend'];
   onSave: HttpProps['onSave'];
   onSendCompare: HttpProps['onSendCompare'];
-  breadcrumb: any;
 }
 
-const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendCompare }) => {
+const HttpRequest: FC<HttpRequestProps> = (props) => {
   const { store, dispatch } = useContext(HttpContext);
   const { message } = App.useApp();
   const { t } = useTranslation();
+
   const handleMenuClick: MenuProps['onClick'] = (e) => {
-    if (e.key === '1') {
-      handleRequest({ type: 'compare' });
-    }
+    e.key === '1' && handleRequest('compare');
   };
 
-  function checkRequestParams(requestParams: any) {
+  function checkRequestParams(requestParams: HoppRESTRequest) {
     const { body, endpoint } = requestParams;
     if (endpoint === '') {
       return {
@@ -79,7 +83,7 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
     };
   }
 
-  const handleRequest = ({ type }: any) => {
+  const handleRequest = (type: State['mode']) => {
     if (checkRequestParams(store.request).error) {
       message.error(checkRequestParams(store.request).msg);
       return;
@@ -103,16 +107,18 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
       dispatch((state) => {
         state.compareLoading = true;
       });
-      onSendCompare({
-        ...store.request,
-        endpoint: urlPretreatment(store.request.endpoint),
-        compareEndpoint: urlPretreatment(store.request.compareEndpoint),
-      }).then((responseAndTestResult: any) => {
-        dispatch((state) => {
-          state.compareResult = responseAndTestResult.responses;
-          state.compareLoading = false;
+      props
+        .onSendCompare({
+          ...store.request,
+          endpoint: urlPretreatment(store.request.endpoint),
+          compareEndpoint: urlPretreatment(store.request.compareEndpoint),
+        })
+        .then((responseAndTestResult) => {
+          dispatch((state) => {
+            state.compareResult = responseAndTestResult.responses;
+            state.compareLoading = false;
+          });
         });
-      });
     } else {
       dispatch((state) => {
         state.response = {
@@ -120,17 +126,19 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
         };
       });
 
-      onSend({
-        ...store.request,
-        endpoint: urlPretreatment(store.request.endpoint),
-      }).then((responseAndTestResult) => {
-        dispatch((state) => {
-          if (responseAndTestResult.response.type === 'success') {
-            state.response = responseAndTestResult.response;
-            state.testResult = responseAndTestResult.testResult;
-          }
+      props
+        .onSend({
+          ...store.request,
+          endpoint: urlPretreatment(store.request.endpoint),
+        })
+        .then((responseAndTestResult) => {
+          dispatch((state) => {
+            if (responseAndTestResult.response.type === 'success') {
+              state.response = responseAndTestResult.response;
+              state.testResult = responseAndTestResult.testResult;
+            }
+          });
         });
-      });
     }
   };
 
@@ -142,7 +150,12 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
       }}
     >
       <SpaceBetweenWrapper>
-        {breadcrumb}
+        <HttpBreadcrumb
+          id={props.id}
+          nodeType={props.nodeType}
+          nodePath={props.nodePath}
+          defaultTags={props.labelIds}
+        />
 
         <Space>
           <Select
@@ -159,13 +172,7 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
 
           <Divider type={'vertical'} />
 
-          <Button
-            size='small'
-            icon={<SaveOutlined />}
-            onClick={() => {
-              onSave(store.request);
-            }}
-          >
+          <Button size='small' icon={<SaveOutlined />} onClick={() => props.onSave(store.request)}>
             {t('action.save')}
           </Button>
         </Space>
@@ -200,7 +207,7 @@ const HttpRequest: FC<HttpRequestProps> = ({ onSend, onSave, breadcrumb, onSendC
             items,
             onClick: handleMenuClick,
           }}
-          onClick={() => handleRequest({ type: store.mode === 'normal' ? null : 'compare' })}
+          onClick={() => handleRequest(store.mode)}
           style={{ marginLeft: '16px' }}
         >
           {t('action.send')}

@@ -19,10 +19,10 @@ export class FileSystemService {
     } = res;
     return {
       ...rest,
-      method: address.method,
-      endpoint: address.endpoint,
-      compareMethod: testAddress.method,
-      compareEndpoint: testAddress.endpoint,
+      method: address?.method,
+      endpoint: address?.endpoint,
+      compareMethod: testAddress?.method,
+      compareEndpoint: testAddress?.endpoint,
     };
   }
 
@@ -43,10 +43,10 @@ export class FileSystemService {
     } = res;
     return {
       ...rest,
-      method: address.method,
-      endpoint: address.endpoint,
-      compareMethod: testAddress.method,
-      compareEndpoint: testAddress.endpoint,
+      method: address?.method,
+      endpoint: address?.endpoint,
+      compareMethod: testAddress?.method,
+      compareEndpoint: testAddress?.endpoint,
     };
   }
 

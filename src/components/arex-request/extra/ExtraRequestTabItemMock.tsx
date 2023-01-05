@@ -92,51 +92,53 @@ const ExtraRequestTabItemMock: FC<{ recordId: string }> = ({ recordId }) => {
   return (
     <Space direction='vertical' style={{ width: '100%' }}>
       <EmptyWrapper loading={loading} empty={!mockData.length}>
-        {mockData.map((mock) => (
-          <Card
-            size='small'
-            key={mock.id}
-            title={mock.operationName}
-            extra={
-              <TooltipButton
-                icon={<SaveOutlined />}
-                title={'Save'}
-                onClick={() => handleSave(mock.id)}
-              />
-            }
-          >
-            <Row gutter={16}>
-              <Col span={12} style={{ display: 'flex', flexDirection: 'column' }}>
-                <WatermarkCodeMirror
-                  remark='Request'
-                  themeKey={theme}
-                  extensions={[json()]}
-                  value={mock.targetRequestString}
-                  onChange={(value) =>
-                    setMockData((state) => {
-                      const data = state.find((item) => item.id === mock.id);
-                      data && (data.targetRequestString = value);
-                    })
-                  }
+        <Space direction='vertical' style={{ width: '100%' }}>
+          {mockData.map((mock) => (
+            <Card
+              size='small'
+              key={mock.id}
+              title={mock.operationName}
+              extra={
+                <TooltipButton
+                  icon={<SaveOutlined />}
+                  title={'Save'}
+                  onClick={() => handleSave(mock.id)}
                 />
-              </Col>
-              <Col span={12}>
-                <WatermarkCodeMirror
-                  remark='Response'
-                  themeKey={theme}
-                  extensions={[json()]}
-                  value={mock.targetResponseString}
-                  onChange={(value) => {
-                    setMockData((state) => {
-                      const data = state.find((item) => item.id === mock.id);
-                      data && (data.targetResponseString = value);
-                    });
-                  }}
-                />
-              </Col>
-            </Row>
-          </Card>
-        ))}
+              }
+            >
+              <Row gutter={16}>
+                <Col span={12} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <WatermarkCodeMirror
+                    remark='Request'
+                    themeKey={theme}
+                    extensions={[json()]}
+                    value={mock.targetRequestString}
+                    onChange={(value) =>
+                      setMockData((state) => {
+                        const data = state.find((item) => item.id === mock.id);
+                        data && (data.targetRequestString = value);
+                      })
+                    }
+                  />
+                </Col>
+                <Col span={12}>
+                  <WatermarkCodeMirror
+                    remark='Response'
+                    themeKey={theme}
+                    extensions={[json()]}
+                    value={mock.targetResponseString}
+                    onChange={(value) => {
+                      setMockData((state) => {
+                        const data = state.find((item) => item.id === mock.id);
+                        data && (data.targetResponseString = value);
+                      });
+                    }}
+                  />
+                </Col>
+              </Row>
+            </Card>
+          ))}
+        </Space>
       </EmptyWrapper>
     </Space>
   );

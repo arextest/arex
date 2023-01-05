@@ -44,21 +44,23 @@ export interface Tab extends Omit<TabPaneProps, 'tab'> {
   hidden?: boolean;
 }
 
-type TabConfig = {
+export type TabConfig = {
   extra?: Tab[];
   filter?: (key: string) => boolean;
 };
 
-type HttpConfig = {
+export type HttpConfig = {
   requestTabs?: TabConfig;
   responseTabs?: TabConfig;
 };
 
 export interface HttpProps {
+  id: string;
   environment: Environment;
   theme: 'dark' | 'light';
   value?: HoppRESTRequest | null;
-  breadcrumb: any;
+  nodeType: number;
+  nodePath: string[];
   onSend: (
     request: HoppRESTRequest,
   ) => Promise<{ response: HoppRESTResponse; testResult: HoppTestResult }>;
@@ -84,16 +86,18 @@ function reducer(draft: Draft<State>, action: (state: State) => void) {
 const Http = forwardRef<HttpRef, HttpProps>(
   (
     {
+      id,
       value,
-      onSend,
-      onSendCompare,
+      nodeType,
+      nodePath,
       environment,
-      onSave,
       theme,
-      breadcrumb,
       config,
       renderResponse = true,
       onPin,
+      onSend,
+      onSave,
+      onSendCompare,
       defaultDisplayResponse = false,
       requestPanePreferredSize = 360,
     },
@@ -142,6 +146,7 @@ const Http = forwardRef<HttpRef, HttpProps>(
         state.environment = environment;
       });
     }, [environment]);
+
     return (
       <HttpContext.Provider value={{ store, dispatch }}>
         <Allotment
@@ -157,27 +162,30 @@ const Http = forwardRef<HttpRef, HttpProps>(
                 display: flex;
                 flex-direction: column;
               `}
-              className={'http-request-and-options'}
             >
               {store.request.method && (
                 <>
                   <HttpRequest
-                    breadcrumb={breadcrumb}
+                    id={id}
+                    labelIds={value?.labelIds}
+                    nodePath={nodePath}
+                    nodeType={nodeType}
                     onSave={onSave}
                     onSend={onSend}
                     onSendCompare={onSendCompare}
                   />
-                  <HttpRequestOptions config={config} />
+                  <HttpRequestOptions config={config?.requestTabs} />
                 </>
               )}
             </div>
           </Allotment.Pane>
+
           {renderResponse && (
             <Allotment.Pane>
               {store.mode === 'compare' ? (
                 <ExtraResponseTabItemCompareResult theme={theme} responses={store.compareResult} />
               ) : (
-                <HttpResponse onPin={onPin} config={config} />
+                <HttpResponse onPin={onPin} config={config?.responseTabs} />
               )}
             </Allotment.Pane>
           )}

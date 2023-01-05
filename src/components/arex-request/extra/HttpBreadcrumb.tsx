@@ -11,13 +11,13 @@ import { SpaceBetweenWrapper } from '../../styledComponents';
 const { Text } = Typography;
 
 export type HttpBreadcrumbProps = {
-  nodePaths: { title: string }[];
+  nodePath: string[];
   id: string;
   defaultTags?: string[];
   nodeType: number;
 };
 
-const HttpBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePaths, id, defaultTags, nodeType }) => {
+const HttpBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTags, nodeType }) => {
   const params = useParams();
   const { message } = App.useApp();
 
@@ -50,8 +50,8 @@ const HttpBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePaths, id, defaultTags, n
     <SpaceBetweenWrapper>
       <Space>
         <Breadcrumb>
-          {nodePaths.map((nodePath, index) => (
-            <Breadcrumb.Item key={index}>{nodePath.title}</Breadcrumb.Item>
+          {nodePath.map((title, index) => (
+            <Breadcrumb.Item key={index}>{title}</Breadcrumb.Item>
           ))}
         </Breadcrumb>
 

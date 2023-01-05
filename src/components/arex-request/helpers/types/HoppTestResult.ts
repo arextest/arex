@@ -29,4 +29,5 @@ export type HoppTestResult = {
       deletions: Environment['variables'];
     };
   };
+  children: unknown[];
 };

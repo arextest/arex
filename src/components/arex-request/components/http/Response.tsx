@@ -2,13 +2,15 @@ import { css } from '@emotion/react';
 import { FC, useContext, useMemo } from 'react';
 import React from 'react';
 
-import { HttpContext } from '../..';
-import { HoppRESTResponse } from '../../helpers/types/HoppRESTResponse';
-import { HoppTestResult } from '../../helpers/types/HoppTestResult';
+import { HttpContext, TabConfig } from '../..';
+import { LensesHeadersRendererEntryProps } from '../lenses/HeadersRendererEntry';
 import LensesResponseBodyRenderer from '../lenses/ResponseBodyRenderer';
 import HttpResponseMeta from './ResponseMeta';
 
-const HttpResponse: FC<{ onPin: any; config: any }> = ({ onPin, config }) => {
+const HttpResponse: FC<{ onPin: LensesHeadersRendererEntryProps['onPin']; config?: TabConfig }> = ({
+  onPin,
+  config,
+}) => {
   const { store } = useContext(HttpContext);
   const hasResponse = useMemo(
     () =>
@@ -36,8 +38,8 @@ const HttpResponse: FC<{ onPin: any; config: any }> = ({ onPin, config }) => {
       {!loading && hasResponse && (
         <LensesResponseBodyRenderer
           onPin={onPin}
-          response={store.response as HoppRESTResponse}
-          testResult={store.testResult as HoppTestResult}
+          response={store.response}
+          testResult={store.testResult}
           config={config}
         />
       )}

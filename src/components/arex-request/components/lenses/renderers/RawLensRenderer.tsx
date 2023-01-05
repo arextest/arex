@@ -5,22 +5,20 @@ import { useCodeMirror } from '../../../helpers/editor/codemirror';
 import { HoppRESTResponse } from '../../../helpers/types/HoppRESTResponse';
 import { HttpContext } from '../../../index';
 
-const RawLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
+const RawLensRenderer: FC<{ response: HoppRESTResponse | null }> = ({ response }) => {
   const jsonResponse = useRef(null);
   const { store } = useContext(HttpContext);
+
   useCodeMirror({
     container: jsonResponse.current,
-    value: response.type === 'success' ? JSON.stringify(response.body) : '',
+    value: response?.type === 'success' ? JSON.stringify(response.body) : '',
     height: '100%',
     extensions: [EditorView.lineWrapping],
     lineWrapping: true,
     theme: store.theme,
   });
-  return (
-    <div>
-      <div ref={jsonResponse}></div>
-    </div>
-  );
+
+  return <div ref={jsonResponse} />;
 };
 
 export default RawLensRenderer;

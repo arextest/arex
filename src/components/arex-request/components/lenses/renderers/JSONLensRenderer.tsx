@@ -10,11 +10,11 @@ import { useCodeMirror } from '../../../helpers/editor/codemirror';
 import { HoppRESTResponse } from '../../../helpers/types/HoppRESTResponse';
 import { HttpContext } from '../../../index';
 
-const JSONLensRenderer: FC<{ response: HoppRESTResponse }> = ({ response }) => {
+const JSONLensRenderer: FC<{ response: HoppRESTResponse | null }> = ({ response }) => {
   const { message } = App.useApp();
 
   const jsonResponse = useRef(null);
-  const jsonObj = response.body;
+  const jsonObj = response?.body;
   const { store } = useContext(HttpContext);
   useCodeMirror({
     container: jsonResponse.current,

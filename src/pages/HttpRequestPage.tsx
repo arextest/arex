@@ -8,7 +8,6 @@ import Http from '../components/arex-request';
 import { Environment } from '../components/arex-request/data/environment';
 import { HoppRESTRequest } from '../components/arex-request/data/rest';
 import ExtraRequestTabItemMock from '../components/arex-request/extra/ExtraRequestTabItemMock';
-import HttpBreadcrumb from '../components/arex-request/extra/HttpBreadcrumb';
 import { treeFind, treeFindPath } from '../helpers/collection/util';
 import { runCompareRESTRequest } from '../helpers/CompareRequestRunner';
 import { convertSaveRequestData } from '../helpers/http/util';
@@ -47,7 +46,7 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [reqParams, setReqParams] = useState<HoppRESTRequest>();
 
-  const env = useMemo<Environment>(
+  const environment = useMemo<Environment>(
     () =>
       activeEnvironment
         ? {
@@ -71,11 +70,13 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
     );
   }, [props.page.paneId, collectionTreeData]);
 
-  const nodePaths = useMemo(() => {
-    return treeFindPath(
+  const nodePath = useMemo(() => {
+    const path = treeFindPath(
       collectionTreeData,
       (node: nodeType) => node.key === parseGlobalPaneId(props.page.paneId)['rawId'],
     );
+
+    return path.map((item) => item.title);
   }, [props.page.paneId, collectionTreeData]);
 
   const { data, run: queryInterfaceOrCase } = useRequest(
@@ -166,18 +167,13 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
     <HttpRequestPageWrapper>
       <Http
         renderResponse
+        id={id}
         value={data}
-        environment={env}
         theme={theme}
-        breadcrumb={
-          <HttpBreadcrumb
-            nodePaths={nodePaths}
-            id={id}
-            defaultTags={data?.labelIds}
-            nodeType={nodeType}
-          />
-        }
         config={httpConfig}
+        nodeType={nodeType}
+        nodePath={nodePath}
+        environment={environment}
         onSend={runRESTRequest}
         onSendCompare={runCompareRESTRequest}
         onSave={handleSave}

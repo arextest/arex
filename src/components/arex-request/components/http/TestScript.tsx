@@ -21,7 +21,7 @@ export type TestScriptProps = Omit<ScriptBlocksProps, 'onChange'> & {
 const TestScript: FC<TestScriptProps> = (props) => {
   const [items, setItems] = useImmer<ScriptBlock<string>[]>(
     props.multiple
-      ? props.value.map((p) => {
+      ? (props.value || []).map((p) => {
           return {
             key: uuid(),
             type: p.type,

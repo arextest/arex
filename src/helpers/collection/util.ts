@@ -16,7 +16,15 @@ export function arrToTree(arr: any, pid = 0) {
 
 // 根据id查询返回每一级数据
 
-export function treeFindPath(tree: any, func: any, path: any = []): any {
+export function treeFindPath(
+  tree: any,
+  func: any,
+  path: any = [],
+): {
+  title: string;
+  key: string;
+  nodeType: number;
+}[] {
   if (!tree) {
     return [];
   }

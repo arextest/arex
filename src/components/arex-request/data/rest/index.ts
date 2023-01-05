@@ -56,10 +56,9 @@ export interface HoppRESTRequest {
     type: number;
     value: string;
   }[];
-
   auth: HoppRESTAuth | null;
-
   body: { [key: string]: string };
+  labelIds?: string[];
 }
 
 export function makeRESTRequest(x: HoppRESTRequest): HoppRESTRequest & { v: string } {

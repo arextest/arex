@@ -3,16 +3,16 @@ import { Radio, RadioChangeEvent } from 'antd';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import RawBody from './RawBody';
+import RawBody, { HttpRawBodyRef } from './RawBody';
 const HttpBody = () => {
   const { t } = useTranslation();
 
-  const [value1, setValue1] = useState('application/json');
+  const [value, setValue] = useState('application/json');
   const plainOptions = ['application/json'];
-  const onChange1 = ({ target: { value } }: RadioChangeEvent) => {
-    setValue1(value);
+  const onChange = ({ target: { value } }: RadioChangeEvent) => {
+    setValue(value);
   };
-  const rawBodyRef = useRef<any>(null);
+  const rawBodyRef = useRef<HttpRawBodyRef>(null);
 
   return (
     <div
@@ -29,13 +29,11 @@ const HttpBody = () => {
           margin: 6px 0;
         `}
       >
-        <Radio.Group options={plainOptions} onChange={onChange1} value={value1} />
-        <div>
-          <a onClick={() => rawBodyRef.current.prettifyRequestBody()}>{t('action.prettify')}</a>
-        </div>
+        <Radio.Group options={plainOptions} onChange={onChange} value={value} />
+        <a onClick={() => rawBodyRef.current?.prettifyRequestBody()}>{t('action.prettify')}</a>
       </div>
 
-      <RawBody cRef={rawBodyRef} />
+      <RawBody ref={rawBodyRef} />
     </div>
   );
 };

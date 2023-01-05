@@ -5,7 +5,7 @@ import React from 'react';
 
 import { HoppRESTResponse } from '../../helpers/types/HoppRESTResponse';
 import { HoppTestResult } from '../../helpers/types/HoppTestResult';
-import { HttpProps, Tab } from '../../index';
+import { Tab, TabConfig } from '../../index';
 import TestResult from '../http/TestResult';
 import LensesHeadersRenderer from './HeadersRenderer';
 import { LensesHeadersRendererEntryProps } from './HeadersRendererEntry';
@@ -13,10 +13,10 @@ import JSONLensRenderer from './renderers/JSONLensRenderer';
 import RawLensRenderer from './renderers/RawLensRenderer';
 
 const LensesResponseBodyRenderer: FC<{
-  response: HoppRESTResponse;
-  testResult: HoppTestResult;
+  response: HoppRESTResponse | null;
+  testResult: HoppTestResult | null;
   onPin: LensesHeadersRendererEntryProps['onPin'];
-  config: HttpProps['config'];
+  config?: TabConfig;
 }> = ({ response, testResult, onPin, config }) => {
   const items = useMemo(() => {
     let _items: Tab[] = [
@@ -42,14 +42,12 @@ const LensesResponseBodyRenderer: FC<{
       },
     ];
     // concat extra response tabs
-    config?.responseTabs?.extra?.length &&
-      _items.push(...config.responseTabs.extra.filter((e) => !e.hidden));
+    config?.extra?.length && _items.push(...config.extra.filter((e) => !e.hidden));
 
     // filter tabs
-    config?.responseTabs?.filter &&
-      (_items = _items.filter((tab) => config?.responseTabs?.filter?.(tab.key)));
+    config?.filter && (_items = _items.filter((tab) => config?.filter?.(tab.key)));
     return _items;
-  }, [config?.responseTabs, response, testResult]);
+  }, [config, response, testResult]);
 
   return (
     <div

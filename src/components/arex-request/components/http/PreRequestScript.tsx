@@ -21,7 +21,7 @@ export type PreRequestScriptProps = Omit<ScriptBlocksProps, 'onChange'> & {
 const PreRequestScript: FC<PreRequestScriptProps> = (props) => {
   const [items, setItems] = useImmer<ScriptBlock<string>[]>(
     props.multiple
-      ? props.value.map((p) => ({
+      ? (props.value || []).map((p) => ({
           key: uuid(),
           type: p.type,
           label: p.label,

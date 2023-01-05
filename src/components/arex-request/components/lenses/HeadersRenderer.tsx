@@ -7,12 +7,12 @@ import LensesHeadersRendererEntry, {
 } from './HeadersRendererEntry';
 
 const LensesHeadersRenderer: FC<{
-  headers: HoppRESTHeader[];
+  headers: HoppRESTHeader[] | null;
   onPin: LensesHeadersRendererEntryProps['onPin'];
 }> = ({ headers, onPin }) => {
   return (
     <>
-      {headers.map((header, index) => (
+      {headers?.map((header, index) => (
         <LensesHeadersRendererEntry onPin={onPin} key={index} header={header} />
       ))}
     </>

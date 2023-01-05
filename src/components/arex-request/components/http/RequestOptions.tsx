@@ -4,14 +4,14 @@ import { FC, useContext, useMemo, useState } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { HttpContext, HttpProps, Tab } from '../../index';
+import { HttpContext, Tab, TabConfig } from '../../index';
 import HttpBody from './Body';
 import HttpHeaders from './Headers';
 import HttpParameters from './Parameters';
 import PreRequestScript from './PreRequestScript';
 import TestScript from './TestScript';
 
-const HttpRequestOptions: FC<Pick<HttpProps, 'config'>> = ({ config }) => {
+const HttpRequestOptions: FC<{ config?: TabConfig }> = ({ config }) => {
   const { store, dispatch } = useContext(HttpContext);
   const { t } = useTranslation();
   const [activeKey, setActiveKey] = useState('body');
@@ -22,7 +22,7 @@ const HttpRequestOptions: FC<Pick<HttpProps, 'config'>> = ({ config }) => {
         label: (
           <span>
             {t('tab.parameters')}
-            {!!store.request.params.length && (
+            {!!store.request.params?.length && (
               <Tag style={{ borderRadius: '6px', margin: '0 0 0 4px' }}>
                 {store.request.params.length}
               </Tag>
@@ -36,7 +36,7 @@ const HttpRequestOptions: FC<Pick<HttpProps, 'config'>> = ({ config }) => {
         label: (
           <span>
             {t('tab.headers')}
-            {!!store.request.headers.length && (
+            {!!store.request.headers?.length && (
               <Tag style={{ borderRadius: '6px', margin: '0 0 0 4px' }}>
                 {store.request.headers.length}
               </Tag>
@@ -81,12 +81,10 @@ const HttpRequestOptions: FC<Pick<HttpProps, 'config'>> = ({ config }) => {
     ];
 
     // concat extra request tabs
-    config?.requestTabs?.extra &&
-      _items.push(...config.requestTabs.extra.filter((tab) => !tab.hidden));
+    config?.extra && _items.push(...config.extra.filter((tab) => !tab.hidden));
 
     // filter tabs
-    config?.requestTabs?.filter &&
-      (_items = _items.filter((tab) => config?.requestTabs?.filter?.(tab.key)));
+    config?.filter && (_items = _items.filter((tab) => config?.filter?.(tab.key)));
 
     return _items;
   }, [config, store.request]);
