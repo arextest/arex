@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import Http from '../components/arex-request';
 import { Environment } from '../components/arex-request/data/environment';
 import { HoppRESTRequest } from '../components/arex-request/data/rest';
-import ExtraRequestTabItemMock from '../components/arex-request/extra/ExtraRequestTabItemMock';
+import { ExtraTabs } from '../components/arex-request/extra';
 import { treeFind, treeFindPath } from '../helpers/collection/util';
 import { runCompareRESTRequest } from '../helpers/CompareRequestRunner';
 import { convertSaveRequestData } from '../helpers/http/util';
@@ -116,7 +116,7 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
           {
             label: 'Mock',
             key: 'mock',
-            children: <ExtraRequestTabItemMock recordId={data?.recordId as string} />,
+            children: <ExtraTabs.RequestTabs.Mock recordId={data?.recordId as string} />,
             hidden: !data?.recordId,
           },
         ],

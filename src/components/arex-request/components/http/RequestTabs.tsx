@@ -11,7 +11,7 @@ import HttpParameters from './Parameters';
 import PreRequestScript from './PreRequestScript';
 import TestScript from './TestScript';
 
-const HttpRequestOptions: FC<{ config?: TabConfig }> = ({ config }) => {
+const RequestTabs: FC<{ config?: TabConfig }> = ({ config }) => {
   const { store, dispatch } = useContext(HttpContext);
   const { t } = useTranslation();
   const [activeKey, setActiveKey] = useState('body');
@@ -114,4 +114,4 @@ const HttpRequestOptions: FC<{ config?: TabConfig }> = ({ config }) => {
   );
 };
 
-export default HttpRequestOptions;
+export default RequestTabs;

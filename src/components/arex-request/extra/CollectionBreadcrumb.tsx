@@ -17,7 +17,7 @@ export type HttpBreadcrumbProps = {
   nodeType: number;
 };
 
-const HttpBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTags, nodeType }) => {
+const CollectionBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTags, nodeType }) => {
   const params = useParams();
   const { message } = App.useApp();
 
@@ -99,4 +99,4 @@ const HttpBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTags, no
   );
 };
 
-export default HttpBreadcrumb;
+export default CollectionBreadcrumb;
