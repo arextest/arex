@@ -8,6 +8,7 @@ import Http from '../components/arex-request';
 import { Environment } from '../components/arex-request/data/environment';
 import { HoppRESTRequest } from '../components/arex-request/data/rest';
 import { ExtraTabs } from '../components/arex-request/extra';
+import { CompareConfig } from '../components/arex-request/extra/tabs/request';
 import { treeFind, treeFindPath } from '../helpers/collection/util';
 import { runCompareRESTRequest } from '../helpers/CompareRequestRunner';
 import { convertSaveRequestData } from '../helpers/http/util';
@@ -17,6 +18,7 @@ import { MenusType } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
 import SaveRequestButton from '../menus/CollectionMenu/SaveRequestButton';
 import { FileSystemService } from '../services/FileSystem.service';
+import { BaseInterface } from '../services/FileSystem.type';
 import { useStore } from '../store';
 import useUserProfile from '../store/useUserProfile';
 import { PageFC, PagesType } from './index';
@@ -85,7 +87,7 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
         ? FileSystemService.queryCase({ id })
         : FileSystemService.queryInterface({ id }),
     {
-      refreshDeps: [nodeType],
+      refreshDeps: [id],
     },
   );
 
@@ -118,6 +120,16 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
             key: 'mock',
             children: <ExtraTabs.RequestTabs.Mock recordId={data?.recordId as string} />,
             hidden: !data?.recordId,
+          },
+          {
+            label: 'CompareConfig',
+            key: 'compareConfig',
+            children: (
+              <ExtraTabs.RequestTabs.CompareConfig
+                interfaceId={id}
+                operationId={data?.operationId}
+              />
+            ),
           },
         ],
       },

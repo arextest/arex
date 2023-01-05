@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { Input, Select } from 'antd';
 import React, { useContext } from 'react';
 
+import { METHODS } from '../../../../../constant';
 import { HttpContext } from '../../../index';
 
 const HeaderWrapper = styled.div`
@@ -23,14 +24,14 @@ const HeaderWrapper = styled.div`
     margin-left: 16px;
   }
 `;
-const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 const Compare = () => {
   const { store, dispatch } = useContext(HttpContext);
+
   return (
     <HeaderWrapper>
       <Select
         value={store.request.compareMethod}
-        options={methods.map((i) => ({ value: i, lable: i }))}
+        options={METHODS.map((i) => ({ value: i, lable: i }))}
         onChange={(value) => {
           dispatch((state) => {
             state.request.compareMethod = value;

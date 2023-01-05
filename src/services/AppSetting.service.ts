@@ -1,13 +1,16 @@
 import request from '../helpers/api/axios';
 import { objectArrayFilter } from '../helpers/utils';
 import {
-  IgnoreNode,
   IgnoreNodeBase,
   InsertSettingReqInsert,
+  InterfaceIgnoreNode,
   OperationId,
   OperationInterface,
   OperationType,
   QueryConfigTemplateRes,
+  QueryIgnoreNode,
+  QueryInterfaceIgnoreNode,
+  QueryInterfaceIgnoreNodeReq,
   QueryInterfacesListRes,
   QueryNodeReq,
   QueryRecordDynamicClassSettingReq,
@@ -141,12 +144,26 @@ export default class AppSettingService {
 
   // 获取 IgnoreNode Interface/Global 数据
   static async queryIgnoreNode(params: QueryNodeReq<'Global'>) {
-    const res = await request.get<IgnoreNode[]>(
+    const res = await request.get<QueryIgnoreNode[]>(
       '/report/config/comparison/exclusions/useResultAsList',
       { ...params, operationId: params.operationId || undefined },
     );
     return res.body
-      .map<IgnoreNode>((item) => ({
+      .map<QueryIgnoreNode>((item) => ({
+        ...item,
+        path: item.exclusions.concat(['']).join('/'),
+      }))
+      .sort((a, b) => a.path.localeCompare(b.path));
+  }
+
+  // 使用 interfaceId 和 operationId 获取 IgnoreNode 数据（用于 collection-interface ）
+  static async queryInterfaceIgnoreNode(params: QueryInterfaceIgnoreNodeReq) {
+    const res = await request.get<QueryInterfaceIgnoreNode[]>(
+      '/report/config/comparison/exclusions/queryByInterfaceIdAndOperationId?',
+      params,
+    );
+    return res.body
+      .map<QueryInterfaceIgnoreNode>((item) => ({
         ...item,
         path: item.exclusions.concat(['']).join('/'),
       }))
@@ -154,7 +171,7 @@ export default class AppSettingService {
   }
 
   // 单个新增 IgnoreNode Interface/Global 数据
-  static async insertIgnoreNode(params: IgnoreNodeBase) {
+  static async insertIgnoreNode(params: IgnoreNodeBase | InterfaceIgnoreNode) {
     const res = await request.post<boolean>(
       '/report/config/comparison/exclusions/modify/INSERT',
       params,
