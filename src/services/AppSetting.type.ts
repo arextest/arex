@@ -127,19 +127,29 @@ export interface UpdateInterfaceResponseReq {
   operationResponse: string;
 }
 
-export type IgnoreNodeBase = {
-  appId: string;
+export interface IgnoreNodeBase {
+  appId?: string;
   operationId: OperationId<'Global'>;
   exclusions: string[];
-};
+}
 
-export type IgnoreNode = IgnoreNodeBase & {
+export interface QueryIgnoreNode extends IgnoreNodeBase {
   modifiedTime: string;
   id: string;
   expirationType: number;
   expirationDate: string;
   path: string;
-};
+}
+
+export interface QueryInterfaceIgnoreNode extends QueryIgnoreNode {
+  compareConfigType: number | null;
+  fsInterfaceId: string | null;
+}
+
+export interface InterfaceIgnoreNode extends IgnoreNodeBase {
+  compareConfigType: number | null;
+  fsInterfaceId: string | null;
+}
 
 export interface UpdateIgnoreNodeReq {
   id: string;
@@ -149,6 +159,11 @@ export interface UpdateIgnoreNodeReq {
 export interface QueryNodeReq<T extends OperationType> {
   appId: string;
   operationId?: OperationId<T>;
+}
+
+export interface QueryInterfaceIgnoreNodeReq {
+  interfaceId: string;
+  operationId?: string;
 }
 
 export type SortNodePathKey = {

@@ -12,7 +12,13 @@ import { App, Button, Collapse, Input, List, Spin } from 'antd';
 import React, { FC, SyntheticEvent, useRef, useState } from 'react';
 
 import AppSettingService from '../../../services/AppSetting.service';
-import { IgnoreNode, OperationId, OperationInterface } from '../../../services/AppSetting.type';
+import {
+  IgnoreNodeBase,
+  InterfaceIgnoreNode,
+  OperationId,
+  OperationInterface,
+  QueryIgnoreNode,
+} from '../../../services/AppSetting.type';
 import { SpaceBetweenWrapper } from '../../styledComponents';
 import TooltipButton from '../../TooltipButton';
 
@@ -26,15 +32,16 @@ const PathCollapseWrapper = styled.div`
 `;
 
 type PathCollapseProps = {
-  appId: string;
+  appId?: string;
+  interfaceId?: string; // collection - interface
   title?: string;
   activeKey?: OperationId<'Global'>;
   interfaces: InterfacePick[];
-  ignoreNodes: IgnoreNode[];
+  ignoreNodes: QueryIgnoreNode[];
   loading?: boolean;
   loadingPanel?: boolean;
   manualEdit?: boolean;
-  onChange: (path?: InterfacePick, maintain?: boolean) => void;
+  onChange?: (path?: InterfacePick, maintain?: boolean) => void;
   onReloadNodes?: () => void;
   onEditResponse?: (operationInterface: InterfacePick) => void;
 };
@@ -77,11 +84,17 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
       message.warning('Please enter ignored key');
       return;
     }
-    insertIgnoreNode({
+
+    let params: IgnoreNodeBase | InterfaceIgnoreNode = {
       appId: props.appId,
       operationId: null,
       exclusions: ignoredKey.split('/').filter(Boolean),
-    });
+    };
+
+    props.interfaceId &&
+      (params = { ...params, compareConfigType: 1, fsInterfaceId: props.interfaceId });
+
+    insertIgnoreNode(params);
   };
 
   /**
