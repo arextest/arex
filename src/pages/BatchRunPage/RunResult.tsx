@@ -132,7 +132,7 @@ const RunResult: FC<RunResultProps> = ({ result, loading }) => {
                   font-size: 12px;
                 `}
               >
-                {urlPretreatment(resultItem?.request.address?.endpoint)}
+                {urlPretreatment(resultItem?.request?.address?.endpoint)}
               </div>
             </div>
 

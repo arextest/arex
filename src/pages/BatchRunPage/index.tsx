@@ -222,6 +222,11 @@ const BatchRunPage: React.FC = () => {
           `}
         >
           <Tabs
+            css={css`
+              .ant-tabs-content-holder {
+                overflow: auto;
+              }
+            `}
             style={{ height: '100%' }}
             items={[
               {

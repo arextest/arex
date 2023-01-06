@@ -45,6 +45,7 @@ interface HttpRequestProps {
   nodeType: number;
   nodePath: string[];
   onSend: HttpProps['onSend'];
+  onPreSend: HttpProps['onPreSend'];
   onSave: HttpProps['onSave'];
   onSendCompare: HttpProps['onSendCompare'];
 }
@@ -88,14 +89,13 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
       message.error(checkRequestParams(store.request).msg);
       return;
     }
-    const urlPretreatment = (url: string) => {
+    const urlPretreatment = (url: string, envs: { key: string; value: string }[]) => {
       const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
       for (let j = 0; j < editorValueMatch.length; j++) {
         let replaceVar = editorValueMatch[j];
-        const env = store.environment?.variables || [];
-        for (let i = 0; i < env.length; i++) {
-          if (env[i].key === editorValueMatch[j].replace('{{', '').replace('}}', '')) {
-            replaceVar = env[i].value;
+        for (let i = 0; i < envs.length; i++) {
+          if (envs[i].key === editorValueMatch[j].replace('{{', '').replace('}}', '')) {
+            replaceVar = envs[i].value;
             url = url.replace(editorValueMatch[j], replaceVar);
           }
         }
@@ -110,8 +110,11 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
       props
         .onSendCompare({
           ...store.request,
-          endpoint: urlPretreatment(store.request.endpoint),
-          compareEndpoint: urlPretreatment(store.request.compareEndpoint),
+          endpoint: urlPretreatment(store.request.endpoint, store.environment?.variables || []),
+          compareEndpoint: urlPretreatment(
+            store.request.compareEndpoint,
+            store.environment?.variables || [],
+          ),
         })
         .then((responseAndTestResult) => {
           dispatch((state) => {
@@ -127,17 +130,26 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
       });
 
       props
-        .onSend({
+        .onPreSend({
           ...store.request,
-          endpoint: urlPretreatment(store.request.endpoint),
         })
-        .then((responseAndTestResult) => {
-          dispatch((state) => {
-            if (responseAndTestResult.response.type === 'success') {
-              state.response = responseAndTestResult.response;
-              state.testResult = responseAndTestResult.testResult;
-            }
-          });
+        .then((prTestResultEnvs) => {
+          props
+            .onSend({
+              ...store.request,
+              endpoint: urlPretreatment(store.request.endpoint, [
+                ...(store.environment?.variables || []),
+                ...prTestResultEnvs.prTestResultEnvs,
+              ]),
+            })
+            .then((responseAndTestResult) => {
+              dispatch((state) => {
+                if (responseAndTestResult.response.type === 'success') {
+                  state.response = responseAndTestResult.response;
+                  state.testResult = responseAndTestResult.testResult;
+                }
+              });
+            });
         });
     }
   };
