@@ -116,7 +116,7 @@ export type OperationData<T extends OperationType> = {
 
 export type QueryInterfacesListRes<T extends OperationType> = OperationData<T>[];
 
-type OperationIdGlobal = string | null;
+type OperationIdGlobal = string | null | undefined;
 type OperationIdInterface = string;
 export type OperationId<T extends OperationType> = T extends 'Global'
   ? OperationIdGlobal
@@ -163,7 +163,7 @@ export interface QueryNodeReq<T extends OperationType> {
 
 export interface QueryInterfaceIgnoreNodeReq {
   interfaceId: string;
-  operationId?: string;
+  operationId?: string | null;
 }
 
 export type SortNodePathKey = {

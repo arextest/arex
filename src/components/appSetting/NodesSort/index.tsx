@@ -45,7 +45,9 @@ const TreeCarousel = styled(Carousel)`
   }
 `;
 
-const SettingNodesSort: FC<{ appId: string }> = (props) => {
+export type SettingNodesSortProps = { appId?: string; interfaceId?: string; operationId?: string };
+
+const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
   const { message } = App.useApp();
 
   const { t } = useTranslation('common');
@@ -71,9 +73,13 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
   /**
    * 请求 InterfacesList
    */
-  const { data: operationList = [], loading: loadingOperationList } = useRequest(() =>
-    AppSettingService.queryInterfacesList<'Interface'>({ id: props.appId }),
-  );
+  const { data: operationList = props.interfaceId ? [{}] : [], loading: loadingOperationList } =
+    useRequest(
+      () => AppSettingService.queryInterfacesList<'Interface'>({ id: props.appId as string }),
+      {
+        ready: !!props.appId,
+      },
+    );
 
   /**
    * 获取 SortNode
@@ -266,6 +272,7 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
   /**
    * 取消编辑 response
    * @param reloadResponse 是否重新加载 interfaceResponse
+   * @param nodesEditMode
    */
   const handleCancelEditResponse = (
     reloadResponse?: boolean,
@@ -297,95 +304,86 @@ const SettingNodesSort: FC<{ appId: string }> = (props) => {
   };
 
   return (
-    <div>
-      <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
-        <Col span={10}>
-          <PathCollapse
-            title='Interfaces'
-            loading={loadingOperationList}
-            loadingPanel={loadingSortNode}
-            interfaces={operationList}
-            activeKey={activeOperationInterface?.id}
-            activeCollapseKey={activeSortNode}
-            sortNodes={sortNodeList}
-            onEdit={handleEditCollapseItem}
-            onChange={handleNodesCollapseClick}
-            onEditResponse={handleEditResponse}
-            onReloadNodes={querySortNode}
-          />
-        </Col>
+    <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
+      <Col span={10}>
+        <PathCollapse
+          title='Interfaces'
+          loading={loadingOperationList}
+          loadingPanel={loadingSortNode}
+          interfaces={operationList}
+          activeKey={activeOperationInterface?.id}
+          activeCollapseKey={activeSortNode}
+          sortNodes={sortNodeList}
+          onEdit={handleEditCollapseItem}
+          onChange={handleNodesCollapseClick}
+          onEditResponse={handleEditResponse}
+          onReloadNodes={querySortNode}
+        />
+      </Col>
 
-        <Col span={13}>
-          <EditAreaPlaceholder
-            dashedBorder
-            title='Edit Area (Click interface to start)'
-            ready={!!activeOperationInterface}
-          >
-            {nodesEditMode === NodesEditMode.Tree ? (
-              <div>
-                <SpaceBetweenWrapper style={{ paddingBottom: '8px' }}>
-                  <h3>{TreeEditMode[treeEditMode]}</h3>
-                  {treeEditMode === TreeEditModeEnum.SortTree && (
-                    <Space>
-                      <Button size='small' onClick={() => handleCancelEditResponse()}>
-                        {t('cancel')}
-                      </Button>
-                      <Button size='small' type='primary' onClick={handleSaveSort}>
-                        {t('save')}
-                      </Button>
-                    </Space>
-                  )}
-                </SpaceBetweenWrapper>
+      <Col span={13}>
+        <EditAreaPlaceholder
+          dashedBorder
+          title='Edit Area (Click interface to start)'
+          ready={!!activeOperationInterface}
+        >
+          {nodesEditMode === NodesEditMode.Tree ? (
+            <>
+              <SpaceBetweenWrapper style={{ paddingBottom: '8px' }}>
+                <h3>{TreeEditMode[treeEditMode]}</h3>
+                {treeEditMode === TreeEditModeEnum.SortTree && (
+                  <Space>
+                    <Button size='small' onClick={() => handleCancelEditResponse()}>
+                      {t('cancel')}
+                    </Button>
+                    <Button size='small' type='primary' onClick={handleSaveSort}>
+                      {t('save')}
+                    </Button>
+                  </Space>
+                )}
+              </SpaceBetweenWrapper>
 
-                <Card bodyStyle={{ padding: 0 }}>
-                  {Object.keys(interfaceResponseParsed).length ? (
-                    <TreeCarousel
-                      ref={treeCarousel}
-                      beforeChange={(from, to) => setTreeEditMode(to)}
-                    >
-                      <div>
-                        <ArrayTree
-                          title={activeOperationInterface?.operationName}
-                          treeData={interfaceResponseParsed}
-                          loading={loadingInterfaceResponse}
-                          sortNodeList={sortNodeList}
-                          onSelect={(selectedKeys) =>
-                            handleEditCollapseItem(
-                              selectedKeys[0] as string,
-                              sortNodeList.find((node) => node.path === selectedKeys[0]),
-                            )
-                          }
-                        />
-                      </div>
+              <Card bodyStyle={{ padding: 0 }}>
+                {Object.keys(interfaceResponseParsed).length ? (
+                  <TreeCarousel ref={treeCarousel} beforeChange={(from, to) => setTreeEditMode(to)}>
+                    <ArrayTree
+                      title={activeOperationInterface?.operationName}
+                      treeData={interfaceResponseParsed}
+                      loading={loadingInterfaceResponse}
+                      sortNodeList={sortNodeList}
+                      onSelect={(selectedKeys) =>
+                        handleEditCollapseItem(
+                          selectedKeys[0] as string,
+                          sortNodeList.find((node) => node.path === selectedKeys[0]),
+                        )
+                      }
+                    />
 
-                      <div>
-                        {treeReady && (
-                          <SortTree
-                            title={checkedNodesData.path}
-                            treeData={sortArray}
-                            checkedKeys={checkedNodesData.pathKeyList}
-                            onCheck={handleSortTreeChecked}
-                            onSelect={handleSortTreeSelected}
-                          />
-                        )}
-                      </div>
-                    </TreeCarousel>
-                  ) : (
-                    <EmptyResponse onClick={handleEditResponse} />
-                  )}
-                </Card>
-              </div>
-            ) : (
-              <ResponseRaw
-                value={tryPrettierJsonString(interfaceResponse?.operationResponse || '')}
-                onSave={handleResponseSave}
-                onCancel={handleCancelEditResponse}
-              />
-            )}
-          </EditAreaPlaceholder>
-        </Col>
-      </Row>
-    </div>
+                    {treeReady && (
+                      <SortTree
+                        title={checkedNodesData.path}
+                        treeData={sortArray}
+                        checkedKeys={checkedNodesData.pathKeyList}
+                        onCheck={handleSortTreeChecked}
+                        onSelect={handleSortTreeSelected}
+                      />
+                    )}
+                  </TreeCarousel>
+                ) : (
+                  <EmptyResponse onClick={handleEditResponse} />
+                )}
+              </Card>
+            </>
+          ) : (
+            <ResponseRaw
+              value={tryPrettierJsonString(interfaceResponse?.operationResponse || '')}
+              onSave={handleResponseSave}
+              onCancel={handleCancelEditResponse}
+            />
+          )}
+        </EditAreaPlaceholder>
+      </Col>
+    </Row>
   );
 };
 

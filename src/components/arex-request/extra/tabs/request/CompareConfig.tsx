@@ -3,29 +3,20 @@ import { Space, Typography } from 'antd';
 import React, { FC } from 'react';
 
 import AppSettingService from '../../../../../services/AppSetting.service';
-import PathCollapse from '../../../../appSetting/NodesIgnore/PathCollapse';
+import NodesIgnore from '../../../../appSetting/NodesIgnore';
+import NodesSort from '../../../../appSetting/NodesSort';
 import { Label } from '../../../../styledComponents';
 
 export type CompareConfigProps = {
   interfaceId: string;
-  operationId?: string;
+  operationId?: string | null;
 };
 const CompareConfig: FC<CompareConfigProps> = (props) => {
-  const {
-    data: ignoreNodeList = [],
-    loading: loadingIgnoreNode,
-    run: queryIgnoreNode,
-  } = useRequest(
-    () =>
-      AppSettingService.queryInterfaceIgnoreNode({
-        interfaceId: props.interfaceId,
-        operationId: props.operationId,
-      }),
-    {
-      onSuccess(res) {
-        console.log('queryInterfaceIgnoreNode', res);
-      },
-    },
+  useRequest(() =>
+    AppSettingService.queryInterfaceSortNode({
+      interfaceId: props.interfaceId,
+      operationId: props.operationId,
+    }),
   );
 
   return (
@@ -41,15 +32,9 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         </Typography.Text>
       </Space>
 
-      <PathCollapse
-        manualEdit
-        interfaceId={props.interfaceId}
-        loadingPanel={loadingIgnoreNode}
-        interfaces={[{ id: props.interfaceId, operationName: 'Node Ignore' }]}
-        activeKey={props.interfaceId}
-        ignoreNodes={ignoreNodeList}
-        onReloadNodes={queryIgnoreNode}
-      />
+      <NodesIgnore interfaceId={props.interfaceId} operationId={props.operationId} />
+
+      {/*<NodesSort  interfaceId={props.interfaceId} />*/}
     </>
   );
 };

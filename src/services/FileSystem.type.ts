@@ -43,7 +43,7 @@ export interface QueryWorkspaceByIdRes {
 
 // ------ /api/filesystem/queryInterface ------
 
-export type BaseInterface<T extends 'interface' | 'case'> = {
+export type BaseInterface = {
   id: string;
   name: string | null;
   address: Address;
@@ -55,21 +55,14 @@ export type BaseInterface<T extends 'interface' | 'case'> = {
   auth: HoppRESTAuth | null;
   testAddress: Address;
   customTags: null;
-} & (T extends 'interface'
-  ? {
-      // interface unique attribute
-      operationId?: string | null;
-    }
-  : {
-      // case unique attribute
-      recordId?: string | null;
-      comparisonMsg?: null;
-      labelIds?: string[];
-      description?: null;
-    });
-
-export type QueryInterfaceRes = BaseInterface<'interface'>;
-export type QueryCaseRes = BaseInterface<'case'>;
+  // interface unique attribute
+  operationId?: string | null;
+  // case unique attribute
+  recordId?: string | null;
+  comparisonMsg?: null;
+  labelIds?: string[];
+  description?: null;
+};
 
 // ------ /api/filesystem/saveInterface ------
 export interface SaveInterfaceReq extends Partial<QueryInterfaceRes> {

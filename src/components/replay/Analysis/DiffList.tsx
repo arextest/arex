@@ -110,7 +110,9 @@ const DiffList: FC<DiffListType> = (props) => {
             {log.pathPair.unmatchedType === 3 ? (
               <Typography.Text type='secondary'>
                 {'Value of '}
-                <Typography.Text code>{log.path || '[]'}</Typography.Text>
+                <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
+                  {log.path || '[]'}
+                </Typography.Text>
                 {' is different, excepted '}
                 <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
                   {log.baseValue || '[]'}
