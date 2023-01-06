@@ -85,7 +85,7 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
         ? FileSystemService.queryCase({ id })
         : FileSystemService.queryInterface({ id }),
     {
-      refreshDeps: [id],
+      refreshDeps: [id, nodeType],
     },
   );
 
