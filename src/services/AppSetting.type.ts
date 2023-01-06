@@ -66,15 +66,15 @@ export type RemoveDynamicClassSettingRes = boolean;
 
 export type OperationType = 'Global' | 'Interface';
 export type OperationInterface<T extends OperationType = 'Global'> = {
-  status: number;
+  status?: number;
   modifiedTime?: number;
   id: OperationId<T>;
-  appId: string;
-  serviceId: string;
+  appId?: string;
+  serviceId?: string;
   operationName: string;
-  operationType: number;
-  operationResponse: string | null;
-  recordedCaseCount: number | null;
+  operationType?: number;
+  operationResponse?: string | null;
+  recordedCaseCount?: number | null;
 };
 
 export type ExcludeOperationMap = { [key: string]: string[] };

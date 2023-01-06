@@ -45,7 +45,12 @@ const TreeCarousel = styled(Carousel)`
   }
 `;
 
-export type SettingNodesSortProps = { appId?: string; interfaceId?: string; operationId?: string };
+export type SettingNodesSortProps = {
+  appId?: string; // 在 AppSetting 中设置
+  // 以下 props 不应与上面 props 同时定义
+  interfaceId?: string; // 在 Request 中设置
+  operationId?: string | null; // 在 Request 中设置
+};
 
 const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
   const { message } = App.useApp();
@@ -54,8 +59,16 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
 
   const treeCarousel = useRef<CarouselRef>(null);
 
-  const [activeOperationInterface, setActiveOperationInterface] =
-    useState<OperationInterface<'Interface'>>();
+  const [activeOperationInterface, setActiveOperationInterface] = useState<
+    OperationInterface<'Interface'> | undefined
+  >(
+    props.interfaceId
+      ? {
+          id: props.interfaceId,
+          operationName: 'NodeSort',
+        }
+      : undefined,
+  );
   const [activeSortNode, setActiveSortNode] = useState<SortNode>();
   const [checkedNodesData, setCheckedNodesData] = useImmer<{
     path?: string;
@@ -73,13 +86,17 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
   /**
    * 请求 InterfacesList
    */
-  const { data: operationList = props.interfaceId ? [{}] : [], loading: loadingOperationList } =
-    useRequest(
-      () => AppSettingService.queryInterfacesList<'Interface'>({ id: props.appId as string }),
-      {
-        ready: !!props.appId,
-      },
-    );
+  const {
+    data: operationList = props.appId && activeOperationInterface
+      ? []
+      : [activeOperationInterface as OperationInterface<'Interface'>],
+    loading: loadingOperationList,
+  } = useRequest(
+    () => AppSettingService.queryInterfacesList<'Interface'>({ id: props.appId as string }),
+    {
+      ready: !!props.appId,
+    },
+  );
 
   /**
    * 获取 SortNode
@@ -91,10 +108,15 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
     mutate: setSortNodeList,
   } = useRequest(
     () =>
-      AppSettingService.querySortNode({
-        appId: props.appId,
-        operationId: activeOperationInterface!.id,
-      }),
+      props.interfaceId
+        ? AppSettingService.queryInterfaceSortNode({
+            interfaceId: props.interfaceId,
+            operationId: props.operationId,
+          })
+        : AppSettingService.querySortNode({
+            appId: props.appId as string,
+            operationId: activeOperationInterface!.id,
+          }),
     {
       ready: !!activeOperationInterface,
       refreshDeps: [activeOperationInterface?.id],
@@ -102,7 +124,7 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
         setSortNodeList([]);
       },
       onSuccess() {
-        handleCancelEditResponse(false, false);
+        props.appId && handleCancelEditResponse(false, false);
       },
     },
   );
@@ -137,11 +159,11 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
     };
     if (activeSortNode) {
       updateSortNode({ id: activeSortNode.id, ...params });
-    } else {
+    } else if (props.appId && activeOperationInterface?.id) {
       insertSortNode({
         ...params,
         appId: props.appId,
-        operationId: activeOperationInterface!.id,
+        operationId: activeOperationInterface.id,
       });
     }
   };
@@ -157,7 +179,7 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
   } = useRequest(
     () =>
       AppSettingService.queryInterfaceResponse({
-        id: activeOperationInterface!.id,
+        id: activeOperationInterface?.id as string,
       }),
     {
       ready: !!activeOperationInterface?.id,
@@ -206,7 +228,7 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
     const parsed = value && tryParseJsonString(value, 'Invalid JSON');
     if (parsed) {
       updateInterfaceResponse({
-        id: activeOperationInterface!.id,
+        id: activeOperationInterface?.id as string,
         operationResponse: JSON.stringify(parsed),
       });
       handleCancelEditResponse(true);
@@ -307,7 +329,9 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
     <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
       <Col span={10}>
         <PathCollapse
-          title='Interfaces'
+          interfaceId={props.interfaceId}
+          title={props.interfaceId ? undefined : 'Interfaces'}
+          expandIcon={props.interfaceId ? () => <></> : undefined}
           loading={loadingOperationList}
           loadingPanel={loadingSortNode}
           interfaces={operationList}

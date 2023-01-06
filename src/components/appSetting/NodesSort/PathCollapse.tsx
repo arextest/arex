@@ -1,7 +1,7 @@
 import { CodeOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { App, Button, Collapse, List, Spin } from 'antd';
+import { App, Button, Collapse, CollapseProps, List, Spin } from 'antd';
 import React, { FC } from 'react';
 
 import AppSettingService from '../../../services/AppSetting.service';
@@ -9,7 +9,8 @@ import { OperationId, OperationInterface, SortNode } from '../../../services/App
 import { SpaceBetweenWrapper } from '../../styledComponents';
 import TooltipButton from '../../TooltipButton';
 
-type PathCollapseProps = {
+export interface PathCollapseProps extends Omit<CollapseProps, 'activeKey' | 'onChange'> {
+  interfaceId?: string;
   title?: string;
   loading?: boolean;
   loadingPanel?: boolean;
@@ -21,7 +22,7 @@ type PathCollapseProps = {
   interfaces: OperationInterface<'Interface'>[];
   sortNodes: SortNode[];
   onReloadNodes?: () => void;
-};
+}
 
 const CollapseWrapper = styled.div`
   .ant-collapse-content-box {
@@ -58,6 +59,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
       {props.title && <h3>{props.title}</h3>}
       <Spin spinning={props.loading || false}>
         <Collapse
+          {...props}
           accordion
           activeKey={props.activeKey || undefined}
           onChange={(id) =>

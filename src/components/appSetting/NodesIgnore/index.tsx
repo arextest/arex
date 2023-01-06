@@ -39,7 +39,7 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
     InterfacePick | undefined
   >({
     id: props.interfaceId ?? GLOBAL_OPERATION_ID,
-    operationName: 'Global',
+    operationName: props.interfaceId ? 'NodeIgnore' : 'Global',
   });
   const [nodesEditMode, setNodesEditMode] = useState<NodesEditMode>(NodesEditMode.Tree);
 
