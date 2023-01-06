@@ -1,14 +1,13 @@
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import Http from '../components/arex-request';
 import { Environment } from '../components/arex-request/data/environment';
 import { HoppRESTRequest } from '../components/arex-request/data/rest';
 import { ExtraTabs } from '../components/arex-request/extra';
-import { CompareConfig } from '../components/arex-request/extra/tabs/request';
 import { treeFind, treeFindPath } from '../helpers/collection/util';
 import { runCompareRESTRequest } from '../helpers/CompareRequestRunner';
 import { convertSaveRequestData } from '../helpers/http/util';
@@ -18,7 +17,6 @@ import { MenusType } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
 import SaveRequestButton from '../menus/CollectionMenu/SaveRequestButton';
 import { FileSystemService } from '../services/FileSystem.service';
-import { BaseInterface } from '../services/FileSystem.type';
 import { useStore } from '../store';
 import useUserProfile from '../store/useUserProfile';
 import { PageFC, PagesType } from './index';
@@ -118,19 +116,20 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
           {
             label: 'Mock',
             key: 'mock',
-            children: <ExtraTabs.RequestTabs.Mock recordId={data?.recordId as string} />,
             hidden: !data?.recordId,
+            children: <ExtraTabs.RequestTabs.Mock recordId={data?.recordId as string} />,
           },
-          {
-            label: 'CompareConfig',
-            key: 'compareConfig',
-            children: (
-              <ExtraTabs.RequestTabs.CompareConfig
-                interfaceId={id}
-                operationId={data?.operationId}
-              />
-            ),
-          },
+          // {
+          //   label: 'CompareConfig',
+          //   key: 'compareConfig',
+          //   hidden: nodeType === 2,
+          //   children: (
+          //     <ExtraTabs.RequestTabs.CompareConfig
+          //       interfaceId={id}
+          //       operationId={data?.operationId}
+          //     />
+          //   ),
+          // },
         ],
       },
       responseTabs: {
