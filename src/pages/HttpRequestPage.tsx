@@ -60,7 +60,7 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
     [activeEnvironment],
   );
   const id = useMemo(() => parseGlobalPaneId(props.page.paneId)['rawId'], [props.page.paneId]);
-
+  // TODO 删除nodeType兜底逻辑
   const nodeType = useMemo(() => {
     return (
       treeFind(
@@ -85,7 +85,7 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
         ? FileSystemService.queryCase({ id })
         : FileSystemService.queryInterface({ id }),
     {
-      refreshDeps: [id],
+      refreshDeps: [id, nodeType],
     },
   );
 

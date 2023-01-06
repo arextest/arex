@@ -8,6 +8,8 @@ import AgentAxios from './request';
 export const runRESTRequest = async (
   request: HoppRESTRequest,
 ): Promise<{ response: HoppRESTResponse; testResult: HoppTestResult }> => {
+  const prTestResult = await _runRESTRequestPreTest(request);
+  console.log(prTestResult, 'prTestResult');
   const response = await _runRESTRequest(request, 'EXTENSIONS_ENABLED');
   const testResult = await _runRESTRequestTest(request, response);
 
@@ -85,6 +87,45 @@ function _runRESTRequestTest(request: HoppRESTRequest, response: any): Promise<H
         status: response.statusCode,
       }),
       preTestScripts: [request.testScripts.map((t) => t.value).join('\n')],
+    },
+  })
+    .then((testRes) => {
+      try {
+        return testRes.data.body.caseResult;
+      } catch (e) {
+        return errTestResult;
+      }
+    })
+    .catch(() => {
+      return errTestResult;
+    });
+}
+
+function _runRESTRequestPreTest(request: HoppRESTRequest) {
+  const errTestResult = {
+    description: '',
+    expectResults: [],
+    tests: [],
+    envDiff: {
+      global: {
+        additions: [],
+        deletions: [],
+        updations: [],
+      },
+      selected: {
+        additions: [],
+        deletions: [],
+        updations: [],
+      },
+    },
+    scriptError: true,
+  };
+
+  return axios({
+    method: 'POST',
+    url: '/node/preTest',
+    data: {
+      preTestScripts: [request.preRequestScripts.map((t) => t.value).join('\n')],
     },
   })
     .then((testRes) => {
