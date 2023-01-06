@@ -11,7 +11,7 @@ import { ExtraTabs } from '../components/arex-request/extra';
 import { treeFind, treeFindPath } from '../helpers/collection/util';
 import { runCompareRESTRequest } from '../helpers/CompareRequestRunner';
 import { convertSaveRequestData } from '../helpers/http/util';
-import { runRESTRequest } from '../helpers/RequestRunner';
+import { runRESTPreRequest, runRESTRequest } from '../helpers/RequestRunner';
 import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
 import { MenusType } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
@@ -184,6 +184,7 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
         nodeType={nodeType}
         nodePath={nodePath}
         environment={environment}
+        onPreSend={runRESTPreRequest}
         onSend={runRESTRequest}
         onSendCompare={runCompareRESTRequest}
         onSave={handleSave}

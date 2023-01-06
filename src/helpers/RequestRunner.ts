@@ -7,15 +7,27 @@ import AgentAxios from './request';
 
 export const runRESTRequest = async (
   request: HoppRESTRequest,
-): Promise<{ response: HoppRESTResponse; testResult: HoppTestResult }> => {
-  const prTestResult = await _runRESTRequestPreTest(request);
-  console.log(prTestResult, 'prTestResult');
+): Promise<{
+  response: HoppRESTResponse;
+  testResult: HoppTestResult;
+}> => {
   const response = await _runRESTRequest(request, 'EXTENSIONS_ENABLED');
   const testResult = await _runRESTRequestTest(request, response);
 
   return {
     response,
     testResult,
+  };
+};
+
+export const runRESTPreRequest = async (
+  request: HoppRESTRequest,
+): Promise<{
+  prTestResultEnvs: { key: string; value: string }[];
+}> => {
+  const prTestResult = await _runRESTRequestPreTest(request);
+  return {
+    prTestResultEnvs: [...prTestResult.envList, ...prTestResult.varList],
   };
 };
 
@@ -82,7 +94,12 @@ function _runRESTRequestTest(request: HoppRESTRequest, response: any): Promise<H
     url: '/node/preTest',
     data: {
       response: JSON.stringify({
-        headers: response.headers,
+        headers: request.headers.reduce((p, c) => {
+          return {
+            ...p,
+            [c.key]: c.value,
+          };
+        }, {}),
         body: response.body,
         status: response.statusCode,
       }),
@@ -102,25 +119,6 @@ function _runRESTRequestTest(request: HoppRESTRequest, response: any): Promise<H
 }
 
 function _runRESTRequestPreTest(request: HoppRESTRequest) {
-  const errTestResult = {
-    description: '',
-    expectResults: [],
-    tests: [],
-    envDiff: {
-      global: {
-        additions: [],
-        deletions: [],
-        updations: [],
-      },
-      selected: {
-        additions: [],
-        deletions: [],
-        updations: [],
-      },
-    },
-    scriptError: true,
-  };
-
   return axios({
     method: 'POST',
     url: '/node/preTest',
@@ -129,13 +127,23 @@ function _runRESTRequestPreTest(request: HoppRESTRequest) {
     },
   })
     .then((testRes) => {
+      const { envList, varList } = testRes.data.body;
       try {
-        return testRes.data.body.caseResult;
+        return {
+          envList,
+          varList,
+        };
       } catch (e) {
-        return errTestResult;
+        return {
+          envList: [],
+          varList: [],
+        };
       }
     })
     .catch(() => {
-      return errTestResult;
+      return {
+        envList: [],
+        varList: [],
+      };
     });
 }
