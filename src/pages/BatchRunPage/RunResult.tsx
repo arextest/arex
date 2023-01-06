@@ -1,9 +1,10 @@
 import { css } from '@emotion/react';
 import { Empty, Spin, Tag } from 'antd';
-import { GlobalContext, TestResult } from 'arex-request';
-import { FC, useContext, useMemo } from 'react';
+import React from 'react';
+import { FC, useMemo } from 'react';
 
-// import { TestResult } from '../../components/ArexRequestComponent/lib';
+import { useStore } from '../../store';
+
 interface RunResultProps {
   result: {
     title: string;
@@ -21,7 +22,7 @@ function NewTestResult({ testResult }) {
         margin-bottom: 12px;
       `}
     >
-      {testResult.children.map((i) => {
+      {testResult.children.map((i, index) => {
         const isPass = i.expectResults.filter((i) => i.status === 'fail').length === 0 ? 0 : 1;
         const r = [
           {
@@ -35,6 +36,7 @@ function NewTestResult({ testResult }) {
         ];
         return (
           <div
+            key={index}
             css={css`
               display: flex;
               align-items: center;
@@ -56,9 +58,10 @@ function NewTestResult({ testResult }) {
               {r[isPass].text}
             </span>
             <span>{i.descriptor}</span>
-            {i.expectResults.map((e) => {
+            {i.expectResults.map((e, index1) => {
               return (
                 <span
+                  key={index1}
                   css={css`
                     margin-left: 8px;
                   `}
@@ -74,15 +77,16 @@ function NewTestResult({ testResult }) {
   );
 }
 const RunResult: FC<RunResultProps> = ({ result, loading }) => {
-  const { store: globalStore } = useContext(GlobalContext);
+  const { activeEnvironment } = useStore();
   const realResult = useMemo(() => {
     return result.filter((i) => i.children.filter((f) => f.testResult).length > 0);
   }, [result]);
   const urlPretreatment = (url: string) => {
+    url = url || '';
     // 正则匹配{{}}
     const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
     let replaceVar = editorValueMatch[0];
-    const env = globalStore.environment?.keyValues || [];
+    const env = activeEnvironment?.keyValues || [];
     for (let i = 0; i < env.length; i++) {
       if (env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')) {
         replaceVar = env[i].value;
@@ -94,8 +98,8 @@ const RunResult: FC<RunResultProps> = ({ result, loading }) => {
   return (
     <Spin spinning={loading}>
       {realResult.length > 0 ? (
-        realResult.map((resultItem) => (
-          <div>
+        realResult.map((resultItem, index) => (
+          <div key={index}>
             <div
               css={css`
                 display: flex;
@@ -140,9 +144,9 @@ const RunResult: FC<RunResultProps> = ({ result, loading }) => {
             >
               {resultItem.children
                 .filter((i) => i.testResult)
-                .map((testResultItem) => {
+                .map((testResultItem, index2) => {
                   return (
-                    <div>
+                    <div key={index2}>
                       <div
                         css={css`
                           margin-bottom: 14px;

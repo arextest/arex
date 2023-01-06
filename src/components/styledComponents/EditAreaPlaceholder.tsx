@@ -1,3 +1,4 @@
+// @ts-nocheck
 import styled from '@emotion/styled';
 import { Skeleton } from 'antd';
 import React, { FC, ReactNode } from 'react';
@@ -10,8 +11,7 @@ const EditAreaPlaceholderWrapper = styled.div<{ dashedBorder?: boolean }>`
   }
   .dashed-border {
     height: 300px;
-    border: ${(props) =>
-      props.dashedBorder ? `2px ${props.theme.color.border.primary} dashed` : 'none'};
+    border: ${(props) => (props.dashedBorder ? `2px ${props.theme.colorBorder} dashed` : 'none')};
     border-radius: 8px;
     padding: 16px;
   }
@@ -26,7 +26,7 @@ type EditAreaPlaceholderProps = {
 
 const EditAreaPlaceholder: FC<EditAreaPlaceholderProps> = (props) => {
   return props.ready ? (
-    <>{props.children}</>
+    <div>{props.children}</div>
   ) : (
     <EditAreaPlaceholderWrapper dashedBorder={props.dashedBorder}>
       <h3> {props.title}</h3>

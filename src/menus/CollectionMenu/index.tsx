@@ -1,29 +1,29 @@
-import {
-  DownOutlined,
-  GatewayOutlined,
-  MenuOutlined,
-  PlusOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
+import { DownOutlined, PlayCircleOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Empty, Input, Spin, Tree } from 'antd';
+import { Button, Input, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps, TreeProps } from 'antd/lib/tree';
-import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { TooltipButton } from '../../components';
-import { NodeType } from '../../constant';
+import { EmptyWrapper } from '../../components/styledComponents';
+import { EmailKey, NodeType } from '../../constant';
 import { treeFind } from '../../helpers/collection/util';
-import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
+import {
+  generateGlobalPaneId,
+  getLocalStorage,
+  parseGlobalPaneId,
+  uuid,
+} from '../../helpers/utils';
 import { PagesType } from '../../pages';
-import { CollectionService } from '../../services/CollectionService';
+import { CollectionService } from '../../services/Collection.service';
 import { useStore } from '../../store';
 import { MenusType } from '../index';
 import CollectionTitle from './CollectionTitle';
 
 const CollectionMenuWrapper = styled.div`
-  //height: 100%;
+  width: 100%;
   .ant-spin-nested-loading,
   .ant-spin {
     height: 100%;
@@ -33,8 +33,8 @@ const CollectionMenuWrapper = styled.div`
   .collection-header {
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+
     .collection-header-create {
       margin-right: 5px;
       span.action {
@@ -48,29 +48,38 @@ const CollectionMenuWrapper = styled.div`
     }
   }
 
-  .collection-title-render {
-    color: ${(props) => props.theme.color.text.secondary};
-    display: flex;
-    .right {
-    }
-    .left {
-      flex: 1;
-      overflow: hidden;
+  .ant-tree {
+    background-color: transparent;
+  }
+
+  .ant-tree-title {
+    width: 100%;
+    .collection-title-render {
+      color: ${(props) => props.theme.colorTextSecondary};
       display: flex;
-      align-items: center;
-      .content {
-        overflow: hidden; //超出的文本隐藏
-        text-overflow: ellipsis; //溢出用省略号显示
-        white-space: nowrap; //溢出不换行
+      .right {
+        float: right;
+      }
+      .left {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        .content {
+          overflow: hidden; //超出的文本隐藏
+          text-overflow: ellipsis; //溢出用省略号显示
+          white-space: nowrap; //溢出不换行
+        }
+      }
+      :hover {
+        color: ${(props) => props.theme.colorText};
       }
     }
-    :hover {
-      color: ${(props) => props.theme.color.text.primary};
-    }
   }
+
   .ant-tree-node-selected {
     .collection-title-render {
-      color: ${(props) => props.theme.color.text.primary};
+      color: ${(props) => props.theme.colorText};
     }
   }
 
@@ -119,13 +128,9 @@ export type nodeType = {
 
 const CollectionMenu = () => {
   const params = useParams();
-  const {
-    userInfo: { email: userName },
-    activeMenu,
-    collectionLastManualUpdateTimestamp,
-    setPages,
-    setCollectionTreeData,
-  } = useStore();
+  const { activeMenu, collectionLastManualUpdateTimestamp, setPages, setCollectionTreeData } =
+    useStore();
+  const email = getLocalStorage<string>(EmailKey);
 
   const value = useMemo(() => parseGlobalPaneId(activeMenu[1])['rawId'], [activeMenu]);
   const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
@@ -144,16 +149,17 @@ const CollectionMenu = () => {
     onSuccess: (res) => {
       if (res.length) {
         setCollectionTreeData(res);
-        // generateList(treeData);
-        generateList(res, 'res');
+        generateList(res);
         // 首次加载，在这里加initvalue逻辑
         const initValue = treeFind(res, (node) => node.key === params.rTypeId);
         if (initValue && expandedKeys.length === 0) {
+          // @ts-ignore
           handleCollectionMenuClick(params.rTypeId, {
             title: initValue.title,
             key: initValue.key,
             nodeType: initValue.nodeType,
           });
+          // @ts-ignore
           setExpandedKeys([params.rTypeId]);
         }
       }
@@ -204,7 +210,7 @@ const CollectionMenu = () => {
     const key = keys[0];
     const maps: { [key: string]: string } = {
       '1': 'New Request',
-      '2': 'New Case',
+      '2': 'New CaseTable',
       '3': 'New Folder',
     };
     setExpandedKeys([...expandedKeys, p[p.length - 1]]);
@@ -222,7 +228,7 @@ const CollectionMenu = () => {
         nodeName: 'New Collection',
         nodeType: 3,
         parentPath: [],
-        userName,
+        userName: email,
       }),
     {
       manual: true,
@@ -238,7 +244,6 @@ const CollectionMenu = () => {
     const dragKey = info.dragNode.key;
     const dragNodeType = info.dragNode.nodeType;
     const dropPos = info.node.pos.split('-');
-    const dragPos = info.dragNode.pos.split('-');
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
 
     const loop = (
@@ -399,13 +404,16 @@ const CollectionMenu = () => {
       });
     }
     // console.log({fromNodePath, id: params.workspaceId, toParentPath, toIndex});
-    CollectionService.move({ fromNodePath, id: params.workspaceId, toParentPath, toIndex }).then(
-      (res) => {
-        if (res.body.success) {
-          fetchTreeData();
-        }
-      },
-    );
+    CollectionService.move({
+      fromNodePath,
+      id: params.workspaceId,
+      toParentPath,
+      toIndex,
+    }).then((res) => {
+      if (res.body.success) {
+        fetchTreeData();
+      }
+    });
   };
 
   const handleCollectionMenuClick = (key: string, node: nodeType) => {
@@ -446,75 +454,77 @@ const CollectionMenu = () => {
 
   return (
     <CollectionMenuWrapper>
-      <Spin spinning={loading}>
-        {!loading && !treeData.length ? (
-          <Empty>
-            <Button type='primary' onClick={createCollection}>
-              New
-            </Button>
-          </Empty>
-        ) : (
-          <>
-            <div className={'collection-header'}>
-              <TooltipButton
-                icon={<PlusOutlined />}
-                type='text'
-                size='small'
-                className={'collection-header-create'}
-                onClick={createCollection}
-                placement='bottomLeft'
-                title={'Create New'}
-              />
-
-              <TooltipButton
-                icon={<GatewayOutlined />}
-                type='text'
-                size='small'
-                className={'collection-header-create'}
-                onClick={test}
-                placement='bottomLeft'
-                title={'Run'}
-              />
-
-              <Input
-                className={'collection-header-search'}
-                size='small'
-                placeholder=''
-                prefix={<SearchOutlined />}
-                onChange={onChange}
-              />
-              {/*<Tooltip placement='bottomLeft' title={'View more actions'} mouseEnterDelay={0.5}>*/}
-              {/*  <Button className={'collection-header-view'} type='text' size='small'>*/}
-              {/*    <DashOutlined />*/}
-              {/*  </Button>*/}
-              {/*</Tooltip>*/}
-            </div>
-
-            <Tree
-              autoExpandParent={autoExpandParent}
-              blockNode={true}
-              selectedKeys={selectedKeys}
-              expandedKeys={expandedKeys}
-              onExpand={onExpand}
-              onSelect={handleSelect}
-              switcherIcon={<DownOutlined />}
-              treeData={treeData}
-              onDrop={onDrop}
-              draggable={{ icon: false }}
-              titleRender={(val) => (
-                <CollectionTitle
-                  searchValue={searchValue}
-                  updateDirectoryTreeData={fetchTreeData}
-                  val={val}
-                  treeData={treeData}
-                  callbackOfNewRequest={expandSpecifyKeys} // TODO 暂时禁用待优化
-                />
-              )}
+      <EmptyWrapper
+        empty={!loading && !treeData.length}
+        loading={loading}
+        description={
+          <Button type='primary' onClick={createCollection}>
+            New
+          </Button>
+        }
+      >
+        <div>
+          <div className={'collection-header'}>
+            <TooltipButton
+              icon={<PlusOutlined />}
+              type='text'
+              size='small'
+              className={'collection-header-create'}
+              onClick={createCollection}
+              placement='bottomLeft'
+              title={'Create New'}
             />
-            {/*<CollectionImport/>*/}
-          </>
-        )}
-      </Spin>
+
+            <TooltipButton
+              icon={<PlayCircleOutlined />}
+              type='text'
+              size='small'
+              className={'collection-header-create'}
+              onClick={test}
+              placement='bottomLeft'
+              title={'Run'}
+            />
+
+            <Input
+              className={'collection-header-search'}
+              size='small'
+              placeholder=''
+              prefix={<SearchOutlined />}
+              onChange={onChange}
+            />
+            {/*<Tooltip placement='bottomLeft' title={'View more actions'} mouseEnterDelay={0.5}>*/}
+            {/*  <Button className={'collection-header-view'} type='text' size='small'>*/}
+            {/*    <DashOutlined />*/}
+            {/*  </Button>*/}
+            {/*</Tooltip>*/}
+          </div>
+
+          <Tree
+            autoExpandParent={autoExpandParent}
+            blockNode={true}
+            selectedKeys={selectedKeys}
+            expandedKeys={expandedKeys}
+            // @ts-ignore
+            onExpand={onExpand}
+            onSelect={handleSelect}
+            switcherIcon={<DownOutlined />}
+            treeData={treeData}
+            onDrop={onDrop}
+            draggable={{ icon: false }}
+            showLine
+            titleRender={(val) => (
+              <CollectionTitle
+                searchValue={searchValue}
+                updateDirectoryTreeData={fetchTreeData}
+                val={val}
+                treeData={treeData}
+                callbackOfNewRequest={expandSpecifyKeys} // TODO 暂时禁用待优化
+              />
+            )}
+          />
+          {/*<CollectionImport/>*/}
+        </div>
+      </EmptyWrapper>
     </CollectionMenuWrapper>
   );
 };

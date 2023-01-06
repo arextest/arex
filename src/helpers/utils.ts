@@ -1,13 +1,11 @@
-import { message } from 'antd';
-import { v4 as uuid } from 'uuid';
-export { uuid };
-
+import { App, message } from 'antd';
 import React from 'react';
+import { v4 as uuid } from 'uuid';
 
-import { MenusType } from '../menus';
-import { PagesType, PageType } from '../pages';
+import { PageType } from '../pages';
 import * as ChartUtils from './chart';
-export { ChartUtils };
+
+export { ChartUtils, uuid };
 
 /**
  * 从 localStorage 中获取数据
@@ -54,7 +52,7 @@ export function tryParseJsonString<T>(jsonString?: string, errorTip?: string) {
     return JSON.parse(jsonString || '{}') as T;
   } catch (e) {
     console.error(e);
-    errorTip && message.warn(errorTip);
+    errorTip && message.warning(errorTip);
   }
 }
 
@@ -62,7 +60,7 @@ export const tryPrettierJsonString = (jsonString: string, errorTip?: string) => 
   try {
     return JSON.stringify(JSON.parse(jsonString), null, 2);
   } catch (e) {
-    errorTip && message.warn(errorTip);
+    errorTip && message.warning(errorTip);
     return jsonString;
   }
 };
@@ -73,7 +71,7 @@ export const getPercent = (num: number, den: number, showPercentSign = true) => 
 };
 
 export const generateGlobalPaneId = (
-  menuType: MenusType,
+  menuType: string,
   pageType: PageType<string>,
   rawId: React.Key,
 ) => btoa(encodeURI(`${menuType}__${pageType}__${rawId}`));
@@ -105,9 +103,9 @@ export const versionStringCompare = (preVersion = '', lastVersion = '') => {
   const maxL = Math.max(sources.length, dests.length);
   let result = 0;
   for (let i = 0; i < maxL; i++) {
-    const preValue = sources.length > i ? sources[i] : 0;
+    const preValue: any = sources.length > i ? sources[i] : 0;
     const preNum = isNaN(Number(preValue)) ? preValue.charCodeAt() : Number(preValue);
-    const lastValue = dests.length > i ? dests[i] : 0;
+    const lastValue: any = dests.length > i ? dests[i] : 0;
     const lastNum = isNaN(Number(lastValue)) ? lastValue.charCodeAt() : Number(lastValue);
     if (preNum < lastNum) {
       result = -1;
@@ -122,11 +120,11 @@ export const versionStringCompare = (preVersion = '', lastVersion = '') => {
 
 // 检查版本号
 export function getChromeVersion() {
-  let v = '';
+  let v: any = '';
   try {
     v = navigator.userAgent
       .toLowerCase()
-      .match(/chrome\/[\d.]+/gi)[0]
+      .match(/chrome\/[\d.]+/gi)?.[0]
       .split('/')[1];
   } catch (e) {
     console.log(e);

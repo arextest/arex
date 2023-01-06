@@ -4,7 +4,7 @@ import { EditorView, ViewUpdate } from '@codemirror/view';
 import { basicSetup } from 'codemirror';
 import { useEffect, useState } from 'react';
 
-import { ThemeClassify } from '../../style/theme';
+import { Theme } from '../../theme';
 import { getStatistics, Statistics } from './utils';
 // import {defaultKeymap} from "@codemirror/commands"
 
@@ -16,7 +16,7 @@ export interface UseCodeMirrorProps {
     fields?: { [p: string]: StateField<any> };
   };
   root?: Document | ShadowRoot | undefined;
-  theme: ThemeClassify | Extension;
+  theme: Theme | Extension;
   extensions?: Extension[];
   height: number | string | null;
   onCreateEditor?: (editorView: EditorView, editorState: EditorState) => void;

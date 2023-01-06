@@ -1,20 +1,22 @@
-import { SyncOutlined } from '@ant-design/icons';
+import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { CSSInterpolation } from '@emotion/serialize/types';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Options } from 'ahooks/lib/useRequest/src/types';
-import { Button, Input, Menu, Spin } from 'antd';
+import { Button, Input, Menu, Spin, Typography } from 'antd';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import React, { ChangeEventHandler, ReactNode, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type MenuSelectProps<D, P extends any[]> = {
+export type MenuSelectProps<D, P extends any[]> = {
   sx?: CSSInterpolation; // custom style
   small?: boolean;
   refresh?: boolean; // show refresh button
   defaultSelectFirst?: boolean;
+  limit?: number;
+  prefix?: ReactNode; // icon beside search input
   initValue?: string;
   rowKey: string;
   selectedKeys?: string[];
@@ -28,43 +30,37 @@ type MenuSelectProps<D, P extends any[]> = {
   itemRender?: (app: D, index: number) => { label: ReactNode; key: React.Key };
 };
 
-const MenuSelectWrapper = styled.div`
-  height: 100%;
-  padding: 8px;
-  .ant-spin-nested-loading,
-  .ant-spin {
-    height: 100%;
-    max-height: 100% !important;
-  }
-`;
-const MenuList = styled(Menu, { shouldForwardProp: (propName) => propName !== 'small' })<{
+const MenuList = styled(Menu, {
+  shouldForwardProp: (propName) => propName !== 'small',
+})<{
   small?: boolean;
 }>`
   border: none !important;
   background: transparent !important;
   .ant-menu-item {
-    color: ${(props) => props.theme.color.text.secondary}!important;
-    margin: 4px 0 !important;
+    color: ${(props) => props.theme.colorTextSecondary}!important;
+    padding-left: 8px;
+    padding-right: 8px;
     height: ${(props) => (props.small ? '24px' : '28px')};
     line-height: ${(props) => (props.small ? '24px' : '28px')};
-    border-radius: 2px;
     background: transparent !important;
   }
   .ant-menu-item-active,
   .ant-menu-item-selected {
-    color: ${(props) => props.theme.color.text.primary}!important;
+    color: ${(props) => props.theme.colorText}!important;
   }
   .ant-menu-item-active {
-    background-color: ${(props) => props.theme.color.active} !important;
+    background-color: ${(props) => props.theme.colorFillTertiary} !important;
   }
   .ant-menu-item-selected {
-    background-color: ${(props) => props.theme.color.selected} !important;
+    background-color: ${(props) => props.theme.colorPrimaryBg} !important;
   }
 `;
 
 type MenuFilterProps = {
   refresh?: boolean;
-  size: SizeType;
+  prefix?: ReactNode;
+  size?: SizeType;
   value: string;
   placeholder?: string;
   onChange?: ChangeEventHandler<HTMLInputElement>;
@@ -73,29 +69,35 @@ type MenuFilterProps = {
 };
 const MenuFilter = styled((props: MenuFilterProps) => {
   return (
-    <Input.Group compact className={props.className}>
-      {props.refresh && (
-        <Button
-          size={props.size}
-          icon={<SyncOutlined />}
-          onClick={props.onFresh}
-          style={{ padding: '0 6px' }}
-        />
-      )}
-      <Input.Search
+    <div className={props.className}>
+      <span className='button-group'>
+        {props.prefix}
+        {props.refresh && (
+          <Button type='text' size={props.size} icon={<SyncOutlined />} onClick={props.onFresh} />
+        )}
+      </span>
+
+      <Input
+        prefix={<SearchOutlined />}
         size={props.size}
         value={props.value}
         placeholder={props.placeholder}
         onChange={props.onChange}
         style={{ flex: 1 }}
       />
-    </Input.Group>
+    </div>
   );
 })`
-  margin-bottom: 8px;
+  margin: 2px 0 6px 0;
   display: flex !important;
-  .ant-btn-icon-only {
-    color: ${(props) => props.theme.color.text.secondary} !important;
+  .button-group {
+    margin-right: 2px;
+    .ant-btn-icon-only {
+      color: ${(props) => props.theme.colorTextSecondary} !important;
+      .anticon > svg {
+        transform: scale(0.8);
+      }
+    }
   }
 `;
 
@@ -109,6 +111,8 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
     () => props.selectedKeys || (selectedKey ? [selectedKey] : undefined),
     [props.selectedKeys, selectedKey],
   );
+
+  const [hiddenCount, setHiddenCount] = useState(0);
 
   const [filterKeyword, setFilterKeyword] = useState('');
 
@@ -125,11 +129,12 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   );
 
   const {
-    data: apps = [],
+    data: apps,
     loading,
     run: reload,
   } = useRequest<D[], P>(props.request, {
-    onSuccess(res) {
+    ...props.requestOptions,
+    onSuccess(res, _params) {
       if (res.length && (props.defaultSelectFirst || props.initValue)) {
         const record = props.defaultSelectFirst
           ? props.forceFilter
@@ -142,13 +147,16 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
           props.onSelect(record);
         }
       }
+      props.requestOptions?.onSuccess?.(res, _params);
     },
-    ...props.requestOptions,
   });
 
   const filteredApps = useMemo<ItemType[]>(() => {
-    const filtered = (props.forceFilter || filterKeyword) && props.filter ? filter(apps) : apps;
-    return filtered.map<ItemType>(
+    const _app = apps || [];
+    const filtered = (props.forceFilter || filterKeyword) && props.filter ? filter(_app) : _app;
+    const limitApp = typeof props.limit === 'number' ? filtered.slice(0, props.limit) : filtered;
+    setHiddenCount(filtered.length - limitApp.length);
+    return limitApp.map<ItemType>(
       props.itemRender
         ? props.itemRender
         : (app) => ({
@@ -159,34 +167,38 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   }, [filterKeyword, props, apps]);
 
   const handleAppMenuClick = (value: { key: string }) => {
-    const app: D | undefined = apps.find((app) => app[props.rowKey] === value.key);
+    const app: D | undefined = apps?.find((app) => app[props.rowKey] === value.key);
     if (app) {
       props.onSelect(app);
       setSelectedKey(app[props.rowKey]);
     }
   };
   return (
-    <MenuSelectWrapper css={css(props.sx)}>
-      <Spin spinning={loading}>
-        {/* 目前刷新按钮的显示受限于搜索逻辑 */}
-        {props.filter && (
-          <MenuFilter
-            refresh={props.refresh}
-            size={props.small ? 'small' : 'middle'}
-            value={filterKeyword}
-            placeholder={props.placeholder && t(props.placeholder)}
-            onChange={(e) => setFilterKeyword(e.target.value)}
-            onFresh={reload}
-          />
-        )}
-        <MenuList
-          small={props.small}
-          selectedKeys={selectedKeys}
-          items={filteredApps}
-          onClick={handleAppMenuClick}
+    <Spin spinning={loading} css={css(props.sx)}>
+      {/* 目前刷新按钮的显示受限于搜索逻辑 */}
+      {props.filter && (
+        <MenuFilter
+          refresh={props.refresh}
+          prefix={props.prefix}
+          size={props.small ? 'small' : 'middle'}
+          value={filterKeyword}
+          placeholder={props.placeholder && t(props.placeholder)}
+          onChange={(e) => setFilterKeyword(e.target.value)}
+          onFresh={reload}
         />
-      </Spin>
-    </MenuSelectWrapper>
+      )}
+      <MenuList
+        small={props.small}
+        selectedKeys={selectedKeys}
+        items={filteredApps}
+        onClick={handleAppMenuClick}
+      />
+      {!!hiddenCount && (
+        <div style={{ textAlign: 'center' }}>
+          <Typography.Text type='secondary'>{hiddenCount} more ...</Typography.Text>
+        </div>
+      )}
+    </Spin>
   );
 }
 

@@ -1,17 +1,17 @@
 import { UserAddOutlined } from '@ant-design/icons';
-import { Button, Form, message, Modal, Select, Space, Typography } from 'antd';
-import { useState } from 'react';
+import { App, Button, Form, Modal, Select, Space, Typography } from 'antd';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { EmailKey, RoleEnum } from '../../constant';
 import { getLocalStorage } from '../../helpers/utils';
 import WorkspaceService from '../../services/Workspace.service';
-import { useStore } from '../../store';
 const { Text } = Typography;
 
 const { Option } = Select;
 
 const InviteWorkspace = () => {
+  const { message } = App.useApp();
   const email = getLocalStorage<string>(EmailKey);
   const _useParams = useParams();
 
@@ -23,7 +23,7 @@ const InviteWorkspace = () => {
   };
 
   return (
-    <>
+    <div>
       <Button
         style={{ marginRight: '8px' }}
         type={'primary'}
@@ -49,7 +49,7 @@ const InviteWorkspace = () => {
                 userNames: values.email,
                 workspaceId: _useParams.workspaceId,
               };
-              WorkspaceService.inviteToWorkspace(params).then((res) => {
+              WorkspaceService.inviteToWorkspace(params).then((res: any) => {
                 const successUsers = res.body.successUsers;
                 const failedUsers = res.body.failedUsers;
                 const successMsg =
@@ -112,7 +112,7 @@ const InviteWorkspace = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 };
 

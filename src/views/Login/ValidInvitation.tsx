@@ -4,10 +4,9 @@ import {
   StopOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
-import { useTheme } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { Card, Space } from 'antd';
-import { useEffect, useState } from 'react';
+import { Card, Space, theme } from 'antd';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { FlexCenterWrapper } from '../../components/styledComponents';
@@ -30,8 +29,9 @@ type InvitationData = {
 };
 
 const ValidInvitation = () => {
-  const { color } = useTheme();
   const nav = useNavigate();
+  const { token } = theme.useToken();
+
   const { setInvitedWorkspaceId } = useStore();
 
   const [status, setStatus] = useState<Status>(Status.loading);
@@ -91,17 +91,17 @@ const ValidInvitation = () => {
           </Space>
         ) : status === Status.success ? (
           <Space>
-            <CheckCircleOutlined style={{ color: color.success }} />{' '}
+            <CheckCircleOutlined style={{ color: token.colorSuccess }} />{' '}
             <span>Authentication success! Redirecting...</span>
           </Space>
         ) : status === Status.failed ? (
           <Space>
-            <StopOutlined style={{ color: color.error }} />
+            <StopOutlined style={{ color: token.colorError }} />
             <span>Authentication failed! Redirecting...</span>
           </Space>
         ) : (
           <Space>
-            <WarningOutlined style={{ color: color.warning }} />
+            <WarningOutlined style={{ color: token.colorWarning }} />
             <span>Invalid Invitation Link! Redirecting...</span>
           </Space>
         )}

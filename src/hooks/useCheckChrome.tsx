@@ -5,18 +5,17 @@ import { useNavigate } from 'react-router-dom';
 
 import { ExtensionVersion } from '../constant';
 import { getChromeVersion, versionStringCompare } from '../helpers/utils';
-import { useStore } from '../store';
 
 const useCheckChrome = () => {
-  const { t } = useTranslation('components');
   const nav = useNavigate();
+  // const { message } = App.useApp();
+  const { t } = useTranslation('components');
 
   useEffect(() => {
     if (getChromeVersion() < 0) {
       localStorage.clear();
       nav('/upgradebrowser');
     } else if (!window.__AREX_EXTENSION_INSTALLED__) {
-      useStore.setState({ extensionInstalled: false });
       message.info(
         <div>
           Be careful：The Chrome Extension can break the cross-domain limit of the browser. Please
@@ -47,7 +46,6 @@ const useCheckChrome = () => {
       );
       console.info(t('http.extensionIncorrect', ` ${window.__AREX_EXTENSION_VERSION__}`));
     } else {
-      useStore.setState({ extensionInstalled: true });
       console.info(`[AREX] Extension installed, version ${window.__AREX_EXTENSION_VERSION__}`);
     }
   }, []);

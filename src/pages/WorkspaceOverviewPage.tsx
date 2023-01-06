@@ -1,10 +1,10 @@
-import { useMount } from 'ahooks';
+import { useRequest } from 'ahooks';
 import { Avatar, Button, Divider, Form, Input, List, Popconfirm, Space, Typography } from 'antd';
-import { FC, useState } from 'react';
+import React, { FC } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { RoleEnum } from '../constant';
-import request from '../helpers/api/axios';
+import { EmailKey, RoleEnum } from '../constant';
+import { getLocalStorage } from '../helpers/utils';
 import WorkspaceService from '../services/Workspace.service';
 import { useStore } from '../store';
 
@@ -13,36 +13,40 @@ const { Text } = Typography;
 const WorkspaceOverviewPage: FC = () => {
   const params = useParams();
   const nav = useNavigate();
-  const {
-    userInfo: { email: userName },
-    workspaces,
-    resetPanes,
-  } = useStore();
+  const { workspaces, resetPanes, activeWorkspaceId, setActiveWorkspaceId } = useStore();
+  const userName = getLocalStorage<string>(EmailKey);
 
   const onFinish = (values: any) => {
     WorkspaceService.renameWorkspace({
-      workspaceId: params.workspaceId,
+      workspaceId: activeWorkspaceId,
       newName: values.name,
       userName,
-    }).then((res) => {
-      window.location.href = `/${params.workspaceId}/workspace/${values.name}`;
+    }).then(() => {
+      nav(`/${params.workspaceId}/workspace/${values.name}`);
     });
   };
 
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
-  };
-  const [workspaceUsers, setWorkspaceUsers] = useState([]);
-
-  useMount(() => {
-    request
-      .post(`/api/filesystem/queryUsersByWorkspace`, {
-        workspaceId: params.workspaceId,
-      })
-      .then((res) => {
-        setWorkspaceUsers(res.body.users);
-      });
+  const { data: workspaceUsers } = useRequest(WorkspaceService.queryUsersByWorkspace, {
+    defaultParams: [{ workspaceId: activeWorkspaceId }],
   });
+
+  const { run: deleteWorkspace } = useRequest(
+    () =>
+      WorkspaceService.deleteWorkspace({
+        workspaceId: activeWorkspaceId,
+        userName: userName as string,
+      }),
+    {
+      manual: true,
+      onSuccess: () => {
+        resetPanes();
+        setActiveWorkspaceId(workspaces[0].id);
+        nav(
+          `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,
+        );
+      },
+    },
+  );
 
   return (
     <div>
@@ -53,7 +57,6 @@ const WorkspaceOverviewPage: FC = () => {
           name='basic'
           initialValues={{ name: params.workspaceName }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
           autoComplete='off'
         >
           <Form.Item
@@ -90,7 +93,7 @@ const WorkspaceOverviewPage: FC = () => {
               ]}
             >
               <List.Item.Meta
-                avatar={<Avatar src='https://joeschmoe.io/api/v1/random' />}
+                avatar={<Avatar> {item.userName?.[0].toUpperCase()}</Avatar>}
                 title={<span>{item.userName}</span>}
                 description={
                   {
@@ -113,20 +116,11 @@ const WorkspaceOverviewPage: FC = () => {
 
           <Popconfirm
             title='Are you sure to delete this workspace?'
-            onConfirm={() => {
-              WorkspaceService.deleteWorkspace({ workspaceId: params.workspaceId, userName }).then(
-                (res) => {
-                  resetPanes();
-                  nav(
-                    `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,
-                  );
-                },
-              );
-            }}
+            onConfirm={deleteWorkspace}
             okText='Yes'
             cancelText='No'
           >
-            <Button type={'danger'}>Delete Workspace</Button>
+            <Button danger>Delete Workspace</Button>
           </Popconfirm>
         </Space>
       </div>

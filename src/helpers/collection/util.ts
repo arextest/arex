@@ -1,5 +1,5 @@
 // 数组转树通用方法
-import { NodeList } from '../../services/CollectionService';
+import { NodeList } from '../../services/Collection.service';
 
 export function arrToTree(arr: any, pid = 0) {
   const newArr: any = [];
@@ -16,7 +16,15 @@ export function arrToTree(arr: any, pid = 0) {
 
 // 根据id查询返回每一级数据
 
-export function treeFindPath(tree: any, func: any, path: any = []): any {
+export function treeFindPath(
+  tree: any,
+  func: any,
+  path: any = [],
+): {
+  title: string;
+  key: string;
+  nodeType: number;
+}[] {
   if (!tree) {
     return [];
   }
@@ -57,7 +65,7 @@ export function collectionOriginalTreeToAntdTreeData(
   nodeList: NodeList[] = [],
 ): NodeList[] {
   const nodes = tree;
-  Object.keys(nodes).forEach((value, index, array) => {
+  Object.keys(nodes).forEach((value, index) => {
     nodeList.push({
       id: nodes[value].infoId,
       children: [],

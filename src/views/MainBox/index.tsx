@@ -2,15 +2,23 @@ import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
 import React, { useState } from 'react';
 
-import { AppFooter, AppHeader, WorkspacesMenu } from '../../components';
+import { AppFooter, AppHeader } from '../../components';
+import { CollapseMenuKey } from '../../constant';
+import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
+import useInit from '../../hooks/useInit';
 import MainMenu from './MainMenu';
 import MainTabs from './MainTabs';
 
 const MainBox = () => {
-  const [collapseMenu, setCollapseMenu] = useState(false);
+  useInit();
+
+  const [collapseMenu, setCollapseMenu] = useState(getLocalStorage<boolean>(CollapseMenuKey));
 
   const handleMainMenuChange = () => collapseMenu && setCollapseMenu(false);
-  const handleCollapseMenu = () => setCollapseMenu(!collapseMenu);
+  const handleCollapseMenu = () => {
+    setCollapseMenu(!collapseMenu);
+    setLocalStorage(CollapseMenuKey, !collapseMenu);
+  };
 
   return (
     <>
@@ -18,7 +26,7 @@ const MainBox = () => {
 
       <Allotment
         css={css`
-          height: calc(100vh - 74px);
+          height: calc(100vh - 73px);
         `}
       >
         <Allotment.Pane
@@ -26,8 +34,6 @@ const MainBox = () => {
           minSize={collapseMenu ? 69 : 200}
           maxSize={collapseMenu ? 69 : 600}
         >
-          <WorkspacesMenu collapse={collapseMenu} />
-
           <MainMenu
             collapse={collapseMenu}
             onChange={handleMainMenuChange}

@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { Login, MainBox, ValidInvitation } from '../views';
 import UpgradeBrowser from '../views/UpgradeBrowser';
 
@@ -32,12 +34,12 @@ const router = [
   },
 ];
 
-const authPath = router.reduce<string[]>((list, cur) => {
-  if (cur.auth) {
+const FreePath = router.reduce<string[]>((list, cur) => {
+  if (!cur.auth) {
     list.push(cur.path);
   }
   return list;
 }, []);
 
 export default router;
-export { authPath };
+export { FreePath };

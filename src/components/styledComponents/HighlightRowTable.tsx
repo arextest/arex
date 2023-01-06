@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { CSSInterpolation } from '@emotion/serialize/types';
 import styled from '@emotion/styled';
 import { Table, TableProps } from 'antd';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 type HighlightRowTableProps<T> = {
   sx?: CSSInterpolation;
@@ -13,7 +13,7 @@ type HighlightRowTableProps<T> = {
 const HighlightRowTableWrapper = styled.div`
   // highlight selected row
   .clickRowStyle {
-    background-color: ${(props) => props.theme.color.selected};
+    background-color: ${(props) => props.theme.colorPrimaryBg};
     td.ant-table-cell-row-hover {
       background-color: transparent !important; // use clickRowStyle background color instead
     }

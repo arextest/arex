@@ -1,7 +1,18 @@
 import { ReactNode } from 'react';
 
+import { HoppRESTAuth, HoppRESTRequest } from '../components/arex-request/data/rest';
 import { METHODS, NodeType } from '../constant';
-import { KeyValueType } from '../pages/HttpRequestPage';
+
+export type KeyValueType = {
+  key: string;
+  value: string;
+  active?: boolean;
+};
+
+export type Address = {
+  method: typeof METHODS[number];
+  endpoint: string;
+};
 
 // ------ /api/filesystem/queryWorkspaceById ------
 export interface QueryWorkspaceByIdReq {
@@ -30,38 +41,50 @@ export interface QueryWorkspaceByIdRes {
   fsTree: FsTree;
 }
 
-// ------ /api/filesystem/saveInterface ------
-export interface QueryInterfaceReq {
+// ------ /api/filesystem/queryInterface ------
+
+export type BaseInterface<T extends 'interface' | 'case'> = {
   id: string;
-}
-export interface QueryInterfaceRes {
-  id: string;
-  endpoint: string | null;
-  method: typeof METHODS[number] | null;
-  preRequestScript: string | null;
-  testScript: string | null;
-  body: object | null;
-  headers: object | null;
-  params: object | null;
-  auth: string | null;
-}
+  name: string | null;
+  address: Address;
+  preRequestScripts: HoppRESTRequest['preRequestScripts'];
+  testScripts: HoppRESTRequest['testScripts'];
+  body: { [key: string]: string };
+  headers: KeyValueType[];
+  params: KeyValueType[];
+  auth: HoppRESTAuth | null;
+  testAddress: Address;
+  customTags: null;
+} & (T extends 'interface'
+  ? {
+      // interface unique attribute
+      operationId?: string | null;
+    }
+  : {
+      // case unique attribute
+      recordId?: string | null;
+      comparisonMsg?: null;
+      labelIds?: string[];
+      description?: null;
+    });
+
+export type QueryInterfaceRes = BaseInterface<'interface'>;
+export type QueryCaseRes = BaseInterface<'case'>;
 
 // ------ /api/filesystem/saveInterface ------
-export interface SaveInterfaceReq {
-  auth: {
-    authActive: boolean;
-    authType: string;
-    token: string;
-  } | null;
-  body: { contentType: string; body: string | null };
-  endpoint: string;
-  headers: KeyValueType[];
-  id: string;
-  method: string;
-  params: KeyValueType[];
-  preRequestScript: string | null;
-  testScript: string | null;
+export interface SaveInterfaceReq extends Partial<QueryInterfaceRes> {
+  workspaceId: string;
 }
-export interface SaveInterfaceRes {
-  success: boolean;
+
+// ------ /api/filesystem/saveCase ------
+export type SaveCaseReq =
+  | (Partial<QueryCaseRes> & { workspaceId: string })
+  | { id: string; labelIds: string[] };
+
+//
+export interface PinkMockReq {
+  workspaceId: string;
+  infoId: string;
+  recordId: string;
+  nodeType: number;
 }

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { treeFindPath } from '../collection/util';
 
 export function genCaseTreeData(data) {

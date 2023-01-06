@@ -1,17 +1,14 @@
-import { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 
-import MenuSelect from '../components/MenuSelect';
-import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
+import { generateGlobalPaneId } from '../helpers/utils';
 import { PagesType } from '../pages';
-import ReplayService from '../services/Replay.service';
 import { ApplicationDataType } from '../services/Replay.type';
 import { useStore } from '../store';
+import AppMenu from './AppMenu';
 import { MenusType } from './index';
 
 const ReplayMenu: FC = () => {
-  const { activeMenu, setPages } = useStore();
-  const value = useMemo(() => parseGlobalPaneId(activeMenu[1])['rawId'], [activeMenu]);
-  const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
+  const { setPages } = useStore();
 
   const handleReplayMenuClick = (app: ApplicationDataType) => {
     setPages(
@@ -28,26 +25,7 @@ const ReplayMenu: FC = () => {
     );
   };
 
-  return (
-    <MenuSelect<ApplicationDataType>
-      small
-      refresh
-      rowKey='id'
-      initValue={value}
-      selectedKeys={selectedKeys}
-      onSelect={handleReplayMenuClick}
-      placeholder='applicationsMenu.appFilterPlaceholder'
-      request={ReplayService.regressionList}
-      filter={(keyword, app) => app.appName.includes(keyword) || app.appId.includes(keyword)}
-      itemRender={(app) => ({
-        label: app.appId,
-        key: app.id,
-      })}
-      sx={{
-        padding: '8px 0 8px 8px',
-      }}
-    />
-  );
+  return <AppMenu onSelect={handleReplayMenuClick} />;
 };
 
 export default ReplayMenu;

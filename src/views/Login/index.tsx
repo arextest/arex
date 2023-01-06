@@ -1,34 +1,38 @@
-import './index.less';
-
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Button, Input, message } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { useRequest } from 'ahooks';
+import { App, Button, Card, Input, Space, Typography } from 'antd';
+import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { FlexCenterWrapper, Label } from '../../components/styledComponents';
 import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../../constant';
 import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
-import { AuthService } from '../../services/AuthService';
-import { UserService } from '../../services/UserService';
-import WorkspaceService from '../../services/Workspace.service';
+import { AuthService } from '../../services/Auth.service';
+import { UserService } from '../../services/User.service';
 
-const OtherLoginMethods = styled.div`
-  a {
-    margin-left: 4px;
-  }
+const Logo = styled(Typography.Text)`
+  height: 64px;
+  display: block;
+  font-size: 36px;
+  font-weight: 600;
+  text-align: center;
 `;
 
-let timeChange: any;
+let timer: NodeJS.Timer;
 
-const Login = () => {
+const Login: FC = () => {
   const nav = useNavigate();
+  const { message } = App.useApp();
+
   const [email, setEmail] = useState('');
   const [verificationCode, setVerificationCode] = useState<string>('');
+  const [verify, setVerify] = useState(false);
   const [emailChecked, setEmailChecked] = useState<boolean>(true);
-  const [loadings, setLoadings] = useState<boolean>(false);
-  const [count, setCount] = useState<number>(60);
+  const [count, setCount] = useState<number>(0);
 
   const getEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVerify(false);
     const { value } = e.target;
     if (value.match(/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/)) {
       setEmailChecked(true);
@@ -43,136 +47,144 @@ const Login = () => {
     setVerificationCode(value);
   };
 
+  const { run: sendVerifyCode } = useRequest(AuthService.sendVerifyCodeByEmail, {
+    manual: true,
+    onBefore() {
+      setCount(60);
+    },
+    onSuccess(res) {
+      res.data.body.success
+        ? message.success('The verification code has been sent to the email.')
+        : message.error('Authentication failed.');
+    },
+    onError() {
+      message.error('Authentication failed.');
+    },
+  });
+
   const sendVerificationCode = () => {
-    if (!emailChecked || email == '') {
-      message.error('email error');
-      return;
+    setVerify(true);
+
+    if (!emailChecked || !email) {
+      return message.error('email error');
     }
-    setLoadings(true);
-    timeChange = setInterval(() => {
+
+    timer = setInterval(() => {
       setCount((t: number) => --t);
     }, 1000);
-    AuthService.sendVerifyCodeByEmail(email).then((res) => {
-      if (res.data.body.success == true) {
-        message.success('The verification code has been sent to the email.');
-      } else {
-        message.error('Authentication failed.');
-      }
-    });
+
+    sendVerifyCode(email);
   };
 
-  // 用户进入前初始化
-  const initBeforeUserEntry = (userName: string) => {
-    setLocalStorage(EmailKey, userName);
+  const handleLoginSuccess = (email?: string) => {
+    const query = new URLSearchParams(location.search);
+    const redirect = query.get('redirect');
 
-    WorkspaceService.listWorkspace({
-      userName: userName,
-    }).then((workspaces) => {
-      if (workspaces.length === 0) {
-        const params = {
-          userName: userName,
-          workspaceName: 'Default',
-        };
-        WorkspaceService.createWorkspace(params).then((res) => {
-          nav('/');
-        });
-      } else {
-        nav('/');
-      }
-    });
+    setLocalStorage(EmailKey, email);
+
+    nav(redirect || '/');
   };
 
-  const guestLogin = () => {
-    UserService.loginAsGuest({ userName: getLocalStorage(EmailKey) }).then((res) => {
-      if (res.body.success) {
-        setLocalStorage(EmailKey, res.body.userName);
-        setLocalStorage(AccessTokenKey, res.body.accessToken);
-        setLocalStorage(RefreshTokenKey, res.body.refreshToken);
-        initBeforeUserEntry(res.body.userName);
-      }
-    });
-  };
+  const { run: loginAsGuest } = useRequest(
+    () => UserService.loginAsGuest({ userName: getLocalStorage<string>(EmailKey) }),
+    {
+      manual: true,
+      onSuccess(res) {
+        setLocalStorage(EmailKey, res.userName);
+        setLocalStorage(AccessTokenKey, res.accessToken);
+        setLocalStorage(RefreshTokenKey, res.refreshToken);
+        handleLoginSuccess(res.userName);
+      },
+    },
+  );
 
-  const login = () => {
-    if (!emailChecked || email == '') {
-      message.error('Please check your email');
-      return;
-    } else if (verificationCode == '') {
-      message.error('Please fill in the verification code');
-      return;
-    }
-
-    AuthService.loginVerify({
-      userName: email,
-      verificationCode,
-    }).then((res) => {
+  const { run: loginVerify } = useRequest(AuthService.loginVerify, {
+    manual: true,
+    onSuccess(res) {
       if (res.data.body.success) {
         setLocalStorage(AccessTokenKey, res.data.body.accessToken);
         setLocalStorage(RefreshTokenKey, res.data.body.refreshToken);
         message.success('Login succeeded');
-        initBeforeUserEntry(email);
+        handleLoginSuccess(email);
       } else {
         message.error('Verification code error');
       }
+    },
+  });
+
+  const handleLogin = () => {
+    setVerify(true);
+    if (!emailChecked) {
+      return message.error('Please check your email');
+    } else if (verificationCode.length !== 6) {
+      return message.error('Please enter the verification code');
+    }
+
+    loginVerify({
+      userName: email,
+      verificationCode,
     });
   };
+
   useEffect(() => {
-    if (!count) {
-      clearInterval(timeChange);
-      setCount(60);
-      setLoadings(false);
-    }
+    !count && clearInterval(timer);
   }, [count]);
 
   return (
-    <div className={'login-layout'}>
-      <div className={'login'}>
-        <div className={'login-title'}>AREX</div>
-        {/* TODO 使用 Form 组件做数据校验以及表单提交 */}
-        <Input
-          size='large'
-          placeholder='Please enter your email！'
-          prefix={<UserOutlined />}
-          onChange={getEmail}
-          status={emailChecked ? '' : 'error'}
-          allowClear
-        />
-        {emailChecked ? (
-          <div className={'login-email-tip'}></div>
-        ) : (
-          <div className={'login-email-tip'}>Please enter the correct email!</div>
-        )}
-        <div className={'login-verificationCode'}>
-          <Input
-            size='large'
-            placeholder='Please enter a verification code！'
-            prefix={<LockOutlined />}
-            onChange={getVerificationCode}
-          />
-          <Button
-            style={{ marginLeft: '8px' }}
-            size='large'
-            onClick={sendVerificationCode}
-            disabled={loadings}
-          >
-            {loadings ? count + 's' : 'Verification code'}
+    <FlexCenterWrapper>
+      <Card style={{ marginBottom: '20vh' }}>
+        <Space size={26} direction='vertical'>
+          <Logo>AREX</Logo>
+
+          {/* TODO 使用 Form 组件做数据校验以及表单提交 */}
+          <div style={{ position: 'relative' }}>
+            <Input
+              size='large'
+              placeholder='Please enter your email！'
+              prefix={<UserOutlined />}
+              onChange={getEmail}
+              status={!emailChecked && verify ? 'error' : undefined}
+              allowClear
+            />
+
+            <Typography.Text
+              type='danger'
+              style={{ position: 'absolute', left: 0, bottom: '-24px' }}
+            >
+              {!emailChecked && verify && 'Please enter the correct email!'}
+            </Typography.Text>
+          </div>
+
+          <Space>
+            <Input
+              size='large'
+              placeholder='Please enter a verification code！'
+              prefix={<LockOutlined />}
+              onChange={getVerificationCode}
+            />
+            <Button
+              size='large'
+              disabled={!!count}
+              onClick={sendVerificationCode}
+              style={{ width: '120px' }}
+            >
+              {count ? count + 's' : 'Send code'}
+            </Button>
+          </Space>
+
+          <Button block size='large' type='primary' onClick={handleLogin}>
+            Login
           </Button>
-        </div>
-        <Button type='primary' block size='large' onClick={login} style={{ marginBottom: '10px' }}>
-          Login
-        </Button>
-        <OtherLoginMethods>
-          Login with :
-          <a
-            onClick={() => {
-              guestLogin();
-            }}
-          >
-            Guest
-          </a>
-        </OtherLoginMethods>
-      </div>
-    </div>
+
+          <span>
+            <Label>Login with</Label>
+            <Button type='link' onClick={loginAsGuest} style={{ paddingLeft: 0 }}>
+              Guest
+            </Button>
+          </span>
+        </Space>
+      </Card>
+    </FlexCenterWrapper>
   );
 };
 

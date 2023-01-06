@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
+import { Typography } from 'antd';
 
-const Label = styled.label<{ offset?: number }>`
+const Label = styled(Typography.Text)<{ offset?: number }>`
   display: inline-block;
   margin-right: ${(props) => (props.offset ? props.offset : 0)}px;
   :after {

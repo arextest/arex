@@ -8,8 +8,7 @@ export enum MethodEnum {
   DELETE = 'DELETE',
   PATCH = 'PATCH',
 }
-
-export const methodMap = {
+export const MethodMap = {
   GET: {
     color: '#0cbb52',
   },
@@ -28,7 +27,7 @@ export const methodMap = {
   UNKNOWN: {
     color: '#0cbb52',
   },
-};
+} as const;
 
 export enum NodeType {
   interface = 1,
@@ -46,16 +45,19 @@ export enum RoleEnum {
   Viewer = 3,
 }
 
-export enum FontSizeMap {
-  small = 0.9,
-  medium = 1,
-  large = 1.1,
-}
+export const RoleMap = {
+  [RoleEnum.Admin]: 'Admin',
+  [RoleEnum.Editor]: 'Editor',
+  [RoleEnum.Viewer]: 'Viewer',
+};
 
 // localStorage key
-export const UserInfoKey = 'userInfo';
+export const UserProfileKey = 'userProfile';
 export const EmailKey = 'email'; // 初始化接口相关的 email 请使用该 key 而非 UserInfo
 export const AccessTokenKey = 'accessToken';
 export const RefreshTokenKey = 'refreshToken';
 export const CollapseMenuKey = 'collapseMenu';
 export const EnvironmentKey = 'environmentId';
+export const WorkspaceKey = 'workspaceId';
+export const I18Key = 'i18nextLng';
+export const WorkspaceEnvironmentPairKey = 'workspaceEnvironmentPair';

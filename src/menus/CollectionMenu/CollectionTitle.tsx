@@ -1,16 +1,17 @@
 import { MoreOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Dropdown, Input, Menu, Popconfirm, Space } from 'antd';
-import { ReactNode, useMemo, useState } from 'react';
+import { App, Button, Dropdown, Input, Popconfirm } from 'antd';
+import React, { ReactNode, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { methodMap } from '../../constant';
-import SearchHeighLight from '../../helpers/collection/searchHeighLight';
+import { EmailKey, MethodMap } from '../../constant';
+import SearchHighLight from '../../helpers/collection/searchHighLight';
 import { treeFindPath } from '../../helpers/collection/util';
-import { generateGlobalPaneId, uuid } from '../../helpers/utils';
+import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
 import { PagesType } from '../../pages';
-import { CollectionService } from '../../services/CollectionService';
+import { CollectionService } from '../../services/Collection.service';
+import { FileSystemService } from '../../services/FileSystem.service';
 import { useStore } from '../../store';
 import { MenusType } from '../index';
 
@@ -32,16 +33,16 @@ function CollectionTitle({
   callbackOfNewRequest,
   searchValue,
 }: any) {
+  const { message } = App.useApp();
   const _useParams = useParams();
-  const {
-    userInfo: { email: userName },
-    setPages,
-  } = useStore();
+  const { setPages } = useStore();
+  const userName = getLocalStorage<string>(EmailKey);
+
   const [open, setOpen] = useState(false);
   const [renameKey, setRenameKey] = useState('');
   const [renameValue, setRenameValue] = useState('');
   const menu = (val: any) => {
-    const paths = treeFindPath(treeData, (node) => node.key === val.key);
+    const paths = treeFindPath(treeData, (node: any) => node.key === val.key);
     return {
       items: [
         {
@@ -92,7 +93,7 @@ function CollectionTitle({
                   id: _useParams.workspaceId,
                   removeNodePath: paths.map((i: any) => i.key),
                   userName,
-                }).then((res) => {
+                }).then(() => {
                   updateDirectoryTreeData();
                 });
               }}
@@ -111,9 +112,11 @@ function CollectionTitle({
               nodeType: 3,
               parentPath: paths.map((i: any) => i.key),
               userName,
-            }).then(() => {
-              updateDirectoryTreeData();
-            });
+            })
+              .then(() => {
+                updateDirectoryTreeData();
+              })
+              .catch((e) => message.error(e));
             break;
           case '1':
             CollectionService.addItem({
@@ -139,11 +142,21 @@ function CollectionTitle({
               parentPath: paths.map((i: any) => i.key),
               userName,
             }).then((res) => {
-              updateDirectoryTreeData();
-              callbackOfNewRequest(
-                [res.body.infoId],
-                paths.map((i: any) => i.key),
-                2,
+              FileSystemService.queryInterface({ id: paths[paths.length - 1].key }).then(
+                (parentInterface) => {
+                  FileSystemService.saveCase({
+                    workspaceId: _useParams.workspaceId as string,
+                    ...parentInterface,
+                    id: res.body.infoId,
+                  }).then((_) => {
+                    updateDirectoryTreeData();
+                    callbackOfNewRequest(
+                      [res.body.infoId],
+                      paths.map((i) => i.key),
+                      2,
+                    );
+                  });
+                },
               );
             });
             break;
@@ -160,6 +173,7 @@ function CollectionTitle({
               console.log(res);
               updateDirectoryTreeData();
             });
+            break;
           case '7':
             setPages(
               {
@@ -174,6 +188,7 @@ function CollectionTitle({
               },
               'push',
             );
+            break;
         }
         e.domEvent.stopPropagation();
         setOpen(false);
@@ -182,56 +197,56 @@ function CollectionTitle({
   };
 
   const rename = () => {
-    const paths = treeFindPath(treeData, (node) => node.key === val.key);
+    const paths = treeFindPath(treeData, (node: any) => node.key === val.key);
     CollectionService.rename({
       id: _useParams.workspaceId,
       newName: renameValue,
       path: paths.map((i: any) => i.key),
       userName,
-    }).then((res) => {
+    }).then(() => {
       updateDirectoryTreeData();
       setRenameValue('');
       setRenameKey('');
     });
   };
+
   const method = useMemo(() => {
-    return Object.keys(methodMap).includes(val.method) ? val.method : 'UNKNOWN';
+    return Object.keys(MethodMap).includes(val.method) ? val.method : 'UNKNOWN';
   }, [val]);
+
   return (
-    <>
-      <div className={'collection-title-render'}>
-        <div className={'left'}>
-          {val.nodeType === 1 && (
-            <span css={css(`color:${methodMap[method].color};margin-right:4px`)}>{method}</span>
+    <div className={'collection-title-render'}>
+      <div className={'left'}>
+        {val.nodeType === 1 && (
+          <span css={css(`color:${MethodMap[method].color};margin-right:4px`)}>{method}</span>
+        )}
+        {val.nodeType === 2 && <PrefixIcon border icon='case' />}
+        <div className={'content'}>
+          {renameKey === val.id ? (
+            <Input
+              value={renameValue}
+              onPressEnter={rename}
+              onBlur={rename}
+              onChange={(val) => setRenameValue(val.target.value)}
+              style={{ padding: '0 4px', width: '100%' }}
+            />
+          ) : (
+            <SearchHighLight text={val.title} keyword={searchValue} />
           )}
-          {val.nodeType === 2 && <PrefixIcon border icon='case' />}
-          <div className={'content'}>
-            {renameKey === val.id ? (
-              <Input
-                autoFocus
-                width={'100%'}
-                style={{ padding: '0 4px', width: '100%' }}
-                value={renameValue}
-                onPressEnter={rename}
-                onBlur={rename}
-                onChange={(val) => setRenameValue(val.target.value)}
-              />
-            ) : (
-              <SearchHeighLight text={val.title} keyword={searchValue} />
-            )}
-          </div>
-        </div>
-        <div className='right'>
-          <Dropdown menu={menu(val)} trigger={['click']} open={open} onOpenChange={setOpen}>
-            <span onClick={(event) => event.stopPropagation()}>
-              <Space>
-                <MoreOutlined size={100} style={{ fontSize: '16px' }} />
-              </Space>
-            </span>
-          </Dropdown>
         </div>
       </div>
-    </>
+
+      <div className='right'>
+        <Dropdown menu={menu(val)} trigger={['click']} open={open} onOpenChange={setOpen}>
+          <Button
+            type='text'
+            size='small'
+            icon={<MoreOutlined style={{ fontSize: '14px' }} />}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </Dropdown>
+      </div>
+    </div>
   );
 }
 

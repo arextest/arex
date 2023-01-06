@@ -1,8 +1,8 @@
-import { SettingOutlined, SyncOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, DatePicker, Form, Input, Modal, notification } from 'antd';
-import moment, { Moment } from 'moment';
+import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, ReactNode, useState } from 'react';
 
 import { EmailKey } from '../../constant';
@@ -20,7 +20,7 @@ type AppTitleProps = {
   onRefresh?: () => void;
 };
 
-type CreatePlanForm = { targetEnv: string; caseStartTime: Moment; caseEndTime: Moment };
+type CreatePlanForm = { targetEnv: string; caseStartTime: Dayjs; caseEndTime: Dayjs };
 
 const TitleWrapper = styled(
   (props: {
@@ -40,18 +40,18 @@ const TitleWrapper = styled(
           onClick={props.onRefresh}
         />
       )}
-      <TooltipButton
-        size='small'
-        type='text'
-        title='setting'
-        icon={<SettingOutlined />}
-        onClick={props.onSetting}
-      />
+      {/*<TooltipButton*/}
+      {/*  size='small'*/}
+      {/*  type='text'*/}
+      {/*  title='setting'*/}
+      {/*  icon={<SettingOutlined />}*/}
+      {/*  onClick={props.onSetting}*/}
+      {/*/>*/}
     </div>
   ),
 )`
   display: flex;
-  align-items: baseline;
+  align-items: center;
   & > :first-of-type {
     margin-right: 4px;
   }
@@ -66,8 +66,8 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
 
   const initialValues = {
     targetEnv: '',
-    caseStartTime: moment().subtract(1, 'day'),
-    caseEndTime: moment(),
+    caseStartTime: dayjs().subtract(1, 'day').startOf('day'), // 前一天零点
+    caseEndTime: dayjs().add(1, 'day').startOf('day').subtract(1, 'second'), // 当天最后一秒
   };
 
   const { run: createPlan, loading: confirmLoading } = useRequest(ReplayService.createPlan, {
@@ -106,8 +106,12 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           appId: data.appId,
           sourceEnv: 'pro',
           targetEnv: values.targetEnv,
-          caseStartTime: values.caseStartTime.valueOf(),
-          caseEndTime: values.caseEndTime.valueOf(),
+          caseStartTime: values.caseStartTime.startOf('day').valueOf(),
+          caseEndTime: values.caseEndTime
+            .add(1, 'day')
+            .startOf('day')
+            .subtract(1, 'second')
+            .valueOf(),
           operator: email as string,
           replayPlanType: 0,
         });
@@ -122,24 +126,29 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     setPages(
       {
         title: `Setting ${data.appId}`,
-        menuType: MenusType.Replay,
-        pageType: PagesType.ReplaySetting,
+        menuType: MenusType.AppSetting,
+        pageType: PagesType.AppSetting,
         isNew: false,
         data,
-        paneId: generateGlobalPaneId(MenusType.Replay, PagesType.ReplaySetting, data.id),
+        paneId: generateGlobalPaneId(MenusType.AppSetting, PagesType.AppSetting, data.id),
         rawId: data.id,
       },
       'push',
     );
   };
   return (
-    <>
+    <div>
       <PanesTitle
         title={
           <TitleWrapper title={data.appId} onRefresh={onRefresh} onSetting={handleOpenSetting} />
         }
         extra={
-          <Button size='small' type='primary' onClick={() => setOpen(true)}>
+          <Button
+            size='small'
+            type='primary'
+            icon={<PlayCircleOutlined />}
+            onClick={() => setOpen(true)}
+          >
             Start replay
           </Button>
         }
@@ -186,7 +195,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 };
 

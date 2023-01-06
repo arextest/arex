@@ -1,22 +1,18 @@
 import { I18nextLng } from './i18n';
-import { FontSize } from './pages/SettingPage';
-import { Theme, ThemeClassify, ThemeName } from './style/theme';
-import DarkPurple from './style/theme/darkPurple';
+import { ColorPrimary, CompactMode, DarkMode } from './theme';
 
 export type DefaultConfig = {
   language: I18nextLng;
-  theme: ThemeName;
-  themePrimaryColor: string;
-  themeClassify: ThemeClassify;
-  fontSize: FontSize;
+  colorPrimary: ColorPrimary;
+  darkMode: DarkMode;
+  compactMode: CompactMode;
 };
 
-const defaultConfig: DefaultConfig = {
+const defaultConfig: Readonly<DefaultConfig> = {
   language: 'en-US',
-  theme: Theme.darkPurple,
-  themePrimaryColor: DarkPurple.primaryColor,
-  themeClassify: ThemeClassify.dark, // 深浅应于 theme 对应
-  fontSize: 'medium',
+  colorPrimary: ColorPrimary.green,
+  darkMode: false,
+  compactMode: false,
 };
 
 export default defaultConfig;

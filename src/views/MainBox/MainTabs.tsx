@@ -1,21 +1,30 @@
 import styled from '@emotion/styled';
-import { Button, Empty, TabsProps } from 'antd';
-import React, { ReactNode, useCallback, useEffect, useMemo } from 'react';
+import { Button, TabsProps } from 'antd';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { DraggableTabs, EnvironmentSelect } from '../../components';
+import { EmptyWrapper } from '../../components/styledComponents';
 import { treeFind } from '../../helpers/collection/util';
 import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
 import { MenusType } from '../../menus';
 import Pages, { PagesType } from '../../pages';
-import { NodeList } from '../../services/CollectionService';
+import { NodeList } from '../../services/Collection.service';
 import { Page, useStore } from '../../store';
 
 const MainTabs = () => {
   const nav = useNavigate();
   const params = useParams();
-  const { pages, activeMenu, setPages, setActiveMenu, environmentTreeData, collectionTreeData } =
-    useStore();
+
+  const {
+    pages,
+    activeMenu,
+    setPages,
+    removePage,
+    setActiveMenu,
+    environmentTreeData,
+    collectionTreeData,
+  } = useStore();
 
   const addTab = () => {
     const u = uuid();
@@ -33,25 +42,9 @@ const MainTabs = () => {
       'push',
     );
   };
-  const handleTabsEdit: any = (targetKey: string, action: 'add' | 'remove') => {
-    action === 'add' ? addTab() : removeTab(targetKey);
-  };
 
-  const removeTab = (targetKey: string) => {
-    const menuType = activeMenu[0];
-    const filteredPanes = pages.filter((i) => i.paneId !== targetKey);
-    setPages(filteredPanes);
-
-    if (filteredPanes.length) {
-      const lastPane = filteredPanes.reduce((pane, cur) => {
-        if ((cur.sortIndex || 0) > (pane.sortIndex || 0)) pane = cur;
-        return pane;
-      }, filteredPanes[0]);
-
-      setActiveMenu(lastPane.menuType, lastPane.paneId);
-    } else {
-      setActiveMenu(menuType);
-    }
+  const handleTabsEdit: TabsProps['onEdit'] = (targetKey, action: 'add' | 'remove') => {
+    action === 'add' ? addTab() : removePage(targetKey as string);
   };
 
   const genTabTitle = useCallback(
@@ -86,7 +79,7 @@ const MainTabs = () => {
           children: React.createElement(Pages[page.pageType], { page }),
         };
       }),
-    [pages, collectionTreeData],
+    [pages, genTabTitle, collectionTreeData],
   );
 
   // 必须和路由搭配起来，在切换的时候附着上去
@@ -99,29 +92,10 @@ const MainTabs = () => {
     }
   }, [activeMenu, pages]);
 
-  // TODO 只做了Replay的路由刷新优化
-  useEffect(() => {
-    if (params.rType === PagesType.Replay) {
-      setActiveMenu(
-        MenusType.Replay,
-        generateGlobalPaneId(MenusType.Replay, PagesType.Replay, params.rTypeId as string),
-      );
-    } else if (params.rType === PagesType.Environment) {
-      setActiveMenu(
-        MenusType.Environment,
-        generateGlobalPaneId(
-          MenusType.Environment,
-          PagesType.Environment,
-          params.rTypeId as string,
-        ),
-      );
-    }
-  }, []);
-
   return (
     <EmptyWrapper
       empty={!pages.length}
-      emptyContent={
+      description={
         <Button type='primary' onClick={addTab}>
           New Request
         </Button>
@@ -161,14 +135,11 @@ const MainTabsWrapper = styled((props: TabsProps) => {
   // 工作区 Tabs 全局样式调整
   .ant-tabs-tab {
     .ant-tabs-tab-btn {
-      color: ${(props) => props.theme.color.text.secondary}!important;
-    }
-    &.ant-tabs-tab-active {
-      border-bottom: 1px solid ${(props) => props.theme.color.background.primary}!important;
+      color: ${(props) => props.theme.colorTextSecondary}!important;
     }
     :hover {
       .ant-tabs-tab-btn {
-        color: ${(props) => props.theme.color.text.primary}!important;
+        color: ${(props) => props.theme.colorText}!important;
       }
     }
   }
@@ -179,8 +150,6 @@ const MainTabsWrapper = styled((props: TabsProps) => {
     // 注意当前的作用范围很广，目前的作用对象为工作区所有的可编辑可删除卡片式 Tab
     // .ant-tabs-tab-with-remove 类是为了避免污染一般的 Tabs
     &.ant-tabs-tab-active {
-      background-color: ${(props) => props.theme.color.background.primary}!important;
-      border-bottom: 1px solid ${(props) => props.theme.color.background.primary}!important;
       :after {
         content: '';
         position: absolute;
@@ -188,7 +157,7 @@ const MainTabsWrapper = styled((props: TabsProps) => {
         left: 0;
         width: 100%;
         height: 2px;
-        background-color: ${(props) => props.theme.color.primary};
+        background-color: ${(props) => props.theme.colorPrimary};
         transition: all 0.2s ease-in-out;
       }
     }
@@ -197,11 +166,28 @@ const MainTabsWrapper = styled((props: TabsProps) => {
       padding-right: 0;
     }
   }
+
   .main-tabs {
     overflow: auto;
     height: inherit;
     padding: 0 16px;
   }
+
+  .ant-tabs-nav-operations {
+    margin-bottom: 0 !important;
+    .ant-tabs-nav-more {
+      padding: 8px 12px;
+      border: 1px solid ${(props) => props.theme.colorBorderSecondary};
+      border-bottom-color: ${(props) => props.theme.colorBorder};
+      border-radius: ${(props) => props.theme.borderRadius}px
+        ${(props) => props.theme.borderRadius}px 0 0;
+    }
+    .ant-tabs-nav-add {
+      margin-left: -1px;
+      border-bottom-color: ${(props) => props.theme.colorBorderSecondary};
+    }
+  }
+
   .ant-tabs-nav-more {
     height: 36px;
     border-left: #000c17 1px solid;
@@ -210,22 +196,10 @@ const MainTabsWrapper = styled((props: TabsProps) => {
     height: 100%;
     .ant-tabs-tabpane {
       height: inherit;
-      //padding: 0 16px;
-      overflow: auto;
+      padding: 0 16px;
+      //overflow: auto;
     }
   }
-`;
-
-const EmptyWrapper = styled(
-  (props: { empty: boolean; emptyContent: ReactNode; children: ReactNode }) => {
-    const { empty, emptyContent, children, ...restProps } = props;
-    return <div {...restProps}>{empty ? <Empty>{emptyContent}</Empty> : children}</div>;
-  },
-)`
-  height: 100%;
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
 `;
 
 export default MainTabs;

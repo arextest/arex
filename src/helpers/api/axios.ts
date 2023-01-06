@@ -1,4 +1,3 @@
-import { message } from 'antd';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { AccessTokenKey } from '../../constant';
@@ -20,7 +19,7 @@ interface IRequestConfig<T = AxiosResponse> extends AxiosRequestConfig {
   interceptors?: IRequestInterceptors<T>;
 }
 
-type IAxiosResponse<T> = {
+export type IAxiosResponse<T> = {
   ResponseStatus: {
     responseStatusType: {
       responseCode: number;
@@ -55,14 +54,11 @@ export class Request {
     this.instance.interceptors.response.use(
       (response) => {
         if (response.data.responseStatusType.responseDesc === 'no permission') {
-          message.error(response.data.responseStatusType.responseDesc);
+          return Promise.reject(response.data.responseStatusType.responseDesc);
         }
-        return response.data;
+        return Promise.resolve(response.data);
       },
       (error) => {
-        if (error.response) {
-          message.error(error.response.data.message);
-        }
         return Promise.reject(error);
       },
     );
@@ -129,7 +125,7 @@ export class Request {
 }
 
 const request = new Request({
-  timeout: import.meta.env.VITE_TIMEOUT,
+  timeout: 30000,
   // 实例级别的拦截器，在创建axios实例的时候携带拦截器
   // interceptors: {
   //   requestInterceptor: ...

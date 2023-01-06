@@ -1,29 +1,33 @@
 import { useRequest } from 'ahooks';
 import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { AccessTokenKey, EmailKey, FontSizeMap, RefreshTokenKey, UserInfoKey } from '../constant';
-import DefaultConfig from '../defaultConfig';
-import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
-import { AuthService } from '../services/AuthService';
-import { UserService } from '../services/UserService';
-import { UserInfo, useStore } from '../store';
-import { themeMap } from '../style/theme';
+import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../constant';
+import {
+  clearLocalStorage,
+  generateGlobalPaneId,
+  getLocalStorage,
+  setLocalStorage,
+} from '../helpers/utils';
+import { MenusType } from '../menus';
+import { PagesType } from '../pages';
+import { AuthService } from '../services/Auth.service';
+import { UserService } from '../services/User.service';
+import { useStore } from '../store';
+import useUserProfile from '../store/useUserProfile';
 
 // init theme, fontSize, etc.
+// 由于使用了 useParams hook, 该 hook 只在 RouterComponent 中生效
+// (例如在 App.tsx 中无效
 const useInit = () => {
-  const {
-    changeTheme,
-    userInfo: {
-      profile: { theme: themeName, fontSize },
-    },
-    setUserInfo,
-  } = useStore();
   // checkout if the user is logged in
   const email = getLocalStorage<string>(EmailKey);
 
   const nav = useNavigate();
+  const params = useParams();
   const { pathname } = useLocation();
+  const { setUserProfile } = useUserProfile();
+  const { setPages, setActiveMenu, setActiveWorkspaceId } = useStore();
 
   const { run: refreshToken } = useRequest(AuthService.refreshToken, {
     manual: true,
@@ -43,24 +47,10 @@ const useInit = () => {
     },
   });
 
-  useRequest(() => UserService.userProfile(email as string), {
+  useRequest(() => UserService.getUserProfile(email as string), {
     ready: !!email,
-    onSuccess(res: any) {
-      const themeName = res.profile.theme;
-      const themeLS = getLocalStorage<UserInfo>(UserInfoKey)?.profile?.theme;
-      // 如果profile中的theme合法且与localStorage中的theme不一致，则更新localStorage中的theme
-      if ((themeName || '') in themeMap && (themeLS || '') in themeMap) {
-        if (themeName !== themeLS) {
-          changeTheme(themeName);
-        }
-      } else {
-        res.profile.theme = DefaultConfig.theme;
-        // setLocalStorage<UserInfo>(UserInfoKey, (state) => {
-        //   state.profile.theme = DefaultConfig.theme;
-        // });
-        changeTheme(DefaultConfig.theme);
-      }
-      setUserInfo(res);
+    onSuccess(res) {
+      res && setUserProfile(res);
     },
     onError() {
       // token过期了以后来刷新，如果还是没通过就退出
@@ -68,10 +58,48 @@ const useInit = () => {
     },
   });
 
+  // TODO 实现通用的所用页面初始化方法
+  // 根据 url 初始化页面, 同时初始化 workspaceId
   useEffect(() => {
-    changeTheme(themeName);
-    // @ts-ignore
-    // document.body.style['zoom'] = FontSizeMap[fontSize]; // Non-standard: https://developer.mozilla.org/en-US/docs/Web/CSS/zoom
+    console.log('params.workspaceId', params.workspaceId);
+    if (params.workspaceId) {
+      setActiveWorkspaceId(params.workspaceId);
+    }
+
+    if (params.rType === PagesType.Replay) {
+      setActiveMenu(
+        MenusType.Replay,
+        generateGlobalPaneId(MenusType.Replay, PagesType.Replay, params.rTypeId as string),
+      );
+    } else if (params.rType === PagesType.Environment) {
+      setActiveMenu(
+        MenusType.Environment,
+        generateGlobalPaneId(
+          MenusType.Environment,
+          PagesType.Environment,
+          params.rTypeId as string,
+        ),
+      );
+    } else if (params.rType === PagesType.WorkspaceOverview) {
+      params.workspaceName &&
+        params.workspaceId &&
+        setPages(
+          {
+            title: params.workspaceName,
+            menuType: MenusType.Collection,
+            pageType: PagesType.WorkspaceOverview,
+            isNew: true,
+            data: undefined,
+            paneId: generateGlobalPaneId(
+              MenusType.Collection,
+              PagesType.WorkspaceOverview,
+              params.workspaceId,
+            ),
+            rawId: params.workspaceId,
+          },
+          'push',
+        );
+    }
   }, []);
 };
 

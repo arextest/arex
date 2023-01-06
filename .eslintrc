@@ -9,6 +9,10 @@
     "plugin:prettier/recommended",
     "prettier"
   ],
+  "env": {
+    "browser": true,
+    "node": true
+  },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {
@@ -28,7 +32,7 @@
     "@emotion"
   ],
   "rules": {
-    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-unused-vars": [
@@ -59,9 +63,14 @@
     ],
     "react/prop-types": "off",
     "react/display-name": "off",
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error",
+    "react/react-in-jsx-scope": "warn",
     "jsx-a11y/anchor-is-valid": "off",
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/no-static-element-interactions": "off",
-    "react/no-unknown-property": ["error", { "ignore": ["css"] }]
-  }
+    "react/no-unknown-property": ["error", { "ignore": ["css"] }],
+    "jsx-a11y/no-autofocus": "off"
+  },
+  "ignorePatterns": ["**/*.css"]
 }

@@ -1,4 +1,6 @@
 import styled from '@emotion/styled';
+import { Divider } from 'antd';
+import React, { FC } from 'react';
 
 import CheckOrCloseIcon from '../styledComponents/CheckOrCloseIcon';
 
@@ -7,32 +9,32 @@ const FooterWrapper = styled.div`
   width: 100%;
   line-height: 26px;
   font-size: 12px;
-  border-top: 1px solid ${(props) => props.theme.color.border.primary};
   display: flex;
   justify-content: space-between;
   z-index: 1000;
   .footer_right {
     margin-right: 12px;
     span {
-      color: #6b6b6b;
+      color: ${(props) => props.theme.colorTextTertiary};
       margin-left: 6px;
-    }
-    span[role='img'] {
-      color: rgb(82, 196, 26);
     }
   }
 `;
-const AppFooter = () => {
+
+const AppFooter: FC = () => {
   return (
-    <FooterWrapper>
-      <div className='footer_left'></div>
-      <div className='footer_right'>
-        <span>
-          <CheckOrCloseIcon checked={window.__AREX_EXTENSION_INSTALLED__} />
-          Browser Agent
-        </span>
-      </div>
-    </FooterWrapper>
+    <div>
+      <Divider style={{ margin: 0 }} />
+      <FooterWrapper>
+        <div className='footer_left'></div>
+        <div className='footer_right'>
+          <span>
+            <CheckOrCloseIcon size={12} checked={window.__AREX_EXTENSION_INSTALLED__} />
+            Browser Agent
+          </span>
+        </div>
+      </FooterWrapper>
+    </div>
   );
 };
 

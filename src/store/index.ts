@@ -1,44 +1,30 @@
-// @ts-ignore
-import { toggleTheme } from '@zougt/vite-plugin-theme-preprocessor/dist/browser-utils';
 import React from 'react';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import { AccessTokenKey, EnvironmentKey, RefreshTokenKey, UserInfoKey } from '../constant';
-import DefaultConfig from '../defaultConfig';
-import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
-import { I18nextLng } from '../i18n';
+import { EmailKey, WorkspaceEnvironmentPairKey, WorkspaceKey } from '../constant';
+import { getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { MenusType } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
 import { PageType } from '../pages';
-import { FontSize } from '../pages/SettingPage';
-import { NodeList } from '../services/CollectionService';
+import { NodeList } from '../services/Collection.service';
 import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
-import { PrimaryColor, ThemeClassify, ThemeName } from '../style/theme';
-
-export type Profile = {
-  theme: ThemeName;
-  fontSize: FontSize;
-  language: I18nextLng;
-};
-export type UserInfo = {
-  profile: Profile;
-};
 
 // 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
 export type PageData =
   | undefined
   | nodeType // PageTypeEnum.Request 时的数据
   | ApplicationDataType // PageTypeEnum.Replay 时的数据
-  | PlanItemStatistics; // PageTypeEnum.ReplayAnalysis 时的数据
+  | PlanItemStatistics // PageTypeEnum.ReplayAnalysis 时的数据
+  | Environment;
 
 export type Page<D extends PageData = undefined> = {
   title: string;
   key?: string;
-  menuType: MenusType;
+  menuType?: MenusType;
   pageType: PageType<string>;
   isNew?: boolean;
   data: D;
@@ -47,18 +33,13 @@ export type Page<D extends PageData = undefined> = {
   rawId: React.Key;
 };
 
-type ActiveMenu = [MenusType, string | undefined]; // [菜单id, 菜单项目id]
+type ActiveMenu = [MenusType | undefined, string | undefined]; // [菜单id, 菜单项目id]
 type SetPagesMode = 'push' | 'normal';
 type BaseState = {
-  userInfo: UserInfo;
-  setUserInfo: (data: UserInfo) => void;
-
-  themeClassify: ThemeClassify;
-  changeTheme: (theme?: ThemeName) => void;
-  extensionInstalled: boolean;
   logout: () => void;
+
   activeMenu: ActiveMenu;
-  setActiveMenu: (menuKey: MenusType, menuItemKey?: string) => void;
+  setActiveMenu: (menuKey?: MenusType, menuItemKey?: string) => void;
 
   pages: Page<PageData>[];
   /*
@@ -70,6 +51,7 @@ type BaseState = {
     pages: M extends 'push' ? Page<D> : Page<D>[],
     mode?: M,
   ) => void;
+  removePage: (removePaneId: string) => void;
   resetPanes: () => void;
 
   collectionTreeData: NodeList[];
@@ -80,73 +62,27 @@ type BaseState = {
   invitedWorkspaceId: string;
   setInvitedWorkspaceId: (workspaceId: string) => void;
 
+  activeWorkspaceId: string;
+  setActiveWorkspaceId: (activeWorkspaceId: string) => void;
+
   workspaces: Workspace[];
   setWorkspaces: (workspaces: Workspace[]) => void;
+  workspacesLastManualUpdateTimestamp: number;
+  setWorkspacesLastManualUpdateTimestamp: (timestamp: number) => void;
 
   environmentTreeData: Environment[];
   setEnvironmentTreeData: (environmentTreeData: Environment[]) => void;
+  environmentLastManualUpdateTimestamp: number;
+  setEnvironmentLastManualUpdateTimestamp: (timestamp: number) => void;
 
   activeEnvironment?: Environment;
-  setActiveEnvironment: (environment: Environment | string) => void;
-
-  currentEnvironment?: Environment;
-  setCurrentEnvironment: (currentEnvironment: Environment | string) => void;
+  setActiveEnvironment: (environment?: Environment | string) => void;
 };
 
-const initUserInfo = (() => {
-  const userInfo = getLocalStorage<UserInfo>(UserInfoKey);
-  if (userInfo && userInfo?.profile) {
-    return userInfo;
-  } else {
-    return {
-      profile: {
-        theme: DefaultConfig.theme,
-        fontSize: DefaultConfig.fontSize,
-        language: DefaultConfig.language,
-      },
-    };
-  }
-})();
+export const DefaultEnvironment = { envName: 'No Environment', id: '0' };
 
-/**
- * TODO 全局store模块拆分
- * 1. 用户信息，用户配置等相关
- * 2. 主菜单/工作区（MainBox）相关
- * 3. ......
- */
 export const useStore = create(
   immer<BaseState>((set, get) => ({
-    userInfo: initUserInfo,
-    setUserInfo: (data) => {
-      set({ userInfo: data });
-      setLocalStorage(UserInfoKey, data);
-    },
-
-    themeClassify:
-      (getLocalStorage<UserInfo>(UserInfoKey)?.profile?.theme?.split('-')?.at(0) as
-        | ThemeClassify
-        | undefined) || DefaultConfig.themeClassify,
-    changeTheme: (theme) => {
-      set((state) => {
-        let newTheme = theme;
-        if (!theme) {
-          const [themeMode, primaryColor] = state.userInfo.profile.theme.split('-');
-          const newThemeMode =
-            themeMode === ThemeClassify.light ? ThemeClassify.dark : ThemeClassify.light;
-          newTheme = `${newThemeMode}-${primaryColor as PrimaryColor}`;
-        }
-
-        const themeName = newTheme as ThemeName;
-        toggleTheme({
-          scopeName: newTheme,
-        });
-        state.userInfo!.profile.theme = themeName;
-        state.themeClassify = themeName.split('-')[0] as ThemeClassify;
-      });
-    },
-
-    extensionInstalled: false,
-
     pages: [],
     setPages: (pages, mode: SetPagesMode = 'normal') => {
       if (mode === 'normal') {
@@ -163,6 +99,9 @@ export const useStore = create(
             // page already exist, just update sortIndex
             statePane.sortIndex = maxSortIndex;
           } else {
+            if (state.pages.length > 9) {
+              state.pages.shift();
+            }
             // insert new page with sortIndex
             state.pages.push({
               ...page,
@@ -172,6 +111,22 @@ export const useStore = create(
           // state.activePane = page.paneId;
           state.activeMenu = [page.menuType || MenusType.Collection, page.paneId];
         });
+      }
+    },
+    removePage(removePaneId) {
+      const menuType = get().activeMenu[0];
+      const filteredPanes = get().pages.filter((i) => i.paneId !== removePaneId);
+      get().setPages(filteredPanes);
+
+      if (filteredPanes.length) {
+        const lastPane = filteredPanes.reduce((pane, cur) => {
+          if ((cur.sortIndex || 0) > (pane.sortIndex || 0)) pane = cur;
+          return pane;
+        }, filteredPanes[0]);
+
+        get().setActiveMenu(lastPane.menuType, lastPane.paneId);
+      } else {
+        get().setActiveMenu(menuType);
       }
     },
 
@@ -196,10 +151,10 @@ export const useStore = create(
     },
 
     logout: () => {
-      clearLocalStorage(AccessTokenKey);
-      clearLocalStorage(RefreshTokenKey);
-      clearLocalStorage(UserInfoKey);
-      set({ userInfo: undefined, pages: [] });
+      const email = getLocalStorage<string>(EmailKey);
+      localStorage.clear();
+      email?.startsWith('GUEST') && setLocalStorage(EmailKey, email);
+      set({ pages: [] });
     },
 
     collectionTreeData: [],
@@ -213,37 +168,85 @@ export const useStore = create(
     invitedWorkspaceId: '',
     setInvitedWorkspaceId: (workspaceId) => set({ invitedWorkspaceId: workspaceId }),
 
-    workspaces: [],
-    setWorkspaces: (workspaces) => set({ workspaces }),
+    activeWorkspaceId: '',
+    setActiveWorkspaceId: (activeWorkspaceId) => {
+      set({ activeWorkspaceId });
+      setLocalStorage(WorkspaceKey, activeWorkspaceId);
 
-    environmentTreeData: [],
-    setEnvironmentTreeData: (environmentTreeData) => set({ environmentTreeData }),
-
-    activeEnvironment: undefined,
-    setActiveEnvironment: (environment) => {
-      if (typeof environment === 'string') {
-        const environmentTreeData = get().environmentTreeData;
-        set({ activeEnvironment: environmentTreeData.find((i) => i.id === environment) });
-      } else {
-        set({ activeEnvironment: environment });
-      }
+      // 更新 activeEnvironment 为当前 workspace 下的默认值
+      get().setActiveEnvironment();
     },
 
-    currentEnvironment: { id: '0', envName: '', keyValues: [] },
-    setCurrentEnvironment: (environment) => {
-      setLocalStorage(EnvironmentKey, environment);
+    workspaces: [],
+    setWorkspaces: (workspaces) => set({ workspaces }),
+    workspacesLastManualUpdateTimestamp: new Date().getTime(),
+    setWorkspacesLastManualUpdateTimestamp: (timestamp) => {
+      set({ workspacesLastManualUpdateTimestamp: timestamp });
+    },
 
-      if (environment !== '0') {
+    environmentTreeData: [],
+    setEnvironmentTreeData: (environmentTreeData) => {
+      set({ environmentTreeData });
+
+      // 初次加载 environmentTreeData 时恢复 activeEnvironment 的缓存状态
+      get().setActiveEnvironment();
+    },
+    environmentLastManualUpdateTimestamp: new Date().getTime(),
+    setEnvironmentLastManualUpdateTimestamp: (timestamp) =>
+      set({ environmentLastManualUpdateTimestamp: timestamp }),
+
+    activeEnvironment: DefaultEnvironment,
+    setActiveEnvironment: (environment) => {
+      // 从 localStorage 中读取工作空间的缓存值
+      if (!environment) {
+        // 先设置为默认值，后面再可能设置为有效值，避免有效值不存在时环境变量仍属于上一个工作空间
+        set({ activeEnvironment: DefaultEnvironment });
+
+        const workspaceEnvironmentPair = getLocalStorage<WorkspaceEnvironmentPair>(
+          WorkspaceEnvironmentPairKey,
+        );
+        const environmentId = workspaceEnvironmentPair?.[get().activeWorkspaceId];
+        environmentId && get().setActiveEnvironment(environmentId);
+      }
+      // 根据 id 从 environmentTreeData 中读取保存
+      else if (typeof environment === 'string') {
         const environmentTreeData = get().environmentTreeData;
-        set({ currentEnvironment: environmentTreeData.find((i) => i.id === environment) });
-      } else {
-        set({ currentEnvironment: { id: '0', envName: '', keyValues: [] } });
+        const activeEnvironment =
+          environment === DefaultEnvironment.id
+            ? DefaultEnvironment
+            : environmentTreeData.find((i) => i.id === environment);
+        if (activeEnvironment) {
+          set({
+            activeEnvironment,
+          });
+          updateWorkspaceEnvironmentLS(get().activeWorkspaceId, activeEnvironment.id);
+        }
+      }
+      // 直接保存
+      else {
+        set({ activeEnvironment: environment });
+        updateWorkspaceEnvironmentLS(get().activeWorkspaceId, environment.id);
       }
     },
   })),
 );
 
+type WorkspaceEnvironmentPair = { [workspaceId: string]: string };
+const updateWorkspaceEnvironmentLS = (workspaceId: string, environmentId: string) => {
+  let workspaceEnvironmentPair = getLocalStorage<WorkspaceEnvironmentPair>(
+    WorkspaceEnvironmentPairKey,
+  );
+  if (!workspaceEnvironmentPair) {
+    workspaceEnvironmentPair = { [workspaceId]: environmentId };
+  } else if (workspaceEnvironmentPair[workspaceId] === environmentId) {
+    return;
+  } else {
+    workspaceEnvironmentPair[workspaceId] = environmentId;
+  }
+  setLocalStorage(WorkspaceEnvironmentPairKey, workspaceEnvironmentPair);
+};
+
 // @ts-ignore
 if (process.env.NODE_ENV === 'development') {
-  mountStoreDevtool('Store', useStore);
+  mountStoreDevtool('BaseStore', useStore);
 }

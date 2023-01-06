@@ -1,51 +1,51 @@
-import 'antd/dist/antd.less';
-import './style/index.less';
-
 import { LoadingOutlined } from '@ant-design/icons';
-import { Theme as EmotionTheme, ThemeProvider } from '@emotion/react';
-import { Spin } from 'antd';
-import { HttpProvider } from 'arex-request';
+import { App as AppWrapper, Empty, Layout, Spin, theme } from 'antd';
+import { MappingAlgorithm } from 'antd/es/config-provider/context';
 import React, { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 
-import DefaultConfig from './defaultConfig';
-import { useAuthentication, useCheckChrome, useInit } from './hooks';
+import { useAuthentication, useCheckChrome } from './hooks';
+import { localeMap } from './i18n';
 import routerConfig from './router';
-import { useStore } from './store';
-import { themeMap } from './style/theme';
+import useUserProfile from './store/useUserProfile';
+import { generateToken, GlobalConfigProvider } from './theme';
+
+const { Content } = Layout;
+const { darkAlgorithm, compactAlgorithm, defaultAlgorithm } = theme;
 
 // global Spin config
-Spin.setDefaultIndicator(<LoadingOutlined style={{ fontSize: 24 }} spin />);
+Spin.setDefaultIndicator(<LoadingOutlined spin style={{ fontSize: 24 }} />);
 
 function App() {
   useCheckChrome();
   useAuthentication();
-  useInit();
 
   const routesContent = useRoutes(routerConfig);
 
-  const {
-    userInfo: {
-      profile: { theme: themeName, language },
-    },
-    collectionTreeData,
-    themeClassify,
-    currentEnvironment,
-  } = useStore();
-  const theme = useMemo<EmotionTheme>(
-    () => (themeName in themeMap ? themeMap[themeName] : themeMap[DefaultConfig.theme]),
-    [themeName],
-  );
+  const { theme, darkMode, compactMode, colorPrimary, language } = useUserProfile();
+
+  const algorithm = useMemo<MappingAlgorithm[]>(() => {
+    const _algorithm = [defaultAlgorithm];
+    darkMode && _algorithm.push(darkAlgorithm);
+    compactMode && _algorithm.push(compactAlgorithm);
+    return _algorithm;
+  }, [darkMode, compactMode]);
 
   return (
-    <HttpProvider
-      theme={themeClassify}
-      locale={{ 'zh-CN': 'cn', 'en-US': 'en' }[language]}
-      collectionTreeData={collectionTreeData}
-      environment={currentEnvironment}
+    <GlobalConfigProvider
+      theme={{
+        token: generateToken(theme, colorPrimary),
+        algorithm,
+      }}
+      locale={localeMap[language]}
+      renderEmpty={() => Empty.PRESENTED_IMAGE_SIMPLE}
     >
-      <ThemeProvider theme={theme}>{routesContent}</ThemeProvider>
-    </HttpProvider>
+      <AppWrapper>
+        <Layout>
+          <Content>{routesContent}</Content>
+        </Layout>
+      </AppWrapper>
+    </GlobalConfigProvider>
   );
 }
 
