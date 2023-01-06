@@ -33,6 +33,7 @@ export interface State {
 
 export type HttpRef = {
   getRequestValue: () => State['request'];
+  resetResponse: () => void;
 };
 
 export interface Tab extends Omit<TabPaneProps, 'tab'> {
@@ -61,6 +62,9 @@ export interface HttpProps {
   onSend: (
     request: HoppRESTRequest,
   ) => Promise<{ response: HoppRESTResponse; testResult: HoppTestResult }>;
+  onPreSend: (
+    request: HoppRESTRequest,
+  ) => Promise<{ prTestResultEnvs: { key: string; value: string }[] }>;
   onSave: (r: HoppRESTRequest) => void;
   onSendCompare: (r: HoppRESTRequest) => Promise<any>;
   config?: HttpConfig;
@@ -94,6 +98,7 @@ const Http = forwardRef<HttpRef, HttpProps>(
       onPin,
       onSend,
       onSave,
+      onPreSend,
       onSendCompare,
       defaultDisplayResponse = false,
       requestPanePreferredSize = 360,
@@ -104,6 +109,24 @@ const Http = forwardRef<HttpRef, HttpProps>(
 
     useImperativeHandle(ref, () => ({
       getRequestValue: () => store.request,
+      resetResponse: () => {
+        dispatch((state) => {
+          if (defaultDisplayResponse) {
+            state.response = {
+              type: 'empty',
+              headers: [],
+              body: '',
+              statusCode: 0,
+              meta: {
+                responseSize: 0,
+                responseDuration: 0,
+              },
+            };
+          } else {
+            state.response = null;
+          }
+        });
+      },
     }));
 
     useEffect(() => {
@@ -181,6 +204,7 @@ const Http = forwardRef<HttpRef, HttpProps>(
                     onSave={onSave}
                     onSend={onSend}
                     onSendCompare={onSendCompare}
+                    onPreSend={onPreSend}
                   />
                   <RequestTabs config={config?.requestTabs} />
                 </>
