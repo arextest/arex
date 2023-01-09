@@ -66,15 +66,15 @@ export type RemoveDynamicClassSettingRes = boolean;
 
 export type OperationType = 'Global' | 'Interface';
 export type OperationInterface<T extends OperationType = 'Global'> = {
-  status: number;
+  status?: number;
   modifiedTime?: number;
   id: OperationId<T>;
-  appId: string;
-  serviceId: string;
+  appId?: string;
+  serviceId?: string;
   operationName: string;
-  operationType: number;
-  operationResponse: string | null;
-  recordedCaseCount: number | null;
+  operationType?: number;
+  operationResponse?: string | null;
+  recordedCaseCount?: number | null;
 };
 
 export type ExcludeOperationMap = { [key: string]: string[] };
@@ -116,7 +116,7 @@ export type OperationData<T extends OperationType> = {
 
 export type QueryInterfacesListRes<T extends OperationType> = OperationData<T>[];
 
-type OperationIdGlobal = string | null;
+type OperationIdGlobal = string | null | undefined;
 type OperationIdInterface = string;
 export type OperationId<T extends OperationType> = T extends 'Global'
   ? OperationIdGlobal
@@ -163,7 +163,7 @@ export interface QueryNodeReq<T extends OperationType> {
 
 export interface QueryInterfaceIgnoreNodeReq {
   interfaceId: string;
-  operationId?: string;
+  operationId?: string | null;
 }
 
 export type SortNodePathKey = {
