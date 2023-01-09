@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import type { InputRef } from 'antd';
+import type { CollapseProps, InputRef } from 'antd';
 import { App, Button, Collapse, Input, List, Spin } from 'antd';
 import React, { FC, SyntheticEvent, useRef, useState } from 'react';
 
@@ -31,7 +31,7 @@ const PathCollapseWrapper = styled.div`
   }
 `;
 
-type PathCollapseProps = {
+export interface PathCollapseProps extends Omit<CollapseProps, 'activeKey' | 'onChange'> {
   appId?: string;
   interfaceId?: string; // collection - interface
   title?: string;
@@ -44,7 +44,7 @@ type PathCollapseProps = {
   onChange?: (path?: InterfacePick, maintain?: boolean) => void;
   onReloadNodes?: () => void;
   onEditResponse?: (operationInterface: InterfacePick) => void;
-};
+}
 
 const PathCollapse: FC<PathCollapseProps> = (props) => {
   const { message } = App.useApp();
@@ -76,6 +76,8 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
         message.success('Update successfully');
         handleExitEdit();
         props.onReloadNodes?.();
+      } else {
+        message.error('Update failed');
       }
     },
   });
@@ -86,8 +88,8 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
     }
 
     let params: IgnoreNodeBase | InterfaceIgnoreNode = {
+      operationId: undefined,
       appId: props.appId,
-      operationId: null,
       exclusions: ignoredKey.split('/').filter(Boolean),
     };
 
@@ -122,6 +124,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
       <h3>{props.title}</h3>
       <Spin spinning={props.loading || false}>
         <Collapse
+          {...props}
           accordion
           activeKey={props.activeKey || undefined}
           onChange={(id) =>
@@ -135,6 +138,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
             props.interfaces.map((path) => {
               return (
                 <Collapse.Panel
+                  collapsible={props.interfaceId ? 'icon' : 'header'}
                   key={String(path.id)}
                   header={path.operationName}
                   extra={[

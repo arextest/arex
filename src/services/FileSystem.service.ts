@@ -1,11 +1,5 @@
 import request from '../helpers/api/axios';
-import {
-  PinkMockReq,
-  QueryCaseRes,
-  QueryInterfaceRes,
-  SaveCaseReq,
-  SaveInterfaceReq,
-} from './FileSystem.type';
+import { BaseInterface, PinkMockReq, SaveCaseReq, SaveInterfaceReq } from './FileSystem.type';
 
 export class FileSystemService {
   static async rename(params: any): Promise<any> {
@@ -13,7 +7,7 @@ export class FileSystemService {
   }
 
   static async queryInterface(params: { id: string }) {
-    const res = await request.post<QueryInterfaceRes>(`/report/filesystem/queryInterface`, params);
+    const res = await request.post<BaseInterface>(`/report/filesystem/queryInterface`, params);
     const {
       body: { address, testAddress, ...rest },
     } = res;
@@ -42,7 +36,7 @@ export class FileSystemService {
   }
 
   static async queryCase(params: { id: string }) {
-    const res = await request.post<QueryCaseRes>(`/report/filesystem/queryCase`, params);
+    const res = await request.post<BaseInterface>(`/report/filesystem/queryCase`, params);
     const {
       body: { address, testAddress, ...rest },
     } = res;

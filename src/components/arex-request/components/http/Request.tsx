@@ -155,12 +155,7 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
   };
 
   return (
-    <Space
-      direction='vertical'
-      style={{
-        padding: '0 16px',
-      }}
-    >
+    <Space direction='vertical'>
       <SpaceBetweenWrapper>
         <CollectionBreadcrumb
           id={props.id}

@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { App } from 'antd';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,7 @@ import { getChromeVersion, versionStringCompare } from '../helpers/utils';
 
 const useCheckChrome = () => {
   const nav = useNavigate();
-  // const { message } = App.useApp();
+  const { message } = App.useApp();
   const { t } = useTranslation('components');
 
   useEffect(() => {

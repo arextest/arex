@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
@@ -27,8 +28,6 @@ const HttpRequestPageWrapper = styled.div`
   min-height: 650px;
   overflow-y: auto;
   border: 0 solid salmon;
-  margin-left: -16px;
-  width: calc(100% + 32px);
   .ant-tabs-content {
     .ant-tabs-tabpane {
       padding: 0;
