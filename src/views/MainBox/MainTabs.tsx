@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Button, TabsProps } from 'antd';
+import { Button, Dropdown, MenuProps, TabsProps } from 'antd';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -21,6 +21,7 @@ const MainTabs = () => {
     activeMenu,
     setPages,
     removePage,
+    resetPanes,
     setActiveMenu,
     environmentTreeData,
     collectionTreeData,
@@ -42,6 +43,24 @@ const MainTabs = () => {
       'push',
     );
   };
+
+  const rightClickItems: (id: string) => MenuProps['items'] = (id) => [
+    {
+      label: 'Close this Tab',
+      key: 'closeThisTab',
+      onClick: () => removePage(id),
+    },
+    {
+      label: 'Close other tab',
+      key: 'closeOtherTab',
+      onClick: () => setPages(pages.filter((page) => page.paneId === id)),
+    },
+    {
+      label: 'Close all Tab',
+      key: 'closeAllTab',
+      onClick: resetPanes,
+    },
+  ];
 
   const handleTabsEdit: TabsProps['onEdit'] = (targetKey, action: 'add' | 'remove') => {
     action === 'add' ? addTab() : removePage(targetKey as string);
@@ -74,7 +93,11 @@ const MainTabs = () => {
       pages.map((page) => {
         return {
           forceRender: true,
-          label: genTabTitle(collectionTreeData, page),
+          label: (
+            <Dropdown menu={{ items: rightClickItems(page.paneId) }} trigger={['contextMenu']}>
+              <span>{genTabTitle(collectionTreeData, page)}</span>
+            </Dropdown>
+          ),
           key: page.paneId,
           children: React.createElement(Pages[page.pageType], { page }),
         };
