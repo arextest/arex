@@ -93,10 +93,8 @@ const RequestTabs: FC<{ config?: TabConfig }> = ({ config }) => {
     <div
       css={css`
         height: 100%;
-        padding: 0 16px;
         flex: 1;
         overflow: auto;
-        width: calc(100% - 16px);
       `}
     >
       <Tabs

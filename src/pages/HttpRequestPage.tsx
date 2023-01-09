@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
@@ -27,8 +28,6 @@ const HttpRequestPageWrapper = styled.div`
   min-height: 650px;
   overflow-y: auto;
   border: 0 solid salmon;
-  margin-left: -16px;
-  width: calc(100% + 32px);
   .ant-tabs-content {
     .ant-tabs-tabpane {
       padding: 0;
@@ -119,17 +118,17 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
             hidden: !data?.recordId,
             children: <ExtraTabs.RequestTabs.Mock recordId={data?.recordId as string} />,
           },
-          {
-            label: 'CompareConfig',
-            key: 'compareConfig',
-            hidden: nodeType === 2,
-            children: (
-              <ExtraTabs.RequestTabs.CompareConfig
-                interfaceId={id}
-                operationId={data?.operationId}
-              />
-            ),
-          },
+          // {
+          //   label: 'CompareConfig',
+          //   key: 'compareConfig',
+          //   hidden: nodeType === 2,
+          //   children: (
+          //     <ExtraTabs.RequestTabs.CompareConfig
+          //       interfaceId={id}
+          //       operationId={data?.operationId}
+          //     />
+          //   ),
+          // },
         ],
       },
       responseTabs: {
