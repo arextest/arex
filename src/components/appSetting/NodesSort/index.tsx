@@ -10,6 +10,7 @@ import { useImmer } from 'use-immer';
 import { tryParseJsonString, tryPrettierJsonString } from '../../../helpers/utils';
 import AppSettingService from '../../../services/AppSetting.service';
 import { OperationInterface, SortNode } from '../../../services/AppSetting.type';
+import { FileSystemService } from '../../../services/FileSystem.service';
 import { EditAreaPlaceholder, SpaceBetweenWrapper } from '../../styledComponents';
 import EmptyResponse from '../NodesIgnore/EmptyResponse';
 import ResponseRaw from '../NodesIgnore/ResponseRaw';
@@ -87,7 +88,7 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
    * 请求 InterfacesList
    */
   const {
-    data: operationList = props.appId && activeOperationInterface
+    data: operationList = props.appId
       ? []
       : [activeOperationInterface as OperationInterface<'Interface'>],
     loading: loadingOperationList,

@@ -3,6 +3,7 @@ export { default as AppFooter } from './app/Footer';
 export { default as AppHeader } from './app/Header';
 export { default as DraggableTabs } from './DraggableTabs';
 export { default as EnvironmentSelect } from './Environment/EnvironmentSelect';
+export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as MenuSelect } from './MenuSelect';
 export { default as ScriptBlocks } from './ScriptBlocks';
 export { default as ScriptSnippets } from './ScriptSnippets';

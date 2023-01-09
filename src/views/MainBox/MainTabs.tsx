@@ -3,7 +3,7 @@ import { Button, Dropdown, MenuProps, TabsProps } from 'antd';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { DraggableTabs, EnvironmentSelect } from '../../components';
+import { DraggableTabs, EnvironmentSelect, ErrorBoundary } from '../../components';
 import { EmptyWrapper } from '../../components/styledComponents';
 import { treeFind } from '../../helpers/collection/util';
 import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
@@ -99,7 +99,9 @@ const MainTabs = () => {
             </Dropdown>
           ),
           key: page.paneId,
-          children: React.createElement(Pages[page.pageType], { page }),
+          children: (
+            <ErrorBoundary>{React.createElement(Pages[page.pageType], { page })}</ErrorBoundary>
+          ),
         };
       }),
     [pages, genTabTitle, collectionTreeData],
