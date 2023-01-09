@@ -1,12 +1,12 @@
 import { Button, Tag } from 'antd';
-import { PresetColorTypes } from 'antd/es/_util/colors';
+import { PresetColors } from 'antd/es/theme/interface';
 import React, { FC } from 'react';
 
-export const LabelColor = ['default', ...PresetColorTypes] as const;
+export const LabelColor = ['default', ...PresetColors] as const;
 
 export type ColorPickerProps = {
-  value?: typeof LabelColor[number];
-  onChange?: (value: typeof LabelColor[number]) => void;
+  value?: (typeof LabelColor)[number];
+  onChange?: (value: (typeof LabelColor)[number]) => void;
 };
 
 const ColorPicker: FC<ColorPickerProps> = (props) => {

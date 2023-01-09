@@ -51,9 +51,16 @@ function CollectionTitle({
             //必须要用a标签，不然无法disable
             <span className={'dropdown-click-target'}>Run Folder</span>
           ),
-          // 只有类型为3才能新增文件夹
           disabled: val.nodeType !== 3,
         },
+        // {
+        //   key: '8',
+        //   label: (
+        //     //必须要用a标签，不然无法disable
+        //     <span className={'dropdown-click-target'}>Run Compare</span>
+        //   ),
+        //   disabled: val.nodeType !== 3,
+        // },
         {
           key: '3',
           label: (
@@ -184,6 +191,21 @@ function CollectionTitle({
                 isNew: true,
                 data: undefined,
                 paneId: generateGlobalPaneId(MenusType.Collection, PagesType.BatchRun, val.id),
+                rawId: val.id,
+              },
+              'push',
+            );
+            break;
+          case '8':
+            setPages(
+              {
+                key: val.id,
+                title: 'BatchCompare',
+                pageType: PagesType.BatchCompare,
+                menuType: MenusType.Collection,
+                isNew: true,
+                data: undefined,
+                paneId: generateGlobalPaneId(MenusType.Collection, PagesType.BatchCompare, val.id),
                 rawId: val.id,
               },
               'push',

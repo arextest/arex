@@ -1,4 +1,10 @@
-import { DownOutlined, PlayCircleOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  ClearOutlined,
+  DownOutlined,
+  PlayCircleOutlined,
+  PlusOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Input, Tree } from 'antd';
@@ -452,6 +458,23 @@ const CollectionMenu = () => {
     );
   };
 
+  const onOpenBatchComparePage = () => {
+    const u = uuid();
+    setPages(
+      {
+        key: u,
+        title: 'BatchCompare',
+        pageType: PagesType.BatchCompare,
+        menuType: MenusType.Collection,
+        isNew: true,
+        data: undefined,
+        paneId: generateGlobalPaneId(MenusType.Collection, PagesType.BatchCompare, u),
+        rawId: u,
+      },
+      'push',
+    );
+  };
+
   return (
     <CollectionMenuWrapper>
       <EmptyWrapper
@@ -484,6 +507,16 @@ const CollectionMenu = () => {
               placement='bottomLeft'
               title={'Run'}
             />
+
+            {/*<TooltipButton*/}
+            {/*  icon={<ClearOutlined />}*/}
+            {/*  type='text'*/}
+            {/*  size='small'*/}
+            {/*  className={'collection-header-create'}*/}
+            {/*  onClick={onOpenBatchComparePage}*/}
+            {/*  placement='bottomLeft'*/}
+            {/*  title={'Run'}*/}
+            {/*/>*/}
 
             <Input
               className={'collection-header-search'}

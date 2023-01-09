@@ -2,6 +2,7 @@ import { FC } from 'react';
 
 import { Page, PageData } from '../store';
 import AppSettingPage from './AppSettingPage';
+import BatchComparePage from './BatchComparePage';
 import BatchRunPage from './BatchRunPage';
 import EnvironmentPage from './EnvironmentPage';
 import FolderPage from './FolderPage';
@@ -43,6 +44,7 @@ const CommonPageType: PagesTypeType = {
   Setting: 'SettingPage',
   WorkspaceOverview: 'WorkspaceOverviewPage',
   BatchRun: 'BatchRunPage',
+  BatchCompare: 'BatchComparePage',
 };
 
 export const PagesType = Object.assign(CommonPageType, ExtraPagesType);
@@ -67,6 +69,7 @@ const CommonPages: PageComponents = {
   SettingPage,
   WorkspaceOverviewPage,
   BatchRunPage,
+  BatchComparePage,
 };
 
 export default Object.assign(CommonPages, ExtraPages);
