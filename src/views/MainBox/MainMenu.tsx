@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Menu, MenuProps } from 'antd';
 import React, { FC, ReactNode, useMemo } from 'react';
 
-import { WorkspacesMenu } from '../../components';
+import { ErrorBoundary, WorkspacesMenu } from '../../components';
 import MenuConfig, { MenusType } from '../../menus';
 import { useStore } from '../../store';
 
@@ -57,7 +57,13 @@ const MainMenu: FC<MainMenuProps> = (props) => {
 
   const MenuContent = useMemo(() => {
     const Content = FlatMenu.find((menu) => menu.key === activeKey);
-    return !props.collapse && Content?.Menu ? <Content.Menu /> : <></>;
+    return !props.collapse && Content?.Menu ? (
+      <ErrorBoundary>
+        <Content.Menu />
+      </ErrorBoundary>
+    ) : (
+      <></>
+    );
   }, [activeKey, props.collapse]);
 
   return (
