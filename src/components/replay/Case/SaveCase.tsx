@@ -34,7 +34,6 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
 
   useImperativeHandle(ref, () => ({
     openModal: (record) => {
-      console.log(record, 'record');
       setOpen(true);
       setTitle(record.recordId);
       form.setFieldsValue({
@@ -61,7 +60,7 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
     form.validateFields().then((values) => {
       // TODO 集合那边加一个刷新
       request
-        .post('/api/filesystem/addItemFromRecord', {
+        .post('/report/filesystem/addItemFromRecord', {
           workspaceId: params['workspaceId'],
           parentPath: treeFindPath(collectionTreeData, (node) => node.key === value).map(
             (i) => i.key,

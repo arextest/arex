@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
@@ -174,31 +175,37 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
     window.globalFetchTreeData();
   };
   return (
-    <HttpRequestPageWrapper>
-      <Http
-        renderResponse
-        id={id}
-        value={data}
-        theme={theme}
-        config={httpConfig}
-        nodeType={nodeType}
-        nodePath={nodePath}
-        environment={environment}
-        onPreSend={runRESTPreRequest}
-        onSend={runRESTRequest}
-        onSendCompare={runCompareRESTRequest}
-        onSave={handleSave}
-        onPin={runPinMock}
-      />
+    <div
+      css={css`
+        overflow: hidden;
+      `}
+    >
+      <HttpRequestPageWrapper>
+        <Http
+          renderResponse
+          id={id}
+          value={data}
+          theme={theme}
+          config={httpConfig}
+          nodeType={nodeType}
+          nodePath={nodePath}
+          environment={environment}
+          onPreSend={runRESTPreRequest}
+          onSend={runRESTRequest}
+          onSendCompare={runCompareRESTRequest}
+          onSave={handleSave}
+          onPin={runPinMock}
+        />
 
-      <SaveRequestButton
-        open={saveModalOpen}
-        reqParams={reqParams}
-        collectionTreeData={collectionTreeData}
-        onSaveAs={handleSaveAs}
-        onClose={() => setSaveModalOpen(false)}
-      />
-    </HttpRequestPageWrapper>
+        <SaveRequestButton
+          open={saveModalOpen}
+          reqParams={reqParams}
+          collectionTreeData={collectionTreeData}
+          onSaveAs={handleSaveAs}
+          onClose={() => setSaveModalOpen(false)}
+        />
+      </HttpRequestPageWrapper>
+    </div>
   );
 };
 
