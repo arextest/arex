@@ -46,7 +46,7 @@ const MainTabs = () => {
 
   const rightClickItems: (id: string) => MenuProps['items'] = (id) => [
     {
-      label: 'Close this Tab',
+      label: 'Close this tab',
       key: 'closeThisTab',
       onClick: () => removePage(id),
     },
@@ -56,7 +56,7 @@ const MainTabs = () => {
       onClick: () => setPages(pages.filter((page) => page.paneId === id)),
     },
     {
-      label: 'Close all Tab',
+      label: 'Close all tab',
       key: 'closeAllTab',
       onClick: resetPanes,
     },
