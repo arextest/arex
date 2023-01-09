@@ -1,7 +1,7 @@
 import { StopOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { App, Button, Card, Space, Tag, Typography } from 'antd';
-import React, { FC } from 'react';
+import { App, Button, Card, Space, Tag, Tooltip, Typography } from 'antd';
+import React, { FC, useMemo } from 'react';
 
 import AppSettingService from '../../../services/AppSetting.service';
 import ReplayService from '../../../services/Replay.service';
@@ -33,6 +33,16 @@ const DiffMap: {
     text: 'Different Value',
     color: 'magenta',
   },
+};
+
+const PathTooltip: FC<{ path: string }> = (props) => {
+  const path = useMemo(() => props.path.split('.'), [props.path]);
+
+  return (
+    <Tooltip title={props.path} open={path.length > 1 ? undefined : false}>
+      <Typography.Text code>{path.at(-1)}</Typography.Text>
+    </Tooltip>
+  );
 };
 
 export type DiffListType = {
@@ -110,23 +120,20 @@ const DiffList: FC<DiffListType> = (props) => {
             {log.pathPair.unmatchedType === 3 ? (
               <Typography.Text type='secondary'>
                 {'Value of '}
-                <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
-                  {log.path || '[]'}
-                </Typography.Text>
+                <PathTooltip path={log.path} />
                 {' is different, excepted '}
                 <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
-                  {log.baseValue || '[]'}
+                  {log.baseValue}
                 </Typography.Text>
                 {', actual '}
                 <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
-                  {log.testValue || '[]'}
+                  {log.testValue}
                 </Typography.Text>
                 {'.'}
               </Typography.Text>
             ) : (
               <Typography.Text type='secondary'>
-                <Typography.Text code>{log.path}</Typography.Text>
-                {DiffMap[log.pathPair.unmatchedType].desc}
+                <PathTooltip path={log.path} /> {DiffMap[log.pathPair.unmatchedType].desc}
               </Typography.Text>
             )}
 
