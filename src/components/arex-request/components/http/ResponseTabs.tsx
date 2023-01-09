@@ -30,8 +30,6 @@ const ResponseTabs: FC<{ onPin: LensesHeadersRendererEntryProps['onPin']; config
         display: flex;
         flex-direction: column;
         height: 100%;
-        padding-left: 16px;
-        padding-right: 16px;
       `}
     >
       <HttpResponseMeta response={store.response} />
