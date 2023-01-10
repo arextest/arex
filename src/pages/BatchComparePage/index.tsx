@@ -1,47 +1,21 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Button, Tree, TreeProps } from 'antd';
-import { DataNode } from 'antd/es/tree';
+import { useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
+import { urlPretreatment } from '../../components/arex-request/helpers/utils/util';
 import axios from '../../helpers/api/axios';
-const treeData: DataNode[] = [
-  {
-    title: 'parent 1',
-    key: '0-0',
-    children: [
-      {
-        title: 'parent 1-0',
-        key: '0-0-0',
-        disabled: true,
-        children: [
-          {
-            title: 'leaf',
-            key: '0-0-0-0',
-            disableCheckbox: true,
-          },
-          {
-            title: 'leaf',
-            key: '0-0-0-1',
-          },
-        ],
-      },
-      {
-        title: 'parent 1-1',
-        key: '0-0-1',
-        children: [{ title: <span style={{ color: '#1890ff' }}>sss</span>, key: '0-0-1-0' }],
-      },
-    ],
-  },
-];
+import { genCaseTreeData } from '../../helpers/BatchRun/util';
+import { treeFind } from '../../helpers/collection/util';
+import { runCompareRESTRequest } from '../../helpers/CompareRequestRunner';
+import { runRESTRequest } from '../../helpers/RequestRunner';
+import { FileSystemService } from '../../services/FileSystem.service';
+import { useStore } from '../../store';
+import { getBatchCompareResults } from './util';
+
 const BatchComparePage = () => {
-  const onSelect: TreeProps['onSelect'] = (selectedKeys, info) => {
-    console.log('selected', selectedKeys, info);
-  };
-
-  const onCheck: TreeProps['onCheck'] = (checkedKeys, info) => {
-    console.log('onCheck', checkedKeys, info);
-  };
-
+  const { activeEnvironment } = useStore();
   const { data, loading } = useRequest(
     () => {
       return axios
@@ -60,7 +34,25 @@ const BatchComparePage = () => {
       refreshDeps: [],
     },
   );
-
+  const { collectionTreeData } = useStore();
+  const params = useParams();
+  const caseTreeData = useMemo(() => {
+    if (params.rType === 'BatchComparePage') {
+      if (params.rTypeId && params.rTypeId.length === 24) {
+        return genCaseTreeData([
+          treeFind(collectionTreeData, (node) => node.key === params.rTypeId),
+        ]);
+      } else {
+        return genCaseTreeData(collectionTreeData);
+      }
+    } else {
+      return [];
+    }
+  }, [collectionTreeData, params.rTypeId, params.rType]);
+  const [checkValue, setCheckValue] = useState([]);
+  const onCheck: TreeProps['onCheck'] = (checkedKeys) => {
+    setCheckValue(checkedKeys);
+  };
   return (
     <div>
       <div
@@ -69,18 +61,18 @@ const BatchComparePage = () => {
         `}
       >
         <div>
-          <Tree
-            checkable
-            defaultExpandedKeys={['0-0-0', '0-0-1']}
-            defaultSelectedKeys={['0-0-0', '0-0-1']}
-            defaultCheckedKeys={['0-0-0', '0-0-1']}
-            onSelect={onSelect}
-            onCheck={onCheck}
-            treeData={treeData}
-          />
+          <Tree checkable checkedKeys={checkValue} onCheck={onCheck} treeData={caseTreeData} />
         </div>
         <div>
-          <Button>Run</Button>
+          <Button
+            onClick={() => {
+              // getBatchCompareResults([checkValue[1],checkValue[2]],activeEnvironment.keyValues).then(r=>{
+              //   console.log(r,'ssssss')
+              // })
+            }}
+          >
+            Run
+          </Button>
         </div>
       </div>
 

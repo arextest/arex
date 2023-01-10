@@ -17,7 +17,6 @@ const { darkAlgorithm, compactAlgorithm, defaultAlgorithm } = theme;
 Spin.setDefaultIndicator(<LoadingOutlined spin style={{ fontSize: 24 }} />);
 
 function App() {
-  useCheckChrome();
   useAuthentication();
 
   const routesContent = useRoutes(routerConfig);
