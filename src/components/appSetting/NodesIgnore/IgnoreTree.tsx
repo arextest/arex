@@ -22,7 +22,7 @@ type IgnoreTreeProps = Omit<TreeProps, 'treeData'> & {
 // `;
 
 const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['components', 'common']);
 
   // 过滤出 object 类型的节点
   function getNodes(object: object, basePath = ''): DataNode[] {
@@ -43,13 +43,13 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
     // <IgnoreTreeWrapper>
     <>
       <SpaceBetweenWrapper style={{ paddingBottom: '8px' }}>
-        <Typography.Title level={5}>Data Structure</Typography.Title>
+        <Typography.Title level={5}>{t('appSetting.dataStructure')}</Typography.Title>
         <Button size='small' type='primary' onClick={() => props.onSave && props.onSave()}>
-          {t('save')}
+          {t('save', { ns: 'common' })}
         </Button>
       </SpaceBetweenWrapper>
 
-      <Card size='small' title={`${props.title} (click node to ignore)`}>
+      <Card size='small' title={`${props.title} (${t('appSetting.clickToIgnore')})`}>
         <Spin spinning={props.loading}>
           {Object.keys(props.treeData).length ? (
             <Tree multiple defaultExpandAll {...props} treeData={getNodes(props.treeData, '')} />

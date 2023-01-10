@@ -13,5 +13,28 @@
   "key": "Key",
   "value": "Value",
   "invalidJSON": "Invalid JSON",
-  "prettier": "Prettier"
+  "prettier": "Prettier",
+  "edit": "Edit",
+  "yes": "Yes",
+  "no": "No",
+  "action": "Actions",
+  "raw": "Raw",
+  "everyDay": "Every Day",
+  "monday": "Mon.",
+  "tuesday": "Tues.",
+  "wednesday": "Wed.",
+  "thursday": "Thur.",
+  "friday": "Fri.",
+  "saturday": "Sat.",
+  "sunday": "Sun.",
+  "message": {
+    "success": "Success",
+    "error": "Error",
+    "delSuccess": "Delete successfully",
+    "delFailed": "Delete failed",
+    "updateSuccess": "Update successfully",
+    "updateFailed": "Update failed",
+    "saveSuccess": "Save successfully",
+    "saveFailed": "Save failed"
+  }
 }

@@ -2,38 +2,12 @@ import { StopOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
 import { App, Button, Card, Space, Tag, Tooltip, Typography } from 'antd';
 import React, { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import AppSettingService from '../../../services/AppSetting.service';
 import ReplayService from '../../../services/Replay.service';
 import { QueryMsgWithDiffLog, QueryMsgWithDiffRes, Scene } from '../../../services/Replay.type';
 import { TooltipButton } from '../../index';
-
-const DiffMap: {
-  [unmatchedType: string]: {
-    text: string;
-    color: string;
-    desc?: string;
-  };
-} = {
-  '0': {
-    text: 'Unknown',
-    color: 'default',
-  },
-  '1': {
-    text: 'Left Missing',
-    color: 'orange',
-    desc: 'is missing on the left',
-  },
-  '2': {
-    text: 'Right Missing',
-    color: 'blue',
-    desc: 'is missing on the right',
-  },
-  '3': {
-    text: 'Different Value',
-    color: 'magenta',
-  },
-};
 
 const PathTooltip: FC<{ path: string }> = (props) => {
   const path = useMemo(() => props.path.split('.'), [props.path]);
@@ -54,7 +28,36 @@ export type DiffListType = {
 
 const DiffList: FC<DiffListType> = (props) => {
   const { message } = App.useApp();
+  const { t } = useTranslation(['components']);
 
+  const DiffMap: {
+    [unmatchedType: string]: {
+      text: string;
+      color: string;
+      desc?: string;
+    };
+  } = useMemo(() => {
+    return {
+      '0': {
+        text: t('replay.unknown'),
+        color: 'default',
+      },
+      '1': {
+        text: t('replay.leftMissing'),
+        color: 'orange',
+        desc: t('replay.leftMissingDesc'),
+      },
+      '2': {
+        text: t('replay.rightMissing'),
+        color: 'blue',
+        desc: t('replay.rightMissingDesc'),
+      },
+      '3': {
+        text: t('replay.differentValue'),
+        color: 'magenta',
+      },
+    };
+  }, []);
   const { data: diffData, loading } = useRequest(
     () =>
       ReplayService.queryMsgWithDiff({
@@ -78,7 +81,7 @@ const DiffList: FC<DiffListType> = (props) => {
       manual: true,
       onSuccess(success) {
         if (success) {
-          message.success('Ignore node successfully');
+          message.success(t('replay.addIgnoreSuccess'));
         }
       },
     },
@@ -96,7 +99,7 @@ const DiffList: FC<DiffListType> = (props) => {
   return (
     <Card
       size='small'
-      title={!loading && `${diffData?.logs.length} issue(s)`}
+      title={!loading && `${diffData?.logs.length} ${t('replay.issues')}`}
       extra={
         <Button
           size='small'
@@ -104,7 +107,7 @@ const DiffList: FC<DiffListType> = (props) => {
           onClick={() => props.onTreeModeClick?.(diffData)}
           style={{ marginLeft: '8px' }}
         >
-          Tree Mode
+          {t('replay.treeMode')}
         </Button>
       }
       loading={loading}
@@ -119,13 +122,13 @@ const DiffList: FC<DiffListType> = (props) => {
 
             {log.pathPair.unmatchedType === 3 ? (
               <Typography.Text type='secondary'>
-                {'Value of '}
+                {t('replay.valueOf')}
                 <PathTooltip path={log.path} />
-                {' is different, excepted '}
+                {t('replay.isDifferenceExcepted')}
                 <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
                   {log.baseValue}
                 </Typography.Text>
-                {', actual '}
+                {t('replay.actual')}
                 <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
                   {log.testValue}
                 </Typography.Text>
@@ -141,7 +144,7 @@ const DiffList: FC<DiffListType> = (props) => {
               size='small'
               type='default'
               breakpoint='xxl'
-              title='Ignore Node'
+              title={t('replay.ignoreNode')}
               icon={<StopOutlined />}
               onClick={() => handleIgnoreNode(log.pathPair)}
               style={{ float: 'right', marginLeft: 'auto' }}

@@ -3,6 +3,7 @@ import { Badge, Card, Spin, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useColorPrimary } from '../../../hooks';
 import { SortNode } from '../../../services/AppSetting.type';
@@ -16,6 +17,8 @@ type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
 };
 
 const ArrayTree: FC<ResponseTreeProps> = (props) => {
+  const { t } = useTranslation('components');
+
   const color = useColorPrimary();
   function getNodes(object: object, basePath = ''): DataNode[] {
     const entries = Object.entries(object);
@@ -38,7 +41,7 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
   return (
     <Card
       bordered={false}
-      title={`${props.title} (choose one array node)`}
+      title={`${props.title} (${t('appSetting.chooseOneNode')})`}
       bodyStyle={{ padding: '8px 16px' }}
       headStyle={{ padding: '0 16px', margin: '-8px 0' }}
     >

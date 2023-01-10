@@ -7,6 +7,7 @@ import {
 } from '@ant-design/icons';
 import { Tag } from 'antd';
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const resultsStates = [
   { label: 'init', color: 'default', value: 0, icon: <ClockCircleOutlined /> },
@@ -17,13 +18,15 @@ export const resultsStates = [
 ] as const;
 
 const StatusTag: FC<{ status: number }> = (props) => {
+  const { t } = useTranslation(['components']);
+
   const state = resultsStates.find((s) => s.value === props.status);
   return state ? (
     <Tag color={state.color} icon={state.icon}>
-      {state.label}
+      {t('replay.' + state.label)}
     </Tag>
   ) : (
-    <Tag>Unknown State</Tag>
+    <Tag>{t('replay.unknownState')}</Tag>
   );
 };
 

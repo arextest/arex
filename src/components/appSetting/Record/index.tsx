@@ -3,6 +3,7 @@ import { useRequest } from 'ahooks';
 import { App, Button, Checkbox, Collapse, Form, TimePicker } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
 import { decodeWeekCode, encodeWeekCode } from '../../../helpers/record/util';
@@ -42,6 +43,7 @@ const defaultValues: Omit<
 
 const SettingRecord: FC<SettingRecordProps> = (props) => {
   const { message } = App.useApp();
+  const { t } = useTranslation(['components', 'common']);
 
   const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
   const [loading, setLoading] = useState(false);
@@ -70,7 +72,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
   const { run: update } = useRequest(AppSettingService.updateRecordSetting, {
     manual: true,
     onSuccess(res) {
-      res && message.success('Update successfully');
+      res && message.success(t('message.updateSuccess', { ns: 'common' }));
     },
   });
 
@@ -100,29 +102,29 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
           }
         `}
       >
-        <Panel header='Basic' key='basic'>
-          <Form.Item label='Agent Version'>{props.agentVersion}</Form.Item>
+        <Panel header={t('appSetting.basic')} key='basic'>
+          <Form.Item label={t('appSetting.agentVersion')}>{props.agentVersion}</Form.Item>
 
-          <Form.Item label='Duration' name='allowDayOfWeeks'>
+          <Form.Item label={t('appSetting.duration')} name='allowDayOfWeeks'>
             <DurationInput />
           </Form.Item>
 
-          <Form.Item label='Period' name='period'>
+          <Form.Item label={t('appSetting.period')} name='period'>
             <TimePicker.RangePicker format={format} />
           </Form.Item>
 
-          <Form.Item label='Frequency' name='sampleRate'>
+          <Form.Item label={t('appSetting.frequency')} name='sampleRate'>
             <IntegerStepSlider />
           </Form.Item>
         </Panel>
 
         {/* 此处必须 forceRender，否则如果没有打开高级设置就保存，将丢失高级设置部分字段 */}
-        <Panel forceRender header='Advanced' key='advanced'>
-          <Form.Item label='Time Mock' name='timeMock' valuePropName='checked'>
+        <Panel forceRender header={t('appSetting.advanced')} key='advanced'>
+          <Form.Item label={t('appSetting.timeMock')} name='timeMock' valuePropName='checked'>
             <Checkbox />
           </Form.Item>
 
-          <Form.Item label='Dynamic Classes'>
+          <Form.Item label={t('appSetting.dynamicClasses')}>
             <DynamicClassesEditableTable appId={props.appId} />
           </Form.Item>
         </Panel>
@@ -130,7 +132,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
 
       <Form.Item style={{ float: 'right', margin: '16px 0' }}>
         <Button type='primary' htmlType='submit'>
-          Save
+          {t('save', { ns: 'common' })}
         </Button>
       </Form.Item>
     </SettingForm>

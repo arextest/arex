@@ -15,7 +15,7 @@ type ImportYamlProps = {
 
 const ImportYaml: FC<ImportYamlProps> = (props) => {
   const { message } = App.useApp();
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common', 'components']);
   const yamlRef = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState('');
 
@@ -47,7 +47,7 @@ const ImportYaml: FC<ImportYamlProps> = (props) => {
     {
       manual: true,
       onSuccess(success) {
-        success && message.success('update success');
+        success && message.success(t('message.updateSuccess'));
       },
     },
   );
@@ -55,7 +55,7 @@ const ImportYaml: FC<ImportYamlProps> = (props) => {
   return (
     <div>
       <div style={{ marginBottom: '8px' }}>
-        <Label>Agent Version</Label>
+        <Label>{t('appSetting.agentVersion', { ns: 'components' })}</Label>
         {props.agentVersion}
       </div>
 
