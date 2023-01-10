@@ -1,12 +1,12 @@
-import { StopOutlined } from '@ant-design/icons';
+import { DiffOutlined, StopOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { App, Button, Card, Space, Tag, Tooltip, Typography } from 'antd';
+import { App, Button, Card, Modal, Space, Tag, Tooltip, Typography } from 'antd';
 import React, { FC, useMemo } from 'react';
 
 import AppSettingService from '../../../services/AppSetting.service';
 import ReplayService from '../../../services/Replay.service';
 import { QueryMsgWithDiffLog, QueryMsgWithDiffRes, Scene } from '../../../services/Replay.type';
-import { TooltipButton } from '../../index';
+import { DiffMatch, TooltipButton } from '../../index';
 
 const DiffMap: {
   [unmatchedType: string]: {
@@ -36,7 +36,7 @@ const DiffMap: {
 };
 
 const PathTooltip: FC<{ path: string }> = (props) => {
-  const path = useMemo(() => props.path.split('.'), [props.path]);
+  const path = useMemo(() => props.path?.split('.') || [], [props.path]);
 
   return (
     <Tooltip title={props.path} open={path.length > 1 ? undefined : false}>
@@ -54,6 +54,7 @@ export type DiffListType = {
 
 const DiffList: FC<DiffListType> = (props) => {
   const { message } = App.useApp();
+  const [modal, contextHolder] = Modal.useModal();
 
   const { data: diffData, loading } = useRequest(
     () =>
@@ -113,15 +114,16 @@ const DiffList: FC<DiffListType> = (props) => {
       <Space direction='vertical' style={{ width: '100%' }}>
         {diffData?.logs.map((log, index) => (
           <div key={index} style={{ display: 'flex', flexFlow: 'row nowrap' }}>
-            <Tag color={DiffMap[log.pathPair.unmatchedType]?.color}>
+            <Tag
+              color={DiffMap[log.pathPair.unmatchedType]?.color}
+              style={{ height: 'fit-content' }}
+            >
               {DiffMap[log.pathPair.unmatchedType]?.text}
             </Tag>
 
             {log.pathPair.unmatchedType === 3 ? (
               <Typography.Text type='secondary'>
-                {'Value of '}
-                <PathTooltip path={log.path} />
-                {' is different, excepted '}
+                {'Value of '} <PathTooltip path={log.path} /> {' is different, excepted '}
                 <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
                   {log.baseValue}
                 </Typography.Text>
@@ -137,18 +139,35 @@ const DiffList: FC<DiffListType> = (props) => {
               </Typography.Text>
             )}
 
-            <TooltipButton
-              size='small'
-              type='default'
-              breakpoint='xxl'
-              title='Ignore Node'
-              icon={<StopOutlined />}
-              onClick={() => handleIgnoreNode(log.pathPair)}
-              style={{ float: 'right', marginLeft: 'auto' }}
-            />
+            <Space style={{ float: 'right', marginLeft: 'auto' }}>
+              <TooltipButton
+                size='small'
+                type='default'
+                breakpoint='xxl'
+                title='Diff Match'
+                icon={<DiffOutlined />}
+                onClick={() =>
+                  modal.info({
+                    title: 'Diff Match',
+                    content: <DiffMatch text1={log.baseValue} text2={log.testValue} />,
+                  })
+                }
+              />
+
+              <TooltipButton
+                size='small'
+                type='default'
+                breakpoint='xxl'
+                title='Ignore Node'
+                icon={<StopOutlined />}
+                onClick={() => handleIgnoreNode(log.pathPair)}
+              />
+            </Space>
           </div>
         ))}
       </Space>
+
+      {contextHolder}
     </Card>
   );
 };

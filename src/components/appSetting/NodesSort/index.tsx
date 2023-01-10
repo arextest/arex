@@ -179,9 +179,11 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
     loading: loadingInterfaceResponse,
   } = useRequest(
     () =>
-      AppSettingService.queryInterfaceResponse({
-        id: activeOperationInterface?.id as string,
-      }),
+      props.interfaceId
+        ? FileSystemService.queryInterface({ id: props.interfaceId })
+        : AppSettingService.queryInterfaceResponse({
+            id: activeOperationInterface?.id as string,
+          }),
     {
       ready: !!activeOperationInterface?.id,
       refreshDeps: [activeOperationInterface],

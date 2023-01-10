@@ -10,7 +10,7 @@ export type KeyValueType = {
 };
 
 export type Address = {
-  method: (typeof METHODS)[number];
+  method: typeof METHODS[number];
   endpoint: string;
 };
 
@@ -57,6 +57,7 @@ export type BaseInterface = {
   customTags: null;
   // interface unique attribute
   operationId?: string | null;
+  operationResponse?: string | null;
   // case unique attribute
   recordId?: string | null;
   comparisonMsg?: null;
@@ -65,13 +66,13 @@ export type BaseInterface = {
 };
 
 // ------ /api/filesystem/saveInterface ------
-export interface SaveInterfaceReq extends Partial<QueryInterfaceRes> {
+export interface SaveInterfaceReq extends Partial<BaseInterface> {
   workspaceId: string;
 }
 
 // ------ /api/filesystem/saveCase ------
 export type SaveCaseReq =
-  | (Partial<QueryCaseRes> & { workspaceId: string })
+  | (Partial<BaseInterface> & { workspaceId: string })
   | { id: string; labelIds: string[] };
 
 //
