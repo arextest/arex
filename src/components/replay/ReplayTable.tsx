@@ -38,7 +38,13 @@ const ReplayTable: FC<ResultsProps> = ({
     },
     {
       title: 'State',
-      render: (_, record) => <StatusTag status={record.status} />,
+      render: (_, record) => (
+        <StatusTag
+          status={record.status}
+          successCaseCount={record.successCaseCount}
+          totalCaseCount={record.totalCaseCount}
+        />
+      ),
     },
     {
       title: 'Passed',
@@ -77,7 +83,11 @@ const ReplayTable: FC<ResultsProps> = ({
     },
   ];
 
-  const { data: planStatistics, loading } = useRequest(
+  const {
+    data: planStatistics,
+    loading,
+    cancel: cancelPollingInterval,
+  } = useRequest(
     () =>
       ReplayService.queryPlanStatistics({
         appId,
@@ -88,8 +98,11 @@ const ReplayTable: FC<ResultsProps> = ({
     {
       ready: !!appId,
       refreshDeps: [appId, refreshDep],
+      loadingDelay: 200,
+      pollingInterval: 3000,
       onSuccess(res) {
         res.length && defaultSelectFirst && onSelectedPlanChange(res[0]);
+        res.every((record) => record.status !== 1) && cancelPollingInterval();
       },
     },
   );

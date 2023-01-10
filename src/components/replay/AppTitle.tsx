@@ -105,7 +105,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         createPlan({
           appId: data.appId,
           sourceEnv: 'pro',
-          targetEnv: values.targetEnv,
+          targetEnv: values.targetEnv.trim(),
           caseStartTime: values.caseStartTime.startOf('day').valueOf(),
           caseEndTime: values.caseEndTime
             .add(1, 'day')
