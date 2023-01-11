@@ -58,6 +58,7 @@ export const getBatchTestResults = async (
 };
 
 export async function getAllRequestsData(requestIds: string[]) {
+  console.log(requestIds, 'res');
   const result = [];
   for (let i = 0; i < requestIds.length; i++) {
     const requestRes = await FileSystemService.queryInterface({ id: requestIds[i] });

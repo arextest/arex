@@ -44,9 +44,14 @@ const BatchRunPage: React.FC = () => {
     }
   }, [collectionTreeData, params.rTypeId, params.rType]);
   // 所有Request的数据
-  const { data: allRequestsData } = useRequest(() => {
-    return getAllRequestsData(caseTreeData.map((i) => i.key));
-  });
+  const { data: allRequestsData } = useRequest(
+    () => {
+      return getAllRequestsData(caseTreeData.map((i) => i.key));
+    },
+    {
+      refreshDeps: [caseTreeData],
+    },
+  );
   const { data, loading, run } = useRequest(
     () =>
       getBatchTestResults(
