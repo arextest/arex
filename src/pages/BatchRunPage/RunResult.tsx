@@ -3,181 +3,84 @@ import { Empty, Spin, Tag } from 'antd';
 import React from 'react';
 import { FC, useMemo } from 'react';
 
+import { TestResult } from '../../components/arex-request';
+import { HoppRESTResponse } from '../../components/arex-request/helpers/types/HoppRESTResponse';
+import { HoppTestResult } from '../../components/arex-request/helpers/types/HoppTestResult';
 import { useStore } from '../../store';
 
 interface RunResultProps {
-  result: {
-    title: string;
-    method: string;
-    endpoint: string;
-    children: {
-      testResult: any;
+  loading: boolean;
+  dataSource: {
+    key: string;
+    parentNode: any;
+    parentNodeData: any;
+    data: {
+      id: string;
+      request: any;
+      testResult: {
+        response: HoppRESTResponse;
+        testResult: HoppTestResult;
+      };
     }[];
   }[];
 }
-function NewTestResult({ testResult }) {
-  return (
-    <div
-      css={css`
-        margin-bottom: 12px;
-      `}
-    >
-      {testResult.children.map((i, index) => {
-        const isPass = i.expectResults.filter((i) => i.status === 'fail').length === 0 ? 0 : 1;
-        const r = [
-          {
-            bgc: '#0cbb52',
-            text: 'Pass',
-          },
-          {
-            bgc: '#eb2013',
-            text: 'Fail',
-          },
-        ];
-        return (
-          <div
-            key={index}
-            css={css`
-              display: flex;
-              align-items: center;
-            `}
-          >
-            <div
-              css={css`
-                height: 16px;
-                width: 3px;
-                background-color: ${r[isPass].bgc};
-              `}
-            ></div>
-            <span
-              css={css`
-                margin-left: 14px;
-                margin-right: 14px;
-              `}
-            >
-              {r[isPass].text}
-            </span>
-            <span>{i.descriptor}</span>
-            {i.expectResults.map((e, index1) => {
-              return (
-                <span
-                  key={index1}
-                  css={css`
-                    margin-left: 8px;
-                  `}
-                >
-                  ｜{e.message}
-                </span>
-              );
-            })}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-const RunResult: FC<RunResultProps> = ({ result, loading }) => {
-  const { activeEnvironment } = useStore();
-  const realResult = useMemo(() => {
-    return result.filter((i) => i.children.filter((f) => f.testResult).length > 0);
-  }, [result]);
-  const urlPretreatment = (url: string) => {
-    url = url || '';
-    // 正则匹配{{}}
-    const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
-    let replaceVar = editorValueMatch[0];
-    const env = activeEnvironment?.keyValues || [];
-    for (let i = 0; i < env.length; i++) {
-      if (env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')) {
-        replaceVar = env[i].value;
-      }
-    }
 
-    return url.replace(editorValueMatch[0], replaceVar);
-  };
+const RunResult: FC<RunResultProps> = ({ loading, dataSource }) => {
   return (
     <Spin spinning={loading}>
-      {realResult.length > 0 ? (
-        realResult.map((resultItem, index) => (
-          <div key={index}>
-            <div
-              css={css`
-                display: flex;
-                align-items: center;
-                margin-bottom: 14px;
-                font-weight: bolder;
-              `}
-            >
-              <div
-                css={css`
-                  margin-right: 14px;
-                  font-size: 14px;
-                  font-weight: bolder;
-                `}
-              >
-                {resultItem?.request.address?.method}
-              </div>
-              <div
-                css={css`
-                  margin-right: 14px;
-                  font-size: 14px;
-                  font-weight: bolder;
-                `}
-              >
-                {resultItem?.fileNode.title}
-              </div>
-              <div
-                css={css`
-                  color: grey;
-                  font-size: 12px;
-                `}
-              >
-                {urlPretreatment(resultItem?.request?.address?.endpoint)}
-              </div>
-            </div>
-
-            <div
-              css={css`
-                padding-left: 14px;
-                margin-bottom: 28px;
-              `}
-            >
-              {resultItem.children
-                .filter((i) => i.testResult)
-                .map((testResultItem, index2) => {
+      {dataSource.length > 0 ? (
+        <div>
+          {dataSource.map((dataSourceItem, index) => {
+            console.log(dataSourceItem);
+            return (
+              <div key={index}>
+                <p
+                  css={css`
+                    font-size: 14px;
+                    font-weight: bolder;
+                  `}
+                >
+                  <span>GET</span>
+                  <span
+                    css={css`
+                      margin-left: 12px;
+                    `}
+                  >
+                    {dataSourceItem.parentNode.title}
+                  </span>
+                  <span
+                    css={css`
+                      font-weight: normal;
+                      font-size: 12px;
+                      margin-left: 12px;
+                      color: grey;
+                    `}
+                  >
+                    {dataSourceItem.parentNodeData?.endpoint}
+                  </span>
+                </p>
+                {dataSourceItem.data.map((dataSourceItemDataItem, dataSourceItemDataIndex) => {
                   return (
-                    <div key={index2}>
+                    <div key={dataSourceItemDataIndex}>
                       <div
                         css={css`
-                          margin-bottom: 14px;
+                          margin-bottom: 10px;
                         `}
                       >
-                        <Tag>CASE</Tag>
-                        <span>{testResultItem?.fileNode?.title}</span>
+                        <Tag>case</Tag>
+                        <span>{dataSourceItemDataItem.request.name}</span>
                       </div>
-                      {testResultItem.testResult ? (
-                        <div>
-                          <NewTestResult testResult={testResultItem.testResult}></NewTestResult>
-                        </div>
-                      ) : (
-                        <div
-                          css={css`
-                            color: red;
-                          `}
-                        >
-                          error
-                        </div>
-                      )}
-
-                      {testResultItem.testResult.children.length === 0 ? (
-                        <div>No test results.</div>
-                      ) : null}
+                      <TestResult
+                        mode={'simple'}
+                        testResult={dataSourceItemDataItem.testResult.testResult}
+                      ></TestResult>
                     </div>
                   );
                 })}
-            </div>
-          </div>
-        ))
+              </div>
+            );
+          })}
+        </div>
       ) : (
         <Empty />
       )}

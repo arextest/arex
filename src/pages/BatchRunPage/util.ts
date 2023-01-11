@@ -1,9 +1,8 @@
 import { urlPretreatment } from '../../components/arex-request/helpers/utils/util';
-import axios from '../../helpers/api/axios';
-import { runCompareRESTRequest } from '../../helpers/CompareRequestRunner';
+import { runRESTRequest } from '../../helpers/RequestRunner';
 import { FileSystemService } from '../../services/FileSystem.service';
 
-export const getBatchCompareResults = async (
+export const getBatchTestResults = async (
   caseIds: string[],
   envs: { key: string; value: string }[],
 ): Promise<
@@ -14,10 +13,7 @@ export const getBatchCompareResults = async (
       compareMethod: string;
       compareEndpoint: string;
     };
-    compareResult: {
-      responses: [any, any];
-    };
-    quickCompare: any;
+    testResult: any;
   }[]
 > => {
   const results = [];
@@ -36,7 +32,7 @@ export const getBatchCompareResults = async (
         body,
       } = caseRequest;
 
-      const compareResult = await runCompareRESTRequest({
+      const testResult = await runRESTRequest({
         endpoint: urlPretreatment(endpoint, envs),
         auth: null,
         name: '',
@@ -49,22 +45,9 @@ export const getBatchCompareResults = async (
         headers: headers,
         body: body,
       });
-      const quickCompare = await axios
-        .post('/report/compare/quickCompare', {
-          msgCombination: {
-            baseMsg: JSON.stringify(compareResult.responses[0]),
-            testMsg: JSON.stringify(compareResult.responses[1]),
-          },
-        })
-        .then((res) => {
-          const rows = res.body.diffDetails || [];
-          return rows.map((r) => r.logs[0]);
-        });
-
       results.push({
         caseRequest,
-        compareResult,
-        quickCompare,
+        testResult,
       });
     } catch (e) {
       console.log(e);
@@ -74,13 +57,12 @@ export const getBatchCompareResults = async (
   return results;
 };
 
-function isJson(obj) {
-  return (
-    typeof obj == 'object' &&
-    Object.prototype.toString.call(obj).toLowerCase() === '[object object]' &&
-    !obj.length
-  );
-}
-export function checkResponsesIsJson(responses) {
-  return isJson(responses[0]) && isJson(responses[1]);
+export async function getAllRequestsData(requestIds: string[]) {
+  const result = [];
+  for (let i = 0; i < requestIds.length; i++) {
+    const requestRes = await FileSystemService.queryInterface({ id: requestIds[i] });
+
+    result.push(requestRes);
+  }
+  return result;
 }

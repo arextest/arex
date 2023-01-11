@@ -5,7 +5,12 @@ import React, { FC, useMemo } from 'react';
 
 import AppSettingService from '../../../services/AppSetting.service';
 import ReplayService from '../../../services/Replay.service';
-import { QueryMsgWithDiffLog, QueryMsgWithDiffRes, Scene } from '../../../services/Replay.type';
+import {
+  QueryMsgWithDiffLog,
+  QueryMsgWithDiffReq,
+  QueryMsgWithDiffRes,
+  Scene,
+} from '../../../services/Replay.type';
 import { TooltipButton } from '../../index';
 
 const DiffMap: {
@@ -50,12 +55,13 @@ export type DiffListType = {
   operationId: string;
   scene?: Scene;
   onTreeModeClick?: (diff?: QueryMsgWithDiffRes) => void;
+  externalData: QueryMsgWithDiffReq;
 };
 
 const DiffList: FC<DiffListType> = (props) => {
   const { message } = App.useApp();
 
-  const { data: diffData, loading } = useRequest(
+  const { data: diffDataFromRequest, loading } = useRequest(
     () =>
       ReplayService.queryMsgWithDiff({
         compareResultId: props.scene!.compareResultId,
@@ -66,6 +72,10 @@ const DiffList: FC<DiffListType> = (props) => {
       refreshDeps: [props.scene],
     },
   );
+
+  const diffData = useMemo(() => {
+    return props.externalData || diffDataFromRequest;
+  }, [props.externalData, diffDataFromRequest]);
 
   const { run: insertIgnoreNode } = useRequest(
     (path) =>

@@ -47,26 +47,17 @@ function CollectionTitle({
       items: [
         {
           key: '7',
-          label: (
-            //必须要用a标签，不然无法disable
-            <span className={'dropdown-click-target'}>Run Folder</span>
-          ),
+          label: <span className={'dropdown-click-target'}>Run Folder</span>,
           disabled: val.nodeType !== 3,
         },
-        // {
-        //   key: '8',
-        //   label: (
-        //     //必须要用a标签，不然无法disable
-        //     <span className={'dropdown-click-target'}>Run Compare</span>
-        //   ),
-        //   disabled: val.nodeType !== 3,
-        // },
+        {
+          key: '8',
+          label: <span className={'dropdown-click-target'}>Run Compare</span>,
+          disabled: val.nodeType !== 3,
+        },
         {
           key: '3',
-          label: (
-            //必须要用a标签，不然无法disable
-            <span className={'dropdown-click-target'}>Add Folder</span>
-          ),
+          label: <span className={'dropdown-click-target'}>Add Folder</span>,
           // 只有类型为3才能新增文件夹
           disabled: val.nodeType !== 3,
         },

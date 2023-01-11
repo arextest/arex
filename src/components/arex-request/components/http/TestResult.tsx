@@ -6,7 +6,10 @@ import { useTranslation } from 'react-i18next';
 import { CheckOrCloseIcon } from '../../../styledComponents';
 import { HoppTestResult } from '../../helpers/types/HoppTestResult';
 
-const TestResult: FC<{ testResult: HoppTestResult | null }> = ({ testResult }) => {
+const TestResult: FC<{ testResult: HoppTestResult | null; mode?: string }> = ({
+  testResult,
+  mode,
+}) => {
   const { t } = useTranslation();
 
   return testResult?.scriptError ? (
@@ -26,73 +29,78 @@ const TestResult: FC<{ testResult: HoppTestResult | null }> = ({ testResult }) =
             key={i}
             size='large'
             header={
-              <div>
-                <div
-                  css={css`
-                    margin-top: -10px;
-                    font-weight: bold;
-                  `}
-                >
-                  {result.descriptor}
-                </div>
-                <div
-                  css={css`
-                    margin-top: 10px;
-                    display: flex;
-                  `}
-                >
-                  <Progress
-                    strokeColor={'#EF4444'}
-                    width={20}
-                    strokeWidth={20}
-                    percent={100}
-                    success={{
-                      percent: Math.round(
-                        (result.expectResults.filter((i: any) => i.status === 'pass').length /
-                          result.expectResults.length) *
-                          100,
-                      ),
-                      strokeColor: '#10B981',
-                    }}
-                    type='circle'
-                    showInfo={false}
-                  />
-                  <span
+              mode !== 'simple' ? (
+                <div>
+                  <div
                     css={css`
-                      margin-left: 10px;
+                      margin-top: -10px;
+                      font-weight: bold;
+                    `}
+                  >
+                    {result.descriptor}
+                  </div>
+                  <div
+                    css={css`
+                      margin-top: 10px;
                       display: flex;
                     `}
                   >
-                    {result.expectResults.length -
-                    result.expectResults.filter((i: any) => i.status === 'pass').length ? (
-                      <span
-                        css={css`
-                          color: #ef4444;
-                        `}
-                      >
-                        {result.expectResults.length -
-                          result.expectResults.filter((i: any) => i.status === 'pass').length}{' '}
-                        failing,{' '}
-                      </span>
-                    ) : (
-                      <div></div>
-                    )}
-                    {result.expectResults.filter((i: any) => i.status === 'pass').length ? (
-                      <span
-                        css={css`
-                          color: #10b981;
-                        `}
-                      >
-                        {result.expectResults.filter((i: any) => i.status === 'pass').length}{' '}
-                        successful,{' '}
-                      </span>
-                    ) : (
-                      <div></div>
-                    )}
-                    out of {result.expectResults.length} tests
-                  </span>
+                    <Progress
+                      strokeColor={'#EF4444'}
+                      width={20}
+                      strokeWidth={20}
+                      percent={100}
+                      success={{
+                        percent: Math.round(
+                          (result.expectResults.filter((i: any) => i.status === 'pass').length /
+                            result.expectResults.length) *
+                            100,
+                        ),
+                        strokeColor: '#10B981',
+                      }}
+                      type='circle'
+                      showInfo={false}
+                    />
+                    <span
+                      css={css`
+                        margin-left: 10px;
+                        display: flex;
+                      `}
+                    >
+                      {result.expectResults.length -
+                      result.expectResults.filter((i: any) => i.status === 'pass').length ? (
+                        <span
+                          css={css`
+                            color: #ef4444;
+                          `}
+                        >
+                          {result.expectResults.length -
+                            result.expectResults.filter((i: any) => i.status === 'pass')
+                              .length}{' '}
+                          failing,{' '}
+                        </span>
+                      ) : (
+                        <div></div>
+                      )}
+                      {result.expectResults.filter((i: any) => i.status === 'pass').length ? (
+                        <span
+                          css={css`
+                            color: #10b981;
+                          `}
+                        >
+                          {result.expectResults.filter((i: any) => i.status === 'pass').length}{' '}
+                          successful,{' '}
+                        </span>
+                      ) : (
+                        <div></div>
+                      )}
+                      out of {result.expectResults.length} tests
+                    </span>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                false
+              )
             }
             dataSource={result.expectResults}
             renderItem={(item, i) => (
@@ -106,7 +114,13 @@ const TestResult: FC<{ testResult: HoppTestResult | null }> = ({ testResult }) =
           />
         ))
       ) : (
-        <p>{t('helpers.tests')}</p>
+        <p
+          css={css`
+            color: orange;
+          `}
+        >
+          {t('helpers.tests')}
+        </p>
       )}
     </div>
   );

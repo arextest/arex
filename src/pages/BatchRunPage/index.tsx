@@ -1,83 +1,27 @@
 import { css } from '@emotion/react';
+import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
-import { App, Button, Checkbox, Col, Form, Row, Space, Tabs, Tree } from 'antd';
+import { App, Button, Checkbox, Col, Form, Row, Space, Tree } from 'antd';
 import { Divider } from 'antd';
 import type { TreeProps } from 'antd/es/tree';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { genCaseTreeData } from '../../helpers/BatchRun/util';
-import { treeFind } from '../../helpers/collection/util';
-import { runRESTRequest } from '../../helpers/RequestRunner';
-import { NodeList } from '../../services/Collection.service';
-import { FileSystemService } from '../../services/FileSystem.service';
+import { treeFind, treeFindPath } from '../../helpers/collection/util';
 import { useStore } from '../../store';
 import RunResult from './RunResult';
+import { getAllRequestsData, getBatchTestResults } from './util';
 
 const BatchRunPage: React.FC = () => {
   const { message } = App.useApp();
   const { activeEnvironment } = useStore();
-  const urlPretreatment = (url: string) => {
-    // 正则匹配{{}}
-    const editorValueMatch = url.match(/\{\{(.+?)\}\}/g) || [''];
-    let replaceVar = editorValueMatch[0];
-    const env = activeEnvironment?.keyValues || [];
-    for (let i = 0; i < env.length; i++) {
-      if (env[i].key === editorValueMatch[0].replace('{{', '').replace('}}', '')) {
-        replaceVar = env[i].value;
-      }
-    }
-
-    return url.replace(editorValueMatch[0], replaceVar);
-  };
 
   const params = useParams();
 
-  async function batchExecutionCase(runCases, collectionTreeData) {
-    // 1.把case过滤出来
-    runCases = runCases.filter(
-      (i) => treeFind(collectionTreeData, (node) => node.key === i).nodeType === 2,
-    );
-    const caseResArr = await Promise.all(
-      runCases.map((i) => {
-        return FileSystemService.queryCase({ id: i }).then((r) => r);
-      }),
-    );
-    const caseExecutionResult = [];
-    for (let i = 0; i < caseResArr.length; i++) {
-      const agentAxiosAndTestResponse = await runRESTRequest({
-        endpoint: urlPretreatment(caseResArr[i].address.endpoint),
-        method: caseResArr[i].address.method,
-        testScript: caseResArr[i].testScript,
-        testScripts: caseResArr[i].testScripts,
-        params: caseResArr[i].params,
-        headers: caseResArr[i].headers,
-        body: caseResArr[i].body,
-      }).catch(() => ({ testResult: undefined }));
-      caseExecutionResult.push({
-        key: caseResArr[i].id,
-        request: {
-          endpoint: urlPretreatment(caseResArr[i].address.endpoint),
-          method: caseResArr[i].address.method,
-          testScript: caseResArr[i].testScript,
-          testScripts: caseResArr[i].testScripts,
-          params: caseResArr[i].params,
-          headers: caseResArr[i].headers,
-          body: caseResArr[i].body,
-        },
-        testResult: agentAxiosAndTestResponse.testResult,
-      });
-    }
-    return caseExecutionResult;
-  }
-
   const [form] = Form.useForm();
   const onFinish = () => {
-    setLoading(true);
-    batchExecutionCase(checkValue, collectionTreeData).then((res) => {
-      setResults(res);
-      setLoading(false);
-    });
+    run();
   };
   const onFinishFailed = () => {
     message.error('Submit failed!');
@@ -99,50 +43,53 @@ const BatchRunPage: React.FC = () => {
       return [];
     }
   }, [collectionTreeData, params.rTypeId, params.rType]);
+  // 所有Request的数据
+  const { data: allRequestsData } = useRequest(() => {
+    return getAllRequestsData(caseTreeData.map((i) => i.key));
+  });
+  const { data, loading, run } = useRequest(
+    () =>
+      getBatchTestResults(
+        checkValue.filter(
+          (c) => treeFind(collectionTreeData, (node) => node.key === c)?.nodeType === 2,
+        ),
+        activeEnvironment?.keyValues || [],
+      ),
+    {
+      manual: true,
+    },
+  );
 
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const dataSource = useMemo(() => {
+    const caseData = (data || []).map((i) => {
+      return {
+        id: i.caseRequest.id,
+        request: i.caseRequest,
+        testResult: i.testResult,
+      };
+    });
 
-  const [interfaceResponseArray, setInterfaceResponseArray] = useState([]);
-
-  useEffect(() => {
-    Promise.all(caseTreeData.map((i) => FileSystemService.queryInterface({ id: i.key })))
-      .then((res) => {
-        return res.map((i) => i);
-      })
-      .then((res) => {
-        setInterfaceResponseArray(res);
-      });
-    const allKeys = caseTreeData
-      .map((i) => i.children.map((ci) => ci.id))
-      .filter((i) => i.length > 0)
-      .reduce((previousValue, currentValue) => {
-        return [...currentValue, ...previousValue];
-      }, []);
-
-    setCheckValue(allKeys);
-  }, [caseTreeData]);
-
-  const resultData = useMemo(() => {
-    // 遍历组合数据
-    function deep(tree: any, nodeList: any = [], results): NodeList[] {
-      const nodes = tree;
-      Object.keys(nodes).forEach((value, index) => {
-        nodeList.push({
-          children: [],
-          request: interfaceResponseArray.find((r) => r.id === nodes[value].key),
-          fileNode: treeFind(collectionTreeData, (node) => node.id === nodes[value].key),
-          key: nodes[value].key,
-          testResult: results.find((r) => r.key === nodes[value].key)?.testResult,
-        });
-        if (nodes[value].children && Object.keys(nodes[value].children).length > 0) {
-          deep(nodes[value].children, nodeList[index].children, results);
-        }
-      });
-      return nodeList;
+    function findNodeParent(c) {
+      return treeFindPath(collectionTreeData, (node: any) => node.key === c.id)?.at(-2);
     }
-    return deep(caseTreeData, [], results);
-  }, [caseTreeData, results, collectionTreeData, interfaceResponseArray]);
+
+    return caseData.reduce((accumulator, currentValue) => {
+      const nodeParent = findNodeParent(currentValue);
+      const findPeIndex = accumulator.map((i) => i.key).findIndex((i) => i === nodeParent?.key);
+      console.log(accumulator, findPeIndex);
+      if (findPeIndex > -1) {
+        accumulator[findPeIndex].data.push(currentValue);
+      } else {
+        accumulator.push({
+          key: nodeParent.key,
+          parentNodeData: allRequestsData.find((i) => i.id === nodeParent.key),
+          parentNode: nodeParent,
+          data: [currentValue],
+        });
+      }
+      return accumulator;
+    }, []);
+  }, [data]);
 
   const onCheck: TreeProps['onCheck'] = (checkedKeys) => {
     setCheckValue(checkedKeys);
@@ -173,7 +120,7 @@ const BatchRunPage: React.FC = () => {
             </p>
             <div
               css={css`
-                height: 360px;
+                height: 100%;
                 overflow-y: scroll;
                 .ant-checkbox-group {
                   display: flex;
@@ -181,7 +128,19 @@ const BatchRunPage: React.FC = () => {
                 }
               `}
             >
-              <Tree checkable checkedKeys={checkValue} treeData={caseTreeData} onCheck={onCheck} />
+              <Tree
+                defaultExpandedKeys={['ROOT']}
+                checkable
+                checkedKeys={checkValue}
+                treeData={[
+                  {
+                    key: 'ROOT',
+                    title: 'ROOT',
+                    children: caseTreeData,
+                  },
+                ]}
+                onCheck={onCheck}
+              />
             </div>
           </Col>
           <Col span={2}>
@@ -203,7 +162,11 @@ const BatchRunPage: React.FC = () => {
                 </Form.Item>
                 <Form.Item>
                   <Space>
-                    <Button type='primary' htmlType='submit'>
+                    <Button
+                      type='primary'
+                      htmlType='submit'
+                      disabled={!((allRequestsData?.length || 0) > 0)}
+                    >
                       Run Case
                     </Button>
                   </Space>
@@ -219,23 +182,10 @@ const BatchRunPage: React.FC = () => {
           css={css`
             height: 100%;
             padding: 14px;
+            overflow-y: auto;
           `}
         >
-          <Tabs
-            css={css`
-              .ant-tabs-content-holder {
-                overflow: auto;
-              }
-            `}
-            style={{ height: '100%' }}
-            items={[
-              {
-                label: 'Test',
-                key: 'test',
-                children: <RunResult loading={loading} result={resultData} />,
-              },
-            ]}
-          />
+          <RunResult loading={loading} dataSource={dataSource} />
         </div>
       </Allotment.Pane>
     </Allotment>
