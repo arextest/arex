@@ -159,6 +159,8 @@ const DiffList: FC<DiffListType> = (props) => {
                 onClick={() =>
                   modal.info({
                     title: 'Diff Match',
+                    width: 800,
+                    maskClosable: true,
                     content: <DiffMatch text1={log.baseValue} text2={log.testValue} />,
                   })
                 }
