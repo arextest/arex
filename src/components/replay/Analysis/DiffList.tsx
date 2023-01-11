@@ -40,7 +40,7 @@ const DiffMap: {
   },
 };
 
-const PathTooltip: FC<{ path: string }> = (props) => {
+const PathTooltip: FC<{ path?: string | null }> = (props) => {
   const path = useMemo(() => props.path?.split('.') || [], [props.path]);
 
   return (
