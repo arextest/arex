@@ -100,6 +100,13 @@ const ReplayTable: FC<ResultsProps> = ({
         return text ? new Date(text).toLocaleString() : '-';
       },
     },
+    {
+      title: 'ReplayEndTime',
+      dataIndex: 'replayEndTime',
+      render(text) {
+        return text ? new Date(text).toLocaleString() : '-';
+      },
+    },
   ];
 
   const {
