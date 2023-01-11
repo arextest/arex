@@ -14,6 +14,7 @@ const useAuthentication = () => {
   const email = getLocalStorage<string>(EmailKey);
 
   useEffect(() => {
+    // TODO 对 LocalStorage 中的数据进行校验
     if (!FreePath.includes(location.pathname) && (!accessToken || !email))
       nav('/login?redirect=' + location.pathname);
   }, [accessToken, email, nav]);
