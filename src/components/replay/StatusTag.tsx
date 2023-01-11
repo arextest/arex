@@ -5,8 +5,8 @@ import {
   MinusCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import { Tag } from 'antd';
-import React, { FC } from 'react';
+import { Progress, Tag } from 'antd';
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export const resultsStates = [
@@ -17,10 +17,36 @@ export const resultsStates = [
   { label: 'cancelled', color: 'error', value: 4, icon: <MinusCircleOutlined /> },
 ] as const;
 
-const StatusTag: FC<{ status: number }> = (props) => {
+export type StatusTagProps = {
+  status: number;
+  successCaseCount?: number | null;
+  totalCaseCount?: number | null;
+};
+
+const StatusTag: FC<StatusTagProps> = (props) => {
   const { t } = useTranslation(['components']);
 
-  const state = resultsStates.find((s) => s.value === props.status);
+  const state = useMemo(() => resultsStates.find((s) => s.value === props.status), [props.status]);
+  const icon = useMemo(
+    () =>
+      props.status === 1 && props.totalCaseCount ? (
+        <Progress
+          type='circle'
+          percent={((props.successCaseCount || 0) * 100) / props.totalCaseCount}
+          format={() =>
+            `${(((props.successCaseCount || 0) / (props.totalCaseCount as number)) * 100).toFixed(
+              2,
+            )}% ${props.successCaseCount} of ${props.totalCaseCount}`
+          }
+          width={12}
+          style={{ marginRight: '7px' }}
+        />
+      ) : (
+        state?.icon
+      ),
+    [props.status, props.successCaseCount, props.totalCaseCount, state],
+  );
+
   return state ? (
     <Tag color={state.color} icon={state.icon}>
       {t('replay.' + state.label)}

@@ -5,9 +5,10 @@ import {
   PlusOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Input, Tree } from 'antd';
+import { Button, Dropdown, Input, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps, TreeProps } from 'antd/lib/tree';
 import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -498,25 +499,34 @@ const CollectionMenu = () => {
               title={'Create New'}
             />
 
-            <TooltipButton
-              icon={<PlayCircleOutlined />}
-              type='text'
-              size='small'
-              className={'collection-header-create'}
-              onClick={test}
-              placement='bottomLeft'
-              title={'Run'}
-            />
-
-            {/*<TooltipButton*/}
-            {/*  icon={<ClearOutlined />}*/}
-            {/*  type='text'*/}
-            {/*  size='small'*/}
-            {/*  className={'collection-header-create'}*/}
-            {/*  onClick={onOpenBatchComparePage}*/}
-            {/*  placement='bottomLeft'*/}
-            {/*  title={'Run'}*/}
-            {/*/>*/}
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    key: '1',
+                    label: <a>Batch Run</a>,
+                  },
+                  {
+                    key: '2',
+                    label: <a>Batch Compare</a>,
+                  },
+                ],
+                onClick(e) {
+                  e.key;
+                  if (e.key === '1') {
+                    test();
+                  } else if (e.key === '2') {
+                    onOpenBatchComparePage();
+                  }
+                },
+              }}
+            >
+              <a onClick={(e) => e.preventDefault()}>
+                <Button type={'text'} size={'small'}>
+                  <PlayCircleOutlined />
+                </Button>
+              </a>
+            </Dropdown>
 
             <Input
               className={'collection-header-search'}
@@ -525,11 +535,6 @@ const CollectionMenu = () => {
               prefix={<SearchOutlined />}
               onChange={onChange}
             />
-            {/*<Tooltip placement='bottomLeft' title={'View more actions'} mouseEnterDelay={0.5}>*/}
-            {/*  <Button className={'collection-header-view'} type='text' size='small'>*/}
-            {/*    <DashOutlined />*/}
-            {/*  </Button>*/}
-            {/*</Tooltip>*/}
           </div>
 
           <Tree

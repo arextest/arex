@@ -13,7 +13,7 @@ const { Text } = Typography;
 const WorkspaceOverviewPage: FC = () => {
   const params = useParams();
   const nav = useNavigate();
-  const { workspaces, resetPanes, activeWorkspaceId, setActiveWorkspaceId } = useStore();
+  const { workspaces, resetPage, activeWorkspaceId, setActiveWorkspaceId } = useStore();
   const userName = getLocalStorage<string>(EmailKey);
 
   const onFinish = (values: any) => {
@@ -39,7 +39,7 @@ const WorkspaceOverviewPage: FC = () => {
     {
       manual: true,
       onSuccess: () => {
-        resetPanes();
+        resetPage();
         setActiveWorkspaceId(workspaces[0].id);
         nav(
           `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,

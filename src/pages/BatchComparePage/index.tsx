@@ -1,41 +1,24 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { Button, Tree, TreeProps } from 'antd';
-import { useMemo, useState } from 'react';
+import { Allotment } from 'allotment';
+import { Button, Divider, Table, Tree } from 'antd';
+import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { urlPretreatment } from '../../components/arex-request/helpers/utils/util';
-import axios from '../../helpers/api/axios';
+import { DiffJsonView, DiffJsonViewProps } from '../../components/replay/Analysis';
+import DiffList from '../../components/replay/Analysis/DiffList';
 import { genCaseTreeData } from '../../helpers/BatchRun/util';
 import { treeFind } from '../../helpers/collection/util';
-import { runCompareRESTRequest } from '../../helpers/CompareRequestRunner';
-import { runRESTRequest } from '../../helpers/RequestRunner';
-import { FileSystemService } from '../../services/FileSystem.service';
 import { useStore } from '../../store';
-import { getBatchCompareResults } from './util';
+import { checkResponsesIsJson, getBatchCompareResults } from './util';
 
 const BatchComparePage = () => {
   const { activeEnvironment } = useStore();
-  const { data, loading } = useRequest(
-    () => {
-      return axios
-        .post('/report/compare/quickCompare', {
-          msgCombination: {
-            baseMsg: JSON.stringify({ name: 'zt' }),
-            testMsg: JSON.stringify({ name: 'wp' }),
-          },
-        })
-        .then((res) => {
-          const rows = res.body.diffDetails || [];
-          return rows.map((r) => r.logs[0]);
-        });
-    },
-    {
-      refreshDeps: [],
-    },
-  );
   const { collectionTreeData } = useStore();
+  const [diffJsonViewData, setDiffJsonViewData] = useState<DiffJsonViewProps['data']>();
+  const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
   const params = useParams();
+  // 生成caseTree数据
   const caseTreeData = useMemo(() => {
     if (params.rType === 'BatchComparePage') {
       if (params.rTypeId && params.rTypeId.length === 24) {
@@ -49,35 +32,165 @@ const BatchComparePage = () => {
       return [];
     }
   }, [collectionTreeData, params.rTypeId, params.rType]);
-  const [checkValue, setCheckValue] = useState([]);
-  const onCheck: TreeProps['onCheck'] = (checkedKeys) => {
+  const [checkValue, setCheckValue] = useState<string[]>([]);
+  const onCheck = (checkedKeys: string[]) => {
     setCheckValue(checkedKeys);
   };
-  return (
-    <div>
-      <div
-        css={css`
-          display: flex;
-        `}
-      >
-        <div>
-          <Tree checkable checkedKeys={checkValue} onCheck={onCheck} treeData={caseTreeData} />
-        </div>
-        <div>
-          <Button
-            onClick={() => {
-              // getBatchCompareResults([checkValue[1],checkValue[2]],activeEnvironment.keyValues).then(r=>{
-              //   console.log(r,'ssssss')
-              // })
-            }}
-          >
-            Run
-          </Button>
-        </div>
-      </div>
+  const { data, loading, run } = useRequest(
+    () =>
+      getBatchCompareResults(
+        checkValue.filter(
+          (c) => treeFind(collectionTreeData, (node) => node.key === c)?.nodeType === 2,
+        ),
+        activeEnvironment?.keyValues || [],
+      ),
+    {
+      manual: true,
+    },
+  );
 
-      <div>{JSON.stringify(data)}</div>
-    </div>
+  const columns = [
+    {
+      title: 'Case',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Issues',
+      dataIndex: 'issues',
+      key: 'issues',
+    },
+  ];
+  const dataSource = useMemo(() => {
+    return (data || []).map((i) => ({
+      id: i.caseRequest.id,
+      name: i.caseRequest.name,
+      issues: i.quickCompare.length,
+      quickCompare: i.quickCompare,
+      compareResult: i.compareResult,
+    }));
+  }, [data]);
+  return (
+    <Allotment
+      css={css`
+        height: 100%;
+      `}
+      vertical={true}
+    >
+      <Allotment.Pane preferredSize={360}>
+        <div
+          css={css`
+            height: 100%;
+            display: flex;
+          `}
+        >
+          <div
+            css={css`
+              flex: 1;
+              height: 100%;
+              overflow-y: scroll;
+            `}
+          >
+            <p
+              css={css`
+                font-weight: bolder;
+              `}
+            >
+              Select need compare case
+            </p>
+            <Tree
+              checkable
+              checkedKeys={checkValue}
+              onCheck={onCheck}
+              defaultExpandedKeys={['ROOT']}
+              treeData={[
+                {
+                  title: 'ROOT',
+                  key: 'ROOT',
+                  children: caseTreeData,
+                },
+              ]}
+            />
+          </div>
+          <div
+            css={css`
+              width: 50px;
+            `}
+          >
+            <Divider
+              type={'vertical'}
+              css={css`
+                height: 100%;
+              `}
+            />
+          </div>
+
+          <div
+            css={css`
+              flex: 1;
+            `}
+          >
+            <Button
+              type={'primary'}
+              onClick={() => {
+                run();
+              }}
+            >
+              Run Compare
+            </Button>
+          </div>
+        </div>
+      </Allotment.Pane>
+      <Allotment.Pane>
+        <div
+          css={css`
+            overflow-y: scroll;
+            height: 100%;
+            padding-top: 10px;
+          `}
+        >
+          <h3>Compare results</h3>
+          <Table
+            bordered
+            rowKey={'id'}
+            expandable={{
+              expandedRowRender: (record) =>
+                checkResponsesIsJson(record.compareResult.responses) ? (
+                  <DiffList
+                    externalData={{
+                      logs: record.quickCompare,
+                      baseMsg: JSON.stringify(record.compareResult.responses[0]),
+                      testMsg: JSON.stringify(record.compareResult.responses[1]),
+                    }}
+                    appId={''}
+                    operationId={''}
+                    onTreeModeClick={(diff) => {
+                      if (diff) {
+                        setDiffJsonViewData({
+                          baseMsg: diff.baseMsg,
+                          testMsg: diff.testMsg,
+                          logs: diff.logs,
+                        });
+                        setDiffJsonViewVisible(true);
+                      }
+                    }}
+                  ></DiffList>
+                ) : (
+                  <span>compare result data in wrong format</span>
+                ),
+            }}
+            loading={loading}
+            columns={columns}
+            dataSource={dataSource}
+          />
+          <DiffJsonView
+            data={diffJsonViewData}
+            open={diffJsonViewVisible}
+            onClose={() => setDiffJsonViewVisible(false)}
+          />
+        </div>
+      </Allotment.Pane>
+    </Allotment>
   );
 };
 

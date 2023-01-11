@@ -2,6 +2,7 @@ import { useRequest } from 'ahooks';
 import { theme, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC } from 'react';
+import CountUp from 'react-countup';
 import { useTranslation } from 'react-i18next';
 
 import ReplayService from '../../services/Replay.service';
@@ -40,31 +41,55 @@ const ReplayTable: FC<ResultsProps> = ({
     },
     {
       title: t('replay.state'),
-      render: (_, record) => <StatusTag status={record.status} />,
+      render: (_, record) => (
+        <StatusTag
+          status={record.status}
+          successCaseCount={record.successCaseCount}
+          totalCaseCount={record.totalCaseCount}
+        />
+      ),
     },
     {
       title: t('replay.passed'),
       width: 80,
       dataIndex: 'successCaseCount',
-      render: (text) => <Text style={{ color: token.colorSuccessText }}>{text}</Text>,
+      render: (text) => (
+        <CountUp
+          preserveValue
+          duration={0.3}
+          end={text}
+          style={{ color: token.colorSuccessText }}
+        />
+      ),
     },
     {
       title: t('replay.failed'),
       width: 80,
       dataIndex: 'failCaseCount',
-      render: (text) => <Text style={{ color: token.colorErrorText }}>{text}</Text>,
+      render: (text) => (
+        <CountUp preserveValue duration={0.3} end={text} style={{ color: token.colorErrorText }} />
+      ),
     },
     {
       title: t('replay.invalid'),
       width: 80,
       dataIndex: 'errorCaseCount',
-      render: (text) => <Text style={{ color: token.colorInfoText }}>{text}</Text>,
+      render: (text) => (
+        <CountUp preserveValue duration={0.3} end={text} style={{ color: token.colorInfoText }} />
+      ),
     },
     {
       title: t('replay.blocked'),
       width: 80,
       dataIndex: 'waitCaseCount',
-      render: (text) => <Text style={{ color: token.colorWarningText }}>{text}</Text>,
+      render: (text) => (
+        <CountUp
+          preserveValue
+          duration={0.3}
+          end={text}
+          style={{ color: token.colorWarningText }}
+        />
+      ),
     },
     {
       title: t('replay.executor'),
@@ -74,12 +99,23 @@ const ReplayTable: FC<ResultsProps> = ({
       title: t('replay.replayStartTime'),
       dataIndex: 'replayStartTime',
       render(text) {
-        return text ? new Date(text).toLocaleString() : '';
+        return text ? new Date(text).toLocaleString() : '-';
+      },
+    },
+    {
+      title: 'ReplayEndTime',
+      dataIndex: 'replayEndTime',
+      render(text) {
+        return text ? new Date(text).toLocaleString() : '-';
       },
     },
   ];
 
-  const { data: planStatistics, loading } = useRequest(
+  const {
+    data: planStatistics,
+    loading,
+    cancel: cancelPollingInterval,
+  } = useRequest(
     () =>
       ReplayService.queryPlanStatistics({
         appId,
@@ -90,8 +126,11 @@ const ReplayTable: FC<ResultsProps> = ({
     {
       ready: !!appId,
       refreshDeps: [appId, refreshDep],
+      loadingDelay: 200,
+      pollingInterval: 3000,
       onSuccess(res) {
         res.length && defaultSelectFirst && onSelectedPlanChange(res[0]);
+        res.every((record) => record.status !== 1) && cancelPollingInterval();
       },
     },
   );

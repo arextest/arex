@@ -21,7 +21,8 @@ const MainTabs = () => {
     activeMenu,
     setPages,
     removePage,
-    resetPanes,
+    removeSegmentPages,
+    resetPage,
     setActiveMenu,
     environmentTreeData,
     collectionTreeData,
@@ -46,19 +47,29 @@ const MainTabs = () => {
 
   const rightClickItems: (id: string) => MenuProps['items'] = (id) => [
     {
-      label: 'Close this tab',
-      key: 'closeThisTab',
+      label: 'Close',
+      key: 'close',
       onClick: () => removePage(id),
     },
     {
-      label: 'Close other tab',
+      label: 'Close Other Tabs',
       key: 'closeOtherTab',
       onClick: () => setPages(pages.filter((page) => page.paneId === id)),
     },
     {
-      label: 'Close all tab',
+      label: 'Close All Tabs',
       key: 'closeAllTab',
-      onClick: resetPanes,
+      onClick: resetPage,
+    },
+    {
+      label: 'Close Tabs to the Left',
+      key: 'closeLeft',
+      onClick: () => removeSegmentPages(id, 'left'),
+    },
+    {
+      label: 'Close Tabs to the Right',
+      key: 'closeRight',
+      onClick: () => removeSegmentPages(id, 'right'),
     },
   ];
 

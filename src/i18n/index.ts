@@ -1,8 +1,8 @@
 import 'dayjs/locale/zh-cn';
 
-import en from 'antd/es/locale/en_US';
-import zh from 'antd/es/locale/zh_CN';
-import { Locale } from 'antd/es/locale-provider';
+import { Locale } from 'antd/es/locale';
+import en from 'antd/locale/en_US';
+import zh from 'antd/locale/zh_CN';
 
 import i18n from './react-i18next.config';
 
