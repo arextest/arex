@@ -111,7 +111,8 @@
     "escExit": "Press Esc to exit",
     "moreNode": "additional node",
     "differenceNode": "Difference node",
-    "addIgnoreSuccess": "Ignore node successfully"
+    "addIgnoreSuccess": "Ignore node successfully",
+    "diffMatch": "Diff Match"
   },
   "appSetting": {
     "record": "Record",

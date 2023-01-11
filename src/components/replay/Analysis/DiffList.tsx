@@ -160,11 +160,11 @@ const DiffList: FC<DiffListType> = (props) => {
                 size='small'
                 type='default'
                 breakpoint='xxl'
-                title='Diff Match'
+                title={t('replay.diffMatch')}
                 icon={<DiffOutlined />}
                 onClick={() =>
                   modal.info({
-                    title: 'Diff Match',
+                    title: t('replay.diffMatch'),
                     width: 800,
                     maskClosable: true,
                     content: <DiffMatch text1={log.baseValue} text2={log.testValue} />,

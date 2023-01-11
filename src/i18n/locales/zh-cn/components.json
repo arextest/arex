@@ -103,15 +103,16 @@
     "actual": ", 实际",
     "unknown": "未知",
     "leftMissing": "录制为空",
-    "leftMissingDesc": "录制为空",
+    "leftMissingDesc": "录制结果为空",
     "rightMissing": "回放为空",
-    "rightMissingDesc": "回放为空",
+    "rightMissingDesc": "回放结果为空",
     "differentValue": "不同点",
     "ignoreNode": "忽略节点",
     "escExit": "按 ESC 退出",
     "moreNode": "新增节点",
     "differenceNode": "差异节点",
-    "addIgnoreSuccess": "添加忽略成功"
+    "addIgnoreSuccess": "添加忽略成功",
+    "diffMatch": "差异展示"
   },
   "appSetting": {
     "record": "录制",
