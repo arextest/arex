@@ -28,7 +28,7 @@ const WorkspaceSetting: FC = () => {
   const nav = useNavigate();
   const {
     workspaces,
-    resetPanes,
+    resetPage,
     activeWorkspaceId,
     setActiveWorkspaceId,
     setWorkspacesLastManualUpdateTimestamp,
@@ -61,7 +61,7 @@ const WorkspaceSetting: FC = () => {
         if (success) {
           message.success('delete workspace successfully');
           setWorkspacesLastManualUpdateTimestamp(new Date().getTime());
-          resetPanes();
+          resetPage();
           setActiveWorkspaceId(workspaces[0].id);
           nav(
             `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,

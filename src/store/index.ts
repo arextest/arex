@@ -51,8 +51,9 @@ type BaseState = {
     pages: M extends 'push' ? Page<D> : Page<D>[],
     mode?: M,
   ) => void;
-  removePage: (removePaneId: string) => void;
-  resetPanes: () => void;
+  removePage: (pageId: string) => void;
+  removeSegmentPages: (targetPageId: string, segment: 'left' | 'right') => void;
+  resetPage: () => void;
 
   collectionTreeData: NodeList[];
   setCollectionTreeData: (collectionTreeData: NodeList[]) => void;
@@ -129,6 +130,17 @@ export const useStore = create(
         get().setActiveMenu(menuType);
       }
     },
+    removeSegmentPages: (targetPageId, segment) => {
+      const pages = get().pages;
+      const index = pages.findIndex((page) => page.paneId === targetPageId);
+      Number.isInteger(index) &&
+        set({
+          pages: segment === 'left' ? pages.slice(index, pages.length) : pages.slice(0, index + 1),
+        });
+    },
+    resetPage: () => {
+      set({ pages: [], activeMenu: [MenusType.Collection, undefined] });
+    },
 
     activeMenu: [MenusType.Collection, undefined],
     setActiveMenu: (menuKey, menuItemKey) => {
@@ -144,10 +156,6 @@ export const useStore = create(
       });
 
       set({ activeMenu: [menuKey, menuItemKey] });
-    },
-
-    resetPanes: () => {
-      set({ pages: [], activeMenu: [MenusType.Collection, undefined] });
     },
 
     logout: () => {

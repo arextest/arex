@@ -55,7 +55,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     workspacesLastManualUpdateTimestamp,
     setInvitedWorkspaceId,
     setPages,
-    resetPanes,
+    resetPage,
   } = useStore();
 
   const email = getLocalStorage<string>(EmailKey);
@@ -154,7 +154,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
       if (res.success) {
         message.success('create workspace successfully');
         reset();
-        resetPanes();
+        resetPage();
         getWorkspaces(res.workspaceId);
       }
     },
@@ -163,7 +163,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
   const handleChangeWorkspace = (workspaceId: string) => {
     const label = workspaces.find((i) => i.id === workspaceId)?.workspaceName;
     if (label) {
-      resetPanes();
+      resetPage();
       setActiveWorkspaceId(workspaceId);
       nav(`/${workspaceId}/workspace/${label}/WorkspaceOverviewPage/${workspaceId}`);
     }
