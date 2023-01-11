@@ -117,17 +117,17 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
             hidden: !data?.recordId,
             children: <ExtraTabs.RequestTabs.Mock recordId={data?.recordId as string} />,
           },
-          {
-            label: 'CompareConfig',
-            key: 'compareConfig',
-            hidden: nodeType === 2,
-            children: (
-              <ExtraTabs.RequestTabs.CompareConfig
-                interfaceId={id}
-                operationId={data?.operationId}
-              />
-            ),
-          },
+          // {
+          //   label: 'CompareConfig',
+          //   key: 'compareConfig',
+          //   hidden: nodeType === 2,
+          //   children: (
+          //     <ExtraTabs.RequestTabs.CompareConfig
+          //       interfaceId={id}
+          //       operationId={data?.operationId}
+          //     />
+          //   ),
+          // },
         ],
       },
       responseTabs: {
