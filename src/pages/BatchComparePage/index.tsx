@@ -131,11 +131,12 @@ const BatchComparePage = () => {
             `}
           >
             <Button
+              type={'primary'}
               onClick={() => {
                 run();
               }}
             >
-              Run
+              Run Compare
             </Button>
           </div>
         </div>

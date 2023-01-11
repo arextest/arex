@@ -67,9 +67,9 @@ const MainMenu: FC<MainMenuProps> = (props) => {
   }, [activeKey, props.collapse]);
 
   return (
-    <div style={{ height: '100%' }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <WorkspacesMenu collapse={props.collapse} />
-      <div style={{ display: 'flex', height: '100%' }}>
+      <div style={{ display: 'flex', flex: '1', minHeight: '0' }}>
         <StyledMenu
           mode='inline'
           selectedKeys={activeKey ? [activeKey] : []}
