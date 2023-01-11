@@ -115,24 +115,30 @@ const BatchRunPage: React.FC = () => {
             padding: 14px;
           `}
         >
-          <Col className='gutter-row' span={11}>
-            <p
-              css={css`
-                font-weight: bolder;
-              `}
-            >
-              Select need test case
-            </p>
+          <Col
+            className='gutter-row'
+            span={11}
+            css={css`
+              height: 100%;
+            `}
+          >
             <div
               css={css`
-                height: 100%;
                 overflow-y: scroll;
+                height: 100%;
                 .ant-checkbox-group {
                   display: flex;
                   flex-direction: column;
                 }
               `}
             >
+              <p
+                css={css`
+                  font-weight: bolder;
+                `}
+              >
+                Select need test case
+              </p>
               <Tree
                 defaultExpandedKeys={['ROOT']}
                 checkable
