@@ -7,6 +7,7 @@ import { Card, Col, notification, Row, Statistic, Table, theme, Tooltip, Typogra
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
+import CountUp from 'react-countup';
 
 import { EmailKey } from '../../constant';
 import { generateGlobalPaneId, getLocalStorage, getPercent } from '../../helpers/utils';
@@ -36,7 +37,11 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
   const email = getLocalStorage<string>(EmailKey);
   const { token } = theme.useToken();
 
-  const { data: planItemData, loading: loadingData } = useRequest(
+  const {
+    data: planItemData,
+    loading: loadingData,
+    cancel: cancelPollingInterval,
+  } = useRequest(
     () =>
       ReplayService.queryPlanItemStatistics({
         planId: selectedPlan!.planId,
@@ -44,6 +49,11 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     {
       ready: !!selectedPlan?.planId,
       refreshDeps: [selectedPlan?.planId],
+      loadingDelay: 200,
+      pollingInterval: 3000,
+      onSuccess(res) {
+        res.every((record) => record.status !== 1) && cancelPollingInterval();
+      },
     },
   );
 
@@ -105,7 +115,13 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     },
     {
       title: 'State',
-      render: (_, record) => <StatusTag status={record.status} />,
+      render: (_, record) => (
+        <StatusTag
+          status={record.status}
+          successCaseCount={record.successCaseCount}
+          totalCaseCount={record.totalCaseCount}
+        />
+      ),
     },
     {
       title: 'Time consumed(s)',
@@ -122,25 +138,43 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       title: 'Passed',
       dataIndex: 'successCaseCount',
       width: 70,
-      render: (text) => <Text style={{ color: token.colorSuccessText }}>{text}</Text>,
+      render: (text) => (
+        <CountUp
+          preserveValue
+          duration={0.3}
+          end={text}
+          style={{ color: token.colorSuccessText }}
+        />
+      ),
     },
     {
       title: 'Failed',
       dataIndex: 'failCaseCount',
       width: 70,
-      render: (text) => <Text style={{ color: token.colorErrorText }}>{text}</Text>,
+      render: (text) => (
+        <CountUp preserveValue duration={0.3} end={text} style={{ color: token.colorErrorText }} />
+      ),
     },
     {
       title: 'Invalid',
       dataIndex: 'errorCaseCount',
       width: 70,
-      render: (text) => <Text style={{ color: token.colorInfoText }}>{text}</Text>,
+      render: (text) => (
+        <CountUp preserveValue duration={0.3} end={text} style={{ color: token.colorInfoText }} />
+      ),
     },
     {
       title: 'Blocked',
       dataIndex: 'waitCaseCount',
       width: 70,
-      render: (text) => <Text style={{ color: token.colorWarningText }}>{text}</Text>,
+      render: (text) => (
+        <CountUp
+          preserveValue
+          duration={0.3}
+          end={text}
+          style={{ color: token.colorWarningText }}
+        />
+      ),
     },
     {
       title: 'Action',

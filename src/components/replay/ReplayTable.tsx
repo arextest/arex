@@ -2,6 +2,7 @@ import { useRequest } from 'ahooks';
 import { theme, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC } from 'react';
+import CountUp from 'react-countup';
 
 import ReplayService from '../../services/Replay.service';
 import { PlanStatistics } from '../../services/Replay.type';
@@ -50,25 +51,43 @@ const ReplayTable: FC<ResultsProps> = ({
       title: 'Passed',
       width: 80,
       dataIndex: 'successCaseCount',
-      render: (text) => <Text style={{ color: token.colorSuccessText }}>{text}</Text>,
+      render: (text) => (
+        <CountUp
+          preserveValue
+          duration={0.3}
+          end={text}
+          style={{ color: token.colorSuccessText }}
+        />
+      ),
     },
     {
       title: 'Failed',
       width: 80,
       dataIndex: 'failCaseCount',
-      render: (text) => <Text style={{ color: token.colorErrorText }}>{text}</Text>,
+      render: (text) => (
+        <CountUp preserveValue duration={0.3} end={text} style={{ color: token.colorErrorText }} />
+      ),
     },
     {
       title: 'Invalid',
       width: 80,
       dataIndex: 'errorCaseCount',
-      render: (text) => <Text style={{ color: token.colorInfoText }}>{text}</Text>,
+      render: (text) => (
+        <CountUp preserveValue duration={0.3} end={text} style={{ color: token.colorInfoText }} />
+      ),
     },
     {
       title: 'Blocked',
       width: 80,
       dataIndex: 'waitCaseCount',
-      render: (text) => <Text style={{ color: token.colorWarningText }}>{text}</Text>,
+      render: (text) => (
+        <CountUp
+          preserveValue
+          duration={0.3}
+          end={text}
+          style={{ color: token.colorWarningText }}
+        />
+      ),
     },
     {
       title: 'Executor',
@@ -78,7 +97,7 @@ const ReplayTable: FC<ResultsProps> = ({
       title: 'replayStartTime',
       dataIndex: 'replayStartTime',
       render(text) {
-        return text ? new Date(text).toLocaleString() : '';
+        return text ? new Date(text).toLocaleString() : '-';
       },
     },
   ];
