@@ -122,13 +122,13 @@ const DiffList: FC<DiffListType> = (props) => {
 
             {log.pathPair.unmatchedType === 3 ? (
               <Typography.Text type='secondary'>
-                {t('replay.valueOf')}
+                {`${t('replay.valueOf')} `}
                 <PathTooltip path={log.path} />
-                {t('replay.isDifferenceExcepted')}
+                {` ${t('replay.isDifferenceExcepted')} `}
                 <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
                   {log.baseValue}
                 </Typography.Text>
-                {t('replay.actual')}
+                {`${t('replay.actual')} `}
                 <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
                   {log.testValue}
                 </Typography.Text>

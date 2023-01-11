@@ -41,7 +41,7 @@ const ReplayPage: PageFC<ApplicationDataType> = (props) => {
     </>
   ) : (
     <FlexCenterWrapper>
-      <Empty description={t('replay.empty_app')} />
+      <Empty description={t('replay.selectApplication')} />
     </FlexCenterWrapper>
   );
 };

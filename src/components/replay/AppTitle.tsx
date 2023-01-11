@@ -1,4 +1,4 @@
-import { PlayCircleOutlined, SyncOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, SettingOutlined, SyncOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, DatePicker, Form, Input, Modal, notification } from 'antd';
@@ -82,20 +82,20 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     onSuccess(res) {
       if (res.result === 1) {
         notification.success({
-          message: `${t('replay.startSuccess')}`,
+          message: t('replay.startSuccess'),
         });
         onRefresh && onRefresh();
       } else {
         console.error(res.desc);
         notification.error({
-          message: `${t('replay.startFailed')}`,
+          message: t('replay.startFailed'),
           description: res.desc,
         });
       }
     },
     onError(e) {
       notification.error({
-        message: `${t('replay.startFailed')}`,
+        message: t('replay.startFailed'),
         description: e.message,
       });
     },
