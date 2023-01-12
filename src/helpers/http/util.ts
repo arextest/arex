@@ -21,5 +21,6 @@ export function convertSaveRequestData(
       method: request.compareMethod,
       endpoint: request.compareEndpoint,
     },
+    description: request.description,
   };
 }

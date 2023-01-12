@@ -151,6 +151,7 @@ const BatchComparePage = () => {
         >
           <h3>Compare results</h3>
           <Table
+            size={'small'}
             bordered
             rowKey={'id'}
             expandable={{
