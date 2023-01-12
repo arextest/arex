@@ -160,13 +160,18 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
       listPath: checkedNodesData?.path?.split('/').filter(Boolean) || [],
       keys: checkedNodesData.pathKeyList.map((key) => key?.split('/').filter(Boolean)),
     };
+
+    console.log({ params, activeSortNode });
+
     if (activeSortNode) {
       updateSortNode({ id: activeSortNode.id, ...params });
-    } else if (props.appId && activeOperationInterface?.id) {
+    } else if (activeOperationInterface?.id) {
       insertSortNode({
         ...params,
         appId: props.appId,
-        operationId: activeOperationInterface.id,
+        operationId: activeOperationInterface?.id,
+        compareConfigType: props.interfaceId && '1',
+        fsInterfaceId: props.interfaceId,
       });
     }
   };
@@ -181,6 +186,7 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
     loading: loadingInterfaceResponse,
   } = useRequest(
     () =>
+      // @ts-ignore
       props.interfaceId
         ? FileSystemService.queryInterface({ id: props.interfaceId })
         : AppSettingService.queryInterfaceResponse({
@@ -204,17 +210,23 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
   /**
    * 更新 InterfaceResponse
    */
-  const { run: updateInterfaceResponse } = useRequest(AppSettingService.updateInterfaceResponse, {
-    manual: true,
-    onSuccess(success) {
-      if (success) {
-        queryInterfaceResponse();
-        message.success(t('message.updateSuccess', { ns: 'common' }));
-      } else {
-        message.error(t('message.updateFailed', { ns: 'common' }));
-      }
+  const { run: updateInterfaceResponse } = useRequest(
+    (params) =>
+      props.interfaceId
+        ? FileSystemService.saveInterface(params)
+        : AppSettingService.updateInterfaceResponse(params),
+    {
+      manual: true,
+      onSuccess(success) {
+        if (success) {
+          queryInterfaceResponse();
+          message.success(t('message.updateSuccess', { ns: 'common' }));
+        } else {
+          message.error(t('message.updateFailed', { ns: 'common' }));
+        }
+      },
     },
-  });
+  );
 
   /**
    * 开始编辑某个 interface 的 response
