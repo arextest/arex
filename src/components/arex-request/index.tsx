@@ -162,10 +162,18 @@ const Http = forwardRef<HttpRef, HttpProps>(
           state.request.params = value.params || [];
           state.request.testScripts = value.testScripts || [];
           state.request.preRequestScripts = value.preRequestScripts || [];
+
+          // 默认加上{Content-Type:application/json}
+          if (!state.request.headers.find((head) => head.key === 'Content-Type')) {
+            state.request.headers.unshift({
+              key: 'Content-Type',
+              value: 'application/json',
+              active: true,
+            });
+          }
         }
       });
     }, [value]);
-
     useEffect(() => {
       dispatch((state) => {
         state.theme = theme;
