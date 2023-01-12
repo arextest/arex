@@ -52,7 +52,7 @@
     "invalid": "无效",
     "blocked": "待执行",
     "executor": "执行人",
-    "replayStartTime": "任务开始时间",
+    "replayStartTime": "开始时间",
     "report": "报告",
     "basicInfo": "基本信息",
     "replayPassRate": "回放通过率",
@@ -113,7 +113,8 @@
     "moreNode": "新增节点",
     "differenceNode": "差异节点",
     "addIgnoreSuccess": "添加忽略成功",
-    "diffMatch": "差异展示"
+    "diffMatch": "差异展示",
+    "replayEndTime": "结束时间"
   },
   "appSetting": {
     "record": "录制",
