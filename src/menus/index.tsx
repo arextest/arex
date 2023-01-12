@@ -11,7 +11,7 @@ import CollectionMenu from './CollectionMenu';
 import EnvironmentMenu from './EnvironmentMenu';
 import ReplayMenu from './ReplayMenu';
 
-type MenuConfig = {
+export type MenuConfig = {
   key: string;
   label: ReactNode;
   icon: ReactNode;

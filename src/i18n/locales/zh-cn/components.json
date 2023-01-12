@@ -34,7 +34,7 @@
     "appFilterPlaceholder": "搜索应用"
   },
   "replay": {
-    "empty_app": "请选择一个应用",
+    "selectApplication": "请选择一个应用",
     "refresh": "刷新",
     "startSuccess": "启动成功",
     "startFailed": "启动失败",
