@@ -41,5 +41,6 @@
   "replay": "Replay",
   "appSetting": "AppSetting",
   "environment": "Environment",
-  "setting": "Setting"
+  "setting": "Setting",
+  "create": "Create"
 }

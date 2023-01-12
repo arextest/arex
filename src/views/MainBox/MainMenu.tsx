@@ -1,12 +1,11 @@
 import { LeftOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Menu, MenuProps } from 'antd';
-import { t } from 'i18next';
 import React, { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { ErrorBoundary, WorkspacesMenu } from '../../components';
-import MenuConfig, { MenusType } from '../../menus';
+import MenuConfigList, { MenuConfig, MenusType } from '../../menus';
 import { useStore } from '../../store';
 
 type MainMenuProps = {
@@ -35,19 +34,26 @@ function flatTree<T extends NestedTree[]>(tree: T, keyName = 'id') {
   return result;
 }
 
-const FlatMenu = flatTree(MenuConfig, 'key');
+const FlatMenu = flatTree(MenuConfigList, 'key');
 
 const MainMenu: FC<MainMenuProps> = (props) => {
   const { activeMenu, setActiveMenu } = useStore();
   const { t } = useTranslation('common');
   const activeKey = useMemo(() => activeMenu[0], [activeMenu]);
 
+  const menuTranslation = (menu: MenuConfig) => {
+    if (menu.children) {
+      menu.children = menu.children.map(menuTranslation);
+    }
+    return {
+      ...menu,
+      label: t(menu.label as MenusType),
+    };
+  };
+
   const tabsItems = useMemo(
     () =>
-      MenuConfig.map((menu) => ({
-        ...menu,
-        label: t(menu.label as string),
-      })).concat({
+      MenuConfigList.map(menuTranslation).concat({
         label: '',
         key: ICON_KEY,
         icon: <CollapseButton collapse={props.collapse} />,

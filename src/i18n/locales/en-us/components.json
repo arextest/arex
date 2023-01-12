@@ -113,7 +113,8 @@
     "moreNode": "additional node",
     "differenceNode": "Difference node",
     "addIgnoreSuccess": "Ignore node successfully",
-    "diffMatch": "Diff Match"
+    "diffMatch": "Diff Match",
+    "replayEndTime": "ReplayEndTime"
   },
   "appSetting": {
     "record": "Record",
