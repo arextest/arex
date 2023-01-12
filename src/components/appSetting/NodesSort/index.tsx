@@ -27,7 +27,6 @@ enum TreeEditModeEnum {
   ArrayTree,
   SortTree,
 }
-const TreeEditMode = ['ArrayTree', 'SortTree'];
 
 const TreeCarousel = styled(Carousel)`
   .slick-dots-bottom {
@@ -55,8 +54,11 @@ export type SettingNodesSortProps = {
 
 const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
   const { message } = App.useApp();
+  const { t } = useTranslation(['components', 'common']);
 
-  const { t } = useTranslation('common');
+  const TreeEditMode = useMemo(() => {
+    return [t('appSetting.arrayTree'), t('appSetting.sortTree')];
+  }, []);
 
   const treeCarousel = useRef<CarouselRef>(null);
 
@@ -136,9 +138,9 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
       if (success) {
         querySortNode();
         treeCarousel.current?.goTo(0);
-        message.success('Update successfully');
+        message.success(t('message.updateSuccess', { ns: 'common' }));
       } else {
-        message.error('Update failed');
+        message.error(t('message.updateFailed', { ns: 'common' }));
       }
     },
   };
@@ -218,9 +220,9 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
       onSuccess(success) {
         if (success) {
           queryInterfaceResponse();
-          message.success('Update successfully');
+          message.success(t('message.updateSuccess', { ns: 'common' }));
         } else {
-          message.error('Update failed');
+          message.error(t('message.updateFailed', { ns: 'common' }));
         }
       },
     },
@@ -345,7 +347,7 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
       <Col span={10}>
         <PathCollapse
           interfaceId={props.interfaceId}
-          title={props.interfaceId ? undefined : 'Interfaces'}
+          title={props.interfaceId ? undefined : t('appSetting.interfaces')}
           expandIcon={props.interfaceId ? () => <></> : undefined}
           loading={loadingOperationList}
           loadingPanel={loadingSortNode}
@@ -363,7 +365,7 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
       <Col span={13}>
         <EditAreaPlaceholder
           dashedBorder
-          title='Edit Area (Click interface to start)'
+          title={t('appSetting.editArea')}
           ready={!!activeOperationInterface}
         >
           {nodesEditMode === NodesEditMode.Tree ? (
@@ -373,10 +375,10 @@ const SettingNodesSort: FC<SettingNodesSortProps> = (props) => {
                 {treeEditMode === TreeEditModeEnum.SortTree && (
                   <Space>
                     <Button size='small' onClick={() => handleCancelEditResponse()}>
-                      {t('cancel')}
+                      {t('cancel', { ns: 'common' })}
                     </Button>
                     <Button size='small' type='primary' onClick={handleSaveSort}>
-                      {t('save')}
+                      {t('save', { ns: 'common' })}
                     </Button>
                   </Space>
                 )}

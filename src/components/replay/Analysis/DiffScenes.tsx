@@ -2,6 +2,7 @@ import { useRequest } from 'ahooks';
 import { Col, Row, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import ReplayService from '../../../services/Replay.service';
 import { CategoryStatistic, Difference } from '../../../services/Replay.type';
@@ -14,6 +15,7 @@ const DiffScenes: FC<{
   onSelectCategory?: (category: CategoryStatistic) => void;
 }> = ({ planItemId, onScenes, onSelectCategory }) => {
   const { token } = theme.useToken();
+  const { t } = useTranslation(['components']);
 
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
   const { data: differenceData = [], loading } = useRequest(
@@ -31,18 +33,18 @@ const DiffScenes: FC<{
 
   const categoryColumns: ColumnsType<Difference> = [
     {
-      title: 'Point of difference',
+      title: t('replay.pointOfDifference'),
       dataIndex: 'differenceName',
       ellipsis: true,
       render: (text, record) => <a onClick={() => handleRowClick(record)}>{text}</a>,
     },
     {
-      title: 'Scene Count',
+      title: t('replay.sceneCount'),
       dataIndex: 'sceneCount',
       width: '110px',
     },
     {
-      title: 'CaseTable Count',
+      title: t('replay.caseTableCount'),
       dataIndex: 'caseCount',
       width: '110px',
     },

@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Col, Collapse, Row, Switch } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { CaseTable, SaveCase, SaveCaseRef } from '../components/replay/Case';
 import {
@@ -29,6 +30,7 @@ const InfoIcon = styled(InfoCircleOutlined)`
 
 const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
   const { theme } = useUserProfile();
+  const { t } = useTranslation(['components']);
 
   const [onlyFailed, setOnlyFailed] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
@@ -66,10 +68,14 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
   return (
     <>
       <PanesTitle
-        title={<span>Main Service API: {props.page.data.operationName}</span>}
+        title={
+          <span>
+            {t('replay.caseServiceAPI')}: {props.page.data.operationName}
+          </span>
+        }
         extra={
           <span>
-            <Label>View Failed Only</Label>
+            <Label>{t('replay.viewFailedOnly')}</Label>
             <Switch size='small' defaultChecked={onlyFailed} onChange={setOnlyFailed} />
           </span>
         }
@@ -121,7 +127,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
                         themeKey={theme}
                         extensions={[javascript(), html(), json()]}
                         value={result.baseMsg}
-                        remark='Benchmark'
+                        remark={t('replay.benchmark')}
                       />
                     </Col>
                     <Col span={12}>
@@ -137,7 +143,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
                         themeKey={theme}
                         extensions={[javascript(), html(), json()]}
                         value={result.testMsg}
-                        remark='Test'
+                        remark={t('replay.test')}
                       />
                     </Col>
                   </Row>

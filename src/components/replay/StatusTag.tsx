@@ -7,6 +7,7 @@ import {
 } from '@ant-design/icons';
 import { Progress, Tag } from 'antd';
 import React, { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const resultsStates = [
   { label: 'init', color: 'default', value: 0, icon: <ClockCircleOutlined /> },
@@ -23,6 +24,8 @@ export type StatusTagProps = {
 };
 
 const StatusTag: FC<StatusTagProps> = (props) => {
+  const { t } = useTranslation(['components']);
+
   const state = useMemo(() => resultsStates.find((s) => s.value === props.status), [props.status]);
   const icon = useMemo(
     () =>
@@ -45,11 +48,11 @@ const StatusTag: FC<StatusTagProps> = (props) => {
   );
 
   return state ? (
-    <Tag color={state.color} icon={icon}>
-      {state.label}
+    <Tag color={state.color} icon={state.icon}>
+      {t('replay.' + state.label)}
     </Tag>
   ) : (
-    <Tag>Unknown State</Tag>
+    <Tag>{t('replay.unknownState')}</Tag>
   );
 };
 

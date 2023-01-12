@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { App, Button, Collapse, CollapseProps, List, Spin } from 'antd';
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import AppSettingService from '../../../services/AppSetting.service';
 import { OperationId, OperationInterface, SortNode } from '../../../services/AppSetting.type';
@@ -36,6 +37,7 @@ const CollapseWrapper = styled.div`
 
 const PathCollapse: FC<PathCollapseProps> = (props) => {
   const { message } = App.useApp();
+  const { t } = useTranslation(['components', 'common']);
 
   const handleEdit = (sortNode: SortNode) => props.onEdit && props.onEdit(sortNode.path, sortNode);
 
@@ -47,9 +49,9 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
     onSuccess(success) {
       if (success) {
         props.onReloadNodes?.();
-        message.success('Delete successfully');
+        message.success(t('message.delSuccess'));
       } else {
-        message.error('Delete failed');
+        message.error(t('message.delFailed'));
       }
     },
   });
@@ -75,7 +77,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                   <TooltipButton
                     key='add'
                     icon={<PlusOutlined />}
-                    title='Add Sort Key'
+                    title={t('appSetting.addSortKey')}
                     onClick={(e) => {
                       e.stopPropagation();
                       props.onChange?.(i, true);
@@ -84,7 +86,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                   <TooltipButton
                     key='editResponse'
                     icon={<CodeOutlined />}
-                    title='Edit Response'
+                    title={t('appSetting.editResponse')}
                     onClick={(e) => {
                       e.stopPropagation();
                       props.onEditResponse?.(i);
@@ -127,7 +129,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                       </SpaceBetweenWrapper>
                     </List.Item>
                   )}
-                  locale={{ emptyText: 'No Sort Nodes' }}
+                  locale={{ emptyText: t('appSetting.noSortNodes') }}
                 />
               </Collapse.Panel>
             );

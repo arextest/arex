@@ -5,6 +5,7 @@ import { useMount } from 'ahooks';
 import { Modal } from 'antd';
 import JSONEditor, { JSONEditorOptions } from 'jsoneditor';
 import React, { FC, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { tryParseJsonString } from '../../../helpers/utils';
 import { QueryMsgWithDiffLog } from '../../../services/Replay.type';
@@ -21,6 +22,8 @@ export type DiffJsonViewProps = {
 };
 const DiffJsonView: FC<DiffJsonViewProps> = ({ data, open = false, onClose }) => {
   const { theme } = useUserProfile();
+  const { t } = useTranslation(['components']);
+
   useMount(() => {
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') {
@@ -129,7 +132,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, open = false, onClose }) =>
 
   return (
     <Modal
-      title='Press Esc to exit'
+      title={t('replay.escExit')}
       width={'100%'}
       footer={false}
       open={open}
@@ -145,15 +148,15 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, open = false, onClose }) =>
         <div className='MsgWithDiffLegend'>
           <div>
             <div className='color-tag-green' />
-            <span>One more node than</span>
+            <span>{t('replay.moreNode')}</span>
           </div>
           <div>
             <div className='color-tag-pink' />
-            <span>Difference node</span>
+            <span>{t('replay.differenceNode')}</span>
           </div>
           <div>
             <div className='color-tag-grey' />
-            <span>Ignore node</span>
+            <span>{t('replay.ignoreNode')}</span>
           </div>
         </div>
       </div>
