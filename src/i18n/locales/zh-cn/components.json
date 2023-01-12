@@ -30,6 +30,7 @@
     "newCreate": "新建"
   },
   "applicationsMenu": {
+    "filterFavoriteApps": "收藏应用列表",
     "appFilterPlaceholder": "搜索应用"
   },
   "replay": {

@@ -36,5 +36,10 @@
     "updateFailed": "更新失败",
     "saveSuccess": "保存成功",
     "saveFailed": "保存失败"
-  }
+  },
+  "collection": "集合",
+  "replay": "回放",
+  "appSetting": "应用设置",
+  "environment": "环境配置",
+  "setting": "设置"
 }

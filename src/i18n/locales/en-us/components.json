@@ -30,6 +30,7 @@
     "newCreate": "New"
   },
   "applicationsMenu": {
+    "filterFavoriteApps": "Filter Favorite Apps",
     "appFilterPlaceholder": "Search Applications"
   },
   "replay": {
