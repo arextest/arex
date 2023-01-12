@@ -1,6 +1,7 @@
 import { useRequest } from 'ahooks';
 import { App, Button, Form, InputNumber } from 'antd';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
 import AppSettingService from '../../../services/AppSetting.service';
@@ -21,6 +22,7 @@ const defaultValues: SettingFormType = {
 
 const SettingReplay: React.FC<SettingRecordProps> = ({ appId, agentVersion }) => {
   const { message } = App.useApp();
+  const { t } = useTranslation(['components', 'common']);
 
   const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
 
@@ -41,7 +43,7 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId, agentVersion }) =>
   const { run: updateReplaySetting } = useRequest(AppSettingService.updateReplaySetting, {
     manual: true,
     onSuccess(res) {
-      res && message.success('update success');
+      res && message.success(t('message.updateSuccess', { ns: 'common' }));
     },
   });
 
@@ -63,19 +65,19 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId, agentVersion }) =>
 
   return (
     <SettingForm loading={loading} initialValues={initialValues} onFinish={onFinish}>
-      <Form.Item label='Agent Version'>
+      <Form.Item label={t('appSetting.agentVersion')}>
         <span>{agentVersion}</span>
       </Form.Item>
 
       <Form.Item
         label='CaseTable range'
         name='offsetDays'
-        rules={[{ required: true, message: 'Please input your case range!' }]}
+        rules={[{ required: true, message: t('appSetting.emptyCaseRange') }]}
       >
         <InputNumber min={1} />
       </Form.Item>
 
-      <Form.Item label='Exclude Operation' name='excludeOperationMap'>
+      <Form.Item label={t('appSetting.excludeOperation')} name='excludeOperationMap'>
         <ExcludeOperation appId={appId} />
       </Form.Item>
 
@@ -84,7 +86,7 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId, agentVersion }) =>
         style={{ textAlign: 'right', marginTop: '16px' }}
       >
         <Button type='primary' htmlType='submit'>
-          Save
+          {t('save', { ns: 'common' })}
         </Button>
       </Form.Item>
     </SettingForm>

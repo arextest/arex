@@ -8,6 +8,7 @@ import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 import CountUp from 'react-countup';
+import { useTranslation } from 'react-i18next';
 
 import { EmailKey } from '../../constant';
 import { generateGlobalPaneId, getLocalStorage, getPercent } from '../../helpers/utils';
@@ -33,6 +34,8 @@ const chartOptions = {
 } as const;
 
 const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
+  const { t } = useTranslation(['components', 'common']);
+
   const { setPages } = useStore();
   const email = getLocalStorage<string>(EmailKey);
   const { token } = theme.useToken();
@@ -72,7 +75,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
   const pieProps = useMemo(
     () => ({
       data: {
-        labels: ['Passed', 'Failed', 'Invalid', 'Blocked'],
+        labels: [t('replay.passed'), t('replay.failed'), t('replay.invalid'), t('replay.blocked')],
         datasets: [
           {
             data: countData,
@@ -92,7 +95,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
 
   const columns: ColumnsType<PlanItemStatistics> = [
     {
-      title: 'Plan Item ID',
+      title: t('replay.planItemID'),
       dataIndex: 'planItemId',
       key: 'planItemId',
       ellipsis: { showTitle: false },
@@ -103,7 +106,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       ),
     },
     {
-      title: 'API',
+      title: t('replay.api'),
       dataIndex: 'operationName',
       key: 'operationName',
       ellipsis: { showTitle: false },
@@ -114,7 +117,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       ),
     },
     {
-      title: 'State',
+      title: t('replay.state'),
       render: (_, record) => (
         <StatusTag
           status={record.status}
@@ -124,18 +127,18 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       ),
     },
     {
-      title: 'Time consumed(s)',
+      title: t('replay.timeConsumed'),
       render: (_, record) =>
         record.replayEndTime && record.replayStartTime
           ? (record.replayEndTime - record.replayStartTime) / 1000
           : '-',
     },
     {
-      title: 'Cases',
+      title: t('replay.cases'),
       dataIndex: 'totalCaseCount',
     },
     {
-      title: 'Passed',
+      title: t('replay.passed'),
       dataIndex: 'successCaseCount',
       width: 70,
       render: (text) => (
@@ -148,7 +151,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       ),
     },
     {
-      title: 'Failed',
+      title: t('replay.failed'),
       dataIndex: 'failCaseCount',
       width: 70,
       render: (text) => (
@@ -156,7 +159,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       ),
     },
     {
-      title: 'Invalid',
+      title: t('replay.invalid'),
       dataIndex: 'errorCaseCount',
       width: 70,
       render: (text) => (
@@ -164,7 +167,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       ),
     },
     {
-      title: 'Blocked',
+      title: t('replay.blocked'),
       dataIndex: 'waitCaseCount',
       width: 70,
       render: (text) => (
@@ -177,19 +180,19 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       ),
     },
     {
-      title: 'Action',
+      title: t('replay.action'),
       align: 'center',
       render: (_, record) => (
         <>
           <TooltipButton
             icon={<ContainerOutlined />}
-            title='DiffScenes'
+            title={t('replay.diffScenes')}
             breakpoint='xxl'
             disabled={!record.failCaseCount}
             onClick={() => {
               setPages(
                 {
-                  title: `DiffScenes - ${record.operationId}`,
+                  title: `${t('replay.diffScenes')} - ${record.operationId}`,
                   pageType: PagesType.ReplayAnalysis,
                   menuType: MenusType.Replay,
                   isNew: false,
@@ -210,12 +213,12 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
           />
           <TooltipButton
             icon={<FileTextOutlined />}
-            title='CaseTable'
+            title={t('replay.caseTable')}
             breakpoint='xxl'
             onClick={() =>
               setPages(
                 {
-                  title: `Case - ${record.planItemId}`,
+                  title: `${t('replay.caseTable')} - ${record.planItemId}`,
                   pageType: PagesType.ReplayCase,
                   menuType: MenusType.Replay,
                   isNew: false,
@@ -234,7 +237,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
           />
           <TooltipButton
             icon={<RedoOutlined />}
-            title='Rerun'
+            title={t('replay.rerun')}
             breakpoint='xxl'
             onClick={() =>
               handleRerun(record.operationId, record.caseStartTime, record.caseEndTime)
@@ -250,11 +253,14 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     manual: true,
     onSuccess(res) {
       if (res.result === 1) {
-        notification.success({ message: 'Success', description: res.desc });
+        notification.success({
+          message: t('message.success', { ns: 'common' }),
+          description: res.desc,
+        });
       } else {
         console.error(res.desc);
         notification.error({
-          message: 'Error',
+          message: t('message.error', { ns: 'common' }),
           description: res.desc,
         });
       }
@@ -295,16 +301,16 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     <Card
       bordered={false}
       size='small'
-      title={`Report: ${selectedPlan.planName}`}
+      title={`${t('replay.report')}: ${selectedPlan.planName}`}
       extra={
         <SmallTextButton icon={<RedoOutlined />} onClick={() => handleRerun()}>
-          Rerun
+          {t('replay.rerun')}
         </SmallTextButton>
       }
     >
       <Row gutter={12}>
         <Col span={12}>
-          <Typography.Text type='secondary'>Basic Information</Typography.Text>
+          <Typography.Text type='secondary'>{t('replay.basicInfo')}</Typography.Text>
           <div
             css={css`
               display: flex;
@@ -314,25 +320,36 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
             `}
           >
             <Statistic
-              title='Pass Rate'
+              title={t('replay.passRate')}
               value={getPercent(selectedPlan.successCaseCount, selectedPlan.totalCaseCount)}
             />
             <Statistic
-              title='API Pass Rate'
+              title={t('replay.apiPassRate')}
               value={getPercent(
                 selectedPlan.successOperationCount,
                 selectedPlan.totalOperationCount,
               )}
             />
           </div>
-          <div>Report Name: {selectedPlan.planName}</div>
-          <div>Target Host: {selectedPlan.targetHost}</div>
-          <div>Executor: {selectedPlan.creator}</div>
-          <span>Record version: {selectedPlan.caseRecordVersion}</span> &nbsp;
-          <span>Replay version: {selectedPlan.coreVersion}</span>
+          <div>
+            {t('replay.reportName')}: {selectedPlan.planName}
+          </div>
+          <div>
+            {t('replay.targetHost')}: {selectedPlan.targetHost}
+          </div>
+          <div>
+            {t('replay.executor')}: {selectedPlan.creator}
+          </div>
+          <span>
+            {t('replay.recordVersion')}: {selectedPlan.caseRecordVersion}
+          </span>{' '}
+          &nbsp;
+          <span>
+            {t('replay.replayVersion')}: {selectedPlan.coreVersion}
+          </span>
         </Col>
         <Col span={12}>
-          <Typography.Text type='secondary'>Replay Pass Rate</Typography.Text>
+          <Typography.Text type='secondary'>{t('replay.replayPassRate')}</Typography.Text>
           <SpaceBetweenWrapper>
             <div style={{ height: '160px', width: 'calc(100% - 160px)', padding: '16px 0' }}>
               <Pie {...pieProps} />
@@ -346,11 +363,21 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
                 padding: '16px 16px 16px 0',
               }}
             >
-              <div>Total Cases: {countSum}</div>
-              <div>Passed: {countData[0]}</div>
-              <div>Failed: {countData[1]}</div>
-              <div>Invalid: {countData[2]}</div>
-              <div>Blocked: {countData[3]}</div>
+              <div>
+                {t('replay.totalCases')}: {countSum}
+              </div>
+              <div>
+                {t('replay.passed')}: {countData[0]}
+              </div>
+              <div>
+                {t('replay.failed')}: {countData[1]}
+              </div>
+              <div>
+                {t('replay.invalid')}: {countData[2]}
+              </div>
+              <div>
+                {t('replay.blocked')}: {countData[3]}
+              </div>
             </div>
           </SpaceBetweenWrapper>
         </Col>

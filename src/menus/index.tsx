@@ -11,7 +11,7 @@ import CollectionMenu from './CollectionMenu';
 import EnvironmentMenu from './EnvironmentMenu';
 import ReplayMenu from './ReplayMenu';
 
-type MenuConfig = {
+export type MenuConfig = {
   key: string;
   label: ReactNode;
   icon: ReactNode;
@@ -20,11 +20,11 @@ type MenuConfig = {
 };
 
 export enum MenusType {
-  Collection = 'Collection',
-  Replay = 'Replay',
-  AppSetting = 'AppSetting',
-  Environment = 'Environment',
-  Setting = 'Setting',
+  Collection = 'collection',
+  Replay = 'replay',
+  AppSetting = 'appSetting',
+  Environment = 'environment',
+  Setting = 'setting',
 }
 
 // TODO import ExtraConfig

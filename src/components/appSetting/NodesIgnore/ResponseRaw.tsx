@@ -21,7 +21,7 @@ const ResponseRaw: FC<ResponseRawProps> = (props) => {
   return (
     <div>
       <SpaceBetweenWrapper style={{ paddingBottom: '8px' }}>
-        <h3>Raw</h3>
+        <h3>{t('raw')}</h3>
         <Space>
           <Button size='small' onClick={onCancel}>
             {t('cancel')}

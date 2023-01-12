@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { Tabs } from 'antd';
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
   SettingImportYaml,
@@ -13,32 +14,34 @@ import { ApplicationDataType } from '../services/Replay.type';
 import { PageFC } from './index';
 
 const AppSettingPage: PageFC<ApplicationDataType> = (props) => {
+  const { t } = useTranslation(['components']);
+
   const data: any = props.page.data;
   const TabsItems = useMemo(
     () => [
       {
         key: 'record',
-        label: 'Record',
+        label: t('appSetting.record'),
         children: <SettingRecord appId={data.appId} agentVersion={data.agentVersion} />,
       },
       {
         key: 'replay',
-        label: 'Replay',
+        label: t('appSetting.replay'),
         children: <SettingReplay appId={data.appId} agentVersion={data.agentVersion} />,
       },
       {
         key: 'importYaml',
-        label: 'ImportYaml',
+        label: t('appSetting.importYaml'),
         children: <SettingImportYaml appId={data.appId} agentVersion={data.agentVersion} />,
       },
       {
         key: 'nodesIgnore',
-        label: 'NodesIgnore',
+        label: t('appSetting.nodesIgnore'),
         children: <SettingNodesIgnore appId={data.appId} />,
       },
       {
         key: 'nodesSort',
-        label: 'NodesSort',
+        label: t('appSetting.nodesSort'),
         children: <SettingNodesSort appId={data.appId} />,
       },
     ],

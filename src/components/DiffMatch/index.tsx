@@ -2,12 +2,12 @@ import { theme, Typography } from 'antd';
 import { diff_match_patch } from 'diff-match-patch';
 import React, { FC, useCallback } from 'react';
 
-export type DiffMatchProps = { text1?: string | null; text2?: string | null };
+export type DiffMatchProps = { text1?: string | number | null; text2?: string | number | null };
 
 const DiffMatch: FC<DiffMatchProps> = (props) => {
   const { token } = theme.useToken();
   const Diff = new diff_match_patch();
-  const diffs = Diff.diff_main(props.text1 || '', props.text2 || '');
+  const diffs = Diff.diff_main(props.text1?.toString() || '', props.text2?.toString() || '');
   Diff.diff_cleanupSemantic(diffs);
 
   const getBackgroundColor = useCallback(

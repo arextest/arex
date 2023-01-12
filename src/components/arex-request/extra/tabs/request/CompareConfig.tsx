@@ -1,4 +1,4 @@
-import { Space, Typography } from 'antd';
+import { Divider, Space, Typography } from 'antd';
 import React, { FC } from 'react';
 
 import NodesIgnore from '../../../../appSetting/NodesIgnore';
@@ -24,6 +24,8 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
       </Space>
 
       <NodesIgnore interfaceId={props.interfaceId} operationId={props.operationId} />
+
+      <Divider style={{ margin: '0 0 16px 0' }} />
 
       <NodesSort interfaceId={props.interfaceId} operationId={props.operationId} />
     </div>

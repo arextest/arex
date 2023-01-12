@@ -1,6 +1,7 @@
 import { useRequest } from 'ahooks';
 import { Collapse, theme, Typography } from 'antd';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
   DiffJsonView,
@@ -15,6 +16,7 @@ import { PageFC } from './index';
 
 const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
   const { token } = theme.useToken();
+  const { t } = useTranslation(['components']);
 
   const [selectedDiff, setSelectedDiff] = useState<Difference>();
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
@@ -53,7 +55,13 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
 
   return (
     <>
-      <PanesTitle title={<span>Main Service API: {props.page.data.operationName}</span>} />
+      <PanesTitle
+        title={
+          <span>
+            {t('replay.caseServiceAPI')}: {props.page.data.operationName}
+          </span>
+        }
+      />
       <CollapseTable
         active={!!selectedDiff}
         table={

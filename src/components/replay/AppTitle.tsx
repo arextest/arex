@@ -1,9 +1,10 @@
-import { PlayCircleOutlined, SyncOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, SettingOutlined, SyncOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, DatePicker, Form, Input, Modal, notification } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, ReactNode, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { EmailKey } from '../../constant';
 import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
@@ -28,27 +29,31 @@ const TitleWrapper = styled(
     title: ReactNode;
     onRefresh?: () => void;
     onSetting?: () => void;
-  }) => (
-    <div className={props.className}>
-      <span>{props.title}</span>
-      {props.onRefresh && (
-        <TooltipButton
-          size='small'
-          type='text'
-          title='refresh'
-          icon={<SyncOutlined />}
-          onClick={props.onRefresh}
-        />
-      )}
-      {/*<TooltipButton*/}
-      {/*  size='small'*/}
-      {/*  type='text'*/}
-      {/*  title='setting'*/}
-      {/*  icon={<SettingOutlined />}*/}
-      {/*  onClick={props.onSetting}*/}
-      {/*/>*/}
-    </div>
-  ),
+  }) => {
+    const { t } = useTranslation(['components']);
+
+    return (
+      <div className={props.className}>
+        <span>{props.title}</span>
+        {props.onRefresh && (
+          <TooltipButton
+            size='small'
+            type='text'
+            title={t('replay.refresh')}
+            icon={<SyncOutlined />}
+            onClick={props.onRefresh}
+          />
+        )}
+        {/*<TooltipButton*/}
+        {/*  size='small'*/}
+        {/*  type='text'*/}
+        {/*  title='setting'*/}
+        {/*  icon={<SettingOutlined />}*/}
+        {/*  onClick={props.onSetting}*/}
+        {/*/>*/}
+      </div>
+    );
+  },
 )`
   display: flex;
   align-items: center;
@@ -58,6 +63,8 @@ const TitleWrapper = styled(
 `;
 
 const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
+  const { t } = useTranslation(['components']);
+
   const email = getLocalStorage<string>(EmailKey);
   const { setPages } = useStore();
 
@@ -75,20 +82,20 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     onSuccess(res) {
       if (res.result === 1) {
         notification.success({
-          message: 'Started Successfully',
+          message: t('replay.startSuccess'),
         });
         onRefresh && onRefresh();
       } else {
         console.error(res.desc);
         notification.error({
-          message: 'Start Failed',
+          message: t('replay.startFailed'),
           description: res.desc,
         });
       }
     },
     onError(e) {
       notification.error({
-        message: 'Start Failed',
+        message: t('replay.startFailed'),
         description: e.message,
       });
     },
@@ -149,13 +156,13 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
             icon={<PlayCircleOutlined />}
             onClick={() => setOpen(true)}
           >
-            Start replay
+            {t('replay.startButton')}
           </Button>
         }
       />
 
       <Modal
-        title={`Start replay - ${data.appId}`}
+        title={`${t('replay.startButton')} - ${data.appId}`}
         open={open}
         onOk={handleStartReplay}
         onCancel={() => setOpen(false)}
@@ -171,25 +178,25 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           autoComplete='off'
         >
           <Form.Item
-            label='Target Host'
+            label={t('replay.targetHost')}
             name='targetEnv'
-            rules={[{ required: true, message: "Target Host can't be empty" }]}
+            rules={[{ required: true, message: t('replay.emptyHost') }]}
           >
             <Input />
           </Form.Item>
 
           <Form.Item
-            label='Start Time'
+            label={t('replay.caseStartTime')}
             name='caseStartTime'
-            rules={[{ required: true, message: "Start Time can't be empty" }]}
+            rules={[{ required: true, message: t('replay.emptyStartTime') }]}
           >
             <DatePicker style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
-            label='End Time'
+            label={t('replay.caseEndTime')}
             name='caseEndTime'
-            rules={[{ required: true, message: "End Time can't be empty" }]}
+            rules={[{ required: true, message: t('replay.emptyEndTime') }]}
           >
             <DatePicker style={{ width: '100%' }} />
           </Form.Item>
