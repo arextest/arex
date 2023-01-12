@@ -102,6 +102,8 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
             store.request.compareEndpoint,
             store.environment?.variables || [],
           ),
+          headers: store.request.headers.filter((f) => f.key !== '' && f.value !== ''),
+          params: store.request.params.filter((f) => f.key !== '' && f.value !== ''),
         })
         .then((responseAndTestResult) => {
           dispatch((state) => {
@@ -115,7 +117,7 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
           type: 'loading',
         };
       });
-
+      // *** 参与校验分两种 1.重提醒，弹窗提示 2.静默处理，例如空值
       props
         .onPreSend({
           ...store.request,
@@ -128,6 +130,8 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
                 ...(store.environment?.variables || []),
                 ...prTestResultEnvs.prTestResultEnvs,
               ]),
+              headers: store.request.headers.filter((f) => f.key !== '' && f.value !== ''),
+              params: store.request.params.filter((f) => f.key !== '' && f.value !== ''),
             })
             .then((responseAndTestResult) => {
               dispatch((state) => {
