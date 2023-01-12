@@ -1,4 +1,5 @@
-import { SettingOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Avatar, Dropdown, DropdownProps, Typography } from 'antd';
 import React from 'react';
@@ -83,11 +84,25 @@ const AppHeader = () => {
       </div>
 
       <div className={'right'}>
+        <TooltipButton
+          css={css`
+            margin-right: 6px;
+          `}
+          icon={<QuestionCircleOutlined />}
+          title='Help'
+          onClick={() => window.open('https://arextest.github.io/arex-doc/')}
+        />
+        <TooltipButton
+          css={css`
+            margin-right: 6px;
+          `}
+          icon={<SettingOutlined />}
+          title='Setting'
+          onClick={handleSetting}
+        />
         {!(email || '').match('GUEST') && <InviteWorkspace />}
-        <TooltipButton icon={<SettingOutlined />} title='Setting' onClick={handleSetting} />
-
         <Dropdown overlayStyle={{ width: '170px' }} menu={userMenu}>
-          <Avatar src={avatar} size={24} style={{ marginLeft: '8px', cursor: 'pointer' }}>
+          <Avatar src={avatar} size={24} style={{ marginLeft: '0px', cursor: 'pointer' }}>
             {email?.[0].toUpperCase()}
           </Avatar>
         </Dropdown>
