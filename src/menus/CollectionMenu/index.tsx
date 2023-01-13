@@ -5,6 +5,7 @@ import {
   PlusOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Dropdown, Input, Tree } from 'antd';
@@ -503,11 +504,11 @@ const CollectionMenu = () => {
                 items: [
                   {
                     key: '1',
-                    label: <a>Run Case</a>,
+                    label: <a>Batch Run</a>,
                   },
                   {
                     key: '2',
-                    label: <a>Run Compare</a>,
+                    label: <a>Batch Compare</a>,
                   },
                 ],
                 onClick(e) {

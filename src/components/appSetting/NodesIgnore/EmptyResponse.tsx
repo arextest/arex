@@ -1,5 +1,6 @@
 import { Button, Empty } from 'antd';
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { FlexCenterWrapper } from '../../styledComponents';
 
@@ -8,16 +9,18 @@ type EmptyResponseProps = {
 };
 
 const EmptyResponse: FC<EmptyResponseProps> = (props) => {
+  const { t } = useTranslation(['components']);
+
   return (
     <FlexCenterWrapper style={{ padding: '24px' }}>
       <Empty
-        description={'Empty Response'}
+        description={t('appSetting.emptyResponse')}
         image={Empty.PRESENTED_IMAGE_SIMPLE}
         style={{ paddingBottom: '16px' }}
       />
 
       <Button size='small' type='primary' onClick={() => props.onClick?.()}>
-        Config Response
+        {t('appSetting.configResponse')}
       </Button>
     </FlexCenterWrapper>
   );

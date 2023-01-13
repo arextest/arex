@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { App, Button, Collapse, CollapseProps, List, Spin } from 'antd';
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import AppSettingService from '../../../services/AppSetting.service';
 import { OperationId, OperationInterface, SortNode } from '../../../services/AppSetting.type';
@@ -36,6 +37,7 @@ const CollapseWrapper = styled.div`
 
 const PathCollapse: FC<PathCollapseProps> = (props) => {
   const { message } = App.useApp();
+  const { t } = useTranslation(['components', 'common']);
 
   const handleEdit = (sortNode: SortNode) => props.onEdit && props.onEdit(sortNode.path, sortNode);
 
@@ -47,9 +49,9 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
     onSuccess(success) {
       if (success) {
         props.onReloadNodes?.();
-        message.success('Delete successfully');
+        message.success(t('message.delSuccess', { ns: 'common' }));
       } else {
-        message.error('Delete failed');
+        message.error(t('message.delFailed', { ns: 'common' }));
       }
     },
   });
@@ -66,72 +68,74 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
             props.onChange && props.onChange(props.interfaces.find((i) => i.id === id))
           }
         >
-          {props.interfaces.map((i) => {
-            return (
-              <Collapse.Panel
-                key={String(i.id)}
-                header={i.operationName}
-                extra={[
+          {props.interfaces.map((i) => (
+            <Collapse.Panel
+              key={String(i.id)}
+              header={i.operationName}
+              extra={
+                <>
                   <TooltipButton
                     key='add'
                     icon={<PlusOutlined />}
-                    title='Add Sort Key'
+                    title={t('appSetting.addSortKey')}
                     onClick={(e) => {
                       e.stopPropagation();
                       props.onChange?.(i, true);
                     }}
-                  />,
-                  <TooltipButton
-                    key='editResponse'
-                    icon={<CodeOutlined />}
-                    title='Edit Response'
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      props.onEditResponse?.(i);
-                    }}
-                  />,
-                ]}
-              >
-                <List
-                  size='small'
-                  loading={props.loadingPanel}
-                  dataSource={props.sortNodes}
-                  renderItem={(sortNode) => (
-                    <List.Item
-                      className={
-                        `${props.activeKey}_${props.activeCollapseKey?.id}` ===
-                        `${i.id}_${sortNode.id}`
-                          ? 'active-item'
-                          : ''
-                      }
-                    >
-                      <SpaceBetweenWrapper width={'100%'}>
-                        <span>{sortNode.path}</span>
-                        <span>
-                          <span style={{ marginRight: '8px' }}>
-                            {`${sortNode.pathKeyList.length} keys`}
-                          </span>
-                          <Button
-                            type='text'
-                            size='small'
-                            icon={<EditOutlined />}
-                            onClick={() => handleEdit(sortNode)}
-                          />
-                          <Button
-                            type='text'
-                            size='small'
-                            icon={<DeleteOutlined />}
-                            onClick={() => deleteIgnoreNode({ id: sortNode.id })}
-                          />
-                        </span>
-                      </SpaceBetweenWrapper>
-                    </List.Item>
+                  />
+                  {!props.interfaceId && (
+                    <TooltipButton
+                      key='editResponse'
+                      icon={<CodeOutlined />}
+                      title={t('appSetting.editResponse')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        props.onEditResponse?.(i);
+                      }}
+                    />
                   )}
-                  locale={{ emptyText: 'No Sort Nodes' }}
-                />
-              </Collapse.Panel>
-            );
-          })}
+                </>
+              }
+            >
+              <List
+                size='small'
+                loading={props.loadingPanel}
+                dataSource={props.sortNodes}
+                renderItem={(sortNode) => (
+                  <List.Item
+                    className={
+                      `${props.activeKey}_${props.activeCollapseKey?.id}` ===
+                      `${i.id}_${sortNode.id}`
+                        ? 'active-item'
+                        : ''
+                    }
+                  >
+                    <SpaceBetweenWrapper width={'100%'}>
+                      <span>{sortNode.path}</span>
+                      <span>
+                        <span style={{ marginRight: '8px' }}>
+                          {`${sortNode.pathKeyList.length} keys`}
+                        </span>
+                        <Button
+                          type='text'
+                          size='small'
+                          icon={<EditOutlined />}
+                          onClick={() => handleEdit(sortNode)}
+                        />
+                        <Button
+                          type='text'
+                          size='small'
+                          icon={<DeleteOutlined />}
+                          onClick={() => deleteIgnoreNode({ id: sortNode.id })}
+                        />
+                      </span>
+                    </SpaceBetweenWrapper>
+                  </List.Item>
+                )}
+                locale={{ emptyText: t('appSetting.noSortNodes') }}
+              />
+            </Collapse.Panel>
+          ))}
         </Collapse>
       </Spin>
     </CollapseWrapper>

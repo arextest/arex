@@ -1,5 +1,6 @@
 import { Empty } from 'antd';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { AppTitle, ReplayReport, ReplayTable } from '../components/replay';
 import { FlexCenterWrapper } from '../components/styledComponents';
@@ -9,6 +10,8 @@ import { ApplicationDataType, PlanStatistics } from '../services/Replay.type';
 import { PageFC } from './index';
 
 const ReplayPage: PageFC<ApplicationDataType> = (props) => {
+  const { t } = useTranslation(['components']);
+
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
   const handleSelectPlan = (plan: PlanStatistics) => {
     plan.planId === selectedPlan?.planId ? setSelectedPlan(undefined) : setSelectedPlan(plan);
@@ -38,7 +41,7 @@ const ReplayPage: PageFC<ApplicationDataType> = (props) => {
     </>
   ) : (
     <FlexCenterWrapper>
-      <Empty description={'Please select an application'} />
+      <Empty description={t('replay.selectApplication')} />
     </FlexCenterWrapper>
   );
 };

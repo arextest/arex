@@ -47,12 +47,12 @@ function CollectionTitle({
       items: [
         {
           key: '7',
-          label: <span className={'dropdown-click-target'}>Run Folder</span>,
+          label: <span className={'dropdown-click-target'}>Batch Run</span>,
           disabled: val.nodeType !== 3,
         },
         {
           key: '8',
-          label: <span className={'dropdown-click-target'}>Run Compare</span>,
+          label: <span className={'dropdown-click-target'}>Batch Compare</span>,
           disabled: val.nodeType !== 3,
         },
         {

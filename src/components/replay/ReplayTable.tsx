@@ -3,6 +3,7 @@ import { theme, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC } from 'react';
 import CountUp from 'react-countup';
+import { useTranslation } from 'react-i18next';
 
 import ReplayService from '../../services/Replay.service';
 import { PlanStatistics } from '../../services/Replay.type';
@@ -25,10 +26,11 @@ const ReplayTable: FC<ResultsProps> = ({
   onSelectedPlanChange,
 }) => {
   const { token } = theme.useToken();
+  const { t } = useTranslation(['components']);
 
   const columns: ColumnsType<PlanStatistics> = [
     {
-      title: 'ReplayReport Name',
+      title: t('replay.replayReportName'),
       dataIndex: 'planName',
       ellipsis: { showTitle: false },
       render: (text) => (
@@ -38,7 +40,7 @@ const ReplayTable: FC<ResultsProps> = ({
       ),
     },
     {
-      title: 'State',
+      title: t('replay.state'),
       render: (_, record) => (
         <StatusTag
           status={record.status}
@@ -48,7 +50,7 @@ const ReplayTable: FC<ResultsProps> = ({
       ),
     },
     {
-      title: 'Passed',
+      title: t('replay.passed'),
       width: 80,
       dataIndex: 'successCaseCount',
       render: (text) => (
@@ -61,7 +63,7 @@ const ReplayTable: FC<ResultsProps> = ({
       ),
     },
     {
-      title: 'Failed',
+      title: t('replay.failed'),
       width: 80,
       dataIndex: 'failCaseCount',
       render: (text) => (
@@ -69,7 +71,7 @@ const ReplayTable: FC<ResultsProps> = ({
       ),
     },
     {
-      title: 'Invalid',
+      title: t('replay.invalid'),
       width: 80,
       dataIndex: 'errorCaseCount',
       render: (text) => (
@@ -77,7 +79,7 @@ const ReplayTable: FC<ResultsProps> = ({
       ),
     },
     {
-      title: 'Blocked',
+      title: t('replay.blocked'),
       width: 80,
       dataIndex: 'waitCaseCount',
       render: (text) => (
@@ -90,11 +92,11 @@ const ReplayTable: FC<ResultsProps> = ({
       ),
     },
     {
-      title: 'Executor',
+      title: t('replay.executor'),
       dataIndex: 'creator',
     },
     {
-      title: 'replayStartTime',
+      title: t('replay.replayStartTime'),
       dataIndex: 'replayStartTime',
       render(text) {
         return text ? new Date(text).toLocaleString() : '-';

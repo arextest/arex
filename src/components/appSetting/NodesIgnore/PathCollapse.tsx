@@ -10,6 +10,7 @@ import { useRequest } from 'ahooks';
 import type { CollapseProps, InputRef } from 'antd';
 import { App, Button, Collapse, Input, List, Spin } from 'antd';
 import React, { FC, SyntheticEvent, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import AppSettingService from '../../../services/AppSetting.service';
 import {
@@ -48,6 +49,7 @@ export interface PathCollapseProps extends Omit<CollapseProps, 'activeKey' | 'on
 
 const PathCollapse: FC<PathCollapseProps> = (props) => {
   const { message } = App.useApp();
+  const { t } = useTranslation(['components', 'common']);
 
   const editInputRef = useRef<InputRef>(null);
   const [ignoredKey, setIgnoredKey] = useState('');
@@ -73,17 +75,17 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
     manual: true,
     onSuccess(success) {
       if (success) {
-        message.success('Update successfully');
+        message.success(t('message.updateSuccess', { ns: 'common' }));
         handleExitEdit();
         props.onReloadNodes?.();
       } else {
-        message.error('Update failed');
+        message.error(t('message.updateFailed', { ns: 'common' }));
       }
     },
   });
   const handleEditSave = () => {
     if (!ignoredKey) {
-      message.warning('Please enter ignored key');
+      message.warning(t('appSetting.emptyKey'));
       return;
     }
 
@@ -107,9 +109,9 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
     onSuccess(success) {
       if (success) {
         props.onReloadNodes?.();
-        message.success('Delete successfully');
+        message.success(t('message.delSuccess', { ns: 'common' }));
       } else {
-        message.error('Delete failed');
+        message.error(t('message.delFailed', { ns: 'common' }));
       }
     },
   });
@@ -144,14 +146,14 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                   extra={[
                     <TooltipButton
                       key='add'
-                      title='Add Key'
+                      title={t('appSetting.addKey')}
                       icon={<PlusOutlined />}
                       onClick={(e) => handleAddKey(e, path)}
                     />,
                     !props.manualEdit && (
                       <TooltipButton
                         key='editResponse'
-                        title='Edit Response'
+                        title={t('appSetting.editResponse')}
                         icon={<CodeOutlined />}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -207,7 +209,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                         </SpaceBetweenWrapper>
                       </List.Item>
                     )}
-                    locale={{ emptyText: 'No Ignored Nodes' }}
+                    locale={{ emptyText: t('appSetting.noIgnoredNodes') }}
                   />
                 </Collapse.Panel>
               );

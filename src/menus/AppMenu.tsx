@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useRequest, useToggle } from 'ahooks';
 import { theme } from 'antd';
 import React, { FC, useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { TooltipButton } from '../components';
 import MenuSelect from '../components/MenuSelect';
@@ -75,6 +76,8 @@ const MenuItem = styled((props: MenuItemProps) => {
 const AppMenu: FC<{
   onSelect: (app: ApplicationDataType) => void;
 }> = (props) => {
+  const { t } = useTranslation(['components']);
+
   const { token } = theme.useToken();
   const { activeMenu } = useStore();
   const email = getLocalStorage<string>(EmailKey) as string;
@@ -134,7 +137,7 @@ const AppMenu: FC<{
       selectedKeys={selectedKeys}
       prefix={
         <TooltipButton
-          title='Filter Favorite Apps'
+          title={t('applicationsMenu.filterFavoriteApps')}
           icon={
             favoriteFilter ? <HeartFilled style={{ color: token.colorError }} /> : <HeartOutlined />
           }
@@ -142,7 +145,7 @@ const AppMenu: FC<{
         />
       }
       onSelect={props.onSelect}
-      placeholder='applicationsMenu.appFilterPlaceholder'
+      placeholder={t('applicationsMenu.appFilterPlaceholder')}
       request={ReplayService.regressionList}
       requestOptions={{
         onSuccess(res) {

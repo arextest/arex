@@ -1,5 +1,6 @@
 import { Form, Input, Modal, notification, TreeSelect, Typography } from 'antd';
 import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { EmailKey } from '../../../constant';
@@ -21,6 +22,7 @@ export type SaveCaseProps = {
 
 const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
   const params = useParams();
+  const { t } = useTranslation(['components', 'common']);
   const { collectionTreeData } = useStore();
   const [form] = Form.useForm();
   const [value, setValue] = useState<string>('');
@@ -72,7 +74,7 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
         })
         .then((res) => {
           if (res?.body?.success) {
-            notification.success({ message: 'Save success' });
+            notification.success({ message: t('message.saveSuccess', { ns: 'common' }) });
             setOpen(false);
           } else {
             notification.error({
@@ -87,9 +89,9 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
     <div>
       <Modal
         open={open}
-        title={`SAVE CASE - ${title}`}
-        okText='Create'
-        cancelText='Cancel'
+        title={`${t('replay.saveCase')} - ${title}`}
+        okText={t('replay.create')}
+        cancelText={t('cancel', { ns: 'common' })}
         onCancel={() => setOpen(false)}
         onOk={handleSubmit}
       >
@@ -99,18 +101,18 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
           </Form.Item>
           <Form.Item
             name='caseName'
-            label='CaseTable name'
+            label={t('replay.caseName')}
             rules={[
               {
                 required: true,
-                message: 'Please input case name!',
+                message: t('replay.emptyCaseName'),
               },
             ]}
           >
             <Input />
           </Form.Item>
           <p>
-            <span>Save to </span>
+            <span>{t('replay.saveTo')}</span>
             <Text type='secondary'>
               {treeFindPath(collectionTreeData, (node) => node.key === value)
                 ?.map((i) => i.title)
@@ -123,7 +125,7 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
             rules={[
               {
                 required: true,
-                message: 'Please input the title of collection!',
+                message: t('replay.emptyTitle'),
               },
             ]}
           >
@@ -133,7 +135,7 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
               value={value}
               dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
               treeData={collectionTreeSelectData}
-              placeholder='Please select'
+              placeholder={t('replay.selectTree')}
               treeDefaultExpandAll
               onChange={onChange}
             />

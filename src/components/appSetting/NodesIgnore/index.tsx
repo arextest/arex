@@ -2,6 +2,7 @@ import { useRequest } from 'ahooks';
 import { App, Col, Row } from 'antd';
 import { TreeProps } from 'antd/lib/tree';
 import React, { FC, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
 import { tryParseJsonString, tryPrettierJsonString } from '../../../helpers/utils';
@@ -28,6 +29,7 @@ export type SettingNodeIgnoreProps = {
 
 const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
   const { message } = App.useApp();
+  const { t } = useTranslation(['components', 'common']);
 
   const [checkedNodesData, setCheckedNodesData] = useImmer<{
     operationId?: OperationId<'Global'>;
@@ -110,9 +112,9 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
     onSuccess(success) {
       if (success) {
         queryIgnoreNode();
-        message.success('Update successfully');
+        message.success(t('message.updateSuccess', { ns: 'common' }));
       } else {
-        message.error('Update failed');
+        message.error(t('message.updateFailed', { ns: 'common' }));
       }
     },
   });
@@ -125,9 +127,9 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
     onSuccess(success) {
       if (success) {
         queryIgnoreNode();
-        message.success('Delete successfully');
+        message.success(t('message.delSuccess', { ns: 'common' }));
       } else {
-        message.error('Delete failed');
+        message.error(t('message.delFailed', { ns: 'common' }));
       }
     },
   });
@@ -167,9 +169,9 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
     onSuccess(success) {
       if (success) {
         queryInterfaceResponse();
-        message.success('Update successfully');
+        message.success(t('message.updateSuccess', { ns: 'common' }));
       } else {
-        message.error('Update failed');
+        message.error(t('message.updateFailed', { ns: 'common' }));
       }
     },
   });
@@ -232,82 +234,79 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
   };
 
   return (
-    <div>
-      <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
-        <Col span={props.interfaceId ? 24 : 10}>
+    <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
+      <Col span={props.interfaceId ? 24 : 10}>
+        <PathCollapse
+          manualEdit
+          appId={props.appId}
+          interfaceId={props.interfaceId}
+          title={props.interfaceId ? undefined : t('appSetting.global')}
+          loadingPanel={loadingIgnoreNode}
+          interfaces={[
+            {
+              id: props.interfaceId ?? GLOBAL_OPERATION_ID,
+              operationName: props.interfaceId ? 'NodeIgnore' : 'Global',
+            },
+          ]}
+          activeKey={activeOperationInterface?.id}
+          ignoreNodes={ignoreNodeList}
+          onChange={(data, maintain) =>
+            setActiveOperationInterface(
+              data?.id !== activeOperationInterface?.id || maintain ? data : undefined,
+            )
+          }
+          onReloadNodes={queryIgnoreNode}
+        />
+        {props.appId && (
           <PathCollapse
-            manualEdit
+            title={t('appSetting.interfaces')}
             appId={props.appId}
-            interfaceId={props.interfaceId}
-            title={props.interfaceId ? undefined : 'Global'}
-            expandIcon={props.interfaceId ? () => <></> : undefined}
+            loading={loadingOperationList}
             loadingPanel={loadingIgnoreNode}
-            interfaces={[
-              {
-                id: props.interfaceId ?? GLOBAL_OPERATION_ID,
-                operationName: props.interfaceId ? 'NodeIgnore' : 'Global',
-              },
-            ]}
-            activeKey={props.interfaceId ?? activeOperationInterface?.id}
+            interfaces={operationList}
+            activeKey={activeOperationInterface?.id}
             ignoreNodes={ignoreNodeList}
             onChange={(data, maintain) =>
               setActiveOperationInterface(
                 data?.id !== activeOperationInterface?.id || maintain ? data : undefined,
               )
             }
+            onEditResponse={handleEditResponse}
             onReloadNodes={queryIgnoreNode}
           />
-          {props.appId && (
-            <PathCollapse
-              title='Interfaces'
-              appId={props.appId}
-              loading={loadingOperationList}
-              loadingPanel={loadingIgnoreNode}
-              interfaces={operationList}
-              activeKey={activeOperationInterface?.id}
-              ignoreNodes={ignoreNodeList}
-              onChange={(data, maintain) =>
-                setActiveOperationInterface(
-                  data?.id !== activeOperationInterface?.id || maintain ? data : undefined,
-                )
-              }
-              onEditResponse={handleEditResponse}
-              onReloadNodes={queryIgnoreNode}
-            />
-          )}
-        </Col>
-
-        {props.appId && (
-          <Col span={13}>
-            <EditAreaPlaceholder
-              dashedBorder
-              title='Edit Area (Click interface to start)'
-              ready={
-                !!activeOperationInterface && activeOperationInterface.id !== GLOBAL_OPERATION_ID
-              }
-            >
-              {nodesEditMode === NodesEditMode.Tree ? (
-                <IgnoreTree
-                  title={activeOperationInterface?.operationName}
-                  treeData={interfaceResponseParsed}
-                  // selectedKeys={checkedNodesData.exclusionsList}
-                  loading={loadingInterfaceResponse}
-                  onSelect={handleIgnoreTreeSelect}
-                  onSave={handleIgnoreSave}
-                  onEditResponse={handleEditResponse}
-                />
-              ) : (
-                <ResponseRaw
-                  value={tryPrettierJsonString(interfaceResponse?.operationResponse || '')}
-                  onSave={handleResponseSave}
-                  onCancel={handleCancelEditResponse}
-                />
-              )}
-            </EditAreaPlaceholder>
-          </Col>
         )}
-      </Row>
-    </div>
+      </Col>
+
+      {props.appId && (
+        <Col span={13}>
+          <EditAreaPlaceholder
+            dashedBorder
+            title={t('appSetting.editArea')}
+            ready={
+              !!activeOperationInterface && activeOperationInterface.id !== GLOBAL_OPERATION_ID
+            }
+          >
+            {nodesEditMode === NodesEditMode.Tree ? (
+              <IgnoreTree
+                title={activeOperationInterface?.operationName}
+                treeData={interfaceResponseParsed}
+                // selectedKeys={checkedNodesData.exclusionsList}
+                loading={loadingInterfaceResponse}
+                onSelect={handleIgnoreTreeSelect}
+                onSave={handleIgnoreSave}
+                onEditResponse={handleEditResponse}
+              />
+            ) : (
+              <ResponseRaw
+                value={tryPrettierJsonString(interfaceResponse?.operationResponse || '')}
+                onSave={handleResponseSave}
+                onCancel={handleCancelEditResponse}
+              />
+            )}
+          </EditAreaPlaceholder>
+        </Col>
+      )}
+    </Row>
   );
 };
 

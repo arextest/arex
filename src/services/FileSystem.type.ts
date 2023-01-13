@@ -62,7 +62,7 @@ export type BaseInterface = {
   recordId?: string | null;
   comparisonMsg?: null;
   labelIds?: string[];
-  description?: null;
+  description?: string | null;
 };
 
 // ------ /api/filesystem/saveInterface ------
