@@ -69,12 +69,13 @@ const MainMenu: FC<MainMenuProps> = (props) => {
 
   const MenuContent = useMemo(() => {
     const Content = FlatMenu.find((menu) => menu.key === activeKey);
-    return !props.collapse && Content?.Menu ? (
-      <ErrorBoundary>
-        <Content.Menu />
-      </ErrorBoundary>
-    ) : (
-      <></>
+    return (
+      !props.collapse &&
+      Content?.Menu && (
+        <ErrorBoundary>
+          <Content.Menu />
+        </ErrorBoundary>
+      )
     );
   }, [activeKey, props.collapse]);
 

@@ -140,7 +140,6 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
             props.interfaces.map((path) => {
               return (
                 <Collapse.Panel
-                  collapsible={props.interfaceId ? 'icon' : 'header'}
                   key={String(path.id)}
                   header={path.operationName}
                   extra={[

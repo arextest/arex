@@ -150,9 +150,6 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
       onBefore() {
         setInterfaceResponse();
       },
-      onSuccess(res) {
-        console.log({ queryInterfaceResponse: res });
-      },
     },
   );
   const interfaceResponseParsed = useMemo<{ [key: string]: any }>(() => {
