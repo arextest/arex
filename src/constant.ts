@@ -22,7 +22,7 @@ export const MethodMap = {
     color: '#eb2013',
   },
   PATCH: {
-    color: '#212121',
+    color: '#d3adf7',
   },
   UNKNOWN: {
     color: '#0cbb52',
