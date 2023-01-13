@@ -1,8 +1,8 @@
-import { QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
-import { css } from '@emotion/react';
+import { LogoutOutlined, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Avatar, Dropdown, DropdownProps, Typography } from 'antd';
-import React from 'react';
+import { Avatar, Dropdown, DropdownProps, Space, Typography } from 'antd';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { EmailKey } from '../../constant';
@@ -39,6 +39,8 @@ const HeaderWrapper = styled.div`
 
 const AppHeader = () => {
   const nav = useNavigate();
+  const { t, i18n } = useTranslation('common');
+
   const { avatar, theme } = useUserProfile();
   const { logout, setPages } = useStore();
   const email = getLocalStorage<string>(EmailKey);
@@ -62,19 +64,23 @@ const AppHeader = () => {
     nav('/login');
   };
 
-  const userMenu: DropdownProps['menu'] = {
-    items: [
-      {
-        key: 'signOut',
-        label: 'Sign Out',
+  const userMenu: DropdownProps['menu'] = useMemo(
+    () => ({
+      items: [
+        {
+          key: 'logout',
+          label: t('logout'),
+          icon: <LogoutOutlined />,
+        },
+      ],
+      onClick: (e) => {
+        if (e.key === 'logout') {
+          handleLogout();
+        }
       },
-    ],
-    onClick: (e) => {
-      if (e.key === 'signOut') {
-        handleLogout();
-      }
-    },
-  };
+    }),
+    [i18n.language],
+  );
 
   return (
     <HeaderWrapper>
@@ -83,30 +89,20 @@ const AppHeader = () => {
         <GitHubStarButton theme={theme} />
       </div>
 
-      <div className={'right'}>
+      <Space className={'right'} size='small'>
+        {!email?.match('GUEST') && <InviteWorkspace />}
         <TooltipButton
-          css={css`
-            margin-right: 6px;
-          `}
+          title={t('help')}
           icon={<QuestionCircleOutlined />}
-          title='Help'
           onClick={() => window.open('https://arextest.github.io/arex-doc/')}
         />
-        <TooltipButton
-          css={css`
-            margin-right: 6px;
-          `}
-          icon={<SettingOutlined />}
-          title='Setting'
-          onClick={handleSetting}
-        />
-        {!(email || '').match('GUEST') && <InviteWorkspace />}
-        <Dropdown overlayStyle={{ width: '170px' }} menu={userMenu}>
+        <TooltipButton title={t('setting')} icon={<SettingOutlined />} onClick={handleSetting} />
+        <Dropdown menu={userMenu}>
           <Avatar src={avatar} size={24} style={{ marginLeft: '0px', cursor: 'pointer' }}>
             {email?.[0].toUpperCase()}
           </Avatar>
         </Dropdown>
-      </div>
+      </Space>
     </HeaderWrapper>
   );
 };

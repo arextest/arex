@@ -1,13 +1,15 @@
 import { EditOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Breadcrumb, Button, Select, Space, Tag, Typography } from 'antd';
-import React, { FC, useEffect, useState } from 'react';
+import { App, Breadcrumb, Button, Input, Select, Space, Tag, Typography } from 'antd';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { CollectionService } from '../../../services/Collection.service';
 import { FileSystemService } from '../../../services/FileSystem.service';
 import { SpaceBetweenWrapper } from '../../styledComponents';
+import QuickEdit from '../components/smart/QuickEdit';
+import { HttpContext } from '../index';
 
 const { Text } = Typography;
 
@@ -21,6 +23,7 @@ export type HttpBreadcrumbProps = {
 const CollectionBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTags, nodeType }) => {
   const params = useParams();
   const { message } = App.useApp();
+  const { store, dispatch } = useContext(HttpContext);
 
   const [editEditAble, setEditAble] = useState(false);
   const [labelValue, setLabelValue] = useState<string[]>([]);
@@ -29,6 +32,16 @@ const CollectionBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTa
     () => CollectionService.queryLabels({ workspaceId: params.workspaceId as string }),
     {
       ready: !!params.workspaceId,
+    },
+  );
+
+  const { run: runUpdateRequestDescription } = useRequest(
+    () => FileSystemService.saveCase({ id: id, description: store.request.description }),
+    {
+      manual: true,
+      onSuccess() {
+        message.success('update success');
+      },
     },
   );
 
@@ -58,25 +71,39 @@ const CollectionBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTa
 
         {nodeType === 2 &&
           (!editEditAble ? (
-            <>
-              {labelValue.map((id) => (
-                <Tag key={id} color={labelsData?.find((d) => d.id === id)?.color}>
-                  {labelsData?.find((d) => d.id === id)?.labelName}
-                </Tag>
-              ))}
+            <div
+              css={css`
+                margin-left: 10px;
+                &:hover {
+                  .edit-btn {
+                    display: inline-block;
+                  }
+                }
+              `}
+            >
+              {labelValue.length > 0 ? (
+                labelValue.map((id) => (
+                  <Tag key={id} color={labelsData?.find((d) => d.id === id)?.color}>
+                    {labelsData?.find((d) => d.id === id)?.labelName}
+                  </Tag>
+                ))
+              ) : (
+                <Tag>Add Tag</Tag>
+              )}
 
-              <Button size='small' type='link' icon={<EditOutlined />}>
-                <Text
-                  type={'secondary'}
-                  onClick={() => {
-                    setEditAble(true);
-                  }}
-                  style={{ fontSize: '12px' }}
-                >
-                  Edit Label
-                </Text>
-              </Button>
-            </>
+              <Button
+                css={css`
+                  display: none;
+                `}
+                className={'edit-btn'}
+                size='small'
+                type='link'
+                icon={<EditOutlined />}
+                onClick={() => {
+                  setEditAble(true);
+                }}
+              ></Button>
+            </div>
           ) : (
             <Select
               css={css`
@@ -90,7 +117,17 @@ const CollectionBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTa
               value={labelValue}
               options={labelsData?.map((t) => ({ label: t.labelName, value: t.id }))}
               tagRender={({ label, value }) => (
-                <Tag key={value} color={labelsData?.find((d) => d.id === value)?.color}>
+                <Tag
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  key={value}
+                  closable
+                  onClose={() => {
+                    setLabelValue(labelValue.filter((l) => l !== value));
+                  }}
+                  color={labelsData?.find((d) => d.id === value)?.color}
+                >
                   {label}
                 </Tag>
               )}
@@ -98,6 +135,39 @@ const CollectionBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTa
               onChange={setLabelValue}
             />
           ))}
+        <QuickEdit
+          edit={(setDisplayMode) => (
+            <Input
+              size={'small'}
+              value={store.request.description}
+              onChange={(e) => {
+                dispatch((state) => {
+                  state.request.description = e.target.value;
+                });
+              }}
+              onBlur={() => {
+                setDisplayMode();
+                runUpdateRequestDescription();
+              }}
+              onKeyUp={(e) => {
+                if (e.keyCode === 13) {
+                  setDisplayMode();
+                  runUpdateRequestDescription();
+                }
+              }}
+            />
+          )}
+          display={
+            <Text
+              type={'secondary'}
+              css={css`
+                font-size: 12px;
+              `}
+            >
+              {store.request.description || 'description'}
+            </Text>
+          }
+        ></QuickEdit>
       </Space>
     </SpaceBetweenWrapper>
   );

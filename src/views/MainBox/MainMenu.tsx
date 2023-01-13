@@ -38,7 +38,7 @@ const FlatMenu = flatTree(MenuConfigList, 'key');
 
 const MainMenu: FC<MainMenuProps> = (props) => {
   const { activeMenu, setActiveMenu } = useStore();
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
   const activeKey = useMemo(() => activeMenu[0], [activeMenu]);
 
   const menuTranslation = (menu: MenuConfig) => {
@@ -47,7 +47,7 @@ const MainMenu: FC<MainMenuProps> = (props) => {
     }
     return {
       ...menu,
-      label: t(menu.label as MenusType),
+      label: t(menu.key),
     };
   };
 
@@ -58,7 +58,7 @@ const MainMenu: FC<MainMenuProps> = (props) => {
         key: ICON_KEY,
         icon: <CollapseButton collapse={props.collapse} />,
       }),
-    [props.collapse],
+    [props.collapse, i18n.language],
   );
 
   const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
@@ -69,12 +69,13 @@ const MainMenu: FC<MainMenuProps> = (props) => {
 
   const MenuContent = useMemo(() => {
     const Content = FlatMenu.find((menu) => menu.key === activeKey);
-    return !props.collapse && Content?.Menu ? (
-      <ErrorBoundary>
-        <Content.Menu />
-      </ErrorBoundary>
-    ) : (
-      <></>
+    return (
+      !props.collapse &&
+      Content?.Menu && (
+        <ErrorBoundary>
+          <Content.Menu />
+        </ErrorBoundary>
+      )
     );
   }, [activeKey, props.collapse]);
 

@@ -162,7 +162,7 @@ const Http = forwardRef<HttpRef, HttpProps>(
           state.request.params = value.params || [];
           state.request.testScripts = value.testScripts || [];
           state.request.preRequestScripts = value.preRequestScripts || [];
-
+          state.request.description = value.description || '';
           // 默认加上{Content-Type:application/json}
           if (!state.request.headers.find((head) => head.key === 'Content-Type')) {
             state.request.headers.unshift({

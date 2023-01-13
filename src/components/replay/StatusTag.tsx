@@ -48,7 +48,7 @@ const StatusTag: FC<StatusTagProps> = (props) => {
   );
 
   return state ? (
-    <Tag color={state.color} icon={state.icon}>
+    <Tag color={state.color} icon={icon}>
       {t('replay.' + state.label)}
     </Tag>
   ) : (
