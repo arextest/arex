@@ -47,7 +47,7 @@ const MainMenu: FC<MainMenuProps> = (props) => {
     }
     return {
       ...menu,
-      label: t(menu.label as MenusType),
+      label: t(menu.key),
     };
   };
 

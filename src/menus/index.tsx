@@ -13,7 +13,7 @@ import ReplayMenu from './ReplayMenu';
 
 export type MenuConfig = {
   key: string;
-  label: ReactNode;
+  label: string;
   icon: ReactNode;
   Menu?: FC;
   children?: MenuConfig[];

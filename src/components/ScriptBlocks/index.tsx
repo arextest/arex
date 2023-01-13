@@ -13,7 +13,7 @@ export const ScriptBlockType = {
 
 export type BaseScriptBlock = {
   key: string;
-  type: (typeof ScriptBlockType)[keyof typeof ScriptBlockType];
+  type: typeof ScriptBlockType[keyof typeof ScriptBlockType];
   icon: ReactNode;
   label: ReactNode;
 };
