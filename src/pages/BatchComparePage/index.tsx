@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
-import { Button, Divider, Spin, Table, Tree } from 'antd';
+import { Button, Divider, Spin, Table, Tag, Tree } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -107,9 +107,13 @@ const BatchComparePage = () => {
       key: 'name',
     },
     {
-      title: 'Issues',
-      dataIndex: 'issues',
-      key: 'issues',
+      title: 'Result',
+      dataIndex: 'diffResultCode',
+      key: 'diffResultCode',
+      render(_, record) {
+        const result = { '0': 'success', '1': 'error', '2': 'error' }[record.diffResultCode];
+        return <Tag color={result}>{result}</Tag>;
+      },
     },
   ];
   const dataSource = useMemo(() => {
@@ -118,6 +122,7 @@ const BatchComparePage = () => {
       name: i.caseRequest.name,
       issues: 0,
       caseCompare: i.caseCompare,
+      diffResultCode: i.caseCompare,
       compareResult: i.compareResult,
       comparisonConfig: i.comparisonConfig,
     }));
