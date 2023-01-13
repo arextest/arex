@@ -1,22 +1,72 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
-import { Button, Divider, Table, Tree } from 'antd';
+import { Button, Divider, Spin, Table, Tree } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { DiffJsonView, DiffJsonViewProps } from '../../components/replay/Analysis';
 import DiffList from '../../components/replay/Analysis/DiffList';
+import axios from '../../helpers/api/axios';
 import { genCaseTreeData } from '../../helpers/BatchRun/util';
 import { treeFind } from '../../helpers/collection/util';
 import { useStore } from '../../store';
 import { checkResponsesIsJson, getBatchCompareResults } from './util';
 
+const ExpandedRowRender = ({ record }) => {
+  const [diffJsonViewData, setDiffJsonViewData] = useState<DiffJsonViewProps['data']>();
+
+  const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
+  const { data, loading } = useRequest(() => {
+    return axios
+      .post('/report/compare/quickCompare', {
+        msgCombination: {
+          baseMsg: JSON.stringify(record.compareResult.responses[0]),
+          testMsg: JSON.stringify(record.compareResult.responses[1]),
+          comparisonConfig: record.comparisonConfig,
+        },
+      })
+      .then((res) => {
+        const rows = res.body.diffDetails || [];
+        return rows.map((r) => r.logs[0]);
+      });
+  });
+  return (
+    <Spin spinning={loading}>
+      {checkResponsesIsJson(record.compareResult.responses) ? (
+        <DiffList
+          externalData={{
+            logs: data || [],
+            baseMsg: JSON.stringify(record.compareResult.responses[0]),
+            testMsg: JSON.stringify(record.compareResult.responses[1]),
+          }}
+          appId={''}
+          operationId={''}
+          onTreeModeClick={(diff) => {
+            if (diff) {
+              setDiffJsonViewData({
+                baseMsg: diff.baseMsg,
+                testMsg: diff.testMsg,
+                logs: diff.logs,
+              });
+              setDiffJsonViewVisible(true);
+            }
+          }}
+        />
+      ) : null}
+
+      <DiffJsonView
+        data={diffJsonViewData}
+        open={diffJsonViewVisible}
+        onClose={() => setDiffJsonViewVisible(false)}
+      />
+    </Spin>
+  );
+};
 const BatchComparePage = () => {
   const { activeEnvironment } = useStore();
   const { collectionTreeData } = useStore();
-  const [diffJsonViewData, setDiffJsonViewData] = useState<DiffJsonViewProps['data']>();
-  const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
+
   const params = useParams();
   // 生成caseTree数据
   const caseTreeData = useMemo(() => {
@@ -43,6 +93,7 @@ const BatchComparePage = () => {
           (c) => treeFind(collectionTreeData, (node) => node.key === c)?.nodeType === 2,
         ),
         activeEnvironment?.keyValues || [],
+        collectionTreeData,
       ),
     {
       manual: true,
@@ -65,9 +116,10 @@ const BatchComparePage = () => {
     return (data || []).map((i) => ({
       id: i.caseRequest.id,
       name: i.caseRequest.name,
-      issues: i.quickCompare.length,
-      quickCompare: i.quickCompare,
+      issues: 0,
+      caseCompare: i.caseCompare,
       compareResult: i.compareResult,
+      comparisonConfig: i.comparisonConfig,
     }));
   }, [data]);
   return (
@@ -155,39 +207,11 @@ const BatchComparePage = () => {
             bordered
             rowKey={'id'}
             expandable={{
-              expandedRowRender: (record) =>
-                checkResponsesIsJson(record.compareResult.responses) ? (
-                  <DiffList
-                    externalData={{
-                      logs: record.quickCompare,
-                      baseMsg: JSON.stringify(record.compareResult.responses[0]),
-                      testMsg: JSON.stringify(record.compareResult.responses[1]),
-                    }}
-                    appId={''}
-                    operationId={''}
-                    onTreeModeClick={(diff) => {
-                      if (diff) {
-                        setDiffJsonViewData({
-                          baseMsg: diff.baseMsg,
-                          testMsg: diff.testMsg,
-                          logs: diff.logs,
-                        });
-                        setDiffJsonViewVisible(true);
-                      }
-                    }}
-                  ></DiffList>
-                ) : (
-                  <span>compare result data in wrong format</span>
-                ),
+              expandedRowRender: (record) => <ExpandedRowRender record={record} />,
             }}
             loading={loading}
             columns={columns}
             dataSource={dataSource}
-          />
-          <DiffJsonView
-            data={diffJsonViewData}
-            open={diffJsonViewVisible}
-            onClose={() => setDiffJsonViewVisible(false)}
           />
         </div>
       </Allotment.Pane>

@@ -1,11 +1,13 @@
 import { urlPretreatment } from '../../components/arex-request/helpers/utils/util';
 import axios from '../../helpers/api/axios';
+import { treeFindPath } from '../../helpers/collection/util';
 import { runCompareRESTRequest } from '../../helpers/CompareRequestRunner';
 import { FileSystemService } from '../../services/FileSystem.service';
 
 export const getBatchCompareResults = async (
   caseIds: string[],
   envs: { key: string; value: string }[],
+  collectionTreeData: any,
 ): Promise<
   {
     caseRequest: {
@@ -17,9 +19,19 @@ export const getBatchCompareResults = async (
     compareResult: {
       responses: [any, any];
     };
-    quickCompare: any;
+    caseCompare: any;
+    comparisonConfig: any;
   }[]
 > => {
+  function findNodeParent(c: string) {
+    return treeFindPath(collectionTreeData, (node: any) => node.key === c)?.at(-2);
+  }
+  const allRequests = [];
+  const requestIds = [...new Set(caseIds.map((c) => findNodeParent(c)?.key))];
+  for (let i = 0; i < requestIds.length; i++) {
+    allRequests.push(await FileSystemService.queryInterface({ id: requestIds[i] }));
+  }
+
   const results = [];
   for (let i = 0; i < caseIds.length; i++) {
     try {
@@ -49,22 +61,29 @@ export const getBatchCompareResults = async (
         headers: headers,
         body: body,
       });
-      const quickCompare = await axios
-        .post('/report/compare/quickCompare', {
+
+      const interfaceId = findNodeParent(caseId).key;
+      const operationId = allRequests.find((i) => i.id === interfaceId).operationId;
+      const comparisonConfig = await axios.get(
+        `/report/config/comparison/summary/queryByInterfaceIdAndOperationId?interfaceId=${interfaceId}&operationId=${operationId}`,
+      );
+      const caseCompare = await axios
+        .post('/report/compare/caseCompare', {
           msgCombination: {
             baseMsg: JSON.stringify(compareResult.responses[0]),
             testMsg: JSON.stringify(compareResult.responses[1]),
+            comparisonConfig: comparisonConfig,
           },
         })
         .then((res) => {
-          const rows = res.body.diffDetails || [];
-          return rows.map((r) => r.logs[0]);
+          return res.body.diffResultCode;
         });
 
       results.push({
         caseRequest,
         compareResult,
-        quickCompare,
+        caseCompare,
+        comparisonConfig,
       });
     } catch (e) {
       console.log(e);
