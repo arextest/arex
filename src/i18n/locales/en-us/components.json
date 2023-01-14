@@ -33,6 +33,10 @@
     "filterFavoriteApps": "Filter Favorite Apps",
     "appFilterPlaceholder": "Search Applications"
   },
+  "collection": {
+    "create_new": "Create New",
+    "batch_run": "Batch Run"
+  },
   "replay": {
     "selectApplication": "Please select an application",
     "refresh": "refresh",

@@ -11,6 +11,7 @@ import { useRequest } from 'ahooks';
 import { Button, Dropdown, Input, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps, TreeProps } from 'antd/lib/tree';
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { TooltipButton } from '../../components';
@@ -134,6 +135,7 @@ export type nodeType = {
 } & DataNode;
 
 const CollectionMenu = () => {
+  const { t } = useTranslation(['components']);
   const params = useParams();
   const { activeMenu, collectionLastManualUpdateTimestamp, setPages, setCollectionTreeData } =
     useStore();
@@ -496,7 +498,7 @@ const CollectionMenu = () => {
               className={'collection-header-create'}
               onClick={createCollection}
               placement='bottomLeft'
-              title={'Create New'}
+              title={t('collection.create_new')}
             />
 
             <Dropdown
@@ -504,7 +506,7 @@ const CollectionMenu = () => {
                 items: [
                   {
                     key: '1',
-                    label: <a>Batch Run</a>,
+                    label: <a>{t('collection.batch_run')}</a>,
                   },
                   {
                     key: '2',

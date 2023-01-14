@@ -33,6 +33,10 @@
     "filterFavoriteApps": "收藏应用列表",
     "appFilterPlaceholder": "搜索应用"
   },
+  "collection": {
+    "create_new": "新建",
+    "batch_run": "批量执行"
+  },
   "replay": {
     "selectApplication": "请选择一个应用",
     "refresh": "刷新",
