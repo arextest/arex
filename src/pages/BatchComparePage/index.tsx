@@ -3,6 +3,7 @@ import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
 import { Button, Divider, Spin, Table, Tag, Tree } from 'antd';
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { DiffJsonView, DiffJsonViewProps } from '../../components/replay/Analysis';
@@ -64,6 +65,7 @@ const ExpandedRowRender = ({ record }) => {
   );
 };
 const BatchComparePage = () => {
+  const { t } = useTranslation(['common', 'page']);
   const { activeEnvironment } = useStore();
   const { collectionTreeData } = useStore();
 
@@ -102,12 +104,12 @@ const BatchComparePage = () => {
 
   const columns = [
     {
-      title: 'Case',
+      title: t('case', { ns: 'common' }),
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: 'Result',
+      title: t('batchComparePage.result', { ns: 'page' }),
       dataIndex: 'diffResultCode',
       key: 'diffResultCode',
       render(_, record) {
@@ -153,7 +155,7 @@ const BatchComparePage = () => {
                 font-weight: bolder;
               `}
             >
-              Select need compare case
+              {t('batchComparePage.select_need_compare_case', { ns: 'page' })}
             </p>
             <Tree
               checkable
@@ -193,7 +195,7 @@ const BatchComparePage = () => {
                 run();
               }}
             >
-              Run Compare
+              {t('batchComparePage.run_compare', { ns: 'page' })}
             </Button>
           </div>
         </div>
@@ -206,7 +208,7 @@ const BatchComparePage = () => {
             padding-top: 10px;
           `}
         >
-          <h3>Compare results</h3>
+          <h3>{t('batchComparePage.compare_results', { ns: 'page' })}</h3>
           <Table
             size={'small'}
             bordered

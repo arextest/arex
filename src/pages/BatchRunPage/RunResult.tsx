@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import { Empty, Spin, Tag } from 'antd';
 import React from 'react';
 import { FC, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { TestResult } from '../../components/arex-request';
 import { HoppRESTResponse } from '../../components/arex-request/helpers/types/HoppRESTResponse';
@@ -26,6 +27,7 @@ interface RunResultProps {
 }
 
 const RunResult: FC<RunResultProps> = ({ loading, dataSource }) => {
+  const { t } = useTranslation(['common']);
   return (
     <Spin spinning={loading}>
       {dataSource.length > 0 ? (
@@ -67,7 +69,7 @@ const RunResult: FC<RunResultProps> = ({ loading, dataSource }) => {
                           margin-bottom: 10px;
                         `}
                       >
-                        <Tag>case</Tag>
+                        <Tag>{t('case_tag')}</Tag>
                         <span>{dataSourceItemDataItem.request.name}</span>
                       </div>
                       <TestResult

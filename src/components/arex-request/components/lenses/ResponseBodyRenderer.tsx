@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import { Tabs } from 'antd';
 import { FC, useMemo } from 'react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { HoppRESTResponse } from '../../helpers/types/HoppRESTResponse';
 import { HoppTestResult } from '../../helpers/types/HoppTestResult';
@@ -18,6 +19,7 @@ const LensesResponseBodyRenderer: FC<{
   onPin: LensesHeadersRendererEntryProps['onPin'];
   config?: TabConfig;
 }> = ({ response, testResult, onPin, config }) => {
+  const { t } = useTranslation();
   const items = useMemo(() => {
     let _items: Tab[] = [
       {
@@ -26,17 +28,17 @@ const LensesResponseBodyRenderer: FC<{
         children: <JSONLensRenderer response={response} />,
       },
       {
-        label: 'Raw',
+        label: t('raw', { ns: 'common' }),
         key: '1',
         children: <RawLensRenderer response={response} />,
       },
       {
-        label: 'Headers',
+        label: t('http.requestHeaders', { ns: 'components' }),
         key: '2',
         children: <LensesHeadersRenderer onPin={onPin} headers={response.headers} />,
       },
       {
-        label: 'Result',
+        label: t('http.result', { ns: 'components' }),
         key: '3',
         children: <TestResult testResult={testResult} />,
       },

@@ -30,6 +30,7 @@
   "friday": "Fri.",
   "saturday": "Sat.",
   "sunday": "Sun.",
+  "description": "description",
   "message": {
     "success": "Success",
     "error": "Error",
@@ -45,5 +46,8 @@
   "appSetting": "AppSetting",
   "environment": "Environment",
   "setting": "Setting",
-  "create": "Create"
+  "create": "Create",
+  "case_tag": "case",
+  "case": "Case",
+  "are_you_sure": "Are you sure？"
 }

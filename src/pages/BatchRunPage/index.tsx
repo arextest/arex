@@ -5,6 +5,7 @@ import { App, Button, Checkbox, Col, Form, Row, Space, Tree } from 'antd';
 import { Divider } from 'antd';
 import type { TreeProps } from 'antd/es/tree';
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { genCaseTreeData } from '../../helpers/BatchRun/util';
@@ -14,6 +15,7 @@ import RunResult from './RunResult';
 import { getAllRequestsData, getBatchTestResults } from './util';
 
 const BatchRunPage: React.FC = () => {
+  const { t } = useTranslation(['page']);
   const { message } = App.useApp();
   const { activeEnvironment } = useStore();
 
@@ -137,7 +139,7 @@ const BatchRunPage: React.FC = () => {
                   font-weight: bolder;
                 `}
               >
-                Select need test case
+                {t('batchRunPage.select_need_test_case')}
               </p>
               <Tree
                 defaultExpandedKeys={['ROOT']}
@@ -168,7 +170,7 @@ const BatchRunPage: React.FC = () => {
               >
                 <Form.Item name='url' label=''>
                   <Checkbox checked={false} disabled>
-                    Start Arex replay compare
+                    {t('batchRunPage.start_arex_replay_compare')}
                   </Checkbox>
                 </Form.Item>
                 <Form.Item>
@@ -178,7 +180,7 @@ const BatchRunPage: React.FC = () => {
                       htmlType='submit'
                       disabled={!((allRequestsData?.length || 0) > 0)}
                     >
-                      Run Case
+                      {t('batchRunPage.run_case')}
                     </Button>
                   </Space>
                 </Form.Item>

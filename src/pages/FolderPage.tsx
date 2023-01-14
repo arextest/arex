@@ -1,5 +1,6 @@
 import { Tabs } from 'antd';
 import React, { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
 import { ScriptBlocks } from '../components';
@@ -12,6 +13,7 @@ import { PageFC } from './index';
 const ScriptBlocksSource = [ScriptBlocksMap[ScriptBlockType.CustomScript]];
 
 const FolderPage: PageFC = () => {
+  const { t } = useTranslation(['components', 'page']);
   const [script, setScript] = useState<string>();
   const [items, setItems] = useImmer<ScriptBlock<string>[]>([]);
 
@@ -66,12 +68,12 @@ const FolderPage: PageFC = () => {
       items={[
         {
           key: 'authorization',
-          label: 'Authorization',
+          label: t('http.authorization', { ns: 'components' }),
           children: <Authorization />,
         },
         {
           key: 'pre-requestScript',
-          label: 'Pre-request Script',
+          label: t('http.pre-requestScript', { ns: 'components' }),
           children: (
             <ScriptBlocks
               multiple
@@ -87,7 +89,7 @@ const FolderPage: PageFC = () => {
         },
         {
           key: 'tests',
-          label: 'Tests',
+          label: t('folderPage.tests', { ns: 'page' }),
           children: 'Content of Tests',
           disabled: true,
         },

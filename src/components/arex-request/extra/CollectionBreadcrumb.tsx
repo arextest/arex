@@ -3,6 +3,7 @@ import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { App, Breadcrumb, Button, Input, Select, Space, Tag, Typography } from 'antd';
 import React, { FC, useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { CollectionService } from '../../../services/Collection.service';
@@ -21,6 +22,7 @@ export type HttpBreadcrumbProps = {
 };
 
 const CollectionBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTags, nodeType }) => {
+  const { t } = useTranslation();
   const params = useParams();
   const { message } = App.useApp();
   const { store, dispatch } = useContext(HttpContext);
@@ -88,7 +90,7 @@ const CollectionBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTa
                   </Tag>
                 ))
               ) : (
-                <Tag>Add Tag</Tag>
+                <Tag>{t('http.add_tag', { ns: 'components' })}</Tag>
               )}
 
               <Button
@@ -164,7 +166,7 @@ const CollectionBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTa
                 font-size: 12px;
               `}
             >
-              {store.request.description || 'description'}
+              {store.request.description || t('description', { ns: 'common' })}
             </Text>
           }
         ></QuickEdit>

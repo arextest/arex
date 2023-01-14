@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import Http from '../components/arex-request';
@@ -35,6 +36,7 @@ const HttpRequestPageWrapper = styled.div`
 `;
 
 const HttpRequestPage: PageFC<nodeType> = (props) => {
+  const { t } = useTranslation(['components']);
   const { message } = App.useApp();
   const { workspaceId } = useParams();
 
@@ -118,7 +120,7 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
             children: <ExtraTabs.RequestTabs.Mock recordId={data?.recordId as string} />,
           },
           {
-            label: 'CompareConfig',
+            label: t('http.compare_config'),
             key: 'compareConfig',
             hidden: nodeType === 2,
             children: (

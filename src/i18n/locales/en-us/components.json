@@ -14,15 +14,26 @@
     "params": "Params",
     "requestBody": "Body",
     "requestHeaders": "Headers",
+    "result": "Result",
     "authorization": "Authorization",
-    "pre-requestScript": "Pre-Script",
+    "pre-requestScript": "Pre-request Script",
     "test": "Test",
     "queryParams": "QueryParams",
     "contentType": "ContentType",
+    "responseBody": "Response Body",
     "responseNotReady": "Enter the URL and click Send to get a response",
     "testPassed": "test passed",
     "testFailed": "test failed",
-    "javaScriptCode": "JavaScript Code"
+    "javaScriptCode": "JavaScript Code",
+    "add_script_block": "Add Script Block",
+    "compare_config": "CompareConfig",
+    "add_tag": "Add Tag"
+  },
+  "authorization": {
+    "type": "Type",
+    "type_parent": "Inherit auth from parent",
+    "header_description": "This authorization method will be used for every request in this folder. You can override this by specifying one in the request.",
+    "footer_description": "The authorization header will be automatically generated when you send the request."
   },
   "collectionMenu": {
     "collection": "Collection",
@@ -32,6 +43,21 @@
   "applicationsMenu": {
     "filterFavoriteApps": "Filter Favorite Apps",
     "appFilterPlaceholder": "Search Applications"
+  },
+  "collection": {
+    "create_new": "Create New",
+    "batch_run": "Batch Run",
+    "batch_compare": "Batch Compare",
+    "new_collection": "New Collection",
+    "new_request": "New Request",
+    "new_case_table": "New CaseTable",
+    "new_folder": "New Folder",
+    "add_folder": "Add Folder",
+    "add_request": "Add Request",
+    "add_case": "Add Case",
+    "rename": "Rename",
+    "duplicate": "Duplicate",
+    "delete": "Delete"
   },
   "replay": {
     "selectApplication": "Please select an application",
