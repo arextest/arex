@@ -449,7 +449,7 @@ const CollectionMenu = () => {
     setPages(
       {
         key: u,
-        title: 'BatchRun',
+        title: t('collection.batch_run'),
         pageType: PagesType.BatchRun,
         menuType: MenusType.Collection,
         isNew: true,
@@ -466,7 +466,7 @@ const CollectionMenu = () => {
     setPages(
       {
         key: u,
-        title: 'BatchCompare',
+        title: t('collection.batch_compare'),
         pageType: PagesType.BatchCompare,
         menuType: MenusType.Collection,
         isNew: true,
@@ -485,7 +485,7 @@ const CollectionMenu = () => {
         loading={loading}
         description={
           <Button type='primary' onClick={createCollection}>
-            New
+            {t('collection.create_new')}
           </Button>
         }
       >
@@ -510,7 +510,7 @@ const CollectionMenu = () => {
                   },
                   {
                     key: '2',
-                    label: <a>Batch Compare</a>,
+                    label: <a>{t('collection.batch_compare')}</a>,
                   },
                 ],
                 onClick(e) {
