@@ -8,9 +8,9 @@ import { useParams } from 'react-router-dom';
 
 import { DiffJsonView, DiffJsonViewProps } from '../../components/replay/Analysis';
 import DiffList from '../../components/replay/Analysis/DiffList';
-import axios from '../../helpers/api/axios';
 import { genCaseTreeData } from '../../helpers/BatchRun/util';
 import { treeFind } from '../../helpers/collection/util';
+import { FileSystemService } from '../../services/FileSystem.service';
 import { useStore } from '../../store';
 import { checkResponsesIsJson, getBatchCompareResults } from './util';
 
@@ -19,18 +19,9 @@ const ExpandedRowRender = ({ record }) => {
 
   const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
   const { data, loading } = useRequest(() => {
-    return axios
-      .post('/report/compare/quickCompare', {
-        msgCombination: {
-          baseMsg: JSON.stringify(record.compareResult.responses[0]),
-          testMsg: JSON.stringify(record.compareResult.responses[1]),
-          comparisonConfig: record.comparisonConfig,
-        },
-      })
-      .then((res) => {
-        const rows = res.body.diffDetails || [];
-        return rows.map((r) => r.logs[0]);
-      });
+    return FileSystemService.queryCase({ id: record.id }).then((res) =>
+      (res.comparisonMsg.diffDetails || []).map((r) => r.logs[0]),
+    );
   });
   return (
     <Spin spinning={loading}>
