@@ -76,7 +76,7 @@ export interface QueryPlanStatisticsRes {
 
 // ------ /report_api/report/queryPlanItemStatistics ------
 export interface QueryPlanItemStatisticsReq {
-  planId: number;
+  planId: string;
 }
 
 export type PlanItemStatistics = {

@@ -266,11 +266,11 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     },
   });
 
-  const handleRerun = (operationId?: string, caseStartTime?: number, caseEndTime?: number) => {
-    if (operationId && caseStartTime && caseEndTime) {
+  const handleRerun = (operationId?: string, caseSourceFrom?: number, caseSourceTo?: number) => {
+    if (operationId && caseSourceFrom && caseSourceTo) {
       rerun({
-        caseStartTime,
-        caseEndTime,
+        caseSourceFrom,
+        caseSourceTo,
         appId: selectedPlan!.appId,
         caseSourceType: 0,
         operationCaseInfoList: [{ operationId }],
@@ -285,8 +285,8 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       selectedPlan?.targetHost
     ) {
       rerun({
-        caseStartTime: selectedPlan.caseStartTime,
-        caseEndTime: selectedPlan.caseEndTime,
+        caseSourceFrom: selectedPlan.caseStartTime,
+        caseSourceTo: selectedPlan.caseEndTime,
         appId: selectedPlan!.appId,
         operator: email as string,
         replayPlanType: 0,
