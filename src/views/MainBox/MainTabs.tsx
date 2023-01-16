@@ -121,7 +121,10 @@ const MainTabs = () => {
   // 必须和路由搭配起来，在切换的时候附着上去
   useEffect(() => {
     const findActivePane = pages.find((i) => i.paneId === activeMenu[1]);
-    if (findActivePane) {
+    if (
+      findActivePane &&
+      !(params.rType === findActivePane.pageType && params.rTypeId === findActivePane.rawId)
+    ) {
       nav(
         `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.rawId}`,
       );
