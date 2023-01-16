@@ -1,7 +1,7 @@
 import { CodeOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { App, Button, Collapse, CollapseProps, List, Spin } from 'antd';
+import { App, Button, Collapse, CollapseProps, List, Spin, Typography } from 'antd';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -32,6 +32,12 @@ const CollapseWrapper = styled.div`
   .active-item {
     background-color: ${(props) => props.theme.colorPrimaryBg};
     transition: background-color 200ms ease;
+  }
+  .ant-spin-nested-loading {
+    width: 100%;
+  }
+  .disabled-node {
+    cursor: not-allowed;
   }
 `;
 
@@ -110,26 +116,32 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                         : ''
                     }
                   >
-                    <SpaceBetweenWrapper width={'100%'}>
-                      <span>{sortNode.path}</span>
-                      <span>
-                        <span style={{ marginRight: '8px' }}>
-                          {`${sortNode.pathKeyList.length} keys`}
+                    <Spin
+                      indicator={<></>}
+                      spinning={!sortNode.compareConfigType}
+                      wrapperClassName={!sortNode.compareConfigType ? 'disabled-node' : ''}
+                    >
+                      <SpaceBetweenWrapper width={'100%'}>
+                        <Typography.Text ellipsis>{sortNode.path}</Typography.Text>
+                        <span style={{ flexShrink: 0 }}>
+                          <span style={{ marginRight: '8px' }}>
+                            {`${sortNode.pathKeyList.length} keys`}
+                          </span>
+                          <Button
+                            type='text'
+                            size='small'
+                            icon={<EditOutlined />}
+                            onClick={() => handleEdit(sortNode)}
+                          />
+                          <Button
+                            type='text'
+                            size='small'
+                            icon={<DeleteOutlined />}
+                            onClick={() => deleteIgnoreNode({ id: sortNode.id })}
+                          />
                         </span>
-                        <Button
-                          type='text'
-                          size='small'
-                          icon={<EditOutlined />}
-                          onClick={() => handleEdit(sortNode)}
-                        />
-                        <Button
-                          type='text'
-                          size='small'
-                          icon={<DeleteOutlined />}
-                          onClick={() => deleteIgnoreNode({ id: sortNode.id })}
-                        />
-                      </span>
-                    </SpaceBetweenWrapper>
+                      </SpaceBetweenWrapper>
+                    </Spin>
                   </List.Item>
                 )}
                 locale={{ emptyText: t('appSetting.noSortNodes') }}

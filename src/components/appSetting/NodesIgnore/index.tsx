@@ -7,7 +7,11 @@ import { useImmer } from 'use-immer';
 
 import { tryParseJsonString, tryPrettierJsonString } from '../../../helpers/utils';
 import AppSettingService from '../../../services/AppSetting.service';
-import { OperationId } from '../../../services/AppSetting.type';
+import {
+  OperationId,
+  QueryIgnoreNode,
+  QueryInterfaceIgnoreNode,
+} from '../../../services/AppSetting.type';
 import { EditAreaPlaceholder } from '../../styledComponents';
 import IgnoreTree from './IgnoreTree';
 import PathCollapse, { InterfacePick } from './PathCollapse';
@@ -73,7 +77,7 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
     loading: loadingIgnoreNode,
     run: queryIgnoreNode,
     mutate: setIgnoreNodeList,
-  } = useRequest(
+  } = useRequest<QueryIgnoreNode[] | QueryInterfaceIgnoreNode[], []>(
     () =>
       props.interfaceId
         ? AppSettingService.queryInterfaceIgnoreNode({
@@ -122,17 +126,17 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
   /**
    * 批量删除 IgnoreNode
    */
-  const { run: batchDeleteIgnoreNode } = useRequest(AppSettingService.batchDeleteIgnoreNode, {
-    manual: true,
-    onSuccess(success) {
-      if (success) {
-        queryIgnoreNode();
-        message.success(t('message.delSuccess', { ns: 'common' }));
-      } else {
-        message.error(t('message.delFailed', { ns: 'common' }));
-      }
-    },
-  });
+  // const { run: batchDeleteIgnoreNode } = useRequest(AppSettingService.batchDeleteIgnoreNode, {
+  //   manual: true,
+  //   onSuccess(success) {
+  //     if (success) {
+  //       queryIgnoreNode();
+  //       message.success(t('message.delSuccess', { ns: 'common' }));
+  //     } else {
+  //       message.error(t('message.delFailed', { ns: 'common' }));
+  //     }
+  //   },
+  // });
 
   /**
    * 请求 InterfaceResponse
