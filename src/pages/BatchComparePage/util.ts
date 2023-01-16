@@ -70,6 +70,7 @@ export const getBatchCompareResults = async (
       const caseCompare = await axios
         .post('/report/compare/caseCompare', {
           msgCombination: {
+            caseId: caseId,
             baseMsg: JSON.stringify(compareResult.responses[0]),
             testMsg: JSON.stringify(compareResult.responses[1]),
             comparisonConfig: comparisonConfig,
