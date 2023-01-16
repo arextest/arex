@@ -87,6 +87,7 @@
     "reportName": "Report Name",
     "recordVersion": "Record version",
     "replayVersion": "Replay version",
+    "caseRange": "Case range",
     "totalCases": "Total Cases",
     "planItemID": "Plan Item ID",
     "api": "API",

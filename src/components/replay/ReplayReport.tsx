@@ -5,6 +5,7 @@ import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Card, Col, notification, Row, Statistic, Table, theme, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import dayjs from 'dayjs';
 import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 import CountUp from 'react-countup';
@@ -20,8 +21,6 @@ import { useStore } from '../../store';
 import { SmallTextButton, SpaceBetweenWrapper } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
 import StatusTag from './StatusTag';
-
-const { Text } = Typography;
 
 const chartOptions = {
   responsive: true,
@@ -303,9 +302,11 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       size='small'
       title={`${t('replay.report')}: ${selectedPlan.planName}`}
       extra={
-        <SmallTextButton icon={<RedoOutlined />} onClick={() => handleRerun()}>
-          {t('replay.rerun')}
-        </SmallTextButton>
+        <SmallTextButton
+          icon={<RedoOutlined />}
+          title={t('replay.rerun')}
+          onClick={() => handleRerun()}
+        />
       }
     >
       <Row gutter={12}>
@@ -340,20 +341,28 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
           <div>
             {t('replay.executor')}: {selectedPlan.creator}
           </div>
-          <span>
-            {t('replay.recordVersion')}: {selectedPlan.caseRecordVersion}
-          </span>{' '}
-          &nbsp;
-          <span>
-            {t('replay.replayVersion')}: {selectedPlan.coreVersion}
-          </span>
+          <div>
+            <span>
+              {t('replay.recordVersion')}: {selectedPlan.caseRecordVersion || '-'}
+            </span>
+            &nbsp;
+            <span>
+              {t('replay.replayVersion')}: {selectedPlan.coreVersion || '-'}
+            </span>
+          </div>
+          <div>
+            {t('replay.caseRange')}:{' '}
+            {dayjs(new Date(selectedPlan.caseStartTime || '')).format('YYYY/MM/DD')} -{' '}
+            {dayjs(new Date(selectedPlan.caseEndTime || '')).format('YYYY/MM/DD')}
+          </div>
         </Col>
         <Col span={12}>
           <Typography.Text type='secondary'>{t('replay.replayPassRate')}</Typography.Text>
           <SpaceBetweenWrapper>
-            <div style={{ height: '160px', width: 'calc(100% - 160px)', padding: '16px 0' }}>
+            <div style={{ height: '180px', width: 'calc(100% - 160px)', padding: '16px 0' }}>
               <Pie {...pieProps} />
             </div>
+
             <div
               style={{
                 display: 'flex',
