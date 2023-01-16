@@ -3,13 +3,13 @@
     "tests": "Tests"
   },
   "batchRunPage": {
-    "select_need_test_case": "Select need test case",
+    "select_need_test_case": "Select cases to run",
     "start_arex_replay_compare": "Start Arex replay compare",
-    "run_case": "Run Case"
+    "run_case": "Run Cases"
   },
   "batchComparePage": {
-    "select_need_compare_case": "Select need compare case",
-    "run_compare": "Run Compare",
+    "select_need_compare_case": "Select comparison cases to run",
+    "run_compare": "Run Comparison Cases",
     "compare_results": "Compare results",
     "result": "Result"
   }
