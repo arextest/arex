@@ -23,7 +23,7 @@ export interface ScriptBlocksProps<T = string>
 }
 
 const AddScriptBlockButton: FC<{
-  title: string;
+  title?: string;
   blocksSource: ScriptBlocksProps['blocksSource'];
   onAdd?: (key: string) => void;
 }> = (props) => (
