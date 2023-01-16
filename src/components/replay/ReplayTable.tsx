@@ -1,16 +1,15 @@
 import { useRequest } from 'ahooks';
-import { theme, Tooltip, Typography } from 'antd';
+import { theme, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC } from 'react';
 import CountUp from 'react-countup';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 
 import ReplayService from '../../services/Replay.service';
 import { PlanStatistics } from '../../services/Replay.type';
 import HighlightRowTable from '../styledComponents/HighlightRowTable';
 import StatusTag from './StatusTag';
-
-const { Text } = Typography;
 
 export type ResultsProps = {
   appId?: string;
@@ -27,7 +26,7 @@ const ReplayTable: FC<ResultsProps> = ({
 }) => {
   const { token } = theme.useToken();
   const { t } = useTranslation(['components']);
-
+  const [search] = useSearchParams();
   const columns: ColumnsType<PlanStatistics> = [
     {
       title: t('replay.replayReportName'),
@@ -129,7 +128,13 @@ const ReplayTable: FC<ResultsProps> = ({
       loadingDelay: 200,
       pollingInterval: 3000,
       onSuccess(res) {
-        res.length && defaultSelectFirst && onSelectedPlanChange(res[0]);
+        // 先判断是否有url参数
+        const searchRes = res.find((i) => i.planId === search.get('planId'));
+        if (searchRes) {
+          onSelectedPlanChange(searchRes);
+        } else {
+          res.length && defaultSelectFirst && onSelectedPlanChange(res[0]);
+        }
         res.every((record) => record.status !== 1) && cancelPollingInterval();
       },
     },

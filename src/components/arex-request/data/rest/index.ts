@@ -38,9 +38,9 @@ export type HoppRESTHeader = {
 export interface HoppRESTRequest {
   id?: string; // Firebase Firestore ID
   name: string | null;
-  method: typeof METHODS[number];
+  method: (typeof METHODS)[number];
   endpoint: string;
-  compareMethod: typeof METHODS[number];
+  compareMethod: (typeof METHODS)[number];
   compareEndpoint: string;
   params: KeyValueType[];
   headers: HoppRESTHeader[];

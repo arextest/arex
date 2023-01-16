@@ -34,7 +34,7 @@ export interface QueryPlanStatisticsReq {
 }
 
 export type PlanStatistics = {
-  planId: number;
+  planId: string;
   planName: string;
   status: number;
   appId: string;
