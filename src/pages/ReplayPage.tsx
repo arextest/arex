@@ -15,6 +15,7 @@ const ReplayPage: PageFC<ApplicationDataType> = (props) => {
   const nav = useNavigate();
   const loc = useLocation();
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
+
   const handleSelectPlan = (plan: PlanStatistics) => {
     plan.planId === selectedPlan?.planId ? setSelectedPlan(undefined) : setSelectedPlan(plan);
   };
@@ -33,12 +34,10 @@ const ReplayPage: PageFC<ApplicationDataType> = (props) => {
   return props.page.data ? (
     <>
       <AppTitle data={props.page.data} onRefresh={handleRefreshDep} />
-      {JSON.stringify(selectedPlan)}
       <CollapseTable
         active={!!selectedPlan}
         table={
           <ReplayTable
-            // defaultSelectFirst
             appId={props.page.data.appId}
             refreshDep={refreshDep}
             onSelectedPlanChange={handleSelectPlan}

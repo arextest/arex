@@ -163,8 +163,8 @@ export interface CreatePlanReq {
   operator: string;
   replayPlanType: number;
   caseSourceType?: number;
-  caseStartTime: number;
-  caseEndTime: number;
+  caseSourceFrom: number;
+  caseSourceTo: number;
   operationCaseInfoList?: { operationId: string }[];
 }
 

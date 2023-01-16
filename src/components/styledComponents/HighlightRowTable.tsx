@@ -4,11 +4,8 @@ import styled from '@emotion/styled';
 import { Table, TableProps } from 'antd';
 import React, { useState } from 'react';
 
-type HighlightRowTableProps<T> = {
-  sx?: CSSInterpolation;
-  onRowClick?: (record: T) => void;
-  defaultSelectFirst?: boolean;
-} & TableProps<T>;
+const defaultSelectRow = { row: 0, page: 1 };
+const invalidSelectRow = { row: -1, page: -1 };
 
 const HighlightRowTableWrapper = styled.div`
   // highlight selected row
@@ -20,14 +17,32 @@ const HighlightRowTableWrapper = styled.div`
   }
 `;
 
-const defaultSelectRow = { row: 0, page: 1 };
-const invalidSelectRow = { row: -1, page: -1 };
-function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
-  const { sx, defaultSelectFirst, onRowClick, onChange, ...restProps } = props;
+export type HighlightRowTableProps<T> = {
+  sx?: CSSInterpolation;
+  defaultCurrent?: number; // should be defined at the same time as defaultRow
+  defaultRow?: number; // should be defined at the same time as defaultCurrent
+  defaultSelectFirst?: boolean;
+  onRowClick?: (record: T) => void;
+} & TableProps<T>;
 
-  const [page, setPage] = useState<number>();
+function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
+  const {
+    sx,
+    defaultSelectFirst,
+    defaultRow = 0,
+    defaultCurrent = 1,
+    onRowClick,
+    onChange,
+    ...restProps
+  } = props;
+
+  const [page, setPage] = useState<number | undefined>(defaultCurrent);
   const [selectRow, setSelectRow] = useState<{ row?: number; page?: number }>(
-    defaultSelectFirst ? defaultSelectRow : invalidSelectRow,
+    defaultSelectFirst
+      ? defaultSelectRow
+      : props.defaultCurrent !== undefined && props.defaultRow !== undefined
+      ? { row: defaultRow, page: defaultCurrent }
+      : invalidSelectRow,
   );
 
   const handleChange: TableProps<T>['onChange'] = (pagination, ...restParams) => {
@@ -47,7 +62,7 @@ function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
                     ? invalidSelectRow
                     : { row: index, page },
                 );
-                onRowClick && onRowClick(record);
+                onRowClick?.(record);
               }
             },
           };

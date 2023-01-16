@@ -21,7 +21,7 @@ type AppTitleProps = {
   onRefresh?: () => void;
 };
 
-type CreatePlanForm = { targetEnv: string; caseStartTime: Dayjs; caseEndTime: Dayjs };
+type CreatePlanForm = { targetEnv: string; caseSourceFrom: Dayjs; caseSourceTo: Dayjs };
 
 const TitleWrapper = styled(
   (props: {
@@ -73,8 +73,8 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
 
   const initialValues = {
     targetEnv: '',
-    caseStartTime: dayjs().subtract(1, 'day').startOf('day'), // 前一天零点
-    caseEndTime: dayjs().add(1, 'day').startOf('day').subtract(1, 'second'), // 当天最后一秒
+    caseSourceFrom: dayjs().subtract(1, 'day').startOf('day'), // 前一天零点
+    caseSourceTo: dayjs().add(1, 'day').startOf('day').subtract(1, 'second'), // 当天最后一秒
   };
 
   const { run: createPlan, loading: confirmLoading } = useRequest(ReplayService.createPlan, {
@@ -113,8 +113,8 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           appId: data.appId,
           sourceEnv: 'pro',
           targetEnv: values.targetEnv.trim(),
-          caseStartTime: values.caseStartTime.startOf('day').valueOf(),
-          caseEndTime: values.caseEndTime
+          caseSourceFrom: values.caseSourceFrom.startOf('day').valueOf(),
+          caseSourceTo: values.caseSourceTo
             .add(1, 'day')
             .startOf('day')
             .subtract(1, 'second')
@@ -187,7 +187,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
 
           <Form.Item
             label={t('replay.caseStartTime')}
-            name='caseStartTime'
+            name='caseSourceFrom'
             rules={[{ required: true, message: t('replay.emptyStartTime') }]}
           >
             <DatePicker style={{ width: '100%' }} />
@@ -195,7 +195,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
 
           <Form.Item
             label={t('replay.caseEndTime')}
-            name='caseEndTime'
+            name='caseSourceTo'
             rules={[{ required: true, message: t('replay.emptyEndTime') }]}
           >
             <DatePicker style={{ width: '100%' }} />

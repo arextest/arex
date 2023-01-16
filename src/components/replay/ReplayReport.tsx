@@ -52,7 +52,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       ready: !!selectedPlan?.planId,
       refreshDeps: [selectedPlan?.planId],
       loadingDelay: 200,
-      pollingInterval: 3000,
+      pollingInterval: 5000,
       onSuccess(res) {
         res.every((record) => record.status !== 1) && cancelPollingInterval();
       },
