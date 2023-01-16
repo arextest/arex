@@ -64,9 +64,11 @@ export const getBatchCompareResults = async (
 
       const interfaceId = findNodeParent(caseId).key;
       const operationId = allRequests.find((i) => i.id === interfaceId).operationId;
-      const comparisonConfig = await axios.get(
-        `/report/config/comparison/summary/queryByInterfaceIdAndOperationId?interfaceId=${interfaceId}&operationId=${operationId}`,
-      );
+      const comparisonConfig = await axios
+        .get(
+          `/report/config/comparison/summary/queryByInterfaceIdAndOperationId?interfaceId=${interfaceId}&operationId=${operationId}`,
+        )
+        .then((res) => res.body);
       const caseCompare = await axios
         .post('/report/compare/caseCompare', {
           msgCombination: {
