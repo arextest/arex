@@ -126,7 +126,7 @@ const MainTabs = () => {
       !(params.rType === findActivePane.pageType && params.rTypeId === findActivePane.rawId)
     ) {
       nav(
-        `/${params.workspaceId}/workspace/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.rawId}`,
+        `/${params.workspaceId}/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.rawId}`,
       );
     }
   }, [activeMenu, pages]);

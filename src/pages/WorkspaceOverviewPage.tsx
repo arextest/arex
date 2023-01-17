@@ -22,7 +22,7 @@ const WorkspaceOverviewPage: FC = () => {
       newName: values.name,
       userName,
     }).then(() => {
-      nav(`/${params.workspaceId}/workspace/${values.name}`);
+      nav(`/${params.workspaceId}/${values.name}`);
     });
   };
 
@@ -42,7 +42,7 @@ const WorkspaceOverviewPage: FC = () => {
         resetPage();
         setActiveWorkspaceId(workspaces[0].id);
         nav(
-          `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,
+          `/${workspaces[0].id}/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,
         );
       },
     },

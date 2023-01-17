@@ -61,7 +61,6 @@ const useInit = () => {
   // TODO 实现通用的所用页面初始化方法
   // 根据 url 初始化页面, 同时初始化 workspaceId
   useEffect(() => {
-    console.log('params.workspaceId', params.workspaceId);
     if (params.workspaceId) {
       setActiveWorkspaceId(params.workspaceId);
     }
