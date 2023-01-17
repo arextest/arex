@@ -65,11 +65,11 @@ const useInit = () => {
     if (params.workspaceId) {
       setActiveWorkspaceId(params.workspaceId);
     }
-
-    if (params.rType === PagesType.Replay) {
+    // Replay有三种类型
+    if (params.rType === PagesType.Replay || params.rType === PagesType.ReplayCase) {
       setActiveMenu(
         MenusType.Replay,
-        generateGlobalPaneId(MenusType.Replay, PagesType.Replay, params.rTypeId as string),
+        generateGlobalPaneId(MenusType.Replay, params.rType, params.rTypeId as string),
       );
     } else if (params.rType === PagesType.Environment) {
       setActiveMenu(

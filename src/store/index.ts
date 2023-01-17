@@ -86,6 +86,7 @@ export const useStore = create(
   immer<BaseState>((set, get) => ({
     pages: [],
     setPages: (pages, mode: SetPagesMode = 'normal') => {
+      // setPages函数完成了添加新page，并且激活它的操作。
       if (mode === 'normal') {
         set({ pages: pages as Page[] });
       } else if (mode === 'push') {

@@ -19,7 +19,7 @@ const ExpandedRowRender = ({ record }) => {
 
   const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
   const { data, loading } = useRequest(() => {
-    return FileSystemService.queryCase({ id: record.id }).then((res) =>
+    return FileSystemService.queryCase({ id: record.id, getCompareMsg: true }).then((res) =>
       (res.comparisonMsg.diffDetails || []).map((r) => r.logs[0]),
     );
   });
