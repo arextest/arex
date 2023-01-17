@@ -63,18 +63,16 @@ const BatchComparePage = () => {
   const params = useParams();
   // 生成caseTree数据
   const caseTreeData = useMemo(() => {
-    if (params.rType === 'BatchComparePage') {
-      if (params.rTypeId && params.rTypeId.length === 24) {
-        return genCaseTreeData([
-          treeFind(collectionTreeData, (node) => node.key === params.rTypeId),
-        ]);
+    if (params.pagesType === 'BatchComparePage') {
+      if (params.rawId && params.rawId.length === 24) {
+        return genCaseTreeData([treeFind(collectionTreeData, (node) => node.key === params.rawId)]);
       } else {
         return genCaseTreeData(collectionTreeData);
       }
     } else {
       return [];
     }
-  }, [collectionTreeData, params.rTypeId, params.rType]);
+  }, [collectionTreeData, params.rawId, params.pagesType]);
   const [checkValue, setCheckValue] = useState<string[]>([]);
   const onCheck = (checkedKeys: string[]) => {
     setCheckValue(checkedKeys);

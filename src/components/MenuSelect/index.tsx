@@ -144,8 +144,8 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
     onSuccess(res, _params) {
       // 默认触发onSelect第一个的逻辑
       // const record1 = res.find((i) => {
-      //   console.log(i , params.rTypeId)
-      //   return i.id === params.rTypeId
+      //   console.log(i , params.rawId)
+      //   return i.id === params.rawId
       // });
       // setPages(
       //   {

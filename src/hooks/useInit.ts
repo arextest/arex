@@ -65,21 +65,17 @@ const useInit = () => {
       setActiveWorkspaceId(params.workspaceId);
     }
     // Replay有三种类型
-    if (params.rType === PagesType.Replay || params.rType === PagesType.ReplayCase) {
+    if (params.pagesType === PagesType.Replay || params.pagesType === PagesType.ReplayCase) {
       setActiveMenu(
         MenusType.Replay,
-        generateGlobalPaneId(MenusType.Replay, params.rType, params.rTypeId as string),
+        generateGlobalPaneId(MenusType.Replay, params.pagesType, params.rawId as string),
       );
-    } else if (params.rType === PagesType.Environment) {
+    } else if (params.pagesType === PagesType.Environment) {
       setActiveMenu(
         MenusType.Environment,
-        generateGlobalPaneId(
-          MenusType.Environment,
-          PagesType.Environment,
-          params.rTypeId as string,
-        ),
+        generateGlobalPaneId(MenusType.Environment, PagesType.Environment, params.rawId as string),
       );
-    } else if (params.rType === PagesType.WorkspaceOverview) {
+    } else if (params.pagesType === PagesType.WorkspaceOverview) {
       params.workspaceName &&
         params.workspaceId &&
         setPages(

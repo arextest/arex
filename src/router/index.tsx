@@ -28,7 +28,7 @@ const router = [
     auth: true,
   },
   {
-    path: '/:workspaceId/:workspaceName/:rType/:rTypeId',
+    path: '/:workspaceId/:workspaceName/:pagesType/:rawId',
     element: <MainBox />,
     auth: true,
   },
