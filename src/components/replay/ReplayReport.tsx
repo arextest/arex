@@ -1,9 +1,22 @@
 import 'chart.js/auto';
 
-import { ContainerOutlined, FileTextOutlined, RedoOutlined } from '@ant-design/icons';
+import { ContainerOutlined, FileTextOutlined, RedoOutlined, StopOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { Card, Col, notification, Row, Statistic, Table, theme, Tooltip, Typography } from 'antd';
+import {
+  App,
+  Button,
+  Card,
+  Col,
+  notification,
+  Popconfirm,
+  Row,
+  Statistic,
+  Table,
+  theme,
+  Tooltip,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import dayjs from 'dayjs';
 import React, { FC, useMemo } from 'react';
@@ -33,6 +46,7 @@ const chartOptions = {
 } as const;
 
 const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
+  const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
 
   const { setPages } = useStore();
@@ -250,6 +264,16 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     },
   ];
 
+  const { run: deletePlanStatistics } = useRequest(ReplayService.deletePlanStatistics, {
+    manual: true,
+    ready: !!selectedPlan?.planId,
+    onSuccess(success) {
+      success
+        ? message.success(t('message.success', { ns: 'common' }))
+        : message.error(t('message.error', { ns: 'common' }));
+    },
+  });
+
   const { run: rerun } = useRequest(ReplayService.createPlan, {
     manual: true,
     onSuccess(res) {
@@ -304,11 +328,23 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       size='small'
       title={`${t('replay.report')}: ${selectedPlan.planName}`}
       extra={
-        <SmallTextButton
-          icon={<RedoOutlined />}
-          title={t('replay.rerun')}
-          onClick={() => handleRerun()}
-        />
+        <>
+          {selectedPlan.status !== 2 && (
+            <Popconfirm
+              title={t('replay.abortTheCase')}
+              description={t('replay.confirmAbortCase')}
+              onConfirm={() => deletePlanStatistics(selectedPlan!.planId)}
+            >
+              <SmallTextButton icon={<StopOutlined />} title={t('replay.abort')} />
+            </Popconfirm>
+          )}
+
+          <SmallTextButton
+            icon={<RedoOutlined />}
+            title={t('replay.rerun')}
+            onClick={() => handleRerun()}
+          />
+        </>
       }
     >
       <Row gutter={12}>
@@ -338,6 +374,11 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
             {t('replay.reportName')}: {selectedPlan.planName}
           </div>
           <div>
+            {t('replay.caseRange')}:{' '}
+            {dayjs(new Date(selectedPlan.caseStartTime || '')).format('YYYY/MM/DD')} -{' '}
+            {dayjs(new Date(selectedPlan.caseEndTime || '')).format('YYYY/MM/DD')}
+          </div>
+          <div>
             {t('replay.targetHost')}: {selectedPlan.targetHost}
           </div>
           <div>
@@ -352,12 +393,8 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
               {t('replay.replayVersion')}: {selectedPlan.coreVersion || '-'}
             </span>
           </div>
-          <div>
-            {t('replay.caseRange')}:{' '}
-            {dayjs(new Date(selectedPlan.caseStartTime || '')).format('YYYY/MM/DD')} -{' '}
-            {dayjs(new Date(selectedPlan.caseEndTime || '')).format('YYYY/MM/DD')}
-          </div>
         </Col>
+
         <Col span={12}>
           <Typography.Text type='secondary'>{t('replay.replayPassRate')}</Typography.Text>
           <SpaceBetweenWrapper>

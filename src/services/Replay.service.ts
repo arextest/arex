@@ -41,6 +41,11 @@ export default class ReplayService {
       );
   }
 
+  static async deletePlanStatistics(planId: string) {
+    const res = await request.get<boolean>('/report/report/delete/' + planId);
+    return res.body;
+  }
+
   static async queryPlanItemStatistics(params: QueryPlanItemStatisticsReq) {
     return request
       .post<QueryPlanItemStatisticsRes>('/report/report/queryPlanItemStatistics', params)

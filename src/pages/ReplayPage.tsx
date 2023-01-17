@@ -13,7 +13,7 @@ import { PageFC } from './index';
 const ReplayPage: PageFC<ApplicationDataType> = (props) => {
   const { t } = useTranslation(['components']);
   const nav = useNavigate();
-  const loc = useLocation();
+  const location = useLocation();
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
 
   const handleSelectPlan = (plan: PlanStatistics) => {
@@ -27,7 +27,7 @@ const ReplayPage: PageFC<ApplicationDataType> = (props) => {
 
   useEffect(() => {
     if (selectedPlan?.planId) {
-      nav(`${loc.pathname}?planId=${selectedPlan?.planId}`);
+      nav(`${location.pathname}?planId=${selectedPlan?.planId}`);
     }
   }, [selectedPlan]);
 
