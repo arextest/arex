@@ -35,8 +35,10 @@
     "error": "Error",
     "delSuccess": "Delete successfully",
     "delFailed": "Delete failed",
+    "delError": "Delete error",
     "updateSuccess": "Update successfully",
     "updateFailed": "Update failed",
+    "updateError": "Update error",
     "saveSuccess": "Save successfully",
     "saveFailed": "Save failed"
   },
@@ -45,5 +47,6 @@
   "appSetting": "AppSetting",
   "environment": "Environment",
   "setting": "Setting",
-  "create": "Create"
+  "create": "Create",
+  "delete": "Delete"
 }

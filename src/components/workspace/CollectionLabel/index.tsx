@@ -2,6 +2,7 @@ import { useRequest } from 'ahooks';
 import { App, Button, Popconfirm, Space, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { FC, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { CollectionService } from '../../../services/Collection.service';
 import { Label } from '../../../services/Collection.type';
@@ -10,13 +11,14 @@ import LabelEditor, { LabelEditorProps, LabelEditorRef } from './LabelEditor';
 
 const CollectionLabel: FC = () => {
   const { message } = App.useApp();
+  const { t } = useTranslation(['common', 'components']);
 
   const { activeWorkspaceId } = useStore();
   const createAndUpdateRef = useRef<LabelEditorRef>(null);
 
   const columns: ColumnsType<Label> = [
     {
-      title: 'LabelName',
+      title: t('workSpace.labelName', { ns: 'components' }),
       dataIndex: 'labelName',
       key: 'labelName',
       render(labelName, record) {
@@ -24,32 +26,32 @@ const CollectionLabel: FC = () => {
       },
     },
     {
-      title: 'Color',
+      title: t('workSpace.color', { ns: 'components' }),
       dataIndex: 'color',
       key: 'color',
     },
     {
-      title: 'Action',
+      title: t('action'),
       render(_, record) {
         return (
           <Space>
             <Button size='small' onClick={() => createAndUpdateRef.current?.showModal(record)}>
-              Edit
+              {t('edit')}
             </Button>
 
             <Popconfirm
-              title='Are you sure to delete this label?'
+              title={t('workSpace.delLabelConfirmText', { ns: 'components' })}
               onConfirm={() => {
                 labelRemoveRun({
                   workspaceId: activeWorkspaceId,
                   id: record.id,
                 });
               }}
-              okText='Yes'
-              cancelText='No'
+              okText={t('yes')}
+              cancelText={t('no')}
             >
               <Button danger size='small'>
-                Delete
+                {t('delete')}
               </Button>
             </Popconfirm>
           </Space>
@@ -68,18 +70,18 @@ const CollectionLabel: FC = () => {
       queryLabels();
     },
     onError() {
-      message.error('delete error');
+      message.error(t('delError'));
     },
   });
 
   const { run: labelSaveRun } = useRequest(CollectionService.saveLabels, {
     manual: true,
     onSuccess() {
-      message.success('update successfully');
+      message.success(t('updateSuccess'));
       queryLabels();
     },
     onError() {
-      message.error('update error');
+      message.error(t('updateError'));
     },
   });
 
