@@ -161,5 +161,15 @@
     "emptyFullClassName": "Please enter full class name",
     "emptyCaseRange": "Please input your case range!",
     "emptyValue": "Please enter value"
+  },
+  "env": {
+    "searchEnvironment": "Search Environment",
+    "setCurrentEnv": "Set as current environment",
+    "duplicateCurrentEnv": "Duplicate current environment",
+    "createEnvKeyValue": "Create environment keyValue",
+    "delConfirmText": "Deleting this environment might cause any monitors or mock servers using it to stop functioning properly. Are you sure you want to continue?",
+    "variable": "Variable",
+    "key": "Key",
+    "value": "Value"
   }
 }
