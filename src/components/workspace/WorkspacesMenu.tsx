@@ -99,7 +99,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
         }
         if (targetWorkspace.id && !params.workspaceId) {
           nav(
-            `/${targetWorkspace.id}/workspace/${targetWorkspace.workspaceName}/workspaceOverview/${targetWorkspace.id}`,
+            `/${targetWorkspace.id}/${targetWorkspace.workspaceName}/workspaceOverview/${targetWorkspace.id}`,
           );
           setActiveWorkspaceId(targetWorkspace.id);
         }
@@ -167,7 +167,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     if (label) {
       resetPage();
       setActiveWorkspaceId(workspaceId);
-      nav(`/${workspaceId}/workspace/${label}/WorkspaceOverviewPage/${workspaceId}`);
+      nav(`/${workspaceId}/${label}/WorkspaceOverviewPage/${workspaceId}`);
     }
   };
 

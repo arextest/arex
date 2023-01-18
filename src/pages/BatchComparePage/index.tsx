@@ -3,13 +3,14 @@ import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
 import { Button, Divider, Spin, Table, Tag, Tree } from 'antd';
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { DiffJsonView, DiffJsonViewProps } from '../../components/replay/Analysis';
 import DiffList from '../../components/replay/Analysis/DiffList';
-import axios from '../../helpers/api/axios';
 import { genCaseTreeData } from '../../helpers/BatchRun/util';
 import { treeFind } from '../../helpers/collection/util';
+import { FileSystemService } from '../../services/FileSystem.service';
 import { useStore } from '../../store';
 import { checkResponsesIsJson, getBatchCompareResults } from './util';
 
@@ -18,18 +19,9 @@ const ExpandedRowRender = ({ record }) => {
 
   const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
   const { data, loading } = useRequest(() => {
-    return axios
-      .post('/report/compare/quickCompare', {
-        msgCombination: {
-          baseMsg: JSON.stringify(record.compareResult.responses[0]),
-          testMsg: JSON.stringify(record.compareResult.responses[1]),
-          comparisonConfig: record.comparisonConfig,
-        },
-      })
-      .then((res) => {
-        const rows = res.body.diffDetails || [];
-        return rows.map((r) => r.logs[0]);
-      });
+    return FileSystemService.queryCase({ id: record.id, getCompareMsg: true }).then((res) =>
+      (res.comparisonMsg.diffDetails || []).map((r) => r.logs[0]),
+    );
   });
   return (
     <Spin spinning={loading}>
@@ -64,24 +56,23 @@ const ExpandedRowRender = ({ record }) => {
   );
 };
 const BatchComparePage = () => {
+  const { t } = useTranslation(['common', 'page']);
   const { activeEnvironment } = useStore();
   const { collectionTreeData } = useStore();
 
   const params = useParams();
   // 生成caseTree数据
   const caseTreeData = useMemo(() => {
-    if (params.rType === 'BatchComparePage') {
-      if (params.rTypeId && params.rTypeId.length === 24) {
-        return genCaseTreeData([
-          treeFind(collectionTreeData, (node) => node.key === params.rTypeId),
-        ]);
+    if (params.pagesType === 'BatchComparePage') {
+      if (params.rawId && params.rawId.length === 24) {
+        return genCaseTreeData([treeFind(collectionTreeData, (node) => node.key === params.rawId)]);
       } else {
         return genCaseTreeData(collectionTreeData);
       }
     } else {
       return [];
     }
-  }, [collectionTreeData, params.rTypeId, params.rType]);
+  }, [collectionTreeData, params.rawId, params.pagesType]);
   const [checkValue, setCheckValue] = useState<string[]>([]);
   const onCheck = (checkedKeys: string[]) => {
     setCheckValue(checkedKeys);
@@ -102,12 +93,12 @@ const BatchComparePage = () => {
 
   const columns = [
     {
-      title: 'Case',
+      title: t('case', { ns: 'common' }),
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: 'Result',
+      title: t('batchComparePage.result', { ns: 'page' }),
       dataIndex: 'diffResultCode',
       key: 'diffResultCode',
       render(_, record) {
@@ -153,7 +144,7 @@ const BatchComparePage = () => {
                 font-weight: bolder;
               `}
             >
-              Select need compare case
+              {t('batchComparePage.select_need_compare_case', { ns: 'page' })}
             </p>
             <Tree
               checkable
@@ -193,7 +184,7 @@ const BatchComparePage = () => {
                 run();
               }}
             >
-              Run Compare
+              {t('batchComparePage.run_compare', { ns: 'page' })}
             </Button>
           </div>
         </div>
@@ -206,7 +197,7 @@ const BatchComparePage = () => {
             padding-top: 10px;
           `}
         >
-          <h3>Compare results</h3>
+          <h3>{t('batchComparePage.compare_results', { ns: 'page' })}</h3>
           <Table
             size={'small'}
             bordered

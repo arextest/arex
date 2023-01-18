@@ -35,7 +35,7 @@ export class FileSystemService {
     return res.body.success;
   }
 
-  static async queryCase(params: { id: string }) {
+  static async queryCase(params: { id: string; getCompareMsg?: boolean }) {
     const res = await request.post<BaseInterface>(`/report/filesystem/queryCase`, params);
     const {
       body: { address, testAddress, ...rest },

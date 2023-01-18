@@ -3,6 +3,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { App, Button, Dropdown, Input, Popconfirm } from 'antd';
 import React, { ReactNode, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { EmailKey, MethodMap } from '../../constant';
@@ -33,6 +34,7 @@ function CollectionTitle({
   callbackOfNewRequest,
   searchValue,
 }: any) {
+  const { t } = useTranslation(['common', 'components']);
   const { message } = App.useApp();
   const _useParams = useParams();
   const { setPages } = useStore();
@@ -47,45 +49,73 @@ function CollectionTitle({
       items: [
         {
           key: '7',
-          label: <span className={'dropdown-click-target'}>Batch Run</span>,
+          label: (
+            <span className={'dropdown-click-target'}>
+              {t('collection.batch_run', { ns: 'components' })}
+            </span>
+          ),
           disabled: val.nodeType !== 3,
         },
         {
           key: '8',
-          label: <span className={'dropdown-click-target'}>Batch Compare</span>,
+          label: (
+            <span className={'dropdown-click-target'}>
+              {t('collection.batch_compare', { ns: 'components' })}
+            </span>
+          ),
           disabled: val.nodeType !== 3,
         },
         {
           key: '3',
-          label: <span className={'dropdown-click-target'}>Add Folder</span>,
+          label: (
+            <span className={'dropdown-click-target'}>
+              {t('collection.add_folder', { ns: 'components' })}
+            </span>
+          ),
           // 只有类型为3才能新增文件夹
           disabled: val.nodeType !== 3,
         },
         {
           key: '1',
-          label: <span className={'dropdown-click-target'}>Add Request</span>,
+          label: (
+            <span className={'dropdown-click-target'}>
+              {t('collection.add_request', { ns: 'components' })}
+            </span>
+          ),
           disabled: val.nodeType !== 3,
         },
         {
           key: '2',
-          label: <span className={'dropdown-click-target'}>Add Case</span>,
+          label: (
+            <span className={'dropdown-click-target'}>
+              {t('collection.add_case', { ns: 'components' })}
+            </span>
+          ),
           disabled: val.nodeType !== 1,
         },
         {
           key: '4',
-          label: <span className={'dropdown-click-target'}>Rename</span>,
+          label: (
+            <span className={'dropdown-click-target'}>
+              {t('collection.rename', { ns: 'components' })}
+            </span>
+          ),
         },
         {
           key: '6',
-          label: <span className={'dropdown-click-target'}>Duplicate</span>,
+          label: (
+            <span className={'dropdown-click-target'}>
+              {t('collection.duplicate', { ns: 'components' })}
+            </span>
+          ),
         },
         {
           key: '5',
           label: (
             <Popconfirm
-              title='Are you sure？'
-              okText='Yes'
-              cancelText='No'
+              title={t('are_you_sure')}
+              okText={t('yes')}
+              cancelText={t('no')}
               onConfirm={() => {
                 CollectionService.removeItem({
                   id: _useParams.workspaceId,
@@ -96,7 +126,7 @@ function CollectionTitle({
                 });
               }}
             >
-              <a style={{ color: 'red' }}>Delete</a>
+              <a style={{ color: 'red' }}>{t('collection.delete', { ns: 'components' })}</a>
             </Popconfirm>
           ),
         },
@@ -176,7 +206,7 @@ function CollectionTitle({
             setPages(
               {
                 key: val.id,
-                title: 'BatchRun',
+                title: t('collection.batch_run', { ns: 'components' }),
                 pageType: PagesType.BatchRun,
                 menuType: MenusType.Collection,
                 isNew: true,
@@ -191,7 +221,7 @@ function CollectionTitle({
             setPages(
               {
                 key: val.id,
-                title: 'BatchCompare',
+                title: t('collection.batch_compare', { ns: 'components' }),
                 pageType: PagesType.BatchCompare,
                 menuType: MenusType.Collection,
                 isNew: true,

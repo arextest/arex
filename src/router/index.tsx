@@ -23,12 +23,12 @@ const router = [
   },
 
   {
-    path: '/:workspaceId/workspace/:workspaceName',
+    path: '/:workspaceId/:workspaceName',
     element: <MainBox />,
     auth: true,
   },
   {
-    path: '/:workspaceId/workspace/:workspaceName/:rType/:rTypeId',
+    path: '/:workspaceId/:workspaceName/:pagesType/:rawId',
     element: <MainBox />,
     auth: true,
   },

@@ -34,7 +34,7 @@ export interface QueryPlanStatisticsReq {
 }
 
 export type PlanStatistics = {
-  planId: number;
+  planId: string;
   planName: string;
   status: number;
   appId: string;
@@ -76,7 +76,7 @@ export interface QueryPlanStatisticsRes {
 
 // ------ /report_api/report/queryPlanItemStatistics ------
 export interface QueryPlanItemStatisticsReq {
-  planId: number;
+  planId: string;
 }
 
 export type PlanItemStatistics = {
@@ -163,8 +163,8 @@ export interface CreatePlanReq {
   operator: string;
   replayPlanType: number;
   caseSourceType?: number;
-  caseStartTime: number;
-  caseEndTime: number;
+  caseSourceFrom: number;
+  caseSourceTo: number;
   operationCaseInfoList?: { operationId: string }[];
 }
 

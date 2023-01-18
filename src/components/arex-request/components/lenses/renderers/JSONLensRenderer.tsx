@@ -5,12 +5,14 @@ import { css } from '@emotion/react';
 import { App, Tooltip } from 'antd';
 import copy from 'copy-to-clipboard';
 import React, { FC, useContext, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useCodeMirror } from '../../../helpers/editor/codemirror';
 import { HoppRESTResponse } from '../../../helpers/types/HoppRESTResponse';
 import { HttpContext } from '../../../index';
 
 const JSONLensRenderer: FC<{ response: HoppRESTResponse | null }> = ({ response }) => {
+  const { t } = useTranslation();
   const { message } = App.useApp();
 
   const jsonResponse = useRef(null);
@@ -42,7 +44,7 @@ const JSONLensRenderer: FC<{ response: HoppRESTResponse | null }> = ({ response 
           justify-content: space-between;
         `}
       >
-        <span>Response Body</span>
+        <span>{t('http.responseBody', { ns: 'components' })}</span>
         <div>
           <div>
             <Tooltip title={'Copy'} placement={'left'}>

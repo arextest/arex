@@ -1,6 +1,7 @@
 import { Empty } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { AppTitle, ReplayReport, ReplayTable } from '../components/replay';
 import { FlexCenterWrapper } from '../components/styledComponents';
@@ -11,8 +12,10 @@ import { PageFC } from './index';
 
 const ReplayPage: PageFC<ApplicationDataType> = (props) => {
   const { t } = useTranslation(['components']);
-
+  const nav = useNavigate();
+  const location = useLocation();
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
+
   const handleSelectPlan = (plan: PlanStatistics) => {
     plan.planId === selectedPlan?.planId ? setSelectedPlan(undefined) : setSelectedPlan(plan);
   };
@@ -22,15 +25,19 @@ const ReplayPage: PageFC<ApplicationDataType> = (props) => {
     setRefreshDep(uuid()); // 触发 ReplayTable 组件请求更新
   };
 
+  useEffect(() => {
+    if (selectedPlan?.planId) {
+      nav(`${location.pathname}?planId=${selectedPlan?.planId}`);
+    }
+  }, [selectedPlan]);
+
   return props.page.data ? (
     <>
       <AppTitle data={props.page.data} onRefresh={handleRefreshDep} />
-
       <CollapseTable
         active={!!selectedPlan}
         table={
           <ReplayTable
-            // defaultSelectFirst
             appId={props.page.data.appId}
             refreshDep={refreshDep}
             onSelectedPlanChange={handleSelectPlan}

@@ -9,6 +9,12 @@ import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import React, { ChangeEventHandler, ReactNode, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+
+import { generateGlobalPaneId } from '../../helpers/utils';
+import { MenusType } from '../../menus';
+import { PagesType } from '../../pages';
+import { useStore } from '../../store';
 
 export type MenuSelectProps<D, P extends any[]> = {
   sx?: CSSInterpolation; // custom style
@@ -127,7 +133,8 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
       }),
     [filterKeyword, props],
   );
-
+  const { setPages } = useStore();
+  const params = useParams();
   const {
     data: apps,
     loading,
@@ -135,6 +142,24 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   } = useRequest<D[], P>(props.request, {
     ...props.requestOptions,
     onSuccess(res, _params) {
+      // 默认触发onSelect第一个的逻辑
+      // const record1 = res.find((i) => {
+      //   console.log(i , params.rawId)
+      //   return i.id === params.rawId
+      // });
+      // setPages(
+      //   {
+      //     title: `${t('replay.caseTable')} - ${record1.planItemId}`,
+      //     pageType: PagesType.ReplayCase,
+      //     menuType: MenusType.Replay,
+      //     isNew: false,
+      //     data: record1,
+      //     paneId: generateGlobalPaneId(MenusType.Replay, PagesType.ReplayCase, record1.planItemId),
+      //     rawId: record1.planItemId,
+      //   },
+      //   'push',
+      // );
+
       if (res.length && (props.defaultSelectFirst || props.initValue)) {
         const record = props.defaultSelectFirst
           ? props.forceFilter

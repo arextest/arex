@@ -23,7 +23,7 @@ export interface ScriptBlocksProps<T = string>
 }
 
 const AddScriptBlockButton: FC<{
-  title: string;
+  title?: string;
   blocksSource: ScriptBlocksProps['blocksSource'];
   onAdd?: (key: string) => void;
 }> = (props) => (
@@ -48,8 +48,12 @@ const AddScriptBlockButton: FC<{
 );
 
 function ScriptBlocks<T>(props: ScriptBlocksProps<T>) {
-  const { value = [], blocksSource = ScriptBlocksList, buttonTitle = 'Add Script Block' } = props;
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common', 'components']);
+  const {
+    value = [],
+    blocksSource = ScriptBlocksList,
+    buttonTitle = t('http.add_script_block', { ns: 'components' }),
+  } = props;
 
   return (
     <EmptyWrapper

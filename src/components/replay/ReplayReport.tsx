@@ -1,10 +1,24 @@
 import 'chart.js/auto';
 
-import { ContainerOutlined, FileTextOutlined, RedoOutlined } from '@ant-design/icons';
+import { ContainerOutlined, FileTextOutlined, RedoOutlined, StopOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { Card, Col, notification, Row, Statistic, Table, theme, Tooltip, Typography } from 'antd';
+import {
+  App,
+  Button,
+  Card,
+  Col,
+  notification,
+  Popconfirm,
+  Row,
+  Statistic,
+  Table,
+  theme,
+  Tooltip,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/lib/table';
+import dayjs from 'dayjs';
 import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 import CountUp from 'react-countup';
@@ -21,8 +35,6 @@ import { SmallTextButton, SpaceBetweenWrapper } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
 import StatusTag from './StatusTag';
 
-const { Text } = Typography;
-
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false,
@@ -34,6 +46,7 @@ const chartOptions = {
 } as const;
 
 const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
+  const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
 
   const { setPages } = useStore();
@@ -53,9 +66,11 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       ready: !!selectedPlan?.planId,
       refreshDeps: [selectedPlan?.planId],
       loadingDelay: 200,
-      pollingInterval: 3000,
+      pollingInterval: 5000,
       onSuccess(res) {
-        res.every((record) => record.status !== 1) && cancelPollingInterval();
+        res.every((record) => record.status !== 1) &&
+          selectedPlan?.status !== 1 &&
+          cancelPollingInterval();
       },
     },
   );
@@ -249,6 +264,16 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     },
   ];
 
+  const { run: deletePlanStatistics } = useRequest(ReplayService.deletePlanStatistics, {
+    manual: true,
+    ready: !!selectedPlan?.planId,
+    onSuccess(success) {
+      success
+        ? message.success(t('message.success', { ns: 'common' }))
+        : message.error(t('message.error', { ns: 'common' }));
+    },
+  });
+
   const { run: rerun } = useRequest(ReplayService.createPlan, {
     manual: true,
     onSuccess(res) {
@@ -267,11 +292,11 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     },
   });
 
-  const handleRerun = (operationId?: string, caseStartTime?: number, caseEndTime?: number) => {
-    if (operationId && caseStartTime && caseEndTime) {
+  const handleRerun = (operationId?: string, caseSourceFrom?: number, caseSourceTo?: number) => {
+    if (operationId && caseSourceFrom && caseSourceTo) {
       rerun({
-        caseStartTime,
-        caseEndTime,
+        caseSourceFrom,
+        caseSourceTo,
         appId: selectedPlan!.appId,
         caseSourceType: 0,
         operationCaseInfoList: [{ operationId }],
@@ -286,8 +311,8 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       selectedPlan?.targetHost
     ) {
       rerun({
-        caseStartTime: selectedPlan.caseStartTime,
-        caseEndTime: selectedPlan.caseEndTime,
+        caseSourceFrom: selectedPlan.caseStartTime,
+        caseSourceTo: selectedPlan.caseEndTime,
         appId: selectedPlan!.appId,
         operator: email as string,
         replayPlanType: 0,
@@ -303,9 +328,23 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       size='small'
       title={`${t('replay.report')}: ${selectedPlan.planName}`}
       extra={
-        <SmallTextButton icon={<RedoOutlined />} onClick={() => handleRerun()}>
-          {t('replay.rerun')}
-        </SmallTextButton>
+        <>
+          {selectedPlan.status !== 2 && (
+            <Popconfirm
+              title={t('replay.abortTheCase')}
+              description={t('replay.confirmAbortCase')}
+              onConfirm={() => deletePlanStatistics(selectedPlan!.planId)}
+            >
+              <SmallTextButton icon={<StopOutlined />} title={t('replay.abort')} />
+            </Popconfirm>
+          )}
+
+          <SmallTextButton
+            icon={<RedoOutlined />}
+            title={t('replay.rerun')}
+            onClick={() => handleRerun()}
+          />
+        </>
       }
     >
       <Row gutter={12}>
@@ -335,25 +374,34 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
             {t('replay.reportName')}: {selectedPlan.planName}
           </div>
           <div>
+            {t('replay.caseRange')}:{' '}
+            {dayjs(new Date(selectedPlan.caseStartTime || '')).format('YYYY/MM/DD')} -{' '}
+            {dayjs(new Date(selectedPlan.caseEndTime || '')).format('YYYY/MM/DD')}
+          </div>
+          <div>
             {t('replay.targetHost')}: {selectedPlan.targetHost}
           </div>
           <div>
             {t('replay.executor')}: {selectedPlan.creator}
           </div>
-          <span>
-            {t('replay.recordVersion')}: {selectedPlan.caseRecordVersion}
-          </span>{' '}
-          &nbsp;
-          <span>
-            {t('replay.replayVersion')}: {selectedPlan.coreVersion}
-          </span>
+          <div>
+            <span>
+              {t('replay.recordVersion')}: {selectedPlan.caseRecordVersion || '-'}
+            </span>
+            &nbsp;
+            <span>
+              {t('replay.replayVersion')}: {selectedPlan.coreVersion || '-'}
+            </span>
+          </div>
         </Col>
+
         <Col span={12}>
           <Typography.Text type='secondary'>{t('replay.replayPassRate')}</Typography.Text>
           <SpaceBetweenWrapper>
-            <div style={{ height: '160px', width: 'calc(100% - 160px)', padding: '16px 0' }}>
+            <div style={{ height: '180px', width: 'calc(100% - 160px)', padding: '16px 0' }}>
               <Pie {...pieProps} />
             </div>
+
             <div
               style={{
                 display: 'flex',

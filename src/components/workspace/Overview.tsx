@@ -44,7 +44,7 @@ const WorkspaceSetting: FC = () => {
       newName: values.name,
       userName,
     }).then(() => {
-      window.location.href = `/${params.workspaceId}/workspace/${values.name}`;
+      window.location.href = `/${params.workspaceId}/${values.name}`;
     });
   };
 
@@ -67,7 +67,7 @@ const WorkspaceSetting: FC = () => {
           resetPage();
           setActiveWorkspaceId(workspaces[0].id);
           nav(
-            `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,
+            `/${workspaces[0].id}/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,
           );
         }
       },

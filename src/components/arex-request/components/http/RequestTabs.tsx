@@ -50,7 +50,7 @@ const RequestTabs: FC<{ config?: TabConfig }> = ({ config }) => {
 
       {
         key: 'pre-requestScript',
-        label: 'Pre-request Script',
+        label: t('http.pre-requestScript', { ns: 'components' }),
         children: (
           <PreRequestScript
             multiple

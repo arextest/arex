@@ -38,7 +38,7 @@ const HttpResponseMeta: FC<{ response: HoppRESTResponse | null }> = ({ response 
           <Empty
             description={
               <Typography.Text type='secondary'>
-                Enter the URL and click Send to get a response
+                {t('http.responseNotReady', { ns: 'components' })}
               </Typography.Text>
             }
           />

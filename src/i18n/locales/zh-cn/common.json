@@ -30,6 +30,7 @@
   "friday": "周五",
   "saturday": "周六",
   "sunday": "周日",
+  "description": "描述",
   "message": {
     "success": "成功",
     "error": "异常",
@@ -46,5 +47,8 @@
   "environment": "环境配置",
   "setting": "设置",
   "create": "创建",
+  "case_tag": "用例",
+  "case": "用例",
+  "are_you_sure": "你确定吗？",
   "delete": "删除"
 }

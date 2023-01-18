@@ -5,9 +5,10 @@ import {
   DeleteOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import type { CollapseProps, InputRef } from 'antd';
+import { CollapseProps, InputRef, Typography } from 'antd';
 import { App, Button, Collapse, Input, List, Spin } from 'antd';
 import React, { FC, SyntheticEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +20,7 @@ import {
   OperationId,
   OperationInterface,
   QueryIgnoreNode,
+  QueryInterfaceIgnoreNode,
 } from '../../../services/AppSetting.type';
 import { SpaceBetweenWrapper } from '../../styledComponents';
 import TooltipButton from '../../TooltipButton';
@@ -30,6 +32,12 @@ const PathCollapseWrapper = styled.div`
   .ant-collapse-content-box {
     padding: 0 !important;
   }
+  .ant-spin-nested-loading {
+    width: 100%;
+  }
+  .disabled-node {
+    cursor: not-allowed;
+  }
 `;
 
 export interface PathCollapseProps extends Omit<CollapseProps, 'activeKey' | 'onChange'> {
@@ -38,7 +46,7 @@ export interface PathCollapseProps extends Omit<CollapseProps, 'activeKey' | 'on
   title?: string;
   activeKey?: OperationId<'Global'>;
   interfaces: InterfacePick[];
-  ignoreNodes: QueryIgnoreNode[];
+  ignoreNodes: QueryInterfaceIgnoreNode[];
   loading?: boolean;
   loadingPanel?: boolean;
   manualEdit?: boolean;
@@ -197,15 +205,21 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                     }
                     renderItem={(node) => (
                       <List.Item>
-                        <SpaceBetweenWrapper width={'100%'}>
-                          <span>{node.exclusions.join('/')}</span>
-                          <Button
-                            type='text'
-                            size='small'
-                            icon={<DeleteOutlined />}
-                            onClick={() => deleteIgnoreNode({ id: node.id })}
-                          />
-                        </SpaceBetweenWrapper>
+                        <Spin
+                          indicator={<></>}
+                          spinning={!node.compareConfigType}
+                          wrapperClassName={!node.compareConfigType ? 'disabled-node' : ''}
+                        >
+                          <SpaceBetweenWrapper width={'100%'}>
+                            <Typography.Text ellipsis>{node.exclusions.join('/')}</Typography.Text>
+                            <Button
+                              type='text'
+                              size='small'
+                              icon={<DeleteOutlined />}
+                              onClick={() => deleteIgnoreNode({ id: node.id })}
+                            />
+                          </SpaceBetweenWrapper>
+                        </Spin>
                       </List.Item>
                     )}
                     locale={{ emptyText: t('appSetting.noIgnoredNodes') }}

@@ -1,8 +1,9 @@
 import { useRequest } from 'ahooks';
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import ReplayService from '../../../services/Replay.service';
 import { ReplayCase } from '../../../services/Replay.type';
@@ -16,11 +17,19 @@ type CaseProps = {
 
 const CaseTable: FC<CaseProps> = (props) => {
   const { t } = useTranslation(['components']);
+  const nav = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    nav(`${location.pathname}?planItemId=${props.planItemId}`);
+  }, [props.planItemId]);
 
   const columnsCase: ColumnsType<ReplayCase> = [
     {
       title: t('replay.recordId'),
       dataIndex: 'recordId',
+
+      render: (recordId, record) => <a onClick={() => props.onClick?.(record)}>{recordId}</a>,
     },
     {
       title: t('replay.replayId'),
@@ -39,14 +48,9 @@ const CaseTable: FC<CaseProps> = (props) => {
       render: (_, record) => [
         // <SmallTextButton key='replayLog' title='Replay Log' />,
         <SmallTextButton
-          key='detail'
-          title={t('replay.detail')}
-          onClick={() => props.onClick && props.onClick(record)}
-        />,
-        <SmallTextButton
           key='save'
           title={t('replay.save')}
-          onClick={() => props.onClickSaveCase && props.onClickSaveCase(record)}
+          onClick={() => props.onClickSaveCase?.(record)}
         />,
       ],
     },

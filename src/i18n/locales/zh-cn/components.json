@@ -14,15 +14,26 @@
     "params": "参数",
     "requestBody": "请求体",
     "requestHeaders": "请求头",
+    "result": "结果",
     "authorization": "授权",
     "pre-requestScript": "预请求脚本",
     "test": "测试",
     "queryParams": "查询参数",
     "contentType": "内容类型",
+    "responseBody": "响应体",
     "responseNotReady": "请求未发送，当前无响应",
     "testPassed": "测试成功",
     "testFailed": "测试失败",
-    "javaScriptCode": "JavaScript 代码"
+    "javaScriptCode": "JavaScript 代码",
+    "add_script_block": "添加脚本块",
+    "compare_config": "比对配置",
+    "add_tag": "添加标签"
+  },
+  "authorization": {
+    "type": "类型",
+    "type_parent": "继承父类授权",
+    "header_description": "此授权方法将用于此文件夹中的每个请求，你可以在一个具体的请求中重写。",
+    "footer_description": "授权头将在发送请求时自动生成。"
   },
   "collectionMenu": {
     "collection": "集合",
@@ -32,6 +43,21 @@
   "applicationsMenu": {
     "filterFavoriteApps": "收藏应用列表",
     "appFilterPlaceholder": "搜索应用"
+  },
+  "collection": {
+    "create_new": "新建",
+    "batch_run": "批量执行",
+    "batch_compare": "批量比对",
+    "new_collection": "新集合",
+    "new_request": "新请求",
+    "new_case_table": "新用例表",
+    "new_folder": "新文件夹",
+    "add_folder": "添加文件夹",
+    "add_request": "添加请求",
+    "add_case": "添加用例",
+    "rename": "重命名",
+    "duplicate": "拷贝",
+    "delete": "删除"
   },
   "replay": {
     "selectApplication": "请选择一个应用",
@@ -61,6 +87,7 @@
     "reportName": "任务名称",
     "recordVersion": "录制版本",
     "replayVersion": "回放版本",
+    "caseRange": "任务时间",
     "totalCases": "Case 数",
     "planItemID": "子任务 ID",
     "api": "API",
@@ -69,6 +96,9 @@
     "action": "操作",
     "rerun": "重新执行",
     "init": "初始化",
+    "abort": "终止",
+    "abortTheCase": "终止任务",
+    "confirmAbortCase": "确定终止该任务?",
     "running": "进行中",
     "done": "完成",
     "interrupted": "异常终止",

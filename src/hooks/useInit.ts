@@ -61,26 +61,21 @@ const useInit = () => {
   // TODO 实现通用的所用页面初始化方法
   // 根据 url 初始化页面, 同时初始化 workspaceId
   useEffect(() => {
-    console.log('params.workspaceId', params.workspaceId);
     if (params.workspaceId) {
       setActiveWorkspaceId(params.workspaceId);
     }
-
-    if (params.rType === PagesType.Replay) {
+    // Replay有三种类型
+    if (params.pagesType === PagesType.Replay || params.pagesType === PagesType.ReplayCase) {
       setActiveMenu(
         MenusType.Replay,
-        generateGlobalPaneId(MenusType.Replay, PagesType.Replay, params.rTypeId as string),
+        generateGlobalPaneId(MenusType.Replay, params.pagesType, params.rawId as string),
       );
-    } else if (params.rType === PagesType.Environment) {
+    } else if (params.pagesType === PagesType.Environment) {
       setActiveMenu(
         MenusType.Environment,
-        generateGlobalPaneId(
-          MenusType.Environment,
-          PagesType.Environment,
-          params.rTypeId as string,
-        ),
+        generateGlobalPaneId(MenusType.Environment, PagesType.Environment, params.rawId as string),
       );
-    } else if (params.rType === PagesType.WorkspaceOverview) {
+    } else if (params.pagesType === PagesType.WorkspaceOverview) {
       params.workspaceName &&
         params.workspaceId &&
         setPages(
