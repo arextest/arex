@@ -11,6 +11,7 @@
     "select_need_compare_case": "请选择比对用例",
     "run_compare": "执行比对",
     "compare_results": "比对结果",
-    "result": "结果"
+    "result": "结果",
+    "error.count": "错误数量"
   }
 }

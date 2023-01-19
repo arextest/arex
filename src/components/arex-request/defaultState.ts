@@ -31,7 +31,10 @@ export const defaultState: State = {
   testResult: null,
   environment: { name: '', variables: [] },
   theme: 'light',
-  compareResult: [{}, {}],
+  compareResult: {
+    logs: [],
+    responses: [{}, {}],
+  },
   mode: 'normal',
   compareLoading: false,
 };

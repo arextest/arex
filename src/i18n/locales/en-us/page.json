@@ -11,6 +11,7 @@
     "select_need_compare_case": "Select comparison cases to run",
     "run_compare": "Run Comparison Cases",
     "compare_results": "Compare results",
-    "result": "Result"
+    "result": "Result",
+    "error.count": "Error Count"
   }
 }

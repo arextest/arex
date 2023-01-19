@@ -1,4 +1,4 @@
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, FieldTimeOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Tooltip } from 'antd';
 import { FC } from 'react';
@@ -37,12 +37,26 @@ const FormHeader: FC<{ update: Updater<KeyValueType[]>; title: string }> = (prop
     });
   };
 
+  // handleAddRecord
+  const handleAddRecord = () => {
+    const newValue: KeyValueType = {
+      key: 'arex-force-record',
+      value: 'true',
+      active: true,
+    };
+    props.update((state) => {
+      state.push(newValue);
+    });
+  };
   const handleClearAllParams = () => props.update([]);
 
   return (
     <FormHeaderWrapper>
       <span>{props.title}</span>
       <div>
+        <Tooltip title={t('action.record')}>
+          <Button type='text' icon={<FieldTimeOutlined />} onClick={handleAddRecord} />
+        </Tooltip>
         <Tooltip title={t('action.clear_all')}>
           <Button type='text' icon={<DeleteOutlined />} onClick={handleClearAllParams} />
         </Tooltip>

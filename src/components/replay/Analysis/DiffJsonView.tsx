@@ -2,7 +2,7 @@ import './DiffJsonView.css';
 
 import { css } from '@emotion/react';
 import { useMount } from 'ahooks';
-import { Modal } from 'antd';
+import { Drawer, Modal } from 'antd';
 import JSONEditor, { JSONEditorOptions } from 'jsoneditor';
 import React, { FC, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -131,14 +131,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, open = false, onClose }) =>
   }, [msgWithDiff]);
 
   return (
-    <Modal
-      title={t('replay.escExit')}
-      width={'100%'}
-      footer={false}
-      open={open}
-      onCancel={onClose}
-      style={{ top: 0 }}
-    >
+    <Drawer width={'75%'} footer={false} open={open} style={{ top: 0 }} onClose={onClose}>
       <div
         css={css`
           display: flex;
@@ -169,7 +162,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, open = false, onClose }) =>
         <div ref={containerLeftRef} id='containerLeft' />
         <div ref={containerRightRef} id='containerRight' />
       </div>
-    </Modal>
+    </Drawer>
   );
 };
 

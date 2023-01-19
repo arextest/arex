@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
-import { Button, Divider, Spin, Table, Tag, Tree } from 'antd';
+import { Button, Divider, Empty, Progress, Spin, Table, Tag, Tree } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -12,25 +12,26 @@ import { genCaseTreeData } from '../../helpers/BatchRun/util';
 import { treeFind } from '../../helpers/collection/util';
 import { FileSystemService } from '../../services/FileSystem.service';
 import { useStore } from '../../store';
-import { checkResponsesIsJson, getBatchCompareResults } from './util';
+import useBatchCompareResults, { genCaseStructure } from './hooks/useBatchCompareResults';
+import { checkResponsesIsJson, flattenArray } from './util';
 
+// TODO 多编写无状态组件
 const ExpandedRowRender = ({ record }) => {
   const [diffJsonViewData, setDiffJsonViewData] = useState<DiffJsonViewProps['data']>();
-
   const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
   const { data, loading } = useRequest(() => {
-    return FileSystemService.queryCase({ id: record.id, getCompareMsg: true }).then((res) =>
-      (res.comparisonMsg.diffDetails || []).map((r) => r.logs[0]),
+    return FileSystemService.queryCase({ id: record.key, getCompareMsg: true }).then((res) =>
+      flattenArray((res.comparisonMsg.diffDetails || []).map((r) => r.logs)),
     );
   });
   return (
     <Spin spinning={loading}>
-      {checkResponsesIsJson(record.compareResult.responses) ? (
+      {checkResponsesIsJson(record.compareResultResponses) ? (
         <DiffList
           externalData={{
             logs: data || [],
-            baseMsg: JSON.stringify(record.compareResult.responses[0]),
-            testMsg: JSON.stringify(record.compareResult.responses[1]),
+            baseMsg: JSON.stringify(record.compareResultResponses[0]),
+            testMsg: JSON.stringify(record.compareResultResponses[1]),
           }}
           appId={''}
           operationId={''}
@@ -79,25 +80,11 @@ const BatchComparePage = () => {
   const onCheck = (checkedKeys: string[]) => {
     setCheckValue(checkedKeys);
   };
-  const { data, loading, run } = useRequest(
-    () =>
-      getBatchCompareResults(
-        checkValue.filter(
-          (c) => treeFind(collectionTreeData, (node) => node.key === c)?.nodeType === 2,
-        ),
-        activeEnvironment?.keyValues || [],
-        collectionTreeData,
-      ),
-    {
-      manual: true,
-    },
-  );
-
   const columns = [
     {
       title: t('case', { ns: 'common' }),
-      dataIndex: 'name',
-      key: 'name',
+      dataIndex: 'caseName',
+      key: 'caseName',
     },
     {
       title: t('batchComparePage.result', { ns: 'page' }),
@@ -108,18 +95,20 @@ const BatchComparePage = () => {
         return <Tag color={result}>{result}</Tag>;
       },
     },
+    {
+      title: 'Error Count',
+      dataIndex: 'errCount',
+      key: 'errCount',
+    },
   ];
-  const dataSource = useMemo(() => {
-    return (data || []).map((i) => ({
-      id: i.caseRequest.id,
-      name: i.caseRequest.name,
-      issues: 0,
-      caseCompare: i.caseCompare,
-      diffResultCode: i.caseCompare,
-      compareResult: i.compareResult,
-      comparisonConfig: i.comparisonConfig,
-    }));
-  }, [data]);
+  const caseStructure = useMemo(() => {
+    return genCaseStructure(checkValue, collectionTreeData);
+  }, [checkValue, collectionTreeData]);
+  const { data: testData, run: testRun } = useBatchCompareResults(
+    caseStructure,
+    collectionTreeData,
+    activeEnvironment?.keyValues || [],
+  );
   return (
     <Allotment
       css={css`
@@ -177,15 +166,10 @@ const BatchComparePage = () => {
 
           <div
             css={css`
-              flex: 1;
+              flex: 0.5;
             `}
           >
-            <Button
-              type={'primary'}
-              onClick={() => {
-                run();
-              }}
-            >
+            <Button type={'primary'} onClick={testRun}>
               {t('batchComparePage.run_compare', { ns: 'page' })}
             </Button>
           </div>
@@ -200,17 +184,56 @@ const BatchComparePage = () => {
           `}
         >
           <h3>{t('batchComparePage.compare_results', { ns: 'page' })}</h3>
-          <Table
-            size={'small'}
-            bordered
-            rowKey={'id'}
-            expandable={{
-              expandedRowRender: (record) => <ExpandedRowRender record={record} />,
-            }}
-            loading={loading}
-            columns={columns}
-            dataSource={dataSource}
-          />
+          {testData.length === 0 ? <Empty /> : null}
+          {testData.map((i, index) => {
+            return (
+              <div key={index}>
+                <div>
+                  <span>
+                    {i.interfaceName}{' '}
+                    <Tag color={'success'}>
+                      success:
+                      {
+                        i.children.filter((i) => {
+                          return Number(i.diffResultCode) === 1;
+                        }).length
+                      }
+                    </Tag>
+                    <Tag color={'error'}>
+                      error:
+                      {
+                        i.children.filter((i) => {
+                          return Number(i.diffResultCode) === 0;
+                        }).length
+                      }
+                    </Tag>
+                  </span>
+                  <span>
+                    <Progress
+                      percent={
+                        Number(
+                          i.children.length /
+                            caseStructure.find(
+                              (caseStructureItem) => caseStructureItem.key === i.key,
+                            ).children.length,
+                        ) * 100
+                      }
+                    />
+                  </span>
+                </div>
+                <Table
+                  size={'small'}
+                  bordered
+                  rowKey={'id'}
+                  expandable={{
+                    expandedRowRender: (record) => <ExpandedRowRender record={record} />,
+                  }}
+                  columns={columns}
+                  dataSource={i.children}
+                />
+              </div>
+            );
+          })}
         </div>
       </Allotment.Pane>
     </Allotment>
