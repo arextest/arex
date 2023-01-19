@@ -5,8 +5,7 @@ import React, { useState } from 'react';
 import { AppFooter, AppHeader } from '../../components';
 import { CollapseMenuKey } from '../../constant';
 import { getLocalStorage, setLocalStorage } from '../../helpers/utils';
-import { useCheckChrome } from '../../hooks';
-import useInit from '../../hooks/useInit';
+import { useCheckChrome, useInit } from '../../hooks';
 import MainMenu from './MainMenu';
 import MainTabs from './MainTabs';
 

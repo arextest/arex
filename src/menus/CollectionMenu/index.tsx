@@ -160,16 +160,16 @@ const CollectionMenu = () => {
         setCollectionTreeData(res);
         generateList(res);
         // 首次加载，在这里加initvalue逻辑
-        const initValue = treeFind(res, (node) => node.key === params.rTypeId);
+        const initValue = treeFind(res, (node) => node.key === params.rawId);
         if (initValue && expandedKeys.length === 0) {
           // @ts-ignore
-          handleCollectionMenuClick(params.rTypeId, {
+          handleCollectionMenuClick(params.rawId, {
             title: initValue.title,
             key: initValue.key,
             nodeType: initValue.nodeType,
           });
           // @ts-ignore
-          setExpandedKeys([params.rTypeId]);
+          setExpandedKeys([params.rawId]);
         }
       }
     },

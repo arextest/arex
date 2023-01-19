@@ -33,18 +33,16 @@ const BatchRunPage: React.FC = () => {
   const { collectionTreeData } = useStore();
 
   const caseTreeData = useMemo(() => {
-    if (params.rType === 'BatchRunPage') {
-      if (params.rTypeId && params.rTypeId.length === 24) {
-        return genCaseTreeData([
-          treeFind(collectionTreeData, (node) => node.key === params.rTypeId),
-        ]);
+    if (params.pagesType === 'BatchRunPage') {
+      if (params.rawId && params.rawId.length === 24) {
+        return genCaseTreeData([treeFind(collectionTreeData, (node) => node.key === params.rawId)]);
       } else {
         return genCaseTreeData(collectionTreeData);
       }
     } else {
       return [];
     }
-  }, [collectionTreeData, params.rTypeId, params.rType]);
+  }, [collectionTreeData, params.rawId, params.pagesType]);
   // 所有Request的数据
   const { data: allRequestsData } = useRequest(
     () => {
