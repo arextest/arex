@@ -94,7 +94,7 @@ const BatchComparePage = () => {
       },
     },
     {
-      title: 'Error Count',
+      title: t('batchComparePage.error.count', { ns: 'page' }),
       dataIndex: 'errCount',
       key: 'errCount',
     },
@@ -193,7 +193,7 @@ const BatchComparePage = () => {
                       success:
                       {
                         i.children.filter((i) => {
-                          return Number(i.diffResultCode) === 1;
+                          return Number(i.diffResultCode) === 0;
                         }).length
                       }
                     </Tag>
@@ -201,7 +201,7 @@ const BatchComparePage = () => {
                       error:
                       {
                         i.children.filter((i) => {
-                          return Number(i.diffResultCode) === 0;
+                          return Number(i.diffResultCode) === 1;
                         }).length
                       }
                     </Tag>
@@ -216,6 +216,7 @@ const BatchComparePage = () => {
                             ).children.length,
                         ) * 100
                       }
+                      status='active'
                     />
                   </span>
                 </div>
