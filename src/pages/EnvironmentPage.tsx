@@ -8,6 +8,7 @@ import {
 import { useRequest } from 'ahooks';
 import { App, Button, Divider, Popconfirm, Space } from 'antd';
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useImmer } from 'use-immer';
 
@@ -26,6 +27,7 @@ const EnvironmentPage: PageFC<Environment> = (props) => {
     },
   } = props;
   const { message } = App.useApp();
+  const { t } = useTranslation(['components', 'common']);
 
   const { workspaceId } = useParams();
   const {
@@ -46,7 +48,7 @@ const EnvironmentPage: PageFC<Environment> = (props) => {
   const { run: saveEnv } = useRequest(EnvironmentService.saveEnvironment, {
     manual: true,
     onSuccess() {
-      message.success('保存成功');
+      message.success(t('message.saveSuccess'));
       setEnvironmentLastManualUpdateTimestamp(new Date().getTime());
     },
   });
@@ -99,12 +101,12 @@ const EnvironmentPage: PageFC<Environment> = (props) => {
               disabled={activeEnvironment?.id === id}
               icon={<AimOutlined />}
               placement='left'
-              title='Set as current environment'
+              title={t('env.setCurrentEnv')}
               onClick={() => setActiveEnvironment(environment as Environment)}
             />
             <TooltipButton
               icon={<CopyOutlined />}
-              title='Duplicate current environment'
+              title={t('env.duplicateCurrentEnv')}
               onClick={duplicateEnvironment}
             />
 
@@ -112,7 +114,7 @@ const EnvironmentPage: PageFC<Environment> = (props) => {
 
             <TooltipButton
               icon={<PlusOutlined />}
-              title='Create environment keyValue'
+              title={t('env.createEnvKeyValue')}
               onClick={() =>
                 setKeyValues((state) => {
                   state.push({ key: '', value: '', active: true });
@@ -123,20 +125,19 @@ const EnvironmentPage: PageFC<Environment> = (props) => {
             <Popconfirm
               title={
                 <span style={{ display: 'block', maxWidth: '256px' }}>
-                  Deleting this environment might cause any monitors or mock servers using it to
-                  stop functioning properly. Are you sure you want to continue?
+                  {t('env.delConfirmText')}
                 </span>
               }
               onConfirm={deleteEnvironment}
-              okText='Yes'
-              cancelText='No'
+              okText={t('yes', { ns: 'common' })}
+              cancelText={t('no', { ns: 'common' })}
             >
               <Button size='small' type='text' icon={<DeleteOutlined />} />
             </Popconfirm>
 
             <TooltipButton
               icon={<SaveOutlined />}
-              title='Save'
+              title={t('save', { ns: 'common' })}
               onClick={() => saveEnv({ env: { ...environment, keyValues } })}
             />
           </Space>

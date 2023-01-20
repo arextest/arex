@@ -2,6 +2,7 @@ import { AimOutlined, PlusOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
 import { App, theme } from 'antd';
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import MenuSelect from '../components/MenuSelect';
@@ -14,6 +15,7 @@ import { useStore } from '../store';
 import { MenusType } from './index';
 
 const EnvironmentMenu: FC = () => {
+  const { t } = useTranslation(['common', 'components']);
   const params = useParams();
   const { message } = App.useApp();
   const {
@@ -55,7 +57,7 @@ const EnvironmentMenu: FC = () => {
     {
       manual: true,
       onSuccess() {
-        message.success('success');
+        message.success(t('message.saveSuccess'));
         setEnvironmentLastManualUpdateTimestamp(new Date().getTime());
       },
     },
@@ -68,7 +70,7 @@ const EnvironmentMenu: FC = () => {
       rowKey='id'
       prefix={<SmallTextButton icon={<PlusOutlined />} onClick={createNewEnvironment} />}
       onSelect={handleEnvMenuClick}
-      placeholder='Search Environment'
+      placeholder={t('env.searchEnvironment', { ns: 'components' })}
       request={() => EnvironmentService.getEnvironment({ workspaceId: activeWorkspaceId })}
       requestOptions={{ refreshDeps: [environmentLastManualUpdateTimestamp, activeWorkspaceId] }}
       filter={(keyword, env) => env.envName?.includes(keyword)}

@@ -1,5 +1,6 @@
 import { Button, Form, Input, Modal } from 'antd';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { FlexRowReverseWrapper } from '../../ScriptBlocks/ScriptBlocksCollapse';
 import ColorPicker from './ColorPicker';
@@ -21,6 +22,7 @@ export type LabelEditorRef = {
 const LabelEditor = forwardRef<LabelEditorRef, LabelEditorProps>((props, ref) => {
   const [form] = Form.useForm<LabelFormType>();
   const [modalOpen, setModalOpen] = useState(false);
+  const { t } = useTranslation('components');
 
   const showModal: LabelEditorRef['showModal'] = (initFormValue) => {
     initFormValue &&
@@ -57,21 +59,26 @@ const LabelEditor = forwardRef<LabelEditorRef, LabelEditorProps>((props, ref) =>
     <>
       <FlexRowReverseWrapper style={{ marginBottom: '8px' }}>
         <Button size='small' type='primary' onClick={() => showModal()}>
-          New Label
+          {t('workSpace.addLabelButton')}
         </Button>
       </FlexRowReverseWrapper>
 
-      <Modal title='Labels' open={modalOpen} onOk={handleSave} onCancel={handleClose}>
+      <Modal
+        title={t('workSpace.labels')}
+        open={modalOpen}
+        onOk={handleSave}
+        onCancel={handleClose}
+      >
         <Form form={form} layout='vertical' name='label-form'>
-          <Form.Item hidden name='id' label='Id'>
+          <Form.Item hidden name='id' label={t('workSpace.labelId')}>
             <Input />
           </Form.Item>
 
-          <Form.Item required name='labelName' label='Label Name'>
+          <Form.Item required name='labelName' label={t('workSpace.labelName')}>
             <Input />
           </Form.Item>
 
-          <Form.Item name='color' label='Color'>
+          <Form.Item name='color' label={t('workSpace.color')}>
             <ColorPicker />
           </Form.Item>
         </Form>

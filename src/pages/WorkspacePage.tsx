@@ -1,17 +1,20 @@
 import { Tabs } from 'antd';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { CollectionLabel, Overview } from '../components/workspace';
 
 const WorkspaceOverview = () => {
+  const { t } = useTranslation('components');
+
   const item = [
     {
-      label: 'Overview',
+      label: t('workSpace.overview'),
       key: 'overview',
       children: <Overview />,
     },
     {
-      label: 'Labels',
+      label: t('workSpace.labels'),
       key: 'labels',
       children: <CollectionLabel />,
     },

@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { App, Button, Input, Modal, Select, Upload } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { EmailKey, RoleEnum, RoleMap, WorkspaceKey } from '../../constant';
@@ -43,6 +44,7 @@ const WorkspacesMenuWrapper = styled.div<{ collapse?: boolean }>`
 
 const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
   const { message } = App.useApp();
+  const { t } = useTranslation(['components', 'common']);
 
   const params = useParams();
   const nav = useNavigate();
@@ -92,7 +94,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
           console.log({ workspace, targetWorkspaceId });
           workspace
             ? (targetWorkspace = workspace)
-            : message.warning('无目标工作空间权限或目标工作空间无效');
+            : message.warning(t('workSpace.noPermissionOrInvalid'));
           invitedWorkspaceId && setInvitedWorkspaceId('');
         }
         if (targetWorkspace.id && !params.workspaceId) {
@@ -118,7 +120,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
   const handleAddWorkspace = () => {
     if (newWorkspaceName === '') {
       setStatus('error');
-      message.error('Please input the name of workspace!');
+      message.error(t('workSpace.emptySpaceName'));
     } else {
       createWorkspace({
         userName: email as string,
@@ -152,7 +154,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     manual: true,
     onSuccess: (res) => {
       if (res.success) {
-        message.success('create workspace successfully');
+        message.success(t('workSpace.cereateSuccess'));
         reset();
         resetPage();
         getWorkspaces(res.workspaceId);
@@ -190,12 +192,12 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
       FileSystemService.importFile(param).then((res) => {
         console.log(res);
         if (res.body && res.body.success) {
-          message.success('Import success!');
+          message.success(t('workSpace.importSuccess'));
           setImportView(false);
           setImportType('');
           setImportFile(undefined);
         } else {
-          message.error('Import fail!');
+          message.error(t('workSpace.importFailed'));
         }
         return;
       });
@@ -207,7 +209,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
       <>
         <TooltipButton
           icon={<GlobalOutlined />}
-          title={`Workspace${props.collapse ? ': ' + params.workspaceName : ''}`}
+          title={`${t('workSpace.workSpace')}${props.collapse ? ': ' + params.workspaceName : ''}`}
           placement='right'
           style={{
             marginLeft: props.collapse ? '8px' : '0',
@@ -249,25 +251,37 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
             <div style={{ display: 'flex' }}>
               {editMode ? (
                 <>
-                  <TooltipButton icon={<CheckOutlined />} title='OK' onClick={handleAddWorkspace} />
-                  <TooltipButton icon={<CloseOutlined />} title='Cancel' onClick={reset} />
+                  <TooltipButton
+                    icon={<CheckOutlined />}
+                    title={t('save', { ns: 'common' })}
+                    onClick={handleAddWorkspace}
+                  />
+                  <TooltipButton
+                    icon={<CloseOutlined />}
+                    title={t('cancel', { ns: 'common' })}
+                    onClick={reset}
+                  />
                 </>
               ) : (
                 <>
                   <TooltipButton
                     icon={<PlusOutlined />}
-                    title='Add Workspace'
+                    title={t('workSpace.add')}
                     onClick={() => setEditMode(true)}
                   />
                   <TooltipButton
                     icon={<EditOutlined />}
-                    title='Edit Workspace'
+                    title={t('workSpace.edit')}
                     onClick={handleEditWorkspace}
                   />
                 </>
               )}
 
-              <TooltipButton icon={<UploadOutlined />} title='Import' onClick={viewImport} />
+              <TooltipButton
+                icon={<UploadOutlined />}
+                title={t('workSpace.import')}
+                onClick={viewImport}
+              />
             </div>
 
             <Modal
@@ -282,13 +296,15 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
                       <ArrowLeftOutlined onClick={() => setImportType('')} />
                     </span>
                   ) : null}
-                  Collections
+                  {t('workSpace.collections')}
                 </div>
               }
             >
               {importType != '' ? (
                 <div>
-                  <span>Import {importType}</span>
+                  <span>
+                    {t('workSpace.import')} {importType}
+                  </span>
                   <Upload
                     maxCount={1}
                     onRemove={() => setImportFile(undefined)}
@@ -302,7 +318,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
                       return false;
                     }}
                   >
-                    <Button icon={<UploadOutlined />}>Select File</Button>
+                    <Button icon={<UploadOutlined />}>{t('workSpace.selectFile')}</Button>
                   </Upload>
                   <Button
                     type='primary'
@@ -310,13 +326,13 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
                     style={{ width: '100%', marginTop: 15 }}
                     onClick={handleImport}
                   >
-                    Import
+                    {t('workSpace.import')}
                   </Button>
                 </div>
               ) : (
                 <div>
                   <Button type='text' onClick={() => setImportType('collection')}>
-                    Import collection
+                    {t('workSpace.importCollection')}
                   </Button>
                   <br />
                   {/*<Button type='text' onClick={() => setImportType('case')}>*/}

@@ -110,7 +110,7 @@ const ReplayTable: FC<ResultsProps> = (props) => {
       },
     },
     {
-      title: 'ReplayEndTime',
+      title: t('replay.replayEndTime'),
       dataIndex: 'replayEndTime',
       render(text) {
         return text ? new Date(text).toLocaleString() : '-';
