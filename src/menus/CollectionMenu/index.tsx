@@ -10,7 +10,7 @@ import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Dropdown, Input, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps, TreeProps } from 'antd/lib/tree';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 

@@ -26,7 +26,10 @@ export interface State {
   testResult: HoppTestResult | null;
   environment: Environment;
   theme: 'dark' | 'light';
-  compareResult: any[];
+  compareResult: {
+    logs: any[];
+    responses: any[];
+  };
   mode: 'compare' | 'normal';
   compareLoading: boolean;
 }
@@ -65,7 +68,7 @@ export interface HttpProps {
   onPreSend: (
     request: HoppRESTRequest,
   ) => Promise<{ prTestResultEnvs: { key: string; value: string }[] }>;
-  onSave: (r: HoppRESTRequest) => void;
+  onSave: (r: HoppRESTRequest, rp?: HoppRESTResponse) => void;
   onSendCompare: (r: HoppRESTRequest) => Promise<any>;
   config?: HttpConfig;
   renderResponse?: boolean;
@@ -224,8 +227,8 @@ const Http = forwardRef<HttpRef, HttpProps>(
             <Allotment.Pane>
               {store.mode === 'compare' ? (
                 <ExtraTabs.ResponseTabs.CompareResult
-                  theme={theme}
-                  responses={store.compareResult}
+                  compareResult={store.compareResult}
+                  loading={store.compareLoading}
                 />
               ) : (
                 <ResponseTabs onPin={onPin} config={config?.responseTabs} />

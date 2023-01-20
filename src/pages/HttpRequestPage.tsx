@@ -9,8 +9,8 @@ import Http from '../components/arex-request';
 import { Environment } from '../components/arex-request/data/environment';
 import { HoppRESTRequest } from '../components/arex-request/data/rest';
 import { ExtraTabs } from '../components/arex-request/extra';
+import { HoppRESTResponse } from '../components/arex-request/helpers/types/HoppRESTResponse';
 import { treeFind, treeFindPath } from '../helpers/collection/util';
-import { runCompareRESTRequest } from '../helpers/CompareRequestRunner';
 import { convertSaveRequestData } from '../helpers/http/util';
 import { runRESTPreRequest, runRESTRequest } from '../helpers/RequestRunner';
 import { generateGlobalPaneId, parseGlobalPaneId } from '../helpers/utils';
@@ -20,6 +20,7 @@ import SaveRequestButton from '../menus/CollectionMenu/SaveRequestButton';
 import { FileSystemService } from '../services/FileSystem.service';
 import { useStore } from '../store';
 import useUserProfile from '../store/useUserProfile';
+import { sendQuickCompare } from './BatchComparePage/util';
 import { PageFC, PagesType } from './index';
 
 const HttpRequestPageWrapper = styled.div`
@@ -139,7 +140,19 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
     [data],
   );
 
-  const handleSave = (request: HoppRESTRequest) => {
+  const handleSave = (request: HoppRESTRequest, response?: HoppRESTResponse) => {
+    console.log(request, response);
+    if (
+      !request.headers.find((i) => i.key === 'arex-record-id') &&
+      (response?.type === 'success' ? response.headers : []).find((i) => i.key === 'arex-record-id')
+    ) {
+      const recordId =
+        response?.type === 'success'
+          ? response.headers.find((i) => i.key === 'arex-record-id')?.value
+          : '';
+
+      runPinMock(recordId);
+    }
     if (nodeType === 1 && id.length === 36) {
       setReqParams(request);
       setSaveModalOpen(true);
@@ -186,7 +199,14 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
         environment={environment}
         onPreSend={runRESTPreRequest}
         onSend={runRESTRequest}
-        onSendCompare={runCompareRESTRequest}
+        onSendCompare={() => {
+          const nodeInfo = treeFindPath(collectionTreeData, (node) => node.key === id);
+          return sendQuickCompare({
+            caseId: id,
+            nodeInfo,
+            envs: environment.variables,
+          });
+        }}
         onSave={handleSave}
         onPin={runPinMock}
       />

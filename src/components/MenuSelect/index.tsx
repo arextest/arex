@@ -143,23 +143,6 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
     ...props.requestOptions,
     onSuccess(res, _params) {
       // 默认触发onSelect第一个的逻辑
-      // const record1 = res.find((i) => {
-      //   console.log(i , params.rawId)
-      //   return i.id === params.rawId
-      // });
-      // setPages(
-      //   {
-      //     title: `${t('replay.caseTable')} - ${record1.planItemId}`,
-      //     pageType: PagesType.ReplayCase,
-      //     menuType: MenusType.Replay,
-      //     isNew: false,
-      //     data: record1,
-      //     paneId: generateGlobalPaneId(MenusType.Replay, PagesType.ReplayCase, record1.planItemId),
-      //     rawId: record1.planItemId,
-      //   },
-      //   'push',
-      // );
-
       if (res.length && (props.defaultSelectFirst || props.initValue)) {
         const record = props.defaultSelectFirst
           ? props.forceFilter

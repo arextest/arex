@@ -5,9 +5,11 @@ import React, { FC, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { METHODS } from '../../../../constant';
+import { flattenArray } from '../../../../pages/BatchComparePage/util';
 import { SpaceBetweenWrapper } from '../../../styledComponents';
 import { HoppRESTRequest } from '../../data/rest';
 import CollectionBreadcrumb from '../../extra/CollectionBreadcrumb';
+import { HoppRESTResponse } from '../../helpers/types/HoppRESTResponse';
 import { urlPretreatment } from '../../helpers/utils/util';
 import { HttpContext, HttpProps, State } from '../../index';
 import SmartEnvInput from '../smart/EnvInput';
@@ -107,7 +109,13 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
         })
         .then((responseAndTestResult) => {
           dispatch((state) => {
-            state.compareResult = responseAndTestResult.responses;
+            state.compareResult = {
+              logs: flattenArray((responseAndTestResult.diffDetails || []).map((r) => r.logs)),
+              responses: [
+                JSON.parse(responseAndTestResult.baseMsg),
+                JSON.parse(responseAndTestResult.testMsg),
+              ],
+            };
             state.compareLoading = false;
           });
         });
@@ -170,7 +178,11 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
 
           <Divider type={'vertical'} />
 
-          <Button size='small' icon={<SaveOutlined />} onClick={() => props.onSave(store.request)}>
+          <Button
+            size='small'
+            icon={<SaveOutlined />}
+            onClick={() => props.onSave(store.request, store.response as HoppRESTResponse)}
+          >
             {t('action.save')}
           </Button>
         </Space>

@@ -130,7 +130,7 @@
     "issues": "issue(s)",
     "treeMode": "Tree Mode",
     "valueOf": "Value of",
-    "isDifferenceExcepted": "is different, excepted",
+    "isDifferenceExcepted": ",excepted",
     "actual": ", actual",
     "unknown": "Unknown",
     "leftMissing": "Left Missing",

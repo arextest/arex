@@ -137,7 +137,7 @@ const DiffList: FC<DiffListType> = (props) => {
 
             {log.pathPair.unmatchedType === 3 ? (
               <Typography.Text type='secondary'>
-                {`${t('replay.valueOf')} `}
+                {` ${t('appSetting.path')} `}
                 <PathTooltip path={log.path} />
                 {` ${t('replay.isDifferenceExcepted')} `}
                 <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>

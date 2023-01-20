@@ -130,7 +130,7 @@
     "issues": "差异",
     "treeMode": "报文详情",
     "valueOf": "节点 ",
-    "isDifferenceExcepted": "不同，期望",
+    "isDifferenceExcepted": "，期望",
     "actual": ", 实际",
     "unknown": "未知",
     "leftMissing": "录制为空",
