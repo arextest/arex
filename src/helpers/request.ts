@@ -1,9 +1,9 @@
 // @ts-nocheck
 import axios from 'axios';
 
-import { HoppRESTRequest } from '../components/arex-request/data/rest';
-import { HoppRESTResponse } from '../components/arex-request/helpers/types/HoppRESTResponse';
-import { HoppTestResult } from '../components/arex-request/helpers/types/HoppTestResult';
+import { HoppRESTRequest } from '../components/http/data/rest';
+import { HoppRESTResponse } from '../components/http/helpers/types/HoppRESTResponse';
+import { HoppTestResult } from '../components/http/helpers/types/HoppTestResult';
 function AgentAxios<T>(params: any) {
   return new Promise<T>((resolve, reject) => {
     const tid = String(Math.random());

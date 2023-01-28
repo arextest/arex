@@ -195,6 +195,7 @@ export interface QueryScenesRes {
 export interface QueryMsgWithDiffReq {
   compareResultId: string;
   logIndexes: string;
+  logs: any[];
 }
 
 export type QueryMsgWithDiffLog = {

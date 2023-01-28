@@ -2,7 +2,7 @@ import { App, message } from 'antd';
 import React from 'react';
 import { v4 as uuid } from 'uuid';
 
-import { PageType } from '../pages';
+import { PageType } from '../components/panes';
 import * as ChartUtils from './chart';
 
 export { ChartUtils, uuid };

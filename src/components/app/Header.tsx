@@ -7,12 +7,12 @@ import { useNavigate } from 'react-router-dom';
 
 import { EmailKey } from '../../constant';
 import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
-import { PagesType } from '../../pages';
 import { useStore } from '../../store';
 import useUserProfile from '../../store/useUserProfile';
-import GitHubStarButton from '../GitHubStarButton';
 import { TooltipButton } from '../index';
+import { PagesType } from '../panes';
 import InviteWorkspace from '../workspace/Invite';
+import GitHubStarButton from './GitHubStarButton';
 
 const HeaderWrapper = styled.div`
   height: 46px;

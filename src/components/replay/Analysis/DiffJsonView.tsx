@@ -1,3 +1,4 @@
+// @ts-nocheck
 import './DiffJsonView.css';
 
 import { css } from '@emotion/react';

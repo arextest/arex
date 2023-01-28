@@ -47,12 +47,12 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
 
   // 深度优先遍历
   const collectionTreeSelectData = useMemo(() => {
-    const mapTree = (tree) => {
+    const mapTree = (tree: any) => {
       const haveChildren = Array.isArray(tree.children) && tree.children.length > 0;
       return {
         ...tree,
         disabled: tree.nodeType !== 1,
-        children: haveChildren ? tree.children.map((i) => mapTree(i)) : [],
+        children: haveChildren ? tree.children.map((i: any) => mapTree(i)) : [],
       };
     };
     return mapTree({ children: collectionTreeData })['children'];
@@ -73,11 +73,13 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
           operationId: props.operationId,
         })
         .then((res) => {
+          // @ts-ignore
           if (res?.body?.success) {
             notification.success({ message: t('message.saveSuccess', { ns: 'common' }) });
             setOpen(false);
           } else {
             notification.error({
+              // @ts-ignore
               message: res.responseStatusType.responseDesc,
             });
           }

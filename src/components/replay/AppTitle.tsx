@@ -8,11 +8,11 @@ import { useTranslation } from 'react-i18next';
 
 import { EmailKey } from '../../constant';
 import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
-import { MenusType } from '../../menus';
-import { PagesType } from '../../pages';
 import ReplayService from '../../services/Replay.service';
 import { ApplicationDataType } from '../../services/Replay.type';
 import { useStore } from '../../store';
+import { MenusType } from '../menus';
+import { PagesType } from '../panes';
 import { PanesTitle } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
 
