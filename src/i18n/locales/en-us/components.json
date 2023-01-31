@@ -163,6 +163,7 @@
     "advanced": "Advanced",
     "timeMock": "Time Mock",
     "dynamicClasses": "Dynamic Classes",
+    "excludeServiceOperationSet": "ExcludeServiceOperationSet",
     "fullClassName": "Full Class Name",
     "methodName": "Method Name",
     "parameterTypes": "Parameter Types",

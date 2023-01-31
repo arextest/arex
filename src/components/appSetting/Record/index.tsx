@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Checkbox, Collapse, Form, TimePicker } from 'antd';
+import { App, Button, Checkbox, Collapse, Form, Radio, TimePicker } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +24,7 @@ type SettingFormType = {
   sampleRate: number;
   period: Dayjs[];
   timeMock: boolean;
+  excludeServiceOperationSet: string[];
 };
 
 const format = 'HH:mm';
@@ -39,6 +40,7 @@ const defaultValues: Omit<
   sampleRate: 1,
   period: [dayjs('00:01', format), dayjs('23:59', format)],
   timeMock: false,
+  excludeServiceOperationSet: [],
 };
 
 const SettingRecord: FC<SettingRecordProps> = (props) => {
@@ -47,6 +49,16 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
 
   const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
   const [loading, setLoading] = useState(false);
+
+  /**
+   * 请求 InterfacesList
+   */
+  const { data: operationList = [] } = useRequest(
+    () => AppSettingService.queryInterfacesList<'Global'>({ id: props.appId as string }),
+    {
+      ready: !!props.appId,
+    },
+  );
 
   useRequest(AppSettingService.queryRecordSetting, {
     defaultParams: [{ id: props.appId }],
@@ -59,6 +71,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
         sampleRate: res.sampleRate,
         allowDayOfWeeks: [],
         timeMock: res.timeMock,
+        excludeServiceOperationSet: res.excludeServiceOperationSet,
       });
 
       setInitialValues((state) => {
@@ -80,6 +93,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
     const allowDayOfWeeks = encodeWeekCode(values.allowDayOfWeeks);
     const [allowTimeOfDayFrom, allowTimeOfDayTo] = values.period.map((m: any) => m.format(format));
 
+    console.log({ excludeDependentServiceSet: values.excludeDependentServiceSet });
     const params = {
       allowDayOfWeeks,
       allowTimeOfDayFrom,
@@ -87,6 +101,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       appId: props.appId,
       sampleRate: values.sampleRate,
       timeMock: values.timeMock,
+      excludeServiceOperationSet: values.excludeServiceOperationSet,
     };
 
     update(params);
@@ -126,6 +141,19 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
 
           <Form.Item label={t('appSetting.dynamicClasses')}>
             <DynamicClassesEditableTable appId={props.appId} />
+          </Form.Item>
+
+          <Form.Item
+            label={t('appSetting.excludeServiceOperationSet')}
+            name='excludeServiceOperationSet'
+          >
+            <Checkbox.Group style={{ display: 'flex', flexDirection: 'column' }}>
+              {operationList.map((i) => (
+                <Checkbox key={i.operationName} value={i.operationName}>
+                  {i.operationName}
+                </Checkbox>
+              ))}
+            </Checkbox.Group>
           </Form.Item>
         </Panel>
       </Collapse>

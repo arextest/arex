@@ -163,6 +163,7 @@
     "advanced": "高级",
     "timeMock": "Mock 时间",
     "dynamicClasses": "动态类",
+    "excludeServiceOperationSet": "ExcludeServiceOperationSet",
     "fullClassName": "全类名",
     "methodName": "方法名",
     "parameterTypes": "参数类型",
