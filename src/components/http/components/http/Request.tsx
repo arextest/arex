@@ -209,19 +209,14 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
           />
         </Space.Compact>
 
-        <Dropdown.Button
+        <Button
           type='primary'
           className='send-request-button'
-          icon={<DownOutlined />}
-          menu={{
-            items,
-            onClick: handleMenuClick,
-          }}
           onClick={() => handleRequest(store.mode)}
           style={{ marginLeft: '16px' }}
         >
           {t('action.send')}
-        </Dropdown.Button>
+        </Button>
       </RequestMethodUrlWrapper>
 
       {store.mode === 'compare' && (

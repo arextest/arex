@@ -10,7 +10,7 @@ import { ReplayCase } from '../../../services/Replay.type';
 import { HighlightRowTable, SmallTextButton } from '../../styledComponents';
 
 type CaseProps = {
-  planItemId: number;
+  planItemId: string;
   onClick?: (record: ReplayCase) => void;
   onClickSaveCase?: (record: ReplayCase) => void;
 };

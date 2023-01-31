@@ -75,6 +75,7 @@ const SaveRequestButton: FC<SaveRequestButtonProps> = ({
                 headers: reqParams.headers,
                 params: reqParams.params,
                 testScripts: reqParams.testScripts,
+                preRequestScripts: reqParams.preRequestScripts,
                 testAddress: {
                   endpoint: reqParams.compareEndpoint,
                   method: reqParams.compareMethod,

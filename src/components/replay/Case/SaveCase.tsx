@@ -17,7 +17,7 @@ export type SaveCaseRef = {
 };
 
 export type SaveCaseProps = {
-  operationId: number;
+  operationId: string;
 };
 
 const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
