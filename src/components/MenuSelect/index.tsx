@@ -12,9 +12,9 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { generateGlobalPaneId } from '../../helpers/utils';
-import { MenusType } from '../../menus';
-import { PagesType } from '../../pages';
 import { useStore } from '../../store';
+import { MenusType } from '../menus';
+import { PagesType } from '../panes';
 
 export type MenuSelectProps<D, P extends any[]> = {
   sx?: CSSInterpolation; // custom style

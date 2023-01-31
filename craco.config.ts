@@ -12,7 +12,7 @@ export default {
     open: false,
   },
   typescript: {
-    enableTypeChecking: false,
+    enableTypeChecking: true,
   },
   webpack: {
     alias: {

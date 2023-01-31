@@ -3,12 +3,12 @@ import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
+import { MenusType } from '../components/menus';
+import { nodeType } from '../components/menus/CollectionMenu';
+import { PageType } from '../components/panes';
 import { EmailKey, WorkspaceEnvironmentPairKey, WorkspaceKey } from '../constant';
 import { getLocalStorage, setLocalStorage } from '../helpers/utils';
-import { MenusType } from '../menus';
-import { nodeType } from '../menus/CollectionMenu';
-import { PageType } from '../pages';
-import { NodeList } from '../services/Collection.service';
+import { NodeObject } from '../services/Collection.service';
 import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
@@ -44,7 +44,7 @@ type BaseState = {
   pages: Page<PageData>[];
   /*
    * 修改工作区标签页数据
-   * @param pages 工作区标签页数据
+   * @param panes 工作区标签页数据
    * @param mode 添加模式：push，替换模式：undefined
    * */
   setPages: <D extends PageData = undefined, M extends SetPagesMode = 'normal'>(
@@ -55,8 +55,8 @@ type BaseState = {
   removeSegmentPages: (targetPageId: string, segment: 'left' | 'right') => void;
   resetPage: () => void;
 
-  collectionTreeData: NodeList[];
-  setCollectionTreeData: (collectionTreeData: NodeList[]) => void;
+  collectionTreeData: NodeObject[];
+  setCollectionTreeData: (collectionTreeData: NodeObject[]) => void;
   collectionLastManualUpdateTimestamp: number;
   setCollectionLastManualUpdateTimestamp: (timestamp: number) => void;
 
