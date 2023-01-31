@@ -2,6 +2,8 @@ import { useRequest } from 'ahooks';
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
+import { MenusType } from '../components/menus';
+import { PagesType } from '../components/panes';
 import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../constant';
 import {
   clearLocalStorage,
@@ -9,8 +11,6 @@ import {
   getLocalStorage,
   setLocalStorage,
 } from '../helpers/utils';
-import { MenusType } from '../menus';
-import { PagesType } from '../pages';
 import { AuthService } from '../services/Auth.service';
 import { UserService } from '../services/User.service';
 import { useStore } from '../store';

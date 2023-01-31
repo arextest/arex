@@ -1,4 +1,5 @@
-import { HoppRESTRequest } from '../components/arex-request/data/rest';
+// @ts-nocheck
+import { HoppRESTRequest } from '../components/http/data/rest';
 import AgentAxios from './request';
 
 export const runCompareRESTRequest = async (request: HoppRESTRequest): Promise<any> => {

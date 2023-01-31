@@ -109,7 +109,7 @@ export interface QueryPlanItemStatisticsRes {
 
 // ------ /report_api/report/queryResponseTypeStatistic ------
 export interface QueryResponseTypeStatisticReq {
-  planItemId: number;
+  planItemId: string;
 }
 export type CategoryStatistic = {
   categoryName: string;
@@ -127,7 +127,7 @@ export interface QueryResponseTypeStatisticRes {
 export interface QueryDifferencesReq {
   categoryName: string;
   operationName: string;
-  planItemId: number;
+  planItemId: string;
 }
 export type Difference = {
   differenceName: string;
@@ -143,7 +143,7 @@ export interface QueryReplayCaseReq {
   needTotal?: boolean;
   pageIndex?: number;
   pageSize?: number;
-  planItemId: number;
+  planItemId: string;
 }
 export type ReplayCase = {
   replayId: string;
@@ -195,6 +195,7 @@ export interface QueryScenesRes {
 export interface QueryMsgWithDiffReq {
   compareResultId: string;
   logIndexes: string;
+  logs: any[];
 }
 
 export type QueryMsgWithDiffLog = {
@@ -232,7 +233,7 @@ export type QueryMsgWithDiffRes = {
 // ------ /report/queryFullLinkMsg ------
 export interface QueryFullLinkMsgReq {
   recordId: string;
-  planItemId: number;
+  planItemId: string;
 }
 
 export type CompareResult = {

@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { HoppRESTAuth, HoppRESTRequest } from '../components/arex-request/data/rest';
+import { HoppRESTAuth, HoppRESTRequest } from '../components/http/data/rest';
 import { METHODS, NodeType } from '../constant';
 
 export type KeyValueType = {
@@ -10,7 +10,7 @@ export type KeyValueType = {
 };
 
 export type Address = {
-  method: typeof METHODS[number];
+  method: (typeof METHODS)[number];
   endpoint: string;
 };
 

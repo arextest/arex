@@ -32,11 +32,11 @@ import { useTranslation } from 'react-i18next';
 
 import { EmailKey } from '../../constant';
 import { generateGlobalPaneId, getLocalStorage, getPercent } from '../../helpers/utils';
-import { MenusType } from '../../menus';
-import { PagesType } from '../../pages';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
+import { MenusType } from '../menus';
+import { PagesType } from '../panes';
 import { SmallTextButton, SpaceBetweenWrapper } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
 import StatusTag from './StatusTag';

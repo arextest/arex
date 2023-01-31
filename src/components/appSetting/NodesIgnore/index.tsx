@@ -250,6 +250,7 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
             },
           ]}
           activeKey={activeOperationInterface?.id}
+          // @ts-ignore
           ignoreNodes={ignoreNodeList}
           onChange={(data, maintain) =>
             setActiveOperationInterface(
@@ -266,6 +267,7 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
             loadingPanel={loadingIgnoreNode}
             interfaces={operationList}
             activeKey={activeOperationInterface?.id}
+            // @ts-ignore
             ignoreNodes={ignoreNodeList}
             onChange={(data, maintain) =>
               setActiveOperationInterface(

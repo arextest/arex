@@ -95,7 +95,7 @@ export default class ReplayService {
       .then((res) => Promise.resolve(res.body.scenes));
   }
 
-  static async queryMsgWithDiff(params: QueryMsgWithDiffReq) {
+  static async queryMsgWithDiff(params: { logIndexes: string; compareResultId: string }) {
     return request
       .post<QueryMsgWithDiffRes>('/report/report/queryMsgWithDiff', params)
       .then((res) => Promise.resolve(res.body));

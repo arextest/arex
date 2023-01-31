@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Login, MainBox, ValidInvitation } from '../views';
-import UpgradeBrowser from '../views/UpgradeBrowser';
+import { Login, MainBox, ValidInvitation } from '../pages';
+import UpgradeBrowser from '../pages/UpgradeBrowser';
 
 const router = [
   {

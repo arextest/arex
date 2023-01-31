@@ -28,8 +28,8 @@ export type DiffListType = {
   appId: string;
   operationId: string;
   scene?: Scene;
-  onTreeModeClick?: (diff?: QueryMsgWithDiffRes) => void;
-  externalData: QueryMsgWithDiffReq;
+  onTreeModeClick?: (diff?: unknown) => void;
+  externalData?: QueryMsgWithDiffReq;
 };
 
 const DiffList: FC<DiffListType> = (props) => {

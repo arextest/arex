@@ -1,5 +1,6 @@
 import { Button, ButtonProps, Tooltip, TooltipProps } from 'antd';
-import { Breakpoint } from 'antd/es/_util/responsiveObserve';
+import { Breakpoint } from 'antd/es/_util/responsiveObserver';
+// import { Breakpoint } from 'antd/es/_util/responsiveObserve';
 import useBreakpoint from 'antd/es/grid/hooks/useBreakpoint';
 import React, { FC } from 'react';
 

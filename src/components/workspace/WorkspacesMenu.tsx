@@ -16,12 +16,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { EmailKey, RoleEnum, RoleMap, WorkspaceKey } from '../../constant';
 import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
-import { MenusType } from '../../menus';
-import { PagesType } from '../../pages';
 import { FileSystemService } from '../../services/FileSystem.service';
 import WorkspaceService from '../../services/Workspace.service';
 import { useStore } from '../../store';
 import { TooltipButton } from '../index';
+import { MenusType } from '../menus';
+import { PagesType } from '../panes';
 
 const Role = styled((props: { className?: string; role: RoleEnum }) => (
   <span className={props.className}>({RoleMap[props.role]})</span>

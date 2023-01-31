@@ -10,7 +10,7 @@ import MenuSelect from '../../MenuSelect';
 import { HighlightRowTable } from '../../styledComponents';
 
 const DiffScenes: FC<{
-  planItemId: number;
+  planItemId: string;
   onScenes?: (diff: Difference, category?: CategoryStatistic) => void;
   onSelectCategory?: (category: CategoryStatistic) => void;
 }> = ({ planItemId, onScenes, onSelectCategory }) => {
