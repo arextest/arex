@@ -80,8 +80,8 @@ export interface QueryPlanItemStatisticsReq {
 }
 
 export type PlanItemStatistics = {
-  planItemId: number;
-  planId: number;
+  planItemId: string;
+  planId: string;
   operationId: string;
   operationName: string;
   serviceName: string;

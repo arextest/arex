@@ -1,6 +1,12 @@
 import 'chart.js/auto';
 
-import { ContainerOutlined, FileTextOutlined, RedoOutlined, StopOutlined } from '@ant-design/icons';
+import {
+  ContainerOutlined,
+  DeleteOutlined,
+  FileTextOutlined,
+  RedoOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import {
@@ -329,15 +335,13 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       title={`${t('replay.report')}: ${selectedPlan.planName}`}
       extra={
         <>
-          {selectedPlan.status !== 2 && (
-            <Popconfirm
-              title={t('replay.abortTheCase')}
-              description={t('replay.confirmAbortCase')}
-              onConfirm={() => deletePlanStatistics(selectedPlan!.planId)}
-            >
-              <SmallTextButton icon={<StopOutlined />} title={t('replay.abort')} />
-            </Popconfirm>
-          )}
+          <Popconfirm
+            title={t('replay.deleteTheReport')}
+            description={t('replay.confirmDeleteReport')}
+            onConfirm={() => deletePlanStatistics(selectedPlan!.planId)}
+          >
+            <SmallTextButton icon={<DeleteOutlined />} title={t('replay.delete')} />
+          </Popconfirm>
 
           <SmallTextButton
             icon={<RedoOutlined />}
