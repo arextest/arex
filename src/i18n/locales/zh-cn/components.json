@@ -209,7 +209,7 @@
     "workSpace": "工作空间",
     "noPermissionOrInvalid": "无目标工作空间权限或目标工作空间无效",
     "emptySpaceName": "请输入名称!",
-    "cereateSuccess": "创建成功",
+    "createSuccess": "创建成功",
     "importSuccess": "导入成功!",
     "importFailed": "导入失败!",
     "add": "新增工作空间",

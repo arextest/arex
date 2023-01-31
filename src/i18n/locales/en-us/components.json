@@ -210,7 +210,7 @@
     "workSpace": "Workspace",
     "noPermissionOrInvalid": "No target workspace permission or target workspace is invalid",
     "emptySpaceName": "Please input the name of workspace!",
-    "cereateSuccess": "create workspace successfully",
+    "createSuccess": "create workspace successfully",
     "importSuccess": "Import success!",
     "importFailed": "Import Fail!",
     "add": "addWorkspace",

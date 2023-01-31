@@ -154,7 +154,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     manual: true,
     onSuccess: (res) => {
       if (res.success) {
-        message.success(t('workSpace.cereateSuccess'));
+        message.success(t('workSpace.createSuccess'));
         reset();
         resetPage();
         getWorkspaces(res.workspaceId);
