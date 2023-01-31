@@ -4,11 +4,12 @@ import { MappingAlgorithm } from 'antd/es/config-provider/context';
 import React, { useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 
-import { useAuthentication, useCheckChrome } from './hooks';
+import { useAuthentication } from './hooks';
 import { localeMap } from './i18n';
 import routerConfig from './router';
 import useUserProfile from './store/useUserProfile';
 import { generateToken, GlobalConfigProvider } from './theme';
+import GlobalStyle from './theme/GlobalStyle';
 
 const { Content } = Layout;
 const { darkAlgorithm, compactAlgorithm, defaultAlgorithm } = theme;
@@ -39,11 +40,13 @@ function App() {
       locale={localeMap[language]}
       renderEmpty={() => Empty.PRESENTED_IMAGE_SIMPLE}
     >
-      <AppWrapper>
-        <Layout>
-          <Content>{routesContent}</Content>
-        </Layout>
-      </AppWrapper>
+      <GlobalStyle>
+        <AppWrapper>
+          <Layout>
+            <Content>{routesContent}</Content>
+          </Layout>
+        </AppWrapper>
+      </GlobalStyle>
     </GlobalConfigProvider>
   );
 }
