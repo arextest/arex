@@ -24,10 +24,22 @@ export const runRESTPreRequest = async (
   request: HoppRESTRequest,
 ): Promise<{
   prTestResultEnvs: { key: string; value: string }[];
+  prTestResultRequest: any;
 }> => {
   const prTestResult = await _runRESTRequestPreTest(request);
+  const prTestResultRequest: any = {};
+  if (prTestResult.headers) {
+    prTestResultRequest.headers = prTestResult.headers;
+  }
+  if (prTestResult.params) {
+    prTestResultRequest.params = prTestResult.params;
+  }
+  // if (prTestResult.body) {
+  //   prTestResultRequest.body = prTestResult.body;
+  // }
   return {
     prTestResultEnvs: [...prTestResult.envList, ...prTestResult.varList],
+    prTestResultRequest: prTestResultRequest,
   };
 };
 
@@ -127,16 +139,20 @@ function _runRESTRequestPreTest(request: HoppRESTRequest) {
     },
   })
     .then((testRes) => {
-      const { envList, varList } = testRes.data.body;
+      const { envList, varList, headers, params } = testRes.data.body;
       try {
         return {
           envList,
           varList,
+          headers,
+          params,
         };
       } catch (e) {
         return {
           envList: [],
           varList: [],
+          headers: [],
+          params: [],
         };
       }
     })
@@ -144,6 +160,8 @@ function _runRESTRequestPreTest(request: HoppRESTRequest) {
       return {
         envList: [],
         varList: [],
+        headers: [],
+        params: [],
       };
     });
 }

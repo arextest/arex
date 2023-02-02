@@ -65,9 +65,10 @@ export interface HttpProps {
   onSend: (
     request: HoppRESTRequest,
   ) => Promise<{ response: HoppRESTResponse; testResult: HoppTestResult }>;
-  onPreSend: (
-    request: HoppRESTRequest,
-  ) => Promise<{ prTestResultEnvs: { key: string; value: string }[] }>;
+  onPreSend: (request: HoppRESTRequest) => Promise<{
+    prTestResultEnvs: { key: string; value: string }[];
+    prTestResultRequest: { params: any[]; header: any[] };
+  }>;
   onSave: (r: HoppRESTRequest, rp?: HoppRESTResponse) => void;
   onSendCompare: (r: HoppRESTRequest) => Promise<any>;
   config?: HttpConfig;

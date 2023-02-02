@@ -93,7 +93,6 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
     const allowDayOfWeeks = encodeWeekCode(values.allowDayOfWeeks);
     const [allowTimeOfDayFrom, allowTimeOfDayTo] = values.period.map((m: any) => m.format(format));
 
-    console.log({ excludeDependentServiceSet: values.excludeDependentServiceSet });
     const params = {
       allowDayOfWeeks,
       allowTimeOfDayFrom,

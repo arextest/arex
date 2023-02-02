@@ -131,15 +131,28 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
           ...store.request,
         })
         .then((prTestResultEnvs) => {
+          const prTestResultRequest = prTestResultEnvs.prTestResultRequest;
+          // 预请求脚本返回envs和修改后的request
+          // envs 和 request 需要一个方法合并对象
+          const mergeRequest = {
+            ...store.request,
+            ...prTestResultRequest,
+          };
           props
             .onSend({
-              ...store.request,
-              endpoint: urlPretreatment(store.request.endpoint, [
+              ...mergeRequest,
+              endpoint: urlPretreatment(mergeRequest.endpoint, [
                 ...(store.environment?.variables || []),
                 ...prTestResultEnvs.prTestResultEnvs,
               ]),
-              headers: store.request.headers.filter((f) => f.key !== '' && f.value !== ''),
-              params: store.request.params.filter((f) => f.key !== '' && f.value !== ''),
+              headers: mergeRequest.headers.filter(
+                (f: { active?: boolean; key: string; value: string }) =>
+                  f.active && f.key !== '' && f.value !== '',
+              ),
+              params: mergeRequest.params.filter(
+                (f: { active?: boolean; key: string; value: string }) =>
+                  f.active && f.key !== '' && f.value !== '',
+              ),
             })
             .then((responseAndTestResult) => {
               dispatch((state) => {
