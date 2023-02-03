@@ -10,7 +10,12 @@ import { decodeWeekCode, encodeWeekCode } from '../../../helpers/record/util';
 import AppSettingService from '../../../services/AppSetting.service';
 import { QueryRecordSettingRes } from '../../../services/AppSetting.type';
 import SettingForm from '../SettingForm';
-import { DurationInput, DynamicClassesEditableTable, IntegerStepSlider } from './FormItem';
+import {
+  DurationInput,
+  DynamicClassesEditableTable,
+  IntegerStepSlider,
+  Operations,
+} from './FormItem';
 
 const { Panel } = Collapse;
 
@@ -142,17 +147,24 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
             <DynamicClassesEditableTable appId={props.appId} />
           </Form.Item>
 
+          {/*<Form.Item*/}
+          {/*  label={t('appSetting.excludeServiceOperationSet')}*/}
+          {/*  name='excludeServiceOperationSet'*/}
+          {/*>*/}
+          {/*  <Checkbox.Group style={{ display: 'flex', flexDirection: 'column' }}>*/}
+          {/*    {operationList.map((i) => (*/}
+          {/*      <Checkbox key={i.operationName} value={i.operationName}>*/}
+          {/*        {i.operationName}*/}
+          {/*      </Checkbox>*/}
+          {/*    ))}*/}
+          {/*  </Checkbox.Group>*/}
+          {/*</Form.Item>*/}
+
           <Form.Item
             label={t('appSetting.excludeServiceOperationSet')}
             name='excludeServiceOperationSet'
           >
-            <Checkbox.Group style={{ display: 'flex', flexDirection: 'column' }}>
-              {operationList.map((i) => (
-                <Checkbox key={i.operationName} value={i.operationName}>
-                  {i.operationName}
-                </Checkbox>
-              ))}
-            </Checkbox.Group>
+            <Operations dataSource={operationList.map((item) => item.operationName)} />
           </Form.Item>
         </Panel>
       </Collapse>

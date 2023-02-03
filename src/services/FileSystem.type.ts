@@ -10,7 +10,7 @@ export type KeyValueType = {
 };
 
 export type Address = {
-  method: (typeof METHODS)[number];
+  method: typeof METHODS[number];
   endpoint: string;
 };
 
