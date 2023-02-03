@@ -132,7 +132,7 @@ const Login: FC = () => {
 
   return (
     <FlexCenterWrapper>
-      <Card style={{ marginBottom: '20vh' }}>
+      <Card style={{ marginTop: '20vh' }}>
         <Space size={26} direction='vertical'>
           <Logo>AREX</Logo>
 
