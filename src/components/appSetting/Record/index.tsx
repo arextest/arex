@@ -147,19 +147,6 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
             <DynamicClassesEditableTable appId={props.appId} />
           </Form.Item>
 
-          {/*<Form.Item*/}
-          {/*  label={t('appSetting.excludeServiceOperationSet')}*/}
-          {/*  name='excludeServiceOperationSet'*/}
-          {/*>*/}
-          {/*  <Checkbox.Group style={{ display: 'flex', flexDirection: 'column' }}>*/}
-          {/*    {operationList.map((i) => (*/}
-          {/*      <Checkbox key={i.operationName} value={i.operationName}>*/}
-          {/*        {i.operationName}*/}
-          {/*      </Checkbox>*/}
-          {/*    ))}*/}
-          {/*  </Checkbox.Group>*/}
-          {/*</Form.Item>*/}
-
           <Form.Item
             label={t('appSetting.excludeServiceOperationSet')}
             name='excludeServiceOperationSet'
