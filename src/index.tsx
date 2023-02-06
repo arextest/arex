@@ -1,4 +1,5 @@
 import './i18n';
+import './assets/css/index.css';
 import './theme/style.css';
 import 'allotment/dist/style.css';
 import 'antd/dist/reset.css';

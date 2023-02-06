@@ -37,13 +37,15 @@ const useInit = () => {
         const refreshToken = res.data.body.refreshToken;
         setLocalStorage(AccessTokenKey, accessToken);
         setLocalStorage(RefreshTokenKey, refreshToken);
-        nav('/');
+        window.location.reload();
       } else if (pathname !== '/login') {
         clearLocalStorage();
+        window.location.reload();
       }
     },
     onError() {
       clearLocalStorage();
+      window.location.reload();
     },
   });
 
