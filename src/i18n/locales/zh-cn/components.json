@@ -71,6 +71,7 @@
     "emptyHost": "目标回放环境不能为空",
     "emptyStartTime": "Case 开始时间不能为空",
     "emptyEndTime": "Case 结束时间不能为空",
+    "operation": "operation",
     "replayReportName": "任务名称",
     "state": "状态",
     "passed": "成功",

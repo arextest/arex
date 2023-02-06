@@ -1,13 +1,15 @@
-import { PlayCircleOutlined, SettingOutlined, SyncOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, DatePicker, Form, Input, Modal, notification } from 'antd';
+import { App, Button, DatePicker, Form, Input, Modal, Select } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
+import { DefaultOptionType } from 'rc-select/lib/Select';
 import React, { FC, ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { EmailKey } from '../../constant';
 import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
+import AppSettingService from '../../services/AppSetting.service';
 import ReplayService from '../../services/Replay.service';
 import { ApplicationDataType } from '../../services/Replay.type';
 import { useStore } from '../../store';
@@ -21,7 +23,12 @@ type AppTitleProps = {
   onRefresh?: () => void;
 };
 
-type CreatePlanForm = { targetEnv: string; caseSourceFrom: Dayjs; caseSourceTo: Dayjs };
+type CreatePlanForm = {
+  targetEnv: string;
+  caseSourceFrom: Dayjs;
+  caseSourceTo: Dayjs;
+  operationList: string[];
+};
 
 const TitleWrapper = styled(
   (props: {
@@ -62,21 +69,36 @@ const TitleWrapper = styled(
   }
 `;
 
+const InitialValues = {
+  targetEnv: '',
+  caseSourceFrom: dayjs().subtract(1, 'day').startOf('day'), // 前一天零点
+  caseSourceTo: dayjs().add(1, 'day').startOf('day').subtract(1, 'second'), // 当天最后一秒
+};
+
 const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   const { t } = useTranslation(['components']);
+  const { notification } = App.useApp();
 
   const email = getLocalStorage<string>(EmailKey);
   const { setPages } = useStore();
 
   const [form] = Form.useForm<CreatePlanForm>();
   const [open, setOpen] = useState(false);
+  const [interfacesOptions, setInterfacesOptions] = useState<DefaultOptionType[]>([]);
 
-  const initialValues = {
-    targetEnv: '',
-    caseSourceFrom: dayjs().subtract(1, 'day').startOf('day'), // 前一天零点
-    caseSourceTo: dayjs().add(1, 'day').startOf('day').subtract(1, 'second'), // 当天最后一秒
-  };
+  /**
+   * 请求 InterfacesList
+   */
+  useRequest(() => AppSettingService.queryInterfacesList<'Global'>({ id: data.appId }), {
+    ready: open,
+    onSuccess(res) {
+      setInterfacesOptions(res.map((item) => ({ label: item.operationName, value: item.id })));
+    },
+  });
 
+  /**
+   * 创建回放
+   */
   const { run: createPlan, loading: confirmLoading } = useRequest(ReplayService.createPlan, {
     manual: true,
     onSuccess(res) {
@@ -84,7 +106,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         notification.success({
           message: t('replay.startSuccess'),
         });
-        onRefresh && onRefresh();
+        onRefresh?.();
       } else {
         console.error(res.desc);
         notification.error({
@@ -109,6 +131,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     form
       .validateFields()
       .then((values) => {
+        console.log({ values });
         createPlan({
           appId: data.appId,
           sourceEnv: 'pro',
@@ -119,6 +142,9 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
             .startOf('day')
             .subtract(1, 'second')
             .valueOf(),
+          operationCaseInfoList: values.operationList.map((operationId) => ({
+            operationId,
+          })),
           operator: email as string,
           replayPlanType: 0,
         });
@@ -174,7 +200,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           form={form}
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
-          initialValues={initialValues}
+          initialValues={InitialValues}
           autoComplete='off'
         >
           <Form.Item
@@ -199,6 +225,15 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
             rules={[{ required: true, message: t('replay.emptyEndTime') }]}
           >
             <DatePicker style={{ width: '100%' }} />
+          </Form.Item>
+
+          <Form.Item label={t('replay.operation')} name='operationList'>
+            <Select
+              mode='multiple'
+              maxTagCount={3}
+              options={interfacesOptions}
+              placeholder={'optional'}
+            />
           </Form.Item>
         </Form>
       </Modal>

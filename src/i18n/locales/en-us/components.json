@@ -71,6 +71,7 @@
     "emptyHost": "Target Host can't be empty",
     "emptyStartTime": "Start Time can't be empty",
     "emptyEndTime": "End Time can't be empty",
+    "operation": "operation",
     "replayReportName": "Report",
     "state": "State",
     "passed": "Passed",

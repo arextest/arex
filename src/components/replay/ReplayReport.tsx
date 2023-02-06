@@ -5,16 +5,13 @@ import {
   DeleteOutlined,
   FileTextOutlined,
   RedoOutlined,
-  StopOutlined,
 } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import {
   App,
-  Button,
   Card,
   Col,
-  notification,
   Popconfirm,
   Row,
   Statistic,
@@ -52,7 +49,7 @@ const chartOptions = {
 } as const;
 
 const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
-  const { message } = App.useApp();
+  const { message, notification } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
 
   const { setPages } = useStore();
