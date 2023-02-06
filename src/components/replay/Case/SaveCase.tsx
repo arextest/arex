@@ -1,4 +1,4 @@
-import { Form, Input, Modal, notification, TreeSelect, Typography } from 'antd';
+import { App, Form, Input, Modal, TreeSelect, Typography } from 'antd';
 import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -22,7 +22,9 @@ export type SaveCaseProps = {
 
 const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
   const params = useParams();
+  const { notification } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
+
   const { collectionTreeData } = useStore();
   const [form] = Form.useForm();
   const [value, setValue] = useState<string>('');

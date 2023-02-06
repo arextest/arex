@@ -1,7 +1,7 @@
-import { PlayCircleOutlined, SettingOutlined, SyncOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, DatePicker, Form, Input, Modal, notification } from 'antd';
+import { App, Button, DatePicker, Form, Input, Modal } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -64,6 +64,7 @@ const TitleWrapper = styled(
 
 const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   const { t } = useTranslation(['components']);
+  const { notification } = App.useApp();
 
   const email = getLocalStorage<string>(EmailKey);
   const { setPages } = useStore();
