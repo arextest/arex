@@ -90,7 +90,7 @@ const MainMenu: FC<MainMenuProps> = (props) => {
           items={tabsItems}
           onClick={handleMenuClick}
         />
-        <MenuContentWrapper>{MenuContent}</MenuContentWrapper>
+        <MenuContentWrapper className={'menu-content-wrapper'}>{MenuContent}</MenuContentWrapper>
       </div>
     </div>
   );
@@ -139,6 +139,8 @@ const MenuContentWrapper = styled.div`
   min-width: 0;
   overflow-y: auto;
 `;
+
+// MenuContentWrapper.displayName = 'asfasfs'
 
 const CollapseButton = styled(
   (props: { collapse?: boolean; children?: ReactNode }) => <LeftOutlined {...props} />,

@@ -444,6 +444,19 @@ const CollectionMenu = () => {
     );
   };
 
+  const [treeHeight, setTreeHeight] = useState(0);
+
+  useEffect(() => {
+    setTimeout(() => {
+      try {
+        // @ts-ignore
+        setTreeHeight(document.getElementsByClassName('menu-content-wrapper')[0].offsetHeight);
+      } catch (e) {
+        console.log(e);
+      }
+    }, 0);
+  }, []);
+
   const test = () => {
     const u = uuid();
     setPages(
@@ -538,8 +551,8 @@ const CollectionMenu = () => {
               onChange={onChange}
             />
           </div>
-
           <Tree
+            height={treeHeight - 62}
             autoExpandParent={autoExpandParent}
             blockNode={true}
             selectedKeys={selectedKeys}
