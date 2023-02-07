@@ -144,7 +144,7 @@ const ReplayTable: FC<ResultsProps> = (props) => {
             onSelectedPlanChange(res[searchResIndex]);
             setDefaultPagination({
               defaultCurrent: Math.ceil((searchResIndex + 1) / PageSize),
-              defaultRow: ((searchResIndex + 1) % PageSize) - 1,
+              defaultRow: searchResIndex % PageSize,
             });
           } else {
             res.length && defaultSelectFirst && onSelectedPlanChange(res[0]);
