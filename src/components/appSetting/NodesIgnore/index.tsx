@@ -192,7 +192,6 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
   };
   /**
    * 保存某个 interface 的 response
-   * @param value
    */
   const handleResponseSave = () => {
     const parsed = rawResponse && tryParseJsonString(rawResponse, 'Invalid JSON');
