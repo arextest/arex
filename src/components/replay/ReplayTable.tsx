@@ -134,7 +134,7 @@ const ReplayTable: FC<ResultsProps> = (props) => {
       ready: !!appId,
       refreshDeps: [appId, refreshDep],
       loadingDelay: 200,
-      pollingInterval: 5000,
+      pollingInterval: 6000,
       onSuccess(res) {
         // 判断请求类型为轮询还是手动触发
         if (prevAppId.current !== appId) {
