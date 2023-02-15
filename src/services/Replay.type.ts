@@ -201,7 +201,7 @@ export interface QueryMsgWithDiffReq {
 export type QueryMsgWithDiffLog = {
   addRefPkNodePathLeft: null;
   addRefPkNodePathRight: null;
-  baseValue: string;
+  baseValue: string | boolean;
   logInfo: string;
   logTag: { lv: number; ig: boolean };
   path: string;
@@ -219,7 +219,7 @@ export type QueryMsgWithDiffLog = {
     trace: { currentTraceLeft: null; currentTraceRight: null } | null;
     unmatchedType: number;
   };
-  testValue: null;
+  testValue: string | boolean;
 };
 export type QueryMsgWithDiffRes = {
   baseMsg: string;

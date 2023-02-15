@@ -141,11 +141,11 @@ const DiffList: FC<DiffListType> = (props) => {
                 <PathTooltip path={log.path} />
                 {` ${t('replay.isDifferenceExcepted')} `}
                 <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
-                  {log.baseValue}
+                  {log.baseValue.toString()}
                 </Typography.Text>
                 {`${t('replay.actual')} `}
                 <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
-                  {log.testValue}
+                  {log.testValue.toString()}
                 </Typography.Text>
                 {'.'}
               </Typography.Text>
