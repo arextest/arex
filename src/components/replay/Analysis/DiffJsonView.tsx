@@ -139,7 +139,12 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, open = false, onClose }) =>
           justify-content: space-between;
         `}
       >
-        <div className='MsgWithDiffLegend'>
+        <div
+          className='MsgWithDiffLegend'
+          css={css`
+            color: ${theme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : '#333'};
+          `}
+        >
           <div>
             <div className='color-tag-green' />
             <span>{t('replay.moreNode')}</span>
