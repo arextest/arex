@@ -161,7 +161,7 @@ const CollectionMenu = () => {
         generateList(res);
         // 首次加载，在这里加initvalue逻辑
         const initValue = treeFind(res, (node) => node.key === params.rawId);
-        if (initValue && expandedKeys.length === 0) {
+        if (initValue && expandedKeys.length === 0 && params.pagesType !== 'BatchComparePage') {
           // @ts-ignore
           handleCollectionMenuClick(params.rawId, {
             title: initValue.title,
@@ -412,7 +412,6 @@ const CollectionMenu = () => {
         if (e.key == dragKey) toIndex = i;
       });
     }
-    // console.log({fromNodePath, id: params.workspaceId, toParentPath, toIndex});
     CollectionService.move({
       fromNodePath,
       id: params.workspaceId,

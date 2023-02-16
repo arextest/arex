@@ -210,7 +210,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
             onClick={() => {
               setPages(
                 {
-                  title: `${t('replay.diffScenes')} - ${record.operationId}`,
+                  title: `${t('replay.diffScenes')} - ${record.planItemId}`,
                   pageType: PagesType.ReplayAnalysis,
                   menuType: MenusType.Replay,
                   isNew: false,
@@ -218,9 +218,9 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
                   paneId: generateGlobalPaneId(
                     MenusType.Replay,
                     PagesType.ReplayAnalysis,
-                    record.operationId,
+                    record.planItemId,
                   ),
-                  rawId: record.operationId,
+                  rawId: record.planItemId,
                 },
                 'push',
               );
@@ -286,7 +286,6 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
           description: res.desc,
         });
       } else {
-        console.error(res.desc);
         notification.error({
           message: t('message.error', { ns: 'common' }),
           description: res.desc,

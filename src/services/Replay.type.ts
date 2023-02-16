@@ -196,6 +196,8 @@ export interface QueryMsgWithDiffReq {
   compareResultId: string;
   logIndexes: string;
   logs: any[];
+  logIds?: string[];
+  errorCount?: number[];
 }
 
 export type QueryMsgWithDiffLog = {

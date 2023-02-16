@@ -37,7 +37,6 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, open = false, onClose }) =>
   const containerRightRef = useRef<HTMLDivElement>(null);
 
   const msgWithDiff = data;
-
   useEffect(() => {
     const containerLeft = containerLeftRef.current;
     const containerRight = containerRightRef.current;

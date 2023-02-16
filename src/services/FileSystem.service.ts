@@ -59,4 +59,32 @@ export class FileSystemService {
     const res = await request.post<{ success: boolean }>(`/report/filesystem/pinMock`, params);
     return res.body.success;
   }
+
+  static async initBatchCompareReport(params: any) {
+    const res = await request.post(`/report/batchcomparereport/initBatchCompareReport`, params);
+    return res.body;
+  }
+
+  static async updateBatchCompareCase(params: any) {
+    const res = await request.post(`/report/batchcomparereport/updateBatchCompareCase`, params);
+    return res.body;
+  }
+
+  static async queryBatchCompareProgress(params: any) {
+    const res = await request.post(`/report/batchcomparereport/queryBatchCompareProgress`, params);
+    return res.body;
+  }
+
+  static async queryBatchCompareSummary(params: any) {
+    const res = await request.post(`/report/batchcomparereport/queryBatchCompareSummary`, params);
+    return res.body;
+  }
+
+  static async queryBatchCompareCaseMsgWithDiff(params: any) {
+    const res = await request.post(
+      `/report/batchcomparereport/queryBatchCompareCaseMsgWithDiff`,
+      params,
+    );
+    return res.body;
+  }
 }

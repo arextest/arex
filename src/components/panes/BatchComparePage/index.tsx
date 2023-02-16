@@ -1,68 +1,27 @@
-// @ts-nocheck
 import { css } from '@emotion/react';
-import { useRequest } from 'ahooks';
+import { useMount } from 'ahooks';
 import { Allotment } from 'allotment';
-import { Button, Divider, Empty, Progress, Spin, Table, Tag, Tree } from 'antd';
-import React, { useMemo, useState } from 'react';
+import { Button, Divider, Progress, Table, Tree } from 'antd';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { genCaseTreeData } from '../../../helpers/BatchRun/util';
 import { treeFind } from '../../../helpers/collection/util';
-import { FileSystemService } from '../../../services/FileSystem.service';
 import { useStore } from '../../../store';
-import { DiffJsonView, DiffJsonViewProps } from '../../replay/Analysis';
-import DiffList from '../../replay/Analysis/DiffList';
+import DiffCard from './DiffCard';
+import { calcProgress } from './helper';
 import useBatchCompareResults, { genCaseStructure } from './hooks/useBatchCompareResults';
-import { checkResponsesIsJson, flattenArray } from './util';
+import useQueryBatchCompareProgress from './hooks/useQueryBatchCompareProgress';
 
-// TODO 多编写无状态组件
-const ExpandedRowRender = ({ record }) => {
-  const [diffJsonViewData, setDiffJsonViewData] = useState<DiffJsonViewProps['data']>();
-  const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
-  const { data, loading } = useRequest(() => {
-    return FileSystemService.queryCase({ id: record.key, getCompareMsg: true }).then((res) =>
-      flattenArray((res.comparisonMsg.diffDetails || []).map((r) => r.logs)),
-    );
-  });
-  return (
-    <Spin spinning={loading}>
-      {checkResponsesIsJson(record.compareResultResponses) ? (
-        <DiffList
-          externalData={{
-            logs: data || [],
-            baseMsg: JSON.stringify(record.compareResultResponses[0]),
-            testMsg: JSON.stringify(record.compareResultResponses[1]),
-          }}
-          appId={''}
-          operationId={''}
-          onTreeModeClick={(diff) => {
-            if (diff) {
-              setDiffJsonViewData({
-                baseMsg: diff.baseMsg,
-                testMsg: diff.testMsg,
-                logs: diff.logs,
-              });
-              setDiffJsonViewVisible(true);
-            }
-          }}
-        />
-      ) : null}
-
-      <DiffJsonView
-        data={diffJsonViewData}
-        open={diffJsonViewVisible}
-        onClose={() => setDiffJsonViewVisible(false)}
-      />
-    </Spin>
-  );
-};
 const BatchComparePage = () => {
+  // const [planId, setPlanId] = useState<string>('');
   const { t } = useTranslation(['common', 'page']);
   const { activeEnvironment } = useStore();
   const { collectionTreeData } = useStore();
 
   const params = useParams();
+  const planId = params.rawId;
   // 生成caseTree数据
   const caseTreeData = useMemo(() => {
     if (params.pagesType === 'BatchComparePage') {
@@ -76,28 +35,32 @@ const BatchComparePage = () => {
     }
   }, [collectionTreeData, params.rawId, params.pagesType]);
   const [checkValue, setCheckValue] = useState<string[]>([]);
-  const onCheck = (checkedKeys: string[]) => {
+  const onCheck: any = (checkedKeys: string[]) => {
     setCheckValue(checkedKeys);
   };
   const columns = [
     {
-      title: t('case', { ns: 'common' }),
-      dataIndex: 'caseName',
-      key: 'caseName',
+      title: 'Interface Id',
+      dataIndex: 'interfaceId',
+      key: 'interfaceId',
     },
     {
-      title: t('batchComparePage.result', { ns: 'page' }),
-      dataIndex: 'diffResultCode',
-      key: 'diffResultCode',
-      render(_, record) {
-        const result = { '0': 'success', '1': 'error', '2': 'error' }[record.diffResultCode];
-        return <Tag color={result}>{result}</Tag>;
+      title: 'Interface',
+      dataIndex: 'interfaceName',
+      key: 'interfaceName',
+    },
+
+    {
+      title: '进度',
+      dataIndex: 'statusList',
+      key: 'statusList',
+      render(_: any, record: any) {
+        return (
+          <div>
+            <Progress percent={calcProgress(record.statusList) * 100} />
+          </div>
+        );
       },
-    },
-    {
-      title: t('batchComparePage.error.count', { ns: 'page' }),
-      dataIndex: 'errCount',
-      key: 'errCount',
     },
   ];
   const caseStructure = useMemo(() => {
@@ -107,7 +70,20 @@ const BatchComparePage = () => {
     caseStructure,
     collectionTreeData,
     activeEnvironment?.keyValues || [],
+    planId,
   );
+  const { data, run: runQueryBatchCompareProgress } = useQueryBatchCompareProgress({
+    planId: planId,
+  });
+  const [timer, setTimer] = useState<any>(-1);
+  useEffect(() => {
+    clearInterval(timer);
+    const interval = setInterval(() => {
+      runQueryBatchCompareProgress(planId);
+    }, 3000);
+    setTimer(interval);
+    return () => clearInterval(interval);
+  }, [planId]);
   return (
     <Allotment
       css={css`
@@ -165,7 +141,7 @@ const BatchComparePage = () => {
 
           <div
             css={css`
-              flex: 0.5;
+              flex: 0.3;
             `}
           >
             <Button type={'primary'} onClick={testRun}>
@@ -183,57 +159,20 @@ const BatchComparePage = () => {
           `}
         >
           <h3>{t('batchComparePage.compare_results', { ns: 'page' })}</h3>
-          {testData.length === 0 ? <Empty /> : null}
-          {testData.map((i, index) => {
-            return (
-              <div key={index}>
-                <div>
-                  <span>
-                    {i.interfaceName}{' '}
-                    <Tag color={'success'}>
-                      success:
-                      {
-                        i.children.filter((i) => {
-                          return Number(i.diffResultCode) === 0;
-                        }).length
-                      }
-                    </Tag>
-                    <Tag color={'error'}>
-                      error:
-                      {
-                        i.children.filter((i) => {
-                          return Number(i.diffResultCode) === 1;
-                        }).length
-                      }
-                    </Tag>
-                  </span>
-                  <span>
-                    <Progress
-                      percent={
-                        Number(
-                          i.children.length /
-                            caseStructure.find(
-                              (caseStructureItem) => caseStructureItem.key === i.key,
-                            ).children.length,
-                        ) * 100
-                      }
-                      status='active'
-                    />
-                  </span>
-                </div>
-                <Table
-                  size={'small'}
-                  bordered
-                  rowKey={'id'}
-                  expandable={{
-                    expandedRowRender: (record) => <ExpandedRowRender record={record} />,
-                  }}
-                  columns={columns}
-                  dataSource={i.children}
-                />
-              </div>
-            );
-          })}
+          <Table
+            columns={columns}
+            dataSource={data}
+            expandable={{
+              expandedRowRender: (record) => {
+                return (
+                  <div style={{ margin: 0 }}>
+                    <DiffCard planId={planId} interfaceId={record.interfaceId} />
+                  </div>
+                );
+              },
+              rowExpandable: (record) => record.name !== 'Not Expandable',
+            }}
+          />
         </div>
       </Allotment.Pane>
     </Allotment>

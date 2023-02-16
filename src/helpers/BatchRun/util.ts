@@ -2,6 +2,7 @@
 import { treeFindPath } from '../collection/util';
 
 export function genCaseTreeData(data) {
+  data = data.filter((d) => d);
   const cloneData = JSON.parse(JSON.stringify(data));
   const result = [];
   data.forEach((item) => {

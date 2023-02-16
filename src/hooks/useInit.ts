@@ -96,6 +96,28 @@ const useInit = () => {
           },
           'push',
         );
+    } else if (params.pagesType === PagesType.BatchCompare) {
+      setPages(
+        {
+          title: 'Batch Compare',
+          menuType: MenusType.Collection,
+          pageType: PagesType.BatchCompare,
+          isNew: true,
+          data: undefined,
+          paneId: generateGlobalPaneId(
+            MenusType.Collection,
+            PagesType.BatchCompare,
+            params.rawId || '',
+          ),
+          rawId: params.rawId || '',
+        },
+        'push',
+      );
+
+      setActiveMenu(
+        MenusType.Collection,
+        generateGlobalPaneId(MenusType.Collection, params.pagesType, params.rawId as string),
+      );
     }
   }, []);
 };
