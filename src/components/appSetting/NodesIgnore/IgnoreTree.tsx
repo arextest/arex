@@ -52,7 +52,14 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
       <Card size='small' title={`${props.title} (${t('appSetting.clickToIgnore')})`}>
         <Spin spinning={props.loading}>
           {Object.keys(props.treeData).length ? (
-            <Tree multiple defaultExpandAll {...props} treeData={getNodes(props.treeData, '')} />
+            <Tree
+              multiple
+              defaultExpandAll
+              {...props}
+              treeData={getNodes(props.treeData, '')}
+              // @ts-ignore
+              height={'calc(100vh - 240px)'}
+            />
           ) : (
             <EmptyResponse onClick={props.onEditResponse} />
           )}

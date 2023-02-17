@@ -1,4 +1,5 @@
 import { CodeOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { App, Button, Collapse, CollapseProps, List, Spin, Typography } from 'antd';
@@ -13,6 +14,7 @@ import TooltipButton from '../../TooltipButton';
 export interface PathCollapseProps extends Omit<CollapseProps, 'activeKey' | 'onChange'> {
   interfaceId?: string;
   title?: string;
+  height?: string;
   loading?: boolean;
   loadingPanel?: boolean;
   activeKey?: OperationId<'Interface'>;
@@ -73,6 +75,10 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
           onChange={(id) =>
             props.onChange && props.onChange(props.interfaces.find((i) => i.id === id))
           }
+          css={css`
+            height: ${props.height};
+            overflow-y: auto;
+          `}
         >
           {props.interfaces.map((i) => (
             <Collapse.Panel

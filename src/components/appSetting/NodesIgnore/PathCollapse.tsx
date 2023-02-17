@@ -19,7 +19,6 @@ import {
   InterfaceIgnoreNode,
   OperationId,
   OperationInterface,
-  QueryIgnoreNode,
   QueryInterfaceIgnoreNode,
 } from '../../../services/AppSetting.type';
 import { SpaceBetweenWrapper } from '../../styledComponents';
@@ -44,6 +43,7 @@ export interface PathCollapseProps extends Omit<CollapseProps, 'activeKey' | 'on
   appId?: string;
   interfaceId?: string; // collection - interface
   title?: string;
+  height?: string;
   activeKey?: OperationId<'Global'>;
   interfaces: InterfacePick[];
   ignoreNodes: QueryInterfaceIgnoreNode[];
@@ -143,13 +143,17 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
               false,
             )
           }
+          css={css`
+            height: ${props.height};
+            overflow-y: auto;
+          `}
         >
           {props.interfaces && Array.isArray(props.interfaces) ? (
             props.interfaces.map((path) => {
               return (
                 <Collapse.Panel
                   key={String(path.id)}
-                  header={path.operationName}
+                  header={<Typography.Text ellipsis>{path.operationName}</Typography.Text>}
                   extra={[
                     <TooltipButton
                       key='add'
@@ -169,6 +173,11 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                       />
                     ),
                   ]}
+                  css={css`
+                    .ant-collapse-header-text {
+                      width: calc(100% - 80px);
+                    }
+                  `}
                 >
                   <List
                     size='small'

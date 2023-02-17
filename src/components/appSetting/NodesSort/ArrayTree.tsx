@@ -53,6 +53,8 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
           selectedKeys={[]}
           treeData={getNodes(props.treeData, '')}
           css={css`
+            height: calc(100vh - 240px);
+            overflow-y: auto;
             .ant-tree-icon__customize {
               float: right;
             }

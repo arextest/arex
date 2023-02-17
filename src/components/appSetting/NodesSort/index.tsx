@@ -362,6 +362,7 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
         <PathCollapse
           interfaceId={props.interfaceId}
           title={props.interfaceId ? undefined : t('appSetting.interfaces')}
+          height={'calc(100vh - 168px)'}
           loading={loadingOperationList}
           loadingPanel={loadingSortNode}
           interfaces={operationList}

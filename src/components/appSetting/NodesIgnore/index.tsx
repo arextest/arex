@@ -271,6 +271,7 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
             loadingPanel={loadingIgnoreNode}
             interfaces={operationList}
             activeKey={activeOperationInterface?.id}
+            height={'calc(100vh - 280px)'}
             // @ts-ignore
             ignoreNodes={ignoreNodeList}
             onChange={(data, maintain) =>
