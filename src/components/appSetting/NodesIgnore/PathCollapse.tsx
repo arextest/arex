@@ -207,8 +207,10 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                       <List.Item>
                         <Spin
                           indicator={<></>}
-                          spinning={!node.compareConfigType}
-                          wrapperClassName={!node.compareConfigType ? 'disabled-node' : ''}
+                          spinning={!!props.interfaceId && !node.compareConfigType}
+                          wrapperClassName={
+                            !!props.interfaceId && !node.compareConfigType ? 'disabled-node' : ''
+                          }
                         >
                           <SpaceBetweenWrapper width={'100%'}>
                             <Typography.Text ellipsis>{node.exclusions.join('/')}</Typography.Text>
