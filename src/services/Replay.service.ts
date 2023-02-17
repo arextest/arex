@@ -41,6 +41,18 @@ export default class ReplayService {
       );
   }
 
+  static async terminatePlanStatistics(planId: string) {
+    return new Promise<{
+      result: number;
+      desc: string;
+    }>((resolve, reject) => {
+      return axios
+        .get('/schedule/stopPlan?planId=' + planId)
+        .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
+    });
+  }
+
   static async deletePlanStatistics(planId: string) {
     const res = await request.get<boolean>('/report/report/delete/' + planId);
     return res.body;

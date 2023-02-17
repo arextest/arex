@@ -5,6 +5,7 @@ import {
   DeleteOutlined,
   FileTextOutlined,
   RedoOutlined,
+  StopOutlined,
 } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
@@ -267,6 +268,16 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     },
   ];
 
+  const { run: terminatePlanStatistics } = useRequest(ReplayService.terminatePlanStatistics, {
+    manual: true,
+    ready: !!selectedPlan?.planId,
+    onSuccess(success) {
+      success
+        ? message.success(t('message.success', { ns: 'common' }))
+        : message.error(t('message.error', { ns: 'common' }));
+    },
+  });
+
   const { run: deletePlanStatistics } = useRequest(ReplayService.deletePlanStatistics, {
     manual: true,
     ready: !!selectedPlan?.planId,
@@ -331,6 +342,13 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       title={`${t('replay.report')}: ${selectedPlan.planName}`}
       extra={
         <>
+          <Popconfirm
+            title={t('replay.terminateTheReplay')}
+            description={t('replay.confirmTerminateReplay')}
+            onConfirm={() => terminatePlanStatisticsPlanStatistics(selectedPlan!.planId)}
+          >
+            <SmallTextButton icon={<StopOutlined />} title={t('replay.terminate')} />
+          </Popconfirm>
           <Popconfirm
             title={t('replay.deleteTheReport')}
             description={t('replay.confirmDeleteReport')}
