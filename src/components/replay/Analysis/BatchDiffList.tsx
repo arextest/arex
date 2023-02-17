@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { App, Card, Modal, Space, Tag, Tooltip, Typography } from 'antd';
 import React, { FC, useMemo } from 'react';
@@ -140,8 +141,14 @@ const BatchDiffList: FC<DiffListType> = (props) => {
                 <PathTooltip path={log.path} /> {DiffMap[log.pathPair.unmatchedType].desc}
               </Typography.Text>
             )}
-            <Typography.Text type='secondary'>
-              ,{`${t_page('batchComparePage.error.count')} `}
+            <Typography.Text
+              type='secondary'
+              css={css`
+                margin-right: 4px;
+                margin-left: 8px;
+              `}
+            >
+              {`${t_page('batchComparePage.error.count')} `}
             </Typography.Text>
             {/*// @ts-ignore*/}
             {props?.externalData?.errorCount[index]}
