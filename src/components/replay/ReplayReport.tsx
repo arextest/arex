@@ -345,7 +345,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
           <Popconfirm
             title={t('replay.terminateTheReplay')}
             description={t('replay.confirmTerminateReplay')}
-            onConfirm={() => terminatePlanStatisticsPlanStatistics(selectedPlan!.planId)}
+            onConfirm={() => terminatePlanStatistics(selectedPlan!.planId)}
           >
             <SmallTextButton icon={<StopOutlined />} title={t('replay.terminate')} />
           </Popconfirm>
