@@ -1,6 +1,7 @@
+import { DiffOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Card, Modal, Space, Tag, Tooltip, Typography } from 'antd';
+import { App, Badge, Card, Modal, Space, Tag, Tooltip, Typography } from 'antd';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -8,7 +9,7 @@ import AppSettingService from '../../../services/AppSetting.service';
 import { FileSystemService } from '../../../services/FileSystem.service';
 import ReplayService from '../../../services/Replay.service';
 import { QueryMsgWithDiffLog, QueryMsgWithDiffReq, Scene } from '../../../services/Replay.type';
-import { TooltipButton } from '../../index';
+import { DiffMatch, TooltipButton } from '../../index';
 
 const PathTooltip: FC<{ path?: string | null }> = (props) => {
   const path = useMemo(() => props.path?.split('.') || [], [props.path]);
@@ -115,13 +116,20 @@ const BatchDiffList: FC<DiffListType> = (props) => {
       <Space direction='vertical' style={{ width: '100%' }}>
         {diffData?.logs.map((log, index) => (
           <div key={index} style={{ display: 'flex', flexFlow: 'row nowrap' }}>
-            <Tag
-              color={DiffMap[log.pathPair.unmatchedType]?.color}
-              style={{ height: 'fit-content' }}
-            >
-              {DiffMap[log.pathPair.unmatchedType]?.text}
-            </Tag>
-
+            {/*// @ts-ignore*/}
+            <Badge size={'small'} count={props?.externalData?.errorCount[index]}>
+              <Tag
+                color={DiffMap[log.pathPair.unmatchedType]?.color}
+                style={{ height: 'fit-content' }}
+              >
+                {DiffMap[log.pathPair.unmatchedType]?.text}
+              </Tag>
+            </Badge>
+            <div
+              css={css`
+                margin-left: 24px;
+              `}
+            ></div>
             {log.pathPair.unmatchedType === 3 ? (
               <Typography.Text type='secondary'>
                 {` ${t('appSetting.path')} `}
@@ -141,24 +149,28 @@ const BatchDiffList: FC<DiffListType> = (props) => {
                 <PathTooltip path={log.path} /> {DiffMap[log.pathPair.unmatchedType].desc}
               </Typography.Text>
             )}
-            <Typography.Text
-              type='secondary'
-              css={css`
-                margin-right: 4px;
-                margin-left: 8px;
-              `}
-            >
-              {`${t_page('batchComparePage.error.count')} `}
-            </Typography.Text>
-            {/*// @ts-ignore*/}
-            {props?.externalData?.errorCount[index]}
 
             <Space style={{ float: 'right', marginLeft: 'auto' }}>
               <TooltipButton
                 size='small'
                 type='default'
                 breakpoint='xxl'
-                title={'logs'}
+                title={t('replay.diffMatch')}
+                icon={<DiffOutlined />}
+                onClick={() =>
+                  modal.info({
+                    title: t('replay.diffMatch'),
+                    width: 800,
+                    maskClosable: true,
+                    content: <DiffMatch text1={log.baseValue} text2={log.testValue} />,
+                  })
+                }
+              />
+              <TooltipButton
+                size='small'
+                type='default'
+                breakpoint='xxl'
+                title={t('replay.treeMode')}
                 onClick={() => {
                   if (props.externalData?.logIds) {
                     FileSystemService.queryBatchCompareCaseMsgWithDiff({
@@ -172,7 +184,7 @@ const BatchDiffList: FC<DiffListType> = (props) => {
                   }
                 }}
               >
-                logs
+                {t('replay.treeMode')}
               </TooltipButton>
             </Space>
           </div>

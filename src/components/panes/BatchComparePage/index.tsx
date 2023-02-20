@@ -56,8 +56,8 @@ const BatchComparePage = () => {
       key: 'interfaceName',
     },
     ...[
-      { label: 'Init' },
-      { label: 'Wait' },
+      // { label: 'Init' },
+      // { label: 'Wait' },
       { label: 'Success' },
       { label: 'Fail' },
       { label: 'Exception' },
@@ -80,13 +80,18 @@ const BatchComparePage = () => {
 
     // 0:初始、1:等待比较、2：成功、3:失败、4：异常
     {
-      title: 'Progress',
+      title: 'Status',
       dataIndex: 'statusList',
       key: 'statusList',
       render(_: any, record: any) {
         return (
           <div>
-            <Progress percent={calcProgress(record.statusList) * 100} />
+            <Progress
+              type={'circle'}
+              strokeWidth={20}
+              width={14}
+              percent={calcProgress(record.statusList) * 100}
+            />
           </div>
         );
       },
