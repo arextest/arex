@@ -137,7 +137,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
           {...props}
           accordion
           activeKey={props.activeKey || undefined}
-          onChange={(id) =>
+          onChange={([id]) =>
             props.onChange?.(
               props.interfaces.find((i) => i.id === id),
               false,
