@@ -20,16 +20,20 @@ interface ICaseResults {
 }
 
 export function genCaseStructure(checkValue, collectionTreeData): ICase[] {
-  const allInterface = [];
+  let allInterface = [];
   const allCase = [];
   for (let i = 0; i < checkValue.length; i++) {
-    if (treeFind(collectionTreeData, (node) => node.key === checkValue[i])?.nodeType === 1) {
-      allInterface.push(checkValue[i]);
-    }
     if (treeFind(collectionTreeData, (node) => node.key === checkValue[i])?.nodeType === 2) {
+      const key = treeFindPath(collectionTreeData, (node) => node.key === checkValue[i]).at(
+        -2,
+      )?.key;
+      allInterface.push(key);
+
       allCase.push(checkValue[i]);
     }
   }
+
+  allInterface = [...new Set(allInterface)];
 
   const results = JSON.parse(
     JSON.stringify(

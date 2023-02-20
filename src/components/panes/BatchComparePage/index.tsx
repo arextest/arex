@@ -1,13 +1,13 @@
 import { css } from '@emotion/react';
-import { useMount } from 'ahooks';
 import { Allotment } from 'allotment';
 import { Button, Divider, Progress, Table, Tree } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 import { genCaseTreeData } from '../../../helpers/BatchRun/util';
 import { treeFind } from '../../../helpers/collection/util';
+import { uuid } from '../../../helpers/utils';
 import { useStore } from '../../../store';
 import DiffCard from './DiffCard';
 import { calcProgress } from './helper';
@@ -15,13 +15,24 @@ import useBatchCompareResults, { genCaseStructure } from './hooks/useBatchCompar
 import useQueryBatchCompareProgress from './hooks/useQueryBatchCompareProgress';
 
 const BatchComparePage = () => {
-  // const [planId, setPlanId] = useState<string>('');
   const { t } = useTranslation(['common', 'page']);
   const { activeEnvironment } = useStore();
   const { collectionTreeData } = useStore();
 
   const params = useParams();
-  const planId = params.rawId;
+  const nav = useNavigate();
+  const loc = useLocation();
+
+  const [searchParams] = useSearchParams();
+  const planId = searchParams.get('planId');
+
+  useEffect(() => {
+    if (!searchParams.get('planId') && params.pagesType) {
+      const u = uuid();
+      nav(`${loc.pathname}?planId=${u}`);
+    }
+  }, [loc]);
+
   // 生成caseTree数据
   const caseTreeData = useMemo(() => {
     if (params.pagesType === 'BatchComparePage') {
@@ -40,24 +51,47 @@ const BatchComparePage = () => {
   };
   const columns = [
     {
-      title: 'Interface Id',
-      dataIndex: 'interfaceId',
-      key: 'interfaceId',
-    },
-    {
       title: 'Interface',
       dataIndex: 'interfaceName',
       key: 'interfaceName',
     },
+    ...[
+      // { label: 'Init' },
+      // { label: 'Wait' },
+      { label: 'Success' },
+      { label: 'Fail' },
+      { label: 'Exception' },
+    ].map((i, index) => {
+      return {
+        title: i.label,
+        dataIndex: 'statusList',
+        key: i.label,
+        render(_: any): JSX.Element {
+          return (
+            <div>
+              {_.find((r: any) => {
+                return r.status === index;
+              })?.count || 0}
+            </div>
+          );
+        },
+      };
+    }),
 
+    // 0:初始、1:等待比较、2：成功、3:失败、4：异常
     {
-      title: '进度',
+      title: 'Status',
       dataIndex: 'statusList',
       key: 'statusList',
       render(_: any, record: any) {
         return (
           <div>
-            <Progress percent={calcProgress(record.statusList) * 100} />
+            <Progress
+              type={'circle'}
+              strokeWidth={20}
+              width={14}
+              percent={calcProgress(record.statusList) * 100}
+            />
           </div>
         );
       },
@@ -78,6 +112,7 @@ const BatchComparePage = () => {
   const [timer, setTimer] = useState<any>(-1);
   useEffect(() => {
     clearInterval(timer);
+    runQueryBatchCompareProgress(planId);
     const interval = setInterval(() => {
       runQueryBatchCompareProgress(planId);
     }, 3000);
@@ -162,6 +197,7 @@ const BatchComparePage = () => {
           <Table
             columns={columns}
             dataSource={data}
+            rowKey={'interfaceId'}
             expandable={{
               expandedRowRender: (record) => {
                 return (
