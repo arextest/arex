@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Login, MainBox, ValidInvitation } from '../pages';
+import { Login, Logs, MainBox, ValidInvitation } from '../pages';
 import UpgradeBrowser from '../pages/UpgradeBrowser';
 
 const router = [
@@ -16,6 +16,10 @@ const router = [
   {
     path: '/login',
     element: <Login />,
+  },
+  {
+    path: '/logs',
+    element: <Logs />,
   },
   {
     path: '/click',

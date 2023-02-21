@@ -6,19 +6,14 @@ import { useTranslation } from 'react-i18next';
 
 import AppSettingService from '../../../services/AppSetting.service';
 import ReplayService from '../../../services/Replay.service';
-import {
-  QueryMsgWithDiffLog,
-  QueryMsgWithDiffReq,
-  QueryMsgWithDiffRes,
-  Scene,
-} from '../../../services/Replay.type';
+import { QueryMsgWithDiffLog, QueryMsgWithDiffReq, Scene } from '../../../services/Replay.type';
 import { DiffMatch, TooltipButton } from '../../index';
 
 const PathTooltip: FC<{ path?: string | null }> = (props) => {
   const path = useMemo(() => props.path?.split('.') || [], [props.path]);
 
   return (
-    <Tooltip title={props.path} open={path.length > 1 ? undefined : false}>
+    <Tooltip title={props.path} open={path?.length > 1 ? undefined : false}>
       <Typography.Text code>{path.at(-1)}</Typography.Text>
     </Tooltip>
   );
@@ -111,7 +106,7 @@ const DiffList: FC<DiffListType> = (props) => {
   return (
     <Card
       size='small'
-      title={!loading && `${diffData?.logs.length} ${t('replay.issues')}`}
+      title={!loading && `${diffData?.logs?.length} ${t('replay.issues')}`}
       extra={
         <Button
           size='small'
@@ -126,7 +121,7 @@ const DiffList: FC<DiffListType> = (props) => {
       style={{ minHeight: '56px' }}
     >
       <Space direction='vertical' style={{ width: '100%' }}>
-        {diffData?.logs.map((log, index) => (
+        {diffData?.logs?.map((log, index) => (
           <div key={index} style={{ display: 'flex', flexFlow: 'row nowrap' }}>
             <Tag
               color={DiffMap[log.pathPair.unmatchedType]?.color}
