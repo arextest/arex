@@ -11,6 +11,7 @@ export const runRESTRequest = async (
   response: HoppRESTResponse;
   testResult: HoppTestResult;
 }> => {
+  window.vConsole.log.info(`${request.method} ${request.endpoint}`, request);
   const response = await _runRESTRequest(request, 'EXTENSIONS_ENABLED');
   const testResult = await _runRESTRequestTest(request, response);
 
