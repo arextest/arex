@@ -8,8 +8,7 @@ import {
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { AutoComplete, CollapseProps, InputRef, Typography } from 'antd';
-import { App, Button, Collapse, Input, List, Spin } from 'antd';
+import { App, AutoComplete, Button, Collapse, CollapseProps, List, Spin, Typography } from 'antd';
 import React, { FC, SyntheticEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
