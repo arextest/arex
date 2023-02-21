@@ -31,6 +31,9 @@ const PathCollapseWrapper = styled.div`
   .ant-collapse-content-box {
     padding: 0 !important;
   }
+  .ant-collapse-header-text {
+    width: calc(100% - 80px);
+  }
   .ant-spin-nested-loading {
     width: 100%;
   }
@@ -148,7 +151,8 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
             overflow-y: auto;
           `}
         >
-          {props.interfaces && Array.isArray(props.interfaces) ? (
+          {props.interfaces &&
+            Array.isArray(props.interfaces) &&
             props.interfaces.map((path) => {
               return (
                 <Collapse.Panel
@@ -173,11 +177,6 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                       />
                     ),
                   ]}
-                  css={css`
-                    .ant-collapse-header-text {
-                      width: calc(100% - 80px);
-                    }
-                  `}
                 >
                   <List
                     size='small'
@@ -237,10 +236,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                   />
                 </Collapse.Panel>
               );
-            })
-          ) : (
-            <div></div>
-          )}
+            })}
         </Collapse>
       </Spin>
     </PathCollapseWrapper>

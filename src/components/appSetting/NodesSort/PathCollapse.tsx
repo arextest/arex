@@ -31,6 +31,9 @@ const CollapseWrapper = styled.div`
   .ant-collapse-content-box {
     padding: 0 !important;
   }
+  .ant-collapse-header-text {
+    width: calc(100% - 80px);
+  }
   .active-item {
     background-color: ${(props) => props.theme.colorPrimaryBg};
     transition: background-color 200ms ease;
@@ -83,7 +86,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
           {props.interfaces.map((i) => (
             <Collapse.Panel
               key={String(i.id)}
-              header={i.operationName}
+              header={<Typography.Text ellipsis>{i.operationName}</Typography.Text>}
               extra={
                 <>
                   <TooltipButton
