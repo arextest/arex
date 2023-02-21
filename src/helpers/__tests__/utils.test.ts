@@ -4,8 +4,8 @@ import React from 'react';
 import { v4 as uuid } from 'uuid';
 
 import { PagesType, PageType } from '../components/panes';
+import { MenusType } from '../enums/menus';
 import * as ChartUtils from './chart';
-import {MenusType} from "../enums/menus";
 
 export { ChartUtils, uuid };
 

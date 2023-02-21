@@ -29,7 +29,10 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
     const entries = Object.entries(object);
     return entries.map(([key, value]) => {
       const path = basePath + key + '/';
-      return value && typeof value === 'object'
+      const isSimpleArray = Array.isArray(value) && ['number', 'string'].includes(typeof value[0]);
+      const isObject = typeof value === 'object';
+
+      return value && isObject && !isSimpleArray
         ? {
             title: key,
             key: path,
