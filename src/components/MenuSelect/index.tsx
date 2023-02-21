@@ -11,11 +11,6 @@ import React, { ChangeEventHandler, ReactNode, useCallback, useMemo, useState } 
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
-import { generateGlobalPaneId } from '../../helpers/utils';
-import { useStore } from '../../store';
-import { MenusType } from '../menus';
-import { PagesType } from '../panes';
-
 export type MenuSelectProps<D, P extends any[]> = {
   sx?: CSSInterpolation; // custom style
   small?: boolean;
@@ -133,7 +128,6 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
       }),
     [filterKeyword, props],
   );
-  const { setPages } = useStore();
   const params = useParams();
   const {
     data: apps,
@@ -142,6 +136,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   } = useRequest<D[], P>(props.request, {
     ...props.requestOptions,
     onSuccess(res, _params) {
+      console.log({ props });
       // 默认触发onSelect第一个的逻辑
       if (res.length && (props.defaultSelectFirst || props.initValue)) {
         const record = props.defaultSelectFirst

@@ -1,27 +1,19 @@
 import React, { FC } from 'react';
+import { useParams } from 'react-router-dom';
 
-import { generateGlobalPaneId } from '../../helpers/utils';
+import { useCustomNavigate } from '../../router/useCustomNavigate';
 import { ApplicationDataType } from '../../services/Replay.type';
-import { useStore } from '../../store';
 import { PagesType } from '../panes';
 import AppMenu from './AppMenu';
-import { MenusType } from './index';
 
 const ReplayMenu: FC = () => {
-  const { setPages } = useStore();
-
+  const params = useParams();
+  const customNavigate = useCustomNavigate();
   const handleReplayMenuClick = (app: ApplicationDataType) => {
-    setPages(
-      {
-        title: app.appId,
-        menuType: MenusType.Replay,
-        pageType: PagesType.Replay,
-        isNew: false,
-        data: app,
-        paneId: generateGlobalPaneId(MenusType.Collection, PagesType.Replay, app.id),
-        rawId: app.id,
-      },
-      'push',
+    customNavigate(
+      `/${params.workspaceId}/${params.workspaceName}/${PagesType.Replay}/${
+        app.id
+      }?data=${encodeURIComponent(JSON.stringify(app))}`,
     );
   };
 

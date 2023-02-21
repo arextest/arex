@@ -3,10 +3,10 @@ import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import { MenusType } from '../components/menus';
 import { nodeType } from '../components/menus/CollectionMenu';
 import { PageType } from '../components/panes';
 import { EmailKey, WorkspaceEnvironmentPairKey, WorkspaceKey } from '../constant';
+import { MenusType } from '../enums/menus';
 import { getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { NodeObject } from '../services/Collection.service';
 import { Environment } from '../services/Environment.type';
@@ -143,7 +143,7 @@ export const useStore = create(
       set({ pages: [], activeMenu: [MenusType.Collection, undefined] });
     },
 
-    activeMenu: [MenusType.Collection, undefined],
+    activeMenu: [MenusType.Replay, undefined],
     setActiveMenu: (menuKey, menuItemKey) => {
       set((state) => {
         const statePane = state.pages.find((i) => i.paneId === menuItemKey);

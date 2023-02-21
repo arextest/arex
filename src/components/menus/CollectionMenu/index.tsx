@@ -16,18 +16,13 @@ import { useParams } from 'react-router-dom';
 
 import { EmailKey, NodeType } from '../../../constant';
 import { treeFind } from '../../../helpers/collection/util';
-import {
-  generateGlobalPaneId,
-  getLocalStorage,
-  parseGlobalPaneId,
-  uuid,
-} from '../../../helpers/utils';
+import { getLocalStorage, parsePaneId, uuid } from '../../../helpers/utils';
+import { useCustomNavigate } from '../../../router/useCustomNavigate';
 import { CollectionService } from '../../../services/Collection.service';
 import { useStore } from '../../../store';
 import { TooltipButton } from '../../index';
 import { PagesType } from '../../panes';
 import { EmptyWrapper } from '../../styledComponents';
-import { MenusType } from '../index';
 import CollectionTitle from './CollectionTitle';
 
 const CollectionMenuWrapper = styled.div`
@@ -137,11 +132,10 @@ export type nodeType = {
 const CollectionMenu = () => {
   const { t } = useTranslation(['components']);
   const params = useParams();
-  const { activeMenu, collectionLastManualUpdateTimestamp, setPages, setCollectionTreeData } =
-    useStore();
+  const { activeMenu, collectionLastManualUpdateTimestamp, setCollectionTreeData } = useStore();
   const email = getLocalStorage<string>(EmailKey);
 
-  const value = useMemo(() => parseGlobalPaneId(activeMenu[1])['rawId'], [activeMenu]);
+  const value = useMemo(() => parsePaneId(activeMenu[1] || '')['rawId'], [activeMenu]);
   const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   // TODO
@@ -423,24 +417,10 @@ const CollectionMenu = () => {
       }
     });
   };
-
+  const customNavigate = useCustomNavigate();
   const handleCollectionMenuClick = (key: string, node: nodeType) => {
-    setPages(
-      {
-        title: node.title,
-        menuType: MenusType.Collection,
-        pageType: node.nodeType === 3 ? PagesType.Folder : PagesType.Request,
-        isNew: false,
-        data: node,
-        paneId: generateGlobalPaneId(
-          MenusType.Collection,
-          node.nodeType === 3 ? PagesType.Folder : PagesType.Request,
-          key,
-        ),
-        rawId: key,
-      },
-      'push',
-    );
+    const pageType = node.nodeType === 3 ? PagesType.Folder : PagesType.Request;
+    customNavigate(`/${params.workspaceId}/${params.workspaceName}/${pageType}/${key}`);
   };
 
   const [treeHeight, setTreeHeight] = useState(0);
@@ -458,36 +438,12 @@ const CollectionMenu = () => {
 
   const test = () => {
     const u = uuid();
-    setPages(
-      {
-        key: u,
-        title: t('collection.batch_run'),
-        pageType: PagesType.BatchRun,
-        menuType: MenusType.Collection,
-        isNew: true,
-        data: undefined,
-        paneId: generateGlobalPaneId(MenusType.Collection, PagesType.BatchRun, u),
-        rawId: u,
-      },
-      'push',
-    );
+    customNavigate(`/${params.workspaceId}/${params.workspaceName}/${PagesType.BatchRun}/${u}`);
   };
 
   const onOpenBatchComparePage = () => {
     const u = uuid();
-    setPages(
-      {
-        key: u,
-        title: t('collection.batch_compare'),
-        pageType: PagesType.BatchCompare,
-        menuType: MenusType.Collection,
-        isNew: true,
-        data: undefined,
-        paneId: generateGlobalPaneId(MenusType.Collection, PagesType.BatchCompare, u),
-        rawId: u,
-      },
-      'push',
-    );
+    customNavigate(`/${params.workspaceId}/${params.workspaceName}/${PagesType.BatchCompare}/${u}`);
   };
 
   return (

@@ -6,6 +6,7 @@ import {
 } from '@ant-design/icons';
 import React, { FC, ReactNode } from 'react';
 
+import { MenusType } from '../../enums/menus';
 import AppSettingMenu from './AppSettingMenu';
 import CollectionMenu from './CollectionMenu';
 import EnvironmentMenu from './EnvironmentMenu';
@@ -18,14 +19,6 @@ export type MenuConfig = {
   Menu?: FC;
   children?: MenuConfig[];
 };
-
-export enum MenusType {
-  Collection = 'collection',
-  Replay = 'replay',
-  AppSetting = 'appSetting',
-  Environment = 'environment',
-  Setting = 'setting',
-}
 
 // TODO import ExtraConfig
 // import ExtraConfig from 'src/extra/menus'

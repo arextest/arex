@@ -31,7 +31,7 @@ const useCheckChrome = () => {
             &nbsp;before you run it.
           </div>,
         );
-        console.info('[AREX] Extension not installed, please install it first.');
+        console.log('[AREX] Extension not installed, please install it first.');
       } else if (versionStringCompare(window.__AREX_EXTENSION_VERSION__, ExtensionVersion) < 0) {
         message.info(
           <span>
@@ -45,9 +45,9 @@ const useCheckChrome = () => {
             </a>
           </span>,
         );
-        console.info(t('http.extensionIncorrect', ` ${window.__AREX_EXTENSION_VERSION__}`));
+        console.log(t('http.extensionIncorrect', ` ${window.__AREX_EXTENSION_VERSION__}`));
       } else {
-        console.info(`[AREX] Extension installed, version ${window.__AREX_EXTENSION_VERSION__}`);
+        console.log(`[AREX] Extension installed, version ${window.__AREX_EXTENSION_VERSION__}`);
       }
     }, 200);
   }, []);

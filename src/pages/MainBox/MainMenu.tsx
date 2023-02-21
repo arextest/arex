@@ -5,7 +5,8 @@ import React, { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { ErrorBoundary, WorkspacesMenu } from '../../components';
-import MenuConfigList, { MenuConfig, MenusType } from '../../components/menus';
+import MenuConfigList, { MenuConfig } from '../../components/menus';
+import { MenusType } from '../../enums/menus';
 import { useStore } from '../../store';
 
 type MainMenuProps = {

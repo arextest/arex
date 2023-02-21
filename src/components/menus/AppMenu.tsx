@@ -6,7 +6,7 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { EmailKey } from '../../constant';
-import { getLocalStorage, parseGlobalPaneId } from '../../helpers/utils';
+import { getLocalStorage, parsePaneId } from '../../helpers/utils';
 import ReplayService from '../../services/Replay.service';
 import { ApplicationDataType } from '../../services/Replay.type';
 import { UserService } from '../../services/User.service';
@@ -85,8 +85,10 @@ const AppMenu: FC<{
   const [favoriteFilter, { toggle: toggleFavoriteFilter, setRight: disableFavoriteFilter }] =
     useToggle(false);
   const [favoriteAppsInitialized, setFavoriteAppsInitialized] = useState(false);
+  console.log({ activeMenu });
+  const value = useMemo(() => parsePaneId(activeMenu[1] || '')['rawId'], [activeMenu]);
 
-  const value = useMemo(() => parseGlobalPaneId(activeMenu[1])['rawId'], [activeMenu]);
+  console.log(value, 'value');
   const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
 
   const {
