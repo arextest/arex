@@ -1,39 +1,38 @@
-import { match } from 'path-to-regexp';
-import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { MenuTypeEnum } from '../constant';
-import { genPaneIdByUrl, getMenuTypeByPageType } from '../helpers/utils';
-import { MainContext } from '../store/content/MainContent';
+import { genPaneIdByUrl, getMenuTypeByPageType, JSONparse, matchUrlParams } from '../helpers/utils';
+import { useStore } from '../store';
 
 export function useCustomNavigate() {
+  const { setPages, pages, collectionTreeData } = useStore();
   const nav = useNavigate();
-  const { store, dispatch } = useContext(MainContext);
+  function genTitle(p: any): any {
+    return p.rawId;
+  }
   return function (url: string) {
-    const fn: any = match('/:workspaceId/workspace/:workspaceName/:paneType/:paneId', {
-      decode: decodeURIComponent,
-    });
-    const params = fn(url).params;
+    const matchUrlParams1 = matchUrlParams(url).params;
+    const matchUrlParams2 = matchUrlParams(url).searchParams;
     const paneKey = genPaneIdByUrl(url);
 
-    dispatch((state) => {
-      const find = state.globalState.panes.find((pane) => pane.key === paneKey);
-      if (!find) {
-        state.globalState.panes.push({
-          key: paneKey,
-          title: 'suibian',
-          menuType: getMenuTypeByPageType(params.paneType), //要计算得处
-          pageType: params.paneType,
-          rawId: params.paneId,
-          edited: false,
-        });
-      }
-    });
-
-    dispatch((state) => {
-      state.globalState.activeMenu = [getMenuTypeByPageType(params.paneType), paneKey];
-    });
-
+    const find = pages.find((pane) => pane.key === paneKey);
+    if (!find) {
+      setPages(
+        {
+          title: genTitle({
+            rawId: matchUrlParams1.rawId,
+            pagesType: matchUrlParams1.pagesType,
+            collectionTreeData: collectionTreeData,
+          }),
+          menuType: getMenuTypeByPageType(matchUrlParams1.pagesType),
+          pageType: matchUrlParams1.pagesType,
+          isNew: false,
+          data: JSONparse(decodeURIComponent(matchUrlParams2.data)),
+          paneId: genPaneIdByUrl(url),
+          rawId: matchUrlParams1.rawId,
+        },
+        'push',
+      );
+    }
     nav(url);
   };
 }

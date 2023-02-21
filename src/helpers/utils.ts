@@ -1,8 +1,10 @@
 import { App, message } from 'antd';
+import { match } from 'path-to-regexp';
 import React from 'react';
 import { v4 as uuid } from 'uuid';
 
-import { PageType } from '../components/panes';
+import { PagesType, PageType } from '../components/panes';
+import { MenusType } from '../enums/menus';
 import * as ChartUtils from './chart';
 
 export { ChartUtils, uuid };
@@ -70,22 +72,6 @@ export const getPercent = (num: number, den: number, showPercentSign = true) => 
   return showPercentSign ? value + '%' : value;
 };
 
-export const generateGlobalPaneId = (
-  menuType: string,
-  pageType: PageType<string>,
-  rawId: React.Key,
-) => btoa(encodeURI(`${menuType}__${pageType}__${rawId}`));
-
-export const parseGlobalPaneId = (paneId?: string) => {
-  paneId = paneId || '';
-  const arr = atob(decodeURI(paneId)).split('__');
-  return {
-    menuType: arr[0],
-    pageType: arr[1],
-    rawId: arr[2],
-  };
-};
-
 /**
  * 对象数组去重
  * @param arr 去重对象数组
@@ -131,3 +117,92 @@ export function getChromeVersion() {
   }
   return versionStringCompare(v, '89.00.00');
 }
+
+export const genPaneIdByUrl = (url: string) => btoa(encodeURI(url));
+
+export const parsePaneId = (
+  paneId: string,
+): {
+  workspaceId: string;
+  workspaceName: string;
+  pagesType: string;
+  rawId: string;
+} => {
+  try {
+    const matchUrl: any = match('/:workspaceId/:workspaceName/:pagesType/:rawId', {
+      decode: decodeURIComponent,
+    });
+    const params = matchUrl(atob(decodeURI(paneId)).split('?')[0]).params;
+    return {
+      workspaceId: params.workspaceId,
+      workspaceName: params.workspaceName,
+      pagesType: params.pagesType,
+      rawId: params.rawId,
+    };
+  } catch (e) {
+    return {
+      workspaceId: '',
+      workspaceName: '',
+      pagesType: '',
+      rawId: '',
+    };
+  }
+};
+
+export const getMenuTypeByPageType = (pageType: any): MenusType => {
+  if (
+    [PagesType.Folder, PagesType.Request, PagesType.Case, PagesType.Workspace].includes(pageType)
+  ) {
+    return MenusType.Collection;
+  } else if (
+    [PagesType.Replay, PagesType.ReplayAnalysis, PagesType.ReplayCase].includes(pageType)
+  ) {
+    return MenusType.Replay;
+  } else if ([PagesType.AppSetting].includes(pageType)) {
+    return MenusType.AppSetting;
+  } else if ([PagesType.Environment].includes(pageType)) {
+    return MenusType.Environment;
+  }
+
+  return MenusType.Collection;
+};
+
+/**
+ * 获取当前 URL 所有 GET 查询参数
+ * 入参：要解析的 URL，不传则默认为当前 URL
+ * 返回：一个<key, value>参数对象
+ */
+function getUrlQueryParams(url = location.search) {
+  const params: any = {};
+  const keys: any = url.match(/([^?&]+)(?==)/g);
+  const values: any = url.match(/(?<==)([^&]*)/g);
+  for (const index in keys) {
+    params[keys[index]] = values[index];
+  }
+  return params;
+}
+
+export const matchUrlParams = (url: string) => {
+  // const s = url.split('?')
+
+  const url0 = url.split('?')[0];
+  const url1 = url.split('?')[1];
+
+  const matchUrl: any = match('/:workspaceId/:workspaceName/:pagesType/:rawId', {
+    decode: decodeURIComponent,
+  });
+  const matchUrlParams = matchUrl(url0).params;
+  // JSON.parse
+  return {
+    params: matchUrlParams,
+    searchParams: getUrlQueryParams(url1),
+  };
+};
+
+export const JSONparse = (jsonString: string) => {
+  try {
+    return JSON.parse(jsonString);
+  } catch (e) {
+    return undefined;
+  }
+};

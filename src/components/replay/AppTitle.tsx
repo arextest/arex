@@ -6,14 +6,14 @@ import dayjs, { Dayjs } from 'dayjs';
 import { DefaultOptionType } from 'rc-select/lib/Select';
 import React, { FC, ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 
 import { EmailKey } from '../../constant';
-import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
+import { getLocalStorage } from '../../helpers/utils';
+import { useCustomNavigate } from '../../router/useCustomNavigate';
 import AppSettingService from '../../services/AppSetting.service';
 import ReplayService from '../../services/Replay.service';
 import { ApplicationDataType } from '../../services/Replay.type';
-import { useStore } from '../../store';
-import { MenusType } from '../menus';
 import { PagesType } from '../panes';
 import { PanesTitle } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
@@ -78,9 +78,9 @@ const InitialValues = {
 const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   const { t } = useTranslation(['components']);
   const { notification } = App.useApp();
-
+  const params = useParams();
+  const customNavigate = useCustomNavigate();
   const email = getLocalStorage<string>(EmailKey);
-  const { setPages } = useStore();
 
   const [form] = Form.useForm<CreatePlanForm>();
   const [open, setOpen] = useState(false);
@@ -156,17 +156,10 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   };
 
   const handleOpenSetting = () => {
-    setPages(
-      {
-        title: `Setting ${data.appId}`,
-        menuType: MenusType.AppSetting,
-        pageType: PagesType.AppSetting,
-        isNew: false,
-        data,
-        paneId: generateGlobalPaneId(MenusType.AppSetting, PagesType.AppSetting, data.id),
-        rawId: data.id,
-      },
-      'push',
+    customNavigate(
+      `/${params.workspaceId}/${params.workspaceName}/${PagesType.AppSetting}/${
+        data.id
+      }?data=${encodeURIComponent(JSON.stringify(data))}`,
     );
   };
   return (

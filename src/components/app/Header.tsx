@@ -3,10 +3,11 @@ import styled from '@emotion/styled';
 import { Avatar, Dropdown, DropdownProps, Space, Typography } from 'antd';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { EmailKey } from '../../constant';
-import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
+import { getLocalStorage } from '../../helpers/utils';
+import { useCustomNavigate } from '../../router/useCustomNavigate';
 import { useStore } from '../../store';
 import useUserProfile from '../../store/useUserProfile';
 import { TooltipButton } from '../index';
@@ -42,20 +43,13 @@ const AppHeader = () => {
   const { t, i18n } = useTranslation('common');
 
   const { avatar, theme } = useUserProfile();
-  const { logout, setPages } = useStore();
+  const { logout } = useStore();
   const email = getLocalStorage<string>(EmailKey);
-
+  const params = useParams();
+  const customNavigate = useCustomNavigate();
   const handleSetting = () => {
-    setPages(
-      {
-        title: 'Setting',
-        pageType: PagesType.Setting,
-        isNew: false,
-        data: undefined,
-        paneId: generateGlobalPaneId('-', PagesType.Setting, 'SETTING'),
-        rawId: 'SETTING',
-      },
-      'push',
+    customNavigate(
+      `/${params.workspaceId}/${params.workspaceName}/${PagesType.Setting}/${'SETTING'}`,
     );
   };
 

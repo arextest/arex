@@ -2,13 +2,12 @@ import { useRequest } from 'ahooks';
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { MenusType } from '../components/menus';
-import { PagesType } from '../components/panes';
 import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../constant';
 import {
   clearLocalStorage,
-  generateGlobalPaneId,
+  genPaneIdByUrl,
   getLocalStorage,
+  getMenuTypeByPageType,
   setLocalStorage,
 } from '../helpers/utils';
 import { AuthService } from '../services/Auth.service';
@@ -27,7 +26,7 @@ const useInit = () => {
   const params = useParams();
   const { pathname } = useLocation();
   const { setUserProfile } = useUserProfile();
-  const { setPages, setActiveMenu, setActiveWorkspaceId } = useStore();
+  const { setActiveMenu, setActiveWorkspaceId } = useStore();
 
   const { run: refreshToken } = useRequest(AuthService.refreshToken, {
     manual: true,
@@ -66,57 +65,12 @@ const useInit = () => {
     if (params.workspaceId) {
       setActiveWorkspaceId(params.workspaceId);
     }
-    // Replay有三种类型
-    if (params.pagesType === PagesType.Replay || params.pagesType === PagesType.ReplayCase) {
+    if (params.pagesType) {
       setActiveMenu(
-        MenusType.Replay,
-        generateGlobalPaneId(MenusType.Replay, params.pagesType, params.rawId as string),
-      );
-    } else if (params.pagesType === PagesType.Environment) {
-      setActiveMenu(
-        MenusType.Environment,
-        generateGlobalPaneId(MenusType.Environment, PagesType.Environment, params.rawId as string),
-      );
-    } else if (params.pagesType === PagesType.WorkspaceOverview) {
-      params.workspaceName &&
-        params.workspaceId &&
-        setPages(
-          {
-            title: params.workspaceName,
-            menuType: MenusType.Collection,
-            pageType: PagesType.WorkspaceOverview,
-            isNew: true,
-            data: undefined,
-            paneId: generateGlobalPaneId(
-              MenusType.Collection,
-              PagesType.WorkspaceOverview,
-              params.workspaceId,
-            ),
-            rawId: params.workspaceId,
-          },
-          'push',
-        );
-    } else if (params.pagesType === PagesType.BatchCompare) {
-      setPages(
-        {
-          title: 'Batch Compare',
-          menuType: MenusType.Collection,
-          pageType: PagesType.BatchCompare,
-          isNew: true,
-          data: undefined,
-          paneId: generateGlobalPaneId(
-            MenusType.Collection,
-            PagesType.BatchCompare,
-            params.rawId || '',
-          ),
-          rawId: params.rawId || '',
-        },
-        'push',
-      );
-
-      setActiveMenu(
-        MenusType.Collection,
-        generateGlobalPaneId(MenusType.Collection, params.pagesType, params.rawId as string),
+        getMenuTypeByPageType(params.pagesType),
+        genPaneIdByUrl(
+          `/${params.workspaceId}/${params.workspaceName}/${params.pagesType}/${params.rawId}`,
+        ),
       );
     }
   }, []);

@@ -8,7 +8,8 @@ import { useParams } from 'react-router-dom';
 import { treeFind, treeFindPath } from '../../helpers/collection/util';
 import { convertSaveRequestData } from '../../helpers/http/util';
 import { runRESTPreRequest, runRESTRequest } from '../../helpers/RequestRunner';
-import { generateGlobalPaneId, parseGlobalPaneId } from '../../helpers/utils';
+import { parsePaneId } from '../../helpers/utils';
+import { useCustomNavigate } from '../../router/useCustomNavigate';
 import { FileSystemService } from '../../services/FileSystem.service';
 import { useStore } from '../../store';
 import useUserProfile from '../../store/useUserProfile';
@@ -17,11 +18,11 @@ import { Environment } from '../http/data/environment';
 import { HoppRESTRequest } from '../http/data/rest';
 import { ExtraTabs } from '../http/extra';
 import { HoppRESTResponse } from '../http/helpers/types/HoppRESTResponse';
-import { MenusType } from '../menus';
 import { nodeType } from '../menus/CollectionMenu';
 import SaveRequestButton from '../menus/CollectionMenu/SaveRequestButton';
 import { sendQuickCompare } from './BatchComparePage/util';
 import { PageFC, PagesType } from './index';
+// import {const} from "fp-ts";
 
 const HttpRequestPageWrapper = styled.div`
   overflow: hidden;
@@ -46,7 +47,8 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
 
   const [saveModalOpen, setSaveModalOpen] = useState(false);
   const [reqParams, setReqParams] = useState<HoppRESTRequest>();
-
+  const params = useParams();
+  const customNavigate = useCustomNavigate();
   const environment = useMemo<Environment>(
     () =>
       activeEnvironment
@@ -60,21 +62,19 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
           },
     [activeEnvironment],
   );
-  const id = useMemo(() => parseGlobalPaneId(props.page.paneId)['rawId'], [props.page.paneId]);
+  const id = useMemo(() => parsePaneId(props.page.paneId)['rawId'], [props.page.paneId]);
   // TODO 删除nodeType兜底逻辑
   const nodeType = useMemo(() => {
     return (
-      treeFind(
-        collectionTreeData,
-        (node) => node.key === parseGlobalPaneId(props.page.paneId)['rawId'],
-      )?.nodeType || 1
+      treeFind(collectionTreeData, (node) => node.key === parsePaneId(props.page.paneId)['rawId'])
+        ?.nodeType || 1
     );
   }, [props.page.paneId, collectionTreeData]);
 
   const nodePath = useMemo(() => {
     const path = treeFindPath(
       collectionTreeData,
-      (node: nodeType) => node.key === parseGlobalPaneId(props.page.paneId)['rawId'],
+      (node: nodeType) => node.key === parsePaneId(props.page.paneId)['rawId'],
     );
 
     return path.map((item) => item.title);
@@ -168,21 +168,12 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
   const handleSaveAs = (node: nodeType) => {
     const filteredPanes = pages.filter((i) => i.paneId !== props.page.paneId);
     setPages(filteredPanes);
-    setPages(
-      {
-        title: node.title,
-        menuType: MenusType.Collection,
-        pageType: node.nodeType === 3 ? PagesType.Folder : PagesType.Request,
-        isNew: false,
-        data: node,
-        paneId: generateGlobalPaneId(
-          MenusType.Collection,
-          node.nodeType === 3 ? PagesType.Folder : PagesType.Request,
-          node.key,
-        ),
-        rawId: node.key,
-      },
-      'push',
+
+    const nodeType = node.nodeType === 3 ? PagesType.Folder : PagesType.Request;
+    customNavigate(
+      `/${params.workspaceId}/${params.workspaceName}/${nodeType}/${
+        node.key
+      }?data=${encodeURIComponent(JSON.stringify(node))}`,
     );
     window.globalFetchTreeData();
   };

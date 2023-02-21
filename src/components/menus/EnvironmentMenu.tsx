@@ -5,14 +5,13 @@ import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
-import { generateGlobalPaneId } from '../../helpers/utils';
+import { useCustomNavigate } from '../../router/useCustomNavigate';
 import EnvironmentService from '../../services/Environment.service';
 import { Environment } from '../../services/Environment.type';
 import { useStore } from '../../store';
 import MenuSelect from '../MenuSelect';
 import { PagesType } from '../panes';
 import { SmallTextButton, SpaceBetweenWrapper } from '../styledComponents';
-import { MenusType } from './index';
 
 const EnvironmentMenu: FC = () => {
   const { t } = useTranslation(['common', 'components']);
@@ -23,25 +22,19 @@ const EnvironmentMenu: FC = () => {
   } = theme.useToken();
 
   const {
-    setPages,
     activeWorkspaceId,
     activeEnvironment,
     environmentLastManualUpdateTimestamp,
     setEnvironmentLastManualUpdateTimestamp,
   } = useStore();
 
+  const customNavigate = useCustomNavigate();
+
   const handleEnvMenuClick = (env: Environment) => {
-    setPages(
-      {
-        title: env.envName,
-        menuType: MenusType.Environment,
-        pageType: PagesType.Environment,
-        isNew: false,
-        data: env,
-        paneId: generateGlobalPaneId(MenusType.Environment, PagesType.Environment, env.id),
-        rawId: env.id,
-      },
-      'push',
+    customNavigate(
+      `/${params.workspaceId}/${params.workspaceName}/${PagesType.Environment}/${
+        env.id
+      }?data=${encodeURIComponent(JSON.stringify(env))}`,
     );
   };
 

@@ -27,13 +27,14 @@ import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 import CountUp from 'react-countup';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 
 import { EmailKey } from '../../constant';
-import { generateGlobalPaneId, getLocalStorage, getPercent } from '../../helpers/utils';
+import { getLocalStorage, getPercent } from '../../helpers/utils';
+import { useCustomNavigate } from '../../router/useCustomNavigate';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { useStore } from '../../store';
-import { MenusType } from '../menus';
 import { PagesType } from '../panes';
 import { SmallTextButton, SpaceBetweenWrapper } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
@@ -52,8 +53,8 @@ const chartOptions = {
 const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
   const { message, notification } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
-
-  const { setPages } = useStore();
+  const params = useParams();
+  const customNavigate = useCustomNavigate();
   const email = getLocalStorage<string>(EmailKey);
   const { token } = theme.useToken();
 
@@ -209,21 +210,10 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
             breakpoint='xxl'
             disabled={!record.failCaseCount}
             onClick={() => {
-              setPages(
-                {
-                  title: `${t('replay.diffScenes')} - ${record.planItemId}`,
-                  pageType: PagesType.ReplayAnalysis,
-                  menuType: MenusType.Replay,
-                  isNew: false,
-                  data: record,
-                  paneId: generateGlobalPaneId(
-                    MenusType.Replay,
-                    PagesType.ReplayAnalysis,
-                    record.planItemId,
-                  ),
-                  rawId: record.planItemId,
-                },
-                'push',
+              customNavigate(
+                `/${params.workspaceId}/${params.workspaceName}/${PagesType.ReplayAnalysis}/${
+                  record.planItemId
+                }?data=${encodeURIComponent(JSON.stringify(record))}`,
               );
             }}
             style={{
@@ -234,24 +224,13 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
             icon={<FileTextOutlined />}
             title={t('replay.caseTable')}
             breakpoint='xxl'
-            onClick={() =>
-              setPages(
-                {
-                  title: `${t('replay.caseTable')} - ${record.planItemId}`,
-                  pageType: PagesType.ReplayCase,
-                  menuType: MenusType.Replay,
-                  isNew: false,
-                  data: record,
-                  paneId: generateGlobalPaneId(
-                    MenusType.Replay,
-                    PagesType.ReplayCase,
-                    record.planItemId,
-                  ),
-                  rawId: record.planItemId,
-                },
-                'push',
-              )
-            }
+            onClick={() => {
+              customNavigate(
+                `/${params.workspaceId}/${params.workspaceName}/${PagesType.ReplayCase}/${
+                  record.planItemId
+                }?data=${encodeURIComponent(JSON.stringify(record))}`,
+              );
+            }}
             style={{ color: token.colorPrimary }}
           />
           <TooltipButton

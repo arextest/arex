@@ -9,12 +9,12 @@ import { useParams } from 'react-router-dom';
 import { EmailKey, MethodMap } from '../../../constant';
 import SearchHighLight from '../../../helpers/collection/searchHighLight';
 import { treeFindPath } from '../../../helpers/collection/util';
-import { generateGlobalPaneId, getLocalStorage } from '../../../helpers/utils';
+import { getLocalStorage, uuid } from '../../../helpers/utils';
+import { useCustomNavigate } from '../../../router/useCustomNavigate';
 import { CollectionService } from '../../../services/Collection.service';
 import { FileSystemService } from '../../../services/FileSystem.service';
 import { useStore } from '../../../store';
 import { PagesType } from '../../panes';
-import { MenusType } from '../index';
 
 const PrefixIcon = styled(
   (props: { icon: ReactNode; border?: boolean }) => <div {...props}>{props.icon}</div>,
@@ -37,12 +37,12 @@ function CollectionTitle({
   const { t } = useTranslation(['common', 'components']);
   const { message } = App.useApp();
   const _useParams = useParams();
-  const { setPages } = useStore();
   const userName = getLocalStorage<string>(EmailKey);
 
   const [open, setOpen] = useState(false);
   const [renameKey, setRenameKey] = useState('');
   const [renameValue, setRenameValue] = useState('');
+  const customNavigate = useCustomNavigate();
   const menu = (val: any) => {
     const paths = treeFindPath(treeData, (node: any) => node.key === val.key);
     return {
@@ -203,33 +203,15 @@ function CollectionTitle({
             });
             break;
           case '7':
-            setPages(
-              {
-                key: val.id,
-                title: t('collection.batch_run', { ns: 'components' }),
-                pageType: PagesType.BatchRun,
-                menuType: MenusType.Collection,
-                isNew: true,
-                data: undefined,
-                paneId: generateGlobalPaneId(MenusType.Collection, PagesType.BatchRun, val.id),
-                rawId: val.id,
-              },
-              'push',
+            customNavigate(
+              `/${_useParams.workspaceId}/${_useParams.workspaceName}/${PagesType.BatchRun}/${val.id}`,
             );
             break;
           case '8':
-            setPages(
-              {
-                key: val.id,
-                title: t('collection.batch_compare', { ns: 'components' }),
-                pageType: PagesType.BatchCompare,
-                menuType: MenusType.Collection,
-                isNew: true,
-                data: undefined,
-                paneId: generateGlobalPaneId(MenusType.Collection, PagesType.BatchCompare, val.id),
-                rawId: val.id,
-              },
-              'push',
+            customNavigate(
+              `/${_useParams.workspaceId}/${_useParams.workspaceName}/${PagesType.BatchCompare}/${
+                val.id
+              }?planId=${uuid()}`,
             );
             break;
         }

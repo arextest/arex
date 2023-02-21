@@ -4,17 +4,18 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { DraggableTabs, EnvironmentSelect, ErrorBoundary } from '../../components';
-import { MenusType } from '../../components/menus';
 import Pages, { PagesType } from '../../components/panes';
 import { EmptyWrapper } from '../../components/styledComponents';
 import { treeFind } from '../../helpers/collection/util';
-import { generateGlobalPaneId, parseGlobalPaneId, uuid } from '../../helpers/utils';
+import { parsePaneId, uuid } from '../../helpers/utils';
+import { useCustomNavigate } from '../../router/useCustomNavigate';
 import { NodeObject } from '../../services/Collection.service';
 import { Page, useStore } from '../../store';
 
 const MainTabs = () => {
   const nav = useNavigate();
   const params = useParams();
+  const customNavigate = useCustomNavigate();
 
   const {
     pages,
@@ -30,19 +31,7 @@ const MainTabs = () => {
 
   const addTab = () => {
     const u = uuid();
-    setPages(
-      {
-        key: u,
-        title: 'New Request',
-        pageType: PagesType.Request,
-        menuType: MenusType.Collection,
-        isNew: true,
-        data: undefined,
-        paneId: generateGlobalPaneId(MenusType.Collection, PagesType.Request, u),
-        rawId: u,
-      },
-      'push',
-    );
+    customNavigate(`/${params.workspaceId}/${params.workspaceName}/${PagesType.Request}/${u}`);
   };
 
   const rightClickItems: (id: string) => MenuProps['items'] = (id) => [
@@ -82,15 +71,13 @@ const MainTabs = () => {
       // Request类型需要动态响应tittle修改
       if ([PagesType.Request, PagesType.Folder].includes(page.pageType)) {
         return (
-          treeFind(
-            collectionTreeData,
-            (item) => item.key === parseGlobalPaneId(page.paneId)['rawId'],
-          )?.title || 'New Request'
+          treeFind(collectionTreeData, (item) => item.key === parsePaneId(page.paneId)['rawId'])
+            ?.title || 'New Request'
         );
       } else if ([PagesType.Environment].includes(page.pageType)) {
         return treeFind(
           environmentTreeData,
-          (item) => item.id === parseGlobalPaneId(page.paneId)['rawId'],
+          (item) => item.id === parsePaneId(page.paneId)['rawId'],
         )?.envName;
       } else {
         return page.title;

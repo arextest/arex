@@ -15,12 +15,12 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { EmailKey, RoleEnum, RoleMap, WorkspaceKey } from '../../constant';
-import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
+import { getLocalStorage } from '../../helpers/utils';
+import { useCustomNavigate } from '../../router/useCustomNavigate';
 import { FileSystemService } from '../../services/FileSystem.service';
 import WorkspaceService from '../../services/Workspace.service';
 import { useStore } from '../../store';
 import { TooltipButton } from '../index';
-import { MenusType } from '../menus';
 import { PagesType } from '../panes';
 
 const Role = styled((props: { className?: string; role: RoleEnum }) => (
@@ -48,6 +48,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
 
   const params = useParams();
   const nav = useNavigate();
+  const customNavigate = useCustomNavigate();
   const {
     workspaces,
     setWorkspaces,
@@ -56,7 +57,6 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
     invitedWorkspaceId,
     workspacesLastManualUpdateTimestamp,
     setInvitedWorkspaceId,
-    setPages,
     resetPage,
   } = useStore();
 
@@ -132,21 +132,8 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
   const handleEditWorkspace = () => {
     params.workspaceName &&
       params.workspaceId &&
-      setPages(
-        {
-          title: params.workspaceName,
-          menuType: MenusType.Collection,
-          pageType: PagesType.WorkspaceOverview,
-          isNew: true,
-          data: undefined,
-          paneId: generateGlobalPaneId(
-            MenusType.Collection,
-            PagesType.WorkspaceOverview,
-            params.workspaceId,
-          ),
-          rawId: params.workspaceId,
-        },
-        'push',
+      customNavigate(
+        `/${params.workspaceId}/${params.workspaceName}/${PagesType.WorkspaceOverview}/${params.workspaceId}`,
       );
   };
 
