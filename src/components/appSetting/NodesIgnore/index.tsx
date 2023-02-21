@@ -1,6 +1,6 @@
 import { useRequest } from 'ahooks';
 import { App, Col, Row } from 'antd';
-import { TreeProps } from 'antd/lib/tree';
+import { DataNode, TreeProps } from 'antd/lib/tree';
 import React, { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
@@ -12,8 +12,9 @@ import {
   QueryIgnoreNode,
   QueryInterfaceIgnoreNode,
 } from '../../../services/AppSetting.type';
+import { FileSystemService } from '../../../services/FileSystem.service';
 import { EditAreaPlaceholder } from '../../styledComponents';
-import IgnoreTree from './IgnoreTree';
+import IgnoreTree, { getNodes } from './IgnoreTree';
 import PathCollapse, { InterfacePick } from './PathCollapse';
 import ResponseRaw from './ResponseRaw';
 
@@ -145,13 +146,19 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
    */
   const {
     data: interfaceResponse,
-    loading: loadingInterfaceResponse,
-    run: queryInterfaceResponse,
     mutate: setInterfaceResponse,
+    run: queryInterfaceResponse,
+    loading: loadingInterfaceResponse,
   } = useRequest(
-    () => AppSettingService.queryInterfaceResponse({ id: activeOperationInterface!.id as string }),
+    () =>
+      // @ts-ignore
+      props.interfaceId
+        ? FileSystemService.queryInterface({ id: props.interfaceId })
+        : AppSettingService.queryInterfaceResponse({
+            id: activeOperationInterface?.id as string,
+          }),
     {
-      ready: !!activeOperationInterface?.id && activeOperationInterface?.id !== GLOBAL_OPERATION_ID,
+      ready: !!activeOperationInterface?.id,
       refreshDeps: [activeOperationInterface],
       onBefore() {
         setInterfaceResponse();
@@ -238,6 +245,19 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
     // remove.length && batchDeleteIgnoreNode(remove.map((id) => ({ id })));
   };
 
+  function getPath(nodeList: DataNode[], pathList: string[], basePath = '') {
+    nodeList.forEach((node) => {
+      pathList.push(basePath ? basePath + '/' + node.title : (node.title as string));
+      node.children && getPath(node.children, pathList, node.title as string);
+    });
+  }
+
+  const nodePath = useMemo(() => {
+    const pathList: string[] = [];
+    getPath(getNodes(interfaceResponseParsed, ''), pathList);
+    return pathList.map((value) => ({ value }));
+  }, [interfaceResponseParsed]);
+
   return (
     <Row justify='space-between' style={{ margin: 0, flexWrap: 'nowrap' }}>
       <Col span={props.interfaceId ? 24 : 10}>
@@ -246,6 +266,7 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
           appId={props.appId}
           interfaceId={props.interfaceId}
           title={props.interfaceId ? undefined : t('appSetting.global')}
+          options={nodePath}
           loadingPanel={loadingIgnoreNode}
           interfaces={[
             {

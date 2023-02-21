@@ -56,6 +56,7 @@ export type SettingNodesSortProps = {
 
 export type SettingNodesSortRef = {
   onEditResponse: (operationInterface?: OperationInterface<'Interface'>) => void;
+  getOperationResponse: () => string | undefined | null;
 };
 
 const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>((props, ref) => {
@@ -236,6 +237,15 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
     },
   );
 
+  useImperativeHandle(
+    ref,
+    () => ({
+      onEditResponse: handleEditResponse,
+      getOperationResponse: () => interfaceResponse?.operationResponse,
+    }),
+    [interfaceResponse],
+  );
+
   /**
    * 开始编辑某个 interface 的 response
    * @param operationInterface
@@ -245,9 +255,6 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
     setNodesEditMode(NodesEditMode.Raw);
     setModalOpen(true);
   };
-  useImperativeHandle(ref, () => ({
-    onEditResponse: handleEditResponse,
-  }));
 
   /**
    * 保存某个 interface 的 response
