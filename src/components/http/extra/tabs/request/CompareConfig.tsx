@@ -1,12 +1,11 @@
 import { CodeOutlined } from '@ant-design/icons';
 import { Button, Space, Typography } from 'antd';
-import React, { FC, useRef } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import NodesIgnore from '../../../../appSetting/NodesIgnore';
 import NodesSort, { SettingNodesSortRef } from '../../../../appSetting/NodesSort';
 import { Label, SpaceBetweenWrapper } from '../../../../styledComponents';
-import TooltipButton from '../../../../TooltipButton';
 
 export type CompareConfigProps = {
   interfaceId: string;

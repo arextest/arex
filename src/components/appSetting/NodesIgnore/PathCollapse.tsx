@@ -8,8 +8,7 @@ import {
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { CollapseProps, InputRef, Typography } from 'antd';
-import { App, Button, Collapse, Input, List, Spin } from 'antd';
+import { App, AutoComplete, Button, Collapse, CollapseProps, List, Spin, Typography } from 'antd';
 import React, { FC, SyntheticEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -19,7 +18,6 @@ import {
   InterfaceIgnoreNode,
   OperationId,
   OperationInterface,
-  QueryIgnoreNode,
   QueryInterfaceIgnoreNode,
 } from '../../../services/AppSetting.type';
 import { SpaceBetweenWrapper } from '../../styledComponents';
@@ -31,6 +29,9 @@ const PathCollapseWrapper = styled.div`
   margin-bottom: 16px;
   .ant-collapse-content-box {
     padding: 0 !important;
+  }
+  .ant-collapse-header-text {
+    width: calc(100% - 80px);
   }
   .ant-spin-nested-loading {
     width: 100%;
@@ -44,6 +45,8 @@ export interface PathCollapseProps extends Omit<CollapseProps, 'activeKey' | 'on
   appId?: string;
   interfaceId?: string; // collection - interface
   title?: string;
+  options?: { value: string }[]; // AutoComplete options
+  height?: string;
   activeKey?: OperationId<'Global'>;
   interfaces: InterfacePick[];
   ignoreNodes: QueryInterfaceIgnoreNode[];
@@ -59,7 +62,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
 
-  const editInputRef = useRef<InputRef>(null);
+  const editInputRef = useRef<any>(null);
   const [ignoredKey, setIgnoredKey] = useState('');
   const [editMode, setEditMode] = useState(false);
 
@@ -143,13 +146,18 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
               false,
             )
           }
+          css={css`
+            height: ${props.height};
+            overflow-y: auto;
+          `}
         >
-          {props.interfaces && Array.isArray(props.interfaces) ? (
+          {props.interfaces &&
+            Array.isArray(props.interfaces) &&
             props.interfaces.map((path) => {
               return (
                 <Collapse.Panel
                   key={String(path.id)}
-                  header={path.operationName}
+                  header={<Typography.Text ellipsis>{path.operationName}</Typography.Text>}
                   extra={[
                     <TooltipButton
                       key='add'
@@ -178,12 +186,17 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                       editMode && (
                         <List.Item style={{ padding: '0 8px' }}>
                           <SpaceBetweenWrapper width={'100%'}>
-                            <Input
+                            <AutoComplete
                               size='small'
                               placeholder='Ignored key'
                               ref={editInputRef}
+                              options={props.options}
+                              filterOption={(inputValue, option) =>
+                                option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                              }
                               value={ignoredKey}
-                              onChange={(e) => setIgnoredKey(e.target.value)}
+                              onChange={setIgnoredKey}
+                              style={{ width: '100%' }}
                             />
                             <span style={{ display: 'flex', marginLeft: '8px' }}>
                               <Button
@@ -228,10 +241,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                   />
                 </Collapse.Panel>
               );
-            })
-          ) : (
-            <div></div>
-          )}
+            })}
         </Collapse>
       </Spin>
     </PathCollapseWrapper>

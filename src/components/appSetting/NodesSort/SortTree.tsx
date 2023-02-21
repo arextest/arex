@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import { Card, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
@@ -48,6 +49,10 @@ const SortTree: FC<SortTreeProps> = (props) => {
         autoExpandParent
         selectedKeys={[]}
         treeData={getNodes(props.treeData, '')}
+        css={css`
+          max-height: calc(100vh - 300px);
+          overflow-y: auto;
+        `}
       />
     </Card>
   );

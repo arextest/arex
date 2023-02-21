@@ -4,4 +4,5 @@
 
 interface Window {
   globalFetchTreeData: () => void;
+  vConsole: any;
 }

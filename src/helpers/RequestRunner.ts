@@ -11,6 +11,7 @@ export const runRESTRequest = async (
   response: HoppRESTResponse;
   testResult: HoppTestResult;
 }> => {
+  window.vConsole.log.info(`${request.method} ${request.endpoint}`, request);
   const response = await _runRESTRequest(request, 'EXTENSIONS_ENABLED');
   const testResult = await _runRESTRequestTest(request, response);
 
@@ -20,6 +21,7 @@ export const runRESTRequest = async (
   };
 };
 
+// 预请求处理函数
 export const runRESTPreRequest = async (
   request: HoppRESTRequest,
 ): Promise<{
@@ -34,9 +36,12 @@ export const runRESTPreRequest = async (
   if (prTestResult.params) {
     prTestResultRequest.params = prTestResult.params;
   }
-  // if (prTestResult.body) {
-  //   prTestResultRequest.body = prTestResult.body;
-  // }
+  if (prTestResult.body) {
+    prTestResultRequest.body = {
+      contentType: 'application/json',
+      body: prTestResult.body,
+    };
+  }
   return {
     prTestResultEnvs: [...prTestResult.envList, ...prTestResult.varList],
     prTestResultRequest: prTestResultRequest,
@@ -130,6 +135,7 @@ function _runRESTRequestTest(request: HoppRESTRequest, response: any): Promise<H
     });
 }
 
+// 从接口拿到pretest的接口数据
 function _runRESTRequestPreTest(request: HoppRESTRequest) {
   return axios({
     method: 'POST',
@@ -139,13 +145,14 @@ function _runRESTRequestPreTest(request: HoppRESTRequest) {
     },
   })
     .then((testRes) => {
-      const { envList, varList, headers, params } = testRes.data.body;
+      const { envList, varList, headers, params, body } = testRes.data.body;
       try {
         return {
           envList,
           varList,
           headers,
           params,
+          body,
         };
       } catch (e) {
         return {
@@ -153,6 +160,7 @@ function _runRESTRequestPreTest(request: HoppRESTRequest) {
           varList: [],
           headers: [],
           params: [],
+          body: '',
         };
       }
     })
@@ -162,6 +170,7 @@ function _runRESTRequestPreTest(request: HoppRESTRequest) {
         varList: [],
         headers: [],
         params: [],
+        body: '',
       };
     });
 }

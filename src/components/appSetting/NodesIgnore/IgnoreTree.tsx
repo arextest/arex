@@ -21,23 +21,27 @@ type IgnoreTreeProps = Omit<TreeProps, 'treeData'> & {
 //   }
 // `;
 
+export function getNodes(object: object, basePath = ''): DataNode[] {
+  const entries = Object.entries(object);
+  return entries.map(([key, value]) => {
+    const path = basePath + key + '/';
+    const isSimpleArray = Array.isArray(value) && ['number', 'string'].includes(typeof value[0]);
+    const isObject = typeof value === 'object';
+
+    return value && isObject && !isSimpleArray
+      ? {
+          title: key,
+          key: path,
+          children: getNodes(Array.isArray(value) ? value[0] || {} : value, path),
+        }
+      : { title: key, key: path, value };
+  });
+}
+
 const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
   const { t } = useTranslation(['components', 'common']);
 
   // 过滤出 object 类型的节点
-  function getNodes(object: object, basePath = ''): DataNode[] {
-    const entries = Object.entries(object);
-    return entries.map(([key, value]) => {
-      const path = basePath + key + '/';
-      return value && typeof value === 'object'
-        ? {
-            title: key,
-            key: path,
-            children: getNodes(Array.isArray(value) ? value[0] || {} : value, path),
-          }
-        : { title: key, key: path, value };
-    });
-  }
 
   return (
     // <IgnoreTreeWrapper>
@@ -52,7 +56,14 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
       <Card size='small' title={`${props.title} (${t('appSetting.clickToIgnore')})`}>
         <Spin spinning={props.loading}>
           {Object.keys(props.treeData).length ? (
-            <Tree multiple defaultExpandAll {...props} treeData={getNodes(props.treeData, '')} />
+            <Tree
+              multiple
+              defaultExpandAll
+              {...props}
+              treeData={getNodes(props.treeData, '')}
+              // @ts-ignore
+              height={'calc(100vh - 240px)'}
+            />
           ) : (
             <EmptyResponse onClick={props.onEditResponse} />
           )}

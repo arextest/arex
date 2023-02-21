@@ -1,4 +1,5 @@
 import { CodeOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { App, Button, Collapse, CollapseProps, List, Spin, Typography } from 'antd';
@@ -13,6 +14,7 @@ import TooltipButton from '../../TooltipButton';
 export interface PathCollapseProps extends Omit<CollapseProps, 'activeKey' | 'onChange'> {
   interfaceId?: string;
   title?: string;
+  height?: string;
   loading?: boolean;
   loadingPanel?: boolean;
   activeKey?: OperationId<'Interface'>;
@@ -28,6 +30,9 @@ export interface PathCollapseProps extends Omit<CollapseProps, 'activeKey' | 'on
 const CollapseWrapper = styled.div`
   .ant-collapse-content-box {
     padding: 0 !important;
+  }
+  .ant-collapse-header-text {
+    width: calc(100% - 80px);
   }
   .active-item {
     background-color: ${(props) => props.theme.colorPrimaryBg};
@@ -73,11 +78,15 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
           onChange={([id]) =>
             props.onChange && props.onChange(props.interfaces.find((i) => i.id === id))
           }
+          css={css`
+            height: ${props.height};
+            overflow-y: auto;
+          `}
         >
           {props.interfaces.map((i) => (
             <Collapse.Panel
               key={String(i.id)}
-              header={i.operationName}
+              header={<Typography.Text ellipsis>{i.operationName}</Typography.Text>}
               extra={
                 <>
                   <TooltipButton
@@ -118,8 +127,10 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                   >
                     <Spin
                       indicator={<></>}
-                      spinning={!sortNode.compareConfigType}
-                      wrapperClassName={!sortNode.compareConfigType ? 'disabled-node' : ''}
+                      spinning={!!props.interfaceId && !sortNode.compareConfigType}
+                      wrapperClassName={
+                        !!props.interfaceId && !sortNode.compareConfigType ? 'disabled-node' : ''
+                      }
                     >
                       <SpaceBetweenWrapper width={'100%'}>
                         <Typography.Text ellipsis>{sortNode.path}</Typography.Text>
