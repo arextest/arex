@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
-import { TabPaneProps } from 'antd';
+import { Button, TabPaneProps } from 'antd';
 import produce, { Draft } from 'immer';
 import React, {
   createContext,
@@ -37,6 +37,7 @@ export interface State {
 export type HttpRef = {
   getRequestValue: () => State['request'];
   resetResponse: () => void;
+  forceReRendering: () => void;
 };
 
 export interface Tab extends Omit<TabPaneProps, 'tab'> {
@@ -130,6 +131,17 @@ const Http = forwardRef<HttpRef, HttpProps>(
             state.response = null;
           }
         });
+      },
+      forceReRendering() {
+        dispatch((state) => {
+          // @ts-ignore
+          state.request.method = undefined;
+        });
+        setTimeout(() => {
+          dispatch((state) => {
+            state.request.method = 'GET';
+          });
+        }, 10);
       },
     }));
 

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
@@ -13,7 +13,7 @@ import { useCustomNavigate } from '../../router/useCustomNavigate';
 import { FileSystemService } from '../../services/FileSystem.service';
 import { useStore } from '../../store';
 import useUserProfile from '../../store/useUserProfile';
-import Http from '../http';
+import Http, { HttpRef } from '../http';
 import { Environment } from '../http/data/environment';
 import { HoppRESTRequest } from '../http/data/rest';
 import { ExtraTabs } from '../http/extra';
@@ -105,6 +105,7 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
         if (success) {
           message.success('pin success');
           queryInterfaceOrCase();
+          httpRef.current?.forceReRendering();
         }
       },
     },
@@ -177,10 +178,11 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
     );
     window.globalFetchTreeData();
   };
-
+  const httpRef = useRef<HttpRef>(null);
   return (
     <HttpRequestPageWrapper>
       <Http
+        ref={httpRef}
         renderResponse
         id={id}
         // TODO 这里较复杂，待完善类型
