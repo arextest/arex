@@ -35,7 +35,7 @@ const Log: FC<{ log: LogType; color?: string }> = (props) => {
         showArrow={false}
         key={props.log.id}
         header={<LogHeader log={props.log} />}
-        stack={<LogStack thrown={props.log.thrown} />}
+        stack={<LogStack message={props.log.message} thrown={props.log.thrown} />}
       />
     </Collapse>
   );

@@ -3,9 +3,10 @@ import React, { FC } from 'react';
 
 import { Log } from '../../services/System.type';
 
-const LogStack: FC<{ thrown: Log['thrown'] }> = (props) => {
+const LogStack: FC<{ message: string; thrown: Log['thrown'] }> = (props) => {
   return (
     <>
+      <Typography.Title level={5}>{props.message}</Typography.Title>
       <Typography.Text strong>{props.thrown?.type}</Typography.Text>
 
       {props.thrown?.stackTrace.map((track, index) => (
