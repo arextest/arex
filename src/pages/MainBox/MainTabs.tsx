@@ -31,7 +31,7 @@ const MainTabs = () => {
 
   const addTab = () => {
     const u = uuid();
-    customNavigate(`/${params.workspaceId}/${params.workspaceName}/${PagesType.Request}/${u}`);
+    customNavigate(`/${params.workspaceId}/${PagesType.Request}/${u}`);
   };
 
   const rightClickItems: (id: string) => MenuProps['items'] = (id) => [
@@ -112,9 +112,7 @@ const MainTabs = () => {
       findActivePane &&
       !(params.pagesType === findActivePane.pageType && params.rawId === findActivePane.rawId)
     ) {
-      nav(
-        `/${params.workspaceId}/${params.workspaceName}/${findActivePane.pageType}/${findActivePane.rawId}`,
-      );
+      nav(`/${params.workspaceId}/${findActivePane.pageType}/${findActivePane.rawId}`);
     }
   }, [activeMenu, pages]);
 

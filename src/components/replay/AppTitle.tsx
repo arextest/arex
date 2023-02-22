@@ -157,9 +157,9 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
 
   const handleOpenSetting = () => {
     customNavigate(
-      `/${params.workspaceId}/${params.workspaceName}/${PagesType.AppSetting}/${
-        data.id
-      }?data=${encodeURIComponent(JSON.stringify(data))}`,
+      `/${params.workspaceId}/${PagesType.AppSetting}/${data.id}?data=${encodeURIComponent(
+        JSON.stringify(data),
+      )}`,
     );
   };
   return (

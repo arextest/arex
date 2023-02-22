@@ -420,7 +420,7 @@ const CollectionMenu = () => {
   const customNavigate = useCustomNavigate();
   const handleCollectionMenuClick = (key: string, node: nodeType) => {
     const pageType = node.nodeType === 3 ? PagesType.Folder : PagesType.Request;
-    customNavigate(`/${params.workspaceId}/${params.workspaceName}/${pageType}/${key}`);
+    customNavigate(`/${params.workspaceId}/${pageType}/${key}`);
   };
 
   const [treeHeight, setTreeHeight] = useState(0);
@@ -438,12 +438,12 @@ const CollectionMenu = () => {
 
   const test = () => {
     const u = uuid();
-    customNavigate(`/${params.workspaceId}/${params.workspaceName}/${PagesType.BatchRun}/${u}`);
+    customNavigate(`/${params.workspaceId}/${PagesType.BatchRun}/${u}`);
   };
 
   const onOpenBatchComparePage = () => {
     const u = uuid();
-    customNavigate(`/${params.workspaceId}/${params.workspaceName}/${PagesType.BatchCompare}/${u}`);
+    customNavigate(`/${params.workspaceId}/${PagesType.BatchCompare}/${u}`);
   };
 
   return (

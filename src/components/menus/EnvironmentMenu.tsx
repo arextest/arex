@@ -32,9 +32,9 @@ const EnvironmentMenu: FC = () => {
 
   const handleEnvMenuClick = (env: Environment) => {
     customNavigate(
-      `/${params.workspaceId}/${params.workspaceName}/${PagesType.Environment}/${
-        env.id
-      }?data=${encodeURIComponent(JSON.stringify(env))}`,
+      `/${params.workspaceId}/${PagesType.Environment}/${env.id}?data=${encodeURIComponent(
+        JSON.stringify(env),
+      )}`,
     );
   };
 

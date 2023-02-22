@@ -44,7 +44,7 @@ const WorkspaceSetting: FC = () => {
       newName: values.name,
       userName,
     }).then(() => {
-      window.location.href = `/${params.workspaceId}/${values.name}`;
+      window.location.href = `/${params.workspaceId}`;
     });
   };
 
@@ -66,9 +66,7 @@ const WorkspaceSetting: FC = () => {
           setWorkspacesLastManualUpdateTimestamp(new Date().getTime());
           resetPage();
           setActiveWorkspaceId(workspaces[0].id);
-          nav(
-            `/${workspaces[0].id}/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,
-          );
+          nav(`/${workspaces[0].id}/workspaceOverview/${workspaces[0].id}`);
         }
       },
     },
@@ -81,7 +79,10 @@ const WorkspaceSetting: FC = () => {
         <Form
           layout='vertical'
           name='basic'
-          initialValues={{ name: params.workspaceName }}
+          initialValues={{
+            name: workspaces.find((workspace) => workspace.id === params.workspaceId)
+              ?.workspaceName,
+          }}
           onFinish={onFinish}
           autoComplete='off'
         >

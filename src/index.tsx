@@ -3,7 +3,7 @@ import './assets/css/index.css';
 import './theme/style.css';
 import 'allotment/dist/style.css';
 import 'antd/dist/reset.css';
-import 'jsoneditor/dist/jsoneditor.min.css';
+import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';

@@ -70,7 +70,7 @@ const BatchComparePage = () => {
           return (
             <div>
               {_.find((r: any) => {
-                return r.status === index;
+                return r.status === index + 2;
               })?.count || 0}
             </div>
           );

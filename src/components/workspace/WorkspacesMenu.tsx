@@ -98,9 +98,7 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
           invitedWorkspaceId && setInvitedWorkspaceId('');
         }
         if (targetWorkspace.id && !params.workspaceId) {
-          nav(
-            `/${targetWorkspace.id}/${targetWorkspace.workspaceName}/workspaceOverview/${targetWorkspace.id}`,
-          );
+          nav(`/${targetWorkspace.id}/workspaceOverview/${targetWorkspace.id}`);
           setActiveWorkspaceId(targetWorkspace.id);
         }
       },
@@ -130,11 +128,8 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
   };
 
   const handleEditWorkspace = () => {
-    params.workspaceName &&
-      params.workspaceId &&
-      customNavigate(
-        `/${params.workspaceId}/${params.workspaceName}/${PagesType.WorkspaceOverview}/${params.workspaceId}`,
-      );
+    params.workspaceId &&
+      customNavigate(`/${params.workspaceId}/${PagesType.WorkspaceOverview}/${params.workspaceId}`);
   };
 
   const { run: createWorkspace } = useRequest(WorkspaceService.createWorkspace, {

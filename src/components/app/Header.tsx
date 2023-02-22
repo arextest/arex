@@ -48,9 +48,7 @@ const AppHeader = () => {
   const params = useParams();
   const customNavigate = useCustomNavigate();
   const handleSetting = () => {
-    customNavigate(
-      `/${params.workspaceId}/${params.workspaceName}/${PagesType.Setting}/${'SETTING'}`,
-    );
+    customNavigate(`/${params.workspaceId}/${PagesType.Setting}/${'SETTING'}`);
   };
 
   const handleLogout = () => {

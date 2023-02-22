@@ -171,9 +171,9 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
 
     const nodeType = node.nodeType === 3 ? PagesType.Folder : PagesType.Request;
     customNavigate(
-      `/${params.workspaceId}/${params.workspaceName}/${nodeType}/${
-        node.key
-      }?data=${encodeURIComponent(JSON.stringify(node))}`,
+      `/${params.workspaceId}/${nodeType}/${node.key}?data=${encodeURIComponent(
+        JSON.stringify(node),
+      )}`,
     );
     window.globalFetchTreeData();
   };

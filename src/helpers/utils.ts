@@ -124,25 +124,22 @@ export const parsePaneId = (
   paneId: string,
 ): {
   workspaceId: string;
-  workspaceName: string;
   pagesType: string;
   rawId: string;
 } => {
   try {
-    const matchUrl: any = match('/:workspaceId/:workspaceName/:pagesType/:rawId', {
+    const matchUrl: any = match('/:workspaceId/:pagesType/:rawId', {
       decode: decodeURIComponent,
     });
     const params = matchUrl(atob(decodeURI(paneId)).split('?')[0]).params;
     return {
       workspaceId: params.workspaceId,
-      workspaceName: params.workspaceName,
       pagesType: params.pagesType,
       rawId: params.rawId,
     };
   } catch (e) {
     return {
       workspaceId: '',
-      workspaceName: '',
       pagesType: '',
       rawId: '',
     };
@@ -188,7 +185,7 @@ export const matchUrlParams = (url: string) => {
   const url0 = url.split('?')[0];
   const url1 = url.split('?')[1];
 
-  const matchUrl: any = match('/:workspaceId/:workspaceName/:pagesType/:rawId', {
+  const matchUrl: any = match('/:workspaceId/:pagesType/:rawId', {
     decode: decodeURIComponent,
   });
   const matchUrlParams = matchUrl(url0).params;

@@ -2,6 +2,7 @@ import { useRequest } from 'ahooks';
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
+import { PagesType } from '../components/panes';
 import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../constant';
 import {
   clearLocalStorage,
@@ -10,6 +11,7 @@ import {
   getMenuTypeByPageType,
   setLocalStorage,
 } from '../helpers/utils';
+import { useCustomNavigate } from '../router/useCustomNavigate';
 import { AuthService } from '../services/Auth.service';
 import { UserService } from '../services/User.service';
 import { useStore } from '../store';
@@ -23,6 +25,8 @@ const useInit = () => {
   const email = getLocalStorage<string>(EmailKey);
 
   const nav = useNavigate();
+  const customNavigate = useCustomNavigate();
+  const loc = useLocation();
   const params = useParams();
   const { pathname } = useLocation();
   const { setUserProfile } = useUserProfile();
@@ -68,9 +72,7 @@ const useInit = () => {
     if (params.pagesType) {
       setActiveMenu(
         getMenuTypeByPageType(params.pagesType),
-        genPaneIdByUrl(
-          `/${params.workspaceId}/${params.workspaceName}/${params.pagesType}/${params.rawId}`,
-        ),
+        genPaneIdByUrl(`/${params.workspaceId}/${params.pagesType}/${params.rawId}`),
       );
     }
   }, []);

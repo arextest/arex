@@ -211,7 +211,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
             disabled={!record.failCaseCount}
             onClick={() => {
               customNavigate(
-                `/${params.workspaceId}/${params.workspaceName}/${PagesType.ReplayAnalysis}/${
+                `/${params.workspaceId}/${PagesType.ReplayAnalysis}/${
                   record.planItemId
                 }?data=${encodeURIComponent(JSON.stringify(record))}`,
               );
@@ -226,7 +226,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
             breakpoint='xxl'
             onClick={() => {
               customNavigate(
-                `/${params.workspaceId}/${params.workspaceName}/${PagesType.ReplayCase}/${
+                `/${params.workspaceId}/${PagesType.ReplayCase}/${
                   record.planItemId
                 }?data=${encodeURIComponent(JSON.stringify(record))}`,
               );

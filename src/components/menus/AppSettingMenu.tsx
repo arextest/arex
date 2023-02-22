@@ -11,9 +11,9 @@ const AppSettingMenu: FC = () => {
   const customNavigate = useCustomNavigate();
   const handleAppSettingMenuClick = (app: ApplicationDataType) => {
     customNavigate(
-      `/${params.workspaceId}/${params.workspaceName}/${PagesType.AppSetting}/${
-        app.id
-      }?data=${encodeURIComponent(JSON.stringify(app))}`,
+      `/${params.workspaceId}/${PagesType.AppSetting}/${app.id}?data=${encodeURIComponent(
+        JSON.stringify(app),
+      )}`,
     );
   };
 

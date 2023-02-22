@@ -11,9 +11,9 @@ const ReplayMenu: FC = () => {
   const customNavigate = useCustomNavigate();
   const handleReplayMenuClick = (app: ApplicationDataType) => {
     customNavigate(
-      `/${params.workspaceId}/${params.workspaceName}/${PagesType.Replay}/${
-        app.id
-      }?data=${encodeURIComponent(JSON.stringify(app))}`,
+      `/${params.workspaceId}/${PagesType.Replay}/${app.id}?data=${encodeURIComponent(
+        JSON.stringify(app),
+      )}`,
     );
   };
 

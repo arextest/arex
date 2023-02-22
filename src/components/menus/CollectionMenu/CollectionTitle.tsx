@@ -203,15 +203,11 @@ function CollectionTitle({
             });
             break;
           case '7':
-            customNavigate(
-              `/${_useParams.workspaceId}/${_useParams.workspaceName}/${PagesType.BatchRun}/${val.id}`,
-            );
+            customNavigate(`/${_useParams.workspaceId}/${PagesType.BatchRun}/${val.id}`);
             break;
           case '8':
             customNavigate(
-              `/${_useParams.workspaceId}/${_useParams.workspaceName}/${PagesType.BatchCompare}/${
-                val.id
-              }?planId=${uuid()}`,
+              `/${_useParams.workspaceId}/${PagesType.BatchCompare}/${val.id}?planId=${uuid()}`,
             );
             break;
         }
