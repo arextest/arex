@@ -27,7 +27,7 @@ type CreatePlanForm = {
   targetEnv: string;
   caseSourceFrom: Dayjs;
   caseSourceTo: Dayjs;
-  operationList: string[];
+  operationList?: string[];
 };
 
 const TitleWrapper = styled(
@@ -131,7 +131,6 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     form
       .validateFields()
       .then((values) => {
-        console.log({ values });
         createPlan({
           appId: data.appId,
           sourceEnv: 'pro',
@@ -142,7 +141,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
             .startOf('day')
             .subtract(1, 'second')
             .valueOf(),
-          operationCaseInfoList: values.operationList.map((operationId) => ({
+          operationCaseInfoList: values.operationList?.map((operationId) => ({
             operationId,
           })),
           operator: email as string,
