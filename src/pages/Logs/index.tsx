@@ -1,7 +1,9 @@
 import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Badge, Button, Divider, Empty, Select, Space, theme, Typography } from 'antd';
+import { Badge, Button, DatePicker, Divider, Empty, Select, Space, theme, Typography } from 'antd';
+import { RangePickerProps } from 'antd/es/date-picker';
+import dayjs from 'dayjs';
 import React, { FC, useState } from 'react';
 
 import { Label } from '../../components/styledComponents';
@@ -10,7 +12,7 @@ import { Log as LogType } from '../../services/System.type';
 import Log from './Log';
 
 export const LogLevel = ['DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'TRACE'] as const;
-export const AppType = ['arex-web-api', 'arex-schedule', 'arex-storage'] as const;
+export const AppType = ['all', 'arex-web-api', 'arex-schedule', 'arex-storage'] as const;
 
 const LogsWrapper = styled.div`
   height: 100vh;
@@ -38,7 +40,11 @@ const Logs: FC = () => {
     }[level]);
 
   const [level, setLevel] = useState<(typeof LogLevel)[number]>('INFO');
-  const [appType, setAppType] = useState<(typeof AppType)[number]>('arex-web-api');
+  const [appType, setAppType] = useState<(typeof AppType)[number]>('all');
+  const [time, setTime] = useState<RangePickerProps['value']>([
+    dayjs().subtract(1, 'day'),
+    dayjs(),
+  ]);
 
   const [logsData, setLogsData] = useState<LogType[]>([]);
   const { run: queryLogs, loading: loadingLogs } = useRequest(
@@ -47,8 +53,10 @@ const Logs: FC = () => {
         pageSize: 10,
         level,
         previousId,
+        startTime: time?.[0]?.valueOf(),
+        endTime: time?.[1]?.valueOf(),
         tags: {
-          'app-type': appType,
+          'app-type': appType === 'all' ? undefined : appType,
         },
       }),
     {
@@ -92,6 +100,11 @@ const Logs: FC = () => {
               onChange={setAppType}
               style={{ width: '200px' }}
             />
+          </div>
+
+          <div>
+            <Label>Time</Label>
+            <DatePicker.RangePicker showTime value={time} onChange={setTime} />
           </div>
         </Space>
 
