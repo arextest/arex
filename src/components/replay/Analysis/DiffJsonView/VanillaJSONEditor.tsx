@@ -24,7 +24,6 @@ export default function SvelteJSONEditor(props: any) {
   useEffect(() => {
     if (refEditor.current) {
       refEditor.current.updateProps(props);
-      console.log(refEditor.current.scrollTo);
       setTimeout(() => {
         if (allDiffByType.diff3.length > 0) {
           refEditor.current.scrollTo(allDiffByType.diff3[0]);

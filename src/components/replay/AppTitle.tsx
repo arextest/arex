@@ -147,7 +147,6 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           operator: email as string,
           replayPlanType: 0,
         });
-        console.log('Received values of form: ', values);
       })
       .catch((info) => {
         console.log('Validate Failed:', info);

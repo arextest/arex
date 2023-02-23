@@ -69,7 +69,6 @@ const useInit = () => {
         genPaneIdByUrl(`/${params.workspaceId}/${params.pagesType}/${params.rawId}`),
       );
       //   以下几种page的复原单独实现
-      console.log(params.pagesType, 'BatchRun');
       if (params.pagesType === PagesType.ReplayAnalysis) {
         customNavigate({
           path: customSearchParams.pathname,

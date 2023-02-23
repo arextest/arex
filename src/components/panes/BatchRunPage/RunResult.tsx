@@ -33,7 +33,6 @@ const RunResult: FC<RunResultProps> = ({ loading, dataSource }) => {
       {dataSource.length > 0 ? (
         <div>
           {dataSource.map((dataSourceItem, index) => {
-            console.log(dataSourceItem);
             return (
               <div key={index}>
                 <p

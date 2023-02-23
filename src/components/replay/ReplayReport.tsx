@@ -225,7 +225,6 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
             title={t('replay.caseTable')}
             breakpoint='xxl'
             onClick={() => {
-              console.log(record, 'record');
               customNavigate(
                 `/${params.workspaceId}/${PagesType.ReplayCase}/${
                   record.planItemId

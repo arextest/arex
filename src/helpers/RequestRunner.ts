@@ -31,10 +31,10 @@ export const runRESTPreRequest = async (
   const prTestResult = await _runRESTRequestPreTest(request);
   const prTestResultRequest: any = {};
   if (prTestResult.headers) {
-    prTestResultRequest.headers = prTestResult.headers;
+    prTestResultRequest.headers = prTestResult.headers.map((h: any) => ({ ...h, active: true }));
   }
   if (prTestResult.params) {
-    prTestResultRequest.params = prTestResult.params;
+    prTestResultRequest.params = prTestResult.params.map((p: any) => ({ ...p, active: true }));
   }
   if (prTestResult.body) {
     prTestResultRequest.body = {
@@ -141,7 +141,10 @@ function _runRESTRequestPreTest(request: HoppRESTRequest) {
     method: 'POST',
     url: '/node/preTest',
     data: {
-      preTestScripts: [request.preRequestScripts.map((t) => t.value).join('\n')],
+      preTestScripts: [
+        request.parentPreRequestScripts.map((t) => t.value).join('\n'),
+        request.preRequestScripts.map((t) => t.value).join('\n'),
+      ],
     },
   })
     .then((testRes) => {

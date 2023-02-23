@@ -69,7 +69,6 @@ export const AgentAxiosAndTest = ({
         preTestScripts: [request.testScript],
       },
     }).then((testRes) => {
-      console.log(testRes.data.body.caseResult, 'testRes.data.body.caseResult');
       return {
         testResult: testRes.data.body.caseResult,
         response: {

@@ -50,7 +50,6 @@ const FolderPage: PageFC = () => {
 
   const handleSave = () => {
     const output = items.filter((item) => !item.disabled);
-    console.log({ output });
   };
 
   const handlePreRequestScriptChange: ScriptBlocksProps<string>['onChange'] = ({ id, value }) => {

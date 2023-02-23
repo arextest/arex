@@ -40,7 +40,6 @@ const InviteWorkspace = () => {
           form
             .validateFields()
             .then((values) => {
-              console.log(values, 'va');
               const params = {
                 invitor: email,
                 role: values.role,

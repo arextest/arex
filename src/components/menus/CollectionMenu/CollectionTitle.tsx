@@ -198,7 +198,6 @@ function CollectionTitle({
               path: paths.map((i: any) => i.key),
               userName,
             }).then((res) => {
-              console.log(res);
               updateDirectoryTreeData();
             });
             break;

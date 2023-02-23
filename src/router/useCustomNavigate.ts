@@ -22,7 +22,6 @@ export function useCustomNavigate() {
     } else {
       url = arg;
     }
-    console.log(url);
     const matchUrlParams1 = matchUrlParams(url).params;
     const matchUrlParams2 = matchUrlParams(url).searchParams;
     const paneKey = genPaneIdByUrl(url);

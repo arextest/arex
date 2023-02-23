@@ -20,7 +20,6 @@ const Operations: FC<OperationsProps> = (props) => {
               size='small'
               checked={props.value?.includes(item)}
               onChange={(checked) => {
-                console.log({ checked });
                 let cloneValue = props.value ? [...props.value] : [];
                 checked
                   ? cloneValue.push(item)

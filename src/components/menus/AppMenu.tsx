@@ -86,10 +86,7 @@ const AppMenu: FC<{
   const [favoriteFilter, { toggle: toggleFavoriteFilter, setRight: disableFavoriteFilter }] =
     useToggle(false);
   const [favoriteAppsInitialized, setFavoriteAppsInitialized] = useState(false);
-  console.log({ activeMenu });
   const value = useMemo(() => parsePaneId(activeMenu[1] || '')['rawId'], [activeMenu]);
-
-  console.log(value, 'value');
   const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
 
   const {

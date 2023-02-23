@@ -34,7 +34,12 @@ export type HoppRESTHeader = {
   value: string;
   active?: boolean;
 };
-
+interface RequestScript {
+  icon: string;
+  label: string;
+  type: number;
+  value: string;
+}
 export interface HoppRESTRequest {
   id?: string; // Firebase Firestore ID
   name: string | null;
@@ -50,12 +55,8 @@ export interface HoppRESTRequest {
     type: number;
     value: string;
   }[];
-  testScripts: {
-    icon: string;
-    label: string;
-    type: number;
-    value: string;
-  }[];
+  parentPreRequestScripts: RequestScript[];
+  testScripts: RequestScript[];
   auth: HoppRESTAuth | null;
   body: { [key: string]: string };
   labelIds?: string[];

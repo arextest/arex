@@ -136,7 +136,6 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   } = useRequest<D[], P>(props.request, {
     ...props.requestOptions,
     onSuccess(res, _params) {
-      console.log({ props });
       // 默认触发onSelect第一个的逻辑
       if (res.length && (props.defaultSelectFirst || props.initValue)) {
         const record = props.defaultSelectFirst

@@ -82,7 +82,6 @@ const BatchRunPage: React.FC = () => {
     return caseData.reduce((accumulator, currentValue) => {
       const nodeParent = findNodeParent(currentValue);
       const findPeIndex = accumulator.map((i) => i.key).findIndex((i) => i === nodeParent?.key);
-      console.log(accumulator, findPeIndex);
       if (findPeIndex > -1) {
         accumulator[findPeIndex].data.push(currentValue);
       } else {

@@ -88,10 +88,8 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
         const workspaceIdLS = getLocalStorage<string>(WorkspaceKey);
         const targetWorkspaceId =
           _params[0] || activeWorkspaceId || invitedWorkspaceId || workspaceIdLS;
-        console.log({ param: _params[0], activeWorkspaceId, invitedWorkspaceId, workspaceIdLS });
         if (targetWorkspaceId) {
           const workspace = data.find((workspace) => workspace.id === targetWorkspaceId);
-          console.log({ workspace, targetWorkspaceId });
           workspace
             ? (targetWorkspace = workspace)
             : message.warning(t('workSpace.noPermissionOrInvalid'));
@@ -172,7 +170,6 @@ const WorkspacesMenu: FC<{ collapse?: boolean }> = (props) => {
         importString: importFile,
       };
       FileSystemService.importFile(param).then((res) => {
-        console.log(res);
         if (res.body && res.body.success) {
           message.success(t('workSpace.importSuccess'));
           setImportView(false);
