@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import AppSettingService from '../../../services/AppSetting.service';
 import ReplayService from '../../../services/Replay.service';
-import { QueryMsgWithDiffLog, QueryMsgWithDiffReq, Scene } from '../../../services/Replay.type';
+import { QueryMsgWithDiffLog, QueryMsgWithDiffRes, Scene } from '../../../services/Replay.type';
 import { DiffMatch, TooltipButton } from '../../index';
 
 const PathTooltip: FC<{ path?: string | null }> = (props) => {
@@ -24,7 +24,7 @@ export type DiffListType = {
   operationId: string;
   scene?: Scene;
   onTreeModeClick?: (diff?: unknown) => void;
-  externalData?: QueryMsgWithDiffReq;
+  externalData?: QueryMsgWithDiffRes;
 };
 
 const DiffList: FC<DiffListType> = (props) => {
@@ -73,7 +73,7 @@ const DiffList: FC<DiffListType> = (props) => {
     },
   );
 
-  const diffData = useMemo(() => {
+  const diffData = useMemo<QueryMsgWithDiffRes | undefined>(() => {
     return props.externalData || diffDataFromRequest;
   }, [props.externalData, diffDataFromRequest]);
 
@@ -136,11 +136,11 @@ const DiffList: FC<DiffListType> = (props) => {
                 <PathTooltip path={log.path} />
                 {` ${t('replay.isDifferenceExcepted')} `}
                 <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
-                  {log.baseValue.toString()}
+                  {log.baseValue?.toString()}
                 </Typography.Text>
                 {`${t('replay.actual')} `}
                 <Typography.Text code ellipsis style={{ maxWidth: '200px' }}>
-                  {log.testValue.toString()}
+                  {log.testValue?.toString()}
                 </Typography.Text>
                 {'.'}
               </Typography.Text>
@@ -162,7 +162,12 @@ const DiffList: FC<DiffListType> = (props) => {
                     title: t('replay.diffMatch'),
                     width: 800,
                     maskClosable: true,
-                    content: <DiffMatch text1={log.baseValue} text2={log.testValue} />,
+                    content: (
+                      <DiffMatch
+                        text1={log.baseValue?.toString()}
+                        text2={log.testValue?.toString()}
+                      />
+                    ),
                   })
                 }
               />
