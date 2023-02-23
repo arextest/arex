@@ -3,8 +3,10 @@ import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
+import { useCustomNavigate } from '../../../router/useCustomNavigate';
+import { useCustomSearchParams } from '../../../router/useCustomSearchParams';
 import ReplayService from '../../../services/Replay.service';
 import { ReplayCase } from '../../../services/Replay.type';
 import { HighlightRowTable, SmallTextButton } from '../../styledComponents';
@@ -17,11 +19,18 @@ type CaseProps = {
 
 const CaseTable: FC<CaseProps> = (props) => {
   const { t } = useTranslation(['components']);
-  const nav = useNavigate();
+  const customNavigate = useCustomNavigate();
+  const customSearchParams = useCustomSearchParams();
   const location = useLocation();
 
   useEffect(() => {
-    nav(`${location.pathname}?planItemId=${props.planItemId}`);
+    customNavigate({
+      path: location.pathname,
+      query: {
+        data: customSearchParams.query.data,
+        planItemId: props.planItemId,
+      },
+    });
   }, [props.planItemId]);
 
   const columnsCase: ColumnsType<ReplayCase> = [

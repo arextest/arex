@@ -6,9 +6,9 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { treeFind, treeFindPath } from '../../helpers/collection/util';
+import { parsePaneId } from '../../helpers/functional/url';
 import { convertSaveRequestData } from '../../helpers/http/util';
 import { runRESTPreRequest, runRESTRequest } from '../../helpers/RequestRunner';
-import { parsePaneId } from '../../helpers/utils';
 import { useCustomNavigate } from '../../router/useCustomNavigate';
 import { FileSystemService } from '../../services/FileSystem.service';
 import { useStore } from '../../store';

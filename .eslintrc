@@ -72,5 +72,5 @@
     "react/no-unknown-property": ["error", { "ignore": ["css"] }],
     "jsx-a11y/no-autofocus": "off"
   },
-  "ignorePatterns": ["**/*.css"]
+  "ignorePatterns": ["**/*.css","**/*.md"]
 }

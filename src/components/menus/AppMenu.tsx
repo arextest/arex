@@ -6,7 +6,8 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { EmailKey } from '../../constant';
-import { getLocalStorage, parsePaneId } from '../../helpers/utils';
+import { parsePaneId } from '../../helpers/functional/url';
+import { getLocalStorage } from '../../helpers/utils';
 import ReplayService from '../../services/Replay.service';
 import { ApplicationDataType } from '../../services/Replay.type';
 import { UserService } from '../../services/User.service';

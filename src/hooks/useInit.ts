@@ -1,17 +1,13 @@
 import { useRequest } from 'ahooks';
 import { useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 import { PagesType } from '../components/panes';
 import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../constant';
-import {
-  clearLocalStorage,
-  genPaneIdByUrl,
-  getLocalStorage,
-  getMenuTypeByPageType,
-  setLocalStorage,
-} from '../helpers/utils';
+import { genPaneIdByUrl, getMenuTypeByPageType } from '../helpers/functional/url';
+import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { useCustomNavigate } from '../router/useCustomNavigate';
+import { useCustomSearchParams } from '../router/useCustomSearchParams';
 import { AuthService } from '../services/Auth.service';
 import { UserService } from '../services/User.service';
 import { useStore } from '../store';
@@ -23,10 +19,8 @@ import useUserProfile from '../store/useUserProfile';
 const useInit = () => {
   // checkout if the user is logged in
   const email = getLocalStorage<string>(EmailKey);
-
-  const nav = useNavigate();
   const customNavigate = useCustomNavigate();
-  const loc = useLocation();
+  const customSearchParams = useCustomSearchParams();
   const params = useParams();
   const { pathname } = useLocation();
   const { setUserProfile } = useUserProfile();
@@ -74,6 +68,30 @@ const useInit = () => {
         getMenuTypeByPageType(params.pagesType),
         genPaneIdByUrl(`/${params.workspaceId}/${params.pagesType}/${params.rawId}`),
       );
+      //   以下几种page的复原单独实现
+      console.log(params.pagesType, 'BatchRun');
+      if (params.pagesType === PagesType.ReplayAnalysis) {
+        customNavigate({
+          path: customSearchParams.pathname,
+          query: {
+            data: customSearchParams.query.data,
+          },
+        });
+      } else if (params.pagesType === PagesType.ReplayCase) {
+        customNavigate({
+          path: customSearchParams.pathname,
+          query: {
+            data: customSearchParams.query.data,
+          },
+        });
+      } else if (params.pagesType === PagesType.BatchCompare) {
+        customNavigate({
+          path: customSearchParams.pathname,
+          query: {
+            planId: customSearchParams.query.planId,
+          },
+        });
+      }
     }
   }, []);
 };

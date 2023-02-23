@@ -1,4 +1,4 @@
-import { matchUrlParams } from '../utils';
+import { matchUrlParams } from '../functional/url';
 describe('matchUrlParams', () => {
   test('matchUrlParams', () => {
     return expect(

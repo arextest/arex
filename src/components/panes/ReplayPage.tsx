@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { uuid } from '../../helpers/utils';
+import { useCustomSearchParams } from '../../router/useCustomSearchParams';
 import { ApplicationDataType, PlanStatistics } from '../../services/Replay.type';
 import { AppTitle, ReplayReport, ReplayTable } from '../replay';
 import { FlexCenterWrapper } from '../styledComponents';
@@ -15,6 +16,7 @@ const ReplayPage: PageFC<ApplicationDataType> = (props) => {
   const nav = useNavigate();
   const location = useLocation();
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
+  const customSearchParams = useCustomSearchParams();
 
   const handleSelectPlan = (plan: PlanStatistics) => {
     plan.planId === selectedPlan?.planId ? setSelectedPlan(undefined) : setSelectedPlan(plan);
@@ -27,7 +29,9 @@ const ReplayPage: PageFC<ApplicationDataType> = (props) => {
 
   useEffect(() => {
     if (selectedPlan?.planId) {
-      nav(`${location.pathname}?planId=${selectedPlan?.planId}`);
+      nav(
+        `${location.pathname}?data=${customSearchParams.query.data}&planId=${selectedPlan?.planId}`,
+      );
     }
   }, [selectedPlan]);
 

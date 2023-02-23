@@ -1,6 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 
-import { genPaneIdByUrl, getMenuTypeByPageType, JSONparse, matchUrlParams } from '../helpers/utils';
+import {
+  genPaneIdByUrl,
+  getMenuTypeByPageType,
+  matchUrlParams,
+  objToUrl,
+} from '../helpers/functional/url';
+import { JSONparse } from '../helpers/utils';
 import { useStore } from '../store';
 
 export function useCustomNavigate() {
@@ -9,7 +15,14 @@ export function useCustomNavigate() {
   function genTitle(p: any): any {
     return p.rawId;
   }
-  return function (url: string) {
+  return function (arg: any) {
+    let url = '';
+    if (typeof arg === 'object') {
+      url = arg.path + objToUrl(arg.query);
+    } else {
+      url = arg;
+    }
+    console.log(url);
     const matchUrlParams1 = matchUrlParams(url).params;
     const matchUrlParams2 = matchUrlParams(url).searchParams;
     const paneKey = genPaneIdByUrl(url);

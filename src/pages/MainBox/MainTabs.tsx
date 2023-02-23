@@ -7,7 +7,8 @@ import { DraggableTabs, EnvironmentSelect, ErrorBoundary } from '../../component
 import Pages, { PagesType } from '../../components/panes';
 import { EmptyWrapper } from '../../components/styledComponents';
 import { treeFind } from '../../helpers/collection/util';
-import { parsePaneId, uuid } from '../../helpers/utils';
+import { parsePaneId } from '../../helpers/functional/url';
+import { uuid } from '../../helpers/utils';
 import { useCustomNavigate } from '../../router/useCustomNavigate';
 import { NodeObject } from '../../services/Collection.service';
 import { Page, useStore } from '../../store';

@@ -1,11 +1,4 @@
-import {
-  ClearOutlined,
-  DownOutlined,
-  PlayCircleOutlined,
-  PlusOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
-import { css } from '@emotion/react';
+import { DownOutlined, PlayCircleOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Dropdown, Input, Tree } from 'antd';
@@ -16,7 +9,8 @@ import { useParams } from 'react-router-dom';
 
 import { EmailKey, NodeType } from '../../../constant';
 import { treeFind } from '../../../helpers/collection/util';
-import { getLocalStorage, parsePaneId, uuid } from '../../../helpers/utils';
+import { parsePaneId } from '../../../helpers/functional/url';
+import { getLocalStorage, uuid } from '../../../helpers/utils';
 import { useCustomNavigate } from '../../../router/useCustomNavigate';
 import { CollectionService } from '../../../services/Collection.service';
 import { useStore } from '../../../store';
