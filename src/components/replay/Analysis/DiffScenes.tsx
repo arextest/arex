@@ -1,7 +1,7 @@
 import { useRequest } from 'ahooks';
 import { Col, Row, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import React, { FC, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ReplayService from '../../../services/Replay.service';
@@ -31,24 +31,35 @@ const DiffScenes: FC<{
     },
   );
 
-  const categoryColumns: ColumnsType<Difference> = [
-    {
-      title: t('replay.pointOfDifference'),
-      dataIndex: 'differenceName',
-      ellipsis: true,
-      render: (text, record) => <a onClick={() => handleRowClick(record)}>{text}</a>,
-    },
-    {
-      title: t('replay.sceneCount'),
-      dataIndex: 'sceneCount',
-      width: '110px',
-    },
-    {
-      title: t('replay.caseTableCount'),
-      dataIndex: 'caseCount',
-      width: '110px',
-    },
-  ];
+  const categoryColumns: ColumnsType<Difference> = useMemo(
+    () => [
+      {
+        title: t('replay.pointOfDifference'),
+        dataIndex: 'differenceName',
+        ellipsis: true,
+        render: (text, record) => (
+          <a onClick={() => handleRowClick(record)}>
+            {text === '%baseMissing%'
+              ? t('replay.baseMissing')
+              : text === '%testMissing%'
+              ? t('replay.testMissing')
+              : text}
+          </a>
+        ),
+      },
+      {
+        title: t('replay.sceneCount'),
+        dataIndex: 'sceneCount',
+        width: '110px',
+      },
+      {
+        title: t('replay.caseTableCount'),
+        dataIndex: 'caseCount',
+        width: '110px',
+      },
+    ],
+    [t],
+  );
 
   const handleSelect = (item: CategoryStatistic) => {
     onSelectCategory && onSelectCategory(item);

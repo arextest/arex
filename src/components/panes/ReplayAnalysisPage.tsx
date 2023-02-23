@@ -74,7 +74,7 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
           >
             {scenes.map((scene, index) => (
               <Collapse.Panel
-                header={<Typography.Text>{scene.sceneName}</Typography.Text>}
+                header={<Typography.Text>{`Scene ${index + 1}`}</Typography.Text>}
                 key={index}
               >
                 <DiffList
