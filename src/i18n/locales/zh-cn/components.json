@@ -140,6 +140,8 @@
     "isDifferenceExcepted": "，期望",
     "actual": ", 实际",
     "unknown": "未知",
+    "baseMissing": "录制缺失",
+    "testMissing": "测试未调",
     "leftMissing": "录制为空",
     "leftMissingDesc": "录制结果为空",
     "rightMissing": "回放为空",

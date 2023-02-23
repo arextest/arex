@@ -140,6 +140,8 @@
     "isDifferenceExcepted": ",excepted",
     "actual": ", actual",
     "unknown": "Unknown",
+    "baseMissing": "Base Missing",
+    "testMissing": "Test Missing",
     "leftMissing": "Left Missing",
     "leftMissingDesc": "is missing on the left",
     "rightMissing": "Right Missing",
