@@ -35,6 +35,7 @@ export const getBatchTestResults = async (
       const testResult = await runRESTRequest({
         description: '',
         endpoint: urlPretreatment(endpoint, envs),
+        inherited: true,
         auth: null,
         name: '',
         preRequestScripts: [],

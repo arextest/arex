@@ -47,6 +47,7 @@ export interface HoppRESTRequest {
   endpoint: string;
   compareMethod: (typeof METHODS)[number];
   compareEndpoint: string;
+  inherited: boolean;
   params: KeyValueType[];
   headers: HoppRESTHeader[];
   preRequestScripts: {
@@ -61,6 +62,7 @@ export interface HoppRESTRequest {
   body: { [key: string]: string };
   labelIds?: string[];
   description: string;
+  parentValue?: HoppRESTRequest;
 }
 
 export function makeRESTRequest(x: HoppRESTRequest): HoppRESTRequest & { v: string } {

@@ -4,6 +4,7 @@ import { useImmer } from 'use-immer';
 import axios from '../../../../helpers/api/axios';
 import { treeFind, treeFindPath } from '../../../../helpers/collection/util';
 import { runCompareRESTRequest } from '../../../../helpers/CompareRequestRunner';
+import { handleInherited } from '../../../../helpers/utils';
 import { FileSystemService } from '../../../../services/FileSystem.service';
 import { urlPretreatment } from '../../../http/helpers/utils/util';
 // 定义参数数据结构
@@ -89,11 +90,13 @@ const useBatchCompareResults = (cases: ICase[], collectionTreeData, envs, planId
 
     setCaseResults([]);
     for (let i = 0; i < cases.length; i++) {
-      const interfaceData = await FileSystemService.queryInterface({ id: cases[i].key });
       for (let j = 0; j < cases[i].children.length; j++) {
         try {
           const caseId = cases[i].children[j].key;
-          const caseRequest = await FileSystemService.queryCase({ id: caseId });
+          const caseRequest = await FileSystemService.queryCase({
+            id: caseId,
+            parentId: cases[i].key,
+          });
           const {
             endpoint,
             method,
@@ -103,21 +106,27 @@ const useBatchCompareResults = (cases: ICase[], collectionTreeData, envs, planId
             headers,
             params,
             body,
+            inherited,
+            parentValue,
           } = caseRequest;
           // 先使用interface的method和endpoint
-          const compareResult = await runCompareRESTRequest({
-            endpoint: urlPretreatment(interfaceData.endpoint, envs),
-            auth: null,
-            name: '',
-            preRequestScripts: [],
-            compareEndpoint: urlPretreatment(interfaceData.compareEndpoint, envs),
-            compareMethod: interfaceData.compareMethod,
-            method: interfaceData.method,
-            testScripts: testScripts,
-            params: params,
-            headers: headers,
-            body: body,
-          });
+          const compareResult = await runCompareRESTRequest(
+            handleInherited({
+              endpoint: urlPretreatment(endpoint, envs),
+              auth: null,
+              name: '',
+              preRequestScripts: [],
+              compareEndpoint: urlPretreatment(compareEndpoint, envs),
+              compareMethod: compareMethod,
+              method: method,
+              testScripts: testScripts,
+              params: params,
+              headers: headers,
+              body: body,
+              inherited: inherited,
+              parentValue,
+            }),
+          );
 
           const interfaceId = cases[i].key;
           const comparisonConfig = await axios

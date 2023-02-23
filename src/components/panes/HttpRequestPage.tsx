@@ -77,13 +77,13 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
       (node: nodeType) => node.key === parsePaneId(props.page.paneId)['rawId'],
     );
 
-    return path.map((item) => item.title);
+    return path;
   }, [props.page.paneId, collectionTreeData]);
 
   const { data, run: queryInterfaceOrCase } = useRequest(
     () =>
       nodeType === 2
-        ? FileSystemService.queryCase({ id })
+        ? FileSystemService.queryCase({ id, parentId: nodePath.at(-2)?.key })
         : FileSystemService.queryInterface({ id }),
     {
       refreshDeps: [id, nodeType],
@@ -190,7 +190,7 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
         theme={theme}
         config={httpConfig}
         nodeType={nodeType}
-        nodePath={nodePath}
+        nodePath={nodePath.map((item) => item.title)}
         environment={environment}
         onPreSend={runRESTPreRequest}
         onSend={runRESTRequest}

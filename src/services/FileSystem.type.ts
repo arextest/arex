@@ -63,6 +63,7 @@ export type BaseInterface = {
   comparisonMsg?: null;
   labelIds?: string[];
   description?: string | null;
+  inherited: boolean;
 };
 
 // ------ /api/filesystem/saveInterface ------

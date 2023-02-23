@@ -1,3 +1,4 @@
+import { EditorState } from '@codemirror/state';
 import { hoverTooltip } from '@codemirror/view';
 import { css, useTheme } from '@emotion/react';
 import React, { FC, useContext, useRef } from 'react';
@@ -10,10 +11,11 @@ import {
 import { HttpContext } from '../../index';
 
 interface SmartEnvInputProps {
+  disabled: boolean;
   value: string;
   onChange: (e: any) => void;
 }
-const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
+const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange, disabled }) => {
   const theme = useTheme();
   const smartEnvInputRef = useRef(null);
   const { store } = useContext(HttpContext);
@@ -47,6 +49,7 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange }) => {
           };
         }),
       ],
+      EditorState.readOnly.of(disabled),
     ],
     onChange: (val: string) => {
       onChange(val);

@@ -1,6 +1,7 @@
 import { DownOutlined, SaveOutlined } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { App, Button, Divider, Dropdown, MenuProps, Select, Space } from 'antd';
+import { App, Button, Checkbox, Divider, Dropdown, MenuProps, Radio, Select, Space } from 'antd';
 import React, { FC, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -57,10 +58,6 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
   const { store, dispatch } = useContext(HttpContext);
   const { message } = App.useApp();
   const { t } = useTranslation();
-
-  const handleMenuClick: MenuProps['onClick'] = (e) => {
-    e.key === '1' && handleRequest('compare');
-  };
 
   function checkRequestParams(requestParams: HoppRESTRequest) {
     const { body, endpoint } = requestParams;
@@ -202,9 +199,20 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
       </SpaceBetweenWrapper>
 
       <RequestMethodUrlWrapper>
-        <Space.Compact block>
+        <Space.Compact
+          block
+          css={css`
+            display: flex;
+            align-items: center;
+          `}
+        >
           <Select
-            value={store.request.method}
+            disabled={store.request.inherited}
+            value={
+              store.request.inherited
+                ? store.request.parentValue?.method || 'GET'
+                : store.request.method
+            }
             options={METHODS.map((i) => ({ value: i, label: i }))}
             onChange={(value) => {
               dispatch((state) => {
@@ -213,20 +221,38 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
             }}
           />
           <SmartEnvInput
-            value={store.request.endpoint}
+            disabled={store.request.inherited}
+            value={
+              store.request.inherited
+                ? store.request.parentValue?.endpoint || ''
+                : store.request.endpoint
+            }
             onChange={(value) => {
               dispatch((state) => {
                 state.request.endpoint = value;
               });
             }}
           />
+          <Checkbox
+            css={css`
+              margin-left: 8px;
+            `}
+            checked={store.request.inherited}
+            onChange={(checkboxChangeEvent) => {
+              // console.log(checkboxChangeEvent.target)
+              dispatch((state) => {
+                state.request.inherited = checkboxChangeEvent.target.checked;
+              });
+            }}
+          >
+            Overwrite
+          </Checkbox>
         </Space.Compact>
 
         <Button
           type='primary'
           className='send-request-button'
           onClick={() => handleRequest(store.mode)}
-          style={{ marginLeft: '16px' }}
         >
           {t('action.send')}
         </Button>
@@ -236,7 +262,12 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
         <RequestMethodUrlWrapper>
           <Space.Compact block style={{ marginRight: '112px' }}>
             <Select
-              value={store.request.compareMethod}
+              disabled={store.request.inherited}
+              value={
+                store.request.inherited
+                  ? store.request.parentValue?.compareMethod || 'GET'
+                  : store.request.compareMethod
+              }
               options={METHODS.map((i) => ({ value: i, label: i }))}
               onChange={(value) => {
                 dispatch((state) => {
@@ -245,7 +276,12 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
               }}
             />
             <SmartEnvInput
-              value={store.request.compareEndpoint}
+              disabled={store.request.inherited}
+              value={
+                store.request.inherited
+                  ? store.request.parentValue?.compareEndpoint || ''
+                  : store.request.compareEndpoint
+              }
               onChange={(value) => {
                 dispatch((state) => {
                   state.request.compareEndpoint = value;

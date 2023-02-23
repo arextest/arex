@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import { v4 as uuid } from 'uuid';
 
+import { HoppRESTRequest } from '../components/http/data/rest';
 import * as ChartUtils from './chart';
 
 export { ChartUtils, uuid };
@@ -121,3 +122,17 @@ export const JSONparse = (jsonString: string) => {
     return undefined;
   }
 };
+
+export function handleInherited(request: HoppRESTRequest): HoppRESTRequest {
+  if (request.inherited) {
+    return {
+      ...request,
+      method: request.parentValue?.method || 'GET',
+      endpoint: request.parentValue?.endpoint || '',
+      compareMethod: request.parentValue?.compareMethod || 'GET',
+      compareEndpoint: request.parentValue?.compareEndpoint || '',
+    };
+  } else {
+    return request;
+  }
+}

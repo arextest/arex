@@ -35,7 +35,7 @@ export class FileSystemService {
     return res.body.success;
   }
 
-  static async queryCase(params: { id: string; getCompareMsg?: boolean }) {
+  static async queryCase(params: { id: string; getCompareMsg?: boolean; parentId?: string }) {
     const res = await request.post<BaseInterface>(`/report/filesystem/queryCase`, params);
     const {
       body: { address, testAddress, ...rest },
@@ -48,6 +48,7 @@ export class FileSystemService {
       compareEndpoint: testAddress?.endpoint,
       address,
       testAddress,
+      parentValue: params.parentId ? await this.queryInterface({ id: params.parentId }) : undefined,
     };
   }
 

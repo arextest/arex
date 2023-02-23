@@ -22,5 +22,6 @@ export function convertSaveRequestData(
       endpoint: request.compareEndpoint,
     },
     description: request.description,
+    inherited: request.inherited,
   };
 }

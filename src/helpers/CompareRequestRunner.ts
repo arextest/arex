@@ -3,6 +3,7 @@ import { HoppRESTRequest } from '../components/http/data/rest';
 import AgentAxios from './request';
 
 export const runCompareRESTRequest = async (request: HoppRESTRequest): Promise<any> => {
+  console.log(request, 'co');
   const a = await AgentAxios({
     method: request.method,
     url: request.endpoint,

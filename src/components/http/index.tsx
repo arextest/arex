@@ -170,6 +170,7 @@ const Http = forwardRef<HttpRef, HttpProps>(
           state.request.endpoint = value.endpoint || '';
           state.request.compareMethod = value.compareMethod || 'GET';
           state.request.compareEndpoint = value.compareEndpoint || '';
+          state.request.parentValue = value.parentValue;
           state.request.body = value.body || {
             contentType: 'application/json',
             body: '',
@@ -180,6 +181,7 @@ const Http = forwardRef<HttpRef, HttpProps>(
           state.request.preRequestScripts = value.preRequestScripts || [];
           state.request.parentPreRequestScripts = value.parentPreRequestScripts || [];
           state.request.description = value.description || '';
+          state.request.inherited = value.inherited;
           // 默认加上{Content-Type:application/json}
           if (!state.request.headers.find((head) => head.key === 'Content-Type')) {
             state.request.headers.unshift({

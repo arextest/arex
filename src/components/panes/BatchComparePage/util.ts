@@ -1,6 +1,7 @@
 // @ts-nocheck
 import axios from '../../../helpers/api/axios';
 import { runCompareRESTRequest } from '../../../helpers/CompareRequestRunner';
+import { handleInherited } from '../../../helpers/utils';
 import { FileSystemService } from '../../../services/FileSystem.service';
 import { urlPretreatment } from '../../http/helpers/utils/util';
 
@@ -30,28 +31,42 @@ export async function sendQuickCompare({ caseId, nodeInfo, envs }) {
   let caseRequest;
   let parRequest;
   if (selfNode.nodeType === 2) {
-    caseRequest = await FileSystemService.queryCase({ id: caseId });
+    caseRequest = await FileSystemService.queryCase({ id: caseId, parentId: parNode.key });
     parRequest = await FileSystemService.queryInterface({ id: parNode.key });
   } else if (selfNode.nodeType === 1) {
     caseRequest = await FileSystemService.queryInterface({ id: caseId });
     parRequest = caseRequest;
   }
   const { id: interfaceId, operationId } = parRequest;
-  const { endpoint, method, compareEndpoint, compareMethod, testScripts, headers, params, body } =
-    caseRequest;
-  const compareResult = await runCompareRESTRequest({
-    endpoint: urlPretreatment(endpoint, envs),
-    auth: null,
-    name: '',
-    preRequestScripts: [],
-    compareEndpoint: urlPretreatment(compareEndpoint, envs),
-    compareMethod: compareMethod,
-    method: method,
-    testScripts: testScripts,
-    params: params,
-    headers: headers,
-    body: body,
-  });
+  const {
+    endpoint,
+    method,
+    compareEndpoint,
+    compareMethod,
+    testScripts,
+    headers,
+    params,
+    body,
+    inherited,
+    parentValue,
+  } = caseRequest;
+  const compareResult = await runCompareRESTRequest(
+    handleInherited({
+      endpoint: urlPretreatment(endpoint, envs),
+      auth: null,
+      name: '',
+      preRequestScripts: [],
+      compareEndpoint: urlPretreatment(compareEndpoint, envs),
+      compareMethod: compareMethod,
+      method: method,
+      testScripts: testScripts,
+      params: params,
+      headers: headers,
+      body: body,
+      inherited: inherited,
+      parentValue,
+    }),
+  );
 
   const comparisonConfig = await axios
     .get(
