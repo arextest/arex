@@ -104,15 +104,15 @@ const useBatchCompareResults = (cases: ICase[], collectionTreeData, envs, planId
             params,
             body,
           } = caseRequest;
-
+          // 先使用interface的method和endpoint
           const compareResult = await runCompareRESTRequest({
-            endpoint: urlPretreatment(endpoint, envs),
+            endpoint: urlPretreatment(interfaceData.endpoint, envs),
             auth: null,
             name: '',
             preRequestScripts: [],
-            compareEndpoint: urlPretreatment(compareEndpoint, envs),
-            compareMethod: compareMethod,
-            method: method,
+            compareEndpoint: urlPretreatment(interfaceData.compareEndpoint, envs),
+            compareMethod: interfaceData.compareMethod,
+            method: interfaceData.method,
             testScripts: testScripts,
             params: params,
             headers: headers,
@@ -120,25 +120,9 @@ const useBatchCompareResults = (cases: ICase[], collectionTreeData, envs, planId
           });
 
           const interfaceId = cases[i].key;
-          const operationId = interfaceData.operationId;
           const comparisonConfig = await axios
-            .get(
-              `/report/config/comparison/summary/queryByInterfaceIdAndOperationId?interfaceId=${interfaceId}&operationId=${operationId}`,
-            )
+            .get(`/report/config/comparison/summary/queryByInterfaceId?interfaceId=${interfaceId}`)
             .then((res) => res.body);
-          // const caseCompare = await axios
-          //   .post('/report/compare/caseCompare', {
-          //     msgCombination: {
-          //       caseId: caseId,
-          //       baseMsg: JSON.stringify(compareResult.responses[0]),
-          //       testMsg: JSON.stringify(compareResult.responses[1]),
-          //       comparisonConfig: comparisonConfig,
-          //     },
-          //   })
-          //   .then((res) => {
-          //     return res.body;
-          //   });
-
           await FileSystemService.updateBatchCompareCase({
             planId: planId,
             interfaceId: interfaceId,

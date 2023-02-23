@@ -33,17 +33,19 @@ const AppFooter: FC = () => {
   const vConsole = useRef<VConsole>();
 
   useEffect(() => {
-    vConsole.current = new VConsole({
-      theme,
-      log: {
-        showTimestamps: true,
-      },
-      defaultPlugins: [],
-      pluginOrder: ['logs'],
-    });
-    vConsole.current.hideSwitch();
+    if (process.env.NODE_ENV === 'production') {
+      vConsole.current = new VConsole({
+        theme,
+        log: {
+          showTimestamps: true,
+        },
+        defaultPlugins: [],
+        pluginOrder: ['logs'],
+      });
+      vConsole.current.hideSwitch();
 
-    return () => vConsole.current?.destroy();
+      return () => vConsole.current?.destroy();
+    }
   }, []);
 
   return (
