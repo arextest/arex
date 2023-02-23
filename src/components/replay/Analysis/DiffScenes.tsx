@@ -1,5 +1,5 @@
 import { useRequest } from 'ahooks';
-import { Col, Row, theme } from 'antd';
+import { Col, Row, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -84,7 +84,16 @@ const DiffScenes: FC<{
             record.operationName.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())
           }
           itemRender={(item: CategoryStatistic) => ({
-            label: item.operationName,
+            label: (
+              <Typography.Text>
+                <Tag>{item.categoryName}</Tag>
+                {React.createElement(
+                  item.operationName.split('.').length > 1 ? Tooltip : 'span',
+                  { title: item.operationName },
+                  item.operationName.split('.').at(-1),
+                )}
+              </Typography.Text>
+            ),
             key: item.operationName,
           })}
           sx={`
