@@ -132,7 +132,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       ellipsis: { showTitle: false },
       render: (value) => (
         <Tooltip placement='topLeft' title={value}>
-          {value}
+          {'/' + value.split('/').at(-1)}
         </Tooltip>
       ),
     },
