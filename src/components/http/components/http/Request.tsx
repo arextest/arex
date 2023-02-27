@@ -236,6 +236,7 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
           <Checkbox
             css={css`
               margin-left: 8px;
+              display: ${props.nodeType === 2 ? 'flex' : 'none'};
             `}
             checked={store.request.inherited}
             onChange={(checkboxChangeEvent) => {
@@ -245,7 +246,7 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
               });
             }}
           >
-            Overwrite
+            Inherit
           </Checkbox>
         </Space.Compact>
 
