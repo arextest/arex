@@ -86,7 +86,7 @@ const AppHeader = () => {
         <TooltipButton
           title={t('help')}
           icon={<QuestionCircleOutlined />}
-          onClick={() => window.open('https://arextest.github.io/arex-doc/')}
+          onClick={() => window.open('https://arextest.github.io/website/zh-Hans/')}
         />
         <TooltipButton title={t('setting')} icon={<SettingOutlined />} onClick={handleSetting} />
         <Dropdown menu={userMenu}>
