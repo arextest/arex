@@ -49,24 +49,23 @@ export async function sendQuickCompare({ caseId, nodeInfo, envs }) {
     body,
     inherited,
     parentValue,
-  } = caseRequest;
-  const compareResult = await runCompareRESTRequest(
-    handleInherited({
-      endpoint: urlPretreatment(endpoint, envs),
-      auth: null,
-      name: '',
-      preRequestScripts: [],
-      compareEndpoint: urlPretreatment(compareEndpoint, envs),
-      compareMethod: compareMethod,
-      method: method,
-      testScripts: testScripts,
-      params: params,
-      headers: headers,
-      body: body,
-      inherited: inherited,
-      parentValue,
-    }),
-  );
+  } = handleInherited(caseRequest);
+
+  const compareResult = await runCompareRESTRequest({
+    endpoint: urlPretreatment(endpoint, envs),
+    auth: null,
+    name: '',
+    preRequestScripts: [],
+    compareEndpoint: urlPretreatment(compareEndpoint, envs),
+    compareMethod: compareMethod,
+    method: method,
+    testScripts: testScripts,
+    params: params,
+    headers: headers,
+    body: body,
+    inherited: inherited,
+    parentValue,
+  });
 
   const comparisonConfig = await axios
     .get(

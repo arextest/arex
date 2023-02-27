@@ -6,6 +6,7 @@ import React, { FC, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { METHODS } from '../../../../constant';
+import { handleInherited } from '../../../../helpers/utils';
 import { flattenArray } from '../../../panes/BatchComparePage/util';
 import { SpaceBetweenWrapper } from '../../../styledComponents';
 import { HoppRESTRequest } from '../../data/rest';
@@ -131,10 +132,10 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
           const prTestResultRequest = prTestResultEnvs.prTestResultRequest;
           // 预请求脚本返回envs和修改后的request
           // envs 和 request 需要一个方法合并对象
-          const mergeRequest = {
+          const mergeRequest = handleInherited({
             ...store.request,
             ...prTestResultRequest,
-          };
+          });
           props
             .onSend({
               ...mergeRequest,

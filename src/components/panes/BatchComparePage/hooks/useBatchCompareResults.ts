@@ -108,25 +108,23 @@ const useBatchCompareResults = (cases: ICase[], collectionTreeData, envs, planId
             body,
             inherited,
             parentValue,
-          } = caseRequest;
+          } = handleInherited(caseRequest);
           // 先使用interface的method和endpoint
-          const compareResult = await runCompareRESTRequest(
-            handleInherited({
-              endpoint: urlPretreatment(endpoint, envs),
-              auth: null,
-              name: '',
-              preRequestScripts: [],
-              compareEndpoint: urlPretreatment(compareEndpoint, envs),
-              compareMethod: compareMethod,
-              method: method,
-              testScripts: testScripts,
-              params: params,
-              headers: headers,
-              body: body,
-              inherited: inherited,
-              parentValue,
-            }),
-          );
+          const compareResult = await runCompareRESTRequest({
+            endpoint: urlPretreatment(endpoint, envs),
+            auth: null,
+            name: '',
+            preRequestScripts: [],
+            compareEndpoint: urlPretreatment(compareEndpoint, envs),
+            compareMethod: compareMethod,
+            method: method,
+            testScripts: testScripts,
+            params: params,
+            headers: headers,
+            body: body,
+            inherited: inherited,
+            parentValue,
+          });
 
           const interfaceId = cases[i].key;
           const comparisonConfig = await axios
