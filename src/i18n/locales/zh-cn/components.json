@@ -199,7 +199,8 @@
     "noIgnoredNodes": "忽略节点为空",
     "emptyFullClassName": "请输入全类名",
     "emptyCaseRange": "请输入 Case 数量上限!",
-    "emptyValue": "请输入值"
+    "emptyValue": "请输入值",
+    "mockTips": "\"body\"为json字符串时会自动转换成json对象，保存时还原。"
   },
   "env": {
     "searchEnvironment": "搜索环境",

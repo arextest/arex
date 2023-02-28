@@ -200,7 +200,8 @@
     "noIgnoredNodes": "No Ignored Nodes",
     "emptyFullClassName": "Please enter full class name",
     "emptyCaseRange": "Please input your case range!",
-    "emptyValue": "Please enter value"
+    "emptyValue": "Please enter value",
+    "mockTips": "When \"body\" is a json string, it will be automatically converted into a json object, and restored when saving."
   },
   "env": {
     "searchEnvironment": "Search Environment",

@@ -1,8 +1,9 @@
 import { SaveOutlined } from '@ant-design/icons';
 import { json } from '@codemirror/lang-json';
 import { useRequest } from 'ahooks';
-import { App, Card, Col, Row, Space } from 'antd';
+import { Alert, App, Card, Col, Row, Space } from 'antd';
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
 import request from '../../../../../helpers/api/request';
@@ -34,6 +35,7 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
   const { message } = App.useApp();
   const { theme } = useUserProfile();
   const [mockData, setMockData] = useImmer<MockData[]>([]);
+  const { t } = useTranslation(['components', 'common']);
 
   const { run: getMockData, loading } = useRequest<MockData[], []>(
     () =>
@@ -93,6 +95,7 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
     <Space direction='vertical' style={{ width: '100%' }}>
       <EmptyWrapper loading={loading} empty={!mockData.length}>
         <Space direction='vertical' style={{ width: '100%' }}>
+          <Alert message={t('appSetting.mockTips')} type='info' showIcon />
           {mockData.map((mock) => (
             <Card
               size='small'
