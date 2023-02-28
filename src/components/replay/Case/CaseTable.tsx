@@ -24,13 +24,13 @@ const CaseTable: FC<CaseProps> = (props) => {
   const location = useLocation();
 
   useEffect(() => {
-    customNavigate({
-      path: location.pathname,
-      query: {
-        data: customSearchParams.query.data,
-        planItemId: props.planItemId,
-      },
-    });
+    // customNavigate({
+    //   path: location.pathname,
+    //   query: {
+    //     data: customSearchParams.query.data,
+    //     planItemId: props.planItemId,
+    //   },
+    // });
   }, [props.planItemId]);
 
   const columnsCase: ColumnsType<ReplayCase> = [

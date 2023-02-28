@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
+import { PagesType } from '../components/panes';
 import {
   genPaneIdByUrl,
   getMenuTypeByPageType,
@@ -12,8 +13,8 @@ import { useStore } from '../store';
 export function useCustomNavigate() {
   const { setPages, pages, collectionTreeData } = useStore();
   const nav = useNavigate();
-  function genTitle(p: any): any {
-    return p.rawId;
+  function genTitle({ rawId, pagesType }: any): string {
+    return `${pagesType} - ${rawId}`;
   }
   return function (arg: any) {
     let url = '';
