@@ -12,6 +12,14 @@ import useUserProfile from '../../../../../store/useUserProfile';
 import { EmptyWrapper, WatermarkCodeMirror } from '../../../../styledComponents';
 import TooltipButton from '../../../../TooltipButton';
 
+type MockTarget = {
+  body: string | null;
+  attributes: Record<string, any> | null;
+  type: string | null;
+};
+
+type MockTargetParsed = { body: Record<string, any> | string | null } & Omit<MockTarget, 'body'>;
+
 type MockData = {
   id: string;
   categoryType: {
@@ -24,20 +32,25 @@ type MockData = {
   appId: string;
   recordEnvironment: number;
   creationTime: number;
-  targetRequest: { [key: string]: any };
+  targetRequest: MockTarget;
   targetRequestString?: string;
-  targetResponse: { [key: string]: any };
+  targetResponse: MockTarget;
   targetResponseString?: string;
   operationName: string;
+};
+
+type MockDataParse = Omit<MockData, 'targetRequest' | 'targetResponse'> & {
+  targetRequest: MockTargetParsed;
+  targetResponse: MockTargetParsed;
 };
 
 const Mock: FC<{ recordId: string }> = ({ recordId }) => {
   const { message } = App.useApp();
   const { theme } = useUserProfile();
-  const [mockData, setMockData] = useImmer<MockData[]>([]);
+  const [mockData, setMockData] = useImmer<MockDataParse[]>([]);
   const { t } = useTranslation(['components', 'common']);
 
-  const { run: getMockData, loading } = useRequest<MockData[], []>(
+  const { run: getMockData, loading } = useRequest<MockDataParse[], []>(
     () =>
       request
         .post<{ recordResult: MockData[] }>(`/storage/storage/replay/query/viewRecord`, {
@@ -46,11 +59,26 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
         })
         .then((res) =>
           Promise.resolve(
-            res.recordResult.map((result) => ({
-              ...result,
-              targetRequestString: tryPrettierJsonString(JSON.stringify(result.targetRequest)),
-              targetResponseString: tryPrettierJsonString(JSON.stringify(result.targetResponse)),
-            })),
+            res.recordResult.map((result) => {
+              try {
+                result.targetRequest.body &&
+                  (result.targetRequest.body = JSON.parse(result.targetRequest.body));
+              } catch (e) {
+                console.info(e);
+              }
+              try {
+                result.targetResponse.body &&
+                  (result.targetResponse.body = JSON.parse(result.targetResponse.body));
+              } catch (e) {
+                console.info(e);
+              }
+
+              return {
+                ...result,
+                targetRequestString: tryPrettierJsonString(JSON.stringify(result.targetRequest)),
+                targetResponseString: tryPrettierJsonString(JSON.stringify(result.targetResponse)),
+              };
+            }),
           ),
         ),
     {
@@ -85,8 +113,14 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
     if (!data) return;
 
     const { targetRequestString, targetResponseString, ...params } = data;
-    params.targetRequest = tryParseJsonString(targetRequestString) || {};
-    params.targetResponse = tryParseJsonString(targetResponseString) || {};
+
+    params.targetRequest = tryParseJsonString(targetRequestString) as MockTarget;
+    params.targetResponse = tryParseJsonString(targetResponseString) as MockTarget;
+
+    typeof params.targetRequest.body !== 'string' &&
+      (params.targetRequest.body = JSON.stringify(params.targetRequest.body));
+    typeof params.targetResponse.body !== 'string' &&
+      (params.targetResponse.body = JSON.stringify(params.targetResponse.body));
 
     updateMockData(params);
   };
@@ -95,7 +129,7 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
     <Space direction='vertical' style={{ width: '100%' }}>
       <EmptyWrapper loading={loading} empty={!mockData.length}>
         <Space direction='vertical' style={{ width: '100%' }}>
-          <Alert message={t('appSetting.mockTips')} type='info' showIcon />
+          {/*<Alert message={t('appSetting.mockTips')} type='info' showIcon />*/}
           {mockData.map((mock) => (
             <Card
               size='small'
