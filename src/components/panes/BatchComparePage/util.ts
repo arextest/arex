@@ -1,6 +1,7 @@
 // @ts-nocheck
 import axios from '../../../helpers/api/axios';
 import { runCompareRESTRequest } from '../../../helpers/CompareRequestRunner';
+import { runRESTPreRequest } from '../../../helpers/RequestRunner';
 import { handleInherited } from '../../../helpers/utils';
 import { FileSystemService } from '../../../services/FileSystem.service';
 import { urlPretreatment } from '../../http/helpers/utils/util';
@@ -38,33 +39,48 @@ export async function sendQuickCompare({ caseId, nodeInfo, envs }) {
     parRequest = caseRequest;
   }
   const { id: interfaceId, operationId } = parRequest;
-  const {
-    endpoint,
-    method,
-    compareEndpoint,
-    compareMethod,
-    testScripts,
-    headers,
-    params,
-    body,
-    inherited,
-    parentValue,
-  } = handleInherited(caseRequest);
+
+  // const request =
+
+  // const {
+  //   endpoint,
+  //   method,
+  //   compareEndpoint,
+  //   compareMethod,
+  //   testScripts,
+  //   headers,
+  //   params,
+  //   body,
+  //   inherited,
+  //   parentValue,
+  // } = handleInherited(caseRequest);
+  const prTestResultEnvs = await runRESTPreRequest(caseRequest);
+
+  const prTestResultRequest = prTestResultEnvs.prTestResultRequest;
+
+  const mergeRequest = handleInherited({
+    ...caseRequest,
+    ...prTestResultRequest,
+  });
 
   const compareResult = await runCompareRESTRequest({
-    endpoint: urlPretreatment(endpoint, envs),
-    auth: null,
-    name: '',
-    preRequestScripts: [],
-    compareEndpoint: urlPretreatment(compareEndpoint, envs),
-    compareMethod: compareMethod,
-    method: method,
-    testScripts: testScripts,
-    params: params,
-    headers: headers,
-    body: body,
-    inherited: inherited,
-    parentValue,
+    ...mergeRequest,
+    endpoint: urlPretreatment(mergeRequest.endpoint, [
+      ...(envs || []),
+      ...prTestResultEnvs.prTestResultEnvs,
+    ]),
+    compareEndpoint: urlPretreatment(mergeRequest.compareEndpoint, [
+      ...(envs || []),
+      ...prTestResultEnvs.prTestResultEnvs,
+    ]),
+    headers: mergeRequest.headers.filter(
+      (f: { active?: boolean; key: string; value: string }) =>
+        f.active && f.key !== '' && f.value !== '',
+    ),
+    params: mergeRequest.params.filter(
+      (f: { active?: boolean; key: string; value: string }) =>
+        f.active && f.key !== '' && f.value !== '',
+    ),
   });
 
   const comparisonConfig = await axios

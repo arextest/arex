@@ -125,7 +125,7 @@ export class Request {
 }
 
 const request = new Request({
-  timeout: 30000,
+  timeout: 300000,
   // 实例级别的拦截器，在创建axios实例的时候携带拦截器
   // interceptors: {
   //   requestInterceptor: ...

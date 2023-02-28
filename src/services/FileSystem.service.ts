@@ -49,6 +49,9 @@ export class FileSystemService {
       address,
       testAddress,
       parentValue: params.parentId ? await this.queryInterface({ id: params.parentId }) : undefined,
+      preRequestScripts: rest.preRequestScripts || [],
+      headers: rest.headers || [],
+      params: rest.params || [],
     };
   }
 
