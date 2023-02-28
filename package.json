@@ -44,6 +44,7 @@
     "@emotion/react": "^11.10.5",
     "@emotion/serialize": "^1.0.4",
     "@emotion/styled": "^11.10.5",
+    "@hpcc-js/wasm": "^2.8.0",
     "@kurkle/color": "^0.2.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",

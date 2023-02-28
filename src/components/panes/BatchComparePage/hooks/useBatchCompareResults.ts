@@ -6,6 +6,7 @@ import { treeFind, treeFindPath } from '../../../../helpers/collection/util';
 import { runCompareRESTRequest } from '../../../../helpers/CompareRequestRunner';
 import { runRESTPreRequest } from '../../../../helpers/RequestRunner';
 import { handleInherited } from '../../../../helpers/utils';
+import { compressedData } from '../../../../helpers/zstd';
 import { FileSystemService } from '../../../../services/FileSystem.service';
 import { urlPretreatment } from '../../../http/helpers/utils/util';
 // 定义参数数据结构
@@ -135,8 +136,8 @@ const useBatchCompareResults = (cases: ICase[], collectionTreeData, envs, planId
             planId: planId,
             interfaceId: interfaceId,
             caseId: caseId,
-            baseMsg: JSON.stringify(compareResult.responses[0]),
-            testMsg: JSON.stringify(compareResult.responses[1]),
+            baseMsg: await compressedData(JSON.stringify(compareResult.responses[0])),
+            testMsg: await compressedData(JSON.stringify(compareResult.responses[1])),
             comparisonConfig: comparisonConfig,
           });
         } catch (e) {
