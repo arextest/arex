@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 
-import { PagesType } from '../components/panes';
 import {
   genPaneIdByUrl,
   getMenuTypeByPageType,
