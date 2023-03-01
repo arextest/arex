@@ -75,6 +75,7 @@ const DiffScenes: FC<{
           small
           forceFilter
           defaultSelectFirst
+          limit={10}
           rowKey='operationName'
           onSelect={handleSelect}
           placeholder={''}
