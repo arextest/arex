@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
-import { Button, Divider, Progress, Table, Tree } from 'antd';
+import { Button, Divider, Table, Tree } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -9,8 +9,9 @@ import { genCaseTreeData } from '../../../helpers/BatchRun/util';
 import { treeFind } from '../../../helpers/collection/util';
 import { uuid } from '../../../helpers/utils';
 import { useStore } from '../../../store';
+import StatusTag from '../../replay/StatusTag';
 import DiffCard from './DiffCard';
-import { calcProgress } from './helper';
+import { calcProgressDetail } from './helper';
 import useBatchCompareResults, { genCaseStructure } from './hooks/useBatchCompareResults';
 import useQueryBatchCompareProgress from './hooks/useQueryBatchCompareProgress';
 
@@ -86,12 +87,11 @@ const BatchComparePage = () => {
       render(_: any, record: any) {
         return (
           <div>
-            <Progress
-              type={'circle'}
-              strokeWidth={20}
-              width={14}
-              percent={calcProgress(record.statusList) * 100}
-            />
+            <StatusTag
+              status={calcProgressDetail(record.statusList).status}
+              successCaseCount={calcProgressDetail(record.statusList).successCaseCount}
+              totalCaseCount={calcProgressDetail(record.statusList).totalCaseCount}
+            ></StatusTag>
           </div>
         );
       },
@@ -114,7 +114,12 @@ const BatchComparePage = () => {
     clearInterval(timer);
     runQueryBatchCompareProgress(planId);
     const interval = setInterval(() => {
-      runQueryBatchCompareProgress(planId);
+      runQueryBatchCompareProgress(planId).then((runQueryBatchCompareProgressRes) => {
+        const statusNoDoneLen = runQueryBatchCompareProgressRes.filter((f: any) => f.status !== 2);
+        if (statusNoDoneLen.length === 0 && runQueryBatchCompareProgressRes.length > 0) {
+          clearInterval(interval);
+        }
+      });
     }, 3000);
     setTimer(interval);
     return () => clearInterval(interval);
