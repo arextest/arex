@@ -1,3 +1,14 @@
+# 安装完整依赖并构建产物
+FROM node:18.14.2-alpine3.17 AS build
+
+# Create app directory
+WORKDIR /usr/src/app
+
+COPY . .
+
+RUN npm install  --loglevel verbose --registry=http://registry.npmmirror.com
+RUN npm run build
+
 FROM node:18.14.2-alpine3.17
 
 # Create app directory
@@ -9,10 +20,9 @@ WORKDIR /usr/src/app
 # COPY package*.json ./
 COPY . .
 
-RUN npm install  --loglevel verbose --registry=http://registry.npmmirror.com
-RUN npm run build --max_old_space_size=8192
-RUN rm -rf node_modules
-RUN cp ./deploy/deploy-package.json ./
+COPY --from=build /usr/src/app/dist /usr/src/app/dist
+
+RUN cp ./deploy/deploy-package.json ./package.json
 RUN npm install  --loglevel verbose --registry=http://registry.npmmirror.com
 # Bundle app event
 # COPY . .
