@@ -1,7 +1,7 @@
-import { MoreOutlined } from '@ant-design/icons';
+import { ExclamationCircleFilled, MoreOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { App, Button, Dropdown, Input, Popconfirm } from 'antd';
+import { App, Button, Dropdown, Input } from 'antd';
 import React, { ReactNode, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -35,7 +35,8 @@ function CollectionTitle({
   searchValue,
 }: any) {
   const { t } = useTranslation(['common', 'components']);
-  const { message } = App.useApp();
+  const { modal, message } = App.useApp();
+  const confirm = modal.confirm;
   const _useParams = useParams();
   const userName = getLocalStorage<string>(EmailKey);
 
@@ -43,6 +44,27 @@ function CollectionTitle({
   const [renameKey, setRenameKey] = useState('');
   const [renameValue, setRenameValue] = useState('');
   const customNavigate = useCustomNavigate();
+  const showPropsConfirm = (paths: any) => {
+    confirm({
+      title: t('are_you_sure'),
+      icon: <ExclamationCircleFilled />,
+      okText: 'Yes',
+      okType: 'danger',
+      cancelText: 'No',
+      onOk() {
+        CollectionService.removeItem({
+          id: _useParams.workspaceId,
+          removeNodePath: paths.map((i: any) => i.key),
+          userName,
+        }).then(() => {
+          updateDirectoryTreeData();
+        });
+      },
+      onCancel() {
+        console.log('Cancel');
+      },
+    });
+  };
   const menu = (val: any) => {
     const paths = treeFindPath(treeData, (node: any) => node.key === val.key);
     return {
@@ -112,22 +134,14 @@ function CollectionTitle({
         {
           key: '5',
           label: (
-            <Popconfirm
-              title={t('are_you_sure')}
-              okText={t('yes')}
-              cancelText={t('no')}
-              onConfirm={() => {
-                CollectionService.removeItem({
-                  id: _useParams.workspaceId,
-                  removeNodePath: paths.map((i: any) => i.key),
-                  userName,
-                }).then(() => {
-                  updateDirectoryTreeData();
-                });
+            <a
+              style={{ color: 'red' }}
+              onClick={() => {
+                showPropsConfirm(paths);
               }}
             >
-              <a style={{ color: 'red' }}>{t('collection.delete', { ns: 'components' })}</a>
-            </Popconfirm>
+              {t('collection.delete', { ns: 'components' })}
+            </a>
           ),
         },
       ],
@@ -205,9 +219,10 @@ function CollectionTitle({
             customNavigate(`/${_useParams.workspaceId}/${PagesType.BatchRun}/${val.id}`);
             break;
           case '8':
-            customNavigate(
-              `/${_useParams.workspaceId}/${PagesType.BatchCompare}/${val.id}?planId=${uuid()}`,
-            );
+            customNavigate({
+              path: `/${_useParams.workspaceId}/${PagesType.Run}/${'create'}`,
+              query: { folderId: val.id },
+            });
             break;
         }
         e.domEvent.stopPropagation();

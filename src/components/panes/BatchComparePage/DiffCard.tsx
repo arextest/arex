@@ -34,6 +34,7 @@ const DiffCard = (record: any) => {
           appId={''}
           operationId={''}
           onTreeModeClick={(diff: any) => {
+            console.log(diff, 'diff');
             if (diff) {
               setDiffJsonViewData({
                 baseMsg: diff.baseMsg,

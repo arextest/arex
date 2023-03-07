@@ -90,6 +90,11 @@ const useInit = () => {
             planId: customSearchParams.query.planId,
           },
         });
+      } else if (params.pagesType === PagesType.Run) {
+        customNavigate({
+          path: customSearchParams.pathname,
+          query: customSearchParams.query,
+        });
       }
     }
   }, []);

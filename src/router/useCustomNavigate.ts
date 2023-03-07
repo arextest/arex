@@ -45,6 +45,7 @@ export function useCustomNavigate() {
         'push',
       );
     }
+    console.log({ url });
     nav(url);
   };
 }

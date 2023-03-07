@@ -480,7 +480,7 @@ const CollectionMenu = () => {
                   if (e.key === '1') {
                     test();
                   } else if (e.key === '2') {
-                    onOpenBatchComparePage();
+                    customNavigate({ path: `/${params.workspaceId}/${PagesType.Run}/${'create'}` });
                   }
                 },
               }}

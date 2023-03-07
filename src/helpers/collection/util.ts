@@ -91,3 +91,14 @@ export function collectionOriginalTreeToAntdTreeData(
   });
   return nodeList;
 }
+
+export function treeFindAllKeys(tree: any, allKeys = []) {
+  for (const treeElement of tree) {
+    // @ts-ignore
+    allKeys.push(treeElement.key);
+    if (treeElement.children) {
+      treeFindAllKeys(treeElement.children, allKeys);
+    }
+  }
+  return allKeys;
+}
