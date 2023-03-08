@@ -81,11 +81,12 @@ export function transformBatchCompareCaseList(cases: ICase[]) {
 }
 
 // 批量跑对比的结果
-const useBatchCompareResults = (cases: ICase[], collectionTreeData, envs, planId) => {
+const useBatchCompareResults = (collectionTreeData, envs, planId) => {
   const [caseResults, setCaseResults] = useImmer<any[]>([]);
 
-  async function run() {
+  async function run(cases: ICase[]) {
     setCaseResults([]);
+    console.log(cases.length, '!!!');
     for (let i = 0; i < cases.length; i++) {
       for (let j = 0; j < cases[i].children.length; j++) {
         try {

@@ -1,10 +1,8 @@
 import { css } from '@emotion/react';
-import { useMount } from 'ahooks';
-import { Progress, Table } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Table } from 'antd';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-import { matchUrlParams } from '../../../../helpers/functional/url';
 import { useCustomSearchParams } from '../../../../router/useCustomSearchParams';
 import { useStore } from '../../../../store';
 import StatusTag from '../../../replay/StatusTag';
@@ -14,6 +12,7 @@ import useBatchCompareResults, {
   genCaseStructure,
 } from '../../BatchComparePage/hooks/useBatchCompareResults';
 import useQueryBatchCompareProgress from '../../BatchComparePage/hooks/useQueryBatchCompareProgress';
+import { getIncompleteKeys } from '../RunCreate/helper';
 
 const columns = [
   {
@@ -72,28 +71,28 @@ const columns = [
 ];
 const RunResultPane = () => {
   const prm = useParams();
-
-  const customSearchParams = useCustomSearchParams();
-  console.log(
-    JSON.parse(decodeURIComponent(customSearchParams.query.caseStructure)),
-    'customSearchParams',
-  );
   const { collectionTreeData, activeEnvironment } = useStore();
   const planId = prm.rawId;
-  const caseStructure = JSON.parse(decodeURIComponent(customSearchParams.query.caseStructure));
+
+  const { data, run: runQueryBatchCompareProgress } = useQueryBatchCompareProgress({
+    planId: planId,
+  });
+  const caseStructure = useMemo(() => {
+    return genCaseStructure(getIncompleteKeys(data || []), collectionTreeData);
+  }, [data]);
   const { data: testData, run: testRun } = useBatchCompareResults(
-    caseStructure,
     collectionTreeData,
     activeEnvironment?.keyValues || [],
     planId,
   );
-  useMount(() => {
-    // 进来就执行
-    testRun();
-  });
-  const { data, run: runQueryBatchCompareProgress } = useQueryBatchCompareProgress({
-    planId: planId,
-  });
+  const [checkRun, setCheckRun] = useState(false);
+  useEffect(() => {
+    if (data?.length > 0 && !checkRun) {
+      setCheckRun(true);
+      testRun(caseStructure);
+    }
+  }, [data, checkRun]);
+  // 轮训，直到全部完成
   const [timer, setTimer] = useState<any>(-1);
   useEffect(() => {
     clearInterval(timer);
