@@ -9,7 +9,7 @@ export default defineConfig({
     }),
   ],
   server: {
-    port: 8001,
+    port: 8888,
     proxy: {
       '/report': {
         target: 'http://10.5.153.1:8090',
@@ -25,6 +25,11 @@ export default defineConfig({
         target: 'http://10.5.153.1:8093',
         changeOrigin: true,
         rewrite: (path) => path.replace('/storage', '/api'),
+      },
+      '^/node/.*': {
+        target: 'http://10.5.153.1:10001',
+        changeOrigin: true,
+        rewrite: (path) => path.replace('/node', '/'),
       },
     },
   },
