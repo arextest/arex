@@ -14,6 +14,7 @@ export function genCaseTreeData(data) {
         method: data.method,
         nodeType: data.nodeType,
         disabled: data.children.length === 0,
+        // disableCheckbox: data.children.length === 0,
         path: treeFindPath(cloneData, (node) => node.id === data.id),
         children: data.children,
       });

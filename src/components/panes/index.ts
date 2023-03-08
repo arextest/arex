@@ -10,6 +10,7 @@ import HttpRequestPage from './HttpRequestPage';
 import ReplayAnalysisPage from './ReplayAnalysisPage';
 import ReplayCasePage from './ReplayCasePage';
 import ReplayPage from './ReplayPage';
+import RunPage from './RunPage';
 import SettingPage from './SettingPage';
 import WorkspaceOverviewPage from './WorkspacePage';
 
@@ -45,6 +46,7 @@ const CommonPageType: PagesTypeType = {
   WorkspaceOverview: 'WorkspaceOverviewPage',
   BatchRun: 'BatchRunPage',
   BatchCompare: 'BatchComparePage',
+  Run: 'RunPage',
 };
 
 export const PagesType = Object.assign(CommonPageType, ExtraPagesType);
@@ -70,6 +72,7 @@ const CommonPages: PageComponents = {
   WorkspaceOverviewPage,
   BatchRunPage,
   BatchComparePage,
+  RunPage,
 };
 
 export default Object.assign(CommonPages, ExtraPages);

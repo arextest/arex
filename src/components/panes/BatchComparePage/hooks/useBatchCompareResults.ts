@@ -65,7 +65,7 @@ export function genCaseStructure(checkValue, collectionTreeData): ICase[] {
   return results;
 }
 
-function transformBatchCompareCaseList(cases: ICase[]) {
+export function transformBatchCompareCaseList(cases: ICase[]) {
   return cases.reduce((previousValue, currentValue) => {
     previousValue = [
       ...previousValue,
@@ -85,11 +85,6 @@ const useBatchCompareResults = (cases: ICase[], collectionTreeData, envs, planId
   const [caseResults, setCaseResults] = useImmer<any[]>([]);
 
   async function run() {
-    await FileSystemService.initBatchCompareReport({
-      planId: planId,
-      batchCompareCaseList: transformBatchCompareCaseList(cases),
-    });
-
     setCaseResults([]);
     for (let i = 0; i < cases.length; i++) {
       for (let j = 0; j < cases[i].children.length; j++) {

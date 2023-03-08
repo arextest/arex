@@ -37,13 +37,16 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, open = false, onClose }) =>
   const msgWithDiff = data;
   const allDiffByType = genAllDiffByType(msgWithDiff.logs);
   const onClassName = (path: string[]) => {
+    const pathStr = path.map((p) => (isNaN(Number(p)) ? p : Number(p)));
     if (
-      allDiffByType.diff012.map((item: any) => JSON.stringify(item)).includes(JSON.stringify(path))
+      allDiffByType.diff012
+        .map((item: any) => JSON.stringify(item))
+        .includes(JSON.stringify(pathStr))
     ) {
       return 'different_element_012';
     }
     if (
-      allDiffByType.diff3.map((item: any) => JSON.stringify(item)).includes(JSON.stringify(path))
+      allDiffByType.diff3.map((item: any) => JSON.stringify(item)).includes(JSON.stringify(pathStr))
     ) {
       return 'different_element';
     }
