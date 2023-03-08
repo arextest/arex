@@ -101,7 +101,7 @@ const BatchComparePage = () => {
     return genCaseStructure(checkValue, collectionTreeData);
   }, [checkValue, collectionTreeData]);
   const { data: testData, run: testRun } = useBatchCompareResults(
-    caseStructure,
+    // caseStructure,
     collectionTreeData,
     activeEnvironment?.keyValues || [],
     planId,
@@ -183,11 +183,7 @@ const BatchComparePage = () => {
             css={css`
               flex: 0.3;
             `}
-          >
-            <Button type={'primary'} onClick={testRun}>
-              {t('batchComparePage.run_compare', { ns: 'page' })}
-            </Button>
-          </div>
+          ></div>
         </div>
       </Allotment.Pane>
       <Allotment.Pane>
