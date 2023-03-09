@@ -40,7 +40,7 @@ export const darkToken: Partial<AliasToken> = {
   colorInfo: '#29b6f6',
   colorWarning: '#ffa726',
   colorError: '#f44336',
-  // colorBgLayout: '#202020',
+  colorBgLayout: '#202020',
   colorTextBase: '#ffffffd9',
 };
 

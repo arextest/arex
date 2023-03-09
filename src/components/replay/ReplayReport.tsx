@@ -3,6 +3,7 @@ import 'chart.js/auto';
 import {
   ContainerOutlined,
   DeleteOutlined,
+  DiffOutlined,
   FileTextOutlined,
   RedoOutlined,
   StopOutlined,
@@ -204,6 +205,21 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       align: 'center',
       render: (_, record) => (
         <>
+          <TooltipButton
+            icon={<DiffOutlined />}
+            title={t('replay.diff')}
+            breakpoint='xxl'
+            onClick={() => {
+              customNavigate(
+                `/${params.workspaceId}/${PagesType.ReplayDiff}/${
+                  record.planItemId
+                }?data=${encodeURIComponent(JSON.stringify(record))}`,
+              );
+            }}
+            style={{
+              color: token.colorPrimary,
+            }}
+          />
           <TooltipButton
             icon={<ContainerOutlined />}
             title={t('replay.diffScenes')}

@@ -9,6 +9,7 @@ import FolderPage from './FolderPage';
 import HttpRequestPage from './HttpRequestPage';
 import ReplayAnalysisPage from './ReplayAnalysisPage';
 import ReplayCasePage from './ReplayCasePage';
+import ReplayDiffPage from './ReplayDiffPage';
 import ReplayPage from './ReplayPage';
 import RunPage from './RunPage';
 import SettingPage from './SettingPage';
@@ -39,6 +40,7 @@ const CommonPageType: PagesTypeType = {
   Folder: 'FolderPage',
   Request: 'HttpRequestPage',
   Replay: 'ReplayPage',
+  ReplayDiff: 'ReplayDiffPage',
   ReplayAnalysis: 'ReplayAnalysisPage',
   ReplayCase: 'ReplayCasePage',
   AppSetting: 'AppSettingPage',
@@ -65,6 +67,7 @@ const CommonPages: PageComponents = {
   FolderPage,
   HttpRequestPage,
   ReplayPage,
+  ReplayDiffPage,
   ReplayAnalysisPage,
   ReplayCasePage,
   AppSettingPage,

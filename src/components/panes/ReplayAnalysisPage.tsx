@@ -67,11 +67,7 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
           />
         }
         panel={
-          <Collapse
-            activeKey={activeKey}
-            onChange={setActiveKey}
-            style={{ width: '100%', padding: token.padding }}
-          >
+          <Collapse activeKey={activeKey} onChange={setActiveKey} style={{ width: '100%' }}>
             {scenes.map((scene, index) => (
               <Collapse.Panel
                 header={<Typography.Text>{`Scene ${index + 1}`}</Typography.Text>}

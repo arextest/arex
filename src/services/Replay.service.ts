@@ -9,7 +9,10 @@ import {
   QueryDifferencesRes,
   QueryFullLinkMsgReq,
   QueryFullLinkMsgRes,
-  QueryMsgWithDiffReq,
+  QueryFullLinkMsgWithCategoryReq,
+  QueryFullLinkMsgWithCategoryRes,
+  QueryFullLinkSummaryReq,
+  QueryFullLinkSummaryRes,
   QueryMsgWithDiffRes,
   QueryPlanItemStatisticsReq,
   QueryPlanItemStatisticsRes,
@@ -19,9 +22,12 @@ import {
   QueryReplayCaseRes,
   QueryResponseTypeStatisticReq,
   QueryResponseTypeStatisticRes,
+  QuerySceneInfoReq,
+  QuerySceneInfoRes,
   QueryScenesReq,
   QueryScenesRes,
   RegressionListRes,
+  SceneInfo,
 } from './Replay.type';
 
 export default class ReplayService {
@@ -137,5 +143,25 @@ export default class ReplayService {
           }),
         ),
       );
+  }
+
+  static async querySceneInfo(params: QuerySceneInfoReq) {
+    return request
+      .get<QuerySceneInfoRes>(`/report/report/querySceneInfo/${params.planId}/${params.planItemId}`)
+      .then((res) => Promise.resolve(res.body.sceneInfos));
+  }
+
+  static async queryFullLinkSummary(params: QueryFullLinkSummaryReq) {
+    return request
+      .get<QueryFullLinkSummaryRes>(
+        `/report/report/queryFullLinkSummary/${params.recordId}/${params.replayId}`,
+      )
+      .then((res) => Promise.resolve(res.body.details));
+  }
+
+  static async queryFullLinkMsgWithCategory(params: QueryFullLinkMsgWithCategoryReq) {
+    return request
+      .post<QueryFullLinkMsgWithCategoryRes>(`/report/report/queryFullLinkMsgWithCategory`, params)
+      .then((res) => Promise.resolve(res.body.detailList));
   }
 }

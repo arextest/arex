@@ -238,6 +238,41 @@ export interface QueryFullLinkMsgReq {
   planItemId: string;
 }
 
+export interface UnmatchedPath {
+  nodeName: string;
+  index: number;
+}
+
+export interface Trace {
+  currentTraceLeft?: any;
+  currentTraceRight?: any;
+}
+
+export interface PathPair {
+  unmatchedType: number;
+  leftUnmatchedPath: UnmatchedPath[];
+  rightUnmatchedPath: UnmatchedPath[];
+  listKeys: any[];
+  listKeyPath: any[];
+  trace: Trace;
+}
+
+export interface LogTag {
+  errorType: number;
+}
+
+export interface Log {
+  baseValue: string;
+  testValue: string;
+  logInfo: string;
+  pathPair: PathPair;
+  addRefPkNodePathLeft?: any;
+  addRefPkNodePathRight?: any;
+  warn: number;
+  path: string;
+  logTag: LogTag;
+}
+
 export type CompareResult = {
   planId: number;
   operationId: number;
@@ -250,31 +285,75 @@ export type CompareResult = {
   baseMsg: string | null;
   testMsg: string | null;
   planItemId: number;
-  logs:
-    | {
-        baseValue: null;
-        testValue: null;
-        logInfo: string;
-        pathPair: {
-          unmatchedType: number;
-          leftUnmatchedPath: [];
-          rightUnmatchedPath: [];
-          listKeys: null;
-          listKeyPath: [];
-          trace: null;
-        };
-        addRefPkNodePathLeft: null;
-        addRefPkNodePathRight: null;
-        warn: number;
-        path: null;
-        logTag: {
-          lv: string;
-          ig: boolean;
-        };
-      }[]
-    | null;
+  logs: Log[] | null;
   type: 'html' | 'json';
 };
 export interface QueryFullLinkMsgRes {
   compareResults: CompareResult[];
+}
+
+// /querySceneInfo/{planId}/{planItemId}
+export interface QuerySceneInfoReq {
+  planId: string;
+  planItemId: string;
+}
+
+export interface Detail {
+  code: number;
+  categoryName: string;
+  operationName: string;
+}
+
+export interface SubScene {
+  recordId: string;
+  replayId: string;
+  details: Detail[];
+}
+
+export interface SceneInfo {
+  subScenes: SubScene[];
+}
+
+export interface QuerySceneInfoRes {
+  sceneInfos: SceneInfo[];
+}
+
+// /queryFullLinkSummary/{recordId}/{replayId}
+export interface QueryFullLinkSummaryReq {
+  recordId: string;
+  replayId: string;
+}
+
+export interface DetailInfoList {
+  code: number;
+  count: number;
+}
+
+export interface Detail {
+  categoryName: string;
+  detailInfoList: DetailInfoList[];
+}
+
+export interface QueryFullLinkSummaryRes {
+  details: Detail[];
+}
+
+// /queryFullLinkMsgWithCategory
+export interface QueryFullLinkMsgWithCategoryReq {
+  recordId: string;
+  replayId: string;
+  categoryName: string;
+}
+
+export interface DetailList {
+  id: string;
+  operationName: string;
+  diffResultCode: number;
+  logs: Log[];
+  baseMsg: string;
+  testMsg: string;
+}
+
+export interface QueryFullLinkMsgWithCategoryRes {
+  detailList: DetailList[];
 }
