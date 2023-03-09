@@ -24,11 +24,7 @@ const RunCreatePane = () => {
       batchCompareReportInitBatchCompareReport({
         batchCompareCaseList: transformBatchCompareCaseList(test),
       }).then(({ planId }) => {
-        nav(
-          `/${params.workspaceId}/RunPage/${planId}?caseStructure=${encodeURIComponent(
-            JSON.stringify(test),
-          )}`,
-        );
+        nav(`/${params.workspaceId}/RunPage/${planId}`);
       });
     } else {
       message.error(`Please select case`);

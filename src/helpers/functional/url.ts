@@ -17,7 +17,7 @@ export function getUrlQueryParams(url = location.search) {
   }
   return params;
 }
-
+// 根据url生成paneId
 export const genPaneIdByUrl = (url: string) => btoa(encodeURI(url));
 export const parsePaneId = (
   paneId: string,
@@ -62,8 +62,6 @@ export const getMenuTypeByPageType = (pageType: any): MenusType => {
   return MenusType.Collection;
 };
 export const matchUrlParams = (url: string) => {
-  // const s = url.split('?')
-
   const url0 = url.split('?')[0];
   const url1 = url.split('?')[1];
 
@@ -71,7 +69,6 @@ export const matchUrlParams = (url: string) => {
     decode: decodeURIComponent,
   });
   const matchUrlParams = matchUrl(url0).params;
-  // JSON.parse
   return {
     params: matchUrlParams,
     searchParams: getUrlQueryParams(url1),

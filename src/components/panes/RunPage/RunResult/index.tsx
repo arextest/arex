@@ -108,24 +108,70 @@ const RunResultPane = () => {
     setTimer(interval);
     return () => clearInterval(interval);
   }, [planId]);
-
+  const metrics = [
+    {
+      title: 'Environment',
+      value: 'test dev',
+    },
+    {
+      title: 'Duration',
+      value: '0ms',
+    },
+    {
+      title: 'Avg. Resp. time',
+      value: '0ms',
+    },
+  ];
   return (
     <div
       css={css`
         display: block;
       `}
     >
+      <h2>Untitled - Run results</h2>
+      <div
+        css={css`
+          display: flex;
+          background-color: #ededed;
+          padding: 20px;
+          margin-bottom: 20px;
+        `}
+      >
+        {metrics.map((metric, index) => {
+          return (
+            <div
+              key={index}
+              css={css`
+                display: flex;
+                flex-direction: column;
+                margin: 0 20px 0px 0;
+              `}
+            >
+              <span>{metric.title}</span>
+              <span
+                css={css`
+                  font-size: 14px;
+                  font-weight: bolder;
+                `}
+              >
+                {metric.value}
+              </span>
+            </div>
+          );
+        })}
+      </div>
       {data && (
         <Table
+          size={'small'}
           columns={columns}
           dataSource={data}
           rowKey={'interfaceId'}
           expandable={{
-            defaultExpandedRowKeys: [data ? data[0].interfaceId : ''],
+            defaultExpandedRowKeys: [data[0] ? data[0].interfaceId : ''],
             expandedRowRender: (record) => {
               return (
                 <div style={{ margin: 0 }}>
-                  <DiffCard planId={planId} interfaceId={record.interfaceId} />
+                  <DiffCard planId={planId} interfaceId={record?.interfaceId} />
                 </div>
               );
             },

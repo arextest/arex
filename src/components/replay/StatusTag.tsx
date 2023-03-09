@@ -38,7 +38,7 @@ const StatusTag: FC<StatusTagProps> = (props) => {
               2,
             )}% ${props.successCaseCount} of ${props.totalCaseCount}`
           }
-          width={12}
+          size={12}
           style={{ marginRight: '7px' }}
         />
       ) : (

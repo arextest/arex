@@ -26,10 +26,8 @@ const FolderTreeSelect = forwardRef<FolderTreeSelectRef, FolderTreeSelectProps>(
 
   const { collectionTreeData } = useStore();
   const customSearchParams = useCustomSearchParams();
-  console.log(customSearchParams.query.folderId);
   const theme = useTheme();
   const [checkedKeys, setCheckedKeys] = useState<Key[]>([]);
-  console.log();
   const testData: DataNode[] = customSearchParams?.query?.folderId
     ? genCaseTreeData([
         treeFind(collectionTreeData, (node) => node.key === customSearchParams.query.folderId),

@@ -86,7 +86,6 @@ const useBatchCompareResults = (collectionTreeData, envs, planId) => {
 
   async function run(cases: ICase[]) {
     setCaseResults([]);
-    console.log(cases.length, '!!!');
     for (let i = 0; i < cases.length; i++) {
       for (let j = 0; j < cases[i].children.length; j++) {
         try {
