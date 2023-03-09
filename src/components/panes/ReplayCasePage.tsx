@@ -18,6 +18,7 @@ import {
   CollapseTable,
   Label,
   PanesTitle,
+  SpaceBetweenWrapper,
   WatermarkCodeMirror,
 } from '../styledComponents';
 import { PageFC } from './index';
@@ -73,12 +74,6 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
             {t('replay.caseServiceAPI')}: {props.page.data.operationName}
           </span>
         }
-        extra={
-          <span>
-            <Label>{t('replay.viewFailedOnly')}</Label>
-            <Switch size='small' defaultChecked={onlyFailed} onChange={setOnlyFailed} />
-          </span>
-        }
       />
 
       <CollapseTable
@@ -91,66 +86,79 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
           />
         }
         panel={
-          <Collapse>
-            {compareResultsFiltered.map((result, i) =>
-              result.diffResultCode === 2 ? (
-                <Panel
-                  header={
-                    <span>
-                      <InfoIcon />
-                      {result.logs?.length && result.logs[0].logInfo}
-                    </span>
-                  }
-                  key={i}
-                />
-              ) : (
-                <Panel
-                  header={
-                    <span>
-                      <CheckOrCloseIcon size={14} checked={!result.diffResultCode} />
-                      {result?.operationName}
-                    </span>
-                  }
-                  key={i}
-                >
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      {/*解决无法渲然全的bug，误删*/}
-                      <div
-                        css={css`
-                          height: 1px;
-                        `}
-                      ></div>
-                      <WatermarkCodeMirror
-                        readOnly
-                        height='300px'
-                        themeKey={theme}
-                        extensions={[javascript(), html(), json()]}
-                        value={result.baseMsg}
-                        remark={t('replay.benchmark')}
-                      />
-                    </Col>
-                    <Col span={12}>
-                      {/*解决无法渲然全的bug，误删*/}
-                      <div
-                        css={css`
-                          height: 1px;
-                        `}
-                      ></div>
-                      <WatermarkCodeMirror
-                        readOnly
-                        height='300px'
-                        themeKey={theme}
-                        extensions={[javascript(), html(), json()]}
-                        value={result.testMsg}
-                        remark={t('replay.test')}
-                      />
-                    </Col>
-                  </Row>
-                </Panel>
-              ),
-            )}
-          </Collapse>
+          <>
+            <SpaceBetweenWrapper style={{ margin: '8px' }}>
+              <div>
+                <Label>Total Count</Label>
+                {compareResults.length}
+              </div>
+              <span>
+                <Label>{t('replay.viewFailedOnly')}</Label>
+                <Switch size='small' defaultChecked={onlyFailed} onChange={setOnlyFailed} />
+              </span>
+            </SpaceBetweenWrapper>
+
+            <Collapse>
+              {compareResultsFiltered.map((result, i) =>
+                result.diffResultCode === 2 ? (
+                  <Panel
+                    header={
+                      <span>
+                        <InfoIcon />
+                        {result.logs?.length && result.logs[0].logInfo}
+                      </span>
+                    }
+                    key={i}
+                  />
+                ) : (
+                  <Panel
+                    header={
+                      <span>
+                        <CheckOrCloseIcon size={14} checked={!result.diffResultCode} />
+                        {result?.operationName}
+                      </span>
+                    }
+                    key={i}
+                  >
+                    <Row gutter={16}>
+                      <Col span={12}>
+                        {/*解决无法渲然全的bug，误删*/}
+                        <div
+                          css={css`
+                            height: 1px;
+                          `}
+                        ></div>
+                        <WatermarkCodeMirror
+                          readOnly
+                          height='300px'
+                          themeKey={theme}
+                          extensions={[javascript(), html(), json()]}
+                          value={result.baseMsg}
+                          remark={t('replay.benchmark')}
+                        />
+                      </Col>
+                      <Col span={12}>
+                        {/*解决无法渲然全的bug，误删*/}
+                        <div
+                          css={css`
+                            height: 1px;
+                          `}
+                        ></div>
+                        <WatermarkCodeMirror
+                          readOnly
+                          height='300px'
+                          themeKey={theme}
+                          extensions={[javascript(), html(), json()]}
+                          value={result.testMsg}
+                          remark={t('replay.test')}
+                        />
+                      </Col>
+                    </Row>
+                  </Panel>
+                ),
+              )}
+            </Collapse>
+          </>
         }
       />
       <SaveCase operationId={props.page.data.operationId} ref={saveCaseRef} />
