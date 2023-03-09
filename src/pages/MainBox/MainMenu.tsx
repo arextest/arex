@@ -47,7 +47,8 @@ const MainMenu: FC<MainMenuProps> = (props) => {
       menu.children = menu.children.map(menuTranslation);
     }
     return {
-      ...menu,
+      icon: menu.icon,
+      key: menu.key,
       label: t(menu.key),
     };
   };
