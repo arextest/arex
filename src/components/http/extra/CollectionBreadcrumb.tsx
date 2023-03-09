@@ -38,8 +38,12 @@ const CollectionBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTa
   );
 
   const { run: runUpdateRequestDescription } = useRequest(
-    // @ts-ignore
-    () => FileSystemService.saveCase({ id: id, description: store.request.description }),
+    () =>
+      nodeType === 2
+        ? // @ts-ignore
+          FileSystemService.saveCase({ id: id, description: store.request.description })
+        : // @ts-ignore
+          FileSystemService.saveInterface({ id: id, description: store.request.description }),
     {
       manual: true,
       onSuccess() {
