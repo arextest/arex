@@ -1,7 +1,6 @@
 import './../DiffJsonView.css';
 
 import { css } from '@emotion/react';
-import { Drawer } from 'antd';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -15,11 +14,8 @@ export type DiffJsonViewProps = {
     testMsg: string;
     logs: QueryMsgWithDiffLog[];
   };
-
-  open: boolean;
-  onClose: () => void;
 };
-const DiffJsonView: FC<DiffJsonViewProps> = ({ data, open = false, onClose }) => {
+const DiffJsonView: FC<DiffJsonViewProps> = ({ data }) => {
   const { t } = useTranslation(['components']);
   const { theme } = useUserProfile();
   if (!data) {
@@ -52,7 +48,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, open = false, onClose }) =>
     }
   };
   return (
-    <Drawer width={'75%'} footer={false} open={open} style={{ top: 0 }} onClose={onClose}>
+    <>
       <div
         css={css`
           display: flex;
@@ -124,7 +120,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, open = false, onClose }) =>
           />
         </div>
       </div>
-    </Drawer>
+    </>
   );
 };
 

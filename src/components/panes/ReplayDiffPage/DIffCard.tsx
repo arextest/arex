@@ -1,13 +1,15 @@
 import { Card, Col, Menu, Row, Typography } from 'antd';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 
-import { DetailList } from '../../../services/Replay.type';
+import { DetailList, Log } from '../../../services/Replay.type';
+import { Label } from '../../styledComponents';
 
 export interface DiffCard {
   data: DetailList;
   loading?: boolean;
 }
 const DiffCard: FC<DiffCard> = (props) => {
+  const [activeLog, setActiveLog] = useState<Log>();
   return (
     <Card key={props.data.id} size='small' title={props.data.operationName} loading={props.loading}>
       <Row gutter={16}>
@@ -25,12 +27,19 @@ const DiffCard: FC<DiffCard> = (props) => {
             })}
             onClick={({ key }) => {
               console.log(key, props.data);
+              setActiveLog(props.data.logs[parseInt(key)]);
             }}
           />
         </Col>
         <Col span={16}>
-          <div>baseValue</div>
-          <div>testValue</div>
+          <div>
+            <Label>baseValue</Label>
+            {activeLog?.baseValue}
+          </div>
+          <div>
+            <Label>testValue</Label>
+            {activeLog?.testValue}
+          </div>
         </Col>
       </Row>
     </Card>

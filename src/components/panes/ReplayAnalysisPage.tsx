@@ -1,16 +1,16 @@
 import { useRequest } from 'ahooks';
-import { Collapse, theme, Typography } from 'antd';
+import { Collapse, Typography } from 'antd';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ReplayService from '../../services/Replay.service';
 import { CategoryStatistic, Difference, PlanItemStatistics } from '../../services/Replay.type';
-import { DiffJsonView, DiffJsonViewProps, DiffList, DiffScenes } from '../replay/Analysis';
+import { DiffJsonViewProps, DiffList, DiffScenes } from '../replay/Analysis';
+import DiffJsonViewDrawer from '../replay/Analysis/DiffJsonView/DiffJsonViewDrawer';
 import { CollapseTable, PanesTitle } from '../styledComponents';
 import { PageFC } from './index';
 
 const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
-  const { token } = theme.useToken();
   const { t } = useTranslation(['components']);
 
   const [selectedDiff, setSelectedDiff] = useState<Difference>();
@@ -94,7 +94,7 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
         }
       />
 
-      <DiffJsonView
+      <DiffJsonViewDrawer
         data={diffJsonViewData}
         open={diffJsonViewVisible}
         onClose={() => setDiffJsonViewVisible(false)}

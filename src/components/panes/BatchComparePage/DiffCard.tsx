@@ -1,9 +1,10 @@
-import { Button, Spin } from 'antd';
+import { Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import { FileSystemService } from '../../../services/FileSystem.service';
-import { DiffJsonView, DiffJsonViewProps } from '../../replay/Analysis';
+import { DiffJsonViewProps } from '../../replay/Analysis';
 import BatchDiffList from '../../replay/Analysis/BatchDiffList';
+import DiffJsonViewDrawer from '../../replay/Analysis/DiffJsonView/DiffJsonViewDrawer';
 
 const DiffCard = (record: any) => {
   const { planId, interfaceId } = record;
@@ -46,7 +47,7 @@ const DiffCard = (record: any) => {
           }}
         />
 
-        <DiffJsonView
+        <DiffJsonViewDrawer
           data={diffJsonViewData}
           open={diffJsonViewVisible}
           onClose={() => setDiffJsonViewVisible(false)}

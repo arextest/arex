@@ -1,9 +1,9 @@
-// @ts-nocheck
 import { css } from '@emotion/react';
 import { Spin } from 'antd';
 import React, { useState } from 'react';
 
-import { DiffJsonView, DiffJsonViewProps } from '../../../../replay/Analysis';
+import { DiffJsonViewProps } from '../../../../replay/Analysis';
+import DiffJsonViewDrawer from '../../../../replay/Analysis/DiffJsonView/DiffJsonViewDrawer';
 import DiffList from '../../../../replay/Analysis/DiffList';
 
 const CompareResult = ({ compareResult, loading }) => {
@@ -43,7 +43,7 @@ const CompareResult = ({ compareResult, loading }) => {
             }
           }}
         />
-        <DiffJsonView
+        <DiffJsonViewDrawer
           data={diffJsonViewData}
           open={diffJsonViewVisible}
           onClose={() => setDiffJsonViewVisible(false)}

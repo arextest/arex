@@ -111,7 +111,7 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
         </Typography.Text>
       </Space>
 
-      <Card size='small' style={{ marginBottom: '8px' }}>
+      <Card size='small' bodyStyle={{ padding: '4px' }} style={{ marginBottom: '8px' }}>
         <Row>
           {/* 一级: 第一个subScenes details.map(item => item.categoryName + decode(item.code)) */}
           {/* 二级: details.categoryName + decode(item.code) + item.operationName */}
@@ -133,7 +133,8 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
       {/*
 
       */}
-      <Card size='small'>
+
+      <Card size='small' bodyStyle={{ paddingTop: 0 }}>
         <EmptyWrapper loading={loadingFullLinkSummary} empty={!fullLinkSummary.length}>
           <SummaryTabs
             data={fullLinkSummary}

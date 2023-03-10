@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import { Menu, Tag, Typography } from 'antd';
 import React, { FC, ReactNode } from 'react';
 
@@ -11,6 +12,9 @@ export interface SubSceneMenuProps {
 const SubSceneMenu: FC<SubSceneMenuProps> = (props) => {
   return (
     <Menu
+      css={css`
+        border-inline-end: none !important;
+      `}
       items={props.data.map((subScene, index) => {
         const fullPath = subScene.details.reduce<ReactNode[]>((path, item, index) => {
           const detail = (
