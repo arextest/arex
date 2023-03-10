@@ -1,4 +1,5 @@
 import { useRequest } from 'ahooks';
+import axios from 'axios';
 import { useEffect } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
@@ -54,6 +55,12 @@ const useInit = () => {
     onError() {
       // token过期了以后来刷新，如果还是没通过就退出
       email && refreshToken({ userName: email });
+    },
+  });
+  // 检测arex desktop agent
+  useRequest(() => axios.get('http://localhost:16888/vi/health'), {
+    onSuccess() {
+      window.__AREX_DESKTOP_AGENT__ = true;
     },
   });
 

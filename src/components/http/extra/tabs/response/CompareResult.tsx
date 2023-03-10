@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { css } from '@emotion/react';
 import { Spin } from 'antd';
 import React, { useState } from 'react';

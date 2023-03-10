@@ -144,7 +144,10 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
   const handleSave = (request: HoppRESTRequest, response?: HoppRESTResponse) => {
     if (
       !request.headers.find((i) => i.key === 'arex-record-id') &&
-      (response?.type === 'success' ? response.headers : []).find((i) => i.key === 'arex-record-id')
+      (response?.type === 'success' ? response.headers : []).find(
+        (i) => i.key === 'arex-record-id',
+      ) &&
+      request.headers.find((i) => i.key === 'arex-force-record')?.active
     ) {
       const recordId =
         response?.type === 'success'
