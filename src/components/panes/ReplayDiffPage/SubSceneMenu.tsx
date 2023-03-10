@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { Menu, Tag, Typography } from 'antd';
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useEffect, useState } from 'react';
 
 import { SubScene } from '../../../services/Replay.type';
 import { SceneCodeMap } from './index';
@@ -9,12 +9,25 @@ export interface SubSceneMenuProps {
   data: SubScene[];
   onClick?: (params: { recordId: string; replayId: string }) => void;
 }
+
+const Connector = '%_%';
 const SubSceneMenu: FC<SubSceneMenuProps> = (props) => {
+  const [selectedKeys, setSelectedKeys] = useState('');
+
+  useEffect(() => {
+    if (props.data.length) {
+      const params = {
+        recordId: props.data[0].recordId,
+        replayId: props.data[0].replayId,
+      };
+      setSelectedKeys(params.recordId + Connector + params.replayId);
+      props.onClick?.(params);
+    }
+  }, [props.data]);
+
   return (
     <Menu
-      css={css`
-        border-inline-end: none !important;
-      `}
+      selectedKeys={[selectedKeys]}
       items={props.data.map((subScene, index) => {
         const fullPath = subScene.details.reduce<ReactNode[]>((path, item, index) => {
           const detail = (
@@ -31,9 +44,10 @@ const SubSceneMenu: FC<SubSceneMenuProps> = (props) => {
           return path;
         }, []);
 
-        return { label: fullPath, key: subScene.recordId + '%_%' + subScene.replayId };
+        return { label: fullPath, key: subScene.recordId + Connector + subScene.replayId };
       })}
       onClick={({ key }) => {
+        setSelectedKeys(key);
         const split = key.split('%_%');
         if (split.length !== 2) return;
 
@@ -45,6 +59,9 @@ const SubSceneMenu: FC<SubSceneMenuProps> = (props) => {
 
         props.onClick?.(params);
       }}
+      css={css`
+        border-inline-end: none !important;
+      `}
     />
   );
 };

@@ -1,8 +1,8 @@
 import { css } from '@emotion/react';
 import { Card, Col, Empty, Menu, Row, Typography } from 'antd';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 
-import { DetailList, DiffLog } from '../../../services/Replay.type';
+import { DetailList, DiffLog, PathPair } from '../../../services/Replay.type';
 import DiffJsonView from '../../replay/Analysis/DiffJsonView';
 import { EmptyWrapper } from '../../styledComponents';
 
@@ -16,6 +16,18 @@ const DiffCard: FC<DiffCard> = (props) => {
     props.data.logs?.length && setActiveLog((props.data.logs as DiffLog[])[0]);
   }, [props.data]);
 
+  const pathTitle = useCallback((pathPair: PathPair) => {
+    const path =
+      pathPair.leftUnmatchedPath.length >= pathPair.rightUnmatchedPath.length
+        ? pathPair.leftUnmatchedPath
+        : pathPair.rightUnmatchedPath;
+    return path.reduce((title, curPair, index) => {
+      index && (title += '.');
+      title += curPair.nodeName || `[${curPair.index}]`;
+      return title;
+    }, '');
+  }, []);
+
   return (
     <Card key={props.data.id} size='small' title={props.data.operationName} loading={props.loading}>
       {props.data.logs?.length ? (
@@ -26,7 +38,9 @@ const DiffCard: FC<DiffCard> = (props) => {
               items={props.data.logs?.map((log, index) => {
                 return {
                   label: (
-                    <Typography.Text style={{ color: 'inherit' }}>{log.logInfo}</Typography.Text>
+                    <Typography.Text style={{ color: 'inherit' }}>
+                      {pathTitle(log.pathPair)}
+                    </Typography.Text>
                   ),
                   key: index,
                 };

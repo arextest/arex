@@ -1,5 +1,5 @@
 import { Menu, Tag } from 'antd';
-import React, { FC, ReactNode, useMemo } from 'react';
+import React, { FC, ReactNode, useEffect, useMemo } from 'react';
 
 import { SceneInfo, SubScene } from '../../../services/Replay.type';
 import { SceneCodeMap } from '.';
@@ -9,6 +9,10 @@ export interface SceneMenuProps {
   onClick?: (subScenes: SubScene[]) => void;
 }
 const SceneMenu: FC<SceneMenuProps> = (props) => {
+  useEffect(() => {
+    props.data.length && props.onClick?.(props.data[0].subScenes);
+  }, [props.data]);
+
   const items = useMemo(
     () =>
       props.data.map((scene, index) => {
@@ -34,6 +38,7 @@ const SceneMenu: FC<SceneMenuProps> = (props) => {
   );
   return (
     <Menu
+      defaultSelectedKeys={['0']}
       items={items}
       onClick={({ key }) => {
         props.onClick?.(props.data[parseInt(key)].subScenes);
