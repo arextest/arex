@@ -1,12 +1,15 @@
 import { DiffLog } from '../../../../services/Replay.type';
 
-export function genAllDiffByType(logs: DiffLog[]) {
+export function genAllDiffByType(logs?: DiffLog[]) {
   const allDiff: any = {
     diff012: [],
     diff3: [],
     diff012Ig: [],
     diff3Ig: [],
   };
+
+  if (!logs || !logs.length) return allDiff;
+
   for (let j = 0; j < logs.length; j++) {
     const leftArr = [];
     for (let i = 0; i < logs[j].pathPair.leftUnmatchedPath.length; i++) {

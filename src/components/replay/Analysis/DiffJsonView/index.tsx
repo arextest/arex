@@ -1,7 +1,7 @@
 import './../DiffJsonView.css';
 
 import { css } from '@emotion/react';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { tryParseJsonString } from '../../../../helpers/utils';
@@ -18,21 +18,27 @@ export type DiffJsonViewProps = {
 const DiffJsonView: FC<DiffJsonViewProps> = ({ data, height }) => {
   const { t } = useTranslation(['components']);
   const { theme } = useUserProfile();
-  if (!data) {
-    return <div></div>;
-  }
-  const baseMsg = {
-    json: tryParseJsonString(data?.baseMsg),
-    text: undefined,
-  };
 
-  const testMsg = {
-    json: tryParseJsonString(data?.testMsg),
-    text: undefined,
-  };
+  const baseMsg = useMemo(() => {
+    const msg = {
+      json: data?.baseMsg,
+      text: undefined,
+    };
+    msg.json = tryParseJsonString(data?.baseMsg);
+    return msg;
+  }, [data]);
+
+  const testMsg = useMemo(() => {
+    const msg = {
+      json: data?.testMsg,
+      text: undefined,
+    };
+    msg.json = tryParseJsonString(data?.testMsg);
+    return msg;
+  }, [data]);
 
   const msgWithDiff = data;
-  const allDiffByType = genAllDiffByType(msgWithDiff.logs);
+  const allDiffByType = genAllDiffByType(msgWithDiff?.logs);
 
   const onClassName = (path: string[]) => {
     const pathStr = path.map((p) => (isNaN(Number(p)) ? p : Number(p)));
@@ -50,6 +56,9 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, height }) => {
     }
   };
 
+  if (!data) {
+    return <div></div>;
+  }
   return (
     <div>
       <div
