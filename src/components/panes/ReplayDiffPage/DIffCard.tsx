@@ -1,47 +1,64 @@
-import { Card, Col, Menu, Row, Typography } from 'antd';
-import React, { FC, useState } from 'react';
+import { css } from '@emotion/react';
+import { Card, Col, Empty, Menu, Row, Typography } from 'antd';
+import React, { FC, useEffect, useState } from 'react';
 
-import { DetailList, Log } from '../../../services/Replay.type';
-import { Label } from '../../styledComponents';
+import { DetailList, DiffLog } from '../../../services/Replay.type';
+import DiffJsonView from '../../replay/Analysis/DiffJsonView';
+import { EmptyWrapper } from '../../styledComponents';
 
 export interface DiffCard {
   data: DetailList;
   loading?: boolean;
 }
 const DiffCard: FC<DiffCard> = (props) => {
-  const [activeLog, setActiveLog] = useState<Log>();
+  const [activeLog, setActiveLog] = useState<DiffLog>();
+  useEffect(() => {
+    props.data.logs?.length && setActiveLog((props.data.logs as DiffLog[])[0]);
+  }, [props.data]);
+
   return (
     <Card key={props.data.id} size='small' title={props.data.operationName} loading={props.loading}>
-      <Row gutter={16}>
-        <Col span={8}>
-          <Menu
-            items={props.data.logs.map((log, index) => {
-              return {
-                label: (
-                  <Typography.Text ellipsis style={{ color: 'inherit' }}>
-                    {log.logInfo}
-                  </Typography.Text>
-                ),
-                key: index,
-              };
-            })}
-            onClick={({ key }) => {
-              console.log(key, props.data);
-              setActiveLog(props.data.logs[parseInt(key)]);
-            }}
-          />
-        </Col>
-        <Col span={16}>
-          <div>
-            <Label>baseValue</Label>
-            {activeLog?.baseValue}
-          </div>
-          <div>
-            <Label>testValue</Label>
-            {activeLog?.testValue}
-          </div>
-        </Col>
-      </Row>
+      {props.data.logs?.length ? (
+        <Row gutter={16}>
+          <Col span={8}>
+            <Menu
+              defaultSelectedKeys={['0']}
+              items={props.data.logs?.map((log, index) => {
+                return {
+                  label: (
+                    <Typography.Text style={{ color: 'inherit' }}>{log.logInfo}</Typography.Text>
+                  ),
+                  key: index,
+                };
+              })}
+              onClick={({ key }) => {
+                setActiveLog((props.data.logs as DiffLog[])[parseInt(key)]);
+              }}
+              css={css`
+                height: 100%;
+                .ant-menu-item {
+                  height: 24px;
+                  line-height: 24px;
+                }
+              `}
+            />
+          </Col>
+
+          <Col span={16}>
+            {activeLog && (
+              <DiffJsonView
+                data={{
+                  baseMsg: activeLog.baseValue,
+                  testMsg: activeLog.testValue,
+                  logs: [activeLog],
+                }}
+              />
+            )}
+          </Col>
+        </Row>
+      ) : (
+        <EmptyWrapper empty />
+      )}
     </Card>
   );
 };

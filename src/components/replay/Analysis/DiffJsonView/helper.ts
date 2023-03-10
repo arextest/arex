@@ -1,6 +1,6 @@
-import { QueryMsgWithDiffLog } from '../../../../services/Replay.type';
+import { DiffLog } from '../../../../services/Replay.type';
 
-export function genAllDiffByType(logs: QueryMsgWithDiffLog[]) {
+export function genAllDiffByType(logs: DiffLog[]) {
   const allDiff: any = {
     diff012: [],
     diff3: [],

@@ -1,5 +1,5 @@
 import { Drawer } from 'antd';
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 import DiffJsonView, { DiffJsonViewProps } from './index';
 
@@ -12,7 +12,7 @@ export interface DiffJsonViewDrawerProps extends DiffJsonViewProps {
 const DiffJsonViewDrawer: FC<DiffJsonViewDrawerProps> = ({ data, open = false, onClose }) => {
   return (
     <Drawer width={'75%'} footer={false} open={open} style={{ top: 0 }} onClose={onClose}>
-      <DiffJsonView data={data} />
+      <DiffJsonView height='85vh' data={data} />
     </Drawer>
   );
 };

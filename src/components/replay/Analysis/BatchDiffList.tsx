@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import AppSettingService from '../../../services/AppSetting.service';
 import { FileSystemService } from '../../../services/FileSystem.service';
 import ReplayService from '../../../services/Replay.service';
-import { QueryMsgWithDiffLog, QueryMsgWithDiffReq, Scene } from '../../../services/Replay.type';
+import { DiffLog, QueryMsgWithDiffReq, Scene } from '../../../services/Replay.type';
 import { DiffMatch, TooltipButton } from '../../index';
 
 const PathTooltip: FC<{ path?: string | null }> = (props) => {
@@ -97,7 +97,7 @@ const BatchDiffList: FC<DiffListType> = (props) => {
     },
   );
 
-  function handleIgnoreNode(pathPair: QueryMsgWithDiffLog['pathPair']) {
+  function handleIgnoreNode(pathPair: DiffLog['pathPair']) {
     const unmatchedType = pathPair.unmatchedType;
     const path = pathPair[unmatchedType === 2 ? 'rightUnmatchedPath' : 'leftUnmatchedPath']
       .map((p) => p.nodeName)

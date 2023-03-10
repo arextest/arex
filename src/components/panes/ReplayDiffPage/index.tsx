@@ -65,8 +65,10 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
   const { data: sceneInfo = [] } = useRequest(
     () =>
       ReplayService.querySceneInfo({
-        planId: '6406f9fe78b64d7f552679c9',
-        planItemId: '6406f9fe78b64d7f552679f7',
+        // planId: '6406f9fe78b64d7f552679c9',
+        // planItemId: '6406f9fe78b64d7f552679f7',
+        planId,
+        planItemId,
       }),
     {
       onSuccess(res) {
@@ -100,7 +102,7 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
 
   return (
     <>
-      <Space>
+      <Space style={{ marginBottom: '4px' }}>
         <Typography.Text type='secondary'>
           <Label>planId</Label>
           {planId}
@@ -135,7 +137,10 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
       */}
 
       <Card size='small' bodyStyle={{ paddingTop: 0 }}>
-        <EmptyWrapper loading={loadingFullLinkSummary} empty={!fullLinkSummary.length}>
+        <EmptyWrapper
+          loading={loadingDetailList || loadingFullLinkSummary}
+          empty={!fullLinkSummary.length}
+        >
           <SummaryTabs
             data={fullLinkSummary}
             onChange={(key) => {
@@ -143,9 +148,11 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
             }}
           />
 
-          {detailList.map((detail) => (
-            <DiffCard key={detail.id} data={detail} loading={loadingDetailList} />
-          ))}
+          <Space direction='vertical' style={{ width: '100%' }}>
+            {detailList.map((detail) => (
+              <DiffCard key={detail.id} data={detail} />
+            ))}
+          </Space>
         </EmptyWrapper>
       </Card>
     </>

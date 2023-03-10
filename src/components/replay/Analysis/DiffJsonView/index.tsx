@@ -4,34 +4,36 @@ import { css } from '@emotion/react';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { QueryMsgWithDiffLog } from '../../../../services/Replay.type';
+import { tryParseJsonString } from '../../../../helpers/utils';
+import { QueryMsgWithDiffRes } from '../../../../services/Replay.type';
 import useUserProfile from '../../../../store/useUserProfile';
 import { genAllDiffByType } from './helper';
 import VanillaJSONEditor from './VanillaJSONEditor';
+
 export type DiffJsonViewProps = {
-  data?: {
-    baseMsg: string;
-    testMsg: string;
-    logs: QueryMsgWithDiffLog[];
-  };
+  height?: string | number;
+  data?: Pick<QueryMsgWithDiffRes, 'baseMsg' | 'testMsg' | 'logs'>;
 };
-const DiffJsonView: FC<DiffJsonViewProps> = ({ data }) => {
+
+const DiffJsonView: FC<DiffJsonViewProps> = ({ data, height }) => {
   const { t } = useTranslation(['components']);
   const { theme } = useUserProfile();
   if (!data) {
     return <div></div>;
   }
   const baseMsg = {
-    json: JSON.parse(data?.baseMsg),
+    json: tryParseJsonString(data?.baseMsg),
     text: undefined,
   };
 
   const testMsg = {
-    json: JSON.parse(data?.testMsg),
+    json: tryParseJsonString(data?.testMsg),
     text: undefined,
   };
+
   const msgWithDiff = data;
   const allDiffByType = genAllDiffByType(msgWithDiff.logs);
+
   const onClassName = (path: string[]) => {
     const pathStr = path.map((p) => (isNaN(Number(p)) ? p : Number(p)));
     if (
@@ -47,8 +49,9 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data }) => {
       return 'different_element';
     }
   };
+
   return (
-    <>
+    <div>
       <div
         css={css`
           display: flex;
@@ -94,6 +97,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data }) => {
             css={css`
               flex: 1;
             `}
+            height={height}
             content={baseMsg}
             readOnly
             mainMenuBar={false}
@@ -112,6 +116,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data }) => {
             css={css`
               flex: 1;
             `}
+            height={height}
             content={testMsg}
             readOnly
             mainMenuBar={false}
@@ -120,7 +125,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data }) => {
           />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

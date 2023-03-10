@@ -200,44 +200,6 @@ export interface QueryMsgWithDiffReq {
   errorCount?: number[];
 }
 
-export type QueryMsgWithDiffLog = {
-  addRefPkNodePathLeft: null;
-  addRefPkNodePathRight: null;
-  baseValue: string | boolean | null;
-  testValue: string | boolean | null;
-  logInfo: string;
-  logTag: { lv: number; ig: boolean };
-  path: string;
-  pathPair: {
-    leftUnmatchedPath: {
-      nodeName: string;
-      index: number;
-    }[];
-    listKeyPath: string[];
-    listKeys: string | null;
-    rightUnmatchedPath: {
-      nodeName: string;
-      index: number;
-    }[];
-    trace: { currentTraceLeft: null; currentTraceRight: null } | null;
-    unmatchedType: number;
-  };
-};
-export type QueryMsgWithDiffRes = {
-  baseMsg: string;
-  diffResultCode: number;
-  logs: QueryMsgWithDiffLog[];
-  recordId: string;
-  replayId: string;
-  testMsg: string;
-};
-
-// ------ /report/queryFullLinkMsg ------
-export interface QueryFullLinkMsgReq {
-  recordId: string;
-  planItemId: string;
-}
-
 export interface UnmatchedPath {
   nodeName: string;
   index: number;
@@ -257,20 +219,34 @@ export interface PathPair {
   trace: Trace;
 }
 
-export interface LogTag {
-  errorType: number;
+export type DiffLog = {
+  addRefPkNodePathLeft: null;
+  addRefPkNodePathRight: null;
+  baseValue: string | boolean | null;
+  testValue: string | boolean | null;
+  logInfo: string;
+  logTag: { lv: number; ig: boolean };
+  path: string;
+  pathPair: PathPair;
+};
+
+export type QueryMsgWithDiffRes = {
+  baseMsg: string | boolean | null;
+  testMsg: string | boolean | null;
+  diffResultCode: number;
+  logs: DiffLog[];
+  recordId: string;
+  replayId: string;
+};
+
+// ------ /report/queryFullLinkMsg ------
+export interface QueryFullLinkMsgReq {
+  recordId: string;
+  planItemId: string;
 }
 
-export interface Log {
-  baseValue: string;
-  testValue: string;
-  logInfo: string;
-  pathPair: PathPair;
-  addRefPkNodePathLeft?: any;
-  addRefPkNodePathRight?: any;
-  warn: number;
-  path: string;
-  logTag: LogTag;
+export interface LogTag {
+  errorType: number;
 }
 
 export type CompareResult = {
@@ -285,7 +261,7 @@ export type CompareResult = {
   baseMsg: string | null;
   testMsg: string | null;
   planItemId: number;
-  logs: Log[] | null;
+  logs: DiffLog[] | null;
   type: 'html' | 'json';
 };
 export interface QueryFullLinkMsgRes {
@@ -349,7 +325,7 @@ export interface DetailList {
   id: string;
   operationName: string;
   diffResultCode: number;
-  logs: Log[];
+  logs: DiffLog[] | null;
   baseMsg: string;
   testMsg: string;
 }

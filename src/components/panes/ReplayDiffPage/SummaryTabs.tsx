@@ -1,4 +1,4 @@
-import { Space, Tabs, Tag, Tooltip } from 'antd';
+import { Tabs, Tag, Tooltip } from 'antd';
 import React, { FC } from 'react';
 
 import { Detail } from '../../../services/Replay.type';
@@ -14,18 +14,19 @@ const SummaryTabs: FC<SummaryTabsProps> = (props) => {
       items={props.data.map((summary) => ({
         key: summary.categoryName,
         label: (
-          <Space>
-            {summary.categoryName}
+          <>
+            <span style={{ marginRight: '8px' }}>{summary.categoryName}</span>
             {summary.detailInfoList.map((item, key) => (
               <Tooltip key={key} title={SummaryCodeMap[item.code.toString()].message}>
                 <Tag color={SummaryCodeMap[item.code.toString()].color}>{item.count}</Tag>
               </Tooltip>
             ))}
-          </Space>
+          </>
         ),
       }))}
       onChange={props.onChange}
-    ></Tabs>
+      style={{ marginBottom: '-16px' }}
+    />
   );
 };
 

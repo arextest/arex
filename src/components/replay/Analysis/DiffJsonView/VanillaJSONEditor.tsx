@@ -1,8 +1,12 @@
 import { css } from '@emotion/react';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { JSONEditor } from 'vanilla-jsoneditor';
 
-export default function SvelteJSONEditor(props: any) {
+export type SvelteJSONEditorProps = {
+  height?: string | number;
+} & any;
+
+export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
   const refContainer = useRef<any>(null);
   const refEditor = useRef<any>(null);
   const { allDiffByType } = props;
@@ -38,7 +42,7 @@ export default function SvelteJSONEditor(props: any) {
   return (
     <div
       css={css`
-        height: 85vh;
+        height: ${props.height};
       `}
       ref={refContainer}
     ></div>
