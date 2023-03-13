@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-import { HoppRESTRequest } from '../components/http/data/rest';
-import { HoppRESTResponse } from '../components/http/helpers/types/HoppRESTResponse';
-import { HoppTestResult } from '../components/http/helpers/types/HoppTestResult';
-import AgentAxios from './request';
+import { HoppRESTRequest } from '../../components/http/data/rest';
+import { HoppRESTResponse } from '../../components/http/helpers/types/HoppRESTResponse';
+import { HoppTestResult } from '../../components/http/helpers/types/HoppTestResult';
+import AgentAxios from './AgentAxios';
 
 export const runRESTRequest = async (
   request: HoppRESTRequest,
@@ -11,7 +11,6 @@ export const runRESTRequest = async (
   response: HoppRESTResponse;
   testResult: HoppTestResult;
 }> => {
-  // window.vConsole.log.info(`${request.method} ${request.endpoint}`, request);
   const response = await _runRESTRequest(request, 'EXTENSIONS_ENABLED');
   const testResult = await _runRESTRequestTest(request, response);
 
@@ -49,7 +48,6 @@ export const runRESTPreRequest = async (
 };
 
 function _runRESTRequest(request: HoppRESTRequest, type: string): Promise<HoppRESTResponse> {
-  console.log(request, 'request');
   if (type === 'EXTENSIONS_ENABLED') {
     const startTime = new Date().getTime();
     return AgentAxios({

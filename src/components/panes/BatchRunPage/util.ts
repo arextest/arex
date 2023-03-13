@@ -1,4 +1,4 @@
-import { runRESTRequest } from '../../../helpers/RequestRunner';
+import { runRESTRequest } from '../../../helpers/http/RequestRunner';
 import { FileSystemService } from '../../../services/FileSystem.service';
 import { urlPretreatment } from '../../http/helpers/utils/util';
 

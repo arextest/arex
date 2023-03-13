@@ -1,7 +1,7 @@
 // @ts-nocheck
 import axios from '../../../helpers/api/axios';
-import { runCompareRESTRequest } from '../../../helpers/CompareRequestRunner';
-import { runRESTPreRequest } from '../../../helpers/RequestRunner';
+import { runCompareRESTRequest } from '../../../helpers/http/CompareRequestRunner';
+import { runRESTPreRequest } from '../../../helpers/http/RequestRunner';
 import { handleInherited } from '../../../helpers/utils';
 import { FileSystemService } from '../../../services/FileSystem.service';
 import { urlPretreatment } from '../../http/helpers/utils/util';

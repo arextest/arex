@@ -1,4 +1,4 @@
-import { useLocation, useParams, useSearchParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import { getUrlQueryParams } from '../helpers/functional/url';
 

@@ -3,8 +3,8 @@ import { useImmer } from 'use-immer';
 
 import axios from '../../../../helpers/api/axios';
 import { treeFind, treeFindPath } from '../../../../helpers/collection/util';
-import { runCompareRESTRequest } from '../../../../helpers/CompareRequestRunner';
-import { runRESTPreRequest } from '../../../../helpers/RequestRunner';
+import { runCompareRESTRequest } from '../../../../helpers/http/CompareRequestRunner';
+import { runRESTPreRequest } from '../../../../helpers/http/RequestRunner';
 import { handleInherited } from '../../../../helpers/utils';
 import { compressedData } from '../../../../helpers/zstd';
 import { FileSystemService } from '../../../../services/FileSystem.service';

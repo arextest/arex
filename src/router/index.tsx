@@ -1,5 +1,4 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
 
 import { Login, Logs, MainBox, ValidInvitation } from '../pages';
 import UpgradeBrowser from '../pages/UpgradeBrowser';

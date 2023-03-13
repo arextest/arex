@@ -7,8 +7,8 @@ import { useParams } from 'react-router-dom';
 
 import { treeFind, treeFindPath } from '../../helpers/collection/util';
 import { parsePaneId } from '../../helpers/functional/url';
+import { runRESTPreRequest, runRESTRequest } from '../../helpers/http/RequestRunner';
 import { convertSaveRequestData } from '../../helpers/http/util';
-import { runRESTPreRequest, runRESTRequest } from '../../helpers/RequestRunner';
 import { useCustomNavigate } from '../../router/useCustomNavigate';
 import { FileSystemService } from '../../services/FileSystem.service';
 import { useStore } from '../../store';
@@ -22,7 +22,6 @@ import { nodeType } from '../menus/CollectionMenu';
 import SaveRequestButton from '../menus/CollectionMenu/SaveRequestButton';
 import { sendQuickCompare } from './BatchComparePage/util';
 import { PageFC, PagesType } from './index';
-// import {const} from "fp-ts";
 
 const HttpRequestPageWrapper = styled.div`
   overflow: hidden;

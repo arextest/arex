@@ -9,6 +9,7 @@ import {
 import { JSONparse } from '../helpers/utils';
 import { useStore } from '../store';
 
+// 代替useNavigate钩子
 export function useCustomNavigate() {
   const { setPages, pages, collectionTreeData } = useStore();
   const nav = useNavigate();
