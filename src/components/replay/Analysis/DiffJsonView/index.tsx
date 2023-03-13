@@ -24,7 +24,11 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, height }) => {
       json: data?.baseMsg,
       text: undefined,
     };
-    msg.json = tryParseJsonString(data?.baseMsg);
+    try {
+      msg.json = JSON.parse(data?.baseMsg);
+    } catch (e) {
+      console.error(e);
+    }
     return msg;
   }, [data]);
 
@@ -33,11 +37,16 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, height }) => {
       json: data?.testMsg,
       text: undefined,
     };
-    msg.json = tryParseJsonString(data?.testMsg);
+    try {
+      msg.json = JSON.parse(data?.testMsg);
+    } catch (e) {
+      console.error(e);
+    }
     return msg;
   }, [data]);
 
   const msgWithDiff = data;
+  console.log('msgWithDiff?.logs', msgWithDiff?.logs);
   const allDiffByType = genAllDiffByType(msgWithDiff?.logs);
 
   const onClassName = (path: string[]) => {

@@ -47,5 +47,6 @@ export function genAllDiffByType(logs?: DiffLog[]) {
       }
     }
   }
+  console.log({ allDiff });
   return allDiff;
 }
