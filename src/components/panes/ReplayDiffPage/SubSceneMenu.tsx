@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import { Menu, Tag, Typography } from 'antd';
+import { Menu, Space, Tag } from 'antd';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 
 import { SubScene } from '../../../services/Replay.type';
@@ -28,16 +28,15 @@ const SubSceneMenu: FC<SubSceneMenuProps> = (props) => {
   return (
     <Menu
       selectedKeys={[selectedKeys]}
-      items={props.data.map((subScene, index) => {
+      items={props.data.map((subScene) => {
         const fullPath = subScene.details.reduce<ReactNode[]>((path, item, index) => {
           const detail = (
-            <>
-              <Typography.Text>{item.operationName}</Typography.Text>
-              {`${item.categoryName}`}{' '}
+            <Space>
+              {`${item.operationName}-${item.categoryName}`}
               <Tag color={SceneCodeMap[item.code.toString()].color}>
                 {SceneCodeMap[item.code.toString()].message}
               </Tag>
-            </>
+            </Space>
           );
           index && path.push('+ ');
           path.push(detail);

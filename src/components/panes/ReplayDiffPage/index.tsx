@@ -1,13 +1,13 @@
+import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { Card, Col, Row, Space, Typography } from 'antd';
-import React, { useState } from 'react';
+import { Card, Collapse, Space, Tag, Typography } from 'antd';
+import React, { ReactNode, useState } from 'react';
 
 import ReplayService from '../../../services/Replay.service';
 import { PlanItemStatistics, SubScene } from '../../../services/Replay.type';
 import { EmptyWrapper, Label } from '../../styledComponents';
 import { PageFC } from '../index';
 import DiffCard from './DIffCard';
-import SceneMenu from './SceneMenu';
 import SubSceneMenu from './SubSceneMenu';
 import SummaryTabs from './SummaryTabs';
 
@@ -101,7 +101,7 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
   });
 
   return (
-    <>
+    <Space direction='vertical' style={{ width: '100%' }}>
       <Space style={{ marginBottom: '4px' }}>
         <Typography.Text type='secondary'>
           <Label>planId</Label>
@@ -113,28 +113,53 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
         </Typography.Text>
       </Space>
 
-      <Card size='small' bodyStyle={{ padding: '4px' }} style={{ marginBottom: '8px' }}>
-        <Row>
-          {/* 一级: 第一个subScenes details.map(item => item.categoryName + decode(item.code)) */}
-          {/* 二级: details.categoryName + decode(item.code) + item.operationName */}
-          <Col span={9}>
-            <SceneMenu data={sceneInfo} onClick={setSubSceneList} />
-          </Col>
+      {/* 一级: 第一个subScenes details.map(item => item.categoryName + decode(item.code)) */}
+      {/* 二级: details.categoryName + decode(item.code) + item.operationName */}
 
-          <Col span={15}>
-            <SubSceneMenu
-              data={subSceneList}
-              onClick={(params) => {
-                setActiveIds(params);
-                getFullLinkSummary(params);
-              }}
-            />
-          </Col>
-        </Row>
-      </Card>
-      {/*
+      <Collapse
+        accordion
+        onChange={([index]) => {
+          index !== undefined && setSubSceneList(sceneInfo[parseInt(index)].subScenes);
+        }}
+      >
+        {sceneInfo.map((scene, index) => {
+          const firstSubScene = scene.subScenes[0];
+          const fullPath = firstSubScene.details.reduce<ReactNode[]>((path, item, i) => {
+            const title = (
+              <>
+                {item.categoryName}{' '}
+                <Tag color={SceneCodeMap[item.code.toString()].color}>
+                  {SceneCodeMap[item.code.toString()].message}
+                </Tag>
+              </>
+            );
 
-      */}
+            i && path.push('+ ');
+            path.push(title);
+            return path;
+          }, []);
+
+          return (
+            <Collapse.Panel
+              header={fullPath}
+              key={index}
+              css={css`
+                .ant-collapse-content-box {
+                  padding: 8px !important;
+                }
+              `}
+            >
+              <SubSceneMenu
+                data={subSceneList || []}
+                onClick={(params) => {
+                  setActiveIds(params);
+                  getFullLinkSummary(params);
+                }}
+              />
+            </Collapse.Panel>
+          );
+        })}
+      </Collapse>
 
       <Card size='small' bodyStyle={{ paddingTop: 0 }}>
         <EmptyWrapper
@@ -155,7 +180,7 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
           </Space>
         </EmptyWrapper>
       </Card>
-    </>
+    </Space>
   );
 };
 
