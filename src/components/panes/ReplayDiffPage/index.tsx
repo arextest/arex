@@ -124,20 +124,31 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
       >
         {sceneInfo.map((scene, index) => {
           const firstSubScene = scene.subScenes[0];
-          const fullPath = firstSubScene.details.reduce<ReactNode[]>((path, item, i) => {
-            const title = (
-              <>
-                {item.categoryName}{' '}
-                <Tag color={SceneCodeMap[item.code.toString()].color}>
-                  {SceneCodeMap[item.code.toString()].message}
-                </Tag>
-              </>
-            );
+          const { fullPath } = firstSubScene.details.reduce<{
+            fullPath: ReactNode[];
+            pathKeyList: string[];
+          }>(
+            (path, item, i) => {
+              // 去重: code 和 categoryName 组成唯一标识
+              const pathKey = `${item.code}-${item.categoryName}`;
+              if (path.pathKeyList.includes(pathKey)) return path;
 
-            i && path.push('+ ');
-            path.push(title);
-            return path;
-          }, []);
+              path.pathKeyList.push(pathKey);
+              const title = (
+                <Space>
+                  {item.categoryName}
+                  <Tag color={SceneCodeMap[item.code.toString()].color}>
+                    {SceneCodeMap[item.code.toString()].message}
+                  </Tag>
+                </Space>
+              );
+
+              i && path.fullPath.push('+ ');
+              path.fullPath.push(title);
+              return path;
+            },
+            { fullPath: [], pathKeyList: [] },
+          );
 
           return (
             <Collapse.Panel
