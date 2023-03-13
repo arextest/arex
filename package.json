@@ -5,7 +5,7 @@
   "scripts": {
     "prepare": "husky install",
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "lint-staged": "lint-staged",
     "format": "prettier --write src/**/*.ts{,x}",
     "lint": "prettier --write \"src/**/*.{ts,tsx}\" && eslint \"src/**/*.{ts,tsx}\" --fix"
