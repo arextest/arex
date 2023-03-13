@@ -32,17 +32,19 @@ export type SettingNodeIgnoreProps = {
   operationId?: string | null; // 在 Request 中设置
 };
 
+// type CheckedNodesData = {
+//   operationId?: OperationId<'Global'>;
+//   operationName?: string;
+//   exclusionsList: string[];
+// };
+
 const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
 
   const [rawResponse, setRawResponse] = useState<string>();
 
-  const [checkedNodesData, setCheckedNodesData] = useImmer<{
-    operationId?: OperationId<'Global'>;
-    operationName?: string;
-    exclusionsList: string[];
-  }>({ exclusionsList: [] });
+  // const [checkedNodesData, setCheckedNodesData] = useImmer<CheckedNodesData>({ exclusionsList: [] });
 
   const [activeOperationInterface, setActiveOperationInterface] = useState<
     InterfacePick | undefined
@@ -62,13 +64,12 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
     },
   );
 
-  const handleIgnoreTreeSelect: TreeProps['onSelect'] = (_, info) => {
-    const selected = info.selectedNodes.map((node) => node.key.toString());
-
-    setCheckedNodesData((state) => {
-      state.operationId = activeOperationInterface!.id;
-      state.operationName = activeOperationInterface!.operationName;
-      state.exclusionsList = selected;
+  const handleIgnoreTreeSelect: TreeProps['onSelect'] = ([path], info) => {
+    // const selected = info.selectedNodes.map((node) => node.key.toString());
+    insertIgnoreNode({
+      appId: props.appId,
+      operationId: activeOperationInterface!.id, // null 时目标为 Global
+      exclusions: path.toString().split('/').filter(Boolean),
     });
   };
 
@@ -100,16 +101,20 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
       onBefore() {
         setIgnoreNodeList([]);
       },
-      onSuccess(res) {
-        props.appId &&
-          setCheckedNodesData((state) => {
-            state.operationId = activeOperationInterface!.id;
-            state.operationName = activeOperationInterface!.operationName;
-            state.exclusionsList = res.map((item) => item.path);
-          });
-      },
     },
   );
+
+  /**
+   * 单个新增 IgnoreNode
+   */
+  const { run: insertIgnoreNode } = useRequest(AppSettingService.insertIgnoreNode, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        queryIgnoreNode();
+      }
+    },
+  });
 
   /**
    * 批量新增 IgnoreNode
@@ -216,34 +221,35 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
     reloadResponse && queryInterfaceResponse();
   };
 
-  const handleIgnoreSave = () => {
-    const { operationId = null, exclusionsList } = checkedNodesData;
-    // const exclusionsListPrev = ignoreNodeList.map((item) => item.path);
+  // const handleIgnoreSave = (data: CheckedNodesData) => {
+  // const { operationId = null, exclusionsList } = data;
+  // const exclusionsListPrev = ignoreNodeList.map((item) => item.path);
 
-    // const add: string[] = [],
-    //   remove: string[] = [];
-    //
-    // // 计算新旧集合的差集，分别进行增量更新和批量删除
-    // Array.from(new Set([...exclusionsListPrev, ...exclusionsList])).forEach((path) => {
-    //   if (exclusionsListPrev.includes(path) && exclusionsList.includes(path)) return;
-    //   else if (exclusionsListPrev.includes(path))
-    //     remove.push(ignoreNodeList.find((item) => item.path === path)!.id);
-    //   else add.push(path);
-    // });
+  // const add: string[] = [],
+  //   remove: string[] = [];
+  //
+  // // 计算新旧集合的差集，分别进行增量更新和批量删除
+  // Array.from(new Set([...exclusionsListPrev, ...exclusionsList])).forEach((path) => {
+  //   if (exclusionsListPrev.includes(path) && exclusionsList.includes(path)) return;
+  //   else if (exclusionsListPrev.includes(path))
+  //     remove.push(ignoreNodeList.find((item) => item.path === path)!.id);
+  //   else add.push(path);
+  // });
 
-    // 增量更新
-    exclusionsList.length &&
-      batchInsertIgnoreNode(
-        exclusionsList.map((path) => ({
-          appId: props.appId,
-          operationId, // null 时目标为 Global
-          exclusions: path.split('/').filter(Boolean),
-        })),
-      );
+  // 增量更新
 
-    // 批量删除
-    // remove.length && batchDeleteIgnoreNode(remove.map((id) => ({ id })));
-  };
+  // exclusionsList.length &&
+  //   batchInsertIgnoreNode(
+  //     exclusionsList.map((path) => ({
+  //       appId: props.appId,
+  //       operationId, // null 时目标为 Global
+  //       exclusions: path.split('/').filter(Boolean),
+  //     })),
+  //   );
+
+  // 批量删除
+  // remove.length && batchDeleteIgnoreNode(remove.map((id) => ({ id })));
+  // };
 
   function getPath(nodeList: DataNode[], pathList: string[], basePath = '') {
     nodeList.forEach((node) => {
@@ -319,10 +325,10 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
               <IgnoreTree
                 title={activeOperationInterface?.operationName}
                 treeData={interfaceResponseParsed}
-                // selectedKeys={checkedNodesData.exclusionsList}
                 loading={loadingInterfaceResponse}
+                // selectedKeys={checkedNodesData.exclusionsList}
+                // onSave={handleIgnoreSave}
                 onSelect={handleIgnoreTreeSelect}
-                onSave={handleIgnoreSave}
                 onEditResponse={handleEditResponse}
               />
             ) : (

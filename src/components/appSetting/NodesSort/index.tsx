@@ -133,7 +133,8 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
         setSortNodeList([]);
       },
       onSuccess() {
-        props.appId && handleCancelEditResponse(false, false);
+        // 由于增量调用，取消状态重置
+        // props.appId && handleCancelEditResponse(false, false);
       },
     },
   );
@@ -143,7 +144,6 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
     onSuccess(success: boolean) {
       if (success) {
         querySortNode();
-        treeCarousel.current?.goTo(0);
         message.success(t('message.updateSuccess', { ns: 'common' }));
       } else {
         message.error(t('message.updateFailed', { ns: 'common' }));
@@ -161,10 +161,11 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
    */
   const { run: updateSortNode } = useRequest(AppSettingService.updateSortNode, SaveSortNodeOptions);
 
-  const handleSaveSort = () => {
+  // 保存方式更改为增量式调用
+  const handleSaveSort = (data: typeof checkedNodesData) => {
     const params = {
-      listPath: checkedNodesData?.path?.split('/').filter(Boolean) || [],
-      keys: checkedNodesData.pathKeyList.map((key) => key?.split('/').filter(Boolean)),
+      listPath: data?.path?.split('/').filter(Boolean) || [],
+      keys: data.pathKeyList.map((key) => key?.split('/').filter(Boolean)),
     };
 
     if (activeSortNode) {
@@ -346,12 +347,17 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
   };
 
   const handleSortTreeChecked: TreeProps['onCheck'] = (checkedKeys) => {
+    console.log({ checkedKeys });
     setCheckedNodesData((state) => {
       state.pathKeyList = (checkedKeys as { checked: string[]; halfChecked: string[] }).checked;
+
+      handleSaveSort(state);
     });
   };
 
   const handleSortTreeSelected: TreeProps['onSelect'] = (selectedKeys) => {
+    console.log({ selectedKeys });
+
     const key = selectedKeys[0] as string;
     if (key) {
       setCheckedNodesData((state) => {
@@ -359,6 +365,8 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
         state.pathKeyList = includes
           ? state.pathKeyList.filter((pathKey) => pathKey !== key)
           : [...state.pathKeyList, key];
+
+        handleSaveSort(state);
       });
     }
   };
@@ -389,12 +397,12 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
           {
             open: modalOpen,
             onCancel: () => setModalOpen(false),
-            footer: (
-              <ActionButton
-                onSave={nodesEditMode === NodesEditMode.Tree ? handleSaveSort : handleResponseSave}
-                onCancel={handleCancelEditResponse}
-              />
-            ),
+            // footer: (
+            //   <ActionButton
+            //     onSave={nodesEditMode === NodesEditMode.Tree ? handleSaveSort : handleResponseSave}
+            //     onCancel={handleCancelEditResponse}
+            //   />
+            // ),
           },
           <EditAreaPlaceholder
             dashedBorder
@@ -405,13 +413,13 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
               <>
                 <SpaceBetweenWrapper style={{ paddingBottom: '8px' }}>
                   <h3>{TreeEditMode[treeEditMode]}</h3>
-                  {treeEditMode === TreeEditModeEnum.SortTree && !props.modalTree && (
-                    <ActionButton
-                      small
-                      onSave={handleSaveSort}
-                      onCancel={handleCancelEditResponse}
-                    />
-                  )}
+                  {/*{treeEditMode === TreeEditModeEnum.SortTree && !props.modalTree && (*/}
+                  {/*  <ActionButton*/}
+                  {/*    small*/}
+                  {/*    onSave={handleSaveSort}*/}
+                  {/*    onCancel={handleCancelEditResponse}*/}
+                  {/*  />*/}
+                  {/*)}*/}
                 </SpaceBetweenWrapper>
 
                 <Card bodyStyle={{ padding: 0 }}>
