@@ -1,7 +1,7 @@
 import { SaveOutlined } from '@ant-design/icons';
 import { json } from '@codemirror/lang-json';
 import { useRequest } from 'ahooks';
-import { Alert, App, Card, Col, Row, Space } from 'antd';
+import { Alert, App, Card, Col, Collapse, Row, Space } from 'antd';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
@@ -130,51 +130,52 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
       <EmptyWrapper loading={loading} empty={!mockData.length}>
         <Space direction='vertical' style={{ width: '100%' }}>
           {/*<Alert message={t('appSetting.mockTips')} type='info' showIcon />*/}
-          {mockData.map((mock) => (
-            <Card
-              size='small'
-              key={mock.id}
-              title={mock.operationName}
-              extra={
-                <TooltipButton
-                  icon={<SaveOutlined />}
-                  title={'Save'}
-                  onClick={() => handleSave(mock.id)}
-                />
-              }
-            >
-              <Row gutter={16}>
-                <Col span={12} style={{ display: 'flex', flexDirection: 'column' }}>
-                  <WatermarkCodeMirror
-                    remark='Request'
-                    themeKey={theme}
-                    extensions={[json()]}
-                    value={mock.targetRequestString}
-                    onChange={(value) =>
-                      setMockData((state) => {
-                        const data = state.find((item) => item.id === mock.id);
-                        data && (data.targetRequestString = value);
-                      })
-                    }
+          <Collapse defaultActiveKey={mockData.map((mock) => mock.id)}>
+            {mockData.map((mock) => (
+              <Collapse.Panel
+                key={mock.id}
+                header={mock.operationName}
+                extra={
+                  <TooltipButton
+                    icon={<SaveOutlined />}
+                    title={'Save'}
+                    onClick={() => handleSave(mock.id)}
                   />
-                </Col>
-                <Col span={12}>
-                  <WatermarkCodeMirror
-                    remark='Response'
-                    themeKey={theme}
-                    extensions={[json()]}
-                    value={mock.targetResponseString}
-                    onChange={(value) => {
-                      setMockData((state) => {
-                        const data = state.find((item) => item.id === mock.id);
-                        data && (data.targetResponseString = value);
-                      });
-                    }}
-                  />
-                </Col>
-              </Row>
-            </Card>
-          ))}
+                }
+              >
+                <Row gutter={16}>
+                  <Col span={12} style={{ display: 'flex', flexDirection: 'column' }}>
+                    <WatermarkCodeMirror
+                      remark='Request'
+                      themeKey={theme}
+                      extensions={[json()]}
+                      value={mock.targetRequestString}
+                      onChange={(value) =>
+                        setMockData((state) => {
+                          const data = state.find((item) => item.id === mock.id);
+                          data && (data.targetRequestString = value);
+                        })
+                      }
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <WatermarkCodeMirror
+                      remark='Response'
+                      themeKey={theme}
+                      extensions={[json()]}
+                      value={mock.targetResponseString}
+                      onChange={(value) => {
+                        setMockData((state) => {
+                          const data = state.find((item) => item.id === mock.id);
+                          data && (data.targetResponseString = value);
+                        });
+                      }}
+                    />
+                  </Col>
+                </Row>
+              </Collapse.Panel>
+            ))}
+          </Collapse>
         </Space>
       </EmptyWrapper>
     </Space>

@@ -48,9 +48,9 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
     <>
       <SpaceBetweenWrapper style={{ paddingBottom: '8px' }}>
         <Typography.Title level={5}>{t('appSetting.dataStructure')}</Typography.Title>
-        <Button size='small' type='primary' onClick={() => props.onSave && props.onSave()}>
-          {t('save', { ns: 'common' })}
-        </Button>
+        {/*<Button size='small' type='primary' onClick={() => props.onSave && props.onSave()}>*/}
+        {/*  {t('save', { ns: 'common' })}*/}
+        {/*</Button>*/}
       </SpaceBetweenWrapper>
 
       <Card size='small' title={`${props.title} (${t('appSetting.clickToIgnore')})`}>
