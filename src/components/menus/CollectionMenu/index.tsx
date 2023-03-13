@@ -1,4 +1,4 @@
-import { DownOutlined, PlayCircleOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { DownOutlined, FilterOutlined, PlayCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Dropdown, Input, Tree } from 'antd';
@@ -435,11 +435,6 @@ const CollectionMenu = () => {
     customNavigate(`/${params.workspaceId}/${PagesType.BatchRun}/${u}`);
   };
 
-  const onOpenBatchComparePage = () => {
-    const u = uuid();
-    customNavigate(`/${params.workspaceId}/${PagesType.BatchCompare}/${u}`);
-  };
-
   return (
     <CollectionMenuWrapper>
       <EmptyWrapper
@@ -496,7 +491,7 @@ const CollectionMenu = () => {
               className={'collection-header-search'}
               size='small'
               placeholder=''
-              prefix={<SearchOutlined />}
+              prefix={<FilterOutlined />}
               onChange={onChange}
             />
           </div>

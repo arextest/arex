@@ -6,6 +6,17 @@ export default defineConfig({
     react({
       jsxImportSource: '@emotion/react',
     }),
+    {
+      // 解决循环依赖
+      name: 'singleHMR',
+      handleHotUpdate({ modules }) {
+        modules.map((m) => {
+          m.importedModules = new Set();
+          m.importers = new Set();
+        });
+        return modules;
+      },
+    },
   ],
   server: {
     port: 8888,

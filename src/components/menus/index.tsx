@@ -4,21 +4,13 @@ import {
   FieldTimeOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import React, { FC, ReactNode } from 'react';
+import React from 'react';
 
-import { MenusType } from '../../enums/menus';
+import { MenuConfig, MenusType } from '../../enums/menus';
 import AppSettingMenu from './AppSettingMenu';
 import CollectionMenu from './CollectionMenu';
 import EnvironmentMenu from './EnvironmentMenu';
 import ReplayMenu from './ReplayMenu';
-
-export type MenuConfig = {
-  key: string;
-  label: string;
-  icon: ReactNode;
-  Menu?: FC;
-  children?: MenuConfig[];
-};
 
 // TODO import ExtraConfig
 // import ExtraConfig from 'src/extra/menus'

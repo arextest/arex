@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 const GlobalStyle = styled.div`
-  --focus-border: ${(props) => props.theme.colorPrimaryBorder} !important;
+  --focus-border: #007fd4 !important;
 
   .tooltip-theme1 {
     display: flex;
