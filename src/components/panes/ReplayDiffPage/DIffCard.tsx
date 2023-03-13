@@ -21,8 +21,8 @@ const DiffCard: FC<DiffCard> = (props) => {
       props.data.diffResultCode
         ? activeLog
           ? {
-              baseMsg: activeLog.baseValue,
-              testMsg: activeLog.testValue,
+              baseMsg: props.data.baseMsg,
+              testMsg: props.data.testMsg,
               logs: [activeLog],
             }
           : undefined
