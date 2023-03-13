@@ -4,7 +4,6 @@ import { css } from '@emotion/react';
 import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { tryParseJsonString } from '../../../../helpers/utils';
 import { QueryMsgWithDiffRes } from '../../../../services/Replay.type';
 import useUserProfile from '../../../../store/useUserProfile';
 import { genAllDiffByType } from './helper';
@@ -45,9 +44,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, height }) => {
     return msg;
   }, [data]);
 
-  const msgWithDiff = data;
-  console.log('msgWithDiff?.logs', msgWithDiff?.logs);
-  const allDiffByType = genAllDiffByType(msgWithDiff?.logs);
+  const allDiffByType = genAllDiffByType(data?.logs);
 
   const onClassName = (path: string[]) => {
     const pathStr = path.map((p) => (isNaN(Number(p)) ? p : Number(p)));
