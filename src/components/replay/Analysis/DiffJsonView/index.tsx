@@ -1,7 +1,7 @@
 import './../DiffJsonView.css';
 
 import { css } from '@emotion/react';
-import { FC, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { QueryMsgWithDiffRes } from '../../../../services/Replay.type';
@@ -24,7 +24,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, height }) => {
       text: undefined,
     };
     try {
-      msg.json = JSON.parse(data?.baseMsg);
+      msg.json = JSON.parse(data?.baseMsg as string);
     } catch (e) {
       console.error(e);
     }
@@ -37,7 +37,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, height }) => {
       text: undefined,
     };
     try {
-      msg.json = JSON.parse(data?.testMsg);
+      msg.json = JSON.parse(data?.testMsg as string);
     } catch (e) {
       console.error(e);
     }
