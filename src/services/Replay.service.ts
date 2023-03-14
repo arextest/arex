@@ -7,6 +7,8 @@ import {
   CreatePlanRes,
   QueryDifferencesReq,
   QueryDifferencesRes,
+  QueryDiffMsgByIdReq,
+  QueryDiffMsgByIdRes,
   QueryFullLinkInfoReq,
   QueryFullLinkInfoRes,
   QueryFullLinkMsgReq,
@@ -161,9 +163,17 @@ export default class ReplayService {
   }
 
   static async queryFullLinkInfo(params: QueryFullLinkInfoReq) {
-    return request.get<QueryFullLinkInfoRes>(
-      `/report/report/queryFullLinkInfo/${params.recordId}/${params.replayId}`,
-    );
+    return request
+      .get<QueryFullLinkInfoRes>(
+        `/report/report/queryFullLinkInfo/${params.recordId}/${params.replayId}`,
+      )
+      .then((res) => Promise.resolve(res.body));
+  }
+
+  static async queryDiffMsgById(params: QueryDiffMsgByIdReq) {
+    return request
+      .get<QueryDiffMsgByIdRes>(`/report/report/queryDiffMsgById/${params.id}`)
+      .then((res) => Promise.resolve(res.body));
   }
 
   static async queryFullLinkMsgWithCategory(params: QueryFullLinkMsgWithCategoryReq) {

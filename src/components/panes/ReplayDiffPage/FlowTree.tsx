@@ -3,14 +3,28 @@ import { Badge, Space, theme, Typography } from 'antd';
 import React, { FC, useCallback } from 'react';
 import Tree from 'react-d3-tree';
 
+import { infoItem } from '../../../services/Replay.type';
+import { SceneCodeMap } from './index';
+
+export type FlowTreeItem = { name: string; level: number } & infoItem;
+export type FlowTreeData = FlowTreeItem & {
+  children: FlowTreeItem[];
+};
 export interface FlowTreeProps {
-  data: any;
+  data: FlowTreeData;
+  onClick?: (id: string) => void;
 }
 
 const FlowTree: FC<FlowTreeProps> = (props) => {
   const { token } = theme.useToken();
   const renderNodeWithCustomEvents = useCallback(
-    ({ nodeDatum, handleNodeClick }) => (
+    ({
+      nodeDatum,
+      handleNodeClick,
+    }: {
+      nodeDatum: FlowTreeData;
+      handleNodeClick: (nodeDatum: FlowTreeData) => void;
+    }) => (
       <g>
         {nodeDatum.level === 0 ? (
           <g>
@@ -21,7 +35,6 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
               height={48}
               rx={6}
               y={-24}
-              onClick={() => handleNodeClick(nodeDatum)}
             />
             <text
               fill={token.colorText}
@@ -30,7 +43,6 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
               strokeWidth={0}
               fontSize={token.fontSizeLG}
               fontWeight={500}
-              onClick={() => handleNodeClick(nodeDatum)}
               dominantBaseline='middle'
               textAnchor='middle'
             >
@@ -47,8 +59,8 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
               rx={6}
               x={-30}
               y={-50}
-              onClick={() => handleNodeClick(nodeDatum)}
             />
+
             <text
               fill={token.colorText}
               x={70}
@@ -57,31 +69,22 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
               strokeWidth={0}
               fontSize={token.fontSizeLG}
               fontWeight={400}
-              onClick={() => handleNodeClick(nodeDatum)}
               dominantBaseline='middle'
               textAnchor='middle'
             >
               {nodeDatum.name}
             </text>
 
-            <text
-              fill={token.colorText}
-              x={70}
-              y={12}
-              height={50}
-              strokeWidth={0}
-              fontSize={token.fontSize}
-              fontWeight={400}
-              onClick={() => handleNodeClick(nodeDatum)}
-              dominantBaseline='middle'
-              textAnchor='middle'
-            >
-              Attribute
-            </text>
-            <br />
+            <foreignObject x={-18} y={-48} width={20} height={20}>
+              <Badge color={SceneCodeMap[nodeDatum.code]?.color} />
+            </foreignObject>
+
+            <foreignObject x={-10} y={0} width={164} height={28}>
+              <Typography.Text ellipsis>{nodeDatum.operationName}</Typography.Text>
+            </foreignObject>
           </g>
         ) : (
-          <g>
+          <g onClick={() => handleNodeClick(nodeDatum)}>
             <rect
               fill={token.colorBgContainer}
               stroke={token.colorBorder}
@@ -89,15 +92,14 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
               height={30}
               rx={6}
               y={-15}
-              onClick={() => handleNodeClick(nodeDatum)}
             />
 
             <foreignObject x={12} y={-10} width={280} height={28}>
               <Space>
-                <Badge status='error' />
+                <Badge color={SceneCodeMap[nodeDatum.code].color} />
 
                 <Typography.Text ellipsis style={{ width: '260px' }}>
-                  longlonglonglonglonglonglonglonglonglongtext
+                  {nodeDatum.name} - {nodeDatum.operationName}
                 </Typography.Text>
               </Space>
             </foreignObject>
@@ -108,8 +110,8 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
     [token],
   );
 
-  const handleNodeClick = (nodeDatum) => {
-    console.log(nodeDatum);
+  const handleNodeClick = (nodeDatum: FlowTreeItem) => {
+    props.onClick?.(nodeDatum.id);
   };
 
   return (

@@ -328,6 +328,7 @@ export type infoItem = {
 };
 
 export interface QueryFullLinkInfoRes {
+  entrance: infoItem;
   infoItemList: infoItem[];
 }
 
@@ -345,6 +346,15 @@ export interface DetailList {
   logs: DiffLog[] | null;
   baseMsg: string;
   testMsg: string;
+}
+
+// /queryDiffMsgById/{id}
+export interface QueryDiffMsgByIdReq {
+  id: string;
+}
+
+export interface QueryDiffMsgByIdRes {
+  compareResultDetail: { categoryName: string } & DetailList;
 }
 
 export interface QueryFullLinkMsgWithCategoryRes {

@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Card, Collapse, Space, Tag, Typography } from 'antd';
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useMemo, useState } from 'react';
 
 import ReplayService from '../../../services/Replay.service';
 import { PlanItemStatistics, SubScene } from '../../../services/Replay.type';
@@ -19,11 +19,11 @@ export const SceneCodeMap: {
   };
 } = {
   '-1': {
-    color: 'error',
+    color: 'red',
     message: 'exception',
   },
   '0': {
-    color: 'success',
+    color: 'green',
     message: 'success',
   },
   '1': { color: 'magenta', message: 'value diff' },
@@ -48,59 +48,6 @@ export const SummaryCodeMap: { [key: string]: { color: string; message: string }
     color: 'orange',
     message: 'SEND_FAILED_NOT_COMPARE',
   },
-};
-
-const treeData = {
-  name: 'Arex',
-  level: 0,
-  children: [
-    {
-      name: 'Servlet',
-      level: 1,
-      children: [
-        {
-          name: 'HttpClient-/posts/2',
-          level: 2,
-        },
-        {
-          name: 'HttpClient-/posts',
-          level: 2,
-        },
-        {
-          name: 'HttpClient-/posts/2',
-          level: 2,
-        },
-        {
-          name: 'HttpClient-/posts',
-          level: 2,
-        },
-        {
-          name: 'HttpClient-/posts/2',
-          level: 2,
-        },
-        {
-          name: 'HttpClient-/posts',
-          level: 2,
-        },
-        {
-          name: 'HttpClient-/posts/2',
-          level: 2,
-        },
-        {
-          name: 'HttpClient-/posts',
-          level: 2,
-        },
-        {
-          name: 'HttpClient-/posts/2',
-          level: 2,
-        },
-        {
-          name: 'HttpClient-/posts',
-          level: 2,
-        },
-      ],
-    },
-  ],
 };
 
 const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
@@ -148,6 +95,41 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
     loading: loadingDetailList,
     run: getFullLinkMsgWithCategory,
   } = useRequest(ReplayService.queryFullLinkMsgWithCategory, {
+    manual: true,
+    onSuccess(res) {
+      console.log(res);
+    },
+  });
+
+  const { data: fullLinkInfo, run: getQueryFullLinkInfo } = useRequest(
+    ReplayService.queryFullLinkInfo,
+    {
+      manual: true,
+    },
+  );
+
+  const treeData = useMemo(
+    () => ({
+      name: 'Arex',
+      operationName: 'Arex',
+      level: 0,
+      children: [
+        {
+          ...fullLinkInfo?.entrance,
+          name: fullLinkInfo?.entrance.categoryName,
+          level: 1,
+          children: fullLinkInfo?.infoItemList.map((item) => ({
+            ...item,
+            name: fullLinkInfo?.entrance.categoryName,
+            level: 2,
+          })),
+        },
+      ],
+    }),
+    [fullLinkInfo],
+  );
+
+  const { data: diffMsg, run: queryDiffMsgById } = useRequest(ReplayService.queryDiffMsgById, {
     manual: true,
     onSuccess(res) {
       console.log(res);
@@ -219,6 +201,7 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
                 onClick={(params) => {
                   setActiveIds(params);
                   getFullLinkSummary(params);
+                  getQueryFullLinkInfo(params);
                 }}
               />
             </Collapse.Panel>
@@ -226,7 +209,12 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
         })}
       </Collapse>
 
-      <FlowTree data={treeData} />
+      <FlowTree
+        data={treeData}
+        onClick={(id) => {
+          queryDiffMsgById({ id });
+        }}
+      />
 
       <Card size='small' bodyStyle={{ paddingTop: 0 }}>
         <EmptyWrapper
