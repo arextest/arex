@@ -113,7 +113,7 @@ const MainTabs = () => {
       findActivePane &&
       !(params.pagesType === findActivePane.pageType && params.rawId === findActivePane.rawId)
     ) {
-      nav(`/${params.workspaceId}/${findActivePane.pageType}/${findActivePane.rawId}`);
+      nav(window.atob(findActivePane.paneId));
     }
   }, [activeMenu, pages]);
 
