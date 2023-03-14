@@ -8,6 +8,7 @@ import { PlanItemStatistics, SubScene } from '../../../services/Replay.type';
 import { EmptyWrapper, Label } from '../../styledComponents';
 import { PageFC } from '../index';
 import DiffCard from './DIffCard';
+import FlowTree from './FlowTree';
 import SubSceneMenu from './SubSceneMenu';
 import SummaryTabs from './SummaryTabs';
 
@@ -47,6 +48,59 @@ export const SummaryCodeMap: { [key: string]: { color: string; message: string }
     color: 'orange',
     message: 'SEND_FAILED_NOT_COMPARE',
   },
+};
+
+const treeData = {
+  name: 'Arex',
+  level: 0,
+  children: [
+    {
+      name: 'Servlet',
+      level: 1,
+      children: [
+        {
+          name: 'HttpClient-/posts/2',
+          level: 2,
+        },
+        {
+          name: 'HttpClient-/posts',
+          level: 2,
+        },
+        {
+          name: 'HttpClient-/posts/2',
+          level: 2,
+        },
+        {
+          name: 'HttpClient-/posts',
+          level: 2,
+        },
+        {
+          name: 'HttpClient-/posts/2',
+          level: 2,
+        },
+        {
+          name: 'HttpClient-/posts',
+          level: 2,
+        },
+        {
+          name: 'HttpClient-/posts/2',
+          level: 2,
+        },
+        {
+          name: 'HttpClient-/posts',
+          level: 2,
+        },
+        {
+          name: 'HttpClient-/posts/2',
+          level: 2,
+        },
+        {
+          name: 'HttpClient-/posts',
+          level: 2,
+        },
+      ],
+    },
+  ],
 };
 
 const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
@@ -171,6 +225,8 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
           );
         })}
       </Collapse>
+
+      <FlowTree data={treeData} />
 
       <Card size='small' bodyStyle={{ paddingTop: 0 }}>
         <EmptyWrapper

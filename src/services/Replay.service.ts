@@ -7,6 +7,8 @@ import {
   CreatePlanRes,
   QueryDifferencesReq,
   QueryDifferencesRes,
+  QueryFullLinkInfoReq,
+  QueryFullLinkInfoRes,
   QueryFullLinkMsgReq,
   QueryFullLinkMsgRes,
   QueryFullLinkMsgWithCategoryReq,
@@ -27,7 +29,6 @@ import {
   QueryScenesReq,
   QueryScenesRes,
   RegressionListRes,
-  SceneInfo,
 } from './Replay.type';
 
 export default class ReplayService {
@@ -157,6 +158,12 @@ export default class ReplayService {
         `/report/report/queryFullLinkSummary/${params.recordId}/${params.replayId}`,
       )
       .then((res) => Promise.resolve(res.body.details));
+  }
+
+  static async queryFullLinkInfo(params: QueryFullLinkInfoReq) {
+    return request.get<QueryFullLinkInfoRes>(
+      `/report/report/queryFullLinkInfo/${params.recordId}/${params.replayId}`,
+    );
   }
 
   static async queryFullLinkMsgWithCategory(params: QueryFullLinkMsgWithCategoryReq) {

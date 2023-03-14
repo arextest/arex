@@ -314,6 +314,23 @@ export interface QueryFullLinkSummaryRes {
   details: Detail[];
 }
 
+// /queryFullLinkInfo/{recordId}/{replayId}
+export interface QueryFullLinkInfoReq {
+  recordId: string;
+  replayId: string;
+}
+
+export type infoItem = {
+  id: string;
+  code: number;
+  categoryName: string;
+  operationName: string;
+};
+
+export interface QueryFullLinkInfoRes {
+  infoItemList: infoItem[];
+}
+
 // /queryFullLinkMsgWithCategory
 export interface QueryFullLinkMsgWithCategoryReq {
   recordId: string;
