@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { EmailKey, NodeType } from '../../../constant';
-import { treeFind } from '../../../helpers/collection/util';
+import { filterTree, treeFind } from '../../../helpers/collection/util';
 import { parsePaneId } from '../../../helpers/functional/url';
 import { getLocalStorage, uuid } from '../../../helpers/utils';
 import { useCustomNavigate } from '../../../router/useCustomNavigate';
@@ -505,7 +505,7 @@ const CollectionMenu = () => {
             onExpand={onExpand}
             onSelect={handleSelect}
             switcherIcon={<DownOutlined />}
-            treeData={treeData}
+            treeData={filterTree(searchValue, treeData)}
             onDrop={onDrop}
             draggable={{ icon: false }}
             showLine

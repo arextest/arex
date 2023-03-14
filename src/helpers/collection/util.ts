@@ -102,3 +102,28 @@ export function treeFindAllKeys(tree: any, allKeys = []) {
   }
   return allKeys;
 }
+
+export const filterTree = (val: string, tree: any, newArr: any = []) => {
+  if (!(tree.length && val)) {
+    // 如果搜索关键字为空直接返回源数据
+    return tree;
+  }
+
+  for (const item of tree) {
+    if (item.title.indexOf(val) > -1) {
+      // 匹配到关键字的逻辑
+      newArr.push(item); // 如果匹配到就在数值中添加记录
+      continue; // 匹配到了就退出循环了此时如果有子集也会一并带着
+    }
+    if (item.children && item.children.length) {
+      // 如果父级节点没有匹配到就看看是否有子集，然后做递归
+      const subArr = filterTree(val, item.children); // 缓存递归后的子集数组
+      if (subArr && subArr.length) {
+        // 如果子集数据有匹配到的节点
+        const node = { ...item, children: subArr }; // 关键逻辑，缓存父节点同时将递归后的子节点作为新值
+        newArr.push(node); // 添加进数组
+      }
+    }
+  }
+  return newArr;
+};
