@@ -142,7 +142,7 @@ function _runRESTRequestPreTest(request: HoppRESTRequest) {
     data: {
       body: request.body.body,
       preTestScripts: [
-        request.parentPreRequestScripts.map((t) => t.value).join('\n'),
+        (request.parentPreRequestScripts || []).map((t) => t.value).join('\n'),
         request.preRequestScripts.map((t) => t.value).join('\n'),
       ],
     },
