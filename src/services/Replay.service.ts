@@ -13,10 +13,6 @@ import {
   QueryFullLinkInfoRes,
   QueryFullLinkMsgReq,
   QueryFullLinkMsgRes,
-  QueryFullLinkMsgWithCategoryReq,
-  QueryFullLinkMsgWithCategoryRes,
-  QueryFullLinkSummaryReq,
-  QueryFullLinkSummaryRes,
   QueryMsgWithDiffRes,
   QueryPlanItemStatisticsReq,
   QueryPlanItemStatisticsRes,
@@ -151,15 +147,7 @@ export default class ReplayService {
   static async querySceneInfo(params: QuerySceneInfoReq) {
     return request
       .get<QuerySceneInfoRes>(`/report/report/querySceneInfo/${params.planId}/${params.planItemId}`)
-      .then((res) => Promise.resolve(res.body.sceneInfos));
-  }
-
-  static async queryFullLinkSummary(params: QueryFullLinkSummaryReq) {
-    return request
-      .get<QueryFullLinkSummaryRes>(
-        `/report/report/queryFullLinkSummary/${params.recordId}/${params.replayId}`,
-      )
-      .then((res) => Promise.resolve(res.body.details));
+      .then((res) => Promise.resolve(res.body.sceneInfos.filter((scene) => scene.subScenes))); //  subScenes could be null;
   }
 
   static async queryFullLinkInfo(params: QueryFullLinkInfoReq) {
@@ -173,12 +161,6 @@ export default class ReplayService {
   static async queryDiffMsgById(params: QueryDiffMsgByIdReq) {
     return request
       .get<QueryDiffMsgByIdRes>(`/report/report/queryDiffMsgById/${params.id}`)
-      .then((res) => Promise.resolve(res.body));
-  }
-
-  static async queryFullLinkMsgWithCategory(params: QueryFullLinkMsgWithCategoryReq) {
-    return request
-      .post<QueryFullLinkMsgWithCategoryRes>(`/report/report/queryFullLinkMsgWithCategory`, params)
-      .then((res) => Promise.resolve(res.body.detailList));
+      .then((res) => Promise.resolve(res.body.compareResultDetail));
   }
 }

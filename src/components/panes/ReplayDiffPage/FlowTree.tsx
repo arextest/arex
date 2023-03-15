@@ -1,17 +1,23 @@
 import { css } from '@emotion/react';
-import { Badge, Space, theme, Typography } from 'antd';
+import { Badge, Space, theme, Tooltip, Typography } from 'antd';
 import React, { FC, useCallback } from 'react';
 import Tree from 'react-d3-tree';
 
 import { infoItem } from '../../../services/Replay.type';
 import { SceneCodeMap } from './index';
 
-export type FlowTreeItem = { name: string; level: number } & infoItem;
-export type FlowTreeData = FlowTreeItem & {
-  children: FlowTreeItem[];
-};
+export interface FlowTreeItem extends infoItem {
+  name: string;
+  level: number;
+}
+export interface FlowTreeData extends FlowTreeItem {
+  children?: FlowTreeData[];
+}
 export interface FlowTreeProps {
-  data: FlowTreeData;
+  data?: FlowTreeData;
+  bordered?: boolean;
+  width?: number | string;
+  height?: number | string;
   onClick?: (id: string) => void;
 }
 
@@ -29,7 +35,7 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
         {nodeDatum.level === 0 ? (
           <g>
             <rect
-              fill={token.colorBgContainer}
+              fill={token.colorBgLayout}
               stroke={token.colorBorder}
               width={100}
               height={48}
@@ -52,7 +58,7 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
         ) : nodeDatum.level === 1 ? (
           <g>
             <rect
-              fill={token.colorBgContainer}
+              fill={token.colorBgLayout}
               stroke={token.colorBorder}
               width={200}
               height={100}
@@ -80,13 +86,15 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
             </foreignObject>
 
             <foreignObject x={-10} y={0} width={164} height={28}>
-              <Typography.Text ellipsis>{nodeDatum.operationName}</Typography.Text>
+              <Tooltip title={nodeDatum.operationName} placement='bottom'>
+                <Typography.Text ellipsis>{nodeDatum.operationName}</Typography.Text>
+              </Tooltip>
             </foreignObject>
           </g>
         ) : (
           <g onClick={() => handleNodeClick(nodeDatum)}>
             <rect
-              fill={token.colorBgContainer}
+              fill={token.colorBgLayout}
               stroke={token.colorBorder}
               width={300}
               height={30}
@@ -118,8 +126,11 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
     <div
       id='treeWrapper'
       css={css`
-        width: 800px;
-        height: 300px;
+        width: ${props.width || '800px'};
+        height: ${props.height || '400px'};
+        border: ${props.bordered ? `1px solid ${token.colorBorder}` : 'none'};
+        border-radius: ${token.borderRadius}px;
+        background-color: ${token.colorBgContainer};
         .rd3t-link {
           stroke: ${token.colorBorder}!important;
         }
@@ -128,6 +139,7 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
       <Tree
         data={props.data}
         nodeSize={{ x: 240, y: 40 }}
+        translate={{ x: 100, y: props.height ? parseInt(props.height.toString()) / 2 : 200 }}
         renderCustomNodeElement={(rd3tProps) =>
           renderNodeWithCustomEvents({ ...rd3tProps, handleNodeClick })
         }

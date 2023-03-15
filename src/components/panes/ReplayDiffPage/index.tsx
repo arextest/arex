@@ -1,16 +1,15 @@
 import { css } from '@emotion/react';
-import { useRequest } from 'ahooks';
-import { Card, Collapse, Space, Tag, Typography } from 'antd';
-import React, { ReactNode, useMemo, useState } from 'react';
+import { useRequest, useSize } from 'ahooks';
+import { Collapse, Space, Tag, Typography } from 'antd';
+import React, { ReactNode, useMemo, useRef, useState } from 'react';
 
 import ReplayService from '../../../services/Replay.service';
-import { PlanItemStatistics, SubScene } from '../../../services/Replay.type';
+import { CompareResultDetail, PlanItemStatistics, SubScene } from '../../../services/Replay.type';
 import { EmptyWrapper, Label } from '../../styledComponents';
 import { PageFC } from '../index';
-import DiffCard from './DIffCard';
-import FlowTree from './FlowTree';
+import DiffCard from './DIffDrawer';
+import FlowTree, { FlowTreeData } from './FlowTree';
 import SubSceneMenu from './SubSceneMenu';
-import SummaryTabs from './SummaryTabs';
 
 export const SceneCodeMap: {
   [key: string]: {
@@ -57,11 +56,11 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
     },
   } = props;
 
+  const wrapperRef = useRef<HTMLElement>(null);
+  const size = useSize(wrapperRef);
+
+  const [modalOpen, setModalOpen] = useState(false);
   const [subSceneList, setSubSceneList] = useState<SubScene[]>([]);
-  const [activeIds, setActiveIds] = useState<{ recordId: string; replayId: string }>({
-    recordId: '',
-    replayId: '',
-  });
 
   const { data: sceneInfo = [] } = useRequest(
     () =>
@@ -79,57 +78,40 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
   );
 
   const {
-    data: fullLinkSummary = [],
-    loading: loadingFullLinkSummary,
-    run: getFullLinkSummary,
-  } = useRequest(ReplayService.queryFullLinkSummary, {
+    data: fullLinkInfo,
+    mutate: setFullLinkInfo,
+    run: getQueryFullLinkInfo,
+  } = useRequest(ReplayService.queryFullLinkInfo, {
     manual: true,
-    onSuccess(res, [params]) {
-      console.log(res);
-      res.length && getFullLinkMsgWithCategory({ ...params, categoryName: res[0].categoryName });
-    },
   });
 
-  const {
-    data: detailList = [],
-    loading: loadingDetailList,
-    run: getFullLinkMsgWithCategory,
-  } = useRequest(ReplayService.queryFullLinkMsgWithCategory, {
-    manual: true,
-    onSuccess(res) {
-      console.log(res);
-    },
-  });
-
-  const { data: fullLinkInfo, run: getQueryFullLinkInfo } = useRequest(
-    ReplayService.queryFullLinkInfo,
-    {
-      manual: true,
-    },
-  );
-
-  const treeData = useMemo(
-    () => ({
-      name: 'Arex',
-      operationName: 'Arex',
-      level: 0,
-      children: [
-        {
-          ...fullLinkInfo?.entrance,
-          name: fullLinkInfo?.entrance.categoryName,
-          level: 1,
-          children: fullLinkInfo?.infoItemList.map((item) => ({
-            ...item,
-            name: fullLinkInfo?.entrance.categoryName,
-            level: 2,
-          })),
-        },
-      ],
-    }),
+  const treeData = useMemo<FlowTreeData | undefined>(
+    () =>
+      fullLinkInfo && {
+        name: 'Arex',
+        operationName: 'Arex',
+        level: 0,
+        children: [
+          {
+            ...fullLinkInfo.entrance,
+            name: fullLinkInfo.entrance.categoryName,
+            level: 1,
+            children: fullLinkInfo.infoItemList.map((item) => ({
+              ...item,
+              name: fullLinkInfo.entrance.categoryName,
+              level: 2,
+            })),
+          },
+        ],
+      },
     [fullLinkInfo],
   );
 
-  const { data: diffMsg, run: queryDiffMsgById } = useRequest(ReplayService.queryDiffMsgById, {
+  const {
+    data: diffMsg,
+    loading: loadingDiffMsg,
+    run: queryDiffMsgById,
+  } = useRequest(ReplayService.queryDiffMsgById, {
     manual: true,
     onSuccess(res) {
       console.log(res);
@@ -137,105 +119,94 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
   });
 
   return (
-    <Space direction='vertical' style={{ width: '100%' }}>
-      <Space style={{ marginBottom: '4px' }}>
-        <Typography.Text type='secondary'>
-          <Label>planId</Label>
-          {planId}
-        </Typography.Text>
-        <Typography.Text type='secondary'>
-          <Label>planItemId</Label>
-          {planItemId}
-        </Typography.Text>
-      </Space>
+    <div ref={wrapperRef}>
+      <Space direction='vertical' style={{ width: '100%' }}>
+        <Space style={{ marginBottom: '4px' }}>
+          <Typography.Text type='secondary'>
+            <Label>planId</Label>
+            {planId}
+          </Typography.Text>
+          <Typography.Text type='secondary'>
+            <Label>planItemId</Label>
+            {planItemId}
+          </Typography.Text>
+        </Space>
 
-      {/* 一级: 第一个subScenes details.map(item => item.categoryName + decode(item.code)) */}
-      {/* 二级: details.categoryName + decode(item.code) + item.operationName */}
+        {/* 一级: 第一个subScenes details.map(item => item.categoryName + decode(item.code)) */}
+        {/* 二级: details.categoryName + decode(item.code) + item.operationName */}
 
-      <Collapse
-        accordion
-        onChange={([index]) => {
-          index !== undefined && setSubSceneList(sceneInfo[parseInt(index)].subScenes);
-        }}
-      >
-        {sceneInfo.map((scene, index) => {
-          const firstSubScene = scene.subScenes[0];
-          const { fullPath } = firstSubScene.details.reduce<{
-            fullPath: ReactNode[];
-            pathKeyList: string[];
-          }>(
-            (path, item, i) => {
-              // 去重: code 和 categoryName 组成唯一标识
-              const pathKey = `${item.code}-${item.categoryName}`;
-              if (path.pathKeyList.includes(pathKey)) return path;
-
-              path.pathKeyList.push(pathKey);
-              const title = (
-                <Space>
-                  {item.categoryName}
-                  <Tag color={SceneCodeMap[item.code.toString()].color}>
-                    {SceneCodeMap[item.code.toString()].message}
-                  </Tag>
-                </Space>
-              );
-
-              i && path.fullPath.push('+ ');
-              path.fullPath.push(title);
-              return path;
-            },
-            { fullPath: [], pathKeyList: [] },
-          );
-
-          return (
-            <Collapse.Panel
-              header={fullPath}
-              key={index}
-              css={css`
-                .ant-collapse-content-box {
-                  padding: 8px !important;
-                }
-              `}
-            >
-              <SubSceneMenu
-                data={subSceneList || []}
-                onClick={(params) => {
-                  setActiveIds(params);
-                  getFullLinkSummary(params);
-                  getQueryFullLinkInfo(params);
-                }}
-              />
-            </Collapse.Panel>
-          );
-        })}
-      </Collapse>
-
-      <FlowTree
-        data={treeData}
-        onClick={(id) => {
-          queryDiffMsgById({ id });
-        }}
-      />
-
-      <Card size='small' bodyStyle={{ paddingTop: 0 }}>
-        <EmptyWrapper
-          loading={loadingDetailList || loadingFullLinkSummary}
-          empty={!fullLinkSummary.length}
+        <Collapse
+          accordion
+          destroyInactivePanel
+          onChange={([index]) => {
+            if (index !== undefined) setSubSceneList(sceneInfo[parseInt(index)].subScenes);
+            else setFullLinkInfo(undefined);
+          }}
         >
-          <SummaryTabs
-            data={fullLinkSummary}
-            onChange={(key) => {
-              getFullLinkMsgWithCategory({ ...activeIds, categoryName: key });
+          {sceneInfo.map((scene, index) => {
+            const firstSubScene = scene.subScenes[0];
+            const { fullPath } = firstSubScene.details.reduce<{
+              fullPath: ReactNode[];
+              pathKeyList: string[];
+            }>(
+              (path, item, i) => {
+                // 去重: code 和 categoryName 组成唯一标识
+                const pathKey = `${item.code}-${item.categoryName}`;
+                if (path.pathKeyList.includes(pathKey)) return path;
+
+                path.pathKeyList.push(pathKey);
+                const title = (
+                  <Space>
+                    {item.categoryName}
+                    <Tag color={SceneCodeMap[item.code.toString()].color}>
+                      {SceneCodeMap[item.code.toString()].message}
+                    </Tag>
+                  </Space>
+                );
+
+                i && path.fullPath.push('+ ');
+                path.fullPath.push(title);
+                return path;
+              },
+              { fullPath: [], pathKeyList: [] },
+            );
+
+            return (
+              <Collapse.Panel
+                header={fullPath}
+                key={index}
+                css={css`
+                  .ant-collapse-content-box {
+                    padding: 8px !important;
+                  }
+                `}
+              >
+                <SubSceneMenu
+                  data={subSceneList || []}
+                  onClick={(params) => {
+                    getQueryFullLinkInfo(params);
+                  }}
+                />
+              </Collapse.Panel>
+            );
+          })}
+        </Collapse>
+
+        {treeData && (
+          <FlowTree
+            bordered
+            width={size?.width && size.width - 32}
+            data={treeData}
+            onClick={(id) => {
+              queryDiffMsgById({ id });
+              setModalOpen(true);
             }}
           />
+        )}
 
-          <Space direction='vertical' style={{ width: '100%' }}>
-            {detailList.map((detail) => (
-              <DiffCard key={detail.id} data={detail} />
-            ))}
-          </Space>
-        </EmptyWrapper>
-      </Card>
-    </Space>
+        <DiffCard open={modalOpen} loading={loadingDiffMsg} data={diffMsg} onClose={setModalOpen} />
+      </Space>
+    </div>
   );
 };
 

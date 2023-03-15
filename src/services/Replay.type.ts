@@ -287,31 +287,11 @@ export interface SubScene {
 }
 
 export interface SceneInfo {
-  subScenes: SubScene[];
+  subScenes: SubScene[]; // could be null;
 }
 
 export interface QuerySceneInfoRes {
   sceneInfos: SceneInfo[];
-}
-
-// /queryFullLinkSummary/{recordId}/{replayId}
-export interface QueryFullLinkSummaryReq {
-  recordId: string;
-  replayId: string;
-}
-
-export interface DetailInfoList {
-  code: number;
-  count: number;
-}
-
-export interface Detail {
-  categoryName: string;
-  detailInfoList: DetailInfoList[];
-}
-
-export interface QueryFullLinkSummaryRes {
-  details: Detail[];
 }
 
 // /queryFullLinkInfo/{recordId}/{replayId}
@@ -332,31 +312,20 @@ export interface QueryFullLinkInfoRes {
   infoItemList: infoItem[];
 }
 
-// /queryFullLinkMsgWithCategory
-export interface QueryFullLinkMsgWithCategoryReq {
-  recordId: string;
-  replayId: string;
-  categoryName: string;
-}
-
-export interface DetailList {
-  id: string;
-  operationName: string;
-  diffResultCode: number;
-  logs: DiffLog[] | null;
-  baseMsg: string;
-  testMsg: string;
-}
-
 // /queryDiffMsgById/{id}
 export interface QueryDiffMsgByIdReq {
   id: string;
 }
 
+export type CompareResultDetail = {
+  id: string;
+  categoryName: string;
+  operationName: string;
+  diffResultCode: number;
+  logs: DiffLog[] | null;
+  baseMsg: string;
+  testMsg: string;
+};
 export interface QueryDiffMsgByIdRes {
-  compareResultDetail: { categoryName: string } & DetailList;
-}
-
-export interface QueryFullLinkMsgWithCategoryRes {
-  detailList: DetailList[];
+  compareResultDetail: CompareResultDetail;
 }
