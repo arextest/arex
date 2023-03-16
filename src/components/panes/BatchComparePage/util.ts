@@ -3,6 +3,7 @@ import axios from '../../../helpers/api/axios';
 import { runCompareRESTRequest } from '../../../helpers/http/CompareRequestRunner';
 import { runRESTPreRequest } from '../../../helpers/http/RequestRunner';
 import { handleInherited } from '../../../helpers/utils';
+import { compressedData, dcompressedData, decompressedData } from '../../../helpers/zstd';
 import { FileSystemService } from '../../../services/FileSystem.service';
 import { urlPretreatment } from '../../http/helpers/utils/util';
 
@@ -88,17 +89,24 @@ export async function sendQuickCompare({ caseId, nodeInfo, envs }) {
       `/report/config/comparison/summary/queryByInterfaceIdAndOperationId?interfaceId=${interfaceId}&operationId=${operationId}`,
     )
     .then((res) => res.body);
+  // TODO 暂时response用原始的，原因是zstd解压不了
+  const compressedDataResponses0 = await compressedData(JSON.stringify(compareResult.responses[0]));
+  const compressedDataResponses1 = await compressedData(JSON.stringify(compareResult.responses[1]));
   const quickCompare = await axios
     .post('/report/compare/quickCompare', {
       msgCombination: {
         caseId: caseId,
-        baseMsg: JSON.stringify(compareResult.responses[0]),
-        testMsg: JSON.stringify(compareResult.responses[1]),
+        baseMsg: compressedDataResponses0,
+        testMsg: compressedDataResponses1,
         comparisonConfig: comparisonConfig,
       },
     })
     .then((res) => {
-      return res.body;
+      return {
+        ...res.body,
+        baseMsg: JSON.stringify(compareResult.responses[0]),
+        testMsg: JSON.stringify(compareResult.responses[1]),
+      };
     });
 
   return quickCompare;
