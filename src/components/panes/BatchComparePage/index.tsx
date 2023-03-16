@@ -85,14 +85,13 @@ const BatchComparePage = () => {
       dataIndex: 'statusList',
       key: 'statusList',
       render(_: any, record: any) {
+        const data = calcProgressDetail(record.statusList);
         return (
-          <div>
-            <StatusTag
-              status={calcProgressDetail(record.statusList).status}
-              successCaseCount={calcProgressDetail(record.statusList).successCaseCount}
-              totalCaseCount={calcProgressDetail(record.statusList).totalCaseCount}
-            ></StatusTag>
-          </div>
+          <StatusTag
+            status={data.status}
+            caseCount={data.successCaseCount}
+            totalCaseCount={data.totalCaseCount}
+          />
         );
       },
     },

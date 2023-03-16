@@ -3,7 +3,6 @@ import { Table } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useCustomSearchParams } from '../../../../router/useCustomSearchParams';
 import { useStore } from '../../../../store';
 import StatusTag from '../../../replay/StatusTag';
 import DiffCard from '../../BatchComparePage/DiffCard';
@@ -57,14 +56,13 @@ const columns = [
     dataIndex: 'statusList',
     key: 'statusList',
     render(_: any, record: any) {
+      const data = calcProgressDetail(record.statusList);
       return (
-        <div>
-          <StatusTag
-            status={calcProgressDetail(record.statusList).status}
-            successCaseCount={calcProgressDetail(record.statusList).successCaseCount}
-            totalCaseCount={calcProgressDetail(record.statusList).totalCaseCount}
-          ></StatusTag>
-        </div>
+        <StatusTag
+          status={data.status}
+          caseCount={data.successCaseCount}
+          totalCaseCount={data.totalCaseCount}
+        />
       );
     },
   },

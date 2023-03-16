@@ -51,7 +51,7 @@ const ReplayTable: FC<ResultsProps> = (props) => {
       render: (_, record) => (
         <StatusTag
           status={record.status}
-          successCaseCount={record.successCaseCount}
+          caseCount={record.successCaseCount + record.failCaseCount + record.errorCaseCount}
           totalCaseCount={record.totalCaseCount}
         />
       ),

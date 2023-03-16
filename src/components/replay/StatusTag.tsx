@@ -19,7 +19,7 @@ export const resultsStates = [
 
 export type StatusTagProps = {
   status: number;
-  successCaseCount?: number | null;
+  caseCount?: number | null;
   totalCaseCount?: number | null;
 };
 
@@ -32,11 +32,11 @@ const StatusTag: FC<StatusTagProps> = (props) => {
       props.status === 1 && props.totalCaseCount ? (
         <Progress
           type='circle'
-          percent={((props.successCaseCount || 0) * 100) / props.totalCaseCount}
+          percent={((props.caseCount || 0) * 100) / props.totalCaseCount}
           format={() =>
-            `${(((props.successCaseCount || 0) / (props.totalCaseCount as number)) * 100).toFixed(
-              2,
-            )}% ${props.successCaseCount} of ${props.totalCaseCount}`
+            `${(((props.caseCount || 0) / (props.totalCaseCount as number)) * 100).toFixed(2)}% ${
+              props.caseCount
+            } of ${props.totalCaseCount}`
           }
           size={12}
           style={{ marginRight: '7px' }}
@@ -44,7 +44,7 @@ const StatusTag: FC<StatusTagProps> = (props) => {
       ) : (
         state?.icon
       ),
-    [props.status, props.successCaseCount, props.totalCaseCount, state],
+    [props.status, props.caseCount, props.totalCaseCount, state],
   );
 
   return state ? (

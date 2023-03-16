@@ -35,7 +35,6 @@ import { getLocalStorage, getPercent } from '../../helpers/utils';
 import { useCustomNavigate } from '../../router/useCustomNavigate';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
-import { useStore } from '../../store';
 import { PagesType } from '../panes';
 import { SmallTextButton, SpaceBetweenWrapper } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
@@ -142,7 +141,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       render: (_, record) => (
         <StatusTag
           status={record.status}
-          successCaseCount={record.successCaseCount}
+          caseCount={record.successCaseCount}
           totalCaseCount={record.totalCaseCount}
         />
       ),
