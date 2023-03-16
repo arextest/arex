@@ -26,8 +26,8 @@ export const SceneCodeMap: {
     message: 'success',
   },
   '1': { color: 'magenta', message: 'value diff' },
-  '2': { color: 'orange', message: 'left call missing' },
-  '4': { color: 'blue', message: 'right call missing' },
+  '2': { color: 'orange', message: 'new call' },
+  '4': { color: 'blue', message: 'call missing' },
 };
 
 export const SummaryCodeMap: { [key: string]: { color: string; message: string } } = {
