@@ -1,6 +1,6 @@
 import './../DiffJsonView.css';
 
-import { css } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -61,16 +61,23 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, height }) => {
       return 'different_element';
     }
   };
-
+  const emotionTheme = useTheme();
   if (!data) {
     return <div></div>;
   }
+
   return (
     <div>
       <div
         css={css`
           display: flex;
           justify-content: space-between;
+          .color-tag-pink {
+            background-color: ${emotionTheme.colorInfoActive};
+          }
+          .color-tag-green {
+            background-color: ${emotionTheme.colorWarningActive};
+          }
         `}
       >
         <div
@@ -98,6 +105,18 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, height }) => {
         css={css`
           display: flex;
           width: 100%;
+          #containerRight .different_element {
+            background-color: ${emotionTheme.colorInfoActive};
+          }
+          #containerLeft .different_element {
+            background-color: ${emotionTheme.colorInfoActive};
+          }
+          #containerRight .different_element_012 {
+            background-color: ${emotionTheme.colorWarningActive};
+          }
+          #containerLeft .different_element_012 {
+            background-color: ${emotionTheme.colorWarningActive};
+          }
         `}
         id={'MsgWithDiffJsonEditorWrapper'}
         className={`${theme === 'dark' ? 'jse-theme-dark' : ''}`}

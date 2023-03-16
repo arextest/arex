@@ -1,4 +1,5 @@
-import { css } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
+import { theme } from 'antd';
 import React, { useEffect, useRef } from 'react';
 import { JSONEditor } from 'vanilla-jsoneditor';
 
@@ -37,11 +38,15 @@ export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
       }, 100);
     }
   }, [props]);
-
+  const theme = useTheme();
   return (
     <div
       css={css`
         height: ${props.height};
+        .jse-value,
+        .jse-key {
+          color: ${theme.colorText} !important;
+        }
       `}
       ref={refContainer}
     ></div>

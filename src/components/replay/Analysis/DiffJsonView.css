@@ -10,18 +10,18 @@
   height: 100%;
   width: 50%;
 }
-#MsgWithDiffJsonEditorWrapper #containerRight .different_element {
-  background-color: pink;
-}
-#MsgWithDiffJsonEditorWrapper #containerLeft .different_element {
-  background-color: pink;
-}
-#MsgWithDiffJsonEditorWrapper #containerRight .different_element_012 {
-  background-color: #00bb74;
-}
-#MsgWithDiffJsonEditorWrapper #containerLeft .different_element_012 {
-  background-color: #00bb74;
-}
+/*#MsgWithDiffJsonEditorWrapper #containerRight .different_element {*/
+/*  background-color: pink;*/
+/*}*/
+/*#MsgWithDiffJsonEditorWrapper #containerLeft .different_element {*/
+/*  background-color: pink;*/
+/*}*/
+/*#MsgWithDiffJsonEditorWrapper #containerRight .different_element_012 {*/
+/*  background-color: #00bb74;*/
+/*}*/
+/*#MsgWithDiffJsonEditorWrapper #containerLeft .different_element_012 {*/
+/*  background-color: #00bb74;*/
+/*}*/
 #MsgWithDiffJsonEditorWrapper #containerLeft .different_element_ig {
   background-color: #bfbfbf;
 }
@@ -58,13 +58,13 @@ div.jsoneditor-value.jsoneditor-null {
 .MsgWithDiffLegend > div > .color-tag-pink {
   width: 20px;
   height: 20px;
-  background-color: pink;
+  /*background-color: pink;*/
   margin-right: 8px;
 }
 .MsgWithDiffLegend > div > .color-tag-green {
   width: 20px;
   height: 20px;
-  background-color: #00bb74;
+  /*background-color: #00bb74;*/
   margin-right: 8px;
 }
 .MsgWithDiffLegend > div > .color-tag-grey {
