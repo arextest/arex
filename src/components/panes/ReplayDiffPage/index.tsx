@@ -4,8 +4,8 @@ import { Collapse, Space, Tag, Typography } from 'antd';
 import React, { ReactNode, useMemo, useRef, useState } from 'react';
 
 import ReplayService from '../../../services/Replay.service';
-import { CompareResultDetail, PlanItemStatistics, SubScene } from '../../../services/Replay.type';
-import { EmptyWrapper, Label } from '../../styledComponents';
+import { PlanItemStatistics, SubScene } from '../../../services/Replay.type';
+import { Label } from '../../styledComponents';
 import { PageFC } from '../index';
 import DiffCard from './DIffDrawer';
 import FlowTree, { FlowTreeData } from './FlowTree';
@@ -56,7 +56,7 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
     },
   } = props;
 
-  const wrapperRef = useRef<HTMLElement>(null);
+  const wrapperRef = useRef(null);
   const size = useSize(wrapperRef);
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -113,9 +113,6 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
     run: queryDiffMsgById,
   } = useRequest(ReplayService.queryDiffMsgById, {
     manual: true,
-    onSuccess(res) {
-      console.log(res);
-    },
   });
 
   return (

@@ -56,7 +56,7 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
             </text>
           </g>
         ) : nodeDatum.level === 1 ? (
-          <g>
+          <g onClick={() => handleNodeClick(nodeDatum)}>
             <rect
               fill={token.colorBgLayout}
               stroke={token.colorBorder}
