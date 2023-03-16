@@ -107,7 +107,7 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
                 <Badge color={SceneCodeMap[nodeDatum.code].color} />
 
                 <Typography.Text ellipsis style={{ width: '260px' }}>
-                  {nodeDatum.name} - {nodeDatum.operationName}
+                  {nodeDatum.categoryName} - {nodeDatum.operationName}
                 </Typography.Text>
               </Space>
             </foreignObject>
