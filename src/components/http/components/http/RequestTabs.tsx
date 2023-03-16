@@ -83,15 +83,19 @@ const RequestTabs: FC<{ config?: TabConfig }> = ({ config }) => {
         ),
       },
     ];
-
     // concat extra request tabs
-    config?.extra && _items.push(...config.extra.filter((tab) => !tab.hidden));
+    config?.extra &&
+      _items.push(
+        // 孟老板需求，compare时才显示compareConfig
+        ...config.extra.filter(
+          (tab) => !(tab.hidden || (tab.key === 'compareConfig' && store.mode === 'normal')),
+        ),
+      );
 
     // filter tabs
     config?.filter && (_items = _items.filter((tab) => config?.filter?.(tab.key)));
-
     return _items;
-  }, [config, store.request]);
+  }, [config, store.request, store.mode]);
 
   return (
     <div

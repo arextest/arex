@@ -3,7 +3,7 @@ import axios from '../../../helpers/api/axios';
 import { runCompareRESTRequest } from '../../../helpers/http/CompareRequestRunner';
 import { runRESTPreRequest } from '../../../helpers/http/RequestRunner';
 import { handleInherited } from '../../../helpers/utils';
-import { compressedData, dcompressedData, decompressedData } from '../../../helpers/zstd';
+import { compressedData, decompressedData } from '../../../helpers/zstd';
 import { FileSystemService } from '../../../services/FileSystem.service';
 import { urlPretreatment } from '../../http/helpers/utils/util';
 
@@ -101,11 +101,11 @@ export async function sendQuickCompare({ caseId, nodeInfo, envs }) {
         comparisonConfig: comparisonConfig,
       },
     })
-    .then((res) => {
+    .then(async (res) => {
       return {
         ...res.body,
-        baseMsg: JSON.stringify(compareResult.responses[0]),
-        testMsg: JSON.stringify(compareResult.responses[1]),
+        baseMsg: await decompressedData(res.body.baseMsg),
+        testMsg: await decompressedData(res.body.testMsg),
       };
     });
 
