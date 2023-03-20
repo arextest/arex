@@ -208,6 +208,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
             icon={<DiffOutlined />}
             title={t('replay.diffScenesNew')}
             breakpoint='xxl'
+            disabled={!record.failCaseCount}
             onClick={() => {
               customNavigate(
                 `/${params.workspaceId}/${PagesType.ReplayDiff}/${
