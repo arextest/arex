@@ -129,7 +129,7 @@ const RunResultPane = () => {
       <h2>Untitled - Run results</h2>
       <div
         css={css`
-          display: flex;
+          display: none;
           background-color: #ededed;
           padding: 20px;
           margin-bottom: 20px;
