@@ -112,6 +112,7 @@
     "cancelled": "cancelled",
     "unknownState": "Unknown State",
     "diffScenes": "DiffScenes",
+    "diffScenesNew": "DiffScenes(New)",
     "caseTable": "CaseTable",
     "recordId": "Record ID",
     "replayId": "Index ID",

@@ -206,7 +206,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
         <>
           <TooltipButton
             icon={<DiffOutlined />}
-            title={t('replay.diff')}
+            title={t('replay.diffScenesNew')}
             breakpoint='xxl'
             onClick={() => {
               customNavigate(

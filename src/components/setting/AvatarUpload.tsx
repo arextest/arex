@@ -14,13 +14,6 @@ const AvatarUpload: FC<{ value?: string; onChange?: (value: string) => void }> =
   const { token } = theme.useToken();
   const { message } = App.useApp();
 
-  const uploadButton = (
-    <div>
-      <PlusOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
-
   const beforeUpload = (file: RcFile) => {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
@@ -55,7 +48,10 @@ const AvatarUpload: FC<{ value?: string; onChange?: (value: string) => void }> =
             style={{ width: '100%', borderRadius: token.borderRadius }}
           />
         ) : (
-          uploadButton
+          <div>
+            <PlusOutlined />
+            <div style={{ marginTop: 8 }}>Upload</div>
+          </div>
         )}
       </Upload>
     </ImgCrop>

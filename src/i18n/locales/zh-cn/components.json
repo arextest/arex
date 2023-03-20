@@ -112,6 +112,7 @@
     "cancelled": "取消",
     "unknownState": "未知",
     "diffScenes": "差异对比",
+    "diffScenesNew": "DiffScenes(新)",
     "caseTable": "全量 Case",
     "recordId": "录制 ID",
     "replayId": "回放 ID",
