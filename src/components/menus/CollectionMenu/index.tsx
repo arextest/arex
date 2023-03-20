@@ -189,7 +189,8 @@ const CollectionMenu = () => {
     } else {
       newExpandedKeys = dataList
         .map((item) => {
-          if (item.title.match(regExp)) {
+          // @ts-ignore
+          if (item.title.match(regExp) || item.key.includes(value)) {
             return getParentKey(item.key, treeData);
           }
           return null;
