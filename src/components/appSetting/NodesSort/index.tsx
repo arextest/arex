@@ -397,6 +397,9 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
           {
             open: modalOpen,
             onCancel: () => setModalOpen(false),
+            onOk() {
+              handleResponseSave();
+            },
             // footer: (
             //   <ActionButton
             //     onSave={nodesEditMode === NodesEditMode.Tree ? handleSaveSort : handleResponseSave}
