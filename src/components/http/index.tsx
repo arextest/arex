@@ -166,6 +166,7 @@ const Http = forwardRef<HttpRef, HttpProps>(
     useEffect(() => {
       dispatch((state) => {
         if (value) {
+          state.request.name = value.name || '';
           state.request.method = value.method || 'GET';
           state.request.endpoint = value.endpoint || '';
           state.request.compareMethod = value.compareMethod || 'GET';
