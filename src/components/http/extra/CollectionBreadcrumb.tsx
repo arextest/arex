@@ -6,8 +6,11 @@ import React, { FC, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
+import { treeFindPath } from '../../../helpers/collection/util';
+import { getLocalStorage } from '../../../helpers/utils';
 import { CollectionService } from '../../../services/Collection.service';
 import { FileSystemService } from '../../../services/FileSystem.service';
+import { useStore } from '../../../store';
 import { SpaceBetweenWrapper } from '../../styledComponents';
 import QuickEdit from '../components/smart/QuickEdit';
 import { HttpContext } from '../index';
@@ -26,6 +29,7 @@ const CollectionBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTa
   const params = useParams();
   const { message } = App.useApp();
   const { store, dispatch } = useContext(HttpContext);
+  const { collectionTreeData } = useStore();
 
   const [editEditAble, setEditAble] = useState(false);
   const [labelValue, setLabelValue] = useState<string[]>([]);
@@ -52,6 +56,25 @@ const CollectionBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTa
     },
   );
 
+  const { run: runUpdateRequestName } = useRequest(
+    () => {
+      const paths = treeFindPath(collectionTreeData, (node) => node.key === id);
+      return CollectionService.rename({
+        id: params.workspaceId,
+        newName: store.request.name,
+        path: paths.map((i) => i.key),
+        userName: getLocalStorage('email'),
+      });
+    },
+    {
+      manual: true,
+      onSuccess() {
+        message.success('update success');
+        window.globalFetchTreeData();
+      },
+    },
+  );
+
   useEffect(() => {
     defaultTags &&
       setLabelValue(defaultTags.filter((t) => labelsData?.map((d) => d.id).includes(t)));
@@ -70,11 +93,39 @@ const CollectionBreadcrumb: FC<HttpBreadcrumbProps> = ({ nodePath, id, defaultTa
   return (
     <SpaceBetweenWrapper>
       <Space>
-        <Breadcrumb>
-          {nodePath.map((title, index) => (
-            <Breadcrumb.Item key={index}>{title}</Breadcrumb.Item>
-          ))}
-        </Breadcrumb>
+        <QuickEdit
+          edit={(setDisplayMode: any) => (
+            <Input
+              css={css`
+                width: 260px;
+              `}
+              size={'small'}
+              value={store.request.name || ''}
+              onChange={(e) => {
+                dispatch((state) => {
+                  state.request.name = e.target.value;
+                });
+              }}
+              onBlur={() => {
+                setDisplayMode();
+                runUpdateRequestName();
+              }}
+              onKeyUp={(e) => {
+                if (e.keyCode === 13) {
+                  setDisplayMode();
+                  runUpdateRequestName();
+                }
+              }}
+            />
+          )}
+          display={
+            <Breadcrumb>
+              {nodePath.map((title, index) => (
+                <Breadcrumb.Item key={index}>{title}</Breadcrumb.Item>
+              ))}
+            </Breadcrumb>
+          }
+        ></QuickEdit>
 
         {nodeType === 2 &&
           (!editEditAble ? (

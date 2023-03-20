@@ -110,7 +110,8 @@ export const filterTree = (val: string, tree: any, newArr: any = []) => {
   }
 
   for (const item of tree) {
-    if (item.title.indexOf(val) > -1) {
+    const regExp = new RegExp(val, 'i');
+    if (item.title.match(regExp)) {
       // 匹配到关键字的逻辑
       newArr.push(item); // 如果匹配到就在数值中添加记录
       continue; // 匹配到了就退出循环了此时如果有子集也会一并带着

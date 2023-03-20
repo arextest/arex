@@ -14,6 +14,7 @@ const QuickEdit: FC<{ display: any; edit: any }> = ({ display, edit }) => {
         &:hover {
           .edit-btn {
             display: inline-block;
+            visibility: unset;
           }
         }
       `}
@@ -24,7 +25,7 @@ const QuickEdit: FC<{ display: any; edit: any }> = ({ display, edit }) => {
         <Button
           className={'edit-btn'}
           css={css`
-            display: none;
+            visibility: hidden;
           `}
           size='small'
           type='link'
