@@ -1,21 +1,14 @@
-.tooltip-theme1 {
-  display: flex;
-  padding: 10px;
-  border-radius: 3px;
-  background-color: #f5f5f5;
+@font-face {
+  font-family: "IBMPlexMono"; /* Project id 3197714 */
+  src: url('./IBMPlexMono-Regular.woff2') format('woff2')
 }
 
-.tooltip-theme1 .name {
-  color: black;
-  margin-right: 8px;
+#__vconsole > div.vc-panel > div.vc-toolbar > i:nth-child(2){
+  display: none;
 }
-.tooltip-theme1 .value {
-  color: black;
-  background-color: #a3a3a3;
-  padding: 0 4px;
-  border-radius: 2px;
+#__vconsole > div.vc-panel > div.vc-toolbar > i:nth-child(3){
+  display: none;
 }
-
-.ExtraResponseTabItemCompareResult-wrapperClassName{
-  height: 100%;
+#__vc_plug_default > div > div > div.vc-scroller-contents > div.vc-scroller-footer > form:nth-child(1){
+  display: none;
 }

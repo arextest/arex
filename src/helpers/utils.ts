@@ -1,8 +1,7 @@
-import { App, message } from 'antd';
-import React from 'react';
+import { message } from 'antd';
 import { v4 as uuid } from 'uuid';
 
-import { PageType } from '../pages';
+import { HoppRESTRequest } from '../components/http/data/rest';
 import * as ChartUtils from './chart';
 
 export { ChartUtils, uuid };
@@ -47,12 +46,13 @@ export function clearLocalStorage(key?: string) {
   }
 }
 
-export function tryParseJsonString<T>(jsonString?: string, errorTip?: string) {
+export function tryParseJsonString<T>(jsonString?: any, errorTip?: string) {
   try {
     return JSON.parse(jsonString || '{}') as T;
   } catch (e) {
     console.error(e);
     errorTip && message.warning(errorTip);
+    return jsonString;
   }
 }
 
@@ -68,22 +68,6 @@ export const tryPrettierJsonString = (jsonString: string, errorTip?: string) => 
 export const getPercent = (num: number, den: number, showPercentSign = true) => {
   const value = num && den ? parseFloat(((num / den) * 100).toFixed(0)) : 0;
   return showPercentSign ? value + '%' : value;
-};
-
-export const generateGlobalPaneId = (
-  menuType: string,
-  pageType: PageType<string>,
-  rawId: React.Key,
-) => btoa(encodeURI(`${menuType}__${pageType}__${rawId}`));
-
-export const parseGlobalPaneId = (paneId?: string) => {
-  paneId = paneId || '';
-  const arr = atob(decodeURI(paneId)).split('__');
-  return {
-    menuType: arr[0],
-    pageType: arr[1],
-    rawId: arr[2],
-  };
 };
 
 /**
@@ -130,4 +114,26 @@ export function getChromeVersion() {
     console.log(e);
   }
   return versionStringCompare(v, '89.00.00');
+}
+
+export const JSONparse = (jsonString: string) => {
+  try {
+    return JSON.parse(jsonString);
+  } catch (e) {
+    return undefined;
+  }
+};
+
+export function handleInherited(request: HoppRESTRequest): HoppRESTRequest {
+  if (request.inherited) {
+    return {
+      ...request,
+      method: request.parentValue?.method || 'GET',
+      endpoint: request.parentValue?.endpoint || '',
+      compareMethod: request.parentValue?.compareMethod || 'GET',
+      compareEndpoint: request.parentValue?.compareEndpoint || '',
+    };
+  } else {
+    return request;
+  }
 }

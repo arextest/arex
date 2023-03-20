@@ -1,6 +1,6 @@
 import 'dayjs/locale/zh-cn';
 
-import { Locale } from 'antd/lib/locale-provider';
+import { Locale } from 'antd/es/locale';
 import en from 'antd/locale/en_US';
 import zh from 'antd/locale/zh_CN';
 

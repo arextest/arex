@@ -2,7 +2,7 @@ import { DeleteOutlined, DownOutlined, LeftOutlined, MenuOutlined } from '@ant-d
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button, Collapse, Popconfirm, Space, Switch, theme } from 'antd';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { DragDropContext, DragDropContextProps, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
 
@@ -28,6 +28,7 @@ export type ScriptBlocksCollapseProps<T = string> = {
 function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
   const { t } = useTranslation('common');
   const { token } = theme.useToken();
+  const count = useRef(0);
 
   const [activeKey, setActiveKey] = useState<string>();
   const onDragEnd: DragDropContextProps['onDragEnd'] = (result) => {
@@ -37,6 +38,12 @@ function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
     }
     props.onDrag?.(result.source.index, result.destination.index);
   };
+
+  useEffect(() => {
+    props.value.length === 1 && setActiveKey(props.value[0].key);
+    if (props.value.length === count.current + 1) setActiveKey(props.value.at(-1)?.key);
+    count.current = props.value.length;
+  }, [props.value.length]);
 
   const handleChange = useCallback(
     (id: string, attr: keyof ScriptBlock<any>, value: ScriptBlock<any>[typeof attr]) => {
@@ -58,7 +65,7 @@ function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
                   <div ref={provided.innerRef} {...provided.draggableProps}>
                     <div
                       css={css`
-                        //margin: 8px 0;
+                        margin: 8px 0;
                         width: 100%;
                         .ant-collapse-header-text {
                           flex: 1 !important;
@@ -116,7 +123,13 @@ function ScriptBlocksCollapse<T = string>(props: ScriptBlocksCollapseProps<T>) {
                                   title={t('delete')}
                                 />
                               </Popconfirm>
-                              {activeKey === item.key ? <DownOutlined /> : <LeftOutlined />}
+                              <LeftOutlined
+                                css={css`
+                                  transform: rotate(${activeKey === item.key ? '-90deg' : 0});
+                                  transition: all 0.3s ease;
+                                `}
+                                onClick={() => setActiveKey(item.key)}
+                              />
                             </Space>
                           }
                         >

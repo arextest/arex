@@ -1,4 +1,4 @@
-import { HoppRESTRequest } from '../../components/arex-request/data/rest';
+import { HoppRESTRequest } from '../../components/http/data/rest';
 import { SaveInterfaceReq } from '../../services/FileSystem.type';
 export function convertSaveRequestData(
   workspaceId: string,
@@ -21,5 +21,7 @@ export function convertSaveRequestData(
       method: request.compareMethod,
       endpoint: request.compareEndpoint,
     },
+    description: request.description,
+    inherited: request.inherited,
   };
 }

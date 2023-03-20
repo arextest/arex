@@ -1,7 +1,9 @@
+import { css } from '@emotion/react';
 import { Card, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type SortTreeProps = Omit<TreeProps, 'treeData'> & {
   treeData?: any[];
@@ -9,6 +11,8 @@ type SortTreeProps = Omit<TreeProps, 'treeData'> & {
 };
 
 const SortTree: FC<SortTreeProps> = (props) => {
+  const { t } = useTranslation('components');
+
   function getNodes(data?: any[] | object, basePath = ''): DataNode[] {
     if (!data || (Array.isArray(data) && !data?.length)) return [];
 
@@ -33,7 +37,7 @@ const SortTree: FC<SortTreeProps> = (props) => {
   return (
     <Card
       bordered={false}
-      title={`${props.title} (choose key to sort)`}
+      title={`${props.title} (${t('appSetting.chooseOnekey')})`}
       bodyStyle={{ padding: '8px 16px' }}
       headStyle={{ padding: '0 16px', margin: '-8px 0' }}
     >
@@ -45,6 +49,10 @@ const SortTree: FC<SortTreeProps> = (props) => {
         autoExpandParent
         selectedKeys={[]}
         treeData={getNodes(props.treeData, '')}
+        css={css`
+          max-height: calc(100vh - 300px);
+          overflow-y: auto;
+        `}
       />
     </Card>
   );

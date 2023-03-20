@@ -9,6 +9,7 @@ import { useRequest } from 'ahooks';
 import { App, Button, Input, Popconfirm, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { FC, useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Updater, useImmer } from 'use-immer';
 
 import AppSettingService from '../../../../services/AppSetting.service';
@@ -29,6 +30,7 @@ const InitRowData = {
 
 const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props) => {
   const { message } = App.useApp();
+  const { t } = useTranslation(['common', 'components']);
 
   const [editableRow, setEditableRow] = useState<string>();
   const [fullClassNameInputStatus, setFullClassNameInputStatus] = useState<
@@ -52,7 +54,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
 
     return [
       {
-        title: 'Full Class Name',
+        title: t('appSetting.fullClassName', { ns: 'components' }),
         dataIndex: 'fullClassName',
         key: 'fullClassName',
         render: (text, record) =>
@@ -70,7 +72,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
           ),
       },
       {
-        title: 'Method Name',
+        title: t('appSetting.methodName', { ns: 'components' }),
         dataIndex: 'methodName',
         key: 'methodName',
         render: (text, record) =>
@@ -81,7 +83,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
           ),
       },
       {
-        title: 'Parameter Types',
+        title: t('appSetting.parameterTypes', { ns: 'components' }),
         dataIndex: 'parameterTypes',
         key: 'parameterTypes',
         render: (text, record) =>
@@ -92,7 +94,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
           ),
       },
       {
-        title: 'Action',
+        title: t('action'),
         key: 'actions',
         width: 72,
         align: 'center',
@@ -101,13 +103,13 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
           <Space>
             {isEditableRow(record.id) ? (
               <TooltipButton
-                title={'Cancel'}
+                title={t('cancel')}
                 icon={<CloseOutlined />}
                 onClick={() => reload({ appId: props.appId })}
               />
             ) : (
               <TooltipButton
-                title={'Edit'}
+                title={t('edit')}
                 icon={<EditOutlined />}
                 onClick={() => {
                   // 防止某一行在编辑未保存状态下意外开始编辑新的一行数据，导致夹带未保存的数据
@@ -119,13 +121,13 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
 
             {isEditableRow(record.id) ? (
               <TooltipButton
-                title={'Save'}
+                title={t('save')}
                 icon={<SaveOutlined />}
                 onClick={() => handleSave(record)}
               />
             ) : (
               <Popconfirm
-                title='Are you sure to delete this record?'
+                title={t('appSetting.delConfirmText', { ns: 'components' })}
                 onConfirm={() => {
                   if (record.id === EDIT_ROW_KEY) {
                     setDataSource((state) => {
@@ -135,8 +137,8 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
                     remove({ appId: props.appId, id: record.id as string });
                   }
                 }}
-                okText='Yes'
-                cancelText='No'
+                okText={t('yes')}
+                cancelText={t('no')}
               >
                 <Button type='text' size='small' icon={<DeleteOutlined />} />
               </Popconfirm>
@@ -157,7 +159,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
   const handleSave = (record: DynamicClass) => {
     if (!record.fullClassName) {
       setFullClassNameInputStatus('error');
-      message.warning('Please enter full class name');
+      message.warning(t('appSetting.emptyFullClassName', { ns: 'components' }));
       return;
     }
     record.id === EDIT_ROW_KEY
@@ -184,33 +186,33 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
   const { run: insert } = useRequest(AppSettingService.insertDynamicClassSetting, {
     manual: true,
     onSuccess(res) {
-      res ? reload({ appId: props.appId }) : message.error('saveFail');
+      res ? reload({ appId: props.appId }) : message.error(t('message.saveFailed'));
     },
     onError(e) {
       console.error(e);
-      message.error('saveFail');
+      message.error(t('message.saveFailed'));
     },
   });
 
   const { run: update } = useRequest(AppSettingService.updateDynamicClassSetting, {
     manual: true,
     onSuccess(res) {
-      res ? reload({ appId: props.appId }) : message.error('saveFail');
+      res ? reload({ appId: props.appId }) : message.error(t('message.saveFailed'));
     },
     onError(e) {
       console.error(e);
-      message.error('saveFail');
+      message.error(t('message.saveFailed'));
     },
   });
 
   const { run: remove } = useRequest(AppSettingService.removeDynamicClassSetting, {
     manual: true,
     onSuccess(res) {
-      res ? reload({ appId: props.appId }) : message.error('deleteFailed');
+      res ? reload({ appId: props.appId }) : message.error(t('message.delFailed'));
     },
     onError(e) {
       console.error(e);
-      message.error('deleteFailed');
+      message.error(t('message.delFailed'));
     },
   });
 
@@ -231,7 +233,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
         onClick={handleAddRecord}
         style={{ marginTop: '8px' }}
       >
-        Add
+        {t('add')}
       </Button>
     </div>
   );

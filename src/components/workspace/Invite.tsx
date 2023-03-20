@@ -1,6 +1,7 @@
 import { UserAddOutlined } from '@ant-design/icons';
 import { App, Button, Form, Modal, Select, Space, Typography } from 'antd';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { EmailKey, RoleEnum } from '../../constant';
@@ -12,18 +13,15 @@ const { Option } = Select;
 
 const InviteWorkspace = () => {
   const { message } = App.useApp();
+  const { t } = useTranslation('common');
   const email = getLocalStorage<string>(EmailKey);
   const _useParams = useParams();
 
   const [form] = Form.useForm();
   const [open, setOpen] = useState<boolean>(false);
 
-  const handleChange = (value: string) => {
-    console.log(`selected ${value}`);
-  };
-
   return (
-    <div>
+    <>
       <Button
         style={{ marginRight: '8px' }}
         type={'primary'}
@@ -31,7 +29,7 @@ const InviteWorkspace = () => {
         icon={<UserAddOutlined />}
         onClick={() => setOpen(true)}
       >
-        Invite
+        {t('invite')}
       </Button>
 
       <Modal
@@ -42,7 +40,6 @@ const InviteWorkspace = () => {
           form
             .validateFields()
             .then((values) => {
-              console.log(values, 'va');
               const params = {
                 invitor: email,
                 role: values.role,
@@ -85,7 +82,7 @@ const InviteWorkspace = () => {
               },
             ]}
           >
-            <Select mode='tags' style={{ width: '100%' }} onChange={handleChange}></Select>
+            <Select mode='tags' style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item name='role' label='Role'>
@@ -105,14 +102,14 @@ const InviteWorkspace = () => {
               <Option value={RoleEnum.Viewer}>
                 <Space direction='vertical'>
                   <Text>Viewer</Text>
-                  <Text type='secondary'>Can viewfork,and export workspace resources.</Text>
+                  <Text type='secondary'>Can view fork, and export workspace resources.</Text>
                 </Space>
               </Option>
             </Select>
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </>
   );
 };
 

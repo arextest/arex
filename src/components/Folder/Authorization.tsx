@@ -1,37 +1,34 @@
 import { Select, Typography } from 'antd';
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const { Text } = Typography;
 
 const Authorization: FC = () => {
+  const { t } = useTranslation(['components']);
   return (
     <div>
       <div style={{ marginBottom: '20px' }}>
-        <Text>
-          This authorization method will be used for every request in this folder. You can override
-          this by specifying one in the request.
-        </Text>
+        <Text>{t('authorization.header_description')}</Text>
       </div>
       <div style={{ padding: '10px' }}>
         <div style={{ marginBottom: '20px' }}>
           <div style={{ width: '200px', display: 'inline-block' }}>
-            <Text strong>Type</Text>
+            <Text strong>{t('authorization.type')}</Text>
           </div>
           <Select
             style={{ width: '200px' }}
             options={[
               {
                 value: 'parent',
-                label: 'Inherit auth from parent',
+                label: t('authorization.type_parent'),
               },
             ]}
             disabled
             value={'parent'}
           />
         </div>
-        <Text type='secondary'>
-          The authorization header will be automatically generated when you send the request.
-        </Text>
+        <Text type='secondary'>{t('authorization.footer_description')}</Text>
       </div>
     </div>
   );

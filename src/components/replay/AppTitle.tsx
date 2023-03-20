@@ -1,17 +1,20 @@
 import { PlayCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, DatePicker, Form, Input, Modal, notification } from 'antd';
+import { App, Button, DatePicker, Form, Input, Modal, Select } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
+import { DefaultOptionType } from 'rc-select/lib/Select';
 import React, { FC, ReactNode, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 
 import { EmailKey } from '../../constant';
-import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
-import { MenusType } from '../../menus';
-import { PagesType } from '../../pages';
+import { getLocalStorage } from '../../helpers/utils';
+import { useCustomNavigate } from '../../router/useCustomNavigate';
+import AppSettingService from '../../services/AppSetting.service';
 import ReplayService from '../../services/Replay.service';
 import { ApplicationDataType } from '../../services/Replay.type';
-import { useStore } from '../../store';
+import { PagesType } from '../panes';
 import { PanesTitle } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
 
@@ -20,7 +23,12 @@ type AppTitleProps = {
   onRefresh?: () => void;
 };
 
-type CreatePlanForm = { targetEnv: string; caseStartTime: Dayjs; caseEndTime: Dayjs };
+type CreatePlanForm = {
+  targetEnv: string;
+  caseSourceFrom: Dayjs;
+  caseSourceTo: Dayjs;
+  operationList?: string[];
+};
 
 const TitleWrapper = styled(
   (props: {
@@ -28,27 +36,31 @@ const TitleWrapper = styled(
     title: ReactNode;
     onRefresh?: () => void;
     onSetting?: () => void;
-  }) => (
-    <div className={props.className}>
-      <span>{props.title}</span>
-      {props.onRefresh && (
-        <TooltipButton
-          size='small'
-          type='text'
-          title='refresh'
-          icon={<SyncOutlined />}
-          onClick={props.onRefresh}
-        />
-      )}
-      {/*<TooltipButton*/}
-      {/*  size='small'*/}
-      {/*  type='text'*/}
-      {/*  title='setting'*/}
-      {/*  icon={<SettingOutlined />}*/}
-      {/*  onClick={props.onSetting}*/}
-      {/*/>*/}
-    </div>
-  ),
+  }) => {
+    const { t } = useTranslation(['components']);
+
+    return (
+      <div className={props.className}>
+        <span>{props.title}</span>
+        {props.onRefresh && (
+          <TooltipButton
+            size='small'
+            type='text'
+            title={t('replay.refresh')}
+            icon={<SyncOutlined />}
+            onClick={props.onRefresh}
+          />
+        )}
+        {/*<TooltipButton*/}
+        {/*  size='small'*/}
+        {/*  type='text'*/}
+        {/*  title='setting'*/}
+        {/*  icon={<SettingOutlined />}*/}
+        {/*  onClick={props.onSetting}*/}
+        {/*/>*/}
+      </div>
+    );
+  },
 )`
   display: flex;
   align-items: center;
@@ -57,38 +69,55 @@ const TitleWrapper = styled(
   }
 `;
 
+const InitialValues = {
+  targetEnv: '',
+  caseSourceFrom: dayjs().subtract(1, 'day').startOf('day'), // 前一天零点
+  caseSourceTo: dayjs().add(1, 'day').startOf('day').subtract(1, 'second'), // 当天最后一秒
+};
+
 const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
+  const { t } = useTranslation(['components']);
+  const { notification } = App.useApp();
+  const params = useParams();
+  const customNavigate = useCustomNavigate();
   const email = getLocalStorage<string>(EmailKey);
-  const { setPages } = useStore();
 
   const [form] = Form.useForm<CreatePlanForm>();
   const [open, setOpen] = useState(false);
+  const [interfacesOptions, setInterfacesOptions] = useState<DefaultOptionType[]>([]);
 
-  const initialValues = {
-    targetEnv: '',
-    caseStartTime: dayjs().subtract(1, 'day').startOf('day'), // 前一天零点
-    caseEndTime: dayjs().add(1, 'day').startOf('day').subtract(1, 'second'), // 当天最后一秒
-  };
+  /**
+   * 请求 InterfacesList
+   */
+  useRequest(() => AppSettingService.queryInterfacesList<'Global'>({ id: data.appId }), {
+    ready: open,
+    onSuccess(res) {
+      setInterfacesOptions(res.map((item) => ({ label: item.operationName, value: item.id })));
+    },
+  });
 
+  /**
+   * 创建回放
+   */
   const { run: createPlan, loading: confirmLoading } = useRequest(ReplayService.createPlan, {
     manual: true,
     onSuccess(res) {
       if (res.result === 1) {
         notification.success({
-          message: 'Started Successfully',
+          message: t('replay.startSuccess'),
         });
-        onRefresh && onRefresh();
+        onRefresh?.();
       } else {
         console.error(res.desc);
         notification.error({
-          message: 'Start Failed',
+          message: t('replay.startFailed'),
           description: res.desc,
         });
       }
     },
     onError(e) {
       notification.error({
-        message: 'Start Failed',
+        message: t('replay.startFailed'),
         description: e.message,
       });
     },
@@ -105,17 +134,19 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         createPlan({
           appId: data.appId,
           sourceEnv: 'pro',
-          targetEnv: values.targetEnv,
-          caseStartTime: values.caseStartTime.startOf('day').valueOf(),
-          caseEndTime: values.caseEndTime
+          targetEnv: values.targetEnv.trim(),
+          caseSourceFrom: values.caseSourceFrom.startOf('day').valueOf(),
+          caseSourceTo: values.caseSourceTo
             .add(1, 'day')
             .startOf('day')
             .subtract(1, 'second')
             .valueOf(),
+          operationCaseInfoList: values.operationList?.map((operationId) => ({
+            operationId,
+          })),
           operator: email as string,
           replayPlanType: 0,
         });
-        console.log('Received values of form: ', values);
       })
       .catch((info) => {
         console.log('Validate Failed:', info);
@@ -123,17 +154,10 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   };
 
   const handleOpenSetting = () => {
-    setPages(
-      {
-        title: `Setting ${data.appId}`,
-        menuType: MenusType.AppSetting,
-        pageType: PagesType.AppSetting,
-        isNew: false,
-        data,
-        paneId: generateGlobalPaneId(MenusType.AppSetting, PagesType.AppSetting, data.id),
-        rawId: data.id,
-      },
-      'push',
+    customNavigate(
+      `/${params.workspaceId}/${PagesType.AppSetting}/${data.id}?data=${encodeURIComponent(
+        JSON.stringify(data),
+      )}`,
     );
   };
   return (
@@ -149,13 +173,13 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
             icon={<PlayCircleOutlined />}
             onClick={() => setOpen(true)}
           >
-            Start replay
+            {t('replay.startButton')}
           </Button>
         }
       />
 
       <Modal
-        title={`Start replay - ${data.appId}`}
+        title={`${t('replay.startButton')} - ${data.appId}`}
         open={open}
         onOk={handleStartReplay}
         onCancel={() => setOpen(false)}
@@ -167,31 +191,40 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           form={form}
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
-          initialValues={initialValues}
+          initialValues={InitialValues}
           autoComplete='off'
         >
           <Form.Item
-            label='Target Host'
+            label={t('replay.targetHost')}
             name='targetEnv'
-            rules={[{ required: true, message: "Target Host can't be empty" }]}
+            rules={[{ required: true, message: t('replay.emptyHost') }]}
           >
             <Input />
           </Form.Item>
 
           <Form.Item
-            label='Start Time'
-            name='caseStartTime'
-            rules={[{ required: true, message: "Start Time can't be empty" }]}
+            label={t('replay.caseStartTime')}
+            name='caseSourceFrom'
+            rules={[{ required: true, message: t('replay.emptyStartTime') }]}
           >
             <DatePicker style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
-            label='End Time'
-            name='caseEndTime'
-            rules={[{ required: true, message: "End Time can't be empty" }]}
+            label={t('replay.caseEndTime')}
+            name='caseSourceTo'
+            rules={[{ required: true, message: t('replay.emptyEndTime') }]}
           >
             <DatePicker style={{ width: '100%' }} />
+          </Form.Item>
+
+          <Form.Item label={t('replay.operation')} name='operationList'>
+            <Select
+              mode='multiple'
+              maxTagCount={3}
+              options={interfacesOptions}
+              placeholder={'optional'}
+            />
           </Form.Item>
         </Form>
       </Modal>

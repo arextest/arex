@@ -3,12 +3,12 @@ import { mountStoreDevtool } from 'simple-zustand-devtools';
 import create from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
+import { nodeType } from '../components/menus/CollectionMenu';
+import { PageType } from '../components/panes';
 import { EmailKey, WorkspaceEnvironmentPairKey, WorkspaceKey } from '../constant';
+import { MenusType } from '../enums/menus';
 import { getLocalStorage, setLocalStorage } from '../helpers/utils';
-import { MenusType } from '../menus';
-import { nodeType } from '../menus/CollectionMenu';
-import { PageType } from '../pages';
-import { NodeList } from '../services/Collection.service';
+import { NodeObject } from '../services/Collection.service';
 import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
@@ -44,18 +44,19 @@ type BaseState = {
   pages: Page<PageData>[];
   /*
    * 修改工作区标签页数据
-   * @param pages 工作区标签页数据
+   * @param panes 工作区标签页数据
    * @param mode 添加模式：push，替换模式：undefined
    * */
   setPages: <D extends PageData = undefined, M extends SetPagesMode = 'normal'>(
     pages: M extends 'push' ? Page<D> : Page<D>[],
     mode?: M,
   ) => void;
-  removePage: (removePaneId: string) => void;
-  resetPanes: () => void;
+  removePage: (pageId: string) => void;
+  removeSegmentPages: (targetPageId: string, segment: 'left' | 'right') => void;
+  resetPage: () => void;
 
-  collectionTreeData: NodeList[];
-  setCollectionTreeData: (collectionTreeData: NodeList[]) => void;
+  collectionTreeData: NodeObject[];
+  setCollectionTreeData: (collectionTreeData: NodeObject[]) => void;
   collectionLastManualUpdateTimestamp: number;
   setCollectionLastManualUpdateTimestamp: (timestamp: number) => void;
 
@@ -85,6 +86,7 @@ export const useStore = create(
   immer<BaseState>((set, get) => ({
     pages: [],
     setPages: (pages, mode: SetPagesMode = 'normal') => {
+      // setPages函数完成了添加新page，并且激活它的操作。
       if (mode === 'normal') {
         set({ pages: pages as Page[] });
       } else if (mode === 'push') {
@@ -129,8 +131,19 @@ export const useStore = create(
         get().setActiveMenu(menuType);
       }
     },
+    removeSegmentPages: (targetPageId, segment) => {
+      const pages = get().pages;
+      const index = pages.findIndex((page) => page.paneId === targetPageId);
+      Number.isInteger(index) &&
+        set({
+          pages: segment === 'left' ? pages.slice(index, pages.length) : pages.slice(0, index + 1),
+        });
+    },
+    resetPage: () => {
+      set({ pages: [], activeMenu: [MenusType.Collection, undefined] });
+    },
 
-    activeMenu: [MenusType.Collection, undefined],
+    activeMenu: [MenusType.Replay, undefined],
     setActiveMenu: (menuKey, menuItemKey) => {
       set((state) => {
         const statePane = state.pages.find((i) => i.paneId === menuItemKey);
@@ -144,10 +157,6 @@ export const useStore = create(
       });
 
       set({ activeMenu: [menuKey, menuItemKey] });
-    },
-
-    resetPanes: () => {
-      set({ pages: [], activeMenu: [MenusType.Collection, undefined] });
     },
 
     logout: () => {

@@ -1,7 +1,8 @@
 import { useRequest } from 'ahooks';
-import { Col, Row, theme } from 'antd';
+import { Col, Row, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import React, { FC, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import ReplayService from '../../../services/Replay.service';
 import { CategoryStatistic, Difference } from '../../../services/Replay.type';
@@ -9,11 +10,12 @@ import MenuSelect from '../../MenuSelect';
 import { HighlightRowTable } from '../../styledComponents';
 
 const DiffScenes: FC<{
-  planItemId: number;
+  planItemId: string;
   onScenes?: (diff: Difference, category?: CategoryStatistic) => void;
   onSelectCategory?: (category: CategoryStatistic) => void;
 }> = ({ planItemId, onScenes, onSelectCategory }) => {
   const { token } = theme.useToken();
+  const { t } = useTranslation(['components']);
 
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
   const { data: differenceData = [], loading } = useRequest(
@@ -29,24 +31,35 @@ const DiffScenes: FC<{
     },
   );
 
-  const categoryColumns: ColumnsType<Difference> = [
-    {
-      title: 'Point of difference',
-      dataIndex: 'differenceName',
-      ellipsis: true,
-      render: (text, record) => <a onClick={() => handleRowClick(record)}>{text}</a>,
-    },
-    {
-      title: 'Scene Count',
-      dataIndex: 'sceneCount',
-      width: '110px',
-    },
-    {
-      title: 'CaseTable Count',
-      dataIndex: 'caseCount',
-      width: '110px',
-    },
-  ];
+  const categoryColumns: ColumnsType<Difference> = useMemo(
+    () => [
+      {
+        title: t('replay.pointOfDifference'),
+        dataIndex: 'differenceName',
+        ellipsis: true,
+        render: (text, record) => (
+          <a onClick={() => handleRowClick(record)}>
+            {text === '%baseMissing%'
+              ? t('replay.baseMissing')
+              : text === '%testMissing%'
+              ? t('replay.testMissing')
+              : text}
+          </a>
+        ),
+      },
+      {
+        title: t('replay.sceneCount'),
+        dataIndex: 'sceneCount',
+        width: '110px',
+      },
+      {
+        title: t('replay.caseTableCount'),
+        dataIndex: 'caseCount',
+        width: '110px',
+      },
+    ],
+    [t],
+  );
 
   const handleSelect = (item: CategoryStatistic) => {
     onSelectCategory && onSelectCategory(item);
@@ -62,6 +75,7 @@ const DiffScenes: FC<{
           small
           forceFilter
           defaultSelectFirst
+          limit={10}
           rowKey='operationName'
           onSelect={handleSelect}
           placeholder={''}
@@ -71,7 +85,16 @@ const DiffScenes: FC<{
             record.operationName.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())
           }
           itemRender={(item: CategoryStatistic) => ({
-            label: item.operationName,
+            label: (
+              <Typography.Text>
+                <Tag>{item.categoryName}</Tag>
+                {React.createElement(
+                  item.operationName.split('.').length > 1 ? Tooltip : 'span',
+                  { title: item.operationName },
+                  item.operationName.split('.').at(-1),
+                )}
+              </Typography.Text>
+            ),
             key: item.operationName,
           })}
           sx={`

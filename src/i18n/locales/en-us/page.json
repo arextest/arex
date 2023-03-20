@@ -1,1 +1,17 @@
-{}
+{
+  "folderPage": {
+    "tests": "Tests"
+  },
+  "batchRunPage": {
+    "select_need_test_case": "Select cases to run",
+    "start_arex_replay_compare": "Start Arex replay compare",
+    "run_case": "Run Cases"
+  },
+  "batchComparePage": {
+    "select_need_compare_case": "Select comparison cases to runssss",
+    "run_compare": "Run Comparison Cases",
+    "compare_results": "Compare results",
+    "result": "Result",
+    "error.count": "Error Count"
+  }
+}

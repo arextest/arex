@@ -1,1 +1,17 @@
-{}
+{
+  "folderPage": {
+    "tests": "测试"
+  },
+  "batchRunPage": {
+    "select_need_test_case": "请选择测试用例",
+    "start_arex_replay_compare": "开始Arex回放比对",
+    "run_case": "运行"
+  },
+  "batchComparePage": {
+    "select_need_compare_case": "请选择比对用例",
+    "run_compare": "执行比对",
+    "compare_results": "比对结果",
+    "result": "结果",
+    "error.count": "错误数量"
+  }
+}

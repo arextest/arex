@@ -34,7 +34,7 @@ export interface QueryPlanStatisticsReq {
 }
 
 export type PlanStatistics = {
-  planId: number;
+  planId: string;
   planName: string;
   status: number;
   appId: string;
@@ -76,12 +76,12 @@ export interface QueryPlanStatisticsRes {
 
 // ------ /report_api/report/queryPlanItemStatistics ------
 export interface QueryPlanItemStatisticsReq {
-  planId: number;
+  planId: string;
 }
 
 export type PlanItemStatistics = {
-  planItemId: number;
-  planId: number;
+  planItemId: string;
+  planId: string;
   operationId: string;
   operationName: string;
   serviceName: string;
@@ -109,7 +109,7 @@ export interface QueryPlanItemStatisticsRes {
 
 // ------ /report_api/report/queryResponseTypeStatistic ------
 export interface QueryResponseTypeStatisticReq {
-  planItemId: number;
+  planItemId: string;
 }
 export type CategoryStatistic = {
   categoryName: string;
@@ -127,7 +127,7 @@ export interface QueryResponseTypeStatisticRes {
 export interface QueryDifferencesReq {
   categoryName: string;
   operationName: string;
-  planItemId: number;
+  planItemId: string;
 }
 export type Difference = {
   differenceName: string;
@@ -143,7 +143,7 @@ export interface QueryReplayCaseReq {
   needTotal?: boolean;
   pageIndex?: number;
   pageSize?: number;
-  planItemId: number;
+  planItemId: string;
 }
 export type ReplayCase = {
   replayId: string;
@@ -163,8 +163,8 @@ export interface CreatePlanReq {
   operator: string;
   replayPlanType: number;
   caseSourceType?: number;
-  caseStartTime: number;
-  caseEndTime: number;
+  caseSourceFrom: number;
+  caseSourceTo: number;
   operationCaseInfoList?: { operationId: string }[];
 }
 
@@ -195,44 +195,58 @@ export interface QueryScenesRes {
 export interface QueryMsgWithDiffReq {
   compareResultId: string;
   logIndexes: string;
+  logs: any[];
+  logIds?: string[];
+  errorCount?: number[];
 }
 
-export type QueryMsgWithDiffLog = {
+export interface UnmatchedPath {
+  nodeName: string;
+  index: number;
+}
+
+export interface Trace {
+  currentTraceLeft?: any;
+  currentTraceRight?: any;
+}
+
+export interface PathPair {
+  unmatchedType: number;
+  leftUnmatchedPath: UnmatchedPath[];
+  rightUnmatchedPath: UnmatchedPath[];
+  listKeys: any[];
+  listKeyPath: any[];
+  trace: Trace;
+}
+
+export type DiffLog = {
   addRefPkNodePathLeft: null;
   addRefPkNodePathRight: null;
-  baseValue: string;
+  baseValue: string | boolean | null;
+  testValue: string | boolean | null;
   logInfo: string;
   logTag: { lv: number; ig: boolean };
   path: string;
-  pathPair: {
-    leftUnmatchedPath: {
-      nodeName: string;
-      index: number;
-    }[];
-    listKeyPath: string[];
-    listKeys: string | null;
-    rightUnmatchedPath: {
-      nodeName: string;
-      index: number;
-    }[];
-    trace: { currentTraceLeft: null; currentTraceRight: null } | null;
-    unmatchedType: number;
-  };
-  testValue: null;
+  pathPair: PathPair;
 };
+
 export type QueryMsgWithDiffRes = {
-  baseMsg: string;
+  baseMsg: string | boolean | null;
+  testMsg: string | boolean | null;
   diffResultCode: number;
-  logs: QueryMsgWithDiffLog[];
+  logs: DiffLog[];
   recordId: string;
   replayId: string;
-  testMsg: string;
 };
 
 // ------ /report/queryFullLinkMsg ------
 export interface QueryFullLinkMsgReq {
   recordId: string;
-  planItemId: number;
+  planItemId: string;
+}
+
+export interface LogTag {
+  errorType: number;
 }
 
 export type CompareResult = {
@@ -247,31 +261,71 @@ export type CompareResult = {
   baseMsg: string | null;
   testMsg: string | null;
   planItemId: number;
-  logs:
-    | {
-        baseValue: null;
-        testValue: null;
-        logInfo: string;
-        pathPair: {
-          unmatchedType: number;
-          leftUnmatchedPath: [];
-          rightUnmatchedPath: [];
-          listKeys: null;
-          listKeyPath: [];
-          trace: null;
-        };
-        addRefPkNodePathLeft: null;
-        addRefPkNodePathRight: null;
-        warn: number;
-        path: null;
-        logTag: {
-          lv: string;
-          ig: boolean;
-        };
-      }[]
-    | null;
+  logs: DiffLog[] | null;
   type: 'html' | 'json';
 };
 export interface QueryFullLinkMsgRes {
   compareResults: CompareResult[];
+}
+
+// /querySceneInfo/{planId}/{planItemId}
+export interface QuerySceneInfoReq {
+  planId: string;
+  planItemId: string;
+}
+
+export interface Detail {
+  code: number;
+  categoryName: string;
+  operationName: string;
+}
+
+export interface SubScene {
+  recordId: string;
+  replayId: string;
+  details: Detail[];
+}
+
+export interface SceneInfo {
+  subScenes: SubScene[]; // could be null;
+}
+
+export interface QuerySceneInfoRes {
+  sceneInfos: SceneInfo[];
+}
+
+// /queryFullLinkInfo/{recordId}/{replayId}
+export interface QueryFullLinkInfoReq {
+  recordId: string;
+  replayId: string;
+}
+
+export type infoItem = {
+  id: string;
+  code: number;
+  categoryName: string;
+  operationName: string;
+};
+
+export interface QueryFullLinkInfoRes {
+  entrance: infoItem;
+  infoItemList: infoItem[];
+}
+
+// /queryDiffMsgById/{id}
+export interface QueryDiffMsgByIdReq {
+  id: string;
+}
+
+export type CompareResultDetail = {
+  id: string;
+  categoryName: string;
+  operationName: string;
+  diffResultCode: number;
+  logs: DiffLog[] | null;
+  baseMsg: string;
+  testMsg: string;
+};
+export interface QueryDiffMsgByIdRes {
+  compareResultDetail: CompareResultDetail;
 }

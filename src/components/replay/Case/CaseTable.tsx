@@ -1,49 +1,65 @@
 import { useRequest } from 'ahooks';
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 
+import { useCustomNavigate } from '../../../router/useCustomNavigate';
+import { useCustomSearchParams } from '../../../router/useCustomSearchParams';
 import ReplayService from '../../../services/Replay.service';
 import { ReplayCase } from '../../../services/Replay.type';
 import { HighlightRowTable, SmallTextButton } from '../../styledComponents';
 
 type CaseProps = {
-  planItemId: number;
+  planItemId: string;
   onClick?: (record: ReplayCase) => void;
   onClickSaveCase?: (record: ReplayCase) => void;
 };
 
 const CaseTable: FC<CaseProps> = (props) => {
+  const { t } = useTranslation(['components']);
+  const customNavigate = useCustomNavigate();
+  const customSearchParams = useCustomSearchParams();
+  const location = useLocation();
+
+  useEffect(() => {
+    // customNavigate({
+    //   path: location.pathname,
+    //   query: {
+    //     data: customSearchParams.query.data,
+    //     planItemId: props.planItemId,
+    //   },
+    // });
+  }, [props.planItemId]);
+
   const columnsCase: ColumnsType<ReplayCase> = [
     {
-      title: 'Record ID',
+      title: t('replay.recordId'),
       dataIndex: 'recordId',
+
+      render: (recordId, record) => <a onClick={() => props.onClick?.(record)}>{recordId}</a>,
     },
     {
-      title: 'Index ID',
+      title: t('replay.replayId'),
       dataIndex: 'replayId',
     },
     {
-      title: 'Status',
+      title: t('replay.status'),
       render: (_, record) => (
         <Tag color={['green', 'red', 'blue'][record.diffResultCode]}>
-          {['Success', 'Failed', 'Invalid'][record.diffResultCode]}
+          {[t('replay.success'), t('replay.failed'), t('replay.invalid')][record.diffResultCode]}
         </Tag>
       ),
     },
     {
-      title: 'Action',
+      title: t('replay.action'),
       render: (_, record) => [
         // <SmallTextButton key='replayLog' title='Replay Log' />,
         <SmallTextButton
-          key='detail'
-          title='Detail'
-          onClick={() => props.onClick && props.onClick(record)}
-        />,
-        <SmallTextButton
           key='save'
-          title='Save'
-          onClick={() => props.onClickSaveCase && props.onClickSaveCase(record)}
+          title={t('replay.save')}
+          onClick={() => props.onClickSaveCase?.(record)}
         />,
       ],
     },

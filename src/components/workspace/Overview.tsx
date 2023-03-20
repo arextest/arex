@@ -13,6 +13,7 @@ import {
 } from 'antd';
 import React from 'react';
 import { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { EmailKey, RoleEnum } from '../../constant';
@@ -24,11 +25,13 @@ const { Text } = Typography;
 
 const WorkspaceSetting: FC = () => {
   const { message } = App.useApp();
+  const { t } = useTranslation(['components', 'common']);
+
   const params = useParams();
   const nav = useNavigate();
   const {
     workspaces,
-    resetPanes,
+    resetPage,
     activeWorkspaceId,
     setActiveWorkspaceId,
     setWorkspacesLastManualUpdateTimestamp,
@@ -41,7 +44,7 @@ const WorkspaceSetting: FC = () => {
       newName: values.name,
       userName,
     }).then(() => {
-      window.location.href = `/${params.workspaceId}/workspace/${values.name}`;
+      window.location.href = `/${params.workspaceId}`;
     });
   };
 
@@ -59,13 +62,11 @@ const WorkspaceSetting: FC = () => {
       manual: true,
       onSuccess(success) {
         if (success) {
-          message.success('delete workspace successfully');
+          message.success(t('message.delSuccess', { ns: 'common' }));
           setWorkspacesLastManualUpdateTimestamp(new Date().getTime());
-          resetPanes();
+          resetPage();
           setActiveWorkspaceId(workspaces[0].id);
-          nav(
-            `/${workspaces[0].id}/workspace/${workspaces[0].workspaceName}/workspaceOverview/${workspaces[0].id}`,
-          );
+          nav(`/${workspaces[0].id}/workspaceOverview/${workspaces[0].id}`);
         }
       },
     },
@@ -74,25 +75,28 @@ const WorkspaceSetting: FC = () => {
   return (
     <div>
       <div style={{ width: '440px', margin: '0 auto' }}>
-        <h1>Workspace settings</h1>
+        <h1>{t('workSpace.workspaceSettings')}</h1>
         <Form
           layout='vertical'
           name='basic'
-          initialValues={{ name: params.workspaceName }}
+          initialValues={{
+            name: workspaces.find((workspace) => workspace.id === params.workspaceId)
+              ?.workspaceName,
+          }}
           onFinish={onFinish}
           autoComplete='off'
         >
           <Form.Item
-            label='Name'
+            label={t('workSpace.name')}
             name='name'
-            rules={[{ required: true, message: 'Please input your name!' }]}
+            rules={[{ required: true, message: t('workSpace.emptyName') }]}
           >
             <Input />
           </Form.Item>
 
           <Form.Item>
             <Button type='primary' htmlType='submit'>
-              Update
+              {t('workSpace.update')}
             </Button>
           </Form.Item>
         </Form>
@@ -101,16 +105,16 @@ const WorkspaceSetting: FC = () => {
         <List
           itemLayout='horizontal'
           dataSource={workspaceUsers}
-          locale={{ emptyText: 'no invited user' }}
+          locale={{ emptyText: t('workSpace.noInvitedUser') }}
           renderItem={(item) => (
             <List.Item
               actions={[
                 <a key='list-loadmore-edit'>
                   {
                     {
-                      [RoleEnum.Admin]: 'Admin',
-                      [RoleEnum.Editor]: 'Editor',
-                      [RoleEnum.Viewer]: 'Viewer',
+                      [RoleEnum.Admin]: t('workSpace.admin'),
+                      [RoleEnum.Editor]: t('workSpace.editor'),
+                      [RoleEnum.Viewer]: t('workSpace.viewer'),
                     }[item.role]
                   }
                 </a>,
@@ -121,8 +125,8 @@ const WorkspaceSetting: FC = () => {
                 title={<span>{item.userName}</span>}
                 description={
                   {
-                    '1': 'Not accepted',
-                    '2': 'Accepted',
+                    '1': t('workSpace.notAccepted'),
+                    '2': t('workSpace.accepted'),
                   }[item.status]
                 }
               />
@@ -133,18 +137,16 @@ const WorkspaceSetting: FC = () => {
         <Divider />
 
         <Space direction='vertical'>
-          <Text>Delete workspace</Text>
-          <Text type='secondary'>
-            Once deleted, a workspace is gone forever along with its data.
-          </Text>
+          <Text>{t('workSpace.del')}</Text>
+          <Text type='secondary'>{t('workSpace.delMessage')}</Text>
 
           <Popconfirm
-            title='Are you sure to delete this workspace?'
+            title={t('workSpace.delConfirmText')}
             onConfirm={handleDeleteWorkspace}
-            okText='Yes'
-            cancelText='No'
+            okText={t('yes', { ns: 'common' })}
+            cancelText={t('no', { ns: 'common' })}
           >
-            <Button danger>Delete Workspace</Button>
+            <Button danger>{t('workSpace.del')}</Button>
           </Popconfirm>
         </Space>
       </div>

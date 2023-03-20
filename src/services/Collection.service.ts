@@ -5,9 +5,9 @@ import { collectionOriginalTreeToAntdTreeData } from '../helpers/collection/util
 import { QueryLabelsReq, QueryLabelsRes, RemoveLabelsReq, SaveLabelsReq } from './Collection.type';
 import { SaveCaseReq } from './FileSystem.type';
 
-export interface NodeList {
+export interface NodeObject {
   id: string;
-  children: NodeList[];
+  children: NodeObject[];
   title: string;
   key: string;
   nodeType: number;

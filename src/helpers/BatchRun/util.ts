@@ -2,6 +2,7 @@
 import { treeFindPath } from '../collection/util';
 
 export function genCaseTreeData(data) {
+  data = data.filter((d) => d);
   const cloneData = JSON.parse(JSON.stringify(data));
   const result = [];
   data.forEach((item) => {
@@ -13,6 +14,7 @@ export function genCaseTreeData(data) {
         method: data.method,
         nodeType: data.nodeType,
         disabled: data.children.length === 0,
+        // disableCheckbox: data.children.length === 0,
         path: treeFindPath(cloneData, (node) => node.id === data.id),
         children: data.children,
       });

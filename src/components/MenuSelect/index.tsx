@@ -9,6 +9,7 @@ import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import React, { ChangeEventHandler, ReactNode, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 
 export type MenuSelectProps<D, P extends any[]> = {
   sx?: CSSInterpolation; // custom style
@@ -113,6 +114,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   );
 
   const [hiddenCount, setHiddenCount] = useState(0);
+  const [limitCount, setLimitCount] = useState(props.limit);
 
   const [filterKeyword, setFilterKeyword] = useState('');
 
@@ -127,7 +129,6 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
       }),
     [filterKeyword, props],
   );
-
   const {
     data: apps,
     loading,
@@ -135,6 +136,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   } = useRequest<D[], P>(props.request, {
     ...props.requestOptions,
     onSuccess(res, _params) {
+      // 默认触发onSelect第一个的逻辑
       if (res.length && (props.defaultSelectFirst || props.initValue)) {
         const record = props.defaultSelectFirst
           ? props.forceFilter
@@ -154,7 +156,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
   const filteredApps = useMemo<ItemType[]>(() => {
     const _app = apps || [];
     const filtered = (props.forceFilter || filterKeyword) && props.filter ? filter(_app) : _app;
-    const limitApp = typeof props.limit === 'number' ? filtered.slice(0, props.limit) : filtered;
+    const limitApp = typeof props.limit === 'number' ? filtered.slice(0, limitCount) : filtered;
     setHiddenCount(filtered.length - limitApp.length);
     return limitApp.map<ItemType>(
       props.itemRender
@@ -164,7 +166,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
             key: app[props.rowKey],
           }),
     );
-  }, [filterKeyword, props, apps]);
+  }, [filterKeyword, props, apps, limitCount]);
 
   const handleAppMenuClick = (value: { key: string }) => {
     const app: D | undefined = apps?.find((app) => app[props.rowKey] === value.key);
@@ -193,9 +195,15 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
         items={filteredApps}
         onClick={handleAppMenuClick}
       />
-      {!!hiddenCount && (
+      {hiddenCount > 0 && (
         <div style={{ textAlign: 'center' }}>
-          <Typography.Text type='secondary'>{hiddenCount} more ...</Typography.Text>
+          <Button
+            size='small'
+            type='text'
+            onClick={() => props.limit && setLimitCount((limitCount as number) + props.limit)}
+          >
+            <Typography.Text type='secondary'>{hiddenCount} more ...</Typography.Text>
+          </Button>
         </div>
       )}
     </Spin>

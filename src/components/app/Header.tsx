@@ -1,17 +1,19 @@
-import { SettingOutlined } from '@ant-design/icons';
+import { LogoutOutlined, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Avatar, Dropdown, DropdownProps, Typography } from 'antd';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Avatar, Dropdown, DropdownProps, Space, Typography } from 'antd';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { EmailKey } from '../../constant';
-import { generateGlobalPaneId, getLocalStorage } from '../../helpers/utils';
-import { PagesType } from '../../pages';
+import { getLocalStorage } from '../../helpers/utils';
+import { useCustomNavigate } from '../../router/useCustomNavigate';
 import { useStore } from '../../store';
 import useUserProfile from '../../store/useUserProfile';
-import GitHubStarButton from '../GitHubStarButton';
 import { TooltipButton } from '../index';
+import { PagesType } from '../panes';
 import InviteWorkspace from '../workspace/Invite';
+import GitHubStarButton from './GitHubStarButton';
 
 const HeaderWrapper = styled.div`
   height: 46px;
@@ -38,22 +40,15 @@ const HeaderWrapper = styled.div`
 
 const AppHeader = () => {
   const nav = useNavigate();
-  const { avatar, theme } = useUserProfile();
-  const { logout, setPages } = useStore();
-  const email = getLocalStorage<string>(EmailKey);
+  const { t, i18n } = useTranslation('common');
 
+  const { avatar, theme } = useUserProfile();
+  const { logout } = useStore();
+  const email = getLocalStorage<string>(EmailKey);
+  const params = useParams();
+  const customNavigate = useCustomNavigate();
   const handleSetting = () => {
-    setPages(
-      {
-        title: 'Setting',
-        pageType: PagesType.Setting,
-        isNew: false,
-        data: undefined,
-        paneId: generateGlobalPaneId('-', PagesType.Setting, 'SETTING'),
-        rawId: 'SETTING',
-      },
-      'push',
-    );
+    customNavigate(`/${params.workspaceId}/${PagesType.Setting}/${'SETTING'}`);
   };
 
   const handleLogout = () => {
@@ -61,19 +56,23 @@ const AppHeader = () => {
     nav('/login');
   };
 
-  const userMenu: DropdownProps['menu'] = {
-    items: [
-      {
-        key: 'signOut',
-        label: 'Sign Out',
+  const userMenu: DropdownProps['menu'] = useMemo(
+    () => ({
+      items: [
+        {
+          key: 'logout',
+          label: t('logout'),
+          icon: <LogoutOutlined />,
+        },
+      ],
+      onClick: (e) => {
+        if (e.key === 'logout') {
+          handleLogout();
+        }
       },
-    ],
-    onClick: (e) => {
-      if (e.key === 'signOut') {
-        handleLogout();
-      }
-    },
-  };
+    }),
+    [i18n.language],
+  );
 
   return (
     <HeaderWrapper>
@@ -82,16 +81,20 @@ const AppHeader = () => {
         <GitHubStarButton theme={theme} />
       </div>
 
-      <div className={'right'}>
-        {!(email || '').match('GUEST') && <InviteWorkspace />}
-        <TooltipButton icon={<SettingOutlined />} title='Setting' onClick={handleSetting} />
-
-        <Dropdown overlayStyle={{ width: '170px' }} menu={userMenu}>
-          <Avatar src={avatar} size={24} style={{ marginLeft: '8px', cursor: 'pointer' }}>
+      <Space className={'right'} size='small'>
+        {!email?.match('GUEST') && <InviteWorkspace />}
+        <TooltipButton
+          title={t('help')}
+          icon={<QuestionCircleOutlined />}
+          onClick={() => window.open('https://arextest.github.io/website/zh-Hans/')}
+        />
+        <TooltipButton title={t('setting')} icon={<SettingOutlined />} onClick={handleSetting} />
+        <Dropdown menu={userMenu}>
+          <Avatar src={avatar} size={24} style={{ marginLeft: '0px', cursor: 'pointer' }}>
             {email?.[0].toUpperCase()}
           </Avatar>
         </Dropdown>
-      </div>
+      </Space>
     </HeaderWrapper>
   );
 };

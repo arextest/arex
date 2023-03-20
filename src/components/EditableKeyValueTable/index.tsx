@@ -21,7 +21,7 @@ export const useColumns = (
   paramsUpdater?: Updater<KeyValueType[]>,
   editable?: boolean,
 ): ColumnsType<KeyValueType> => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common', 'components']);
 
   const handleChange = (i: number, attr: 'key' | 'value', value: string) => {
     paramsUpdater &&
@@ -39,7 +39,7 @@ export const useColumns = (
 
   const keyValueColumns: ColumnsType<KeyValueType> = [
     {
-      title: 'VARIABLE',
+      title: t('env.variable', { ns: 'components' }).toUpperCase(),
       dataIndex: 'key',
       key: 'key',
       render: editable
@@ -47,7 +47,7 @@ export const useColumns = (
             <Input
               value={text}
               bordered={false}
-              placeholder={t('count.key') || ''}
+              placeholder={`${t('env.key', { ns: 'components' })} ${i + 1}`}
               disabled={!record.active}
               onChange={(e) => handleChange(i, 'key', e.target.value)}
             />
@@ -55,7 +55,7 @@ export const useColumns = (
         : undefined,
     },
     {
-      title: 'VALUE',
+      title: t('env.key', { ns: 'components' }).toUpperCase(),
       dataIndex: 'value',
       key: 'value',
       render: editable
@@ -63,7 +63,7 @@ export const useColumns = (
             <Input
               value={text}
               bordered={false}
-              placeholder={t('count.value') || ''}
+              placeholder={`${t('env.value', { ns: 'components' })} ${i + 1}`}
               disabled={!record.active}
               onChange={(e) => handleChange(i, 'value', e.target.value)}
             />
@@ -76,7 +76,7 @@ export const useColumns = (
     ? [
         ...keyValueColumns,
         {
-          title: 'Action',
+          title: t('action'),
           key: 'actions',
           width: 72,
           align: 'center',

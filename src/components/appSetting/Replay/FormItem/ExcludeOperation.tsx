@@ -4,6 +4,7 @@ import { useRequest } from 'ahooks';
 import { App, Button, Input, Select, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
 import { uuid } from '../../../../helpers/utils';
@@ -22,6 +23,7 @@ type ExcludeOperationProps = FormItemProps<ExcludeOperationFormItem[]> & { appId
 
 const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
   const { message } = App.useApp();
+  const { t } = useTranslation(['components', 'common']);
 
   const tableRowCount = useRef(0);
   const tableRef = useRef<HTMLDivElement>(null);
@@ -43,7 +45,7 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
 
   const columns: ColumnsType<ExcludeOperationFormItem> = [
     {
-      title: 'path',
+      title: t('appSetting.path'),
       dataIndex: 'key',
       key: 'key',
       width: '50%',
@@ -56,7 +58,7 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
       ),
     },
     {
-      title: 'value',
+      title: t('appSetting.value'),
       dataIndex: 'value',
       key: 'value',
       width: '50%',
@@ -65,7 +67,7 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
           mode='tags'
           value={text}
           tokenSeparators={[',']}
-          notFoundContent={'Please enter value'}
+          notFoundContent={t('appSetting.emptyValue')}
           onChange={(value) => handleValueChange(i, value)}
           style={{ width: '100%', borderColor: 'transparent' }}
         />
@@ -82,7 +84,7 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
             });
           }}
         >
-          Add
+          {t('add', { ns: 'common' })}
         </Button>
       ),
       key: 'actions',
@@ -93,7 +95,7 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
         <Space>
           <TooltipButton
             key='save'
-            title={'Save'}
+            title={t('save', { ns: 'common' })}
             type='text'
             size='small'
             icon={<SaveOutlined />}
@@ -103,7 +105,7 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
             key='remove'
             type='text'
             size='small'
-            title='remove'
+            title={t('remove', { ns: 'common' })}
             icon={<DeleteOutlined />}
             onClick={() =>
               setValue?.((params) => {
@@ -119,7 +121,7 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
   const { run: updateReplaySetting } = useRequest(AppSettingService.updateReplaySetting, {
     manual: true,
     onSuccess(res) {
-      res && message.success('update success');
+      res && message.success(t('message.updateSuccess', { ns: 'common' }));
     },
   });
 

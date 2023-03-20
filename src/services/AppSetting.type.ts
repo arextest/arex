@@ -10,6 +10,7 @@ export interface QueryRecordSettingRes {
   modifiedTime: string;
   sampleRate: number;
   timeMock: boolean;
+  excludeServiceOperationSet: string[];
 }
 
 export interface UpdateRecordSettingReq {
@@ -22,7 +23,7 @@ export interface UpdateRecordSettingReq {
   excludeOperationSet?: string[];
   excludeDependentOperationSet?: string[];
   includeServiceSet?: string[];
-  excludeDependentServiceSet?: string[];
+  excludeServiceOperationSet?: string[];
 }
 
 export type UpdateRecordSettingRes = boolean;
@@ -171,12 +172,16 @@ export type SortNodePathKey = {
   keys: string[][];
 };
 
-export type SortNodeBase = SortNodePathKey & {
-  appId: string;
-  operationId: OperationId<'Interface'>;
-};
+export interface SortNodeBase extends SortNodePathKey {
+  appId?: string;
+  operationId?: OperationId<'Interface'>;
 
-export type SortNode = SortNodeBase & {
+  // collection attr
+  fsInterfaceId?: string;
+  compareConfigType?: string;
+}
+
+export interface SortNode extends SortNodeBase {
   id: string;
   modifiedTime: number;
   status: number | null;
@@ -184,7 +189,7 @@ export type SortNode = SortNodeBase & {
   expirationDate: number;
   path: string;
   pathKeyList: string[];
-};
+}
 
 export interface UpdateSortNodeReq extends SortNodePathKey {
   id: string;

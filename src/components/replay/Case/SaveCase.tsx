@@ -1,5 +1,6 @@
-import { Form, Input, Modal, notification, TreeSelect, Typography } from 'antd';
+import { App, Form, Input, Modal, TreeSelect, Typography } from 'antd';
 import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
 import { EmailKey } from '../../../constant';
@@ -16,11 +17,14 @@ export type SaveCaseRef = {
 };
 
 export type SaveCaseProps = {
-  operationId: number;
+  operationId: string;
 };
 
 const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
   const params = useParams();
+  const { notification } = App.useApp();
+  const { t } = useTranslation(['components', 'common']);
+
   const { collectionTreeData } = useStore();
   const [form] = Form.useForm();
   const [value, setValue] = useState<string>('');
@@ -45,12 +49,12 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
 
   // 深度优先遍历
   const collectionTreeSelectData = useMemo(() => {
-    const mapTree = (tree) => {
+    const mapTree = (tree: any) => {
       const haveChildren = Array.isArray(tree.children) && tree.children.length > 0;
       return {
         ...tree,
         disabled: tree.nodeType !== 1,
-        children: haveChildren ? tree.children.map((i) => mapTree(i)) : [],
+        children: haveChildren ? tree.children.map((i: any) => mapTree(i)) : [],
       };
     };
     return mapTree({ children: collectionTreeData })['children'];
@@ -71,11 +75,13 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
           operationId: props.operationId,
         })
         .then((res) => {
+          // @ts-ignore
           if (res?.body?.success) {
-            notification.success({ message: 'Save success' });
+            notification.success({ message: t('message.saveSuccess', { ns: 'common' }) });
             setOpen(false);
           } else {
             notification.error({
+              // @ts-ignore
               message: res.responseStatusType.responseDesc,
             });
           }
@@ -87,9 +93,9 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
     <div>
       <Modal
         open={open}
-        title={`SAVE CASE - ${title}`}
-        okText='Create'
-        cancelText='Cancel'
+        title={`${t('replay.saveCase')} - ${title}`}
+        okText={t('replay.create')}
+        cancelText={t('cancel', { ns: 'common' })}
         onCancel={() => setOpen(false)}
         onOk={handleSubmit}
       >
@@ -99,18 +105,18 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
           </Form.Item>
           <Form.Item
             name='caseName'
-            label='CaseTable name'
+            label={t('replay.caseName')}
             rules={[
               {
                 required: true,
-                message: 'Please input case name!',
+                message: t('replay.emptyCaseName'),
               },
             ]}
           >
             <Input />
           </Form.Item>
           <p>
-            <span>Save to </span>
+            <span>{t('replay.saveTo')}</span>
             <Text type='secondary'>
               {treeFindPath(collectionTreeData, (node) => node.key === value)
                 ?.map((i) => i.title)
@@ -123,7 +129,7 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
             rules={[
               {
                 required: true,
-                message: 'Please input the title of collection!',
+                message: t('replay.emptyTitle'),
               },
             ]}
           >
@@ -133,7 +139,7 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
               value={value}
               dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
               treeData={collectionTreeSelectData}
-              placeholder='Please select'
+              placeholder={t('replay.selectTree')}
               treeDefaultExpandAll
               onChange={onChange}
             />

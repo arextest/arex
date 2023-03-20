@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { Login, MainBox, ValidInvitation } from '../views';
-import UpgradeBrowser from '../views/UpgradeBrowser';
-
+import { Login, Logs, MainBox, ValidInvitation } from '../pages';
+import UpgradeBrowser from '../pages/UpgradeBrowser';
 const router = [
   {
     path: '/',
@@ -18,17 +17,24 @@ const router = [
     element: <Login />,
   },
   {
+    path: '/logs',
+    element: <Logs />,
+  },
+  {
     path: '/click',
     element: <ValidInvitation />,
   },
-
   {
-    path: '/:workspaceId/workspace/:workspaceName',
+    path: '/:workspaceId/:workspaceName/:pagesType/:rawId',
+    element: <MainBox />,
+  },
+  {
+    path: '/:workspaceId',
     element: <MainBox />,
     auth: true,
   },
   {
-    path: '/:workspaceId/workspace/:workspaceName/:rType/:rTypeId',
+    path: '/:workspaceId/:pagesType/:rawId',
     element: <MainBox />,
     auth: true,
   },

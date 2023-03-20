@@ -1,16 +1,14 @@
 import { useRequest } from 'ahooks';
+import axios from 'axios';
 import { useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
+import { PagesType } from '../components/panes';
 import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../constant';
-import {
-  clearLocalStorage,
-  generateGlobalPaneId,
-  getLocalStorage,
-  setLocalStorage,
-} from '../helpers/utils';
-import { MenusType } from '../menus';
-import { PagesType } from '../pages';
+import { genPaneIdByUrl, getMenuTypeByPageType } from '../helpers/functional/url';
+import { clearLocalStorage, getLocalStorage, setLocalStorage } from '../helpers/utils';
+import { useCustomNavigate } from '../router/useCustomNavigate';
+import { useCustomSearchParams } from '../router/useCustomSearchParams';
 import { AuthService } from '../services/Auth.service';
 import { UserService } from '../services/User.service';
 import { useStore } from '../store';
@@ -22,12 +20,12 @@ import useUserProfile from '../store/useUserProfile';
 const useInit = () => {
   // checkout if the user is logged in
   const email = getLocalStorage<string>(EmailKey);
-
-  const nav = useNavigate();
+  const customNavigate = useCustomNavigate();
+  const customSearchParams = useCustomSearchParams();
   const params = useParams();
   const { pathname } = useLocation();
   const { setUserProfile } = useUserProfile();
-  const { setPages, setActiveMenu, setActiveWorkspaceId } = useStore();
+  const { setActiveMenu, setActiveWorkspaceId } = useStore();
 
   const { run: refreshToken } = useRequest(AuthService.refreshToken, {
     manual: true,
@@ -37,13 +35,15 @@ const useInit = () => {
         const refreshToken = res.data.body.refreshToken;
         setLocalStorage(AccessTokenKey, accessToken);
         setLocalStorage(RefreshTokenKey, refreshToken);
-        nav('/');
+        window.location.reload();
       } else if (pathname !== '/login') {
         clearLocalStorage();
+        window.location.reload();
       }
     },
     onError() {
       clearLocalStorage();
+      window.location.reload();
     },
   });
 
@@ -57,48 +57,52 @@ const useInit = () => {
       email && refreshToken({ userName: email });
     },
   });
+  // 检测arex desktop agent
+  useRequest(() => axios.get('http://localhost:16888/vi/health'), {
+    onSuccess() {
+      window.__AREX_DESKTOP_AGENT__ = true;
+    },
+  });
 
   // TODO 实现通用的所用页面初始化方法
   // 根据 url 初始化页面, 同时初始化 workspaceId
   useEffect(() => {
-    console.log('params.workspaceId', params.workspaceId);
     if (params.workspaceId) {
       setActiveWorkspaceId(params.workspaceId);
     }
-
-    if (params.rType === PagesType.Replay) {
+    if (params.pagesType) {
       setActiveMenu(
-        MenusType.Replay,
-        generateGlobalPaneId(MenusType.Replay, PagesType.Replay, params.rTypeId as string),
+        getMenuTypeByPageType(params.pagesType),
+        genPaneIdByUrl(`/${params.workspaceId}/${params.pagesType}/${params.rawId}`),
       );
-    } else if (params.rType === PagesType.Environment) {
-      setActiveMenu(
-        MenusType.Environment,
-        generateGlobalPaneId(
-          MenusType.Environment,
-          PagesType.Environment,
-          params.rTypeId as string,
-        ),
-      );
-    } else if (params.rType === PagesType.WorkspaceOverview) {
-      params.workspaceName &&
-        params.workspaceId &&
-        setPages(
-          {
-            title: params.workspaceName,
-            menuType: MenusType.Collection,
-            pageType: PagesType.WorkspaceOverview,
-            isNew: true,
-            data: undefined,
-            paneId: generateGlobalPaneId(
-              MenusType.Collection,
-              PagesType.WorkspaceOverview,
-              params.workspaceId,
-            ),
-            rawId: params.workspaceId,
+      //   以下几种page的复原单独实现
+      if (params.pagesType === PagesType.ReplayAnalysis) {
+        customNavigate({
+          path: customSearchParams.pathname,
+          query: {
+            data: customSearchParams.query.data,
           },
-          'push',
-        );
+        });
+      } else if (params.pagesType === PagesType.ReplayCase) {
+        customNavigate({
+          path: customSearchParams.pathname,
+          query: {
+            data: customSearchParams.query.data,
+          },
+        });
+      } else if (params.pagesType === PagesType.BatchCompare) {
+        customNavigate({
+          path: customSearchParams.pathname,
+          query: {
+            planId: customSearchParams.query.planId,
+          },
+        });
+      } else if (params.pagesType === PagesType.Run) {
+        customNavigate({
+          path: customSearchParams.pathname,
+          query: customSearchParams.query,
+        });
+      }
     }
   }, []);
 };

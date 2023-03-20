@@ -7,9 +7,12 @@ import {
   CreatePlanRes,
   QueryDifferencesReq,
   QueryDifferencesRes,
+  QueryDiffMsgByIdReq,
+  QueryDiffMsgByIdRes,
+  QueryFullLinkInfoReq,
+  QueryFullLinkInfoRes,
   QueryFullLinkMsgReq,
   QueryFullLinkMsgRes,
-  QueryMsgWithDiffReq,
   QueryMsgWithDiffRes,
   QueryPlanItemStatisticsReq,
   QueryPlanItemStatisticsRes,
@@ -19,6 +22,8 @@ import {
   QueryReplayCaseRes,
   QueryResponseTypeStatisticReq,
   QueryResponseTypeStatisticRes,
+  QuerySceneInfoReq,
+  QuerySceneInfoRes,
   QueryScenesReq,
   QueryScenesRes,
   RegressionListRes,
@@ -39,6 +44,23 @@ export default class ReplayService {
           res.body.planStatisticList.sort((a, b) => b.replayStartTime - a.replayStartTime),
         ),
       );
+  }
+
+  static async terminatePlanStatistics(planId: string) {
+    return new Promise<{
+      result: number;
+      desc: string;
+    }>((resolve, reject) => {
+      return axios
+        .get('/schedule/stopPlan?planId=' + planId)
+        .then((res) => resolve(res.data))
+        .catch((err) => reject(err));
+    });
+  }
+
+  static async deletePlanStatistics(planId: string) {
+    const res = await request.get<boolean>('/report/report/delete/' + planId);
+    return res.body;
   }
 
   static async queryPlanItemStatistics(params: QueryPlanItemStatisticsReq) {
@@ -90,7 +112,7 @@ export default class ReplayService {
       .then((res) => Promise.resolve(res.body.scenes));
   }
 
-  static async queryMsgWithDiff(params: QueryMsgWithDiffReq) {
+  static async queryMsgWithDiff(params: { logIndexes: string; compareResultId: string }) {
     return request
       .post<QueryMsgWithDiffRes>('/report/report/queryMsgWithDiff', params)
       .then((res) => Promise.resolve(res.body));
@@ -120,5 +142,25 @@ export default class ReplayService {
           }),
         ),
       );
+  }
+
+  static async querySceneInfo(params: QuerySceneInfoReq) {
+    return request
+      .get<QuerySceneInfoRes>(`/report/report/querySceneInfo/${params.planId}/${params.planItemId}`)
+      .then((res) => Promise.resolve(res.body.sceneInfos.filter((scene) => scene.subScenes))); //  subScenes could be null;
+  }
+
+  static async queryFullLinkInfo(params: QueryFullLinkInfoReq) {
+    return request
+      .get<QueryFullLinkInfoRes>(
+        `/report/report/queryFullLinkInfo/${params.recordId}/${params.replayId}`,
+      )
+      .then((res) => Promise.resolve(res.body));
+  }
+
+  static async queryDiffMsgById(params: QueryDiffMsgByIdReq) {
+    return request
+      .get<QueryDiffMsgByIdRes>(`/report/report/queryDiffMsgById/${params.id}`)
+      .then((res) => Promise.resolve(res.body.compareResultDetail));
   }
 }
