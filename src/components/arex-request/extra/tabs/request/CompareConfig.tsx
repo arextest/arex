@@ -1,32 +1,56 @@
+import { useRequest } from 'ahooks';
 import { Space, Typography } from 'antd';
 import React, { FC } from 'react';
 
-import NodesIgnore from '../../../../appSetting/NodesIgnore';
-import NodesSort from '../../../../appSetting/NodesSort';
+import AppSettingService from '../../../../../services/AppSetting.service';
+import PathCollapse from '../../../../appSetting/NodesIgnore/PathCollapse';
 import { Label } from '../../../../styledComponents';
 
 export type CompareConfigProps = {
   interfaceId: string;
-  operationId?: string | null;
+  operationId?: string;
 };
 const CompareConfig: FC<CompareConfigProps> = (props) => {
+  const {
+    data: ignoreNodeList = [],
+    loading: loadingIgnoreNode,
+    run: queryIgnoreNode,
+  } = useRequest(
+    () =>
+      AppSettingService.queryInterfaceIgnoreNode({
+        interfaceId: props.interfaceId,
+        operationId: props.operationId,
+      }),
+    {
+      onSuccess(res) {
+        console.log('queryInterfaceIgnoreNode', res);
+      },
+    },
+  );
+
   return (
-    <div style={{ padding: '8px 0' }}>
+    <>
       <Space size='large'>
         <Typography.Text type='secondary'>
-          <Label>InterfaceId</Label>
+          <Label>interfaceId</Label>
           {props.interfaceId}
         </Typography.Text>
         <Typography.Text type='secondary'>
-          <Label>OperationId</Label>
+          <Label>operationId</Label>
           {props.operationId}
         </Typography.Text>
       </Space>
 
-      <NodesIgnore interfaceId={props.interfaceId} operationId={props.operationId} />
-
-      <NodesSort interfaceId={props.interfaceId} operationId={props.operationId} />
-    </div>
+      <PathCollapse
+        manualEdit
+        interfaceId={props.interfaceId}
+        loadingPanel={loadingIgnoreNode}
+        interfaces={[{ id: props.interfaceId, operationName: 'Node Ignore' }]}
+        activeKey={props.interfaceId}
+        ignoreNodes={ignoreNodeList}
+        onReloadNodes={queryIgnoreNode}
+      />
+    </>
   );
 };
 
