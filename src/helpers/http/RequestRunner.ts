@@ -29,10 +29,10 @@ export const runRESTPreRequest = async (
 }> => {
   const prTestResult = await _runRESTRequestPreTest(request);
   const prTestResultRequest: any = {};
-  if (prTestResult.headers) {
+  if (prTestResult.headers && prTestResult.headers.length > 0) {
     prTestResultRequest.headers = prTestResult.headers.map((h: any) => ({ ...h, active: true }));
   }
-  if (prTestResult.params) {
+  if (prTestResult.params && prTestResult.params.length > 0) {
     prTestResultRequest.params = prTestResult.params.map((p: any) => ({ ...p, active: true }));
   }
   if (prTestResult.body) {
