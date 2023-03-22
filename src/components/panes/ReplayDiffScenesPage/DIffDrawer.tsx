@@ -14,7 +14,46 @@ export interface DIffDrawer {
 }
 
 const DiffCard: FC<DIffDrawer> = (props) => {
+<<<<<<< HEAD
   const diffList = Array.isArray(props.data) ? props.data : [props.data];
+=======
+  const [activeLog, setActiveLog] = useState<DiffLog>();
+  useEffect(() => {
+    props.data?.logs?.length && setActiveLog((props.data.logs as DiffLog[])[0]);
+  }, [props.data]);
+
+  const diffJsonData = useMemo(
+    () =>
+      props.data?.diffResultCode
+        ? activeLog
+          ? {
+              baseMsg: props.data.baseMsg,
+              testMsg: props.data.testMsg,
+              logs: [activeLog],
+            }
+          : undefined
+        : {
+            baseMsg: props.data?.baseMsg,
+            testMsg: props.data?.testMsg,
+            logs: [],
+          },
+    [props.data, activeLog],
+  );
+
+  const pathTitle = useCallback((pathPair: PathPair) => {
+    const path =
+      pathPair.leftUnmatchedPath.length >= pathPair.rightUnmatchedPath.length
+        ? pathPair.leftUnmatchedPath
+        : pathPair.rightUnmatchedPath;
+    return (
+      path.reduce((title, curPair, index) => {
+        index && (title += '.');
+        title += curPair.nodeName || `[${curPair.index}]`;
+        return title;
+      }, '') || 'root'
+    );
+  }, []);
+>>>>>>> dc509a8 (fix: add default pathTitle)
 
   return (
     <Drawer
