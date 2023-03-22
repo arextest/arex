@@ -42,11 +42,13 @@ const DiffCard: FC<DIffDrawer> = (props) => {
       pathPair.leftUnmatchedPath.length >= pathPair.rightUnmatchedPath.length
         ? pathPair.leftUnmatchedPath
         : pathPair.rightUnmatchedPath;
-    return path.reduce((title, curPair, index) => {
-      index && (title += '.');
-      title += curPair.nodeName || `[${curPair.index}]`;
-      return title;
-    }, '');
+    return (
+      path.reduce((title, curPair, index) => {
+        index && (title += '.');
+        title += curPair.nodeName || `[${curPair.index}]`;
+        return title;
+      }, '') || 'root'
+    );
   }, []);
 
   return (
