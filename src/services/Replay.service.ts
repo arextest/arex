@@ -5,6 +5,8 @@ import { tryPrettierJsonString } from '../helpers/utils';
 import {
   CreatePlanReq,
   CreatePlanRes,
+  QueryAllDiffMsgReq,
+  QueryAllDiffMsgRes,
   QueryDifferencesReq,
   QueryDifferencesRes,
   QueryDiffMsgByIdReq,
@@ -162,5 +164,11 @@ export default class ReplayService {
     return request
       .get<QueryDiffMsgByIdRes>(`/report/report/queryDiffMsgById/${params.id}`)
       .then((res) => Promise.resolve(res.body.compareResultDetail));
+  }
+
+  static async queryAllDiffMsg(params: QueryAllDiffMsgReq) {
+    return request
+      .post<QueryAllDiffMsgRes>('/report/report/queryAllDiffMsg', params)
+      .then((res) => Promise.resolve(res.body));
   }
 }
