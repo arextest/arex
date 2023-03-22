@@ -90,7 +90,7 @@ const DiffCard: FC<DIffDrawer> = (props) => {
             )}
           </Col>
 
-          <Col span={18}>{diffJsonData && <DiffJsonView data={diffJsonData} />}</Col>
+          <Col span={18}>{diffJsonData && <DiffJsonView height='85vh' data={diffJsonData} />}</Col>
         </Row>
       </EmptyWrapper>
     </Drawer>
