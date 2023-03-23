@@ -65,10 +65,10 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
 
   const { data: sceneInfo = [] } = useRequest(() =>
     ReplayService.querySceneInfo({
-      planId: '6406f9fe78b64d7f552679c9',
-      planItemId: '6406f9fe78b64d7f552679f7',
-      // planId,
-      // planItemId,
+      // planId: '6406f9fe78b64d7f552679c9',
+      // planItemId: '6406f9fe78b64d7f552679f7',
+      planId,
+      planItemId,
     }),
   );
 
