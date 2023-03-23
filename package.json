@@ -1,0 +1,42 @@
+{
+  "name": "arex",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepare": "husky install",
+    "dev": "pnpm --stream -r do-dev",
+    "build": "pnpm -r do-build",
+    "server": "pnpm -r do-server",
+    "lint": "prettier --write \"packages/**/*.{ts,tsx}\" && eslint \"packages/**/*.{ts,tsx}\" --fix",
+    "pre-commit": "pnpm run lint",
+    "test": "pnpm -r do-test",
+    "postinstall": "pnpm run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "workspaces": [
+    "./packages/*"
+  ],
+  "dependencies": {
+    "@commitlint/cli": "^17.4.4",
+    "@commitlint/config-conventional": "^17.4.4"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.0",
+    "@emotion/eslint-plugin": "^11.10.0",
+    "@typescript-eslint/eslint-plugin": "^5.30.7",
+    "@typescript-eslint/parser": "^5.30.7",
+    "eslint": "8.20.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.31.11",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "prettier": "^2.8.0"
+  }
+}

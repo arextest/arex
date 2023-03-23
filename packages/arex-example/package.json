@@ -1,0 +1,34 @@
+{
+  "name": "arex-example",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "do-dev": "vite",
+    "do-build": "tsc && vite build"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "ahooks": "^3.7.5",
+    "allotment": "^1.18.1",
+    "antd": "^5.3.2",
+    "arex-common": "workspace:^0.0.3-beta.1",
+    "i18next": "^22.4.11",
+    "immer": "^9.0.19",
+    "mockjs": "^1.1.0",
+    "monaco-editor": "^0.36.1",
+    "path-to-regexp": "^6.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^12.2.0",
+    "react-router-dom": "^6.9.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@vitejs/plugin-react-swc": "^3.0.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.2.0"
+  }
+}

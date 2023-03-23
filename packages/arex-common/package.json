@@ -1,0 +1,40 @@
+{
+  "name": "arex-common",
+  "version": "0.0.3-beta.1",
+  "main": "dist/arex-common.umd.cjs",
+  "module": "dist/arex-common.js",
+  "type": "module",
+  "scripts": {
+    "build:code": "vite build",
+    "build:decl": "tsc --project tsconfig.decl.json",
+    "do-build": "pnpm run build:code && pnpm run build:decl"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [ "dist/*" ],
+  "dependencies": {
+    "@ant-design/icons": "^5.0.1",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "ahooks": "^3.7.5",
+    "allotment": "^1.18.1",
+    "antd": "^5.3.2",
+    "copy-to-clipboard": "^3.3.3",
+    "i18next": "^22.4.11",
+    "immer": "^9.0.19",
+    "monaco-editor": "^0.36.1",
+    "react": "^18.2.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-dom": "^18.2.0",
+    "react-github-btn": "^1.4.0",
+    "react-i18next": "^12.2.0",
+    "use-immer": "^0.8.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@vitejs/plugin-react-swc": "^3.0.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.2.0"
+  }
+}
