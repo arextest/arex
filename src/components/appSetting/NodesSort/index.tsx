@@ -116,7 +116,7 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
     run: querySortNode,
     mutate: setSortNodeList,
   } = useRequest(
-    () =>
+    (listPath?: string[]) =>
       props.interfaceId
         ? AppSettingService.queryInterfaceSortNode({
             interfaceId: props.interfaceId,
@@ -132,14 +132,40 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
       onBefore() {
         setSortNodeList([]);
       },
-      onSuccess() {
+      onSuccess(res, [listPath]) {
+        // 新增 SortNode 时设置 activeSortNode, 防止继续新增
+        if (listPath) {
+          const pathKey = listPath.join('_');
+          // 获取新增的 node
+          const node = res.find((node) => node.listPath.join('_') === pathKey);
+          node && setActiveSortNode(node);
+        }
         // 由于增量调用，取消状态重置
         // props.appId && handleCancelEditResponse(false, false);
       },
     },
   );
 
-  const SaveSortNodeOptions = {
+  /**
+   * 新增 SortNode
+   */
+  const { run: insertSortNode } = useRequest(AppSettingService.insertSortNode, {
+    manual: true,
+    onSuccess(success: boolean, [params]) {
+      if (success) {
+        // 将新增的 node 设置为 activeNode
+        querySortNode(params.listPath);
+        message.success(t('message.updateSuccess', { ns: 'common' }));
+      } else {
+        message.error(t('message.updateFailed', { ns: 'common' }));
+      }
+    },
+  });
+
+  /**
+   * 更新 SortNode
+   */
+  const { run: updateSortNode } = useRequest(AppSettingService.updateSortNode, {
     manual: true,
     onSuccess(success: boolean) {
       if (success) {
@@ -149,17 +175,7 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
         message.error(t('message.updateFailed', { ns: 'common' }));
       }
     },
-  };
-
-  /**
-   * 新增 SortNode
-   */
-  const { run: insertSortNode } = useRequest(AppSettingService.insertSortNode, SaveSortNodeOptions);
-
-  /**
-   * 更新 SortNode
-   */
-  const { run: updateSortNode } = useRequest(AppSettingService.updateSortNode, SaveSortNodeOptions);
+  });
 
   // 保存方式更改为增量式调用
   const handleSaveSort = (data: typeof checkedNodesData) => {
@@ -356,8 +372,6 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
   };
 
   const handleSortTreeSelected: TreeProps['onSelect'] = (selectedKeys) => {
-    console.log({ selectedKeys });
-
     const key = selectedKeys[0] as string;
     if (key) {
       setCheckedNodesData((state) => {
