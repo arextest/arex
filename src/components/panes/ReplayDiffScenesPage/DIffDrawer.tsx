@@ -1,5 +1,5 @@
 import { Drawer, Space } from 'antd';
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useMemo } from 'react';
 
 import { CompareResultDetail } from '../../../services/Replay.type';
 import { EmptyWrapper } from '../../styledComponents';
@@ -14,11 +14,10 @@ export interface DIffDrawer {
 }
 
 const DiffCard: FC<DIffDrawer> = (props) => {
-<<<<<<< HEAD
-  const diffList = Array.isArray(props.data) ? props.data : [props.data];
-=======
-  const diffList = Array.isArray(props.data) ? props.data : [props.data];
->>>>>>> dc509a8 (fix: add default pathTitle)
+  const diffList = useMemo(
+    () => (Array.isArray(props.data) ? props.data : [props.data]),
+    [props.data],
+  );
 
   return (
     <Drawer

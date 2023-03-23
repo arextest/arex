@@ -104,18 +104,26 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
 
   const {
     data: diffMsg,
+    mutate: setDiffMsg,
     loading: loadingDiffMsg,
     run: queryDiffMsgById,
   } = useRequest(ReplayService.queryDiffMsgById, {
     manual: true,
+    onBefore() {
+      setDiffMsg();
+    },
   });
 
   const {
     data: diffMsgAll,
+    mutate: setDiffMsgAll,
     loading: loadingDiffMsgAll,
     run: queryAllDiffMsg,
   } = useRequest(ReplayService.queryAllDiffMsg, {
     manual: true,
+    onBefore() {
+      setDiffMsgAll();
+    },
   });
 
   return (
