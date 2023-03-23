@@ -14,6 +14,7 @@ export function useCustomNavigate() {
   const { setPages, pages, collectionTreeData } = useStore();
   const nav = useNavigate();
   function genTitle({ rawId, pagesType }: any): string {
+    console.log(rawId, pagesType);
     return `${pagesType} - ${rawId}`;
   }
   return function (arg: any) {
@@ -29,17 +30,18 @@ export function useCustomNavigate() {
 
     const find = pages.find((pane) => pane.key === paneKey);
     if (!find) {
+      const data = JSONparse(decodeURIComponent(matchUrlParams2.data));
       setPages(
         {
           title: genTitle({
-            rawId: matchUrlParams1.rawId,
+            rawId: data?.appId || matchUrlParams1.rawId,
             pagesType: matchUrlParams1.pagesType,
             collectionTreeData: collectionTreeData,
           }),
           menuType: getMenuTypeByPageType(matchUrlParams1.pagesType),
           pageType: matchUrlParams1.pagesType,
           isNew: false,
-          data: JSONparse(decodeURIComponent(matchUrlParams2.data)),
+          data: data,
           paneId: genPaneIdByUrl(url),
           rawId: matchUrlParams1.rawId,
         },

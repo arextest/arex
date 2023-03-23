@@ -62,7 +62,21 @@ const RunResult: FC<RunResultProps> = ({ loading, dataSource }) => {
                 </p>
                 {dataSourceItem.data.map((dataSourceItemDataItem, dataSourceItemDataIndex) => {
                   return (
-                    <div key={dataSourceItemDataIndex}>
+                    <div
+                      key={dataSourceItemDataIndex}
+                      css={css`
+                        border: 1px solid silver;
+                        padding: 4px;
+                        border-radius: 4px;
+                        margin-bottom: 8px;
+                        .ant-list-bordered {
+                          border: none !important;
+                        }
+                        .ant-list-item.ant-list-item-no-flex {
+                          padding: 6px !important;
+                        }
+                      `}
+                    >
                       <div
                         css={css`
                           margin-bottom: 10px;
