@@ -308,8 +308,8 @@ export type infoItem = {
 };
 
 export interface QueryFullLinkInfoRes {
-  entrance: infoItem;
-  infoItemList: infoItem[];
+  entrance: infoItem | null;
+  infoItemList: infoItem[] | null;
 }
 
 // /queryDiffMsgById/{id}
@@ -328,4 +328,17 @@ export type CompareResultDetail = {
 };
 export interface QueryDiffMsgByIdRes {
   compareResultDetail: CompareResultDetail;
+}
+
+export interface QueryAllDiffMsgReq {
+  recordId: string;
+  replayId: string;
+  pageIndex: number;
+  pageSize: number;
+  needTotal: boolean;
+}
+
+export interface QueryAllDiffMsgRes {
+  compareResultDetailList: CompareResultDetail[];
+  totalCount: number;
 }
