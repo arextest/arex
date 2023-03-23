@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { css } from '@emotion/react';
-import { Spin } from 'antd';
+import { Result, Spin } from 'antd';
 import React, { useState } from 'react';
 
 import { DiffJsonViewProps } from '../../../../replay/Analysis';
@@ -25,25 +25,29 @@ const CompareResult = ({ compareResult, loading }) => {
         >
           Compare Result
         </h4>
-        <DiffList
-          externalData={{
-            logs: compareResult.logs,
-            baseMsg: JSON.stringify(compareResult.responses[0]),
-            testMsg: JSON.stringify(compareResult.responses[1]),
-          }}
-          appId={''}
-          operationId={''}
-          onTreeModeClick={(diff) => {
-            if (diff) {
-              setDiffJsonViewData({
-                baseMsg: diff.baseMsg,
-                testMsg: diff.testMsg,
-                logs: diff.logs,
-              });
-              setDiffJsonViewVisible(true);
-            }
-          }}
-        />
+        {compareResult.logs.length > 0 || JSON.stringify(compareResult.responses[0]) === '{}' ? (
+          <DiffList
+            externalData={{
+              logs: compareResult.logs,
+              baseMsg: JSON.stringify(compareResult.responses[0]),
+              testMsg: JSON.stringify(compareResult.responses[1]),
+            }}
+            appId={''}
+            operationId={''}
+            onTreeModeClick={(diff) => {
+              if (diff) {
+                setDiffJsonViewData({
+                  baseMsg: diff.baseMsg,
+                  testMsg: diff.testMsg,
+                  logs: diff.logs,
+                });
+                setDiffJsonViewVisible(true);
+              }
+            }}
+          />
+        ) : (
+          <Result status='success' title='No differences found!' />
+        )}
         <DiffJsonViewDrawer
           data={diffJsonViewData}
           open={diffJsonViewVisible}

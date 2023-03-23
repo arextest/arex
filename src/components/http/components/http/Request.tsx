@@ -154,10 +154,8 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
             })
             .then((responseAndTestResult) => {
               dispatch((state) => {
-                if (responseAndTestResult.response.type === 'success') {
-                  state.response = responseAndTestResult.response;
-                  state.testResult = responseAndTestResult.testResult;
-                }
+                state.response = responseAndTestResult.response;
+                state.testResult = responseAndTestResult.testResult;
               });
             });
         });
@@ -234,9 +232,13 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
               });
             }}
           />
+          <div
+            css={css`
+              width: 8px;
+            `}
+          />
           <Checkbox
             css={css`
-              margin-left: 8px;
               display: ${props.nodeType === 2 ? 'flex' : 'none'};
             `}
             checked={store.request.inherited}

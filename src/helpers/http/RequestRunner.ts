@@ -4,6 +4,24 @@ import { HoppRESTRequest } from '../../components/http/data/rest';
 import { HoppRESTResponse } from '../../components/http/helpers/types/HoppRESTResponse';
 import { HoppTestResult } from '../../components/http/helpers/types/HoppTestResult';
 import AgentAxios from './AgentAxios';
+const errTestResult = {
+  description: '',
+  expectResults: [],
+  tests: [],
+  envDiff: {
+    global: {
+      additions: [],
+      deletions: [],
+      updations: [],
+    },
+    selected: {
+      additions: [],
+      deletions: [],
+      updations: [],
+    },
+  },
+  scriptError: true,
+};
 
 export const runRESTRequest = async (
   request: HoppRESTRequest,
@@ -11,13 +29,30 @@ export const runRESTRequest = async (
   response: HoppRESTResponse;
   testResult: HoppTestResult;
 }> => {
-  const response = await _runRESTRequest(request, 'EXTENSIONS_ENABLED');
-  const testResult = await _runRESTRequestTest(request, response);
+  try {
+    const response = await _runRESTRequest(request, 'EXTENSIONS_ENABLED');
+    const testResult = await _runRESTRequestTest(request, response);
 
-  return {
-    response,
-    testResult,
-  };
+    return {
+      response,
+      testResult,
+    };
+  } catch (e) {
+    return {
+      response: {
+        type: 'fail',
+        headers: [],
+        body: {},
+        statusCode: 200,
+        meta: {
+          responseSize: 0, // in bytes
+          responseDuration: 0, // in millis
+        },
+      },
+      // @ts-ignore
+      testResult: errTestResult,
+    };
+  }
 };
 
 // 预请求处理函数
@@ -86,25 +121,6 @@ function _runRESTRequest(request: HoppRESTRequest, type: string): Promise<HoppRE
 }
 
 function _runRESTRequestTest(request: HoppRESTRequest, response: any): Promise<HoppTestResult> {
-  const errTestResult = {
-    description: '',
-    expectResults: [],
-    tests: [],
-    envDiff: {
-      global: {
-        additions: [],
-        deletions: [],
-        updations: [],
-      },
-      selected: {
-        additions: [],
-        deletions: [],
-        updations: [],
-      },
-    },
-    scriptError: true,
-  };
-
   return axios({
     method: 'POST',
     url: '/node/preTest',
