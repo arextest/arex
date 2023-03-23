@@ -90,6 +90,13 @@ const useInit = () => {
             data: customSearchParams.query.data,
           },
         });
+      } else if (params.pagesType === PagesType.ReplayDiff) {
+        customNavigate({
+          path: customSearchParams.pathname,
+          query: {
+            data: customSearchParams.query.data,
+          },
+        });
       } else if (params.pagesType === PagesType.BatchCompare) {
         customNavigate({
           path: customSearchParams.pathname,
