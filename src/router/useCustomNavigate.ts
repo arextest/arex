@@ -14,7 +14,6 @@ export function useCustomNavigate() {
   const { setPages, pages, collectionTreeData } = useStore();
   const nav = useNavigate();
   function genTitle({ rawId, pagesType }: any): string {
-    console.log(rawId, pagesType);
     return `${pagesType} - ${rawId}`;
   }
   return function (arg: any) {
