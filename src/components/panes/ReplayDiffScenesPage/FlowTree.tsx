@@ -1,9 +1,10 @@
 import { css } from '@emotion/react';
-import { Badge, Space, theme, Tooltip, Typography } from 'antd';
+import { Badge, Space, theme, Typography } from 'antd';
 import React, { FC, useCallback } from 'react';
 import Tree from 'react-d3-tree';
 
 import { infoItem } from '../../../services/Replay.type';
+import { EllipsisTooltip } from '../../index';
 import { SceneCodeMap } from './index';
 
 export interface FlowTreeItem extends infoItem {
@@ -74,7 +75,7 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
               height={50}
               strokeWidth={0}
               fontSize={token.fontSizeLG}
-              fontWeight={400}
+              fontWeight={500}
               dominantBaseline='middle'
               textAnchor='middle'
             >
@@ -86,9 +87,12 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
             </foreignObject>
 
             <foreignObject x={-10} y={0} width={164} height={28}>
-              <Tooltip title={nodeDatum.operationName} placement='bottom'>
-                <Typography.Text ellipsis>{nodeDatum.operationName}</Typography.Text>
-              </Tooltip>
+              <EllipsisTooltip
+                ellipsis
+                separator={false}
+                title={nodeDatum.operationName}
+                placement='bottom'
+              />
             </foreignObject>
           </g>
         ) : (
@@ -107,7 +111,12 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
                 <Badge color={SceneCodeMap[nodeDatum.code].color} />
 
                 <Typography.Text ellipsis style={{ width: '260px' }}>
-                  {nodeDatum.categoryName} - {nodeDatum.operationName}
+                  {nodeDatum.categoryName} -{' '}
+                  <EllipsisTooltip
+                    showSeparator
+                    placement='bottom'
+                    title={nodeDatum.operationName}
+                  />
                 </Typography.Text>
               </Space>
             </foreignObject>
