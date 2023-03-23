@@ -126,6 +126,14 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
     },
   });
 
+  const {
+    data: diffMsgAll,
+    loading: loadingDiffMsgAll,
+    run: queryAllDiffMsg,
+  } = useRequest(ReplayService.queryAllDiffMsg, {
+    manual: true,
+  });
+
   return (
     <div ref={wrapperRef}>
       <Space direction='vertical' style={{ width: '100%' }}>
