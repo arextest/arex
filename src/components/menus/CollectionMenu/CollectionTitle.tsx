@@ -256,7 +256,9 @@ function CollectionTitle({
           // @ts-ignore
           <span css={css(`color:${MethodMap[method].color};margin-right:4px`)}>{method}</span>
         )}
-        {val.nodeType === 2 && <PrefixIcon border icon='case' />}
+        {val.nodeType === 2 && (
+          <PrefixIcon border icon={val.caseSourceType === 1 ? 'arex' : 'case'} />
+        )}
         <div className={'content'}>
           {renameKey === val.id ? (
             <Input
