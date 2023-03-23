@@ -82,6 +82,7 @@ export function collectionOriginalTreeToAntdTreeData(
       key: nodes[value].infoId,
       nodeType: nodes[value].nodeType,
       method: nodes[value].method,
+      caseSourceType: nodes[value].caseSourceType,
       // isLeaf: nodes[value].nodeType === 2||nodes[value].children==null
       // icon: iconMap[nodes[value].nodeType],
     });

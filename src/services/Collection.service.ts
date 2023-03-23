@@ -12,6 +12,7 @@ export interface NodeObject {
   key: string;
   nodeType: number;
   method: string;
+  caseSourceType: number;
 }
 
 export class CollectionService {
