@@ -57,7 +57,7 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
         <Spin spinning={props.loading}>
           {Object.keys(props.treeData).length ? (
             <Tree
-              multiple
+              // multiple
               defaultExpandAll
               {...props}
               treeData={getNodes(props.treeData, '')}
