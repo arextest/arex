@@ -14,6 +14,7 @@
     "params": "Params",
     "requestBody": "Body",
     "requestHeaders": "Headers",
+    "responseHeaders": "Response Headers",
     "result": "Result",
     "authorization": "Authorization",
     "pre-requestScript": "Pre-request Script",
