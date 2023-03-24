@@ -14,6 +14,7 @@
     "params": "参数",
     "requestBody": "请求体",
     "requestHeaders": "请求头",
+    "responseHeaders": "响应头",
     "result": "结果",
     "authorization": "授权",
     "pre-requestScript": "预请求脚本",
