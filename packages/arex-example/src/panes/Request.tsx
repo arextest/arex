@@ -60,6 +60,7 @@ const RequestPane = () => {
           return new Promise((resolve) => resolve(0));
         }}
         onSend={(req) => {
+          // @ts-ignore
           return new Promise((resolve) => resolve(0));
         }}
         onChangeEditState={(edited) => {
