@@ -4,3 +4,4 @@
 - pnpm多仓库模式包引用
 - pnpm包别名切换引用
 - github pnpm包发布
+- 代码编辑器使用monaco
