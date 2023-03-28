@@ -33,7 +33,7 @@ export const SceneCodeMap: {
 export const SummaryCodeMap: { [key: string]: { color: string; message: string } } = {
   '0': {
     color: 'success',
-    message: 'COMPARED_WITHOUT_DIFFERENCE',
+    message: 'SUCCESS', // 'COMPARED_WITHOUT_DIFFERENCE'
   },
   '1': {
     color: 'magenta',
@@ -41,7 +41,7 @@ export const SummaryCodeMap: { [key: string]: { color: string; message: string }
   },
   '2': {
     color: 'error',
-    message: 'COMPARED_INTERNAL_EXCEPTION',
+    message: 'EXCEPTION', // 'COMPARED_INTERNAL_EXCEPTION'
   },
   '3': {
     color: 'orange',

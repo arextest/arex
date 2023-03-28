@@ -70,7 +70,7 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId, agentVersion }) =>
       </Form.Item>
 
       <Form.Item
-        label='CaseTable range'
+        label='Case range'
         name='offsetDays'
         rules={[{ required: true, message: t('appSetting.emptyCaseRange') }]}
       >

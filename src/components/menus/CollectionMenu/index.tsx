@@ -276,7 +276,7 @@ const CollectionMenu = () => {
     const key = keys[0];
     const maps: { [key: string]: string } = {
       '1': 'New Request',
-      '2': 'New CaseTable',
+      '2': 'New Case',
       '3': 'New Folder',
     };
     setExpandedKeys([...expandedKeys, p[p.length - 1]]);
