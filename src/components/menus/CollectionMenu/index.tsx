@@ -1,7 +1,7 @@
-import { DownOutlined, FilterOutlined, PlayCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { DownOutlined, PlayCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Button, Dropdown, Input, Tree } from 'antd';
+import { Button, Dropdown, Tag, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps, TreeProps } from 'antd/lib/tree';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,12 +10,14 @@ import { useParams } from 'react-router-dom';
 import { EmailKey, NodeType } from '../../../constant';
 import { filterTree, treeFind } from '../../../helpers/collection/util';
 import { parsePaneId } from '../../../helpers/functional/url';
-import { getLocalStorage, uuid } from '../../../helpers/utils';
+import { getLocalStorage, negate, uuid } from '../../../helpers/utils';
 import { useCustomNavigate } from '../../../router/useCustomNavigate';
-import { CollectionService } from '../../../services/Collection.service';
+import { CollectionService, NodeObject } from '../../../services/Collection.service';
 import { useStore } from '../../../store';
-import { TooltipButton } from '../../index';
+import { StructuredFilter, TooltipButton } from '../../index';
 import { PagesType } from '../../panes';
+import { SearchDataType } from '../../StructuredFilter';
+import { CategoryKey, Operator } from '../../StructuredFilter/keyword';
 import { EmptyWrapper } from '../../styledComponents';
 import CollectionTitle from './CollectionTitle';
 
@@ -90,12 +92,12 @@ const CollectionMenuWrapper = styled.div`
   }
 `;
 
-const dataList: { key: React.Key; title: string }[] = [];
-const generateList = (data: DataNode[]) => {
+const dataList: { key: string; title: string; labelIds: string[] | null }[] = [];
+const generateList = (data: NodeObject[]) => {
   for (let i = 0; i < data.length; i++) {
     const node = data[i];
-    const { key, title }: any = node;
-    dataList.push({ key, title });
+    const { key, title, labelIds } = node;
+    dataList.push({ key, title, labelIds });
     if (node.children) {
       generateList(node.children);
     }
@@ -126,15 +128,42 @@ export type nodeType = {
 const CollectionMenu = () => {
   const { t } = useTranslation(['components']);
   const params = useParams();
-  const { activeMenu, collectionLastManualUpdateTimestamp, setCollectionTreeData } = useStore();
+  const {
+    activeMenu,
+    labelData,
+    collectionLastManualUpdateTimestamp,
+    setLabelData,
+    setCollectionTreeData,
+  } = useStore();
   const email = getLocalStorage<string>(EmailKey);
 
   const value = useMemo(() => parsePaneId(activeMenu[1] || '')['rawId'], [activeMenu]);
   const selectedKeys = useMemo(() => (value ? [value] : []), [value]);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
-  // TODO
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState<SearchDataType>();
   const [autoExpandParent, setAutoExpandParent] = useState(true);
+
+  const options = useMemo(
+    () => [
+      {
+        category: CategoryKey.LabelKey,
+        operator: [Operator.EQ, Operator.NE],
+        value: labelData.map((label) => ({
+          label: <Tag color={label.color}>{label.labelName}</Tag>,
+          key: label.id,
+        })),
+      },
+      {
+        category: CategoryKey.IDKey,
+        operator: [Operator.EQ, Operator.NE],
+        value: dataList.map((item) => ({
+          label: item.key,
+          key: item.key,
+        })),
+      },
+    ],
+    [labelData, dataList],
+  );
 
   const {
     data: treeData = [],
@@ -147,7 +176,7 @@ const CollectionMenu = () => {
       if (res.length) {
         setCollectionTreeData(res);
         generateList(res);
-        // 首次加载，在这里加initvalue逻辑
+        // 首次加载，在这里加 initValue 逻辑
         const initValue = treeFind(res, (node) => node.key === params.rawId);
         if (initValue && expandedKeys.length === 0 && params.pagesType !== 'BatchComparePage') {
           // @ts-ignore
@@ -160,6 +189,13 @@ const CollectionMenu = () => {
           setExpandedKeys([params.rawId]);
         }
       }
+    },
+  });
+
+  useRequest(() => CollectionService.queryLabels({ workspaceId: params.workspaceId as string }), {
+    ready: !!params.workspaceId,
+    onSuccess(res) {
+      setLabelData(res);
     },
   });
 
@@ -180,23 +216,55 @@ const CollectionMenu = () => {
     setAutoExpandParent(false);
   };
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    const regExp = new RegExp(value, 'i');
+  const handleChange = (value: SearchDataType) => {
+    console.log(value, dataList);
+    const { keyword, structuredValue = [] } = value;
     let newExpandedKeys;
-    if (value == '') {
+    if (!structuredValue?.length && !keyword) {
       newExpandedKeys = dataList.map((item) => item.title);
     } else {
       newExpandedKeys = dataList
         .map((item) => {
-          // @ts-ignore
-          if (item.title.match(regExp) || item.key.includes(value)) {
+          let filtered = keyword && item.title.includes(keyword);
+
+          if (filtered) {
             return getParentKey(item.key, treeData);
           }
-          return null;
+
+          for (let i = 0; i < structuredValue.length; i++) {
+            const structured = structuredValue[i];
+
+            if (structured.category === CategoryKey.LabelKey) {
+              // search for labelIds
+              const include = negate(
+                item.labelIds?.includes(structured.value as string),
+                structured.operator === Operator.NE,
+              );
+
+              if (include) {
+                filtered = true;
+                break;
+              }
+            } else if (structured.category === CategoryKey.IDKey) {
+              // search for id
+              const include = negate(
+                item.key.includes(structured.value as string),
+                structured.operator === Operator.NE,
+              );
+              console.log({ include });
+              if (include) {
+                filtered = true;
+                break;
+              }
+            }
+          }
+
+          return filtered ? getParentKey(item.key, treeData) : null;
         })
         .filter((item, i, self) => item && self.indexOf(item) === i);
     }
+    // TODO
+    console.log({ newExpandedKeys });
     setExpandedKeys(newExpandedKeys as React.Key[]);
     setSearchValue(value);
     setAutoExpandParent(true);
@@ -448,54 +516,51 @@ const CollectionMenu = () => {
         }
       >
         <div>
-          <div className={'collection-header'}>
-            <TooltipButton
-              icon={<PlusOutlined />}
-              type='text'
-              size='small'
-              className={'collection-header-create'}
-              onClick={createCollection}
-              placement='bottomLeft'
-              title={t('collection.create_new')}
-            />
+          <StructuredFilter
+            size='small'
+            className={'collection-header-search'}
+            showSearchButton={false}
+            prefix={
+              <>
+                <TooltipButton
+                  icon={<PlusOutlined />}
+                  type='text'
+                  size='small'
+                  className={'collection-header-create'}
+                  onClick={createCollection}
+                  placement='bottomLeft'
+                  title={t('collection.create_new')}
+                />
+                <Dropdown
+                  menu={{
+                    items: [
+                      { key: '1', label: <a>{t('collection.batch_run')}</a> },
+                      { key: '2', label: <a>{t('collection.batch_compare')}</a> },
+                    ],
+                    onClick(e) {
+                      e.key;
+                      if (e.key === '1') {
+                        test();
+                      } else if (e.key === '2') {
+                        customNavigate({
+                          path: `/${params.workspaceId}/${PagesType.Run}/${'create'}`,
+                        });
+                      }
+                    },
+                  }}
+                >
+                  <a onClick={(e) => e.preventDefault()}>
+                    <Button type={'text'} size={'small'}>
+                      <PlayCircleOutlined />{' '}
+                    </Button>
+                  </a>
+                </Dropdown>
+              </>
+            }
+            options={options}
+            onChange={handleChange}
+          />
 
-            <Dropdown
-              menu={{
-                items: [
-                  {
-                    key: '1',
-                    label: <a>{t('collection.batch_run')}</a>,
-                  },
-                  {
-                    key: '2',
-                    label: <a>{t('collection.batch_compare')}</a>,
-                  },
-                ],
-                onClick(e) {
-                  e.key;
-                  if (e.key === '1') {
-                    test();
-                  } else if (e.key === '2') {
-                    customNavigate({ path: `/${params.workspaceId}/${PagesType.Run}/${'create'}` });
-                  }
-                },
-              }}
-            >
-              <a onClick={(e) => e.preventDefault()}>
-                <Button type={'text'} size={'small'}>
-                  <PlayCircleOutlined />
-                </Button>
-              </a>
-            </Dropdown>
-
-            <Input
-              className={'collection-header-search'}
-              size='small'
-              placeholder=''
-              prefix={<FilterOutlined />}
-              onChange={onChange}
-            />
-          </div>
           <Tree
             height={treeHeight - 62}
             autoExpandParent={autoExpandParent}
@@ -512,7 +577,7 @@ const CollectionMenu = () => {
             showLine
             titleRender={(val) => (
               <CollectionTitle
-                searchValue={searchValue}
+                keyword={searchValue?.keyword}
                 updateDirectoryTreeData={fetchTreeData}
                 val={val}
                 treeData={treeData}

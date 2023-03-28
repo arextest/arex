@@ -1,5 +1,8 @@
 // 数组转树通用方法
+import { SearchDataType } from '../../components/StructuredFilter';
+import { CategoryKey, Operator } from '../../components/StructuredFilter/keyword';
 import { NodeObject } from '../../services/Collection.service';
+import { negate } from '../utils';
 
 export function arrToTree(arr: any, pid = 0) {
   const newArr: any = [];
@@ -78,6 +81,7 @@ export function collectionOriginalTreeToAntdTreeData(
       id: nodes[value].infoId,
       children: [],
       // 自定义
+      labelIds: nodes[value].labelIds,
       title: nodes[value].nodeName,
       key: nodes[value].infoId,
       nodeType: nodes[value].nodeType,
@@ -104,19 +108,48 @@ export function treeFindAllKeys(tree: any, allKeys = []) {
   return allKeys;
 }
 
-export const filterTree = (val: string, tree: any, newArr: any = []) => {
-  if (!(tree.length && val)) {
+export const filterTree = (val: SearchDataType = {}, tree: any, newArr: any = []) => {
+  const { keyword, structuredValue = [] } = val;
+
+  if (!keyword && !structuredValue?.length) {
     // 如果搜索关键字为空直接返回源数据
     return tree;
   }
 
   for (const item of tree) {
-    const regExp = new RegExp(val, 'i');
-    if (item.title.match(regExp) || item.key.includes(val)) {
+    let filtered = keyword && !!item.title.includes(keyword);
+
+    for (let i = 0; i < structuredValue.length; i++) {
+      const structured = structuredValue[i];
+
+      if (structured.category === CategoryKey.LabelKey) {
+        // search for labelIds
+        const include = negate(
+          item.labelIds?.includes(structured.value as string),
+          structured.operator === Operator.NE,
+        );
+
+        if (include) {
+          filtered = true;
+        }
+      } else if (structured.category === CategoryKey.IDKey) {
+        // search for id
+        const include = negate(
+          item.key.includes(structured.value as string),
+          structured.operator === Operator.NE,
+        );
+        if (include) {
+          filtered = true;
+        }
+      }
+    }
+
+    if (filtered) {
       // 匹配到关键字的逻辑
       newArr.push(item); // 如果匹配到就在数值中添加记录
       continue; // 匹配到了就退出循环了此时如果有子集也会一并带着
     }
+
     if (item.children && item.children.length) {
       // 如果父级节点没有匹配到就看看是否有子集，然后做递归
       const subArr = filterTree(val, item.children); // 缓存递归后的子集数组

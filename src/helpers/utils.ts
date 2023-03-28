@@ -137,3 +137,12 @@ export function handleInherited(request: HoppRESTRequest): HoppRESTRequest {
     return request;
   }
 }
+
+/**
+ * 取反函数
+ * @param value
+ * @param negate 是否取反
+ */
+export function negate(value: any, negate = true): boolean {
+  return negate ? !value : !!value;
+}
