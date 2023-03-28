@@ -196,12 +196,13 @@ const HttpRequestPage: PageFC<nodeType> = (props) => {
         environment={environment}
         onPreSend={runRESTPreRequest}
         onSend={runRESTRequest}
-        onSendCompare={() => {
+        onSendCompare={(request) => {
           const nodeInfo = treeFindPath(collectionTreeData, (node) => node.key === id);
           return sendQuickCompare({
             caseId: id,
             nodeInfo,
             envs: environment.variables,
+            request,
           });
         }}
         onSave={handleSave}
