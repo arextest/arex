@@ -133,7 +133,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
               <Allotment
                 vertical
                 css={css`
-                  height: 800px;
+                  height: ${compareResultDetailListFiltered.length * 400 || 200}px;
                   margin-top: 8px;
                 `}
               >
