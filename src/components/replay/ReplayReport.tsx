@@ -342,17 +342,26 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
             description={t('replay.confirmTerminateReplay')}
             onConfirm={() => terminatePlanStatistics(selectedPlan!.planId)}
           >
-            <SmallTextButton icon={<StopOutlined />} title={t('replay.terminate')} />
+            <SmallTextButton
+              color={'primary'}
+              icon={<StopOutlined />}
+              title={t('replay.terminate')}
+            />
           </Popconfirm>
           <Popconfirm
             title={t('replay.deleteTheReport')}
             description={t('replay.confirmDeleteReport')}
             onConfirm={() => deletePlanStatistics(selectedPlan!.planId)}
           >
-            <SmallTextButton icon={<DeleteOutlined />} title={t('replay.delete')} />
+            <SmallTextButton
+              color={'primary'}
+              icon={<DeleteOutlined />}
+              title={t('replay.delete')}
+            />
           </Popconfirm>
 
           <SmallTextButton
+            color={'primary'}
             icon={<RedoOutlined />}
             title={t('replay.rerun')}
             onClick={() => handleRerun()}

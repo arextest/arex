@@ -13,6 +13,7 @@ import { OperationInterface, SortNode } from '../../../services/AppSetting.type'
 import { FileSystemService } from '../../../services/FileSystem.service';
 import { EditAreaPlaceholder, SpaceBetweenWrapper } from '../../styledComponents';
 import EmptyResponse from '../NodesIgnore/EmptyResponse';
+import PathCollapseHeader from '../NodesIgnore/PathCollapseHeader';
 import ResponseRaw from '../NodesIgnore/ResponseRaw';
 import ActionButton from './ActionButton';
 import ArrayTree from './ArrayTree';
@@ -86,6 +87,9 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
   const [nodesEditMode, setNodesEditMode] = useState<NodesEditMode>(NodesEditMode.Tree);
   const [treeEditMode, setTreeEditMode] = useState<TreeEditModeEnum>(TreeEditModeEnum.ArrayTree);
 
+  // Interfaces search keyword
+  const [keyword, setKeyword] = useState<string | boolean>(false);
+
   const [sortArray, setSortArray] = useState<any[]>();
 
   const [rawResponse, setRawResponse] = useState<string>();
@@ -105,6 +109,15 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
     {
       ready: !!props.appId,
     },
+  );
+  const operationListFiltered = useMemo(
+    () =>
+      typeof keyword === 'string' && keyword
+        ? operationList.filter((item) =>
+            item.operationName.toLowerCase().includes(keyword.toLowerCase()),
+          )
+        : operationList,
+    [operationList, keyword],
   );
 
   /**
@@ -390,11 +403,19 @@ const SettingNodesSort = forwardRef<SettingNodesSortRef, SettingNodesSortProps>(
       <Col span={props.modalTree ? 24 : 10}>
         <PathCollapse
           interfaceId={props.interfaceId}
-          title={props.interfaceId ? undefined : t('appSetting.interfaces')}
+          title={
+            props.interfaceId ? undefined : (
+              <PathCollapseHeader
+                search={keyword}
+                onChange={(search) => setKeyword(search ? '' : search)}
+                onSearch={setKeyword}
+              />
+            )
+          }
           height={'calc(100vh - 168px)'}
           loading={loadingOperationList}
           loadingPanel={loadingSortNode}
-          interfaces={operationList}
+          interfaces={operationListFiltered}
           activeKey={activeOperationInterface?.id}
           activeCollapseKey={activeSortNode}
           sortNodes={sortNodeList}

@@ -1,19 +1,26 @@
-import { CodeOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  CloseOutlined,
+  CodeOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { App, Button, Collapse, CollapseProps, List, Spin, Typography } from 'antd';
-import React, { FC } from 'react';
+import { App, Button, Collapse, CollapseProps, Input, List, Spin, Typography } from 'antd';
+import React, { FC, ReactNode, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import AppSettingService from '../../../services/AppSetting.service';
 import { OperationId, OperationInterface, SortNode } from '../../../services/AppSetting.type';
-import { SpaceBetweenWrapper } from '../../styledComponents';
+import { SmallTextButton, SpaceBetweenWrapper } from '../../styledComponents';
 import TooltipButton from '../../TooltipButton';
 
 export interface PathCollapseProps extends Omit<CollapseProps, 'activeKey' | 'onChange'> {
   interfaceId?: string;
-  title?: string;
+  title?: ReactNode;
   height?: string;
   loading?: boolean;
   loadingPanel?: boolean;
@@ -50,6 +57,16 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
 
+  const [search, setSearch] = useState<boolean | string>(false);
+
+  const sortNodesFiltered = useMemo(
+    () =>
+      typeof search === 'string' && search
+        ? props.sortNodes.filter((node) => node.path.toLowerCase().includes(search.toLowerCase()))
+        : props.sortNodes,
+    [props.sortNodes, search],
+  );
+
   const handleEdit = (sortNode: SortNode) => props.onEdit && props.onEdit(sortNode.path, sortNode);
 
   /**
@@ -81,6 +98,9 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
           css={css`
             height: ${props.height};
             overflow-y: auto;
+            .ant-collapse-extra {
+              flex-shrink: 0;
+            }
           `}
         >
           {props.interfaces.map((i) => (
@@ -95,6 +115,15 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                     title={t('appSetting.addSortKey')}
                     onClick={(e) => {
                       e.stopPropagation();
+                      props.onChange?.(i, true);
+                    }}
+                  />
+                  <SmallTextButton
+                    key='search'
+                    icon={<SearchOutlined />}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSearch('');
                       props.onChange?.(i, true);
                     }}
                   />
@@ -115,7 +144,26 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
               <List
                 size='small'
                 loading={props.loadingPanel}
-                dataSource={props.sortNodes}
+                dataSource={sortNodesFiltered}
+                header={
+                  search !== false && (
+                    <SpaceBetweenWrapper style={{ padding: '0 16px' }}>
+                      <Input.Search
+                        size='small'
+                        onSearch={(value) => {
+                          setSearch(value);
+                        }}
+                        style={{ marginRight: '8px' }}
+                      />
+                      <Button
+                        size='small'
+                        type='text'
+                        icon={<CloseOutlined />}
+                        onClick={() => setSearch(false)}
+                      />
+                    </SpaceBetweenWrapper>
+                  )
+                }
                 renderItem={(sortNode) => (
                   <List.Item
                     className={

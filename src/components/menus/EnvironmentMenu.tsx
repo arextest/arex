@@ -61,7 +61,9 @@ const EnvironmentMenu: FC = () => {
       small
       refresh
       rowKey='id'
-      prefix={<SmallTextButton icon={<PlusOutlined />} onClick={createNewEnvironment} />}
+      prefix={
+        <SmallTextButton color={'primary'} icon={<PlusOutlined />} onClick={createNewEnvironment} />
+      }
       onSelect={handleEnvMenuClick}
       placeholder={t('env.searchEnvironment', { ns: 'components' })}
       request={() => EnvironmentService.getEnvironment({ workspaceId: activeWorkspaceId })}
