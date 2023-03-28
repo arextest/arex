@@ -27,16 +27,16 @@ export function flattenArray(arr) {
   return result;
 }
 
-export async function sendQuickCompare({ caseId, nodeInfo, envs }) {
+export async function sendQuickCompare({ caseId, nodeInfo, envs, request }) {
   const selfNode = nodeInfo.at(-1);
   const parNode = nodeInfo.at(-2);
   let caseRequest;
   let parRequest;
   if (selfNode.nodeType === 2) {
-    caseRequest = await FileSystemService.queryCase({ id: caseId, parentId: parNode.key });
-    parRequest = await FileSystemService.queryInterface({ id: parNode.key });
+    caseRequest = request;
+    parRequest = request;
   } else if (selfNode.nodeType === 1) {
-    caseRequest = await FileSystemService.queryInterface({ id: caseId });
+    caseRequest = request;
     parRequest = caseRequest;
   }
   const { id: interfaceId, operationId } = parRequest;
