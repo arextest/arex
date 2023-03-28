@@ -9,5 +9,6 @@ export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as MenuSelect } from './MenuSelect';
 export { default as ScriptBlocks } from './ScriptBlocks';
 export { default as ScriptSnippets } from './ScriptSnippets';
+export { default as StructuredFilter } from './StructuredFilter';
 export { default as TooltipButton } from './TooltipButton';
 export { default as WorkspacesMenu } from './workspace/WorkspacesMenu';

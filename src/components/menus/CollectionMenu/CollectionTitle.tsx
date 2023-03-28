@@ -32,7 +32,7 @@ function CollectionTitle({
   updateDirectoryTreeData,
   treeData,
   callbackOfNewRequest,
-  searchValue,
+  keyword,
 }: any) {
   const { t } = useTranslation(['common', 'components']);
   const { modal, message } = App.useApp();
@@ -269,7 +269,7 @@ function CollectionTitle({
               style={{ padding: '0 4px', width: '100%' }}
             />
           ) : (
-            <SearchHighLight text={val.title} keyword={searchValue} />
+            <SearchHighLight text={val.title} keyword={keyword} />
           )}
         </div>
       </div>

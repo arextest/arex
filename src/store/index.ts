@@ -1,6 +1,6 @@
 import React from 'react';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
-import create from 'zustand';
+import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 import { nodeType } from '../components/menus/CollectionMenu';
@@ -9,6 +9,7 @@ import { EmailKey, WorkspaceEnvironmentPairKey, WorkspaceKey } from '../constant
 import { MenusType } from '../enums/menus';
 import { getLocalStorage, setLocalStorage } from '../helpers/utils';
 import { NodeObject } from '../services/Collection.service';
+import { Label } from '../services/Collection.type';
 import { Environment } from '../services/Environment.type';
 import { ApplicationDataType, PlanItemStatistics } from '../services/Replay.type';
 import { Workspace } from '../services/Workspace.type';
@@ -59,6 +60,9 @@ type BaseState = {
   setCollectionTreeData: (collectionTreeData: NodeObject[]) => void;
   collectionLastManualUpdateTimestamp: number;
   setCollectionLastManualUpdateTimestamp: (timestamp: number) => void;
+
+  labelData: Label[];
+  setLabelData: (labels: Label[]) => void;
 
   invitedWorkspaceId: string;
   setInvitedWorkspaceId: (workspaceId: string) => void;
@@ -173,6 +177,9 @@ export const useStore = create(
     setCollectionLastManualUpdateTimestamp: (timestamp) => {
       set({ collectionLastManualUpdateTimestamp: timestamp });
     },
+
+    labelData: [],
+    setLabelData: (labelData) => set({ labelData }),
 
     invitedWorkspaceId: '',
     setInvitedWorkspaceId: (workspaceId) => set({ invitedWorkspaceId: workspaceId }),
