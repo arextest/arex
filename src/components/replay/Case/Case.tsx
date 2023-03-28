@@ -17,7 +17,7 @@ type CaseProps = {
   onClickSaveCase?: (record: ReplayCase) => void;
 };
 
-const CaseTable: FC<CaseProps> = (props) => {
+const Case: FC<CaseProps> = (props) => {
   const { t } = useTranslation(['components']);
   const customNavigate = useCustomNavigate();
   const customSearchParams = useCustomSearchParams();
@@ -85,4 +85,4 @@ const CaseTable: FC<CaseProps> = (props) => {
   );
 };
 
-export default CaseTable;
+export default Case;

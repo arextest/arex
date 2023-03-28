@@ -6,16 +6,17 @@ import { useTranslation } from 'react-i18next';
 
 import { QueryMsgWithDiffRes } from '../../../../services/Replay.type';
 import useUserProfile from '../../../../store/useUserProfile';
+import DiffJsonViewTooltip from './DiffJsonViewTooltip';
 import { genAllDiffByType } from './helper';
 import VanillaJSONEditor from './VanillaJSONEditor';
 
 export type DiffJsonViewProps = {
   height?: string | number;
+  hiddenTooltip?: boolean;
   data?: Pick<QueryMsgWithDiffRes, 'baseMsg' | 'testMsg' | 'logs'>;
 };
 
-const DiffJsonView: FC<DiffJsonViewProps> = ({ data, height }) => {
-  const { t } = useTranslation(['components']);
+const DiffJsonView: FC<DiffJsonViewProps> = ({ data, hiddenTooltip, height }) => {
   const { theme } = useUserProfile();
 
   const baseMsg = useMemo(() => {
@@ -67,55 +68,24 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, height }) => {
   }
 
   return (
-    <div>
+    <>
+      {!hiddenTooltip && <DiffJsonViewTooltip />}
       <div
         css={css`
           display: flex;
-          justify-content: space-between;
-          .color-tag-pink {
-            background-color: ${emotionTheme.colorInfoActive};
-          }
-          .color-tag-green {
-            background-color: ${emotionTheme.colorWarningActive};
-          }
-        `}
-      >
-        <div
-          className={`MsgWithDiffLegend`}
-          css={css`
-            color: ${theme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : '#333'};
-          `}
-        >
-          <div>
-            <div className='color-tag-green' />
-            <span>{t('replay.moreNode')}</span>
-          </div>
-          <div>
-            <div className='color-tag-pink' />
-            <span>{t('replay.differenceNode')}</span>
-          </div>
-          <div>
-            <div className='color-tag-grey' />
-            <span>{t('replay.ignoreNode')}</span>
-          </div>
-        </div>
-      </div>
-
-      <div
-        css={css`
-          display: flex;
+          height: ${height};
           width: 100%;
           #containerRight .different_element {
-            background-color: ${emotionTheme.colorInfoActive};
+            background-color: ${emotionTheme.colorInfoBgHover};
           }
           #containerLeft .different_element {
-            background-color: ${emotionTheme.colorInfoActive};
+            background-color: ${emotionTheme.colorInfoBgHover};
           }
           #containerRight .different_element_012 {
-            background-color: ${emotionTheme.colorWarningActive};
+            background-color: ${emotionTheme.colorWarningBgHover};
           }
           #containerLeft .different_element_012 {
-            background-color: ${emotionTheme.colorWarningActive};
+            background-color: ${emotionTheme.colorWarningBgHover};
           }
         `}
         id={'MsgWithDiffJsonEditorWrapper'}
@@ -159,7 +129,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, height }) => {
           />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

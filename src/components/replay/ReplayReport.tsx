@@ -238,7 +238,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
           />
           <TooltipButton
             icon={<FileTextOutlined />}
-            title={t('replay.caseTable')}
+            title={t('replay.case')}
             breakpoint='xxl'
             onClick={() => {
               customNavigate(

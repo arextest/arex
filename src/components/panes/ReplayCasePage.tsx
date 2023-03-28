@@ -1,36 +1,25 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { html } from '@codemirror/lang-html';
-import { javascript } from '@codemirror/lang-javascript';
-import { json } from '@codemirror/lang-json';
 import { css } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { Col, Collapse, Row, Switch } from 'antd';
+import { Allotment } from 'allotment';
+import { Space, Switch } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, ReplayCase as ReplayCaseType } from '../../services/Replay.type';
-import useUserProfile from '../../store/useUserProfile';
-import { CaseTable, SaveCase, SaveCaseRef } from '../replay/Case';
+import DiffJsonViewTooltip from '../replay/Analysis/DiffJsonView/DiffJsonViewTooltip';
+import { Case, SaveCase, SaveCaseRef } from '../replay/Case';
 import {
-  CheckOrCloseIcon,
   CollapseTable,
+  EmptyWrapper,
   Label,
   PanesTitle,
   SpaceBetweenWrapper,
-  WatermarkCodeMirror,
 } from '../styledComponents';
 import { PageFC } from './index';
-
-const { Panel } = Collapse;
-const InfoIcon = styled(InfoCircleOutlined)`
-  color: ${(props) => props.theme.colorError};
-  margin-right: 8px;
-`;
+import DiffScenes from './ReplayDiffScenesPage/DiffScenes';
 
 const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
-  const { theme } = useUserProfile();
   const { t } = useTranslation(['components']);
 
   const [onlyFailed, setOnlyFailed] = useState(false);
@@ -53,13 +42,47 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
     },
   );
 
-  const compareResultsFiltered = useMemo(
-    () => compareResults.filter((item) => !onlyFailed || item.diffResultCode !== 0),
-    [onlyFailed, compareResults],
+  const {
+    data: diffMsgAll = {
+      compareResultDetailList: [],
+      totalCount: 0,
+    },
+    mutate: setDiffMsgAll,
+    loading: loadingDiffMsgAll,
+    run: queryAllDiffMsg,
+  } = useRequest(
+    (params: { recordId: string; replayId: string }) =>
+      ReplayService.queryAllDiffMsg({
+        ...params,
+        diffResultCodeList: [0, 1, 2],
+        pageIndex: 0,
+        pageSize: 99, // TODO lazy load
+        needTotal: true,
+      }),
+    {
+      manual: true,
+      onBefore() {
+        setDiffMsgAll();
+      },
+      onSuccess(res) {
+        console.log(res);
+      },
+    },
+  );
+  const compareResultDetailListFiltered = useMemo(
+    () =>
+      onlyFailed
+        ? diffMsgAll.compareResultDetailList.filter((item) => item.diffResultCode > 0)
+        : diffMsgAll.compareResultDetailList,
+    [diffMsgAll, onlyFailed],
   );
 
   const handleClickRecord = (record: ReplayCaseType) => {
     setSelectedRecord(selectedRecord?.recordId === record.recordId ? undefined : record);
+    queryAllDiffMsg({
+      recordId: record.recordId,
+      replayId: record.replayId,
+    });
   };
 
   function handleClickSaveCase(record: ReplayCaseType) {
@@ -79,7 +102,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
       <CollapseTable
         active={!!selectedRecord}
         table={
-          <CaseTable
+          <Case
             planItemId={props.page.data.planItemId}
             onClick={handleClickRecord}
             onClickSaveCase={handleClickSaveCase}
@@ -88,76 +111,45 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
         panel={
           <>
             <SpaceBetweenWrapper style={{ margin: '8px' }}>
-              <div>
-                <Label>Total Count</Label>
-                {compareResults.length}
-              </div>
+              <Space size='large'>
+                <div>
+                  <Label>Total Count</Label>
+                  {compareResults.length}
+                </div>
+                <DiffJsonViewTooltip />
+              </Space>
+
               <span>
                 <Label>{t('replay.viewFailedOnly')}</Label>
                 <Switch size='small' defaultChecked={onlyFailed} onChange={setOnlyFailed} />
               </span>
             </SpaceBetweenWrapper>
 
-            <Collapse>
-              {compareResultsFiltered.map((result, i) =>
-                result.diffResultCode === 2 ? (
-                  <Panel
-                    header={
-                      <span>
-                        <InfoIcon />
-                        {result.logs?.length && result.logs[0].logInfo}
-                      </span>
-                    }
-                    key={i}
-                  />
-                ) : (
-                  <Panel
-                    header={
-                      <span>
-                        <CheckOrCloseIcon size={14} checked={!result.diffResultCode} />
-                        {result?.operationName}
-                      </span>
-                    }
-                    key={i}
+            <EmptyWrapper
+              loading={loadingDiffMsgAll}
+              empty={!compareResultDetailListFiltered?.length}
+              style={{ height: '400px' }}
+            >
+              <Allotment
+                vertical
+                css={css`
+                  height: 800px;
+                  margin-top: 8px;
+                `}
+              >
+                {compareResultDetailListFiltered.map((data) => (
+                  <Allotment.Pane
+                    key={data?.id}
+                    css={css`
+                      padding: 16px 0;
+                      height: 100%;
+                    `}
                   >
-                    <Row gutter={16}>
-                      <Col span={12}>
-                        {/*解决无法渲然全的bug，误删*/}
-                        <div
-                          css={css`
-                            height: 1px;
-                          `}
-                        ></div>
-                        <WatermarkCodeMirror
-                          readOnly
-                          height='300px'
-                          themeKey={theme}
-                          extensions={[javascript(), html(), json()]}
-                          value={result.baseMsg}
-                          remark={t('replay.benchmark')}
-                        />
-                      </Col>
-                      <Col span={12}>
-                        {/*解决无法渲然全的bug，误删*/}
-                        <div
-                          css={css`
-                            height: 1px;
-                          `}
-                        ></div>
-                        <WatermarkCodeMirror
-                          readOnly
-                          height='300px'
-                          themeKey={theme}
-                          extensions={[javascript(), html(), json()]}
-                          value={result.testMsg}
-                          remark={t('replay.test')}
-                        />
-                      </Col>
-                    </Row>
-                  </Panel>
-                ),
-              )}
-            </Collapse>
+                    <DiffScenes hiddenTooltip height={'100%'} data={data} />
+                  </Allotment.Pane>
+                ))}
+              </Allotment>
+            </EmptyWrapper>
           </>
         }
       />

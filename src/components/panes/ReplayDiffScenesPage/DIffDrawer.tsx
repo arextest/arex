@@ -1,7 +1,10 @@
-import { Drawer, Space } from 'antd';
+import { css } from '@emotion/react';
+import { Allotment } from 'allotment';
+import { Drawer } from 'antd';
 import React, { FC, ReactNode, useMemo } from 'react';
 
 import { CompareResultDetail } from '../../../services/Replay.type';
+import DiffJsonViewTooltip from '../../replay/Analysis/DiffJsonView/DiffJsonViewTooltip';
 import { EmptyWrapper } from '../../styledComponents';
 import DiffScenes from './DiffScenes';
 
@@ -24,19 +27,32 @@ const DiffCard: FC<DIffDrawer> = (props) => {
       destroyOnClose
       open={props.open}
       title={Array.isArray(props.data) ? props.title : props.data?.operationName}
+      bodyStyle={{ padding: '0 16px' }}
       width='80%'
       onClose={() => props.onClose?.(false)}
     >
       <EmptyWrapper loading={props.loading} empty={!props.data}>
-        <Space direction='vertical' size='large' style={{ width: '100%' }}>
-          {diffList.map((data) => (
-            <DiffScenes
+        <DiffJsonViewTooltip />
+
+        <Allotment
+          vertical
+          css={css`
+            height: 1000px;
+          `}
+        >
+          {diffList.map((data, index) => (
+            <Allotment.Pane
               key={data?.id}
-              height={diffList.length > 1 ? '400px' : '85vh'}
-              data={data}
-            />
+              css={css`
+                padding: 16px 0;
+                padding-top: ${!index ? 0 : '16px'};
+                height: 100%;
+              `}
+            >
+              <DiffScenes hiddenTooltip height={'100%'} data={data} />
+            </Allotment.Pane>
           ))}
-        </Space>
+        </Allotment>
       </EmptyWrapper>
     </Drawer>
   );
