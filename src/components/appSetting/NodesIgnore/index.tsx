@@ -1,21 +1,17 @@
 import { useRequest } from 'ahooks';
-import { App, Col, Row } from 'antd';
+import { App, Col, Divider, Row } from 'antd';
 import { DataNode, TreeProps } from 'antd/lib/tree';
 import React, { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useImmer } from 'use-immer';
 
 import { tryParseJsonString, tryPrettierJsonString } from '../../../helpers/utils';
 import AppSettingService from '../../../services/AppSetting.service';
-import {
-  OperationId,
-  QueryIgnoreNode,
-  QueryInterfaceIgnoreNode,
-} from '../../../services/AppSetting.type';
+import { QueryIgnoreNode, QueryInterfaceIgnoreNode } from '../../../services/AppSetting.type';
 import { FileSystemService } from '../../../services/FileSystem.service';
 import { EditAreaPlaceholder } from '../../styledComponents';
 import IgnoreTree, { getNodes } from './IgnoreTree';
 import PathCollapse, { InterfacePick } from './PathCollapse';
+import PathCollapseHeader from './PathCollapseHeader';
 import ResponseRaw from './ResponseRaw';
 
 enum NodesEditMode {
@@ -43,6 +39,8 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
   const { t } = useTranslation(['components', 'common']);
 
   const [rawResponse, setRawResponse] = useState<string>();
+  // Interfaces search keyword
+  const [keyword, setKeyword] = useState<string | boolean>(false);
 
   // const [checkedNodesData, setCheckedNodesData] = useImmer<CheckedNodesData>({ exclusionsList: [] });
 
@@ -62,6 +60,15 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
     {
       ready: !!props.appId,
     },
+  );
+  const operationListFiltered = useMemo(
+    () =>
+      typeof keyword === 'string' && keyword
+        ? operationList.filter((item) =>
+            item.operationName.toLowerCase().includes(keyword.toLowerCase()),
+          )
+        : operationList,
+    [operationList, keyword],
   );
 
   const handleIgnoreTreeSelect: TreeProps['onSelect'] = ([path], info) => {
@@ -290,13 +297,22 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
           }
           onReloadNodes={queryIgnoreNode}
         />
+
+        <Divider style={{ margin: '8px 0' }} />
+
         {props.appId && (
           <PathCollapse
-            title={t('appSetting.interfaces')}
+            title={
+              <PathCollapseHeader
+                search={keyword}
+                onChange={(search) => setKeyword(search ? '' : search)}
+                onSearch={setKeyword}
+              />
+            }
             appId={props.appId}
             loading={loadingOperationList}
             loadingPanel={loadingIgnoreNode}
-            interfaces={operationList}
+            interfaces={operationListFiltered}
             activeKey={activeOperationInterface?.id}
             height={'calc(100vh - 280px)'}
             // @ts-ignore

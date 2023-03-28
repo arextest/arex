@@ -4,12 +4,24 @@ import {
   CodeOutlined,
   DeleteOutlined,
   PlusOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { App, AutoComplete, Button, Collapse, CollapseProps, List, Spin, Typography } from 'antd';
-import React, { FC, SyntheticEvent, useRef, useState } from 'react';
+import {
+  App,
+  AutoComplete,
+  Button,
+  Collapse,
+  CollapseProps,
+  Input,
+  List,
+  Space,
+  Spin,
+  Typography,
+} from 'antd';
+import React, { FC, ReactNode, SyntheticEvent, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import AppSettingService from '../../../services/AppSetting.service';
@@ -20,7 +32,7 @@ import {
   OperationInterface,
   QueryInterfaceIgnoreNode,
 } from '../../../services/AppSetting.type';
-import { SpaceBetweenWrapper } from '../../styledComponents';
+import { SmallTextButton, SpaceBetweenWrapper } from '../../styledComponents';
 import TooltipButton from '../../TooltipButton';
 
 export type InterfacePick = Pick<OperationInterface, 'id' | 'operationName'>;
@@ -44,7 +56,7 @@ const PathCollapseWrapper = styled.div`
 export interface PathCollapseProps extends Omit<CollapseProps, 'activeKey' | 'onChange'> {
   appId?: string;
   interfaceId?: string; // collection - interface
-  title?: string;
+  title?: ReactNode;
   options?: { value: string }[]; // AutoComplete options
   height?: string;
   activeKey?: OperationId<'Global'>;
@@ -65,6 +77,17 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
   const editInputRef = useRef<any>(null);
   const [ignoredKey, setIgnoredKey] = useState('');
   const [editMode, setEditMode] = useState(false);
+  const [search, setSearch] = useState<boolean | string>(false);
+
+  const ignoreNodesFiltered = useMemo(
+    () =>
+      typeof search === 'string' && search
+        ? props.ignoreNodes.filter((node) =>
+            node.exclusions.join('/').toLowerCase().includes(search.toLowerCase()),
+          )
+        : props.ignoreNodes,
+    [props.ignoreNodes, search],
+  );
 
   const handleAddKey = (e: SyntheticEvent, path: InterfacePick) => {
     e.stopPropagation();
@@ -149,6 +172,9 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
           css={css`
             height: ${props.height};
             overflow-y: auto;
+            .ant-collapse-extra {
+              flex-shrink: 0;
+            }
           `}
         >
           {props.interfaces &&
@@ -165,6 +191,15 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                       icon={<PlusOutlined />}
                       onClick={(e) => handleAddKey(e, path)}
                     />,
+                    <SmallTextButton
+                      key='search'
+                      icon={<SearchOutlined />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSearch('');
+                        props.onChange?.(path, true);
+                      }}
+                    />,
                     !props.manualEdit && (
                       <TooltipButton
                         key='editResponse'
@@ -180,9 +215,28 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                 >
                   <List
                     size='small'
-                    dataSource={props.ignoreNodes}
+                    dataSource={ignoreNodesFiltered}
                     loading={props.loadingPanel}
                     header={
+                      search !== false && (
+                        <SpaceBetweenWrapper style={{ padding: '0 16px' }}>
+                          <Input.Search
+                            size='small'
+                            onSearch={(value) => {
+                              setSearch(value);
+                            }}
+                            style={{ marginRight: '8px' }}
+                          />
+                          <Button
+                            size='small'
+                            type='text'
+                            icon={<CloseOutlined />}
+                            onClick={() => setSearch(false)}
+                          />
+                        </SpaceBetweenWrapper>
+                      )
+                    }
+                    footer={
                       editMode && (
                         <List.Item style={{ padding: '0 8px' }}>
                           <SpaceBetweenWrapper width={'100%'}>
@@ -199,18 +253,8 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                               style={{ width: '100%' }}
                             />
                             <span style={{ display: 'flex', marginLeft: '8px' }}>
-                              <Button
-                                type='text'
-                                size='small'
-                                icon={<CloseOutlined />}
-                                onClick={handleExitEdit}
-                              />
-                              <Button
-                                type='text'
-                                size='small'
-                                icon={<CheckOutlined />}
-                                onClick={handleEditSave}
-                              />
+                              <SmallTextButton icon={<CloseOutlined />} onClick={handleExitEdit} />
+                              <SmallTextButton icon={<CheckOutlined />} onClick={handleEditSave} />
                             </span>
                           </SpaceBetweenWrapper>
                         </List.Item>
@@ -227,9 +271,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                         >
                           <SpaceBetweenWrapper width={'100%'}>
                             <Typography.Text ellipsis>{node.exclusions.join('/')}</Typography.Text>
-                            <Button
-                              type='text'
-                              size='small'
+                            <SmallTextButton
                               icon={<DeleteOutlined />}
                               onClick={() => deleteIgnoreNode({ id: node.id })}
                             />

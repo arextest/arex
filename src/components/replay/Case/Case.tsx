@@ -58,6 +58,7 @@ const Case: FC<CaseProps> = (props) => {
         // <SmallTextButton key='replayLog' title='Replay Log' />,
         <SmallTextButton
           key='save'
+          color={'primary'}
           title={t('replay.save')}
           onClick={() => props.onClickSaveCase?.(record)}
         />,
