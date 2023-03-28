@@ -74,7 +74,7 @@ export interface SaveInterfaceReq extends Partial<BaseInterface> {
 // ------ /api/filesystem/saveCase ------
 export type SaveCaseReq =
   | (Partial<BaseInterface> & { workspaceId: string })
-  | { id: string; labelIds: string[] };
+  | { id: string; labelIds: string[]; workspaceId: string };
 
 //
 export interface PinkMockReq {
