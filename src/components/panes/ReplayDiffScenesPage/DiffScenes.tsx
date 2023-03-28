@@ -1,18 +1,22 @@
 import { css } from '@emotion/react';
-import { Col, Menu, Row, Typography } from 'antd';
+import { Allotment } from 'allotment';
+import { Menu, theme, Typography } from 'antd';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CompareResultDetail, DiffLog, PathPair } from '../../../services/Replay.type';
-import DiffJsonView from '../../replay/Analysis/DiffJsonView';
+import DiffJsonView, { DiffJsonViewProps } from '../../replay/Analysis/DiffJsonView';
 import { FlexCenterWrapper } from '../../styledComponents';
+import { SummaryCodeMap } from './index';
 
-export interface DiffScenesProps {
+export interface DiffScenesProps extends Pick<DiffJsonViewProps, 'hiddenTooltip'> {
   data?: CompareResultDetail;
   height?: string;
 }
 
 const DiffScenes: FC<DiffScenesProps> = (props) => {
+  const { token } = theme.useToken();
   const [activeLog, setActiveLog] = useState<DiffLog>();
+
   useEffect(() => {
     props.data?.logs?.length && setActiveLog((props.data.logs as DiffLog[])[0]);
   }, [props.data]);
@@ -52,11 +56,17 @@ const DiffScenes: FC<DiffScenesProps> = (props) => {
   if (!props.data) return null;
 
   return (
-    <Row gutter={16}>
-      <Col span={5}>
-        {!props.data?.diffResultCode ? (
+    <Allotment
+      css={css`
+        height: ${props.height};
+      `}
+    >
+      <Allotment.Pane preferredSize={200}>
+        {[0, 2].includes(props.data?.diffResultCode) ? (
           <FlexCenterWrapper>
-            <Typography.Text type='secondary'>COMPARED_WITHOUT_DIFFERENCE</Typography.Text>
+            <Typography.Text type='secondary'>
+              {SummaryCodeMap[props.data?.diffResultCode].message}
+            </Typography.Text>
           </FlexCenterWrapper>
         ) : (
           <Menu
@@ -76,6 +86,7 @@ const DiffScenes: FC<DiffScenesProps> = (props) => {
             }}
             css={css`
               height: 100%;
+              padding: 0 8px;
               .ant-menu-item {
                 height: 24px;
                 line-height: 24px;
@@ -83,12 +94,31 @@ const DiffScenes: FC<DiffScenesProps> = (props) => {
             `}
           />
         )}
-      </Col>
+      </Allotment.Pane>
 
-      <Col span={19}>
-        {diffJsonData && <DiffJsonView height={props.height} data={diffJsonData} />}
-      </Col>
-    </Row>
+      <Allotment.Pane
+        visible
+        css={css`
+          height: ${props.height};
+          border-left: 1px solid ${token.colorBorderBg};
+          padding-left: 8px;
+        `}
+      >
+        {props.data?.diffResultCode === 2 ? (
+          <FlexCenterWrapper>
+            <Typography.Text type='secondary'>{props.data.logs?.[0].logInfo}</Typography.Text>
+          </FlexCenterWrapper>
+        ) : (
+          diffJsonData && (
+            <DiffJsonView
+              hiddenTooltip={props.hiddenTooltip}
+              height={props.height}
+              data={diffJsonData}
+            />
+          )
+        )}
+      </Allotment.Pane>
+    </Allotment>
   );
 };
 

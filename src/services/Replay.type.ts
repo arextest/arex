@@ -333,6 +333,7 @@ export interface QueryDiffMsgByIdRes {
 export interface QueryAllDiffMsgReq {
   recordId: string;
   replayId: string;
+  diffResultCodeList: number[]; // 0-正常，1,2-异常
   pageIndex: number;
   pageSize: number;
   needTotal: boolean;
