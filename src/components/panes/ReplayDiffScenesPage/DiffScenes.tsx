@@ -1,13 +1,12 @@
 import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
-import { Col, Menu, Row, theme, Typography } from 'antd';
+import { Menu, theme, Typography } from 'antd';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import MainMenu from '../../../pages/MainBox/MainMenu';
-import MainTabs from '../../../pages/MainBox/MainTabs';
 import { CompareResultDetail, DiffLog, PathPair } from '../../../services/Replay.type';
 import DiffJsonView, { DiffJsonViewProps } from '../../replay/Analysis/DiffJsonView';
 import { FlexCenterWrapper } from '../../styledComponents';
+import { SummaryCodeMap } from './index';
 
 export interface DiffScenesProps extends Pick<DiffJsonViewProps, 'hiddenTooltip'> {
   data?: CompareResultDetail;
@@ -63,9 +62,11 @@ const DiffScenes: FC<DiffScenesProps> = (props) => {
       `}
     >
       <Allotment.Pane preferredSize={200}>
-        {!props.data?.diffResultCode ? (
+        {[0, 2].includes(props.data?.diffResultCode) ? (
           <FlexCenterWrapper>
-            <Typography.Text type='secondary'>COMPARED_WITHOUT_DIFFERENCE</Typography.Text>
+            <Typography.Text type='secondary'>
+              {SummaryCodeMap[props.data?.diffResultCode].message}
+            </Typography.Text>
           </FlexCenterWrapper>
         ) : (
           <Menu
@@ -103,12 +104,18 @@ const DiffScenes: FC<DiffScenesProps> = (props) => {
           padding-left: 8px;
         `}
       >
-        {diffJsonData && (
-          <DiffJsonView
-            hiddenTooltip={props.hiddenTooltip}
-            height={props.height}
-            data={diffJsonData}
-          />
+        {props.data?.diffResultCode === 2 ? (
+          <FlexCenterWrapper>
+            <Typography.Text type='secondary'>{props.data.logs?.[0].logInfo}</Typography.Text>
+          </FlexCenterWrapper>
+        ) : (
+          diffJsonData && (
+            <DiffJsonView
+              hiddenTooltip={props.hiddenTooltip}
+              height={props.height}
+              data={diffJsonData}
+            />
+          )
         )}
       </Allotment.Pane>
     </Allotment>
