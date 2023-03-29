@@ -1,12 +1,9 @@
 import { useRequest } from 'ahooks';
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
 
-import { useCustomNavigate } from '../../../router/useCustomNavigate';
-import { useCustomSearchParams } from '../../../router/useCustomSearchParams';
 import ReplayService from '../../../services/Replay.service';
 import { ReplayCase } from '../../../services/Replay.type';
 import { HighlightRowTable, SmallTextButton } from '../../styledComponents';
@@ -19,25 +16,11 @@ type CaseProps = {
 
 const Case: FC<CaseProps> = (props) => {
   const { t } = useTranslation(['components']);
-  const customNavigate = useCustomNavigate();
-  const customSearchParams = useCustomSearchParams();
-  const location = useLocation();
-
-  useEffect(() => {
-    // customNavigate({
-    //   path: location.pathname,
-    //   query: {
-    //     data: customSearchParams.query.data,
-    //     planItemId: props.planItemId,
-    //   },
-    // });
-  }, [props.planItemId]);
 
   const columnsCase: ColumnsType<ReplayCase> = [
     {
       title: t('replay.recordId'),
       dataIndex: 'recordId',
-
       render: (recordId, record) => <a onClick={() => props.onClick?.(record)}>{recordId}</a>,
     },
     {
@@ -55,7 +38,6 @@ const Case: FC<CaseProps> = (props) => {
     {
       title: t('replay.action'),
       render: (_, record) => [
-        // <SmallTextButton key='replayLog' title='Replay Log' />,
         <SmallTextButton
           key='save'
           color={'primary'}
@@ -81,6 +63,7 @@ const Case: FC<CaseProps> = (props) => {
       columns={columnsCase}
       dataSource={caseData}
       pagination={{ pageSize: 5 }}
+      onRowClick={props.onClick}
     />
   );
 };
