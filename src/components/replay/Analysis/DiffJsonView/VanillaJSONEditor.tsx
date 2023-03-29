@@ -20,6 +20,7 @@ export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
         // parse bigInt
         // @ts-ignore
         parser: LosslessJSONParser,
+        navigationBar: false,
       },
     });
 
