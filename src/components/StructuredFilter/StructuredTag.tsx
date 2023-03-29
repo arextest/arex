@@ -1,7 +1,7 @@
 import { CloseCircleOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useHover } from 'ahooks';
-import { Button, Space, Tag, Typography } from 'antd';
+import { Button, Space, Tag, theme, Typography } from 'antd';
 import { DefaultOptionType } from 'rc-select/lib/Select';
 import React, { useMemo, useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
@@ -48,6 +48,7 @@ const StructuredTagWrapper = styled.div`
 
 const StructuredTag = (props: StructuredTagProps) => {
   const { labelData } = useStore();
+  const { token } = theme.useToken();
 
   const categoryRef = useRef<HTMLDivElement>(null);
   const closeIconRef = useRef<HTMLDivElement>(null);
@@ -61,55 +62,55 @@ const StructuredTag = (props: StructuredTagProps) => {
   );
 
   const label = useMemo<Label | undefined>(() => {
-    const isLabel = data?.category === CategoryKey.LabelKey;
+    const isLabel = data?.category === CategoryKey.Label;
     return isLabel ? labelData.find((label) => label.id === data.value) : undefined;
   }, [labelData, props.value]);
 
   return (
     <StructuredTagWrapper>
       <Space.Compact block size='small' style={{ margin: '4px' }}>
-        {React.createElement(
-          data?.category === CategoryKey.LabelKey ? Tag : Button,
-          {
-            color: label?.color,
-            ref: categoryRef,
-            onClick: () => props.onDelete?.(data),
-          },
-          <>
-            <CSSTransition
-              nodeRef={categoryNodeRef}
-              in={!hoverCategoryButton}
-              timeout={2000}
-              classNames='my-node'
-            >
-              <Typography ref={categoryNodeRef}>{data?.category}</Typography>
-            </CSSTransition>
-            <CSSTransition
-              nodeRef={closeIconRef}
-              in={hoverCategoryButton}
-              timeout={2000}
-              classNames='my-node'
-            >
-              <CloseCircleOutlined
-                ref={closeIconRef}
-                className='structure-tag-hidden'
-                style={{
-                  position: 'absolute',
-                  left: '50%',
-                  top: ' 50%',
-                  transform: 'translate(-50%, -50%)',
-                }}
-              />
-            </CSSTransition>
-          </>,
-        )}
+        <Button ref={categoryRef} onClick={() => props.onDelete?.(data)}>
+          <CSSTransition
+            nodeRef={categoryNodeRef}
+            in={!hoverCategoryButton}
+            timeout={2000}
+            classNames='my-node'
+          >
+            <Typography ref={categoryNodeRef}>{data?.category}</Typography>
+          </CSSTransition>
+          <CSSTransition
+            nodeRef={closeIconRef}
+            in={hoverCategoryButton}
+            timeout={2000}
+            classNames='my-node'
+          >
+            <CloseCircleOutlined
+              ref={closeIconRef}
+              className='structure-tag-hidden'
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: ' 50%',
+                transform: 'translate(-50%, -50%)',
+              }}
+            />
+          </CSSTransition>
+        </Button>
 
         <Button size='small' onClick={() => props.onOperatorClick?.(data)}>
           {data?.operator}
         </Button>
-        <Button size='small' onClick={() => props.onValueClick?.(data)}>
-          {label?.labelName || data?.value}
-        </Button>
+
+        {React.createElement(
+          data?.category == CategoryKey.Label ? Tag : Button,
+          {
+            color: label?.color,
+            className: 'ant-btn-default',
+            onClick: () => props.onValueClick?.(data),
+            style: { borderRadius: `0 ${token.borderRadiusSM}px ${token.borderRadiusSM}px 0` },
+          },
+          label?.labelName || data?.value,
+        )}
       </Space.Compact>
     </StructuredTagWrapper>
   );

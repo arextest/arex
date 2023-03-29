@@ -1,12 +1,12 @@
 // category key
 export const CategoryKey = {
-  LabelKey: 'label',
-  IDKey: 'id',
+  Label: 'label',
+  Id: 'id',
 };
 
 // operator
 export const Operator = {
-  EQ: '==', // equal to
+  EQ: '=', // equal to
   NE: '!=', // not equal to
   LT: '<', // less than
   lE: '<=', // less than or equal to

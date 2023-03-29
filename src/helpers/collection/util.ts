@@ -117,34 +117,41 @@ export const filterTree = (val: SearchDataType = {}, tree: any, newArr: any = []
   }
 
   for (const item of tree) {
-    let filtered = keyword && !!item.title.includes(keyword);
+    const lowerCaseKeyword = keyword?.toLowerCase() || '';
+    const keywordFiltered =
+      !keyword ||
+      (lowerCaseKeyword &&
+        (item.title.toLowerCase().includes(lowerCaseKeyword) ||
+          item.key.toLowerCase().includes(lowerCaseKeyword)));
+    let structuredFiltered = true;
 
     for (let i = 0; i < structuredValue.length; i++) {
       const structured = structuredValue[i];
 
-      if (structured.category === CategoryKey.LabelKey) {
+      if (structured.category === CategoryKey.Label) {
         // search for labelIds
         const include = negate(
           item.labelIds?.includes(structured.value as string),
           structured.operator === Operator.NE,
         );
 
-        if (include) {
-          filtered = true;
+        if (!include) {
+          structuredFiltered = false;
         }
-      } else if (structured.category === CategoryKey.IDKey) {
-        // search for id
-        const include = negate(
-          item.key.includes(structured.value as string),
-          structured.operator === Operator.NE,
-        );
-        if (include) {
-          filtered = true;
-        }
+        // TODO 暂时移除 id 结构化搜索
+        // } else if (structured.category === CategoryKey.Id) {
+        //   // search for id
+        //   const include = negate(
+        //     item.key.includes(structured.value as string),
+        //     structured.operator === Operator.NE,
+        //   );
+        //   if (include) {
+        //     filtered = true;
+        //   }
       }
     }
 
-    if (filtered) {
+    if (keywordFiltered && structuredFiltered) {
       // 匹配到关键字的逻辑
       newArr.push(item); // 如果匹配到就在数值中添加记录
       continue; // 匹配到了就退出循环了此时如果有子集也会一并带着

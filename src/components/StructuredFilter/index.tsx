@@ -23,6 +23,7 @@ export type StructuredFilterProps = {
   size?: SizeType;
   prefix?: ReactNode;
   showSearchButton?: boolean | 'simple';
+  keywordPlaceholder?: string;
   onSearch?: (value: SearchDataType) => void;
   onChange?: (value: SearchDataType) => void;
   options: StructuredOptionType[];
@@ -159,6 +160,7 @@ const StructuredFilter: FC<StructuredFilterProps> = (props) => {
                 ref={structuredOptionRef}
                 size={size}
                 keyword={keyword}
+                keywordPlaceholder={props.keywordPlaceholder}
                 options={options}
                 onChange={handleChange}
                 onSearch={handleSearch}
