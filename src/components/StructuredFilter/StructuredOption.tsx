@@ -6,6 +6,7 @@ import { ItemType } from 'antd/es/menu/hooks/useItems';
 import React, {
   forwardRef,
   ForwardRefRenderFunction,
+  ReactNode,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -30,6 +31,7 @@ export type StructuredValue = {
 export type StructuredOptionProps = {
   size?: SizeType;
   keyword?: string;
+  keywordPlaceholder?: ReactNode;
   options: StructuredOptionType[];
   onChange?: (
     mode: StructuredOptionMode,
@@ -68,6 +70,7 @@ const StructuredOption: ForwardRefRenderFunction<StructuredOptionRef, Structured
   props,
   ref,
 ) => {
+  const { keywordPlaceholder = 'Search for this keyword' } = props;
   const carouselRef = useRef<CarouselRef>(null);
 
   const [mode, setMode] = useState<StructuredOptionMode>(StructuredOptionMode.append); // process: 三步流程模式，single: 单一属性编辑模式
@@ -81,8 +84,8 @@ const StructuredOption: ForwardRefRenderFunction<StructuredOptionRef, Structured
           label: o.category,
           key: o.category,
         }))
-      : [{ label: 'Search for this keyword', key: KeywordKey }];
-  }, [props.options, props.keyword]);
+      : [{ label: keywordPlaceholder, key: KeywordKey }];
+  }, [props.options, props.keyword, keywordPlaceholder]);
 
   const operatorOptions = useMemo<ItemType[]>(
     () =>

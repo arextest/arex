@@ -146,21 +146,22 @@ const CollectionMenu = () => {
   const options = useMemo(
     () => [
       {
-        category: CategoryKey.LabelKey,
+        category: CategoryKey.Label,
         operator: [Operator.EQ, Operator.NE],
         value: labelData.map((label) => ({
           label: <Tag color={label.color}>{label.labelName}</Tag>,
           key: label.id,
         })),
       },
-      {
-        category: CategoryKey.IDKey,
-        operator: [Operator.EQ, Operator.NE],
-        value: dataList.map((item) => ({
-          label: item.key,
-          key: item.key,
-        })),
-      },
+      // TODO 暂时将 id 搜索用 keyword 实现
+      // {
+      //   category: CategoryKey.Id,
+      //   operator: [Operator.EQ, Operator.NE],
+      //   value: dataList.map((item) => ({
+      //     label: item.key,
+      //     key: item.key,
+      //   })),
+      // },
     ],
     [labelData, dataList],
   );
@@ -217,7 +218,6 @@ const CollectionMenu = () => {
   };
 
   const handleChange = (value: SearchDataType) => {
-    console.log(value, dataList);
     const { keyword, structuredValue = [] } = value;
     let newExpandedKeys;
     if (!structuredValue?.length && !keyword) {
@@ -225,46 +225,47 @@ const CollectionMenu = () => {
     } else {
       newExpandedKeys = dataList
         .map((item) => {
-          let filtered = keyword && item.title.includes(keyword);
-
-          if (filtered) {
-            return getParentKey(item.key, treeData);
-          }
+          const lowerCaseKeyword = keyword?.toLowerCase() || '';
+          const keywordFiltered =
+            !keyword ||
+            (lowerCaseKeyword &&
+              (item.title.toLowerCase().includes(lowerCaseKeyword) ||
+                item.key.toLowerCase().includes(lowerCaseKeyword)));
+          let structuredFiltered = true;
 
           for (let i = 0; i < structuredValue.length; i++) {
             const structured = structuredValue[i];
 
-            if (structured.category === CategoryKey.LabelKey) {
+            if (structured.category === CategoryKey.Label) {
               // search for labelIds
               const include = negate(
                 item.labelIds?.includes(structured.value as string),
                 structured.operator === Operator.NE,
               );
 
-              if (include) {
-                filtered = true;
+              if (!include) {
+                structuredFiltered = false;
                 break;
               }
-            } else if (structured.category === CategoryKey.IDKey) {
-              // search for id
-              const include = negate(
-                item.key.includes(structured.value as string),
-                structured.operator === Operator.NE,
-              );
-              console.log({ include });
-              if (include) {
-                filtered = true;
-                break;
-              }
+              // TODO 暂时移除 id 结构化搜索
+              // } else if (structured.category === CategoryKey.Id) {
+              //   // search for id
+              //   const include = negate(
+              //     item.key.includes(structured.value as string),
+              //     structured.operator === Operator.NE,
+              //   );
+              //   console.log({ include });
+              //   if (include) {
+              //     filtered = true;
+              //     break;
+              //   }
             }
           }
 
-          return filtered ? getParentKey(item.key, treeData) : null;
+          return keywordFiltered && structuredFiltered ? getParentKey(item.key, treeData) : null;
         })
         .filter((item, i, self) => item && self.indexOf(item) === i);
     }
-    // TODO
-    console.log({ newExpandedKeys });
     setExpandedKeys(newExpandedKeys as React.Key[]);
     setSearchValue(value);
     setAutoExpandParent(true);
@@ -515,78 +516,76 @@ const CollectionMenu = () => {
           </Button>
         }
       >
-        <div>
-          <StructuredFilter
-            size='small'
-            className={'collection-header-search'}
-            showSearchButton={false}
-            prefix={
-              <>
-                <TooltipButton
-                  icon={<PlusOutlined />}
-                  type='text'
-                  size='small'
-                  className={'collection-header-create'}
-                  onClick={createCollection}
-                  placement='bottomLeft'
-                  title={t('collection.create_new')}
-                />
-                <Dropdown
-                  menu={{
-                    items: [
-                      { key: '1', label: <a>{t('collection.batch_run')}</a> },
-                      { key: '2', label: <a>{t('collection.batch_compare')}</a> },
-                    ],
-                    onClick(e) {
-                      e.key;
-                      if (e.key === '1') {
-                        test();
-                      } else if (e.key === '2') {
-                        customNavigate({
-                          path: `/${params.workspaceId}/${PagesType.Run}/${'create'}`,
-                        });
-                      }
-                    },
-                  }}
-                >
-                  <a onClick={(e) => e.preventDefault()}>
-                    <Button type={'text'} size={'small'}>
-                      <PlayCircleOutlined />{' '}
-                    </Button>
-                  </a>
-                </Dropdown>
-              </>
-            }
-            options={options}
-            onChange={handleChange}
-          />
-
-          <Tree
-            height={treeHeight - 62}
-            autoExpandParent={autoExpandParent}
-            blockNode={true}
-            selectedKeys={selectedKeys}
-            expandedKeys={expandedKeys}
-            // @ts-ignore
-            onExpand={onExpand}
-            onSelect={handleSelect}
-            switcherIcon={<DownOutlined />}
-            treeData={filterTree(searchValue, treeData)}
-            onDrop={onDrop}
-            draggable={{ icon: false }}
-            showLine
-            titleRender={(val) => (
-              <CollectionTitle
-                keyword={searchValue?.keyword}
-                updateDirectoryTreeData={fetchTreeData}
-                val={val}
-                treeData={treeData}
-                callbackOfNewRequest={expandSpecifyKeys} // TODO 暂时禁用待优化
+        <StructuredFilter
+          size='small'
+          className={'collection-header-search'}
+          showSearchButton={false}
+          prefix={
+            <>
+              <TooltipButton
+                icon={<PlusOutlined />}
+                type='text'
+                size='small'
+                className={'collection-header-create'}
+                onClick={createCollection}
+                placement='bottomLeft'
+                title={t('collection.create_new')}
               />
-            )}
-          />
-          {/*<CollectionImport/>*/}
-        </div>
+              <Dropdown
+                menu={{
+                  items: [
+                    { key: '1', label: <a>{t('collection.batch_run')}</a> },
+                    { key: '2', label: <a>{t('collection.batch_compare')}</a> },
+                  ],
+                  onClick(e) {
+                    e.key;
+                    if (e.key === '1') {
+                      test();
+                    } else if (e.key === '2') {
+                      customNavigate({
+                        path: `/${params.workspaceId}/${PagesType.Run}/${'create'}`,
+                      });
+                    }
+                  },
+                }}
+              >
+                <a onClick={(e) => e.preventDefault()}>
+                  <Button type={'text'} size={'small'}>
+                    <PlayCircleOutlined />
+                  </Button>
+                </a>
+              </Dropdown>
+            </>
+          }
+          options={options}
+          keywordPlaceholder={'Search for Name or Id'}
+          onChange={handleChange}
+        />
+
+        <Tree
+          height={treeHeight - 62}
+          autoExpandParent={autoExpandParent}
+          blockNode={true}
+          selectedKeys={selectedKeys}
+          expandedKeys={expandedKeys}
+          // @ts-ignore
+          onExpand={onExpand}
+          onSelect={handleSelect}
+          switcherIcon={<DownOutlined />}
+          treeData={filterTree(searchValue, treeData)}
+          onDrop={onDrop}
+          draggable={{ icon: false }}
+          showLine
+          titleRender={(val) => (
+            <CollectionTitle
+              keyword={searchValue?.keyword}
+              updateDirectoryTreeData={fetchTreeData}
+              val={val}
+              treeData={treeData}
+              callbackOfNewRequest={expandSpecifyKeys} // TODO 暂时禁用待优化
+            />
+          )}
+        />
       </EmptyWrapper>
     </CollectionMenuWrapper>
   );
