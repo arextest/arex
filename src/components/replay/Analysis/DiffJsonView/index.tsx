@@ -1,8 +1,7 @@
 import './../DiffJsonView.css';
 
 import { css, useTheme } from '@emotion/react';
-import React, { FC, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { FC } from 'react';
 
 import { QueryMsgWithDiffRes } from '../../../../services/Replay.type';
 import useUserProfile from '../../../../store/useUserProfile';
@@ -18,33 +17,6 @@ export type DiffJsonViewProps = {
 
 const DiffJsonView: FC<DiffJsonViewProps> = ({ data, hiddenTooltip, height }) => {
   const { theme } = useUserProfile();
-
-  const baseMsg = useMemo(() => {
-    const msg = {
-      json: data?.baseMsg,
-      text: undefined,
-    };
-    try {
-      msg.json = JSON.parse(data?.baseMsg as string);
-    } catch (e) {
-      console.error(e);
-    }
-    return msg;
-  }, [data]);
-
-  const testMsg = useMemo(() => {
-    const msg = {
-      json: data?.testMsg,
-      text: undefined,
-    };
-    try {
-      msg.json = JSON.parse(data?.testMsg as string);
-    } catch (e) {
-      console.error(e);
-    }
-    return msg;
-  }, [data]);
-
   const allDiffByType = genAllDiffByType(data?.logs);
 
   const onClassName = (path: string[]) => {
@@ -62,10 +34,10 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, hiddenTooltip, height }) =>
       return 'different_element';
     }
   };
+
   const emotionTheme = useTheme();
-  if (!data) {
-    return <div></div>;
-  }
+
+  if (!data) return null;
 
   return (
     <>
@@ -102,7 +74,10 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, hiddenTooltip, height }) =>
               flex: 1;
             `}
             height={height}
-            content={baseMsg}
+            content={{
+              text: data?.baseMsg,
+              json: undefined,
+            }}
             readOnly
             mainMenuBar={false}
             onClassName={onClassName}
@@ -121,7 +96,10 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, hiddenTooltip, height }) =>
               flex: 1;
             `}
             height={height}
-            content={testMsg}
+            content={{
+              text: data?.testMsg,
+              json: undefined,
+            }}
             readOnly
             mainMenuBar={false}
             onClassName={onClassName}

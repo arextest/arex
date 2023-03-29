@@ -1,7 +1,9 @@
 import { css, useTheme } from '@emotion/react';
-import { theme } from 'antd';
+import { parse, stringify } from 'lossless-json';
 import React, { useEffect, useRef } from 'react';
 import { JSONEditor } from 'vanilla-jsoneditor';
+
+const LosslessJSONParser = { parse, stringify };
 
 export type SvelteJSONEditorProps = {
   height?: string | number;
@@ -14,7 +16,12 @@ export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
   useEffect(() => {
     refEditor.current = new JSONEditor({
       target: refContainer.current,
-      props: {},
+      props: {
+        // parse bigInt
+        // @ts-ignore
+        parser: LosslessJSONParser,
+        navigationBar: false,
+      },
     });
 
     return () => {
@@ -39,6 +46,7 @@ export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
     }
   }, [props]);
   const theme = useTheme();
+
   return (
     <div
       css={css`
@@ -49,6 +57,6 @@ export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
         }
       `}
       ref={refContainer}
-    ></div>
+    />
   );
 }

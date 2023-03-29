@@ -53,6 +53,7 @@
     "js-base64": "^3.7.5",
     "jsoneditor": "^9.9.0",
     "lodash": "^4.17.21",
+    "lossless-json": "^2.0.8",
     "monaco-editor": "^0.34.1",
     "path-to-regexp": "^6.2.1",
     "rc-select": "^14.2.0",
