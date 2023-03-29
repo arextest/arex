@@ -17,6 +17,8 @@ export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
     refEditor.current = new JSONEditor({
       target: refContainer.current,
       props: {
+        // parse bigInt
+        // @ts-ignore
         parser: LosslessJSONParser,
       },
     });
