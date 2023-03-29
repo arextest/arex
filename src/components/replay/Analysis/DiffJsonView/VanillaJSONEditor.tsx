@@ -1,5 +1,4 @@
 import { css, useTheme } from '@emotion/react';
-import JSONbig from 'json-bigint';
 import { parse, stringify } from 'lossless-json';
 import React, { useEffect, useRef } from 'react';
 import { JSONEditor } from 'vanilla-jsoneditor';
