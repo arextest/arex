@@ -75,7 +75,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, hiddenTooltip, height }) =>
             `}
             height={height}
             content={{
-              text: data?.baseMsg,
+              text: String(data?.baseMsg), // stringify falsy value
               json: undefined,
             }}
             readOnly
@@ -97,7 +97,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, hiddenTooltip, height }) =>
             `}
             height={height}
             content={{
-              text: data?.testMsg,
+              text: String(data?.testMsg), // stringify falsy value
               json: undefined,
             }}
             readOnly
