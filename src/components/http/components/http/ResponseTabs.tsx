@@ -23,7 +23,6 @@ const ResponseTabs: FC<{ onPin: LensesHeadersRendererEntryProps['onPin']; config
     () => store.response === null || store.response.type === 'loading',
     [store.response],
   );
-
   return (
     <div
       css={css`
