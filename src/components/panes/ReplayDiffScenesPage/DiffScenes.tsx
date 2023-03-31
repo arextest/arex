@@ -13,6 +13,7 @@ export interface DiffScenesProps extends Pick<DiffJsonViewProps, 'hiddenTooltip'
   height?: string;
 }
 
+const defaultPath = 'root';
 const DiffScenes: FC<DiffScenesProps> = (props) => {
   const { token } = theme.useToken();
   const [activeLog, setActiveLog] = useState<DiffLog>();
@@ -49,7 +50,7 @@ const DiffScenes: FC<DiffScenesProps> = (props) => {
         index && (title += '.');
         title += curPair.nodeName || `[${curPair.index}]`;
         return title;
-      }, '') || 'root'
+      }, '') || defaultPath
     );
   }, []);
 
