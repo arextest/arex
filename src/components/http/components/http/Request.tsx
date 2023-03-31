@@ -173,20 +173,6 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
         />
 
         <Space>
-          <Select
-            size='small'
-            value={store.mode}
-            options={RequestModeOptions}
-            onChange={(value) => {
-              dispatch((state) => {
-                state.mode = value;
-              });
-            }}
-            style={{ width: '100%' }}
-          />
-
-          <Divider type={'vertical'} />
-
           <Button
             size='small'
             icon={<SaveOutlined />}
@@ -203,6 +189,7 @@ const HttpRequest: FC<HttpRequestProps> = (props) => {
           css={css`
             display: flex;
             align-items: center;
+            min-width: 0;
           `}
         >
           <Select
