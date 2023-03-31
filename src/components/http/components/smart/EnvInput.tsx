@@ -64,6 +64,7 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange, disabled }) =>
         border: 1px solid ${theme.colorBorder};
         border-radius: 0 ${theme.borderRadius}px ${theme.borderRadius}px 0;
         flex: 1;
+        min-width: 0;
         overflow: hidden;
       `}
     >
