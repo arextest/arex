@@ -103,11 +103,13 @@ const AppMenu: FC<{
   });
 
   const filter = useCallback(
-    (keyword: string, app: ApplicationDataType) =>
-      favoriteFilter
-        ? !!favoriteApps?.includes(app.id) &&
-          (app.appName.includes(keyword) || app.appId.includes(keyword))
-        : app.appName.includes(keyword) || app.appId.includes(keyword),
+    (keyword: string, app: ApplicationDataType) => {
+      return keyword
+        ? app.appName.includes(keyword) || app.appId.includes(keyword)
+        : favoriteFilter
+        ? !!favoriteApps?.includes(app.id)
+        : favoriteApps;
+    },
     [favoriteFilter, favoriteApps],
   );
 
