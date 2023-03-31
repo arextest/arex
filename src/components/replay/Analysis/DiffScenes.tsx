@@ -53,7 +53,7 @@ const DiffScenes: FC<{
         width: '110px',
       },
       {
-        title: t('replay.caseTableCount'),
+        title: t('replay.caseErrorCount'),
         dataIndex: 'caseCount',
         width: '110px',
       },

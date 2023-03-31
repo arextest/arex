@@ -135,7 +135,7 @@
     "test": "Test",
     "pointOfDifference": "Point of difference",
     "sceneCount": "Scene Count",
-    "caseTableCount": "Error Count",
+    "caseErrorCount": "Error Count",
     "issues": "issue(s)",
     "treeMode": "Tree Mode",
     "valueOf": "Value of",

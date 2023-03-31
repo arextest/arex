@@ -27,21 +27,6 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
 
   const saveCaseRef = useRef<SaveCaseRef>(null);
 
-  const { data: compareResults = [], mutate } = useRequest(
-    () =>
-      ReplayService.queryFullLinkMsg({
-        recordId: selectedRecord!.recordId,
-        planItemId: props.page.data!.planItemId,
-      }),
-    {
-      ready: !!selectedRecord,
-      refreshDeps: [selectedRecord?.recordId],
-      onError() {
-        mutate([]);
-      },
-    },
-  );
-
   const {
     data: diffMsgAll = {
       compareResultDetailList: [],
@@ -113,8 +98,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
             <SpaceBetweenWrapper style={{ margin: '8px' }}>
               <Space size='large'>
                 <div>
-                  <Label>Total Count</Label>
-                  {compareResults.length}
+                  <Label>{t('replay.sceneCount')}</Label> {compareResultDetailListFiltered.length}
                 </div>
                 <DiffJsonViewTooltip />
               </Space>
@@ -127,7 +111,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
 
             <EmptyWrapper
               loading={loadingDiffMsgAll}
-              empty={!compareResultDetailListFiltered?.length}
+              empty={!compareResultDetailListFiltered.length}
               style={{ height: '400px' }}
             >
               <Allotment

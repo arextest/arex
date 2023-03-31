@@ -135,7 +135,7 @@
     "test": "回放",
     "pointOfDifference": "差异点",
     "sceneCount": "差异数",
-    "caseTableCount": "错误数",
+    "caseErrorCount": "错误数",
     "issues": "差异",
     "treeMode": "报文详情",
     "valueOf": "节点 ",
