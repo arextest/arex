@@ -1,10 +1,12 @@
 import { css, useTheme } from '@emotion/react';
-import React from 'react';
+import { Typography } from 'antd';
+import { TextProps } from 'antd/es/typography/Text';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import useUserProfile from '../../../../store/useUserProfile';
 
-const DiffJsonViewTooltip = () => {
+const DiffJsonViewTooltip: FC<TextProps> = (props) => {
   const { t } = useTranslation(['components']);
   const emotionTheme = useTheme();
   const { theme } = useUserProfile();
@@ -30,15 +32,21 @@ const DiffJsonViewTooltip = () => {
       >
         <div>
           <div className='color-tag-green' />
-          <span>{t('replay.moreNode')}</span>
+          <Typography.Text type='secondary' {...props}>
+            {t('replay.moreNode')}
+          </Typography.Text>
         </div>
         <div>
           <div className='color-tag-pink' />
-          <span>{t('replay.differenceNode')}</span>
+          <Typography.Text type='secondary' {...props}>
+            {t('replay.differenceNode')}
+          </Typography.Text>
         </div>
         <div>
           <div className='color-tag-grey' />
-          <span>{t('replay.ignoreNode')}</span>
+          <Typography.Text type='secondary' {...props}>
+            {t('replay.ignoreNode')}
+          </Typography.Text>
         </div>
       </div>
     </div>

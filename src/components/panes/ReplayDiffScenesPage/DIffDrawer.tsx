@@ -49,7 +49,7 @@ const DiffCard: FC<DIffDrawer> = (props) => {
                 height: 100%;
               `}
             >
-              <DiffScenes hiddenTooltip height={'100%'} data={data} />
+              <DiffScenes hiddenTooltip height={'100%'} data={data as CompareResultDetail} />
             </Allotment.Pane>
           ))}
         </Allotment>
