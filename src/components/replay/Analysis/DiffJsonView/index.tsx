@@ -2,8 +2,9 @@ import './../DiffJsonView.css';
 
 import { css, useTheme } from '@emotion/react';
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { QueryMsgWithDiffRes } from '../../../../services/Replay.type';
+import { CompareResultDetail } from '../../../../services/Replay.type';
 import useUserProfile from '../../../../store/useUserProfile';
 import DiffJsonViewTooltip from './DiffJsonViewTooltip';
 import { genAllDiffByType } from './helper';
@@ -12,12 +13,13 @@ import VanillaJSONEditor from './VanillaJSONEditor';
 export type DiffJsonViewProps = {
   height?: string | number;
   hiddenTooltip?: boolean;
-  data?: Pick<QueryMsgWithDiffRes, 'baseMsg' | 'testMsg' | 'logs'>;
+  data?: Pick<CompareResultDetail, 'baseMsg' | 'testMsg' | 'logs'>;
 };
 
 const DiffJsonView: FC<DiffJsonViewProps> = ({ data, hiddenTooltip, height }) => {
+  const { t } = useTranslation(['components']);
   const { theme } = useUserProfile();
-  const allDiffByType = genAllDiffByType(data?.logs);
+  const allDiffByType = genAllDiffByType(data?.logs || []);
 
   const onClassName = (path: string[]) => {
     const pathStr = path.map((p) => (isNaN(Number(p)) ? p : Number(p)));
@@ -70,18 +72,19 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, hiddenTooltip, height }) =>
           id={'containerLeft'}
         >
           <VanillaJSONEditor
-            css={css`
-              flex: 1;
-            `}
+            readOnly
             height={height}
+            remark={t('replay.benchmark')}
             content={{
               text: String(data?.baseMsg), // stringify falsy value
               json: undefined,
             }}
-            readOnly
             mainMenuBar={false}
             onClassName={onClassName}
             allDiffByType={allDiffByType}
+            css={css`
+              flex: 1;
+            `}
           />
         </div>
 
@@ -92,18 +95,19 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, hiddenTooltip, height }) =>
           id={'containerRight'}
         >
           <VanillaJSONEditor
-            css={css`
-              flex: 1;
-            `}
+            readOnly
             height={height}
+            remark={t('replay.test')}
             content={{
               text: String(data?.testMsg), // stringify falsy value
               json: undefined,
             }}
-            readOnly
             mainMenuBar={false}
             onClassName={onClassName}
             allDiffByType={allDiffByType}
+            css={css`
+              flex: 1;
+            `}
           />
         </div>
       </div>

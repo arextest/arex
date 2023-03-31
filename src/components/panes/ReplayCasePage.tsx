@@ -1,10 +1,11 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
-import { Space, Switch } from 'antd';
-import React, { useMemo, useRef, useState } from 'react';
+import { Divider, Space, Switch } from 'antd';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useCustomSearchParams } from '../../router/useCustomSearchParams';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, ReplayCase as ReplayCaseType } from '../../services/Replay.type';
 import DiffJsonViewTooltip from '../replay/Analysis/DiffJsonView/DiffJsonViewTooltip';
@@ -21,11 +22,13 @@ import DiffScenes from './ReplayDiffScenesPage/DiffScenes';
 
 const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
   const { t } = useTranslation(['components']);
-
   const [onlyFailed, setOnlyFailed] = useState(true);
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
 
   const saveCaseRef = useRef<SaveCaseRef>(null);
+
+  const params = useCustomSearchParams();
+  const { data = params.query.data } = props.page;
 
   const {
     data: diffMsgAll = {
@@ -48,9 +51,6 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
       manual: true,
       onBefore() {
         setDiffMsgAll();
-      },
-      onSuccess(res) {
-        console.log(res);
       },
     },
   );
@@ -79,7 +79,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
       <PanesTitle
         title={
           <span>
-            {t('replay.caseServiceAPI')}: {props.page.data.operationName}
+            {t('replay.caseServiceAPI')}: {data.operationName}
           </span>
         }
       />
@@ -88,17 +88,18 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
         active={!!selectedRecord}
         table={
           <Case
-            planItemId={props.page.data.planItemId}
+            planItemId={data.planItemId}
             onClick={handleClickRecord}
             onClickSaveCase={handleClickSaveCase}
           />
         }
         panel={
           <>
-            <SpaceBetweenWrapper style={{ margin: '8px' }}>
+            <SpaceBetweenWrapper style={{ margin: '4px 16px' }}>
               <Space size='large'>
                 <div>
-                  <Label>{t('replay.sceneCount')}</Label> {compareResultDetailListFiltered.length}
+                  <Label strong>{t('replay.sceneCount')}</Label>
+                  {compareResultDetailListFiltered.length}
                 </div>
                 <DiffJsonViewTooltip />
               </Space>
@@ -108,6 +109,8 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
                 <Switch size='small' defaultChecked={onlyFailed} onChange={setOnlyFailed} />
               </span>
             </SpaceBetweenWrapper>
+
+            <Divider style={{ margin: '0px 0px -8px' }} />
 
             <EmptyWrapper
               loading={loadingDiffMsgAll}
@@ -125,7 +128,6 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
                   <Allotment.Pane
                     key={data?.id + onlyFailed} // force rerender when onlyFailed change
                     css={css`
-                      padding: 16px 0;
                       height: 100%;
                     `}
                   >
@@ -137,7 +139,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
           </>
         }
       />
-      <SaveCase operationId={props.page.data.operationId} ref={saveCaseRef} />
+      <SaveCase operationId={data.operationId} ref={saveCaseRef} />
     </>
   );
 };

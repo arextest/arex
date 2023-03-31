@@ -234,7 +234,7 @@ export type QueryMsgWithDiffRes = {
   baseMsg: string | boolean | null;
   testMsg: string | boolean | null;
   diffResultCode: number;
-  logs: DiffLog[];
+  logs: DiffLog[] | null;
   recordId: string;
   replayId: string;
 };
