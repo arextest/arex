@@ -19,6 +19,10 @@ export class FileSystemService {
       compareEndpoint: testAddress?.endpoint,
       address,
       testAddress,
+      headers: (rest.headers || []).sort((a, b) => {
+        return -(a.key.includes('arex') ? 1 : -1) + (b.key.includes('arex') ? 1 : -1);
+      }),
+      params: rest.params || [],
     };
   }
 
@@ -50,7 +54,9 @@ export class FileSystemService {
       testAddress,
       parentValue: params.parentId ? await this.queryInterface({ id: params.parentId }) : undefined,
       preRequestScripts: rest.preRequestScripts || [],
-      headers: rest.headers || [],
+      headers: (rest.headers || []).sort((a, b) => {
+        return -(a.key.includes('arex') ? 1 : -1) + (b.key.includes('arex') ? 1 : -1);
+      }),
       params: rest.params || [],
     };
   }
