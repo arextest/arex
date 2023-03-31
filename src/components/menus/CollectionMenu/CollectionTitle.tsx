@@ -183,6 +183,7 @@ function CollectionTitle({
               nodeType: 2,
               parentPath: paths.map((i: any) => i.key),
               userName,
+              caseSourceType: 2,
             }).then((res) => {
               FileSystemService.queryInterface({ id: paths[paths.length - 1].key }).then(
                 (parentInterface) => {
