@@ -139,7 +139,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
               >
                 {compareResultDetailListFiltered.map((data) => (
                   <Allotment.Pane
-                    key={data?.id}
+                    key={data?.id + onlyFailed} // force rerender when onlyFailed change
                     css={css`
                       padding: 16px 0;
                       height: 100%;
