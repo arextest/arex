@@ -22,7 +22,7 @@ import DiffScenes from './ReplayDiffScenesPage/DiffScenes';
 const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
   const { t } = useTranslation(['components']);
 
-  const [onlyFailed, setOnlyFailed] = useState(false);
+  const [onlyFailed, setOnlyFailed] = useState(true);
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
 
   const saveCaseRef = useRef<SaveCaseRef>(null);
