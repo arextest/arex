@@ -2,3 +2,4 @@ node_modules
 server.js
 index.html
 Dockerfile
+src/assets
