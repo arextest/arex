@@ -62,14 +62,14 @@ const MenuItem = styled((props: MenuItemProps) => {
   .menu-item-heart {
     padding-right: 8px;
     .menu-item-heart-outlined {
-      display: none;
-      transition: all 0.3s;
+      opacity: 0;
+      transition: opacity ease 0.3s;
     }
   }
 
   &:hover {
     .menu-item-heart-outlined {
-      display: inherit;
+      opacity: 1;
     }
   }
 `;

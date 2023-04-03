@@ -1,9 +1,9 @@
 import { StopOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
-import { App, Button, Menu, theme, Typography } from 'antd';
-import path from 'path';
+import { App, Menu, theme, Typography } from 'antd';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -11,20 +11,68 @@ import AppSettingService from '../../../services/AppSetting.service';
 import { CompareResultDetail, DiffLog, PathPair } from '../../../services/Replay.type';
 import { TooltipButton } from '../../index';
 import DiffJsonView, { DiffJsonViewProps } from '../../replay/Analysis/DiffJsonView';
-import {
-  FlexCenterWrapper,
-  Label,
-  SmallTextButton,
-  SpaceBetweenWrapper,
-} from '../../styledComponents';
+import { FlexCenterWrapper, Label, SpaceBetweenWrapper } from '../../styledComponents';
 import { SummaryCodeMap } from './index';
 
 export interface DiffScenesProps extends Pick<DiffJsonViewProps, 'hiddenTooltip'> {
+  operationId: string;
+  appId: string;
   data: CompareResultDetail;
   height?: string;
 }
 
 const defaultPath = 'root';
+
+interface PathTitleProps {
+  pathPair: PathPair;
+  onIgnore?: (pathPair: PathPair) => void;
+}
+const PathTitle = styled((props: PathTitleProps) => {
+  const { t } = useTranslation(['components']);
+
+  const pathTitle = useCallback((pathPair: PathPair) => {
+    const path =
+      pathPair.leftUnmatchedPath.length >= pathPair.rightUnmatchedPath.length
+        ? pathPair.leftUnmatchedPath
+        : pathPair.rightUnmatchedPath;
+    return (
+      path.reduce((title, curPair, index) => {
+        index && (title += '.');
+        title += curPair.nodeName || `[${curPair.index}]`;
+        return title;
+      }, '') || defaultPath
+    );
+  }, []);
+
+  return (
+    <SpaceBetweenWrapper {...props}>
+      <Typography.Text style={{ color: 'inherit' }}>{pathTitle(props.pathPair)}</Typography.Text>
+      <TooltipButton
+        size='small'
+        color='primary'
+        placement='right'
+        icon={<StopOutlined />}
+        title={t('replay.ignoreNode')}
+        className='menu-item-stop-outlined'
+        onClick={() => props.onIgnore?.(props.pathPair)}
+      />
+    </SpaceBetweenWrapper>
+  );
+})`
+  height: 100%;
+  .menu-item-stop-outlined {
+    padding-right: 8px;
+    opacity: 0;
+    transition: opacity ease 0.3s;
+  }
+
+  &:hover {
+    .menu-item-stop-outlined {
+      opacity: 1;
+    }
+  }
+`;
+
 const DiffScenes: FC<DiffScenesProps> = (props) => {
   const { t } = useTranslation(['components']);
   const { token } = theme.useToken();
@@ -53,20 +101,6 @@ const DiffScenes: FC<DiffScenesProps> = (props) => {
           },
     [props.data, activeLog],
   );
-
-  const pathTitle = useCallback((pathPair: PathPair) => {
-    const path =
-      pathPair.leftUnmatchedPath.length >= pathPair.rightUnmatchedPath.length
-        ? pathPair.leftUnmatchedPath
-        : pathPair.rightUnmatchedPath;
-    return (
-      path.reduce((title, curPair, index) => {
-        index && (title += '.');
-        title += curPair.nodeName || `[${curPair.index}]`;
-        return title;
-      }, '') || defaultPath
-    );
-  }, []);
 
   const { run: insertIgnoreNode } = useRequest(
     (path) =>
@@ -124,20 +158,7 @@ const DiffScenes: FC<DiffScenesProps> = (props) => {
               defaultSelectedKeys={['0']}
               items={props.data.logs?.map((log, index) => {
                 return {
-                  label: (
-                    <SpaceBetweenWrapper>
-                      <Typography.Text style={{ color: 'inherit' }}>
-                        {pathTitle(log.pathPair)}
-                      </Typography.Text>
-                      <TooltipButton
-                        size='small'
-                        color='primary'
-                        icon={<StopOutlined />}
-                        title={t('replay.ignoreNode')}
-                        onClick={() => handleIgnoreNode(log.pathPair)}
-                      />
-                    </SpaceBetweenWrapper>
-                  ),
+                  label: <PathTitle pathPair={log.pathPair} onIgnore={handleIgnoreNode} />,
                   key: index,
                 };
               })}
@@ -145,8 +166,8 @@ const DiffScenes: FC<DiffScenesProps> = (props) => {
                 height: 100%;
                 padding: 4px 8px 0;
                 .ant-menu-item {
-                  height: 24px;
-                  line-height: 24px;
+                  height: 26px;
+                  line-height: 26px;
                 }
                 border-inline-end: none !important;
               `}

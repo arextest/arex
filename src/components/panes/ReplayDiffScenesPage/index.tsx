@@ -218,6 +218,8 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
         <DiffCard
           open={!!modalOpen}
           title={modalTitle}
+          appId={props.page.data.appId}
+          operationId={props.page.data.operationId}
           loading={loadingDiffMsg || loadingDiffMsgAll}
           data={[undefined, diffMsg, diffMsgAll?.compareResultDetailList][modalOpen]}
           onClose={(open) => setModalOpen(Number(open))}
