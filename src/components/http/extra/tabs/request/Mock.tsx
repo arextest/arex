@@ -137,8 +137,8 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
                 header={mock.operationName}
                 extra={
                   <TooltipButton
-                    icon={<SaveOutlined />}
                     title={'Save'}
+                    icon={<SaveOutlined />}
                     onClick={() => handleSave(mock.id)}
                   />
                 }

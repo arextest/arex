@@ -209,6 +209,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
             title={t('replay.diffScenesNew')}
             breakpoint='xxl'
             disabled={!record.failCaseCount}
+            color={record.failCaseCount ? 'primary' : 'disabled'}
             onClick={() => {
               customNavigate(
                 `/${params.workspaceId}/${PagesType.ReplayDiff}/${
@@ -216,15 +217,13 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
                 }?data=${encodeURIComponent(JSON.stringify(record))}`,
               );
             }}
-            style={{
-              color: record.failCaseCount ? token.colorPrimary : token.colorTextDisabled,
-            }}
           />
           <TooltipButton
             icon={<ContainerOutlined />}
             title={t('replay.diffScenes')}
             breakpoint='xxl'
             disabled={!record.failCaseCount}
+            color={record.failCaseCount ? 'primary' : 'disabled'}
             onClick={() => {
               customNavigate(
                 `/${params.workspaceId}/${PagesType.ReplayAnalysis}/${
@@ -232,14 +231,12 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
                 }?data=${encodeURIComponent(JSON.stringify(record))}`,
               );
             }}
-            style={{
-              color: record.failCaseCount ? token.colorPrimary : token.colorTextDisabled,
-            }}
           />
           <TooltipButton
             icon={<FileTextOutlined />}
             title={t('replay.case')}
             breakpoint='xxl'
+            color='primary'
             onClick={() => {
               customNavigate(
                 `/${params.workspaceId}/${PagesType.ReplayCase}/${
@@ -247,16 +244,15 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
                 }?data=${encodeURIComponent(JSON.stringify(record))}`,
               );
             }}
-            style={{ color: token.colorPrimary }}
           />
           <TooltipButton
             icon={<RedoOutlined />}
             title={t('replay.rerun')}
             breakpoint='xxl'
+            color='primary'
             onClick={() =>
               handleRerun(record.operationId, record.caseStartTime, record.caseEndTime)
             }
-            style={{ color: token.colorPrimary }}
           />
         </>
       ),

@@ -95,10 +95,10 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
         <Space>
           <TooltipButton
             key='save'
-            title={t('save', { ns: 'common' })}
             type='text'
             size='small'
             icon={<SaveOutlined />}
+            title={t('save', { ns: 'common' })}
             onClick={onSave}
           />
           <TooltipButton

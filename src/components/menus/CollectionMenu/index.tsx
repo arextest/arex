@@ -526,10 +526,10 @@ const CollectionMenu = () => {
                 icon={<PlusOutlined />}
                 type='text'
                 size='small'
-                className={'collection-header-create'}
-                onClick={createCollection}
                 placement='bottomLeft'
+                className={'collection-header-create'}
                 title={t('collection.create_new')}
+                onClick={createCollection}
               />
               <Dropdown
                 menu={{

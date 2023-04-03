@@ -1,12 +1,22 @@
+import { StopOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
+import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
-import { Menu, theme, Typography } from 'antd';
+import { App, Button, Menu, theme, Typography } from 'antd';
+import path from 'path';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import AppSettingService from '../../../services/AppSetting.service';
 import { CompareResultDetail, DiffLog, PathPair } from '../../../services/Replay.type';
+import { TooltipButton } from '../../index';
 import DiffJsonView, { DiffJsonViewProps } from '../../replay/Analysis/DiffJsonView';
-import { FlexCenterWrapper, Label } from '../../styledComponents';
+import {
+  FlexCenterWrapper,
+  Label,
+  SmallTextButton,
+  SpaceBetweenWrapper,
+} from '../../styledComponents';
 import { SummaryCodeMap } from './index';
 
 export interface DiffScenesProps extends Pick<DiffJsonViewProps, 'hiddenTooltip'> {
@@ -18,6 +28,7 @@ const defaultPath = 'root';
 const DiffScenes: FC<DiffScenesProps> = (props) => {
   const { t } = useTranslation(['components']);
   const { token } = theme.useToken();
+  const { message } = App.useApp();
 
   const [activeLog, setActiveLog] = useState<DiffLog>();
 
@@ -57,6 +68,32 @@ const DiffScenes: FC<DiffScenesProps> = (props) => {
     );
   }, []);
 
+  const { run: insertIgnoreNode } = useRequest(
+    (path) =>
+      AppSettingService.insertIgnoreNode({
+        operationId: props.operationId,
+        appId: props.appId,
+        exclusions: path,
+      }),
+    {
+      manual: true,
+      onSuccess(success) {
+        if (success) {
+          message.success(t('replay.addIgnoreSuccess'));
+        }
+      },
+    },
+  );
+
+  function handleIgnoreNode(pathPair: DiffLog['pathPair']) {
+    const unmatchedType = pathPair.unmatchedType;
+    const path = pathPair[unmatchedType === 2 ? 'rightUnmatchedPath' : 'leftUnmatchedPath']
+      .map((p) => p.nodeName)
+      .filter(Boolean);
+
+    insertIgnoreNode(path);
+  }
+
   if (!props.data) return null;
 
   return (
@@ -75,7 +112,11 @@ const DiffScenes: FC<DiffScenesProps> = (props) => {
         ) : (
           <>
             <Typography.Text
-              style={{ display: 'inline-block', margin: `${token.marginXS}px ${token.margin}px 0` }}
+              style={{
+                display: 'inline-block',
+                margin: `0 ${token.margin}px`,
+                lineHeight: '30px',
+              }}
             >
               {t('replay.pointOfDifference')}
             </Typography.Text>
@@ -84,9 +125,18 @@ const DiffScenes: FC<DiffScenesProps> = (props) => {
               items={props.data.logs?.map((log, index) => {
                 return {
                   label: (
-                    <Typography.Text style={{ color: 'inherit' }}>
-                      {pathTitle(log.pathPair)}
-                    </Typography.Text>
+                    <SpaceBetweenWrapper>
+                      <Typography.Text style={{ color: 'inherit' }}>
+                        {pathTitle(log.pathPair)}
+                      </Typography.Text>
+                      <TooltipButton
+                        size='small'
+                        color='primary'
+                        icon={<StopOutlined />}
+                        title={t('replay.ignoreNode')}
+                        onClick={() => handleIgnoreNode(log.pathPair)}
+                      />
+                    </SpaceBetweenWrapper>
                   ),
                   key: index,
                 };
