@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 import AppSettingService from '../../../services/AppSetting.service';
 import { CompareResultDetail, DiffLog, PathPair } from '../../../services/Replay.type';
-import { TooltipButton } from '../../index';
+import { EllipsisTooltip, TooltipButton } from '../../index';
 import DiffJsonView, { DiffJsonViewProps } from '../../replay/Analysis/DiffJsonView';
 import { FlexCenterWrapper, Label, SpaceBetweenWrapper } from '../../styledComponents';
 import { SummaryCodeMap } from './index';
@@ -164,6 +164,7 @@ const DiffScenes: FC<DiffScenesProps> = (props) => {
               })}
               css={css`
                 height: 100%;
+                overflow-y: auto;
                 padding: 4px 8px 0;
                 .ant-menu-item {
                   height: 26px;

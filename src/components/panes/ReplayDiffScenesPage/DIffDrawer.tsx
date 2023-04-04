@@ -18,7 +18,7 @@ export interface DIffDrawer {
   onClose: (open: false) => void;
 }
 
-const DiffCard: FC<DIffDrawer> = (props) => {
+const DiffDrawer: FC<DIffDrawer> = (props) => {
   const diffList = useMemo(
     () => (Array.isArray(props.data) ? props.data : [props.data]),
     [props.data],
@@ -38,16 +38,16 @@ const DiffCard: FC<DIffDrawer> = (props) => {
 
         <Allotment
           vertical
+          minSize={48}
           css={css`
-            height: 1000px;
+            height: ${diffList.length * 400 || 200}px;
           `}
         >
           {diffList.map((data, index) => (
             <Allotment.Pane
               key={data?.id}
               css={css`
-                padding: 16px 0;
-                padding-top: ${!index ? 0 : '16px'};
+                padding: ${!index ? 0 : '16px'} 16px 0;
                 height: 100%;
               `}
             >
@@ -66,4 +66,4 @@ const DiffCard: FC<DIffDrawer> = (props) => {
   );
 };
 
-export default DiffCard;
+export default DiffDrawer;
