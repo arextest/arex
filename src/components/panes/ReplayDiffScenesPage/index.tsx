@@ -164,7 +164,7 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
 
                 path.pathKeyList.push(pathKey);
                 const title = (
-                  <Space>
+                  <Space key={index}>
                     {item.categoryName}
                     <Tag color={SceneCodeMap[item.code.toString()].color}>
                       {SceneCodeMap[item.code.toString()].message}

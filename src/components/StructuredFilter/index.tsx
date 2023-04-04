@@ -57,7 +57,7 @@ const StructuredFilterWrapper = styled.div<{ size: SizeType }>`
 `;
 
 const StructuredFilter: FC<StructuredFilterProps> = (props) => {
-  const { showSearchButton = true, size, options, ...restProps } = props;
+  const { showSearchButton = true, size, options, keywordPlaceholder, ...restProps } = props;
   const { t } = useTranslation(['common']);
 
   const selectRef = useRef<BaseSelectRef>(null);
@@ -160,7 +160,7 @@ const StructuredFilter: FC<StructuredFilterProps> = (props) => {
                 ref={structuredOptionRef}
                 size={size}
                 keyword={keyword}
-                keywordPlaceholder={props.keywordPlaceholder}
+                keywordPlaceholder={keywordPlaceholder}
                 options={options}
                 onChange={handleChange}
                 onSearch={handleSearch}

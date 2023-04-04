@@ -59,7 +59,7 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
       items={props.data.map((subScene) => {
         const fullPath = subScene.details.reduce<ReactNode[]>((path, item, index) => {
           const detail = (
-            <Space>
+            <Space key={`${item.operationName}-${item.categoryName}`}>
               {`${item.operationName}-${item.categoryName}`}
               <Tag color={SceneCodeMap[item.code.toString()].color}>
                 {SceneCodeMap[item.code.toString()].message}

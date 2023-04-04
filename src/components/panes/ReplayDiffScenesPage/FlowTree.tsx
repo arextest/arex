@@ -112,11 +112,7 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
 
                 <Typography.Text ellipsis style={{ width: '260px' }}>
                   {nodeDatum.categoryName} -{' '}
-                  <EllipsisTooltip
-                    showSeparator
-                    placement='bottom'
-                    title={nodeDatum.operationName}
-                  />
+                  <EllipsisTooltip placement='bottom' title={nodeDatum.operationName} />
                 </Typography.Text>
               </Space>
             </foreignObject>

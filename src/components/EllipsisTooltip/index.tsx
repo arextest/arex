@@ -23,7 +23,20 @@ const EllipsisTooltip: FC<EllipsisTooltipProps> = (props) => {
 
   if (!separator) {
     return (
-      <Tooltip {...props}>
+      <Tooltip
+        overlayInnerStyle={{ padding: 0 }}
+        {...props}
+        title={
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            style={{ padding: '8px' }}
+          >
+            {props.title}
+          </div>
+        }
+      >
         <Typography.Text ellipsis={ellipsis}>{props.title}</Typography.Text>
       </Tooltip>
     );
@@ -39,7 +52,18 @@ const EllipsisTooltip: FC<EllipsisTooltipProps> = (props) => {
 
   return (
     <Tooltip
+      overlayInnerStyle={{ padding: 0 }}
       {...props}
+      title={
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          style={{ padding: '8px' }}
+        >
+          {props.title}
+        </div>
+      }
       open={props.open || (autoOpen && displayedTitle === title) ? false : undefined}
     >
       <Typography.Text ellipsis={ellipsis}>{displayedTitle}</Typography.Text>
