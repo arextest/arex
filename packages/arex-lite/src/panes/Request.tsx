@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { Breadcrumb } from 'antd';
-import { RequestPane as Http } from 'arex-core';
+import { ArexPanes } from 'arex-core';
 import { FC } from 'react';
 
 const HttpBreadcrumb: FC<{ nodePaths: { title: string }[] }> = ({ nodePaths }) => {
@@ -51,7 +51,7 @@ const RequestPane = () => {
         height: calc(100vh - 140px);
       `}
     >
-      <Http
+      <ArexPanes.Http
         breadcrumb={<HttpBreadcrumb nodePaths={[]} />}
         // @ts-ignore
         value={data}

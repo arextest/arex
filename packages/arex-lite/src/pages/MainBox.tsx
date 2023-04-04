@@ -3,12 +3,11 @@ import {
   ArexFooter,
   ArexHeader,
   ArexMainBox,
+  ArexMenu,
   ArexSideMenu,
-  CollectionMenu,
-  EnvironmentMenu,
   PanesWrapper,
 } from 'arex-core';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { PageTypeEnum } from '../constant';
@@ -60,7 +59,7 @@ const MainBox = () => {
     customNavigate(`/${params.workspaceId}/workspace/${params.workspaceName}/${'replay'}/${'key'}`);
   }
   return (
-    <div>
+    <>
       <ArexHeader onDarkModeChange={darkMode.toggle} />
       <ArexMainBox
         height={'calc(100vh - 79px)'}
@@ -74,7 +73,7 @@ const MainBox = () => {
                 label: 'Collection',
                 key: 'Collection',
                 children: (
-                  <CollectionMenu
+                  <ArexMenu.Collection
                     value={'activeMenu[1]'}
                     collectionTreeData={collectionOriginalTreeToAntdTreeData(
                       mockCollectionTreeData.roots,
@@ -97,7 +96,7 @@ const MainBox = () => {
                 label: 'Environment',
                 key: 'Environment',
                 children: (
-                  <EnvironmentMenu
+                  <ArexMenu.Environment
                     value={'EnvironmentMenu[1]'}
                     onSelect={() => {
                       console.log();
@@ -128,7 +127,7 @@ const MainBox = () => {
         }
       />
       <ArexFooter />
-    </div>
+    </>
   );
 };
 

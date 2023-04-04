@@ -1,11 +1,11 @@
 export enum PanesType {
-  REQUEST = 'request',
-  ENVIRONMENT = 'environment',
+  REQUEST = 'Request',
+  ENVIRONMENT = 'Environment',
 }
 
 export enum MenusType {
-  COLLECTION = 'collection',
-  ENVIRONMENT = 'environment',
+  COLLECTION = 'Collection',
+  ENVIRONMENT = 'Environment',
 }
 
 export enum NodeTypeEnum {

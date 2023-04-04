@@ -52,7 +52,7 @@ export type ArexPanesType<D extends PanesData = undefined> = {
   rawId: React.Key;
 };
 
-const ArexPanes = {
+export const ArexPanes = {
   [PanesType.REQUEST]: Request,
   [PanesType.ENVIRONMENT]: Environment,
 };

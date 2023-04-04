@@ -12,7 +12,7 @@ export type MenuConfig = {
   children?: MenuConfig[];
 };
 
-const ArexMenu = {
+export const ArexMenu = {
   [MenusType.COLLECTION]: CollectionMenu,
   [MenusType.ENVIRONMENT]: EnvironmentMenu,
 };

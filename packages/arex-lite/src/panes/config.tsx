@@ -1,5 +1,3 @@
-import { RunPane } from 'arex-core';
-
 import FolderPane from './Folder';
 import RequestPane from './Request';
 const paneConfig = [
@@ -14,10 +12,6 @@ const paneConfig = [
   {
     pageType: 'case',
     element: RequestPane,
-  },
-  {
-    pageType: 'run',
-    element: RunPane,
   },
 ];
 
