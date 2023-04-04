@@ -1,8 +1,10 @@
+import { SearchOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { Button, Menu, Space, Tag } from 'antd';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 
 import { QueryAllDiffMsgReq, QueryFullLinkInfoReq, SubScene } from '../../../services/Replay.type';
+import { EllipsisTooltip } from '../../index';
 import { SpaceBetweenWrapper } from '../../styledComponents';
 import { SceneCodeMap } from './index';
 
@@ -60,7 +62,8 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
         const fullPath = subScene.details.reduce<ReactNode[]>((path, item, index) => {
           const detail = (
             <Space key={`${item.operationName}-${item.categoryName}`}>
-              {`${item.operationName}-${item.categoryName}`}
+              <EllipsisTooltip title={item.operationName} />
+              {`- ${item.categoryName}`}
               <Tag color={SceneCodeMap[item.code.toString()].color}>
                 {SceneCodeMap[item.code.toString()].message}
               </Tag>
@@ -74,8 +77,13 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
         return {
           label: (
             <SpaceBetweenWrapper>
-              <div>{fullPath}</div>
-              <Button type='link' size='small' onClick={() => handleClickALl(subScene, fullPath)}>
+              <div style={{ overflow: 'hidden' }}>{fullPath}</div>
+              <Button
+                type='link'
+                size='small'
+                icon={<SearchOutlined />}
+                onClick={() => handleClickALl(subScene, fullPath)}
+              >
                 view all
               </Button>
             </SpaceBetweenWrapper>
