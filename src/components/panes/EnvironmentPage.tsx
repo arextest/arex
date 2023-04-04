@@ -98,10 +98,10 @@ const EnvironmentPage: PageFC<Environment> = (props) => {
         extra={
           <Space>
             <TooltipButton
-              disabled={activeEnvironment?.id === id}
               icon={<AimOutlined />}
               placement='left'
               title={t('env.setCurrentEnv')}
+              disabled={activeEnvironment?.id === id}
               onClick={() => setActiveEnvironment(environment as Environment)}
             />
             <TooltipButton

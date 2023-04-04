@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
 import { Divider, Space, Switch } from 'antd';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useCustomSearchParams } from '../../router/useCustomSearchParams';
@@ -131,7 +131,13 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
                       height: 100%;
                     `}
                   >
-                    <DiffScenes hiddenTooltip height={'100%'} data={data} />
+                    <DiffScenes
+                      hiddenTooltip
+                      height={'100%'}
+                      appId={props.page.data.appId}
+                      operationId={props.page.data.operationId}
+                      data={data}
+                    />
                   </Allotment.Pane>
                 ))}
               </Allotment>

@@ -11,6 +11,8 @@ import DiffScenes from './DiffScenes';
 export interface DIffDrawer {
   open: boolean;
   title?: string | ReactNode[];
+  appId: string;
+  operationId: string;
   data?: CompareResultDetail | CompareResultDetail[];
   loading?: boolean;
   onClose: (open: false) => void;
@@ -49,7 +51,13 @@ const DiffCard: FC<DIffDrawer> = (props) => {
                 height: 100%;
               `}
             >
-              <DiffScenes hiddenTooltip height={'100%'} data={data as CompareResultDetail} />
+              <DiffScenes
+                hiddenTooltip
+                appId={props.appId}
+                operationId={props.operationId}
+                height={'100%'}
+                data={data as CompareResultDetail}
+              />
             </Allotment.Pane>
           ))}
         </Allotment>

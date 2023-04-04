@@ -187,8 +187,8 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                   extra={[
                     <TooltipButton
                       key='add'
-                      title={t('appSetting.addKey')}
                       icon={<PlusOutlined />}
+                      title={t('appSetting.addKey')}
                       onClick={(e) => handleAddKey(e, path)}
                     />,
                     <SmallTextButton
@@ -203,8 +203,8 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                     !props.manualEdit && (
                       <TooltipButton
                         key='editResponse'
-                        title={t('appSetting.editResponse')}
                         icon={<CodeOutlined />}
+                        title={t('appSetting.editResponse')}
                         onClick={(e) => {
                           e.stopPropagation();
                           props.onEditResponse?.(path);
