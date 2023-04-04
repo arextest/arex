@@ -1,15 +1,15 @@
-import { css, useTheme } from '@emotion/react';
-import { Typography } from 'antd';
+import { css } from '@emotion/react';
+import { theme as antdTheme, Typography } from 'antd';
 import { TextProps } from 'antd/es/typography/Text';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import useUserProfile from '../../../../store/useUserProfile';
+import useUserProfile from '../../store/useUserProfile';
 
-const DiffJsonViewTooltip: FC<TextProps> = (props) => {
-  const { t } = useTranslation(['components']);
-  const emotionTheme = useTheme();
+const DiffJsonTooltip: FC<TextProps> = (props) => {
+  const { token } = antdTheme.useToken();
   const { theme } = useUserProfile();
+  const { t } = useTranslation(['components']);
 
   return (
     <div
@@ -17,10 +17,10 @@ const DiffJsonViewTooltip: FC<TextProps> = (props) => {
         display: flex;
         justify-content: space-between;
         .color-tag-pink {
-          background-color: ${emotionTheme.colorInfoBgHover};
+          background-color: ${token.colorInfoBgHover};
         }
         .color-tag-green {
-          background-color: ${emotionTheme.colorWarningBgHover};
+          background-color: ${token.colorWarningBgHover};
         }
       `}
     >
@@ -53,4 +53,4 @@ const DiffJsonViewTooltip: FC<TextProps> = (props) => {
   );
 };
 
-export default DiffJsonViewTooltip;
+export default DiffJsonTooltip;

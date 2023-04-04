@@ -7,14 +7,15 @@ import { App, Menu, theme, Typography } from 'antd';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import AppSettingService from '../../../services/AppSetting.service';
-import { CompareResultDetail, DiffLog, PathPair } from '../../../services/Replay.type';
-import { EllipsisTooltip, TooltipButton } from '../../index';
-import DiffJsonView, { DiffJsonViewProps } from '../../replay/Analysis/DiffJsonView';
-import { FlexCenterWrapper, Label, SpaceBetweenWrapper } from '../../styledComponents';
-import { SummaryCodeMap } from './index';
+import AppSettingService from '../../services/AppSetting.service';
+import { CompareResultDetail, DiffLog, PathPair } from '../../services/Replay.type';
+import DiffJsonView, { DiffJsonViewProps } from '../DiffJsonView';
+import { EllipsisTooltip } from '../index';
+import { SummaryCodeMap } from '../panes/ReplayDiffScenesPage';
+import { FlexCenterWrapper, Label, SpaceBetweenWrapper } from '../styledComponents';
+import TooltipButton from '../TooltipButton';
 
-export interface DiffScenesProps extends Pick<DiffJsonViewProps, 'hiddenTooltip'> {
+export interface DiffScenesProps {
   operationId: string;
   appId: string;
   data: CompareResultDetail;
@@ -28,6 +29,7 @@ interface PathTitleProps {
   onIgnore?: (pathPair: PathPair) => void;
 }
 const PathTitle = styled((props: PathTitleProps) => {
+  const { onIgnore, pathPair, ...restProps } = props;
   const { t } = useTranslation(['components']);
 
   const pathTitle = useCallback((pathPair: PathPair) => {
@@ -45,8 +47,10 @@ const PathTitle = styled((props: PathTitleProps) => {
   }, []);
 
   return (
-    <SpaceBetweenWrapper {...props}>
-      <Typography.Text style={{ color: 'inherit' }}>{pathTitle(props.pathPair)}</Typography.Text>
+    <SpaceBetweenWrapper {...restProps}>
+      <Typography.Text ellipsis style={{ color: 'inherit' }}>
+        {pathTitle(pathPair)}
+      </Typography.Text>
       <TooltipButton
         size='small'
         color='primary'
@@ -54,7 +58,7 @@ const PathTitle = styled((props: PathTitleProps) => {
         icon={<StopOutlined />}
         title={t('replay.ignoreNode')}
         className='menu-item-stop-outlined'
-        onClick={() => props.onIgnore?.(props.pathPair)}
+        onClick={() => onIgnore?.(pathPair)}
       />
     </SpaceBetweenWrapper>
   );
@@ -73,7 +77,7 @@ const PathTitle = styled((props: PathTitleProps) => {
   }
 `;
 
-const DiffScenes: FC<DiffScenesProps> = (props) => {
+const DiffPathViewer: FC<DiffScenesProps> = (props) => {
   const { t } = useTranslation(['components']);
   const { token } = theme.useToken();
   const { message } = App.useApp();
@@ -202,16 +206,10 @@ const DiffScenes: FC<DiffScenesProps> = (props) => {
                 }}
               >
                 <Label>{props.data.categoryName}</Label>
-                <Typography.Text strong ellipsis>
-                  {props.data.operationName}
-                </Typography.Text>
+                <EllipsisTooltip title={props.data.operationName} />
               </Typography.Text>
               <div style={{ position: 'relative', margin: `${token.marginXS}px`, height: '100%' }}>
-                <DiffJsonView
-                  hiddenTooltip={props.hiddenTooltip}
-                  height={props.height}
-                  data={diffJsonData}
-                />
+                <DiffJsonView hiddenTooltip height={props.height} data={diffJsonData} />
               </div>
             </>
           )
@@ -221,4 +219,4 @@ const DiffScenes: FC<DiffScenesProps> = (props) => {
   );
 };
 
-export default DiffScenes;
+export default DiffPathViewer;

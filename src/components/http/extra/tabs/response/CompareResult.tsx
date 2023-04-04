@@ -3,8 +3,8 @@ import { css } from '@emotion/react';
 import { Result, Spin } from 'antd';
 import React, { useState } from 'react';
 
+import DiffJsonViewDrawer from '../../../../DiffJsonView/DiffJsonViewDrawer';
 import { DiffJsonViewProps } from '../../../../replay/Analysis';
-import DiffJsonViewDrawer from '../../../../replay/Analysis/DiffJsonView/DiffJsonViewDrawer';
 import DiffList from '../../../../replay/Analysis/DiffList';
 
 const CompareResult = ({ compareResult, loading }) => {

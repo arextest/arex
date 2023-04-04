@@ -45,7 +45,7 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
     const params = {
       recordId: subScene.recordId,
       replayId: subScene.replayId,
-      diffResultCodeList: [1, 2],
+      diffResultCodeList: [0, 1, 2],
       pageIndex: 0,
       pageSize: 99, // TODO lazy load
       needTotal: true,

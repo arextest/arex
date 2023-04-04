@@ -1,12 +1,12 @@
-import './../DiffJsonView.css';
+import '../replay/Analysis/DiffJsonView.css';
 
 import { css, useTheme } from '@emotion/react';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { CompareResultDetail } from '../../../../services/Replay.type';
-import useUserProfile from '../../../../store/useUserProfile';
-import DiffJsonViewTooltip from './DiffJsonViewTooltip';
+import { CompareResultDetail } from '../../services/Replay.type';
+import useUserProfile from '../../store/useUserProfile';
+import DiffJsonTooltip from './DiffJsonTooltip';
 import { genAllDiffByType } from './helper';
 import VanillaJSONEditor from './VanillaJSONEditor';
 
@@ -43,7 +43,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, hiddenTooltip, height }) =>
 
   return (
     <>
-      {!hiddenTooltip && <DiffJsonViewTooltip />}
+      {!hiddenTooltip && <DiffJsonTooltip />}
       <div
         css={css`
           display: flex;
