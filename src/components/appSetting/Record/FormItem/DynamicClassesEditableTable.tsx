@@ -62,6 +62,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
             <Input
               value={text}
               status={fullClassNameInputStatus}
+              placeholder={t('appSetting.fullClassNamePlaceholder', { ns: 'components' })}
               onChange={(e) => {
                 setFullClassNameInputStatus('');
                 handleChange('fullClassName', e.target.value);
@@ -77,7 +78,11 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
         key: 'methodName',
         render: (text, record) =>
           isEditableRow(record.id) ? (
-            <Input value={text} onChange={(e) => handleChange('methodName', e.target.value)} />
+            <Input
+              value={text}
+              placeholder={t('appSetting.methodNamePlaceholder', { ns: 'components' })}
+              onChange={(e) => handleChange('methodName', e.target.value)}
+            />
           ) : (
             text
           ),
@@ -88,7 +93,11 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
         key: 'parameterTypes',
         render: (text, record) =>
           isEditableRow(record.id) ? (
-            <Input value={text} onChange={(e) => handleChange('parameterTypes', e.target.value)} />
+            <Input
+              value={text}
+              placeholder={t('appSetting.parameterTypesPlaceholder', { ns: 'components' })}
+              onChange={(e) => handleChange('parameterTypes', e.target.value)}
+            />
           ) : (
             text
           ),

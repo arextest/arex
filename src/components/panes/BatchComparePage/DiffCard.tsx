@@ -2,9 +2,9 @@ import { Spin } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import { FileSystemService } from '../../../services/FileSystem.service';
+import DiffJsonViewDrawer from '../../DiffJsonView/DiffJsonViewDrawer';
 import { DiffJsonViewProps } from '../../replay/Analysis';
 import BatchDiffList from '../../replay/Analysis/BatchDiffList';
-import DiffJsonViewDrawer from '../../replay/Analysis/DiffJsonView/DiffJsonViewDrawer';
 
 const DiffCard = (record: any) => {
   const { planId, interfaceId } = record;

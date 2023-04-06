@@ -7,7 +7,7 @@ import ReplayService from '../../../services/Replay.service';
 import { PlanItemStatistics, SubScene } from '../../../services/Replay.type';
 import { Label } from '../../styledComponents';
 import { PageFC } from '../index';
-import DiffCard from './DIffDrawer';
+import DiffDrawer from './DIffDrawer';
 import FlowTree, { FlowTreeData } from './FlowTree';
 import SubScenesMenu from './SubScenesMenu';
 
@@ -164,7 +164,7 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
 
                 path.pathKeyList.push(pathKey);
                 const title = (
-                  <Space>
+                  <Space key={index}>
                     {item.categoryName}
                     <Tag color={SceneCodeMap[item.code.toString()].color}>
                       {SceneCodeMap[item.code.toString()].message}
@@ -215,7 +215,7 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
           />
         )}
 
-        <DiffCard
+        <DiffDrawer
           open={!!modalOpen}
           title={modalTitle}
           appId={props.page.data.appId}

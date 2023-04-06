@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 
 import ReplayService from '../../services/Replay.service';
 import { CategoryStatistic, Difference, PlanItemStatistics } from '../../services/Replay.type';
+import DiffJsonViewDrawer from '../DiffJsonView/DiffJsonViewDrawer';
 import { DiffJsonViewProps, DiffList, DiffScenes } from '../replay/Analysis';
-import DiffJsonViewDrawer from '../replay/Analysis/DiffJsonView/DiffJsonViewDrawer';
 import { CollapseTable, PanesTitle } from '../styledComponents';
 import { PageFC } from './index';
 
