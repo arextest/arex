@@ -35,7 +35,12 @@ const TooltipButton: FC<TooltipButtonProps> = (props) => {
       style={{ color: props.color && colorMap[props.color], ...style }}
       {...restProps}
     >
-      <Typography.Text {...textProps}>{title}</Typography.Text>
+      <Typography.Text
+        {...textProps}
+        style={{ color: props.color && colorMap[props.color], ...style }}
+      >
+        {title}
+      </Typography.Text>
     </Button>
   ) : (
     <Tooltip title={title} placement={placement} {...tooltipProps}>

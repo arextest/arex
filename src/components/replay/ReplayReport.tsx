@@ -138,6 +138,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     },
     {
       title: t('replay.state'),
+      width: 80,
       render: (_, record) => (
         <StatusTag
           status={record.status}
@@ -148,6 +149,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     },
     {
       title: t('replay.timeConsumed'),
+      width: 80,
       render: (_, record) =>
         record.replayEndTime && record.replayStartTime
           ? (record.replayEndTime - record.replayStartTime) / 1000
@@ -156,11 +158,12 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     {
       title: t('replay.cases'),
       dataIndex: 'totalCaseCount',
+      width: 72,
     },
     {
       title: t('replay.passed'),
       dataIndex: 'successCaseCount',
-      width: 70,
+      width: 72,
       render: (text) => (
         <CountUp
           preserveValue
@@ -173,7 +176,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     {
       title: t('replay.failed'),
       dataIndex: 'failCaseCount',
-      width: 70,
+      width: 72,
       render: (text) => (
         <CountUp preserveValue duration={0.3} end={text} style={{ color: token.colorErrorText }} />
       ),
@@ -181,7 +184,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     {
       title: t('replay.invalid'),
       dataIndex: 'errorCaseCount',
-      width: 70,
+      width: 72,
       render: (text) => (
         <CountUp preserveValue duration={0.3} end={text} style={{ color: token.colorInfoText }} />
       ),
@@ -189,7 +192,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     {
       title: t('replay.blocked'),
       dataIndex: 'waitCaseCount',
-      width: 70,
+      width: 72,
       render: (text) => (
         <CountUp
           preserveValue
