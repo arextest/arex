@@ -16,10 +16,10 @@ const DiffJsonTooltip: FC<TextProps> = (props) => {
       css={css`
         display: flex;
         justify-content: space-between;
-        .color-tag-pink {
+        .color-tag-difference {
           background-color: ${token.colorInfoBgHover};
         }
-        .color-tag-green {
+        .color-tag-more {
           background-color: ${token.colorWarningBgHover};
         }
       `}
@@ -31,21 +31,15 @@ const DiffJsonTooltip: FC<TextProps> = (props) => {
         `}
       >
         <div>
-          <div className='color-tag-green' />
+          <div className='color-tag-more' />
           <Typography.Text type='secondary' {...props}>
             {t('replay.moreNode')}
           </Typography.Text>
         </div>
         <div>
-          <div className='color-tag-pink' />
+          <div className='color-tag-difference' />
           <Typography.Text type='secondary' {...props}>
             {t('replay.differenceNode')}
-          </Typography.Text>
-        </div>
-        <div>
-          <div className='color-tag-grey' />
-          <Typography.Text type='secondary' {...props}>
-            {t('replay.ignoreNode')}
           </Typography.Text>
         </div>
       </div>

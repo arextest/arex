@@ -55,16 +55,14 @@ div.jsoneditor-value.jsoneditor-null {
   display: flex;
   margin-right: 14px;
 }
-.MsgWithDiffLegend > div > .color-tag-pink {
+.MsgWithDiffLegend > div > .color-tag-difference {
   width: 20px;
   height: 20px;
-  /*background-color: pink;*/
   margin-right: 8px;
 }
-.MsgWithDiffLegend > div > .color-tag-green {
+.MsgWithDiffLegend > div > .color-tag-more {
   width: 20px;
   height: 20px;
-  /*background-color: #00bb74;*/
   margin-right: 8px;
 }
 .MsgWithDiffLegend > div > .color-tag-grey {
