@@ -177,7 +177,7 @@
     "methodName": "Method Name",
     "methodNamePlaceholder": "Method name (if not configured, mock all public methods with parameters in this class)",
     "parameterTypes": "Parameter Types",
-    "parameterTypesPlaceholder": "Fully qualified class name parameters, separated by \"@\" if there are multiple, for example: java.lang.String@java.lang.Integer.",
+    "parameterTypesPlaceholder": "Fully qualified class name parameters, separated by \"@\" if there are multiple, for example: java.lang.String@java.lang.Integer",
     "action": "Action",
     "delConfirmText": "Are you sure to delete this record?",
     "caseRange": "Case range",

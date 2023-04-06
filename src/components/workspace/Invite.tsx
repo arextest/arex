@@ -69,7 +69,7 @@ const InviteWorkspace = () => {
           name='form_in_modal'
           initialValues={{
             email: [],
-            role: RoleEnum.Admin,
+            role: RoleEnum.Editor,
           }}
         >
           <Form.Item
