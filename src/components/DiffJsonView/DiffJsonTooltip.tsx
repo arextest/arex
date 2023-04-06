@@ -42,12 +42,6 @@ const DiffJsonTooltip: FC<TextProps> = (props) => {
             {t('replay.differenceNode')}
           </Typography.Text>
         </div>
-        <div>
-          <div className='color-tag-grey' />
-          <Typography.Text type='secondary' {...props}>
-            {t('replay.ignoreNode')}
-          </Typography.Text>
-        </div>
       </div>
     </div>
   );
