@@ -58,13 +58,11 @@ div.jsoneditor-value.jsoneditor-null {
 .MsgWithDiffLegend > div > .color-tag-difference {
   width: 20px;
   height: 20px;
-  /*background-color: pink;*/
   margin-right: 8px;
 }
 .MsgWithDiffLegend > div > .color-tag-more {
   width: 20px;
   height: 20px;
-  /*background-color: #00bb74;*/
   margin-right: 8px;
 }
 .MsgWithDiffLegend > div > .color-tag-grey {
