@@ -2,6 +2,7 @@ import { useRequest } from 'ahooks';
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { tryParseJsonString } from '../../helpers/utils';
 import { useCustomSearchParams } from '../../router/useCustomSearchParams';
 import ReplayService from '../../services/Replay.service';
 import { PlanItemStatistics, ReplayCase as ReplayCaseType } from '../../services/Replay.type';
@@ -17,7 +18,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
   const saveCaseRef = useRef<SaveCaseRef>(null);
 
   const params = useCustomSearchParams();
-  const { data = params.query.data } = props.page;
+  const { data = tryParseJsonString(decodeURIComponent(params.query.data)) } = props.page;
 
   const {
     data: diffMsgAll = {
@@ -77,8 +78,8 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
         }
         panel={
           <DiffPath
-            appId={props.page.data.appId}
-            operationId={props.page.data.operationId}
+            appId={data.appId}
+            operationId={data.operationId}
             loading={loadingDiffMsgAll}
             data={diffMsgAll.compareResultDetailList}
           />
