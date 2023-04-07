@@ -5,6 +5,7 @@ import { immer } from 'zustand/middleware/immer';
 
 import { nodeType } from '../components/menus/CollectionMenu';
 import { PageType } from '../components/panes';
+import { CaseDetailType } from '../components/panes/ReplayCaseDetailPage';
 import { EmailKey, WorkspaceEnvironmentPairKey, WorkspaceKey } from '../constant';
 import { MenusType } from '../enums/menus';
 import { getLocalStorage, setLocalStorage } from '../helpers/utils';
@@ -20,7 +21,8 @@ export type PageData =
   | nodeType // PageTypeEnum.Request 时的数据
   | ApplicationDataType // PageTypeEnum.Replay 时的数据
   | PlanItemStatistics // PageTypeEnum.ReplayAnalysis 时的数据
-  | Environment;
+  | Environment
+  | CaseDetailType;
 
 export type Page<D extends PageData = undefined> = {
   title: string;

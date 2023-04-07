@@ -345,3 +345,52 @@ export interface QueryAllDiffMsgRes {
   compareResultDetailList: CompareResultDetail[];
   totalCount: number;
 }
+
+export interface ViewRecordReq {
+  recordId: string;
+}
+
+export interface CategoryType {
+  name: string;
+  entryPoint: boolean;
+  skipComparison: boolean;
+}
+
+export interface Attribute {
+  requestPath: string;
+  catId: string;
+  format: string;
+  headers: Record<string, string>;
+  cookies: Record<string, string>;
+  configBatchNo: string;
+}
+
+export interface TargetRequest {
+  body: string;
+  attributes: Attribute;
+  type: string | null;
+}
+
+export interface TargetResponse {
+  body: string;
+  attributes?: Attribute;
+  type: string | null;
+}
+
+export interface RecordResult {
+  id: string;
+  categoryType: CategoryType;
+  replayId: string | any;
+  recordId: string;
+  appId: string;
+  recordEnvironment: number;
+  creationTime: number;
+  targetRequest: TargetRequest;
+  targetResponse: TargetResponse;
+  operationName: string;
+  recordVersion?: number | any;
+}
+
+export interface ViewRecordRes {
+  recordResult: RecordResult[];
+}

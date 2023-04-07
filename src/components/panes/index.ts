@@ -8,6 +8,7 @@ import EnvironmentPage from './EnvironmentPage';
 import FolderPage from './FolderPage';
 import HttpRequestPage from './HttpRequestPage';
 import ReplayAnalysisPage from './ReplayAnalysisPage';
+import ReplayCaseDetailPage from './ReplayCaseDetailPage';
 import ReplayCasePage from './ReplayCasePage';
 import ReplayDiffScenesPage from './ReplayDiffScenesPage';
 import ReplayPage from './ReplayPage';
@@ -43,6 +44,7 @@ const CommonPageType: PagesTypeType = {
   ReplayDiff: 'ReplayDiffScenesPage',
   ReplayAnalysis: 'ReplayAnalysisPage',
   ReplayCase: 'ReplayCasePage',
+  ReplayCaseDetail: 'ReplayCaseDetailPage',
   AppSetting: 'AppSettingPage',
   Setting: 'SettingPage',
   WorkspaceOverview: 'WorkspaceOverviewPage',
@@ -70,6 +72,7 @@ const CommonPages: PageComponents = {
   ReplayDiffScenesPage,
   ReplayAnalysisPage,
   ReplayCasePage,
+  ReplayCaseDetailPage,
   AppSettingPage,
   SettingPage,
   WorkspaceOverviewPage,

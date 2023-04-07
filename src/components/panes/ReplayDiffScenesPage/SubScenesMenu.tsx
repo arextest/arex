@@ -1,10 +1,10 @@
-import { SearchOutlined } from '@ant-design/icons';
+import { ClusterOutlined, SearchOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { Badge, Button, Menu, Space, Tag, theme, Typography } from 'antd';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 
 import { QueryAllDiffMsgReq, QueryFullLinkInfoReq, SubScene } from '../../../services/Replay.type';
-import { EllipsisTooltip } from '../../index';
+import { EllipsisTooltip, TooltipButton } from '../../index';
 import { SpaceBetweenWrapper } from '../../styledComponents';
 import { SceneCodeMap } from './index';
 
@@ -91,14 +91,13 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
           label: (
             <SpaceBetweenWrapper>
               <div style={{ overflow: 'hidden' }}>{fullPath}</div>
-              <Button
+              <TooltipButton
                 type='link'
                 size='small'
-                icon={<SearchOutlined />}
+                icon={<ClusterOutlined />}
+                title={'view all'}
                 onClick={() => handleClickALl(subScene, fullPath)}
-              >
-                view all
-              </Button>
+              />
             </SpaceBetweenWrapper>
           ),
           key: subScene.recordId + Connector + subScene.replayId,
