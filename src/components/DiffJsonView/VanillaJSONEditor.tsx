@@ -2,7 +2,7 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { parse, stringify } from 'lossless-json';
 import React, { useEffect, useRef } from 'react';
-import { JSONEditor } from 'vanilla-jsoneditor';
+import { JSONEditor, ReadonlyValue } from 'vanilla-jsoneditor';
 
 const LosslessJSONParser = { parse, stringify };
 
@@ -37,6 +37,9 @@ export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
     refEditor.current = new JSONEditor({
       target: refContainer.current,
       props: {
+        // @ts-ignore
+        // disable build-in render component
+        onRenderValue: (props) => [{ component: ReadonlyValue, props }],
         // parse bigInt
         // @ts-ignore
         parser: LosslessJSONParser,
