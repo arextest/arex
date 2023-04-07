@@ -50,5 +50,7 @@
   "case_tag": "用例",
   "case": "用例",
   "are_you_sure": "你确定吗？",
-  "delete": "删除"
+  "delete": "删除",
+  "request": "请求",
+  "response": "响应"
 }

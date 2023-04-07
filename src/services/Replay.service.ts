@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import request from '../helpers/api/axios';
+import http from '../helpers/api/request';
 import { tryPrettierJsonString } from '../helpers/utils';
 import {
   CreatePlanReq,
@@ -29,6 +30,8 @@ import {
   QueryScenesReq,
   QueryScenesRes,
   RegressionListRes,
+  ViewRecordReq,
+  ViewRecordRes,
 } from './Replay.type';
 
 export default class ReplayService {
@@ -170,5 +173,10 @@ export default class ReplayService {
     return request
       .post<QueryAllDiffMsgRes>('/report/report/queryAllDiffMsg', params)
       .then((res) => Promise.resolve(res.body));
+  }
+
+  static async viewRecord(params: ViewRecordReq) {
+    const res = await http.post<ViewRecordRes>('/storage/storage/replay/query/viewRecord', params);
+    return res.recordResult;
   }
 }

@@ -120,6 +120,7 @@
     "status": "Status",
     "detail": "Detail",
     "save": "Save",
+    "recordDetail": "Record Detail",
     "success": "Success",
     "caseServiceAPI": "Main Service API",
     "viewFailedOnly": "View Failed Only",

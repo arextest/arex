@@ -52,5 +52,7 @@
   "case_tag": "case",
   "case": "Case",
   "are_you_sure": "Are you sure？",
-  "delete": "Delete"
+  "delete": "Delete",
+  "request": "Request",
+  "response": "Response"
 }

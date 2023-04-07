@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import ReplayService from '../../../services/Replay.service';
 import { ReplayCase } from '../../../services/Replay.type';
 import { HighlightRowTable, SmallTextButton } from '../../styledComponents';
+import ToCaseDetailButton from '../ToCaseDetailButton';
 
 type CaseProps = {
   planItemId: string;
@@ -43,6 +44,17 @@ const Case: FC<CaseProps> = (props) => {
           color={'primary'}
           title={t('replay.save')}
           onClick={() => props.onClickSaveCase?.(record)}
+        />,
+        <ToCaseDetailButton
+          key='caseDetail'
+          caseInfo={{
+            appId: props.appId,
+            planId: props.planId,
+            recordId: record.recordId,
+            replayId: record.replayId,
+            operationId: props.operationId,
+            operationName: props.operationName,
+          }}
         />,
       ],
     },
