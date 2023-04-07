@@ -281,12 +281,14 @@ export interface Detail {
 }
 
 export interface SubScene {
+  count: number;
   recordId: string;
   replayId: string;
   details: Detail[];
 }
 
 export interface SceneInfo {
+  count: number;
   subScenes: SubScene[]; // could be null;
 }
 
