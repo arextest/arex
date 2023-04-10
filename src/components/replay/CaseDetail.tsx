@@ -1,11 +1,10 @@
-import { html } from '@codemirror/lang-html';
-import { javascript } from '@codemirror/lang-javascript';
 import { json } from '@codemirror/lang-json';
 import { css } from '@emotion/react';
 import { Col, Collapse, Row } from 'antd';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { RecordResult } from '../../services/Replay.type';
 import useUserProfile from '../../store/useUserProfile';
 import { WatermarkCodeMirror } from '../styledComponents';
 
@@ -13,7 +12,7 @@ const { Panel } = Collapse;
 
 type CaseDetailProps = {
   type: string;
-  compareResults: any[];
+  compareResults?: RecordResult[];
 };
 
 const CaseDetail: FC<CaseDetailProps> = (props) => {
@@ -23,16 +22,8 @@ const CaseDetail: FC<CaseDetailProps> = (props) => {
 
   return (
     <Collapse>
-      {props.compareResults.map((result, index) => (
-        <Panel
-          header={
-            <span>
-              {(props.type !== 'Database' ? '' : result.targetRequest.attributes.dbName + '-') +
-                result.operationName}
-            </span>
-          }
-          key={index}
-        >
+      {props.compareResults?.map((result, index) => (
+        <Panel header={<span>{result.operationName}</span>} key={index}>
           <Row gutter={16}>
             <Col span={12}>
               {/*解决无法渲然全的bug，误删*/}
