@@ -6,7 +6,6 @@ import { ItemType } from 'antd/es/menu/hooks/useItems';
 import React, {
   forwardRef,
   ForwardRefRenderFunction,
-  ReactNode,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -31,7 +30,6 @@ export type StructuredValue = {
 export type StructuredOptionProps = {
   size?: SizeType;
   keyword?: string;
-  keywordPlaceholder?: ReactNode;
   options: StructuredOptionType[];
   onChange?: (
     mode: StructuredOptionMode,
@@ -52,7 +50,6 @@ export enum StructuredOptionMode {
 }
 
 const Step = ['category', 'operator', 'value'] as const;
-const KeywordKey = '__keyword';
 const InitialValue = {
   category: undefined,
   operator: undefined,
@@ -60,6 +57,7 @@ const InitialValue = {
 };
 
 const MenuList = styled(Menu)<{ size?: SizeType }>`
+  border-inline-end: none !important;
   .ant-menu-item {
     height: ${(props) => (props.size === 'small' ? '24px' : '28px')};
     line-height: ${(props) => (props.size === 'small' ? '24px' : '28px')};
@@ -70,22 +68,17 @@ const StructuredOption: ForwardRefRenderFunction<StructuredOptionRef, Structured
   props,
   ref,
 ) => {
-  const { keywordPlaceholder = 'Search for this keyword' } = props;
   const carouselRef = useRef<CarouselRef>(null);
 
   const [mode, setMode] = useState<StructuredOptionMode>(StructuredOptionMode.append); // process: 三步流程模式，single: 单一属性编辑模式
   const [value, setValue] = useImmer<StructuredValue>(InitialValue);
 
   const categoryOptions = useMemo<ItemType[]>(() => {
-    const filterOptions = props.options.filter((o) => o.category.includes(props.keyword || ''));
-
-    return filterOptions.length
-      ? filterOptions.map((o) => ({
-          label: o.category,
-          key: o.category,
-        }))
-      : [{ label: keywordPlaceholder, key: KeywordKey }];
-  }, [props.options, props.keyword, keywordPlaceholder]);
+    return props.options.map((o) => ({
+      label: o.category,
+      key: o.category,
+    }));
+  }, [props.options]);
 
   const operatorOptions = useMemo<ItemType[]>(
     () =>
@@ -152,7 +145,6 @@ const StructuredOption: ForwardRefRenderFunction<StructuredOptionRef, Structured
           selectedKeys={[]}
           items={categoryOptions}
           onClick={({ key: category }) => {
-            if (category === KeywordKey) return props.onSearch?.(props.keyword);
             handleChange({ ...value, category }, Step[0]);
           }}
         />

@@ -142,7 +142,7 @@ const StructuredFilter: FC<StructuredFilterProps> = (props) => {
             className='search-inner'
             mode='multiple'
             size={size}
-            open={open}
+            open={!keyword && open}
             suffixIcon={<SearchOutlined />}
             tagRender={(props) => (
               <StructuredTag

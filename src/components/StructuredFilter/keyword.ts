@@ -2,6 +2,7 @@
 export const CategoryKey = {
   Label: 'label',
   Id: 'id',
+  Keyword: 'keyword',
 };
 
 // operator
