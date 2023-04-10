@@ -144,6 +144,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
           status={record.status}
           caseCount={record.successCaseCount}
           totalCaseCount={record.totalCaseCount}
+          message={record.errorMessage}
         />
       ),
     },

@@ -5,8 +5,8 @@ import {
   MinusCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import { Progress, Tag } from 'antd';
-import React, { FC, useMemo } from 'react';
+import { Progress, Tag, Tooltip } from 'antd';
+import React, { FC, Fragment, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export const resultsStates = [
@@ -21,6 +21,7 @@ export type StatusTagProps = {
   status: number;
   caseCount?: number | null;
   totalCaseCount?: number | null;
+  message?: string | null;
 };
 
 const StatusTag: FC<StatusTagProps> = (props) => {
@@ -47,12 +48,12 @@ const StatusTag: FC<StatusTagProps> = (props) => {
     [props.status, props.caseCount, props.totalCaseCount, state],
   );
 
-  return state ? (
-    <Tag color={state.color} icon={icon}>
-      {t('replay.' + state.label)}
-    </Tag>
-  ) : (
-    <Tag>{t('replay.unknownState')}</Tag>
+  return React.createElement(
+    props.message ? Tooltip : Fragment,
+    { title: props.message },
+    <Tag color={state?.color} icon={icon}>
+      {state ? t('replay.' + state?.label) : t('replay.unknownState')}
+    </Tag>,
   );
 };
 
