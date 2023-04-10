@@ -39,7 +39,7 @@ const PathTitle = styled((props: PathTitleProps) => {
         : pathPair.rightUnmatchedPath;
     return (
       path.reduce((title, curPair, index) => {
-        index && (title += '.');
+        index && curPair.nodeName && (title += '.');
         title += curPair.nodeName || `[${curPair.index}]`;
         return title;
       }, '') || defaultPath
