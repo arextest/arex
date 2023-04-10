@@ -184,7 +184,7 @@ const Http = forwardRef<HttpRef, HttpProps>(
           state.request.description = value.description || '';
           state.request.inherited = value.inherited;
           // 默认加上{Content-Type:application/json}
-          if (!state.request.headers.find((head) => head.key === 'Content-Type')) {
+          if (!state.request.headers.find((head) => head.key.toLowerCase() === 'content-type')) {
             state.request.headers.unshift({
               key: 'Content-Type',
               value: 'application/json',
