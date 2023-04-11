@@ -75,6 +75,7 @@
     "operation": "operation",
     "replayReportName": "任务名称",
     "state": "状态",
+    "all": "全部",
     "passed": "成功",
     "failed": "失败",
     "invalid": "无效",

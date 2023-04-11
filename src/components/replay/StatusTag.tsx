@@ -6,7 +6,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import { Progress, Tag, Tooltip } from 'antd';
-import React, { FC, Fragment, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export const resultsStates = [
@@ -49,7 +49,7 @@ const StatusTag: FC<StatusTagProps> = (props) => {
   );
 
   return React.createElement(
-    props.message ? Tooltip : Fragment,
+    props.message ? Tooltip : 'div',
     { title: props.message },
     <Tag color={state?.color} icon={icon}>
       {state ? t('replay.' + state?.label) : t('replay.unknownState')}

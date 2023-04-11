@@ -12,6 +12,7 @@ import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import {
   App,
+  Button,
   Card,
   Col,
   Popconfirm,
@@ -24,7 +25,7 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import dayjs from 'dayjs';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 import CountUp from 'react-countup';
 import { useTranslation } from 'react-i18next';
@@ -113,6 +114,37 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
     [countData],
   );
 
+  const CaseCountRender = useCallback(
+    (count: number, record: PlanItemStatistics, status?: 0 | 1 | 2) => (
+      <Button
+        type='link'
+        size='small'
+        onClick={() => {
+          customNavigate(
+            `/${params.workspaceId}/${PagesType.ReplayCase}/${
+              record.planItemId
+            }?data=${encodeURIComponent(JSON.stringify(record))}${
+              status ? `&status=${status}` : ''
+            }`,
+          );
+        }}
+      >
+        <CountUp
+          preserveValue
+          duration={0.3}
+          end={count}
+          style={{
+            color:
+              status === undefined
+                ? token.colorText
+                : [token.colorSuccessText, token.colorErrorText, token.colorInfoText][status],
+          }}
+        />
+      </Button>
+    ),
+    [token],
+  );
+
   const columns: ColumnsType<PlanItemStatistics> = [
     {
       title: t('replay.planItemID'),
@@ -160,35 +192,25 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
       title: t('replay.cases'),
       dataIndex: 'totalCaseCount',
       width: 72,
+      render: (count, record) => CaseCountRender(count, record),
     },
     {
       title: t('replay.passed'),
       dataIndex: 'successCaseCount',
       width: 72,
-      render: (text) => (
-        <CountUp
-          preserveValue
-          duration={0.3}
-          end={text}
-          style={{ color: token.colorSuccessText }}
-        />
-      ),
+      render: (count, record) => CaseCountRender(count, record, 0),
     },
     {
       title: t('replay.failed'),
       dataIndex: 'failCaseCount',
       width: 72,
-      render: (text) => (
-        <CountUp preserveValue duration={0.3} end={text} style={{ color: token.colorErrorText }} />
-      ),
+      render: (count, record) => CaseCountRender(count, record, 1),
     },
     {
       title: t('replay.invalid'),
       dataIndex: 'errorCaseCount',
       width: 72,
-      render: (text) => (
-        <CountUp preserveValue duration={0.3} end={text} style={{ color: token.colorInfoText }} />
-      ),
+      render: (count, record) => CaseCountRender(count, record, 2),
     },
     {
       title: t('replay.blocked'),

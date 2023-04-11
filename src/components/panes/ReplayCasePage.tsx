@@ -74,6 +74,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
             planItemId={data.planItemId}
             onClick={handleClickRecord}
             onClickSaveCase={handleClickSaveCase}
+            status={params.query.status}
           />
         }
         panel={
