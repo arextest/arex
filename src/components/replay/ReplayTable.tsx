@@ -53,6 +53,7 @@ const ReplayTable: FC<ResultsProps> = (props) => {
           status={record.status}
           caseCount={record.successCaseCount + record.failCaseCount + record.errorCaseCount}
           totalCaseCount={record.totalCaseCount}
+          message={record.errorMessage}
         />
       ),
     },

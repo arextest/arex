@@ -58,6 +58,7 @@ export type PlanStatistics = {
   recordEndTime: string | null;
   totalCaseCount: number;
   errorCaseCount: number;
+  errorMessage: string | null;
   successCaseCount: number;
   failCaseCount: number;
   waitCaseCount: number;
@@ -98,6 +99,7 @@ export type PlanItemStatistics = {
   caseEndTime: number;
   totalCaseCount: number;
   errorCaseCount: number;
+  errorMessage?: string | null;
   successCaseCount: number;
   failCaseCount: number;
   waitCaseCount: number;

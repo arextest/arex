@@ -1,7 +1,7 @@
 import { useRequest } from 'ahooks';
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ReplayService from '../../../services/Replay.service';
@@ -11,12 +11,22 @@ import ToCaseDetailButton from '../ToCaseDetailButton';
 
 type CaseProps = {
   planItemId: string;
+  status?: number;
   onClick?: (record: ReplayCase) => void;
   onClickSaveCase?: (record: ReplayCase) => void;
 };
 
 const Case: FC<CaseProps> = (props) => {
   const { t } = useTranslation(['components']);
+
+  const filterMap = useMemo(
+    () => [
+      { text: t('replay.success'), value: 0 },
+      { text: t('replay.failed'), value: 1 },
+      { text: t('replay.invalid'), value: 2 },
+    ],
+    [t],
+  );
 
   const columnsCase: ColumnsType<ReplayCase> = [
     {
@@ -30,6 +40,10 @@ const Case: FC<CaseProps> = (props) => {
     },
     {
       title: t('replay.status'),
+      defaultFilteredValue: props.status ? [props.status] : undefined,
+      filterMultiple: false,
+      filters: filterMap,
+      onFilter: (value, record) => record.diffResultCode === value,
       render: (_, record) => (
         <Tag color={['green', 'red', 'blue'][record.diffResultCode]}>
           {[t('replay.success'), t('replay.failed'), t('replay.invalid')][record.diffResultCode]}
@@ -48,12 +62,7 @@ const Case: FC<CaseProps> = (props) => {
         <ToCaseDetailButton
           key='caseDetail'
           caseInfo={{
-            appId: props.appId,
-            planId: props.planId,
             recordId: record.recordId,
-            replayId: record.replayId,
-            operationId: props.operationId,
-            operationName: props.operationName,
           }}
         />,
       ],

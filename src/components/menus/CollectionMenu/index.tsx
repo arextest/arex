@@ -558,7 +558,7 @@ const CollectionMenu = () => {
             </>
           }
           options={options}
-          keywordPlaceholder={'Search for Name or Id'}
+          placeholder={'Search for Name or Id'}
           onChange={handleChange}
         />
 

@@ -39,7 +39,7 @@ const PathTitle = styled((props: PathTitleProps) => {
         : pathPair.rightUnmatchedPath;
     return (
       path.reduce((title, curPair, index) => {
-        index && (title += '.');
+        index && curPair.nodeName && (title += '.');
         title += curPair.nodeName || `[${curPair.index}]`;
         return title;
       }, '') || defaultPath
@@ -140,6 +140,7 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
         height: ${props.height};
       `}
     >
+      {/* TODO: refactor Menu to Select and remove menu area to categoryName area */}
       <Allotment.Pane preferredSize={200}>
         {[0, 2].includes(props.data?.diffResultCode) ? (
           <FlexCenterWrapper>
