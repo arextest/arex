@@ -166,6 +166,7 @@
     "nodesIgnore": "Nodes Ignore",
     "nodesSort": "Nodes Sort",
     "agentVersion": "Agent Version",
+    "agentHost": "Agent Host",
     "basic": "Basic",
     "duration": "Duration",
     "period": "Period",

@@ -1,6 +1,7 @@
 import request from '../helpers/api/axios';
 import { objectArrayFilter } from '../helpers/utils';
 import {
+  AgentData,
   IgnoreNodeBase,
   InsertSettingReqInsert,
   InterfaceIgnoreNode,
@@ -273,5 +274,13 @@ export default class AppSettingService {
       params,
     );
     return res.body;
+  }
+
+  // get machines with the agent installed
+  static async getAgentList(appId: string) {
+    const res = await request.get<AgentData[]>(
+      '/report/config/applicationInstances/useResultAsList/appId/' + appId,
+    );
+    return res.body.map((item) => item.host);
   }
 }

@@ -194,3 +194,13 @@ export interface SortNode extends SortNodeBase {
 export interface UpdateSortNodeReq extends SortNodePathKey {
   id: string;
 }
+
+export interface AgentData {
+  status: number | null;
+  modifiedTime: number;
+  id: string;
+  appId: string;
+  recordVersion: string | null;
+  host: string;
+  dataUpdateTime: number;
+}

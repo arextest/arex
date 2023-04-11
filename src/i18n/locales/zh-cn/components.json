@@ -166,6 +166,7 @@
     "nodesIgnore": "忽略节点配置",
     "nodesSort": "数组节点配置",
     "agentVersion": "Agent 版本",
+    "agentHost": "Agent 地址",
     "basic": "基础",
     "duration": "录制周期",
     "period": "录制时间",

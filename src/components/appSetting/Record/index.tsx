@@ -1,6 +1,19 @@
+import { DeploymentUnitOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Checkbox, Collapse, Form, Radio, TimePicker } from 'antd';
+import {
+  App,
+  Button,
+  Checkbox,
+  Collapse,
+  Form,
+  List,
+  Modal,
+  Space,
+  Spin,
+  TimePicker,
+  Typography,
+} from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +22,7 @@ import { useImmer } from 'use-immer';
 import { decodeWeekCode, encodeWeekCode } from '../../../helpers/record/util';
 import AppSettingService from '../../../services/AppSetting.service';
 import { QueryRecordSettingRes } from '../../../services/AppSetting.type';
+import { TooltipButton } from '../../index';
 import SettingForm from '../SettingForm';
 import {
   DurationInput,
@@ -52,6 +66,8 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
 
+  const [open, setOpen] = useState(false);
+
   const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
   const [loading, setLoading] = useState(false);
 
@@ -94,6 +110,17 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
     },
   });
 
+  const {
+    data: agentData,
+    run: getAgentList,
+    loading: loadingAgentList,
+  } = useRequest(AppSettingService.getAgentList, {
+    manual: true,
+    onBefore() {
+      setOpen(true);
+    },
+  });
+
   const onFinish = (values: SettingFormType) => {
     const allowDayOfWeeks = encodeWeekCode(values.allowDayOfWeeks);
     const [allowTimeOfDayFrom, allowTimeOfDayTo] = values.period.map((m: any) => m.format(format));
@@ -122,7 +149,16 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
         `}
       >
         <Panel header={t('appSetting.basic')} key='basic'>
-          <Form.Item label={t('appSetting.agentVersion')}>{props.agentVersion}</Form.Item>
+          <Form.Item label={t('appSetting.agentVersion')}>
+            <Space>
+              <Typography.Text>{props.agentVersion || '0.0.0'}</Typography.Text>
+              <TooltipButton
+                title={t('appSetting.agentHost')}
+                icon={<DeploymentUnitOutlined />}
+                onClick={() => getAgentList(props.appId)}
+              />
+            </Space>
+          </Form.Item>
 
           <Form.Item label={t('appSetting.duration')} name='allowDayOfWeeks'>
             <DurationInput />
@@ -161,6 +197,36 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
           {t('save', { ns: 'common' })}
         </Button>
       </Form.Item>
+
+      <Modal
+        destroyOnClose
+        open={open}
+        title={t('appSetting.agentHost')}
+        onCancel={() => setOpen(false)}
+      >
+        <Spin spinning={loadingAgentList}>
+          <List
+            bordered
+            size='small'
+            dataSource={agentData}
+            renderItem={(item) => (
+              <List.Item>
+                <Typography.Text
+                  copyable
+                  css={css`
+                    width: 100%;
+                    .ant-typography-copy {
+                      float: right;
+                    }
+                  `}
+                >
+                  {item}
+                </Typography.Text>
+              </List.Item>
+            )}
+          />
+        </Spin>
+      </Modal>
     </SettingForm>
   );
 };
