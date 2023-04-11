@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { PanesFC } from '../index';
+import { ArexPanePC, PanesFC } from '../index';
 
 export type EnvironmentPanesData = {
   envName: string;
@@ -11,7 +11,7 @@ export type EnvironmentPanesData = {
 
 export type EnvironmentKeyValues = { key: string; value: string; active?: boolean };
 
-const Environment: PanesFC<EnvironmentPanesData> = () => {
+const Environment: ArexPanePC<EnvironmentPanesData> = () => {
   return <div>Environment</div>;
 };
 

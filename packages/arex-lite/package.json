@@ -23,8 +23,7 @@
     "react-dom": "^18.2.0",
     "react-i18next": "^12.2.0",
     "react-router-dom": "^6.9.0",
-    "@react-buddy/ide-toolbox": "^2.3.1",
-    "@react-buddy/palette-antd": "^5.0.0"
+    "zustand": "^4.3.7"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",

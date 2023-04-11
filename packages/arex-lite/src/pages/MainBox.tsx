@@ -1,22 +1,13 @@
 import { theme } from 'antd';
-import {
-  ArexFooter,
-  ArexHeader,
-  ArexMainBox,
-  ArexMenu,
-  ArexSideMenu,
-  PanesWrapper,
-} from 'arex-core';
-import React, { useContext } from 'react';
+import { ArexFooter, ArexHeader, ArexMainBox, ArexMenu, ArexSideMenu } from 'arex-core';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 
 import { PageTypeEnum } from '../constant';
 import useDarkMode from '../hooks/use-dark-mode';
 import useInit from '../hooks/useInit';
 import mockCollectionTreeData from '../mocks/mockCollectionTreeData';
-import paneConfig from '../panes/config';
 import { useCustomNavigate } from '../router/useCustomRouter';
-import { MainContext } from '../store/content/MainContent';
 
 function collectionOriginalTreeToAntdTreeData(tree: any, nodeList: any[] = []): any[] {
   const nodes = tree;
@@ -43,7 +34,6 @@ const { useToken } = theme;
 const MainBox = () => {
   const params = useParams();
   const theme = useToken();
-  const { store, dispatch } = useContext(MainContext);
   const customNavigate = useCustomNavigate();
   console.log(theme, 'theme');
   const darkMode = useDarkMode();
@@ -70,29 +60,6 @@ const MainBox = () => {
           <ArexSideMenu
             items={[
               {
-                label: 'Collection',
-                key: 'Collection',
-                children: (
-                  <ArexMenu.Collection
-                    value={'activeMenu[1]'}
-                    collectionTreeData={collectionOriginalTreeToAntdTreeData(
-                      mockCollectionTreeData.roots,
-                    )}
-                    onSelect={handleCollectionMenuClick}
-                    onClickRunCompare={() => {
-                      customNavigate(
-                        `/${params.workspaceId}/workspace/${
-                          params.workspaceName
-                        }/${'run'}/${'key'}`,
-                      );
-                    }}
-                    onClickRunTest={() => {
-                      console.log('1123');
-                    }}
-                  />
-                ),
-              },
-              {
                 label: 'Environment',
                 key: 'Environment',
                 children: (
@@ -108,22 +75,22 @@ const MainBox = () => {
           />
         }
         secondary={
-          <PanesWrapper
-            activeKey={store.globalState.activeMenu[1]}
-            items={store.globalState.panes.map((p) => {
-              const s = {
-                key: p.key,
-                label: 'd',
-                children: paneConfig
-                  .find((f) => {
-                    return p.pageType === f.pageType;
-                  })
-                  ?.element(),
-              };
-              console.log(s);
-              return s;
-            })}
-          />
+          // <PanesWrapper
+          //   activeKey={store.globalState.activeMenu[1]}
+          //   items={store.globalState.panes.map((p) => {
+          //     const s = {
+          //       key: p.key,
+          //       label: 'd',
+          //       children: paneConfig
+          //         .find((f) => {
+          //           return p.pageType === f.pageType;
+          //         })
+          //         ?.element(),
+          //     };
+          //     return s;
+          //   })}
+          // />
+          <>Pane</>
         }
       />
       <ArexFooter />
