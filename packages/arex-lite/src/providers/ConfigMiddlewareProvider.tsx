@@ -2,7 +2,7 @@ import { App, ConfigProvider, theme } from 'antd';
 import React, { FC, PropsWithChildren } from 'react';
 
 import { ArexCoreProvider } from '../../../arex-core';
-import useDarkMode from '../hooks/use-dark-mode';
+import useDarkMode from '../hooks/useDarkMode';
 
 const { darkAlgorithm } = theme;
 

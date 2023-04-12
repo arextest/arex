@@ -6,7 +6,7 @@ interface MainTabsProps {
   items: { key: string; label: string; children: any }[];
   activeKey: string;
 }
-const PanesWrapper: FC<MainTabsProps> = ({ items, activeKey }) => {
+const ArexPanesContainer: FC<MainTabsProps> = ({ items, activeKey }) => {
   const removeTab = (targetKey: string) => {
     console.log(targetKey);
   };
@@ -29,4 +29,4 @@ const PanesWrapper: FC<MainTabsProps> = ({ items, activeKey }) => {
   );
 };
 
-export default PanesWrapper;
+export default ArexPanesContainer;

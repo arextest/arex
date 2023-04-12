@@ -6,7 +6,7 @@ export interface AppSidenavProps {
   items: any[];
 }
 
-const ArexSideMenu: FC<AppSidenavProps> = ({ items }) => {
+const ArexMenuContainer: FC<AppSidenavProps> = ({ items }) => {
   const [activeKey, setActiveKey] = useState('Collection');
   const token = theme.useToken();
   return (
@@ -47,4 +47,4 @@ const ArexSideMenu: FC<AppSidenavProps> = ({ items }) => {
   );
 };
 
-export default ArexSideMenu;
+export default ArexMenuContainer;

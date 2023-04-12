@@ -27,7 +27,7 @@ export function useCustomNavigate() {
     //   }
     // });
     //
-    // Set active menu
+    // Set active menus
     // dispatch((state) => {
     //   state.globalState.activeMenu = [getMenuTypeByPageType(params.paneType), paneKey];
     // });

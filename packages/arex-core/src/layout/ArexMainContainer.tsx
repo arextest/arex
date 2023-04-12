@@ -20,15 +20,15 @@ function calculatePercentage(a: number, b: number) {
   }
 }
 
-interface AppPaneLayoutProps {
-  primary: ReactNode;
-  secondary: ReactNode;
+export interface ArexMainContainerProps {
+  menus: ReactNode;
+  panes: ReactNode;
   vertical: boolean;
   layoutId: string;
   height: string;
 }
 
-const ArexMainBox: FC<AppPaneLayoutProps> = (props) => {
+const ArexMainContainer: FC<ArexMainContainerProps> = (props) => {
   const [panePrimarySize, setPanePrimarySize] = useState(35);
   const [paneSecondarySize, setPaneSecondarySize] = useState(65);
   function getPaneData(type: 'vertical' | 'horizontal'): PaneEvent[] | null {
@@ -37,7 +37,8 @@ const ArexMainBox: FC<AppPaneLayoutProps> = (props) => {
     if (!paneEvent) return null;
     return tryParseJsonString(paneEvent);
   }
-  function populatePaneEvent() {
+
+  useEffect(() => {
     if (!props.layoutId) return;
 
     const verticalPaneData = getPaneData(props.vertical ? 'vertical' : 'horizontal');
@@ -48,10 +49,6 @@ const ArexMainBox: FC<AppPaneLayoutProps> = (props) => {
       setPanePrimarySize(p);
       setPaneSecondarySize(100 - p);
     }
-  }
-
-  useEffect(() => {
-    populatePaneEvent();
   }, []);
 
   return (
@@ -69,10 +66,10 @@ const ArexMainBox: FC<AppPaneLayoutProps> = (props) => {
         );
       }}
     >
-      <Allotment.Pane preferredSize={`${panePrimarySize}%`}>{props.primary}</Allotment.Pane>
-      <Allotment.Pane preferredSize={`${paneSecondarySize}%`}>{props.secondary}</Allotment.Pane>
+      <Allotment.Pane preferredSize={`${panePrimarySize}%`}>{props.menus}</Allotment.Pane>
+      <Allotment.Pane preferredSize={`${paneSecondarySize}%`}>{props.panes}</Allotment.Pane>
     </Allotment>
   );
 };
 
-export default ArexMainBox;
+export default ArexMainContainer;
