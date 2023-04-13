@@ -32,7 +32,10 @@ const HttpParameters = () => {
         rowKey={'id'}
         size='small'
         pagination={false}
-        dataSource={requestParams}
+        dataSource={store.request.params.map((i: any) => ({
+          ...i,
+          id: String(Math.random()),
+        }))}
         // @ts-ignore
         columns={useColumns(setRequestParams, true)}
       />
