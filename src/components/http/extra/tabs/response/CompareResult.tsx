@@ -1,14 +1,22 @@
-// @ts-nocheck
 import { css } from '@emotion/react';
 import { Result, Spin } from 'antd';
-import React, { useState } from 'react';
+import { WritableDraft } from 'immer/dist/internal';
+import React, { FC, useState } from 'react';
 
+import { DiffJsonViewProps } from '../../../../DiffJsonView';
 import DiffJsonViewDrawer from '../../../../DiffJsonView/DiffJsonViewDrawer';
-import { DiffJsonViewProps } from '../../../../replay/Analysis';
-import DiffList from '../../../../replay/Analysis/DiffList';
+import { DiffList } from '../../../../DiffList';
 
-const CompareResult = ({ compareResult, loading }) => {
-  const [diffJsonViewData, setDiffJsonViewData] = useState<DiffJsonViewProps['data']>();
+export type CompareResultProps = {
+  compareResult: WritableDraft<{ logs: any[]; responses: any[] }>;
+  loading: boolean;
+};
+
+const CompareResult: FC<CompareResultProps> = (props) => {
+  const { compareResult, loading } = props;
+
+  const [diffJsonViewData, setDiffJsonViewData] =
+    useState<Pick<DiffJsonViewProps, 'diffJson' | 'diffPath'>>();
   const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
   return (
     <div
@@ -37,9 +45,11 @@ const CompareResult = ({ compareResult, loading }) => {
             onTreeModeClick={(diff) => {
               if (diff) {
                 setDiffJsonViewData({
-                  baseMsg: diff.baseMsg,
-                  testMsg: diff.testMsg,
-                  logInfos: diff.logs,
+                  diffJson: {
+                    left: String(diff.baseMsg) || '',
+                    right: String(diff.testMsg) || '',
+                  },
+                  diffPath: diff.logs || [],
                 });
                 setDiffJsonViewVisible(true);
               }
@@ -49,7 +59,7 @@ const CompareResult = ({ compareResult, loading }) => {
           <Result status='success' title='No differences found!' />
         )}
         <DiffJsonViewDrawer
-          data={diffJsonViewData}
+          {...diffJsonViewData}
           open={diffJsonViewVisible}
           onClose={() => setDiffJsonViewVisible(false)}
         />

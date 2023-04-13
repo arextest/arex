@@ -80,7 +80,7 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
   const { token } = theme.useToken();
   const { message } = App.useApp();
 
-  const { data: logEntity, run: queryLogEntity } = useRequest(
+  const { data: logEntity = [], run: queryLogEntity } = useRequest(
     (logIndex) =>
       ReplayService.queryLogEntity({
         compareResultId: props.data.id,
@@ -114,8 +114,8 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
     },
   );
 
-  function handleIgnoreNode(pathPair: DiffLog) {
-    const path = pathPair.nodePath.map((p) => p.nodeName).filter(Boolean);
+  function handleIgnoreNode(diffLog: DiffLog) {
+    const path = diffLog.nodePath.map((p) => p.nodeName).filter(Boolean);
 
     insertIgnoreNode(path);
   }

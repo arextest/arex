@@ -180,7 +180,7 @@ export default class ReplayService {
   static async queryLogEntity(params: QueryLogEntityReq) {
     return request
       .post<QueryLogEntityRes>('/report/report/queryLogEntity', params)
-      .then((res) => Promise.resolve(res.body.logEntity));
+      .then((res) => Promise.resolve([res.body.logEntity]));
   }
 
   static async viewRecord(params: ViewRecordReq) {

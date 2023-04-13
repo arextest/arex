@@ -5,8 +5,10 @@ import { useTranslation } from 'react-i18next';
 
 import ReplayService from '../../services/Replay.service';
 import { CategoryStatistic, Difference, PlanItemStatistics } from '../../services/Replay.type';
+import { DiffJsonViewProps } from '../DiffJsonView';
 import DiffJsonViewDrawer from '../DiffJsonView/DiffJsonViewDrawer';
-import { DiffJsonViewProps, DiffList, DiffScenes } from '../replay/Analysis';
+import { DiffList } from '../DiffList';
+import { DiffScenes } from '../replay/Analysis';
 import { CollapseTable, PanesTitle } from '../styledComponents';
 import { PageFC } from './index';
 
@@ -17,7 +19,8 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryStatistic>();
   const [activeKey, setActiveKey] = useState<string[] | string>(['0']);
 
-  const [diffJsonViewData, setDiffJsonViewData] = useState<DiffJsonViewProps['data']>();
+  const [diffJsonViewData, setDiffJsonViewData] =
+    useState<Pick<DiffJsonViewProps, 'diffJson' | 'diffPath'>>();
   const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
 
   const handleScenes = (diff: Difference, category?: CategoryStatistic) => {
@@ -77,12 +80,14 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
                   appId={props.page.data.appId}
                   operationId={props.page.data.operationId}
                   scene={scene}
-                  onTreeModeClick={(diff: any) => {
+                  onTreeModeClick={(diff) => {
                     if (diff) {
                       setDiffJsonViewData({
-                        baseMsg: diff.baseMsg,
-                        testMsg: diff.testMsg,
-                        logInfos: diff.logs,
+                        diffJson: {
+                          left: String(diff.baseMsg) || '',
+                          right: String(diff.testMsg) || '',
+                        },
+                        diffPath: diff.logs || [],
                       });
                       setDiffJsonViewVisible(true);
                     }
@@ -95,7 +100,8 @@ const ReplayAnalysisPage: PageFC<PlanItemStatistics> = (props) => {
       />
 
       <DiffJsonViewDrawer
-        data={diffJsonViewData}
+        {...diffJsonViewData}
+        title={t('replay.treeMode')}
         open={diffJsonViewVisible}
         onClose={() => setDiffJsonViewVisible(false)}
       />
