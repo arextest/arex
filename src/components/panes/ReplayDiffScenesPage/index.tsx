@@ -9,7 +9,7 @@ import { Label } from '../../styledComponents';
 import { PageFC } from '../index';
 import DiffDrawer from './DIffDrawer';
 import FlowTree, { FlowTreeData } from './FlowTree';
-import SubScenesMenu from './SubScenesMenu';
+import SubScenesMenu, { SubSceneMenuProps } from './SubScenesMenu';
 
 export const SceneCodeMap: {
   [key: string]: {
@@ -126,6 +126,19 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
     },
   });
 
+  const handleClickAllDiff: SubSceneMenuProps['onClickAllDiff'] = (recordId, title) => {
+    queryAllDiffMsg({
+      recordId,
+      planItemId: props.page.data.planItemId,
+      diffResultCodeList: [0, 1, 2],
+      pageIndex: 0,
+      pageSize: 99, // TODO lazy load
+      needTotal: true,
+    });
+    setModalTitle(title);
+    setModalOpen(2);
+  };
+
   return (
     <div ref={wrapperRef}>
       <Space direction='vertical' style={{ width: '100%' }}>
@@ -192,11 +205,7 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
                 <SubScenesMenu
                   data={subSceneList || []}
                   onClick={getQueryFullLinkInfo}
-                  onClickAllDiff={(params, title) => {
-                    queryAllDiffMsg(params);
-                    setModalTitle(title);
-                    setModalOpen(2);
-                  }}
+                  onClickAllDiff={handleClickAllDiff}
                 />
               </Collapse.Panel>
             );
@@ -216,6 +225,7 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
         )}
 
         <DiffDrawer
+          mode={modalOpen === 2 ? 'multiple' : 'single'}
           open={!!modalOpen}
           title={modalTitle}
           appId={props.page.data.appId}

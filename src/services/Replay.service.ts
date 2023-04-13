@@ -16,6 +16,8 @@ import {
   QueryFullLinkInfoRes,
   QueryFullLinkMsgReq,
   QueryFullLinkMsgRes,
+  QueryLogEntityReq,
+  QueryLogEntityRes,
   QueryMsgWithDiffRes,
   QueryPlanItemStatisticsReq,
   QueryPlanItemStatisticsRes,
@@ -173,6 +175,12 @@ export default class ReplayService {
     return request
       .post<QueryAllDiffMsgRes>('/report/report/queryAllDiffMsg', params)
       .then((res) => Promise.resolve(res.body));
+  }
+
+  static async queryLogEntity(params: QueryLogEntityReq) {
+    return request
+      .post<QueryLogEntityRes>('/report/report/queryLogEntity', params)
+      .then((res) => Promise.resolve(res.body.logEntity));
   }
 
   static async viewRecord(params: ViewRecordReq) {

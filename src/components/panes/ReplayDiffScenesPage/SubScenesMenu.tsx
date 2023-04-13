@@ -1,9 +1,9 @@
-import { ClusterOutlined, SearchOutlined } from '@ant-design/icons';
+import { ClusterOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
-import { Badge, Button, Menu, Space, Tag, theme, Typography } from 'antd';
+import { Badge, Divider, Menu, Space, Tag, theme } from 'antd';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 
-import { QueryAllDiffMsgReq, QueryFullLinkInfoReq, SubScene } from '../../../services/Replay.type';
+import { QueryFullLinkInfoReq, SubScene } from '../../../services/Replay.type';
 import { EllipsisTooltip, TooltipButton } from '../../index';
 import { SpaceBetweenWrapper } from '../../styledComponents';
 import { SceneCodeMap } from './index';
@@ -11,7 +11,7 @@ import { SceneCodeMap } from './index';
 export interface SubSceneMenuProps {
   data: SubScene[];
   onClick?: (params: QueryFullLinkInfoReq) => void;
-  onClickAllDiff?: (params: QueryAllDiffMsgReq, label: React.ReactNode[]) => void;
+  onClickAllDiff?: (recordId: string, label: React.ReactNode[]) => void;
 }
 
 const Connector = '%_%';
@@ -42,18 +42,6 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
     };
 
     props.onClick?.(params);
-  };
-
-  const handleClickALl = (subScene: SubScene, label: ReactNode[]) => {
-    const params = {
-      recordId: subScene.recordId,
-      replayId: subScene.replayId,
-      diffResultCodeList: [0, 1, 2],
-      pageIndex: 0,
-      pageSize: 99, // TODO lazy load
-      needTotal: true,
-    };
-    props.onClickAllDiff?.(params, label);
   };
 
   return (
@@ -91,13 +79,16 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
           label: (
             <SpaceBetweenWrapper>
               <div style={{ overflow: 'hidden' }}>{fullPath}</div>
-              <TooltipButton
-                type='link'
-                size='small'
-                icon={<ClusterOutlined />}
-                title={'view all'}
-                onClick={() => handleClickALl(subScene, fullPath)}
-              />
+              <div>
+                <Divider type='vertical' />
+                <TooltipButton
+                  type='link'
+                  size='small'
+                  icon={<ClusterOutlined />}
+                  title={'view all'}
+                  onClick={() => props.onClickAllDiff?.(subScene.recordId, fullPath)}
+                />
+              </div>
             </SpaceBetweenWrapper>
           ),
           key: subScene.recordId + Connector + subScene.replayId,

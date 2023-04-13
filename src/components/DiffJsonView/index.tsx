@@ -4,7 +4,7 @@ import { css, useTheme } from '@emotion/react';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { CompareResultDetail } from '../../services/Replay.type';
+import { LogEntity } from '../../services/Replay.type';
 import useUserProfile from '../../store/useUserProfile';
 import DiffJsonTooltip from './DiffJsonTooltip';
 import { genAllDiffByType } from './helper';
@@ -13,20 +13,19 @@ import VanillaJSONEditor from './VanillaJSONEditor';
 export type DiffJsonViewProps = {
   height?: string | number;
   hiddenTooltip?: boolean;
-  data?: Pick<CompareResultDetail, 'baseMsg' | 'testMsg' | 'logs'>;
+  diffJson?: { left: string; right: string };
+  diffPath?: LogEntity;
 };
 
-const DiffJsonView: FC<DiffJsonViewProps> = ({ data, hiddenTooltip, height }) => {
+const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip, height }) => {
   const { t } = useTranslation(['components']);
   const { theme } = useUserProfile();
-  const allDiffByType = genAllDiffByType(data?.logs || []);
+  const allDiffByType = genAllDiffByType(diffPath);
 
   const onClassName = (path: string[]) => {
     const pathStr = path.map((p) => (isNaN(Number(p)) ? p : Number(p)));
     if (
-      allDiffByType.diff012
-        .map((item: any) => JSON.stringify(item))
-        .includes(JSON.stringify(pathStr))
+      allDiffByType.diff012.map((item) => JSON.stringify(item)).includes(JSON.stringify(pathStr))
     ) {
       return 'different_element_012';
     }
@@ -39,7 +38,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, hiddenTooltip, height }) =>
 
   const emotionTheme = useTheme();
 
-  if (!data) return null;
+  if (!diffJson) return null;
 
   return (
     <>
@@ -76,7 +75,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, hiddenTooltip, height }) =>
             height={height}
             remark={t('replay.benchmark')}
             content={{
-              text: String(data?.baseMsg), // stringify falsy value
+              text: String(diffJson?.left), // stringify falsy value
               json: undefined,
             }}
             mainMenuBar={false}
@@ -99,7 +98,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ data, hiddenTooltip, height }) =>
             height={height}
             remark={t('replay.test')}
             content={{
-              text: String(data?.testMsg), // stringify falsy value
+              text: String(diffJson?.right), // stringify falsy value
               json: undefined,
             }}
             mainMenuBar={false}
