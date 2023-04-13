@@ -26,7 +26,7 @@ const PreRequestScript: FC<PreRequestScriptProps> = (props) => {
           type: p.type,
           label: p.label,
           value: p.value,
-          disabled: false,
+          disabled: p.disabled,
           icon: <CodeOutlined />,
         }))
       : [
@@ -72,14 +72,13 @@ const PreRequestScript: FC<PreRequestScriptProps> = (props) => {
 
   useEffect(() => {
     props.onChange(
-      items
-        .filter((item) => !item.disabled)
-        .map((item) => ({
-          label: item.label?.toString(),
-          // type: item.type,
-          type: '0', // 暂时写死成 number
-          value: item.value,
-        })),
+      items.map((item) => ({
+        label: item.label?.toString(),
+        // type: item.type,
+        type: '0', // 暂时写死成 number
+        value: item.value,
+        disabled: item.disabled,
+      })),
     );
   }, [items]);
 
