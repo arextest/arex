@@ -222,7 +222,7 @@ const MainTabsWrapper = styled((props: TabsProps) => {
     .ant-tabs-tabpane {
       height: inherit;
       padding: 0 16px;
-      overflow: auto;
+      overflow-y: overlay;
     }
   }
 `;

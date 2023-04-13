@@ -1,13 +1,15 @@
 import { css } from '@emotion/react';
-import { Allotment } from 'allotment';
-import React, { FC, useMemo } from 'react';
+import { Collapse, Typography } from 'antd';
+import React, { FC, useMemo, useState } from 'react';
 
 import { CompareResultDetail } from '../../services/Replay.type';
-import { EmptyWrapper } from '../styledComponents';
+import { EllipsisTooltip } from '../index';
+import { CheckOrCloseIcon, EmptyWrapper } from '../styledComponents';
+import DiffPathTooltip, { DiffPathTooltipProps } from './DiffPathTooltip';
 import DiffPathViewer from './DiffPathViewer';
-import useDiffPathTooltip from './useDiffPathTooltip';
 
 export interface DiffPathProps {
+  mode?: DiffPathTooltipProps['mode'];
   appId: string;
   operationId: string;
   loading?: boolean;
@@ -16,44 +18,64 @@ export interface DiffPathProps {
 }
 
 const DiffPath: FC<DiffPathProps> = (props) => {
-  const { defaultOnlyFailed = true } = props;
-  const { Tooltip, onlyFailed } = useDiffPathTooltip({
-    defaultOnlyFailed,
-  });
+  const { mode = 'multiple', defaultOnlyFailed = true } = props;
+  const [onlyFailed, setOnlyFailed] = React.useState(defaultOnlyFailed);
 
-  const diffListFiltered = useMemo(
-    () => (onlyFailed ? props.data.filter((item) => item.diffResultCode > 0) : props.data),
-    [props.data, onlyFailed],
-  );
+  const [searchOperationName, setSearchOperationName] = useState<string>();
+
+  const diffListFiltered = useMemo<CompareResultDetail[]>(() => {
+    return props.data.filter((data) => {
+      if (onlyFailed && !data.diffResultCode) {
+        return false;
+      }
+      if (searchOperationName) {
+        return data.operationName.includes(searchOperationName);
+      }
+      return true;
+    });
+  }, [props.data, onlyFailed, searchOperationName]);
 
   return (
     <>
-      <Tooltip count={diffListFiltered.length} />
+      <DiffPathTooltip
+        mode={mode}
+        count={diffListFiltered.length}
+        onFilterChange={setOnlyFailed}
+        onSearch={setSearchOperationName}
+      />
 
       <EmptyWrapper loading={props.loading} empty={!diffListFiltered.length}>
-        <Allotment
-          vertical
-          minSize={48}
+        <Collapse
+          accordion
+          size='small'
+          defaultActiveKey={diffListFiltered[0]?.id}
           css={css`
-            height: ${diffListFiltered.length * 400 || 200}px;
+            .ant-collapse-content-box {
+              padding: 0 !important;
+            }
           `}
         >
           {diffListFiltered.map((data) => (
-            <Allotment.Pane
-              key={data?.id + onlyFailed}
-              css={css`
-                height: 100%;
-              `}
+            <Collapse.Panel
+              header={
+                <Typography.Text strong>
+                  {/*<Label>{props.data.categoryName}</Label>*/}
+                  <CheckOrCloseIcon size={12} checked={!data.diffResultCode}></CheckOrCloseIcon>
+                  <EllipsisTooltip title={data.operationName} />
+                </Typography.Text>
+              }
+              key={data.id}
             >
               <DiffPathViewer
+                defaultActiveFirst
                 appId={props.appId}
                 operationId={props.operationId}
-                height={'100%'}
-                data={data as CompareResultDetail}
+                height={'400px'}
+                data={data}
               />
-            </Allotment.Pane>
+            </Collapse.Panel>
           ))}
-        </Allotment>
+        </Collapse>
       </EmptyWrapper>
     </>
   );

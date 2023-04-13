@@ -4,15 +4,15 @@ import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
 import { App, Menu, theme, Typography } from 'antd';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import AppSettingService from '../../services/AppSetting.service';
-import { CompareResultDetail, DiffLog, PathPair } from '../../services/Replay.type';
-import DiffJsonView, { DiffJsonViewProps } from '../DiffJsonView';
-import { EllipsisTooltip } from '../index';
+import ReplayService from '../../services/Replay.service';
+import { CompareResultDetail, DiffLog } from '../../services/Replay.type';
+import DiffJsonView from '../DiffJsonView';
 import { SummaryCodeMap } from '../panes/ReplayDiffScenesPage';
-import { FlexCenterWrapper, Label, SpaceBetweenWrapper } from '../styledComponents';
+import { FlexCenterWrapper, SpaceBetweenWrapper } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
 
 export interface DiffScenesProps {
@@ -20,23 +20,21 @@ export interface DiffScenesProps {
   appId: string;
   data: CompareResultDetail;
   height?: string;
+  defaultActiveFirst?: boolean;
 }
 
 const defaultPath = 'root';
 
 interface PathTitleProps {
-  pathPair: PathPair;
-  onIgnore?: (pathPair: PathPair) => void;
+  diffLog: DiffLog;
+  onIgnore?: (diffLog: DiffLog) => void;
 }
 const PathTitle = styled((props: PathTitleProps) => {
-  const { onIgnore, pathPair, ...restProps } = props;
+  const { onIgnore, diffLog, ...restProps } = props;
   const { t } = useTranslation(['components']);
 
-  const pathTitle = useCallback((pathPair: PathPair) => {
-    const path =
-      pathPair.leftUnmatchedPath.length >= pathPair.rightUnmatchedPath.length
-        ? pathPair.leftUnmatchedPath
-        : pathPair.rightUnmatchedPath;
+  const pathTitle = useCallback((diffLog: DiffLog) => {
+    const path = diffLog.nodePath;
     return (
       path.reduce((title, curPair, index) => {
         index && curPair.nodeName && (title += '.');
@@ -49,7 +47,7 @@ const PathTitle = styled((props: PathTitleProps) => {
   return (
     <SpaceBetweenWrapper {...restProps}>
       <Typography.Text ellipsis style={{ color: 'inherit' }}>
-        {pathTitle(pathPair)}
+        {pathTitle(diffLog)}
       </Typography.Text>
       <TooltipButton
         size='small'
@@ -58,7 +56,7 @@ const PathTitle = styled((props: PathTitleProps) => {
         icon={<StopOutlined />}
         title={t('replay.ignoreNode')}
         className='menu-item-stop-outlined'
-        onClick={() => onIgnore?.(pathPair)}
+        onClick={() => onIgnore?.(diffLog)}
       />
     </SpaceBetweenWrapper>
   );
@@ -82,29 +80,22 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
   const { token } = theme.useToken();
   const { message } = App.useApp();
 
-  const [activeLog, setActiveLog] = useState<DiffLog>();
+  const { data: logEntity, run: queryLogEntity } = useRequest(
+    (logIndex) =>
+      ReplayService.queryLogEntity({
+        compareResultId: props.data.id,
+        logIndex,
+      }),
+    {
+      manual: true,
+    },
+  );
 
   useEffect(() => {
-    props.data?.logs?.length && setActiveLog((props.data.logs as DiffLog[])[0]);
+    props.defaultActiveFirst &&
+      props.data.logInfos?.length &&
+      queryLogEntity(props.data.logInfos[0].logIndex);
   }, [props.data]);
-
-  const diffJsonData = useMemo<DiffJsonViewProps['data']>(
-    () =>
-      props.data?.diffResultCode
-        ? activeLog
-          ? {
-              baseMsg: props.data.baseMsg,
-              testMsg: props.data.testMsg,
-              logs: [activeLog],
-            }
-          : undefined
-        : {
-            baseMsg: props.data.baseMsg,
-            testMsg: props.data.testMsg,
-            logs: [],
-          },
-    [props.data, activeLog],
-  );
 
   const { run: insertIgnoreNode } = useRequest(
     (path) =>
@@ -123,11 +114,8 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
     },
   );
 
-  function handleIgnoreNode(pathPair: DiffLog['pathPair']) {
-    const unmatchedType = pathPair.unmatchedType;
-    const path = pathPair[unmatchedType === 2 ? 'rightUnmatchedPath' : 'leftUnmatchedPath']
-      .map((p) => p.nodeName)
-      .filter(Boolean);
+  function handleIgnoreNode(pathPair: DiffLog) {
+    const path = pathPair.nodePath.map((p) => p.nodeName).filter(Boolean);
 
     insertIgnoreNode(path);
   }
@@ -140,7 +128,6 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
         height: ${props.height};
       `}
     >
-      {/* TODO: refactor Menu to Select and remove menu area to categoryName area */}
       <Allotment.Pane preferredSize={200}>
         {[0, 2].includes(props.data?.diffResultCode) ? (
           <FlexCenterWrapper>
@@ -151,19 +138,19 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
         ) : (
           <>
             <Typography.Text
+              type='secondary'
               style={{
                 display: 'inline-block',
-                margin: `0 ${token.margin}px`,
-                lineHeight: '30px',
+                margin: `${token.marginSM}px 0 0 ${token.margin}px`,
               }}
             >
               {t('replay.pointOfDifference')}
             </Typography.Text>
             <Menu
-              defaultSelectedKeys={['0']}
-              items={props.data.logs?.map((log, index) => {
+              defaultSelectedKeys={props.defaultActiveFirst ? ['0'] : undefined}
+              items={props.data.logInfos?.map((log, index) => {
                 return {
-                  label: <PathTitle pathPair={log.pathPair} onIgnore={handleIgnoreNode} />,
+                  label: <PathTitle diffLog={log} onIgnore={handleIgnoreNode} />,
                   key: index,
                 };
               })}
@@ -178,7 +165,8 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
                 border-inline-end: none !important;
               `}
               onClick={({ key }) => {
-                props.data && setActiveLog((props.data.logs as DiffLog[])[parseInt(key)]);
+                props.data.logInfos?.length &&
+                  queryLogEntity(props.data.logInfos[parseInt(key)].logIndex);
               }}
             />
           </>
@@ -188,32 +176,26 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
       <Allotment.Pane
         visible
         css={css`
-          height: calc(${props.height} - 48px);
+          height: ${props.height};
           border-left: 1px solid ${token.colorBorderBg};
         `}
       >
         {props.data?.diffResultCode === 2 ? (
-          <FlexCenterWrapper>
-            <Typography.Text type='secondary'>{props.data.logs?.[0].logInfo}</Typography.Text>
+          <FlexCenterWrapper style={{ padding: '16px' }}>
+            <Typography.Text type='secondary'>{props.data.exceptionMsg}</Typography.Text>
           </FlexCenterWrapper>
         ) : (
-          diffJsonData && (
-            <>
-              <Typography.Text
-                strong
-                style={{
-                  display: 'inline-block',
-                  margin: `${token.marginXS}px ${token.margin}px 0`,
-                }}
-              >
-                <Label>{props.data.categoryName}</Label>
-                <EllipsisTooltip title={props.data.operationName} />
-              </Typography.Text>
-              <div style={{ position: 'relative', margin: `${token.marginXS}px`, height: '100%' }}>
-                <DiffJsonView hiddenTooltip height={props.height} data={diffJsonData} />
-              </div>
-            </>
-          )
+          <div style={{ position: 'relative', margin: `${token.marginXS}px`, height: '100%' }}>
+            <DiffJsonView
+              hiddenTooltip
+              height={`calc(${props.height} - 16px)`}
+              diffJson={{
+                left: props.data.baseMsg,
+                right: props.data.testMsg,
+              }}
+              diffPath={logEntity}
+            />
+          </div>
         )}
       </Allotment.Pane>
     </Allotment>

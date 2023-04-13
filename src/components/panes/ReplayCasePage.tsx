@@ -5,7 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { tryParseJsonString } from '../../helpers/utils';
 import { useCustomSearchParams } from '../../router/useCustomSearchParams';
 import ReplayService from '../../services/Replay.service';
-import { PlanItemStatistics, ReplayCase as ReplayCaseType } from '../../services/Replay.type';
+import {
+  PlanItemStatistics,
+  QueryAllDiffMsgReq,
+  ReplayCase as ReplayCaseType,
+} from '../../services/Replay.type';
 import DiffPath from '../DiffPath';
 import { Case, SaveCase, SaveCaseRef } from '../replay/Case';
 import { CollapseTable, PanesTitle } from '../styledComponents';
@@ -29,7 +33,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
     loading: loadingDiffMsgAll,
     run: queryAllDiffMsg,
   } = useRequest(
-    (params: { recordId: string; replayId: string }) =>
+    (params: Pick<QueryAllDiffMsgReq, 'recordId' | 'planItemId'>) =>
       ReplayService.queryAllDiffMsg({
         ...params,
         diffResultCodeList: [0, 1, 2],
@@ -49,7 +53,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
     setSelectedRecord(selectedRecord?.recordId === record.recordId ? undefined : record);
     queryAllDiffMsg({
       recordId: record.recordId,
-      replayId: record.replayId,
+      planItemId: props.page.data.planItemId,
     });
   };
 

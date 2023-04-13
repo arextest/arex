@@ -39,7 +39,7 @@ const CompareResult = ({ compareResult, loading }) => {
                 setDiffJsonViewData({
                   baseMsg: diff.baseMsg,
                   testMsg: diff.testMsg,
-                  logs: diff.logs,
+                  logInfos: diff.logs,
                 });
                 setDiffJsonViewVisible(true);
               }

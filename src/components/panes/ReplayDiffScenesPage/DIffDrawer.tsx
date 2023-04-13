@@ -3,10 +3,12 @@ import React, { FC, ReactNode, useMemo } from 'react';
 
 import { CompareResultDetail } from '../../../services/Replay.type';
 import DiffPath from '../../DiffPath';
+import { DiffPathTooltipProps } from '../../DiffPath/DiffPathTooltip';
 
 export interface DIffDrawer {
   open: boolean;
   title?: string | ReactNode[];
+  mode?: DiffPathTooltipProps['mode'];
   appId: string;
   operationId: string;
   data?: CompareResultDetail | CompareResultDetail[];
@@ -15,6 +17,7 @@ export interface DIffDrawer {
 }
 
 const DiffDrawer: FC<DIffDrawer> = (props) => {
+  const { mode = 'single' } = props;
   const diffList = useMemo(
     () => (Array.isArray(props.data) ? props.data : props.data ? [props.data] : []),
     [props.data],
@@ -33,6 +36,7 @@ const DiffDrawer: FC<DIffDrawer> = (props) => {
         {/* force destroyOnClose */}
         {props.open && (
           <DiffPath
+            mode={mode}
             appId={props.appId}
             operationId={props.operationId}
             defaultOnlyFailed={Array.isArray(props.data)}

@@ -202,7 +202,7 @@ export interface QueryMsgWithDiffReq {
   errorCount?: number[];
 }
 
-export interface UnmatchedPath {
+export interface NodePath {
   nodeName: string;
   index: number;
 }
@@ -214,22 +214,28 @@ export interface Trace {
 
 export interface PathPair {
   unmatchedType: number;
-  leftUnmatchedPath: UnmatchedPath[];
-  rightUnmatchedPath: UnmatchedPath[];
+  leftUnmatchedPath: NodePath[];
+  rightUnmatchedPath: NodePath[];
   listKeys: any[];
   listKeyPath: any[];
   trace: Trace;
 }
 
-export type DiffLog = {
+export type LogEntity = {
   addRefPkNodePathLeft: null;
   addRefPkNodePathRight: null;
   baseValue: string | boolean | null;
   testValue: string | boolean | null;
   logInfo: string;
-  logTag: { lv: number; ig: boolean };
-  path: string;
+  logTag: Record<string, string | number>;
+  path: string | null;
   pathPair: PathPair;
+  warn: number;
+};
+
+export type DiffLog = {
+  nodePath: NodePath[];
+  logIndex: number;
 };
 
 export type QueryMsgWithDiffRes = {
@@ -268,6 +274,16 @@ export type CompareResult = {
 };
 export interface QueryFullLinkMsgRes {
   compareResults: CompareResult[];
+}
+
+export interface QueryLogEntityReq {
+  compareResultId: string;
+  logIndex: number;
+}
+
+export interface QueryLogEntityRes {
+  diffResultCode: number;
+  logEntity: LogEntity;
 }
 
 // /querySceneInfo/{planId}/{planItemId}
@@ -326,7 +342,8 @@ export type CompareResultDetail = {
   categoryName: string;
   operationName: string;
   diffResultCode: number;
-  logs: DiffLog[] | null;
+  logInfos: DiffLog[] | null;
+  exceptionMsg: string | null;
   baseMsg: string;
   testMsg: string;
 };
@@ -336,7 +353,7 @@ export interface QueryDiffMsgByIdRes {
 
 export interface QueryAllDiffMsgReq {
   recordId: string;
-  replayId: string;
+  planItemId: string;
   diffResultCodeList: number[]; // 0-正常，1,2-异常
   pageIndex: number;
   pageSize: number;

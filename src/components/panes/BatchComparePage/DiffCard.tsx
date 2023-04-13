@@ -40,7 +40,7 @@ const DiffCard = (record: any) => {
               setDiffJsonViewData({
                 baseMsg: diff.baseMsg,
                 testMsg: diff.testMsg,
-                logs: diff.logs,
+                logInfos: diff.logs,
               });
               setDiffJsonViewVisible(true);
             }
