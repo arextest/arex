@@ -1,16 +1,8 @@
-import { t } from 'i18next';
-
 import { PanesType } from '../../constant';
-import { ArexPane } from '../index';
+import { createPane } from '../index';
 import Environment, { EnvironmentPanesData } from './Environment';
 
-const EnvironmentPanes: ArexPane<EnvironmentPanesData> = {
-  get name() {
-    return t('Environment');
-  },
-  type: PanesType.ENVIRONMENT,
-  render: Environment,
-};
+const EnvironmentPanes = createPane(Environment, PanesType.ENVIRONMENT);
 
 export default EnvironmentPanes;
 export type { EnvironmentPanesData };

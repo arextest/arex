@@ -1,5 +1,5 @@
 import { Draft, produce } from 'immer';
-import { createContext, Dispatch, useEffect, useReducer } from 'react';
+import { createContext, Dispatch, useReducer } from 'react';
 interface State {
   darkMode: boolean;
   locale: any;

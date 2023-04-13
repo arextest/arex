@@ -1,23 +1,19 @@
-import React, { FC } from 'react';
+import { t } from 'i18next';
+import React from 'react';
 
 import { MenusType, PanesType } from '../constant';
 import Environment, { EnvironmentPanesData } from './Environment';
 
-export type PanesProps<D extends PanesData, P = unknown> = P & {
-  page: PanesFC<D>;
-};
-
 /**
  * All components under panes folder should be defined using PanesFC
  */
-export type PanesFC<D extends PanesData = PanesData, P = unknown> = FC<PanesProps<D, P>>;
-export interface ArexPane<T extends PanesData = PanesData> {
+export type ArexPane<D extends PanesData = PanesData> = ArexPaneFC<D> & {
   name: string;
   type: string;
-  render: ArexPanePC<T>;
-}
-export type ArexPanePC<T extends PanesData> = (props: {
-  data: T;
+};
+
+export type ArexPaneFC<D extends PanesData = PanesData> = (props: {
+  data: D;
   idx?: string | null;
   mode?: 'test' | 'production';
   children?: React.ReactNode;
@@ -40,6 +36,10 @@ export type ArexPanesType<D extends PanesData> = {
   paneId: string;
   rawId: React.Key;
 };
+
+export function createPane<D extends PanesData>(Pane: ArexPaneFC<D>, type: string) {
+  return Object.assign(Pane, { name: t(type), type });
+}
 
 export const ArexPanes: Record<string, ArexPane> = {
   [PanesType.ENVIRONMENT]: Environment,
