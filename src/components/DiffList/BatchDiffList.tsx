@@ -1,15 +1,14 @@
 import { DiffOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Badge, Card, Modal, Space, Tag, Tooltip, Typography } from 'antd';
+import { Badge, Card, Modal, Space, Tag, Tooltip, Typography } from 'antd';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import AppSettingService from '../../../services/AppSetting.service';
-import { FileSystemService } from '../../../services/FileSystem.service';
-import ReplayService from '../../../services/Replay.service';
-import { DiffLog, QueryMsgWithDiffReq, Scene } from '../../../services/Replay.type';
-import { DiffMatch, TooltipButton } from '../../index';
+import { FileSystemService } from '../../services/FileSystem.service';
+import ReplayService from '../../services/Replay.service';
+import { QueryMsgWithDiffReq, QueryMsgWithDiffRes, Scene } from '../../services/Replay.type';
+import { DiffMatch, TooltipButton } from '../index';
 
 const PathTooltip: FC<{ path?: string | null }> = (props) => {
   const path = useMemo(() => props.path?.split('.') || [], [props.path]);
@@ -25,14 +24,12 @@ export type DiffListType = {
   appId: string;
   operationId: string;
   scene?: Scene;
-  onTreeModeClick?: (diff?: unknown) => void;
-  externalData?: QueryMsgWithDiffReq;
+  onTreeModeClick?: (diff?: QueryMsgWithDiffRes) => void;
+  externalData?: Partial<QueryMsgWithDiffReq>;
 };
 
 const BatchDiffList: FC<DiffListType> = (props) => {
-  const { message } = App.useApp();
   const { t } = useTranslation(['components']);
-  const { t: t_page } = useTranslation(['page']);
 
   const [modal, contextHolder] = Modal.useModal();
 
@@ -80,44 +77,17 @@ const BatchDiffList: FC<DiffListType> = (props) => {
     return props.externalData || diffDataFromRequest;
   }, [props.externalData, diffDataFromRequest]);
 
-  const { run: insertIgnoreNode } = useRequest(
-    (path) =>
-      AppSettingService.insertIgnoreNode({
-        operationId: props.operationId,
-        appId: props.appId,
-        exclusions: path,
-      }),
-    {
-      manual: true,
-      onSuccess(success) {
-        if (success) {
-          message.success(t('replay.addIgnoreSuccess'));
-        }
-      },
-    },
-  );
-
-  function handleIgnoreNode(pathPair: DiffLog['pathPair']) {
-    const unmatchedType = pathPair.unmatchedType;
-    const path = pathPair[unmatchedType === 2 ? 'rightUnmatchedPath' : 'leftUnmatchedPath']
-      .map((p) => p.nodeName)
-      .filter(Boolean);
-
-    insertIgnoreNode(path);
-  }
-
   return (
     <Card
       size='small'
-      title={!loading && `${diffData?.logs.length} ${t('replay.issues')}`}
+      title={!loading && `${diffData?.logs?.length} ${t('replay.issues')}`}
       loading={loading}
       style={{ minHeight: '56px' }}
     >
       <Space direction='vertical' style={{ width: '100%' }}>
-        {diffData?.logs.map((log, index) => (
+        {diffData?.logs?.map((log, index) => (
           <div key={index} style={{ display: 'flex', flexFlow: 'row nowrap' }}>
-            {/*// @ts-ignore*/}
-            <Badge size={'small'} count={props?.externalData?.errorCount[index]}>
+            <Badge size={'small'} count={props?.externalData?.errorCount?.[index]}>
               <Tag
                 color={DiffMap[log.pathPair.unmatchedType]?.color}
                 style={{ height: 'fit-content' }}

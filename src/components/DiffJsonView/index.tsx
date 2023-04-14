@@ -1,4 +1,4 @@
-import '../replay/Analysis/DiffJsonView.css';
+import './DiffJsonView.css';
 
 import { css, useTheme } from '@emotion/react';
 import React, { FC } from 'react';
@@ -14,7 +14,7 @@ export type DiffJsonViewProps = {
   height?: string | number;
   hiddenTooltip?: boolean;
   diffJson?: { left: string; right: string };
-  diffPath?: LogEntity;
+  diffPath?: LogEntity[];
 };
 
 const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip, height }) => {
@@ -29,9 +29,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
     ) {
       return 'different_element_012';
     }
-    if (
-      allDiffByType.diff3.map((item: any) => JSON.stringify(item)).includes(JSON.stringify(pathStr))
-    ) {
+    if (allDiffByType.diff3.map((item) => JSON.stringify(item)).includes(JSON.stringify(pathStr))) {
       return 'different_element';
     }
   };

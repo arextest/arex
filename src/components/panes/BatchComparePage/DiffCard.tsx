@@ -1,46 +1,49 @@
 import { Spin } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 
 import { FileSystemService } from '../../../services/FileSystem.service';
+import { DiffJsonViewProps } from '../../DiffJsonView';
 import DiffJsonViewDrawer from '../../DiffJsonView/DiffJsonViewDrawer';
-import { DiffJsonViewProps } from '../../replay/Analysis';
-import BatchDiffList from '../../replay/Analysis/BatchDiffList';
+import { BatchDiffList } from '../../DiffList';
 
-const DiffCard = (record: any) => {
-  const { planId, interfaceId } = record;
-  const [data, setData] = useState<any>([]);
-  useEffect(() => {
-    FileSystemService.queryBatchCompareSummary({
-      planId: planId,
-      interfaceId: interfaceId,
-    }).then((res: any) => {
-      setData(res.batchCompareSummaryItems);
-    });
-  }, [record]);
+export type DiffCardProps = {
+  planId: string;
+  interfaceId: string;
+};
+const DiffCard: FC<DiffCardProps> = (props) => {
+  const { planId, interfaceId } = props;
+  const [data, setData] = useState<any[]>([]);
 
-  const [diffJsonViewData, setDiffJsonViewData] = useState<DiffJsonViewProps['data']>();
+  FileSystemService.queryBatchCompareSummary({
+    planId: planId,
+    interfaceId: interfaceId,
+  }).then((res: any) => {
+    setData(res.batchCompareSummaryItems);
+  });
+
+  const [diffJsonViewData, setDiffJsonViewData] =
+    useState<Pick<DiffJsonViewProps, 'diffJson' | 'diffPath'>>();
   const [diffJsonViewVisible, setDiffJsonViewVisible] = useState(false);
 
   return (
     <div>
       <Spin spinning={false}>
         <BatchDiffList
-          // @ts-ignore
           externalData={{
             logs: data.map((d: any) => d.logEntity),
             logIds: data.map((d: any) => d.logId),
-            // @ts-ignore
             errorCount: data.map((d) => d.errorCount),
           }}
           appId={''}
           operationId={''}
-          onTreeModeClick={(diff: any) => {
-            console.log(diff, 'diff');
+          onTreeModeClick={(diff) => {
             if (diff) {
               setDiffJsonViewData({
-                baseMsg: diff.baseMsg,
-                testMsg: diff.testMsg,
-                logInfos: diff.logs,
+                diffJson: {
+                  left: String(diff.baseMsg) || '',
+                  right: String(diff.testMsg) || '',
+                },
+                diffPath: diff.logs || [],
               });
               setDiffJsonViewVisible(true);
             }
@@ -48,7 +51,7 @@ const DiffCard = (record: any) => {
         />
 
         <DiffJsonViewDrawer
-          data={diffJsonViewData}
+          {...diffJsonViewData}
           open={diffJsonViewVisible}
           onClose={() => setDiffJsonViewVisible(false)}
         />

@@ -4,10 +4,10 @@ import { App, Button, Card, Modal, Space, Tag, Tooltip, Typography } from 'antd'
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import AppSettingService from '../../../services/AppSetting.service';
-import ReplayService from '../../../services/Replay.service';
-import { DiffLog, QueryMsgWithDiffRes, Scene } from '../../../services/Replay.type';
-import { DiffMatch, TooltipButton } from '../../index';
+import AppSettingService from '../../services/AppSetting.service';
+import ReplayService from '../../services/Replay.service';
+import { LogEntity, QueryMsgWithDiffRes, Scene } from '../../services/Replay.type';
+import { DiffMatch, TooltipButton } from '../index';
 
 const PathTooltip: FC<{ path?: string | null }> = (props) => {
   const path = useMemo(() => props.path?.split('.') || [], [props.path]);
@@ -23,8 +23,8 @@ export type DiffListType = {
   appId: string;
   operationId: string;
   scene?: Scene;
-  onTreeModeClick?: (diff?: unknown) => void;
-  externalData?: QueryMsgWithDiffRes;
+  onTreeModeClick?: (diff?: QueryMsgWithDiffRes) => void;
+  externalData?: Partial<QueryMsgWithDiffRes>;
 };
 
 const DiffList: FC<DiffListType> = (props) => {
@@ -61,6 +61,7 @@ const DiffList: FC<DiffListType> = (props) => {
       },
     };
   }, []);
+
   const { data: diffDataFromRequest, loading } = useRequest(
     () =>
       ReplayService.queryMsgWithDiff({
@@ -73,7 +74,7 @@ const DiffList: FC<DiffListType> = (props) => {
     },
   );
 
-  const diffData = useMemo<QueryMsgWithDiffRes | undefined>(() => {
+  const diffData = useMemo(() => {
     return props.externalData || diffDataFromRequest;
   }, [props.externalData, diffDataFromRequest]);
 
@@ -94,7 +95,7 @@ const DiffList: FC<DiffListType> = (props) => {
     },
   );
 
-  function handleIgnoreNode(pathPair: DiffLog['pathPair']) {
+  function handleIgnoreNode(pathPair: LogEntity['pathPair']) {
     const unmatchedType = pathPair.unmatchedType;
     const path = pathPair[unmatchedType === 2 ? 'rightUnmatchedPath' : 'leftUnmatchedPath']
       .map((p) => p.nodeName)

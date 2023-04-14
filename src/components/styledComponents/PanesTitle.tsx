@@ -36,7 +36,7 @@ const PanesTitle = styled((props: PanesTitleProps) => {
         {edit ? (
           <Input value={editableTitle} onChange={(e) => setEditableTitle(e.target.value)} />
         ) : (
-          <Typography.Title level={3} style={{ marginBottom: 0 }}>
+          <Typography.Title ellipsis level={3} style={{ marginBottom: 0 }}>
             {title}
           </Typography.Title>
         )}

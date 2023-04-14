@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
-import { Button, TabPaneProps } from 'antd';
+import { TabPaneProps } from 'antd';
 import produce, { Draft } from 'immer';
 import React, {
   createContext,
