@@ -1,20 +1,21 @@
+import { TabsProps } from 'antd';
 import React, { FC } from 'react';
 
 import DraggableTabs from '../components/DraggableTabs';
 
 interface MainTabsProps {
-  items: { key: string; label: string; children: any }[];
-  activeKey: string;
+  items: TabsProps['items'];
+  activeKey?: string;
+  onAdd?: () => void;
+  onRemove?: (key: string) => void;
 }
-const ArexPanesContainer: FC<MainTabsProps> = ({ items, activeKey }) => {
-  const removeTab = (targetKey: string) => {
-    console.log(targetKey);
+const ArexPanesContainer: FC<MainTabsProps> = (props) => {
+  const removeTab = (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
+    props.onRemove?.(targetKey as string);
   };
-  const addTab = () => {
-    console.log();
-  };
-  const handleTabsEdit: any = (targetKey: string, action: 'add' | 'remove') => {
-    action === 'add' ? addTab() : removeTab(targetKey);
+
+  const handleTabsEdit: TabsProps['onEdit'] = (targetKey, action) => {
+    action === 'add' ? props.onAdd?.() : removeTab(targetKey);
   };
 
   return (
@@ -22,8 +23,8 @@ const ArexPanesContainer: FC<MainTabsProps> = ({ items, activeKey }) => {
       size='small'
       type='editable-card'
       tabBarGutter={-1}
-      items={items}
-      activeKey={activeKey}
+      items={props.items}
+      activeKey={props.activeKey}
       onEdit={handleTabsEdit}
     />
   );

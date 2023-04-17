@@ -62,39 +62,42 @@ const ArexHeader: FC<AppHeaderProps> = (props) => {
         }
       },
     }),
-    [],
+    [t],
   );
 
-  return (
-    <HeaderWrapper>
-      <div className={'left'}>
-        <Typography.Text className={'app-name'}>AREX</Typography.Text>
-        <GithubStarButton theme={store.darkMode ? 'dark' : 'light'} />
-      </div>
+  return useMemo(
+    () => (
+      <HeaderWrapper>
+        <div className={'left'}>
+          <Typography.Text className={'app-name'}>AREX</Typography.Text>
+          <GithubStarButton theme={store.darkMode ? 'dark' : 'light'} />
+        </div>
 
-      <Space className={'right'} size='small'>
-        {props.onDarkModeChange && (
-          <Switch checkedChildren='🌛' unCheckedChildren='🌞' onChange={props.onDarkModeChange} />
-        )}
-        <TooltipButton
-          title={`t('help')`}
-          icon={<QuestionCircleOutlined />}
-          onClick={() => window.open('https://arextest.github.io/website/zh-Hans/')}
-        />
-        {props.onSetting && (
+        <Space className={'right'} size='small'>
+          {props.onDarkModeChange && (
+            <Switch checkedChildren='🌛' unCheckedChildren='🌞' onChange={props.onDarkModeChange} />
+          )}
           <TooltipButton
-            title={`t('setting')`}
-            icon={<SettingOutlined />}
-            onClick={props.onSetting}
+            title={`t('help')`}
+            icon={<QuestionCircleOutlined />}
+            onClick={() => window.open('https://arextest.github.io/website/zh-Hans/')}
           />
-        )}
-        <Dropdown menu={userMenu}>
-          <Avatar src={'avatar'} size={24} style={{ marginLeft: '0px', cursor: 'pointer' }}>
-            {'A'}
-          </Avatar>
-        </Dropdown>
-      </Space>
-    </HeaderWrapper>
+          {props.onSetting && (
+            <TooltipButton
+              title={`t('setting')`}
+              icon={<SettingOutlined />}
+              onClick={props.onSetting}
+            />
+          )}
+          <Dropdown menu={userMenu}>
+            <Avatar src={'avatar'} size={24} style={{ marginLeft: '0px', cursor: 'pointer' }}>
+              {'A'}
+            </Avatar>
+          </Dropdown>
+        </Space>
+      </HeaderWrapper>
+    ),
+    [],
   );
 };
 

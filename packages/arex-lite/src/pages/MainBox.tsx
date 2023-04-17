@@ -1,19 +1,37 @@
-import { theme } from 'antd';
 import {
   ArexFooter,
   ArexHeader,
   ArexMainContainer,
   ArexMenu,
   ArexMenuContainer,
+  ArexPane,
   ArexPanesContainer,
+  PanesManager,
 } from 'arex-core';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { useDarkMode, useInit } from '../hooks';
+import useMenusPanes from '../store/useMenusPanes';
 
 const MainBox = () => {
-  const darkMode = useDarkMode();
   useInit();
+  const { panes, activePane, setPanes, removePane } = useMenusPanes();
+  const darkMode = useDarkMode();
+
+  const panesItems = useMemo(
+    () =>
+      panes.map((p) => {
+        return {
+          key: p.key || '',
+          label: p.title,
+          children: React.createElement(
+            PanesManager.getPanes().find((f: ArexPane) => p.type === f.type) || 'div',
+            { data: p.data },
+          ),
+        };
+      }),
+    [panes],
+  );
 
   return (
     <>
@@ -31,9 +49,14 @@ const MainBox = () => {
                 key: 'Environment',
                 children: (
                   <ArexMenu.Environment
-                    value={'EnvironmentMenu[1]'}
-                    onSelect={() => {
-                      console.log();
+                    value={activePane as string}
+                    onSelect={(value) => {
+                      setPanes({
+                        id: value,
+                        type: 'Environment',
+                        title: 'Environment',
+                        data: { value: 'Environment' },
+                      });
                     }}
                   />
                 ),
@@ -42,22 +65,7 @@ const MainBox = () => {
           />
         }
         panes={
-          // <ArexPanesContainer
-          //   activeKey={store.globalState.activeMenu[1]}
-          //   items={store.globalState.panes.map((p) => {
-          //     const s = {
-          //       key: p.key,
-          //       label: 'd',
-          //       children: paneConfig
-          //         .find((f) => {
-          //           return p.pageType === f.pageType;
-          //         })
-          //         ?.element(),
-          //     };
-          //     return s;
-          //   })}
-          // />
-          <>Pane</>
+          <ArexPanesContainer activeKey={activePane} items={panesItems} onRemove={removePane} />
         }
       />
       <ArexFooter />

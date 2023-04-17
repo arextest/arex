@@ -1,18 +1,22 @@
 import React from 'react';
 
-import { ArexPaneFC, PanesFC } from '../index';
+import { ArexPaneFC } from '../index';
 
 export type EnvironmentPanesData = {
-  envName: string;
-  id: string;
-  keyValues?: EnvironmentKeyValues[];
-  workspaceId?: string;
+  value: string;
 };
 
 export type EnvironmentKeyValues = { key: string; value: string; active?: boolean };
 
-const Environment: ArexPaneFC<EnvironmentPanesData> = () => {
-  return <div>Environment</div>;
+const Environment: ArexPaneFC<EnvironmentPanesData> = (props) => {
+  const [count, setCount] = React.useState(0);
+  return (
+    <div>
+      <span>props.value: {props.data.value}</span>
+      <span>count: {count}</span>
+      <button onClick={() => setCount((count) => count + 1)}>add</button>
+    </div>
+  );
 };
 
 export default Environment;

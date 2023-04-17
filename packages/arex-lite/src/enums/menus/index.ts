@@ -15,3 +15,6 @@ export type MenuConfig = {
   Menu?: FC;
   children?: MenuConfig[];
 };
+
+export const defaultActiveMenu = MenusType.Environment;
+export const MAX_PANES_COUNT = 8;

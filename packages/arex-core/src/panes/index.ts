@@ -10,14 +10,10 @@ import Environment, { EnvironmentPanesData } from './Environment';
 export type ArexPane<D extends PanesData = PanesData> = ArexPaneFC<D> & {
   name: string;
   type: string;
+  menuType?: string;
 };
 
-export type ArexPaneFC<D extends PanesData = PanesData> = (props: {
-  data: D;
-  idx?: string | null;
-  mode?: 'test' | 'production';
-  children?: React.ReactNode;
-}) => React.ReactNode;
+export type ArexPaneFC<D extends PanesData = PanesData> = React.FC<{ data: D }>;
 
 export type PanesTypeType = { [type: string]: PanesType };
 
@@ -38,7 +34,12 @@ export type ArexPanesType<D extends PanesData> = {
 };
 
 export function createPane<D extends PanesData>(Pane: ArexPaneFC<D>, type: string) {
-  return Object.assign(Pane, { name: t(type), type });
+  return Object.assign(Pane, {
+    get paneName() {
+      return t(type);
+    },
+    type,
+  });
 }
 
 export const ArexPanes: Record<string, ArexPane> = {
