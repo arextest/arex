@@ -1,19 +1,6 @@
-import { DeploymentUnitOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import {
-  App,
-  Button,
-  Checkbox,
-  Collapse,
-  Form,
-  List,
-  Modal,
-  Space,
-  Spin,
-  TimePicker,
-  Typography,
-} from 'antd';
+import { App, Button, Checkbox, Collapse, Form, Space, TimePicker, Typography } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +9,6 @@ import { useImmer } from 'use-immer';
 import { decodeWeekCode, encodeWeekCode } from '../../../helpers/record/util';
 import AppSettingService from '../../../services/AppSetting.service';
 import { QueryRecordSettingRes } from '../../../services/AppSetting.type';
-import { TooltipButton } from '../../index';
 import SettingForm from '../SettingForm';
 import {
   DurationInput,
@@ -30,8 +16,7 @@ import {
   IntegerStepSlider,
   Operations,
 } from './FormItem';
-
-const { Panel } = Collapse;
+import AgentHost from './FormItem/AgentHost';
 
 export type SettingRecordProps = {
   appId: string;
@@ -65,8 +50,6 @@ const defaultValues: Omit<
 const SettingRecord: FC<SettingRecordProps> = (props) => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
-
-  const [open, setOpen] = useState(false);
 
   const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
   const [loading, setLoading] = useState(false);
@@ -110,17 +93,6 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
     },
   });
 
-  const {
-    data: agentData,
-    run: getAgentList,
-    loading: loadingAgentList,
-  } = useRequest(AppSettingService.getAgentList, {
-    manual: true,
-    onBefore() {
-      setOpen(true);
-    },
-  });
-
   const onFinish = (values: SettingFormType) => {
     const allowDayOfWeeks = encodeWeekCode(values.allowDayOfWeeks);
     const [allowTimeOfDayFrom, allowTimeOfDayTo] = values.period.map((m: any) => m.format(format));
@@ -148,15 +120,11 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
           }
         `}
       >
-        <Panel header={t('appSetting.basic')} key='basic'>
+        <Collapse.Panel header={t('appSetting.basic')} key='basic'>
           <Form.Item label={t('appSetting.agentVersion')}>
             <Space>
               <Typography.Text>{props.agentVersion || '0.0.0'}</Typography.Text>
-              <TooltipButton
-                title={t('appSetting.agentHost')}
-                icon={<DeploymentUnitOutlined />}
-                onClick={() => getAgentList(props.appId)}
-              />
+              <AgentHost appId={props.appId} />
             </Space>
           </Form.Item>
 
@@ -171,10 +139,10 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
           <Form.Item label={t('appSetting.frequency')} name='sampleRate'>
             <IntegerStepSlider />
           </Form.Item>
-        </Panel>
+        </Collapse.Panel>
 
         {/* 此处必须 forceRender，否则如果没有打开高级设置就保存，将丢失高级设置部分字段 */}
-        <Panel forceRender header={t('appSetting.advanced')} key='advanced'>
+        <Collapse.Panel forceRender header={t('appSetting.advanced')} key='advanced'>
           <Form.Item label={t('appSetting.timeMock')} name='timeMock' valuePropName='checked'>
             <Checkbox />
           </Form.Item>
@@ -189,7 +157,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
           >
             <Operations dataSource={operationList.map((item) => item.operationName)} />
           </Form.Item>
-        </Panel>
+        </Collapse.Panel>
       </Collapse>
 
       <Form.Item style={{ float: 'right', margin: '16px 0' }}>
@@ -197,36 +165,6 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
           {t('save', { ns: 'common' })}
         </Button>
       </Form.Item>
-
-      <Modal
-        destroyOnClose
-        open={open}
-        title={t('appSetting.agentHost')}
-        onCancel={() => setOpen(false)}
-      >
-        <Spin spinning={loadingAgentList}>
-          <List
-            bordered
-            size='small'
-            dataSource={agentData}
-            renderItem={(item) => (
-              <List.Item>
-                <Typography.Text
-                  copyable
-                  css={css`
-                    width: 100%;
-                    .ant-typography-copy {
-                      float: right;
-                    }
-                  `}
-                >
-                  {item}
-                </Typography.Text>
-              </List.Item>
-            )}
-          />
-        </Spin>
-      </Modal>
     </SettingForm>
   );
 };
