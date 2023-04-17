@@ -52,5 +52,7 @@
   "are_you_sure": "你确定吗？",
   "delete": "删除",
   "request": "请求",
-  "response": "响应"
+  "response": "响应",
+  "version": "版本",
+  "modifiedTime": "修改时间"
 }

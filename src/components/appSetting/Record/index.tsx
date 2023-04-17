@@ -7,13 +7,14 @@ import {
   Checkbox,
   Collapse,
   Form,
-  List,
   Modal,
   Space,
   Spin,
+  Table,
   TimePicker,
   Typography,
 } from 'antd';
+import { ColumnsType } from 'antd/es/table';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +22,7 @@ import { useImmer } from 'use-immer';
 
 import { decodeWeekCode, encodeWeekCode } from '../../../helpers/record/util';
 import AppSettingService from '../../../services/AppSetting.service';
-import { QueryRecordSettingRes } from '../../../services/AppSetting.type';
+import { AgentData, QueryRecordSettingRes } from '../../../services/AppSetting.type';
 import { TooltipButton } from '../../index';
 import SettingForm from '../SettingForm';
 import {
@@ -70,6 +71,27 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
 
   const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
   const [loading, setLoading] = useState(false);
+
+  const agentColumns: ColumnsType<AgentData> = [
+    {
+      title: 'Host',
+      dataIndex: 'host',
+      align: 'center',
+      render: (text) => <Typography.Text copyable>{text}</Typography.Text>,
+    },
+    {
+      title: t('version', { ns: 'common' }),
+      dataIndex: 'recordVersion',
+      align: 'center',
+      render: (text) => <Typography.Text>{text || '-'}</Typography.Text>,
+    },
+    {
+      title: t('modifiedTime', { ns: 'common' }),
+      dataIndex: 'modifiedTime',
+      align: 'center',
+      render: (text) => dayjs(text).format('YYYY-MM-DD HH:mm:ss'),
+    },
+  ];
 
   /**
    * 请求 InterfacesList
@@ -201,29 +223,17 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       <Modal
         destroyOnClose
         open={open}
+        footer={false}
         title={t('appSetting.agentHost')}
         onCancel={() => setOpen(false)}
       >
         <Spin spinning={loadingAgentList}>
-          <List
+          <Table
             bordered
+            pagination={false}
             size='small'
             dataSource={agentData}
-            renderItem={(item) => (
-              <List.Item>
-                <Typography.Text
-                  copyable
-                  css={css`
-                    width: 100%;
-                    .ant-typography-copy {
-                      float: right;
-                    }
-                  `}
-                >
-                  {item}
-                </Typography.Text>
-              </List.Item>
-            )}
+            columns={agentColumns}
           />
         </Spin>
       </Modal>

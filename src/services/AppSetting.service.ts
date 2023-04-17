@@ -281,6 +281,6 @@ export default class AppSettingService {
     const res = await request.get<AgentData[]>(
       '/report/config/applicationInstances/useResultAsList/appId/' + appId,
     );
-    return res.body.map((item) => item.host);
+    return res.body;
   }
 }

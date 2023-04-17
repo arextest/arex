@@ -54,5 +54,7 @@
   "are_you_sure": "Are you sure？",
   "delete": "Delete",
   "request": "Request",
-  "response": "Response"
+  "response": "Response",
+  "version": "Version",
+  "modifiedTime": "Modified Time"
 }
