@@ -15,7 +15,7 @@ import useMenusPanes from '../store/useMenusPanes';
 
 const MainBox = () => {
   useInit();
-  const { panes, activePane, setPanes, removePane } = useMenusPanes();
+  const { panes, activePane, setPanes, setActivePane, removePane } = useMenusPanes();
   const darkMode = useDarkMode();
 
   const panesItems = useMemo(
@@ -51,11 +51,12 @@ const MainBox = () => {
                   <ArexMenu.Environment
                     value={activePane as string}
                     onSelect={(value) => {
+                      console.log(value);
                       setPanes({
                         id: value,
                         type: 'Environment',
-                        title: 'Environment',
-                        data: { value: 'Environment' },
+                        title: 'CustomPane',
+                        data: { value: 'CustomPane' },
                       });
                     }}
                   />
@@ -65,7 +66,12 @@ const MainBox = () => {
           />
         }
         panes={
-          <ArexPanesContainer activeKey={activePane} items={panesItems} onRemove={removePane} />
+          <ArexPanesContainer
+            activeKey={activePane}
+            items={panesItems}
+            onChange={setActivePane}
+            onRemove={removePane}
+          />
         }
       />
       <ArexFooter />

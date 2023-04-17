@@ -3,9 +3,7 @@ import React, { FC } from 'react';
 
 import DraggableTabs from '../components/DraggableTabs';
 
-interface MainTabsProps {
-  items: TabsProps['items'];
-  activeKey?: string;
+interface MainTabsProps extends TabsProps {
   onAdd?: () => void;
   onRemove?: (key: string) => void;
 }
@@ -23,9 +21,8 @@ const ArexPanesContainer: FC<MainTabsProps> = (props) => {
       size='small'
       type='editable-card'
       tabBarGutter={-1}
-      items={props.items}
-      activeKey={props.activeKey}
       onEdit={handleTabsEdit}
+      {...props}
     />
   );
 };

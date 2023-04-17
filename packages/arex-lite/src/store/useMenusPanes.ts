@@ -1,5 +1,5 @@
 import { PanesManager } from 'arex-core';
-import { EnvironmentPanesData } from 'arex-core/src';
+import { PanesData } from 'arex-core/src';
 import { ReactNode } from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -8,32 +8,28 @@ import { immer } from 'zustand/middleware/immer';
 import { defaultActiveMenu, MAX_PANES_COUNT } from '../enums/menus';
 
 // 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
-export type PaneData = EnvironmentPanesData;
-
-export type Pane<D extends PaneData = PaneData> = {
+export type Pane<D extends PanesData = PanesData> = {
+  id: string; //
+  type: string; // PaneType
+  key?: string; // unique, generate by id and type
   title: string;
   icon?: ReactNode;
-  key?: string; // unique, generate by id and type
-  id: string; //
-  // menuType?: string;
-  // pageType: string;
-  type: string; // PaneType
-  dirty?: boolean;
   index?: number; // 越新的 pane, index 越大
+  dirty?: boolean;
   data: D;
 };
 
 export type MenusPanesState = {
   activeMenu?: string; // MenusType
   activePane?: string; // PaneKey
-  panes: Pane<PaneData>[];
+  panes: Pane<PanesData>[];
   paneMaxIndex: number; // 用于同步 panes 中 index 的最大值
 };
 
 export type MenusPanesAction = {
   setActiveMenu: (menuKey: string) => void;
   setActivePane: (paneKey: string) => void;
-  setPanes: <D extends PaneData = PaneData>(panes: Pane<D> | Pane<D>[]) => void;
+  setPanes: <D extends PanesData = PanesData>(panes: Pane<D> | Pane<D>[]) => void;
   removePane: (paneKey: string) => void;
   removeSegmentPages: (paneKey: string, segment: 'left' | 'right') => void;
   reset: () => void;
