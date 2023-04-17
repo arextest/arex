@@ -32,6 +32,7 @@
     "@emotion/styled": "^11.10.5",
     "@hpcc-js/wasm": "^2.8.0",
     "@kurkle/color": "^0.2.1",
+    "@sentry/react": "^7.48.0",
     "@uiw/codemirror-themes-all": "^4.19.2",
     "@uiw/react-codemirror": "^4.8.1",
     "ahooks": "^3.5.2",
