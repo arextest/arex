@@ -124,7 +124,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
             `/${params.workspaceId}/${PagesType.ReplayCase}/${
               record.planItemId
             }?data=${encodeURIComponent(JSON.stringify(record))}${
-              status ? `&status=${status}` : ''
+              Number.isInteger(status) ? `&status=${status}` : ''
             }`,
           );
         }}
