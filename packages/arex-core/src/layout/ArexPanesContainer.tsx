@@ -77,12 +77,13 @@ interface MainTabsProps extends TabsProps {
   onRemove?: (key: string) => void;
 }
 const ArexPanesContainer: FC<MainTabsProps> = (props) => {
+  const { onAdd, onRemove, ...restTabsProps } = props;
   const removeTab = (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
-    props.onRemove?.(targetKey as string);
+    onRemove?.(targetKey as string);
   };
 
   const handleTabsEdit: TabsProps['onEdit'] = (targetKey, action) => {
-    action === 'add' ? props.onAdd?.() : removeTab(targetKey);
+    action === 'add' ? onAdd?.() : removeTab(targetKey);
   };
 
   const { items = [] } = props;
@@ -166,7 +167,7 @@ const ArexPanesContainer: FC<MainTabsProps> = (props) => {
         tabBarGutter={-1}
         onEdit={handleTabsEdit}
         items={orderItems}
-        {...props}
+        {...restTabsProps}
       />
     </DndProvider>
   );

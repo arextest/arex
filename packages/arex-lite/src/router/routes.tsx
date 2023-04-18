@@ -13,7 +13,7 @@ const routes: Routes[] = [
     component: lazy(() => import('../pages')),
   },
   {
-    path: '/:workspaceId/workspace/:workspaceName/:paneType/:rawId',
+    path: '/:workspaceId/:menuType/:paneType/:id',
     component: lazy(() => import('../pages')),
   },
 

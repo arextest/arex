@@ -17,6 +17,7 @@ export class MenusManager {
   }
 
   public static getMenuByType(type?: string): ArexMenu | undefined {
+    // TODO 搜索 menusMap children 上的 type
     return type ? (this.menusMap[type] as ArexMenu) : undefined;
   }
 

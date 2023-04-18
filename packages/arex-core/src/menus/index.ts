@@ -19,18 +19,21 @@ export type ArexMenuFC = FC<{
 }>;
 
 export type ArexMenu = ArexMenuFC & {
-  name: string;
+  menuName: string;
   type: string;
   paneType: string;
+  icon?: ReactNode;
+  children?: ArexMenu[];
 };
 
-export function createMenu(Menu: ArexMenuFC, type: string) {
+export function createMenu(Menu: ArexMenuFC, type: string, icon?: ReactNode) {
   return Object.assign(Menu, {
     get menuName() {
-      return t(type);
+      return t(`arexMenu.${type}`);
     },
     type,
     paneType: type,
+    icon,
   });
 }
 

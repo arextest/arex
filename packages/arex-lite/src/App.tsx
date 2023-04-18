@@ -5,11 +5,11 @@ import Routes from './router';
 
 const App = () => {
   return (
-    <GlobalConfigProvider>
-      <GlobalThemeProvider>
+    <GlobalThemeProvider>
+      <GlobalConfigProvider>
         <Routes />
-      </GlobalThemeProvider>
-    </GlobalConfigProvider>
+      </GlobalConfigProvider>
+    </GlobalThemeProvider>
   );
 };
 

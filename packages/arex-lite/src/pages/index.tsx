@@ -15,8 +15,17 @@ import useMenusPanes from '../store/useMenusPanes';
 
 const Index = () => {
   useInit();
-  const { panes, activePane, activeMenu, setActiveMenu, setPanes, setActivePane, removePane } =
-    useMenusPanes();
+  const {
+    collapsed,
+    setCollapsed,
+    activeMenu,
+    setActiveMenu,
+    panes,
+    setPanes,
+    activePane,
+    setActivePane,
+    removePane,
+  } = useMenusPanes();
   const darkMode = useDarkMode();
 
   const panesItems = useMemo(
@@ -42,9 +51,12 @@ const Index = () => {
     <>
       <ArexHeader onDarkModeChange={darkMode.toggle} />
       <ArexMainContainer
+        collapsed={collapsed}
         menus={
           <ArexMenuContainer
             activeKey={activeMenu}
+            collapsed={collapsed}
+            onCollapsed={setCollapsed}
             onChange={setActiveMenu}
             onSelect={(id, type) => {
               setPanes({

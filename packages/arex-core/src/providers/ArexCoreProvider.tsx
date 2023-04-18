@@ -1,21 +1,20 @@
-import { Draft, produce } from 'immer';
-import { createContext, Dispatch, useReducer } from 'react';
+import React, { createContext, FC, PropsWithChildren, useReducer, useState } from 'react';
+
 interface State {
   darkMode: boolean;
   locale: any;
 }
-const defaultState = { darkMode: false, locale: {} };
-export const HttpContext = createContext<
-  { store: State } & { dispatch: Dispatch<(state: State) => void> }
->({
-  store: defaultState,
-  dispatch: () => undefined,
-});
-function reducer(draft: Draft<State>, action: (state: State) => void) {
-  return action(draft);
-}
-const ArexCoreProvider = ({ children, darkMode, locale }: any) => {
-  const [store, dispatch] = useReducer(produce(reducer), { darkMode: darkMode, locale });
-  return <HttpContext.Provider value={{ store, dispatch }}>{children}</HttpContext.Provider>;
+
+const defaultState: State = { darkMode: false, locale: {} };
+
+export const ArexCoreContext = createContext(defaultState);
+
+const ArexCoreProvider: FC<PropsWithChildren<State>> = (props) => {
+  const [darkMode, setDarkMode] = useState(props.darkMode);
+  return (
+    <ArexCoreContext.Provider value={{ darkMode, locale: props.locale }}>
+      {props.children}
+    </ArexCoreContext.Provider>
+  );
 };
 export default ArexCoreProvider;

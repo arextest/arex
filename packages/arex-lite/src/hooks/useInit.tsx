@@ -11,9 +11,7 @@ const useInit = () => {
   const params = useParams();
   const customNavigate = useCustomNavigate();
   useEffect(() => {
-    customNavigate(
-      `/${params.workspaceId}/workspace/${params.workspaceName}/${params.paneType}/${params.rawId}`,
-    );
+    customNavigate(`/${params.workspaceId}/${params.menuType}/${params.paneType}/${params.id}`);
   }, []);
 };
 

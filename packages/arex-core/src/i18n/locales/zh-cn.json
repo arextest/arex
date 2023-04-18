@@ -1,4 +1,7 @@
 {
+  "arexMenu": {
+    "Environment": "环境变量"
+  },
   "action": {
     "autoscroll": "Autoscroll",
     "cancel": "取消",

@@ -20,6 +20,7 @@ export type Pane<D extends PanesData = PanesData> = {
 };
 
 export type MenusPanesState = {
+  collapsed: boolean;
   activeMenu?: string; // MenusType
   activePane?: string; // PaneKey
   panes: Pane<PanesData>[];
@@ -27,6 +28,7 @@ export type MenusPanesState = {
 };
 
 export type MenusPanesAction = {
+  setCollapsed: (collapsed: boolean) => void;
   setActiveMenu: (menuKey: string) => void;
   setActivePane: (paneKey: string) => void;
   setPanes: <D extends PanesData = PanesData>(panes: Pane<D> | Pane<D>[]) => void;
@@ -36,6 +38,7 @@ export type MenusPanesAction = {
 };
 
 const initialState: MenusPanesState = {
+  collapsed: false,
   activeMenu: defaultActiveMenu,
   activePane: undefined,
   panes: [],
@@ -50,6 +53,13 @@ export const useMenusPanes = create(
   persist(
     immer<MenusPanesState & MenusPanesAction>((set, get) => ({
       ...initialState,
+
+      // 设置菜单折叠
+      setCollapsed: (collapsed) => {
+        set((state) => {
+          state.collapsed = collapsed;
+        });
+      },
 
       // 设置激活的菜单
       setActiveMenu: (menuType) => {

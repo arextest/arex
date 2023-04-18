@@ -1,11 +1,29 @@
 import { ThemeProvider } from '@emotion/react';
-import { theme } from 'antd';
+import { App, ConfigProvider, theme } from 'antd';
 import React, { FC, PropsWithChildren } from 'react';
 
-const { useToken } = theme;
-const GlobalThemeProvider: FC<PropsWithChildren> = (props) => {
-  const token = useToken();
+import useDarkMode from '../hooks/useDarkMode';
 
-  return <ThemeProvider theme={token.token}>{props.children}</ThemeProvider>;
+const { darkAlgorithm, useToken } = theme;
+
+const GlobalThemeProvider: FC<PropsWithChildren> = (props) => {
+  const { token } = useToken();
+  const darkMode = useDarkMode();
+
+  return (
+    <ConfigProvider
+      theme={{
+        token: {
+          // colorPrimary: store.settings.THEME_COLOR,
+          // colorBorder: token.token.colorSplit,
+        },
+        algorithm: darkMode.value ? [darkAlgorithm] : [],
+      }}
+    >
+      <App>
+        <ThemeProvider theme={token}>{props.children}</ThemeProvider>
+      </App>
+    </ConfigProvider>
+  );
 };
 export default GlobalThemeProvider;
