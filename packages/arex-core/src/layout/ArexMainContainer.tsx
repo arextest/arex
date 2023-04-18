@@ -23,25 +23,20 @@ function calculatePercentage(a: number, b: number) {
 export interface ArexMainContainerProps {
   menus: ReactNode;
   panes: ReactNode;
-  vertical: boolean;
-  layoutId: string;
-  height: string;
 }
 
 const ArexMainContainer: FC<ArexMainContainerProps> = (props) => {
   const [panePrimarySize, setPanePrimarySize] = useState(35);
   const [paneSecondarySize, setPaneSecondarySize] = useState(65);
-  function getPaneData(type: 'vertical' | 'horizontal'): PaneEvent[] | null {
-    const storageKey = `${props.layoutId}-pane-config-${type}`;
+  function getPaneData(): PaneEvent[] | null {
+    const storageKey = `http-pane-config-horizontal`;
     const paneEvent = getLocalStorage(storageKey);
     if (!paneEvent) return null;
     return tryParseJsonString(paneEvent);
   }
 
   useEffect(() => {
-    if (!props.layoutId) return;
-
-    const verticalPaneData = getPaneData(props.vertical ? 'vertical' : 'horizontal');
+    const verticalPaneData = getPaneData();
     if (verticalPaneData) {
       const [mainPane, sidebarPane] = verticalPaneData;
 
@@ -54,12 +49,11 @@ const ArexMainContainer: FC<ArexMainContainerProps> = (props) => {
   return (
     <Allotment
       css={css`
-        height: ${props.height};
+        height: calc(100vh - 79px);
       `}
-      vertical={props.vertical}
+      vertical={false}
       onChange={(sizes) => {
-        const type = props.vertical ? 'vertical' : 'horizontal';
-        const storageKey = `${props.layoutId}-pane-config-${type}`;
+        const storageKey = `http-pane-config-horizontal`;
         setLocalStorage(
           storageKey,
           sizes.map((size) => ({ min: 0, max: 100, size })),

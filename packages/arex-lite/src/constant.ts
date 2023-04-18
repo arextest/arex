@@ -1,4 +1,6 @@
+import { MenusType } from 'arex-core';
 export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
+
 export enum MethodEnum {
   GET = 'GET',
   POST = 'POST',
@@ -30,32 +32,5 @@ export enum NodeType {
   folder = 3,
 }
 
-export enum MenuTypeEnum {
-  Collection = 'collection',
-  Replay = 'replay',
-  Environment = 'environment',
-}
-
-export enum PageTypeEnum {
-  Setting = 'setting',
-  Request = 'request',
-  Case = 'case',
-  Folder = 'folder',
-  Run = 'run',
-  Collection = 'collection',
-  Environment = 'environment',
-  Workspace = 'workspace',
-  Replay = 'replay',
-  ReplayAnalysis = 'replayAnalysis',
-  ReplayCase = 'replayCase',
-}
-
-export enum ContentTypeEnum {
-  ApplicationJson = 'application/json',
-}
-
-export enum RoleEnum {
-  Admin = 1,
-  Editor = 2,
-  Viewer = 3,
-}
+export const defaultActiveMenu = MenusType.ENVIRONMENT;
+export const MAX_PANES_COUNT = 8;

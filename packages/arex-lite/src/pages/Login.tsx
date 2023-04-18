@@ -4,8 +4,8 @@ import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import logo from '../assets/img/logo.svg';
-import rightBackgroundImage from '../assets/img/rightBackgroundImage.svg';
+import logo from '../assets/svg/logo.svg';
+import rightBackgroundImage from '../assets/svg/rightBackgroundImage.svg';
 
 const Login: FC = () => {
   const { t } = useTranslation();
@@ -100,11 +100,7 @@ const Login: FC = () => {
           </div>
         </div>
         <div className={'right-box'}>
-          <div
-            className={'img-wrap'}
-            style={{ backgroundImage: `url(${rightBackgroundImage})` }}
-          ></div>
-          <Button>OK</Button>
+          <div className={'img-wrap'} style={{ backgroundImage: `url(${rightBackgroundImage})` }} />
         </div>
       </div>
     </div>

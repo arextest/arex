@@ -48,7 +48,7 @@ function useMonaco(el: any, value: any, options: MonacoOptions) {
     value: value,
     language: options.extendedEditorConfig.mode,
     automaticLayout: true,
-    fontFamily: 'IBMPlexMono, "Courier New", monospace',
+    fontFamily: '"Courier New", monospace',
     minimap: {
       enabled: false,
     },
@@ -61,7 +61,7 @@ function useMonaco(el: any, value: any, options: MonacoOptions) {
     // },
     lineNumbers: 'off',
     fontSize: 14,
-    // fontFamily: 'IBMPlexMono, "Courier New", monospace',
+    // fontFamily: '"Courier New", monospace',
     scrollbar: {
       useShadows: false,
       vertical: 'hidden',
@@ -77,7 +77,7 @@ function useMonaco(el: any, value: any, options: MonacoOptions) {
     value: value,
     language: options.extendedEditorConfig.mode,
     automaticLayout: true,
-    fontFamily: 'IBMPlexMono, "Courier New", monospace',
+    fontFamily: '"Courier New", monospace',
     minimap: {
       enabled: false,
     },
@@ -90,7 +90,7 @@ function useMonaco(el: any, value: any, options: MonacoOptions) {
     // },
     lineNumbers: 'off',
     fontSize: 12,
-    // fontFamily: 'IBMPlexMono, "Courier New", monospace',
+    // fontFamily:"Courier New", monospace',
     // scrollbar: {
     //   useShadows: false,
     //   vertical: 'hidden',

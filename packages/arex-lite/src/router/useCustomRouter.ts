@@ -1,7 +1,7 @@
 import { match } from 'path-to-regexp';
 import { useNavigate } from 'react-router-dom';
 
-import { genPaneIdByUrl, getMenuTypeByPageType } from '../helpers/utils';
+// import { genPaneIdByUrl, getMenuTypeByPageType } from '../helpers/utils';
 
 export function useCustomNavigate() {
   const nav = useNavigate();
@@ -9,8 +9,8 @@ export function useCustomNavigate() {
     const fn: any = match('/:workspaceId/workspace/:workspaceName/:paneType/:paneId', {
       decode: decodeURIComponent,
     });
-    const params = fn(url).params;
-    const paneKey = genPaneIdByUrl(url);
+    // const params = fn(url).params;
+    // const paneKey = genPaneIdByUrl(url);
 
     // Set active pane
     // dispatch((state) => {

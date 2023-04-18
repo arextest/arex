@@ -6,7 +6,7 @@ import useDarkMode from '../hooks/useDarkMode';
 
 const { darkAlgorithm } = theme;
 
-const ConfigMiddlewareProvider: FC<PropsWithChildren> = (props) => {
+const GlobalConfigProvider: FC<PropsWithChildren> = (props) => {
   const darkMode = useDarkMode();
 
   return (
@@ -25,4 +25,4 @@ const ConfigMiddlewareProvider: FC<PropsWithChildren> = (props) => {
     </ConfigProvider>
   );
 };
-export default ConfigMiddlewareProvider;
+export default GlobalConfigProvider;

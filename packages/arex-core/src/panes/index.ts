@@ -33,12 +33,17 @@ export type ArexPanesType<D extends PanesData> = {
   rawId: React.Key;
 };
 
-export function createPane<D extends PanesData>(Pane: ArexPaneFC<D>, type: string) {
+export function createPane<D extends PanesData>(
+  Pane: ArexPaneFC<D>,
+  type: string,
+  menuType?: string,
+): ArexPane<D> {
   return Object.assign(Pane, {
     get paneName() {
       return t(type);
     },
     type,
+    menuType,
   });
 }
 

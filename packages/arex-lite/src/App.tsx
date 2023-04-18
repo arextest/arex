@@ -1,17 +1,15 @@
 import React from 'react';
-import { useRoutes } from 'react-router-dom';
 
-import ConfigMiddlewareProvider from './providers/ConfigMiddlewareProvider';
-import routerConfig from './router';
-import ThemeMiddlewareProvider from './theme/ThemeMiddlewareProvider';
+import { GlobalConfigProvider, GlobalThemeProvider } from './providers';
+import Routes from './router';
 
 const App = () => {
-  const routesContent = useRoutes(routerConfig);
-
   return (
-    <ConfigMiddlewareProvider>
-      <ThemeMiddlewareProvider>{routesContent}</ThemeMiddlewareProvider>
-    </ConfigMiddlewareProvider>
+    <GlobalConfigProvider>
+      <GlobalThemeProvider>
+        <Routes />
+      </GlobalThemeProvider>
+    </GlobalConfigProvider>
   );
 };
 

@@ -1,22 +1,7 @@
-import Login from '../pages/Login';
-import MainBox from '../pages/MainBox';
+import { useRoutes } from 'react-router-dom';
 
-const router = [
-  {
-    path: '/',
-    element: <MainBox />,
-  },
-  {
-    path: '/:workspaceId/workspace/:workspaceName/:paneType/:rawId',
-    element: <MainBox />,
-  },
-  // {
-  //   path: '/welcome',
-  //   element: <Welcome />,
-  // },
-  {
-    path: '/login',
-    element: <Login />,
-  },
-];
-export default router;
+import routes from './routes';
+
+const Routes = () => useRoutes(routes);
+
+export default Routes;
