@@ -1,7 +1,7 @@
 import { useRequest } from 'ahooks';
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { FC, useMemo } from 'react';
+import React, { FC, Key, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ReplayService from '../../../services/Replay.service';
@@ -11,7 +11,7 @@ import ToCaseDetailButton from '../ToCaseDetailButton';
 
 type CaseProps = {
   planItemId: string;
-  status?: number;
+  status?: Key;
   onClick?: (record: ReplayCase) => void;
   onClickSaveCase?: (record: ReplayCase) => void;
 };
@@ -40,7 +40,7 @@ const Case: FC<CaseProps> = (props) => {
     },
     {
       title: t('replay.status'),
-      defaultFilteredValue: props.status ? [props.status] : undefined,
+      defaultFilteredValue: props.status !== undefined ? [props.status] : undefined,
       filterMultiple: false,
       filters: filterMap,
       onFilter: (value, record) => record.diffResultCode === value,
