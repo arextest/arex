@@ -4,7 +4,6 @@ export enum PanesType {
 }
 
 export enum MenusType {
-  COLLECTION = 'Collection',
   ENVIRONMENT = 'Environment',
 }
 

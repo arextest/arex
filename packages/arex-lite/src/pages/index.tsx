@@ -9,6 +9,7 @@ import {
   ArexPanesContainerProps,
   ErrorBoundary,
   PanesManager,
+  PanesType,
 } from 'arex-core';
 import React, { useMemo } from 'react';
 
@@ -32,18 +33,14 @@ export default () => {
 
   const panesItems = useMemo(
     () =>
-      panes.map((p) => {
+      panes.map((pane) => {
+        const Pane = PanesManager.getPanes().find(
+          (p: ArexPane) => pane.type === p.type,
+        ) as ArexPane;
         return {
-          key: p.key || '',
-          label: p.title,
-          children: (
-            <ErrorBoundary>
-              {React.createElement(
-                PanesManager.getPanes().find((f: ArexPane) => p.type === f.type) || 'div',
-                { data: p.data },
-              )}
-            </ErrorBoundary>
-          ),
+          key: pane.key || '',
+          label: [Pane.icon, pane.title],
+          children: <ErrorBoundary>{React.createElement(Pane, { data: pane.data })}</ErrorBoundary>,
         };
       }),
     [panes],
@@ -60,10 +57,11 @@ export default () => {
 
   const onPaneAdd: ArexPanesContainerProps['onAdd'] = () =>
     setPanes({
-      type: 'Environment',
+      // type: PanesType.DEMO,
+      type: 'Demo',
       title: 'zzz',
       id: '123',
-      data: { value: 'CustomPane' },
+      data: { value: 'DemoPane' },
     });
 
   return (

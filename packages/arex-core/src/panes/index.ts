@@ -1,7 +1,7 @@
 import { t } from 'i18next';
 import React from 'react';
 
-import { MenusType, PanesType } from '../constant';
+import { PanesType } from '../constant';
 import Environment, { EnvironmentPanesData } from './Environment';
 
 /**
@@ -9,34 +9,20 @@ import Environment, { EnvironmentPanesData } from './Environment';
  */
 export type ArexPane<D extends PanesData = PanesData> = ArexPaneFC<D> & {
   name: string;
+  icon?: React.ReactNode;
   type: string;
   menuType?: string;
 };
 
 export type ArexPaneFC<D extends PanesData = PanesData> = React.FC<{ data: D }>;
 
-export type PanesTypeType = { [type: string]: PanesType };
-
-export type PanesData =
-  // | nodeType // PanesTypeEnum.Request 时的数据
-  EnvironmentPanesData;
-
-export type ArexPanesType<D extends PanesData> = {
-  title: string;
-  key?: string;
-  menuType?: MenusType;
-  pageType: PanesType;
-  isNew?: boolean;
-  data: D;
-  sortIndex?: number;
-  paneId: string;
-  rawId: React.Key;
-};
+export type PanesData = EnvironmentPanesData;
 
 export function createPane<D extends PanesData>(
   Pane: ArexPaneFC<D>,
   type: string,
   menuType?: string,
+  icon?: React.ReactNode,
 ): ArexPane<D> {
   return Object.assign(Pane, {
     get paneName() {
@@ -44,6 +30,7 @@ export function createPane<D extends PanesData>(
     },
     type,
     menuType,
+    icon,
   });
 }
 

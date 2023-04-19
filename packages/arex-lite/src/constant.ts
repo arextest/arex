@@ -1,5 +1,15 @@
 import { MenusType } from 'arex-core';
 
+declare module 'arex-core' {
+  export enum PanesType {
+    DEMO = 'Demo',
+  }
+
+  export enum MenusType {
+    DEMO = 'Demo',
+  }
+}
+
 export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
 
 export enum MethodEnum {

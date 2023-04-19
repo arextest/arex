@@ -21,11 +21,6 @@ export class MenusManager {
     return type ? (this.menusMap[type] as ArexMenu) : undefined;
   }
 
-  public static getMenuTypeByType(type?: string): string | undefined {
-    const menu = this.getMenuByType(type);
-    return menu ? menu.type : undefined;
-  }
-
   public static getMenusByType(types: Array<string>): Array<ArexMenu | undefined> {
     return types.map((item) => {
       return Object.values(this.menusMap).find((child) => {

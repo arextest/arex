@@ -1,3 +1,4 @@
+import { DeploymentUnitOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import { PanesType } from '../constant';
@@ -20,4 +21,9 @@ const Environment: ArexPaneFC<EnvironmentPanesData> = (props) => {
   );
 };
 
-export default createPane(Environment, PanesType.ENVIRONMENT);
+export default createPane(
+  Environment,
+  PanesType.ENVIRONMENT,
+  undefined,
+  <DeploymentUnitOutlined />,
+);

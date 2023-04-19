@@ -14,7 +14,7 @@ export type MenuConfig = {
 
 export type ArexMenuFC = FC<{
   value?: string;
-  onSelect: (value: string) => void;
+  onSelect?: (value: string) => void;
   [key: string]: any;
 }>;
 
