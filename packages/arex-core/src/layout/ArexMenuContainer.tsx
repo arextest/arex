@@ -6,7 +6,7 @@ import React, { FC, ReactNode, useMemo } from 'react';
 import { ErrorBoundary, WorkspacesMenu } from '../components';
 import { MenusManager } from '../utils';
 
-type ArexMenuContainerProps = {
+export type ArexMenuContainerProps = {
   value?: string;
   activeKey?: string;
   collapsed?: boolean;

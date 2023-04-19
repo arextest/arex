@@ -3,8 +3,10 @@ import {
   ArexHeader,
   ArexMainContainer,
   ArexMenuContainer,
+  ArexMenuContainerProps,
   ArexPane,
   ArexPanesContainer,
+  ArexPanesContainerProps,
   ErrorBoundary,
   PanesManager,
 } from 'arex-core';
@@ -13,7 +15,7 @@ import React, { useMemo } from 'react';
 import { useDarkMode, useInit } from '../hooks';
 import useMenusPanes from '../store/useMenusPanes';
 
-const Index = () => {
+export default () => {
   useInit();
   const {
     collapsed,
@@ -47,6 +49,23 @@ const Index = () => {
     [panes],
   );
 
+  const onMenuSelect: ArexMenuContainerProps['onSelect'] = (id, type) => {
+    setPanes({
+      id,
+      type,
+      title: 'CustomPane',
+      data: { value: 'CustomPane' },
+    });
+  };
+
+  const onPaneAdd: ArexPanesContainerProps['onAdd'] = () =>
+    setPanes({
+      type: 'Environment',
+      title: 'zzz',
+      id: '123',
+      data: { value: 'CustomPane' },
+    });
+
   return (
     <>
       <ArexHeader onDarkModeChange={darkMode.toggle} />
@@ -58,14 +77,7 @@ const Index = () => {
             collapsed={collapsed}
             onCollapsed={setCollapsed}
             onChange={setActiveMenu}
-            onSelect={(id, type) => {
-              setPanes({
-                id,
-                type,
-                title: 'CustomPane',
-                data: { value: 'CustomPane' },
-              });
-            }}
+            onSelect={onMenuSelect}
           />
         }
         panes={
@@ -73,14 +85,7 @@ const Index = () => {
             activeKey={activePane}
             items={panesItems}
             onChange={setActivePane}
-            onAdd={() =>
-              setPanes({
-                type: 'Environment',
-                title: 'zzz',
-                id: '123',
-                data: { value: 'CustomPane' },
-              })
-            }
+            onAdd={onPaneAdd}
             onRemove={removePane}
           />
         }
@@ -89,5 +94,3 @@ const Index = () => {
     </>
   );
 };
-
-export default Index;

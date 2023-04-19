@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { PanesType } from '../../constant';
-import { ArexPaneFC, createPane } from '../index';
+import { PanesType } from '../constant';
+import { ArexPaneFC, createPane } from './index';
 
 export type EnvironmentPanesData = {
   value: string;

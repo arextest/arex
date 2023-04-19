@@ -72,11 +72,12 @@ const DraggableTabNode = ({ index, children, moveNode }: DraggableTabPaneProps) 
   );
 };
 
-interface MainTabsProps extends TabsProps {
+export interface ArexPanesContainerProps extends TabsProps {
   onAdd?: () => void;
   onRemove?: (key: string) => void;
 }
-const ArexPanesContainer: FC<MainTabsProps> = (props) => {
+
+const ArexPanesContainer: FC<ArexPanesContainerProps> = (props) => {
   const { onAdd, onRemove, ...restTabsProps } = props;
   const removeTab = (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
     onRemove?.(targetKey as string);

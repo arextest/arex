@@ -2,7 +2,7 @@ import { t } from 'i18next';
 import { FC, ReactNode } from 'react';
 
 import { MenusType } from '../constant';
-import EnvironmentMenu from './EnvironmentMenu';
+import EnvironmentMenu from './Environment';
 
 export type MenuConfig = {
   key: string;

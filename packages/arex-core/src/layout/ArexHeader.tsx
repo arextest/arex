@@ -8,11 +8,12 @@ import GithubStarButton from '../components/GithubStarButton';
 import TooltipButton from '../components/TooltipButton';
 import { ArexCoreContext } from '../providers/ArexCoreProvider';
 
-interface AppHeaderProps {
+export interface AppHeaderProps {
   onDarkModeChange?: (dark: boolean) => void;
   onSetting?: () => void;
   onLogout?: () => void;
 }
+
 const ArexHeader: FC<AppHeaderProps> = (props) => {
   const HeaderWrapper = styled.div`
   height: 46px;
