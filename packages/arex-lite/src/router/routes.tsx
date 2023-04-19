@@ -1,3 +1,4 @@
+import { Spin } from 'antd';
 import React, { FC, lazy, Suspense } from 'react';
 import { RouteObject } from 'react-router-dom';
 
@@ -27,7 +28,7 @@ const syncRouter = (table: Routes[]): RouteObject[] =>
   table.map((route) => ({
     path: route.path,
     element: (
-      <Suspense fallback={<div>loading...</div>}>
+      <Suspense fallback={<Spin style={{ padding: '8px' }} />}>
         <route.component />
       </Suspense>
     ),

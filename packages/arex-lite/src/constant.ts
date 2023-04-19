@@ -1,4 +1,5 @@
 import { MenusType } from 'arex-core';
+
 export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
 
 export enum MethodEnum {
@@ -34,3 +35,6 @@ export enum NodeType {
 
 export const defaultActiveMenu = MenusType.ENVIRONMENT;
 export const MAX_PANES_COUNT = 8;
+
+// localStorage key
+export const I18Key = 'i18nextLng';

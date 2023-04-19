@@ -297,14 +297,6 @@
     "json_description": "从 Hoppscotch 的集合文件导入（JSON）",
     "title": "导入"
   },
-  "layout": {
-    "collapse_collection": "折叠/展开集合",
-    "collapse_sidebar": "折叠/展开边栏",
-    "column": "垂直布局",
-    "name": "布局",
-    "row": "水平布局",
-    "zen_mode": "ZEN 模式"
-  },
   "modal": {
     "collections": "集合",
     "confirm": "确认",

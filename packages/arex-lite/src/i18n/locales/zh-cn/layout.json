@@ -1,0 +1,11 @@
+{
+  "sideMenu": {
+    "normal": "常规",
+    "compare": "对比",
+    "replay": "回放"
+  },
+  "sideCollection": {
+    "collection": "集合",
+    "env": "环境"
+  }
+}
