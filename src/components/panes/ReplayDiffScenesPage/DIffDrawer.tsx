@@ -39,7 +39,7 @@ const DiffDrawer: FC<DIffDrawer> = (props) => {
             mode={mode}
             appId={props.appId}
             operationId={props.operationId}
-            defaultOnlyFailed={Array.isArray(props.data)}
+            defaultOnlyFailed={mode === 'multiple'}
             loading={props.loading}
             data={diffList}
           />
