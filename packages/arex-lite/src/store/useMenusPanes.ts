@@ -5,7 +5,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { defaultActiveMenu, MAX_PANES_COUNT } from '../constant';
+import { DEFAULT_ACTIVE_MENU, MAX_PANES_COUNT } from '../constant';
 
 // 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
 export type Pane<D extends PanesData = PanesData> = {
@@ -39,7 +39,7 @@ export type MenusPanesAction = {
 
 const initialState: MenusPanesState = {
   collapsed: false,
-  activeMenu: defaultActiveMenu,
+  activeMenu: DEFAULT_ACTIVE_MENU,
   activePane: undefined,
   panes: [],
   paneMaxIndex: 0,

@@ -1,4 +1,4 @@
-import { MenusType } from 'arex-core';
+import { ColorPrimary, getLocalStorage, MenusType, Theme } from 'arex-core';
 
 declare module 'arex-core' {
   export enum PanesType {
@@ -43,8 +43,15 @@ export enum NodeType {
   folder = 3,
 }
 
-export const defaultActiveMenu = MenusType.ENVIRONMENT;
-export const MAX_PANES_COUNT = 8;
-
 // localStorage key
-export const I18Key = 'i18nextLng';
+export const I18_KEY = 'i18nextLng';
+export const THEME_KEY = 'theme';
+
+// Default value
+export const DEFAULT_ACTIVE_MENU = MenusType.ENVIRONMENT;
+export const DEFAULT_THEME =
+  getLocalStorage<Theme>(THEME_KEY) ||
+  (window.matchMedia('(prefers-color-scheme: dark)').matches ? Theme.dark : Theme.light);
+export const DEFAULT_COLOR_PRIMARY = ColorPrimary.green;
+
+export const MAX_PANES_COUNT = 8;

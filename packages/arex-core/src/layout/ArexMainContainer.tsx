@@ -17,7 +17,7 @@ const ArexMainContainer: FC<ArexMainContainerProps> = (props) => {
     >
       <Allotment.Pane
         preferredSize={400}
-        minSize={props.collapsed ? 69 : 200}
+        minSize={props.collapsed ? 69 : 300}
         maxSize={props.collapsed ? 69 : 600}
       >
         {props.menus}

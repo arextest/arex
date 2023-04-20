@@ -3,7 +3,8 @@ import { MappingAlgorithm } from 'antd/es/config-provider/context';
 import { ArexCoreProvider, ColorPrimary, generateToken, Theme } from 'arex-core';
 import React, { useMemo } from 'react';
 
-import { localeMap } from './i18n';
+import { DEFAULT_COLOR_PRIMARY, DEFAULT_THEME } from './constant';
+import { I18nextLng, localeMap } from './i18n';
 import { GlobalConfigProvider } from './providers';
 import Routes from './router';
 import { useUserProfile } from './store';
@@ -16,7 +17,7 @@ const App = () => {
   const { theme } = useUserProfile();
   const compactMode = false;
   const colorPrimary = ColorPrimary.green;
-  const language = 'en-US';
+  const language: I18nextLng = 'en-US';
 
   const algorithm = useMemo<MappingAlgorithm[]>(() => {
     const _algorithm = [defaultAlgorithm];
@@ -26,20 +27,21 @@ const App = () => {
   }, [theme, compactMode]);
 
   return (
-    <GlobalStyle>
-      <GlobalConfigProvider
-        theme={{
-          token: generateToken(theme, colorPrimary),
-          algorithm,
-        }}
-        locale={localeMap[language]}
-        renderEmpty={() => Empty.PRESENTED_IMAGE_SIMPLE}
-      >
-        <ArexCoreProvider theme={Theme.light} colorPrimary={colorPrimary} locale={{}}>
+    <GlobalConfigProvider
+      theme={{
+        token: generateToken(theme, colorPrimary),
+        algorithm,
+      }}
+      locale={localeMap[language]}
+      renderEmpty={() => Empty.PRESENTED_IMAGE_SIMPLE}
+    >
+      <GlobalStyle>
+        {/* arex-core default config */}
+        <ArexCoreProvider theme={DEFAULT_THEME} colorPrimary={DEFAULT_COLOR_PRIMARY}>
           <Routes />
         </ArexCoreProvider>
-      </GlobalConfigProvider>
-    </GlobalStyle>
+      </GlobalStyle>
+    </GlobalConfigProvider>
   );
 };
 

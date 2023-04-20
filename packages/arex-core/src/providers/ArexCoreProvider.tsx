@@ -5,7 +5,6 @@ import { ColorPrimary, Theme } from '../theme';
 export type ArexCoreProviderProps = {
   theme: Theme;
   colorPrimary: ColorPrimary;
-  locale: any;
 };
 
 export const ArexCoreContext = createContext<
@@ -20,7 +19,6 @@ export const ArexCoreContext = createContext<
   colorPrimary: ColorPrimary.green,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   setColorPrimary: () => {},
-  locale: {},
 });
 
 const ArexCoreProvider: FC<PropsWithChildren<ArexCoreProviderProps>> = (props) => {
@@ -28,9 +26,7 @@ const ArexCoreProvider: FC<PropsWithChildren<ArexCoreProviderProps>> = (props) =
   const [colorPrimary, setColorPrimary] = useState(props.colorPrimary);
 
   return (
-    <ArexCoreContext.Provider
-      value={{ theme, setTheme, colorPrimary, setColorPrimary, locale: props.locale }}
-    >
+    <ArexCoreContext.Provider value={{ theme, setTheme, colorPrimary, setColorPrimary }}>
       {props.children}
     </ArexCoreContext.Provider>
   );

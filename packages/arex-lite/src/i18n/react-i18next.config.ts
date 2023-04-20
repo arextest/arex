@@ -5,7 +5,7 @@ import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 
-import { I18Key } from '../constant';
+import { I18_KEY } from '../constant';
 import enUsCommonJson from './locales/en-us/common.json';
 import enUsComponentsJson from './locales/en-us/components.json';
 import en from './locales/en-us/en.json';
@@ -41,7 +41,7 @@ i18n
   .init({
     // 初始化
     resources, // 本地多语言数据
-    lng: localStorage.getItem(I18Key) || 'en-US',
+    lng: localStorage.getItem(I18_KEY) || 'en-US',
     fallbackLng: 'en',
     detection: {
       caches: ['localStorage'], // 'sessionStorage', 'cookie'

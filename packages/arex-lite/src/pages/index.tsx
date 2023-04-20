@@ -46,7 +46,7 @@ export default () => {
     [panes],
   );
 
-  const onMenuSelect: ArexMenuContainerProps['onSelect'] = (id, type) => {
+  const handleMenuSelect: ArexMenuContainerProps['onSelect'] = (id, type) => {
     setPanes({
       id,
       type,
@@ -55,7 +55,7 @@ export default () => {
     });
   };
 
-  const onPaneAdd: ArexPanesContainerProps['onAdd'] = () =>
+  const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () =>
     setPanes({
       // type: PanesType.DEMO,
       type: 'Demo',
@@ -75,7 +75,7 @@ export default () => {
             collapsed={collapsed}
             onCollapsed={setCollapsed}
             onChange={setActiveMenu}
-            onSelect={onMenuSelect}
+            onSelect={handleMenuSelect}
           />
         }
         panes={
@@ -83,7 +83,7 @@ export default () => {
             activeKey={activePane}
             items={panesItems}
             onChange={setActivePane}
-            onAdd={onPaneAdd}
+            onAdd={handlePaneAdd}
             onRemove={removePane}
           />
         }
