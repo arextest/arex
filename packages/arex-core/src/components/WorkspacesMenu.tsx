@@ -22,7 +22,7 @@ const Role = styled((props: { className?: string; role?: RoleEnum }) => (
 const WorkspacesMenuWrapper = styled('div', {
   shouldForwardProp: (propName) => propName !== 'collapsed',
 })<{ collapsed?: boolean }>`
-  height: 35px;
+  height: 36px;
   width: ${(props) => (props.collapsed ? '100%' : 'calc(100% + 10px)')};
   display: flex;
   justify-content: space-between;
