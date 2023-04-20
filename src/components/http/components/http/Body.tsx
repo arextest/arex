@@ -16,7 +16,7 @@ const HttpBody = () => {
     {
       label: 'JSON',
       value: 'application/json',
-      test: (
+      viewLabel: (
         <span
           css={css`
             color: ${theme.colorPrimary};
@@ -29,13 +29,13 @@ const HttpBody = () => {
     {
       label: 'Protobuf',
       value: 'application/protobuf',
-      test: (
+      viewLabel: (
         <span
           css={css`
             color: ${theme.colorPrimary};
           `}
         >
-          protobuf
+          Protobuf
         </span>
       ),
     },
@@ -44,14 +44,6 @@ const HttpBody = () => {
   const onChange = (value: any) => {
     dispatch((state) => {
       state.request.body.contentType = value;
-      state.request.headers = state.request.headers.filter(
-        (head) => head.key.toLowerCase() !== 'content-type',
-      );
-      state.request.headers.unshift({
-        key: 'Content-Type',
-        value: value,
-        active: true,
-      });
     });
   };
   const rawBodyRef = useRef<HttpRawBodyRef>(null);
@@ -78,12 +70,19 @@ const HttpBody = () => {
             bordered={false}
             size={'small'}
             options={rawSmallCateOptions}
-            optionLabelProp={'test'}
+            optionLabelProp={'viewLabel'}
             dropdownMatchSelectWidth={120}
             onChange={onChange}
           />
         </div>
-        <a onClick={() => rawBodyRef.current?.prettifyRequestBody()}>{t('action.prettify')}</a>
+        <a
+          css={css`
+            display: ${store.request.body.contentType.includes('json') ? 'block' : 'none'};
+          `}
+          onClick={() => rawBodyRef.current?.prettifyRequestBody()}
+        >
+          {t('action.prettify')}
+        </a>
       </div>
 
       <RawBody ref={rawBodyRef} />
