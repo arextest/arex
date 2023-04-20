@@ -3,6 +3,7 @@ import axios from 'axios';
 import { HoppRESTRequest } from '../../components/http/data/rest';
 import { HoppRESTResponse } from '../../components/http/helpers/types/HoppRESTResponse';
 import { HoppTestResult } from '../../components/http/helpers/types/HoppTestResult';
+import { tryParseJsonString } from '../utils';
 import AgentAxios from './AgentAxios';
 const errTestResult = {
   description: '',
@@ -95,7 +96,7 @@ function _runRESTRequest(request: HoppRESTRequest, type: string): Promise<HoppRE
         };
       }, {}),
       // @ts-ignore
-      data: ['GET'].includes(request.method) ? undefined : JSON.parse(request.body.body || '{}'),
+      data: ['GET'].includes(request.method) ? undefined : tryParseJsonString(request.body.body),
       params: ['POST'].includes(request.method)
         ? undefined
         : request.params.reduce((p, c) => {
