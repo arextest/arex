@@ -15,7 +15,7 @@ const Environment: ArexPaneFC<EnvironmentPanesData> = (props) => {
   const [count, setCount] = React.useState(0);
   return (
     <div>
-      <span>props.value: {props.data.value}</span>
+      <div>props.value: {props.data?.value}</div>
       <span>count: {count}</span>
       <Button onClick={() => setCount((count) => count + 1)}>add</Button>
     </div>

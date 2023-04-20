@@ -12,11 +12,11 @@ export type Pane<D extends PanesData = PanesData> = {
   id: string; //
   type: string; // PaneType
   key?: string; // unique, generate by id and type
-  title: string;
+  title?: string;
   icon?: ReactNode;
   index?: number; // 越新的 pane, index 越大
   dirty?: boolean;
-  data: D;
+  data?: D;
 };
 
 export type MenusPanesState = {
@@ -45,8 +45,8 @@ const initialState: MenusPanesState = {
   paneMaxIndex: 0,
 };
 
-function getPaneKey(pane?: Pane) {
-  return pane && `${pane.id}_${pane.type}`;
+export function getPaneKey(pane?: Pane) {
+  return pane && `${pane.type}_${pane.id}`;
 }
 
 export const useMenusPanes = create(

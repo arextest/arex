@@ -16,6 +16,7 @@ import HeaderMenu from '../components/HeaderMenu';
 import { PanesType } from '../constant';
 import { useInit } from '../hooks';
 import { useMenusPanes } from '../store';
+import { getPaneKey } from '../store/useMenusPanes';
 
 export default () => {
   useInit();
@@ -51,16 +52,15 @@ export default () => {
     setPanes({
       id,
       type,
-      title: 'CustomPane',
-      data: { value: 'CustomPane' },
+      title: getPaneKey({ id, type }),
     });
   };
 
   const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () =>
     setPanes({
       type: PanesType.DEMO,
-      title: 'zzz',
-      id: '123',
+      title: 'Untitled',
+      id: Math.random().toString(36).substring(2),
       data: { value: 'DemoPane' },
     });
 
