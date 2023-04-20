@@ -46,7 +46,7 @@ export const tokenMap = {
   [Theme.dark]: darkToken,
 };
 
-export const generateToken = (theme: Theme, colorPrimary?: ColorPrimary) => {
+export const generateToken = (theme: Theme, colorPrimary?: ColorPrimary): Partial<AliasToken> => {
   const primary = colorPrimaryPalette.find((color) => color.name === colorPrimary)?.key;
   if (primary)
     return {
@@ -55,4 +55,5 @@ export const generateToken = (theme: Theme, colorPrimary?: ColorPrimary) => {
       colorLink: primary,
       colorLinkActive: primary,
     };
+  else return tokenMap[Theme.light];
 };

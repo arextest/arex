@@ -1,18 +1,36 @@
-import React, { createContext, FC, PropsWithChildren, useReducer, useState } from 'react';
+import React, { createContext, FC, PropsWithChildren, useState } from 'react';
 
-interface State {
-  darkMode: boolean;
+import { ColorPrimary, Theme } from '../theme';
+
+export type ArexCoreProviderProps = {
+  theme: Theme;
+  colorPrimary: ColorPrimary;
   locale: any;
-}
+};
 
-const defaultState: State = { darkMode: false, locale: {} };
+export const ArexCoreContext = createContext<
+  ArexCoreProviderProps & {
+    setTheme: React.Dispatch<React.SetStateAction<Theme>>;
+    setColorPrimary: React.Dispatch<React.SetStateAction<ColorPrimary>>;
+  }
+>({
+  theme: Theme.light,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  setTheme: () => {},
+  colorPrimary: ColorPrimary.green,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  setColorPrimary: () => {},
+  locale: {},
+});
 
-export const ArexCoreContext = createContext(defaultState);
+const ArexCoreProvider: FC<PropsWithChildren<ArexCoreProviderProps>> = (props) => {
+  const [theme, setTheme] = useState(props.theme);
+  const [colorPrimary, setColorPrimary] = useState(props.colorPrimary);
 
-const ArexCoreProvider: FC<PropsWithChildren<State>> = (props) => {
-  const [darkMode, setDarkMode] = useState(props.darkMode);
   return (
-    <ArexCoreContext.Provider value={{ darkMode, locale: props.locale }}>
+    <ArexCoreContext.Provider
+      value={{ theme, setTheme, colorPrimary, setColorPrimary, locale: props.locale }}
+    >
       {props.children}
     </ArexCoreContext.Provider>
   );

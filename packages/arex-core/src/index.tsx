@@ -7,4 +7,5 @@ export * from './layout';
 export * from './menus';
 export * from './panes';
 export * from './providers';
+export * from './theme';
 export * from './utils';

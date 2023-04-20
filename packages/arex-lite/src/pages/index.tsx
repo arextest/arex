@@ -9,15 +9,16 @@ import {
   ArexPanesContainerProps,
   ErrorBoundary,
   PanesManager,
-  PanesType,
 } from 'arex-core';
 import React, { useMemo } from 'react';
 
-import { useDarkMode, useInit } from '../hooks';
-import useMenusPanes from '../store/useMenusPanes';
+import { useInit } from '../hooks';
+import { useMenusPanes, useUserProfile } from '../store';
 
 export default () => {
   useInit();
+
+  const { setTheme } = useUserProfile();
   const {
     collapsed,
     setCollapsed,
@@ -29,7 +30,6 @@ export default () => {
     setActivePane,
     removePane,
   } = useMenusPanes();
-  const darkMode = useDarkMode();
 
   const panesItems = useMemo(
     () =>
@@ -66,7 +66,7 @@ export default () => {
 
   return (
     <>
-      <ArexHeader onDarkModeChange={darkMode.toggle} />
+      <ArexHeader onThemeChange={setTheme} />
       <ArexMainContainer
         collapsed={collapsed}
         menus={

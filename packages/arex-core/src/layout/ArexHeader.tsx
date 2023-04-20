@@ -1,15 +1,16 @@
 import { LogoutOutlined, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Avatar, Dropdown, DropdownProps, Space, Switch, Typography } from 'antd';
-import React, { FC, useContext, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import GithubStarButton from '../components/GithubStarButton';
 import TooltipButton from '../components/TooltipButton';
-import { ArexCoreContext } from '../providers/ArexCoreProvider';
+import { useArexCoreConfig } from '../hooks';
+import { Theme } from '../theme';
 
 export interface AppHeaderProps {
-  onDarkModeChange?: (dark: boolean) => void;
+  onThemeChange?: (theme: Theme) => void;
   onSetting?: () => void;
   onLogout?: () => void;
 }
@@ -38,7 +39,7 @@ const ArexHeader: FC<AppHeaderProps> = (props) => {
     }
   `;
   const { t } = useTranslation();
-  const { darkMode } = useContext(ArexCoreContext);
+  const { theme, setTheme } = useArexCoreConfig();
 
   const handleLogout = () => {
     // logout();
@@ -68,13 +69,20 @@ const ArexHeader: FC<AppHeaderProps> = (props) => {
       <HeaderWrapper>
         <div className={'left'}>
           <Typography.Text className={'app-name'}>AREX</Typography.Text>
-          <GithubStarButton theme={darkMode ? 'dark' : 'light'} />
+          <GithubStarButton theme={theme} />
         </div>
 
         <Space className={'right'} size='small'>
-          {props.onDarkModeChange && (
-            <Switch checkedChildren='🌛' unCheckedChildren='🌞' onChange={props.onDarkModeChange} />
-          )}
+          <Switch
+            defaultChecked={theme === Theme.dark}
+            checkedChildren='🌛'
+            unCheckedChildren='🌞'
+            onChange={(dark) => {
+              const theme = dark ? Theme.dark : Theme.light;
+              props.onThemeChange?.(theme);
+              setTheme(theme);
+            }}
+          />
           <TooltipButton
             title={`t('help')`}
             icon={<QuestionCircleOutlined />}
@@ -95,7 +103,7 @@ const ArexHeader: FC<AppHeaderProps> = (props) => {
         </Space>
       </HeaderWrapper>
     ),
-    [],
+    [theme, userMenu],
   );
 };
 

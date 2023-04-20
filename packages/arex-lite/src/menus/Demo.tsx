@@ -1,4 +1,5 @@
 import { FileOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import { createMenu, MenusType } from 'arex-core';
 import { ArexMenuFC, MenusManager } from 'arex-core';
 import React from 'react';
@@ -8,7 +9,7 @@ const Demo: ArexMenuFC = (props) => {
     <>
       <div>DemoMenu</div>
       <div>
-        <button onClick={() => props.onSelect?.('demoId')}>open pane</button>
+        <Button onClick={() => props.onSelect?.('demoId')}>open pane</Button>
       </div>
     </>
   );
