@@ -6,9 +6,12 @@ import zh from 'antd/locale/zh_CN';
 
 import i18n from './react-i18next.config';
 
-export type I18nextLng = 'en-US' | 'zh-CN';
+export enum I18nextLng {
+  ZH = 'zh-CN',
+  EN = 'en-US',
+}
 
-export const local: { key: I18nextLng; name: string }[] = [
+export const local: { key: `${I18nextLng}`; name: string }[] = [
   { key: 'en-US', name: 'English' },
   { key: 'zh-CN', name: '简体中文' },
 ];

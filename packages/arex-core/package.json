@@ -25,6 +25,7 @@
     "i18next": "^22.4.11",
     "immer": "^9.0.19",
     "monaco-editor": "^0.36.1",
+    "path-to-regexp": "^6.2.1",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",

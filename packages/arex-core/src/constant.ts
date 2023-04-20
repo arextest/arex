@@ -1,3 +1,5 @@
+export const StandardPath = '/:workspaceId/:menuType/:paneType/:id';
+
 export const RequestMethod = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
 
 export enum RequestMethodEnum {

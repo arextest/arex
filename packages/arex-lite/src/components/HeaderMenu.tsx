@@ -1,9 +1,12 @@
 import { LogoutOutlined, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Avatar, Dropdown, DropdownProps, Space, Switch } from 'antd';
 import { Theme, TooltipButton } from 'arex-core';
+import { changeLanguage } from 'i18next';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { I18_KEY } from '../constant';
+import { I18nextLng } from '../i18n';
 import { useUserProfile } from '../store';
 
 const HeaderMenu: FC = () => {
@@ -47,6 +50,16 @@ const HeaderMenu: FC = () => {
           setTheme(theme);
         }}
       />
+      <Switch
+        defaultChecked={localStorage.getItem(I18_KEY) === I18nextLng.ZH}
+        checkedChildren='中'
+        unCheckedChildren='Eng'
+        onChange={(zh) => {
+          const lang = zh ? I18nextLng.ZH : I18nextLng.EN;
+          changeLanguage(lang);
+        }}
+      />
+
       <TooltipButton
         title={`t('help')`}
         icon={<QuestionCircleOutlined />}

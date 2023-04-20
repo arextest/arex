@@ -17,7 +17,7 @@ const App = () => {
   const { theme } = useUserProfile();
   const compactMode = false;
   const colorPrimary = DEFAULT_COLOR_PRIMARY;
-  const language: I18nextLng = 'en-US';
+  const language: `${I18nextLng}` = 'zh-CN';
 
   const algorithm = useMemo<MappingAlgorithm[]>(() => {
     const _algorithm = [defaultAlgorithm];

@@ -1,3 +1,4 @@
+import { Typography } from 'antd';
 import {
   ArexFooter,
   ArexHeader,
@@ -11,6 +12,7 @@ import {
   ErrorBoundary,
 } from 'arex-core';
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import HeaderMenu from '../components/HeaderMenu';
 import { PanesType } from '../constant';
@@ -20,6 +22,7 @@ import { getPaneKey } from '../store/useMenusPanes';
 
 export default () => {
   useInit();
+  const { t } = useTranslation();
 
   const {
     collapsed,
@@ -41,11 +44,19 @@ export default () => {
         ) as ArexPane;
         return {
           key: pane.key || '',
-          label: [Pane.icon, pane.title],
+          // 规定: 翻译文本需要配置在 locales/[lang]/common.json => "arexPane" 下, 且 key 为 Pane.name 即组件名 (注意首字母大写)
+          label: (
+            <>
+              <span>{Pane.icon}</span>
+              <Typography.Text ellipsis style={{ maxWidth: '120px' }}>
+                {`${t(`arexPane.${Pane.name}`)} - ${pane.id}`}
+              </Typography.Text>
+            </>
+          ),
           children: <ErrorBoundary>{React.createElement(Pane, { data: pane.data })}</ErrorBoundary>,
         };
       }),
-    [panes],
+    [panes, t],
   );
 
   const handleMenuSelect: ArexMenuContainerProps['onSelect'] = (id, type) => {

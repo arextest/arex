@@ -1,4 +1,5 @@
 import { Spin } from 'antd';
+import { StandardPath } from 'arex-core';
 import React, { FC, lazy, Suspense } from 'react';
 import { RouteObject } from 'react-router-dom';
 
@@ -14,7 +15,7 @@ const routes: Routes[] = [
     component: lazy(() => import('../pages')),
   },
   {
-    path: '/:workspaceId/:menuType/:paneType/:id',
+    path: StandardPath,
     component: lazy(() => import('../pages')),
   },
 

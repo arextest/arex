@@ -2,7 +2,7 @@ import { ArexPaneManager } from 'arex-core';
 import { PanesData } from 'arex-core/src';
 import { ReactNode } from 'react';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { DEFAULT_ACTIVE_MENU, MAX_PANES_COUNT } from '../constant';
@@ -50,102 +50,112 @@ export function getPaneKey(pane?: Pane) {
 }
 
 export const useMenusPanes = create(
-  persist(
-    immer<MenusPanesState & MenusPanesAction>((set, get) => ({
-      ...initialState,
+  subscribeWithSelector(
+    persist(
+      immer<MenusPanesState & MenusPanesAction>((set, get) => ({
+        ...initialState,
 
-      // 设置菜单折叠
-      setCollapsed: (collapsed) => {
-        set((state) => {
-          state.collapsed = collapsed;
-        });
-      },
-
-      // 设置激活的菜单
-      setActiveMenu: (menuType) => {
-        set((state) => {
-          state.activeMenu = menuType;
-        });
-      },
-
-      // 设置激活的面板
-      setActivePane: (paneKey) => {
-        set((state) => {
-          const statePane = state.panes.find((i) => i.key === paneKey);
-          if (statePane) {
-            statePane.index = state.paneMaxIndex = state.paneMaxIndex + 1;
-            state.activePane = paneKey;
-          }
-        });
-      },
-
-      // 新增面板
-      setPanes: (panes) => {
-        if (Array.isArray(panes)) {
-          // panes are array, replace all panes
-          const latestPane = panes.reduce((pane, cur) => {
-            if ((cur.index || 0) > (pane.index || 0)) pane = cur;
-            return pane;
-          }, panes[0]);
-
-          set({
-            panes,
-            activePane: latestPane?.key,
-            activeMenu: ArexPaneManager.getMenuTypeByType(latestPane?.type),
-          });
-        } else {
-          // panes are single pane, insert
+        // 设置菜单折叠
+        setCollapsed: (collapsed) => {
           set((state) => {
-            state.paneMaxIndex = state.paneMaxIndex + 1;
-            state.activePane = getPaneKey(panes);
+            state.collapsed = collapsed;
+          });
+        },
 
-            const menuType = ArexPaneManager.getMenuTypeByType(panes.type);
-            menuType && (state.activeMenu = menuType);
+        // 设置激活的菜单
+        setActiveMenu: (menuType) => {
+          set((state) => {
+            state.activeMenu = menuType;
+          });
+        },
 
-            // return if pane already exists
-            if (state.panes.find((i) => i.key === getPaneKey(panes))) return;
-            if (state.panes.length > MAX_PANES_COUNT) {
-              state.panes.shift();
+        // 设置激活的面板
+        setActivePane: (paneKey) => {
+          set((state) => {
+            const statePane = state.panes.find((i) => i.key === paneKey);
+            if (statePane) {
+              statePane.index = state.paneMaxIndex = state.paneMaxIndex + 1;
+              state.activePane = paneKey;
             }
-            // insert new page with sortIndex
-            state.panes.push({
-              ...panes,
-              key: getPaneKey(panes),
-              index: state.paneMaxIndex + 1,
+          });
+        },
+
+        // 新增面板
+        setPanes: (panes) => {
+          if (Array.isArray(panes)) {
+            // panes are array, replace all panes
+            const latestPane = panes.reduce((pane, cur) => {
+              if ((cur.index || 0) > (pane.index || 0)) pane = cur;
+              return pane;
+            }, panes[0]);
+
+            set({
+              panes,
+              activePane: latestPane?.key,
+              activeMenu: ArexPaneManager.getMenuTypeByType(latestPane?.type),
             });
-          });
-        }
-      },
+          } else {
+            // panes are single pane, insert
+            set((state) => {
+              state.paneMaxIndex = state.paneMaxIndex + 1;
+              state.activePane = getPaneKey(panes);
 
-      // 关闭面板
-      removePane(paneKey) {
-        const panes = get().panes;
-        const filteredPanes = panes.filter((i) => i.key !== paneKey);
-        get().setPanes(filteredPanes);
-      },
+              const menuType = ArexPaneManager.getMenuTypeByType(panes.type);
+              menuType && (state.activeMenu = menuType);
 
-      // 关闭左侧或右侧的面板
-      removeSegmentPages: (paneId, segment) => {
-        const panes = get().panes;
-        const paneKey = getPaneKey(panes.find((i) => i.id === paneId));
+              // return if pane already exists
+              if (state.panes.find((i) => i.key === getPaneKey(panes))) return;
+              if (state.panes.length > MAX_PANES_COUNT) {
+                state.panes.shift();
+              }
+              // insert new page with sortIndex
+              state.panes.push({
+                ...panes,
+                key: getPaneKey(panes),
+                index: state.paneMaxIndex + 1,
+              });
+            });
+          }
+        },
 
-        const index = panes.findIndex((page) => page.key === paneKey);
-        Number.isInteger(index) &&
-          set({
-            panes:
-              segment === 'left' ? panes.slice(index, panes.length) : panes.slice(0, index + 1),
-          });
-      },
+        // 关闭面板
+        removePane(paneKey) {
+          const panes = get().panes;
+          const filteredPanes = panes.filter((i) => i.key !== paneKey);
+          get().setPanes(filteredPanes);
+        },
 
-      // 重置菜单和面板
-      reset: () => {
-        set(initialState);
+        // 关闭左侧或右侧的面板
+        removeSegmentPages: (paneId, segment) => {
+          const panes = get().panes;
+          const paneKey = getPaneKey(panes.find((i) => i.id === paneId));
+
+          const index = panes.findIndex((page) => page.key === paneKey);
+          Number.isInteger(index) &&
+            set({
+              panes:
+                segment === 'left' ? panes.slice(index, panes.length) : panes.slice(0, index + 1),
+            });
+        },
+
+        // 重置菜单和面板
+        reset: () => {
+          set(initialState);
+        },
+      })),
+      {
+        name: 'menus-panes-storage', // unique name
       },
-    })),
-    {
-      name: 'menus-panes-storage', // unique name
-    },
+    ),
   ),
+);
+
+useMenusPanes.subscribe(
+  (state) => ({ activePane: state.activePane, activeMenu: state.activeMenu }),
+  (curr) => {
+    console.log('curr', curr);
+    // TODO update url
+  },
 );
 
 export default useMenusPanes;

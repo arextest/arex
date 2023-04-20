@@ -56,7 +56,12 @@
   "version": "版本",
   "modifiedTime": "修改时间",
   "arexMenu": {
-    "Demo": "Demo",
+    "Demo": "样例",
+    "Environment": "环境变量",
+    "Collection": "集合"
+  },
+  "arexPane": {
+    "Demo": "样例",
     "Environment": "环境变量",
     "Collection": "集合"
   }

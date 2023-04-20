@@ -1,4 +1,3 @@
-import { t } from 'i18next';
 import { FC, ReactNode } from 'react';
 
 export type MenuConfig = {
@@ -6,7 +5,6 @@ export type MenuConfig = {
   label: string;
   icon: ReactNode;
   Menu?: FC;
-  children?: MenuConfig[];
 };
 
 export type ArexMenuFC = FC<{
@@ -16,11 +14,9 @@ export type ArexMenuFC = FC<{
 }>;
 
 export type ArexMenu = ArexMenuFC & {
-  menuName: string;
   type: string;
   paneType: string;
   icon?: ReactNode;
-  children?: ArexMenu[];
 };
 
 /**
@@ -34,18 +30,10 @@ export function createArexMenu(
     type: string;
     paneType: string;
     icon?: ReactNode;
-    i18?: {
-      prefix?: string;
-      ns?: string;
-    };
   },
 ) {
-  const { type, paneType, icon, i18 = {} } = options;
-  const { prefix = 'arexMenu', ns } = i18;
+  const { type, paneType, icon } = options;
   return Object.assign(Menu, {
-    get menuName() {
-      return t(`${prefix}.${type}`, { ns });
-    },
     type,
     paneType,
     icon,

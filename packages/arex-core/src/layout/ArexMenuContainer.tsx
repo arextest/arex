@@ -2,6 +2,7 @@ import { LeftOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Menu, MenuProps } from 'antd';
 import React, { FC, ReactNode, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { ErrorBoundary, WorkspacesMenu } from '../components';
 import { ArexMenuManager } from '../utils';
@@ -25,12 +26,14 @@ export type MenuItemType = {
 const ICON_KEY = '__ExpandIcon';
 
 const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
+  const { t } = useTranslation();
   const tabsItems = useMemo<MenuItemType[]>(
     () =>
       ArexMenuManager.getMenus()
         .map((Menu) => ({
           icon: Menu.icon,
-          label: Menu.menuName,
+          // 规定: 翻译文本需要配置在 locales/[lang]/common.json => "arexMenu" 下, 且 key 为 Menu.name 即组件名 (注意首字母大写)
+          label: t(`arexMenu.${Menu.name}`),
           key: Menu.type,
         }))
         .concat({
@@ -38,7 +41,7 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
           key: ICON_KEY,
           icon: <CollapseButton collapsed={props.collapsed} />,
         }),
-    [props.collapsed],
+    [props.collapsed, t],
   );
 
   const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
