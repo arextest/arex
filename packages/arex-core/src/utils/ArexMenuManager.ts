@@ -1,9 +1,7 @@
-import ArexMenus, { ArexMenu } from '../menus';
+import { ArexMenu } from './ArexMenu';
 
-export class MenusManager {
-  private static menusMap: Record<string, ArexMenu> = {
-    ...ArexMenus,
-  };
+export class ArexMenuManager {
+  private static menusMap: Record<string, ArexMenu> = {};
 
   public static getMenus(): Array<ArexMenu> {
     return Object.values(this.menusMap);

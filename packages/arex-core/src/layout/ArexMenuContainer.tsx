@@ -4,7 +4,7 @@ import { Menu, MenuProps } from 'antd';
 import React, { FC, ReactNode, useMemo } from 'react';
 
 import { ErrorBoundary, WorkspacesMenu } from '../components';
-import { MenusManager } from '../utils';
+import { ArexMenuManager } from '../utils';
 
 export type ArexMenuContainerProps = {
   value?: string;
@@ -27,7 +27,7 @@ const ICON_KEY = '__ExpandIcon';
 const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
   const tabsItems = useMemo<MenuItemType[]>(
     () =>
-      MenusManager.getMenus()
+      ArexMenuManager.getMenus()
         .map((Menu) => ({
           icon: Menu.icon,
           label: Menu.menuName,
@@ -47,7 +47,7 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
   };
 
   const MenuContent = useMemo(() => {
-    const Content = MenusManager.getMenuByType(props.activeKey);
+    const Content = ArexMenuManager.getMenuByType(props.activeKey);
     return (
       !props.collapsed &&
       Content && (

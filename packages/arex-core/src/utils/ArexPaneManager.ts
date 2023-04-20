@@ -1,9 +1,7 @@
-import ArexPanes, { ArexPane, PanesData } from '../panes';
+import { ArexPane, PanesData } from './ArexPane';
 
-export class PanesManager {
-  private static panesMap: Record<string, ArexPane> = {
-    ...ArexPanes,
-  };
+export class ArexPaneManager {
+  private static panesMap: Record<string, ArexPane> = {};
 
   public static getPanes(): Array<ArexPane> {
     return Object.values(this.panesMap);

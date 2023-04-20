@@ -1,37 +1,32 @@
 import i18n from 'i18next';
-// i18next-browser-languagedetector插件
+// i18next-browser-language-detector插件
 // 这是一个 i18next 语言检测插件，用于检测浏览器中的用户语言，
 // 详情请访问：https://github.com/i18next/i18next-browser-languageDetector
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 
 import { I18_KEY } from '../constant';
+// enUS
 import enUsCommonJson from './locales/en-us/common.json';
 import enUsComponentsJson from './locales/en-us/components.json';
-import en from './locales/en-us/en.json';
-import enUsLayoutJson from './locales/en-us/layout.json';
 import enUsPageJson from './locales/en-us/page.json';
-import cn from './locales/zh-cn/cn.json';
-// 引入需要实现国际化的简体、繁体、英文三种数据的json文件
+// zhCN
 import zhCnCommonJson from './locales/zh-cn/common.json';
 import zhCnComponentsJson from './locales/zh-cn/components.json';
-import zhCnLayoutJson from './locales/zh-cn/layout.json';
 import zhCnPageJson from './locales/zh-cn/page.json';
 
 const resources = {
   'zh-CN': {
     common: zhCnCommonJson,
+    translation: zhCnCommonJson,
     components: zhCnComponentsJson,
-    layout: zhCnLayoutJson,
     page: zhCnPageJson,
-    translation: cn,
   },
   'en-US': {
     common: enUsCommonJson,
+    translation: enUsCommonJson,
     components: enUsComponentsJson,
-    layout: enUsLayoutJson,
     page: enUsPageJson,
-    translation: en,
   },
 };
 

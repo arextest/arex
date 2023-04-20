@@ -1,18 +1,6 @@
-export enum PanesType {
-  REQUEST = 'Request',
-  ENVIRONMENT = 'Environment',
-}
+export const RequestMethod = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
 
-export enum MenusType {
-  ENVIRONMENT = 'Environment',
-}
-
-export enum NodeTypeEnum {
-  request = 1,
-  case = 2,
-  folder = 3,
-}
-export enum MethodEnum {
+export enum RequestMethodEnum {
   GET = 'GET',
   POST = 'POST',
   PUT = 'PUT',

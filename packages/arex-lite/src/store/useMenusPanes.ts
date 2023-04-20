@@ -1,4 +1,4 @@
-import { PanesManager } from 'arex-core';
+import { ArexPaneManager } from 'arex-core';
 import { PanesData } from 'arex-core/src';
 import { ReactNode } from 'react';
 import { create } from 'zustand';
@@ -91,7 +91,7 @@ export const useMenusPanes = create(
           set({
             panes,
             activePane: latestPane?.key,
-            activeMenu: PanesManager.getMenuTypeByType(latestPane?.type),
+            activeMenu: ArexPaneManager.getMenuTypeByType(latestPane?.type),
           });
         } else {
           // panes are single pane, insert
@@ -110,7 +110,7 @@ export const useMenusPanes = create(
               index: state.paneMaxIndex + 1,
             });
 
-            state.activeMenu = PanesManager.getMenuTypeByType(panes.type);
+            state.activeMenu = ArexPaneManager.getMenuTypeByType(panes.type);
           });
         }
       },

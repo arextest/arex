@@ -1,9 +1,6 @@
 import { t } from 'i18next';
 import { FC, ReactNode } from 'react';
 
-import { MenusType } from '../constant';
-import EnvironmentMenu from './Environment';
-
 export type MenuConfig = {
   key: string;
   label: string;
@@ -26,19 +23,31 @@ export type ArexMenu = ArexMenuFC & {
   children?: ArexMenu[];
 };
 
-export function createMenu(Menu: ArexMenuFC, type: string, icon?: ReactNode) {
+/**
+ * 创建菜单
+ * @param Menu
+ * @param options
+ */
+export function createArexMenu(
+  Menu: ArexMenuFC,
+  options: {
+    type: string;
+    paneType: string;
+    icon?: ReactNode;
+    i18?: {
+      prefix?: string;
+      ns?: string;
+    };
+  },
+) {
+  const { type, paneType, icon, i18 = {} } = options;
+  const { prefix = 'arexMenu', ns } = i18;
   return Object.assign(Menu, {
     get menuName() {
-      return t(`arexMenu.${type}`);
+      return t(`${prefix}.${type}`, { ns });
     },
     type,
-    paneType: type,
+    paneType,
     icon,
   });
 }
-
-export const ArexMenus: Record<string, ArexMenu> = {
-  [MenusType.ENVIRONMENT]: EnvironmentMenu,
-};
-
-export default ArexMenus;

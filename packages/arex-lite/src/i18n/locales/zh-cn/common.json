@@ -54,5 +54,10 @@
   "request": "请求",
   "response": "响应",
   "version": "版本",
-  "modifiedTime": "修改时间"
+  "modifiedTime": "修改时间",
+  "arexMenu": {
+    "Demo": "Demo",
+    "Environment": "环境变量",
+    "Collection": "集合"
+  }
 }

@@ -1,8 +1,9 @@
 import { DeploymentUnitOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
+import { ArexPaneFC, createArexPane } from 'arex-core';
 import React from 'react';
 
 import { PanesType } from '../constant';
-import { ArexPaneFC, createPane } from './index';
 
 export type EnvironmentPanesData = {
   value: string;
@@ -16,14 +17,12 @@ const Environment: ArexPaneFC<EnvironmentPanesData> = (props) => {
     <div>
       <span>props.value: {props.data.value}</span>
       <span>count: {count}</span>
-      <button onClick={() => setCount((count) => count + 1)}>add</button>
+      <Button onClick={() => setCount((count) => count + 1)}>add</Button>
     </div>
   );
 };
 
-export default createPane(
-  Environment,
-  PanesType.ENVIRONMENT,
-  undefined,
-  <DeploymentUnitOutlined />,
-);
+export default createArexPane(Environment, {
+  type: PanesType.ENVIRONMENT,
+  icon: <DeploymentUnitOutlined />,
+});

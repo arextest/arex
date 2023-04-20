@@ -5,13 +5,14 @@ import {
   ArexMenuContainer,
   ArexMenuContainerProps,
   ArexPane,
+  ArexPaneManager,
   ArexPanesContainer,
   ArexPanesContainerProps,
   ErrorBoundary,
-  PanesManager,
 } from 'arex-core';
 import React, { useMemo } from 'react';
 
+import { PanesType } from '../constant';
 import { useInit } from '../hooks';
 import { useMenusPanes, useUserProfile } from '../store';
 
@@ -34,7 +35,7 @@ export default () => {
   const panesItems = useMemo(
     () =>
       panes.map((pane) => {
-        const Pane = PanesManager.getPanes().find(
+        const Pane = ArexPaneManager.getPanes().find(
           (p: ArexPane) => pane.type === p.type,
         ) as ArexPane;
         return {
@@ -57,8 +58,8 @@ export default () => {
 
   const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () =>
     setPanes({
-      // type: PanesType.DEMO,
-      type: 'Demo',
+      type: PanesType.DEMO,
+      // type: 'Demo',
       title: 'zzz',
       id: '123',
       data: { value: 'DemoPane' },

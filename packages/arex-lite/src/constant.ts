@@ -1,25 +1,17 @@
-import { ColorPrimary, getLocalStorage, MenusType, Theme } from 'arex-core';
+import { ColorPrimary, getLocalStorage, Theme } from 'arex-core';
+import { RequestMethodEnum } from 'arex-core/src';
 
-declare module 'arex-core' {
-  export enum PanesType {
-    DEMO = 'Demo',
-  }
-
-  export enum MenusType {
-    DEMO = 'Demo',
-  }
+export enum PanesType {
+  DEMO = 'Demo',
+  ENVIRONMENT = 'Environment',
 }
 
-export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
-
-export enum MethodEnum {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  DELETE = 'DELETE',
-  PATCH = 'PATCH',
+export enum MenusType {
+  DEMO = 'Demo',
+  ENVIRONMENT = 'Environment',
 }
-export const methodMap = {
+
+export const methodMap: Record<RequestMethodEnum, { color: string }> = {
   GET: {
     color: '#0cbb52',
   },

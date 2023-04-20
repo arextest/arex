@@ -56,5 +56,10 @@
   "request": "Request",
   "response": "Response",
   "version": "Version",
-  "modifiedTime": "Modified Time"
+  "modifiedTime": "Modified Time",
+  "arexMenu": {
+    "Demo": "Demo",
+    "Environment": "Environment",
+    "Collection": "Collection"
+  }
 }

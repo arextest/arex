@@ -1,8 +1,10 @@
 import { FileOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import { createMenu, MenusType } from 'arex-core';
-import { ArexMenuFC, MenusManager } from 'arex-core';
+import { createArexMenu } from 'arex-core';
+import { ArexMenuFC } from 'arex-core';
 import React from 'react';
+
+import { MenusType, PanesType } from '../constant';
 
 const Demo: ArexMenuFC = (props) => {
   return (
@@ -15,11 +17,8 @@ const Demo: ArexMenuFC = (props) => {
   );
 };
 
-export default createMenu(
-  Demo,
-  // TODO MenusType module 被重新 declare, 但是这里的 MenusType.DEMO 依然是 undefined
-  // 尝试通过 MenusManager 动态创建带类型的 MenusType 未果
-  // MenusType.DEMO,
-  'Demo',
-  <FileOutlined />,
-);
+export default createArexMenu(Demo, {
+  type: MenusType.DEMO,
+  paneType: PanesType.DEMO,
+  icon: <FileOutlined />,
+});
