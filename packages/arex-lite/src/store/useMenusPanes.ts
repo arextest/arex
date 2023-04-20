@@ -98,6 +98,10 @@ export const useMenusPanes = create(
           set((state) => {
             state.paneMaxIndex = state.paneMaxIndex + 1;
             state.activePane = getPaneKey(panes);
+
+            const menuType = ArexPaneManager.getMenuTypeByType(panes.type);
+            menuType && (state.activeMenu = menuType);
+
             // return if pane already exists
             if (state.panes.find((i) => i.key === getPaneKey(panes))) return;
             if (state.panes.length > MAX_PANES_COUNT) {
@@ -109,17 +113,13 @@ export const useMenusPanes = create(
               key: getPaneKey(panes),
               index: state.paneMaxIndex + 1,
             });
-
-            state.activeMenu = ArexPaneManager.getMenuTypeByType(panes.type);
           });
         }
       },
 
       // 关闭面板
       removePane(paneKey) {
-        console.log('removePane', paneKey);
         const panes = get().panes;
-        // const paneKey = getPaneKey(panes.find((i) => i.id === paneId));
         const filteredPanes = panes.filter((i) => i.key !== paneKey);
         get().setPanes(filteredPanes);
       },

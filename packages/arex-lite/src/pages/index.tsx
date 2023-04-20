@@ -12,14 +12,14 @@ import {
 } from 'arex-core';
 import React, { useMemo } from 'react';
 
+import HeaderMenu from '../components/HeaderMenu';
 import { PanesType } from '../constant';
 import { useInit } from '../hooks';
-import { useMenusPanes, useUserProfile } from '../store';
+import { useMenusPanes } from '../store';
 
 export default () => {
   useInit();
 
-  const { setTheme } = useUserProfile();
   const {
     collapsed,
     setCollapsed,
@@ -59,7 +59,6 @@ export default () => {
   const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () =>
     setPanes({
       type: PanesType.DEMO,
-      // type: 'Demo',
       title: 'zzz',
       id: '123',
       data: { value: 'DemoPane' },
@@ -67,7 +66,7 @@ export default () => {
 
   return (
     <>
-      <ArexHeader onThemeChange={setTheme} />
+      <ArexHeader menu={<HeaderMenu />} />
       <ArexMainContainer
         collapsed={collapsed}
         menus={

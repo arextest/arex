@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import { ArexPaneFC, createArexPane } from 'arex-core';
 import React from 'react';
 
-import { PanesType } from '../constant';
+import { MenusType, PanesType } from '../constant';
 
 export type EnvironmentPanesData = {
   value: string;
@@ -24,5 +24,6 @@ const Environment: ArexPaneFC<EnvironmentPanesData> = (props) => {
 
 export default createArexPane(Environment, {
   type: PanesType.ENVIRONMENT,
+  menuType: MenusType.ENVIRONMENT,
   icon: <DeploymentUnitOutlined />,
 });

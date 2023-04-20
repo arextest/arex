@@ -2,7 +2,7 @@ import { FileOutlined } from '@ant-design/icons';
 import { ArexPaneFC, createArexPane } from 'arex-core';
 import React from 'react';
 
-import { PanesType } from '../constant';
+import { MenusType, PanesType } from '../constant';
 
 const Demo: ArexPaneFC = (props) => {
   return <>DemoPane</>;
@@ -10,5 +10,6 @@ const Demo: ArexPaneFC = (props) => {
 
 export default createArexPane(Demo, {
   type: PanesType.DEMO,
+  menuType: MenusType.DEMO,
   icon: <FileOutlined />,
 });

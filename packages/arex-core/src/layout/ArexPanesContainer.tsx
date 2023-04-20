@@ -1,9 +1,11 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Dropdown, MenuProps, Tabs, TabsProps } from 'antd';
-import React, { useRef, useState } from 'react';
+import { Button, Dropdown, MenuProps, Tabs, TabsProps } from 'antd';
+import React, { useMemo, useRef, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+
+import { EmptyWrapper } from '../components';
 
 // https://ant.design/components/tabs-cn/#components-tabs-demo-custom-tab-bar-node
 const dropdownItems: MenuProps['items'] = [
@@ -135,43 +137,56 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
     </DefaultTabBar>
   );
 
-  const orderItems = [...items].sort((a, b) => {
-    const orderA = order.indexOf(a.key!);
-    const orderB = order.indexOf(b.key!);
+  const orderItems = useMemo(
+    () =>
+      items.sort((a, b) => {
+        const orderA = order.indexOf(a.key!);
+        const orderB = order.indexOf(b.key!);
 
-    if (orderA !== -1 && orderB !== -1) {
-      return orderA - orderB;
-    }
-    if (orderA !== -1) {
-      return -1;
-    }
-    if (orderB !== -1) {
-      return 1;
-    }
+        if (orderA !== -1 && orderB !== -1) {
+          return orderA - orderB;
+        }
+        if (orderA !== -1) {
+          return -1;
+        }
+        if (orderB !== -1) {
+          return 1;
+        }
 
-    const ia = items.indexOf(a);
-    const ib = items.indexOf(b);
+        const ia = items.indexOf(a);
+        const ib = items.indexOf(b);
 
-    return ia - ib;
-  });
+        return ia - ib;
+      }),
+    [items],
+  );
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <Tabs
-        css={css`
-          .ant-tabs-nav {
-            margin-bottom: 0;
-          }
-        `}
-        renderTabBar={renderTabBar}
-        size='small'
-        type='editable-card'
-        tabBarGutter={-1}
-        onEdit={handleTabsEdit}
-        items={orderItems}
-        {...restTabsProps}
-      />
-    </DndProvider>
+    <EmptyWrapper
+      empty={!orderItems.length}
+      description={
+        <Button type='primary' onClick={props.onAdd}>
+          New Request
+        </Button>
+      }
+    >
+      <DndProvider backend={HTML5Backend}>
+        <Tabs
+          css={css`
+            .ant-tabs-nav {
+              margin-bottom: 0;
+            }
+          `}
+          renderTabBar={renderTabBar}
+          size='small'
+          type='editable-card'
+          tabBarGutter={-1}
+          onEdit={handleTabsEdit}
+          items={orderItems}
+          {...restTabsProps}
+        />
+      </DndProvider>
+    </EmptyWrapper>
   );
 })`
   height: 100%;

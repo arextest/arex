@@ -1,9 +1,9 @@
 import { Empty, theme } from 'antd';
 import { MappingAlgorithm } from 'antd/es/config-provider/context';
-import { ArexCoreProvider, ColorPrimary, generateToken, Theme } from 'arex-core';
+import { ArexCoreProvider, generateToken, Theme } from 'arex-core';
 import React, { useMemo } from 'react';
 
-import { DEFAULT_COLOR_PRIMARY, DEFAULT_THEME } from './constant';
+import { DEFAULT_COLOR_PRIMARY } from './constant';
 import { I18nextLng, localeMap } from './i18n';
 import { GlobalConfigProvider } from './providers';
 import Routes from './router';
@@ -16,7 +16,7 @@ const App = () => {
   // TODO get from user profile
   const { theme } = useUserProfile();
   const compactMode = false;
-  const colorPrimary = ColorPrimary.green;
+  const colorPrimary = DEFAULT_COLOR_PRIMARY;
   const language: I18nextLng = 'en-US';
 
   const algorithm = useMemo<MappingAlgorithm[]>(() => {
@@ -36,8 +36,7 @@ const App = () => {
       renderEmpty={() => Empty.PRESENTED_IMAGE_SIMPLE}
     >
       <GlobalStyle>
-        {/* arex-core default config */}
-        <ArexCoreProvider theme={DEFAULT_THEME} colorPrimary={DEFAULT_COLOR_PRIMARY}>
+        <ArexCoreProvider theme={theme}>
           <Routes />
         </ArexCoreProvider>
       </GlobalStyle>

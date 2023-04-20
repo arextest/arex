@@ -11,10 +11,13 @@
     "do-build": "pnpm run build:code && pnpm run build:decl"
   },
   "types": "./dist/index.d.ts",
-  "files": [ "dist/*" ],
+  "files": [
+    "dist/*"
+  ],
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@emotion/react": "^11.10.6",
+    "@emotion/serialize": "^1.1.1",
     "@emotion/styled": "^11.10.6",
     "allotment": "^1.18.1",
     "antd": "^5.3.2",
