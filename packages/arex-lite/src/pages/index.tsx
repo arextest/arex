@@ -44,12 +44,12 @@ export default () => {
         ) as ArexPane;
         return {
           key: pane.key || '',
-          // 规定: 翻译文本需要配置在 locales/[lang]/common.json => "arexPane" 下, 且 key 为 Pane.name 即组件名 (注意首字母大写)
+          // 规定: 翻译文本需要配置在 locales/[lang]/common.json => "arexPane" 下, 且 key 为 Pane.type
           label: (
             <>
               <span>{Pane.icon}</span>
               <Typography.Text ellipsis style={{ maxWidth: '120px' }}>
-                {`${t(`arexPane.${Pane.name}`)} - ${pane.id}`}
+                {`${t(`arexPane.${Pane.type}`)} - ${pane.id}`}
               </Typography.Text>
             </>
           ),

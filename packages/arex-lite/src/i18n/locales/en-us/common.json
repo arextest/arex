@@ -58,13 +58,13 @@
   "version": "Version",
   "modifiedTime": "Modified Time",
   "arexMenu": {
-    "Demo": "Demo",
-    "Environment": "Environment",
-    "Collection": "Collection"
+    "demo": "Demo",
+    "environment": "Environment",
+    "collection": "Collection"
   },
   "arexPane": {
-    "Demo": "Demo",
-    "Environment": "Environment",
-    "Collection": "Collection"
+    "demo": "Demo",
+    "environment": "Environment",
+    "collection": "Collection"
   }
 }

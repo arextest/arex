@@ -32,8 +32,8 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
       ArexMenuManager.getMenus()
         .map((Menu) => ({
           icon: Menu.icon,
-          // 规定: 翻译文本需要配置在 locales/[lang]/common.json => "arexMenu" 下, 且 key 为 Menu.name 即组件名 (注意首字母大写)
-          label: t(`arexMenu.${Menu.name}`),
+          // 规定: 翻译文本需要配置在 locales/[lang]/common.json => "arexMenu" 下, 且 key 为 Menu.type
+          label: t(`arexMenu.${Menu.type}`),
           key: Menu.type,
         }))
         .concat({
