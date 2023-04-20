@@ -31,7 +31,8 @@
     "react-dom": "^18.2.0",
     "react-github-btn": "^1.4.0",
     "react-i18next": "^12.2.0",
-    "use-immer": "^0.8.1"
+    "use-immer": "^0.8.1",
+    "vconsole": "^3.15.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
