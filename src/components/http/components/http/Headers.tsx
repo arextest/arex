@@ -34,10 +34,7 @@ const HttpHeaders = () => {
         size='small'
         rowKey={'id'}
         pagination={false}
-        dataSource={store.request.headers.map((i: any) => ({
-          ...i,
-          id: String(Math.random()),
-        }))}
+        dataSource={requestHeaders}
         // @ts-ignore
         columns={useColumns(setRequestHeaders, true)}
       />
