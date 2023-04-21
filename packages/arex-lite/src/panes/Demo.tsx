@@ -19,15 +19,11 @@ const Demo: ArexPaneFC = (props) => {
 
         <Button
           onClick={() => {
-            paneNav(
-              {
-                workspaceId: '321',
-                menuType: MenusType.ENVIRONMENT,
-                paneType: PanesType.DEMO,
-                id: '123',
-              },
-              { name: 'Tom', age: 10 },
-            );
+            paneNav({
+              id: '123',
+              type: PanesType.DEMO,
+              data: { name: 'Tom', age: 10 },
+            });
           }}
         >
           nav

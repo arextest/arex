@@ -1,33 +1,28 @@
-import { decodeUrl, encodeUrl, StandardPathParams } from 'arex-core';
+import { ArexPaneManager, decodeUrl, encodeUrl, StandardPathParams } from 'arex-core';
 import { useNavigate } from 'react-router-dom';
 
 import { useMenusPanes } from '../store';
-import { encodePaneKey } from '../store/useMenusPanes';
+import { Pane } from '../store/useMenusPanes';
 
-function useNavPane(options?: { updateMenusPanesStore: boolean }) {
-  const { updateMenusPanesStore = true } = options || {};
+function useNavPane() {
   const nav = useNavigate();
-  const { setActivePane, setActiveMenu } = useMenusPanes();
+  const { setPanes } = useMenusPanes();
 
-  return function (
-    pathParams: {
-      workspaceId?: string;
-      menuType?: string;
-      paneType?: string;
-      id?: string;
-    },
-    data?: object,
-  ) {
+  return function (pane: Pane) {
     const match = decodeUrl();
 
-    const mergedParams = { ...match.params, ...pathParams } as StandardPathParams;
-    const mergedData = { ...match.query, ...data };
+    const mergedParams = {
+      ...match.params,
+      ...{
+        menuType: ArexPaneManager.getMenuTypeByType(pane.type),
+        paneType: pane.type,
+        id: pane.id,
+      },
+    } as StandardPathParams;
+    const mergedData = { ...match.query, ...pane.data };
     const url = encodeUrl(mergedParams, mergedData);
 
-    if (updateMenusPanesStore) {
-      setActivePane(encodePaneKey({ type: mergedParams.paneType, id: mergedParams.id }));
-      setActiveMenu(mergedParams.menuType);
-    }
+    setPanes(pane);
 
     return nav(url);
   };
