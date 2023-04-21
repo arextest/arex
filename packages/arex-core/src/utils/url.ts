@@ -1,6 +1,7 @@
-import { match } from 'path-to-regexp';
+import { compile, match } from 'path-to-regexp';
+import qs from 'qs';
 
-import { StandardPath } from '../constant';
+import { StandardPath, StandardPathParams } from '../constant';
 
 /**
  * 获取当前 URL 所有 GET 查询参数
@@ -20,18 +21,25 @@ export function getUrlQueryParams(url = location.search) {
   return params;
 }
 
-export const matchUrlParams = (url: string) => {
-  // const { pathname, search } = location;
-  const [path, query] = url.split('?');
+export const decodeUrl = () => {
+  const { pathname, search } = location;
   const matchUrl = match(StandardPath, {
     decode: decodeURIComponent,
-  })(path);
-  const matchUrlParams = matchUrl && matchUrl.params;
+  })(pathname);
+  const matchUrlParams = matchUrl ? matchUrl.params : undefined;
 
   return {
     params: matchUrlParams,
-    query: getUrlQueryParams(query),
+    query: getUrlQueryParams(search),
   };
+};
+
+export const encodeUrl = (pathParams: StandardPathParams, data?: object) => {
+  const compileUrl = compile(StandardPath, { encode: encodeURIComponent });
+  let url = compileUrl(pathParams);
+  if (data && Object.keys(data).length) url += `?${qs.stringify(data)}`;
+
+  return url;
 };
 
 export const objToUrl = (obj: Record<string, string | number>) => {

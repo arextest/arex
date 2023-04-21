@@ -1,8 +1,13 @@
-import { matchUrlParams } from 'arex-core';
+import { decodeUrl, encodeUrl, StandardPathParams } from 'arex-core';
 import { useNavigate } from 'react-router-dom';
 
-function useNavPane() {
+import { useMenusPanes } from '../store';
+import { encodePaneKey } from '../store/useMenusPanes';
+
+function useNavPane(options?: { updateMenusPanesStore: boolean }) {
+  const { updateMenusPanesStore = true } = options || {};
   const nav = useNavigate();
+  const { setActivePane, setActiveMenu } = useMenusPanes();
 
   return function (
     pathParams: {
@@ -13,9 +18,18 @@ function useNavPane() {
     },
     data?: object,
   ) {
-    // TODO 动态增量更新 pathParams 和 search
-    // matchUrlParams('');
-    // nav();
+    const match = decodeUrl();
+
+    const mergedParams = { ...match.params, ...pathParams } as StandardPathParams;
+    const mergedData = { ...match.query, ...data };
+    const url = encodeUrl(mergedParams, mergedData);
+
+    if (updateMenusPanesStore) {
+      setActivePane(encodePaneKey({ type: mergedParams.paneType, id: mergedParams.id }));
+      setActiveMenu(mergedParams.menuType);
+    }
+
+    return nav(url);
   };
 }
 

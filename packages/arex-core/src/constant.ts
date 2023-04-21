@@ -1,4 +1,10 @@
 export const StandardPath = '/:workspaceId/:menuType/:paneType/:id';
+export type StandardPathParams = {
+  workspaceId: string;
+  menuType: string;
+  paneType: string;
+  id: string;
+};
 
 export const RequestMethod = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
 

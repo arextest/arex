@@ -1,6 +1,7 @@
 import { ArexPaneManager } from 'arex-core';
 import { PanesData } from 'arex-core/src';
 import { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -29,8 +30,8 @@ export type MenusPanesState = {
 
 export type MenusPanesAction = {
   setCollapsed: (collapsed: boolean) => void;
-  setActiveMenu: (menuKey: string) => void;
-  setActivePane: (paneKey: string) => void;
+  setActiveMenu: (menuKey?: string) => void;
+  setActivePane: (paneKey?: string) => void;
   setPanes: <D extends PanesData = PanesData>(panes: Pane<D> | Pane<D>[]) => void;
   removePane: (paneKey: string) => void;
   removeSegmentPages: (paneKey: string, segment: 'left' | 'right') => void;
@@ -45,8 +46,13 @@ const initialState: MenusPanesState = {
   paneMaxIndex: 0,
 };
 
-export function getPaneKey(pane?: Pane) {
+export function encodePaneKey(pane?: Pane) {
   return pane && `${pane.type}_${pane.id}`;
+}
+
+export function decodePaneKey(paneKey?: string) {
+  const [type, id] = paneKey?.split('_') || [];
+  return { type, id };
 }
 
 export const useMenusPanes = create(
@@ -98,20 +104,20 @@ export const useMenusPanes = create(
             // panes are single pane, insert
             set((state) => {
               state.paneMaxIndex = state.paneMaxIndex + 1;
-              state.activePane = getPaneKey(panes);
+              state.activePane = encodePaneKey(panes);
 
               const menuType = ArexPaneManager.getMenuTypeByType(panes.type);
               menuType && (state.activeMenu = menuType);
 
               // return if pane already exists
-              if (state.panes.find((i) => i.key === getPaneKey(panes))) return;
+              if (state.panes.find((i) => i.key === encodePaneKey(panes))) return;
               if (state.panes.length > MAX_PANES_COUNT) {
                 state.panes.shift();
               }
               // insert new page with sortIndex
               state.panes.push({
                 ...panes,
-                key: getPaneKey(panes),
+                key: encodePaneKey(panes),
                 index: state.paneMaxIndex + 1,
               });
             });
@@ -128,7 +134,7 @@ export const useMenusPanes = create(
         // 关闭左侧或右侧的面板
         removeSegmentPages: (paneId, segment) => {
           const panes = get().panes;
-          const paneKey = getPaneKey(panes.find((i) => i.id === paneId));
+          const paneKey = encodePaneKey(panes.find((i) => i.id === paneId));
 
           const index = panes.findIndex((page) => page.key === paneKey);
           Number.isInteger(index) &&
@@ -148,14 +154,6 @@ export const useMenusPanes = create(
       },
     ),
   ),
-);
-
-useMenusPanes.subscribe(
-  (state) => ({ activePane: state.activePane, activeMenu: state.activeMenu }),
-  (curr) => {
-    console.log('curr', curr);
-    // TODO update url
-  },
 );
 
 export default useMenusPanes;

@@ -1,11 +1,10 @@
-import { Typography } from 'antd';
+import { TabsProps, Typography } from 'antd';
 import {
   ArexFooter,
   ArexHeader,
   ArexMainContainer,
   ArexMenuContainer,
   ArexMenuContainerProps,
-  ArexPane,
   ArexPaneManager,
   ArexPanesContainer,
   ArexPanesContainerProps,
@@ -18,7 +17,7 @@ import HeaderMenu from '../components/HeaderMenu';
 import { PanesType } from '../constant';
 import { useInit } from '../hooks';
 import { useMenusPanes } from '../store';
-import { getPaneKey } from '../store/useMenusPanes';
+import { encodePaneKey } from '../store/useMenusPanes';
 
 export default () => {
   useInit();
@@ -58,7 +57,7 @@ export default () => {
             ),
           };
         })
-        .filter(Boolean),
+        .filter(Boolean) as TabsProps['items'],
     [panes, t],
   );
 
@@ -66,7 +65,7 @@ export default () => {
     setPanes({
       id,
       type,
-      title: getPaneKey({ id, type }),
+      title: encodePaneKey({ id, type }),
     });
   };
 
@@ -74,7 +73,8 @@ export default () => {
     setPanes({
       type: PanesType.DEMO,
       title: 'Untitled',
-      id: Math.random().toString(36).substring(2),
+      // id: Math.random().toString(36).substring(2),
+      id: '123',
       data: { value: 'DemoPane' },
     });
 
