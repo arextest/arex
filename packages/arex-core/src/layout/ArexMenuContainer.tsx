@@ -51,6 +51,7 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
 
   const MenuContent = useMemo(() => {
     const Content = ArexMenuManager.getMenuByType(props.activeKey);
+    console.log('found', ArexMenuManager.getMenus());
     return (
       !props.collapsed &&
       Content && (

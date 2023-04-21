@@ -38,24 +38,27 @@ export default () => {
 
   const panesItems = useMemo(
     () =>
-      panes.map((pane) => {
-        const Pane = ArexPaneManager.getPanes().find(
-          (p: ArexPane) => pane.type === p.type,
-        ) as ArexPane;
-        return {
-          key: pane.key || '',
-          // 规定: 翻译文本需要配置在 locales/[lang]/common.json => "arexPane" 下, 且 key 为 Pane.type
-          label: (
-            <>
-              <span>{Pane.icon}</span>
-              <Typography.Text ellipsis style={{ maxWidth: '120px' }}>
-                {`${t(`arexPane.${Pane.type}`)} - ${pane.id}`}
-              </Typography.Text>
-            </>
-          ),
-          children: <ErrorBoundary>{React.createElement(Pane, { data: pane.data })}</ErrorBoundary>,
-        };
-      }),
+      panes
+        .map((pane) => {
+          const Pane = ArexPaneManager.getPaneByType(pane.type);
+          if (!Pane) return;
+          return {
+            key: pane.key || '',
+            // 规定: 翻译文本需要配置在 locales/[lang]/common.json => "arexPane" 下, 且 key 为 Pane.type
+            label: (
+              <>
+                <span>{Pane.icon}</span>
+                <Typography.Text ellipsis style={{ maxWidth: '120px' }}>
+                  {`${t(`arexPane.${Pane.type}`)} - ${pane.id}`}
+                </Typography.Text>
+              </>
+            ),
+            children: (
+              <ErrorBoundary>{React.createElement(Pane, { data: pane.data })}</ErrorBoundary>
+            ),
+          };
+        })
+        .filter(Boolean),
     [panes, t],
   );
 

@@ -1,21 +1,26 @@
 import { ArexPane, PanesData } from './ArexPane';
 
 export class ArexPaneManager {
-  private static panesMap: Record<string, ArexPane> = {};
+  private static panesMap: Map<string, ArexPane> = new Map<string, ArexPane>();
 
   public static getPanes(): Array<ArexPane> {
-    return Object.values(this.panesMap);
+    return Array.from(this.panesMap.values());
+  }
+
+  public static getPanesMap(): Map<string, ArexPane> {
+    return this.panesMap;
   }
 
   public static registerPanes(panesMap: { [key: string]: ArexPane }) {
-    this.panesMap = {
-      ...this.panesMap,
-      ...panesMap,
-    };
+    for (const name in panesMap) {
+      const menu = panesMap[name];
+      if (this.panesMap.has(menu.type)) continue;
+      this.panesMap.set(menu.type, menu);
+    }
   }
 
   public static getPaneByType<T extends PanesData>(type?: string): ArexPane<T> | undefined {
-    return type ? (this.panesMap[type] as ArexPane<T>) : undefined;
+    return type ? this.panesMap.get(type) : undefined;
   }
 
   public static getMenuTypeByType(type?: string): string | undefined {
