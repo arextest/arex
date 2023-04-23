@@ -1,7 +1,14 @@
-import { ArexPane, PanesData } from './ArexPane';
+import { ArexPanesType } from '../constant';
+import { ArexPane, ArexPanes, PanesData } from '../panes';
 
 export class ArexPaneManager {
-  private static panesMap: Map<string, ArexPane> = new Map<string, ArexPane>();
+  private static panesMap: Map<string, ArexPane> = (() => {
+    const map = new Map<string, ArexPane>();
+    for (const pane in ArexPanes) {
+      map.set(pane, ArexPanes[pane]);
+    }
+    return map;
+  })();
 
   public static getPanes(): Array<ArexPane> {
     return Array.from(this.panesMap.values());
@@ -20,7 +27,10 @@ export class ArexPaneManager {
   }
 
   public static getPaneByType<T extends PanesData>(type?: string): ArexPane<T> | undefined {
-    return type ? this.panesMap.get(type) : undefined;
+    return (
+      this.panesMap.get(type || ArexPanesType.PANE_NOT_FOUND) ||
+      ArexPanes[ArexPanesType.PANE_NOT_FOUND]
+    );
   }
 
   public static getMenuTypeByType(type?: string): string | undefined {

@@ -1,5 +1,8 @@
 import React from 'react';
 
+import { ArexPanesType } from '../constant';
+import PaneNotFound from './PaneNotFound';
+
 export type ArexPane<D extends PanesData = PanesData> = ArexPaneFC<D> & {
   icon?: React.ReactNode;
   type: string;
@@ -25,3 +28,7 @@ export function createArexPane<D extends PanesData>(
     icon,
   });
 }
+
+export const ArexPanes: Record<string, ArexPane> = {
+  [ArexPanesType.PANE_NOT_FOUND]: PaneNotFound,
+};

@@ -6,6 +6,10 @@ export type StandardPathParams = {
   id: string;
 };
 
+export enum ArexPanesType {
+  PANE_NOT_FOUND = 'pane-not-found',
+}
+
 export const RequestMethod = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
 
 export enum RequestMethodEnum {

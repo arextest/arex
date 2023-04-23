@@ -61,6 +61,7 @@
     "collection": "集合"
   },
   "arexPane": {
+    "pane-not-found": "PaneNotFound",
     "demo": "样例",
     "environment": "环境变量",
     "collection": "集合"

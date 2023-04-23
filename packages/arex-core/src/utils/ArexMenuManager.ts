@@ -1,4 +1,4 @@
-import { ArexMenu } from './ArexMenu';
+import { ArexMenu } from '../menus';
 
 export class ArexMenuManager {
   private static menusMap: Map<string, ArexMenu> = new Map();
