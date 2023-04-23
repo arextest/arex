@@ -23,7 +23,7 @@ const ArexMainContainer: FC<ArexMainContainerProps> = (props) => {
         {props.menus}
       </Allotment.Pane>
 
-      <Allotment.Pane visible>{props.panes}</Allotment.Pane>
+      <Allotment.Pane>{props.panes}</Allotment.Pane>
     </Allotment>
   );
 };

@@ -94,7 +94,7 @@ export default () => {
         }
         panes={
           <ArexPanesContainer
-            activeKey={activePane}
+            activeKey={activePane?.key}
             items={panesItems}
             onChange={setActivePane}
             onAdd={handlePaneAdd}

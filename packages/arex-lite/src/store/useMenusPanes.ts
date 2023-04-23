@@ -23,7 +23,7 @@ export type Pane<D extends PanesData = PanesData> = {
 export type MenusPanesState = {
   collapsed: boolean;
   activeMenu?: string; // MenusType
-  activePane?: string; // PaneKey
+  activePane?: Pane<PanesData>;
   panes: Pane<PanesData>[];
   paneMaxIndex: number; // 用于同步 panes 中 index 的最大值
 };
@@ -81,7 +81,7 @@ export const useMenusPanes = create(
             const statePane = state.panes.find((i) => i.key === paneKey);
             if (statePane) {
               statePane.index = state.paneMaxIndex = state.paneMaxIndex + 1;
-              state.activePane = paneKey;
+              state.activePane = statePane;
             }
           });
         },
@@ -97,14 +97,14 @@ export const useMenusPanes = create(
 
             set({
               panes,
-              activePane: latestPane?.key,
+              activePane: latestPane,
               activeMenu: ArexPaneManager.getMenuTypeByType(latestPane?.type),
             });
           } else {
             // panes are single pane, insert
             set((state) => {
               state.paneMaxIndex = state.paneMaxIndex + 1;
-              state.activePane = encodePaneKey(panes);
+              state.activePane = panes;
 
               const menuType = ArexPaneManager.getMenuTypeByType(panes.type);
               menuType && (state.activeMenu = menuType);

@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 
 import * as Menus from '../menus';
 import * as Panes from '../panes';
-import useMenusPanes, { decodePaneKey } from '../store/useMenusPanes';
+import useMenusPanes from '../store/useMenusPanes';
 
 const useInit = () => {
   // register menus and panes
@@ -21,11 +21,16 @@ const useInit = () => {
   const nav = useNavigate();
 
   useEffect(() => {
+    // TODO test, remove after workspace function realize
+    if (location.pathname === '/') {
+      nav('/this-is-workspace-id');
+    }
+
     const unsSubscribe = useMenusPanes.subscribe(
       (state) => ({ activePane: state.activePane, activeMenu: state.activeMenu }),
       (currPane) => {
         const match = decodeUrl();
-        const { id, type: paneType } = decodePaneKey(currPane.activePane);
+        const { id, type: paneType, data } = currPane.activePane || {};
 
         const mergedParams = {
           ...match.params,
@@ -35,13 +40,8 @@ const useInit = () => {
             id,
           },
         } as StandardPathParams;
-        const mergedData = {
-          ...match.query,
-          // TODO get pane data
-          // ...pane.data
-        };
 
-        const url = encodeUrl(mergedParams, mergedData);
+        const url = encodeUrl(mergedParams, data);
         nav(url);
       },
     );

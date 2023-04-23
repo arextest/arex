@@ -1,29 +1,27 @@
 import { Spin } from 'antd';
-import { StandardPath } from 'arex-core';
+import { RouterPath } from 'arex-core';
 import React, { FC, lazy, Suspense } from 'react';
 import { RouteObject } from 'react-router-dom';
 
+import Home from '../pages';
+
 export type Routes = {
   path: string;
-  component: React.LazyExoticComponent<FC>;
+  component: React.LazyExoticComponent<FC> | FC;
   children?: Routes[];
 };
 
-const routes: Routes[] = [
-  {
-    path: '/',
-    component: lazy(() => import('../pages')),
-  },
-  {
-    path: StandardPath,
-    component: lazy(() => import('../pages')),
-  },
-
-  {
-    path: '/login',
-    component: lazy(() => import('../pages/Login')),
-  },
-];
+const routes: Routes[] = Object.values(RouterPath)
+  .map<Routes>((path) => ({
+    path,
+    component: Home,
+  }))
+  .concat([
+    {
+      path: '/login',
+      component: lazy(() => import('../pages/Login')),
+    },
+  ]);
 
 const syncRouter = (table: Routes[]): RouteObject[] =>
   table.map((route) => ({

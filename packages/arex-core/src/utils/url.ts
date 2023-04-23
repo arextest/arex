@@ -1,7 +1,7 @@
 import { compile, match } from 'path-to-regexp';
 import qs from 'qs';
 
-import { StandardPath, StandardPathParams } from '../constant';
+import { StandardPathParams, StandardPathReg } from '../constant';
 
 /**
  * 获取当前 URL 所有 GET 查询参数
@@ -23,7 +23,7 @@ export function getUrlQueryParams(url = location.search) {
 
 export const decodeUrl = () => {
   const { pathname, search } = location;
-  const matchUrl = match(StandardPath, {
+  const matchUrl = match(StandardPathReg, {
     decode: decodeURIComponent,
   })(pathname);
   const matchUrlParams = matchUrl ? matchUrl.params : undefined;
@@ -34,10 +34,10 @@ export const decodeUrl = () => {
   };
 };
 
-export const encodeUrl = (pathParams: StandardPathParams, data?: object) => {
-  const compileUrl = compile(StandardPath, { encode: encodeURIComponent });
+export const encodeUrl = (pathParams: Partial<StandardPathParams>, data?: object) => {
+  const compileUrl = compile(StandardPathReg, { encode: encodeURIComponent });
   let url = compileUrl(pathParams);
-  if (data && Object.keys(data).length) url += `?${qs.stringify(data)}`;
+  if (pathParams.paneType && data && Object.keys(data).length) url += `?${qs.stringify(data)}`;
 
   return url;
 };
