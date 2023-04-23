@@ -1,10 +1,14 @@
 import { FileOutlined } from '@ant-design/icons';
 import { Button, Space } from 'antd';
-import { ArexPaneFC, createArexPane, decodeUrl } from 'arex-core';
+import { ArexPaneFC, createArexPane, decodeUrl, styled } from 'arex-core';
 import React, { useState } from 'react';
 
 import { MenusType, PanesType } from '../constant';
 import useNavPane from '../hooks/useNavPane';
+
+const StyledDiv = styled.div`
+  color: ${(props) => props.theme.colorPrimary};
+`;
 
 const Demo: ArexPaneFC = (props) => {
   const paneNav = useNavPane();
@@ -13,7 +17,7 @@ const Demo: ArexPaneFC = (props) => {
   return (
     <div>
       <div>DemoPane</div>
-
+      <StyledDiv>zzz</StyledDiv>
       <Space>
         <div>url encode/decode demo </div>
 

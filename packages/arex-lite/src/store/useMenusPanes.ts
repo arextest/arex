@@ -1,7 +1,6 @@
 import { ArexPaneManager } from 'arex-core';
 import { PanesData } from 'arex-core/src';
 import { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
