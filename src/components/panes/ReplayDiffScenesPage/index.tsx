@@ -132,7 +132,7 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
       planItemId: props.page.data.planItemId,
       diffResultCodeList: [0, 1, 2],
       pageIndex: 0,
-      pageSize: 99, // TODO lazy load
+      pageSize: 2000, // TODO lazy load
       needTotal: true,
     });
     setModalTitle(title);

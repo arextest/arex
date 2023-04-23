@@ -38,7 +38,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
         ...params,
         diffResultCodeList: [0, 1, 2],
         pageIndex: 0,
-        pageSize: 99, // TODO lazy load
+        pageSize: 2000, // TODO lazy load
         needTotal: true,
       }),
     {
