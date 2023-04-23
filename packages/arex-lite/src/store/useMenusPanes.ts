@@ -103,8 +103,13 @@ export const useMenusPanes = create(
           } else {
             // panes are single pane, insert
             set((state) => {
+              const newPane = {
+                ...panes,
+                key: panes.key || encodePaneKey(panes),
+                index: state.paneMaxIndex + 1,
+              };
+              state.activePane = newPane;
               state.paneMaxIndex = state.paneMaxIndex + 1;
-              state.activePane = panes;
 
               const menuType = ArexPaneManager.getMenuTypeByType(panes.type);
               menuType && (state.activeMenu = menuType);
@@ -114,12 +119,8 @@ export const useMenusPanes = create(
               if (state.panes.length > MAX_PANES_COUNT) {
                 state.panes.shift();
               }
-              // insert new page with sortIndex
-              state.panes.push({
-                ...panes,
-                key: encodePaneKey(panes),
-                index: state.paneMaxIndex + 1,
-              });
+              // insert new pane with sortIndex
+              state.panes.push(newPane);
             });
           }
         },
@@ -136,7 +137,7 @@ export const useMenusPanes = create(
           const panes = get().panes;
           const paneKey = encodePaneKey(panes.find((i) => i.id === paneId));
 
-          const index = panes.findIndex((page) => page.key === paneKey);
+          const index = panes.findIndex((pane) => pane.key === paneKey);
           Number.isInteger(index) &&
             set({
               panes:
