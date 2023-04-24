@@ -10,6 +10,12 @@ import { ClickToComponent } from 'click-to-react-component';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+
+import App from './App';
+import { ArexVersionKey, ArexVersionValue } from './constant';
+if (!localStorage.getItem(ArexVersionKey)) {
+  localStorage.setItem(ArexVersionKey, ArexVersionValue);
+}
 if (import.meta.env.MODE !== 'development') {
   Sentry.init({
     dsn: 'https://bd34e6a640f44ebdad2e05fd993474bd@sentry-performance.ctrip.com/3',
@@ -17,8 +23,6 @@ if (import.meta.env.MODE !== 'development') {
     tracesSampleRate: 1.0,
   });
 }
-
-import App from './App';
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <BrowserRouter>

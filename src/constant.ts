@@ -1,5 +1,6 @@
 export const ExtensionVersion = '1.0.4';
-
+export const ArexVersionKey = 'arexVersion';
+export const ArexVersionValue = '0.2.8';
 export const METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
 export enum MethodEnum {
   GET = 'GET',

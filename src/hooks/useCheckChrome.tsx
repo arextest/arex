@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { ExtensionVersion } from '../constant';
-import { getChromeVersion, versionStringCompare } from '../helpers/utils';
+import { checkArexVersion, getChromeVersion, versionStringCompare } from '../helpers/utils';
 
 const useCheckChrome = () => {
   const nav = useNavigate();
@@ -16,6 +16,10 @@ const useCheckChrome = () => {
       if (getChromeVersion() < 0) {
         localStorage.clear();
         nav('/upgradebrowser');
+      } else if (!checkArexVersion()) {
+        // 检查是否更新过arex
+        localStorage.clear();
+        window.location.href = '/login';
       } else if (!window.__AREX_EXTENSION_INSTALLED__) {
         message.info(
           <div>
