@@ -36,11 +36,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace('/storage', '/api'),
       },
-      // '^/node/.*': {
-      //   target: 'http://10.5.153.1:10001',
-      //   changeOrigin: true,
-      //   rewrite: (path) => path.replace('/node', '/'),
-      // },
+      '^/node/.*': {
+        target: 'http://10.5.153.1:10001',
+        changeOrigin: true,
+        rewrite: (path) => path.replace('/node', '/'),
+      },
     },
   },
 });
