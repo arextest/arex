@@ -47,7 +47,9 @@ const ReplayPage: PageFC<ApplicationDataType> = (props) => {
             onSelectedPlanChange={handleSelectPlan}
           />
         }
-        panel={<ReplayReport selectedPlan={selectedPlan} />}
+        panel={
+          <ReplayReport selectedPlan={selectedPlan} filter={(record) => !!record.totalCaseCount} />
+        }
       />
     </>
   ) : (
