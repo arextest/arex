@@ -1,24 +1,31 @@
-import 'dayjs/locale/zh-cn';
+import { ArexMenuNamespace, ArexPaneNamespace, I18nextLng } from 'arex-core';
 
-import { Locale } from 'antd/es/locale';
-import en from 'antd/locale/en_US';
-import zh from 'antd/locale/zh_CN';
+import arexMenuCn from './locales/cn/arex-menu.json';
+import arexPaneCn from './locales/cn/arex-pane.json';
+import commonCn from './locales/cn/common.json';
+import componentsCn from './locales/cn/components.json';
+import pageCn from './locales/cn/page.json';
+import arexMenuEn from './locales/en/arex-menu.json';
+import arexPaneEn from './locales/en/arex-pane.json';
+import commonEn from './locales/en/common.json';
+import componentsEn from './locales/en/components.json';
+import pageEn from './locales/en/page.json';
 
-import i18n from './react-i18next.config';
-
-export enum I18nextLng {
-  ZH = 'zh-CN',
-  EN = 'en-US',
-}
-
-export const local: { key: `${I18nextLng}`; name: string }[] = [
-  { key: 'en-US', name: 'English' },
-  { key: 'zh-CN', name: '简体中文' },
-];
-
-export const localeMap: { [key in I18nextLng]: Locale } = {
-  'zh-CN': zh,
-  'en-US': en,
+export const resources = {
+  [I18nextLng.cn]: {
+    [ArexMenuNamespace]: arexPaneCn,
+    [ArexPaneNamespace]: arexMenuCn,
+    common: commonCn,
+    translation: commonCn,
+    components: componentsCn,
+    page: pageCn,
+  },
+  [I18nextLng.en]: {
+    [ArexMenuNamespace]: arexPaneEn,
+    [ArexPaneNamespace]: arexMenuEn,
+    common: commonEn,
+    translation: commonEn,
+    components: componentsEn,
+    page: pageEn,
+  },
 };
-
-export default i18n;

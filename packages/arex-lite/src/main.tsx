@@ -1,7 +1,6 @@
 import 'allotment/dist/style.css';
 import 'antd/dist/reset.css';
 import './style/style.css';
-import './i18n';
 import 'dayjs/locale/zh-cn';
 
 import React from 'react';

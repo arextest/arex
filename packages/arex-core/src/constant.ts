@@ -18,6 +18,11 @@ export enum ArexPanesType {
   PANE_NOT_FOUND = 'pane-not-found',
 }
 
+export enum ArexMenusType {}
+
+export const ArexMenuNamespace = 'arex-menu';
+export const ArexPaneNamespace = 'arex-pane';
+
 export const RequestMethod = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const;
 
 export enum RequestMethodEnum {

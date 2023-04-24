@@ -6,12 +6,13 @@ import {
   ArexMenuContainer,
   ArexMenuContainerProps,
   ArexPaneManager,
+  ArexPaneNamespace,
   ArexPanesContainer,
   ArexPanesContainerProps,
   ErrorBoundary,
+  useTranslation,
 } from 'arex-core';
 import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import HeaderMenu from '../components/HeaderMenu';
 import { PanesType } from '../constant';
@@ -48,7 +49,7 @@ export default () => {
               <>
                 <span>{Pane.icon}</span>
                 <Typography.Text ellipsis style={{ maxWidth: '120px' }}>
-                  {`${t(`arexPane.${Pane.type}`)} - ${pane.id}`}
+                  {`${t(Pane.type, { ns: ArexPaneNamespace })} - ${pane.id}`}
                 </Typography.Text>
               </>
             ),

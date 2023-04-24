@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { Button } from 'antd';
+import { useTranslation } from 'arex-core';
 import React, { FC } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import logo from '../assets/svg/logo.svg';

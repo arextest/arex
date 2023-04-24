@@ -2,7 +2,8 @@ import { App as AppWrapper, ConfigProvider, Empty, Layout, theme } from 'antd';
 import { MappingAlgorithm } from 'antd/es/config-provider/context';
 import enUS from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
-import React, { createContext, FC, PropsWithChildren, useMemo } from 'react';
+import i18n from 'i18next';
+import React, { createContext, FC, PropsWithChildren, useEffect, useMemo } from 'react';
 
 import { I18nextLng } from '../i18n';
 import { ColorPrimary, generateToken, Theme } from '../theme';
@@ -20,6 +21,7 @@ export type ArexCoreProviderProps = {
   compact: boolean;
   colorPrimary: ColorPrimary;
   language: I18nextLng;
+  localeResources?: Record<I18nextLng, { [ns: string]: object }>;
 };
 
 export const ArexCoreContext = createContext<ArexCoreProviderProps>({
@@ -35,7 +37,17 @@ const ArexCoreProvider: FC<PropsWithChildren<Partial<ArexCoreProviderProps>>> = 
     compact = false,
     colorPrimary = ColorPrimary.green,
     language = I18nextLng.en,
+    localeResources,
   } = props;
+
+  useEffect(() => {
+    // add locale resources
+    for (const lng in localeResources) {
+      for (const ns in localeResources[lng as I18nextLng]) {
+        i18n.addResourceBundle(lng, ns, localeResources[lng as I18nextLng][ns], true, false);
+      }
+    }
+  });
 
   const algorithm = useMemo<MappingAlgorithm[]>(() => {
     const _algorithm = [defaultAlgorithm];

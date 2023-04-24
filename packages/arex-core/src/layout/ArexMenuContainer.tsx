@@ -5,6 +5,7 @@ import React, { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { ErrorBoundary, WorkspacesMenu } from '../components';
+import { ArexMenuNamespace } from '../constant';
 import { ArexMenuManager } from '../utils';
 
 export type ArexMenuContainerProps = {
@@ -33,7 +34,7 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
         .map((Menu) => ({
           icon: Menu.icon,
           // 规定: 翻译文本需要配置在 locales/[lang]/common.json => "arexMenu" 下, 且 key 为 Menu.type
-          label: t(`arexMenu.${Menu.type}`),
+          label: t(`${Menu.type}`, { ns: ArexMenuNamespace }),
           key: Menu.type,
         }))
         .concat({

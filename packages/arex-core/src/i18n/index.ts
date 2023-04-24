@@ -1,15 +1,24 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-import en from './locales/en-us.json';
-import cn from './locales/zh-cn.json';
+import { ArexMenuNamespace, ArexPaneNamespace } from '../constant';
+import arexMenuCn from './locales/cn/arex-menu.json';
+import arexPaneCn from './locales/cn/arex-pane.json';
+import commonCn from './locales/cn/common.json';
+import arexPaneEn from './locales/en/arex-pane.json';
+import arexMenuEn from './locales/en/arex-pane.json';
+import commonEn from './locales/en/common.json';
 
 const resources = {
   cn: {
-    translation: cn,
+    translation: commonCn,
+    [ArexPaneNamespace]: arexPaneCn,
+    [ArexMenuNamespace]: arexMenuCn,
   },
   en: {
-    translation: en,
+    translation: commonEn,
+    [ArexPaneNamespace]: arexPaneEn,
+    [ArexMenuNamespace]: arexMenuEn,
   },
 };
 
@@ -29,13 +38,10 @@ i18n.use(initReactI18next).init({
 });
 
 export const local: { key: `${I18nextLng}`; name: string }[] = [
-  { key: 'en', name: 'English' },
-  { key: 'cn', name: '简体中文' },
+  { key: I18nextLng.en, name: 'English' },
+  { key: I18nextLng.cn, name: '简体中文' },
 ];
 
-export const localeMap: { [key in I18nextLng]: object } = {
-  cn,
-  en,
-};
-
+export { i18n };
+export { getI18n, useTranslation } from 'react-i18next';
 export default i18n;
