@@ -224,6 +224,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
               maxTagCount={3}
               options={interfacesOptions}
               placeholder={'optional'}
+              optionFilterProp='label'
             />
           </Form.Item>
         </Form>
