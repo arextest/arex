@@ -145,7 +145,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
             operationId,
           })),
           operator: email as string,
-          replayPlanType: 0,
+          replayPlanType: Number(Boolean(values.operationList?.length)),
         });
       })
       .catch((info) => {
@@ -224,6 +224,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
               maxTagCount={3}
               options={interfacesOptions}
               placeholder={'optional'}
+              optionFilterProp='label'
             />
           </Form.Item>
         </Form>

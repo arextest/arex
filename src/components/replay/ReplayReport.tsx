@@ -51,7 +51,12 @@ const chartOptions = {
   },
 } as const;
 
-const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) => {
+export type ReplayReportProps = {
+  selectedPlan?: PlanStatistics;
+  filter?: (record: PlanItemStatistics) => boolean;
+};
+
+const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
   const { message, notification } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
   const params = useParams();
@@ -60,7 +65,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
   const { token } = theme.useToken();
 
   const {
-    data: planItemData,
+    data: planItemData = [],
     loading: loadingData,
     cancel: cancelPollingInterval,
   } = useRequest(
@@ -79,6 +84,11 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
           cancelPollingInterval();
       },
     },
+  );
+
+  const planItemDataFiltered = useMemo(
+    () => (filter ? planItemData.filter(filter) : planItemData),
+    [planItemData],
   );
 
   const countData = useMemo(
@@ -482,7 +492,7 @@ const ReplayReport: FC<{ selectedPlan?: PlanStatistics }> = ({ selectedPlan }) =
         rowKey='planItemId'
         loading={loadingData}
         columns={columns}
-        dataSource={planItemData}
+        dataSource={planItemDataFiltered}
         style={{ overflow: 'auto' }}
       />
     </Card>
