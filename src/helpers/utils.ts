@@ -2,6 +2,7 @@ import { message } from 'antd';
 import { v4 as uuid } from 'uuid';
 
 import { HoppRESTRequest } from '../components/http/data/rest';
+import { ArexVersionKey, ArexVersionValue } from '../constant';
 import * as ChartUtils from './chart';
 
 export { ChartUtils, uuid };
@@ -102,6 +103,9 @@ export const versionStringCompare = (preVersion = '', lastVersion = '') => {
   return result;
 };
 
+export function checkArexVersion() {
+  return localStorage.getItem(ArexVersionKey) === ArexVersionValue;
+}
 // 检查版本号
 export function getChromeVersion() {
   let v: any = '';
