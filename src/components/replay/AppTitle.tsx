@@ -145,7 +145,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
             operationId,
           })),
           operator: email as string,
-          replayPlanType: 0,
+          replayPlanType: Number(Boolean(values.operationList?.length)),
         });
       })
       .catch((info) => {
