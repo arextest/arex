@@ -1,6 +1,7 @@
-import { DeleteOutlined, FieldTimeOutlined, PlusOutlined } from '@ant-design/icons';
+import { CopyOutlined, DeleteOutlined, FieldTimeOutlined, PlusOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Button, Tooltip } from 'antd';
+import { Button, message, Tooltip } from 'antd';
+import copy from 'copy-to-clipboard';
 import { FC } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +24,9 @@ export const FormHeaderWrapper = styled.div`
   }
 `;
 
-const FormHeader: FC<{ update: Updater<KeyValueType[]>; title: string }> = (props) => {
+const FormHeader: FC<{ update: Updater<KeyValueType[]>; title: string; dataSource: any }> = (
+  props,
+) => {
   const { t } = useTranslation();
 
   const handleAddParam = () => {
@@ -50,10 +53,18 @@ const FormHeader: FC<{ update: Updater<KeyValueType[]>; title: string }> = (prop
   };
   const handleClearAllParams = () => props.update([]);
 
+  function copyUrl() {
+    copy(JSON.stringify(props.dataSource.map((i: any) => ({ key: i.key, value: i.value }))));
+    message.success('copy success🎉');
+  }
+
   return (
     <FormHeaderWrapper>
       <span>{props.title}</span>
       <div>
+        <Tooltip title={'Copy'}>
+          <Button type='text' icon={<CopyOutlined />} onClick={copyUrl} />
+        </Tooltip>
         <Tooltip title={t('action.record')}>
           <Button type='text' icon={<FieldTimeOutlined />} onClick={handleAddRecord} />
         </Tooltip>

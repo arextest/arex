@@ -1,6 +1,6 @@
 {
   "name": "arex",
-  "version": "0.1.0",
+  "version": "0.2.8",
   "private": true,
   "scripts": {
     "prepare": "husky install",
