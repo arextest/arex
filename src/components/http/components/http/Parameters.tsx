@@ -26,7 +26,11 @@ const HttpParameters = () => {
 
   return (
     <>
-      <FormHeader title={t('request.parameter_list')} update={setRequestParams} />
+      <FormHeader
+        dataSource={requestParams}
+        title={t('request.parameter_list')}
+        update={setRequestParams}
+      />
       <FormTable
         bordered
         rowKey={'id'}
