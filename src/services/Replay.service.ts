@@ -92,7 +92,7 @@ export default class ReplayService {
     planItemId,
     needTotal = false,
     pageIndex = 1,
-    pageSize = 2000,
+    pageSize = 99,
   }: QueryReplayCaseReq) {
     return request
       .post<QueryReplayCaseRes>('/report/report/queryReplayCase', {
