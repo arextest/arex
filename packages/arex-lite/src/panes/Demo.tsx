@@ -1,6 +1,6 @@
 import { FileOutlined } from '@ant-design/icons';
 import { Button, Space } from 'antd';
-import { ArexPaneFC, createArexPane, decodeUrl, styled } from 'arex-core';
+import { ArexPaneFC, createArexPane, decodeUrl, i18n, styled } from 'arex-core';
 import React, { useState } from 'react';
 
 import { MenusType, PanesType } from '../constant';
@@ -26,6 +26,15 @@ const Demo: ArexPaneFC = (props) => {
           }}
         >
           message
+        </Button>
+
+        <Button
+          onClick={() => {
+            const resource = i18n.getResourceBundle('cn', 'arex-menu');
+            console.log(resource);
+          }}
+        >
+          i18n
         </Button>
 
         <Button

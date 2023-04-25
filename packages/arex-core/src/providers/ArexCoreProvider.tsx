@@ -46,7 +46,7 @@ const ArexCoreProvider: FC<PropsWithChildren<Partial<ArexCoreProviderProps>>> = 
     // add locale resources
     for (const lng in localeResources) {
       for (const ns in localeResources[lng as I18nextLng]) {
-        i18n.addResourceBundle(lng, ns, localeResources[lng as I18nextLng][ns], true, false);
+        i18n.addResourceBundle(lng, ns, localeResources[lng as I18nextLng][ns], true);
       }
     }
     // set message api

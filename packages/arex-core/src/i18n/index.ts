@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-import { ArexMenuNamespace, ArexPaneNamespace } from '../constant';
+import { ArexMenuNamespace, ArexPaneNamespace, I18_KEY } from '../constant';
 import arexMenuCn from './locales/cn/arex-menu.json';
 import arexPaneCn from './locales/cn/arex-pane.json';
 import commonCn from './locales/cn/common.json';
@@ -26,14 +26,17 @@ export enum I18nextLng {
   'en' = 'en',
   'cn' = 'cn',
 }
-// TODO Add after init https://www.i18next.com/how-to/add-or-load-translations#add-after-init
+
 i18n.use(initReactI18next).init({
-  // 初始化
   resources,
-  lng: localStorage.getItem('locale') || I18nextLng.en,
+  partialBundledLanguages: true,
+  lng: localStorage.getItem(I18_KEY) || I18nextLng.en,
   fallbackLng: I18nextLng.en,
   detection: {
     caches: ['localStorage'], // 'sessionStorage', 'cookie'
+  },
+  interpolation: {
+    escapeValue: false,
   },
 });
 

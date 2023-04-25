@@ -45,3 +45,5 @@ export const RoleMap = {
   [RoleEnum.Editor]: 'Editor',
   [RoleEnum.Viewer]: 'Viewer',
 };
+
+export const I18_KEY = 'i18nextLng';

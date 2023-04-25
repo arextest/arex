@@ -2,6 +2,7 @@ import { CodeOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Button, Typography } from 'antd';
 import React, { FC, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import VConsole from 'vconsole';
 
 import { CheckOrCloseIcon } from '../components';
@@ -29,8 +30,14 @@ const FooterWrapper = styled.div`
   }
 `;
 
-const ArexFooter: FC = () => {
+export type ArexFooterProps = {
+  left?: React.ReactNode;
+  right?: React.ReactNode;
+};
+
+const ArexFooter: FC<ArexFooterProps> = (props) => {
   const { theme } = useArexCoreConfig();
+  const { t } = useTranslation();
   const vConsole = useRef<VConsole>();
 
   useEffect(() => {
@@ -55,17 +62,19 @@ const ArexFooter: FC = () => {
       <div>
         <Button type='link' size='small' onClick={() => vConsole.current?.show()}>
           <Typography.Text type='secondary'>
-            <CodeOutlined /> Console
+            <CodeOutlined /> {t('console')}
           </Typography.Text>
         </Button>
+        {props.left}
       </div>
 
       {/* right */}
       <div>
+        {props.right}
         <span>
           {/* @ts-ignore */}
           <CheckOrCloseIcon size={12} checked={window.__AREX_EXTENSION_INSTALLED__} />
-          <Typography.Text type='secondary'>Browser Agent</Typography.Text>
+          <Typography.Text type='secondary'>{t('browserAgent')}</Typography.Text>
         </span>
       </div>
     </FooterWrapper>

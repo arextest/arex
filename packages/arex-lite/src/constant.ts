@@ -36,7 +36,6 @@ export enum NodeType {
 }
 
 // localStorage key
-export const I18_KEY = 'i18nextLng';
 export const THEME_KEY = 'theme';
 
 // Default value

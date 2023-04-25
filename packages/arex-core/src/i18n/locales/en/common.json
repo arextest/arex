@@ -1,1 +1,4 @@
-{}
+{
+  "console": "Console",
+  "browserAgent": "Browser Agent"
+}
