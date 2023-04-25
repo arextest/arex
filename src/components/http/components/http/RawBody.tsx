@@ -1,9 +1,10 @@
 import { json } from '@codemirror/lang-json';
 import { css } from '@emotion/react';
-import { App } from 'antd';
+import { message } from 'antd';
 import React, { forwardRef, useContext, useImperativeHandle, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { tryPrettierJsonString } from '../../../../helpers/utils';
 import { useCodeMirror } from '../../helpers/editor/codemirror';
 import { HttpContext } from '../../index';
 
@@ -12,8 +13,6 @@ export type HttpRawBodyRef = {
 };
 
 const HttpRawBody = forwardRef<HttpRawBodyRef>((props, ref) => {
-  const { message } = App.useApp();
-
   const rawBodyParameters = useRef<HTMLDivElement>(null);
   const { store, dispatch } = useContext(HttpContext);
   const { t } = useTranslation();
@@ -34,14 +33,12 @@ const HttpRawBody = forwardRef<HttpRawBodyRef>((props, ref) => {
   });
 
   const prettifyRequestBody = () => {
-    try {
-      const jsonObj = JSON.parse(store.request.body.body as string);
-      dispatch((state) => {
-        state.request.body.body = JSON.stringify(jsonObj, null, 2);
-      });
-    } catch (e) {
-      message.error(t('error.json_prettify_invalid_body'));
-    }
+    dispatch((state) => {
+      state.request.body.body = tryPrettierJsonString(
+        store.request.body.body,
+        t('error.json_prettify_invalid_body'),
+      ) as string;
+    });
   };
 
   return (

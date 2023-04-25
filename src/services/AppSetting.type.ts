@@ -125,7 +125,7 @@ export type OperationId<T extends OperationType> = T extends 'Global'
 
 export interface UpdateInterfaceResponseReq {
   id: OperationId<'Interface'>;
-  operationResponse: string;
+  operationResponse?: string;
 }
 
 export interface IgnoreNodeBase {
