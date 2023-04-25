@@ -1,10 +1,15 @@
 import { useRequest } from 'ahooks';
 import { App, Col, Divider, Row } from 'antd';
 import { DataNode, TreeProps } from 'antd/lib/tree';
+import { stringify } from 'lossless-json';
 import React, { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { tryParseJsonString, tryPrettierJsonString } from '../../../helpers/utils';
+import {
+  tryParseJsonString,
+  tryPrettierJsonString,
+  tryStringifyJson,
+} from '../../../helpers/utils';
 import AppSettingService from '../../../services/AppSetting.service';
 import { QueryIgnoreNode, QueryInterfaceIgnoreNode } from '../../../services/AppSetting.type';
 import { FileSystemService } from '../../../services/FileSystem.service';
@@ -217,7 +222,7 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
     if (!!activeOperationInterface?.id && parsed) {
       updateInterfaceResponse({
         id: activeOperationInterface.id,
-        operationResponse: JSON.stringify(parsed),
+        operationResponse: tryStringifyJson(parsed),
       });
       handleCancelEditResponse(true);
     }

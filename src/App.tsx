@@ -1,7 +1,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { App as AppWrapper, Empty, Layout, Spin, theme } from 'antd';
+import { App as AppWrapper, Empty, Layout, message, Spin, theme } from 'antd';
 import { MappingAlgorithm } from 'antd/es/config-provider/context';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useRoutes } from 'react-router-dom';
 
 import { useAuthentication } from './hooks';
@@ -21,8 +21,12 @@ function App() {
   useAuthentication();
 
   const routesContent = useRoutes(routerConfig);
-
+  const [messageApi, contextHolder] = message.useMessage();
   const { theme, darkMode, compactMode, colorPrimary, language } = useUserProfile();
+
+  useEffect(() => {
+    window.message = messageApi;
+  }, []);
 
   const algorithm = useMemo<MappingAlgorithm[]>(() => {
     const _algorithm = [defaultAlgorithm];
@@ -42,6 +46,7 @@ function App() {
     >
       <GlobalStyle>
         <AppWrapper>
+          {contextHolder}
           <Layout>
             <Content>{routesContent}</Content>
           </Layout>

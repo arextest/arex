@@ -2,12 +2,11 @@ import { SaveOutlined } from '@ant-design/icons';
 import { json } from '@codemirror/lang-json';
 import { useRequest } from 'ahooks';
 import { App, Col, Collapse, Row, Space } from 'antd';
-import { stringify } from 'lossless-json';
 import React, { FC } from 'react';
 import { useImmer } from 'use-immer';
 
 import request from '../../../../../helpers/api/request';
-import { tryParseJsonString } from '../../../../../helpers/utils';
+import { tryParseJsonString, tryStringifyJson } from '../../../../../helpers/utils';
 import useUserProfile from '../../../../../store/useUserProfile';
 import { EmptyWrapper, WatermarkCodeMirror } from '../../../../styledComponents';
 import TooltipButton from '../../../../TooltipButton';
@@ -69,7 +68,7 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
 
               const convertData = (data: MockTarget) => {
                 const { body, bodyParsed, ...rest } = data;
-                return stringify({ body: bodyParsed || body, ...rest }, undefined, 2);
+                return tryStringifyJson({ body: bodyParsed || body, ...rest }, undefined, true);
               };
 
               return {
@@ -117,10 +116,10 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
     params.targetResponse = tryParseJsonString(targetResponseString);
 
     typeof params.targetRequest.body !== 'string' &&
-      (params.targetRequest.body = stringify(params.targetRequest.body));
+      (params.targetRequest.body = tryStringifyJson(params.targetRequest.body));
 
     typeof params.targetResponse.body !== 'string' &&
-      (params.targetResponse.body = stringify(params.targetResponse.body));
+      (params.targetResponse.body = tryStringifyJson(params.targetResponse.body));
 
     updateMockData(params);
   };
