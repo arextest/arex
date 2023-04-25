@@ -4,7 +4,12 @@ import React, { FC } from 'react';
 import FlexCenterWrapper from './FlexCenterWrapper';
 import { FullHeightSpin } from './index';
 
-const EmptyWrapper: FC<{ empty?: boolean; loading?: boolean } & EmptyProps> = (props) => {
+export type EmptyWrapperProps = {
+  empty?: boolean;
+  loading?: boolean;
+} & EmptyProps;
+
+const EmptyWrapper: FC<EmptyWrapperProps> = (props) => {
   const { empty = true, loading = false, children, ...emptyProps } = props;
   return (
     <FullHeightSpin spinning={loading}>

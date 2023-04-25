@@ -1,42 +1,19 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button, Dropdown, MenuProps, Tabs, TabsProps } from 'antd';
-import React, { useMemo, useRef, useState } from 'react';
+import { Button, Dropdown, MenuProps, Tabs, TabsProps, Typography } from 'antd';
+import React, { PropsWithChildren, useMemo, useRef, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useTranslation } from 'react-i18next';
 
-import { EmptyWrapper } from '../components';
-
-// https://ant.design/components/tabs-cn/#components-tabs-demo-custom-tab-bar-node
-const dropdownItems: MenuProps['items'] = [
-  {
-    label: 'Close',
-    key: '1',
-  },
-  {
-    label: 'Close Other Tabs',
-    key: '2',
-  },
-  {
-    label: 'Close All Tabs',
-    key: '3',
-  },
-  {
-    label: 'Close Unmodified Tabs',
-    key: '4',
-  },
-  {
-    label: 'Close Tabs to the Left',
-    key: '5',
-  },
-  {
-    label: 'Close Tabs to the Right',
-    key: '6',
-  },
-];
+import { EmptyWrapper, ErrorBoundary, Icons } from '../components';
+import { ArexPaneNamespace } from '../constant';
+import { Pane } from '../panes';
+import { ArexPaneManager } from '../utils';
 
 const type = 'DraggableTabNode';
-interface DraggableTabPaneProps extends React.HTMLAttributes<HTMLDivElement> {
+
+interface DraggableTabPaneProps extends PropsWithChildren<React.HTMLAttributes<HTMLDivElement>> {
   index: React.Key;
   moveNode: (dragIndex: React.Key, hoverIndex: React.Key) => void;
 }
@@ -75,13 +52,104 @@ const DraggableTabNode = ({ index, children, moveNode }: DraggableTabPaneProps) 
   );
 };
 
-export interface ArexPanesContainerProps extends TabsProps {
+export interface ArexPanesContainerProps extends Omit<TabsProps, 'items'> {
+  panes?: Pane[];
   onAdd?: () => void;
   onRemove?: (key: string) => void;
 }
 
 const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
-  const { onAdd, onRemove, ...restTabsProps } = props;
+  const { onAdd, onRemove, panes = [], ...restTabsProps } = props;
+  // 规定: ArexMenu 翻译文本需要配置在 locales/[lang]/arex-menu.json 下, 且 key 为 Menu.type
+  const { t } = useTranslation([ArexPaneNamespace]);
+
+  const [order, setOrder] = useState<React.Key[]>([]);
+
+  const panesItems = useMemo(
+    () =>
+      panes
+        .map((pane) => {
+          const Pane = ArexPaneManager.getPaneByType(pane.type);
+          if (!Pane) return;
+          return {
+            key: pane.key || '',
+            // 规定: 翻译文本需要配置在 locales/[lang]/arex-pane.json 下, 且 key 为 Pane.type
+            label: (
+              <>
+                <span>
+                  {pane.icon
+                    ? // @ts-ignore
+                      React.createElement(Icons[pane.icon] || Icons['QuestionOutlined'])
+                    : Pane.icon}
+                </span>
+                <Typography.Text ellipsis style={{ maxWidth: '120px' }}>
+                  {`${t(Pane.type)} - ${pane.id}`}
+                </Typography.Text>
+              </>
+            ),
+            children: (
+              <ErrorBoundary>{React.createElement(Pane, { data: pane.data })}</ErrorBoundary>
+            ),
+          };
+        })
+        .filter(Boolean) as TabsProps['items'],
+    [panes, t],
+  );
+
+  const orderItems = useMemo(
+    () =>
+      panesItems?.sort((a, b) => {
+        const orderA = order.indexOf(a!.key);
+        const orderB = order.indexOf(b!.key);
+
+        if (orderA !== -1 && orderB !== -1) {
+          return orderA - orderB;
+        }
+        if (orderA !== -1) {
+          return -1;
+        }
+        if (orderB !== -1) {
+          return 1;
+        }
+
+        const ia = panesItems.indexOf(a);
+        const ib = panesItems.indexOf(b);
+
+        return ia - ib;
+      }),
+    [order, panesItems],
+  );
+
+  const dropdownItems: MenuProps['items'] = useMemo(
+    () => [
+      {
+        label: 'Close',
+        key: '1',
+      },
+      {
+        label: 'Close Other Tabs',
+        key: '2',
+      },
+      {
+        label: 'Close All Tabs',
+        key: '3',
+      },
+      {
+        label: 'Close Unmodified Tabs',
+        key: '4',
+      },
+      {
+        label: 'Close Tabs to the Left',
+        key: '5',
+      },
+      {
+        label: 'Close Tabs to the Right',
+        key: '6',
+      },
+    ],
+    [],
+  );
+
   const removeTab = (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
     onRemove?.(targetKey as string);
   };
@@ -90,14 +158,11 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
     action === 'add' ? onAdd?.() : removeTab(targetKey);
   };
 
-  const { items = [] } = props;
-  const [order, setOrder] = useState<React.Key[]>([]);
-
   const moveTabNode = (dragKey: React.Key, hoverKey: React.Key) => {
     const newOrder = order.slice();
 
-    items.forEach((item) => {
-      if (item.key && newOrder.indexOf(item.key) === -1) {
+    panesItems?.forEach((item) => {
+      if (item?.key && newOrder.indexOf(item.key) === -1) {
         newOrder.push(item.key);
       }
     });
@@ -111,59 +176,37 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
     setOrder(newOrder);
   };
 
-  const renderTabBar: TabsProps['renderTabBar'] = (tabBarProps, DefaultTabBar) => (
-    <DefaultTabBar {...tabBarProps}>
-      {(node) => {
-        return (
-          <DraggableTabNode key={node.key} index={node.key!} moveNode={moveTabNode}>
-            <Dropdown
-              menu={{
-                items: dropdownItems,
-                onClick: function (e) {
-                  // props.onClickContextMenu({
-                  //   tabKey: String(node.key),
-                  //   clickKey: e.key,
-                  //   order,
-                  // });
-                },
-              }}
-              trigger={['contextMenu']}
-            >
-              <>{node}</>
-            </Dropdown>
-          </DraggableTabNode>
-        );
-      }}
-    </DefaultTabBar>
-  );
-
-  const orderItems = useMemo(
-    () =>
-      items.sort((a, b) => {
-        const orderA = order.indexOf(a.key!);
-        const orderB = order.indexOf(b.key!);
-
-        if (orderA !== -1 && orderB !== -1) {
-          return orderA - orderB;
-        }
-        if (orderA !== -1) {
-          return -1;
-        }
-        if (orderB !== -1) {
-          return 1;
-        }
-
-        const ia = items.indexOf(a);
-        const ib = items.indexOf(b);
-
-        return ia - ib;
-      }),
-    [items],
-  );
+  const renderTabBar: TabsProps['renderTabBar'] = (tabBarProps, DefaultTabBar) => {
+    return (
+      <DefaultTabBar {...tabBarProps}>
+        {(node) => {
+          return (
+            <DraggableTabNode key={node.key} index={node.key!} moveNode={moveTabNode}>
+              <Dropdown
+                menu={{
+                  items: dropdownItems,
+                  onClick: function (e) {
+                    // props.onClickContextMenu({
+                    //   tabKey: String(node.key),
+                    //   clickKey: e.key,
+                    //   order,
+                    // });
+                  },
+                }}
+                trigger={['contextMenu']}
+              >
+                {node}
+              </Dropdown>
+            </DraggableTabNode>
+          );
+        }}
+      </DefaultTabBar>
+    );
+  };
 
   return (
     <EmptyWrapper
-      empty={!orderItems.length}
+      empty={!orderItems?.length}
       description={
         <Button type='primary' onClick={props.onAdd}>
           New Request

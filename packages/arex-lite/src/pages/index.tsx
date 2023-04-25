@@ -1,28 +1,21 @@
-import { TabsProps, Typography } from 'antd';
 import {
   ArexFooter,
   ArexHeader,
   ArexMainContainer,
   ArexMenuContainer,
   ArexMenuContainerProps,
-  ArexPaneManager,
-  ArexPaneNamespace,
   ArexPanesContainer,
   ArexPanesContainerProps,
-  ErrorBoundary,
-  useTranslation,
 } from 'arex-core';
 import React, { useMemo } from 'react';
 
 import HeaderMenu from '../components/HeaderMenu';
 import { PanesType } from '../constant';
 import { useInit } from '../hooks';
-import { useMenusPanes } from '../store';
-import { encodePaneKey } from '../store/useMenusPanes';
+import { useMenusPanes, useWorkspaces } from '../store';
 
 export default () => {
   useInit();
-  const { t } = useTranslation();
 
   const {
     collapsed,
@@ -35,47 +28,30 @@ export default () => {
     setActivePane,
     removePane,
   } = useMenusPanes();
+  const { activeWorkspaceId, workspaces, setActiveWorkspaceId } = useWorkspaces();
 
-  const panesItems = useMemo(
+  const workspacesOptions = useMemo(
     () =>
-      panes
-        .map((pane) => {
-          const Pane = ArexPaneManager.getPaneByType(pane.type);
-          if (!Pane) return;
-          return {
-            key: pane.key || '',
-            // 规定: 翻译文本需要配置在 locales/[lang]/common.json => "arexPane" 下, 且 key 为 Pane.type
-            label: (
-              <>
-                <span>{Pane.icon}</span>
-                <Typography.Text ellipsis style={{ maxWidth: '120px' }}>
-                  {`${t(Pane.type, { ns: ArexPaneNamespace })} - ${pane.id}`}
-                </Typography.Text>
-              </>
-            ),
-            children: (
-              <ErrorBoundary>{React.createElement(Pane, { data: pane.data })}</ErrorBoundary>
-            ),
-          };
-        })
-        .filter(Boolean) as TabsProps['items'],
-    [panes, t],
+      workspaces.map((workspace) => ({
+        value: workspace.id,
+        label: workspace.name,
+      })),
+    [workspaces],
   );
 
   const handleMenuSelect: ArexMenuContainerProps['onSelect'] = (id, type) => {
     setPanes({
       id,
       type,
-      title: encodePaneKey({ id, type }),
     });
   };
 
   const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () =>
     setPanes({
       type: PanesType.DEMO,
-      title: 'Untitled',
       // id: Math.random().toString(36).substring(2),
-      id: '123',
+      id: 'Untitled',
+      icon: 'Get',
       data: { value: 'DemoPane' },
     });
 
@@ -84,19 +60,27 @@ export default () => {
       <ArexHeader menu={<HeaderMenu />} />
       <ArexMainContainer
         collapsed={collapsed}
-        menus={
+        arexMenus={
           <ArexMenuContainer
             activeKey={activeMenu}
             collapsed={collapsed}
+            workspaceMenuProps={{
+              value: activeWorkspaceId,
+              options: workspacesOptions,
+              onChange: setActiveWorkspaceId,
+              // extra?: ReactNode;
+              // onAdd?(name: string): void;
+              // onEdit?(id: string): void;
+            }}
             onCollapsed={setCollapsed}
             onChange={setActiveMenu}
             onSelect={handleMenuSelect}
           />
         }
-        panes={
+        arexPanes={
           <ArexPanesContainer
             activeKey={activePane?.key}
-            items={panesItems}
+            panes={panes}
             onChange={setActivePane}
             onAdd={handlePaneAdd}
             onRemove={removePane}

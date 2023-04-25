@@ -4,8 +4,8 @@ import React, { FC, ReactNode } from 'react';
 
 export interface ArexMainContainerProps {
   collapsed?: boolean;
-  menus: ReactNode;
-  panes: ReactNode;
+  arexMenus: ReactNode;
+  arexPanes: ReactNode;
 }
 
 const ArexMainContainer: FC<ArexMainContainerProps> = (props) => {
@@ -20,10 +20,10 @@ const ArexMainContainer: FC<ArexMainContainerProps> = (props) => {
         minSize={props.collapsed ? 69 : 300}
         maxSize={props.collapsed ? 69 : 600}
       >
-        {props.menus}
+        {props.arexMenus}
       </Allotment.Pane>
 
-      <Allotment.Pane>{props.panes}</Allotment.Pane>
+      <Allotment.Pane>{props.arexPanes}</Allotment.Pane>
     </Allotment>
   );
 };

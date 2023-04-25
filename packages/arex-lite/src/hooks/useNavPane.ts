@@ -1,8 +1,7 @@
-import { ArexPaneManager, decodeUrl, encodeUrl, StandardPathParams } from 'arex-core';
+import { ArexPaneManager, decodeUrl, encodeUrl, Pane, StandardPathParams } from 'arex-core';
 import { useNavigate } from 'react-router-dom';
 
 import { useMenusPanes } from '../store';
-import { Pane } from '../store/useMenusPanes';
 
 function useNavPane() {
   const nav = useNavigate();

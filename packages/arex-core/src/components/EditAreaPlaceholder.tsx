@@ -16,7 +16,7 @@ const EditAreaPlaceholderWrapper = styled.div<{ dashedBorder?: boolean }>`
   }
 `;
 
-type EditAreaPlaceholderProps = {
+export type EditAreaPlaceholderProps = {
   title: string;
   ready?: boolean;
   dashedBorder?: boolean;

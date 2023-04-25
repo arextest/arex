@@ -10,10 +10,12 @@ import { useNavigate } from 'react-router-dom';
 
 import * as Menus from '../menus';
 import * as Panes from '../panes';
+import { useWorkspaces } from '../store';
 import useMenusPanes from '../store/useMenusPanes';
 
 const useInit = () => {
   const { panes, setPanes } = useMenusPanes();
+  const { workspaces, setActiveWorkspaceId } = useWorkspaces();
   const nav = useNavigate();
 
   // register menus and panes
@@ -21,12 +23,13 @@ const useInit = () => {
   ArexMenuManager.registerMenus(Menus);
 
   useEffect(() => {
-    // TODO test, remove after workspace function realize
-    if (location.pathname === '/') {
-      nav('/this-is-workspace-id');
+    if (location.pathname === '/' && workspaces.length) {
+      const workspaceId = workspaces[0].id;
+      setActiveWorkspaceId(workspaceId);
+      nav(`/${workspaceId}`);
     }
 
-    // Check if the url points to the new Pane
+    // check if the url points to the new Pane
     const match = decodeUrl();
     const { paneType, id } = match.params as StandardPathParams;
     if (paneType && id) {
@@ -39,8 +42,8 @@ const useInit = () => {
         });
     }
 
-    // subscribe StandardPathParams and update url
-    const unsSubscribe = useMenusPanes.subscribe(
+    // subscribe active menu/pane change and update url
+    const unSubscribeMenusPane = useMenusPanes.subscribe(
       (state) => ({ activePane: state.activePane, activeMenu: state.activeMenu }),
       (currPane) => {
         const match = decodeUrl();
@@ -53,13 +56,32 @@ const useInit = () => {
             paneType,
             id,
           },
-        } as StandardPathParams;
+        };
 
         const url = encodeUrl(mergedParams, data);
         nav(url);
       },
     );
-    return () => unsSubscribe();
+
+    // subscribe active workspace change and update url
+    const unSubscribeWorkspaces = useWorkspaces.subscribe(
+      (state) => state.activeWorkspaceId,
+      (activeWorkspaceId) => {
+        const url = encodeUrl(
+          // remove menuType,paneType,id and query
+          {
+            workspaceId: activeWorkspaceId,
+          },
+        );
+        useMenusPanes.getState().reset();
+        nav(url);
+      },
+    );
+
+    return () => {
+      unSubscribeMenusPane();
+      unSubscribeWorkspaces();
+    };
   }, []);
 };
 

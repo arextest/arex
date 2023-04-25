@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { App, Input, Select } from 'antd';
-import React, { FC, ReactNode, useState } from 'react';
+import React, { FC, ReactNode, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { RoleEnum, RoleMap, TooltipButton } from '../index';
@@ -33,13 +33,11 @@ const WorkspacesMenuWrapper = styled('div', {
   border-bottom: 1px solid ${(props) => props.theme.colorBorder};
 `;
 
+export type WorkspaceItem = { label: React.ReactNode; value: string; role?: RoleEnum };
 export type WorkspacesMenuProps = {
   collapsed?: boolean;
-  value?: {
-    name?: string;
-    id: string;
-  };
-  options?: { label: React.ReactNode; value: React.Key; role?: RoleEnum }[];
+  value?: string;
+  options?: WorkspaceItem[];
   extra?: ReactNode;
   onAdd?(name: string): void;
   onChange?(id: string): void;
@@ -53,6 +51,11 @@ const WorkspacesMenu: FC<WorkspacesMenuProps> = (props) => {
   const [editMode, setEditMode] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [status, setStatus] = useState<'' | 'error'>('');
+
+  const workspaceName = useMemo(() => {
+    const workspace = props.options?.find((ws) => ws.value === props.value);
+    return workspace?.label;
+  }, [props.value, props.options]);
 
   const handleAddWorkspace = () => {
     if (newWorkspaceName === '') {
@@ -74,7 +77,7 @@ const WorkspacesMenu: FC<WorkspacesMenuProps> = (props) => {
       <>
         <TooltipButton
           icon={<GlobalOutlined />}
-          title={`${t('workSpace.workSpace')}${props.collapsed ? ': ' + props.value?.name : ''}`}
+          title={`${t('workSpace.workSpace')}${props.collapsed ? ': ' + workspaceName : ''}`}
           placement='right'
           style={{
             marginLeft: props.collapsed ? '8px' : '0',
@@ -95,7 +98,7 @@ const WorkspacesMenu: FC<WorkspacesMenuProps> = (props) => {
             <Select
               size='small'
               bordered={false}
-              value={props.value?.id}
+              value={props.value}
               options={props.options?.map((ws) => ({
                 value: ws.value,
                 label: (
@@ -137,7 +140,7 @@ const WorkspacesMenu: FC<WorkspacesMenuProps> = (props) => {
                   <TooltipButton
                     icon={<EditOutlined />}
                     title={t('workSpace.edit')}
-                    onClick={() => props.value?.id && props.onEdit?.(props.value.id)}
+                    onClick={() => props.value && props.onEdit?.(props.value)}
                   />
                 </>
               )}

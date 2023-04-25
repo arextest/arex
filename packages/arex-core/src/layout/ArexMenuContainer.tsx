@@ -4,7 +4,7 @@ import { Menu, MenuProps } from 'antd';
 import React, { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { ErrorBoundary, WorkspacesMenu } from '../components';
+import { ErrorBoundary, WorkspacesMenu, WorkspacesMenuProps } from '../components';
 import { ArexMenuNamespace } from '../constant';
 import { ArexMenuManager } from '../utils';
 
@@ -12,6 +12,7 @@ export type ArexMenuContainerProps = {
   value?: string;
   activeKey?: string;
   collapsed?: boolean;
+  workspaceMenuProps?: WorkspacesMenuProps;
   onChange?: (menuType: string) => void;
   onCollapsed?: (collapse: boolean) => void;
   onSelect?: (id: string, paneType: string) => void;
@@ -27,14 +28,14 @@ export type MenuItemType = {
 const ICON_KEY = '__ExpandIcon';
 
 const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
-  const { t } = useTranslation();
+  // 规定: ArexMenu 翻译文本需要配置在 locales/[lang]/arex-menu.json 下, 且 key 为 Menu.type
+  const { t } = useTranslation([ArexMenuNamespace]);
   const tabsItems = useMemo<MenuItemType[]>(
     () =>
       ArexMenuManager.getMenus()
         .map((Menu) => ({
           icon: Menu.icon,
-          // 规定: 翻译文本需要配置在 locales/[lang]/common.json => "arexMenu" 下, 且 key 为 Menu.type
-          label: t(`${Menu.type}`, { ns: ArexMenuNamespace }),
+          label: t(`${Menu.type}`),
           key: Menu.type,
         }))
         .concat({
@@ -67,7 +68,7 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <WorkspacesMenu collapsed={props.collapsed} />
+      <WorkspacesMenu collapsed={props.collapsed} {...props.workspaceMenuProps} />
       <div style={{ display: 'flex', flex: '1', minHeight: '0' }}>
         <StyledMenu
           mode='inline'

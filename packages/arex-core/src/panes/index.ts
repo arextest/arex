@@ -1,8 +1,18 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import { ArexPanesType } from '../constant';
 import NoPermission from './NoPermission';
 import PaneNotFound from './PaneNotFound';
+
+export type Pane<D extends PanesData = PanesData> = {
+  id: string; // PaneId
+  type: string; // PaneType
+  key?: string; // unique, generate by id and type
+  icon?: string; // antd icon name
+  index?: number; // 越新的 pane, index 越大
+  dirty?: boolean;
+  data?: D;
+};
 
 export type ArexPane<D extends PanesData = PanesData> = ArexPaneFC<D> & {
   icon?: React.ReactNode;

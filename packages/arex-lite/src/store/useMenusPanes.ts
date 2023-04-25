@@ -1,23 +1,9 @@
-import { ArexPaneManager } from 'arex-core';
-import { PanesData } from 'arex-core/src';
-import { ReactNode } from 'react';
+import { ArexPaneManager, Pane, PanesData } from 'arex-core';
 import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { DEFAULT_ACTIVE_MENU, MAX_PANES_COUNT } from '../constant';
-
-// 不同 MenuItem 组件传递的完整数据类型, 后续不断扩充
-export type Pane<D extends PanesData = PanesData> = {
-  id: string; //
-  type: string; // PaneType
-  key?: string; // unique, generate by id and type
-  title?: string;
-  icon?: ReactNode;
-  index?: number; // 越新的 pane, index 越大
-  dirty?: boolean;
-  data?: D;
-};
 
 export type MenusPanesState = {
   collapsed: boolean;
