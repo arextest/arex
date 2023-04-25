@@ -79,15 +79,6 @@ function CollectionTitle({
           disabled: val.nodeType !== 3,
         },
         {
-          key: '8',
-          label: (
-            <span className={'dropdown-click-target'}>
-              {t('collection.batch_compare', { ns: 'components' })}
-            </span>
-          ),
-          disabled: val.nodeType !== 3,
-        },
-        {
           key: '3',
           label: (
             <span className={'dropdown-click-target'}>

@@ -534,8 +534,7 @@ const CollectionMenu = () => {
               <Dropdown
                 menu={{
                   items: [
-                    { key: '1', label: <a>{t('collection.batch_run')}</a> },
-                    { key: '2', label: <a>{t('collection.batch_compare')}</a> },
+                    { key: '1', label: <a>{t('collection.batch_run')}</a> }
                   ],
                   onClick(e) {
                     e.key;
