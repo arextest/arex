@@ -3,11 +3,14 @@ import {
   ArexPaneManager,
   decodeUrl,
   encodeUrl,
+  I18_KEY,
+  i18n,
   StandardPathParams,
 } from 'arex-core';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { DEFAULT_LANGUAGE } from '../constant';
 import * as Menus from '../menus';
 import * as Panes from '../panes';
 import { useWorkspaces } from '../store';
@@ -41,6 +44,9 @@ const useInit = () => {
           data: match.query,
         });
     }
+
+    // Trigger rerender after resources loaded
+    i18n.changeLanguage(localStorage.getItem(I18_KEY) || DEFAULT_LANGUAGE);
 
     // subscribe active menu/pane change and update url
     const unSubscribeMenusPane = useMenusPanes.subscribe(

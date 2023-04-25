@@ -1,4 +1,4 @@
-import { ColorPrimary, getLocalStorage, Theme } from 'arex-core';
+import { ColorPrimary, getLocalStorage, I18nextLng, Theme } from 'arex-core';
 import { RequestMethodEnum } from 'arex-core/src';
 
 export enum PanesType {
@@ -39,6 +39,7 @@ export enum NodeType {
 export const THEME_KEY = 'theme';
 
 // Default value
+export const DEFAULT_LANGUAGE = I18nextLng.en;
 export const DEFAULT_ACTIVE_MENU = MenusType.ENVIRONMENT;
 export const DEFAULT_THEME =
   getLocalStorage<Theme>(THEME_KEY) ||
