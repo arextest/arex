@@ -20,6 +20,13 @@ const Demo: ArexPaneFC = (props) => {
       <StyledDiv>zzz</StyledDiv>
       <Space>
         <div>url encode/decode demo </div>
+        <Button
+          onClick={() => {
+            window.message.info('hello');
+          }}
+        >
+          message
+        </Button>
 
         <Button
           onClick={() => {

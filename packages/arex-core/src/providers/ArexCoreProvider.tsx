@@ -1,4 +1,4 @@
-import { App as AppWrapper, ConfigProvider, Empty, Layout, theme } from 'antd';
+import { App, ConfigProvider, Empty, Layout, message, theme } from 'antd';
 import { MappingAlgorithm } from 'antd/es/config-provider/context';
 import enUS from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
@@ -40,6 +40,8 @@ const ArexCoreProvider: FC<PropsWithChildren<Partial<ArexCoreProviderProps>>> = 
     localeResources,
   } = props;
 
+  const [messageApi, contextHolder] = message.useMessage();
+
   useEffect(() => {
     // add locale resources
     for (const lng in localeResources) {
@@ -47,7 +49,9 @@ const ArexCoreProvider: FC<PropsWithChildren<Partial<ArexCoreProviderProps>>> = 
         i18n.addResourceBundle(lng, ns, localeResources[lng as I18nextLng][ns], true, false);
       }
     }
-  });
+    // set message api
+    window.message = messageApi;
+  }, []);
 
   const algorithm = useMemo<MappingAlgorithm[]>(() => {
     const _algorithm = [defaultAlgorithm];
@@ -66,7 +70,8 @@ const ArexCoreProvider: FC<PropsWithChildren<Partial<ArexCoreProviderProps>>> = 
       renderEmpty={() => Empty.PRESENTED_IMAGE_SIMPLE}
     >
       <EmotionThemeProvider>
-        <AppWrapper>
+        <App>
+          {contextHolder}
           <Layout>
             <Content>
               <ArexCoreContext.Provider value={{ theme, compact, colorPrimary, language }}>
@@ -74,7 +79,7 @@ const ArexCoreProvider: FC<PropsWithChildren<Partial<ArexCoreProviderProps>>> = 
               </ArexCoreContext.Provider>
             </Content>
           </Layout>
-        </AppWrapper>
+        </App>
       </EmotionThemeProvider>
     </ConfigProvider>
   );

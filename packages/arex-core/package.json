@@ -24,6 +24,7 @@
     "copy-to-clipboard": "^3.3.3",
     "i18next": "^22.4.11",
     "immer": "^9.0.19",
+    "lossless-json": "^2.0.8",
     "monaco-editor": "^0.36.1",
     "path-to-regexp": "^6.2.1",
     "qs": "^6.11.1",
