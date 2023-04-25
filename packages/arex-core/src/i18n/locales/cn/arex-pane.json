@@ -1,3 +1,4 @@
 {
-  "pane-not-found": "PaneNotFound"
+  "pane-not-found": "PaneNotFound",
+  "no-permission": "NoPermission"
 }
