@@ -1,4 +1,5 @@
 import { message } from 'antd';
+import { parse, stringify } from 'lossless-json';
 import { v4 as uuid } from 'uuid';
 
 import { HoppRESTRequest } from '../components/http/data/rest';
@@ -32,7 +33,7 @@ export function setLocalStorage<T>(key: string, value?: T | ((state: T) => void)
     raw && (value as (state: T) => void)(raw);
     _value = raw;
   }
-  return window.localStorage.setItem(key, JSON.stringify(_value));
+  return window.localStorage.setItem(key, stringify(_value) || 'undefined');
 }
 
 /**
@@ -49,7 +50,7 @@ export function clearLocalStorage(key?: string) {
 
 export function tryParseJsonString<T>(jsonString?: any, errorTip?: string) {
   try {
-    return JSON.parse(jsonString || '{}') as T;
+    return parse(jsonString || '{}') as T;
   } catch (e) {
     console.error(e);
     errorTip && message.warning(errorTip);
@@ -59,7 +60,7 @@ export function tryParseJsonString<T>(jsonString?: any, errorTip?: string) {
 
 export const tryPrettierJsonString = (jsonString: string, errorTip?: string) => {
   try {
-    return JSON.stringify(JSON.parse(jsonString), null, 2);
+    return stringify(parse(jsonString), undefined, 2);
   } catch (e) {
     errorTip && message.warning(errorTip);
     return jsonString;
@@ -122,7 +123,7 @@ export function getChromeVersion() {
 
 export const JSONparse = (jsonString: string) => {
   try {
-    return JSON.parse(jsonString);
+    return parse(jsonString);
   } catch (e) {
     return undefined;
   }

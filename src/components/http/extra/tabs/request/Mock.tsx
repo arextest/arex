@@ -1,24 +1,25 @@
 import { SaveOutlined } from '@ant-design/icons';
 import { json } from '@codemirror/lang-json';
 import { useRequest } from 'ahooks';
-import { Alert, App, Card, Col, Collapse, Row, Space } from 'antd';
+import { App, Col, Collapse, Row, Space } from 'antd';
+import { stringify } from 'lossless-json';
 import React, { FC } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
 import request from '../../../../../helpers/api/request';
-import { tryParseJsonString, tryPrettierJsonString } from '../../../../../helpers/utils';
+import { tryParseJsonString } from '../../../../../helpers/utils';
 import useUserProfile from '../../../../../store/useUserProfile';
 import { EmptyWrapper, WatermarkCodeMirror } from '../../../../styledComponents';
 import TooltipButton from '../../../../TooltipButton';
 
 type MockTarget = {
   body: string | null;
+  bodyParsed?: Record<string, any> | null;
   attributes: Record<string, any> | null;
   type: string | null;
 };
 
-type MockTargetParsed = { body: Record<string, any> | string | null } & Omit<MockTarget, 'body'>;
+type MockTargetParsed = { body?: string | null } & Omit<MockTarget, 'body'>;
 
 type MockData = {
   id: string;
@@ -48,7 +49,6 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
   const { message } = App.useApp();
   const { theme } = useUserProfile();
   const [mockData, setMockData] = useImmer<MockDataParse[]>([]);
-  const { t } = useTranslation(['components', 'common']);
 
   const { run: getMockData, loading } = useRequest<MockDataParse[], []>(
     () =>
@@ -60,23 +60,22 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
         .then((res) =>
           Promise.resolve(
             res.recordResult.map((result) => {
-              try {
-                result.targetRequest.body &&
-                  (result.targetRequest.body = JSON.parse(result.targetRequest.body));
-              } catch (e) {
-                console.info(e);
-              }
-              try {
-                result.targetResponse.body &&
-                  (result.targetResponse.body = JSON.parse(result.targetResponse.body));
-              } catch (e) {
-                console.info(e);
-              }
+              result.targetRequest.bodyParsed = tryParseJsonString<Record<string, any>>(
+                result.targetRequest.body,
+              );
+              result.targetResponse.bodyParsed = tryParseJsonString<Record<string, any>>(
+                result.targetResponse.body,
+              );
+
+              const convertData = (data: MockTarget) => {
+                const { body, bodyParsed, ...rest } = data;
+                return stringify({ body: bodyParsed || body, ...rest }, undefined, 2);
+              };
 
               return {
                 ...result,
-                targetRequestString: tryPrettierJsonString(JSON.stringify(result.targetRequest)),
-                targetResponseString: tryPrettierJsonString(JSON.stringify(result.targetResponse)),
+                targetRequestString: convertData(result.targetRequest),
+                targetResponseString: convertData(result.targetResponse),
               };
             }),
           ),
@@ -114,13 +113,14 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
 
     const { targetRequestString, targetResponseString, ...params } = data;
 
-    params.targetRequest = tryParseJsonString(targetRequestString) as MockTarget;
-    params.targetResponse = tryParseJsonString(targetResponseString) as MockTarget;
+    params.targetRequest = tryParseJsonString(targetRequestString);
+    params.targetResponse = tryParseJsonString(targetResponseString);
 
     typeof params.targetRequest.body !== 'string' &&
-      (params.targetRequest.body = JSON.stringify(params.targetRequest.body));
+      (params.targetRequest.body = stringify(params.targetRequest.body));
+
     typeof params.targetResponse.body !== 'string' &&
-      (params.targetResponse.body = JSON.stringify(params.targetResponse.body));
+      (params.targetResponse.body = stringify(params.targetResponse.body));
 
     updateMockData(params);
   };
@@ -129,7 +129,6 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
     <Space direction='vertical' style={{ width: '100%' }}>
       <EmptyWrapper loading={loading} empty={!mockData.length}>
         <Space direction='vertical' style={{ width: '100%' }}>
-          {/*<Alert message={t('appSetting.mockTips')} type='info' showIcon />*/}
           <Collapse defaultActiveKey={mockData.map((mock) => mock.id)}>
             {mockData.map((mock) => (
               <Collapse.Panel
@@ -139,7 +138,10 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
                   <TooltipButton
                     title={'Save'}
                     icon={<SaveOutlined />}
-                    onClick={() => handleSave(mock.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSave(mock.id);
+                    }}
                   />
                 }
               >
