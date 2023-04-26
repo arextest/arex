@@ -65,7 +65,7 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
         </ErrorBoundary>
       )
     );
-  }, [props.activeKey, props.collapsed]);
+  }, [props]);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>

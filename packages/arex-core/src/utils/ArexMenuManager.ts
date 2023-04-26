@@ -12,9 +12,14 @@ export class ArexMenuManager {
   }
 
   public static registerMenus(menusMap: { [Modal: string]: ArexMenu }) {
+    console.dir(menusMap['AppSettingMenu']);
     for (const name in menusMap) {
       const menu = menusMap[name];
-      if (this.menusMap.has(menu.type)) continue;
+      // console.log(this.menusMap, menusMap, name, menu.type);
+      if (this.menusMap.has(menu.type)) {
+        console.log(`Menu ${menu.type} already exists, please check!`);
+        // continue;
+      }
       this.menusMap.set(menu.type, menu);
     }
   }

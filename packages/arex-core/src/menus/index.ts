@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { cloneElement, FC, PropsWithChildren, ReactNode } from 'react';
 
 export type MenuConfig = {
   key: string;
@@ -7,11 +7,12 @@ export type MenuConfig = {
   Menu?: FC;
 };
 
-export type ArexMenuFC = FC<{
+export interface ArexMenuProps extends PropsWithChildren {
   value?: string;
-  onSelect?: (value: string) => void;
-  [key: string]: any;
-}>;
+  onSelect?: (value: string, data?: unknown) => void;
+}
+
+export type ArexMenuFC = FC<ArexMenuProps>;
 
 export type ArexMenu = ArexMenuFC & {
   type: string;
