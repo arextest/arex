@@ -1,16 +1,30 @@
 import { LogoutOutlined, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Avatar, Dropdown, DropdownProps, Space, Switch } from 'antd';
-import { I18_KEY, i18n, I18nextLng, Theme, TooltipButton, useTranslation } from 'arex-core';
+import {
+  getLocalStorage,
+  I18_KEY,
+  i18n,
+  I18nextLng,
+  setLocalStorage,
+  Theme,
+  TooltipButton,
+  useTranslation,
+} from 'arex-core';
 import React, { FC, useMemo } from 'react';
 
-import { useUserProfile } from '../store';
+import { EMAIL_KEY } from '../constant';
+import { useMenusPanes, useUserProfile } from '../store';
 
 const HeaderMenu: FC = () => {
+  const { reset } = useMenusPanes();
   const { theme, setTheme } = useUserProfile();
   const { t } = useTranslation();
 
   const handleLogout = () => {
-    console.log('logout');
+    const email = getLocalStorage<string>(EMAIL_KEY);
+    reset();
+    localStorage.clear();
+    email?.startsWith('GUEST') && setLocalStorage(EMAIL_KEY, email);
   };
 
   const userMenu: DropdownProps['menu'] = useMemo(
