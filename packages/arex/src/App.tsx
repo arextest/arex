@@ -1,3 +1,4 @@
+import { Segmented } from 'antd';
 import { ArexCoreProvider } from 'arex-core';
 import React from 'react';
 
