@@ -3,11 +3,15 @@ import { RequestMethodEnum } from 'arex-core/src';
 
 export enum PanesType {
   DEMO = 'demo',
+  REPLAY = 'replay',
+  APP_SETTING = 'appSetting',
   ENVIRONMENT = 'environment',
 }
 
 export enum MenusType {
   DEMO = 'demo',
+  REPLAY = 'replay',
+  APP_SETTING = 'appSetting',
   ENVIRONMENT = 'environment',
 }
 

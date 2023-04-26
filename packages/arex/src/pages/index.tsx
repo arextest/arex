@@ -62,6 +62,7 @@ export default () => {
         collapsed={collapsed}
         arexMenus={
           <ArexMenuContainer
+            value={activePane?.id}
             activeKey={activeMenu}
             collapsed={collapsed}
             workspaceMenuProps={{
