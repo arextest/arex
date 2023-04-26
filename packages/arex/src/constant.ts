@@ -35,8 +35,19 @@ export enum NodeType {
   folder = 3,
 }
 
+export const ExtensionVersion = '1.0.4';
+export const ArexVersionKey = 'arexVersion';
+export const ArexVersionValue = '0.2.8';
+
 // localStorage key
 export const THEME_KEY = 'theme';
+export const USER_PROFILE_KEY = 'userProfile';
+export const EMAIL_KEY = 'email'; // 初始化接口相关的 email 请使用该 key 而非 UserInfo
+export const ACCESS_TOKEN_KEY = 'accessToken';
+export const REFRESH_TOKEN_KEY = 'refreshToken';
+export const ENVIRONMENT_KEY = 'environmentId';
+export const WORKSPACE_KEY = 'workspaceId';
+export const WORKSPACE_ENVIRONMENT_PAIR_KEY = 'workspaceEnvironmentPair';
 
 // Default value
 export const DEFAULT_LANGUAGE = I18nextLng.en;

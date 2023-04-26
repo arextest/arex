@@ -1,109 +1,188 @@
-import { css } from '@emotion/react';
-import { Button } from 'antd';
-import { useTranslation } from 'arex-core';
-import React, { FC } from 'react';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import styled from '@emotion/styled';
+import { useRequest } from 'ahooks';
+import { App, Button, Card, Input, Space, Typography } from 'antd';
+import { FlexCenterWrapper, getLocalStorage, Label, setLocalStorage } from 'arex-core';
+import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import logo from '../assets/svg/logo.svg';
-import rightBackgroundImage from '../assets/svg/rightBackgroundImage.svg';
+import { ACCESS_TOKEN_KEY, EMAIL_KEY, REFRESH_TOKEN_KEY } from '../constant';
+import { AuthService, UserService } from '../services';
+
+const Logo = styled(Typography.Text)`
+  height: 64px;
+  display: block;
+  font-size: 36px;
+  font-weight: 600;
+  text-align: center;
+`;
+
+let timer: NodeJS.Timer;
 
 const Login: FC = () => {
-  const { t } = useTranslation();
   const nav = useNavigate();
+  const { message } = App.useApp();
+
+  const [email, setEmail] = useState('');
+  const [verificationCode, setVerificationCode] = useState<string>('');
+  const [verify, setVerify] = useState(false);
+  const [emailChecked, setEmailChecked] = useState<boolean>(true);
+  const [count, setCount] = useState<number>(0);
+
+  const getEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVerify(false);
+    const { value } = e.target;
+    if (value.match(/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/)) {
+      setEmailChecked(true);
+    } else {
+      setEmailChecked(false);
+    }
+    setEmail(value);
+  };
+
+  const getVerificationCode = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setVerificationCode(value);
+  };
+
+  const { run: sendVerifyCode } = useRequest(AuthService.sendVerifyCodeByEmail, {
+    manual: true,
+    onBefore() {
+      setCount(60);
+    },
+    onSuccess(success) {
+      success
+        ? message.success('The verification code has been sent to the email.')
+        : message.error('Authentication failed.');
+    },
+    onError() {
+      message.error('Authentication failed.');
+    },
+  });
+
+  const sendVerificationCode = () => {
+    setVerify(true);
+
+    if (!emailChecked || !email) {
+      return message.error('email error');
+    }
+
+    timer = setInterval(() => {
+      setCount((t: number) => --t);
+    }, 1000);
+
+    sendVerifyCode(email);
+  };
+
+  const handleLoginSuccess = (email?: string) => {
+    const query = new URLSearchParams(location.search);
+    const redirect = query.get('redirect');
+
+    setLocalStorage(EMAIL_KEY, email);
+
+    nav(redirect || '/');
+  };
+
+  const { run: loginAsGuest } = useRequest(
+    () => UserService.loginAsGuest({ userName: getLocalStorage<string>(EMAIL_KEY) }),
+    {
+      manual: true,
+      onSuccess(res) {
+        setLocalStorage(EMAIL_KEY, res.userName);
+        setLocalStorage(ACCESS_TOKEN_KEY, res.accessToken);
+        setLocalStorage(REFRESH_TOKEN_KEY, res.refreshToken);
+        handleLoginSuccess(res.userName);
+      },
+    },
+  );
+
+  const { run: loginVerify } = useRequest(AuthService.loginVerify, {
+    manual: true,
+    onSuccess(res) {
+      if (res.success) {
+        setLocalStorage(ACCESS_TOKEN_KEY, res.accessToken);
+        setLocalStorage(REFRESH_TOKEN_KEY, res.refreshToken);
+        message.success('Login succeeded');
+        handleLoginSuccess(email);
+      } else {
+        message.error('Verification code error');
+      }
+    },
+  });
+
+  const handleLogin = () => {
+    setVerify(true);
+    if (!emailChecked) {
+      return message.error('Please check your email');
+    } else if (verificationCode.length !== 6) {
+      return message.error('Please enter the verification code');
+    }
+
+    loginVerify({
+      userName: email,
+      verificationCode,
+    });
+  };
+
+  useEffect(() => {
+    !count && clearInterval(timer);
+  }, [count]);
 
   return (
-    <div
-      css={css`
-        .welcome {
-          min-width: 1000px;
-          height: 100vh;
-          display: flex;
-          .left-box {
-            padding: 100px;
-            flex-basis: 580px;
-            border-right: 1px solid #eee;
-            .logo {
-              font-size: 30px;
-              font-weight: bolder;
-              margin-bottom: 60px;
-              display: flex;
-              align-items: center;
-              img {
-                width: 52.5px;
-                margin-right: 14px;
-              }
-            }
-            h1 {
-              font-weight: 600;
-              font-size: 32px;
-              line-height: 44px;
-              color: #22222a;
-            }
-            .desc {
-              font-size: 16px;
-              line-height: 24px;
-              display: block;
-              color: #9293ab;
-              margin-bottom: 30px;
-            }
-          }
-          .right-box {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            .img-wrap {
-              background-color: #0a3364;
-              height: 100%;
-              width: 100%;
-              background-size: 100%;
-              background-repeat: no-repeat;
-              background-position: center;
-            }
-          }
-        }
-      `}
-    >
-      <div className={'welcome'}>
-        <div className={'left-box'}>
-          <div className='login-form'>
-            <div className='logo'>
-              <img src={logo} alt='' />
-              <span>AREX</span>
-            </div>
-            <h1 className={'title'}>
-              {t('auth.login')}，
-              <br />
-              Welcome to Arex。
-            </h1>
-            <p className={'desc'}>
-              You will be redirected to your source control management system to authenticate.
-            </p>
-            <Button
-              type={'primary'}
-              style={{ width: '100%' }}
-              size={'large'}
-              onClick={() => {
-                localStorage.setItem(
-                  'refreshToken',
-                  'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODE5NzgwMDQsInVzZXJuYW1lIjoidHpoYW5nbUB0cmlwLmNvbSJ9.K3PcNDDG3V8Mg4EBN113PGa6OU6_Ac5WKhfQ5EmWvE8',
-                );
-                localStorage.setItem(
-                  'accessToken',
-                  'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2Nzk5OTA4MDQsInVzZXJuYW1lIjoidHpoYW5nbUB0cmlwLmNvbSJ9.1qlDL7SF43yzwrSWVeMH23_p4qGe31ETDmrrDfg1ZgM',
-                );
-                nav('/');
-              }}
+    <FlexCenterWrapper>
+      <Card style={{ marginTop: '20vh' }}>
+        <Space size={26} direction='vertical'>
+          <Logo>AREX</Logo>
+
+          {/* TODO 使用 Form 组件做数据校验以及表单提交 */}
+          <div style={{ position: 'relative' }}>
+            <Input
+              size='large'
+              placeholder='Please enter your email'
+              prefix={<UserOutlined />}
+              onChange={getEmail}
+              status={!emailChecked && verify ? 'error' : undefined}
+              allowClear
+            />
+
+            <Typography.Text
+              type='danger'
+              style={{ position: 'absolute', left: 0, bottom: '-24px' }}
             >
-              Continue
-            </Button>
+              {!emailChecked && verify && 'Please enter the correct email!'}
+            </Typography.Text>
           </div>
-        </div>
-        <div className={'right-box'}>
-          <div className={'img-wrap'} style={{ backgroundImage: `url(${rightBackgroundImage})` }} />
-        </div>
-      </div>
-    </div>
+
+          <Space>
+            <Input
+              size='large'
+              placeholder='Please enter a verification code'
+              prefix={<LockOutlined />}
+              onChange={getVerificationCode}
+            />
+            <Button
+              size='large'
+              disabled={!!count}
+              onClick={sendVerificationCode}
+              style={{ width: '120px' }}
+            >
+              {count ? count + 's' : 'Send code'}
+            </Button>
+          </Space>
+
+          <Button block size='large' type='primary' onClick={handleLogin}>
+            Login
+          </Button>
+
+          <span>
+            <Label>Login with</Label>
+            <Button type='link' onClick={loginAsGuest} style={{ paddingLeft: 0 }}>
+              Guest
+            </Button>
+          </span>
+        </Space>
+      </Card>
+    </FlexCenterWrapper>
   );
 };
 

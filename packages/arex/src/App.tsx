@@ -1,12 +1,14 @@
 import { ArexCoreProvider } from 'arex-core';
 import React from 'react';
 
+import { useAuthentication } from './hooks';
 import { resources } from './i18n';
 import Routes from './router';
 import { useUserProfile } from './store';
 import GlobalStyle from './style/GlobalStyle';
 
 const App = () => {
+  useAuthentication();
   const { theme, compact, colorPrimary, language } = useUserProfile();
 
   return (

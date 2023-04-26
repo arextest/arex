@@ -7,6 +7,7 @@ import Home from '../pages';
 
 export type Routes = {
   path: string;
+  auth?: boolean;
   component: React.LazyExoticComponent<FC> | FC;
   children?: Routes[];
 };
@@ -15,6 +16,7 @@ const routes: Routes[] = Object.values(RouterPath)
   .map<Routes>((path) => ({
     path,
     component: Home,
+    auth: true,
   }))
   .concat([
     {
@@ -34,4 +36,15 @@ const syncRouter = (table: Routes[]): RouteObject[] =>
     children: route.children && syncRouter(route.children),
   }));
 
+const getFreePath = (routes: Routes[]): string[] =>
+  routes.reduce<string[]>((list, cur) => {
+    if (!cur.auth) {
+      list.push(cur.path);
+    }
+    return list;
+  }, []);
+
+const FreePath = getFreePath(routes);
+
 export default syncRouter(routes);
+export { FreePath };
