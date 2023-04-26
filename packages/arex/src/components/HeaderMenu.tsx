@@ -17,11 +17,11 @@ import { useMenusPanes, useUserProfile } from '../store';
 
 const HeaderMenu: FC = () => {
   const { reset } = useMenusPanes();
-  const { theme, setTheme } = useUserProfile();
+  const { avatar, theme, setTheme } = useUserProfile();
   const { t } = useTranslation();
+  const email = getLocalStorage(EMAIL_KEY) as string;
 
   const handleLogout = () => {
-    const email = getLocalStorage<string>(EMAIL_KEY);
     reset();
     localStorage.clear();
     email?.startsWith('GUEST') && setLocalStorage(EMAIL_KEY, email);
@@ -37,9 +37,7 @@ const HeaderMenu: FC = () => {
         },
       ],
       onClick: (e) => {
-        if (e.key === 'logout') {
-          handleLogout();
-        }
+        if (e.key === 'logout') handleLogout();
       },
     }),
     [t],
@@ -79,8 +77,8 @@ const HeaderMenu: FC = () => {
 
       <TooltipButton title={t('setting')} icon={<SettingOutlined />} onClick={handleClickSetting} />
       <Dropdown menu={userMenu}>
-        <Avatar src={'avatar'} size={24} style={{ marginLeft: '0px', cursor: 'pointer' }}>
-          {'A'}
+        <Avatar src={avatar} size={24} style={{ marginLeft: '0px', cursor: 'pointer' }}>
+          {email?.slice(0, 1).toUpperCase()}
         </Avatar>
       </Dropdown>
     </Space>
