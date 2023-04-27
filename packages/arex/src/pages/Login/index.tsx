@@ -7,8 +7,8 @@ import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ACCESS_TOKEN_KEY, EMAIL_KEY, REFRESH_TOKEN_KEY } from '../../constant';
-import { AuthService, UserService } from '../../services';
-import { loginVerifyReq } from '../../services/AuthService';
+import { LoginService, UserService } from '../../services';
+import { loginVerifyReq } from '../../services/LoginService';
 import VerificationCode from './VerificationCode';
 
 const Logo = styled(Typography.Text)`
@@ -29,7 +29,7 @@ const Login: FC = () => {
   const [form] = Form.useForm();
   const [count, setCount] = useState<number>(0);
 
-  const { run: sendVerifyCode } = useRequest(AuthService.sendVerifyCodeByEmail, {
+  const { run: sendVerifyCode } = useRequest(LoginService.sendVerifyCodeByEmail, {
     manual: true,
     onBefore() {
       setCount(60);
@@ -76,7 +76,7 @@ const Login: FC = () => {
     },
   );
 
-  const { run: loginVerify } = useRequest(AuthService.loginVerify, {
+  const { run: loginVerify } = useRequest(LoginService.loginVerify, {
     manual: true,
     onSuccess(res, [{ userName }]) {
       if (res.success) {

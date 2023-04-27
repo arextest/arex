@@ -2,17 +2,13 @@ import { ColorPrimary, getLocalStorage, I18nextLng, Theme } from 'arex-core';
 import { RequestMethodEnum } from 'arex-core/src';
 
 export enum PanesType {
-  DEMO = 'demo',
   REPLAY = 'replay',
   APP_SETTING = 'appSetting',
-  ENVIRONMENT = 'environment',
 }
 
 export enum MenusType {
-  DEMO = 'demo',
   REPLAY = 'replay',
   APP_SETTING = 'appSetting',
-  ENVIRONMENT = 'environment',
 }
 
 export const methodMap: Record<RequestMethodEnum, { color: string }> = {

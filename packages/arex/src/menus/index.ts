@@ -6,7 +6,7 @@
  * do not create the function anonymously.
  */
 
-import AppSettingMenu from './AppSettingMenu';
-import ReplayMenu from './ReplayMenu';
+import AppSetting from './AppSetting';
+import Replay from './Replay';
 
-export default { ReplayMenu, AppSettingMenu };
+export default { Replay, AppSetting };

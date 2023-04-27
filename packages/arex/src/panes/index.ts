@@ -6,6 +6,6 @@
  * do not create the function anonymously.
  */
 
-import Demo from './Demo';
+import Replay from './Replay';
 
-export default { Demo };
+export default { Replay };

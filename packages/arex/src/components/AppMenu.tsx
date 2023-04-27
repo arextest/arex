@@ -7,8 +7,8 @@ import { getLocalStorage, SpaceBetweenWrapper, TooltipButton, useTranslation } f
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { EMAIL_KEY } from '../constant';
-import { ReplayService, UserService } from '../services';
-import { ApplicationDataType } from '../services/ReplayService';
+import { ApplicationService, UserService } from '../services';
+import { ApplicationDataType } from '../services/ApplicationService';
 import MenuSelect from './MenuSelect';
 
 type MenuItemProps = {
@@ -139,7 +139,7 @@ const AppMenu: ArexMenuFC = (props) => {
       }
       onSelect={props.onSelect}
       placeholder={t('applicationsMenu.appFilterPlaceholder') as string}
-      request={ReplayService.getAppList}
+      request={ApplicationService.getAppList}
       requestOptions={{
         onSuccess(res) {
           !loadingFavoriteApp && recycleDiscard(res);
