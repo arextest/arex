@@ -1,18 +1,8 @@
-import {
-  ArexMenuManager,
-  ArexPaneManager,
-  decodeUrl,
-  encodeUrl,
-  I18_KEY,
-  i18n,
-  StandardPathParams,
-} from 'arex-core';
+import { decodeUrl, encodeUrl, I18_KEY, i18n, StandardPathParams } from 'arex-core';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { DEFAULT_LANGUAGE } from '../constant';
-import * as Menus from '../menus';
-import * as Panes from '../panes';
 import { useWorkspaces } from '../store';
 import useMenusPanes from '../store/useMenusPanes';
 
@@ -20,10 +10,6 @@ const useInit = () => {
   const { panes, setPanes } = useMenusPanes();
   const { workspaces, setActiveWorkspaceId } = useWorkspaces();
   const nav = useNavigate();
-
-  // register menus and panes
-  ArexPaneManager.registerPanes(Panes);
-  ArexMenuManager.registerMenus(Menus);
 
   useEffect(() => {
     if (location.pathname === '/' && workspaces.length) {

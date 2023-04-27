@@ -12,7 +12,6 @@ export class ArexMenuManager {
   }
 
   public static registerMenus(menusMap: { [Modal: string]: ArexMenu }) {
-    console.dir(menusMap['AppSettingMenu']);
     for (const name in menusMap) {
       const menu = menusMap[name];
       // console.log(this.menusMap, menusMap, name, menu.type);

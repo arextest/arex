@@ -1,6 +1,7 @@
 import { LeftOutlined } from '@ant-design/icons';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Menu, MenuProps } from 'antd';
+import { Menu, MenuProps, Tabs, TabsProps } from 'antd';
 import React, { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -15,14 +16,14 @@ export type ArexMenuContainerProps = {
   workspaceMenuProps?: WorkspacesMenuProps;
   onChange?: (menuType: string) => void;
   onCollapsed?: (collapse: boolean) => void;
-  onSelect?: (id: string, paneType: string) => void;
+  onSelect?: (paneType: string, id: string, data: unknown) => void;
 };
 
 export type MenuItemType = {
   icon: ReactNode;
   label: ReactNode;
   key: string;
-  children?: MenuItemType[];
+  children?: ReactNode;
 };
 
 const ICON_KEY = '__ExpandIcon';
@@ -47,25 +48,29 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
     [props.collapsed, t],
   );
 
+  const items = useMemo<TabsProps['items']>(
+    () =>
+      ArexMenuManager.getMenus().map((Menu) => ({
+        label: t(`${Menu.type}`),
+        key: Menu.type,
+        children: (
+          <ErrorBoundary>
+            <Menu
+              value={props.value}
+              onSelect={(value, data) =>
+                props.activeKey && props.onSelect?.(props.activeKey, value, data)
+              }
+            />
+          </ErrorBoundary>
+        ),
+      })),
+    [props, t],
+  );
+
   const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
     if (key === ICON_KEY) return props.onCollapsed?.(!props.collapsed);
     props.onChange?.(key);
   };
-
-  const MenuContent = useMemo(() => {
-    const Content = ArexMenuManager.getMenuByType(props.activeKey);
-    return (
-      !props.collapsed &&
-      Content && (
-        <ErrorBoundary>
-          <Content
-            value={props.value}
-            onSelect={(value) => props.activeKey && props.onSelect?.(value, props.activeKey)}
-          />
-        </ErrorBoundary>
-      )
-    );
-  }, [props]);
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -78,7 +83,18 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
           items={tabsItems}
           onClick={handleMenuClick}
         />
-        <MenuContentWrapper className={'menu-content-wrapper'}>{MenuContent}</MenuContentWrapper>
+        {/* 此处利用 Tabs 做组件缓存 */}
+        <Tabs
+          activeKey={props.activeKey}
+          items={items}
+          css={css`
+            width: 100%;
+            //overflow-y: overlay;
+            .ant-tabs-nav {
+              display: none; // 隐藏 Tabs 的导航栏
+            }
+          `}
+        />
       </div>
     </div>
   );
@@ -119,13 +135,6 @@ const StyledMenu = styled(Menu)`
       left: 8px;
     }
   }
-`;
-
-const MenuContentWrapper = styled.div`
-  padding: 8px;
-  flex: auto;
-  min-width: 0;
-  overflow-y: auto;
 `;
 
 const CollapseButton = styled(

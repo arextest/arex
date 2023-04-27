@@ -1,10 +1,16 @@
-import { ArexCoreProvider } from 'arex-core';
+import { ArexCoreProvider, ArexMenuManager, ArexPaneManager } from 'arex-core';
 import React from 'react';
 
 import { resources } from './i18n';
+import Menus from './menus';
+import Panes from './panes';
 import Routes from './router';
 import { useUserProfile } from './store';
 import GlobalStyle from './style/GlobalStyle';
+
+// register menus and panes
+ArexPaneManager.registerPanes(Panes);
+ArexMenuManager.registerMenus(Menus);
 
 const App = () => {
   const { theme, compact, colorPrimary, language } = useUserProfile();

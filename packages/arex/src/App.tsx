@@ -3,8 +3,8 @@ import React from 'react';
 
 import { useAuthentication } from './hooks';
 import { resources } from './i18n';
-import * as Menus from './menus';
-import * as Panes from './panes';
+import Menus from './menus';
+import Panes from './panes';
 import Routes from './router';
 import { useUserProfile } from './store';
 import GlobalStyle from './style/GlobalStyle';

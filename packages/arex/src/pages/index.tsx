@@ -39,10 +39,11 @@ export default () => {
     [workspaces],
   );
 
-  const handleMenuSelect: ArexMenuContainerProps['onSelect'] = (id, type) => {
+  const handleMenuSelect: ArexMenuContainerProps['onSelect'] = (type, id, data) => {
     setPanes({
       id,
       type,
+      data,
     });
   };
 
