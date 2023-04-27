@@ -57,11 +57,7 @@ export function tryParseJsonString<T>(jsonString?: any, errorTip?: string) {
   }
 }
 
-export const tryStringifyJson = (
-  jsonString?: object | null,
-  errorTip?: string,
-  prettier?: boolean,
-) => {
+export const tryStringifyJson = (jsonString?: any, errorTip?: string, prettier?: boolean) => {
   try {
     return stringify(jsonString, undefined, prettier ? 2 : undefined);
   } catch (e) {
