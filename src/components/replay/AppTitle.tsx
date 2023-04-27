@@ -1,10 +1,10 @@
 import { PlayCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
-import { App, Button, DatePicker, Form, Input, Modal, Select } from 'antd';
+import { App, Button, DatePicker, Form, Input, Modal, Select, Typography } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { DefaultOptionType } from 'rc-select/lib/Select';
-import React, { FC, ReactNode, useState } from 'react';
+import React, { FC, ReactNode, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 
@@ -83,8 +83,14 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   const email = getLocalStorage<string>(EmailKey);
 
   const [form] = Form.useForm<CreatePlanForm>();
+  const targetEnv = Form.useWatch('targetEnv', form);
   const [open, setOpen] = useState(false);
   const [interfacesOptions, setInterfacesOptions] = useState<DefaultOptionType[]>([]);
+
+  const webhook = useMemo(
+    () => `${location.origin}/api/createPlan?appId=${data.appId}&targetEnv=${targetEnv}`,
+    [data.appId, targetEnv],
+  );
 
   /**
    * 请求 InterfacesList
@@ -226,6 +232,10 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
               placeholder={'optional'}
               optionFilterProp='label'
             />
+          </Form.Item>
+
+          <Form.Item label={'webhook'}>
+            <Typography.Text copyable>{webhook}</Typography.Text>
           </Form.Item>
         </Form>
       </Modal>
