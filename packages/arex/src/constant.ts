@@ -51,7 +51,7 @@ export const WORKSPACE_ENVIRONMENT_PAIR_KEY = 'workspaceEnvironmentPair';
 
 // Default value
 export const DEFAULT_LANGUAGE = I18nextLng.en;
-export const DEFAULT_ACTIVE_MENU = MenusType.ENVIRONMENT;
+export const DEFAULT_ACTIVE_MENU = MenusType.REPLAY;
 export const DEFAULT_THEME =
   getLocalStorage<Theme>(THEME_KEY) ||
   (window.matchMedia('(prefers-color-scheme: dark)').matches ? Theme.dark : Theme.light);
