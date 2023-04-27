@@ -1,7 +1,5 @@
 import { useRequest } from 'ahooks';
 import {
-  ArexMenuManager,
-  ArexPaneManager,
   decodeUrl,
   encodeUrl,
   getLocalStorage,
@@ -13,8 +11,6 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { DEFAULT_LANGUAGE, EMAIL_KEY } from '../constant';
-import * as Menus from '../menus';
-import * as Panes from '../panes';
 import { UserService } from '../services';
 import { useUserProfile, useWorkspaces } from '../store';
 import useMenusPanes from '../store/useMenusPanes';
@@ -23,10 +19,6 @@ const useInit = () => {
   const { workspaces, setActiveWorkspaceId } = useWorkspaces();
   const nav = useNavigate();
   const email = getLocalStorage(EMAIL_KEY) as string;
-
-  // register menus and panes
-  ArexPaneManager.registerPanes(Panes);
-  ArexMenuManager.registerMenus(Menus);
 
   useRequest(UserService.getUserProfile, {
     defaultParams: [email],

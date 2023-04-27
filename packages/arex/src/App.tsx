@@ -1,12 +1,17 @@
-import { Segmented } from 'antd';
-import { ArexCoreProvider } from 'arex-core';
+import { ArexCoreProvider, ArexMenuManager, ArexPaneManager } from 'arex-core';
 import React from 'react';
 
 import { useAuthentication } from './hooks';
 import { resources } from './i18n';
+import * as Menus from './menus';
+import * as Panes from './panes';
 import Routes from './router';
 import { useUserProfile } from './store';
 import GlobalStyle from './style/GlobalStyle';
+
+// register menus and panes
+ArexPaneManager.registerPanes(Panes);
+ArexMenuManager.registerMenus(Menus);
 
 const App = () => {
   useAuthentication();

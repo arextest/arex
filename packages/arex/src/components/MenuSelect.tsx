@@ -1,12 +1,10 @@
 import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Options } from 'ahooks/lib/useRequest/src/types';
 import { Button, Input, Menu, Spin, Typography } from 'antd';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
-import { useTranslation } from 'arex-core';
+import { css, styled, useTranslation } from 'arex-core';
 import React, { ChangeEventHandler, ReactNode, useCallback, useMemo, useState } from 'react';
 
 export type MenuSelectProps<D, P extends any[]> = {
