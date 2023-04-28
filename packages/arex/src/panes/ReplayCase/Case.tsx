@@ -10,7 +10,7 @@ import { ReplayCaseType } from '../../services/ReportService';
 
 type CaseProps = {
   planItemId: string;
-  status?: Key;
+  filter?: Key;
   onClick?: (record: ReplayCaseType) => void;
   onClickSaveCase?: (record: ReplayCaseType) => void;
 };
@@ -39,7 +39,7 @@ const Case: FC<CaseProps> = (props) => {
     },
     {
       title: t('replay.status'),
-      defaultFilteredValue: props.status !== undefined ? [props.status] : undefined,
+      defaultFilteredValue: props.filter !== undefined ? [props.filter.toString()] : undefined,
       filterMultiple: false,
       filters: filterMap,
       onFilter: (value, record) => record.diffResultCode === value,
@@ -75,6 +75,7 @@ const Case: FC<CaseProps> = (props) => {
       refreshDeps: [props.planItemId],
     },
   );
+
   return (
     <HighlightRowTable
       size='small'

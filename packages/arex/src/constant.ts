@@ -2,7 +2,9 @@ import { ColorPrimary, getLocalStorage, I18nextLng, Theme } from 'arex-core';
 import { RequestMethodEnum } from 'arex-core/src';
 
 export enum PanesType {
+  REQUEST = 'request',
   REPLAY = 'replay',
+  REPLAY_CASE = 'replayCase',
   APP_SETTING = 'appSetting',
 }
 

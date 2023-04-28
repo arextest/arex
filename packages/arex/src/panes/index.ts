@@ -7,5 +7,6 @@
  */
 
 import Replay from './Replay';
+import ReplayCase from './ReplayCase';
 
-export default { Replay };
+export default { Replay, ReplayCase };

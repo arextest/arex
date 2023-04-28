@@ -37,7 +37,8 @@ import { Pie } from 'react-chartjs-2';
 import CountUp from 'react-countup';
 
 import { StatusTag } from '../../components';
-import { EMAIL_KEY } from '../../constant';
+import { EMAIL_KEY, PanesType } from '../../constant';
+import { useNavPane } from '../../hooks';
 import { ReportService, ScheduleService } from '../../services';
 import { PlanItemStatistics, PlanStatistics } from '../../services/ReportService';
 
@@ -65,6 +66,7 @@ const PlanItem: FC<ReplayPlanItemProps> = ({ selectedPlan, filter }) => {
   const { message, notification } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
   const email = getLocalStorage<string>(EMAIL_KEY);
+  const navPane = useNavPane();
   const { token } = theme.useToken();
 
   const {
@@ -280,12 +282,11 @@ const PlanItem: FC<ReplayPlanItemProps> = ({ selectedPlan, filter }) => {
             breakpoint='xxl'
             color='primary'
             onClick={() => {
-              // TODO
-              // customNavigate(
-              //   `/${params.workspaceId}/${PagesType.ReplayCase}/${
-              //     record.planItemId
-              //   }?data=${encodeURIComponent(JSON.stringify(record))}`,
-              // );
+              navPane({
+                type: PanesType.REPLAY_CASE,
+                id: record.planItemId,
+                data: record,
+              });
             }}
           />
           <TooltipButton

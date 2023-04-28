@@ -19,6 +19,7 @@
     "chart.js": "^4.2.1",
     "dayjs": "^1.11.7",
     "immer": "^9.0.19",
+    "lodash": "^4.17.21",
     "monaco-editor": "^0.36.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
@@ -28,6 +29,7 @@
     "zustand": "^4.3.7"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.194",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react-swc": "^3.0.0",

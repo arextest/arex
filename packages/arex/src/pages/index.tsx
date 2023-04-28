@@ -49,7 +49,7 @@ export default () => {
 
   const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () =>
     setPanes({
-      type: PanesType.DEMO,
+      type: PanesType.REQUEST,
       // id: Math.random().toString(36).substring(2),
       id: 'Untitled',
       icon: 'Get',
