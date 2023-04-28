@@ -56,7 +56,10 @@ const Case: FC<CaseProps> = (props) => {
           key='save'
           color={'primary'}
           title={t('replay.save') as string}
-          onClick={() => props.onClickSaveCase?.(record)}
+          onClick={(e) => {
+            e.stopPropagation();
+            props.onClickSaveCase?.(record);
+          }}
         />,
         // <ToCaseDetailButton
         //   key='caseDetail'

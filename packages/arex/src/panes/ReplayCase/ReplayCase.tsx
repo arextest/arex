@@ -9,13 +9,14 @@ import {
   ReplayCaseType,
 } from '../../services/ReportService';
 import Case from './Case';
+import SaveCase, { SaveCaseRef } from './SaveCase';
 // import { SaveCaseRef } from './SaveCase';
 
 const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
   const { t } = useTranslation(['components']);
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
 
-  const saveCaseRef = useRef<any>(null);
+  const saveCaseRef = useRef<SaveCaseRef>(null);
 
   const {
     data: diffMsgAll = {
@@ -91,7 +92,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
           />
         }
       />
-      {/*<SaveCase operationId={props.data.operationId} ref={saveCaseRef} />*/}
+      <SaveCase operationId={props.data.operationId} ref={saveCaseRef} />
     </>
   );
 };

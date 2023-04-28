@@ -11,6 +11,45 @@ export function objectArrayFilter<T extends { [key: string]: any }>(arr: T[], ke
   return arr.filter((item) => !res.has(item[key]) && res.set(item[key], 1));
 }
 
+// TODO 优化该方法
+export function treeFindPath<T>(
+  tree: T[],
+  func: (item: T) => boolean,
+  path: any = [],
+): {
+  title: string;
+  key: string;
+  nodeType: number;
+}[] {
+  if (!tree) {
+    return [];
+  }
+  for (const data of tree) {
+    // 假设满足条件,直接放到数组里
+    path.push({
+      // @ts-ignore
+      title: data.title,
+      // @ts-ignore
+      key: data.key,
+      // @ts-ignore
+      nodeType: data.nodeType,
+    });
+    if (func(data)) {
+      return path;
+    }
+    // @ts-ignore
+    if (data.children) {
+      // @ts-ignore
+      const res = treeFindPath(data.children, func, path);
+      if (res.length) {
+        return res;
+      }
+    }
+    path.pop();
+  }
+  return [];
+}
+
 //版本号比较
 export const versionStringCompare = (preVersion = '', lastVersion = '') => {
   const sources = preVersion.split('.');
