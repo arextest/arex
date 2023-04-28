@@ -57,9 +57,7 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
           <ErrorBoundary>
             <Menu
               value={props.value}
-              onSelect={(value, data) =>
-                props.activeKey && props.onSelect?.(props.activeKey, value, data)
-              }
+              onSelect={(id, data) => props.activeKey && props.onSelect?.(Menu.paneType, id, data)}
             />
           </ErrorBoundary>
         ),

@@ -1,8 +1,15 @@
 export { default as CheckOrCloseIcon } from './CheckOrCloseIcon';
 export type { CollapseTableProps } from './CollapseTable';
 export { default as CollapseTable } from './CollapseTable';
+export type { DiffJsonViewProps } from './DiffJsonView';
+export { default as DiffJsonView } from './DiffJsonView';
+export type { DiffPathProps } from './DiffPath';
+export { default as DiffPath } from './DiffPath';
+export { default as DiffPathViewer } from './DiffPath/DiffPathViewer';
 export type { EditAreaPlaceholderProps } from './EditAreaPlaceholder';
 export { default as EditAreaPlaceholder } from './EditAreaPlaceholder';
+export type { EllipsisTooltipProps } from './EllipsisTooltip';
+export { default as EllipsisTooltip } from './EllipsisTooltip';
 export type { EmptyWrapperProps } from './EmptyWrapper';
 export { default as EmptyWrapper } from './EmptyWrapper';
 export { default as ErrorBoundary } from './ErrorBoundary';

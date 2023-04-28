@@ -19,6 +19,7 @@
     "@emotion/react": "^11.10.6",
     "@emotion/serialize": "^1.1.1",
     "@emotion/styled": "^11.10.6",
+    "ahooks": "^3.7.5",
     "allotment": "^1.18.1",
     "antd": "^5.3.2",
     "copy-to-clipboard": "^3.3.3",
@@ -35,6 +36,7 @@
     "react-github-btn": "^1.4.0",
     "react-i18next": "^12.2.0",
     "use-immer": "^0.8.1",
+    "vanilla-jsoneditor": "^0.17.1",
     "vconsole": "^3.15.0"
   },
   "devDependencies": {

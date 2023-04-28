@@ -1,16 +1,13 @@
 import { useRequest } from 'ahooks';
-import {
-  ArexPaneFC,
-  CollapseTable,
-  PanesTitle,
-  tryParseJsonString,
-  useTranslation,
-} from 'arex-core';
+import { ArexPaneFC, CollapseTable, DiffPath, PanesTitle, useTranslation } from 'arex-core';
 import React, { useRef, useState } from 'react';
 
-import { ReportService } from '../../services';
-import { PlanItemStatistics, ReplayCaseType } from '../../services/ReportService';
-import { QueryAllDiffMsgReq } from '../../services/ReportService/queryAllDiffMsg';
+import { ComparisonService, ReportService } from '../../services';
+import {
+  PlanItemStatistics,
+  QueryAllDiffMsgReq,
+  ReplayCaseType,
+} from '../../services/ReportService';
 import Case from './Case';
 // import { SaveCaseRef } from './SaveCase';
 
@@ -78,13 +75,20 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
           />
         }
         panel={
-          // <DiffPath
-          //   appId={data.appId}
-          //   operationId={data.operationId}
-          //   loading={loadingDiffMsgAll}
-          //   data={diffMsgAll.compareResultDetailList}
-          // />
-          <></>
+          <DiffPath
+            appId={props.data.appId}
+            operationId={props.data.operationId}
+            loading={loadingDiffMsgAll}
+            data={diffMsgAll.compareResultDetailList}
+            onQueryLogEntity={ReportService.queryLogEntity}
+            onIgnoreNode={(path) =>
+              ComparisonService.insertIgnoreNode({
+                operationId: props.data.operationId,
+                appId: props.data.appId,
+                exclusions: path,
+              })
+            }
+          />
         }
       />
       {/*<SaveCase operationId={props.data.operationId} ref={saveCaseRef} />*/}
