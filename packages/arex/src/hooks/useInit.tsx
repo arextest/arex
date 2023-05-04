@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { DEFAULT_LANGUAGE, EMAIL_KEY } from '../constant';
 import { UserService } from '../services';
-import { useUserProfile, useWorkspaces } from '../store';
+import { useEnvironments, useUserProfile, useWorkspaces } from '../store';
 import useMenusPanes from '../store/useMenusPanes';
 const useInit = () => {
   const { panes, setPanes } = useMenusPanes();
@@ -82,6 +82,7 @@ const useInit = () => {
           },
         );
         useMenusPanes.getState().reset();
+        useEnvironments.getState().reset();
         nav(url);
       },
     );

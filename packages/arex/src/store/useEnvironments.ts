@@ -22,8 +22,9 @@ export type EnvironmentState = {
 };
 
 export type EnvironmentAction = {
-  getEnvironments: () => Promise<Environment[] | undefined>;
+  getEnvironments: (workspaceId?: string) => Promise<Environment[] | undefined>;
   setActiveEnvironment: (environment?: Environment | string) => void;
+  reset: () => void;
 };
 
 export type WorkspaceEnvironmentPair = { [workspaceId: string]: string };
@@ -53,14 +54,16 @@ const initialState: EnvironmentState = {
 const useEnvironments = create(
   persist<EnvironmentState & EnvironmentAction>(
     (set, get) => {
-      async function getEnvironments() {
-        const workspaceId = useWorkspaces.getState().activeWorkspaceId;
-        if (!workspaceId) {
+      async function getEnvironments(workspaceId?: string) {
+        const _workspaceId = workspaceId || useWorkspaces.getState().activeWorkspaceId;
+        if (!_workspaceId) {
           window.message.info('please select a workspace first');
           return;
         }
 
-        const environments = await EnvironmentService.getEnvironments({ workspaceId });
+        const environments = await EnvironmentService.getEnvironments({
+          workspaceId: _workspaceId as string,
+        });
         set({ environments, timestamp: Date.now() });
         return environments;
       }
@@ -111,6 +114,11 @@ const useEnvironments = create(
             set({ activeEnvironment: environment });
             updateWorkspaceEnvironmentLS(workspaceId, environment.id);
           }
+        },
+
+        reset: () => {
+          set(initialState);
+          get().getEnvironments();
         },
       };
     },
