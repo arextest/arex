@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Checkbox, Collapse, Form, Space, TimePicker, Typography } from 'antd';
+import { App, Button, Checkbox, Collapse, Form, Select, TimePicker } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,7 @@ import {
   IntegerStepSlider,
   Operations,
 } from './FormItem';
-import AgentHost from './FormItem/AgentHost';
+import RunningStatus from './FormItem/RunningStatus';
 
 export type SettingRecordProps = {
   appId: string;
@@ -75,7 +75,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
         sampleRate: res.sampleRate,
         allowDayOfWeeks: [],
         timeMock: res.timeMock,
-        excludeServiceOperationSet: res.excludeServiceOperationSet,
+        excludeServiceOperationSet: res.excludeServiceOperationSet?.filter(Boolean),
       });
 
       setInitialValues((state) => {
@@ -104,7 +104,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       appId: props.appId,
       sampleRate: values.sampleRate,
       timeMock: values.timeMock,
-      excludeServiceOperationSet: values.excludeServiceOperationSet,
+      excludeServiceOperationSet: values.excludeServiceOperationSet?.filter(Boolean),
     };
 
     update(params);
@@ -113,21 +113,18 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
     <SettingForm loading={loading} initialValues={initialValues} onFinish={onFinish}>
       <Collapse
         bordered={false}
-        defaultActiveKey={['basic']}
+        defaultActiveKey={['runningStatus', 'basic']}
         css={css`
           .ant-collapse-header-text {
             font-weight: 600;
           }
         `}
       >
-        <Collapse.Panel header={t('appSetting.basic')} key='basic'>
-          <Form.Item label={t('appSetting.agentVersion')}>
-            <Space>
-              <Typography.Text>{props.agentVersion || '0.0.0'}</Typography.Text>
-              <AgentHost appId={props.appId} />
-            </Space>
-          </Form.Item>
+        <Collapse.Panel header={t('appSetting.runningStatus')} key='runningStatus'>
+          <RunningStatus appId={props.appId} />
+        </Collapse.Panel>
 
+        <Collapse.Panel header={t('appSetting.basic')} key='basic'>
           <Form.Item label={t('appSetting.duration')} name='allowDayOfWeeks'>
             <DurationInput />
           </Form.Item>
@@ -155,7 +152,16 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
             label={t('appSetting.excludeServiceOperationSet')}
             name='excludeServiceOperationSet'
           >
-            <Operations dataSource={operationList.map((item) => item.operationName)} />
+            <Select
+              allowClear
+              mode='tags'
+              options={[...new Set(operationList.map((item) => item.operationName))]
+                .filter(Boolean)
+                .map((name) => ({
+                  label: name,
+                  value: name,
+                }))}
+            />
           </Form.Item>
         </Collapse.Panel>
       </Collapse>

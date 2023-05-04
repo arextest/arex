@@ -1,9 +1,12 @@
-import { Col, InputNumber, Row, Slider } from 'antd';
+import { InputNumber, Slider, Space, Typography } from 'antd';
 import React, { FC, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { FormItemProps } from './index';
 
 const IntegerStepSlider: FC<FormItemProps<number>> = (props) => {
+  const { t } = useTranslation(['components', 'common']);
+
   const [value, setInput] = useState(props.value || 1);
 
   const onChange = (newValue: number | null) => {
@@ -14,20 +17,20 @@ const IntegerStepSlider: FC<FormItemProps<number>> = (props) => {
   };
 
   return (
-    <Row>
-      <Col span={12}>
-        <Slider min={1} max={100} onChange={onChange} value={value} />
-      </Col>
-      <Col span={4}>
-        <InputNumber
-          min={1}
-          max={100}
-          style={{ margin: '0 16px' }}
-          value={value}
-          onChange={onChange}
-        />
-      </Col>
-    </Row>
+    <div>
+      <Space>
+        <Slider min={1} max={100} onChange={onChange} value={value} style={{ width: '200px' }} />
+        <InputNumber min={1} max={100} value={value} onChange={onChange} />
+        <Typography.Text type='secondary'>{t('appSetting.frequencyUnit')} </Typography.Text>
+      </Space>
+      <div>
+        <Typography.Text type='secondary'>
+          {t('appSetting.frequencyTip').split('*')[0]}
+          <Typography.Text type='danger'>{value * 36 * 24}</Typography.Text>
+          {t('appSetting.frequencyTip').split('*')[1]}
+        </Typography.Text>
+      </div>
+    </div>
   );
 };
 
