@@ -75,14 +75,6 @@ const HttpBody = () => {
             onChange={onChange}
           />
         </div>
-        <a
-          css={css`
-            display: ${store.request.body.contentType.includes('json') ? 'block' : 'none'};
-          `}
-          onClick={() => rawBodyRef.current?.prettifyRequestBody()}
-        >
-          {t('action.prettify')}
-        </a>
       </div>
 
       <RawBody ref={rawBodyRef} />
