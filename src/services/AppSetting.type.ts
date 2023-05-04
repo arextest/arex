@@ -41,7 +41,7 @@ export type DynamicClass = {
   parameterTypes?: string;
   configType?: number;
 };
-export type QueryRecordDynamicClassSettingRes = DynamicClass[];
+export type QueryRecordDynamicClassSettingRes = DynamicClass[] | null;
 
 export interface InsertSettingReqInsert {
   appId: string;

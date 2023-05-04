@@ -174,7 +174,7 @@
     "advanced": "Advanced",
     "timeMock": "Time Mock",
     "dynamicClasses": "Dynamic Classes",
-    "excludeServiceOperationSet": "Operation",
+    "excludeServiceOperationSet": "Exclude Operations",
     "fullClassName": "Full Class Name",
     "fullClassNamePlaceholder": "Full class mame",
     "methodName": "Method Name",

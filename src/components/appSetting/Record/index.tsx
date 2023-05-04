@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Checkbox, Collapse, Form, Space, TimePicker, Typography } from 'antd';
+import { App, Button, Checkbox, Collapse, Form, Select, TimePicker } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -75,7 +75,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
         sampleRate: res.sampleRate,
         allowDayOfWeeks: [],
         timeMock: res.timeMock,
-        excludeServiceOperationSet: res.excludeServiceOperationSet,
+        excludeServiceOperationSet: res.excludeServiceOperationSet?.filter(Boolean),
       });
 
       setInitialValues((state) => {
@@ -104,7 +104,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       appId: props.appId,
       sampleRate: values.sampleRate,
       timeMock: values.timeMock,
-      excludeServiceOperationSet: values.excludeServiceOperationSet,
+      excludeServiceOperationSet: values.excludeServiceOperationSet?.filter(Boolean),
     };
 
     update(params);
@@ -152,7 +152,16 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
             label={t('appSetting.excludeServiceOperationSet')}
             name='excludeServiceOperationSet'
           >
-            <Operations dataSource={operationList.map((item) => item.operationName)} />
+            <Select
+              allowClear
+              mode='tags'
+              options={[...new Set(operationList.map((item) => item.operationName))]
+                .filter(Boolean)
+                .map((name) => ({
+                  label: name,
+                  value: name,
+                }))}
+            />
           </Form.Item>
         </Collapse.Panel>
       </Collapse>
