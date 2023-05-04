@@ -16,7 +16,7 @@ import {
   IntegerStepSlider,
   Operations,
 } from './FormItem';
-import AgentHost from './FormItem/AgentHost';
+import RunningStatus from './FormItem/RunningStatus';
 
 export type SettingRecordProps = {
   appId: string;
@@ -113,21 +113,18 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
     <SettingForm loading={loading} initialValues={initialValues} onFinish={onFinish}>
       <Collapse
         bordered={false}
-        defaultActiveKey={['basic']}
+        defaultActiveKey={['runningStatus', 'basic']}
         css={css`
           .ant-collapse-header-text {
             font-weight: 600;
           }
         `}
       >
-        <Collapse.Panel header={t('appSetting.basic')} key='basic'>
-          <Form.Item label={t('appSetting.agentVersion')}>
-            <Space>
-              <Typography.Text>{props.agentVersion || '0.0.0'}</Typography.Text>
-              <AgentHost appId={props.appId} />
-            </Space>
-          </Form.Item>
+        <Collapse.Panel header={t('appSetting.runningStatus')} key='runningStatus'>
+          <RunningStatus appId={props.appId} />
+        </Collapse.Panel>
 
+        <Collapse.Panel header={t('appSetting.basic')} key='basic'>
           <Form.Item label={t('appSetting.duration')} name='allowDayOfWeeks'>
             <DurationInput />
           </Form.Item>

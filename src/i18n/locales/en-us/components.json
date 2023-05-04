@@ -209,7 +209,10 @@
     "emptyFullClassName": "Please enter full class name",
     "emptyCaseRange": "Please input your case range!",
     "emptyValue": "Please enter value",
-    "mockTips": "When \"body\" is a json string, it will be automatically converted into a json object, and restored when saving."
+    "mockTips": "When \"body\" is a json string, it will be automatically converted into a json object, and restored when saving.",
+    "runningStatus": "Running Status",
+    "frequencyUnit": "times/100 second",
+    "frequencyTip": "Single-interface single-day recording: * times"
   },
   "env": {
     "searchEnvironment": "Search Environment",

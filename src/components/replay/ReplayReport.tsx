@@ -89,7 +89,7 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
   );
 
   const planItemDataFiltered = useMemo(
-    () => (filter ? planItemData?.filter(filter) : planItemData),
+    () => (filter ? planItemData?.filter(filter) : planItemData || []),
     [planItemData],
   );
 
