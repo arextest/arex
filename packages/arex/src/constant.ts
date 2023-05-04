@@ -6,11 +6,13 @@ export enum PanesType {
   REPLAY = 'replay',
   REPLAY_CASE = 'replayCase',
   APP_SETTING = 'appSetting',
+  ENVIRONMENT = 'environment',
 }
 
 export enum MenusType {
   REPLAY = 'replay',
   APP_SETTING = 'appSetting',
+  ENVIRONMENT = 'environment',
 }
 
 export const methodMap: Record<RequestMethodEnum, { color: string }> = {

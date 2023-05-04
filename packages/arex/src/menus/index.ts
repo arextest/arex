@@ -7,6 +7,7 @@
  */
 
 import AppSetting from './AppSetting';
+import Environment from './Environment';
 import Replay from './Replay';
 
-export default { Replay, AppSetting };
+export default { Replay, Environment, AppSetting };

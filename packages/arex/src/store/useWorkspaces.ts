@@ -1,42 +1,59 @@
-import { RoleEnum } from 'arex-core';
+import { getLocalStorage, RoleEnum } from 'arex-core';
 import { create } from 'zustand';
-import { subscribeWithSelector } from 'zustand/middleware';
+import { persist, subscribeWithSelector } from 'zustand/middleware';
+
+import { EMAIL_KEY } from '../constant';
+import queryWorkspacesByUser from '../services/FileSystemService/queryWorkspacesByUser';
 
 export type Workspace = {
   id: string;
-  name: string;
+  workspaceName: string;
   role: RoleEnum;
 };
 
 export type WorkspaceState = {
   activeWorkspaceId?: string;
   workspaces: Workspace[];
-  timestamp: number;
 };
 
 export type WorkspaceAction = {
-  setWorkspaces: (workspaces: Workspace[]) => void;
+  getWorkspaces: () => Promise<Workspace[]>;
   setActiveWorkspaceId: (id: string) => void;
-  updateTimestamp: () => void;
 };
 
 const initialState: WorkspaceState = {
-  // TODO mock data
-  activeWorkspaceId: 'this-is-workspaces-id-1',
-  workspaces: [
-    { id: 'this-is-workspaces-id-1', role: RoleEnum.Admin, name: '演示工作区1' },
-    { id: 'this-is-workspaces-id-2', role: RoleEnum.Admin, name: '演示工作区2' },
-  ],
-  timestamp: new Date().getTime(),
+  activeWorkspaceId: undefined,
+  workspaces: [],
 };
 
-const useUserProfile = create(
-  subscribeWithSelector<WorkspaceState & WorkspaceAction>((set) => ({
-    ...initialState,
-    setWorkspaces: (workspaces) => set({ workspaces }),
-    setActiveWorkspaceId: (id) => set({ activeWorkspaceId: id }),
-    updateTimestamp: () => set({ timestamp: new Date().getTime() }),
-  })),
+const useWorkspaces = create(
+  subscribeWithSelector(
+    persist<WorkspaceState & WorkspaceAction>(
+      (set) => {
+        async function getWorkspaces() {
+          const userName = getLocalStorage(EMAIL_KEY) as string;
+          const workspaces = await queryWorkspacesByUser({ userName });
+          set({ workspaces });
+          // TODO set activeWorkspaceId
+          return workspaces;
+        }
+
+        getWorkspaces();
+
+        return {
+          // initialState
+          ...initialState,
+
+          // actions
+          getWorkspaces,
+          setActiveWorkspaceId: (id) => set({ activeWorkspaceId: id }),
+        };
+      },
+      {
+        name: 'workspaces-storage', // unique name
+      },
+    ),
+  ),
 );
 
-export default useUserProfile;
+export default useWorkspaces;

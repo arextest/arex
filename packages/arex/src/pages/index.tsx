@@ -9,7 +9,7 @@ import {
 } from 'arex-core';
 import React, { useMemo } from 'react';
 
-import HeaderMenu from '../components/HeaderMenu';
+import { EnvironmentSelect, HeaderMenu } from '../components';
 import { PanesType } from '../constant';
 import { useInit } from '../hooks';
 import { useMenusPanes, useWorkspaces } from '../store';
@@ -34,7 +34,7 @@ export default () => {
     () =>
       workspaces.map((workspace) => ({
         value: workspace.id,
-        label: workspace.name,
+        label: workspace.workspaceName,
       })),
     [workspaces],
   );
@@ -83,6 +83,7 @@ export default () => {
           <ArexPanesContainer
             activeKey={activePane?.key}
             panes={panes}
+            tabBarExtraContent={<EnvironmentSelect />}
             onChange={setActivePane}
             onAdd={handlePaneAdd}
             onRemove={removePane}
