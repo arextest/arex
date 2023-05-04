@@ -106,7 +106,7 @@ export type PlanItemStatistics = {
   percent?: number;
 };
 export interface QueryPlanItemStatisticsRes {
-  planItemStatisticList: PlanItemStatistics[];
+  planItemStatisticList: PlanItemStatistics[] | null;
 }
 
 // ------ /report_api/report/queryResponseTypeStatistic ------
