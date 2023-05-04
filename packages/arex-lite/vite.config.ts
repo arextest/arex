@@ -13,4 +13,7 @@ export default defineConfig({
       'arex-core': path.resolve('../arex-core/src'),
     },
   },
+  server: {
+    port: 18888,
+  },
 });

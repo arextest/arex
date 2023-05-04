@@ -8,5 +8,6 @@
 
 import Replay from './Replay';
 import ReplayCase from './ReplayCase';
+import Request from './Request';
 
-export default { Replay, ReplayCase };
+export default { Replay, ReplayCase, Request };
