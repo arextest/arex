@@ -6,8 +6,9 @@
  * do not create the function anonymously.
  */
 
+import Environment from './Environment';
 import Replay from './Replay';
 import ReplayCase from './ReplayCase';
 import Request from './Request';
 
-export default { Replay, ReplayCase, Request };
+export default { Replay, ReplayCase, Request, Environment };

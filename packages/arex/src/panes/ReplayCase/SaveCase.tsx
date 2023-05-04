@@ -2,7 +2,7 @@ import { useRequest } from 'ahooks';
 import { App, Form, Input, Modal, TreeSelect, Typography } from 'antd';
 import { useTranslation } from 'arex-core';
 import { getLocalStorage } from 'arex-core';
-import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { EMAIL_KEY } from '../../constant';
 import { FileSystemService } from '../../services';
@@ -83,9 +83,7 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
     form.validateFields().then((values) => {
       // TODO 集合那边加一个刷新
       addItemFromRecord({
-        parentPath: treeFindPath(collectionTreeData, (node) => node.key === values.savePath).map(
-          (i) => i.key,
-        ),
+        parentPath: treeFindPath(collectionTreeData, (node) => node.key === values.savePath),
         nodeName: values.nodeName,
         recordId: values.recordId,
       });

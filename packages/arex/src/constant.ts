@@ -1,5 +1,5 @@
 import { ColorPrimary, getLocalStorage, I18nextLng, Theme } from 'arex-core';
-import { RequestMethodEnum } from 'arex-core/src';
+import { RequestMethodEnum } from 'arex-core';
 
 export enum PanesType {
   REQUEST = 'request',

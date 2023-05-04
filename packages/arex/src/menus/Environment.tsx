@@ -1,19 +1,23 @@
 import { AimOutlined, DeploymentUnitOutlined, PlusOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
 import { App, theme } from 'antd';
-import { createArexMenu, SmallTextButton, SpaceBetweenWrapper, useTranslation } from 'arex-core';
-import React, { FC } from 'react';
+import {
+  ArexMenuFC,
+  createArexMenu,
+  SmallTextButton,
+  SpaceBetweenWrapper,
+  useTranslation,
+} from 'arex-core';
+import React from 'react';
 
 import { MenuSelect } from '../components';
 import { MenusType, PanesType } from '../constant';
-import { useNavPane } from '../hooks';
 import { EnvironmentService } from '../services';
 import { useEnvironments, useWorkspaces } from '../store';
 import { Environment } from '../store/useEnvironments';
 
-const EnvironmentMenu: FC = () => {
+const EnvironmentMenu: ArexMenuFC = (props) => {
   const { t } = useTranslation(['common', 'components']);
-  const navPane = useNavPane();
 
   const { message } = App.useApp();
   const {
@@ -23,14 +27,6 @@ const EnvironmentMenu: FC = () => {
   const { activeEnvironment, timestamp, getEnvironments } = useEnvironments();
 
   const { activeWorkspaceId } = useWorkspaces();
-
-  const handleEnvMenuClick = (id: string, env?: Environment) => {
-    navPane({
-      type: PanesType.ENVIRONMENT,
-      id,
-      data: env,
-    });
-  };
 
   const { run: createNewEnvironment } = useRequest(
     () =>
@@ -61,7 +57,7 @@ const EnvironmentMenu: FC = () => {
       prefix={
         <SmallTextButton color={'primary'} icon={<PlusOutlined />} onClick={createNewEnvironment} />
       }
-      onSelect={handleEnvMenuClick}
+      onSelect={props.onSelect}
       placeholder={t('env.searchEnvironment', { ns: 'components' }) as string}
       request={() =>
         EnvironmentService.getEnvironments({ workspaceId: activeWorkspaceId as string })
