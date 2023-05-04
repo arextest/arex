@@ -10,6 +10,7 @@ export enum PanesType {
 }
 
 export enum MenusType {
+  COLLECTION = 'collection',
   REPLAY = 'replay',
   APP_SETTING = 'appSetting',
   ENVIRONMENT = 'environment',
