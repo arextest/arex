@@ -74,15 +74,8 @@ const HttpBody = () => {
             dropdownMatchSelectWidth={120}
             onChange={onChange}
           />
+          <a onClick={() => rawBodyRef.current?.prettifyRequestBody()}>{t('action.prettify')}</a>
         </div>
-        <a
-          css={css`
-            display: ${store.request.body.contentType.includes('json') ? 'block' : 'none'};
-          `}
-          onClick={() => rawBodyRef.current?.prettifyRequestBody()}
-        >
-          {t('action.prettify')}
-        </a>
       </div>
 
       <RawBody ref={rawBodyRef} />
