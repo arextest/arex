@@ -84,15 +84,17 @@ const PlanItem: FC<ReplayPlanItemProps> = ({ selectedPlan, filter }) => {
       loadingDelay: 200,
       pollingInterval: 6000,
       onSuccess(res) {
-        res.every((record) => record.status !== 1) &&
-          selectedPlan?.status !== 1 &&
-          cancelPollingInterval();
+        if (res)
+          res.every((record) => record.status !== 1) &&
+            selectedPlan?.status !== 1 &&
+            cancelPollingInterval();
+        else cancelPollingInterval();
       },
     },
   );
 
   const planItemDataFiltered = useMemo(
-    () => (filter ? planItemData.filter(filter) : planItemData),
+    () => (filter ? planItemData?.filter(filter) : planItemData || []),
     [planItemData],
   );
 

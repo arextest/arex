@@ -31,7 +31,7 @@ export type PlanItemStatistics = {
 };
 
 export interface QueryPlanItemStatisticsRes {
-  planItemStatisticList: PlanItemStatistics[];
+  planItemStatisticList: PlanItemStatistics[] | null;
 }
 
 export async function queryPlanItemStatistics(params: QueryPlanItemStatisticsReq) {
