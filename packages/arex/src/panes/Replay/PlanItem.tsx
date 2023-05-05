@@ -246,7 +246,7 @@ const PlanItem: FC<ReplayPlanItemProps> = ({ selectedPlan, filter }) => {
       render: (_, record) => (
         <>
           <TooltipButton
-            icon={<DiffOutlined />}
+            icon={<ContainerOutlined />}
             title={t('replay.diffScenesNew')}
             breakpoint='xxl'
             disabled={!record.failCaseCount}
@@ -260,18 +260,17 @@ const PlanItem: FC<ReplayPlanItemProps> = ({ selectedPlan, filter }) => {
             }}
           />
           <TooltipButton
-            icon={<ContainerOutlined />}
+            icon={<DiffOutlined />}
             title={t('replay.diffScenes')}
             breakpoint='xxl'
             disabled={!record.failCaseCount}
             color={record.failCaseCount ? 'primary' : 'disabled'}
             onClick={() => {
-              // TODO
-              // customNavigate(
-              //   `/${params.workspaceId}/${PagesType.ReplayAnalysis}/${
-              //     record.planItemId
-              //   }?data=${encodeURIComponent(JSON.stringify(record))}`,
-              // );
+              navPane({
+                type: PanesType.REPLAY_ANALYSIS,
+                id: record.planItemId,
+                data: record,
+              });
             }}
           />
           <TooltipButton

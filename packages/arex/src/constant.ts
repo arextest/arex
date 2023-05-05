@@ -1,12 +1,15 @@
 import { ColorPrimary, getLocalStorage, I18nextLng, Theme } from 'arex-core';
 import { RequestMethodEnum } from 'arex-core';
 
+import ReplayAnalysis from './panes/ReplayAnalysis/ReplayAnalysis';
+
 export enum PanesType {
   REQUEST = 'request',
   REPLAY = 'replay',
   REPLAY_CASE = 'replayCase',
   CASE_DETAIL = 'caseDetail',
   DIFF_SCENES = 'diffScenes',
+  REPLAY_ANALYSIS = 'replayAnalysis',
   APP_SETTING = 'appSetting',
   ENVIRONMENT = 'environment',
 }
