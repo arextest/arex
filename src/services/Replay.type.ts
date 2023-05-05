@@ -314,10 +314,10 @@ export interface QuerySceneInfoRes {
   sceneInfos: SceneInfo[];
 }
 
-// /queryFullLinkInfo/{recordId}/{replayId}
+// /queryFullLinkInfo/{planItemId}/{recordId}
 export interface QueryFullLinkInfoReq {
   recordId: string;
-  replayId: string;
+  planItemId: string;
 }
 
 export type infoItem = {

@@ -1,16 +1,15 @@
 import { ClusterOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
-import { Badge, Divider, Menu, Space, Tag, theme } from 'antd';
+import { Badge, Divider, Menu, Space, theme } from 'antd';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 
-import { QueryFullLinkInfoReq, SubScene } from '../../../services/Replay.type';
-import { EllipsisTooltip, TooltipButton } from '../../index';
+import { SubScene } from '../../../services/Replay.type';
+import { EllipsisTooltip, SceneCode, TooltipButton } from '../../index';
 import { SpaceBetweenWrapper } from '../../styledComponents';
-import { SceneCodeMap } from './index';
 
 export interface SubSceneMenuProps {
   data: SubScene[];
-  onClick?: (params: QueryFullLinkInfoReq) => void;
+  onClick?: (recordId: string) => void;
   onClickAllDiff?: (recordId: string, label: React.ReactNode[]) => void;
 }
 
@@ -26,7 +25,7 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
         replayId: props.data[0].replayId,
       };
       setSelectedKeys(params.recordId + Connector + params.replayId);
-      props.onClick?.(params);
+      props.onClick?.(props.data[0].recordId);
     }
   }, [props.data]);
 
@@ -36,12 +35,8 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
     if (split.length !== 2) return;
 
     const [recordId, replayId] = split;
-    const params = {
-      recordId,
-      replayId,
-    };
 
-    props.onClick?.(params);
+    props.onClick?.(recordId);
   };
 
   return (
@@ -54,9 +49,7 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
               <Space key={`${item.operationName}-${item.categoryName}`}>
                 <EllipsisTooltip title={item.operationName} />
                 {`- ${item.categoryName}`}
-                <Tag color={SceneCodeMap[item.code.toString()].color}>
-                  {SceneCodeMap[item.code.toString()].message}
-                </Tag>
+                <SceneCode code={item.code} />
               </Space>
             );
             index && path.push('+ ');

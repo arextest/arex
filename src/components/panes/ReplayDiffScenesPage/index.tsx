@@ -1,34 +1,16 @@
 import { css } from '@emotion/react';
 import { useRequest, useSize } from 'ahooks';
-import { Collapse, Space, Tag, Typography } from 'antd';
+import { Card, Collapse, Drawer, Space, Typography } from 'antd';
 import React, { ReactNode, useMemo, useRef, useState } from 'react';
 
 import ReplayService from '../../../services/Replay.service';
-import { PlanItemStatistics, SubScene } from '../../../services/Replay.type';
+import { infoItem, PlanItemStatistics, SubScene } from '../../../services/Replay.type';
+import DiffPath from '../../DiffPath';
+import { SceneCode } from '../../index';
 import { Label } from '../../styledComponents';
 import { PageFC } from '../index';
-import DiffDrawer from './DIffDrawer';
 import FlowTree, { FlowTreeData } from './FlowTree';
 import SubScenesMenu, { SubSceneMenuProps } from './SubScenesMenu';
-
-export const SceneCodeMap: {
-  [key: string]: {
-    color: string;
-    message: string;
-  };
-} = {
-  '-1': {
-    color: 'red',
-    message: 'exception',
-  },
-  '0': {
-    color: 'green',
-    message: 'success',
-  },
-  '1': { color: 'magenta', message: 'value diff' },
-  '2': { color: 'orange', message: 'new call' },
-  '4': { color: 'blue', message: 'call missing' },
-};
 
 export const SummaryCodeMap: { [key: string]: { color: string; message: string } } = {
   '0': {
@@ -60,6 +42,7 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
   const size = useSize(wrapperRef);
 
   const [modalOpen, setModalOpen] = useState(0); // 0-close 1-open-diffMsg 2-open-diffMsgAll
+  const [modalData, setModalData] = useState<infoItem[]>([]);
   const [subSceneList, setSubSceneList] = useState<SubScene[]>([]);
   const [modalTitle, setModalTitle] = useState<ReactNode[]>();
 
@@ -74,11 +57,17 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
 
   const {
     data: fullLinkInfo,
+    loading: loadingFullLinkInfo,
     mutate: setFullLinkInfo,
     run: getQueryFullLinkInfo,
-  } = useRequest(ReplayService.queryFullLinkInfo, {
+  } = useRequest((recordId) => ReplayService.queryFullLinkInfo({ planItemId, recordId }), {
     manual: true,
   });
+
+  const fullLinkInfoMerged = useMemo<infoItem[]>(() => {
+    const { entrance, infoItemList } = fullLinkInfo || {};
+    return [entrance, ...(infoItemList || [])].filter(Boolean) as infoItem[];
+  }, [fullLinkInfo]);
 
   const treeData = useMemo<FlowTreeData | undefined>(
     () =>
@@ -102,39 +91,9 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
     [fullLinkInfo],
   );
 
-  const {
-    data: diffMsg,
-    mutate: setDiffMsg,
-    loading: loadingDiffMsg,
-    run: queryDiffMsgById,
-  } = useRequest(ReplayService.queryDiffMsgById, {
-    manual: true,
-    onBefore() {
-      setDiffMsg();
-    },
-  });
-
-  const {
-    data: diffMsgAll,
-    mutate: setDiffMsgAll,
-    loading: loadingDiffMsgAll,
-    run: queryAllDiffMsg,
-  } = useRequest(ReplayService.queryAllDiffMsg, {
-    manual: true,
-    onBefore() {
-      setDiffMsgAll();
-    },
-  });
-
   const handleClickAllDiff: SubSceneMenuProps['onClickAllDiff'] = (recordId, title) => {
-    queryAllDiffMsg({
-      recordId,
-      planItemId: props.page.data.planItemId,
-      diffResultCodeList: [0, 1, 2],
-      pageIndex: 0,
-      pageSize: 2000, // TODO lazy load
-      needTotal: true,
-    });
+    console.log({ fullLinkInfoMerged });
+    setModalData(fullLinkInfoMerged);
     setModalTitle(title);
     setModalOpen(2);
   };
@@ -179,9 +138,7 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
                 const title = (
                   <Space key={index}>
                     {item.categoryName}
-                    <Tag color={SceneCodeMap[item.code.toString()].color}>
-                      {SceneCodeMap[item.code.toString()].message}
-                    </Tag>
+                    <SceneCode code={item.code} />
                   </Space>
                 );
 
@@ -217,23 +174,36 @@ const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
             bordered
             width={size?.width && size.width - 32}
             data={treeData}
-            onClick={(id) => {
-              queryDiffMsgById({ id });
+            onClick={(data) => {
+              const { id, code, categoryName, operationName } = data;
+              setModalData([{ id, code, categoryName, operationName }]);
               setModalOpen(1);
             }}
           />
         )}
 
-        <DiffDrawer
-          mode={modalOpen === 2 ? 'multiple' : 'single'}
+        <Drawer
+          destroyOnClose
+          width='80%'
           open={!!modalOpen}
           title={modalTitle}
-          appId={props.page.data.appId}
-          operationId={props.page.data.operationId}
-          loading={loadingDiffMsg || loadingDiffMsgAll}
-          data={[undefined, diffMsg, diffMsgAll?.compareResultDetailList][modalOpen]}
-          onClose={(open) => setModalOpen(Number(open))}
-        />
+          bodyStyle={{ padding: 0 }}
+          onClose={() => setModalOpen(0)}
+        >
+          <Card bordered={false} bodyStyle={{ padding: '0 16px' }} style={{ minHeight: '100%' }}>
+            {/* force destroyOnClose */}
+            {modalOpen && (
+              <DiffPath
+                mode={modalOpen === 2 ? 'multiple' : 'single'}
+                appId={props.page.data.appId}
+                operationId={props.page.data.operationId}
+                defaultOnlyFailed={modalOpen === 2}
+                loading={loadingFullLinkInfo}
+                data={modalData}
+              />
+            )}
+          </Card>
+        </Drawer>
       </Space>
     </div>
   );
