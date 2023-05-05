@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
-import { App, Menu, theme, Typography } from 'antd';
+import { App, Menu, Spin, theme, Typography } from 'antd';
 import React, { FC, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -12,13 +12,14 @@ import ReplayService from '../../services/Replay.service';
 import { CompareResultDetail, DiffLog } from '../../services/Replay.type';
 import DiffJsonView from '../DiffJsonView';
 import { SummaryCodeMap } from '../panes/ReplayDiffScenesPage';
-import { FlexCenterWrapper, SpaceBetweenWrapper } from '../styledComponents';
+import { EmptyWrapper, FlexCenterWrapper, SpaceBetweenWrapper } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
 
 export interface DiffScenesProps {
   operationId: string;
   appId: string;
-  data: CompareResultDetail;
+  loading?: boolean;
+  data?: CompareResultDetail;
   height?: string;
   defaultActiveFirst?: boolean;
 }
@@ -80,20 +81,25 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
   const { token } = theme.useToken();
   const { message } = App.useApp();
 
-  const { data: logEntity = [], run: queryLogEntity } = useRequest(
+  const {
+    data: logEntity = [],
+    loading: loadingLogEntity,
+    run: queryLogEntity,
+  } = useRequest(
     (logIndex) =>
       ReplayService.queryLogEntity({
-        compareResultId: props.data.id,
+        compareResultId: props.data!.id,
         logIndex,
       }),
     {
       manual: true,
+      ready: !!props.data,
     },
   );
 
   useEffect(() => {
     props.defaultActiveFirst &&
-      props.data.logInfos?.length &&
+      props.data?.logInfos?.length &&
       queryLogEntity(props.data.logInfos[0].logIndex);
   }, [props.data]);
 
@@ -137,15 +143,28 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
           </FlexCenterWrapper>
         ) : (
           <>
-            <Typography.Text
-              type='secondary'
-              style={{
-                display: 'inline-block',
-                margin: `${token.marginSM}px 0 0 ${token.margin}px`,
-              }}
-            >
-              {t('replay.pointOfDifference')}
-            </Typography.Text>
+            <SpaceBetweenWrapper>
+              <Typography.Text
+                type='secondary'
+                style={{
+                  display: 'inline-block',
+                  margin: `${token.marginSM}px 0 0 ${token.margin}px`,
+                }}
+              >
+                {t('replay.pointOfDifference')}
+              </Typography.Text>
+              <Spin
+                size='small'
+                spinning={loadingLogEntity}
+                css={css`
+                  margin-right: 8px;
+                  span {
+                    font-size: 16px !important;
+                  }
+                `}
+              />
+            </SpaceBetweenWrapper>
+
             <Menu
               defaultSelectedKeys={props.defaultActiveFirst ? ['0'] : undefined}
               items={props.data.logInfos?.map((log, index) => {
@@ -165,7 +184,7 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
                 border-inline-end: none !important;
               `}
               onClick={({ key }) => {
-                props.data.logInfos?.length &&
+                props.data?.logInfos?.length &&
                   queryLogEntity(props.data.logInfos[parseInt(key)].logIndex);
               }}
             />
@@ -185,7 +204,11 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
             <Typography.Text type='secondary'>{props.data.exceptionMsg}</Typography.Text>
           </FlexCenterWrapper>
         ) : (
-          <div style={{ position: 'relative', margin: `${token.marginXS}px`, height: '100%' }}>
+          <EmptyWrapper
+            loading={props.loading}
+            empty={!props.data}
+            style={{ position: 'relative', margin: `${token.marginXS}px`, height: '100%' }}
+          >
             <DiffJsonView
               hiddenTooltip
               height={`calc(${props.height} - 16px)`}
@@ -195,7 +218,7 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
               }}
               diffPath={logEntity}
             />
-          </div>
+          </EmptyWrapper>
         )}
       </Allotment.Pane>
     </Allotment>

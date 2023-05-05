@@ -1,11 +1,12 @@
 import { useRequest } from 'ahooks';
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { tryParseJsonString } from '../../helpers/utils';
 import { useCustomSearchParams } from '../../router/useCustomSearchParams';
 import ReplayService from '../../services/Replay.service';
 import {
+  infoItem,
   PlanItemStatistics,
   QueryAllDiffMsgReq,
   ReplayCase as ReplayCaseType,
@@ -25,33 +26,21 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
   const { data = tryParseJsonString(decodeURIComponent(params.query.data)) } = props.page;
 
   const {
-    data: diffMsgAll = {
-      compareResultDetailList: [],
-      totalCount: 0,
-    },
-    mutate: setDiffMsgAll,
-    loading: loadingDiffMsgAll,
-    run: queryAllDiffMsg,
-  } = useRequest(
-    (params: Pick<QueryAllDiffMsgReq, 'recordId' | 'planItemId'>) =>
-      ReplayService.queryAllDiffMsg({
-        ...params,
-        diffResultCodeList: [0, 1, 2],
-        pageIndex: 0,
-        pageSize: 2000, // TODO lazy load
-        needTotal: true,
-      }),
-    {
-      manual: true,
-      onBefore() {
-        setDiffMsgAll();
-      },
-    },
-  );
+    data: fullLinkInfo,
+    loading: loadingFullLinkInfo,
+    run: getQueryFullLinkInfo,
+  } = useRequest(ReplayService.queryFullLinkInfo, {
+    manual: true,
+  });
+
+  const fullLinkInfoMerged = useMemo<infoItem[]>(() => {
+    const { entrance, infoItemList } = fullLinkInfo || {};
+    return [entrance, ...(infoItemList || [])].filter(Boolean) as infoItem[];
+  }, [fullLinkInfo]);
 
   const handleClickRecord = (record: ReplayCaseType) => {
     setSelectedRecord(selectedRecord?.recordId === record.recordId ? undefined : record);
-    queryAllDiffMsg({
+    getQueryFullLinkInfo({
       recordId: record.recordId,
       planItemId: props.page.data.planItemId,
     });
@@ -85,8 +74,8 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
           <DiffPath
             appId={data.appId}
             operationId={data.operationId}
-            loading={loadingDiffMsgAll}
-            data={diffMsgAll.compareResultDetailList}
+            loading={loadingFullLinkInfo}
+            data={fullLinkInfoMerged}
           />
         }
       />

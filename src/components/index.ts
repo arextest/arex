@@ -7,6 +7,7 @@ export { default as EllipsisTooltip } from './EllipsisTooltip';
 export { default as EnvironmentSelect } from './Environment/EnvironmentSelect';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { default as MenuSelect } from './MenuSelect';
+export { default as SceneCode } from './SceneCode';
 export { default as ScriptBlocks } from './ScriptBlocks';
 export { default as ScriptSnippets } from './ScriptSnippets';
 export { default as StructuredFilter } from './StructuredFilter';

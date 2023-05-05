@@ -5,7 +5,7 @@ import Tree from 'react-d3-tree';
 
 import { infoItem } from '../../../services/Replay.type';
 import { EllipsisTooltip } from '../../index';
-import { SceneCodeMap } from './index';
+import { SceneCodeMap } from '../../SceneCode';
 
 export interface FlowTreeItem extends infoItem {
   name: string;
@@ -19,7 +19,7 @@ export interface FlowTreeProps {
   bordered?: boolean;
   width?: number | string;
   height?: number | string;
-  onClick?: (id: string) => void;
+  onClick?: (data: FlowTreeData) => void;
 }
 
 const FlowTree: FC<FlowTreeProps> = (props) => {
@@ -123,10 +123,6 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
     [token],
   );
 
-  const handleNodeClick = (nodeDatum: FlowTreeItem) => {
-    props.onClick?.(nodeDatum.id);
-  };
-
   return (
     <div
       id='treeWrapper'
@@ -146,7 +142,7 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
         nodeSize={{ x: 240, y: 40 }}
         translate={{ x: 100, y: props.height ? parseInt(props.height.toString()) / 2 : 200 }}
         renderCustomNodeElement={(rd3tProps) =>
-          renderNodeWithCustomEvents({ ...rd3tProps, handleNodeClick })
+          renderNodeWithCustomEvents({ ...rd3tProps, handleNodeClick: props.onClick })
         }
       />
     </div>

@@ -157,10 +157,11 @@ export default class ReplayService {
       .then((res) => Promise.resolve(res.body.sceneInfos.filter((scene) => scene.subScenes))); //  subScenes could be null;
   }
 
+  // /queryFullLinkInfo/{planItemId}/{recordId}
   static async queryFullLinkInfo(params: QueryFullLinkInfoReq) {
     return request
       .get<QueryFullLinkInfoRes>(
-        `/report/report/queryFullLinkInfo/${params.recordId}/${params.replayId}`,
+        `/report/report/queryFullLinkInfo/${params.planItemId}/${params.recordId}`,
       )
       .then((res) => Promise.resolve(res.body));
   }
