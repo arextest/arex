@@ -10,7 +10,7 @@ import { CompareResultDetail, DiffPathViewerProps } from './DiffPathViewer';
 import { infoItem } from './type';
 
 export interface DiffPathProps
-  extends Pick<DiffPathViewerProps, 'requestQueryLogEntity' | 'onIgnoreNode'> {
+  extends Pick<DiffPathViewerProps, 'requestQueryLogEntity' | 'requestIgnoreNode'> {
   mode?: DiffPathTooltipProps['mode'];
   appId: string;
   operationId: string;
@@ -86,7 +86,7 @@ const DiffPath: FC<DiffPathProps> = (props) => {
                 loading={loadingDiffMsg}
                 appId={props.appId}
                 operationId={props.operationId}
-                onIgnoreNode={props.onIgnoreNode}
+                requestIgnoreNode={props.requestIgnoreNode}
                 requestQueryLogEntity={props.requestQueryLogEntity}
               />
             </Collapse.Panel>

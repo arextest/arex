@@ -7,6 +7,7 @@ export enum PanesType {
   REPLAY_CASE = 'replayCase',
   APP_SETTING = 'appSetting',
   ENVIRONMENT = 'environment',
+  CASE_DETAIL = 'caseDetail',
 }
 
 export enum MenusType {

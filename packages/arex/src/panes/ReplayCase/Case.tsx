@@ -4,9 +4,10 @@ import { ColumnsType } from 'antd/lib/table';
 import { HighlightRowTable, SmallTextButton, useTranslation } from 'arex-core';
 import React, { FC, Key, useMemo } from 'react';
 
+import { PanesType } from '../../constant';
+import { useNavPane } from '../../hooks';
 import { ReportService } from '../../services';
 import { ReplayCaseType } from '../../services/ReportService';
-// import ToCaseDetailButton from '../ToCaseDetailButton';
 
 type CaseProps = {
   planItemId: string;
@@ -17,6 +18,7 @@ type CaseProps = {
 
 const Case: FC<CaseProps> = (props) => {
   const { t } = useTranslation(['components']);
+  const navPane = useNavPane();
 
   const filterMap = useMemo(
     () => [
@@ -61,12 +63,15 @@ const Case: FC<CaseProps> = (props) => {
             props.onClickSaveCase?.(record);
           }}
         />,
-        // <ToCaseDetailButton
-        //   key='caseDetail'
-        //   caseInfo={{
-        //     recordId: record.recordId,
-        //   }}
-        // />,
+        <SmallTextButton
+          color='primary'
+          key='caseDetail'
+          title={t('replay.recordDetail') as string}
+          onClick={(e) => {
+            e.stopPropagation();
+            navPane({ type: PanesType.CASE_DETAIL, id: record.recordId, data: record });
+          }}
+        />,
       ],
     },
   ];

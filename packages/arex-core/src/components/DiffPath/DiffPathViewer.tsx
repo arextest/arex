@@ -51,7 +51,7 @@ export interface DiffPathViewerProps {
     compareResultId: string;
     logIndex: number;
   }) => Promise<LogEntity[]>;
-  onIgnoreNode: (path: string[]) => Promise<boolean>;
+  requestIgnoreNode: (path: string[]) => Promise<boolean>;
 }
 
 const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
@@ -81,7 +81,7 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
       queryLogEntity(props.data.logInfos[0].logIndex);
   }, [props.data]);
 
-  const { run: insertIgnoreNode } = useRequest(props.onIgnoreNode, {
+  const { run: insertIgnoreNode } = useRequest(props.requestIgnoreNode, {
     manual: true,
     onSuccess(success) {
       if (success) {

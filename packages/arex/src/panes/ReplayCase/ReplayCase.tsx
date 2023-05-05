@@ -67,7 +67,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             data={fullLinkInfoMerged}
             requestDiffMsg={ReportService.queryDiffMsgById}
             requestQueryLogEntity={ReportService.queryLogEntity}
-            onIgnoreNode={(path) =>
+            requestIgnoreNode={(path: string[]) =>
               ComparisonService.insertIgnoreNode({
                 operationId: props.data.operationId,
                 appId: props.data.appId,
