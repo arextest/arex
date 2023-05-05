@@ -5,9 +5,10 @@ export enum PanesType {
   REQUEST = 'request',
   REPLAY = 'replay',
   REPLAY_CASE = 'replayCase',
+  CASE_DETAIL = 'caseDetail',
+  DIFF_SCENES = 'diffScenes',
   APP_SETTING = 'appSetting',
   ENVIRONMENT = 'environment',
-  CASE_DETAIL = 'caseDetail',
 }
 
 export enum MenusType {

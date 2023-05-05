@@ -6,3 +6,4 @@ export * from './queryLogEntity';
 export * from './queryPlanItemStatistics';
 export * from './queryPlanStatistics';
 export * from './queryReplayCase';
+export * from './querySceneInfo';

@@ -137,14 +137,11 @@ const PlanItem: FC<ReplayPlanItemProps> = ({ selectedPlan, filter }) => {
         type='link'
         size='small'
         onClick={() => {
-          // TODO
-          // customNavigate(
-          //   `/${params.workspaceId}/${PagesType.ReplayCase}/${
-          //     record.planItemId
-          //   }?data=${encodeURIComponent(JSON.stringify(record))}${
-          //     Number.isInteger(status) ? `&status=${status}` : ''
-          //   }`,
-          // );
+          navPane({
+            type: PanesType.REPLAY_CASE,
+            id: record.planItemId,
+            data: { ...record, filter: status },
+          });
         }}
       >
         <CountUp
@@ -255,12 +252,11 @@ const PlanItem: FC<ReplayPlanItemProps> = ({ selectedPlan, filter }) => {
             disabled={!record.failCaseCount}
             color={record.failCaseCount ? 'primary' : 'disabled'}
             onClick={() => {
-              // TODO
-              // customNavigate(
-              //   `/${params.workspaceId}/${PagesType.ReplayDiff}/${
-              //     record.planItemId
-              //   }?data=${encodeURIComponent(JSON.stringify(record))}`,
-              // );
+              navPane({
+                type: PanesType.DIFF_SCENES,
+                id: record.planItemId,
+                data: record,
+              });
             }}
           />
           <TooltipButton

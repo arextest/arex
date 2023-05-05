@@ -10,6 +10,7 @@ import Environment from './Environment';
 import Replay from './Replay';
 import ReplayCase from './ReplayCase';
 import ReplayCaseDetail from './ReplayCaseDetail';
+import ReplayDiffScenes from './ReplayDiffScenes';
 import Request from './Request';
 
-export default { Replay, ReplayCase, ReplayCaseDetail, Request, Environment };
+export default { Replay, ReplayCase, ReplayCaseDetail, ReplayDiffScenes, Request, Environment };
