@@ -1,3 +1,5 @@
+import { SceneCodeMap } from './SceneCode';
+
 export { default as CheckOrCloseIcon } from './CheckOrCloseIcon';
 export type { CollapseTableProps } from './CollapseTable';
 export { default as CollapseTable } from './CollapseTable';
@@ -23,6 +25,7 @@ export * as Icons from './icons';
 export { default as Label } from './Label';
 export type { PanesTitleProps } from './PanesTitle';
 export { default as PanesTitle } from './PanesTitle';
+export { default as SceneCode, SceneCodeMap } from './SceneCode';
 export { default as SmallTextButton } from './SmallTextButton';
 export { default as SpaceBetweenWrapper } from './SpaceBetweenWrapper';
 export type { TooltipButtonProps } from './TooltipButton';

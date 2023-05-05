@@ -1,20 +1,23 @@
 import { css } from '@emotion/react';
+import { useRequest } from 'ahooks';
 import { Collapse, Typography } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 
 import EllipsisTooltip from '../EllipsisTooltip';
-import { CheckOrCloseIcon, DiffPathViewer, EmptyWrapper } from '../index';
+import { DiffPathViewer, EmptyWrapper, SceneCode } from '../index';
 import DiffPathTooltip, { DiffPathTooltipProps } from './DiffPathTooltip';
 import { CompareResultDetail, DiffPathViewerProps } from './DiffPathViewer';
+import { infoItem } from './type';
 
 export interface DiffPathProps
-  extends Pick<DiffPathViewerProps, 'onQueryLogEntity' | 'onIgnoreNode'> {
+  extends Pick<DiffPathViewerProps, 'requestQueryLogEntity' | 'onIgnoreNode'> {
   mode?: DiffPathTooltipProps['mode'];
   appId: string;
   operationId: string;
   loading?: boolean;
   defaultOnlyFailed?: boolean;
-  data: CompareResultDetail[];
+  requestDiffMsg: (params: any) => Promise<CompareResultDetail>;
+  data: infoItem[];
 }
 
 const DiffPath: FC<DiffPathProps> = (props) => {
@@ -23,9 +26,17 @@ const DiffPath: FC<DiffPathProps> = (props) => {
 
   const [searchOperationName, setSearchOperationName] = useState<string>();
 
-  const diffListFiltered = useMemo<CompareResultDetail[]>(() => {
+  const {
+    data: diffMsg,
+    loading: loadingDiffMsg,
+    run: queryDiffMsgById,
+  } = useRequest(props.requestDiffMsg, {
+    manual: true,
+  });
+
+  const diffListFiltered = useMemo<infoItem[]>(() => {
     return props.data.filter((data) => {
-      if (onlyFailed && !data.diffResultCode) {
+      if (onlyFailed && !data.code) {
         return false;
       }
       if (searchOperationName) {
@@ -48,7 +59,10 @@ const DiffPath: FC<DiffPathProps> = (props) => {
         <Collapse
           accordion
           size='small'
-          defaultActiveKey={diffListFiltered[0]?.id}
+          // defaultActiveKey={diffListFiltered[0]?.id}
+          onChange={([id]) => {
+            id && queryDiffMsgById({ id });
+          }}
           css={css`
             .ant-collapse-content-box {
               padding: 0 !important;
@@ -59,8 +73,7 @@ const DiffPath: FC<DiffPathProps> = (props) => {
             <Collapse.Panel
               header={
                 <Typography.Text strong>
-                  {/*<Label>{props.data.categoryName}</Label>*/}
-                  <CheckOrCloseIcon size={12} checked={!data.diffResultCode}></CheckOrCloseIcon>
+                  <SceneCode code={data.code} />
                   <EllipsisTooltip title={data.operationName} />
                 </Typography.Text>
               }
@@ -69,11 +82,12 @@ const DiffPath: FC<DiffPathProps> = (props) => {
               <DiffPathViewer
                 defaultActiveFirst
                 height='400px'
-                data={data}
+                data={diffMsg}
+                loading={loadingDiffMsg}
                 appId={props.appId}
                 operationId={props.operationId}
                 onIgnoreNode={props.onIgnoreNode}
-                onQueryLogEntity={props.onQueryLogEntity}
+                requestQueryLogEntity={props.requestQueryLogEntity}
               />
             </Collapse.Panel>
           ))}

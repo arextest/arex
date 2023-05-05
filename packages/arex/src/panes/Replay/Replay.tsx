@@ -21,15 +21,6 @@ const ReplayPage: ArexPaneFC<ApplicationDataType> = (props) => {
     setRefreshDep(new Date().getTime()); // 触发 ReplayTable 组件请求更新
   };
 
-  useEffect(() => {
-    if (selectedPlan?.planId) {
-      // TODO
-      // nav(
-      //   `${location.pathname}?data=${customSearchParams.query.data}&planId=${selectedPlan?.planId}`,
-      // );
-    }
-  }, [selectedPlan]);
-
   return props.data ? (
     <>
       <AppTitle data={props.data} onRefresh={handleRefreshDep} />
@@ -37,6 +28,7 @@ const ReplayPage: ArexPaneFC<ApplicationDataType> = (props) => {
         active={!!selectedPlan}
         table={
           <PlanReport
+            defaultSelectFirst
             appId={props.data.appId}
             refreshDep={refreshDep}
             onSelectedPlanChange={handleSelectPlan}

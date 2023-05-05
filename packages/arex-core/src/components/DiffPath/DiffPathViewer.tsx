@@ -1,12 +1,12 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
-import { App, Menu, theme, Typography } from 'antd';
+import { App, Menu, Spin, theme, Typography } from 'antd';
 import React, { FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import DiffJsonView from '../DiffJsonView';
-import { FlexCenterWrapper } from '../index';
+import { FlexCenterWrapper, SpaceBetweenWrapper } from '../index';
 import PathTitle from './DiffPathTitle';
 import { DiffLog, LogEntity } from './type';
 
@@ -42,11 +42,15 @@ export type CompareResultDetail = {
 export interface DiffPathViewerProps {
   operationId: string;
   appId: string;
-  data: CompareResultDetail;
+  loading?: boolean;
+  data?: CompareResultDetail;
   diffPath?: LogEntity[];
   height?: string;
   defaultActiveFirst?: boolean;
-  onQueryLogEntity: (params: { compareResultId: string; logIndex: number }) => Promise<LogEntity[]>;
+  requestQueryLogEntity: (params: {
+    compareResultId: string;
+    logIndex: number;
+  }) => Promise<LogEntity[]>;
   onIgnoreNode: (path: string[]) => Promise<boolean>;
 }
 
@@ -55,20 +59,25 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
   const { token } = theme.useToken();
   const { message } = App.useApp();
 
-  const { data: logEntity = [], run: queryLogEntity } = useRequest(
+  const {
+    data: logEntity = [],
+    loading: loadingLogEntity,
+    run: queryLogEntity,
+  } = useRequest(
     (logIndex) =>
-      props.onQueryLogEntity({
-        compareResultId: props.data.id,
+      props.requestQueryLogEntity({
+        compareResultId: props.data!.id,
         logIndex,
       }),
     {
       manual: true,
+      ready: !!props.data,
     },
   );
 
   useEffect(() => {
     props.defaultActiveFirst &&
-      props.data.logInfos?.length &&
+      props.data?.logInfos?.length &&
       queryLogEntity(props.data.logInfos[0].logIndex);
   }, [props.data]);
 
@@ -104,15 +113,27 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
           </FlexCenterWrapper>
         ) : (
           <>
-            <Typography.Text
-              type='secondary'
-              style={{
-                display: 'inline-block',
-                margin: `${token.marginSM}px 0 0 ${token.margin}px`,
-              }}
-            >
-              {t('replay.pointOfDifference')}
-            </Typography.Text>
+            <SpaceBetweenWrapper>
+              <Typography.Text
+                type='secondary'
+                style={{
+                  display: 'inline-block',
+                  margin: `${token.marginSM}px 0 0 ${token.margin}px`,
+                }}
+              >
+                {t('replay.pointOfDifference')}
+              </Typography.Text>
+              <Spin
+                size='small'
+                spinning={loadingLogEntity}
+                css={css`
+                  margin-right: 8px;
+                  span {
+                    font-size: 16px !important;
+                  }
+                `}
+              />
+            </SpaceBetweenWrapper>
             <Menu
               defaultSelectedKeys={props.defaultActiveFirst ? ['0'] : undefined}
               items={props.data.logInfos?.map((log, index) => {
@@ -132,7 +153,7 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
                 border-inline-end: none !important;
               `}
               onClick={({ key }) => {
-                props.data.logInfos?.length &&
+                props.data?.logInfos?.length &&
                   queryLogEntity(props.data.logInfos[parseInt(key)].logIndex);
               }}
             />

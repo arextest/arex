@@ -1,3 +1,10 @@
+export type infoItem = {
+  id: string;
+  code: number;
+  categoryName: string;
+  operationName: string;
+};
+
 export interface NodePath {
   nodeName: string;
   index: number;

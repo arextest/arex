@@ -1,13 +1,9 @@
 import { useRequest } from 'ahooks';
 import { ArexPaneFC, CollapseTable, DiffPath, PanesTitle, useTranslation } from 'arex-core';
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 
 import { ComparisonService, ReportService } from '../../services';
-import {
-  PlanItemStatistics,
-  QueryAllDiffMsgReq,
-  ReplayCaseType,
-} from '../../services/ReportService';
+import { infoItem, PlanItemStatistics, ReplayCaseType } from '../../services/ReportService';
 import Case from './Case';
 import SaveCase, { SaveCaseRef } from './SaveCase';
 // import { SaveCaseRef } from './SaveCase';
@@ -19,33 +15,21 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   const saveCaseRef = useRef<SaveCaseRef>(null);
 
   const {
-    data: diffMsgAll = {
-      compareResultDetailList: [],
-      totalCount: 0,
-    },
-    mutate: setDiffMsgAll,
-    loading: loadingDiffMsgAll,
-    run: queryAllDiffMsg,
-  } = useRequest(
-    (params: Pick<QueryAllDiffMsgReq, 'recordId' | 'planItemId'>) =>
-      ReportService.queryAllDiffMsg({
-        ...params,
-        diffResultCodeList: [0, 1, 2],
-        pageIndex: 0,
-        pageSize: 2000, // TODO lazy load
-        needTotal: true,
-      }),
-    {
-      manual: true,
-      onBefore() {
-        setDiffMsgAll();
-      },
-    },
-  );
+    data: fullLinkInfo,
+    loading: loadingFullLinkInfo,
+    run: getQueryFullLinkInfo,
+  } = useRequest(ReportService.queryFullLinkInfo, {
+    manual: true,
+  });
+
+  const fullLinkInfoMerged = useMemo<infoItem[]>(() => {
+    const { entrance, infoItemList } = fullLinkInfo || {};
+    return [entrance, ...(infoItemList || [])].filter(Boolean) as infoItem[];
+  }, [fullLinkInfo]);
 
   const handleClickRecord = (record: ReplayCaseType) => {
     setSelectedRecord(selectedRecord?.recordId === record.recordId ? undefined : record);
-    queryAllDiffMsg({
+    getQueryFullLinkInfo({
       recordId: record.recordId,
       planItemId: props.data.planItemId,
     });
@@ -79,9 +63,10 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
           <DiffPath
             appId={props.data.appId}
             operationId={props.data.operationId}
-            loading={loadingDiffMsgAll}
-            data={diffMsgAll.compareResultDetailList}
-            onQueryLogEntity={ReportService.queryLogEntity}
+            loading={loadingFullLinkInfo}
+            data={fullLinkInfoMerged}
+            requestDiffMsg={ReportService.queryDiffMsgById}
+            requestQueryLogEntity={ReportService.queryLogEntity}
             onIgnoreNode={(path) =>
               ComparisonService.insertIgnoreNode({
                 operationId: props.data.operationId,
