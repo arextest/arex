@@ -1,5 +1,6 @@
 {
-  "demo": "样例",
+  "collection": "集合",
+  "replay": "回放",
   "environment": "环境变量",
-  "collection": "集合"
+  "appSetting": "应用配置"
 }

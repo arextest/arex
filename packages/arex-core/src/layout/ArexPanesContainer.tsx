@@ -297,7 +297,7 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
     height: 100%;
     .ant-tabs-tabpane {
       height: inherit;
-      padding: 0 16px;
+      padding: 8px 16px;
       overflow-y: overlay;
     }
   }

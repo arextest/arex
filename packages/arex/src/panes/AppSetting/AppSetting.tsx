@@ -42,7 +42,7 @@ const AppSetting: ArexPaneFC<ApplicationDataType> = (props) => {
         children: <SettingNodesSort appId={data.appId} />,
       },
     ],
-    [data],
+    [data, t],
   );
 
   return (

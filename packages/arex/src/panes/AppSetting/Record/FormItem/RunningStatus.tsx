@@ -13,7 +13,7 @@ export interface RunningStatusProps {
 }
 
 const RunningStatus: FC<RunningStatusProps> = (props) => {
-  const { t } = useTranslation(['components', 'common']);
+  const { t } = useTranslation();
 
   const agentColumns: ColumnsType<AgentData> = [
     {
@@ -23,13 +23,13 @@ const RunningStatus: FC<RunningStatusProps> = (props) => {
       render: (text) => <Typography.Text copyable>{text}</Typography.Text>,
     },
     {
-      title: t('version', { ns: 'common' }),
+      title: t('version'),
       dataIndex: 'recordVersion',
       align: 'center',
       render: (text) => <Typography.Text>{text || '-'}</Typography.Text>,
     },
     {
-      title: t('modifiedTime', { ns: 'common' }),
+      title: t('modifiedTime'),
       dataIndex: 'modifiedTime',
       align: 'center',
       render: (text) => dayjs(text).format('YYYY-MM-DD HH:mm:ss'),

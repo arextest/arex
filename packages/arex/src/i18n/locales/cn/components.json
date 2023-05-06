@@ -208,7 +208,10 @@
     "emptyFullClassName": "请输入全类名",
     "emptyCaseRange": "请输入 Case 数量上限!",
     "emptyValue": "请输入值",
-    "mockTips": "\"body\"为json字符串时会自动转换成json对象，保存时还原。"
+    "mockTips": "\"body\"为json字符串时会自动转换成json对象，保存时还原。",
+    "runningStatus": "运行状态",
+    "frequencyUnit": "个/100秒",
+    "frequencyTip": "单接口单日录制: * 个"
   },
   "env": {
     "searchEnvironment": "搜索环境",

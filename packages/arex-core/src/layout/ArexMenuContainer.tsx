@@ -87,7 +87,8 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
           items={items}
           css={css`
             width: 100%;
-            //overflow-y: overlay;
+            padding: 8px;
+            overflow-y: overlay;
             .ant-tabs-nav {
               display: none; // 隐藏 Tabs 的导航栏
             }

@@ -1,6 +1,8 @@
 {
-  "pane-not-found": "PaneNotFound",
-  "demo": "Demo",
+  "collection": "Collection",
   "environment": "Environment",
-  "collection": "Collection"
+  "replay": "Replay",
+  "caseDetail": "CaseDetail",
+  "appSetting": "AppSetting",
+  "userSetting": "UserSetting"
 }
