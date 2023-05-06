@@ -13,7 +13,9 @@ const PaneNotFound: ArexPaneFC = () => {
       description={<Typography.Title level={4}>Pane Not Found</Typography.Title>}
       style={{ padding: '16px' }}
     >
-      <Typography.Text type='secondary'> Please check if PaneType is correct</Typography.Text>
+      <Typography.Text type='secondary'>
+        Please check if PaneType is correct, or ArexPaneComponent is registered properly
+      </Typography.Text>
     </Empty>
   );
 };
