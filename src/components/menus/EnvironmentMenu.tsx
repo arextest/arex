@@ -1,4 +1,4 @@
-import { AimOutlined, PlusOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, PlusOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
 import { App, theme } from 'antd';
 import React, { FC } from 'react';
@@ -73,7 +73,9 @@ const EnvironmentMenu: FC = () => {
         label: (
           <SpaceBetweenWrapper>
             {env.envName}
-            {activeEnvironment?.id === env.id && <AimOutlined style={{ color: colorPrimary }} />}
+            {activeEnvironment?.id === env.id && (
+              <EnvironmentOutlined style={{ color: colorPrimary }} />
+            )}
           </SpaceBetweenWrapper>
         ),
         key: env.id,

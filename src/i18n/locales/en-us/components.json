@@ -256,6 +256,10 @@
     "color": "Color",
     "delLabelConfirmText": "Are you sure to delete this label?",
     "addLabelButton": "New Label",
-    "labelId": "Id"
+    "labelId": "Id",
+    "moveOut": "Move out",
+    "moveOutTip": "Are you sure to move out this user?",
+    "leave": "Leave workspace",
+    "leaveTip": "Are you sure to leave this workspace?"
   }
 }

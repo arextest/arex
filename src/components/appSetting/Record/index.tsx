@@ -10,12 +10,7 @@ import { decodeWeekCode, encodeWeekCode } from '../../../helpers/record/util';
 import AppSettingService from '../../../services/AppSetting.service';
 import { QueryRecordSettingRes } from '../../../services/AppSetting.type';
 import SettingForm from '../SettingForm';
-import {
-  DurationInput,
-  DynamicClassesEditableTable,
-  IntegerStepSlider,
-  Operations,
-} from './FormItem';
+import { DurationInput, DynamicClassesEditableTable, IntegerStepSlider } from './FormItem';
 import RunningStatus from './FormItem/RunningStatus';
 
 export type SettingRecordProps = {

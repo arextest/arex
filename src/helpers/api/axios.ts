@@ -20,12 +20,10 @@ interface IRequestConfig<T = AxiosResponse> extends AxiosRequestConfig {
 }
 
 export type IAxiosResponse<T> = {
-  ResponseStatus: {
-    responseStatusType: {
-      responseCode: number;
-      responseDesc: 'success' | 'failure';
-      timestamp: number;
-    };
+  responseStatusType: {
+    responseCode: number;
+    responseDesc: string;
+    timestamp: number;
   };
   body: T;
 };
