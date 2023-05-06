@@ -11,7 +11,7 @@ export interface QueryUsersByWorkspaceReq {
 }
 
 export type WorkspaceUser = {
-  userName: string | null;
+  userName: string;
   role: number;
   status: number;
 };
@@ -47,4 +47,17 @@ export type ValidInvitationRes = {
   success: boolean;
   accessToken: string;
   refreshToken: string;
+};
+
+// ------ /api/filesystem/changeRole ------
+export type ChangeRoleReq = {
+  workspaceId: string;
+  userName: string;
+  role: RoleEnum;
+};
+
+// ------ /api/filesystem/removeUserFromWorkspace ------
+export type RemoveUserFromWorkspaceReq = {
+  workspaceId: string;
+  userName: string;
 };

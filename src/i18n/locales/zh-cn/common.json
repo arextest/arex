@@ -36,6 +36,8 @@
     "error": "异常",
     "delSuccess": "删除成功",
     "delFailed": "删除失败",
+    "leaveSuccess": "退出成功",
+    "leaveFailed": "退出失败",
     "updateSuccess": "更新成功",
     "updateFailed": "更新失败",
     "saveSuccess": "保存成功",

@@ -1,3 +1,4 @@
+import { UserOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
 import {
   App,
@@ -8,10 +9,11 @@ import {
   Input,
   List,
   Popconfirm,
+  Select,
   Space,
   Typography,
 } from 'antd';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -38,6 +40,24 @@ const WorkspaceSetting: FC = () => {
   } = useStore();
   const userName = getLocalStorage<string>(EmailKey);
 
+  const roleOptions = useMemo(
+    () => [
+      {
+        label: t('workSpace.admin'),
+        value: RoleEnum.Admin,
+      },
+      {
+        label: t('workSpace.editor'),
+        value: RoleEnum.Editor,
+      },
+      {
+        label: t('workSpace.viewer'),
+        value: RoleEnum.Viewer,
+      },
+    ],
+    [t],
+  );
+
   const onFinish = (values: any) => {
     WorkspaceService.renameWorkspace({
       workspaceId: params.workspaceId,
@@ -52,7 +72,74 @@ const WorkspaceSetting: FC = () => {
     WorkspaceService.queryUsersByWorkspace({ workspaceId: activeWorkspaceId }),
   );
 
-  const { run: handleDeleteWorkspace } = useRequest(
+  const isAdmin = useMemo(
+    () => workspaceUsers.find((user) => user.userName === userName)?.role === RoleEnum.Admin,
+    [userName, workspaceUsers],
+  );
+
+  const { run: changeRole } = useRequest(
+    (params: { userName: string; role: number }) =>
+      WorkspaceService.changeRole({
+        ...params,
+        workspaceId: activeWorkspaceId,
+      }),
+    {
+      manual: true,
+      onSuccess(res) {
+        if (!res.responseCode) {
+          message.success(res.responseDesc);
+        } else {
+          message.error(res.responseDesc);
+        }
+      },
+    },
+  );
+
+  const { run: removeUserFromWorkspace } = useRequest(
+    (params: { userName: string }) =>
+      WorkspaceService.removeUserFromWorkspace({
+        ...params,
+        workspaceId: activeWorkspaceId,
+      }),
+    {
+      manual: true,
+      onSuccess(res) {
+        if (!res.responseCode) {
+          message.success(res.responseDesc);
+        } else {
+          message.error(res.responseDesc);
+        }
+      },
+    },
+  );
+
+  const resetWorkspaces = () => {
+    setWorkspacesLastManualUpdateTimestamp(new Date().getTime());
+    resetPage();
+    // TODO workspaces[0] 可能无效
+    setActiveWorkspaceId(workspaces[0].id);
+    nav(`/${workspaces[0].id}/workspaceOverview/${workspaces[0].id}`);
+  };
+
+  const { run: leaveWorkspace } = useRequest(
+    () =>
+      WorkspaceService.leaveWorkspace({
+        workspaceId: activeWorkspaceId,
+      }),
+    {
+      manual: true,
+      onSuccess(success) {
+        if (success) {
+          message.success(t('message.leaveSuccess', { ns: 'common' }));
+          resetWorkspaces();
+        } else {
+          message.error(t('message.leaveFailed', { ns: 'common' }));
+        }
+      },
+    },
+  );
+
+  const { run: deleteWorkspace } = useRequest(
     () =>
       WorkspaceService.deleteWorkspace({
         workspaceId: activeWorkspaceId,
@@ -63,10 +150,9 @@ const WorkspaceSetting: FC = () => {
       onSuccess(success) {
         if (success) {
           message.success(t('message.delSuccess', { ns: 'common' }));
-          setWorkspacesLastManualUpdateTimestamp(new Date().getTime());
-          resetPage();
-          setActiveWorkspaceId(workspaces[0].id);
-          nav(`/${workspaces[0].id}/workspaceOverview/${workspaces[0].id}`);
+          resetWorkspaces();
+        } else {
+          message.error(t('message.delFailed', { ns: 'common' }));
         }
       },
     },
@@ -77,7 +163,7 @@ const WorkspaceSetting: FC = () => {
       <div style={{ width: '440px', margin: '0 auto' }}>
         <h1>{t('workSpace.workspaceSettings')}</h1>
         <Form
-          layout='vertical'
+          layout='inline'
           name='basic'
           initialValues={{
             name: workspaces.find((workspace) => workspace.id === params.workspaceId)
@@ -109,20 +195,45 @@ const WorkspaceSetting: FC = () => {
           renderItem={(item) => (
             <List.Item
               actions={[
-                <a key='list-loadmore-edit'>
-                  {
-                    {
-                      [RoleEnum.Admin]: t('workSpace.admin'),
-                      [RoleEnum.Editor]: t('workSpace.editor'),
-                      [RoleEnum.Viewer]: t('workSpace.viewer'),
-                    }[item.role]
-                  }
-                </a>,
-              ]}
+                <Select
+                  bordered={false}
+                  key='userRole'
+                  disabled={!isAdmin}
+                  value={item.role}
+                  options={roleOptions}
+                  onSelect={(role) => {
+                    changeRole({ role, userName: item.userName });
+                  }}
+                />,
+              ].concat(
+                item.userName !== userName && isAdmin ? (
+                  <Popconfirm
+                    key='moveOut'
+                    title={t('workSpace.moveOut')}
+                    description={t('workSpace.moveOutTip')}
+                    onConfirm={() => removeUserFromWorkspace({ userName: item.userName })}
+                    okText={t('yes', { ns: 'common' })}
+                    cancelText={t('no', { ns: 'common' })}
+                  >
+                    <Button danger type='link'>
+                      {t('workSpace.moveOut')}
+                    </Button>
+                  </Popconfirm>
+                ) : (
+                  []
+                ),
+              )}
             >
               <List.Item.Meta
                 avatar={<Avatar>{item.userName?.[0]}</Avatar>}
-                title={<span>{item.userName}</span>}
+                title={
+                  <Space>
+                    <Typography.Text>{item.userName}</Typography.Text>
+                    <Typography.Text type='secondary'>
+                      {userName === item.userName && <UserOutlined />}
+                    </Typography.Text>
+                  </Space>
+                }
                 description={
                   {
                     '1': t('workSpace.notAccepted'),
@@ -135,14 +246,30 @@ const WorkspaceSetting: FC = () => {
         />
 
         <Divider />
+        <Space direction='vertical'>
+          <Text>{t('workSpace.leave')}</Text>
+
+          <Popconfirm
+            title={t('workSpace.leave')}
+            description={t('workSpace.leaveTip')}
+            onConfirm={leaveWorkspace}
+            okText={t('yes', { ns: 'common' })}
+            cancelText={t('no', { ns: 'common' })}
+          >
+            <Button danger>{t('workSpace.leave')}</Button>
+          </Popconfirm>
+        </Space>
+
+        <Divider />
 
         <Space direction='vertical'>
           <Text>{t('workSpace.del')}</Text>
           <Text type='secondary'>{t('workSpace.delMessage')}</Text>
 
           <Popconfirm
-            title={t('workSpace.delConfirmText')}
-            onConfirm={handleDeleteWorkspace}
+            title={t('workSpace.del')}
+            description={t('workSpace.delConfirmText')}
+            onConfirm={deleteWorkspace}
             okText={t('yes', { ns: 'common' })}
             cancelText={t('no', { ns: 'common' })}
           >

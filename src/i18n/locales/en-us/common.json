@@ -35,6 +35,8 @@
     "success": "Success",
     "error": "Error",
     "delSuccess": "Delete successfully",
+    "leaveSuccess": "Leave successfully",
+    "leaveFailed": "Leave failed",
     "delFailed": "Delete failed",
     "delError": "Delete error",
     "updateSuccess": "Update successfully",
