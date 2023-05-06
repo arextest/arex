@@ -1,8 +1,6 @@
 import { ColorPrimary, getLocalStorage, I18nextLng, Theme } from 'arex-core';
 import { RequestMethodEnum } from 'arex-core';
 
-import ReplayAnalysis from './panes/ReplayAnalysis/ReplayAnalysis';
-
 export enum PanesType {
   REQUEST = 'request',
   REPLAY = 'replay',
@@ -12,6 +10,7 @@ export enum PanesType {
   REPLAY_ANALYSIS = 'replayAnalysis',
   APP_SETTING = 'appSetting',
   ENVIRONMENT = 'environment',
+  USER_SETTING = 'userSetting',
 }
 
 export enum MenusType {

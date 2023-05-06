@@ -13,6 +13,7 @@ import ReplayCase from './ReplayCase';
 import ReplayCaseDetail from './ReplayCaseDetail';
 import ReplayDiffScenes from './ReplayDiffScenes';
 import Request from './Request';
+import UserSetting from './UserSetting';
 
 export default {
   Replay,
@@ -22,4 +23,5 @@ export default {
   ReplayAnalysis,
   Request,
   Environment,
+  UserSetting,
 };

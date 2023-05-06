@@ -6,6 +6,7 @@ import { UserProfile } from '../services/UserService';
 
 export type UserProfileAction = {
   setTheme: (theme: Theme) => void;
+  setUserProfile: (profile: UserProfile) => void;
 };
 
 const initialState: UserProfile = {
@@ -21,6 +22,9 @@ const useUserProfile = create<UserProfile & UserProfileAction>((set) => ({
   setTheme: (theme: Theme) => {
     setLocalStorage(THEME_KEY, theme);
     set({ theme });
+  },
+  setUserProfile: (profile: UserProfile) => {
+    set(profile);
   },
 }));
 
