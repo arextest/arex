@@ -4,8 +4,8 @@ import { App, Button, Card, Modal, Space, Tag, Tooltip, Typography } from 'antd'
 import { DiffMatch, TooltipButton, useTranslation } from 'arex-core';
 import React, { FC, useMemo } from 'react';
 
-import { ComparisonService, ReportService } from '../../services';
-import { LogEntity, QueryMsgWithDiffRes, Scene } from '../../services/ReportService';
+import { ComparisonService, ReportService } from '@/services';
+import { LogEntity, QueryMsgWithDiffRes, Scene } from '@/services/ReportService';
 
 const PathTooltip: FC<{ path?: string | null }> = (props) => {
   const path = useMemo(() => props.path?.split('.') || [], [props.path]);

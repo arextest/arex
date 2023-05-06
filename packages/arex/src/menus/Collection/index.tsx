@@ -5,8 +5,8 @@ import { createArexMenu } from 'arex-core';
 import React, { useEffect } from 'react';
 
 // import CollectionMenu from '../../components/CollectionMenu';
-import { MenusType, PanesType } from '../../constant';
-import { queryWorkspaceById } from '../../services/FileSystemService/queryWorkspaceById';
+import { MenusType, PanesType } from '@/constant';
+import { queryWorkspaceById } from '@/services/FileSystemService/queryWorkspaceById';
 // import { queryWorkspaceById } from '../services/FileSystemService/queryWorkspaceById';
 const CollectionMenu = () => {
   useEffect(() => {

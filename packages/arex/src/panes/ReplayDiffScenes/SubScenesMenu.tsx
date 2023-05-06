@@ -4,7 +4,7 @@ import { Badge, Divider, Menu, Space, theme } from 'antd';
 import { EllipsisTooltip, SceneCode, SpaceBetweenWrapper, TooltipButton } from 'arex-core';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 
-import { SubScene } from '../../services/ReportService';
+import { SubScene } from '@/services/ReportService';
 
 export interface SubSceneMenuProps {
   data: SubScene[];

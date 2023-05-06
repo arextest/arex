@@ -1,4 +1,4 @@
-import { request } from '../../utils';
+import { request } from '@/utils';
 
 export type UpdateUserProfileReq = {
   profile: string; // JSON.stringify(UserProfile)

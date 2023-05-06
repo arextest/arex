@@ -2,7 +2,7 @@ import { Select } from 'antd';
 import { styled } from 'arex-core';
 import React from 'react';
 
-import useEnvironments, { DefaultEnvironment } from '../store/useEnvironments';
+import useEnvironments, { DefaultEnvironment } from '@/store/useEnvironments';
 
 const { Option } = Select;
 

@@ -1,4 +1,5 @@
 export { default as AppMenu } from './AppMenu';
+export { default as EditAreaPlaceholder } from './EditAreaPlaceholder';
 export { default as EnvironmentSelect } from './EnvironmentSelect';
 export { default as HeaderMenu } from './HeaderMenu';
 export { default as MenuSelect } from './MenuSelect';

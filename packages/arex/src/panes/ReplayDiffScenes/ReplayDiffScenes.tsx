@@ -3,8 +3,9 @@ import { Card, Collapse, Drawer, Space, Typography } from 'antd';
 import { ArexPaneFC, css, DiffPath, Label, SceneCode } from 'arex-core';
 import React, { ReactNode, useMemo, useRef, useState } from 'react';
 
-import { ComparisonService, ReportService } from '../../services';
-import { infoItem, PlanItemStatistics, SubScene } from '../../services/ReportService';
+import { ComparisonService, ReportService } from '@/services';
+import { infoItem, PlanItemStatistics, SubScene } from '@/services/ReportService';
+
 import FlowTree, { FlowTreeData } from './FlowTree';
 import SubScenesMenu, { SubSceneMenuProps } from './SubScenesMenu';
 

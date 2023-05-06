@@ -4,12 +4,12 @@ import { useTranslation } from 'arex-core';
 import { getLocalStorage } from 'arex-core';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
-import { EMAIL_KEY } from '../../constant';
-import { FileSystemService } from '../../services';
-import { AddItemFromRecordReq } from '../../services/FileSystemService';
-import { ReplayCaseType } from '../../services/ReportService';
-import { useWorkspaces } from '../../store';
-import { treeFindPath } from '../../utils';
+import { EMAIL_KEY } from '@/constant';
+import { FileSystemService } from '@/services';
+import { AddItemFromRecordReq } from '@/services/FileSystemService';
+import { ReplayCaseType } from '@/services/ReportService';
+import { useWorkspaces } from '@/store';
+import { treeFindPath } from '@/utils';
 
 const { Text } = Typography;
 

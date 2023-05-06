@@ -1,4 +1,5 @@
-import { request } from '../../utils';
+import { request } from '@/utils';
+
 import { NodePath } from './queryAllDiffMsg';
 
 export interface QueryLogEntityReq {

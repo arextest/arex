@@ -6,9 +6,10 @@ import { FlexCenterWrapper, getLocalStorage, setLocalStorage } from 'arex-core';
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ACCESS_TOKEN_KEY, EMAIL_KEY, REFRESH_TOKEN_KEY } from '../../constant';
-import { LoginService, UserService } from '../../services';
-import { loginVerifyReq } from '../../services/LoginService';
+import { ACCESS_TOKEN_KEY, EMAIL_KEY, REFRESH_TOKEN_KEY } from '@/constant';
+import { LoginService, UserService } from '@/services';
+import { loginVerifyReq } from '@/services/LoginService';
+
 import VerificationCode from './VerificationCode';
 
 const Logo = styled(Typography.Text)`

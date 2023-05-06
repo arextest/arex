@@ -2,7 +2,7 @@ import { Switch } from 'antd';
 import { Theme } from 'arex-core';
 import React, { FC } from 'react';
 
-import { useUserProfile } from '../../store';
+import { useUserProfile } from '@/store';
 
 const ThemeSwitch: FC<{ value?: Theme; onChange?: (theme: Theme) => void }> = (props) => {
   const { setTheme } = useUserProfile();

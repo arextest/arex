@@ -1,5 +1,6 @@
+import { request } from '@/utils';
+
 import { Environment } from '../../store/useEnvironments';
-import { request } from '../../utils';
 
 export type GetEnvironmentReq = {
   workspaceId: string;

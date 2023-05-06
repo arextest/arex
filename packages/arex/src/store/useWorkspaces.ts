@@ -2,8 +2,8 @@ import { getLocalStorage, RoleEnum } from 'arex-core';
 import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 
-import { EMAIL_KEY } from '../constant';
-import queryWorkspacesByUser from '../services/FileSystemService/queryWorkspacesByUser';
+import { EMAIL_KEY } from '@/constant';
+import queryWorkspacesByUser from '@/services/FileSystemService/queryWorkspacesByUser';
 
 export type Workspace = {
   id: string;

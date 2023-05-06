@@ -36,11 +36,11 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 import CountUp from 'react-countup';
 
-import { StatusTag } from '../../components';
-import { EMAIL_KEY, PanesType } from '../../constant';
-import { useNavPane } from '../../hooks';
-import { ReportService, ScheduleService } from '../../services';
-import { PlanItemStatistics, PlanStatistics } from '../../services/ReportService';
+import { StatusTag } from '@/components';
+import { EMAIL_KEY, PanesType } from '@/constant';
+import { useNavPane } from '@/hooks';
+import { ReportService, ScheduleService } from '@/services';
+import { PlanItemStatistics, PlanStatistics } from '@/services/ReportService';
 
 function getPercent(num: number, den: number, showPercentSign = true) {
   const value = num && den ? parseFloat(((num / den) * 100).toFixed(0)) : 0;

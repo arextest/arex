@@ -1,19 +1,18 @@
 import { useRequest } from 'ahooks';
-import { App, Form, Select, Switch } from 'antd';
-import { ColorPrimaryPalette, getLocalStorage, i18n, PanesTitle } from 'arex-core';
+import { App, Form, Switch } from 'antd';
+import { ColorPrimaryPalette, getLocalStorage, PanesTitle } from 'arex-core';
 import React, { FC, useEffect } from 'react';
 
-import { EMAIL_KEY } from '../../constant';
-import { useColorPrimary } from '../../hooks';
-import { LoginService } from '../../services';
-import { UserProfile } from '../../services/UserService';
-import useUserProfile from '../../store/useUserProfile';
+import { EMAIL_KEY } from '@/constant';
+import { useColorPrimary } from '@/hooks';
+import { LoginService } from '@/services';
+import { UserProfile } from '@/services/UserService';
+import useUserProfile from '@/store/useUserProfile';
+
 import AvatarUpload from './AvatarUpload';
 import ColorPicker from './ColorPicker';
 import LanguageSelect from './LanguageSelect';
 import ThemeSwitch from './ThemeSwitch';
-
-const { Option } = Select;
 
 type SettingForm = Omit<UserProfile, 'colorPrimary'> & { colorPrimary: ColorPrimaryPalette };
 

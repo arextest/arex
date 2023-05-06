@@ -1,4 +1,5 @@
-import { request } from '../../utils';
+import { request } from '@/utils';
+
 import { FavoriteAppReq } from './setFavoriteApp';
 
 export async function setUnFavoriteApp(params: FavoriteAppReq) {

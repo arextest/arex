@@ -6,6 +6,7 @@
  * do not create the function anonymously.
  */
 
+import AppSetting from './AppSetting';
 import Environment from './Environment';
 import Replay from './Replay';
 import ReplayAnalysis from './ReplayAnalysis';
@@ -16,6 +17,7 @@ import Request from './Request';
 import UserSetting from './UserSetting';
 
 export default {
+  AppSetting,
   Replay,
   ReplayCase,
   ReplayCaseDetail,

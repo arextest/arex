@@ -11,9 +11,10 @@ import { ArexPaneFC, PanesTitle, PanesTitleProps, TooltipButton, useTranslation 
 import React, { useMemo } from 'react';
 import { useImmer } from 'use-immer';
 
-import { EnvironmentService } from '../../services';
-import { useEnvironments, useMenusPanes, useWorkspaces } from '../../store';
-import { Environment } from '../../store/useEnvironments';
+import { EnvironmentService } from '@/services';
+import { useEnvironments, useMenusPanes, useWorkspaces } from '@/store';
+import { Environment } from '@/store/useEnvironments';
+
 import EditableKeyValueTable, { useColumns } from './EditableKeyValueTable';
 
 const Environment: ArexPaneFC<Environment> = (props) => {

@@ -9,10 +9,10 @@ import {
 } from 'arex-core';
 import React, { useMemo } from 'react';
 
-import { EnvironmentSelect, HeaderMenu } from '../components';
-import { PanesType } from '../constant';
-import { useInit } from '../hooks';
-import { useMenusPanes, useWorkspaces } from '../store';
+import { EnvironmentSelect, HeaderMenu } from '@/components';
+import { PanesType } from '@/constant';
+import { useInit } from '@/hooks';
+import { useMenusPanes, useWorkspaces } from '@/store';
 
 export default () => {
   useInit();

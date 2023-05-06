@@ -10,8 +10,9 @@ import {
 } from 'arex-core';
 import React, { useState } from 'react';
 
-import { ReportService } from '../../services';
-import { CategoryStatistic, Difference, PlanItemStatistics } from '../../services/ReportService';
+import { ReportService } from '@/services';
+import { CategoryStatistic, Difference, PlanItemStatistics } from '@/services/ReportService';
+
 import DiffList from './DiffList';
 import DiffScenes from './DiffScenes';
 

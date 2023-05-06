@@ -2,8 +2,8 @@ import { SettingOutlined } from '@ant-design/icons';
 import { createArexMenu } from 'arex-core';
 import React from 'react';
 
-import { AppMenu } from '../components';
-import { MenusType, PanesType } from '../constant';
+import { AppMenu } from '@/components';
+import { MenusType, PanesType } from '@/constant';
 
 export default createArexMenu((props) => <AppMenu {...props} />, {
   type: MenusType.APP_SETTING,

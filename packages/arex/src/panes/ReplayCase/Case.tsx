@@ -4,10 +4,10 @@ import { ColumnsType } from 'antd/lib/table';
 import { HighlightRowTable, SmallTextButton, useTranslation } from 'arex-core';
 import React, { FC, Key, useMemo } from 'react';
 
-import { PanesType } from '../../constant';
-import { useNavPane } from '../../hooks';
-import { ReportService } from '../../services';
-import { ReplayCaseType } from '../../services/ReportService';
+import { PanesType } from '@/constant';
+import { useNavPane } from '@/hooks';
+import { ReportService } from '@/services';
+import { ReplayCaseType } from '@/services/ReportService';
 
 type CaseProps = {
   planItemId: string;

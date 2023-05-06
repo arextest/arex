@@ -1,5 +1,5 @@
-import { Workspace } from '../../store/useWorkspaces';
-import { request } from '../../utils';
+import { Workspace } from '@/store/useWorkspaces';
+import { request } from '@/utils';
 
 export default async function queryWorkspacesByUser(params: { userName: string }) {
   return request

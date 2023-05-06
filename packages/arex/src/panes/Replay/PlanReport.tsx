@@ -11,9 +11,9 @@ import React, { FC, useRef, useState } from 'react';
 import CountUp from 'react-countup';
 import { useSearchParams } from 'react-router-dom';
 
-import { StatusTag } from '../../components';
-import { ReportService } from '../../services';
-import { PlanStatistics } from '../../services/ReportService';
+import { StatusTag } from '@/components';
+import { ReportService } from '@/services';
+import { PlanStatistics } from '@/services/ReportService';
 
 const PageSize = 5 as const;
 

@@ -1,7 +1,7 @@
-import { collectionOriginalTreeToAntdTreeData } from '../../helpers/collection/util';
-import { request } from '../../utils';
+import { collectionOriginalTreeToAntdTreeData } from '@/helpers/collection/util';
+import { request } from '@/utils';
 
-export function queryWorkspaceById(params: { id: string }) {
+export async function queryWorkspaceById(params: { id: string }) {
   return request
     .post<{
       fsTree: {

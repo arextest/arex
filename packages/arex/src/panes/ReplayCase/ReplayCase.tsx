@@ -2,8 +2,9 @@ import { useRequest } from 'ahooks';
 import { ArexPaneFC, CollapseTable, DiffPath, PanesTitle, useTranslation } from 'arex-core';
 import React, { useMemo, useRef, useState } from 'react';
 
-import { ComparisonService, ReportService } from '../../services';
-import { infoItem, PlanItemStatistics, ReplayCaseType } from '../../services/ReportService';
+import { ComparisonService, ReportService } from '@/services';
+import { infoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
+
 import Case from './Case';
 import SaveCase, { SaveCaseRef } from './SaveCase';
 // import { SaveCaseRef } from './SaveCase';

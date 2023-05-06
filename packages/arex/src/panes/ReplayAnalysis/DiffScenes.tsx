@@ -4,9 +4,9 @@ import { ColumnsType } from 'antd/es/table';
 import { HighlightRowTable, useTranslation } from 'arex-core';
 import React, { FC, useMemo, useState } from 'react';
 
-import { MenuSelect } from '../../components';
-import { ReportService } from '../../services';
-import { CategoryStatistic, Difference } from '../../services/ReportService';
+import { MenuSelect } from '@/components';
+import { ReportService } from '@/services';
+import { CategoryStatistic, Difference } from '@/services/ReportService';
 
 const DiffScenes: FC<{
   planItemId: string;

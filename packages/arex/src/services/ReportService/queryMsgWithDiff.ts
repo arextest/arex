@@ -1,4 +1,5 @@
-import { request } from '../../utils';
+import { request } from '@/utils';
+
 import { LogEntity } from './queryLogEntity';
 
 export type QueryMsgWithDiffReq = { logIndexes: string; compareResultId: string };

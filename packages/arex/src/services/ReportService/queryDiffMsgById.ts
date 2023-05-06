@@ -1,4 +1,5 @@
-import { request } from '../../utils';
+import { request } from '@/utils';
+
 import { CompareResultDetail } from './queryAllDiffMsg';
 
 export interface QueryDiffMsgByIdReq {

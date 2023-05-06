@@ -3,7 +3,7 @@ import { ColorPrimaryPalette, colorPrimaryPalette, Theme } from 'arex-core';
 import React, { FC, useMemo } from 'react';
 import { CirclePicker } from 'react-color';
 
-import useUserProfile from '../../store/useUserProfile';
+import useUserProfile from '@/store/useUserProfile';
 
 const { defaultSeed, darkAlgorithm, defaultAlgorithm } = theme;
 

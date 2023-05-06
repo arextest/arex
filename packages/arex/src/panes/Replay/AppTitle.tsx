@@ -6,9 +6,9 @@ import { getLocalStorage, PanesTitle, TooltipButton, useTranslation } from 'arex
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 
-import { EMAIL_KEY } from '../../constant';
-import { ApplicationService, ScheduleService } from '../../services';
-import { ApplicationDataType } from '../../services/ApplicationService';
+import { EMAIL_KEY } from '@/constant';
+import { ApplicationService, ScheduleService } from '@/services';
+import { ApplicationDataType } from '@/services/ApplicationService';
 
 type AppTitleProps = {
   data: ApplicationDataType;

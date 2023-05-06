@@ -2,8 +2,9 @@ import { getLocalStorage, setLocalStorage } from 'arex-core';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { WORKSPACE_ENVIRONMENT_PAIR_KEY } from '../constant';
-import { EnvironmentService } from '../services';
+import { WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
+import { EnvironmentService } from '@/services';
+
 import useWorkspaces from './useWorkspaces';
 
 export type EnvironmentKeyValues = { key: string; value: string; active?: boolean };

@@ -4,7 +4,7 @@ import { EllipsisTooltip, SceneCodeMap } from 'arex-core';
 import React, { FC, useCallback } from 'react';
 import Tree from 'react-d3-tree';
 
-import { infoItem } from '../../services/ReportService';
+import { infoItem } from '@/services/ReportService';
 
 export interface FlowTreeItem extends infoItem {
   name: string;

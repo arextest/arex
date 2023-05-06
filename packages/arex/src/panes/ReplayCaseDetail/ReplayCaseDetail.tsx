@@ -3,9 +3,10 @@ import { Badge, Tabs, theme } from 'antd';
 import { ArexPaneFC, PanesTitle } from 'arex-core';
 import React, { ReactNode, useState } from 'react';
 
-import { StorageService } from '../../services';
-import { ReplayCaseType } from '../../services/ReportService';
-import { RecordResult } from '../../services/StorageService';
+import { StorageService } from '@/services';
+import { ReplayCaseType } from '@/services/ReportService';
+import { RecordResult } from '@/services/StorageService';
+
 import CaseDetailTab from './CaseDetailTab';
 
 type TagType = { label: ReactNode; key: string; children: ReactNode };

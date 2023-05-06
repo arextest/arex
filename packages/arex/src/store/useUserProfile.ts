@@ -1,8 +1,8 @@
 import { I18nextLng, setLocalStorage, Theme } from 'arex-core';
 import { create } from 'zustand';
 
-import { DEFAULT_COLOR_PRIMARY, DEFAULT_THEME, THEME_KEY } from '../constant';
-import { UserProfile } from '../services/UserService';
+import { DEFAULT_COLOR_PRIMARY, DEFAULT_THEME, THEME_KEY } from '@/constant';
+import { UserProfile } from '@/services/UserService';
 
 export type UserProfileAction = {
   setTheme: (theme: Theme) => void;

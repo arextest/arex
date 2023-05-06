@@ -2,7 +2,7 @@ import { Collapse } from 'antd';
 import { DiffJsonView } from 'arex-core';
 import React, { FC } from 'react';
 
-import { RecordResult } from '../../services/StorageService';
+import { RecordResult } from '@/services/StorageService';
 
 const { Panel } = Collapse;
 

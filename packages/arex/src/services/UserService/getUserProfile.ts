@@ -1,6 +1,6 @@
 import { ColorPrimary, CompactMode, I18nextLng, Theme, tryParseJsonString } from 'arex-core';
 
-import { request } from '../../utils';
+import { request } from '@/utils';
 
 export type UserProfile = {
   theme: Theme;

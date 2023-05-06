@@ -3,9 +3,9 @@ import { Avatar, Dropdown, DropdownProps, Space } from 'antd';
 import { getLocalStorage, setLocalStorage, TooltipButton, useTranslation } from 'arex-core';
 import React, { FC, useMemo } from 'react';
 
-import { EMAIL_KEY, PanesType } from '../constant';
-import { useNavPane } from '../hooks';
-import { useMenusPanes, useUserProfile } from '../store';
+import { EMAIL_KEY, PanesType } from '@/constant';
+import { useNavPane } from '@/hooks';
+import { useMenusPanes, useUserProfile } from '@/store';
 
 const HeaderMenu: FC = () => {
   const { reset } = useMenusPanes();

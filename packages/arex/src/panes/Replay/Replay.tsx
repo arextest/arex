@@ -1,9 +1,10 @@
 import { Empty } from 'antd';
 import { ArexPaneFC, CollapseTable, FlexCenterWrapper, useTranslation } from 'arex-core';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import { ApplicationDataType } from '../../services/ApplicationService';
-import { PlanStatistics } from '../../services/ReportService';
+import { ApplicationDataType } from '@/services/ApplicationService';
+import { PlanStatistics } from '@/services/ReportService';
+
 import AppTitle from './AppTitle';
 import PlanItem from './PlanItem';
 import PlanReport from './PlanReport';
