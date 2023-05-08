@@ -7,15 +7,17 @@ import { App, Menu, Spin, theme, Typography } from 'antd';
 import React, { FC, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ReplayStatusCode } from '../../constant';
 import AppSettingService from '../../services/AppSetting.service';
 import ReplayService from '../../services/Replay.service';
 import { CompareResultDetail, DiffLog } from '../../services/Replay.type';
 import DiffJsonView from '../DiffJsonView';
-import { SummaryCodeMap } from '../panes/ReplayDiffScenesPage';
+import { SceneCodeMap } from '../SceneCode';
 import { EmptyWrapper, FlexCenterWrapper, SpaceBetweenWrapper } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
 
 export interface DiffScenesProps {
+  status: ReplayStatusCode;
   operationId: string;
   appId: string;
   loading?: boolean;
@@ -135,10 +137,10 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
       `}
     >
       <Allotment.Pane preferredSize={200}>
-        {[0, 2].includes(props.data?.diffResultCode) ? (
+        {[ReplayStatusCode.EXCEPTION, ReplayStatusCode.SUCCESS].includes(props.status) ? (
           <FlexCenterWrapper>
             <Typography.Text type='secondary'>
-              {SummaryCodeMap[props.data?.diffResultCode].message}
+              {SceneCodeMap[props.status].message.toUpperCase()}
             </Typography.Text>
           </FlexCenterWrapper>
         ) : (
@@ -199,7 +201,7 @@ const DiffPathViewer: FC<DiffScenesProps> = (props) => {
           border-left: 1px solid ${token.colorBorderBg};
         `}
       >
-        {props.data?.diffResultCode === 2 ? (
+        {props.status === ReplayStatusCode.EXCEPTION ? (
           <FlexCenterWrapper style={{ padding: '16px' }}>
             <Typography.Text type='secondary'>{props.data.exceptionMsg}</Typography.Text>
           </FlexCenterWrapper>

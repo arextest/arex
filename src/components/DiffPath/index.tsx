@@ -79,6 +79,7 @@ const DiffPath: FC<DiffPathProps> = (props) => {
             >
               <DiffPathViewer
                 defaultActiveFirst
+                status={data.code}
                 loading={loadingDiffMsg}
                 appId={props.appId}
                 operationId={props.operationId}

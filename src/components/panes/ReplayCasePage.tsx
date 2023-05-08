@@ -8,7 +8,6 @@ import ReplayService from '../../services/Replay.service';
 import {
   infoItem,
   PlanItemStatistics,
-  QueryAllDiffMsgReq,
   ReplayCase as ReplayCaseType,
 } from '../../services/Replay.type';
 import DiffPath from '../DiffPath';
@@ -39,11 +38,13 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
   }, [fullLinkInfo]);
 
   const handleClickRecord = (record: ReplayCaseType) => {
-    setSelectedRecord(selectedRecord?.recordId === record.recordId ? undefined : record);
-    getQueryFullLinkInfo({
-      recordId: record.recordId,
-      planItemId: props.page.data.planItemId,
-    });
+    const selected = selectedRecord?.recordId === record.recordId ? undefined : record;
+    setSelectedRecord(selected);
+    selected &&
+      getQueryFullLinkInfo({
+        recordId: record.recordId,
+        planItemId: props.page.data.planItemId,
+      });
   };
 
   function handleClickSaveCase(record: ReplayCaseType) {

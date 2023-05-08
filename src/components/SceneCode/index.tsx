@@ -1,30 +1,30 @@
 import { Tag } from 'antd';
 import React, { FC } from 'react';
 
+import { ReplayStatusCode } from '../../constant';
+
 export const SceneCodeMap: {
-  [key: string]: {
+  [key in ReplayStatusCode]: {
     color: string;
     message: string;
   };
 } = {
-  '-1': {
+  [ReplayStatusCode.EXCEPTION]: {
     color: 'red',
     message: 'exception',
   },
-  '0': {
+  [ReplayStatusCode.SUCCESS]: {
     color: 'green',
     message: 'success',
   },
-  '1': { color: 'magenta', message: 'value diff' },
-  '2': { color: 'orange', message: 'new call' },
-  '4': { color: 'blue', message: 'call missing' },
+  [ReplayStatusCode.VALUE_DIFF]: { color: 'magenta', message: 'value diff' },
+  [ReplayStatusCode.LEFT_CALL_MISSING]: { color: 'orange', message: 'new call' },
+  [ReplayStatusCode.RIGHT_CALL_MISSING]: { color: 'blue', message: 'call missing' },
 };
 
-const SceneCode: FC<{ code?: React.Key }> = (props) =>
+const SceneCode: FC<{ code?: ReplayStatusCode }> = (props) =>
   props.code ? (
-    <Tag color={SceneCodeMap[props.code.toString()].color}>
-      {SceneCodeMap[props.code.toString()].message}
-    </Tag>
+    <Tag color={SceneCodeMap[props.code].color}>{SceneCodeMap[props.code].message}</Tag>
   ) : null;
 
 export default SceneCode;

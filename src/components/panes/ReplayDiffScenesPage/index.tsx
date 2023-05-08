@@ -12,25 +12,6 @@ import { PageFC } from '../index';
 import FlowTree, { FlowTreeData } from './FlowTree';
 import SubScenesMenu, { SubSceneMenuProps } from './SubScenesMenu';
 
-export const SummaryCodeMap: { [key: string]: { color: string; message: string } } = {
-  '0': {
-    color: 'success',
-    message: 'SUCCESS', // 'COMPARED_WITHOUT_DIFFERENCE'
-  },
-  '1': {
-    color: 'magenta',
-    message: 'COMPARED_WITH_DIFFERENCE',
-  },
-  '2': {
-    color: 'error',
-    message: 'EXCEPTION', // 'COMPARED_INTERNAL_EXCEPTION'
-  },
-  '3': {
-    color: 'orange',
-    message: 'SEND_FAILED_NOT_COMPARE',
-  },
-};
-
 const ReplayDiffPage: PageFC<PlanItemStatistics> = (props) => {
   const {
     page: {
