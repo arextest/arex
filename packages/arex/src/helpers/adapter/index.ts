@@ -1,5 +1,6 @@
 // 十分重要
 
+// @ts-ignore
 import xspy from 'xspy';
 
 // chrome插件代理

@@ -26,7 +26,8 @@ const CollectionMenu: ArexMenuFC = ({ onSelect, value }) => {
       <Tree
         treeData={collectionsTreeData}
         onSelect={(_, node) => {
-          onSelect(_[0], { data: 'test123' });
+          console.log('')
+          // onSelect(_[0], { data: 'test123' });
         }}
       />
     </div>

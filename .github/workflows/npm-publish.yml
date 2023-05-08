@@ -2,7 +2,7 @@ name: Node.js Package
 
 on:
   push:
-    branches: [ dev-pnpm-workspace ]
+    branches: [ refactor-monorepo ]
 
 jobs:
   install:

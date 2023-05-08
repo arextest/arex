@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { create } from 'zustand';
 
 import { queryWorkspaceById } from '../services/FileSystemService/workspace';
