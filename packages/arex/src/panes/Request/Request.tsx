@@ -1,6 +1,8 @@
 import { css } from '@emotion/react';
 import { message } from 'antd';
-import { Http } from 'arex-request-core';
+import { Theme } from 'arex-core/src';
+import { ConfigProvider as RequestConfigProvider, Http } from 'arex-request-core';
+// import { Http } from 'arex-request-core';
 import { useMemo } from 'react';
 
 import { sendRequest } from '../../helpers/postman';
@@ -23,7 +25,7 @@ const Request = () => {
       auth: { authActive: false, authType: 'none' } as any,
       testScript: '',
       endpoint: '',
-      method: '',
+      method: 'GET',
       params: [],
     };
   }, []);
@@ -37,19 +39,21 @@ const Request = () => {
         height: 500px;
       `}
     >
-      <Http
-        onSend={(request) => {
-          return onSend(request, {
-            name: 'dev',
-            variables: [{ key: 'url', value: 'https://m.weibo.cn' }],
-          });
-        }}
-        onSave={onSave}
-        value={testReqaData}
-        breadcrumb={<div></div>}
-        environment={{ name: 'dev', variables: [{ key: 'url', value: 'https://m.weibo.cn' }] }}
-        config={{}}
-      />
+      <RequestConfigProvider locale={'zh_CN'} theme={'dark'}>
+        <Http
+          onSend={(request) => {
+            return onSend(request, {
+              name: 'dev',
+              variables: [{ key: 'url', value: 'https://m.weibo.cn' }],
+            });
+          }}
+          onSave={onSave}
+          value={testReqaData}
+          breadcrumb={<div></div>}
+          environment={{ name: 'dev', variables: [{ key: 'url', value: 'https://m.weibo.cn' }] }}
+          config={{}}
+        />
+      </RequestConfigProvider>
     </div>
   );
 };

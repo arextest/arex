@@ -22,12 +22,12 @@ const CollectionMenu: ArexMenuFC = ({ onSelect, value }) => {
 
   return (
     <div>
-      {JSON.stringify(value)}
       <Tree
         treeData={collectionsTreeData}
         onSelect={(_, node) => {
-          console.log('');
-          // onSelect(_[0], { data: 'test123' });
+          // console.log('');
+          // @ts-ignore
+          onSelect(_[0], { data: 'test123' });
         }}
       />
     </div>
