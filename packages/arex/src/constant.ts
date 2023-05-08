@@ -11,6 +11,7 @@ export enum PanesType {
   APP_SETTING = 'appSetting',
   ENVIRONMENT = 'environment',
   USER_SETTING = 'userSetting',
+  WORKSPACE = 'workspace',
 }
 
 export enum MenusType {

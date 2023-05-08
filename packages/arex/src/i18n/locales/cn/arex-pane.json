@@ -1,6 +1,9 @@
 {
-  "pane-not-found": "PaneNotFound",
-  "demo": "样例",
+  "collection": "集合",
   "environment": "环境变量",
-  "collection": "集合"
+  "replay": "回放",
+  "caseDetail": "Case详情",
+  "appSetting": "应用设置",
+  "userSetting": "用户设置",
+  "workspace": "工作空间"
 }

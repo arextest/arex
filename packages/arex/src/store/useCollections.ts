@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { queryWorkspaceById } from '@/services/FileSystemService';
+import { queryWorkspaceById } from '../services/FileSystemService/workspace';
 
 interface CollectionState {
   collections: Collection[];

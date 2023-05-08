@@ -1,17 +1,15 @@
 import { getLocalStorage } from 'arex-core';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-import { ACCESS_TOKEN_KEY } from '../constant';
+import { ACCESS_TOKEN_KEY } from '@/constant';
 
 type IRequestConfig<T = AxiosResponse> = AxiosRequestConfig;
 
 export type IAxiosResponse<T> = {
-  ResponseStatus: {
-    responseStatusType: {
-      responseCode: number;
-      responseDesc: 'success' | 'failure';
-      timestamp: number;
-    };
+  responseStatusType: {
+    responseCode: number;
+    responseDesc: string;
+    timestamp: number;
   };
   body: T;
 };

@@ -1,5 +1,6 @@
 {
-  "demo": "Demo",
+  "collection": "Collection",
+  "replay": "Replay",
   "environment": "Environment",
-  "collection": "Collection"
+  "appSetting": "AppSetting"
 }

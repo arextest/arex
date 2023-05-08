@@ -1,9 +1,9 @@
+import { css } from '@emotion/react';
 import { message } from 'antd';
 import { Http } from 'arex-request-core';
 import { useMemo } from 'react';
 
 import { sendRequest } from '../../helpers/postman';
-import {css} from "@emotion/react";
 const Request = () => {
   function onSend(request: any, environment: any) {
     return sendRequest(request, environment).then((res: any) => {
@@ -32,7 +32,11 @@ const Request = () => {
     message.success('保存成功');
   }
   return (
-    <div css={css`height: 500px`}>
+    <div
+      css={css`
+        height: 500px;
+      `}
+    >
       <Http
         onSend={(request) => {
           return onSend(request, {

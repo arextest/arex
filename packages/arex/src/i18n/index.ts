@@ -13,16 +13,16 @@ import pageEn from './locales/en/page.json';
 
 export const resources = {
   [I18nextLng.cn]: {
-    [ArexMenuNamespace]: arexPaneCn,
-    [ArexPaneNamespace]: arexMenuCn,
+    [ArexMenuNamespace]: arexMenuCn,
+    [ArexPaneNamespace]: arexPaneCn,
     common: commonCn,
     translation: commonCn,
     components: componentsCn,
     page: pageCn,
   },
   [I18nextLng.en]: {
-    [ArexMenuNamespace]: arexPaneEn,
-    [ArexPaneNamespace]: arexMenuEn,
+    [ArexMenuNamespace]: arexMenuEn,
+    [ArexPaneNamespace]: arexPaneEn,
     common: commonEn,
     translation: commonEn,
     components: componentsEn,

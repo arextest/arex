@@ -63,6 +63,7 @@ const WorkspacesMenu: FC<WorkspacesMenuProps> = (props) => {
       message.error(t('workSpace.emptySpaceName'));
     } else {
       props.onAdd?.(newWorkspaceName);
+      reset();
     }
   };
 

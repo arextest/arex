@@ -11,7 +11,7 @@ export type CreateWorkspaceRes = {
   success: boolean;
 };
 
-export default async function createWorkspace({ userName, workspaceName }: CreateWorkspaceReq) {
+export async function createWorkspace({ userName, workspaceName }: CreateWorkspaceReq) {
   return request
     .post<CreateWorkspaceRes>(`/report/filesystem/addItem`, {
       nodeName: 'New Collection',

@@ -67,7 +67,7 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
   return (
     <SettingForm loading={loading} initialValues={initialValues} onFinish={onFinish}>
       <Form.Item
-        label='Case range'
+        label={t('appSetting.caseRange')}
         name='offsetDays'
         rules={[{ required: true, message: t('appSetting.emptyCaseRange') as string }]}
       >
