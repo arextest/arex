@@ -12,7 +12,7 @@ const SmallTextButton = styled((props: ButtonProps & { color?: 'primary' | 'text
       ? props.theme.colorPrimary
       : props.color === 'text'
       ? props.theme.colorText
-      : props.color}!important;
+      : props.color};
 `;
 
 export default SmallTextButton;

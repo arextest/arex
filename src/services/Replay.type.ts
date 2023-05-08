@@ -169,12 +169,22 @@ export interface CreatePlanReq {
   caseSourceType?: number;
   caseSourceFrom: number;
   caseSourceTo: number;
-  operationCaseInfoList?: { operationId: string }[];
+  operationCaseInfoList?: { operationId: string; replayIdList?: string[] }[];
 }
 
 export interface CreatePlanRes {
   desc: string;
   result: number;
+}
+
+// ------ /schedule/queryPlanFailCase ------
+export type failCaseInfo = {
+  operationId: string;
+  replayIdList: string[];
+};
+
+export interface QueryPlanFailCaseRes {
+  failCaseInfoList: failCaseInfo[];
 }
 
 // ------ /report/queryScenes ------

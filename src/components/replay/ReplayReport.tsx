@@ -7,6 +7,7 @@ import {
   FileTextOutlined,
   RedoOutlined,
   StopOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
@@ -15,8 +16,11 @@ import {
   Button,
   Card,
   Col,
+  Dropdown,
+  MenuProps,
   Popconfirm,
   Row,
+  Space,
   Statistic,
   Table,
   theme,
@@ -35,7 +39,7 @@ import { EmailKey } from '../../constant';
 import { getLocalStorage, getPercent } from '../../helpers/utils';
 import { useCustomNavigate } from '../../router/useCustomNavigate';
 import ReplayService from '../../services/Replay.service';
-import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
+import { CreatePlanReq, PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { PagesType } from '../panes';
 import { SmallTextButton, SpaceBetweenWrapper } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
@@ -289,7 +293,11 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
             breakpoint='xxl'
             color='primary'
             onClick={() =>
-              handleRerun(record.operationId, record.caseStartTime, record.caseEndTime)
+              handleRerun({
+                operationId: record.operationId,
+                caseSourceFrom: record.caseStartTime,
+                caseSourceTo: record.caseEndTime,
+              })
             }
           />
         </>
@@ -334,7 +342,12 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
     },
   });
 
-  const handleRerun = (operationId?: string, caseSourceFrom?: number, caseSourceTo?: number) => {
+  const handleRerun = (
+    params?: { operationId?: string } & Partial<
+      Pick<CreatePlanReq, 'caseSourceFrom' | 'caseSourceTo' | 'operationCaseInfoList'>
+    >,
+  ) => {
+    const { operationId, caseSourceFrom, caseSourceTo, operationCaseInfoList } = params || {};
     if (operationId && caseSourceFrom && caseSourceTo) {
       rerun({
         caseSourceFrom,
@@ -342,7 +355,7 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
         appId: selectedPlan!.appId,
         caseSourceType: 0,
         operationCaseInfoList: [{ operationId }],
-        operator: email as string,
+        operator: email,
         replayPlanType: 1,
         sourceEnv: 'pro',
         targetEnv: selectedPlan!.targetHost as string,
@@ -356,12 +369,24 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
         caseSourceFrom: selectedPlan.caseStartTime,
         caseSourceTo: selectedPlan.caseEndTime,
         appId: selectedPlan!.appId,
-        operator: email as string,
-        replayPlanType: 0,
+        operationCaseInfoList,
+        operator: email,
+        replayPlanType: operationCaseInfoList ? 2 : 0,
         sourceEnv: 'pro',
         targetEnv: selectedPlan!.targetHost,
       });
     }
+  };
+
+  const { run: queryPlanFailCase } = useRequest(ReplayService.queryPlanFailCase, {
+    manual: true,
+    onSuccess(failCaseList) {
+      handleRerun({ operationCaseInfoList: failCaseList });
+    },
+  });
+
+  const handleRerunError: MenuProps['onClick'] = (e) => {
+    queryPlanFailCase(selectedPlan!.planId);
   };
 
   return selectedPlan ? (
@@ -370,7 +395,7 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
       size='small'
       title={`${t('replay.report')}: ${selectedPlan.planName}`}
       extra={
-        <>
+        <Space>
           <Popconfirm
             title={t('replay.terminateTheReplay')}
             description={t('replay.confirmTerminateReplay')}
@@ -382,6 +407,7 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
               title={t('replay.terminate')}
             />
           </Popconfirm>
+
           <Popconfirm
             title={t('replay.deleteTheReport')}
             description={t('replay.confirmDeleteReport')}
@@ -394,13 +420,24 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
             />
           </Popconfirm>
 
-          <SmallTextButton
-            color={'primary'}
-            icon={<RedoOutlined />}
-            title={t('replay.rerun')}
+          <Dropdown.Button
+            size='small'
+            type='text'
+            menu={{
+              items: [{ label: 'rerun error', key: 'rerunError', icon: <RedoOutlined /> }],
+              onClick: handleRerunError,
+            }}
             onClick={() => handleRerun()}
-          />
-        </>
+            css={css`
+              button {
+                color: ${token.colorPrimary};
+              }
+            `}
+          >
+            <RedoOutlined />
+            {t('replay.rerun')}
+          </Dropdown.Button>
+        </Space>
       }
     >
       <Row gutter={12}>
