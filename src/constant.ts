@@ -52,6 +52,14 @@ export const RoleMap = {
   [RoleEnum.Viewer]: 'Viewer',
 };
 
+export enum ReplayStatusCode {
+  EXCEPTION = -1,
+  SUCCESS = 0,
+  VALUE_DIFF = 1,
+  LEFT_CALL_MISSING = 2,
+  RIGHT_CALL_MISSING = 4,
+}
+
 // localStorage key
 export const UserProfileKey = 'userProfile';
 export const EmailKey = 'email'; // 初始化接口相关的 email 请使用该 key 而非 UserInfo

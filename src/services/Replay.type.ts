@@ -1,4 +1,6 @@
 // ------ /config/application/regressionList ------
+import { ReplayStatusCode } from '../constant';
+
 export interface ApplicationDataType {
   id: string;
   status: number;
@@ -293,7 +295,7 @@ export interface QuerySceneInfoReq {
 }
 
 export interface Detail {
-  code: number;
+  code: ReplayStatusCode;
   categoryName: string;
   operationName: string;
 }
@@ -322,7 +324,7 @@ export interface QueryFullLinkInfoReq {
 
 export type infoItem = {
   id: string;
-  code: number;
+  code: ReplayStatusCode;
   categoryName: string;
   operationName: string;
 };
@@ -341,7 +343,6 @@ export type CompareResultDetail = {
   id: string;
   categoryName: string;
   operationName: string;
-  diffResultCode: number;
   logInfos: DiffLog[] | null;
   exceptionMsg: string | null;
   baseMsg: string;
