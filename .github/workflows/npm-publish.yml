@@ -25,7 +25,7 @@ jobs:
           node-version: 16
           registry-url: https://registry.npmjs.org/
       - run: pnpm install
-      - run: pnpm run build
+      - run: pnpm run build-core
       - run: pnpm --filter=arex-core publish -f --no-git-checks --filter
         env:
           NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
