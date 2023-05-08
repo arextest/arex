@@ -11,8 +11,7 @@
     "server": "pnpm -r do-server",
     "lint": "prettier --write \"packages/**/*.{ts,tsx}\" && eslint \"packages/**/*.{ts,tsx}\" --fix",
     "pre-commit": "pnpm run lint",
-    "test": "pnpm -r do-test",
-    "postinstall": "pnpm run build"
+    "test": "pnpm -r do-test"
   },
   "keywords": [],
   "author": "",
