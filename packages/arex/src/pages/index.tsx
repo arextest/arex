@@ -1,3 +1,5 @@
+import { useRequest } from 'ahooks';
+import { App } from 'antd';
 import {
   ArexFooter,
   ArexHeader,
@@ -6,12 +8,15 @@ import {
   ArexMenuContainerProps,
   ArexPanesContainer,
   ArexPanesContainerProps,
+  getLocalStorage,
+  useTranslation,
 } from 'arex-core';
 import React, { useMemo } from 'react';
 
 import { EnvironmentSelect, HeaderMenu } from '@/components';
-import { PanesType } from '@/constant';
-import { useInit } from '@/hooks';
+import { EMAIL_KEY, PanesType } from '@/constant';
+import { useInit, useNavPane } from '@/hooks';
+import { FileSystemService } from '@/services';
 import { useMenusPanes, useWorkspaces } from '@/store';
 
 export default () => {
@@ -23,12 +28,17 @@ export default () => {
     activeMenu,
     setActiveMenu,
     panes,
-    setPanes,
     activePane,
     setActivePane,
+    reset: resetPane,
     removePane,
   } = useMenusPanes();
-  const { activeWorkspaceId, workspaces, setActiveWorkspaceId } = useWorkspaces();
+  const { activeWorkspaceId, workspaces, getWorkspaces, setActiveWorkspaceId } = useWorkspaces();
+
+  const navPane = useNavPane();
+  const { message } = App.useApp();
+  const { t } = useTranslation(['components', 'common']);
+  const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
   const workspacesOptions = useMemo(
     () =>
@@ -39,8 +49,19 @@ export default () => {
     [workspaces],
   );
 
+  const { run: createWorkspace } = useRequest(FileSystemService.createWorkspace, {
+    manual: true,
+    onSuccess: (res) => {
+      if (res.success) {
+        message.success(t('workSpace.createSuccess'));
+        resetPane();
+        getWorkspaces(res.workspaceId);
+      }
+    },
+  });
+
   const handleMenuSelect: ArexMenuContainerProps['onSelect'] = (type, id, data) => {
-    setPanes({
+    navPane({
       id,
       type,
       data,
@@ -48,13 +69,24 @@ export default () => {
   };
 
   const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () =>
-    setPanes({
+    navPane({
       type: PanesType.REQUEST,
       // id: Math.random().toString(36).substring(2),
       id: 'Untitled',
       icon: 'Get',
       data: { value: 'DemoPane' },
     });
+
+  const handleAddWorkspace = (workspaceName: string) => {
+    createWorkspace({ userName, workspaceName });
+  };
+
+  const handleEditWorkspace = (workspaceId: string) => {
+    navPane({
+      type: PanesType.WORKSPACE,
+      id: workspaceId,
+    });
+  };
 
   return (
     <>
@@ -70,9 +102,9 @@ export default () => {
               value: activeWorkspaceId,
               options: workspacesOptions,
               onChange: setActiveWorkspaceId,
+              onAdd: handleAddWorkspace,
+              onEdit: handleEditWorkspace,
               // extra?: ReactNode;
-              // onAdd?(name: string): void;
-              // onEdit?(id: string): void;
             }}
             onCollapsed={setCollapsed}
             onChange={setActiveMenu}

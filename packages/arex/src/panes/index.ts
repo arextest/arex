@@ -15,6 +15,7 @@ import ReplayCaseDetail from './ReplayCaseDetail';
 import ReplayDiffScenes from './ReplayDiffScenes';
 import Request from './Request';
 import UserSetting from './UserSetting';
+import Workspace from './Workspace';
 
 export default {
   AppSetting,
@@ -26,4 +27,5 @@ export default {
   Request,
   Environment,
   UserSetting,
+  Workspace,
 };

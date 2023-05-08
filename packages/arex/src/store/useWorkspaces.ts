@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 
 import { EMAIL_KEY } from '@/constant';
-import queryWorkspacesByUser from '@/services/FileSystemService/queryWorkspacesByUser';
+import queryWorkspacesByUser from '@/services/FileSystemService/workspace/queryWorkspacesByUser';
 
 export type Workspace = {
   id: string;
@@ -17,7 +17,7 @@ export type WorkspaceState = {
 };
 
 export type WorkspaceAction = {
-  getWorkspaces: () => Promise<Workspace[]>;
+  getWorkspaces: (id?: string) => Promise<Workspace[]>;
   setActiveWorkspaceId: (id: string) => void;
 };
 
@@ -30,11 +30,12 @@ const useWorkspaces = create(
   subscribeWithSelector(
     persist<WorkspaceState & WorkspaceAction>(
       (set) => {
-        async function getWorkspaces() {
+        async function getWorkspaces(id?: string) {
           const userName = getLocalStorage(EMAIL_KEY) as string;
           const workspaces = await queryWorkspacesByUser({ userName });
           set({ workspaces });
-          // TODO set activeWorkspaceId
+          id && set({ activeWorkspaceId: id });
+
           return workspaces;
         }
 
