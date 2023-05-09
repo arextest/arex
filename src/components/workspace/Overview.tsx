@@ -200,7 +200,7 @@ const WorkspaceSetting: FC = () => {
                 <Select
                   bordered={false}
                   key='userRole'
-                  disabled={isAdmin}
+                  disabled={!isAdmin}
                   value={item.role}
                   options={roleOptions}
                   onSelect={(role) => {
@@ -208,7 +208,7 @@ const WorkspaceSetting: FC = () => {
                   }}
                 />,
               ].concat(
-                item.userName !== userName && !isAdmin ? (
+                item.userName !== userName && isAdmin ? (
                   <Popconfirm
                     key='moveOut'
                     title={t('workSpace.moveOut')}
