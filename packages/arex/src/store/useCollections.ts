@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { create } from 'zustand';
 
 import { queryWorkspaceById } from '../services/FileSystemService/workspace';
@@ -8,7 +7,7 @@ interface CollectionState {
   collectionsTreeData: any[];
 }
 interface CollectionAction {
-  getCollections: () => Promise<Collection[]>;
+  getCollections: (workspaceId: string) => Promise<Collection[]>;
 }
 interface Collection {
   id: string;
@@ -23,7 +22,7 @@ const initialState: CollectionState = {
   collections: [],
   collectionsTreeData: [],
 };
-function treeToArray(node, result, pid) {
+function treeToArray(node: any, result: any, pid?: string) {
   if (node != null) {
     result.push({
       id: node.id,
@@ -35,13 +34,14 @@ function treeToArray(node, result, pid) {
       caseSourceType: node.caseSourceType,
     }); // 将当前节点的值存储到数组中
     if (node.children != null) {
-      node.children.forEach(function (child) {
+      node.children.forEach(function (child: string) {
         treeToArray(child, result, node.id); // 递归遍历子节点
       });
     }
   }
   return result; // 返回存储遍历结果的数组
 }
+import useWorkspaces from './useWorkspaces';
 const useCollections = create<CollectionState & CollectionAction>((set, get) => {
   async function getCollections(workspaceId: string) {
     const treeData = await queryWorkspaceById({ id: workspaceId });
@@ -51,7 +51,7 @@ const useCollections = create<CollectionState & CollectionAction>((set, get) => 
     return collections;
   }
 
-  getCollections('644a282d3867983e29d1b8f5');
+  getCollections(useWorkspaces.getState().activeWorkspaceId || '');
 
   return {
     // ...initialState,
