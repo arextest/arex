@@ -36,7 +36,7 @@ const Request = () => {
   return (
     <div
       css={css`
-        height: 500px;
+        height: 100%;
       `}
     >
       <RequestConfigProvider locale={'zh_CN'} theme={'dark'}>
