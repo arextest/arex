@@ -88,7 +88,14 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
               </>
             ),
             children: (
-              <ErrorBoundary>{React.createElement(Pane, { data: pane.data })}</ErrorBoundary>
+              <ErrorBoundary>
+                <div
+                  className='arex-pane-wrapper'
+                  style={{ padding: Pane.noPadding ? 0 : '8px 16px' }}
+                >
+                  {React.createElement(Pane, { data: pane.data })}
+                </div>
+              </ErrorBoundary>
             ),
           };
         })
@@ -297,7 +304,6 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
     height: 100%;
     .ant-tabs-tabpane {
       height: inherit;
-      padding: 8px 16px;
       overflow-y: overlay;
     }
   }
