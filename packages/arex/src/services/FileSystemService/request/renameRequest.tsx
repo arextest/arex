@@ -3,6 +3,6 @@
 
 import { request } from '@/utils';
 
-export async function renameRequest(params:any) {
+export async function renameRequest(params: any) {
   return request.post(`/report/filesystem/rename`, params);
 }

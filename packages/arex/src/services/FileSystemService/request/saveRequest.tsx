@@ -2,7 +2,7 @@ import { HoppRESTRequest } from 'arex-request-core/dist/components/http/data/res
 
 import { request } from '@/utils';
 
-export async function saveRequest(workspaceId: string, params: HoppRESTRequest, nodeType:number) {
+export async function saveRequest(workspaceId: string, params: HoppRESTRequest, nodeType: number) {
   if (nodeType === 1) {
     const saveParams = {
       address: {
@@ -20,7 +20,7 @@ export async function saveRequest(workspaceId: string, params: HoppRESTRequest, 
           disabled: false,
         },
       ],
-      body:params.body,
+      body: params.body,
       preRequestScripts: [
         {
           type: '0',
@@ -56,7 +56,7 @@ export async function saveRequest(workspaceId: string, params: HoppRESTRequest, 
           disabled: false,
         },
       ],
-      body:params.body,
+      body: params.body,
       preRequestScripts: [
         {
           type: '0',

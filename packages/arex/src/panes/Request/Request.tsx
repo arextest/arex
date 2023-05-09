@@ -12,7 +12,7 @@ import { saveRequest } from '@/services/FileSystemService/request/saveRequest';
 import { useCollections, useEnvironments } from '@/store';
 
 import { sendRequest } from '../../helpers/postman';
-function findAncestors(arr:any[], id:string) {
+function findAncestors(arr: any[], id: string) {
   const res = [];
   let node = arr.find((item) => item.id === id);
   while (node && node.pid) {
@@ -29,7 +29,7 @@ function findAncestors(arr:any[], id:string) {
 const Request: ArexPaneFC = (props) => {
   const pam = useParams();
   const { activeEnvironment } = useEnvironments();
-  const { collections,getCollections } = useCollections();
+  const { collections, getCollections } = useCollections();
   const nodeInfo = useMemo(() => {
     return collections.find((collection) => collection.id === pam.id);
   }, [collections, pam.id]);
@@ -102,7 +102,7 @@ const Request: ArexPaneFC = (props) => {
               path: parentInfos.map((parentInfo) => parentInfo.id),
               userName: 'tzhangm@trip.com',
             }).then((res) => {
-              getCollections(pam.workspaceId)
+              getCollections(pam.workspaceId);
             });
           }}
         />
