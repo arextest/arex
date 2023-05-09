@@ -115,10 +115,10 @@ export default class ReplayService {
     });
   }
 
-  static async queryPlanFailCase(planId: string) {
+  static async queryPlanFailCase(params: Omit<QueryPlanFailCaseReq, 'diffResultCodeList'>) {
     return request
       .post<QueryPlanFailCaseRes>('/report/report/queryPlanFailCase', {
-        planId,
+        ...params,
         diffResultCodeList: [1, 2],
       })
       .then((res) => Promise.resolve(res.body.failCaseInfoList));

@@ -130,7 +130,7 @@ export function getChromeVersion() {
 
 export const JSONparse = (jsonString: string) => {
   try {
-    return parse(jsonString);
+    return JSON.parse(jsonString);
   } catch (e) {
     return undefined;
   }

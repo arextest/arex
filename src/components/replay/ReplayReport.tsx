@@ -7,7 +7,6 @@ import {
   FileTextOutlined,
   RedoOutlined,
   StopOutlined,
-  UserOutlined,
 } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
@@ -21,6 +20,7 @@ import {
   Popconfirm,
   Row,
   Space,
+  Spin,
   Statistic,
   Table,
   theme,
@@ -29,7 +29,7 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import dayjs from 'dayjs';
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import CountUp from 'react-countup';
 import { useTranslation } from 'react-i18next';
@@ -287,19 +287,30 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
               );
             }}
           />
-          <TooltipButton
-            icon={<RedoOutlined />}
-            title={t('replay.rerun')}
-            breakpoint='xxl'
-            color='primary'
-            onClick={() =>
+          <Popconfirm
+            title='Rerun plan item'
+            description='Are you sure to rerun?'
+            onConfirm={() =>
               handleRerun({
                 operationId: record.operationId,
                 caseSourceFrom: record.caseStartTime,
                 caseSourceTo: record.caseEndTime,
               })
             }
-          />
+            onCancel={() => {
+              handleRerunError({ key: 'rerunInterface' }, record.planItemId);
+            }}
+            okText={t('replay.rerun')}
+            cancelText={t('replay.rerunError')}
+          >
+            <TooltipButton
+              tooltipProps={{ open: false }}
+              icon={<RedoOutlined />}
+              title={t('replay.rerun')}
+              breakpoint='xxl'
+              color='primary'
+            />
+          </Popconfirm>
         </>
       ),
     },
@@ -325,8 +336,12 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
     },
   });
 
+  const [creatingPlan, setCreatingPlan] = useState<number>();
   const { run: rerun } = useRequest(ReplayService.createPlan, {
     manual: true,
+    onBefore([param]) {
+      setCreatingPlan(param.replayPlanType);
+    },
     onSuccess(res) {
       if (res.result === 1) {
         notification.success({
@@ -339,6 +354,9 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
           description: res.desc,
         });
       }
+    },
+    onFinally() {
+      setCreatingPlan(undefined);
     },
   });
 
@@ -385,8 +403,10 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
     },
   });
 
-  const handleRerunError: MenuProps['onClick'] = (e) => {
-    queryPlanFailCase(selectedPlan!.planId);
+  const handleRerunError = (e: { key: string }, planItemId?: string) => {
+    if (e.key === 'rerunErrorPlan') queryPlanFailCase({ planId: selectedPlan!.planId });
+    else if (e.key === 'rerunInterface')
+      queryPlanFailCase({ planId: selectedPlan!.planId, planItemIdList: [planItemId] });
   };
 
   return selectedPlan ? (
@@ -423,8 +443,11 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
           <Dropdown.Button
             size='small'
             type='text'
+            disabled={creatingPlan === 0}
             menu={{
-              items: [{ label: 'rerun error', key: 'rerunError', icon: <RedoOutlined /> }],
+              items: [
+                { label: t('replay.rerunError'), key: 'rerunErrorPlan', icon: <RedoOutlined /> },
+              ],
               onClick: handleRerunError,
             }}
             onClick={() => handleRerun()}
@@ -434,8 +457,19 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
               }
             `}
           >
-            <RedoOutlined />
-            {t('replay.rerun')}
+            <Spin
+              spinning={creatingPlan === 0}
+              css={css`
+                span.anticon-loading {
+                  font-size: 16px !important;
+                }
+              `}
+            >
+              <Space>
+                <RedoOutlined />
+                {t('replay.rerun')}
+              </Space>
+            </Spin>
           </Dropdown.Button>
         </Space>
       }

@@ -3,7 +3,16 @@ import { Button, ButtonProps } from 'antd';
 import React from 'react';
 
 const SmallTextButton = styled((props: ButtonProps & { color?: 'primary' | 'text' | string }) => (
-  <Button type='text' size='small' {...props}>
+  <Button
+    type='text'
+    size='small'
+    {...props}
+    onClick={(e) => {
+      e.stopPropagation();
+      // @ts-ignore
+      props.onClick?.(e);
+    }}
+  >
     {props.title}
   </Button>
 ))<{ title?: string } & ButtonProps>`

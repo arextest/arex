@@ -98,6 +98,7 @@
     "cases": "case 数",
     "action": "操作",
     "rerun": "重新执行",
+    "rerunError": "重新执行(仅错误类型)",
     "init": "初始化",
     "abort": "终止",
     "abortTheCase": "终止任务",

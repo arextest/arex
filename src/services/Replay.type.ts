@@ -178,6 +178,13 @@ export interface CreatePlanRes {
 }
 
 // ------ /schedule/queryPlanFailCase ------
+export interface QueryPlanFailCaseReq {
+  planId: string;
+  planItemIdList?: string[];
+  recordIdList?: string[];
+  diffResultCodeList: number[];
+}
+
 export type failCaseInfo = {
   operationId: string;
   replayIdList: string[];
