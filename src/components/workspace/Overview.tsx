@@ -68,7 +68,7 @@ const WorkspaceSetting: FC = () => {
     });
   };
 
-  const { data: workspaceUsers = [] } = useRequest(() =>
+  const { data: workspaceUsers = [], run: queryUsersByWorkspace } = useRequest(() =>
     WorkspaceService.queryUsersByWorkspace({ workspaceId: activeWorkspaceId }),
   );
 
@@ -87,6 +87,7 @@ const WorkspaceSetting: FC = () => {
       manual: true,
       onSuccess(res) {
         if (!res.responseCode) {
+          queryUsersByWorkspace();
           message.success(res.responseDesc);
         } else {
           message.error(res.responseDesc);
@@ -105,6 +106,7 @@ const WorkspaceSetting: FC = () => {
       manual: true,
       onSuccess(res) {
         if (!res.responseCode) {
+          queryUsersByWorkspace();
           message.success(res.responseDesc);
         } else {
           message.error(res.responseDesc);
@@ -198,7 +200,7 @@ const WorkspaceSetting: FC = () => {
                 <Select
                   bordered={false}
                   key='userRole'
-                  disabled={!isAdmin}
+                  disabled={isAdmin}
                   value={item.role}
                   options={roleOptions}
                   onSelect={(role) => {
@@ -206,7 +208,7 @@ const WorkspaceSetting: FC = () => {
                   }}
                 />,
               ].concat(
-                item.userName !== userName && isAdmin ? (
+                item.userName !== userName && !isAdmin ? (
                   <Popconfirm
                     key='moveOut'
                     title={t('workSpace.moveOut')}
@@ -266,6 +268,7 @@ const WorkspaceSetting: FC = () => {
           <Text>{t('workSpace.del')}</Text>
           <Text type='secondary'>{t('workSpace.delMessage')}</Text>
 
+          {/* TODO input workspace name to confirm delete workspace */}
           <Popconfirm
             title={t('workSpace.del')}
             description={t('workSpace.delConfirmText')}
