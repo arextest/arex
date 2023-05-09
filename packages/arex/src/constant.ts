@@ -20,7 +20,13 @@ export enum MenusType {
   APP_SETTING = 'appSetting',
   ENVIRONMENT = 'environment',
 }
-
+export enum MethodEnum {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  DELETE = 'DELETE',
+  PATCH = 'PATCH',
+}
 export const methodMap: Record<RequestMethodEnum, { color: string }> = {
   GET: {
     color: '#0cbb52',

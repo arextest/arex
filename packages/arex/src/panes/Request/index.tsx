@@ -9,6 +9,5 @@ import Request from './Request';
 export default createArexPane(Request, {
   type: PanesType.REQUEST,
   menuType: MenusType.COLLECTION,
-  icon: <HistoryOutlined />,
   noPadding: true,
 });

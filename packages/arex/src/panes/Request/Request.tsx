@@ -1,12 +1,18 @@
 import { css } from '@emotion/react';
+import { useRequest } from 'ahooks';
 import { message } from 'antd';
-import { Theme } from 'arex-core/src';
+import { ArexPaneFC } from 'arex-core/src';
 import { ConfigProvider as RequestConfigProvider, Http } from 'arex-request-core';
-// import { Http } from 'arex-request-core';
-import { useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+
+import { queryRequest } from '@/services/FileSystemService/request/queryRequest';
+import { saveRequest } from '@/services/FileSystemService/request/saveRequest';
+import { useEnvironments } from '@/store';
 
 import { sendRequest } from '../../helpers/postman';
-const Request = () => {
+const Request: ArexPaneFC = (props) => {
+  const pam = useParams();
+  const { activeEnvironment } = useEnvironments();
   function onSend(request: any, environment: any) {
     return sendRequest(request, environment).then((res: any) => {
       return {
@@ -15,42 +21,43 @@ const Request = () => {
       };
     });
   }
-  const testReqaData = useMemo(() => {
-    return {
-      preRequestScript: '',
-      v: '',
-      headers: [],
-      name: '',
-      body: { contentType: 'application/json', body: '' } as any,
-      auth: { authActive: false, authType: 'none' } as any,
-      testScript: '',
-      endpoint: '',
-      method: 'GET',
-      params: [],
-    };
-  }, []);
+
   function onSave(r: any) {
-    localStorage.setItem('req', JSON.stringify(r));
-    message.success('保存成功');
+    saveRequest(pam.workspaceId as string, r).then((res) => {
+      if (res) {
+        message.success('保存成功');
+      }
+    });
   }
+
+  const { data } = useRequest(() => {
+    return queryRequest({ id: pam.id as string }).then((res) => {
+      return res;
+    });
+  }, {});
+
   return (
     <div
       css={css`
-        height: 100%;
+        height: calc(100vh - 110px);
       `}
     >
-      <RequestConfigProvider locale={'zh_CN'} theme={'dark'}>
+      <RequestConfigProvider locale={'en'} theme={'light'}>
         <Http
           onSend={(request) => {
             return onSend(request, {
-              name: 'dev',
-              variables: [{ key: 'url', value: 'https://m.weibo.cn' }],
+              name: activeEnvironment?.envName || '',
+              variables: activeEnvironment?.keyValues || [],
             });
           }}
           onSave={onSave}
-          value={testReqaData}
+          // @ts-ignore
+          value={data}
           breadcrumb={<div></div>}
-          environment={{ name: 'dev', variables: [{ key: 'url', value: 'https://m.weibo.cn' }] }}
+          environment={{
+            name: activeEnvironment?.envName || '',
+            variables: activeEnvironment?.keyValues || [],
+          }}
           config={{}}
         />
       </RequestConfigProvider>
