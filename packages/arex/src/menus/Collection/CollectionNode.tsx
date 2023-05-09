@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import { Button, Dropdown } from 'antd';
 import { FC } from 'react';
 
-import { MethodEnum, methodMap } from '../../constant';
+import { MethodEnum, methodMap } from '@/constant';
 interface CollectionNodeProps {
   value: { title: string; method: MethodEnum };
 }

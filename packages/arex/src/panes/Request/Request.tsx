@@ -3,16 +3,16 @@ import { useRequest } from 'ahooks';
 import { message } from 'antd';
 import { ArexPaneFC, getLocalStorage } from 'arex-core';
 import { ConfigProvider as RequestConfigProvider, Http } from 'arex-request-core';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { EMAIL_KEY } from '@/constant';
+import { sendRequest } from '@/helpers/postman';
 import { queryRequest } from '@/services/FileSystemService/request';
 import { renameRequest } from '@/services/FileSystemService/request';
 import { saveRequest } from '@/services/FileSystemService/request';
 import { useCollections, useEnvironments, useUserProfile } from '@/store';
 
-import { sendRequest } from '../../helpers/postman';
 function findAncestors(arr: any[], id: string) {
   const res = [];
   let node = arr.find((item) => item.id === id);
@@ -29,8 +29,11 @@ function findAncestors(arr: any[], id: string) {
 }
 const Request: ArexPaneFC = () => {
   const pam = useParams();
+
   const { activeEnvironment } = useEnvironments();
   const { collections, getCollections } = useCollections();
+  const { theme, language } = useUserProfile();
+
   const nodeInfo = useMemo(() => {
     return collections.find((collection) => collection.id === pam.id);
   }, [collections, pam.id]);
@@ -78,7 +81,7 @@ const Request: ArexPaneFC = () => {
       `}
     >
       {/*{nodeInfo?.title}*/}
-      <RequestConfigProvider locale={'en'} theme={'light'}>
+      <RequestConfigProvider locale={language} theme={theme}>
         <Http
           onSend={(request) => {
             return onSend(request, {

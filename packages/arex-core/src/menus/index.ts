@@ -1,4 +1,4 @@
-import { cloneElement, FC, PropsWithChildren, ReactNode } from 'react';
+import { FC, PropsWithChildren, ReactNode } from 'react';
 
 export type MenuConfig = {
   key: string;

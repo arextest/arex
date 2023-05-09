@@ -2,6 +2,15 @@ import { ArexVersionKey, ArexVersionValue } from '../constant';
 export { default as request } from './request';
 
 /**
+ * 取反函数
+ * @param value
+ * @param negate 是否取反
+ */
+export function negate(value: any, negate = true): boolean {
+  return negate ? !value : !!value;
+}
+
+/**
  * 对象数组去重
  * @param arr 去重对象数组
  * @param key 去重参考 key
