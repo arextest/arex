@@ -102,6 +102,7 @@ const StructuredTag = (props: StructuredTagProps) => {
         </Button>
 
         {React.createElement(
+          // @ts-ignore
           data?.category == CategoryKey.Label ? Tag : Button,
           {
             color: label?.color,
