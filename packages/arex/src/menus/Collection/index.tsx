@@ -1,7 +1,6 @@
 import { ApiOutlined, DownOutlined } from '@ant-design/icons';
 import { Tree } from 'antd';
-import { createArexMenu } from 'arex-core';
-import { ArexMenuFC } from 'arex-core/src';
+import { ArexMenuFC, createArexMenu } from 'arex-core';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { MenusType, PanesType } from '@/constant';

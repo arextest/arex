@@ -1,15 +1,16 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { message } from 'antd';
-import { ArexPaneFC } from 'arex-core/src';
+import { ArexPaneFC, getLocalStorage } from 'arex-core';
 import { ConfigProvider as RequestConfigProvider, Http } from 'arex-request-core';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { queryRequest } from '@/services/FileSystemService/request/queryRequest';
-import { renameRequest } from '@/services/FileSystemService/request/renameRequest';
-import { saveRequest } from '@/services/FileSystemService/request/saveRequest';
-import { useCollections, useEnvironments } from '@/store';
+import { EMAIL_KEY } from '@/constant';
+import { queryRequest } from '@/services/FileSystemService/request';
+import { renameRequest } from '@/services/FileSystemService/request';
+import { saveRequest } from '@/services/FileSystemService/request';
+import { useCollections, useEnvironments, useUserProfile } from '@/store';
 
 import { sendRequest } from '../../helpers/postman';
 function findAncestors(arr: any[], id: string) {
@@ -26,7 +27,7 @@ function findAncestors(arr: any[], id: string) {
   }
   return res;
 }
-const Request: ArexPaneFC = (props) => {
+const Request: ArexPaneFC = () => {
   const pam = useParams();
   const { activeEnvironment } = useEnvironments();
   const { collections, getCollections } = useCollections();
@@ -100,9 +101,9 @@ const Request: ArexPaneFC = (props) => {
               id: pam.workspaceId,
               newName: value,
               path: parentInfos.map((parentInfo) => parentInfo.id),
-              userName: 'tzhangm@trip.com',
+              userName: getLocalStorage(EMAIL_KEY),
             }).then((res) => {
-              getCollections(pam.workspaceId);
+              getCollections(pam.workspaceId || '');
             });
           }}
         />
