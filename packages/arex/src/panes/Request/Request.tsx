@@ -31,17 +31,19 @@ const Request: ArexPaneFC = () => {
   const pam = useParams();
 
   const { activeEnvironment } = useEnvironments();
-  const { collections, getCollections } = useCollections();
+  const { collectionsFlatData, getCollections } = useCollections();
   const { theme, language } = useUserProfile();
 
   const nodeInfo = useMemo(() => {
-    return collections.find((collection) => collection.id === pam.id);
-  }, [collections, pam.id]);
+    return collectionsFlatData.find((collection) => collection.infoId === pam.id);
+  }, [collectionsFlatData, pam.id]);
+
   const parentInfos = useMemo(() => {
-    return findAncestors(collections, pam.id as string)
+    return findAncestors(collectionsFlatData, pam.id as string)
       .reverse()
-      .concat(collections.find((collection) => collection.id === pam.id));
-  }, [collections, pam.id]);
+      .concat(collectionsFlatData.find((collection) => collection.infoId === pam.id));
+  }, [collectionsFlatData, pam.id]);
+
   function onSend(request: any, environment: any) {
     return sendRequest(request, environment).then((res: any) => {
       return {

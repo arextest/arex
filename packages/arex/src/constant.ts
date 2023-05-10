@@ -1,5 +1,4 @@
 import { ColorPrimary, getLocalStorage, I18nextLng, Theme } from 'arex-core';
-import { RequestMethodEnum } from 'arex-core';
 
 export enum PanesType {
   REQUEST = 'request',
@@ -20,32 +19,8 @@ export enum MenusType {
   APP_SETTING = 'appSetting',
   ENVIRONMENT = 'environment',
 }
-export enum MethodEnum {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  DELETE = 'DELETE',
-  PATCH = 'PATCH',
-}
-export const methodMap: Record<RequestMethodEnum, { color: string }> = {
-  GET: {
-    color: '#0cbb52',
-  },
-  PUT: {
-    color: '#097bed',
-  },
-  POST: {
-    color: '#ffb400',
-  },
-  DELETE: {
-    color: '#eb2013',
-  },
-  PATCH: {
-    color: '#212121',
-  },
-};
 
-export enum NodeType {
+export enum CollectionNodeType {
   interface = 1,
   case = 2,
   folder = 3,

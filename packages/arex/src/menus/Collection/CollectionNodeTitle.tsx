@@ -2,19 +2,16 @@
 // import { css } from '@emotion/react';
 // import styled from '@emotion/styled';
 // import { App, Button, Dropdown, Input } from 'antd';
-// import React, { ReactNode, useMemo, useState } from 'react';
-// import { useTranslation } from 'react-i18next';
+// import { getLocalStorage, useTranslation } from 'arex-core';
+// import React, { FC, ReactNode, useMemo, useState } from 'react';
 // import { useParams } from 'react-router-dom';
 //
-// import { EmailKey, MethodMap } from '../../../constant';
+// import { EMAIL_KEY } from '@/constant';
+//
 // import SearchHighLight from '../../../helpers/collection/searchHighLight';
 // import { treeFindPath } from '../../../helpers/collection/util';
-// import { getLocalStorage, uuid } from '../../../helpers/utils';
-// import { useCustomNavigate } from '../../../router/useCustomNavigate';
 // import { CollectionService } from '../../../services/Collection.service';
 // import { FileSystemService } from '../../../services/FileSystem.service';
-// import { useStore } from '../../../store';
-// import { PagesType } from '../../panes';
 //
 // const PrefixIcon = styled(
 //   (props: { icon: ReactNode; border?: boolean }) => <div {...props}>{props.icon}</div>,
@@ -27,18 +24,16 @@
 //   line-height: 12px;
 // `;
 //
-// function CollectionTitle({
-//   val,
-//   updateDirectoryTreeData,
-//   treeData,
-//   callbackOfNewRequest,
-//   keyword,
-// }: any) {
+// export type CollectionNodeTitleProps = {
+//   data: TreeDataType;
+//   keyword: string;
+// };
+// const CollectionNodeTitle: FC<CollectionNodeTitleProps> = ({ val, keyword }) => {
 //   const { t } = useTranslation(['common', 'components']);
 //   const { modal, message } = App.useApp();
 //   const confirm = modal.confirm;
 //   const _useParams = useParams();
-//   const userName = getLocalStorage<string>(EmailKey);
+//   const userName = getLocalStorage<string>(EMAIL_KEY);
 //
 //   const [open, setOpen] = useState(false);
 //   const [renameKey, setRenameKey] = useState('');
@@ -278,6 +273,6 @@
 //       </div>
 //     </div>
 //   );
-// }
+// };
 //
-// export default CollectionTitle;
+// export default CollectionNodeTitle;

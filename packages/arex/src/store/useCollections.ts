@@ -1,65 +1,66 @@
 import { create } from 'zustand';
 
-import { queryWorkspaceById } from '../services/FileSystemService/workspace';
+import { treeToArray } from '@/helpers/collection/util';
+import { CollectionType, queryWorkspaceById } from '@/services/FileSystemService';
 
-interface CollectionState {
-  collections: Collection[];
-  collectionsTreeData: any[];
-}
-interface CollectionAction {
-  getCollections: (workspaceId: string) => Promise<Collection[]>;
-}
-interface Collection {
+export type CollectionFlatType = Omit<CollectionType, 'children'> & { pid?: string };
+
+export type CollectionState = {
+  loading: boolean;
+  collectionsFlatData: CollectionFlatType[];
+  collectionsTreeData: CollectionType[];
+};
+
+export type CollectionAction = {
+  getCollections: (workspaceId?: string) => Promise<void>;
+};
+
+export type Collection = {
   id: string;
-  pid: string; //父节点id，0为根节点
+  pid: string; //父节点id
   title: string;
   nodeType: number;
   method: string;
   labelIds: string[];
   caseSourceType: number;
-}
+};
+
 const initialState: CollectionState = {
-  collections: [],
+  loading: false,
+  collectionsFlatData: [],
   collectionsTreeData: [],
 };
-function treeToArray(node: any, result: any, pid?: string) {
-  if (node != null) {
-    result.push({
-      id: node.id,
-      pid: pid,
-      title: node.title,
-      nodeType: node.nodeType,
-      method: node.method,
-      labelIds: node.labelIds || [],
-      caseSourceType: node.caseSourceType,
-    }); // 将当前节点的值存储到数组中
-    if (node.children != null) {
-      node.children.forEach(function (child: string) {
-        treeToArray(child, result, node.id); // 递归遍历子节点
-      });
-    }
-  }
-  return result; // 返回存储遍历结果的数组
-}
+
 import useWorkspaces from './useWorkspaces';
 const useCollections = create<CollectionState & CollectionAction>((set, get) => {
-  async function getCollections(workspaceId: string) {
-    const treeData = await queryWorkspaceById({ id: workspaceId });
-    const collections = treeToArray({ id: '', children: treeData }, []);
-    const collectionsTreeData = treeData;
-    set({ collections, collectionsTreeData });
-    return collections;
+  async function getCollections(workspaceId?: string) {
+    const id = workspaceId || useWorkspaces.getState().activeWorkspaceId;
+    if (!id) return;
+
+    set({ loading: true });
+    const data = await queryWorkspaceById({ id });
+    const collectionsFlatData = treeToArray({
+      caseSourceType: 0,
+      labelIds: null,
+      method: null,
+      nodeName: 'root',
+      nodeType: 3,
+      infoId: data.id,
+      children: data.roots,
+    });
+    set({ collectionsFlatData, collectionsTreeData: data.roots, loading: false });
   }
 
-  getCollections(useWorkspaces.getState().activeWorkspaceId || '');
+  getCollections();
 
   return {
-    // ...initialState,
+    // State,
     ...initialState,
-    // actions
+
+    // Action
     getCollections,
     reset: () => {
-      console.log('reset');
+      set(initialState);
     },
   };
 });

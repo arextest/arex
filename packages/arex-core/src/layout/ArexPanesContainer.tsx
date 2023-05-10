@@ -6,7 +6,7 @@ import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
 
-import { EmptyWrapper, ErrorBoundary, Icons } from '../components';
+import { EmptyWrapper, ErrorBoundary, RequestMethodIcon } from '../components';
 import { ArexPaneNamespace } from '../constant';
 import { Pane } from '../panes';
 import { ArexPaneManager } from '../utils';
@@ -78,8 +78,10 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
               <>
                 <span>
                   {pane.icon
-                    ? // @ts-ignore
-                      React.createElement(Icons[pane.icon] || Icons['QuestionOutlined'])
+                    ? React.createElement(
+                        // @ts-ignore
+                        RequestMethodIcon[pane.icon] || RequestMethodIcon['QuestionOutlined'],
+                      )
                     : Pane.icon}
                 </span>
                 <Typography.Text ellipsis style={{ maxWidth: '120px' }}>

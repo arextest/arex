@@ -1,3 +1,9 @@
+import _default from 'chart.js/dist/core/core.interaction';
+
+import { CollectionType } from '@/services/FileSystemService';
+import { CollectionFlatType } from '@/store/useCollections';
+import x = _default.modes.x;
+
 interface NodeObject {
   id: string;
   children: NodeObject[];
@@ -8,6 +14,7 @@ interface NodeObject {
   labelIds: string[] | null;
   caseSourceType: number;
 }
+
 export function arrToTree(arr: any, pid = 0) {
   const newArr: any = [];
   arr.forEach((item: any) => {
@@ -75,6 +82,31 @@ export function treeFind<T>(tree: T[], func: (item: T) => boolean): T | undefine
   return undefined;
 }
 
+export function treeToArray(
+  node?: CollectionType | null,
+  result: CollectionFlatType[] = [],
+  pid?: string,
+) {
+  if (node) {
+    const { children, ...rest } = node;
+    result.push({
+      pid,
+      ...rest,
+    }); // 将当前节点的值存储到数组中
+    if (children) {
+      node.children.forEach((child) => {
+        treeToArray(child, result, node.infoId); // 递归遍历子节点
+      });
+    }
+  }
+  return result; // 返回存储遍历结果的数组
+}
+
+/**
+ * deserted
+ * @param tree
+ * @param nodeList
+ */
 export function collectionOriginalTreeToAntdTreeData(
   tree: any,
   nodeList: NodeObject[] = [],

@@ -25,7 +25,7 @@ export { default as FullHeightSpin } from './FullHeightSpin';
 export { default as GithubStarButton } from './GithubStarButton';
 export type { HighlightRowTableProps } from './HighlightRowTable';
 export { default as HighlightRowTable } from './HighlightRowTable';
-export * as Icons from './icons';
+export * from './icons';
 export { default as Label } from './Label';
 export type { PanesTitleProps } from './PanesTitle';
 export { default as PanesTitle } from './PanesTitle';

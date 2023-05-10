@@ -1,4 +1,5 @@
 export * from './changeRole';
+export * from './createWorkspace';
 export * from './deleteWorkspace';
 export * from './inviteToWorkspace';
 export * from './leaveWorkspace';

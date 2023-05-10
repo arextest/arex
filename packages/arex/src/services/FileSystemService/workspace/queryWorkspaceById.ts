@@ -1,15 +1,29 @@
-import { collectionOriginalTreeToAntdTreeData } from '@/helpers/collection/util';
+import { RequestMethodEnum } from 'arex-core';
+
+import { CollectionNodeType } from '@/constant';
 import { request } from '@/utils';
+
+export type CollectionType = {
+  caseSourceType: number; // 0, 1
+  children: CollectionType[];
+  infoId: string;
+  labelIds: string | null;
+  method: RequestMethodEnum | null;
+  nodeName: string;
+  nodeType: CollectionNodeType;
+};
+
+export type QueryWorkspaceByIdRes = {
+  fsTree: {
+    id: string;
+    roots: CollectionType[];
+    userName: string;
+    workspaceName: string;
+  };
+};
 
 export async function queryWorkspaceById(params: { id: string }) {
   return request
-    .post<{
-      fsTree: {
-        id: string;
-        roots: any[];
-        userName: string;
-        workspaceName: string;
-      };
-    }>(`/report/filesystem/queryWorkspaceById`, params)
-    .then((res) => Promise.resolve(collectionOriginalTreeToAntdTreeData(res.body.fsTree.roots)));
+    .post<QueryWorkspaceByIdRes>(`/report/filesystem/queryWorkspaceById`, params)
+    .then((res) => res.body.fsTree);
 }

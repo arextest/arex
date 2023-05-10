@@ -1,6 +1,8 @@
 import { request } from '@/utils';
 
 export type CreateWorkspaceReq = {
+  nodeName?: string;
+  nodeType?: string;
   userName: string;
   workspaceName: string;
 };
@@ -11,13 +13,13 @@ export type CreateWorkspaceRes = {
   success: boolean;
 };
 
-export async function createWorkspace({ userName, workspaceName }: CreateWorkspaceReq) {
+export async function createWorkspace(params: CreateWorkspaceReq) {
+  const { nodeName = 'New Collection', nodeType = '3', ...restParams } = params;
   return request
     .post<CreateWorkspaceRes>(`/report/filesystem/addItem`, {
-      nodeName: 'New Collection',
-      nodeType: '3',
-      userName,
-      workspaceName,
+      nodeName,
+      nodeType,
+      ...restParams,
     })
-    .then((res) => Promise.resolve(res.body));
+    .then((res) => res.body);
 }

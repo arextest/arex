@@ -12,7 +12,7 @@ export type Workspace = {
 };
 
 export type WorkspaceState = {
-  activeWorkspaceId?: string;
+  activeWorkspaceId: string;
   workspaces: Workspace[];
 };
 
@@ -22,7 +22,7 @@ export type WorkspaceAction = {
 };
 
 const initialState: WorkspaceState = {
-  activeWorkspaceId: undefined,
+  activeWorkspaceId: '',
   workspaces: [],
 };
 

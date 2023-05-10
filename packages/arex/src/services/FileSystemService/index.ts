@@ -1,5 +1,5 @@
 export * from './addItemFromRecord';
-export * from './createWorkspace';
+export * from './collection';
 export * from './label';
 export * from './queryInterface';
 export * from './saveInterface';
