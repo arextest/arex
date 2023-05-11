@@ -1,6 +1,12 @@
-const { createProxyMiddleware } = require('http-proxy-middleware');
-const history = require('connect-history-api-fallback');
-const express = require('express');
+import {createProxyMiddleware} from 'http-proxy-middleware'
+import history from 'connect-history-api-fallback'
+import express from 'express'
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
 const app = express();
 const e = {
   SERVICE_REPORT_URL:"http://10.5.153.1:8090",
@@ -62,7 +68,7 @@ app.get('/env', (req, res) => {
 
 app.use(history()); // 这里千万要注意，要在static静态资源上面
 // 托管静态文件
-app.use(express.static('dist'));
+app.use(express.static(__dirname+'/dist'));
 
 // 监听8080端口
 app.listen(8080, function () {

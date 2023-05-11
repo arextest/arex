@@ -15,4 +15,4 @@ export const Operator = {
   GE: '>=', // greater than or equal to
 } as const;
 
-export type OperatorType = (typeof Operator)[keyof typeof Operator];
+export type OperatorType = typeof Operator[keyof typeof Operator];
