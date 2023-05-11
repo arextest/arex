@@ -15,9 +15,9 @@ export async function queryRequest(params: {
     // @ts-ignore
     return {
       id: rest.id,
-      method: address?.method,
-      endpoint: address?.endpoint,
-      headers: rest.headers,
+      method: address?.method || 'GET',
+      endpoint: address?.endpoint || '',
+      headers: rest.headers || [],
       params: rest.params || [],
       body: rest.body || { contentType: 'application/json', body: '' },
       testScript: rest.testScripts?.length > 0 ? rest.testScripts[0].value : '',
@@ -31,9 +31,9 @@ export async function queryRequest(params: {
     // @ts-ignore
     return {
       id: rest.id,
-      method: address?.method,
-      endpoint: address?.endpoint,
-      headers: rest.headers,
+      method: address?.method || 'GET',
+      endpoint: address?.endpoint || '',
+      headers: rest.headers || [],
       params: rest.params || [],
       body: rest.body || { contentType: 'application/json', body: '' },
       testScript: rest.testScripts?.length > 0 ? rest.testScripts[0].value : '',
