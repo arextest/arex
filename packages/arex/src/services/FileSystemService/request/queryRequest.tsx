@@ -19,7 +19,7 @@ export async function queryRequest(params: {
       endpoint: address?.endpoint,
       headers: rest.headers,
       params: rest.params || [],
-      body: rest.body,
+      body: rest.body || { contentType: 'application/json', body: '' },
       testScript: rest.testScripts?.length > 0 ? rest.testScripts[0].value : '',
       preRequestScript: rest.preRequestScript?.length > 0 ? rest.preRequestScript[0].value : '',
     };
@@ -35,7 +35,7 @@ export async function queryRequest(params: {
       endpoint: address?.endpoint,
       headers: rest.headers,
       params: rest.params || [],
-      body: rest.body,
+      body: rest.body || { contentType: 'application/json', body: '' },
       testScript: rest.testScripts?.length > 0 ? rest.testScripts[0].value : '',
       preRequestScript: rest.preRequestScript?.length > 0 ? rest.preRequestScript[0].value : '',
     };
