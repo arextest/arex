@@ -1,7 +1,7 @@
 import { ExclamationCircleFilled, MoreOutlined } from '@ant-design/icons';
 import { App, Button, Dropdown, Input, MenuProps } from 'antd';
 import { getLocalStorage, RequestMethodIcon, styled, useTranslation } from 'arex-core';
-import React, { FC, ReactNode, useMemo, useState } from 'react';
+import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY } from '@/constant';
 import { FileSystemService } from '@/services';

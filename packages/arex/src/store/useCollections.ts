@@ -1,7 +1,10 @@
 import { create } from 'zustand';
 
+import { CollectionNodeType } from '@/constant';
 import { treeToMap } from '@/helpers/collection/util';
 import { CollectionType, queryWorkspaceById } from '@/services/FileSystemService';
+
+import useWorkspaces from './useWorkspaces';
 
 export type CollectionFlatType = Omit<CollectionType, 'children'> & { pid?: string };
 export type CollectionFlatMapType = Map<string, CollectionFlatType>;
@@ -34,7 +37,6 @@ const initialState: CollectionState = {
   collectionsTreeData: [],
 };
 
-import useWorkspaces from './useWorkspaces';
 const useCollections = create<CollectionState & CollectionAction>((set, get) => {
   async function getCollections(workspaceId?: string) {
     const id = workspaceId || useWorkspaces.getState().activeWorkspaceId;
@@ -47,8 +49,9 @@ const useCollections = create<CollectionState & CollectionAction>((set, get) => 
       labelIds: null,
       method: null,
       nodeName: 'root',
-      nodeType: 3,
+      nodeType: CollectionNodeType.folder,
       infoId: '', // data.id,
+      key: '__root__', //
       children: data.roots,
     });
     set({ collectionsFlatData, collectionsTreeData: data.roots, loading: false });

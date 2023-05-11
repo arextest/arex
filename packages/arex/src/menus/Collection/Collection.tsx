@@ -116,7 +116,6 @@ const Collection: ArexMenuFC = (props) => {
         <Tree<CollectionType>
           showLine
           blockNode
-          // height={treeHeight - 62}
           autoExpandParent={autoExpandParent}
           selectedKeys={selectedKeys}
           expandedKeys={expandedKeys}
