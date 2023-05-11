@@ -132,7 +132,11 @@ export const useMenusPanes = create(
 
         // 重置菜单和面板
         reset: () => {
-          set(initialState);
+          set({
+            activePane: initialState.activePane,
+            panes: initialState.panes,
+            paneMaxIndex: initialState.paneMaxIndex,
+          });
         },
       })),
       {

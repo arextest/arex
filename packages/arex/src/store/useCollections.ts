@@ -80,9 +80,7 @@ const useCollections = create<CollectionState & CollectionAction>((set, get) => 
 
     // Action
     getCollections,
-    getPath: (infoId: string) => {
-      getPathInFlatArray(infoId, get().collectionsFlatData);
-    },
+    getPath: (infoId: string) => getPathInFlatArray(infoId, get().collectionsFlatData),
     reset: () => {
       set(initialState);
     },

@@ -10,6 +10,8 @@ import {
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useCollections } from '@/store';
+
 import { DEFAULT_LANGUAGE, EMAIL_KEY } from '../constant';
 import { UserService } from '../services';
 import { useEnvironments, useUserProfile, useWorkspaces } from '../store';
@@ -83,6 +85,7 @@ const useInit = () => {
         );
         useMenusPanes.getState().reset();
         useEnvironments.getState().reset();
+        useCollections.getState().getCollections(activeWorkspaceId);
         nav(url);
       },
     );
