@@ -1,11 +1,13 @@
+import { CollectionNodeType } from '@/constant';
 import { request } from '@/utils';
 
 export type AddCollectionReq = {
   id: string;
   userName: string;
   nodeName?: string;
-  nodeType?: string;
+  nodeType?: CollectionNodeType;
   parentPath?: string[];
+  caseSourceType?: number;
 };
 
 export type AddCollectionRes = {
@@ -14,8 +16,8 @@ export type AddCollectionRes = {
   success: boolean;
 };
 
-export async function addCollection(params: AddCollectionReq) {
-  const { nodeName = 'New Collection', nodeType = '3', parentPath = [], ...restParams } = params;
+export async function addCollectionItem(params: AddCollectionReq) {
+  const { nodeName = 'New Collection', nodeType = 3, parentPath = [], ...restParams } = params;
   return request
     .post<AddCollectionRes>(`/report/filesystem/addItem`, {
       nodeName,

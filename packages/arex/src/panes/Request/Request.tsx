@@ -4,45 +4,33 @@ import { message } from 'antd';
 import { ArexPaneFC, getLocalStorage } from 'arex-core';
 import { ConfigProvider as RequestConfigProvider, Http } from 'arex-request-core';
 import React, { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
 
 import { EMAIL_KEY } from '@/constant';
+import { findAncestors } from '@/helpers/collection/util';
 import { sendRequest } from '@/helpers/postman';
+import { CollectionTreeType } from '@/menus/Collection/Collection';
 import { queryRequest } from '@/services/FileSystemService/request';
 import { renameRequest } from '@/services/FileSystemService/request';
 import { saveRequest } from '@/services/FileSystemService/request';
-import { useCollections, useEnvironments, useUserProfile } from '@/store';
+import { useCollections, useEnvironments, useUserProfile, useWorkspaces } from '@/store';
 
-function findAncestors(arr: any[], id: string) {
-  const res = [];
-  let node = arr.find((item) => item.id === id);
-  while (node && node.pid) {
-    const parent = arr.find((item) => item.id === node.pid);
-    if (parent) {
-      res.push(parent);
-      node = parent;
-    } else {
-      node = null;
-    }
-  }
-  return res;
-}
-const Request: ArexPaneFC = () => {
-  const pam = useParams();
+const Request: ArexPaneFC<CollectionTreeType> = (props) => {
+  const { infoId: id } = props.data;
 
   const { activeEnvironment } = useEnvironments();
+  const { activeWorkspaceId } = useWorkspaces();
   const { collectionsFlatData, getCollections } = useCollections();
   const { theme, language } = useUserProfile();
 
   const nodeInfo = useMemo(() => {
-    return collectionsFlatData.find((collection) => collection.infoId === pam.id);
-  }, [collectionsFlatData, pam.id]);
+    return collectionsFlatData.get(id);
+  }, [collectionsFlatData, id]);
 
-  const parentInfos = useMemo(() => {
-    return findAncestors(collectionsFlatData, pam.id as string)
-      .reverse()
-      .concat(collectionsFlatData.find((collection) => collection.infoId === pam.id));
-  }, [collectionsFlatData, pam.id]);
+  // const parentInfos = useMemo(() => {
+  //   return findAncestors(collectionsFlatData, id as string)
+  //     .reverse()
+  //     .concat(collectionsFlatData.get(id);
+  // }, [collectionsFlatData, id]);
 
   function onSend(request: any, environment: any) {
     return sendRequest(request, environment).then((res: any) => {
@@ -54,7 +42,7 @@ const Request: ArexPaneFC = () => {
   }
 
   function onSave(r: any) {
-    saveRequest(pam.workspaceId as string, r, nodeInfo?.nodeType || 1).then((res) => {
+    saveRequest(activeWorkspaceId, r, nodeInfo?.nodeType || 1).then((res) => {
       if (res) {
         message.success('保存成功');
       }
@@ -63,15 +51,13 @@ const Request: ArexPaneFC = () => {
 
   const { data } = useRequest(
     () => {
-      return queryRequest({ id: pam.id as string, nodeType: nodeInfo?.nodeType || 1 }).then(
-        (res) => {
-          return res;
-        },
-      );
+      return queryRequest({ id: id as string, nodeType: nodeInfo?.nodeType || 1 }).then((res) => {
+        return res;
+      });
     },
     {
       onSuccess() {
-        // console.log(collections.find((i) => i.id === pam.id).nodeType, 'collections');
+        // console.log(collections.find((i) => i.id === id).nodeType, 'collections');
       },
     },
   );
@@ -100,17 +86,18 @@ const Request: ArexPaneFC = () => {
             variables: activeEnvironment?.keyValues || [],
           }}
           config={{}}
-          breadcrumbItems={parentInfos}
-          onChangeTitle={({ value }) => {
-            renameRequest({
-              id: pam.workspaceId,
-              newName: value,
-              path: parentInfos.map((parentInfo) => parentInfo.id),
-              userName: getLocalStorage(EMAIL_KEY),
-            }).then((res) => {
-              getCollections(pam.workspaceId || '');
-            });
-          }}
+          breadcrumbItems={[]}
+          // breadcrumbItems={parentInfos}
+          // onChangeTitle={({ value }) => {
+          //   renameRequest({
+          //     id: activeWorkspaceId,
+          //     newName: value,
+          //     path: parentInfos.map((parentInfo) => parentInfo.id),
+          //     userName: getLocalStorage(EMAIL_KEY),
+          //   }).then((res) => {
+          //     getCollections();
+          //   });
+          // }}
         />
       </RequestConfigProvider>
     </div>

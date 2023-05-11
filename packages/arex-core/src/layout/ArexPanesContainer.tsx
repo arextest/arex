@@ -79,7 +79,6 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
                 <span>
                   {pane.icon
                     ? React.createElement(
-                        // @ts-ignore
                         RequestMethodIcon[pane.icon] || RequestMethodIcon['QuestionOutlined'],
                       )
                     : Pane.icon}

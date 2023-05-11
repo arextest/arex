@@ -1,9 +1,10 @@
+import { DataNode } from 'antd/lib/tree';
 import { RequestMethodEnum } from 'arex-core';
 
 import { CollectionNodeType } from '@/constant';
 import { request } from '@/utils';
 
-export type CollectionType = {
+export interface CollectionType extends DataNode {
   caseSourceType: number; // 0, 1
   children: CollectionType[];
   infoId: string;
@@ -11,7 +12,7 @@ export type CollectionType = {
   method: RequestMethodEnum | null;
   nodeName: string;
   nodeType: CollectionNodeType;
-};
+}
 
 export type QueryWorkspaceByIdRes = {
   fsTree: {

@@ -1,22 +1,38 @@
 import { CollectionType } from '@/services/FileSystemService';
-import { CollectionFlatType } from '@/store/useCollections';
+import { CollectionFlatMapType, CollectionFlatType } from '@/store/useCollections';
 
-export function treeToArray(
-  node?: CollectionType | null,
-  result: CollectionFlatType[] = [],
+export function findAncestors(collections: CollectionFlatType[], id: string) {
+  const res = [];
+  let node = collections.find((item) => item.infoId === id);
+
+  while (node && node.pid) {
+    const parent = collections.find((item) => item.infoId === node?.pid);
+    if (parent) {
+      res.push(parent);
+      node = parent;
+    } else {
+      node = undefined;
+    }
+  }
+  return res;
+}
+
+export function treeToMap(
+  tree?: CollectionType | null,
+  map: CollectionFlatMapType = new Map<string, CollectionFlatType>(),
   pid?: string,
 ) {
-  if (node) {
-    const { children, ...rest } = node;
-    result.push({
+  if (tree) {
+    const { children, ...rest } = tree;
+    map.set(tree.infoId, {
       pid,
       ...rest,
-    }); // 将当前节点的值存储到数组中
+    });
     if (children) {
-      node.children.forEach((child) => {
-        treeToArray(child, result, node.infoId); // 递归遍历子节点
+      tree.children.forEach((child) => {
+        treeToMap(child, map, tree.infoId);
       });
     }
   }
-  return result; // 返回存储遍历结果的数组
+  return map;
 }

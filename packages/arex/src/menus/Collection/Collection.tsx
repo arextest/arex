@@ -1,20 +1,18 @@
 import { DownOutlined } from '@ant-design/icons';
-import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { Button, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
-import { ArexMenuFC, EmptyWrapper, getLocalStorage, useTranslation } from 'arex-core';
+import { ArexMenuFC, EmptyWrapper, getLocalStorage, styled, useTranslation } from 'arex-core';
 import React, { useMemo, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
+import CollectionNodeTitle from '@/menus/Collection/CollectionNodeTitle';
 import { FileSystemService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
 import { useCollections, useWorkspaces } from '@/store';
 
-// import CollectionTitle from './NodeTitle';
-
-const CollectionMenuWrapper = styled.div`
+const CollectionNodeTitleWrapper = styled.div`
   width: 100%;
   .ant-spin-nested-loading,
   .ant-spin {
@@ -33,8 +31,6 @@ const CollectionMenuWrapper = styled.div`
         font-weight: bold;
       }
     }
-    .collection-header-search {
-    }
     .collection-header-view {
       margin: 0 5px;
     }
@@ -44,46 +40,20 @@ const CollectionMenuWrapper = styled.div`
     background-color: transparent;
   }
 
-  .ant-tree-title {
-    width: 100%;
-    .collection-title-render {
-      color: ${(props) => props.theme.colorTextSecondary};
-      display: flex;
-      .right {
-        float: right;
-      }
-      .left {
-        flex: 1;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        .content {
-          overflow: hidden; //超出的文本隐藏
-          text-overflow: ellipsis; //溢出用省略号显示
-          white-space: nowrap; //溢出不换行
-        }
-      }
-      :hover {
-        color: ${(props) => props.theme.colorText};
-      }
-    }
-  }
-
-  .ant-tree-node-selected {
-    .collection-title-render {
-      color: ${(props) => props.theme.colorText};
-    }
+  .ant-tree-node-selected .content {
+    color: ${(props) => props.theme.colorText};
   }
 
   .ant-tree-node-content-wrapper {
     width: 10%;
     overflow-y: visible; //解决拖拽图标被隐藏
-    // overflow-x: clip;
-    // overflow-x: hidden; //超出的文本隐藏
+    overflow-x: hidden; //超出的文本隐藏
     text-overflow: ellipsis; //溢出用省略号显示
     white-space: nowrap; //溢出不换行
   }
 `;
+
+export type CollectionTreeType = CollectionType & DataNode;
 
 const Collection: ArexMenuFC = (props) => {
   const { t } = useTranslation(['components']);
@@ -98,7 +68,7 @@ const Collection: ArexMenuFC = (props) => {
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState(true);
 
-  const handleSelect: DirectoryTreeProps<CollectionType & DataNode>['onSelect'] = (keys, info) => {
+  const handleSelect: DirectoryTreeProps<CollectionTreeType>['onSelect'] = (keys, info) => {
     console.log({ keys, info });
 
     if (info.node.nodeType !== CollectionNodeType.folder) {
@@ -108,35 +78,19 @@ const Collection: ArexMenuFC = (props) => {
         type: PanesType.REQUEST,
         id: info.node.infoId,
         icon: (method && method.replace(method[0], method[0].toUpperCase())) || undefined,
+        data: info.node,
       });
     }
   };
 
-  const onExpand = (newExpandedKeys: string[]) => {
+  const onExpand = (newExpandedKeys: React.Key[]) => {
     setExpandedKeys(newExpandedKeys);
     setAutoExpandParent(false);
   };
 
-  // 对外的函数
-  // 展开指定的数组
-  // function expandSpecifyKeys(keys: string[], p: string[], nodeType: CollectionNodeType) {
-  //   const key = keys[0];
-  //   const maps: { [key: string]: string } = {
-  //     '1': 'New Request',
-  //     '2': 'New Case',
-  //     '3': 'New Folder',
-  //   };
-  //   setExpandedKeys([...expandedKeys, p[p.length - 1]]);
-  //   handleCollectionMenuClick(key, {
-  //     title: maps[nodeType],
-  //     key,
-  //     nodeType,
-  //   });
-  // }
-
   const { run: createCollection } = useRequest(
     () =>
-      FileSystemService.addCollection({
+      FileSystemService.addCollectionItem({
         id: activeWorkspaceId,
         userName,
       }),
@@ -149,7 +103,7 @@ const Collection: ArexMenuFC = (props) => {
   );
 
   return (
-    <CollectionMenuWrapper>
+    <CollectionNodeTitleWrapper>
       <EmptyWrapper
         empty={!loading && !collectionsTreeData.length}
         loading={loading}
@@ -159,7 +113,7 @@ const Collection: ArexMenuFC = (props) => {
           </Button>
         }
       >
-        <Tree
+        <Tree<CollectionType>
           showLine
           blockNode
           // height={treeHeight - 62}
@@ -167,26 +121,16 @@ const Collection: ArexMenuFC = (props) => {
           selectedKeys={selectedKeys}
           expandedKeys={expandedKeys}
           switcherIcon={<DownOutlined />}
-          // @ts-ignore
           treeData={collectionsTreeData}
           fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
           // onDrop={onDrop}
-          // @ts-ignore
           onExpand={onExpand}
           onSelect={handleSelect}
           draggable={{ icon: false }}
-          // titleRender={(val) => (
-          //   <CollectionTitle
-          //     keyword={searchValue?.keyword}
-          //     updateDirectoryTreeData={fetchTreeData}
-          //     val={val}
-          //     treeData={treeData}
-          //     callbackOfNewRequest={expandSpecifyKeys} // TODO 暂时禁用待优化
-          //   />
-          // )}
+          titleRender={(data) => <CollectionNodeTitle keyword={''} data={data} />}
         />
       </EmptyWrapper>
-    </CollectionMenuWrapper>
+    </CollectionNodeTitleWrapper>
   );
 };
 
