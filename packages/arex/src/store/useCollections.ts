@@ -65,7 +65,7 @@ const useCollections = create<CollectionState & CollectionAction>((set, get) => 
    * @param flatArray
    */
   function getPathInFlatArray(id: string, flatArray: CollectionFlatMapType) {
-    const path: string[] = [];
+    const path: string[] = [id];
     let node = flatArray.get(id);
     while (node && node.pid) {
       path.unshift(node.pid);

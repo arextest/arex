@@ -1,4 +1,5 @@
 import { ExclamationCircleFilled, MoreOutlined } from '@ant-design/icons';
+import { useRequest } from 'ahooks';
 import { App, Button, Dropdown, Input, MenuProps } from 'antd';
 import { getLocalStorage, RequestMethodIcon, styled, useTranslation } from 'arex-core';
 import React, { FC, ReactNode, useMemo, useState } from 'react';
@@ -62,27 +63,72 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   const [editMode, setEditMode] = useState(false);
   const [nodeName, setNodeName] = useState(props.data.nodeName);
 
-  const nodePath = useMemo(() => getPath(props.data.infoId), [props.data]);
+  const nodePath = useMemo(() => getPath(props.data.infoId), [getPath, props.data.infoId]);
 
-  const showPropsConfirm = (id: string) => {
+  const { run: addCollectionItem } = useRequest(
+    (params: { nodeName: string; nodeType: CollectionNodeType; caseSourceType?: number }) =>
+      FileSystemService.addCollectionItem({
+        ...params,
+        userName,
+        id: activeWorkspaceId,
+        parentPath: nodePath,
+      }),
+    {
+      manual: true,
+      onSuccess: (res, [{ caseSourceType }]) => {
+        if (res.success) {
+          getCollections();
+          // TODO 展开新增行
+
+          if (caseSourceType === 2) {
+            queryInterface({ id: nodePath.at(-1) as string }, res.infoId);
+          }
+        }
+      },
+    },
+  );
+
+  const { run: removeCollectionItem } = useRequest(
+    () =>
+      FileSystemService.removeCollectionItem({
+        id: activeWorkspaceId,
+        removeNodePath: nodePath,
+        userName,
+      }),
+    {
+      manual: true,
+      onSuccess: () => {
+        getCollections();
+      },
+    },
+  );
+
+  const { run: saveCase } = useRequest(FileSystemService.saveCase, {
+    manual: true,
+    onSuccess: () => {
+      getCollections();
+    },
+  });
+
+  const { run: queryInterface } = useRequest(FileSystemService.queryInterface, {
+    manual: true,
+    onSuccess: (parentInterface, params) => {
+      saveCase({
+        workspaceId: activeWorkspaceId as string,
+        ...parentInterface,
+        id: params[1],
+      });
+    },
+  });
+
+  const showPropsConfirm = () => {
     confirm({
       title: t('are_you_sure'),
       icon: <ExclamationCircleFilled />,
       okText: 'Yes',
       okType: 'danger',
       cancelText: 'No',
-      onOk() {
-        FileSystemService.removeCollectionItem({
-          id: activeWorkspaceId,
-          removeNodePath: nodePath,
-          userName,
-        }).then(() => {
-          // updateDirectoryTreeData();
-        });
-      },
-      onCancel() {
-        console.log('Cancel');
-      },
+      onOk: removeCollectionItem,
     });
   };
 
@@ -90,44 +136,44 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     () => ({
       items: [
         {
-          key: '7',
+          key: 'batchRun',
           label: (
             <span className={'dropdown-click-target'}>
               {t('collection.batch_run', { ns: 'components' })}
             </span>
           ),
-          disabled: props.data.nodeType !== 3,
+          disabled: props.data.nodeType !== CollectionNodeType.folder,
         },
         {
-          key: '3',
+          key: 'addFolder',
           label: (
             <span className={'dropdown-click-target'}>
               {t('collection.add_folder', { ns: 'components' })}
             </span>
           ),
           // 只有类型为3才能新增文件夹
-          disabled: props.data.nodeType !== 3,
+          disabled: props.data.nodeType !== CollectionNodeType.folder,
         },
         {
-          key: '1',
+          key: 'addRequest',
           label: (
             <span className={'dropdown-click-target'}>
               {t('collection.add_request', { ns: 'components' })}
             </span>
           ),
-          disabled: props.data.nodeType !== 3,
+          disabled: props.data.nodeType !== CollectionNodeType.interface,
         },
         {
-          key: '2',
+          key: 'addCase',
           label: (
             <span className={'dropdown-click-target'}>
               {t('collection.add_case', { ns: 'components' })}
             </span>
           ),
-          disabled: props.data.nodeType !== 1,
+          disabled: props.data.nodeType !== CollectionNodeType.interface,
         },
         {
-          key: '4',
+          key: 'rename',
           label: (
             <span className={'dropdown-click-target'}>
               {t('collection.rename', { ns: 'components' })}
@@ -135,7 +181,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
           ),
         },
         {
-          key: '6',
+          key: 'duplicate',
           label: (
             <span className={'dropdown-click-target'}>
               {t('collection.duplicate', { ns: 'components' })}
@@ -147,9 +193,9 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
           label: (
             <a
               style={{ color: 'red' }}
-              // onClick={() => {
-              //   showPropsConfirm(paths);
-              // }}
+              onClick={() => {
+                showPropsConfirm();
+              }}
             >
               {t('collection.delete', { ns: 'components' })}
             </a>
@@ -158,67 +204,29 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
       ],
       onClick(e) {
         switch (e.key) {
-          case '3':
-            FileSystemService.addCollectionItem({
-              id: activeWorkspaceId,
+          case 'addFolder':
+            addCollectionItem({
               nodeName: 'New Collection',
-              nodeType: 3,
-              parentPath: nodePath,
-              userName,
-            })
-              .then(() => {
-                getCollections();
-              })
-              .catch((e) => message.error(e));
+              nodeType: CollectionNodeType.folder,
+            });
             break;
-          case '1':
-            FileSystemService.addCollectionItem({
-              id: activeWorkspaceId,
+          case 'addRequest':
+            addCollectionItem({
               nodeName: 'New Request',
               nodeType: CollectionNodeType.interface,
-              parentPath: nodePath,
-              userName,
-            }).then((res) => {
-              getCollections();
-              // TODO 展开新增行
-              // callbackOfNewRequest(
-              //   [res.infoId],
-              //   nodePath,
-              //   1,
-              // );
             });
             break;
-          case '2':
-            FileSystemService.addCollectionItem({
-              id: activeWorkspaceId,
+          case 'addCase':
+            addCollectionItem({
               nodeName: 'case',
               nodeType: CollectionNodeType.case,
-              parentPath: nodePath,
-              userName,
               caseSourceType: 2,
-            }).then((res) => {
-              // FileSystemService.queryInterface({ id: paths[paths.length - 1].key }).then(
-              //   (parentInterface) => {
-              //     FileSystemService.saveCase({
-              //       workspaceId: activeWorkspaceId as string,
-              //       ...parentInterface,
-              //       id: res.body.infoId,
-              //     }).then((_) => {
-              //       updateDirectoryTreeData();
-              //       callbackOfNewRequest(
-              //         [res.body.infoId],
-              //         nodePath,
-              //         2,
-              //       );
-              //     });
-              //   },
-              // );
             });
             break;
-          case '4':
+          case 'rename':
             setEditMode(true);
             break;
-          case '6':
+          case 'duplicate':
             FileSystemService.duplicateCollectionItem({
               id: activeWorkspaceId,
               path: nodePath,
@@ -227,7 +235,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
               getCollections(activeWorkspaceId);
             });
             break;
-          case '7':
+          case 'batchRun':
             // to BatchRun pane
             // customNavigate(`/${activeWorkspaceId}/${PagesType.BatchRun}/${props.data.id}`);
             break;
@@ -239,18 +247,22 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     [activeWorkspaceId, userName],
   );
 
-  const rename = () => {
-    FileSystemService.renameCollectionItem({
-      id: activeWorkspaceId,
-      newName: nodeName,
-      path: nodePath,
-      userName,
-    }).then(() => {
-      getCollections(activeWorkspaceId);
-      setNodeName('');
-      setEditMode(false);
-    });
-  };
+  const { run: rename } = useRequest(
+    () =>
+      FileSystemService.renameCollectionItem({
+        id: activeWorkspaceId,
+        newName: nodeName,
+        path: nodePath,
+        userName,
+      }),
+    {
+      manual: true,
+      onSuccess(success) {
+        setEditMode(false);
+        getCollections(activeWorkspaceId);
+      },
+    },
+  );
 
   const prefix = useMemo(
     () =>
@@ -272,8 +284,8 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         <div className={'content'}>
           {editMode ? (
             <Input
-              value={nodeName}
               onPressEnter={rename}
+              value={nodeName}
               onBlur={rename}
               onChange={(e) => setNodeName(e.currentTarget.value)}
               style={{ padding: '0 4px', width: '100%' }}

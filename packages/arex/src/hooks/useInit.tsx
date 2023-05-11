@@ -10,12 +10,11 @@ import {
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { DEFAULT_LANGUAGE, EMAIL_KEY } from '@/constant';
+import { UserService } from '@/services';
 import { useCollections } from '@/store';
-
-import { DEFAULT_LANGUAGE, EMAIL_KEY } from '../constant';
-import { UserService } from '../services';
-import { useEnvironments, useUserProfile, useWorkspaces } from '../store';
-import useMenusPanes from '../store/useMenusPanes';
+import { useEnvironments, useUserProfile, useWorkspaces } from '@/store';
+import useMenusPanes from '@/store/useMenusPanes';
 const useInit = () => {
   const { panes, setPanes } = useMenusPanes();
   const { workspaces, setActiveWorkspaceId } = useWorkspaces();
@@ -85,7 +84,7 @@ const useInit = () => {
         );
         useMenusPanes.getState().reset();
         useEnvironments.getState().reset();
-        useCollections.getState().getCollections(activeWorkspaceId);
+        useCollections.getState().getCollections();
         nav(url);
       },
     );
