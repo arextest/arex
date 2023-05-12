@@ -1,8 +1,8 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { message } from 'antd';
-import { ArexPaneFC, getLocalStorage } from 'arex-core';
-import { ConfigProvider as RequestConfigProvider, Http } from 'arex-request-core';
+import { ArexPaneFC } from 'arex-core';
+import { Http } from 'arex-request-core';
 import React, { useMemo } from 'react';
 
 import { EMAIL_KEY } from '@/constant';
@@ -37,6 +37,7 @@ const Request: ArexPaneFC<CollectionTreeType> = (props) => {
       return {
         response: res.response,
         testResult: res.testResult,
+        consoles: res.consoles,
       };
     });
   }
@@ -68,38 +69,37 @@ const Request: ArexPaneFC<CollectionTreeType> = (props) => {
         height: calc(100vh - 110px);
       `}
     >
-      {/*{nodeInfo?.title}*/}
-      <RequestConfigProvider locale={language} theme={theme}>
-        <Http
-          onSend={(request) => {
-            return onSend(request, {
-              name: activeEnvironment?.envName || '',
-              variables: activeEnvironment?.keyValues || [],
-            });
-          }}
-          onSave={onSave}
-          // @ts-ignore
-          value={data}
-          breadcrumb={<div></div>}
-          environment={{
+      <Http
+        theme={theme}
+        locale={language}
+        onSend={(request: any) => {
+          return onSend(request, {
             name: activeEnvironment?.envName || '',
             variables: activeEnvironment?.keyValues || [],
-          }}
-          config={{}}
-          breadcrumbItems={[]}
-          // breadcrumbItems={parentInfos}
-          // onChangeTitle={({ value }) => {
-          //   renameRequest({
-          //     id: activeWorkspaceId,
-          //     newName: value,
-          //     path: parentInfos.map((parentInfo) => parentInfo.id),
-          //     userName: getLocalStorage(EMAIL_KEY),
-          //   }).then((res) => {
-          //     getCollections();
-          //   });
-          // }}
-        />
-      </RequestConfigProvider>
+          });
+        }}
+        onSave={onSave}
+        // @ts-ignore
+        value={data}
+        breadcrumb={<div></div>}
+        environment={{
+          name: activeEnvironment?.envName || '',
+          variables: activeEnvironment?.keyValues || [],
+        }}
+        config={{}}
+        breadcrumbItems={[{ title: 'test' }, { title: 'case' }]}
+        // breadcrumbItems={parentInfos}
+        // onChangeTitle={({ value }) => {
+        //   renameRequest({
+        //     id: activeWorkspaceId,
+        //     newName: value,
+        //     path: parentInfos.map((parentInfo) => parentInfo.id),
+        //     userName: getLocalStorage(EMAIL_KEY),
+        //   }).then((res) => {
+        //     getCollections();
+        //   });
+        // }}
+      />
     </div>
   );
 };
