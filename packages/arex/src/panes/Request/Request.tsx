@@ -37,6 +37,7 @@ const Request: ArexPaneFC<CollectionTreeType> = (props) => {
       return {
         response: res.response,
         testResult: res.testResult,
+        consoles: res.consoles,
       };
     });
   }
