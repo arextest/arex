@@ -72,7 +72,7 @@ const Request: ArexPaneFC<CollectionTreeType> = (props) => {
       <Http
         theme={theme}
         locale={language}
-        onSend={(request) => {
+        onSend={(request: any) => {
           return onSend(request, {
             name: activeEnvironment?.envName || '',
             variables: activeEnvironment?.keyValues || [],
