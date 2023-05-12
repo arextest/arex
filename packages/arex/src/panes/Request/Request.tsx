@@ -87,7 +87,7 @@ const Request: ArexPaneFC<CollectionTreeType> = (props) => {
             variables: activeEnvironment?.keyValues || [],
           }}
           config={{}}
-          breadcrumbItems={[]}
+          breadcrumbItems={[{ title: 'test' }, { title: 'case' }]}
           // breadcrumbItems={parentInfos}
           // onChangeTitle={({ value }) => {
           //   renameRequest({
