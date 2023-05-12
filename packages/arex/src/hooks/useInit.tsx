@@ -1,34 +1,21 @@
-import { useRequest } from 'ahooks';
-import {
-  decodeUrl,
-  encodeUrl,
-  getLocalStorage,
-  I18_KEY,
-  i18n,
-  StandardPathParams,
-} from 'arex-core';
+import { decodeUrl, encodeUrl, I18_KEY, i18n, StandardPathParams } from 'arex-core';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { DEFAULT_LANGUAGE, EMAIL_KEY } from '@/constant';
-import { UserService } from '@/services';
+import { DEFAULT_LANGUAGE } from '@/constant';
 import { useCollections } from '@/store';
-import { useEnvironments, useUserProfile, useWorkspaces } from '@/store';
+import { useEnvironments, useWorkspaces } from '@/store';
 import useMenusPanes from '@/store/useMenusPanes';
+import { globalStoreInit } from '@/utils';
+
 const useInit = () => {
   const { panes, setPanes } = useMenusPanes();
   const { workspaces, setActiveWorkspaceId } = useWorkspaces();
   const nav = useNavigate();
-  const email = getLocalStorage(EMAIL_KEY) as string;
-
-  useRequest(UserService.getUserProfile, {
-    defaultParams: [email],
-    onSuccess(res) {
-      res && useUserProfile.setState(res);
-    },
-  });
 
   useEffect(() => {
+    globalStoreInit();
+
     if (location.pathname === '/' && workspaces.length) {
       const workspaceId = workspaces[0].id;
       setActiveWorkspaceId(workspaceId);
@@ -37,7 +24,7 @@ const useInit = () => {
 
     // check if the url points to the new Pane
     const match = decodeUrl();
-    const { paneType, id } = match.params as StandardPathParams;
+    const { paneType, id } = (match.params as StandardPathParams) || {};
     if (paneType && id) {
       const exist = panes.some((pane) => pane.type === paneType && pane.id === id);
       if (!exist)

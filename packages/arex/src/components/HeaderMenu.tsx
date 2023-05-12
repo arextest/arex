@@ -1,23 +1,25 @@
 import { LogoutOutlined, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Avatar, Dropdown, DropdownProps, Space } from 'antd';
-import { getLocalStorage, setLocalStorage, TooltipButton, useTranslation } from 'arex-core';
+import { getLocalStorage, TooltipButton, useTranslation } from 'arex-core';
 import React, { FC, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
-import { useMenusPanes, useUserProfile } from '@/store';
+import { useUserProfile } from '@/store';
+
+import globalStoreReset from '../utils/globalStoreReset';
 
 const HeaderMenu: FC = () => {
-  const { reset } = useMenusPanes();
   const { avatar } = useUserProfile();
   const { t } = useTranslation();
   const email = getLocalStorage(EMAIL_KEY) as string;
   const navPane = useNavPane();
+  const nav = useNavigate();
 
   const handleLogout = () => {
-    reset();
-    localStorage.clear();
-    email?.startsWith('GUEST') && setLocalStorage(EMAIL_KEY, email);
+    globalStoreReset();
+    nav('/login');
   };
 
   const userMenu: DropdownProps['menu'] = useMemo(

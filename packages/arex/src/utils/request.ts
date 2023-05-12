@@ -5,12 +5,14 @@ import { ACCESS_TOKEN_KEY } from '@/constant';
 
 type IRequestConfig<T = AxiosResponse> = AxiosRequestConfig;
 
+export type ResponseStatusType = {
+  responseCode: number;
+  responseDesc: string;
+  timestamp: number;
+};
+
 export type IAxiosResponse<T> = {
-  responseStatusType: {
-    responseCode: number;
-    responseDesc: string;
-    timestamp: number;
-  };
+  responseStatusType: ResponseStatusType;
   body: T;
 };
 
@@ -36,8 +38,8 @@ export class Request {
     // 全局响应拦截
     this.instance.interceptors.response.use(
       (response) => {
-        if (response.data.responseStatusType.responseDesc === 'no permission') {
-          return Promise.reject(response.data.responseStatusType.responseDesc);
+        if (response.data.responseStatusType.responseCode === 4) {
+          return Promise.reject(response.data.responseStatusType);
         }
         return Promise.resolve(response.data);
       },

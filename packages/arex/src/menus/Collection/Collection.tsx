@@ -58,15 +58,14 @@ export type CollectionTreeType = CollectionType & DataNode;
 const Collection: ArexMenuFC = (props) => {
   const { t } = useTranslation(['components']);
   const { activeWorkspaceId } = useWorkspaces();
-  const { loading, collectionsTreeData, getCollections } = useCollections();
+  const { loading, collectionsTreeData, collectionsFlatData, getCollections } = useCollections();
   // useLabels()
 
   const navPane = useNavPane();
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
   const selectedKeys = useMemo(() => (props.value ? [props.value] : []), [props.value]);
-  const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
-  const [autoExpandParent, setAutoExpandParent] = useState(true);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
 
   const handleSelect: DirectoryTreeProps<CollectionTreeType>['onSelect'] = (keys, info) => {
     console.log({ keys, info });
@@ -84,8 +83,7 @@ const Collection: ArexMenuFC = (props) => {
   };
 
   const onExpand = (newExpandedKeys: React.Key[]) => {
-    setExpandedKeys(newExpandedKeys);
-    setAutoExpandParent(false);
+    setExpandedKeys(newExpandedKeys as string[]);
   };
 
   const { run: createCollection } = useRequest(
@@ -116,7 +114,7 @@ const Collection: ArexMenuFC = (props) => {
         <Tree<CollectionType>
           showLine
           blockNode
-          autoExpandParent={autoExpandParent}
+          autoExpandParent
           selectedKeys={selectedKeys}
           expandedKeys={expandedKeys}
           switcherIcon={<DownOutlined />}
@@ -126,7 +124,16 @@ const Collection: ArexMenuFC = (props) => {
           onExpand={onExpand}
           onSelect={handleSelect}
           draggable={{ icon: false }}
-          titleRender={(data) => <CollectionNodeTitle keyword={''} data={data} />}
+          titleRender={(data) => (
+            <CollectionNodeTitle
+              keyword={''}
+              data={data}
+              onAddNode={(infoId) => {
+                props.onSelect?.(infoId, { infoId });
+                setExpandedKeys([...expandedKeys, infoId]);
+              }}
+            />
+          )}
         />
       </EmptyWrapper>
     </CollectionNodeTitleWrapper>

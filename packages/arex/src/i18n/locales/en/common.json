@@ -57,5 +57,6 @@
   "request": "Request",
   "response": "Response",
   "version": "Version",
-  "modifiedTime": "Modified Time"
+  "modifiedTime": "Modified Time",
+  "loginInformationExpired": "Login information expired, please login again"
 }

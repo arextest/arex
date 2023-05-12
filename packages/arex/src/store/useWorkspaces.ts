@@ -1,4 +1,4 @@
-import { getLocalStorage, RoleEnum } from 'arex-core';
+import { getLocalStorage, i18n, RoleEnum } from 'arex-core';
 import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 
@@ -17,8 +17,9 @@ export type WorkspaceState = {
 };
 
 export type WorkspaceAction = {
-  getWorkspaces: (id?: string) => Promise<Workspace[]>;
+  getWorkspaces: (id?: string) => Promise<Workspace[] | undefined>;
   setActiveWorkspaceId: (id: string) => void;
+  reset: () => void;
 };
 
 const initialState: WorkspaceState = {
@@ -29,17 +30,23 @@ const initialState: WorkspaceState = {
 const useWorkspaces = create(
   subscribeWithSelector(
     persist<WorkspaceState & WorkspaceAction>(
-      (set) => {
+      (set, get) => {
         async function getWorkspaces(id?: string) {
-          const userName = getLocalStorage(EMAIL_KEY) as string;
-          const workspaces = await queryWorkspacesByUser({ userName });
+          const userName = getLocalStorage<string>(EMAIL_KEY);
+          if (!userName) return;
+
+          let workspaces: Workspace[] = [];
+          try {
+            workspaces = await queryWorkspacesByUser({ userName });
+          } catch (e) {
+            window.message.error(i18n.t('workSpace.noPermissionOrInvalid', { ns: 'components' }));
+          }
           set({ workspaces });
-          id && set({ activeWorkspaceId: id });
+          const activeWorkspaceId = id || get().activeWorkspaceId || workspaces[0]?.id;
+          activeWorkspaceId && set({ activeWorkspaceId: activeWorkspaceId });
 
           return workspaces;
         }
-
-        getWorkspaces();
 
         return {
           // initialState
@@ -48,6 +55,7 @@ const useWorkspaces = create(
           // actions
           getWorkspaces,
           setActiveWorkspaceId: (id) => set({ activeWorkspaceId: id }),
+          reset: () => set(initialState),
         };
       },
       {

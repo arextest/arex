@@ -20,7 +20,7 @@ const SettingPage: FC = () => {
   const { message } = App.useApp();
   const email = getLocalStorage<string>(EMAIL_KEY) as string;
   const colorPrimary = useColorPrimary();
-  const { avatar, theme, compact, language, setUserProfile } = useUserProfile();
+  const { avatar, theme, compact, language, getUserProfile } = useUserProfile();
 
   const [form] = Form.useForm<SettingForm>();
 
@@ -53,7 +53,7 @@ const SettingPage: FC = () => {
           avatar: values.avatar,
         };
 
-        setUserProfile(profile);
+        getUserProfile();
         updateUserProfileRequestRun({
           profile: JSON.stringify(profile),
           userName: email,

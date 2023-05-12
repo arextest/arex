@@ -58,7 +58,7 @@ const useEnvironments = create(
       async function getEnvironments(workspaceId?: string) {
         const _workspaceId = workspaceId || useWorkspaces.getState().activeWorkspaceId;
         if (!_workspaceId) {
-          window.message.info('please select a workspace first');
+          // window.message.info('please select a workspace first');
           return;
         }
 
@@ -68,8 +68,6 @@ const useEnvironments = create(
         set({ environments, timestamp: Date.now() });
         return environments;
       }
-
-      getEnvironments();
 
       return {
         // ...initialState,

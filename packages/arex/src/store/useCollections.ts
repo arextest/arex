@@ -57,8 +57,6 @@ const useCollections = create<CollectionState & CollectionAction>((set, get) => 
     set({ collectionsFlatData, collectionsTreeData: data.roots, loading: false });
   }
 
-  getCollections();
-
   /**
    * 获取路径
    * @param id

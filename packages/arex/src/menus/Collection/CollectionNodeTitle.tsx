@@ -47,19 +47,19 @@ const CollectionNodeTitleWrapper = styled.div`
 export type CollectionNodeTitleProps = {
   data: CollectionType;
   keyword: string;
+  onAddNode?: (info: string) => void;
 };
 
 const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
-  const { modal, message } = App.useApp();
+  const { modal } = App.useApp();
   const confirm = modal.confirm;
-
   const { t } = useTranslation(['common', 'components']);
+
   const { activeWorkspaceId } = useWorkspaces();
   const { getCollections, getPath } = useCollections();
 
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
-  const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [nodeName, setNodeName] = useState(props.data.nodeName);
 
@@ -77,13 +77,41 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
       manual: true,
       onSuccess: (res, [{ caseSourceType }]) => {
         if (res.success) {
-          getCollections();
-          // TODO 展开新增行
-
-          if (caseSourceType === 2) {
-            queryInterface({ id: nodePath.at(-1) as string }, res.infoId);
-          }
+          getCollections().then(() => props.onAddNode?.(res.infoId));
+          if (caseSourceType === 2) queryInterface({ id: nodePath.at(-1) as string }, res.infoId);
         }
+      },
+    },
+  );
+
+  const { run: duplicateCollectionItem } = useRequest(
+    () =>
+      FileSystemService.duplicateCollectionItem({
+        id: activeWorkspaceId,
+        path: nodePath,
+        userName,
+      }),
+    {
+      manual: true,
+      onSuccess: () => {
+        getCollections();
+      },
+    },
+  );
+
+  const { run: rename } = useRequest(
+    () =>
+      FileSystemService.renameCollectionItem({
+        id: activeWorkspaceId,
+        newName: nodeName,
+        path: nodePath,
+        userName,
+      }),
+    {
+      manual: true,
+      onSuccess(success) {
+        setEditMode(false);
+        getCollections(activeWorkspaceId);
       },
     },
   );
@@ -121,156 +149,125 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     },
   });
 
-  const showPropsConfirm = () => {
-    confirm({
-      title: t('are_you_sure'),
-      icon: <ExclamationCircleFilled />,
-      okText: 'Yes',
-      okType: 'danger',
-      cancelText: 'No',
-      onOk: removeCollectionItem,
-    });
-  };
-
   const menu: MenuProps = useMemo(
     () => ({
-      items: [
-        {
-          key: 'batchRun',
-          label: (
-            <span className={'dropdown-click-target'}>
-              {t('collection.batch_run', { ns: 'components' })}
-            </span>
-          ),
-          disabled: props.data.nodeType !== CollectionNodeType.folder,
-        },
-        {
-          key: 'addFolder',
-          label: (
-            <span className={'dropdown-click-target'}>
-              {t('collection.add_folder', { ns: 'components' })}
-            </span>
-          ),
-          // 只有类型为3才能新增文件夹
-          disabled: props.data.nodeType !== CollectionNodeType.folder,
-        },
-        {
-          key: 'addRequest',
-          label: (
-            <span className={'dropdown-click-target'}>
-              {t('collection.add_request', { ns: 'components' })}
-            </span>
-          ),
-          disabled: props.data.nodeType !== CollectionNodeType.interface,
-        },
-        {
-          key: 'addCase',
-          label: (
-            <span className={'dropdown-click-target'}>
-              {t('collection.add_case', { ns: 'components' })}
-            </span>
-          ),
-          disabled: props.data.nodeType !== CollectionNodeType.interface,
-        },
-        {
-          key: 'rename',
-          label: (
-            <span className={'dropdown-click-target'}>
-              {t('collection.rename', { ns: 'components' })}
-            </span>
-          ),
-        },
-        {
-          key: 'duplicate',
-          label: (
-            <span className={'dropdown-click-target'}>
-              {t('collection.duplicate', { ns: 'components' })}
-            </span>
-          ),
-        },
-        {
-          key: '5',
-          label: (
-            <a
-              style={{ color: 'red' }}
-              onClick={() => {
-                showPropsConfirm();
-              }}
-            >
-              {t('collection.delete', { ns: 'components' })}
-            </a>
-          ),
-        },
-      ],
+      items: (
+        [] as {
+          key: string;
+          label: ReactNode;
+        }[]
+      )
+        .concat(
+          props.data.nodeType === CollectionNodeType.folder
+            ? [
+                {
+                  key: 'batchRun',
+                  label: <a>{t('collection.batch_run', { ns: 'components' })}</a>,
+                },
+                {
+                  key: 'addFolder',
+                  label: (
+                    <a
+                      onClick={() =>
+                        addCollectionItem({
+                          nodeName: 'New Collection',
+                          nodeType: CollectionNodeType.folder,
+                        })
+                      }
+                    >
+                      {t('collection.add_folder', { ns: 'components' })}
+                    </a>
+                  ),
+                },
+                {
+                  key: 'addRequest',
+                  label: (
+                    <a
+                      onClick={() =>
+                        addCollectionItem({
+                          nodeName: 'New Request',
+                          nodeType: CollectionNodeType.interface,
+                        })
+                      }
+                    >
+                      {t('collection.add_request', { ns: 'components' })}
+                    </a>
+                  ),
+                },
+              ]
+            : [],
+        )
+        .concat(
+          props.data.nodeType === CollectionNodeType.interface
+            ? [
+                {
+                  key: 'addCase',
+                  label: (
+                    <a
+                      onClick={() => {
+                        addCollectionItem({
+                          nodeName: 'case',
+                          nodeType: CollectionNodeType.case,
+                          caseSourceType: 2,
+                        });
+                      }}
+                    >
+                      {t('collection.add_case', { ns: 'components' })}
+                    </a>
+                  ),
+                },
+              ]
+            : [],
+        )
+        .concat([
+          {
+            key: 'rename',
+            label: (
+              <a onClick={() => setEditMode(true)}>
+                {t('collection.rename', { ns: 'components' })}
+              </a>
+            ),
+          },
+          {
+            key: 'duplicate',
+            label: (
+              <a onClick={() => duplicateCollectionItem()}>
+                {t('collection.duplicate', { ns: 'components' })}
+              </a>
+            ),
+          },
+          {
+            key: 'delete',
+            label: (
+              <a
+                style={{ color: 'red' }}
+                onClick={() => {
+                  confirm({
+                    title: t('are_you_sure'),
+                    icon: <ExclamationCircleFilled />,
+                    okText: 'Yes',
+                    okType: 'danger',
+                    cancelText: 'No',
+                    onOk: removeCollectionItem,
+                  });
+                }}
+              >
+                {t('collection.delete', { ns: 'components' })}
+              </a>
+            ),
+          },
+        ]),
       onClick(e) {
-        switch (e.key) {
-          case 'addFolder':
-            addCollectionItem({
-              nodeName: 'New Collection',
-              nodeType: CollectionNodeType.folder,
-            });
-            break;
-          case 'addRequest':
-            addCollectionItem({
-              nodeName: 'New Request',
-              nodeType: CollectionNodeType.interface,
-            });
-            break;
-          case 'addCase':
-            addCollectionItem({
-              nodeName: 'case',
-              nodeType: CollectionNodeType.case,
-              caseSourceType: 2,
-            });
-            break;
-          case 'rename':
-            setEditMode(true);
-            break;
-          case 'duplicate':
-            FileSystemService.duplicateCollectionItem({
-              id: activeWorkspaceId,
-              path: nodePath,
-              userName,
-            }).then(() => {
-              getCollections(activeWorkspaceId);
-            });
-            break;
-          case 'batchRun':
-            // to BatchRun pane
-            // customNavigate(`/${activeWorkspaceId}/${PagesType.BatchRun}/${props.data.id}`);
-            break;
-        }
         e.domEvent.stopPropagation();
-        setOpen(false);
       },
     }),
-    [activeWorkspaceId, userName],
-  );
-
-  const { run: rename } = useRequest(
-    () =>
-      FileSystemService.renameCollectionItem({
-        id: activeWorkspaceId,
-        newName: nodeName,
-        path: nodePath,
-        userName,
-      }),
-    {
-      manual: true,
-      onSuccess(success) {
-        setEditMode(false);
-        getCollections(activeWorkspaceId);
-      },
-    },
+    [],
   );
 
   const prefix = useMemo(
     () =>
       props.data.nodeType === 1 ? (
-        React.createElement(
-          RequestMethodIcon[props.data.method || 'QuestionOutlined'] ||
-            RequestMethodIcon['QuestionOutlined'],
-        )
+        React.createElement(RequestMethodIcon[props.data.method || ''] || 'div')
       ) : props.data.nodeType === 2 ? (
         <PrefixIcon border icon={props.data.caseSourceType === 1 ? 'arex' : 'case'} />
       ) : null,
@@ -297,7 +294,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
       </div>
 
       <div className='right'>
-        <Dropdown menu={menu} trigger={['click']} open={open} onOpenChange={setOpen}>
+        <Dropdown menu={menu} trigger={['click']}>
           <Button
             type='text'
             size='small'

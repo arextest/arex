@@ -1,12 +1,15 @@
-import { I18nextLng, setLocalStorage, Theme } from 'arex-core';
+import { getLocalStorage, i18n, I18nextLng, setLocalStorage, Theme } from 'arex-core';
 import { create } from 'zustand';
 
-import { DEFAULT_COLOR_PRIMARY, DEFAULT_THEME, THEME_KEY } from '@/constant';
+import { DEFAULT_COLOR_PRIMARY, DEFAULT_THEME, EMAIL_KEY, THEME_KEY } from '@/constant';
+import { UserService } from '@/services';
 import { UserProfile } from '@/services/UserService';
+import globalStoreReset from '@/utils/globalStoreReset';
 
 export type UserProfileAction = {
   setTheme: (theme: Theme) => void;
-  setUserProfile: (profile: UserProfile) => void;
+  getUserProfile: () => void;
+  reset: () => void;
 };
 
 const initialState: UserProfile = {
@@ -17,15 +20,31 @@ const initialState: UserProfile = {
   avatar: '',
 };
 
-const useUserProfile = create<UserProfile & UserProfileAction>((set) => ({
-  ...initialState,
-  setTheme: (theme: Theme) => {
-    setLocalStorage(THEME_KEY, theme);
-    set({ theme });
-  },
-  setUserProfile: (profile: UserProfile) => {
-    set(profile);
-  },
-}));
+const useUserProfile = create<UserProfile & UserProfileAction>((set) => {
+  async function getUserProfile(email?: string) {
+    const _email = email || getLocalStorage<string>(EMAIL_KEY);
+    if (!_email) return;
+
+    let profile: UserProfile | undefined;
+    try {
+      profile = await UserService.getUserProfile(_email);
+    } catch (e) {
+      window.message.error(i18n.t('loginInformationExpired'));
+      globalStoreReset();
+    }
+
+    profile && set(profile);
+  }
+
+  return {
+    ...initialState,
+    setTheme: (theme: Theme) => {
+      setLocalStorage(THEME_KEY, theme);
+      set({ theme });
+    },
+    getUserProfile,
+    reset: () => set(initialState),
+  };
+});
 
 export default useUserProfile;
