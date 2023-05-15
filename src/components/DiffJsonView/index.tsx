@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { LogEntity } from '../../services/Replay.type';
 import useUserProfile from '../../store/useUserProfile';
 import DiffJsonTooltip from './DiffJsonTooltip';
-import { genAllDiffByType } from './helper';
+import { genAllLeftDiffByType, genAllRightDiffByType } from './helper';
 import VanillaJSONEditor from './VanillaJSONEditor';
 
 export type DiffJsonViewProps = {
@@ -20,17 +20,43 @@ export type DiffJsonViewProps = {
 const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip, height }) => {
   const { t } = useTranslation(['components']);
   const { theme } = useUserProfile();
-  const allDiffByType = genAllDiffByType(diffPath);
+  const allLeftDiffByType = genAllLeftDiffByType(diffPath);
 
-  const onClassName = (path: string[]) => {
+  const allRightDiffByType = genAllRightDiffByType(diffPath);
+
+  const onClassNameLeft = (path: string[]) => {
     const pathStr = path.map((p) => (isNaN(Number(p)) ? p : Number(p)));
     if (
-      allDiffByType.diff012.map((item) => JSON.stringify(item)).includes(JSON.stringify(pathStr))
+      allLeftDiffByType.diff
+        .map((item: any) => JSON.stringify(item))
+        .includes(JSON.stringify(pathStr))
+    ) {
+      return 'different_element';
+    }
+    if (
+      allLeftDiffByType.more
+        .map((item: any) => JSON.stringify(item))
+        .includes(JSON.stringify(pathStr))
     ) {
       return 'different_element_012';
     }
-    if (allDiffByType.diff3.map((item) => JSON.stringify(item)).includes(JSON.stringify(pathStr))) {
+  };
+
+  const onClassNameRight = (path: string[]) => {
+    const pathStr = path.map((p) => (isNaN(Number(p)) ? p : Number(p)));
+    if (
+      allRightDiffByType.diff
+        .map((item: any) => JSON.stringify(item))
+        .includes(JSON.stringify(pathStr))
+    ) {
       return 'different_element';
+    }
+    if (
+      allRightDiffByType.more
+        .map((item: any) => JSON.stringify(item))
+        .includes(JSON.stringify(pathStr))
+    ) {
+      return 'different_element_012';
     }
   };
 
@@ -77,8 +103,8 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
               json: undefined,
             }}
             mainMenuBar={false}
-            onClassName={onClassName}
-            allDiffByType={allDiffByType}
+            onClassName={onClassNameLeft}
+            allDiffByType={allLeftDiffByType}
             css={css`
               flex: 1;
             `}
@@ -100,8 +126,8 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
               json: undefined,
             }}
             mainMenuBar={false}
-            onClassName={onClassName}
-            allDiffByType={allDiffByType}
+            onClassName={onClassNameRight}
+            allDiffByType={allRightDiffByType}
             css={css`
               flex: 1;
             `}
