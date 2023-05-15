@@ -46,7 +46,7 @@ const CollectionNodeTitleWrapper = styled.div`
 
 export type CollectionNodeTitleProps = {
   data: CollectionType;
-  keyword: string;
+  keyword?: string;
   onAddNode?: (info: string) => void;
 };
 

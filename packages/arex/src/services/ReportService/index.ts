@@ -1,4 +1,5 @@
 export * from './deleteReport';
+export * from './label';
 export * from './queryAllDiffMsg';
 export * from './queryDifferences';
 export * from './queryDiffMsgById';

@@ -1,16 +1,28 @@
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, PlayCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { Button, Tree } from 'antd';
+import { Button, Dropdown, Tag, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
-import { ArexMenuFC, EmptyWrapper, getLocalStorage, styled, useTranslation } from 'arex-core';
+import {
+  ArexMenuFC,
+  CategoryKey,
+  EmptyWrapper,
+  getLocalStorage,
+  Operator,
+  SearchDataType,
+  StructuredFilter,
+  styled,
+  TooltipButton,
+  useTranslation,
+} from 'arex-core';
 import React, { useMemo, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import CollectionNodeTitle from '@/menus/Collection/CollectionNodeTitle';
-import { FileSystemService } from '@/services';
+import { FileSystemService, ReportService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
 import { useCollections, useWorkspaces } from '@/store';
+import { negate } from '@/utils';
 
 const CollectionNodeTitleWrapper = styled.div`
   width: 100%;
@@ -58,14 +70,59 @@ export type CollectionTreeType = CollectionType & DataNode;
 const Collection: ArexMenuFC = (props) => {
   const { t } = useTranslation(['components']);
   const { activeWorkspaceId } = useWorkspaces();
-  const { loading, collectionsTreeData, getCollections } = useCollections();
+  const { loading, collectionsTreeData, collectionsFlatData, getCollections } = useCollections();
   // useLabels()
 
   const navPane = useNavPane();
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
+  const [searchValue, setSearchValue] = useState<SearchDataType>();
+
   const selectedKeys = useMemo(() => (props.value ? [props.value] : []), [props.value]);
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]); // TODO 初始化展开的节点
+
+  const { data: labelData = [] } = useRequest(
+    () => ReportService.queryLabels({ workspaceId: activeWorkspaceId as string }),
+    {
+      ready: !!activeWorkspaceId,
+    },
+  );
+
+  // TODO filter
+  const filterTreeData = useMemo(() => collectionsTreeData, [collectionsTreeData, searchValue]);
+
+  const dataList: { key: string; title: string; labelIds: string | null }[] = useMemo(
+    () =>
+      Array.from(collectionsFlatData).map(([key, value]) => ({
+        key,
+        title: value.nodeName,
+        labelIds: value.labelIds,
+      })),
+    [collectionsFlatData],
+  );
+
+  const options = useMemo(
+    () => [
+      {
+        category: CategoryKey.Label,
+        operator: [Operator.EQ, Operator.NE],
+        value: labelData.map((label) => ({
+          label: <Tag color={label.color}>{label.labelName}</Tag>,
+          key: label.id,
+        })),
+      },
+      // TODO 暂时将 id 搜索用 keyword 实现
+      // {
+      //   category: CategoryKey.Id,
+      //   operator: [Operator.EQ, Operator.NE],
+      //   value: dataList.map((item) => ({
+      //     label: item.key,
+      //     key: item.key,
+      //   })),
+      // },
+    ],
+    [labelData],
+  );
 
   const handleSelect: DirectoryTreeProps<CollectionTreeType>['onSelect'] = (keys, info) => {
     if (info.node.nodeType !== CollectionNodeType.folder) {
@@ -78,6 +135,61 @@ const Collection: ArexMenuFC = (props) => {
         data: info.node,
       });
     }
+  };
+
+  const handleChange = (value: SearchDataType) => {
+    const { keyword, structuredValue = [] } = value;
+    let newExpandedKeys;
+    if (!structuredValue?.length && !keyword) {
+      newExpandedKeys = dataList.map((item) => item.title);
+    } else {
+      newExpandedKeys = dataList
+        .map((item) => {
+          const lowerCaseKeyword = keyword?.toLowerCase() || '';
+          const keywordFiltered =
+            !keyword ||
+            (lowerCaseKeyword &&
+              (item.title.toLowerCase().includes(lowerCaseKeyword) ||
+                item.key.toLowerCase().includes(lowerCaseKeyword)));
+          let structuredFiltered = true;
+
+          for (let i = 0; i < structuredValue.length; i++) {
+            const structured = structuredValue[i];
+
+            if (structured.category === CategoryKey.Label) {
+              // search for labelIds
+              const include = negate(
+                item.labelIds?.includes(structured.value as string),
+                structured.operator === Operator.NE,
+              );
+
+              if (!include) {
+                structuredFiltered = false;
+                break;
+              }
+              // TODO 暂时移除 id 结构化搜索
+              // } else if (structured.category === CategoryKey.Id) {
+              //   // search for id
+              //   const include = negate(
+              //     item.key.includes(structured.value as string),
+              //     structured.operator === Operator.NE,
+              //   );
+              //   console.log({ include });
+              //   if (include) {
+              //     filtered = true;
+              //     break;
+              //   }
+            }
+          }
+
+          return keywordFiltered && structuredFiltered
+            ? collectionsFlatData.get(item.key)?.pid
+            : null;
+        })
+        .filter((item, i, self) => item && self.indexOf(item) === i);
+    }
+    setExpandedKeys(newExpandedKeys as string[]);
+    setSearchValue(value);
   };
 
   const { run: createCollection } = useRequest(
@@ -170,6 +282,50 @@ const Collection: ArexMenuFC = (props) => {
           </Button>
         }
       >
+        <StructuredFilter
+          size='small'
+          className={'collection-header-search'}
+          showSearchButton={false}
+          prefix={
+            <>
+              <TooltipButton
+                icon={<PlusOutlined />}
+                type='text'
+                size='small'
+                placement='bottomLeft'
+                className={'collection-header-create'}
+                title={t('collection.create_new')}
+                onClick={createCollection}
+              />
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: 'batchRun',
+                      label: (
+                        <a
+                          onClick={(e) => {
+                            // TODO // customNavigate(`/${params.workspaceId}/${PagesType.BatchRun}/${u}`);
+                          }}
+                        >
+                          {t('collection.batch_run')}
+                        </a>
+                      ),
+                    },
+                  ],
+                }}
+              >
+                <a onClick={(e) => e.preventDefault()}>
+                  <Button icon={<PlayCircleOutlined />} type={'text'} size={'small'} />
+                </a>
+              </Dropdown>
+            </>
+          }
+          options={options}
+          placeholder={'Search for Name or Id'}
+          onChange={handleChange}
+        />
+
         <Tree<CollectionType>
           showLine
           blockNode
@@ -177,7 +333,7 @@ const Collection: ArexMenuFC = (props) => {
           selectedKeys={selectedKeys}
           expandedKeys={expandedKeys}
           switcherIcon={<DownOutlined />}
-          treeData={collectionsTreeData}
+          treeData={filterTreeData}
           fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
           onDrop={onDrop}
           onExpand={onExpand}
@@ -185,7 +341,7 @@ const Collection: ArexMenuFC = (props) => {
           draggable={{ icon: false }}
           titleRender={(data) => (
             <CollectionNodeTitle
-              keyword={''}
+              keyword={searchValue?.keyword}
               data={data}
               onAddNode={(infoId) => {
                 props.onSelect?.(infoId, { infoId });

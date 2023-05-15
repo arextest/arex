@@ -3,9 +3,9 @@ import { App, Button, Popconfirm, Space, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useTranslation } from 'arex-core';
 import React, { FC, useRef } from 'react';
+import { Label } from 'src/services/ReportService/label';
 
-import { FileSystemService } from '@/services';
-import { Label } from '@/services/FileSystemService/label';
+import { ReportService } from '@/services';
 import { useWorkspaces } from '@/store';
 
 import LabelEditor, { LabelEditorProps, LabelEditorRef } from './LabelEditor';
@@ -62,11 +62,11 @@ const CollectionLabel: FC = () => {
   ];
 
   const { data: labelData, run: queryLabels } = useRequest(
-    () => FileSystemService.queryLabels({ workspaceId: activeWorkspaceId as string }),
+    () => ReportService.queryLabels({ workspaceId: activeWorkspaceId as string }),
     { ready: !!activeWorkspaceId },
   );
 
-  const { run: labelRemoveRun } = useRequest(FileSystemService.removeLabels, {
+  const { run: labelRemoveRun } = useRequest(ReportService.removeLabels, {
     manual: true,
     ready: !!activeWorkspaceId,
     onSuccess() {
@@ -77,7 +77,7 @@ const CollectionLabel: FC = () => {
     },
   });
 
-  const { run: labelSaveRun } = useRequest(FileSystemService.saveLabels, {
+  const { run: labelSaveRun } = useRequest(ReportService.saveLabels, {
     manual: true,
     ready: !!activeWorkspaceId,
     onSuccess() {
