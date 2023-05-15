@@ -166,6 +166,7 @@ export interface CreatePlanReq {
   targetEnv: string;
   operator: string;
   replayPlanType: number;
+  planName?: string;
   caseSourceType?: number;
   caseSourceFrom: number;
   caseSourceTo: number;

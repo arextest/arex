@@ -16,7 +16,6 @@ import {
   Card,
   Col,
   Dropdown,
-  MenuProps,
   Popconfirm,
   Row,
   Space,
@@ -58,9 +57,11 @@ const chartOptions = {
 export type ReplayReportProps = {
   selectedPlan?: PlanStatistics;
   filter?: (record: PlanItemStatistics) => boolean;
+  onRefresh?: () => void;
 };
 
-const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
+const ReplayReport: FC<ReplayReportProps> = (props) => {
+  const { selectedPlan, filter, onRefresh } = props;
   const { message, notification } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
   const params = useParams();
@@ -288,8 +289,8 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
             }}
           />
           <Popconfirm
-            title='Rerun plan item'
-            description='Are you sure to rerun?'
+            title={t('replay.rerun')}
+            description={t('replay.rerunTip')}
             onConfirm={() =>
               handleRerun({
                 operationId: record.operationId,
@@ -298,7 +299,7 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
               })
             }
             onCancel={() => {
-              handleRerunError({ key: 'rerunInterface' }, record.planItemId);
+              handleRerunError({ key: 'rerunInterface' }, record);
             }}
             okText={t('replay.rerun')}
             cancelText={t('replay.rerunError')}
@@ -344,6 +345,7 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
     },
     onSuccess(res) {
       if (res.result === 1) {
+        onRefresh?.();
         notification.success({
           message: t('message.success', { ns: 'common' }),
           description: res.desc,
@@ -364,9 +366,11 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
     params?: { operationId?: string } & Partial<
       Pick<CreatePlanReq, 'caseSourceFrom' | 'caseSourceTo' | 'operationCaseInfoList'>
     >,
+    operationName?: string,
   ) => {
     const { operationId, caseSourceFrom, caseSourceTo, operationCaseInfoList } = params || {};
     if (operationId && caseSourceFrom && caseSourceTo) {
+      // 创建新的回放
       rerun({
         caseSourceFrom,
         caseSourceTo,
@@ -383,13 +387,19 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
       selectedPlan?.caseEndTime &&
       selectedPlan?.targetHost
     ) {
+      // 重新执行回放
       rerun({
         caseSourceFrom: selectedPlan.caseStartTime,
         caseSourceTo: selectedPlan.caseEndTime,
         appId: selectedPlan!.appId,
-        operationCaseInfoList,
+        operationCaseInfoList, // 重新执行失败的用例
         operator: email,
         replayPlanType: operationCaseInfoList ? 2 : 0,
+        planName: operationCaseInfoList
+          ? operationName
+            ? selectedPlan.planName + `-${operationName}-rerun`
+            : selectedPlan.planName + '-rerun'
+          : undefined,
         sourceEnv: 'pro',
         targetEnv: selectedPlan!.targetHost,
       });
@@ -398,15 +408,18 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
 
   const { run: queryPlanFailCase } = useRequest(ReplayService.queryPlanFailCase, {
     manual: true,
-    onSuccess(failCaseList) {
-      handleRerun({ operationCaseInfoList: failCaseList });
+    onSuccess(failCaseList, [params, operationName]) {
+      handleRerun({ operationCaseInfoList: failCaseList }, operationName);
     },
   });
 
-  const handleRerunError = (e: { key: string }, planItemId?: string) => {
+  const handleRerunError = (e: { key: string }, planItem?: PlanItemStatistics) => {
     if (e.key === 'rerunErrorPlan') queryPlanFailCase({ planId: selectedPlan!.planId });
     else if (e.key === 'rerunInterface')
-      queryPlanFailCase({ planId: selectedPlan!.planId, planItemIdList: [planItemId] });
+      queryPlanFailCase(
+        { planId: selectedPlan!.planId, planItemIdList: [planItem!.planItemId] },
+        planItem!.operationName,
+      );
   };
 
   return selectedPlan ? (
@@ -569,9 +582,7 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
         style={{ overflow: 'auto' }}
       />
     </Card>
-  ) : (
-    <div></div>
-  );
+  ) : null;
 };
 
 export default ReplayReport;
