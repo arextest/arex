@@ -58,18 +58,16 @@ export type CollectionTreeType = CollectionType & DataNode;
 const Collection: ArexMenuFC = (props) => {
   const { t } = useTranslation(['components']);
   const { activeWorkspaceId } = useWorkspaces();
-  const { loading, collectionsTreeData, collectionsFlatData, getCollections } = useCollections();
+  const { loading, collectionsTreeData, getCollections } = useCollections();
   // useLabels()
 
   const navPane = useNavPane();
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
   const selectedKeys = useMemo(() => (props.value ? [props.value] : []), [props.value]);
-  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]); // TODO 初始化展开的节点
 
   const handleSelect: DirectoryTreeProps<CollectionTreeType>['onSelect'] = (keys, info) => {
-    console.log({ keys, info });
-
     if (info.node.nodeType !== CollectionNodeType.folder) {
       const method = info.node.method && info.node.method.toLowerCase();
 
@@ -80,10 +78,6 @@ const Collection: ArexMenuFC = (props) => {
         data: info.node,
       });
     }
-  };
-
-  const onExpand = (newExpandedKeys: React.Key[]) => {
-    setExpandedKeys(newExpandedKeys as string[]);
   };
 
   const { run: createCollection } = useRequest(
@@ -99,6 +93,71 @@ const Collection: ArexMenuFC = (props) => {
       },
     },
   );
+
+  const { run: remove } = useRequest(FileSystemService.moveCollectionItem, {
+    manual: true,
+    onSuccess(success) {
+      success && getCollections();
+    },
+  });
+
+  const onDrop: DirectoryTreeProps<CollectionTreeType>['onDrop'] = (value) => {
+    /**
+     * 节点拖动规则:
+     * 1. CollectionNodeType.folder 只能直属于 CollectionNodeType.folder
+     * 2. CollectionNodeType.request 只能直属于 CollectionNodeType.folder
+     * 3. CollectionNodeType.case 只能直属于 CollectionNodeType.request
+     */
+    const dragNodeType = value.dragNode.nodeType;
+    let parentNodeType = CollectionNodeType.folder;
+
+    const dragPos = value.dragNode.pos
+      .split('-')
+      .slice(1) // remove root node
+      .map((p) => Number(p));
+    const nodePos = value.node.pos
+      .split('-')
+      .slice(1, -1) // remove root and target node
+      .map((p) => Number(p));
+
+    let dragTree = collectionsTreeData;
+    let nodeTree = collectionsTreeData;
+    const fromNodePath: string[] = [];
+    const toParentPath: string[] = [];
+
+    dragPos.forEach((p) => {
+      fromNodePath.push(dragTree[p].infoId);
+      dragTree = dragTree[p].children;
+    });
+
+    nodePos.forEach((p) => {
+      toParentPath.push(nodeTree[p].infoId);
+      parentNodeType = nodeTree[p].nodeType;
+      nodeTree = nodeTree[p].children;
+    });
+
+    // 校验拖拽节点是否合规: 3,3 || 1,3 || 2,1
+    if (
+      (dragNodeType === CollectionNodeType.folder &&
+        parentNodeType !== CollectionNodeType.folder) ||
+      (dragNodeType === CollectionNodeType.interface &&
+        parentNodeType !== CollectionNodeType.folder) ||
+      (dragNodeType === CollectionNodeType.case &&
+        (parentNodeType as CollectionNodeType) !== CollectionNodeType.interface)
+    )
+      return console.error('拖拽节点不合规');
+
+    remove({
+      id: activeWorkspaceId,
+      fromNodePath,
+      toParentPath,
+      toIndex: value.dropPosition,
+    });
+  };
+
+  const onExpand = (newExpandedKeys: React.Key[]) => {
+    setExpandedKeys(newExpandedKeys as string[]);
+  };
 
   return (
     <CollectionNodeTitleWrapper>
@@ -120,7 +179,7 @@ const Collection: ArexMenuFC = (props) => {
           switcherIcon={<DownOutlined />}
           treeData={collectionsTreeData}
           fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
-          // onDrop={onDrop}
+          onDrop={onDrop}
           onExpand={onExpand}
           onSelect={handleSelect}
           draggable={{ icon: false }}
