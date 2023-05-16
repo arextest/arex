@@ -111,15 +111,6 @@ const Collection: ArexMenuFC = (props) => {
           key: label.id,
         })),
       },
-      // TODO 暂时将 id 搜索用 keyword 实现
-      // {
-      //   category: CategoryKey.Id,
-      //   operator: [Operator.EQ, Operator.NE],
-      //   value: dataList.map((item) => ({
-      //     label: item.key,
-      //     key: item.key,
-      //   })),
-      // },
     ],
     [labelData],
   );
@@ -128,11 +119,24 @@ const Collection: ArexMenuFC = (props) => {
     if (info.node.nodeType !== CollectionNodeType.folder) {
       const method = info.node.method && info.node.method.toLowerCase();
 
+      // parent path breadcrumb
+      const path: { title: string }[] = [{ title: info.node.nodeName }];
+      let pid = collectionsFlatData.get(info.node.infoId)?.pid;
+      while (pid) {
+        const node = collectionsFlatData.get(pid);
+        if (node) {
+          path.unshift({ title: node.nodeName });
+          pid = node.pid;
+        } else {
+          break;
+        }
+      }
+
       navPane({
         type: PanesType.REQUEST,
         id: info.node.infoId,
         icon: (method && method.replace(method[0], method[0].toUpperCase())) || undefined,
-        data: info.node,
+        data: { ...info.node, path },
       });
     }
   };
@@ -167,18 +171,6 @@ const Collection: ArexMenuFC = (props) => {
                 structuredFiltered = false;
                 break;
               }
-              // TODO 暂时移除 id 结构化搜索
-              // } else if (structured.category === CategoryKey.Id) {
-              //   // search for id
-              //   const include = negate(
-              //     item.key.includes(structured.value as string),
-              //     structured.operator === Operator.NE,
-              //   );
-              //   console.log({ include });
-              //   if (include) {
-              //     filtered = true;
-              //     break;
-              //   }
             }
           }
 

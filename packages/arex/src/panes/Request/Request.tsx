@@ -1,39 +1,41 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { message } from 'antd';
-import { ArexPaneFC } from 'arex-core';
+import { ArexPaneFC, getLocalStorage } from 'arex-core';
 import { Http } from 'arex-request-core';
 import React, { useMemo } from 'react';
+import { useImmer } from 'use-immer';
 
 import { EMAIL_KEY } from '@/constant';
-import { findAncestors } from '@/helpers/collection/util';
 import { sendRequest } from '@/helpers/postman';
 import { CollectionTreeType } from '@/menus/Collection/Collection';
-import { queryRequest } from '@/services/FileSystemService/request';
-import { renameRequest } from '@/services/FileSystemService/request';
-import { saveRequest } from '@/services/FileSystemService/request';
+import { FileSystemService } from '@/services';
 import { useCollections, useEnvironments, useUserProfile, useWorkspaces } from '@/store';
 
-const Request: ArexPaneFC<CollectionTreeType> = (props) => {
+export type PathType = {
+  title: string;
+};
+
+export type RequestProps = CollectionTreeType & { path: PathType[] };
+
+const Request: ArexPaneFC<RequestProps> = (props) => {
   const { infoId: id } = props.data;
+
+  const userName = getLocalStorage<string>(EMAIL_KEY);
 
   const { activeEnvironment } = useEnvironments();
   const { activeWorkspaceId } = useWorkspaces();
-  const { collectionsFlatData, getCollections } = useCollections();
+  const { collectionsFlatData, getCollections, getPath } = useCollections();
   const { theme, language } = useUserProfile();
+
+  const [path, setPath] = useImmer<PathType[]>(props.data.path || []);
 
   const nodeInfo = useMemo(() => {
     return collectionsFlatData.get(id);
   }, [collectionsFlatData, id]);
 
-  // const parentInfos = useMemo(() => {
-  //   return findAncestors(collectionsFlatData, id as string)
-  //     .reverse()
-  //     .concat(collectionsFlatData.get(id);
-  // }, [collectionsFlatData, id]);
-
-  function onSend(request: any, environment: any) {
-    return sendRequest(request, environment).then((res: any) => {
+  function onSend(request, environment) {
+    return sendRequest(request, environment).then((res) => {
       return {
         response: res.response,
         testResult: res.testResult,
@@ -42,23 +44,36 @@ const Request: ArexPaneFC<CollectionTreeType> = (props) => {
     });
   }
 
-  function onSave(r: any) {
-    saveRequest(activeWorkspaceId, r, nodeInfo?.nodeType || 1).then((res) => {
-      if (res) {
-        message.success('保存成功');
-      }
+  function onSave(r) {
+    FileSystemService.saveRequest(activeWorkspaceId, r, nodeInfo?.nodeType || 1).then((res) => {
+      res && message.success('保存成功');
     });
   }
 
-  const { data } = useRequest(
-    () => {
-      return queryRequest({ id: id as string, nodeType: nodeInfo?.nodeType || 1 }).then((res) => {
-        return res;
-      });
-    },
+  const { data } = useRequest(() =>
+    FileSystemService.queryRequest({
+      id: id as string,
+      nodeType: nodeInfo?.nodeType || 1,
+    }),
+  );
+
+  const nodePath = useMemo(() => getPath(props.data.infoId), [getPath, props.data.infoId]);
+
+  const { run: rename } = useRequest(
+    (newName) =>
+      FileSystemService.renameCollectionItem({
+        id: activeWorkspaceId,
+        newName,
+        path: nodePath,
+        userName: userName as string,
+      }),
     {
-      onSuccess() {
-        // console.log(collections.find((i) => i.id === id).nodeType, 'collections');
+      manual: true,
+      onSuccess(success, [newName]) {
+        setPath((prev) => {
+          prev[prev.length - 1].title = newName;
+        });
+        getCollections(activeWorkspaceId);
       },
     },
   );
@@ -72,14 +87,13 @@ const Request: ArexPaneFC<CollectionTreeType> = (props) => {
       <Http
         theme={theme}
         locale={language}
-        onSend={(request: any) => {
+        onSend={(request) => {
           return onSend(request, {
             name: activeEnvironment?.envName || '',
             variables: activeEnvironment?.keyValues || [],
           });
         }}
         onSave={onSave}
-        // @ts-ignore
         value={data}
         breadcrumb={<div></div>}
         environment={{
@@ -87,18 +101,8 @@ const Request: ArexPaneFC<CollectionTreeType> = (props) => {
           variables: activeEnvironment?.keyValues || [],
         }}
         config={{}}
-        breadcrumbItems={[{ title: 'test' }, { title: 'case' }]}
-        // breadcrumbItems={parentInfos}
-        // onChangeTitle={({ value }) => {
-        //   renameRequest({
-        //     id: activeWorkspaceId,
-        //     newName: value,
-        //     path: parentInfos.map((parentInfo) => parentInfo.id),
-        //     userName: getLocalStorage(EMAIL_KEY),
-        //   }).then((res) => {
-        //     getCollections();
-        //   });
-        // }}
+        breadcrumbItems={path}
+        onChangeTitle={({ value }) => rename(value)}
       />
     </div>
   );

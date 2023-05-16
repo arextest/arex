@@ -1,4 +1,3 @@
-// import { RequestMethod } from 'arex-core';
 import { HoppRESTRequest } from 'arex-request-core/dist/components/http/data/rest';
 
 import { request } from '@/utils';
