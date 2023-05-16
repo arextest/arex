@@ -1,6 +1,6 @@
 import { DownOutlined, PlayCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { Button, Dropdown, Tag, Tree } from 'antd';
+import { Button, Tag, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import {
   ArexMenuFC,
@@ -87,14 +87,11 @@ const Collection: ArexMenuFC = (props) => {
       setExpandedKeys((expandedKeys) => [...expandedKeys, activePane.id]);
   }, [activePane]);
 
-  useEffect(() => {
-    console.log({ expandedKeys });
-  }, [expandedKeys]);
-
   const { data: labelData = [] } = useRequest(
     () => ReportService.queryLabels({ workspaceId: activeWorkspaceId as string }),
     {
       ready: !!activeWorkspaceId,
+      refreshDeps: [activeWorkspaceId],
     },
   );
 
@@ -300,30 +297,24 @@ const Collection: ArexMenuFC = (props) => {
                 title={t('collection.create_new')}
                 onClick={createCollection}
               />
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      key: 'batchRun',
-                      label: (
-                        <a
-                          onClick={(e) => {
-                            // TODO // customNavigate(`/${params.workspaceId}/${PagesType.BatchRun}/${u}`);
-                          }}
-                        >
-                          {t('collection.batch_run')}
-                        </a>
-                      ),
-                    },
-                  ],
+              <TooltipButton
+                icon={<PlayCircleOutlined />}
+                title={t('collection.batch_run')}
+                onClick={() => {
+                  // TODO batchRun pane
+                  // navPane({
+                  //   id: 'batchRun',
+                  //   type: PanesType.BATCH_RUN,
+                  // })
                 }}
-              >
-                <a onClick={(e) => e.preventDefault()}>
-                  <Button icon={<PlayCircleOutlined />} type={'text'} size={'small'} />
-                </a>
-              </Dropdown>
+              />
             </>
           }
+          labelDataSource={labelData.map((item) => ({
+            id: item.id,
+            name: item.labelName,
+            color: item.color,
+          }))}
           options={options}
           placeholder={'Search for Name or Id'}
           onChange={handleChange}

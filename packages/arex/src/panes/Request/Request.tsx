@@ -3,6 +3,7 @@ import { useRequest } from 'ahooks';
 import { message } from 'antd';
 import { ArexPaneFC, getLocalStorage } from 'arex-core';
 import { Http } from 'arex-request-core';
+import { HttpProps } from 'arex-request-core/dist/components/http';
 import React, { useMemo } from 'react';
 import { useImmer } from 'use-immer';
 
@@ -34,7 +35,15 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     return collectionsFlatData.get(id);
   }, [collectionsFlatData, id]);
 
-  function onSend(request, environment) {
+  const environment = useMemo(
+    () => ({
+      name: activeEnvironment?.envName || '',
+      variables: activeEnvironment?.keyValues || [],
+    }),
+    [activeEnvironment],
+  );
+
+  const handleSend: HttpProps['onSend'] = (request) => {
     return sendRequest(request, environment).then((res) => {
       return {
         response: res.response,
@@ -42,13 +51,15 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         consoles: res.consoles,
       };
     });
-  }
+  };
 
-  function onSave(r) {
-    FileSystemService.saveRequest(activeWorkspaceId, r, nodeInfo?.nodeType || 1).then((res) => {
-      res && message.success('保存成功');
-    });
-  }
+  const handleSave: HttpProps['onSave'] = (requestParams) => {
+    FileSystemService.saveRequest(activeWorkspaceId, requestParams, nodeInfo?.nodeType || 1).then(
+      (res) => {
+        res && message.success('保存成功');
+      },
+    );
+  };
 
   const { data } = useRequest(() =>
     FileSystemService.queryRequest({
@@ -87,21 +98,12 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       <Http
         theme={theme}
         locale={language}
-        onSend={(request) => {
-          return onSend(request, {
-            name: activeEnvironment?.envName || '',
-            variables: activeEnvironment?.keyValues || [],
-          });
-        }}
-        onSave={onSave}
         value={data}
-        breadcrumb={<div></div>}
-        environment={{
-          name: activeEnvironment?.envName || '',
-          variables: activeEnvironment?.keyValues || [],
-        }}
         config={{}}
+        environment={environment}
         breadcrumbItems={path}
+        onSave={handleSave}
+        onSend={handleSend}
         onChangeTitle={({ value }) => rename(value)}
       />
     </div>
