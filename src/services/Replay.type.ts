@@ -166,15 +166,33 @@ export interface CreatePlanReq {
   targetEnv: string;
   operator: string;
   replayPlanType: number;
+  planName?: string;
   caseSourceType?: number;
   caseSourceFrom: number;
   caseSourceTo: number;
-  operationCaseInfoList?: { operationId: string }[];
+  operationCaseInfoList?: { operationId: string; replayIdList?: string[] }[];
 }
 
 export interface CreatePlanRes {
   desc: string;
   result: number;
+}
+
+// ------ /schedule/queryPlanFailCase ------
+export interface QueryPlanFailCaseReq {
+  planId: string;
+  planItemIdList?: string[];
+  recordIdList?: string[];
+  diffResultCodeList: number[];
+}
+
+export type failCaseInfo = {
+  operationId: string;
+  replayIdList: string[];
+};
+
+export interface QueryPlanFailCaseRes {
+  failCaseInfoList: failCaseInfo[];
 }
 
 // ------ /report/queryScenes ------

@@ -1,8 +1,10 @@
 import { useRequest } from 'ahooks';
+import { App } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { tryParseJsonString } from '../../helpers/utils';
+import { EmailKey } from '../../constant';
+import { getLocalStorage, tryParseJsonString } from '../../helpers/utils';
 import { useCustomSearchParams } from '../../router/useCustomSearchParams';
 import ReplayService from '../../services/Replay.service';
 import {
@@ -16,13 +18,16 @@ import { CollapseTable, PanesTitle } from '../styledComponents';
 import { PageFC } from './index';
 
 const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
+  const { message, notification } = App.useApp();
   const { t } = useTranslation(['components']);
+  const email = getLocalStorage<string>(EmailKey);
+
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
 
   const saveCaseRef = useRef<SaveCaseRef>(null);
 
   const params = useCustomSearchParams();
-  const { data = tryParseJsonString(decodeURIComponent(params.query.data)) } = props.page;
+  const { data = JSON.parse(decodeURIComponent(params.query.data)) } = props.page;
 
   const {
     data: fullLinkInfo,
@@ -51,6 +56,47 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
     saveCaseRef.current?.openModal(record);
   }
 
+  const { run: queryPlanFailCase } = useRequest(ReplayService.queryPlanFailCase, {
+    manual: true,
+    onSuccess(operationCaseInfoList) {
+      rerun({
+        caseSourceFrom: data.caseStartTime,
+        caseSourceTo: data.caseEndTime,
+        appId: data.appId,
+        operationCaseInfoList,
+        operator: email,
+        replayPlanType: 2,
+        sourceEnv: 'pro',
+        targetEnv: data.targetHost,
+      });
+    },
+  });
+
+  const { run: rerun } = useRequest(ReplayService.createPlan, {
+    manual: true,
+    onSuccess(res) {
+      if (res.result === 1) {
+        notification.success({
+          message: t('message.success', { ns: 'common' }),
+          description: res.desc,
+        });
+      } else {
+        notification.error({
+          message: t('message.error', { ns: 'common' }),
+          description: res.desc,
+        });
+      }
+    },
+  });
+  function handleClickRerunCase(recordId: string) {
+    console.log(data);
+    queryPlanFailCase({
+      planId: data.planId,
+      planItemIdList: [data.planItemId],
+      recordIdList: [recordId],
+    });
+  }
+
   return (
     <>
       <PanesTitle
@@ -66,9 +112,10 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
         table={
           <Case
             planItemId={data.planItemId}
+            status={params.query.status}
             onClick={handleClickRecord}
             onClickSaveCase={handleClickSaveCase}
-            status={params.query.status}
+            onClickRerunCase={handleClickRerunCase}
           />
         }
         panel={

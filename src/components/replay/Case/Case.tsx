@@ -14,6 +14,7 @@ type CaseProps = {
   status?: Key;
   onClick?: (record: ReplayCase) => void;
   onClickSaveCase?: (record: ReplayCase) => void;
+  onClickRerunCase?: (recordId: string) => void;
 };
 
 const Case: FC<CaseProps> = (props) => {
@@ -64,6 +65,12 @@ const Case: FC<CaseProps> = (props) => {
           caseInfo={{
             recordId: record.recordId,
           }}
+        />,
+        <SmallTextButton
+          key='rerun'
+          color={'primary'}
+          title={t('replay.rerun')}
+          onClick={() => props.onClickRerunCase?.(record.recordId)}
         />,
       ],
     },

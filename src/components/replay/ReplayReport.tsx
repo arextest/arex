@@ -15,8 +15,11 @@ import {
   Button,
   Card,
   Col,
+  Dropdown,
   Popconfirm,
   Row,
+  Space,
+  Spin,
   Statistic,
   Table,
   theme,
@@ -25,7 +28,7 @@ import {
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import dayjs from 'dayjs';
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import CountUp from 'react-countup';
 import { useTranslation } from 'react-i18next';
@@ -35,7 +38,7 @@ import { EmailKey } from '../../constant';
 import { getLocalStorage, getPercent } from '../../helpers/utils';
 import { useCustomNavigate } from '../../router/useCustomNavigate';
 import ReplayService from '../../services/Replay.service';
-import { PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
+import { CreatePlanReq, PlanItemStatistics, PlanStatistics } from '../../services/Replay.type';
 import { PagesType } from '../panes';
 import { SmallTextButton, SpaceBetweenWrapper } from '../styledComponents';
 import TooltipButton from '../TooltipButton';
@@ -54,9 +57,11 @@ const chartOptions = {
 export type ReplayReportProps = {
   selectedPlan?: PlanStatistics;
   filter?: (record: PlanItemStatistics) => boolean;
+  onRefresh?: () => void;
 };
 
-const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
+const ReplayReport: FC<ReplayReportProps> = (props) => {
+  const { selectedPlan, filter, onRefresh } = props;
   const { message, notification } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
   const params = useParams();
@@ -283,15 +288,30 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
               );
             }}
           />
-          <TooltipButton
-            icon={<RedoOutlined />}
+          <Popconfirm
             title={t('replay.rerun')}
-            breakpoint='xxl'
-            color='primary'
-            onClick={() =>
-              handleRerun(record.operationId, record.caseStartTime, record.caseEndTime)
+            description={t('replay.rerunTip')}
+            onConfirm={() =>
+              handleRerun({
+                operationId: record.operationId,
+                caseSourceFrom: record.caseStartTime,
+                caseSourceTo: record.caseEndTime,
+              })
             }
-          />
+            onCancel={() => {
+              handleRerunError({ key: 'rerunInterface' }, record);
+            }}
+            okText={t('replay.rerun')}
+            cancelText={t('replay.rerunError')}
+          >
+            <TooltipButton
+              tooltipProps={{ open: false }}
+              icon={<RedoOutlined />}
+              title={t('replay.rerun')}
+              breakpoint='xxl'
+              color='primary'
+            />
+          </Popconfirm>
         </>
       ),
     },
@@ -317,10 +337,15 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
     },
   });
 
+  const [creatingPlan, setCreatingPlan] = useState<number>();
   const { run: rerun } = useRequest(ReplayService.createPlan, {
     manual: true,
+    onBefore([param]) {
+      setCreatingPlan(param.replayPlanType);
+    },
     onSuccess(res) {
       if (res.result === 1) {
+        onRefresh?.();
         notification.success({
           message: t('message.success', { ns: 'common' }),
           description: res.desc,
@@ -332,17 +357,27 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
         });
       }
     },
+    onFinally() {
+      setCreatingPlan(undefined);
+    },
   });
 
-  const handleRerun = (operationId?: string, caseSourceFrom?: number, caseSourceTo?: number) => {
+  const handleRerun = (
+    params?: { operationId?: string } & Partial<
+      Pick<CreatePlanReq, 'caseSourceFrom' | 'caseSourceTo' | 'operationCaseInfoList'>
+    >,
+    operationName?: string,
+  ) => {
+    const { operationId, caseSourceFrom, caseSourceTo, operationCaseInfoList } = params || {};
     if (operationId && caseSourceFrom && caseSourceTo) {
+      // 创建新的回放
       rerun({
         caseSourceFrom,
         caseSourceTo,
         appId: selectedPlan!.appId,
         caseSourceType: 0,
         operationCaseInfoList: [{ operationId }],
-        operator: email as string,
+        operator: email,
         replayPlanType: 1,
         sourceEnv: 'pro',
         targetEnv: selectedPlan!.targetHost as string,
@@ -352,16 +387,39 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
       selectedPlan?.caseEndTime &&
       selectedPlan?.targetHost
     ) {
+      // 重新执行回放
       rerun({
         caseSourceFrom: selectedPlan.caseStartTime,
         caseSourceTo: selectedPlan.caseEndTime,
         appId: selectedPlan!.appId,
-        operator: email as string,
-        replayPlanType: 0,
+        operationCaseInfoList, // 重新执行失败的用例
+        operator: email,
+        replayPlanType: operationCaseInfoList ? 2 : 0,
+        planName: operationCaseInfoList
+          ? operationName
+            ? selectedPlan.planName + `-${operationName}-rerun`
+            : selectedPlan.planName + '-rerun'
+          : undefined,
         sourceEnv: 'pro',
         targetEnv: selectedPlan!.targetHost,
       });
     }
+  };
+
+  const { run: queryPlanFailCase } = useRequest(ReplayService.queryPlanFailCase, {
+    manual: true,
+    onSuccess(failCaseList, [params, operationName]) {
+      handleRerun({ operationCaseInfoList: failCaseList }, operationName);
+    },
+  });
+
+  const handleRerunError = (e: { key: string }, planItem?: PlanItemStatistics) => {
+    if (e.key === 'rerunErrorPlan') queryPlanFailCase({ planId: selectedPlan!.planId });
+    else if (e.key === 'rerunInterface')
+      queryPlanFailCase(
+        { planId: selectedPlan!.planId, planItemIdList: [planItem!.planItemId] },
+        planItem!.operationName,
+      );
   };
 
   return selectedPlan ? (
@@ -370,7 +428,7 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
       size='small'
       title={`${t('replay.report')}: ${selectedPlan.planName}`}
       extra={
-        <>
+        <Space>
           <Popconfirm
             title={t('replay.terminateTheReplay')}
             description={t('replay.confirmTerminateReplay')}
@@ -382,6 +440,7 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
               title={t('replay.terminate')}
             />
           </Popconfirm>
+
           <Popconfirm
             title={t('replay.deleteTheReport')}
             description={t('replay.confirmDeleteReport')}
@@ -394,13 +453,38 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
             />
           </Popconfirm>
 
-          <SmallTextButton
-            color={'primary'}
-            icon={<RedoOutlined />}
-            title={t('replay.rerun')}
+          <Dropdown.Button
+            size='small'
+            type='text'
+            disabled={creatingPlan === 0}
+            menu={{
+              items: [
+                { label: t('replay.rerunError'), key: 'rerunErrorPlan', icon: <RedoOutlined /> },
+              ],
+              onClick: handleRerunError,
+            }}
             onClick={() => handleRerun()}
-          />
-        </>
+            css={css`
+              button {
+                color: ${token.colorPrimary};
+              }
+            `}
+          >
+            <Spin
+              spinning={creatingPlan === 0}
+              css={css`
+                span.anticon-loading {
+                  font-size: 16px !important;
+                }
+              `}
+            >
+              <Space>
+                <RedoOutlined />
+                {t('replay.rerun')}
+              </Space>
+            </Spin>
+          </Dropdown.Button>
+        </Space>
       }
     >
       <Row gutter={12}>
@@ -498,9 +582,7 @@ const ReplayReport: FC<ReplayReportProps> = ({ selectedPlan, filter }) => {
         style={{ overflow: 'auto' }}
       />
     </Card>
-  ) : (
-    <div></div>
-  );
+  ) : null;
 };
 
 export default ReplayReport;

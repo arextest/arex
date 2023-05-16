@@ -19,6 +19,8 @@ import {
   QueryLogEntityReq,
   QueryLogEntityRes,
   QueryMsgWithDiffRes,
+  QueryPlanFailCaseReq,
+  QueryPlanFailCaseRes,
   QueryPlanItemStatisticsReq,
   QueryPlanItemStatisticsRes,
   QueryPlanStatisticsReq,
@@ -111,6 +113,18 @@ export default class ReplayService {
         .then((res) => resolve(res.data))
         .catch((err) => reject(err));
     });
+  }
+
+  static async queryPlanFailCase(
+    params: Omit<QueryPlanFailCaseReq, 'diffResultCodeList'>,
+    operationName?: string,
+  ) {
+    return request
+      .post<QueryPlanFailCaseRes>('/report/report/queryPlanFailCase', {
+        ...params,
+        diffResultCodeList: [1, 2],
+      })
+      .then((res) => Promise.resolve(res.body.failCaseInfoList));
   }
 
   static async queryScenes(params: QueryScenesReq) {
