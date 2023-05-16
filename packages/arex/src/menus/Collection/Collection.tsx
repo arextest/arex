@@ -14,14 +14,14 @@ import {
   TooltipButton,
   useTranslation,
 } from 'arex-core';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import CollectionNodeTitle from '@/menus/Collection/CollectionNodeTitle';
 import { FileSystemService, ReportService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
-import { useCollections, useWorkspaces } from '@/store';
+import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { negate } from '@/utils';
 
 const CollectionNodeTitleWrapper = styled.div`
@@ -70,8 +70,8 @@ export type CollectionTreeType = CollectionType & DataNode;
 const Collection: ArexMenuFC = (props) => {
   const { t } = useTranslation(['components']);
   const { activeWorkspaceId } = useWorkspaces();
+  const { activePane } = useMenusPanes();
   const { loading, collectionsTreeData, collectionsFlatData, getCollections } = useCollections();
-  // useLabels()
 
   const navPane = useNavPane();
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
@@ -79,7 +79,17 @@ const Collection: ArexMenuFC = (props) => {
   const [searchValue, setSearchValue] = useState<SearchDataType>();
 
   const selectedKeys = useMemo(() => (props.value ? [props.value] : []), [props.value]);
-  const [expandedKeys, setExpandedKeys] = useState<string[]>([]); // TODO 初始化展开的节点
+  const [expandedKeys, setExpandedKeys] = useState<string[]>(props.value ? [props.value] : []); // TODO 初始化展开的节点
+  // auto expand by active pane id
+  useEffect(() => {
+    activePane &&
+      activePane.type === PanesType.REQUEST &&
+      setExpandedKeys((expandedKeys) => [...expandedKeys, activePane.id]);
+  }, [activePane]);
+
+  useEffect(() => {
+    console.log({ expandedKeys });
+  }, [expandedKeys]);
 
   const { data: labelData = [] } = useRequest(
     () => ReportService.queryLabels({ workspaceId: activeWorkspaceId as string }),
@@ -180,7 +190,8 @@ const Collection: ArexMenuFC = (props) => {
         })
         .filter((item, i, self) => item && self.indexOf(item) === i);
     }
-    setExpandedKeys(newExpandedKeys as string[]);
+    // setExpandedKeys(newExpandedKeys as string[]);
+    // console.log('setExpandedKeys');
     setSearchValue(value);
   };
 
