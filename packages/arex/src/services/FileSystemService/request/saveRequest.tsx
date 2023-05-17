@@ -1,8 +1,8 @@
-import { HoppRESTRequest } from 'arex-request-core/dist/components/http/data/rest';
+import { ArexRESTRequest } from 'arex-request-core/dist/components/http/data/rest';
 
 import { request } from '@/utils';
 
-export async function saveRequest(workspaceId: string, params: HoppRESTRequest, nodeType: number) {
+export async function saveRequest(workspaceId: string, params: ArexRESTRequest, nodeType: number) {
   if (nodeType === 1) {
     const saveParams = {
       address: {

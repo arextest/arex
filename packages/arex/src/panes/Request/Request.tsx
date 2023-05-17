@@ -1,9 +1,7 @@
-import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { message } from 'antd';
 import { ArexPaneFC, getLocalStorage } from 'arex-core';
-import { Http } from 'arex-request-core';
-import { HttpProps } from 'arex-request-core/dist/components/http';
+import { Http, HttpProps } from 'arex-request-core';
 import React, { useMemo } from 'react';
 import { useImmer } from 'use-immer';
 
@@ -90,12 +88,9 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   );
 
   return (
-    <div
-      css={css`
-        height: calc(100vh - 110px);
-      `}
-    >
+    <div>
       <Http
+        height={`calc(100vh - 110px)`}
         theme={theme}
         locale={language}
         value={data}

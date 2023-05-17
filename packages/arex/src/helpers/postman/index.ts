@@ -11,7 +11,7 @@ const converToUrl = (requestParams: any) => {
   return '?' + params.join('&');
 };
 // 发送一个request
-export async function sendRequest(hopReq: any, environment: any) {
+export async function sendRequest(hopReq: any, environment: any):Promise<{response:any,testResult:any,consoles:any}> {
   // @ts-ignore
   const runner = new window.PostmanRuntime.Runner();
   const rawCollection = {
@@ -111,10 +111,7 @@ export async function sendRequest(hopReq: any, environment: any) {
           ) {
             res = {
               type: 'success',
-              headers: Object.keys(response.headers).map((key) => ({
-                key: key,
-                value: String(response.headers[key]),
-              })),
+              headers: response.headers.members,
               statusCode: response.code,
               body: response.stream,
               meta: {

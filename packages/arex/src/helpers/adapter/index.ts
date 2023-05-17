@@ -46,7 +46,13 @@ xspy.onRequest(async (request: any, sendResponse: any) => {
     });
     const dummyResponse = {
       ajaxType: 'fetch',
-      status: 200,
+      status: agentData.status,
+      headers: agentData.headers.reduce((p: any, c: { key: any; value: any }) => {
+        return {
+          ...p,
+          [c.key]: c.value,
+        };
+      }, {}),
       statusText: 'OK',
       ok: true,
       redirected: false,
