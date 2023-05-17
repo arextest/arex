@@ -67,7 +67,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
         operator: email,
         replayPlanType: 2,
         sourceEnv: 'pro',
-        targetEnv: data.targetHost,
+        targetEnv: data.targetEnv,
       });
     },
   });

@@ -67,6 +67,7 @@
     "startFailed": "Start Failed",
     "startButton": "Start replay",
     "targetHost": "Target Host",
+    "targetEnv": "Target Env",
     "caseStartTime": "Start Time",
     "caseEndTime": "End Time",
     "emptyHost": "Target Host can't be empty",
