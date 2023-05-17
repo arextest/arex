@@ -380,12 +380,12 @@ const ReplayReport: FC<ReplayReportProps> = (props) => {
         operator: email,
         replayPlanType: 1,
         sourceEnv: 'pro',
-        targetEnv: selectedPlan!.targetHost as string,
+        targetEnv: selectedPlan!.targetEnv as string,
       });
     } else if (
       selectedPlan?.caseStartTime &&
       selectedPlan?.caseEndTime &&
-      selectedPlan?.targetHost
+      selectedPlan?.targetEnv
     ) {
       // 重新执行回放
       rerun({
@@ -401,7 +401,7 @@ const ReplayReport: FC<ReplayReportProps> = (props) => {
             : selectedPlan.planName + '-rerun'
           : undefined,
         sourceEnv: 'pro',
-        targetEnv: selectedPlan!.targetHost,
+        targetEnv: selectedPlan!.targetEnv as string,
       });
     }
   };
@@ -519,7 +519,7 @@ const ReplayReport: FC<ReplayReportProps> = (props) => {
             {dayjs(new Date(selectedPlan.caseEndTime || '')).format('YYYY/MM/DD')}
           </div>
           <div>
-            {t('replay.targetHost')}: {selectedPlan.targetHost}
+            {t('replay.targetEnv')}: {selectedPlan.targetEnv}
           </div>
           <div>
             {t('replay.executor')}: {selectedPlan.creator}
