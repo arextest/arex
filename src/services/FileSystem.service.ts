@@ -1,13 +1,54 @@
 import request from '../helpers/api/axios';
 import { BaseInterface, PinkMockReq, SaveCaseReq, SaveInterfaceReq } from './FileSystem.type';
-
+const emptyQueryInterfaceResBody = {
+  id: '',
+  name: 'New Request',
+  address: {
+    method: 'GET',
+    endpoint: '',
+  },
+  preRequestScripts: [],
+  testScripts: [],
+  body: {
+    contentType: 'application/json',
+    body: '',
+  },
+  headers: [
+    {
+      key: 'Content-Type',
+      value: 'application/json',
+      active: true,
+    },
+  ],
+  params: [],
+  auth: null,
+  testAddress: {
+    method: 'GET',
+    endpoint: '',
+  },
+  description: '',
+  customTags: null,
+  operationId: null,
+  operationResponse: null,
+};
 export class FileSystemService {
   static async rename(params: any): Promise<any> {
     return request.post(`/report/filesystem/rename`, params);
   }
 
   static async queryInterface(params: { id: string }) {
-    const res = await request.post<BaseInterface>(`/report/filesystem/queryInterface`, params);
+    const res = await request
+      .post<BaseInterface>(`/report/filesystem/queryInterface`, params)
+      .then((res) => {
+        // id不合法时
+        if (res.body === null) {
+          return {
+            body: emptyQueryInterfaceResBody,
+          };
+        } else {
+          return res;
+        }
+      });
     const {
       body: { address, testAddress, ...rest },
     } = res;
