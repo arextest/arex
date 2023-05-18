@@ -65,7 +65,7 @@ const ReplayCasePage: PageFC<PlanItemStatistics> = (props) => {
         appId: data.appId,
         operationCaseInfoList,
         operator: email,
-        replayPlanType: 2,
+        replayPlanType: 3,
         sourceEnv: 'pro',
         targetEnv: data.targetEnv,
       });
