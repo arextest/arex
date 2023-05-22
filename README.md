@@ -5,7 +5,7 @@
 [quick start](https://github.com/arextest/dev-ops#arex-install)\
 [documentions](./documents/introduction.md)
 
-## FETURE
+## FEATURE
 - Out-of-order comparsion\
   Supports out-of-order comparison of arrays with limited configuration. [more detail](url)
 - Exclusion/Inclusion\
