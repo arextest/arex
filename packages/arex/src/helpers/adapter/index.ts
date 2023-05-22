@@ -1,6 +1,4 @@
-// 十分重要
-
-// @ts-ignore
+import { Buffer } from 'buffer';
 import xspy from 'xspy';
 
 // chrome插件代理
@@ -35,17 +33,16 @@ function AgentAxios<T>(params: any) {
 }
 
 xspy.onRequest(async (request: any, sendResponse: any) => {
-  console.log(request);
   // 判断是否是pm发的
   if (request.headers['postman-token']) {
     const agentData: any = await AgentAxios({
       method: request.method,
       url: request.url,
       headers: request.headers,
-      data: ['GET'].includes(request.method) ? undefined : request.body,
+      // TODO 这里需要适配其他类型请求
+      body: ['GET'].includes(request.method) ? undefined : request.body,
     });
     const dummyResponse = {
-      ajaxType: 'fetch',
       status: agentData.status,
       headers: agentData.headers.reduce((p: any, c: { key: any; value: any }) => {
         return {
@@ -53,12 +50,9 @@ xspy.onRequest(async (request: any, sendResponse: any) => {
           [c.key]: c.value,
         };
       }, {}),
-      statusText: 'OK',
-      ok: true,
-      redirected: false,
-      type: 'basic',
-      body: JSON.stringify(agentData.data),
-      url: 'https://...',
+      ajaxType: 'xhr',
+      responseType: 'arraybuffer',
+      response: new Buffer(agentData.data),
     };
     sendResponse(dummyResponse);
   } else {

@@ -11,7 +11,7 @@ const converToUrl = (requestParams: any) => {
   return '?' + params.join('&');
 };
 // 发送一个request
-export async function sendRequest(hopReq: any, environment: any):Promise<{response:any,testResult:any,consoles:any}> {
+export async function sendRequest(hopReq: any, environment: any):Promise<{response:any,testResult:any,consoles:any,visualizer:any}> {
   // @ts-ignore
   const runner = new window.PostmanRuntime.Runner();
   const rawCollection = {
@@ -73,7 +73,7 @@ export async function sendRequest(hopReq: any, environment: any):Promise<{respon
             });
           },
           createReadStream(base64: string) {
-            return base64.split(';base64,')[1];
+            return base64;
           },
         },
       },
@@ -86,17 +86,42 @@ export async function sendRequest(hopReq: any, environment: any):Promise<{respon
             consolesBox.push(logs);
           },
           prerequest: function (err: any, cursor: any, results: any, item: any) {
-            console.log('');
+            // console.log('');
           },
           responseData: function (cursor: any, data: any) {
-            console.log('');
+            // console.log('');
+          },
+          test: function (err: any, cursor: any, results: any, item: any) {
+            // results: Array of objects. Each object looks like this:
+            //  {
+            //      error: Error,
+            //      event: sdk.Event,
+            //      script: sdk.Script,
+            //      result: {
+            //          target: 'test'
+            //
+            //          -- Updated environment
+            //          environment: <VariableScope>
+            //
+            //          -- Updated globals
+            //          globals: <VariableScope>
+            //
+            //          response: <sdk.Response>
+            //          request: <sdk.Request>
+            //          data: <Object of data variables>
+            //          cookies: <Array of "sdk.Cookie" objects>
+            //          tests: <Object>
+            //          return: <Object, contains set next request params, etc>
+            //      }
+            //  }
           },
           item: function (err: any, cursor: any, item: any, visualizer: any) {
-            console.log('pm logs:', consolesBox);
+            console.log('pm logs:', consolesBox, visualizer);
             resolve({
               response: res,
               testResult: assertionsBox,
               consoles: consolesBox,
+              visualizer: visualizer,
             });
           },
           //调用一次，并对集合中的每个请求进行响应
@@ -109,6 +134,7 @@ export async function sendRequest(hopReq: any, environment: any):Promise<{respon
             cookies: any,
             history: any,
           ) {
+            console.log(response);
             res = {
               type: 'success',
               headers: response.headers.members,
