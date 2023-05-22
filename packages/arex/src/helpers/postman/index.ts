@@ -11,7 +11,10 @@ const converToUrl = (requestParams: any) => {
   return '?' + params.join('&');
 };
 // 发送一个request
-export async function sendRequest(hopReq: any, environment: any):Promise<{response:any,testResult:any,consoles:any,visualizer:any}> {
+export async function sendRequest(
+  hopReq: any,
+  environment: any,
+): Promise<{ response: any; testResult: any; consoles: any; visualizer: any }> {
   // @ts-ignore
   const runner = new window.PostmanRuntime.Runner();
   const rawCollection = {
