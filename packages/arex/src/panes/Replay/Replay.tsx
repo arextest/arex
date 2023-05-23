@@ -1,20 +1,29 @@
 import { Empty } from 'antd';
 import { ArexPaneFC, CollapseTable, FlexCenterWrapper, useTranslation } from 'arex-core';
+import { merge } from 'lodash';
 import React, { useState } from 'react';
 
+import { PanesType } from '@/constant';
+import { useNavPane } from '@/hooks';
 import { ApplicationDataType } from '@/services/ApplicationService';
 import { PlanStatistics } from '@/services/ReportService';
 
 import AppTitle from './AppTitle';
 import PlanItem from './PlanItem';
-import PlanReport from './PlanReport';
+import PlanReport, { PlanReportProps } from './PlanReport';
 
 const ReplayPage: ArexPaneFC<ApplicationDataType> = (props) => {
   const { t } = useTranslation(['components']);
+  const navPane = useNavPane();
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
 
-  const handleSelectPlan = (plan: PlanStatistics) => {
+  const handleSelectPlan: PlanReportProps['onSelectedPlanChange'] = (plan, current, row) => {
     plan.planId === selectedPlan?.planId ? setSelectedPlan(undefined) : setSelectedPlan(plan);
+    navPane({
+      id: props.data.id,
+      type: PanesType.REPLAY,
+      data: merge({ current, row }, props.data), // 同步当前选中的页码好行数
+    });
   };
 
   const [refreshDep, setRefreshDep] = useState<number>();
@@ -29,7 +38,6 @@ const ReplayPage: ArexPaneFC<ApplicationDataType> = (props) => {
         active={!!selectedPlan}
         table={
           <PlanReport
-            defaultSelectFirst
             appId={props.data.appId}
             refreshDep={refreshDep}
             onSelectedPlanChange={handleSelectPlan}

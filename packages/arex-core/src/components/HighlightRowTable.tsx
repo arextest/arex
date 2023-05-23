@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { CSSInterpolation } from '@emotion/serialize/types';
 import styled from '@emotion/styled';
-import { Table, TableProps } from 'antd';
+import { Table, TablePaginationConfig, TableProps } from 'antd';
 import React, { useState } from 'react';
 
 const defaultSelectRow = { row: 0, page: 1 };
@@ -22,7 +22,7 @@ export type HighlightRowTableProps<T> = {
   defaultCurrent?: number; // should be defined at the same time as defaultRow
   defaultRow?: number; // should be defined at the same time as defaultCurrent
   defaultSelectFirst?: boolean;
-  onRowClick?: (record: T) => void;
+  onRowClick?: (record: T, index?: number) => void;
 } & TableProps<T>;
 
 function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
@@ -56,20 +56,25 @@ function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
         onRow={(record, index) => {
           return {
             onClick: () => {
-              if (typeof index === 'number') {
-                setSelectRow(
-                  page === selectRow.page && index === selectRow.row
-                    ? invalidSelectRow
-                    : { row: index, page },
-                );
-                onRowClick?.(record);
-              }
+              setSelectRow(
+                ((props.pagination as TablePaginationConfig)?.current || page) === selectRow.page &&
+                  index === selectRow.row
+                  ? invalidSelectRow
+                  : {
+                      row: index,
+                      page: (props.pagination as TablePaginationConfig)?.current || page,
+                    },
+              );
+              onRowClick?.(record, index);
             },
           };
         }}
         onChange={handleChange}
         rowClassName={(record, index) =>
-          page === selectRow.page && index === selectRow.row ? 'clickRowStyle' : ''
+          ((props.pagination as TablePaginationConfig)?.current || page) === selectRow.page &&
+          index === selectRow.row
+            ? 'clickRowStyle'
+            : ''
         }
         {...restProps}
       />

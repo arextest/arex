@@ -49,12 +49,22 @@ export type QueryPlanStatisticsRes = {
   planStatisticList: PlanStatistics[];
 };
 
-export async function queryPlanStatistics(params: QueryPlanStatisticsReq) {
+export async function queryPlanStatistics(
+  params: { current?: number; pageSize?: number } & Pick<QueryPlanStatisticsReq, 'appId'>,
+) {
+  const { current, pageSize, appId } = params; // current, pageSize is used for usePagination hook
+  const requestParams = {
+    appId,
+    needTotal: true,
+    pageIndex: current,
+    pageSize,
+  };
   return request
-    .post<QueryPlanStatisticsRes>('/report/report/queryPlanStatistics', params)
+    .post<QueryPlanStatisticsRes>('/report/report/queryPlanStatistics', requestParams)
     .then((res) =>
-      Promise.resolve(
-        res.body.planStatisticList.sort((a, b) => b.replayStartTime - a.replayStartTime),
-      ),
+      Promise.resolve({
+        total: res.body.totalCount,
+        list: res.body.planStatisticList.sort((a, b) => b.replayStartTime - a.replayStartTime),
+      }),
     );
 }

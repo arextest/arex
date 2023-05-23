@@ -1,4 +1,4 @@
-import { useRequest } from 'ahooks';
+import { usePagination } from 'ahooks';
 import { theme, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import {
@@ -7,7 +7,7 @@ import {
   HighlightRowTableProps,
   useTranslation,
 } from 'arex-core';
-import React, { FC, useRef, useState } from 'react';
+import React, { FC, useState } from 'react';
 import CountUp from 'react-countup';
 import { useSearchParams } from 'react-router-dom';
 
@@ -15,28 +15,26 @@ import { StatusTag } from '@/components';
 import { ReportService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
 
-const PageSize = 5 as const;
+const defaultPageSize = 5 as const;
 
-export type ReplayPlanProps = {
+export type PlanReportProps = {
   appId?: string;
   refreshDep?: React.Key;
-  onSelectedPlanChange: (selectedPlan: PlanStatistics) => void;
-} & Pick<HighlightRowTableProps<PlanStatistics>, 'defaultSelectFirst'>;
+  onSelectedPlanChange: (selectedPlan: PlanStatistics, current?: number, row?: number) => void;
+};
 
-const PlanReport: FC<ReplayPlanProps> = (props) => {
-  const { appId, refreshDep, defaultSelectFirst, onSelectedPlanChange } = props;
+const PlanReport: FC<PlanReportProps> = (props) => {
+  const { appId, refreshDep, onSelectedPlanChange } = props;
 
   const { token } = theme.useToken();
   const { t } = useTranslation(['components']);
-  const [search] = useSearchParams();
-
+  const [searchParams] = useSearchParams();
   const [init, setInit] = useState(true);
-  const [defaultPagination, setDefaultPagination] = useState({
-    defaultCurrent: 1,
-    defaultRow: 0,
-  });
 
-  const prevAppId = useRef<string>();
+  const defaultPagination = {
+    defaultCurrent: parseInt(searchParams.get('current') || '1'),
+    defaultRow: parseInt(searchParams.get('row') || '0'),
+  };
 
   const columns: ColumnsType<PlanStatistics> = [
     {
@@ -123,61 +121,51 @@ const PlanReport: FC<ReplayPlanProps> = (props) => {
   ];
 
   const {
-    data: planStatistics,
+    data: { list: planStatistics } = { list: [] },
+    pagination,
     loading,
     cancel: cancelPollingInterval,
-  } = useRequest(
-    () =>
+  } = usePagination(
+    (params) =>
       ReportService.queryPlanStatistics({
         appId,
-        needTotal: true,
-        pageSize: 100,
-        pageIndex: 1,
+        ...params,
       }),
     {
       ready: !!appId,
-      refreshDeps: [appId, refreshDep],
       loadingDelay: 200,
       pollingInterval: 6000,
-      onSuccess(res) {
-        // 判断请求类型为轮询还是手动触发
-        if (prevAppId.current !== appId) {
-          // 判断 url 参数中是否含有 planId
-          const searchResIndex = res.findIndex((i) => i.planId === search.get('planId'));
-          if (searchResIndex >= 0) {
-            onSelectedPlanChange(res[searchResIndex]);
-            setDefaultPagination({
-              defaultCurrent: Math.ceil((searchResIndex + 1) / PageSize),
-              defaultRow: searchResIndex % PageSize,
-            });
-          } else {
-            res.length && defaultSelectFirst && onSelectedPlanChange(res[0]);
-          }
-          prevAppId.current = appId;
+      defaultPageSize,
+      defaultCurrent: defaultPagination.defaultCurrent,
+      refreshDeps: [appId, refreshDep],
+      onSuccess({ list }) {
+        if (init) {
+          onSelectedPlanChange(list[parseInt(searchParams.get('row') || '0')]);
+          setInit(false); // 设置第一次初始化标识);
         }
-        res.every((record) => record.status !== 1) && cancelPollingInterval();
-
-        init && setInit(false); // 设置第一次初始化标识
+        list.every((record) => record.status !== 1) && cancelPollingInterval();
       },
     },
   );
+
+  const handleRowClick: HighlightRowTableProps<PlanStatistics>['onRowClick'] = (record, index) => {
+    onSelectedPlanChange(record, pagination.current, index);
+  };
 
   return (
     <FullHeightSpin
       spinning={init}
       minHeight={240}
       // 为了 defaultCurrent 和 defaultRow 生效，需在初次获取到数据后再挂载子组件
-      // TODO 优化: Table Pagination 受控，直接挂载 Table
       mountOnFirstLoading={false}
     >
       <HighlightRowTable<PlanStatistics>
         rowKey='planId'
         size='small'
         loading={loading}
-        pagination={{ defaultCurrent: defaultPagination.defaultCurrent, pageSize: PageSize }}
         columns={columns}
-        defaultSelectFirst={defaultSelectFirst}
-        onRowClick={onSelectedPlanChange}
+        pagination={pagination}
+        onRowClick={handleRowClick}
         dataSource={planStatistics}
         defaultCurrent={defaultPagination.defaultCurrent}
         defaultRow={defaultPagination.defaultRow}
