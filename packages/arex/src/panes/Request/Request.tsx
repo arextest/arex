@@ -42,6 +42,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   );
 
   const handleSend: HttpProps['onSend'] = (request) => {
+    // TODO 这里使用继承
     return sendRequest(request, environment).then((res) => {
       return {
         response: res.response,

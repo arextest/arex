@@ -39,7 +39,6 @@ xspy.onRequest(async (request: any, sendResponse: any) => {
       method: request.method,
       url: request.url,
       headers: request.headers,
-      // TODO 这里需要适配其他类型请求
       body: ['GET'].includes(request.method) ? undefined : request.body,
     });
     const dummyResponse = {

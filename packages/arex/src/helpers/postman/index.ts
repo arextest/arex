@@ -17,6 +17,7 @@ export async function sendRequest(
 ): Promise<{ response: any; testResult: any; consoles: any; visualizer: any }> {
   // @ts-ignore
   const runner = new window.PostmanRuntime.Runner();
+  // arex数据接口转postman数据结构
   const rawCollection = {
     info: {
       _postman_id: '7b650e98-a5d2-4925-b23c-a4fb33a14832',
@@ -45,9 +46,11 @@ export async function sendRequest(
         ],
         request: {
           method: hopReq.method,
-          header: hopReq.headers,
+          header: hopReq.headers.filter((i: any) => i.active),
           body: convertToPmBody(hopReq.body),
-          url: sdk.Url.parse(hopReq.endpoint + converToUrl(hopReq.params)),
+          url: sdk.Url.parse(
+            hopReq.endpoint + converToUrl(hopReq.params.filter((i: any) => i.active)),
+          ),
         },
         response: [],
       },
