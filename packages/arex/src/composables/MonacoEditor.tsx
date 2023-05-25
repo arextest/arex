@@ -9,7 +9,7 @@ const MonacoEditor: FC<{ value: string; option: Options }> = ({ value, option })
   return (
     <div
       css={css`
-        height: 100%;
+        height: 360px;
       `}
       ref={ref}
     ></div>

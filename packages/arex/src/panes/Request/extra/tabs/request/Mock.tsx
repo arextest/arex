@@ -1,10 +1,7 @@
 import { SaveOutlined } from '@ant-design/icons';
-// import { json } from '@codemirror/lang-json';
 import { useRequest } from 'ahooks';
 import { App, Col, Collapse, Row, Space } from 'antd';
 import { tryParseJsonString, tryStringifyJson } from 'arex-core';
-// import { EmptyWrapper, WatermarkCodeMirror } from '../../../../styledComponents';
-// import TooltipButton from '../../../../TooltipButton';
 import { EmptyWrapper, TooltipButton } from 'arex-core';
 import React, { FC } from 'react';
 import { useImmer } from 'use-immer';
@@ -12,10 +9,7 @@ import { useImmer } from 'use-immer';
 import MonacoEditor from '@/composables/MonacoEditor';
 import request from '@/utils/request';
 
-// import request from '../../../../../helpers/api/request';
-// import { tryParseJsonString, tryStringifyJson } from '../../../../../helpers/utils';
 import useUserProfile from '../../../../../store/useUserProfile';
-// import {TooltipButton} from "arex-core";
 
 type MockTarget = {
   body: string | null;
@@ -62,9 +56,9 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
           recordId,
           sourceProvider: 'Pinned',
         })
-        .then((res) =>
+        .then((res: any) =>
           Promise.resolve(
-            res.recordResult.map((result) => {
+            res.recordResult.map((result: any) => {
               result.targetRequest.bodyParsed = tryParseJsonString<Record<string, any>>(
                 tryParseJsonString(result.targetRequest.body),
               );
@@ -116,15 +110,17 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
     const data = mockData.find((item) => item.id === id);
     if (!data) return;
 
-    const { targetRequestString, targetResponseString, ...params } = data;
+    const { targetRequestString, targetResponseString, ...params }: any = data;
 
     params.targetRequest = tryParseJsonString(targetRequestString);
     params.targetResponse = tryParseJsonString(targetResponseString);
 
     typeof params.targetRequest.body !== 'string' &&
+      // @ts-ignore
       (params.targetRequest.body = tryStringifyJson(tryStringifyJson(params.targetRequest.body)));
 
     typeof params.targetResponse.body !== 'string' &&
+      // @ts-ignore
       (params.targetResponse.body = tryStringifyJson(tryStringifyJson(params.targetResponse.body)));
 
     updateMockData(params);
@@ -152,36 +148,38 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
               >
                 <Row gutter={16}>
                   <Col span={12} style={{ display: 'flex', flexDirection: 'column' }}>
-                    {/*{JSON.stringify(mock.targetRequestString)}*/}
-                    <MonacoEditor value={mock.targetRequestString}></MonacoEditor>
-                    {/*<WatermarkCodeMirror*/}
-                    {/*  remark='Request'*/}
-                    {/*  themeKey={theme}*/}
-                    {/*  extensions={[json()]}*/}
-                    {/*  value={mock.targetRequestString}*/}
-                    {/*  onChange={(value) =>*/}
-                    {/*    setMockData((state) => {*/}
-                    {/*      const data = state.find((item) => item.id === mock.id);*/}
-                    {/*      data && (data.targetRequestString = value);*/}
-                    {/*    })*/}
-                    {/*  }*/}
-                    {/*/>*/}
+                    <MonacoEditor
+                      value={mock.targetRequestString as string}
+                      option={{
+                        extendedEditorConfig: {
+                          theme: theme,
+                          mode: 'json',
+                        },
+                        onChange(value) {
+                          setMockData((state) => {
+                            const data = state.find((item) => item.id === mock.id);
+                            data && (data.targetRequestString = value);
+                          });
+                        },
+                      }}
+                    ></MonacoEditor>
                   </Col>
                   <Col span={12}>
-                    <MonacoEditor css={css``} value={mock.targetResponseString}></MonacoEditor>
-                    {/*{JSON.stringify(mock.targetResponseString)}*/}
-                    {/*<WatermarkCodeMirror*/}
-                    {/*  remark='Response'*/}
-                    {/*  themeKey={theme}*/}
-                    {/*  extensions={[json()]}*/}
-                    {/*  value={mock.targetResponseString}*/}
-                    {/*  onChange={(value) => {*/}
-                    {/*    setMockData((state) => {*/}
-                    {/*      const data = state.find((item) => item.id === mock.id);*/}
-                    {/*      data && (data.targetResponseString = value);*/}
-                    {/*    });*/}
-                    {/*  }}*/}
-                    {/*/>*/}
+                    <MonacoEditor
+                      value={mock.targetResponseString as string}
+                      option={{
+                        extendedEditorConfig: {
+                          theme: theme,
+                          mode: 'json',
+                        },
+                        onChange(value) {
+                          setMockData((state) => {
+                            const data = state.find((item) => item.id === mock.id);
+                            data && (data.targetResponseString = value);
+                          });
+                        },
+                      }}
+                    ></MonacoEditor>
                   </Col>
                 </Row>
               </Collapse.Panel>
@@ -192,5 +190,4 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
     </Space>
   );
 };
-
 export default Mock;

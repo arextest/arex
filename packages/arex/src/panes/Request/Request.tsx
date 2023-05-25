@@ -55,6 +55,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   };
 
   const handleSave: HttpProps['onSave'] = (requestParams) => {
+    console.log(requestParams,'s')
     FileSystemService.saveRequest(activeWorkspaceId, requestParams, nodeInfo?.nodeType || 1).then(
       (res) => {
         res && message.success('保存成功');
