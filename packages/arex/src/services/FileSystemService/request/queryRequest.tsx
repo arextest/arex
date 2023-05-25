@@ -5,7 +5,7 @@ import { request } from '@/utils';
 export async function queryRequest(params: {
   id: string;
   nodeType: number;
-}): Promise<ArexRESTRequest> {
+}): Promise<ArexRESTRequest & { recordId: string; inherited: boolean }> {
   if (params.nodeType === 1) {
     const res = await request.post<any>(`/report/filesystem/queryInterface`, params);
     const {
@@ -22,12 +22,15 @@ export async function queryRequest(params: {
       testScript: rest.testScripts?.length > 0 ? rest.testScripts[0].value : '',
       preRequestScript: rest.preRequestScript?.length > 0 ? rest.preRequestScript[0].value : '',
       recordId: rest.recordId,
+      inherited: rest.inherited,
     };
   } else {
     const res = await request.post<any>(`/report/filesystem/queryCase`, params);
+    console.log(res);
     const {
       body: { address, testAddress, ...rest },
     } = res;
+    // @ts-ignore
     return {
       id: rest.id,
       method: address?.method || 'GET',
@@ -38,6 +41,7 @@ export async function queryRequest(params: {
       testScript: rest.testScripts?.length > 0 ? rest.testScripts[0].value : '',
       preRequestScript: rest.preRequestScript?.length > 0 ? rest.preRequestScript[0].value : '',
       recordId: rest.recordId,
+      inherited: rest.inherited,
     };
   }
 }

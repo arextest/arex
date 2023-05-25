@@ -2,7 +2,11 @@ import { ArexRESTRequest } from 'arex-request-core/dist/components/http/data/res
 
 import { request } from '@/utils';
 
-export async function saveRequest(workspaceId: string, params: ArexRESTRequest, nodeType: number) {
+export async function saveRequest(
+  workspaceId: string,
+  params: ArexRESTRequest & { inherited: boolean },
+  nodeType: number,
+) {
   if (nodeType === 1) {
     const saveParams = {
       address: {
@@ -33,6 +37,7 @@ export async function saveRequest(workspaceId: string, params: ArexRESTRequest, 
       // id
       workspaceId: workspaceId,
       id: params.id,
+      inherited: params.inherited,
     };
     const res = await request.post<{ success: boolean }>(
       `/report/filesystem/saveInterface`,
@@ -69,6 +74,7 @@ export async function saveRequest(workspaceId: string, params: ArexRESTRequest, 
       // id
       workspaceId: workspaceId,
       id: params.id,
+      inherited: params.inherited,
     };
     const res = await request.post<{ success: boolean }>(`/report/filesystem/saveCase`, saveParams);
     return res.body.success;
