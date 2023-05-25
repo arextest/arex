@@ -11,6 +11,8 @@ import { CollectionTreeType } from '@/menus/Collection/Collection';
 import { FileSystemService } from '@/services';
 import { useCollections, useEnvironments, useUserProfile, useWorkspaces } from '@/store';
 
+import { ExtraTabs } from './extra';
+
 export type PathType = {
   title: string;
 };
@@ -87,7 +89,23 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       },
     },
   );
-
+  const httpConfig = useMemo(() => {
+    return {
+      requestTabs: {
+        extra: [
+          {
+            label: 'Mock',
+            key: 'mock',
+            hidden: !data?.recordId,
+            children: <ExtraTabs.RequestTabs.Mock recordId={data?.recordId as string} />,
+          },
+        ],
+      },
+      responseTabs: {
+        extra: [],
+      },
+    };
+  }, [data]);
   return (
     <div>
       <Http
@@ -95,7 +113,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         theme={theme}
         locale={language}
         value={data}
-        config={{}}
+        config={httpConfig}
         environment={environment}
         breadcrumbItems={path}
         onSave={handleSave}

@@ -21,13 +21,13 @@ export async function queryRequest(params: {
       body: rest.body || { contentType: 'application/json', body: '' },
       testScript: rest.testScripts?.length > 0 ? rest.testScripts[0].value : '',
       preRequestScript: rest.preRequestScript?.length > 0 ? rest.preRequestScript[0].value : '',
+      recordId: rest.recordId,
     };
   } else {
     const res = await request.post<any>(`/report/filesystem/queryCase`, params);
     const {
       body: { address, testAddress, ...rest },
     } = res;
-    // @ts-ignore
     return {
       id: rest.id,
       method: address?.method || 'GET',
@@ -37,6 +37,7 @@ export async function queryRequest(params: {
       body: rest.body || { contentType: 'application/json', body: '' },
       testScript: rest.testScripts?.length > 0 ? rest.testScripts[0].value : '',
       preRequestScript: rest.preRequestScript?.length > 0 ? rest.preRequestScript[0].value : '',
+      recordId: rest.recordId,
     };
   }
 }
