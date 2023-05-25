@@ -6,6 +6,7 @@ export * from './queryDiffMsgById';
 export * from './queryFullLinkInfo';
 export * from './queryLogEntity';
 export * from './queryMsgWithDiff';
+export * from './queryPlanFailCase';
 export * from './queryPlanItemStatistics';
 export * from './queryPlanStatistics';
 export * from './queryReplayCase';

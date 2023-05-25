@@ -6,10 +6,11 @@ export type CreatePlanReq = {
   targetEnv: string;
   operator: string;
   replayPlanType: number;
+  planName?: string;
   caseSourceType?: number;
   caseSourceFrom: number;
   caseSourceTo: number;
-  operationCaseInfoList?: { operationId: string }[];
+  operationCaseInfoList?: { operationId: string; replayIdList?: string[] }[];
 };
 
 export type CreatePlanRes = {

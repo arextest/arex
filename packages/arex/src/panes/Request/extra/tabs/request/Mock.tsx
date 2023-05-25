@@ -9,12 +9,12 @@ import { EmptyWrapper, TooltipButton } from 'arex-core';
 import React, { FC } from 'react';
 import { useImmer } from 'use-immer';
 
+import MonacoEditor from '@/composables/MonacoEditor';
 import request from '@/utils/request';
 
 // import request from '../../../../../helpers/api/request';
 // import { tryParseJsonString, tryStringifyJson } from '../../../../../helpers/utils';
 import useUserProfile from '../../../../../store/useUserProfile';
-import MonacoEditor from "@/composables/MonacoEditor";
 // import {TooltipButton} from "arex-core";
 
 type MockTarget = {
@@ -168,7 +168,7 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
                     {/*/>*/}
                   </Col>
                   <Col span={12}>
-                    <MonacoEditor value={mock.targetResponseString}></MonacoEditor>
+                    <MonacoEditor css={css``} value={mock.targetResponseString}></MonacoEditor>
                     {/*{JSON.stringify(mock.targetResponseString)}*/}
                     {/*<WatermarkCodeMirror*/}
                     {/*  remark='Response'*/}

@@ -44,7 +44,11 @@ const ReplayPage: ArexPaneFC<ApplicationDataType> = (props) => {
           />
         }
         panel={
-          <PlanItem selectedPlan={selectedPlan} filter={(record) => !!record.totalCaseCount} />
+          <PlanItem
+            selectedPlan={selectedPlan}
+            filter={(record) => !!record.totalCaseCount}
+            onRefresh={handleRefreshDep}
+          />
         }
       />
     </>

@@ -14,6 +14,7 @@ type CaseProps = {
   filter?: Key;
   onClick?: (record: ReplayCaseType) => void;
   onClickSaveCase?: (record: ReplayCaseType) => void;
+  onClickRerunCase?: (recordId: string) => void;
 };
 
 const Case: FC<CaseProps> = (props) => {
@@ -71,6 +72,12 @@ const Case: FC<CaseProps> = (props) => {
             e.stopPropagation();
             navPane({ type: PanesType.CASE_DETAIL, id: record.recordId, data: record });
           }}
+        />,
+        <SmallTextButton
+          key='rerun'
+          color={'primary'}
+          title={t('replay.rerun') as string}
+          onClick={() => props.onClickRerunCase?.(record.recordId)}
         />,
       ],
     },

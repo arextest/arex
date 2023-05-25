@@ -3,7 +3,16 @@ import { Button, ButtonProps } from 'antd';
 import React, { ReactNode } from 'react';
 
 const SmallTextButton = styled((props: ButtonProps & { color?: 'primary' | 'text' | string }) => (
-  <Button type='text' size='small' {...props}>
+  <Button
+    type='text'
+    size='small'
+    {...props}
+    onClick={(e) => {
+      e.stopPropagation();
+      // @ts-ignore
+      props.onClick?.(e);
+    }}
+  >
     {props.title}
   </Button>
 ))<{ title?: ReactNode } & ButtonProps>`
@@ -12,7 +21,7 @@ const SmallTextButton = styled((props: ButtonProps & { color?: 'primary' | 'text
       ? props.theme.colorPrimary
       : props.color === 'text'
       ? props.theme.colorText
-      : props.color}!important;
+      : props.color};
 `;
 
 export default SmallTextButton;

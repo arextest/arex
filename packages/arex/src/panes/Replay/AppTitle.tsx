@@ -186,7 +186,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           autoComplete='off'
         >
           <Form.Item
-            label={t('replay.targetHost')}
+            label={t('replay.targetEnv')}
             name='targetEnv'
             rules={[{ required: true, message: t('replay.emptyHost') as string }]}
           >

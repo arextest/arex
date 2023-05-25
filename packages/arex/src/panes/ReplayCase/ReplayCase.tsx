@@ -1,8 +1,17 @@
 import { useRequest } from 'ahooks';
-import { ArexPaneFC, CollapseTable, DiffPath, PanesTitle, useTranslation } from 'arex-core';
+import { App } from 'antd';
+import {
+  ArexPaneFC,
+  CollapseTable,
+  DiffPath,
+  getLocalStorage,
+  PanesTitle,
+  useTranslation,
+} from 'arex-core';
 import React, { useMemo, useRef, useState } from 'react';
 
-import { ComparisonService, ReportService } from '@/services';
+import { EMAIL_KEY } from '@/constant';
+import { ComparisonService, ReportService, ScheduleService } from '@/services';
 import { infoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
 
 import Case from './Case';
@@ -10,6 +19,10 @@ import SaveCase, { SaveCaseRef } from './SaveCase';
 // import { SaveCaseRef } from './SaveCase';
 
 const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
+  const { data } = props;
+  const { message, notification } = App.useApp();
+  const email = getLocalStorage<string>(EMAIL_KEY);
+
   const { t } = useTranslation(['components']);
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
 
@@ -40,6 +53,48 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     saveCaseRef.current?.openModal(record);
   }
 
+  const { run: queryPlanFailCase } = useRequest(ReportService.queryPlanFailCase, {
+    manual: true,
+    onSuccess(operationCaseInfoList) {
+      rerun({
+        caseSourceFrom: data.caseStartTime,
+        caseSourceTo: data.caseEndTime,
+        appId: data.appId,
+        operationCaseInfoList,
+        operator: email as string,
+        replayPlanType: 2,
+        sourceEnv: 'pro',
+        targetEnv: data.targetEnv,
+      });
+    },
+  });
+
+  const { run: rerun } = useRequest(ScheduleService.createPlan, {
+    manual: true,
+    onSuccess(res) {
+      if (res.result === 1) {
+        notification.success({
+          message: t('message.success', { ns: 'common' }),
+          description: res.desc,
+        });
+      } else {
+        notification.error({
+          message: t('message.error', { ns: 'common' }),
+          description: res.desc,
+        });
+      }
+    },
+  });
+
+  function handleClickRerunCase(recordId: string) {
+    console.log(data);
+    queryPlanFailCase({
+      planId: data.planId,
+      planItemIdList: [data.planItemId],
+      recordIdList: [recordId],
+    });
+  }
+
   return (
     <>
       <PanesTitle
@@ -55,9 +110,10 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         table={
           <Case
             planItemId={props.data.planItemId}
+            filter={props.data.filter}
             onClick={handleClickRecord}
             onClickSaveCase={handleClickSaveCase}
-            filter={props.data.filter}
+            onClickRerunCase={handleClickRerunCase}
           />
         }
         panel={
