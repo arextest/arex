@@ -17,7 +17,7 @@ export type PathType = {
   title: string;
 };
 
-function convertRequest(request) {
+function convertRequest(request: any) {
   if (request.inherited) {
     return {
       ...request,
@@ -29,7 +29,7 @@ function convertRequest(request) {
   }
 }
 
-const Request: ArexPaneFC = (props) => {
+const Request: ArexPaneFC = () => {
   const { id = '' } = useParams();
 
   const userName = getLocalStorage<string>(EMAIL_KEY);
