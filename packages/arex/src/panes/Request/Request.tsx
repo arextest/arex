@@ -3,11 +3,11 @@ import { message } from 'antd';
 import { ArexPaneFC, getLocalStorage } from 'arex-core';
 import { Http, HttpProps } from 'arex-request-core';
 import React, { useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import { useImmer } from 'use-immer';
 
 import { EMAIL_KEY } from '@/constant';
 import { sendRequest } from '@/helpers/postman';
-import { CollectionTreeType } from '@/menus/Collection/Collection';
 import { FileSystemService } from '@/services';
 import { useCollections, useEnvironments, useUserProfile, useWorkspaces } from '@/store';
 
@@ -17,7 +17,6 @@ export type PathType = {
   title: string;
 };
 
-export type RequestProps = CollectionTreeType & { path: PathType[] };
 function convertRequest(request: any) {
   if (request.inherited) {
     return {
@@ -29,8 +28,9 @@ function convertRequest(request: any) {
     return request;
   }
 }
-const Request: ArexPaneFC<RequestProps> = (props) => {
-  const { infoId: id } = props.data;
+
+const Request: ArexPaneFC = () => {
+  const { id = '' } = useParams();
 
   const userName = getLocalStorage<string>(EMAIL_KEY);
 
@@ -39,7 +39,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const { collectionsFlatData, getCollections, getPath } = useCollections();
   const { theme, language } = useUserProfile();
 
-  const [path, setPath] = useImmer<PathType[]>(props.data.path || []);
+  const [path, setPath] = useImmer<PathType[]>([]);
 
   const nodeInfo = useMemo(() => {
     return collectionsFlatData.get(id);
@@ -66,7 +66,6 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   };
 
   const handleSave: HttpProps['onSave'] = (requestParams) => {
-    console.log(requestParams, 's');
     FileSystemService.saveRequest(activeWorkspaceId, requestParams, nodeInfo?.nodeType || 1).then(
       (res) => {
         res && message.success('保存成功');
@@ -74,14 +73,32 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     );
   };
 
-  const { data } = useRequest(() =>
-    FileSystemService.queryRequest({
-      id: id as string,
-      nodeType: nodeInfo?.nodeType || 1,
-    }),
+  const { data } = useRequest(
+    () =>
+      FileSystemService.queryRequest({
+        id: id as string,
+        nodeType: nodeInfo?.nodeType || 1,
+      }),
+    {
+      onSuccess(res) {
+        // parent path breadcrumb
+        const defaultPath: { title: string }[] = [{ title: res.name }];
+        let pid = collectionsFlatData.get(res.id!)?.pid;
+        while (pid) {
+          const node = collectionsFlatData.get(pid);
+          if (node) {
+            defaultPath.unshift({ title: node.nodeName });
+            pid = node.pid;
+          } else {
+            break;
+          }
+        }
+        setPath(defaultPath);
+      },
+    },
   );
 
-  const nodePath = useMemo(() => getPath(props.data.infoId), [getPath, props.data.infoId]);
+  const nodePath = useMemo(() => getPath(id), [getPath, id]);
 
   const { run: rename } = useRequest(
     (newName) =>

@@ -67,12 +67,13 @@
     "startFailed": "启动失败",
     "startButton": "启动回放",
     "targetHost": "目标回放环境",
+    "targetEnv": "目标回放环境",
     "caseStartTime": "Case 开始时间",
     "caseEndTime": "Case 结束时间",
     "emptyHost": "目标回放环境不能为空",
     "emptyStartTime": "Case 开始时间不能为空",
     "emptyEndTime": "Case 结束时间不能为空",
-    "operation": "operation",
+    "operation": "Operation",
     "replayReportName": "任务名称",
     "state": "状态",
     "all": "全部",
@@ -212,7 +213,7 @@
     "emptyValue": "请输入值",
     "mockTips": "\"body\"为json字符串时会自动转换成json对象，保存时还原。",
     "runningStatus": "运行状态",
-    "frequencyUnit": "个/100秒",
+    "frequencyUnit": "个/分钟",
     "frequencyTip": "单接口单日录制: * 个"
   },
   "env": {

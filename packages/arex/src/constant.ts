@@ -39,6 +39,7 @@ export const REFRESH_TOKEN_KEY = 'refreshToken';
 export const ENVIRONMENT_KEY = 'environmentId';
 export const WORKSPACE_KEY = 'workspaceId';
 export const WORKSPACE_ENVIRONMENT_PAIR_KEY = 'workspaceEnvironmentPair';
+export const TARGET_HOST_AUTOCOMPLETE_KEY = 'targetHostAutocomplete';
 
 // Default value
 export const DEFAULT_LANGUAGE = I18nextLng.en;

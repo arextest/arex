@@ -53,7 +53,6 @@ const SettingPage: FC = () => {
           avatar: values.avatar,
         };
 
-        getUserProfile();
         updateUserProfileRequestRun({
           profile: JSON.stringify(profile),
           userName: email,
@@ -66,6 +65,9 @@ const SettingPage: FC = () => {
 
   const { run: updateUserProfileRequestRun } = useRequest(LoginService.updateUserProfile, {
     manual: true,
+    onSuccess(success) {
+      success && getUserProfile();
+    },
     onError(err) {
       message.error('Update profile failed');
       console.error(err);
