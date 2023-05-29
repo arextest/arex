@@ -40,7 +40,7 @@ export type StructuredOptionProps = {
 };
 
 export type StructuredOptionRef = {
-  set: (value: { data?: StructuredValue; type?: (typeof Step)[1] | (typeof Step)[2] }) => void;
+  set: (value: { data?: StructuredValue; type?: typeof Step[1] | typeof Step[2] }) => void;
   reset: () => void;
 };
 
@@ -115,7 +115,7 @@ const StructuredOption: ForwardRefRenderFunction<StructuredOptionRef, Structured
     },
   }));
 
-  const handleChange = (data: StructuredValue, step: (typeof Step)[number]) => {
+  const handleChange = (data: StructuredValue, step: typeof Step[number]) => {
     if (mode === StructuredOptionMode.modify) {
       props.onChange?.(mode, data, value);
       carouselRef.current?.goTo(0, false);
