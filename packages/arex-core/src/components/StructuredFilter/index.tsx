@@ -62,7 +62,7 @@ const StructuredFilterWrapper = styled.div<{ size: SizeType }>`
 `;
 
 const StructuredFilter: FC<StructuredFilterProps> = (props) => {
-  const { showSearchButton = true, size, options, ...restProps } = props;
+  const { showSearchButton = true, size, options, labelDataSource, ...restProps } = props;
   const { t } = useTranslation(['common']);
 
   const selectRef = useRef<any>(null); // BaseSelectRef
@@ -152,7 +152,7 @@ const StructuredFilter: FC<StructuredFilterProps> = (props) => {
             tagRender={(tagProps) => (
               <StructuredTag
                 {...tagProps}
-                labelSource={props.labelDataSource}
+                labelSource={labelDataSource}
                 onOperatorClick={handleTagOperatorClick}
                 onValueClick={handleTagValueClick}
                 onDelete={handleDeleteTag}

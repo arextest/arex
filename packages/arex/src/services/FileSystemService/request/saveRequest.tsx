@@ -4,7 +4,7 @@ import { request } from '@/utils';
 
 export async function saveRequest(
   workspaceId: string,
-  params: ArexRESTRequest & { inherited: boolean },
+  params: ArexRESTRequest & { inherited?: boolean },
   nodeType: number,
 ) {
   if (nodeType === 1) {

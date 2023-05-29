@@ -2,8 +2,8 @@ import axios from 'axios';
 
 export type CreatePlanReq = {
   appId: string;
-  sourceEnv: string;
-  targetEnv: string;
+  sourceEnv: string | null;
+  targetEnv: string | null;
   operator: string;
   replayPlanType: number;
   planName?: string;
