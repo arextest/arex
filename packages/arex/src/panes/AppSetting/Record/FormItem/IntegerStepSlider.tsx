@@ -17,20 +17,21 @@ const IntegerStepSlider: FC<FormItemProps<number>> = (props) => {
   };
 
   return (
-    <div>
+    <>
       <Space>
-        <Slider min={1} max={100} onChange={onChange} value={value} style={{ width: '200px' }} />
-        <InputNumber min={1} max={100} value={value} onChange={onChange} />
+        <Slider min={0} max={10} onChange={onChange} value={value} style={{ width: '200px' }} />
+        <InputNumber precision={0} min={1} max={10} value={value} onChange={onChange} />
         <Typography.Text type='secondary'>{t('appSetting.frequencyUnit')} </Typography.Text>
       </Space>
+
       <div>
         <Typography.Text type='secondary'>
           {t('appSetting.frequencyTip').split('*')[0]}
-          <Typography.Text type='danger'>{value * 36 * 24}</Typography.Text>
+          <Typography.Text type='danger'>{value * 60 * 24}</Typography.Text>
           {t('appSetting.frequencyTip').split('*')[1]}
         </Typography.Text>
       </div>
-    </div>
+    </>
   );
 };
 
