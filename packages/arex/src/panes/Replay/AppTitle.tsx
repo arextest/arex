@@ -15,7 +15,6 @@ import {
 import {
   getLocalStorage,
   PanesTitle,
-  setLocalStorage,
   SpaceBetweenWrapper,
   TooltipButton,
   useTranslation,
@@ -160,7 +159,6 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         });
 
         // update targetHostSource
-
         setTargetHostSource((source) => {
           !source && (source = {});
 

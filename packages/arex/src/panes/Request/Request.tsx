@@ -17,7 +17,19 @@ export type PathType = {
   title: string;
 };
 
-const Request: ArexPaneFC = () => {
+function convertRequest(request) {
+  if (request.inherited) {
+    return {
+      ...request,
+      method: request.inheritedMethod,
+      endpoint: request.inheritedEndpoint,
+    };
+  } else {
+    return request;
+  }
+}
+
+const Request: ArexPaneFC = (props) => {
   const { id = '' } = useParams();
 
   const userName = getLocalStorage<string>(EMAIL_KEY);
@@ -43,7 +55,8 @@ const Request: ArexPaneFC = () => {
 
   const handleSend: HttpProps['onSend'] = (request) => {
     // TODO 这里使用继承
-    return sendRequest(request, environment).then((res) => {
+    const convertedRequest = convertRequest(request);
+    return sendRequest(convertedRequest, environment).then((res) => {
       return {
         response: res.response,
         testResult: res.testResult,
