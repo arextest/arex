@@ -22,11 +22,15 @@ export async function queryRequest(params: {
       testScript: rest.testScripts?.length > 0 ? rest.testScripts[0].value : '',
       preRequestScript: rest.preRequestScript?.length > 0 ? rest.preRequestScript[0].value : '',
       recordId: rest.recordId,
-      inherited: rest.inherited,
+      inherited: false,
+      inheritedMethod: '',
+      inheritedEndpoint: '',
     };
   } else {
     const res = await request.post<any>(`/report/filesystem/queryCase`, params);
-    console.log(res);
+    const interfaceRes = await request.post<any>(`/report/filesystem/queryInterface`, {
+      id: res.body.pareId,
+    });
     const {
       body: { address, testAddress, ...rest },
     } = res;
@@ -42,6 +46,8 @@ export async function queryRequest(params: {
       preRequestScript: rest.preRequestScript?.length > 0 ? rest.preRequestScript[0].value : '',
       recordId: rest.recordId,
       inherited: rest.inherited,
+      inheritedMethod: 'GET',
+      inheritedEndpoint: '',
     };
   }
 }

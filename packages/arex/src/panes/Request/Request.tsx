@@ -18,7 +18,17 @@ export type PathType = {
 };
 
 export type RequestProps = CollectionTreeType & { path: PathType[] };
-
+function convertRequest(request) {
+  if (request.inherited) {
+    return {
+      ...request,
+      method: request.inheritedMethod,
+      endpoint: request.inheritedEndpoint,
+    };
+  } else {
+    return request;
+  }
+}
 const Request: ArexPaneFC<RequestProps> = (props) => {
   const { infoId: id } = props.data;
 
@@ -45,7 +55,8 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
 
   const handleSend: HttpProps['onSend'] = (request) => {
     // TODO 这里使用继承
-    return sendRequest(request, environment).then((res) => {
+    const convertedRequest = convertRequest(request);
+    return sendRequest(convertedRequest, environment).then((res) => {
       return {
         response: res.response,
         testResult: res.testResult,
