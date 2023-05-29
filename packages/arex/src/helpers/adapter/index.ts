@@ -10,6 +10,7 @@ function AgentAxios<T>(params: any) {
         type: '__AREX_EXTENSION_REQUEST__',
         tid: tid,
         payload: params,
+        v: '0.3.0',
       },
       '*',
     );
