@@ -29,7 +29,7 @@
     "immer": "^9.0.19",
     "lodash": "^4.17.21",
     "lossless-json": "^2.0.8",
-    "monaco-editor": "^0.37.1",
+    "monaco-editor": "^0.38.0",
     "path-to-regexp": "^6.2.1",
     "qs": "^6.11.1",
     "react": "^18.2.0",

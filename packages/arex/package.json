@@ -24,7 +24,7 @@
     "dayjs": "^1.11.7",
     "immer": "^9.0.19",
     "lodash": "^4.17.21",
-    "monaco-editor": "^0.37.1",
+    "monaco-editor": "^0.38.0",
     "postman-collection": "^4.1.7",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
