@@ -56,6 +56,7 @@ export interface ArexPanesContainerProps extends Omit<TabsProps, 'items'> {
   panes?: Pane[];
   onAdd?: () => void;
   onRemove?: (key: string) => void;
+  onClickContextMenu?: (key: string) => void;
 }
 
 const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
@@ -194,11 +195,7 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
                 menu={{
                   items: dropdownItems,
                   onClick: function (e) {
-                    // props.onClickContextMenu({
-                    //   tabKey: String(node.key),
-                    //   clickKey: e.key,
-                    //   order,
-                    // });
+                    props.onClickContextMenu?.(String(node.key));
                   },
                 }}
                 trigger={['contextMenu']}
