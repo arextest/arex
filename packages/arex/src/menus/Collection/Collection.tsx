@@ -126,24 +126,10 @@ const Collection: ArexMenuFC = (props) => {
     if (info.node.nodeType !== CollectionNodeType.folder) {
       const method = info.node.method && info.node.method.toLowerCase();
 
-      // parent path breadcrumb
-      const path: { title: string }[] = [{ title: info.node.nodeName }];
-      let pid = collectionsFlatData.get(info.node.infoId)?.pid;
-      while (pid) {
-        const node = collectionsFlatData.get(pid);
-        if (node) {
-          path.unshift({ title: node.nodeName });
-          pid = node.pid;
-        } else {
-          break;
-        }
-      }
-
       navPane({
         type: PanesType.REQUEST,
         id: info.node.infoId,
         icon: (method && method.replace(method[0], method[0].toUpperCase())) || undefined,
-        data: { ...info.node, path },
       });
     }
   };
