@@ -8,16 +8,12 @@ const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 const app = express();
-const e = {
-  SERVICE_REPORT_URL:"http://10.5.153.1:8090",
-  SERVICE_SCHEDULE_URL:"http://10.5.153.1:8092",
-  SERVICE_STORAGE_URL:"http://10.5.153.1:8093",
-  SERVICE_NODE_URL:"http://10.5.153.1:10001"
-}
+
+
 app.use(
   '/report',
   createProxyMiddleware({
-    target: e.SERVICE_REPORT_URL,
+    target: process.env.SERVICE_REPORT_URL,
     changeOrigin: true,
     pathRewrite: { '/report': '/api' },
   }),
@@ -26,7 +22,7 @@ app.use(
 app.use(
   '/schedule',
   createProxyMiddleware({
-    target: e.SERVICE_SCHEDULE_URL,
+    target: process.env.SERVICE_SCHEDULE_URL,
     changeOrigin: true,
     pathRewrite: { '/schedule': '/api' },
   }),
@@ -35,7 +31,7 @@ app.use(
 app.use(
   '/storage',
   createProxyMiddleware({
-    target: e.SERVICE_STORAGE_URL,
+    target: process.env.SERVICE_STORAGE_URL,
     changeOrigin: true,
     pathRewrite: { '/storage': '/api' },
   }),
@@ -44,7 +40,7 @@ app.use(
 app.use(
   '/node',
   createProxyMiddleware({
-    target: e.SERVICE_NODE_URL,
+    target: process.env.SERVICE_NODE_URL,
     changeOrigin: true,
     pathRewrite: { '/node': '/' },
   }),
@@ -58,11 +54,11 @@ app.get('/vi/health', (req, res) => {
 // storage
 app.get('/env', (req, res) => {
   res.send({
-    SERVICE_REPORT_URL: e.SERVICE_REPORT_URL,
-    SERVICE_CONFIG_URL: e.SERVICE_CONFIG_URL,
-    SERVICE_SCHEDULE_URL: e.SERVICE_SCHEDULE_URL,
-    SERVICE_STORAGE_URL: e.SERVICE_STORAGE_URL,
-    SERVICE_NODE_URL:e.SERVICE_NODE_URL
+    SERVICE_REPORT_URL: process.env.SERVICE_REPORT_URL,
+    SERVICE_CONFIG_URL: process.env.SERVICE_CONFIG_URL,
+    SERVICE_SCHEDULE_URL: process.env.SERVICE_SCHEDULE_URL,
+    SERVICE_STORAGE_URL: process.env.SERVICE_STORAGE_URL,
+    SERVICE_NODE_URL:process.env.SERVICE_NODE_URL
   });
 });
 

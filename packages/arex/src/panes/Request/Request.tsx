@@ -18,7 +18,7 @@ export type PathType = {
 };
 
 export type RequestProps = CollectionTreeType & { path: PathType[] };
-function convertRequest(request) {
+function convertRequest(request: any) {
   if (request.inherited) {
     return {
       ...request,
