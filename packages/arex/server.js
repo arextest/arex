@@ -37,15 +37,6 @@ app.use(
   }),
 );
 
-app.use(
-  '/node',
-  createProxyMiddleware({
-    target: process.env.SERVICE_NODE_URL,
-    changeOrigin: true,
-    pathRewrite: { '/node': '/' },
-  }),
-);
-
 
 // 健康检查
 app.get('/vi/health', (req, res) => {
@@ -57,8 +48,7 @@ app.get('/env', (req, res) => {
     SERVICE_REPORT_URL: process.env.SERVICE_REPORT_URL,
     SERVICE_CONFIG_URL: process.env.SERVICE_CONFIG_URL,
     SERVICE_SCHEDULE_URL: process.env.SERVICE_SCHEDULE_URL,
-    SERVICE_STORAGE_URL: process.env.SERVICE_STORAGE_URL,
-    SERVICE_NODE_URL:process.env.SERVICE_NODE_URL
+    SERVICE_STORAGE_URL: process.env.SERVICE_STORAGE_URL
   });
 });
 
