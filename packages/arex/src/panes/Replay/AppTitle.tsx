@@ -1,12 +1,28 @@
-import { PlayCircleOutlined, SyncOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, PlayCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { useRequest } from 'ahooks';
-import { App, Button, DatePicker, Form, Input, Modal, Select, Typography } from 'antd';
-import { getLocalStorage, PanesTitle, TooltipButton, useTranslation } from 'arex-core';
+import { useLocalStorageState, useRequest } from 'ahooks';
+import {
+  App,
+  AutoComplete,
+  Button,
+  DatePicker,
+  Form,
+  Modal,
+  Select,
+  theme,
+  Typography,
+} from 'antd';
+import {
+  getLocalStorage,
+  PanesTitle,
+  SpaceBetweenWrapper,
+  TooltipButton,
+  useTranslation,
+} from 'arex-core';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 
-import { EMAIL_KEY } from '@/constant';
+import { EMAIL_KEY, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { ApplicationService, ScheduleService } from '@/services';
 import { ApplicationDataType } from '@/services/ApplicationService';
 
@@ -17,18 +33,12 @@ type AppTitleProps = {
 
 type CreatePlanForm = {
   targetEnv: string;
-  caseSourceFrom: Dayjs;
-  caseSourceTo: Dayjs;
+  caseSourceRange: [Dayjs, Dayjs];
   operationList?: string[];
 };
 
 const TitleWrapper = styled(
-  (props: {
-    className?: string;
-    title: ReactNode;
-    onRefresh?: () => void;
-    onSetting?: () => void;
-  }) => {
+  (props: { className?: string; title: ReactNode; onRefresh?: () => void }) => {
     const { t } = useTranslation(['components']);
 
     return (
@@ -56,13 +66,16 @@ const TitleWrapper = styled(
 
 const InitialValues = {
   targetEnv: '',
-  caseSourceFrom: dayjs().subtract(1, 'day').startOf('day'), // 前一天零点
-  caseSourceTo: dayjs().add(1, 'day').startOf('day').subtract(1, 'second'), // 当天最后一秒
+  caseSourceRange: [
+    dayjs().subtract(1, 'day').startOf('day'), // 前一天零点
+    dayjs().add(1, 'day').startOf('day').subtract(1, 'second'), // 当天最后一秒
+  ],
 };
 
 const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   const { t } = useTranslation(['components']);
   const { notification } = App.useApp();
+  const { token } = theme.useToken();
   const email = getLocalStorage<string>(EMAIL_KEY);
 
   const [form] = Form.useForm<CreatePlanForm>();
@@ -71,8 +84,14 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   const [open, setOpen] = useState(false);
   const [interfacesOptions, setInterfacesOptions] = useState<any[]>([]);
 
+  const [targetHostSource, setTargetHostSource] = useLocalStorageState<{
+    [appId: string]: string[];
+  }>(TARGET_HOST_AUTOCOMPLETE_KEY, {
+    defaultValue: {},
+  });
+
   const webhook = useMemo(
-    () => `${location.origin}/api/createPlan?appId=${data.appId}&targetEnv=${targetEnv}`,
+    () => `${location.origin}/api/createPlan?appId=${data.appId}&targetEnv=${targetEnv?.trim()}`,
     [data.appId, targetEnv],
   );
 
@@ -121,12 +140,13 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     form
       .validateFields()
       .then((values) => {
+        const targetEnv = values.targetEnv.trim();
         createPlan({
           appId: data.appId,
           sourceEnv: 'pro',
-          targetEnv: values.targetEnv.trim(),
-          caseSourceFrom: values.caseSourceFrom.startOf('day').valueOf(),
-          caseSourceTo: values.caseSourceTo
+          targetEnv,
+          caseSourceFrom: values.caseSourceRange[0].startOf('day').valueOf(),
+          caseSourceTo: values.caseSourceRange[1]
             .add(1, 'day')
             .startOf('day')
             .subtract(1, 'second')
@@ -137,26 +157,64 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           operator: email as string,
           replayPlanType: Number(Boolean(values.operationList?.length)),
         });
+
+        // update targetHostSource
+        setTargetHostSource((source) => {
+          !source && (source = {});
+
+          if (source?.[data.appId] && !source?.[data.appId].includes(targetEnv))
+            source[data.appId].push(targetEnv);
+          else if (!source?.[data.appId]) source[data.appId] = [targetEnv];
+
+          return source;
+        });
       })
       .catch((info) => {
         console.log('Validate Failed:', info);
       });
   };
 
-  const handleOpenSetting = () => {
-    // TODO: 跳转页面
-    // customNavigate(
-    //   `/${params.workspaceId}/${PagesType.AppSetting}/${data.id}?data=${encodeURIComponent(
-    //     JSON.stringify(data),
-    //   )}`,
-    // );
-  };
+  const targetHostOptions = useMemo(
+    () =>
+      targetHostSource?.[data.appId]?.map((item) => ({
+        label: (
+          <SpaceBetweenWrapper>
+            <Typography.Text>{item}</Typography.Text>
+            <Button
+              size='small'
+              type='text'
+              icon={
+                <CloseCircleOutlined
+                  style={{ fontSize: '10px', color: token.colorTextSecondary }}
+                />
+              }
+              onClick={(e) => {
+                e.stopPropagation();
+
+                setTargetHostSource((source) => {
+                  const targetHostList = source?.[data.appId] || [];
+                  const index = targetHostList.indexOf(item);
+                  if (index > -1) {
+                    targetHostList.splice(index, 1);
+                  }
+                  return {
+                    ...source,
+                    [data.appId]: targetHostList,
+                  };
+                });
+              }}
+            />
+          </SpaceBetweenWrapper>
+        ),
+        value: item,
+      })) || [],
+    [data.appId, targetHostSource, open],
+  );
+
   return (
     <div>
       <PanesTitle
-        title={
-          <TitleWrapper title={data.appId} onRefresh={onRefresh} onSetting={handleOpenSetting} />
-        }
+        title={<TitleWrapper title={data.appId} onRefresh={onRefresh} />}
         extra={
           <Button
             size='small'
@@ -186,27 +244,22 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           autoComplete='off'
         >
           <Form.Item
-            label={t('replay.targetEnv')}
+            label={t('replay.targetHost')}
             name='targetEnv'
             rules={[{ required: true, message: t('replay.emptyHost') as string }]}
           >
-            <Input />
+            <AutoComplete allowClear options={targetHostOptions} />
           </Form.Item>
 
           <Form.Item
-            label={t('replay.caseStartTime')}
-            name='caseSourceFrom'
-            rules={[{ required: true, message: t('replay.emptyStartTime') as string }]}
+            label={t('replay.caseRange')}
+            name='caseSourceRange'
+            rules={[{ required: true, message: t('replay.emptyCaseRange') as string }]}
           >
-            <DatePicker style={{ width: '100%' }} />
-          </Form.Item>
-
-          <Form.Item
-            label={t('replay.caseEndTime')}
-            name='caseSourceTo'
-            rules={[{ required: true, message: t('replay.emptyEndTime') as string }]}
-          >
-            <DatePicker style={{ width: '100%' }} />
+            <DatePicker.RangePicker
+              placeholder={[t('replay.caseStartTime'), t('replay.caseEndTime')]}
+              style={{ width: '100%' }}
+            />
           </Form.Item>
 
           <Form.Item label={t('replay.operation')} name='operationList'>
@@ -219,7 +272,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
             />
           </Form.Item>
 
-          <Form.Item label={'webhook'}>
+          <Form.Item label={'Webhook'}>
             <Typography.Text copyable>{webhook}</Typography.Text>
           </Form.Item>
         </Form>

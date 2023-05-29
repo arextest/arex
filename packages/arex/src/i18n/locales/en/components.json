@@ -67,12 +67,13 @@
     "startFailed": "Start Failed",
     "startButton": "Start replay",
     "targetHost": "Target Host",
+    "targetEnv": "Target Env",
     "caseStartTime": "Start Time",
     "caseEndTime": "End Time",
     "emptyHost": "Target Host can't be empty",
     "emptyStartTime": "Start Time can't be empty",
     "emptyEndTime": "End Time can't be empty",
-    "operation": "operation",
+    "operation": "Operation",
     "replayReportName": "Report",
     "state": "State",
     "all": "All",
@@ -211,7 +212,10 @@
     "emptyFullClassName": "Please enter full class name",
     "emptyCaseRange": "Please input your case range!",
     "emptyValue": "Please enter value",
-    "mockTips": "When \"body\" is a json string, it will be automatically converted into a json object, and restored when saving."
+    "mockTips": "When \"body\" is a json string, it will be automatically converted into a json object, and restored when saving.",
+    "runningStatus": "Running Status",
+    "frequencyUnit": "times/minute",
+    "frequencyTip": "Single-interface single-day recording: * times"
   },
   "env": {
     "searchEnvironment": "Search Environment",
