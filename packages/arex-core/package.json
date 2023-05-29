@@ -9,8 +9,7 @@
     "build:code": "vite build",
     "build:decl": "tsc --project tsconfig.decl.json",
     "do-build": "npm run build:code && npm run build:decl",
-    "do-build-core": "npm run build:code && npm run build:decl",
-    "prepare": "pnpm run build:code && pnpm run build:decl"
+    "do-build-core": "npm run build:code && npm run build:decl"
   },
   "types": "./dist/index.d.ts",
   "files": [
