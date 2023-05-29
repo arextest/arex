@@ -4,9 +4,21 @@ import { State as UserProfile } from '../store/useUserProfile';
 import { FavoriteAppReq, LoginAsGuestReq, LoginAsGuestRes, UserFavoriteAppRes } from './User.type';
 
 export class UserService {
-  static async getUserProfile(email: string) {
-    const res = await request.get<{ profile: string }>(`/report/login/userProfile/${email}`);
-    return tryParseJsonString<UserProfile>(res.body.profile);
+  static async getUserProfile(email: string): Promise<UserProfile> {
+    return new Promise((resolve, reject) => {
+      request
+        .get<{ profile: string }>(`/report/login/userProfile/${email}`)
+        .then((res) => {
+          if (res.body === null) {
+            reject({ reason: 'nouser' });
+          } else {
+            resolve(tryParseJsonString<UserProfile>(res.body.profile));
+          }
+        })
+        .catch((err) => {
+          reject({ reason: 'error' });
+        });
+    });
   }
 
   static updateUserProfile(params: UserProfile) {

@@ -1,8 +1,7 @@
 import * as Sentry from '@sentry/react';
 import { useRequest } from 'ahooks';
-import axios from 'axios';
 import { useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { PagesType } from '../components/panes';
 import { AccessTokenKey, EmailKey, RefreshTokenKey } from '../constant';
@@ -27,7 +26,8 @@ const useInit = () => {
   const { pathname } = useLocation();
   const { setUserProfile } = useUserProfile();
   const { setActiveMenu, setActiveWorkspaceId } = useStore();
-
+  const nav = useNavigate();
+  const { logout } = useStore();
   const { run: refreshToken } = useRequest(AuthService.refreshToken, {
     manual: true,
     onSuccess(res) {
@@ -54,9 +54,16 @@ const useInit = () => {
       res && setUserProfile(res);
       Sentry.setTag('arex-user', email);
     },
-    onError() {
-      // token过期了以后来刷新，如果还是没通过就退出
-      email && refreshToken({ userName: email });
+    onError(err) {
+      // 防止用户不存在返回null
+      // @ts-ignore
+      if (err.reason === 'nouser') {
+        logout();
+        nav('/login');
+      } else {
+        // token过期了以后来刷新，如果还是没通过就退出
+        email && refreshToken({ userName: email });
+      }
     },
   });
 
