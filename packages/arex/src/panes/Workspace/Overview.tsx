@@ -72,7 +72,7 @@ const WorkspaceSetting: FC = () => {
     renameWorkspace(values.workspaceName);
   };
 
-  const { data: workspaceUsers = [] } = useRequest(
+  const { data: workspaceUsers = [], run: queryUsersByWorkspace } = useRequest(
     () => FileSystemService.queryUsersByWorkspace({ workspaceId: activeWorkspaceId as string }),
     {
       ready: !!activeWorkspaceId,
@@ -95,6 +95,7 @@ const WorkspaceSetting: FC = () => {
       ready: !!activeWorkspaceId,
       onSuccess(res) {
         if (!res.responseCode) {
+          queryUsersByWorkspace();
           message.success(res.responseDesc);
         } else {
           message.error(res.responseDesc);
@@ -114,6 +115,7 @@ const WorkspaceSetting: FC = () => {
       ready: !!activeWorkspaceId,
       onSuccess(res) {
         if (!res.responseCode) {
+          queryUsersByWorkspace();
           message.success(res.responseDesc);
         } else {
           message.error(res.responseDesc);
@@ -275,6 +277,7 @@ const WorkspaceSetting: FC = () => {
           <Text>{t('workSpace.del')}</Text>
           <Text type='secondary'>{t('workSpace.delMessage')}</Text>
 
+          {/* TODO input workspace name to confirm delete workspace */}
           <Popconfirm
             title={t('workSpace.del')}
             description={t('workSpace.delConfirmText')}
