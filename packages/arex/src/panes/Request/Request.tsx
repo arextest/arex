@@ -8,7 +8,8 @@ import { useImmer } from 'use-immer';
 
 import { EMAIL_KEY } from '@/constant';
 import { sendRequest } from '@/helpers/postman';
-import { FileSystemService } from '@/services';
+import { FileSystemService, ReportService } from '@/services';
+import { saveRequest } from '@/services/FileSystemService';
 import { useCollections, useEnvironments, useUserProfile, useWorkspaces } from '@/store';
 
 import { ExtraTabs } from './extra';
@@ -38,7 +39,10 @@ const Request: ArexPaneFC = () => {
   const { activeWorkspaceId } = useWorkspaces();
   const { collectionsFlatData, getCollections, getPath } = useCollections();
   const { theme, language } = useUserProfile();
-
+  const { data: labelData, run: queryLabels } = useRequest(
+    () => ReportService.queryLabels({ workspaceId: activeWorkspaceId as string }),
+    { ready: !!activeWorkspaceId },
+  );
   const [path, setPath] = useImmer<PathType[]>([]);
 
   const nodeInfo = useMemo(() => {
@@ -147,7 +151,40 @@ const Request: ArexPaneFC = () => {
         breadcrumbItems={path}
         onSave={handleSave}
         onSend={handleSend}
-        onChangeTitle={({ value }) => rename(value)}
+        description={data?.description}
+        tags={data?.tags}
+        tagOptions={(labelData || []).map((i) => ({
+          label: i.labelName,
+          value: i.id,
+          color: i.color,
+        }))}
+        onChange={({ title, description, tags }) => {
+          console.log(description, tags);
+          if (title) {
+            rename(title);
+          }
+
+          if (description) {
+            saveRequest(
+              activeWorkspaceId,
+              {
+                id: data.id,
+                description,
+              },
+              2,
+            );
+          }
+          if (tags) {
+            saveRequest(
+              activeWorkspaceId,
+              {
+                id: data.id,
+                tags,
+              },
+              2,
+            );
+          }
+        }}
       />
     </div>
   );

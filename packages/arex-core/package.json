@@ -1,6 +1,6 @@
 {
-  "name": "arex-core",
-  "version": "0.0.3-beta.5",
+  "name": "arex-core1",
+  "version": "0.0.3-beta.51",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-core.umd.cjs",
   "module": "dist/arex-core.js",
@@ -29,7 +29,6 @@
     "immer": "^9.0.19",
     "lodash": "^4.17.21",
     "lossless-json": "^2.0.8",
-    "monaco-editor": "^0.38.0",
     "path-to-regexp": "^6.2.1",
     "qs": "^6.11.1",
     "react": "^18.2.0",

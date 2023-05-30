@@ -1,4 +1,4 @@
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+// import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { useEffect, useState } from 'react';
 // 完全去掉间隙
 // https://github.com/microsoft/monaco-editor/issues/1960

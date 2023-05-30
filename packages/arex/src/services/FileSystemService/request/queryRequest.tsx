@@ -25,6 +25,8 @@ export async function queryRequest(params: {
       inherited: undefined,
       inheritedMethod: '',
       inheritedEndpoint: '',
+      tags: rest.labelIds || [],
+      description: rest.description,
     };
   } else {
     const res = await request.post<any>(`/report/filesystem/queryCase`, params);
@@ -45,6 +47,8 @@ export async function queryRequest(params: {
       inherited: undefined,
       inheritedMethod: 'GET',
       inheritedEndpoint: '',
+      tags: rest.labelIds || [],
+      description: rest.description,
     };
   }
 }
