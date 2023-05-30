@@ -40,6 +40,7 @@ export function decodePaneKey(paneKey?: string) {
   return { type, id };
 }
 
+// 注意：对 useMenusPanes 的订阅监听存在于 useInit hook 中
 export const useMenusPanes = create(
   subscribeWithSelector(
     persist(
@@ -80,10 +81,11 @@ export const useMenusPanes = create(
               return pane;
             }, panes[0]);
 
+            console.log(latestPane);
             set({
               panes,
               activePane: latestPane,
-              activeMenu: ArexPaneManager.getMenuTypeByType(latestPane?.type),
+              activeMenu: ArexPaneManager.getMenuTypeByType(latestPane?.type) || get().activeMenu, // 防止最后一个 pane 被关闭时 activeMenu 丢失
             });
           } else {
             // panes are single pane, insert

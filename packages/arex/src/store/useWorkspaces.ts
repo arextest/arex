@@ -27,6 +27,7 @@ const initialState: WorkspaceState = {
   workspaces: [],
 };
 
+// 注意：对 useWorkspaces 的订阅监听存在于 useInit hook 中
 const useWorkspaces = create(
   subscribeWithSelector(
     persist<WorkspaceState & WorkspaceAction>(
