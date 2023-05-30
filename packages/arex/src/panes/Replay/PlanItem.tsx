@@ -361,6 +361,12 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         });
       }
     },
+    onError(e) {
+      notification.error({
+        message: t('replay.startFailed'),
+        description: e.message,
+      });
+    },
     onFinally() {
       setCreatingPlan(undefined);
     },
