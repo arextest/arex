@@ -398,7 +398,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         appId: selectedPlan!.appId,
         operationCaseInfoList, // 重新执行失败的用例
         operator: email as string,
-        replayPlanType: operationCaseInfoList ? 2 : 0,
+        replayPlanType: operationCaseInfoList ? 3 : 0,
         planName: operationCaseInfoList
           ? operationName
             ? selectedPlan.planName + `-${operationName}-rerun`
