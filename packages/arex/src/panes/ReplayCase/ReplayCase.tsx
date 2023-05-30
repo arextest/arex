@@ -38,7 +38,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
 
   const fullLinkInfoMerged = useMemo<infoItem[]>(() => {
     const { entrance, infoItemList } = fullLinkInfo || {};
-    return [entrance, ...(infoItemList || [])].filter(Boolean) as infoItem[];
+    return [entrance, ...(infoItemList || [])].filter((item) => item && item.id) as infoItem[];
   }, [fullLinkInfo]);
 
   const handleClickRecord = (record: ReplayCaseType) => {
@@ -62,7 +62,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         appId: data.appId,
         operationCaseInfoList,
         operator: email as string,
-        replayPlanType: 2,
+        replayPlanType: 3,
         sourceEnv: 'pro',
         targetEnv: data.targetEnv,
       });

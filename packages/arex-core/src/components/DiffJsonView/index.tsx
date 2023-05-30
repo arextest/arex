@@ -1,4 +1,3 @@
-import './style.css';
 import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
 
 import { css, useTheme } from '@emotion/react';
@@ -9,6 +8,7 @@ import { useArexCoreConfig } from '../../hooks';
 import { Theme } from '../../theme';
 import { LogEntity } from '../DiffPath/type';
 import DiffJsonTooltip from './DiffJsonTooltip';
+import DiffJsonViewWrapper from './DiffJsonViewWrapper';
 import { genAllDiffByType } from './helper';
 import VanillaJSONEditor from './VanillaJSONEditor';
 
@@ -41,7 +41,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
   if (!diffJson) return null;
 
   return (
-    <>
+    <DiffJsonViewWrapper>
       {!hiddenTooltip && <DiffJsonTooltip />}
       <div
         css={css`
@@ -81,9 +81,6 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
             mainMenuBar={false}
             onClassName={onClassName}
             allDiffByType={allDiffByType}
-            // css={css`
-            //   flex: 1;
-            // `}
           />
         </div>
 
@@ -104,13 +101,10 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
             mainMenuBar={false}
             onClassName={onClassName}
             allDiffByType={allDiffByType}
-            // css={css`
-            //   flex: 1;
-            // `}
           />
         </div>
       </div>
-    </>
+    </DiffJsonViewWrapper>
   );
 };
 

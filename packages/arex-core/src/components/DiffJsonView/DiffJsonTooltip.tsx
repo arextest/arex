@@ -5,6 +5,7 @@ import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexCoreConfig } from '../../hooks';
+import DiffJsonViewWrapper from './DiffJsonViewWrapper';
 
 const DiffJsonTooltip: FC<TextProps> = (props) => {
   const { token } = antdTheme.useToken();
@@ -12,38 +13,40 @@ const DiffJsonTooltip: FC<TextProps> = (props) => {
   const { t } = useTranslation(['components']);
 
   return (
-    <div
-      css={css`
-        display: flex;
-        justify-content: space-between;
-        .color-tag-difference {
-          background-color: ${token.colorInfoBgHover};
-        }
-        .color-tag-more {
-          background-color: ${token.colorWarningBgHover};
-        }
-      `}
-    >
+    <DiffJsonViewWrapper>
       <div
-        className={`MsgWithDiffLegend`}
         css={css`
-          color: ${theme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : '#333'};
+          display: flex;
+          justify-content: space-between;
+          .color-tag-difference {
+            background-color: ${token.colorInfoBgHover};
+          }
+          .color-tag-more {
+            background-color: ${token.colorWarningBgHover};
+          }
         `}
       >
-        <div>
-          <div className='color-tag-more' />
-          <Typography.Text type='secondary' {...props}>
-            {t('replay.moreNode')}
-          </Typography.Text>
-        </div>
-        <div>
-          <div className='color-tag-difference' />
-          <Typography.Text type='secondary' {...props}>
-            {t('replay.differenceNode')}
-          </Typography.Text>
+        <div
+          className={`MsgWithDiffLegend`}
+          css={css`
+            color: ${theme === 'dark' ? 'rgba(255, 255, 255, 0.85)' : '#333'};
+          `}
+        >
+          <div>
+            <div className='color-tag-more' />
+            <Typography.Text type='secondary' {...props}>
+              {t('replay.moreNode')}
+            </Typography.Text>
+          </div>
+          <div>
+            <div className='color-tag-difference' />
+            <Typography.Text type='secondary' {...props}>
+              {t('replay.differenceNode')}
+            </Typography.Text>
+          </div>
         </div>
       </div>
-    </div>
+    </DiffJsonViewWrapper>
   );
 };
 

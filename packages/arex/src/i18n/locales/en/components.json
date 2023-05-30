@@ -89,6 +89,7 @@
     "passRate": "Pass Rate",
     "apiPassRate": "API Pass Rate",
     "reportName": "Report Name",
+    "reportId": "Report ID",
     "recordVersion": "Record version",
     "replayVersion": "Replay version",
     "caseRange": "Case range",
@@ -264,5 +265,13 @@
     "moveOutTip": "Are you sure to move out this user?",
     "leave": "Leave workspace",
     "leaveTip": "Are you sure to leave this workspace?"
+  },
+  "dropdownMenu": {
+    "close" :"Close",
+    "closeOther" :"Close Other Tabs",
+    "closeAll" :"Close All Tabs",
+    "closeUnmodified" :"Close Unmodified Tabs",
+    "closeLeft" :"Close Tabs to the Left",
+    "closeRight":"Close Tabs to the Right"
   }
 }

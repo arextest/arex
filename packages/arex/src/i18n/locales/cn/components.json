@@ -89,6 +89,7 @@
     "passRate": "Case 通过率",
     "apiPassRate": "API 通过率",
     "reportName": "任务名称",
+    "reportId": "任务 ID",
     "recordVersion": "录制版本",
     "replayVersion": "回放版本",
     "caseRange": "任务时间",
@@ -263,5 +264,13 @@
     "moveOutTip": "你确定要将该用户移出工作空间吗？",
     "leave": "退出工作空间",
     "leaveTip": "你确定要退出该工作空间吗？"
+  },
+  "dropdownMenu": {
+    "close" :"关闭",
+    "closeOther" :"关闭其他标签页",
+    "closeAll" :"关闭所有标签页",
+    "closeUnmodified" :"关闭未修改标签页",
+    "closeLeft" :"关闭左侧标签页",
+    "closeRight":"关闭右侧标签页"
   }
 }
