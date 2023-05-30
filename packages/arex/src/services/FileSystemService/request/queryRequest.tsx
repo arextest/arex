@@ -11,9 +11,9 @@ export async function queryRequest(params: {
     const {
       body: { address, testAddress, ...rest },
     } = res;
-    // @ts-ignore
     return {
       id: rest.id,
+      name: rest.name,
       method: address?.method || 'GET',
       endpoint: address?.endpoint || '',
       headers: rest.headers || [],
