@@ -13,7 +13,7 @@
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",
     "antd": "^5.4.2",
-    "arex-core": "workspace:^0.0.3-beta.1",
+    "arex-core": "0.0.3-beta.5",
     "dayjs": "^1.11.7",
     "immer": "^9.0.19",
     "monaco-editor": "^0.38.0",
