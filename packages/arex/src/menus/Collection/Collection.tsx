@@ -80,12 +80,13 @@ const Collection: ArexMenuFC = (props) => {
   const [autoExpandParent, setAutoExpandParent] = useState(true);
 
   const selectedKeys = useMemo(() => (props.value ? [props.value] : []), [props.value]);
-  const [expandedKeys, setExpandedKeys] = useState<string[]>(props.value ? [props.value] : []); // TODO 初始化展开的节点
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]); // TODO 初始化展开的节点
+
   // auto expand by active pane id
   useEffect(() => {
     activePane &&
       activePane.type === PanesType.REQUEST &&
-      setExpandedKeys((expandedKeys) => [...expandedKeys, activePane.id]);
+      setExpandedKeys((expandedKeys) => Array.from(new Set([...expandedKeys, activePane.id])));
   }, [activePane]);
 
   const { data: labelData = [] } = useRequest(
@@ -174,6 +175,7 @@ const Collection: ArexMenuFC = (props) => {
         })
         .filter((item, i, self) => item && self.indexOf(item) === i);
     }
+    setExpandedKeys(newExpandedKeys as string[]);
     setSearchValue(value);
     setAutoExpandParent(true);
   };
@@ -306,7 +308,6 @@ const Collection: ArexMenuFC = (props) => {
           placeholder={'Search for Name or Id'}
           onChange={handleChange}
         />
-
         <Tree<CollectionType>
           showLine
           blockNode
