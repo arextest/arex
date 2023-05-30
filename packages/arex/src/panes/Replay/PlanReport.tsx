@@ -140,7 +140,7 @@ const PlanReport: FC<PlanReportProps> = (props) => {
       refreshDeps: [appId, refreshDep],
       onSuccess({ list }) {
         if (init) {
-          onSelectedPlanChange(list[parseInt(searchParams.get('row') || '0')]);
+          list.length && onSelectedPlanChange(list[parseInt(searchParams.get('row') || '0')]);
           setInit(false); // 设置第一次初始化标识);
         }
         list.every((record) => record.status !== 1) && cancelPollingInterval();
