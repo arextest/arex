@@ -62,7 +62,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         appId: data.appId,
         operationCaseInfoList,
         operator: email as string,
-        replayPlanType: 2,
+        replayPlanType: 3,
         sourceEnv: 'pro',
         targetEnv: data.targetEnv,
       });
