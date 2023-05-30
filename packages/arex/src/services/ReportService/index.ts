@@ -5,6 +5,7 @@ export * from './queryDifferences';
 export * from './queryDiffMsgById';
 export * from './queryFullLinkInfo';
 export * from './queryLogEntity';
+export * from './queryLogs';
 export * from './queryMsgWithDiff';
 export * from './queryPlanFailCase';
 export * from './queryPlanItemStatistics';
