@@ -89,6 +89,7 @@
     "passRate": "Pass Rate",
     "apiPassRate": "API Pass Rate",
     "reportName": "Report Name",
+    "reportId": "Report ID",
     "recordVersion": "Record version",
     "replayVersion": "Replay version",
     "caseRange": "Case range",

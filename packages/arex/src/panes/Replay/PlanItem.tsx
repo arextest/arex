@@ -520,6 +520,9 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             />
           </div>
           <div>
+            {t('replay.reportId')}: {selectedPlan.planId}
+          </div>
+          <div>
             {t('replay.reportName')}: {selectedPlan.planName}
           </div>
           <div>
@@ -528,7 +531,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             {dayjs(new Date(selectedPlan.caseEndTime || '')).format('YYYY/MM/DD')}
           </div>
           <div>
-            {t('replay.targetHost')}: {selectedPlan.targetHost}
+            {t('replay.targetHost')}: {selectedPlan.targetEnv}
           </div>
           <div>
             {t('replay.executor')}: {selectedPlan.creator}

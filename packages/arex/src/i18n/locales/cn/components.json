@@ -89,6 +89,7 @@
     "passRate": "Case 通过率",
     "apiPassRate": "API 通过率",
     "reportName": "任务名称",
+    "reportId": "任务 ID",
     "recordVersion": "录制版本",
     "replayVersion": "回放版本",
     "caseRange": "任务时间",
