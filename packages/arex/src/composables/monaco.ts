@@ -11,6 +11,7 @@ type ExtendedEditorConfig = {
 };
 
 export type Options = {
+  height?: string;
   extendedEditorConfig: Partial<ExtendedEditorConfig>;
   onChange: (val: string) => void;
 };

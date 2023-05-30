@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button, Dropdown, MenuProps, Tabs, TabsProps, Typography } from 'antd';
-import React, { PropsWithChildren, useMemo, useRef, useState } from 'react';
+import React, { Key, PropsWithChildren, useMemo, useRef, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +16,14 @@ const type = 'DraggableTabNode';
 interface DraggableTabPaneProps extends PropsWithChildren<React.HTMLAttributes<HTMLDivElement>> {
   index: React.Key;
   moveNode: (dragIndex: React.Key, hoverIndex: React.Key) => void;
+}
+
+export interface MenuInfo {
+  key: string;
+  keyPath: string[];
+  /** @deprecated This will not support in future. You should avoid to use this */
+  item: React.ReactInstance;
+  domEvent: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>;
 }
 
 const DraggableTabNode = ({ index, children, moveNode }: DraggableTabPaneProps) => {
@@ -55,7 +63,9 @@ const DraggableTabNode = ({ index, children, moveNode }: DraggableTabPaneProps) 
 export interface ArexPanesContainerProps extends Omit<TabsProps, 'items'> {
   panes?: Pane[];
   onAdd?: () => void;
+  dropdownMenu?: Omit<MenuProps, 'onClick'> & { onClick: (e: MenuInfo, key: Key | null) => void };
   onRemove?: (key: string) => void;
+  onClickContextMenu?: (key: string) => void;
 }
 
 const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
@@ -128,36 +138,6 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
     [order, panesItems],
   );
 
-  const dropdownItems: MenuProps['items'] = useMemo(
-    () => [
-      {
-        label: 'Close',
-        key: '1',
-      },
-      {
-        label: 'Close Other Tabs',
-        key: '2',
-      },
-      {
-        label: 'Close All Tabs',
-        key: '3',
-      },
-      {
-        label: 'Close Unmodified Tabs',
-        key: '4',
-      },
-      {
-        label: 'Close Tabs to the Left',
-        key: '5',
-      },
-      {
-        label: 'Close Tabs to the Right',
-        key: '6',
-      },
-    ],
-    [],
-  );
-
   const removeTab = (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
     onRemove?.(targetKey as string);
   };
@@ -190,21 +170,17 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
         {(node) => {
           return (
             <DraggableTabNode key={node.key} index={node.key!} moveNode={moveTabNode}>
-              <Dropdown
-                menu={{
-                  items: dropdownItems,
-                  onClick: function (e) {
-                    // props.onClickContextMenu({
-                    //   tabKey: String(node.key),
-                    //   clickKey: e.key,
-                    //   order,
-                    // });
+              {React.createElement(
+                props.dropdownMenu ? Dropdown : 'div',
+                {
+                  menu: {
+                    ...props.dropdownMenu,
+                    onClick: (e) => props.dropdownMenu?.onClick?.(e, node.key),
                   },
-                }}
-                trigger={['contextMenu']}
-              >
-                {node}
-              </Dropdown>
+                  trigger: ['contextMenu'],
+                },
+                node,
+              )}
             </DraggableTabNode>
           );
         }}

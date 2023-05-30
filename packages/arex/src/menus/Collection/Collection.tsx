@@ -77,14 +77,16 @@ const Collection: ArexMenuFC = (props) => {
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
   const [searchValue, setSearchValue] = useState<SearchDataType>();
+  const [autoExpandParent, setAutoExpandParent] = useState(true);
 
   const selectedKeys = useMemo(() => (props.value ? [props.value] : []), [props.value]);
-  const [expandedKeys, setExpandedKeys] = useState<string[]>(props.value ? [props.value] : []); // TODO 初始化展开的节点
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]); // TODO 初始化展开的节点
+
   // auto expand by active pane id
   useEffect(() => {
     activePane &&
       activePane.type === PanesType.REQUEST &&
-      setExpandedKeys((expandedKeys) => [...expandedKeys, activePane.id]);
+      setExpandedKeys((expandedKeys) => Array.from(new Set([...expandedKeys, activePane.id])));
   }, [activePane]);
 
   const { data: labelData = [] } = useRequest(
@@ -173,9 +175,9 @@ const Collection: ArexMenuFC = (props) => {
         })
         .filter((item, i, self) => item && self.indexOf(item) === i);
     }
-    // setExpandedKeys(newExpandedKeys as string[]);
-    // console.log('setExpandedKeys');
+    setExpandedKeys(newExpandedKeys as string[]);
     setSearchValue(value);
+    setAutoExpandParent(true);
   };
 
   const { run: createCollection } = useRequest(
@@ -255,6 +257,7 @@ const Collection: ArexMenuFC = (props) => {
 
   const onExpand = (newExpandedKeys: React.Key[]) => {
     setExpandedKeys(newExpandedKeys as string[]);
+    setAutoExpandParent(false);
   };
 
   return (
@@ -305,13 +308,12 @@ const Collection: ArexMenuFC = (props) => {
           placeholder={'Search for Name or Id'}
           onChange={handleChange}
         />
-
         <Tree<CollectionType>
           showLine
           blockNode
-          autoExpandParent
           selectedKeys={selectedKeys}
           expandedKeys={expandedKeys}
+          autoExpandParent={autoExpandParent}
           switcherIcon={<DownOutlined />}
           treeData={filterTreeData}
           fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}

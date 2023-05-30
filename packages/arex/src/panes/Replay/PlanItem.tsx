@@ -361,6 +361,12 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         });
       }
     },
+    onError(e) {
+      notification.error({
+        message: t('replay.startFailed'),
+        description: e.message,
+      });
+    },
     onFinally() {
       setCreatingPlan(undefined);
     },
@@ -398,7 +404,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         appId: selectedPlan!.appId,
         operationCaseInfoList, // 重新执行失败的用例
         operator: email as string,
-        replayPlanType: operationCaseInfoList ? 2 : 0,
+        replayPlanType: operationCaseInfoList ? 3 : 0,
         planName: operationCaseInfoList
           ? operationName
             ? selectedPlan.planName + `-${operationName}-rerun`
@@ -514,6 +520,9 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             />
           </div>
           <div>
+            {t('replay.reportId')}: {selectedPlan.planId}
+          </div>
+          <div>
             {t('replay.reportName')}: {selectedPlan.planName}
           </div>
           <div>
@@ -522,7 +531,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             {dayjs(new Date(selectedPlan.caseEndTime || '')).format('YYYY/MM/DD')}
           </div>
           <div>
-            {t('replay.targetHost')}: {selectedPlan.targetHost}
+            {t('replay.targetHost')}: {selectedPlan.targetEnv}
           </div>
           <div>
             {t('replay.executor')}: {selectedPlan.creator}

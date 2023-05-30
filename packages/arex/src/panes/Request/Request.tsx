@@ -85,6 +85,7 @@ const Request: ArexPaneFC = () => {
       }),
     {
       onSuccess(res) {
+        console.log(res);
         // parent path breadcrumb
         const defaultPath: { title: string }[] = [{ title: res.name }];
         let pid = collectionsFlatData.get(res.id!)?.pid;

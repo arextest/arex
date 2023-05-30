@@ -1,5 +1,5 @@
 import { useRequest } from 'ahooks';
-import { App } from 'antd';
+import { App, MenuProps } from 'antd';
 import {
   ArexFooter,
   ArexHeader,
@@ -28,6 +28,8 @@ export default () => {
     activeMenu,
     setActiveMenu,
     panes,
+    setPanes,
+    removeSegmentPanes,
     activePane,
     setActivePane,
     reset: resetPane,
@@ -74,7 +76,6 @@ export default () => {
       // id: Math.random().toString(36).substring(2),
       id: 'Untitled',
       icon: 'Get',
-      data: { value: 'DemoPane' },
     });
 
   const handleAddWorkspace = (workspaceName: string) => {
@@ -86,6 +87,62 @@ export default () => {
       type: PanesType.WORKSPACE,
       id: workspaceId,
     });
+  };
+
+  const dropdownItems: MenuProps['items'] = [
+    {
+      label: t('dropdownMenu.close'),
+      key: 'close',
+    },
+    {
+      label: t('dropdownMenu.closeOther'),
+      key: 'closeOther',
+    },
+    {
+      label: t('dropdownMenu.closeAll'),
+      key: 'closeAll',
+    },
+    // {
+    //   label: t('dropdownMenu.closeUnmodified'),
+    //   key: 'closeUnmodified',
+    // },
+    {
+      label: t('dropdownMenu.closeLeft'),
+      key: 'closeLeft',
+    },
+    {
+      label: t('dropdownMenu.closeRight'),
+      key: 'closeRight',
+    },
+  ];
+
+  const handleDropdownClick = (e: { key: string }, key: React.Key | null) => {
+    if (!key) return;
+    const paneKey = key.toString();
+
+    switch (e.key) {
+      case 'close': {
+        removePane(paneKey);
+        break;
+      }
+      case 'closeOther': {
+        const pane = panes.find((pane) => pane.key === paneKey);
+        if (pane) setPanes([pane]);
+        break;
+      }
+      case 'closeAll': {
+        resetPane();
+        break;
+      }
+      case 'closeLeft': {
+        removeSegmentPanes(paneKey, 'left');
+        break;
+      }
+      case 'closeRight': {
+        removeSegmentPanes(paneKey, 'right');
+        break;
+      }
+    }
   };
 
   return (
@@ -116,6 +173,10 @@ export default () => {
             activeKey={activePane?.key}
             panes={panes}
             tabBarExtraContent={<EnvironmentSelect />}
+            dropdownMenu={{
+              items: dropdownItems,
+              onClick: handleDropdownClick,
+            }}
             onChange={setActivePane}
             onAdd={handlePaneAdd}
             onRemove={removePane}

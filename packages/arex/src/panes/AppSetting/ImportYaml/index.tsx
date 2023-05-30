@@ -1,9 +1,11 @@
 import { useRequest } from 'ahooks';
-import { App, Button, Input } from 'antd';
+import { App, Button } from 'antd';
 import { Label, useTranslation } from 'arex-core';
 import React, { FC, useState } from 'react';
 
+import MonacoEditor from '@/composables/MonacoEditor';
 import { ConfigService } from '@/services';
+import { useUserProfile } from '@/store';
 
 type ImportYamlProps = {
   appId: string;
@@ -12,6 +14,7 @@ type ImportYamlProps = {
 
 const ImportYaml: FC<ImportYamlProps> = (props) => {
   const { message } = App.useApp();
+  const { theme } = useUserProfile();
   const { t } = useTranslation(['common', 'components']);
   const [value, setValue] = useState('');
 
@@ -44,7 +47,17 @@ const ImportYaml: FC<ImportYamlProps> = (props) => {
         {props.agentVersion}
       </div>
 
-      <Input.TextArea value={value} onChange={(e) => setValue(e.currentTarget.value)} />
+      <MonacoEditor
+        value={value}
+        option={{
+          height: '400px',
+          extendedEditorConfig: {
+            theme,
+            mode: 'ymal',
+          },
+          onChange: setValue,
+        }}
+      />
 
       <Button
         type={'primary'}

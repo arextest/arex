@@ -19,7 +19,7 @@ export type MenusPanesAction = {
   setActivePane: (paneKey?: string) => void;
   setPanes: <D extends PanesData = PanesData>(panes: Pane<D> | Pane<D>[]) => void;
   removePane: (paneKey: string) => void;
-  removeSegmentPages: (paneKey: string, segment: 'left' | 'right') => void;
+  removeSegmentPanes: (paneKey: string, segment: 'left' | 'right') => void;
   reset: () => void;
 };
 
@@ -40,6 +40,7 @@ export function decodePaneKey(paneKey?: string) {
   return { type, id };
 }
 
+// 注意：对 useMenusPanes 的订阅监听存在于 useInit hook 中
 export const useMenusPanes = create(
   subscribeWithSelector(
     persist(
@@ -80,10 +81,11 @@ export const useMenusPanes = create(
               return pane;
             }, panes[0]);
 
+            console.log(latestPane);
             set({
               panes,
               activePane: latestPane,
-              activeMenu: ArexPaneManager.getMenuTypeByType(latestPane?.type),
+              activeMenu: ArexPaneManager.getMenuTypeByType(latestPane?.type) || get().activeMenu, // 防止最后一个 pane 被关闭时 activeMenu 丢失
             });
           } else {
             // panes are single pane, insert
@@ -118,16 +120,16 @@ export const useMenusPanes = create(
         },
 
         // 关闭左侧或右侧的面板
-        removeSegmentPages: (paneId, segment) => {
+        removeSegmentPanes: (paneKey, segment) => {
           const panes = get().panes;
-          const paneKey = encodePaneKey(panes.find((i) => i.id === paneId));
-
           const index = panes.findIndex((pane) => pane.key === paneKey);
-          Number.isInteger(index) &&
+          if (Number.isInteger(index)) {
             set({
               panes:
                 segment === 'left' ? panes.slice(index, panes.length) : panes.slice(0, index + 1),
             });
+            get().setActivePane(paneKey);
+          }
         },
 
         // 重置菜单和面板
