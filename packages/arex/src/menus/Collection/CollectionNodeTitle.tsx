@@ -2,6 +2,7 @@ import { ExclamationCircleFilled, MoreOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
 import { App, Button, Dropdown, Input, MenuProps } from 'antd';
 import { getLocalStorage, RequestMethodIcon, styled, useTranslation } from 'arex-core';
+import path from 'path';
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY } from '@/constant';
@@ -63,7 +64,10 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   const [editMode, setEditMode] = useState(false);
   const [nodeName, setNodeName] = useState(props.data.nodeName);
 
-  const nodePath = useMemo(() => getPath(props.data.infoId), [getPath, props.data.infoId]);
+  const nodePath = useMemo(
+    () => getPath(props.data.infoId).map((path) => path.id),
+    [getPath, props.data.infoId],
+  );
 
   const { run: addCollectionItem } = useRequest(
     (params: { nodeName: string; nodeType: CollectionNodeType; caseSourceType?: number }) =>
