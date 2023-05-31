@@ -7,6 +7,7 @@
  */
 
 import AppSetting from './AppSetting';
+import BatchRun from './BatchRun';
 import Environment from './Environment';
 import Replay from './Replay';
 import ReplayAnalysis from './ReplayAnalysis';
@@ -28,4 +29,5 @@ export default {
   Environment,
   UserSetting,
   Workspace,
+  BatchRun,
 };

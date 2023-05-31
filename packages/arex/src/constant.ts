@@ -11,6 +11,7 @@ export enum PanesType {
   ENVIRONMENT = 'environment',
   USER_SETTING = 'userSetting',
   WORKSPACE = 'workspace',
+  BATCH_RUN = 'batchRun',
 }
 
 export enum MenusType {

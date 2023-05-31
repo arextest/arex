@@ -101,3 +101,19 @@ export function getChromeVersion() {
   }
   return versionStringCompare(v, '89.00.00');
 }
+
+export function treeFind(tree: any, func: any): any {
+  for (const data of tree) {
+    //相当于func = node => node.id == '2-1'
+    if (func(data)) {
+      return data;
+    }
+    if (data.children) {
+      const res = treeFind(data.children, func);
+      if (res) {
+        return res;
+      }
+    }
+  }
+  return null;
+}

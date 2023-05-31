@@ -4,7 +4,8 @@ import { App, Button, Dropdown, Input, MenuProps } from 'antd';
 import { getLocalStorage, RequestMethodIcon, styled, useTranslation } from 'arex-core';
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 
-import { CollectionNodeType, EMAIL_KEY } from '@/constant';
+import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
+import { useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
 import { useCollections, useWorkspaces } from '@/store';
@@ -54,7 +55,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   const { modal } = App.useApp();
   const confirm = modal.confirm;
   const { t } = useTranslation(['common', 'components']);
-
+  const navPane = useNavPane();
   const { activeWorkspaceId } = useWorkspaces();
   const { getCollections, getPath } = useCollections();
 
@@ -162,7 +163,18 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
             ? [
                 {
                   key: 'batchRun',
-                  label: <a>{t('collection.batch_run', { ns: 'components' })}</a>,
+                  label: (
+                    <a
+                      onClick={() => {
+                        navPane({
+                          type: PanesType.BATCH_RUN,
+                          id: 'root',
+                        });
+                      }}
+                    >
+                      {t('collection.batch_run', { ns: 'components' })}
+                    </a>
+                  ),
                 },
                 {
                   key: 'addFolder',

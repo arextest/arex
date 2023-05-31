@@ -1,5 +1,5 @@
 import { useRequest } from 'ahooks';
-import { message } from 'antd';
+import { message, Spin } from 'antd';
 import { ArexPaneFC, getLocalStorage } from 'arex-core';
 import { Http, HttpProps } from 'arex-request-core';
 import React, { useMemo } from 'react';
@@ -84,8 +84,8 @@ const Request: ArexPaneFC = () => {
         nodeType: nodeInfo?.nodeType || 1,
       }),
     {
+      refreshDeps: [nodeInfo],
       onSuccess(res) {
-        console.log(res);
         // parent path breadcrumb
         const defaultPath: { title: string }[] = [{ title: res.name }];
         let pid = collectionsFlatData.get(res.id!)?.pid;
@@ -140,53 +140,57 @@ const Request: ArexPaneFC = () => {
       },
     };
   }, [data]);
+
   return (
     <div>
-      <Http
-        height={`calc(100vh - 110px)`}
-        theme={theme}
-        locale={language}
-        value={data}
-        config={httpConfig}
-        environment={environment}
-        breadcrumbItems={path}
-        onSave={handleSave}
-        onSend={handleSend}
-        description={data?.description}
-        tags={data?.tags}
-        tagOptions={(labelData || []).map((i) => ({
-          label: i.labelName,
-          value: i.id,
-          color: i.color,
-        }))}
-        onChange={({ title, description, tags }) => {
-          console.log(description, tags);
-          if (title) {
-            rename(title);
-          }
-
-          if (description) {
-            saveRequest(
-              activeWorkspaceId,
-              {
-                id: data.id,
-                description,
-              },
-              2,
-            );
-          }
-          if (tags) {
-            saveRequest(
-              activeWorkspaceId,
-              {
-                id: data.id,
-                tags,
-              },
-              2,
-            );
-          }
-        }}
-      />
+      <Spin spinning={!data}>
+        {nodeInfo && data && (
+          <Http
+            height={`calc(100vh - 110px)`}
+            theme={theme}
+            locale={language}
+            value={data}
+            config={httpConfig}
+            environment={environment}
+            breadcrumbItems={path}
+            onSave={handleSave}
+            onSend={handleSend}
+            description={data?.description || ''}
+            // @ts-ignore
+            tags={data?.tags || []}
+            tagOptions={(labelData || []).map((i) => ({
+              label: i.labelName,
+              value: i.id,
+              color: i.color,
+            }))}
+            onChange={({ title, description, tags }) => {
+              if (title) {
+                rename(title);
+              }
+              if (description) {
+                saveRequest(
+                  activeWorkspaceId,
+                  {
+                    id: data?.id,
+                    description,
+                  },
+                  nodeInfo?.nodeType || 1,
+                );
+              }
+              if (tags) {
+                saveRequest(
+                  activeWorkspaceId,
+                  {
+                    id: data?.id,
+                    tags,
+                  },
+                  nodeInfo?.nodeType || 1,
+                );
+              }
+            }}
+          />
+        )}
+      </Spin>
     </div>
   );
 };

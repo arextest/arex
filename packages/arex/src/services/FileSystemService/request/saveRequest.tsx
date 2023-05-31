@@ -4,7 +4,7 @@ import { request } from '@/utils';
 
 export async function saveRequest(
   workspaceId: string,
-  params: ArexRESTRequest & { inherited?: boolean },
+  params: ArexRESTRequest & { inherited?: boolean } & any,
   nodeType: number,
 ) {
   const saveParams = {
@@ -46,6 +46,9 @@ export async function saveRequest(
     description: params.description,
     labelIds: params.tags,
   };
-  const res = await request.post<{ success: boolean }>(`/report/filesystem/saveCase`, saveParams);
+  const res = await request.post<{ success: boolean }>(
+    `/report/filesystem/${nodeType === 1 ? 'saveInterface' : 'saveCase'}`,
+    saveParams,
+  );
   return res.body.success;
 }
