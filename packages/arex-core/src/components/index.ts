@@ -23,6 +23,7 @@ export { default as FlexCenterWrapper } from './FlexCenterWrapper';
 export type { FullHeightSpinProps } from './FullHeightSpin';
 export { default as FullHeightSpin } from './FullHeightSpin';
 export { default as GithubStarButton } from './GithubStarButton';
+export { default as HelpTooltip } from './HelpTooltip';
 export type { HighlightRowTableProps } from './HighlightRowTable';
 export { default as HighlightRowTable } from './HighlightRowTable';
 export * from './icons';

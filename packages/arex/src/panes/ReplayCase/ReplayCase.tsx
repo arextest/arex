@@ -16,10 +16,8 @@ import { infoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportS
 
 import Case from './Case';
 import SaveCase, { SaveCaseRef } from './SaveCase';
-// import { SaveCaseRef } from './SaveCase';
 
 const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
-  const { data } = props;
   const { message, notification } = App.useApp();
   const email = getLocalStorage<string>(EMAIL_KEY);
 
@@ -57,14 +55,14 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     manual: true,
     onSuccess(operationCaseInfoList) {
       rerun({
-        caseSourceFrom: data.caseStartTime,
-        caseSourceTo: data.caseEndTime,
-        appId: data.appId,
+        caseSourceFrom: props.data.caseStartTime,
+        caseSourceTo: props.data.caseEndTime,
+        appId: props.data.appId,
         operationCaseInfoList,
         operator: email as string,
         replayPlanType: 3,
         sourceEnv: 'pro',
-        targetEnv: data.targetEnv,
+        targetEnv: props.data.targetEnv,
       });
     },
   });
@@ -87,10 +85,9 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   });
 
   function handleClickRerunCase(recordId: string) {
-    console.log(data);
     queryPlanFailCase({
-      planId: data.planId,
-      planItemIdList: [data.planItemId],
+      planId: props.data.planId,
+      planItemIdList: [props.data.planItemId],
       recordIdList: [recordId],
     });
   }
@@ -134,7 +131,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
           />
         }
       />
-      <SaveCase operationId={props.data.operationId} ref={saveCaseRef} />
+      <SaveCase planId={props.data.planId} operationId={props.data.operationId} ref={saveCaseRef} />
     </>
   );
 };

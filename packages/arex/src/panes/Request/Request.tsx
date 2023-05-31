@@ -4,7 +4,6 @@ import { ArexPaneFC, getLocalStorage } from 'arex-core';
 import { Http, HttpProps } from 'arex-request-core';
 import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { useImmer } from 'use-immer';
 
 import { EMAIL_KEY } from '@/constant';
 import { sendRequest } from '@/helpers/postman';
@@ -39,15 +38,13 @@ const Request: ArexPaneFC = () => {
   const { activeWorkspaceId } = useWorkspaces();
   const { collectionsFlatData, getCollections, getPath } = useCollections();
   const { theme, language } = useUserProfile();
+
   const { data: labelData, run: queryLabels } = useRequest(
     () => ReportService.queryLabels({ workspaceId: activeWorkspaceId as string }),
     { ready: !!activeWorkspaceId },
   );
-  const [path, setPath] = useImmer<PathType[]>([]);
 
-  const nodeInfo = useMemo(() => {
-    return collectionsFlatData.get(id);
-  }, [collectionsFlatData, id]);
+  const nodeInfo = useMemo(() => collectionsFlatData.get(id), [collectionsFlatData, id]);
 
   const environment = useMemo(
     () => ({
@@ -77,48 +74,33 @@ const Request: ArexPaneFC = () => {
     );
   };
 
-  const { data } = useRequest(
-    () =>
-      FileSystemService.queryRequest({
-        id: id as string,
-        nodeType: nodeInfo?.nodeType || 1,
-      }),
-    {
-      refreshDeps: [nodeInfo],
-      onSuccess(res) {
-        // parent path breadcrumb
-        const defaultPath: { title: string }[] = [{ title: res.name }];
-        let pid = collectionsFlatData.get(res.id!)?.pid;
-        while (pid) {
-          const node = collectionsFlatData.get(pid);
-          if (node) {
-            defaultPath.unshift({ title: node.nodeName });
-            pid = node.pid;
-          } else {
-            break;
-          }
-        }
-        setPath(defaultPath);
-      },
-    },
+  const { data } = useRequest(() =>
+    FileSystemService.queryRequest({
+      id: id as string,
+      nodeType: nodeInfo?.nodeType || 1,
+    }),
   );
 
-  const nodePath = useMemo(() => getPath(id), [getPath, id]);
+  const nodePathId = useMemo(() => getPath(id).map((path) => path.id), [collectionsFlatData, id]);
+  const nodePath = useMemo(
+    () =>
+      getPath(id).map((path) => ({
+        title: path.name,
+      })),
+    [collectionsFlatData, id],
+  );
 
   const { run: rename } = useRequest(
     (newName) =>
       FileSystemService.renameCollectionItem({
         id: activeWorkspaceId,
         newName,
-        path: nodePath,
+        path: nodePathId,
         userName: userName as string,
       }),
     {
       manual: true,
-      onSuccess(success, [newName]) {
-        setPath((prev) => {
-          prev[prev.length - 1].title = newName;
-        });
+      onSuccess(success) {
         getCollections(activeWorkspaceId);
       },
     },
@@ -152,7 +134,7 @@ const Request: ArexPaneFC = () => {
             value={data}
             config={httpConfig}
             environment={environment}
-            breadcrumbItems={path}
+            breadcrumbItems={nodePath}
             onSave={handleSave}
             onSend={handleSend}
             description={data?.description || ''}

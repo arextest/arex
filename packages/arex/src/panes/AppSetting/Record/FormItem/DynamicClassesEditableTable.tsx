@@ -8,7 +8,7 @@ import {
 import { useRequest } from 'ahooks';
 import { App, Button, Input, Popconfirm, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { TooltipButton, useTranslation } from 'arex-core';
+import { HelpTooltip, TooltipButton, useTranslation } from 'arex-core';
 import React, { FC, useCallback, useState } from 'react';
 import { Updater, useImmer } from 'use-immer';
 
@@ -53,7 +53,11 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
 
     return [
       {
-        title: t('appSetting.fullClassName', { ns: 'components' }),
+        title: (
+          <HelpTooltip title={t('appSetting.fullClassNameTooltip', { ns: 'components' })}>
+            {t('appSetting.fullClassName', { ns: 'components' })}
+          </HelpTooltip>
+        ),
         dataIndex: 'fullClassName',
         key: 'fullClassName',
         render: (text, record) =>
@@ -61,7 +65,6 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
             <Input
               value={text}
               status={fullClassNameInputStatus}
-              placeholder={t('appSetting.fullClassNamePlaceholder', { ns: 'components' }) as string}
               onChange={(e) => {
                 setFullClassNameInputStatus('');
                 handleChange('fullClassName', e.target.value);
@@ -72,33 +75,31 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
           ),
       },
       {
-        title: t('appSetting.methodName', { ns: 'components' }),
+        title: (
+          <HelpTooltip title={t('appSetting.methodNameTooltip', { ns: 'components' })}>
+            {t('appSetting.methodName', { ns: 'components' })}
+          </HelpTooltip>
+        ),
         dataIndex: 'methodName',
         key: 'methodName',
         render: (text, record) =>
           isEditableRow(record.id) ? (
-            <Input
-              value={text}
-              placeholder={t('appSetting.methodNamePlaceholder', { ns: 'components' }) as string}
-              onChange={(e) => handleChange('methodName', e.target.value)}
-            />
+            <Input value={text} onChange={(e) => handleChange('methodName', e.target.value)} />
           ) : (
             text
           ),
       },
       {
-        title: t('appSetting.parameterTypes', { ns: 'components' }),
+        title: (
+          <HelpTooltip title={t('appSetting.parameterTypesTooltip', { ns: 'components' })}>
+            {t('appSetting.parameterTypes', { ns: 'components' })}
+          </HelpTooltip>
+        ),
         dataIndex: 'parameterTypes',
         key: 'parameterTypes',
         render: (text, record) =>
           isEditableRow(record.id) ? (
-            <Input
-              value={text}
-              placeholder={
-                t('appSetting.parameterTypesPlaceholder', { ns: 'components' }) as string
-              }
-              onChange={(e) => handleChange('parameterTypes', e.target.value)}
-            />
+            <Input value={text} onChange={(e) => handleChange('parameterTypes', e.target.value)} />
           ) : (
             text
           ),

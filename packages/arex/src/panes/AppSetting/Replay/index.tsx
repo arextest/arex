@@ -1,6 +1,6 @@
 import { useRequest } from 'ahooks';
 import { App, Button, Form, InputNumber } from 'antd';
-import { useTranslation } from 'arex-core';
+import { HelpTooltip, useTranslation } from 'arex-core';
 import React from 'react';
 import { useImmer } from 'use-immer';
 
@@ -67,14 +67,25 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
   return (
     <SettingForm loading={loading} initialValues={initialValues} onFinish={onFinish}>
       <Form.Item
-        label={t('appSetting.caseRange')}
+        label={
+          <HelpTooltip title={t('appSetting.caseRangeTooltip')}>
+            {t('appSetting.caseRange')}
+          </HelpTooltip>
+        }
         name='offsetDays'
         rules={[{ required: true, message: t('appSetting.emptyCaseRange') as string }]}
       >
         <InputNumber min={1} />
       </Form.Item>
 
-      <Form.Item label={t('appSetting.excludeOperation')} name='excludeOperationMap'>
+      <Form.Item
+        label={
+          <HelpTooltip title={t('appSetting.exclusionTooltip')}>
+            {t('appSetting.exclusion')}
+          </HelpTooltip>
+        }
+        name='excludeOperationMap'
+      >
         <ExcludeOperation appId={appId} />
       </Form.Item>
 

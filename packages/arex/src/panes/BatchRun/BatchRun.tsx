@@ -127,7 +127,7 @@ const BatchRun = () => {
           height: 50%;
         `}
       >
-        {(data || []).map((i,index) => {
+        {(data || []).map((i, index) => {
           return (
             <div
               key={index}

@@ -15,9 +15,11 @@ export type CollectionState = {
   collectionsFlatData: CollectionFlatMapType;
 };
 
+export type CollectionPath = { name: string; id: string };
+
 export type CollectionAction = {
   getCollections: (workspaceId?: string) => Promise<void>;
-  getPath: (infoId: string) => string[];
+  getPath: (infoId: string) => CollectionPath[];
   reset: () => void;
 };
 
@@ -63,12 +65,15 @@ const useCollections = create<CollectionState & CollectionAction>((set, get) => 
    * @param flatArray
    */
   function getPathInFlatArray(id: string, flatArray: CollectionFlatMapType) {
-    const path: string[] = [id];
     let node = flatArray.get(id);
-    while (node && node.pid) {
-      path.unshift(node.pid);
-      node = flatArray.get(node.pid);
+
+    const path: CollectionPath[] = [];
+
+    while (node) {
+      path.unshift({ name: node.nodeName, id: node.infoId });
+      node = node.pid ? flatArray.get(node.pid) : undefined;
     }
+
     return path;
   }
 
