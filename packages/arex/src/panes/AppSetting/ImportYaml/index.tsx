@@ -1,9 +1,9 @@
+import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { App, Button } from 'antd';
 import { Label, useTranslation } from 'arex-core';
 import React, { FC, useState } from 'react';
 
-import MonacoEditor from '@/composables/MonacoEditor';
 import { ConfigService } from '@/services';
 import { useUserProfile } from '@/store';
 
@@ -47,15 +47,13 @@ const ImportYaml: FC<ImportYamlProps> = (props) => {
         {props.agentVersion}
       </div>
 
-      <MonacoEditor
+      <Editor
+        theme={theme === 'dark' ? 'vs-dark' : 'light'}
         value={value}
-        option={{
-          height: '400px',
-          extendedEditorConfig: {
-            theme,
-            mode: 'ymal',
-          },
-          onChange: setValue,
+        language={'yaml'}
+        height={'400px'}
+        onChange={(value) => {
+          setValue(value || '');
         }}
       />
 
