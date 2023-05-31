@@ -97,7 +97,6 @@ const Collection: ArexMenuFC = (props) => {
     },
   );
 
-  // TODO filter
   const filterTreeData = useMemo(() => collectionsTreeData, [collectionsTreeData, searchValue]);
 
   const dataList: { key: string; title: string; labelIds: string | null }[] = useMemo(
