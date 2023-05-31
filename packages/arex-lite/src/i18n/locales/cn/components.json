@@ -46,7 +46,7 @@
     "appFilterPlaceholder": "搜索应用"
   },
   "collection": {
-    "create_new": "新建",
+    "create_new": "新建集合",
     "batch_run": "批量执行",
     "batch_compare": "批量比对",
     "new_collection": "新集合",
