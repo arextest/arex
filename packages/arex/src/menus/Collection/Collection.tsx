@@ -280,10 +280,10 @@ const Collection: ArexMenuFC = (props) => {
                 title={t('collection.batch_run')}
                 onClick={() => {
                   // TODO batchRun pane
-                  // navPane({
-                  //   id: 'batchRun',
-                  //   type: PanesType.BATCH_RUN,
-                  // })
+                  navPane({
+                    type: PanesType.BATCH_RUN,
+                    id: 'root',
+                  });
                 }}
               />
             </div>
