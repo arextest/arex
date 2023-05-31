@@ -66,7 +66,23 @@ const Request: ArexPaneFC = () => {
     });
   };
 
-  const handleSave: HttpProps['onSave'] = (requestParams) => {
+  const handleSave: HttpProps['onSave'] = (requestParams, response) => {
+    console.log(response);
+    const request = requestParams;
+    if (
+      !request.headers.find((i) => i.key === 'arex-record-id') &&
+      (response?.type === 'success' ? response.headers : []).find(
+        (i) => i.key === 'arex-record-id',
+      ) &&
+      request.headers.find((i) => i.key === 'arex-force-record')?.active
+    ) {
+      const recordId =
+        response?.type === 'success'
+          ? response.headers.find((i) => i.key === 'arex-record-id')?.value
+          : '';
+
+      runPinMock(recordId);
+    }
     FileSystemService.saveRequest(activeWorkspaceId, requestParams, nodeInfo?.nodeType || 1).then(
       (res) => {
         res && message.success('保存成功');
@@ -74,7 +90,7 @@ const Request: ArexPaneFC = () => {
     );
   };
 
-  const { data } = useRequest(() =>
+  const { data, run } = useRequest(() =>
     FileSystemService.queryRequest({
       id: id as string,
       nodeType: nodeInfo?.nodeType || 1,
@@ -89,7 +105,26 @@ const Request: ArexPaneFC = () => {
       })),
     [collectionsFlatData, id],
   );
-
+  const { run: runPinMock } = useRequest(
+    (recordId) =>
+      FileSystemService.pinMock({
+        workspaceId: activeWorkspaceId as string,
+        infoId: id,
+        recordId,
+        nodeType: nodeInfo?.nodeType || 2,
+      }),
+    {
+      manual: true,
+      ready: !!activeWorkspaceId,
+      onSuccess: (success) => {
+        if (success) {
+          message.success('pin success');
+          run();
+          // httpRef.current?.forceReRendering();
+        }
+      },
+    },
+  );
   const { run: rename } = useRequest(
     (newName) =>
       FileSystemService.renameCollectionItem({

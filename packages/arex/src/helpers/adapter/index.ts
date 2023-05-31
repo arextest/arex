@@ -41,6 +41,13 @@ xspy.onRequest(async (request: any, sendResponse: any) => {
       url: request.url,
       headers: request.headers,
       body: ['GET'].includes(request.method) ? undefined : request.body,
+    }).catch((err) => {
+      console.log(err);
+      return {
+        status: 400,
+        headers: [],
+        data: '',
+      };
     });
     const dummyResponse = {
       status: agentData.status,

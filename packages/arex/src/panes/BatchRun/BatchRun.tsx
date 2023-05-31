@@ -1,7 +1,8 @@
 // @ts-nocheck
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { Button, Divider, Space, Tree, Typography } from 'antd';
+import { Allotment } from 'allotment';
+import { Button, Divider, Empty, Space, Spin, Tree, Typography } from 'antd';
 import { TreeProps } from 'antd/es';
 import { TestResult } from 'arex-request-core';
 import { useMemo, useState } from 'react';
@@ -12,6 +13,23 @@ import { FileSystemService } from '@/services';
 import { useCollections, useEnvironments } from '@/store';
 import { treeFind } from '@/utils';
 const { Text } = Typography;
+export const methodMap = {
+  GET: {
+    color: '#0cbb52',
+  },
+  PUT: {
+    color: '#097bed',
+  },
+  POST: {
+    color: '#ffb400',
+  },
+  DELETE: {
+    color: '#eb2013',
+  },
+  PATCH: {
+    color: '#212121',
+  },
+};
 
 const BatchRun = () => {
   const { activeEnvironment } = useEnvironments();
@@ -38,7 +56,11 @@ const BatchRun = () => {
   const treeData = genCaseTreeData(collectionsTreeData);
 
   // 暂时写死
-  const { data, run: run1 } = useRequest(
+  const {
+    data,
+    run: run1,
+    loading,
+  } = useRequest(
     async () => {
       const cases = await Promise.all(
         keys.map((key) => FileSystemService.queryRequest({ id: key, nodeType: 2 })),
@@ -66,111 +88,134 @@ const BatchRun = () => {
     },
   );
   return (
-    <div
+    <Allotment
+      vertical={true}
       css={css`
-        height: calc(100vh - 100px);
+        height: calc(100vh - 120px);
       `}
     >
-      <div
-        css={css`
-          height: 50%;
-          display: flex;
-        `}
-      >
+      <Allotment.Pane preferredSize={400}>
         <div
           css={css`
-            flex: 1;
+            display: flex;
+            height: 100%;
           `}
         >
           <div
             css={css`
-              overflow-y: scroll;
+              flex: 1;
               height: 100%;
-              .ant-checkbox-group {
-                display: flex;
-                flex-direction: column;
-              }
             `}
           >
-            <p
-              css={css`
-                font-weight: bolder;
-              `}
-            >
-              {/*{JSON.stringify(caseCheckValue)}*/}
-            </p>
-            <Tree
-              defaultExpandedKeys={['ROOT']}
-              checkable
-              checkedKeys={checkValue}
-              treeData={treeData}
-              onCheck={onCheck}
-            />
-          </div>
-        </div>
-        <div
-          css={css`
-            flex: 1;
-          `}
-        >
-          <Button
-            onClick={() => {
-              run1();
-            }}
-          >
-            Run
-          </Button>
-        </div>
-      </div>
-      <div
-        css={css`
-          height: 50%;
-        `}
-      >
-        {(data || []).map((i, index) => {
-          return (
             <div
-              key={index}
               css={css`
-                padding: 10px;
+                overflow-y: scroll;
+                height: 100%;
+                .ant-checkbox-group {
+                  display: flex;
+                  flex-direction: column;
+                }
               `}
             >
-              <Space>
-                <span
-                  css={css`
-                    color: darkseagreen;
-                  `}
-                >
-                  {i.req.method}
-                </span>
-                <Text>{i.req.name} &gt; </Text>
-                <Text>{i.req.name}</Text>
-                <Text type='secondary'>{i.req.endpoint}</Text>
-              </Space>
-              {i.testResult.length > 0 ? (
-                <TestResult testResult={i.testResult} />
-              ) : (
-                <Text
-                  css={css`
-                    display: block;
-                    margin: 20px;
-                  `}
-                  type='secondary'
-                >
-                  No tests found
-                </Text>
-              )}
-              <Divider
+              <p
                 css={css`
-                  margin: 0;
-                  margin-top: 10px;
+                  font-weight: bolder;
                 `}
+              >
+                {/*{JSON.stringify(caseCheckValue)}*/}
+              </p>
+              <Tree
+                defaultExpandedKeys={['ROOT']}
+                checkable
+                checkedKeys={checkValue}
+                treeData={[
+                  {
+                    title: 'ROOT',
+                    key: 'ROOT',
+                    children: treeData,
+                  },
+                ]}
+                onCheck={onCheck}
               />
             </div>
-          );
-        })}
-      </div>
-    </div>
+          </div>
+          <div
+            css={css`
+              flex: 1;
+            `}
+          >
+            <Button
+              css={css`
+                margin: 20px;
+              `}
+              onClick={() => {
+                run1();
+              }}
+            >
+              Run
+            </Button>
+          </div>
+        </div>
+      </Allotment.Pane>
+      <Allotment.Pane>
+        <div
+          css={css`
+            height: 100%;
+            padding: 14px;
+            overflow-y: auto;
+          `}
+        >
+          <Spin spinning={loading}>
+            {(data || []).length > 0 ? (
+              (data || []).map((i, index) => {
+                return (
+                  <div
+                    key={index}
+                    css={css`
+                      padding: 10px;
+                    `}
+                  >
+                    <Space>
+                      <span
+                        css={css`
+                          color: ${methodMap[i.req.method].color};
+                        `}
+                      >
+                        {i.req.method}
+                      </span>
+                      {/*<Text>{i.req.name} &gt; </Text>*/}
+                      <Text>{i.req.name}</Text>
+                      <Text type='secondary'>{i.req.endpoint}</Text>
+                    </Space>
+                    {i.testResult.length > 0 ? (
+                      <TestResult testResult={i.testResult} />
+                    ) : (
+                      <Text
+                        css={css`
+                          display: block;
+                          margin: 20px;
+                        `}
+                        type='secondary'
+                      >
+                        No tests found
+                      </Text>
+                    )}
+                    <Divider
+                      css={css`
+                        margin: 0;
+                        margin-top: 10px;
+                      `}
+                    />
+                  </div>
+                );
+              })
+            ) : (
+              <Empty />
+            )}
+          </Spin>
+        </div>
+      </Allotment.Pane>
+    </Allotment>
   );
 };
 
