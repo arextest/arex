@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { App, Button, Checkbox, Collapse, Form, Select, TimePicker } from 'antd';
-import { useTranslation } from 'arex-core';
+import { HelpTooltip, useTranslation } from 'arex-core';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useState } from 'react';
 import { useImmer } from 'use-immer';
@@ -139,12 +139,22 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
             <Checkbox />
           </Form.Item>
 
-          <Form.Item label={t('appSetting.dynamicClasses')}>
+          <Form.Item
+            label={
+              <HelpTooltip title={t('appSetting.dynamicClassesTooltip')}>
+                {t('appSetting.dynamicClasses')}
+              </HelpTooltip>
+            }
+          >
             <DynamicClassesEditableTable appId={props.appId} />
           </Form.Item>
 
           <Form.Item
-            label={t('appSetting.excludeServiceOperationSet')}
+            label={
+              <HelpTooltip title={t('appSetting.exclusionTooltip')}>
+                {t('appSetting.exclusion')}
+              </HelpTooltip>
+            }
             name='excludeServiceOperationSet'
           >
             <Select

@@ -36,6 +36,7 @@ export async function queryRequest(params: {
     // @ts-ignore
     return {
       id: rest.id,
+      name: rest.name,
       method: address?.method || 'GET',
       endpoint: address?.endpoint || '',
       headers: rest.headers || [],

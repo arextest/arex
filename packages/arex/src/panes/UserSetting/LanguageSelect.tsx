@@ -9,9 +9,9 @@ const LanguageSelect: FC<{ value?: I18nextLng; onChange?: (lang: I18nextLng) => 
     <Select
       value={props.value}
       onChange={(lang) => {
-        props.onChange?.(lang);
         i18n.changeLanguage(lang);
         localStorage.setItem(I18_KEY, lang);
+        props.onChange?.(lang);
       }}
       style={{ width: 120 }}
     >

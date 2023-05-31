@@ -31,9 +31,8 @@ const SettingPage: FC = () => {
       theme,
       compact,
       language,
-      colorPrimary,
     });
-  }, [avatar, colorPrimary, compact, form, language, theme]);
+  }, [avatar, compact, language, theme]);
 
   useEffect(() => {
     form.setFieldsValue({

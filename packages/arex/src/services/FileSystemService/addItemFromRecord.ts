@@ -2,16 +2,14 @@ import { request } from '@/utils';
 
 export type AddItemFromRecordReq = {
   workspaceId: string;
-  parentPath: {
-    title: string;
-    key: string;
-    nodeType: number;
-  }[];
+  parentPath: string[];
   nodeName: string;
+  planId: string;
   recordId: string;
-  userName: string;
   operationId: string;
+  userName?: string;
 };
+
 export async function addItemFromRecord(params: AddItemFromRecordReq) {
   return request
     .post<{ success: boolean }>('/report/filesystem/addItemFromRecord', params)

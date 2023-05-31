@@ -2,5 +2,5 @@
   "collection": "Collection",
   "replay": "Replay",
   "environment": "Environment",
-  "appSetting": "AppSetting"
+  "appSetting": "Setting"
 }

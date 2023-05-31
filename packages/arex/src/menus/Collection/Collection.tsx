@@ -1,6 +1,6 @@
 import { DownOutlined, PlayCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { Button, Tag, Tree } from 'antd';
+import { Button, Space, Tag, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import {
   ArexMenuFC,
@@ -36,16 +36,6 @@ const CollectionNodeTitleWrapper = styled.div`
     display: flex;
     justify-content: space-between;
     margin-bottom: 8px;
-
-    .collection-header-create {
-      margin-right: 5px;
-      span.action {
-        font-weight: bold;
-      }
-    }
-    .collection-header-view {
-      margin: 0 5px;
-    }
   }
 
   .ant-tree {
@@ -97,7 +87,6 @@ const Collection: ArexMenuFC = (props) => {
     },
   );
 
-  // TODO filter
   const filterTreeData = useMemo(() => collectionsTreeData, [collectionsTreeData, searchValue]);
 
   const dataList: { key: string; title: string; labelIds: string | null }[] = useMemo(
@@ -276,13 +265,11 @@ const Collection: ArexMenuFC = (props) => {
           className={'collection-header-search'}
           showSearchButton={false}
           prefix={
-            <>
+            <div style={{ marginRight: '8px' }}>
               <TooltipButton
                 icon={<PlusOutlined />}
                 type='text'
                 size='small'
-                placement='bottomLeft'
-                className={'collection-header-create'}
                 title={t('collection.create_new')}
                 onClick={createCollection}
               />
@@ -297,7 +284,7 @@ const Collection: ArexMenuFC = (props) => {
                   // })
                 }}
               />
-            </>
+            </div>
           }
           labelDataSource={labelData.map((item) => ({
             id: item.id,

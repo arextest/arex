@@ -14,6 +14,7 @@ import {
 } from 'antd';
 import {
   getLocalStorage,
+  HelpTooltip,
   PanesTitle,
   SpaceBetweenWrapper,
   TooltipButton,
@@ -244,15 +245,27 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           autoComplete='off'
         >
           <Form.Item
-            label={t('replay.targetHost')}
+            label={
+              <HelpTooltip title={t('replay.targetHostTooltip')}>
+                {t('replay.targetHost')}
+              </HelpTooltip>
+            }
             name='targetEnv'
             rules={[{ required: true, message: t('replay.emptyHost') as string }]}
           >
-            <AutoComplete allowClear options={targetHostOptions} />
+            <AutoComplete
+              allowClear
+              options={targetHostOptions}
+              placeholder='https://<ip>:<port>'
+            />
           </Form.Item>
 
           <Form.Item
-            label={t('replay.caseRange')}
+            label={
+              <HelpTooltip title={t('replay.caseRangeTooltip')}>
+                {t('replay.caseRange')}
+              </HelpTooltip>
+            }
             name='caseSourceRange'
             rules={[{ required: true, message: t('replay.emptyCaseRange') as string }]}
           >
@@ -262,12 +275,14 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
             />
           </Form.Item>
 
-          <Form.Item label={t('replay.operation')} name='operationList'>
+          <Form.Item
+            label={<HelpTooltip title={t('replay.pathsTooltip')}>{t('replay.paths')}</HelpTooltip>}
+            name='operationList'
+          >
             <Select
               mode='multiple'
               maxTagCount={3}
               options={interfacesOptions}
-              placeholder={'optional'}
               optionFilterProp='label'
             />
           </Form.Item>

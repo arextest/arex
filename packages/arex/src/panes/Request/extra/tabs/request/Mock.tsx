@@ -60,10 +60,10 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
           Promise.resolve(
             res.recordResult.map((result: any) => {
               result.targetRequest.bodyParsed = tryParseJsonString<Record<string, any>>(
-                tryParseJsonString(result.targetRequest.body),
+                result.targetRequest.body,
               );
               result.targetResponse.bodyParsed = tryParseJsonString<Record<string, any>>(
-                tryParseJsonString(result.targetResponse.body),
+                result.targetResponse.body,
               );
 
               const convertData = (data: MockTarget) => {
@@ -117,11 +117,11 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
 
     typeof params.targetRequest.body !== 'string' &&
       // @ts-ignore
-      (params.targetRequest.body = tryStringifyJson(tryStringifyJson(params.targetRequest.body)));
+      (params.targetRequest.body = tryStringifyJson(params.targetRequest.body));
 
     typeof params.targetResponse.body !== 'string' &&
       // @ts-ignore
-      (params.targetResponse.body = tryStringifyJson(tryStringifyJson(params.targetResponse.body)));
+      (params.targetResponse.body = tryStringifyJson(params.targetResponse.body));
 
     updateMockData(params);
   };
