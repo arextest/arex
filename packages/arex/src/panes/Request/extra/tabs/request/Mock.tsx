@@ -1,4 +1,5 @@
 import { SaveOutlined } from '@ant-design/icons';
+import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { App, Col, Collapse, Row, Space } from 'antd';
 import { tryParseJsonString, tryStringifyJson } from 'arex-core';
@@ -6,7 +7,6 @@ import { EmptyWrapper, TooltipButton } from 'arex-core';
 import React, { FC } from 'react';
 import { useImmer } from 'use-immer';
 
-import MonacoEditor from '@/composables/MonacoEditor';
 import request from '@/utils/request';
 
 import useUserProfile from '../../../../../store/useUserProfile';
@@ -148,38 +148,32 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
               >
                 <Row gutter={16}>
                   <Col span={12} style={{ display: 'flex', flexDirection: 'column' }}>
-                    <MonacoEditor
+                    <Editor
+                      theme={theme === 'dark' ? 'vs-dark' : 'light'}
+                      height={'260px'}
                       value={mock.targetRequestString as string}
-                      option={{
-                        extendedEditorConfig: {
-                          theme: theme,
-                          mode: 'json',
-                        },
-                        onChange(value) {
-                          setMockData((state) => {
-                            const data = state.find((item) => item.id === mock.id);
-                            data && (data.targetRequestString = value);
-                          });
-                        },
+                      onChange={(value) => {
+                        setMockData((state) => {
+                          const data = state.find((item) => item.id === mock.id);
+                          data && (data.targetRequestString = value);
+                        });
                       }}
-                    ></MonacoEditor>
+                      language={'json'}
+                    />
                   </Col>
                   <Col span={12}>
-                    <MonacoEditor
+                    <Editor
+                      theme={theme === 'dark' ? 'vs-dark' : 'light'}
+                      height={'300px'}
                       value={mock.targetResponseString as string}
-                      option={{
-                        extendedEditorConfig: {
-                          theme: theme,
-                          mode: 'json',
-                        },
-                        onChange(value) {
-                          setMockData((state) => {
-                            const data = state.find((item) => item.id === mock.id);
-                            data && (data.targetResponseString = value);
-                          });
-                        },
+                      onChange={(value) => {
+                        setMockData((state) => {
+                          const data = state.find((item) => item.id === mock.id);
+                          data && (data.targetResponseString = value);
+                        });
                       }}
-                    ></MonacoEditor>
+                      language={'json'}
+                    />
                   </Col>
                 </Row>
               </Collapse.Panel>
