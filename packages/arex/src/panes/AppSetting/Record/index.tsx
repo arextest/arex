@@ -151,8 +151,8 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
 
           <Form.Item
             label={
-              <HelpTooltip title={t('appSetting.excludeTooltip')}>
-                {t('appSetting.exclude')}
+              <HelpTooltip title={t('appSetting.exclusionTooltip')}>
+                {t('appSetting.exclusion')}
               </HelpTooltip>
             }
             name='excludeServiceOperationSet'
