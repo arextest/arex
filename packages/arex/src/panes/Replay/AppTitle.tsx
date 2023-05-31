@@ -256,7 +256,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
             <AutoComplete
               allowClear
               options={targetHostOptions}
-              placeholder='https://<ip>:<port>'
+              placeholder='e.g., https://<ip>:<port>'
             />
           </Form.Item>
 

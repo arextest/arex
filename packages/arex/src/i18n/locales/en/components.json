@@ -185,7 +185,7 @@
     "fullClassName": "Full Class Name",
     "fullClassNameTooltip": "The full class name of the local cache, e.g.: java.lang.String.",
     "methodName": "Method Name",
-    "methodNameTooltip": "The method name to be mocked, if not configured, mock all public methods with parameters in this class",
+    "methodNameTooltip": "The method name to be mocked.",
     "parameterTypes": "Parameter Types",
     "parameterTypesTooltip": "Parameter list (Multiple separated by '@', e.g.: java.lang.String@java.lang.Integer)",
     "action": "Action",

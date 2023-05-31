@@ -191,6 +191,7 @@ const Collection: ArexMenuFC = (props) => {
   });
 
   const onDrop: DirectoryTreeProps<CollectionTreeType>['onDrop'] = (value) => {
+    console.log(value);
     /**
      * 节点拖动规则:
      * 1. CollectionNodeType.folder 只能直属于 CollectionNodeType.folder
@@ -206,6 +207,7 @@ const Collection: ArexMenuFC = (props) => {
       .map((p) => Number(p));
     const nodePos = value.node.pos
       .split('-')
+      // .slice(1, -1) // remove root and target node
       .slice(1, -1) // remove root and target node
       .map((p) => Number(p));
 
