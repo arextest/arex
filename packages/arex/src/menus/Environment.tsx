@@ -8,7 +8,7 @@ import {
   SpaceBetweenWrapper,
   useTranslation,
 } from 'arex-core';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { MenuSelect } from '@/components';
 import { MenusType, PanesType } from '@/constant';
@@ -25,8 +25,9 @@ const EnvironmentMenu: ArexMenuFC = (props) => {
   } = theme.useToken();
 
   const { activeEnvironment, timestamp, getEnvironments } = useEnvironments();
-
   const { activeWorkspaceId } = useWorkspaces();
+
+  const selectedKeys = useMemo(() => (props.value ? [props.value] : []), [props.value]);
 
   const { run: createNewEnvironment } = useRequest(
     () =>
@@ -39,12 +40,15 @@ const EnvironmentMenu: ArexMenuFC = (props) => {
       }),
     {
       manual: true,
-      onSuccess() {
-        message.success(t('message.saveSuccess'));
-        // TODO 目前 MenuSelect 通过传递request的方式在内部进行数据管理,
-        //  导致 需要借助 timestamp 来强制刷新数据, 造成了两次相同的数据请求
-        //  后续需要优化
-        getEnvironments();
+      onSuccess(success) {
+        if (success) {
+          // TODO 目前 MenuSelect 通过传递request的方式在内部进行数据管理,
+          //  导致 需要借助 timestamp 来强制刷新数据, 造成了两次相同的数据请求
+          //  后续需要优化
+          getEnvironments();
+        } else {
+          message.error(t('message.createFailed', { ns: 'common' }));
+        }
       },
     },
   );
@@ -57,6 +61,8 @@ const EnvironmentMenu: ArexMenuFC = (props) => {
       prefix={
         <SmallTextButton color={'primary'} icon={<PlusOutlined />} onClick={createNewEnvironment} />
       }
+      initValue={props.value}
+      selectedKeys={selectedKeys}
       onSelect={props.onSelect}
       placeholder={t('env.searchEnvironment', { ns: 'components' }) as string}
       request={() =>

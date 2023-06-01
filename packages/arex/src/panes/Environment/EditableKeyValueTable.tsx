@@ -5,13 +5,11 @@ import { styled, useTranslation } from 'arex-core';
 import React from 'react';
 import { Updater } from 'use-immer';
 
-export type KeyValueType = {
-  key: string;
-  value: string;
-  active?: boolean;
-};
+import { EnvironmentKeyValues } from '@/store/useEnvironments';
 
-const EditableKeyValueTable = styled(Table)<TableProps<KeyValueType> & { showHeader?: boolean }>`
+const EditableKeyValueTable = styled(Table)<
+  TableProps<EnvironmentKeyValues> & { showHeader?: boolean }
+>`
   .ant-table-thead {
     display: ${(props) => (props.showHeader ? 'table-header-group' : 'none')};
   }
@@ -21,9 +19,9 @@ const EditableKeyValueTable = styled(Table)<TableProps<KeyValueType> & { showHea
 `;
 
 export const useColumns = (
-  paramsUpdater?: Updater<KeyValueType[]>,
+  paramsUpdater?: Updater<EnvironmentKeyValues[]>,
   editable?: boolean,
-): ColumnsType<KeyValueType> => {
+): ColumnsType<EnvironmentKeyValues> => {
   const { t } = useTranslation(['common', 'components']);
 
   const handleChange = (i: number, attr: 'key' | 'value', value: string) => {
@@ -40,7 +38,7 @@ export const useColumns = (
       });
   };
 
-  const keyValueColumns: ColumnsType<KeyValueType> = [
+  const keyValueColumns: ColumnsType<EnvironmentKeyValues> = [
     {
       title: t('env.variable', { ns: 'components' }).toUpperCase(),
       dataIndex: 'key',

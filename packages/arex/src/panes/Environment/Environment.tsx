@@ -7,13 +7,16 @@ import {
 } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
 import { App, Button, Divider, Popconfirm, Space } from 'antd';
+import { ColumnsType } from 'antd/es/table';
 import { ArexPaneFC, PanesTitle, PanesTitleProps, TooltipButton, useTranslation } from 'arex-core';
 import React, { useMemo } from 'react';
 import { useImmer } from 'use-immer';
 
+import { PanesType } from '@/constant';
 import { EnvironmentService } from '@/services';
 import { useEnvironments, useMenusPanes, useWorkspaces } from '@/store';
-import { Environment } from '@/store/useEnvironments';
+import { Environment, EnvironmentKeyValues } from '@/store/useEnvironments';
+import { encodePaneKey } from '@/store/useMenusPanes';
 
 import EditableKeyValueTable, { useColumns } from './EditableKeyValueTable';
 
@@ -32,11 +35,13 @@ const Environment: ArexPaneFC<Environment> = (props) => {
   );
 
   const [keyValues, setKeyValues] = useImmer(environment?.keyValues || []);
+  const columns = useColumns(setKeyValues, true) as ColumnsType<object> &
+    ColumnsType<EnvironmentKeyValues>;
 
   const { run: saveEnv } = useRequest(EnvironmentService.saveEnvironment, {
     manual: true,
     onSuccess() {
-      message.success(t('message.saveSuccess'));
+      message.success(t('message.saveSuccess', { ns: 'common' }));
       getEnvironments();
     },
   });
@@ -69,8 +74,7 @@ const Environment: ArexPaneFC<Environment> = (props) => {
       onSuccess(success) {
         if (success) {
           getEnvironments();
-          // TODO not work
-          removePane(props.data.id);
+          removePane(encodePaneKey({ type: PanesType.ENVIRONMENT, id: props.data.id }) as string);
         }
       },
     },
@@ -138,10 +142,10 @@ const Environment: ArexPaneFC<Environment> = (props) => {
         bordered
         showHeader
         size='small'
+        rowKey='index'
         pagination={false}
         dataSource={keyValues}
-        // @ts-ignore
-        columns={useColumns(setKeyValues, true)}
+        columns={columns}
         style={{ marginTop: '16px' }}
       />
     </>
