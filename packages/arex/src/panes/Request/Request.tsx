@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { message, Spin } from 'antd';
 import { ArexPaneFC, getLocalStorage } from 'arex-core';
@@ -160,7 +161,13 @@ const Request: ArexPaneFC = () => {
 
   return (
     <div>
-      <Spin spinning={!data}>
+      <Spin
+        css={css`
+          height: calc(100vh - 110px);
+          width: 100%;
+        `}
+        spinning={!data}
+      >
         {nodeInfo && data && (
           <Http
             height={`calc(100vh - 110px)`}

@@ -149,6 +149,16 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
                 <Row gutter={16}>
                   <Col span={12} style={{ display: 'flex', flexDirection: 'column' }}>
                     <Editor
+                      options={{
+                        minimap: {
+                          enabled: false,
+                        },
+                        fontSize: 12,
+                        wordWrap: 'wordWrapColumn',
+                        automaticLayout: true,
+                        fontFamily: 'IBMPlexMono, "Courier New", monospace',
+                        scrollBeyondLastLine: false,
+                      }}
                       theme={theme === 'dark' ? 'vs-dark' : 'light'}
                       height={'260px'}
                       value={mock.targetRequestString as string}
@@ -163,8 +173,18 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
                   </Col>
                   <Col span={12}>
                     <Editor
+                      options={{
+                        minimap: {
+                          enabled: false,
+                        },
+                        fontSize: 12,
+                        wordWrap: 'wordWrapColumn',
+                        automaticLayout: true,
+                        fontFamily: 'IBMPlexMono, "Courier New", monospace',
+                        scrollBeyondLastLine: false,
+                      }}
                       theme={theme === 'dark' ? 'vs-dark' : 'light'}
-                      height={'300px'}
+                      height={'260px'}
                       value={mock.targetResponseString as string}
                       onChange={(value) => {
                         setMockData((state) => {

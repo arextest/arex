@@ -192,9 +192,10 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
     <EmptyWrapper
       empty={!orderItems?.length}
       description={
-        <Button type='primary' onClick={props.onAdd}>
-          New Request
-        </Button>
+        'Please select Request'
+        // <Button type='primary' onClick={props.onAdd}>
+        //   New Request
+        // </Button>
       }
     >
       <DndProvider backend={HTML5Backend}>
@@ -209,6 +210,7 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
           type='editable-card'
           tabBarGutter={-1}
           onEdit={handleTabsEdit}
+          hideAdd={true}
           items={orderItems}
           {...restTabsProps}
         />
