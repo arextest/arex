@@ -60,7 +60,7 @@ const HeaderMenu: FC = () => {
       <TooltipButton
         title={t('help')}
         icon={<QuestionCircleOutlined />}
-        onClick={() => window.open('https://arextest.github.io/website/zh-Hans/')}
+        onClick={() => window.open('http://www.arextest.com/')}
       />
 
       <TooltipButton title={t('setting')} icon={<SettingOutlined />} onClick={handleClickSetting} />
