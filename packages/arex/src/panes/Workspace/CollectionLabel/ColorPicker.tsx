@@ -5,8 +5,8 @@ import React, { FC } from 'react';
 export const LabelColor = ['default', ...PresetColors] as const;
 
 export type ColorPickerProps = {
-  value?: typeof LabelColor[number];
-  onChange?: (value: typeof LabelColor[number]) => void;
+  value?: (typeof LabelColor)[number];
+  onChange?: (value: (typeof LabelColor)[number]) => void;
 };
 
 const ColorPicker: FC<ColorPickerProps> = (props) => {
