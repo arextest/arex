@@ -2,6 +2,7 @@ import axios from 'axios';
 
 export type ViewRecordReq = {
   recordId: string;
+  sourceProvider?: string;
 };
 export interface CategoryType {
   name: string;
@@ -18,15 +19,10 @@ export interface Attribute {
   configBatchNo: string;
 }
 
-export interface TargetRequest {
+export interface MockTarget {
   body: string;
   attributes: Attribute;
-  type: string | null;
-}
-
-export interface TargetResponse {
-  body: string;
-  attributes?: Attribute;
+  bodyParsed?: Record<string, any> | null; // 非接口字段，数据转换用
   type: string | null;
 }
 
@@ -38,8 +34,10 @@ export type RecordResult = {
   appId: string;
   recordEnvironment: number;
   creationTime: number;
-  targetRequest: TargetRequest;
-  targetResponse: TargetResponse;
+  targetRequest: MockTarget;
+  targetResponse: MockTarget;
+  targetRequestString?: string; // 非接口字段，数据转换用
+  targetResponseString?: string; // 非接口字段，数据转换用
   operationName: string;
   recordVersion?: number | any;
 };

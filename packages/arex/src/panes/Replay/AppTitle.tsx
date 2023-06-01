@@ -4,6 +4,7 @@ import { useLocalStorageState, useRequest } from 'ahooks';
 import {
   App,
   AutoComplete,
+  Badge,
   Button,
   DatePicker,
   Form,
@@ -44,7 +45,12 @@ const TitleWrapper = styled(
 
     return (
       <div className={props.className}>
-        <span>{props.title}</span>
+        <Button type='text'>
+          <Badge size='small' count={100} offset={[10, 2]}>
+            <span style={{ fontSize: '20px', fontWeight: 600 }}> {props.title}</span>
+          </Badge>
+        </Button>
+
         {props.onRefresh && (
           <TooltipButton
             size='small'
