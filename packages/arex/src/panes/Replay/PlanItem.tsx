@@ -390,12 +390,12 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         operator: email as string,
         replayPlanType: 1,
         sourceEnv: 'pro',
-        targetEnv: selectedPlan!.targetHost as string,
+        targetEnv: selectedPlan!.targetEnv,
       });
     } else if (
       selectedPlan?.caseStartTime &&
       selectedPlan?.caseEndTime &&
-      selectedPlan?.targetHost
+      selectedPlan?.targetEnv
     ) {
       // 重新执行回放
       rerun({
@@ -411,7 +411,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             : selectedPlan.planName + '-rerun'
           : undefined,
         sourceEnv: 'pro',
-        targetEnv: selectedPlan!.targetHost,
+        targetEnv: selectedPlan!.targetEnv,
       });
     }
   };
