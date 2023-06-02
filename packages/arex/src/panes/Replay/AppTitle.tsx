@@ -22,10 +22,11 @@ import {
   useTranslation,
 } from 'arex-core';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { FC, ReactNode, useMemo, useState } from 'react';
+import React, { createElement, FC, ReactNode, useMemo, useRef, useState } from 'react';
 
 import { EMAIL_KEY, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
-import { ApplicationService, ScheduleService } from '@/services';
+import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCaseList';
+import { ApplicationService, ReportService, ScheduleService } from '@/services';
 import { ApplicationDataType } from '@/services/ApplicationService';
 
 type AppTitleProps = {
@@ -40,16 +41,24 @@ type CreatePlanForm = {
 };
 
 const TitleWrapper = styled(
-  (props: { className?: string; title: ReactNode; onRefresh?: () => void }) => {
+  (props: {
+    className?: string;
+    title: ReactNode;
+    count?: number;
+    onClickTitle?: () => void;
+    onRefresh?: () => void;
+  }) => {
     const { t } = useTranslation(['components']);
 
     return (
       <div className={props.className}>
-        <Button type='text'>
-          <Badge size='small' count={100} offset={[10, 2]}>
+        {createElement(
+          props.count ? Button : 'div',
+          props.count ? { type: 'text', onClick: props.onClickTitle } : {},
+          <Badge size='small' count={props.count} offset={[10, 2]}>
             <span style={{ fontSize: '20px', fontWeight: 600 }}> {props.title}</span>
-          </Badge>
-        </Button>
+          </Badge>,
+        )}
 
         {props.onRefresh && (
           <TooltipButton
@@ -85,6 +94,8 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   const { token } = theme.useToken();
   const email = getLocalStorage<string>(EMAIL_KEY);
 
+  const caseListRef = useRef<RecordedCaseListRef>(null);
+
   const [form] = Form.useForm<CreatePlanForm>();
   const targetEnv = Form.useWatch('targetEnv', form);
 
@@ -110,6 +121,11 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     onSuccess(res) {
       setInterfacesOptions(res.map((item) => ({ label: item.operationName, value: item.id })));
     },
+  });
+
+  const { data: recordedCaseCount } = useRequest(ReportService.queryCountRecord, {
+    defaultParams: [data.appId],
+    ready: !!data.appId,
   });
 
   /**
@@ -221,7 +237,14 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   return (
     <div>
       <PanesTitle
-        title={<TitleWrapper title={data.appId} onRefresh={onRefresh} />}
+        title={
+          <TitleWrapper
+            title={data.appId}
+            count={recordedCaseCount}
+            onClickTitle={() => caseListRef.current?.open()}
+            onRefresh={onRefresh}
+          />
+        }
         extra={
           <Button
             size='small'
@@ -298,6 +321,8 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           </Form.Item>
         </Form>
       </Modal>
+
+      <RecordedCaseList ref={caseListRef} appId={data.appId} />
     </div>
   );
 };
