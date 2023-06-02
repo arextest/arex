@@ -91,11 +91,15 @@ const Request: ArexPaneFC = () => {
     );
   };
 
-  const { data, run } = useRequest(() =>
-    FileSystemService.queryRequest({
-      id: id as string,
-      nodeType: nodeInfo?.nodeType || 1,
-    }),
+  const { data, run } = useRequest(
+    () =>
+      FileSystemService.queryRequest({
+        id: id as string,
+        nodeType: nodeInfo?.nodeType || 1,
+      }),
+    {
+      refreshDeps: [nodeInfo?.nodeType],
+    },
   );
 
   const nodePathId = useMemo(() => getPath(id).map((path) => path.id), [collectionsFlatData, id]);
