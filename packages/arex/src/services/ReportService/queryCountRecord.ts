@@ -1,15 +1,11 @@
 import { request } from '@/utils';
 
-export interface QueryCountRecordReq {
-  appId: string;
-}
-
 export interface QueryCountRecordRes {
   recordedCaseCount: number;
 }
 
-export async function queryCountRecord(params: QueryCountRecordReq) {
+export async function queryCountRecord(appId: string) {
   return request
-    .post<QueryCountRecordRes>('/report/report/countRecord' + params.appId)
+    .post<QueryCountRecordRes>('/report/report/countRecord/' + appId)
     .then((res) => Promise.resolve(res.body.recordedCaseCount));
 }
