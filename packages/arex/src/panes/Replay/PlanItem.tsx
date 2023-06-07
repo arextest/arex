@@ -195,7 +195,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         <div style={{ overflow: 'hidden' }}>
           <StatusTag
             status={record.status}
-            caseCount={record.successCaseCount}
+            caseCount={record.successCaseCount + record.failCaseCount + record.errorCaseCount}
             totalCaseCount={record.totalCaseCount}
             message={record.errorMessage}
           />
