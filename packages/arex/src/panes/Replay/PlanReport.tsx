@@ -50,12 +50,14 @@ const PlanReport: FC<PlanReportProps> = (props) => {
     {
       title: t('replay.state'),
       render: (_, record) => (
-        <StatusTag
-          status={record.status}
-          caseCount={record.successCaseCount + record.failCaseCount + record.errorCaseCount}
-          totalCaseCount={record.totalCaseCount}
-          message={record.errorMessage}
-        />
+        <div style={{ overflow: 'hidden' }}>
+          <StatusTag
+            status={record.status}
+            caseCount={record.successCaseCount + record.failCaseCount + record.errorCaseCount}
+            totalCaseCount={record.totalCaseCount}
+            message={record.errorMessage}
+          />
+        </div>
       ),
     },
     {

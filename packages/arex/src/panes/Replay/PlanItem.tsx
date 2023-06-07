@@ -191,19 +191,19 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
     },
     {
       title: t('replay.state'),
-      width: 80,
       render: (_, record) => (
-        <StatusTag
-          status={record.status}
-          caseCount={record.successCaseCount}
-          totalCaseCount={record.totalCaseCount}
-          message={record.errorMessage}
-        />
+        <div style={{ overflow: 'hidden' }}>
+          <StatusTag
+            status={record.status}
+            caseCount={record.successCaseCount}
+            totalCaseCount={record.totalCaseCount}
+            message={record.errorMessage}
+          />
+        </div>
       ),
     },
     {
       title: t('replay.timeConsumed'),
-      width: 80,
       render: (_, record) =>
         record.replayEndTime && record.replayStartTime
           ? (record.replayEndTime - record.replayStartTime) / 1000
@@ -591,7 +591,6 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         loading={loadingData}
         columns={columns}
         dataSource={planItemDataFiltered}
-        style={{ overflow: 'auto' }}
       />
     </Card>
   ) : null;
