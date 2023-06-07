@@ -2,11 +2,14 @@ import { ArexPaneManager, decodeUrl, encodeUrl, Pane, StandardPathParams } from 
 import { merge } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 
+import { useWorkspaces } from '@/store';
+
 import { useMenusPanes } from '../store';
 
 function useNavPane() {
   const nav = useNavigate();
   const { setPanes } = useMenusPanes();
+  const { activeWorkspaceId } = useWorkspaces();
 
   return function (pane: Pane) {
     const match = decodeUrl();
@@ -15,6 +18,7 @@ function useNavPane() {
       Partial<StandardPathParams> | undefined,
       Partial<StandardPathParams>
     >(match.params, {
+      workspaceId: activeWorkspaceId,
       menuType: ArexPaneManager.getMenuTypeByType(pane.type),
       paneType: pane.type,
       id: pane.id,
