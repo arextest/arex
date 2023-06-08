@@ -2,7 +2,6 @@ import { ExclamationCircleFilled, MoreOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
 import { App, Button, Dropdown, Input, MenuProps } from 'antd';
 import { getLocalStorage, RequestMethodIcon, styled, useTranslation } from 'arex-core';
-import path from 'path';
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
@@ -13,7 +12,7 @@ import { useCollections, useWorkspaces } from '@/store';
 
 import SearchHighLight from './SearchHighLight';
 
-const PrefixIcon = styled(
+export const PrefixIcon = styled(
   (props: { icon: ReactNode; border?: boolean }) => <div {...props}>{props.icon}</div>,
   { shouldForwardProp: (prop) => prop !== 'border' },
 )`
@@ -282,9 +281,9 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
 
   const prefix = useMemo(
     () =>
-      props.data.nodeType === 1 ? (
+      props.data.nodeType === CollectionNodeType.interface ? (
         React.createElement(RequestMethodIcon[props.data.method || ''] || 'div')
-      ) : props.data.nodeType === 2 ? (
+      ) : props.data.nodeType === CollectionNodeType.case ? (
         <PrefixIcon border icon={props.data.caseSourceType === 1 ? 'arex' : 'case'} />
       ) : null,
     [props.data],
