@@ -49,7 +49,7 @@ const CollectionNodeTitleWrapper = styled.div`
 export type CollectionNodeTitleProps = {
   data: CollectionType;
   keyword?: string;
-  onAddNode?: (info: string) => void;
+  onAddNode?: (info: string, nodeType: CollectionNodeType) => void;
 };
 
 const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
@@ -80,9 +80,9 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
       }),
     {
       manual: true,
-      onSuccess: (res, [{ caseSourceType }]) => {
+      onSuccess: (res, [{ caseSourceType, nodeType }]) => {
         if (res.success) {
-          getCollections().then(() => props.onAddNode?.(res.infoId));
+          getCollections().then(() => props.onAddNode?.(res.infoId, nodeType));
           if (caseSourceType === 2) queryInterface({ id: nodePath.at(-1) as string }, res.infoId);
         }
       },
