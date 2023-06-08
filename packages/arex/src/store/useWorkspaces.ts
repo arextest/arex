@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 
 import { EMAIL_KEY } from '@/constant';
+import { createWorkspace } from '@/services/FileSystemService';
 import queryWorkspacesByUser from '@/services/FileSystemService/workspace/queryWorkspacesByUser';
 
 export type Workspace = {
@@ -12,7 +13,7 @@ export type Workspace = {
 };
 
 export type WorkspaceState = {
-  activeWorkspaceId: string;
+  activeWorkspaceId: string; // attention: activeWorkspaceId could be empty string !!!
   workspaces: Workspace[];
 };
 
@@ -39,6 +40,12 @@ const useWorkspaces = create(
           let workspaces: Workspace[] = [];
           try {
             workspaces = await queryWorkspacesByUser({ userName });
+            // create default workspace if no workspace
+            if (!workspaces.length) {
+              createWorkspace({ userName, workspaceName: 'default' }).then((res) => {
+                get().getWorkspaces(res.workspaceId);
+              });
+            }
           } catch (e) {
             window.message.error(i18n.t('workSpace.noPermissionOrInvalid', { ns: 'components' }));
           }

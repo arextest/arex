@@ -1,7 +1,6 @@
 import 'allotment/dist/style.css';
 import 'antd/dist/reset.css';
 import './style/style.css';
-import 'arex-core/dist/style.css';
 import 'dayjs/locale/zh-cn';
 import './helpers/adapter';
 import './assets/css/index.css';
