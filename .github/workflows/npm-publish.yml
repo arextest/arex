@@ -2,7 +2,7 @@ name: Node.js Package
 
 on:
   push:
-    branches: [ main,login-fail ]
+    branches: [ main ]
 
 jobs:
   install:
