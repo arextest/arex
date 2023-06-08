@@ -1,6 +1,6 @@
 import { DownOutlined, PlayCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { Button, Space, Tag, Tree } from 'antd';
+import { Button, Tag, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import {
   ArexMenuFC,
@@ -8,6 +8,7 @@ import {
   EmptyWrapper,
   getLocalStorage,
   Operator,
+  RequestMethodEnum,
   SearchDataType,
   StructuredFilter,
   styled,
@@ -18,7 +19,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
-import CollectionNodeTitle from '@/menus/Collection/CollectionNodeTitle';
+import CollectionNodeTitle, {
+  CollectionNodeTitleProps,
+} from '@/menus/Collection/CollectionNodeTitle';
 import { FileSystemService, ReportService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
@@ -251,6 +254,18 @@ const Collection: ArexMenuFC = (props) => {
     setAutoExpandParent(false);
   };
 
+  const handleAddNode: CollectionNodeTitleProps['onAddNode'] = (infoId, nodeType) => {
+    handleSelect([infoId], {
+      // @ts-ignore
+      node: {
+        infoId,
+        nodeType,
+        method: nodeType === CollectionNodeType.interface ? RequestMethodEnum.GET : null,
+      },
+    });
+    setExpandedKeys([...expandedKeys, infoId]);
+  };
+
   return (
     <CollectionNodeTitleWrapper>
       <EmptyWrapper
@@ -279,7 +294,6 @@ const Collection: ArexMenuFC = (props) => {
                 icon={<PlayCircleOutlined />}
                 title={t('collection.batch_run')}
                 onClick={() => {
-                  // TODO batchRun pane
                   navPane({
                     type: PanesType.BATCH_RUN,
                     id: 'root',
@@ -312,12 +326,9 @@ const Collection: ArexMenuFC = (props) => {
           draggable={{ icon: false }}
           titleRender={(data) => (
             <CollectionNodeTitle
-              keyword={searchValue?.keyword}
               data={data}
-              onAddNode={(infoId) => {
-                props.onSelect?.(infoId, { infoId });
-                setExpandedKeys([...expandedKeys, infoId]);
-              }}
+              keyword={searchValue?.keyword}
+              onAddNode={handleAddNode}
             />
           )}
         />
