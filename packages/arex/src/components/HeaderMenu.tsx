@@ -18,8 +18,9 @@ const HeaderMenu: FC = () => {
   const nav = useNavigate();
 
   const handleLogout = () => {
-    globalStoreReset();
-    nav('/login');
+    // 登出时需要清除所有本地数据，重定向到login页面
+    localStorage.clear();
+    window.location.href = '/login';
   };
 
   const userMenu: DropdownProps['menu'] = useMemo(
