@@ -1,5 +1,4 @@
-import { css } from '@emotion/react';
-import { theme } from 'antd';
+import { css, useTheme } from '@emotion/react';
 import React, { FC } from 'react';
 
 import { useArexCoreConfig } from '../../hooks';
@@ -14,7 +13,7 @@ export type DiffJsonViewProps = {
   diffJson?: { left: string; right: string };
   diffPath?: LogEntity[];
 };
-const { useToken } = theme;
+
 const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip, height }) => {
   const { theme } = useArexCoreConfig();
   const allLeftDiffByType = genAllLeftDiffByType(diffPath);
@@ -59,7 +58,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
     }
   };
 
-  const { token: emotionTheme } = useToken();
+  const emotionTheme = useTheme();
 
   if (!diffJson) return null;
 
