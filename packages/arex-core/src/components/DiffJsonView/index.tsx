@@ -1,4 +1,5 @@
-import { css, useTheme } from '@emotion/react';
+import { css } from '@emotion/react';
+import { theme } from 'antd';
 import React, { FC } from 'react';
 
 import { useArexCoreConfig } from '../../hooks';
@@ -6,14 +7,13 @@ import { LogEntity } from '../DiffPath/type';
 import DiffJsonTooltip from './DiffJsonTooltip';
 import { genAllLeftDiffByType, genAllRightDiffByType } from './helper';
 import VanillaJSONEditor from './VanillaJSONEditor';
-
 export type DiffJsonViewProps = {
   height?: string | number;
   hiddenTooltip?: boolean;
   diffJson?: { left: string; right: string };
   diffPath?: LogEntity[];
 };
-
+const { useToken } = theme;
 const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip, height }) => {
   const { theme } = useArexCoreConfig();
   const allLeftDiffByType = genAllLeftDiffByType(diffPath);
@@ -58,7 +58,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
     }
   };
 
-  const emotionTheme = useTheme();
+  const { token: emotionTheme } = useToken();
 
   if (!diffJson) return null;
 
