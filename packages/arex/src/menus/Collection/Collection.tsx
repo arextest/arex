@@ -260,7 +260,7 @@ const Collection: ArexMenuFC = (props) => {
       node: {
         infoId,
         nodeType,
-        method: nodeType === CollectionNodeType.interface ? RequestMethodEnum.GET : null,
+        method: RequestMethodEnum.GET,
       },
     });
     setExpandedKeys([...expandedKeys, infoId]);
