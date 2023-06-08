@@ -68,10 +68,10 @@ export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
     if (refEditor.current) {
       refEditor.current.updateProps(props);
       setTimeout(() => {
-        if (allDiffByType.diff3.length > 0) {
-          refEditor.current.scrollTo(allDiffByType.diff3[0]);
-        } else if (allDiffByType.diff012.length > 0) {
-          refEditor.current.scrollTo(allDiffByType.diff012[0]);
+        if (allDiffByType.more.length > 0) {
+          refEditor.current.scrollTo(allDiffByType.more[0]);
+        } else if (allDiffByType.diff.length > 0) {
+          refEditor.current.scrollTo(allDiffByType.diff[0]);
         }
       }, 100);
     }
