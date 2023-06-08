@@ -1,15 +1,10 @@
-import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
-
 import { css, useTheme } from '@emotion/react';
 import React, { FC } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { useArexCoreConfig } from '../../hooks';
-import { Theme } from '../../theme';
 import { LogEntity } from '../DiffPath/type';
 import DiffJsonTooltip from './DiffJsonTooltip';
-import DiffJsonViewWrapper from './DiffJsonViewWrapper';
-import { genAllDiffByType } from './helper';
+import { genAllLeftDiffByType, genAllRightDiffByType } from './helper';
 import VanillaJSONEditor from './VanillaJSONEditor';
 
 export type DiffJsonViewProps = {
@@ -20,19 +15,46 @@ export type DiffJsonViewProps = {
 };
 
 const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip, height }) => {
-  const { t } = useTranslation(['components']);
   const { theme } = useArexCoreConfig();
-  const allDiffByType = genAllDiffByType(diffPath);
-
-  const onClassName = (path: string[]) => {
+  const allLeftDiffByType = genAllLeftDiffByType(diffPath);
+  const allRightDiffByType = genAllRightDiffByType(diffPath);
+  const onClassNameLeft = (path: string[]) => {
     const pathStr = path.map((p) => (isNaN(Number(p)) ? p : Number(p)));
+    if (pathStr.length === 0) {
+      // 排除空数组
+      return '';
+    }
     if (
-      allDiffByType.diff012.map((item) => JSON.stringify(item)).includes(JSON.stringify(pathStr))
+      allLeftDiffByType.diff
+        .map((item: any) => JSON.stringify(item))
+        .includes(JSON.stringify(pathStr))
+    ) {
+      return 'different_element';
+    }
+    if (
+      allLeftDiffByType.more
+        .map((item: any) => JSON.stringify(item))
+        .includes(JSON.stringify(pathStr))
     ) {
       return 'different_element_012';
     }
-    if (allDiffByType.diff3.map((item) => JSON.stringify(item)).includes(JSON.stringify(pathStr))) {
+  };
+
+  const onClassNameRight = (path: string[]) => {
+    const pathStr = path.map((p) => (isNaN(Number(p)) ? p : Number(p)));
+    if (
+      allRightDiffByType.diff
+        .map((item: any) => JSON.stringify(item))
+        .includes(JSON.stringify(pathStr))
+    ) {
       return 'different_element';
+    }
+    if (
+      allRightDiffByType.more
+        .map((item: any) => JSON.stringify(item))
+        .includes(JSON.stringify(pathStr))
+    ) {
+      return 'different_element_012';
     }
   };
 
@@ -41,7 +63,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
   if (!diffJson) return null;
 
   return (
-    <DiffJsonViewWrapper>
+    <>
       {!hiddenTooltip && <DiffJsonTooltip />}
       <div
         css={css`
@@ -62,7 +84,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
           }
         `}
         id={'MsgWithDiffJsonEditorWrapper'}
-        className={`${theme === Theme.dark ? 'jse-theme-dark' : ''}`}
+        className={`${theme === 'dark' ? 'jse-theme-dark' : ''}`}
       >
         <div
           css={css`
@@ -73,14 +95,14 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
           <VanillaJSONEditor
             readOnly
             height={height}
-            remark={t('replay.benchmark') as string}
+            // remark={t('replay.benchmark')}
             content={{
               text: String(diffJson?.left), // stringify falsy value
               json: undefined,
             }}
             mainMenuBar={false}
-            onClassName={onClassName}
-            allDiffByType={allDiffByType}
+            onClassName={onClassNameLeft}
+            allDiffByType={allLeftDiffByType}
           />
         </div>
 
@@ -93,18 +115,18 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
           <VanillaJSONEditor
             readOnly
             height={height}
-            remark={t('replay.test') as string}
+            // remark={t('replay.test')}
             content={{
               text: String(diffJson?.right), // stringify falsy value
               json: undefined,
             }}
             mainMenuBar={false}
-            onClassName={onClassName}
-            allDiffByType={allDiffByType}
+            onClassName={onClassNameRight}
+            allDiffByType={allRightDiffByType}
           />
         </div>
       </div>
-    </DiffJsonViewWrapper>
+    </>
   );
 };
 

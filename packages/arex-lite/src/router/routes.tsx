@@ -18,6 +18,10 @@ const routes: Routes[] = Object.values(RouterPath)
   }))
   .concat([
     {
+      path: '/playground',
+      component: lazy(() => import('../pages/Playground')),
+    },
+    {
       path: '/login',
       component: lazy(() => import('../pages/Login')),
     },
