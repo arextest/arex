@@ -3,20 +3,25 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { DEFAULT_LANGUAGE } from '@/constant';
+import { useNavPane } from '@/hooks';
 import { useCollections } from '@/store';
 import { useEnvironments, useWorkspaces } from '@/store';
 import useMenusPanes from '@/store/useMenusPanes';
 import { globalStoreInit } from '@/utils';
 
 const useInit = () => {
-  const { panes, setPanes } = useMenusPanes();
-  const { workspaces, setActiveWorkspaceId } = useWorkspaces();
+  const { activeMenu, activePane, panes, setPanes } = useMenusPanes();
+  const { workspaces, activeWorkspaceId, setActiveWorkspaceId } = useWorkspaces();
   const nav = useNavigate();
+  const navPane = useNavPane();
 
   useEffect(() => {
     globalStoreInit();
 
-    if (location.pathname === '/' && workspaces.length) {
+    // restore url
+    if (activeWorkspaceId && activeMenu && activePane) {
+      navPane(activePane);
+    } else if (location.pathname === '/' && workspaces.length) {
       const workspaceId = workspaces[0].id;
       setActiveWorkspaceId(workspaceId);
       nav(`/${workspaceId}`);
