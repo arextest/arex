@@ -35,7 +35,7 @@ import {
   useTranslation,
 } from 'arex-core';
 import dayjs from 'dayjs';
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import CountUp from 'react-countup';
 
@@ -45,6 +45,7 @@ import { useNavPane } from '@/hooks';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanItemStatistics, PlanStatistics } from '@/services/ReportService';
 import { CreatePlanReq } from '@/services/ScheduleService';
+import { useMenusPanes } from '@/store';
 
 function getPercent(num: number, den: number, showPercentSign = true) {
   const value = num && den ? parseFloat(((num / den) * 100).toFixed(0)) : 0;
@@ -62,6 +63,7 @@ const chartOptions = {
 } as const;
 
 export type ReplayPlanItemProps = {
+  id: string;
   selectedPlan?: PlanStatistics;
   filter?: (record: PlanItemStatistics) => boolean;
   onRefresh?: () => void;
@@ -70,6 +72,8 @@ export type ReplayPlanItemProps = {
 const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const { selectedPlan, filter, onRefresh } = props;
   const { message, notification } = App.useApp();
+  const { activePane } = useMenusPanes();
+
   const { t } = useTranslation(['components', 'common']);
   const email = getLocalStorage<string>(EMAIL_KEY);
   const navPane = useNavPane();
@@ -78,6 +82,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const {
     data: planItemData = [],
     loading: loadingData,
+    refresh,
     cancel: cancelPollingInterval,
   } = useRequest(
     () =>
@@ -98,6 +103,10 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       },
     },
   );
+  // optimize: cancel polling interval when pane is not active
+  useEffect(() => {
+    activePane?.id !== props.id ? cancelPollingInterval() : refresh();
+  }, [activePane, props.id]);
 
   const planItemDataFiltered = useMemo(
     () => (filter ? planItemData?.filter(filter) : planItemData || []),

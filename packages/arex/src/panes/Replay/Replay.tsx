@@ -38,6 +38,7 @@ const ReplayPage: ArexPaneFC<ApplicationDataType> = (props) => {
         active={!!selectedPlan}
         table={
           <PlanReport
+            id={props.data.id}
             appId={props.data.appId}
             refreshDep={refreshDep}
             onSelectedPlanChange={handleSelectPlan}
@@ -45,6 +46,7 @@ const ReplayPage: ArexPaneFC<ApplicationDataType> = (props) => {
         }
         panel={
           <PlanItem
+            id={props.data.id}
             selectedPlan={selectedPlan}
             filter={(record) => !!record.totalCaseCount}
             onRefresh={handleRefreshDep}
