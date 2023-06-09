@@ -7,17 +7,19 @@ import {
   HighlightRowTableProps,
   useTranslation,
 } from 'arex-core';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import CountUp from 'react-countup';
 import { useSearchParams } from 'react-router-dom';
 
 import { StatusTag } from '@/components';
 import { ReportService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
+import { useMenusPanes } from '@/store';
 
 const defaultPageSize = 5 as const;
 
 export type PlanReportProps = {
+  id?: string;
   appId?: string;
   refreshDep?: React.Key;
   onSelectedPlanChange: (selectedPlan: PlanStatistics, current?: number, row?: number) => void;
@@ -25,6 +27,7 @@ export type PlanReportProps = {
 
 const PlanReport: FC<PlanReportProps> = (props) => {
   const { appId, refreshDep, onSelectedPlanChange } = props;
+  const { activePane } = useMenusPanes();
 
   const { token } = theme.useToken();
   const { t } = useTranslation(['components']);
@@ -126,6 +129,7 @@ const PlanReport: FC<PlanReportProps> = (props) => {
     data: { list: planStatistics } = { list: [] },
     pagination,
     loading,
+    refresh,
     cancel: cancelPollingInterval,
   } = usePagination(
     (params) =>
@@ -149,6 +153,11 @@ const PlanReport: FC<PlanReportProps> = (props) => {
       },
     },
   );
+
+  // optimize: cancel polling interval when pane is not active
+  useEffect(() => {
+    activePane?.id !== props.id ? cancelPollingInterval() : refresh();
+  }, [activePane, props.id]);
 
   const handleRowClick: HighlightRowTableProps<PlanStatistics>['onRowClick'] = (record, index) => {
     onSelectedPlanChange(record, pagination.current, index);
