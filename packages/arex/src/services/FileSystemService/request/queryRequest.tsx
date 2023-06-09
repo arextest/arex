@@ -22,7 +22,7 @@ export async function queryRequest(params: {
     params: rest.params || [],
     body: rest.body || { contentType: 'application/json', body: '' },
     testScript: rest.testScripts?.length > 0 ? rest.testScripts[0].value : '',
-    preRequestScript: rest.preRequestScript?.length > 0 ? rest.preRequestScript[0].value : '',
+    preRequestScript: rest.preRequestScripts?.length > 0 ? rest.preRequestScripts[0].value : '',
     recordId: rest.recordId,
     // @ts-ignore
     inherited: undefined,
