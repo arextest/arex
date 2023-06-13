@@ -1,9 +1,10 @@
 import { useRequest } from 'ahooks';
-import { App, Divider, Select, Space, Typography } from 'antd';
+import { App, Divider, Select, Space } from 'antd';
 import { Label, tryPrettierJsonString, useTranslation } from 'arex-core';
 import React, { FC, useMemo, useState } from 'react';
 
 import NodesIgnore from '@/panes/AppSetting/CompareConfig/NodesIgnore';
+import NodeSort from '@/panes/AppSetting/CompareConfig/NodeSort';
 import { ApplicationService, ConfigService } from '@/services';
 
 import SyncResponse from './SyncResponse';
@@ -86,10 +87,6 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
 
   return (
     <>
-      <div>
-        <Typography.Text type='secondary'>appId: {props.appId}</Typography.Text>
-      </div>
-
       <Space>
         <div>
           <Label>operationName</Label>
@@ -112,6 +109,14 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
       <Divider style={{ margin: '16px 0 8px 0' }} />
 
       <NodesIgnore
+        appId={props.appId}
+        interfaceId={activeOperationId}
+        responseParsed={interfaceResponseParsed}
+      />
+
+      <Divider style={{ margin: '16px 0 8px 0' }} />
+
+      <NodeSort
         appId={props.appId}
         interfaceId={activeOperationId}
         responseParsed={interfaceResponseParsed}

@@ -38,7 +38,7 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
   // 过滤出 object 类型的节点
   return (
     <IgnoreTreeWrapper>
-      <Card size='small' title={`Response (${t('appSetting.clickToIgnore')})`}>
+      <Card size='small' title={t('appSetting.clickToIgnore')}>
         <Tree
           multiple
           defaultExpandAll

@@ -10,9 +10,9 @@ import { useImmer } from 'use-immer';
 import { EditAreaPlaceholder } from '@/components';
 import PaneDrawer from '@/components/PaneDrawer';
 import CompareConfigTitle from '@/panes/AppSetting/CompareConfig/CompareConfigTitle';
-import { ApplicationService, ComparisonService } from '@/services';
+import { ComparisonService } from '@/services';
 import { OperationId } from '@/services/ApplicationService';
-import { QueryIgnoreNode, QueryInterfaceIgnoreNode } from '@/services/ComparisonService';
+import { QueryIgnoreNode } from '@/services/ComparisonService';
 
 import IgnoreTree, { getNodes } from './IgnoreTree';
 
@@ -26,7 +26,7 @@ type CheckedNodesData = {
 export type NodesIgnoreProps = {
   appId: string;
   interfaceId?: string;
-  responseParsed: object;
+  responseParsed: { [p: string]: any };
 };
 
 const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
@@ -275,7 +275,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
         title={
           <SpaceBetweenWrapper>
             <Typography.Title level={5} style={{ marginBottom: 0 }}>
-              {t('appSetting.dataStructure')}
+              Nodes Ignore
             </Typography.Title>
             <Button size='small' type='primary' onClick={handleIgnoreSave}>
               {t('save', { ns: 'common' })}
