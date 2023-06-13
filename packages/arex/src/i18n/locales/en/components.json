@@ -170,6 +170,7 @@
     "record": "Record",
     "replay": "Replay",
     "importYaml": "Import Yaml",
+    "compareConfig": "Compare Config",
     "nodesIgnore": "Nodes Ignore",
     "nodesSort": "Nodes Sort",
     "agentVersion": "Agent Version",

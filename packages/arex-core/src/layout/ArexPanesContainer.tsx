@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Button, Dropdown, MenuProps, Tabs, TabsProps, Typography } from 'antd';
-import React, { Key, PropsWithChildren, useMemo, useRef, useState } from 'react';
+import { Dropdown, MenuProps, Tabs, TabsProps, Typography } from 'antd';
+import React, { createContext, Key, PropsWithChildren, useMemo, useRef, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useTranslation } from 'react-i18next';
@@ -60,6 +60,14 @@ const DraggableTabNode = ({ index, children, moveNode }: DraggableTabPaneProps) 
   );
 };
 
+export const PaneContext = createContext<{
+  data?: unknown;
+  paneKey: string;
+}>({
+  data: undefined,
+  paneKey: '',
+});
+
 export interface ArexPanesContainerProps extends Omit<TabsProps, 'items'> {
   panes?: Pane[];
   onAdd?: () => void;
@@ -81,6 +89,8 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
         .map((pane) => {
           const Pane = ArexPaneManager.getPaneByType(pane.type);
           if (!Pane) return;
+
+          const paneProps = { data: pane.data, paneKey: pane.key as string };
           return {
             key: pane.key || '',
             // 规定: 翻译文本需要配置在 locales/[lang]/arex-pane.json 下, 且 key 为 Pane.type
@@ -100,12 +110,17 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
             ),
             children: (
               <ErrorBoundary>
-                <div
-                  className='arex-pane-wrapper'
-                  style={{ padding: Pane.noPadding ? 0 : '8px 16px' }}
-                >
-                  {React.createElement(Pane, { data: pane.data })}
-                </div>
+                <PaneContext.Provider value={paneProps}>
+                  <div
+                    className='arex-pane-wrapper'
+                    style={{
+                      padding: Pane.noPadding ? 0 : '8px 16px',
+                      height: '100%',
+                    }}
+                  >
+                    {React.createElement(Pane, paneProps)}
+                  </div>
+                </PaneContext.Provider>
               </ErrorBoundary>
             ),
           };
@@ -279,6 +294,7 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
     height: 36px;
     border-left: #000c17 1px solid;
   }
+
   .ant-tabs-content {
     height: 100%;
     .ant-tabs-tabpane {

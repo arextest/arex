@@ -191,7 +191,7 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
   );
   const interfaceResponseParsed = useMemo<{ [key: string]: any }>(() => {
     const res = interfaceResponse?.operationResponse;
-    if (res) return tryParseJsonString<object>(res) || {};
+    if (res) return JSON.parse(res) || {};
     else return {};
   }, [interfaceResponse]);
 
