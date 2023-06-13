@@ -1,21 +1,19 @@
-import { Card, Spin, Tree, Typography } from 'antd';
+import { Card, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
-import { SpaceBetweenWrapper, useTranslation } from 'arex-core';
+import { styled, useTranslation } from 'arex-core';
 import React, { FC } from 'react';
 
 type IgnoreTreeProps = Omit<TreeProps, 'treeData'> & {
   loading?: boolean;
   treeData: object;
-  title?: string;
-  onSave?: () => void;
-  onEditResponse?: () => void;
 };
-// const IgnoreTreeWrapper = styled.div`
-//   .ant-tree-node-selected {
-//     text-decoration: line-through;
-//   }
-// `;
+
+const IgnoreTreeWrapper = styled.div`
+  .ant-tree-node-selected {
+    text-decoration: line-through;
+  }
+`;
 
 export function getNodes(object: object, basePath = ''): DataNode[] {
   const entries = Object.entries(object);
@@ -38,31 +36,19 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
   const { t } = useTranslation(['components', 'common']);
 
   // 过滤出 object 类型的节点
-
   return (
-    // <IgnoreTreeWrapper>
-    <>
-      <SpaceBetweenWrapper style={{ paddingBottom: '8px' }}>
-        <Typography.Title level={5}>{t('appSetting.dataStructure')}</Typography.Title>
-        {/*<Button size='small' type='primary' onClick={() => props.onSave && props.onSave()}>*/}
-        {/*  {t('save', { ns: 'common' })}*/}
-        {/*</Button>*/}
-      </SpaceBetweenWrapper>
-
-      <Card size='small' title={`${props.title} (${t('appSetting.clickToIgnore')})`}>
-        <Spin spinning={props.loading}>
-          <Tree
-            // multiple
-            defaultExpandAll
-            {...props}
-            treeData={getNodes(props.treeData, '')}
-            // @ts-ignore
-            height={'calc(100vh - 240px)'}
-          />
-        </Spin>
+    <IgnoreTreeWrapper>
+      <Card size='small' title={`Response (${t('appSetting.clickToIgnore')})`}>
+        <Tree
+          multiple
+          defaultExpandAll
+          {...props}
+          treeData={getNodes(props.treeData, '')}
+          // @ts-ignore
+          height={'calc(100vh - 240px)'}
+        />
       </Card>
-    </>
-    // </IgnoreTreeWrapper>
+    </IgnoreTreeWrapper>
   );
 };
 

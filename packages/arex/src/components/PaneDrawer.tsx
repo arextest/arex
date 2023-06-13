@@ -1,8 +1,17 @@
 import { Drawer, DrawerProps } from 'antd';
-import { FC } from 'react';
+import React, { FC } from 'react';
 
-const PaneDrawer: FC<DrawerProps> = (props) => (
-  <Drawer headerStyle={{ padding: '8px' }} bodyStyle={{ padding: 0 }} {...props}>
+export type PaneDrawerProps = {
+  noPadding?: boolean;
+} & DrawerProps;
+
+const PaneDrawer: FC<PaneDrawerProps> = (props) => (
+  <Drawer
+    getContainer={false}
+    headerStyle={{ padding: '8px' }}
+    bodyStyle={{ padding: props.noPadding ? 0 : '8px' }}
+    {...props}
+  >
     {props.children}
   </Drawer>
 );

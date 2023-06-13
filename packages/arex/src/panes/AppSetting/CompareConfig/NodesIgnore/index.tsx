@@ -1,18 +1,27 @@
 import { CheckOutlined, CloseOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { App, AutoComplete, Button, Card, Col, Input, List, Modal, Row, Typography } from 'antd';
+import { App, AutoComplete, Button, Card, Input, InputRef, List, Modal, Typography } from 'antd';
+import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
 import { SmallTextButton, SpaceBetweenWrapper, useTranslation } from 'arex-core';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useMemo, useRef, useState } from 'react';
+import { useImmer } from 'use-immer';
 
 import { EditAreaPlaceholder } from '@/components';
+import PaneDrawer from '@/components/PaneDrawer';
 import CompareConfigTitle from '@/panes/AppSetting/CompareConfig/CompareConfigTitle';
-import { ComparisonService } from '@/services';
+import { ApplicationService, ComparisonService } from '@/services';
+import { OperationId } from '@/services/ApplicationService';
 import { QueryIgnoreNode, QueryInterfaceIgnoreNode } from '@/services/ComparisonService';
 
 import IgnoreTree, { getNodes } from './IgnoreTree';
 
 const GLOBAL_OPERATION_ID = '__global__';
+
+type CheckedNodesData = {
+  operationId?: OperationId<'Global'>;
+  exclusionsList: string[];
+};
 
 export type NodesIgnoreProps = {
   appId: string;
@@ -22,14 +31,20 @@ export type NodesIgnoreProps = {
 
 const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
   const { message } = App.useApp();
-  const [t] = useTranslation();
+  const [t] = useTranslation(['components', 'common']);
+
+  const searchRef = useRef<InputRef>(null);
+  const editInputRef = useRef<any>(null);
 
   const [search, setSearch] = useState<string | false>(false);
   const [editMode, setEditMode] = useState(false);
 
   const [openIgnoreModal, setOpenIgnoreModal] = useState(false);
 
-  const [rawResponse, setRawResponse] = useState<string>();
+  const [checkedNodesData, setCheckedNodesData] = useImmer<CheckedNodesData>({
+    exclusionsList: [],
+  });
+
   const [ignoredKey, setIgnoredKey] = useState<string>();
 
   /**
@@ -40,7 +55,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
     loading: loadingIgnoreNode,
     run: queryIgnoreNode,
     mutate: setIgnoreNodeList,
-  } = useRequest<QueryIgnoreNode[] | QueryInterfaceIgnoreNode[], []>(
+  } = useRequest(
     () =>
       ComparisonService.queryIgnoreNode({
         appId: props.appId,
@@ -52,8 +67,17 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
       onBefore() {
         setIgnoreNodeList([]);
       },
+      onSuccess: convertIgnoreNode,
     },
   );
+
+  function convertIgnoreNode(data: QueryIgnoreNode[]) {
+    props.appId &&
+      setCheckedNodesData((state) => {
+        state.operationId = props.interfaceId;
+        state.exclusionsList = data.map((item) => item.path);
+      });
+  }
 
   const ignoreNodesFiltered = useMemo(
     () =>
@@ -93,16 +117,81 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
     },
   });
 
+  /**
+   * 批量新增 IgnoreNode
+   */
+  const { run: batchInsertIgnoreNode } = useRequest(ComparisonService.batchInsertIgnoreNode, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        queryIgnoreNode();
+        message.success(t('message.updateSuccess', { ns: 'common' }));
+      } else {
+        message.error(t('message.updateFailed', { ns: 'common' }));
+      }
+    },
+  });
+
+  /**
+   * 批量删除 IgnoreNode
+   */
+  const { run: batchDeleteIgnoreNode } = useRequest(ComparisonService.batchDeleteIgnoreNode, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        queryIgnoreNode();
+      } else {
+        message.error(t('message.delFailed', { ns: 'common' }));
+      }
+    },
+  });
+
   const handleExitEdit = () => {
     console.log('handleExitEdit');
+    setEditMode(false);
   };
 
   const handleEditSave = () => {
     console.log('handleEditSave');
   };
 
-  const handleCloseModal = () => {
-    console.log('handleCloseModal');
+  const handleIgnoreTreeSelect: TreeProps['onSelect'] = (_, info) => {
+    const selected = info.selectedNodes.map((node) => node.key.toString());
+
+    setCheckedNodesData((state) => {
+      state.operationId = props.interfaceId;
+      state.exclusionsList = selected;
+    });
+  };
+
+  const handleIgnoreSave = () => {
+    const { operationId = null, exclusionsList } = checkedNodesData;
+    const exclusionsListPrev = ignoreNodeList.map((item) => item.path);
+
+    const add: string[] = [],
+      remove: string[] = [];
+
+    // 计算新旧集合的差集，分别进行增量更新和批量删除
+    Array.from(new Set([...exclusionsListPrev, ...exclusionsList])).forEach((path) => {
+      if (exclusionsListPrev.includes(path) && exclusionsList.includes(path)) return;
+      else if (exclusionsListPrev.includes(path))
+        remove.push(ignoreNodeList.find((item) => item.path === path)!.id);
+      else add.push(path);
+    });
+
+    // 增量更新
+    add.length &&
+      batchInsertIgnoreNode(
+        add.map((path) => ({
+          appId: props.appId,
+          operationId, // null 时目标为 Global
+          exclusions: path.split('/').filter(Boolean),
+        })),
+      );
+
+    // 批量删除
+    remove.length && batchDeleteIgnoreNode(remove.map((id) => ({ id })));
+
     setOpenIgnoreModal(false);
   };
 
@@ -110,7 +199,10 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
     <>
       <CompareConfigTitle
         title='Nodes Ignore'
-        onSearch={() => setSearch('')}
+        onSearch={() => {
+          setSearch('');
+          setTimeout(() => searchRef.current?.focus());
+        }}
         onAdd={() => {
           if (Object.keys(props.responseParsed).length) setOpenIgnoreModal(true);
           else message.info('empty response, please sync response first');
@@ -127,6 +219,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
               <SpaceBetweenWrapper style={{ padding: '0 16px' }}>
                 <Input.Search
                   size='small'
+                  ref={searchRef}
                   onChange={(e) => setSearch(e.target.value)}
                   style={{ marginRight: '8px' }}
                 />
@@ -146,7 +239,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
                   <AutoComplete
                     size='small'
                     placeholder='Ignored key'
-                    // ref={editInputRef}
+                    ref={editInputRef}
                     options={nodePath}
                     filterOption={(inputValue, option) =>
                       option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
@@ -178,24 +271,35 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
         />
       </Card>
 
-      <Modal open={openIgnoreModal} okText={'保存'} onCancel={handleCloseModal}>
+      <PaneDrawer
+        title={
+          <SpaceBetweenWrapper>
+            <Typography.Title level={5} style={{ marginBottom: 0 }}>
+              {t('appSetting.dataStructure')}
+            </Typography.Title>
+            <Button size='small' type='primary' onClick={handleIgnoreSave}>
+              {t('save', { ns: 'common' })}
+            </Button>
+          </SpaceBetweenWrapper>
+        }
+        open={openIgnoreModal}
+        onClose={() => {
+          setOpenIgnoreModal(false);
+          convertIgnoreNode(ignoreNodeList);
+        }}
+      >
         <EditAreaPlaceholder
           dashedBorder
           title={t('appSetting.editArea')}
           ready={props.interfaceId !== GLOBAL_OPERATION_ID}
         >
           <IgnoreTree
-            title={''}
             treeData={props.responseParsed}
-            loading={false}
-            // selectedKeys={checkedNodesData.exclusionsList}
-            // onSave={handleIgnoreSave}
-
-            // onSelect={handleIgnoreTreeSelect}
-            // onEditResponse={handleEditResponse}
+            selectedKeys={checkedNodesData.exclusionsList}
+            onSelect={handleIgnoreTreeSelect}
           />
         </EditAreaPlaceholder>
-      </Modal>
+      </PaneDrawer>
     </>
   );
 };

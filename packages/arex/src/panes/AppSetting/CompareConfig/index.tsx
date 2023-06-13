@@ -1,5 +1,5 @@
 import { useRequest } from 'ahooks';
-import { Divider, Select, Space, Typography } from 'antd';
+import { App, Divider, Select, Space, Typography } from 'antd';
 import { Label, tryPrettierJsonString, useTranslation } from 'arex-core';
 import React, { FC, useMemo, useState } from 'react';
 
@@ -16,6 +16,7 @@ export type CompareConfigProps = {
 
 const CompareConfig: FC<CompareConfigProps> = (props) => {
   const { t } = useTranslation();
+  const { message } = App.useApp();
 
   const [activeOperationId, setActiveOperationId] = useState<string | undefined>();
   const [rawResponse, setRawResponse] = useState<string>();
@@ -27,9 +28,6 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
     () => ApplicationService.queryInterfacesList<'Interface'>({ id: props.appId as string }),
     {
       ready: !!props.appId,
-      onSuccess: (res) => {
-        console.log(res);
-      },
     },
   );
 
@@ -40,7 +38,6 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
     data: interfaceResponse,
     mutate: setInterfaceResponse,
     run: queryInterfaceResponse,
-    loading: loadingInterfaceResponse,
   } = useRequest(
     () =>
       ConfigService.queryInterfaceResponse({
@@ -57,15 +54,34 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
       },
     },
   );
-  ``;
+
   const interfaceResponseParsed = useMemo<{ [key: string]: any }>(() => {
     const res = interfaceResponse?.operationResponse;
     if (res) return JSON.parse(res) || {};
     else return {};
   }, [interfaceResponse]);
 
+  /**
+   * 更新 InterfaceResponse
+   */
+  const { run: updateInterfaceResponse } = useRequest(ConfigService.updateInterfaceResponse, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        queryInterfaceResponse();
+        message.success(t('message.updateSuccess', { ns: 'common' }));
+      } else {
+        message.error(t('message.updateFailed', { ns: 'common' }));
+      }
+    },
+  });
+
   const handleSaveResponse = (value?: string) => {
-    console.log(value);
+    activeOperationId &&
+      updateInterfaceResponse({
+        id: activeOperationId as string,
+        operationResponse: value,
+      });
   };
 
   return (
@@ -93,7 +109,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         <SyncResponse value={rawResponse} onSave={handleSaveResponse} />
       </Space>
 
-      <Divider />
+      <Divider style={{ margin: '16px 0 8px 0' }} />
 
       <NodesIgnore
         appId={props.appId}

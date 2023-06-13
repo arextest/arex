@@ -19,16 +19,13 @@ const CompareConfigTitle: FC<CompareConfigTitleProps> = (props) => {
         <SmallTextButton
           key='search'
           icon={<SearchOutlined />}
-          onClick={(e) => {
-            e.stopPropagation();
-            props.onSearch?.();
-          }}
+          onClick={() => props.onSearch?.()}
         />
         <TooltipButton
           key='add'
           icon={<PlusOutlined />}
           title={t('appSetting.addKey')}
-          onClick={(e) => props.onAdd?.()}
+          onClick={() => props.onAdd?.()}
         />
       </div>
     </Space>

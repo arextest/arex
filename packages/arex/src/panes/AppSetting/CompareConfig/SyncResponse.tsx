@@ -1,13 +1,7 @@
-import { CodeOutlined, EditOutlined, SaveOutlined, SyncOutlined } from '@ant-design/icons';
+import { EditOutlined, SaveOutlined, SyncOutlined } from '@ant-design/icons';
 import { Editor, EditorProps } from '@monaco-editor/react';
-import { Dropdown, Typography } from 'antd';
-import {
-  SmallTextButton,
-  SpaceBetweenWrapper,
-  Theme,
-  TooltipButton,
-  useTranslation,
-} from 'arex-core';
+import { App, Dropdown, Typography } from 'antd';
+import { SmallTextButton, SpaceBetweenWrapper, Theme, useTranslation } from 'arex-core';
 import React, { FC, useEffect, useState } from 'react';
 
 import PaneDrawer from '@/components/PaneDrawer';
@@ -20,6 +14,7 @@ export type ResponseRawProps = {
 const SyncResponse: FC<ResponseRawProps> = (props) => {
   const { value: _value, onSave, ...restProps } = props;
   const { t } = useTranslation('common');
+  const { message } = App.useApp();
   const { theme } = useUserProfile();
 
   const [value, setValue] = useState(_value);
@@ -27,18 +22,20 @@ const SyncResponse: FC<ResponseRawProps> = (props) => {
 
   useEffect(() => {
     setValue(_value);
-  }, [_value]);
+  }, [_value, open]);
 
   const handleClose = () => setOpen(false);
 
   const handleSave = () => {
-    if (!value) return onSave?.();
-
     let prettier = '';
-    try {
-      prettier = JSON.stringify(JSON.parse(value), null, 2);
-    } catch (e) {
-      return console.log('invalid json');
+
+    console.log(value);
+    if (value) {
+      try {
+        prettier = JSON.stringify(JSON.parse(value), null, 2);
+      } catch (e) {
+        return message.error('invalid json');
+      }
     }
 
     onSave?.(prettier);
@@ -48,25 +45,30 @@ const SyncResponse: FC<ResponseRawProps> = (props) => {
   return (
     <>
       <Dropdown.Button
-        icon={<SyncOutlined />}
+        size='small'
+        type='text'
+        placement='bottom'
+        onClick={() => {
+          console.log('handle sync response');
+        }}
         menu={{
           items: [
             {
-              key: 'edit response',
-              title: 'Edit Response',
+              key: 'edit',
+              label: 'Edit Response',
               icon: <EditOutlined />,
             },
           ],
+          onClick: ({ key }) => {
+            key === 'edit' && setOpen(true);
+          },
         }}
       >
-        Sync
+        <SyncOutlined /> SyncResponse
       </Dropdown.Button>
-      <TooltipButton
-        icon={<CodeOutlined />}
-        title={t('appSetting.editResponse')}
-        onClick={() => setOpen(true)}
-      />
+
       <PaneDrawer
+        noPadding
         open={open}
         title={
           <SpaceBetweenWrapper>
@@ -80,7 +82,6 @@ const SyncResponse: FC<ResponseRawProps> = (props) => {
           </SpaceBetweenWrapper>
         }
         onClose={handleClose}
-        getContainer={false}
       >
         <Editor
           {...restProps}
