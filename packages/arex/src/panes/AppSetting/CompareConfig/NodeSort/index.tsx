@@ -87,6 +87,7 @@ const NodeSort: FC<NodeSortProps> = (props) => {
     manual: true,
     onSuccess(success: boolean) {
       if (success) {
+        setOpenSortModal(false);
         querySortNode();
         treeCarouselRef.current?.goTo(0);
         message.success('Update successfully');
@@ -275,7 +276,7 @@ const NodeSort: FC<NodeSortProps> = (props) => {
         title={
           <SpaceBetweenWrapper>
             <Typography.Title level={5} style={{ marginBottom: 0 }}>
-              {t('appSetting.dataStructure')}
+              {t('appSetting.nodesSort')}
             </Typography.Title>
 
             {treeEditMode === TreeEditModeEnum.SortTree && (
