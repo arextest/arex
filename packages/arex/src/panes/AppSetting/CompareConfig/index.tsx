@@ -1,8 +1,9 @@
 import { useRequest } from 'ahooks';
 import { App, Divider, Select, Space } from 'antd';
-import { Label, tryPrettierJsonString, useTranslation } from 'arex-core';
+import { tryPrettierJsonString, useTranslation } from 'arex-core';
 import React, { FC, useMemo, useState } from 'react';
 
+import { Segmented } from '@/components';
 import NodesIgnore from '@/panes/AppSetting/CompareConfig/NodesIgnore';
 import NodeSort from '@/panes/AppSetting/CompareConfig/NodeSort';
 import { ApplicationService, ConfigService } from '@/services';
@@ -11,6 +12,12 @@ import SyncResponse from './SyncResponse';
 
 export const GLOBAL_OPERATION_ID = '__global__';
 
+enum CONFIG_TYPE {
+  GLOBAL,
+  INTERFACE,
+  DEPENDENCY,
+}
+
 export type CompareConfigProps = {
   appId: string;
 };
@@ -18,6 +25,25 @@ export type CompareConfigProps = {
 const CompareConfig: FC<CompareConfigProps> = (props) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
+
+  const configOptions = useMemo(
+    () => [
+      {
+        label: 'Global',
+        value: CONFIG_TYPE.GLOBAL,
+      },
+      {
+        label: 'Interface',
+        value: CONFIG_TYPE.INTERFACE,
+      },
+      {
+        label: 'Dependency',
+        value: CONFIG_TYPE.DEPENDENCY,
+      },
+    ],
+    [],
+  );
+  const [configType, setConfigType] = useState<React.Key>(CONFIG_TYPE.GLOBAL);
 
   const [activeOperationId, setActiveOperationId] = useState<string | undefined>();
   const [rawResponse, setRawResponse] = useState<string>();
@@ -88,20 +114,33 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   return (
     <>
       <Space>
-        <div>
-          <Label>operationName</Label>
+        <Segmented value={configType} options={configOptions} onChange={setConfigType} />
+
+        {configType !== CONFIG_TYPE.GLOBAL && (
           <Select
             allowClear
-            placeholder='global'
+            showSearch
+            optionFilterProp='label'
+            placeholder='choose interface'
+            popupMatchSelectWidth={false}
             options={operationList.map((operation) => ({
               label: operation.operationName,
               value: operation.id,
             }))}
             value={activeOperationId}
             onChange={setActiveOperationId}
-            style={{ width: '300px' }}
           />
-        </div>
+        )}
+
+        {configType === CONFIG_TYPE.DEPENDENCY && (
+          <Select
+            allowClear
+            showSearch
+            optionFilterProp='label'
+            placeholder='choose external dependency'
+            popupMatchSelectWidth={false}
+          />
+        )}
 
         <SyncResponse value={rawResponse} onSave={handleSaveResponse} />
       </Space>
