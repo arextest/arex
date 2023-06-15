@@ -1,13 +1,14 @@
 import { useRequest } from 'ahooks';
-import { Table, Typography,Tooltip } from 'antd';
+import { Table, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { useTranslation, HelpTooltip } from 'arex-core';
+import { HelpTooltip, useTranslation } from 'arex-core';
 import dayjs from 'dayjs';
 import React, { FC } from 'react';
-import { stringTransformDom } from '../utils';
 
 import { ConfigService } from '@/services';
 import { AgentData } from '@/services/ConfigService';
+
+import { stringTransformDom } from '../utils';
 
 export interface RunningStatusProps {
   appId: string;
@@ -36,17 +37,25 @@ const RunningStatus: FC<RunningStatusProps> = (props) => {
       render: (text) => dayjs(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
-      title: <HelpTooltip title={<div dangerouslySetInnerHTML={stringTransformDom(t('appSetting.agentStatusTip'))}></div>}>{t('agentStatus', { ns: 'common' })}</HelpTooltip>,
+      title: (
+        <HelpTooltip
+          title={
+            <div dangerouslySetInnerHTML={stringTransformDom(t('appSetting.agentStatusTip'))}></div>
+          }
+        >
+          {t('agentStatus', { ns: 'common' })}
+        </HelpTooltip>
+      ),
       dataIndex: 'agentStatus',
       align: 'center',
       render: (text) => <Typography.Text>{text || '-'}</Typography.Text>,
-    }
+    },
   ];
 
   const { data: agentData, loading: loadingAgentList } = useRequest(ConfigService.getAgentList, {
     defaultParams: [props.appId],
   });
-  
+
   return (
     <Table
       bordered

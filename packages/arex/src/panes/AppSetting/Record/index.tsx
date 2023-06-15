@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Checkbox, Collapse, Form, Select, TimePicker, InputNumber } from 'antd';
+import { App, Button, Checkbox, Collapse, Form, InputNumber, Select, TimePicker } from 'antd';
 import { HelpTooltip, useTranslation } from 'arex-core';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useState } from 'react';
@@ -65,14 +65,15 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
     onBefore() {
       setLoading(true);
     },
-    onSuccess(res) {  
+    onSuccess(res) {
       setInitialValues({
         period: [dayjs(res.allowTimeOfDayFrom, format), dayjs(res.allowTimeOfDayTo, format)],
         sampleRate: res.sampleRate,
         allowDayOfWeeks: [],
         timeMock: res.timeMock,
         excludeServiceOperationSet: res.excludeServiceOperationSet?.filter(Boolean),
-        recordMachineCountLimit: res?.recordMachineCountLimit === undefined ? 1 : res?.recordMachineCountLimit
+        recordMachineCountLimit:
+          res?.recordMachineCountLimit === undefined ? 1 : res?.recordMachineCountLimit,
       });
 
       setInitialValues((state) => {
@@ -102,7 +103,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       sampleRate: values.sampleRate,
       timeMock: values.timeMock,
       excludeServiceOperationSet: values.excludeServiceOperationSet?.filter(Boolean),
-      recordMachineCountLimit: values.recordMachineCountLimit
+      recordMachineCountLimit: values.recordMachineCountLimit,
     };
     update(params);
   };
