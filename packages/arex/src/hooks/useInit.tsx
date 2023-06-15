@@ -21,8 +21,9 @@ const useInit = () => {
 
     // restore url
     if (location.pathname === '/' && workspaces.length) {
-      const workspaceId = workspaces[0].id;
-      setActiveWorkspaceId(workspaceId);
+      const workspaceId = activeWorkspaceId || workspaces[0].id;
+      !activeWorkspaceId && setActiveWorkspaceId(workspaceId);
+
       nav(`/${workspaceId}`);
     }
 
