@@ -13,7 +13,7 @@
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",
     "antd": "^5.4.2",
-    "arex-core": "0.0.3-beta.12",
+    "arex-core": "0.0.3-beta.13",
     "dayjs": "^1.11.7",
     "immer": "^9.0.19",
     "react": "^18.2.0",

@@ -1,16 +1,16 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { message, Spin } from 'antd';
-import { ArexPaneFC, getLocalStorage } from 'arex-core';
+import { App, Spin } from 'antd';
+import { ArexPaneFC, getLocalStorage, useArexPaneProps } from 'arex-core';
 import { Http, HttpProps } from 'arex-request-core';
 import React, { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
 
 import { EMAIL_KEY } from '@/constant';
 import { sendRequest } from '@/helpers/postman';
 import { FileSystemService, ReportService } from '@/services';
 import { saveRequest } from '@/services/FileSystemService';
 import { useCollections, useEnvironments, useUserProfile, useWorkspaces } from '@/store';
+import { decodePaneKey } from '@/store/useMenusPanes';
 
 import { ExtraTabs } from './extra';
 
@@ -31,7 +31,9 @@ function convertRequest(request: any) {
 }
 
 const Request: ArexPaneFC = () => {
-  const { id = '' } = useParams();
+  const { message } = App.useApp();
+  const { paneKey } = useArexPaneProps();
+  const { id } = useMemo(() => decodePaneKey(paneKey), []);
 
   const userName = getLocalStorage<string>(EMAIL_KEY);
 
