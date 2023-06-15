@@ -2,6 +2,7 @@ import { Tabs } from 'antd';
 import { ArexPaneFC, css, useTranslation } from 'arex-core';
 import React, { useMemo } from 'react';
 
+import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ApplicationDataType } from '@/services/ApplicationService';
 
 import SettingImportYaml from './ImportYaml';
@@ -32,6 +33,11 @@ const AppSetting: ArexPaneFC<ApplicationDataType> = (props) => {
         children: <SettingImportYaml appId={data.appId} agentVersion={data.agentVersion} />,
       },
       {
+        key: 'compareConfig',
+        label: t('appSetting.compareConfig'),
+        children: <CompareConfig appId={data.appId} />,
+      },
+      {
         key: 'nodesIgnore',
         label: t('appSetting.nodesIgnore'),
         children: <SettingNodesIgnore appId={data.appId} />,
@@ -51,6 +57,7 @@ const AppSetting: ArexPaneFC<ApplicationDataType> = (props) => {
       tabPosition='left'
       items={TabsItems}
       css={css`
+        height: 100%;
         .ant-tabs-nav-list > .ant-tabs-tab {
           margin: 4px 0 0 0 !important;
         }

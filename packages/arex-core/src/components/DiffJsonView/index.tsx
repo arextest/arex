@@ -1,3 +1,5 @@
+import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
+
 import { css } from '@emotion/react';
 import { theme } from 'antd';
 import React, { FC } from 'react';

@@ -1,3 +1,4 @@
+export * from './batchDeleteIgnoreNode';
 export * from './batchInsertIgnoreNode';
 export * from './deleteIgnoreNode';
 export * from './deleteSortNode';

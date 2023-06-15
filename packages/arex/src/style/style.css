@@ -24,8 +24,3 @@ body {
   background-color: transparent !important;
 }
 
-/*删除codemirror聚焦时候的边框虚线*/
-.cm-focused{
-  outline: none !important;
-}
-

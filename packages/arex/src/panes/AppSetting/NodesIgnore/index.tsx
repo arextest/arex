@@ -191,7 +191,7 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
   );
   const interfaceResponseParsed = useMemo<{ [key: string]: any }>(() => {
     const res = interfaceResponse?.operationResponse;
-    if (res) return tryParseJsonString<object>(res) || {};
+    if (res) return JSON.parse(res) || {};
     else return {};
   }, [interfaceResponse]);
 
@@ -209,6 +209,7 @@ const SettingNodesIgnore: FC<SettingNodeIgnoreProps> = (props) => {
       }
     },
   });
+
   /**
    * 开始编辑某个 interface 的 response
    * @param operationInterface
