@@ -123,6 +123,7 @@ const Collection: ArexMenuFC = (props) => {
       navPane({
         type: PanesType.REQUEST,
         id: info.node.infoId,
+        name: info.node.nodeName,
         icon: (method && method.replace(method[0], method[0].toUpperCase())) || undefined,
       });
     }
