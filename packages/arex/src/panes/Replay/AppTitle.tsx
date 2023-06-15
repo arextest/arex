@@ -123,8 +123,8 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     },
   });
 
-  const { data: recordedCaseCount } = useRequest(ReportService.queryCountRecord, {
-    defaultParams: [data.appId],
+  const { data: recordedCase = 0 } = useRequest(ReportService.queryCountRecord, {
+    defaultParams: [{ appId: data.appId, beginTime: 0, endTime: 1686548838786 }],
     ready: !!data.appId,
   });
 
@@ -240,7 +240,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         title={
           <TitleWrapper
             title={data.appId}
-            count={recordedCaseCount}
+            count={recordedCase.totalCount}
             onClickTitle={() => caseListRef.current?.open()}
             onRefresh={onRefresh}
           />
