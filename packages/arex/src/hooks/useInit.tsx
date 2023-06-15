@@ -21,15 +21,9 @@ const useInit = () => {
 
     // restore url
     if (location.pathname === '/' && workspaces.length) {
-      let workspaceId = workspaces[0].id;
-      try {
-        const workspacesStorageStr = localStorage.getItem('workspaces-storage');
-        workspacesStorageStr &&
-          (workspaceId = JSON.parse(workspacesStorageStr).state.activeWorkspaceId);
-      } catch (error) {
-        console.error(error, 'invalid workspaces storage');
-      }
-      setActiveWorkspaceId(workspaceId);
+      const workspaceId = activeWorkspaceId || workspaces[0].id;
+      !activeWorkspaceId && setActiveWorkspaceId(workspaceId);
+
       nav(`/${workspaceId}`);
     }
 
