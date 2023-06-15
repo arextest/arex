@@ -170,6 +170,7 @@
     "record": "录制",
     "replay": "回放",
     "importYaml": "Yaml 配置导入",
+    "compareConfig": "对比配置",
     "nodesIgnore": "忽略节点配置",
     "nodesSort": "数组节点配置",
     "agentVersion": "Agent 版本",

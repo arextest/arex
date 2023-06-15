@@ -8,6 +8,7 @@ export type Pane<D extends PanesData = PanesData> = {
   id: string; // PaneId
   type: string; // PaneType
   key?: string; // unique, generate by id and type
+  name?: string; // PaneName
   icon?: string; // antd icon name
   index?: number; // 越新的 pane, index 越大
   dirty?: boolean;
@@ -23,7 +24,7 @@ export type ArexPaneOptions = {
 
 export type ArexPane<D extends PanesData = PanesData> = ArexPaneFC<D> & ArexPaneOptions;
 
-export type ArexPaneFC<D extends PanesData = PanesData> = React.FC<{ data: D }>;
+export type ArexPaneFC<D extends PanesData = PanesData> = React.FC<{ data: D; paneKey: string }>;
 
 export type PanesData = any;
 
