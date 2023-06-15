@@ -81,7 +81,6 @@ export const useMenusPanes = create(
               return pane;
             }, panes[0]);
 
-            console.log(latestPane);
             set({
               panes,
               activePane: latestPane,

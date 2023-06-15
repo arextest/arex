@@ -104,7 +104,7 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
                     : Pane.icon}
                 </span>
                 <Typography.Text ellipsis style={{ maxWidth: '120px' }}>
-                  {`${t(Pane.type)} - ${pane.id}`}
+                  {pane.name || `${t(Pane.type)} - ${pane.id}`}
                 </Typography.Text>
               </>
             ),
