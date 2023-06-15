@@ -60,5 +60,6 @@
   "response": "Response",
   "version": "Version",
   "modifiedTime": "Modified Time",
-  "loginInformationExpired": "Login information expired, please login again"
+  "loginInformationExpired": "Login information expired, please login again",
+  "agentStatus": "Status"
 }

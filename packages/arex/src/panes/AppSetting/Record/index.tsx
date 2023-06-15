@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Checkbox, Collapse, Form, Select, TimePicker } from 'antd';
+import { App, Button, Checkbox, Collapse, Form, Select, TimePicker, InputNumber } from 'antd';
 import { HelpTooltip, useTranslation } from 'arex-core';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useState } from 'react';
@@ -24,6 +24,7 @@ type SettingFormType = {
   period: Dayjs[];
   timeMock: boolean;
   excludeServiceOperationSet: string[];
+  recordMachineCountLimit?: number;
 };
 
 const format = 'HH:mm';
@@ -64,13 +65,14 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
     onBefore() {
       setLoading(true);
     },
-    onSuccess(res) {
+    onSuccess(res) {  
       setInitialValues({
         period: [dayjs(res.allowTimeOfDayFrom, format), dayjs(res.allowTimeOfDayTo, format)],
         sampleRate: res.sampleRate,
         allowDayOfWeeks: [],
         timeMock: res.timeMock,
         excludeServiceOperationSet: res.excludeServiceOperationSet?.filter(Boolean),
+        recordMachineCountLimit: res?.recordMachineCountLimit === undefined ? 1 : res?.recordMachineCountLimit
       });
 
       setInitialValues((state) => {
@@ -100,8 +102,8 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       sampleRate: values.sampleRate,
       timeMock: values.timeMock,
       excludeServiceOperationSet: values.excludeServiceOperationSet?.filter(Boolean),
+      recordMachineCountLimit: values.recordMachineCountLimit
     };
-
     update(params);
   };
   return (
@@ -116,6 +118,9 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
         `}
       >
         <Collapse.Panel header={t('appSetting.runningStatus')} key='runningStatus'>
+          <Form.Item label={t('appSetting.recordMachineNum')} name='recordMachineCountLimit'>
+            <InputNumber size='small' min={0} max={10} />
+          </Form.Item>
           <RunningStatus appId={props.appId} />
         </Collapse.Panel>
 

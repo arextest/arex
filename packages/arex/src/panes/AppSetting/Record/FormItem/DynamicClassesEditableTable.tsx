@@ -14,6 +14,7 @@ import { Updater, useImmer } from 'use-immer';
 
 import { ConfigService } from '@/services';
 import { DynamicClass } from '@/services/ConfigService';
+import { stringTransformDom } from '../utils';
 
 export type DynamicClassesEditableTableProps = {
   appId: string;
@@ -54,7 +55,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
     return [
       {
         title: (
-          <HelpTooltip title={t('appSetting.fullClassNameTooltip', { ns: 'components' })}>
+          <HelpTooltip title={<div dangerouslySetInnerHTML={stringTransformDom(t('appSetting.fullClassNameTooltip', { ns: 'components' }))}></div>}>
             {t('appSetting.fullClassName', { ns: 'components' })}
           </HelpTooltip>
         ),

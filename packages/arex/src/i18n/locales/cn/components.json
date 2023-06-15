@@ -183,7 +183,7 @@
     "dynamicClasses": "动态类",
     "dynamicClassesTooltip": "实际应用中会使用各式缓存来提升运行时的性能，为了避免由于缓存数据的差异导致的执行结果不一致的问题，AREX 也支持了本地缓存数据的采集和 Mock 功能。实现方法是将访问本地缓存的方法配置成动态类，相当于你自定义了这个方法进行 Mock，会在生产环境录制你配置的这个动态类方法的数据，回放相应的匹配出数据返回。除了缓存数据，也可以 Mock 各种内存数据。",
     "fullClassName": "全类名",
-    "fullClassNameTooltip": "本地缓存的类名，必须为全类名, 如 java.lang.String。",
+    "fullClassNameTooltip": "本地缓存的类名，必须为全类名, 如\n中缀: io.arex.inst.dynamic.*namicTest*\n后缀: io.arex.inst.dynamic.*namicTestClass\n前缀: io.arex.inst.dynamic.DynamicTest*\n等于: io.arex.inst.dynamic.DynamicTestClass\n抽象类或接口: ac:io.arex.inst.dynamic.AbstractDynamicTestClass",
     "methodName": "方法名",
     "methodNameTooltip": "需要 Mock 的方法名",
     "parameterTypes": "参数类型",
@@ -220,7 +220,9 @@
     "mockTips": "\"body\"为json字符串时会自动转换成json对象，保存时还原。",
     "runningStatus": "运行状态",
     "frequencyUnit": "个/分钟",
-    "frequencyTip": "单接口单日录制: * 个"
+    "frequencyTip": "单接口单日录制: * 个",
+    "recordMachineNum": "录制机器数量",
+    "agentStatusTip": "SLEEPING: Agent已注入,但不录制\nUNSTART: Agent未注入\nWORKING: 正在录制"
   },
   "env": {
     "searchEnvironment": "搜索环境",
