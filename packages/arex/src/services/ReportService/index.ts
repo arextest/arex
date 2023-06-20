@@ -1,5 +1,6 @@
 export * from './deleteReport';
 export * from './label';
+export * from './queryAggCount';
 export * from './queryAllDiffMsg';
 export * from './queryCountRecord';
 export * from './queryDifferences';

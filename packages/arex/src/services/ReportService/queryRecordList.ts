@@ -3,10 +3,11 @@ import { request } from '@/utils';
 
 export interface QueryRecordListReq {
   appId: string;
-  operationName: string;
+  beginTime: number;
+  endTime: number;
   operationType: string;
   pageSize: number;
-  lastId: string;
+  pageIndex: number;
 }
 
 export interface QueryRecordListRes {
