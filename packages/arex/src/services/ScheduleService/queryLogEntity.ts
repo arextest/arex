@@ -1,6 +1,5 @@
+import { NodePath } from '@/services/ReportService';
 import { request } from '@/utils';
-
-import { NodePath } from './queryAllDiffMsg';
 
 export interface QueryLogEntityReq {
   compareResultId: string;
@@ -40,6 +39,6 @@ export interface QueryLogEntityRes {
 
 export async function queryLogEntity(params: QueryLogEntityReq) {
   return request
-    .post<QueryLogEntityRes>('/report/report/queryLogEntity', params)
+    .post<QueryLogEntityRes>('/schedule/report/queryLogEntity', params)
     .then((res) => Promise.resolve([res.body.logEntity]));
 }
