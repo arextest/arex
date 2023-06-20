@@ -1,6 +1,6 @@
 import { CheckOutlined, CloseOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { App, AutoComplete, Button, Card, Input, InputRef, List, Modal, Typography } from 'antd';
+import { App, AutoComplete, Button, Card, Input, InputRef, List, Typography } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
 import { SmallTextButton, SpaceBetweenWrapper, useTranslation } from 'arex-core';
@@ -9,10 +9,11 @@ import { useImmer } from 'use-immer';
 
 import { EditAreaPlaceholder } from '@/components';
 import PaneDrawer from '@/components/PaneDrawer';
+import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
 import CompareConfigTitle from '@/panes/AppSetting/CompareConfig/CompareConfigTitle';
 import { ComparisonService } from '@/services';
 import { OperationId } from '@/services/ApplicationService';
-import { QueryIgnoreNode } from '@/services/ComparisonService';
+import { IgnoreNodeBase, InterfaceIgnoreNode, QueryIgnoreNode } from '@/services/ComparisonService';
 
 import IgnoreTree, { getNodes } from './IgnoreTree';
 
@@ -26,6 +27,7 @@ type CheckedNodesData = {
 export type NodesIgnoreProps = {
   appId: string;
   interfaceId?: string;
+  configType: CONFIG_TYPE;
   responseParsed: { [p: string]: any };
 };
 
@@ -146,13 +148,43 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
     },
   });
 
+  /**
+   * 新增 Global IgnoreNode 数据
+   */
+  const { run: insertIgnoreNode } = useRequest(ComparisonService.insertIgnoreNode, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        message.success(t('message.updateSuccess', { ns: 'common' }));
+        handleExitEdit();
+        queryIgnoreNode();
+      } else {
+        message.error(t('message.updateFailed', { ns: 'common' }));
+      }
+    },
+  });
+
   const handleExitEdit = () => {
-    console.log('handleExitEdit');
     setEditMode(false);
+    setIgnoredKey(undefined);
   };
 
   const handleEditSave = () => {
-    console.log('handleEditSave');
+    if (!ignoredKey) {
+      message.warning(t('appSetting.emptyKey'));
+      return;
+    }
+
+    let params: IgnoreNodeBase | InterfaceIgnoreNode = {
+      operationId: undefined,
+      appId: props.appId,
+      exclusions: ignoredKey.split('/').filter(Boolean),
+    };
+
+    props.interfaceId &&
+      (params = { ...params, compareConfigType: 1, fsInterfaceId: props.interfaceId });
+
+    insertIgnoreNode(params);
   };
 
   const handleIgnoreTreeSelect: TreeProps['onSelect'] = (_, info) => {
@@ -162,6 +194,15 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
       state.operationId = props.interfaceId;
       state.exclusionsList = selected;
     });
+  };
+
+  const handleIgnoreAdd = () => {
+    if (props.configType === CONFIG_TYPE.GLOBAL) {
+      setEditMode(true);
+    } else if (props.configType === CONFIG_TYPE.INTERFACE) {
+      if (Object.keys(props.responseParsed).length) setOpenIgnoreModal(true);
+      else message.info('empty response, please sync response first');
+    }
   };
 
   const handleIgnoreSave = () => {
@@ -203,10 +244,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
           setSearch('');
           setTimeout(() => searchRef.current?.focus());
         }}
-        onAdd={() => {
-          if (Object.keys(props.responseParsed).length) setOpenIgnoreModal(true);
-          else message.info('empty response, please sync response first');
-        }}
+        onAdd={handleIgnoreAdd}
       />
 
       <Card size='small' bodyStyle={{ padding: 0 }} style={{ marginTop: '8px' }}>

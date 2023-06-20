@@ -12,7 +12,7 @@ import SyncResponse from './SyncResponse';
 
 export const GLOBAL_OPERATION_ID = '__global__';
 
-enum CONFIG_TYPE {
+export enum CONFIG_TYPE {
   GLOBAL,
   INTERFACE,
   DEPENDENCY,
@@ -43,7 +43,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
     ],
     [],
   );
-  const [configType, setConfigType] = useState<React.Key>(CONFIG_TYPE.GLOBAL);
+  const [configType, setConfigType] = useState<CONFIG_TYPE>(CONFIG_TYPE.GLOBAL);
 
   const [activeOperationId, setActiveOperationId] = useState<string | undefined>();
   const [rawResponse, setRawResponse] = useState<string>();
@@ -114,7 +114,11 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   return (
     <>
       <Space>
-        <Segmented value={configType} options={configOptions} onChange={setConfigType} />
+        <Segmented
+          value={configType}
+          options={configOptions}
+          onChange={(value) => setConfigType(value as CONFIG_TYPE)}
+        />
 
         {configType !== CONFIG_TYPE.GLOBAL && (
           <Select
@@ -149,6 +153,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
 
       <NodesIgnore
         appId={props.appId}
+        configType={configType}
         interfaceId={activeOperationId}
         responseParsed={interfaceResponseParsed}
       />
