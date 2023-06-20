@@ -3,7 +3,7 @@ import { Card, Collapse, Drawer, Space, Typography } from 'antd';
 import { ArexPaneFC, css, DiffPath, Label, SceneCode } from 'arex-core';
 import React, { ReactNode, useMemo, useRef, useState } from 'react';
 
-import { ComparisonService, ReportService } from '@/services';
+import { ComparisonService, ReportService, ScheduleService } from '@/services';
 import { infoItem, PlanItemStatistics, SubScene } from '@/services/ReportService';
 
 import FlowTree, { FlowTreeData } from './FlowTree';
@@ -196,8 +196,8 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
                 defaultOnlyFailed={modalOpen === 2}
                 loading={loadingFullLinkInfo}
                 data={modalData}
-                requestDiffMsg={ReportService.queryDiffMsgById}
-                requestQueryLogEntity={ReportService.queryLogEntity}
+                requestDiffMsg={ScheduleService.queryDiffMsgById}
+                requestQueryLogEntity={ScheduleService.queryLogEntity}
                 requestIgnoreNode={(path: string[]) =>
                   ComparisonService.insertIgnoreNode({
                     operationId: props.data.operationId,
