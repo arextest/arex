@@ -2,7 +2,7 @@
 <div align="center">auto replay X -- a "Differential Testing" and "Record and Replay Testing" Tool</div>
 
 ## QUICK START
-[quick start](https://github.com/arextest/dev-ops#arex-install)\
+[quick start](http://arextest.com/docs/category/get-started)\
 [documentions](http://arextest.com/docs/intro/)
 
 ## FEATURE
