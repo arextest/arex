@@ -8,8 +8,6 @@ import React, { FC } from 'react';
 import { ConfigService } from '@/services';
 import { AgentData } from '@/services/ConfigService';
 
-import { stringTransformDom } from '../utils';
-
 export interface RunningStatusProps {
   appId: string;
 }
@@ -40,7 +38,7 @@ const RunningStatus: FC<RunningStatusProps> = (props) => {
       title: (
         <HelpTooltip
           title={
-            <div dangerouslySetInnerHTML={stringTransformDom(t('appSetting.agentStatusTip'))}></div>
+            <div style={{whiteSpace:"pre-line"}}>{t('appSetting.agentStatusTip')}</div>
           }
         >
           {t('agentStatus', { ns: 'common' })}

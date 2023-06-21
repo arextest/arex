@@ -25,10 +25,3 @@ export const decodeWeekCode = (weekCode: number) => {
 
   return allowDayOfWeeks;
 };
-
-/**
- * @param stringCode
- */
-export const stringTransformDom = (stringCode: string) => {
-  return { __html: JSON.parse(JSON.stringify(stringCode).replace(/\\n/g, '<br/>')) };
-};
