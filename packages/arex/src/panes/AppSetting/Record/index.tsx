@@ -130,7 +130,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       >
         <Collapse.Panel header={t('appSetting.runningStatus')} key='runningStatus'>
           <Form.Item label={t('appSetting.recordMachineNum')} name='recordMachineCountLimit'>
-            <InputNumber size='small' min={0} max={10} />
+            <InputNumber size='small' min={0} max={10} precision={0} />
           </Form.Item>
           <RunningStatus appId={props.appId} />
         </Collapse.Panel>
