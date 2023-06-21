@@ -224,7 +224,9 @@
     "frequencyUnit": "times/minute",
     "frequencyTip": "Single-interface single-day recording: * times",
     "recordMachineNum": "Record Machine Count",
-    "agentStatusTip": "SLEEPING: Agent injected but not recording\nUNSTART: Agent not injected\nWORKING: Recording in progress"
+    "agentStatusTip": "SLEEPING: Agent injected but not recording\nUNSTART: Agent not injected\nWORKING: Recording in progress",
+    "inclusion": "Inclusion",
+    "inclusionTooltip": "Select the paths to record"
   },
   "env": {
     "searchEnvironment": "Search Environment",

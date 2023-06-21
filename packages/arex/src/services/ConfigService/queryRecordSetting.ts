@@ -14,6 +14,7 @@ export interface QueryRecordSettingRes {
   timeMock: boolean;
   excludeServiceOperationSet: string[];
   recordMachineCountLimit?: number;
+  extendField?: {includeServiceOperations: string} | null
 }
 
 export async function queryRecordSetting(params: QueryRecordSettingReq) {

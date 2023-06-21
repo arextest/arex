@@ -25,6 +25,7 @@ type SettingFormType = {
   timeMock: boolean;
   excludeServiceOperationSet: string[];
   recordMachineCountLimit?: number;
+  includeServiceOperationSet: string[] | undefined
 };
 
 const format = 'HH:mm';
@@ -35,12 +36,15 @@ const defaultValues: Omit<
 > & {
   allowDayOfWeeks: number[];
   period: Dayjs[];
+  includeServiceOperationSet: string[];
 } = {
   allowDayOfWeeks: [],
   sampleRate: 1,
   period: [dayjs('00:01', format), dayjs('23:59', format)],
   timeMock: false,
   excludeServiceOperationSet: [],
+  recordMachineCountLimit: 1,
+  includeServiceOperationSet: []
 };
 
 const SettingRecord: FC<SettingRecordProps> = (props) => {
@@ -73,7 +77,8 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
         timeMock: res.timeMock,
         excludeServiceOperationSet: res.excludeServiceOperationSet?.filter(Boolean),
         recordMachineCountLimit:
-          res?.recordMachineCountLimit === undefined ? 1 : res?.recordMachineCountLimit,
+          res?.recordMachineCountLimit == undefined ? 1 : res?.recordMachineCountLimit,
+        includeServiceOperationSet: res.extendField?.includeServiceOperations.split(',')
       });
 
       setInitialValues((state) => {
@@ -104,7 +109,10 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       timeMock: values.timeMock,
       excludeServiceOperationSet: values.excludeServiceOperationSet?.filter(Boolean),
       recordMachineCountLimit: values.recordMachineCountLimit,
-    };
+      extendField: values.includeServiceOperationSet?.length ? {
+        includeServiceOperations: values.includeServiceOperationSet?.join(",")
+      } : null
+    }; 
     update(params);
   };
   return (
@@ -153,6 +161,26 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
             }
           >
             <DynamicClassesEditableTable appId={props.appId} />
+          </Form.Item>
+
+          <Form.Item
+            label={
+              <HelpTooltip title={t('appSetting.inclusionTooltip')}>
+                {t('appSetting.inclusion')}
+              </HelpTooltip>
+            }
+            name='includeServiceOperationSet'
+          >
+            <Select
+              allowClear
+              mode='tags'
+              options={[...new Set(operationList.map((item) => item.operationName))]
+                .filter(Boolean)
+                .map((name) => ({
+                  label: name,
+                  value: name,
+                }))}
+            />
           </Form.Item>
 
           <Form.Item
