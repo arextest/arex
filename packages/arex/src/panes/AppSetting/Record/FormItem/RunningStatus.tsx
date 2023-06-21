@@ -37,9 +37,7 @@ const RunningStatus: FC<RunningStatusProps> = (props) => {
     {
       title: (
         <HelpTooltip
-          title={
-            <div style={{whiteSpace:"pre-line"}}>{t('appSetting.agentStatusTip')}</div>
-          }
+          title={<div style={{ whiteSpace: 'pre-line' }}>{t('appSetting.agentStatusTip')}</div>}
         >
           {t('agentStatus', { ns: 'common' })}
         </HelpTooltip>

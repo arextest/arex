@@ -56,9 +56,9 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
         title: (
           <HelpTooltip
             title={
-              <div
-              style={{whiteSpace:"pre-line"}}
-              >{t('appSetting.fullClassNameTooltip', { ns: 'components' })}</div>
+              <div style={{ whiteSpace: 'pre-line' }}>
+                {t('appSetting.fullClassNameTooltip', { ns: 'components' })}
+              </div>
             }
           >
             {t('appSetting.fullClassName', { ns: 'components' })}
