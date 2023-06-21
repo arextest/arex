@@ -25,7 +25,7 @@ type SettingFormType = {
   timeMock: boolean;
   excludeServiceOperationSet: string[];
   recordMachineCountLimit?: number;
-  includeServiceOperationSet: string[] | undefined
+  includeServiceOperationSet: string[] | undefined;
 };
 
 const format = 'HH:mm';
@@ -44,7 +44,7 @@ const defaultValues: Omit<
   timeMock: false,
   excludeServiceOperationSet: [],
   recordMachineCountLimit: 1,
-  includeServiceOperationSet: []
+  includeServiceOperationSet: [],
 };
 
 const SettingRecord: FC<SettingRecordProps> = (props) => {
@@ -78,7 +78,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
         excludeServiceOperationSet: res.excludeServiceOperationSet?.filter(Boolean),
         recordMachineCountLimit:
           res?.recordMachineCountLimit == undefined ? 1 : res?.recordMachineCountLimit,
-        includeServiceOperationSet: res.extendField?.includeServiceOperations.split(',')
+        includeServiceOperationSet: res.extendField?.includeServiceOperations.split(','),
       });
 
       setInitialValues((state) => {
@@ -109,10 +109,12 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       timeMock: values.timeMock,
       excludeServiceOperationSet: values.excludeServiceOperationSet?.filter(Boolean),
       recordMachineCountLimit: values.recordMachineCountLimit,
-      extendField: values.includeServiceOperationSet?.length ? {
-        includeServiceOperations: values.includeServiceOperationSet?.join(",")
-      } : null
-    }; 
+      extendField: values.includeServiceOperationSet?.length
+        ? {
+            includeServiceOperations: values.includeServiceOperationSet?.join(','),
+          }
+        : null,
+    };
     update(params);
   };
   return (
