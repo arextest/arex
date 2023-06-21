@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Checkbox, Collapse, Form, Select, TimePicker } from 'antd';
+import { App, Button, Checkbox, Collapse, Form, InputNumber, Select, TimePicker } from 'antd';
 import { HelpTooltip, useTranslation } from 'arex-core';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useState } from 'react';
@@ -24,6 +24,8 @@ type SettingFormType = {
   period: Dayjs[];
   timeMock: boolean;
   excludeServiceOperationSet: string[];
+  recordMachineCountLimit?: number;
+  includeServiceOperationSet: string[] | undefined;
 };
 
 const format = 'HH:mm';
@@ -34,12 +36,15 @@ const defaultValues: Omit<
 > & {
   allowDayOfWeeks: number[];
   period: Dayjs[];
+  includeServiceOperationSet: string[];
 } = {
   allowDayOfWeeks: [],
   sampleRate: 1,
   period: [dayjs('00:01', format), dayjs('23:59', format)],
   timeMock: false,
   excludeServiceOperationSet: [],
+  recordMachineCountLimit: 1,
+  includeServiceOperationSet: [],
 };
 
 const SettingRecord: FC<SettingRecordProps> = (props) => {
@@ -71,6 +76,9 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
         allowDayOfWeeks: [],
         timeMock: res.timeMock,
         excludeServiceOperationSet: res.excludeServiceOperationSet?.filter(Boolean),
+        recordMachineCountLimit:
+          res?.recordMachineCountLimit == undefined ? 1 : res?.recordMachineCountLimit,
+        includeServiceOperationSet: res.extendField?.includeServiceOperations.split(','),
       });
 
       setInitialValues((state) => {
@@ -100,8 +108,13 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       sampleRate: values.sampleRate,
       timeMock: values.timeMock,
       excludeServiceOperationSet: values.excludeServiceOperationSet?.filter(Boolean),
+      recordMachineCountLimit: values.recordMachineCountLimit,
+      extendField: values.includeServiceOperationSet?.length
+        ? {
+            includeServiceOperations: values.includeServiceOperationSet?.join(','),
+          }
+        : null,
     };
-
     update(params);
   };
   return (
@@ -116,6 +129,9 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
         `}
       >
         <Collapse.Panel header={t('appSetting.runningStatus')} key='runningStatus'>
+          <Form.Item label={t('appSetting.recordMachineNum')} name='recordMachineCountLimit'>
+            <InputNumber size='small' min={0} max={10} precision={0} />
+          </Form.Item>
           <RunningStatus appId={props.appId} />
         </Collapse.Panel>
 
@@ -147,6 +163,26 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
             }
           >
             <DynamicClassesEditableTable appId={props.appId} />
+          </Form.Item>
+
+          <Form.Item
+            label={
+              <HelpTooltip title={t('appSetting.inclusionTooltip')}>
+                {t('appSetting.inclusion')}
+              </HelpTooltip>
+            }
+            name='includeServiceOperationSet'
+          >
+            <Select
+              allowClear
+              mode='tags'
+              options={[...new Set(operationList.map((item) => item.operationName))]
+                .filter(Boolean)
+                .map((name) => ({
+                  label: name,
+                  value: name,
+                }))}
+            />
           </Form.Item>
 
           <Form.Item

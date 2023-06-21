@@ -1,7 +1,7 @@
 import { useRequest } from 'ahooks';
-import { Table, Typography } from 'antd';
+import { Table, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { useTranslation } from 'arex-core';
+import { HelpTooltip, useTranslation } from 'arex-core';
 import dayjs from 'dayjs';
 import React, { FC } from 'react';
 
@@ -13,7 +13,7 @@ export interface RunningStatusProps {
 }
 
 const RunningStatus: FC<RunningStatusProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['components', 'common']);
 
   const agentColumns: ColumnsType<AgentData> = [
     {
@@ -23,16 +23,28 @@ const RunningStatus: FC<RunningStatusProps> = (props) => {
       render: (text) => <Typography.Text copyable>{text}</Typography.Text>,
     },
     {
-      title: t('version'),
+      title: t('version', { ns: 'common' }),
       dataIndex: 'recordVersion',
       align: 'center',
       render: (text) => <Typography.Text>{text || '-'}</Typography.Text>,
     },
     {
-      title: t('modifiedTime'),
+      title: t('modifiedTime', { ns: 'common' }),
       dataIndex: 'modifiedTime',
       align: 'center',
       render: (text) => dayjs(text).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      title: (
+        <HelpTooltip
+          title={<div style={{ whiteSpace: 'pre-line' }}>{t('appSetting.agentStatusTip')}</div>}
+        >
+          {t('agentStatus', { ns: 'common' })}
+        </HelpTooltip>
+      ),
+      dataIndex: 'agentStatus',
+      align: 'center',
+      render: (text) => <Typography.Text>{text || '-'}</Typography.Text>,
     },
   ];
 
