@@ -3,7 +3,7 @@
 
 ## QUICK START
 [quick start](https://github.com/arextest/dev-ops#arex-install)\
-[documentions](./documents/introduction.md)
+[documentions](http://arextest.com/docs/intro/)
 
 ## FEATURE
 - Out-of-order comparsion\
