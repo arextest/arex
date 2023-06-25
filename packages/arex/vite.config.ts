@@ -45,6 +45,9 @@ export default defineConfig({
       // 'arex-core': path.resolve('../arex-core/src'),
     },
   },
+  build: {
+    sourcemap: true,
+  },
   server: {
     port: 16888,
     proxy: {
