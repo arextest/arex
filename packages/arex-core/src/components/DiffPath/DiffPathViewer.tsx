@@ -52,6 +52,8 @@ export interface DiffPathViewerProps {
     logIndex: number;
   }) => Promise<LogEntity[]>;
   requestIgnoreNode: (path: string[]) => Promise<boolean>;
+  onIgnoreKey?: (key: string[]) => void;
+  onSortKey?: (key: string[]) => void;
 }
 
 const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
@@ -102,6 +104,10 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
     <Allotment
       css={css`
         height: ${props.height};
+        overflow: visible !important;
+        .split-view-view-visible:has(.json-diff-viewer) {
+          overflow: visible !important;
+        }
       `}
     >
       <Allotment.Pane preferredSize={200}>
@@ -163,9 +169,9 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
 
       <Allotment.Pane
         visible
+        className='json-diff-viewer'
         css={css`
           height: ${props.height};
-          border-left: 1px solid ${token.colorBorderBg};
         `}
       >
         {props.data?.diffResultCode === 2 ? (
@@ -182,6 +188,8 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
                 right: props.data.testMsg,
               }}
               diffPath={logEntity}
+              onIgnoreKey={props.onIgnoreKey}
+              onSortKey={props.onSortKey}
             />
           </div>
         )}
