@@ -84,6 +84,21 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     },
   });
 
+  const { run: handleIgnoreKey } = useRequest(
+    (path: string[]) =>
+      ComparisonService.insertIgnoreNode({
+        operationId: props.data.operationId,
+        appId: props.data.appId,
+        exclusions: path,
+      }),
+    {
+      manual: true,
+      onSuccess(success) {
+        success && message.success(t('message.success', { ns: 'common' }));
+      },
+    },
+  );
+
   function handleClickRerunCase(recordId: string) {
     queryPlanFailCase({
       planId: props.data.planId,
@@ -119,6 +134,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             operationId={props.data.operationId}
             loading={loadingFullLinkInfo}
             data={fullLinkInfoMerged}
+            onIgnoreKey={handleIgnoreKey}
             requestDiffMsg={ReportService.queryDiffMsgById}
             requestQueryLogEntity={ReportService.queryLogEntity}
             requestIgnoreNode={(path: string[]) =>
