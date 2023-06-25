@@ -1,9 +1,20 @@
 import { CheckOutlined, CloseOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
-import { App, AutoComplete, Button, Card, Input, InputRef, List, Typography } from 'antd';
+import {
+  App,
+  AutoComplete,
+  Button,
+  ButtonProps,
+  Card,
+  Collapse,
+  Input,
+  InputRef,
+  List,
+  Typography,
+} from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
-import { SmallTextButton, SpaceBetweenWrapper, useTranslation } from 'arex-core';
+import { css, SmallTextButton, SpaceBetweenWrapper, useTranslation } from 'arex-core';
 import React, { FC, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
@@ -16,8 +27,7 @@ import { OperationId } from '@/services/ApplicationService';
 import { IgnoreNodeBase, InterfaceIgnoreNode, QueryIgnoreNode } from '@/services/ComparisonService';
 
 import IgnoreTree, { getNodes } from './IgnoreTree';
-
-const GLOBAL_OPERATION_ID = '__global__';
+const ActiveKey = 'sort';
 
 type CheckedNodesData = {
   operationId?: OperationId<'Global'>;
@@ -38,6 +48,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
   const searchRef = useRef<InputRef>(null);
   const editInputRef = useRef<any>(null);
 
+  const [activeKey, setActiveKey] = useState<string | string[]>([ActiveKey]);
   const [search, setSearch] = useState<string | false>(false);
   const [editMode, setEditMode] = useState(false);
 
@@ -61,11 +72,11 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
     () =>
       ComparisonService.queryIgnoreNode({
         appId: props.appId,
-        operationId: props.interfaceId === GLOBAL_OPERATION_ID ? null : props.interfaceId,
+        operationId: props.configType === CONFIG_TYPE.GLOBAL ? null : props.interfaceId,
       }),
     {
-      ready: props.interfaceId !== undefined,
-      refreshDeps: [props.interfaceId],
+      ready: !!props.appId,
+      refreshDeps: [props.interfaceId, props.configType],
       onBefore() {
         setIgnoreNodeList([]);
       },
@@ -196,7 +207,16 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
     });
   };
 
-  const handleIgnoreAdd = () => {
+  const handleSearch: ButtonProps['onClick'] = (e) => {
+    activeKey?.[0] === ActiveKey && e.stopPropagation();
+    setSearch('');
+    setTimeout(() => searchRef.current?.focus());
+  };
+
+  const handleIgnoreAdd: ButtonProps['onClick'] = (e) => {
+    activeKey?.[0] === ActiveKey && e.stopPropagation();
+    setTimeout(() => editInputRef.current?.focus());
+
     if (props.configType === CONFIG_TYPE.GLOBAL) {
       setEditMode(true);
     } else if (props.configType === CONFIG_TYPE.INTERFACE) {
@@ -237,108 +257,116 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
   };
 
   return (
-    <>
-      <CompareConfigTitle
-        title='Nodes Ignore'
-        onSearch={() => {
-          setSearch('');
-          setTimeout(() => searchRef.current?.focus());
-        }}
-        onAdd={handleIgnoreAdd}
-      />
-
-      <Card size='small' bodyStyle={{ padding: 0 }} style={{ marginTop: '8px' }}>
-        <List
-          size='small'
-          dataSource={ignoreNodesFiltered}
-          loading={loadingIgnoreNode}
-          header={
-            search !== false && (
-              <SpaceBetweenWrapper style={{ padding: '0 16px' }}>
-                <Input.Search
-                  size='small'
-                  ref={searchRef}
-                  onChange={(e) => setSearch(e.target.value)}
-                  style={{ marginRight: '8px' }}
-                />
-                <Button
-                  size='small'
-                  type='text'
-                  icon={<CloseOutlined />}
-                  onClick={() => setSearch(false)}
-                />
-              </SpaceBetweenWrapper>
-            )
+    <Collapse size='small' activeKey={activeKey} onChange={setActiveKey}>
+      <Collapse.Panel
+        key={ActiveKey}
+        header={
+          <CompareConfigTitle
+            title='Nodes Ignore'
+            onSearch={handleSearch}
+            onAdd={handleIgnoreAdd}
+          />
+        }
+        css={css`
+          .ant-collapse-content-box {
+            padding: 0 !important;
           }
-          footer={
-            editMode && (
-              <List.Item style={{ padding: '0 8px' }}>
-                <SpaceBetweenWrapper width={'100%'}>
-                  <AutoComplete
+        `}
+      >
+        <Card bordered={false} size='small' bodyStyle={{ padding: 0 }}>
+          <List
+            size='small'
+            dataSource={ignoreNodesFiltered}
+            loading={loadingIgnoreNode}
+            header={
+              search !== false && (
+                <SpaceBetweenWrapper style={{ padding: '0 16px' }}>
+                  <Input.Search
                     size='small'
-                    placeholder='Ignored key'
-                    ref={editInputRef}
-                    options={nodePath}
-                    filterOption={(inputValue, option) =>
-                      option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                    }
-                    value={ignoredKey}
-                    onChange={setIgnoredKey}
-                    style={{ width: '100%' }}
+                    ref={searchRef}
+                    placeholder='Search for ignored key'
+                    onChange={(e) => setSearch(e.target.value)}
+                    style={{ marginRight: '8px' }}
                   />
-                  <span style={{ display: 'flex', marginLeft: '8px' }}>
-                    <SmallTextButton icon={<CloseOutlined />} onClick={handleExitEdit} />
-                    <SmallTextButton icon={<CheckOutlined />} onClick={handleEditSave} />
-                  </span>
+                  <Button
+                    size='small'
+                    type='text'
+                    icon={<CloseOutlined />}
+                    onClick={() => setSearch(false)}
+                  />
+                </SpaceBetweenWrapper>
+              )
+            }
+            footer={
+              editMode && (
+                <List.Item style={{ padding: '0 16px' }}>
+                  <SpaceBetweenWrapper width={'100%'}>
+                    <AutoComplete
+                      size='small'
+                      placeholder='Input key to ignore'
+                      ref={editInputRef}
+                      options={nodePath}
+                      filterOption={(inputValue, option) =>
+                        option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                      }
+                      value={ignoredKey}
+                      onChange={setIgnoredKey}
+                      style={{ width: '100%' }}
+                    />
+                    <span style={{ display: 'flex', marginLeft: '8px' }}>
+                      <SmallTextButton icon={<CloseOutlined />} onClick={handleExitEdit} />
+                      <SmallTextButton icon={<CheckOutlined />} onClick={handleEditSave} />
+                    </span>
+                  </SpaceBetweenWrapper>
+                </List.Item>
+              )
+            }
+            renderItem={(node) => (
+              <List.Item>
+                <SpaceBetweenWrapper width={'100%'}>
+                  <Typography.Text ellipsis>{node.exclusions.join('/')}</Typography.Text>
+                  <SmallTextButton
+                    icon={<DeleteOutlined />}
+                    onClick={() => handleDeleteIgnoreNode({ id: node.id })}
+                  />
                 </SpaceBetweenWrapper>
               </List.Item>
-            )
-          }
-          renderItem={(node) => (
-            <List.Item>
-              <SpaceBetweenWrapper width={'100%'}>
-                <Typography.Text ellipsis>{node.exclusions.join('/')}</Typography.Text>
-                <SmallTextButton
-                  icon={<DeleteOutlined />}
-                  onClick={() => handleDeleteIgnoreNode({ id: node.id })}
-                />
-              </SpaceBetweenWrapper>
-            </List.Item>
-          )}
-          locale={{ emptyText: t('appSetting.noIgnoredNodes') }}
-        />
-      </Card>
-
-      <PaneDrawer
-        title={
-          <SpaceBetweenWrapper>
-            <Typography.Title level={5} style={{ marginBottom: 0 }}>
-              Nodes Ignore
-            </Typography.Title>
-            <Button size='small' type='primary' onClick={handleIgnoreSave}>
-              {t('save', { ns: 'common' })}
-            </Button>
-          </SpaceBetweenWrapper>
-        }
-        open={openIgnoreModal}
-        onClose={() => {
-          setOpenIgnoreModal(false);
-          convertIgnoreNode(ignoreNodeList);
-        }}
-      >
-        <EditAreaPlaceholder
-          dashedBorder
-          title={t('appSetting.editArea')}
-          ready={props.interfaceId !== GLOBAL_OPERATION_ID}
-        >
-          <IgnoreTree
-            treeData={props.responseParsed}
-            selectedKeys={checkedNodesData.exclusionsList}
-            onSelect={handleIgnoreTreeSelect}
+            )}
+            locale={{ emptyText: t('appSetting.noIgnoredNodes') }}
           />
-        </EditAreaPlaceholder>
-      </PaneDrawer>
-    </>
+        </Card>
+
+        <PaneDrawer
+          title={
+            <SpaceBetweenWrapper>
+              <Typography.Title level={5} style={{ marginBottom: 0 }}>
+                Nodes Ignore
+              </Typography.Title>
+              <Button size='small' type='primary' onClick={handleIgnoreSave}>
+                {t('save', { ns: 'common' })}
+              </Button>
+            </SpaceBetweenWrapper>
+          }
+          open={openIgnoreModal}
+          onClose={() => {
+            setOpenIgnoreModal(false);
+            convertIgnoreNode(ignoreNodeList);
+          }}
+        >
+          <EditAreaPlaceholder
+            ready={!!props.responseParsed}
+            dashedBorder
+            title={t('appSetting.editArea')}
+          >
+            <IgnoreTree
+              treeData={props.responseParsed}
+              selectedKeys={checkedNodesData.exclusionsList}
+              onSelect={handleIgnoreTreeSelect}
+            />
+          </EditAreaPlaceholder>
+        </PaneDrawer>
+      </Collapse.Panel>
+    </Collapse>
   );
 };
 

@@ -1,5 +1,5 @@
 import { useRequest } from 'ahooks';
-import { App, Divider, Select, Space } from 'antd';
+import { App, Select, Space } from 'antd';
 import { tryPrettierJsonString, useTranslation } from 'arex-core';
 import React, { FC, useMemo, useState } from 'react';
 
@@ -9,8 +9,6 @@ import NodeSort from '@/panes/AppSetting/CompareConfig/NodeSort';
 import { ApplicationService, ConfigService } from '@/services';
 
 import SyncResponse from './SyncResponse';
-
-export const GLOBAL_OPERATION_ID = '__global__';
 
 export enum CONFIG_TYPE {
   GLOBAL,
@@ -55,6 +53,9 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
     () => ApplicationService.queryInterfacesList<'Interface'>({ id: props.appId as string }),
     {
       ready: !!props.appId,
+      onSuccess(res) {
+        setActiveOperationId(res?.[0]?.id);
+      },
     },
   );
 
@@ -112,8 +113,8 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   };
 
   return (
-    <>
-      <Space>
+    <Space size='middle' direction='vertical' style={{ display: 'flex' }}>
+      <Space style={{ display: 'flex', flexWrap: 'wrap' }}>
         <Segmented
           value={configType}
           options={configOptions}
@@ -122,7 +123,6 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
 
         {configType !== CONFIG_TYPE.GLOBAL && (
           <Select
-            allowClear
             showSearch
             optionFilterProp='label'
             placeholder='choose interface'
@@ -149,8 +149,6 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         <SyncResponse value={rawResponse} onSave={handleSaveResponse} />
       </Space>
 
-      <Divider style={{ margin: '16px 0 8px 0' }} />
-
       <NodesIgnore
         appId={props.appId}
         configType={configType}
@@ -158,14 +156,13 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         responseParsed={interfaceResponseParsed}
       />
 
-      <Divider style={{ margin: '16px 0 8px 0' }} />
-
       <NodeSort
         appId={props.appId}
+        configType={configType}
         interfaceId={activeOperationId}
         responseParsed={interfaceResponseParsed}
       />
-    </>
+    </Space>
   );
 };
 
