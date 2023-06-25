@@ -18,6 +18,8 @@ export interface DiffPathProps
   defaultOnlyFailed?: boolean;
   requestDiffMsg: (params: any) => Promise<CompareResultDetail>;
   data: infoItem[];
+  onIgnoreKey?: (key: string[]) => void;
+  onSortKey?: (key: string[]) => void;
 }
 
 const DiffPath: FC<DiffPathProps> = (props) => {
@@ -86,6 +88,8 @@ const DiffPath: FC<DiffPathProps> = (props) => {
                 loading={loadingDiffMsg}
                 appId={props.appId}
                 operationId={props.operationId}
+                onIgnoreKey={props.onIgnoreKey}
+                onSortKey={props.onSortKey}
                 requestIgnoreNode={props.requestIgnoreNode}
                 requestQueryLogEntity={props.requestQueryLogEntity}
               />
