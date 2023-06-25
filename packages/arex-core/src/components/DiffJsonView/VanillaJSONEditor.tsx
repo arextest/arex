@@ -3,19 +3,17 @@ import styled from '@emotion/styled';
 import { theme } from 'antd';
 import { parse, stringify } from 'lossless-json';
 import React, { useEffect, useRef } from 'react';
-import { JSONEditor, ReadonlyValue } from 'vanilla-jsoneditor';
+import { JSONEditor, JSONEditorPropsOptional, ReadonlyValue } from 'vanilla-jsoneditor';
+
+import { AllDiff } from './helper';
 
 const LosslessJSONParser = { parse, stringify };
 
-export type SvelteJSONEditorProps = {
-  readOnly?: boolean;
+export interface SvelteJSONEditorProps extends JSONEditorPropsOptional {
   height?: string | number;
   remark?: string;
-  allDiffByType?: any;
-  content: { json?: object; text?: string };
-  mainMenuBar?: boolean;
-  onClassName?: (path: string[]) => string | undefined;
-};
+  allDiffByType?: AllDiff;
+}
 
 const EditorWaterMark = styled.div<{
   remark?: string;
@@ -36,14 +34,13 @@ const EditorWaterMark = styled.div<{
 `;
 
 export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
-  const { allDiffByType } = props;
-  const refContainer = useRef<any>(null);
+  const refContainer = useRef<HTMLDivElement>(null);
   const refEditor = useRef<any>(null);
   const { token } = theme.useToken();
 
   useEffect(() => {
     refEditor.current = new JSONEditor({
-      target: refContainer.current,
+      target: refContainer.current!,
       props: {
         // @ts-ignore
         // disable build-in render component
@@ -68,10 +65,10 @@ export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
     if (refEditor.current) {
       refEditor.current.updateProps(props);
       setTimeout(() => {
-        if (allDiffByType.more.length > 0) {
-          refEditor.current.scrollTo(allDiffByType.more[0]);
-        } else if (allDiffByType.diff.length > 0) {
-          refEditor.current.scrollTo(allDiffByType.diff[0]);
+        if (props.allDiffByType?.more.length) {
+          refEditor.current.scrollTo(props.allDiffByType?.more[0]);
+        } else if (props.allDiffByType?.diff.length) {
+          refEditor.current.scrollTo(props.allDiffByType?.diff[0]);
         }
       }, 100);
     }
