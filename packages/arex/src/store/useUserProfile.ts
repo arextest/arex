@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import { getLocalStorage, i18n, I18nextLng, setLocalStorage, Theme } from 'arex-core';
 import { create } from 'zustand';
 
@@ -28,6 +29,7 @@ const useUserProfile = create<UserProfile & UserProfileAction>((set) => {
     let profile: UserProfile | undefined;
     try {
       profile = await UserService.getUserProfile(_email);
+      Sentry.setTag('arex-user', email);
     } catch (e) {
       window.message.error(i18n.t('loginInformationExpired'));
       globalStoreReset();
