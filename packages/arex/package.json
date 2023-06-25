@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "do-dev": "vite",
-    "do-build": "vite build"
+    "do-build": "node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
@@ -39,6 +39,7 @@
     "zustand": "^4.3.7"
   },
   "devDependencies": {
+    "@sentry/vite-plugin": "^2.3.0",
     "@types/lodash": "^4.14.194",
     "@types/react": "^18.0.28",
     "@types/react-color": "^3.0.6",

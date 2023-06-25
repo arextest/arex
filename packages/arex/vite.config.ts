@@ -1,3 +1,4 @@
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 import { defineConfig } from 'vite';
@@ -28,7 +29,18 @@ export default defineConfig({
         return modules;
       },
     },
+    // Put the Sentry vite plugin after all other plugins
+    sentryVitePlugin({
+      org: 'arextest',
+      project: 'arex-ui',
+      // Auth tokens can be obtained from https://sentry.io/settings/account/api/auth-tokens/
+      // and need `project:releases` and `org:read` scopes
+      authToken: '46c8ead9fe034d13a77de7eb2e9a3294d007aec9a8e740c1ad94f67b75bcc41d',
+    }),
   ],
+  build: {
+    sourcemap: true, // Source map generation must be turned on
+  },
   resolve: {
     alias: {
       '@': path.resolve('./src'),
