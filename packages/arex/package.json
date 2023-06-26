@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "do-dev": "vite",
-    "do-build": "vite build"
+    "do-build": "node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
