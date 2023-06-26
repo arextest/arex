@@ -62,6 +62,11 @@ export default () => {
     },
   });
 
+  const handleMenuChange = (menuType: string) => {
+    collapsed && setCollapsed(false);
+    setActiveMenu(menuType);
+  };
+
   const handleMenuSelect: ArexMenuContainerProps['onSelect'] = (type, id, data) => {
     navPane({
       id,
@@ -164,7 +169,7 @@ export default () => {
               // extra?: ReactNode;
             }}
             onCollapsed={setCollapsed}
-            onChange={setActiveMenu}
+            onChange={handleMenuChange}
             onSelect={handleMenuSelect}
           />
         }
