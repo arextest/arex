@@ -13,7 +13,7 @@ import {
   Space,
   Typography,
 } from 'antd';
-import { getLocalStorage, RoleEnum, useTranslation } from 'arex-core';
+import { getLocalStorage, RoleEnum, useTranslation } from '@arextest/arex-core';
 import React, { useMemo } from 'react';
 import { FC } from 'react';
 

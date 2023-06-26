@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { App, Button, Input, Select, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { TooltipButton, useTranslation } from 'arex-core';
+import { TooltipButton, useTranslation } from '@arextest/arex-core';
 import React, { FC, useEffect, useRef } from 'react';
 import { useImmer } from 'use-immer';
 

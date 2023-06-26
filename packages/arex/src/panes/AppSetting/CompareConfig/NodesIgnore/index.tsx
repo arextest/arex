@@ -14,7 +14,7 @@ import {
 } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
-import { css, SmallTextButton, SpaceBetweenWrapper, useTranslation } from 'arex-core';
+import { css, SmallTextButton, SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
 import React, { FC, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 

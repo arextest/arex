@@ -3,7 +3,7 @@ import { useRequest } from 'ahooks';
 import { App, Button, ButtonProps, Card, Collapse, Input, InputRef, List, Typography } from 'antd';
 import { TreeProps } from 'antd/es';
 import { CarouselRef } from 'antd/lib/carousel';
-import { css, SpaceBetweenWrapper, useTranslation } from 'arex-core';
+import { css, SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
 import React, { FC, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 

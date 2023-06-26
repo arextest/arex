@@ -1,7 +1,7 @@
 import { useRequest } from 'ahooks';
 import { Table, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { HelpTooltip, useTranslation } from 'arex-core';
+import { HelpTooltip, useTranslation } from '@arextest/arex-core';
 import dayjs from 'dayjs';
 import React, { FC } from 'react';
 

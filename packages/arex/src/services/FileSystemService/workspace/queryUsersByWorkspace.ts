@@ -1,4 +1,4 @@
-import { getLocalStorage } from 'arex-core';
+import { getLocalStorage } from '@arextest/arex-core';
 
 import { EMAIL_KEY } from '@/constant';
 import { request } from '@/utils';

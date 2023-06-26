@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react';
-import { getLocalStorage, i18n, I18nextLng, setLocalStorage, Theme } from 'arex-core';
+import { getLocalStorage, i18n, I18nextLng, setLocalStorage, Theme } from '@arextest/arex-core';
 import { create } from 'zustand';
 
 import { DEFAULT_COLOR_PRIMARY, DEFAULT_THEME, EMAIL_KEY, THEME_KEY } from '@/constant';

@@ -9,7 +9,7 @@ import {
   tryParseJsonString,
   tryPrettierJsonString,
   useTranslation,
-} from 'arex-core';
+} from '@arextest/arex-core';
 import React, { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 

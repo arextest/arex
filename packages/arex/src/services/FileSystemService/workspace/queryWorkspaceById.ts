@@ -1,5 +1,5 @@
 import { DataNode } from 'antd/lib/tree';
-import { RequestMethodEnum } from 'arex-core';
+import { RequestMethodEnum } from '@arextest/arex-core';
 
 import { CollectionNodeType } from '@/constant';
 import { request } from '@/utils';

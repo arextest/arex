@@ -1,7 +1,7 @@
 import { useRequest } from 'ahooks';
 import { Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import { HighlightRowTable, SmallTextButton, useTranslation } from 'arex-core';
+import { HighlightRowTable, SmallTextButton, useTranslation } from '@arextest/arex-core';
 import React, { FC, Key, useMemo } from 'react';
 
 import { PanesType } from '@/constant';

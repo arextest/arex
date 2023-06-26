@@ -1,4 +1,4 @@
-import { RequestMethod } from 'arex-core';
+import { RequestMethod } from '@arextest/arex-core';
 
 import { request } from '@/utils';
 

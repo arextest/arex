@@ -25,7 +25,7 @@ import {
   styled,
   TooltipButton,
   useTranslation,
-} from 'arex-core';
+} from '@arextest/arex-core';
 import React, { FC, ReactNode, SyntheticEvent, useMemo, useRef, useState } from 'react';
 
 import { ComparisonService } from '@/services';

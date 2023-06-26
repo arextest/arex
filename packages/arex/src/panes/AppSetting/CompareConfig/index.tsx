@@ -1,6 +1,6 @@
 import { useRequest } from 'ahooks';
 import { App, Select, Space } from 'antd';
-import { tryPrettierJsonString, useTranslation } from 'arex-core';
+import { tryPrettierJsonString, useTranslation } from '@arextest/arex-core';
 import React, { FC, useMemo, useState } from 'react';
 
 import { Segmented } from '@/components';

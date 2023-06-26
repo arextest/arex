@@ -1,5 +1,5 @@
 import { App } from 'antd';
-import { useTranslation } from 'arex-core';
+import { useTranslation } from '@arextest/arex-core';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 

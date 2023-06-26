@@ -1,5 +1,5 @@
 import { Button, Space } from 'antd';
-import { useTranslation } from 'arex-core';
+import { useTranslation } from '@arextest/arex-core';
 import React, { FC } from 'react';
 
 export type ActionButtonProps = {

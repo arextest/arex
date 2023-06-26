@@ -8,7 +8,7 @@ import {
 import { useRequest } from 'ahooks';
 import { App, Button, Input, Popconfirm, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { HelpTooltip, TooltipButton, useTranslation } from 'arex-core';
+import { HelpTooltip, TooltipButton, useTranslation } from '@arextest/arex-core';
 import React, { FC, useCallback, useState } from 'react';
 import { Updater, useImmer } from 'use-immer';
 

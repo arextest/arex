@@ -1,7 +1,7 @@
 import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { App, Button } from 'antd';
-import { Label, useTranslation } from 'arex-core';
+import { Label, useTranslation } from '@arextest/arex-core';
 import React, { FC, useState } from 'react';
 
 import { ConfigService } from '@/services';

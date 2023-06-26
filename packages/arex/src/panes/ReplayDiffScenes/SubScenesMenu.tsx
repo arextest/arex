@@ -1,7 +1,12 @@
 import { ClusterOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import { Badge, Divider, Menu, Space, theme } from 'antd';
-import { EllipsisTooltip, SceneCode, SpaceBetweenWrapper, TooltipButton } from 'arex-core';
+import {
+  EllipsisTooltip,
+  SceneCode,
+  SpaceBetweenWrapper,
+  TooltipButton,
+} from '@arextest/arex-core';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 
 import { SubScene } from '@/services/ReportService';

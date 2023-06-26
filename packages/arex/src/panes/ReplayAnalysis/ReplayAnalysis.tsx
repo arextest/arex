@@ -7,7 +7,7 @@ import {
   DiffJsonViewProps,
   PanesTitle,
   useTranslation,
-} from 'arex-core';
+} from '@arextest/arex-core';
 import React, { useState } from 'react';
 
 import { ReportService } from '@/services';

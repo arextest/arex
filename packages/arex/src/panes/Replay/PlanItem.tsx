@@ -33,7 +33,7 @@ import {
   SpaceBetweenWrapper,
   TooltipButton,
   useTranslation,
-} from 'arex-core';
+} from '@arextest/arex-core';
 import dayjs from 'dayjs';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Pie } from 'react-chartjs-2';

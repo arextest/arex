@@ -1,5 +1,5 @@
 import { InputNumber, Slider, Space, Typography } from 'antd';
-import { useTranslation } from 'arex-core';
+import { useTranslation } from '@arextest/arex-core';
 import React, { FC, useState } from 'react';
 
 import { FormItemProps } from './index';

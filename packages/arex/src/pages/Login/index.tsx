@@ -2,7 +2,7 @@ import { UserOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useRequest } from 'ahooks';
 import { App, Button, Card, Form, Input, Space, Typography } from 'antd';
-import { FlexCenterWrapper, getLocalStorage, setLocalStorage } from 'arex-core';
+import { FlexCenterWrapper, getLocalStorage, setLocalStorage } from '@arextest/arex-core';
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

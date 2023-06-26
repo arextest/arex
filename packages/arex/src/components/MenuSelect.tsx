@@ -4,7 +4,7 @@ import { Options } from 'ahooks/lib/useRequest/src/types';
 import { Button, Input, Menu, Spin, Typography } from 'antd';
 import { SizeType } from 'antd/lib/config-provider/SizeContext';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
-import { css, styled, useTranslation } from 'arex-core';
+import { css, styled, useTranslation } from '@arextest/arex-core';
 import React, { ChangeEventHandler, ReactNode, useCallback, useMemo, useState } from 'react';
 
 export type MenuSelectProps<D, P extends any[]> = {

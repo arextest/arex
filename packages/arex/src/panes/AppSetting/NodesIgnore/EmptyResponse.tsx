@@ -1,5 +1,5 @@
 import { Button, Empty } from 'antd';
-import { FlexCenterWrapper, useTranslation } from 'arex-core';
+import { FlexCenterWrapper, useTranslation } from '@arextest/arex-core';
 import React, { FC } from 'react';
 
 type EmptyResponseProps = {

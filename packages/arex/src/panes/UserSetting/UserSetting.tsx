@@ -1,6 +1,6 @@
 import { useRequest } from 'ahooks';
 import { App, Form, Switch } from 'antd';
-import { ColorPrimaryPalette, getLocalStorage, PanesTitle } from 'arex-core';
+import { ColorPrimaryPalette, getLocalStorage, PanesTitle } from '@arextest/arex-core';
 import React, { FC, useEffect } from 'react';
 
 import { EMAIL_KEY } from '@/constant';

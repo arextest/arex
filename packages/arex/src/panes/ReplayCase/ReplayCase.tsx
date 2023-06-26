@@ -7,7 +7,7 @@ import {
   getLocalStorage,
   PanesTitle,
   useTranslation,
-} from 'arex-core';
+} from '@arextest/arex-core';
 import React, { useMemo, useRef, useState } from 'react';
 
 import { EMAIL_KEY } from '@/constant';

@@ -6,7 +6,7 @@ import {
   HighlightRowTable,
   HighlightRowTableProps,
   useTranslation,
-} from 'arex-core';
+} from '@arextest/arex-core';
 import React, { FC, useEffect, useState } from 'react';
 import CountUp from 'react-countup';
 import { useSearchParams } from 'react-router-dom';

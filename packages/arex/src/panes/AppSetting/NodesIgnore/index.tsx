@@ -6,7 +6,7 @@ import {
   tryPrettierJsonString,
   tryStringifyJson,
   useTranslation,
-} from 'arex-core';
+} from '@arextest/arex-core';
 import React, { FC, useMemo, useState } from 'react';
 
 import { EditAreaPlaceholder } from '@/components';

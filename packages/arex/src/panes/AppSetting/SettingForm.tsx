@@ -1,5 +1,5 @@
 import { Form, FormProps, Spin } from 'antd';
-import { styled } from 'arex-core';
+import { styled } from '@arextest/arex-core';
 import React, { ReactNode } from 'react';
 
 type SettingFormProps = FormProps & { loading: boolean; children: ReactNode };

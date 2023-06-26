@@ -1,6 +1,6 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Input, theme, Typography } from 'antd';
-import { useTranslation } from 'arex-core';
+import { useTranslation } from '@arextest/arex-core';
 import React, { FC } from 'react';
 
 export interface PathCollapseHeaderProps {

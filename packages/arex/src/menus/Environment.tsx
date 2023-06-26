@@ -7,7 +7,7 @@ import {
   SmallTextButton,
   SpaceBetweenWrapper,
   useTranslation,
-} from 'arex-core';
+} from '@arextest/arex-core';
 import React, { useMemo } from 'react';
 
 import { MenuSelect } from '@/components';

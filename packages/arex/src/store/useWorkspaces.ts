@@ -1,4 +1,4 @@
-import { getLocalStorage, i18n, RoleEnum } from 'arex-core';
+import { getLocalStorage, i18n, RoleEnum } from '@arextest/arex-core';
 import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 

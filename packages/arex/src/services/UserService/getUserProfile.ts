@@ -1,4 +1,10 @@
-import { ColorPrimary, CompactMode, I18nextLng, Theme, tryParseJsonString } from 'arex-core';
+import {
+  ColorPrimary,
+  CompactMode,
+  I18nextLng,
+  Theme,
+  tryParseJsonString,
+} from '@arextest/arex-core';
 
 import { request } from '@/utils';
 

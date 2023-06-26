@@ -19,7 +19,7 @@ import {
   SpaceBetweenWrapper,
   TooltipButton,
   useTranslation,
-} from 'arex-core';
+} from '@arextest/arex-core';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 

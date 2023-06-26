@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { App, Button, Checkbox, Collapse, Form, InputNumber, Select, TimePicker } from 'antd';
-import { HelpTooltip, useTranslation } from 'arex-core';
+import { HelpTooltip, useTranslation } from '@arextest/arex-core';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useState } from 'react';
 import { useImmer } from 'use-immer';

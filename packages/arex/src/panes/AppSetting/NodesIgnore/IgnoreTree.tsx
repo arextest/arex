@@ -1,7 +1,7 @@
 import { Card, Spin, Tree, Typography } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
-import { SpaceBetweenWrapper, useTranslation } from 'arex-core';
+import { SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
 import React, { FC } from 'react';
 
 import EmptyResponse from './EmptyResponse';

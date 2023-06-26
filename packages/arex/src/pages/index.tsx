@@ -10,7 +10,7 @@ import {
   ArexPanesContainerProps,
   getLocalStorage,
   useTranslation,
-} from 'arex-core';
+} from '@arextest/arex-core';
 import React, { useMemo } from 'react';
 
 import { EnvironmentSelect, HeaderMenu } from '@/components';

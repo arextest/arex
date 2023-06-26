@@ -1,6 +1,6 @@
 import { useRequest } from 'ahooks';
 import { Badge, Tabs, theme } from 'antd';
-import { ArexPaneFC, PanesTitle } from 'arex-core';
+import { ArexPaneFC, PanesTitle } from '@arextest/arex-core';
 import React, { ReactNode, useState } from 'react';
 
 import { StorageService } from '@/services';

@@ -2,7 +2,7 @@ import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import { useRequest } from 'ahooks';
 import { Badge, Button, DatePicker, Divider, Empty, Select, Space, theme, Typography } from 'antd';
 import { RangePickerProps } from 'antd/es/date-picker';
-import { Label, styled } from 'arex-core';
+import { Label, styled } from '@arextest/arex-core';
 import dayjs from 'dayjs';
 import React, { FC, useState } from 'react';
 

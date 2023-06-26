@@ -1,6 +1,6 @@
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { ButtonProps, Space, Typography } from 'antd';
-import { TooltipButton, useTranslation } from 'arex-core';
+import { TooltipButton, useTranslation } from '@arextest/arex-core';
 import React, { FC } from 'react';
 
 export type CompareConfigTitleProps = {
