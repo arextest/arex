@@ -1,5 +1,5 @@
-import { Tabs } from 'antd';
 import { useTranslation } from '@arextest/arex-core';
+import { Tabs } from 'antd';
 import React from 'react';
 
 import CollectionLabel from './CollectionLabel';

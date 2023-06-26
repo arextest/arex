@@ -1,12 +1,12 @@
-import { useRequest } from 'ahooks';
-import { App, Col, Divider, Row } from 'antd';
-import { DataNode, TreeProps } from 'antd/lib/tree';
 import {
   tryParseJsonString,
   tryPrettierJsonString,
   tryStringifyJson,
   useTranslation,
 } from '@arextest/arex-core';
+import { useRequest } from 'ahooks';
+import { App, Col, Divider, Row } from 'antd';
+import { DataNode, TreeProps } from 'antd/lib/tree';
 import React, { FC, useMemo, useState } from 'react';
 
 import { EditAreaPlaceholder } from '@/components';

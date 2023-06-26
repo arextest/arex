@@ -1,4 +1,10 @@
-import { ColorPrimary, getLocalStorage, I18nextLng, RequestMethodEnum, Theme } from 'arex-core';
+import {
+  ColorPrimary,
+  getLocalStorage,
+  I18nextLng,
+  RequestMethodEnum,
+  Theme,
+} from '@arextest/arex-core';
 export enum PanesType {
   DEMO = 'demo',
   ENVIRONMENT = 'environment',

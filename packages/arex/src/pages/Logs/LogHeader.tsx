@@ -1,5 +1,5 @@
-import { Tag, Typography } from 'antd';
 import { styled } from '@arextest/arex-core';
+import { Tag, Typography } from 'antd';
 import React, { FC } from 'react';
 
 import { Log } from '@/services/ReportService';

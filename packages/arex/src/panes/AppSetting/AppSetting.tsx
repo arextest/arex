@@ -1,5 +1,5 @@
-import { Tabs } from 'antd';
 import { ArexPaneFC, css, useTranslation } from '@arextest/arex-core';
+import { Tabs } from 'antd';
 import React, { useMemo } from 'react';
 
 import CompareConfig from '@/panes/AppSetting/CompareConfig';

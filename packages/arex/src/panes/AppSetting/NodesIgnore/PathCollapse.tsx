@@ -6,6 +6,14 @@ import {
   PlusOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
+import {
+  css,
+  SmallTextButton,
+  SpaceBetweenWrapper,
+  styled,
+  TooltipButton,
+  useTranslation,
+} from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import {
   App,
@@ -18,14 +26,6 @@ import {
   Spin,
   Typography,
 } from 'antd';
-import {
-  css,
-  SmallTextButton,
-  SpaceBetweenWrapper,
-  styled,
-  TooltipButton,
-  useTranslation,
-} from '@arextest/arex-core';
 import React, { FC, ReactNode, SyntheticEvent, useMemo, useRef, useState } from 'react';
 
 import { ComparisonService } from '@/services';

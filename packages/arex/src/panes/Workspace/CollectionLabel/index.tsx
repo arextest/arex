@@ -1,7 +1,7 @@
+import { useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Popconfirm, Space, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { useTranslation } from '@arextest/arex-core';
 import React, { FC, useRef } from 'react';
 import { Label } from 'src/services/ReportService/label';
 

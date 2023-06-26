@@ -1,5 +1,5 @@
-import { Carousel } from 'antd';
 import { styled } from '@arextest/arex-core';
+import { Carousel } from 'antd';
 
 const TreeCarousel = styled(Carousel)`
   .slick-dots-bottom {

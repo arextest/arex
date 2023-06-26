@@ -1,7 +1,7 @@
+import { styled, useTranslation } from '@arextest/arex-core';
 import { Card, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
-import { styled, useTranslation } from '@arextest/arex-core';
 import React, { FC } from 'react';
 
 type IgnoreTreeProps = Omit<TreeProps, 'treeData'> & {

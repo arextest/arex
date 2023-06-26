@@ -5,9 +5,6 @@ import {
   PlusOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import { useRequest } from 'ahooks';
-import { App, Button, Divider, Popconfirm, Space } from 'antd';
-import { ColumnsType } from 'antd/es/table';
 import {
   ArexPaneFC,
   PanesTitle,
@@ -15,6 +12,9 @@ import {
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
+import { useRequest } from 'ahooks';
+import { App, Button, Divider, Popconfirm, Space } from 'antd';
+import { ColumnsType } from 'antd/es/table';
 import React, { useMemo } from 'react';
 import { useImmer } from 'use-immer';
 

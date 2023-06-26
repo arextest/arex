@@ -1,4 +1,4 @@
-import { ArexPaneManager, Pane, PanesData } from 'arex-core';
+import { ArexPaneManager, Pane, PanesData } from '@arextest/arex-core';
 import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';

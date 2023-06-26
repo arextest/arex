@@ -1,6 +1,6 @@
 import { LogoutOutlined, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
-import { Avatar, Dropdown, DropdownProps, Space } from 'antd';
 import { getLocalStorage, TooltipButton, useTranslation } from '@arextest/arex-core';
+import { Avatar, Dropdown, DropdownProps, Space } from 'antd';
 import React, { FC, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 

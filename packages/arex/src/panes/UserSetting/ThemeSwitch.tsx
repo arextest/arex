@@ -1,5 +1,5 @@
-import { Switch } from 'antd';
 import { Theme } from '@arextest/arex-core';
+import { Switch } from 'antd';
 import React, { FC } from 'react';
 
 import { useUserProfile } from '@/store';

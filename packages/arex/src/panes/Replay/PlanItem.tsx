@@ -8,6 +8,13 @@ import {
   RedoOutlined,
   StopOutlined,
 } from '@ant-design/icons';
+import {
+  getLocalStorage,
+  SmallTextButton,
+  SpaceBetweenWrapper,
+  TooltipButton,
+  useTranslation,
+} from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import {
@@ -27,13 +34,6 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import {
-  getLocalStorage,
-  SmallTextButton,
-  SpaceBetweenWrapper,
-  TooltipButton,
-  useTranslation,
-} from '@arextest/arex-core';
 import dayjs from 'dayjs';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Pie } from 'react-chartjs-2';

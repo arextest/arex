@@ -1,7 +1,4 @@
 import { DownOutlined, PlayCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { useRequest } from 'ahooks';
-import { Button, Tag, Tree } from 'antd';
-import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import {
   ArexMenuFC,
   CategoryKey,
@@ -15,6 +12,9 @@ import {
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
+import { useRequest } from 'ahooks';
+import { Button, Tag, Tree } from 'antd';
+import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';

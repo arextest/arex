@@ -1,6 +1,6 @@
+import { EllipsisTooltip, SceneCodeMap } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { Badge, Space, theme, Typography } from 'antd';
-import { EllipsisTooltip, SceneCodeMap } from '@arextest/arex-core';
 import React, { FC, useCallback } from 'react';
 import Tree from 'react-d3-tree';
 

@@ -1,5 +1,5 @@
-import { theme } from 'antd';
 import { ColorPrimaryPalette } from '@arextest/arex-core';
+import { theme } from 'antd';
 
 import useUserProfile from '../store/useUserProfile';
 

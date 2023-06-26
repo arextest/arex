@@ -1,5 +1,5 @@
-import { theme } from 'antd';
 import { ColorPrimaryPalette, colorPrimaryPalette, Theme } from '@arextest/arex-core';
+import { theme } from 'antd';
 import React, { FC, useMemo } from 'react';
 import { CirclePicker } from 'react-color';
 

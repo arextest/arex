@@ -1,5 +1,3 @@
-import { useRequest } from 'ahooks';
-import { Collapse, Typography } from 'antd';
 import {
   ArexPaneFC,
   CollapseTable,
@@ -8,6 +6,8 @@ import {
   PanesTitle,
   useTranslation,
 } from '@arextest/arex-core';
+import { useRequest } from 'ahooks';
+import { Collapse, Typography } from 'antd';
 import React, { useState } from 'react';
 
 import { ReportService } from '@/services';

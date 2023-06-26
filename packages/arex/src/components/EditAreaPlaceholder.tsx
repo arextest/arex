@@ -1,5 +1,5 @@
-import { Skeleton } from 'antd';
 import { styled } from '@arextest/arex-core';
+import { Skeleton } from 'antd';
 import React, { FC, ReactNode } from 'react';
 
 const EditAreaPlaceholderWrapper = styled.div<{ dashedBorder?: boolean }>`

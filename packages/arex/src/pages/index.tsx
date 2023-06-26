@@ -1,5 +1,3 @@
-import { useRequest } from 'ahooks';
-import { App, MenuProps } from 'antd';
 import {
   ArexFooter,
   ArexHeader,
@@ -11,6 +9,8 @@ import {
   getLocalStorage,
   useTranslation,
 } from '@arextest/arex-core';
+import { useRequest } from 'ahooks';
+import { App, MenuProps } from 'antd';
 import React, { useMemo } from 'react';
 
 import { EnvironmentSelect, HeaderMenu } from '@/components';

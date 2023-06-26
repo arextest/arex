@@ -1,5 +1,3 @@
-import { useRequest } from 'ahooks';
-import { App } from 'antd';
 import {
   ArexPaneFC,
   CollapseTable,
@@ -8,6 +6,8 @@ import {
   PanesTitle,
   useTranslation,
 } from '@arextest/arex-core';
+import { useRequest } from 'ahooks';
+import { App } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
 
 import { EMAIL_KEY } from '@/constant';

@@ -1,7 +1,7 @@
 import { EditOutlined, SaveOutlined, SyncOutlined } from '@ant-design/icons';
+import { SmallTextButton, SpaceBetweenWrapper, Theme, useTranslation } from '@arextest/arex-core';
 import { Editor, EditorProps } from '@monaco-editor/react';
 import { App, Dropdown, Typography } from 'antd';
-import { SmallTextButton, SpaceBetweenWrapper, Theme, useTranslation } from '@arextest/arex-core';
 import React, { FC, useEffect, useState } from 'react';
 
 import PaneDrawer from '@/components/PaneDrawer';

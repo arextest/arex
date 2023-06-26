@@ -1,6 +1,6 @@
+import { Theme } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { Segmented as SegmentedAntd, SegmentedProps } from 'antd';
-import { Theme } from '@arextest/arex-core';
 import React, { forwardRef } from 'react';
 
 import { useUserProfile } from '@/store';

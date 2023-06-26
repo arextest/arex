@@ -1,5 +1,5 @@
-import { Collapse } from 'antd';
 import { DiffJsonView } from '@arextest/arex-core';
+import { Collapse } from 'antd';
 import React, { FC } from 'react';
 
 import { RecordResult } from '@/services/StorageService';

@@ -1,7 +1,7 @@
 import { ExclamationCircleFilled, MoreOutlined } from '@ant-design/icons';
+import { getLocalStorage, RequestMethodIcon, styled, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Dropdown, Input, MenuProps } from 'antd';
-import { getLocalStorage, RequestMethodIcon, styled, useTranslation } from '@arextest/arex-core';
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';

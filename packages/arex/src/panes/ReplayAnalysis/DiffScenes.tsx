@@ -1,7 +1,7 @@
+import { HighlightRowTable, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { Col, Row, Tag, theme, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { HighlightRowTable, useTranslation } from '@arextest/arex-core';
 import React, { FC, useMemo, useState } from 'react';
 
 import { MenuSelect } from '@/components';

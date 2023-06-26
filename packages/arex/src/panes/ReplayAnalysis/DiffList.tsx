@@ -1,7 +1,7 @@
 import { DiffOutlined, StopOutlined } from '@ant-design/icons';
+import { DiffMatch, TooltipButton, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Card, Modal, Space, Tag, Tooltip, Typography } from 'antd';
-import { DiffMatch, TooltipButton, useTranslation } from '@arextest/arex-core';
 import React, { FC, useMemo } from 'react';
 
 import { ComparisonService, ReportService } from '@/services';

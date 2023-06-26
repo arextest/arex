@@ -1,6 +1,6 @@
+import { getLocalStorage, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Form, FormProps, Input, Modal, TreeSelect, Typography } from 'antd';
-import { getLocalStorage, useTranslation } from '@arextest/arex-core';
 import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY } from '@/constant';

@@ -1,5 +1,5 @@
-import { Spin } from 'antd';
 import { RouterPath } from '@arextest/arex-core';
+import { Spin } from 'antd';
 import React, { FC, lazy, Suspense } from 'react';
 import { RouteObject } from 'react-router-dom';
 

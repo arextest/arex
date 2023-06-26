@@ -1,5 +1,5 @@
-import { Button, Form, Input, Modal } from 'antd';
 import { useTranslation } from '@arextest/arex-core';
+import { Button, Form, Input, Modal } from 'antd';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { FlexRowReverseWrapper } from '@/components';

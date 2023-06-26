@@ -5,8 +5,8 @@ import {
   MinusCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import { Progress, Tag, Tooltip } from 'antd';
 import { useTranslation } from '@arextest/arex-core';
+import { Progress, Tag, Tooltip } from 'antd';
 import React, { FC, useMemo } from 'react';
 
 export const resultsStates = [

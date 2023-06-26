@@ -1,6 +1,4 @@
 import { AimOutlined, DeploymentUnitOutlined, PlusOutlined } from '@ant-design/icons';
-import { useRequest } from 'ahooks';
-import { App, theme } from 'antd';
 import {
   ArexMenuFC,
   createArexMenu,
@@ -8,6 +6,8 @@ import {
   SpaceBetweenWrapper,
   useTranslation,
 } from '@arextest/arex-core';
+import { useRequest } from 'ahooks';
+import { App, theme } from 'antd';
 import React, { useMemo } from 'react';
 
 import { MenuSelect } from '@/components';

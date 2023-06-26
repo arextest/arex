@@ -1,5 +1,5 @@
-import { Select } from 'antd';
 import { I18_KEY, i18n, I18nextLng, local } from '@arextest/arex-core';
+import { Select } from 'antd';
 import React, { FC } from 'react';
 
 const LanguageSelect: FC<{ value?: I18nextLng; onChange?: (lang: I18nextLng) => void }> = (
