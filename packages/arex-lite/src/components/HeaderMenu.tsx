@@ -1,5 +1,4 @@
 import { LogoutOutlined, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
-import { Avatar, Dropdown, DropdownProps, Space, Switch } from 'antd';
 import {
   I18_KEY,
   i18n,
@@ -8,6 +7,7 @@ import {
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
+import { Avatar, Dropdown, DropdownProps, Space, Switch } from 'antd';
 import React, { FC, useMemo } from 'react';
 
 import { useUserProfile } from '../store';

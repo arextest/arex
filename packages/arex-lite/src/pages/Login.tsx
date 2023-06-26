@@ -1,6 +1,6 @@
+import { useTranslation } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { Button } from 'antd';
-import { useTranslation } from '@arextest/arex-core';
 import React, { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 

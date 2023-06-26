@@ -1,6 +1,6 @@
 import { FileOutlined } from '@ant-design/icons';
-import { Button, Space } from 'antd';
 import { ArexPaneFC, createArexPane, decodeUrl, i18n, styled } from '@arextest/arex-core';
+import { Button, Space } from 'antd';
 import React, { useState } from 'react';
 
 import { MenusType, PanesType } from '../constant';
