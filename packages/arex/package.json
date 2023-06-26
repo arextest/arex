@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "do-dev": "vite",
-    "do-build": "vite build"
+    "do-build": "node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
+    "@arextest/arex-core": "0.0.3-beta.13",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@monaco-editor/react": "^4.5.1",
@@ -17,7 +18,6 @@
     "allotment": "^1.18.1",
     "antd": "^5.4.2",
     "antd-img-crop": "^4.12.2",
-    "arex-core": "0.0.3-beta.14",
     "arex-request-core": "0.0.1-beta.36",
     "arex-request-runtime": "^1.0.2",
     "axios": "^1.3.6",
