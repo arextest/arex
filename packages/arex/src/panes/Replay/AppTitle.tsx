@@ -1,4 +1,12 @@
 import { CloseCircleOutlined, PlayCircleOutlined, SyncOutlined } from '@ant-design/icons';
+import {
+  getLocalStorage,
+  HelpTooltip,
+  PanesTitle,
+  SpaceBetweenWrapper,
+  TooltipButton,
+  useTranslation,
+} from '@arextest/arex-core';
 import styled from '@emotion/styled';
 import { useLocalStorageState, useRequest } from 'ahooks';
 import {
@@ -12,14 +20,6 @@ import {
   theme,
   Typography,
 } from 'antd';
-import {
-  getLocalStorage,
-  HelpTooltip,
-  PanesTitle,
-  SpaceBetweenWrapper,
-  TooltipButton,
-  useTranslation,
-} from 'arex-core';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 

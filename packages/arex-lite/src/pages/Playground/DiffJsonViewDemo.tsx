@@ -1,4 +1,4 @@
-import { DiffJsonView } from 'arex-core';
+import { DiffJsonView } from '@arextest/arex-core';
 const Playground = () => {
   return (
     <div>

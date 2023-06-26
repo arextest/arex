@@ -1,9 +1,14 @@
 import { HeartFilled, HeartOutlined } from '@ant-design/icons';
+import { ArexMenuFC } from '@arextest/arex-core';
+import {
+  getLocalStorage,
+  SpaceBetweenWrapper,
+  TooltipButton,
+  useTranslation,
+} from '@arextest/arex-core';
 import styled from '@emotion/styled';
 import { useRequest, useToggle } from 'ahooks';
 import { theme } from 'antd';
-import { ArexMenuFC } from 'arex-core';
-import { getLocalStorage, SpaceBetweenWrapper, TooltipButton, useTranslation } from 'arex-core';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { EMAIL_KEY } from '@/constant';

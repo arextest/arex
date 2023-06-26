@@ -1,9 +1,9 @@
+import { JSONEditor, JSONEditorPropsOptional, ReadonlyValue } from '@arextest/vanilla-jsoneditor';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { theme } from 'antd';
 import { parse, stringify } from 'lossless-json';
 import React, { useEffect, useRef } from 'react';
-import { JSONEditor, JSONEditorPropsOptional, ReadonlyValue } from 'vanilla-jsoneditor';
 
 import { AllDiff } from './helper';
 

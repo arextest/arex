@@ -1,7 +1,7 @@
+import { useTranslation } from '@arextest/arex-core';
 import { Checkbox, Divider } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { CheckboxOptionType, CheckboxValueType } from 'antd/lib/checkbox/Group';
-import { useTranslation } from 'arex-core';
 import React, { FC, useMemo, useState } from 'react';
 
 import { FormItemProps } from './index';

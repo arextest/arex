@@ -1,4 +1,4 @@
-import { getLocalStorage } from 'arex-core';
+import { getLocalStorage } from '@arextest/arex-core';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { ACCESS_TOKEN_KEY } from '@/constant';

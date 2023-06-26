@@ -1,5 +1,5 @@
+import { styled } from '@arextest/arex-core';
 import { Collapse, CollapsePanelProps } from 'antd';
-import { styled } from 'arex-core';
 import React, { FC, ReactNode } from 'react';
 
 import { Log as LogType } from '@/services/ReportService';

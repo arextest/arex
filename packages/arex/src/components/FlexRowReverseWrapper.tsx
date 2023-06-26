@@ -1,4 +1,4 @@
-import { styled } from 'arex-core';
+import { styled } from '@arextest/arex-core';
 
 const FlexRowReverseWrapper = styled.div`
   display: flex;

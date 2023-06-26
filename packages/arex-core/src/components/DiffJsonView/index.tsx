@@ -1,4 +1,4 @@
-import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
+import '@arextest/vanilla-jsoneditor/themes/jse-theme-dark.css';
 
 import { css } from '@emotion/react';
 import { theme } from 'antd';
@@ -16,6 +16,8 @@ export type DiffJsonViewProps = {
   diffJson?: { left: string; right: string };
   diffPath?: LogEntity[];
   remark?: [string, string];
+  onIgnoreKey?: (key: string[]) => void;
+  onSortKey?: (key: string[]) => void;
 };
 const { useToken } = theme;
 const DiffJsonView: FC<DiffJsonViewProps> = ({
@@ -24,6 +26,8 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
   hiddenTooltip,
   height,
   remark,
+  onIgnoreKey,
+  onSortKey,
 }) => {
   const { t } = useTranslation();
   const { theme } = useArexCoreConfig();
@@ -104,7 +108,6 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
           id={'containerLeft'}
         >
           <VanillaJSONEditor
-            readOnly
             height={height}
             remark={remark?.[0] || (t('record') as string)}
             content={{
@@ -114,6 +117,8 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             mainMenuBar={false}
             onClassName={onClassNameLeft}
             allDiffByType={allLeftDiffByType}
+            onIgnoreKey={onIgnoreKey}
+            onSortKey={onSortKey}
           />
         </div>
 
@@ -124,7 +129,6 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
           id={'containerRight'}
         >
           <VanillaJSONEditor
-            readOnly
             height={height}
             remark={remark?.[1] || (t('replay') as string)}
             content={{
@@ -134,6 +138,8 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             mainMenuBar={false}
             onClassName={onClassNameRight}
             allDiffByType={allRightDiffByType}
+            onIgnoreKey={onIgnoreKey}
+            onSortKey={onSortKey}
           />
         </div>
       </div>

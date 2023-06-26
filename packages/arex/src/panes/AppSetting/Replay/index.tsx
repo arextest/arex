@@ -1,6 +1,6 @@
+import { HelpTooltip, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Form, InputNumber } from 'antd';
-import { HelpTooltip, useTranslation } from 'arex-core';
 import React from 'react';
 import { useImmer } from 'use-immer';
 

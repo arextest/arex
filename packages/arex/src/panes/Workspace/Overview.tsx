@@ -1,4 +1,5 @@
 import { UserOutlined } from '@ant-design/icons';
+import { getLocalStorage, RoleEnum, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import {
   App,
@@ -13,7 +14,6 @@ import {
   Space,
   Typography,
 } from 'antd';
-import { getLocalStorage, RoleEnum, useTranslation } from 'arex-core';
 import React, { useMemo } from 'react';
 import { FC } from 'react';
 

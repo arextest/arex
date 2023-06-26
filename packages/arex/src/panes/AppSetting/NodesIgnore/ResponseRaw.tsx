@@ -1,7 +1,7 @@
 // import { json } from '@codemirror/lang-json';
 // import CodeMirror, { ReactCodeMirrorProps } from '@uiw/react-codemirror';
+import { SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
 import { Button, Input, Space } from 'antd';
-import { SpaceBetweenWrapper, useTranslation } from 'arex-core';
 import React, { FC } from 'react';
 
 import { useUserProfile } from '@/store';

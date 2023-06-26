@@ -1,4 +1,4 @@
-import { ColorPrimary, I18nextLng, setLocalStorage, Theme } from 'arex-core';
+import { ColorPrimary, I18nextLng, setLocalStorage, Theme } from '@arextest/arex-core';
 import { create } from 'zustand';
 
 import { DEFAULT_COLOR_PRIMARY, DEFAULT_THEME, THEME_KEY } from '../constant';
