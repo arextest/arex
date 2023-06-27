@@ -177,11 +177,12 @@ const NodeSort: FC<NodeSortProps> = (props) => {
     });
 
     handleSetSortArray(path);
-    setTreeEditMode(TreeEditModeEnum.SortTree);
-    treeCarouselRef.current?.goTo(1);
 
+    setTreeEditMode(TreeEditModeEnum.SortTree);
     setOpenSortModal(true);
     setTreeReady(true);
+
+    setTimeout(() => treeCarouselRef.current?.goTo(1)); // 防止初始化时 treeCarouselRef 未绑定
   };
 
   // 获取待排序操作的数组结构
