@@ -1,5 +1,9 @@
-import { ArexCoreProvider, ArexMenuManager, ArexPaneManager } from '@arextest/arex-core';
-import { getLocalStorage } from '@arextest/arex-core';
+import {
+  ArexCoreProvider,
+  ArexMenuManager,
+  ArexPaneManager,
+  getLocalStorage,
+} from '@arextest/arex-core';
 import * as Sentry from '@sentry/react';
 import React from 'react';
 
