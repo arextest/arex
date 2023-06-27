@@ -2,6 +2,8 @@ import { CloseCircleOutlined, PlayCircleOutlined, SyncOutlined } from '@ant-desi
 import {
   getLocalStorage,
   HelpTooltip,
+  i18n,
+  I18nextLng,
   PanesTitle,
   SpaceBetweenWrapper,
   TooltipButton,
@@ -36,6 +38,19 @@ type CreatePlanForm = {
   targetEnv: string;
   caseSourceRange: [Dayjs, Dayjs];
   operationList?: string[];
+};
+
+const MessageMap: {
+  [lang in I18nextLng]: {
+    [code: number]: string;
+  };
+} = {
+  cn: {
+    1: '错误：回放执行失败，可能是由于与正在进行的同一应用程序的另一个计划存在冲突。请检查当前计划状态，并确保它不会与其他正在进行的计划冲突。',
+  },
+  en: {
+    1: 'Error: The execution of the plan failed due to a possible conflict with another plan in process for the same app. Please check the current plan status and ensure that it does not conflict with any other ongoing plans.',
+  },
 };
 
 const TitleWrapper = styled(
@@ -74,9 +89,9 @@ const InitialValues = {
 };
 
 const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
-  const { t } = useTranslation(['components']);
   const { notification } = App.useApp();
   const { token } = theme.useToken();
+  const { t } = useTranslation(['components']);
   const email = getLocalStorage<string>(EMAIL_KEY);
 
   const [form] = Form.useForm<CreatePlanForm>();
@@ -115,6 +130,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
       if (res.result === 1) {
         notification.success({
           message: t('replay.startSuccess'),
+          // description: MessageMap[i18n.language as I18nextLng][res.code],
         });
         onRefresh?.();
       } else {
@@ -122,6 +138,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         notification.error({
           message: t('replay.startFailed'),
           description: res.desc,
+          // description: MessageMap[i18n.language as I18nextLng][res.code],
         });
       }
     },
