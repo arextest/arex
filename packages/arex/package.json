@@ -39,7 +39,6 @@
     "zustand": "^4.3.7"
   },
   "devDependencies": {
-    "@sentry/vite-plugin": "^2.3.0",
     "@types/lodash": "^4.14.194",
     "@types/react": "^18.0.28",
     "@types/react-color": "^3.0.6",
