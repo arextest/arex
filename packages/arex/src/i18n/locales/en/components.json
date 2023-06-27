@@ -58,7 +58,10 @@
     "add_case": "Add Case",
     "rename": "Rename",
     "duplicate": "Duplicate",
-    "delete": "Delete"
+    "delete": "Delete",
+    "import_export": "Import/Export",
+    "export": "Export",
+    "from_postman_description": "Import from Hoppscotch collection file"
   },
   "replay": {
     "selectApplication": "Please select an application",
