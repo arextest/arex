@@ -11,7 +11,9 @@ import { App } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
 
 import { EMAIL_KEY } from '@/constant';
-import { ComparisonService, ReportService, ScheduleService } from '@/services';
+import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
+import NodesIgnore from '@/panes/AppSetting/CompareConfig/NodesIgnore';
+import { ComparisonService, ConfigService, ReportService, ScheduleService } from '@/services';
 import { infoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
 
 import Case from './Case';
@@ -99,6 +101,35 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     },
   );
 
+  const handleSortKey = (path: string[]) => {
+    console.log(path);
+  };
+
+  /**
+   * 请求 InterfaceResponse
+   */
+  const {
+    data: interfaceResponse,
+    mutate: setInterfaceResponse,
+    run: queryInterfaceResponse,
+  } = useRequest(
+    () =>
+      ConfigService.queryInterfaceResponse({
+        id: props.data.operationId,
+      }),
+    {
+      onBefore() {
+        setInterfaceResponse();
+      },
+    },
+  );
+
+  const interfaceResponseParsed = useMemo<{ [key: string]: any }>(() => {
+    const res = interfaceResponse?.operationResponse;
+    if (res) return JSON.parse(res) || {};
+    else return {};
+  }, [interfaceResponse]);
+
   function handleClickRerunCase(recordId: string) {
     queryPlanFailCase({
       planId: props.data.planId,
@@ -135,6 +166,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             loading={loadingFullLinkInfo}
             data={fullLinkInfoMerged}
             onIgnoreKey={handleIgnoreKey}
+            onSortKey={handleSortKey}
             requestDiffMsg={ReportService.queryDiffMsgById}
             requestQueryLogEntity={ReportService.queryLogEntity}
             requestIgnoreNode={(path: string[]) =>
@@ -148,6 +180,13 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         }
       />
       <SaveCase planId={props.data.planId} operationId={props.data.operationId} ref={saveCaseRef} />
+
+      <NodesIgnore
+        appId={props.data.appId}
+        configType={CONFIG_TYPE.INTERFACE}
+        interfaceId={props.data.operationId}
+        responseParsed={interfaceResponseParsed}
+      />
     </>
   );
 };
