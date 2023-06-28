@@ -53,6 +53,7 @@ export interface DiffPathViewerProps {
   }) => Promise<LogEntity[]>;
   requestIgnoreNode: (path: string[]) => Promise<boolean>;
   onIgnoreKey?: (key: string[]) => void;
+  onGlobalIgnoreKey?: (key: string[]) => void;
   onSortKey?: (key: string[]) => void;
 }
 
@@ -189,6 +190,7 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
               }}
               diffPath={logEntity}
               onIgnoreKey={props.onIgnoreKey}
+              onGlobalIgnoreKey={props.onGlobalIgnoreKey}
               onSortKey={props.onSortKey}
             />
           </div>

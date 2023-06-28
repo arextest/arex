@@ -17,6 +17,7 @@ export type DiffJsonViewProps = {
   diffPath?: LogEntity[];
   remark?: [string, string];
   onIgnoreKey?: (key: string[]) => void;
+  onGlobalIgnoreKey?: (key: string[]) => void;
   onSortKey?: (key: string[]) => void;
 };
 const { useToken } = theme;
@@ -27,6 +28,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
   height,
   remark,
   onIgnoreKey,
+  onGlobalIgnoreKey,
   onSortKey,
 }) => {
   const { t } = useTranslation();
@@ -118,6 +120,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             onClassName={onClassNameLeft}
             allDiffByType={allLeftDiffByType}
             onIgnoreKey={onIgnoreKey}
+            onGlobalIgnoreKey={onGlobalIgnoreKey}
             onSortKey={onSortKey}
           />
         </div>
@@ -139,6 +142,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             onClassName={onClassNameRight}
             allDiffByType={allRightDiffByType}
             onIgnoreKey={onIgnoreKey}
+            onGlobalIgnoreKey={onGlobalIgnoreKey}
             onSortKey={onSortKey}
           />
         </div>

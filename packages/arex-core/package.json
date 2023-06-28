@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-core",
-  "version": "0.0.3-beta.13",
+  "version": "0.0.3-beta.14",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-core.umd.cjs",
   "module": "dist/arex-core.js",
@@ -17,7 +17,7 @@
   ],
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
-    "@arextest/vanilla-jsoneditor": "^0.17.12",
+    "@arextest/vanilla-jsoneditor": "^0.17.14",
     "@emotion/react": "^11.10.6",
     "@emotion/serialize": "^1.1.1",
     "@emotion/styled": "^11.10.6",

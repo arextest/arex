@@ -89,9 +89,9 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   });
 
   const { run: handleIgnoreKey } = useRequest(
-    (path: string[]) =>
+    (path: string[], global?: boolean) =>
       ComparisonService.insertIgnoreNode({
-        operationId: props.data.operationId,
+        operationId: global ? undefined : props.data.operationId,
         appId: props.data.appId,
         exclusions: path,
       }),
@@ -179,6 +179,10 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             loading={loadingFullLinkInfo}
             data={fullLinkInfoMerged}
             onIgnoreKey={handleIgnoreKey}
+            onGlobalIgnoreKey={(path) => {
+              console.log(path, 'global');
+              handleIgnoreKey(path, true);
+            }}
             onSortKey={handleSortKey}
             requestDiffMsg={ReportService.queryDiffMsgById}
             requestQueryLogEntity={ReportService.queryLogEntity}

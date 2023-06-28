@@ -20,6 +20,7 @@ export interface DiffPathProps
   requestDiffMsg: (params: any) => Promise<CompareResultDetail>;
   data: infoItem[];
   onIgnoreKey?: (key: string[]) => void;
+  onGlobalIgnoreKey?: (key: string[]) => void;
   onSortKey?: (key: string[]) => void;
 }
 
@@ -91,6 +92,7 @@ const DiffPath: FC<DiffPathProps> = (props) => {
                 appId={props.appId}
                 operationId={props.operationId}
                 onIgnoreKey={props.onIgnoreKey}
+                onGlobalIgnoreKey={props.onGlobalIgnoreKey}
                 onSortKey={props.onSortKey}
                 requestIgnoreNode={props.requestIgnoreNode}
                 requestQueryLogEntity={props.requestQueryLogEntity}
