@@ -1,5 +1,10 @@
 import { SaveOutlined } from '@ant-design/icons';
-import {tryParseJsonString, tryStringifyJson , EmptyWrapper, TooltipButton } from '@arextest/arex-core';
+import {
+  EmptyWrapper,
+  TooltipButton,
+  tryParseJsonString,
+  tryStringifyJson,
+} from '@arextest/arex-core';
 import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { App, Col, Collapse, Row, Space } from 'antd';
