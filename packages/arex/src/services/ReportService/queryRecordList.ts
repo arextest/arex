@@ -8,6 +8,7 @@ export interface QueryRecordListReq {
   operationType: string;
   pageSize: number;
   pageIndex: number;
+  operationName: string;
 }
 
 export interface QueryRecordListRes {
@@ -16,7 +17,10 @@ export interface QueryRecordListRes {
 }
 
 export async function queryRecordList(params: QueryRecordListReq) {
-  return request
-    .post<QueryRecordListRes>('/report/report/listRecord', params)
-    .then((res) => Promise.resolve(res.body.recordList));
+  return request.post<QueryRecordListRes>('/report/report/listRecord', params).then((res) =>
+    Promise.resolve({
+      total: res.body.totalCount,
+      list: res.body.recordList,
+    }),
+  );
 }

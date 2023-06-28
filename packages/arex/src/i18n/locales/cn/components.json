@@ -164,7 +164,11 @@
     "differenceNode": "差异节点",
     "addIgnoreSuccess": "添加忽略成功",
     "diffMatch": "差异展示",
-    "replayEndTime": "结束时间"
+    "replayEndTime": "结束时间",
+    "operationName": "接口名称",
+    "recordedCaseCount": "用例数",
+    "recordTime": "录制时间",
+    "operationType": "接口类型"
   },
   "appSetting": {
     "record": "录制",
@@ -221,7 +225,10 @@
     "mockTips": "\"body\"为json字符串时会自动转换成json对象，保存时还原。",
     "runningStatus": "运行状态",
     "frequencyUnit": "个/分钟",
-    "frequencyTip": "单接口单日录制: * 个"
+    "frequencyTip": "单接口单日录制: * 个",
+    "maxQPS": "最大QPS",
+    "QPSTips": "有效范围 1 - 20",
+    "emptyQPS": "请输入最大QPS"
   },
   "env": {
     "searchEnvironment": "搜索环境",

@@ -14,11 +14,13 @@ import { ExcludeOperation } from './FormItem';
 type SettingFormType = {
   offsetDays: number;
   excludeOperationMap: KeyValueType[];
+  sendMaxQps: number;
 };
 
 const defaultValues: SettingFormType = {
   offsetDays: 0,
   excludeOperationMap: [],
+  sendMaxQps: 0,
 };
 
 const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
@@ -33,10 +35,13 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
       setInitialValues({
         offsetDays: res.offsetDays,
         // @ts-ignore
-        excludeOperationMap: Object.entries(res.excludeOperationMap).map(([key, value]) => ({
-          key,
-          value,
-        })),
+        excludeOperationMap: res.excludeOperationMap
+          ? Object.entries(res.excludeOperationMap).map(([key, value]) => ({
+              key,
+              value,
+            }))
+          : [],
+        sendMaxQps: 20,
       });
     },
   });
@@ -60,12 +65,20 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
         },
         {},
       ),
+      sendMaxQps: values.sendMaxQps,
     };
     updateReplaySetting(params);
   };
 
   return (
     <SettingForm loading={loading} initialValues={initialValues} onFinish={onFinish}>
+      <Form.Item
+        label={<HelpTooltip title={t('appSetting.QPSTips')}>{t('appSetting.maxQPS')}</HelpTooltip>}
+        name='sendMaxQps'
+        rules={[{ required: true, message: t('appSetting.emptyQPS') as string }]}
+      >
+        <InputNumber min={1} max={20} precision={0} />
+      </Form.Item>
       <Form.Item
         label={
           <HelpTooltip title={t('appSetting.caseRangeTooltip')}>
@@ -77,7 +90,6 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
       >
         <InputNumber min={1} />
       </Form.Item>
-
       <Form.Item
         label={
           <HelpTooltip title={t('appSetting.exclusionTooltip')}>
@@ -88,7 +100,6 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
       >
         <ExcludeOperation appId={appId} />
       </Form.Item>
-
       <Form.Item
         wrapperCol={{ offset: 8, span: 16 }}
         style={{ textAlign: 'right', marginTop: '16px' }}

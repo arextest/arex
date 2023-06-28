@@ -164,7 +164,11 @@
     "differenceNode": "Difference node",
     "addIgnoreSuccess": "Ignore node successfully",
     "diffMatch": "Diff Match",
-    "replayEndTime": "ReplayEndTime"
+    "replayEndTime": "ReplayEndTime",
+    "operationName": "operationName",
+    "recordedCaseCount": "recordedCaseCount",
+    "recordTime": "recordTime",
+    "operationType": "operationType"
   },
   "appSetting": {
     "record": "Record",
@@ -222,7 +226,10 @@
     "mockTips": "When \"body\" is a json string, it will be automatically converted into a json object, and restored when saving.",
     "runningStatus": "Running Status",
     "frequencyUnit": "times/minute",
-    "frequencyTip": "Single-interface single-day recording: * times"
+    "frequencyTip": "Single-interface single-day recording: * times",
+    "maxQPS": "Max QPS",
+    "QPSTips": "Allowable value range 1 - 20",
+    "emptyQPS": "Please input your max QPS"
   },
   "env": {
     "searchEnvironment": "Search Environment",
