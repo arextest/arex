@@ -1,11 +1,12 @@
 import { useRequest } from 'ahooks';
-import { Modal, Table } from 'antd';
 import type { TableColumnsType } from 'antd';
+import { Modal, Table } from 'antd';
+import { useTranslation } from 'arex-core';
 import dayjs from 'dayjs';
 import { forwardRef, useImperativeHandle, useState } from 'react';
+
 import RecordedCaseListItem from '@/panes/Replay/RecordedCaseListItem';
 import { ReportService } from '@/services';
-import { useTranslation } from 'arex-core';
 
 export type RecordedCaseListRef = {
   open: () => void;

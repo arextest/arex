@@ -1,9 +1,10 @@
 import { usePagination } from 'ahooks';
-import { Table, Select } from 'antd';
+import { Select, Table } from 'antd';
+import { useTranslation } from 'arex-core';
 import dayjs from 'dayjs';
 import { FC, useState } from 'react';
+
 import { ReportService } from '@/services';
-import { useTranslation } from 'arex-core';
 
 export type RecordedCaseListProps = {
   recordedCaseList: DataType;
