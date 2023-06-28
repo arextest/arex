@@ -17,7 +17,9 @@ export enum CONFIG_TYPE {
 }
 
 export type CompareConfigProps = {
-  appId: string;
+  appId: string; // 限定应用，用于展示特定应用下所有接口的对比配置
+  operationId?: string; // 限定接口，用于展示特定接口的对比配置
+  readOnly?: boolean; // 只读模式，用于展示接口的对比配置
 };
 
 const CompareConfig: FC<CompareConfigProps> = (props) => {
@@ -43,7 +45,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   );
   const [configType, setConfigType] = useState<CONFIG_TYPE>(CONFIG_TYPE.GLOBAL);
 
-  const [activeOperationId, setActiveOperationId] = useState<string | undefined>();
+  const [activeOperationId, setActiveOperationId] = useState<string | undefined>(props.operationId);
   const [rawResponse, setRawResponse] = useState<string>();
 
   /**
@@ -52,7 +54,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   const { data: operationList = [] } = useRequest(
     () => ApplicationService.queryInterfacesList<'Interface'>({ id: props.appId as string }),
     {
-      ready: !!props.appId,
+      ready: !!props.appId && !props.operationId,
       onSuccess(res) {
         setActiveOperationId(res?.[0]?.id);
       },
@@ -121,7 +123,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           onChange={(value) => setConfigType(value as CONFIG_TYPE)}
         />
 
-        {configType !== CONFIG_TYPE.GLOBAL && (
+        {configType !== CONFIG_TYPE.GLOBAL && !props.operationId && (
           <Select
             showSearch
             optionFilterProp='label'
@@ -151,6 +153,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
 
       <NodesIgnore
         appId={props.appId}
+        readOnly={props.readOnly}
         configType={configType}
         operationId={activeOperationId}
         responseParsed={interfaceResponseParsed}
@@ -158,6 +161,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
 
       <NodeSort
         appId={props.appId}
+        readOnly={props.readOnly}
         configType={configType}
         operationId={activeOperationId}
         responseParsed={interfaceResponseParsed}

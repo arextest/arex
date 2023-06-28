@@ -37,6 +37,7 @@ type CheckedNodesData = {
 export type NodesIgnoreProps = {
   appId: string;
   operationId?: string;
+  readOnly?: boolean;
   configType: CONFIG_TYPE;
   responseParsed: { [p: string]: any };
 };
@@ -85,11 +86,10 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
   );
 
   function convertIgnoreNode(data: QueryIgnoreNode[]) {
-    props.appId &&
-      setCheckedNodesData((state) => {
-        state.operationId = props.operationId;
-        state.exclusionsList = data.map((item) => item.path);
-      });
+    setCheckedNodesData((state) => {
+      state.operationId = props.operationId;
+      state.exclusionsList = data.map((item) => item.path);
+    });
   }
 
   const ignoreNodesFiltered = useMemo(
@@ -260,6 +260,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
         header={
           <CompareConfigTitle
             title='Nodes Ignore'
+            readOnly={props.readOnly}
             onSearch={handleSearch}
             onAdd={handleIgnoreAdd}
           />
@@ -322,10 +323,12 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
               <List.Item>
                 <SpaceBetweenWrapper width={'100%'}>
                   <Typography.Text ellipsis>{node.exclusions.join('/')}</Typography.Text>
-                  <SmallTextButton
-                    icon={<DeleteOutlined />}
-                    onClick={() => handleDeleteIgnoreNode({ id: node.id })}
-                  />
+                  {!props.readOnly && (
+                    <SmallTextButton
+                      icon={<DeleteOutlined />}
+                      onClick={() => handleDeleteIgnoreNode({ id: node.id })}
+                    />
+                  )}
                 </SpaceBetweenWrapper>
               </List.Item>
             )}

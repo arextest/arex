@@ -25,9 +25,10 @@ enum TreeEditModeEnum {
 const ActiveKey = 'sort';
 
 export type NodeSortProps = {
-  appId: string;
-  configType: CONFIG_TYPE;
+  appId?: string;
   operationId?: string;
+  readOnly?: boolean;
+  configType: CONFIG_TYPE;
   responseParsed: { [key: string]: any };
 };
 
@@ -68,7 +69,7 @@ const NodeSort: FC<NodeSortProps> = (props) => {
         operationId: props.operationId,
       }),
     {
-      ready: !!props.operationId,
+      ready: !!props.operationId && !!props.appId,
       refreshDeps: [props.operationId],
       onBefore() {
         setSortNodeList([]);
@@ -233,6 +234,7 @@ const NodeSort: FC<NodeSortProps> = (props) => {
         header={
           <CompareConfigTitle
             title='Nodes Sort'
+            readOnly={props.readOnly}
             onSearch={handleSearch}
             onAdd={handleAddSortNode}
           />
@@ -274,18 +276,23 @@ const NodeSort: FC<NodeSortProps> = (props) => {
                     <span style={{ marginRight: '8px' }}>
                       {`${sortNode.pathKeyList.length} keys`}
                     </span>
-                    <Button
-                      type='text'
-                      size='small'
-                      icon={<EditOutlined />}
-                      onClick={() => handleEditCollapseItem(sortNode.path, sortNode)}
-                    />
-                    <Button
-                      type='text'
-                      size='small'
-                      icon={<DeleteOutlined />}
-                      onClick={() => deleteIgnoreNode({ id: sortNode.id })}
-                    />
+
+                    {!props.readOnly && (
+                      <div className='sort-node-list-item' style={{ display: 'inline' }}>
+                        <Button
+                          type='text'
+                          size='small'
+                          icon={<EditOutlined />}
+                          onClick={() => handleEditCollapseItem(sortNode.path, sortNode)}
+                        />
+                        <Button
+                          type='text'
+                          size='small'
+                          icon={<DeleteOutlined />}
+                          onClick={() => deleteIgnoreNode({ id: sortNode.id })}
+                        />
+                      </div>
+                    )}
                   </span>
                 </SpaceBetweenWrapper>
               </List.Item>

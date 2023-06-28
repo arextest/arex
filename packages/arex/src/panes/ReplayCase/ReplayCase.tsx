@@ -1,18 +1,19 @@
+import { SettingOutlined } from '@ant-design/icons';
 import {
   ArexPaneFC,
   CollapseTable,
   DiffPath,
   getLocalStorage,
   PanesTitle,
+  TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App } from 'antd';
+import { App, Modal } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
 
 import { EMAIL_KEY } from '@/constant';
-import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
-import NodesIgnore from '@/panes/AppSetting/CompareConfig/NodesIgnore';
+import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService, ConfigService, ReportService, ScheduleService } from '@/services';
 import { infoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
 
@@ -22,8 +23,9 @@ import SaveCase, { SaveCaseRef } from './SaveCase';
 const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
   const { message, notification } = App.useApp();
   const email = getLocalStorage<string>(EMAIL_KEY);
-
   const { t } = useTranslation(['components']);
+
+  const [compareConfigOpen, setCompareConfigOpen] = useState<boolean>(false);
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
 
   const saveCaseRef = useRef<SaveCaseRef>(null);
@@ -138,6 +140,10 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     });
   }
 
+  function handleClickCompareConfigSetting() {
+    setCompareConfigOpen(true);
+  }
+
   return (
     <>
       <PanesTitle
@@ -163,6 +169,13 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
           <DiffPath
             appId={props.data.appId}
             operationId={props.data.operationId}
+            extra={
+              <TooltipButton
+                icon={<SettingOutlined />}
+                title={'compareConfig'}
+                onClick={handleClickCompareConfigSetting}
+              />
+            }
             loading={loadingFullLinkInfo}
             data={fullLinkInfoMerged}
             onIgnoreKey={handleIgnoreKey}
@@ -181,12 +194,18 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
       />
       <SaveCase planId={props.data.planId} operationId={props.data.operationId} ref={saveCaseRef} />
 
-      <NodesIgnore
-        appId={props.data.appId}
-        configType={CONFIG_TYPE.INTERFACE}
-        interfaceId={props.data.operationId}
-        responseParsed={interfaceResponseParsed}
-      />
+      <Modal
+        destroyOnClose
+        width='60%'
+        footer={false}
+        title={'CompareConfig'}
+        open={compareConfigOpen}
+        onCancel={() => {
+          setCompareConfigOpen(false);
+        }}
+      >
+        <CompareConfig readOnly appId={props.data.appId} operationId={props.data.operationId} />
+      </Modal>
     </>
   );
 };

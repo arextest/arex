@@ -15,6 +15,7 @@ export interface DiffPathProps
   appId: string;
   operationId: string;
   loading?: boolean;
+  extra?: React.ReactNode;
   defaultOnlyFailed?: boolean;
   requestDiffMsg: (params: any) => Promise<CompareResultDetail>;
   data: infoItem[];
@@ -52,6 +53,7 @@ const DiffPath: FC<DiffPathProps> = (props) => {
     <>
       <DiffPathTooltip
         mode={mode}
+        extra={props.extra}
         count={diffListFiltered.length}
         onFilterChange={setOnlyFailed}
         onSearch={setSearchOperationName}
