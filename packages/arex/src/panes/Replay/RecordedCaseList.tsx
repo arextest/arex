@@ -1,7 +1,7 @@
+import { useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import type { TableColumnsType } from 'antd';
 import { Modal, Table } from 'antd';
-import { useTranslation } from 'arex-core';
 import dayjs from 'dayjs';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
@@ -67,6 +67,7 @@ const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>(
       onCancel={() => setOpen(false)}
     >
       <Table
+        size='small'
         columns={columns}
         expandable={{ expandedRowRender }}
         dataSource={aggList as []}

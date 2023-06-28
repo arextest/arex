@@ -1,6 +1,6 @@
+import { useTranslation } from '@arextest/arex-core';
 import { usePagination } from 'ahooks';
 import { Select, Table } from 'antd';
-import { useTranslation } from 'arex-core';
 import dayjs from 'dayjs';
 import { FC, useState } from 'react';
 
@@ -75,6 +75,7 @@ const RecordedCaseListItem: FC<RecordedCaseListProps> = ({ recordedCaseList }) =
 
   return (
     <Table
+      size='small'
       columns={columns}
       dataSource={listRecord}
       pagination={pagination}
