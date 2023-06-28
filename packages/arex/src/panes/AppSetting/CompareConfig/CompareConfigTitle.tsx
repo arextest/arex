@@ -5,6 +5,7 @@ import React, { FC } from 'react';
 
 export type CompareConfigTitleProps = {
   title: string;
+  readOnly?: boolean;
   onAdd?: ButtonProps['onClick'];
   onSearch?: ButtonProps['onClick'];
 };
@@ -15,19 +16,22 @@ const CompareConfigTitle: FC<CompareConfigTitleProps> = (props) => {
   return (
     <Space>
       <Typography.Text strong>{props.title}</Typography.Text>
-      <div>
+      <div className='compare-config-title-actions'>
         <TooltipButton
           key='search'
           icon={<SearchOutlined />}
           title={t('search')}
           onClick={props.onSearch}
         />
-        <TooltipButton
-          key='add'
-          icon={<PlusOutlined />}
-          title={t('appSetting.addKey')}
-          onClick={props.onAdd}
-        />
+
+        {!props.readOnly && (
+          <TooltipButton
+            key='add'
+            icon={<PlusOutlined />}
+            title={t('appSetting.addKey')}
+            onClick={props.onAdd}
+          />
+        )}
       </div>
     </Space>
   );

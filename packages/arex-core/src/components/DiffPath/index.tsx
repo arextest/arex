@@ -4,22 +4,27 @@ import { Collapse, Typography } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 
 import EllipsisTooltip from '../EllipsisTooltip';
-import { DiffPathViewer, EmptyWrapper, SceneCode } from '../index';
+import { DiffPathViewer, EmptyWrapper, PathHandler, SceneCode } from '../index';
 import DiffPathTooltip, { DiffPathTooltipProps } from './DiffPathTooltip';
 import { CompareResultDetail, DiffPathViewerProps } from './DiffPathViewer';
 import { infoItem } from './type';
 
 export interface DiffPathProps
-  extends Pick<DiffPathViewerProps, 'requestQueryLogEntity' | 'requestIgnoreNode'> {
+  extends Pick<
+    DiffPathViewerProps,
+    'contextMenuDisabled' | 'requestQueryLogEntity' | 'requestIgnoreNode'
+  > {
   mode?: DiffPathTooltipProps['mode'];
   appId: string;
   operationId: string;
   loading?: boolean;
+  extra?: React.ReactNode;
   defaultOnlyFailed?: boolean;
   requestDiffMsg: (params: any) => Promise<CompareResultDetail>;
   data: infoItem[];
-  onIgnoreKey?: (key: string[]) => void;
-  onSortKey?: (key: string[]) => void;
+  onIgnoreKey?: PathHandler;
+  onGlobalIgnoreKey?: PathHandler;
+  onSortKey?: PathHandler;
 }
 
 const DiffPath: FC<DiffPathProps> = (props) => {
@@ -52,6 +57,7 @@ const DiffPath: FC<DiffPathProps> = (props) => {
     <>
       <DiffPathTooltip
         mode={mode}
+        extra={props.extra}
         count={diffListFiltered.length}
         onFilterChange={setOnlyFailed}
         onSearch={setSearchOperationName}
@@ -82,16 +88,11 @@ const DiffPath: FC<DiffPathProps> = (props) => {
               key={data.id}
             >
               <DiffPathViewer
+                {...props}
                 defaultActiveFirst
                 height='400px'
                 data={diffMsg}
                 loading={loadingDiffMsg}
-                appId={props.appId}
-                operationId={props.operationId}
-                onIgnoreKey={props.onIgnoreKey}
-                onSortKey={props.onSortKey}
-                requestIgnoreNode={props.requestIgnoreNode}
-                requestQueryLogEntity={props.requestQueryLogEntity}
               />
             </Collapse.Panel>
           ))}

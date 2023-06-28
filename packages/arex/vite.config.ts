@@ -34,7 +34,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve('./src'),
-      // 'arex-core': path.resolve('../arex-core/src'),
+      // '@arextest/arex-core': path.resolve('../arex-core/src'),
     },
   },
   server: {

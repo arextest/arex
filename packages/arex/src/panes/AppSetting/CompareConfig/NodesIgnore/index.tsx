@@ -24,7 +24,7 @@ import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
 import CompareConfigTitle from '@/panes/AppSetting/CompareConfig/CompareConfigTitle';
 import { ComparisonService } from '@/services';
 import { OperationId } from '@/services/ApplicationService';
-import { IgnoreNodeBase, InterfaceIgnoreNode, QueryIgnoreNode } from '@/services/ComparisonService';
+import { IgnoreNodeBase, QueryIgnoreNode } from '@/services/ComparisonService';
 
 import IgnoreTree, { getNodes } from './IgnoreTree';
 const ActiveKey = 'sort';
@@ -36,7 +36,8 @@ type CheckedNodesData = {
 
 export type NodesIgnoreProps = {
   appId: string;
-  interfaceId?: string;
+  operationId?: string;
+  readOnly?: boolean;
   configType: CONFIG_TYPE;
   responseParsed: { [p: string]: any };
 };
@@ -72,11 +73,11 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
     () =>
       ComparisonService.queryIgnoreNode({
         appId: props.appId,
-        operationId: props.configType === CONFIG_TYPE.GLOBAL ? null : props.interfaceId,
+        operationId: props.configType === CONFIG_TYPE.GLOBAL ? null : props.operationId,
       }),
     {
       ready: !!props.appId,
-      refreshDeps: [props.interfaceId, props.configType],
+      refreshDeps: [props.operationId, props.configType],
       onBefore() {
         setIgnoreNodeList([]);
       },
@@ -85,11 +86,10 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
   );
 
   function convertIgnoreNode(data: QueryIgnoreNode[]) {
-    props.appId &&
-      setCheckedNodesData((state) => {
-        state.operationId = props.interfaceId;
-        state.exclusionsList = data.map((item) => item.path);
-      });
+    setCheckedNodesData((state) => {
+      state.operationId = props.operationId;
+      state.exclusionsList = data.map((item) => item.path);
+    });
   }
 
   const ignoreNodesFiltered = useMemo(
@@ -167,7 +167,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
     onSuccess(success) {
       if (success) {
         message.success(t('message.updateSuccess', { ns: 'common' }));
-        handleExitEdit();
+        handleGlobalEditExit();
         queryIgnoreNode();
       } else {
         message.error(t('message.updateFailed', { ns: 'common' }));
@@ -175,25 +175,22 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
     },
   });
 
-  const handleExitEdit = () => {
+  const handleGlobalEditExit = () => {
     setEditMode(false);
     setIgnoredKey(undefined);
   };
 
-  const handleEditSave = () => {
+  const handleGlobalEditSave = () => {
     if (!ignoredKey) {
       message.warning(t('appSetting.emptyKey'));
       return;
     }
 
-    let params: IgnoreNodeBase | InterfaceIgnoreNode = {
+    const params: IgnoreNodeBase = {
       operationId: undefined,
       appId: props.appId,
       exclusions: ignoredKey.split('/').filter(Boolean),
     };
-
-    props.interfaceId &&
-      (params = { ...params, compareConfigType: 1, fsInterfaceId: props.interfaceId });
 
     insertIgnoreNode(params);
   };
@@ -202,7 +199,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
     const selected = info.selectedNodes.map((node) => node.key.toString());
 
     setCheckedNodesData((state) => {
-      state.operationId = props.interfaceId;
+      state.operationId = props.operationId;
       state.exclusionsList = selected;
     });
   };
@@ -263,6 +260,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
         header={
           <CompareConfigTitle
             title='Nodes Ignore'
+            readOnly={props.readOnly}
             onSearch={handleSearch}
             onAdd={handleIgnoreAdd}
           />
@@ -314,8 +312,8 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
                       style={{ width: '100%' }}
                     />
                     <span style={{ display: 'flex', marginLeft: '8px' }}>
-                      <SmallTextButton icon={<CloseOutlined />} onClick={handleExitEdit} />
-                      <SmallTextButton icon={<CheckOutlined />} onClick={handleEditSave} />
+                      <SmallTextButton icon={<CloseOutlined />} onClick={handleGlobalEditExit} />
+                      <SmallTextButton icon={<CheckOutlined />} onClick={handleGlobalEditSave} />
                     </span>
                   </SpaceBetweenWrapper>
                 </List.Item>
@@ -325,10 +323,12 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
               <List.Item>
                 <SpaceBetweenWrapper width={'100%'}>
                   <Typography.Text ellipsis>{node.exclusions.join('/')}</Typography.Text>
-                  <SmallTextButton
-                    icon={<DeleteOutlined />}
-                    onClick={() => handleDeleteIgnoreNode({ id: node.id })}
-                  />
+                  {!props.readOnly && (
+                    <SmallTextButton
+                      icon={<DeleteOutlined />}
+                      onClick={() => handleDeleteIgnoreNode({ id: node.id })}
+                    />
+                  )}
                 </SpaceBetweenWrapper>
               </List.Item>
             )}
