@@ -48,9 +48,7 @@ export async function sendRequest(
           method: hopReq.method,
           header: hopReq.headers.filter((i: any) => i.active),
           body: convertToPmBody(hopReq.body),
-          url: sdk.Url.parse(
-            hopReq.endpoint + converToUrl(hopReq.params.filter((i: any) => i.active)),
-          ),
+          url: sdk.Url.parse(hopReq.endpoint),
         },
         response: [],
       },
