@@ -32,11 +32,12 @@ const AppSetting: ArexPaneFC<ApplicationDataType> = (props) => {
         label: t('appSetting.importYaml'),
         children: <SettingImportYaml appId={data.appId} agentVersion={data.agentVersion} />,
       },
-      {
-        key: 'compareConfig',
-        label: t('appSetting.compareConfig'),
-        children: <CompareConfig appId={data.appId} />,
-      },
+      // TODO 暂时隐藏
+      // {
+      //   key: 'compareConfig',
+      //   label: t('appSetting.compareConfig'),
+      //   children: <CompareConfig appId={data.appId} />,
+      // },
       {
         key: 'nodesIgnore',
         label: t('appSetting.nodesIgnore'),

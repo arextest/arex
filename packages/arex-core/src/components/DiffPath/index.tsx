@@ -4,13 +4,16 @@ import { Collapse, Typography } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 
 import EllipsisTooltip from '../EllipsisTooltip';
-import { DiffPathViewer, EmptyWrapper, SceneCode } from '../index';
+import { DiffPathViewer, EmptyWrapper, PathHandler, SceneCode } from '../index';
 import DiffPathTooltip, { DiffPathTooltipProps } from './DiffPathTooltip';
 import { CompareResultDetail, DiffPathViewerProps } from './DiffPathViewer';
 import { infoItem } from './type';
 
 export interface DiffPathProps
-  extends Pick<DiffPathViewerProps, 'requestQueryLogEntity' | 'requestIgnoreNode'> {
+  extends Pick<
+    DiffPathViewerProps,
+    'contextMenuDisabled' | 'requestQueryLogEntity' | 'requestIgnoreNode'
+  > {
   mode?: DiffPathTooltipProps['mode'];
   appId: string;
   operationId: string;
@@ -19,9 +22,9 @@ export interface DiffPathProps
   defaultOnlyFailed?: boolean;
   requestDiffMsg: (params: any) => Promise<CompareResultDetail>;
   data: infoItem[];
-  onIgnoreKey?: (key: string[]) => void;
-  onGlobalIgnoreKey?: (key: string[]) => void;
-  onSortKey?: (key: string[]) => void;
+  onIgnoreKey?: PathHandler;
+  onGlobalIgnoreKey?: PathHandler;
+  onSortKey?: PathHandler;
 }
 
 const DiffPath: FC<DiffPathProps> = (props) => {
@@ -85,17 +88,11 @@ const DiffPath: FC<DiffPathProps> = (props) => {
               key={data.id}
             >
               <DiffPathViewer
+                {...props}
                 defaultActiveFirst
                 height='400px'
                 data={diffMsg}
                 loading={loadingDiffMsg}
-                appId={props.appId}
-                operationId={props.operationId}
-                onIgnoreKey={props.onIgnoreKey}
-                onGlobalIgnoreKey={props.onGlobalIgnoreKey}
-                onSortKey={props.onSortKey}
-                requestIgnoreNode={props.requestIgnoreNode}
-                requestQueryLogEntity={props.requestQueryLogEntity}
               />
             </Collapse.Panel>
           ))}

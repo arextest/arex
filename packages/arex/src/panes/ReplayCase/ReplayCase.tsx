@@ -5,6 +5,7 @@ import {
   DiffPath,
   getLocalStorage,
   PanesTitle,
+  PathHandler,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
@@ -14,7 +15,8 @@ import React, { useMemo, useRef, useState } from 'react';
 
 import { EMAIL_KEY } from '@/constant';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
-import { ComparisonService, ConfigService, ReportService, ScheduleService } from '@/services';
+import SortTree from '@/panes/AppSetting/CompareConfig/NodeSort/SortTree';
+import { ComparisonService, ReportService, ScheduleService } from '@/services';
 import { infoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
 
 import Case from './Case';
@@ -26,6 +28,9 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   const { t } = useTranslation(['components']);
 
   const [compareConfigOpen, setCompareConfigOpen] = useState<boolean>(false);
+  const [nodeSortOpen, setNodeSortOpen] = useState<boolean>(false);
+
+  const [targetNodePath, setTargetNodePath] = useState<string[]>();
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
 
   const saveCaseRef = useRef<SaveCaseRef>(null);
@@ -103,34 +108,10 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     },
   );
 
-  const handleSortKey = (path: string[]) => {
-    console.log(path);
+  const handleSortKey: PathHandler = (path: string[], targetEditor: 'left' | 'right') => {
+    setTargetNodePath(path);
+    setNodeSortOpen(true);
   };
-
-  /**
-   * 请求 InterfaceResponse
-   */
-  const {
-    data: interfaceResponse,
-    mutate: setInterfaceResponse,
-    run: queryInterfaceResponse,
-  } = useRequest(
-    () =>
-      ConfigService.queryInterfaceResponse({
-        id: props.data.operationId,
-      }),
-    {
-      onBefore() {
-        setInterfaceResponse();
-      },
-    },
-  );
-
-  const interfaceResponseParsed = useMemo<{ [key: string]: any }>(() => {
-    const res = interfaceResponse?.operationResponse;
-    if (res) return JSON.parse(res) || {};
-    else return {};
-  }, [interfaceResponse]);
 
   function handleClickRerunCase(recordId: string) {
     queryPlanFailCase({
@@ -167,22 +148,20 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         }
         panel={
           <DiffPath
+            contextMenuDisabled
             appId={props.data.appId}
             operationId={props.data.operationId}
-            extra={
-              <TooltipButton
-                icon={<SettingOutlined />}
-                title={'compareConfig'}
-                onClick={handleClickCompareConfigSetting}
-              />
-            }
+            // extra={
+            //   <TooltipButton
+            //     icon={<SettingOutlined />}
+            //     title={'compareConfig'}
+            //     onClick={handleClickCompareConfigSetting}
+            //   />
+            // }
             loading={loadingFullLinkInfo}
             data={fullLinkInfoMerged}
-            onIgnoreKey={handleIgnoreKey}
-            onGlobalIgnoreKey={(path) => {
-              console.log(path, 'global');
-              handleIgnoreKey(path, true);
-            }}
+            onIgnoreKey={(path) => handleIgnoreKey(path)}
+            onGlobalIgnoreKey={(path) => handleIgnoreKey(path, true)}
             onSortKey={handleSortKey}
             requestDiffMsg={ReportService.queryDiffMsgById}
             requestQueryLogEntity={ReportService.queryLogEntity}
@@ -198,17 +177,43 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
       />
       <SaveCase planId={props.data.planId} operationId={props.data.operationId} ref={saveCaseRef} />
 
+      {/* CompareConfigModal */}
       <Modal
         destroyOnClose
         width='60%'
         footer={false}
-        title={'CompareConfig'}
+        title={
+          <span>
+            {t('appSetting.compareConfig')} - {props.data.operationName}
+          </span>
+        }
         open={compareConfigOpen}
         onCancel={() => {
           setCompareConfigOpen(false);
         }}
       >
-        <CompareConfig readOnly appId={props.data.appId} operationId={props.data.operationId} />
+        <CompareConfig appId={props.data.appId} operationId={props.data.operationId} />
+      </Modal>
+
+      {/* NodeSortModal */}
+      <Modal
+        destroyOnClose
+        width='60%'
+        footer={false}
+        title={'NodeSort'}
+        open={nodeSortOpen}
+        onCancel={() => {
+          setNodeSortOpen(false);
+        }}
+      >
+        {/* TODO */}
+        <SortTree
+          title={targetNodePath?.join('/')}
+          treeData={[{ key: 1 }, { key: 2 }, { key: 3 }]}
+          // checkedKeys={checkedNodesData.pathKeyList}
+          // onCheck={handleSortTreeChecked}
+          // onSelect={handleSortTreeSelected}
+        />
       </Modal>
     </>
   );

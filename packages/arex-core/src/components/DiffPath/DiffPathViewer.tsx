@@ -3,9 +3,10 @@ import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
 import { App, Menu, Spin, theme, Typography } from 'antd';
 import React, { FC, useEffect } from 'react';
+import { Simulate } from 'react-dom/test-utils';
 import { useTranslation } from 'react-i18next';
 
-import DiffJsonView from '../DiffJsonView';
+import DiffJsonView, { PathHandler } from '../DiffJsonView';
 import { FlexCenterWrapper, SpaceBetweenWrapper } from '../index';
 import PathTitle from './DiffPathTitle';
 import { DiffLog, LogEntity } from './type';
@@ -40,6 +41,7 @@ export type CompareResultDetail = {
   testMsg: string;
 };
 export interface DiffPathViewerProps {
+  contextMenuDisabled?: boolean;
   operationId: string;
   appId: string;
   loading?: boolean;
@@ -52,9 +54,9 @@ export interface DiffPathViewerProps {
     logIndex: number;
   }) => Promise<LogEntity[]>;
   requestIgnoreNode: (path: string[]) => Promise<boolean>;
-  onIgnoreKey?: (key: string[]) => void;
-  onGlobalIgnoreKey?: (key: string[]) => void;
-  onSortKey?: (key: string[]) => void;
+  onIgnoreKey?: PathHandler;
+  onGlobalIgnoreKey?: PathHandler;
+  onSortKey?: PathHandler;
 }
 
 const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
@@ -183,6 +185,7 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
           <div style={{ position: 'relative', margin: `${token.marginXS}px`, height: '100%' }}>
             <DiffJsonView
               hiddenTooltip
+              readOnly={props.contextMenuDisabled}
               height={`calc(${props.height} - 16px)`}
               diffJson={{
                 left: props.data.baseMsg,
