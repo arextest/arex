@@ -65,7 +65,7 @@ const DiffScenes: FC<{
     setSelectedCategory(item);
   };
 
-  const handleRowClick = (record: Difference) => onScenes && onScenes(record, selectedCategory);
+  const handleRowClick = (record: Difference) => onScenes?.(record, selectedCategory);
 
   return (
     <Row gutter={16}>

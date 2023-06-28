@@ -17,12 +17,15 @@ const ReplayPage: ArexPaneFC<ApplicationDataType> = (props) => {
   const navPane = useNavPane();
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
 
-  const handleSelectPlan: PlanReportProps['onSelectedPlanChange'] = (plan, current, row) => {
+  const handleSelectPlan: PlanReportProps['onSelectedPlanChange'] = (
+    plan,
+    { current = 0, key },
+  ) => {
     plan.planId === selectedPlan?.planId ? setSelectedPlan(undefined) : setSelectedPlan(plan);
     navPane({
       id: props.data.id,
       type: PanesType.REPLAY,
-      data: merge({ current, row }, props.data), // 同步当前选中的页码好行数
+      data: merge({ current, key }, props.data), // 同步当前选中的页码好行数
     });
   };
 
@@ -33,7 +36,7 @@ const ReplayPage: ArexPaneFC<ApplicationDataType> = (props) => {
 
   return props.data ? (
     <>
-      <AppTitle data={props.data} onRefresh={handleRefreshDep} />
+      <AppTitle data={props.data} onRefresh={handleRefreshDep} onCreateReplay={handleRefreshDep} />
       <CollapseTable
         active={!!selectedPlan}
         table={

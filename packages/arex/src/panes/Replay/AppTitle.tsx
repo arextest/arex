@@ -29,6 +29,7 @@ import { ApplicationDataType } from '@/services/ApplicationService';
 
 type AppTitleProps = {
   data: ApplicationDataType;
+  onCreateReplay?: () => void;
   onRefresh?: () => void;
 };
 
@@ -73,7 +74,7 @@ const InitialValues = {
   ],
 };
 
-const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
+const AppTitle: FC<AppTitleProps> = (props) => {
   const { t } = useTranslation(['components']);
   const { notification } = App.useApp();
   const { token } = theme.useToken();
@@ -92,14 +93,15 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   });
 
   const webhook = useMemo(
-    () => `${location.origin}/api/createPlan?appId=${data.appId}&targetEnv=${targetEnv?.trim()}`,
-    [data.appId, targetEnv],
+    () =>
+      `${location.origin}/api/createPlan?appId=${props.data.appId}&targetEnv=${targetEnv?.trim()}`,
+    [props.data.appId, targetEnv],
   );
 
   /**
    * 请求 InterfacesList
    */
-  useRequest(() => ApplicationService.queryInterfacesList<'Global'>({ id: data.appId }), {
+  useRequest(() => ApplicationService.queryInterfacesList<'Global'>({ id: props.data.appId }), {
     ready: open,
     onSuccess(res) {
       setInterfacesOptions(res.map((item) => ({ label: item.operationName, value: item.id })));
@@ -116,7 +118,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         notification.success({
           message: t('replay.startSuccess'),
         });
-        onRefresh?.();
+        props.onCreateReplay?.();
       } else {
         console.error(res.desc);
         notification.error({
@@ -143,7 +145,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
       .then((values) => {
         const targetEnv = values.targetEnv.trim();
         createPlan({
-          appId: data.appId,
+          appId: props.data.appId,
           sourceEnv: 'pro',
           targetEnv,
           caseSourceFrom: values.caseSourceRange[0].startOf('day').valueOf(),
@@ -163,9 +165,9 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         setTargetHostSource((source) => {
           !source && (source = {});
 
-          if (source?.[data.appId] && !source?.[data.appId].includes(targetEnv))
-            source[data.appId].push(targetEnv);
-          else if (!source?.[data.appId]) source[data.appId] = [targetEnv];
+          if (source?.[props.data.appId] && !source?.[props.data.appId].includes(targetEnv))
+            source[props.data.appId].push(targetEnv);
+          else if (!source?.[props.data.appId]) source[props.data.appId] = [targetEnv];
 
           return source;
         });
@@ -177,7 +179,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
 
   const targetHostOptions = useMemo(
     () =>
-      targetHostSource?.[data.appId]?.map((item) => ({
+      targetHostSource?.[props.data.appId]?.map((item) => ({
         label: (
           <SpaceBetweenWrapper>
             <Typography.Text>{item}</Typography.Text>
@@ -193,14 +195,14 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
                 e.stopPropagation();
 
                 setTargetHostSource((source) => {
-                  const targetHostList = source?.[data.appId] || [];
+                  const targetHostList = source?.[props.data.appId] || [];
                   const index = targetHostList.indexOf(item);
                   if (index > -1) {
                     targetHostList.splice(index, 1);
                   }
                   return {
                     ...source,
-                    [data.appId]: targetHostList,
+                    [props.data.appId]: targetHostList,
                   };
                 });
               }}
@@ -209,13 +211,13 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         ),
         value: item,
       })) || [],
-    [data.appId, targetHostSource, open],
+    [props.data.appId, targetHostSource, open],
   );
 
   return (
     <div>
       <PanesTitle
-        title={<TitleWrapper title={data.appId} onRefresh={onRefresh} />}
+        title={<TitleWrapper title={props.data.appId} onRefresh={props.onRefresh} />}
         extra={
           <Button
             size='small'
@@ -229,7 +231,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
       />
 
       <Modal
-        title={`${t('replay.startButton')} - ${data.appId}`}
+        title={`${t('replay.startButton')} - ${props.data.appId}`}
         open={open}
         onOk={handleStartReplay}
         onCancel={() => setOpen(false)}

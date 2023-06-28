@@ -22,7 +22,10 @@ export type PlanReportProps = {
   id?: string;
   appId?: string;
   refreshDep?: React.Key;
-  onSelectedPlanChange: (selectedPlan: PlanStatistics, current?: number, row?: number) => void;
+  onSelectedPlanChange: (
+    selectedPlan: PlanStatistics,
+    pagination: { current?: number; key?: number },
+  ) => void;
 };
 
 const PlanReport: FC<PlanReportProps> = (props) => {
@@ -36,7 +39,7 @@ const PlanReport: FC<PlanReportProps> = (props) => {
 
   const defaultPagination = {
     defaultCurrent: parseInt(searchParams.get('current') || '1'),
-    defaultRow: parseInt(searchParams.get('row') || '0'),
+    defaultRowKey: searchParams.get('key') || undefined,
   };
 
   const columns: ColumnsType<PlanStatistics> = [
@@ -144,9 +147,13 @@ const PlanReport: FC<PlanReportProps> = (props) => {
       defaultPageSize,
       defaultCurrent: defaultPagination.defaultCurrent,
       refreshDeps: [appId, refreshDep],
-      onSuccess({ list }) {
+      onSuccess({ list }, [params]) {
         if (init) {
-          list.length && onSelectedPlanChange(list[parseInt(searchParams.get('row') || '0')]);
+          list.length &&
+            onSelectedPlanChange(
+              list.find((record) => record.planId === searchParams.get('key')) || list[0],
+              { current: params.current, key: searchParams.get('key') },
+            );
           setInit(false); // 设置第一次初始化标识);
         }
         list.every((record) => record.status !== 1) && cancelPollingInterval();
@@ -159,15 +166,15 @@ const PlanReport: FC<PlanReportProps> = (props) => {
     activePane?.id !== props.id ? cancelPollingInterval() : refresh();
   }, [activePane, props.id]);
 
-  const handleRowClick: HighlightRowTableProps<PlanStatistics>['onRowClick'] = (record, index) => {
-    onSelectedPlanChange(record, pagination.current, index);
+  const handleRowClick: HighlightRowTableProps<PlanStatistics>['onRowClick'] = (record, key) => {
+    onSelectedPlanChange(record, { current: pagination.current, key });
   };
 
   return (
     <FullHeightSpin
       spinning={init}
       minHeight={240}
-      // 为了 defaultCurrent 和 defaultRow 生效，需在初次获取到数据后再挂载子组件
+      // 为了 defaultCurrent 和 defaultRowKey 生效，需在初次获取到数据后再挂载子组件
       mountOnFirstLoading={false}
     >
       <HighlightRowTable<PlanStatistics>
@@ -179,7 +186,7 @@ const PlanReport: FC<PlanReportProps> = (props) => {
         onRowClick={handleRowClick}
         dataSource={planStatistics}
         defaultCurrent={defaultPagination.defaultCurrent}
-        defaultRow={defaultPagination.defaultRow}
+        defaultRowKey={defaultPagination.defaultRowKey}
         sx={{
           '.ant-table-cell-ellipsis': {
             color: token.colorPrimary,

@@ -4,8 +4,8 @@ import styled from '@emotion/styled';
 import { Table, TablePaginationConfig, TableProps } from 'antd';
 import React, { useState } from 'react';
 
-const defaultSelectRow = { row: 0, page: 1 };
-const invalidSelectRow = { row: -1, page: -1 };
+const defaultSelectRow = { key: 0, page: 1 };
+const invalidSelectRow = { key: -1, page: -1 };
 
 const HighlightRowTableWrapper = styled.div`
   // highlight selected row
@@ -17,19 +17,20 @@ const HighlightRowTableWrapper = styled.div`
   }
 `;
 
-export type HighlightRowTableProps<T> = {
+export type HighlightRowTableProps<T extends { [key: string]: any }> = {
   sx?: CSSInterpolation;
-  defaultCurrent?: number; // should be defined at the same time as defaultRow
-  defaultRow?: number; // should be defined at the same time as defaultCurrent
+  rowKey: string;
+  defaultCurrent?: number; // should be defined at the same time as defaultRowKey
+  defaultRowKey?: React.Key; // should be defined at the same time as defaultCurrent
   defaultSelectFirst?: boolean;
   onRowClick?: (record: T, index?: number) => void;
-} & TableProps<T>;
+} & Omit<TableProps<T>, 'rowKey'>;
 
-function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
+function HighlightRowTable<T extends { [key: string]: any }>(props: HighlightRowTableProps<T>) {
   const {
     sx,
     defaultSelectFirst,
-    defaultRow = 0,
+    defaultRowKey = 0,
     defaultCurrent = 1,
     onRowClick,
     onChange,
@@ -37,11 +38,11 @@ function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
   } = props;
 
   const [page, setPage] = useState<number | undefined>(defaultCurrent);
-  const [selectRow, setSelectRow] = useState<{ row?: number; page?: number }>(
+  const [selectRow, setSelectRow] = useState<{ key?: React.Key; page?: number }>(
     defaultSelectFirst
       ? defaultSelectRow
-      : props.defaultCurrent !== undefined && props.defaultRow !== undefined
-      ? { row: defaultRow, page: defaultCurrent }
+      : props.defaultCurrent !== undefined && props.defaultRowKey !== undefined
+      ? { key: defaultRowKey, page: defaultCurrent }
       : invalidSelectRow,
   );
 
@@ -53,26 +54,26 @@ function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
   return (
     <HighlightRowTableWrapper css={css(sx)}>
       <Table<T>
-        onRow={(record, index) => {
+        onRow={(record: T) => {
           return {
             onClick: () => {
               setSelectRow(
                 ((props.pagination as TablePaginationConfig)?.current || page) === selectRow.page &&
-                  index === selectRow.row
+                  record?.[props.rowKey] === selectRow.key
                   ? invalidSelectRow
                   : {
-                      row: index,
+                      key: record?.[props.rowKey],
                       page: (props.pagination as TablePaginationConfig)?.current || page,
                     },
               );
-              onRowClick?.(record, index);
+              onRowClick?.(record, record?.[props.rowKey]);
             },
           };
         }}
         onChange={handleChange}
-        rowClassName={(record, index) =>
+        rowClassName={(record) =>
           ((props.pagination as TablePaginationConfig)?.current || page) === selectRow.page &&
-          index === selectRow.row
+          record?.[props.rowKey] === selectRow.key
             ? 'clickRowStyle'
             : ''
         }
