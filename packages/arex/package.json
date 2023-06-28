@@ -16,7 +16,7 @@
     "@sentry/react": "^7.56.0",
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",
-    "antd": "^5.6.0",
+    "antd": "^5.4.2",
     "antd-img-crop": "^4.12.2",
     "arex-request-core": "0.0.1-beta.37",
     "arex-request-runtime": "^1.0.2",
