@@ -1,6 +1,7 @@
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
+import Icons from 'unplugin-icons/vite';
 import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
@@ -29,24 +30,13 @@ export default defineConfig({
         return modules;
       },
     },
-    // Put the Sentry vite plugin after all other plugins
-    sentryVitePlugin({
-      org: 'arextest',
-      project: 'arex-ui',
-
-      // Auth tokens can be obtained from https://sentry.io/settings/account/api/auth-tokens/
-      // and need `project:releases` and `org:read` scopes
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-    }),
+    Icons({ compiler: 'jsx', jsx: 'react' }),
   ],
   resolve: {
     alias: {
       '@': path.resolve('./src'),
       '@arextest/arex-core': path.resolve('../arex-core/src'),
     },
-  },
-  build: {
-    sourcemap: true,
   },
   server: {
     port: 16888,

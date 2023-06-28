@@ -1,5 +1,13 @@
-import { ArexCoreProvider, ArexMenuManager, ArexPaneManager } from '@arextest/arex-core';
+import {
+  ArexCoreProvider,
+  ArexMenuManager,
+  ArexPaneManager,
+  getLocalStorage,
+} from '@arextest/arex-core';
+import * as Sentry from '@sentry/react';
 import React from 'react';
+
+import { EMAIL_KEY } from '@/constant';
 
 import { useAuthentication } from './hooks';
 import { resources } from './i18n';
@@ -12,8 +20,11 @@ import GlobalStyle from './style/GlobalStyle';
 // register menus and panes
 ArexPaneManager.registerPanes(Panes);
 ArexMenuManager.registerMenus(Menus);
-
+const email = getLocalStorage<string>(EMAIL_KEY);
 const App = () => {
+  if (email) {
+    Sentry.setTag('arex-user', email);
+  }
   useAuthentication();
   const { theme, compact, colorPrimary, language } = useUserProfile();
 
