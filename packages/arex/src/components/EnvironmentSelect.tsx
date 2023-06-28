@@ -1,5 +1,5 @@
+import { styled } from '@arextest/arex-core';
 import { Select } from 'antd';
-import { styled } from 'arex-core';
 import React from 'react';
 
 import useEnvironments, { DefaultEnvironment } from '@/store/useEnvironments';

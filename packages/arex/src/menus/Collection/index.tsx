@@ -1,5 +1,5 @@
 import { ApiOutlined } from '@ant-design/icons';
-import { createArexMenu } from 'arex-core';
+import { createArexMenu } from '@arextest/arex-core';
 import React from 'react';
 
 import { MenusType, PanesType } from '@/constant';

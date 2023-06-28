@@ -1,13 +1,14 @@
 import { CloseOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { css, SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Card, Input, InputRef, List, Typography } from 'antd';
+import { App, Button, ButtonProps, Card, Collapse, Input, InputRef, List, Typography } from 'antd';
 import { TreeProps } from 'antd/es';
 import { CarouselRef } from 'antd/lib/carousel';
-import { SpaceBetweenWrapper, useTranslation } from 'arex-core';
 import React, { FC, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import PaneDrawer from '@/components/PaneDrawer';
+import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService } from '@/services';
 import { SortNode } from '@/services/ComparisonService';
 
@@ -21,9 +22,13 @@ enum TreeEditModeEnum {
   SortTree,
 }
 
+const ActiveKey = 'sort';
+
 export type NodeSortProps = {
-  appId: string;
-  interfaceId?: string;
+  appId?: string;
+  operationId?: string;
+  readOnly?: boolean;
+  configType: CONFIG_TYPE;
   responseParsed: { [key: string]: any };
 };
 
@@ -35,6 +40,7 @@ const NodeSort: FC<NodeSortProps> = (props) => {
   const treeCarouselRef = React.useRef<CarouselRef>(null);
   const [treeEditMode, setTreeEditMode] = useState<TreeEditModeEnum>(TreeEditModeEnum.ArrayTree);
 
+  const [activeKey, setActiveKey] = useState<string | string[]>([ActiveKey]);
   const [search, setSearch] = useState<string | false>(false);
   const [sortArray, setSortArray] = useState<any[]>();
   const [activeSortNode, setActiveSortNode] = useState<SortNode>();
@@ -60,11 +66,11 @@ const NodeSort: FC<NodeSortProps> = (props) => {
     (listPath?: string[]) =>
       ComparisonService.querySortNode({
         appId: props.appId as string,
-        operationId: props.interfaceId,
+        operationId: props.operationId,
       }),
     {
-      ready: !!props.interfaceId,
-      refreshDeps: [props.interfaceId],
+      ready: !!props.operationId && !!props.appId,
+      refreshDeps: [props.operationId],
       onBefore() {
         setSortNodeList([]);
       },
@@ -114,11 +120,11 @@ const NodeSort: FC<NodeSortProps> = (props) => {
     };
     if (activeSortNode) {
       updateSortNode({ id: activeSortNode.id, ...params });
-    } else if (props.appId && props.interfaceId) {
+    } else if (props.appId && props.operationId) {
       insertSortNode({
         ...params,
         appId: props.appId,
-        operationId: props.interfaceId,
+        operationId: props.operationId,
       });
     }
   };
@@ -145,6 +151,19 @@ const NodeSort: FC<NodeSortProps> = (props) => {
       }
     },
   });
+  const handleSearch: ButtonProps['onClick'] = (e) => {
+    activeKey?.[0] === ActiveKey && e.stopPropagation();
+    setTimeout(() => searchRef.current?.focus());
+
+    setSearch('');
+  };
+
+  const handleAddSortNode: ButtonProps['onClick'] = (e) => {
+    activeKey?.[0] === ActiveKey && e.stopPropagation();
+
+    if (Object.keys(props.responseParsed).length) setOpenSortModal(true);
+    else message.info('empty response, please sync response first');
+  };
 
   /**
    * 点击 PathCollapseItem 或 ArrayTreeItem 时
@@ -159,11 +178,12 @@ const NodeSort: FC<NodeSortProps> = (props) => {
     });
 
     handleSetSortArray(path);
-    setTreeEditMode(TreeEditModeEnum.SortTree);
-    treeCarouselRef.current?.goTo(1);
 
+    setTreeEditMode(TreeEditModeEnum.SortTree);
     setOpenSortModal(true);
     setTreeReady(true);
+
+    setTimeout(() => treeCarouselRef.current?.goTo(1)); // 防止初始化时 treeCarouselRef 未绑定
   };
 
   // 获取待排序操作的数组结构
@@ -207,112 +227,122 @@ const NodeSort: FC<NodeSortProps> = (props) => {
     setOpenSortModal(false);
   };
 
-  return (
-    <>
-      <CompareConfigTitle
-        title='Nodes Sort'
-        onSearch={() => {
-          setSearch('');
-          setTimeout(() => searchRef.current?.focus());
-        }}
-        onAdd={() => {
-          if (Object.keys(props.responseParsed).length) setOpenSortModal(true);
-          else message.info('empty response, please sync response first');
-        }}
-      />
-
-      <Card size='small' bodyStyle={{ padding: 0 }} style={{ marginTop: '8px' }}>
-        <List
-          size='small'
-          loading={loadingSortNode}
-          dataSource={sortNodesFiltered}
-          header={
-            search !== false && (
-              <SpaceBetweenWrapper style={{ padding: '0 16px' }}>
-                <Input.Search
-                  size='small'
-                  ref={searchRef}
-                  onChange={(e) => setSearch(e.target.value)}
-                  style={{ marginRight: '8px' }}
-                />
-                <Button
-                  size='small'
-                  type='text'
-                  icon={<CloseOutlined />}
-                  onClick={() => setSearch(false)}
-                />
-              </SpaceBetweenWrapper>
-            )
-          }
-          renderItem={(sortNode) => (
-            <List.Item>
-              <SpaceBetweenWrapper width={'100%'}>
-                <Typography.Text ellipsis>{sortNode.path}</Typography.Text>
-                <span style={{ flexShrink: 0 }}>
-                  <span style={{ marginRight: '8px' }}>
-                    {`${sortNode.pathKeyList.length} keys`}
-                  </span>
-                  <Button
-                    type='text'
-                    size='small'
-                    icon={<EditOutlined />}
-                    onClick={() => handleEditCollapseItem(sortNode.path, sortNode)}
-                  />
-                  <Button
-                    type='text'
-                    size='small'
-                    icon={<DeleteOutlined />}
-                    onClick={() => deleteIgnoreNode({ id: sortNode.id })}
-                  />
-                </span>
-              </SpaceBetweenWrapper>
-            </List.Item>
-          )}
-          locale={{ emptyText: t('appSetting.noSortNodes') }}
-        />
-      </Card>
-
-      <PaneDrawer
-        title={
-          <SpaceBetweenWrapper>
-            <Typography.Title level={5} style={{ marginBottom: 0 }}>
-              {t('appSetting.nodesSort')}
-            </Typography.Title>
-
-            {treeEditMode === TreeEditModeEnum.SortTree && (
-              <Button size='small' type='primary' onClick={handleSaveSort}>
-                {t('save', { ns: 'common' })}
-              </Button>
-            )}
-          </SpaceBetweenWrapper>
+  return props.configType === CONFIG_TYPE.GLOBAL ? null : (
+    <Collapse size='small' activeKey={activeKey} onChange={setActiveKey}>
+      <Collapse.Panel
+        key={ActiveKey}
+        header={
+          <CompareConfigTitle
+            title='Nodes Sort'
+            readOnly={props.readOnly}
+            onSearch={handleSearch}
+            onAdd={handleAddSortNode}
+          />
         }
-        open={openSortModal}
-        onClose={handleCancelEdit}
+        css={css`
+          .ant-collapse-content-box {
+            padding: 0 !important;
+          }
+        `}
       >
-        <TreeCarousel ref={treeCarouselRef} beforeChange={(from, to) => setTreeEditMode(to)}>
-          <ArrayTree
-            treeData={props.responseParsed}
-            sortNodeList={sortNodeList}
-            onSelect={(selectedKeys) =>
-              handleEditCollapseItem(
-                selectedKeys[0] as string,
-                sortNodeList.find((node) => node.path === selectedKeys[0]),
+        <Card bordered={false} size='small' bodyStyle={{ padding: 0 }}>
+          <List
+            size='small'
+            loading={loadingSortNode}
+            dataSource={sortNodesFiltered}
+            header={
+              search !== false && (
+                <SpaceBetweenWrapper style={{ padding: '0 16px' }}>
+                  <Input.Search
+                    size='small'
+                    ref={searchRef}
+                    onChange={(e) => setSearch(e.target.value)}
+                    style={{ marginRight: '8px' }}
+                  />
+                  <Button
+                    size='small'
+                    type='text'
+                    icon={<CloseOutlined />}
+                    onClick={() => setSearch(false)}
+                  />
+                </SpaceBetweenWrapper>
               )
             }
-          />
+            renderItem={(sortNode) => (
+              <List.Item>
+                <SpaceBetweenWrapper width={'100%'}>
+                  <Typography.Text ellipsis>{sortNode.path}</Typography.Text>
+                  <span style={{ flexShrink: 0 }}>
+                    <span style={{ marginRight: '8px' }}>
+                      {`${sortNode.pathKeyList.length} keys`}
+                    </span>
 
-          {treeReady && (
-            <SortTree
-              title={checkedNodesData.path}
-              treeData={sortArray}
-              checkedKeys={checkedNodesData.pathKeyList}
-              onCheck={handleSortTreeChecked}
-              onSelect={handleSortTreeSelected}
+                    {!props.readOnly && (
+                      <div className='sort-node-list-item' style={{ display: 'inline' }}>
+                        <Button
+                          type='text'
+                          size='small'
+                          icon={<EditOutlined />}
+                          onClick={() => handleEditCollapseItem(sortNode.path, sortNode)}
+                        />
+                        <Button
+                          type='text'
+                          size='small'
+                          icon={<DeleteOutlined />}
+                          onClick={() => deleteIgnoreNode({ id: sortNode.id })}
+                        />
+                      </div>
+                    )}
+                  </span>
+                </SpaceBetweenWrapper>
+              </List.Item>
+            )}
+            locale={{ emptyText: t('appSetting.noSortNodes') }}
+          />
+        </Card>
+
+        <PaneDrawer
+          title={
+            <SpaceBetweenWrapper>
+              <Typography.Title level={5} style={{ marginBottom: 0 }}>
+                {t('appSetting.nodesSort')}
+              </Typography.Title>
+
+              {treeEditMode === TreeEditModeEnum.SortTree && (
+                <Button size='small' type='primary' onClick={handleSaveSort}>
+                  {t('save', { ns: 'common' })}
+                </Button>
+              )}
+            </SpaceBetweenWrapper>
+          }
+          open={openSortModal}
+          onClose={handleCancelEdit}
+        >
+          <TreeCarousel ref={treeCarouselRef} beforeChange={(from, to) => setTreeEditMode(to)}>
+            <ArrayTree
+              treeData={props.responseParsed}
+              sortNodeList={sortNodeList}
+              onSelect={(selectedKeys) =>
+                handleEditCollapseItem(
+                  selectedKeys[0] as string,
+                  sortNodeList.find((node) => node.path === selectedKeys[0]),
+                )
+              }
             />
-          )}
-        </TreeCarousel>
-      </PaneDrawer>
-    </>
+
+            {treeReady && (
+              <SortTree
+                title={checkedNodesData.path}
+                treeData={sortArray}
+                checkedKeys={checkedNodesData.pathKeyList}
+                onCheck={handleSortTreeChecked}
+                onSelect={handleSortTreeSelected}
+              />
+            )}
+          </TreeCarousel>
+        </PaneDrawer>
+      </Collapse.Panel>
+    </Collapse>
   );
 };
 

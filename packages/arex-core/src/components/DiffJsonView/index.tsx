@@ -1,25 +1,46 @@
-import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
+import '@arextest/vanilla-jsoneditor/themes/jse-theme-dark.css';
 
 import { css } from '@emotion/react';
 import { theme } from 'antd';
 import React, { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useArexCoreConfig } from '../../hooks';
 import { LogEntity } from '../DiffPath/type';
 import DiffJsonTooltip from './DiffJsonTooltip';
-import { genAllLeftDiffByType, genAllRightDiffByType } from './helper';
+import { genAllDiffByType } from './helper';
 import VanillaJSONEditor from './VanillaJSONEditor';
+
+export type TargetEditor = 'left' | 'right';
+export type PathHandler = (path: string[], targetEditor: TargetEditor) => void;
 export type DiffJsonViewProps = {
+  readOnly?: boolean;
   height?: string | number;
   hiddenTooltip?: boolean;
   diffJson?: { left: string; right: string };
   diffPath?: LogEntity[];
+  remark?: [string, string];
+  onIgnoreKey?: PathHandler;
+  onGlobalIgnoreKey?: PathHandler;
+  onSortKey?: PathHandler;
 };
+
 const { useToken } = theme;
-const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip, height }) => {
+const DiffJsonView: FC<DiffJsonViewProps> = ({
+  readOnly,
+  diffJson,
+  diffPath,
+  hiddenTooltip,
+  height,
+  remark,
+  onIgnoreKey,
+  onGlobalIgnoreKey,
+  onSortKey,
+}) => {
+  const { t } = useTranslation();
   const { theme } = useArexCoreConfig();
-  const allLeftDiffByType = genAllLeftDiffByType(diffPath);
-  const allRightDiffByType = genAllRightDiffByType(diffPath);
+  const allLeftDiffByType = genAllDiffByType('left', diffPath);
+  const allRightDiffByType = genAllDiffByType('right', diffPath);
   const onClassNameLeft = (path: string[]) => {
     const pathStr = path.map((p) => (isNaN(Number(p)) ? p : Number(p)));
     if (pathStr.length === 0) {
@@ -95,9 +116,9 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
           id={'containerLeft'}
         >
           <VanillaJSONEditor
-            readOnly
+            readOnly={readOnly}
             height={height}
-            // remark={t('replay.benchmark')}
+            remark={remark?.[0] || (t('record') as string)}
             content={{
               text: String(diffJson?.left), // stringify falsy value
               json: undefined,
@@ -105,6 +126,9 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
             mainMenuBar={false}
             onClassName={onClassNameLeft}
             allDiffByType={allLeftDiffByType}
+            onIgnoreKey={(path) => onIgnoreKey?.(path, 'left')}
+            onGlobalIgnoreKey={(path) => onGlobalIgnoreKey?.(path, 'left')}
+            onSortKey={(path) => onSortKey?.(path, 'left')}
           />
         </div>
 
@@ -115,9 +139,9 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
           id={'containerRight'}
         >
           <VanillaJSONEditor
-            readOnly
+            readOnly={readOnly}
             height={height}
-            // remark={t('replay.test')}
+            remark={remark?.[1] || (t('replay') as string)}
             content={{
               text: String(diffJson?.right), // stringify falsy value
               json: undefined,
@@ -125,6 +149,9 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({ diffJson, diffPath, hiddenTooltip
             mainMenuBar={false}
             onClassName={onClassNameRight}
             allDiffByType={allRightDiffByType}
+            onIgnoreKey={(path) => onIgnoreKey?.(path, 'right')}
+            onGlobalIgnoreKey={(path) => onGlobalIgnoreKey?.(path, 'right')}
+            onSortKey={(path) => onSortKey?.(path, 'right')}
           />
         </div>
       </div>

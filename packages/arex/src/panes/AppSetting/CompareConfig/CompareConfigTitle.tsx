@@ -1,12 +1,13 @@
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { Space, Typography } from 'antd';
-import { SmallTextButton, TooltipButton, useTranslation } from 'arex-core';
+import { TooltipButton, useTranslation } from '@arextest/arex-core';
+import { ButtonProps, Space, Typography } from 'antd';
 import React, { FC } from 'react';
 
 export type CompareConfigTitleProps = {
   title: string;
-  onAdd?: () => void;
-  onSearch?: () => void;
+  readOnly?: boolean;
+  onAdd?: ButtonProps['onClick'];
+  onSearch?: ButtonProps['onClick'];
 };
 
 const CompareConfigTitle: FC<CompareConfigTitleProps> = (props) => {
@@ -15,18 +16,22 @@ const CompareConfigTitle: FC<CompareConfigTitleProps> = (props) => {
   return (
     <Space>
       <Typography.Text strong>{props.title}</Typography.Text>
-      <div>
-        <SmallTextButton
+      <div className='compare-config-title-actions'>
+        <TooltipButton
           key='search'
           icon={<SearchOutlined />}
-          onClick={() => props.onSearch?.()}
+          title={t('search')}
+          onClick={props.onSearch}
         />
-        <TooltipButton
-          key='add'
-          icon={<PlusOutlined />}
-          title={t('appSetting.addKey')}
-          onClick={() => props.onAdd?.()}
-        />
+
+        {!props.readOnly && (
+          <TooltipButton
+            key='add'
+            icon={<PlusOutlined />}
+            title={t('appSetting.addKey')}
+            onClick={props.onAdd}
+          />
+        )}
       </div>
     </Space>
   );

@@ -1,4 +1,4 @@
-import { decodeUrl, encodeUrl, I18_KEY, i18n, StandardPathParams } from 'arex-core';
+import { decodeUrl, encodeUrl, I18_KEY, i18n, StandardPathParams } from '@arextest/arex-core';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 

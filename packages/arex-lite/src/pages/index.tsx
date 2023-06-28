@@ -6,7 +6,7 @@ import {
   ArexMenuContainerProps,
   ArexPanesContainer,
   ArexPanesContainerProps,
-} from 'arex-core';
+} from '@arextest/arex-core';
 import React, { useMemo } from 'react';
 
 import HeaderMenu from '../components/HeaderMenu';

@@ -1,7 +1,7 @@
+import { css, useTranslation } from '@arextest/arex-core';
 import { Card, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
-import { css, useTranslation } from 'arex-core';
 import React, { FC } from 'react';
 
 type SortTreeProps = Omit<TreeProps, 'treeData'> & {

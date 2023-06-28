@@ -1,4 +1,4 @@
-import { ArexMenuNamespace, ArexPaneNamespace, I18nextLng } from 'arex-core';
+import { ArexMenuNamespace, ArexPaneNamespace, I18nextLng } from '@arextest/arex-core';
 
 import arexMenuCn from './locales/cn/arex-menu.json';
 import arexPaneCn from './locales/cn/arex-pane.json';

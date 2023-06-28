@@ -1,5 +1,3 @@
-import { useRequest } from 'ahooks';
-import { App, MenuProps } from 'antd';
 import {
   ArexFooter,
   ArexHeader,
@@ -10,7 +8,9 @@ import {
   ArexPanesContainerProps,
   getLocalStorage,
   useTranslation,
-} from 'arex-core';
+} from '@arextest/arex-core';
+import { useRequest } from 'ahooks';
+import { App, MenuProps } from 'antd';
 import React, { useMemo } from 'react';
 
 import { EnvironmentSelect, HeaderMenu } from '@/components';
@@ -61,6 +61,11 @@ export default () => {
       }
     },
   });
+
+  const handleMenuChange = (menuType: string) => {
+    collapsed && setCollapsed(false);
+    setActiveMenu(menuType);
+  };
 
   const handleMenuSelect: ArexMenuContainerProps['onSelect'] = (type, id, data) => {
     navPane({
@@ -164,7 +169,7 @@ export default () => {
               // extra?: ReactNode;
             }}
             onCollapsed={setCollapsed}
-            onChange={setActiveMenu}
+            onChange={handleMenuChange}
             onSelect={handleMenuSelect}
           />
         }

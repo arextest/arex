@@ -1,6 +1,6 @@
+import { tryPrettierJsonString, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Divider, Select, Space } from 'antd';
-import { tryPrettierJsonString, useTranslation } from 'arex-core';
+import { App, Select, Space } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 
 import { Segmented } from '@/components';
@@ -10,16 +10,16 @@ import { ApplicationService, ConfigService } from '@/services';
 
 import SyncResponse from './SyncResponse';
 
-export const GLOBAL_OPERATION_ID = '__global__';
-
-enum CONFIG_TYPE {
+export enum CONFIG_TYPE {
   GLOBAL,
   INTERFACE,
   DEPENDENCY,
 }
 
 export type CompareConfigProps = {
-  appId: string;
+  appId: string; // 限定应用，用于展示特定应用下所有接口的对比配置
+  operationId?: string; // 限定接口，用于展示特定接口的对比配置
+  readOnly?: boolean; // 只读模式，用于展示接口的对比配置
 };
 
 const CompareConfig: FC<CompareConfigProps> = (props) => {
@@ -43,9 +43,9 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
     ],
     [],
   );
-  const [configType, setConfigType] = useState<React.Key>(CONFIG_TYPE.GLOBAL);
+  const [configType, setConfigType] = useState<CONFIG_TYPE>(CONFIG_TYPE.GLOBAL);
 
-  const [activeOperationId, setActiveOperationId] = useState<string | undefined>();
+  const [activeOperationId, setActiveOperationId] = useState<string | undefined>(props.operationId);
   const [rawResponse, setRawResponse] = useState<string>();
 
   /**
@@ -54,7 +54,10 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   const { data: operationList = [] } = useRequest(
     () => ApplicationService.queryInterfacesList<'Interface'>({ id: props.appId as string }),
     {
-      ready: !!props.appId,
+      ready: !!props.appId && !props.operationId,
+      onSuccess(res) {
+        setActiveOperationId(res?.[0]?.id);
+      },
     },
   );
 
@@ -112,13 +115,16 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   };
 
   return (
-    <>
-      <Space>
-        <Segmented value={configType} options={configOptions} onChange={setConfigType} />
+    <Space size='middle' direction='vertical' style={{ display: 'flex' }}>
+      <Space style={{ display: 'flex', flexWrap: 'wrap' }}>
+        <Segmented
+          value={configType}
+          options={configOptions}
+          onChange={(value) => setConfigType(value as CONFIG_TYPE)}
+        />
 
-        {configType !== CONFIG_TYPE.GLOBAL && (
+        {configType !== CONFIG_TYPE.GLOBAL && !props.operationId && (
           <Select
-            allowClear
             showSearch
             optionFilterProp='label'
             placeholder='choose interface'
@@ -145,22 +151,22 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         <SyncResponse value={rawResponse} onSave={handleSaveResponse} />
       </Space>
 
-      <Divider style={{ margin: '16px 0 8px 0' }} />
-
       <NodesIgnore
         appId={props.appId}
-        interfaceId={activeOperationId}
+        readOnly={props.readOnly}
+        configType={configType}
+        operationId={activeOperationId}
         responseParsed={interfaceResponseParsed}
       />
-
-      <Divider style={{ margin: '16px 0 8px 0' }} />
 
       <NodeSort
         appId={props.appId}
-        interfaceId={activeOperationId}
+        readOnly={props.readOnly}
+        configType={configType}
+        operationId={activeOperationId}
         responseParsed={interfaceResponseParsed}
       />
-    </>
+    </Space>
   );
 };
 

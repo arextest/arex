@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage } from 'arex-core';
+import { getLocalStorage, setLocalStorage } from '@arextest/arex-core';
 
 import { EMAIL_KEY } from '@/constant';
 import { useEnvironments, useMenusPanes, useUserProfile, useWorkspaces } from '@/store';

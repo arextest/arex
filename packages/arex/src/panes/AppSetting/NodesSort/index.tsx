@@ -1,7 +1,3 @@
-import { useRequest } from 'ahooks';
-import { App, Card, Carousel, Col, Modal, Row } from 'antd';
-import { CarouselRef } from 'antd/lib/carousel';
-import { TreeProps } from 'antd/lib/tree';
 import {
   EditAreaPlaceholder,
   SpaceBetweenWrapper,
@@ -9,7 +5,11 @@ import {
   tryParseJsonString,
   tryPrettierJsonString,
   useTranslation,
-} from 'arex-core';
+} from '@arextest/arex-core';
+import { useRequest } from 'ahooks';
+import { App, Card, Carousel, Col, Modal, Row } from 'antd';
+import { CarouselRef } from 'antd/lib/carousel';
+import { TreeProps } from 'antd/lib/tree';
 import React, { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 

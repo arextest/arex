@@ -1,6 +1,6 @@
 {
-  "name": "arex-core",
-  "version": "0.0.3-beta.12",
+  "name": "@arextest/arex-core",
+  "version": "0.0.3-beta.16",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-core.umd.cjs",
   "module": "dist/arex-core.js",
@@ -9,7 +9,8 @@
     "build:code": "vite build",
     "build:decl": "tsc --project tsconfig.decl.json",
     "do-build": "npm run build:code && npm run build:decl",
-    "do-build-core": "npm run build:code && npm run build:decl"
+    "do-build-core": "npm run build:code && npm run build:decl",
+    "publish": "npm publish packages/arex-core --no-git-checks --access=public"
   },
   "types": "./dist/index.d.ts",
   "files": [
@@ -17,6 +18,7 @@
   ],
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
+    "@arextest/vanilla-jsoneditor": "^0.17.14",
     "@emotion/react": "^11.10.6",
     "@emotion/serialize": "^1.1.1",
     "@emotion/styled": "^11.10.6",
@@ -39,7 +41,6 @@
     "react-i18next": "^12.2.0",
     "react-transition-group": "^4.4.5",
     "use-immer": "^0.8.1",
-    "vanilla-jsoneditor": "^0.17.1",
     "vconsole": "^3.15.0"
   },
   "devDependencies": {

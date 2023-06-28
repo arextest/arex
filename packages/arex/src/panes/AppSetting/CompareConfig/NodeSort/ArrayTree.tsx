@@ -1,8 +1,8 @@
+import { useTranslation } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { Badge, Card, Tree, Typography } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
-import { useTranslation } from 'arex-core';
 import React, { FC, useMemo } from 'react';
 
 import { useColorPrimary } from '@/hooks';

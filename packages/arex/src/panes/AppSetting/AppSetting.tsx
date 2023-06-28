@@ -1,5 +1,5 @@
+import { ArexPaneFC, css, useTranslation } from '@arextest/arex-core';
 import { Tabs } from 'antd';
-import { ArexPaneFC, css, useTranslation } from 'arex-core';
 import React, { useMemo } from 'react';
 
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
@@ -32,11 +32,12 @@ const AppSetting: ArexPaneFC<ApplicationDataType> = (props) => {
         label: t('appSetting.importYaml'),
         children: <SettingImportYaml appId={data.appId} agentVersion={data.agentVersion} />,
       },
-      {
-        key: 'compareConfig',
-        label: t('appSetting.compareConfig'),
-        children: <CompareConfig appId={data.appId} />,
-      },
+      // TODO 暂时隐藏
+      // {
+      //   key: 'compareConfig',
+      //   label: t('appSetting.compareConfig'),
+      //   children: <CompareConfig appId={data.appId} />,
+      // },
       {
         key: 'nodesIgnore',
         label: t('appSetting.nodesIgnore'),

@@ -58,7 +58,10 @@
     "add_case": "Add Case",
     "rename": "Rename",
     "duplicate": "Duplicate",
-    "delete": "Delete"
+    "delete": "Delete",
+    "import_export": "Import/Export",
+    "export": "Export",
+    "from_postman_description": "Import from Postman collection file"
   },
   "replay": {
     "selectApplication": "Please select an application",
@@ -188,7 +191,7 @@
     "dynamicClasses": "Dynamic Classes",
     "dynamicClassesTooltip": "To ensure consistent execution results despite cache data differences, AREX collects and mocks local cache data. This is achieved by configuring the access method of the local cache as a dynamic class, allowing custom mocking of the method. It records the data from the dynamically configured class method in the production environment and replays the corresponding matched data. In addition to cache data, various memory data can also be mocked.",
     "fullClassName": "Full Class Name",
-    "fullClassNameTooltip": "The full class name of the local cache, e.g.: java.lang.String.",
+    "fullClassNameTooltip": "The full class name of the local cache, e.g.:\ninfix: io.arex.inst.dynamic.*namicTest* \nsuffix: io.arex.inst.dynamic.*namicTestClass\nprefix: io.arex.inst.dynamic.DynamicTest*\nequals: io.arex.inst.dynamic.DynamicTestClass\nabstract class or interface: ac:io.arex.inst.dynamic.AbstractDynamicTestClass",
     "methodName": "Method Name",
     "methodNameTooltip": "The method name to be mocked.",
     "parameterTypes": "Parameter Types",
@@ -226,10 +229,14 @@
     "mockTips": "When \"body\" is a json string, it will be automatically converted into a json object, and restored when saving.",
     "runningStatus": "Running Status",
     "frequencyUnit": "times/minute",
-    "frequencyTip": "Single-interface single-day recording: * times",
     "maxQPS": "Max QPS",
     "QPSTips": "Allowable value range 1 - 20",
-    "emptyQPS": "Please input your max QPS"
+    "emptyQPS": "Please input your max QPS",
+    "frequencyTip": "Single-interface single-day recording: * times",
+    "recordMachineNum": "Record Machine Count",
+    "agentStatusTip": "SLEEPING: Agent injected but not recording\nUNSTART: Agent not injected\nWORKING: Recording in progress",
+    "inclusion": "Inclusion",
+    "inclusionTooltip": "Select the paths to record"
   },
   "env": {
     "searchEnvironment": "Search Environment",

@@ -1,4 +1,4 @@
-import { getLocalStorage } from 'arex-core';
+import { getLocalStorage } from '@arextest/arex-core';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 

@@ -1,13 +1,13 @@
 import { AimOutlined, DeploymentUnitOutlined, PlusOutlined } from '@ant-design/icons';
-import { useRequest } from 'ahooks';
-import { App, theme } from 'antd';
 import {
   ArexMenuFC,
   createArexMenu,
   SmallTextButton,
   SpaceBetweenWrapper,
   useTranslation,
-} from 'arex-core';
+} from '@arextest/arex-core';
+import { useRequest } from 'ahooks';
+import { App, theme } from 'antd';
 import React, { useMemo } from 'react';
 
 import { MenuSelect } from '@/components';

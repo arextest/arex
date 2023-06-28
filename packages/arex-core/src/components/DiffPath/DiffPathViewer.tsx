@@ -3,9 +3,10 @@ import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
 import { App, Menu, Spin, theme, Typography } from 'antd';
 import React, { FC, useEffect } from 'react';
+import { Simulate } from 'react-dom/test-utils';
 import { useTranslation } from 'react-i18next';
 
-import DiffJsonView from '../DiffJsonView';
+import DiffJsonView, { PathHandler } from '../DiffJsonView';
 import { FlexCenterWrapper, SpaceBetweenWrapper } from '../index';
 import PathTitle from './DiffPathTitle';
 import { DiffLog, LogEntity } from './type';
@@ -40,6 +41,7 @@ export type CompareResultDetail = {
   testMsg: string;
 };
 export interface DiffPathViewerProps {
+  contextMenuDisabled?: boolean;
   operationId: string;
   appId: string;
   loading?: boolean;
@@ -52,6 +54,9 @@ export interface DiffPathViewerProps {
     logIndex: number;
   }) => Promise<LogEntity[]>;
   requestIgnoreNode: (path: string[]) => Promise<boolean>;
+  onIgnoreKey?: PathHandler;
+  onGlobalIgnoreKey?: PathHandler;
+  onSortKey?: PathHandler;
 }
 
 const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
@@ -102,6 +107,10 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
     <Allotment
       css={css`
         height: ${props.height};
+        overflow: visible !important;
+        .split-view-view-visible:has(.json-diff-viewer) {
+          overflow: visible !important;
+        }
       `}
     >
       <Allotment.Pane preferredSize={200}>
@@ -163,9 +172,9 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
 
       <Allotment.Pane
         visible
+        className='json-diff-viewer'
         css={css`
           height: ${props.height};
-          border-left: 1px solid ${token.colorBorderBg};
         `}
       >
         {props.data?.diffResultCode === 2 ? (
@@ -176,12 +185,16 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
           <div style={{ position: 'relative', margin: `${token.marginXS}px`, height: '100%' }}>
             <DiffJsonView
               hiddenTooltip
+              readOnly={props.contextMenuDisabled}
               height={`calc(${props.height} - 16px)`}
               diffJson={{
                 left: props.data.baseMsg,
                 right: props.data.testMsg,
               }}
               diffPath={logEntity}
+              onIgnoreKey={props.onIgnoreKey}
+              onGlobalIgnoreKey={props.onGlobalIgnoreKey}
+              onSortKey={props.onSortKey}
             />
           </div>
         )}

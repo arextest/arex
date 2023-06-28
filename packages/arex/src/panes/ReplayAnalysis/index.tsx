@@ -1,5 +1,5 @@
 import { DiffOutlined } from '@ant-design/icons';
-import { createArexPane } from 'arex-core';
+import { createArexPane } from '@arextest/arex-core';
 import React from 'react';
 
 import { PanesType } from '@/constant';

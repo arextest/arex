@@ -1,4 +1,6 @@
 {
+  "record": "Record",
+  "replay": "Replay",
   "console": "Console",
   "browserAgent": "Browser Agent"
 }

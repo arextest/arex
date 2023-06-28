@@ -12,7 +12,8 @@
     "server": "pnpm -r do-server",
     "lint": "prettier --write \"packages/**/*.{ts,tsx}\" && eslint \"packages/**/*.{ts,tsx}\" --fix",
     "pre-commit": "pnpm run lint",
-    "test": "pnpm -r do-test"
+    "test": "pnpm -r do-test",
+    "rm": "rm -rf node_modules packages/arex/node_modules packages/arex-core/node_modules packages/arex-lite/node_modules"
   },
   "keywords": [],
   "author": "",

@@ -3,7 +3,7 @@ import { SceneCodeMap } from './SceneCode';
 export { default as CheckOrCloseIcon } from './CheckOrCloseIcon';
 export type { CollapseTableProps } from './CollapseTable';
 export { default as CollapseTable } from './CollapseTable';
-export type { DiffJsonViewProps } from './DiffJsonView';
+export type { DiffJsonViewProps, PathHandler, TargetEditor } from './DiffJsonView';
 export { default as DiffJsonView } from './DiffJsonView';
 export type { DiffJsonViewDrawerProps } from './DiffJsonView/DiffJsonViewDrawer';
 export { default as DiffJsonViewDrawer } from './DiffJsonView/DiffJsonViewDrawer';
