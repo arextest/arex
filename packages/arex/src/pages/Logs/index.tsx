@@ -1,8 +1,8 @@
 import { LoadingOutlined, SearchOutlined } from '@ant-design/icons';
+import { Label, styled } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { Badge, Button, DatePicker, Divider, Empty, Select, Space, theme, Typography } from 'antd';
 import { RangePickerProps } from 'antd/es/date-picker';
-import { Label, styled } from 'arex-core';
 import dayjs from 'dayjs';
 import React, { FC, useState } from 'react';
 
@@ -28,7 +28,7 @@ const Logs: FC = () => {
   const {
     token: { colorError, colorSuccess, colorWarning, colorInfo },
   } = theme.useToken();
-  const getLevelColor = (level: (typeof LogLevel)[number]) =>
+  const getLevelColor = (level: typeof LogLevel[number]) =>
     ({
       DEBUG: colorSuccess,
       INFO: colorInfo,
@@ -38,8 +38,8 @@ const Logs: FC = () => {
       TRACE: colorError,
     }[level]);
 
-  const [level, setLevel] = useState<(typeof LogLevel)[number]>('INFO');
-  const [appType, setAppType] = useState<(typeof AppType)[number]>('all');
+  const [level, setLevel] = useState<typeof LogLevel[number]>('INFO');
+  const [appType, setAppType] = useState<typeof AppType[number]>('all');
   const [time, setTime] = useState<RangePickerProps['value']>([
     dayjs().subtract(1, 'day'),
     dayjs(),

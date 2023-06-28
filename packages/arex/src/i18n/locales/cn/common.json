@@ -13,6 +13,7 @@
   "login": "登录",
   "logout": "登出",
   "invite": "邀请",
+  "search": "搜索",
   "key": "参数",
   "value": "值",
   "invalidJSON": "无效JSON",
@@ -57,5 +58,6 @@
   "response": "响应",
   "version": "版本",
   "modifiedTime": "修改时间",
-  "loginInformationExpired": "登录信息已过期，请重新登录"
+  "loginInformationExpired": "登录信息已过期，请重新登录",
+  "agentStatus": "状态"
 }

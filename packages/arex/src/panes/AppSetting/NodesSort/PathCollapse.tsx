@@ -6,8 +6,6 @@ import {
   PlusOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { useRequest } from 'ahooks';
-import { App, Button, Collapse, CollapseProps, Input, List, Spin, Typography } from 'antd';
 import {
   css,
   SmallTextButton,
@@ -15,7 +13,9 @@ import {
   styled,
   TooltipButton,
   useTranslation,
-} from 'arex-core';
+} from '@arextest/arex-core';
+import { useRequest } from 'ahooks';
+import { App, Button, Collapse, CollapseProps, Input, List, Spin, Typography } from 'antd';
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 
 import { ComparisonService } from '@/services';

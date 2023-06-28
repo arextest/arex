@@ -1,4 +1,4 @@
-import { RoleEnum } from 'arex-core';
+import { RoleEnum } from '@arextest/arex-core';
 
 import { request } from '@/utils';
 

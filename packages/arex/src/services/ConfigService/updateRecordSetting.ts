@@ -11,6 +11,7 @@ export interface UpdateRecordSettingReq {
   excludeDependentOperationSet?: string[];
   includeServiceSet?: string[];
   excludeServiceOperationSet?: string[];
+  recordMachineCountLimit?: number;
 }
 
 export async function updateRecordSetting(params: UpdateRecordSettingReq) {

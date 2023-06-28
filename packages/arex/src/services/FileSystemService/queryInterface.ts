@@ -1,9 +1,9 @@
-import { RequestMethod } from 'arex-core';
+import { RequestMethod } from '@arextest/arex-core';
 
 import { request } from '@/utils';
 
 export type Address = {
-  method: (typeof RequestMethod)[number];
+  method: typeof RequestMethod[number];
   endpoint: string;
 };
 

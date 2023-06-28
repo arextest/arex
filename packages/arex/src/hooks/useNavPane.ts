@@ -1,4 +1,10 @@
-import { ArexPaneManager, decodeUrl, encodeUrl, Pane, StandardPathParams } from 'arex-core';
+import {
+  ArexPaneManager,
+  decodeUrl,
+  encodeUrl,
+  Pane,
+  StandardPathParams,
+} from '@arextest/arex-core';
 import { merge } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 

@@ -1,5 +1,5 @@
+import { ArexPaneFC, CollapseTable, FlexCenterWrapper, useTranslation } from '@arextest/arex-core';
 import { Empty } from 'antd';
-import { ArexPaneFC, CollapseTable, FlexCenterWrapper, useTranslation } from 'arex-core';
 import { merge } from 'lodash';
 import React, { useState } from 'react';
 

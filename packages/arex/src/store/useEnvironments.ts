@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage } from 'arex-core';
+import { getLocalStorage, setLocalStorage } from '@arextest/arex-core';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 

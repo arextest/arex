@@ -1,4 +1,4 @@
-import { ArexCoreProvider, ArexMenuManager, ArexPaneManager } from 'arex-core';
+import { ArexCoreProvider, ArexMenuManager, ArexPaneManager } from '@arextest/arex-core';
 import React from 'react';
 
 import { resources } from './i18n';

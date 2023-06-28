@@ -13,6 +13,8 @@ export interface QueryRecordSettingRes {
   sampleRate: number;
   timeMock: boolean;
   excludeServiceOperationSet: string[];
+  recordMachineCountLimit?: number;
+  extendField?: { includeServiceOperations: string } | null;
 }
 
 export async function queryRecordSetting(params: QueryRecordSettingReq) {

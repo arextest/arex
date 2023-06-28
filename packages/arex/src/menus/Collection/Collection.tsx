@@ -1,7 +1,4 @@
-import { DownOutlined, PlayCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { useRequest } from 'ahooks';
-import { Button, Tag, Tree } from 'antd';
-import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
+import Icon, { DownOutlined, PlayCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   ArexMenuFC,
   CategoryKey,
@@ -14,7 +11,10 @@ import {
   styled,
   TooltipButton,
   useTranslation,
-} from 'arex-core';
+} from '@arextest/arex-core';
+import { useRequest } from 'ahooks';
+import { Button, Tag, Tree } from 'antd';
+import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
@@ -22,10 +22,12 @@ import { useNavPane } from '@/hooks';
 import CollectionNodeTitle, {
   CollectionNodeTitleProps,
 } from '@/menus/Collection/CollectionNodeTitle';
+import CollectionsImportExport from '@/menus/Collection/ImportExport';
 import { FileSystemService, ReportService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { negate } from '@/utils';
+import IconArchive from '~icons/lucide/archive';
 
 const CollectionNodeTitleWrapper = styled.div`
   width: 100%;
@@ -74,7 +76,7 @@ const Collection: ArexMenuFC = (props) => {
 
   const selectedKeys = useMemo(() => (props.value ? [props.value] : []), [props.value]);
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]); // TODO 初始化展开的节点
-
+  const [showModalImportExport, setShowModalImportExport] = useState(false);
   // auto expand by active pane id
   useEffect(() => {
     activePane &&
@@ -291,6 +293,15 @@ const Collection: ArexMenuFC = (props) => {
                 title={t('collection.create_new')}
                 onClick={createCollection}
               />
+
+              <TooltipButton
+                icon={<Icon component={IconArchive} />}
+                title={t('collection.import_export')}
+                onClick={() => {
+                  setShowModalImportExport(true);
+                }}
+              />
+
               <TooltipButton
                 icon={<PlayCircleOutlined />}
                 title={t('collection.batch_run')}
@@ -332,6 +343,13 @@ const Collection: ArexMenuFC = (props) => {
               onAddNode={handleAddNode}
             />
           )}
+        />
+        {/*弹框*/}
+        <CollectionsImportExport
+          show={showModalImportExport}
+          onHideModal={() => {
+            setShowModalImportExport(false);
+          }}
         />
       </EmptyWrapper>
     </CollectionNodeTitleWrapper>

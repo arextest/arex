@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
+import Icons from 'unplugin-icons/vite';
 import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
@@ -28,6 +29,7 @@ export default defineConfig({
         return modules;
       },
     },
+    Icons({ compiler: 'jsx', jsx: 'react' }),
   ],
   resolve: {
     alias: {

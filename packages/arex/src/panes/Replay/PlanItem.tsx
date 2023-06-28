@@ -6,8 +6,16 @@ import {
   DiffOutlined,
   FileTextOutlined,
   RedoOutlined,
+  SearchOutlined,
   StopOutlined,
 } from '@ant-design/icons';
+import {
+  getLocalStorage,
+  SmallTextButton,
+  SpaceBetweenWrapper,
+  TooltipButton,
+  useTranslation,
+} from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import {
@@ -16,6 +24,8 @@ import {
   Card,
   Col,
   Dropdown,
+  Input,
+  InputRef,
   Popconfirm,
   Row,
   Space,
@@ -27,15 +37,8 @@ import {
   Typography,
 } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import {
-  getLocalStorage,
-  SmallTextButton,
-  SpaceBetweenWrapper,
-  TooltipButton,
-  useTranslation,
-} from 'arex-core';
 import dayjs from 'dayjs';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import CountUp from 'react-countup';
 
@@ -175,6 +178,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
     [token],
   );
 
+  const searchInput = useRef<InputRef>(null);
   const columns: ColumnsType<PlanItemStatistics> = [
     {
       title: t('replay.planItemID'),
@@ -192,6 +196,36 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       dataIndex: 'operationName',
       key: 'operationName',
       ellipsis: { showTitle: false },
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+        <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+          <Input.Search
+            allowClear
+            enterButton
+            size='small'
+            ref={searchInput}
+            placeholder={`${t('search', { ns: 'common' })} ${t('replay.api')}`}
+            value={selectedKeys[0]}
+            onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+            onSearch={(value, event) => {
+              // @ts-ignore
+              if (event.target?.localName === 'input') return;
+              confirm();
+            }}
+            onPressEnter={() => confirm()}
+          />
+        </div>
+      ),
+      filterIcon: (filtered: boolean) => (
+        <SearchOutlined style={{ color: filtered ? token.colorPrimaryActive : undefined }} />
+      ),
+      onFilter: (value, record) =>
+        record.operationName
+          .toString()
+          .toLowerCase()
+          .includes((value as string).toLowerCase()),
+      onFilterDropdownOpenChange: (visible) => {
+        visible && setTimeout(() => searchInput.current?.select(), 100);
+      },
       render: (value) => (
         <Tooltip placement='topLeft' title={value}>
           {'/' + (value ?? '').split('/').at(-1)}

@@ -1,9 +1,9 @@
 import { SaveOutlined } from '@ant-design/icons';
+import { tryParseJsonString, tryStringifyJson } from '@arextest/arex-core';
+import { EmptyWrapper, TooltipButton } from '@arextest/arex-core';
 import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { App, Col, Collapse, Row, Space } from 'antd';
-import { tryParseJsonString, tryStringifyJson } from 'arex-core';
-import { EmptyWrapper, TooltipButton } from 'arex-core';
 import React, { FC } from 'react';
 import { useImmer } from 'use-immer';
 
