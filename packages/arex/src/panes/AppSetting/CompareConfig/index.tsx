@@ -152,14 +152,14 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
       <NodesIgnore
         appId={props.appId}
         configType={configType}
-        interfaceId={activeOperationId}
+        operationId={activeOperationId}
         responseParsed={interfaceResponseParsed}
       />
 
       <NodeSort
         appId={props.appId}
         configType={configType}
-        interfaceId={activeOperationId}
+        operationId={activeOperationId}
         responseParsed={interfaceResponseParsed}
       />
     </Space>

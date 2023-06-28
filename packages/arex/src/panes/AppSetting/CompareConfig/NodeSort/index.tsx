@@ -27,7 +27,7 @@ const ActiveKey = 'sort';
 export type NodeSortProps = {
   appId: string;
   configType: CONFIG_TYPE;
-  interfaceId?: string;
+  operationId?: string;
   responseParsed: { [key: string]: any };
 };
 
@@ -65,11 +65,11 @@ const NodeSort: FC<NodeSortProps> = (props) => {
     (listPath?: string[]) =>
       ComparisonService.querySortNode({
         appId: props.appId as string,
-        operationId: props.interfaceId,
+        operationId: props.operationId,
       }),
     {
-      ready: !!props.interfaceId,
-      refreshDeps: [props.interfaceId],
+      ready: !!props.operationId,
+      refreshDeps: [props.operationId],
       onBefore() {
         setSortNodeList([]);
       },
@@ -119,11 +119,11 @@ const NodeSort: FC<NodeSortProps> = (props) => {
     };
     if (activeSortNode) {
       updateSortNode({ id: activeSortNode.id, ...params });
-    } else if (props.appId && props.interfaceId) {
+    } else if (props.appId && props.operationId) {
       insertSortNode({
         ...params,
         appId: props.appId,
-        operationId: props.interfaceId,
+        operationId: props.operationId,
       });
     }
   };
