@@ -167,11 +167,11 @@
     "differenceNode": "Difference node",
     "addIgnoreSuccess": "Ignore node successfully",
     "diffMatch": "Diff Match",
-    "replayEndTime": "ReplayEndTime",
-    "operationName": "operationName",
-    "recordedCaseCount": "recordedCaseCount",
-    "recordTime": "recordTime",
-    "operationType": "operationType"
+    "replayEndTime": "Replay End Time",
+    "operationName": "Operation Name",
+    "recordedCaseCount": "Recorded Case Count",
+    "recordTime": "Record Time",
+    "operationType": "Operation Type"
   },
   "appSetting": {
     "record": "Record",

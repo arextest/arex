@@ -3,11 +3,13 @@ import { usePagination } from 'ahooks';
 import { Select, Table } from 'antd';
 import dayjs from 'dayjs';
 import { FC, useState } from 'react';
-
+import { PanesType } from '@/constant';
+import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
 
 export type RecordedCaseListProps = {
   recordedCaseList: DataType;
+  closeModal: () => void;
 };
 
 export type DataType = {
@@ -18,18 +20,31 @@ export type DataType = {
   appId: string;
 };
 
-const RecordedCaseListItem: FC<RecordedCaseListProps> = ({ recordedCaseList }) => {
+const RecordedCaseListItem: FC<RecordedCaseListProps> = ({ recordedCaseList, closeModal }) => {
   const { appId, operationName, operationTypes } = recordedCaseList;
   const [operationType, setOperationType] = useState<string>(operationTypes[0]);
   const { t } = useTranslation(['components']);
   const options = operationTypes.map((type: string) => ({ text: type, value: type }));
+  const navPane = useNavPane();
   const operationTypesChange = (type: string) => {
-    console.log(type, 233);
-
     setOperationType(type);
   };
   const columns = [
-    { title: t('replay.recordId'), dataIndex: 'recordId', key: 'recordId' },
+    {
+      title: t('replay.recordId'),
+      dataIndex: 'recordId',
+      key: 'recordId',
+      render: (text: string, record: { recordId: string }) => (
+        <a
+          onClick={() => {
+            closeModal();
+            navPane({ type: PanesType.CASE_DETAIL, id: record.recordId, data: record });
+          }}
+        >
+          {text}
+        </a>
+      ),
+    },
     {
       title: t('replay.recordTime'),
       dataIndex: 'createTime',

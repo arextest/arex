@@ -1,13 +1,12 @@
 import { useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import type { TableColumnsType } from 'antd';
-import { Modal, Table } from 'antd';
+import { Modal, Table, Input, theme } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { forwardRef, useImperativeHandle, useState } from 'react';
-
 import RecordedCaseListItem from '@/panes/Replay/RecordedCaseListItem';
 import { ReportService } from '@/services';
-
 export type RecordedCaseListRef = {
   open: () => void;
 };
@@ -31,6 +30,8 @@ export type OjectType = {
 const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>((props, ref) => {
   const { t } = useTranslation(['components']);
   const [open, setOpen] = useState(false);
+  const [curExpandedRowKeys, setCurExpandedRowKeys] = useState<string[]>([]);
+  const { token } = theme.useToken();
   useImperativeHandle(ref, () => ({
     open: () => setOpen(true),
   }));
@@ -43,10 +44,42 @@ const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>(
       }),
     {
       ready: open,
+      onSuccess() {
+        setCurExpandedRowKeys([]);
+      },
     },
   );
   const columns: TableColumnsType<DataType> = [
-    { title: t('replay.operationName'), dataIndex: 'operationName', key: 'operationName' },
+    {
+      title: t('replay.operationName'),
+      dataIndex: 'operationName',
+      key: 'operationName',
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+        <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+          <Input.Search
+            allowClear
+            enterButton
+            size='small'
+            placeholder={`${t('search', { ns: 'common' })} ${t('replay.api')}`}
+            onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+            onSearch={(value, event) => {
+              // @ts-ignore
+              if (event.target?.localName === 'input') return;
+              confirm();
+            }}
+            onPressEnter={() => confirm()}
+          />
+        </div>
+      ),
+      filterIcon: (filtered: boolean) => (
+        <SearchOutlined style={{ color: filtered ? token.colorPrimaryActive : undefined }} />
+      ),
+      onFilter: (value, record) =>
+        record.operationName
+          .toString()
+          .toLowerCase()
+          .includes((value as string).toLowerCase()),
+    },
     {
       title: t('replay.recordedCaseCount'),
       dataIndex: 'recordedCaseCount',
@@ -54,7 +87,22 @@ const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>(
     },
   ];
   const expandedRowRender = (record: DataType) => {
-    return <RecordedCaseListItem recordedCaseList={record}></RecordedCaseListItem>;
+    return (
+      <RecordedCaseListItem
+        recordedCaseList={record}
+        closeModal={closeModal}
+      ></RecordedCaseListItem>
+    );
+  };
+  const onExpand = (expanded: boolean, record: DataType) => {
+    if (expanded) {
+      setCurExpandedRowKeys([record.id]);
+    } else {
+      setCurExpandedRowKeys([]);
+    }
+  };
+  const closeModal = () => {
+    setOpen(false);
   };
 
   return (
@@ -72,7 +120,8 @@ const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>(
         expandable={{ expandedRowRender }}
         dataSource={aggList as []}
         rowKey={'id'}
-        pagination={false}
+        expandedRowKeys={curExpandedRowKeys}
+        onExpand={onExpand}
         loading={loading}
       />
     </Modal>
