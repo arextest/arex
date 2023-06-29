@@ -28,7 +28,7 @@ const Logs: FC = () => {
   const {
     token: { colorError, colorSuccess, colorWarning, colorInfo },
   } = theme.useToken();
-  const getLevelColor = (level: typeof LogLevel[number]) =>
+  const getLevelColor = (level: (typeof LogLevel)[number]) =>
     ({
       DEBUG: colorSuccess,
       INFO: colorInfo,
@@ -38,8 +38,8 @@ const Logs: FC = () => {
       TRACE: colorError,
     }[level]);
 
-  const [level, setLevel] = useState<typeof LogLevel[number]>('INFO');
-  const [appType, setAppType] = useState<typeof AppType[number]>('all');
+  const [level, setLevel] = useState<(typeof LogLevel)[number]>('INFO');
+  const [appType, setAppType] = useState<(typeof AppType)[number]>('all');
   const [time, setTime] = useState<RangePickerProps['value']>([
     dayjs().subtract(1, 'day'),
     dayjs(),

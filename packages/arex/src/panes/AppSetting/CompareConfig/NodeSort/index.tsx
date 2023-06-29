@@ -25,9 +25,10 @@ enum TreeEditModeEnum {
 const ActiveKey = 'sort';
 
 export type NodeSortProps = {
-  appId: string;
+  appId?: string;
+  operationId?: string;
+  readOnly?: boolean;
   configType: CONFIG_TYPE;
-  interfaceId?: string;
   responseParsed: { [key: string]: any };
 };
 
@@ -65,11 +66,11 @@ const NodeSort: FC<NodeSortProps> = (props) => {
     (listPath?: string[]) =>
       ComparisonService.querySortNode({
         appId: props.appId as string,
-        operationId: props.interfaceId,
+        operationId: props.operationId,
       }),
     {
-      ready: !!props.interfaceId,
-      refreshDeps: [props.interfaceId],
+      ready: !!props.operationId && !!props.appId,
+      refreshDeps: [props.operationId],
       onBefore() {
         setSortNodeList([]);
       },
@@ -119,11 +120,11 @@ const NodeSort: FC<NodeSortProps> = (props) => {
     };
     if (activeSortNode) {
       updateSortNode({ id: activeSortNode.id, ...params });
-    } else if (props.appId && props.interfaceId) {
+    } else if (props.appId && props.operationId) {
       insertSortNode({
         ...params,
         appId: props.appId,
-        operationId: props.interfaceId,
+        operationId: props.operationId,
       });
     }
   };
@@ -177,11 +178,12 @@ const NodeSort: FC<NodeSortProps> = (props) => {
     });
 
     handleSetSortArray(path);
-    setTreeEditMode(TreeEditModeEnum.SortTree);
-    treeCarouselRef.current?.goTo(1);
 
+    setTreeEditMode(TreeEditModeEnum.SortTree);
     setOpenSortModal(true);
     setTreeReady(true);
+
+    setTimeout(() => treeCarouselRef.current?.goTo(1)); // 防止初始化时 treeCarouselRef 未绑定
   };
 
   // 获取待排序操作的数组结构
@@ -232,6 +234,7 @@ const NodeSort: FC<NodeSortProps> = (props) => {
         header={
           <CompareConfigTitle
             title='Nodes Sort'
+            readOnly={props.readOnly}
             onSearch={handleSearch}
             onAdd={handleAddSortNode}
           />
@@ -273,18 +276,23 @@ const NodeSort: FC<NodeSortProps> = (props) => {
                     <span style={{ marginRight: '8px' }}>
                       {`${sortNode.pathKeyList.length} keys`}
                     </span>
-                    <Button
-                      type='text'
-                      size='small'
-                      icon={<EditOutlined />}
-                      onClick={() => handleEditCollapseItem(sortNode.path, sortNode)}
-                    />
-                    <Button
-                      type='text'
-                      size='small'
-                      icon={<DeleteOutlined />}
-                      onClick={() => deleteIgnoreNode({ id: sortNode.id })}
-                    />
+
+                    {!props.readOnly && (
+                      <div className='sort-node-list-item' style={{ display: 'inline' }}>
+                        <Button
+                          type='text'
+                          size='small'
+                          icon={<EditOutlined />}
+                          onClick={() => handleEditCollapseItem(sortNode.path, sortNode)}
+                        />
+                        <Button
+                          type='text'
+                          size='small'
+                          icon={<DeleteOutlined />}
+                          onClick={() => deleteIgnoreNode({ id: sortNode.id })}
+                        />
+                      </div>
+                    )}
                   </span>
                 </SpaceBetweenWrapper>
               </List.Item>
