@@ -1,3 +1,4 @@
+export { default as useApplication } from './useApplication';
 export { default as useCollections } from './useCollections';
 export { default as useEnvironments } from './useEnvironments';
 export { default as useMenusPanes } from './useMenusPanes';

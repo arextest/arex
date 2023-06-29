@@ -9,7 +9,6 @@ import { useUserProfile } from '@/store';
 
 type ImportYamlProps = {
   appId: string;
-  agentVersion: string;
 };
 
 const ImportYaml: FC<ImportYamlProps> = (props) => {
@@ -42,11 +41,6 @@ const ImportYaml: FC<ImportYamlProps> = (props) => {
 
   return (
     <>
-      <div style={{ marginBottom: '8px' }}>
-        <Label>{t('appSetting.agentVersion', { ns: 'components' })}</Label>
-        {props.agentVersion}
-      </div>
-
       <Editor
         theme={theme === 'dark' ? 'vs-dark' : 'light'}
         value={value}

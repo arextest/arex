@@ -14,6 +14,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { EMAIL_KEY } from '@/constant';
 import { ApplicationService, UserService } from '@/services';
 import { ApplicationDataType } from '@/services/ApplicationService';
+import { useApplication } from '@/store';
 
 import MenuSelect from './MenuSelect';
 
@@ -80,6 +81,7 @@ const AppMenu: ArexMenuFC = (props) => {
 
   const { token } = theme.useToken();
   const email = getLocalStorage<string>(EMAIL_KEY) as string;
+  const { timestamp } = useApplication();
 
   const [favoriteFilter, { toggle: toggleFavoriteFilter, setRight: disableFavoriteFilter }] =
     useToggle(false);
@@ -147,6 +149,7 @@ const AppMenu: ArexMenuFC = (props) => {
       placeholder={t('applicationsMenu.appFilterPlaceholder') as string}
       request={ApplicationService.getAppList}
       requestOptions={{
+        refreshDeps: [timestamp], // refresh when delete app
         onSuccess(res) {
           !loadingFavoriteApp && recycleDiscard(res);
         },
