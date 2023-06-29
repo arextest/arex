@@ -29,7 +29,7 @@ function useNavPane() {
       paneType: pane.type,
       id: pane.id,
     });
-    const mergedData = merge(match.query, pane.data);
+    const mergedData = Object.assign(match.query, pane.data);
     const url = encodeUrl(mergedParams, mergedData);
 
     setPanes(pane);

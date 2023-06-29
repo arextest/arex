@@ -68,12 +68,13 @@ const chartOptions = {
 export type ReplayPlanItemProps = {
   id: string;
   selectedPlan?: PlanStatistics;
+  refreshDep?: number;
   filter?: (record: PlanItemStatistics) => boolean;
   onRefresh?: () => void;
 };
 
 const PlanItem: FC<ReplayPlanItemProps> = (props) => {
-  const { selectedPlan, filter, onRefresh } = props;
+  const { selectedPlan, filter, refreshDep, onRefresh } = props;
   const { message, notification } = App.useApp();
   const { activePane } = useMenusPanes();
 
@@ -94,7 +95,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       }),
     {
       ready: !!selectedPlan?.planId,
-      refreshDeps: [selectedPlan?.planId],
+      refreshDeps: [refreshDep],
       loadingDelay: 200,
       pollingInterval: 6000,
       onSuccess(res) {

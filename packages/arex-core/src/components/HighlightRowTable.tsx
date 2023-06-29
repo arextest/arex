@@ -23,7 +23,7 @@ export type HighlightRowTableProps<T extends { [key: string]: any }> = {
   defaultCurrent?: number; // should be defined at the same time as defaultRowKey
   defaultRowKey?: React.Key; // should be defined at the same time as defaultCurrent
   defaultSelectFirst?: boolean;
-  onRowClick?: (record: T, index?: number) => void;
+  onRowClick?: (record?: T, key?: string) => void; // record is undefined when fold
 } & Omit<TableProps<T>, 'rowKey'>;
 
 function HighlightRowTable<T extends { [key: string]: any }>(props: HighlightRowTableProps<T>) {
@@ -54,19 +54,20 @@ function HighlightRowTable<T extends { [key: string]: any }>(props: HighlightRow
   return (
     <HighlightRowTableWrapper css={css(sx)}>
       <Table<T>
-        onRow={(record: T) => {
+        onRow={(record: T | undefined) => {
           return {
             onClick: () => {
+              const rowKey = record?.[props.rowKey];
+              const shouldFold = selectRow.key === rowKey && selectRow.page === page;
               setSelectRow(
-                ((props.pagination as TablePaginationConfig)?.current || page) === selectRow.page &&
-                  record?.[props.rowKey] === selectRow.key
+                shouldFold
                   ? invalidSelectRow
                   : {
-                      key: record?.[props.rowKey],
+                      key: rowKey,
                       page: (props.pagination as TablePaginationConfig)?.current || page,
                     },
               );
-              onRowClick?.(record, record?.[props.rowKey]);
+              onRowClick?.(shouldFold ? undefined : record, rowKey);
             },
           };
         }}

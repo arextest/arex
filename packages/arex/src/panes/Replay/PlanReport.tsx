@@ -23,8 +23,8 @@ export type PlanReportProps = {
   appId?: string;
   refreshDep?: React.Key;
   onSelectedPlanChange: (
-    selectedPlan: PlanStatistics,
-    pagination: { current?: number; key?: number },
+    selectedPlan: PlanStatistics | undefined,
+    pagination: { current: number; key?: string },
   ) => void;
 };
 
@@ -149,11 +149,13 @@ const PlanReport: FC<PlanReportProps> = (props) => {
       refreshDeps: [appId, refreshDep],
       onSuccess({ list }, [params]) {
         if (init) {
-          list.length &&
-            onSelectedPlanChange(
-              list.find((record) => record.planId === searchParams.get('key')) || list[0],
-              { current: params.current, key: searchParams.get('key') },
-            );
+          const isValidKey = searchParams.get('key') !== '-1';
+          if (isValidKey && list.length) {
+            const plan =
+              list.find((record) => record.planId === searchParams.get('key')) || list[0];
+            plan && onSelectedPlanChange(plan, { current: params.current, key: plan.planId });
+          }
+
           setInit(false); // 设置第一次初始化标识);
         }
         list.every((record) => record.status !== 1) && cancelPollingInterval();

@@ -17,15 +17,17 @@ const ReplayPage: ArexPaneFC<ApplicationDataType> = (props) => {
   const navPane = useNavPane();
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
 
-  const handleSelectPlan: PlanReportProps['onSelectedPlanChange'] = (
-    plan,
-    { current = 0, key },
-  ) => {
-    plan.planId === selectedPlan?.planId ? setSelectedPlan(undefined) : setSelectedPlan(plan);
+  const handleSelectPlan: PlanReportProps['onSelectedPlanChange'] = (plan, pagination) => {
+    setSelectedPlan(plan);
+
     navPane({
       id: props.data.id,
       type: PanesType.REPLAY,
-      data: merge({ current, key }, props.data), // 同步当前选中的页码好行数
+      data: Object.assign(
+        {},
+        props.data,
+        plan ? pagination : { current: pagination.current, key: '-1' },
+      ),
     });
   };
 
@@ -52,6 +54,7 @@ const ReplayPage: ArexPaneFC<ApplicationDataType> = (props) => {
             id={props.data.id}
             selectedPlan={selectedPlan}
             filter={(record) => !!record.totalCaseCount}
+            refreshDep={refreshDep}
             onRefresh={handleRefreshDep}
           />
         }
