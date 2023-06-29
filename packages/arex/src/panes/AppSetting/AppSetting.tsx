@@ -8,6 +8,7 @@ import { ApplicationDataType } from '@/services/ApplicationService';
 import SettingImportYaml from './ImportYaml';
 import SettingNodesIgnore from './NodesIgnore';
 import SettingNodesSort from './NodesSort';
+import SettingOther from './Other';
 import SettingRecord from './Record';
 import SettingReplay from './Replay';
 
@@ -30,7 +31,7 @@ const AppSetting: ArexPaneFC<ApplicationDataType> = (props) => {
       {
         key: 'importYaml',
         label: t('appSetting.importYaml'),
-        children: <SettingImportYaml appId={data.appId} agentVersion={data.agentVersion} />,
+        children: <SettingImportYaml appId={data.appId} />,
       },
       // TODO 暂时隐藏
       // {
@@ -47,6 +48,11 @@ const AppSetting: ArexPaneFC<ApplicationDataType> = (props) => {
         key: 'nodesSort',
         label: t('appSetting.nodesSort'),
         children: <SettingNodesSort appId={data.appId} />,
+      },
+      {
+        key: 'other',
+        label: t('appSetting.other'),
+        children: <SettingOther appId={data.appId} />,
       },
     ],
     [data, t],

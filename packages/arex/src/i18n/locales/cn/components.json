@@ -228,7 +228,14 @@
     "recordMachineNum": "录制机器数量",
     "agentStatusTip": "SLEEPING: Agent已注入,但不录制\nUNSTART: Agent未注入\nWORKING: 正在录制",
     "inclusion": "包含规则",
-    "inclusionTooltip": "选择要录制的路径。"
+    "inclusionTooltip": "选择要录制的路径。",
+    "other": "其他",
+    "dangerZone": "危险区域",
+    "deleteApp": "删除应用",
+    "deleteThisApp": "删除该应用",
+    "deleteTip": "删除应用后，将无法恢复，请谨慎操作。",
+    "confirmDelete": "确认删除",
+    "deleteConfirmTip": "请输入应用 ID 确认删除"
   },
   "env": {
     "searchEnvironment": "搜索环境",
