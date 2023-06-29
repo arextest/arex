@@ -52,7 +52,6 @@ const TitleWrapper = styled(
 
     return (
       <div className={props.className}>
-        <span>{props.title}</span>
         {createElement(
           props.count ? Button : 'div',
           props.count ? { type: 'text', onClick: props.onClickTitle } : {},
