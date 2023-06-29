@@ -1,10 +1,11 @@
+import { SearchOutlined } from '@ant-design/icons';
 import { useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import type { TableColumnsType } from 'antd';
-import { Modal, Table, Input, theme } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { Input, Modal, Table, theme } from 'antd';
 import dayjs from 'dayjs';
 import { forwardRef, useImperativeHandle, useState } from 'react';
+
 import RecordedCaseListItem from '@/panes/Replay/RecordedCaseListItem';
 import { ReportService } from '@/services';
 export type RecordedCaseListRef = {
@@ -117,11 +118,9 @@ const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>(
       <Table
         size='small'
         columns={columns}
-        expandable={{ expandedRowRender }}
+        expandable={{ expandedRowRender, onExpand, expandedRowKeys: curExpandedRowKeys }}
         dataSource={aggList as []}
         rowKey={'id'}
-        expandedRowKeys={curExpandedRowKeys}
-        onExpand={onExpand}
         loading={loading}
       />
     </Modal>
