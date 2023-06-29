@@ -167,7 +167,11 @@
     "differenceNode": "差异节点",
     "addIgnoreSuccess": "添加忽略成功",
     "diffMatch": "差异展示",
-    "replayEndTime": "结束时间"
+    "replayEndTime": "结束时间",
+    "operationName": "接口名称",
+    "recordedCaseCount": "用例数",
+    "recordTime": "录制时间",
+    "operationType": "接口类型"
   },
   "appSetting": {
     "record": "录制",
@@ -235,7 +239,10 @@
     "deleteThisApp": "删除该应用",
     "deleteTip": "删除应用后，将无法恢复，请谨慎操作。",
     "confirmDelete": "确认删除",
-    "deleteConfirmTip": "请输入应用 ID 确认删除"
+    "deleteConfirmTip": "请输入应用 ID 确认删除",
+    "maxQPS": "最大QPS",
+    "QPSTips": "有效范围 1 - 20",
+    "emptyQPS": "请输入最大QPS"
   },
   "env": {
     "searchEnvironment": "搜索环境",

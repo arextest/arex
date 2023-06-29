@@ -167,7 +167,11 @@
     "differenceNode": "Difference node",
     "addIgnoreSuccess": "Ignore node successfully",
     "diffMatch": "Diff Match",
-    "replayEndTime": "ReplayEndTime"
+    "replayEndTime": "ReplayEndTime",
+    "operationName": "Operation Name",
+    "recordedCaseCount": "Recorded Case Count",
+    "recordTime": "Record Time",
+    "operationType": "Operation Type"
   },
   "appSetting": {
     "record": "Record",
@@ -236,7 +240,10 @@
     "deleteThisApp": "Delete this App",
     "deleteTip": "Once you delete a app, there is no going back. Please be certain.",
     "confirmDelete": "Confirm Delete",
-    "deleteConfirmTip": "Please enter app Id to confirm delete"
+    "deleteConfirmTip": "Please enter app Id to confirm delete",
+    "maxQPS": "Max QPS",
+    "QPSTips": "Allowable value range 1 - 20",
+    "emptyQPS": "Please input your max QPS"
   },
   "env": {
     "searchEnvironment": "Search Environment",

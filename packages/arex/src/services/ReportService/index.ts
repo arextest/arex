@@ -12,3 +12,6 @@ export * from './queryReplayCase';
 export * from './queryResponseTypeStatistic';
 export * from './querySceneInfo';
 export * from './queryScenes';
+export * from './queryAggCount';
+export * from './queryRecordList';
+export * from './queryCountRecord';
