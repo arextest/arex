@@ -40,3 +40,4 @@ export type { TooltipButtonProps } from './TooltipButton';
 export { default as TooltipButton } from './TooltipButton';
 export type { WorkspaceItem, WorkspacesMenuProps } from './WorkspacesMenu';
 export { default as WorkspacesMenu } from './WorkspacesMenu';
+export { default as QueryLogsDrawer } from './QueryLogsDrawer';
