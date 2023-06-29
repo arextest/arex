@@ -507,7 +507,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             <SmallTextButton
               color={'primary'}
               icon={<DeleteOutlined />}
-              title={t('ssssss') as string}
+              title={t('replay.delete') as string}
             />
           </Popconfirm>
 
