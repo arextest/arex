@@ -1,10 +1,11 @@
-import { SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
+import { SpaceBetweenWrapper, useArexPaneProps, useTranslation } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { App, Button, Collapse, Input, Modal, Typography } from 'antd';
 import React, { FC, useState } from 'react';
 
 import { ApplicationService } from '@/services';
+import { useApplication, useMenusPanes } from '@/store';
 
 export interface SettingOtherProps {
   appId: string;
@@ -13,6 +14,9 @@ export interface SettingOtherProps {
 const SettingOther: FC<SettingOtherProps> = (props) => {
   const { t } = useTranslation(['components', 'common']);
   const { message } = App.useApp();
+  const { paneKey } = useArexPaneProps();
+  const { removePane } = useMenusPanes();
+  const { setTimestamp } = useApplication();
 
   const [confirmAppIdValue, setConfirmAppIdValue] = useState('');
   const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
@@ -23,6 +27,8 @@ const SettingOther: FC<SettingOtherProps> = (props) => {
     onSuccess: (success) => {
       if (success) {
         handleCancelDelete();
+        removePane(paneKey);
+        setTimestamp(Date.now());
         message.success(t('message.delSuccess', { ns: 'common' }));
       } else message.error(t('message.delFailed', { ns: 'common' }));
     },
@@ -83,6 +89,7 @@ const SettingOther: FC<SettingOtherProps> = (props) => {
               placeholder={props.appId}
               status={confirmInputStatus}
               onChange={handleConfirmChange}
+              style={{ marginTop: '8px' }}
             />
           </Modal>
         </SpaceBetweenWrapper>
