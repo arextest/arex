@@ -5,7 +5,8 @@ import { App, Button, Card, Modal, Space, Tag, Tooltip, Typography } from 'antd'
 import React, { FC, useMemo } from 'react';
 
 import { ComparisonService, ReportService } from '@/services';
-import { LogEntity, QueryMsgWithDiffRes, Scene } from '@/services/ReportService';
+import { QueryMsgWithDiffRes, Scene } from '@/services/ReportService';
+import { LogEntity } from '@/services/ScheduleService';
 
 const PathTooltip: FC<{ path?: string | null }> = (props) => {
   const path = useMemo(() => props.path?.split('.') || [], [props.path]);

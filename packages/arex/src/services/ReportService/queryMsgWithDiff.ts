@@ -1,6 +1,5 @@
+import { LogEntity } from '@/services/ScheduleService';
 import { request } from '@/utils';
-
-import { LogEntity } from './queryLogEntity';
 
 export type QueryMsgWithDiffReq = { logIndexes: string; compareResultId: string };
 export type QueryMsgWithDiffRes = {

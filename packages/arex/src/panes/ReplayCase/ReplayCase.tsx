@@ -23,7 +23,7 @@ import Case from './Case';
 import SaveCase, { SaveCaseRef } from './SaveCase';
 
 const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
-  const { message, notification } = App.useApp();
+  const { notification } = App.useApp();
   const email = getLocalStorage<string>(EMAIL_KEY);
   const { t } = useTranslation(['components']);
 
@@ -163,8 +163,8 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             onIgnoreKey={(path) => handleIgnoreKey(path)}
             onGlobalIgnoreKey={(path) => handleIgnoreKey(path, true)}
             onSortKey={handleSortKey}
-            requestDiffMsg={ReportService.queryDiffMsgById}
-            requestQueryLogEntity={ReportService.queryLogEntity}
+            requestDiffMsg={ScheduleService.queryDiffMsgById}
+            requestQueryLogEntity={ScheduleService.queryLogEntity}
             requestIgnoreNode={(path: string[]) =>
               ComparisonService.insertIgnoreNode({
                 operationId: props.data.operationId,
