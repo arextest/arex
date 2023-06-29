@@ -8,7 +8,7 @@
     "prepare": "husky install",
     "dev": "pnpm --stream -r do-dev",
     "build": "pnpm -r do-build",
-    "build-core": "pnpm --filter=arex-core -r do-build-core",
+    "build-core": "pnpm --filter=@arextest/arex-core -r do-build-core",
     "server": "pnpm -r do-server",
     "lint": "prettier --write \"packages/**/*.{ts,tsx}\" && eslint \"packages/**/*.{ts,tsx}\" --fix",
     "pre-commit": "pnpm run lint",
