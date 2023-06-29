@@ -236,7 +236,14 @@
     "recordMachineNum": "Record Machine Count",
     "agentStatusTip": "SLEEPING: Agent injected but not recording\nUNSTART: Agent not injected\nWORKING: Recording in progress",
     "inclusion": "Inclusion",
-    "inclusionTooltip": "Select the paths to record"
+    "inclusionTooltip": "Select the paths to record",
+    "other": "Other",
+    "dangerZone": "Danger Zone",
+    "deleteApp": "Delete App",
+    "deleteThisApp": "Delete this App",
+    "deleteTip": "Once you delete a app, there is no going back. Please be certain.",
+    "confirmDelete": "Confirm Delete",
+    "deleteConfirmTip": "Please enter app Id to confirm delete"
   },
   "env": {
     "searchEnvironment": "Search Environment",
