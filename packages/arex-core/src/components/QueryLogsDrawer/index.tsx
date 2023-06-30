@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Drawer, Input, Select, Space, Table } from 'antd';
+import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { FC, useEffect, useState } from 'react';
 export enum BizLogLevel {
@@ -78,18 +79,18 @@ export type BizLog = {
 const bizLogLevelOption = Object.entries(BizLogLevel).map(([label, value]) => ({ label, value }));
 const bizLogTypeOption = Object.entries(BizLogType).map(([label, value]) => ({ label, value }));
 
-const columns = [
+const columns: ColumnsType<BizLog> = [
   {
     dataIndex: 'level',
     title: 'Level',
-    render(_: number): string {
+    render(_): string {
       return bizLogLevelOption.find((b) => b.value === _)?.label || '';
     },
   },
   {
     dataIndex: 'logType',
     title: 'Type',
-    render(_: number): string {
+    render(_): string {
       return bizLogTypeOption.find((b) => b.value === _)?.label || '';
     },
   },
@@ -108,11 +109,10 @@ const columns = [
   {
     dataIndex: 'date',
     title: 'Time',
-    render(_: string) {
+    render(_) {
       return dayjs(_).format('YYYY-MM-DD HH:mm:ss');
     },
-    sorter: (a: { date: string }, b: { date: string }) =>
-      dayjs(a.date).isAfter(dayjs(b.date)) ? 1 : -1,
+    sorter: (a, b) => (dayjs(a.date).isAfter(dayjs(b.date)) ? 1 : -1),
   },
 ];
 
