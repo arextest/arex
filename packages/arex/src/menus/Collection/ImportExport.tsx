@@ -1,6 +1,6 @@
 import { useTranslation } from '@arextest/arex-core';
 import { css } from '@emotion/react';
-import { Button, Divider, message, Modal } from 'antd';
+import { Button, Divider, message, Modal, Radio, RadioChangeEvent } from 'antd';
 import { FC, useState, useTransition } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -37,7 +37,7 @@ const CollectionsImportExport: FC<CollectionsImportExportProps> = ({ show, onHid
   const submit = () => {
     importCollection({
       workspaceId: pam.workspaceId as string,
-      type: 2,
+      type: importType,
       path: [],
       importString: fileString,
     })
@@ -52,6 +52,12 @@ const CollectionsImportExport: FC<CollectionsImportExportProps> = ({ show, onHid
       .catch((err) => {
         message.error(t('workSpace.importFailed'));
       });
+  };
+  const [importType, setImportType] = useState(1);
+
+  const onChange = (e: RadioChangeEvent) => {
+    console.log('radio checked', e.target.value);
+    setImportType(e.target.value);
   };
   return (
     <Modal
@@ -68,7 +74,16 @@ const CollectionsImportExport: FC<CollectionsImportExportProps> = ({ show, onHid
           padding-top: 10px;
         `}
       >
-        <p>{t('collection.from_postman_description')}</p>
+        <Radio.Group
+          onChange={onChange}
+          value={importType}
+          css={css`
+            margin-bottom: 10px;
+          `}
+        >
+          <Radio value={1}>AREX</Radio>
+          <Radio value={2}>Postman</Radio>
+        </Radio.Group>
         <input
           css={css`
             margin-bottom: 20px;
@@ -97,6 +112,7 @@ const CollectionsImportExport: FC<CollectionsImportExportProps> = ({ show, onHid
         />
         <Button
           onClick={() => {
+            // 暂只支持arex导出
             exportCollection({
               workspaceId: pam.workspaceId as string,
               type: 1,
