@@ -114,34 +114,8 @@ const QueryLogsDrawer: FC<{
     },
   );
 
-  const bizLogLevelOption = [
-    { value: 0, label: 'INFO' },
-    { value: 1, label: 'WARN' },
-    { value: 2, label: 'ERROR' },
-    { value: 3, label: 'DEBUG' },
-  ];
-  const bizLogTypeOption = [
-    { value: 0, label: 'PLAN_START' },
-    { value: 1, label: 'PLAN_CASE_SAVED' },
-    { value: 2, label: 'PLAN_CONTEXT_BUILT' },
-    { value: 3, label: 'PLAN_DONE' },
-    { value: 4, label: 'PLAN_ASYNC_RUN_START' },
-    { value: 5, label: 'PLAN_STATUS_CHANGE' },
-    { value: 6, label: 'PLAN_FATAL_ERROR' },
-    { value: 100, label: 'QPS_LIMITER_INIT' },
-    { value: 101, label: 'QPS_LIMITER_CHANGE' },
-    { value: 200, label: 'CONTEXT_START' },
-    { value: 202, label: 'CONTEXT_AFTER_RUN' },
-    { value: 203, label: 'CONTEXT_SKIP' },
-    { value: 204, label: 'CONTEXT_NORMAL' },
-    { value: 306, label: 'ACTION_ITEM_CASE_SAVED' },
-    { value: 300, label: 'ACTION_ITEM_EXECUTE_CONTEXT' },
-    { value: 302, label: 'ACTION_ITEM_INIT_TOTAL_COUNT' },
-    { value: 303, label: 'ACTION_ITEM_STATUS_CHANGED' },
-    { value: 304, label: 'ACTION_ITEM_SENT' },
-    { value: 305, label: 'ACTION_ITEM_BATCH_SENT' },
-    { value: 400, label: 'RESUME_START' },
-  ];
+  const bizLogLevelOption = Object.entries(BizLogLevel).map(([label, value]) => ({ label, value }));
+  const bizLogTypeOption = Object.entries(BizLogType).map(([label, value]) => ({ label, value }));
 
   const columns = [
     {
