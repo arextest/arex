@@ -238,7 +238,7 @@
     "dangerZone": "Danger Zone",
     "deleteApp": "Delete App",
     "deleteThisApp": "Delete this App",
-    "deleteTip": "Once you delete a app, there is no going back. Please be certain.",
+    "deleteTip": "Once you delete an app, there is no going back. Please be certain.",
     "confirmDelete": "Confirm Delete",
     "deleteConfirmTip": "Please enter app Id to confirm delete",
     "maxQPS": "Max QPS",
