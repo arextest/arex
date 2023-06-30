@@ -1,6 +1,6 @@
 import 'chart.js/auto';
 
-import {
+import Icon, {
   ContainerOutlined,
   DeleteOutlined,
   DiffOutlined,
@@ -9,6 +9,7 @@ import {
   SearchOutlined,
   StopOutlined,
 } from '@ant-design/icons';
+import { QueryLogsDrawer } from '@arextest/arex-core';
 import {
   getLocalStorage,
   SmallTextButton,
@@ -48,7 +49,9 @@ import { useNavPane } from '@/hooks';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanItemStatistics, PlanStatistics } from '@/services/ReportService';
 import { CreatePlanReq } from '@/services/ScheduleService';
+import { BizLogLevel, BizLogType, queryLogs } from '@/services/ScheduleService/queryLogs';
 import { useMenusPanes } from '@/store';
+import IconLog from '~icons/octicon/log-24';
 
 function getPercent(num: number, den: number, showPercentSign = true) {
   const value = num && den ? parseFloat(((num / den) * 100).toFixed(0)) : 0;
@@ -296,27 +299,13 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         <>
           <TooltipButton
             icon={<ContainerOutlined />}
-            title={t('replay.diffScenesNew')}
-            breakpoint='xxl'
-            disabled={!record.failCaseCount}
-            color={record.failCaseCount ? 'primary' : 'disabled'}
-            onClick={() => {
-              navPane({
-                type: PanesType.DIFF_SCENES,
-                id: record.planItemId,
-                data: record,
-              });
-            }}
-          />
-          <TooltipButton
-            icon={<DiffOutlined />}
             title={t('replay.diffScenes')}
             breakpoint='xxl'
             disabled={!record.failCaseCount}
             color={record.failCaseCount ? 'primary' : 'disabled'}
             onClick={() => {
               navPane({
-                type: PanesType.REPLAY_ANALYSIS,
+                type: PanesType.DIFF_SCENES,
                 id: record.planItemId,
                 data: record,
               });
@@ -475,6 +464,8 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       );
   };
 
+  const [queryLogsDrawerShow, setQueryLogsDrawerShow] = useState(false);
+
   return selectedPlan ? (
     <Card
       bordered={false}
@@ -493,6 +484,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
               title={t('replay.terminate') as string}
             />
           </Popconfirm>
+
           <Popconfirm
             title={t('replay.deleteTheReport')}
             description={t('replay.confirmDeleteReport')}
@@ -505,6 +497,15 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             />
           </Popconfirm>
 
+          {/*logs*/}
+          <SmallTextButton
+            onClick={() => {
+              setQueryLogsDrawerShow(true);
+            }}
+            color={'primary'}
+            icon={<Icon component={IconLog} />}
+            title={t('logs') as string}
+          />
           <Dropdown.Button
             size='small'
             type='text'
@@ -634,6 +635,14 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         loading={loadingData}
         columns={columns}
         dataSource={planItemDataFiltered}
+      />
+      <QueryLogsDrawer
+        planId={selectedPlan?.planId}
+        show={queryLogsDrawerShow}
+        request={queryLogs}
+        onHideDrawer={() => {
+          setQueryLogsDrawerShow(false);
+        }}
       />
     </Card>
   ) : null;

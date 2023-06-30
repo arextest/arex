@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-core",
-  "version": "0.0.3-beta.16",
+  "version": "0.0.3-beta.20",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-core.umd.cjs",
   "module": "dist/arex-core.js",
@@ -9,8 +9,7 @@
     "build:code": "vite build",
     "build:decl": "tsc --project tsconfig.decl.json",
     "do-build": "npm run build:code && npm run build:decl",
-    "do-build-core": "npm run build:code && npm run build:decl",
-    "publish": "npm publish packages/arex-core --no-git-checks --access=public"
+    "do-build-core": "npm run build:code && npm run build:decl"
   },
   "types": "./dist/index.d.ts",
   "files": [
@@ -26,6 +25,7 @@
     "allotment": "^1.18.1",
     "antd": "^5.4.2",
     "copy-to-clipboard": "^3.3.3",
+    "dayjs": "^1.11.7",
     "diff-match-patch": "^1.0.5",
     "i18next": "^22.4.11",
     "immer": "^9.0.19",
