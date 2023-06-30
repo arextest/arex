@@ -107,7 +107,7 @@ const QueryLogsDrawer: FC<{
         },
       }),
     {
-      onSuccess(res: { total?: number; logs: any }) {
+      onSuccess(res) {
         setTotal(res?.total || 0);
       },
       refreshDeps: [bizLogLevel, bizLogType, pagination, planId],
