@@ -69,41 +69,43 @@ const QueryLogsDrawer: FC<{
   const columns = [
     {
       dataIndex: 'level',
-      title: '等级',
+      title: 'Level',
       render(_: number): string {
         return bizLogLevelOption.find((b) => b.value === _)?.label || '';
       },
     },
     {
       dataIndex: 'logType',
-      title: '类型',
+      title: 'Type',
       render(_: number): string {
         return bizLogTypeOption.find((b) => b.value === _)?.label || '';
       },
     },
     {
       dataIndex: 'message',
-      title: '消息',
+      title: 'Message',
       ellipsis: true,
     },
-    {
-      dataIndex: 'resumedExecution',
-      title: '继续执行',
-      render(_: boolean) {
-        return _ ? '是' : '否';
-      },
-    },
+    // {
+    //   dataIndex: 'resumedExecution',
+    //   title: '继续执行',
+    //   render(_: boolean) {
+    //     return _ ? '是' : '否';
+    //   },
+    // },
     {
       dataIndex: 'date',
-      title: '时间',
+      title: 'Time',
       render(_: string) {
         return dayjs(_).format('YYYY-MM-DD HH:mm:ss');
       },
+      sorter: (a: { date: string }, b: { date: string }) =>
+        dayjs(a.date).isAfter(dayjs(b.date)) ? 1 : -1,
     },
   ];
 
   return (
-    <Drawer title={'log'} open={show} width={'85%'} onClose={onHideDrawer}>
+    <Drawer title={'Logs'} open={show} width={'85%'} onClose={onHideDrawer}>
       <Space
         css={css`
           margin-bottom: 10px;
@@ -111,7 +113,7 @@ const QueryLogsDrawer: FC<{
       >
         <Select
           mode={'multiple'}
-          placeholder={'请选择log等级'}
+          placeholder={'Please select a log level'}
           value={bizLogLevel}
           onChange={(val) => {
             setBizLogLevel(val);
@@ -123,7 +125,7 @@ const QueryLogsDrawer: FC<{
         />
         <Select
           mode={'multiple'}
-          placeholder={'请选择log类型'}
+          placeholder={'Please select a log type'}
           value={bizLogType}
           onChange={(val) => {
             setBizLogType(val);
