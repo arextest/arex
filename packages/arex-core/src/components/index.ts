@@ -30,6 +30,7 @@ export * from './icons';
 export { default as Label } from './Label';
 export type { PanesTitleProps } from './PanesTitle';
 export { default as PanesTitle } from './PanesTitle';
+export { default as QueryLogsDrawer } from './QueryLogsDrawer';
 export { default as SceneCode, SceneCodeMap } from './SceneCode';
 export { default as SmallTextButton } from './SmallTextButton';
 export { default as SpaceBetweenWrapper } from './SpaceBetweenWrapper';
