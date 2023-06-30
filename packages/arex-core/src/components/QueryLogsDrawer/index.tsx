@@ -74,6 +74,48 @@ export type BizLog = {
   traceId: string;
   extra: string;
 };
+
+const bizLogLevelOption = Object.entries(BizLogLevel).map(([label, value]) => ({ label, value }));
+const bizLogTypeOption = Object.entries(BizLogType).map(([label, value]) => ({ label, value }));
+
+const columns = [
+  {
+    dataIndex: 'level',
+    title: 'Level',
+    render(_: number): string {
+      return bizLogLevelOption.find((b) => b.value === _)?.label || '';
+    },
+  },
+  {
+    dataIndex: 'logType',
+    title: 'Type',
+    render(_: number): string {
+      return bizLogTypeOption.find((b) => b.value === _)?.label || '';
+    },
+  },
+  {
+    dataIndex: 'message',
+    title: 'Message',
+    ellipsis: true,
+  },
+  // {
+  //   dataIndex: 'resumedExecution',
+  //   title: '继续执行',
+  //   render(_: boolean) {
+  //     return _ ? '是' : '否';
+  //   },
+  // },
+  {
+    dataIndex: 'date',
+    title: 'Time',
+    render(_: string) {
+      return dayjs(_).format('YYYY-MM-DD HH:mm:ss');
+    },
+    sorter: (a: { date: string }, b: { date: string }) =>
+      dayjs(a.date).isAfter(dayjs(b.date)) ? 1 : -1,
+  },
+];
+
 const QueryLogsDrawer: FC<{
   show: boolean;
   request: (params: QueryPlanLogsReq) => Promise<QueryPlanLogsRes>;
@@ -113,47 +155,6 @@ const QueryLogsDrawer: FC<{
       refreshDeps: [bizLogLevel, bizLogType, pagination, planId],
     },
   );
-
-  const bizLogLevelOption = Object.entries(BizLogLevel).map(([label, value]) => ({ label, value }));
-  const bizLogTypeOption = Object.entries(BizLogType).map(([label, value]) => ({ label, value }));
-
-  const columns = [
-    {
-      dataIndex: 'level',
-      title: 'Level',
-      render(_: number): string {
-        return bizLogLevelOption.find((b) => b.value === _)?.label || '';
-      },
-    },
-    {
-      dataIndex: 'logType',
-      title: 'Type',
-      render(_: number): string {
-        return bizLogTypeOption.find((b) => b.value === _)?.label || '';
-      },
-    },
-    {
-      dataIndex: 'message',
-      title: 'Message',
-      ellipsis: true,
-    },
-    // {
-    //   dataIndex: 'resumedExecution',
-    //   title: '继续执行',
-    //   render(_: boolean) {
-    //     return _ ? '是' : '否';
-    //   },
-    // },
-    {
-      dataIndex: 'date',
-      title: 'Time',
-      render(_: string) {
-        return dayjs(_).format('YYYY-MM-DD HH:mm:ss');
-      },
-      sorter: (a: { date: string }, b: { date: string }) =>
-        dayjs(a.date).isAfter(dayjs(b.date)) ? 1 : -1,
-    },
-  ];
 
   return (
     <Drawer title={'Logs'} open={show} width={'85%'} onClose={onHideDrawer}>
