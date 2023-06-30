@@ -17,6 +17,7 @@ import {
 import React, { useMemo } from 'react';
 import { FC } from 'react';
 
+import { InviteWorkspace } from '@/components';
 import { EMAIL_KEY } from '@/constant';
 import { FileSystemService } from '@/services';
 import { useMenusPanes, useWorkspaces } from '@/store';
@@ -197,6 +198,13 @@ const WorkspaceSetting: FC = () => {
             </Button>
           </Form.Item>
         </Form>
+        <Divider />
+
+        <Space>
+          <Text>{t('workSpace.inviteTitle')}</Text>
+          <InviteWorkspace />
+        </Space>
+
         <Divider />
 
         <List

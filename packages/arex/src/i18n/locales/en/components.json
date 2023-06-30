@@ -291,7 +291,18 @@
     "moveOut": "Move out",
     "moveOutTip": "Are you sure to move out this user?",
     "leave": "Leave workspace",
-    "leaveTip": "Are you sure to leave this workspace?"
+    "leaveTip": "Are you sure to leave this workspace?",
+    "invite": "Invite",
+    "email": "Email",
+    "role": "Role",
+    "inviteTitle": "Invite to this workspace",
+    "sendInvitation":"Send Invitation",
+    "enterInviteeEmail": "Enter Invitee email (use Enter to split multiple email)",
+    "inviteSuccessful": "Invite successful",
+    "invitationFailed": "Invitation Failed",
+    "adminPermission":"Manage workspace details and members.",
+    "editorPermission":"Create and edit workspace resources",
+    "viewerPermission":"View and export workspace resources"
   },
   "dropdownMenu": {
     "close" :"Close",
