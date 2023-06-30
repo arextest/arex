@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Drawer, Input, Select, Space, Table } from 'antd';
 import dayjs from 'dayjs';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 const QueryLogsDrawer: FC<{
   show: boolean;
   request: (params: any) => any;
@@ -15,6 +15,14 @@ const QueryLogsDrawer: FC<{
     current: 1,
     pageSize: 10,
   });
+  useEffect(() => {
+    if (show) {
+      setPagination({
+        ...pagination,
+        current: 1,
+      });
+    }
+  }, [show]);
   const [total, setTotal] = useState(0);
   const { data, loading } = useRequest(
     (params) =>
