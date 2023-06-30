@@ -11,6 +11,8 @@ import {
 } from '@ant-design/icons';
 import {
   getLocalStorage,
+  i18n,
+  I18nextLng,
   SmallTextButton,
   SpaceBetweenWrapper,
   TooltipButton,
@@ -47,7 +49,7 @@ import { EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanItemStatistics, PlanStatistics } from '@/services/ReportService';
-import { CreatePlanReq } from '@/services/ScheduleService';
+import { CreatePlanReq, MessageMap } from '@/services/ScheduleService';
 import { useMenusPanes } from '@/store';
 
 function getPercent(num: number, den: number, showPercentSign = true) {
@@ -394,13 +396,12 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       if (res.result === 1) {
         onRefresh?.();
         notification.success({
-          message: t('message.success', { ns: 'common' }),
-          description: res.desc,
+          message: t('replay.startSuccess'),
         });
       } else {
         notification.error({
           message: t('message.error', { ns: 'common' }),
-          description: res.desc,
+          description: MessageMap[i18n.language as I18nextLng][res.data.reasonCode],
         });
       }
     },
