@@ -17,10 +17,11 @@ import {
 import React, { useMemo } from 'react';
 import { FC } from 'react';
 
-import { InviteWorkspace } from '@/components';
 import { EMAIL_KEY } from '@/constant';
 import { FileSystemService } from '@/services';
 import { useMenusPanes, useWorkspaces } from '@/store';
+
+import InviteWorkspace from './InviteWorkspace';
 
 const { Text } = Typography;
 
@@ -202,7 +203,7 @@ const WorkspaceSetting: FC = () => {
 
         <Space>
           <Text>{t('workSpace.inviteTitle')}</Text>
-          <InviteWorkspace />
+          <InviteWorkspace onInvite={queryUsersByWorkspace} />
         </Space>
 
         <Divider />

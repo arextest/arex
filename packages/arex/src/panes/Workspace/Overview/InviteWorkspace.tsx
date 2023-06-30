@@ -2,7 +2,7 @@ import { UserAddOutlined } from '@ant-design/icons';
 import { getLocalStorage, RoleEnum, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Form, Modal, Select, Space, Typography } from 'antd';
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 
 import { EMAIL_KEY } from '@/constant';
 import { FileSystemService } from '@/services';
@@ -11,7 +11,11 @@ const { Text } = Typography;
 
 const { Option } = Select;
 
-const InviteWorkspace = () => {
+export type InviteWorkspaceProps = {
+  onInvite?: () => void;
+};
+
+const InviteWorkspace: FC<InviteWorkspaceProps> = (props) => {
   const { message } = App.useApp();
   const { t } = useTranslation('components');
   const email = getLocalStorage<string>(EMAIL_KEY);
@@ -35,6 +39,8 @@ const InviteWorkspace = () => {
 
       message.info(`${successMsg} ${failedMsg}`);
       res.failReason && message.warning(res.failReason);
+
+      successUsers.length && props.onInvite?.();
     },
     onFinally: () => {
       setOpen(false);
