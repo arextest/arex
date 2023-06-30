@@ -4,6 +4,8 @@ import {
   CollapseTable,
   DiffPath,
   getLocalStorage,
+  i18n,
+  I18nextLng,
   PanesTitle,
   PathHandler,
   TooltipButton,
@@ -18,12 +20,13 @@ import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import SortTree from '@/panes/AppSetting/CompareConfig/NodeSort/SortTree';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
 import { infoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
+import { MessageMap } from '@/services/ScheduleService';
 
 import Case from './Case';
 import SaveCase, { SaveCaseRef } from './SaveCase';
 
 const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
-  const { notification } = App.useApp();
+  const { message, notification } = App.useApp();
   const email = getLocalStorage<string>(EMAIL_KEY);
   const { t } = useTranslation(['components']);
 
@@ -81,13 +84,12 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     onSuccess(res) {
       if (res.result === 1) {
         notification.success({
-          message: t('message.success', { ns: 'common' }),
-          description: res.desc,
+          message: t('replay.startSuccess'),
         });
       } else {
         notification.error({
           message: t('message.error', { ns: 'common' }),
-          description: res.desc,
+          description: MessageMap[i18n.language as I18nextLng][res.data.reasonCode],
         });
       }
     },

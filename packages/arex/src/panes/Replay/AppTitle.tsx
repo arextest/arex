@@ -2,6 +2,8 @@ import { CloseCircleOutlined, PlayCircleOutlined, SyncOutlined } from '@ant-desi
 import {
   getLocalStorage,
   HelpTooltip,
+  i18n,
+  I18nextLng,
   PanesTitle,
   SpaceBetweenWrapper,
   TooltipButton,
@@ -28,6 +30,7 @@ import { EMAIL_KEY, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCaseList';
 import { ApplicationService, ReportService, ScheduleService } from '@/services';
 import { ApplicationDataType } from '@/services/ApplicationService';
+import { MessageMap } from '@/services/ScheduleService';
 
 type AppTitleProps = {
   data: ApplicationDataType;
@@ -88,9 +91,9 @@ const InitialValues = {
 };
 
 const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
-  const { t } = useTranslation(['components']);
   const { notification } = App.useApp();
   const { token } = theme.useToken();
+  const { t } = useTranslation(['components']);
   const email = getLocalStorage<string>(EMAIL_KEY);
 
   const caseListRef = useRef<RecordedCaseListRef>(null);
@@ -148,7 +151,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         console.error(res.desc);
         notification.error({
           message: t('replay.startFailed'),
-          description: res.desc,
+          description: MessageMap[i18n.language as I18nextLng][res.data.reasonCode],
         });
       }
     },

@@ -12,6 +12,8 @@ import Icon, {
 import { QueryLogsDrawer } from '@arextest/arex-core';
 import {
   getLocalStorage,
+  i18n,
+  I18nextLng,
   SmallTextButton,
   SpaceBetweenWrapper,
   TooltipButton,
@@ -48,7 +50,7 @@ import { EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanItemStatistics, PlanStatistics } from '@/services/ReportService';
-import { CreatePlanReq } from '@/services/ScheduleService';
+import { CreatePlanReq, MessageMap } from '@/services/ScheduleService';
 import { BizLogLevel, BizLogType, queryLogs } from '@/services/ScheduleService/queryLogs';
 import { useMenusPanes } from '@/store';
 import IconLog from '~icons/octicon/log-24';
@@ -383,13 +385,12 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       if (res.result === 1) {
         onRefresh?.();
         notification.success({
-          message: t('message.success', { ns: 'common' }),
-          description: res.desc,
+          message: t('replay.startSuccess'),
         });
       } else {
         notification.error({
           message: t('message.error', { ns: 'common' }),
-          description: res.desc,
+          description: MessageMap[i18n.language as I18nextLng][res.data.reasonCode],
         });
       }
     },
