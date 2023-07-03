@@ -3,7 +3,7 @@ import { Spin } from 'antd';
 import React, { FC, lazy, Suspense } from 'react';
 import { RouteObject } from 'react-router-dom';
 
-import Home from '../pages';
+import Home from '@/pages';
 
 export type Routes = {
   path: string;
@@ -11,21 +11,20 @@ export type Routes = {
   children?: Routes[];
 };
 
+// TODO: add your routes here
+const OthersRouter: Routes[] = [
+  {
+    path: '/login',
+    component: lazy(() => import('../pages/Login')),
+  },
+];
+
 const routes: Routes[] = Object.values(RouterPath)
   .map<Routes>((path) => ({
     path,
     component: Home,
   }))
-  .concat([
-    {
-      path: '/playground',
-      component: lazy(() => import('../pages/Playground')),
-    },
-    {
-      path: '/login',
-      component: lazy(() => import('../pages/Login')),
-    },
-  ]);
+  .concat(OthersRouter);
 
 const syncRouter = (table: Routes[]): RouteObject[] =>
   table.map((route) => ({

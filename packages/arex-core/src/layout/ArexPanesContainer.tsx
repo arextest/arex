@@ -61,7 +61,7 @@ const DraggableTabNode = ({ index, children, moveNode }: DraggableTabPaneProps) 
 };
 
 export const PaneContext = createContext<{
-  data?: unknown;
+  data?: any;
   paneKey: string;
 }>({
   data: undefined,

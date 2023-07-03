@@ -1,64 +1,116 @@
-import { FileOutlined } from '@ant-design/icons';
-import { ArexPaneFC, createArexPane, decodeUrl, i18n, styled } from '@arextest/arex-core';
-import { Button, Space } from 'antd';
-import React, { useState } from 'react';
+import { FileOutlined, SaveOutlined } from '@ant-design/icons';
+import {
+  ArexPaneFC,
+  createArexPane,
+  i18n,
+  Label,
+  PanesTitle,
+  styled,
+  useArexPaneProps,
+  useTranslation,
+} from '@arextest/arex-core';
+import { App, Button, Divider, Space, Typography } from 'antd';
+import React from 'react';
 
-import { MenusType, PanesType } from '../constant';
-import useNavPane from '../hooks/useNavPane';
+import { MenusType, PanesType } from '@/constant';
+import useNavPane from '@/hooks/useNavPane';
+import { encodePaneKey } from '@/store/useMenusPanes';
 
 const StyledDiv = styled.div`
+  padding: ${(props) => props.theme.paddingSM}px;
+  margin: ${(props) => props.theme.marginSM}px;
   color: ${(props) => props.theme.colorPrimary};
+  border-radius: ${(props) => props.theme.borderRadius}px;
+  border: 1px solid ${(props) => props.theme.colorPrimary};
 `;
 
-const Demo: ArexPaneFC = (props) => {
+type DemoData = {
+  name: string;
+  age: number;
+};
+
+const Demo: ArexPaneFC<DemoData> = (props) => {
+  const { t } = useTranslation();
+  const { message, notification } = App.useApp();
   const paneNav = useNavPane();
-  const [decode, setDecode] = useState<any>();
+  const paneProps = useArexPaneProps<DemoData>();
+
+  const handleNavPane = () => {
+    if (
+      encodePaneKey({
+        id: '123',
+        type: PanesType.DEMO,
+      }) === props.paneKey
+    ) {
+      message.info('pane already exist');
+    } else {
+      paneNav({
+        id: '123',
+        type: PanesType.DEMO,
+        data: { name: 'Tom', age: 10 },
+        icon: 'GET', //optional, name of arex-core/component/Icon/RequestMethodIcon/[icon]
+      });
+    }
+  };
 
   return (
     <div>
-      <div>DemoPane</div>
-      <StyledDiv>zzz</StyledDiv>
+      <PanesTitle title={`DemoPane - ${props.paneKey}`} />
+
+      <Divider orientation='left'>StyledDiv</Divider>
+      <StyledDiv>This is a StyledDiv</StyledDiv>
+
+      <Divider orientation='left'>I18n</Divider>
       <Space>
-        <div>url encode/decode demo </div>
-        <Button
-          onClick={() => {
-            window.message.info('hello');
-          }}
-        >
-          message
-        </Button>
-
-        <Button
-          onClick={() => {
-            const resource = i18n.getResourceBundle('cn', 'arex-menu');
-            console.log(resource);
-          }}
-        >
-          i18n
-        </Button>
-
-        <Button
-          onClick={() => {
-            paneNav({
-              id: '123',
-              type: PanesType.DEMO,
-              data: { name: 'Tom', age: 10 },
-            });
-          }}
-        >
-          nav
-        </Button>
-        <Button
-          onClick={() => {
-            const decode = decodeUrl();
-            setDecode(decode);
-            console.log(decode);
-          }}
-        >
-          decode url
+        <Typography.Text>
+          <Label>lang</Label>
+          {i18n.language}
+        </Typography.Text>
+        <Button size='small' type='primary' icon={<SaveOutlined />}>
+          {t('save')}
         </Button>
       </Space>
-      <div>{JSON.stringify(decode, null, 2)}</div>
+
+      <Divider orientation='left'>Message / Notification</Divider>
+      <Space size='middle'>
+        <Button type='primary' onClick={() => message.success('success')}>
+          app.message
+        </Button>
+        <Button type='primary' onClick={() => window.message.error('error')}>
+          window.message
+        </Button>
+        <Button
+          type='primary'
+          onClick={() =>
+            notification.success({
+              message: 'success',
+              description: 'This is a successful notification',
+            })
+          }
+        >
+          notification
+        </Button>
+      </Space>
+
+      <Divider orientation='left'>props</Divider>
+      <div>
+        <Typography.Text>
+          <Label>Props(use in RootPaneComponent)</Label>
+          {JSON.stringify(props)}
+        </Typography.Text>
+      </div>
+
+      <div>
+        <Typography.Text>
+          <Label>PaneProps(use in ChildrenPaneComponent)</Label>
+          {JSON.stringify(paneProps)}
+        </Typography.Text>
+      </div>
+
+      <Divider orientation='left'>PaneNav</Divider>
+      <Button type='primary' onClick={handleNavPane}>
+        navToNewPane
+      </Button>
     </div>
   );
 };

@@ -7,12 +7,13 @@ import {
   ArexPanesContainer,
   ArexPanesContainerProps,
 } from '@arextest/arex-core';
+import { Button } from 'antd';
 import React, { useMemo } from 'react';
 
-import HeaderMenu from '../components/HeaderMenu';
-import { PanesType } from '../constant';
-import { useInit } from '../hooks';
-import { useMenusPanes, useWorkspaces } from '../store';
+import HeaderMenu from '@/components/HeaderMenu';
+import { PanesType } from '@/constant';
+import { useInit } from '@/hooks';
+import { useMenusPanes, useWorkspaces } from '@/store';
 
 export default () => {
   useInit();
@@ -58,7 +59,7 @@ export default () => {
 
   return (
     <>
-      <ArexHeader menu={<HeaderMenu />} />
+      <ArexHeader menu={<Button size='small'>Menu</Button>} extra={<HeaderMenu />} />
       <ArexMainContainer
         collapsed={collapsed}
         arexMenus={

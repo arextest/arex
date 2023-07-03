@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { DEFAULT_ACTIVE_MENU, MAX_PANES_COUNT } from '../constant';
+import { DEFAULT_ACTIVE_MENU, MAX_PANES_COUNT } from '@/constant';
 
 export type MenusPanesState = {
   collapsed: boolean;

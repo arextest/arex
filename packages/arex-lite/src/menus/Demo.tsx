@@ -3,7 +3,7 @@ import { ArexMenuFC, createArexMenu, useTranslation } from '@arextest/arex-core'
 import { Button } from 'antd';
 import React from 'react';
 
-import { MenusType, PanesType } from '../constant';
+import { MenusType, PanesType } from '@/constant';
 
 const Demo: ArexMenuFC = (props) => {
   const { t } = useTranslation();
@@ -11,7 +11,6 @@ const Demo: ArexMenuFC = (props) => {
   return (
     <>
       <div>DemoMenu</div>
-      <span>{t('are_you_sure', { ns: 'common' })}</span>
       <div>
         <Button onClick={() => props.onSelect?.('demoId')}>open pane</Button>
       </div>
