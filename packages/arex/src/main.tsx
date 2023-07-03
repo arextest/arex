@@ -1,3 +1,4 @@
+import './useWork';
 import 'allotment/dist/style.css';
 import 'antd/dist/reset.css';
 import '@arextest/arex-core/dist/style.css';
