@@ -504,7 +504,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             }}
             color={'primary'}
             icon={<Icon component={IconLog} />}
-            title={t('logs') as string}
+            title={t('replay.logs') as string}
           />
           <Dropdown.Button
             size='small'
