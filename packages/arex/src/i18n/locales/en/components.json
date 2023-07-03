@@ -105,6 +105,7 @@
     "timeConsumed": "Time consumed(s)",
     "cases": "Cases",
     "action": "Action",
+    "logs": "Execution Logs",
     "rerun": "Rerun",
     "rerunError": "Rerun error",
     "rerunTip": "Are you sure to rerun?",

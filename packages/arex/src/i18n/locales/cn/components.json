@@ -105,6 +105,7 @@
     "timeConsumed": "耗时(秒)",
     "cases": "case 数",
     "action": "操作",
+    "logs": "执行日志",
     "rerun": "重新执行",
     "rerunError": "重新执行(仅错误类型)",
     "rerunTip": "确定重新执行该回放?",

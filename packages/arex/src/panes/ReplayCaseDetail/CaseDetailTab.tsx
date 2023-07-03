@@ -18,6 +18,7 @@ const CaseDetailTab: FC<CaseDetailTabProps> = (props) => {
         <Panel header={<span>{result.operationName}</span>} key={index}>
           <DiffJsonView
             height='400px'
+            remark={['Request', 'Response']}
             diffJson={{
               left: JSON.stringify(result.targetRequest, null, 2),
               right: JSON.stringify(result.targetResponse, null, 2),
