@@ -76,9 +76,13 @@ export type BizLog = {
   extra: string;
 };
 
-const bizLogLevelOption = Object.entries(BizLogLevel).map(([label, value]) => ({ label, value }));
-const bizLogTypeOption = Object.entries(BizLogType).map(([label, value]) => ({ label, value }));
-
+const bizLogLevelOption = Object.entries(BizLogLevel)
+  .map(([label, value]) => ({ label, value }))
+  .filter(({ label }) => isNaN(Number(label)));
+const bizLogTypeOption = Object.entries(BizLogType)
+  .map(([label, value]) => ({ label, value }))
+  .filter(({ label }) => isNaN(Number(label)));
+console.log(bizLogTypeOption, bizLogLevelOption);
 const columns: ColumnsType<BizLog> = [
   {
     dataIndex: 'level',
