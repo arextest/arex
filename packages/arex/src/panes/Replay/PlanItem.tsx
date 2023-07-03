@@ -9,11 +9,11 @@ import Icon, {
   SearchOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { QueryLogsDrawer } from '@arextest/arex-core';
 import {
   getLocalStorage,
   i18n,
   I18nextLng,
+  QueryLogsDrawer,
   SmallTextButton,
   SpaceBetweenWrapper,
   TooltipButton,
@@ -51,7 +51,6 @@ import { useNavPane } from '@/hooks';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanItemStatistics, PlanStatistics } from '@/services/ReportService';
 import { CreatePlanReq, MessageMap } from '@/services/ScheduleService';
-import { BizLogLevel, BizLogType, queryLogs } from '@/services/ScheduleService/queryLogs';
 import { useMenusPanes } from '@/store';
 import IconLog from '~icons/octicon/log-24';
 
@@ -640,7 +639,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       <QueryLogsDrawer
         planId={selectedPlan?.planId}
         show={queryLogsDrawerShow}
-        request={queryLogs}
+        request={ScheduleService.queryLogs}
         onHideDrawer={() => {
           setQueryLogsDrawerShow(false);
         }}

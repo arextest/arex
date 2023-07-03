@@ -1,4 +1,4 @@
-import { UserOutlined } from '@ant-design/icons';
+import { DeleteOutlined, LogoutOutlined, SyncOutlined, UserOutlined } from '@ant-design/icons';
 import { getLocalStorage, RoleEnum, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import {
@@ -20,6 +20,8 @@ import { FC } from 'react';
 import { EMAIL_KEY } from '@/constant';
 import { FileSystemService } from '@/services';
 import { useMenusPanes, useWorkspaces } from '@/store';
+
+import InviteWorkspace from './InviteWorkspace';
 
 const { Text } = Typography;
 
@@ -192,11 +194,18 @@ const WorkspaceSetting: FC = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type='primary' htmlType='submit'>
+            <Button icon={<SyncOutlined />} type='primary' htmlType='submit'>
               {t('workSpace.update')}
             </Button>
           </Form.Item>
         </Form>
+        <Divider />
+
+        <Space>
+          <Text>{t('workSpace.inviteTitle')}</Text>
+          <InviteWorkspace onInvite={queryUsersByWorkspace} />
+        </Space>
+
         <Divider />
 
         <List
@@ -267,7 +276,9 @@ const WorkspaceSetting: FC = () => {
             okText={t('yes', { ns: 'common' })}
             cancelText={t('no', { ns: 'common' })}
           >
-            <Button danger>{t('workSpace.leave')}</Button>
+            <Button danger icon={<LogoutOutlined />}>
+              {t('workSpace.leave')}
+            </Button>
           </Popconfirm>
         </Space>
 
@@ -285,7 +296,9 @@ const WorkspaceSetting: FC = () => {
             okText={t('yes', { ns: 'common' })}
             cancelText={t('no', { ns: 'common' })}
           >
-            <Button danger>{t('workSpace.del')}</Button>
+            <Button danger icon={<DeleteOutlined />}>
+              {t('workSpace.del')}
+            </Button>
           </Popconfirm>
         </Space>
       </div>

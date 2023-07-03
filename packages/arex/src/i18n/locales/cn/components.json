@@ -290,7 +290,18 @@
     "moveOut": "移出",
     "moveOutTip": "你确定要将该用户移出工作空间吗？",
     "leave": "退出工作空间",
-    "leaveTip": "你确定要退出该工作空间吗？"
+    "leaveTip": "你确定要退出该工作空间吗？",
+    "email": "邮箱",
+    "role": "角色",
+    "invite": "邀请",
+    "inviteTitle": "邀请至该工作空间",
+    "sendInvitation":"发送邀请",
+    "enterInviteeEmail": "请输入受邀者邮箱 (使用回车键分隔多个邮箱)",
+    "inviteSuccessful": "邀请成功",
+    "invitationFailed": "邀请失败",
+    "adminPermission":"管理工作空间和成员",
+    "editorPermission":"创建和编辑工作空间资源",
+    "viewerPermission":"查看和导出工作空间资源"
   },
   "dropdownMenu": {
     "close" :"关闭",
