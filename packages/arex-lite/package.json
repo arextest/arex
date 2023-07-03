@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
-    "@arextest/arex-core": "0.0.3-beta.22",
+    "@arextest/arex-core": "0.0.3-beta.23",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "ahooks": "^3.7.5",

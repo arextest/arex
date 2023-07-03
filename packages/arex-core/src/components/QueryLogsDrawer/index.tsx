@@ -134,12 +134,13 @@ const QueryLogsDrawer: FC<{
   });
   useEffect(() => {
     if (show) {
+      console.log(pagination);
       setPagination({
         ...pagination,
         current: 1,
       });
     }
-  }, [show]);
+  }, [show, bizLogLevel, bizLogType]);
   const [total, setTotal] = useState(0);
   const { data, loading } = useRequest(
     () =>
@@ -168,6 +169,8 @@ const QueryLogsDrawer: FC<{
         `}
       >
         <Select
+          filterOption={(input, option) => (option?.label ?? '').includes(input)}
+          showSearch={true}
           mode={'multiple'}
           placeholder={'Please select a log level'}
           value={bizLogLevel}
@@ -180,6 +183,8 @@ const QueryLogsDrawer: FC<{
           options={bizLogLevelOption}
         />
         <Select
+          filterOption={(input, option) => (option?.label ?? '').includes(input)}
+          showSearch={true}
           mode={'multiple'}
           placeholder={'Please select a log type'}
           value={bizLogType}
