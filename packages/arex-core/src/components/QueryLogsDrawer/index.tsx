@@ -91,17 +91,17 @@ const columns: ColumnsType<BizLog> = [
       return bizLogLevelOption.find((b) => b.value === _)?.label || '';
     },
   },
-  {
-    dataIndex: 'logType',
-    title: 'Type',
-    render(_): string {
-      return bizLogTypeOption.find((b) => b.value === _)?.label || '';
-    },
-  },
+  // {
+  //   dataIndex: 'logType',
+  //   title: 'Type',
+  //   render(_): string {
+  //     return bizLogTypeOption.find((b) => b.value === _)?.label || '';
+  //   },
+  // },
   {
     dataIndex: 'message',
     title: 'Message',
-    ellipsis: true,
+    // ellipsis: true,
   },
   // {
   //   dataIndex: 'resumedExecution',
@@ -130,7 +130,7 @@ const QueryLogsDrawer: FC<{
   const [bizLogType, setBizLogType] = useState([]);
   const [pagination, setPagination] = useState<{ current: number; pageSize: number }>({
     current: 1,
-    pageSize: 10,
+    pageSize: 15,
   });
   useEffect(() => {
     if (show) {
