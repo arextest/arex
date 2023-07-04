@@ -2,6 +2,7 @@ import { FileOutlined, SaveOutlined } from '@ant-design/icons';
 import {
   ArexPaneFC,
   createArexPane,
+  HelpTooltip,
   i18n,
   Label,
   PanesTitle,
@@ -10,7 +11,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { App, Button, Divider, Space, Typography } from 'antd';
-import React from 'react';
+import React, { FC } from 'react';
 
 import { MenusType, PanesType } from '@/constant';
 import useNavPane from '@/hooks/useNavPane';
@@ -29,11 +30,15 @@ type DemoData = {
   age: number;
 };
 
+const ChildComponent: FC = () => {
+  const paneProps = useArexPaneProps<DemoData>();
+  return <>{JSON.stringify(paneProps)}</>;
+};
+
 const Demo: ArexPaneFC<DemoData> = (props) => {
   const { t } = useTranslation();
   const { message, notification } = App.useApp();
   const paneNav = useNavPane();
-  const paneProps = useArexPaneProps<DemoData>();
 
   const handleNavPane = () => {
     if (
@@ -95,15 +100,21 @@ const Demo: ArexPaneFC<DemoData> = (props) => {
       <Divider orientation='left'>props</Divider>
       <div>
         <Typography.Text>
-          <Label>Props(use in RootPaneComponent)</Label>
+          <Label>
+            <HelpTooltip title='use in RootPaneComponent'>Props</HelpTooltip>
+          </Label>
           {JSON.stringify(props)}
         </Typography.Text>
       </div>
 
       <div>
         <Typography.Text>
-          <Label>PaneProps(use in ChildrenPaneComponent)</Label>
-          {JSON.stringify(paneProps)}
+          <Label>
+            <HelpTooltip title='use in ChildrenPaneComponent (Inject)'>
+              useArexPaneProps
+            </HelpTooltip>
+          </Label>
+          <ChildComponent />
         </Typography.Text>
       </div>
 
