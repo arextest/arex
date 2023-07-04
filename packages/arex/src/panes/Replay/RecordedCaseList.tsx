@@ -2,12 +2,15 @@ import { SearchOutlined } from '@ant-design/icons';
 import { useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import type { TableColumnsType } from 'antd';
-import { Input, Modal, Table, theme } from 'antd';
+import { Input, InputRef, Modal, Table, theme } from 'antd';
 import dayjs from 'dayjs';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 
-import RecordedCaseListItem from '@/panes/Replay/RecordedCaseListItem';
 import { ReportService } from '@/services';
+import { AggOperation } from '@/services/ReportService';
+
+import RecordedCaseListDetail from './RecordedCaseListDetail';
+
 export type RecordedCaseListRef = {
   open: () => void;
 };
@@ -16,27 +19,20 @@ export type RecordedCaseListProps = {
   appId: string;
 };
 
-export type DataType = {
-  id: string;
-  operationName: string;
-  recordedCaseCount: string;
-  operationTypes: [];
-  appId: string;
-};
-
-export type OjectType = {
-  [key: string]: string;
-};
-
 const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>((props, ref) => {
   const { t } = useTranslation(['components']);
-  const [open, setOpen] = useState(false);
-  const [curExpandedRowKeys, setCurExpandedRowKeys] = useState<string[]>([]);
   const { token } = theme.useToken();
+
+  const [open, setOpen] = useState(false);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>();
+
+  const searchInput = useRef<InputRef>(null);
+
   useImperativeHandle(ref, () => ({
     open: () => setOpen(true),
   }));
-  const { data: aggList, loading } = useRequest(
+
+  const { data: aggList = [], loading } = useRequest(
     () =>
       ReportService.queryAggCount({
         appId: props.appId,
@@ -45,22 +41,24 @@ const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>(
       }),
     {
       ready: open,
-      onSuccess() {
-        setCurExpandedRowKeys([]);
+      onBefore() {
+        setExpandedRowKeys(undefined);
       },
     },
   );
-  const columns: TableColumnsType<DataType> = [
+
+  const columns: TableColumnsType<AggOperation> = [
     {
       title: t('replay.operationName'),
       dataIndex: 'operationName',
       key: 'operationName',
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => (
         <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
           <Input.Search
             allowClear
             enterButton
             size='small'
+            ref={searchInput}
             placeholder={`${t('search', { ns: 'common' })} ${t('replay.api')}`}
             onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
             onSearch={(value, event) => {
@@ -80,48 +78,46 @@ const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>(
           .toString()
           .toLowerCase()
           .includes((value as string).toLowerCase()),
+      onFilterDropdownOpenChange: (visible) => {
+        visible && setTimeout(() => searchInput.current?.select(), 100);
+      },
     },
     {
       title: t('replay.recordedCaseCount'),
       dataIndex: 'recordedCaseCount',
       key: 'recordedCaseCount',
+      sorter: (a, b) => a.recordedCaseCount - b.recordedCaseCount,
+      defaultSortOrder: 'descend',
     },
   ];
-  const expandedRowRender = (record: DataType) => {
-    return (
-      <RecordedCaseListItem
-        recordedCaseList={record}
-        closeModal={closeModal}
-      ></RecordedCaseListItem>
-    );
-  };
-  const onExpand = (expanded: boolean, record: DataType) => {
-    if (expanded) {
-      setCurExpandedRowKeys([record.id]);
-    } else {
-      setCurExpandedRowKeys([]);
-    }
-  };
-  const closeModal = () => {
-    setOpen(false);
-  };
 
   return (
     <Modal
-      open={open}
+      destroyOnClose
+      width='75%'
       title={props.appId}
-      width={'1000px'}
       footer={null}
-      destroyOnClose={true}
+      open={open}
       onCancel={() => setOpen(false)}
     >
-      <Table
+      <Table<AggOperation>
         size='small'
-        columns={columns}
-        expandable={{ expandedRowRender, onExpand, expandedRowKeys: curExpandedRowKeys }}
-        dataSource={aggList as []}
-        rowKey={'id'}
+        rowKey='id'
         loading={loading}
+        dataSource={aggList}
+        columns={columns}
+        expandable={{
+          expandedRowKeys,
+          expandedRowRender: (record) => (
+            <RecordedCaseListDetail
+              appId={record.appId}
+              operationName={record.operationName}
+              operationTypes={record.operationTypes}
+              onClick={() => setOpen(false)}
+            />
+          ),
+          onExpand: (expanded, record) => setExpandedRowKeys(expanded ? [record.id] : undefined),
+        }}
       />
     </Modal>
   );
