@@ -117,7 +117,9 @@ const useEnvironments = create(
 
         reset: () => {
           set(initialState);
-          get().getEnvironments();
+          get()
+            .getEnvironments()
+            .then(() => get().setActiveEnvironment());
         },
       };
     },
