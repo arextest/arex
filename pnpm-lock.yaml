@@ -44,7 +44,7 @@ importers:
   packages/arex:
     specifiers:
       '@ant-design/icons': ^5.0.1
-      '@arextest/arex-core': 0.0.3-beta.21
+      '@arextest/arex-core': 0.0.3-beta.25
       '@emotion/react': ^11.10.6
       '@emotion/styled': ^11.10.6
       '@iconify/json': ^2.2.76
@@ -61,7 +61,7 @@ importers:
       allotment: ^1.18.1
       antd: ^5.4.2
       antd-img-crop: ^4.12.2
-      arex-request-core: 0.0.1-beta.46
+      arex-request-core: 0.0.1-beta.48
       arex-request-runtime: ^1.0.2
       axios: ^1.3.6
       buffer: ^6.0.3
@@ -72,6 +72,7 @@ importers:
       http-proxy-middleware: ^2.0.6
       immer: ^9.0.19
       lodash: ^4.17.21
+      monaco-editor: ^0.39.0
       postman-collection: ^4.1.7
       react: ^18.2.0
       react-chartjs-2: ^5.2.0
@@ -98,7 +99,7 @@ importers:
       allotment: 1.19.0_biqbaboplfbrettd7655fr4n2y
       antd: 5.6.1_biqbaboplfbrettd7655fr4n2y
       antd-img-crop: 4.12.2_y6ultqorr77cmsnjqxxr5gwvgi
-      arex-request-core: 0.0.1-beta.46_qbgifpua7r57lfznlxnojvbhwm
+      arex-request-core: 0.0.1-beta.48_qbgifpua7r57lfznlxnojvbhwm
       arex-request-runtime: 1.0.2
       axios: 1.4.0
       buffer: 6.0.3
@@ -106,6 +107,7 @@ importers:
       dayjs: 1.11.8
       immer: 9.0.21
       lodash: 4.17.21
+      monaco-editor: 0.39.0
       postman-collection: 4.1.7
       react: 18.2.0
       react-chartjs-2: 5.2.0_jzw32sextkxj6pznyxerjojkqm
@@ -212,7 +214,7 @@ importers:
   packages/arex-lite:
     specifiers:
       '@ant-design/icons': ^5.0.1
-      '@arextest/arex-core': 0.0.3-beta.21
+      '@arextest/arex-core': 0.0.3-beta.25
       '@emotion/react': ^11.10.6
       '@emotion/styled': ^11.10.6
       '@types/lodash': ^4.14.194
@@ -2162,8 +2164,8 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /arex-request-core/0.0.1-beta.46_qbgifpua7r57lfznlxnojvbhwm:
-    resolution: {integrity: sha512-LS/6KsEx+sbuZ5GNTL9qsnCdPo1Z4y2dV+T4TWdbV5tQO/rQEu2/wg17KnoLaBMmXRzf8qJboYidN3EwuABcJA==}
+  /arex-request-core/0.0.1-beta.48_qbgifpua7r57lfznlxnojvbhwm:
+    resolution: {integrity: sha512-eMX+lqYmIXrZ5TZuHupwYuLSUvqiMjYd30ElwC7wuY5TEGVuvpOKCPfuS0tE3dPd0kkzWA49nkHNU8NjHfD1Aw==}
     dependencies:
       '@ant-design/icons': 5.1.4_biqbaboplfbrettd7655fr4n2y
       '@emotion/core': 11.0.0
