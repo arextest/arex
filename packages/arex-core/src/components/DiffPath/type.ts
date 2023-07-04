@@ -12,7 +12,7 @@ export interface NodePath {
 
 export type DiffLog = {
   nodePath: NodePath[];
-  logIndex: number;
+  logIndex: number | null;
 };
 
 export interface Trace {

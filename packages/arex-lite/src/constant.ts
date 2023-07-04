@@ -5,14 +5,14 @@ import {
   RequestMethodEnum,
   Theme,
 } from '@arextest/arex-core';
+
 export enum PanesType {
   DEMO = 'demo',
-  ENVIRONMENT = 'environment',
+  COMPONENTS = 'components',
 }
 
 export enum MenusType {
   DEMO = 'demo',
-  ENVIRONMENT = 'environment',
 }
 
 export const methodMap: Record<RequestMethodEnum, { color: string }> = {

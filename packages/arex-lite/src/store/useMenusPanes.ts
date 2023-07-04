@@ -83,7 +83,7 @@ export const useMenusPanes = create(
             set({
               panes,
               activePane: latestPane,
-              activeMenu: ArexPaneManager.getMenuTypeByType(latestPane?.type),
+              activeMenu: ArexPaneManager.getMenuTypeByType(latestPane?.type) || get().activeMenu, // 防止最后一个 pane 被关闭时 activeMenu 丢失
             });
           } else {
             // panes are single pane, insert

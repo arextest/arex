@@ -4,6 +4,7 @@
  * and export in this index file.
  */
 
+import Components from './Components';
 import Demo from './Demo';
 
-export default { Demo };
+export default { Demo, Components };
