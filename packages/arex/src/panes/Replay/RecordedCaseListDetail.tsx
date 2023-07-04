@@ -1,48 +1,44 @@
 import { useTranslation } from '@arextest/arex-core';
 import { usePagination } from 'ahooks';
 import { Select, Table } from 'antd';
+import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
-import { FC, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 
 import { PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
+import { AggOperation } from '@/services/ReportService';
+import { RecordResult } from '@/services/StorageService';
 
 export type RecordedCaseListProps = {
-  recordedCaseList: DataType;
-  closeModal: () => void;
-};
+  onClick?: () => void;
+} & Pick<AggOperation, 'appId' | 'operationName' | 'operationTypes'>;
 
-export type DataType = {
-  id: string;
-  operationName: string;
-  recordedCaseCount: string;
-  operationTypes: string[];
-  appId: string;
-};
-
-const RecordedCaseListItem: FC<RecordedCaseListProps> = ({ recordedCaseList, closeModal }) => {
-  const { appId, operationName, operationTypes } = recordedCaseList;
-  const [operationType, setOperationType] = useState<string>(operationTypes[0]);
-  const { t } = useTranslation(['components']);
-  const options = operationTypes.map((type: string) => ({ text: type, value: type }));
+const RecordedCaseListItem: FC<RecordedCaseListProps> = (props) => {
   const navPane = useNavPane();
-  const operationTypesChange = (type: string) => {
-    setOperationType(type);
-  };
-  const columns = [
+  const { t } = useTranslation(['components']);
+
+  const [operationType, setOperationType] = useState<string>(props.operationTypes?.[0]);
+
+  const options = useMemo(
+    () => props.operationTypes?.map((type: string) => ({ text: type, value: type })),
+    [props.operationTypes],
+  );
+
+  const columns: ColumnsType<RecordResult> = [
     {
       title: t('replay.recordId'),
       dataIndex: 'recordId',
       key: 'recordId',
-      render: (text: string, record: { recordId: string }) => (
+      render: (recordId, record) => (
         <a
           onClick={() => {
-            closeModal();
+            props.onClick?.();
             navPane({ type: PanesType.CASE_DETAIL, id: record.recordId, data: record });
           }}
         >
-          {text}
+          {recordId}
         </a>
       ),
     },
@@ -50,9 +46,11 @@ const RecordedCaseListItem: FC<RecordedCaseListProps> = ({ recordedCaseList, clo
       title: t('replay.recordTime'),
       dataIndex: 'createTime',
       key: 'createTime',
-      render: (text: string) => dayjs(text).format('YYYY-MM-DD hh:mm:ss'),
+      render: (createTime) => dayjs(createTime).format('YYYY-MM-DD hh:mm:ss'),
     },
     {
+      key: 'operationType',
+      dataIndex: 'operationType',
       title: (
         <>
           {t('replay.operationType')}：
@@ -60,14 +58,13 @@ const RecordedCaseListItem: FC<RecordedCaseListProps> = ({ recordedCaseList, clo
             style={{ width: '100px' }}
             options={options}
             value={operationType}
-            onChange={operationTypesChange}
+            onChange={setOperationType}
           />
         </>
       ),
-      dataIndex: 'operationType',
-      key: 'operationType',
     },
   ];
+
   const {
     data: { list: listRecord } = { list: [] },
     pagination,
@@ -75,10 +72,10 @@ const RecordedCaseListItem: FC<RecordedCaseListProps> = ({ recordedCaseList, clo
   } = usePagination(
     (params) => {
       return ReportService.queryRecordList({
-        appId: appId,
+        appId: props.appId,
         beginTime: dayjs().startOf('day').valueOf(),
         endTime: dayjs().valueOf(),
-        operationName: operationName,
+        operationName: props.operationName,
         operationType: operationType,
         pageSize: params.pageSize,
         pageIndex: params.current,
@@ -90,13 +87,13 @@ const RecordedCaseListItem: FC<RecordedCaseListProps> = ({ recordedCaseList, clo
   );
 
   return (
-    <Table
+    <Table<RecordResult>
       size='small'
+      rowKey='recordId'
       columns={columns}
       dataSource={listRecord}
       pagination={pagination}
       loading={loading}
-      rowKey={'recordId'}
     />
   );
 };
