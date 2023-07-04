@@ -28,6 +28,7 @@ export type { HighlightRowTableProps } from './HighlightRowTable';
 export { default as HighlightRowTable } from './HighlightRowTable';
 export * from './icons';
 export { default as Label } from './Label';
+export { default as PaneDrawer } from './PaneDrawer';
 export type { PanesTitleProps } from './PanesTitle';
 export { default as PanesTitle } from './PanesTitle';
 export { default as QueryLogsDrawer } from './QueryLogsDrawer';

@@ -1,10 +1,15 @@
 import { EditOutlined, SaveOutlined, SyncOutlined } from '@ant-design/icons';
-import { SmallTextButton, SpaceBetweenWrapper, Theme, useTranslation } from '@arextest/arex-core';
+import {
+  PaneDrawer,
+  SmallTextButton,
+  SpaceBetweenWrapper,
+  Theme,
+  useTranslation,
+} from '@arextest/arex-core';
 import { Editor, EditorProps } from '@monaco-editor/react';
 import { App, Dropdown, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 
-import PaneDrawer from '@/components/PaneDrawer';
 import { useUserProfile } from '@/store';
 
 export type ResponseRawProps = {
@@ -68,7 +73,6 @@ const SyncResponse: FC<ResponseRawProps> = (props) => {
       </Dropdown.Button>
 
       <PaneDrawer
-        noPadding
         open={open}
         title={
           <SpaceBetweenWrapper>
@@ -82,6 +86,7 @@ const SyncResponse: FC<ResponseRawProps> = (props) => {
           </SpaceBetweenWrapper>
         }
         onClose={handleClose}
+        bodyStyle={{ padding: '8px 0' }}
       >
         <Editor
           {...restProps}

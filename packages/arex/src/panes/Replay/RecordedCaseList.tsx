@@ -1,8 +1,8 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { useTranslation } from '@arextest/arex-core';
+import { PaneDrawer, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import type { TableColumnsType } from 'antd';
-import { Input, InputRef, Modal, Table, theme } from 'antd';
+import { Input, InputRef, Table, theme } from 'antd';
 import dayjs from 'dayjs';
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 
@@ -92,13 +92,13 @@ const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>(
   ];
 
   return (
-    <Modal
+    <PaneDrawer
       destroyOnClose
       width='75%'
       title={props.appId}
       footer={null}
       open={open}
-      onCancel={() => setOpen(false)}
+      onClose={() => setOpen(false)}
     >
       <Table<AggOperation>
         size='small'
@@ -119,7 +119,7 @@ const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>(
           onExpand: (expanded, record) => setExpandedRowKeys(expanded ? [record.id] : undefined),
         }}
       />
-    </Modal>
+    </PaneDrawer>
   );
 });
 

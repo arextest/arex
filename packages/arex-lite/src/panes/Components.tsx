@@ -4,6 +4,7 @@ import {
   CheckOrCloseIcon,
   CollapseTable,
   createArexPane,
+  css,
   DiffJsonView,
   DiffMatch,
   EllipsisTooltip,
@@ -12,6 +13,7 @@ import {
   HelpTooltip,
   HighlightRowTable,
   Label,
+  PaneDrawer,
   PanesTitle,
   RequestMethodIcon,
   SceneCode,
@@ -19,8 +21,7 @@ import {
   SpaceBetweenWrapper,
   TooltipButton,
 } from '@arextest/arex-core';
-import { css } from '@emotion/react';
-import { Anchor, Card, Col, Divider, Dropdown, Row, Space, Switch, theme } from 'antd';
+import { Anchor, Button, Card, Col, Divider, Dropdown, Row, Space, Switch, theme } from 'antd';
 import React, { useState } from 'react';
 
 import { PanesType } from '@/constant';
@@ -75,6 +76,11 @@ const anchorItems = [
     key: 'label',
     href: '#label',
     title: 'Label',
+  },
+  {
+    key: 'pane-drawer',
+    href: '#pane-drawer',
+    title: 'PaneDrawer',
   },
   {
     key: 'panes-title',
@@ -135,6 +141,8 @@ const Components: ArexPaneFC = () => {
   }>();
   const [loading, setLoading] = useState(true);
   const [panesTitle, setPanesTitle] = useState('arex-core Components');
+  const [openPaneDrawer, setOpenPaneDrawer] = useState(false);
+
   return (
     <Row style={{ paddingBottom: `16px` }}>
       <PanesTitle title='arex-core Components'></PanesTitle>
@@ -265,6 +273,15 @@ const Components: ArexPaneFC = () => {
           <Label>label</Label>
         </div>
 
+        <div id='pane-drawer'>
+          <Divider orientation='left'>PaneDrawer</Divider>
+          <Button size='small' type='primary' onClick={() => setOpenPaneDrawer(true)}>
+            open PaneDrawer
+          </Button>
+          <PaneDrawer title='title' open={openPaneDrawer} onClose={() => setOpenPaneDrawer(false)}>
+            hello world
+          </PaneDrawer>
+        </div>
         <div id={'panes-title'}>
           <Divider orientation='left'>PanesTitle</Divider>
           <PanesTitle
