@@ -4,6 +4,7 @@ import {
   CheckOrCloseIcon,
   CollapseTable,
   createArexPane,
+  css,
   DiffJsonView,
   DiffMatch,
   EllipsisTooltip,
@@ -20,7 +21,6 @@ import {
   SpaceBetweenWrapper,
   TooltipButton,
 } from '@arextest/arex-core';
-import { css } from '@emotion/react';
 import { Anchor, Button, Card, Col, Divider, Dropdown, Row, Space, Switch, theme } from 'antd';
 import React, { useState } from 'react';
 
