@@ -78,6 +78,11 @@ const anchorItems = [
     title: 'Label',
   },
   {
+    key: 'pane-drawer',
+    href: '#pane-drawer',
+    title: 'PaneDrawer',
+  },
+  {
     key: 'panes-title',
     href: '#panes-title',
     title: 'PanesTitle',
