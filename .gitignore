@@ -22,11 +22,6 @@ dist-ssr
 *.sln
 *.sw?
 
-pnpm-lock.yaml
-yarn.lock
-package-lock.json
-
-
 # IDE / Editor
 .idea/*
 !.idea/rcb-settings.xml
