@@ -55,6 +55,7 @@ const RecordedCaseListItem: FC<RecordedCaseListProps> = (props) => {
         <>
           {t('replay.operationType')}：
           <Select
+            size='small'
             style={{ width: '100px' }}
             options={options}
             value={operationType}

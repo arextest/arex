@@ -1,5 +1,11 @@
 import { CheckOutlined, CloseOutlined, DeleteOutlined } from '@ant-design/icons';
-import { css, SmallTextButton, SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
+import {
+  css,
+  PaneDrawer,
+  SmallTextButton,
+  SpaceBetweenWrapper,
+  useTranslation,
+} from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import {
   App,
@@ -19,7 +25,6 @@ import React, { FC, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { EditAreaPlaceholder } from '@/components';
-import PaneDrawer from '@/components/PaneDrawer';
 import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
 import CompareConfigTitle from '@/panes/AppSetting/CompareConfig/CompareConfigTitle';
 import { ComparisonService } from '@/services';
@@ -347,6 +352,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
               </Button>
             </SpaceBetweenWrapper>
           }
+          bodyStyle={{ padding: '8px 0' }}
           open={openIgnoreModal}
           onClose={() => {
             setOpenIgnoreModal(false);

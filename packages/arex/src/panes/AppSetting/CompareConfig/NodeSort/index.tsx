@@ -1,5 +1,5 @@
 import { CloseOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { css, SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
+import { css, PaneDrawer, SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, ButtonProps, Card, Collapse, Input, InputRef, List, Typography } from 'antd';
 import { TreeProps } from 'antd/es';
@@ -7,7 +7,6 @@ import { CarouselRef } from 'antd/lib/carousel';
 import React, { FC, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import PaneDrawer from '@/components/PaneDrawer';
 import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService } from '@/services';
 import { SortNode } from '@/services/ComparisonService';
@@ -315,6 +314,7 @@ const NodeSort: FC<NodeSortProps> = (props) => {
               )}
             </SpaceBetweenWrapper>
           }
+          bodyStyle={{ padding: '8px 0' }}
           open={openSortModal}
           onClose={handleCancelEdit}
         >
