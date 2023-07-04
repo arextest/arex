@@ -5,26 +5,29 @@ import {
   Pane,
   StandardPathParams,
 } from '@arextest/arex-core';
+import { merge } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 
-import { useMenusPanes } from '../store';
+import { useMenusPanes, useWorkspaces } from '@/store';
 
 function useNavPane() {
   const nav = useNavigate();
   const { setPanes } = useMenusPanes();
+  const { activeWorkspaceId } = useWorkspaces();
 
   return function (pane: Pane) {
     const match = decodeUrl();
 
-    const mergedParams = {
-      ...match.params,
-      ...{
-        menuType: ArexPaneManager.getMenuTypeByType(pane.type),
-        paneType: pane.type,
-        id: pane.id,
-      },
-    } as StandardPathParams;
-    const mergedData = { ...match.query, ...pane.data };
+    const mergedParams = merge<
+      Partial<StandardPathParams> | undefined,
+      Partial<StandardPathParams>
+    >(match.params, {
+      workspaceId: activeWorkspaceId,
+      menuType: ArexPaneManager.getMenuTypeByType(pane.type),
+      paneType: pane.type,
+      id: pane.id,
+    });
+    const mergedData = merge(match.query, pane.data);
     const url = encodeUrl(mergedParams, mergedData);
 
     setPanes(pane);

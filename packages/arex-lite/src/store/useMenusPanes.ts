@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { DEFAULT_ACTIVE_MENU, MAX_PANES_COUNT } from '../constant';
+import { DEFAULT_ACTIVE_MENU, MAX_PANES_COUNT } from '@/constant';
 
 export type MenusPanesState = {
   collapsed: boolean;
@@ -83,7 +83,7 @@ export const useMenusPanes = create(
             set({
               panes,
               activePane: latestPane,
-              activeMenu: ArexPaneManager.getMenuTypeByType(latestPane?.type),
+              activeMenu: ArexPaneManager.getMenuTypeByType(latestPane?.type) || get().activeMenu, // 防止最后一个 pane 被关闭时 activeMenu 丢失
             });
           } else {
             // panes are single pane, insert

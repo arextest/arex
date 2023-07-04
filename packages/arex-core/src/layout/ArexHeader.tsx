@@ -6,7 +6,9 @@ import { GithubStarButton } from '../components';
 import { useArexCoreConfig } from '../hooks';
 
 export interface AppHeaderProps {
+  githubStar?: boolean;
   menu?: React.ReactNode;
+  extra?: React.ReactNode;
 }
 
 const HeaderWrapper = styled.div`
@@ -39,10 +41,11 @@ const ArexHeader: FC<AppHeaderProps> = (props) => {
     <HeaderWrapper>
       <div className={'left'}>
         <Typography.Text className={'app-name'}>AREX</Typography.Text>
-        <GithubStarButton theme={theme} />
+        {props.githubStar && <GithubStarButton theme={theme} />}
+        {props.menu}
       </div>
 
-      <div className={'right'}>{props.menu}</div>
+      <div className={'right'}>{props.extra}</div>
     </HeaderWrapper>
   );
 };

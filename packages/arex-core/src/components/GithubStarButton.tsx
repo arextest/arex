@@ -5,7 +5,7 @@ import GitHubButton from 'react-github-btn';
 import { Theme } from '../theme';
 const GitHubStarButton: FC<{ theme: Theme }> = ({ theme }) => {
   return (
-    <div style={{ height: '22px', marginLeft: '16px' }}>
+    <div style={{ height: '22px', lineHeight: '31px', margin: '0 16px' }}>
       <GitHubButton
         data-text={'Star'}
         aria-label={'Star Arex on GitHub'}

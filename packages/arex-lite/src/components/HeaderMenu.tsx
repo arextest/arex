@@ -10,7 +10,7 @@ import {
 import { Avatar, Dropdown, DropdownProps, Space, Switch } from 'antd';
 import React, { FC, useMemo } from 'react';
 
-import { useUserProfile } from '../store';
+import { useUserProfile } from '@/store';
 
 const HeaderMenu: FC = () => {
   const { theme, setTheme } = useUserProfile();

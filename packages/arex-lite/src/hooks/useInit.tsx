@@ -2,19 +2,20 @@ import { decodeUrl, encodeUrl, I18_KEY, i18n, StandardPathParams } from '@arexte
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { DEFAULT_LANGUAGE } from '../constant';
-import { useWorkspaces } from '../store';
-import useMenusPanes from '../store/useMenusPanes';
+import { DEFAULT_LANGUAGE } from '@/constant';
+import { useMenusPanes, useWorkspaces } from '@/store';
 
 const useInit = () => {
   const { panes, setPanes } = useMenusPanes();
-  const { workspaces, setActiveWorkspaceId } = useWorkspaces();
+  const { workspaces, activeWorkspaceId, setActiveWorkspaceId } = useWorkspaces();
   const nav = useNavigate();
 
   useEffect(() => {
+    // restore url
     if (location.pathname === '/' && workspaces.length) {
-      const workspaceId = workspaces[0].id;
-      setActiveWorkspaceId(workspaceId);
+      const workspaceId = activeWorkspaceId || workspaces[0].id;
+      !activeWorkspaceId && setActiveWorkspaceId(workspaceId);
+
       nav(`/${workspaceId}`);
     }
 

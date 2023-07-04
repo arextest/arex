@@ -152,7 +152,7 @@ export default () => {
 
   return (
     <>
-      <ArexHeader menu={<HeaderMenu />} />
+      <ArexHeader githubStar extra={<HeaderMenu />} />
       <ArexMainContainer
         collapsed={collapsed}
         arexMenus={

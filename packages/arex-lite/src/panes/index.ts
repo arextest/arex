@@ -2,10 +2,9 @@
  * All Pane Components under panes folder
  * should be defined using ArexPaneFC,
  * and export in this index file.
- * Note: In order to get the name of the function component,
- * do not create the function anonymously.
  */
 
+import Components from './Components';
 import Demo from './Demo';
 
-export default { Demo };
+export default { Demo, Components };

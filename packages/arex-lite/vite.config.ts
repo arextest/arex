@@ -10,7 +10,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      // 'arex-core': path.resolve('../arex-core/src'),
+      '@': path.resolve('./src'),
+      // '@arextest/arex-core': path.resolve('../arex-core/src'),
     },
   },
   server: {
