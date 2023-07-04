@@ -112,7 +112,7 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
               <ErrorBoundary>
                 <PaneContext.Provider value={paneProps}>
                   <div
-                    className='arex-pane-wrapper'
+                    id={`arex-pane-wrapper-${pane.key}`}
                     style={{
                       padding: Pane.noPadding ? 0 : '8px 16px',
                       height: '100%',
