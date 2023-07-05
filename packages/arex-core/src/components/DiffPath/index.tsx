@@ -9,11 +9,7 @@ import DiffPathTooltip, { DiffPathTooltipProps } from './DiffPathTooltip';
 import { CompareResultDetail, DiffPathViewerProps } from './DiffPathViewer';
 import { infoItem } from './type';
 
-export interface DiffPathProps
-  extends Pick<
-    DiffPathViewerProps,
-    'contextMenuDisabled' | 'requestQueryLogEntity' | 'requestIgnoreNode'
-  > {
+export interface DiffPathProps extends Omit<DiffPathViewerProps, 'data'> {
   mode?: DiffPathTooltipProps['mode'];
   appId: string;
   operationId: string;
@@ -29,7 +25,7 @@ export interface DiffPathProps
 
 const DiffPath: FC<DiffPathProps> = (props) => {
   const { mode = 'multiple', defaultOnlyFailed = true } = props;
-  const [onlyFailed, setOnlyFailed] = React.useState(defaultOnlyFailed);
+  const [onlyFailed, setOnlyFailed] = useState(defaultOnlyFailed);
 
   const [searchOperationName, setSearchOperationName] = useState<string>();
 

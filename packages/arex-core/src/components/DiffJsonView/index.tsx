@@ -118,7 +118,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
           <VanillaJSONEditor
             readOnly={readOnly}
             height={height}
-            remark={remark?.[0] || (t('record') as string)}
+            remark={remark?.[0] || (t('benchmark') as string)}
             content={{
               text: String(diffJson?.left), // stringify falsy value
               json: undefined,
@@ -141,7 +141,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
           <VanillaJSONEditor
             readOnly={readOnly}
             height={height}
-            remark={remark?.[1] || (t('replay') as string)}
+            remark={remark?.[1] || (t('test') as string)}
             content={{
               text: String(diffJson?.right), // stringify falsy value
               json: undefined,

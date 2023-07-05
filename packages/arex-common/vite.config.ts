@@ -15,17 +15,16 @@ export default defineConfig({
     emptyOutDir: true,
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
-      name: 'ArexCore',
-      fileName: 'arex-core',
+      name: 'ArexCommon',
+      fileName: 'arex-common',
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'antd', 'monaco-editor'],
+      external: ['react', 'react-dom', 'antd'],
       output: {
         globals: {
           react: 'react',
           antd: 'antd',
           'react-dom': 'react-dom',
-          'monaco-editor': 'monaco-editor',
         },
       },
     },

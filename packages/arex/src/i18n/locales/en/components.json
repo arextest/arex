@@ -109,6 +109,7 @@
     "rerun": "Rerun",
     "rerunError": "Rerun error",
     "rerunTip": "Are you sure to rerun?",
+    "parameterError": "Parameter error",
     "abort": "Abort",
     "abortTheCase": "Abort the Case",
     "confirmAbortCase": "Are you sure to abort this case?",

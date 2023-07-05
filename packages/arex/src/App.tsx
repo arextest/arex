@@ -10,7 +10,7 @@ import React from 'react';
 import { EMAIL_KEY } from '@/constant';
 
 import { useAuthentication } from './hooks';
-import { resources } from './i18n';
+import resources from './i18n';
 import Menus from './menus';
 import Panes from './panes';
 import Routes from './router';

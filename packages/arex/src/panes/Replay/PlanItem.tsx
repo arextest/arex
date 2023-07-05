@@ -3,17 +3,16 @@ import 'chart.js/auto';
 import Icon, {
   ContainerOutlined,
   DeleteOutlined,
-  DiffOutlined,
   FileTextOutlined,
   RedoOutlined,
   SearchOutlined,
   StopOutlined,
 } from '@ant-design/icons';
+import { ReplayLogsDrawer } from '@arextest/arex-common';
 import {
   getLocalStorage,
   i18n,
   I18nextLng,
-  QueryLogsDrawer,
   SmallTextButton,
   SpaceBetweenWrapper,
   TooltipButton,
@@ -445,6 +444,8 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         sourceEnv: 'pro',
         targetEnv: selectedPlan!.targetEnv,
       });
+    } else {
+      message.error(t('replay.parameterError'));
     }
   };
 
@@ -464,7 +465,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       );
   };
 
-  const [queryLogsDrawerShow, setQueryLogsDrawerShow] = useState(false);
+  const [ReplayLogsDrawerOpen, setReplayLogsDrawerOpen] = useState(false);
 
   return selectedPlan ? (
     <Card
@@ -500,7 +501,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
           {/*logs*/}
           <SmallTextButton
             onClick={() => {
-              setQueryLogsDrawerShow(true);
+              setReplayLogsDrawerOpen(true);
             }}
             color={'primary'}
             icon={<Icon component={IconLog} />}
@@ -636,12 +637,12 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         columns={columns}
         dataSource={planItemDataFiltered}
       />
-      <QueryLogsDrawer
+      <ReplayLogsDrawer
         planId={selectedPlan?.planId}
-        show={queryLogsDrawerShow}
+        open={ReplayLogsDrawerOpen}
         request={ScheduleService.queryLogs}
-        onHideDrawer={() => {
-          setQueryLogsDrawerShow(false);
+        onClose={() => {
+          setReplayLogsDrawerOpen(false);
         }}
       />
     </Card>

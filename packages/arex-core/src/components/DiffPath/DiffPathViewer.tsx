@@ -3,10 +3,9 @@ import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
 import { App, Menu, Spin, theme, Typography } from 'antd';
 import React, { FC, useEffect } from 'react';
-import { Simulate } from 'react-dom/test-utils';
 import { useTranslation } from 'react-i18next';
 
-import DiffJsonView, { PathHandler } from '../DiffJsonView';
+import DiffJsonView, { DiffJsonViewProps } from '../DiffJsonView';
 import { FlexCenterWrapper, SpaceBetweenWrapper } from '../index';
 import PathTitle from './DiffPathTitle';
 import { DiffLog, LogEntity } from './type';
@@ -40,13 +39,12 @@ export type CompareResultDetail = {
   baseMsg: string;
   testMsg: string;
 };
-export interface DiffPathViewerProps {
+export interface DiffPathViewerProps extends DiffJsonViewProps {
   contextMenuDisabled?: boolean;
   operationId: string;
   appId: string;
   loading?: boolean;
   data?: CompareResultDetail;
-  diffPath?: LogEntity[];
   height?: string;
   defaultActiveFirst?: boolean;
   requestQueryLogEntity: (params: {
@@ -54,9 +52,6 @@ export interface DiffPathViewerProps {
     logIndex: number;
   }) => Promise<LogEntity[]>;
   requestIgnoreNode: (path: string[]) => Promise<boolean>;
-  onIgnoreKey?: PathHandler;
-  onGlobalIgnoreKey?: PathHandler;
-  onSortKey?: PathHandler;
 }
 
 const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
@@ -186,15 +181,13 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
             <DiffJsonView
               hiddenTooltip
               readOnly={props.contextMenuDisabled}
-              height={`calc(${props.height} - 16px)`}
               diffJson={{
                 left: props.data.baseMsg,
                 right: props.data.testMsg,
               }}
               diffPath={logEntity}
-              onIgnoreKey={props.onIgnoreKey}
-              onGlobalIgnoreKey={props.onGlobalIgnoreKey}
-              onSortKey={props.onSortKey}
+              {...props}
+              height={`calc(${props.height} - 8px)`}
             />
           </div>
         )}
