@@ -6,13 +6,14 @@ import {
   getLocalStorage,
   i18n,
   I18nextLng,
+  PaneDrawer,
   PanesTitle,
   PathHandler,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Modal } from 'antd';
+import { App } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
 
 import { EMAIL_KEY } from '@/constant';
@@ -150,16 +151,16 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         }
         panel={
           <DiffPath
-            contextMenuDisabled
+            // contextMenuDisabled
             appId={props.data.appId}
             operationId={props.data.operationId}
-            // extra={
-            //   <TooltipButton
-            //     icon={<SettingOutlined />}
-            //     title={'compareConfig'}
-            //     onClick={handleClickCompareConfigSetting}
-            //   />
-            // }
+            extra={
+              <TooltipButton
+                icon={<SettingOutlined />}
+                title={'compareConfig'}
+                onClick={handleClickCompareConfigSetting}
+              />
+            }
             loading={loadingFullLinkInfo}
             data={fullLinkInfoMerged}
             onIgnoreKey={(path) => handleIgnoreKey(path)}
@@ -180,31 +181,27 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
       <SaveCase planId={props.data.planId} operationId={props.data.operationId} ref={saveCaseRef} />
 
       {/* CompareConfigModal */}
-      <Modal
+      <PaneDrawer
         destroyOnClose
-        width='60%'
+        width='70%'
         footer={false}
-        title={
-          <span>
-            {t('appSetting.compareConfig')} - {props.data.operationName}
-          </span>
-        }
+        title={`${t('appSetting.compareConfig')} - ${props.data.operationName}`}
         open={compareConfigOpen}
-        onCancel={() => {
+        onClose={() => {
           setCompareConfigOpen(false);
         }}
       >
         <CompareConfig appId={props.data.appId} operationId={props.data.operationId} />
-      </Modal>
+      </PaneDrawer>
 
       {/* NodeSortModal */}
-      <Modal
+      <PaneDrawer
         destroyOnClose
-        width='60%'
+        width='70%'
         footer={false}
         title={'NodeSort'}
         open={nodeSortOpen}
-        onCancel={() => {
+        onClose={() => {
           setNodeSortOpen(false);
         }}
       >
@@ -216,7 +213,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
           // onCheck={handleSortTreeChecked}
           // onSelect={handleSortTreeSelected}
         />
-      </Modal>
+      </PaneDrawer>
     </>
   );
 };
