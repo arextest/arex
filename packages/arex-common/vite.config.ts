@@ -19,12 +19,13 @@ export default defineConfig({
       fileName: 'arex-common',
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'antd'],
+      external: ['react', 'react-dom', 'antd', '@arextest/arex-core'],
       output: {
         globals: {
           react: 'react',
           antd: 'antd',
           'react-dom': 'react-dom',
+          '@arextest/arex-core': '@arextest/arex-core',
         },
       },
     },

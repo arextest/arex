@@ -29,7 +29,7 @@ export enum CollectionNodeType {
 
 export const ExtensionVersion = '1.0.4';
 export const ArexVersionKey = 'arexVersion';
-export const ArexVersionValue = '0.2.8';
+export const ArexVersionValue = '0.4.1';
 
 // localStorage key
 export const THEME_KEY = 'theme';
