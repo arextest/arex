@@ -1,7 +1,7 @@
 import { I18nextLng } from '@arextest/arex-core';
 
 import arexCommonCn from './locales/cn.json';
-import arexCommonEn from './locales/En.json';
+import arexCommonEn from './locales/en.json';
 
 export const arexCommonNamespace = 'arexCommon';
 
