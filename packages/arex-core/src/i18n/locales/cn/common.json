@@ -1,6 +1,8 @@
 {
   "record": "录制",
   "replay": "回放",
+  "benchmark": "基准",
+  "test": "测试",
   "console": "控制台",
   "browserAgent": "浏览器代理"
 }

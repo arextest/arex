@@ -45,7 +45,6 @@ const HeaderMenu: FC = () => {
         icon={<QuestionCircleOutlined />}
         onClick={() => window.open('http://www.arextest.com/')}
       />
-
       <TooltipButton
         title={t('setting')}
         icon={<SettingOutlined />}
@@ -53,10 +52,9 @@ const HeaderMenu: FC = () => {
           navPane({ id: 'setting', type: PanesType.USER_SETTING });
         }}
       />
-
       <Dropdown menu={userMenu}>
         <Avatar src={avatar} size={24} style={{ marginLeft: '0px', cursor: 'pointer' }}>
-          {email?.slice(0, 1).toUpperCase()}
+          {email?.slice(0, 1).toUpperCase() || 'G'}
         </Avatar>
       </Dropdown>
     </Space>

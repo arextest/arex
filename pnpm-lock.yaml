@@ -44,7 +44,8 @@ importers:
   packages/arex:
     specifiers:
       '@ant-design/icons': ^5.0.1
-      '@arextest/arex-core': 0.0.3-beta.25
+      '@arextest/arex-common': 0.0.2
+      '@arextest/arex-core': 0.0.3-beta.26
       '@emotion/react': ^11.10.6
       '@emotion/styled': ^11.10.6
       '@iconify/json': ^2.2.76
@@ -90,6 +91,7 @@ importers:
       zustand: ^4.3.7
     dependencies:
       '@ant-design/icons': 5.1.4_biqbaboplfbrettd7655fr4n2y
+      '@arextest/arex-common': link:../arex-common
       '@arextest/arex-core': link:../arex-core
       '@emotion/react': 11.11.1_xomkljxbsahfbuzbqqeyw47ndm
       '@emotion/styled': 11.11.0_l35v4go2jo7vjfoy4hc44odhfi
@@ -135,6 +137,57 @@ importers:
       unplugin-icons: 0.16.3_@svgr+core@8.0.0
       vite: 4.3.9
       vite-plugin-static-copy: 0.14.0_vite@4.3.9
+
+  packages/arex-common:
+    specifiers:
+      '@ant-design/icons': ^5.0.1
+      '@arextest/arex-core': 0.0.3-beta.26
+      '@emotion/react': ^11.10.6
+      '@emotion/serialize': ^1.1.1
+      '@emotion/styled': ^11.10.6
+      '@types/lodash': ^4.14.194
+      '@types/qs': ^6.9.7
+      '@types/react': ^18.0.28
+      '@types/react-dom': ^18.0.11
+      '@vitejs/plugin-react-swc': ^3.3.0
+      ahooks: ^3.7.5
+      antd: ^5.4.2
+      dayjs: ^1.11.7
+      i18next: ^22.4.11
+      immer: ^9.0.19
+      lodash: ^4.17.21
+      qs: ^6.11.1
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      react-i18next: ^12.2.0
+      typescript: ^5.0.2
+      use-immer: ^0.8.1
+      vite: ^4.2.0
+    dependencies:
+      '@ant-design/icons': 5.1.4_biqbaboplfbrettd7655fr4n2y
+      '@arextest/arex-core': link:../arex-core
+      '@emotion/react': 11.11.1_xomkljxbsahfbuzbqqeyw47ndm
+      '@emotion/serialize': 1.1.2
+      '@emotion/styled': 11.11.0_l35v4go2jo7vjfoy4hc44odhfi
+      ahooks: 3.7.7_react@18.2.0
+      antd: 5.6.1_biqbaboplfbrettd7655fr4n2y
+      dayjs: 1.11.8
+      i18next: 22.5.1
+      immer: 9.0.21
+      lodash: 4.17.21
+      qs: 6.11.2
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-i18next: 12.3.1_spyi3zqm3bqfobczid2f6jym6y
+      use-immer: 0.8.1_immer@9.0.21+react@18.2.0
+    devDependencies:
+      '@types/lodash': 4.14.195
+      '@types/qs': 6.9.7
+      '@types/react': 18.2.9
+      '@types/react-dom': 18.2.4
+      '@vitejs/plugin-react-swc': 3.3.2_vite@4.3.9
+      typescript: 5.1.3
+      vite: 4.3.9
 
   packages/arex-core:
     specifiers:
@@ -214,7 +267,8 @@ importers:
   packages/arex-lite:
     specifiers:
       '@ant-design/icons': ^5.0.1
-      '@arextest/arex-core': 0.0.3-beta.25
+      '@arextest/arex-common': 0.0.2
+      '@arextest/arex-core': 0.0.3-beta.26
       '@emotion/react': ^11.10.6
       '@emotion/styled': ^11.10.6
       '@types/lodash': ^4.14.194
@@ -235,6 +289,7 @@ importers:
       zustand: ^4.3.7
     dependencies:
       '@ant-design/icons': 5.1.4_biqbaboplfbrettd7655fr4n2y
+      '@arextest/arex-common': link:../arex-common
       '@arextest/arex-core': link:../arex-core
       '@emotion/react': 11.11.1_xomkljxbsahfbuzbqqeyw47ndm
       '@emotion/styled': 11.11.0_l35v4go2jo7vjfoy4hc44odhfi

@@ -1,4 +1,7 @@
+// import { I18nResources as ArexCommonI18nResources } from '@arextest/arex-common';
+import { I18nResources as ArexCommonI18nResources } from '@arextest/arex-common';
 import { ArexMenuNamespace, ArexPaneNamespace, I18nextLng } from '@arextest/arex-core';
+import { merge } from 'lodash';
 
 import arexMenuCn from './locales/cn/arex-menu.json';
 import arexPaneCn from './locales/cn/arex-pane.json';
@@ -11,7 +14,7 @@ import commonEn from './locales/en/common.json';
 import componentsEn from './locales/en/components.json';
 import pageEn from './locales/en/page.json';
 
-export const resources = {
+const resources = {
   [I18nextLng.cn]: {
     [ArexMenuNamespace]: arexMenuCn,
     [ArexPaneNamespace]: arexPaneCn,
@@ -29,3 +32,5 @@ export const resources = {
     page: pageEn,
   },
 };
+
+export default merge(resources, ArexCommonI18nResources);

@@ -1,9 +1,9 @@
 {
-  "name": "@arextest/arex-core",
-  "version": "0.0.3-beta.26",
+  "name": "@arextest/arex-common",
+  "version": "0.0.2",
   "homepage": "https://github.com/arextest/arex",
-  "main": "dist/arex-core.umd.cjs",
-  "module": "dist/arex-core.js",
+  "main": "dist/arex-common.umd.cjs",
+  "module": "dist/arex-common.js",
   "type": "module",
   "scripts": {
     "build:code": "vite build",
@@ -16,42 +16,32 @@
     "dist/*"
   ],
   "dependencies": {
+    "@arextest/arex-core": "0.0.3-beta.26",
     "@ant-design/icons": "^5.0.1",
-    "@arextest/vanilla-jsoneditor": "^0.17.14",
     "@emotion/react": "^11.10.6",
     "@emotion/serialize": "^1.1.1",
     "@emotion/styled": "^11.10.6",
     "ahooks": "^3.7.5",
-    "allotment": "^1.18.1",
     "antd": "^5.4.2",
-    "copy-to-clipboard": "^3.3.3",
     "dayjs": "^1.11.7",
-    "diff-match-patch": "^1.0.5",
-    "i18next": "^22.4.11",
     "immer": "^9.0.19",
     "lodash": "^4.17.21",
-    "lossless-json": "^2.0.8",
-    "path-to-regexp": "^6.2.1",
     "qs": "^6.11.1",
     "react": "^18.2.0",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
-    "react-github-btn": "^1.4.0",
-    "react-i18next": "^12.2.0",
-    "react-transition-group": "^4.4.5",
-    "use-immer": "^0.8.1",
-    "vconsole": "^3.15.0"
+    "use-immer": "^0.8.1"
   },
   "devDependencies": {
-    "@types/diff-match-patch": "^1.0.32",
     "@types/lodash": "^4.14.194",
     "@types/qs": "^6.9.7",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
-    "@types/react-transition-group": "^4.4.6",
     "@vitejs/plugin-react-swc": "^3.3.0",
     "typescript": "^5.0.2",
     "vite": "^4.2.0"
+  },
+  "peerDependencies": {
+    "i18next": "^22.4.11",
+    "react-i18next": "^12.2.0"
   }
 }
