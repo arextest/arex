@@ -45,7 +45,6 @@ const HeaderMenu: FC = () => {
         icon={<QuestionCircleOutlined />}
         onClick={() => window.open('http://www.arextest.com/')}
       />
-      g
       <TooltipButton
         title={t('setting')}
         icon={<SettingOutlined />}
