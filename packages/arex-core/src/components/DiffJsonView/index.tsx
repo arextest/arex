@@ -6,9 +6,8 @@ import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexCoreConfig } from '../../hooks';
-import { LogEntity } from '../DiffPath/type';
 import DiffJsonTooltip from './DiffJsonTooltip';
-import { genAllDiffByType } from './helper';
+import { genAllDiffByType, LogEntity } from './helper';
 import VanillaJSONEditor from './VanillaJSONEditor';
 
 export type TargetEditor = 'left' | 'right';

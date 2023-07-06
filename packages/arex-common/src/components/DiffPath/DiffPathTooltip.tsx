@@ -1,12 +1,9 @@
 import { FilterOutlined } from '@ant-design/icons';
+import { DiffJsonTooltip, Label, SpaceBetweenWrapper, TooltipButton } from '@arextest/arex-core';
 import { Divider, Input, Space, Switch, theme } from 'antd';
 import { TextProps } from 'antd/es/typography/Text';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import DiffJsonTooltip from '../DiffJsonView/DiffJsonTooltip';
-import { Label, SpaceBetweenWrapper } from '../index';
-import TooltipButton from '../TooltipButton';
 
 export interface DiffPathTooltipProps {
   count?: number;

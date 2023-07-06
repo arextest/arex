@@ -1,11 +1,10 @@
 import { StopOutlined } from '@ant-design/icons';
+import { SpaceBetweenWrapper, TooltipButton } from '@arextest/arex-core';
 import styled from '@emotion/styled';
 import { Typography } from 'antd';
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { SpaceBetweenWrapper } from '../index';
-import TooltipButton from '../TooltipButton';
 import { DiffLog } from './type';
 
 const defaultPath = 'root';

@@ -1,3 +1,9 @@
+import {
+  DiffJsonView,
+  DiffJsonViewProps,
+  FlexCenterWrapper,
+  SpaceBetweenWrapper,
+} from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
@@ -5,8 +11,6 @@ import { App, Menu, Spin, theme, Typography } from 'antd';
 import React, { FC, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import DiffJsonView, { DiffJsonViewProps } from '../DiffJsonView';
-import { FlexCenterWrapper, SpaceBetweenWrapper } from '../index';
 import PathTitle from './DiffPathTitle';
 import { DiffLog, LogEntity } from './type';
 

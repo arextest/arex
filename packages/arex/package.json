@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "@ant-design/icons": "5.1.4",
-    "@arextest/arex-core": "0.0.3-beta.26",
-    "@arextest/arex-common": "0.0.2",
+    "@arextest/arex-core": "0.0.3-beta.27",
+    "@arextest/arex-common": "0.0.3",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@monaco-editor/react": "^4.5.1",

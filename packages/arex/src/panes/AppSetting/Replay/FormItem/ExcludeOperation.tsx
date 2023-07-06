@@ -1,6 +1,5 @@
 import { DeleteOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
-import { TooltipButton, useTranslation } from '@arextest/arex-core';
-import styled from '@emotion/styled';
+import { styled, TooltipButton, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Input, Select, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
