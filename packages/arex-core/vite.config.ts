@@ -19,13 +19,12 @@ export default defineConfig({
       fileName: 'arex-core',
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'antd', 'monaco-editor'],
+      external: ['react', 'react-dom', 'antd'],
       output: {
         globals: {
           react: 'react',
           antd: 'antd',
           'react-dom': 'react-dom',
-          'monaco-editor': 'monaco-editor',
         },
       },
     },

@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-common",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-common.umd.cjs",
   "module": "dist/arex-common.js",
@@ -16,19 +16,16 @@
     "dist/*"
   ],
   "dependencies": {
-    "@arextest/arex-core": "0.0.3-beta.26",
+    "@arextest/arex-core": "0.0.3-beta.27",
     "@ant-design/icons": "5.1.4",
     "@emotion/react": "^11.10.6",
-    "@emotion/serialize": "^1.1.1",
     "@emotion/styled": "^11.10.6",
     "ahooks": "^3.7.5",
-    "antd": "^5.6.4",
+    "allotment": "^1.18.1",
     "dayjs": "^1.11.7",
     "immer": "^9.0.19",
     "lodash": "^4.17.21",
     "qs": "^6.11.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "use-immer": "^0.8.1"
   },
   "devDependencies": {
@@ -41,6 +38,9 @@
     "vite": "^4.2.0"
   },
   "peerDependencies": {
+    "antd": "^5.6.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "i18next": "^22.4.11",
     "react-i18next": "^12.2.0"
   }

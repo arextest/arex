@@ -44,8 +44,8 @@ importers:
   packages/arex:
     specifiers:
       '@ant-design/icons': 5.1.4
-      '@arextest/arex-common': 0.0.2
-      '@arextest/arex-core': 0.0.3-beta.26
+      '@arextest/arex-common': 0.0.3
+      '@arextest/arex-core': 0.0.3-beta.27
       '@emotion/react': ^11.10.6
       '@emotion/styled': ^11.10.6
       '@iconify/json': ^2.2.76
@@ -141,9 +141,8 @@ importers:
   packages/arex-common:
     specifiers:
       '@ant-design/icons': 5.1.4
-      '@arextest/arex-core': 0.0.3-beta.26
+      '@arextest/arex-core': 0.0.3-beta.27
       '@emotion/react': ^11.10.6
-      '@emotion/serialize': ^1.1.1
       '@emotion/styled': ^11.10.6
       '@types/lodash': ^4.14.194
       '@types/qs': ^6.9.7
@@ -151,6 +150,7 @@ importers:
       '@types/react-dom': ^18.0.11
       '@vitejs/plugin-react-swc': ^3.3.0
       ahooks: ^3.7.5
+      allotment: ^1.18.1
       antd: ^5.6.4
       dayjs: ^1.11.7
       i18next: ^22.4.11
@@ -167,9 +167,9 @@ importers:
       '@ant-design/icons': 5.1.4_biqbaboplfbrettd7655fr4n2y
       '@arextest/arex-core': link:../arex-core
       '@emotion/react': 11.11.1_xomkljxbsahfbuzbqqeyw47ndm
-      '@emotion/serialize': 1.1.2
       '@emotion/styled': 11.11.0_l35v4go2jo7vjfoy4hc44odhfi
       ahooks: 3.7.7_react@18.2.0
+      allotment: 1.19.0_biqbaboplfbrettd7655fr4n2y
       antd: 5.6.4_biqbaboplfbrettd7655fr4n2y
       dayjs: 1.11.8
       i18next: 22.5.1
@@ -267,8 +267,8 @@ importers:
   packages/arex-lite:
     specifiers:
       '@ant-design/icons': 5.1.4
-      '@arextest/arex-common': 0.0.2
-      '@arextest/arex-core': 0.0.3-beta.26
+      '@arextest/arex-common': 0.0.3
+      '@arextest/arex-core': 0.0.3-beta.27
       '@emotion/react': ^11.10.6
       '@emotion/styled': ^11.10.6
       '@types/lodash': ^4.14.194

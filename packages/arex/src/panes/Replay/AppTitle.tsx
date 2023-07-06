@@ -6,10 +6,10 @@ import {
   I18nextLng,
   PanesTitle,
   SpaceBetweenWrapper,
+  styled,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
-import styled from '@emotion/styled';
 import { useLocalStorageState, useRequest } from 'ahooks';
 import {
   App,

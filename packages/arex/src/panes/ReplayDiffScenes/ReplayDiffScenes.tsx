@@ -1,4 +1,5 @@
-import { ArexPaneFC, css, DiffPath, Label, SceneCode } from '@arextest/arex-core';
+import { DiffPath } from '@arextest/arex-common';
+import { ArexPaneFC, css, Label, SceneCode } from '@arextest/arex-core';
 import { useRequest, useSize } from 'ahooks';
 import { Card, Collapse, Drawer, Space, Typography } from 'antd';
 import React, { ReactNode, useMemo, useRef, useState } from 'react';

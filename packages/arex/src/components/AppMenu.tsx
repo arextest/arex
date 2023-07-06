@@ -3,10 +3,10 @@ import { ArexMenuFC } from '@arextest/arex-core';
 import {
   getLocalStorage,
   SpaceBetweenWrapper,
+  styled,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
-import styled from '@emotion/styled';
 import { useRequest, useToggle } from 'ahooks';
 import { theme } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';

@@ -1,6 +1,5 @@
 import { UserOutlined } from '@ant-design/icons';
-import { FlexCenterWrapper, getLocalStorage, setLocalStorage } from '@arextest/arex-core';
-import styled from '@emotion/styled';
+import { FlexCenterWrapper, getLocalStorage, setLocalStorage, styled } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Card, Form, Input, Space, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';

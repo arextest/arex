@@ -1,12 +1,12 @@
+import { EllipsisTooltip, EmptyWrapper, PathHandler, SceneCode } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Collapse, Typography } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 
-import EllipsisTooltip from '../EllipsisTooltip';
-import { DiffPathViewer, EmptyWrapper, PathHandler, SceneCode } from '../index';
 import DiffPathTooltip, { DiffPathTooltipProps } from './DiffPathTooltip';
 import { CompareResultDetail, DiffPathViewerProps } from './DiffPathViewer';
+import DiffPathViewer from './DiffPathViewer';
 import { infoItem } from './type';
 
 export interface DiffPathProps extends Omit<DiffPathViewerProps, 'data'> {

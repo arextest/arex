@@ -1,8 +1,8 @@
 import { SettingOutlined } from '@ant-design/icons';
+import { DiffPath } from '@arextest/arex-common';
 import {
   ArexPaneFC,
   CollapseTable,
-  DiffPath,
   getLocalStorage,
   i18n,
   I18nextLng,
