@@ -4,8 +4,6 @@ import React, { FC } from 'react';
 
 import { RecordResult } from '@/services/StorageService';
 
-const { Panel } = Collapse;
-
 type CaseDetailTabProps = {
   type: string;
   compareResults?: RecordResult[];
@@ -13,9 +11,11 @@ type CaseDetailTabProps = {
 
 const CaseDetailTab: FC<CaseDetailTabProps> = (props) => {
   return (
-    <Collapse>
-      {props.compareResults?.map((result, index) => (
-        <Panel header={<span>{result.operationName}</span>} key={index}>
+    <Collapse
+      items={props.compareResults?.map((result, index) => ({
+        key: index,
+        label: <span>{result.operationName}</span>,
+        children: (
           <DiffJsonView
             height='400px'
             remark={['Request', 'Response']}
@@ -24,9 +24,10 @@ const CaseDetailTab: FC<CaseDetailTabProps> = (props) => {
               right: JSON.stringify(result.targetResponse, null, 2),
             }}
           />
-        </Panel>
-      ))}
-    </Collapse>
+        ),
+      }))}
+      style={{ marginTop: '8px' }}
+    />
   );
 };
 

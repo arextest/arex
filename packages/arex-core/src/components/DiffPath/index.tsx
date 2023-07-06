@@ -64,6 +64,24 @@ const DiffPath: FC<DiffPathProps> = (props) => {
           accordion
           size='small'
           // defaultActiveKey={diffListFiltered[0]?.id}
+          items={diffListFiltered.map((data) => ({
+            key: data.id,
+            label: (
+              <Typography.Text strong>
+                <SceneCode code={data.code} />
+                <EllipsisTooltip title={data.operationName} />
+              </Typography.Text>
+            ),
+            children: (
+              <DiffPathViewer
+                {...props}
+                defaultActiveFirst
+                height='400px'
+                data={diffMsg}
+                loading={loadingDiffMsg}
+              />
+            ),
+          }))}
           onChange={([id]) => {
             id && queryDiffMsgById({ id });
           }}
@@ -72,27 +90,7 @@ const DiffPath: FC<DiffPathProps> = (props) => {
               padding: 0 !important;
             }
           `}
-        >
-          {diffListFiltered.map((data) => (
-            <Collapse.Panel
-              header={
-                <Typography.Text strong>
-                  <SceneCode code={data.code} />
-                  <EllipsisTooltip title={data.operationName} />
-                </Typography.Text>
-              }
-              key={data.id}
-            >
-              <DiffPathViewer
-                {...props}
-                defaultActiveFirst
-                height='400px'
-                data={diffMsg}
-                loading={loadingDiffMsg}
-              />
-            </Collapse.Panel>
-          ))}
-        </Collapse>
+        />
       </EmptyWrapper>
     </>
   );

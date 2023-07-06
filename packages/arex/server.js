@@ -1,6 +1,6 @@
-import {createProxyMiddleware} from 'http-proxy-middleware'
-import history from 'connect-history-api-fallback'
-import express from 'express'
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import history from 'connect-history-api-fallback';
+import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -8,7 +8,6 @@ const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 const app = express();
-
 
 app.use(
   '/report',
@@ -37,7 +36,6 @@ app.use(
   }),
 );
 
-
 // 健康检查
 app.get('/vi/health', (req, res) => {
   res.end(`365ms`);
@@ -48,13 +46,13 @@ app.get('/env', (req, res) => {
     SERVICE_REPORT_URL: process.env.SERVICE_REPORT_URL,
     SERVICE_CONFIG_URL: process.env.SERVICE_CONFIG_URL,
     SERVICE_SCHEDULE_URL: process.env.SERVICE_SCHEDULE_URL,
-    SERVICE_STORAGE_URL: process.env.SERVICE_STORAGE_URL
+    SERVICE_STORAGE_URL: process.env.SERVICE_STORAGE_URL,
   });
 });
 
 app.use(history()); // 这里千万要注意，要在static静态资源上面
 // 托管静态文件
-app.use(express.static(__dirname+'/dist'));
+app.use(express.static(__dirname + '/dist'));
 
 // 监听8080端口
 app.listen(8080, function () {

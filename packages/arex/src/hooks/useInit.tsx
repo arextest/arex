@@ -35,7 +35,7 @@ const useInit = () => {
     // this scenario occurs especially when opening a shared link
 
     const authorized = workspaces.map((ws) => ws.id).includes(workspaceId);
-    console.log({ authorized });
+
     if (workspaceId && workspaceId !== activeWorkspaceId) {
       if (authorized) {
         setActiveWorkspaceId(workspaceId);

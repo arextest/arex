@@ -130,22 +130,22 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
     <Space direction='vertical' style={{ width: '100%' }}>
       <EmptyWrapper loading={loading} empty={!mockData.length}>
         <Space direction='vertical' style={{ width: '100%' }}>
-          <Collapse defaultActiveKey={mockData.map((mock) => mock.id)}>
-            {mockData.map((mock) => (
-              <Collapse.Panel
-                key={mock.id}
-                header={mock.operationName}
-                extra={
-                  <TooltipButton
-                    title={'Save'}
-                    icon={<SaveOutlined />}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSave(mock.id);
-                    }}
-                  />
-                }
-              >
+          <Collapse
+            defaultActiveKey={mockData.map((mock) => mock.id)}
+            items={mockData.map((mock) => ({
+              key: mock.id,
+              label: mock.operationName,
+              extra: (
+                <TooltipButton
+                  title={'Save'}
+                  icon={<SaveOutlined />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSave(mock.id);
+                  }}
+                />
+              ),
+              children: (
                 <Row gutter={16}>
                   <Col span={12} style={{ display: 'flex', flexDirection: 'column' }}>
                     <Editor
@@ -196,9 +196,9 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
                     />
                   </Col>
                 </Row>
-              </Collapse.Panel>
-            ))}
-          </Collapse>
+              ),
+            }))}
+          />
         </Space>
       </EmptyWrapper>
     </Space>

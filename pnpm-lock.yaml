@@ -43,7 +43,7 @@ importers:
 
   packages/arex:
     specifiers:
-      '@ant-design/icons': ^5.0.1
+      '@ant-design/icons': 5.1.4
       '@arextest/arex-common': 0.0.2
       '@arextest/arex-core': 0.0.3-beta.26
       '@emotion/react': ^11.10.6
@@ -60,7 +60,7 @@ importers:
       '@vitejs/plugin-react-swc': ^3.3.0
       ahooks: ^3.7.5
       allotment: ^1.18.1
-      antd: ^5.4.2
+      antd: ^5.6.4
       antd-img-crop: ^4.12.2
       arex-request-core: 0.0.1-beta.48
       arex-request-runtime: ^1.0.2
@@ -99,8 +99,8 @@ importers:
       '@sentry/react': 7.56.0_react@18.2.0
       ahooks: 3.7.7_react@18.2.0
       allotment: 1.19.0_biqbaboplfbrettd7655fr4n2y
-      antd: 5.6.1_biqbaboplfbrettd7655fr4n2y
-      antd-img-crop: 4.12.2_y6ultqorr77cmsnjqxxr5gwvgi
+      antd: 5.6.4_biqbaboplfbrettd7655fr4n2y
+      antd-img-crop: 4.12.2_nzi366icxiuusfhzyspxzjmw3y
       arex-request-core: 0.0.1-beta.48_qbgifpua7r57lfznlxnojvbhwm
       arex-request-runtime: 1.0.2
       axios: 1.4.0
@@ -140,7 +140,7 @@ importers:
 
   packages/arex-common:
     specifiers:
-      '@ant-design/icons': ^5.0.1
+      '@ant-design/icons': 5.1.4
       '@arextest/arex-core': 0.0.3-beta.26
       '@emotion/react': ^11.10.6
       '@emotion/serialize': ^1.1.1
@@ -151,7 +151,7 @@ importers:
       '@types/react-dom': ^18.0.11
       '@vitejs/plugin-react-swc': ^3.3.0
       ahooks: ^3.7.5
-      antd: ^5.4.2
+      antd: ^5.6.4
       dayjs: ^1.11.7
       i18next: ^22.4.11
       immer: ^9.0.19
@@ -170,7 +170,7 @@ importers:
       '@emotion/serialize': 1.1.2
       '@emotion/styled': 11.11.0_l35v4go2jo7vjfoy4hc44odhfi
       ahooks: 3.7.7_react@18.2.0
-      antd: 5.6.1_biqbaboplfbrettd7655fr4n2y
+      antd: 5.6.4_biqbaboplfbrettd7655fr4n2y
       dayjs: 1.11.8
       i18next: 22.5.1
       immer: 9.0.21
@@ -191,7 +191,7 @@ importers:
 
   packages/arex-core:
     specifiers:
-      '@ant-design/icons': ^5.0.1
+      '@ant-design/icons': 5.1.4
       '@arextest/vanilla-jsoneditor': ^0.17.14
       '@emotion/react': ^11.10.6
       '@emotion/serialize': ^1.1.1
@@ -205,7 +205,7 @@ importers:
       '@vitejs/plugin-react-swc': ^3.3.0
       ahooks: ^3.7.5
       allotment: ^1.18.1
-      antd: ^5.4.2
+      antd: ^5.6.4
       copy-to-clipboard: ^3.3.3
       dayjs: ^1.11.7
       diff-match-patch: ^1.0.5
@@ -234,7 +234,7 @@ importers:
       '@emotion/styled': 11.11.0_l35v4go2jo7vjfoy4hc44odhfi
       ahooks: 3.7.7_react@18.2.0
       allotment: 1.19.0_biqbaboplfbrettd7655fr4n2y
-      antd: 5.6.1_biqbaboplfbrettd7655fr4n2y
+      antd: 5.6.4_biqbaboplfbrettd7655fr4n2y
       copy-to-clipboard: 3.3.3
       dayjs: 1.11.8
       diff-match-patch: 1.0.5
@@ -266,7 +266,7 @@ importers:
 
   packages/arex-lite:
     specifiers:
-      '@ant-design/icons': ^5.0.1
+      '@ant-design/icons': 5.1.4
       '@arextest/arex-common': 0.0.2
       '@arextest/arex-core': 0.0.3-beta.26
       '@emotion/react': ^11.10.6
@@ -277,7 +277,7 @@ importers:
       '@vitejs/plugin-react-swc': ^3.3.0
       ahooks: ^3.7.5
       allotment: ^1.18.1
-      antd: ^5.4.2
+      antd: ^5.6.4
       dayjs: ^1.11.7
       immer: ^9.0.19
       lodash: ^4.17.21
@@ -295,7 +295,7 @@ importers:
       '@emotion/styled': 11.11.0_l35v4go2jo7vjfoy4hc44odhfi
       ahooks: 3.7.7_react@18.2.0
       allotment: 1.19.0_biqbaboplfbrettd7655fr4n2y
-      antd: 5.6.1_biqbaboplfbrettd7655fr4n2y
+      antd: 5.6.4_biqbaboplfbrettd7655fr4n2y
       dayjs: 1.11.8
       immer: 9.0.21
       lodash: 4.17.21
@@ -2134,14 +2134,14 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /antd-img-crop/4.12.2_y6ultqorr77cmsnjqxxr5gwvgi:
+  /antd-img-crop/4.12.2_nzi366icxiuusfhzyspxzjmw3y:
     resolution: {integrity: sha512-xgxR3x2sg+tCBHMfx1gejEfhhvnIL2mpZ4OIPfQDJZTTfm9YpMqaqLF9qWbF9Nf83bXCdaQywYihcVGyw3niDg==}
     peerDependencies:
       antd: '>=4.0.0'
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
-      antd: 5.6.1_biqbaboplfbrettd7655fr4n2y
+      antd: 5.6.4_biqbaboplfbrettd7655fr4n2y
       compare-versions: 6.0.0-rc.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -2149,8 +2149,8 @@ packages:
       tslib: 2.5.3
     dev: false
 
-  /antd/5.6.1_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-ZuY6MATmONRCrHL53BwM3t/GruwhNcPJsKtRQLyo6TWJFkdPBd4gASfHsgKWRlXnN767IG8ioxDS5hlV6GsGHg==}
+  /antd/5.6.4_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-ttAN5vk6yUybDCe5WFloEb49dyLwyec+FJlvopfZFSkScHX2OBbfpPlCQ50Bpp2u5P/eqN6EQUM4PsE4MPslAA==}
     peerDependencies:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
@@ -2170,12 +2170,12 @@ packages:
       dayjs: 1.11.8
       qrcode.react: 3.1.0_react@18.2.0
       rc-cascader: 3.12.0_biqbaboplfbrettd7655fr4n2y
-      rc-checkbox: 3.0.1_biqbaboplfbrettd7655fr4n2y
+      rc-checkbox: 3.1.0_biqbaboplfbrettd7655fr4n2y
       rc-collapse: 3.7.0_biqbaboplfbrettd7655fr4n2y
       rc-dialog: 9.1.0_biqbaboplfbrettd7655fr4n2y
       rc-drawer: 6.2.0_biqbaboplfbrettd7655fr4n2y
       rc-dropdown: 4.1.0_biqbaboplfbrettd7655fr4n2y
-      rc-field-form: 1.32.0_biqbaboplfbrettd7655fr4n2y
+      rc-field-form: 1.34.1_biqbaboplfbrettd7655fr4n2y
       rc-image: 5.17.1_biqbaboplfbrettd7655fr4n2y
       rc-input: 1.0.4_biqbaboplfbrettd7655fr4n2y
       rc-input-number: 7.4.2_biqbaboplfbrettd7655fr4n2y
@@ -2184,7 +2184,7 @@ packages:
       rc-motion: 2.7.3_biqbaboplfbrettd7655fr4n2y
       rc-notification: 5.0.4_biqbaboplfbrettd7655fr4n2y
       rc-pagination: 3.5.0_biqbaboplfbrettd7655fr4n2y
-      rc-picker: 3.8.1_uzmppugwq37c3inrakk5tjdz6q
+      rc-picker: 3.8.2_uzmppugwq37c3inrakk5tjdz6q
       rc-progress: 3.4.2_biqbaboplfbrettd7655fr4n2y
       rc-rate: 2.12.0_biqbaboplfbrettd7655fr4n2y
       rc-resize-observer: 1.3.1_biqbaboplfbrettd7655fr4n2y
@@ -2229,7 +2229,7 @@ packages:
       '@emotion/styled': 11.11.0_l35v4go2jo7vjfoy4hc44odhfi
       '@monaco-editor/react': 4.5.1_gesakegkf6ivhdtrwoiybdd3ni
       allotment: 1.19.0_biqbaboplfbrettd7655fr4n2y
-      antd: 5.6.1_biqbaboplfbrettd7655fr4n2y
+      antd: 5.6.4_biqbaboplfbrettd7655fr4n2y
       copy-to-clipboard: 3.3.3
       i18next: 22.5.1
       immer: 9.0.21
@@ -5185,8 +5185,8 @@ packages:
       react-dom: 18.2.0_react@18.2.0
     dev: false
 
-  /rc-checkbox/3.0.1_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-k7nxDWxYF+jDI0ZcCvuvj71xONmWRVe5+1MKcERRR9MRyP3tZ69b+yUCSXXh+sik4/Hc9P5wHr2nnUoGS2zBjA==}
+  /rc-checkbox/3.1.0_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-PAwpJFnBa3Ei+5pyqMMXdcKYKNBMS+TvSDiLdDnARnMJHC8ESxwPfm4Ao1gJiKtWLdmGfigascnCpwrHFgoOBQ==}
     peerDependencies:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
@@ -5256,8 +5256,8 @@ packages:
       react-dom: 18.2.0_react@18.2.0
     dev: false
 
-  /rc-field-form/1.32.0_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-vr5pA0/gWiBZf0HKdevQJcWSsAac10Z8Nj1Brs3OOCnExk7l+u8GtsW+4cRSqJLug5fxV11dOGXpxf7+aHT/2A==}
+  /rc-field-form/1.34.1_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-oohdrjUHYWzY4H5EOw/9xk324oatZOKiCfo3FwnK9G/LswoqflWoxeaAGMkjI5Ug4YxSq80fehoJjVYApSheYA==}
     engines: {node: '>=8.x'}
     peerDependencies:
       react: '>=16.9.0'
@@ -5401,8 +5401,8 @@ packages:
       react-dom: 18.2.0_react@18.2.0
     dev: false
 
-  /rc-picker/3.8.1_uzmppugwq37c3inrakk5tjdz6q:
-    resolution: {integrity: sha512-Td63/F/V+36dXMEvjuqCNEahBR8S4yocgH7XXY+NrJh6+8dJM+X+5w0PgEjYo0LKkDvfGcu5CpdLG0gobnyLWA==}
+  /rc-picker/3.8.2_uzmppugwq37c3inrakk5tjdz6q:
+    resolution: {integrity: sha512-q6jnMwBoOi6tFA4xohrKIhzq80Fc3dH0Kiw5VRx6Tf1db7y27PBFCLwu6f66niXidZKD8F4R0M9VIui/jkL4cg==}
     engines: {node: '>=8.x'}
     peerDependencies:
       date-fns: '>= 2.x'

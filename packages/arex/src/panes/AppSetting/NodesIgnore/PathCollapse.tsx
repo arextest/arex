@@ -151,6 +151,123 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
     },
   });
 
+  const collapseItems = useMemo<CollapseProps['items']>(
+    () =>
+      props.interfaces.map((path) => ({
+        key: String(path.id),
+        label: <Typography.Text ellipsis>{path.operationName}</Typography.Text>,
+        extra: [
+          <TooltipButton
+            key='add'
+            icon={<PlusOutlined />}
+            title={t('appSetting.addKey')}
+            onClick={(e) => handleAddKey(e, path)}
+          />,
+          <SmallTextButton
+            key='search'
+            icon={<SearchOutlined />}
+            onClick={(e) => {
+              e.stopPropagation();
+              setSearch('');
+              props.onChange?.(path, true);
+            }}
+          />,
+          !props.manualEdit && (
+            <TooltipButton
+              key='editResponse'
+              icon={<CodeOutlined />}
+              title={t('appSetting.editResponse')}
+              onClick={(e) => {
+                e.stopPropagation();
+                props.onEditResponse?.(path);
+              }}
+            />
+          ),
+        ],
+        children: (
+          <List
+            size='small'
+            dataSource={ignoreNodesFiltered}
+            loading={props.loadingPanel}
+            header={
+              search !== false && (
+                <SpaceBetweenWrapper style={{ padding: '0 16px' }}>
+                  <Input.Search
+                    size='small'
+                    onSearch={(value) => {
+                      setSearch(value);
+                    }}
+                    style={{ marginRight: '8px' }}
+                  />
+                  <Button
+                    size='small'
+                    type='text'
+                    icon={<CloseOutlined />}
+                    onClick={() => setSearch(false)}
+                  />
+                </SpaceBetweenWrapper>
+              )
+            }
+            footer={
+              editMode && (
+                <List.Item style={{ padding: '0 8px' }}>
+                  <SpaceBetweenWrapper width={'100%'}>
+                    <AutoComplete
+                      size='small'
+                      placeholder='Ignored key'
+                      ref={editInputRef}
+                      options={props.options}
+                      filterOption={(inputValue, option) =>
+                        option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                      }
+                      value={ignoredKey}
+                      onChange={setIgnoredKey}
+                      style={{ width: '100%' }}
+                    />
+                    <span style={{ display: 'flex', marginLeft: '8px' }}>
+                      <SmallTextButton icon={<CloseOutlined />} onClick={handleExitEdit} />
+                      <SmallTextButton icon={<CheckOutlined />} onClick={handleEditSave} />
+                    </span>
+                  </SpaceBetweenWrapper>
+                </List.Item>
+              )
+            }
+            renderItem={(node) => (
+              <List.Item>
+                <Spin
+                  indicator={<></>}
+                  spinning={!!props.interfaceId && !node.compareConfigType}
+                  wrapperClassName={
+                    !!props.interfaceId && !node.compareConfigType ? 'disabled-node' : ''
+                  }
+                >
+                  <SpaceBetweenWrapper width={'100%'}>
+                    <Typography.Text ellipsis>{node.exclusions.join('/')}</Typography.Text>
+                    <SmallTextButton
+                      icon={<DeleteOutlined />}
+                      onClick={() => deleteIgnoreNode({ id: node.id })}
+                    />
+                  </SpaceBetweenWrapper>
+                </Spin>
+              </List.Item>
+            )}
+            locale={{ emptyText: t('appSetting.noIgnoredNodes') }}
+          />
+        ),
+      })),
+    [
+      deleteIgnoreNode,
+      editMode,
+      handleAddKey,
+      handleEditSave,
+      ignoreNodesFiltered,
+      ignoredKey,
+      props,
+      search,
+      t,
+    ],
+  );
+
   const handleExitEdit = () => {
     setIgnoredKey('');
     setEditMode(false);
@@ -164,6 +281,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
           {...props}
           accordion
           activeKey={props.activeKey || undefined}
+          items={collapseItems}
           onChange={([id]) =>
             props.onChange?.(
               props.interfaces.find((i) => i.id === id),
@@ -177,115 +295,7 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
               flex-shrink: 0;
             }
           `}
-        >
-          {props.interfaces &&
-            Array.isArray(props.interfaces) &&
-            props.interfaces.map((path) => {
-              return (
-                <Collapse.Panel
-                  key={String(path.id)}
-                  header={<Typography.Text ellipsis>{path.operationName}</Typography.Text>}
-                  extra={[
-                    <TooltipButton
-                      key='add'
-                      icon={<PlusOutlined />}
-                      title={t('appSetting.addKey')}
-                      onClick={(e) => handleAddKey(e, path)}
-                    />,
-                    <SmallTextButton
-                      key='search'
-                      icon={<SearchOutlined />}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSearch('');
-                        props.onChange?.(path, true);
-                      }}
-                    />,
-                    !props.manualEdit && (
-                      <TooltipButton
-                        key='editResponse'
-                        icon={<CodeOutlined />}
-                        title={t('appSetting.editResponse')}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          props.onEditResponse?.(path);
-                        }}
-                      />
-                    ),
-                  ]}
-                >
-                  <List
-                    size='small'
-                    dataSource={ignoreNodesFiltered}
-                    loading={props.loadingPanel}
-                    header={
-                      search !== false && (
-                        <SpaceBetweenWrapper style={{ padding: '0 16px' }}>
-                          <Input.Search
-                            size='small'
-                            onSearch={(value) => {
-                              setSearch(value);
-                            }}
-                            style={{ marginRight: '8px' }}
-                          />
-                          <Button
-                            size='small'
-                            type='text'
-                            icon={<CloseOutlined />}
-                            onClick={() => setSearch(false)}
-                          />
-                        </SpaceBetweenWrapper>
-                      )
-                    }
-                    footer={
-                      editMode && (
-                        <List.Item style={{ padding: '0 8px' }}>
-                          <SpaceBetweenWrapper width={'100%'}>
-                            <AutoComplete
-                              size='small'
-                              placeholder='Ignored key'
-                              ref={editInputRef}
-                              options={props.options}
-                              filterOption={(inputValue, option) =>
-                                option!.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                              }
-                              value={ignoredKey}
-                              onChange={setIgnoredKey}
-                              style={{ width: '100%' }}
-                            />
-                            <span style={{ display: 'flex', marginLeft: '8px' }}>
-                              <SmallTextButton icon={<CloseOutlined />} onClick={handleExitEdit} />
-                              <SmallTextButton icon={<CheckOutlined />} onClick={handleEditSave} />
-                            </span>
-                          </SpaceBetweenWrapper>
-                        </List.Item>
-                      )
-                    }
-                    renderItem={(node) => (
-                      <List.Item>
-                        <Spin
-                          indicator={<></>}
-                          spinning={!!props.interfaceId && !node.compareConfigType}
-                          wrapperClassName={
-                            !!props.interfaceId && !node.compareConfigType ? 'disabled-node' : ''
-                          }
-                        >
-                          <SpaceBetweenWrapper width={'100%'}>
-                            <Typography.Text ellipsis>{node.exclusions.join('/')}</Typography.Text>
-                            <SmallTextButton
-                              icon={<DeleteOutlined />}
-                              onClick={() => deleteIgnoreNode({ id: node.id })}
-                            />
-                          </SpaceBetweenWrapper>
-                        </Spin>
-                      </List.Item>
-                    )}
-                    locale={{ emptyText: t('appSetting.noIgnoredNodes') }}
-                  />
-                </Collapse.Panel>
-              );
-            })}
-        </Collapse>
+        />
       </Spin>
     </PathCollapseWrapper>
   );
