@@ -99,52 +99,43 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
           onChange={([id]) =>
             props.onChange && props.onChange(props.interfaces.find((i) => i.id === id))
           }
-          css={css`
-            height: ${props.height};
-            overflow-y: auto;
-            .ant-collapse-extra {
-              flex-shrink: 0;
-            }
-          `}
-        >
-          {props.interfaces.map((i) => (
-            <Collapse.Panel
-              key={String(i.id)}
-              header={<Typography.Text ellipsis>{i.operationName}</Typography.Text>}
-              extra={
-                <>
+          items={props.interfaces.map((i) => ({
+            key: String(i.id),
+            label: <Typography.Text ellipsis>{i.operationName}</Typography.Text>,
+            extra: (
+              <>
+                <TooltipButton
+                  key='add'
+                  icon={<PlusOutlined />}
+                  title={t('appSetting.addSortKey')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    props.onChange?.(i, true);
+                  }}
+                />
+                <SmallTextButton
+                  key='search'
+                  icon={<SearchOutlined />}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSearch('');
+                    props.onChange?.(i, true);
+                  }}
+                />
+                {!props.interfaceId && (
                   <TooltipButton
-                    key='add'
-                    icon={<PlusOutlined />}
-                    title={t('appSetting.addSortKey')}
+                    key='editResponse'
+                    icon={<CodeOutlined />}
+                    title={t('appSetting.editResponse')}
                     onClick={(e) => {
                       e.stopPropagation();
-                      props.onChange?.(i, true);
+                      props.onEditResponse?.(i);
                     }}
                   />
-                  <SmallTextButton
-                    key='search'
-                    icon={<SearchOutlined />}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setSearch('');
-                      props.onChange?.(i, true);
-                    }}
-                  />
-                  {!props.interfaceId && (
-                    <TooltipButton
-                      key='editResponse'
-                      icon={<CodeOutlined />}
-                      title={t('appSetting.editResponse')}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        props.onEditResponse?.(i);
-                      }}
-                    />
-                  )}
-                </>
-              }
-            >
+                )}
+              </>
+            ),
+            children: (
               <List
                 size='small'
                 loading={props.loadingPanel}
@@ -209,9 +200,16 @@ const PathCollapse: FC<PathCollapseProps> = (props) => {
                 )}
                 locale={{ emptyText: t('appSetting.noSortNodes') }}
               />
-            </Collapse.Panel>
-          ))}
-        </Collapse>
+            ),
+          }))}
+          css={css`
+            height: ${props.height};
+            overflow-y: auto;
+            .ant-collapse-extra {
+              flex-shrink: 0;
+            }
+          `}
+        />
       </Spin>
     </CollapseWrapper>
   );

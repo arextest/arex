@@ -94,6 +94,49 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
     setModalOpen(2);
   };
 
+  const collapseItems = useMemo(
+    () =>
+      sceneInfo.map((scene, index) => {
+        const firstSubScene = scene.subScenes[0];
+        const { fullPath } = firstSubScene.details.reduce<{
+          fullPath: ReactNode[];
+          pathKeyList: string[];
+        }>(
+          (path, item, i) => {
+            // 去重: code 和 categoryName 组成唯一标识
+            const pathKey = `${item.code}-${item.categoryName}`;
+            if (path.pathKeyList.includes(pathKey)) return path;
+
+            path.pathKeyList.push(pathKey);
+            const title = (
+              <Space key={i}>
+                {item.categoryName}
+                <SceneCode code={item.code} />
+              </Space>
+            );
+
+            i && path.fullPath.push('+ ');
+            path.fullPath.push(title);
+            return path;
+          },
+          { fullPath: [], pathKeyList: [] },
+        );
+
+        return {
+          key: index,
+          label: fullPath,
+          children: (
+            <SubScenesMenu
+              data={subSceneList || []}
+              onClick={getQueryFullLinkInfo}
+              onClickAllDiff={handleClickAllDiff}
+            />
+          ),
+        };
+      }),
+    [getQueryFullLinkInfo, handleClickAllDiff, sceneInfo, subSceneList],
+  );
+
   return (
     <div ref={wrapperRef}>
       <Space direction='vertical' style={{ width: '100%' }}>
@@ -114,56 +157,17 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
         <Collapse
           accordion
           destroyInactivePanel
+          items={collapseItems}
           onChange={([index]) => {
             if (index !== undefined) setSubSceneList(sceneInfo[parseInt(index)].subScenes);
             else setFullLinkInfo(undefined);
           }}
-        >
-          {sceneInfo.map((scene, index) => {
-            const firstSubScene = scene.subScenes[0];
-            const { fullPath } = firstSubScene.details.reduce<{
-              fullPath: ReactNode[];
-              pathKeyList: string[];
-            }>(
-              (path, item, i) => {
-                // 去重: code 和 categoryName 组成唯一标识
-                const pathKey = `${item.code}-${item.categoryName}`;
-                if (path.pathKeyList.includes(pathKey)) return path;
-
-                path.pathKeyList.push(pathKey);
-                const title = (
-                  <Space key={index}>
-                    {item.categoryName}
-                    <SceneCode code={item.code} />
-                  </Space>
-                );
-
-                i && path.fullPath.push('+ ');
-                path.fullPath.push(title);
-                return path;
-              },
-              { fullPath: [], pathKeyList: [] },
-            );
-
-            return (
-              <Collapse.Panel
-                header={fullPath}
-                key={index}
-                css={css`
-                  .ant-collapse-content-box {
-                    padding: 8px !important;
-                  }
-                `}
-              >
-                <SubScenesMenu
-                  data={subSceneList || []}
-                  onClick={getQueryFullLinkInfo}
-                  onClickAllDiff={handleClickAllDiff}
-                />
-              </Collapse.Panel>
-            );
-          })}
-        </Collapse>
+          css={css`
+            .ant-collapse-content-box {
+              padding: 8px !important;
+            }
+          `}
+        />
 
         {treeData && (
           <FlowTree

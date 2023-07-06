@@ -7,14 +7,14 @@
     "do-dev": "vite"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.0.1",
+    "@ant-design/icons": "5.1.4",
     "@arextest/arex-core": "0.0.3-beta.26",
     "@arextest/arex-common": "0.0.2",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",
-    "antd": "^5.4.2",
+    "antd": "^5.6.4",
     "dayjs": "^1.11.7",
     "immer": "^9.0.19",
     "lodash": "^4.17.21",

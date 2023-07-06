@@ -74,16 +74,16 @@ const ReplayAnalysis: ArexPaneFC<PlanItemStatistics> = (props) => {
           />
         }
         panel={
-          <Collapse activeKey={activeKey} onChange={setActiveKey} style={{ width: '100%' }}>
-            {scenes.map((scene, index) => (
-              <Collapse.Panel
-                header={<Typography.Text>{`Scene ${index + 1}`}</Typography.Text>}
-                key={index}
-              >
+          <Collapse
+            activeKey={activeKey}
+            items={scenes.map((scene, index) => ({
+              key: index,
+              label: <Typography.Text>{`Scene ${index + 1}`}</Typography.Text>,
+              children: (
                 <DiffList
+                  scene={scene}
                   appId={props.data.appId}
                   operationId={props.data.operationId}
-                  scene={scene}
                   onTreeModeClick={(diff) => {
                     if (diff) {
                       setDiffJsonViewData({
@@ -97,9 +97,11 @@ const ReplayAnalysis: ArexPaneFC<PlanItemStatistics> = (props) => {
                     }
                   }}
                 />
-              </Collapse.Panel>
-            ))}
-          </Collapse>
+              ),
+            }))}
+            onChange={setActiveKey}
+            style={{ width: '100%' }}
+          />
         }
       />
 

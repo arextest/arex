@@ -35,7 +35,7 @@ const useInit = () => {
     // this scenario occurs especially when opening a shared link
 
     const authorized = workspaces.map((ws) => ws.id).includes(workspaceId);
-    console.log({ authorized });
+
     if (workspaceId && workspaceId !== activeWorkspaceId) {
       if (authorized) {
         setActiveWorkspaceId(workspaceId);
@@ -100,6 +100,13 @@ const useInit = () => {
         }
       },
     );
+
+    console.log(`
+   ____   __   ____ _   ______   ___   ___  _____  __
+  /  _/  / /  / __ \\ | / / __/  / _ | / _ \\/ __/ |/_/
+ _/ /   / /__/ /_/ / |/ / _/   / __ |/ , _/ _/_>  <  
+/___/  /____/\\____/|___/___/  /_/ |_/_/|_/___/_/|_|  
+        `);
 
     return () => {
       unSubscribeMenusPane();

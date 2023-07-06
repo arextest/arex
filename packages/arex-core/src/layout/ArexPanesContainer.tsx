@@ -77,7 +77,7 @@ export interface ArexPanesContainerProps extends Omit<TabsProps, 'items'> {
 }
 
 const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
-  const { onAdd, onRemove, panes = [], ...restTabsProps } = props;
+  const { onAdd, onRemove, panes = [], dropdownMenu, ...restTabsProps } = props;
   // 规定: ArexMenu 翻译文本需要配置在 locales/[lang]/arex-menu.json 下, 且 key 为 Menu.type
   const { t } = useTranslation([ArexPaneNamespace]);
 
@@ -186,11 +186,11 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
           return (
             <DraggableTabNode key={node.key} index={node.key!} moveNode={moveTabNode}>
               {React.createElement(
-                props.dropdownMenu ? Dropdown : 'div',
+                dropdownMenu ? Dropdown : 'div',
                 {
                   menu: {
-                    ...props.dropdownMenu,
-                    onClick: (e) => props.dropdownMenu?.onClick?.(e, node.key),
+                    ...dropdownMenu,
+                    onClick: (e) => dropdownMenu?.onClick?.(e, node.key),
                   },
                   trigger: ['contextMenu'],
                 },

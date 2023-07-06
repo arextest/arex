@@ -122,90 +122,107 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       <Collapse
         bordered={false}
         defaultActiveKey={['runningStatus', 'basic']}
+        items={[
+          {
+            key: 'runningStatus',
+            label: t('appSetting.runningStatus'),
+            children: (
+              <>
+                <Form.Item label={t('appSetting.recordMachineNum')} name='recordMachineCountLimit'>
+                  <InputNumber size='small' min={0} max={10} precision={0} />
+                </Form.Item>
+                <RunningStatus appId={props.appId} />
+              </>
+            ),
+          },
+          {
+            key: 'basic',
+            label: t('appSetting.basic'),
+            children: (
+              <>
+                <Form.Item label={t('appSetting.duration')} name='allowDayOfWeeks'>
+                  <DurationInput />
+                </Form.Item>
+
+                <Form.Item label={t('appSetting.period')} name='period'>
+                  <TimePicker.RangePicker format={format} />
+                </Form.Item>
+
+                <Form.Item label={t('appSetting.frequency')} name='sampleRate'>
+                  <IntegerStepSlider />
+                </Form.Item>
+              </>
+            ),
+          },
+          {
+            key: 'advanced',
+            label: t('appSetting.advanced'),
+            forceRender: true,
+            children: (
+              <>
+                <Form.Item label={t('appSetting.timeMock')} name='timeMock' valuePropName='checked'>
+                  <Checkbox />
+                </Form.Item>
+
+                <Form.Item
+                  label={
+                    <HelpTooltip title={t('appSetting.dynamicClassesTooltip')}>
+                      {t('appSetting.dynamicClasses')}
+                    </HelpTooltip>
+                  }
+                >
+                  <DynamicClassesEditableTable appId={props.appId} />
+                </Form.Item>
+
+                <Form.Item
+                  label={
+                    <HelpTooltip title={t('appSetting.inclusionTooltip')}>
+                      {t('appSetting.inclusion')}
+                    </HelpTooltip>
+                  }
+                  name='includeServiceOperationSet'
+                >
+                  <Select
+                    allowClear
+                    mode='tags'
+                    options={[...new Set(operationList.map((item) => item.operationName))]
+                      .filter(Boolean)
+                      .map((name) => ({
+                        label: name,
+                        value: name,
+                      }))}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  label={
+                    <HelpTooltip title={t('appSetting.exclusionTooltip')}>
+                      {t('appSetting.exclusion')}
+                    </HelpTooltip>
+                  }
+                  name='excludeServiceOperationSet'
+                >
+                  <Select
+                    allowClear
+                    mode='tags'
+                    options={[...new Set(operationList.map((item) => item.operationName))]
+                      .filter(Boolean)
+                      .map((name) => ({
+                        label: name,
+                        value: name,
+                      }))}
+                  />
+                </Form.Item>
+              </>
+            ),
+          },
+        ]}
         css={css`
           .ant-collapse-header-text {
             font-weight: 600;
           }
         `}
-      >
-        <Collapse.Panel header={t('appSetting.runningStatus')} key='runningStatus'>
-          <Form.Item label={t('appSetting.recordMachineNum')} name='recordMachineCountLimit'>
-            <InputNumber size='small' min={0} max={10} precision={0} />
-          </Form.Item>
-          <RunningStatus appId={props.appId} />
-        </Collapse.Panel>
-
-        <Collapse.Panel header={t('appSetting.basic')} key='basic'>
-          <Form.Item label={t('appSetting.duration')} name='allowDayOfWeeks'>
-            <DurationInput />
-          </Form.Item>
-
-          <Form.Item label={t('appSetting.period')} name='period'>
-            <TimePicker.RangePicker format={format} />
-          </Form.Item>
-
-          <Form.Item label={t('appSetting.frequency')} name='sampleRate'>
-            <IntegerStepSlider />
-          </Form.Item>
-        </Collapse.Panel>
-
-        {/* 此处必须 forceRender，否则如果没有打开高级设置就保存，将丢失高级设置部分字段 */}
-        <Collapse.Panel forceRender header={t('appSetting.advanced')} key='advanced'>
-          <Form.Item label={t('appSetting.timeMock')} name='timeMock' valuePropName='checked'>
-            <Checkbox />
-          </Form.Item>
-
-          <Form.Item
-            label={
-              <HelpTooltip title={t('appSetting.dynamicClassesTooltip')}>
-                {t('appSetting.dynamicClasses')}
-              </HelpTooltip>
-            }
-          >
-            <DynamicClassesEditableTable appId={props.appId} />
-          </Form.Item>
-
-          <Form.Item
-            label={
-              <HelpTooltip title={t('appSetting.inclusionTooltip')}>
-                {t('appSetting.inclusion')}
-              </HelpTooltip>
-            }
-            name='includeServiceOperationSet'
-          >
-            <Select
-              allowClear
-              mode='tags'
-              options={[...new Set(operationList.map((item) => item.operationName))]
-                .filter(Boolean)
-                .map((name) => ({
-                  label: name,
-                  value: name,
-                }))}
-            />
-          </Form.Item>
-
-          <Form.Item
-            label={
-              <HelpTooltip title={t('appSetting.exclusionTooltip')}>
-                {t('appSetting.exclusion')}
-              </HelpTooltip>
-            }
-            name='excludeServiceOperationSet'
-          >
-            <Select
-              allowClear
-              mode='tags'
-              options={[...new Set(operationList.map((item) => item.operationName))]
-                .filter(Boolean)
-                .map((name) => ({
-                  label: name,
-                  value: name,
-                }))}
-            />
-          </Form.Item>
-        </Collapse.Panel>
-      </Collapse>
+      />
 
       <Form.Item style={{ float: 'right', margin: '16px 0' }}>
         <Button type='primary' htmlType='submit'>

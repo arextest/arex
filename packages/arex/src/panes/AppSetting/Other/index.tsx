@@ -57,44 +57,51 @@ const SettingOther: FC<SettingOtherProps> = (props) => {
   return (
     <Collapse
       bordered={false}
+      items={[
+        {
+          key: 'dangerZone',
+          label: t('appSetting.dangerZone'),
+          children: (
+            <SpaceBetweenWrapper>
+              <div>
+                <Typography.Text strong style={{ display: 'block' }}>
+                  {t('appSetting.deleteThisApp')}
+                </Typography.Text>
+                <Typography.Text type='secondary'>{t('appSetting.deleteTip')}</Typography.Text>
+              </div>
+
+              <Button danger onClick={() => setConfirmDeleteOpen(true)}>
+                {t('appSetting.deleteApp')}
+              </Button>
+
+              <Modal
+                destroyOnClose
+                open={confirmDeleteOpen}
+                title={`${t('appSetting.confirmDelete')} ${props.appId}`}
+                onCancel={handleCancelDelete}
+                onOk={handleConfirmDelete}
+              >
+                <Typography.Text type='secondary'>
+                  {t('appSetting.deleteConfirmTip')}
+                </Typography.Text>
+                <Input
+                  value={confirmAppIdValue}
+                  placeholder={props.appId}
+                  status={confirmInputStatus}
+                  onChange={handleConfirmChange}
+                  style={{ marginTop: '8px' }}
+                />
+              </Modal>
+            </SpaceBetweenWrapper>
+          ),
+        },
+      ]}
       css={css`
         .ant-collapse-header-text {
           font-weight: 600;
         }
       `}
-    >
-      <Collapse.Panel header={t('appSetting.dangerZone')} key='dangerZone'>
-        <SpaceBetweenWrapper>
-          <div>
-            <Typography.Text strong style={{ display: 'block' }}>
-              {t('appSetting.deleteThisApp')}
-            </Typography.Text>
-            <Typography.Text type='secondary'>{t('appSetting.deleteTip')}</Typography.Text>
-          </div>
-
-          <Button danger onClick={() => setConfirmDeleteOpen(true)}>
-            {t('appSetting.deleteApp')}
-          </Button>
-
-          <Modal
-            destroyOnClose
-            open={confirmDeleteOpen}
-            title={`${t('appSetting.confirmDelete')} ${props.appId}`}
-            onCancel={handleCancelDelete}
-            onOk={handleConfirmDelete}
-          >
-            <Typography.Text type='secondary'>{t('appSetting.deleteConfirmTip')}</Typography.Text>
-            <Input
-              value={confirmAppIdValue}
-              placeholder={props.appId}
-              status={confirmInputStatus}
-              onChange={handleConfirmChange}
-              style={{ marginTop: '8px' }}
-            />
-          </Modal>
-        </SpaceBetweenWrapper>
-      </Collapse.Panel>
-    </Collapse>
+    />
   );
 };
 

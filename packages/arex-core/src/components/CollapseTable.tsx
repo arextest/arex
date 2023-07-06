@@ -8,14 +8,20 @@ export type CollapseTableProps = {
   panel: ReactNode;
 } & CollapseProps;
 
-const { Panel } = Collapse;
-
 const CollapseTable: FC<CollapseTableProps> = (props) => {
   const { active, table, panel, ...restProps } = props;
   return (
     <Collapse
       className='collapse-table'
       activeKey={active ? 'report' : 'none'}
+      items={[
+        {
+          key: 'report',
+          label: table,
+          showArrow: false,
+          children: panel,
+        },
+      ]}
       css={css`
         .ant-collapse-content-box {
           padding: 0 !important;
@@ -34,11 +40,7 @@ const CollapseTable: FC<CollapseTableProps> = (props) => {
         }
       `}
       {...restProps}
-    >
-      <Panel key='report' showArrow={false} header={table}>
-        {panel}
-      </Panel>
-    </Collapse>
+    />
   );
 };
 
