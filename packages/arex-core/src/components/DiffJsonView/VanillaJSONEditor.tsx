@@ -79,10 +79,6 @@ export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
       <div
         css={css`
           height: ${props.height};
-          // .jse-value,
-          // .jse-key {
-          //   color: ${token.colorText} !important;
-          // }
         `}
         ref={refContainer}
       />
