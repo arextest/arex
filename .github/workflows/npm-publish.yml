@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: pnpm/action-setup@v2
         with:
-          version: 6.0.2
+          version: 8
 
   publish-npm:
     needs: [install]
@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: pnpm/action-setup@v2
         with:
-          version: 6.0.2
+          version: 8
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
