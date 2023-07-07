@@ -45,7 +45,7 @@ importers:
     specifiers:
       '@ant-design/icons': 5.1.4
       '@arextest/arex-common': 0.0.3
-      '@arextest/arex-core': 0.0.3-beta.27
+      '@arextest/arex-core': 0.0.3-beta.28
       '@emotion/react': ^11.10.6
       '@emotion/styled': ^11.10.6
       '@iconify/json': ^2.2.76
@@ -141,7 +141,7 @@ importers:
   packages/arex-common:
     specifiers:
       '@ant-design/icons': 5.1.4
-      '@arextest/arex-core': 0.0.3-beta.27
+      '@arextest/arex-core': 0.0.3-beta.28
       '@emotion/react': ^11.10.6
       '@emotion/styled': ^11.10.6
       '@types/lodash': ^4.14.194
@@ -268,7 +268,7 @@ importers:
     specifiers:
       '@ant-design/icons': 5.1.4
       '@arextest/arex-common': 0.0.3
-      '@arextest/arex-core': 0.0.3-beta.27
+      '@arextest/arex-core': 0.0.3-beta.28
       '@emotion/react': ^11.10.6
       '@emotion/styled': ^11.10.6
       '@types/lodash': ^4.14.194

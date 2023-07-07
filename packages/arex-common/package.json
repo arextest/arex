@@ -16,7 +16,7 @@
     "dist/*"
   ],
   "dependencies": {
-    "@arextest/arex-core": "0.0.3-beta.27",
+    "@arextest/arex-core": "0.0.3-beta.28",
     "@ant-design/icons": "5.1.4",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
