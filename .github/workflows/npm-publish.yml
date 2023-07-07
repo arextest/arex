@@ -26,7 +26,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: pnpm install
       - run: pnpm run build-core
-      - run: pnpm --filter=@arextest/arex-common publish -f --no-git-checks --access=public --filter
+#      - run: pnpm --filter=@arextest/arex-common publish -f --no-git-checks --access=public --filter
       - run: pnpm --filter=@arextest/arex-core publish -f --no-git-checks --access=public --filter
         env:
           NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
