@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: pnpm/action-setup@v2
         with:
-          version: 6.0.2
+          version: 8
 
   publish-npm:
     needs: [install]
@@ -18,14 +18,15 @@ jobs:
     steps:
       - uses: pnpm/action-setup@v2
         with:
-          version: 6.0.2
+          version: 8
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: 18
           registry-url: https://registry.npmjs.org/
       - run: pnpm install
       - run: pnpm run build-core
+#      - run: pnpm --filter=@arextest/arex-common publish -f --no-git-checks --access=public --filter
       - run: pnpm --filter=@arextest/arex-core publish -f --no-git-checks --access=public --filter
         env:
           NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}

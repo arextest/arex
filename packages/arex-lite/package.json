@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "@ant-design/icons": "5.1.4",
-    "@arextest/arex-core": "0.0.3-beta.27",
-    "@arextest/arex-common": "0.0.3",
+    "@arextest/arex-core": "workspace:^",
+    "@arextest/arex-common": "workspace:^",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "ahooks": "^3.7.5",
