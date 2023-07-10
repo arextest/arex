@@ -32,6 +32,7 @@ import { OperationId } from '@/services/ApplicationService';
 import { IgnoreNodeBase, QueryIgnoreNode } from '@/services/ComparisonService';
 
 import IgnoreTree, { getNodes } from './IgnoreTree';
+
 const ActiveKey = 'sort';
 
 type CheckedNodesData = {
@@ -45,7 +46,8 @@ export type NodesIgnoreProps = {
   dependencyId?: string;
   readOnly?: boolean;
   configType: CONFIG_TYPE;
-  responseParsed: { [p: string]: any };
+  contractParsed: { [p: string]: any };
+  onAdd?: () => void;
 };
 
 const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
@@ -124,9 +126,9 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
 
   const nodePath = useMemo(() => {
     const pathList: string[] = [];
-    getPath(getNodes(props.responseParsed, ''), pathList);
+    getPath(getNodes(props.contractParsed, ''), pathList);
     return pathList.map((value) => ({ value }));
-  }, [props.responseParsed]);
+  }, [props.contractParsed]);
 
   /**
    * 删除 IgnoreNode
@@ -226,13 +228,16 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
 
   const handleIgnoreAdd: ButtonProps['onClick'] = (e) => {
     activeKey?.[0] === ActiveKey && e.stopPropagation();
+    props.onAdd?.();
     setTimeout(() => editInputRef.current?.focus());
 
     if (props.configType === CONFIG_TYPE.GLOBAL) {
       setEditMode(true);
     } else {
-      if (Object.keys(props.responseParsed).length) setOpenIgnoreModal(true);
-      else message.info('empty response, please sync response first');
+      setOpenIgnoreModal(true);
+      // TODO empty construct tip
+      // if (Object.keys(props.responseParsed).length) setOpenIgnoreModal(true);
+      // else message.info('empty response, please sync response first');
     }
   };
 
@@ -310,6 +315,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
                     )
                   }
                   footer={
+                    props.configType === CONFIG_TYPE.GLOBAL &&
                     editMode && (
                       <List.Item style={{ padding: '0 16px' }}>
                         <SpaceBetweenWrapper width={'100%'}>
@@ -384,12 +390,14 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
         }}
       >
         <EditAreaPlaceholder
-          ready={!!props.responseParsed}
+          ready={!!props.contractParsed}
           dashedBorder
           title={t('appSetting.editArea')}
         >
           <IgnoreTree
-            treeData={props.responseParsed}
+            // TODO auto expand failed
+            defaultExpandAll
+            treeData={props.contractParsed}
             selectedKeys={checkedNodesData.exclusionsList}
             onSelect={handleIgnoreTreeSelect}
           />

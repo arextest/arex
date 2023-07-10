@@ -6,8 +6,16 @@ export interface QueryContractReq {
   operationId?: string; //queryEntryPoint
 }
 
-export type Contract = string;
+export type Contract = string | null;
 export interface QueryContractRes {
+  id: string;
+  dataChangeCreateTime: number;
+  dataChangeUpdateTime: number;
+  appId: string;
+  isEntry: boolean;
+  operationId: string;
+  operationName: string;
+  operationType: string;
   contract: Contract;
 }
 

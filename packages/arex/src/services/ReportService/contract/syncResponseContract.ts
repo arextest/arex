@@ -3,7 +3,7 @@ import { request } from '@/utils';
 import { Contract } from './queryContract';
 
 export interface SyncResponseContractReq {
-  appId: string;
+  appId?: string;
   operationId: string;
 }
 
@@ -17,11 +17,11 @@ export type DependencyData = DependencyInfo & { contract: Contract };
 
 export interface SyncResponseContractRes {
   entryPointContractStr: Contract;
-  dependencyList: DependencyData[];
+  dependencyList?: DependencyData[];
 }
 
 export async function syncResponseContract(params: SyncResponseContractReq) {
-  const res = await request.post<SyncResponseContractRes>(
+  const res = await request.post<SyncResponseContractRes | null>(
     '/report/report/syncResponseContract',
     params,
   );

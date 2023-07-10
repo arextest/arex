@@ -1,14 +1,19 @@
-import { tryParseJsonString, tryPrettierJsonString, useTranslation } from '@arextest/arex-core';
+import {
+  Label,
+  tryParseJsonString,
+  tryPrettierJsonString,
+  useTranslation,
+} from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Select, Space } from 'antd';
+import { App, Select, SelectProps, Space, Typography } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 
 import { Segmented } from '@/components';
 import NodesIgnore from '@/panes/AppSetting/CompareConfig/NodesIgnore';
 import NodeSort from '@/panes/AppSetting/CompareConfig/NodeSort';
-import { ApplicationService, ConfigService } from '@/services';
+import { ApplicationService, ReportService } from '@/services';
 
-import SyncResponse from './SyncResponse';
+import SyncContract from './SyncContract';
 
 export enum CONFIG_TYPE {
   GLOBAL,
@@ -51,7 +56,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
     props.dependencyId,
   );
 
-  const [rawResponse, setRawResponse] = useState<string>();
+  const [rawContract, setRawContract] = useState<string>();
 
   /**
    * 请求 InterfacesList
@@ -75,66 +80,65 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   );
 
   /**
-   * 请求 DependencyList // TODO 该接口与 queryInterfaceResponse url 相同，考虑合并
+   * 请求 DependencyList
    */
-  const { data: dependencyList = [] } = useRequest(
+  const { loading: loadingDependency } = useRequest(
     () => ApplicationService.getDependencyList({ operationId: activeOperationId as string }),
     {
       ready: !!activeOperationId,
       refreshDeps: [activeOperationId],
       onSuccess(res) {
         setActiveDependencyId(res?.[0]?.dependencyId);
+        setDependencyOptions(
+          res.map((dependency) => ({
+            label: dependency.dependencyType + '-' + dependency.dependencyName,
+            value: dependency.dependencyId,
+          })),
+        );
       },
     },
   );
 
-  const dependencyOptions = useMemo(
-    () =>
-      dependencyList.map((dependency) => ({
-        label: dependency.dependencyType + '-' + dependency.dependencyName,
-        value: dependency.dependencyId,
-      })),
-    [dependencyList],
-  );
+  const [dependencyOptions, setDependencyOptions] = useState<SelectProps['options']>();
 
   /**
-   * 请求 InterfaceResponse
+   * 请求 Contract
    */
   const {
-    data: interfaceResponse,
-    mutate: setInterfaceResponse,
-    run: queryInterfaceResponse,
+    data: contract,
+    mutate: setContract,
+    loading: loadingContract,
+    run: queryContract,
   } = useRequest(
     () =>
-      ConfigService.queryInterfaceResponse({
-        id: activeOperationId as string,
+      ReportService.queryContract({
+        operationId: configType === CONFIG_TYPE.INTERFACE ? activeOperationId : undefined,
+        contractId: configType === CONFIG_TYPE.DEPENDENCY ? activeDependencyId : undefined,
       }),
     {
-      ready: !!activeOperationId,
-      refreshDeps: [activeOperationId],
+      manual: true,
       onBefore() {
-        setInterfaceResponse();
+        setContract();
       },
       onSuccess(res) {
-        setRawResponse(tryPrettierJsonString(res?.operationResponse || ''));
+        setRawContract(tryPrettierJsonString(res?.contract || ''));
       },
     },
   );
 
-  const interfaceResponseParsed = useMemo<{ [key: string]: any }>(() => {
-    const res = interfaceResponse?.operationResponse;
+  const contractParsed = useMemo<{ [key: string]: any }>(() => {
+    const res = contract?.contract;
     if (res) return tryParseJsonString(res) || {};
     else return {};
-  }, [interfaceResponse]);
+  }, [contract]);
 
   /**
-   * 更新 InterfaceResponse
+   * 更新 Contract
    */
-  const { run: updateInterfaceResponse } = useRequest(ConfigService.updateInterfaceResponse, {
+  const { run: updateContract } = useRequest(ReportService.overwriteContract, {
     manual: true,
     onSuccess(success) {
       if (success) {
-        queryInterfaceResponse();
         message.success(t('message.updateSuccess', { ns: 'common' }));
       } else {
         message.error(t('message.updateFailed', { ns: 'common' }));
@@ -142,50 +146,98 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
     },
   });
 
-  const handleSaveResponse = (value?: string) => {
-    activeOperationId &&
-      updateInterfaceResponse({
-        id: activeOperationId as string,
-        operationResponse: value,
-      });
+  const { run: handleSync, loading: syncing } = useRequest(
+    () =>
+      ReportService.syncResponseContract({
+        operationId: activeOperationId as string,
+      }),
+    {
+      manual: true,
+      ready: !!activeOperationId,
+      onSuccess: (data) => {
+        if (data?.dependencyList) {
+          setDependencyOptions(
+            data.dependencyList.map((dependency) => ({
+              label: dependency.dependencyType + '-' + dependency.dependencyName,
+              value: dependency.dependencyId,
+            })),
+          );
+        }
+      },
+    },
+  );
+
+  const handleSaveContract = (value?: string) => {
+    updateContract({
+      operationId: configType === CONFIG_TYPE.INTERFACE ? activeOperationId : undefined,
+      contractId: configType === CONFIG_TYPE.DEPENDENCY ? activeDependencyId : undefined,
+      operationResponse: value || '',
+    });
   };
 
   return (
     <Space size='middle' direction='vertical' style={{ display: 'flex' }}>
       <Space style={{ display: 'flex', flexWrap: 'wrap' }}>
-        <Segmented
-          value={configType}
-          options={configOptions}
-          onChange={(value) => setConfigType(value as CONFIG_TYPE)}
-        />
+        <div>
+          <div>
+            <Typography.Text type='secondary'>Type : </Typography.Text>
+          </div>
+          <Segmented
+            value={configType}
+            options={configOptions}
+            onChange={(value) => setConfigType(value as CONFIG_TYPE)}
+          />
+        </div>
 
         {configType !== CONFIG_TYPE.GLOBAL && !props.operationId && (
-          <Select
-            showSearch
-            optionFilterProp='label'
-            placeholder='choose interface'
-            popupMatchSelectWidth={false}
-            options={interfaceOptions}
-            value={activeOperationId}
-            onChange={setActiveOperationId}
-            style={{ width: '160px' }}
-          />
+          <div>
+            <div>
+              <Typography.Text type='secondary'>Interface : </Typography.Text>
+            </div>
+            <Select
+              showSearch
+              optionFilterProp='label'
+              placeholder='choose interface'
+              popupMatchSelectWidth={false}
+              options={interfaceOptions}
+              value={activeOperationId}
+              onChange={setActiveOperationId}
+              style={{ width: '160px' }}
+            />
+          </div>
         )}
 
         {configType === CONFIG_TYPE.DEPENDENCY && !props.dependencyId && (
-          <Select
-            showSearch
-            optionFilterProp='label'
-            placeholder='choose external dependency'
-            popupMatchSelectWidth={false}
-            options={dependencyOptions}
-            value={activeDependencyId}
-            onChange={setActiveDependencyId}
-            style={{ width: '160px' }}
-          />
+          <div>
+            <div>
+              <Typography.Text type='secondary'>Dependency : </Typography.Text>
+            </div>
+            <Select
+              showSearch
+              optionFilterProp='label'
+              placeholder='choose external dependency'
+              popupMatchSelectWidth={false}
+              loading={loadingDependency}
+              options={dependencyOptions}
+              value={activeDependencyId}
+              onChange={setActiveDependencyId}
+              style={{ width: '160px' }}
+            />
+          </div>
         )}
 
-        <SyncResponse value={rawResponse} onSave={handleSaveResponse} />
+        {configType !== CONFIG_TYPE.GLOBAL && (
+          <div>
+            <br />
+            <SyncContract
+              syncing={syncing}
+              value={rawContract}
+              onSync={handleSync}
+              onEdit={queryContract}
+              onSave={handleSaveContract}
+            />
+          </div>
+        )}
       </Space>
 
       <NodesIgnore
@@ -194,7 +246,8 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         configType={configType}
         operationId={activeOperationId}
         dependencyId={activeDependencyId}
-        responseParsed={interfaceResponseParsed}
+        contractParsed={contractParsed}
+        onAdd={queryContract}
       />
 
       <NodeSort
@@ -203,7 +256,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         configType={configType}
         operationId={activeOperationId}
         dependencyId={activeDependencyId}
-        responseParsed={interfaceResponseParsed}
+        contractParsed={contractParsed}
       />
     </Space>
   );

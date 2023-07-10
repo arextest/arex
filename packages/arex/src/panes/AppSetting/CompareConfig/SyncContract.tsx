@@ -11,13 +11,15 @@ import { App, Dropdown, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 
 import { useUserProfile } from '@/store';
-
-export type ResponseRawProps = {
+export type SyncContractProps = {
+  syncing?: boolean;
+  onSync?: React.MouseEventHandler<HTMLElement>;
+  onEdit?: () => void;
   onSave?: (value?: string) => void;
 } & EditorProps;
 
-const SyncResponse: FC<ResponseRawProps> = (props) => {
-  const { value: _value, onSave, ...restProps } = props;
+const SyncContract: FC<SyncContractProps> = (props) => {
+  const { value: _value, syncing = false, onSync, onSave, ...restProps } = props;
   const { t } = useTranslation('common');
   const { message } = App.useApp();
   const { theme } = useUserProfile();
@@ -53,23 +55,25 @@ const SyncResponse: FC<ResponseRawProps> = (props) => {
         size='small'
         type='text'
         placement='bottom'
-        onClick={() => {
-          console.log('handle sync response');
-        }}
+        disabled={syncing}
+        onClick={onSync}
         menu={{
           items: [
             {
               key: 'edit',
-              label: 'Edit Response',
+              label: 'Edit Contract',
               icon: <EditOutlined />,
             },
           ],
           onClick: ({ key }) => {
-            key === 'edit' && setOpen(true);
+            if (key === 'edit') {
+              props.onEdit?.();
+              setOpen(true);
+            }
           },
         }}
       >
-        <SyncOutlined /> Sync
+        <SyncOutlined spin={syncing} /> Sync
       </Dropdown.Button>
 
       <PaneDrawer
@@ -101,4 +105,4 @@ const SyncResponse: FC<ResponseRawProps> = (props) => {
   );
 };
 
-export default SyncResponse;
+export default SyncContract;

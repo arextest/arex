@@ -29,7 +29,7 @@ export type NodeSortProps = {
   dependencyId?: string;
   readOnly?: boolean;
   configType: CONFIG_TYPE;
-  responseParsed: { [key: string]: any };
+  contractParsed: { [key: string]: any };
 };
 
 const NodeSort: FC<NodeSortProps> = (props) => {
@@ -167,7 +167,7 @@ const NodeSort: FC<NodeSortProps> = (props) => {
   const handleAddSortNode: ButtonProps['onClick'] = (e) => {
     activeKey?.[0] === ActiveKey && e.stopPropagation();
 
-    if (Object.keys(props.responseParsed).length) setOpenSortModal(true);
+    if (Object.keys(props.contractParsed).length) setOpenSortModal(true);
     else message.info('empty response, please sync response first');
   };
 
@@ -199,7 +199,7 @@ const NodeSort: FC<NodeSortProps> = (props) => {
       .split('/')
       .filter(Boolean)
       .forEach((k, i) => {
-        value = i === 0 ? props.responseParsed[k] : Array.isArray(value) ? value[0]?.[k] : value[k];
+        value = i === 0 ? props.contractParsed[k] : Array.isArray(value) ? value[0]?.[k] : value[k];
       });
 
     setSortArray(value);
@@ -336,7 +336,7 @@ const NodeSort: FC<NodeSortProps> = (props) => {
       >
         <TreeCarousel ref={treeCarouselRef} beforeChange={(from, to) => setTreeEditMode(to)}>
           <ArrayTree
-            treeData={props.responseParsed}
+            treeData={props.contractParsed}
             sortNodeList={sortNodeList}
             onSelect={(selectedKeys) =>
               handleEditCollapseItem(
