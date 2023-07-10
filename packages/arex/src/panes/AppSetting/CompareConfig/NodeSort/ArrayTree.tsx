@@ -23,17 +23,27 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
     return (
       entries
         .map(([key, value]) => {
+          const losslessValue = value.isLosslessNumber ? value.value : value;
+
           const path = basePath + key + '/';
-          return value && typeof value === 'object'
+          return losslessValue && typeof losslessValue === 'object'
             ? {
                 title: key,
                 key: path,
-                children: getNodes(Array.isArray(value) ? value[0] || {} : value, path),
-                disabled: !Array.isArray(value),
+                children: getNodes(
+                  Array.isArray(losslessValue) ? losslessValue[0] || {} : losslessValue,
+                  path,
+                ),
+                disabled: !Array.isArray(losslessValue),
                 icon: props.sortNodeList?.find((node) => node.path === path)?.pathKeyList
                   ?.length && <Badge color={color.name} />, // 已配置过的节点使用圆点进行提示
               }
-            : { title: key, key: path, value, disabled: !Array.isArray(value) };
+            : {
+                title: key,
+                key: path,
+                value: losslessValue,
+                disabled: !Array.isArray(losslessValue),
+              };
         })
         // 过滤非数组子节点
         .filter((item) => item.children || Array.isArray(item.value))

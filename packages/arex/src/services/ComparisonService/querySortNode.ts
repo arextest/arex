@@ -10,7 +10,7 @@ export type SortNodePathKey = {
 export interface SortNodeBase extends SortNodePathKey {
   appId?: string;
   operationId?: OperationId<'Interface'>;
-
+  dependencyId?: OperationId<'Interface'>;
   // collection attr
   fsInterfaceId?: string;
   compareConfigType?: string;
@@ -27,10 +27,13 @@ export interface SortNode extends SortNodeBase {
 }
 
 export async function querySortNode(params: QueryNodeReq<'Interface'>) {
-  const res = await request.get<SortNode[]>('/report/config/comparison/listsort/useResultAsList', {
-    ...params,
-    operationId: params.operationId || undefined,
-  });
+  const res = await request.post<SortNode[]>(
+    '/report/config/comparison/listsort/queryComparisonConfig',
+    {
+      ...params,
+      operationId: params.operationId || undefined,
+    },
+  );
   return res.body
     .map<SortNode>((item) => ({
       ...item,

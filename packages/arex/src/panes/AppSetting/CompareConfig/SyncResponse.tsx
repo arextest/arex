@@ -69,11 +69,12 @@ const SyncResponse: FC<ResponseRawProps> = (props) => {
           },
         }}
       >
-        <SyncOutlined /> SyncResponse
+        <SyncOutlined /> Sync
       </Dropdown.Button>
 
       <PaneDrawer
         open={open}
+        width={'50%'}
         title={
           <SpaceBetweenWrapper>
             <Typography.Text>{t('raw')}</Typography.Text>
@@ -94,7 +95,6 @@ const SyncResponse: FC<ResponseRawProps> = (props) => {
           onChange={setValue}
           theme={theme === Theme.dark ? 'vs-dark' : 'light'}
           language={'json'}
-          height={'400px'}
         />
       </PaneDrawer>
     </>

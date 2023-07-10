@@ -5,11 +5,12 @@ import { request } from '@/utils';
 export interface QueryNodeReq<T extends OperationType> {
   appId: string;
   operationId?: OperationId<T>;
+  dependencyId?: OperationId<T>;
 }
 
 export async function queryIgnoreNode(params: QueryNodeReq<'Global'>) {
-  const res = await request.get<QueryIgnoreNode[]>(
-    '/report/config/comparison/exclusions/useResultAsList',
+  const res = await request.post<QueryIgnoreNode[]>(
+    '/report/config/comparison/exclusions/queryComparisonConfig',
     { ...params, operationId: params.operationId || undefined },
   );
   return res.body

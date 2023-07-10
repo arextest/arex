@@ -4,7 +4,7 @@ import { useRequest } from 'ahooks';
 import { App, Button, ButtonProps, Card, Collapse, Input, InputRef, List, Typography } from 'antd';
 import { TreeProps } from 'antd/es';
 import { CarouselRef } from 'antd/lib/carousel';
-import React, { FC, useMemo, useRef, useState } from 'react';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
@@ -26,6 +26,7 @@ const ActiveKey = 'sort';
 export type NodeSortProps = {
   appId?: string;
   operationId?: string;
+  dependencyId?: string;
   readOnly?: boolean;
   configType: CONFIG_TYPE;
   responseParsed: { [key: string]: any };
@@ -66,15 +67,16 @@ const NodeSort: FC<NodeSortProps> = (props) => {
       ComparisonService.querySortNode({
         appId: props.appId as string,
         operationId: props.operationId,
+        dependencyId: props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependencyId : undefined,
       }),
     {
-      ready: !!props.operationId && !!props.appId,
-      refreshDeps: [props.operationId],
-      onBefore() {
-        setSortNodeList([]);
-      },
+      ready: !!(
+        props.appId &&
+        ((props.configType === CONFIG_TYPE.INTERFACE && props.operationId) || // INTERFACE ready
+          (props.configType === CONFIG_TYPE.DEPENDENCY && props.dependencyId))
+      ),
+      refreshDeps: [props.configType, props.operationId, props.dependencyId],
       onSuccess(res, [listPath]) {
-        console.log(res);
         // 新增 SortNode 时设置 activeSortNode, 防止继续新增
         if (listPath) {
           const pathKey = listPath.join('_');
@@ -87,6 +89,10 @@ const NodeSort: FC<NodeSortProps> = (props) => {
       },
     },
   );
+
+  useEffect(() => {
+    setSortNodeList([]);
+  }, [props.configType]);
 
   const SaveSortNodeOptions = {
     manual: true,
@@ -124,6 +130,7 @@ const NodeSort: FC<NodeSortProps> = (props) => {
         ...params,
         appId: props.appId,
         operationId: props.operationId,
+        dependencyId: props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependencyId : undefined,
       });
     }
   };
@@ -137,9 +144,9 @@ const NodeSort: FC<NodeSortProps> = (props) => {
   );
 
   /**
-   * 删除 IgnoreNode
+   * 删除 SortNode
    */
-  const { run: deleteIgnoreNode } = useRequest(ComparisonService.deleteSortNode, {
+  const { run: deleteSortNode } = useRequest(ComparisonService.deleteSortNode, {
     manual: true,
     onSuccess(success) {
       if (success) {
@@ -287,7 +294,7 @@ const NodeSort: FC<NodeSortProps> = (props) => {
                                 type='text'
                                 size='small'
                                 icon={<DeleteOutlined />}
-                                onClick={() => deleteIgnoreNode({ id: sortNode.id })}
+                                onClick={() => deleteSortNode({ id: sortNode.id })}
                               />
                             </div>
                           )}

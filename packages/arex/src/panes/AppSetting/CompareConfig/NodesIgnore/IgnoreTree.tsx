@@ -18,23 +18,30 @@ const IgnoreTreeWrapper = styled.div`
 export function getNodes(object: object, basePath = ''): DataNode[] {
   const entries = Object.entries(object);
   return entries.map(([key, value]) => {
-    const path = basePath + key + '/';
-    const isSimpleArray = Array.isArray(value) && ['number', 'string'].includes(typeof value[0]);
-    const isObject = typeof value === 'object';
+    const losslessValue = value.isLosslessNumber ? value.value : value;
+    const isSimpleArray =
+      Array.isArray(losslessValue) && ['number', 'string'].includes(typeof losslessValue[0]);
+    const isObject = typeof losslessValue === 'object';
 
-    return value && isObject && !isSimpleArray
+    const path = basePath + key + '/';
+
+    return losslessValue && isObject && !isSimpleArray
       ? {
           title: key,
           key: path,
-          children: getNodes(Array.isArray(value) ? value[0] || {} : value, path),
+          children: getNodes(
+            Array.isArray(losslessValue) ? losslessValue[0] || {} : losslessValue,
+            path,
+          ),
         }
-      : { title: key, key: path, value };
+      : { title: key, key: path, lossLessValue: losslessValue };
   });
 }
 
 const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
   const { t } = useTranslation(['components', 'common']);
 
+  console.log(props.treeData, getNodes(props.treeData, ''));
   // 过滤出 object 类型的节点
   return (
     <IgnoreTreeWrapper>

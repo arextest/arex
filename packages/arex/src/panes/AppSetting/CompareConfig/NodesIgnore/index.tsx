@@ -21,7 +21,7 @@ import {
 } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
-import React, { FC, useMemo, useRef, useState } from 'react';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { EditAreaPlaceholder } from '@/components';
@@ -42,6 +42,7 @@ type CheckedNodesData = {
 export type NodesIgnoreProps = {
   appId: string;
   operationId?: string;
+  dependencyId?: string;
   readOnly?: boolean;
   configType: CONFIG_TYPE;
   responseParsed: { [p: string]: any };
@@ -78,17 +79,24 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
     () =>
       ComparisonService.queryIgnoreNode({
         appId: props.appId,
-        operationId: props.configType === CONFIG_TYPE.GLOBAL ? null : props.operationId,
+        operationId: props.configType === CONFIG_TYPE.GLOBAL ? undefined : props.operationId,
+        dependencyId: props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependencyId : undefined,
       }),
     {
-      ready: !!props.appId,
-      refreshDeps: [props.operationId, props.configType],
-      onBefore() {
-        setIgnoreNodeList([]);
-      },
+      ready: !!(
+        props.appId &&
+        (props.configType === CONFIG_TYPE.GLOBAL || // GLOBAL ready
+          (props.configType === CONFIG_TYPE.INTERFACE && props.operationId) || // INTERFACE ready
+          (props.configType === CONFIG_TYPE.DEPENDENCY && props.dependencyId))
+      ),
+      refreshDeps: [props.operationId, props.dependencyId, props.configType],
       onSuccess: convertIgnoreNode,
     },
   );
+
+  useEffect(() => {
+    setIgnoreNodeList([]);
+  }, [props.configType]);
 
   function convertIgnoreNode(data: QueryIgnoreNode[]) {
     setCheckedNodesData((state) => {
@@ -193,6 +201,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
 
     const params: IgnoreNodeBase = {
       operationId: undefined,
+      dependencyId: undefined,
       appId: props.appId,
       exclusions: ignoredKey.split('/').filter(Boolean),
     };
@@ -221,7 +230,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
 
     if (props.configType === CONFIG_TYPE.GLOBAL) {
       setEditMode(true);
-    } else if (props.configType === CONFIG_TYPE.INTERFACE) {
+    } else {
       if (Object.keys(props.responseParsed).length) setOpenIgnoreModal(true);
       else message.info('empty response, please sync response first');
     }
@@ -247,7 +256,8 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
       batchInsertIgnoreNode(
         add.map((path) => ({
           appId: props.appId,
-          operationId, // null 时目标为 Global
+          operationId: props.operationId,
+          dependencyId: props.dependencyId,
           exclusions: path.split('/').filter(Boolean),
         })),
       );

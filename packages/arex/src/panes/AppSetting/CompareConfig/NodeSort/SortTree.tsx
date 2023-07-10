@@ -20,14 +20,19 @@ const SortTree: FC<SortTreeProps> = (props) => {
     if (['number', 'string'].includes(typeof sample))
       return [{ title: '%value%', key: basePath + '%value%/' }];
 
-    const entries = Object.entries(sample);
+    const entries = Object.entries<any>(sample);
     return entries.map(([key, value]) => {
+      const losslessValue = value.isLosslessNumber ? value.value : value;
+
       const path = basePath + key + '/';
-      return value && typeof value === 'object'
+      return losslessValue && typeof losslessValue === 'object'
         ? {
             title: key,
             key: path,
-            children: getNodes(Array.isArray(value) ? value[0] || [] : value, path),
+            children: getNodes(
+              Array.isArray(losslessValue) ? losslessValue[0] || [] : losslessValue,
+              path,
+            ),
           }
         : { title: key, key: path, value: path };
     });

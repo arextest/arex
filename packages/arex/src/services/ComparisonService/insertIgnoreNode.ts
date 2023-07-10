@@ -5,6 +5,7 @@ import { OperationId } from '../ApplicationService';
 export interface IgnoreNodeBase {
   appId?: string;
   operationId: OperationId<'Global'>;
+  dependencyId: OperationId<'Global'>;
   exclusions: string[];
 }
 

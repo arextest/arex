@@ -1,4 +1,4 @@
-import { tryPrettierJsonString, useTranslation } from '@arextest/arex-core';
+import { tryParseJsonString, tryPrettierJsonString, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Select, Space } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
@@ -19,6 +19,7 @@ export enum CONFIG_TYPE {
 export type CompareConfigProps = {
   appId: string; // 限定应用，用于展示特定应用下所有接口的对比配置
   operationId?: string; // 限定接口，用于展示特定接口的对比配置
+  dependencyId?: string; // 限定依赖，用于展示特定依赖的对比配置
   readOnly?: boolean; // 只读模式，用于展示接口的对比配置
 };
 
@@ -46,6 +47,10 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   const [configType, setConfigType] = useState<CONFIG_TYPE>(CONFIG_TYPE.GLOBAL);
 
   const [activeOperationId, setActiveOperationId] = useState<string | undefined>(props.operationId);
+  const [activeDependencyId, setActiveDependencyId] = useState<string | undefined>(
+    props.dependencyId,
+  );
+
   const [rawResponse, setRawResponse] = useState<string>();
 
   /**
@@ -59,6 +64,37 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         setActiveOperationId(res?.[0]?.id);
       },
     },
+  );
+  const interfaceOptions = useMemo(
+    () =>
+      operationList.map((operation) => ({
+        label: operation.operationName,
+        value: operation.id,
+      })),
+    [operationList],
+  );
+
+  /**
+   * 请求 DependencyList // TODO 该接口与 queryInterfaceResponse url 相同，考虑合并
+   */
+  const { data: dependencyList = [] } = useRequest(
+    () => ApplicationService.getDependencyList({ operationId: activeOperationId as string }),
+    {
+      ready: !!activeOperationId,
+      refreshDeps: [activeOperationId],
+      onSuccess(res) {
+        setActiveDependencyId(res?.[0]?.dependencyId);
+      },
+    },
+  );
+
+  const dependencyOptions = useMemo(
+    () =>
+      dependencyList.map((dependency) => ({
+        label: dependency.dependencyType + '-' + dependency.dependencyName,
+        value: dependency.dependencyId,
+      })),
+    [dependencyList],
   );
 
   /**
@@ -87,7 +123,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
 
   const interfaceResponseParsed = useMemo<{ [key: string]: any }>(() => {
     const res = interfaceResponse?.operationResponse;
-    if (res) return JSON.parse(res) || {};
+    if (res) return tryParseJsonString(res) || {};
     else return {};
   }, [interfaceResponse]);
 
@@ -129,22 +165,23 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
             optionFilterProp='label'
             placeholder='choose interface'
             popupMatchSelectWidth={false}
-            options={operationList.map((operation) => ({
-              label: operation.operationName,
-              value: operation.id,
-            }))}
+            options={interfaceOptions}
             value={activeOperationId}
             onChange={setActiveOperationId}
+            style={{ width: '160px' }}
           />
         )}
 
-        {configType === CONFIG_TYPE.DEPENDENCY && (
+        {configType === CONFIG_TYPE.DEPENDENCY && !props.dependencyId && (
           <Select
-            allowClear
             showSearch
             optionFilterProp='label'
             placeholder='choose external dependency'
             popupMatchSelectWidth={false}
+            options={dependencyOptions}
+            value={activeDependencyId}
+            onChange={setActiveDependencyId}
+            style={{ width: '160px' }}
           />
         )}
 
@@ -156,6 +193,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         readOnly={props.readOnly}
         configType={configType}
         operationId={activeOperationId}
+        dependencyId={activeDependencyId}
         responseParsed={interfaceResponseParsed}
       />
 
@@ -164,6 +202,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         readOnly={props.readOnly}
         configType={configType}
         operationId={activeOperationId}
+        dependencyId={activeDependencyId}
         responseParsed={interfaceResponseParsed}
       />
     </Space>
