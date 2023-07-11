@@ -18,9 +18,9 @@ import React, { useMemo, useRef, useState } from 'react';
 
 import { EMAIL_KEY } from '@/constant';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
-import SortTree from '@/panes/AppSetting/CompareConfig/NodeSort/SortTree';
+import SortTree from '@/panes/AppSetting/CompareConfig/NodesSort/SortTree';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
-import { infoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
+import { InfoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
 import { MessageMap } from '@/services/ScheduleService';
 
 import Case from './Case';
@@ -36,6 +36,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
 
   const [targetNodePath, setTargetNodePath] = useState<string[]>();
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
+  const [selectedDependencyId, setSelectedDependencyId] = useState<string | false>();
 
   const saveCaseRef = useRef<SaveCaseRef>(null);
 
@@ -47,9 +48,9 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     manual: true,
   });
 
-  const fullLinkInfoMerged = useMemo<infoItem[]>(() => {
+  const fullLinkInfoMerged = useMemo<InfoItem[]>(() => {
     const { entrance, infoItemList } = fullLinkInfo || {};
-    return [entrance, ...(infoItemList || [])].filter((item) => item && item.id) as infoItem[];
+    return [entrance, ...(infoItemList || [])].filter((item) => item && item.id) as InfoItem[];
   }, [fullLinkInfo]);
 
   const handleClickRecord = (record: ReplayCaseType) => {
@@ -124,7 +125,11 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     });
   }
 
-  function handleClickCompareConfigSetting() {
+  function handleClickCompareConfigSetting(data?: InfoItem) {
+    // false 不存在 DependencyId，不显示 Dependency 配置
+    // undefined 未指定 DependencyId，显示所有 Dependency 配置
+    // string 指定 DependencyId，显示指定 Dependency 配置
+    setSelectedDependencyId(data ? data.dependencyId || false : undefined);
     setCompareConfigOpen(true);
   }
 
@@ -158,9 +163,20 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
               <TooltipButton
                 icon={<SettingOutlined />}
                 title={'compareConfig'}
-                onClick={handleClickCompareConfigSetting}
+                onClick={() => handleClickCompareConfigSetting()}
               />
             }
+            itemsExtraRender={(data) => (
+              <TooltipButton
+                icon={<SettingOutlined />}
+                title={'compareConfig'}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClickCompareConfigSetting(data);
+                }}
+                style={{ marginRight: '6px' }}
+              />
+            )}
             loading={loadingFullLinkInfo}
             data={fullLinkInfoMerged}
             onIgnoreKey={(path) => handleIgnoreKey(path)}
@@ -191,7 +207,11 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
           setCompareConfigOpen(false);
         }}
       >
-        <CompareConfig appId={props.data.appId} operationId={props.data.operationId} />
+        <CompareConfig
+          appId={props.data.appId}
+          operationId={props.data.operationId || false}
+          dependencyId={selectedDependencyId}
+        />
       </PaneDrawer>
 
       {/* NodeSortModal */}

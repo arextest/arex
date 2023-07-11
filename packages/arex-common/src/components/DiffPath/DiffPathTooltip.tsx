@@ -55,8 +55,6 @@ const DiffPathTooltip: FC<DiffPathTooltipProps> = (props) => {
         </Space>
 
         <Space className='diff-path-tooltip-extra'>
-          {extra}
-
           {mode === 'multiple' && (
             <>
               <TooltipButton
@@ -70,6 +68,7 @@ const DiffPathTooltip: FC<DiffPathTooltipProps> = (props) => {
                 }
                 style={{ color: failedOnly ? token.colorPrimaryActive : undefined }}
               />
+              {extra}
             </>
           )}
         </Space>

@@ -26,5 +26,5 @@ export async function getDependencyList(params: { operationId: string }) {
   const res = await request.get<GetDependencyList>(
     '/report/config/applicationOperation/useResult/operationId/' + params.operationId,
   );
-  return res.body.dependencyList;
+  return res.body;
 }

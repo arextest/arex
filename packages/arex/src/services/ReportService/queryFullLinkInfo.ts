@@ -5,16 +5,20 @@ export type QueryFullLinkInfoReq = {
   planItemId: string;
 };
 
-export type infoItem = {
+export type InfoItem = {
   id: string;
   code: number;
   categoryName: string;
   operationName: string;
+  instanceId: string | null;
+  foundInSystem: true;
+  operationId: string;
+  dependencyId: string | null;
 };
 
 export type QueryFullLinkInfoRes = {
-  entrance: infoItem | null;
-  infoItemList: infoItem[] | null;
+  entrance: InfoItem | null;
+  infoItemList: InfoItem[] | null;
 };
 
 export async function queryFullLinkInfo(params: QueryFullLinkInfoReq) {

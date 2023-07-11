@@ -1,8 +1,12 @@
-export type infoItem = {
+export type InfoItem = {
   id: string;
   code: number;
   categoryName: string;
   operationName: string;
+  instanceId: string | null;
+  foundInSystem: true;
+  operationId: string;
+  dependencyId: string | null;
 };
 
 export interface NodePath {

@@ -23,7 +23,7 @@ enum TreeEditModeEnum {
 
 const ActiveKey = 'sort';
 
-export type NodeSortProps = {
+export type NodesSortProps = {
   appId?: string;
   operationId?: string;
   dependencyId?: string;
@@ -33,7 +33,7 @@ export type NodeSortProps = {
   onAdd?: () => void;
 };
 
-const NodeSort: FC<NodeSortProps> = (props) => {
+const NodesSort: FC<NodesSortProps> = (props) => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
 
@@ -236,7 +236,7 @@ const NodeSort: FC<NodeSortProps> = (props) => {
     setOpenSortModal(false);
   };
 
-  return props.configType === CONFIG_TYPE.GLOBAL ? null : (
+  return (
     <>
       <Collapse
         size='small'
@@ -364,4 +364,4 @@ const NodeSort: FC<NodeSortProps> = (props) => {
   );
 };
 
-export default NodeSort;
+export default NodesSort;

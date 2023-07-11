@@ -1,9 +1,11 @@
 import { request } from '@/utils';
 
 export interface OverwriteContractReq {
-  // 只需要传一个
-  contractId?: string; //queryDependency
+  appId?: string;
   operationId?: string; //queryEntryPoint
+  operationName?: string; //queryEntryPoint
+  operationType?: string; //queryEntryPoint
+  contractId?: string; //queryDependency
   operationResponse: string;
 }
 

@@ -41,7 +41,6 @@ export function getNodes(object: object, basePath = ''): DataNode[] {
 const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
   const { t } = useTranslation(['components', 'common']);
 
-  console.log(props.treeData, getNodes(props.treeData, ''));
   // 过滤出 object 类型的节点
   return (
     <IgnoreTreeWrapper>

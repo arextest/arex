@@ -7,7 +7,7 @@ import React, { FC, useMemo, useState } from 'react';
 import DiffPathTooltip, { DiffPathTooltipProps } from './DiffPathTooltip';
 import { CompareResultDetail, DiffPathViewerProps } from './DiffPathViewer';
 import DiffPathViewer from './DiffPathViewer';
-import { infoItem } from './type';
+import { InfoItem } from './type';
 
 export interface DiffPathProps extends Omit<DiffPathViewerProps, 'data'> {
   mode?: DiffPathTooltipProps['mode'];
@@ -15,9 +15,10 @@ export interface DiffPathProps extends Omit<DiffPathViewerProps, 'data'> {
   operationId: string;
   loading?: boolean;
   extra?: React.ReactNode;
+  itemsExtraRender?: (data: InfoItem) => React.ReactNode;
   defaultOnlyFailed?: boolean;
   requestDiffMsg: (params: any) => Promise<CompareResultDetail>;
-  data: infoItem[];
+  data: InfoItem[];
   onIgnoreKey?: PathHandler;
   onGlobalIgnoreKey?: PathHandler;
   onSortKey?: PathHandler;
@@ -37,7 +38,7 @@ const DiffPath: FC<DiffPathProps> = (props) => {
     manual: true,
   });
 
-  const diffListFiltered = useMemo<infoItem[]>(() => {
+  const diffListFiltered = useMemo<InfoItem[]>(() => {
     return props.data.filter((data) => {
       if (onlyFailed && !data.code) {
         return false;
@@ -72,6 +73,7 @@ const DiffPath: FC<DiffPathProps> = (props) => {
                 <EllipsisTooltip title={data.operationName} />
               </Typography.Text>
             ),
+            extra: props.itemsExtraRender?.(data),
             children: (
               <DiffPathViewer
                 {...props}
