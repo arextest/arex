@@ -1,4 +1,4 @@
-import { useTranslation } from '@arextest/arex-core';
+import { EmptyWrapper, useTranslation } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { Badge, Card, Tree, Typography } from 'antd';
 import { TreeProps } from 'antd/es';
@@ -9,6 +9,7 @@ import { useColorPrimary } from '@/hooks';
 import { SortNode } from '@/services/ComparisonService';
 
 type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
+  loading?: boolean;
   sortNodeList?: SortNode[];
   treeData: object;
   onEditResponse?: () => void;
@@ -57,20 +58,26 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
       size='small'
       title={<Typography.Text ellipsis>{t('appSetting.chooseOneNode')}</Typography.Text>}
     >
-      <Tree
-        showIcon
-        defaultExpandAll
-        {...props}
-        selectedKeys={[]}
-        treeData={nodesData}
-        css={css`
-          max-height: calc(100vh - 300px);
-          overflow-y: auto;
-          .ant-tree-icon__customize {
-            float: right;
-          }
-        `}
-      />
+      <EmptyWrapper
+        loading={props.loading}
+        description={'empty response, please sync response first'}
+        empty={!Object.keys(props.treeData).length}
+      >
+        <Tree
+          showIcon
+          defaultExpandAll
+          {...props}
+          selectedKeys={[]}
+          treeData={nodesData}
+          css={css`
+            max-height: calc(100vh - 300px);
+            overflow-y: auto;
+            .ant-tree-icon__customize {
+              float: right;
+            }
+          `}
+        />
+      </EmptyWrapper>
     </Card>
   );
 };

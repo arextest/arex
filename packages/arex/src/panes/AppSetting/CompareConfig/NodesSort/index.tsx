@@ -28,6 +28,7 @@ export type NodesSortProps = {
   operationId?: string;
   dependencyId?: string;
   readOnly?: boolean;
+  loadingContract?: boolean;
   configType: CONFIG_TYPE;
   contractParsed: { [key: string]: any };
   onAdd?: () => void;
@@ -333,12 +334,12 @@ const NodesSort: FC<NodesSortProps> = (props) => {
             )}
           </SpaceBetweenWrapper>
         }
-        bodyStyle={{ padding: '8px 0' }}
         open={openSortModal}
         onClose={handleCancelEdit}
       >
         <TreeCarousel ref={treeCarouselRef} beforeChange={(from, to) => setTreeEditMode(to)}>
           <ArrayTree
+            loading={props.loadingContract}
             treeData={props.contractParsed}
             sortNodeList={sortNodeList}
             onSelect={(selectedKeys) =>

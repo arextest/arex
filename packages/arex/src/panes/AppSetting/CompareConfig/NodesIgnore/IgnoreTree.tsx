@@ -1,4 +1,4 @@
-import { styled, useTranslation } from '@arextest/arex-core';
+import { EmptyWrapper, styled, useTranslation } from '@arextest/arex-core';
 import { Card, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
@@ -45,14 +45,21 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
   return (
     <IgnoreTreeWrapper>
       <Card size='small' title={t('appSetting.clickToIgnore')}>
-        <Tree
-          multiple
-          defaultExpandAll
-          {...props}
-          treeData={getNodes(props.treeData, '')}
-          // @ts-ignore
-          height={'calc(100vh - 240px)'}
-        />
+        <EmptyWrapper
+          loading={props.loading}
+          empty={!Object.keys(props.treeData).length}
+          description='empty response, please sync response first'
+        >
+          <Tree
+            multiple
+            defaultExpandAll
+            emptyText={t('common.noData')}
+            {...props}
+            treeData={getNodes(props.treeData, '')}
+            // @ts-ignore
+            height={'calc(100vh - 240px)'}
+          />
+        </EmptyWrapper>
       </Card>
     </IgnoreTreeWrapper>
   );

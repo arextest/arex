@@ -115,6 +115,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   const {
     data: contract,
     mutate: setContract,
+    loading: loadingContract,
     run: queryContract,
   } = useRequest(
     () =>
@@ -127,6 +128,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
       manual: true,
       onBefore() {
         setContract();
+        setRawContract(undefined);
       },
       onSuccess(res) {
         setRawContract(tryPrettierJsonString(res?.contract || ''));
@@ -278,6 +280,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         key='nodes-ignore'
         appId={props.appId}
         readOnly={props.readOnly}
+        loadingContract={loadingContract}
         configType={configType}
         operationId={activeOperationId}
         dependencyId={activeDependencyId}
@@ -290,6 +293,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           key='nodes-sort'
           appId={props.appId}
           readOnly={props.readOnly}
+          loadingContract={loadingContract}
           configType={configType}
           operationId={activeOperationId}
           dependencyId={activeDependencyId}

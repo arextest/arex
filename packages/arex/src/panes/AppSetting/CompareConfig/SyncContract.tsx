@@ -22,7 +22,7 @@ export type SyncContractProps = {
 } & EditorProps;
 
 const SyncContract: FC<SyncContractProps> = (props) => {
-  const { value: _value, syncing = false, onSync, onSave, ...restProps } = props;
+  const { value: _value, syncing = false, onSync, onSave, onClose, ...restProps } = props;
   const { t } = useTranslation('common');
   const { message } = App.useApp();
   const { theme } = useUserProfile();
@@ -34,7 +34,9 @@ const SyncContract: FC<SyncContractProps> = (props) => {
     setValue(_value);
   }, [_value, open]);
 
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleSave = () => {
     let prettier = '';

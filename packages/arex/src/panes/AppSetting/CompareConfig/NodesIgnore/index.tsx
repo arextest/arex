@@ -45,6 +45,7 @@ export type NodesIgnoreProps = {
   operationId?: string;
   dependencyId?: string;
   readOnly?: boolean;
+  loadingContract?: boolean;
   configType: CONFIG_TYPE;
   contractParsed: { [p: string]: any };
   onAdd?: () => void;
@@ -382,7 +383,6 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
             </Button>
           </SpaceBetweenWrapper>
         }
-        bodyStyle={{ padding: '8px 0' }}
         open={openIgnoreModal}
         onClose={() => {
           setOpenIgnoreModal(false);
@@ -397,6 +397,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
           <IgnoreTree
             // TODO auto expand failed
             defaultExpandAll
+            loading={props.loadingContract}
             treeData={props.contractParsed}
             selectedKeys={checkedNodesData.exclusionsList}
             onSelect={handleIgnoreTreeSelect}
