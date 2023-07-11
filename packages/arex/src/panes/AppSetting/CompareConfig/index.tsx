@@ -119,7 +119,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   } = useRequest(
     () =>
       ReportService.queryContract({
-        appId: configType === CONFIG_TYPE.GLOBAL ? props.appId : undefined,
+        appId: props.appId,
         operationId: configType === CONFIG_TYPE.INTERFACE ? activeOperationId : undefined,
         contractId: configType === CONFIG_TYPE.DEPENDENCY ? activeDependencyId : undefined,
       }),
