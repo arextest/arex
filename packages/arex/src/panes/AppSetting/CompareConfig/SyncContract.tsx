@@ -1,4 +1,4 @@
-import { EditOutlined, SaveOutlined, SyncOutlined } from '@ant-design/icons';
+import { EditOutlined, EllipsisOutlined, SaveOutlined, SyncOutlined } from '@ant-design/icons';
 import {
   PaneDrawer,
   SmallTextButton,
@@ -7,12 +7,15 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { Editor, EditorProps } from '@monaco-editor/react';
-import { App, Dropdown, Typography } from 'antd';
+import { App, Button, ButtonProps, Dropdown, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 
 import { useUserProfile } from '@/store';
+
+export type ButtonsDisabled = { leftButton?: boolean; rightButton?: boolean };
 export type SyncContractProps = {
   syncing?: boolean;
+  buttonsDisabled?: ButtonsDisabled | boolean;
   onSync?: React.MouseEventHandler<HTMLElement>;
   onEdit?: () => void;
   onSave?: (value?: string) => void;
@@ -52,11 +55,24 @@ const SyncContract: FC<SyncContractProps> = (props) => {
   return (
     <>
       <Dropdown.Button
-        size='small'
-        type='text'
         placement='bottom'
-        disabled={syncing}
+        disabled={
+          (props.buttonsDisabled as ButtonsDisabled)?.rightButton ||
+          props.buttonsDisabled === true ||
+          syncing
+        }
         onClick={onSync}
+        buttonsRender={([leftButton, rightButton]) => [
+          React.cloneElement(
+            leftButton as React.DetailedReactHTMLElement<ButtonProps, HTMLElement>,
+            {
+              disabled:
+                (props.buttonsDisabled as ButtonsDisabled)?.leftButton ||
+                props.buttonsDisabled === true,
+            },
+          ),
+          rightButton,
+        ]}
         menu={{
           items: [
             {
@@ -75,7 +91,6 @@ const SyncContract: FC<SyncContractProps> = (props) => {
       >
         <SyncOutlined spin={syncing} /> Sync
       </Dropdown.Button>
-
       <PaneDrawer
         open={open}
         width={'50%'}

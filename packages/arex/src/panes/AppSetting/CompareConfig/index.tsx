@@ -1,9 +1,4 @@
-import {
-  Label,
-  tryParseJsonString,
-  tryPrettierJsonString,
-  useTranslation,
-} from '@arextest/arex-core';
+import { tryParseJsonString, tryPrettierJsonString, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Select, SelectProps, Space, Typography } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
@@ -64,9 +59,9 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   const { data: operationList = [] } = useRequest(
     () => ApplicationService.queryInterfacesList<'Interface'>({ id: props.appId as string }),
     {
-      ready: !!props.appId && !props.operationId,
+      ready: !!props.appId,
       onSuccess(res) {
-        setActiveOperationId(res?.[0]?.id);
+        !props.operationId && setActiveOperationId(res?.[0]?.id);
       },
     },
   );
@@ -107,11 +102,11 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   const {
     data: contract,
     mutate: setContract,
-    loading: loadingContract,
     run: queryContract,
   } = useRequest(
     () =>
       ReportService.queryContract({
+        appId: configType === CONFIG_TYPE.GLOBAL ? props.appId : undefined,
         operationId: configType === CONFIG_TYPE.INTERFACE ? activeOperationId : undefined,
         contractId: configType === CONFIG_TYPE.DEPENDENCY ? activeDependencyId : undefined,
       }),
@@ -189,16 +184,21 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           />
         </div>
 
-        {configType !== CONFIG_TYPE.GLOBAL && !props.operationId && (
+        {configType !== CONFIG_TYPE.GLOBAL && (
           <div>
             <div>
-              <Typography.Text type='secondary'>Interface : </Typography.Text>
+              <Typography.Text type='secondary'>Interface :</Typography.Text>
             </div>
             <Select
-              showSearch
               optionFilterProp='label'
               placeholder='choose interface'
               popupMatchSelectWidth={false}
+              // START 指定 operationId 时，Select 只读
+              showSearch={!props.operationId}
+              bordered={!props.operationId}
+              showArrow={!props.operationId}
+              open={props.operationId ? false : undefined}
+              // END 指定 operationId 时，Select 只读
               options={interfaceOptions}
               value={activeOperationId}
               onChange={setActiveOperationId}
@@ -207,16 +207,21 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           </div>
         )}
 
-        {configType === CONFIG_TYPE.DEPENDENCY && !props.dependencyId && (
+        {configType === CONFIG_TYPE.DEPENDENCY && (
           <div>
             <div>
               <Typography.Text type='secondary'>Dependency : </Typography.Text>
             </div>
             <Select
-              showSearch
               optionFilterProp='label'
               placeholder='choose external dependency'
               popupMatchSelectWidth={false}
+              // START 指定 operationId 时，Select 只读
+              showSearch={!props.dependencyId}
+              bordered={!props.dependencyId}
+              showArrow={!props.dependencyId}
+              open={props.dependencyId ? false : undefined}
+              // END 指定 operationId 时，Select 只读
               loading={loadingDependency}
               options={dependencyOptions}
               value={activeDependencyId}
@@ -226,18 +231,17 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           </div>
         )}
 
-        {configType !== CONFIG_TYPE.GLOBAL && (
-          <div>
-            <br />
-            <SyncContract
-              syncing={syncing}
-              value={rawContract}
-              onSync={handleSync}
-              onEdit={queryContract}
-              onSave={handleSaveContract}
-            />
-          </div>
-        )}
+        <div>
+          <br />
+          <SyncContract
+            syncing={syncing}
+            value={rawContract}
+            buttonsDisabled={{ leftButton: syncing || configType === CONFIG_TYPE.GLOBAL }}
+            onSync={handleSync}
+            onEdit={queryContract}
+            onSave={handleSaveContract}
+          />
+        </div>
       </Space>
 
       <NodesIgnore
@@ -257,6 +261,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         operationId={activeOperationId}
         dependencyId={activeDependencyId}
         contractParsed={contractParsed}
+        onAdd={queryContract}
       />
     </Space>
   );

@@ -229,9 +229,9 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
   const handleIgnoreAdd: ButtonProps['onClick'] = (e) => {
     activeKey?.[0] === ActiveKey && e.stopPropagation();
     props.onAdd?.();
-    setTimeout(() => editInputRef.current?.focus());
 
     if (props.configType === CONFIG_TYPE.GLOBAL) {
+      setTimeout(() => editInputRef.current?.focus());
       setEditMode(true);
     } else {
       setOpenIgnoreModal(true);

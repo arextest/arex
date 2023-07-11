@@ -2,6 +2,7 @@ import { request } from '@/utils';
 
 export interface QueryContractReq {
   // 只需要传一个
+  appId?: string; //queryGlobal
   contractId?: string; //queryDependency
   operationId?: string; //queryEntryPoint
 }

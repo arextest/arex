@@ -30,6 +30,7 @@ export type NodeSortProps = {
   readOnly?: boolean;
   configType: CONFIG_TYPE;
   contractParsed: { [key: string]: any };
+  onAdd?: () => void;
 };
 
 const NodeSort: FC<NodeSortProps> = (props) => {
@@ -166,9 +167,11 @@ const NodeSort: FC<NodeSortProps> = (props) => {
 
   const handleAddSortNode: ButtonProps['onClick'] = (e) => {
     activeKey?.[0] === ActiveKey && e.stopPropagation();
-
-    if (Object.keys(props.contractParsed).length) setOpenSortModal(true);
-    else message.info('empty response, please sync response first');
+    props.onAdd?.();
+    setOpenSortModal(true);
+    // TODO empty construct tip
+    // if (Object.keys(props.contractParsed).length) setOpenSortModal(true);
+    // else message.info('empty response, please sync response first');
   };
 
   /**
