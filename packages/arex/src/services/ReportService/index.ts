@@ -1,3 +1,4 @@
+export * from './addDependencyToSystem';
 export * from './contract';
 export * from './deleteReport';
 export * from './label';

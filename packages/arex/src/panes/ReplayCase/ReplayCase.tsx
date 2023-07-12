@@ -14,11 +14,10 @@ import {
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { EMAIL_KEY } from '@/constant';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
-import SortTree from '@/panes/AppSetting/CompareConfig/NodesSort/SortTree';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
 import { InfoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
 import { MessageMap } from '@/services/ScheduleService';
@@ -32,11 +31,14 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   const { t } = useTranslation(['components']);
 
   const [compareConfigOpen, setCompareConfigOpen] = useState<boolean>(false);
-  const [nodeSortOpen, setNodeSortOpen] = useState<boolean>(false);
 
   const [targetNodePath, setTargetNodePath] = useState<string[]>();
   const [selectedRecord, setSelectedRecord] = useState<ReplayCaseType>();
-  const [selectedDependencyId, setSelectedDependencyId] = useState<string | false>();
+
+  // false 不存在 DependencyId，不显示 Dependency 配置
+  // undefined 未指定 DependencyId，显示所有 Dependency 配置
+  // string 指定 DependencyId，显示指定 Dependency 配置
+  const [selectedDependency, setSelectedDependency] = useState<InfoItem>();
 
   const saveCaseRef = useRef<SaveCaseRef>(null);
 
@@ -50,7 +52,9 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
 
   const fullLinkInfoMerged = useMemo<InfoItem[]>(() => {
     const { entrance, infoItemList } = fullLinkInfo || {};
-    return [entrance, ...(infoItemList || [])].filter((item) => item && item.id) as InfoItem[];
+    return ([{ ...entrance, idEntry: true }, ...(infoItemList || [])] as InfoItem[]).filter(
+      (item) => item.id,
+    );
   }, [fullLinkInfo]);
 
   const handleClickRecord = (record: ReplayCaseType) => {
@@ -102,6 +106,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
       ComparisonService.insertIgnoreNode({
         operationId: global ? undefined : props.data.operationId,
         appId: props.data.appId,
+        dependencyId: selectedDependency?.idEntry ? undefined : selectedDependency?.dependencyId,
         exclusions: path,
       }),
     {
@@ -112,9 +117,36 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     },
   );
 
+  // 当 dependencyId 不存在时，手动添加接口依赖
+  const { run: addDependencyToSystem } = useRequest(ReportService.addDependencyToSystem, {
+    manual: true,
+    onSuccess(res) {
+      setSelectedDependency({
+        ...(selectedDependency as InfoItem),
+        dependencyId: res.dependencyId,
+      });
+    },
+  });
+  useEffect(() => {
+    if (
+      compareConfigOpen &&
+      selectedDependency &&
+      !selectedDependency.idEntry &&
+      !selectedDependency.dependencyId
+    ) {
+      addDependencyToSystem({
+        appId: props.data.appId,
+        operationId: props.data.operationId,
+        operationType: selectedDependency.categoryName,
+        operationName: selectedDependency.operationName,
+        msg: '',
+      });
+    }
+  }, [compareConfigOpen, selectedDependency]);
+
   const handleSortKey: PathHandler = (path: string[], targetEditor: 'left' | 'right') => {
-    setTargetNodePath(path);
-    setNodeSortOpen(true);
+    setTargetNodePath(path.filter((path) => Number.isNaN(Number(path))));
+    setCompareConfigOpen(true);
   };
 
   function handleClickRerunCase(recordId: string) {
@@ -126,10 +158,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   }
 
   function handleClickCompareConfigSetting(data?: InfoItem) {
-    // false 不存在 DependencyId，不显示 Dependency 配置
-    // undefined 未指定 DependencyId，显示所有 Dependency 配置
-    // string 指定 DependencyId，显示指定 Dependency 配置
-    setSelectedDependencyId(data ? data.dependencyId || false : undefined);
+    setSelectedDependency(data);
     setCompareConfigOpen(true);
   }
 
@@ -179,6 +208,9 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             )}
             loading={loadingFullLinkInfo}
             data={fullLinkInfoMerged}
+            onChange={(id, record) => {
+              setSelectedDependency(record);
+            }}
             onIgnoreKey={(path) => handleIgnoreKey(path)}
             onGlobalIgnoreKey={(path) => handleIgnoreKey(path, true)}
             onSortKey={handleSortKey}
@@ -189,6 +221,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
                 operationId: props.data.operationId,
                 appId: props.data.appId,
                 exclusions: path,
+                dependencyId: selectedDependency?.dependencyId,
               })
             }
           />
@@ -205,33 +238,14 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         open={compareConfigOpen}
         onClose={() => {
           setCompareConfigOpen(false);
+          setTargetNodePath(undefined);
         }}
       >
         <CompareConfig
           appId={props.data.appId}
           operationId={props.data.operationId || false}
-          dependencyId={selectedDependencyId}
-        />
-      </PaneDrawer>
-
-      {/* NodeSortModal */}
-      <PaneDrawer
-        destroyOnClose
-        width='70%'
-        footer={false}
-        title={'NodeSort'}
-        open={nodeSortOpen}
-        onClose={() => {
-          setNodeSortOpen(false);
-        }}
-      >
-        {/* TODO */}
-        <SortTree
-          title={targetNodePath?.join('/')}
-          treeData={[{ key: 1 }, { key: 2 }, { key: 3 }]}
-          // checkedKeys={checkedNodesData.pathKeyList}
-          // onCheck={handleSortTreeChecked}
-          // onSelect={handleSortTreeSelected}
+          dependencyId={selectedDependency ? selectedDependency.dependencyId || false : undefined}
+          sortArrayPath={targetNodePath}
         />
       </PaneDrawer>
     </>

@@ -50,15 +50,7 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
           empty={!Object.keys(props.treeData).length}
           description='empty response, please sync response first'
         >
-          <Tree
-            multiple
-            defaultExpandAll
-            emptyText={t('common.noData')}
-            {...props}
-            treeData={getNodes(props.treeData, '')}
-            // @ts-ignore
-            height={'calc(100vh - 240px)'}
-          />
+          <Tree multiple defaultExpandAll {...props} treeData={getNodes(props.treeData, '')} />
         </EmptyWrapper>
       </Card>
     </IgnoreTreeWrapper>

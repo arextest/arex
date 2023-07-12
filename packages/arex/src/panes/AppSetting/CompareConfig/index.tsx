@@ -2,7 +2,7 @@ import { tryParseJsonString, tryPrettierJsonString, useTranslation } from '@arex
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { App, Select, SelectProps, Space, Typography } from 'antd';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 
 import { Segmented } from '@/components';
 import NodesIgnore from '@/panes/AppSetting/CompareConfig/NodesIgnore';
@@ -22,6 +22,7 @@ export type CompareConfigProps = {
   operationId?: string | false; // 限定接口，用于展示特定接口的对比配置, false 时不展示 operationType
   dependencyId?: string | false; // 限定依赖，用于展示特定依赖的对比配置, false 时不展示 dependencyType
   readOnly?: boolean; // 只读模式，用于展示接口的对比配置
+  sortArrayPath?: string[]; // 指定数组节点排序配置的数组节点路径
 };
 
 const CompareConfig: FC<CompareConfigProps> = (props) => {
@@ -55,6 +56,14 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
     return options;
   }, [props.operationId, props.dependencyId]);
   const [configType, setConfigType] = useState<CONFIG_TYPE>(CONFIG_TYPE.GLOBAL);
+  // 当组件初始化时，根据 props.operationId 和 props.dependencyId 设置 configType
+  useEffect(() => {
+    if (props.dependencyId) {
+      setConfigType(CONFIG_TYPE.DEPENDENCY);
+    } else if (props.operationId) {
+      setConfigType(CONFIG_TYPE.INTERFACE);
+    }
+  }, [props.operationId, props.dependencyId]);
 
   const [activeOperationId, setActiveOperationId] = useState<string | undefined>(
     props.operationId || undefined,
@@ -125,7 +134,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         contractId: configType === CONFIG_TYPE.DEPENDENCY ? activeDependencyId : undefined,
       }),
     {
-      manual: true,
+      refreshDeps: [props.sortArrayPath, configType], // TODO 目前可能有一些多余的无效请求，待优化
       onBefore() {
         setContract();
         setRawContract(undefined);
@@ -293,6 +302,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           key='nodes-sort'
           appId={props.appId}
           readOnly={props.readOnly}
+          sortArrayPath={props.sortArrayPath}
           loadingContract={loadingContract}
           configType={configType}
           operationId={activeOperationId}

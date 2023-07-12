@@ -9,11 +9,12 @@ export type InfoItem = {
   id: string;
   code: number;
   categoryName: string;
-  operationName: string;
   instanceId: string | null;
   foundInSystem: true;
-  operationId: string;
   dependencyId: string | null;
+  operationId: string;
+  operationName: string;
+  idEntry?: boolean;
 };
 
 export type QueryFullLinkInfoRes = {

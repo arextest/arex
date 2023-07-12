@@ -19,13 +19,14 @@ export interface DiffPathProps extends Omit<DiffPathViewerProps, 'data'> {
   defaultOnlyFailed?: boolean;
   requestDiffMsg: (params: any) => Promise<CompareResultDetail>;
   data: InfoItem[];
+  onChange?: (id: string, record: InfoItem) => void;
   onIgnoreKey?: PathHandler;
   onGlobalIgnoreKey?: PathHandler;
   onSortKey?: PathHandler;
 }
 
 const DiffPath: FC<DiffPathProps> = (props) => {
-  const { mode = 'multiple', defaultOnlyFailed = true } = props;
+  const { mode = 'multiple', defaultOnlyFailed = true, onChange } = props;
   const [onlyFailed, setOnlyFailed] = useState(defaultOnlyFailed);
 
   const [searchOperationName, setSearchOperationName] = useState<string>();
@@ -85,6 +86,8 @@ const DiffPath: FC<DiffPathProps> = (props) => {
             ),
           }))}
           onChange={([id]) => {
+            const record = diffListFiltered.find((item) => item.id === id) as InfoItem;
+            onChange?.(id, record);
             id && queryDiffMsgById({ id });
           }}
           css={css`

@@ -27,6 +27,7 @@ export type NodesSortProps = {
   appId?: string;
   operationId?: string;
   dependencyId?: string;
+  sortArrayPath?: string[];
   readOnly?: boolean;
   loadingContract?: boolean;
   configType: CONFIG_TYPE;
@@ -92,9 +93,15 @@ const NodesSort: FC<NodesSortProps> = (props) => {
     },
   );
 
+  // 切换配置类型时清空数据
   useEffect(() => {
     setSortNodeList([]);
   }, [props.configType]);
+
+  // 外部指定 sortArrayPath 时，直接打开第二层 TreeCarousel
+  useEffect(() => {
+    props.sortArrayPath && handleEditCollapseItem(props.sortArrayPath?.join('/') || '' + '/');
+  }, [props.sortArrayPath, props.contractParsed]);
 
   const SaveSortNodeOptions = {
     manual: true,
@@ -187,7 +194,11 @@ const NodesSort: FC<NodesSortProps> = (props) => {
       state.pathKeyList = sortNode?.pathKeyList || [];
     });
 
-    handleSetSortArray(path);
+    try {
+      handleSetSortArray(path);
+    } catch (error) {
+      console.warn('failed to analytic path');
+    }
 
     setTreeEditMode(TreeEditModeEnum.SortTree);
     setOpenSortModal(true);
