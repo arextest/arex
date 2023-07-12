@@ -89,7 +89,7 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
     manual: true,
     onSuccess(success) {
       if (success) {
-        message.success(t('replay.addIgnoreSuccess'));
+        message.success(t('diffPath.addIgnoreSuccess'));
       }
     },
   });
@@ -129,7 +129,7 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
                   margin: `${token.marginSM}px 0 0 ${token.margin}px`,
                 }}
               >
-                {t('replay.pointOfDifference')}
+                {t('diffPath.pointOfDifference')}
               </Typography.Text>
               <Spin
                 size='small'

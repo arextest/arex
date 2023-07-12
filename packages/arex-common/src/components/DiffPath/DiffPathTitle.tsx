@@ -38,7 +38,7 @@ const PathTitle = styled((props: PathTitleProps) => {
         color='primary'
         placement='right'
         icon={<StopOutlined />}
-        title={t('replay.ignoreNode')}
+        title={t('diffPath.ignoreNode')}
         className='menu-item-stop-outlined'
         onClick={() => onIgnore?.(diffLog)}
       />

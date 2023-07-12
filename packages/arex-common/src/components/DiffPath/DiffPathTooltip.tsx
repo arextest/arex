@@ -42,7 +42,7 @@ const DiffPathTooltip: FC<DiffPathTooltipProps> = (props) => {
         <Space size='large' className='diff-path-tooltip-title'>
           {mode === 'multiple' && (
             <div>
-              <Label strong>{t('replay.sceneCount')}</Label>
+              <Label strong>{t('diffPath.sceneCount')}</Label>
               {count}
             </div>
           )}
@@ -62,7 +62,7 @@ const DiffPathTooltip: FC<DiffPathTooltipProps> = (props) => {
                 icon={<FilterOutlined />}
                 title={
                   <Space>
-                    {t('replay.viewFailedOnly')}
+                    {t('diffPath.viewFailedOnly')}
                     <Switch size='small' checked={failedOnly} onChange={handleFilterChange} />
                   </Space>
                 }
