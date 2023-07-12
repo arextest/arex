@@ -263,7 +263,8 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
         add.map((path) => ({
           appId: props.appId,
           operationId: props.operationId,
-          dependencyId: props.dependencyId,
+          dependencyId:
+            props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependencyId : undefined,
           exclusions: path.split('/').filter(Boolean),
         })),
       );
