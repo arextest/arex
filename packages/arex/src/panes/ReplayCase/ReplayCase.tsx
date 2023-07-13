@@ -8,7 +8,6 @@ import {
   I18nextLng,
   PaneDrawer,
   PanesTitle,
-  PathHandler,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
@@ -25,6 +24,32 @@ import { MessageMap } from '@/services/ScheduleService';
 
 import Case from './Case';
 import SaveCase, { SaveCaseRef } from './SaveCase';
+
+/**
+ *  过滤 path[] 中的的数组 index 类型元素
+ * @param path
+ * @param jsonString
+ */
+function validateJsonPath(path: string[], jsonString: string) {
+  try {
+    const json = JSON.parse(jsonString);
+    const { pathList } = path.reduce<{ json: any; pathList: string[] }>(
+      (jsonPathData, path) => {
+        if (Array.isArray(jsonPathData.json) && Number.isInteger(Number(path))) {
+          jsonPathData.json = jsonPathData.json[Number(path)];
+        } else {
+          jsonPathData.json = jsonPathData.json[path];
+          jsonPathData.pathList.push(path);
+        }
+        return jsonPathData;
+      },
+      { json, pathList: [] },
+    );
+    return pathList;
+  } catch (error) {
+    return false;
+  }
+}
 
 const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
   const { message, notification } = App.useApp();
@@ -120,11 +145,6 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     },
   );
 
-  const handleSortKey: PathHandler = (path: string[], jsonString, targetEditor) => {
-    setTargetNodePath(path.filter((path) => Number.isNaN(Number(path)))); // TODO 过滤数组 index 路径
-    setCompareConfigOpen(true);
-  };
-
   function handleClickRerunCase(recordId: string) {
     queryPlanFailCase({
       planId: props.data.planId,
@@ -187,9 +207,21 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             onChange={(id, record) => {
               setSelectedDependency(record);
             }}
-            onIgnoreKey={(path) => handleIgnoreKey(path)}
-            onGlobalIgnoreKey={(path) => handleIgnoreKey(path, true)}
-            onSortKey={handleSortKey}
+            onIgnoreKey={(path, jsonString) => {
+              const validatedPath = validateJsonPath(path, jsonString);
+              validatedPath && handleIgnoreKey(validatedPath);
+            }}
+            onGlobalIgnoreKey={(path, jsonString) => {
+              const validatedPath = validateJsonPath(path, jsonString);
+              validatedPath && handleIgnoreKey(validatedPath, true);
+            }}
+            onSortKey={(path: string[], jsonString) => {
+              const validatedPath = validateJsonPath(path, jsonString);
+              if (validatedPath) {
+                setTargetNodePath(validatedPath);
+                setCompareConfigOpen(true);
+              }
+            }}
             requestDiffMsg={ScheduleService.queryDiffMsgById}
             requestQueryLogEntity={ScheduleService.queryLogEntity}
           />
