@@ -3,7 +3,8 @@ import { DiffJsonTooltip, Label, SpaceBetweenWrapper, TooltipButton } from '@are
 import { Divider, Input, Space, Switch, theme } from 'antd';
 import { TextProps } from 'antd/es/typography/Text';
 import React, { FC, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+
+import { useTranslation } from '../../hooks';
 
 export interface DiffPathTooltipProps {
   count?: number;

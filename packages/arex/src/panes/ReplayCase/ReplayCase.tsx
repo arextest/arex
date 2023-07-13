@@ -15,6 +15,7 @@ import {
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useImmer } from 'use-immer';
 
 import { EMAIL_KEY } from '@/constant';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
@@ -42,20 +43,21 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
 
   const saveCaseRef = useRef<SaveCaseRef>(null);
 
-  const {
-    data: fullLinkInfo,
-    loading: loadingFullLinkInfo,
-    run: getQueryFullLinkInfo,
-  } = useRequest(ReportService.queryFullLinkInfo, {
-    manual: true,
-  });
-
-  const fullLinkInfoMerged = useMemo<InfoItem[]>(() => {
-    const { entrance, infoItemList } = fullLinkInfo || {};
-    return ([{ ...entrance, idEntry: true }, ...(infoItemList || [])] as InfoItem[]).filter(
-      (item) => item.id,
-    );
-  }, [fullLinkInfo]);
+  const { loading: loadingFullLinkInfo, run: getQueryFullLinkInfo } = useRequest(
+    ReportService.queryFullLinkInfo,
+    {
+      manual: true,
+      onSuccess(data) {
+        const { entrance, infoItemList } = data || {};
+        setFullLinkInfoMerged(
+          ([{ ...entrance, idEntry: true }, ...(infoItemList || [])] as InfoItem[]).filter(
+            (item) => item.id,
+          ),
+        );
+      },
+    },
+  );
+  const [fullLinkInfoMerged, setFullLinkInfoMerged] = useImmer<InfoItem[]>([]);
 
   const handleClickRecord = (record: ReplayCaseType) => {
     setSelectedRecord(selectedRecord?.recordId === record.recordId ? undefined : record);
@@ -120,7 +122,13 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   // 当 dependencyId 不存在时，手动添加接口依赖
   const { run: addDependencyToSystem } = useRequest(ReportService.addDependencyToSystem, {
     manual: true,
-    onSuccess(res) {
+    onSuccess(res, [{ operationId }]) {
+      setFullLinkInfoMerged((fullLinkInfoMerged) => {
+        const index = fullLinkInfoMerged.findIndex((item) => item.operationId === operationId);
+        console.log({ index });
+        if (index > 0) fullLinkInfoMerged[index].dependencyId = res.dependencyId;
+      });
+
       setSelectedDependency({
         ...(selectedDependency as InfoItem),
         dependencyId: res.dependencyId,
@@ -128,12 +136,8 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     },
   });
   useEffect(() => {
-    if (
-      compareConfigOpen &&
-      selectedDependency &&
-      !selectedDependency.idEntry &&
-      !selectedDependency.dependencyId
-    ) {
+    console.log(selectedDependency);
+    if (selectedDependency && !selectedDependency.idEntry && !selectedDependency.dependencyId) {
       addDependencyToSystem({
         appId: props.data.appId,
         operationId: props.data.operationId,
@@ -142,7 +146,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         msg: '',
       });
     }
-  }, [compareConfigOpen, selectedDependency]);
+  }, [selectedDependency]);
 
   const handleSortKey: PathHandler = (path: string[], targetEditor: 'left' | 'right') => {
     setTargetNodePath(path.filter((path) => Number.isNaN(Number(path))));
@@ -216,14 +220,6 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             onSortKey={handleSortKey}
             requestDiffMsg={ScheduleService.queryDiffMsgById}
             requestQueryLogEntity={ScheduleService.queryLogEntity}
-            requestIgnoreNode={(path: string[]) =>
-              ComparisonService.insertIgnoreNode({
-                operationId: props.data.operationId,
-                appId: props.data.appId,
-                exclusions: path,
-                dependencyId: selectedDependency?.dependencyId,
-              })
-            }
           />
         }
       />
@@ -246,6 +242,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
           operationId={props.data.operationId || false}
           dependencyId={selectedDependency ? selectedDependency.dependencyId || false : undefined}
           sortArrayPath={targetNodePath}
+          onSortDrawerClose={() => setTargetNodePath(undefined)}
         />
       </PaneDrawer>
     </>

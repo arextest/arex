@@ -33,6 +33,7 @@ export type NodesSortProps = {
   configType: CONFIG_TYPE;
   contractParsed: { [key: string]: any };
   onAdd?: () => void;
+  onClose?: () => void;
 };
 
 const NodesSort: FC<NodesSortProps> = (props) => {
@@ -242,6 +243,7 @@ const NodesSort: FC<NodesSortProps> = (props) => {
    * 取消编辑 nodes sort
    */
   const handleCancelEdit = () => {
+    props.onClose?.();
     setTreeEditMode(TreeEditModeEnum.ArrayTree);
     treeCarouselRef.current?.goTo(0);
     setActiveSortNode(undefined);

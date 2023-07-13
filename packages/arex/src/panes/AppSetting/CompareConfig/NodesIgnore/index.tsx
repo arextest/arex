@@ -49,6 +49,7 @@ export type NodesIgnoreProps = {
   configType: CONFIG_TYPE;
   contractParsed: { [p: string]: any };
   onAdd?: () => void;
+  onClose?: () => void;
 };
 
 const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
@@ -386,6 +387,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
         }
         open={openIgnoreModal}
         onClose={() => {
+          props.onClose?.();
           setOpenIgnoreModal(false);
           convertIgnoreNode(ignoreNodeList);
         }}

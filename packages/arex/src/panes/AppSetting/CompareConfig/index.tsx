@@ -23,6 +23,8 @@ export type CompareConfigProps = {
   dependencyId?: string | false; // 限定依赖，用于展示特定依赖的对比配置, false 时不展示 dependencyType
   readOnly?: boolean; // 只读模式，用于展示接口的对比配置
   sortArrayPath?: string[]; // 指定数组节点排序配置的数组节点路径
+  onIgnoreDrawerClose?: () => void;
+  onSortDrawerClose?: () => void;
 };
 
 const CompareConfig: FC<CompareConfigProps> = (props) => {
@@ -295,6 +297,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         dependencyId={activeDependencyId}
         contractParsed={contractParsed}
         onAdd={queryContract}
+        onClose={props.onIgnoreDrawerClose}
       />
 
       {configType !== CONFIG_TYPE.GLOBAL && (
@@ -309,6 +312,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           dependencyId={activeDependencyId}
           contractParsed={contractParsed}
           onAdd={queryContract}
+          onClose={props.onSortDrawerClose}
         />
       )}
     </Space>

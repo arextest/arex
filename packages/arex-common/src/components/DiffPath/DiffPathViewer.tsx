@@ -9,8 +9,8 @@ import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
 import { App, Menu, Spin, theme, Typography } from 'antd';
 import React, { FC, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 
+import { useTranslation } from '../../hooks';
 import PathTitle from './DiffPathTitle';
 import { DiffLog, LogEntity } from './type';
 
@@ -55,11 +55,10 @@ export interface DiffPathViewerProps extends DiffJsonViewProps {
     compareResultId: string;
     logIndex: number;
   }) => Promise<LogEntity[]>;
-  requestIgnoreNode: (path: string[]) => Promise<boolean>;
 }
 
 const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
-  const { t } = useTranslation(['components']);
+  const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
 
@@ -84,21 +83,6 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
       props.data?.logInfos?.length &&
       queryLogEntity(props.data.logInfos[0].logIndex);
   }, [props.data]);
-
-  const { run: insertIgnoreNode } = useRequest(props.requestIgnoreNode, {
-    manual: true,
-    onSuccess(success) {
-      if (success) {
-        message.success(t('diffPath.addIgnoreSuccess'));
-      }
-    },
-  });
-
-  function handleIgnoreNode(diffLog: DiffLog) {
-    const path = diffLog.nodePath.map((p) => p.nodeName).filter(Boolean);
-
-    insertIgnoreNode(path);
-  }
 
   if (!props.data) return null;
 
@@ -146,7 +130,7 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
               defaultSelectedKeys={props.defaultActiveFirst ? ['0'] : undefined}
               items={props.data.logInfos?.map((log, index) => {
                 return {
-                  label: <PathTitle diffLog={log} onIgnore={handleIgnoreNode} />,
+                  label: <PathTitle diffLog={log} />,
                   key: index,
                 };
               })}
