@@ -60,7 +60,6 @@ export interface DiffPathViewerProps extends DiffJsonViewProps {
 const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message } = App.useApp();
 
   const {
     data: logEntity = [],

@@ -14,7 +14,7 @@ import {
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { EMAIL_KEY } from '@/constant';
@@ -75,20 +75,21 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     manual: true,
     onSuccess(operationCaseInfoList) {
       rerun({
-        caseSourceFrom: props.data.caseStartTime,
-        caseSourceTo: props.data.caseEndTime,
+        caseSourceFrom: +props.data.caseStartTime,
+        caseSourceTo: +props.data.caseEndTime,
         appId: props.data.appId,
         operationCaseInfoList,
         operator: email as string,
         replayPlanType: 3,
         sourceEnv: 'pro',
-        targetEnv: props.data.targetEnv,
+        targetEnv: decodeURIComponent(props.data.targetEnv || ''),
       });
     },
   });
 
   const { run: rerun } = useRequest(ScheduleService.createPlan, {
     manual: true,
+
     onSuccess(res) {
       if (res.result === 1) {
         notification.success({
@@ -108,7 +109,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
       ComparisonService.insertIgnoreNode({
         operationId: global ? undefined : props.data.operationId,
         appId: props.data.appId,
-        dependencyId: selectedDependency?.idEntry ? undefined : selectedDependency?.dependencyId,
+        dependencyId: selectedDependency?.idEntry ? undefined : selectedDependency?.dependencyId, // TODO 后端保证此处的 dependencyId 有效
         exclusions: path,
       }),
     {
@@ -119,37 +120,8 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     },
   );
 
-  // 当 dependencyId 不存在时，手动添加接口依赖
-  const { run: addDependencyToSystem } = useRequest(ReportService.addDependencyToSystem, {
-    manual: true,
-    onSuccess(res, [{ operationId }]) {
-      setFullLinkInfoMerged((fullLinkInfoMerged) => {
-        const index = fullLinkInfoMerged.findIndex((item) => item.operationId === operationId);
-        console.log({ index });
-        if (index > 0) fullLinkInfoMerged[index].dependencyId = res.dependencyId;
-      });
-
-      setSelectedDependency({
-        ...(selectedDependency as InfoItem),
-        dependencyId: res.dependencyId,
-      });
-    },
-  });
-  useEffect(() => {
-    console.log(selectedDependency);
-    if (selectedDependency && !selectedDependency.idEntry && !selectedDependency.dependencyId) {
-      addDependencyToSystem({
-        appId: props.data.appId,
-        operationId: props.data.operationId,
-        operationType: selectedDependency.categoryName,
-        operationName: selectedDependency.operationName,
-        msg: '',
-      });
-    }
-  }, [selectedDependency]);
-
-  const handleSortKey: PathHandler = (path: string[], targetEditor: 'left' | 'right') => {
-    setTargetNodePath(path.filter((path) => Number.isNaN(Number(path))));
+  const handleSortKey: PathHandler = (path: string[], jsonString, targetEditor) => {
+    setTargetNodePath(path.filter((path) => Number.isNaN(Number(path)))); // TODO 过滤数组 index 路径
     setCompareConfigOpen(true);
   };
 

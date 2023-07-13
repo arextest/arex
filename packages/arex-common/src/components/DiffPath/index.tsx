@@ -17,9 +17,9 @@ export interface DiffPathProps extends Omit<DiffPathViewerProps, 'data'> {
   extra?: React.ReactNode;
   itemsExtraRender?: (data: InfoItem) => React.ReactNode;
   defaultOnlyFailed?: boolean;
-  requestDiffMsg: (params: any) => Promise<CompareResultDetail>;
+  requestDiffMsg: (params: any, record?: InfoItem) => Promise<CompareResultDetail>;
   data: InfoItem[];
-  onChange?: (id: string, record: InfoItem) => void;
+  onChange?: (id: string, record?: InfoItem, data?: CompareResultDetail) => void;
   onIgnoreKey?: PathHandler;
   onGlobalIgnoreKey?: PathHandler;
   onSortKey?: PathHandler;
@@ -37,6 +37,9 @@ const DiffPath: FC<DiffPathProps> = (props) => {
     run: queryDiffMsgById,
   } = useRequest(props.requestDiffMsg, {
     manual: true,
+    onSuccess: (data, params) => {
+      onChange?.(params?.[0]?.id, params?.[1], data);
+    },
   });
 
   const diffListFiltered = useMemo<InfoItem[]>(() => {
@@ -87,8 +90,7 @@ const DiffPath: FC<DiffPathProps> = (props) => {
           }))}
           onChange={([id]) => {
             const record = diffListFiltered.find((item) => item.id === id) as InfoItem;
-            onChange?.(id, record);
-            id && queryDiffMsgById({ id });
+            id && queryDiffMsgById({ id }, record);
           }}
           css={css`
             .ant-collapse-content-box {

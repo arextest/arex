@@ -11,7 +11,7 @@ import { genAllDiffByType, LogEntity } from './helper';
 import VanillaJSONEditor from './VanillaJSONEditor';
 
 export type TargetEditor = 'left' | 'right';
-export type PathHandler = (path: string[], targetEditor: TargetEditor) => void;
+export type PathHandler = (path: string[], jsonString: string, targetEditor: TargetEditor) => void;
 export type DiffJsonViewProps = {
   readOnly?: boolean;
   height?: string | number;
@@ -125,9 +125,9 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             mainMenuBar={false}
             onClassName={onClassNameLeft}
             allDiffByType={allLeftDiffByType}
-            onIgnoreKey={(path) => onIgnoreKey?.(path, 'left')}
-            onGlobalIgnoreKey={(path) => onGlobalIgnoreKey?.(path, 'left')}
-            onSortKey={(path) => onSortKey?.(path, 'left')}
+            onIgnoreKey={(path) => onIgnoreKey?.(path, diffJson?.left, 'left')}
+            onGlobalIgnoreKey={(path) => onGlobalIgnoreKey?.(path, diffJson?.left, 'left')}
+            onSortKey={(path) => onSortKey?.(path, diffJson?.left, 'left')}
           />
         </div>
 
@@ -148,9 +148,9 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             mainMenuBar={false}
             onClassName={onClassNameRight}
             allDiffByType={allRightDiffByType}
-            onIgnoreKey={(path) => onIgnoreKey?.(path, 'right')}
-            onGlobalIgnoreKey={(path) => onGlobalIgnoreKey?.(path, 'right')}
-            onSortKey={(path) => onSortKey?.(path, 'right')}
+            onIgnoreKey={(path) => onIgnoreKey?.(path, diffJson?.right, 'right')}
+            onGlobalIgnoreKey={(path) => onGlobalIgnoreKey?.(path, diffJson?.right, 'right')}
+            onSortKey={(path) => onSortKey?.(path, diffJson?.right, 'right')}
           />
         </div>
       </div>

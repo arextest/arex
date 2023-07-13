@@ -28,7 +28,7 @@ const DiffPathTooltip: FC<DiffPathTooltipProps> = (props) => {
     onFilterChange,
     onSearch,
   } = props;
-  const { t } = useTranslation(['components']);
+  const { t } = useTranslation();
   const { token } = theme.useToken();
 
   const [failedOnly, setFailedOnly] = useState(defaultOnlyFailed);
