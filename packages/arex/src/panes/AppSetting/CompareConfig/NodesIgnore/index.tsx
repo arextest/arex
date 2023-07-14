@@ -1,4 +1,4 @@
-import { CheckOutlined, CloseOutlined, DeleteOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, DeleteOutlined, SyncOutlined } from '@ant-design/icons';
 import {
   css,
   PaneDrawer,
@@ -17,6 +17,7 @@ import {
   Input,
   InputRef,
   List,
+  Space,
   Typography,
 } from 'antd';
 import { TreeProps } from 'antd/es';
@@ -45,10 +46,12 @@ export type NodesIgnoreProps = {
   operationId?: string;
   dependencyId?: string;
   readOnly?: boolean;
+  syncing?: boolean;
   loadingContract?: boolean;
   configType: CONFIG_TYPE;
   contractParsed: { [p: string]: any };
   onAdd?: () => void;
+  onSync?: () => void;
   onClose?: () => void;
 };
 
@@ -375,11 +378,24 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
         `}
       />
       <PaneDrawer
+        width='60%'
         title={
           <SpaceBetweenWrapper>
-            <Typography.Title level={5} style={{ marginBottom: 0 }}>
-              Nodes Ignore
-            </Typography.Title>
+            <Space size='middle'>
+              <Typography.Title level={5} style={{ marginBottom: 0 }}>
+                Nodes Ignore
+              </Typography.Title>
+
+              <Button
+                size='small'
+                disabled={props.syncing}
+                icon={<SyncOutlined spin={props.syncing} />}
+                onClick={props.onSync}
+              >
+                {t('appSetting.sync', { ns: 'components' })}
+              </Button>
+            </Space>
+
             <Button size='small' type='primary' onClick={handleIgnoreSave}>
               {t('save', { ns: 'common' })}
             </Button>

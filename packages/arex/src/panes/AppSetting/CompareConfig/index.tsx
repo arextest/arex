@@ -121,39 +121,6 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   const [dependencyOptions, setDependencyOptions] = useState<SelectProps['options']>();
 
   /**
-   * 请求 Contract
-   */
-  const {
-    data: contract,
-    mutate: setContract,
-    loading: loadingContract,
-    run: queryContract,
-  } = useRequest(
-    () =>
-      ReportService.queryContract({
-        appId: props.appId,
-        operationId: configType === CONFIG_TYPE.INTERFACE ? activeOperationId : undefined,
-        contractId: configType === CONFIG_TYPE.DEPENDENCY ? activeDependencyId : undefined,
-      }),
-    {
-      refreshDeps: [props.sortArrayPath, configType], // TODO 目前可能有一些多余的无效请求，待优化
-      onBefore() {
-        setContract();
-        setRawContract(undefined);
-      },
-      onSuccess(res) {
-        setRawContract(tryPrettierJsonString(res?.contract || ''));
-      },
-    },
-  );
-
-  const contractParsed = useMemo<{ [key: string]: any }>(() => {
-    const res = contract?.contract;
-    if (res) return tryParseJsonString(res) || {};
-    else return {};
-  }, [contract]);
-
-  /**
    * 更新 Contract
    */
   const { run: updateContract } = useRequest(ReportService.overwriteContract, {
@@ -187,6 +154,40 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
       },
     },
   );
+
+  /**
+   * 请求 Contract
+   */
+  const {
+    data: contract,
+    mutate: setContract,
+    loading: loadingContract,
+    run: queryContract,
+  } = useRequest(
+    () =>
+      ReportService.queryContract({
+        appId: props.appId,
+        operationId: configType === CONFIG_TYPE.INTERFACE ? activeOperationId : undefined,
+        contractId: configType === CONFIG_TYPE.DEPENDENCY ? activeDependencyId : undefined,
+      }),
+    {
+      ready: !!props.appId && !syncing,
+      refreshDeps: [props.sortArrayPath, configType, syncing], // TODO 目前可能有一些多余的无效请求，待优化
+      onBefore() {
+        setContract();
+        setRawContract(undefined);
+      },
+      onSuccess(res) {
+        setRawContract(tryPrettierJsonString(res?.contract || ''));
+      },
+    },
+  );
+
+  const contractParsed = useMemo<{ [key: string]: any }>(() => {
+    const res = contract?.contract;
+    if (res) return tryParseJsonString(res) || {};
+    else return {};
+  }, [contract]);
 
   const handleSaveContract = (value?: string) => {
     let params = {
@@ -291,12 +292,14 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         key='nodes-ignore'
         appId={props.appId}
         readOnly={props.readOnly}
+        syncing={syncing}
         loadingContract={loadingContract}
         configType={configType}
         operationId={activeOperationId}
         dependencyId={activeDependencyId}
         contractParsed={contractParsed}
         onAdd={queryContract}
+        onSync={handleSync}
         onClose={props.onIgnoreDrawerClose}
       />
 
@@ -305,6 +308,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           key='nodes-sort'
           appId={props.appId}
           readOnly={props.readOnly}
+          syncing={syncing}
           sortArrayPath={props.sortArrayPath}
           loadingContract={loadingContract}
           configType={configType}
@@ -312,6 +316,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           dependencyId={activeDependencyId}
           contractParsed={contractParsed}
           onAdd={queryContract}
+          onSync={handleSync}
           onClose={props.onSortDrawerClose}
         />
       )}

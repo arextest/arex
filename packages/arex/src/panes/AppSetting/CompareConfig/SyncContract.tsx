@@ -1,4 +1,4 @@
-import { EditOutlined, EllipsisOutlined, SaveOutlined, SyncOutlined } from '@ant-design/icons';
+import { EditOutlined, SaveOutlined, SyncOutlined } from '@ant-design/icons';
 import {
   PaneDrawer,
   SmallTextButton,
@@ -7,7 +7,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { Editor, EditorProps } from '@monaco-editor/react';
-import { App, Button, ButtonProps, Dropdown, Typography } from 'antd';
+import { App, ButtonProps, Dropdown, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 
 import { useUserProfile } from '@/store';
@@ -22,7 +22,7 @@ export type SyncContractProps = {
 } & EditorProps;
 
 const SyncContract: FC<SyncContractProps> = (props) => {
-  const { value: _value, syncing = false, onSync, onSave, onClose, ...restProps } = props;
+  const { value: _value, syncing = false, onSync, onSave, ...restProps } = props;
   const { t } = useTranslation('common');
   const { message } = App.useApp();
   const { theme } = useUserProfile();
@@ -91,7 +91,7 @@ const SyncContract: FC<SyncContractProps> = (props) => {
           },
         }}
       >
-        <SyncOutlined spin={syncing} /> Sync
+        <SyncOutlined spin={syncing} /> {t('appSetting.sync', { ns: 'components' })}
       </Dropdown.Button>
       <PaneDrawer
         open={open}

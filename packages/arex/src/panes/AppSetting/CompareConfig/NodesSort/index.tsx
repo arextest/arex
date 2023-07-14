@@ -1,7 +1,18 @@
-import { CloseOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { CloseOutlined, DeleteOutlined, EditOutlined, SyncOutlined } from '@ant-design/icons';
 import { css, PaneDrawer, SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, ButtonProps, Card, Collapse, Input, InputRef, List, Typography } from 'antd';
+import {
+  App,
+  Button,
+  ButtonProps,
+  Card,
+  Collapse,
+  Input,
+  InputRef,
+  List,
+  Space,
+  Typography,
+} from 'antd';
 import { TreeProps } from 'antd/es';
 import { CarouselRef } from 'antd/lib/carousel';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
@@ -16,6 +27,19 @@ import ArrayTree from './ArrayTree';
 import SortTree from './SortTree';
 import TreeCarousel from './TreeCarousel';
 
+// 获取待排序操作的数组结构
+function getSortArray(key: string, contract: NodesSortProps['contractParsed']) {
+  let value: any = undefined;
+  key
+    .split('/')
+    .filter(Boolean)
+    .forEach((k, i) => {
+      value = i === 0 ? contract[k] : Array.isArray(value) ? value[0]?.[k] : value[k];
+    });
+
+  return value;
+}
+
 enum TreeEditModeEnum {
   ArrayTree,
   SortTree,
@@ -28,11 +52,13 @@ export type NodesSortProps = {
   operationId?: string;
   dependencyId?: string;
   sortArrayPath?: string[];
+  syncing?: boolean;
   readOnly?: boolean;
   loadingContract?: boolean;
   configType: CONFIG_TYPE;
   contractParsed: { [key: string]: any };
   onAdd?: () => void;
+  onSync?: () => void;
   onClose?: () => void;
 };
 
@@ -196,7 +222,8 @@ const NodesSort: FC<NodesSortProps> = (props) => {
     });
 
     try {
-      handleSetSortArray(path);
+      const sortArray = getSortArray(path, props.contractParsed);
+      setSortArray(sortArray);
     } catch (error) {
       console.warn('failed to analytic path');
     }
@@ -206,19 +233,6 @@ const NodesSort: FC<NodesSortProps> = (props) => {
     setTreeReady(true);
 
     setTimeout(() => treeCarouselRef.current?.goTo(1)); // 防止初始化时 treeCarouselRef 未绑定
-  };
-
-  // 获取待排序操作的数组结构
-  const handleSetSortArray = (key: string) => {
-    let value: any = undefined;
-    key
-      .split('/')
-      .filter(Boolean)
-      .forEach((k, i) => {
-        value = i === 0 ? props.contractParsed[k] : Array.isArray(value) ? value[0]?.[k] : value[k];
-      });
-
-    setSortArray(value);
   };
 
   const handleSortTreeChecked: TreeProps['onCheck'] = (checkedKeys) => {
@@ -334,12 +348,23 @@ const NodesSort: FC<NodesSortProps> = (props) => {
       />
 
       <PaneDrawer
+        width='60%'
         title={
           <SpaceBetweenWrapper>
-            <Typography.Title level={5} style={{ marginBottom: 0 }}>
-              {t('appSetting.nodesSort')}
-            </Typography.Title>
+            <Space size='middle'>
+              <Typography.Title level={5} style={{ marginBottom: 0 }}>
+                {t('appSetting.nodesSort')}
+              </Typography.Title>
 
+              <Button
+                size='small'
+                disabled={props.syncing}
+                icon={<SyncOutlined spin={props.syncing} />}
+                onClick={props.onSync}
+              >
+                {t('appSetting.sync', { ns: 'components' })}
+              </Button>
+            </Space>
             {treeEditMode === TreeEditModeEnum.SortTree && (
               <Button size='small' type='primary' onClick={handleSaveSort}>
                 {t('save', { ns: 'common' })}

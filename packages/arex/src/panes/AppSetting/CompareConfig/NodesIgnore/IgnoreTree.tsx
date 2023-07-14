@@ -48,7 +48,7 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
         <EmptyWrapper
           loading={props.loading}
           empty={!Object.keys(props.treeData).length}
-          description='empty response, please sync response first'
+          description={t('appSetting.emptyContractTip')}
         >
           <Tree multiple defaultExpandAll {...props} treeData={getNodes(props.treeData, '')} />
         </EmptyWrapper>

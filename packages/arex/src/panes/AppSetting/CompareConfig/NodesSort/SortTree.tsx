@@ -1,4 +1,4 @@
-import { css, useTranslation } from '@arextest/arex-core';
+import { css, EmptyWrapper, useTranslation } from '@arextest/arex-core';
 import { Card, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
@@ -40,19 +40,25 @@ const SortTree: FC<SortTreeProps> = (props) => {
 
   return (
     <Card size='small' title={t('appSetting.chooseOnekey')}>
-      <Tree
-        {...props}
-        checkable
-        checkStrictly
-        defaultExpandAll
-        autoExpandParent
-        selectedKeys={[]}
-        treeData={getNodes(props.treeData, '')}
-        css={css`
-          max-height: calc(100vh - 300px);
-          overflow-y: auto;
-        `}
-      />
+      <EmptyWrapper
+        loading={false}
+        description={t('appSetting.emptyContractTip')}
+        empty={!Object.keys(props.treeData || {}).length}
+      >
+        <Tree
+          {...props}
+          checkable
+          checkStrictly
+          defaultExpandAll
+          autoExpandParent
+          selectedKeys={[]}
+          treeData={getNodes(props.treeData, '')}
+          css={css`
+            max-height: calc(100vh - 300px);
+            overflow-y: auto;
+          `}
+        />
+      </EmptyWrapper>
     </Card>
   );
 };

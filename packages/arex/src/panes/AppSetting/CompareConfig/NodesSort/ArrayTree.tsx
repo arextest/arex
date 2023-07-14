@@ -11,7 +11,7 @@ import { SortNode } from '@/services/ComparisonService';
 type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
   loading?: boolean;
   sortNodeList?: SortNode[];
-  treeData: object;
+  treeData?: object;
   onEditResponse?: () => void;
 };
 
@@ -51,7 +51,7 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
     );
   }
 
-  const nodesData = useMemo(() => getNodes(props.treeData, ''), [props.treeData]);
+  const nodesData = useMemo(() => getNodes(props.treeData || {}, ''), [props.treeData]);
 
   return (
     <Card
@@ -60,8 +60,8 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
     >
       <EmptyWrapper
         loading={props.loading}
-        description={'empty response, please sync response first'}
-        empty={!Object.keys(props.treeData).length}
+        description={t('appSetting.emptyContractTip')}
+        empty={!Object.keys(props.treeData || {}).length}
       >
         <Tree
           showIcon
