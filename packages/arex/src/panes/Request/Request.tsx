@@ -9,7 +9,13 @@ import { EMAIL_KEY } from '@/constant';
 import { sendRequest } from '@/helpers/postman';
 import { FileSystemService, ReportService } from '@/services';
 import { saveRequest } from '@/services/FileSystemService';
-import { useCollections, useEnvironments, useUserProfile, useWorkspaces } from '@/store';
+import {
+  useCollections,
+  useEnvironments,
+  useMenusPanes,
+  useUserProfile,
+  useWorkspaces,
+} from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
 import { ExtraTabs } from './extra';
@@ -40,6 +46,7 @@ const Request: ArexPaneFC = () => {
   const { activeEnvironment } = useEnvironments();
   const { activeWorkspaceId } = useWorkspaces();
   const { collectionsFlatData, getCollections, getPath } = useCollections();
+  const { setPanes } = useMenusPanes();
   const { theme, language } = useUserProfile();
 
   const { data: labelData, run: queryLabels } = useRequest(
@@ -70,7 +77,6 @@ const Request: ArexPaneFC = () => {
   };
 
   const handleSave: HttpProps['onSave'] = (requestParams, response) => {
-    console.log(response);
     const request = requestParams;
     if (
       !request.headers.find((i) => i.key === 'arex-record-id') &&
@@ -89,6 +95,13 @@ const Request: ArexPaneFC = () => {
     FileSystemService.saveRequest(activeWorkspaceId, requestParams, nodeInfo?.nodeType || 1).then(
       (res) => {
         res && message.success('保存成功');
+        getCollections();
+        const { id, type } = decodePaneKey(paneKey);
+        setPanes({
+          id,
+          type,
+          icon: requestParams.method,
+        });
       },
     );
   };
@@ -142,8 +155,16 @@ const Request: ArexPaneFC = () => {
       }),
     {
       manual: true,
-      onSuccess(success) {
-        getCollections(activeWorkspaceId);
+      onSuccess(success, [name]) {
+        if (success) {
+          getCollections(activeWorkspaceId);
+          const { id, type } = decodePaneKey(paneKey);
+          setPanes({
+            id,
+            type,
+            name,
+          });
+        }
       },
     },
   );
