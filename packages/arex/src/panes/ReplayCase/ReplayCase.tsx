@@ -25,32 +25,6 @@ import { MessageMap } from '@/services/ScheduleService';
 import Case from './Case';
 import SaveCase, { SaveCaseRef } from './SaveCase';
 
-/**
- *  过滤 path[] 中的的数组 index 类型元素
- * @param path
- * @param jsonString
- */
-function validateJsonPath(path: string[], jsonString: string) {
-  try {
-    const json = JSON.parse(jsonString);
-    const { pathList } = path.reduce<{ json: any; pathList: string[] }>(
-      (jsonPathData, path) => {
-        if (Array.isArray(jsonPathData.json) && Number.isInteger(Number(path))) {
-          jsonPathData.json = jsonPathData.json[Number(path)];
-        } else {
-          jsonPathData.json = jsonPathData.json[path];
-          jsonPathData.pathList.push(path);
-        }
-        return jsonPathData;
-      },
-      { json, pathList: [] },
-    );
-    return pathList;
-  } catch (error) {
-    return false;
-  }
-}
-
 const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
   const { message, notification } = App.useApp();
   const email = getLocalStorage<string>(EMAIL_KEY);
@@ -207,26 +181,18 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             onChange={(id, record) => {
               setSelectedDependency(record);
             }}
-            onIgnoreKey={(path, jsonString) => {
-              const validatedPath = validateJsonPath(path, jsonString);
-              validatedPath && handleIgnoreKey(validatedPath);
-            }}
-            onGlobalIgnoreKey={(path, jsonString) => {
-              const validatedPath = validateJsonPath(path, jsonString);
-              validatedPath && handleIgnoreKey(validatedPath, true);
-            }}
-            onSortKey={(path: string[], jsonString) => {
-              const validatedPath = validateJsonPath(path, jsonString);
-              if (validatedPath) {
-                setTargetNodePath(validatedPath);
-                setCompareConfigOpen(true);
-              }
+            onIgnoreKey={(path) => handleIgnoreKey(path)}
+            onGlobalIgnoreKey={(path) => handleIgnoreKey(path, true)}
+            onSortKey={(path) => {
+              setTargetNodePath(path);
+              setCompareConfigOpen(true);
             }}
             requestDiffMsg={ScheduleService.queryDiffMsgById}
             requestQueryLogEntity={ScheduleService.queryLogEntity}
           />
         }
       />
+
       <SaveCase planId={props.data.planId} operationId={props.data.operationId} ref={saveCaseRef} />
 
       {/* CompareConfigModal */}

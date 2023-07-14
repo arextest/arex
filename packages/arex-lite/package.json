@@ -7,7 +7,7 @@
     "do-dev": "vite"
   },
   "dependencies": {
-    "@ant-design/icons": "5.1.4",
+    "@ant-design/icons": "^5.1.4",
     "@arextest/arex-core": "workspace:^",
     "@arextest/arex-common": "workspace:^",
     "@emotion/react": "^11.10.6",

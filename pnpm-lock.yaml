@@ -64,7 +64,7 @@ importers:
   packages/arex:
     dependencies:
       '@ant-design/icons':
-        specifier: 5.1.4
+        specifier: ^5.1.4
         version: 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@arextest/arex-common':
         specifier: workspace:^
@@ -209,7 +209,7 @@ importers:
   packages/arex-common:
     dependencies:
       '@ant-design/icons':
-        specifier: 5.1.4
+        specifier: ^5.1.4
         version: 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@arextest/arex-core':
         specifier: workspace:^
@@ -282,7 +282,7 @@ importers:
   packages/arex-core:
     dependencies:
       '@ant-design/icons':
-        specifier: 5.1.4
+        specifier: ^5.1.4
         version: 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@arextest/vanilla-jsoneditor':
         specifier: ^0.17.14
@@ -391,7 +391,7 @@ importers:
   packages/arex-lite:
     dependencies:
       '@ant-design/icons':
-        specifier: 5.1.4
+        specifier: ^5.1.4
         version: 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@arextest/arex-common':
         specifier: workspace:^
