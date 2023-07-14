@@ -19,6 +19,7 @@ import { useImmer } from 'use-immer';
 import { EMAIL_KEY } from '@/constant';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
+import { DependencyParams } from '@/services/ComparisonService';
 import { InfoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
 import { MessageMap } from '@/services/ScheduleService';
 
@@ -49,7 +50,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
       onSuccess(data) {
         const { entrance, infoItemList } = data || {};
         setFullLinkInfoMerged(
-          ([{ ...entrance, idEntry: true }, ...(infoItemList || [])] as InfoItem[]).filter(
+          ([{ ...entrance, isEntry: true }, ...(infoItemList || [])] as InfoItem[]).filter(
             (item) => item.id,
           ),
         );
@@ -104,13 +105,23 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   });
 
   const { run: handleIgnoreKey } = useRequest(
-    (path: string[], global?: boolean) =>
-      ComparisonService.insertIgnoreNode({
+    (path: string[], global?: boolean) => {
+      const dependencyParams: DependencyParams = selectedDependency?.isEntry
+        ? ({} as DependencyParams)
+        : { dependencyId: selectedDependency?.dependencyId };
+      // 当 dependencyId 不存在时，需要传入 categoryName 和 operationName 作为依赖唯一标识
+      if (!selectedDependency?.isEntry && !selectedDependency?.dependencyId) {
+        dependencyParams.categoryName = selectedDependency?.categoryName;
+        dependencyParams.operationName = selectedDependency?.operationName;
+      }
+
+      return ComparisonService.insertIgnoreNode({
         operationId: global ? undefined : props.data.operationId,
         appId: props.data.appId,
-        dependencyId: selectedDependency?.idEntry ? undefined : selectedDependency?.dependencyId, // TODO 后端保证此处的 dependencyId 有效
         exclusions: path,
-      }),
+        ...dependencyParams,
+      });
+    },
     {
       manual: true,
       onSuccess(success) {
@@ -211,6 +222,8 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
           appId={props.data.appId}
           operationId={props.data.operationId || false}
           dependencyId={selectedDependency ? selectedDependency.dependencyId || false : undefined}
+          categoryName={selectedDependency?.categoryName}
+          operationName={selectedDependency?.operationName}
           sortArrayPath={targetNodePath}
           onSortDrawerClose={() => setTargetNodePath(undefined)}
         />

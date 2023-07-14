@@ -30,7 +30,7 @@ import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
 import CompareConfigTitle from '@/panes/AppSetting/CompareConfig/CompareConfigTitle';
 import { ComparisonService } from '@/services';
 import { OperationId } from '@/services/ApplicationService';
-import { IgnoreNodeBase, QueryIgnoreNode } from '@/services/ComparisonService';
+import { DependencyParams, IgnoreNodeBase, QueryIgnoreNode } from '@/services/ComparisonService';
 
 import IgnoreTree, { getNodes } from './IgnoreTree';
 
@@ -45,6 +45,8 @@ export type NodesIgnoreProps = {
   appId: string;
   operationId?: string;
   dependencyId?: string;
+  categoryName?: string; // 用于为不存在 dependencyId 时的依赖配置
+  operationName?: string; // 用于为不存在 dependencyId 时的依赖配置
   readOnly?: boolean;
   syncing?: boolean;
   loadingContract?: boolean;
@@ -261,15 +263,22 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
       else add.push(path);
     });
 
+    const dependencyParams: DependencyParams = {
+      dependencyId: props.dependencyId,
+      categoryName: props?.categoryName,
+      operationName: props?.operationName,
+    };
+
     // 增量更新
     add.length &&
       batchInsertIgnoreNode(
         add.map((path) => ({
           appId: props.appId,
           operationId: props.operationId,
-          dependencyId:
-            props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependencyId : undefined,
           exclusions: path.split('/').filter(Boolean),
+          ...(props.configType === CONFIG_TYPE.DEPENDENCY
+            ? dependencyParams
+            : ({} as DependencyParams)),
         })),
       );
 

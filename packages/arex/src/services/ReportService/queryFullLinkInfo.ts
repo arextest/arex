@@ -14,7 +14,7 @@ export type InfoItem = {
   dependencyId: string | null;
   operationId: string;
   operationName: string;
-  idEntry?: boolean;
+  isEntry?: boolean;
 };
 
 export type QueryFullLinkInfoRes = {

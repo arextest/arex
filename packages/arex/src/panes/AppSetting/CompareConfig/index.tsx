@@ -17,10 +17,13 @@ export enum CONFIG_TYPE {
   DEPENDENCY,
 }
 
+// TODO 类型定义抽离封装
 export type CompareConfigProps = {
   appId: string; // 限定应用，用于展示特定应用下所有接口的对比配置
   operationId?: string | false; // 限定接口，用于展示特定接口的对比配置, false 时不展示 operationType
   dependencyId?: string | false; // 限定依赖，用于展示特定依赖的对比配置, false 时不展示 dependencyType
+  categoryName?: string; // 用于为不存在 dependencyId 时的依赖配置
+  operationName?: string; // 用于为不存在 dependencyId 时的依赖配置
   readOnly?: boolean; // 只读模式，用于展示接口的对比配置
   sortArrayPath?: string[]; // 指定数组节点排序配置的数组节点路径
   onIgnoreDrawerClose?: () => void;
@@ -291,12 +294,14 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
       <NodesIgnore
         key='nodes-ignore'
         appId={props.appId}
+        operationId={activeOperationId}
+        dependencyId={activeDependencyId}
+        categoryName={props?.categoryName}
+        operationName={props?.operationName}
         readOnly={props.readOnly}
         syncing={syncing}
         loadingContract={loadingContract}
         configType={configType}
-        operationId={activeOperationId}
-        dependencyId={activeDependencyId}
         contractParsed={contractParsed}
         onAdd={queryContract}
         onSync={handleSync}
@@ -307,13 +312,15 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         <NodesSort
           key='nodes-sort'
           appId={props.appId}
+          operationId={activeOperationId}
+          dependencyId={activeDependencyId}
+          categoryName={props?.categoryName}
+          operationName={props?.operationName}
           readOnly={props.readOnly}
           syncing={syncing}
           sortArrayPath={props.sortArrayPath}
           loadingContract={loadingContract}
           configType={configType}
-          operationId={activeOperationId}
-          dependencyId={activeDependencyId}
           contractParsed={contractParsed}
           onAdd={queryContract}
           onSync={handleSync}

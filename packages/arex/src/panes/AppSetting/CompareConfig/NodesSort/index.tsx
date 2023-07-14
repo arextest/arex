@@ -20,7 +20,7 @@ import { useImmer } from 'use-immer';
 
 import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService } from '@/services';
-import { SortNode } from '@/services/ComparisonService';
+import { DependencyParams, SortNode } from '@/services/ComparisonService';
 
 import CompareConfigTitle from '../CompareConfigTitle';
 import ArrayTree from './ArrayTree';
@@ -51,6 +51,8 @@ export type NodesSortProps = {
   appId?: string;
   operationId?: string;
   dependencyId?: string;
+  categoryName?: string; // 用于为不存在 dependencyId 时的依赖配置
+  operationName?: string; // 用于为不存在 dependencyId 时的依赖配置
   sortArrayPath?: string[];
   syncing?: boolean;
   readOnly?: boolean;
@@ -162,11 +164,19 @@ const NodesSort: FC<NodesSortProps> = (props) => {
     if (activeSortNode) {
       updateSortNode({ id: activeSortNode.id, ...params });
     } else if (props.appId && props.operationId) {
+      const dependencyParams: DependencyParams = {
+        dependencyId: props.dependencyId,
+        categoryName: props?.categoryName,
+        operationName: props?.operationName,
+      };
+
       insertSortNode({
-        ...params,
         appId: props.appId,
         operationId: props.operationId,
-        dependencyId: props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependencyId : undefined,
+        ...params,
+        ...(props.configType === CONFIG_TYPE.DEPENDENCY
+          ? dependencyParams
+          : ({} as DependencyParams)),
       });
     }
   };
