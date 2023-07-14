@@ -222,7 +222,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         <SearchOutlined style={{ color: filtered ? token.colorPrimaryActive : undefined }} />
       ),
       onFilter: (value, record) =>
-        record.operationName
+        (record.operationName || '')
           .toString()
           .toLowerCase()
           .includes((value as string).toLowerCase()),
@@ -407,7 +407,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
     params?: { operationId?: string } & Partial<
       Pick<CreatePlanReq, 'caseSourceFrom' | 'caseSourceTo' | 'operationCaseInfoList'>
     >,
-    operationName?: string,
+    operationName?: PlanItemStatistics['operationName'],
   ) => {
     const { operationId, caseSourceFrom, caseSourceTo, operationCaseInfoList } = params || {};
     if (operationId && caseSourceFrom && caseSourceTo) {

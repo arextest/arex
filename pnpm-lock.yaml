@@ -100,8 +100,8 @@ importers:
         specifier: ^4.12.2
         version: 4.12.2(antd@5.6.4)(react-dom@18.2.0)(react@18.2.0)
       arex-request-core:
-        specifier: 0.0.1-beta.49
-        version: 0.0.1-beta.49(@types/react@18.2.9)(@types/sortablejs@1.15.1)
+        specifier: 0.0.1-beta.51
+        version: 0.0.1-beta.51(@types/react@18.2.9)(@types/sortablejs@1.15.1)
       arex-request-runtime:
         specifier: ^1.0.2
         version: 1.0.2
@@ -2371,8 +2371,8 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /arex-request-core@0.0.1-beta.49(@types/react@18.2.9)(@types/sortablejs@1.15.1):
-    resolution: {integrity: sha512-1RtoyRiOShJmybwqZOf+qgd8fvRozmzOX+JrY/15i9VdmbI1J1hk/SbwxlWoItDu5YJbEzmyaa/cKhTfTbCW/Q==}
+  /arex-request-core@0.0.1-beta.51(@types/react@18.2.9)(@types/sortablejs@1.15.1):
+    resolution: {integrity: sha512-SEUSEIlEN1BPXue9CYN+0o/EzJ25ZyI9gWmTOVd3uQfquzWKWpIyNFof+KwALUZP8wGSsDUwaVrUSpaUnUWh2w==}
     dependencies:
       '@ant-design/icons': 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@emotion/core': 11.0.0
