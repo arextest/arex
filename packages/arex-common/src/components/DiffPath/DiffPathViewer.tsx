@@ -1,18 +1,19 @@
 import {
   DiffJsonView,
   DiffJsonViewProps,
+  EmptyWrapper,
   FlexCenterWrapper,
   SpaceBetweenWrapper,
 } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
-import { App, Menu, Spin, theme, Typography } from 'antd';
+import { Menu, Spin, theme, Typography } from 'antd';
 import React, { FC, useEffect } from 'react';
 
 import { useTranslation } from '../../hooks';
 import PathTitle from './DiffPathTitle';
-import { DiffLog, LogEntity } from './type';
+import { DiffLog, InfoItem, LogEntity } from './type';
 
 export const SummaryCodeMap: { [key: string]: { color: string; message: string } } = {
   '0': {
@@ -44,13 +45,15 @@ export type CompareResultDetail = {
   testMsg: string;
 };
 export interface DiffPathViewerProps extends DiffJsonViewProps {
+  id: string;
   contextMenuDisabled?: boolean;
   operationId: string;
-  appId: string;
   loading?: boolean;
   data?: CompareResultDetail;
   height?: string;
   defaultActiveFirst?: boolean;
+  onChange?: (id: string, record?: InfoItem, data?: CompareResultDetail) => void;
+  requestDiffMsg: (params: any, record?: InfoItem) => Promise<CompareResultDetail>;
   requestQueryLogEntity: (params: {
     compareResultId: string;
     logIndex: number;
@@ -61,6 +64,15 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
+  const { data: diffMsg, loading: loadingDiffMsg } = useRequest(
+    () => props.requestDiffMsg({ id: props.id }),
+    {
+      onSuccess: (data, params) => {
+        props.onChange?.(props.id);
+      },
+    },
+  );
+
   const {
     data: logEntity = [],
     loading: loadingLogEntity,
@@ -68,118 +80,118 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
   } = useRequest(
     (logIndex) =>
       props.requestQueryLogEntity({
-        compareResultId: props.data!.id,
+        compareResultId: diffMsg!.id,
         logIndex,
       }),
     {
       manual: true,
-      ready: !!props.data,
+      ready: !!diffMsg && props.id === diffMsg.id,
     },
   );
 
   useEffect(() => {
     props.defaultActiveFirst &&
-      props.data?.logInfos?.length &&
-      queryLogEntity(props.data.logInfos[0].logIndex);
-  }, [props.data]);
-
-  if (!props.data) return null;
+      diffMsg?.logInfos?.length &&
+      queryLogEntity(diffMsg.logInfos[0].logIndex);
+  }, [diffMsg?.id]);
 
   return (
-    <Allotment
-      css={css`
-        height: ${props.height};
-        overflow: visible !important;
-        .split-view-view-visible:has(.json-diff-viewer) {
-          overflow: visible !important;
-        }
-      `}
-    >
-      <Allotment.Pane preferredSize={200}>
-        {[0, 2].includes(props.data?.diffResultCode) ? (
-          <FlexCenterWrapper>
-            <Typography.Text type='secondary'>
-              {SummaryCodeMap[props.data?.diffResultCode].message}
-            </Typography.Text>
-          </FlexCenterWrapper>
-        ) : (
-          <>
-            <SpaceBetweenWrapper>
-              <Typography.Text
-                type='secondary'
-                style={{
-                  display: 'inline-block',
-                  margin: `${token.marginSM}px 0 0 ${token.margin}px`,
-                }}
-              >
-                {t('diffPath.pointOfDifference')}
-              </Typography.Text>
-              <Spin
-                size='small'
-                spinning={loadingLogEntity}
-                css={css`
-                  margin-right: 8px;
-                  span {
-                    font-size: 16px !important;
-                  }
-                `}
-              />
-            </SpaceBetweenWrapper>
-            <Menu
-              defaultSelectedKeys={props.defaultActiveFirst ? ['0'] : undefined}
-              items={props.data.logInfos?.map((log, index) => {
-                return {
-                  label: <PathTitle diffLog={log} />,
-                  key: index,
-                };
-              })}
-              css={css`
-                height: 100%;
-                overflow-y: auto;
-                padding: 4px 8px 0;
-                .ant-menu-item {
-                  height: 26px;
-                  line-height: 26px;
-                }
-                border-inline-end: none !important;
-              `}
-              onClick={({ key }) => {
-                props.data?.logInfos?.length &&
-                  queryLogEntity(props.data.logInfos[parseInt(key)].logIndex);
-              }}
-            />
-          </>
-        )}
-      </Allotment.Pane>
-
-      <Allotment.Pane
-        visible
-        className='json-diff-viewer'
+    <EmptyWrapper loading={loadingDiffMsg} empty={!diffMsg}>
+      <Allotment
         css={css`
           height: ${props.height};
+          overflow: visible !important;
+          .split-view-view-visible:has(.json-diff-viewer) {
+            overflow: visible !important;
+          }
         `}
       >
-        {props.data?.diffResultCode === 2 ? (
-          <FlexCenterWrapper style={{ padding: '16px' }}>
-            <Typography.Text type='secondary'>{props.data.exceptionMsg}</Typography.Text>
-          </FlexCenterWrapper>
-        ) : (
-          <div style={{ position: 'relative', margin: `${token.marginXS}px`, height: '100%' }}>
-            <DiffJsonView
-              hiddenTooltip
-              readOnly={props.contextMenuDisabled}
-              diffJson={{
-                left: props.data.baseMsg,
-                right: props.data.testMsg,
-              }}
-              diffPath={logEntity}
-              {...props}
-              height={`calc(${props.height} - 8px)`}
-            />
-          </div>
-        )}
-      </Allotment.Pane>
-    </Allotment>
+        <Allotment.Pane preferredSize={200}>
+          {diffMsg && [0, 2].includes(diffMsg?.diffResultCode) ? (
+            <FlexCenterWrapper>
+              <Typography.Text type='secondary'>
+                {SummaryCodeMap[diffMsg?.diffResultCode].message}
+              </Typography.Text>
+            </FlexCenterWrapper>
+          ) : (
+            <>
+              <SpaceBetweenWrapper>
+                <Typography.Text
+                  type='secondary'
+                  style={{
+                    display: 'inline-block',
+                    margin: `${token.marginSM}px 0 0 ${token.margin}px`,
+                  }}
+                >
+                  {t('diffPath.pointOfDifference')}
+                </Typography.Text>
+                <Spin
+                  size='small'
+                  spinning={loadingLogEntity}
+                  css={css`
+                    margin-right: 8px;
+                    span {
+                      font-size: 16px !important;
+                    }
+                  `}
+                />
+              </SpaceBetweenWrapper>
+              <Menu
+                defaultSelectedKeys={props.defaultActiveFirst ? ['0'] : undefined}
+                items={diffMsg?.logInfos?.map((log, index) => {
+                  return {
+                    label: <PathTitle diffLog={log} />,
+                    key: index,
+                  };
+                })}
+                css={css`
+                  height: 100%;
+                  overflow-y: auto;
+                  padding: 4px 8px 0;
+                  .ant-menu-item {
+                    height: 26px;
+                    line-height: 26px;
+                  }
+                  border-inline-end: none !important;
+                `}
+                onClick={({ key }) => {
+                  diffMsg?.logInfos?.length &&
+                    queryLogEntity(diffMsg.logInfos[parseInt(key)].logIndex);
+                }}
+              />
+            </>
+          )}
+        </Allotment.Pane>
+
+        <Allotment.Pane
+          visible
+          className='json-diff-viewer'
+          css={css`
+            height: ${props.height};
+          `}
+        >
+          {diffMsg?.diffResultCode === 2 ? (
+            <FlexCenterWrapper style={{ padding: '16px' }}>
+              <Typography.Text type='secondary'>{diffMsg.exceptionMsg}</Typography.Text>
+            </FlexCenterWrapper>
+          ) : (
+            <div style={{ position: 'relative', margin: `${token.marginXS}px`, height: '100%' }}>
+              <DiffJsonView
+                hiddenTooltip
+                readOnly={props.contextMenuDisabled}
+                diffJson={{
+                  left: diffMsg?.baseMsg || '',
+                  right: diffMsg?.testMsg || '',
+                }}
+                diffPath={logEntity}
+                {...props}
+                height={`calc(${props.height} - 8px)`}
+              />
+            </div>
+          )}
+        </Allotment.Pane>
+      </Allotment>
+    </EmptyWrapper>
   );
 };
 

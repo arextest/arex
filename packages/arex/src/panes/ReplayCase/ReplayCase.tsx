@@ -13,7 +13,7 @@ import {
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { EMAIL_KEY } from '@/constant';
@@ -60,11 +60,14 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   const [fullLinkInfoMerged, setFullLinkInfoMerged] = useImmer<InfoItem[]>([]);
 
   const handleClickRecord = (record: ReplayCaseType) => {
-    setSelectedRecord(selectedRecord?.recordId === record.recordId ? undefined : record);
-    getQueryFullLinkInfo({
-      recordId: record.recordId,
-      planItemId: props.data.planItemId,
-    });
+    const selected = selectedRecord?.recordId === record.recordId ? undefined : record;
+    setSelectedRecord(selected);
+    if (selected) {
+      getQueryFullLinkInfo({
+        recordId: record.recordId,
+        planItemId: props.data.planItemId,
+      });
+    }
   };
 
   function handleClickSaveCase(record: ReplayCaseType) {
@@ -104,7 +107,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     },
   });
 
-  const { run: handleIgnoreKey } = useRequest(
+  const { run: insertIgnoreNode } = useRequest(
     (path: string[], global?: boolean) => {
       const dependencyParams: DependencyParams = selectedDependency?.isEntry
         ? ({} as DependencyParams)
@@ -142,6 +145,13 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     setSelectedDependency(data);
     setCompareConfigOpen(true);
   }
+
+  const handleIgnoreKey = useCallback((path: string[]) => insertIgnoreNode(path), []);
+  const handleGlobalIgnoreKey = useCallback((path: string[]) => insertIgnoreNode(path, true), []);
+  const handleSortKey = useCallback((path: string[]) => {
+    setTargetNodePath(path);
+    setCompareConfigOpen(true);
+  }, []);
 
   return (
     <>
@@ -192,12 +202,9 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             onChange={(id, record) => {
               setSelectedDependency(record);
             }}
-            onIgnoreKey={(path) => handleIgnoreKey(path)}
-            onGlobalIgnoreKey={(path) => handleIgnoreKey(path, true)}
-            onSortKey={(path) => {
-              setTargetNodePath(path);
-              setCompareConfigOpen(true);
-            }}
+            onIgnoreKey={handleIgnoreKey}
+            onGlobalIgnoreKey={handleGlobalIgnoreKey}
+            onSortKey={handleSortKey}
             requestDiffMsg={ScheduleService.queryDiffMsgById}
             requestQueryLogEntity={ScheduleService.queryLogEntity}
           />
