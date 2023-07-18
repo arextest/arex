@@ -50,9 +50,9 @@ const ActiveKey = 'sort';
 export type NodesSortProps = {
   appId?: string;
   operationId?: string;
-  dependencyId?: string;
-  categoryName?: string; // 用于为不存在 dependencyId 时的依赖配置
-  operationName?: string; // 用于为不存在 dependencyId 时的依赖配置
+  dependency?: DependencyParams;
+  operationType?: string;
+  operationName?: string;
   sortArrayPath?: string[];
   syncing?: boolean;
   readOnly?: boolean;
@@ -99,15 +99,15 @@ const NodesSort: FC<NodesSortProps> = (props) => {
       ComparisonService.querySortNode({
         appId: props.appId as string,
         operationId: props.operationId,
-        dependencyId: props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependencyId : undefined,
+        ...(props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependency : {}),
       }),
     {
       ready: !!(
         props.appId &&
         ((props.configType === CONFIG_TYPE.INTERFACE && props.operationId) || // INTERFACE ready
-          (props.configType === CONFIG_TYPE.DEPENDENCY && props.dependencyId))
+          (props.configType === CONFIG_TYPE.DEPENDENCY && props.dependency))
       ),
-      refreshDeps: [props.configType, props.operationId, props.dependencyId],
+      refreshDeps: [props.configType, props.operationId, props.dependency],
       onSuccess(res, [listPath]) {
         // 新增 SortNode 时设置 activeSortNode, 防止继续新增
         if (listPath) {
@@ -165,9 +165,9 @@ const NodesSort: FC<NodesSortProps> = (props) => {
       updateSortNode({ id: activeSortNode.id, ...params });
     } else if (props.appId && props.operationId) {
       const dependencyParams: DependencyParams = {
-        dependencyId: props.dependencyId,
-        categoryName: props?.categoryName,
+        operationType: props?.operationType,
         operationName: props?.operationName,
+        ...props.dependency,
       };
 
       insertSortNode({

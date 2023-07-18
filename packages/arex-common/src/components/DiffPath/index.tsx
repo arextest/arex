@@ -70,7 +70,7 @@ const DiffPath: FC<DiffPathProps> = (props) => {
             ),
             extra: itemsExtraRender?.(data),
             children: (
-              <DiffPathViewer {...restProps} defaultActiveFirst id={data.id} height='400px' />
+              <DiffPathViewer {...restProps} defaultActiveFirst data={data} height='400px' />
             ),
           }))}
           css={css`

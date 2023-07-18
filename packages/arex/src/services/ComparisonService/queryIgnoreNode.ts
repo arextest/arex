@@ -5,7 +5,8 @@ import { request } from '@/utils';
 export interface QueryNodeReq<T extends OperationType> {
   appId: string;
   operationId?: OperationId<T>;
-  dependencyId?: OperationId<T>;
+  operationType?: string;
+  operationName?: string;
 }
 
 export async function queryIgnoreNode(params: QueryNodeReq<'Global'>) {

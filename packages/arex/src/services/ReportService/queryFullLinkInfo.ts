@@ -8,10 +8,10 @@ export type QueryFullLinkInfoReq = {
 export type InfoItem = {
   id: string;
   code: number;
-  categoryName: string;
-  instanceId: string | null;
-  foundInSystem: true;
-  dependencyId: string | null;
+  categoryName: string; // 等效于 operationType，后端字段暂时未修改
+  operationType: string; // 接口中暂不存在该字段
+  instanceId: string;
+  dependencyId: string;
   operationId: string;
   operationName: string;
   isEntry?: boolean;

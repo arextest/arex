@@ -44,9 +44,7 @@ type CheckedNodesData = {
 export type NodesIgnoreProps = {
   appId: string;
   operationId?: string;
-  dependencyId?: string;
-  categoryName?: string; // 用于为不存在 dependencyId 时的依赖配置
-  operationName?: string; // 用于为不存在 dependencyId 时的依赖配置
+  dependency?: DependencyParams;
   readOnly?: boolean;
   syncing?: boolean;
   loadingContract?: boolean;
@@ -89,16 +87,16 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
       ComparisonService.queryIgnoreNode({
         appId: props.appId,
         operationId: props.configType === CONFIG_TYPE.GLOBAL ? undefined : props.operationId,
-        dependencyId: props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependencyId : undefined,
+        ...(props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependency : {}),
       }),
     {
       ready: !!(
         props.appId &&
         (props.configType === CONFIG_TYPE.GLOBAL || // GLOBAL ready
           (props.configType === CONFIG_TYPE.INTERFACE && props.operationId) || // INTERFACE ready
-          (props.configType === CONFIG_TYPE.DEPENDENCY && props.dependencyId))
+          (props.configType === CONFIG_TYPE.DEPENDENCY && props.dependency))
       ),
-      refreshDeps: [props.operationId, props.dependencyId, props.configType],
+      refreshDeps: [props.operationId, props.dependency, props.configType],
       onSuccess: convertIgnoreNode,
     },
   );
@@ -210,7 +208,6 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
 
     const params: IgnoreNodeBase = {
       operationId: undefined,
-      dependencyId: undefined,
       appId: props.appId,
       exclusions: ignoredKey.split('/').filter(Boolean),
     };
@@ -263,12 +260,6 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
       else add.push(path);
     });
 
-    const dependencyParams: DependencyParams = {
-      dependencyId: props.dependencyId,
-      categoryName: props?.categoryName,
-      operationName: props?.operationName,
-    };
-
     // 增量更新
     add.length &&
       batchInsertIgnoreNode(
@@ -277,7 +268,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
           operationId: props.operationId,
           exclusions: path.split('/').filter(Boolean),
           ...(props.configType === CONFIG_TYPE.DEPENDENCY
-            ? dependencyParams
+            ? props.dependency
             : ({} as DependencyParams)),
         })),
       );

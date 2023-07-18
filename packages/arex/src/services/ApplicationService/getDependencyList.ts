@@ -1,9 +1,9 @@
 import { request } from '@/utils';
 
 export type DependencyData = {
-  dependencyId: string;
-  dependencyName: string;
-  dependencyType: string;
+  // dependencyId: string; // dependencyId 概念移除
+  operationType: string;
+  operationName: string;
   contract: string | null;
 };
 

@@ -23,7 +23,7 @@ export type SyncContractProps = {
 
 const SyncContract: FC<SyncContractProps> = (props) => {
   const { value: _value, syncing = false, onSync, onSave, ...restProps } = props;
-  const { t } = useTranslation('common');
+  const { t } = useTranslation('components');
   const { message } = App.useApp();
   const { theme } = useUserProfile();
 
@@ -91,14 +91,14 @@ const SyncContract: FC<SyncContractProps> = (props) => {
           },
         }}
       >
-        <SyncOutlined spin={syncing} /> {t('appSetting.sync', { ns: 'components' })}
+        <SyncOutlined spin={syncing} /> {t('appSetting.sync')}
       </Dropdown.Button>
       <PaneDrawer
         open={open}
         width={'50%'}
         title={
           <SpaceBetweenWrapper>
-            <Typography.Text>{t('raw')}</Typography.Text>
+            <Typography.Text>{t('appSetting.contract')}</Typography.Text>
             <SmallTextButton
               type='primary'
               title={'save'}

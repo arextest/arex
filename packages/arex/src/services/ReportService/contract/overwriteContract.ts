@@ -2,10 +2,10 @@ import { request } from '@/utils';
 
 export interface OverwriteContractReq {
   appId?: string;
-  operationId?: string; //queryEntryPoint
-  operationName?: string; //queryEntryPoint
-  operationType?: string; //queryEntryPoint
-  contractId?: string; //queryDependency
+  operationId?: string; //overwriteEntryPoint
+  //overwriteDependency
+  operationName?: string;
+  operationType?: string;
   operationResponse: string;
 }
 

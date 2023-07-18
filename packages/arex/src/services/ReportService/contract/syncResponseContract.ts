@@ -9,8 +9,8 @@ export interface SyncResponseContractReq {
 
 export type DependencyInfo = {
   dependencyId: string;
-  dependencyName: string;
-  dependencyType: string;
+  operationName: string;
+  operationType: string;
 };
 
 export type DependencyData = DependencyInfo & { contract: Contract };

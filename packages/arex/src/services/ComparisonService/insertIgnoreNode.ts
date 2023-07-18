@@ -5,19 +5,13 @@ import { OperationId } from '../ApplicationService';
 export interface IgnoreNodeBase {
   appId?: string;
   operationId: OperationId<'Global'>;
-  // 为 dependency 添加忽略项的两种方式
-  // 1. 当 dependencyId 存在时传 dependencyId
-  dependencyId: OperationId<'Global'>;
-  // 2. 当 dependencyId 不存在时，传 categoryName 和 operationName
-  categoryName?: string;
+  // 为 dependency 添加忽略项
+  operationType?: string;
   operationName?: string;
   exclusions: string[];
 }
 
-export type DependencyParams = Pick<
-  IgnoreNodeBase,
-  'dependencyId' | 'categoryName' | 'operationName'
->;
+export type DependencyParams = Pick<IgnoreNodeBase, 'operationType' | 'operationName'> | false;
 
 export interface InterfaceIgnoreNode extends IgnoreNodeBase {
   compareConfigType: number | null;

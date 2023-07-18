@@ -247,7 +247,8 @@
     "QPSTips": "Allowable value range 1 - 20",
     "emptyQPS": "Please input your max QPS",
     "sync": "Sync",
-    "emptyContractTip": "No contract, please try to synchronize the contract"
+    "emptyContractTip": "No contract, please try to synchronize the contract",
+    "contract": "Contract"
   },
   "env": {
     "searchEnvironment": "Search Environment",

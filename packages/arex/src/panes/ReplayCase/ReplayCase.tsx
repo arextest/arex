@@ -13,7 +13,7 @@ import {
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { EMAIL_KEY } from '@/constant';
@@ -111,12 +111,10 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     (path: string[], global?: boolean) => {
       const dependencyParams: DependencyParams = selectedDependency?.isEntry
         ? ({} as DependencyParams)
-        : { dependencyId: selectedDependency?.dependencyId };
-      // 当 dependencyId 不存在时，需要传入 categoryName 和 operationName 作为依赖唯一标识
-      if (!selectedDependency?.isEntry && !selectedDependency?.dependencyId) {
-        dependencyParams.categoryName = selectedDependency?.categoryName;
-        dependencyParams.operationName = selectedDependency?.operationName;
-      }
+        : {
+            operationType: selectedDependency?.categoryName || selectedDependency?.operationType,
+            operationName: selectedDependency?.operationName,
+          };
 
       return ComparisonService.insertIgnoreNode({
         operationId: global ? undefined : props.data.operationId,
@@ -177,19 +175,18 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         panel={
           <DiffPath
             // contextMenuDisabled
-            appId={props.data.appId}
             operationId={props.data.operationId}
             extra={
               <TooltipButton
                 icon={<SettingOutlined />}
-                title={'compareConfig'}
+                title={t('appSetting.compareConfig')}
                 onClick={() => handleClickCompareConfigSetting()}
               />
             }
             itemsExtraRender={(data) => (
               <TooltipButton
                 icon={<SettingOutlined />}
-                title={'compareConfig'}
+                title={t('appSetting.compareConfig')}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleClickCompareConfigSetting(data);
@@ -199,9 +196,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             )}
             loading={loadingFullLinkInfo}
             data={fullLinkInfoMerged}
-            onChange={(id, record) => {
-              setSelectedDependency(record);
-            }}
+            onChange={setSelectedDependency}
             onIgnoreKey={handleIgnoreKey}
             onGlobalIgnoreKey={handleGlobalIgnoreKey}
             onSortKey={handleSortKey}
@@ -228,9 +223,17 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         <CompareConfig
           appId={props.data.appId}
           operationId={props.data.operationId || false}
-          dependencyId={selectedDependency ? selectedDependency.dependencyId || false : undefined}
-          categoryName={selectedDependency?.categoryName}
-          operationName={selectedDependency?.operationName}
+          dependency={
+            selectedDependency
+              ? selectedDependency.isEntry
+                ? false
+                : {
+                    operationName: selectedDependency.operationName,
+                    operationType:
+                      selectedDependency.categoryName || selectedDependency.operationType,
+                  }
+              : undefined
+          }
           sortArrayPath={targetNodePath}
           onSortDrawerClose={() => setTargetNodePath(undefined)}
         />

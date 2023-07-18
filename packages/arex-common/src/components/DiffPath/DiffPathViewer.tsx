@@ -45,14 +45,13 @@ export type CompareResultDetail = {
   testMsg: string;
 };
 export interface DiffPathViewerProps extends DiffJsonViewProps {
-  id: string;
   contextMenuDisabled?: boolean;
   operationId: string;
   loading?: boolean;
-  data?: CompareResultDetail;
+  data: InfoItem;
   height?: string;
   defaultActiveFirst?: boolean;
-  onChange?: (id: string, record?: InfoItem, data?: CompareResultDetail) => void;
+  onChange?: (record?: InfoItem, data?: CompareResultDetail) => void;
   requestDiffMsg: (params: any, record?: InfoItem) => Promise<CompareResultDetail>;
   requestQueryLogEntity: (params: {
     compareResultId: string;
@@ -64,14 +63,12 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const { data: diffMsg, loading: loadingDiffMsg } = useRequest(
-    () => props.requestDiffMsg({ id: props.id }),
-    {
-      onSuccess: (data, params) => {
-        props.onChange?.(props.id);
-      },
+  const { data: diffMsg, loading: loadingDiffMsg } = useRequest(props.requestDiffMsg, {
+    defaultParams: [{ id: props.data.id }],
+    onSuccess: (data) => {
+      props.onChange?.(props.data);
     },
-  );
+  });
 
   const {
     data: logEntity = [],
@@ -85,7 +82,7 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
       }),
     {
       manual: true,
-      ready: !!diffMsg && props.id === diffMsg.id,
+      ready: !!diffMsg && props.data.id === diffMsg.id,
     },
   );
 

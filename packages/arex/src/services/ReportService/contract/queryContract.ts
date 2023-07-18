@@ -1,10 +1,11 @@
 import { request } from '@/utils';
 
 export interface QueryContractReq {
-  // 只需要传一个
   appId: string;
-  contractId?: string; //queryDependency
   operationId?: string; //queryEntryPoint
+  //queryDependency
+  operationType?: string;
+  operationName?: string;
 }
 
 export type Contract = string | null;

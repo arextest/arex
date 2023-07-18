@@ -8,6 +8,7 @@ import { Segmented } from '@/components';
 import NodesIgnore from '@/panes/AppSetting/CompareConfig/NodesIgnore';
 import NodesSort from '@/panes/AppSetting/CompareConfig/NodesSort';
 import { ApplicationService, ReportService } from '@/services';
+import { DependencyParams } from '@/services/ComparisonService';
 
 import SyncContract from './SyncContract';
 
@@ -21,9 +22,7 @@ export enum CONFIG_TYPE {
 export type CompareConfigProps = {
   appId: string; // 限定应用，用于展示特定应用下所有接口的对比配置
   operationId?: string | false; // 限定接口，用于展示特定接口的对比配置, false 时不展示 operationType
-  dependencyId?: string | false; // 限定依赖，用于展示特定依赖的对比配置, false 时不展示 dependencyType
-  categoryName?: string; // 用于为不存在 dependencyId 时的依赖配置
-  operationName?: string; // 用于为不存在 dependencyId 时的依赖配置
+  dependency?: DependencyParams; // 限定依赖，用于展示特定依赖的对比配置, undefined 时展示所有 dependency 选项, false 时不展示 dependency 选项
   readOnly?: boolean; // 只读模式，用于展示接口的对比配置
   sortArrayPath?: string[]; // 指定数组节点排序配置的数组节点路径
   onIgnoreDrawerClose?: () => void;
@@ -51,7 +50,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
       });
     }
 
-    if (props.dependencyId !== false) {
+    if (props.dependency !== false) {
       options.push({
         label: 'Dependency',
         value: CONFIG_TYPE.DEPENDENCY,
@@ -59,23 +58,25 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
     }
 
     return options;
-  }, [props.operationId, props.dependencyId]);
+  }, [props.operationId, props.dependency]);
   const [configType, setConfigType] = useState<CONFIG_TYPE>(CONFIG_TYPE.GLOBAL);
-  // 当组件初始化时，根据 props.operationId 和 props.dependencyId 设置 configType
-  useEffect(() => {
-    if (props.dependencyId) {
-      setConfigType(CONFIG_TYPE.DEPENDENCY);
-    } else if (props.operationId) {
-      setConfigType(CONFIG_TYPE.INTERFACE);
-    }
-  }, [props.operationId, props.dependencyId]);
 
   const [activeOperationId, setActiveOperationId] = useState<string | undefined>(
     props.operationId || undefined,
   );
-  const [activeDependencyId, setActiveDependencyId] = useState<string | undefined>(
-    props.dependencyId || undefined,
+  const [activeDependency, setActiveDependency] = useState<DependencyParams | undefined>(
+    props.dependency,
   );
+
+  // 当组件初始化时，根据 props.operationId 和 props.dependencyId 设置 configType
+  useEffect(() => {
+    if (props.dependency) {
+      setConfigType(CONFIG_TYPE.DEPENDENCY);
+      setActiveDependency(props.dependency);
+    } else if (props.operationId) {
+      setConfigType(CONFIG_TYPE.INTERFACE);
+    }
+  }, [props.operationId, props.dependency]);
 
   const [rawContract, setRawContract] = useState<string>();
 
@@ -110,11 +111,16 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
       refreshDeps: [activeOperationId],
       onSuccess(res) {
         const dependencyList = res.dependencyList;
-        setActiveDependencyId(dependencyList?.[0]?.dependencyId);
+        !props.dependency &&
+          dependencyList.length &&
+          setActiveDependency({
+            operationType: dependencyList?.[0]?.operationType,
+            operationName: dependencyList?.[0]?.operationName,
+          });
         setDependencyOptions(
           dependencyList.map((dependency) => ({
-            label: dependency.dependencyType + '-' + dependency.dependencyName,
-            value: dependency.dependencyId,
+            label: dependency.operationType + '-' + dependency.operationName,
+            value: dependency.operationType + '-' + dependency.operationName,
           })),
         );
       },
@@ -149,8 +155,8 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         if (data?.dependencyList) {
           setDependencyOptions(
             data.dependencyList.map((dependency) => ({
-              label: dependency.dependencyType + '-' + dependency.dependencyName,
-              value: dependency.dependencyId,
+              label: dependency.operationType + '-' + dependency.operationName,
+              value: dependency.operationType + '-' + dependency.operationName,
             })),
           );
         }
@@ -170,8 +176,8 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
     () =>
       ReportService.queryContract({
         appId: props.appId,
-        operationId: configType === CONFIG_TYPE.INTERFACE ? activeOperationId : undefined,
-        contractId: configType === CONFIG_TYPE.DEPENDENCY ? activeDependencyId : undefined,
+        operationId: activeOperationId,
+        ...(configType === CONFIG_TYPE.DEPENDENCY ? activeDependency : {}),
       }),
     {
       ready: !!props.appId && !syncing,
@@ -192,6 +198,14 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
     else return {};
   }, [contract]);
 
+  const dependencyValue = useMemo(
+    () =>
+      activeDependency && (activeDependency.operationType || activeDependency.operationName)
+        ? activeDependency.operationType + '-' + activeDependency.operationName //TODO null
+        : undefined,
+    [activeDependency],
+  );
+
   const handleSaveContract = (value?: string) => {
     let params = {
       appId: props.appId,
@@ -199,14 +213,13 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
     };
     if (configType === CONFIG_TYPE.INTERFACE) {
       params = Object.assign(params, {
-        operationType: operationData?.operationType,
-        operationName: operationData?.operationName,
         operationId: activeOperationId,
       });
     }
     if (configType === CONFIG_TYPE.DEPENDENCY) {
       params = Object.assign(params, {
-        contractId: activeDependencyId,
+        operationType: operationData?.operationType,
+        operationName: operationData?.operationName,
       });
     }
 
@@ -264,15 +277,21 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
               placeholder='choose external dependency'
               popupMatchSelectWidth={false}
               // START 指定 operationId 时，Select 只读
-              showSearch={!props.dependencyId}
-              bordered={!props.dependencyId}
-              showArrow={!props.dependencyId}
-              open={props.dependencyId ? false : undefined}
+              showSearch={!props.dependency}
+              bordered={!props.dependency}
+              showArrow={!props.dependency}
+              open={props.dependency ? false : undefined}
               // END 指定 operationId 时，Select 只读
               loading={loadingDependency}
               options={dependencyOptions}
-              value={activeDependencyId}
-              onChange={setActiveDependencyId}
+              value={dependencyValue}
+              onChange={(value) => {
+                const [operationType, operationName] = value.split('-');
+                setActiveDependency({
+                  operationType,
+                  operationName,
+                });
+              }}
               style={{ width: '160px' }}
             />
           </div>
@@ -295,9 +314,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         key='nodes-ignore'
         appId={props.appId}
         operationId={activeOperationId}
-        dependencyId={activeDependencyId}
-        categoryName={props?.categoryName}
-        operationName={props?.operationName}
+        dependency={activeDependency}
         readOnly={props.readOnly}
         syncing={syncing}
         loadingContract={loadingContract}
@@ -313,9 +330,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           key='nodes-sort'
           appId={props.appId}
           operationId={activeOperationId}
-          dependencyId={activeDependencyId}
-          categoryName={props?.categoryName}
-          operationName={props?.operationName}
+          dependency={activeDependency}
           readOnly={props.readOnly}
           syncing={syncing}
           sortArrayPath={props.sortArrayPath}

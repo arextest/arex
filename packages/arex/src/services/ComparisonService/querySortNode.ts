@@ -10,11 +10,8 @@ export type SortNodePathKey = {
 export interface SortNodeBase extends SortNodePathKey {
   appId?: string;
   operationId?: OperationId<'Interface'>;
-  // 为 dependency 添加忽略项的两种方式
-  // 1. 当 dependencyId 存在时传 dependencyId
-  dependencyId: OperationId<'Global'>;
-  // 2. 当 dependencyId 不存在时，传 categoryName 和 operationName
-  categoryName?: string;
+  // 为 dependency 添加忽略项
+  operationType?: string;
   operationName?: string;
   // collection attr
   fsInterfaceId?: string;

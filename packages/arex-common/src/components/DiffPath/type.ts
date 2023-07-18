@@ -1,12 +1,13 @@
 export type InfoItem = {
   id: string;
   code: number;
-  categoryName: string;
-  operationName: string;
-  instanceId: string | null;
-  foundInSystem: true;
+  categoryName: string; // 等效于 operationType，后端字段暂时未修改
+  operationType: string; // 接口中暂不存在该字段
+  instanceId: string;
+  dependencyId: string;
   operationId: string;
-  dependencyId: string | null;
+  operationName: string;
+  isEntry?: boolean;
 };
 
 export interface NodePath {
