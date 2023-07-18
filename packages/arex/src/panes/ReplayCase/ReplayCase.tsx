@@ -109,12 +109,13 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
 
   const { run: insertIgnoreNode } = useRequest(
     (path: string[], global?: boolean) => {
-      const dependencyParams: DependencyParams = selectedDependency?.isEntry
-        ? ({} as DependencyParams)
-        : {
-            operationType: selectedDependency?.categoryName || selectedDependency?.operationType,
-            operationName: selectedDependency?.operationName,
-          };
+      const dependencyParams: DependencyParams =
+        global || selectedDependency?.isEntry
+          ? ({} as DependencyParams)
+          : {
+              operationType: selectedDependency?.categoryName || selectedDependency?.operationType,
+              operationName: selectedDependency?.operationName,
+            };
 
       return ComparisonService.insertIgnoreNode({
         operationId: global ? undefined : props.data.operationId,
