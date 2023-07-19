@@ -1,10 +1,29 @@
 import { create } from 'zustand';
 
 import { CollectionNodeType } from '@/constant';
-import { treeToMap } from '@/helpers/collection/util';
 import { CollectionType, queryWorkspaceById } from '@/services/FileSystemService';
 
 import useWorkspaces from './useWorkspaces';
+
+export function treeToMap(
+  tree?: CollectionType | null,
+  map: CollectionFlatMapType = new Map<string, CollectionFlatType>(),
+  pid?: string,
+) {
+  if (tree) {
+    const { children, ...rest } = tree;
+    map.set(tree.infoId, {
+      pid,
+      ...rest,
+    });
+    if (children) {
+      tree.children.forEach((child) => {
+        treeToMap(child, map, tree.infoId);
+      });
+    }
+  }
+  return map;
+}
 
 export type CollectionFlatType = Omit<CollectionType, 'children'> & { pid?: string };
 export type CollectionFlatMapType = Map<string, CollectionFlatType>;

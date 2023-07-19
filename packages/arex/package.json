@@ -4,15 +4,17 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "test": "vitest",
     "do-dev": "vite",
     "do-build": "node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build"
   },
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
-    "@arextest/arex-core": "workspace:^",
     "@arextest/arex-common": "workspace:^",
+    "@arextest/arex-core": "workspace:^",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@formkit/auto-animate": "^0.7.0",
     "@monaco-editor/react": "^4.5.1",
     "@sentry/react": "^7.56.0",
     "ahooks": "^3.7.5",
@@ -25,7 +27,6 @@
     "buffer": "^6.0.3",
     "chart.js": "^4.2.1",
     "dayjs": "^1.11.7",
-    "@formkit/auto-animate": "^0.7.0",
     "immer": "^9.0.19",
     "lodash": "^4.17.21",
     "monaco-editor": "^0.39.0",
@@ -56,6 +57,7 @@
     "typescript": "^5.0.2",
     "unplugin-icons": "^0.16.3",
     "vite": "^4.2.0",
-    "vite-plugin-static-copy": "^0.14.0"
+    "vite-plugin-static-copy": "^0.14.0",
+    "vitest": "^0.33.0"
   }
 }
