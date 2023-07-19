@@ -270,6 +270,7 @@ const NodesSort: FC<NodesSortProps> = (props) => {
     props.onClose?.();
     setTreeEditMode(TreeEditModeEnum.ArrayTree);
     treeCarouselRef.current?.goTo(0);
+    setSortArray(undefined);
     setActiveSortNode(undefined);
     setOpenSortModal(false);
   };

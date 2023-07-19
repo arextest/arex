@@ -2,7 +2,7 @@ import { css, EmptyWrapper, useTranslation } from '@arextest/arex-core';
 import { Card, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 
 type SortTreeProps = Omit<TreeProps, 'treeData'> & {
   treeData?: any[];
@@ -43,7 +43,7 @@ const SortTree: FC<SortTreeProps> = (props) => {
       <EmptyWrapper
         loading={false}
         description={t('appSetting.emptyContractTip')}
-        empty={!Object.keys(props.treeData || {}).length}
+        empty={!getNodes(props.treeData, '').length}
       >
         <Tree
           {...props}

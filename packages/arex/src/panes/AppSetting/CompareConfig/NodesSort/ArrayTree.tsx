@@ -61,7 +61,7 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
       <EmptyWrapper
         loading={props.loading}
         description={t('appSetting.emptyContractTip')}
-        empty={!Object.keys(props.treeData || {}).length}
+        empty={!nodesData?.length}
       >
         <Tree
           showIcon
