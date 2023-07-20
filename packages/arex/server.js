@@ -12,7 +12,7 @@ const app = express();
 app.use(
   '/report',
   createProxyMiddleware({
-    target: process.env.SERVICE_REPORT_URL,
+    target: process.env.SERVICE_REPORT_URL||'http://10.5.153.1:8090',
     changeOrigin: true,
     pathRewrite: { '/report': '/api' },
   }),
@@ -21,7 +21,7 @@ app.use(
 app.use(
   '/schedule',
   createProxyMiddleware({
-    target: process.env.SERVICE_SCHEDULE_URL,
+    target: process.env.SERVICE_SCHEDULE_URL ||'http://10.5.153.1:8092',
     changeOrigin: true,
     pathRewrite: { '/schedule': '/api' },
   }),
@@ -30,7 +30,7 @@ app.use(
 app.use(
   '/storage',
   createProxyMiddleware({
-    target: process.env.SERVICE_STORAGE_URL,
+    target: process.env.SERVICE_STORAGE_URL||'http://10.5.153.1:8093',
     changeOrigin: true,
     pathRewrite: { '/storage': '/api' },
   }),
@@ -44,7 +44,6 @@ app.get('/vi/health', (req, res) => {
 app.get('/env', (req, res) => {
   res.send({
     SERVICE_REPORT_URL: process.env.SERVICE_REPORT_URL,
-    SERVICE_CONFIG_URL: process.env.SERVICE_CONFIG_URL,
     SERVICE_SCHEDULE_URL: process.env.SERVICE_SCHEDULE_URL,
     SERVICE_STORAGE_URL: process.env.SERVICE_STORAGE_URL,
   });
