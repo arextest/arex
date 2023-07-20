@@ -47,6 +47,21 @@ exports[`convert sort tree > complex object 1`] = `
 ]
 `;
 
+exports[`convert sort tree > lossless json string 1`] = `
+[
+  {
+    "key": "name/",
+    "title": "name",
+    "value": "Helen",
+  },
+  {
+    "key": "age/",
+    "title": "age",
+    "value": "20.00000000",
+  },
+]
+`;
+
 exports[`convert sort tree > simple object 1`] = `
 [
   {

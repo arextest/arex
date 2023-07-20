@@ -1,3 +1,4 @@
+import { tryParseJsonString } from '@arextest/arex-core/src/utils/json';
 import { describe, expect, test } from 'vitest';
 
 import { getNodes } from './utils';
@@ -19,5 +20,10 @@ describe('convert sort tree', () => {
       },
     };
     expect(getNodes(objectData)).toMatchSnapshot();
+  });
+
+  test('lossless json string', () => {
+    const jsonString = '{"name":"Helen","age":20.00000000}';
+    expect(getNodes(tryParseJsonString(jsonString) as object)).toMatchSnapshot();
   });
 });
