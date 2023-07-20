@@ -2,6 +2,7 @@ import { tryParseJsonString } from '@arextest/arex-core/src/utils/json';
 import { describe, expect, test } from 'vitest';
 
 import { getNodes } from './utils';
+
 describe('convert sort tree', () => {
   test('simple object', () => {
     const objectData = { name: 'Helen', age: 20 };
