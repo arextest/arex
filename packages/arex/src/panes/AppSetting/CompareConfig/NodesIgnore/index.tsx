@@ -32,7 +32,8 @@ import { ComparisonService } from '@/services';
 import { OperationId } from '@/services/ApplicationService';
 import { DependencyParams, IgnoreNodeBase, QueryIgnoreNode } from '@/services/ComparisonService';
 
-import IgnoreTree, { getNodes } from './IgnoreTree';
+import IgnoreTree from './IgnoreTree';
+import { getNodes } from './utils';
 
 const ActiveKey = 'sort';
 
