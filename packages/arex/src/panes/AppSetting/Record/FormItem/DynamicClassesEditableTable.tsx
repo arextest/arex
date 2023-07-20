@@ -183,6 +183,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
       ? insert({ ...record, appId: props.appId, configType: 0 })
       : update({
           id: record.id,
+          appId: props.appId,
           fullClassName: record.fullClassName,
           methodName: record.methodName,
           parameterTypes: record.parameterTypes,

@@ -2,6 +2,7 @@ import { request } from '@/utils';
 
 export type UpdateSettingReqInsert = {
   id: string;
+  appId: string;
   fullClassName: string;
   methodName?: string;
   parameterTypes?: string | null;
