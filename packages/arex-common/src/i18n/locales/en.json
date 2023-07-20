@@ -1,4 +1,11 @@
 {
+  "diffPath": {
+    "ignoreNode": "Ignore Node",
+    "sceneCount": "Scene Count",
+    "viewFailedOnly": "View Failed Only",
+    "pointOfDifference": "Point of difference",
+    "addIgnoreSuccess": "Ignore node successfully"
+  },
   "replayLogs": {
     "levelFilterPlaceholder": "Please select a log level",
     "typeFilterPlaceholder": "Please select a log type"

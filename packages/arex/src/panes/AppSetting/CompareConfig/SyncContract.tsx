@@ -7,18 +7,23 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { Editor, EditorProps } from '@monaco-editor/react';
-import { App, Dropdown, Typography } from 'antd';
+import { App, ButtonProps, Dropdown, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 
 import { useUserProfile } from '@/store';
 
-export type ResponseRawProps = {
+export type ButtonsDisabled = { leftButton?: boolean; rightButton?: boolean };
+export type SyncContractProps = {
+  syncing?: boolean;
+  buttonsDisabled?: ButtonsDisabled | boolean;
+  onSync?: React.MouseEventHandler<HTMLElement>;
+  onEdit?: () => void;
   onSave?: (value?: string) => void;
 } & EditorProps;
 
-const SyncResponse: FC<ResponseRawProps> = (props) => {
-  const { value: _value, onSave, ...restProps } = props;
-  const { t } = useTranslation('common');
+const SyncContract: FC<SyncContractProps> = (props) => {
+  const { value: _value, syncing = false, onSync, onSave, ...restProps } = props;
+  const { t } = useTranslation('components');
   const { message } = App.useApp();
   const { theme } = useUserProfile();
 
@@ -29,7 +34,9 @@ const SyncResponse: FC<ResponseRawProps> = (props) => {
     setValue(_value);
   }, [_value, open]);
 
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleSave = () => {
     let prettier = '';
@@ -50,33 +57,48 @@ const SyncResponse: FC<ResponseRawProps> = (props) => {
   return (
     <>
       <Dropdown.Button
-        size='small'
-        type='text'
         placement='bottom'
-        onClick={() => {
-          console.log('handle sync response');
-        }}
+        disabled={
+          (props.buttonsDisabled as ButtonsDisabled)?.rightButton ||
+          props.buttonsDisabled === true ||
+          syncing
+        }
+        onClick={onSync}
+        buttonsRender={([leftButton, rightButton]) => [
+          React.cloneElement(
+            leftButton as React.DetailedReactHTMLElement<ButtonProps, HTMLElement>,
+            {
+              disabled:
+                (props.buttonsDisabled as ButtonsDisabled)?.leftButton ||
+                props.buttonsDisabled === true,
+            },
+          ),
+          rightButton,
+        ]}
         menu={{
           items: [
             {
               key: 'edit',
-              label: 'Edit Response',
+              label: 'Edit Contract',
               icon: <EditOutlined />,
             },
           ],
           onClick: ({ key }) => {
-            key === 'edit' && setOpen(true);
+            if (key === 'edit') {
+              props.onEdit?.();
+              setOpen(true);
+            }
           },
         }}
       >
-        <SyncOutlined /> SyncResponse
+        <SyncOutlined spin={syncing} /> {t('appSetting.sync')}
       </Dropdown.Button>
-
       <PaneDrawer
         open={open}
+        width={'50%'}
         title={
           <SpaceBetweenWrapper>
-            <Typography.Text>{t('raw')}</Typography.Text>
+            <Typography.Text>{t('appSetting.contract')}</Typography.Text>
             <SmallTextButton
               type='primary'
               title={'save'}
@@ -94,11 +116,10 @@ const SyncResponse: FC<ResponseRawProps> = (props) => {
           onChange={setValue}
           theme={theme === Theme.dark ? 'vs-dark' : 'light'}
           language={'json'}
-          height={'400px'}
         />
       </PaneDrawer>
     </>
   );
 };
 
-export default SyncResponse;
+export default SyncContract;

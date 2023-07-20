@@ -1,4 +1,4 @@
-import { useTranslation } from '@arextest/arex-core';
+import { EmptyWrapper, useTranslation } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { Badge, Card, Tree, Typography } from 'antd';
 import { TreeProps } from 'antd/es';
@@ -9,8 +9,9 @@ import { useColorPrimary } from '@/hooks';
 import { SortNode } from '@/services/ComparisonService';
 
 type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
+  loading?: boolean;
   sortNodeList?: SortNode[];
-  treeData: object;
+  treeData?: object;
   onEditResponse?: () => void;
 };
 
@@ -23,44 +24,60 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
     return (
       entries
         .map(([key, value]) => {
+          const losslessValue = value.isLosslessNumber ? value.value : value;
+
           const path = basePath + key + '/';
-          return value && typeof value === 'object'
+          return losslessValue && typeof losslessValue === 'object'
             ? {
                 title: key,
                 key: path,
-                children: getNodes(Array.isArray(value) ? value[0] || {} : value, path),
-                disabled: !Array.isArray(value),
+                children: getNodes(
+                  Array.isArray(losslessValue) ? losslessValue[0] || {} : losslessValue,
+                  path,
+                ),
+                disabled: !Array.isArray(losslessValue),
                 icon: props.sortNodeList?.find((node) => node.path === path)?.pathKeyList
                   ?.length && <Badge color={color.name} />, // 已配置过的节点使用圆点进行提示
               }
-            : { title: key, key: path, value, disabled: !Array.isArray(value) };
+            : {
+                title: key,
+                key: path,
+                value: losslessValue,
+                disabled: !Array.isArray(losslessValue),
+              };
         })
         // 过滤非数组子节点
         .filter((item) => item.children || Array.isArray(item.value))
     );
   }
 
-  const nodesData = useMemo(() => getNodes(props.treeData, ''), [props.treeData]);
+  const nodesData = useMemo(() => getNodes(props.treeData || {}, ''), [props.treeData]);
 
   return (
     <Card
       size='small'
       title={<Typography.Text ellipsis>{t('appSetting.chooseOneNode')}</Typography.Text>}
     >
-      <Tree
-        showIcon
-        defaultExpandAll
-        {...props}
-        selectedKeys={[]}
-        treeData={nodesData}
-        css={css`
-          max-height: calc(100vh - 300px);
-          overflow-y: auto;
-          .ant-tree-icon__customize {
-            float: right;
-          }
-        `}
-      />
+      <EmptyWrapper
+        loading={props.loading}
+        description={t('appSetting.emptyContractTip')}
+        empty={!nodesData?.length}
+      >
+        <Tree
+          showIcon
+          defaultExpandAll
+          {...props}
+          selectedKeys={[]}
+          treeData={nodesData}
+          css={css`
+            max-height: calc(100vh - 300px);
+            overflow-y: auto;
+            .ant-tree-icon__customize {
+              float: right;
+            }
+          `}
+        />
+      </EmptyWrapper>
     </Card>
   );
 };

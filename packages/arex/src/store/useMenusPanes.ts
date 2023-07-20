@@ -100,8 +100,13 @@ export const useMenusPanes = create(
               const menuType = ArexPaneManager.getMenuTypeByType(panes.type);
               menuType && (state.activeMenu = menuType);
 
-              // return if pane already exists
-              if (state.panes.find((i) => i.key === encodePaneKey(panes))) return;
+              // return if pane already exists, update pane
+              const index = state.panes.findIndex((i) => i.key === encodePaneKey(panes));
+              if (index >= 0) {
+                state.panes[index] = Object.assign(state.panes[index], newPane);
+                return;
+              }
+
               if (state.panes.length > MAX_PANES_COUNT) {
                 state.panes.shift();
               }

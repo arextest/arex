@@ -8,7 +8,7 @@
     "do-build": "node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build"
   },
   "dependencies": {
-    "@ant-design/icons": "5.1.4",
+    "@ant-design/icons": "^5.1.4",
     "@arextest/arex-core": "workspace:^",
     "@arextest/arex-common": "workspace:^",
     "@emotion/react": "^11.10.6",
@@ -25,6 +25,7 @@
     "buffer": "^6.0.3",
     "chart.js": "^4.2.1",
     "dayjs": "^1.11.7",
+    "@formkit/auto-animate": "^0.7.0",
     "immer": "^9.0.19",
     "lodash": "^4.17.21",
     "monaco-editor": "^0.39.0",

@@ -42,5 +42,7 @@ export async function queryInterfacesList<T extends OperationType>(params: { id:
       return list;
     }, []),
     'id',
-  ).sort((a, b) => a.operationName.localeCompare(b.operationName));
+  )
+    .filter((operation) => operation.operationName)
+    .sort((a, b) => a.operationName.localeCompare(b.operationName));
 }

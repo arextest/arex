@@ -1,4 +1,11 @@
 {
+  "diffPath": {
+    "ignoreNode": "忽略节点",
+    "sceneCount": "差异数",
+    "viewFailedOnly": "只展示失败",
+    "pointOfDifference": "差异点",
+    "addIgnoreSuccess": "添加忽略成功"
+  },
   "replayLogs": {
     "levelFilterPlaceholder": "请选择日志等级",
     "typeFilterPlaceholder": "请选择日志类型"

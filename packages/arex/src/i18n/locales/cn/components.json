@@ -219,7 +219,7 @@
     "noSortNodes": "List 节点为空",
     "keys": "节点",
     "chooseOneNode": "选择一个数组",
-    "chooseOnekey": "请选择标识节点",
+      "chooseOnekey": "请选择标识节点",
     "arrayTree": "数组节点",
     "sortTree": "关键标识节点",
     "emptyKey": "请输入忽略节点",
@@ -244,7 +244,10 @@
     "deleteConfirmTip": "请输入应用 ID 确认删除",
     "maxQPS": "最大QPS",
     "QPSTips": "有效范围 1 - 20",
-    "emptyQPS": "请输入最大QPS"
+    "emptyQPS": "请输入最大QPS",
+    "sync": "同步",
+    "emptyContractTip": "无报文契约，请尝试同步更新契约",
+    "contract": "契约"
   },
   "env": {
     "searchEnvironment": "搜索环境",

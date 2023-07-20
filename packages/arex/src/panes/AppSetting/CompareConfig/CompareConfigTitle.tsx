@@ -28,7 +28,7 @@ const CompareConfigTitle: FC<CompareConfigTitleProps> = (props) => {
           <TooltipButton
             key='add'
             icon={<PlusOutlined />}
-            title={t('appSetting.addKey')}
+            title={t('appSetting.addKey', { ns: 'components' })}
             onClick={props.onAdd}
           />
         )}

@@ -5,16 +5,21 @@ export type QueryFullLinkInfoReq = {
   planItemId: string;
 };
 
-export type infoItem = {
+export type InfoItem = {
   id: string;
   code: number;
-  categoryName: string;
+  categoryName: string; // 等效于 operationType，后端字段暂时未修改
+  operationType: string; // 接口中暂不存在该字段
+  instanceId: string;
+  dependencyId: string;
+  operationId: string;
   operationName: string;
+  isEntry?: boolean;
 };
 
 export type QueryFullLinkInfoRes = {
-  entrance: infoItem | null;
-  infoItemList: infoItem[] | null;
+  entrance: InfoItem | null;
+  infoItemList: InfoItem[] | null;
 };
 
 export async function queryFullLinkInfo(params: QueryFullLinkInfoReq) {

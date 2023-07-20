@@ -10,8 +10,34 @@ import DiffJsonTooltip from './DiffJsonTooltip';
 import { genAllDiffByType, LogEntity } from './helper';
 import VanillaJSONEditor from './VanillaJSONEditor';
 
+/**
+ *  过滤 path[] 中的的数组 index 类型元素
+ * @param path
+ * @param jsonString
+ */
+function validateJsonPath(path: string[], jsonString: string) {
+  try {
+    const json = JSON.parse(jsonString);
+    const { pathList } = path.reduce<{ json: any; pathList: string[] }>(
+      (jsonPathData, path) => {
+        if (Array.isArray(jsonPathData.json) && Number.isInteger(Number(path))) {
+          jsonPathData.json = jsonPathData.json[Number(path)];
+        } else {
+          jsonPathData.json = jsonPathData.json[path];
+          jsonPathData.pathList.push(path);
+        }
+        return jsonPathData;
+      },
+      { json, pathList: [] },
+    );
+    return pathList;
+  } catch (error) {
+    return false;
+  }
+}
+
 export type TargetEditor = 'left' | 'right';
-export type PathHandler = (path: string[], targetEditor: TargetEditor) => void;
+export type PathHandler = (path: string[], jsonString: string, targetEditor: TargetEditor) => void;
 export type DiffJsonViewProps = {
   readOnly?: boolean;
   height?: string | number;
@@ -125,9 +151,18 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             mainMenuBar={false}
             onClassName={onClassNameLeft}
             allDiffByType={allLeftDiffByType}
-            onIgnoreKey={(path) => onIgnoreKey?.(path, 'left')}
-            onGlobalIgnoreKey={(path) => onGlobalIgnoreKey?.(path, 'left')}
-            onSortKey={(path) => onSortKey?.(path, 'left')}
+            onIgnoreKey={(path) => {
+              const validatedPath = validateJsonPath(path, diffJson?.left);
+              validatedPath && onIgnoreKey?.(validatedPath, diffJson?.left, 'left');
+            }}
+            onGlobalIgnoreKey={(path) => {
+              const validatedPath = validateJsonPath(path, diffJson?.left);
+              validatedPath && onGlobalIgnoreKey?.(validatedPath, diffJson?.left, 'left');
+            }}
+            onSortKey={(path) => {
+              const validatedPath = validateJsonPath(path, diffJson?.left);
+              validatedPath && onSortKey?.(validatedPath, diffJson?.left, 'left');
+            }}
           />
         </div>
 
@@ -148,9 +183,18 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             mainMenuBar={false}
             onClassName={onClassNameRight}
             allDiffByType={allRightDiffByType}
-            onIgnoreKey={(path) => onIgnoreKey?.(path, 'right')}
-            onGlobalIgnoreKey={(path) => onGlobalIgnoreKey?.(path, 'right')}
-            onSortKey={(path) => onSortKey?.(path, 'right')}
+            onIgnoreKey={(path) => {
+              const validatedPath = validateJsonPath(path, diffJson?.left);
+              validatedPath && onIgnoreKey?.(validatedPath, diffJson?.right, 'right');
+            }}
+            onGlobalIgnoreKey={(path) => {
+              const validatedPath = validateJsonPath(path, diffJson?.left);
+              validatedPath && onGlobalIgnoreKey?.(validatedPath, diffJson?.right, 'right');
+            }}
+            onSortKey={(path) => {
+              const validatedPath = validateJsonPath(path, diffJson?.left);
+              validatedPath && onSortKey?.(validatedPath, diffJson?.right, 'right');
+            }}
           />
         </div>
       </div>
