@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "vitest",
+    "test:run": "vitest --run",
     "do-dev": "vite",
     "do-build": "node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build"
   },
