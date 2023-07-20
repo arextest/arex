@@ -17,6 +17,7 @@ const CaseDetailTab: FC<CaseDetailTabProps> = (props) => {
         label: <span>{result.operationName}</span>,
         children: (
           <DiffJsonView
+            hiddenTooltip
             height='400px'
             remark={['Request', 'Response']}
             diffJson={{

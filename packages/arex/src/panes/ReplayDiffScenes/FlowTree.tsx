@@ -4,9 +4,9 @@ import { Badge, Space, theme, Typography } from 'antd';
 import React, { FC, useCallback } from 'react';
 import Tree from 'react-d3-tree';
 
-import { infoItem } from '@/services/ReportService';
+import { InfoItem } from '@/services/ReportService';
 
-export interface FlowTreeItem extends infoItem {
+export interface FlowTreeItem extends InfoItem {
   name: string;
   level: number;
 }

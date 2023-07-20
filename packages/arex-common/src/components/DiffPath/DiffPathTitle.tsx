@@ -1,9 +1,7 @@
-import { StopOutlined } from '@ant-design/icons';
-import { SpaceBetweenWrapper, TooltipButton } from '@arextest/arex-core';
+import { SpaceBetweenWrapper } from '@arextest/arex-core';
 import styled from '@emotion/styled';
 import { Typography } from 'antd';
 import React, { useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { DiffLog } from './type';
 
@@ -11,11 +9,9 @@ const defaultPath = 'root';
 
 interface PathTitleProps {
   diffLog: DiffLog;
-  onIgnore?: (diffLog: DiffLog) => void;
 }
 const PathTitle = styled((props: PathTitleProps) => {
-  const { onIgnore, diffLog, ...restProps } = props;
-  const { t } = useTranslation();
+  const { diffLog, ...restProps } = props;
 
   const pathTitle = useCallback((diffLog: DiffLog) => {
     const path = diffLog.nodePath;
@@ -33,15 +29,6 @@ const PathTitle = styled((props: PathTitleProps) => {
       <Typography.Text ellipsis style={{ color: 'inherit' }}>
         {pathTitle(diffLog)}
       </Typography.Text>
-      <TooltipButton
-        size='small'
-        color='primary'
-        placement='right'
-        icon={<StopOutlined />}
-        title={t('replay.ignoreNode')}
-        className='menu-item-stop-outlined'
-        onClick={() => onIgnore?.(diffLog)}
-      />
     </SpaceBetweenWrapper>
   );
 })`

@@ -5,7 +5,7 @@ import { Card, Collapse, Drawer, Space, Typography } from 'antd';
 import React, { ReactNode, useMemo, useRef, useState } from 'react';
 
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
-import { infoItem, PlanItemStatistics, SubScene } from '@/services/ReportService';
+import { InfoItem, PlanItemStatistics, SubScene } from '@/services/ReportService';
 
 import FlowTree, { FlowTreeData } from './FlowTree';
 import SubScenesMenu, { SubSceneMenuProps } from './SubScenesMenu';
@@ -38,7 +38,7 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
   const size = useSize(wrapperRef);
 
   const [modalOpen, setModalOpen] = useState(0); // 0-close 1-open-diffMsg 2-open-diffMsgAll
-  const [modalData, setModalData] = useState<infoItem[]>([]);
+  const [modalData, setModalData] = useState<InfoItem[]>([]);
   const [subSceneList, setSubSceneList] = useState<SubScene[]>([]);
   const [modalTitle, setModalTitle] = useState<ReactNode[]>();
 
@@ -60,9 +60,9 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
     manual: true,
   });
 
-  const fullLinkInfoMerged = useMemo<infoItem[]>(() => {
+  const fullLinkInfoMerged = useMemo<InfoItem[]>(() => {
     const { entrance, infoItemList } = fullLinkInfo || {};
-    return [entrance, ...(infoItemList || [])].filter(Boolean) as infoItem[];
+    return [entrance, ...(infoItemList || [])].filter(Boolean) as InfoItem[];
   }, [fullLinkInfo]);
 
   const treeData = useMemo<FlowTreeData | undefined>(

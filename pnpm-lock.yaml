@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -60,7 +64,7 @@ importers:
   packages/arex:
     dependencies:
       '@ant-design/icons':
-        specifier: 5.1.4
+        specifier: ^5.1.4
         version: 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@arextest/arex-common':
         specifier: workspace:^
@@ -74,6 +78,9 @@ importers:
       '@emotion/styled':
         specifier: ^11.10.6
         version: 11.11.0(@emotion/react@11.11.1)(@types/react@18.2.9)(react@18.2.0)
+      '@formkit/auto-animate':
+        specifier: ^0.7.0
+        version: 0.7.0
       '@monaco-editor/react':
         specifier: ^4.5.1
         version: 4.5.1(monaco-editor@0.39.0)(react-dom@18.2.0)(react@18.2.0)
@@ -93,8 +100,8 @@ importers:
         specifier: ^4.12.2
         version: 4.12.2(antd@5.6.4)(react-dom@18.2.0)(react@18.2.0)
       arex-request-core:
-        specifier: 0.0.1-beta.49
-        version: 0.0.1-beta.49(@types/react@18.2.9)(@types/sortablejs@1.15.1)
+        specifier: 0.0.1-beta.53
+        version: 0.0.1-beta.53(@types/react@18.2.9)(@types/sortablejs@1.15.1)
       arex-request-runtime:
         specifier: ^1.0.2
         version: 1.0.2
@@ -202,7 +209,7 @@ importers:
   packages/arex-common:
     dependencies:
       '@ant-design/icons':
-        specifier: 5.1.4
+        specifier: ^5.1.4
         version: 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@arextest/arex-core':
         specifier: workspace:^
@@ -275,7 +282,7 @@ importers:
   packages/arex-core:
     dependencies:
       '@ant-design/icons':
-        specifier: 5.1.4
+        specifier: ^5.1.4
         version: 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@arextest/vanilla-jsoneditor':
         specifier: ^0.17.14
@@ -384,7 +391,7 @@ importers:
   packages/arex-lite:
     dependencies:
       '@ant-design/icons':
-        specifier: 5.1.4
+        specifier: ^5.1.4
         version: 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@arextest/arex-common':
         specifier: workspace:^
@@ -1273,6 +1280,10 @@ packages:
 
   /@faker-js/faker@5.5.3:
     resolution: {integrity: sha512-R11tGE6yIFwqpaIqcfkcg7AICXzFg14+5h5v0TfF/9+RMDL6jhzCy/pxHVOfbALGdtVYdt6JdR21tuxEgl34dw==}
+    dev: false
+
+  /@formkit/auto-animate@0.7.0:
+    resolution: {integrity: sha512-RczHUr0AhRPssREoNdRjLfk2b/id9/DFnbIq18QM8L7E4zNV3XH+WO480EZ46BQHDEsv76YPJ0JbG2Y2i3GfXw==}
     dev: false
 
   /@humanwhocodes/config-array@0.9.5:
@@ -2360,8 +2371,8 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /arex-request-core@0.0.1-beta.49(@types/react@18.2.9)(@types/sortablejs@1.15.1):
-    resolution: {integrity: sha512-1RtoyRiOShJmybwqZOf+qgd8fvRozmzOX+JrY/15i9VdmbI1J1hk/SbwxlWoItDu5YJbEzmyaa/cKhTfTbCW/Q==}
+  /arex-request-core@0.0.1-beta.53(@types/react@18.2.9)(@types/sortablejs@1.15.1):
+    resolution: {integrity: sha512-cpCcARCcgfq3qrCuvRhVcWkwfnVZykM5kve1yD+Pa9JZ3tauhe0GkE1tVS5GxQv3Gz3zW4MB1qjFbCz7Gl+wlw==}
     dependencies:
       '@ant-design/icons': 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@emotion/core': 11.0.0

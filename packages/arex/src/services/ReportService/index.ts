@@ -1,3 +1,4 @@
+export * from './contract';
 export * from './deleteReport';
 export * from './label';
 export * from './queryAggCount';

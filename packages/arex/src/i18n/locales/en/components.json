@@ -220,7 +220,7 @@
     "noSortNodes": "No Sort Nodes",
     "keys": "keys",
     "chooseOneNode": "choose one array node",
-    "choosekey": "choose key to sort",
+    "chooseOnekey": "choose key to sort",
     "arrayTree": "ArrayTree",
     "sortTree": "SortTree",
     "emptyKey": "Please enter ignored key",
@@ -245,7 +245,10 @@
     "deleteConfirmTip": "Please enter app Id to confirm delete",
     "maxQPS": "Max QPS",
     "QPSTips": "Allowable value range 1 - 20",
-    "emptyQPS": "Please input your max QPS"
+    "emptyQPS": "Please input your max QPS",
+    "sync": "Sync",
+    "emptyContractTip": "No contract, please try to synchronize the contract",
+    "contract": "Contract"
   },
   "env": {
     "searchEnvironment": "Search Environment",

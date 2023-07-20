@@ -8,7 +8,7 @@ export type PlanItemStatistics = {
   planItemId: string;
   planId: string;
   operationId: string;
-  operationName: string;
+  operationName: string | null;
   serviceName: string;
   appId: string;
   status: number;

@@ -5,8 +5,13 @@ import { OperationId } from '../ApplicationService';
 export interface IgnoreNodeBase {
   appId?: string;
   operationId: OperationId<'Global'>;
+  // 为 dependency 添加忽略项
+  operationType?: string;
+  operationName?: string;
   exclusions: string[];
 }
+
+export type DependencyParams = Pick<IgnoreNodeBase, 'operationType' | 'operationName'> | false;
 
 export interface InterfaceIgnoreNode extends IgnoreNodeBase {
   compareConfigType: number | null;

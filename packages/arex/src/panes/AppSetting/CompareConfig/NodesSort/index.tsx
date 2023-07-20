@@ -1,20 +1,44 @@
-import { CloseOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { CloseOutlined, DeleteOutlined, EditOutlined, SyncOutlined } from '@ant-design/icons';
 import { css, PaneDrawer, SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, ButtonProps, Card, Collapse, Input, InputRef, List, Typography } from 'antd';
+import {
+  App,
+  Button,
+  ButtonProps,
+  Card,
+  Collapse,
+  Input,
+  InputRef,
+  List,
+  Space,
+  Typography,
+} from 'antd';
 import { TreeProps } from 'antd/es';
 import { CarouselRef } from 'antd/lib/carousel';
-import React, { FC, useMemo, useRef, useState } from 'react';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService } from '@/services';
-import { SortNode } from '@/services/ComparisonService';
+import { DependencyParams, SortNode } from '@/services/ComparisonService';
 
 import CompareConfigTitle from '../CompareConfigTitle';
 import ArrayTree from './ArrayTree';
 import SortTree from './SortTree';
 import TreeCarousel from './TreeCarousel';
+
+// 获取待排序操作的数组结构
+function getSortArray(key: string, contract: NodesSortProps['contractParsed']) {
+  let value: any = undefined;
+  key
+    .split('/')
+    .filter(Boolean)
+    .forEach((k, i) => {
+      value = i === 0 ? contract[k] : Array.isArray(value) ? value[0]?.[k] : value[k];
+    });
+
+  return value;
+}
 
 enum TreeEditModeEnum {
   ArrayTree,
@@ -23,15 +47,24 @@ enum TreeEditModeEnum {
 
 const ActiveKey = 'sort';
 
-export type NodeSortProps = {
+export type NodesSortProps = {
   appId?: string;
   operationId?: string;
+  dependency?: DependencyParams;
+  operationType?: string;
+  operationName?: string;
+  sortArrayPath?: string[];
+  syncing?: boolean;
   readOnly?: boolean;
+  loadingContract?: boolean;
   configType: CONFIG_TYPE;
-  responseParsed: { [key: string]: any };
+  contractParsed: { [key: string]: any };
+  onAdd?: () => void;
+  onSync?: () => void;
+  onClose?: () => void;
 };
 
-const NodeSort: FC<NodeSortProps> = (props) => {
+const NodesSort: FC<NodesSortProps> = (props) => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
 
@@ -66,15 +99,16 @@ const NodeSort: FC<NodeSortProps> = (props) => {
       ComparisonService.querySortNode({
         appId: props.appId as string,
         operationId: props.operationId,
+        ...(props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependency : {}),
       }),
     {
-      ready: !!props.operationId && !!props.appId,
-      refreshDeps: [props.operationId],
-      onBefore() {
-        setSortNodeList([]);
-      },
+      ready: !!(
+        props.appId &&
+        ((props.configType === CONFIG_TYPE.INTERFACE && props.operationId) || // INTERFACE ready
+          (props.configType === CONFIG_TYPE.DEPENDENCY && props.dependency))
+      ),
+      refreshDeps: [props.configType, props.operationId, props.dependency],
       onSuccess(res, [listPath]) {
-        console.log(res);
         // 新增 SortNode 时设置 activeSortNode, 防止继续新增
         if (listPath) {
           const pathKey = listPath.join('_');
@@ -87,6 +121,16 @@ const NodeSort: FC<NodeSortProps> = (props) => {
       },
     },
   );
+
+  // 切换配置类型时清空数据
+  useEffect(() => {
+    setSortNodeList([]);
+  }, [props.configType]);
+
+  // 外部指定 sortArrayPath 时，直接打开第二层 TreeCarousel
+  useEffect(() => {
+    props.sortArrayPath && handleEditCollapseItem(props.sortArrayPath?.join('/') || '' + '/');
+  }, [props.sortArrayPath, props.contractParsed]);
 
   const SaveSortNodeOptions = {
     manual: true,
@@ -120,10 +164,19 @@ const NodeSort: FC<NodeSortProps> = (props) => {
     if (activeSortNode) {
       updateSortNode({ id: activeSortNode.id, ...params });
     } else if (props.appId && props.operationId) {
+      const dependencyParams: DependencyParams = {
+        operationType: props?.operationType,
+        operationName: props?.operationName,
+        ...props.dependency,
+      };
+
       insertSortNode({
-        ...params,
         appId: props.appId,
         operationId: props.operationId,
+        ...params,
+        ...(props.configType === CONFIG_TYPE.DEPENDENCY
+          ? dependencyParams
+          : ({} as DependencyParams)),
       });
     }
   };
@@ -137,9 +190,9 @@ const NodeSort: FC<NodeSortProps> = (props) => {
   );
 
   /**
-   * 删除 IgnoreNode
+   * 删除 SortNode
    */
-  const { run: deleteIgnoreNode } = useRequest(ComparisonService.deleteSortNode, {
+  const { run: deleteSortNode } = useRequest(ComparisonService.deleteSortNode, {
     manual: true,
     onSuccess(success) {
       if (success) {
@@ -159,9 +212,11 @@ const NodeSort: FC<NodeSortProps> = (props) => {
 
   const handleAddSortNode: ButtonProps['onClick'] = (e) => {
     activeKey?.[0] === ActiveKey && e.stopPropagation();
-
-    if (Object.keys(props.responseParsed).length) setOpenSortModal(true);
-    else message.info('empty response, please sync response first');
+    props.onAdd?.();
+    setOpenSortModal(true);
+    // TODO empty construct tip
+    // if (Object.keys(props.contractParsed).length) setOpenSortModal(true);
+    // else message.info('empty response, please sync response first');
   };
 
   /**
@@ -176,26 +231,18 @@ const NodeSort: FC<NodeSortProps> = (props) => {
       state.pathKeyList = sortNode?.pathKeyList || [];
     });
 
-    handleSetSortArray(path);
+    try {
+      const sortArray = getSortArray(path, props.contractParsed);
+      setSortArray(sortArray);
+    } catch (error) {
+      console.warn('failed to analytic path');
+    }
 
     setTreeEditMode(TreeEditModeEnum.SortTree);
     setOpenSortModal(true);
     setTreeReady(true);
 
     setTimeout(() => treeCarouselRef.current?.goTo(1)); // 防止初始化时 treeCarouselRef 未绑定
-  };
-
-  // 获取待排序操作的数组结构
-  const handleSetSortArray = (key: string) => {
-    let value: any = undefined;
-    key
-      .split('/')
-      .filter(Boolean)
-      .forEach((k, i) => {
-        value = i === 0 ? props.responseParsed[k] : Array.isArray(value) ? value[0]?.[k] : value[k];
-      });
-
-    setSortArray(value);
   };
 
   const handleSortTreeChecked: TreeProps['onCheck'] = (checkedKeys) => {
@@ -220,13 +267,15 @@ const NodeSort: FC<NodeSortProps> = (props) => {
    * 取消编辑 nodes sort
    */
   const handleCancelEdit = () => {
+    props.onClose?.();
     setTreeEditMode(TreeEditModeEnum.ArrayTree);
     treeCarouselRef.current?.goTo(0);
+    setSortArray(undefined);
     setActiveSortNode(undefined);
     setOpenSortModal(false);
   };
 
-  return props.configType === CONFIG_TYPE.GLOBAL ? null : (
+  return (
     <>
       <Collapse
         size='small'
@@ -287,7 +336,7 @@ const NodeSort: FC<NodeSortProps> = (props) => {
                                 type='text'
                                 size='small'
                                 icon={<DeleteOutlined />}
-                                onClick={() => deleteIgnoreNode({ id: sortNode.id })}
+                                onClick={() => deleteSortNode({ id: sortNode.id })}
                               />
                             </div>
                           )}
@@ -310,12 +359,23 @@ const NodeSort: FC<NodeSortProps> = (props) => {
       />
 
       <PaneDrawer
+        width='60%'
         title={
           <SpaceBetweenWrapper>
-            <Typography.Title level={5} style={{ marginBottom: 0 }}>
-              {t('appSetting.nodesSort')}
-            </Typography.Title>
+            <Space size='middle'>
+              <Typography.Title level={5} style={{ marginBottom: 0 }}>
+                {t('appSetting.nodesSort')}
+              </Typography.Title>
 
+              <Button
+                size='small'
+                disabled={props.syncing}
+                icon={<SyncOutlined spin={props.syncing} />}
+                onClick={props.onSync}
+              >
+                {t('appSetting.sync', { ns: 'components' })}
+              </Button>
+            </Space>
             {treeEditMode === TreeEditModeEnum.SortTree && (
               <Button size='small' type='primary' onClick={handleSaveSort}>
                 {t('save', { ns: 'common' })}
@@ -323,13 +383,13 @@ const NodeSort: FC<NodeSortProps> = (props) => {
             )}
           </SpaceBetweenWrapper>
         }
-        bodyStyle={{ padding: '8px 0' }}
         open={openSortModal}
         onClose={handleCancelEdit}
       >
         <TreeCarousel ref={treeCarouselRef} beforeChange={(from, to) => setTreeEditMode(to)}>
           <ArrayTree
-            treeData={props.responseParsed}
+            loading={props.loadingContract}
+            treeData={props.contractParsed}
             sortNodeList={sortNodeList}
             onSelect={(selectedKeys) =>
               handleEditCollapseItem(
@@ -354,4 +414,4 @@ const NodeSort: FC<NodeSortProps> = (props) => {
   );
 };
 
-export default NodeSort;
+export default NodesSort;

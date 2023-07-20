@@ -12,6 +12,7 @@ const CollapseTable: FC<CollapseTableProps> = (props) => {
   const { active, table, panel, ...restProps } = props;
   return (
     <Collapse
+      destroyInactivePanel
       className='collapse-table'
       activeKey={active ? 'report' : 'none'}
       items={[

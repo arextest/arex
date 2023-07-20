@@ -1,4 +1,4 @@
-import { CheckOutlined, CloseOutlined, DeleteOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, DeleteOutlined, SyncOutlined } from '@ant-design/icons';
 import {
   css,
   PaneDrawer,
@@ -17,11 +17,12 @@ import {
   Input,
   InputRef,
   List,
+  Space,
   Typography,
 } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
-import React, { FC, useMemo, useRef, useState } from 'react';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { EditAreaPlaceholder } from '@/components';
@@ -29,9 +30,10 @@ import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
 import CompareConfigTitle from '@/panes/AppSetting/CompareConfig/CompareConfigTitle';
 import { ComparisonService } from '@/services';
 import { OperationId } from '@/services/ApplicationService';
-import { IgnoreNodeBase, QueryIgnoreNode } from '@/services/ComparisonService';
+import { DependencyParams, IgnoreNodeBase, QueryIgnoreNode } from '@/services/ComparisonService';
 
 import IgnoreTree, { getNodes } from './IgnoreTree';
+
 const ActiveKey = 'sort';
 
 type CheckedNodesData = {
@@ -42,9 +44,15 @@ type CheckedNodesData = {
 export type NodesIgnoreProps = {
   appId: string;
   operationId?: string;
+  dependency?: DependencyParams;
   readOnly?: boolean;
+  syncing?: boolean;
+  loadingContract?: boolean;
   configType: CONFIG_TYPE;
-  responseParsed: { [p: string]: any };
+  contractParsed: { [p: string]: any };
+  onAdd?: () => void;
+  onSync?: () => void;
+  onClose?: () => void;
 };
 
 const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
@@ -78,17 +86,24 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
     () =>
       ComparisonService.queryIgnoreNode({
         appId: props.appId,
-        operationId: props.configType === CONFIG_TYPE.GLOBAL ? null : props.operationId,
+        operationId: props.configType === CONFIG_TYPE.GLOBAL ? undefined : props.operationId,
+        ...(props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependency : {}),
       }),
     {
-      ready: !!props.appId,
-      refreshDeps: [props.operationId, props.configType],
-      onBefore() {
-        setIgnoreNodeList([]);
-      },
+      ready: !!(
+        props.appId &&
+        (props.configType === CONFIG_TYPE.GLOBAL || // GLOBAL ready
+          (props.configType === CONFIG_TYPE.INTERFACE && props.operationId) || // INTERFACE ready
+          (props.configType === CONFIG_TYPE.DEPENDENCY && props.dependency))
+      ),
+      refreshDeps: [props.operationId, props.dependency, props.configType],
       onSuccess: convertIgnoreNode,
     },
   );
+
+  useEffect(() => {
+    setIgnoreNodeList([]);
+  }, [props.configType]);
 
   function convertIgnoreNode(data: QueryIgnoreNode[]) {
     setCheckedNodesData((state) => {
@@ -116,9 +131,9 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
 
   const nodePath = useMemo(() => {
     const pathList: string[] = [];
-    getPath(getNodes(props.responseParsed, ''), pathList);
+    getPath(getNodes(props.contractParsed, ''), pathList);
     return pathList.map((value) => ({ value }));
-  }, [props.responseParsed]);
+  }, [props.contractParsed]);
 
   /**
    * 删除 IgnoreNode
@@ -217,13 +232,16 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
 
   const handleIgnoreAdd: ButtonProps['onClick'] = (e) => {
     activeKey?.[0] === ActiveKey && e.stopPropagation();
-    setTimeout(() => editInputRef.current?.focus());
+    props.onAdd?.();
 
     if (props.configType === CONFIG_TYPE.GLOBAL) {
+      setTimeout(() => editInputRef.current?.focus());
       setEditMode(true);
-    } else if (props.configType === CONFIG_TYPE.INTERFACE) {
-      if (Object.keys(props.responseParsed).length) setOpenIgnoreModal(true);
-      else message.info('empty response, please sync response first');
+    } else {
+      setOpenIgnoreModal(true);
+      // TODO empty construct tip
+      // if (Object.keys(props.responseParsed).length) setOpenIgnoreModal(true);
+      // else message.info('empty response, please sync response first');
     }
   };
 
@@ -247,8 +265,11 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
       batchInsertIgnoreNode(
         add.map((path) => ({
           appId: props.appId,
-          operationId, // null 时目标为 Global
+          operationId: props.operationId,
           exclusions: path.split('/').filter(Boolean),
+          ...(props.configType === CONFIG_TYPE.DEPENDENCY
+            ? props.dependency
+            : ({} as DependencyParams)),
         })),
       );
 
@@ -300,6 +321,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
                     )
                   }
                   footer={
+                    props.configType === CONFIG_TYPE.GLOBAL &&
                     editMode && (
                       <List.Item style={{ padding: '0 16px' }}>
                         <SpaceBetweenWrapper width={'100%'}>
@@ -356,30 +378,46 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
         `}
       />
       <PaneDrawer
+        width='60%'
         title={
           <SpaceBetweenWrapper>
-            <Typography.Title level={5} style={{ marginBottom: 0 }}>
-              Nodes Ignore
-            </Typography.Title>
+            <Space size='middle'>
+              <Typography.Title level={5} style={{ marginBottom: 0 }}>
+                Nodes Ignore
+              </Typography.Title>
+
+              <Button
+                size='small'
+                disabled={props.syncing}
+                icon={<SyncOutlined spin={props.syncing} />}
+                onClick={props.onSync}
+              >
+                {t('appSetting.sync', { ns: 'components' })}
+              </Button>
+            </Space>
+
             <Button size='small' type='primary' onClick={handleIgnoreSave}>
               {t('save', { ns: 'common' })}
             </Button>
           </SpaceBetweenWrapper>
         }
-        bodyStyle={{ padding: '8px 0' }}
         open={openIgnoreModal}
         onClose={() => {
+          props.onClose?.();
           setOpenIgnoreModal(false);
           convertIgnoreNode(ignoreNodeList);
         }}
       >
         <EditAreaPlaceholder
-          ready={!!props.responseParsed}
+          ready={!!props.contractParsed}
           dashedBorder
           title={t('appSetting.editArea')}
         >
           <IgnoreTree
-            treeData={props.responseParsed}
+            // TODO auto expand failed
+            defaultExpandAll
+            loading={props.loadingContract}
+            treeData={props.contractParsed}
             selectedKeys={checkedNodesData.exclusionsList}
             onSelect={handleIgnoreTreeSelect}
           />

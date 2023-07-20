@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-common",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-common.umd.cjs",
   "module": "dist/arex-common.js",
@@ -17,7 +17,7 @@
   ],
   "dependencies": {
     "@arextest/arex-core": "workspace:^",
-    "@ant-design/icons": "5.1.4",
+    "@ant-design/icons": "^5.1.4",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "ahooks": "^3.7.5",
