@@ -23,7 +23,7 @@ import { DependencyParams } from '@/services/ComparisonService';
 import { InfoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
 import { MessageMap } from '@/services/ScheduleService';
 
-import Case from './Case';
+import Case, { CaseProps } from './Case';
 import SaveCase, { SaveCaseRef } from './SaveCase';
 
 const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
@@ -68,6 +68,10 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         planItemId: props.data.planItemId,
       });
     }
+  };
+
+  const handleCaseTableChange: CaseProps['onChange'] = () => {
+    setSelectedRecord(undefined);
   };
 
   function handleClickSaveCase(record: ReplayCaseType) {
@@ -169,6 +173,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             planItemId={props.data.planItemId}
             filter={props.data.filter}
             onClick={handleClickRecord}
+            onChange={handleCaseTableChange}
             onClickSaveCase={handleClickSaveCase}
             onClickRerunCase={handleClickRerunCase}
           />

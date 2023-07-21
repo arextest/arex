@@ -1,6 +1,7 @@
 import { HighlightRowTable, SmallTextButton, useTranslation } from '@arextest/arex-core';
-import { useRequest } from 'ahooks';
-import { Tag } from 'antd';
+import { usePagination } from 'ahooks';
+import { PaginationResult } from 'ahooks/es/usePagination/types';
+import { TableProps, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, Key, useMemo } from 'react';
 
@@ -9,10 +10,11 @@ import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
 import { ReplayCaseType } from '@/services/ReportService';
 
-type CaseProps = {
+export type CaseProps = {
   planItemId: string;
   filter?: Key;
   onClick?: (record: ReplayCaseType) => void;
+  onChange?: TableProps<ReplayCaseType>['onChange'];
   onClickSaveCase?: (record: ReplayCaseType) => void;
   onClickRerunCase?: (recordId: string) => void;
 };
@@ -83,11 +85,22 @@ const Case: FC<CaseProps> = (props) => {
     },
   ];
 
-  const { data: caseData = [], loading } = useRequest(
-    () => ReportService.queryReplayCase({ planItemId: props.planItemId }),
+  const {
+    data: { list: caseData } = { list: [] },
+    pagination,
+    loading,
+  } = usePagination(
+    (params) =>
+      ReportService.queryReplayCase({
+        pageIndex: params.current,
+        pageSize: params.pageSize,
+        planItemId: props.planItemId,
+        needTotal: true,
+      }),
     {
       ready: !!props.planItemId,
       refreshDeps: [props.planItemId],
+      defaultPageSize: 5,
     },
   );
 
@@ -98,8 +111,9 @@ const Case: FC<CaseProps> = (props) => {
       loading={loading}
       columns={columnsCase}
       dataSource={caseData}
-      pagination={{ pageSize: 5 }}
+      pagination={pagination}
       onRowClick={props.onClick}
+      onChange={props.onChange}
     />
   );
 };
