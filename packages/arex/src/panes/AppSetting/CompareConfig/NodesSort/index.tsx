@@ -26,19 +26,7 @@ import CompareConfigTitle from '../CompareConfigTitle';
 import ArrayTree from './ArrayTree';
 import SortTree from './SortTree';
 import TreeCarousel from './TreeCarousel';
-
-// 获取待排序操作的数组结构
-function getSortArray(key: string, contract: NodesSortProps['contractParsed']) {
-  let value: any = undefined;
-  key
-    .split('/')
-    .filter(Boolean)
-    .forEach((k, i) => {
-      value = i === 0 ? contract[k] : Array.isArray(value) ? value[0]?.[k] : value[k];
-    });
-
-  return value;
-}
+import { getSortArray } from './utils';
 
 enum TreeEditModeEnum {
   ArrayTree,
@@ -214,9 +202,6 @@ const NodesSort: FC<NodesSortProps> = (props) => {
     activeKey?.[0] === ActiveKey && e.stopPropagation();
     props.onAdd?.();
     setOpenSortModal(true);
-    // TODO empty construct tip
-    // if (Object.keys(props.contractParsed).length) setOpenSortModal(true);
-    // else message.info('empty response, please sync response first');
   };
 
   /**
