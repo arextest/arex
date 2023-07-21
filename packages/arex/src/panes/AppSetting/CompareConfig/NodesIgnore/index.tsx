@@ -33,7 +33,7 @@ import { OperationId } from '@/services/ApplicationService';
 import { DependencyParams, IgnoreNodeBase, QueryIgnoreNode } from '@/services/ComparisonService';
 
 import IgnoreTree from './IgnoreTree';
-import { getNodes } from './utils';
+import { getIgnoreNodes } from './utils';
 
 const ActiveKey = 'sort';
 
@@ -132,7 +132,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
 
   const nodePath = useMemo(() => {
     const pathList: string[] = [];
-    getPath(getNodes(props.contractParsed, ''), pathList);
+    getPath(getIgnoreNodes(props.contractParsed, ''), pathList);
     return pathList.map((value) => ({ value }));
   }, [props.contractParsed]);
 

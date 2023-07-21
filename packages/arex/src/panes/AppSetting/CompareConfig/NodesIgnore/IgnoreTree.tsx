@@ -1,9 +1,9 @@
 import { EmptyWrapper, styled, useTranslation } from '@arextest/arex-core';
 import { Card, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 
-import { getNodes } from './utils';
+import { getIgnoreNodes } from './utils';
 
 type IgnoreTreeProps = Omit<TreeProps, 'treeData'> & {
   loading?: boolean;
@@ -18,8 +18,8 @@ const IgnoreTreeWrapper = styled.div`
 
 const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
   const { t } = useTranslation(['components', 'common']);
+  const treeData = useMemo(() => getIgnoreNodes(props.treeData, ''), [props.treeData]);
 
-  // 过滤出 object 类型的节点
   return (
     <IgnoreTreeWrapper>
       <Card size='small' title={t('appSetting.clickToIgnore')}>
@@ -28,7 +28,7 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
           empty={!Object.keys(props.treeData).length}
           description={t('appSetting.emptyContractTip')}
         >
-          <Tree multiple defaultExpandAll {...props} treeData={getNodes(props.treeData, '')} />
+          <Tree multiple defaultExpandAll {...props} treeData={treeData} />
         </EmptyWrapper>
       </Card>
     </IgnoreTreeWrapper>

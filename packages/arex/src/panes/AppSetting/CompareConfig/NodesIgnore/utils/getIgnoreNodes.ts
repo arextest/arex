@@ -1,6 +1,13 @@
 import { DataNode } from 'antd/lib/tree';
 
-export function getNodes(object: object, basePath = ''): DataNode[] {
+import { getArrayValidElement } from '@/panes/AppSetting/CompareConfig/NodesSort/utils';
+
+/**
+ * 获取 object 的节点信息
+ * @param object
+ * @param basePath
+ */
+export function getIgnoreNodes(object: object, basePath = ''): DataNode[] {
   const entries = Object.entries(object);
   return entries.map(([key, value]) => {
     const losslessValue = value.isLosslessNumber ? value.value : value;
@@ -14,8 +21,10 @@ export function getNodes(object: object, basePath = ''): DataNode[] {
       ? {
           title: key,
           key: path,
-          children: getNodes(
-            Array.isArray(losslessValue) ? losslessValue[0] || {} : losslessValue,
+          children: getIgnoreNodes(
+            Array.isArray(losslessValue)
+              ? getArrayValidElement(losslessValue) || {}
+              : losslessValue,
             path,
           ),
         }
