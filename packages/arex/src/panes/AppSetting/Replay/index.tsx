@@ -4,8 +4,9 @@ import { App, Button, Form, InputNumber } from 'antd';
 import React from 'react';
 import { useImmer } from 'use-immer';
 
-import { KeyValueType } from '@/panes/Environment/EditableKeyValueTable';
+import UndertoneWrapper from '@/panes/AppSetting/UndertoneWrapper';
 import { ConfigService } from '@/services';
+import { KeyValueType } from '@/services/FileSystemService';
 
 import { SettingRecordProps } from '../Record';
 import SettingForm from '../SettingForm';
@@ -72,36 +73,40 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
 
   return (
     <SettingForm loading={loading} initialValues={initialValues} onFinish={onFinish}>
-      <Form.Item
-        label={<HelpTooltip title={t('appSetting.QPSTips')}>{t('appSetting.maxQPS')}</HelpTooltip>}
-        name='sendMaxQps'
-        rules={[{ required: true, message: t('appSetting.emptyQPS') as string }]}
-      >
-        <InputNumber min={1} max={20} precision={0} />
-      </Form.Item>
+      <UndertoneWrapper>
+        <Form.Item
+          label={
+            <HelpTooltip title={t('appSetting.QPSTips')}>{t('appSetting.maxQPS')}</HelpTooltip>
+          }
+          name='sendMaxQps'
+          rules={[{ required: true, message: t('appSetting.emptyQPS') as string }]}
+        >
+          <InputNumber min={1} max={20} precision={0} />
+        </Form.Item>
 
-      <Form.Item
-        label={
-          <HelpTooltip title={t('appSetting.caseRangeTooltip')}>
-            {t('appSetting.caseRange')}
-          </HelpTooltip>
-        }
-        name='offsetDays'
-        rules={[{ required: true, message: t('appSetting.emptyCaseRange') as string }]}
-      >
-        <InputNumber min={1} />
-      </Form.Item>
+        <Form.Item
+          label={
+            <HelpTooltip title={t('appSetting.caseRangeTooltip')}>
+              {t('appSetting.caseRange')}
+            </HelpTooltip>
+          }
+          name='offsetDays'
+          rules={[{ required: true, message: t('appSetting.emptyCaseRange') as string }]}
+        >
+          <InputNumber min={1} />
+        </Form.Item>
 
-      <Form.Item
-        label={
-          <HelpTooltip title={t('appSetting.exclusionTooltip')}>
-            {t('appSetting.exclusion')}
-          </HelpTooltip>
-        }
-        name='excludeOperationMap'
-      >
-        <ExcludeOperation appId={appId} />
-      </Form.Item>
+        <Form.Item
+          label={
+            <HelpTooltip title={t('appSetting.exclusionTooltip')}>
+              {t('appSetting.exclusion')}
+            </HelpTooltip>
+          }
+          name='excludeOperationMap'
+        >
+          <ExcludeOperation appId={appId} />
+        </Form.Item>
+      </UndertoneWrapper>
 
       <Form.Item
         wrapperCol={{ offset: 8, span: 16 }}

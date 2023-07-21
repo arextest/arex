@@ -1,9 +1,10 @@
-import { Label, useTranslation } from '@arextest/arex-core';
+import { useTranslation } from '@arextest/arex-core';
 import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { App, Button } from 'antd';
 import React, { FC, useState } from 'react';
 
+import UndertoneWrapper from '@/panes/AppSetting/UndertoneWrapper';
 import { ConfigService } from '@/services';
 import { useUserProfile } from '@/store';
 
@@ -41,15 +42,17 @@ const ImportYaml: FC<ImportYamlProps> = (props) => {
 
   return (
     <>
-      <Editor
-        theme={theme === 'dark' ? 'vs-dark' : 'light'}
-        value={value}
-        language={'yaml'}
-        height={'400px'}
-        onChange={(value) => {
-          setValue(value || '');
-        }}
-      />
+      <UndertoneWrapper>
+        <Editor
+          theme={theme === 'dark' ? 'vs-dark' : 'light'}
+          value={value}
+          language={'yaml'}
+          height={'400px'}
+          onChange={(value) => {
+            setValue(value || '');
+          }}
+        />
+      </UndertoneWrapper>
 
       <Button
         type={'primary'}
