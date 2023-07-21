@@ -20,7 +20,7 @@ export interface QueryReplayCaseRes {
 
 export async function queryReplayCase({
   planItemId,
-  needTotal = false,
+  needTotal = true,
   pageIndex = 1,
   pageSize = 99,
 }: QueryReplayCaseReq) {
@@ -31,5 +31,10 @@ export async function queryReplayCase({
       pageSize,
       planItemId,
     })
-    .then((res) => Promise.resolve(res.body.result));
+    .then((res) =>
+      Promise.resolve({
+        total: res.body.totalCount,
+        list: res.body.result,
+      }),
+    );
 }
