@@ -6,8 +6,6 @@ import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ApplicationDataType } from '@/services/ApplicationService';
 
 import SettingImportYaml from './ImportYaml';
-import SettingNodesIgnore from './NodesIgnore';
-import SettingNodesSort from './NodesSort';
 import SettingOther from './Other';
 import SettingRecord from './Record';
 import SettingReplay from './Replay';
@@ -37,16 +35,6 @@ const AppSetting: ArexPaneFC<ApplicationDataType> = (props) => {
         key: 'compareConfig',
         label: t('appSetting.compareConfig'),
         children: <CompareConfig appId={data.appId} />,
-      },
-      {
-        key: 'nodesIgnore',
-        label: t('appSetting.nodesIgnore'),
-        children: <SettingNodesIgnore appId={data.appId} />,
-      },
-      {
-        key: 'nodesSort',
-        label: t('appSetting.nodesSort'),
-        children: <SettingNodesSort appId={data.appId} />,
       },
       {
         key: 'other',
