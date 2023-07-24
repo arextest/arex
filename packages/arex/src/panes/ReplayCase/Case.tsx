@@ -1,6 +1,5 @@
 import { HighlightRowTable, SmallTextButton, useTranslation } from '@arextest/arex-core';
 import { usePagination } from 'ahooks';
-import { PaginationResult } from 'ahooks/es/usePagination/types';
 import { TableProps, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, Key, useMemo } from 'react';
