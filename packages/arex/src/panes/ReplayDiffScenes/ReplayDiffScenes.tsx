@@ -1,10 +1,21 @@
+import { SettingOutlined } from '@ant-design/icons';
 import { DiffPath } from '@arextest/arex-common';
-import { ArexPaneFC, css, Label, SceneCode } from '@arextest/arex-core';
+import {
+  ArexPaneFC,
+  css,
+  Label,
+  PaneDrawer,
+  SceneCode,
+  TooltipButton,
+  useTranslation,
+} from '@arextest/arex-core';
 import { useRequest, useSize } from 'ahooks';
-import { Card, Collapse, Drawer, Space, Typography } from 'antd';
-import React, { ReactNode, useMemo, useRef, useState } from 'react';
+import { App, Card, Collapse, Space, Typography } from 'antd';
+import React, { ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
+import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
+import { DependencyParams } from '@/services/ComparisonService';
 import { InfoItem, PlanItemStatistics, SubScene } from '@/services/ReportService';
 
 import FlowTree, { FlowTreeData } from './FlowTree';
@@ -33,19 +44,26 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
   const {
     data: { planId, planItemId },
   } = props;
-
+  const { t } = useTranslation(['components']);
   const wrapperRef = useRef(null);
   const size = useSize(wrapperRef);
+  const { message } = App.useApp();
 
   const [modalOpen, setModalOpen] = useState(0); // 0-close 1-open-diffMsg 2-open-diffMsgAll
+  const [compareConfigOpen, setCompareConfigOpen] = useState<boolean>(false);
+
   const [modalData, setModalData] = useState<InfoItem[]>([]);
+  const [targetNodePath, setTargetNodePath] = useState<string[]>();
   const [subSceneList, setSubSceneList] = useState<SubScene[]>([]);
   const [modalTitle, setModalTitle] = useState<ReactNode[]>();
 
+  // false 不存在 DependencyId，不显示 Dependency 配置
+  // undefined 未指定 DependencyId，显示所有 Dependency 配置
+  // string 指定 DependencyId，显示指定 Dependency 配置
+  const [selectedDependency, setSelectedDependency] = useState<InfoItem>();
+
   const { data: sceneInfo = [] } = useRequest(() =>
     ReportService.querySceneInfo({
-      // planId: '6406f9fe78b64d7f552679c9',
-      // planItemId: '6406f9fe78b64d7f552679f7',
       planId,
       planItemId,
     }),
@@ -59,10 +77,11 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
   } = useRequest((recordId) => ReportService.queryFullLinkInfo({ planItemId, recordId }), {
     manual: true,
   });
-
   const fullLinkInfoMerged = useMemo<InfoItem[]>(() => {
     const { entrance, infoItemList } = fullLinkInfo || {};
-    return [entrance, ...(infoItemList || [])].filter(Boolean) as InfoItem[];
+    return ([{ ...entrance, isEntry: true }, ...(infoItemList || [])] as InfoItem[]).filter(
+      (item) => item.id,
+    );
   }, [fullLinkInfo]);
 
   const treeData = useMemo<FlowTreeData | undefined>(
@@ -89,11 +108,47 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
   );
 
   const handleClickAllDiff: SubSceneMenuProps['onClickAllDiff'] = (recordId, title) => {
-    console.log({ fullLinkInfoMerged });
     setModalData(fullLinkInfoMerged);
     setModalTitle(title);
     setModalOpen(2);
   };
+
+  const { run: insertIgnoreNode } = useRequest(
+    (path: string[], global?: boolean) => {
+      const dependencyParams: DependencyParams =
+        global || selectedDependency?.isEntry
+          ? ({} as DependencyParams)
+          : {
+              operationType: selectedDependency?.categoryName || selectedDependency?.operationType,
+              operationName: selectedDependency?.operationName,
+            };
+
+      return ComparisonService.insertIgnoreNode({
+        operationId: global ? undefined : props.data.operationId,
+        appId: props.data.appId,
+        exclusions: path,
+        ...dependencyParams,
+      });
+    },
+    {
+      manual: true,
+      onSuccess(success) {
+        success && message.success(t('message.success', { ns: 'common' }));
+      },
+    },
+  );
+
+  function handleClickCompareConfigSetting(data?: InfoItem) {
+    setSelectedDependency(data);
+    setCompareConfigOpen(true);
+  }
+
+  const handleIgnoreKey = useCallback((path: string[]) => insertIgnoreNode(path), []);
+  const handleGlobalIgnoreKey = useCallback((path: string[]) => insertIgnoreNode(path, true), []);
+  const handleSortKey = useCallback((path: string[]) => {
+    setTargetNodePath(path);
+    setCompareConfigOpen(true);
+  }, []);
 
   const collapseItems = useMemo(
     () =>
@@ -176,14 +231,13 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
             width={size?.width && size.width - 32}
             data={treeData}
             onClick={(data) => {
-              const { id, code, categoryName, operationName } = data;
-              setModalData([{ id, code, categoryName, operationName }]);
+              setModalData([data]);
               setModalOpen(1);
             }}
           />
         )}
 
-        <Drawer
+        <PaneDrawer
           destroyOnClose
           width='80%'
           open={!!modalOpen}
@@ -195,26 +249,72 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
             {/* force destroyOnClose */}
             {modalOpen && (
               <DiffPath
-                mode={modalOpen === 2 ? 'multiple' : 'single'}
-                appId={props.data.appId}
-                operationId={props.data.operationId}
+                // contextMenuDisabled
+                mode={modalOpen === 2 ? 'multiple' : 'single'} // TODO extra render on single mode
                 defaultOnlyFailed={modalOpen === 2}
+                operationId={props.data.operationId}
+                extra={
+                  <TooltipButton
+                    icon={<SettingOutlined />}
+                    title={t('appSetting.compareConfig')}
+                    onClick={() => handleClickCompareConfigSetting()}
+                  />
+                }
+                itemsExtraRender={(data) => (
+                  <TooltipButton
+                    icon={<SettingOutlined />}
+                    title={t('appSetting.compareConfig')}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleClickCompareConfigSetting(data);
+                    }}
+                    style={{ marginRight: '6px' }}
+                  />
+                )}
                 loading={loadingFullLinkInfo}
                 data={modalData}
+                onChange={setSelectedDependency}
+                onIgnoreKey={handleIgnoreKey}
+                onGlobalIgnoreKey={handleGlobalIgnoreKey}
+                onSortKey={handleSortKey}
                 requestDiffMsg={ScheduleService.queryDiffMsgById}
                 requestQueryLogEntity={ScheduleService.queryLogEntity}
-                requestIgnoreNode={(path: string[]) =>
-                  ComparisonService.insertIgnoreNode({
-                    operationId: props.data.operationId,
-                    appId: props.data.appId,
-                    exclusions: path,
-                  })
-                }
               />
             )}
           </Card>
-        </Drawer>
+        </PaneDrawer>
       </Space>
+
+      {/* CompareConfigModal */}
+      <PaneDrawer
+        destroyOnClose
+        width='70%'
+        footer={false}
+        title={`${t('appSetting.compareConfig')} - ${props.data.operationName}`}
+        open={compareConfigOpen}
+        onClose={() => {
+          setCompareConfigOpen(false);
+          setTargetNodePath(undefined);
+        }}
+      >
+        <CompareConfig
+          appId={props.data.appId}
+          operationId={props.data.operationId || false}
+          dependency={
+            selectedDependency
+              ? selectedDependency.isEntry
+                ? false
+                : {
+                    operationName: selectedDependency.operationName,
+                    operationType:
+                      selectedDependency.categoryName || selectedDependency.operationType,
+                  }
+              : undefined
+          }
+          sortArrayPath={targetNodePath}
+          onSortDrawerClose={() => setTargetNodePath(undefined)}
+        />
+      </PaneDrawer>
     </div>
   );
 };
