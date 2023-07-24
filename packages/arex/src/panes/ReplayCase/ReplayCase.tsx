@@ -13,7 +13,7 @@ import {
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { EMAIL_KEY } from '@/constant';
@@ -43,21 +43,19 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
 
   const saveCaseRef = useRef<SaveCaseRef>(null);
 
-  const { loading: loadingFullLinkInfo, run: getQueryFullLinkInfo } = useRequest(
-    ReportService.queryFullLinkInfo,
-    {
-      manual: true,
-      onSuccess(data) {
-        const { entrance, infoItemList } = data || {};
-        setFullLinkInfoMerged(
-          ([{ ...entrance, isEntry: true }, ...(infoItemList || [])] as InfoItem[]).filter(
-            (item) => item.id,
-          ),
-        );
-      },
-    },
-  );
-  const [fullLinkInfoMerged, setFullLinkInfoMerged] = useImmer<InfoItem[]>([]);
+  const {
+    data: fullLinkInfo,
+    loading: loadingFullLinkInfo,
+    run: getQueryFullLinkInfo,
+  } = useRequest(ReportService.queryFullLinkInfo, {
+    manual: true,
+  });
+  const fullLinkInfoMerged = useMemo<InfoItem[]>(() => {
+    const { entrance, infoItemList } = fullLinkInfo || {};
+    return ([{ ...entrance, isEntry: true }, ...(infoItemList || [])] as InfoItem[]).filter(
+      (item) => item.id,
+    );
+  }, [fullLinkInfo]);
 
   const handleClickRecord = (record: ReplayCaseType) => {
     const selected = selectedRecord?.recordId === record.recordId ? undefined : record;

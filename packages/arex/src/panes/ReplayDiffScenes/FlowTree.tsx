@@ -1,7 +1,9 @@
-import { EllipsisTooltip, SceneCodeMap } from '@arextest/arex-core';
+import { FilterOutlined } from '@ant-design/icons';
+import { EllipsisTooltip, SceneCodeMap, TooltipButton, useTranslation } from '@arextest/arex-core';
 import { css } from '@emotion/react';
-import { Badge, Space, theme, Typography } from 'antd';
-import React, { FC, useCallback } from 'react';
+import { Badge, Space, Switch, theme, Typography } from 'antd';
+import { cloneDeep } from 'lodash';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import Tree from 'react-d3-tree';
 
 import { InfoItem } from '@/services/ReportService';
@@ -23,6 +25,17 @@ export interface FlowTreeProps {
 
 const FlowTree: FC<FlowTreeProps> = (props) => {
   const { token } = theme.useToken();
+  const { t } = useTranslation(['components']);
+
+  const [failedOnly, setFailedOnly] = useState<boolean>(true);
+  const treeData = useMemo(() => {
+    const data = cloneDeep(props.data);
+    if (failedOnly && data?.children?.[0].children?.length) {
+      data.children[0].children = data?.children[0].children.filter((item) => item.code);
+    }
+    return data;
+  }, [props.data, failedOnly]);
+
   const renderNodeWithCustomEvents = useCallback(
     ({
       nodeDatum,
@@ -136,8 +149,23 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
         }
       `}
     >
+      <TooltipButton
+        tooltipProps={{ trigger: 'click' }}
+        icon={<FilterOutlined />}
+        title={
+          <Space>
+            {t('replay.viewFailedOnly')}
+            <Switch size='small' checked={failedOnly} onChange={setFailedOnly} />
+          </Space>
+        }
+        style={{
+          float: 'right',
+          margin: '8px',
+          color: failedOnly ? token.colorPrimaryActive : undefined,
+        }}
+      />
       <Tree
-        data={props.data}
+        data={treeData}
         nodeSize={{ x: 240, y: 40 }}
         translate={{ x: 100, y: props.height ? parseInt(props.height.toString()) / 2 : 200 }}
         renderCustomNodeElement={(rd3tProps) =>
