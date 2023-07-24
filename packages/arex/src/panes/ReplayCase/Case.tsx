@@ -1,6 +1,5 @@
 import { HighlightRowTable, SmallTextButton, useTranslation } from '@arextest/arex-core';
 import { usePagination } from 'ahooks';
-import { PaginationResult } from 'ahooks/es/usePagination/types';
 import { TableProps, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, Key, useMemo } from 'react';
@@ -95,6 +94,7 @@ const Case: FC<CaseProps> = (props) => {
         pageIndex: params.current,
         pageSize: params.pageSize,
         planItemId: props.planItemId,
+        diffResultCode: Number(props.filter),
         needTotal: true,
       }),
     {
