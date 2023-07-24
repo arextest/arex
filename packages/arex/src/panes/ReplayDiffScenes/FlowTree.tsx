@@ -28,6 +28,13 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
   const { t } = useTranslation(['components']);
 
   const [failedOnly, setFailedOnly] = useState<boolean>(true);
+  const treeData = useMemo(() => {
+    const data = cloneDeep(props.data);
+    if (failedOnly && data?.children?.[0].children?.length) {
+      data.children[0].children = data?.children[0].children.filter((item) => item.code);
+    }
+    return data;
+  }, [props.data, failedOnly]);
 
   const renderNodeWithCustomEvents = useCallback(
     ({
@@ -147,14 +154,18 @@ const FlowTree: FC<FlowTreeProps> = (props) => {
         icon={<FilterOutlined />}
         title={
           <Space>
-            {t('diffPath.viewFailedOnly')}
+            {t('replay.viewFailedOnly')}
             <Switch size='small' checked={failedOnly} onChange={setFailedOnly} />
           </Space>
         }
-        style={{ color: failedOnly ? token.colorPrimaryActive : undefined }}
+        style={{
+          float: 'right',
+          margin: '8px',
+          color: failedOnly ? token.colorPrimaryActive : undefined,
+        }}
       />
       <Tree
-        data={props.data}
+        data={treeData}
         nodeSize={{ x: 240, y: 40 }}
         translate={{ x: 100, y: props.height ? parseInt(props.height.toString()) / 2 : 200 }}
         renderCustomNodeElement={(rd3tProps) =>
