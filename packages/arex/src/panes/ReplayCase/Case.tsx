@@ -95,6 +95,7 @@ const Case: FC<CaseProps> = (props) => {
         pageIndex: params.current,
         pageSize: params.pageSize,
         planItemId: props.planItemId,
+        diffResultCode: Number(props.filter),
         needTotal: true,
       }),
     {

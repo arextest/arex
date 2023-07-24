@@ -5,6 +5,7 @@ export interface QueryReplayCaseReq {
   pageIndex?: number;
   pageSize?: number;
   planItemId: string;
+  diffResultCode?: number;
 }
 
 export type ReplayCaseType = {
@@ -18,23 +19,11 @@ export interface QueryReplayCaseRes {
   totalCount: number;
 }
 
-export async function queryReplayCase({
-  planItemId,
-  needTotal = true,
-  pageIndex = 1,
-  pageSize = 99,
-}: QueryReplayCaseReq) {
-  return request
-    .post<QueryReplayCaseRes>('/report/report/queryReplayCase', {
-      needTotal,
-      pageIndex,
-      pageSize,
-      planItemId,
-    })
-    .then((res) =>
-      Promise.resolve({
-        total: res.body.totalCount,
-        list: res.body.result,
-      }),
-    );
+export async function queryReplayCase(params: QueryReplayCaseReq) {
+  return request.post<QueryReplayCaseRes>('/report/report/queryReplayCase', params).then((res) =>
+    Promise.resolve({
+      total: res.body.totalCount,
+      list: res.body.result,
+    }),
+  );
 }
