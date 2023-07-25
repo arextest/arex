@@ -17,7 +17,7 @@ import { EnvironmentSelect, HeaderMenu } from '@/components';
 import { EMAIL_KEY, PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
-import { useMenusPanes, useWorkspaces } from '@/store';
+import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 
 export default () => {
   useInit();
@@ -41,7 +41,7 @@ export default () => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
-
+  const { collectionsFlatData, getCollections, getPath } = useCollections();
   const workspacesOptions = useMemo(
     () =>
       workspaces.map((workspace) => ({
@@ -74,14 +74,30 @@ export default () => {
       data,
     });
   };
-
-  const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () =>
-    navPane({
-      type: PanesType.REQUEST,
-      // id: Math.random().toString(36).substring(2),
-      id: 'Untitled',
-      icon: 'Get',
+  const { runAsync: createCollection } = useRequest(
+    () =>
+      FileSystemService.addCollectionItem({
+        id: activeWorkspaceId,
+        userName,
+      }),
+    {
+      manual: true,
+      onSuccess() {
+        // getCollections();
+      },
+    },
+  );
+  const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () => {
+    createCollection().then((res) => {
+      getCollections().then(() => {
+        navPane({
+          type: PanesType.REQUEST,
+          id: res.infoId,
+          icon: 'Get',
+        });
+      });
     });
+  };
 
   const handleAddWorkspace = (workspaceName: string) => {
     createWorkspace({ userName, workspaceName });

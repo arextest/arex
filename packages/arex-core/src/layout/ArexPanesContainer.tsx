@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Dropdown, MenuProps, Tabs, TabsProps, Typography } from 'antd';
+import {Button, Dropdown, MenuProps, Tabs, TabsProps, Typography} from 'antd';
 import React, { createContext, Key, PropsWithChildren, useMemo, useRef, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -207,10 +207,9 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
     <EmptyWrapper
       empty={!orderItems?.length}
       description={
-        'Please select Request'
-        // <Button type='primary' onClick={props.onAdd}>
-        //   New Request
-        // </Button>
+        <Button type='primary' onClick={props.onAdd}>
+          New Request
+        </Button>
       }
     >
       <DndProvider backend={HTML5Backend}>
@@ -225,7 +224,6 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
           type='editable-card'
           tabBarGutter={-1}
           onEdit={handleTabsEdit}
-          hideAdd={true}
           items={orderItems}
           {...restTabsProps}
         />
