@@ -1,4 +1,5 @@
 import Icon, { DownOutlined, PlayCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { IconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import {
   ArexMenuFC,
   CategoryKey,
@@ -295,7 +296,7 @@ const Collection: ArexMenuFC = (props) => {
               />
 
               <TooltipButton
-                icon={<Icon component={IconArchive} />}
+                icon={<Icon component={IconArchive as IconComponentProps['component']} />}
                 title={t('collection.import_export')}
                 onClick={() => {
                   setShowModalImportExport(true);

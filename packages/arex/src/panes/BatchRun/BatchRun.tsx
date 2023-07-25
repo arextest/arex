@@ -1,4 +1,4 @@
-import { EmptyWrapper, RequestMethodIcon } from '@arextest/arex-core';
+import { ArexPaneFC, EmptyWrapper, RequestMethodIcon } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
@@ -10,12 +10,16 @@ import React, { Key, useMemo, useState } from 'react';
 import { sendRequest } from '@/helpers/postman';
 import { FileSystemService } from '@/services';
 import { useCollections, useEnvironments } from '@/store';
+import { decodePaneKey } from '@/store/useMenusPanes';
 
 import disabledNonCaseNode from './utils/disabledNonCaseNode';
 
 const { Text } = Typography;
 
-const BatchRun = () => {
+const BatchRun: ArexPaneFC = (props) => {
+  const { paneKey } = props;
+  const { id } = useMemo(() => decodePaneKey(paneKey), [paneKey]);
+
   const { activeEnvironment } = useEnvironments();
   const { collectionsTreeData, collectionsFlatData } = useCollections();
   const environment = useMemo(
@@ -28,12 +32,13 @@ const BatchRun = () => {
 
   const [checkValue, setCheckValue] = useState<Key[]>([]);
 
-  const keys = useMemo(() => {
-    return checkValue.filter((id) => collectionsFlatData.get(String(id))?.nodeType === 2);
-  }, [collectionsFlatData, checkValue]);
-
   const treeData = useMemo(
-    () => disabledNonCaseNode(cloneDeep(collectionsTreeData)),
+    () =>
+      disabledNonCaseNode(
+        cloneDeep(
+          id && id === 'root' ? collectionsTreeData : collectionsFlatData.get(id)?.children || [], // collection right click folder to batch run
+        ),
+      ),
     [collectionsTreeData],
   );
 
@@ -43,18 +48,18 @@ const BatchRun = () => {
     loading,
   } = useRequest(async () => {
     const cases = await Promise.all(
-      keys.map((key) => FileSystemService.queryRequest({ id: String(key), nodeType: 2 })),
+      checkValue.map((key) => FileSystemService.queryRequest({ id: String(key), nodeType: 2 })),
     );
     const resAll = await Promise.all(
       cases.map((caseItem) => sendRequest(caseItem, environment).then((res) => res.testResult)),
     );
-
-    return keys.map((key, index) => ({
+    return checkValue.map((key, index) => ({
       key,
       testResult: resAll[index],
       req: cases[index],
     }));
   });
+
   return (
     <Allotment
       vertical
