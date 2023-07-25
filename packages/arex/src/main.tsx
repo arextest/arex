@@ -5,7 +5,6 @@ import './style/style.css';
 import 'dayjs/locale/zh-cn';
 import './helpers/adapter';
 import './assets/css/index.css';
-import './sentry';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
