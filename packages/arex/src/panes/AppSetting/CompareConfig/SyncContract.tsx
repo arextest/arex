@@ -6,7 +6,7 @@ import {
   Theme,
   useTranslation,
 } from '@arextest/arex-core';
-import { Editor, EditorProps } from '@monaco-editor/react';
+import { Editor, EditorProps } from '@arextest/monaco-react';
 import { App, ButtonProps, Dropdown, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 

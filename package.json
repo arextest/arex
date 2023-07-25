@@ -14,7 +14,7 @@
     "test": "pnpm -r test",
     "test:run": "pnpm -r test:run",
     "pre-commit": "pnpm run lint && pnpm run test:run",
-    "rm": "rm -rf node_modules packages/arex/node_modules packages/arex-core/node_modules packages/arex-lite/node_modules"
+    "rm": "rm -rf node_modules packages/arex/node_modules packages/arex-core/node_modules packages/arex-lite/node_modules packages/arex-common/node_modules"
   },
   "keywords": [],
   "author": "",
