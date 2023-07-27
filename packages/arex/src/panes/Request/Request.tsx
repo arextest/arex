@@ -6,9 +6,10 @@ import { Http, HttpProps } from 'arex-request-core';
 import React, { useMemo } from 'react';
 
 import { EMAIL_KEY } from '@/constant';
+import { processTreeData } from '@/helpers/collection/util';
 import { sendRequest } from '@/helpers/postman';
 import { FileSystemService, ReportService } from '@/services';
-import { saveRequest } from '@/services/FileSystemService';
+import { moveCollectionItem, saveRequest } from '@/services/FileSystemService';
 import {
   useCollections,
   useEnvironments,
@@ -45,7 +46,7 @@ const Request: ArexPaneFC = () => {
 
   const { activeEnvironment } = useEnvironments();
   const { activeWorkspaceId } = useWorkspaces();
-  const { collectionsFlatData, getCollections, getPath } = useCollections();
+  const { collectionsFlatData, collectionsTreeData, getCollections, getPath } = useCollections();
   const { setPanes } = useMenusPanes();
   const { theme, language } = useUserProfile();
 
@@ -74,6 +75,26 @@ const Request: ArexPaneFC = () => {
         consoles: res.consoles,
       };
     });
+  };
+
+  const { data: _, runAsync: moveCollectionItemRunAsync } = useRequest(
+    (params) => {
+      return moveCollectionItem({
+        fromNodePath: getPath(id).map((p) => p.id),
+        toIndex: 0,
+        toParentPath: getPath(params.toParentPath).map((p) => p.id),
+        id: activeWorkspaceId,
+      });
+    },
+    {
+      onSuccess() {
+        getCollections();
+      },
+      manual: true,
+    },
+  );
+  const handleSaveAs: HttpProps['onSaveAs'] = ({ savePath }) => {
+    return moveCollectionItemRunAsync({ toParentPath: savePath });
   };
 
   const handleSave: HttpProps['onSave'] = (requestParams, response) => {
@@ -197,6 +218,7 @@ const Request: ArexPaneFC = () => {
       >
         {nodeInfo && data && (
           <Http
+            collection={processTreeData(collectionsTreeData.filter((item) => item.nodeType !== 1))}
             height={`calc(100vh - 110px)`}
             theme={theme}
             locale={language}
@@ -206,6 +228,7 @@ const Request: ArexPaneFC = () => {
             breadcrumbItems={nodePath}
             onSave={handleSave}
             onSend={handleSend}
+            onSaveAs={handleSaveAs}
             description={data?.description || ''}
             // @ts-ignore
             tags={data?.tags || []}

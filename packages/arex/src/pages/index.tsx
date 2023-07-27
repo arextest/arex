@@ -14,7 +14,7 @@ import { App, MenuProps } from 'antd';
 import React, { useMemo } from 'react';
 
 import { EnvironmentSelect, HeaderMenu } from '@/components';
-import { EMAIL_KEY, PanesType } from '@/constant';
+import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
@@ -79,6 +79,8 @@ export default () => {
       FileSystemService.addCollectionItem({
         id: activeWorkspaceId,
         userName,
+        nodeName: 'New Request',
+        nodeType: CollectionNodeType.interface,
       }),
     {
       manual: true,

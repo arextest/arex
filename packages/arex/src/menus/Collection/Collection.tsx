@@ -330,7 +330,7 @@ const Collection: ArexMenuFC = (props) => {
           expandedKeys={expandedKeys}
           autoExpandParent={autoExpandParent}
           switcherIcon={<DownOutlined />}
-          treeData={filterTreeData}
+          treeData={filterTreeData.filter((item) => item.nodeType === 3)}
           fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
           onDrop={onDrop}
           onExpand={onExpand}
