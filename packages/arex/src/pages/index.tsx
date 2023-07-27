@@ -90,6 +90,7 @@ export default () => {
           type: PanesType.REQUEST,
           id: res.infoId,
           icon: 'Get',
+          name: 'Untitled',
         });
       },
     },
