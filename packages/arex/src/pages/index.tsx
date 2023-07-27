@@ -85,20 +85,12 @@ export default () => {
     {
       manual: true,
       onSuccess() {
-        // getCollections();
+        getCollections();
       },
     },
   );
   const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () => {
-    createCollection().then((res) => {
-      getCollections().then(() => {
-        navPane({
-          type: PanesType.REQUEST,
-          id: res.infoId,
-          icon: 'Get',
-        });
-      });
-    });
+    createCollection();
   };
 
   const handleAddWorkspace = (workspaceName: string) => {
