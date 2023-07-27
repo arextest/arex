@@ -269,7 +269,7 @@ const Request: ArexPaneFC = () => {
         )}
         <SaveAs
           show={saveAsShow}
-          onHide={() => {
+          onClose={() => {
             setSaveAsShow(false);
           }}
           onOk={handleSaveAs}

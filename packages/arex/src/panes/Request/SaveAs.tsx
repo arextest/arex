@@ -7,18 +7,18 @@ const { Text } = Typography;
 
 interface SaveAsProps {
   show: boolean;
-  onHide: () => void;
+  onClose: () => void;
   onOk: ({ savePath }: { savePath: string }) => void;
   collection: any[];
 }
-const SaveAs: FC<SaveAsProps> = ({ show, onHide, onOk, collection }) => {
+const SaveAs: FC<SaveAsProps> = ({ show, onClose, onOk, collection }) => {
   const { getPath } = useCollections();
   const [form] = Form.useForm();
   const [value, setValue] = useState<string>();
   return (
     <Modal
       open={show}
-      onCancel={onHide}
+      onCancel={onClose}
       title={'SAVE REQUEST'}
       onOk={() => {
         onOk(form.getFieldsValue());
