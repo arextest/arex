@@ -93,7 +93,12 @@ const Collection: ArexMenuFC = (props) => {
     },
   );
 
-  const filterTreeData = useMemo(() => collectionsTreeData, [collectionsTreeData, searchValue]);
+  const filterTreeData = useMemo(
+    // TODO searchValue 裁剪树形数据
+    // filter nodeType === 3 是为了隐藏第一层级只显示文件夹类型（由于新增请求时会新增一个临时的request到树形目录的第一层）
+    () => collectionsTreeData.filter((item) => item.nodeType === 3),
+    [collectionsTreeData, searchValue],
+  );
 
   const dataList: { key: string; title: string; labelIds: string | null }[] = useMemo(
     () =>

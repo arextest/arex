@@ -103,8 +103,8 @@ importers:
         specifier: ^4.12.2
         version: 4.12.2(antd@5.6.4)(react-dom@18.2.0)(react@18.2.0)
       arex-request-core:
-        specifier: 0.0.1-beta.55
-        version: 0.0.1-beta.55(@types/react@18.2.0)(@types/sortablejs@1.15.1)
+        specifier: 0.0.1-beta.57
+        version: 0.0.1-beta.57(@types/react@18.2.0)(@types/sortablejs@1.15.1)
       arex-request-runtime:
         specifier: ^1.0.2
         version: 1.0.2
@@ -2032,6 +2032,7 @@ packages:
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
     requiresBuild: true
     dev: true
     optional: true
@@ -2041,6 +2042,7 @@ packages:
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
     requiresBuild: true
     dev: true
     optional: true
@@ -2050,6 +2052,7 @@ packages:
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
     requiresBuild: true
     dev: true
     optional: true
@@ -2059,6 +2062,7 @@ packages:
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
     requiresBuild: true
     dev: true
     optional: true
@@ -2632,8 +2636,8 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /arex-request-core@0.0.1-beta.55(@types/react@18.2.0)(@types/sortablejs@1.15.1):
-    resolution: {integrity: sha512-pQVGcmp8gnkMp7gU86oxRjIB/LojalB0MgxWu566k0Zte9BxJvvXwBiiw2za7IZPeSiZTzItDnuBdNMBKi/zWQ==}
+  /arex-request-core@0.0.1-beta.57(@types/react@18.2.0)(@types/sortablejs@1.15.1):
+    resolution: {integrity: sha512-qEFLfbuEtjcX9rYMtwyJbsqulNg26TMBmjvBGIFV8gPdlK3Nv7Wwh8fNQ6Z5Ixy42W67G2dMB1icTJ9i+wK1Og==}
     dependencies:
       '@ant-design/icons': 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@arextest/monaco-react': 4.5.0(monaco-editor@0.38.0)(react-dom@18.2.0)(react@18.2.0)
