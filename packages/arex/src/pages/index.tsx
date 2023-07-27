@@ -74,7 +74,7 @@ export default () => {
       data,
     });
   };
-  const { runAsync: createCollection } = useRequest(
+  const { run: createCollection } = useRequest(
     () =>
       FileSystemService.addCollectionItem({
         id: activeWorkspaceId,

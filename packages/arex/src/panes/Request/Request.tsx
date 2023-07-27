@@ -78,7 +78,7 @@ const Request: ArexPaneFC = () => {
     });
   };
 
-  const { data: _, runAsync: moveCollectionItemRunAsync } = useRequest(
+  const { data: _, run: moveCollectionItemRun } = useRequest(
     (params) => {
       return moveCollectionItem({
         fromNodePath: getPath(id).map((p) => p.id),
@@ -89,15 +89,14 @@ const Request: ArexPaneFC = () => {
     },
     {
       onSuccess() {
+        setSaveAsShow(false);
         getCollections();
       },
       manual: true,
     },
   );
   const handleSaveAs = ({ savePath }: { savePath: string }) => {
-    moveCollectionItemRunAsync({ toParentPath: savePath }).then(() => {
-      setSaveAsShow(false);
-    });
+    moveCollectionItemRun({ toParentPath: savePath });
   };
 
   const handleSave: HttpProps['onSave'] = (requestParams, response) => {
