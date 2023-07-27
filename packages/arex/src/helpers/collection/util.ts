@@ -1,4 +1,3 @@
-
 export function processTreeData(treeData: any, depthLimit = 10, currentDepth = 0) {
   if (currentDepth >= depthLimit) {
     // 达到递归深度上限，停止递归

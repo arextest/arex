@@ -3,11 +3,12 @@ import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { App, Spin } from 'antd';
 import { Http, HttpProps } from 'arex-request-core';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { EMAIL_KEY } from '@/constant';
 import { processTreeData } from '@/helpers/collection/util';
 import { sendRequest } from '@/helpers/postman';
+import SaveAs from '@/panes/Request/SaveAs';
 import { FileSystemService, ReportService } from '@/services';
 import { moveCollectionItem, saveRequest } from '@/services/FileSystemService';
 import {
@@ -43,7 +44,7 @@ const Request: ArexPaneFC = () => {
   const { id } = useMemo(() => decodePaneKey(paneKey), []);
 
   const userName = getLocalStorage<string>(EMAIL_KEY);
-
+  const [saveAsShow, setSaveAsShow] = useState(false);
   const { activeEnvironment } = useEnvironments();
   const { activeWorkspaceId } = useWorkspaces();
   const { collectionsFlatData, collectionsTreeData, getCollections, getPath } = useCollections();
@@ -93,8 +94,10 @@ const Request: ArexPaneFC = () => {
       manual: true,
     },
   );
-  const handleSaveAs: HttpProps['onSaveAs'] = ({ savePath }) => {
-    return moveCollectionItemRunAsync({ toParentPath: savePath });
+  const handleSaveAs = ({ savePath }: { savePath: string }) => {
+    moveCollectionItemRunAsync({ toParentPath: savePath }).then(() => {
+      setSaveAsShow(false);
+    });
   };
 
   const handleSave: HttpProps['onSave'] = (requestParams, response) => {
@@ -218,7 +221,6 @@ const Request: ArexPaneFC = () => {
       >
         {nodeInfo && data && (
           <Http
-            collection={processTreeData(collectionsTreeData.filter((item) => item.nodeType !== 1))}
             height={`calc(100vh - 110px)`}
             theme={theme}
             locale={language}
@@ -228,7 +230,9 @@ const Request: ArexPaneFC = () => {
             breadcrumbItems={nodePath}
             onSave={handleSave}
             onSend={handleSend}
-            onSaveAs={handleSaveAs}
+            onSaveAs={() => {
+              setSaveAsShow(true);
+            }}
             description={data?.description || ''}
             // @ts-ignore
             tags={data?.tags || []}
@@ -264,6 +268,14 @@ const Request: ArexPaneFC = () => {
             }}
           />
         )}
+        <SaveAs
+          show={saveAsShow}
+          onHide={() => {
+            setSaveAsShow(false);
+          }}
+          onOk={handleSaveAs}
+          collection={processTreeData(collectionsTreeData.filter((item) => item.nodeType !== 1))}
+        />
       </Spin>
     </div>
   );

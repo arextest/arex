@@ -93,7 +93,10 @@ const Collection: ArexMenuFC = (props) => {
     },
   );
 
-  const filterTreeData = useMemo(() => collectionsTreeData, [collectionsTreeData, searchValue]);
+  const filterTreeData = useMemo(
+    () => collectionsTreeData.filter((item) => item.nodeType === 3),
+    [collectionsTreeData, searchValue],
+  );
 
   const dataList: { key: string; title: string; labelIds: string | null }[] = useMemo(
     () =>
@@ -331,7 +334,7 @@ const Collection: ArexMenuFC = (props) => {
           expandedKeys={expandedKeys}
           autoExpandParent={autoExpandParent}
           switcherIcon={<DownOutlined />}
-          treeData={filterTreeData.filter((item) => item.nodeType === 3)}
+          treeData={filterTreeData}
           fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
           onDrop={onDrop}
           onExpand={onExpand}

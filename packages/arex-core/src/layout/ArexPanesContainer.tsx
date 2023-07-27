@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import {Button, Dropdown, MenuProps, Tabs, TabsProps, Typography} from 'antd';
+import { Button, Dropdown, MenuProps, Tabs, TabsProps, Typography } from 'antd';
 import React, { createContext, Key, PropsWithChildren, useMemo, useRef, useState } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
