@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 
 import { CollectionNodeType } from '@/constant';
-import { treeToMap } from '@/helpers/collection/util';
 import { CollectionType, queryWorkspaceById } from '@/services/FileSystemService';
+import { treeToMap } from '@/utils';
 
 import useWorkspaces from './useWorkspaces';
 
-export type CollectionFlatType = Omit<CollectionType, 'children'> & { pid?: string };
+export type CollectionFlatType = CollectionType & { pid?: string };
 export type CollectionFlatMapType = Map<string, CollectionFlatType>;
 
 export type CollectionState = {

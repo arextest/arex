@@ -3,7 +3,13 @@ import * as Sentry from '@sentry/react';
 if (import.meta.env.MODE !== 'development') {
   Sentry.init({
     dsn: 'https://93269396efbd4d9eb84c60aabe220cb5@o4505063820034048.ingest.sentry.io/4505418776510464',
-    integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
+    integrations: [
+      new Sentry.BrowserTracing(),
+      new Sentry.Replay({
+        mutationBreadcrumbLimit: 500,
+        mutationLimit: 500,
+      }),
+    ],
     // Performance Monitoring
     tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!
     // Session Replay
