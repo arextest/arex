@@ -85,7 +85,7 @@ export default () => {
     {
       manual: true,
       onSuccess(res) {
-        getCollections().then(()=>{
+        getCollections().then(() => {
           navPane({
             type: PanesType.REQUEST,
             id: res.infoId,
