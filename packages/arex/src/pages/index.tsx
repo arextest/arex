@@ -85,12 +85,11 @@ export default () => {
     {
       manual: true,
       onSuccess(res) {
-        getCollections().then(() => {
-          navPane({
-            type: PanesType.REQUEST,
-            id: res.infoId,
-            icon: 'Get',
-          });
+        getCollections();
+        navPane({
+          type: PanesType.REQUEST,
+          id: res.infoId,
+          icon: 'Get',
         });
       },
     },
