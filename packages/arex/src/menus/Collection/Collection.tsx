@@ -94,6 +94,8 @@ const Collection: ArexMenuFC = (props) => {
   );
 
   const filterTreeData = useMemo(
+    // TODO searchValue 裁剪树形数据
+    // filter nodeType === 3 是为了隐藏第一层级只显示文件夹类型
     () => collectionsTreeData.filter((item) => item.nodeType === 3),
     [collectionsTreeData, searchValue],
   );
