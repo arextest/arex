@@ -84,8 +84,14 @@ export default () => {
       }),
     {
       manual: true,
-      onSuccess() {
-        getCollections();
+      onSuccess(res) {
+        getCollections().then(()=>{
+          navPane({
+            type: PanesType.REQUEST,
+            id: res.infoId,
+            icon: 'Get',
+          });
+        });
       },
     },
   );
