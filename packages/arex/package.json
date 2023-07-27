@@ -2,12 +2,18 @@
   "name": "arex",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "main": "dist-electron/main.js",
+  "files": [
+    "./build/**/*",
+    "./public/electron.js"
+  ],
   "scripts": {
     "test": "vitest",
     "test:run": "vitest --run",
     "do-dev": "vite",
-    "do-build": "node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build"
+    "dev:ele": "vite --mode electron",
+    "do-build": "node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build",
+    "build:ele": "vite build --mode electron && electron-builder"
   },
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
@@ -44,6 +50,10 @@
     "zustand": "^4.3.7"
   },
   "devDependencies": {
+    "electron": "^25.3.1",
+    "electron-builder": "^24.6.3",
+    "vite-plugin-electron": "^0.12.0",
+    "vite-plugin-electron-renderer": "^0.14.5",
     "@iconify/json": "^2.2.76",
     "@svgr/core": "^8.0.0",
     "@svgr/plugin-jsx": "^8.0.1",

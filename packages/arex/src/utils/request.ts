@@ -1,6 +1,7 @@
 import { getLocalStorage } from '@arextest/arex-core';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
+import proxy from '@/config/proxy';
 import { ACCESS_TOKEN_KEY } from '@/constant';
 
 type IRequestConfig<T = AxiosResponse> = AxiosRequestConfig;
@@ -18,9 +19,11 @@ export type IAxiosResponse<T> = {
 
 export class Request {
   instance: AxiosInstance;
+  proxyPath: string[];
 
   constructor(config: IRequestConfig) {
     this.instance = axios.create(config);
+    this.proxyPath = proxy.map((item) => item.path);
 
     // 全局请求拦截
     this.instance.interceptors.request.use(
@@ -29,6 +32,14 @@ export class Request {
         config.headers = {
           'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
         };
+
+        if (import.meta.env.MODE === 'electron' && !process.env['VITE_DEV_SERVER_URL']) {
+          let path: string | undefined = undefined;
+          if ((path = this.proxyPath.find((path) => config.url?.startsWith(path)))) {
+            config.baseURL = proxy.find((item) => item.path === path)?.target;
+            config.url = config.url?.match(new RegExp(`(?<=${path}).*`))?.[0];
+          }
+        }
 
         return config;
       },

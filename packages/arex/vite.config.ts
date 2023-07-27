@@ -2,9 +2,11 @@ import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 import Icons from 'unplugin-icons/vite';
 import { defineConfig } from 'vite';
+import electron from 'vite-plugin-electron';
+import renderer from 'vite-plugin-electron-renderer';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react({
       jsxImportSource: '@emotion/react',
@@ -30,6 +32,27 @@ export default defineConfig({
       },
     },
     Icons({ compiler: 'jsx', jsx: 'react' }),
+    ...[
+      mode === 'electron'
+        ? [
+            electron([
+              {
+                // Main-Process entry file of the Electron App.
+                entry: 'electron/main.ts',
+              },
+              {
+                entry: 'electron/preload.ts',
+                onstart(options) {
+                  // Notify the Renderer-Process to reload the page when the Preload-Scripts build is complete,
+                  // instead of restarting the entire Electron App.
+                  options.reload();
+                },
+              },
+            ]),
+            renderer(),
+          ]
+        : [],
+    ],
   ],
   resolve: {
     alias: {
@@ -64,4 +87,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));
