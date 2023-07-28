@@ -11,6 +11,7 @@ import {
   InputRef,
   List,
   Space,
+  Tooltip,
   Typography,
 } from 'antd';
 import { TreeProps } from 'antd/es';
@@ -305,9 +306,20 @@ const NodesSort: FC<NodesSortProps> = (props) => {
                       <SpaceBetweenWrapper width={'100%'}>
                         <Typography.Text ellipsis>{sortNode.path}</Typography.Text>
                         <span style={{ flexShrink: 0 }}>
-                          <span style={{ marginRight: '8px' }}>
-                            {`${sortNode.pathKeyList.length} keys`}
-                          </span>
+                          <Tooltip
+                            placement={'bottom'}
+                            title={
+                              <div style={{ padding: '4px' }}>
+                                {sortNode.pathKeyList.map((key) => (
+                                  <div key={key}>{key}</div>
+                                ))}
+                              </div>
+                            }
+                          >
+                            <span style={{ marginRight: '8px', cursor: 'pointer' }}>
+                              {`${sortNode.pathKeyList.length} keys`}
+                            </span>
+                          </Tooltip>
 
                           {!props.readOnly && (
                             <div className='sort-node-list-item' style={{ display: 'inline' }}>
