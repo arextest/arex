@@ -4,9 +4,9 @@ import React from 'react';
 
 import { PanesType } from '@/constant';
 
-import UserSetting from './UserSetting';
+import SystemSetting from './SystemSetting';
 
-export default createArexPane(UserSetting, {
-  type: PanesType.USER_SETTING,
+export default createArexPane(SystemSetting, {
+  type: PanesType.SYSTEM_SETTING,
   icon: <SettingOutlined />,
 });

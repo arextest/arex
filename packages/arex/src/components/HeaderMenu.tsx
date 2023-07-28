@@ -46,10 +46,14 @@ const HeaderMenu: FC = () => {
         onClick={() => window.open('http://www.arextest.com/')}
       />
       <TooltipButton
-        title={t('setting')}
+        title={t('systemSetting')}
         icon={<SettingOutlined />}
         onClick={() => {
-          navPane({ id: 'setting', type: PanesType.USER_SETTING });
+          navPane({
+            id: 'setting',
+            type: PanesType.SYSTEM_SETTING,
+            name: t('systemSetting') as string,
+          });
         }}
       />
       <Dropdown menu={userMenu}>
