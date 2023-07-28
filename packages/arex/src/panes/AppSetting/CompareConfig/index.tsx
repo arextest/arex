@@ -1,7 +1,13 @@
-import { tryParseJsonString, tryPrettierJsonString, useTranslation } from '@arextest/arex-core';
+import {
+  SpaceBetweenWrapper,
+  tryParseJsonString,
+  tryPrettierJsonString,
+  useTranslation,
+} from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { App, Select, SelectProps, Space, Typography } from 'antd';
+import useBreakpoint from 'antd/es/grid/hooks/useBreakpoint';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 
 import { Segmented } from '@/components';
@@ -32,6 +38,7 @@ export type CompareConfigProps = {
 const CompareConfig: FC<CompareConfigProps> = (props) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const breakpoint = useBreakpoint();
   const [menuAnimateParent] = useAutoAnimate();
   const [configAnimateParent] = useAutoAnimate();
 
@@ -227,7 +234,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   };
 
   return (
-    <Space ref={configAnimateParent} size='middle' direction='vertical' style={{ display: 'flex' }}>
+    <Space size='middle' direction='vertical' style={{ display: 'flex' }}>
       <Space
         key='config-menu'
         ref={menuAnimateParent}
@@ -310,38 +317,43 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         </div>
       </Space>
 
-      <NodesIgnore
-        key='nodes-ignore'
-        appId={props.appId}
-        operationId={activeOperationId}
-        dependency={activeDependency}
-        readOnly={props.readOnly}
-        syncing={syncing}
-        loadingContract={loadingContract}
-        configType={configType}
-        contractParsed={contractParsed}
-        onAdd={queryContract}
-        onSync={handleSync}
-        onClose={props.onIgnoreDrawerClose}
-      />
-
-      {configType !== CONFIG_TYPE.GLOBAL && (
-        <NodesSort
-          key='nodes-sort'
+      <div
+        ref={configAnimateParent}
+        style={{ display: 'flex', flexDirection: breakpoint['xl'] ? 'row' : 'column' }}
+      >
+        <NodesIgnore
+          key='nodes-ignore'
           appId={props.appId}
           operationId={activeOperationId}
           dependency={activeDependency}
           readOnly={props.readOnly}
           syncing={syncing}
-          sortArrayPath={props.sortArrayPath}
           loadingContract={loadingContract}
           configType={configType}
           contractParsed={contractParsed}
           onAdd={queryContract}
           onSync={handleSync}
-          onClose={props.onSortDrawerClose}
+          onClose={props.onIgnoreDrawerClose}
         />
-      )}
+
+        {configType !== CONFIG_TYPE.GLOBAL && (
+          <NodesSort
+            key='nodes-sort'
+            appId={props.appId}
+            operationId={activeOperationId}
+            dependency={activeDependency}
+            readOnly={props.readOnly}
+            syncing={syncing}
+            sortArrayPath={props.sortArrayPath}
+            loadingContract={loadingContract}
+            configType={configType}
+            contractParsed={contractParsed}
+            onAdd={queryContract}
+            onSync={handleSync}
+            onClose={props.onSortDrawerClose}
+          />
+        )}
+      </div>
     </Space>
   );
 };

@@ -28,7 +28,7 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
           empty={!Object.keys(props.treeData).length}
           description={t('appSetting.emptyContractTip')}
         >
-          <Tree multiple defaultExpandAll {...props} treeData={treeData} />
+          <Tree multiple defaultExpandAll height={800} {...props} treeData={treeData} />
         </EmptyWrapper>
       </Card>
     </IgnoreTreeWrapper>

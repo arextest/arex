@@ -373,6 +373,9 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
         ]}
         onChange={setActiveKey}
         css={css`
+          flex: 1;
+          margin: 0 16px 16px 0;
+          height: fit-content;
           .ant-collapse-content-box {
             padding: 0 !important;
           }
