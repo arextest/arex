@@ -16,6 +16,7 @@ import {
 import { useRequest } from 'ahooks';
 import { Button, Tag, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
+import { cloneDeep } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
@@ -28,6 +29,7 @@ import { FileSystemService, ReportService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { negate } from '@/utils';
+import treeFilter from '@/utils/treeFilter';
 import IconArchive from '~icons/lucide/archive';
 
 const CollectionNodeTitleWrapper = styled.div`
@@ -94,10 +96,19 @@ const Collection: ArexMenuFC = (props) => {
   );
 
   const filterTreeData = useMemo(
-    // TODO searchValue 裁剪树形数据
     // filter nodeType === 3 是为了隐藏第一层级只显示文件夹类型（由于新增请求时会新增一个临时的request到树形目录的第一层）
-    () => collectionsTreeData.filter((item) => item.nodeType === 3),
-    [collectionsTreeData, searchValue],
+    // TODO filter 逻辑待优化
+    () =>
+      searchValue?.keyword
+        ? treeFilter(
+            searchValue.keyword,
+            cloneDeep(
+              collectionsTreeData.filter((item) => item.nodeType === CollectionNodeType.folder),
+            ),
+            'nodeName',
+          )
+        : collectionsTreeData.filter((item) => item.nodeType === CollectionNodeType.folder),
+    [collectionsTreeData, searchValue?.keyword],
   );
 
   const dataList: { key: string; title: string; labelIds: string | null }[] = useMemo(
