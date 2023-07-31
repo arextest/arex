@@ -24,9 +24,9 @@ import { ComparisonService } from '@/services';
 import { DependencyParams, SortNode } from '@/services/ComparisonService';
 
 import CompareConfigTitle from '../CompareConfigTitle';
+import TreeCarousel from '../TreeCarousel';
 import ArrayTree from './ArrayTree';
 import SortTree from './SortTree';
-import TreeCarousel from './TreeCarousel';
 import { getSortArray } from './utils';
 
 enum TreeEditModeEnum {
