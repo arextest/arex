@@ -11,6 +11,7 @@ import useBreakpoint from 'antd/es/grid/hooks/useBreakpoint';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 
 import { Segmented } from '@/components';
+import NodeMasking from '@/panes/AppSetting/CompareConfig/NodeMasking';
 import NodesIgnore from '@/panes/AppSetting/CompareConfig/NodesIgnore';
 import NodesSort from '@/panes/AppSetting/CompareConfig/NodesSort';
 import { ApplicationService, ReportService } from '@/services';
@@ -319,7 +320,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
 
       <div
         ref={configAnimateParent}
-        style={{ display: 'flex', flexDirection: breakpoint['xl'] ? 'row' : 'column' }}
+        style={{ display: 'flex', flexDirection: breakpoint['xxl'] ? 'row' : 'column' }}
       >
         <NodesIgnore
           key='nodes-ignore'
@@ -352,6 +353,10 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
             onSync={handleSync}
             onClose={props.onSortDrawerClose}
           />
+        )}
+
+        {configType !== CONFIG_TYPE.GLOBAL && (
+          <NodeMasking onAdd={queryContract} key='nodes-masking' />
         )}
       </div>
     </Space>
