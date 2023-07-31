@@ -1,5 +1,5 @@
-import { Form, Input, Modal, Select, TreeSelect, Typography } from 'antd';
-import { FC, useState } from 'react';
+import { Form, Modal, TreeSelect, Typography } from 'antd';
+import React, { FC, useState } from 'react';
 
 import { useCollections } from '@/store';
 

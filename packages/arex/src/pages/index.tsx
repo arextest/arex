@@ -41,7 +41,8 @@ export default () => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
-  const { collectionsFlatData, getCollections, getPath } = useCollections();
+  const { getCollections } = useCollections();
+
   const workspacesOptions = useMemo(
     () =>
       workspaces.map((workspace) => ({
@@ -97,6 +98,12 @@ export default () => {
   );
   const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () => {
     createCollection();
+    // navPane({
+    //   type: PanesType.REQUEST,
+    //   id: 'Untitled',
+    //   icon: 'Get',
+    //   name: 'Untitled',
+    // });
   };
 
   const handleAddWorkspace = (workspaceName: string) => {
