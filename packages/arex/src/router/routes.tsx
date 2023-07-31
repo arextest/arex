@@ -27,6 +27,10 @@ const routes: Routes[] = Object.values(RouterPath)
       path: '/logs',
       component: lazy(() => import('../pages/Logs')),
     },
+    {
+      path: '/click',
+      component: lazy(() => import('../pages/ValidInvitation')),
+    },
   ]);
 
 const syncRouter = (table: Routes[]): RouteObject[] =>
