@@ -42,6 +42,10 @@ const InviteWorkspace: FC<InviteWorkspaceProps> = (props) => {
 
       successUsers.length && props.onInvite?.();
     },
+    onError: (err: Error) => {
+      // @ts-ignore
+      message.error(err?.responseDesc);
+    },
     onFinally: () => {
       setOpen(false);
     },
