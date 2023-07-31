@@ -13,10 +13,11 @@ import {
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
-import { useRequest } from 'ahooks';
+import { useRequest, useSize } from 'ahooks';
 import { Button, Tag, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
-import React, { useEffect, useMemo, useState } from 'react';
+import { cloneDeep } from 'lodash';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
@@ -28,10 +29,12 @@ import { FileSystemService, ReportService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { negate } from '@/utils';
+import treeFilter from '@/utils/treeFilter';
 import IconArchive from '~icons/lucide/archive';
 
 const CollectionNodeTitleWrapper = styled.div`
   width: 100%;
+  overflow: hidden;
   .ant-spin-nested-loading,
   .ant-spin {
     height: 100%;
@@ -72,6 +75,8 @@ const Collection: ArexMenuFC = (props) => {
   const navPane = useNavPane();
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
+  const size = useSize(() => document.getElementById('arex-menu-wrapper'));
+
   const [searchValue, setSearchValue] = useState<SearchDataType>();
   const [autoExpandParent, setAutoExpandParent] = useState(true);
 
@@ -94,10 +99,19 @@ const Collection: ArexMenuFC = (props) => {
   );
 
   const filterTreeData = useMemo(
-    // TODO searchValue 裁剪树形数据
     // filter nodeType === 3 是为了隐藏第一层级只显示文件夹类型（由于新增请求时会新增一个临时的request到树形目录的第一层）
-    () => collectionsTreeData.filter((item) => item.nodeType === 3),
-    [collectionsTreeData, searchValue],
+    // TODO filter 逻辑待优化
+    () =>
+      searchValue?.keyword
+        ? treeFilter(
+            searchValue.keyword,
+            cloneDeep(
+              collectionsTreeData.filter((item) => item.nodeType === CollectionNodeType.folder),
+            ),
+            'nodeName',
+          )
+        : collectionsTreeData.filter((item) => item.nodeType === CollectionNodeType.folder),
+    [collectionsTreeData, searchValue?.keyword],
   );
 
   const dataList: { key: string; title: string; labelIds: string | null }[] = useMemo(
@@ -332,6 +346,7 @@ const Collection: ArexMenuFC = (props) => {
         <Tree<CollectionType>
           showLine
           blockNode
+          height={size?.height && size.height - 100}
           selectedKeys={selectedKeys}
           expandedKeys={expandedKeys}
           autoExpandParent={autoExpandParent}

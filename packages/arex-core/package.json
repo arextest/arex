@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-core",
-  "version": "0.0.5",
+  "version": "0.0.5-beta.0",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-core.umd.cjs",
   "module": "dist/arex-core.js",
