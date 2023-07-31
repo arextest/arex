@@ -13,11 +13,11 @@ import {
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
-import { useRequest } from 'ahooks';
+import { useRequest, useSize } from 'ahooks';
 import { Button, Tag, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import { cloneDeep } from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
@@ -34,6 +34,7 @@ import IconArchive from '~icons/lucide/archive';
 
 const CollectionNodeTitleWrapper = styled.div`
   width: 100%;
+  overflow: hidden;
   .ant-spin-nested-loading,
   .ant-spin {
     height: 100%;
@@ -73,6 +74,8 @@ const Collection: ArexMenuFC = (props) => {
 
   const navPane = useNavPane();
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
+
+  const size = useSize(() => document.getElementById('arex-menu-wrapper'));
 
   const [searchValue, setSearchValue] = useState<SearchDataType>();
   const [autoExpandParent, setAutoExpandParent] = useState(true);
@@ -343,6 +346,7 @@ const Collection: ArexMenuFC = (props) => {
         <Tree<CollectionType>
           showLine
           blockNode
+          height={size?.height && size.height - 100}
           selectedKeys={selectedKeys}
           expandedKeys={expandedKeys}
           autoExpandParent={autoExpandParent}

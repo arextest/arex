@@ -71,7 +71,10 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
   };
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <div
+      id='arex-menu-wrapper'
+      style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+    >
       <WorkspacesMenu collapsed={props.collapsed} {...props.workspaceMenuProps} />
       <div style={{ display: 'flex', flex: '1', minHeight: '0' }}>
         <StyledMenu
@@ -88,7 +91,7 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
           css={css`
             width: 100%;
             padding: 8px;
-            overflow-y: overlay;
+            overflow-y: hidden;
             .ant-tabs-nav {
               display: none; // 隐藏 Tabs 的导航栏
             }
