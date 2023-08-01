@@ -1,7 +1,7 @@
 import { Typography } from 'antd';
 import React from 'react';
 
-const Get = () => {
+const GetIcon = () => {
   return (
     <Typography.Text type='success' style={{ marginRight: '8px' }}>
       GET
@@ -9,4 +9,4 @@ const Get = () => {
   );
 };
 
-export default Get;
+export default GetIcon;

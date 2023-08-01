@@ -1,7 +1,7 @@
 import { Typography } from 'antd';
 import React from 'react';
 
-const Put = () => {
+const PutIcon = () => {
   return (
     <Typography.Text type='secondary' style={{ marginRight: '8px' }}>
       PUT
@@ -9,4 +9,4 @@ const Put = () => {
   );
 };
 
-export default Put;
+export default PutIcon;
