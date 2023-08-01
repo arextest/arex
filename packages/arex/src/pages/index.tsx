@@ -97,13 +97,12 @@ export default () => {
     },
   );
   const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () => {
-    createCollection();
-    // navPane({
-    //   type: PanesType.REQUEST,
-    //   id: 'Untitled',
-    //   icon: 'Get',
-    //   name: 'Untitled',
-    // });
+    navPane({
+      type: PanesType.REQUEST,
+      id: '-1',
+      icon: 'Get',
+      name: 'Untitled',
+    });
   };
 
   const handleAddWorkspace = (workspaceName: string) => {

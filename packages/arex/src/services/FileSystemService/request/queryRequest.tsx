@@ -10,6 +10,29 @@ export async function queryRequest(params: {
     `/report/filesystem/query${params.nodeType === 1 ? 'Interface' : 'Case'}`,
     params,
   );
+
+  if (params.id.length !== 24) {
+    return {
+      id: params.id,
+      name: '',
+      method: 'GET',
+      endpoint: '',
+      headers: [],
+      params: [],
+      body: { contentType: 'application/json', body: '' },
+      testScript: '',
+      preRequestScript: '',
+      // @ts-ignore
+      recordId: null,
+      // @ts-ignore
+      inherited: undefined,
+      inheritedMethod: '',
+      inheritedEndpoint: '',
+      tags: [],
+      description: '',
+    };
+  }
+
   const {
     body: { address, testAddress, ...rest },
   } = res;
