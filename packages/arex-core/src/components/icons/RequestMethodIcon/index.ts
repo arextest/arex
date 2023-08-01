@@ -1,32 +1,42 @@
 import { QuestionOutlined } from '@ant-design/icons';
 import { FC } from 'react';
 
-import Delete from './Delete';
-import Get from './Get';
-import Patch from './Patch';
-import Post from './Post';
-import Put from './Put';
+import ArexIcon from './ArexIcon';
+import CaseIcon from './CaseIcon';
+import DeleteIcon from './DeleteIcon';
+import GetIcon from './GetIcon';
+import PatchIcon from './PatchIcon';
+import PostIcon from './PostIcon';
+import PutIcon from './PutIcon';
 
 const RequestMethodIcon: { [method: string]: FC } = {
-  get: Get,
-  Get: Get,
-  GET: Get,
+  get: GetIcon,
+  Get: GetIcon,
+  GET: GetIcon,
 
-  post: Post,
-  Post: Post,
-  POST: Post,
+  post: PostIcon,
+  Post: PostIcon,
+  POST: PostIcon,
 
-  put: Put,
-  Put: Put,
-  PUT: Put,
+  put: PutIcon,
+  Put: PutIcon,
+  PUT: PutIcon,
 
-  delete: Delete,
-  Delete: Delete,
-  DELETE: Delete,
+  delete: DeleteIcon,
+  Delete: DeleteIcon,
+  DELETE: DeleteIcon,
 
-  patch: Patch,
-  Patch: Patch,
-  PATCH: Patch,
+  patch: PatchIcon,
+  Patch: PatchIcon,
+  PATCH: PatchIcon,
+
+  arex: ArexIcon,
+  Arex: ArexIcon,
+  AREX: ArexIcon,
+
+  case: CaseIcon,
+  Case: CaseIcon,
+  CASE: CaseIcon,
 
   unknown: QuestionOutlined,
   Unknown: QuestionOutlined,

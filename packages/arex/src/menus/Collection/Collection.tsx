@@ -134,13 +134,20 @@ const Collection: ArexMenuFC = (props) => {
 
   const handleSelect: DirectoryTreeProps<CollectionTreeType>['onSelect'] = (keys, info) => {
     if (info.node.nodeType !== CollectionNodeType.folder) {
-      const method = info.node.method && info.node.method.toLowerCase();
+      const icon =
+        info.node.nodeType === CollectionNodeType.interface
+          ? info.node.method || undefined
+          : info.node.nodeType === CollectionNodeType.case
+          ? info.node.caseSourceType === 1
+            ? 'arex'
+            : 'case'
+          : undefined;
 
       navPane({
         type: PanesType.REQUEST,
         id: info.node.infoId,
         name: info.node.nodeName,
-        icon: (method && method.replace(method[0], method[0].toUpperCase())) || undefined,
+        icon,
       });
     }
   };
