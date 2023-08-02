@@ -12,17 +12,6 @@ import { useCollections, useWorkspaces } from '@/store';
 
 import SearchHighLight from './SearchHighLight';
 
-export const PrefixIcon = styled(
-  (props: { icon: ReactNode; border?: boolean }) => <div {...props}>{props.icon}</div>,
-  { shouldForwardProp: (prop) => prop !== 'border' },
-)`
-  margin-right: 6px;
-  border: ${(props) => (props.border ? '1px solid' : 'none')};
-  font-size: 12px;
-  display: block;
-  line-height: 12px;
-`;
-
 const CollectionNodeTitleWrapper = styled.div`
   color: ${(props) => props.theme.colorTextSecondary};
   display: flex;
@@ -281,11 +270,13 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
 
   const prefix = useMemo(
     () =>
-      props.data.nodeType === CollectionNodeType.interface ? (
-        React.createElement(RequestMethodIcon[props.data.method || ''] || 'div')
-      ) : props.data.nodeType === CollectionNodeType.case ? (
-        <PrefixIcon border icon={props.data.caseSourceType === 1 ? 'arex' : 'case'} />
-      ) : null,
+      props.data.nodeType === CollectionNodeType.interface
+        ? React.createElement(RequestMethodIcon[props.data.method || ''] || 'div')
+        : props.data.nodeType === CollectionNodeType.case
+        ? React.createElement(
+            RequestMethodIcon[props.data.caseSourceType === 1 ? 'arex' : 'case'] || 'div',
+          )
+        : null,
     [props.data],
   );
 

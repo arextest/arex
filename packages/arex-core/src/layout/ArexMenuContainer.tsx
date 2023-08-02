@@ -55,10 +55,14 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
         key: Menu.type,
         children: (
           <ErrorBoundary>
-            <Menu
-              value={props.value}
-              onSelect={(id, data) => props.activeKey && props.onSelect?.(Menu.paneType, id, data)}
-            />
+            <div id='arex-menu-content-wrapper'>
+              <Menu
+                value={props.value}
+                onSelect={(id, data) =>
+                  props.activeKey && props.onSelect?.(Menu.paneType, id, data)
+                }
+              />
+            </div>
           </ErrorBoundary>
         ),
       })),

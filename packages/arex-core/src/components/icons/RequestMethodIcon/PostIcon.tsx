@@ -1,7 +1,7 @@
 import { Typography } from 'antd';
 import React from 'react';
 
-const Post = () => {
+const PostIcon = () => {
   return (
     <Typography.Text type='warning' style={{ marginRight: '8px' }}>
       POST
@@ -9,4 +9,4 @@ const Post = () => {
   );
 };
 
-export default Post;
+export default PostIcon;

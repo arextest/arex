@@ -1,4 +1,4 @@
-import { ArexPaneManager, Pane, PanesData } from '@arextest/arex-core';
+import { ArexPaneManager, arrayMove, Pane, PanesData } from '@arextest/arex-core';
 import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -18,6 +18,7 @@ export type MenusPanesAction = {
   setActiveMenu: (menuKey?: string) => void;
   setActivePane: (paneKey?: string) => void;
   setPanes: <D extends PanesData = PanesData>(panes: Pane<D> | Pane<D>[]) => void;
+  switchPane: (fromId: string, toId: string) => void;
   removePane: (paneKey: string) => void;
   removeSegmentPanes: (paneKey: string, segment: 'left' | 'right') => void;
   reset: () => void;
@@ -114,6 +115,14 @@ export const useMenusPanes = create(
               state.panes.push(newPane);
             });
           }
+        },
+
+        // 交换两个面板的位置
+        switchPane: (fromId, toId) => {
+          const panes = get().panes;
+          const fromIndex = panes!.findIndex((i) => i.key === fromId);
+          const toIndex = panes!.findIndex((i) => i.key === toId);
+          get().setPanes(arrayMove(get().panes, fromIndex, toIndex));
         },
 
         // 关闭面板
