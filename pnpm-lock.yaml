@@ -103,8 +103,8 @@ importers:
         specifier: ^4.12.2
         version: 4.12.2(antd@5.6.4)(react-dom@18.2.0)(react@18.2.0)
       arex-request-core:
-        specifier: 0.0.1-beta.60
-        version: 0.0.1-beta.60(@types/react@18.2.0)(@types/sortablejs@1.15.1)
+        specifier: 0.0.1-beta.61
+        version: 0.0.1-beta.61(@types/react@18.2.0)(@types/sortablejs@1.15.1)
       arex-request-runtime:
         specifier: ^1.0.2
         version: 1.0.2
@@ -978,7 +978,7 @@ packages:
       react: '>=16.8.0'
     dependencies:
       react: 18.2.0
-      tslib: 2.6.0
+      tslib: 2.6.1
     dev: false
 
   /@dnd-kit/core@6.0.8(react-dom@18.2.0)(react@18.2.0):
@@ -991,7 +991,7 @@ packages:
       '@dnd-kit/utilities': 3.2.1(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      tslib: 2.6.0
+      tslib: 2.6.1
     dev: false
 
   /@dnd-kit/sortable@7.0.2(@dnd-kit/core@6.0.8)(react@18.2.0):
@@ -1003,7 +1003,7 @@ packages:
       '@dnd-kit/core': 6.0.8(react-dom@18.2.0)(react@18.2.0)
       '@dnd-kit/utilities': 3.2.1(react@18.2.0)
       react: 18.2.0
-      tslib: 2.6.0
+      tslib: 2.6.1
     dev: false
 
   /@dnd-kit/utilities@3.2.1(react@18.2.0):
@@ -1012,7 +1012,7 @@ packages:
       react: '>=16.8.0'
     dependencies:
       react: 18.2.0
-      tslib: 2.6.0
+      tslib: 2.6.1
     dev: false
 
   /@emotion/babel-plugin@11.11.0:
@@ -2670,8 +2670,8 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /arex-request-core@0.0.1-beta.60(@types/react@18.2.0)(@types/sortablejs@1.15.1):
-    resolution: {integrity: sha512-OKrz3p5xvOgMycJBSb0cPoZoP0icRb6MUVjBUgSZwIeRlPZ6Pj4fiZh3t+lkLan4seT6jVUfz/TX6dKamREGmg==}
+  /arex-request-core@0.0.1-beta.61(@types/react@18.2.0)(@types/sortablejs@1.15.1):
+    resolution: {integrity: sha512-wazSPN2igjuQH8e3EBQp/8y0nxbR57af1w2NOBBsrUpT5tSsSZV3rOXVoNotAoems9OyV3T5Rw6a5VtuKjdIRg==}
     dependencies:
       '@ant-design/icons': 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@arextest/monaco-react': 4.5.1(monaco-editor@0.38.0)(react-dom@18.2.0)(react@18.2.0)

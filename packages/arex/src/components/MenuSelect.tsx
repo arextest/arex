@@ -13,6 +13,7 @@ export type MenuSelectProps<D, P extends any[]> = {
   refresh?: boolean; // show refresh button
   defaultSelectFirst?: boolean;
   limit?: number;
+  height?: number;
   prefix?: ReactNode; // icon beside search input
   initValue?: string;
   rowKey: string; // key name in D
@@ -185,23 +186,31 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
           onFresh={reload}
         />
       )}
-      <MenuList
-        small={props.small}
-        selectedKeys={selectedKeys}
-        items={filteredApps}
-        onClick={handleAppMenuClick}
-      />
-      {hiddenCount > 0 && (
-        <div style={{ textAlign: 'center' }}>
-          <Button
-            size='small'
-            type='text'
-            onClick={() => props.limit && setLimitCount((limitCount as number) + props.limit)}
-          >
-            <Typography.Text type='secondary'>{hiddenCount} more ...</Typography.Text>
-          </Button>
-        </div>
-      )}
+      <div
+        className='list-wrapper'
+        css={css`
+          overflow: auto;
+          height: ${props.height && props.height + 'px'};
+        `}
+      >
+        <MenuList
+          small={props.small}
+          selectedKeys={selectedKeys}
+          items={filteredApps}
+          onClick={handleAppMenuClick}
+        />
+        {hiddenCount > 0 && (
+          <div style={{ textAlign: 'center' }}>
+            <Button
+              size='small'
+              type='text'
+              onClick={() => props.limit && setLimitCount((limitCount as number) + props.limit)}
+            >
+              <Typography.Text type='secondary'>{hiddenCount} more ...</Typography.Text>
+            </Button>
+          </div>
+        )}
+      </div>
     </Spin>
   );
 }

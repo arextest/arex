@@ -7,14 +7,14 @@ export type MenuConfig = {
   Menu?: FC;
 };
 
-export interface ArexMenuProps extends PropsWithChildren {
+export type ArexMenuProps<T> = {
   value?: string;
   onSelect?: (value: string, data?: unknown) => void;
-}
+} & PropsWithChildren<T>;
 
-export type ArexMenuFC = FC<ArexMenuProps>;
+export type ArexMenuFC<T = unknown> = FC<ArexMenuProps<T>>;
 
-export type ArexMenu = ArexMenuFC & {
+export type ArexMenu<T> = ArexMenuFC<T> & {
   type: string;
   paneType: string;
   icon?: ReactNode;
@@ -26,7 +26,7 @@ export type ArexMenu = ArexMenuFC & {
  * @param options
  */
 export function createArexMenu(
-  Menu: ArexMenuFC,
+  Menu: ArexMenuFC<unknown>,
   options: {
     type: string;
     paneType: string;
