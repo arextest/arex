@@ -14,7 +14,7 @@ import { App, MenuProps } from 'antd';
 import React, { useMemo } from 'react';
 
 import { EnvironmentSelect, HeaderMenu } from '@/components';
-import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
+import { EMAIL_KEY, PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
@@ -90,28 +90,6 @@ export default () => {
       }
     },
   });
-
-  const { run: createCollection } = useRequest(
-    () =>
-      FileSystemService.addCollectionItem({
-        id: activeWorkspaceId,
-        userName,
-        nodeName: 'New Request',
-        nodeType: CollectionNodeType.interface,
-      }),
-    {
-      manual: true,
-      onSuccess(res) {
-        getCollections();
-        navPane({
-          type: PanesType.REQUEST,
-          id: res.infoId,
-          icon: 'Get',
-          name: 'Untitled',
-        });
-      },
-    },
-  );
 
   const handleMenuChange = (menuType: string) => {
     collapsed && setCollapsed(false);

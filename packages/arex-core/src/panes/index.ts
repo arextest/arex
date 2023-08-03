@@ -3,6 +3,7 @@ import React from 'react';
 import { ArexPanesType } from '../constant';
 import NoPermission from './NoPermission';
 import PaneNotFound from './PaneNotFound';
+import WebView from './WebView';
 
 export type Pane<D extends PanesData = PanesData> = {
   id: string; // PaneId
@@ -39,4 +40,5 @@ export function createArexPane<D extends PanesData>(
 export const ArexPanes: Record<string, ArexPane> = {
   [ArexPanesType.PANE_NOT_FOUND]: PaneNotFound,
   [ArexPanesType.NO_PERMISSION]: NoPermission,
+  [ArexPanesType.WEB_VIEW]: WebView,
 };
