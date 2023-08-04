@@ -7,7 +7,7 @@ import React, { FC, useMemo } from 'react';
 import { useColorPrimary } from '@/hooks';
 import { SortNode } from '@/services/ComparisonService';
 
-import { getArrayNodes } from './utils';
+import { getDataMaskingNodes } from './utils/getDataMaskingNodes';
 
 type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
   loading?: boolean;
@@ -16,13 +16,13 @@ type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
   onEditResponse?: () => void;
 };
 
-const ArrayTree: FC<ResponseTreeProps> = (props) => {
+const DataMaskingTree: FC<ResponseTreeProps> = (props) => {
   const { t } = useTranslation('components');
 
   const color = useColorPrimary();
 
   const treeData = useMemo(() => {
-    const nodesData = getArrayNodes(props.treeData || {}, '', props.sortNodeList, color.name);
+    const nodesData = getDataMaskingNodes(props.treeData || {}, '', props.sortNodeList, color.name);
     console.log('props.treeData', nodesData, props.sortNodeList);
     return nodesData;
   }, [props.treeData, props.sortNodeList, color.name]);
@@ -57,4 +57,4 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
   );
 };
 
-export default ArrayTree;
+export default DataMaskingTree;

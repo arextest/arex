@@ -357,7 +357,12 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         )}
 
         {configType !== CONFIG_TYPE.GLOBAL && (
-          <NodeMasking onAdd={queryContract} key='nodes-masking' />
+          <NodeMasking
+            loadingContract={loadingContract}
+            contractParsed={contractParsed}
+            onAdd={queryContract}
+            key='nodes-masking'
+          />
         )}
       </div>
     </Space>
