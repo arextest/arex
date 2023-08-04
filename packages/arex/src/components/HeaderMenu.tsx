@@ -52,7 +52,7 @@ const HeaderMenu: FC = () => {
   );
 
   const handleSettingClick = useCallback(() => {
-    navPane({ id: 'setting', type: PanesType.USER_SETTING });
+    navPane({ id: 'setting', type: PanesType.SYSTEM_SETTING, name: t('systemSetting') as string });
   }, []);
 
   return (
