@@ -315,5 +315,14 @@
     "closeUnmodified" :"关闭未修改标签页",
     "closeLeft" :"关闭左侧标签页",
     "closeRight":"关闭右侧标签页"
+  },
+  "userSetting": {
+    "userInterface": "用户界面",
+    "compactMode": "紧凑模式",
+    "darkMode": "深色模式",
+    "primaryColor": "主题色",
+    "language": "语言",
+    "avatar": "头像",
+    "dataMasking": "数据脱敏"
   }
 }

@@ -9,7 +9,7 @@ export enum PanesType {
   REPLAY_ANALYSIS = 'replayAnalysis',
   APP_SETTING = 'appSetting',
   ENVIRONMENT = 'environment',
-  USER_SETTING = 'userSetting',
+  SYSTEM_SETTING = 'systemSetting',
   WORKSPACE = 'workspace',
   BATCH_RUN = 'batchRun',
 }

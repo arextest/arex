@@ -316,5 +316,14 @@
     "closeUnmodified" :"Close Unmodified Tabs",
     "closeLeft" :"Close Tabs to the Left",
     "closeRight":"Close Tabs to the Right"
+  },
+  "userSetting": {
+    "userInterface": "UserInterface",
+    "compactMode": "CompactMode",
+    "darkMode": "DarkMode",
+    "primaryColor": "PrimaryColor",
+    "language": "Language",
+    "avatar": "Avatar",
+    "dataMasking": "DataMasking"
   }
 }
