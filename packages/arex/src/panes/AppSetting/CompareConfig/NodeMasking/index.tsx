@@ -1,4 +1,4 @@
-import { CheckOutlined, CloseOutlined, DeleteOutlined, SyncOutlined } from '@ant-design/icons';
+import { CloseOutlined, DeleteOutlined, SyncOutlined } from '@ant-design/icons';
 import {
   css,
   PaneDrawer,
@@ -8,7 +8,6 @@ import {
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import {
-  AutoComplete,
   Button,
   ButtonProps,
   Card,
@@ -26,11 +25,12 @@ import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
 import CompareConfigTitle, {
   CompareConfigTitleProps,
 } from '@/panes/AppSetting/CompareConfig/CompareConfigTitle';
-import { DependencyParams } from '@/services/ComparisonService';
+import DataMaskingNodeConfig from '@/panes/AppSetting/CompareConfig/NodeMasking/DataMaskingNodeConfig';
+import { getSortArray } from '@/panes/AppSetting/CompareConfig/NodesSort/utils';
+import { DependencyParams, SortNode } from '@/services/ComparisonService';
 
 import TreeCarousel from '../TreeCarousel';
-import ArrayTree from './ArrayTree';
-import SortTree from './SortTree';
+import DataMaskingTree from './DataMaskingTree';
 
 export type NodeMaskingProps = {
   appId: string;
@@ -53,7 +53,7 @@ enum TreeEditModeEnum {
 }
 
 const NodeMasking: FC<NodeMaskingProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('components');
 
   const searchRef = useRef<InputRef>(null);
   const treeCarouselRef = React.useRef<CarouselRef>(null);
@@ -62,6 +62,9 @@ const NodeMasking: FC<NodeMaskingProps> = (props) => {
 
   const [activeKey, setActiveKey] = useState<string | string[]>([ActiveKey]);
   const [search, setSearch] = useState<string | false>(false);
+
+  const [openMaskingModal, setOpenMaskingModal] = useState(false);
+
   const handleSearch: ButtonProps['onClick'] = (e) => {
     activeKey?.[0] === ActiveKey && e.stopPropagation();
     setTimeout(() => searchRef.current?.focus());
@@ -91,10 +94,39 @@ const NodeMasking: FC<NodeMaskingProps> = (props) => {
   const handleMaskingAdd: CompareConfigTitleProps['onAdd'] = (e) => {
     activeKey?.[0] === ActiveKey && e.stopPropagation();
     props.onAdd?.();
+    setOpenMaskingModal(true);
   };
 
-  const handleDeleteMaskingNode = () => {
+  const handleDeleteMaskingNode = (params: any) => {
     console.log('handleDeleteMaskingNode');
+  };
+
+  const handleCancelEdit = () => {
+    setOpenMaskingModal(false);
+  };
+
+  const handleSaveMasking = () => {
+    setOpenMaskingModal(false);
+  };
+
+  const handleEditCollapseItem = (path: string, sortNode?: SortNode) => {
+    // setActiveSortNode(sortNode);
+    // setCheckedNodesData((state) => {
+    //   state.path = path;
+    //   state.pathKeyList = sortNode?.pathKeyList || [];
+    // });
+
+    try {
+      const sortArray = getSortArray(path, props.contractParsed);
+      // setSortArray(sortArray);
+    } catch (error) {
+      console.warn('failed to analytic path');
+    }
+
+    setTreeEditMode(TreeEditModeEnum.SortTree);
+    setOpenMaskingModal(true);
+
+    setTimeout(() => treeCarouselRef.current?.goTo(1)); // 防止初始化时 treeCarouselRef 未绑定
   };
 
   return (
@@ -169,6 +201,7 @@ const NodeMasking: FC<NodeMaskingProps> = (props) => {
       />
 
       <PaneDrawer
+        destroyOnClose
         width='60%'
         title={
           <SpaceBetweenWrapper>
@@ -197,25 +230,19 @@ const NodeMasking: FC<NodeMaskingProps> = (props) => {
         onClose={handleCancelEdit}
       >
         <TreeCarousel ref={treeCarouselRef} beforeChange={(from, to) => setTreeEditMode(to)}>
-          <ArrayTree
+          <DataMaskingTree
             loading={props.loadingContract}
             treeData={props.contractParsed}
-            sortNodeList={sortNodeList}
+            // sortNodeList={maskingNodes}
             onSelect={(selectedKeys) =>
               handleEditCollapseItem(
                 selectedKeys[0] as string,
-                sortNodeList.find((node) => node.path === selectedKeys[0]),
+                // maskingNodes.find((node) => node.path === selectedKeys[0]),
               )
             }
           />
 
-          <SortTree
-            title={checkedNodesData.path}
-            treeData={sortArray}
-            checkedKeys={checkedNodesData.pathKeyList}
-            onCheck={handleSortTreeChecked}
-            onSelect={handleSortTreeSelected}
-          />
+          <DataMaskingNodeConfig />
         </TreeCarousel>
       </PaneDrawer>
     </>
