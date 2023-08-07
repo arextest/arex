@@ -63,5 +63,6 @@
   "modifiedTime": "Modified Time",
   "loginInformationExpired": "Login information expired, please login again",
   "agentStatus": "Status",
-  "document": "Document"
+  "document": "Document",
+  "serverError": "Server Error"
 }
