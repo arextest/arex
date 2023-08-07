@@ -1,5 +1,6 @@
 import { getLocalStorage, i18n, I18nextLng, setLocalStorage, Theme } from '@arextest/arex-core';
 import * as Sentry from '@sentry/react';
+import { message } from 'antd';
 import { create } from 'zustand';
 
 import { DEFAULT_COLOR_PRIMARY, DEFAULT_THEME, EMAIL_KEY, THEME_KEY } from '@/constant';
@@ -30,9 +31,14 @@ const useUserProfile = create<UserProfile & UserProfileAction>((set) => {
     try {
       profile = await UserService.getUserProfile(_email);
       Sentry.setTag('arex-user', email);
-    } catch (e) {
-      window.message.error(i18n.t('loginInformationExpired'));
-      globalStoreReset();
+    } catch (e: any) {
+      // 由于后端没有过期的responseCode，所以单独在这里判断。
+      if (e?.responseCode === 4) {
+        window.message.error(i18n.t('loginInformationExpired'));
+        globalStoreReset();
+      } else {
+        message.error(i18n.t('serverError'));
+      }
     }
 
     profile && set(profile);
