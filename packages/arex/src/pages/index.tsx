@@ -14,7 +14,7 @@ import { App, MenuProps } from 'antd';
 import React, { useMemo } from 'react';
 
 import { EnvironmentSelect, HeaderMenu } from '@/components';
-import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
+import { EMAIL_KEY, PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
@@ -29,6 +29,7 @@ export default () => {
     setActiveMenu,
     panes,
     setPanes,
+    switchPane,
     removeSegmentPanes,
     activePane,
     setActivePane,
@@ -51,71 +52,6 @@ export default () => {
       })),
     [workspaces],
   );
-
-  const { run: createWorkspace } = useRequest(FileSystemService.createWorkspace, {
-    manual: true,
-    onSuccess: (res) => {
-      if (res.success) {
-        message.success(t('workSpace.createSuccess'));
-        resetPane();
-        getWorkspaces(res.workspaceId);
-      }
-    },
-  });
-
-  const handleMenuChange = (menuType: string) => {
-    collapsed && setCollapsed(false);
-    setActiveMenu(menuType);
-  };
-
-  const handleMenuSelect: ArexMenuContainerProps['onSelect'] = (type, id, data) => {
-    navPane({
-      id,
-      type,
-      data,
-    });
-  };
-  const { run: createCollection } = useRequest(
-    () =>
-      FileSystemService.addCollectionItem({
-        id: activeWorkspaceId,
-        userName,
-        nodeName: 'New Request',
-        nodeType: CollectionNodeType.interface,
-      }),
-    {
-      manual: true,
-      onSuccess(res) {
-        getCollections();
-        navPane({
-          type: PanesType.REQUEST,
-          id: res.infoId,
-          icon: 'Get',
-          name: 'Untitled',
-        });
-      },
-    },
-  );
-  const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () => {
-    createCollection();
-    // navPane({
-    //   type: PanesType.REQUEST,
-    //   id: 'Untitled',
-    //   icon: 'Get',
-    //   name: 'Untitled',
-    // });
-  };
-
-  const handleAddWorkspace = (workspaceName: string) => {
-    createWorkspace({ userName, workspaceName });
-  };
-
-  const handleEditWorkspace = (workspaceId: string) => {
-    navPane({
-      type: PanesType.WORKSPACE,
-      id: workspaceId,
-    });
-  };
 
   const dropdownItems: MenuProps['items'] = [
     {
@@ -144,6 +80,50 @@ export default () => {
     },
   ];
 
+  const { run: createWorkspace } = useRequest(FileSystemService.createWorkspace, {
+    manual: true,
+    onSuccess: (res) => {
+      if (res.success) {
+        message.success(t('workSpace.createSuccess'));
+        resetPane();
+        getWorkspaces(res.workspaceId);
+      }
+    },
+  });
+
+  const handleMenuChange = (menuType: string) => {
+    collapsed && setCollapsed(false);
+    setActiveMenu(menuType);
+  };
+
+  const handleMenuSelect: ArexMenuContainerProps['onSelect'] = (type, id, data) => {
+    navPane({
+      id,
+      type,
+      data,
+    });
+  };
+
+  const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () => {
+    navPane({
+      type: PanesType.REQUEST,
+      id: '-1',
+      icon: 'Get',
+      name: 'Untitled',
+    });
+  };
+
+  const handleAddWorkspace = (workspaceName: string) => {
+    createWorkspace({ userName, workspaceName });
+  };
+
+  const handleEditWorkspace = (workspaceId: string) => {
+    navPane({
+      type: PanesType.WORKSPACE,
+      id: workspaceId,
+    });
+  };
+
   const handleDropdownClick = (e: { key: string }, key: React.Key | null) => {
     if (!key) return;
     const paneKey = key.toString();
@@ -170,6 +150,12 @@ export default () => {
         removeSegmentPanes(paneKey, 'right');
         break;
       }
+    }
+  };
+
+  const handleDragEnd: ArexPanesContainerProps['onDragEnd'] = ({ active, over }) => {
+    if (active?.id && over?.id && active.id !== over?.id) {
+      switchPane(String(active.id), String(over.id));
     }
   };
 
@@ -205,6 +191,7 @@ export default () => {
               items: dropdownItems,
               onClick: handleDropdownClick,
             }}
+            onDragEnd={handleDragEnd}
             onChange={setActivePane}
             onAdd={handlePaneAdd}
             onRemove={removePane}

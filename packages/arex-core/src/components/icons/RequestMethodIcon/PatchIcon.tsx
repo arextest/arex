@@ -1,7 +1,7 @@
 import { Typography } from 'antd';
 import React from 'react';
 
-const Patch = () => {
+const PatchIcon = () => {
   return (
     <Typography.Text type='secondary' style={{ marginRight: '8px' }}>
       PATCH
@@ -9,4 +9,4 @@ const Patch = () => {
   );
 };
 
-export default Patch;
+export default PatchIcon;

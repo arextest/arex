@@ -60,5 +60,6 @@
   "modifiedTime": "修改时间",
   "loginInformationExpired": "登录信息已过期，请重新登录",
   "agentStatus": "状态",
+  "document": "文档",
   "serverError": "服务器错误"
 }

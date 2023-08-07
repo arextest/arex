@@ -17,6 +17,7 @@ export type StandardPathParams = {
 export enum ArexPanesType {
   PANE_NOT_FOUND = 'pane-not-found',
   NO_PERMISSION = 'no-permission',
+  WEB_VIEW = 'web-view',
 }
 
 export enum ArexMenusType {}
