@@ -223,10 +223,11 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         operationId: activeOperationId,
       });
     }
-    if (configType === CONFIG_TYPE.DEPENDENCY) {
+    if (configType === CONFIG_TYPE.DEPENDENCY && activeDependency) {
       params = Object.assign(params, {
-        operationType: operationData?.operationType,
-        operationName: operationData?.operationName,
+        operationId: activeOperationId,
+        operationType: activeDependency.operationType,
+        operationName: activeDependency.operationName,
       });
     }
 
