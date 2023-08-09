@@ -125,7 +125,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
 
   function getPath(nodeList: DataNode[], pathList: string[], basePath = '') {
     nodeList.forEach((node) => {
-      const path = basePath ? basePath + '/' + node.title : (node.title as string)
+      const path = basePath ? basePath + '/' + node.title : (node.title as string);
       pathList.push(path);
       node.children && getPath(node.children, pathList, path);
     });
