@@ -1,8 +1,9 @@
 import '@arextest/vanilla-jsoneditor/themes/jse-theme-dark.css';
 
+import { CompareConfigType } from '@arextest/vanilla-jsoneditor';
 import { css } from '@emotion/react';
 import { theme } from 'antd';
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexCoreConfig } from '../../hooks';
@@ -32,12 +33,18 @@ function validateJsonPath(path: string[], jsonString: string) {
     );
     return pathList;
   } catch (error) {
+    console.error(error);
     return false;
   }
 }
 
 export type TargetEditor = 'left' | 'right';
-export type PathHandler = (path: string[], jsonString: string, targetEditor: TargetEditor) => void;
+export type PathHandler = (params: {
+  type?: CompareConfigType;
+  path: string[];
+  jsonString: string;
+  targetEditor: TargetEditor;
+}) => void;
 export type DiffJsonViewProps = {
   readOnly?: boolean;
   height?: string | number;
@@ -46,8 +53,8 @@ export type DiffJsonViewProps = {
   diffPath?: LogEntity[];
   remark?: [string, string];
   onIgnoreKey?: PathHandler;
-  onGlobalIgnoreKey?: PathHandler;
   onSortKey?: PathHandler;
+  onReferenceKey?: PathHandler;
 };
 
 const { useToken } = theme;
@@ -59,11 +66,11 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
   height,
   remark,
   onIgnoreKey,
-  onGlobalIgnoreKey,
   onSortKey,
+  onReferenceKey,
 }) => {
   const { t } = useTranslation();
-  const { theme } = useArexCoreConfig();
+  const { theme, language } = useArexCoreConfig();
   const allLeftDiffByType = genAllDiffByType('left', diffPath);
   const allRightDiffByType = genAllDiffByType('right', diffPath);
   const onClassNameLeft = (path: string[]) => {
@@ -108,6 +115,20 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
 
   const { token: emotionTheme } = useToken();
 
+  const rightClickHandler = useCallback(
+    (fn: PathHandler, path: string[], targetEditor: TargetEditor, type?: CompareConfigType) => {
+      const validatedPath = validateJsonPath(path, diffJson![targetEditor]);
+      validatedPath &&
+        fn({
+          type,
+          path: validatedPath,
+          jsonString: diffJson![targetEditor],
+          targetEditor,
+        });
+    },
+    [diffJson],
+  );
+
   if (!diffJson) return null;
 
   return (
@@ -143,6 +164,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
           <VanillaJSONEditor
             readOnly={readOnly}
             height={height}
+            language={language}
             remark={remark?.[0] || (t('benchmark') as string)}
             content={{
               text: String(diffJson?.left), // stringify falsy value
@@ -151,18 +173,16 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             mainMenuBar={false}
             onClassName={onClassNameLeft}
             allDiffByType={allLeftDiffByType}
-            onIgnoreKey={(path) => {
-              const validatedPath = validateJsonPath(path, diffJson?.left);
-              validatedPath && onIgnoreKey?.(validatedPath, diffJson?.left, 'left');
-            }}
-            onGlobalIgnoreKey={(path) => {
-              const validatedPath = validateJsonPath(path, diffJson?.left);
-              validatedPath && onGlobalIgnoreKey?.(validatedPath, diffJson?.left, 'left');
-            }}
-            onSortKey={(path) => {
-              const validatedPath = validateJsonPath(path, diffJson?.left);
-              validatedPath && onSortKey?.(validatedPath, diffJson?.left, 'left');
-            }}
+            onIgnoreKey={
+              onIgnoreKey && ((path, type) => rightClickHandler(onIgnoreKey, path, 'left', type))
+            }
+            onSortKey={
+              onSortKey && ((path, type) => rightClickHandler(onSortKey, path, 'left', type))
+            }
+            onReferenceKey={
+              onReferenceKey &&
+              ((path, type) => rightClickHandler(onReferenceKey, path, 'left', type))
+            }
           />
         </div>
 
@@ -175,6 +195,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
           <VanillaJSONEditor
             readOnly={readOnly}
             height={height}
+            language={language}
             remark={remark?.[1] || (t('test') as string)}
             content={{
               text: String(diffJson?.right), // stringify falsy value
@@ -183,18 +204,16 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             mainMenuBar={false}
             onClassName={onClassNameRight}
             allDiffByType={allRightDiffByType}
-            onIgnoreKey={(path) => {
-              const validatedPath = validateJsonPath(path, diffJson?.left);
-              validatedPath && onIgnoreKey?.(validatedPath, diffJson?.right, 'right');
-            }}
-            onGlobalIgnoreKey={(path) => {
-              const validatedPath = validateJsonPath(path, diffJson?.left);
-              validatedPath && onGlobalIgnoreKey?.(validatedPath, diffJson?.right, 'right');
-            }}
-            onSortKey={(path) => {
-              const validatedPath = validateJsonPath(path, diffJson?.left);
-              validatedPath && onSortKey?.(validatedPath, diffJson?.right, 'right');
-            }}
+            onIgnoreKey={
+              onIgnoreKey && ((path, type) => rightClickHandler(onIgnoreKey, path, 'right', type))
+            }
+            onSortKey={
+              onSortKey && ((path, type) => rightClickHandler(onSortKey, path, 'right', type))
+            }
+            onReferenceKey={
+              onReferenceKey &&
+              ((path, type) => rightClickHandler(onReferenceKey, path, 'right', type))
+            }
           />
         </div>
       </div>

@@ -18,7 +18,7 @@ const initialState: UserProfile = {
   theme: DEFAULT_THEME,
   compact: false,
   colorPrimary: DEFAULT_COLOR_PRIMARY,
-  language: I18nextLng.cn,
+  language: I18nextLng.en,
   avatar: '',
 };
 
