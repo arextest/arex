@@ -1,6 +1,10 @@
+/// <reference types="vite-plugin-svgr/client" />
 import styled from '@emotion/styled';
+import { Typography } from 'antd';
 import React, { FC } from 'react';
 
+import { ReactComponent as LogoIconDark } from '../../assets/svg/logo_dark.svg';
+import { ReactComponent as LogoIconLight } from '../../assets/svg/logo_light.svg';
 import { GithubStarButton } from '../components';
 import { useArexCoreConfig } from '../hooks';
 
@@ -24,7 +28,7 @@ const HeaderWrapper = styled.div`
       align-items: center;
     }
     .logo {
-      width: 90px;
+      width: 100px;
       text-align: center;
       font-weight: 600;
       display: inline-block;
@@ -43,8 +47,17 @@ const ArexHeader: FC<AppHeaderProps> = (props) => {
   return (
     <HeaderWrapper>
       <div className={'left'}>
-        <a className={'logo'} target='_blank' href={'http://arextest.com'} rel='noreferrer'>
-          AREX
+        <a
+          className={'logo'}
+          target='_blank'
+          href={'http://arextest.com'}
+          rel='noreferrer'
+          style={{ display: 'flex' }}
+        >
+          {React.createElement(theme === 'dark' ? LogoIconDark : LogoIconLight, {
+            style: { height: '20px' },
+          })}
+          <Typography.Text style={{ lineHeight: '24px', fontSize: '12px' }}>AREX</Typography.Text>
         </a>
         {props.githubStar && <GithubStarButton theme={theme} />}
         {props.menu}

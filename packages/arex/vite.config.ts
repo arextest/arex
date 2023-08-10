@@ -3,9 +3,11 @@ import path from 'path';
 import Icons from 'unplugin-icons/vite';
 import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import svgr from 'vite-plugin-svgr';
 
 export default defineConfig({
   plugins: [
+    svgr(),
     react({
       jsxImportSource: '@emotion/react',
     }),
