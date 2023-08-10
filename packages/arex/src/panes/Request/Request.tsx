@@ -47,7 +47,7 @@ const Request: ArexPaneFC = () => {
 
   const userName = getLocalStorage<string>(EMAIL_KEY);
   const [saveAsShow, setSaveAsShow] = useState(false);
-  const { activeEnvironment } = useEnvironments();
+  const { activeEnvironment, timestamp: timestampEnvironment } = useEnvironments();
   const { activeWorkspaceId } = useWorkspaces();
   const { collectionsFlatData, collectionsTreeData, getCollections, getPath } = useCollections();
   const { setPanes } = useMenusPanes();
@@ -65,7 +65,7 @@ const Request: ArexPaneFC = () => {
       name: activeEnvironment?.envName || '',
       variables: activeEnvironment?.keyValues || [],
     }),
-    [activeEnvironment],
+    [activeEnvironment, timestampEnvironment],
   );
 
   const handleSend: HttpProps['onSend'] = (request) => {
