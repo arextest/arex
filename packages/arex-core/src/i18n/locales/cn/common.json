@@ -4,5 +4,7 @@
   "benchmark": "基准",
   "test": "测试",
   "console": "控制台",
-  "browserAgent": "浏览器代理"
+  "browserAgent": "浏览器代理",
+  "moreNode": "新增节点",
+  "differenceNode": "差异节点"
 }
