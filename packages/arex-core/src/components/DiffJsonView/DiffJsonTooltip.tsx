@@ -10,7 +10,7 @@ import DiffJsonViewWrapper from './DiffJsonViewWrapper';
 const DiffJsonTooltip: FC<TextProps> = (props) => {
   const { token } = antdTheme.useToken();
   const { theme } = useArexCoreConfig();
-  const { t } = useTranslation(['components']);
+  const { t } = useTranslation();
 
   return (
     <DiffJsonViewWrapper>
@@ -35,13 +35,13 @@ const DiffJsonTooltip: FC<TextProps> = (props) => {
           <div>
             <div className='color-tag-more' />
             <Typography.Text type='secondary' {...props}>
-              {t('replay.moreNode')}
+              {t('moreNode')}
             </Typography.Text>
           </div>
           <div>
             <div className='color-tag-difference' />
             <Typography.Text type='secondary' {...props}>
-              {t('replay.differenceNode')}
+              {t('differenceNode')}
             </Typography.Text>
           </div>
         </div>
