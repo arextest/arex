@@ -229,7 +229,7 @@
     "emptyValue": "请输入值",
     "mockTips": "\"body\"为json字符串时会自动转换成json对象，保存时还原。",
     "runningStatus": "运行状态",
-    "frequencyUnit": "个/分钟",
+    "frequencyUnit": "次/分钟",
     "frequencyTip": "单接口单日录制: * 个",
     "recordMachineNum": "录制机器数量",
     "agentStatusTip": "SLEEPING: Agent已注入,但不录制\nUNSTART: Agent未注入\nWORKING: 正在录制",
