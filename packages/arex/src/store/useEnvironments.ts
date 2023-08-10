@@ -66,6 +66,9 @@ const useEnvironments = create(
           workspaceId: _workspaceId as string,
         });
         set({ environments, timestamp: Date.now() });
+        get().setActiveEnvironment(
+          environments.find((i) => i.id === get().activeEnvironment?.id) || DefaultEnvironment,
+        );
         return environments;
       }
 

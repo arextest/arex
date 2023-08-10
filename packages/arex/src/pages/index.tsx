@@ -17,7 +17,7 @@ import { EnvironmentSelect, HeaderMenu } from '@/components';
 import { EMAIL_KEY, PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
-import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
+import { useMenusPanes, useWorkspaces } from '@/store';
 
 export default () => {
   useInit();
@@ -42,7 +42,6 @@ export default () => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
-  const { getCollections } = useCollections();
 
   const workspacesOptions = useMemo(
     () =>

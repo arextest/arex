@@ -135,6 +135,7 @@ const Environment: ArexPaneFC<Environment> = (props) => {
             </Popconfirm>
 
             <TooltipButton
+              color='primary'
               icon={<SaveOutlined />}
               title={t('save', { ns: 'common' })}
               onClick={() => saveEnv({ env: { ...environment, keyValues } })}

@@ -416,7 +416,6 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         caseSourceFrom,
         caseSourceTo,
         appId: selectedPlan!.appId,
-        caseSourceType: 0,
         operationCaseInfoList: [{ operationId }],
         operator: email as string,
         replayPlanType: 1,
