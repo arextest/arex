@@ -165,8 +165,6 @@
     "differentValue": "Different Value",
     "ignoreNode": "Ignore Node",
     "escExit": "Press Esc to exit",
-    "moreNode": "Additional node",
-    "differenceNode": "Difference node",
     "addIgnoreSuccess": "Ignore node successfully",
     "diffMatch": "Diff Match",
     "replayEndTime": "ReplayEndTime",

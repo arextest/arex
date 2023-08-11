@@ -2,9 +2,11 @@ import react from '@vitejs/plugin-react-swc';
 // @ts-ignore
 import path from 'path';
 import { defineConfig } from 'vite';
+import svgr from 'vite-plugin-svgr';
 
 export default defineConfig({
   plugins: [
+    svgr(),
     react({
       jsxImportSource: '@emotion/react',
     }),
