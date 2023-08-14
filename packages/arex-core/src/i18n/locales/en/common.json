@@ -4,5 +4,7 @@
   "benchmark": "Benchmark",
   "test": "Test",
   "console": "Console",
-  "browserAgent": "Browser Agent"
+  "browserAgent": "Browser Agent",
+  "moreNode": "Additional node",
+  "differenceNode": "Difference node"
 }

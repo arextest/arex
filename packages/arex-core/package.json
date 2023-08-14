@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-core",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-core.umd.cjs",
   "module": "dist/arex-core.js",
@@ -50,6 +50,7 @@
     "@types/react-dom": "^18.2.0",
     "@types/react-transition-group": "^4.4.6",
     "@vitejs/plugin-react-swc": "^3.3.0",
+    "vite-plugin-svgr": "^3.2.0",
     "typescript": "^5.0.2",
     "vite": "^4.2.0"
   },
