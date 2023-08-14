@@ -1,6 +1,13 @@
-import { CloseOutlined, DeleteOutlined, SaveOutlined, SyncOutlined } from '@ant-design/icons';
+import {
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  SaveOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import {
   css,
+  HoveredActionButton,
   PaneDrawer,
   SmallTextButton,
   SpaceBetweenWrapper,
@@ -26,7 +33,7 @@ import React, { FC, useMemo, useRef, useState } from 'react';
 
 import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService } from '@/services';
-import { DependencyParams } from '@/services/ComparisonService';
+import { DependencyParams, QueryEncryptionNode } from '@/services/ComparisonService';
 
 import CompareConfigTitle, { CompareConfigTitleProps } from '../CompareConfigTitle';
 import TreeCarousel from '../TreeCarousel';
@@ -58,7 +65,7 @@ const NodeEncryption: FC<NodeMaskingProps> = (props) => {
   const { message } = App.useApp();
 
   const searchRef = useRef<InputRef>(null);
-  const treeCarouselRef = React.useRef<CarouselRef>(null);
+  const carouselRef = React.useRef<CarouselRef>(null);
 
   const [treeEditMode, setTreeEditMode] = useState<TreeEditModeEnum>(TreeEditModeEnum.DataTree);
 
@@ -68,7 +75,7 @@ const NodeEncryption: FC<NodeMaskingProps> = (props) => {
   const [methodName, setMethodName] = useState<string>();
   const [path, setPath] = useState<string[]>();
 
-  const [openMaskingModal, setOpenMaskingModal] = useState(false);
+  const [openMaskingModal, setOpenMaskingModal] = useState<string | boolean>(false); // boolean: insert mode, string: edit mode
 
   const handleSearch: ButtonProps['onClick'] = (e) => {
     activeKey?.[0] === ActiveKey && e.stopPropagation();
@@ -125,6 +132,16 @@ const NodeEncryption: FC<NodeMaskingProps> = (props) => {
     },
   );
 
+  const { run: updateEncryptionNode } = useRequest(ComparisonService.updateEncryptionNode, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        message.success(t('message.updateSuccess', { ns: 'common' }));
+        getMaskingNodes();
+      }
+    },
+  });
+
   const { run: deleteEncryptionNode } = useRequest(ComparisonService.deleteEncryptionNode, {
     manual: true,
     onSuccess(success) {
@@ -146,23 +163,36 @@ const NodeEncryption: FC<NodeMaskingProps> = (props) => {
   };
 
   const handleCancelEdit = () => {
+    setPath(undefined);
     setMethodName(undefined);
     setOpenMaskingModal(false);
     setTreeEditMode(TreeEditModeEnum.DataTree);
   };
 
   const handleSaveMasking = () => {
+    typeof openMaskingModal === 'string'
+      ? updateEncryptionNode({ id: openMaskingModal, methodName })
+      : insertEncryptionNode({ path, methodName });
     setOpenMaskingModal(false);
-    insertEncryptionNode({ path, methodName });
+  };
+
+  const handleEditEncryption = (node: QueryEncryptionNode) => {
+    setPath(node.path);
+    setMethodName(node.methodName);
+    changeCarousel(TreeEditModeEnum.MethodSelect);
+    setOpenMaskingModal(node.id);
   };
 
   const handleEditCollapseItem: TreeProps['onSelect'] = (path, info) => {
     setPath(path[0].toString().split('/').filter(Boolean));
-    setTreeEditMode(TreeEditModeEnum.MethodSelect);
+    changeCarousel(TreeEditModeEnum.MethodSelect);
     setOpenMaskingModal(true);
-
-    setTimeout(() => treeCarouselRef.current?.goTo(1)); // 防止初始化时 treeCarouselRef 未绑定
   };
+
+  function changeCarousel(index: TreeEditModeEnum) {
+    setTreeEditMode(index);
+    setTimeout(() => carouselRef.current?.goTo(index)); // 防止初始化时 carouselRef 未绑定
+  }
 
   return (
     <>
@@ -174,7 +204,7 @@ const NodeEncryption: FC<NodeMaskingProps> = (props) => {
             key: ActiveKey,
             label: (
               <CompareConfigTitle
-                title='Nodes Encryption'
+                title={t('appSetting.nodesEncryption', { ns: 'components' })}
                 readOnly={props.readOnly}
                 onSearch={handleSearch}
                 onAdd={handleMaskingAdd}
@@ -210,7 +240,20 @@ const NodeEncryption: FC<NodeMaskingProps> = (props) => {
                       <SpaceBetweenWrapper width={'100%'}>
                         <Typography.Text ellipsis>{node.path.join('/')}</Typography.Text>
                         <Space>
-                          <Tag>{node.methodName}</Tag>
+                          <HoveredActionButton
+                            hoveredNode={
+                              <Button
+                                size='small'
+                                icon={<EditOutlined />}
+                                onClick={() => handleEditEncryption(node)}
+                              >
+                                Edit
+                              </Button>
+                            }
+                          >
+                            <Tag>{node.methodName}</Tag>
+                          </HoveredActionButton>
+
                           {!props.readOnly && (
                             <SmallTextButton
                               icon={<DeleteOutlined />}
@@ -245,7 +288,7 @@ const NodeEncryption: FC<NodeMaskingProps> = (props) => {
           <SpaceBetweenWrapper>
             <Space size='middle'>
               <Typography.Title level={5} style={{ marginBottom: 0 }}>
-                {t('appSetting.nodesSort')}
+                {t('appSetting.nodesEncryption', { ns: 'components' })}
               </Typography.Title>
 
               <Button
@@ -269,18 +312,18 @@ const NodeEncryption: FC<NodeMaskingProps> = (props) => {
             )}
           </SpaceBetweenWrapper>
         }
-        open={openMaskingModal}
+        open={!!openMaskingModal}
         onClose={handleCancelEdit}
       >
-        <TreeCarousel ref={treeCarouselRef} beforeChange={(from, to) => setTreeEditMode(to)}>
+        <TreeCarousel ref={carouselRef} beforeChange={(from, to) => setTreeEditMode(to)}>
           <DataEncryptionTree
             loading={props.loadingContract}
             treeData={props.contractParsed}
-            // sortNodeList={maskingNodes}
+            encryptionNodeList={maskingNodes}
             onSelect={handleEditCollapseItem}
           />
 
-          <DataEncryptionNodeConfig value={methodName} onChange={setMethodName} />
+          <DataEncryptionNodeConfig path={path} value={methodName} onChange={setMethodName} />
         </TreeCarousel>
       </PaneDrawer>
     </>

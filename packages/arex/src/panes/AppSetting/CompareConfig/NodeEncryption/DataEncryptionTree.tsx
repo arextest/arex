@@ -5,13 +5,13 @@ import { TreeProps } from 'antd/es';
 import React, { FC, useMemo } from 'react';
 
 import { useColorPrimary } from '@/hooks';
-import { SortNode } from '@/services/ComparisonService';
+import { QueryEncryptionNode } from '@/services/ComparisonService';
 
 import { getDataEncryptionNodes } from './utils/getDataEncryptionNodes';
 
 type DataEncryptionTreeProps = Omit<TreeProps, 'treeData'> & {
   loading?: boolean;
-  sortNodeList?: SortNode[];
+  encryptionNodeList?: QueryEncryptionNode[];
   treeData?: object;
   onEditResponse?: () => void;
 };
@@ -22,8 +22,8 @@ const DataEncryptionTree: FC<DataEncryptionTreeProps> = (props) => {
   const color = useColorPrimary();
 
   const treeData = useMemo(
-    () => getDataEncryptionNodes(props.treeData || {}, '', props.sortNodeList, color.name),
-    [props.treeData, props.sortNodeList, color.name],
+    () => getDataEncryptionNodes(props.treeData || {}, '', props.encryptionNodeList, color.name),
+    [props.treeData, props.encryptionNodeList, color.name],
   );
 
   return (

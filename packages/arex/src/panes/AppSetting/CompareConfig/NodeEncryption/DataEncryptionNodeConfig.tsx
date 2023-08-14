@@ -3,6 +3,7 @@ import { Select, Typography } from 'antd';
 import React, { FC } from 'react';
 
 export type DataEncryptionNodeConfigProps = {
+  path?: string[];
   value?: string;
   onChange?: (value: string) => void;
 };
@@ -11,7 +12,10 @@ const DataEncryptionNodeConfig: FC<DataEncryptionNodeConfigProps> = (props) => {
   const { t } = useTranslation('components');
   return (
     <>
-      <Typography.Title level={5}>Node data encryption config</Typography.Title>
+      <div style={{ marginBottom: '8px' }}>
+        <Typography.Text type='secondary'> Node data encryption config: </Typography.Text>
+        <Typography.Text strong>{props.path?.join('/')}</Typography.Text>
+      </div>
       <Select
         value={props.value}
         options={[

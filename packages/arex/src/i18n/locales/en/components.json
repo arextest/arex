@@ -180,6 +180,7 @@
     "compareConfig": "Compare Config",
     "nodesIgnore": "Nodes Ignore",
     "nodesSort": "Nodes Sort",
+    "nodesEncryption": "Nodes Encryption",
     "agentVersion": "Agent Version",
     "agentHost": "Agent Host",
     "basic": "Basic",

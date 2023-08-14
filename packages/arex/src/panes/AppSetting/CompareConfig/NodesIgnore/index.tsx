@@ -297,7 +297,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
             key: ActiveKey,
             label: (
               <CompareConfigTitle
-                title='Nodes Ignore'
+                title={t('appSetting.nodesIgnore', { ns: 'components' })}
                 readOnly={props.readOnly}
                 onSearch={handleSearch}
                 onAdd={handleIgnoreAdd}

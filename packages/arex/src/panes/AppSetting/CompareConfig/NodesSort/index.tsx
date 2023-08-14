@@ -277,7 +277,7 @@ const NodesSort: FC<NodesSortProps> = (props) => {
             key: ActiveKey,
             label: (
               <CompareConfigTitle
-                title='Nodes Sort'
+                title={t('appSetting.nodesSort', { ns: 'components' })}
                 readOnly={props.readOnly}
                 onSearch={handleSearch}
                 onAdd={handleAddSortNode}
