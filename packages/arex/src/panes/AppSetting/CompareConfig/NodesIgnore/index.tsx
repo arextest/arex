@@ -1,4 +1,10 @@
-import { CheckOutlined, CloseOutlined, DeleteOutlined, SyncOutlined } from '@ant-design/icons';
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  SaveOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import {
   css,
   PaneDrawer,
@@ -401,7 +407,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
               </Button>
             </Space>
 
-            <Button size='small' type='primary' onClick={handleIgnoreSave}>
+            <Button size='small' type='primary' icon={<SaveOutlined />} onClick={handleIgnoreSave}>
               {t('save', { ns: 'common' })}
             </Button>
           </SpaceBetweenWrapper>

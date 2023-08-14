@@ -1,9 +1,4 @@
-import {
-  SpaceBetweenWrapper,
-  tryParseJsonString,
-  tryPrettierJsonString,
-  useTranslation,
-} from '@arextest/arex-core';
+import { tryParseJsonString, tryPrettierJsonString, useTranslation } from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { App, Select, SelectProps, Space, Typography } from 'antd';
@@ -11,7 +6,7 @@ import useBreakpoint from 'antd/es/grid/hooks/useBreakpoint';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 
 import { Segmented } from '@/components';
-import NodeMasking from '@/panes/AppSetting/CompareConfig/NodeMasking';
+import NodeEncryption from '@/panes/AppSetting/CompareConfig/NodeEncryption';
 import NodesIgnore from '@/panes/AppSetting/CompareConfig/NodesIgnore';
 import NodesSort from '@/panes/AppSetting/CompareConfig/NodesSort';
 import { ApplicationService, ReportService } from '@/services';
@@ -357,11 +352,15 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         )}
 
         {configType !== CONFIG_TYPE.GLOBAL && (
-          <NodeMasking
+          <NodeEncryption
+            key='nodes-encryption'
+            appId={props.appId}
+            configType={configType}
+            operationId={activeOperationId}
+            dependency={activeDependency}
             loadingContract={loadingContract}
             contractParsed={contractParsed}
             onAdd={queryContract}
-            key='nodes-masking'
           />
         )}
       </div>

@@ -223,6 +223,7 @@
     "sortTree": "SortTree",
     "emptyKey": "Please enter ignored key",
     "noIgnoredNodes": "No Ignored Nodes",
+    "noEncryptionNodes": "No Encryption Nodes",
     "emptyFullClassName": "Please enter full class name",
     "emptyCaseRange": "Please input your case range!",
     "emptyValue": "Please enter value",
@@ -246,7 +247,8 @@
     "emptyQPS": "Please input your max QPS",
     "sync": "Sync",
     "emptyContractTip": "No contract, please try to synchronize the contract",
-    "contract": "Contract"
+    "contract": "Contract",
+    "chooseEncryptionMethodName": "Please choose encryption method name"
   },
   "env": {
     "searchEnvironment": "Search Environment",

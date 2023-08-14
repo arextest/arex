@@ -7,25 +7,24 @@ import React, { FC, useMemo } from 'react';
 import { useColorPrimary } from '@/hooks';
 import { SortNode } from '@/services/ComparisonService';
 
-import { getDataMaskingNodes } from './utils/getDataMaskingNodes';
+import { getDataEncryptionNodes } from './utils/getDataEncryptionNodes';
 
-type ResponseTreeProps = Omit<TreeProps, 'treeData'> & {
+type DataEncryptionTreeProps = Omit<TreeProps, 'treeData'> & {
   loading?: boolean;
   sortNodeList?: SortNode[];
   treeData?: object;
   onEditResponse?: () => void;
 };
 
-const DataMaskingTree: FC<ResponseTreeProps> = (props) => {
+const DataEncryptionTree: FC<DataEncryptionTreeProps> = (props) => {
   const { t } = useTranslation('components');
 
   const color = useColorPrimary();
 
-  const treeData = useMemo(() => {
-    const nodesData = getDataMaskingNodes(props.treeData || {}, '', props.sortNodeList, color.name);
-    console.log('props.treeData', nodesData, props.sortNodeList);
-    return nodesData;
-  }, [props.treeData, props.sortNodeList, color.name]);
+  const treeData = useMemo(
+    () => getDataEncryptionNodes(props.treeData || {}, '', props.sortNodeList, color.name),
+    [props.treeData, props.sortNodeList, color.name],
+  );
 
   return (
     <Card
@@ -57,4 +56,4 @@ const DataMaskingTree: FC<ResponseTreeProps> = (props) => {
   );
 };
 
-export default DataMaskingTree;
+export default DataEncryptionTree;

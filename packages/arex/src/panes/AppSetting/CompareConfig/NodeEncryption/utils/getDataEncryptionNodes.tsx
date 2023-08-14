@@ -2,8 +2,9 @@ import { Badge } from 'antd';
 import { DataNode } from 'antd/lib/tree';
 import React from 'react';
 
-import { getArrayValidElement } from '@/panes/AppSetting/CompareConfig/NodesSort/utils/getArrayValidElement';
 import { SortNode } from '@/services/ComparisonService';
+
+import { getArrayValidElement } from '../../NodesSort/utils/getArrayValidElement';
 
 /**
  * 获取 object 的节点，并为已配置过的数组节点添加圆点提示
@@ -12,7 +13,7 @@ import { SortNode } from '@/services/ComparisonService';
  * @param sortNodeList 已配置的节点列表
  * @param color 圆点颜色
  */
-export function getDataMaskingNodes(
+export function getDataEncryptionNodes(
   object: object,
   basePath = '',
   sortNodeList?: SortNode[],
@@ -29,7 +30,7 @@ export function getDataMaskingNodes(
           ? {
               title: key,
               key: path,
-              children: getDataMaskingNodes(
+              children: getDataEncryptionNodes(
                 Array.isArray(losslessValue)
                   ? getArrayValidElement(losslessValue) || {}
                   : losslessValue,

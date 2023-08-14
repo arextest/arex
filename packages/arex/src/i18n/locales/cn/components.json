@@ -222,6 +222,7 @@
     "sortTree": "关键标识节点",
     "emptyKey": "请输入忽略节点",
     "noIgnoredNodes": "忽略节点为空",
+    "noEncryptionNodes": "忽略节点为空",
     "emptyFullClassName": "请输入全类名",
     "emptyCaseRange": "请输入 Case 数量上限!",
     "emptyValue": "请输入值",
@@ -245,7 +246,8 @@
     "emptyQPS": "请输入最大QPS",
     "sync": "同步",
     "emptyContractTip": "无报文契约，请尝试同步更新契约",
-    "contract": "契约"
+    "contract": "契约",
+    "chooseEncryptionMethodName": "请选择选择加密方法"
   },
   "env": {
     "searchEnvironment": "搜索环境",

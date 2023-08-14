@@ -1,4 +1,10 @@
-import { CloseOutlined, DeleteOutlined, EditOutlined, SyncOutlined } from '@ant-design/icons';
+import {
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  SaveOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import { css, PaneDrawer, SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import {
@@ -377,7 +383,7 @@ const NodesSort: FC<NodesSortProps> = (props) => {
               </Button>
             </Space>
             {treeEditMode === TreeEditModeEnum.SortTree && (
-              <Button size='small' type='primary' onClick={handleSaveSort}>
+              <Button size='small' type='primary' icon={<SaveOutlined />} onClick={handleSaveSort}>
                 {t('save', { ns: 'common' })}
               </Button>
             )}
