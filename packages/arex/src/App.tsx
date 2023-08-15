@@ -5,9 +5,11 @@ import {
   getLocalStorage,
 } from '@arextest/arex-core';
 import * as Sentry from '@sentry/react';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { EMAIL_KEY } from '@/constant';
+import { request } from '@/utils';
 
 import { useAuthentication } from './hooks';
 import resources from './i18n';
@@ -27,7 +29,25 @@ const App = () => {
   }
   useAuthentication();
   const { theme, compact, colorPrimary, language } = useUserProfile();
-
+  const loc = useLocation();
+  useEffect(() => {
+    request.post('http://trace.arextest.com:8080/graphql', {
+      query: `mutation ReportTraceData($data: String!) {    reportTraceData(data: $data) {id}}`,
+      operationName: 'ReportTraceData',
+      variables: {
+        data: JSON.stringify([
+          {
+            key: 'url',
+            value: loc.pathname,
+          },
+          {
+            key: 'username',
+            value: getLocalStorage(EMAIL_KEY) || 'unknown',
+          },
+        ]),
+      },
+    });
+  }, [loc]);
   return (
     <ArexCoreProvider
       theme={theme}

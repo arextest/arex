@@ -1,7 +1,8 @@
 import { UserOutlined } from '@ant-design/icons';
 import { FlexCenterWrapper, getLocalStorage, setLocalStorage, styled } from '@arextest/arex-core';
+import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Card, Form, Input, Space, Typography } from 'antd';
+import { App, Button, Card, Divider, Form, Input, Space, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -94,6 +95,11 @@ const Login: FC = () => {
     count <= 0 && clearInterval(timer);
   }, [count]);
 
+  const baseInfo = {
+    thAppClientId: 'thAppClientId',
+    thAppRedirectUri: 'http://10.5.153.1:8088/auth',
+  };
+
   return (
     <FlexCenterWrapper>
       <Card style={{ marginTop: '20vh' }}>
@@ -146,6 +152,23 @@ const Login: FC = () => {
                 </Button>
               </span>
             </Form.Item>
+            {/*https://github.com/login/oauth/authorize*/}
+            <Space>
+              <span
+                css={css`
+                  margin-right: 10px;
+                `}
+              >
+                其他登录方式 :{' '}
+              </span>
+              <a
+                href={`https://github.com/login/oauth/authorize?response_type=code&state=STATE&scope=api&client_id=${baseInfo.thAppClientId}&redirect_uri=${baseInfo.thAppRedirectUri}`}
+              >
+                github
+              </a>
+              <Divider type={'vertical'} />
+              <a href='http://github.com/'>gitlab</a>
+            </Space>
           </Form>
         </Space>
       </Card>
