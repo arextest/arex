@@ -24,7 +24,7 @@ import {
   Typography,
 } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { createElement, FC, ReactNode, useMemo, useRef, useState } from 'react';
+import React, { createElement, FC, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
 import { EMAIL_KEY, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCaseList';
@@ -125,16 +125,19 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     },
   });
 
-  const { data: recordedCase = 0 } = useRequest(ReportService.queryCountRecord, {
-    defaultParams: [
-      {
-        appId: data.appId,
-        beginTime: dayjs().startOf('day').valueOf(),
-        endTime: dayjs().valueOf(),
-      },
-    ],
-    ready: !!data.appId,
-  });
+  const { data: recordedCase = 0, refresh: queryCountRecord } = useRequest(
+    ReportService.queryCountRecord,
+    {
+      defaultParams: [
+        {
+          appId: data.appId,
+          beginTime: dayjs().startOf('day').valueOf(),
+          endTime: dayjs().valueOf(),
+        },
+      ],
+      ready: !!data.appId,
+    },
+  );
 
   /**
    * 创建回放
@@ -242,6 +245,13 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     [data.appId, targetHostSource, open],
   );
 
+  const handleClickTitle = useCallback(() => caseListRef.current?.open(), [caseListRef]);
+
+  const handleRefresh = useCallback(() => {
+    queryCountRecord();
+    onRefresh?.();
+  }, []);
+
   return (
     <div>
       <PanesTitle
@@ -249,8 +259,8 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           <TitleWrapper
             title={data.appId}
             count={recordedCase}
-            onClickTitle={() => caseListRef.current?.open()}
-            onRefresh={onRefresh}
+            onClickTitle={handleClickTitle}
+            onRefresh={handleRefresh}
           />
         }
         extra={
