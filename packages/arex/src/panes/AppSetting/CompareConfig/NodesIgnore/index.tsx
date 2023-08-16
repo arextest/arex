@@ -26,7 +26,7 @@ import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { EditAreaPlaceholder } from '@/components';
-import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
+import { CONFIG_TARGET } from '@/panes/AppSetting/CompareConfig';
 import CompareConfigTitle from '@/panes/AppSetting/CompareConfig/CompareConfigTitle';
 import { ComparisonService } from '@/services';
 import { OperationId } from '@/services/ApplicationService';
@@ -49,7 +49,7 @@ export type NodesIgnoreProps = {
   readOnly?: boolean;
   syncing?: boolean;
   loadingContract?: boolean;
-  configType: CONFIG_TYPE;
+  configTarget: CONFIG_TARGET;
   contractParsed: { [p: string]: any };
   onAdd?: () => void;
   onSync?: () => void;
@@ -87,24 +87,24 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
     () =>
       ComparisonService.queryIgnoreNode({
         appId: props.appId,
-        operationId: props.configType === CONFIG_TYPE.GLOBAL ? undefined : props.operationId,
-        ...(props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependency : {}),
+        operationId: props.configTarget === CONFIG_TARGET.GLOBAL ? undefined : props.operationId,
+        ...(props.configTarget === CONFIG_TARGET.DEPENDENCY ? props.dependency : {}),
       }),
     {
       ready: !!(
         props.appId &&
-        (props.configType === CONFIG_TYPE.GLOBAL || // GLOBAL ready
-          (props.configType === CONFIG_TYPE.INTERFACE && props.operationId) || // INTERFACE ready
-          (props.configType === CONFIG_TYPE.DEPENDENCY && props.dependency))
+        (props.configTarget === CONFIG_TARGET.GLOBAL || // GLOBAL ready
+          (props.configTarget === CONFIG_TARGET.INTERFACE && props.operationId) || // INTERFACE ready
+          (props.configTarget === CONFIG_TARGET.DEPENDENCY && props.dependency))
       ),
-      refreshDeps: [props.operationId, props.dependency, props.configType],
+      refreshDeps: [props.operationId, props.dependency, props.configTarget],
       onSuccess: convertIgnoreNode,
     },
   );
 
   useEffect(() => {
     setIgnoreNodeList([]);
-  }, [props.configType]);
+  }, [props.configTarget]);
 
   function convertIgnoreNode(data: QueryIgnoreNode[]) {
     setCheckedNodesData((state) => {
@@ -236,7 +236,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
     activeKey?.[0] === ActiveKey && e.stopPropagation();
     props.onAdd?.();
 
-    if (props.configType === CONFIG_TYPE.GLOBAL) {
+    if (props.configTarget === CONFIG_TARGET.GLOBAL) {
       setTimeout(() => editInputRef.current?.focus());
       setEditMode(true);
     } else {
@@ -269,7 +269,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
           appId: props.appId,
           operationId: props.operationId,
           exclusions: path.split('/').filter(Boolean),
-          ...(props.configType === CONFIG_TYPE.DEPENDENCY
+          ...(props.configTarget === CONFIG_TARGET.DEPENDENCY
             ? props.dependency
             : ({} as DependencyParams)),
         })),
@@ -323,7 +323,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
                     )
                   }
                   footer={
-                    props.configType === CONFIG_TYPE.GLOBAL &&
+                    props.configTarget === CONFIG_TARGET.GLOBAL &&
                     editMode && (
                       <List.Item style={{ padding: '0 16px' }}>
                         <SpaceBetweenWrapper width={'100%'}>
