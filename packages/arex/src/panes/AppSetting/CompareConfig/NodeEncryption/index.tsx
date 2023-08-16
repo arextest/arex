@@ -31,7 +31,7 @@ import { TreeProps } from 'antd/es';
 import { CarouselRef } from 'antd/lib/carousel';
 import React, { FC, useMemo, useRef, useState } from 'react';
 
-import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
+import { CONFIG_TARGET } from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService } from '@/services';
 import { DependencyParams, QueryEncryptionNode } from '@/services/ComparisonService';
 
@@ -47,7 +47,7 @@ export type NodeMaskingProps = {
   readOnly?: boolean;
   syncing?: boolean;
   loadingContract?: boolean;
-  configType: CONFIG_TYPE;
+  configTarget: CONFIG_TARGET;
   contractParsed: { [p: string]: any };
   onAdd?: () => void;
   onSync?: () => void;
@@ -87,10 +87,10 @@ const NodeEncryption: FC<NodeMaskingProps> = (props) => {
   const commonParams = useMemo(
     () => ({
       appId: props.appId,
-      operationId: props.configType === CONFIG_TYPE.GLOBAL ? undefined : props.operationId,
-      ...(props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependency : {}),
+      operationId: props.configTarget === CONFIG_TARGET.GLOBAL ? undefined : props.operationId,
+      ...(props.configTarget === CONFIG_TARGET.DEPENDENCY ? props.dependency : {}),
     }),
-    [props.appId, props.configType, props.dependency, props.operationId],
+    [props.appId, props.configTarget, props.dependency, props.operationId],
   );
 
   const {
@@ -100,10 +100,10 @@ const NodeEncryption: FC<NodeMaskingProps> = (props) => {
   } = useRequest(() => ComparisonService.queryEncryptionNode(commonParams), {
     ready: !!(
       props.appId &&
-      ((props.configType === CONFIG_TYPE.INTERFACE && props.operationId) || // INTERFACE ready
-        (props.configType === CONFIG_TYPE.DEPENDENCY && props.dependency))
+      ((props.configTarget === CONFIG_TARGET.INTERFACE && props.operationId) || // INTERFACE ready
+        (props.configTarget === CONFIG_TARGET.DEPENDENCY && props.dependency))
     ),
-    refreshDeps: [props.configType, props.operationId, props.dependency],
+    refreshDeps: [props.configTarget, props.operationId, props.dependency],
   });
 
   const maskingNodesFiltered = useMemo(

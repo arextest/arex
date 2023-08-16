@@ -22,7 +22,7 @@ export enum CONFIG_TARGET {
 export enum CONFIG_TYPE {
   NODE_IGNORE,
   NODE_SORT,
-  // NODE_Encryption,
+  NODE_Encryption,
   // TYPE_IGNORE,
 }
 
@@ -78,10 +78,16 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
     ];
 
     if (configTargetValue !== CONFIG_TARGET.GLOBAL) {
-      options.push({
-        label: 'NodeSort',
-        value: CONFIG_TYPE.NODE_SORT,
-      });
+      options.push(
+        {
+          label: 'NodeSort',
+          value: CONFIG_TYPE.NODE_SORT,
+        },
+        {
+          label: 'NodeEncryption',
+          value: CONFIG_TYPE.NODE_Encryption,
+        },
+      );
     }
 
     return options;
@@ -395,11 +401,11 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           />
         )}
 
-        {configType !== CONFIG_TYPE.GLOBAL && (
+        {configTypeValue === CONFIG_TYPE.NODE_Encryption && (
           <NodeEncryption
             key='nodes-encryption'
             appId={props.appId}
-            configType={configType}
+            configTarget={configTargetValue}
             operationId={activeOperationId}
             dependency={activeDependency}
             loadingContract={loadingContract}
