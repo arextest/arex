@@ -1,17 +1,7 @@
-import {
-  ArexCoreProvider,
-  ArexMenuManager,
-  ArexPaneManager,
-  getLocalStorage,
-} from '@arextest/arex-core';
-import * as Sentry from '@sentry/react';
-import React, { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { ArexCoreProvider, ArexMenuManager, ArexPaneManager } from '@arextest/arex-core';
+import React from 'react';
 
-import { EMAIL_KEY } from '@/constant';
-import { request } from '@/utils';
-
-import { useAuthentication } from './hooks';
+import { useAuthentication, useTrace } from './hooks';
 import resources from './i18n';
 import Menus from './menus';
 import Panes from './panes';
@@ -22,32 +12,11 @@ import GlobalStyle from './style/GlobalStyle';
 // register menus and panes
 ArexPaneManager.registerPanes(Panes);
 ArexMenuManager.registerMenus(Menus);
-const email = getLocalStorage<string>(EMAIL_KEY);
 const App = () => {
-  if (email) {
-    Sentry.setTag('arex-user', email);
-  }
+  useTrace('http://127.0.0.1:8080/graphql');
   useAuthentication();
   const { theme, compact, colorPrimary, language } = useUserProfile();
-  const loc = useLocation();
-  useEffect(() => {
-    request.post('http://10.5.153.1:16800/graphql', {
-      query: `mutation ReportTraceData($data: String!) {    reportTraceData(data: $data) {id}}`,
-      operationName: 'ReportTraceData',
-      variables: {
-        data: JSON.stringify([
-          {
-            key: 'url',
-            value: loc.pathname,
-          },
-          {
-            key: 'username',
-            value: getLocalStorage(EMAIL_KEY) || 'unknown',
-          },
-        ]),
-      },
-    });
-  }, [loc]);
+
   return (
     <ArexCoreProvider
       theme={theme}
