@@ -1,4 +1,9 @@
-import { tryParseJsonString, tryPrettierJsonString, useTranslation } from '@arextest/arex-core';
+import {
+  Label,
+  tryParseJsonString,
+  tryPrettierJsonString,
+  useTranslation,
+} from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { App, Select, SelectProps, Space, Typography } from 'antd';
@@ -38,7 +43,7 @@ export type CompareConfigProps = {
 };
 
 const CompareConfig: FC<CompareConfigProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('components');
   const { message } = App.useApp();
   const [menuAnimateParent] = useAutoAnimate();
   const [configAnimateParent] = useAutoAnimate();
@@ -46,21 +51,21 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   const configTargetOptions = useMemo(() => {
     const options = [
       {
-        label: 'Global',
+        label: t('appSetting.global'),
         value: CONFIG_TARGET.GLOBAL,
       },
     ];
 
     if (props.operationId !== false) {
       options.push({
-        label: 'Interface',
+        label: t('appSetting.interface'),
         value: CONFIG_TARGET.INTERFACE,
       });
     }
 
     if (props.dependency !== false) {
       options.push({
-        label: 'Dependency',
+        label: t('appSetting.dependency'),
         value: CONFIG_TARGET.DEPENDENCY,
       });
     }
@@ -72,7 +77,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   const configTypeOptions = useMemo(() => {
     const options = [
       {
-        label: 'NodeIgnore',
+        label: t('appSetting.nodesIgnore'),
         value: CONFIG_TYPE.NODE_IGNORE,
       },
     ];
@@ -80,18 +85,18 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
     if (configTargetValue !== CONFIG_TARGET.GLOBAL) {
       options.push(
         {
-          label: 'NodeSort',
+          label: t('appSetting.nodesSort'),
           value: CONFIG_TYPE.NODE_SORT,
         },
         {
-          label: 'NodeEncryption',
+          label: t('appSetting.nodesEncryption'),
           value: CONFIG_TYPE.NODE_Encryption,
         },
       );
     }
 
     return options;
-  }, [configTargetValue]);
+  }, [t, configTargetValue]);
   const [configTypeValue, setConfigTypeValue] = useState<CONFIG_TYPE>(CONFIG_TYPE.NODE_IGNORE);
 
   const [activeOperationId, setActiveOperationId] = useState<string | undefined>(
@@ -279,7 +284,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
       >
         <div key='config-type'>
           <div>
-            <Typography.Text type='secondary'>Type : </Typography.Text>
+            <Label type='secondary'>{t('appSetting.configType')} </Label>
           </div>
           <Segmented
             value={configTypeValue}
@@ -290,7 +295,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
 
         <div key='config-target'>
           <div>
-            <Typography.Text type='secondary'>Target </Typography.Text>
+            <Label type='secondary'>{t('appSetting.configTarget')} </Label>
           </div>
           <Segmented
             value={configTargetValue}
@@ -302,7 +307,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         {configTargetValue !== CONFIG_TARGET.GLOBAL && (
           <div key='interface-select'>
             <div>
-              <Typography.Text type='secondary'>Interface :</Typography.Text>
+              <Label type='secondary'>{t('appSetting.interface')}</Label>
             </div>
             <Select
               optionFilterProp='label'
@@ -325,7 +330,9 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         {configTargetValue === CONFIG_TARGET.DEPENDENCY && (
           <div key='dependency-select'>
             <div>
-              <Typography.Text type='secondary'>Dependency : </Typography.Text>
+              <Typography.Text type='secondary'>
+                <Label type='secondary'>{t('appSetting.dependency')}</Label>
+              </Typography.Text>
             </div>
             <Select
               optionFilterProp='label'
