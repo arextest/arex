@@ -25,7 +25,7 @@ import { CarouselRef } from 'antd/lib/carousel';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
+import { CONFIG_TARGET } from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService } from '@/services';
 import { DependencyParams, SortNode } from '@/services/ComparisonService';
 
@@ -52,7 +52,7 @@ export type NodesSortProps = {
   syncing?: boolean;
   readOnly?: boolean;
   loadingContract?: boolean;
-  configType: CONFIG_TYPE;
+  configTarget: CONFIG_TARGET;
   contractParsed: { [key: string]: any };
   onAdd?: () => void;
   onSync?: () => void;
@@ -94,15 +94,15 @@ const NodesSort: FC<NodesSortProps> = (props) => {
       ComparisonService.querySortNode({
         appId: props.appId as string,
         operationId: props.operationId,
-        ...(props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependency : {}),
+        ...(props.configTarget === CONFIG_TARGET.DEPENDENCY ? props.dependency : {}),
       }),
     {
       ready: !!(
         props.appId &&
-        ((props.configType === CONFIG_TYPE.INTERFACE && props.operationId) || // INTERFACE ready
-          (props.configType === CONFIG_TYPE.DEPENDENCY && props.dependency))
+        ((props.configTarget === CONFIG_TARGET.INTERFACE && props.operationId) || // INTERFACE ready
+          (props.configTarget === CONFIG_TARGET.DEPENDENCY && props.dependency))
       ),
-      refreshDeps: [props.configType, props.operationId, props.dependency],
+      refreshDeps: [props.configTarget, props.operationId, props.dependency],
       onSuccess(res, [listPath]) {
         // 新增 SortNode 时设置 activeSortNode, 防止继续新增
         if (listPath) {
@@ -120,7 +120,7 @@ const NodesSort: FC<NodesSortProps> = (props) => {
   // 切换配置类型时清空数据
   useEffect(() => {
     setSortNodeList([]);
-  }, [props.configType]);
+  }, [props.configTarget]);
 
   // 外部指定 sortArrayPath 时，直接打开第二层 TreeCarousel
   useEffect(() => {
@@ -169,7 +169,7 @@ const NodesSort: FC<NodesSortProps> = (props) => {
         appId: props.appId,
         operationId: props.operationId,
         ...params,
-        ...(props.configType === CONFIG_TYPE.DEPENDENCY
+        ...(props.configTarget === CONFIG_TARGET.DEPENDENCY
           ? dependencyParams
           : ({} as DependencyParams)),
       });
