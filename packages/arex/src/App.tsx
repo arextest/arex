@@ -13,7 +13,7 @@ import GlobalStyle from './style/GlobalStyle';
 ArexPaneManager.registerPanes(Panes);
 ArexMenuManager.registerMenus(Menus);
 const App = () => {
-  useTrace('http://127.0.0.1:8080/graphql');
+  useTrace('http://trace.arextest.com:8080/graphql');
   useAuthentication();
   const { theme, compact, colorPrimary, language } = useUserProfile();
 
