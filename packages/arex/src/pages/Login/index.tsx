@@ -96,7 +96,7 @@ const Login: FC = () => {
   }, [count]);
 
   const baseInfo = {
-    thAppClientId: 'thAppClientId',
+    thAppClientId: 'e4aeafca253a2bfddae3',
     thAppRedirectUri: 'http://10.5.153.1:8088/auth',
   };
 

@@ -21,7 +21,6 @@ function getValue(search: any, key: any) {
   const arr = str.split('=');
   return arr;
 }
-
 const Auth = () => {
   const location = useLocation();
   const nav = useNavigate();
@@ -31,10 +30,15 @@ const Auth = () => {
 
     console.log(code);
 
-    request.post('/api/oauth/token', { code }).then((res: any) => {
-      console.log(res);
-      message.success(JSON.stringify(res));
-    });
+    request
+      .post('/report/login/oauthLogin', {
+        oauthType: 'GithubOauth',
+        code: code,
+      })
+      .then((res: any) => {
+        console.log(res);
+        message.success(JSON.stringify(res));
+      });
   }, []);
   return <div>Auth</div>;
 };
