@@ -29,16 +29,6 @@ const Auth = () => {
     const [_, code] = getValue(location.search || '?code=test', 'code');
 
     console.log(code);
-
-    request
-      .post('/report/login/oauthLogin', {
-        oauthType: 'GithubOauth',
-        code: code,
-      })
-      .then((res: any) => {
-        console.log(res);
-        message.success(JSON.stringify(res));
-      });
   }, []);
   return <div>Auth</div>;
 };
