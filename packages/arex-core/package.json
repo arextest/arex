@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-core",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-core.umd.cjs",
   "module": "dist/arex-core.js",
@@ -21,7 +21,7 @@
     "@dnd-kit/sortable": "^7.0.2",
     "@dnd-kit/utilities": "^3.2.1",
     "@ant-design/icons": "^5.1.4",
-    "@arextest/vanilla-jsoneditor": "^0.17.18",
+    "@arextest/vanilla-jsoneditor": "^0.17.19",
     "@emotion/react": "^11.10.6",
     "@emotion/serialize": "^1.1.1",
     "@emotion/styled": "^11.10.6",
