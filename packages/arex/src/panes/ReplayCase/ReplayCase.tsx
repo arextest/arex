@@ -25,7 +25,6 @@ import { MessageMap } from '@/services/ScheduleService';
 
 import Case, { CaseProps } from './Case';
 import SaveCase, { SaveCaseRef } from './SaveCase';
-import log from '@/pages/Logs/Log';
 
 const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
   const { message, notification } = App.useApp();
