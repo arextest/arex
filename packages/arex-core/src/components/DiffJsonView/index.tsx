@@ -55,6 +55,7 @@ export type DiffJsonViewProps = {
   onIgnoreKey?: PathHandler;
   onSortKey?: PathHandler;
   onReferenceKey?: PathHandler;
+  onCompressKey?: PathHandler;
 };
 
 const { useToken } = theme;
@@ -68,6 +69,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
   onIgnoreKey,
   onSortKey,
   onReferenceKey,
+  onCompressKey,
 }) => {
   const { t } = useTranslation();
   const { theme, language } = useArexCoreConfig();
@@ -183,6 +185,10 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
               onReferenceKey &&
               ((path, type) => rightClickHandler(onReferenceKey, path, 'left', type))
             }
+            onCompressKey={
+              onCompressKey &&
+              ((path, type) => rightClickHandler(onCompressKey, path, 'left', type))
+            }
           />
         </div>
 
@@ -213,6 +219,10 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             onReferenceKey={
               onReferenceKey &&
               ((path, type) => rightClickHandler(onReferenceKey, path, 'right', type))
+            }
+            onCompressKey={
+              onCompressKey &&
+              ((path, type) => rightClickHandler(onCompressKey, path, 'right', type))
             }
           />
         </div>

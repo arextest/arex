@@ -57,6 +57,10 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
         .then((res) => res.data.recordResult),
     {
       onSuccess(res) {
+        res.map((item) => {
+          item.targetRequest.body = tryPrettierJsonString(item.targetRequest.body || '');
+          item.targetResponse.body = tryPrettierJsonString(item.targetResponse.body || '');
+        });
         setMockData(res);
       },
     },
