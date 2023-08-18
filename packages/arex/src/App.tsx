@@ -1,14 +1,7 @@
-import {
-  ArexCoreProvider,
-  ArexMenuManager,
-  ArexPaneManager,
-  getLocalStorage,
-} from '@arextest/arex-core';
+import { ArexCoreProvider, ArexMenuManager, ArexPaneManager } from '@arextest/arex-core';
 import React from 'react';
 
-import { EMAIL_KEY } from '@/constant';
-
-import { useAuthentication } from './hooks';
+import { useAuthentication, useTrace } from './hooks';
 import resources from './i18n';
 import Menus from './menus';
 import Panes from './panes';
@@ -21,6 +14,7 @@ ArexPaneManager.registerPanes(Panes);
 ArexMenuManager.registerMenus(Menus);
 
 const App = () => {
+  useTrace('http://trace.arextest.com:8080/graphql');
   useAuthentication();
   const { theme, compact, colorPrimary, language } = useUserProfile();
 
