@@ -1,4 +1,9 @@
-import { CloseCircleOutlined, PlayCircleOutlined, SyncOutlined } from '@ant-design/icons';
+import {
+  CloseCircleOutlined,
+  PlayCircleOutlined,
+  SettingOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import {
   getLocalStorage,
   HelpTooltip,
@@ -26,7 +31,8 @@ import {
 import dayjs, { Dayjs } from 'dayjs';
 import React, { createElement, FC, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
-import { EMAIL_KEY, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
+import { EMAIL_KEY, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
+import { useNavPane } from '@/hooks';
 import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCaseList';
 import { ApplicationService, ReportService, ScheduleService } from '@/services';
 import { ApplicationDataType } from '@/services/ApplicationService';
@@ -50,6 +56,7 @@ const TitleWrapper = styled(
     count?: number;
     onClickTitle?: () => void;
     onRefresh?: () => void;
+    onSetting?: () => void;
   }) => {
     const { t } = useTranslation(['components']);
 
@@ -69,6 +76,15 @@ const TitleWrapper = styled(
             title={t('replay.refresh')}
             icon={<SyncOutlined />}
             onClick={props.onRefresh}
+          />
+        )}
+        {props.onSetting && (
+          <TooltipButton
+            size='small'
+            type='text'
+            title={t('replay.setting')}
+            icon={<SettingOutlined />}
+            onClick={props.onSetting}
           />
         )}
       </div>
@@ -93,6 +109,7 @@ const InitialValues = {
 const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   const { notification } = App.useApp();
   const { token } = theme.useToken();
+  const navPane = useNavPane();
   const { t } = useTranslation(['components']);
   const email = getLocalStorage<string>(EMAIL_KEY);
 
@@ -252,6 +269,14 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     onRefresh?.();
   }, []);
 
+  const handleSetting = useCallback(() => {
+    navPane({
+      id: data.id,
+      type: PanesType.APP_SETTING,
+      data: data,
+    });
+  }, [data]);
+
   return (
     <div>
       <PanesTitle
@@ -261,6 +286,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
             count={recordedCase}
             onClickTitle={handleClickTitle}
             onRefresh={handleRefresh}
+            onSetting={handleSetting}
           />
         }
         extra={

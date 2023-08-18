@@ -1,14 +1,8 @@
-import {
-  SpaceBetweenWrapper,
-  tryParseJsonString,
-  tryPrettierJsonString,
-  useTranslation,
-} from '@arextest/arex-core';
+import { tryParseJsonString, tryPrettierJsonString, useTranslation } from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { App, Select, SelectProps, Space, Typography } from 'antd';
-import useBreakpoint from 'antd/es/grid/hooks/useBreakpoint';
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Segmented } from '@/components';
 import NodesIgnore from '@/panes/AppSetting/CompareConfig/NodesIgnore';
@@ -18,10 +12,17 @@ import { DependencyParams } from '@/services/ComparisonService';
 
 import SyncContract from './SyncContract';
 
-export enum CONFIG_TYPE {
+export enum CONFIG_TARGET {
   GLOBAL,
   INTERFACE,
   DEPENDENCY,
+}
+
+export enum CONFIG_TYPE {
+  NODE_IGNORE,
+  NODE_SORT,
+  // NODE_Encryption,
+  // TYPE_IGNORE,
 }
 
 // TODO 类型定义抽离封装
@@ -38,35 +39,53 @@ export type CompareConfigProps = {
 const CompareConfig: FC<CompareConfigProps> = (props) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const breakpoint = useBreakpoint();
   const [menuAnimateParent] = useAutoAnimate();
   const [configAnimateParent] = useAutoAnimate();
 
-  const configOptions = useMemo(() => {
+  const configTargetOptions = useMemo(() => {
     const options = [
       {
         label: 'Global',
-        value: CONFIG_TYPE.GLOBAL,
+        value: CONFIG_TARGET.GLOBAL,
       },
     ];
 
     if (props.operationId !== false) {
       options.push({
         label: 'Interface',
-        value: CONFIG_TYPE.INTERFACE,
+        value: CONFIG_TARGET.INTERFACE,
       });
     }
 
     if (props.dependency !== false) {
       options.push({
         label: 'Dependency',
-        value: CONFIG_TYPE.DEPENDENCY,
+        value: CONFIG_TARGET.DEPENDENCY,
       });
     }
 
     return options;
   }, [props.operationId, props.dependency]);
-  const [configType, setConfigType] = useState<CONFIG_TYPE>(CONFIG_TYPE.GLOBAL);
+  const [configTargetValue, setConfigTargetValue] = useState<CONFIG_TARGET>(CONFIG_TARGET.GLOBAL);
+
+  const configTypeOptions = useMemo(() => {
+    const options = [
+      {
+        label: 'NodeIgnore',
+        value: CONFIG_TYPE.NODE_IGNORE,
+      },
+    ];
+
+    if (configTargetValue !== CONFIG_TARGET.GLOBAL) {
+      options.push({
+        label: 'NodeSort',
+        value: CONFIG_TYPE.NODE_SORT,
+      });
+    }
+
+    return options;
+  }, [configTargetValue]);
+  const [configTypeValue, setConfigTypeValue] = useState<CONFIG_TYPE>(CONFIG_TYPE.NODE_IGNORE);
 
   const [activeOperationId, setActiveOperationId] = useState<string | undefined>(
     props.operationId || undefined,
@@ -78,10 +97,10 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   // 当组件初始化时，根据 props.operationId 和 props.dependencyId 设置 configType
   useEffect(() => {
     if (props.dependency) {
-      setConfigType(CONFIG_TYPE.DEPENDENCY);
+      setConfigTargetValue(CONFIG_TARGET.DEPENDENCY);
       setActiveDependency(props.dependency);
     } else if (props.operationId) {
-      setConfigType(CONFIG_TYPE.INTERFACE);
+      setConfigTargetValue(CONFIG_TARGET.INTERFACE);
     }
   }, [props.operationId, props.dependency]);
 
@@ -111,7 +130,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   /**
    * 请求 DependencyList
    */
-  const { data: operationData, loading: loadingDependency } = useRequest(
+  const { loading: loadingDependency } = useRequest(
     () => ApplicationService.getDependencyList({ operationId: activeOperationId as string }),
     {
       ready: !!activeOperationId,
@@ -184,11 +203,11 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
       ReportService.queryContract({
         appId: props.appId,
         operationId: activeOperationId,
-        ...(configType === CONFIG_TYPE.DEPENDENCY ? activeDependency : {}),
+        ...(configTargetValue === CONFIG_TARGET.DEPENDENCY ? activeDependency : {}),
       }),
     {
       ready: !!props.appId && !syncing,
-      refreshDeps: [props.sortArrayPath, configType, syncing], // TODO 目前可能有一些多余的无效请求，待优化
+      refreshDeps: [props.sortArrayPath, configTargetValue, syncing], // TODO 目前可能有一些多余的无效请求，待优化
       onBefore() {
         setContract();
         setRawContract(undefined);
@@ -218,12 +237,12 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
       appId: props.appId,
       operationResponse: value || '',
     };
-    if (configType === CONFIG_TYPE.INTERFACE) {
+    if (configTargetValue === CONFIG_TARGET.INTERFACE) {
       params = Object.assign(params, {
         operationId: activeOperationId,
       });
     }
-    if (configType === CONFIG_TYPE.DEPENDENCY && activeDependency) {
+    if (configTargetValue === CONFIG_TARGET.DEPENDENCY && activeDependency) {
       params = Object.assign(params, {
         operationId: activeOperationId,
         operationType: activeDependency.operationType,
@@ -233,6 +252,16 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
 
     updateContract(params);
   };
+
+  const handleConfigTypeChange = useCallback(
+    (value: React.Key) => setConfigTypeValue(value as CONFIG_TYPE),
+    [],
+  );
+
+  const handleConfigTargetChange = useCallback((value: React.Key) => {
+    if (value === CONFIG_TARGET.GLOBAL) setConfigTypeValue(CONFIG_TYPE.NODE_IGNORE);
+    setConfigTargetValue(value as CONFIG_TARGET);
+  }, []);
 
   return (
     <Space size='middle' direction='vertical' style={{ display: 'flex' }}>
@@ -246,13 +275,24 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
             <Typography.Text type='secondary'>Type : </Typography.Text>
           </div>
           <Segmented
-            value={configType}
-            options={configOptions}
-            onChange={(value) => setConfigType(value as CONFIG_TYPE)}
+            value={configTypeValue}
+            options={configTypeOptions}
+            onChange={handleConfigTypeChange}
           />
         </div>
 
-        {configType !== CONFIG_TYPE.GLOBAL && (
+        <div key='config-target'>
+          <div>
+            <Typography.Text type='secondary'>Target </Typography.Text>
+          </div>
+          <Segmented
+            value={configTargetValue}
+            options={configTargetOptions}
+            onChange={handleConfigTargetChange}
+          />
+        </div>
+
+        {configTargetValue !== CONFIG_TARGET.GLOBAL && (
           <div key='interface-select'>
             <div>
               <Typography.Text type='secondary'>Interface :</Typography.Text>
@@ -275,7 +315,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           </div>
         )}
 
-        {configType === CONFIG_TYPE.DEPENDENCY && (
+        {configTargetValue === CONFIG_TARGET.DEPENDENCY && (
           <div key='dependency-select'>
             <div>
               <Typography.Text type='secondary'>Dependency : </Typography.Text>
@@ -310,7 +350,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           <SyncContract
             syncing={syncing}
             value={rawContract}
-            buttonsDisabled={{ leftButton: syncing || configType === CONFIG_TYPE.GLOBAL }}
+            buttonsDisabled={{ leftButton: syncing || configTargetValue === CONFIG_TARGET.GLOBAL }}
             onSync={handleSync}
             onEdit={queryContract}
             onSave={handleSaveContract}
@@ -318,26 +358,25 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         </div>
       </Space>
 
-      <div
-        ref={configAnimateParent}
-        style={{ display: 'flex', flexDirection: breakpoint['xl'] ? 'row' : 'column' }}
-      >
-        <NodesIgnore
-          key='nodes-ignore'
-          appId={props.appId}
-          operationId={activeOperationId}
-          dependency={activeDependency}
-          readOnly={props.readOnly}
-          syncing={syncing}
-          loadingContract={loadingContract}
-          configType={configType}
-          contractParsed={contractParsed}
-          onAdd={queryContract}
-          onSync={handleSync}
-          onClose={props.onIgnoreDrawerClose}
-        />
+      <div ref={configAnimateParent}>
+        {configTypeValue === CONFIG_TYPE.NODE_IGNORE && (
+          <NodesIgnore
+            key='nodes-ignore'
+            appId={props.appId}
+            operationId={activeOperationId}
+            dependency={activeDependency}
+            readOnly={props.readOnly}
+            syncing={syncing}
+            loadingContract={loadingContract}
+            configTarget={configTargetValue}
+            contractParsed={contractParsed}
+            onAdd={queryContract}
+            onSync={handleSync}
+            onClose={props.onIgnoreDrawerClose}
+          />
+        )}
 
-        {configType !== CONFIG_TYPE.GLOBAL && (
+        {configTypeValue === CONFIG_TYPE.NODE_SORT && (
           <NodesSort
             key='nodes-sort'
             appId={props.appId}
@@ -347,7 +386,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
             syncing={syncing}
             sortArrayPath={props.sortArrayPath}
             loadingContract={loadingContract}
-            configType={configType}
+            configTarget={configTargetValue}
             contractParsed={contractParsed}
             onAdd={queryContract}
             onSync={handleSync}
