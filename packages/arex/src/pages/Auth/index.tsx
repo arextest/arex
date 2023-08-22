@@ -1,9 +1,11 @@
+import { setLocalStorage } from '@arextest/arex-core';
 import { message } from 'antd';
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import request from '../../utils/request';
+import { ACCESS_TOKEN_KEY, EMAIL_KEY, REFRESH_TOKEN_KEY } from '@/constant';
 
+import request from '../../utils/request';
 
 function getValue(search: any, key: any) {
   //找出key第一次出现的位置
@@ -25,20 +27,22 @@ function getValue(search: any, key: any) {
 const Auth = () => {
   const location = useLocation();
   const nav = useNavigate();
-  console.log(location.search, 'ocation.search');
   useEffect(() => {
     const [_, code] = getValue(location.search || '?code=test', 'code');
-
-    console.log(code);
-
     request
       .post('/report/login/oauthLogin', {
         oauthType: 'GitlabOauth',
         code: code,
       })
       .then((res: any) => {
-        console.log(res);
-        message.success(JSON.stringify(res));
+        if (res.body.reason) {
+          message.error(res.body.reason);
+        } else {
+          setLocalStorage(EMAIL_KEY, res.userName);
+          setLocalStorage(ACCESS_TOKEN_KEY, res.accessToken);
+          setLocalStorage(REFRESH_TOKEN_KEY, res.refreshToken);
+          nav('/');
+        }
       });
   }, []);
   return <div>Auth</div>;
