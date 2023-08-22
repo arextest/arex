@@ -81,7 +81,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const { activePane } = useMenusPanes();
 
   const { t } = useTranslation(['components', 'common']);
-  const email = getLocalStorage<string>(EMAIL_KEY);
+  const email = getLocalStorage<string>(EMAIL_KEY) as string;
   const navPane = useNavPane();
   const { token } = theme.useToken();
 
@@ -324,30 +324,13 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
               });
             }}
           />
-          <Popconfirm
+          <TooltipButton
+            icon={<RedoOutlined />}
             title={t('replay.rerun')}
-            description={t('replay.rerunTip')}
-            onConfirm={() =>
-              handleRerun({
-                operationId: record.operationId,
-                caseSourceFrom: record.caseStartTime,
-                caseSourceTo: record.caseEndTime,
-              })
-            }
-            onCancel={() => {
-              handleRerunError({ key: 'rerunInterface' }, record);
-            }}
-            okText={t('replay.rerun')}
-            cancelText={t('replay.rerunError')}
-          >
-            <TooltipButton
-              tooltipProps={{ open: false }}
-              icon={<RedoOutlined />}
-              title={t('replay.rerun')}
-              breakpoint='xxl'
-              color='primary'
-            />
-          </Popconfirm>
+            breakpoint='xxl'
+            color='primary'
+            onClick={() => handleRerun(1, [{ operationId: record.operationId }])}
+          />
         </>
       ),
     },
@@ -404,65 +387,36 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   });
 
   const handleRerun = (
-    params?: { operationId?: string } & Partial<
-      Pick<CreatePlanReq, 'caseSourceFrom' | 'caseSourceTo' | 'operationCaseInfoList'>
-    >,
-    operationName?: PlanItemStatistics['operationName'],
+    replayPlanType: number,
+    operationCaseInfoList?: { operationId: string; replayIdList?: string[] }[],
   ) => {
-    const { operationId, caseSourceFrom, caseSourceTo, operationCaseInfoList } = params || {};
-    if (operationId && caseSourceFrom && caseSourceTo) {
-      // 创建新的回放
-      rerun({
-        caseSourceFrom,
-        caseSourceTo,
-        appId: selectedPlan!.appId,
-        operationCaseInfoList: [{ operationId }],
-        operator: email as string,
-        replayPlanType: 1,
-        sourceEnv: 'pro',
-        targetEnv: selectedPlan!.targetEnv,
-      });
-    } else if (
-      selectedPlan?.caseStartTime &&
-      selectedPlan?.caseEndTime &&
-      selectedPlan?.targetEnv
-    ) {
-      // 重新执行回放
+    if (selectedPlan?.caseStartTime && selectedPlan?.caseEndTime) {
       rerun({
         caseSourceFrom: selectedPlan.caseStartTime,
         caseSourceTo: selectedPlan.caseEndTime,
-        appId: selectedPlan!.appId,
-        operationCaseInfoList, // 重新执行失败的用例
-        operator: email as string,
-        replayPlanType: operationCaseInfoList ? 3 : 0,
-        planName: operationCaseInfoList
-          ? operationName
-            ? selectedPlan.planName + `-${operationName}-rerun`
-            : selectedPlan.planName + '-rerun'
-          : undefined,
+        appId: selectedPlan.appId,
+        operator: email,
         sourceEnv: 'pro',
         targetEnv: selectedPlan!.targetEnv,
+        operationCaseInfoList,
+        replayPlanType,
       });
     } else {
       message.error(t('replay.parameterError'));
     }
   };
 
-  const { run: queryPlanFailCase } = useRequest(ReportService.queryPlanFailCase, {
+  const { run: retryPlan, loading: retrying } = useRequest(ScheduleService.reRunPlan, {
     manual: true,
-    onSuccess(failCaseList, [params, operationName]) {
-      handleRerun({ operationCaseInfoList: failCaseList }, operationName);
+    onSuccess(res) {
+      if (res.result === 1) {
+        message.success(t('message.success', { ns: 'common' }));
+        onRefresh?.();
+      } else {
+        message.error(res.desc);
+      }
     },
   });
-
-  const handleRerunError = (e: { key: string }, planItem?: PlanItemStatistics) => {
-    if (e.key === 'rerunErrorPlan') queryPlanFailCase({ planId: selectedPlan!.planId });
-    else if (e.key === 'rerunInterface')
-      queryPlanFailCase(
-        { planId: selectedPlan!.planId, planItemIdList: [planItem!.planItemId] },
-        planItem!.operationName,
-      );
-  };
 
   const [ReplayLogsDrawerOpen, setReplayLogsDrawerOpen] = useState(false);
 
@@ -506,37 +460,27 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             icon={<Icon component={IconLog} />}
             title={t('replay.logs') as string}
           />
-          <Dropdown.Button
-            size='small'
-            type='text'
-            disabled={creatingPlan === 0}
-            menu={{
-              items: [
-                { label: t('replay.rerunError'), key: 'rerunErrorPlan', icon: <RedoOutlined /> },
-              ],
-              onClick: handleRerunError,
-            }}
-            onClick={() => handleRerun()}
-            css={css`
-              button {
-                color: ${token.colorPrimary};
-              }
-            `}
-          >
-            <Spin
-              spinning={creatingPlan === 0}
-              css={css`
-                span.anticon-loading {
-                  font-size: 16px !important;
-                }
-              `}
-            >
-              <Space>
-                <RedoOutlined />
-                {t('replay.rerun')}
-              </Space>
-            </Spin>
-          </Dropdown.Button>
+
+          <SmallTextButton
+            title={t('replay.retry') as string}
+            icon={<RedoOutlined />}
+            color={'primary'}
+            loading={retrying}
+            onClick={() => retryPlan({ planId: selectedPlan!.planId })}
+          />
+
+          <SmallTextButton
+            title={t('replay.rerun') as string}
+            icon={<RedoOutlined />}
+            color={'primary'}
+            loading={creatingPlan === 0}
+            onClick={() =>
+              handleRerun(
+                1,
+                planItemData?.map((item) => ({ operationId: item.operationId })),
+              )
+            }
+          />
         </Space>
       }
     >
