@@ -30,17 +30,20 @@ const Auth = () => {
   useEffect(() => {
     const [_, code] = getValue(location.search || '?code=test', 'code');
     request
-      .post('/report/login/oauthLogin', {
-        oauthType: 'GitlabOauth',
-        code: code,
-      })
-      .then((res: any) => {
+      .post<{ reason: string | null; userName: string; accessToken: string; refreshToken: string }>(
+        '/report/login/oauthLogin',
+        {
+          oauthType: 'GitlabOauth',
+          code: code,
+        },
+      )
+      .then((res) => {
         if (res.body.reason) {
           message.error(res.body.reason);
         } else {
-          setLocalStorage(EMAIL_KEY, res.userName);
-          setLocalStorage(ACCESS_TOKEN_KEY, res.accessToken);
-          setLocalStorage(REFRESH_TOKEN_KEY, res.refreshToken);
+          setLocalStorage(EMAIL_KEY, res.body.userName);
+          setLocalStorage(ACCESS_TOKEN_KEY, res.body.accessToken);
+          setLocalStorage(REFRESH_TOKEN_KEY, res.body.refreshToken);
           nav('/');
         }
       });
