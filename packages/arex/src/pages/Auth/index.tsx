@@ -4,25 +4,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import request from '../../utils/request';
 
-// 写一个斐波那契额数列js
-// function fib(n) {  // 递归
-//   if (n == 1 || n == 2) {
-//     return 1;
-//   }
-//   return fib(n - 1) + fib(n - 2);
-// }
-// console.log(fib(10));
-
-// 写一个拉格朗日中值定理js // 拉格朗日中值定理
-// // function lagrange(n) {
-// //   if (n == 1 || n == 2) {
-// //     return 1;
-// //   }
-// //   return lagrange(n - 1) + lagrange(n - 2);
-// // }
-
-
-
 
 function getValue(search: any, key: any) {
   //找出key第一次出现的位置
