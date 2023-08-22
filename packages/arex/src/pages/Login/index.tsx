@@ -1,14 +1,15 @@
-import { UserOutlined } from '@ant-design/icons';
+import Icon, { UserOutlined } from '@ant-design/icons';
 import { FlexCenterWrapper, getLocalStorage, setLocalStorage, styled } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Card, Divider, Form, Input, Space, Typography } from 'antd';
+import { App, Button, Card, Form, Input, Space, Tooltip, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ACCESS_TOKEN_KEY, EMAIL_KEY, REFRESH_TOKEN_KEY } from '@/constant';
 import { LoginService, UserService } from '@/services';
 import { loginVerifyReq } from '@/services/LoginService';
+import gitlablogo from '~icons/logos/gitlab';
 
 import VerificationCode from './VerificationCode';
 
@@ -95,12 +96,12 @@ const Login: FC = () => {
     count <= 0 && clearInterval(timer);
   }, [count]);
 
-  const baseInfo = {
-    thAppClientId: '7dbc52caab4eb3d452c39354ae226a4ff89e9fda2ccb349d01dd5e9d214c496c',
+  const thApp = {
     thAppRedirectUri: 'http://10.5.153.1:8088/auth',
     thAppUri: 'http://git.dev.sh.ctripcorp.com',
   };
 
+  const { data: oauthClientId } = useRequest(LoginService.getOauthClientId);
   return (
     <FlexCenterWrapper>
       <Card style={{ marginTop: '20vh' }}>
@@ -160,15 +161,15 @@ const Login: FC = () => {
                   margin-right: 10px;
                 `}
               >
-                其他登录方式 :{' '}
+                Other Login Methods :{' '}
               </span>
               <a
-                href={`${baseInfo.thAppUri}/oauth/authorize?response_type=code&state=STATE&scope=api&client_id=${baseInfo.thAppClientId}&redirect_uri=${baseInfo.thAppRedirectUri}`}
+                href={`${thApp.thAppUri}/oauth/authorize?response_type=code&state=STATE&scope=api&client_id=${oauthClientId?.clientId}&redirect_uri=${thApp.thAppRedirectUri}`}
               >
-                gitlab
+                <Tooltip title={'Login with gitlab'}>
+                  <Icon component={gitlablogo} />
+                </Tooltip>
               </a>
-              <Divider type={'vertical'} />
-              {/*<a href='http://github.com/'>gitlab</a>*/}
             </Space>
           </Form>
         </Space>
