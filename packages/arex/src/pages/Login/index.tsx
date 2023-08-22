@@ -96,8 +96,9 @@ const Login: FC = () => {
   }, [count]);
 
   const baseInfo = {
-    thAppClientId: 'e4aeafca253a2bfddae3',
+    thAppClientId: '7dbc52caab4eb3d452c39354ae226a4ff89e9fda2ccb349d01dd5e9d214c496c',
     thAppRedirectUri: 'http://10.5.153.1:8088/auth',
+    thAppUri: 'http://git.dev.sh.ctripcorp.com',
   };
 
   return (
@@ -162,12 +163,12 @@ const Login: FC = () => {
                 其他登录方式 :{' '}
               </span>
               <a
-                href={`https://github.com/login/oauth/authorize?response_type=code&state=STATE&scope=api&client_id=${baseInfo.thAppClientId}&redirect_uri=${baseInfo.thAppRedirectUri}`}
+                href={`${baseInfo.thAppUri}/oauth/authorize?response_type=code&state=STATE&scope=api&client_id=${baseInfo.thAppClientId}&redirect_uri=${baseInfo.thAppRedirectUri}`}
               >
-                github
+                gitlab
               </a>
               <Divider type={'vertical'} />
-              <a href='http://github.com/'>gitlab</a>
+              {/*<a href='http://github.com/'>gitlab</a>*/}
             </Space>
           </Form>
         </Space>
