@@ -98,7 +98,7 @@ const Login: FC = () => {
 
   const thApp = {
     thAppRedirectUri: 'http://10.5.153.1:8088/auth',
-    thAppUri: 'http://git.dev.sh.ctripcorp.com',
+    thAppUri: 'http://gitlab.com',
   };
 
   const { data: oauthClientId } = useRequest(LoginService.getOauthClientId);
