@@ -10,12 +10,13 @@ import { App, Select, SelectProps, Space, Typography } from 'antd';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Segmented } from '@/components';
-import NodeDesensitization from '@/panes/AppSetting/CompareConfig/NodeDesensitization';
-import NodesIgnore from '@/panes/AppSetting/CompareConfig/NodesIgnore';
-import NodesSort from '@/panes/AppSetting/CompareConfig/NodesSort';
 import { ApplicationService, ReportService } from '@/services';
 import { DependencyParams } from '@/services/ComparisonService';
 
+import CategoryIgnore from './CategoryIgnore';
+import NodeDesensitization from './NodeDesensitization';
+import NodesIgnore from './NodesIgnore';
+import NodesSort from './NodesSort';
 import SyncContract from './SyncContract';
 
 export enum CONFIG_TARGET {
@@ -28,7 +29,7 @@ export enum CONFIG_TYPE {
   NODE_IGNORE,
   NODE_SORT,
   // NODE_Desensitization, // TODO
-  // TYPE_IGNORE,
+  CATEGORY_IGNORE,
 }
 
 // TODO 类型定义抽离封装
@@ -93,6 +94,13 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         //   value: CONFIG_TYPE.NODE_Desensitization,
         // },
       );
+    }
+
+    if (configTargetValue !== CONFIG_TARGET.DEPENDENCY) {
+      options.push({
+        label: t('appSetting.categoryIgnore'),
+        value: CONFIG_TYPE.CATEGORY_IGNORE,
+      });
     }
 
     return options;
@@ -420,6 +428,10 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         {/*    onAdd={queryContract}*/}
         {/*  />*/}
         {/*)}*/}
+
+        {configTypeValue === CONFIG_TYPE.CATEGORY_IGNORE && (
+          <CategoryIgnore key='category-ignore' />
+        )}
       </div>
     </Space>
   );

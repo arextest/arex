@@ -183,6 +183,7 @@
     "nodesIgnore": "Nodes Ignore",
     "nodesSort": "Nodes Sort",
     "nodesDesensitization": "Nodes Desensitization",
+    "categoryIgnore": "Category Ignore",
     "global": "Global",
     "interface": "Interfaces",
     "dependency": "Dependency",

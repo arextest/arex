@@ -40,7 +40,7 @@ import TreeCarousel from '../TreeCarousel';
 import DataDesensitizationNodeConfig from './DataDesensitizationNodeConfig';
 import DataDesensitizationTree from './DataDesensitizationTree';
 
-export type NodeMaskingProps = {
+export type NodeDesensitizationProps = {
   appId: string;
   operationId?: string;
   dependency?: DependencyParams;
@@ -60,7 +60,7 @@ enum TreeEditModeEnum {
   MethodSelect,
 }
 
-const NodeEncryption: FC<NodeMaskingProps> = (props) => {
+const NodeDesensitization: FC<NodeDesensitizationProps> = (props) => {
   const { t } = useTranslation('components');
   const { message } = App.useApp();
 
@@ -204,7 +204,7 @@ const NodeEncryption: FC<NodeMaskingProps> = (props) => {
             key: ActiveKey,
             label: (
               <CompareConfigTitle
-                title={t('appSetting.nodesEncryption', { ns: 'components' })}
+                title={t('appSetting.nodesDesensitization', { ns: 'components' })}
                 readOnly={props.readOnly}
                 onSearch={handleSearch}
                 onAdd={handleMaskingAdd}
@@ -288,7 +288,7 @@ const NodeEncryption: FC<NodeMaskingProps> = (props) => {
           <SpaceBetweenWrapper>
             <Space size='middle'>
               <Typography.Title level={5} style={{ marginBottom: 0 }}>
-                {t('appSetting.nodesEncryption', { ns: 'components' })}
+                {t('appSetting.nodesDesensitization', { ns: 'components' })}
               </Typography.Title>
 
               <Button
@@ -330,4 +330,4 @@ const NodeEncryption: FC<NodeMaskingProps> = (props) => {
   );
 };
 
-export default NodeEncryption;
+export default NodeDesensitization;
