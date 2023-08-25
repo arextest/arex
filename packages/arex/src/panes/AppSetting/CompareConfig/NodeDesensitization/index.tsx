@@ -37,8 +37,8 @@ import { DependencyParams, QueryEncryptionNode } from '@/services/ComparisonServ
 
 import CompareConfigTitle, { CompareConfigTitleProps } from '../CompareConfigTitle';
 import TreeCarousel from '../TreeCarousel';
-import DataEncryptionNodeConfig from './DataEncryptionNodeConfig';
-import DataEncryptionTree from './DataEncryptionTree';
+import DataDesensitizationNodeConfig from './DataDesensitizationNodeConfig';
+import DataDesensitizationTree from './DataDesensitizationTree';
 
 export type NodeMaskingProps = {
   appId: string;
@@ -316,14 +316,14 @@ const NodeEncryption: FC<NodeMaskingProps> = (props) => {
         onClose={handleCancelEdit}
       >
         <TreeCarousel ref={carouselRef} beforeChange={(from, to) => setTreeEditMode(to)}>
-          <DataEncryptionTree
+          <DataDesensitizationTree
             loading={props.loadingContract}
             treeData={props.contractParsed}
             encryptionNodeList={maskingNodes}
             onSelect={handleEditCollapseItem}
           />
 
-          <DataEncryptionNodeConfig path={path} value={methodName} onChange={setMethodName} />
+          <DataDesensitizationNodeConfig path={path} value={methodName} onChange={setMethodName} />
         </TreeCarousel>
       </PaneDrawer>
     </>

@@ -10,7 +10,7 @@ import { App, Select, SelectProps, Space, Typography } from 'antd';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Segmented } from '@/components';
-import NodeEncryption from '@/panes/AppSetting/CompareConfig/NodeEncryption';
+import NodeDesensitization from '@/panes/AppSetting/CompareConfig/NodeDesensitization';
 import NodesIgnore from '@/panes/AppSetting/CompareConfig/NodesIgnore';
 import NodesSort from '@/panes/AppSetting/CompareConfig/NodesSort';
 import { ApplicationService, ReportService } from '@/services';
@@ -27,7 +27,7 @@ export enum CONFIG_TARGET {
 export enum CONFIG_TYPE {
   NODE_IGNORE,
   NODE_SORT,
-  // NODE_Encryption, // TODO
+  // NODE_Desensitization, // TODO
   // TYPE_IGNORE,
 }
 
@@ -89,8 +89,8 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           value: CONFIG_TYPE.NODE_SORT,
         },
         // {
-        //   label: t('appSetting.nodesEncryption'),
-        //   value: CONFIG_TYPE.NODE_Encryption,
+        //   label: t('appSetting.nodesDesensitization'),
+        //   value: CONFIG_TYPE.NODE_Desensitization,
         // },
       );
     }
@@ -408,9 +408,9 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           />
         )}
 
-        {/*{configTypeValue === CONFIG_TYPE.NODE_Encryption && (*/}
-        {/*  <NodeEncryption*/}
-        {/*    key='nodes-encryption'*/}
+        {/*{configTypeValue === CONFIG_TYPE.NODE_Desensitization && (*/}
+        {/*  <NodeDesensitization*/}
+        {/*    key='nodes-desensitization'*/}
         {/*    appId={props.appId}*/}
         {/*    configTarget={configTargetValue}*/}
         {/*    operationId={activeOperationId}*/}

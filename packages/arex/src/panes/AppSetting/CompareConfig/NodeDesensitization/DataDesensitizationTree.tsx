@@ -9,14 +9,14 @@ import { QueryEncryptionNode } from '@/services/ComparisonService';
 
 import { getDataEncryptionNodes } from './utils/getDataEncryptionNodes';
 
-type DataEncryptionTreeProps = Omit<TreeProps, 'treeData'> & {
+type DataDesensitizationTreeProps = Omit<TreeProps, 'treeData'> & {
   loading?: boolean;
   encryptionNodeList?: QueryEncryptionNode[];
   treeData?: object;
   onEditResponse?: () => void;
 };
 
-const DataEncryptionTree: FC<DataEncryptionTreeProps> = (props) => {
+const DataDesensitizationTree: FC<DataDesensitizationTreeProps> = (props) => {
   const { t } = useTranslation('components');
 
   const color = useColorPrimary();
@@ -56,4 +56,4 @@ const DataEncryptionTree: FC<DataEncryptionTreeProps> = (props) => {
   );
 };
 
-export default DataEncryptionTree;
+export default DataDesensitizationTree;

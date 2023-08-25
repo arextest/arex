@@ -10,13 +10,13 @@ import { getArrayValidElement } from '../../NodesSort/utils/getArrayValidElement
  * 获取 object 的节点，并为已配置过的数组节点添加圆点提示
  * @param object 契约对象
  * @param basePath 节点路径
- * @param encryptionNodeList 已配置的节点列表
+ * @param desensitizationNodeList 已配置的节点列表
  * @param color 圆点颜色
  */
-export function getDataEncryptionNodes(
+export function getDataDesensitizationNodes(
   object: object,
   basePath = '',
-  encryptionNodeList?: QueryEncryptionNode[],
+  desensitizationNodeList?: QueryEncryptionNode[],
   color?: string,
 ): DataNode[] {
   const entries = Object.entries(object);
@@ -28,15 +28,15 @@ export function getDataEncryptionNodes(
       ? {
           title: key,
           key: path,
-          children: getDataEncryptionNodes(
+          children: getDataDesensitizationNodes(
             Array.isArray(losslessValue)
               ? getArrayValidElement(losslessValue) || {}
               : losslessValue,
             path,
-            encryptionNodeList,
+            desensitizationNodeList,
             color,
           ),
-          icon: encryptionNodeList?.find((node) => '/' + node.path.join('/') === path) && (
+          icon: desensitizationNodeList?.find((node) => '/' + node.path.join('/') === path) && (
             <Badge color={color} /> // 已配置过的节点使用圆点进行提示
           ),
         }
@@ -44,7 +44,7 @@ export function getDataEncryptionNodes(
           title: key,
           key: path,
           value: losslessValue,
-          icon: encryptionNodeList?.find((node) => '/' + node.path.join('/') === path) && (
+          icon: desensitizationNodeList?.find((node) => '/' + node.path.join('/') === path) && (
             <Badge color={color} /> // 已配置过的节点使用圆点进行提示
           ),
         };

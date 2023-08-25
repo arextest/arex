@@ -2,13 +2,13 @@ import { useTranslation } from '@arextest/arex-core';
 import { Select, Typography } from 'antd';
 import React, { FC } from 'react';
 
-export type DataEncryptionNodeConfigProps = {
+export type DataDesensitizationNodeConfigProps = {
   path?: string[];
   value?: string;
   onChange?: (value: string) => void;
 };
 
-const DataEncryptionNodeConfig: FC<DataEncryptionNodeConfigProps> = (props) => {
+const DataDesensitizationNodeConfig: FC<DataDesensitizationNodeConfigProps> = (props) => {
   const { t } = useTranslation('components');
   return (
     <>
@@ -30,4 +30,4 @@ const DataEncryptionNodeConfig: FC<DataEncryptionNodeConfigProps> = (props) => {
   );
 };
 
-export default DataEncryptionNodeConfig;
+export default DataDesensitizationNodeConfig;
