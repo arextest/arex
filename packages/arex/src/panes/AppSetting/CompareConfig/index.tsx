@@ -27,7 +27,7 @@ export enum CONFIG_TARGET {
 export enum CONFIG_TYPE {
   NODE_IGNORE,
   NODE_SORT,
-  NODE_Encryption,
+  // NODE_Encryption, // TODO
   // TYPE_IGNORE,
 }
 
@@ -88,10 +88,10 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           label: t('appSetting.nodesSort'),
           value: CONFIG_TYPE.NODE_SORT,
         },
-        {
-          label: t('appSetting.nodesEncryption'),
-          value: CONFIG_TYPE.NODE_Encryption,
-        },
+        // {
+        //   label: t('appSetting.nodesEncryption'),
+        //   value: CONFIG_TYPE.NODE_Encryption,
+        // },
       );
     }
 
@@ -408,18 +408,18 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           />
         )}
 
-        {configTypeValue === CONFIG_TYPE.NODE_Encryption && (
-          <NodeEncryption
-            key='nodes-encryption'
-            appId={props.appId}
-            configTarget={configTargetValue}
-            operationId={activeOperationId}
-            dependency={activeDependency}
-            loadingContract={loadingContract}
-            contractParsed={contractParsed}
-            onAdd={queryContract}
-          />
-        )}
+        {/*{configTypeValue === CONFIG_TYPE.NODE_Encryption && (*/}
+        {/*  <NodeEncryption*/}
+        {/*    key='nodes-encryption'*/}
+        {/*    appId={props.appId}*/}
+        {/*    configTarget={configTargetValue}*/}
+        {/*    operationId={activeOperationId}*/}
+        {/*    dependency={activeDependency}*/}
+        {/*    loadingContract={loadingContract}*/}
+        {/*    contractParsed={contractParsed}*/}
+        {/*    onAdd={queryContract}*/}
+        {/*  />*/}
+        {/*)}*/}
       </div>
     </Space>
   );

@@ -82,23 +82,23 @@ const UserInterface = () => {
       wrapperCol={{ span: 20 }}
       onValuesChange={handleFormChange}
     >
-      <Form.Item label={t('userSetting.compactMode')} name='compact' valuePropName='checked'>
+      <Form.Item label={t('systemSetting.compactMode')} name='compact' valuePropName='checked'>
         <Switch />
       </Form.Item>
 
-      <Form.Item label={t('userSetting.darkMode')} name='theme'>
+      <Form.Item label={t('systemSetting.darkMode')} name='theme'>
         <ThemeSwitch />
       </Form.Item>
 
-      <Form.Item label={t('userSetting.primaryColor')} name='colorPrimary'>
+      <Form.Item label={t('systemSetting.primaryColor')} name='colorPrimary'>
         <ColorPicker />
       </Form.Item>
 
-      <Form.Item label={t('userSetting.language')} name='language'>
+      <Form.Item label={t('systemSetting.language')} name='language'>
         <LanguageSelect />
       </Form.Item>
 
-      <Form.Item label={t('userSetting.avatar')} name='avatar'>
+      <Form.Item label={t('systemSetting.avatar')} name='avatar'>
         <AvatarUpload />
       </Form.Item>
     </Form>

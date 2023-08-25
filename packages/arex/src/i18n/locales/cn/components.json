@@ -321,13 +321,14 @@
     "closeLeft" :"关闭左侧标签页",
     "closeRight":"关闭右侧标签页"
   },
-  "userSetting": {
+  "systemSetting": {
     "userInterface": "用户界面",
     "compactMode": "紧凑模式",
     "darkMode": "深色模式",
     "primaryColor": "主题色",
     "language": "语言",
     "avatar": "头像",
-    "dataDescription": "数据加密"
+    "dataDesensitization": "数据加密",
+    "jarFileUrl": "Jar 包地址"
   }
 }

@@ -322,13 +322,14 @@
     "closeLeft" :"Close Tabs to the Left",
     "closeRight":"Close Tabs to the Right"
   },
-  "userSetting": {
+  "systemSetting": {
     "userInterface": "UserInterface",
     "compactMode": "CompactMode",
     "darkMode": "DarkMode",
     "primaryColor": "PrimaryColor",
     "language": "Language",
     "avatar": "Avatar",
-    "dataDescription": "DataDescription"
+    "dataDesensitization": "DataDesensitization",
+    "jarFileUrl": "JarFileUrl"
   }
 }
