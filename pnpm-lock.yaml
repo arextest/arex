@@ -288,8 +288,8 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@arextest/vanilla-jsoneditor':
-        specifier: ^0.17.19
-        version: 0.17.19
+        specifier: ^0.17.20
+        version: 0.17.20
       '@dnd-kit/core':
         specifier: ^6.0.8
         version: 6.0.8(react-dom@18.2.0)(react@18.2.0)
@@ -592,8 +592,8 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@arextest/vanilla-jsoneditor@0.17.19:
-    resolution: {integrity: sha512-ShanwQOeuEHh6vM5at5Ah965gTIE/nGkNmEDk2qImHceEXc8wy8wtjP8bkfs0Rsjzd4EhfuOQwd4jyK+UR7kuw==}
+  /@arextest/vanilla-jsoneditor@0.17.20:
+    resolution: {integrity: sha512-BHNHc0zJXNjwe8+0CdfRKpFLULzutHcZHA5VxPbQTV52kJSNuMJBw6FOTtU+UF7u+/3uBRLhVJknQfoRu+pGRw==}
     dev: false
 
   /@babel/code-frame@7.22.10:

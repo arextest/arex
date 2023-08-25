@@ -328,6 +328,6 @@
     "primaryColor": "主题色",
     "language": "语言",
     "avatar": "头像",
-    "dataMasking": "数据脱敏"
+    "dataDescription": "数据加密"
   }
 }

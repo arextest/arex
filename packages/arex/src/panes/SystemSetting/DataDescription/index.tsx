@@ -10,7 +10,7 @@ export type DataMaskingType = {
   uploadTime: string;
 };
 
-const DataMasking = () => {
+const DataDescription = () => {
   const { message } = App.useApp();
   const { t } = useTranslation();
   const [openUploadModal, setOpenUploadModal] = useState(false);
@@ -128,4 +128,4 @@ const DataMasking = () => {
   );
 };
 
-export default DataMasking;
+export default DataDescription;

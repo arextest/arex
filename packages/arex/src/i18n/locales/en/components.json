@@ -329,6 +329,6 @@
     "primaryColor": "PrimaryColor",
     "language": "Language",
     "avatar": "Avatar",
-    "dataMasking": "DataMasking"
+    "dataDescription": "DataDescription"
   }
 }
