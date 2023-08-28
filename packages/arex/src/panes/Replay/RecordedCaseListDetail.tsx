@@ -46,7 +46,7 @@ const RecordedCaseListItem: FC<RecordedCaseListProps> = (props) => {
       title: t('replay.recordTime'),
       dataIndex: 'createTime',
       key: 'createTime',
-      render: (createTime) => dayjs(createTime).format('YYYY-MM-DD hh:mm:ss'),
+      render: (createTime) => dayjs(createTime).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       key: 'operationType',
