@@ -63,3 +63,13 @@ export function getChromeVersion() {
   }
   return versionStringCompare(v, '89.00.00');
 }
+
+export function generateId() {
+  let id = '';
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const length = chars.length;
+  for (let i = 0; i < 12; i++) {
+    id += chars.charAt(Math.floor(Math.random() * length));
+  }
+  return id;
+}
