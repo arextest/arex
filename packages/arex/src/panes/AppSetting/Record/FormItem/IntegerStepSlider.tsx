@@ -7,7 +7,7 @@ import { FormItemProps } from './index';
 const IntegerStepSlider: FC<FormItemProps<number>> = (props) => {
   const { t } = useTranslation(['components', 'common']);
 
-  const [value, setInput] = useState(props.value || 1);
+  const [value, setInput] = useState(props.value || 0);
 
   const onChange = (newValue: number | null) => {
     if (typeof newValue === 'number') {
