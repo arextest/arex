@@ -12,7 +12,7 @@ function getValue(search: string, key: string) {
   //找出key第一次出现的位置
   const start = search.indexOf(key);
   if (start == -1) {
-    return;
+    return ['', ''];
   }
   //找出key最后出现的位置
   let end = search.indexOf('&', start);
@@ -38,7 +38,7 @@ const Auth = () => {
         refreshToken: string;
       }>('/report/login/oauthLogin', {
         oauthType: 'GitlabOauth',
-        code: getValue(location.search || '?code=test', 'code'),
+        code: getValue(location.search || '?code=test', 'code')[1],
       });
     },
     {
