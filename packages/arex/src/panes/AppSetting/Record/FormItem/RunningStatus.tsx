@@ -1,12 +1,14 @@
 import { HelpTooltip, useTranslation } from '@arextest/arex-core';
+import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { Table, Tooltip, Typography } from 'antd';
+import { Popconfirm, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import React, { FC } from 'react';
 
 import { ConfigService } from '@/services';
 import { AgentData } from '@/services/ConfigService';
+import { deleteAgent } from '@/services/ConfigService/deleteAgent';
 
 export interface RunningStatusProps {
   appId: string;
@@ -46,12 +48,45 @@ const RunningStatus: FC<RunningStatusProps> = (props) => {
       align: 'center',
       render: (text) => <Typography.Text>{text || '-'}</Typography.Text>,
     },
+    {
+      title: t('replay.action', { ns: 'components' }),
+      align: 'center',
+      render: (_, record) => (
+        <Popconfirm
+          title={t('appSetting.confirmDelete', { ns: 'components' })}
+          onConfirm={() => {
+            confirm(record);
+          }}
+          okText='Yes'
+          cancelText='No'
+        >
+          <a
+            css={css`
+              color: red;
+              &:hover {
+                color: red;
+              }
+            `}
+          >
+            {t('replay.delete', { ns: 'components' })}
+          </a>
+        </Popconfirm>
+      ),
+    },
   ];
 
-  const { data: agentData, loading: loadingAgentList } = useRequest(ConfigService.getAgentList, {
+  const {
+    data: agentData,
+    loading: loadingAgentList,
+    run,
+  } = useRequest(ConfigService.getAgentList, {
     defaultParams: [props.appId],
   });
-
+  const confirm = ({ appId, id }: AgentData) => {
+    deleteAgent({ appId, id }).then(() => {
+      run(props.appId);
+    });
+  };
   return (
     <Table
       bordered
