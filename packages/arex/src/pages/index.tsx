@@ -18,6 +18,7 @@ import { EMAIL_KEY, PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
 import { useMenusPanes, useWorkspaces } from '@/store';
+import {generateId} from "@/utils";
 
 export default () => {
   useInit();
@@ -106,7 +107,7 @@ export default () => {
   const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () => {
     navPane({
       type: PanesType.REQUEST,
-      id: '-1',
+      id: generateId(12),
       icon: 'Get',
       name: 'Untitled',
     });
