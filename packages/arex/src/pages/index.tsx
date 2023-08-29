@@ -107,7 +107,7 @@ export default () => {
   const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () => {
     navPane({
       type: PanesType.REQUEST,
-      id: generateId(),
+      id: generateId(12),
       icon: 'Get',
       name: 'Untitled',
     });
