@@ -42,6 +42,7 @@ export default defineConfig({
     },
   },
   server: {
+    host: '0.0.0.0',
     port: 16888,
     proxy: {
       '/report': {
@@ -65,6 +66,5 @@ export default defineConfig({
         rewrite: (path) => path.replace('/node', '/'),
       },
     },
-    host:'0.0.0.0'
   },
 });

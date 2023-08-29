@@ -1,13 +1,14 @@
 import { setLocalStorage } from '@arextest/arex-core';
-import { message } from 'antd';
-import React, { useEffect } from 'react';
+import { useRequest } from 'ahooks';
+import { message, Spin } from 'antd';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { ACCESS_TOKEN_KEY, EMAIL_KEY, REFRESH_TOKEN_KEY } from '@/constant';
 
 import request from '../../utils/request';
 
-function getValue(search: any, key: any) {
+function getValue(search: string, key: string) {
   //找出key第一次出现的位置
   const start = search.indexOf(key);
   if (start == -1) {
@@ -27,17 +28,21 @@ function getValue(search: any, key: any) {
 const Auth = () => {
   const location = useLocation();
   const nav = useNavigate();
-  useEffect(() => {
-    const [_, code] = getValue(location.search || '?code=test', 'code');
-    request
-      .post<{ reason: string | null; userName: string; accessToken: string; refreshToken: string }>(
-        '/report/login/oauthLogin',
-        {
-          oauthType: 'GitlabOauth',
-          code: code,
-        },
-      )
-      .then((res) => {
+
+  const { loading } = useRequest(
+    () => {
+      return request.post<{
+        reason: string | null;
+        userName: string;
+        accessToken: string;
+        refreshToken: string;
+      }>('/report/login/oauthLogin', {
+        oauthType: 'GitlabOauth',
+        code: getValue(location.search || '?code=test', 'code'),
+      });
+    },
+    {
+      onSuccess(res) {
         if (res.body.reason) {
           message.error(res.body.reason);
         } else {
@@ -46,9 +51,11 @@ const Auth = () => {
           setLocalStorage(REFRESH_TOKEN_KEY, res.body.refreshToken);
           nav('/');
         }
-      });
-  }, []);
-  return <div>Auth</div>;
+      },
+    },
+  );
+
+  return <Spin spinning={loading}>Authentication...</Spin>;
 };
 
 export default Auth;
