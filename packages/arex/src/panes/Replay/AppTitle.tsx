@@ -148,8 +148,6 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
       defaultParams: [
         {
           appId: data.appId,
-          beginTime: dayjs().startOf('day').valueOf(),
-          endTime: dayjs().valueOf(),
         },
       ],
       ready: !!data.appId,

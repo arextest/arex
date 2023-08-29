@@ -2,8 +2,8 @@ import { request } from '@/utils';
 
 export interface QueryCountRecordReq {
   appId: string;
-  beginTime: number;
-  endTime: number;
+  beginTime?: number;
+  endTime?: number;
 }
 
 export interface QueryCountRecordRes {
