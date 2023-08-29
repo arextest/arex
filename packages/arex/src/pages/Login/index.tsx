@@ -96,10 +96,6 @@ const Login: FC = () => {
     count <= 0 && clearInterval(timer);
   }, [count]);
 
-  const thApp = {
-    thAppUri: 'http://git.dev.sh.ctripcorp.com',
-  };
-
   const { data: oauthClientId } = useRequest(LoginService.getOauthClientId);
   return (
     <FlexCenterWrapper>
@@ -153,7 +149,7 @@ const Login: FC = () => {
                 </a>
                 <Divider type={'vertical'} />
                 <a
-                  href={`${thApp.thAppUri}/oauth/authorize?response_type=code&state=STATE&scope=api&client_id=${oauthClientId?.clientId}&redirect_uri=${oauthClientId?.redirectUri}`}
+                  href={`${oauthClientId?.oauthUri}/oauth/authorize?response_type=code&state=STATE&scope=api&client_id=${oauthClientId?.clientId}&redirect_uri=${oauthClientId?.redirectUri}`}
                 >
                   <Tooltip title={'Login with gitlab'}>
                     <Icon component={gitlablogo} />

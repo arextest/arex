@@ -2,7 +2,7 @@ import { request } from '@/utils';
 
 export function getOauthClientId() {
   return request
-    .get<{ clientId: string; redirectUri: string }>(
+    .get<{ clientId: string; redirectUri: string; oauthUri: string }>(
       `/report/login/oauthInfo/GitlabOauth`,
       undefined,
       {
