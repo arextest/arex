@@ -2,7 +2,7 @@ import Icon, { UserOutlined } from '@ant-design/icons';
 import { FlexCenterWrapper, getLocalStorage, setLocalStorage, styled } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Card, Form, Input, Space, Tooltip, Typography } from 'antd';
+import { App, Button, Card, Divider, Form, Input, Space, Tooltip, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -97,8 +97,7 @@ const Login: FC = () => {
   }, [count]);
 
   const thApp = {
-    thAppRedirectUri: 'http://10.5.153.1:8088/auth',
-    thAppUri: 'http://gitlab.com',
+    thAppUri: 'http://git.dev.sh.ctripcorp.com',
   };
 
   const { data: oauthClientId } = useRequest(LoginService.getOauthClientId);
@@ -147,30 +146,21 @@ const Login: FC = () => {
             </Form.Item>
 
             <Form.Item>
-              <span>
+              <Space>
                 Login with{' '}
-                <Button type='link' onClick={loginAsGuest} style={{ paddingLeft: 0 }}>
+                <a onClick={loginAsGuest} style={{ paddingLeft: 0 }}>
                   Guest
-                </Button>
-              </span>
+                </a>
+                <Divider type={'vertical'} />
+                <a
+                  href={`${thApp.thAppUri}/oauth/authorize?response_type=code&state=STATE&scope=api&client_id=${oauthClientId?.clientId}&redirect_uri=${oauthClientId?.redirectUri}`}
+                >
+                  <Tooltip title={'Login with gitlab'}>
+                    <Icon component={gitlablogo} />
+                  </Tooltip>
+                </a>
+              </Space>
             </Form.Item>
-            {/*https://github.com/login/oauth/authorize*/}
-            <Space>
-              <span
-                css={css`
-                  margin-right: 10px;
-                `}
-              >
-                Other Login Methods :{' '}
-              </span>
-              <a
-                href={`${thApp.thAppUri}/oauth/authorize?response_type=code&state=STATE&scope=api&client_id=${oauthClientId?.clientId}&redirect_uri=${thApp.thAppRedirectUri}`}
-              >
-                <Tooltip title={'Login with gitlab'}>
-                  <Icon component={gitlablogo} />
-                </Tooltip>
-              </a>
-            </Space>
           </Form>
         </Space>
       </Card>

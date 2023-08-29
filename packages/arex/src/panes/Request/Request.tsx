@@ -250,6 +250,15 @@ const Request: ArexPaneFC = () => {
     };
   }, [data]);
 
+  const isRenderRequestComponent = useMemo(() => {
+    // 如果是新增的直接渲染
+    if (id === '-1' || id.length === 12) {
+      return true;
+    } else {
+      return nodeInfo && data;
+    }
+  }, [data, nodeInfo]);
+
   return (
     <div>
       <Spin
@@ -259,7 +268,7 @@ const Request: ArexPaneFC = () => {
         `}
         spinning={!data}
       >
-        {data && (
+        {isRenderRequestComponent && (
           <Http
             // @ts-ignore
             ref={httpRef}
