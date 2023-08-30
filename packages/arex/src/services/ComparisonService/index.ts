@@ -4,6 +4,7 @@ export * from './deleteIgnoreNode';
 export * from './deleteSortNode';
 export * from './insertIgnoreNode';
 export * from './insertSortNode';
+export * from './queryIgnoreCategory';
 export * from './queryIgnoreNode';
 export * from './queryInterfaceIgnoreNode';
 export * from './queryInterfaceSortNode';
