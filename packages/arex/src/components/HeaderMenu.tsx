@@ -51,10 +51,6 @@ const HeaderMenu: FC = () => {
     [t],
   );
 
-  const handleSettingClick = useCallback(() => {
-    navPane({ id: 'setting', type: PanesType.SYSTEM_SETTING, name: t('systemSetting') as string });
-  }, []);
-
   return (
     <Space size='small'>
       <TooltipButton
@@ -62,7 +58,17 @@ const HeaderMenu: FC = () => {
         icon={<QuestionCircleOutlined />}
         onClick={handleHelpClick}
       />
-      <TooltipButton title={t('setting')} icon={<SettingOutlined />} onClick={handleSettingClick} />
+      <TooltipButton
+        title={t('setting')}
+        icon={<SettingOutlined />}
+        onClick={() => {
+          navPane({
+            id: 'setting',
+            type: PanesType.SYSTEM_SETTING,
+            name: t('systemSetting') as string,
+          });
+        }}
+      />
       <Dropdown menu={userMenu}>
         <Avatar src={avatar} size={24} style={{ marginLeft: '0px', cursor: 'pointer' }}>
           {email?.slice(0, 1).toUpperCase() || 'G'}
