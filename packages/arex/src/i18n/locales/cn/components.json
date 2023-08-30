@@ -134,6 +134,7 @@
     "detail": "详情",
     "save": "保存",
     "recordDetail": "录制详情",
+    "debug": "调试",
     "success": "成功",
     "caseServiceAPI": "接口名称",
     "viewFailedOnly": "只展示失败",

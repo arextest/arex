@@ -4,6 +4,7 @@ import { useRequest } from 'ahooks';
 import { App, Spin } from 'antd';
 import { Http, HttpProps } from 'arex-request-core';
 import React, { useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { processTreeData } from '@/helpers/collection/util';
@@ -170,11 +171,13 @@ const Request: ArexPaneFC = () => {
     );
   };
 
+  const [searchParams] = useSearchParams();
   const { data, run } = useRequest(
     () =>
       FileSystemService.queryRequest({
         id: id as string,
         nodeType: nodeInfo?.nodeType || 1,
+        recordId: searchParams.get('recordId') as string,
       }),
     {
       refreshDeps: [nodeInfo?.nodeType],
@@ -272,6 +275,7 @@ const Request: ArexPaneFC = () => {
           <Http
             // @ts-ignore
             ref={httpRef}
+            disableSave={Boolean(searchParams.get('recordId'))}
             height={`calc(100vh - 110px)`}
             theme={theme}
             locale={language}

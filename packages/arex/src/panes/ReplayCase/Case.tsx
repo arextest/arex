@@ -8,6 +8,7 @@ import { PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
 import { ReplayCaseType } from '@/services/ReportService';
+import { generateId } from '@/utils';
 
 export type CaseProps = {
   planItemId: string;
@@ -63,6 +64,22 @@ const Case: FC<CaseProps> = (props) => {
           onClick={(e) => {
             e.stopPropagation();
             props.onClickSaveCase?.(record);
+          }}
+        />,
+        <SmallTextButton
+          color='primary'
+          key='caseDebug'
+          title={t('replay.debug') as string}
+          onClick={() => {
+            navPane({
+              type: PanesType.REQUEST,
+              id: generateId(12),
+              icon: 'Get',
+              name: record.recordId,
+              data: {
+                recordId: record.recordId,
+              },
+            });
           }}
         />,
         <SmallTextButton
