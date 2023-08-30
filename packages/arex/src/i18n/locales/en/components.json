@@ -134,6 +134,7 @@
     "detail": "Detail",
     "save": "Save",
     "recordDetail": "Record Detail",
+    "debug": "Debug",
     "success": "Success",
     "caseServiceAPI": "Main Service API",
     "viewFailedOnly": "View Failed Only",

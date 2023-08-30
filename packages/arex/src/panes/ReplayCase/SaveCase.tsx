@@ -68,7 +68,7 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
     return mapTree(collectionsTreeData);
   }, [collectionsTreeData]);
 
-  const { run: addItemFromRecord } = useRequest(
+  const { run: addItemFromRecord, loading } = useRequest(
     (values: Pick<AddItemFromRecordReq, 'parentPath' | 'nodeName' | 'recordId'>) =>
       FileSystemService.addItemFromRecord({
         workspaceId: workspaceId as string,
@@ -126,6 +126,7 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
       cancelText={t('cancel', { ns: 'common' })}
       onCancel={handleClose}
       onOk={handleSubmit}
+      confirmLoading={loading}
     >
       <Form form={form} onValuesChange={handleValuesChange} layout='vertical' name='form_in_modal'>
         <Form.Item hidden name='recordId' label='recordId'>
