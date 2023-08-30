@@ -79,7 +79,7 @@ const SyncContract: FC<SyncContractProps> = (props) => {
           items: [
             {
               key: 'edit',
-              label: 'Edit Contract',
+              label: t('appSetting.editContract'),
               icon: <EditOutlined />,
             },
           ],

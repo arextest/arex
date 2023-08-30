@@ -178,8 +178,15 @@
     "replay": "Replay",
     "importYaml": "Import Yaml",
     "compareConfig": "Compare Config",
+    "configType": "Type",
+    "configTarget": "Target",
     "nodesIgnore": "Nodes Ignore",
     "nodesSort": "Nodes Sort",
+    "nodesDesensitization": "Nodes Desensitization",
+    "categoryIgnore": "Category Ignore",
+    "global": "Global",
+    "interface": "Interfaces",
+    "dependency": "Dependency",
     "agentVersion": "Agent Version",
     "agentHost": "Agent Host",
     "basic": "Basic",
@@ -205,8 +212,6 @@
     "path": "Path",
     "value": "Value",
     "updateSuccess": "update success",
-    "global": "Global",
-    "interfaces": "Interfaces",
     "editArea": "Edit Area (Click interface to start)",
     "clickToIgnore": "click node to ignore",
     "dataStructure": "Data Structure",
@@ -223,6 +228,7 @@
     "sortTree": "SortTree",
     "emptyKey": "Please enter ignored key",
     "noIgnoredNodes": "No Ignored Nodes",
+    "noDesensitizationNodes": "No Desensitization Nodes",
     "emptyFullClassName": "Please enter full class name",
     "emptyCaseRange": "Please input your case range!",
     "emptyValue": "Please enter value",
@@ -246,7 +252,9 @@
     "emptyQPS": "Please input your max QPS",
     "sync": "Sync",
     "emptyContractTip": "No contract, please try to synchronize the contract",
-    "contract": "Contract"
+    "contract": "Contract",
+    "editContract": "Edit Contract",
+    "chooseEncryptionMethodName": "Please choose encryption method name"
   },
   "env": {
     "searchEnvironment": "Search Environment",
@@ -314,5 +322,15 @@
     "closeUnmodified" :"Close Unmodified Tabs",
     "closeLeft" :"Close Tabs to the Left",
     "closeRight":"Close Tabs to the Right"
+  },
+  "systemSetting": {
+    "userInterface": "UserInterface",
+    "compactMode": "CompactMode",
+    "darkMode": "DarkMode",
+    "primaryColor": "PrimaryColor",
+    "language": "Language",
+    "avatar": "Avatar",
+    "dataDesensitization": "DataDesensitization",
+    "jarFileUrl": "JarFileUrl"
   }
 }

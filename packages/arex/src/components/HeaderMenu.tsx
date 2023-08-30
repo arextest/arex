@@ -62,7 +62,11 @@ const HeaderMenu: FC = () => {
         title={t('setting')}
         icon={<SettingOutlined />}
         onClick={() => {
-          navPane({ id: 'setting', type: PanesType.USER_SETTING });
+          navPane({
+            id: 'setting',
+            type: PanesType.SYSTEM_SETTING,
+            name: t('systemSetting') as string,
+          });
         }}
       />
       <Dropdown menu={userMenu}>

@@ -1,15 +1,22 @@
-import { tryParseJsonString, tryPrettierJsonString, useTranslation } from '@arextest/arex-core';
+import {
+  Label,
+  tryParseJsonString,
+  tryPrettierJsonString,
+  useTranslation,
+} from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { App, Select, SelectProps, Space, Typography } from 'antd';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Segmented } from '@/components';
-import NodesIgnore from '@/panes/AppSetting/CompareConfig/NodesIgnore';
-import NodesSort from '@/panes/AppSetting/CompareConfig/NodesSort';
 import { ApplicationService, ReportService } from '@/services';
 import { DependencyParams } from '@/services/ComparisonService';
 
+import CategoryIgnore from './CategoryIgnore';
+import NodeDesensitization from './NodeDesensitization';
+import NodesIgnore from './NodesIgnore';
+import NodesSort from './NodesSort';
 import SyncContract from './SyncContract';
 
 export enum CONFIG_TARGET {
@@ -21,8 +28,8 @@ export enum CONFIG_TARGET {
 export enum CONFIG_TYPE {
   NODE_IGNORE,
   NODE_SORT,
-  // NODE_Encryption,
-  // TYPE_IGNORE,
+  // NODE_Desensitization, // TODO
+  CATEGORY_IGNORE,
 }
 
 // TODO 类型定义抽离封装
@@ -37,7 +44,7 @@ export type CompareConfigProps = {
 };
 
 const CompareConfig: FC<CompareConfigProps> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('components');
   const { message } = App.useApp();
   const [menuAnimateParent] = useAutoAnimate();
   const [configAnimateParent] = useAutoAnimate();
@@ -45,21 +52,21 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   const configTargetOptions = useMemo(() => {
     const options = [
       {
-        label: 'Global',
+        label: t('appSetting.global'),
         value: CONFIG_TARGET.GLOBAL,
       },
     ];
 
     if (props.operationId !== false) {
       options.push({
-        label: 'Interface',
+        label: t('appSetting.interface'),
         value: CONFIG_TARGET.INTERFACE,
       });
     }
 
     if (props.dependency !== false) {
       options.push({
-        label: 'Dependency',
+        label: t('appSetting.dependency'),
         value: CONFIG_TARGET.DEPENDENCY,
       });
     }
@@ -71,20 +78,33 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   const configTypeOptions = useMemo(() => {
     const options = [
       {
-        label: 'NodeIgnore',
+        label: t('appSetting.nodesIgnore'),
         value: CONFIG_TYPE.NODE_IGNORE,
       },
     ];
 
     if (configTargetValue !== CONFIG_TARGET.GLOBAL) {
+      options.push(
+        {
+          label: t('appSetting.nodesSort'),
+          value: CONFIG_TYPE.NODE_SORT,
+        },
+        // {
+        //   label: t('appSetting.nodesDesensitization'),
+        //   value: CONFIG_TYPE.NODE_Desensitization,
+        // },
+      );
+    }
+
+    if (configTargetValue !== CONFIG_TARGET.DEPENDENCY) {
       options.push({
-        label: 'NodeSort',
-        value: CONFIG_TYPE.NODE_SORT,
+        label: t('appSetting.categoryIgnore'),
+        value: CONFIG_TYPE.CATEGORY_IGNORE,
       });
     }
 
     return options;
-  }, [configTargetValue]);
+  }, [t, configTargetValue]);
   const [configTypeValue, setConfigTypeValue] = useState<CONFIG_TYPE>(CONFIG_TYPE.NODE_IGNORE);
 
   const [activeOperationId, setActiveOperationId] = useState<string | undefined>(
@@ -272,7 +292,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
       >
         <div key='config-type'>
           <div>
-            <Typography.Text type='secondary'>Type : </Typography.Text>
+            <Label type='secondary'>{t('appSetting.configType')} </Label>
           </div>
           <Segmented
             value={configTypeValue}
@@ -283,7 +303,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
 
         <div key='config-target'>
           <div>
-            <Typography.Text type='secondary'>Target </Typography.Text>
+            <Label type='secondary'>{t('appSetting.configTarget')} </Label>
           </div>
           <Segmented
             value={configTargetValue}
@@ -295,7 +315,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         {configTargetValue !== CONFIG_TARGET.GLOBAL && (
           <div key='interface-select'>
             <div>
-              <Typography.Text type='secondary'>Interface :</Typography.Text>
+              <Label type='secondary'>{t('appSetting.interface')}</Label>
             </div>
             <Select
               optionFilterProp='label'
@@ -318,7 +338,9 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         {configTargetValue === CONFIG_TARGET.DEPENDENCY && (
           <div key='dependency-select'>
             <div>
-              <Typography.Text type='secondary'>Dependency : </Typography.Text>
+              <Typography.Text type='secondary'>
+                <Label type='secondary'>{t('appSetting.dependency')}</Label>
+              </Typography.Text>
             </div>
             <Select
               optionFilterProp='label'
@@ -392,6 +414,23 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
             onSync={handleSync}
             onClose={props.onSortDrawerClose}
           />
+        )}
+
+        {/*{configTypeValue === CONFIG_TYPE.NODE_Desensitization && (*/}
+        {/*  <NodeDesensitization*/}
+        {/*    key='nodes-desensitization'*/}
+        {/*    appId={props.appId}*/}
+        {/*    configTarget={configTargetValue}*/}
+        {/*    operationId={activeOperationId}*/}
+        {/*    dependency={activeDependency}*/}
+        {/*    loadingContract={loadingContract}*/}
+        {/*    contractParsed={contractParsed}*/}
+        {/*    onAdd={queryContract}*/}
+        {/*  />*/}
+        {/*)}*/}
+
+        {configTypeValue === CONFIG_TYPE.CATEGORY_IGNORE && (
+          <CategoryIgnore key='category-ignore' />
         )}
       </div>
     </Space>

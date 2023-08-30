@@ -12,6 +12,7 @@ import GlobalStyle from './style/GlobalStyle';
 // register menus and panes
 ArexPaneManager.registerPanes(Panes);
 ArexMenuManager.registerMenus(Menus);
+
 const App = () => {
   useTrace('http://trace.arextest.com:8080/graphql');
   useAuthentication();

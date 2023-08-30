@@ -1,4 +1,10 @@
-import { CloseOutlined, DeleteOutlined, EditOutlined, SyncOutlined } from '@ant-design/icons';
+import {
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  SaveOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import { css, PaneDrawer, SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import {
@@ -24,9 +30,9 @@ import { ComparisonService } from '@/services';
 import { DependencyParams, SortNode } from '@/services/ComparisonService';
 
 import CompareConfigTitle from '../CompareConfigTitle';
+import TreeCarousel from '../TreeCarousel';
 import ArrayTree from './ArrayTree';
 import SortTree from './SortTree';
-import TreeCarousel from './TreeCarousel';
 import { getSortArray } from './utils';
 
 enum TreeEditModeEnum {
@@ -271,7 +277,7 @@ const NodesSort: FC<NodesSortProps> = (props) => {
             key: ActiveKey,
             label: (
               <CompareConfigTitle
-                title='Nodes Sort'
+                title={t('appSetting.nodesSort', { ns: 'components' })}
                 readOnly={props.readOnly}
                 onSearch={handleSearch}
                 onAdd={handleAddSortNode}
@@ -377,7 +383,7 @@ const NodesSort: FC<NodesSortProps> = (props) => {
               </Button>
             </Space>
             {treeEditMode === TreeEditModeEnum.SortTree && (
-              <Button size='small' type='primary' onClick={handleSaveSort}>
+              <Button size='small' type='primary' icon={<SaveOutlined />} onClick={handleSaveSort}>
                 {t('save', { ns: 'common' })}
               </Button>
             )}

@@ -27,14 +27,14 @@ const AppSetting: ArexPaneFC<ApplicationDataType> = (props) => {
         children: <SettingReplay appId={data.appId} />,
       },
       {
-        key: 'importYaml',
-        label: t('appSetting.importYaml'),
-        children: <SettingImportYaml appId={data.appId} />,
-      },
-      {
         key: 'compareConfig',
         label: t('appSetting.compareConfig'),
         children: <CompareConfig appId={data.appId} />,
+      },
+      {
+        key: 'importYaml',
+        label: t('appSetting.importYaml'),
+        children: <SettingImportYaml appId={data.appId} />,
       },
       {
         key: 'other',

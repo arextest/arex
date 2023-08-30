@@ -178,8 +178,15 @@
     "replay": "回放",
     "importYaml": "Yaml 配置导入",
     "compareConfig": "对比配置",
+    "configType": "类型",
+    "configTarget": "目标",
     "nodesIgnore": "忽略节点配置",
     "nodesSort": "数组节点配置",
+    "nodesDesensitization": "加密节点配置",
+    "categoryIgnore": "类型忽略配置",
+    "global": "全局",
+    "interface": "接口",
+    "dependency": "依赖",
     "agentVersion": "Agent 版本",
     "agentHost": "Agent 地址",
     "basic": "基础",
@@ -204,8 +211,6 @@
     "path": "路径",
     "value": "值",
     "updateSuccess": "更新成功",
-    "global": "全局",
-    "interfaces": "接口",
     "editArea": "修改区（点击接口开始）",
     "clickToIgnore": "点击添加忽略节点",
     "dataStructure": "数据结构",
@@ -217,11 +222,12 @@
     "noSortNodes": "List 节点为空",
     "keys": "节点",
     "chooseOneNode": "选择一个数组",
-      "chooseOnekey": "请选择标识节点",
+    "chooseOnekey": "请选择标识节点",
     "arrayTree": "数组节点",
     "sortTree": "关键标识节点",
     "emptyKey": "请输入忽略节点",
     "noIgnoredNodes": "忽略节点为空",
+    "noEncryptionNodes": "加密节点为空",
     "emptyFullClassName": "请输入全类名",
     "emptyCaseRange": "请输入 Case 数量上限!",
     "emptyValue": "请输入值",
@@ -245,7 +251,9 @@
     "emptyQPS": "请输入最大QPS",
     "sync": "同步",
     "emptyContractTip": "无报文契约，请尝试同步更新契约",
-    "contract": "契约"
+    "contract": "契约",
+    "editContract": "编辑契约",
+    "chooseEncryptionMethodName": "请选择选择加密方法"
   },
   "env": {
     "searchEnvironment": "搜索环境",
@@ -313,5 +321,15 @@
     "closeUnmodified" :"关闭未修改标签页",
     "closeLeft" :"关闭左侧标签页",
     "closeRight":"关闭右侧标签页"
+  },
+  "systemSetting": {
+    "userInterface": "用户界面",
+    "compactMode": "紧凑模式",
+    "darkMode": "深色模式",
+    "primaryColor": "主题色",
+    "language": "语言",
+    "avatar": "头像",
+    "dataDesensitization": "数据加密",
+    "jarFileUrl": "Jar 包地址"
   }
 }
