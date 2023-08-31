@@ -17,9 +17,15 @@ export type IgnoreCategoryData = {
   status: string | null;
 };
 export async function queryIgnoreCategory(params: QueryNodeReq<'Interface'>) {
-  const res = await request.post<IgnoreCategoryData[]>( // TODO
+  const res = await request.post<IgnoreCategoryData[]>(
     '/report/config/comparison/ignoreCategory/queryComparisonConfig',
     params,
   );
-  return res.body[res.body.length - 1];
+  /**
+   * For consistency design reasons,
+   * the valid information of the interface is placed in an array,
+   * and the length of the array is guaranteed to be
+   * only 1 or 0 by reasonable calls to the interface.
+   */
+  return res.body?.[0];
 }

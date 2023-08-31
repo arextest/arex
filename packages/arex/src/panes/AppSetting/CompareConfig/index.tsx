@@ -72,8 +72,10 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
     }
 
     return options;
-  }, [props.operationId, props.dependency]);
-  const [configTargetValue, setConfigTargetValue] = useState<CONFIG_TARGET>(CONFIG_TARGET.GLOBAL);
+  }, [t, props.operationId, props.dependency]);
+  const [configTargetValue, setConfigTargetValue] = useState<CONFIG_TARGET>(
+    CONFIG_TARGET.INTERFACE,
+  );
 
   const configTypeOptions = useMemo(() => {
     const options = [
@@ -279,7 +281,11 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   );
 
   const handleConfigTargetChange = useCallback((value: React.Key) => {
-    if (value === CONFIG_TARGET.GLOBAL) setConfigTypeValue(CONFIG_TYPE.NODE_IGNORE);
+    setConfigTypeValue((configType) =>
+      value === CONFIG_TARGET.GLOBAL && configType === CONFIG_TYPE.NODE_SORT
+        ? CONFIG_TYPE.NODE_IGNORE // sortNode has no global configuration type
+        : configType,
+    );
     setConfigTargetValue(value as CONFIG_TARGET);
   }, []);
 
@@ -290,17 +296,6 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         ref={menuAnimateParent}
         style={{ display: 'flex', flexWrap: 'wrap' }}
       >
-        <div key='config-type'>
-          <div>
-            <Label type='secondary'>{t('appSetting.configType')} </Label>
-          </div>
-          <Segmented
-            value={configTypeValue}
-            options={configTypeOptions}
-            onChange={handleConfigTypeChange}
-          />
-        </div>
-
         <div key='config-target'>
           <div>
             <Label type='secondary'>{t('appSetting.configTarget')} </Label>
@@ -379,6 +374,12 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           />
         </div>
       </Space>
+
+      <Segmented
+        value={configTypeValue}
+        options={configTypeOptions}
+        onChange={handleConfigTypeChange}
+      />
 
       <div ref={configAnimateParent}>
         {configTypeValue === CONFIG_TYPE.NODE_IGNORE && (

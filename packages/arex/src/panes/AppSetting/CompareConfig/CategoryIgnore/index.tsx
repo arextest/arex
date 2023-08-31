@@ -1,6 +1,6 @@
-import { Label } from '@arextest/arex-core';
+import { Label, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { Button, Card, Select, SelectProps } from 'antd';
+import { App, Button, Card, Select, SelectProps } from 'antd';
 import React, { FC, useState } from 'react';
 
 import { CONFIG_TARGET } from '@/panes/AppSetting/CompareConfig';
@@ -13,6 +13,9 @@ export type CategoryIgnoreProps = {
 };
 
 const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
+  const { message } = App.useApp();
+  const { t } = useTranslation();
+
   const [categoryTypeOptions, setCategoryOptions] = useState<SelectProps['options']>([]);
   useRequest(ComparisonService.queryCategoryType, {
     onSuccess(res) {
@@ -28,7 +31,7 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
   });
 
   const [ignoreCategoryValue, setIgnoreCategoryValue] = useState<string[]>();
-  const { data: ignoreCategoryData } = useRequest(
+  const { data: ignoreCategoryData, run: queryIgnoreCategory } = useRequest(
     () =>
       ComparisonService.queryIgnoreCategory({
         appId: props.appId,
@@ -43,42 +46,69 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
       ),
       refreshDeps: [props.operationId, props.configTarget],
       onSuccess(res) {
-        res && setIgnoreCategoryValue(res.ignoreCategory);
+        setIgnoreCategoryValue(res?.ignoreCategory);
       },
     },
   );
 
-  const { run: updateIgnoreCategory } = useRequest(
+  const { run: insertIgnoreCategory } = useRequest(
     (ignoreCategory: string[]) =>
-      ComparisonService.updateIgnoreCategory({
+      ComparisonService.insertIgnoreCategory({
         appId: props.appId,
         operationId: props.configTarget === CONFIG_TARGET.GLOBAL ? undefined : props.operationId,
         ignoreCategory,
       }),
     {
       manual: true,
+      onSuccess(success) {
+        success
+          ? message.success(t('message.updateSuccess'))
+          : message.error(t('message.updateFailed'));
+        queryIgnoreCategory();
+      },
     },
   );
 
+  const { run: updateIgnoreCategory } = useRequest(ComparisonService.updateIgnoreCategory, {
+    manual: true,
+    onSuccess(success) {
+      success
+        ? message.success(t('message.updateSuccess'))
+        : message.error(t('message.updateFailed'));
+      queryIgnoreCategory();
+    },
+  });
+
   const { run: deleteIgnoreCategory } = useRequest(ComparisonService.deleteIgnoreCategory, {
     manual: true,
+    onSuccess(success) {
+      success ? message.success(t('message.delSuccess')) : message.error(t('message.delFailed'));
+      queryIgnoreCategory();
+    },
   });
 
   const handleSave = () => {
-    console.log('save', ignoreCategoryValue);
-    ignoreCategoryValue && ignoreCategoryValue.length
-      ? updateIgnoreCategory(ignoreCategoryValue)
-      : ignoreCategoryData && deleteIgnoreCategory({ id: ignoreCategoryData.id }); // TODO
+    if (ignoreCategoryData && ignoreCategoryValue?.length) {
+      // update when ignoreCategoryData and ignoreCategoryValue is both not empty
+      updateIgnoreCategory({ id: ignoreCategoryData.id, ignoreCategory: ignoreCategoryValue });
+    } else {
+      // delete when ignoreCategoryValue is empty
+      ignoreCategoryData && deleteIgnoreCategory({ id: ignoreCategoryData.id });
+      // insert when ignoreCategoryData is empty
+      ignoreCategoryValue?.length && insertIgnoreCategory(ignoreCategoryValue);
+    }
   };
+
   return (
     <div>
       <Card size='small'>
-        <Label>Category Type</Label>
+        <Label>{t('appSetting.categoryType', { ns: 'components' })}</Label>
         <Select
           allowClear
           mode='tags'
           value={ignoreCategoryValue}
           options={categoryTypeOptions}
+          placeholder={t('appSetting.chooseCategoryType', { ns: 'components' })}
           onChange={setIgnoreCategoryValue}
           style={{ width: '400px' }}
         />

@@ -255,7 +255,9 @@
     "emptyContractTip": "No contract, please try to synchronize the contract",
     "contract": "Contract",
     "editContract": "Edit Contract",
-    "chooseEncryptionMethodName": "Please choose encryption method name"
+    "chooseEncryptionMethodName": "Please choose encryption method name",
+    "categoryType": "Category Type",
+    "chooseCategoryType": "Please select the type of ignore (multiple)"
   },
   "env": {
     "searchEnvironment": "Search Environment",
