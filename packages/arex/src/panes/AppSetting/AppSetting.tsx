@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ApplicationDataType } from '@/services/ApplicationService';
+import { decodePaneKey } from '@/store/useMenusPanes';
 
 import SettingImportYaml from './ImportYaml';
 import SettingOther from './Other';
@@ -11,7 +12,8 @@ import SettingRecord from './Record';
 import SettingReplay from './Replay';
 
 const AppSetting: ArexPaneFC<ApplicationDataType> = (props) => {
-  const { data } = props;
+  const { paneKey } = props;
+  const { id: appId } = decodePaneKey(paneKey);
   const { t } = useTranslation(['components']);
 
   const TabsItems = useMemo(
@@ -19,30 +21,30 @@ const AppSetting: ArexPaneFC<ApplicationDataType> = (props) => {
       {
         key: 'record',
         label: t('appSetting.record'),
-        children: <SettingRecord appId={data.appId} />,
+        children: <SettingRecord appId={appId} />,
       },
       {
         key: 'replay',
         label: t('appSetting.replay'),
-        children: <SettingReplay appId={data.appId} />,
+        children: <SettingReplay appId={appId} />,
       },
       {
         key: 'compareConfig',
         label: t('appSetting.compareConfig'),
-        children: <CompareConfig appId={data.appId} />,
+        children: <CompareConfig appId={appId} />,
       },
       {
         key: 'importYaml',
         label: t('appSetting.importYaml'),
-        children: <SettingImportYaml appId={data.appId} />,
+        children: <SettingImportYaml appId={appId} />,
       },
       {
         key: 'other',
         label: t('appSetting.other'),
-        children: <SettingOther appId={data.appId} />,
+        children: <SettingOther appId={appId} />,
       },
     ],
-    [data, t],
+    [appId, t],
   );
 
   return (

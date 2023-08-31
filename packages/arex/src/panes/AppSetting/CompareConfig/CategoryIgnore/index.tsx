@@ -19,7 +19,6 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
   const [categoryTypeOptions, setCategoryOptions] = useState<SelectProps['options']>([]);
   useRequest(ComparisonService.queryCategoryType, {
     onSuccess(res) {
-      console.log(res);
       const options = res
         .filter((item) => !item.entryPoint)
         .map((item) => ({
@@ -113,7 +112,7 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
           style={{ width: '400px' }}
         />
         <Button type='primary' style={{ marginLeft: '16px' }} onClick={handleSave}>
-          Save
+          {t('save')}
         </Button>
       </Card>
     </div>

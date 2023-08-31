@@ -269,9 +269,8 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
 
   const handleSetting = useCallback(() => {
     navPane({
-      id: data.id,
+      id: data.appId,
       type: PanesType.APP_SETTING,
-      data: data,
     });
   }, [data]);
 
