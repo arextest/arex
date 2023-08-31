@@ -106,6 +106,7 @@
     "cases": "Cases",
     "action": "Action",
     "logs": "Execution Logs",
+    "retry": "Retry",
     "rerun": "Rerun",
     "rerunError": "Rerun error",
     "rerunTip": "Are you sure to rerun?",
