@@ -3,12 +3,16 @@ import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { App, Spin } from 'antd';
 import { Http, HttpProps } from 'arex-request-core';
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
-import { EMAIL_KEY } from '@/constant';
+import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
+import { processTreeData } from '@/helpers/collection/util';
 import { sendRequest } from '@/helpers/postman';
+import { useNavPane } from '@/hooks';
+import SaveAs from '@/panes/Request/SaveAs';
 import { FileSystemService, ReportService } from '@/services';
-import { saveRequest } from '@/services/FileSystemService';
+import { moveCollectionItem, saveRequest } from '@/services/FileSystemService';
 import {
   useCollections,
   useEnvironments,
@@ -37,15 +41,16 @@ function convertRequest(request: any) {
 }
 
 const Request: ArexPaneFC = () => {
+  const navPane = useNavPane({ inherit: true });
   const { message } = App.useApp();
   const { paneKey } = useArexPaneProps();
   const { id } = useMemo(() => decodePaneKey(paneKey), []);
 
   const userName = getLocalStorage<string>(EMAIL_KEY);
-
-  const { activeEnvironment } = useEnvironments();
+  const [saveAsShow, setSaveAsShow] = useState(false);
+  const { activeEnvironment, timestamp: timestampEnvironment } = useEnvironments();
   const { activeWorkspaceId } = useWorkspaces();
-  const { collectionsFlatData, getCollections, getPath } = useCollections();
+  const { collectionsFlatData, collectionsTreeData, getCollections, getPath } = useCollections();
   const { setPanes } = useMenusPanes();
   const { theme, language } = useUserProfile();
 
@@ -61,7 +66,7 @@ const Request: ArexPaneFC = () => {
       name: activeEnvironment?.envName || '',
       variables: activeEnvironment?.keyValues || [],
     }),
-    [activeEnvironment],
+    [activeEnvironment, timestampEnvironment],
   );
 
   const handleSend: HttpProps['onSend'] = (request) => {
@@ -73,6 +78,66 @@ const Request: ArexPaneFC = () => {
         testResult: res.testResult,
         consoles: res.consoles,
       };
+    });
+  };
+
+  const httpRef = useRef(null);
+
+  const { data: _, run: moveCollectionItemRun } = useRequest(
+    (params) => {
+      return moveCollectionItem({
+        fromNodePath: getPath(id).map((p) => p.id),
+        toIndex: 0,
+        toParentPath: getPath(params.toParentPath).map((p) => p.id),
+        id: activeWorkspaceId,
+      });
+    },
+    {
+      onSuccess() {
+        setSaveAsShow(false);
+        getCollections();
+      },
+      manual: true,
+    },
+  );
+
+  const { run: addCollectionItem } = useRequest(
+    (params: {
+      nodeName: string;
+      nodeType: CollectionNodeType;
+      caseSourceType?: number;
+      parentPath: string[];
+    }) =>
+      FileSystemService.addCollectionItem({
+        ...params,
+        userName: userName as string,
+        id: activeWorkspaceId,
+      }),
+    {
+      manual: true,
+      onSuccess: (res, [{ caseSourceType, nodeType }]) => {
+        if (res.success) {
+          setSaveAsShow(false);
+          // 保存完跳转
+          // @ts-ignore
+          httpRef.current?.onSave({ id: res.infoId });
+          setTimeout(() => {
+            navPane({
+              id: res.infoId,
+              type: PanesType.REQUEST,
+            });
+          }, 300);
+        }
+      },
+    },
+  );
+
+  const handleSaveAs = ({ savePath }: { savePath: string }) => {
+    // 先添加，再触发 save ！
+    addCollectionItem({
+      nodeName: 'Untitled',
+      nodeType: CollectionNodeType.interface,
+      parentPath: getPath(savePath).map((i) => i.id),
     });
   };
 
@@ -106,11 +171,14 @@ const Request: ArexPaneFC = () => {
     );
   };
 
+  const [searchParams] = useSearchParams();
   const { data, run } = useRequest(
     () =>
       FileSystemService.queryRequest({
         id: id as string,
         nodeType: nodeInfo?.nodeType || 1,
+        recordId: searchParams.get('recordId') as string,
+        planId: searchParams.get('planId') as string,
       }),
     {
       refreshDeps: [nodeInfo?.nodeType],
@@ -186,6 +254,15 @@ const Request: ArexPaneFC = () => {
     };
   }, [data]);
 
+  const isRenderRequestComponent = useMemo(() => {
+    // 如果是新增的直接渲染
+    if (id === '-1' || id.length === 12) {
+      return true;
+    } else {
+      return nodeInfo && data;
+    }
+  }, [data, nodeInfo]);
+
   return (
     <div>
       <Spin
@@ -195,8 +272,11 @@ const Request: ArexPaneFC = () => {
         `}
         spinning={!data}
       >
-        {nodeInfo && data && (
+        {isRenderRequestComponent && (
           <Http
+            // @ts-ignore
+            ref={httpRef}
+            disableSave={Boolean(searchParams.get('recordId'))}
             height={`calc(100vh - 110px)`}
             theme={theme}
             locale={language}
@@ -206,6 +286,9 @@ const Request: ArexPaneFC = () => {
             breadcrumbItems={nodePath}
             onSave={handleSave}
             onSend={handleSend}
+            onSaveAs={() => {
+              setSaveAsShow(true);
+            }}
             description={data?.description || ''}
             // @ts-ignore
             tags={data?.tags || []}
@@ -241,6 +324,14 @@ const Request: ArexPaneFC = () => {
             }}
           />
         )}
+        <SaveAs
+          show={saveAsShow}
+          onClose={() => {
+            setSaveAsShow(false);
+          }}
+          onOk={handleSaveAs}
+          collection={processTreeData(collectionsTreeData.filter((item) => item.nodeType !== 1))}
+        />
       </Spin>
     </div>
   );

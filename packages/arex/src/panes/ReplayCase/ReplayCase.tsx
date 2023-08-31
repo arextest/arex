@@ -8,13 +8,13 @@ import {
   I18nextLng,
   PaneDrawer,
   PanesTitle,
+  PathHandler,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { useImmer } from 'use-immer';
 
 import { EMAIL_KEY } from '@/constant';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
@@ -147,9 +147,12 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     setCompareConfigOpen(true);
   }
 
-  const handleIgnoreKey = useCallback((path: string[]) => insertIgnoreNode(path), []);
-  const handleGlobalIgnoreKey = useCallback((path: string[]) => insertIgnoreNode(path, true), []);
-  const handleSortKey = useCallback((path: string[]) => {
+  const handleIgnoreKey = useCallback<PathHandler>(
+    ({ path, type }) => insertIgnoreNode(path, type === 'global'),
+    [insertIgnoreNode],
+  );
+
+  const handleSortKey = useCallback<PathHandler>(({ path }) => {
     setTargetNodePath(path);
     setCompareConfigOpen(true);
   }, []);
@@ -168,6 +171,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         active={!!selectedRecord}
         table={
           <Case
+            planId={props.data.planId}
             planItemId={props.data.planItemId}
             filter={props.data.filter}
             onClick={handleClickRecord}
@@ -202,8 +206,13 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             data={fullLinkInfoMerged}
             onChange={setSelectedDependency}
             onIgnoreKey={handleIgnoreKey}
-            onGlobalIgnoreKey={handleGlobalIgnoreKey}
             onSortKey={handleSortKey}
+            onCompressKey={(value) => {
+              console.log(value);
+            }}
+            onReferenceKey={(value) => {
+              console.log(value);
+            }}
             requestDiffMsg={ScheduleService.queryDiffMsgById}
             requestQueryLogEntity={ScheduleService.queryLogEntity}
           />

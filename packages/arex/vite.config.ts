@@ -5,9 +5,11 @@ import { defineConfig } from 'vite';
 import electron from 'vite-plugin-electron';
 import renderer from 'vite-plugin-electron-renderer';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import svgr from 'vite-plugin-svgr';
 
 export default defineConfig(({ mode }) => ({
   plugins: [
+    svgr(),
     react({
       jsxImportSource: '@emotion/react',
     }),
@@ -63,6 +65,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   server: {
+    host: '0.0.0.0',
     port: 16888,
     proxy: {
       '/report': {

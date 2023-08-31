@@ -1,13 +1,13 @@
-import { ColorPrimaryPalette, getLocalStorage, PanesTitle } from '@arextest/arex-core';
+import { ColorPrimaryPalette, getLocalStorage, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Form, Switch } from 'antd';
-import React, { FC, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import { EMAIL_KEY } from '@/constant';
 import { useColorPrimary } from '@/hooks';
 import { LoginService } from '@/services';
 import { UserProfile } from '@/services/UserService';
-import useUserProfile from '@/store/useUserProfile';
+import { useUserProfile } from '@/store';
 
 import AvatarUpload from './AvatarUpload';
 import ColorPicker from './ColorPicker';
@@ -16,9 +16,10 @@ import ThemeSwitch from './ThemeSwitch';
 
 type SettingForm = Omit<UserProfile, 'colorPrimary'> & { colorPrimary: ColorPrimaryPalette };
 
-const SettingPage: FC = () => {
+const UserInterface = () => {
   const { message } = App.useApp();
   const email = getLocalStorage<string>(EMAIL_KEY) as string;
+  const { t } = useTranslation(['components']);
   const colorPrimary = useColorPrimary();
   const { avatar, theme, compact, language, getUserProfile } = useUserProfile();
 
@@ -81,29 +82,27 @@ const SettingPage: FC = () => {
       wrapperCol={{ span: 20 }}
       onValuesChange={handleFormChange}
     >
-      <PanesTitle title='User Interface' />
-
-      <Form.Item label='Compact' name='compact' valuePropName='checked'>
+      <Form.Item label={t('systemSetting.compactMode')} name='compact' valuePropName='checked'>
         <Switch />
       </Form.Item>
 
-      <Form.Item label='Theme' name='theme'>
+      <Form.Item label={t('systemSetting.darkMode')} name='theme'>
         <ThemeSwitch />
       </Form.Item>
 
-      <Form.Item label='Primary Color' name='colorPrimary'>
+      <Form.Item label={t('systemSetting.primaryColor')} name='colorPrimary'>
         <ColorPicker />
       </Form.Item>
 
-      <Form.Item label='Language' name='language'>
+      <Form.Item label={t('systemSetting.language')} name='language'>
         <LanguageSelect />
       </Form.Item>
 
-      <Form.Item label='Avatar' name='avatar'>
+      <Form.Item label={t('systemSetting.avatar')} name='avatar'>
         <AvatarUpload />
       </Form.Item>
     </Form>
   );
 };
 
-export default SettingPage;
+export default UserInterface;

@@ -12,7 +12,7 @@ const GitHubStarButton: FC<{ theme: Theme }> = ({ theme }) => {
         data-show-count={true}
         data-color-scheme={theme}
         title={'Star Arex'}
-        href='https://github.com/arextest/arex'
+        href='https://github.com/arextest/arex-agent-java'
       />
     </div>
   );

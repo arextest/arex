@@ -1,15 +1,15 @@
 import { SaveOutlined } from '@ant-design/icons';
-import { tryParseJsonString, tryStringifyJson } from '@arextest/arex-core';
-import { EmptyWrapper, TooltipButton } from '@arextest/arex-core';
+import { EmptyWrapper, TooltipButton, tryPrettierJsonString } from '@arextest/arex-core';
 import { Editor } from '@arextest/monaco-react';
 import { useRequest } from 'ahooks';
 import { App, Col, Collapse, Row, Space } from 'antd';
+import axios from 'axios';
+import { cloneDeep } from 'lodash';
 import React, { FC } from 'react';
 import { useImmer } from 'use-immer';
 
+import useUserProfile from '@/store/useUserProfile';
 import request from '@/utils/request';
-
-import useUserProfile from '../../../../../store/useUserProfile';
 
 type MockTarget = {
   body: string | null;
@@ -33,9 +33,7 @@ type MockData = {
   recordEnvironment: number;
   creationTime: number;
   targetRequest: MockTarget;
-  targetRequestString?: string;
   targetResponse: MockTarget;
-  targetResponseString?: string;
   operationName: string;
 };
 
@@ -51,36 +49,18 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
 
   const { run: getMockData, loading } = useRequest<MockDataParse[], []>(
     () =>
-      request
+      axios
         .post<{ recordResult: MockData[] }>(`/storage/storage/replay/query/viewRecord`, {
           recordId,
           sourceProvider: 'Pinned',
         })
-        .then((res: any) =>
-          Promise.resolve(
-            res.recordResult.map((result: any) => {
-              result.targetRequest.bodyParsed = tryParseJsonString<Record<string, any>>(
-                result.targetRequest.body,
-              );
-              result.targetResponse.bodyParsed = tryParseJsonString<Record<string, any>>(
-                result.targetResponse.body,
-              );
-
-              const convertData = (data: MockTarget) => {
-                const { body, bodyParsed, ...rest } = data;
-                return tryStringifyJson({ body: bodyParsed || body, ...rest }, undefined, true);
-              };
-
-              return {
-                ...result,
-                targetRequestString: convertData(result.targetRequest),
-                targetResponseString: convertData(result.targetResponse),
-              };
-            }),
-          ),
-        ),
+        .then((res) => res.data.recordResult),
     {
       onSuccess(res) {
+        res.map((item) => {
+          item.targetRequest.body = tryPrettierJsonString(item.targetRequest.body || '');
+          item.targetResponse.body = tryPrettierJsonString(item.targetResponse.body || '');
+        });
         setMockData(res);
       },
     },
@@ -109,20 +89,9 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
   const handleSave = (id: string) => {
     const data = mockData.find((item) => item.id === id);
     if (!data) return;
-
-    const { targetRequestString, targetResponseString, ...params }: any = data;
-
-    params.targetRequest = tryParseJsonString(targetRequestString);
-    params.targetResponse = tryParseJsonString(targetResponseString);
-
-    typeof params.targetRequest.body !== 'string' &&
-      // @ts-ignore
-      (params.targetRequest.body = tryStringifyJson(params.targetRequest.body));
-
-    typeof params.targetResponse.body !== 'string' &&
-      // @ts-ignore
-      (params.targetResponse.body = tryStringifyJson(params.targetResponse.body));
-
+    const params = cloneDeep(data);
+    params.targetRequest.body = tryPrettierJsonString(params.targetRequest.body || '');
+    params.targetResponse.body = tryPrettierJsonString(params.targetResponse.body || '');
     updateMockData(params);
   };
 
@@ -161,11 +130,11 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
                       }}
                       theme={theme === 'dark' ? 'vs-dark' : 'light'}
                       height={'260px'}
-                      value={mock.targetRequestString as string}
+                      value={mock.targetRequest.body || ''}
                       onChange={(value) => {
                         setMockData((state) => {
                           const data = state.find((item) => item.id === mock.id);
-                          data && (data.targetRequestString = value);
+                          data && (data.targetRequest.body = value);
                         });
                       }}
                       language={'json'}
@@ -185,11 +154,11 @@ const Mock: FC<{ recordId: string }> = ({ recordId }) => {
                       }}
                       theme={theme === 'dark' ? 'vs-dark' : 'light'}
                       height={'260px'}
-                      value={mock.targetResponseString as string}
+                      value={mock.targetResponse.body || ''}
                       onChange={(value) => {
                         setMockData((state) => {
                           const data = state.find((item) => item.id === mock.id);
-                          data && (data.targetResponseString = value);
+                          data && (data.targetResponse.body = value);
                         });
                       }}
                       language={'json'}

@@ -4,6 +4,6 @@
   "replay": "Replay",
   "caseDetail": "CaseDetail",
   "appSetting": "AppSetting",
-  "userSetting": "UserSetting",
-  "workspace": "Workspace"
+  "workspace": "Workspace",
+  "systemSetting": "SystemSetting"
 }

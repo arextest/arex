@@ -5,6 +5,7 @@ import {
   css,
   Label,
   PaneDrawer,
+  PathHandler,
   SceneCode,
   TooltipButton,
   useTranslation,
@@ -143,9 +144,11 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
     setCompareConfigOpen(true);
   }
 
-  const handleIgnoreKey = useCallback((path: string[]) => insertIgnoreNode(path), []);
-  const handleGlobalIgnoreKey = useCallback((path: string[]) => insertIgnoreNode(path, true), []);
-  const handleSortKey = useCallback((path: string[]) => {
+  const handleIgnoreKey = useCallback<PathHandler>(
+    ({ path, type }) => insertIgnoreNode(path, type === 'global'),
+    [insertIgnoreNode],
+  );
+  const handleSortKey = useCallback<PathHandler>(({ path }) => {
     setTargetNodePath(path);
     setCompareConfigOpen(true);
   }, []);
@@ -275,7 +278,6 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
                 data={modalData}
                 onChange={setSelectedDependency}
                 onIgnoreKey={handleIgnoreKey}
-                onGlobalIgnoreKey={handleGlobalIgnoreKey}
                 onSortKey={handleSortKey}
                 requestDiffMsg={ScheduleService.queryDiffMsgById}
                 requestQueryLogEntity={ScheduleService.queryLogEntity}

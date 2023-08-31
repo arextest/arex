@@ -52,6 +52,7 @@
   "appSetting": "AppSetting",
   "environment": "Environment",
   "setting": "Setting",
+  "systemSetting": "System Setting",
   "create": "Create",
   "case_tag": "case",
   "case": "Case",
@@ -62,5 +63,7 @@
   "version": "Version",
   "modifiedTime": "Modified Time",
   "loginInformationExpired": "Login information expired, please login again",
-  "agentStatus": "Status"
+  "agentStatus": "Status",
+  "document": "Document",
+  "serverError": "Server Error"
 }

@@ -1,4 +1,10 @@
-import { CloseOutlined, DeleteOutlined, EditOutlined, SyncOutlined } from '@ant-design/icons';
+import {
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  SaveOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import { css, PaneDrawer, SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import {
@@ -11,6 +17,7 @@ import {
   InputRef,
   List,
   Space,
+  Tooltip,
   Typography,
 } from 'antd';
 import { TreeProps } from 'antd/es';
@@ -18,14 +25,14 @@ import { CarouselRef } from 'antd/lib/carousel';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { CONFIG_TYPE } from '@/panes/AppSetting/CompareConfig';
+import { CONFIG_TARGET } from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService } from '@/services';
 import { DependencyParams, SortNode } from '@/services/ComparisonService';
 
 import CompareConfigTitle from '../CompareConfigTitle';
+import TreeCarousel from '../TreeCarousel';
 import ArrayTree from './ArrayTree';
 import SortTree from './SortTree';
-import TreeCarousel from './TreeCarousel';
 import { getSortArray } from './utils';
 
 enum TreeEditModeEnum {
@@ -45,7 +52,7 @@ export type NodesSortProps = {
   syncing?: boolean;
   readOnly?: boolean;
   loadingContract?: boolean;
-  configType: CONFIG_TYPE;
+  configTarget: CONFIG_TARGET;
   contractParsed: { [key: string]: any };
   onAdd?: () => void;
   onSync?: () => void;
@@ -87,15 +94,15 @@ const NodesSort: FC<NodesSortProps> = (props) => {
       ComparisonService.querySortNode({
         appId: props.appId as string,
         operationId: props.operationId,
-        ...(props.configType === CONFIG_TYPE.DEPENDENCY ? props.dependency : {}),
+        ...(props.configTarget === CONFIG_TARGET.DEPENDENCY ? props.dependency : {}),
       }),
     {
       ready: !!(
         props.appId &&
-        ((props.configType === CONFIG_TYPE.INTERFACE && props.operationId) || // INTERFACE ready
-          (props.configType === CONFIG_TYPE.DEPENDENCY && props.dependency))
+        ((props.configTarget === CONFIG_TARGET.INTERFACE && props.operationId) || // INTERFACE ready
+          (props.configTarget === CONFIG_TARGET.DEPENDENCY && props.dependency))
       ),
-      refreshDeps: [props.configType, props.operationId, props.dependency],
+      refreshDeps: [props.configTarget, props.operationId, props.dependency],
       onSuccess(res, [listPath]) {
         // 新增 SortNode 时设置 activeSortNode, 防止继续新增
         if (listPath) {
@@ -113,7 +120,7 @@ const NodesSort: FC<NodesSortProps> = (props) => {
   // 切换配置类型时清空数据
   useEffect(() => {
     setSortNodeList([]);
-  }, [props.configType]);
+  }, [props.configTarget]);
 
   // 外部指定 sortArrayPath 时，直接打开第二层 TreeCarousel
   useEffect(() => {
@@ -162,7 +169,7 @@ const NodesSort: FC<NodesSortProps> = (props) => {
         appId: props.appId,
         operationId: props.operationId,
         ...params,
-        ...(props.configType === CONFIG_TYPE.DEPENDENCY
+        ...(props.configTarget === CONFIG_TARGET.DEPENDENCY
           ? dependencyParams
           : ({} as DependencyParams)),
       });
@@ -270,7 +277,7 @@ const NodesSort: FC<NodesSortProps> = (props) => {
             key: ActiveKey,
             label: (
               <CompareConfigTitle
-                title='Nodes Sort'
+                title={t('appSetting.nodesSort', { ns: 'components' })}
                 readOnly={props.readOnly}
                 onSearch={handleSearch}
                 onAdd={handleAddSortNode}
@@ -305,9 +312,20 @@ const NodesSort: FC<NodesSortProps> = (props) => {
                       <SpaceBetweenWrapper width={'100%'}>
                         <Typography.Text ellipsis>{sortNode.path}</Typography.Text>
                         <span style={{ flexShrink: 0 }}>
-                          <span style={{ marginRight: '8px' }}>
-                            {`${sortNode.pathKeyList.length} keys`}
-                          </span>
+                          <Tooltip
+                            placement={'bottom'}
+                            title={
+                              <div style={{ padding: '4px' }}>
+                                {sortNode.pathKeyList.map((key) => (
+                                  <div key={key}>{key}</div>
+                                ))}
+                              </div>
+                            }
+                          >
+                            <span style={{ marginRight: '8px', cursor: 'pointer' }}>
+                              {`${sortNode.pathKeyList.length} keys`}
+                            </span>
+                          </Tooltip>
 
                           {!props.readOnly && (
                             <div className='sort-node-list-item' style={{ display: 'inline' }}>
@@ -337,6 +355,9 @@ const NodesSort: FC<NodesSortProps> = (props) => {
         ]}
         onChange={setActiveKey}
         css={css`
+          margin: 0 16px 16px 0;
+          height: fit-content;
+          flex: 1;
           .ant-collapse-content-box {
             padding: 0 !important;
           }
@@ -362,7 +383,7 @@ const NodesSort: FC<NodesSortProps> = (props) => {
               </Button>
             </Space>
             {treeEditMode === TreeEditModeEnum.SortTree && (
-              <Button size='small' type='primary' onClick={handleSaveSort}>
+              <Button size='small' type='primary' icon={<SaveOutlined />} onClick={handleSaveSort}>
                 {t('save', { ns: 'common' })}
               </Button>
             )}

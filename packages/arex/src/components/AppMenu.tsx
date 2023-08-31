@@ -1,6 +1,6 @@
 import { HeartFilled, HeartOutlined } from '@ant-design/icons';
-import { ArexMenuFC } from '@arextest/arex-core';
 import {
+  ArexMenuFC,
   getLocalStorage,
   SpaceBetweenWrapper,
   styled,
@@ -76,7 +76,7 @@ const MenuItem = styled((props: MenuItemProps) => {
   }
 `;
 
-const AppMenu: ArexMenuFC = (props) => {
+const AppMenu: ArexMenuFC<{ height?: number }> = (props) => {
   const { t } = useTranslation(['components']);
 
   const { token } = theme.useToken();
@@ -161,6 +161,7 @@ const AppMenu: ArexMenuFC = (props) => {
         ),
         key: app.id,
       })}
+      height={props.height}
       sx={{
         padding: '8px 0',
         '.ant-menu-item': {

@@ -12,13 +12,30 @@ import { useWorkspaces } from '@/store';
 
 import { useMenusPanes } from '../store';
 
-function useNavPane() {
+export type NavPaneOptions = {
+  inherit?: boolean;
+};
+
+function useNavPane(options?: NavPaneOptions) {
   const nav = useNavigate();
-  const { setPanes } = useMenusPanes();
+  const { setPanes, activePane } = useMenusPanes();
   const { activeWorkspaceId } = useWorkspaces();
 
-  return function (pane: Pane) {
+  return function (pane: Pane | string) {
     const match = decodeUrl();
+
+    if (typeof pane === 'string') {
+      // only rename pane id
+      const url = encodeUrl({ ...match.params, id: pane }, match.query);
+      useMenusPanes.setState((state) => {
+        const paneItem = state.panes.find((p) => p.id === activePane?.id);
+        if (paneItem) {
+          paneItem.id = pane;
+          state.setActivePane(pane);
+        }
+      });
+      return nav(url);
+    }
 
     const mergedParams = merge<
       Partial<StandardPathParams> | undefined,
@@ -29,7 +46,7 @@ function useNavPane() {
       paneType: pane.type,
       id: pane.id,
     });
-    const mergedData = merge(match.query, pane.data);
+    const mergedData = options?.inherit ? merge(match.query, pane.data) : pane.data;
     const url = encodeUrl(mergedParams, mergedData);
 
     setPanes(pane);

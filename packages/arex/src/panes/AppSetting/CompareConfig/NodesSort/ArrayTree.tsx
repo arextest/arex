@@ -40,6 +40,7 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
         <Tree
           showIcon
           defaultExpandAll
+          height={800}
           {...props}
           selectedKeys={[]}
           treeData={treeData}

@@ -1,5 +1,4 @@
 import { OperationId, OperationType } from '@/services/ApplicationService';
-import { QueryIgnoreNode } from '@/services/ComparisonService/queryInterfaceIgnoreNode';
 import { request } from '@/utils';
 
 export interface QueryNodeReq<T extends OperationType> {
@@ -7,6 +6,23 @@ export interface QueryNodeReq<T extends OperationType> {
   operationId?: OperationId<T>;
   operationType?: string;
   operationName?: string;
+}
+
+export interface IgnoreNodeBase {
+  appId?: string;
+  operationId: OperationId<'Global'>;
+  // 为 dependency 添加忽略项
+  operationType?: string;
+  operationName?: string;
+  exclusions: string[];
+  path?: string;
+}
+
+export interface QueryIgnoreNode extends IgnoreNodeBase {
+  modifiedTime: string;
+  id: string;
+  expirationType: number;
+  expirationDate: string;
 }
 
 export async function queryIgnoreNode(params: QueryNodeReq<'Global'>) {
@@ -19,5 +35,5 @@ export async function queryIgnoreNode(params: QueryNodeReq<'Global'>) {
       ...item,
       path: item.exclusions.concat(['']).join('/'),
     }))
-    .sort((a, b) => a.path.localeCompare(b.path));
+    .sort((a, b) => a.path!.localeCompare(b.path!));
 }

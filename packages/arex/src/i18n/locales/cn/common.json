@@ -49,6 +49,7 @@
   "appSetting": "应用设置",
   "environment": "环境配置",
   "setting": "设置",
+  "systemSetting": "系统设置",
   "create": "创建",
   "case_tag": "用例",
   "case": "用例",
@@ -59,5 +60,7 @@
   "version": "版本",
   "modifiedTime": "修改时间",
   "loginInformationExpired": "登录信息已过期，请重新登录",
-  "agentStatus": "状态"
+  "agentStatus": "状态",
+  "document": "文档",
+  "serverError": "服务器错误"
 }

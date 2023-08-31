@@ -49,7 +49,7 @@ export class Request {
     // 全局响应拦截
     this.instance.interceptors.response.use(
       (response) => {
-        if (response.data.responseStatusType.responseCode === 4) {
+        if (response.data.responseStatusType?.responseCode === 4) {
           return Promise.reject(response.data.responseStatusType);
         }
         return Promise.resolve(response.data);

@@ -24,6 +24,8 @@ export { default as GithubStarButton } from './GithubStarButton';
 export { default as HelpTooltip } from './HelpTooltip';
 export type { HighlightRowTableProps } from './HighlightRowTable';
 export { default as HighlightRowTable } from './HighlightRowTable';
+export type { HoveredActionButtonProps } from './HoveredActionButton';
+export { default as HoveredActionButton } from './HoveredActionButton';
 export * from './icons';
 export { default as Label } from './Label';
 export { default as PaneDrawer } from './PaneDrawer';

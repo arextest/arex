@@ -1,17 +1,17 @@
 import { ArexMenu } from '../menus';
 
 export class ArexMenuManager {
-  private static menusMap: Map<string, ArexMenu> = new Map();
+  private static menusMap: Map<string, ArexMenu<unknown>> = new Map();
 
-  public static getMenus(): Array<ArexMenu> {
+  public static getMenus(): Array<ArexMenu<unknown>> {
     return Array.from(this.menusMap.values());
   }
 
-  public static getMenusMap(): Map<string, ArexMenu> {
+  public static getMenusMap(): Map<string, ArexMenu<unknown>> {
     return this.menusMap;
   }
 
-  public static registerMenus(menusMap: { [Modal: string]: ArexMenu }) {
+  public static registerMenus(menusMap: { [Modal: string]: ArexMenu<unknown> }) {
     for (const name in menusMap) {
       const menu = menusMap[name];
       // console.log(this.menusMap, menusMap, name, menu.type);
@@ -23,11 +23,11 @@ export class ArexMenuManager {
     }
   }
 
-  public static getMenuByType(type?: string): ArexMenu | undefined {
+  public static getMenuByType(type?: string): ArexMenu<unknown> | undefined {
     return type ? this.menusMap.get(type) : undefined;
   }
 
-  public static getMenusByType(types: Array<string>): Array<ArexMenu | undefined> {
+  public static getMenusByType(types: Array<string>): Array<ArexMenu<unknown> | undefined> {
     return types.map((item) => {
       return Object.values(this.menusMap).find((child) => {
         return child.type === item;

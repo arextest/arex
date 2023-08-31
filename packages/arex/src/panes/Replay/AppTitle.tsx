@@ -1,4 +1,9 @@
-import { CloseCircleOutlined, PlayCircleOutlined, SyncOutlined } from '@ant-design/icons';
+import {
+  CloseCircleOutlined,
+  PlayCircleOutlined,
+  SettingOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import {
   getLocalStorage,
   HelpTooltip,
@@ -24,9 +29,10 @@ import {
   Typography,
 } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { createElement, FC, ReactNode, useMemo, useRef, useState } from 'react';
+import React, { createElement, FC, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
-import { EMAIL_KEY, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
+import { EMAIL_KEY, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
+import { useNavPane } from '@/hooks';
 import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCaseList';
 import { ApplicationService, ReportService, ScheduleService } from '@/services';
 import { ApplicationDataType } from '@/services/ApplicationService';
@@ -50,6 +56,7 @@ const TitleWrapper = styled(
     count?: number;
     onClickTitle?: () => void;
     onRefresh?: () => void;
+    onSetting?: () => void;
   }) => {
     const { t } = useTranslation(['components']);
 
@@ -69,6 +76,15 @@ const TitleWrapper = styled(
             title={t('replay.refresh')}
             icon={<SyncOutlined />}
             onClick={props.onRefresh}
+          />
+        )}
+        {props.onSetting && (
+          <TooltipButton
+            size='small'
+            type='text'
+            title={t('replay.appSetting')}
+            icon={<SettingOutlined />}
+            onClick={props.onSetting}
           />
         )}
       </div>
@@ -93,6 +109,7 @@ const InitialValues = {
 const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   const { notification } = App.useApp();
   const { token } = theme.useToken();
+  const navPane = useNavPane();
   const { t } = useTranslation(['components']);
   const email = getLocalStorage<string>(EMAIL_KEY);
 
@@ -125,16 +142,17 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     },
   });
 
-  const { data: recordedCase = 0 } = useRequest(ReportService.queryCountRecord, {
-    defaultParams: [
-      {
-        appId: data.appId,
-        beginTime: dayjs().startOf('day').valueOf(),
-        endTime: dayjs().valueOf(),
-      },
-    ],
-    ready: !!data.appId,
-  });
+  const { data: recordedCase = 0, refresh: queryCountRecord } = useRequest(
+    ReportService.queryCountRecord,
+    {
+      defaultParams: [
+        {
+          appId: data.appId,
+        },
+      ],
+      ready: !!data.appId,
+    },
+  );
 
   /**
    * 创建回放
@@ -242,6 +260,20 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     [data.appId, targetHostSource, open],
   );
 
+  const handleClickTitle = useCallback(() => caseListRef.current?.open(), [caseListRef]);
+
+  const handleRefresh = useCallback(() => {
+    queryCountRecord();
+    onRefresh?.();
+  }, []);
+
+  const handleSetting = useCallback(() => {
+    navPane({
+      id: data.appId,
+      type: PanesType.APP_SETTING,
+    });
+  }, [data]);
+
   return (
     <div>
       <PanesTitle
@@ -249,8 +281,9 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
           <TitleWrapper
             title={data.appId}
             count={recordedCase}
-            onClickTitle={() => caseListRef.current?.open()}
-            onRefresh={onRefresh}
+            onClickTitle={handleClickTitle}
+            onRefresh={handleRefresh}
+            onSetting={handleSetting}
           />
         }
         extra={

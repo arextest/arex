@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-core",
-  "version": "0.0.5",
+  "version": "0.0.13",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-core.umd.cjs",
   "module": "dist/arex-core.js",
@@ -12,13 +12,16 @@
     "do-build": "npm run build:code && npm run build:decl",
     "do-build-core": "npm run build:code && npm run build:decl"
   },
-  "types": "./dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "files": [
     "dist/*"
   ],
   "dependencies": {
+    "@dnd-kit/core": "^6.0.8",
+    "@dnd-kit/sortable": "^7.0.2",
+    "@dnd-kit/utilities": "^3.2.1",
     "@ant-design/icons": "^5.1.4",
-    "@arextest/vanilla-jsoneditor": "^0.17.14",
+    "@arextest/vanilla-jsoneditor": "^0.17.21",
     "@emotion/react": "^11.10.6",
     "@emotion/serialize": "^1.1.1",
     "@emotion/styled": "^11.10.6",
@@ -33,8 +36,6 @@
     "lossless-json": "^2.0.8",
     "path-to-regexp": "^6.2.1",
     "qs": "^6.11.1",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
     "react-github-btn": "^1.4.0",
     "react-i18next": "^12.2.0",
     "react-transition-group": "^4.4.5",
@@ -49,6 +50,7 @@
     "@types/react-dom": "^18.2.0",
     "@types/react-transition-group": "^4.4.6",
     "@vitejs/plugin-react-swc": "^3.3.0",
+    "vite-plugin-svgr": "^3.2.0",
     "typescript": "^5.0.2",
     "vite": "^4.2.0"
   },

@@ -1,13 +1,15 @@
-import { UserOutlined } from '@ant-design/icons';
+import Icon, { UserOutlined } from '@ant-design/icons';
 import { FlexCenterWrapper, getLocalStorage, setLocalStorage, styled } from '@arextest/arex-core';
+import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Card, Form, Input, Space, Typography } from 'antd';
+import { App, Button, Card, Divider, Form, Input, Space, Tooltip, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ACCESS_TOKEN_KEY, EMAIL_KEY, REFRESH_TOKEN_KEY } from '@/constant';
 import { LoginService, UserService } from '@/services';
 import { loginVerifyReq } from '@/services/LoginService';
+import gitlablogo from '~icons/logos/gitlab';
 
 import VerificationCode from './VerificationCode';
 
@@ -94,6 +96,7 @@ const Login: FC = () => {
     count <= 0 && clearInterval(timer);
   }, [count]);
 
+  const { data: oauthClientId } = useRequest(LoginService.getOauthClientId);
   return (
     <FlexCenterWrapper>
       <Card style={{ marginTop: '20vh' }}>
@@ -139,12 +142,24 @@ const Login: FC = () => {
             </Form.Item>
 
             <Form.Item>
-              <span>
+              <Space>
                 Login with{' '}
-                <Button type='link' onClick={loginAsGuest} style={{ paddingLeft: 0 }}>
+                <a onClick={loginAsGuest} style={{ paddingLeft: 0 }}>
                   Guest
-                </Button>
-              </span>
+                </a>
+                {oauthClientId?.clientId ? (
+                  <>
+                    <Divider type={'vertical'} />
+                    <a
+                      href={`${oauthClientId?.oauthUri}/oauth/authorize?response_type=code&state=STATE&scope=api&client_id=${oauthClientId?.clientId}&redirect_uri=${oauthClientId?.redirectUri}`}
+                    >
+                      <Tooltip title={'Login with gitlab'}>
+                        <Icon component={gitlablogo} />
+                      </Tooltip>
+                    </a>
+                  </>
+                ) : null}
+              </Space>
             </Form.Item>
           </Form>
         </Space>

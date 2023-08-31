@@ -22,6 +22,7 @@ const SortTree: FC<SortTreeProps> = (props) => {
         empty={!treeData?.length}
       >
         <Tree
+          height={800}
           {...props}
           checkable
           checkStrictly

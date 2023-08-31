@@ -42,6 +42,10 @@ const InviteWorkspace: FC<InviteWorkspaceProps> = (props) => {
 
       successUsers.length && props.onInvite?.();
     },
+    onError: (err: Error) => {
+      // @ts-ignore
+      message.error(err?.responseDesc);
+    },
     onFinally: () => {
       setOpen(false);
     },
@@ -53,6 +57,7 @@ const InviteWorkspace: FC<InviteWorkspaceProps> = (props) => {
       role: values.role,
       userNames: values.email,
       workspaceId: activeWorkspaceId,
+      arexUiUrl: `${window.location.protocol}//${window.location.host}`,
     };
     inviteToWorkspace(params);
   };

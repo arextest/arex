@@ -3,6 +3,7 @@ import { RoleEnum } from '@arextest/arex-core';
 import { request } from '@/utils';
 
 export type InviteToWorkspaceReq = {
+  arexUiUrl: string;
   invitor: string;
   role: RoleEnum;
   userNames: string[];

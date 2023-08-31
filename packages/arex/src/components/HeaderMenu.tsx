@@ -1,7 +1,7 @@
 import { LogoutOutlined, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
-import { getLocalStorage, TooltipButton, useTranslation } from '@arextest/arex-core';
+import { ArexPanesType, getLocalStorage, TooltipButton, useTranslation } from '@arextest/arex-core';
 import { Avatar, Dropdown, DropdownProps, Space } from 'antd';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { EMAIL_KEY, PanesType } from '@/constant';
@@ -38,18 +38,35 @@ const HeaderMenu: FC = () => {
     [t],
   );
 
+  const handleHelpClick = useCallback(
+    () =>
+      navPane({
+        id: 'document',
+        type: ArexPanesType.WEB_VIEW,
+        name: t('document') as string,
+        data: {
+          url: 'http://arextest.com/docs/intro',
+        },
+      }),
+    [t],
+  );
+
   return (
     <Space size='small'>
       <TooltipButton
         title={t('help')}
         icon={<QuestionCircleOutlined />}
-        onClick={() => window.open('http://www.arextest.com/')}
+        onClick={handleHelpClick}
       />
       <TooltipButton
         title={t('setting')}
         icon={<SettingOutlined />}
         onClick={() => {
-          navPane({ id: 'setting', type: PanesType.USER_SETTING });
+          navPane({
+            id: 'setting',
+            type: PanesType.SYSTEM_SETTING,
+            name: t('systemSetting') as string,
+          });
         }}
       />
       <Dropdown menu={userMenu}>

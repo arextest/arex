@@ -6,7 +6,7 @@ import {
   SpaceBetweenWrapper,
   useTranslation,
 } from '@arextest/arex-core';
-import { useRequest } from 'ahooks';
+import { useRequest, useSize } from 'ahooks';
 import { App, theme } from 'antd';
 import React, { useMemo } from 'react';
 
@@ -26,6 +26,8 @@ const EnvironmentMenu: ArexMenuFC = (props) => {
 
   const { activeEnvironment, timestamp, getEnvironments } = useEnvironments();
   const { activeWorkspaceId } = useWorkspaces();
+
+  const size = useSize(() => document.getElementById('arex-menu-wrapper'));
 
   const selectedKeys = useMemo(() => (props.value ? [props.value] : []), [props.value]);
 
@@ -79,6 +81,7 @@ const EnvironmentMenu: ArexMenuFC = (props) => {
         ),
         key: env.id,
       })}
+      height={size && size?.height - 88}
       sx={{
         padding: '8px 0',
       }}

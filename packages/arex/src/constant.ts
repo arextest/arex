@@ -9,7 +9,7 @@ export enum PanesType {
   REPLAY_ANALYSIS = 'replayAnalysis',
   APP_SETTING = 'appSetting',
   ENVIRONMENT = 'environment',
-  USER_SETTING = 'userSetting',
+  SYSTEM_SETTING = 'systemSetting',
   WORKSPACE = 'workspace',
   BATCH_RUN = 'batchRun',
 }
@@ -51,3 +51,6 @@ export const DEFAULT_THEME =
 export const DEFAULT_COLOR_PRIMARY = ColorPrimary.green;
 
 export const MAX_PANES_COUNT = 8;
+
+// custom event type
+export const AREX_OPEN_NEW_PANEL = 'arexOpenNewPanel';

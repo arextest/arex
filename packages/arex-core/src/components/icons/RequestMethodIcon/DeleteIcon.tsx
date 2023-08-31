@@ -1,7 +1,7 @@
 import { Typography } from 'antd';
 import React from 'react';
 
-const Delete = () => {
+const DeleteIcon = () => {
   return (
     <Typography.Text type='danger' style={{ marginRight: '8px' }}>
       DELETE
@@ -9,4 +9,4 @@ const Delete = () => {
   );
 };
 
-export default Delete;
+export default DeleteIcon;
