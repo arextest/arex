@@ -6,7 +6,7 @@ import { request } from '@/utils';
 export async function queryRequest(params: {
   id: string;
   nodeType: number;
-  recordId: string | undefined;
+  recordId?: string;
 }): Promise<ArexRESTRequest & { recordId: string; inherited: boolean }> {
   const res = await request.post<any>(
     `/report/filesystem/query${params.nodeType === 1 ? 'Interface' : 'Case'}`,
