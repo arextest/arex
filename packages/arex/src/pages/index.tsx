@@ -18,7 +18,7 @@ import { EMAIL_KEY, PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
 import { useMenusPanes, useWorkspaces } from '@/store';
-import {generateId} from "@/utils";
+import { generateId } from '@/utils';
 
 export default () => {
   useInit();
