@@ -125,6 +125,8 @@
     "running": "进行中",
     "done": "完成",
     "interrupted": "异常终止",
+    "rerunning": "重跑",
+    "caseloaded": "Case 加载完成",
     "cancelled": "取消",
     "unknownState": "未知",
     "diffScenes": "差异对比",

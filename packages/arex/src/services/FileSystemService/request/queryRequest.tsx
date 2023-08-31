@@ -7,6 +7,7 @@ export async function queryRequest(params: {
   id: string;
   nodeType: number;
   recordId: string | undefined;
+  planId: string | undefined;
 }): Promise<ArexRESTRequest & { recordId: string; inherited: boolean }> {
   const res = await request.post<any>(
     `/report/filesystem/query${params.nodeType === 1 ? 'Interface' : 'Case'}`,
@@ -14,8 +15,8 @@ export async function queryRequest(params: {
   );
   if (params.id.length !== 24) {
     // 如果有recordId是从调试页面进来的
-    if (params.recordId) {
-      const res = await queryDebuggingCase({ recordId: params.recordId }).then((res) => res);
+    if (params.recordId && params.planId) {
+      const res = await queryDebuggingCase({ recordId: params.recordId,planId:params.planId }).then((res) => res);
       const {
         body: { address, testAddress, ...rest },
       } = res;

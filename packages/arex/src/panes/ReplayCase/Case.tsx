@@ -12,6 +12,7 @@ import { generateId } from '@/utils';
 
 export type CaseProps = {
   planItemId: string;
+  planId: string;
   filter?: Key;
   onClick?: (record: ReplayCaseType) => void;
   onChange?: TableProps<ReplayCaseType>['onChange'];
@@ -78,6 +79,7 @@ const Case: FC<CaseProps> = (props) => {
               name: record.recordId,
               data: {
                 recordId: record.recordId,
+                planId: props.planId,
               },
             });
           }}

@@ -125,6 +125,8 @@
     "running": "running",
     "done": "done",
     "interrupted": "interrupted",
+    "rerunning": "rerunning",
+    "caseloaded": "caseloaded",
     "cancelled": "cancelled",
     "unknownState": "Unknown State",
     "diffScenes": "DiffScenes",
