@@ -430,7 +430,12 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
         {/*)}*/}
 
         {configTypeValue === CONFIG_TYPE.CATEGORY_IGNORE && (
-          <CategoryIgnore key='category-ignore' />
+          <CategoryIgnore
+            key='category-ignore'
+            appId={props.appId}
+            operationId={activeOperationId}
+            configTarget={configTargetValue}
+          />
         )}
       </div>
     </Space>
