@@ -178,6 +178,7 @@ const Request: ArexPaneFC = () => {
         id: id as string,
         nodeType: nodeInfo?.nodeType || 1,
         recordId: searchParams.get('recordId') as string,
+        planId: searchParams.get('planId') as string,
       }),
     {
       refreshDeps: [nodeInfo?.nodeType],

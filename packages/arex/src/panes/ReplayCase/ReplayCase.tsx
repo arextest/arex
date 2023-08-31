@@ -171,6 +171,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         active={!!selectedRecord}
         table={
           <Case
+            planId={props.data.planId}
             planItemId={props.data.planItemId}
             filter={props.data.filter}
             onClick={handleClickRecord}

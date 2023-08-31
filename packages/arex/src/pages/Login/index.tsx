@@ -147,14 +147,18 @@ const Login: FC = () => {
                 <a onClick={loginAsGuest} style={{ paddingLeft: 0 }}>
                   Guest
                 </a>
-                <Divider type={'vertical'} />
-                <a
-                  href={`${oauthClientId?.oauthUri}/oauth/authorize?response_type=code&state=STATE&scope=api&client_id=${oauthClientId?.clientId}&redirect_uri=${oauthClientId?.redirectUri}`}
-                >
-                  <Tooltip title={'Login with gitlab'}>
-                    <Icon component={gitlablogo} />
-                  </Tooltip>
-                </a>
+                {oauthClientId?.clientId ? (
+                  <>
+                    <Divider type={'vertical'} />
+                    <a
+                      href={`${oauthClientId?.oauthUri}/oauth/authorize?response_type=code&state=STATE&scope=api&client_id=${oauthClientId?.clientId}&redirect_uri=${oauthClientId?.redirectUri}`}
+                    >
+                      <Tooltip title={'Login with gitlab'}>
+                        <Icon component={gitlablogo} />
+                      </Tooltip>
+                    </a>
+                  </>
+                ) : null}
               </Space>
             </Form.Item>
           </Form>
