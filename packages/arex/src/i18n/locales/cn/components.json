@@ -65,6 +65,7 @@
   },
   "replay": {
     "selectApplication": "请选择一个应用",
+    "appSetting": "应用设置",
     "refresh": "刷新",
     "startSuccess": "启动成功",
     "startFailed": "启动失败",
