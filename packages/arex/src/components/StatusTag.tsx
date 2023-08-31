@@ -15,6 +15,8 @@ export const resultsStates = [
   { label: 'done', color: 'success', value: 2, icon: <CheckCircleOutlined /> },
   { label: 'interrupted', color: 'warning', value: 3, icon: <ExclamationCircleOutlined /> },
   { label: 'cancelled', color: 'error', value: 4, icon: <MinusCircleOutlined /> },
+  { label: 'case loaded', color: 'default', value: 5, icon: <ClockCircleOutlined /> },
+  { label: 'rerunning', color: 'processing', value: 6, icon: <SyncOutlined spin /> },
 ] as const;
 
 export type StatusTagProps = {
