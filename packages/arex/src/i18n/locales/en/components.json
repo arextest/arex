@@ -65,6 +65,7 @@
   },
   "replay": {
     "selectApplication": "Please select an application",
+    "appSetting": "AppSetting",
     "refresh": "refresh",
     "startSuccess": "Started Successfully",
     "startFailed": "Start Failed",

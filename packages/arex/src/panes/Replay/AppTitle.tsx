@@ -82,7 +82,7 @@ const TitleWrapper = styled(
           <TooltipButton
             size='small'
             type='text'
-            title={t('replay.setting')}
+            title={t('replay.appSetting')}
             icon={<SettingOutlined />}
             onClick={props.onSetting}
           />
@@ -269,9 +269,8 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
 
   const handleSetting = useCallback(() => {
     navPane({
-      id: data.id,
+      id: data.appId,
       type: PanesType.APP_SETTING,
-      data: data,
     });
   }, [data]);
 
