@@ -16,7 +16,10 @@ export async function queryRequest(params: {
   if (params.id.length !== 24) {
     // 如果有recordId是从调试页面进来的
     if (params.recordId && params.planId) {
-      const res = await queryDebuggingCase({ recordId: params.recordId,planId:params.planId }).then((res) => res);
+      const res = await queryDebuggingCase({
+        recordId: params.recordId,
+        planId: params.planId,
+      }).then((res) => res);
       const {
         body: { address, testAddress, ...rest },
       } = res;
