@@ -97,6 +97,7 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
             ...fullLinkInfo.entrance,
             name: fullLinkInfo.entrance?.categoryName,
             level: 1,
+            isEntry: true,
             children: fullLinkInfo.infoItemList?.map((item) => ({
               ...item,
               name: fullLinkInfo.entrance?.categoryName,
@@ -256,13 +257,6 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
                 mode={modalOpen === 2 ? 'multiple' : 'single'} // TODO extra render on single mode
                 defaultOnlyFailed={modalOpen === 2}
                 operationId={props.data.operationId}
-                extra={
-                  <TooltipButton
-                    icon={<SettingOutlined />}
-                    title={t('appSetting.compareConfig')}
-                    onClick={() => handleClickCompareConfigSetting()}
-                  />
-                }
                 itemsExtraRender={(data) => (
                   <TooltipButton
                     icon={<SettingOutlined />}
