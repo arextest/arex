@@ -2,8 +2,8 @@ import { request } from '@/utils';
 
 export interface QueryAggCountReq {
   appId: string;
-  beginTime: number;
-  endTime: number;
+  beginTime?: number;
+  endTime?: number;
 }
 
 export type AggOperation = {

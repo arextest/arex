@@ -74,8 +74,6 @@ const RecordedCaseListItem: FC<RecordedCaseListProps> = (props) => {
     (params) => {
       return ReportService.queryRecordList({
         appId: props.appId,
-        beginTime: dayjs().startOf('day').valueOf(),
-        endTime: dayjs().valueOf(),
         operationName: props.operationName,
         operationType: operationType,
         pageSize: params.pageSize,
