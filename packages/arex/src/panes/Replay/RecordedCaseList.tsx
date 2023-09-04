@@ -36,8 +36,6 @@ const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>(
     () =>
       ReportService.queryAggCount({
         appId: props.appId,
-        beginTime: dayjs().startOf('day').valueOf(),
-        endTime: dayjs().valueOf(),
       }),
     {
       ready: open,
