@@ -207,12 +207,6 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             onChange={setSelectedDependency}
             onIgnoreKey={handleIgnoreKey}
             onSortKey={handleSortKey}
-            onCompressKey={(value) => {
-              console.log(value);
-            }}
-            onReferenceKey={(value) => {
-              console.log(value);
-            }}
             requestDiffMsg={ScheduleService.queryDiffMsgById}
             requestQueryLogEntity={ScheduleService.queryLogEntity}
           />
