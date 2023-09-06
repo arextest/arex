@@ -32,12 +32,14 @@ const initialState: MenusPanesState = {
   paneMaxIndex: 0,
 };
 
+const Connector = '$&$';
+
 export function encodePaneKey(pane?: Pane) {
-  return pane && `${pane.type}_${pane.id}`;
+  return pane && pane.type + Connector + pane.id;
 }
 
 export function decodePaneKey(paneKey?: string) {
-  const [type, id] = paneKey?.split('_') || [];
+  const [type, id] = paneKey?.split(Connector) || [];
   return { type, id };
 }
 
