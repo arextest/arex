@@ -156,7 +156,7 @@ const Collection: ArexMenuFC = (props) => {
     const { keyword, structuredValue = [] } = value;
     let newExpandedKeys;
     if (!structuredValue?.length && !keyword) {
-      newExpandedKeys = dataList.map((item) => item.title);
+      // newExpandedKeys = dataList.map((item) => item.title);
     } else {
       newExpandedKeys = dataList
         .map((item) => {
@@ -190,8 +190,8 @@ const Collection: ArexMenuFC = (props) => {
             : null;
         })
         .filter((item, i, self) => item && self.indexOf(item) === i);
+      setExpandedKeys(newExpandedKeys as string[]);
     }
-    setExpandedKeys(newExpandedKeys as string[]);
     setSearchValue(value);
     setAutoExpandParent(true);
   };
