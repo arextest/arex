@@ -174,7 +174,7 @@
     "diffMatch": "Diff Match",
     "replayEndTime": "ReplayEndTime",
     "operationName": "Operation Name",
-    "recordedCaseCount": "Recorded Case Count",
+    "recordedCaseCount": "Case Count",
     "recordTime": "Record Time",
     "operationType": "Operation Type"
   },

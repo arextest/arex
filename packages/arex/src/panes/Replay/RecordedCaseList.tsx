@@ -1,13 +1,13 @@
-import { SearchOutlined } from '@ant-design/icons';
+import { DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import { PaneDrawer, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import type { TableColumnsType } from 'antd';
-import { Input, InputRef, Table, theme } from 'antd';
-import dayjs from 'dayjs';
+import { App, Button, Input, InputRef, Table, theme } from 'antd';
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 
-import { ReportService } from '@/services';
+import { ReportService, StorageService } from '@/services';
 import { AggOperation } from '@/services/ReportService';
+import { DeleteRecordType } from '@/services/StorageService';
 
 import RecordedCaseListDetail from './RecordedCaseListDetail';
 
@@ -17,11 +17,13 @@ export type RecordedCaseListRef = {
 
 export type RecordedCaseListProps = {
   appId: string;
+  onChange?: () => void;
 };
 
 const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>((props, ref) => {
   const { t } = useTranslation(['components']);
   const { token } = theme.useToken();
+  const { message } = App.useApp();
 
   const [open, setOpen] = useState(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>();
@@ -32,7 +34,11 @@ const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>(
     open: () => setOpen(true),
   }));
 
-  const { data: aggList = [], loading } = useRequest(
+  const {
+    data: aggList = [],
+    loading,
+    refresh,
+  } = useRequest(
     () =>
       ReportService.queryAggCount({
         appId: props.appId,
@@ -44,6 +50,19 @@ const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>(
       },
     },
   );
+
+  const { run: deleteRecord } = useRequest(StorageService.deleteRecord, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        message.success(t('message.delSuccess', { ns: 'common' }));
+        refresh();
+        props.onChange?.();
+      } else {
+        message.error(t('message.delFailed', { ns: 'common' }));
+      }
+    },
+  });
 
   const columns: TableColumnsType<AggOperation> = [
     {
@@ -87,14 +106,48 @@ const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>(
       sorter: (a, b) => a.recordedCaseCount - b.recordedCaseCount,
       defaultSortOrder: 'descend',
     },
+    {
+      title: t('action', { ns: 'common' }),
+      render: (value, { operationName }) => (
+        <Button
+          size='small'
+          icon={<DeleteOutlined />}
+          onClick={() => {
+            deleteRecord({
+              appId: props.appId,
+              operationName,
+              type: DeleteRecordType.ByAppIdAndOperationName,
+            });
+          }}
+        >
+          Delete
+        </Button>
+      ),
+    },
   ];
 
   return (
     <PaneDrawer
       destroyOnClose
       width='75%'
-      title={props.appId}
+      title={'Recorded detail: ' + props.appId}
       footer={null}
+      extra={
+        <Button
+          danger
+          size='small'
+          icon={<DeleteOutlined />}
+          onClick={() => {
+            deleteRecord({
+              appId: props.appId,
+              type: DeleteRecordType.ByAppId,
+            });
+          }}
+          style={{ marginRight: '8px' }}
+        >
+          Delete All
+        </Button>
+      }
       open={open}
       onClose={() => setOpen(false)}
     >

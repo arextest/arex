@@ -41,6 +41,9 @@ export default defineConfig({
       // '@arextest/arex-common': path.resolve('../arex-common/src'),
     },
   },
+  build: {
+    sourcemap: true,
+  },
   server: {
     host: '0.0.0.0',
     port: 16888,
