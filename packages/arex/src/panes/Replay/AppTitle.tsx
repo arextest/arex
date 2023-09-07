@@ -363,7 +363,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         </Form>
       </Modal>
 
-      <RecordedCaseList ref={caseListRef} appId={data.appId} />
+      <RecordedCaseList ref={caseListRef} appId={data.appId} onChange={queryCountRecord} />
     </div>
   );
 };
