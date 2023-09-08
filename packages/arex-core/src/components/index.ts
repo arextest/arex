@@ -1,13 +1,15 @@
+import { getJsonValueByPath } from './DiffJsonView/helper';
 import { SceneCodeMap } from './SceneCode';
 
 export { default as CheckOrCloseIcon } from './CheckOrCloseIcon';
 export type { CollapseTableProps } from './CollapseTable';
 export { default as CollapseTable } from './CollapseTable';
-export type { DiffJsonViewProps, PathHandler, TargetEditor } from './DiffJsonView';
-export { default as DiffJsonView } from './DiffJsonView';
+export type { DiffJsonViewProps, PathHandler } from './DiffJsonView';
+export { default as DiffJsonView, TargetEditor } from './DiffJsonView';
 export { default as DiffJsonTooltip } from './DiffJsonView/DiffJsonTooltip';
 export type { DiffJsonViewDrawerProps } from './DiffJsonView/DiffJsonViewDrawer';
 export { default as DiffJsonViewDrawer } from './DiffJsonView/DiffJsonViewDrawer';
+export { getJsonValueByPath, jsonIndexPathFilter } from './DiffJsonView/helper';
 export type { DiffMatchProps } from './DiffMatch';
 export { default as DiffMatch } from './DiffMatch';
 export type { EditAreaPlaceholderProps } from './EditAreaPlaceholder';

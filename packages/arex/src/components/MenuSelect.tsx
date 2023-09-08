@@ -51,7 +51,7 @@ const MenuList = styled(Menu, {
     background-color: ${(props) => props.theme.colorFillTertiary} !important;
   }
   .ant-menu-item-selected {
-    background-color: ${(props) => props.theme.colorPrimaryBg} !important;
+    background-color: ${(props) => props.theme.colorPrimaryBgHover} !important;
   }
 `;
 

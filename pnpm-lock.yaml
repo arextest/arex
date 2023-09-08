@@ -100,8 +100,8 @@ importers:
         specifier: ^4.12.2
         version: 4.12.2(antd@5.6.4)(react-dom@18.2.0)(react@18.2.0)
       arex-request-core:
-        specifier: 0.0.1-beta.66
-        version: 0.0.1-beta.66(@types/react@18.2.0)(@types/sortablejs@1.15.1)
+        specifier: 0.0.1-beta.68
+        version: 0.0.1-beta.68(@types/react@18.2.0)(@types/sortablejs@1.15.1)
       arex-request-runtime:
         specifier: ^1.0.2
         version: 1.0.2
@@ -288,8 +288,8 @@ importers:
         specifier: ^5.1.4
         version: 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@arextest/vanilla-jsoneditor':
-        specifier: ^0.17.21
-        version: 0.17.21
+        specifier: 0.17.23
+        version: 0.17.23
       '@dnd-kit/core':
         specifier: ^6.0.8
         version: 6.0.8(react-dom@18.2.0)(react@18.2.0)
@@ -592,8 +592,8 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@arextest/vanilla-jsoneditor@0.17.21:
-    resolution: {integrity: sha512-oZ1bJ4AK5OUR1UJJaj7UlU9T8l31zBXAd+jZtyuH7mnq8JDbhHaX/7Tml6zlyZmdKMUs2ef4r7K+6DBfuLOF7A==}
+  /@arextest/vanilla-jsoneditor@0.17.23:
+    resolution: {integrity: sha512-WmR38mOEAFa3DCSydTrl/BSVlTX62e2YgDhBCw56yTZmqvpd+ARI2A/WQc08k6Hqu5Yxt1DHcwbWJf71Adgzkg==}
     dev: false
 
   /@babel/code-frame@7.22.10:
@@ -2722,8 +2722,8 @@ packages:
       picomatch: 2.3.1
     dev: true
 
-  /arex-request-core@0.0.1-beta.66(@types/react@18.2.0)(@types/sortablejs@1.15.1):
-    resolution: {integrity: sha512-ClK0oQMPVFixkoj4iODnQikJgSJGEW/UB8of3bsej69GLvZUqBHZexaPDt+wqCY0VXP7iOwoLrlrWk48dxugEg==}
+  /arex-request-core@0.0.1-beta.68(@types/react@18.2.0)(@types/sortablejs@1.15.1):
+    resolution: {integrity: sha512-BMgkXvTNeB8pOQSXa2GuUCEkti3jNnSffDNlz77vLIAkQpQS+Rv17yHHzktGc4fhMDT/V7FWc3YrJ4/xsx6z6A==}
     dependencies:
       '@ant-design/icons': 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@arextest/monaco-react': 4.5.1(monaco-editor@0.38.0)(react-dom@18.2.0)(react@18.2.0)
