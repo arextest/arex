@@ -100,8 +100,8 @@ importers:
         specifier: ^4.12.2
         version: 4.12.2(antd@5.6.4)(react-dom@18.2.0)(react@18.2.0)
       arex-request-core:
-        specifier: 0.0.1-beta.65
-        version: 0.0.1-beta.65(@types/react@18.2.0)(@types/sortablejs@1.15.1)
+        specifier: 0.0.1-local.68
+        version: 0.0.1-local.68(@types/react@18.2.0)(@types/sortablejs@1.15.1)
       arex-request-runtime:
         specifier: ^1.0.2
         version: 1.0.2
@@ -2241,6 +2241,7 @@ packages:
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
     requiresBuild: true
     dev: true
     optional: true
@@ -2250,6 +2251,7 @@ packages:
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
     requiresBuild: true
     dev: true
     optional: true
@@ -2259,6 +2261,7 @@ packages:
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
     requiresBuild: true
     dev: true
     optional: true
@@ -2268,6 +2271,7 @@ packages:
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
     requiresBuild: true
     dev: true
     optional: true
@@ -2979,8 +2983,8 @@ packages:
       - supports-color
     dev: true
 
-  /arex-request-core@0.0.1-beta.65(@types/react@18.2.0)(@types/sortablejs@1.15.1):
-    resolution: {integrity: sha512-x7Aio1JUQ5Z9ubJYlR4lmD1cw2NdM73WJDKLn7c5HUtAgfFXQ3L3VJVTTX9OH5J41ENMyb2iqpUaWmVcGA2yeA==}
+  /arex-request-core@0.0.1-local.68(@types/react@18.2.0)(@types/sortablejs@1.15.1):
+    resolution: {integrity: sha512-FFGgJ4VtkJXVb3ubTyGv8AMkfpOwpvf7yF9nDqMvDt8pZAj+IPdaWGsM0TmiyxfoCDWSxxZmNKYv9NgYXKtKPw==}
     dependencies:
       '@ant-design/icons': 5.1.4(react-dom@18.2.0)(react@18.2.0)
       '@arextest/monaco-react': 4.5.1(monaco-editor@0.38.0)(react-dom@18.2.0)(react@18.2.0)

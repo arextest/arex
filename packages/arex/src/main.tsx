@@ -1,9 +1,10 @@
+import './useWork';
 import 'allotment/dist/style.css';
 import 'antd/dist/reset.css';
 import '@arextest/arex-core/dist/style.css';
 import './style/style.css';
 import 'dayjs/locale/zh-cn';
-import './helpers/adapter';
+// import './helpers/adapter';
 import './assets/css/index.css';
 
 import React from 'react';
