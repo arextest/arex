@@ -107,7 +107,9 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
 
     return options;
   }, [t, configTargetValue]);
-  const [configTypeValue, setConfigTypeValue] = useState<CONFIG_TYPE>(CONFIG_TYPE.NODE_IGNORE);
+  const [configTypeValue, setConfigTypeValue] = useState<CONFIG_TYPE>(
+    props.sortArrayPath ? CONFIG_TYPE.NODE_SORT : CONFIG_TYPE.NODE_IGNORE,
+  );
 
   const [activeOperationId, setActiveOperationId] = useState<string | undefined>(
     props.operationId || undefined,

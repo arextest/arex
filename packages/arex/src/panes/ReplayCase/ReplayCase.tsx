@@ -159,8 +159,9 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     [insertIgnoreNode],
   );
 
-  const handleSortKey = useCallback<PathHandler>(({ path }) => {
-    setTargetNodePath(path);
+  const handleSortKey = useCallback<PathHandler>(({ path, type, targetEditor, jsonString }) => {
+    const filteredPath = jsonIndexPathFilter(path, jsonString![targetEditor]);
+    filteredPath && setTargetNodePath(filteredPath);
     setCompareConfigOpen(true);
   }, []);
 
