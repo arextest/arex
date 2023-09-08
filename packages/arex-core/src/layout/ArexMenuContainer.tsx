@@ -123,6 +123,10 @@ const StyledMenu = styled(Menu)`
       color: ${(props) => props.theme.colorText};
     }
 
+    &.ant-menu-item-selected {
+      background-color: ${(props) => props.theme.colorPrimaryBgHover};
+    }
+
     &[data-menu-id$=${ICON_KEY}] {
       position: absolute;
       bottom: 36px;

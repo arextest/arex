@@ -3,6 +3,7 @@ import { IconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import {
   ArexMenuFC,
   CategoryKey,
+  css,
   EmptyWrapper,
   getLocalStorage,
   Operator,
@@ -35,6 +36,7 @@ import IconArchive from '~icons/lucide/archive';
 const CollectionNodeTitleWrapper = styled.div`
   width: 100%;
   overflow: hidden;
+
   .ant-spin-nested-loading,
   .ant-spin {
     height: 100%;
@@ -61,6 +63,12 @@ const CollectionNodeTitleWrapper = styled.div`
     overflow-x: hidden; //超出的文本隐藏
     text-overflow: ellipsis; //溢出用省略号显示
     white-space: nowrap; //溢出不换行
+  }
+`;
+
+const CollectionTree = styled(Tree<CollectionType>)`
+  .ant-tree-node-selected {
+    background-color: ${(props) => props.theme.colorPrimaryBgHover} !important;
   }
 `;
 
@@ -367,7 +375,7 @@ const Collection: ArexMenuFC = (props) => {
           placeholder={'Search for Name or Id'}
           onChange={handleChange}
         />
-        <Tree<CollectionType>
+        <CollectionTree
           showLine
           blockNode
           height={size?.height && size.height - 100}
