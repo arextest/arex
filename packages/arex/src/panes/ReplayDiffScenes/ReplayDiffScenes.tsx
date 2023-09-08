@@ -3,15 +3,19 @@ import { DiffPath } from '@arextest/arex-common';
 import {
   ArexPaneFC,
   css,
+  DiffMatch,
+  getJsonValueByPath,
+  jsonIndexPathFilter,
   Label,
   PaneDrawer,
   PathHandler,
   SceneCode,
+  TargetEditor,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest, useSize } from 'ahooks';
-import { App, Card, Collapse, Space, Typography } from 'antd';
+import { App, Card, Collapse, Modal, Space, Typography } from 'antd';
 import React, { ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
@@ -146,13 +150,37 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
   }
 
   const handleIgnoreKey = useCallback<PathHandler>(
-    ({ path, type }) => insertIgnoreNode(path, type === 'global'),
+    ({ path, type, targetEditor, jsonString }) => {
+      const filteredPath = jsonIndexPathFilter(path, jsonString![targetEditor]);
+      filteredPath && insertIgnoreNode(filteredPath, type === 'global');
+    },
     [insertIgnoreNode],
   );
-  const handleSortKey = useCallback<PathHandler>(({ path }) => {
-    setTargetNodePath(path);
+
+  const handleSortKey = useCallback<PathHandler>(({ path, type, targetEditor, jsonString }) => {
+    const filteredPath = jsonIndexPathFilter(path, jsonString![targetEditor]);
+    filteredPath && setTargetNodePath(filteredPath);
+
     setCompareConfigOpen(true);
   }, []);
+
+  const [modal, contextHolder] = Modal.useModal();
+  const handleDiffMatch = useCallback<PathHandler>(
+    ({ path, targetEditor, jsonString }) => {
+      const another = targetEditor === TargetEditor.left ? TargetEditor.right : TargetEditor.left;
+      const text1 = getJsonValueByPath(jsonString[targetEditor], path);
+      const text2 = getJsonValueByPath(jsonString[another], path);
+
+      modal.info({
+        title: t('replay.diffMatch'),
+        width: 800,
+        maskClosable: true,
+        content: <DiffMatch text1={text1} text2={text2} />,
+        footer: false,
+      });
+    },
+    [t],
+  );
 
   const collapseItems = useMemo(
     () =>
@@ -273,6 +301,7 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
                 onChange={setSelectedDependency}
                 onIgnoreKey={handleIgnoreKey}
                 onSortKey={handleSortKey}
+                onDiffMatch={handleDiffMatch}
                 requestDiffMsg={ScheduleService.queryDiffMsgById}
                 requestQueryLogEntity={ScheduleService.queryLogEntity}
               />
@@ -280,6 +309,9 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
           </Card>
         </PaneDrawer>
       </Space>
+
+      {/* JsonDiffMathModal */}
+      {contextHolder}
 
       {/* CompareConfigModal */}
       <PaneDrawer

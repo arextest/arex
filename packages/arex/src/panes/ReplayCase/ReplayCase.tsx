@@ -208,7 +208,6 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         }
         panel={
           <DiffPath
-            // contextMenuDisabled
             operationId={props.data.operationId}
             extra={
               <TooltipButton
