@@ -98,11 +98,8 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
 
   const rightClickHandler = useCallback(
     (fn: PathHandler, path: string[], targetEditor: TargetEditor, type?: CompareConfigType) => {
-      // const validatedPath = validateJsonPath(path, diffJson![targetEditor]);
-      // validatedPath &&
       fn({
         type,
-        // path: validatedPath,
         path,
         jsonString: diffJson!,
         targetEditor,
