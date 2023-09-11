@@ -71,7 +71,10 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
     },
     onSuccess(res) {
       setInitialValues({
-        period: [dayjs(res.allowTimeOfDayFrom, format), dayjs(res.allowTimeOfDayTo, format)],
+        period: [
+          dayjs(res.allowTimeOfDayFrom || '00:00', format),
+          dayjs(res.allowTimeOfDayTo || '23:59', format),
+        ],
         sampleRate: res.sampleRate,
         allowDayOfWeeks: [],
         timeMock: res.timeMock,
