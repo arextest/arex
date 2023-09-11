@@ -1,8 +1,11 @@
-import { ArexPaneFC, PanesTitle } from '@arextest/arex-core';
+import { HomeOutlined } from '@ant-design/icons';
+import { ArexPaneFC, PanesTitle, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { Badge, Tabs, theme } from 'antd';
+import { Badge, Button, Tabs, theme } from 'antd';
 import React, { ReactNode, useState } from 'react';
 
+import { PanesType } from '@/constant';
+import { useNavPane } from '@/hooks';
 import { StorageService } from '@/services';
 import { ReplayCaseType } from '@/services/ReportService';
 import { RecordResult } from '@/services/StorageService';
@@ -11,8 +14,11 @@ import CaseDetailTab from './CaseDetailTab';
 
 type TagType = { label: ReactNode; key: string; children: ReactNode };
 
-const ReplayCaseDetail: ArexPaneFC<ReplayCaseType> = (props) => {
+const ReplayCaseDetail: ArexPaneFC<ReplayCaseType & { appId: string }> = (props) => {
   const { token } = theme.useToken();
+  const { t } = useTranslation(['components']);
+  const navPane = useNavPane();
+
   const [tabItems, setTabItems] = useState<TagType[]>([]);
 
   useRequest(StorageService.viewRecord, {
@@ -57,7 +63,23 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseType> = (props) => {
 
   return (
     <>
-      <PanesTitle title={`RecordId: ${props.data.recordId}`} />
+      <PanesTitle
+        title={`RecordId: ${props.data.recordId}`}
+        extra={
+          <Button
+            size='small'
+            icon={<HomeOutlined />}
+            onClick={() =>
+              navPane({
+                type: PanesType.REPLAY,
+                id: props.data.appId,
+              })
+            }
+          >
+            {t('replay.appReport')}
+          </Button>
+        }
+      />
       <Tabs items={tabItems} />
     </>
   );
