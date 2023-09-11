@@ -39,7 +39,7 @@ import { ApplicationDataType } from '@/services/ApplicationService';
 import { MessageMap } from '@/services/ScheduleService';
 
 type AppTitleProps = {
-  data: ApplicationDataType;
+  appId: string;
   onRefresh?: () => void;
 };
 
@@ -106,7 +106,7 @@ const InitialValues = {
   ],
 };
 
-const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
+const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
   const { notification } = App.useApp();
   const { token } = theme.useToken();
   const navPane = useNavPane();
@@ -128,14 +128,14 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   });
 
   const webhook = useMemo(
-    () => `${location.origin}/api/createPlan?appId=${data.appId}&targetEnv=${targetEnv?.trim()}`,
-    [data.appId, targetEnv],
+    () => `${location.origin}/api/createPlan?appId=${appId}&targetEnv=${targetEnv?.trim()}`,
+    [appId, targetEnv],
   );
 
   /**
    * 请求 InterfacesList
    */
-  useRequest(() => ApplicationService.queryInterfacesList<'Global'>({ id: data.appId }), {
+  useRequest(() => ApplicationService.queryInterfacesList<'Global'>({ id: appId }), {
     ready: open,
     onSuccess(res) {
       setInterfacesOptions(res.map((item) => ({ label: item.operationName, value: item.id })));
@@ -147,10 +147,10 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     {
       defaultParams: [
         {
-          appId: data.appId,
+          appId,
         },
       ],
-      ready: !!data.appId,
+      ready: !!appId,
     },
   );
 
@@ -191,7 +191,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
       .then((values) => {
         const targetEnv = values.targetEnv.trim();
         createPlan({
-          appId: data.appId,
+          appId,
           sourceEnv: 'pro',
           targetEnv,
           caseSourceFrom: values.caseSourceRange[0].startOf('day').valueOf(),
@@ -211,9 +211,9 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         setTargetHostSource((source) => {
           !source && (source = {});
 
-          if (source?.[data.appId] && !source?.[data.appId].includes(targetEnv))
-            source[data.appId].push(targetEnv);
-          else if (!source?.[data.appId]) source[data.appId] = [targetEnv];
+          if (source?.[appId] && !source?.[appId].includes(targetEnv))
+            source[appId].push(targetEnv);
+          else if (!source?.[appId]) source[appId] = [targetEnv];
 
           return source;
         });
@@ -225,7 +225,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
 
   const targetHostOptions = useMemo(
     () =>
-      targetHostSource?.[data.appId]?.map((item) => ({
+      targetHostSource?.[appId]?.map((item) => ({
         label: (
           <SpaceBetweenWrapper>
             <Typography.Text>{item}</Typography.Text>
@@ -241,14 +241,14 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
                 e.stopPropagation();
 
                 setTargetHostSource((source) => {
-                  const targetHostList = source?.[data.appId] || [];
+                  const targetHostList = source?.[appId] || [];
                   const index = targetHostList.indexOf(item);
                   if (index > -1) {
                     targetHostList.splice(index, 1);
                   }
                   return {
                     ...source,
-                    [data.appId]: targetHostList,
+                    [appId]: targetHostList,
                   };
                 });
               }}
@@ -257,7 +257,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         ),
         value: item,
       })) || [],
-    [data.appId, targetHostSource, open],
+    [appId, targetHostSource, open],
   );
 
   const handleClickTitle = useCallback(() => caseListRef.current?.open(), [caseListRef]);
@@ -269,17 +269,17 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
 
   const handleSetting = useCallback(() => {
     navPane({
-      id: data.appId,
+      id: appId,
       type: PanesType.APP_SETTING,
     });
-  }, [data]);
+  }, [appId]);
 
   return (
     <div>
       <PanesTitle
         title={
           <TitleWrapper
-            title={data.appId}
+            title={appId}
             count={recordedCase}
             onClickTitle={handleClickTitle}
             onRefresh={handleRefresh}
@@ -299,7 +299,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
       />
 
       <Modal
-        title={`${t('replay.startButton')} - ${data.appId}`}
+        title={`${t('replay.startButton')} - ${appId}`}
         open={open}
         onOk={handleStartReplay}
         onCancel={() => setOpen(false)}
@@ -363,7 +363,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         </Form>
       </Modal>
 
-      <RecordedCaseList ref={caseListRef} appId={data.appId} onChange={queryCountRecord} />
+      <RecordedCaseList ref={caseListRef} appId={appId} onChange={queryCountRecord} />
     </div>
   );
 };
