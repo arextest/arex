@@ -2,6 +2,7 @@
   "collection": "Collection",
   "environment": "Environment",
   "replay": "Replay",
+  "replayCase": "ReplayCase",
   "caseDetail": "CaseDetail",
   "appSetting": "AppSetting",
   "workspace": "Workspace",

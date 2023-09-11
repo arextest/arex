@@ -14,7 +14,6 @@ import { ApplicationService, ReportService } from '@/services';
 import { DependencyParams } from '@/services/ComparisonService';
 
 import CategoryIgnore from './CategoryIgnore';
-import NodeDesensitization from './NodeDesensitization';
 import NodesIgnore from './NodesIgnore';
 import NodesSort from './NodesSort';
 import SyncContract from './SyncContract';

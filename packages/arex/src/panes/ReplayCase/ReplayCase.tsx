@@ -1,4 +1,4 @@
-import { SettingOutlined } from '@ant-design/icons';
+import { HomeOutlined, SettingOutlined } from '@ant-design/icons';
 import { DiffPath } from '@arextest/arex-common';
 import {
   ArexPaneFC,
@@ -12,15 +12,17 @@ import {
   PaneDrawer,
   PanesTitle,
   PathHandler,
+  SmallTextButton,
   TargetEditor,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Modal } from 'antd';
+import { App, Button, Modal } from 'antd';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { EMAIL_KEY } from '@/constant';
+import { EMAIL_KEY, PanesType } from '@/constant';
+import { useNavPane } from '@/hooks';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
 import { DependencyParams } from '@/services/ComparisonService';
@@ -34,6 +36,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   const { message, notification } = App.useApp();
   const email = getLocalStorage<string>(EMAIL_KEY);
   const { t } = useTranslation(['components']);
+  const navPane = useNavPane();
 
   const [compareConfigOpen, setCompareConfigOpen] = useState<boolean>(false);
 
@@ -191,6 +194,20 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             {t('replay.caseServiceAPI')}:{' '}
             {decodeURIComponent(props.data.operationName || 'unknown')}
           </span>
+        }
+        extra={
+          <Button
+            size='small'
+            icon={<HomeOutlined />}
+            onClick={() =>
+              navPane({
+                type: PanesType.REPLAY,
+                id: props.data.appId,
+              })
+            }
+          >
+            {t('replay.appReport')}
+          </Button>
         }
       />
 

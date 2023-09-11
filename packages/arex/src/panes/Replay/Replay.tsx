@@ -1,28 +1,27 @@
-import { ArexPaneFC, CollapseTable, FlexCenterWrapper, useTranslation } from '@arextest/arex-core';
-import { Empty } from 'antd';
+import { ArexPaneFC, CollapseTable } from '@arextest/arex-core';
 import { merge } from 'lodash';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
-import { ApplicationDataType } from '@/services/ApplicationService';
 import { PlanStatistics } from '@/services/ReportService';
+import { decodePaneKey } from '@/store/useMenusPanes';
 
 import AppTitle from './AppTitle';
 import PlanItem from './PlanItem';
 import PlanReport, { PlanReportProps } from './PlanReport';
 
-const ReplayPage: ArexPaneFC<ApplicationDataType> = (props) => {
-  const { t } = useTranslation(['components']);
+const ReplayPage: ArexPaneFC = (props) => {
   const navPane = useNavPane();
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
+  const { id: appId } = useMemo(() => decodePaneKey(props.paneKey), [props.paneKey]);
 
   const handleSelectPlan: PlanReportProps['onSelectedPlanChange'] = (plan, current, row) => {
     plan.planId === selectedPlan?.planId ? setSelectedPlan(undefined) : setSelectedPlan(plan);
     navPane({
-      id: props.data.id,
+      id: appId,
       type: PanesType.REPLAY,
-      data: merge({ current, row }, props.data), // 同步当前选中的页码好行数
+      data: merge({ ...props.data }, { current, row }), // 同步当前选中的页码好行数
     });
   };
 
@@ -31,22 +30,21 @@ const ReplayPage: ArexPaneFC<ApplicationDataType> = (props) => {
     setRefreshDep(new Date().getTime()); // 触发 ReplayTable 组件请求更新
   };
 
-  return props.data ? (
+  return (
     <>
-      <AppTitle data={props.data} onRefresh={handleRefreshDep} />
+      <AppTitle appId={appId} onRefresh={handleRefreshDep} />
       <CollapseTable
         active={!!selectedPlan}
         table={
           <PlanReport
-            id={props.data.id}
-            appId={props.data.appId}
+            appId={appId}
             refreshDep={refreshDep}
             onSelectedPlanChange={handleSelectPlan}
           />
         }
         panel={
           <PlanItem
-            id={props.data.id}
+            appId={appId}
             selectedPlan={selectedPlan}
             filter={(record) => !!record.totalCaseCount}
             onRefresh={handleRefreshDep}
@@ -54,10 +52,6 @@ const ReplayPage: ArexPaneFC<ApplicationDataType> = (props) => {
         }
       />
     </>
-  ) : (
-    <FlexCenterWrapper>
-      <Empty description={t('replay.selectApplication')} />
-    </FlexCenterWrapper>
   );
 };
 

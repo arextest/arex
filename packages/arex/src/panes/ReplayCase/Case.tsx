@@ -1,4 +1,9 @@
-import { HighlightRowTable, SmallTextButton, useTranslation } from '@arextest/arex-core';
+import {
+  HighlightRowTable,
+  SmallTextButton,
+  useArexPaneProps,
+  useTranslation,
+} from '@arextest/arex-core';
 import { usePagination } from 'ahooks';
 import { TableProps, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -7,7 +12,7 @@ import React, { FC, Key, useMemo } from 'react';
 import { PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
-import { ReplayCaseType } from '@/services/ReportService';
+import { PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
 import { generateId } from '@/utils';
 
 export type CaseProps = {
@@ -21,6 +26,7 @@ export type CaseProps = {
 };
 
 const Case: FC<CaseProps> = (props) => {
+  const { data } = useArexPaneProps<PlanItemStatistics>();
   const { t } = useTranslation(['components']);
   const navPane = useNavPane();
 
@@ -90,7 +96,11 @@ const Case: FC<CaseProps> = (props) => {
           title={t('replay.recordDetail') as string}
           onClick={(e) => {
             e.stopPropagation();
-            navPane({ type: PanesType.CASE_DETAIL, id: record.recordId, data: record });
+            navPane({
+              type: PanesType.CASE_DETAIL,
+              id: record.recordId,
+              data: { ...record, appId: data?.appId },
+            });
           }}
         />,
         <SmallTextButton
