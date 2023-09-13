@@ -9,9 +9,9 @@ import {
   getLocalStorage,
   useTranslation,
 } from '@arextest/arex-core';
-import { useRequest } from 'ahooks';
+import { useKeyPress, useRequest } from 'ahooks';
 import { App, MenuProps } from 'antd';
-import React, { useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 
 import { EnvironmentSelect, HeaderMenu } from '@/components';
 import { EMAIL_KEY, PanesType } from '@/constant';
@@ -20,7 +20,7 @@ import { FileSystemService } from '@/services';
 import { useMenusPanes, useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
 
-export default () => {
+const Home: FC = () => {
   useInit();
 
   const {
@@ -159,6 +159,21 @@ export default () => {
     }
   };
 
+  useKeyPress(
+    ['meta.t', 'meta.alt.t'],
+    () => {
+      handlePaneAdd();
+    },
+    { useCapture: true },
+  );
+  useKeyPress(
+    ['meta.w', 'meta.alt.w'],
+    () => {
+      activePane?.key && removePane(activePane?.key);
+    },
+    { useCapture: true },
+  );
+
   return (
     <>
       <ArexHeader githubStar extra={<HeaderMenu />} />
@@ -202,3 +217,5 @@ export default () => {
     </>
   );
 };
+
+export default Home;
