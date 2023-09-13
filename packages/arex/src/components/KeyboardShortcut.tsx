@@ -1,5 +1,10 @@
-import { SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
-import { Collapse, Drawer, Input, InputProps, List, Typography } from 'antd';
+import {
+  ArexPanesType,
+  copyToClipboard,
+  SpaceBetweenWrapper,
+  useTranslation,
+} from '@arextest/arex-core';
+import { App, Collapse, Drawer, Input, InputProps, List, Typography } from 'antd';
 import React, {
   CompositionEventHandler,
   FC,
@@ -10,18 +15,27 @@ import React, {
   useState,
 } from 'react';
 
-import { PanesType } from '@/constant';
+import { MenusType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
-import { useMenusPanes } from '@/store';
+import { useMenusPanes, useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
 import { handleKeyDown, shortcuts, ShortcutsMap } from '@/utils/keybindings';
 
 const KeyboardShortcut: FC = () => {
   const { t } = useTranslation('shortcuts');
+  const { message } = App.useApp();
   const [search, setSearch] = useState<string>();
   const navPane = useNavPane();
 
-  const { openKeyboardShortcut, toggleOpenKeyboardShortcut } = useMenusPanes();
+  const {
+    removePane,
+    setActivePane,
+    setActiveMenu,
+    openKeyboardShortcut,
+    toggleOpenKeyboardShortcut,
+    toggleMenuCollapse,
+  } = useMenusPanes();
+  const { activeWorkspaceId } = useWorkspaces();
 
   const inputLock = useRef(false);
   const shortcutsFiltered = useMemo<ShortcutsMap>(() => {
@@ -49,23 +63,59 @@ const KeyboardShortcut: FC = () => {
     }
   };
 
-  useEffect(() => {
-    window.addEventListener('keydown', (e) => {
-      const action = handleKeyDown(e);
-      if (action) {
-        console.log('boundAction: ', action);
-        handleAction(action);
-      }
-    });
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
   const handleAction = useCallback((action: string) => {
     switch (action) {
+      //  General
+      // 'ctrl-u'
+      case 'general.copy-link': {
+        copyToClipboard(location.href);
+        message.success(t('copiedToClipboard'));
+        break;
+      }
+      // 'ctrl-/'
       case 'general.keybindings.toggle': {
         toggleOpenKeyboardShortcut();
         break;
       }
+
+      // Request
+      //   'ctrl-enter': 'request.send',
+      //   'ctrl-shift-enter': 'request.send-cancel',
+      //   'ctrl-s': 'request.save',
+      //   'ctrl-shift-s': 'request.save-as',
+
+      // Navigation
+      // 'alt-,'
+      case 'navigation.setting': {
+        navPane({
+          type: PanesType.SYSTEM_SETTING,
+          id: 'setting',
+        });
+        break;
+      }
+      // 'alt-h'
+      case 'navigation.help': {
+        navPane({
+          id: 'document',
+          type: ArexPanesType.WEB_VIEW,
+          name: t('document') as string,
+          data: {
+            url: 'http://arextest.com/docs/intro',
+          },
+        });
+        break;
+      }
+      // 'alt-o'
+      case 'navigation.workspace': {
+        navPane({
+          id: activeWorkspaceId,
+          type: PanesType.WORKSPACE,
+        });
+        break;
+      }
+
+      // Pane
+      // 'alt-t'
       case 'pane.new': {
         navPane({
           type: PanesType.REQUEST,
@@ -73,8 +123,73 @@ const KeyboardShortcut: FC = () => {
           icon: 'Get',
           name: 'Untitled',
         });
+        break;
+      }
+      // 'alt-w'
+      case 'pane.close': {
+        removePane(undefined);
+        break;
+      }
+      //'alt-shift-w'
+      case 'pane.close-other': {
+        removePane(undefined, { reversal: true });
+        break;
+      }
+      // 'alt-left'
+      case 'pane.prev': {
+        setActivePane(undefined, { offset: 'left' });
+        break;
+      }
+      // 'alt-left'
+      case 'pane.next': {
+        setActivePane(undefined, { offset: 'right' });
+        break;
+      }
+
+      // Menu
+      // 'alt-x'
+      case 'menu.collapse': {
+        toggleMenuCollapse();
+        break;
+      }
+      // 'alt-up
+      case 'menu.prev': {
+        setActiveMenu(undefined, {
+          offset: 'top',
+        });
+        break;
+      }
+      // 'alt-down
+      case 'menu.next': {
+        setActiveMenu(undefined, {
+          offset: 'bottom',
+        });
+        break;
+      }
+      // 'alt-c
+      case 'menu.collection': {
+        setActiveMenu(MenusType.COLLECTION);
+        break;
+      }
+      // 'alt-r
+      case 'menu.replay': {
+        setActiveMenu(MenusType.REPLAY);
+        break;
+      }
+      // 'alt-e
+      case 'menu.environment': {
+        setActiveMenu(MenusType.ENVIRONMENT);
+        break;
       }
     }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('keydown', (e) => {
+      const action = handleKeyDown(e);
+      if (action) handleAction(action);
+    });
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   return (

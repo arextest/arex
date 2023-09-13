@@ -1,6 +1,7 @@
 {
   "shortcuts": "Keyboard Shortcuts",
   "searchPlaceholder":"Search Shortcuts",
+  "copiedToClipboard": "Copied to clipboard",
 
   "general": "General",
   "general.copy-link": "copy-link",
@@ -25,6 +26,7 @@
   "pane.next": "Go to next Pane",
 
   "menu": "Menu",
+  "menu.collapse": "Collapse / Expand",
   "menu.prev":"Select previous Menu",
   "menu.next": "Select next Menu",
   "menu.collection":"Select Collection Menu",

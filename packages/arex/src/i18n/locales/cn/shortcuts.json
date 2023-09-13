@@ -1,6 +1,7 @@
 {
   "shortcuts": "快捷键",
   "searchPlaceholder":"搜索快捷键",
+  "copiedToClipboard": "已复制至剪贴板",
 
   "general": "通用",
   "general.copy-link": "复制链接",
@@ -25,6 +26,7 @@
   "pane.next": "下一个",
 
   "menu": "菜单",
+  "menu.collapse": "折叠 / 展开",
   "menu.prev":"上一个",
   "menu.next": "下一个",
   "menu.collection":"集合",

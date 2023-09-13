@@ -10,7 +10,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Drawer, MenuProps } from 'antd';
+import { App, MenuProps } from 'antd';
 import React, { useMemo } from 'react';
 
 import { EnvironmentSelect, HeaderMenu, KeyboardShortcut } from '@/components';
@@ -24,8 +24,8 @@ export default () => {
   useInit();
 
   const {
-    collapsed,
-    setCollapsed,
+    menuCollapsed,
+    toggleMenuCollapse,
     activeMenu,
     setActiveMenu,
     panes,
@@ -92,7 +92,7 @@ export default () => {
   });
 
   const handleMenuChange = (menuType: string) => {
-    collapsed && setCollapsed(false);
+    menuCollapsed && toggleMenuCollapse(false);
     setActiveMenu(menuType);
   };
 
@@ -130,7 +130,7 @@ export default () => {
 
     switch (e.key) {
       case 'close': {
-        removePane(paneKey);
+        removePane(undefined);
         break;
       }
       case 'closeOther': {
@@ -163,12 +163,12 @@ export default () => {
     <>
       <ArexHeader githubStar extra={<HeaderMenu />} />
       <ArexMainContainer
-        collapsed={collapsed}
+        collapsed={menuCollapsed}
         arexMenus={
           <ArexMenuContainer
             value={activePane?.id}
             activeKey={activeMenu}
-            collapsed={collapsed}
+            collapsed={menuCollapsed}
             workspaceMenuProps={{
               value: activeWorkspaceId,
               options: workspacesOptions,
@@ -177,7 +177,7 @@ export default () => {
               onEdit: handleEditWorkspace,
               // extra?: ReactNode;
             }}
-            onCollapsed={setCollapsed}
+            onCollapsed={toggleMenuCollapse}
             onChange={handleMenuChange}
             onSelect={handleMenuSelect}
           />

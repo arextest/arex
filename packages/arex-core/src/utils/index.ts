@@ -1,5 +1,6 @@
 export { ArexMenuManager } from './ArexMenuManager';
 export { ArexPaneManager } from './ArexPaneManager';
+export * from './clipboard';
 export * from './dom';
 export * from './json';
 export * from './localStorage';

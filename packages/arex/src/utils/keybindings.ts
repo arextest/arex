@@ -62,6 +62,7 @@ export const bindings: {
   'alt-right': 'pane.next',
 
   // Menu
+  'alt-x': 'menu.collapse',
   'alt-up': 'menu.prev',
   'alt-down': 'menu.next',
   'alt-c': 'menu.collection',
