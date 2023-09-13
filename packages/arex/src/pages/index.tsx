@@ -10,17 +10,23 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, MenuProps } from 'antd';
-import React, { useMemo } from 'react';
+import { App, Button, MenuProps, Space, Typography } from 'antd';
+import React, { FC, useMemo } from 'react';
 
-import { EnvironmentSelect, HeaderMenu, KeyboardShortcut } from '@/components';
+import {
+  EmptyPanePlaceholder,
+  EnvironmentSelect,
+  HeaderMenu,
+  KeyboardShortcut,
+} from '@/components';
 import { EMAIL_KEY, PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
 import { useMenusPanes, useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
+import { shortcuts } from '@/utils/keybindings';
 
-export default () => {
+const Home: FC = () => {
   useInit();
 
   const {
@@ -186,6 +192,7 @@ export default () => {
           <ArexPanesContainer
             activeKey={activePane?.key}
             panes={panes}
+            emptyNode={<EmptyPanePlaceholder />}
             tabBarExtraContent={<EnvironmentSelect />}
             dropdownMenu={{
               items: dropdownItems,
@@ -204,3 +211,5 @@ export default () => {
     </>
   );
 };
+
+export default Home;

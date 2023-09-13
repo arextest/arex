@@ -59,6 +59,7 @@ export const PaneContext = createContext<{
 });
 
 export interface ArexPanesContainerProps extends Omit<TabsProps, 'items' | 'onDragEnd'> {
+  emptyNode: React.ReactNode;
   panes?: Pane[];
   onAdd?: () => void;
   dropdownMenu?: Omit<MenuProps, 'onClick'> & { onClick: (e: MenuInfo, key: Key | null) => void };
@@ -134,14 +135,7 @@ const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
   });
 
   return (
-    <EmptyWrapper
-      empty={!panesItems?.length}
-      description={
-        <Button type='primary' onClick={props.onAdd}>
-          New Request
-        </Button>
-      }
-    >
+    <EmptyWrapper empty={!panesItems?.length} description={props.emptyNode}>
       <Tabs
         css={css`
           .ant-tabs-nav {

@@ -1,4 +1,5 @@
 export { default as EditAreaPlaceholder } from './EditAreaPlaceholder';
+export { default as EmptyPanePlaceholder } from './EmptyPanePlaceholder';
 export { default as EnvironmentSelect } from './EnvironmentSelect';
 export { default as FlexRowReverseWrapper } from './FlexRowReverseWrapper';
 export { default as HeaderMenu } from './HeaderMenu';
