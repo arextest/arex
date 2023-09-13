@@ -1,0 +1,33 @@
+{
+  "shortcuts": "Keyboard Shortcuts",
+  "searchPlaceholder":"Search Shortcuts",
+
+  "general": "General",
+  "general.copy-link": "copy-link",
+  "general.keybindings.toggle": "Keyboard Shortcuts",
+
+  "request": "Request",
+  "request.send": "Send Request",
+  "request.send-cancel": "Cancel Request",
+  "request.save": "Save to Collection",
+  "request.save-as": "Save as to Collection",
+
+  "navigation": "Navigation",
+  "navigation.setting": "Go to Setting Pane",
+  "navigation.help": "Go to Help Pane",
+  "navigation.workspace": "Go to Workspace Pane",
+
+  "pane": "Pane",
+  "pane.new": "Open a new Request Pane",
+  "pane.close":  "Close current Pane",
+  "pane.close-other": "Close current Pane",
+  "pane.prev":  "Go to previous Pane",
+  "pane.next": "Go to next Pane",
+
+  "menu": "Menu",
+  "menu.prev":"Select previous Menu",
+  "menu.next": "Select next Menu",
+  "menu.collection":"Select Collection Menu",
+  "menu.replay": "Select Replay Menu",
+  "menu.environment":"Select Environment Menu"
+}

@@ -10,10 +10,10 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, MenuProps } from 'antd';
+import { App, Drawer, MenuProps } from 'antd';
 import React, { useMemo } from 'react';
 
-import { EnvironmentSelect, HeaderMenu } from '@/components';
+import { EnvironmentSelect, HeaderMenu, KeyboardShortcut } from '@/components';
 import { EMAIL_KEY, PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
@@ -199,6 +199,8 @@ export default () => {
         }
       />
       <ArexFooter />
+
+      <KeyboardShortcut />
     </>
   );
 };

@@ -11,10 +11,12 @@ export type MenusPanesState = {
   activePane?: Pane<PanesData>;
   panes: Pane<PanesData>[];
   paneMaxIndex: number; // 用于同步 panes 中 index 的最大值
+  openKeyboardShortcut: boolean;
 };
 
 export type MenusPanesAction = {
   setCollapsed: (collapsed: boolean) => void;
+  toggleOpenKeyboardShortcut: () => void;
   setActiveMenu: (menuKey?: string) => void;
   setActivePane: (paneKey?: string) => void;
   setPanes: <D extends PanesData = PanesData>(panes: Pane<D> | Pane<D>[]) => void;
@@ -30,6 +32,7 @@ const initialState: MenusPanesState = {
   activePane: undefined,
   panes: [],
   paneMaxIndex: 0,
+  openKeyboardShortcut: false,
 };
 
 const Connector = '$&$';
@@ -61,6 +64,13 @@ export const useMenusPanes = create(
         setActiveMenu: (menuType) => {
           set((state) => {
             state.activeMenu = menuType;
+          });
+        },
+
+        // 切换快捷键面板的显隐
+        toggleOpenKeyboardShortcut: () => {
+          set((state) => {
+            state.openKeyboardShortcut = !state.openKeyboardShortcut;
           });
         },
 

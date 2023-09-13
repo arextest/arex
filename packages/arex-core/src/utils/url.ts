@@ -52,3 +52,7 @@ export const objToUrl = (obj: Record<string, string | number>) => {
   //  https://www.xxx.com/xxx?abc=1&type=2
   return `?${tempArray.join('&')}`;
 };
+
+export function capitalizeFirstLetter(string: string) {
+  return string.replace(/^\w/, (c) => c.toUpperCase());
+}

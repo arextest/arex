@@ -1,7 +1,9 @@
 export { ArexMenuManager } from './ArexMenuManager';
 export { ArexPaneManager } from './ArexPaneManager';
+export * from './dom';
 export * from './json';
 export * from './localStorage';
+export * from './platformutils';
 export * from './url';
 export { arrayMove } from '@dnd-kit/sortable';
 export { css, useTheme } from '@emotion/react';
