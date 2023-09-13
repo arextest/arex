@@ -10,7 +10,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, MenuProps, Space, Typography } from 'antd';
+import { App, MenuProps } from 'antd';
 import React, { FC, useMemo } from 'react';
 
 import {
@@ -24,7 +24,6 @@ import { useInit, useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
 import { useMenusPanes, useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
-import { shortcuts } from '@/utils/keybindings';
 
 const Home: FC = () => {
   useInit();
