@@ -37,6 +37,7 @@ import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCa
 import { ApplicationService, ReportService, ScheduleService } from '@/services';
 import { ApplicationDataType } from '@/services/ApplicationService';
 import { MessageMap } from '@/services/ScheduleService';
+import { useMenusPanes } from '@/store';
 
 type AppTitleProps = {
   appId: string;
@@ -61,7 +62,7 @@ const TitleWrapper = styled(
     const { t } = useTranslation(['components']);
 
     return (
-      <div className={props.className}>
+      <div id='arex-replay-record-detail-btn' className={props.className}>
         {createElement(
           props.count ? Button : 'div',
           props.count ? { type: 'text', onClick: props.onClickTitle } : {},
@@ -71,6 +72,7 @@ const TitleWrapper = styled(
         )}
         {props.onRefresh && (
           <TooltipButton
+            id='arex-replay-refresh-report-btn'
             size='small'
             type='text'
             title={t('replay.refresh')}
@@ -80,6 +82,7 @@ const TitleWrapper = styled(
         )}
         {props.onSetting && (
           <TooltipButton
+            id='arex-replay-app-setting-btn'
             size='small'
             type='text'
             title={t('replay.appSetting')}
@@ -112,6 +115,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
   const navPane = useNavPane();
   const { t } = useTranslation(['components']);
   const email = getLocalStorage<string>(EMAIL_KEY);
+  const { activePane } = useMenusPanes();
 
   const caseListRef = useRef<RecordedCaseListRef>(null);
 
@@ -288,6 +292,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
         }
         extra={
           <Button
+            id='arex-replay-create-plan-btn'
             size='small'
             type='primary'
             icon={<PlayCircleOutlined />}

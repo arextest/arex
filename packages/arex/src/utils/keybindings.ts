@@ -49,6 +49,15 @@ export const bindings: {
   'ctrl-s': 'request.save',
   'ctrl-shift-s': 'request.save-as',
 
+  // Replay
+  'alt-r': 'replay.refresh-report',
+  'alt-d': 'replay.record-detail',
+  'alt-shift-,': 'replay.app-setting',
+  'alt-p': 'replay.create-plan',
+
+  // ReplayCase
+  'alt-b': 'replayCase.replay-report',
+
   // Navigation
   'alt-,': 'navigation.setting',
   'alt-h': 'navigation.help',
@@ -65,9 +74,9 @@ export const bindings: {
   'alt-x': 'menu.collapse',
   'alt-up': 'menu.prev',
   'alt-down': 'menu.next',
-  'alt-c': 'menu.collection',
-  'alt-r': 'menu.replay',
-  'alt-e': 'menu.environment',
+  'alt-shift-c': 'menu.collection',
+  'alt-shift-r': 'menu.replay',
+  'alt-shift-e': 'menu.environment',
 };
 
 export type ShortcutDef = {
@@ -148,7 +157,8 @@ function getPressedKey(ev: KeyboardEvent): Key | null {
   if (val === '.') return '.';
 
   // redirection to comma
-  if (val === '≤') return ',';
+  if (val === '≤') return ','; // effected by alt
+  if (val === '¯') return ','; // effected by alt-shift
 
   if (val === 'enter') return 'enter';
 

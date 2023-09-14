@@ -197,6 +197,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         }
         extra={
           <Button
+            id='arex-replay-case-replay-report-btn'
             size='small'
             icon={<HomeOutlined />}
             onClick={() =>
@@ -206,7 +207,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
               })
             }
           >
-            {t('replay.appReport')}
+            {t('replay.replayReport')}
           </Button>
         }
       />

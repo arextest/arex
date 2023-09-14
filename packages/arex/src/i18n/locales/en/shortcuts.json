@@ -1,10 +1,10 @@
 {
   "shortcuts": "Keyboard Shortcuts",
   "searchPlaceholder":"Search Shortcuts",
-  "copiedToClipboard": "Copied to clipboard",
+  "copiedToClipboard": "Link copied to clipboard",
 
   "general": "General",
-  "general.copy-link": "copy-link",
+  "general.copy-link": "Copy Link",
   "general.keybindings.toggle": "Keyboard Shortcuts",
 
   "request": "Request",
@@ -12,6 +12,16 @@
   "request.send-cancel": "Cancel Request",
   "request.save": "Save to Collection",
   "request.save-as": "Save as to Collection",
+
+  "replay": "Replay",
+  "replay.refresh-report": "Refresh Report",
+  "replay.record-detail": "Record Detail",
+  "replay.app-setting": "App Setting",
+  "replay.create-plan": "Create Plan",
+
+  "replayCase": "Replay Case",
+  "replayCase.replay-report": "Replay Report",
+
 
   "navigation": "Navigation",
   "navigation.setting": "Go to Setting Pane",

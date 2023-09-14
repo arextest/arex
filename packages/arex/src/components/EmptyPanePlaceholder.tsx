@@ -31,15 +31,20 @@ const EmptyPanePlaceholder: FC = () => {
         if (!shortcut) return null;
 
         return (
-          <div key={index}>
-            <Typography.Text type='secondary' style={{ marginRight: '8px' }}>
-              {t(shortcut.label, { ns: 'shortcuts' })}
-            </Typography.Text>
-            {shortcut.keys.map((key, index) => (
-              <Typography.Text keyboard key={index} type='secondary'>
-                {key}
+          <div key={index} style={{ display: 'flex', flexFlow: 'row nowrap' }}>
+            <div style={{ flex: 1, marginRight: '8px' }}>
+              <Typography.Text type='secondary' style={{ float: 'right' }}>
+                {t(shortcut.label, { ns: 'shortcuts' })}
               </Typography.Text>
-            ))}
+            </div>
+
+            <div style={{ marginLeft: '8px', whiteSpace: 'nowrap' }}>
+              {shortcut.keys.map((key, index) => (
+                <Typography.Text keyboard key={index} type='secondary'>
+                  {key}
+                </Typography.Text>
+              ))}
+            </div>
           </div>
         );
       }),

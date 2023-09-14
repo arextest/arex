@@ -1,7 +1,7 @@
 {
   "shortcuts": "快捷键",
   "searchPlaceholder":"搜索快捷键",
-  "copiedToClipboard": "已复制至剪贴板",
+  "copiedToClipboard": "链接已复制到剪贴板",
 
   "general": "通用",
   "general.copy-link": "复制链接",
@@ -12,6 +12,15 @@
   "request.send-cancel": "取消请求",
   "request.save": "保存",
   "request.save-as": "取消保存",
+
+  "replay": "回放",
+  "replay.refresh-report": "刷新报告",
+  "replay.record-detail": "录制详情",
+  "replay.app-setting": "应用配置",
+  "replay.create-plan": "启动回放",
+
+  "replayCase": "回放 Case",
+  "replayCase.replay-report": "回放报告",
 
   "navigation": "页面导航",
   "navigation.setting": "设置",

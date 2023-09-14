@@ -76,7 +76,7 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseType & { appId: string }> = (props)
               })
             }
           >
-            {t('replay.appReport')}
+            {t('replay.replayReport')}
           </Button>
         }
       />

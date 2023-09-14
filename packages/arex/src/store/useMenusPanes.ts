@@ -35,7 +35,7 @@ const initialState: MenusPanesState = {
   openKeyboardShortcut: false,
 };
 
-const Connector = '$&$';
+const Connector = '-_-';
 
 export function encodePaneKey(pane?: Pane) {
   return pane && pane.type + Connector + pane.id;
