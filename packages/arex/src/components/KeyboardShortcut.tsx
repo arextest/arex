@@ -83,6 +83,11 @@ const KeyboardShortcut = React.memo(() => {
         handleClose();
         break;
       }
+      // 'ctrl-shift-.': 'general.console',
+      case 'general.console': {
+        (document.querySelector(`#arex-console-btn`) as HTMLElement)?.click?.();
+        break;
+      }
 
       // Request
       // 'ctrl-enter': 'request.send',

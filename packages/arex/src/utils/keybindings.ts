@@ -42,6 +42,7 @@ export const bindings: {
   'ctrl-u': 'general.copy-link',
   // 'ctrl-k': 'general.search.toggle',
   'ctrl-/': 'general.keybindings.toggle',
+  'ctrl-shift-.': 'general.console',
 
   // Request
   'ctrl-enter': 'request.send',
