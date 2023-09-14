@@ -141,7 +141,7 @@
     "debug": "Debug",
     "success": "Success",
     "caseServiceAPI": "Main Service API",
-    "appReport": "AppReport",
+    "replayReport": "ReplayReport",
     "viewFailedOnly": "View Failed Only",
     "saveCase": "Save Case",
     "cancel": "Cancel",

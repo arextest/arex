@@ -141,7 +141,7 @@
     "debug": "调试",
     "success": "成功",
     "caseServiceAPI": "接口名称",
-    "appReport": "应用报告",
+    "replayReport": "回放报告",
     "viewFailedOnly": "只展示失败",
     "saveCase": "保存",
     "cancel": "关闭",

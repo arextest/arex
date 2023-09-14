@@ -11,21 +11,26 @@ import {
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, MenuProps } from 'antd';
-import React, { useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 
-import { EnvironmentSelect, HeaderMenu } from '@/components';
+import {
+  EmptyPanePlaceholder,
+  EnvironmentSelect,
+  HeaderMenu,
+  KeyboardShortcut,
+} from '@/components';
 import { EMAIL_KEY, PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
 import { useMenusPanes, useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
 
-export default () => {
+const Home: FC = () => {
   useInit();
 
   const {
-    collapsed,
-    setCollapsed,
+    menuCollapsed,
+    toggleMenuCollapse,
     activeMenu,
     setActiveMenu,
     panes,
@@ -92,7 +97,7 @@ export default () => {
   });
 
   const handleMenuChange = (menuType: string) => {
-    collapsed && setCollapsed(false);
+    menuCollapsed && toggleMenuCollapse(false);
     setActiveMenu(menuType);
   };
 
@@ -130,7 +135,7 @@ export default () => {
 
     switch (e.key) {
       case 'close': {
-        removePane(paneKey);
+        removePane(undefined);
         break;
       }
       case 'closeOther': {
@@ -163,12 +168,12 @@ export default () => {
     <>
       <ArexHeader githubStar extra={<HeaderMenu />} />
       <ArexMainContainer
-        collapsed={collapsed}
+        collapsed={menuCollapsed}
         arexMenus={
           <ArexMenuContainer
             value={activePane?.id}
             activeKey={activeMenu}
-            collapsed={collapsed}
+            collapsed={menuCollapsed}
             workspaceMenuProps={{
               value: activeWorkspaceId,
               options: workspacesOptions,
@@ -177,7 +182,7 @@ export default () => {
               onEdit: handleEditWorkspace,
               // extra?: ReactNode;
             }}
-            onCollapsed={setCollapsed}
+            onCollapsed={toggleMenuCollapse}
             onChange={handleMenuChange}
             onSelect={handleMenuSelect}
           />
@@ -186,6 +191,7 @@ export default () => {
           <ArexPanesContainer
             activeKey={activePane?.key}
             panes={panes}
+            emptyNode={<EmptyPanePlaceholder />}
             tabBarExtraContent={<EnvironmentSelect />}
             dropdownMenu={{
               items: dropdownItems,
@@ -199,6 +205,10 @@ export default () => {
         }
       />
       <ArexFooter />
+
+      <KeyboardShortcut />
     </>
   );
 };
+
+export default Home;

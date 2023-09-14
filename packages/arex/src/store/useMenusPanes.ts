@@ -1,4 +1,4 @@
-import { ArexPaneManager, arrayMove, Pane, PanesData } from '@arextest/arex-core';
+import { ArexMenuManager, ArexPaneManager, arrayMove, Pane, PanesData } from '@arextest/arex-core';
 import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -6,33 +6,36 @@ import { immer } from 'zustand/middleware/immer';
 import { AREX_OPEN_NEW_PANEL, DEFAULT_ACTIVE_MENU, MAX_PANES_COUNT } from '@/constant';
 
 export type MenusPanesState = {
-  collapsed: boolean;
+  menuCollapsed: boolean;
   activeMenu?: string; // MenusType
   activePane?: Pane<PanesData>;
   panes: Pane<PanesData>[];
   paneMaxIndex: number; // 用于同步 panes 中 index 的最大值
+  openKeyboardShortcut: boolean;
 };
 
 export type MenusPanesAction = {
-  setCollapsed: (collapsed: boolean) => void;
-  setActiveMenu: (menuKey?: string) => void;
-  setActivePane: (paneKey?: string) => void;
+  toggleMenuCollapse: (collapsed?: boolean) => void;
+  toggleOpenKeyboardShortcut: () => void;
+  setActiveMenu: (menuKey: string | undefined, options?: { offset?: 'top' | 'bottom' }) => void;
+  setActivePane: (paneKey: string | undefined, options?: { offset?: 'left' | 'right' }) => void;
   setPanes: <D extends PanesData = PanesData>(panes: Pane<D> | Pane<D>[]) => void;
   switchPane: (fromId: string, toId: string) => void;
-  removePane: (paneKey: string) => void;
+  removePane: (paneKey: string | undefined, options?: { reversal?: boolean }) => void;
   removeSegmentPanes: (paneKey: string, segment: 'left' | 'right') => void;
   reset: () => void;
 };
 
 const initialState: MenusPanesState = {
-  collapsed: false,
+  menuCollapsed: false,
   activeMenu: DEFAULT_ACTIVE_MENU,
   activePane: undefined,
   panes: [],
   paneMaxIndex: 0,
+  openKeyboardShortcut: false,
 };
 
-const Connector = '$&$';
+const Connector = '-_-';
 
 export function encodePaneKey(pane?: Pane) {
   return pane && pane.type + Connector + pane.id;
@@ -51,26 +54,62 @@ export const useMenusPanes = create(
         ...initialState,
 
         // 设置菜单折叠
-        setCollapsed: (collapsed) => {
+        toggleMenuCollapse: (collapsed) => {
           set((state) => {
-            state.collapsed = collapsed;
+            state.menuCollapsed =
+              typeof collapsed === 'undefined' ? !state.menuCollapsed : collapsed;
           });
         },
 
         // 设置激活的菜单
-        setActiveMenu: (menuType) => {
+        setActiveMenu: (menuType, options) => {
+          let key = menuType || get().activeMenu;
+          if (!key) return;
+          const { offset } = options || {};
+          const arexMenus = ArexMenuManager.getMenus();
+
+          if (offset) {
+            let index = arexMenus.findIndex((item) => item.type === key);
+            if (offset === 'top') {
+              if (index === 0) index = arexMenus.length;
+              index--;
+            } else if (offset === 'bottom') {
+              if (index === arexMenus.length - 1) index = -1;
+              index++;
+            }
+            key = arexMenus[index].type;
+          }
+
           set((state) => {
-            state.activeMenu = menuType;
+            state.activeMenu = key;
+          });
+        },
+
+        // 切换快捷键面板的显隐
+        toggleOpenKeyboardShortcut: () => {
+          set((state) => {
+            state.openKeyboardShortcut = !state.openKeyboardShortcut;
           });
         },
 
         // 设置激活的面板
-        setActivePane: (paneKey) => {
+        setActivePane: (paneKey, options) => {
+          const key = paneKey || get().activePane?.key;
+          if (!key) return;
+          const { offset } = options || {};
+
           set((state) => {
-            const statePane = state.panes.find((i) => i.key === paneKey);
-            if (statePane) {
-              statePane.index = state.paneMaxIndex = state.paneMaxIndex + 1;
-              state.activePane = statePane;
+            let index = state.panes.findIndex((i) => i.key === key);
+            if (index >= 0) {
+              if (offset === 'left') {
+                if (index === 0) index = state.panes.length;
+                index--;
+              } else if (offset === 'right') {
+                if (index === state.panes.length - 1) index = -1;
+                index++;
+              }
+              state.panes[index].index = state.paneMaxIndex = state.paneMaxIndex + 1;
+              state.activePane = state.panes[index];
             }
           });
         },
@@ -134,10 +173,17 @@ export const useMenusPanes = create(
           get().setPanes(arrayMove(get().panes, fromIndex, toIndex));
         },
 
-        // 关闭面板
-        removePane(paneKey) {
+        // 关闭面板，默认关闭当前激活面板
+        removePane(paneKey, options) {
+          const key = paneKey || get().activePane?.key;
+          if (!key) return;
+
+          const { reversal } = options || {};
           const panes = get().panes;
-          const filteredPanes = panes.filter((i) => i.key !== paneKey);
+
+          const filteredPanes = reversal
+            ? [get().activePane as Pane]
+            : panes.filter((i) => i.key !== key);
           get().setPanes(filteredPanes);
         },
 

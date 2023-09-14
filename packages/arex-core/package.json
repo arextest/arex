@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-core",
-  "version": "0.0.14",
+  "version": "0.0.16",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-core.umd.cjs",
   "module": "dist/arex-core.js",
@@ -27,7 +27,6 @@
     "@emotion/styled": "^11.10.6",
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",
-    "copy-to-clipboard": "^3.3.3",
     "dayjs": "^1.11.7",
     "diff-match-patch": "^1.0.5",
     "i18next": "^22.4.11",
