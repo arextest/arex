@@ -68,118 +68,123 @@ export interface ArexPanesContainerProps extends Omit<TabsProps, 'items' | 'onDr
   onClickContextMenu?: (key: string) => void;
 }
 
-const ArexPanesContainer = styled((props: ArexPanesContainerProps) => {
-  const { onAdd, onRemove, panes = [], dropdownMenu, onDragEnd, ...restTabsProps } = props;
-  // 规定: ArexMenu 翻译文本需要配置在 locales/[lang]/arex-menu.json 下, 且 key 为 Menu.type
-  const { t } = useTranslation([ArexPaneNamespace]);
+const ArexPanesContainer = styled(
+  (props: ArexPanesContainerProps) => {
+    const { onAdd, onRemove, panes = [], dropdownMenu, onDragEnd, ...restTabsProps } = props;
+    // 规定: ArexMenu 翻译文本需要配置在 locales/[lang]/arex-menu.json 下, 且 key 为 Menu.type
+    const { t } = useTranslation([ArexPaneNamespace]);
 
-  const panesItems = useMemo(
-    () =>
-      (panes
-        .map((pane) => {
-          const Pane = ArexPaneManager.getPaneByType(pane.type);
-          if (!Pane) return;
+    const panesItems = useMemo(
+      () =>
+        (panes
+          .map((pane) => {
+            const Pane = ArexPaneManager.getPaneByType(pane.type);
+            if (!Pane) return;
 
-          const paneProps = { data: pane.data, paneKey: pane.key as string };
-          return {
-            key: pane.key || '',
-            // 规定: 翻译文本需要配置在 locales/[lang]/arex-pane.json 下, 且 key 为 Pane.type
-            label: (
-              <>
-                <span>
-                  {pane.icon
-                    ? React.createElement(
-                        RequestMethodIcon[pane.icon] || RequestMethodIcon['QuestionOutlined'],
-                      )
-                    : Pane.icon}
-                </span>
-                <Typography.Text ellipsis style={{ maxWidth: '120px' }}>
-                  {pane.name || `${t(Pane.type)} - ${pane.id}`}
-                </Typography.Text>
-              </>
-            ),
-            children: (
-              <ErrorBoundary>
-                <PaneContext.Provider value={paneProps}>
-                  <div
-                    id={`arex-pane-wrapper-${pane.key}`}
-                    style={{
-                      padding: Pane.noPadding ? 0 : '8px 16px',
-                      height: '100%',
-                    }}
-                  >
-                    {React.createElement(Pane, paneProps)}
-                  </div>
-                </PaneContext.Provider>
-              </ErrorBoundary>
-            ),
-          };
-        })
-        .filter(Boolean) as TabsProps['items']) || [],
-    [panes, t],
-  );
-
-  const removeTab = (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
-    onRemove?.(targetKey as string);
-  };
-
-  const handleTabsEdit: TabsProps['onEdit'] = (targetKey, action) => {
-    action === 'add' ? onAdd?.() : removeTab(targetKey);
-  };
-
-  const sensor = useSensor(PointerSensor, {
-    activationConstraint: {
-      delay: 250,
-      tolerance: 5,
-    },
-  });
-
-  return (
-    <EmptyWrapper empty={!panesItems?.length} description={props.emptyNode}>
-      <Tabs
-        css={css`
-          .ant-tabs-nav {
-            margin-bottom: 0;
-          }
-        `}
-        renderTabBar={(tabBarProps, DefaultTabBar) => (
-          <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
-            <SortableContext
-              items={panesItems?.map((i) => i.key) || []}
-              strategy={horizontalListSortingStrategy}
-            >
-              <DefaultTabBar {...tabBarProps}>
-                {(node) => (
-                  <DraggableTabNode {...node.props} key={node.key}>
-                    <div>
-                      {React.createElement(
-                        dropdownMenu ? Dropdown : 'div',
-                        {
-                          menu: {
-                            ...dropdownMenu,
-                            onClick: (e) => dropdownMenu?.onClick?.(e, node.key),
-                          },
-                          trigger: ['contextMenu'],
-                        },
-                        node,
-                      )}
+            const paneProps = { data: pane.data, paneKey: pane.key as string };
+            return {
+              key: pane.key || '',
+              // 规定: 翻译文本需要配置在 locales/[lang]/arex-pane.json 下, 且 key 为 Pane.type
+              label: (
+                <>
+                  <span>
+                    {pane.icon
+                      ? React.createElement(
+                          RequestMethodIcon[pane.icon] || RequestMethodIcon['QuestionOutlined'],
+                        )
+                      : Pane.icon}
+                  </span>
+                  <Typography.Text ellipsis style={{ maxWidth: '120px' }}>
+                    {pane.name || `${t(Pane.type)} - ${pane.id}`}
+                  </Typography.Text>
+                </>
+              ),
+              children: (
+                <ErrorBoundary>
+                  <PaneContext.Provider value={paneProps}>
+                    <div
+                      id={`arex-pane-wrapper-${pane.key}`}
+                      style={{
+                        padding: Pane.noPadding ? 0 : '8px 16px',
+                        height: '100%',
+                      }}
+                    >
+                      {React.createElement(Pane, paneProps)}
                     </div>
-                  </DraggableTabNode>
-                )}
-              </DefaultTabBar>
-            </SortableContext>
-          </DndContext>
-        )}
-        size='small'
-        type='editable-card'
-        tabBarGutter={-1}
-        onEdit={handleTabsEdit}
-        items={panesItems}
-        {...restTabsProps}
-      />
-    </EmptyWrapper>
-  );
-})`
+                  </PaneContext.Provider>
+                </ErrorBoundary>
+              ),
+            };
+          })
+          .filter(Boolean) as TabsProps['items']) || [],
+      [panes, t],
+    );
+
+    const removeTab = (targetKey: React.MouseEvent | React.KeyboardEvent | string) => {
+      onRemove?.(targetKey as string);
+    };
+
+    const handleTabsEdit: TabsProps['onEdit'] = (targetKey, action) => {
+      action === 'add' ? onAdd?.() : removeTab(targetKey);
+    };
+
+    const sensor = useSensor(PointerSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    });
+
+    return (
+      <EmptyWrapper empty={!panesItems?.length} description={props.emptyNode}>
+        <Tabs
+          css={css`
+            .ant-tabs-nav {
+              margin-bottom: 0;
+            }
+          `}
+          renderTabBar={(tabBarProps, DefaultTabBar) => (
+            <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
+              <SortableContext
+                items={panesItems?.map((i) => i.key) || []}
+                strategy={horizontalListSortingStrategy}
+              >
+                <DefaultTabBar {...tabBarProps}>
+                  {(node) => (
+                    <DraggableTabNode {...node.props} key={node.key}>
+                      <div>
+                        {React.createElement(
+                          dropdownMenu ? Dropdown : 'div',
+                          {
+                            menu: {
+                              ...dropdownMenu,
+                              onClick: (e) => dropdownMenu?.onClick?.(e, node.key),
+                            },
+                            trigger: ['contextMenu'],
+                          },
+                          node,
+                        )}
+                      </div>
+                    </DraggableTabNode>
+                  )}
+                </DefaultTabBar>
+              </SortableContext>
+            </DndContext>
+          )}
+          size='small'
+          type='editable-card'
+          tabBarGutter={-1}
+          onEdit={handleTabsEdit}
+          items={panesItems}
+          {...restTabsProps}
+        />
+      </EmptyWrapper>
+    );
+  },
+  {
+    shouldForwardProp: (propsName) => ['emptyNode'].includes(propsName),
+  },
+)`
   height: 100%;
   // 工作区 Tabs 全局样式调整
   .ant-tabs-tab {

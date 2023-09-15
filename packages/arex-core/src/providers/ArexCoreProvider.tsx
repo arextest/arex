@@ -1,5 +1,5 @@
 import { App, ConfigProvider, Empty, Layout, message, theme } from 'antd';
-import { MappingAlgorithm } from 'antd/es/config-provider/context';
+import { MappingAlgorithm } from 'antd/lib/theme/interface';
 import enUS from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
 import i18n from 'i18next';

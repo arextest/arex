@@ -141,7 +141,6 @@ const StructuredFilter: FC<StructuredFilterProps> = (props) => {
         <div className='search-content'>
           <Select
             {...restProps}
-            showArrow
             allowClear
             ref={selectRef}
             className='search-inner'
