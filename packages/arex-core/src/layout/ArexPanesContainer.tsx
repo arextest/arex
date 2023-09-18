@@ -142,7 +142,15 @@ const ArexPanesContainerWrapper = styled.div`
 `;
 
 const ArexPanesContainer = (props: ArexPanesContainerProps) => {
-  const { onAdd, onRemove, panes = [], dropdownMenu, onDragEnd, ...restTabsProps } = props;
+  const {
+    panes = [],
+    emptyNode,
+    dropdownMenu,
+    onAdd,
+    onRemove,
+    onDragEnd,
+    ...restTabsProps
+  } = props;
   // 规定: ArexMenu 翻译文本需要配置在 locales/[lang]/arex-menu.json 下, 且 key 为 Menu.type
   const { t } = useTranslation([ArexPaneNamespace]);
 
@@ -209,7 +217,7 @@ const ArexPanesContainer = (props: ArexPanesContainerProps) => {
 
   return (
     <ArexPanesContainerWrapper>
-      <EmptyWrapper empty={!panesItems?.length} description={props.emptyNode}>
+      <EmptyWrapper empty={!panesItems?.length} description={emptyNode}>
         <Tabs
           css={css`
             .ant-tabs-nav {
