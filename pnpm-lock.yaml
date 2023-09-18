@@ -215,7 +215,7 @@ importers:
         specifier: ^5.2.6
         version: 5.2.6(react-dom@18.2.0)(react@18.2.0)
       '@arextest/arex-core':
-        specifier: workspace:*
+        specifier: workspace:latest
         version: link:../arex-core
       '@emotion/react':
         specifier: ^11.10.6

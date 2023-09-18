@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-common",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-common.umd.cjs",
   "module": "dist/arex-common.js",
@@ -16,7 +16,7 @@
     "dist/*"
   ],
   "dependencies": {
-    "@arextest/arex-core": "workspace:*",
+    "@arextest/arex-core": "workspace:latest",
     "@ant-design/icons": "^5.2.6",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
