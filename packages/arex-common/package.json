@@ -16,7 +16,7 @@
     "dist/*"
   ],
   "dependencies": {
-    "@arextest/arex-core": "workspace:^",
+    "@arextest/arex-core": "workspace:*",
     "@ant-design/icons": "^5.2.6",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
