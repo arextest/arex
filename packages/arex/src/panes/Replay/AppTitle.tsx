@@ -35,9 +35,7 @@ import { EMAIL_KEY, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
 import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCaseList';
 import { ApplicationService, ReportService, ScheduleService } from '@/services';
-import { ApplicationDataType } from '@/services/ApplicationService';
 import { MessageMap } from '@/services/ScheduleService';
-import { useMenusPanes } from '@/store';
 
 type AppTitleProps = {
   appId: string;
@@ -115,7 +113,6 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
   const navPane = useNavPane();
   const { t } = useTranslation(['components']);
   const email = getLocalStorage<string>(EMAIL_KEY);
-  const { activePane } = useMenusPanes();
 
   const caseListRef = useRef<RecordedCaseListRef>(null);
 
@@ -132,7 +129,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
   });
 
   const webhook = useMemo(
-    () => `${location.origin}/api/createPlan?appId=${appId}&targetEnv=${targetEnv?.trim()}`,
+    () => `${location.origin}/schedule/createPlan?appId=${appId}&targetEnv=${targetEnv?.trim()}`,
     [appId, targetEnv],
   );
 
@@ -312,7 +309,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
         confirmLoading={confirmLoading}
       >
         <Form
-          name='startReplay'
+          name={`startReplay-${appId}`}
           form={form}
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
