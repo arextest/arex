@@ -27,6 +27,18 @@ export enum CollectionNodeType {
   folder = 3,
 }
 
+export enum RoleEnum {
+  Admin = 1,
+  Editor = 2,
+  Viewer = 3,
+}
+
+export const RoleMap = {
+  [RoleEnum.Admin]: 'Admin',
+  [RoleEnum.Editor]: 'Editor',
+  [RoleEnum.Viewer]: 'Viewer',
+};
+
 export const ExtensionVersion = '1.0.4';
 export const ArexVersionKey = 'arexVersion';
 export const ArexVersionValue = '0.4.1';

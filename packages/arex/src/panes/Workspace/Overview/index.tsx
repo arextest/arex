@@ -1,5 +1,5 @@
 import { DeleteOutlined, LogoutOutlined, SyncOutlined, UserOutlined } from '@ant-design/icons';
-import { getLocalStorage, RoleEnum, useTranslation } from '@arextest/arex-core';
+import { getLocalStorage, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import {
   App,
@@ -17,7 +17,7 @@ import {
 import React, { useMemo } from 'react';
 import { FC } from 'react';
 
-import { EMAIL_KEY } from '@/constant';
+import { EMAIL_KEY, RoleEnum } from '@/constant';
 import { FileSystemService } from '@/services';
 import { useMenusPanes, useWorkspaces } from '@/store';
 

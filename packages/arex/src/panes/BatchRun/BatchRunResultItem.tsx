@@ -1,4 +1,4 @@
-import { FullHeightSpin, RequestMethodIcon } from '@arextest/arex-core';
+import { RequestMethodIcon } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Divider, Space, Spin, Typography } from 'antd';

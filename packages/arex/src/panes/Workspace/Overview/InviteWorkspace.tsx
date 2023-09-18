@@ -1,10 +1,10 @@
 import { UserAddOutlined } from '@ant-design/icons';
-import { getLocalStorage, RoleEnum, useTranslation } from '@arextest/arex-core';
+import { getLocalStorage, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Form, Modal, Select, Space, Typography } from 'antd';
 import React, { FC, useState } from 'react';
 
-import { EMAIL_KEY } from '@/constant';
+import { EMAIL_KEY, RoleEnum } from '@/constant';
 import { FileSystemService } from '@/services';
 import { useWorkspaces } from '@/store';
 const { Text } = Typography;
@@ -57,7 +57,7 @@ const InviteWorkspace: FC<InviteWorkspaceProps> = (props) => {
       role: values.role,
       userNames: values.email,
       workspaceId: activeWorkspaceId,
-      arexUiUrl: `${window.location.protocol}//${window.location.host}`,
+      arexUiUrl: `${window.location.protocol}/${window.location.host}`,
     };
     inviteToWorkspace(params);
   };

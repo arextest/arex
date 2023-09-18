@@ -56,36 +56,42 @@ const EnvironmentMenu: ArexMenuFC = (props) => {
   );
 
   return (
-    <MenuSelect<Environment>
-      small
-      refresh
-      rowKey='id'
-      prefix={
-        <SmallTextButton color={'primary'} icon={<PlusOutlined />} onClick={createNewEnvironment} />
-      }
-      initValue={props.value}
-      selectedKeys={selectedKeys}
-      onSelect={props.onSelect}
-      placeholder={t('env.searchEnvironment', { ns: 'components' }) as string}
-      request={() =>
-        EnvironmentService.getEnvironments({ workspaceId: activeWorkspaceId as string })
-      }
-      requestOptions={{ refreshDeps: [timestamp, activeWorkspaceId] }}
-      filter={(keyword, env) => env.envName?.includes(keyword)}
-      itemRender={(env) => ({
-        label: (
-          <SpaceBetweenWrapper>
-            {env.envName}
-            {activeEnvironment?.id === env.id && <AimOutlined style={{ color: colorPrimary }} />}
-          </SpaceBetweenWrapper>
-        ),
-        key: env.id,
-      })}
-      height={size && size?.height - 88}
-      sx={{
-        padding: '8px 0',
-      }}
-    />
+    <div style={{ padding: '8px' }}>
+      <MenuSelect<Environment>
+        small
+        refresh
+        rowKey='id'
+        prefix={
+          <SmallTextButton
+            color={'primary'}
+            icon={<PlusOutlined />}
+            onClick={createNewEnvironment}
+          />
+        }
+        initValue={props.value}
+        selectedKeys={selectedKeys}
+        onSelect={props.onSelect}
+        placeholder={t('env.searchEnvironment', { ns: 'components' }) as string}
+        request={() =>
+          EnvironmentService.getEnvironments({ workspaceId: activeWorkspaceId as string })
+        }
+        requestOptions={{ refreshDeps: [timestamp, activeWorkspaceId] }}
+        filter={(keyword, env) => env.envName?.includes(keyword)}
+        itemRender={(env) => ({
+          label: (
+            <SpaceBetweenWrapper>
+              {env.envName}
+              {activeEnvironment?.id === env.id && <AimOutlined style={{ color: colorPrimary }} />}
+            </SpaceBetweenWrapper>
+          ),
+          key: env.id,
+        })}
+        height={size && size?.height - 88}
+        sx={{
+          padding: '8px 0',
+        }}
+      />
+    </div>
   );
 };
 

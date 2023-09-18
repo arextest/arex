@@ -1,6 +1,3 @@
-import { getJsonValueByPath } from './DiffJsonView/helper';
-import { SceneCodeMap } from './SceneCode';
-
 export { default as CheckOrCloseIcon } from './CheckOrCloseIcon';
 export type { CollapseTableProps } from './CollapseTable';
 export { default as CollapseTable } from './CollapseTable';
@@ -41,5 +38,3 @@ export { default as StructuredFilter } from './StructuredFilter';
 export { CategoryKey, Operator } from './StructuredFilter/keyword';
 export type { TooltipButtonProps } from './TooltipButton';
 export { default as TooltipButton } from './TooltipButton';
-export type { WorkspaceItem, WorkspacesMenuProps } from './WorkspacesMenu';
-export { default as WorkspacesMenu } from './WorkspacesMenu';
