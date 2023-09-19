@@ -1,4 +1,4 @@
-// import { ArexRESTRequest } from 'arex-request-core/dist/components/http/data/rest';
+// import { ArexRESTRequest } from '@arextest/arex-request/dist/components/http/data/rest';
 
 import { request } from '@/utils';
 

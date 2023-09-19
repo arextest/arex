@@ -22,9 +22,7 @@
     "@dnd-kit/utilities": "^3.2.1",
     "@ant-design/icons": "^5.2.6",
     "@arextest/vanilla-jsoneditor": "0.17.23",
-    "@emotion/react": "^11.10.6",
     "@emotion/serialize": "^1.1.1",
-    "@emotion/styled": "^11.10.6",
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",
     "dayjs": "^1.11.7",
@@ -56,6 +54,8 @@
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "antd": "^5.9.1"
+    "antd": "^5.9.1",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6"
   }
 }

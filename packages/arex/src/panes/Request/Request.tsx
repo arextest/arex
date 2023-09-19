@@ -1,8 +1,8 @@
 import { ArexPaneFC, getLocalStorage, useArexPaneProps } from '@arextest/arex-core';
+import { Http, HttpProps } from '@arextest/arex-request';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { App, Spin } from 'antd';
-import { Http, HttpProps } from 'arex-request-core';
 import React, { useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 

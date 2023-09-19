@@ -1,9 +1,9 @@
 import { FullHeightSpin, RequestMethodIcon } from '@arextest/arex-core';
+import { TestResult } from '@arextest/arex-request';
+import { ArexRESTRequest } from '@arextest/arex-request/dist/components/http/data/rest';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Divider, Space, Spin, Typography } from 'antd';
-import { TestResult } from 'arex-request-core';
-import { ArexRESTRequest } from 'arex-request-core/dist/components/http/data/rest';
 import React, { FC, useMemo } from 'react';
 
 import { sendRequest } from '@/helpers/postman';

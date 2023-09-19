@@ -1,5 +1,4 @@
 import react from '@vitejs/plugin-react-swc';
-// @ts-ignore
 import path from 'path';
 import { defineConfig } from 'vite';
 
@@ -19,12 +18,21 @@ export default defineConfig({
       fileName: 'arex-common',
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'antd', '@arextest/arex-core'],
+      external: [
+        'react',
+        'react-dom',
+        'antd',
+        '@arextest/arex-core',
+        '@emotion/react',
+        '@emotion/styled',
+      ],
       output: {
         globals: {
           react: 'react',
           antd: 'antd',
           'react-dom': 'react-dom',
+          '@emotion/react': '@emotion/react',
+          '@emotion/styled': '@emotion/styled',
           '@arextest/arex-core': '@arextest/arex-core',
         },
       },

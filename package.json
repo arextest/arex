@@ -16,7 +16,8 @@
     "pre-commit": "pnpm run lint && pnpm run test:run",
     "rm": "find ./ -type d \\( -name \"dist\" -o -name \"node_modules\" \\) -exec rm -rf {} +",
     "publish:core": "pnpm publish packages/arex-core --access=public",
-    "publish:common": "pnpm publish packages/arex-common --access=public"
+    "publish:common": "pnpm publish packages/arex-common --access=public",
+    "publish:request": "pnpm publish packages/arex-request --access=public"
   },
   "keywords": [],
   "author": "",
