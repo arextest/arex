@@ -5,7 +5,7 @@ import { Menu, MenuProps, Tabs, TabsProps } from 'antd';
 import React, { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { ErrorBoundary, WorkspacesMenuProps } from '../components';
+import { ErrorBoundary } from '../components';
 import { ArexMenuNamespace } from '../constant';
 import { ArexMenuManager } from '../utils';
 
