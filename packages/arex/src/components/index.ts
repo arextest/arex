@@ -8,3 +8,4 @@ export type { MenuSelectProps } from './MenuSelect';
 export { default as MenuSelect } from './MenuSelect';
 export { default as Segmented } from './Segmented';
 export { default as StatusTag } from './StatusTag';
+export { default as WorkspacesMenu } from './WorkspacesMenu';

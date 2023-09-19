@@ -1,4 +1,4 @@
-import { FullHeightSpin, RequestMethodIcon } from '@arextest/arex-core';
+import { RequestMethodIcon } from '@arextest/arex-core';
 import { TestResult } from '@arextest/arex-request';
 import { ArexRESTRequest } from '@arextest/arex-request/dist/components/http/data/rest';
 import { css } from '@emotion/react';
