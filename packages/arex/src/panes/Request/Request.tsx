@@ -13,13 +13,7 @@ import { useNavPane } from '@/hooks';
 import SaveAs from '@/panes/Request/SaveAs';
 import { FileSystemService, ReportService } from '@/services';
 import { moveCollectionItem, saveRequest } from '@/services/FileSystemService';
-import {
-  useCollections,
-  useEnvironments,
-  useMenusPanes,
-  useUserProfile,
-  useWorkspaces,
-} from '@/store';
+import { useCollections, useEnvironments, useMenusPanes, useUserProfile } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
 import { ExtraTabs } from './extra';
@@ -44,12 +38,11 @@ const Request: ArexPaneFC = () => {
   const navPane = useNavPane({ inherit: true });
   const { message } = App.useApp();
   const { paneKey } = useArexPaneProps();
-  const { id } = useMemo(() => decodePaneKey(paneKey), []);
+  const [activeWorkspaceId, id] = useMemo(() => decodePaneKey(paneKey).id.split('-'), [paneKey]);
 
   const userName = getLocalStorage<string>(EMAIL_KEY);
   const [saveAsShow, setSaveAsShow] = useState(false);
   const { activeEnvironment, timestamp: timestampEnvironment } = useEnvironments();
-  const { activeWorkspaceId } = useWorkspaces();
   const { collectionsFlatData, collectionsTreeData, getCollections, getPath } = useCollections();
   const { setPanes } = useMenusPanes();
   const { theme, language } = useUserProfile();
@@ -66,7 +59,7 @@ const Request: ArexPaneFC = () => {
       name: activeEnvironment?.envName || '',
       variables: activeEnvironment?.keyValues || [],
     }),
-    [activeEnvironment, timestampEnvironment],
+    [activeEnvironment],
   );
 
   const handleSend: HttpProps['onSend'] = (request) => {
@@ -254,15 +247,6 @@ const Request: ArexPaneFC = () => {
     };
   }, [data]);
 
-  const isRenderRequestComponent = useMemo(() => {
-    // 如果是新增的直接渲染
-    if (id === '-1' || id.length === 12) {
-      return true;
-    } else {
-      return nodeInfo && data;
-    }
-  }, [data, nodeInfo]);
-
   return (
     <div>
       <Spin
@@ -272,58 +256,55 @@ const Request: ArexPaneFC = () => {
         `}
         spinning={!data}
       >
-        {isRenderRequestComponent && (
-          <Http
-            // @ts-ignore
-            ref={httpRef}
-            disableSave={Boolean(searchParams.get('recordId'))}
-            height={`calc(100vh - 110px)`}
-            theme={theme}
-            locale={language}
-            value={data}
-            config={httpConfig}
-            environment={environment}
-            breadcrumbItems={nodePath}
-            onSave={handleSave}
-            onSend={handleSend}
-            onSaveAs={() => {
-              setSaveAsShow(true);
-            }}
-            description={data?.description || ''}
-            // @ts-ignore
-            tags={data?.tags || []}
-            tagOptions={(labelData || []).map((i) => ({
-              label: i.labelName,
-              value: i.id,
-              color: i.color,
-            }))}
-            onChange={({ title, description, tags }) => {
-              if (title) {
-                rename(title);
-              }
-              if (description) {
-                saveRequest(
-                  activeWorkspaceId,
-                  {
-                    id: data?.id,
-                    description,
-                  },
-                  nodeInfo?.nodeType || 1,
-                );
-              }
-              if (tags) {
-                saveRequest(
-                  activeWorkspaceId,
-                  {
-                    id: data?.id,
-                    tags,
-                  },
-                  nodeInfo?.nodeType || 1,
-                );
-              }
-            }}
-          />
-        )}
+        <Http
+          ref={httpRef}
+          disableSave={Boolean(searchParams.get('recordId'))}
+          height={`calc(100vh - 110px)`}
+          theme={theme}
+          locale={language}
+          value={data}
+          config={httpConfig}
+          environment={environment}
+          breadcrumbItems={nodePath}
+          onSave={handleSave}
+          onSend={handleSend}
+          onSaveAs={() => {
+            setSaveAsShow(true);
+          }}
+          description={data?.description || ''}
+          // @ts-ignore
+          tags={data?.tags || []}
+          tagOptions={(labelData || []).map((i) => ({
+            label: i.labelName,
+            value: i.id,
+            color: i.color,
+          }))}
+          onChange={({ title, description, tags }) => {
+            if (title) {
+              rename(title);
+            }
+            if (description) {
+              saveRequest(
+                activeWorkspaceId,
+                {
+                  id: data?.id,
+                  description,
+                },
+                nodeInfo?.nodeType || 1,
+              );
+            }
+            if (tags) {
+              saveRequest(
+                activeWorkspaceId,
+                {
+                  id: data?.id,
+                  tags,
+                },
+                nodeInfo?.nodeType || 1,
+              );
+            }
+          }}
+        />
         <SaveAs
           show={saveAsShow}
           onClose={() => {

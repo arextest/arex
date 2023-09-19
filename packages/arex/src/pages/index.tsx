@@ -19,7 +19,7 @@ import {
 } from '@/components';
 import { PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
-import { useMenusPanes } from '@/store';
+import { useMenusPanes, useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
 
 const Home: FC = () => {
@@ -39,6 +39,7 @@ const Home: FC = () => {
     reset: resetPane,
     removePane,
   } = useMenusPanes();
+  const { activeWorkspaceId } = useWorkspaces();
 
   const navPane = useNavPane();
   const { t } = useTranslation(['components', 'common']);
@@ -86,7 +87,7 @@ const Home: FC = () => {
   const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () => {
     navPane({
       type: PanesType.REQUEST,
-      id: generateId(12),
+      id: `${activeWorkspaceId}-${generateId(12)}`,
       icon: 'Get',
       name: 'Untitled',
     });

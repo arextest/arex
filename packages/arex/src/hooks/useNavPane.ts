@@ -8,9 +8,7 @@ import {
 import { merge } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 
-import { useWorkspaces } from '@/store';
-
-import { useMenusPanes } from '../store';
+import { useMenusPanes } from '@/store';
 
 export type NavPaneOptions = {
   inherit?: boolean;
@@ -19,7 +17,6 @@ export type NavPaneOptions = {
 function useNavPane(options?: NavPaneOptions) {
   const nav = useNavigate();
   const { setPanes, activePane } = useMenusPanes();
-  const { activeWorkspaceId } = useWorkspaces();
 
   return function (pane: Pane | string) {
     const match = decodeUrl();
@@ -41,7 +38,6 @@ function useNavPane(options?: NavPaneOptions) {
       Partial<StandardPathParams> | undefined,
       Partial<StandardPathParams>
     >(match.params, {
-      workspaceId: activeWorkspaceId,
       menuType: ArexPaneManager.getMenuTypeByType(pane.type),
       paneType: pane.type,
       id: pane.id,

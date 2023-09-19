@@ -1,11 +1,10 @@
 export const RouterPath = {
   RootPath: '/',
-  WorkspaceIdPath: '/:workspaceId',
-  MenuTypePath: '/:workspaceId/:menuType',
-  PaneTypePath: '/:workspaceId/:menuType/:paneType',
-  StandardPath: '/:workspaceId/:menuType/:paneType/:id',
+  MenuTypePath: '/:menuType',
+  PaneTypePath: '/:menuType/:paneType',
+  StandardPath: '/:menuType/:paneType/:id',
 };
-export const StandardPathReg = '/:workspaceId?/:menuType?/:paneType?/:id?';
+export const StandardPathReg = '/:menuType?/:paneType?/:id?';
 
 export type StandardPathParams = {
   workspaceId: string;

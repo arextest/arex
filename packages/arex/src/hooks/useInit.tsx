@@ -3,7 +3,7 @@ import { App } from 'antd';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { DEFAULT_LANGUAGE } from '@/constant';
+import { DEFAULT_LANGUAGE, PanesType } from '@/constant';
 import { useCollections } from '@/store';
 import { useEnvironments, useWorkspaces } from '@/store';
 import useMenusPanes from '@/store/useMenusPanes';
@@ -11,7 +11,7 @@ import { globalStoreInit } from '@/utils';
 
 const useInit = () => {
   const { message } = App.useApp();
-  const { panes, setPanes, setActiveMenu } = useMenusPanes();
+  const { setPanes, setActiveMenu } = useMenusPanes();
   const { getCollections } = useCollections();
   const { workspaces, activeWorkspaceId, setActiveWorkspaceId } = useWorkspaces();
   const nav = useNavigate();
@@ -19,35 +19,27 @@ const useInit = () => {
   useEffect(() => {
     globalStoreInit();
 
-    // restore url
-    if (location.pathname === '/' && workspaces.length) {
-      const workspaceId = activeWorkspaceId || workspaces[0].id;
-      !activeWorkspaceId && setActiveWorkspaceId(workspaceId);
-
-      nav(`/${workspaceId}`);
-    }
-
     // check if the url points to the new Pane
     const match = decodeUrl();
-    const { paneType, menuType, id, workspaceId } = (match.params as StandardPathParams) || {};
+    const { paneType, menuType, id } = (match.params as StandardPathParams) || {};
 
     // if workspaceId is not empty and not equal to activeWorkspaceId, switch workspace
     // this scenario occurs especially when opening a shared link
+    const needAuthorization = paneType === PanesType.REQUEST;
+    if (needAuthorization) {
+      const [workspaceId] = id.split('-');
+      const authorized = workspaces.map((ws) => ws.id).includes(workspaceId);
 
-    const authorized = workspaces.map((ws) => ws.id).includes(workspaceId);
-
-    if (workspaceId && workspaceId !== activeWorkspaceId) {
-      if (authorized) {
-        setActiveWorkspaceId(workspaceId);
-        getCollections(workspaceId);
-      } else {
-        message.error('No target workspace permissions');
+      if (workspaceId !== activeWorkspaceId) {
+        if (authorized) {
+          setActiveWorkspaceId(workspaceId);
+          getCollections(workspaceId);
+        } else {
+          message.error('No target workspace permissions');
+        }
       }
-    }
 
-    if (authorized && paneType && id) {
-      const exist = panes.some((pane) => pane.type === paneType && pane.id === id);
-      if (!exist) {
+      if (authorized && paneType && id) {
         setActiveMenu(menuType);
         setPanes({
           id,
@@ -84,20 +76,10 @@ const useInit = () => {
     // subscribe active workspace change and update url
     const unSubscribeWorkspaces = useWorkspaces.subscribe(
       (state) => state.activeWorkspaceId,
-      (activeWorkspaceId) => {
-        useMenusPanes.getState().reset();
+      () => {
+        // useMenusPanes.getState().reset();
         useEnvironments.getState().reset();
         useCollections.getState().getCollections();
-        if (activeWorkspaceId) {
-          // activeWorkspaceId could be empty string
-          const url = encodeUrl(
-            // remove menuType,paneType,id and query
-            {
-              workspaceId: activeWorkspaceId,
-            },
-          );
-          nav(url);
-        }
       },
     );
 

@@ -168,7 +168,7 @@ const Collection: ArexMenuFC = (props) => {
 
       navPane({
         type: PanesType.REQUEST,
-        id: info.node.infoId,
+        id: `${activeWorkspaceId}-${info.node.infoId}`,
         name: info.node.nodeName,
         icon,
       });

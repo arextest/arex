@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { Allotment } from 'allotment';
 import { TabPaneProps } from 'antd';
-import { FC, forwardRef, useContext, useEffect, useImperativeHandle } from 'react';
+import React, { FC, forwardRef, useContext, useEffect, useImperativeHandle } from 'react';
 
 import { Context } from '../../providers/ConfigProvider';
 import HttpRequest from './components/http/Request';
