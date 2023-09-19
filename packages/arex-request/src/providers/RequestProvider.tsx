@@ -1,6 +1,13 @@
 import produce, { Draft } from 'immer';
 import { createContext, Dispatch, useEffect, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { Environment } from '../components/http/data/environment';
+import { ArexRESTRequest } from '../components/http/data/rest';
+import { ArexRESTResponse } from '../components/http/helpers/types/ArexRESTResponse';
+import { PostmanTestResult } from '../components/http/helpers/types/PostmanTestResult';
+import { defaultState } from './defaultState';
+
 export interface State {
   request: ArexRESTRequest;
   edited: boolean;
@@ -16,11 +23,7 @@ export interface State {
     processedTemplate: string;
   };
 }
-import { Environment } from '../components/http/data/environment';
-import { ArexRESTRequest } from '../components/http/data/rest';
-import { ArexRESTResponse } from '../components/http/helpers/types/ArexRESTResponse';
-import { PostmanTestResult } from '../components/http/helpers/types/PostmanTestResult';
-import { defaultState } from './defaultState';
+
 export const Context = createContext<
   { store: State } & { dispatch: Dispatch<(state: State) => void> }
 >({
@@ -30,9 +33,10 @@ export const Context = createContext<
 function reducer(draft: Draft<State>, action: (state: State) => void) {
   return action(draft);
 }
-const ConfigProvider = ({ children, theme, locale }: any) => {
+const RequestProvider = ({ children, theme, locale }: any) => {
   const [store, dispatch] = useReducer(produce(reducer), defaultState);
   const { i18n } = useTranslation();
+
   useEffect(() => {
     dispatch((state) => {
       state.theme = theme;
@@ -58,4 +62,4 @@ const ConfigProvider = ({ children, theme, locale }: any) => {
   );
 };
 
-export default ConfigProvider;
+export default RequestProvider;

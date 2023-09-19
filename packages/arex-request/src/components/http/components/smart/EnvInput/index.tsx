@@ -4,7 +4,7 @@ import { theme } from 'antd';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { FC, useContext, useEffect, useRef, useState } from 'react';
 
-import { Context } from '../../../../../providers/ConfigProvider';
+import { Context } from '../../../../../providers/RequestProvider';
 import {
   getMarkFromToArr,
   HOPP_ENVIRONMENT_REGEX,
@@ -135,6 +135,7 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange, disabled }) =>
           border-radius: 2px;
         }
         border: 1px solid ${token.token.colorBorder};
+        border-radius: 0 6px 6px 0;
         flex: 1;
         //添加 min-width: 0 的原因: https://juejin.cn/post/6974356682574921765
         min-width: 0;

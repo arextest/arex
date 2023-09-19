@@ -3,7 +3,7 @@ import { Radio, Select } from 'antd';
 import React, { useContext, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Context } from '../../../../providers/ConfigProvider';
+import { Context } from '../../../../providers/RequestProvider';
 import BinaryBody from './BinaryBody';
 import RawBody from './RawBody';
 const genContentType = (contentType: string | null) => {

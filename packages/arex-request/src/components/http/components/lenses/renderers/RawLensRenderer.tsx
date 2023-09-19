@@ -2,7 +2,7 @@ import { Editor } from '@arextest/monaco-react';
 import { css } from '@emotion/react';
 import React, { FC, useContext } from 'react';
 
-import { Context } from '../../../../../providers/ConfigProvider';
+import { Context } from '../../../../../providers/RequestProvider';
 import { ArexRESTResponse } from '../../../helpers/types/ArexRESTResponse';
 const RawLensRenderer: FC<{ response: ArexRESTResponse }> = ({ response }) => {
   const { store } = useContext(Context);

@@ -3,7 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
-import { Context } from '../../../../providers/ConfigProvider';
+import { Context } from '../../../../providers/RequestProvider';
 import FormHeader from './FormHeader';
 import FormTable, { useColumns } from './FormTable';
 const HttpHeaders = () => {

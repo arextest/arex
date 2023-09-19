@@ -1,4 +1,4 @@
-import { State } from './ConfigProvider';
+import { State } from './RequestProvider';
 
 export const defaultState: State = {
   request: {

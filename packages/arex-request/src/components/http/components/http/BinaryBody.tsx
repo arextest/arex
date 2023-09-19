@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 import { Button, Upload } from 'antd';
 import { useContext, useState } from 'react';
 
-import { Context } from '../../../../providers/ConfigProvider';
+import { Context } from '../../../../providers/RequestProvider';
 const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();

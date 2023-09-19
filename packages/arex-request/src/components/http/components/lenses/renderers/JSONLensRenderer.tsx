@@ -6,7 +6,7 @@ import copy from 'copy-to-clipboard';
 import { FC, useContext } from 'react';
 import React from 'react';
 
-import { Context } from '../../../../../providers/ConfigProvider';
+import { Context } from '../../../../../providers/RequestProvider';
 import { ArexRESTResponse } from '../../../helpers/types/ArexRESTResponse';
 function coppyUrl(text: string) {
   copy(text);

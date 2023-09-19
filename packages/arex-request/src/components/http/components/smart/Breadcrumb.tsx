@@ -1,6 +1,6 @@
 import { EditOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
-import { Breadcrumb, Input, Select, Space, Typography } from 'antd';
+import { Breadcrumb, Divider, Input, Select, Space, Typography } from 'antd';
 import { FC, useEffect, useState } from 'react';
 const { Text, Link } = Typography;
 // 纸笔记录
@@ -37,9 +37,9 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = ({
   return (
     <div
       css={css`
+        margin-top: 4px;
         display: flex;
         align-items: center;
-        width: 100%;
       `}
     >
       {mode === 'normal' ? (
@@ -59,7 +59,6 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = ({
             <div
               className={'editor-icon'}
               css={css`
-                margin-left: 10px;
                 visibility: hidden;
                 cursor: pointer;
               `}
@@ -72,57 +71,59 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = ({
             </div>
           </div>
 
-          <div
-            css={css`
-              display: flex;
-              align-items: center;
-              &:hover {
-                .editor-icon {
-                  visibility: unset !important;
-                }
-              }
-            `}
-          >
-            <Text
-              type='secondary'
-              css={css`
-                font-size: 12px;
-              `}
-            >
-              {descriptionValue || description || 'description'}
-            </Text>
-
+          <div style={{ display: 'flex' }}>
             <div
-              className={'editor-icon'}
               css={css`
-                margin-left: 10px;
-                visibility: hidden;
-                cursor: pointer;
+                display: flex;
+                align-items: center;
+                &:hover {
+                  .editor-icon {
+                    visibility: unset !important;
+                  }
+                }
               `}
             >
-              <EditOutlined
-                onClick={() => {
-                  setMode('description');
-                }}
-              />
-            </div>
-          </div>
+              <Text
+                type='secondary'
+                css={css`
+                  font-size: 12px;
+                `}
+              >
+                {descriptionValue || description || 'description'}
+              </Text>
 
-          <Select
-            css={css`
-              min-width: 120px;
-            `}
-            placeholder={'labels'}
-            mode={'multiple'}
-            defaultValue={tags}
-            options={tagOptions}
-            bordered={false}
-            onChange={(val) => {
-              onChange({
-                tags: val,
-              });
-            }}
-          />
+              <div
+                className={'editor-icon'}
+                css={css`
+                  visibility: hidden;
+                  cursor: pointer;
+                `}
+              >
+                <EditOutlined
+                  onClick={() => {
+                    setMode('description');
+                  }}
+                />
+              </div>
+            </div>
+
+            <Select
+              css={css`
+                min-width: 120px;
+                height: 20px;
+              `}
+              placeholder={'labels'}
+              mode={'multiple'}
+              defaultValue={tags}
+              options={tagOptions}
+              bordered={false}
+              onChange={(val) => {
+                onChange({
+                  tags: val,
+                });
+              }}
+            />
+          </div>
         </Space>
       ) : (
         <>

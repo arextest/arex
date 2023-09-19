@@ -5,7 +5,7 @@ import { forwardRef, useContext, useImperativeHandle, useRef } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Context } from '../../../../providers/ConfigProvider';
+import { Context } from '../../../../providers/RequestProvider';
 
 const HttpRawBody = (props: any, ref: any) => {
   const { store, dispatch } = useContext(Context);

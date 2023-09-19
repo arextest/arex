@@ -3,7 +3,7 @@ import { theme } from 'antd';
 import { FC, useContext } from 'react';
 import ReactJson from 'react-json-view';
 
-import { Context } from '../../../../providers/ConfigProvider';
+import { Context } from '../../../../providers/RequestProvider';
 const { useToken } = theme;
 const Console: FC<{ logs: any[] }> = ({ logs }) => {
   const theme1 = useToken();

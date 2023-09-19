@@ -11,12 +11,7 @@ import {
 import { MenuProps } from 'antd';
 import React, { FC } from 'react';
 
-import {
-  EmptyPanePlaceholder,
-  EnvironmentSelect,
-  HeaderMenu,
-  KeyboardShortcut,
-} from '@/components';
+import { EmptyPanePlaceholder, HeaderMenu, KeyboardShortcut } from '@/components';
 import { PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
 import { useMenusPanes, useWorkspaces } from '@/store';
@@ -148,7 +143,6 @@ const Home: FC = () => {
             activeKey={activePane?.key}
             panes={panes}
             emptyNode={<EmptyPanePlaceholder />}
-            tabBarExtraContent={<EnvironmentSelect />}
             dropdownMenu={{
               items: dropdownItems,
               onClick: handleDropdownClick,

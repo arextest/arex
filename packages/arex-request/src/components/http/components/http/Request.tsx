@@ -1,32 +1,21 @@
-import { DownOutlined, UserOutlined } from '@ant-design/icons';
+import { SaveOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  Breadcrumb,
-  Button,
-  Checkbox,
-  Divider,
-  Dropdown,
-  Input,
-  MenuProps,
-  message,
-  Select,
-  Space,
-} from 'antd';
-import { FC, useContext, useMemo, useState } from 'react';
+import { Button, Checkbox, Divider, Select, Space } from 'antd';
+import { FC, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Context } from '../../../../providers/ConfigProvider';
+import { Context } from '../../../../providers/RequestProvider';
 import { HttpProps } from '../../index';
 import SmartBreadcrumb from '../smart/Breadcrumb';
-// import SmartEnvInput from '../smart/EnvInput';
 import EnvInput from '../smart/EnvInput';
-import SaveAs from './SaveAs';
+import EnvironmentSelect from './EnvironmentSelect';
 
 const HeaderWrapper = styled.div`
+  padding: 0 8px;
   display: flex;
   .ant-select-selector {
-    border-radius: 0;
+    border-radius: 6px 0 0 6px;
   }
 `;
 
@@ -79,55 +68,58 @@ const HttpRequest: FC<HttpRequestProps> = ({
     });
   };
   return (
-    <div
-      css={css`
-        padding: 0 12px;
-        padding-top: 12px;
-      `}
-    >
+    <div>
       <div
         css={css`
           display: flex;
+          flex-flow: row nowrap;
           justify-content: space-between;
-          margin-bottom: 8px;
         `}
       >
-        <SmartBreadcrumb
-          tags={tags}
-          tagOptions={tagOptions}
-          description={description}
-          titleItems={breadcrumbItems}
-          onChange={onChange}
-        />
-        <Space>
-          <Button
-            id={'arex-request-save-btn'}
-            disabled={disableSave}
-            onClick={() => {
-              const request = JSON.parse(JSON.stringify(store.request));
-              if (request.body.contentType === '0') {
-                request.body.body = '';
-              }
-              // @ts-ignore
-              onSave(request, store.response);
-            }}
-          >
-            {t('action.save')}
-          </Button>
-          {store.request.id?.length === 12 && (
+        <div style={{ marginLeft: '8px', display: 'flex', justifyContent: 'space-between' }}>
+          <SmartBreadcrumb
+            tags={tags}
+            tagOptions={tagOptions}
+            description={description}
+            titleItems={breadcrumbItems}
+            onChange={onChange}
+          />
+
+          <Space style={{ float: 'right' }}>
             <Button
-              id={'arex-request-saveas-btn'}
+              id={'arex-request-save-btn'}
+              size='small'
               disabled={disableSave}
-              type={'primary'}
+              icon={<SaveOutlined />}
               onClick={() => {
-                onSaveAs();
+                const request = JSON.parse(JSON.stringify(store.request));
+                if (request.body.contentType === '0') {
+                  request.body.body = '';
+                }
+                // @ts-ignore
+                onSave(request, store.response);
               }}
             >
-              Save As
+              {t('action.save')}
             </Button>
-          )}
-        </Space>
+            {store.request.id?.length === 12 && (
+              <Button
+                id={'arex-request-saveas-btn'}
+                size='small'
+                type='primary'
+                disabled={disableSave}
+                onClick={onSaveAs}
+              >
+                Save As
+              </Button>
+            )}
+          </Space>
+        </div>
+        <EnvironmentSelect />
       </div>
+
+      <Divider style={{ width: '100%', margin: '0 0 8px 0' }} />
+
       <HeaderWrapper>
         <Select
           disabled={Boolean(store.request.inherited)}
@@ -152,11 +144,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
             });
           }}
         />
-        <div
-          css={css`
-            width: 10px;
-          `}
-        ></div>
+
         <Checkbox
           css={css`
             margin-top: 5px;
@@ -170,7 +158,8 @@ const HttpRequest: FC<HttpRequestProps> = ({
             });
           }}
         />
-        <div css={css``}>
+
+        <div style={{ marginLeft: '8px' }}>
           {store.response?.type === 'loading' ? (
             <Button onClick={() => reset()} id={'arex-request-cancel-btn'}>
               {t('action.cancel')}

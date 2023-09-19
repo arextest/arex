@@ -4,7 +4,7 @@ import { FC, useContext, useMemo, useState } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Context } from '../../../../providers/ConfigProvider';
+import { Context } from '../../../../providers/RequestProvider';
 import { TabConfig } from '../../index';
 import HttpBody from './Body';
 import HttpHeaders from './Headers';

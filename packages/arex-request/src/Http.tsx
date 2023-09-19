@@ -1,15 +1,14 @@
-import { FC, forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 
-import HttpIndex, { HttpProps } from './components/http';
-import ConfigProvider from './providers/ConfigProvider';
+import HttpInner, { HttpProps, HttpRef } from './components/http';
+import RequestProvider from './providers/RequestProvider';
 
-const Http: FC<HttpProps & { theme: string; locale: string }> = (props, ref) => {
+const Http = forwardRef<HttpRef, HttpProps & { theme: string; locale: string }>((props, ref) => {
   return (
-    <ConfigProvider {...props}>
-      <HttpIndex {...props} ref={ref} />
-    </ConfigProvider>
+    <RequestProvider {...props}>
+      <HttpInner {...props} ref={ref} />
+    </RequestProvider>
   );
-};
+});
 
-// @ts-ignore
-export default forwardRef(Http);
+export default Http;

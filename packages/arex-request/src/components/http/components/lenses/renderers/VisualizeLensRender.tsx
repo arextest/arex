@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { useContext, useEffect, useRef } from 'react';
 
-import { Context } from '../../../../../providers/ConfigProvider';
+import { Context } from '../../../../../providers/RequestProvider';
 import { genIframeDoc, htmlDecode } from './genIframeDoc';
 
 const VisualizeLensRender = () => {
