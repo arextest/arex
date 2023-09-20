@@ -4,7 +4,7 @@ import { FC } from 'react';
 import ReactJson from 'react-json-view';
 
 const { useToken } = theme;
-const Console: FC<{ logs: any[] }> = ({ logs }) => {
+const Console: FC<{ logs?: any[] }> = ({ logs }) => {
   const theme1 = useToken();
   const { theme } = useArexCoreConfig();
   return (
@@ -14,7 +14,7 @@ const Console: FC<{ logs: any[] }> = ({ logs }) => {
         border-top: 1px solid ${theme1.token.colorBorder};
       `}
     >
-      {logs.map((log, index) => {
+      {logs?.map((log, index) => {
         return (
           <div
             key={index}

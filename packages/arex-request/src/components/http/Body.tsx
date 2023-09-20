@@ -3,7 +3,7 @@ import { Radio, Select } from 'antd';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useArexRequestProps } from '../../hooks';
+import { useArexRequestStore } from '../../hooks';
 import BinaryBody from './BinaryBody';
 import RawBody from './RawBody';
 
@@ -16,7 +16,7 @@ const genContentType = (contentType: string | null) => {
 };
 const HttpBody = () => {
   const { t } = useTranslation();
-  const { store, dispatch } = useArexRequestProps();
+  const { store, dispatch } = useArexRequestStore();
 
   const bigCateOptions = ['raw', 'binary'];
 

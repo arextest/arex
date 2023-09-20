@@ -3,13 +3,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
-import { useArexRequestProps } from '../../hooks';
+import { useArexRequestStore } from '../../hooks';
 import FormHeader from './FormHeader';
 import FormTable, { useColumns } from './FormTable';
 
 const HttpHeaders = () => {
   const { t } = useTranslation();
-  const { store, dispatch } = useArexRequestProps();
+  const { store, dispatch } = useArexRequestStore();
   const [requestHeaders, setRequestHeaders] = useImmer<any>([]);
   useEffect(() => {
     setRequestHeaders(

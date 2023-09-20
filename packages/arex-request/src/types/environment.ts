@@ -1,9 +1,7 @@
-export type Environment = {
-  name: string;
-  variables: {
-    key: string;
-    value: string;
-  }[];
-};
+export type EnvironmentKeyValues = { key: string; value: string };
 
-const REGEX_ENV_VAR = /{{([^>]*)}}/g; // "{{myVariable}}"
+export type Environment = {
+  id: string;
+  name: string;
+  variables?: EnvironmentKeyValues[];
+};

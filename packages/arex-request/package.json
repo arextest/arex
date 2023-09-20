@@ -29,7 +29,8 @@
     "react-json-view": "^1.21.3",
     "react-sortablejs": "^6.1.4",
     "sortablejs": "^1.15.0",
-    "use-immer": "^0.9.0"
+    "use-immer": "^0.9.0",
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "@babel/core": "^7.21.4",
@@ -51,7 +52,8 @@
     "unplugin-icons": "^0.16.3",
     "vite": "^4.2.0",
     "vite-plugin-dts": "^3.4.0",
-    "vitest": "^0.31.0"
+    "vitest": "^0.31.0",
+    "@types/lodash": "^4.14.198"
   },
   "peerDependencies": {
     "antd": "^5.9.1",

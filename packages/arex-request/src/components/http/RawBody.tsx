@@ -5,11 +5,11 @@ import { forwardRef, useImperativeHandle } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useArexRequestProps } from '../../hooks';
+import { useArexRequestProps, useArexRequestStore } from '../../hooks';
 
 const HttpRawBody = (props: any, ref: any) => {
   const { theme } = useArexCoreConfig();
-  const { store, dispatch } = useArexRequestProps();
+  const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
   useImperativeHandle(ref, () => {
     return {

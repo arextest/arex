@@ -10,12 +10,12 @@ import JSONLensRenderer from './renderers/JSONLensRenderer';
 import RawLensRenderer from './renderers/RawLensRenderer';
 
 const LensesResponseBodyRenderer: FC<{
-  response: ArexRESTResponse;
-  testResult: any;
-  consoles: any[];
+  response?: ArexRESTResponse;
+  testResult?: any;
+  consoles?: any[];
 }> = ({ response, testResult, consoles }) => {
   const headers = useMemo(() => {
-    if (response.type === 'success') {
+    if (response?.type === 'success') {
       return response.headers;
     } else {
       return [];
@@ -76,7 +76,7 @@ const LensesResponseBodyRenderer: FC<{
           <Badge
             color={'blue'}
             css={css`
-              display: ${consoles.length > 0 ? 'inline-block' : 'none'};
+              display: ${consoles?.length ? 'inline-block' : 'none'};
             `}
           />
         </div>

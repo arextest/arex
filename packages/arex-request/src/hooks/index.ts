@@ -1,1 +1,2 @@
-export { default as useArexRequestProps } from './useArexRequestProps';
+export { useArexRequestProps } from './useArexRequestProps';
+export { useArexRequestStore } from './useArexRequestStore';

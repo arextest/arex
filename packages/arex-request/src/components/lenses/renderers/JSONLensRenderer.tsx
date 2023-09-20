@@ -17,7 +17,7 @@ function strToJson(str: string) {
     return String(str);
   }
 }
-const JSONLensRenderer: FC<{ response: ArexRESTResponse }> = ({ response }) => {
+const JSONLensRenderer: FC<{ response?: ArexRESTResponse }> = ({ response }) => {
   const { theme } = useArexCoreConfig();
   // @ts-ignore
   const jsonObj = response.body;

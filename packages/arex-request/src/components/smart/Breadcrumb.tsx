@@ -3,39 +3,28 @@ import { css } from '@arextest/arex-core';
 import { Breadcrumb, Input, Select, Space, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 
+import { useArexRequestProps } from '../../hooks';
+
 const { Text, Link } = Typography;
 
-// 纸笔记录
-interface SmartBreadcrumbProps {
-  titleItems: { title: string }[];
-  description: string;
-  tags: string[];
-  tagOptions: { color: string; label: string; value: string }[];
-  onChange: ({
-    title,
-    description,
-    tags,
-  }: {
-    title?: string;
-    description?: string;
-    tags?: string[];
-  }) => void;
+export interface SmartBreadcrumbProps {
+  titleItems?: { title: string }[];
+  description?: string;
+  tags?: string[];
+  tagOptions?: { color: string; label: string; value: string }[];
+  onChange?: (params: { title?: string; description?: string; tags?: string[] }) => void;
 }
-const SmartBreadcrumb: FC<SmartBreadcrumbProps> = ({
-  titleItems,
-  tags,
-  tagOptions,
-  description,
-  onChange,
-}) => {
+const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
+  const { titleItems, tags, tagOptions, description, onChange } = useArexRequestProps();
   const [mode, setMode] = useState('normal');
   const [value, setValue] = useState('');
   const [descriptionValue, setDescriptionValue] = useState('');
 
-  useEffect(() => {
-    setValue(titleItems.at(-1)?.title || '');
-    setDescriptionValue(description);
-  }, []);
+  // useEffect(() => {
+  //   setValue(titleItems.at(-1)?.title || '');
+  //   setDescriptionValue(description);
+  // }, []);
+
   return (
     <div
       css={css`
@@ -120,7 +109,7 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = ({
               options={tagOptions}
               bordered={false}
               onChange={(val) => {
-                onChange({
+                onChange?.({
                   tags: val,
                 });
               }}
@@ -139,12 +128,12 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = ({
             }}
             onBlur={() => {
               setMode('normal');
-              onChange({ title: value });
+              onChange?.({ title: value });
             }}
             onKeyUp={(e) => {
               if (e.keyCode === 13) {
                 setMode('normal');
-                onChange({ title: value });
+                onChange?.({ title: value });
               }
             }}
           />
@@ -159,12 +148,12 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = ({
             }}
             onBlur={(val) => {
               setMode('normal');
-              onChange({ description: descriptionValue });
+              onChange?.({ description: descriptionValue });
             }}
             onKeyUp={(e) => {
               if (e.keyCode === 13) {
                 setMode('normal');
-                onChange({ description: descriptionValue });
+                onChange?.({ description: descriptionValue });
               }
             }}
           />

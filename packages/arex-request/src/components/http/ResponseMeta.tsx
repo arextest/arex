@@ -8,7 +8,7 @@ import { getStatusCodeReasonPhrase } from '../../helpers/utils/statusCodes';
 import { ArexRESTResponse } from '../../types/ArexRESTResponse';
 // import { getStatusCodeReasonPhrase } from '../../helpers/utils/statusCodes';
 
-const HttpResponseMeta: FC<{ response: ArexRESTResponse | null }> = ({ response }) => {
+const HttpResponseMeta: FC<{ response?: ArexRESTResponse }> = ({ response }) => {
   const { t } = useTranslation();
   const tabCss = css`
     color: #10b981;
@@ -47,7 +47,7 @@ const HttpResponseMeta: FC<{ response: ArexRESTResponse | null }> = ({ response 
       ) : (
         <div>
           <div>
-            {response.type === 'loading' ? (
+            {response?.type === 'loading' ? (
               <div
                 css={css`
                   margin: 20px 0;
@@ -64,7 +64,7 @@ const HttpResponseMeta: FC<{ response: ArexRESTResponse | null }> = ({ response 
           </div>
 
           <div>
-            {response.type === 'success' ? (
+            {response?.type === 'success' ? (
               <div>
                 <span>
                   {t('response.status')}:
@@ -72,7 +72,7 @@ const HttpResponseMeta: FC<{ response: ArexRESTResponse | null }> = ({ response 
                     css={tabCss}
                     style={{
                       color:
-                        response.statusCode >= 400 && response.statusCode <= 500
+                        response?.statusCode >= 400 && response?.statusCode <= 500
                           ? 'red'
                           : '#10b981',
                     }}

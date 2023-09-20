@@ -1,12 +1,15 @@
 import { SaveOutlined } from '@ant-design/icons';
 import { css, RequestMethod, styled } from '@arextest/arex-core';
 import { Button, Checkbox, Divider, Select, Space } from 'antd';
+import { cloneDeep } from 'lodash';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useArexRequestProps } from '../../hooks';
-import { RequestProps } from '../Request';
-import SmartBreadcrumb from '../smart/Breadcrumb';
+import { useArexRequestStore } from '../../hooks';
+import { ArexRESTResponse } from '../../types/ArexRESTResponse';
+import { PostmanTestResult } from '../../types/PostmanTestResult';
+import { ArexRESTRequest } from '../../types/rest';
+import SmartBreadcrumb, { SmartBreadcrumbProps } from '../smart/Breadcrumb';
 import EnvInput from '../smart/EnvInput';
 import EnvironmentSelect from './EnvironmentSelect';
 
@@ -18,33 +21,22 @@ const HeaderWrapper = styled.div`
   }
 `;
 
-interface HttpRequestProps {
-  onSave: RequestProps['onSave'];
-  onSend: RequestProps['onSend'];
-  onSaveAs: RequestProps['onSaveAs'];
-  breadcrumbItems: { title: string }[];
-  onChange: RequestProps['onChange'];
-  description: string;
-  tags: string[];
-  tagOptions: { color: string; label: string; value: string }[];
-  disableSave: boolean;
+export interface HttpRequestProps extends SmartBreadcrumbProps {
+  disableSave?: boolean;
+  breadcrumbItems?: { title: string }[];
+  onSend?: (
+    request: ArexRESTRequest,
+  ) => Promise<{ response: ArexRESTResponse; testResult: PostmanTestResult }>;
+  onSave?: (request?: ArexRESTRequest, response?: ArexRESTResponse) => void;
+  onSaveAs?: () => void;
 }
-const HttpRequest: FC<HttpRequestProps> = ({
-  onSave,
-  onSaveAs,
-  onSend,
-  onChange,
-  breadcrumbItems,
-  description,
-  tagOptions,
-  tags,
-  disableSave,
-}) => {
-  const { store, dispatch } = useArexRequestProps();
+const HttpRequest: FC<HttpRequestProps> = ({ onSave, onSaveAs, onSend, disableSave }) => {
+  const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
+
   const reset = () => {
     dispatch((state) => {
-      state.response = null;
+      state.response = undefined;
     });
   };
 
@@ -54,7 +46,8 @@ const HttpRequest: FC<HttpRequestProps> = ({
         type: 'loading',
       };
     });
-    onSend(store.request).then((responseAndTestResult: any) => {
+
+    onSend?.(store.request).then((responseAndTestResult: any) => {
       dispatch((state) => {
         if (responseAndTestResult.response.type === 'success') {
           state.response = responseAndTestResult.response;
@@ -75,13 +68,7 @@ const HttpRequest: FC<HttpRequestProps> = ({
         `}
       >
         <div style={{ marginLeft: '8px', display: 'flex', justifyContent: 'space-between' }}>
-          <SmartBreadcrumb
-            tags={tags}
-            tagOptions={tagOptions}
-            description={description}
-            titleItems={breadcrumbItems}
-            onChange={onChange}
-          />
+          <SmartBreadcrumb />
 
           <Space style={{ float: 'right' }}>
             <Button
@@ -90,16 +77,16 @@ const HttpRequest: FC<HttpRequestProps> = ({
               disabled={disableSave}
               icon={<SaveOutlined />}
               onClick={() => {
-                const request = JSON.parse(JSON.stringify(store.request));
-                if (request.body.contentType === '0') {
-                  request.body.body = '';
-                }
-                // @ts-ignore
-                onSave(request, store.response);
+                const request = cloneDeep(store.request);
+                // if (request?.body?.contentType === '0') {
+                //   request.body.body = '';
+                // }
+                onSave?.(request, store.response);
               }}
             >
               {t('action.save')}
             </Button>
+
             {store.request.id?.length === 12 && (
               <Button
                 id={'arex-request-saveas-btn'}
@@ -120,12 +107,12 @@ const HttpRequest: FC<HttpRequestProps> = ({
 
       <HeaderWrapper>
         <Select
-          disabled={Boolean(store.request.inherited)}
+          disabled={Boolean(store?.request?.inherited)}
           css={css`
             width: 80px;
             transform: translateX(1px);
           `}
-          value={store.request.inherited ? store.request.inheritedMethod : store.request.method}
+          value={store?.request?.inherited ? store.request.inheritedMethod : store?.request?.method}
           options={RequestMethod.map((i) => ({ value: i, lable: i }))}
           onChange={(value) => {
             dispatch((state) => {

@@ -4,7 +4,7 @@ import { FC, useMemo, useState } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useArexRequestProps } from '../../hooks';
+import { useArexRequestStore } from '../../hooks';
 import { TabConfig } from '../Request';
 import HttpBody from './Body';
 import HttpHeaders from './Headers';
@@ -18,7 +18,7 @@ const HttpRequestOptions: FC<{ config?: TabConfig }> = ({ config }) => {
   const { token } = useToken();
   const { t } = useTranslation();
   const [activeKey, setActiveKey] = useState('3');
-  const { store } = useArexRequestProps();
+  const { store } = useArexRequestStore();
 
   const items = useMemo(() => {
     const _items: any = [
@@ -111,6 +111,7 @@ const HttpRequestOptions: FC<{ config?: TabConfig }> = ({ config }) => {
     config?.extra && _items.push(...config.extra.filter((tab) => !tab.hidden));
     return _items;
   }, [store.request]);
+
   return (
     <div
       css={css`

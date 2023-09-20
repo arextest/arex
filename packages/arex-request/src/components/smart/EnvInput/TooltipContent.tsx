@@ -1,12 +1,17 @@
 import React, { FC } from 'react';
 
-const TooltipContent: FC<{ match: any; mockEnvironment: any }> = ({ match, mockEnvironment }) => {
+import { Environment } from '../../../types/environment';
+
+const TooltipContent: FC<{ match: any; mockEnvironment?: Environment }> = ({
+  match,
+  mockEnvironment,
+}) => {
   const key = match.replace('{{', '').replace('}}', '');
-  const v = mockEnvironment.variables.find((v: any) => v.key === key);
+  const v = mockEnvironment?.variables?.find((v: any) => v.key === key);
   return (
     <div className={'rhi-tooltip'}>
       <div className='content'>
-        {!v?.value ? (
+        {v?.value ? (
           <div>
             {'Choose an Environment'}
 
@@ -23,7 +28,7 @@ const TooltipContent: FC<{ match: any; mockEnvironment: any }> = ({ match, mockE
           </div>
         ) : (
           <div>
-            {mockEnvironment.name}
+            {mockEnvironment?.name}
             <span
               style={{
                 backgroundColor: 'rgb(184,187,192)',

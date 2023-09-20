@@ -5,16 +5,16 @@ import { FC, useEffect, useRef, useState } from 'react';
 
 import {
   getMarkFromToArr,
-  HOPP_ENVIRONMENT_REGEX,
+  REGEX_ENV_VAR,
 } from '../../../helpers/editor/extensions/HoppEnvironment';
-import { useArexRequestProps } from '../../../hooks';
+import { useArexRequestStore } from '../../../hooks';
 import SmartTooltip from '../Tooltip';
 import TooltipContent from './TooltipContent';
 import { getElementViewPosition } from './util';
 
 interface SmartEnvInputProps {
   disabled: boolean;
-  value: string;
+  value?: string;
   onChange: (e: any) => void;
 }
 
@@ -41,7 +41,7 @@ const EditorWrapper = styled.div`
 `;
 
 const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange, disabled }) => {
-  const { store } = useArexRequestProps();
+  const { store } = useArexRequestStore();
   const { theme } = useArexCoreConfig();
   const [open, setOpen] = useState(false);
   const [left, setLeft] = useState(0);
@@ -101,7 +101,7 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange, disabled }) =>
 
   // ============================== decorations - {{env}}高亮 ==============================
   function decorations(value: any, editor: any) {
-    const marks = getMarkFromToArr(value, HOPP_ENVIRONMENT_REGEX, store.environment);
+    const marks = getMarkFromToArr(value, REGEX_ENV_VAR, store.environment);
     const ids = [];
     const decorations = editor?.getModel?.().getAllDecorations() || [];
     // ============================== 删除上次mark start ==============================

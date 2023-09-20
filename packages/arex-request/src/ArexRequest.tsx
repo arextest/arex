@@ -1,13 +1,15 @@
 import React, { forwardRef } from 'react';
 
 import Request, { RequestProps, RequestRef } from './components/Request';
-import RequestProvider from './providers/RequestProvider';
+import { RequestPropsProvider, RequestStoreProvider } from './providers';
 
 const ArexRequest = forwardRef<RequestRef, RequestProps>((props, ref) => {
   return (
-    <RequestProvider>
-      <Request {...props} ref={ref} />
-    </RequestProvider>
+    <RequestPropsProvider {...props}>
+      <RequestStoreProvider request={props.data}>
+        <Request {...props} ref={ref} />
+      </RequestStoreProvider>
+    </RequestPropsProvider>
   );
 });
 

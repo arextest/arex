@@ -1,15 +1,11 @@
-export const HOPP_ENVIRONMENT_REGEX = /\{\{(.+?)\}\}/g;
+import { Environment } from '../../../types/environment';
+
+export const REGEX_ENV_VAR = /\{\{(.+?)\}\}/g;
 // 获取文本标志位坐标数组
 export const getMarkFromToArr = (
   text: string,
   reg: RegExp,
-  currentEnv: {
-    name: string;
-    variables: {
-      key: string;
-      value: string;
-    }[];
-  },
+  currentEnv?: Environment,
 ): {
   from: number;
   to: number;
@@ -26,15 +22,15 @@ export const getMarkFromToArr = (
   let cloneText = text;
 
   for (let i = 0; i < editorValueMatch.length; i++) {
-    const find = currentEnv.variables.find(
+    const find = currentEnv?.variables?.find(
       (f) => f.key === editorValueMatch[i].replace('{{', '').replace('}}', ''),
     );
     arr.push({
       from: cloneText.indexOf(editorValueMatch[i]),
       to: cloneText.indexOf(editorValueMatch[i]) + editorValueMatch[i].length,
-      found: find ? true : false,
+      found: !!find,
       matchEnv: {
-        name: currentEnv.name || 'choose an environment',
+        name: currentEnv?.name || 'choose an environment',
         key: find ? find.key : 'not found',
         value: find ? find.value : 'not found',
       },

@@ -1,4 +1,4 @@
-import { ArexPaneFC, getLocalStorage, useArexPaneProps } from '@arextest/arex-core';
+import { ArexPaneFC, getLocalStorage } from '@arextest/arex-core';
 import { ArexRequest, ArexRequestProps, sendRequest } from '@arextest/arex-request';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
@@ -17,10 +17,6 @@ import { decodePaneKey } from '@/store/useMenusPanes';
 
 import { ExtraTabs } from './extra';
 
-export type PathType = {
-  title: string;
-};
-
 function convertRequest(request: any) {
   if (request.inherited) {
     return {
@@ -33,11 +29,13 @@ function convertRequest(request: any) {
   }
 }
 
-const Request: ArexPaneFC = () => {
+const Request: ArexPaneFC = (props) => {
   const navPane = useNavPane({ inherit: true });
   const { message } = App.useApp();
-  const { paneKey } = useArexPaneProps();
-  const [activeWorkspaceId, id] = useMemo(() => decodePaneKey(paneKey).id.split('-'), [paneKey]);
+  const [activeWorkspaceId, id] = useMemo(
+    () => decodePaneKey(props.paneKey).id.split('-'),
+    [props.paneKey],
+  );
 
   const userName = getLocalStorage<string>(EMAIL_KEY);
   const [saveAsShow, setSaveAsShow] = useState(false);
@@ -246,71 +244,64 @@ const Request: ArexPaneFC = () => {
   }, [data]);
 
   return (
-    <div>
-      <Spin
-        css={css`
-          height: calc(100vh - 110px);
-          width: 100%;
-        `}
+    <>
+      <ArexRequest
         spinning={!data}
-      >
-        <ArexRequest
-          ref={httpRef}
-          disableSave={Boolean(searchParams.get('recordId'))}
-          height={`calc(100vh - 110px)`}
-          value={data}
-          config={httpConfig}
-          environment={environment}
-          breadcrumbItems={nodePath}
-          onSave={handleSave}
-          onSend={handleSend}
-          onSaveAs={() => {
-            setSaveAsShow(true);
-          }}
-          description={data?.description || ''}
-          // @ts-ignore
-          tags={data?.tags || []}
-          tagOptions={(labelData || []).map((i) => ({
-            label: i.labelName,
-            value: i.id,
-            color: i.color,
-          }))}
-          onChange={({ title, description, tags }) => {
-            if (title) {
-              rename(title);
-            }
-            if (description) {
-              saveRequest(
-                activeWorkspaceId,
-                {
-                  id: data?.id,
-                  description,
-                },
-                nodeInfo?.nodeType || 1,
-              );
-            }
-            if (tags) {
-              saveRequest(
-                activeWorkspaceId,
-                {
-                  id: data?.id,
-                  tags,
-                },
-                nodeInfo?.nodeType || 1,
-              );
-            }
-          }}
-        />
-        <SaveAs
-          show={saveAsShow}
-          onClose={() => {
-            setSaveAsShow(false);
-          }}
-          onOk={handleSaveAs}
-          collection={processTreeData(collectionsTreeData.filter((item) => item.nodeType !== 1))}
-        />
-      </Spin>
-    </div>
+        ref={httpRef}
+        disableSave={Boolean(searchParams.get('recordId'))}
+        height={`calc(100vh - 110px)`}
+        data={data}
+        config={httpConfig}
+        environment={environment}
+        breadcrumbItems={nodePath}
+        onSave={handleSave}
+        onSend={handleSend}
+        onSaveAs={() => {
+          setSaveAsShow(true);
+        }}
+        description={data?.description || ''}
+        // @ts-ignore
+        tags={data?.tags || []}
+        tagOptions={(labelData || []).map((i) => ({
+          label: i.labelName,
+          value: i.id,
+          color: i.color,
+        }))}
+        onChange={({ title, description, tags }) => {
+          if (title) {
+            rename(title);
+          }
+          if (description) {
+            saveRequest(
+              activeWorkspaceId,
+              {
+                id: data?.id,
+                description,
+              },
+              nodeInfo?.nodeType || 1,
+            );
+          }
+          if (tags) {
+            saveRequest(
+              activeWorkspaceId,
+              {
+                id: data?.id,
+                tags,
+              },
+              nodeInfo?.nodeType || 1,
+            );
+          }
+        }}
+      />
+      <SaveAs
+        show={saveAsShow}
+        onClose={() => {
+          setSaveAsShow(false);
+        }}
+        onOk={handleSaveAs}
+        collection={processTreeData(collectionsTreeData.filter((item) => item.nodeType !== 1))}
+      />
+    </>
   );
 };
 

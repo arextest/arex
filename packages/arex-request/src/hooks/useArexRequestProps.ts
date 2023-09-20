@@ -1,7 +1,5 @@
 import { useContext } from 'react';
 
-import { Context } from '../providers/RequestProvider';
+import { RequestPropsContext } from '../providers/RequestPropsProvider';
 
-const useArexRequestProps = () => useContext(Context);
-
-export default useArexRequestProps;
+export const useArexRequestProps = () => useContext(RequestPropsContext);

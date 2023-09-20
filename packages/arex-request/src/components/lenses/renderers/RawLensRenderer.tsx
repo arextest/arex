@@ -4,7 +4,7 @@ import React, { FC } from 'react';
 
 import { ArexRESTResponse } from '../../../types/ArexRESTResponse';
 
-const RawLensRenderer: FC<{ response: ArexRESTResponse }> = ({ response }) => {
+const RawLensRenderer: FC<{ response?: ArexRESTResponse }> = ({ response }) => {
   const { theme } = useArexCoreConfig();
   return (
     <div
@@ -25,7 +25,7 @@ const RawLensRenderer: FC<{ response: ArexRESTResponse }> = ({ response }) => {
           scrollBeyondLastLine: false,
           readOnly: true,
         }}
-        value={response.type === 'success' ? response.body.toString() : ''}
+        value={response?.type === 'success' ? response.body.toString() : ''}
       />
     </div>
   );

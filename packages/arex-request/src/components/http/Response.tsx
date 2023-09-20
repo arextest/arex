@@ -1,21 +1,20 @@
 import { css } from '@arextest/arex-core';
 import React, { useMemo } from 'react';
 
-import { useArexRequestProps } from '../../hooks';
+import { useArexRequestStore } from '../../hooks';
 import { ArexRESTResponse } from '../../types/ArexRESTResponse';
 import { PostmanTestResult } from '../../types/PostmanTestResult';
-// import { HoppTestResult } from '../../helpers/types/HoppTestResult';
 import LensesResponseBodyRenderer from '../lenses/ResponseBodyRenderer';
 import HttpResponseMeta from './ResponseMeta';
 
 const HttpResponse = () => {
-  const { store } = useArexRequestProps();
+  const { store } = useArexRequestStore();
   const hasResponse = useMemo(
     () => store.response?.type === 'success' || store.response?.type === 'fail',
     [store.response],
   );
   const loading = useMemo(
-    () => store.response === null || store.response.type === 'loading',
+    () => store.response === null || store?.response?.type === 'loading',
     [store.response],
   );
 

@@ -499,6 +499,9 @@ importers:
       immer:
         specifier: ^9.0.21
         version: 9.0.21
+      lodash:
+        specifier: ^4.17.15
+        version: 4.17.21
       monaco-editor:
         specifier: ^0.38.0
         version: 0.38.0
@@ -548,6 +551,9 @@ importers:
       '@testing-library/react':
         specifier: ^14.0.0
         version: 14.0.0(react-dom@18.2.0)(react@18.2.0)
+      '@types/lodash':
+        specifier: ^4.14.198
+        version: 4.14.198
       '@types/postman-collection':
         specifier: ^3.5.7
         version: 3.5.7
@@ -2596,6 +2602,10 @@ packages:
 
   /@types/lodash@4.14.194:
     resolution: {integrity: sha512-r22s9tAS7imvBt2lyHC9B8AGwWnXaYb1tY09oyLkXDs4vArpYJzw09nj8MLx5VfciBPGIb+ZwG0ssYnEPJxn/g==}
+    dev: true
+
+  /@types/lodash@4.14.198:
+    resolution: {integrity: sha512-trNJ/vtMZYMLhfN45uLq4ShQSw0/S7xCTLLVM+WM1rmFpba/VS42jVUgaO3w/NOLiWR/09lnYk0yMaA/atdIsg==}
     dev: true
 
   /@types/minimist@1.2.2:

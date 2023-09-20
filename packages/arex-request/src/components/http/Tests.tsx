@@ -4,7 +4,7 @@ import { Button, Typography } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useArexRequestProps } from '../../hooks';
+import { useArexRequestStore } from '../../hooks';
 import { testCodeSnippet } from './snippets';
 
 const { Text } = Typography;
@@ -33,7 +33,7 @@ export const ResponseTestWrapper = styled.div`
 `;
 
 const HttpTests = () => {
-  const { store, dispatch } = useArexRequestProps();
+  const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
   const { theme } = useArexCoreConfig();
 

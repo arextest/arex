@@ -15,14 +15,14 @@ import { ReactSortable } from 'react-sortablejs';
 
 import IconGripVertical from '~icons/lucide/grip-vertical';
 
-import { useArexRequestProps } from '../../hooks';
+import { useArexRequestStore } from '../../hooks';
 // import IconGripVertical from "~icons/lucide/grip-vertical"
 import { FormHeaderWrapper } from './FormHeader';
 import { converToUrl, removePMparams } from './helpers';
 const { useToken } = theme;
 const HttpParameters: FC = () => {
   const { token } = useToken();
-  const { store, dispatch } = useArexRequestProps();
+  const { store, dispatch } = useArexRequestStore();
   const { endpoint } = store.request;
   const setEndpoint = (newEndpoint: string) => {
     dispatch((state) => {

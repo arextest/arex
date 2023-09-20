@@ -3,7 +3,7 @@ import { css } from '@arextest/arex-core';
 import { Button, Upload } from 'antd';
 import React, { useState } from 'react';
 
-import { useArexRequestProps } from '../../hooks';
+import { useArexRequestStore } from '../../hooks';
 
 const toBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -15,7 +15,7 @@ const toBase64 = (file: File): Promise<string> =>
 
 const BinaryBody = () => {
   const [base64String, setBase64String] = useState('');
-  const { dispatch } = useArexRequestProps();
+  const { dispatch } = useArexRequestStore();
   return (
     <div>
       <Upload

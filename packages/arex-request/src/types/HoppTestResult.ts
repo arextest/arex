@@ -11,22 +11,22 @@ export type HoppTestData = {
   tests: HoppTestData[];
 };
 
-export type HoppTestResult = {
-  tests: HoppTestData[];
-  expectResults: HoppTestExpectResult[];
-  description: string;
-  scriptError: boolean;
-
-  envDiff: {
-    global: {
-      additions: Environment['variables'];
-      updations: Array<Environment['variables'][number] & { previousValue: string }>;
-      deletions: Environment['variables'];
-    };
-    selected: {
-      additions: Environment['variables'];
-      updations: Array<Environment['variables'][number] & { previousValue: string }>;
-      deletions: Environment['variables'];
-    };
-  };
-};
+// export type HoppTestResult = {
+//   tests: HoppTestData[];
+//   expectResults: HoppTestExpectResult[];
+//   description: string;
+//   scriptError: boolean;
+//
+//   envDiff: {
+//     global: {
+//       additions: Environment['variables'];
+//       updations: Array<Environment['variables'][number] & { previousValue: string }>;
+//       deletions: Environment['variables'];
+//     };
+//     selected: {
+//       additions: Environment['variables'];
+//       updations: Array<Environment['variables'][number] & { previousValue: string }>;
+//       deletions: Environment['variables'];
+//     };
+//   };
+// };

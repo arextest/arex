@@ -1,5 +1,4 @@
-import { Form, Input, Modal, Select, TreeSelect, Typography } from 'antd';
-import Tree from 'antd/es/tree/Tree';
+import { Form, Modal, TreeSelect, Typography } from 'antd';
 import { FC, useState } from 'react';
 
 import { treeFindPath } from '../../helpers/collection/util';
