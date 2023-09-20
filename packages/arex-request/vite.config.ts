@@ -32,12 +32,20 @@ export default defineConfig({
       fileName: 'arex-request',
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'antd', '@emotion/react', '@emotion/styled'],
+      external: [
+        'react',
+        'react-dom',
+        'antd',
+        '@arextest/arex-core',
+        '@emotion/react',
+        '@emotion/styled',
+      ],
       output: {
         globals: {
           react: 'react',
           antd: 'antd',
           'react-dom': 'react-dom',
+          '@arextest/arex-core': '@arextest/arex-core',
           '@emotion/react': '@emotion/react',
           '@emotion/styled': '@emotion/styled',
         },

@@ -1,4 +1,4 @@
-import { css, useTheme } from '@arextest/arex-core';
+import { css } from '@arextest/arex-core';
 import { Radio, Select } from 'antd';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,6 @@ const genContentType = (contentType: string | null) => {
 };
 const HttpBody = () => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { store, dispatch } = useArexRequestProps();
 
   const bigCateOptions = ['raw', 'binary'];

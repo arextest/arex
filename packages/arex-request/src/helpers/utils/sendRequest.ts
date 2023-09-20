@@ -1,8 +1,7 @@
-// @ts-ignore
 import sdk from 'postman-collection';
 
 import { convertToPmBody } from './convertToPmBody';
-const converToUrl = (requestParams: any) => {
+const convertToUrl = (requestParams: any) => {
   const params: any = [];
   requestParams.forEach(({ key, value }: any) => {
     const param = key + '=' + value;
@@ -10,6 +9,7 @@ const converToUrl = (requestParams: any) => {
   });
   return '?' + params.join('&');
 };
+
 // 发送一个request
 export async function sendRequest(
   hopReq: any,
@@ -48,7 +48,9 @@ export async function sendRequest(
           method: hopReq.method,
           header: hopReq.headers.filter((i: any) => i.active),
           body: convertToPmBody(hopReq.body),
-          url: sdk.Url.parse(hopReq.endpoint),
+          url: sdk.Url.parse(
+            hopReq.endpoint + convertToUrl(hopReq.params.filter((i: any) => i.active)),
+          ),
         },
         response: [],
       },

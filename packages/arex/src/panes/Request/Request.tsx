@@ -1,5 +1,5 @@
 import { ArexPaneFC, getLocalStorage, useArexPaneProps } from '@arextest/arex-core';
-import { ArexRequest, ArexRequestProps } from '@arextest/arex-request';
+import { ArexRequest, ArexRequestProps, sendRequest } from '@arextest/arex-request';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { App, Spin } from 'antd';
@@ -8,7 +8,6 @@ import { useSearchParams } from 'react-router-dom';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { processTreeData } from '@/helpers/collection/util';
-import { sendRequest } from '@/helpers/postman';
 import { useNavPane } from '@/hooks';
 import SaveAs from '@/panes/Request/SaveAs';
 import { FileSystemService, ReportService } from '@/services';

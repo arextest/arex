@@ -1,0 +1,46 @@
+export const requestCollection = [
+  {
+    id: '-1',
+    title: 'POST',
+    preRequestScript: '',
+    v: '',
+    headers: [],
+    name: '',
+    body: {
+      contentType: 'application/json;charset=UTF-8',
+      body: JSON.stringify(
+        {
+          name: 'zfdhdfhdfhfghtzfdhdfhdfhfghtzfdhdfhdfhfghtzfdhdfhdfhfghtzfdhdfhdfhfghtzfdhdfhdfhfghtzfdhdfhdfhfghtzfdhdfhdfhfghtzfdhdfhdfhfghtzfdhdfhdfhfghtzfdhdfhdfhfghtdfhfghsfsafsa,mnfmsdbfmgdsjhfgbsdjhfgsdhjfghjsdgfjhsdgjfhsdghjsdjhsdhjgt',
+        },
+        null,
+        2,
+      ),
+    } as any,
+    auth: { authActive: false, authType: 'none' } as any,
+    testScript: '',
+    endpoint: '{{url}}/put',
+    method: 'POST',
+    params: [],
+    inherited: undefined,
+    inheritedEndpoint: '{{url}}/put',
+    inheritedMethod: 'PUT',
+  },
+  {
+    id: '1',
+    title: 'GET',
+    preRequestScript: '',
+    v: '',
+    headers: [],
+    name: '',
+    body: { contentType: 'application/json', body: '' } as any,
+    auth: { authActive: false, authType: 'none' } as any,
+    testScript: '',
+    endpoint:
+      'http://127.0.0.1:8081/api/report/listRecord?test1=testvalue&dsadsadas=dasdsdas&dsadasd=null',
+    method: 'GET',
+    params: [],
+    inherited: undefined,
+    inheritedEndpoint: '{{url}}/put',
+    inheritedMethod: 'PUT',
+  },
+];

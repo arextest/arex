@@ -1,12 +1,11 @@
 import { RequestMethodIcon } from '@arextest/arex-core';
-import { TestResult } from '@arextest/arex-request';
+import { sendRequest, TestResult } from '@arextest/arex-request';
 import { ArexRESTRequest } from '@arextest/arex-request/dist/components/http/data/rest';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Divider, Space, Spin, Typography } from 'antd';
 import React, { FC, useMemo } from 'react';
 
-import { sendRequest } from '@/helpers/postman';
 import { useEnvironments } from '@/store';
 
 const { Text } = Typography;

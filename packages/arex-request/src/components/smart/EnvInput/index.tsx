@@ -1,4 +1,4 @@
-import { styled } from '@arextest/arex-core';
+import { styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import Editor from '@arextest/monaco-react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { FC, useEffect, useRef, useState } from 'react';
@@ -42,6 +42,7 @@ const EditorWrapper = styled.div`
 
 const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange, disabled }) => {
   const { store } = useArexRequestProps();
+  const { theme } = useArexCoreConfig();
   const [open, setOpen] = useState(false);
   const [left, setLeft] = useState(0);
   const [top, setTop] = useState(0);
@@ -143,6 +144,7 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange, disabled }) =>
       <Editor
         height='21px'
         value={value}
+        theme={theme === Theme.dark ? 'vs-dark' : 'light'}
         onMount={handleEditorDidMount}
         onChange={(val) => {
           onChange(val);

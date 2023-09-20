@@ -1,6 +1,7 @@
-import { RoleEnum } from '@arextest/arex-core';
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
+
+import { RoleEnum } from '@/constant';
 
 export type Workspace = {
   id: string;
