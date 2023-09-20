@@ -1,5 +1,5 @@
 import { ArexPaneFC, getLocalStorage, useArexPaneProps } from '@arextest/arex-core';
-import { Http, HttpProps } from '@arextest/arex-request';
+import { ArexRequest, ArexRequestProps } from '@arextest/arex-request';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { App, Spin } from 'antd';
@@ -13,7 +13,7 @@ import { useNavPane } from '@/hooks';
 import SaveAs from '@/panes/Request/SaveAs';
 import { FileSystemService, ReportService } from '@/services';
 import { moveCollectionItem, saveRequest } from '@/services/FileSystemService';
-import { useCollections, useEnvironments, useMenusPanes, useUserProfile } from '@/store';
+import { useCollections, useEnvironments, useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
 import { ExtraTabs } from './extra';
@@ -45,7 +45,6 @@ const Request: ArexPaneFC = () => {
   const { activeEnvironment, timestamp: timestampEnvironment } = useEnvironments();
   const { collectionsFlatData, collectionsTreeData, getCollections, getPath } = useCollections();
   const { setPanes } = useMenusPanes();
-  const { theme, language } = useUserProfile();
 
   const { data: labelData, run: queryLabels } = useRequest(
     () => ReportService.queryLabels({ workspaceId: activeWorkspaceId as string }),
@@ -62,7 +61,7 @@ const Request: ArexPaneFC = () => {
     [activeEnvironment],
   );
 
-  const handleSend: HttpProps['onSend'] = (request) => {
+  const handleSend: ArexRequestProps['onSend'] = (request) => {
     // TODO 这里使用继承
     const convertedRequest = convertRequest(request);
     return sendRequest(convertedRequest, environment).then((res) => {
@@ -134,7 +133,7 @@ const Request: ArexPaneFC = () => {
     });
   };
 
-  const handleSave: HttpProps['onSave'] = (requestParams, response) => {
+  const handleSave: ArexRequestProps['onSave'] = (requestParams, response) => {
     const request = requestParams;
     if (
       !request.headers.find((i) => i.key === 'arex-record-id') &&
@@ -256,12 +255,10 @@ const Request: ArexPaneFC = () => {
         `}
         spinning={!data}
       >
-        <Http
+        <ArexRequest
           ref={httpRef}
           disableSave={Boolean(searchParams.get('recordId'))}
           height={`calc(100vh - 110px)`}
-          theme={theme}
-          locale={language}
           value={data}
           config={httpConfig}
           environment={environment}

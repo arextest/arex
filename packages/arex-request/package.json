@@ -17,8 +17,9 @@
     "dist/*"
   ],
   "dependencies": {
-    "@ant-design/icons": "^5.0.1",
+    "@arextest/arex-core": "workspace:latest",
     "@arextest/monaco-react": "^4.5.1",
+    "@ant-design/icons": "^5.2.6",
     "allotment": "^1.18.1",
     "copy-to-clipboard": "^3.3.3",
     "immer": "^9.0.21",

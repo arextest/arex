@@ -13,7 +13,7 @@ vi.mock('@/constant', () => ({
 }));
 
 describe('disabledNonCaseNode', () => {
-  test('no case collection tree data', () => {
+  test('no case collection tree types', () => {
     const collectionTreeData = [
       {
         key: '647849827137ad5ad372bd45',
@@ -41,7 +41,7 @@ describe('disabledNonCaseNode', () => {
     expect(disabledNonCaseNode(collectionTreeData)).toMatchSnapshot();
   });
 
-  test('collection tree data with case', () => {
+  test('collection tree types with case', () => {
     const collectionTreeData = [
       {
         nodeName: 'node',

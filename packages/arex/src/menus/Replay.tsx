@@ -135,7 +135,7 @@ const ReplayMenu: ArexMenuFC = (props) => {
   };
 
   const handleSelect: MenuSelectProps<ApplicationDataType, any[]>['onSelect'] = (value) => {
-    props.onSelect?.(value); // to streamline the params, remove the data from onSelect handler
+    props.onSelect?.(value); // to streamline the params, remove the types from onSelect handler
   };
 
   return (

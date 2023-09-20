@@ -8,7 +8,7 @@ import { SmallTextButton } from './index';
 export type PanesTitleProps = {
   title: ReactNode;
   extra?: ReactNode;
-  editable?: boolean; // when title type is string take effect
+  editable?: boolean; // when title types is string take effect
   onSave?: (title: string) => void;
 };
 const PanesTitle = styled((props: PanesTitleProps) => {

@@ -64,5 +64,5 @@ export const DEFAULT_COLOR_PRIMARY = ColorPrimary.green;
 
 export const MAX_PANES_COUNT = 8;
 
-// custom event type
+// custom event types
 export const AREX_OPEN_NEW_PANEL = 'arexOpenNewPanel';

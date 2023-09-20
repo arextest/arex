@@ -21,7 +21,7 @@ export type WorkspaceAction = {
 };
 
 const initialState: WorkspaceState = {
-  // TODO mock data
+  // TODO mock types
   activeWorkspaceId: 'this-is-workspaces-id-1',
   workspaces: [
     { id: 'this-is-workspaces-id-1', role: RoleEnum.Admin, name: '演示工作区1' },

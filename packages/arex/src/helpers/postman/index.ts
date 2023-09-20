@@ -112,7 +112,7 @@ export async function sendRequest(
             //
             //          response: <sdk.Response>
             //          request: <sdk.Request>
-            //          data: <Object of data variables>
+            //          types: <Object of types variables>
             //          cookies: <Array of "sdk.Cookie" objects>
             //          tests: <Object>
             //          return: <Object, contains set next request params, etc>

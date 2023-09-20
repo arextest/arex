@@ -28,7 +28,7 @@ export type MenuItemType = {
 const ICON_KEY = '__ExpandIcon';
 
 const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
-  // 规定: ArexMenu 翻译文本需要配置在 locales/[lang]/arex-menu.json 下, 且 key 为 Menu.type
+  // 规定: ArexMenu 翻译文本需要配置在 locales/[lang]/arex-menu.json 下, 且 key 为 Menu.types
   const { t } = useTranslation([ArexMenuNamespace]);
 
   const tabsItems = useMemo<MenuItemType[]>(

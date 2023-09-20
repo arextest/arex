@@ -27,8 +27,6 @@ export const defaultState: State = {
   response: null,
   consoles: [],
   environment: { name: 'dev', variables: [{ key: 'name', value: 'ssss' }] },
-  theme: 'light',
-  locale: 'en',
   testResult: null,
   visualizer: {
     error: null,
