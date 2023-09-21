@@ -105,7 +105,7 @@ const Collection: ArexMenuFC = (props) => {
   }, [activePane]);
 
   const { data: labelData = [] } = useRequest(
-    () => ReportService.queryLabels({ workspaceId: activeWorkspaceId as string }),
+    () => ReportService.queryLabels({ workspaceId: activeWorkspaceId }),
     {
       ready: !!activeWorkspaceId,
       refreshDeps: [activeWorkspaceId],

@@ -8,7 +8,7 @@ export async function queryRequest(params: {
   nodeType: number;
   recordId?: string;
   planId?: string;
-}): Promise<ArexRESTRequest & { recordId: string; inherited: boolean }> {
+}): Promise<ArexRESTRequest & { recordId: string; inherited: boolean; tags: string[] }> {
   const res = await request.post<any>(
     `/report/filesystem/query${params.nodeType === 1 ? 'Interface' : 'Case'}`,
     params,

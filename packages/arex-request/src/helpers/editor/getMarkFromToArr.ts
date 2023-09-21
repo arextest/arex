@@ -1,4 +1,4 @@
-import { ArexEnvironment } from '../../../types';
+import { ArexEnvironment } from '../../types';
 
 export const REGEX_ENV_VAR = /\{\{(.+?)\}\}/g;
 // 获取文本标志位坐标数组

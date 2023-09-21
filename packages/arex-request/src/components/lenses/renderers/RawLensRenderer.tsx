@@ -2,7 +2,7 @@ import { css, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import { Editor } from '@arextest/monaco-react';
 import React, { FC } from 'react';
 
-import { ArexRESTResponse } from '../../../types/ArexRESTResponse';
+import { ArexRESTResponse } from '../../../types';
 
 const RawLensRenderer: FC<{ response?: ArexRESTResponse }> = ({ response }) => {
   const { theme } = useArexCoreConfig();

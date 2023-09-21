@@ -1,7 +1,6 @@
 import { CopyOutlined, DeleteOutlined, FieldTimeOutlined, PlusOutlined } from '@ant-design/icons';
-import { styled } from '@arextest/arex-core';
+import { copyToClipboard, styled } from '@arextest/arex-core';
 import { Button, message, Tooltip } from 'antd';
-import copy from 'copy-to-clipboard';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Updater } from 'use-immer';
@@ -61,7 +60,9 @@ const FormHeader: FC<{ update: Updater<KeyValueType[]>; title: string; dataSourc
   const handleClearAllParams = () => props.update([]);
 
   function copyUrl() {
-    copy(JSON.stringify(props.dataSource.map((i: any) => ({ key: i.key, value: i.value }))));
+    copyToClipboard(
+      JSON.stringify(props.dataSource.map((i: any) => ({ key: i.key, value: i.value }))),
+    );
     message.success('copy success🎉');
   }
 

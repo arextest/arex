@@ -1,14 +1,15 @@
 // 修改点
 // 1.删除了 req ArexRESTRequest
 // 2.body 为any
+import { ArexRESTHeader } from './ArexRESTHeader';
+
 export type ArexRESTResponse =
-  | { type: 'loading' }
+  | { type: 'loading'; headers: undefined }
   | {
       type: 'fail';
-      headers: { key: string; value: string }[];
+      headers: ArexRESTHeader[];
       body: any;
       statusCode: number;
-
       meta: {
         responseSize: number; // in bytes
         responseDuration: number; // in millis
@@ -16,15 +17,17 @@ export type ArexRESTResponse =
     }
   | {
       type: 'network_fail';
+      headers: undefined;
       error: Error;
     }
   | {
       type: 'script_fail';
+      headers: undefined;
       error: Error;
     }
   | {
       type: 'success';
-      headers: { key: string; value: string }[];
+      headers: ArexRESTHeader[];
       body: any;
       statusCode: number;
       meta: {

@@ -1,43 +1,63 @@
 import { css } from '@arextest/arex-core';
-import { Radio, Select } from 'antd';
+import { Radio, RadioChangeEvent, Select } from 'antd';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexRequestStore } from '../../hooks';
+import { ArexContentTypes } from '../../types';
 import BinaryBody from './BinaryBody';
-import RawBody from './RawBody';
+import RawBody, { HttpRawBodyRef } from './RawBody';
 
-const genContentType = (contentType: string | null) => {
+const genContentType = (contentType?: string) => {
   if (contentType?.includes('application/json')) {
     return 'raw';
   } else {
     return 'binary';
   }
 };
+
+const bigCateOptions = ['raw', 'binary'];
+
+const rawSmallCateOptions = [
+  {
+    label: 'JSON',
+    value: 'application/json',
+    test: <a>JSON</a>,
+  },
+];
+
 const HttpBody = () => {
   const { t } = useTranslation();
   const { store, dispatch } = useArexRequestStore();
 
-  const bigCateOptions = ['raw', 'binary'];
+  const rawBodyRef = useRef<HttpRawBodyRef>(null);
 
-  const rawSmallCateOptions = [
-    {
-      label: 'JSON',
-      value: 'application/json',
-      test: <a>JSON</a>,
-    },
-  ];
+  const isJsonContentType = useMemo(() => {
+    return ['application/json'].includes(store.request.body.contentType || '');
+  }, [store.request.body.contentType]);
 
-  const onChange = (value: any) => {
+  const onChange = (value: ArexContentTypes) => {
     dispatch((state) => {
       state.request.body.contentType = value;
     });
   };
-  const rawBodyRef = useRef<any>(null);
-  const isShow = useMemo(() => {
-    // @ts-ignore
-    return ['application/json'].includes(store.request.body.contentType);
-  }, [store.request.body.contentType]);
+
+  const handleContentTypeChange = (val: RadioChangeEvent) => {
+    if (val.target.value === 'binary') {
+      dispatch((state) => {
+        // @ts-ignore
+        state.request.body.contentType = '0';
+        // state.request.body.body = '';
+      });
+    }
+    if (val.target.value === 'raw') {
+      dispatch((state) => {
+        state.request.body.contentType = 'application/json';
+        // state.request.body.body = '';
+      });
+    }
+  };
+
   useEffect(() => {
     if (
       store.request.body.contentType?.includes('application/json') &&
@@ -68,48 +88,26 @@ const HttpBody = () => {
           <Radio.Group
             options={bigCateOptions}
             value={genContentType(store.request.body.contentType)}
-            onChange={(val) => {
-              if (val.target.value === 'binary') {
-                dispatch((state) => {
-                  // @ts-ignore
-                  state.request.body.contentType = '0';
-                  // state.request.body.body = '';
-                });
-              }
-              if (val.target.value === 'raw') {
-                dispatch((state) => {
-                  state.request.body.contentType = 'application/json';
-                  // state.request.body.body = '';
-                });
-              }
-            }}
+            onChange={handleContentTypeChange}
           />
 
-          <Select
-            css={css`
-              display: ${isShow ? 'inline-block' : 'none'};
-            `}
-            value={store.request.body.contentType}
-            bordered={false}
-            size={'small'}
-            options={rawSmallCateOptions}
-            optionLabelProp={'test'}
-            onChange={onChange}
-          />
+          {isJsonContentType && (
+            <Select
+              value={store.request.body.contentType}
+              bordered={false}
+              size={'small'}
+              options={rawSmallCateOptions}
+              optionLabelProp={'test'}
+              onChange={onChange}
+            />
+          )}
         </div>
-        <a
-          css={css`
-            display: ${isShow ? 'block' : 'none'};
-          `}
-          onClick={() => {
-            rawBodyRef.current.prettifyRequestBody();
-          }}
-        >
-          {t('action.prettify')}
-        </a>
+
+        {isJsonContentType && (
+          <a onClick={rawBodyRef?.current?.prettifyRequestBody}>{t('action.prettify')}</a>
+        )}
       </div>
-      {isShow && <RawBody ref={rawBodyRef} />}
-      {!isShow && <BinaryBody />}
+      {isJsonContentType ? <RawBody ref={rawBodyRef} /> : <BinaryBody />}
     </div>
   );
 };

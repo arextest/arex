@@ -1,3 +1,5 @@
+import { ArexVisualizer } from './ArexVisualizer';
+
 export interface ArexTestResult {
   async: boolean;
   error: string | null;
@@ -5,4 +7,6 @@ export interface ArexTestResult {
   name: string;
   passed: boolean;
   skipped: boolean;
+  consoles: any[];
+  visualizer: ArexVisualizer;
 }

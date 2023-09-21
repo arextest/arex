@@ -8,6 +8,6 @@ export type ArexRESTReqBody =
     }
   | ArexRESTReqBodyFormData
   | {
-      contentType: null;
-      body: null;
+      contentType: undefined;
+      body: undefined;
     };

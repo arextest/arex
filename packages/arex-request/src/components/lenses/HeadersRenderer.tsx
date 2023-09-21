@@ -4,12 +4,12 @@ import React from 'react';
 import { ArexRESTHeader } from '../../types';
 import LensesHeadersRendererEntry from './HeadersRendererEntry';
 
-const LensesHeadersRenderer: FC<{ headers: ArexRESTHeader[] }> = ({ headers }) => {
+const LensesHeadersRenderer: FC<{ headers?: ArexRESTHeader[] }> = (props) => {
   return (
     <div>
-      {headers.map((header, index) => {
-        return <LensesHeadersRendererEntry key={index} header={header} />;
-      })}
+      {props.headers?.map((header, index) => (
+        <LensesHeadersRendererEntry key={index} header={header} />
+      ))}
     </div>
   );
 };

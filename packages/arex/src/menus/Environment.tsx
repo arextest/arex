@@ -13,8 +13,8 @@ import React, { useMemo } from 'react';
 import { MenuSelect } from '@/components';
 import { MenusType, PanesType } from '@/constant';
 import { EnvironmentService } from '@/services';
+import { Environment } from '@/services/EnvironmentService/getEnvironments';
 import { useEnvironments, useWorkspaces } from '@/store';
-import { Environment } from '@/store/useEnvironments';
 
 const EnvironmentMenu: ArexMenuFC = (props) => {
   const { t } = useTranslation(['common', 'components']);

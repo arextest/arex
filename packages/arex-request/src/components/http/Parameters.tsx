@@ -5,9 +5,8 @@ import Icon, {
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { css } from '@arextest/arex-core';
+import { copyToClipboard, css } from '@arextest/arex-core';
 import { Button, Empty, Input, message, theme, Tooltip } from 'antd';
-import copy from 'copy-to-clipboard';
 import PM from 'postman-collection';
 import React, { FC, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -79,8 +78,8 @@ const HttpParameters: FC = () => {
               type='text'
               icon={<CopyOutlined />}
               onClick={() => {
-                copy(
-                  JSON.stringify(handledParams.map((i: any) => ({ key: i.key, value: i.value }))),
+                copyToClipboard(
+                  JSON.stringify(handledParams.map((i) => ({ key: i.key, value: i.value }))),
                 );
                 message.success('copy success🎉');
               }}

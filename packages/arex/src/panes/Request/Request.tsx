@@ -1,5 +1,10 @@
 import { ArexPaneFC, getLocalStorage } from '@arextest/arex-core';
-import { ArexRequest, ArexRequestProps, sendRequest } from '@arextest/arex-request';
+import {
+  ArexEnvironment,
+  ArexRequest,
+  ArexRequestProps,
+  ArexRESTRequest,
+} from '@arextest/arex-request';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
@@ -8,15 +13,14 @@ import { useSearchParams } from 'react-router-dom';
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { processTreeData } from '@/helpers/collection/util';
 import { useNavPane } from '@/hooks';
-import SaveAs from '@/panes/Request/SaveAs';
-import { FileSystemService, ReportService } from '@/services';
-import { moveCollectionItem, saveRequest } from '@/services/FileSystemService';
-import { useCollections, useEnvironments, useMenusPanes } from '@/store';
+import { EnvironmentService, FileSystemService, ReportService } from '@/services';
+import { useCollections, useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
 import { ExtraTabs } from './extra';
+import SaveAs from './SaveAs';
 
-function convertRequest(request: any) {
+function convertRequest(request: ArexRESTRequest) {
   if (request.inherited) {
     return {
       ...request,
@@ -31,53 +35,50 @@ function convertRequest(request: any) {
 const Request: ArexPaneFC = (props) => {
   const navPane = useNavPane({ inherit: true });
   const { message } = App.useApp();
-  const [activeWorkspaceId, id] = useMemo(
+  const [workspaceId, id] = useMemo(
     () => decodePaneKey(props.paneKey).id.split('-'),
     [props.paneKey],
   );
 
   const userName = getLocalStorage<string>(EMAIL_KEY);
   const [saveAsShow, setSaveAsShow] = useState(false);
-  const { activeEnvironment, timestamp: timestampEnvironment } = useEnvironments();
   const { collectionsFlatData, collectionsTreeData, getCollections, getPath } = useCollections();
   const { setPanes } = useMenusPanes();
 
-  const { data: labelData, run: queryLabels } = useRequest(
-    () => ReportService.queryLabels({ workspaceId: activeWorkspaceId as string }),
-    { ready: !!activeWorkspaceId },
+  const { data: labelData = [], run: queryLabels } = useRequest(
+    () => ReportService.queryLabels({ workspaceId: workspaceId as string }),
+    { ready: !!workspaceId },
+  );
+
+  const tagOptions = useMemo(
+    () =>
+      labelData.map((i) => ({
+        label: i.labelName,
+        value: i.id,
+        color: i.color,
+      })),
+    [labelData],
   );
 
   const nodeInfo = useMemo(() => collectionsFlatData.get(id), [collectionsFlatData, id]);
 
-  const environment = useMemo(
-    () => ({
-      name: activeEnvironment?.envName || '',
-      variables: activeEnvironment?.keyValues || [],
-    }),
-    [activeEnvironment],
-  );
-
-  const handleSend: ArexRequestProps['onSend'] = (request) => {
-    // TODO 这里使用继承
-    const convertedRequest = convertRequest(request);
-    return sendRequest(convertedRequest, environment).then((res) => {
-      return {
-        response: res.response,
-        testResult: res.testResult,
-        consoles: res.consoles,
-      };
-    });
-  };
+  const { data: environments } = useRequest(EnvironmentService.getEnvironments, {
+    defaultParams: [{ workspaceId }],
+    onSuccess(res) {
+      console.log(res);
+      setActiveEnvironment(res[0]);
+    },
+  });
 
   const httpRef = useRef(null);
 
   const { data: _, run: moveCollectionItemRun } = useRequest(
     (params) => {
-      return moveCollectionItem({
+      return FileSystemService.moveCollectionItem({
         fromNodePath: getPath(id).map((p) => p.id),
         toIndex: 0,
         toParentPath: getPath(params.toParentPath).map((p) => p.id),
-        id: activeWorkspaceId,
+        id: workspaceId,
       });
     },
     {
@@ -99,7 +100,7 @@ const Request: ArexPaneFC = (props) => {
       FileSystemService.addCollectionItem({
         ...params,
         userName: userName as string,
-        id: activeWorkspaceId,
+        id: workspaceId,
       }),
     {
       manual: true,
@@ -145,7 +146,7 @@ const Request: ArexPaneFC = (props) => {
 
       runPinMock(recordId);
     }
-    FileSystemService.saveRequest(activeWorkspaceId, requestParams, nodeInfo?.nodeType || 1).then(
+    FileSystemService.saveRequest(workspaceId, requestParams, nodeInfo?.nodeType || 1).then(
       (res) => {
         res && message.success('保存成功');
         getCollections();
@@ -184,14 +185,14 @@ const Request: ArexPaneFC = (props) => {
   const { run: runPinMock } = useRequest(
     (recordId) =>
       FileSystemService.pinMock({
-        workspaceId: activeWorkspaceId as string,
+        workspaceId: workspaceId as string,
         infoId: id,
         recordId,
         nodeType: nodeInfo?.nodeType || 2,
       }),
     {
       manual: true,
-      ready: !!activeWorkspaceId,
+      ready: !!workspaceId,
       onSuccess: (success) => {
         if (success) {
           message.success('pin success');
@@ -204,7 +205,7 @@ const Request: ArexPaneFC = (props) => {
   const { run: rename } = useRequest(
     (newName) =>
       FileSystemService.renameCollectionItem({
-        id: activeWorkspaceId,
+        id: workspaceId,
         newName,
         path: nodePathId,
         userName: userName as string,
@@ -213,7 +214,7 @@ const Request: ArexPaneFC = (props) => {
       manual: true,
       onSuccess(success, [name]) {
         if (success) {
-          getCollections(activeWorkspaceId);
+          getCollections(workspaceId);
           const { id, type } = decodePaneKey(props.paneKey);
           setPanes({
             id,
@@ -242,37 +243,35 @@ const Request: ArexPaneFC = (props) => {
     };
   }, [data]);
 
+  const [activeEnvironment, setActiveEnvironment] = useState<ArexEnvironment>();
   return (
     <>
       <ArexRequest
-        loading={!data}
         ref={httpRef}
-        disableSave={Boolean(searchParams.get('recordId'))}
-        height={`calc(100vh - 110px)`}
+        loading={!data}
+        height='calc(100vh - 110px)'
         data={data}
         config={httpConfig}
-        environment={environment}
+        environmentId={activeEnvironment?.id}
+        environments={environments}
+        onEnvironmentChange={setActiveEnvironment}
         breadcrumbItems={nodePath}
+        description={data?.description}
+        tags={data?.tags}
+        tagOptions={tagOptions}
+        disableSave={Boolean(searchParams.get('recordId'))}
         onSave={handleSave}
-        onSend={handleSend}
+        onBeforeSend={convertRequest}
         onSaveAs={() => {
           setSaveAsShow(true);
         }}
-        description={data?.description || ''}
-        // @ts-ignore
-        tags={data?.tags || []}
-        tagOptions={(labelData || []).map((i) => ({
-          label: i.labelName,
-          value: i.id,
-          color: i.color,
-        }))}
         onChange={({ title, description, tags }) => {
           if (title) {
             rename(title);
           }
           if (description) {
-            saveRequest(
-              activeWorkspaceId,
+            FileSystemService.saveRequest(
+              workspaceId,
               {
                 id: data?.id,
                 description,
@@ -281,8 +280,8 @@ const Request: ArexPaneFC = (props) => {
             );
           }
           if (tags) {
-            saveRequest(
-              activeWorkspaceId,
+            FileSystemService.saveRequest(
+              workspaceId,
               {
                 id: data?.id,
                 tags,

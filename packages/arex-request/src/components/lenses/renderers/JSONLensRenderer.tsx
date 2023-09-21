@@ -1,15 +1,10 @@
 import { CopyOutlined } from '@ant-design/icons';
-import { css, Theme, useArexCoreConfig } from '@arextest/arex-core';
+import { copyToClipboard, css, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import { Editor } from '@arextest/monaco-react';
-import { message, Tooltip } from 'antd';
-import copy from 'copy-to-clipboard';
+import { App, Tooltip, Typography } from 'antd';
 import React, { FC } from 'react';
 
-import { ArexRESTResponse } from '../../../types/ArexRESTResponse';
-function coppyUrl(text: string) {
-  copy(text);
-  message.success('copy success');
-}
+import { ArexRESTResponse } from '../../../types';
 function strToJson(str: string) {
   try {
     return JSON.parse(str);
@@ -18,9 +13,12 @@ function strToJson(str: string) {
   }
 }
 const JSONLensRenderer: FC<{ response?: ArexRESTResponse }> = ({ response }) => {
+  const { message } = App.useApp();
   const { theme } = useArexCoreConfig();
-  // @ts-ignore
-  const jsonObj = response.body;
+
+  const jsonObj =
+    response?.type === 'success' || response?.type === 'fail' ? response?.body : undefined;
+
   return (
     <div
       css={css`
@@ -31,21 +29,24 @@ const JSONLensRenderer: FC<{ response?: ArexRESTResponse }> = ({ response }) => 
     >
       <div
         css={css`
+          margin-top: 8px;
           display: flex;
           justify-content: space-between;
         `}
       >
-        <span>Response Body</span>
+        <Typography.Text type='secondary'>Response Body</Typography.Text>
         <div>
           <div>
-            <Tooltip title={'Copy'} placement={'left'}>
+            <Tooltip title='Copy' placement='left'>
               <a
                 css={css`
                   padding-bottom: 8px;
                   display: block;
                 `}
-                // @ts-ignore
-                onClick={() => coppyUrl(JSON.stringify(strToJson(jsonObj), null, 4))}
+                onClick={() => {
+                  copyToClipboard(JSON.stringify(strToJson(jsonObj), null, 4));
+                  message.success('copy success');
+                }}
               >
                 <CopyOutlined />
               </a>
@@ -60,6 +61,7 @@ const JSONLensRenderer: FC<{ response?: ArexRESTResponse }> = ({ response }) => 
         `}
       >
         <Editor
+          language='json'
           theme={theme === Theme.dark ? 'vs-dark' : 'light'}
           options={{
             minimap: {
@@ -72,7 +74,6 @@ const JSONLensRenderer: FC<{ response?: ArexRESTResponse }> = ({ response }) => 
             scrollBeyondLastLine: false,
             readOnly: true,
           }}
-          language={'json'}
           value={JSON.stringify(strToJson(jsonObj), null, 4)}
         />
       </div>

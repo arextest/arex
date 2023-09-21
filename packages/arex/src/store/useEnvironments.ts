@@ -4,17 +4,11 @@ import { persist } from 'zustand/middleware';
 
 import { WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
 import { EnvironmentService } from '@/services';
+import { Environment } from '@/services/EnvironmentService/getEnvironments';
 
 import useWorkspaces from './useWorkspaces';
 
 export type EnvironmentKeyValues = { key: string; value: string; active?: boolean };
-
-export type Environment = {
-  envName: string;
-  id: string;
-  keyValues?: EnvironmentKeyValues[];
-  workspaceId?: string;
-};
 
 export type EnvironmentState = {
   environments: Environment[];
@@ -52,6 +46,7 @@ const initialState: EnvironmentState = {
   timestamp: Date.now(), // 记录最后一次更新的时间戳, 用于强制刷新
 };
 
+// TODO REMOVE
 const useEnvironments = create(
   persist<EnvironmentState & EnvironmentAction>(
     (set, get) => {

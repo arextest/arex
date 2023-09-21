@@ -3,10 +3,7 @@ import Editor from '@arextest/monaco-react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { FC, useEffect, useRef, useState } from 'react';
 
-import {
-  getMarkFromToArr,
-  REGEX_ENV_VAR,
-} from '../../../helpers/editor/extensions/ArexEnvironment';
+import { getMarkFromToArr, REGEX_ENV_VAR } from '../../../helpers/editor/getMarkFromToArr';
 import { useArexRequestStore } from '../../../hooks';
 import SmartTooltip from '../Tooltip';
 import TooltipContent from './TooltipContent';

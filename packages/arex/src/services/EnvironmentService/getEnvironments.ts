@@ -1,9 +1,17 @@
-import { request } from '@/utils';
+import { ArexEnvironment } from '@arextest/arex-request/src';
 
-import { Environment } from '../../store/useEnvironments';
+import { EnvironmentKeyValues } from '@/store/useEnvironments';
+import { request } from '@/utils';
 
 export type GetEnvironmentReq = {
   workspaceId: string;
+};
+
+export type Environment = {
+  envName: string;
+  id: string;
+  keyValues?: EnvironmentKeyValues[];
+  workspaceId?: string;
 };
 
 export type GetEnvironmentRes = {
@@ -13,5 +21,13 @@ export type GetEnvironmentRes = {
 export default async function getEnvironments(params: GetEnvironmentReq) {
   return request
     .post<GetEnvironmentRes>(`/report/environment/queryEnvsByWorkspace`, params)
-    .then((res) => Promise.resolve(res.body.environments));
+    .then((res) =>
+      Promise.resolve<ArexEnvironment[]>(
+        res.body.environments.map((env) => ({
+          id: env.id,
+          name: env.envName,
+          variables: env.keyValues,
+        })),
+      ),
+    );
 }

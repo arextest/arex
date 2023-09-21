@@ -1,20 +1,24 @@
 import React, { createContext, Dispatch, FC, PropsWithChildren, useEffect } from 'react';
 import { useImmer } from 'use-immer';
 
-import { ArexEnvironment, ArexRESTRequest, ArexRESTResponse, ArexTestResult } from '../types';
+import { useArexRequestProps } from '../hooks';
+import {
+  ArexEnvironment,
+  ArexRESTRequest,
+  ArexRESTResponse,
+  ArexTestResult,
+  ArexVisualizer,
+} from '../types';
 
 export interface RequestStore {
   request: ArexRESTRequest;
   edited?: boolean;
+  environmentId?: string;
   environment?: ArexEnvironment;
   response?: ArexRESTResponse;
-  testResult?: ArexTestResult;
+  testResult?: ArexTestResult[];
   consoles?: any[];
-  visualizer?: {
-    data: any;
-    error: null | string;
-    processedTemplate: string;
-  };
+  visualizer?: ArexVisualizer;
 }
 
 const defaultState: RequestStore = {
@@ -38,7 +42,7 @@ const defaultState: RequestStore = {
     inherited: false,
     inheritedEndpoint: '',
     inheritedMethod: '',
-    description: 'miaoshu',
+    description: '',
   },
   edited: false,
   response: undefined,
@@ -57,15 +61,22 @@ export const RequestStoreContext = createContext<{
   dispatch: Dispatch<(state: RequestStore) => void>;
 }>({ store: defaultState, dispatch: () => {} });
 
-const RequestStoreProvider: FC<PropsWithChildren<{ request?: ArexRESTRequest }>> = (props) => {
+const RequestStoreProvider: FC<PropsWithChildren> = (props) => {
+  const { data, environments, environmentId } = useArexRequestProps();
   const [store, dispatch] = useImmer(defaultState);
 
   useEffect(() => {
-    props.request &&
+    data &&
       dispatch((state) => {
-        state.request = props.request!;
+        state.request = data;
       });
-  }, [props.request]);
+  }, [data]);
+
+  useEffect(() => {
+    dispatch((state) => {
+      state.environment = environments?.find((env) => env.id === environmentId);
+    });
+  }, [environments, environmentId]);
 
   return (
     <RequestStoreContext.Provider

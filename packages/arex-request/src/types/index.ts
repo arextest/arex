@@ -8,3 +8,4 @@ export type { ArexRESTReqBodyFormData } from './ArexRESTReqBodyFormData';
 export type { ArexRESTRequest } from './ArexRESTRequest';
 export type { ArexRESTResponse } from './ArexRESTResponse';
 export type { ArexTestResult } from './ArexTestResult';
+export type { ArexVisualizer } from './ArexVisualizer';

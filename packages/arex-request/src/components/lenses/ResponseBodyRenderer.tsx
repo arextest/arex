@@ -2,25 +2,25 @@ import { css } from '@arextest/arex-core';
 import { Badge, Tabs, Tag } from 'antd';
 import React, { FC, useMemo } from 'react';
 
-import { ArexRESTResponse } from '../../types';
+import { ArexRESTResponse, ArexTestResult } from '../../types';
 import Console from '../http/Console';
 import TestResult from '../http/TestResult';
 import LensesHeadersRenderer from './HeadersRenderer';
 import JSONLensRenderer from './renderers/JSONLensRenderer';
 import RawLensRenderer from './renderers/RawLensRenderer';
 
-const LensesResponseBodyRenderer: FC<{
+export type LensesResponseBodyRendererProps = {
   response?: ArexRESTResponse;
-  testResult?: any;
+  testResult?: ArexTestResult[];
   consoles?: any[];
-}> = ({ response, testResult, consoles }) => {
-  const headers = useMemo(() => {
-    if (response?.type === 'success') {
-      return response.headers;
-    } else {
-      return [];
-    }
-  }, [response]);
+};
+const LensesResponseBodyRenderer: FC<LensesResponseBodyRendererProps> = ({
+  response,
+  testResult,
+  consoles,
+}) => {
+  const headers = useMemo(() => (response?.type === 'success' ? response.headers : []), [response]);
+
   const items = [
     {
       label: 'JSON',
@@ -40,30 +40,16 @@ const LensesResponseBodyRenderer: FC<{
     {
       label: (
         <div>
-          {'Headers'}{' '}
-          <Tag
-            css={css`
-              display: ${headers.length > 0 ? 'inline-block' : 'none'};
-            `}
-          >
-            {headers.length}
-          </Tag>
+          {'Headers'} {headers.length ? <Tag>{headers.length}</Tag> : null}
         </div>
       ),
       key: '2',
-      // @ts-ignore
-      children: <LensesHeadersRenderer headers={response.headers} />,
+      children: <LensesHeadersRenderer headers={headers} />,
     },
     {
       label: (
         <div>
-          {'Result'}{' '}
-          <Badge
-            color={'blue'}
-            css={css`
-              display: ${testResult.length > 0 ? 'inline-block' : 'none'};
-            `}
-          />
+          {'Result'} {testResult?.length ? <Badge color='blue' /> : null}
         </div>
       ),
       key: '3',
@@ -72,19 +58,14 @@ const LensesResponseBodyRenderer: FC<{
     {
       label: (
         <div>
-          {'Console'}{' '}
-          <Badge
-            color={'blue'}
-            css={css`
-              display: ${consoles?.length ? 'inline-block' : 'none'};
-            `}
-          />
+          {'Console'} {consoles?.length ? <Badge color='blue' /> : null}
         </div>
       ),
       key: '4',
       children: <Console logs={consoles} />,
     },
   ];
+
   return (
     <div
       css={css`

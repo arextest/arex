@@ -1,7 +1,10 @@
 import { DeploymentUnitOutlined, EditOutlined } from '@ant-design/icons';
 import { styled } from '@arextest/arex-core';
 import { Button, Select, SelectProps, Tooltip } from 'antd';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
+
+import { useArexRequestProps, useArexRequestStore } from '../../hooks';
+import { ArexEnvironment } from '../../types';
 
 const EnvironmentSelectWrapper = styled.div`
   display: flex;
@@ -12,7 +15,7 @@ const EnvironmentSelectWrapper = styled.div`
   .ant-select {
     width: 160px;
     height: 34px;
-    margin-left: 0px;
+    margin-left: 0;
     box-sizing: content-box;
     .ant-select-selector {
       height: 100%;
@@ -23,14 +26,43 @@ const EnvironmentSelectWrapper = styled.div`
   }
 `;
 
-const EnvironmentSelect: FC<SelectProps> = (props) => {
+export type EnvironmentSelectProps = {
+  environmentId?: string;
+  environments?: ArexEnvironment[];
+  onEnvironmentChange?: (environment?: ArexEnvironment) => void;
+};
+
+const EnvironmentSelect: FC<EnvironmentSelectProps> = () => {
+  const { environmentId, environments, onEnvironmentChange } = useArexRequestProps();
+  const { store, dispatch } = useArexRequestStore();
+
+  const environmentOptions = useMemo<SelectProps['options']>(
+    () =>
+      environments?.map((env) => ({
+        label: env.name,
+        value: env.id,
+      })),
+    [environments],
+  );
+
+  const handleEnvironmentChange = (value: string) => {
+    const newEnv = environments?.find((env) => env.id === value);
+    onEnvironmentChange?.(newEnv);
+  };
+
   return (
     <EnvironmentSelectWrapper>
       <Tooltip title={'Environment'} placement='left'>
         <DeploymentUnitOutlined />
       </Tooltip>
 
-      <Select bordered={false} placeholder='Please select environment' {...props} />
+      <Select
+        bordered={false}
+        placeholder='Please select environment'
+        value={environmentId}
+        options={environmentOptions}
+        onChange={handleEnvironmentChange}
+      />
 
       <Tooltip title={'Edit'}>
         <Button icon={<EditOutlined />} type='text' />

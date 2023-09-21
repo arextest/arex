@@ -6,17 +6,15 @@ import { useTranslation } from 'react-i18next';
 
 import { useArexRequestStore } from '../../hooks';
 
-const HttpRawBody = (props: any, ref: any) => {
+export type HttpRawBodyRef = {
+  prettifyRequestBody: () => void;
+};
+
+const HttpRawBody = forwardRef<HttpRawBodyRef>((props, ref) => {
   const { theme } = useArexCoreConfig();
   const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
-  useImperativeHandle(ref, () => {
-    return {
-      prettifyRequestBody: function () {
-        prettifyRequestBody();
-      },
-    };
-  });
+
   const prettifyRequestBody = () => {
     try {
       const jsonObj = JSON.parse(store.request.body.body as string);
@@ -27,6 +25,13 @@ const HttpRawBody = (props: any, ref: any) => {
       message.error(t('error.json_prettify_invalid_body'));
     }
   };
+
+  useImperativeHandle(ref, () => {
+    return {
+      prettifyRequestBody,
+    };
+  });
+
   return (
     <div
       css={css`
@@ -58,6 +63,6 @@ const HttpRawBody = (props: any, ref: any) => {
       />
     </div>
   );
-};
+});
 
-export default forwardRef(HttpRawBody);
+export default HttpRawBody;

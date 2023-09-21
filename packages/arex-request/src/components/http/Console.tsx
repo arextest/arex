@@ -5,13 +5,13 @@ import ReactJson from 'react-json-view';
 
 const { useToken } = theme;
 const Console: FC<{ logs?: any[] }> = ({ logs }) => {
-  const theme1 = useToken();
   const { theme } = useArexCoreConfig();
+  const { token } = useToken();
   return (
     <div
       css={css`
-        border-left: 1px solid ${theme1.token.colorBorder};
-        border-top: 1px solid ${theme1.token.colorBorder};
+        border-left: 1px solid ${token.colorBorder};
+        border-top: 1px solid ${token.colorBorder};
       `}
     >
       {logs?.map((log, index) => {
@@ -27,8 +27,8 @@ const Console: FC<{ logs?: any[] }> = ({ logs }) => {
                 <div
                   key={lIndex}
                   css={css`
-                    border-right: 1px solid ${theme1.token.colorBorder};
-                    border-bottom: 1px solid ${theme1.token.colorBorder};
+                    border-right: 1px solid ${token.colorBorder};
+                    border-bottom: 1px solid ${token.colorBorder};
                     padding: 10px;
                     flex: 1;
                   `}
@@ -46,8 +46,8 @@ const Console: FC<{ logs?: any[] }> = ({ logs }) => {
                   css={css`
                     flex: 1;
                     padding: 10px;
-                    border-right: 1px solid ${theme1.token.colorBorder};
-                    border-bottom: 1px solid ${theme1.token.colorBorder};
+                    border-right: 1px solid ${token.colorBorder};
+                    border-bottom: 1px solid ${token.colorBorder};
                   `}
                 >
                   <span>{l}</span>

@@ -1,9 +1,18 @@
 import sdk from 'postman-collection';
 
+import {
+  ArexEnvironment,
+  ArexRESTParam,
+  ArexRESTRequest,
+  ArexRESTResponse,
+  ArexTestResult,
+  ArexVisualizer,
+} from '../../types';
 import { convertToPmBody } from './convertToPmBody';
-const convertToUrl = (requestParams: any) => {
-  const params: any = [];
-  requestParams.forEach(({ key, value }: any) => {
+
+const convertToUrl = (requestParams: ArexRESTParam[]) => {
+  const params: string[] = [];
+  requestParams.forEach(({ key, value }) => {
     const param = key + '=' + value;
     params.push(param);
   });
@@ -12,9 +21,14 @@ const convertToUrl = (requestParams: any) => {
 
 // 发送一个request
 export async function sendRequest(
-  hopReq: any,
-  environment: any,
-): Promise<{ response: any; testResult: any; consoles: any; visualizer: any }> {
+  request: ArexRESTRequest,
+  environment?: ArexEnvironment,
+): Promise<{
+  response: ArexRESTResponse;
+  testResult: ArexTestResult[];
+  consoles: any[];
+  visualizer: ArexVisualizer;
+}> {
   // @ts-ignore
   const runner = new window.PostmanRuntime.Runner();
   // arex数据接口转postman数据结构
@@ -27,29 +41,29 @@ export async function sendRequest(
     },
     item: [
       {
-        name: hopReq.name,
+        name: request.name,
         event: [
           {
             listen: 'prerequest',
             script: {
-              exec: [hopReq.preRequestScript],
+              exec: [request.preRequestScript],
               type: 'text/javascript',
             },
           },
           {
             listen: 'test',
             script: {
-              exec: [hopReq.testScript],
+              exec: [request.testScript],
               type: 'text/javascript',
             },
           },
         ],
         request: {
-          method: hopReq.method,
-          header: hopReq.headers.filter((i: any) => i.active),
-          body: convertToPmBody(hopReq.body),
+          method: request.method,
+          header: request.headers.filter((i) => i.active),
+          body: convertToPmBody(request.body),
           url: sdk.Url.parse(
-            hopReq.endpoint + convertToUrl(hopReq.params.filter((i: any) => i.active)),
+            request.endpoint + convertToUrl(request.params.filter((i) => i.active)),
           ),
         },
         response: [],
@@ -66,8 +80,8 @@ export async function sendRequest(
       collection,
       {
         environment: new sdk.VariableScope({
-          name: environment.name,
-          values: environment.variables,
+          name: environment?.name,
+          values: environment?.variables,
         }),
         fileResolver: {
           stat(src: any, cb: any) {
@@ -122,7 +136,6 @@ export async function sendRequest(
             //  }
           },
           item: function (err: any, cursor: any, item: any, visualizer: any) {
-            console.log('pm logs:', consolesBox, visualizer);
             resolve({
               response: res,
               testResult: assertionsBox,
@@ -140,7 +153,6 @@ export async function sendRequest(
             cookies: any,
             history: any,
           ) {
-            console.log(response);
             res = {
               type: 'success',
               headers: response.headers.members,

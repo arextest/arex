@@ -1,6 +1,5 @@
+import { Environment } from '@/services/EnvironmentService/getEnvironments';
 import { request } from '@/utils';
-
-import { Environment } from '../../store/useEnvironments';
 
 export type SaveEnvironmentReq = {
   env: Omit<Environment, 'id'> & { id?: string };
