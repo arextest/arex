@@ -6,11 +6,10 @@
   "module": "dist/arex-core.js",
   "type": "module",
   "scripts": {
-    "prepare": "npm run build:code && npm run build:decl",
     "build:code": "vite build",
     "build:decl": "tsc --project tsconfig.decl.json",
-    "do-build": "npm run build:code && npm run build:decl",
-    "do-build-core": "npm run build:code && npm run build:decl"
+    "do-build": "pnpm run build:code && pnpm run build:decl",
+    "do-build-core": "pnpm run build:code && pnpm run build:decl"
   },
   "types": "dist/index.d.ts",
   "files": [

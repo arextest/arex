@@ -6,7 +6,7 @@
   "module": "dist/arex-request.js",
   "homepage": "https://github.com/arextest/arex-request",
   "scripts": {
-    "prepare": "pnpm run do-build",
+    "preinstall": "pnpm -w run build:core",
     "build:code": "tsc && vite build",
     "do-build": "pnpm run build:code",
     "do-test": "vitest",
@@ -17,7 +17,6 @@
     "dist/*"
   ],
   "dependencies": {
-    "arex-request-runtime": "^1.0.2",
     "@arextest/arex-core": "workspace:latest",
     "@arextest/monaco-react": "^4.5.1",
     "@ant-design/icons": "^5.2.6",
