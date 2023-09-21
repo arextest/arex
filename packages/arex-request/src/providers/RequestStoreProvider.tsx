@@ -23,6 +23,7 @@ export interface RequestStore {
 
 const defaultState: RequestStore = {
   request: {
+    id: '',
     preRequestScript: '',
     v: '',
     headers: [],

@@ -3,7 +3,7 @@ import { styled } from '@arextest/arex-core';
 import { Button, Select, SelectProps, Tooltip } from 'antd';
 import React, { FC, useMemo } from 'react';
 
-import { useArexRequestProps, useArexRequestStore } from '../../hooks';
+import { useArexRequestProps } from '../../hooks';
 import { ArexEnvironment } from '../../types';
 
 const EnvironmentSelectWrapper = styled.div`
@@ -34,7 +34,6 @@ export type EnvironmentSelectProps = {
 
 const EnvironmentSelect: FC<EnvironmentSelectProps> = () => {
   const { environmentId, environments, onEnvironmentChange } = useArexRequestProps();
-  const { store, dispatch } = useArexRequestStore();
 
   const environmentOptions = useMemo<SelectProps['options']>(
     () =>

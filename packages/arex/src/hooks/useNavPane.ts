@@ -18,7 +18,7 @@ function useNavPane(options?: NavPaneOptions) {
   const nav = useNavigate();
   const { setPanes, activePane } = useMenusPanes();
 
-  return function (pane: Pane | string) {
+  return function <D>(pane: Pane<D> | string) {
     const match = decodeUrl();
 
     if (typeof pane === 'string') {
