@@ -2,13 +2,11 @@ import { SaveOutlined } from '@ant-design/icons';
 import { css, RequestMethod, styled } from '@arextest/arex-core';
 import { Button, Checkbox, Divider, Select, Space } from 'antd';
 import { cloneDeep } from 'lodash';
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexRequestStore } from '../../hooks';
-import { ArexRESTResponse } from '../../types/ArexRESTResponse';
-import { PostmanTestResult } from '../../types/PostmanTestResult';
-import { ArexRESTRequest } from '../../types/rest';
+import { ArexRESTRequest, ArexRESTResponse, ArexTestResult } from '../../types';
 import SmartBreadcrumb, { SmartBreadcrumbProps } from '../smart/Breadcrumb';
 import EnvInput from '../smart/EnvInput';
 import EnvironmentSelect from './EnvironmentSelect';
@@ -26,7 +24,7 @@ export interface HttpRequestProps extends SmartBreadcrumbProps {
   breadcrumbItems?: { title: string }[];
   onSend?: (
     request: ArexRESTRequest,
-  ) => Promise<{ response: ArexRESTResponse; testResult: PostmanTestResult }>;
+  ) => Promise<{ response: ArexRESTResponse; testResult: ArexTestResult }>;
   onSave?: (request?: ArexRESTRequest, response?: ArexRESTResponse) => void;
   onSaveAs?: () => void;
 }

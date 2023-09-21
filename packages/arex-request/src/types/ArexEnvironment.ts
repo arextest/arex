@@ -1,6 +1,6 @@
 export type EnvironmentKeyValues = { key: string; value: string };
 
-export type Environment = {
+export type ArexEnvironment = {
   id: string;
   name: string;
   variables?: EnvironmentKeyValues[];

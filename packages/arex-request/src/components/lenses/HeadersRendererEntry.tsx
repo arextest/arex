@@ -2,10 +2,10 @@ import { styled } from '@arextest/arex-core';
 import { Col, Row, theme } from 'antd';
 import React, { FC } from 'react';
 
-import { HoppRESTHeader } from '../../types/rest';
+import { ArexRESTHeader } from '../../types';
 
 const { useToken } = theme;
-const LensesHeadersRendererEntry: FC<{ header: HoppRESTHeader }> = ({ header }) => {
+const LensesHeadersRendererEntry: FC<{ header: ArexRESTHeader }> = ({ header }) => {
   const token = useToken();
   const Test = styled.div`
     border-right: 1px solid ${() => token.token.colorBorder};

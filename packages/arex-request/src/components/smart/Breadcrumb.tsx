@@ -1,11 +1,11 @@
 import { EditOutlined } from '@ant-design/icons';
 import { css } from '@arextest/arex-core';
 import { Breadcrumb, Input, Select, Space, Typography } from 'antd';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 
 import { useArexRequestProps } from '../../hooks';
 
-const { Text, Link } = Typography;
+const { Text } = Typography;
 
 export interface SmartBreadcrumbProps {
   titleItems?: { title: string }[];

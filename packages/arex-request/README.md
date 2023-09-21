@@ -101,7 +101,7 @@ function MainBox({ src }) {
 
 整个组件的核心数据
 
-**`environment: Environment`**
+**`environment: ArexEnvironment`**
 
 当前环境变量
 

@@ -1,11 +1,10 @@
 import { css, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import { Editor } from '@arextest/monaco-react';
 import { message } from 'antd';
-import { forwardRef, useImperativeHandle } from 'react';
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useArexRequestProps, useArexRequestStore } from '../../hooks';
+import { useArexRequestStore } from '../../hooks';
 
 const HttpRawBody = (props: any, ref: any) => {
   const { theme } = useArexCoreConfig();

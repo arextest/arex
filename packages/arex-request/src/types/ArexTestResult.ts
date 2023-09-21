@@ -1,4 +1,4 @@
-export interface PostmanTestResult {
+export interface ArexTestResult {
   async: boolean;
   error: string | null;
   index: number;

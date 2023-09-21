@@ -3,11 +3,7 @@ import { Allotment } from 'allotment';
 import { Spin, TabPaneProps } from 'antd';
 import React, { forwardRef, useImperativeHandle } from 'react';
 
-import { useArexRequestProps } from '../hooks';
-import { ArexRESTResponse } from '../types/ArexRESTResponse';
-import { Environment } from '../types/environment';
-import { PostmanTestResult } from '../types/PostmanTestResult';
-import { ArexRESTRequest } from '../types/rest';
+import { ArexEnvironment, ArexRESTRequest } from '../types';
 import HttpRequest, { HttpRequestProps } from './http/Request';
 import HttpRequestOptions from './http/RequestOptions';
 import HttpResponse from './http/Response';
@@ -30,7 +26,7 @@ export type HttpConfig = {
 export interface RequestProps extends HttpRequestProps {
   loading?: boolean;
   height?: string;
-  environments?: Environment[];
+  environments?: ArexEnvironment[];
   data?: ArexRESTRequest;
   config?: HttpConfig;
 }

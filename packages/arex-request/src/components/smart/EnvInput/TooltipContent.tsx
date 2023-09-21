@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 
-import { Environment } from '../../../types/environment';
+import { ArexEnvironment } from '../../../types';
 
-const TooltipContent: FC<{ match: any; mockEnvironment?: Environment }> = ({
+const TooltipContent: FC<{ match: any; mockEnvironment?: ArexEnvironment }> = ({
   match,
   mockEnvironment,
 }) => {

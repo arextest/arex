@@ -1,10 +1,10 @@
 import { FC } from 'react';
 import React from 'react';
 
-import { HoppRESTHeader } from '../../types/rest';
+import { ArexRESTHeader } from '../../types';
 import LensesHeadersRendererEntry from './HeadersRendererEntry';
 
-const LensesHeadersRenderer: FC<{ headers: HoppRESTHeader[] }> = ({ headers }) => {
+const LensesHeadersRenderer: FC<{ headers: ArexRESTHeader[] }> = ({ headers }) => {
   return (
     <div>
       {headers.map((header, index) => {

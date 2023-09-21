@@ -1,17 +1,14 @@
 import React, { createContext, Dispatch, FC, PropsWithChildren, useEffect } from 'react';
 import { useImmer } from 'use-immer';
 
-import { ArexRESTResponse } from '../types/ArexRESTResponse';
-import { Environment } from '../types/environment';
-import { PostmanTestResult } from '../types/PostmanTestResult';
-import { ArexRESTRequest } from '../types/rest';
+import { ArexEnvironment, ArexRESTRequest, ArexRESTResponse, ArexTestResult } from '../types';
 
 export interface RequestStore {
   request: ArexRESTRequest;
   edited?: boolean;
-  environment?: Environment;
+  environment?: ArexEnvironment;
   response?: ArexRESTResponse;
-  testResult?: PostmanTestResult;
+  testResult?: ArexTestResult;
   consoles?: any[];
   visualizer?: {
     data: any;

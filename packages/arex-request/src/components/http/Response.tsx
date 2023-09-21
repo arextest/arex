@@ -2,8 +2,7 @@ import { css } from '@arextest/arex-core';
 import React, { useMemo } from 'react';
 
 import { useArexRequestStore } from '../../hooks';
-import { ArexRESTResponse } from '../../types/ArexRESTResponse';
-import { PostmanTestResult } from '../../types/PostmanTestResult';
+import { ArexRESTResponse, ArexTestResult } from '../../types';
 import LensesResponseBodyRenderer from '../lenses/ResponseBodyRenderer';
 import HttpResponseMeta from './ResponseMeta';
 
@@ -32,7 +31,7 @@ const HttpResponse = () => {
       {!loading && hasResponse ? (
         <LensesResponseBodyRenderer
           response={store.response as ArexRESTResponse}
-          testResult={store.testResult as PostmanTestResult}
+          testResult={store.testResult as ArexTestResult}
           consoles={store.consoles}
         />
       ) : null}

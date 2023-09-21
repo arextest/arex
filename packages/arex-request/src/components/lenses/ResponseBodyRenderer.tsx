@@ -2,7 +2,7 @@ import { css } from '@arextest/arex-core';
 import { Badge, Tabs, Tag } from 'antd';
 import React, { FC, useMemo } from 'react';
 
-import { ArexRESTResponse } from '../../types/ArexRESTResponse';
+import { ArexRESTResponse } from '../../types';
 import Console from '../http/Console';
 import TestResult from '../http/TestResult';
 import LensesHeadersRenderer from './HeadersRenderer';

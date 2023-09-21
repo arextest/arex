@@ -1,4 +1,4 @@
-export const knownContentTypes = {
+export const KnownContentTypes = {
   'application/json': 'json',
   'application/ld+json': 'json',
   'application/hal+json': 'json',
@@ -10,4 +10,4 @@ export const knownContentTypes = {
   'text/plain': 'plain',
 };
 
-export type ValidContentTypes = keyof typeof knownContentTypes;
+export type ArexContentTypes = keyof typeof KnownContentTypes;

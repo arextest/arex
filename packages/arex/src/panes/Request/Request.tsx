@@ -1,8 +1,7 @@
 import { ArexPaneFC, getLocalStorage } from '@arextest/arex-core';
 import { ArexRequest, ArexRequestProps, sendRequest } from '@arextest/arex-request';
-import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Spin } from 'antd';
+import { App } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
@@ -133,11 +132,11 @@ const Request: ArexPaneFC = (props) => {
   const handleSave: ArexRequestProps['onSave'] = (requestParams, response) => {
     const request = requestParams;
     if (
-      !request.headers.find((i) => i.key === 'arex-record-id') &&
+      !request?.headers.find((i) => i.key === 'arex-record-id') &&
       (response?.type === 'success' ? response.headers : []).find(
         (i) => i.key === 'arex-record-id',
       ) &&
-      request.headers.find((i) => i.key === 'arex-force-record')?.active
+      request?.headers.find((i) => i.key === 'arex-force-record')?.active
     ) {
       const recordId =
         response?.type === 'success'
@@ -150,11 +149,11 @@ const Request: ArexPaneFC = (props) => {
       (res) => {
         res && message.success('保存成功');
         getCollections();
-        const { id, type } = decodePaneKey(paneKey);
+        const { id, type } = decodePaneKey(props.paneKey);
         setPanes({
           id,
           type,
-          icon: requestParams.method,
+          icon: requestParams?.method,
         });
       },
     );
@@ -215,7 +214,7 @@ const Request: ArexPaneFC = (props) => {
       onSuccess(success, [name]) {
         if (success) {
           getCollections(activeWorkspaceId);
-          const { id, type } = decodePaneKey(paneKey);
+          const { id, type } = decodePaneKey(props.paneKey);
           setPanes({
             id,
             type,
@@ -246,7 +245,7 @@ const Request: ArexPaneFC = (props) => {
   return (
     <>
       <ArexRequest
-        spinning={!data}
+        loading={!data}
         ref={httpRef}
         disableSave={Boolean(searchParams.get('recordId'))}
         height={`calc(100vh - 110px)`}

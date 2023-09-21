@@ -6,7 +6,7 @@ import { FC, useEffect, useRef, useState } from 'react';
 import {
   getMarkFromToArr,
   REGEX_ENV_VAR,
-} from '../../../helpers/editor/extensions/HoppEnvironment';
+} from '../../../helpers/editor/extensions/ArexEnvironment';
 import { useArexRequestStore } from '../../../hooks';
 import SmartTooltip from '../Tooltip';
 import TooltipContent from './TooltipContent';

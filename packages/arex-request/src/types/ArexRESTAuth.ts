@@ -1,21 +1,21 @@
-export type HoppRESTAuthNone = {
+export type ArexRESTAuthNone = {
   authType: 'none';
 };
 
-export type HoppRESTAuthBasic = {
+export type ArexRESTAuthBasic = {
   authType: 'basic';
 
   username: string;
   password: string;
 };
 
-export type HoppRESTAuthBearer = {
+export type ArexRESTAuthBearer = {
   authType: 'bearer';
 
   token: string;
 };
 
-export type HoppRESTAuthOAuth2 = {
+export type ArexRESTAuthOAuth2 = {
   authType: 'oauth-2';
 
   token: string;
@@ -26,18 +26,17 @@ export type HoppRESTAuthOAuth2 = {
   scope: string;
 };
 
-export type HoppRESTAuthAPIKey = {
+export type ArexRESTAuthAPIKey = {
   authType: 'api-key';
-
   key: string;
   value: string;
   addTo: string;
 };
 
-export type HoppRESTAuth = { authActive: boolean } & (
-  | HoppRESTAuthNone
-  | HoppRESTAuthBasic
-  | HoppRESTAuthBearer
-  | HoppRESTAuthOAuth2
-  | HoppRESTAuthAPIKey
+export type ArexRESTAuth = { authActive: boolean } & (
+  | ArexRESTAuthNone
+  | ArexRESTAuthBasic
+  | ArexRESTAuthBearer
+  | ArexRESTAuthOAuth2
+  | ArexRESTAuthAPIKey
 );

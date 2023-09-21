@@ -5,7 +5,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { getStatusCodeReasonPhrase } from '../../helpers/utils/statusCodes';
-import { ArexRESTResponse } from '../../types/ArexRESTResponse';
+import { ArexRESTResponse } from '../../types';
 // import { getStatusCodeReasonPhrase } from '../../helpers/utils/statusCodes';
 
 const HttpResponseMeta: FC<{ response?: ArexRESTResponse }> = ({ response }) => {

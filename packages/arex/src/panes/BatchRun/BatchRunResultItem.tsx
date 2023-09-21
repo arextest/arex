@@ -1,6 +1,6 @@
 import { RequestMethodIcon } from '@arextest/arex-core';
+import type { ArexRESTRequest } from '@arextest/arex-request';
 import { sendRequest, TestResult } from '@arextest/arex-request';
-import { ArexRESTRequest } from '@arextest/arex-request/dist/components/http/data/rest';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Divider, Space, Spin, Typography } from 'antd';

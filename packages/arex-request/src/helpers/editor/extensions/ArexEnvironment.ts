@@ -1,11 +1,11 @@
-import { Environment } from '../../../types/environment';
+import { ArexEnvironment } from '../../../types';
 
 export const REGEX_ENV_VAR = /\{\{(.+?)\}\}/g;
 // 获取文本标志位坐标数组
 export const getMarkFromToArr = (
   text: string,
   reg: RegExp,
-  currentEnv?: Environment,
+  currentEnv?: ArexEnvironment,
 ): {
   from: number;
   to: number;
