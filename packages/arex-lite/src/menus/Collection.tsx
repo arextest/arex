@@ -1,6 +1,6 @@
 import { ApiOutlined } from '@ant-design/icons';
 import { ArexMenuFC, createArexMenu } from '@arextest/arex-core';
-import { Button } from 'antd';
+import { Button, Space } from 'antd';
 import React from 'react';
 
 import { MenusType, PanesType } from '@/constant';
@@ -8,8 +8,7 @@ import { requestCollection } from '@/mocks/requestCollection';
 
 const Collection: ArexMenuFC = (props) => {
   return (
-    <div style={{ padding: '8px' }}>
-      {/*{selectedKey}*/}
+    <Space direction='vertical' style={{ padding: '8px' }}>
       {requestCollection.map((r) => {
         return (
           <Button
@@ -19,11 +18,11 @@ const Collection: ArexMenuFC = (props) => {
               props.onSelect?.(r.id);
             }}
           >
-            {r.title}
+            {r.name}
           </Button>
         );
       })}
-    </div>
+    </Space>
   );
 };
 
