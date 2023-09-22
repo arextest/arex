@@ -7,6 +7,9 @@ export type SaveEnvironmentReq = {
 
 export default async function saveEnvironment(params: SaveEnvironmentReq) {
   return request
-    .post<{ success: boolean }>(`/report/environment/saveEnvironment`, params)
+    .post<{
+      success: boolean;
+      // TODO id
+    }>(`/report/environment/saveEnvironment`, params)
     .then((res) => res.body.success);
 }

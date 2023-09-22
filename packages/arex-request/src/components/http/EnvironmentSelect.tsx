@@ -1,7 +1,7 @@
-import { DeploymentUnitOutlined, EditOutlined } from '@ant-design/icons';
+import { DeploymentUnitOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { styled } from '@arextest/arex-core';
-import { Button, Select, SelectProps, Tooltip } from 'antd';
-import React, { FC, useMemo } from 'react';
+import { Button, Divider, Input, Select, SelectProps, Space, Tooltip } from 'antd';
+import React, { FC, useMemo, useState } from 'react';
 
 import { useArexRequestProps } from '../../hooks';
 import { ArexEnvironment } from '../../types';
@@ -27,26 +27,37 @@ const EnvironmentSelectWrapper = styled.div`
 `;
 
 export type EnvironmentSelectProps = {
-  environmentId?: string;
-  environments?: ArexEnvironment[];
-  onEnvironmentChange?: (environment?: ArexEnvironment) => void;
+  environmentProps?: {
+    environmentId?: string;
+    environments?: ArexEnvironment[];
+    onAdd?: (name?: string) => void;
+    onChange?: (environment?: ArexEnvironment) => void;
+    onEdit?: (environment: ArexEnvironment) => void;
+  };
 };
 
 const EnvironmentSelect: FC<EnvironmentSelectProps> = () => {
-  const { environmentId, environments, onEnvironmentChange } = useArexRequestProps();
+  const { environmentProps } = useArexRequestProps();
+  const [newEnvironmentName, setNewEnvironmentName] = useState<string>();
 
   const environmentOptions = useMemo<SelectProps['options']>(
     () =>
-      environments?.map((env) => ({
+      environmentProps?.environments?.map((env) => ({
         label: env.name,
         value: env.id,
       })),
-    [environments],
+    [environmentProps?.environments],
   );
 
-  const handleEnvironmentChange = (value: string) => {
-    const newEnv = environments?.find((env) => env.id === value);
-    onEnvironmentChange?.(newEnv);
+  const handleEnvironmentChange = (environmentId: string) => {
+    const newEnv = environmentProps?.environments?.find((env) => env.id === environmentId);
+    environmentProps?.onChange?.(newEnv);
+  };
+
+  const handleEnvironmentEdit = (environmentId?: string) => {
+    if (!environmentId) return;
+    const newEnv = environmentProps?.environments?.find((env) => env.id === environmentId);
+    newEnv && environmentProps?.onEdit?.(newEnv);
   };
 
   return (
@@ -58,13 +69,42 @@ const EnvironmentSelect: FC<EnvironmentSelectProps> = () => {
       <Select
         bordered={false}
         placeholder='Please select environment'
-        value={environmentId}
+        value={environmentProps?.environmentId}
+        popupMatchSelectWidth={210}
+        dropdownStyle={{
+          right: 4,
+        }}
+        dropdownRender={(menu) => (
+          <>
+            {menu}
+            <Divider style={{ margin: '8px 0' }} />
+            <Space style={{ padding: '0 8px 4px' }}>
+              <Input
+                size='small'
+                placeholder='Enter new environment'
+                value={newEnvironmentName}
+                onChange={(e) => setNewEnvironmentName(e.target.value)}
+                style={{ width: '162px', marginRight: '4px' }}
+              />
+              <Button
+                type='text'
+                size='small'
+                icon={<PlusOutlined />}
+                onClick={() => environmentProps?.onAdd?.(newEnvironmentName)}
+              />
+            </Space>
+          </>
+        )}
         options={environmentOptions}
         onChange={handleEnvironmentChange}
       />
 
       <Tooltip title={'Edit'}>
-        <Button icon={<EditOutlined />} type='text' />
+        <Button
+          icon={<EditOutlined />}
+          type='text'
+          onClick={() => handleEnvironmentEdit?.(environmentProps?.environmentId)}
+        />
       </Tooltip>
     </EnvironmentSelectWrapper>
   );

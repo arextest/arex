@@ -1,4 +1,4 @@
-import { ArexPaneFC, getLocalStorage } from '@arextest/arex-core';
+import { ArexPaneFC, getLocalStorage, useTranslation } from '@arextest/arex-core';
 import {
   ArexEnvironment,
   ArexRequest,
@@ -16,6 +16,7 @@ import { EnvironmentService, FileSystemService, ReportService } from '@/services
 import { useCollections } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
+import EnvironmentDrawer, { EnvironmentDrawerRef } from './EnvironmentDrawer';
 import { ExtraTabs } from './extra';
 import SaveAs from './SaveAs';
 
@@ -38,6 +39,7 @@ export type RequestProps = {
 };
 
 const Request: ArexPaneFC<RequestProps> = (props) => {
+  const { t } = useTranslation();
   const navPane = useNavPane({ inherit: true });
   const { message } = App.useApp();
   const { id: paneId, type } = decodePaneKey(props.paneKey);
@@ -47,6 +49,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const nodeInfo = useMemo(() => collectionsFlatData.get(id), [collectionsFlatData, id]);
 
   const httpRef = useRef(null);
+  const environmentDrawerRef = useRef<EnvironmentDrawerRef>(null);
 
   const userName = getLocalStorage<string>(EMAIL_KEY);
   const [saveAsShow, setSaveAsShow] = useState(false);
@@ -73,15 +76,18 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     [collectionsFlatData, id],
   );
 
-  const { data: environments } = useRequest(EnvironmentService.getEnvironments, {
-    defaultParams: [{ workspaceId }],
-    onSuccess(res) {
-      if (props.data.environmentId) {
-        const env = res.find((env) => env.id === props.data.environmentId);
-        setActiveEnvironment(env);
-      }
+  const { data: environments, refresh: refreshEnvironments } = useRequest(
+    EnvironmentService.getEnvironments,
+    {
+      defaultParams: [{ workspaceId }],
+      onSuccess(res) {
+        if (props.data?.environmentId) {
+          const env = res.find((env) => env.id === props.data.environmentId);
+          setActiveEnvironment(env);
+        }
+      },
     },
-  });
+  );
 
   const { run: addCollectionItem } = useRequest(
     (params: {
@@ -154,10 +160,10 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const { data, run } = useRequest(
     () =>
       FileSystemService.queryRequest({
-        id: id as string,
+        id,
         nodeType: nodeInfo?.nodeType || 1,
         recordId: props.data?.recordId,
-        planId: props.data.planId,
+        planId: props.data?.planId,
       }),
     {
       refreshDeps: [nodeInfo?.nodeType],
@@ -224,7 +230,32 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     };
   }, [data]);
 
-  const handleEnvironmentChange: ArexRequestProps['onEnvironmentChange'] = (environment) => {
+  const { run: createNewEnvironment } = useRequest(
+    (envName) =>
+      EnvironmentService.saveEnvironment({
+        env: {
+          envName,
+          workspaceId,
+          keyValues: [],
+        },
+      }),
+    {
+      manual: true,
+      onSuccess(success, [envName]) {
+        if (success) {
+          // environmentDrawerRef?.current?.open({
+          //   name: envName,
+          //   // id, // TODO
+          //   variables: [],
+          // });
+        } else {
+          message.error(t('message.createFailed', { ns: 'common' }));
+        }
+      },
+    },
+  );
+
+  const handleEnvironmentChange = (environment?: ArexEnvironment) => {
     navPane({
       id: paneId,
       type,
@@ -234,6 +265,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     });
     setActiveEnvironment(environment);
   };
+
   return (
     <>
       <ArexRequest
@@ -242,9 +274,13 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         height='calc(100vh - 110px)'
         data={data}
         config={httpConfig}
-        environmentId={activeEnvironment?.id}
-        environments={environments}
-        onEnvironmentChange={handleEnvironmentChange}
+        environmentProps={{
+          environmentId: activeEnvironment?.id,
+          environments: environments,
+          onChange: handleEnvironmentChange,
+          onAdd: createNewEnvironment,
+          onEdit: environmentDrawerRef?.current?.open,
+        }}
         breadcrumbItems={nodePath}
         description={data?.description}
         tags={data?.tags}
@@ -281,6 +317,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
           }
         }}
       />
+
       <SaveAs
         show={saveAsShow}
         onClose={() => {
@@ -288,6 +325,12 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         }}
         onOk={handleSaveAs}
         collection={processTreeData(collectionsTreeData.filter((item) => item.nodeType !== 1))}
+      />
+
+      <EnvironmentDrawer
+        ref={environmentDrawerRef}
+        workspaceId={workspaceId}
+        onUpdate={refreshEnvironments}
       />
     </>
   );

@@ -4,9 +4,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { DEFAULT_LANGUAGE, PanesType } from '@/constant';
-import { useCollections } from '@/store';
-import { useEnvironments, useWorkspaces } from '@/store';
-import useMenusPanes from '@/store/useMenusPanes';
+import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { globalStoreInit } from '@/utils';
 
 const useInit = () => {
@@ -68,18 +66,7 @@ const useInit = () => {
           },
         };
 
-        const url = encodeUrl(mergedParams, data);
-        nav(url);
-      },
-    );
-
-    // subscribe active workspace change and update url
-    const unSubscribeWorkspaces = useWorkspaces.subscribe(
-      (state) => state.activeWorkspaceId,
-      () => {
-        // useMenusPanes.getState().reset();
-        useEnvironments.getState().reset();
-        useCollections.getState().getCollections();
+        nav(encodeUrl(mergedParams, data));
       },
     );
 
@@ -92,7 +79,6 @@ const useInit = () => {
 
     return () => {
       unSubscribeMenusPane();
-      unSubscribeWorkspaces();
     };
   }, []);
 };

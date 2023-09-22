@@ -63,7 +63,7 @@ export const RequestStoreContext = createContext<{
 }>({ store: defaultState, dispatch: () => {} });
 
 const RequestStoreProvider: FC<PropsWithChildren> = (props) => {
-  const { data, environments, environmentId } = useArexRequestProps();
+  const { data, environmentProps } = useArexRequestProps();
   const [store, dispatch] = useImmer(defaultState);
 
   useEffect(() => {
@@ -75,9 +75,11 @@ const RequestStoreProvider: FC<PropsWithChildren> = (props) => {
 
   useEffect(() => {
     dispatch((state) => {
-      state.environment = environments?.find((env) => env.id === environmentId);
+      state.environment = environmentProps?.environments?.find(
+        (env) => env.id === environmentProps?.environmentId,
+      );
     });
-  }, [environments, environmentId]);
+  }, [environmentProps]);
 
   return (
     <RequestStoreContext.Provider

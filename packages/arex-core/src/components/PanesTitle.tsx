@@ -1,7 +1,7 @@
 import { CheckOutlined, CloseOutlined, EditOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Input, Space, theme, Typography } from 'antd';
-import React, { ReactNode, useState } from 'react';
+import React, { HTMLProps, ReactNode, useState } from 'react';
 
 import { SmallTextButton } from './index';
 
@@ -11,6 +11,7 @@ export type PanesTitleProps = {
   editable?: boolean; // when title types is string take effect
   onSave?: (title: string) => void;
 };
+
 const PanesTitle = styled((props: PanesTitleProps) => {
   const { title, extra, editable, onSave, ...extraProps } = props;
   const { token } = theme.useToken();
