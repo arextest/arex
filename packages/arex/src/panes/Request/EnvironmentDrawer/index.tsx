@@ -7,7 +7,7 @@ import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { EnvironmentService } from '@/services';
-import { EnvironmentKeyValues } from '@/store/useEnvironments';
+import { EnvironmentKeyValues } from '@/services/EnvironmentService/getEnvironments';
 
 import EditableKeyValueTable, { useColumns } from './EditableKeyValueTable';
 
@@ -19,6 +19,8 @@ export type EnvironmentDrawerProps = {
 export type EnvironmentDrawerRef = {
   open: (env: ArexEnvironment) => void;
 };
+
+export type WorkspaceEnvironmentPair = { [workspaceId: string]: string };
 
 const EnvironmentDrawer = forwardRef<EnvironmentDrawerRef, EnvironmentDrawerProps>((props, ref) => {
   const [open, setOpen] = useState(false);

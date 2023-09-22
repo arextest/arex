@@ -69,7 +69,6 @@ export interface ArexPanesContainerProps extends Omit<TabsProps, 'items' | 'onDr
 }
 
 const ArexPanesContainerWrapper = styled.div`
-  height: 100%;
   // 工作区 Tabs 全局样式调整
   .ant-tabs-tab {
     .ant-tabs-tab-btn {
@@ -186,7 +185,7 @@ const ArexPanesContainer = (props: ArexPanesContainerProps) => {
                     id={`arex-pane-wrapper-${pane.key}`}
                     style={{
                       padding: Pane.noPadding ? 0 : '8px 16px',
-                      height: '100%',
+                      height: 'calc(100vh - 106px)',
                     }}
                   >
                     {React.createElement(Pane, paneProps)}

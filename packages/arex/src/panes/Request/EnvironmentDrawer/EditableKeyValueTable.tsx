@@ -5,7 +5,7 @@ import { ColumnsType } from 'antd/es/table';
 import React from 'react';
 import { Updater } from 'use-immer';
 
-import { EnvironmentKeyValues } from '@/store/useEnvironments';
+import { EnvironmentKeyValues } from '@/services/EnvironmentService/getEnvironments';
 
 const EditableKeyValueTable = styled(Table)<
   TableProps<EnvironmentKeyValues> & { showHeader?: boolean }

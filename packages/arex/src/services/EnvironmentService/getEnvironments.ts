@@ -1,11 +1,12 @@
 import { ArexEnvironment } from '@arextest/arex-request/src';
 
-import { EnvironmentKeyValues } from '@/store/useEnvironments';
 import { request } from '@/utils';
 
 export type GetEnvironmentReq = {
   workspaceId: string;
 };
+
+export type EnvironmentKeyValues = { key: string; value: string; active?: boolean };
 
 export type Environment = {
   envName: string;

@@ -4,9 +4,7 @@ import { sendRequest, TestResult } from '@arextest/arex-request';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Divider, Space, Spin, Typography } from 'antd';
-import React, { FC, useMemo } from 'react';
-
-import { useEnvironments } from '@/store';
+import React, { FC } from 'react';
 
 const { Text } = Typography;
 
@@ -16,18 +14,13 @@ export type BatchRunResultItemProps = {
 const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
   const { method, name, endpoint } = props.data;
 
-  const { activeEnvironment } = useEnvironments();
-  const environment = useMemo(
-    () => ({
-      name: activeEnvironment?.envName || '',
-      variables: activeEnvironment?.keyValues || [],
-    }),
-    [activeEnvironment],
-  );
-
   const { data, loading } = useRequest(sendRequest, {
-    defaultParams: [props.data, environment],
+    defaultParams: [
+      props.data,
+      { id: 'xxx', name: 'xxx', variables: [] }, //environment
+    ],
   });
+
   return (
     <div
       css={css`
@@ -62,12 +55,7 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
         </Spin>
       </div>
 
-      <Divider
-        css={css`
-          margin: 0;
-          margin-top: 10px;
-        `}
-      />
+      <Divider style={{ margin: 0, marginTop: '8px' }} />
     </div>
   );
 };

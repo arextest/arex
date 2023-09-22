@@ -87,7 +87,7 @@ const Collection: ArexMenuFC = (props) => {
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
   const { activeWorkspaceId, workspaces, getWorkspaces, setActiveWorkspaceId } = useWorkspaces();
-  const { activePane, menuCollapsed, reset: resetPane } = useMenusPanes();
+  const { activePane, reset: resetPane } = useMenusPanes();
   const { loading, collectionsTreeData, collectionsFlatData, getCollections } = useCollections();
 
   const [searchValue, setSearchValue] = useState<SearchDataType>();

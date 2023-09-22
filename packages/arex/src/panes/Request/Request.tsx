@@ -1,36 +1,28 @@
 import { ArexPaneFC, getLocalStorage, useTranslation } from '@arextest/arex-core';
-import {
-  ArexEnvironment,
-  ArexRequest,
-  ArexRequestProps,
-  ArexRESTRequest,
-} from '@arextest/arex-request';
+import { ArexEnvironment, ArexRequest, ArexRequestProps } from '@arextest/arex-request';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
 
-import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
+import {
+  CollectionNodeType,
+  EMAIL_KEY,
+  PanesType,
+  WORKSPACE_ENVIRONMENT_PAIR_KEY,
+} from '@/constant';
 import { processTreeData } from '@/helpers/collection/util';
 import { useNavPane } from '@/hooks';
 import { EnvironmentService, FileSystemService, ReportService } from '@/services';
 import { useCollections } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
-import EnvironmentDrawer, { EnvironmentDrawerRef } from './EnvironmentDrawer';
+import EnvironmentDrawer, {
+  EnvironmentDrawerRef,
+  WorkspaceEnvironmentPair,
+} from './EnvironmentDrawer';
 import { ExtraTabs } from './extra';
 import SaveAs from './SaveAs';
-
-function convertRequest(request: ArexRESTRequest) {
-  if (request.inherited) {
-    return {
-      ...request,
-      method: request.inheritedMethod,
-      endpoint: request.inheritedEndpoint,
-    };
-  } else {
-    return request;
-  }
-}
+import { convertRequest, updateWorkspaceEnvironmentLS } from './utils';
 
 export type RequestProps = {
   recordId?: string;
@@ -81,8 +73,12 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     {
       defaultParams: [{ workspaceId }],
       onSuccess(res) {
-        if (props.data?.environmentId) {
-          const env = res.find((env) => env.id === props.data.environmentId);
+        const workspaceEnvironmentPair = getLocalStorage<WorkspaceEnvironmentPair>(
+          WORKSPACE_ENVIRONMENT_PAIR_KEY,
+        );
+        const initialEnvId = props.data?.environmentId || workspaceEnvironmentPair?.[workspaceId];
+        if (initialEnvId) {
+          const env = res.find((env) => env.id === initialEnvId);
           setActiveEnvironment(env);
         }
       },
@@ -220,7 +216,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
             label: 'Mock',
             key: 'mock',
             hidden: !data?.recordId,
-            children: <ExtraTabs.RequestTabs.Mock recordId={data?.recordId as string} />,
+            children: <ExtraTabs.RequestTabs.Mock recordId={data?.recordId} />,
           },
         ],
       },
@@ -264,6 +260,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       },
     });
     setActiveEnvironment(environment);
+    environment && updateWorkspaceEnvironmentLS(workspaceId, environment.id);
   };
 
   return (
