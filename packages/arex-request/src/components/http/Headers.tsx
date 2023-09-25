@@ -10,10 +10,11 @@ import FormTable, { useColumns } from './FormTable';
 const HttpHeaders = () => {
   const { t } = useTranslation();
   const { store, dispatch } = useArexRequestStore();
-  const [requestHeaders, setRequestHeaders] = useImmer<any>([]);
+  const [requestHeaders, setRequestHeaders] = useImmer<any>(store.request.headers);
+
   useEffect(() => {
     setRequestHeaders(
-      store.request.headers.map((i: any) => ({
+      store.request.headers.map((i) => ({
         ...i,
         id: String(Math.random()),
       })),
@@ -35,7 +36,7 @@ const HttpHeaders = () => {
       />
       <FormTable
         size='small'
-        rowKey={'id'}
+        rowKey={'id'} // TODO wrong rowKey
         pagination={false}
         dataSource={requestHeaders}
         // @ts-ignore

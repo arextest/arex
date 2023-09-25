@@ -59,7 +59,7 @@ const HttpRequestOptions: FC<HttpRequestOptionsProps> = () => {
         ),
         key: '1',
         children: <HttpHeaders />,
-        forceRender: true,
+        // forceRender: true,
       },
       {
         label: (

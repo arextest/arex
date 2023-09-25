@@ -36,7 +36,7 @@ export type EnvironmentSelectProps = {
 
 const EnvironmentSelect: FC<EnvironmentSelectProps> = (_props) => {
   const { environmentProps } = useArexRequestProps();
-  const props = _props || environmentProps;
+  const props = Object.keys(_props).length ? _props : environmentProps;
 
   const [newEnvironmentName, setNewEnvironmentName] = useState<string>();
 
@@ -104,7 +104,7 @@ const EnvironmentSelect: FC<EnvironmentSelectProps> = (_props) => {
         onDropdownVisibleChange={(open) => !open && setNewEnvironmentName(undefined)}
       />
 
-      {props.onEdit && (
+      {props?.onEdit && (
         <Tooltip title={'Edit'}>
           <Button
             icon={<EditOutlined />}

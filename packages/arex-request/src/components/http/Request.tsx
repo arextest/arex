@@ -72,10 +72,17 @@ const HttpRequest: FC<HttpRequestProps> = () => {
           justify-content: space-between;
         `}
       >
-        <div style={{ marginLeft: '8px', display: 'flex', justifyContent: 'space-between' }}>
+        <div
+          style={{
+            width: '100%',
+            marginLeft: '8px',
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
           <SmartBreadcrumb />
 
-          <Space style={{ float: 'right' }}>
+          <Space style={{ float: 'right', marginRight: '8px' }}>
             <Button
               id={'arex-request-save-btn'}
               size='small'
