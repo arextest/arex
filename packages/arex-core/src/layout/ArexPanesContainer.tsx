@@ -69,6 +69,7 @@ export interface ArexPanesContainerProps extends Omit<TabsProps, 'items' | 'onDr
 }
 
 const ArexPanesContainerWrapper = styled.div`
+  height: 100%;
   // 工作区 Tabs 全局样式调整
   .ant-tabs-tab {
     .ant-tabs-tab-btn {

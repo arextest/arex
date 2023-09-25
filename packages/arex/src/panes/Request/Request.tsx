@@ -4,13 +4,7 @@ import { useRequest } from 'ahooks';
 import { App } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
 
-import {
-  CollectionNodeType,
-  EMAIL_KEY,
-  PanesType,
-  WORKSPACE_ENVIRONMENT_PAIR_KEY,
-} from '@/constant';
-import { processTreeData } from '@/helpers/collection/util';
+import { EMAIL_KEY, WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { EnvironmentService, FileSystemService, ReportService } from '@/services';
 import { useCollections } from '@/store';
@@ -21,7 +15,7 @@ import EnvironmentDrawer, {
   WorkspaceEnvironmentPair,
 } from './EnvironmentDrawer';
 import { ExtraTabs } from './extra';
-import SaveAs from './SaveAs';
+import SaveAs, { SaveAsRef } from './SaveAs';
 import { convertRequest, updateWorkspaceEnvironmentLS } from './utils';
 
 export type RequestProps = {
@@ -34,17 +28,17 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const { t } = useTranslation();
   const navPane = useNavPane({ inherit: true });
   const { message } = App.useApp();
-  const { id: paneId, type } = decodePaneKey(props.paneKey);
-  const [workspaceId, id] = useMemo(() => paneId.split('-'), [paneId]);
 
-  const { collectionsFlatData, collectionsTreeData, getCollections, getPath } = useCollections();
-  const nodeInfo = useMemo(() => collectionsFlatData.get(id), [collectionsFlatData, id]);
+  const { getCollections } = useCollections();
+  const userName = getLocalStorage<string>(EMAIL_KEY);
+  const { id: paneId, type } = decodePaneKey(props.paneKey);
+  // requestId structure: workspaceId-nodeTypeStr-id
+  const [workspaceId, nodeTypeStr, id] = useMemo(() => paneId.split('-'), [paneId]);
+  const nodeType = useMemo(() => parseInt(nodeTypeStr), [nodeTypeStr]);
 
   const httpRef = useRef(null);
+  const saveAsRef = useRef<SaveAsRef>(null);
   const environmentDrawerRef = useRef<EnvironmentDrawerRef>(null);
-
-  const userName = getLocalStorage<string>(EMAIL_KEY);
-  const [saveAsShow, setSaveAsShow] = useState(false);
 
   const [activeEnvironment, setActiveEnvironment] = useState<ArexEnvironment>();
 
@@ -57,15 +51,6 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         color: i.color,
       })),
     [labelData],
-  );
-
-  const nodePathId = useMemo(() => getPath(id).map((path) => path.id), [collectionsFlatData, id]);
-  const nodePath = useMemo(
-    () =>
-      getPath(id).map((path) => ({
-        title: path.name,
-      })),
-    [collectionsFlatData, id],
   );
 
   const { data: environments, refresh: refreshEnvironments } = useRequest(
@@ -85,45 +70,6 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     },
   );
 
-  const { run: addCollectionItem } = useRequest(
-    (params: {
-      nodeName: string;
-      nodeType: CollectionNodeType;
-      caseSourceType?: number;
-      parentPath: string[];
-    }) =>
-      FileSystemService.addCollectionItem({
-        ...params,
-        userName: userName as string,
-        id: workspaceId,
-      }),
-    {
-      manual: true,
-      onSuccess: (res) => {
-        if (res.success) {
-          setSaveAsShow(false);
-          // 保存完跳转
-          // httpRef.current?.onSave({ id: res.infoId });
-          setTimeout(() => {
-            navPane({
-              id: res.infoId,
-              type: PanesType.REQUEST,
-            });
-          }, 300);
-        }
-      },
-    },
-  );
-
-  const handleSaveAs = ({ savePath }: { savePath: string }) => {
-    // 先添加，再触发 save ！
-    addCollectionItem({
-      nodeName: 'Untitled',
-      nodeType: CollectionNodeType.interface,
-      parentPath: getPath(savePath).map((i) => i.id),
-    });
-  };
-
   const handleSave: ArexRequestProps['onSave'] = (requestParams, response) => {
     const request = requestParams;
     if (
@@ -140,30 +86,24 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
 
       runPinMock(recordId);
     }
-    FileSystemService.saveRequest(workspaceId, requestParams, nodeInfo?.nodeType || 1).then(
-      (res) => {
-        res && message.success('保存成功');
-        getCollections();
-        navPane({
-          id: paneId,
-          type,
-          icon: requestParams?.method,
-        });
-      },
-    );
+    FileSystemService.saveRequest(workspaceId, requestParams, nodeType).then((res) => {
+      res && message.success('保存成功');
+      getCollections();
+      navPane({
+        id: paneId,
+        type,
+        icon: requestParams?.method,
+      });
+    });
   };
 
-  const { data, run } = useRequest(
-    () =>
-      FileSystemService.queryRequest({
-        id,
-        nodeType: nodeInfo?.nodeType || 1,
-        recordId: props.data?.recordId,
-        planId: props.data?.planId,
-      }),
-    {
-      refreshDeps: [nodeInfo?.nodeType],
-    },
+  const { data, run } = useRequest(() =>
+    FileSystemService.queryRequest({
+      id,
+      nodeType,
+      recordId: props.data?.recordId,
+      planId: props.data?.planId,
+    }),
   );
 
   const { run: runPinMock } = useRequest(
@@ -172,7 +112,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         workspaceId: workspaceId as string,
         infoId: id,
         recordId,
-        nodeType: nodeInfo?.nodeType || 2,
+        nodeType,
       }),
     {
       manual: true,
@@ -191,7 +131,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       FileSystemService.renameCollectionItem({
         id: workspaceId,
         newName,
-        path: nodePathId,
+        path: [], // TODO: get nodePathId from details
         userName: userName as string,
       }),
     {
@@ -237,13 +177,14 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       }),
     {
       manual: true,
-      onSuccess(success, [envName]) {
+      onSuccess({ success, environmentId }, [envName]) {
         if (success) {
-          // environmentDrawerRef?.current?.open({
-          //   name: envName,
-          //   // id, // TODO
-          //   variables: [],
-          // });
+          environmentDrawerRef?.current?.open({
+            name: envName,
+            id: environmentId,
+            variables: [],
+          });
+          refreshEnvironments();
         } else {
           message.error(t('message.createFailed', { ns: 'common' }));
         }
@@ -278,16 +219,14 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
           onAdd: createNewEnvironment,
           onEdit: environmentDrawerRef?.current?.open,
         }}
-        breadcrumbItems={nodePath}
+        // breadcrumbItems={nodePath} // TODO: get nodePathName from details
         description={data?.description}
         tags={data?.tags}
         tagOptions={tagOptions}
         disableSave={!!props.data?.recordId}
         onSave={handleSave}
         onBeforeSend={convertRequest}
-        onSaveAs={() => {
-          setSaveAsShow(true);
-        }}
+        onSaveAs={() => saveAsRef?.current?.open()}
         onChange={({ title, description, tags }) => {
           if (title) {
             rename(title);
@@ -299,7 +238,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
                 id: data?.id,
                 description,
               },
-              nodeInfo?.nodeType || 1,
+              nodeType,
             );
           }
           if (tags) {
@@ -309,20 +248,13 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
                 id: data?.id,
                 tags,
               },
-              nodeInfo?.nodeType || 1,
+              nodeType,
             );
           }
         }}
       />
 
-      <SaveAs
-        show={saveAsShow}
-        onClose={() => {
-          setSaveAsShow(false);
-        }}
-        onOk={handleSaveAs}
-        collection={processTreeData(collectionsTreeData.filter((item) => item.nodeType !== 1))}
-      />
+      <SaveAs ref={saveAsRef} workspaceId={workspaceId} />
 
       <EnvironmentDrawer
         ref={environmentDrawerRef}

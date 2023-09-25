@@ -17,7 +17,7 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
   const { data, loading } = useRequest(sendRequest, {
     defaultParams: [
       props.data,
-      { id: 'xxx', name: 'xxx', variables: [] }, //environment
+      { id: 'xxx', name: 'xxx', variables: [] }, //TODO: environment
     ],
   });
 

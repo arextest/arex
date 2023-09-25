@@ -26,8 +26,9 @@ export type HttpRequestProps = {
   onBeforeSend?: (request: ArexRESTRequest, environment?: ArexEnvironment) => ArexRESTRequest;
   onSave?: (request?: ArexRESTRequest, response?: ArexRESTResponse) => void;
   onSaveAs?: () => void;
-} & SmartBreadcrumbProps &
-  EnvironmentSelectProps;
+} & SmartBreadcrumbProps & {
+    environmentProps?: EnvironmentSelectProps;
+  };
 
 const HttpRequest: FC<HttpRequestProps> = () => {
   const {

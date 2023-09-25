@@ -27,17 +27,15 @@ const EnvironmentSelectWrapper = styled.div`
 `;
 
 export type EnvironmentSelectProps = {
-  environmentProps?: {
-    environmentId?: string;
-    environments?: ArexEnvironment[];
-    onAdd?: (name?: string) => void;
-    onChange?: (environment?: ArexEnvironment) => void;
-    onEdit?: (environment: ArexEnvironment) => void;
-  };
+  environmentId?: string;
+  environments?: ArexEnvironment[];
+  onAdd?: (name?: string) => void;
+  onChange?: (environment?: ArexEnvironment) => void;
+  onEdit?: (environment: ArexEnvironment) => void;
 };
 
-const EnvironmentSelect: FC<EnvironmentSelectProps> = () => {
-  const { environmentProps } = useArexRequestProps();
+const EnvironmentSelect: FC<EnvironmentSelectProps> = (props) => {
+  const { environmentProps = props } = useArexRequestProps();
   const [newEnvironmentName, setNewEnvironmentName] = useState<string>();
 
   const environmentOptions = useMemo<SelectProps['options']>(
@@ -97,6 +95,7 @@ const EnvironmentSelect: FC<EnvironmentSelectProps> = () => {
         )}
         options={environmentOptions}
         onChange={handleEnvironmentChange}
+        onDropdownVisibleChange={(open) => !open && setNewEnvironmentName(undefined)}
       />
 
       <Tooltip title={'Edit'}>

@@ -1,8 +1,9 @@
 import { css } from '@arextest/arex-core';
 import { Allotment } from 'allotment';
 import { Spin, TabPaneProps } from 'antd';
-import React, { FC } from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 
+import { useArexRequestStore } from '../hooks';
 import { ArexRESTRequest } from '../types';
 import HttpRequest, { HttpRequestProps } from './http/Request';
 import HttpRequestOptions from './http/RequestOptions';
@@ -30,8 +31,23 @@ export interface RequestProps extends HttpRequestProps {
   config?: HttpConfig;
 }
 
-const Request: FC<RequestProps> = (props) => {
+export type RequestRef = {
+  onSave: () => void;
+  onSaveAs: () => void;
+};
+
+const Request = forwardRef<RequestRef, RequestProps>((props, ref) => {
   const { loading = false, height } = props;
+  const { store } = useArexRequestStore();
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      onSave: () => props.onSave?.(store.request, store.response),
+      onSaveAs: () => props.onSaveAs?.(),
+    }),
+    [props, store.request, store.response],
+  );
 
   return (
     <Spin spinning={loading}>
@@ -66,5 +82,5 @@ const Request: FC<RequestProps> = (props) => {
       </Allotment>
     </Spin>
   );
-};
+});
 export default Request;

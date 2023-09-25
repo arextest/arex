@@ -168,7 +168,7 @@ const Collection: ArexMenuFC = (props) => {
 
       navPane({
         type: PanesType.REQUEST,
-        id: `${activeWorkspaceId}-${info.node.infoId}`,
+        id: `${activeWorkspaceId}-${info.node.nodeType}-${info.node.infoId}`,
         name: info.node.nodeName,
         icon,
       });
@@ -406,7 +406,7 @@ const Collection: ArexMenuFC = (props) => {
                   onClick={() => {
                     navPane({
                       type: PanesType.BATCH_RUN,
-                      id: 'root',
+                      id: activeWorkspaceId,
                     });
                   }}
                 />

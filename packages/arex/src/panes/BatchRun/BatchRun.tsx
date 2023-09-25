@@ -1,9 +1,10 @@
 import { ArexPaneFC, EmptyWrapper } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { Button, Card, TreeSelect, Typography } from 'antd';
+import { Button, Card, TreeSelect } from 'antd';
 import { cloneDeep } from 'lodash';
 import React, { Key, useMemo, useState } from 'react';
 
+import { CollectionNodeType } from '@/constant';
 import BatchRunResultItem from '@/panes/BatchRun/BatchRunResultItem';
 import { FileSystemService } from '@/services';
 import { useCollections } from '@/store';
@@ -35,7 +36,9 @@ const BatchRun: ArexPaneFC = (props) => {
     loading,
   } = useRequest(() =>
     Promise.all(
-      checkValue.map((key) => FileSystemService.queryRequest({ id: String(key), nodeType: 2 })),
+      checkValue.map((key) =>
+        FileSystemService.queryRequest({ id: String(key), nodeType: CollectionNodeType.case }),
+      ),
     ),
   );
 

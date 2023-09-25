@@ -46,7 +46,7 @@ const EnvironmentDrawer = forwardRef<EnvironmentDrawerRef, EnvironmentDrawerProp
 
   const { run: saveEnv } = useRequest(EnvironmentService.saveEnvironment, {
     manual: true,
-    onSuccess(success, [{ env }]) {
+    onSuccess({ success }, [{ env }]) {
       if (success) {
         message.success(t('message.saveSuccess', { ns: 'common' }));
         updateState({ id: env.id as string, name: env.envName, variables: env.keyValues });
@@ -54,21 +54,6 @@ const EnvironmentDrawer = forwardRef<EnvironmentDrawerRef, EnvironmentDrawerProp
       }
     },
   });
-
-  // const { run: duplicateEnvironment } = useRequest(
-  //   () =>
-  //     EnvironmentService.duplicateEnvironment({
-  //       id: environment.id,
-  //       workspaceId: activeWorkspaceId as string,
-  //     }),
-  //   {
-  //     manual: true,
-  //     ready: !!activeWorkspaceId,
-  //     onSuccess(success) {
-  //       // success && getEnvironments();
-  //     },
-  //   },
-  // );
 
   const { run: deleteEnvironment } = useRequest(
     () =>
