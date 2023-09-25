@@ -160,7 +160,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
                       onClick={() => {
                         navPane({
                           type: PanesType.BATCH_RUN,
-                          id: props.data.infoId,
+                          id: `${activeWorkspaceId}-${props.data.infoId}`,
                         });
                       }}
                     >

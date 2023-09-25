@@ -34,28 +34,30 @@ export type EnvironmentSelectProps = {
   onEdit?: (environment: ArexEnvironment) => void;
 };
 
-const EnvironmentSelect: FC<EnvironmentSelectProps> = (props) => {
-  const { environmentProps = props } = useArexRequestProps();
+const EnvironmentSelect: FC<EnvironmentSelectProps> = (_props) => {
+  const { environmentProps } = useArexRequestProps();
+  const props = _props || environmentProps;
+
   const [newEnvironmentName, setNewEnvironmentName] = useState<string>();
 
   const environmentOptions = useMemo<SelectProps['options']>(
     () =>
-      environmentProps?.environments?.map((env) => ({
+      props?.environments?.map((env) => ({
         label: env.name,
         value: env.id,
       })),
-    [environmentProps?.environments],
+    [props?.environments],
   );
 
   const handleEnvironmentChange = (environmentId: string) => {
-    const newEnv = environmentProps?.environments?.find((env) => env.id === environmentId);
-    environmentProps?.onChange?.(newEnv);
+    const newEnv = props?.environments?.find((env) => env.id === environmentId);
+    props?.onChange?.(newEnv);
   };
 
   const handleEnvironmentEdit = (environmentId?: string) => {
     if (!environmentId) return;
-    const newEnv = environmentProps?.environments?.find((env) => env.id === environmentId);
-    newEnv && environmentProps?.onEdit?.(newEnv);
+    const newEnv = props?.environments?.find((env) => env.id === environmentId);
+    newEnv && props?.onEdit?.(newEnv);
   };
 
   return (
@@ -67,7 +69,7 @@ const EnvironmentSelect: FC<EnvironmentSelectProps> = (props) => {
       <Select
         bordered={false}
         placeholder='Please select environment'
-        value={environmentProps?.environmentId}
+        value={props?.environmentId}
         popupMatchSelectWidth={210}
         dropdownStyle={{
           right: 4,
@@ -75,22 +77,26 @@ const EnvironmentSelect: FC<EnvironmentSelectProps> = (props) => {
         dropdownRender={(menu) => (
           <>
             {menu}
-            <Divider style={{ margin: '8px 0' }} />
-            <Space style={{ padding: '0 8px 4px' }}>
-              <Input
-                size='small'
-                placeholder='Enter new environment'
-                value={newEnvironmentName}
-                onChange={(e) => setNewEnvironmentName(e.target.value)}
-                style={{ width: '162px', marginRight: '4px' }}
-              />
-              <Button
-                type='text'
-                size='small'
-                icon={<PlusOutlined />}
-                onClick={() => environmentProps?.onAdd?.(newEnvironmentName)}
-              />
-            </Space>
+            {props?.onAdd && (
+              <>
+                <Divider style={{ margin: '8px 0' }} />
+                <Space style={{ padding: '0 8px 4px' }}>
+                  <Input
+                    size='small'
+                    placeholder='Enter new environment'
+                    value={newEnvironmentName}
+                    onChange={(e) => setNewEnvironmentName(e.target.value)}
+                    style={{ width: '162px', marginRight: '4px' }}
+                  />
+                  <Button
+                    type='text'
+                    size='small'
+                    icon={<PlusOutlined />}
+                    onClick={() => props?.onAdd?.(newEnvironmentName)}
+                  />
+                </Space>
+              </>
+            )}
           </>
         )}
         options={environmentOptions}
@@ -98,13 +104,15 @@ const EnvironmentSelect: FC<EnvironmentSelectProps> = (props) => {
         onDropdownVisibleChange={(open) => !open && setNewEnvironmentName(undefined)}
       />
 
-      <Tooltip title={'Edit'}>
-        <Button
-          icon={<EditOutlined />}
-          type='text'
-          onClick={() => handleEnvironmentEdit?.(environmentProps?.environmentId)}
-        />
-      </Tooltip>
+      {props.onEdit && (
+        <Tooltip title={'Edit'}>
+          <Button
+            icon={<EditOutlined />}
+            type='text'
+            onClick={() => handleEnvironmentEdit?.(props?.environmentId)}
+          />
+        </Tooltip>
+      )}
     </EnvironmentSelectWrapper>
   );
 };

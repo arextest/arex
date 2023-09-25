@@ -1,6 +1,6 @@
 import { RequestMethodIcon } from '@arextest/arex-core';
-import type { ArexRESTRequest } from '@arextest/arex-request';
-import { sendRequest, TestResult } from '@arextest/arex-request';
+import type { ArexEnvironment, ArexRESTRequest } from '@arextest/arex-request';
+import { ResponseMeta, sendRequest, TestResult } from '@arextest/arex-request';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Divider, Space, Spin, Typography } from 'antd';
@@ -9,16 +9,14 @@ import React, { FC } from 'react';
 const { Text } = Typography;
 
 export type BatchRunResultItemProps = {
+  environment?: ArexEnvironment;
   data: ArexRESTRequest;
 };
 const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
   const { method, name, endpoint } = props.data;
 
-  const { data, loading } = useRequest(sendRequest, {
-    defaultParams: [
-      props.data,
-      { id: 'xxx', name: 'xxx', variables: [] }, //TODO: environment
-    ],
+  const { data, loading } = useRequest(() => sendRequest(props.data, props.environment), {
+    refreshDeps: [props.data, props.environment],
   });
 
   return (
@@ -27,11 +25,13 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
         padding: 8px;
       `}
     >
-      <Space>
+      <Space size='large'>
         {React.createElement(RequestMethodIcon[method])}
         <Text>{name}</Text>
         <Text type='secondary'>{endpoint}</Text>
       </Space>
+
+      <ResponseMeta response={data?.response} />
 
       <div style={{ minHeight: '32px' }}>
         <Spin spinning={loading}>

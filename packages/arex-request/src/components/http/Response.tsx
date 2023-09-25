@@ -6,11 +6,10 @@ import LensesResponseBodyRenderer from '../lenses/ResponseBodyRenderer';
 import HttpResponseMeta from './ResponseMeta';
 
 const HttpResponseWrapper = styled.div`
+  padding: 8px 12px;
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding-left: 16px;
-  padding-right: 16px;
 `;
 
 const HttpResponse = () => {

@@ -1,21 +1,23 @@
-import { css } from '@arextest/arex-core';
+import { css, Label, styled } from '@arextest/arex-core';
 import { Empty, Spin, Typography } from 'antd';
-import { FC, useMemo } from 'react';
-import React from 'react';
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { getStatusCodeReasonPhrase } from '../../helpers/utils/statusCodes';
 import { ArexRESTResponse } from '../../types';
-// import { getStatusCodeReasonPhrase } from '../../helpers/utils/statusCodes';
+
+const StatusText = styled.span<{ type?: 'success' | 'error' }>`
+  color: ${(props) =>
+    props.type === 'success' ? props.theme.colorSuccess : props.theme.colorError};
+  font-weight: bolder;
+  margin-right: 14px;
+  margin-left: 4px;
+`;
 
 const HttpResponseMeta: FC<{ response?: ArexRESTResponse }> = ({ response }) => {
   const { t } = useTranslation();
-  const tabCss = css`
-    color: #10b981;
-    font-weight: bolder;
-    margin-right: 14px;
-    margin-left: 4px;
-  `;
+
+  const type = useMemo(() => (response?.statusCode >= 400 ? 'error' : 'success'), [response]);
 
   const readableResponseSize = useMemo(() => {
     if (response?.type === 'success' || response?.type === 'fail') {
@@ -29,90 +31,55 @@ const HttpResponseMeta: FC<{ response?: ArexRESTResponse }> = ({ response }) => 
   }, [response]);
 
   return (
-    <div
-      css={css`
-        padding: 12px 0 0 0;
-      `}
-    >
-      {response === null ? (
+    <>
+      {response ? (
         <div>
-          <Empty
-            description={
-              <Typography.Text type='secondary'>
-                Enter the URL and click Send to get a response
-              </Typography.Text>
-            }
-          />
+          {response?.type === 'loading' && (
+            <Spin
+              css={css`
+                margin: 20px 0;
+                padding: 30px 50px;
+                text-align: center;
+                border-radius: 4px;
+                height: 100%;
+              `}
+            />
+          )}
+
+          {response?.type === 'success' && (
+            <>
+              <span>
+                {t('response.status')}:
+                <StatusText type={type}>
+                  {`${response.statusCode}\xA0•\xA0`}
+                  {getStatusCodeReasonPhrase(response.statusCode)}
+                </StatusText>
+              </span>
+
+              <span>
+                {t('response.time')}:
+                <StatusText type={type}>{`${response.meta.responseDuration}ms`}</StatusText>
+              </span>
+
+              <span>
+                <Label>{t('response.size')}</Label>
+                <StatusText type={type}>
+                  {readableResponseSize || `${response.meta.responseSize} B`}
+                </StatusText>
+              </span>
+            </>
+          )}
         </div>
       ) : (
-        <div>
-          <div>
-            {response?.type === 'loading' ? (
-              <div
-                css={css`
-                  margin: 20px 0;
-                  margin-bottom: 20px;
-                  padding: 30px 50px;
-                  text-align: center;
-                  border-radius: 4px;
-                  height: 100%;
-                `}
-              >
-                <Spin />
-              </div>
-            ) : null}
-          </div>
-
-          <div>
-            {response?.type === 'success' ? (
-              <div>
-                <span>
-                  {t('response.status')}:
-                  <span
-                    css={tabCss}
-                    style={{
-                      color:
-                        response?.statusCode >= 400 && response?.statusCode <= 500
-                          ? 'red'
-                          : '#10b981',
-                    }}
-                  >
-                    {`${response.statusCode}\xA0 • \xA0`}
-                    {getStatusCodeReasonPhrase(response.statusCode)}
-                  </span>
-                </span>
-                <span>
-                  {t('response.time')}:
-                  <span
-                    css={tabCss}
-                    style={{
-                      color:
-                        response.statusCode >= 400 && response.statusCode <= 500
-                          ? 'red'
-                          : '#10b981',
-                    }}
-                  >{`${response.meta.responseDuration}ms`}</span>
-                </span>
-                <span>
-                  {t('response.size')}:
-                  <span
-                    css={tabCss}
-                    style={{
-                      color:
-                        response.statusCode >= 400 && response.statusCode <= 500
-                          ? 'red'
-                          : '#10b981',
-                    }}
-                  >
-                    {readableResponseSize || `${response.meta.responseSize} B`}
-                  </span>
-                </span>
-              </div>
-            ) : null}
-          </div>
-        </div>
+        <Empty
+          description={
+            <Typography.Text type='secondary'>
+              Enter the URL and click Send to get a response
+            </Typography.Text>
+          }
+        />
       )}
-    </div>
+    </>
   );
 };
 

@@ -105,6 +105,7 @@ const HttpRequest: FC<HttpRequestProps> = () => {
             )}
           </Space>
         </div>
+
         <EnvironmentSelect />
       </div>
 
