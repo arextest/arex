@@ -1,17 +1,32 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 
 import { ArexEnvironment } from '../../../types';
 
-const TooltipContent: FC<{ match: any; mockEnvironment?: ArexEnvironment }> = ({
-  match,
-  mockEnvironment,
-}) => {
-  const key = match.replace('{{', '').replace('}}', '');
-  const v = mockEnvironment?.variables?.find((v: any) => v.key === key);
+export type TooltipContentProps = { match: string; mockEnvironment?: ArexEnvironment };
+const TooltipContent: FC<TooltipContentProps> = (props) => {
+  const env = useMemo(() => {
+    const key = props.match.replace('{{', '').replace('}}', '');
+    return props.mockEnvironment?.variables?.find((v) => v.key === key);
+  }, [props]);
+
   return (
     <div className={'rhi-tooltip'}>
       <div className='content'>
-        {v?.value ? (
+        {env?.value ? (
+          <div>
+            {props.mockEnvironment?.name}
+            <span
+              style={{
+                backgroundColor: 'rgb(184,187,192)',
+                padding: '0 4px',
+                marginLeft: '4px',
+                borderRadius: '2px',
+              }}
+            >
+              {env?.value}
+            </span>
+          </div>
+        ) : (
           <div>
             {'Choose an Environment'}
 
@@ -24,20 +39,6 @@ const TooltipContent: FC<{ match: any; mockEnvironment?: ArexEnvironment }> = ({
               }}
             >
               {'Not found'}
-            </span>
-          </div>
-        ) : (
-          <div>
-            {mockEnvironment?.name}
-            <span
-              style={{
-                backgroundColor: 'rgb(184,187,192)',
-                padding: '0 4px',
-                marginLeft: '4px',
-                borderRadius: '2px',
-              }}
-            >
-              {v?.value}
             </span>
           </div>
         )}

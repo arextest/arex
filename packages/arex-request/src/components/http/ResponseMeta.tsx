@@ -8,7 +8,11 @@ import { ArexRESTResponse } from '../../types';
 
 const StatusText = styled.span<{ type?: 'success' | 'error' }>`
   color: ${(props) =>
-    props.type === 'success' ? props.theme.colorSuccess : props.theme.colorError};
+    props.type === 'success'
+      ? props.theme.colorSuccess
+      : props.type === 'error'
+      ? props.theme.colorError
+      : undefined};
   font-weight: bolder;
   margin-right: 14px;
   margin-left: 4px;
@@ -17,7 +21,11 @@ const StatusText = styled.span<{ type?: 'success' | 'error' }>`
 const HttpResponseMeta: FC<{ response?: ArexRESTResponse }> = ({ response }) => {
   const { t } = useTranslation();
 
-  const type = useMemo(() => (response?.statusCode >= 400 ? 'error' : 'success'), [response]);
+  const type = useMemo(() => {
+    if (response?.type === 'fail' || response?.type === 'success') {
+      return response?.statusCode >= 400 ? 'error' : 'success';
+    } else return undefined;
+  }, [response]);
 
   const readableResponseSize = useMemo(() => {
     if (response?.type === 'success' || response?.type === 'fail') {

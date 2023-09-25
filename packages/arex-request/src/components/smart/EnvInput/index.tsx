@@ -1,7 +1,7 @@
 import { styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import Editor from '@arextest/monaco-react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 
 import { getMarkFromToArr, REGEX_ENV_VAR } from '../../../helpers/editor/getMarkFromToArr';
 import { useArexRequestStore } from '../../../hooks';
