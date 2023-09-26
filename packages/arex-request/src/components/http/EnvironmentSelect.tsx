@@ -27,8 +27,8 @@ const EnvironmentSelectWrapper = styled.div`
 `;
 
 export type EnvironmentSelectProps = {
-  environmentId?: string;
-  environments?: ArexEnvironment[];
+  value?: string;
+  options?: ArexEnvironment[];
   onAdd?: (name?: string) => void;
   onChange?: (environment?: ArexEnvironment) => void;
   onEdit?: (environment: ArexEnvironment) => void;
@@ -42,21 +42,21 @@ const EnvironmentSelect: FC<EnvironmentSelectProps> = (_props) => {
 
   const environmentOptions = useMemo<SelectProps['options']>(
     () =>
-      props?.environments?.map((env) => ({
+      props?.options?.map((env) => ({
         label: env.name,
         value: env.id,
       })),
-    [props?.environments],
+    [props?.options],
   );
 
   const handleEnvironmentChange = (environmentId: string) => {
-    const newEnv = props?.environments?.find((env) => env.id === environmentId);
+    const newEnv = props?.options?.find((env) => env.id === environmentId);
     props?.onChange?.(newEnv);
   };
 
   const handleEnvironmentEdit = (environmentId?: string) => {
     if (!environmentId) return;
-    const newEnv = props?.environments?.find((env) => env.id === environmentId);
+    const newEnv = props?.options?.find((env) => env.id === environmentId);
     newEnv && props?.onEdit?.(newEnv);
   };
 
@@ -69,7 +69,7 @@ const EnvironmentSelect: FC<EnvironmentSelectProps> = (_props) => {
       <Select
         bordered={false}
         placeholder='Please select environment'
-        value={props?.environmentId}
+        value={props?.value}
         popupMatchSelectWidth={210}
         dropdownStyle={{
           right: 4,
@@ -109,7 +109,7 @@ const EnvironmentSelect: FC<EnvironmentSelectProps> = (_props) => {
           <Button
             icon={<EditOutlined />}
             type='text'
-            onClick={() => handleEnvironmentEdit?.(props?.environmentId)}
+            onClick={() => handleEnvironmentEdit?.(props?.value)}
           />
         </Tooltip>
       )}

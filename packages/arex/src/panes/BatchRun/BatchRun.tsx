@@ -77,8 +77,8 @@ const BatchRun: ArexPaneFC = (props) => {
       <Card>
         <Space.Compact style={{ width: '90%' }}>
           <EnvironmentSelect
-            environmentId={activeEnvironment?.id}
-            environments={environments}
+            value={activeEnvironment?.id}
+            options={environments}
             onChange={setActiveEnvironment}
           />
           <TreeSelect

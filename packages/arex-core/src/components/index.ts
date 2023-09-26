@@ -36,5 +36,7 @@ export { default as SpaceBetweenWrapper } from './SpaceBetweenWrapper';
 export type { SearchDataType } from './StructuredFilter';
 export { default as StructuredFilter } from './StructuredFilter';
 export { CategoryKey, Operator } from './StructuredFilter/keyword';
+export type { TagsGroupProps } from './TagsGroup';
+export { default as TagsGroup } from './TagsGroup';
 export type { TooltipButtonProps } from './TooltipButton';
 export { default as TooltipButton } from './TooltipButton';

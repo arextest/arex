@@ -1,41 +1,46 @@
 import { EditOutlined } from '@ant-design/icons';
-import { css } from '@arextest/arex-core';
-import { Breadcrumb, Input, Select, Space, Tag, Typography } from 'antd';
+import { css, TagsGroup } from '@arextest/arex-core';
+import { Breadcrumb, Input, Space, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 
 import { useArexRequestProps } from '../../hooks';
 
 const { Text } = Typography;
 
-export interface SmartBreadcrumbProps {
+export type TitleProps = {
   titleItems?: { title: string }[];
-  description?: string;
-  tags?: string[];
-  tagOptions?: { color: string; label: string; value: string }[];
-  onTitleChange?: (title?: string) => void;
-  onDescriptionChange?: (description?: string) => void;
-  onTagsChange?: (tags?: string[]) => void;
+  onChange?: (title?: string) => void;
+};
+
+export type TagsProps = {
+  value?: string[];
+  options?: { color: string; label: string; value: string }[];
+  onChange?: (tags?: string[]) => void;
+};
+
+export type DescriptionProps = {
+  value?: string;
+  onChange?: (description?: string) => void;
+};
+
+export interface SmartBreadcrumbProps {
+  titleProps?: TitleProps;
+  tagsProps?: TagsProps;
+  descriptionProps?: DescriptionProps;
 }
+
 const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
-  const {
-    titleItems,
-    tags,
-    tagOptions,
-    description,
-    onTitleChange,
-    onDescriptionChange,
-    onTagsChange,
-  } = useArexRequestProps();
+  const { titleProps, descriptionProps, tagsProps } = useArexRequestProps();
   const [mode, setMode] = useState('normal');
   const [title, setTitle] = useState('');
   const [tagsValue, setTagsValue] = useState<string[]>();
   const [descriptionValue, setDescriptionValue] = useState('');
 
   useEffect(() => {
-    titleItems && setTitle(titleItems.at(-1)?.title || '');
+    titleProps?.titleItems && setTitle(titleProps?.titleItems.at(-1)?.title || '');
     setDescriptionValue(descriptionValue);
-    setTagsValue(tags);
-  }, [descriptionValue, tags, titleItems]);
+    setTagsValue(tagsProps?.value);
+  }, [descriptionValue, tagsProps?.value, titleProps?.titleItems]);
 
   // TODO REFACTOR
   return (
@@ -59,7 +64,7 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
               }
             `}
           >
-            <Breadcrumb items={titleItems} />
+            <Breadcrumb items={titleProps?.titleItems} />
             <div
               className={'editor-icon'}
               css={css`
@@ -93,7 +98,7 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
                   font-size: 12px;
                 `}
               >
-                {descriptionValue || description || 'description'}
+                {descriptionValue || descriptionProps?.value || 'description'}
               </Text>
 
               <div
@@ -111,17 +116,13 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
               </div>
             </div>
 
-            <Select
-              placeholder={<Tag>Add labels</Tag>}
-              mode={'multiple'}
+            <TagsGroup
               value={tagsValue}
-              options={tagOptions}
-              bordered={false}
+              options={tagsProps?.options}
               onChange={(value) => {
                 setTagsValue(value);
-                onTagsChange?.(value);
+                tagsProps?.onChange?.(value);
               }}
-              style={{ width: '120px' }}
             />
           </div>
         </Space>
@@ -135,12 +136,12 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
               }}
               onBlur={() => {
                 setMode('normal');
-                onTitleChange?.(title);
+                titleProps?.onChange?.(title);
               }}
               onKeyUp={(e) => {
                 if (e.keyCode === 13) {
                   setMode('normal');
-                  onTitleChange?.(title);
+                  titleProps?.onChange?.(title);
                 }
               }}
             />
@@ -154,12 +155,12 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
               }}
               onBlur={() => {
                 setMode('normal');
-                onDescriptionChange?.(descriptionValue);
+                descriptionProps?.onChange?.(descriptionValue);
               }}
               onKeyUp={(e) => {
                 if (e.code === 'Enter') {
                   setMode('normal');
-                  onDescriptionChange?.(descriptionValue);
+                  descriptionProps?.onChange?.(descriptionValue);
                 }
               }}
             />

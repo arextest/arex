@@ -123,9 +123,6 @@ importers:
       monaco-editor:
         specifier: ^0.39.0
         version: 0.39.0
-      postman-collection:
-        specifier: ^4.1.7
-        version: 4.1.7
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -302,6 +299,9 @@ importers:
       '@emotion/styled':
         specifier: ^11.10.6
         version: 11.10.6(@emotion/react@11.10.6)(@types/react@18.2.0)(react@18.2.0)
+      '@formkit/auto-animate':
+        specifier: ^0.7.0
+        version: 0.7.0
       ahooks:
         specifier: ^3.7.5
         version: 3.7.5(react@18.2.0)

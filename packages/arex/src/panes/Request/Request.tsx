@@ -219,34 +219,38 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         height='calc(100vh - 110px)'
         data={data}
         config={httpConfig}
+        titleProps={{
+          // breadcrumbItems={nodePath} // TODO: get nodePathName from details
+          onChange: rename,
+        }}
+        tagsProps={{
+          value: data?.tags,
+          options: tagOptions,
+          onChange: (tags) =>
+            saveRequest({
+              id: data?.id,
+              tags,
+            }),
+        }}
+        descriptionProps={{
+          value: data?.description,
+          onChange: (description) =>
+            saveRequest({
+              id: data?.id,
+              description,
+            }),
+        }}
         environmentProps={{
-          environmentId: activeEnvironment?.id,
-          environments: environments,
+          value: activeEnvironment?.id,
+          options: environments,
           onChange: handleEnvironmentChange,
           onAdd: createNewEnvironment,
           onEdit: environmentDrawerRef?.current?.open,
         }}
-        // breadcrumbItems={nodePath} // TODO: get nodePathName from details
-        description={data?.description}
-        tags={data?.tags}
-        tagOptions={tagOptions}
         disableSave={!!props.data?.recordId}
         onSave={handleSave}
         onBeforeSend={convertRequest}
         onSaveAs={saveAsRef?.current?.open}
-        onTitleChange={rename}
-        onDescriptionChange={(description) =>
-          saveRequest({
-            id: data?.id,
-            description,
-          })
-        }
-        onTagsChange={(tags) =>
-          saveRequest({
-            id: data?.id,
-            tags,
-          })
-        }
       />
 
       <SaveAs ref={saveAsRef} workspaceId={workspaceId} />

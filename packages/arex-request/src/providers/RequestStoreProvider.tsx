@@ -75,8 +75,8 @@ const RequestStoreProvider: FC<PropsWithChildren> = (props) => {
 
   useEffect(() => {
     dispatch((state) => {
-      state.environment = environmentProps?.environments?.find(
-        (env) => env.id === environmentProps?.environmentId,
+      state.environment = environmentProps?.options?.find(
+        (env) => env.id === environmentProps?.value,
       );
     });
   }, [environmentProps]);
