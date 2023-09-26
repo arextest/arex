@@ -1,6 +1,6 @@
 import { css, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import { theme } from 'antd';
-import { FC } from 'react';
+import React, { FC } from 'react';
 import ReactJson from 'react-json-view';
 
 const { useToken } = theme;

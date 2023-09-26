@@ -139,7 +139,7 @@ const HttpRequest: FC<HttpRequestProps> = () => {
           value={store.request.inherited ? store.request.inheritedEndpoint : store.request.endpoint}
           onChange={(v) => {
             dispatch((state) => {
-              state.request.endpoint = v;
+              state.request.endpoint = v || '';
             });
           }}
         />

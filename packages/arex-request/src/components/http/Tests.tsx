@@ -32,6 +32,17 @@ export const ResponseTestWrapper = styled.div`
   }
 `;
 
+const editorOptions = {
+  minimap: {
+    enabled: false,
+  },
+  fontSize: 12,
+  wordWrap: 'on',
+  automaticLayout: true,
+  fontFamily: 'IBMPlexMono, "Courier New", monospace',
+  scrollBeyondLastLine: false,
+} as const;
+
 const HttpTests = () => {
   const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
@@ -57,8 +68,8 @@ const HttpTests = () => {
     >
       <ResponseTestHeader>
         <span>{t('preRequest.javascript_code')}</span>
-        <div></div>
       </ResponseTestHeader>
+
       <ResponseTestWrapper>
         <div
           css={css`
@@ -69,16 +80,7 @@ const HttpTests = () => {
         >
           <Editor
             theme={theme === Theme.dark ? 'vs-dark' : 'light'}
-            options={{
-              minimap: {
-                enabled: false,
-              },
-              fontSize: 12,
-              wordWrap: 'on',
-              automaticLayout: true,
-              fontFamily: 'IBMPlexMono, "Courier New", monospace',
-              scrollBeyondLastLine: false,
-            }}
+            options={editorOptions}
             language={'javascript'}
             value={store.request.testScript}
             onChange={(value) => {

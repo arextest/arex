@@ -1,5 +1,5 @@
 import { css, styled } from '@arextest/arex-core';
-import { Badge, Tabs, Tag, theme } from 'antd';
+import { Badge, Tabs, theme } from 'antd';
 import { FC, useMemo, useState } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,8 +11,6 @@ import HttpHeaders from './Headers';
 import HttpParameters from './Parameters';
 import HttpPreRequestScript from './PreRequestScript';
 import HttpTests from './Tests';
-
-const { useToken } = theme;
 
 const HttpRequestOptionsWrapper = styled.div`
   padding-left: 16px;
@@ -33,64 +31,84 @@ const HttpRequestOptions: FC<HttpRequestOptionsProps> = () => {
   const { config } = useArexRequestProps();
   const { store } = useArexRequestStore();
 
-  const { token } = useToken();
+  const { token } = theme.useToken();
   const { t } = useTranslation();
-  const [activeKey, setActiveKey] = useState('3');
+  const [activeKey, setActiveKey] = useState('body');
 
   const items = useMemo(() => {
     const _items: Tab[] = [
       {
         label: (
-          <div>
-            {t('tab.parameters')}{' '}
-            {store.request.params.length ? <Tag>{store.request.params.length}</Tag> : null}
-          </div>
+          <Badge
+            size='small'
+            color={token.colorPrimary}
+            offset={[6, 0]}
+            count={store.request.params?.length}
+          >
+            {t('tab.parameters')}
+          </Badge>
         ),
-        key: '0',
+        key: 'parameters',
         children: <HttpParameters />,
         forceRender: true,
       },
       {
         label: (
-          <div>
-            {t('tab.headers')}{' '}
-            {store.request.headers.length ? <Tag>{store.request.headers.length}</Tag> : null}
-          </div>
+          <Badge
+            size='small'
+            color={token.colorPrimary}
+            offset={[6, 0]}
+            count={store.request.headers?.length}
+          >
+            {t('tab.headers')}
+          </Badge>
         ),
-        key: '1',
+        key: 'headers',
         children: <HttpHeaders />,
         // forceRender: true,
       },
       {
         label: (
-          <div>
-            {t('tab.body')}{' '}
-            {store.request?.body?.body?.length ? <Badge color={token.colorPrimary} /> : null}
-          </div>
+          <Badge
+            size='small'
+            color={token.colorPrimary}
+            offset={[4, 2]}
+            dot={!!store.request?.body?.body?.length}
+          >
+            {t('tab.body')}
+          </Badge>
         ),
-        key: '3',
+        key: 'body',
         children: <HttpBody />,
         forceRender: true,
       },
       {
         label: (
-          <div>
-            {t('tab.pre_request_script')}{' '}
-            {store.request.preRequestScript.length ? <Badge color={token.colorPrimary} /> : null}
-          </div>
+          <Badge
+            size='small'
+            color={token.colorPrimary}
+            offset={[4, 2]}
+            dot={!!store.request?.preRequestScript?.length}
+          >
+            {t('tab.pre_request_script')}
+          </Badge>
         ),
-        key: '4',
+        key: 'pre_request_script',
         children: <HttpPreRequestScript />,
         forceRender: true,
       },
       {
         label: (
-          <div>
-            {t('tab.tests')}{' '}
-            {store.request.testScript.length ? <Badge color={token.colorPrimary} /> : null}
-          </div>
+          <Badge
+            size='small'
+            color={token.colorPrimary}
+            offset={[4, 2]}
+            dot={!!store.request.testScript?.length}
+          >
+            {t('tab.tests')}
+          </Badge>
         ),
-        key: '5',
+        key: 'tests',
         children: <HttpTests />,
         forceRender: true,
       },
@@ -103,17 +121,15 @@ const HttpRequestOptions: FC<HttpRequestOptionsProps> = () => {
   return (
     <HttpRequestOptionsWrapper>
       <Tabs
+        activeKey={activeKey}
+        items={items}
+        onChange={setActiveKey}
         css={css`
           height: 100%;
           .ant-tabs-nav {
             margin-bottom: 0;
           }
         `}
-        activeKey={activeKey}
-        items={items}
-        onChange={(val) => {
-          setActiveKey(val);
-        }}
       />
     </HttpRequestOptionsWrapper>
   );

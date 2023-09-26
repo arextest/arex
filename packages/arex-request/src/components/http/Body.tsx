@@ -8,13 +8,8 @@ import { ArexContentTypes } from '../../types';
 import BinaryBody from './BinaryBody';
 import RawBody, { HttpRawBodyRef } from './RawBody';
 
-const genContentType = (contentType?: string) => {
-  if (contentType?.includes('application/json')) {
-    return 'raw';
-  } else {
-    return 'binary';
-  }
-};
+const genContentType = (contentType?: string) =>
+  contentType?.includes('application/json') ? 'raw' : 'binary';
 
 const bigCateOptions = ['raw', 'binary'];
 
@@ -107,6 +102,7 @@ const HttpBody = () => {
           <a onClick={rawBodyRef?.current?.prettifyRequestBody}>{t('action.prettify')}</a>
         )}
       </div>
+
       {isJsonContentType ? <RawBody ref={rawBodyRef} /> : <BinaryBody />}
     </div>
   );

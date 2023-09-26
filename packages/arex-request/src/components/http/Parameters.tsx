@@ -5,8 +5,9 @@ import Icon, {
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { copyToClipboard, css } from '@arextest/arex-core';
+import { copyToClipboard, css, TooltipButton } from '@arextest/arex-core';
 import { Button, Empty, Input, message, theme, Tooltip } from 'antd';
+import { cloneDeep } from 'lodash';
 import PM from 'postman-collection';
 import React, { FC, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +23,7 @@ const { useToken } = theme;
 
 const HttpParameters: FC = () => {
   const { token } = useToken();
+  const { t } = useTranslation();
   const { store, dispatch } = useArexRequestStore();
   const { endpoint } = store.request;
   const setEndpoint = (newEndpoint: string) => {
@@ -67,9 +69,9 @@ const HttpParameters: FC = () => {
       setEndpoint(endpointParseCopy.toString() + converToUrl(params));
     }
   }, [params]);
-  const { t } = useTranslation();
+
   return (
-    <div css={css``}>
+    <div>
       <FormHeaderWrapper>
         <span>{t('request.parameter_list')}</span>
         <div>
@@ -194,42 +196,38 @@ const HttpParameters: FC = () => {
                 `}
               >
                 <>
-                  <Tooltip title={item.active ? t('action.turn_off') : t('action.turn_on')}>
-                    <Button
-                      style={{ color: '#10b981' }}
-                      type='text'
-                      size='small'
-                      icon={item.active ? <CheckCircleOutlined /> : <StopOutlined />}
-                      onClick={() => {
-                        const s = JSON.parse(JSON.stringify(handledParams));
-                        const newValue = s.find((i: any) => i.id === item.id);
-                        newValue.active = !newValue.active;
-                        setParams(s);
-                      }}
-                    />
-                  </Tooltip>
-                  <Tooltip title={t('action.remove')}>
-                    <Button
-                      style={{ color: '#ef4444' }}
-                      type='text'
-                      size='small'
-                      icon={<DeleteOutlined />}
-                      onClick={
-                        () => {
-                          const s = JSON.parse(JSON.stringify(handledParams));
-                          const findex = s.findIndex((i: any) => i.id === item.id);
-                          s.splice(findex, 1);
-                          setParams(s);
-                          const endpointParse = PM.Url.parse(endpoint);
-                          const endpointParseCopy = removePMparams(endpointParse);
-                          setEndpoint(endpointParseCopy.toString());
-                        }
-                        // paramsUpdater?.((params) => {
-                        //   params.splice(i, 1);
-                        // })
+                  <TooltipButton
+                    title={item.active ? t('action.turn_off') : t('action.turn_on')}
+                    style={{ color: token.colorSuccess }}
+                    icon={item.active ? <CheckCircleOutlined /> : <StopOutlined />}
+                    onClick={() => {
+                      const params = cloneDeep(handledParams);
+                      const newValue = params.find((i) => i.id === item.id);
+                      newValue!.active = !newValue?.active;
+                      setParams(params);
+                    }}
+                  />
+                  <TooltipButton
+                    title={t('action.remove')}
+                    style={{ color: token.colorError }}
+                    type='text'
+                    size='small'
+                    icon={<DeleteOutlined />}
+                    onClick={
+                      () => {
+                        const params = cloneDeep(handledParams);
+                        const index = params.findIndex((i) => i.id === item.id);
+                        params.splice(index, 1);
+                        setParams(params);
+                        const endpointParse = PM.Url.parse(endpoint);
+                        const endpointParseCopy = removePMparams(endpointParse);
+                        setEndpoint(endpointParseCopy.toString());
                       }
-                    />
-                  </Tooltip>
+                      // paramsUpdater?.((params) => {
+                      //   params.splice(i, 1);
+                      // })
+                    }
+                  />
                 </>
               </div>
             </div>
