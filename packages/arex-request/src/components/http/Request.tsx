@@ -22,7 +22,6 @@ const HeaderWrapper = styled.div`
 
 export type HttpRequestProps = {
   disableSave?: boolean;
-  breadcrumbItems?: { title: string }[];
   onBeforeSend?: (request: ArexRESTRequest, environment?: ArexEnvironment) => ArexRESTRequest;
   onSave?: (request?: ArexRESTRequest, response?: ArexRESTResponse) => void;
   onSaveAs?: () => void;

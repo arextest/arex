@@ -1,14 +1,19 @@
 import { EditOutlined } from '@ant-design/icons';
 import { css, TagsGroup } from '@arextest/arex-core';
 import { Breadcrumb, Input, Space, Typography } from 'antd';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 
 import { useArexRequestProps } from '../../hooks';
 
 const { Text } = Typography;
+enum Mode {
+  'normal',
+  'title',
+  'description',
+}
 
 export type TitleProps = {
-  titleItems?: { title: string }[];
+  value?: string;
   onChange?: (title?: string) => void;
 };
 
@@ -24,23 +29,31 @@ export type DescriptionProps = {
 };
 
 export interface SmartBreadcrumbProps {
+  breadcrumb?: string[];
   titleProps?: TitleProps;
   tagsProps?: TagsProps;
   descriptionProps?: DescriptionProps;
 }
 
 const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
-  const { titleProps, descriptionProps, tagsProps } = useArexRequestProps();
-  const [mode, setMode] = useState('normal');
-  const [title, setTitle] = useState('');
+  const { breadcrumb, titleProps, descriptionProps, tagsProps } = useArexRequestProps();
+  const [mode, setMode] = useState(Mode.normal);
+  const [title, setTitle] = useState<string>();
   const [tagsValue, setTagsValue] = useState<string[]>();
   const [descriptionValue, setDescriptionValue] = useState('');
 
   useEffect(() => {
-    titleProps?.titleItems && setTitle(titleProps?.titleItems.at(-1)?.title || '');
+    setTitle(titleProps?.value);
     setDescriptionValue(descriptionValue);
     setTagsValue(tagsProps?.value);
-  }, [descriptionValue, tagsProps?.value, titleProps?.titleItems]);
+  }, [descriptionValue, tagsProps?.value, titleProps?.value]);
+
+  const breadcrumbItems = useMemo(
+    () => breadcrumb?.map((title) => ({ title })).concat({ title: titleProps?.value || '' }),
+    [breadcrumb, titleProps?.value],
+  );
+
+  console.log(breadcrumb);
 
   // TODO REFACTOR
   return (
@@ -51,7 +64,7 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
         align-items: center;
       `}
     >
-      {mode === 'normal' ? (
+      {mode === Mode.normal ? (
         <Space>
           <div
             css={css`
@@ -64,7 +77,7 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
               }
             `}
           >
-            <Breadcrumb items={titleProps?.titleItems} />
+            <Breadcrumb items={breadcrumbItems} />
             <div
               className={'editor-icon'}
               css={css`
@@ -74,7 +87,7 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
             >
               <EditOutlined
                 onClick={() => {
-                  setMode('title');
+                  setMode(Mode.title);
                 }}
               />
             </div>
@@ -110,7 +123,7 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
               >
                 <EditOutlined
                   onClick={() => {
-                    setMode('description');
+                    setMode(Mode.description);
                   }}
                 />
               </div>
@@ -128,38 +141,38 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
         </Space>
       ) : (
         <>
-          {mode === 'title' && (
+          {mode === Mode.title && (
             <Input
               value={title}
               onChange={(val) => {
                 setTitle(val.target.value);
               }}
               onBlur={() => {
-                setMode('normal');
+                setMode(Mode.normal);
                 titleProps?.onChange?.(title);
               }}
               onKeyUp={(e) => {
                 if (e.keyCode === 13) {
-                  setMode('normal');
+                  setMode(Mode.normal);
                   titleProps?.onChange?.(title);
                 }
               }}
             />
           )}
 
-          {mode === 'description' && (
+          {mode === Mode.description && (
             <Input
               defaultValue={descriptionValue}
               onChange={(val) => {
                 setDescriptionValue(val.target.value);
               }}
               onBlur={() => {
-                setMode('normal');
+                setMode(Mode.normal);
                 descriptionProps?.onChange?.(descriptionValue);
               }}
               onKeyUp={(e) => {
                 if (e.code === 'Enter') {
-                  setMode('normal');
+                  setMode(Mode.normal);
                   descriptionProps?.onChange?.(descriptionValue);
                 }
               }}

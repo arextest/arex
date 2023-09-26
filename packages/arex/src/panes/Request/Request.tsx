@@ -113,6 +113,8 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     }),
   );
 
+  const parentPath = useMemo(() => data?.parentPath?.map((path) => path.name), [data]);
+
   const { run: runPinMock } = useRequest(
     (recordId) =>
       FileSystemService.pinMock({
@@ -138,11 +140,12 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       FileSystemService.renameCollectionItem({
         id: workspaceId,
         newName,
-        path: [], // TODO: get nodePathId from details
+        path: data!.parentPath!.map((path) => path.id).concat(data!.id),
         userName: userName as string,
       }),
     {
       manual: true,
+      ready: !!data,
       onSuccess(success, [name]) {
         if (success) {
           getCollections(workspaceId);
@@ -219,8 +222,9 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         height='calc(100vh - 110px)'
         data={data}
         config={httpConfig}
+        breadcrumb={parentPath}
         titleProps={{
-          // breadcrumbItems={nodePath} // TODO: get nodePathName from details
+          value: data?.name,
           onChange: rename,
         }}
         tagsProps={{

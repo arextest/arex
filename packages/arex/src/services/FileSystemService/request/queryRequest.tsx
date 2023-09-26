@@ -9,7 +9,14 @@ export async function queryRequest(params: {
   nodeType: number;
   recordId?: string;
   planId?: string;
-}): Promise<ArexRESTRequest & { recordId: string; inherited: boolean; tags: string[] }> {
+}): Promise<
+  ArexRESTRequest & {
+    recordId: string;
+    inherited: boolean;
+    tags: string[];
+    parentPath: { id: string; name: string; nodeType: CollectionNodeType }[];
+  }
+> {
   const res = await request.post<any>(
     `/report/filesystem/query${
       params.nodeType === CollectionNodeType.interface ? 'Interface' : 'Case'
@@ -43,6 +50,7 @@ export async function queryRequest(params: {
         inheritedEndpoint: '',
         tags: rest.labelIds || [],
         description: rest.description,
+        parentPath: rest?.parentPath,
       };
     }
     // 如果没有recordId是新增页面进来的
@@ -64,6 +72,7 @@ export async function queryRequest(params: {
       inheritedEndpoint: '',
       tags: [],
       description: '',
+      parentPath: [],
     };
   }
   const {
@@ -87,5 +96,6 @@ export async function queryRequest(params: {
     inheritedEndpoint: '',
     tags: rest.labelIds || [],
     description: rest.description,
+    parentPath: rest?.parentPath,
   };
 }
