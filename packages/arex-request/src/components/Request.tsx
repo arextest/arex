@@ -64,7 +64,7 @@ const Request = forwardRef<RequestRef, RequestProps>((props, ref) => {
           }
         `}
       >
-        <Allotment.Pane preferredSize={360}>
+        <Allotment.Pane preferredSize='60%'>
           <div
             css={css`
               height: 100%;

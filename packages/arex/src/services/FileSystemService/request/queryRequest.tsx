@@ -1,5 +1,6 @@
 import type { ArexRESTRequest } from '@arextest/arex-request';
 
+import { CollectionNodeType } from '@/constant';
 import { queryDebuggingCase } from '@/services/FileSystemService';
 import { request } from '@/utils';
 
@@ -10,7 +11,9 @@ export async function queryRequest(params: {
   planId?: string;
 }): Promise<ArexRESTRequest & { recordId: string; inherited: boolean; tags: string[] }> {
   const res = await request.post<any>(
-    `/report/filesystem/query${params.nodeType === 1 ? 'Interface' : 'Case'}`,
+    `/report/filesystem/query${
+      params.nodeType === CollectionNodeType.interface ? 'Interface' : 'Case'
+    }`,
     params,
   );
   if (params.id.length !== 24) {
@@ -66,6 +69,7 @@ export async function queryRequest(params: {
   const {
     body: { address, testAddress, ...rest },
   } = res;
+
   return {
     id: rest.id,
     name: rest.name,

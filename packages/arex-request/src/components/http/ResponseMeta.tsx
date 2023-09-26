@@ -1,4 +1,4 @@
-import { css, Label, styled } from '@arextest/arex-core';
+import { css, EmptyWrapper, Label, styled } from '@arextest/arex-core';
 import { Empty, Spin, Typography } from 'antd';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -79,7 +79,7 @@ const HttpResponseMeta: FC<{ response?: ArexRESTResponse }> = ({ response }) => 
           )}
         </div>
       ) : (
-        <Empty
+        <EmptyWrapper
           description={
             <Typography.Text type='secondary'>
               Enter the URL and click Send to get a response

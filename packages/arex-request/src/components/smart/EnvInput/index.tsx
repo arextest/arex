@@ -5,25 +5,23 @@ import React, { FC, useEffect, useRef, useState } from 'react';
 
 import { getMarkFromToArr, REGEX_ENV_VAR } from '../../../helpers/editor/getMarkFromToArr';
 import { useArexRequestStore } from '../../../hooks';
-import SmartTooltip from '../Tooltip';
-import TooltipContent from './TooltipContent';
-import { getElementViewPosition } from './util';
+import EnvTooltip from './EnvTooltip';
 
 interface SmartEnvInputProps {
-  disabled: boolean;
+  disabled?: boolean;
   value?: string;
-  onChange: (e: any) => void;
+  onChange?: (value?: string) => void;
 }
 
 const EditorWrapper = styled.div`
   .content-class-no-found {
-    background: #ef4444;
+    background: ${(props) => props.theme.colorError};
     color: white !important;
     border-radius: 2px;
   }
 
   .content-class-found {
-    background: #7cb305;
+    background: ${(props) => props.theme.colorSuccess};
     color: white !important;
     border-radius: 2px;
   }
@@ -37,23 +35,41 @@ const EditorWrapper = styled.div`
   //overflow-y: hidden;
 `;
 
+const editOptions = {
+  wordWrap: 'off',
+  automaticLayout: true,
+  fontFamily: 'IBMPlexMono, "Courier New", monospace',
+  minimap: {
+    enabled: false,
+  },
+  scrollBeyondLastLine: false,
+  fontSize: 14,
+  scrollbar: {
+    useShadows: false,
+    vertical: 'hidden',
+    horizontal: 'hidden',
+  },
+  overviewRulerBorder: false,
+  overviewRulerLanes: 0,
+  renderLineHighlight: 'none',
+  quickSuggestions: false,
+  lineNumbers: 'off',
+  links: false,
+  folding: false,
+} as const;
+
 const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange, disabled }) => {
   const { store } = useArexRequestStore();
   const { theme } = useArexCoreConfig();
   const [open, setOpen] = useState(false);
   const [left, setLeft] = useState(0);
-  const [top, setTop] = useState(0);
   const [textContent, setTextContent] = useState('');
   const smartEnvInputRef = useRef<HTMLDivElement>(null);
 
   const [editor, setEditor] = useState(false);
 
   function mouseoverFn(e: any) {
-    const { x, y } = getElementViewPosition(e.target);
-    const l = x;
-    const t = y;
-    setLeft(l);
-    setTop(t);
+    setLeft(e.target.offsetLeft);
     setOpen(true);
     setTextContent(e.target.textContent);
   }
@@ -82,8 +98,8 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange, disabled }) =>
   useEffect(() => {
     if (smartEnvInputRef.current) {
       smartEnvInputRef.current.addEventListener('mouseenter', (e) => {
-        const foundDomList: any = document.querySelectorAll('.content-class-found');
-        const noFoundDomList: any = document.querySelectorAll('.content-class-no-found');
+        const foundDomList = document.querySelectorAll('.content-class-found');
+        const noFoundDomList = document.querySelectorAll('.content-class-no-found');
         const allDomList = [...foundDomList, ...noFoundDomList];
         for (const key in allDomList) {
           allDomList[key].addEventListener('mouseover', mouseoverFn);
@@ -138,46 +154,24 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange, disabled }) =>
 
   return (
     <EditorWrapper ref={smartEnvInputRef}>
-      <Editor
-        height='21px'
-        value={value}
-        theme={theme === Theme.dark ? 'vs-dark' : 'light'}
-        onMount={handleEditorDidMount}
-        onChange={(val) => {
-          onChange(val);
-          decorations(val, editor);
-        }}
-        options={{
-          wordWrap: 'off',
-          automaticLayout: true,
-          fontFamily: 'IBMPlexMono, "Courier New", monospace',
-          minimap: {
-            enabled: false,
-          },
-          scrollBeyondLastLine: false,
-          fontSize: 14,
-          scrollbar: {
-            useShadows: false,
-            vertical: 'hidden',
-            horizontal: 'hidden',
-          },
-          overviewRulerBorder: false,
-          overviewRulerLanes: 0,
-          renderLineHighlight: 'none',
-          quickSuggestions: false,
-          lineNumbers: 'off',
-          links: false,
-          folding: false,
-        }}
-      />
-
-      <SmartTooltip
+      <EnvTooltip
+        offset={[left, -2]}
         open={open}
-        content={<TooltipContent match={textContent} mockEnvironment={store.environment} />}
-        left={left}
-        top={top}
-        contentHeight={0}
-      />
+        match={textContent}
+        mockEnvironment={store.environment}
+      >
+        <Editor
+          height='21px'
+          value={value}
+          theme={theme === Theme.dark ? 'vs-dark' : 'light'}
+          onMount={handleEditorDidMount}
+          onChange={(val) => {
+            onChange?.(val);
+            decorations(val, editor);
+          }}
+          options={editOptions}
+        />
+      </EnvTooltip>
     </EditorWrapper>
   );
 };

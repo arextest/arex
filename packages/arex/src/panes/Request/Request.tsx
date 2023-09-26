@@ -70,31 +70,38 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     },
   );
 
-  const handleSave: ArexRequestProps['onSave'] = (requestParams, response) => {
-    const request = requestParams;
+  const { run: saveRequest } = useRequest(
+    (params, needRefresh?: boolean) => FileSystemService.saveRequest(workspaceId, params, nodeType),
+    {
+      manual: true,
+      onSuccess(res, [params, needRefresh]) {
+        res && message.success('保存成功');
+        needRefresh && getCollections();
+        navPane({
+          id: paneId,
+          type,
+          icon: params?.method,
+        });
+      },
+    },
+  );
+
+  const handleSave: ArexRequestProps['onSave'] = (request, response) => {
     if (
-      !request?.headers.find((i) => i.key === 'arex-record-id') &&
+      !request?.headers.find((header) => header.key === 'arex-record-id') &&
       (response?.type === 'success' ? response.headers : []).find(
-        (i) => i.key === 'arex-record-id',
+        (header) => header.key === 'arex-record-id',
       ) &&
-      request?.headers.find((i) => i.key === 'arex-force-record')?.active
+      request?.headers.find((header) => header.key === 'arex-force-record')?.active
     ) {
       const recordId =
         response?.type === 'success'
-          ? response.headers.find((i) => i.key === 'arex-record-id')?.value
+          ? response.headers.find((header) => header.key === 'arex-record-id')?.value
           : '';
 
       runPinMock(recordId);
     }
-    FileSystemService.saveRequest(workspaceId, requestParams, nodeType).then((res) => {
-      res && message.success('保存成功');
-      getCollections();
-      navPane({
-        id: paneId,
-        type,
-        icon: requestParams?.method,
-      });
-    });
+    saveRequest(request, true);
   };
 
   const { data, run } = useRequest(() =>
@@ -226,32 +233,20 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         disableSave={!!props.data?.recordId}
         onSave={handleSave}
         onBeforeSend={convertRequest}
-        onSaveAs={() => saveAsRef?.current?.open()}
-        onChange={({ title, description, tags }) => {
-          if (title) {
-            rename(title);
-          }
-          if (description) {
-            FileSystemService.saveRequest(
-              workspaceId,
-              {
-                id: data?.id,
-                description,
-              },
-              nodeType,
-            );
-          }
-          if (tags) {
-            FileSystemService.saveRequest(
-              workspaceId,
-              {
-                id: data?.id,
-                tags,
-              },
-              nodeType,
-            );
-          }
-        }}
+        onSaveAs={saveAsRef?.current?.open}
+        onTitleChange={rename}
+        onDescriptionChange={(description) =>
+          saveRequest({
+            id: data?.id,
+            description,
+          })
+        }
+        onTagsChange={(tags) =>
+          saveRequest({
+            id: data?.id,
+            tags,
+          })
+        }
       />
 
       <SaveAs ref={saveAsRef} workspaceId={workspaceId} />

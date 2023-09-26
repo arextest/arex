@@ -1,7 +1,7 @@
 import { EditOutlined } from '@ant-design/icons';
 import { css } from '@arextest/arex-core';
-import { Breadcrumb, Input, Select, Space, Typography } from 'antd';
-import React, { FC, useState } from 'react';
+import { Breadcrumb, Input, Select, Space, Tag, Typography } from 'antd';
+import React, { FC, useEffect, useState } from 'react';
 
 import { useArexRequestProps } from '../../hooks';
 
@@ -12,19 +12,32 @@ export interface SmartBreadcrumbProps {
   description?: string;
   tags?: string[];
   tagOptions?: { color: string; label: string; value: string }[];
-  onChange?: (params: { title?: string; description?: string; tags?: string[] }) => void;
+  onTitleChange?: (title?: string) => void;
+  onDescriptionChange?: (description?: string) => void;
+  onTagsChange?: (tags?: string[]) => void;
 }
 const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
-  const { titleItems, tags, tagOptions, description, onChange } = useArexRequestProps();
+  const {
+    titleItems,
+    tags,
+    tagOptions,
+    description,
+    onTitleChange,
+    onDescriptionChange,
+    onTagsChange,
+  } = useArexRequestProps();
   const [mode, setMode] = useState('normal');
-  const [value, setValue] = useState('');
+  const [title, setTitle] = useState('');
+  const [tagsValue, setTagsValue] = useState<string[]>();
   const [descriptionValue, setDescriptionValue] = useState('');
 
-  // useEffect(() => {
-  //   setValue(titleItems.at(-1)?.title || '');
-  //   setDescriptionValue(description);
-  // }, []);
+  useEffect(() => {
+    titleItems && setTitle(titleItems.at(-1)?.title || '');
+    setDescriptionValue(descriptionValue);
+    setTagsValue(tags);
+  }, [descriptionValue, tags, titleItems]);
 
+  // TODO REFACTOR
   return (
     <div
       css={css`
@@ -99,64 +112,58 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
             </div>
 
             <Select
-              css={css`
-                min-width: 120px;
-                height: 20px;
-              `}
-              placeholder={'labels'}
+              placeholder={<Tag>Add labels</Tag>}
               mode={'multiple'}
-              defaultValue={tags}
+              value={tagsValue}
               options={tagOptions}
               bordered={false}
-              onChange={(val) => {
-                onChange?.({
-                  tags: val,
-                });
+              onChange={(value) => {
+                setTagsValue(value);
+                onTagsChange?.(value);
               }}
+              style={{ width: '120px' }}
             />
           </div>
         </Space>
       ) : (
         <>
-          <Input
-            css={css`
-              display: ${mode === 'title' ? 'inline-block' : 'none'};
-            `}
-            value={value}
-            onChange={(val) => {
-              setValue(val.target.value);
-            }}
-            onBlur={() => {
-              setMode('normal');
-              onChange?.({ title: value });
-            }}
-            onKeyUp={(e) => {
-              if (e.keyCode === 13) {
+          {mode === 'title' && (
+            <Input
+              value={title}
+              onChange={(val) => {
+                setTitle(val.target.value);
+              }}
+              onBlur={() => {
                 setMode('normal');
-                onChange?.({ title: value });
-              }
-            }}
-          />
+                onTitleChange?.(title);
+              }}
+              onKeyUp={(e) => {
+                if (e.keyCode === 13) {
+                  setMode('normal');
+                  onTitleChange?.(title);
+                }
+              }}
+            />
+          )}
 
-          <Input
-            css={css`
-              display: ${mode === 'description' ? 'inline-block' : 'none'};
-            `}
-            defaultValue={descriptionValue}
-            onChange={(val) => {
-              setDescriptionValue(val.target.value);
-            }}
-            onBlur={(val) => {
-              setMode('normal');
-              onChange?.({ description: descriptionValue });
-            }}
-            onKeyUp={(e) => {
-              if (e.keyCode === 13) {
+          {mode === 'description' && (
+            <Input
+              defaultValue={descriptionValue}
+              onChange={(val) => {
+                setDescriptionValue(val.target.value);
+              }}
+              onBlur={() => {
                 setMode('normal');
-                onChange?.({ description: descriptionValue });
-              }
-            }}
-          />
+                onDescriptionChange?.(descriptionValue);
+              }}
+              onKeyUp={(e) => {
+                if (e.code === 'Enter') {
+                  setMode('normal');
+                  onDescriptionChange?.(descriptionValue);
+                }
+              }}
+            />
+          )}
         </>
       )}
     </div>
