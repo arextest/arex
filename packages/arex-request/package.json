@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-request",
-  "version": "0.0.1-beta.2",
+  "version": "0.0.1-beta.3",
   "type": "module",
   "main": "dist/arex-request.umd.cjs",
   "module": "dist/arex-request.js",
@@ -17,7 +17,7 @@
     "dist/*"
   ],
   "dependencies": {
-    "@arextest/arex-core": "workspace:latest",
+    "@arextest/arex-core": "^workspace:latest",
     "@arextest/monaco-react": "^4.5.1",
     "@ant-design/icons": "^5.2.6",
     "allotment": "^1.18.1",
