@@ -199,6 +199,8 @@
     "duration": "录制周期",
     "period": "录制时间",
     "frequency": "录制频率",
+    "serializeSkip": "序列化忽略",
+    "fieldName": "字段名",
     "advanced": "高级",
     "timeMock": "Mock 时间",
     "dynamicClasses": "动态类",

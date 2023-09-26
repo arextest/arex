@@ -199,6 +199,8 @@
     "duration": "Duration",
     "period": "Period",
     "frequency": "Frequency",
+    "serializeSkip": "SerializeSkip",
+    "fieldName": "FieldName",
     "advanced": "Advanced",
     "timeMock": "Time Mock",
     "dynamicClasses": "Dynamic Classes",
