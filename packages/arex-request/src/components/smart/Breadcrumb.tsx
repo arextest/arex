@@ -53,8 +53,6 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
     [breadcrumb, titleProps?.value],
   );
 
-  console.log(breadcrumb);
-
   // TODO REFACTOR
   return (
     <div

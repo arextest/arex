@@ -93,7 +93,12 @@ const Collection: ArexMenuFC = (props) => {
   const [searchValue, setSearchValue] = useState<SearchDataType>();
   const [autoExpandParent, setAutoExpandParent] = useState(true);
 
-  const selectedKeys = useMemo(() => (props.value ? [props.value] : []), [props.value]);
+  // requestId structure: workspaceId-nodeTypeStr-id
+  const selectedKeys = useMemo(() => {
+    const id = props.value?.split('-')?.[2];
+    return id ? [id] : undefined;
+  }, [props.value]);
+
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]); // TODO 初始化展开的节点
   const [showModalImportExport, setShowModalImportExport] = useState(false);
 
