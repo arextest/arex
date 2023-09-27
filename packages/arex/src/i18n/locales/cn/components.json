@@ -177,7 +177,8 @@
     "operationName": "接口名称",
     "recordedCaseCount": "用例数",
     "recordTime": "录制时间",
-    "operationType": "接口类型"
+    "operationType": "接口类型",
+    "re-calculateReport": "重算报告"
   },
   "appSetting": {
     "record": "录制",
