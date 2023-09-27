@@ -1,15 +1,25 @@
-import { ClusterOutlined } from '@ant-design/icons';
+import {
+  BugOutlined,
+  ClusterOutlined,
+  FontColorsOutlined,
+  SketchOutlined,
+} from '@ant-design/icons';
 import {
   EllipsisTooltip,
+  Label,
   SceneCode,
   SpaceBetweenWrapper,
   TooltipButton,
+  useArexPaneProps,
+  useTranslation,
 } from '@arextest/arex-core';
 import { css } from '@emotion/react';
-import { Badge, Divider, Menu, Space, theme } from 'antd';
+import { useRequest } from 'ahooks';
+import { App, Badge, Divider, Menu, Space, theme } from 'antd';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 
-import { SubScene } from '@/services/ReportService';
+import { ReportService } from '@/services';
+import { FeedbackType, PlanItemStatistics, SubScene } from '@/services/ReportService';
 
 export interface SubSceneMenuProps {
   data: SubScene[];
@@ -20,6 +30,11 @@ export interface SubSceneMenuProps {
 const Connector = '%_%';
 const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
   const { token } = theme.useToken();
+  const { message } = App.useApp();
+  const { t } = useTranslation('components');
+
+  const { data: plan } = useArexPaneProps<PlanItemStatistics>();
+
   const [selectedKeys, setSelectedKeys] = useState('');
 
   useEffect(() => {
@@ -32,6 +47,25 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
       props.onClick?.(props.data[0].recordId);
     }
   }, [props.data]);
+
+  const { run: feedbackScene } = useRequest(
+    (recordId, feedbackType) =>
+      ReportService.feedbackScene({
+        recordId,
+        feedbackType,
+        planId: plan!.planId,
+        planItemId: plan!.planItemId,
+      }),
+    {
+      manual: true,
+      ready: !!plan,
+      onSuccess(success) {
+        success
+          ? message.success(t('message.success', { ns: 'common' }))
+          : message.error(t('message.error', { ns: 'common' }));
+      },
+    },
+  );
 
   const handleClick = ({ key }: { key: string }) => {
     setSelectedKeys(key);
@@ -76,8 +110,56 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
           label: (
             <SpaceBetweenWrapper>
               <div style={{ overflow: 'hidden' }}>{fullPath}</div>
+
               <div>
                 <Divider type='vertical' />
+                <Space.Compact>
+                  <TooltipButton
+                    type='link'
+                    size='small'
+                    icon={<BugOutlined />}
+                    title={
+                      <>
+                        <Label>{t('replay.re-calculateReport')}</Label>Bug
+                      </>
+                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      feedbackScene(subScene.recordId, FeedbackType.Bug);
+                    }}
+                  />
+                  <TooltipButton
+                    type='link'
+                    size='small'
+                    icon={<SketchOutlined />}
+                    title={
+                      <>
+                        <Label>{t('replay.re-calculateReport')}</Label>ByDesign
+                      </>
+                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      feedbackScene(subScene.recordId, FeedbackType.ByDesign);
+                    }}
+                  />
+                  <TooltipButton
+                    type='link'
+                    size='small'
+                    icon={<FontColorsOutlined />}
+                    title={
+                      <>
+                        <Label>{t('replay.re-calculateReport')}</Label>ArexProblem
+                      </>
+                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      feedbackScene(subScene.recordId, FeedbackType.ArexProblem);
+                    }}
+                  />
+                </Space.Compact>
+
+                <Divider type='vertical' />
+
                 <TooltipButton
                   type='link'
                   size='small'
