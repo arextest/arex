@@ -40,7 +40,7 @@ const DurationInput: FC<FormItemProps<number[]>> = (props) => {
   };
 
   return (
-    <div style={{ marginTop: '4px' }}>
+    <div style={{ marginTop: '4px', overflow: 'hidden' }}>
       <Checkbox checked={checkAll} onChange={onCheckAllChange}>
         {t('everyDay')}
       </Checkbox>
