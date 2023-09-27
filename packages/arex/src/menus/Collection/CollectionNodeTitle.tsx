@@ -1,7 +1,18 @@
-import { ExclamationCircleFilled, MoreOutlined } from '@ant-design/icons';
-import { getLocalStorage, RequestMethodIcon, styled, useTranslation } from '@arextest/arex-core';
+import {
+  CheckOutlined,
+  CloseOutlined,
+  ExclamationCircleFilled,
+  MoreOutlined,
+} from '@ant-design/icons';
+import {
+  getLocalStorage,
+  RequestMethodIcon,
+  SmallTextButton,
+  styled,
+  useTranslation,
+} from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Dropdown, Input, MenuProps } from 'antd';
+import { App, Button, Dropdown, Input, MenuProps, Space } from 'antd';
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
@@ -17,6 +28,13 @@ const CollectionNodeTitleWrapper = styled.div`
   display: flex;
   .right {
     float: right;
+    opacity: 0;
+    transition: opacity ease 0.3s;
+  }
+  &:hover {
+    .right {
+      opacity: 1;
+    }
   }
   .left {
     flex: 1;
@@ -286,13 +304,22 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         {prefix}
         <div className={'content'}>
           {editMode ? (
-            <Input
-              onPressEnter={rename}
-              value={nodeName}
-              onBlur={rename}
-              onChange={(e) => setNodeName(e.currentTarget.value)}
-              style={{ padding: '0 4px', width: '100%' }}
-            />
+            <Space style={{ display: 'flex' }}>
+              <Input
+                value={nodeName}
+                onPressEnter={rename}
+                onChange={(e) => setNodeName(e.currentTarget.value)}
+                style={{ padding: '0 4px' }}
+              />
+              <SmallTextButton
+                icon={<CloseOutlined />}
+                onClick={() => {
+                  setEditMode(false);
+                  setNodeName(props.data.nodeName);
+                }}
+              />
+              <SmallTextButton icon={<CheckOutlined />} onClick={rename} />
+            </Space>
           ) : (
             <SearchHighLight text={props.data.nodeName} keyword={props.keyword} />
           )}
