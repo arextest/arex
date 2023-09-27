@@ -1,18 +1,23 @@
-import { ArexPaneFC, CollapseTable } from '@arextest/arex-core';
+import { ArexPaneFC, CollapseTable, useTranslation } from '@arextest/arex-core';
+import { useRequest } from 'ahooks';
+import { Alert } from 'antd';
 import { merge } from 'lodash';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 
 import { PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { PlanStatistics } from '@/services/ReportService';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
+import AppOwnerConfig, { AppOwnerConfigRef } from './AppOwnerConfig';
 import AppTitle from './AppTitle';
 import PlanItem from './PlanItem';
 import PlanReport, { PlanReportProps } from './PlanReport';
 
 const ReplayPage: ArexPaneFC = (props) => {
   const navPane = useNavPane();
+  const { t } = useTranslation('components');
+
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
   const { id: appId } = useMemo(() => decodePaneKey(props.paneKey), [props.paneKey]);
 
@@ -30,9 +35,36 @@ const ReplayPage: ArexPaneFC = (props) => {
     setRefreshDep(new Date().getTime()); // 触发 ReplayTable 组件请求更新
   };
 
+  const [hasOwner, setHasOwner] = useState(true);
+  const appOwnerConfigRef = useRef<AppOwnerConfigRef>(null);
+  const { run: queryAppOwners } = useRequest(() => Promise.resolve(false), {
+    onSuccess(success) {
+      setHasOwner(success); // TODO: check owner
+    },
+  });
+  const handleAddOwner = () => {
+    queryAppOwners();
+  };
+
   return (
     <>
+      {!hasOwner && (
+        <Alert
+          banner
+          closable
+          type='warning'
+          message={
+            <span>
+              {t('replay.noAppOwnerAlert')}
+              <a onClick={appOwnerConfigRef?.current?.open}>{t('replay.addOwner')}</a>.
+            </span>
+          }
+          style={{ margin: '-8px -16px 8px -16px' }}
+        />
+      )}
+
       <AppTitle appId={appId} onRefresh={handleRefreshDep} />
+
       <CollapseTable
         active={!!selectedPlan}
         table={
@@ -51,6 +83,8 @@ const ReplayPage: ArexPaneFC = (props) => {
           />
         }
       />
+
+      <AppOwnerConfig ref={appOwnerConfigRef} appId={appId} onClose={handleAddOwner} />
     </>
   );
 };

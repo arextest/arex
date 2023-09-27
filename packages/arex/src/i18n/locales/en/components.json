@@ -177,7 +177,9 @@
     "operationName": "Operation Name",
     "recordedCaseCount": "Case Count",
     "recordTime": "Record Time",
-    "operationType": "Operation Type"
+    "operationType": "Operation Type",
+    "noAppOwnerAlert":"There is no owner of this application, some operation privileges will be disabled, please ",
+    "addOwner": "add application owner"
   },
   "appSetting": {
     "record": "Record",
