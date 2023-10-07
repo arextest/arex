@@ -27,6 +27,18 @@ export enum CollectionNodeType {
   folder = 3,
 }
 
+export enum RoleEnum {
+  Admin = 1,
+  Editor = 2,
+  Viewer = 3,
+}
+
+export const RoleMap = {
+  [RoleEnum.Admin]: 'Admin',
+  [RoleEnum.Editor]: 'Editor',
+  [RoleEnum.Viewer]: 'Viewer',
+};
+
 export const ExtensionVersion = '1.0.4';
 export const ArexVersionKey = 'arexVersion';
 export const ArexVersionValue = '0.4.1';
@@ -52,5 +64,5 @@ export const DEFAULT_COLOR_PRIMARY = ColorPrimary.green;
 
 export const MAX_PANES_COUNT = 8;
 
-// custom event type
+// custom event types
 export const AREX_OPEN_NEW_PANEL = 'arexOpenNewPanel';

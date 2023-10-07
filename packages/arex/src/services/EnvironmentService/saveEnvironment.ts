@@ -1,13 +1,17 @@
+import { Environment } from '@/services/EnvironmentService/getEnvironments';
 import { request } from '@/utils';
-
-import { Environment } from '../../store/useEnvironments';
 
 export type SaveEnvironmentReq = {
   env: Omit<Environment, 'id'> & { id?: string };
 };
 
+export type SaveEnvironmentRes = {
+  success: boolean;
+  environmentId: string;
+};
+
 export default async function saveEnvironment(params: SaveEnvironmentReq) {
   return request
-    .post<{ success: boolean }>(`/report/environment/saveEnvironment`, params)
-    .then((res) => res.body.success);
+    .post<SaveEnvironmentRes>(`/report/environment/saveEnvironment`, params)
+    .then((res) => res.body);
 }

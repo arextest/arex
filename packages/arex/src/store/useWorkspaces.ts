@@ -1,10 +1,10 @@
-import { getLocalStorage, i18n, RoleEnum } from '@arextest/arex-core';
+import { getLocalStorage, i18n } from '@arextest/arex-core';
 import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 
-import { EMAIL_KEY } from '@/constant';
-import { createWorkspace } from '@/services/FileSystemService';
-import queryWorkspacesByUser from '@/services/FileSystemService/workspace/queryWorkspacesByUser';
+import { EMAIL_KEY, RoleEnum } from '@/constant';
+import { FileSystemService } from '@/services';
+import { useCollections } from '@/store';
 
 export type Workspace = {
   id: string;
@@ -39,12 +39,14 @@ const useWorkspaces = create(
 
           let workspaces: Workspace[] = [];
           try {
-            workspaces = await queryWorkspacesByUser({ userName });
+            workspaces = await FileSystemService.queryWorkspacesByUser({ userName });
             // create default workspace if no workspace
             if (!workspaces.length) {
-              createWorkspace({ userName, workspaceName: 'default' }).then((res) => {
-                get().getWorkspaces(res.workspaceId);
-              });
+              FileSystemService.createWorkspace({ userName, workspaceName: 'default' }).then(
+                (res) => {
+                  get().getWorkspaces(res.workspaceId);
+                },
+              );
             }
           } catch (e) {
             window.message.error(i18n.t('workSpace.noPermissionOrInvalid', { ns: 'components' }));
@@ -62,7 +64,10 @@ const useWorkspaces = create(
 
           // actions
           getWorkspaces,
-          setActiveWorkspaceId: (id) => set({ activeWorkspaceId: id }),
+          setActiveWorkspaceId: (id) => {
+            set({ activeWorkspaceId: id });
+            useCollections.getState().getCollections();
+          },
           reset: () => set(initialState),
         };
       },

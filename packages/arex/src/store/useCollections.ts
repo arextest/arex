@@ -52,7 +52,7 @@ const useCollections = create<CollectionState & CollectionAction>((set, get) => 
       method: null,
       nodeName: 'root',
       nodeType: CollectionNodeType.folder,
-      infoId: '', // data.id,
+      infoId: '', // types.id,
       key: '__root__', //
       children: data.roots,
     });

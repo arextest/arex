@@ -42,7 +42,7 @@ type MockDataParse = Omit<MockData, 'targetRequest' | 'targetResponse'> & {
   targetResponse: MockTargetParsed;
 };
 
-const Mock: FC<{ recordId: string }> = ({ recordId }) => {
+const Mock: FC<{ recordId?: string }> = ({ recordId }) => {
   const { message } = App.useApp();
   const { theme } = useUserProfile();
   const [mockData, setMockData] = useImmer<MockDataParse[]>([]);

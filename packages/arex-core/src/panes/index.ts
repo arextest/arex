@@ -8,7 +8,7 @@ import WebView from './WebView';
 export type Pane<D extends PanesData = PanesData> = {
   id: string; // PaneId
   type: string; // PaneType
-  key?: string; // unique, generate by id and type
+  key?: string; // unique, generate by id and types
   name?: string; // PaneName
   icon?: string; // antd icon name
   index?: number; // 越新的 pane, index 越大

@@ -8,7 +8,7 @@ import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import React, { ChangeEventHandler, ReactNode, useCallback, useMemo, useState } from 'react';
 
 export type MenuSelectProps<D, P extends any[]> = {
-  sx?: any; // custom style // type: CSSInterpolation / @emotion/serialize/types
+  sx?: any; // custom style // types: CSSInterpolation / @emotion/serialize/types
   small?: boolean;
   refresh?: boolean; // show refresh button
   defaultSelectFirst?: boolean;
