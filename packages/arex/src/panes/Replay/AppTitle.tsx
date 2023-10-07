@@ -39,6 +39,7 @@ import { MessageMap } from '@/services/ScheduleService';
 
 type AppTitleProps = {
   appId: string;
+  appName?: string;
   onRefresh?: () => void;
 };
 
@@ -107,7 +108,7 @@ const InitialValues = {
   ],
 };
 
-const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
+const AppTitle: FC<AppTitleProps> = ({ appId, appName, onRefresh }) => {
   const { notification } = App.useApp();
   const { token } = theme.useToken();
   const navPane = useNavPane();
@@ -280,7 +281,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
       <PanesTitle
         title={
           <TitleWrapper
-            title={appId}
+            title={appName}
             count={recordedCase}
             onClickTitle={handleClickTitle}
             onRefresh={handleRefresh}

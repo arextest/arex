@@ -6,6 +6,7 @@ import React, { useMemo, useRef, useState } from 'react';
 
 import { PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
+import { ApplicationService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
@@ -37,14 +38,12 @@ const ReplayPage: ArexPaneFC = (props) => {
 
   const [hasOwner, setHasOwner] = useState(true);
   const appOwnerConfigRef = useRef<AppOwnerConfigRef>(null);
-  const { run: queryAppOwners } = useRequest(() => Promise.resolve(false), {
-    onSuccess(success) {
-      setHasOwner(success); // TODO: check owner
+  const { data: appInfo, refresh: getAppInfo } = useRequest(ApplicationService.getAppInfo, {
+    defaultParams: [appId],
+    onSuccess(res) {
+      setHasOwner(!!res.owners?.length);
     },
   });
-  const handleAddOwner = () => {
-    queryAppOwners();
-  };
 
   return (
     <>
@@ -63,7 +62,7 @@ const ReplayPage: ArexPaneFC = (props) => {
         />
       )}
 
-      <AppTitle appId={appId} onRefresh={handleRefreshDep} />
+      <AppTitle appId={appId} appName={appInfo?.appName} onRefresh={handleRefreshDep} />
 
       <CollapseTable
         active={!!selectedPlan}
@@ -84,7 +83,7 @@ const ReplayPage: ArexPaneFC = (props) => {
         }
       />
 
-      <AppOwnerConfig ref={appOwnerConfigRef} appId={appId} onClose={handleAddOwner} />
+      <AppOwnerConfig ref={appOwnerConfigRef} appId={appId} onClose={getAppInfo} />
     </>
   );
 };
