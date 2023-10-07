@@ -16,6 +16,7 @@ ArexMenuManager.registerMenus(Menus);
 const App = () => {
   useTrace('http://trace.arextest.com:8080/graphql');
   useAuthentication();
+
   const { theme, compact, colorPrimary, language } = useUserProfile();
 
   return (

@@ -5,10 +5,12 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import {
+  css,
   getLocalStorage,
   HelpTooltip,
   i18n,
   I18nextLng,
+  Label,
   PanesTitle,
   SpaceBetweenWrapper,
   styled,
@@ -35,11 +37,10 @@ import { EMAIL_KEY, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
 import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCaseList';
 import { ApplicationService, ReportService, ScheduleService } from '@/services';
-import { ApplicationDataType } from '@/services/ApplicationService';
 import { MessageMap } from '@/services/ScheduleService';
 
 type AppTitleProps = {
-  data: ApplicationDataType;
+  appId: string;
   onRefresh?: () => void;
 };
 
@@ -61,7 +62,7 @@ const TitleWrapper = styled(
     const { t } = useTranslation(['components']);
 
     return (
-      <div className={props.className}>
+      <div id='arex-replay-record-detail-btn' className={props.className}>
         {createElement(
           props.count ? Button : 'div',
           props.count ? { type: 'text', onClick: props.onClickTitle } : {},
@@ -71,6 +72,7 @@ const TitleWrapper = styled(
         )}
         {props.onRefresh && (
           <TooltipButton
+            id='arex-replay-refresh-report-btn'
             size='small'
             type='text'
             title={t('replay.refresh')}
@@ -80,6 +82,7 @@ const TitleWrapper = styled(
         )}
         {props.onSetting && (
           <TooltipButton
+            id='arex-replay-app-setting-btn'
             size='small'
             type='text'
             title={t('replay.appSetting')}
@@ -106,7 +109,7 @@ const InitialValues = {
   ],
 };
 
-const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
+const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
   const { notification } = App.useApp();
   const { token } = theme.useToken();
   const navPane = useNavPane();
@@ -128,14 +131,14 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
   });
 
   const webhook = useMemo(
-    () => `${location.origin}/api/createPlan?appId=${data.appId}&targetEnv=${targetEnv?.trim()}`,
-    [data.appId, targetEnv],
+    () => `${location.origin}/schedule/createPlan?appId=${appId}&targetEnv=${targetEnv?.trim()}`,
+    [appId, targetEnv],
   );
 
   /**
    * 请求 InterfacesList
    */
-  useRequest(() => ApplicationService.queryInterfacesList<'Global'>({ id: data.appId }), {
+  useRequest(() => ApplicationService.queryInterfacesList<'Global'>({ id: appId }), {
     ready: open,
     onSuccess(res) {
       setInterfacesOptions(res.map((item) => ({ label: item.operationName, value: item.id })));
@@ -147,10 +150,10 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
     {
       defaultParams: [
         {
-          appId: data.appId,
+          appId,
         },
       ],
-      ready: !!data.appId,
+      ready: !!appId,
     },
   );
 
@@ -191,7 +194,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
       .then((values) => {
         const targetEnv = values.targetEnv.trim();
         createPlan({
-          appId: data.appId,
+          appId,
           sourceEnv: 'pro',
           targetEnv,
           caseSourceFrom: values.caseSourceRange[0].startOf('day').valueOf(),
@@ -211,9 +214,9 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         setTargetHostSource((source) => {
           !source && (source = {});
 
-          if (source?.[data.appId] && !source?.[data.appId].includes(targetEnv))
-            source[data.appId].push(targetEnv);
-          else if (!source?.[data.appId]) source[data.appId] = [targetEnv];
+          if (source?.[appId] && !source?.[appId].includes(targetEnv))
+            source[appId].push(targetEnv);
+          else if (!source?.[appId]) source[appId] = [targetEnv];
 
           return source;
         });
@@ -225,7 +228,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
 
   const targetHostOptions = useMemo(
     () =>
-      targetHostSource?.[data.appId]?.map((item) => ({
+      targetHostSource?.[appId]?.map((item) => ({
         label: (
           <SpaceBetweenWrapper>
             <Typography.Text>{item}</Typography.Text>
@@ -241,14 +244,14 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
                 e.stopPropagation();
 
                 setTargetHostSource((source) => {
-                  const targetHostList = source?.[data.appId] || [];
+                  const targetHostList = source?.[appId] || [];
                   const index = targetHostList.indexOf(item);
                   if (index > -1) {
                     targetHostList.splice(index, 1);
                   }
                   return {
                     ...source,
-                    [data.appId]: targetHostList,
+                    [appId]: targetHostList,
                   };
                 });
               }}
@@ -257,7 +260,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         ),
         value: item,
       })) || [],
-    [data.appId, targetHostSource, open],
+    [appId, targetHostSource, open],
   );
 
   const handleClickTitle = useCallback(() => caseListRef.current?.open(), [caseListRef]);
@@ -269,17 +272,22 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
 
   const handleSetting = useCallback(() => {
     navPane({
-      id: data.appId,
+      id: appId,
       type: PanesType.APP_SETTING,
     });
-  }, [data]);
+  }, [appId]);
+
+  const handleCloseModal = useCallback(() => {
+    setOpen(false);
+    form.resetFields();
+  }, [form]);
 
   return (
     <div>
       <PanesTitle
         title={
           <TitleWrapper
-            title={data.appId}
+            title={appId}
             count={recordedCase}
             onClickTitle={handleClickTitle}
             onRefresh={handleRefresh}
@@ -288,6 +296,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         }
         extra={
           <Button
+            id='arex-replay-create-plan-btn'
             size='small'
             type='primary'
             icon={<PlayCircleOutlined />}
@@ -299,15 +308,15 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
       />
 
       <Modal
-        title={`${t('replay.startButton')} - ${data.appId}`}
+        title={`${t('replay.startButton')} - ${appId}`}
         open={open}
         onOk={handleStartReplay}
-        onCancel={() => setOpen(false)}
+        onCancel={handleCloseModal}
         bodyStyle={{ paddingBottom: '12px' }}
         confirmLoading={confirmLoading}
       >
         <Form
-          name='startReplay'
+          name={`startReplay-${appId}`}
           form={form}
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
@@ -338,8 +347,33 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
             }
             name='caseSourceRange'
             rules={[{ required: true, message: t('replay.emptyCaseRange') as string }]}
+            css={css`
+              .ant-picker-dropdown .ant-picker-footer-extra {
+                position: absolute;
+                border: none;
+                bottom: 3px;
+              }
+            `}
           >
             <DatePicker.RangePicker
+              format='YYYY-MM-DD HH:mm'
+              showTime={{ format: 'HH:mm' }}
+              getPopupContainer={(triggerNode) => triggerNode.parentNode as HTMLElement}
+              renderExtraFooter={() => (
+                <>
+                  <Label type='secondary'>{t('dateRangePreset.quickPick', { ns: 'common' })}</Label>
+                  <Button
+                    size={'small'}
+                    onClick={() => {
+                      form.setFieldsValue({
+                        caseSourceRange: [dayjs().subtract(1, 'day'), dayjs()],
+                      });
+                    }}
+                  >
+                    {t('dateRangePreset.1d', { ns: 'common' })}
+                  </Button>
+                </>
+              )}
               placeholder={[t('replay.caseStartTime'), t('replay.caseEndTime')]}
               style={{ width: '100%' }}
             />
@@ -363,7 +397,7 @@ const AppTitle: FC<AppTitleProps> = ({ data, onRefresh }) => {
         </Form>
       </Modal>
 
-      <RecordedCaseList ref={caseListRef} appId={data.appId} />
+      <RecordedCaseList ref={caseListRef} appId={appId} onChange={queryCountRecord} />
     </div>
   );
 };

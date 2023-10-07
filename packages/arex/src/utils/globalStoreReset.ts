@@ -1,7 +1,7 @@
 import { getLocalStorage, setLocalStorage } from '@arextest/arex-core';
 
 import { EMAIL_KEY } from '@/constant';
-import { useEnvironments, useMenusPanes, useUserProfile, useWorkspaces } from '@/store';
+import { useMenusPanes, useUserProfile, useWorkspaces } from '@/store';
 
 import useCollections from '../store/useCollections';
 
@@ -10,7 +10,6 @@ const globalStoreReset = () => {
 
   useCollections.getState().reset();
   useMenusPanes.getState().reset();
-  useEnvironments.getState().reset();
   useWorkspaces.getState().reset();
   useUserProfile.getState().reset();
 

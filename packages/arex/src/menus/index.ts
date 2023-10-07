@@ -7,7 +7,6 @@
  */
 
 import Collection from './Collection';
-import Environment from './Environment';
 import Replay from './Replay';
 
-export default { Collection, Replay, Environment };
+export default { Collection, Replay };

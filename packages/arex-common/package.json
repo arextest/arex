@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-common",
-  "version": "0.0.13",
+  "version": "0.0.20",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-common.umd.cjs",
   "module": "dist/arex-common.js",
@@ -8,18 +8,16 @@
   "scripts": {
     "build:code": "vite build",
     "build:decl": "tsc --project tsconfig.decl.json",
-    "do-build": "npm run build:code && npm run build:decl",
-    "do-build-core": "npm run build:code && npm run build:decl"
+    "do-build": "pnpm run build:code && pnpm run build:decl",
+    "do-build-core": "pnpm run build:code && pnpm run build:decl"
   },
   "types": "./dist/index.d.ts",
   "files": [
     "dist/*"
   ],
   "dependencies": {
-    "@arextest/arex-core": "workspace:^",
-    "@ant-design/icons": "^5.1.4",
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
+    "@arextest/arex-core": "workspace:latest",
+    "@ant-design/icons": "^5.2.6",
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",
     "dayjs": "^1.11.7",
@@ -38,10 +36,12 @@
     "vite": "^4.2.0"
   },
   "peerDependencies": {
-    "antd": "^5.6.4",
+    "antd": "^5.9.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "i18next": "^22.4.11",
-    "react-i18next": "^12.2.0"
+    "react-i18next": "^12.2.0",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6"
   }
 }

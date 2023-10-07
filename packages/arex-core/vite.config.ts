@@ -21,12 +21,14 @@ export default defineConfig({
       fileName: 'arex-core',
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'antd'],
+      external: ['react', 'react-dom', 'antd', '@emotion/react', '@emotion/styled'],
       output: {
         globals: {
           react: 'react',
           antd: 'antd',
           'react-dom': 'react-dom',
+          '@emotion/react': '@emotion/react',
+          '@emotion/styled': '@emotion/styled',
         },
       },
     },

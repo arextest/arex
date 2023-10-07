@@ -19,7 +19,6 @@ import { useMenusPanes } from '@/store';
 const defaultPageSize = 5 as const;
 
 export type PlanReportProps = {
-  id?: string;
   appId?: string;
   refreshDep?: React.Key;
   onSelectedPlanChange: (selectedPlan: PlanStatistics, current?: number, row?: number) => void;
@@ -156,8 +155,8 @@ const PlanReport: FC<PlanReportProps> = (props) => {
 
   // optimize: cancel polling interval when pane is not active
   useEffect(() => {
-    activePane?.id !== props.id ? cancelPollingInterval() : refresh();
-  }, [activePane, props.id]);
+    activePane?.id !== props.appId ? cancelPollingInterval() : refresh();
+  }, [activePane, props.appId]);
 
   const handleRowClick: HighlightRowTableProps<PlanStatistics>['onRowClick'] = (record, index) => {
     onSelectedPlanChange(record, pagination.current, index);

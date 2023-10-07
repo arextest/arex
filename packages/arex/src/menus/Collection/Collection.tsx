@@ -14,11 +14,12 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest, useSize } from 'ahooks';
-import { Button, Tag, Tree } from 'antd';
+import { App, Button, Tag, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import { cloneDeep } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { WorkspacesMenu } from '@/components';
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import CollectionNodeTitle, {
@@ -32,9 +33,14 @@ import { negate } from '@/utils';
 import treeFilter from '@/utils/treeFilter';
 import IconArchive from '~icons/lucide/archive';
 
-const CollectionNodeTitleWrapper = styled.div`
+const CollectionWrapper = styled.div`
   width: 100%;
   overflow: hidden;
+
+  .collection-content-wrapper {
+    padding: 8px 8px;
+  }
+
   .ant-spin-nested-loading,
   .ant-spin {
     height: 100%;
@@ -64,25 +70,42 @@ const CollectionNodeTitleWrapper = styled.div`
   }
 `;
 
+const CollectionTree = styled(Tree<CollectionType>)`
+  .ant-tree-node-selected {
+    background-color: ${(props) => props.theme.colorPrimaryBgHover} !important;
+  }
+`;
+
 export type CollectionTreeType = CollectionType & DataNode;
 
 const Collection: ArexMenuFC = (props) => {
   const { t } = useTranslation(['components']);
-  const { activeWorkspaceId } = useWorkspaces();
-  const { activePane } = useMenusPanes();
-  const { loading, collectionsTreeData, collectionsFlatData, getCollections } = useCollections();
-
+  const { message } = App.useApp();
   const navPane = useNavPane();
+  const size = useSize(() => document.getElementById('arex-menu-wrapper'));
+
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
-  const size = useSize(() => document.getElementById('arex-menu-wrapper'));
+  const { activeWorkspaceId, workspaces, getWorkspaces, setActiveWorkspaceId } = useWorkspaces();
+  const { activePane, reset: resetPane } = useMenusPanes();
+  const { loading, collectionsTreeData, collectionsFlatData, getCollections } = useCollections();
 
   const [searchValue, setSearchValue] = useState<SearchDataType>();
   const [autoExpandParent, setAutoExpandParent] = useState(true);
 
-  const selectedKeys = useMemo(() => (props.value ? [props.value] : []), [props.value]);
+  // requestId structure: workspaceId-nodeTypeStr-id
+  const selectedKeys = useMemo(() => {
+    const id = props.value?.split('-')?.[2];
+    return id ? [id] : undefined;
+  }, [props.value]);
+
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]); // TODO 初始化展开的节点
   const [showModalImportExport, setShowModalImportExport] = useState(false);
+
+  useEffect(() => {
+    getCollections();
+  }, []);
+
   // auto expand by active pane id
   useEffect(() => {
     activePane &&
@@ -91,7 +114,7 @@ const Collection: ArexMenuFC = (props) => {
   }, [activePane]);
 
   const { data: labelData = [] } = useRequest(
-    () => ReportService.queryLabels({ workspaceId: activeWorkspaceId as string }),
+    () => ReportService.queryLabels({ workspaceId: activeWorkspaceId }),
     {
       ready: !!activeWorkspaceId,
       refreshDeps: [activeWorkspaceId],
@@ -132,6 +155,15 @@ const Collection: ArexMenuFC = (props) => {
     [labelData],
   );
 
+  const workspacesOptions = useMemo(
+    () =>
+      workspaces.map((workspace) => ({
+        value: workspace.id,
+        label: workspace.workspaceName,
+      })),
+    [workspaces],
+  );
+
   const handleSelect: DirectoryTreeProps<CollectionTreeType>['onSelect'] = (keys, info) => {
     if (info.node.nodeType !== CollectionNodeType.folder) {
       const icon =
@@ -145,7 +177,7 @@ const Collection: ArexMenuFC = (props) => {
 
       navPane({
         type: PanesType.REQUEST,
-        id: info.node.infoId,
+        id: `${activeWorkspaceId}-${info.node.nodeType}-${info.node.infoId}`,
         name: info.node.nodeName,
         icon,
       });
@@ -156,7 +188,7 @@ const Collection: ArexMenuFC = (props) => {
     const { keyword, structuredValue = [] } = value;
     let newExpandedKeys;
     if (!structuredValue?.length && !keyword) {
-      newExpandedKeys = dataList.map((item) => item.title);
+      // newExpandedKeys = dataList.map((item) => item.title);
     } else {
       newExpandedKeys = dataList
         .map((item) => {
@@ -190,8 +222,8 @@ const Collection: ArexMenuFC = (props) => {
             : null;
         })
         .filter((item, i, self) => item && self.indexOf(item) === i);
+      setExpandedKeys(newExpandedKeys as string[]);
     }
-    setExpandedKeys(newExpandedKeys as string[]);
     setSearchValue(value);
     setAutoExpandParent(true);
   };
@@ -313,91 +345,123 @@ const Collection: ArexMenuFC = (props) => {
     setExpandedKeys([...expandedKeys, infoId]);
   };
 
+  const { run: createWorkspace } = useRequest(FileSystemService.createWorkspace, {
+    manual: true,
+    onSuccess: (res) => {
+      if (res.success) {
+        message.success(t('workSpace.createSuccess'));
+        resetPane();
+        getWorkspaces(res.workspaceId);
+      }
+    },
+  });
+
+  const handleAddWorkspace = (workspaceName: string) => {
+    createWorkspace({ userName, workspaceName });
+  };
+
+  const handleEditWorkspace = (workspaceId: string) => {
+    navPane({
+      type: PanesType.WORKSPACE,
+      id: workspaceId,
+    });
+  };
+
   return (
-    <CollectionNodeTitleWrapper>
-      <EmptyWrapper
-        empty={!loading && !collectionsTreeData.length}
-        loading={loading}
-        description={
-          <Button type='primary' onClick={createCollection}>
-            {t('collection.create_new')}
-          </Button>
-        }
-      >
-        <StructuredFilter
-          size='small'
-          className={'collection-header-search'}
-          showSearchButton={false}
-          prefix={
-            <div style={{ marginRight: '8px' }}>
-              <TooltipButton
-                icon={<PlusOutlined />}
-                type='text'
-                size='small'
-                title={t('collection.create_new')}
-                onClick={createCollection}
-              />
+    <CollectionWrapper>
+      <WorkspacesMenu
+        value={activeWorkspaceId}
+        options={workspacesOptions}
+        onChange={setActiveWorkspaceId}
+        onAdd={handleAddWorkspace}
+        onEdit={handleEditWorkspace}
+      />
 
-              <TooltipButton
-                icon={<Icon component={IconArchive as IconComponentProps['component']} />}
-                title={t('collection.import_export')}
-                onClick={() => {
-                  setShowModalImportExport(true);
-                }}
-              />
-
-              <TooltipButton
-                icon={<PlayCircleOutlined />}
-                title={t('collection.batch_run')}
-                onClick={() => {
-                  navPane({
-                    type: PanesType.BATCH_RUN,
-                    id: 'root',
-                  });
-                }}
-              />
-            </div>
+      <div className='collection-content-wrapper'>
+        <EmptyWrapper
+          empty={!loading && !collectionsTreeData.length}
+          loading={loading}
+          description={
+            <Button type='primary' onClick={createCollection}>
+              {t('collection.create_new')}
+            </Button>
           }
-          labelDataSource={labelData.map((item) => ({
-            id: item.id,
-            name: item.labelName,
-            color: item.color,
-          }))}
-          options={options}
-          placeholder={'Search for Name or Id'}
-          onChange={handleChange}
-        />
-        <Tree<CollectionType>
-          showLine
-          blockNode
-          height={size?.height && size.height - 100}
-          selectedKeys={selectedKeys}
-          expandedKeys={expandedKeys}
-          autoExpandParent={autoExpandParent}
-          switcherIcon={<DownOutlined />}
-          treeData={filterTreeData}
-          fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
-          onDrop={onDrop}
-          onExpand={onExpand}
-          onSelect={handleSelect}
-          draggable={{ icon: false }}
-          titleRender={(data) => (
-            <CollectionNodeTitle
-              data={data}
-              keyword={searchValue?.keyword}
-              onAddNode={handleAddNode}
-            />
-          )}
-        />
-        {/*弹框*/}
-        <CollectionsImportExport
-          show={showModalImportExport}
-          onHideModal={() => {
-            setShowModalImportExport(false);
-          }}
-        />
-      </EmptyWrapper>
-    </CollectionNodeTitleWrapper>
+        >
+          <StructuredFilter
+            size='small'
+            className={'collection-header-search'}
+            showSearchButton={false}
+            prefix={
+              <div style={{ marginRight: '8px' }}>
+                <TooltipButton
+                  icon={<PlusOutlined />}
+                  type='text'
+                  size='small'
+                  title={t('collection.create_new')}
+                  onClick={createCollection}
+                />
+
+                <TooltipButton
+                  icon={<Icon component={IconArchive as IconComponentProps['component']} />}
+                  title={t('collection.import_export')}
+                  onClick={() => {
+                    setShowModalImportExport(true);
+                  }}
+                />
+
+                <TooltipButton
+                  icon={<PlayCircleOutlined />}
+                  title={t('collection.batch_run')}
+                  onClick={() => {
+                    navPane({
+                      type: PanesType.BATCH_RUN,
+                      id: activeWorkspaceId,
+                    });
+                  }}
+                />
+              </div>
+            }
+            labelDataSource={labelData.map((item) => ({
+              id: item.id,
+              name: item.labelName,
+              color: item.color,
+            }))}
+            options={options}
+            placeholder={'Search for Name or Id'}
+            onChange={handleChange}
+          />
+          <CollectionTree
+            showLine
+            blockNode
+            height={size?.height && size.height - 100}
+            selectedKeys={selectedKeys}
+            expandedKeys={expandedKeys}
+            autoExpandParent={autoExpandParent}
+            switcherIcon={<DownOutlined />}
+            treeData={filterTreeData}
+            fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
+            onDrop={onDrop}
+            onExpand={onExpand}
+            onSelect={handleSelect}
+            draggable={{ icon: false }}
+            titleRender={(data) => (
+              <CollectionNodeTitle
+                data={data}
+                keyword={searchValue?.keyword}
+                onAddNode={handleAddNode}
+              />
+            )}
+          />
+          {/*弹框*/}
+          <CollectionsImportExport
+            show={showModalImportExport}
+            onHideModal={() => {
+              setShowModalImportExport(false);
+            }}
+          />
+        </EmptyWrapper>
+      </div>
+    </CollectionWrapper>
   );
 };
 

@@ -1,11 +1,10 @@
 export const RouterPath = {
   RootPath: '/',
-  WorkspaceIdPath: '/:workspaceId',
-  MenuTypePath: '/:workspaceId/:menuType',
-  PaneTypePath: '/:workspaceId/:menuType/:paneType',
-  StandardPath: '/:workspaceId/:menuType/:paneType/:id',
+  MenuTypePath: '/:menuType',
+  PaneTypePath: '/:menuType/:paneType',
+  StandardPath: '/:menuType/:paneType/:id',
 };
-export const StandardPathReg = '/:workspaceId?/:menuType?/:paneType?/:id?';
+export const StandardPathReg = '/:menuType?/:paneType?/:id?';
 
 export type StandardPathParams = {
   workspaceId: string;
@@ -34,17 +33,5 @@ export enum RequestMethodEnum {
   DELETE = 'DELETE',
   PATCH = 'PATCH',
 }
-
-export enum RoleEnum {
-  Admin = 1,
-  Editor = 2,
-  Viewer = 3,
-}
-
-export const RoleMap = {
-  [RoleEnum.Admin]: 'Admin',
-  [RoleEnum.Editor]: 'Editor',
-  [RoleEnum.Viewer]: 'Viewer',
-};
 
 export const I18_KEY = 'i18nextLng';

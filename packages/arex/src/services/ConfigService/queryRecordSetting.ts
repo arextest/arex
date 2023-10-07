@@ -4,6 +4,11 @@ export interface QueryRecordSettingReq {
   id: string;
 }
 
+export type SerializeSkipInfo = {
+  fieldName: string;
+  fullClassName: string;
+};
+
 export interface QueryRecordSettingRes {
   allowDayOfWeeks: number;
   allowTimeOfDayFrom: string;
@@ -14,6 +19,7 @@ export interface QueryRecordSettingRes {
   timeMock: boolean;
   excludeServiceOperationSet: string[];
   recordMachineCountLimit?: number;
+  serializeSkipInfoList?: SerializeSkipInfo[] | null;
   extendField?: { includeServiceOperations: string } | null;
 }
 

@@ -4,6 +4,6 @@
  * and export in this index file.
  */
 
+import Collection from './Collection';
 import Demo from './Demo';
-
-export default { Demo };
+export default { Demo, Collection };

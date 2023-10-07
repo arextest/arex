@@ -1,16 +1,15 @@
 {
   "name": "@arextest/arex-core",
-  "version": "0.0.13",
+  "version": "0.0.21",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-core.umd.cjs",
   "module": "dist/arex-core.js",
   "type": "module",
   "scripts": {
-    "prepare": "npm run build:code && npm run build:decl",
     "build:code": "vite build",
     "build:decl": "tsc --project tsconfig.decl.json",
-    "do-build": "npm run build:code && npm run build:decl",
-    "do-build-core": "npm run build:code && npm run build:decl"
+    "do-build": "pnpm run build:code && pnpm run build:decl",
+    "do-build-core": "pnpm run build:code && pnpm run build:decl"
   },
   "types": "dist/index.d.ts",
   "files": [
@@ -20,14 +19,11 @@
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/sortable": "^7.0.2",
     "@dnd-kit/utilities": "^3.2.1",
-    "@ant-design/icons": "^5.1.4",
-    "@arextest/vanilla-jsoneditor": "^0.17.21",
-    "@emotion/react": "^11.10.6",
+    "@ant-design/icons": "^5.2.6",
+    "@arextest/vanilla-jsoneditor": "0.17.23",
     "@emotion/serialize": "^1.1.1",
-    "@emotion/styled": "^11.10.6",
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",
-    "copy-to-clipboard": "^3.3.3",
     "dayjs": "^1.11.7",
     "diff-match-patch": "^1.0.5",
     "i18next": "^22.4.11",
@@ -39,6 +35,7 @@
     "react-github-btn": "^1.4.0",
     "react-i18next": "^12.2.0",
     "react-transition-group": "^4.4.5",
+    "@formkit/auto-animate": "^0.7.0",
     "use-immer": "^0.8.1",
     "vconsole": "^3.15.0"
   },
@@ -57,6 +54,8 @@
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "antd": "^5.6.4"
+    "antd": "^5.9.1",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6"
   }
 }

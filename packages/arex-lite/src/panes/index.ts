@@ -6,5 +6,6 @@
 
 import Components from './Components';
 import Demo from './Demo';
+import Request from './Request';
 
-export default { Demo, Components };
+export default { Demo, Components, Request };

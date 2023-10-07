@@ -7,10 +7,15 @@ import React, { FC, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { ApplicationService, ConfigService } from '@/services';
-import { QueryRecordSettingRes } from '@/services/ConfigService';
+import { QueryRecordSettingRes, SerializeSkipInfo } from '@/services/ConfigService';
 
 import SettingForm from '../SettingForm';
-import { DurationInput, DynamicClassesEditableTable, IntegerStepSlider } from './FormItem';
+import {
+  DurationInput,
+  DynamicClassesEditableTable,
+  IntegerStepSlider,
+  SerializeSkip,
+} from './FormItem';
 import RunningStatus from './FormItem/RunningStatus';
 import { decodeWeekCode, encodeWeekCode } from './utils';
 
@@ -26,6 +31,7 @@ type SettingFormType = {
   excludeServiceOperationSet: string[];
   recordMachineCountLimit?: number;
   includeServiceOperationSet: string[] | undefined;
+  serializeSkipInfoList?: SerializeSkipInfo[];
 };
 
 const format = 'HH:mm';
@@ -37,6 +43,7 @@ const defaultValues: Omit<
   allowDayOfWeeks: number[];
   period: Dayjs[];
   includeServiceOperationSet: string[];
+  serializeSkipInfoList: SerializeSkipInfo[];
 } = {
   allowDayOfWeeks: [],
   sampleRate: 1,
@@ -45,6 +52,7 @@ const defaultValues: Omit<
   excludeServiceOperationSet: [],
   recordMachineCountLimit: 1,
   includeServiceOperationSet: [],
+  serializeSkipInfoList: [],
 };
 
 const SettingRecord: FC<SettingRecordProps> = (props) => {
@@ -71,7 +79,10 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
     },
     onSuccess(res) {
       setInitialValues({
-        period: [dayjs(res.allowTimeOfDayFrom, format), dayjs(res.allowTimeOfDayTo, format)],
+        period: [
+          dayjs(res.allowTimeOfDayFrom || '00:00', format),
+          dayjs(res.allowTimeOfDayTo || '23:59', format),
+        ],
         sampleRate: res.sampleRate,
         allowDayOfWeeks: [],
         timeMock: res.timeMock,
@@ -79,6 +90,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
         recordMachineCountLimit:
           res?.recordMachineCountLimit == undefined ? 1 : res?.recordMachineCountLimit,
         includeServiceOperationSet: res.extendField?.includeServiceOperations.split(','),
+        serializeSkipInfoList: res.serializeSkipInfoList ? res.serializeSkipInfoList : undefined,
       });
 
       setInitialValues((state) => {
@@ -114,6 +126,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
             includeServiceOperations: values.includeServiceOperationSet?.join(','),
           }
         : null,
+      serializeSkipInfoList: values.serializeSkipInfoList,
     };
     update(params);
   };
@@ -150,6 +163,10 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
 
                 <Form.Item label={t('appSetting.frequency')} name='sampleRate'>
                   <IntegerStepSlider />
+                </Form.Item>
+
+                <Form.Item label={t('appSetting.serializeSkip')} name='serializeSkipInfoList'>
+                  <SerializeSkip />
                 </Form.Item>
               </>
             ),

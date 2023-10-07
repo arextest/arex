@@ -62,5 +62,9 @@
   "loginInformationExpired": "登录信息已过期，请重新登录",
   "agentStatus": "状态",
   "document": "文档",
-  "serverError": "服务器错误"
+  "serverError": "服务器错误",
+  "dateRangePreset": {
+    "quickPick": "快速选择",
+    "1d": "近一天"
+  }
 }

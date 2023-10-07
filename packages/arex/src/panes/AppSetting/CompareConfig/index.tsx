@@ -14,7 +14,6 @@ import { ApplicationService, ReportService } from '@/services';
 import { DependencyParams } from '@/services/ComparisonService';
 
 import CategoryIgnore from './CategoryIgnore';
-import NodeDesensitization from './NodeDesensitization';
 import NodesIgnore from './NodesIgnore';
 import NodesSort from './NodesSort';
 import SyncContract from './SyncContract';
@@ -107,7 +106,9 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
 
     return options;
   }, [t, configTargetValue]);
-  const [configTypeValue, setConfigTypeValue] = useState<CONFIG_TYPE>(CONFIG_TYPE.NODE_IGNORE);
+  const [configTypeValue, setConfigTypeValue] = useState<CONFIG_TYPE>(
+    props.sortArrayPath ? CONFIG_TYPE.NODE_SORT : CONFIG_TYPE.NODE_IGNORE,
+  );
 
   const [activeOperationId, setActiveOperationId] = useState<string | undefined>(
     props.operationId || undefined,
@@ -283,7 +284,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   const handleConfigTargetChange = useCallback((value: React.Key) => {
     setConfigTypeValue((configType) =>
       value === CONFIG_TARGET.GLOBAL && configType === CONFIG_TYPE.NODE_SORT
-        ? CONFIG_TYPE.NODE_IGNORE // sortNode has no global configuration type
+        ? CONFIG_TYPE.NODE_IGNORE // sortNode has no global configuration types
         : configType,
     );
     setConfigTargetValue(value as CONFIG_TARGET);
@@ -319,7 +320,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
               // START 指定 operationId 时，Select 只读
               showSearch={!props.operationId}
               bordered={!props.operationId}
-              showArrow={!props.operationId}
+              suffixIcon={!props.operationId ? undefined : null}
               open={props.operationId ? false : undefined}
               // END 指定 operationId 时，Select 只读
               options={interfaceOptions}
@@ -344,7 +345,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
               // START 指定 operationId 时，Select 只读
               showSearch={!props.dependency}
               bordered={!props.dependency}
-              showArrow={!props.dependency}
+              suffixIcon={!props.dependency ? undefined : null}
               open={props.dependency ? false : undefined}
               // END 指定 operationId 时，Select 只读
               loading={loadingDependency}

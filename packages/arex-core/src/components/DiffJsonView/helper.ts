@@ -1,3 +1,5 @@
+import { tryParseJsonString } from '../../utils';
+
 export interface NodePath {
   nodeName: string;
   index: number;
@@ -68,4 +70,46 @@ export function genAllDiffByType(type: 'left' | 'right', logs?: LogEntity[]) {
     }
   }
   return allDiff;
+}
+
+/**
+ * 根据 path 获取 json 的 value
+ * @param object
+ * @param path
+ */
+export function getJsonValueByPath(object: any, path: string[]) {
+  const json = typeof object === 'string' ? tryParseJsonString(object) : object;
+
+  return path.reduce(
+    (value, object) =>
+      value[object]?.isLosslessNumber ? Number(value[object].value) : value[object],
+    json,
+  );
+}
+
+/**
+ *  过滤 path[] 中的的数组 index 类型元素
+ * @param path
+ * @param jsonString
+ */
+export function jsonIndexPathFilter(path: string[], jsonString: string) {
+  try {
+    const json = JSON.parse(jsonString);
+    const { pathList } = path.reduce<{ json: any; pathList: string[] }>(
+      (jsonPathData, path) => {
+        if (Array.isArray(jsonPathData.json) && Number.isInteger(Number(path))) {
+          jsonPathData.json = jsonPathData.json[Number(path)];
+        } else {
+          jsonPathData.json = jsonPathData.json[path];
+          jsonPathData.pathList.push(path);
+        }
+        return jsonPathData;
+      },
+      { json, pathList: [] },
+    );
+    return pathList;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 }

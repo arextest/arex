@@ -2,7 +2,8 @@
   "collection": "集合",
   "environment": "环境变量",
   "replay": "回放",
-  "caseDetail": "Case详情",
+  "replayCase": "回放 Case",
+  "caseDetail": "Case 详情",
   "appSetting": "应用设置",
   "workspace": "工作空间",
   "systemSetting": "系统设置"

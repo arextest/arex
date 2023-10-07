@@ -11,38 +11,15 @@ import DiffJsonTooltip from './DiffJsonTooltip';
 import { genAllDiffByType, LogEntity } from './helper';
 import VanillaJSONEditor from './VanillaJSONEditor';
 
-/**
- *  过滤 path[] 中的的数组 index 类型元素
- * @param path
- * @param jsonString
- */
-function validateJsonPath(path: string[], jsonString: string) {
-  try {
-    const json = JSON.parse(jsonString);
-    const { pathList } = path.reduce<{ json: any; pathList: string[] }>(
-      (jsonPathData, path) => {
-        if (Array.isArray(jsonPathData.json) && Number.isInteger(Number(path))) {
-          jsonPathData.json = jsonPathData.json[Number(path)];
-        } else {
-          jsonPathData.json = jsonPathData.json[path];
-          jsonPathData.pathList.push(path);
-        }
-        return jsonPathData;
-      },
-      { json, pathList: [] },
-    );
-    return pathList;
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
+export enum TargetEditor {
+  'left' = 'left',
+  'right' = 'right',
 }
 
-export type TargetEditor = 'left' | 'right';
 export type PathHandler = (params: {
   type?: CompareConfigType;
   path: string[];
-  jsonString: string;
+  jsonString: { [targetEditor in TargetEditor]: string };
   targetEditor: TargetEditor;
 }) => void;
 export type DiffJsonViewProps = {
@@ -56,6 +33,7 @@ export type DiffJsonViewProps = {
   onSortKey?: PathHandler;
   onReferenceKey?: PathHandler;
   onCompressKey?: PathHandler;
+  onDiffMatch?: PathHandler;
 };
 
 const { useToken } = theme;
@@ -70,11 +48,12 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
   onSortKey,
   onReferenceKey,
   onCompressKey,
+  onDiffMatch,
 }) => {
   const { t } = useTranslation();
   const { theme, language } = useArexCoreConfig();
-  const allLeftDiffByType = genAllDiffByType('left', diffPath);
-  const allRightDiffByType = genAllDiffByType('right', diffPath);
+  const allLeftDiffByType = genAllDiffByType(TargetEditor.left, diffPath);
+  const allRightDiffByType = genAllDiffByType(TargetEditor.right, diffPath);
   const onClassNameLeft = (path: string[]) => {
     const pathStr = path.map((p) => (isNaN(Number(p)) ? p : Number(p)));
     if (pathStr.length === 0) {
@@ -119,14 +98,12 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
 
   const rightClickHandler = useCallback(
     (fn: PathHandler, path: string[], targetEditor: TargetEditor, type?: CompareConfigType) => {
-      const validatedPath = validateJsonPath(path, diffJson![targetEditor]);
-      validatedPath &&
-        fn({
-          type,
-          path: validatedPath,
-          jsonString: diffJson![targetEditor],
-          targetEditor,
-        });
+      fn({
+        type,
+        path,
+        jsonString: diffJson!,
+        targetEditor,
+      });
     },
     [diffJson],
   );
@@ -176,18 +153,24 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             onClassName={onClassNameLeft}
             allDiffByType={allLeftDiffByType}
             onIgnoreKey={
-              onIgnoreKey && ((path, type) => rightClickHandler(onIgnoreKey, path, 'left', type))
+              onIgnoreKey &&
+              ((path, type) => rightClickHandler(onIgnoreKey, path, TargetEditor.left, type))
             }
             onSortKey={
-              onSortKey && ((path, type) => rightClickHandler(onSortKey, path, 'left', type))
+              onSortKey &&
+              ((path, type) => rightClickHandler(onSortKey, path, TargetEditor.left, type))
             }
             onReferenceKey={
               onReferenceKey &&
-              ((path, type) => rightClickHandler(onReferenceKey, path, 'left', type))
+              ((path, type) => rightClickHandler(onReferenceKey, path, TargetEditor.left, type))
             }
             onCompressKey={
               onCompressKey &&
-              ((path, type) => rightClickHandler(onCompressKey, path, 'left', type))
+              ((path, type) => rightClickHandler(onCompressKey, path, TargetEditor.left, type))
+            }
+            onDiffMatch={
+              onDiffMatch &&
+              ((path, type) => rightClickHandler(onDiffMatch, path, TargetEditor.left, type))
             }
           />
         </div>
@@ -211,18 +194,24 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             onClassName={onClassNameRight}
             allDiffByType={allRightDiffByType}
             onIgnoreKey={
-              onIgnoreKey && ((path, type) => rightClickHandler(onIgnoreKey, path, 'right', type))
+              onIgnoreKey &&
+              ((path, type) => rightClickHandler(onIgnoreKey, path, TargetEditor.right, type))
             }
             onSortKey={
-              onSortKey && ((path, type) => rightClickHandler(onSortKey, path, 'right', type))
+              onSortKey &&
+              ((path, type) => rightClickHandler(onSortKey, path, TargetEditor.right, type))
             }
             onReferenceKey={
               onReferenceKey &&
-              ((path, type) => rightClickHandler(onReferenceKey, path, 'right', type))
+              ((path, type) => rightClickHandler(onReferenceKey, path, TargetEditor.right, type))
             }
             onCompressKey={
               onCompressKey &&
-              ((path, type) => rightClickHandler(onCompressKey, path, 'right', type))
+              ((path, type) => rightClickHandler(onCompressKey, path, TargetEditor.right, type))
+            }
+            onDiffMatch={
+              onDiffMatch &&
+              ((path, type) => rightClickHandler(onDiffMatch, path, TargetEditor.right, type))
             }
           />
         </div>

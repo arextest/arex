@@ -69,7 +69,7 @@ const chartOptions = {
 } as const;
 
 export type ReplayPlanItemProps = {
-  id: string;
+  appId: string;
   selectedPlan?: PlanStatistics;
   filter?: (record: PlanItemStatistics) => boolean;
   onRefresh?: () => void;
@@ -111,8 +111,8 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   );
   // optimize: cancel polling interval when pane is not active
   useEffect(() => {
-    activePane?.id !== props.id ? cancelPollingInterval() : refresh();
-  }, [activePane, props.id]);
+    activePane?.id !== props.appId ? cancelPollingInterval() : refresh();
+  }, [activePane, props.appId]);
 
   const planItemDataFiltered = useMemo(
     () => (filter ? planItemData?.filter(filter) : planItemData || []),
