@@ -102,6 +102,10 @@ const Collection: ArexMenuFC = (props) => {
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]); // TODO 初始化展开的节点
   const [showModalImportExport, setShowModalImportExport] = useState(false);
 
+  useEffect(() => {
+    getCollections();
+  }, []);
+
   // auto expand by active pane id
   useEffect(() => {
     activePane &&
