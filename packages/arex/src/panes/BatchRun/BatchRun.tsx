@@ -1,7 +1,12 @@
-import { ArexPaneFC, EmptyWrapper, getLocalStorage } from '@arextest/arex-core';
+import {
+  ArexPaneFC,
+  EmptyWrapper,
+  getLocalStorage,
+  SpaceBetweenWrapper,
+} from '@arextest/arex-core';
 import { ArexEnvironment, EnvironmentSelect } from '@arextest/arex-request';
 import { useRequest } from 'ahooks';
-import { Button, Card, Space, TreeSelect } from 'antd';
+import { Button, Divider, TreeSelect, Typography } from 'antd';
 import { cloneDeep } from 'lodash';
 import React, { Key, useCallback, useMemo, useState } from 'react';
 
@@ -74,31 +79,36 @@ const BatchRun: ArexPaneFC = (props) => {
 
   return (
     <div>
-      <Card>
-        <Space.Compact style={{ width: '90%' }}>
-          <EnvironmentSelect
-            value={activeEnvironment?.id}
-            options={environments}
-            onChange={setActiveEnvironment}
-          />
-          <TreeSelect
-            multiple
-            allowClear
-            treeCheckable
-            maxTagCount={3}
-            placeholder={'Please select case'}
-            fieldNames={{ label: 'nodeName', value: 'infoId', children: 'children' }}
-            value={checkValue}
-            treeData={treeData.nodeData}
-            onChange={setCheckValue}
-            style={{ width: '85%' }}
-          />
-        </Space.Compact>
+      <SpaceBetweenWrapper>
+        <Typography.Text type='secondary' style={{ marginLeft: '16px' }}>
+          Select cases for batch execution
+        </Typography.Text>
+        <EnvironmentSelect
+          value={activeEnvironment?.id}
+          options={environments}
+          onChange={setActiveEnvironment}
+        />
+      </SpaceBetweenWrapper>
+      <Divider style={{ margin: 0 }} />
+
+      <div style={{ display: 'flex', padding: '8px 16px' }}>
+        <TreeSelect
+          multiple
+          allowClear
+          treeCheckable
+          maxTagCount={3}
+          placeholder={'Please select case'}
+          fieldNames={{ label: 'nodeName', value: 'infoId', children: 'children' }}
+          value={checkValue}
+          treeData={treeData.nodeData}
+          onChange={setCheckValue}
+          style={{ flex: 1 }}
+        />
 
         <Button type='primary' size='large' onClick={handleBatchRun} style={{ marginLeft: '16px' }}>
           Run
         </Button>
-      </Card>
+      </div>
 
       <EmptyWrapper loading={loading} empty={!cases.length}>
         {casesResults}
