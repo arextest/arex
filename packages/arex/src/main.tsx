@@ -4,7 +4,7 @@ import 'antd/dist/reset.css';
 import '@arextest/arex-core/dist/style.css';
 import './style/style.css';
 import 'dayjs/locale/zh-cn';
-// import './helpers/adapter';
+// import './helpers/axiosGuard';
 import './assets/css/index.css';
 
 import React from 'react';
@@ -13,7 +13,6 @@ import { BrowserRouter, HashRouter } from 'react-router-dom';
 
 import App from './App';
 
-console.log('mode', import.meta.env.MODE);
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   React.createElement(
     import.meta.env.MODE === 'electron' ? HashRouter : BrowserRouter,

@@ -1,5 +1,6 @@
-import { ArexRESTRequest } from 'arex-request-core/dist/components/http/data/rest';
+import type { ArexRESTRequest } from '@arextest/arex-request';
 
+import { CollectionNodeType } from '@/constant';
 import { queryDebuggingCase } from '@/services/FileSystemService';
 import { request } from '@/utils';
 
@@ -8,9 +9,18 @@ export async function queryRequest(params: {
   nodeType: number;
   recordId?: string;
   planId?: string;
-}): Promise<ArexRESTRequest & { recordId: string; inherited: boolean }> {
+}): Promise<
+  ArexRESTRequest & {
+    recordId: string;
+    inherited: boolean;
+    tags: string[];
+    parentPath: { id: string; name: string; nodeType: CollectionNodeType }[];
+  }
+> {
   const res = await request.post<any>(
-    `/report/filesystem/query${params.nodeType === 1 ? 'Interface' : 'Case'}`,
+    `/report/filesystem/query${
+      params.nodeType === CollectionNodeType.interface ? 'Interface' : 'Case'
+    }`,
     params,
   );
   if (params.id.length !== 24) {
@@ -40,6 +50,7 @@ export async function queryRequest(params: {
         inheritedEndpoint: '',
         tags: rest.labelIds || [],
         description: rest.description,
+        parentPath: rest?.parentPath,
       };
     }
     // 如果没有recordId是新增页面进来的
@@ -61,11 +72,13 @@ export async function queryRequest(params: {
       inheritedEndpoint: '',
       tags: [],
       description: '',
+      parentPath: [],
     };
   }
   const {
     body: { address, testAddress, ...rest },
   } = res;
+
   return {
     id: rest.id,
     name: rest.name,
@@ -83,5 +96,6 @@ export async function queryRequest(params: {
     inheritedEndpoint: '',
     tags: rest.labelIds || [],
     description: rest.description,
+    parentPath: rest?.parentPath,
   };
 }

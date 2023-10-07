@@ -10,7 +10,7 @@ const invalidSelectRow = { row: -1, page: -1 };
 const HighlightRowTableWrapper = styled.div`
   // highlight selected row
   .clickRowStyle {
-    background-color: ${(props) => props.theme.colorPrimaryBg};
+    background-color: ${(props) => props.theme.colorPrimaryBgHover};
     td.ant-table-cell-row-hover {
       background-color: transparent !important; // use clickRowStyle background color instead
     }

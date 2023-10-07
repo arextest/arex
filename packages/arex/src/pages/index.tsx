@@ -6,17 +6,14 @@ import {
   ArexMenuContainerProps,
   ArexPanesContainer,
   ArexPanesContainerProps,
-  getLocalStorage,
   useTranslation,
 } from '@arextest/arex-core';
-import { useKeyPress, useRequest } from 'ahooks';
-import { App, MenuProps } from 'antd';
-import React, { FC, useMemo } from 'react';
+import { MenuProps } from 'antd';
+import React, { FC } from 'react';
 
-import { EnvironmentSelect, HeaderMenu } from '@/components';
-import { EMAIL_KEY, PanesType } from '@/constant';
+import { EmptyPanePlaceholder, HeaderMenu, KeyboardShortcut } from '@/components';
+import { PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
-import { FileSystemService } from '@/services';
 import { useMenusPanes, useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
 
@@ -24,8 +21,8 @@ const Home: FC = () => {
   useInit();
 
   const {
-    collapsed,
-    setCollapsed,
+    menuCollapsed,
+    toggleMenuCollapse,
     activeMenu,
     setActiveMenu,
     panes,
@@ -37,21 +34,10 @@ const Home: FC = () => {
     reset: resetPane,
     removePane,
   } = useMenusPanes();
-  const { activeWorkspaceId, workspaces, getWorkspaces, setActiveWorkspaceId } = useWorkspaces();
+  const { activeWorkspaceId } = useWorkspaces();
 
   const navPane = useNavPane();
-  const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
-  const userName = getLocalStorage<string>(EMAIL_KEY) as string;
-
-  const workspacesOptions = useMemo(
-    () =>
-      workspaces.map((workspace) => ({
-        value: workspace.id,
-        label: workspace.workspaceName,
-      })),
-    [workspaces],
-  );
 
   const dropdownItems: MenuProps['items'] = [
     {
@@ -80,19 +66,8 @@ const Home: FC = () => {
     },
   ];
 
-  const { run: createWorkspace } = useRequest(FileSystemService.createWorkspace, {
-    manual: true,
-    onSuccess: (res) => {
-      if (res.success) {
-        message.success(t('workSpace.createSuccess'));
-        resetPane();
-        getWorkspaces(res.workspaceId);
-      }
-    },
-  });
-
   const handleMenuChange = (menuType: string) => {
-    collapsed && setCollapsed(false);
+    menuCollapsed && toggleMenuCollapse(false);
     setActiveMenu(menuType);
   };
 
@@ -107,20 +82,9 @@ const Home: FC = () => {
   const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () => {
     navPane({
       type: PanesType.REQUEST,
-      id: generateId(12),
+      id: `${activeWorkspaceId}-${generateId(12)}`,
       icon: 'Get',
       name: 'Untitled',
-    });
-  };
-
-  const handleAddWorkspace = (workspaceName: string) => {
-    createWorkspace({ userName, workspaceName });
-  };
-
-  const handleEditWorkspace = (workspaceId: string) => {
-    navPane({
-      type: PanesType.WORKSPACE,
-      id: workspaceId,
     });
   };
 
@@ -130,7 +94,7 @@ const Home: FC = () => {
 
     switch (e.key) {
       case 'close': {
-        removePane(paneKey);
+        removePane(undefined);
         break;
       }
       case 'closeOther': {
@@ -159,40 +123,17 @@ const Home: FC = () => {
     }
   };
 
-  useKeyPress(
-    ['meta.t', 'meta.alt.t'],
-    () => {
-      handlePaneAdd();
-    },
-    { useCapture: true },
-  );
-  useKeyPress(
-    ['meta.w', 'meta.alt.w'],
-    () => {
-      activePane?.key && removePane(activePane?.key);
-    },
-    { useCapture: true },
-  );
-
   return (
     <>
       <ArexHeader githubStar extra={<HeaderMenu />} />
       <ArexMainContainer
-        collapsed={collapsed}
+        collapsed={menuCollapsed}
         arexMenus={
           <ArexMenuContainer
             value={activePane?.id}
             activeKey={activeMenu}
-            collapsed={collapsed}
-            workspaceMenuProps={{
-              value: activeWorkspaceId,
-              options: workspacesOptions,
-              onChange: setActiveWorkspaceId,
-              onAdd: handleAddWorkspace,
-              onEdit: handleEditWorkspace,
-              // extra?: ReactNode;
-            }}
-            onCollapsed={setCollapsed}
+            collapsed={menuCollapsed}
+            onCollapsed={toggleMenuCollapse}
             onChange={handleMenuChange}
             onSelect={handleMenuSelect}
           />
@@ -201,7 +142,7 @@ const Home: FC = () => {
           <ArexPanesContainer
             activeKey={activePane?.key}
             panes={panes}
-            tabBarExtraContent={<EnvironmentSelect />}
+            emptyNode={<EmptyPanePlaceholder />}
             dropdownMenu={{
               items: dropdownItems,
               onClick: handleDropdownClick,
@@ -214,6 +155,8 @@ const Home: FC = () => {
         }
       />
       <ArexFooter />
+
+      <KeyboardShortcut />
     </>
   );
 };

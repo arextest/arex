@@ -1,5 +1,3 @@
-// import { ArexRESTRequest } from 'arex-request-core/dist/components/http/data/rest';
-
 import { request } from '@/utils';
 
 export async function pinMock(params: any) {

@@ -1,5 +1,11 @@
 import { LogoutOutlined, QuestionCircleOutlined, SettingOutlined } from '@ant-design/icons';
-import { ArexPanesType, getLocalStorage, TooltipButton, useTranslation } from '@arextest/arex-core';
+import {
+  ArexPanesType,
+  getLocalStorage,
+  I18nextLng,
+  TooltipButton,
+  useTranslation,
+} from '@arextest/arex-core';
 import { Avatar, Dropdown, DropdownProps, Space } from 'antd';
 import React, { FC, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +17,7 @@ import { useUserProfile } from '@/store';
 import globalStoreReset from '../utils/globalStoreReset';
 
 const HeaderMenu: FC = () => {
-  const { avatar } = useUserProfile();
+  const { avatar, language } = useUserProfile();
   const { t } = useTranslation();
   const email = getLocalStorage(EMAIL_KEY) as string;
   const navPane = useNavPane();
@@ -45,10 +51,12 @@ const HeaderMenu: FC = () => {
         type: ArexPanesType.WEB_VIEW,
         name: t('document') as string,
         data: {
-          url: 'http://arextest.com/docs/intro',
+          url: `http://www.arextest.com/${
+            language === I18nextLng.cn ? 'zh-Hans/' : ''
+          }docs/chapter1/get-started`,
         },
       }),
-    [t],
+    [t, language],
   );
 
   return (

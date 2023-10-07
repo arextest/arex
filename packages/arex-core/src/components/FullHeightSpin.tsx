@@ -2,7 +2,9 @@ import styled from '@emotion/styled';
 import { Spin, SpinProps } from 'antd';
 import React, { FC } from 'react';
 
-const FullHeightSpinWrapper = styled.div<{ minHeight?: number }>`
+const FullHeightSpinWrapper = styled('div', {
+  shouldForwardProp: (propsName) => !['minHeight'].includes(propsName),
+})<{ minHeight?: number }>`
   height: 100%;
   .full-height-spin {
     height: 100%;

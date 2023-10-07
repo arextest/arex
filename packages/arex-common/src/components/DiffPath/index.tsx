@@ -1,5 +1,4 @@
-import { EllipsisTooltip, EmptyWrapper, SceneCode } from '@arextest/arex-core';
-import { css } from '@emotion/react';
+import { css, EllipsisTooltip, EmptyWrapper, SceneCode } from '@arextest/arex-core';
 import { Collapse, Typography } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 

@@ -1,13 +1,12 @@
-import { SceneCodeMap } from './SceneCode';
-
 export { default as CheckOrCloseIcon } from './CheckOrCloseIcon';
 export type { CollapseTableProps } from './CollapseTable';
 export { default as CollapseTable } from './CollapseTable';
-export type { DiffJsonViewProps, PathHandler, TargetEditor } from './DiffJsonView';
-export { default as DiffJsonView } from './DiffJsonView';
+export type { DiffJsonViewProps, PathHandler } from './DiffJsonView';
+export { default as DiffJsonView, TargetEditor } from './DiffJsonView';
 export { default as DiffJsonTooltip } from './DiffJsonView/DiffJsonTooltip';
 export type { DiffJsonViewDrawerProps } from './DiffJsonView/DiffJsonViewDrawer';
 export { default as DiffJsonViewDrawer } from './DiffJsonView/DiffJsonViewDrawer';
+export { getJsonValueByPath, jsonIndexPathFilter } from './DiffJsonView/helper';
 export type { DiffMatchProps } from './DiffMatch';
 export { default as DiffMatch } from './DiffMatch';
 export type { EditAreaPlaceholderProps } from './EditAreaPlaceholder';
@@ -37,7 +36,7 @@ export { default as SpaceBetweenWrapper } from './SpaceBetweenWrapper';
 export type { SearchDataType } from './StructuredFilter';
 export { default as StructuredFilter } from './StructuredFilter';
 export { CategoryKey, Operator } from './StructuredFilter/keyword';
+export type { TagsGroupProps } from './TagsGroup';
+export { default as TagsGroup } from './TagsGroup';
 export type { TooltipButtonProps } from './TooltipButton';
 export { default as TooltipButton } from './TooltipButton';
-export type { WorkspaceItem, WorkspacesMenuProps } from './WorkspacesMenu';
-export { default as WorkspacesMenu } from './WorkspacesMenu';

@@ -60,7 +60,12 @@ const ArexFooter: FC<ArexFooterProps> = (props) => {
     <FooterWrapper>
       {/* left */}
       <div>
-        <Button type='link' size='small' onClick={() => vConsole.current?.show()}>
+        <Button
+          id='arex-console-btn'
+          type='link'
+          size='small'
+          onClick={() => vConsole.current?.show()}
+        >
           <Typography.Text type='secondary'>
             <CodeOutlined /> {t('console')}
           </Typography.Text>

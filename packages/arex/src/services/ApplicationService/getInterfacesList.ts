@@ -1,4 +1,6 @@
-import { objectArrayFilter, request } from '@/utils';
+import { objectArrayFilter } from '@arextest/arex-core';
+
+import { request } from '@/utils';
 
 export type OperationType = 'Global' | 'Interface';
 export type OperationIdGlobal = string | null | undefined;

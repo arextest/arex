@@ -78,6 +78,7 @@
     "caseRange": "Case range",
     "caseRangeTooltip": "Select the time range for the recorded cases, and the cases recorded within this time period will be replayed.",
     "emptyHost": "Target Host can't be empty",
+    "emptyCaseRange": "Case range can't be empty",
     "emptyStartTime": "Start Time can't be empty",
     "emptyEndTime": "End Time can't be empty",
     "paths": "Paths",
@@ -141,6 +142,7 @@
     "debug": "Debug",
     "success": "Success",
     "caseServiceAPI": "Main Service API",
+    "replayReport": "ReplayReport",
     "viewFailedOnly": "View Failed Only",
     "saveCase": "Save Case",
     "cancel": "Cancel",
@@ -174,9 +176,10 @@
     "diffMatch": "Diff Match",
     "replayEndTime": "ReplayEndTime",
     "operationName": "Operation Name",
-    "recordedCaseCount": "Recorded Case Count",
+    "recordedCaseCount": "Case Count",
     "recordTime": "Record Time",
-    "operationType": "Operation Type"
+    "operationType": "Operation Type",
+    "re-calculateReport": "Re-calculate Report"
   },
   "appSetting": {
     "record": "Record",
@@ -198,6 +201,8 @@
     "duration": "Duration",
     "period": "Period",
     "frequency": "Frequency",
+    "serializeSkip": "SerializeSkip",
+    "fieldName": "FieldName",
     "advanced": "Advanced",
     "timeMock": "Time Mock",
     "dynamicClasses": "Dynamic Classes",

@@ -1,22 +1,28 @@
-import { SettingOutlined } from '@ant-design/icons';
+import { HomeOutlined, SettingOutlined } from '@ant-design/icons';
 import { DiffPath } from '@arextest/arex-common';
 import {
   ArexPaneFC,
   CollapseTable,
+  DiffMatch,
+  getJsonValueByPath,
   getLocalStorage,
   i18n,
   I18nextLng,
+  jsonIndexPathFilter,
   PaneDrawer,
   PanesTitle,
   PathHandler,
+  SmallTextButton,
+  TargetEditor,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App } from 'antd';
+import { App, Button, Modal } from 'antd';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { EMAIL_KEY } from '@/constant';
+import { EMAIL_KEY, PanesType } from '@/constant';
+import { useNavPane } from '@/hooks';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
 import { DependencyParams } from '@/services/ComparisonService';
@@ -30,6 +36,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   const { message, notification } = App.useApp();
   const email = getLocalStorage<string>(EMAIL_KEY);
   const { t } = useTranslation(['components']);
+  const navPane = useNavPane();
 
   const [compareConfigOpen, setCompareConfigOpen] = useState<boolean>(false);
 
@@ -148,22 +155,60 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   }
 
   const handleIgnoreKey = useCallback<PathHandler>(
-    ({ path, type }) => insertIgnoreNode(path, type === 'global'),
+    ({ path, type, targetEditor, jsonString }) => {
+      const filteredPath = jsonIndexPathFilter(path, jsonString![targetEditor]);
+      filteredPath && insertIgnoreNode(filteredPath, type === 'global');
+    },
     [insertIgnoreNode],
   );
 
-  const handleSortKey = useCallback<PathHandler>(({ path }) => {
-    setTargetNodePath(path);
+  const handleSortKey = useCallback<PathHandler>(({ path, type, targetEditor, jsonString }) => {
+    const filteredPath = jsonIndexPathFilter(path, jsonString![targetEditor]);
+    filteredPath && setTargetNodePath(filteredPath);
     setCompareConfigOpen(true);
   }, []);
+
+  const [modal, contextHolder] = Modal.useModal();
+  const handleDiffMatch = useCallback<PathHandler>(
+    ({ path, targetEditor, jsonString }) => {
+      const another = targetEditor === TargetEditor.left ? TargetEditor.right : TargetEditor.left;
+      const text1 = getJsonValueByPath(jsonString[targetEditor], path);
+      const text2 = getJsonValueByPath(jsonString[another], path);
+
+      modal.info({
+        title: t('replay.diffMatch'),
+        width: 800,
+        maskClosable: true,
+        content: <DiffMatch text1={text1} text2={text2} />,
+        footer: false,
+      });
+    },
+    [t],
+  );
 
   return (
     <>
       <PanesTitle
         title={
           <span>
-            {t('replay.caseServiceAPI')}: {props.data.operationName}
+            {t('replay.caseServiceAPI')}:{' '}
+            {decodeURIComponent(props.data.operationName || 'unknown')}
           </span>
+        }
+        extra={
+          <Button
+            id='arex-replay-case-replay-report-btn'
+            size='small'
+            icon={<HomeOutlined />}
+            onClick={() =>
+              navPane({
+                type: PanesType.REPLAY,
+                id: props.data.appId,
+              })
+            }
+          >
+            {t('replay.replayReport')}
+          </Button>
         }
       />
 
@@ -182,7 +227,6 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         }
         panel={
           <DiffPath
-            // contextMenuDisabled
             operationId={props.data.operationId}
             extra={
               <TooltipButton
@@ -207,12 +251,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
             onChange={setSelectedDependency}
             onIgnoreKey={handleIgnoreKey}
             onSortKey={handleSortKey}
-            onCompressKey={(value) => {
-              console.log(value);
-            }}
-            onReferenceKey={(value) => {
-              console.log(value);
-            }}
+            onDiffMatch={handleDiffMatch}
             requestDiffMsg={ScheduleService.queryDiffMsgById}
             requestQueryLogEntity={ScheduleService.queryLogEntity}
           />
@@ -220,6 +259,9 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
       />
 
       <SaveCase planId={props.data.planId} operationId={props.data.operationId} ref={saveCaseRef} />
+
+      {/* JsonDiffMathModal */}
+      {contextHolder}
 
       {/* CompareConfigModal */}
       <PaneDrawer

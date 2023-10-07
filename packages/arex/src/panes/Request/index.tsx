@@ -1,5 +1,4 @@
 import { createArexPane } from '@arextest/arex-core';
-import React from 'react';
 
 import { MenusType, PanesType } from '@/constant';
 

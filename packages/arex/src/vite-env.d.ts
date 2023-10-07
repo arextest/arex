@@ -13,7 +13,7 @@ declare global {
     __AREX_DESKTOP_AGENT__: boolean; //是否安装了arex桌面代理
   }
 
-  // custom event type
+  // custom event types
   interface WindowEventMap {
     [AREX_OPEN_NEW_PANEL]: CustomEvent<Pane>;
   }

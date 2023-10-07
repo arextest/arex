@@ -133,7 +133,171 @@ exports[`disabledNonCaseNode > collection tree data with case 1`] = `
 }
 `;
 
+exports[`disabledNonCaseNode > collection tree types with case 1`] = `
+{
+  "hasCase": true,
+  "nodeData": [
+    {
+      "caseSourceType": 0,
+      "children": [
+        {
+          "caseSourceType": 0,
+          "children": [],
+          "disabled": true,
+          "infoId": "647849917137ad5ad372bd59",
+          "key": "647849917137ad5ad372bd59",
+          "labelIds": null,
+          "method": "GET",
+          "nodeName": "New Request",
+          "nodeType": 1,
+        },
+      ],
+      "disabled": true,
+      "infoId": "647849827137ad5ad372bd45",
+      "key": "647849827137ad5ad372bd45",
+      "labelIds": null,
+      "method": null,
+      "nodeName": "node",
+      "nodeType": 3,
+    },
+    {
+      "caseSourceType": 0,
+      "children": [
+        {
+          "caseSourceType": 0,
+          "children": [],
+          "disabled": true,
+          "infoId": "648a7923bc7e1a5853cf6a33",
+          "key": "64741a0d2a3299652af9111a",
+          "labelIds": null,
+          "method": "POST",
+          "nodeName": "retryBatchCompare",
+          "nodeType": 1,
+        },
+        {
+          "caseSourceType": 0,
+          "children": [],
+          "disabled": true,
+          "infoId": "64741a0d2a3299652af9111a",
+          "key": "647414772a3299652af90de4",
+          "labelIds": null,
+          "method": "POST",
+          "nodeName": "queryBatchCompareCaseMsgWithDiff",
+          "nodeType": 1,
+        },
+        {
+          "caseSourceType": 0,
+          "children": [
+            {
+              "caseSourceType": 2,
+              "children": [],
+              "disabled": false,
+              "infoId": "647434ee2a3299652af92445",
+              "key": "647434ee2a3299652af92445",
+              "labelIds": null,
+              "method": null,
+              "nodeName": "异常情况",
+              "nodeType": 2,
+            },
+          ],
+          "disabled": false,
+          "infoId": "647414772a3299652af90de4",
+          "key": "647414772a3299652af90de4",
+          "labelIds": null,
+          "method": "POST",
+          "nodeName": "queryDiffInfoByCaseId",
+          "nodeType": 1,
+        },
+        {
+          "caseSourceType": 0,
+          "children": [],
+          "disabled": true,
+          "infoId": "645374a7a79d52663af793ea",
+          "key": "645374a7a79d52663af793ea",
+          "labelIds": null,
+          "method": "POST",
+          "nodeName": "/updateBatchCompareCase",
+          "nodeType": 1,
+        },
+        {
+          "caseSourceType": 0,
+          "children": [
+            {
+              "caseSourceType": 2,
+              "children": [],
+              "disabled": false,
+              "infoId": "648a7792bc7e1a5853cf694c",
+              "key": "648a7792bc7e1a5853cf694c",
+              "labelIds": null,
+              "method": null,
+              "nodeName": "case",
+              "nodeType": 2,
+            },
+          ],
+          "disabled": false,
+          "infoId": "645369aca79d52663af78bde",
+          "key": "645369aca79d52663af78bde",
+          "labelIds": null,
+          "method": "POST",
+          "nodeName": "/initBatchCompareReport",
+          "nodeType": 1,
+        },
+        {
+          "caseSourceType": 0,
+          "children": [],
+          "disabled": true,
+          "infoId": "6453686ba79d52663af78b3b",
+          "key": "6453686ba79d52663af78b3b",
+          "labelIds": null,
+          "method": "POST",
+          "nodeName": "/queryBatchCompareHistoryReport",
+          "nodeType": 1,
+        },
+      ],
+      "disabled": false,
+      "infoId": "64536864a79d52663af78b33",
+      "key": "64536864a79d52663af78b33",
+      "labelIds": null,
+      "method": null,
+      "nodeName": "batchcompare",
+      "nodeType": 3,
+    },
+  ],
+}
+`;
+
 exports[`disabledNonCaseNode > no case collection tree data 1`] = `
+{
+  "hasCase": false,
+  "nodeData": [
+    {
+      "caseSourceType": 0,
+      "children": [
+        {
+          "caseSourceType": 0,
+          "children": [],
+          "disabled": true,
+          "infoId": "647849917137ad5ad372bd59",
+          "key": "647849917137ad5ad372bd59",
+          "labelIds": null,
+          "method": "GET",
+          "nodeName": "New Request",
+          "nodeType": 1,
+        },
+      ],
+      "disabled": true,
+      "infoId": "647849827137ad5ad372bd45",
+      "key": "647849827137ad5ad372bd45",
+      "labelIds": null,
+      "method": null,
+      "nodeName": "node",
+      "nodeType": 3,
+    },
+  ],
+}
+`;
+
+exports[`disabledNonCaseNode > no case collection tree types 1`] = `
 {
   "hasCase": false,
   "nodeData": [

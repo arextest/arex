@@ -10,6 +10,7 @@
     "@ant-design/icons": "^5.1.4",
     "@arextest/arex-core": "workspace:^",
     "@arextest/arex-common": "workspace:^",
+    "@arextest/arex-request": "workspace:^",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "ahooks": "^3.7.5",
@@ -30,6 +31,7 @@
     "@vitejs/plugin-react-swc": "^3.3.0",
     "vite-plugin-svgr": "^3.2.0",
     "typescript": "^5.0.2",
-    "vite": "^4.2.0"
+    "vite": "^4.2.0",
+    "unplugin-icons": "^0.16.3"
   }
 }

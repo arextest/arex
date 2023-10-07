@@ -6,5 +6,6 @@
   "console": "Console",
   "browserAgent": "Browser Agent",
   "moreNode": "Additional node",
-  "differenceNode": "Difference node"
+  "differenceNode": "Difference node",
+  "newTag": "New Tag"
 }

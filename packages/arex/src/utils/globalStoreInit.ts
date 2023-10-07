@@ -1,4 +1,4 @@
-import { useCollections, useEnvironments, useUserProfile, useWorkspaces } from '@/store';
+import { useCollections, useUserProfile, useWorkspaces } from '@/store';
 
 /**
  * TODO 可行性待验证
@@ -9,7 +9,6 @@ import { useCollections, useEnvironments, useUserProfile, useWorkspaces } from '
  */
 const globalStoreInit = () => {
   useCollections.getState().getCollections();
-  useEnvironments.getState().getEnvironments();
   useUserProfile.getState().getUserProfile();
   useWorkspaces.getState().getWorkspaces();
 };
