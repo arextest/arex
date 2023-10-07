@@ -78,6 +78,7 @@
     "caseRange": "Case range",
     "caseRangeTooltip": "Select the time range for the recorded cases, and the cases recorded within this time period will be replayed.",
     "emptyHost": "Target Host can't be empty",
+    "emptyCaseRange": "Case range can't be empty",
     "emptyStartTime": "Start Time can't be empty",
     "emptyEndTime": "End Time can't be empty",
     "paths": "Paths",
