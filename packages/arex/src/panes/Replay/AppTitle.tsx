@@ -5,10 +5,12 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import {
+  css,
   getLocalStorage,
   HelpTooltip,
   i18n,
   I18nextLng,
+  Label,
   PanesTitle,
   SpaceBetweenWrapper,
   styled,
@@ -275,6 +277,11 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
     });
   }, [appId]);
 
+  const handleCloseModal = useCallback(() => {
+    setOpen(false);
+    form.resetFields();
+  }, [form]);
+
   return (
     <div>
       <PanesTitle
@@ -304,7 +311,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
         title={`${t('replay.startButton')} - ${appId}`}
         open={open}
         onOk={handleStartReplay}
-        onCancel={() => setOpen(false)}
+        onCancel={handleCloseModal}
         bodyStyle={{ paddingBottom: '12px' }}
         confirmLoading={confirmLoading}
       >
@@ -340,8 +347,33 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
             }
             name='caseSourceRange'
             rules={[{ required: true, message: t('replay.emptyCaseRange') as string }]}
+            css={css`
+              .ant-picker-dropdown .ant-picker-footer-extra {
+                position: absolute;
+                border: none;
+                bottom: 3px;
+              }
+            `}
           >
             <DatePicker.RangePicker
+              format='YYYY-MM-DD HH:mm'
+              showTime={{ format: 'HH:mm' }}
+              getPopupContainer={(triggerNode) => triggerNode.parentNode as HTMLElement}
+              renderExtraFooter={() => (
+                <>
+                  <Label type='secondary'>{t('dateRangePreset.quickPick', { ns: 'common' })}</Label>
+                  <Button
+                    size={'small'}
+                    onClick={() => {
+                      form.setFieldsValue({
+                        caseSourceRange: [dayjs().subtract(1, 'day'), dayjs()],
+                      });
+                    }}
+                  >
+                    {t('dateRangePreset.1d', { ns: 'common' })}
+                  </Button>
+                </>
+              )}
               placeholder={[t('replay.caseStartTime'), t('replay.caseEndTime')]}
               style={{ width: '100%' }}
             />

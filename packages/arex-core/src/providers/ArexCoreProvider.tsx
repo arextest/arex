@@ -1,4 +1,5 @@
 import { App, ConfigProvider, Empty, Layout, message, theme } from 'antd';
+import { ThemeConfig } from 'antd/es/config-provider/context';
 import { MappingAlgorithm } from 'antd/lib/theme/interface';
 import enUS from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
@@ -18,6 +19,7 @@ const localeMap = {
 
 export type ArexCoreProviderProps = {
   theme: Theme;
+  componentsConfig?: ThemeConfig['components'];
   compact: boolean;
   colorPrimary: ColorPrimary;
   language: I18nextLng;
@@ -38,6 +40,7 @@ const ArexCoreProvider: FC<PropsWithChildren<Partial<ArexCoreProviderProps>>> = 
     colorPrimary = ColorPrimary.green,
     language = I18nextLng.en,
     localeResources,
+    componentsConfig: components,
   } = props;
 
   const [messageApi, contextHolder] = message.useMessage();
@@ -65,6 +68,7 @@ const ArexCoreProvider: FC<PropsWithChildren<Partial<ArexCoreProviderProps>>> = 
       theme={{
         token: generateToken(theme, colorPrimary),
         algorithm,
+        components,
       }}
       locale={localeMap[language]}
       renderEmpty={() => Empty.PRESENTED_IMAGE_SIMPLE}
