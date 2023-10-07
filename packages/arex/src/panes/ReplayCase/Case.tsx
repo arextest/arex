@@ -9,10 +9,11 @@ import { TableProps, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, Key, useMemo } from 'react';
 
-import { PanesType } from '@/constant';
+import { CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
 import { PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
+import { useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
 
 export type CaseProps = {
@@ -27,7 +28,9 @@ export type CaseProps = {
 
 const Case: FC<CaseProps> = (props) => {
   const { data } = useArexPaneProps<PlanItemStatistics>();
+  const { activeWorkspaceId } = useWorkspaces();
   const { t } = useTranslation(['components']);
+
   const navPane = useNavPane();
 
   const filterMap = useMemo(
@@ -80,7 +83,7 @@ const Case: FC<CaseProps> = (props) => {
           onClick={() => {
             navPane({
               type: PanesType.REQUEST,
-              id: generateId(12),
+              id: `${activeWorkspaceId}-${CollectionNodeType.case}-${generateId(12)}`,
               icon: 'Get',
               name: record.recordId,
               data: {

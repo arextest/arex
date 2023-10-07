@@ -9,11 +9,25 @@ import {
 export enum PanesType {
   DEMO = 'demo',
   COMPONENTS = 'components',
+  REQUEST = 'request',
 }
 
 export enum MenusType {
+  COLLECTION = 'collection',
   DEMO = 'demo',
 }
+
+export enum RoleEnum {
+  Admin = 1,
+  Editor = 2,
+  Viewer = 3,
+}
+
+export const RoleMap = {
+  [RoleEnum.Admin]: 'Admin',
+  [RoleEnum.Editor]: 'Editor',
+  [RoleEnum.Viewer]: 'Viewer',
+};
 
 export const methodMap: Record<RequestMethodEnum, { color: string }> = {
   GET: {

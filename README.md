@@ -1,19 +1,31 @@
 <div align="center"><h1>AREX-UI</h1></div>
-<div align="center">auto replay X -- a "Differential Testing" and "Record and Replay Testing" Tool</div>
+<div align="center">A user-friendly visual frontend interface for operating AREX.</div>
 
-## QUICK START
-[quick start](http://arextest.com/docs/category/get-started)\
-[documentions](http://arextest.com/docs/intro/)
+## Get Started
+
+1. Installation
+
+  Please refer to [install documentation](http://arextest.com/docs/chapter1/quick-installation).
+
+2. Getting started
+
+  Please visit our documentation website to get started: [AREX Documentions](http://arextest.com/docs/chapter1/get-started)
 
 ## FEATURE
-- Out-of-order comparsion\
-  Supports out-of-order comparison of arrays with limited configuration. [more detail](url)
-- Exclusion/Inclusion\
-  Inclusion means that you can specify nodes in the interface you want to compare.\
-  Exclusion means that you can specify nodes in the interface you want to ignore.
-- Supporting comparsion type\
-  Temporarily only supports json format comparison
+- **Code no-invasion based data collection and automation Mock**: mock most components such as Dubbo, Http, Redis, persistence layer framework, configuration center;
 
+- **Support a variety of complex business scenarios of verification**: including multi-threaded concurrency, asynchronous callbacks, write operations and so on;
+
+- **Rapid reproduction of production bugs**: directly use the production recorded data in the local environment.
+
+
+## Join the AREX Community
+
+- QQ Group - 656108079
+- Follow us on [Twitter](https://twitter.com/AREX_Test)
+- [Join the Mailing List](https://groups.google.com/g/arex-test)
+- [Join AREX Slack](https://arexcommunity.slack.com/ssb/redirect)
+- [Join AREX Discord](https://discord.gg/wy3CZHnV9K)
 
 ## LICENSE
 ```text

@@ -151,7 +151,7 @@ const ArexPanesContainer = (props: ArexPanesContainerProps) => {
     onDragEnd,
     ...restTabsProps
   } = props;
-  // 规定: ArexMenu 翻译文本需要配置在 locales/[lang]/arex-menu.json 下, 且 key 为 Menu.type
+  // 规定: ArexMenu 翻译文本需要配置在 locales/[lang]/arex-menu.json 下, 且 key 为 Menu.types
   const { t } = useTranslation([ArexPaneNamespace]);
 
   const panesItems = useMemo(
@@ -164,7 +164,7 @@ const ArexPanesContainer = (props: ArexPanesContainerProps) => {
           const paneProps = { data: pane.data, paneKey: pane.key as string };
           return {
             key: pane.key || '',
-            // 规定: 翻译文本需要配置在 locales/[lang]/arex-pane.json 下, 且 key 为 Pane.type
+            // 规定: 翻译文本需要配置在 locales/[lang]/arex-pane.json 下, 且 key 为 Pane.types
             label: (
               <>
                 <span>
@@ -186,7 +186,7 @@ const ArexPanesContainer = (props: ArexPanesContainerProps) => {
                     id={`arex-pane-wrapper-${pane.key}`}
                     style={{
                       padding: Pane.noPadding ? 0 : '8px 16px',
-                      height: '100%',
+                      height: 'calc(100vh - 106px)',
                     }}
                   >
                     {React.createElement(Pane, paneProps)}

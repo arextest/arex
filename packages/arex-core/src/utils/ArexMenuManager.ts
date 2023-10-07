@@ -14,7 +14,7 @@ export class ArexMenuManager {
   public static registerMenus(menusMap: { [Modal: string]: ArexMenu<unknown> }) {
     for (const name in menusMap) {
       const menu = menusMap[name];
-      // console.log(this.menusMap, menusMap, name, menu.type);
+      // console.log(this.menusMap, menusMap, name, menu.types);
       if (this.menusMap.has(menu.type)) {
         console.log(`Menu ${menu.type} already exists, please check!`);
         // continue;

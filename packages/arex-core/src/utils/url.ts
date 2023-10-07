@@ -34,13 +34,13 @@ export const decodeUrl = () => {
   };
 };
 
-export const encodeUrl = (pathParams: Partial<StandardPathParams>, data?: object) => {
+export function encodeUrl<T>(pathParams: Partial<StandardPathParams>, data?: T | undefined) {
   const compileUrl = compile(StandardPathReg, { encode: encodeURIComponent });
   let url = compileUrl(pathParams);
   if (pathParams.paneType && data && Object.keys(data).length) url += `?${qs.stringify(data)}`;
 
   return url;
-};
+}
 
 export const objToUrl = (obj: Record<string, string | number>) => {
   if (!obj) return '';

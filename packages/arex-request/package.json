@@ -1,0 +1,66 @@
+{
+  "name": "@arextest/arex-request",
+  "version": "0.0.2",
+  "type": "module",
+  "main": "dist/arex-request.umd.cjs",
+  "module": "dist/arex-request.js",
+  "homepage": "https://github.com/arextest/arex-request",
+  "scripts": {
+    "preinstall": "pnpm -w run build:core",
+    "build:code": "tsc && vite build",
+    "do-build": "pnpm run build:code",
+    "do-test": "vitest",
+    "coverage": "vitest run --coverage"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/*"
+  ],
+  "dependencies": {
+    "@arextest/arex-core": "workspace:latest",
+    "@arextest/monaco-react": "^4.5.1",
+    "@ant-design/icons": "^5.2.6",
+    "allotment": "^1.18.1",
+    "copy-to-clipboard": "^3.3.3",
+    "immer": "^9.0.21",
+    "monaco-editor": "^0.38.0",
+    "postman-collection": "^4.1.7",
+    "react-json-view": "^1.21.3",
+    "react-sortablejs": "^6.1.4",
+    "sortablejs": "^1.15.0",
+    "use-immer": "^0.9.0",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.4",
+    "@emotion/babel-plugin": "^11.10.6",
+    "@iconify/json": "^2.2.76",
+    "@svgr/core": "^8.0.0",
+    "@svgr/plugin-jsx": "^8.0.1",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^14.0.0",
+    "@types/postman-collection": "^3.5.7",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@types/sortablejs": "^1.15.1",
+    "@types/testing-library__jest-dom": "^5.14.5",
+    "@vitejs/plugin-react-swc": "^3.3.1",
+    "@vitest/coverage-c8": "^0.31.0",
+    "jsdom": "^22.0.0",
+    "typescript": "^4.9.3",
+    "unplugin-icons": "^0.16.3",
+    "vite": "^4.2.0",
+    "vite-plugin-dts": "^3.4.0",
+    "vitest": "^0.31.0",
+    "@types/lodash": "^4.14.198"
+  },
+  "peerDependencies": {
+    "antd": "^5.9.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "i18next": "^22.4.11",
+    "react-i18next": "^12.2.0",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6"
+  }
+}

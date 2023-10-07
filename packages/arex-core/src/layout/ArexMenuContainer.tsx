@@ -5,7 +5,7 @@ import { Menu, MenuProps, Tabs, TabsProps } from 'antd';
 import React, { FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { ErrorBoundary, WorkspacesMenu, WorkspacesMenuProps } from '../components';
+import { ErrorBoundary } from '../components';
 import { ArexMenuNamespace } from '../constant';
 import { ArexMenuManager } from '../utils';
 
@@ -13,7 +13,6 @@ export type ArexMenuContainerProps = {
   value?: string;
   activeKey?: string;
   collapsed?: boolean;
-  workspaceMenuProps?: WorkspacesMenuProps;
   onChange?: (menuType: string) => void;
   onCollapsed?: (collapse: boolean) => void;
   onSelect?: (paneType: string, id: string, data: unknown) => void;
@@ -29,7 +28,7 @@ export type MenuItemType = {
 const ICON_KEY = '__ExpandIcon';
 
 const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
-  // 规定: ArexMenu 翻译文本需要配置在 locales/[lang]/arex-menu.json 下, 且 key 为 Menu.type
+  // 规定: ArexMenu 翻译文本需要配置在 locales/[lang]/arex-menu.json 下, 且 key 为 Menu.types
   const { t } = useTranslation([ArexMenuNamespace]);
 
   const tabsItems = useMemo<MenuItemType[]>(
@@ -79,7 +78,6 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
       id='arex-menu-wrapper'
       style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
     >
-      <WorkspacesMenu collapsed={props.collapsed} {...props.workspaceMenuProps} />
       <div style={{ display: 'flex', flex: '1', minHeight: '0' }}>
         <StyledMenu
           mode='inline'
@@ -94,7 +92,6 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
           items={items}
           css={css`
             width: 100%;
-            padding: 8px;
             overflow-y: hidden;
             .ant-tabs-nav {
               display: none; // 隐藏 Tabs 的导航栏

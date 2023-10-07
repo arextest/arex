@@ -1,5 +1,6 @@
 export * from './contract';
 export * from './deleteReport';
+export * from './feedbackScene';
 export * from './label';
 export * from './queryAggCount';
 export * from './queryAllDiffMsg';

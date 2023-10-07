@@ -135,51 +135,61 @@ const ReplayMenu: ArexMenuFC = (props) => {
   };
 
   const handleSelect: MenuSelectProps<ApplicationDataType, any[]>['onSelect'] = (value) => {
-    props.onSelect?.(value); // to streamline the params, remove the data from onSelect handler
+    props.onSelect?.(value); // to streamline the params, remove the types from onSelect handler
   };
 
   return (
-    <MenuSelect<ApplicationDataType>
-      small
-      refresh
-      forceFilter
-      rowKey='appId'
-      limit={25}
-      initValue={props.value}
-      selectedKeys={selectedKeys}
-      prefix={
-        <TooltipButton
-          title={t('applicationsMenu.filterFavoriteApps')}
-          icon={
-            favoriteFilter ? <HeartFilled style={{ color: token.colorError }} /> : <HeartOutlined />
-          }
-          onClick={toggleFavoriteFilter}
-        />
-      }
-      onSelect={handleSelect}
-      placeholder={t('applicationsMenu.appFilterPlaceholder') as string}
-      request={ApplicationService.getAppList}
-      requestOptions={{
-        refreshDeps: [timestamp], // refresh when delete app
-        onSuccess(res) {
-          !loadingFavoriteApp && recycleDiscard(res);
-        },
-      }}
-      filter={filter}
-      itemRender={(app) => ({
-        label: (
-          <MenuItem app={app} favoriteApps={favoriteApps} onFavoriteAppsChange={getFavoriteApps} />
-        ),
-        key: app.appId,
-      })}
-      height={height}
-      sx={{
-        padding: '8px 0',
-        '.ant-menu-item': {
-          paddingInlineEnd: 0, // 防止在 padding 范围内导致 :hover 失效
-        },
-      }}
-    />
+    <div style={{ padding: '8px' }}>
+      <MenuSelect<ApplicationDataType>
+        small
+        refresh
+        forceFilter
+        rowKey='appId'
+        limit={25}
+        initValue={props.value}
+        selectedKeys={selectedKeys}
+        prefix={
+          <TooltipButton
+            title={t('applicationsMenu.filterFavoriteApps')}
+            icon={
+              favoriteFilter ? (
+                <HeartFilled style={{ color: token.colorError }} />
+              ) : (
+                <HeartOutlined />
+              )
+            }
+            onClick={toggleFavoriteFilter}
+          />
+        }
+        onSelect={handleSelect}
+        placeholder={t('applicationsMenu.appFilterPlaceholder') as string}
+        request={ApplicationService.getAppList}
+        requestOptions={{
+          refreshDeps: [timestamp], // refresh when delete app
+          onSuccess(res) {
+            !loadingFavoriteApp && recycleDiscard(res);
+          },
+        }}
+        filter={filter}
+        itemRender={(app) => ({
+          label: (
+            <MenuItem
+              app={app}
+              favoriteApps={favoriteApps}
+              onFavoriteAppsChange={getFavoriteApps}
+            />
+          ),
+          key: app.appId,
+        })}
+        height={height}
+        sx={{
+          padding: '8px 0',
+          '.ant-menu-item': {
+            paddingInlineEnd: 0, // 防止在 padding 范围内导致 :hover 失效
+          },
+        }}
+      />
+    </div>
   );
 };
 

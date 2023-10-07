@@ -284,7 +284,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   const handleConfigTargetChange = useCallback((value: React.Key) => {
     setConfigTypeValue((configType) =>
       value === CONFIG_TARGET.GLOBAL && configType === CONFIG_TYPE.NODE_SORT
-        ? CONFIG_TYPE.NODE_IGNORE // sortNode has no global configuration type
+        ? CONFIG_TYPE.NODE_IGNORE // sortNode has no global configuration types
         : configType,
     );
     setConfigTargetValue(value as CONFIG_TARGET);

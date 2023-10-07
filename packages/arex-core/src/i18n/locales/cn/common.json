@@ -6,5 +6,6 @@
   "console": "控制台",
   "browserAgent": "浏览器代理",
   "moreNode": "新增节点",
-  "differenceNode": "差异节点"
+  "differenceNode": "差异节点",
+  "newTag": "新增标签"
 }

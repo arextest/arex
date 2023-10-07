@@ -8,7 +8,6 @@
 
 import AppSetting from './AppSetting';
 import BatchRun from './BatchRun';
-import Environment from './Environment';
 import Replay from './Replay';
 import ReplayAnalysis from './ReplayAnalysis';
 import ReplayCase from './ReplayCase';
@@ -26,7 +25,6 @@ export default {
   ReplayDiffScenes,
   ReplayAnalysis,
   Request,
-  Environment,
   SystemSetting,
   Workspace,
   BatchRun,

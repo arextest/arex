@@ -178,6 +178,7 @@
     "recordedCaseCount": "用例数",
     "recordTime": "录制时间",
     "operationType": "接口类型",
+    "re-calculateReport": "重算报告",
     "noAppOwnerAlert":"当前应用无 Owner，一些操作权限将被禁用，请",
     "addOwner": "添加应用 Owner"
   },
