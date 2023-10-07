@@ -1,7 +1,4 @@
-// import { I18nResources as ArexCommonI18nResources } from '@arextest/arex-common';
-import { I18nResources as ArexCommonI18nResources } from '@arextest/arex-common';
 import { ArexMenuNamespace, ArexPaneNamespace, I18nextLng } from '@arextest/arex-core';
-import { merge } from 'lodash';
 
 import arexMenuCn from './locales/cn/arex-menu.json';
 import arexPaneCn from './locales/cn/arex-pane.json';
@@ -37,4 +34,4 @@ const resources = {
   },
 };
 
-export default merge(resources, ArexCommonI18nResources);
+export default resources;
