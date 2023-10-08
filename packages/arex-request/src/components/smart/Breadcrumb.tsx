@@ -1,6 +1,6 @@
 import { EditOutlined } from '@ant-design/icons';
 import { css, TagsGroup } from '@arextest/arex-core';
-import { Breadcrumb, Input, Space, Typography } from 'antd';
+import { Breadcrumb, Input, InputProps, Space, Typography } from 'antd';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 
 import { useArexRequestProps } from '../../hooks';
@@ -38,7 +38,10 @@ export interface SmartBreadcrumbProps {
 const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
   const { breadcrumb, titleProps, descriptionProps, tagsProps } = useArexRequestProps();
   const [mode, setMode] = useState(Mode.normal);
+
   const [title, setTitle] = useState<string>();
+  const [titleStatus, setTitleStatus] = useState<InputProps['status']>();
+
   const [tagsValue, setTagsValue] = useState<string[]>();
   const [descriptionValue, setDescriptionValue] = useState('');
 
@@ -49,17 +52,17 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
   }, [descriptionValue, tagsProps?.value, titleProps?.value]);
 
   const breadcrumbItems = useMemo(
-    () => breadcrumb?.map((title) => ({ title })).concat({ title: titleProps?.value || '' }),
-    [breadcrumb, titleProps?.value],
+    () => breadcrumb?.map((title) => ({ title })).concat({ title: title || '' }),
+    [breadcrumb, title],
   );
 
   // TODO REFACTOR
   return (
     <div
       css={css`
-        margin-top: 4px;
         display: flex;
         align-items: center;
+        width: 100%;
       `}
     >
       {mode === Mode.normal ? (
@@ -141,20 +144,33 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
         <>
           {mode === Mode.title && (
             <Input
+              size='small'
               value={title}
+              status={titleStatus}
               onChange={(val) => {
+                titleStatus === 'error' && title && setTitleStatus(undefined);
                 setTitle(val.target.value);
               }}
-              onBlur={() => {
-                setMode(Mode.normal);
-                titleProps?.onChange?.(title);
-              }}
-              onKeyUp={(e) => {
-                if (e.keyCode === 13) {
+              onBlur={(e) => {
+                const title = e.target.value;
+                if (!title) {
+                  setTitleStatus('error');
+                } else {
                   setMode(Mode.normal);
                   titleProps?.onChange?.(title);
                 }
               }}
+              onKeyUp={(e) => {
+                if (e.keyCode === 13) {
+                  if (!title) {
+                    setTitleStatus('error');
+                  } else {
+                    setMode(Mode.normal);
+                    titleProps?.onChange?.(title);
+                  }
+                }
+              }}
+              style={{ width: '80%', maxWidth: '320px' }}
             />
           )}
 
