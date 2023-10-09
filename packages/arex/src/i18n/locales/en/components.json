@@ -181,7 +181,7 @@
     "operationType": "Operation Type",
     "re-calculateReport": "Re-calculate Report",
     "noAppOwnerAlert":"There is no owners of this application, some operation privileges will be disabled, please ",
-    "addOwner": "add application owner"
+    "addOwner": "Add application owner"
   },
   "appSetting": {
     "record": "Record",

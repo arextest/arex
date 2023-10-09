@@ -27,6 +27,7 @@ import {
   Form,
   Modal,
   Select,
+  Skeleton,
   theme,
   Typography,
 } from 'antd';
@@ -64,32 +65,38 @@ const TitleWrapper = styled(
 
     return (
       <div id='arex-replay-record-detail-btn' className={props.className}>
-        {createElement(
-          props.count ? Button : 'div',
-          props.count ? { type: 'text', onClick: props.onClickTitle } : {},
-          <Badge size='small' count={props.count} offset={[10, 2]}>
-            <span style={{ fontSize: '20px', fontWeight: 600 }}> {props.title}</span>
-          </Badge>,
-        )}
-        {props.onRefresh && (
-          <TooltipButton
-            id='arex-replay-refresh-report-btn'
-            size='small'
-            type='text'
-            title={t('replay.refresh')}
-            icon={<SyncOutlined />}
-            onClick={props.onRefresh}
-          />
-        )}
-        {props.onSetting && (
-          <TooltipButton
-            id='arex-replay-app-setting-btn'
-            size='small'
-            type='text'
-            title={t('replay.appSetting')}
-            icon={<SettingOutlined />}
-            onClick={props.onSetting}
-          />
+        {props.title ? (
+          <>
+            {createElement(
+              props.count ? Button : 'div',
+              props.count ? { type: 'text', onClick: props.onClickTitle } : {},
+              <Badge size='small' count={props.count} offset={[10, 2]}>
+                <span style={{ fontSize: '20px', fontWeight: 600 }}>{props.title}</span>
+              </Badge>,
+            )}
+            {props.onRefresh && (
+              <TooltipButton
+                id='arex-replay-refresh-report-btn'
+                size='small'
+                type='text'
+                title={t('replay.refresh')}
+                icon={<SyncOutlined />}
+                onClick={props.onRefresh}
+              />
+            )}
+            {props.onSetting && (
+              <TooltipButton
+                id='arex-replay-app-setting-btn'
+                size='small'
+                type='text'
+                title={t('replay.appSetting')}
+                icon={<SettingOutlined />}
+                onClick={props.onSetting}
+              />
+            )}
+          </>
+        ) : (
+          <Skeleton.Input active size='small' style={{ width: '200px' }} />
         )}
       </div>
     );

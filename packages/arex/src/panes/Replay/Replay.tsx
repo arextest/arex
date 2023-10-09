@@ -1,16 +1,17 @@
-import { ArexPaneFC, CollapseTable, useTranslation } from '@arextest/arex-core';
+import { ArexPaneFC, CollapseTable, getLocalStorage, useTranslation } from '@arextest/arex-core';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { Alert } from 'antd';
 import { merge } from 'lodash';
 import React, { useMemo, useRef, useState } from 'react';
 
-import { PanesType } from '@/constant';
+import { EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ApplicationService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
-import AppOwnerConfig, { AppOwnerConfigRef } from './AppOwnerConfig';
+import AppOwnersConfig, { AppOwnerConfigRef } from './AppOwnersConfig';
 import AppTitle from './AppTitle';
 import PlanItem from './PlanItem';
 import PlanReport, { PlanReportProps } from './PlanReport';
@@ -18,6 +19,8 @@ import PlanReport, { PlanReportProps } from './PlanReport';
 const ReplayPage: ArexPaneFC = (props) => {
   const navPane = useNavPane();
   const { t } = useTranslation('components');
+
+  const [replayWrapperRef] = useAutoAnimate();
 
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
   const { id: appId } = useMemo(() => decodePaneKey(props.paneKey), [props.paneKey]);
@@ -36,18 +39,19 @@ const ReplayPage: ArexPaneFC = (props) => {
     setRefreshDep(new Date().getTime()); // 触发 ReplayTable 组件请求更新
   };
 
-  const [hasOwner, setHasOwner] = useState(true);
+  const email = getLocalStorage<string>(EMAIL_KEY);
+  const [isOwner, setIsOwner] = useState(true);
   const appOwnerConfigRef = useRef<AppOwnerConfigRef>(null);
   const { data: appInfo, refresh: getAppInfo } = useRequest(ApplicationService.getAppInfo, {
     defaultParams: [appId],
     onSuccess(res) {
-      setHasOwner(!!res.owners?.length);
+      setIsOwner(!!res.owners?.includes?.(email as string));
     },
   });
 
   return (
-    <>
-      {!hasOwner && (
+    <div ref={replayWrapperRef}>
+      {!isOwner && (
         <Alert
           banner
           closable
@@ -55,7 +59,8 @@ const ReplayPage: ArexPaneFC = (props) => {
           message={
             <span>
               {t('replay.noAppOwnerAlert')}
-              <a onClick={appOwnerConfigRef?.current?.open}>{t('replay.addOwner')}</a>.
+              <a onClick={appOwnerConfigRef?.current?.open}>{t('replay.addOwner').toLowerCase()}</a>
+              .
             </span>
           }
           style={{ margin: '-8px -16px 8px -16px' }}
@@ -83,8 +88,8 @@ const ReplayPage: ArexPaneFC = (props) => {
         }
       />
 
-      <AppOwnerConfig ref={appOwnerConfigRef} appId={appId} onClose={getAppInfo} />
-    </>
+      <AppOwnersConfig ref={appOwnerConfigRef} appId={appId} onClose={getAppInfo} />
+    </div>
   );
 };
 
