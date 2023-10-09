@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-request",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "main": "dist/arex-request.umd.cjs",
   "module": "dist/arex-request.js",
