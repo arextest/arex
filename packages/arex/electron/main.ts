@@ -1,4 +1,5 @@
 import { app, BrowserWindow, session, globalShortcut } from 'electron';
+import { autoUpdateInit } from './autoUpdater';
 import path from 'node:path';
 
 // The built directory structure
@@ -79,6 +80,8 @@ function createWindow() {
 
   // 监听主窗口获得焦点事件
   win.on('focus', registerShortcut);
+
+  autoUpdateInit();
 }
 
 app.on('window-all-closed', () => {

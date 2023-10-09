@@ -187,6 +187,12 @@ importers:
       electron-builder:
         specifier: ^24.6.3
         version: 24.6.3
+      electron-log:
+        specifier: ^4.4.8
+        version: 4.4.8
+      electron-updater:
+        specifier: ^6.1.4
+        version: 6.1.4
       express:
         specifier: ^4.18.2
         version: 4.18.2
@@ -4776,6 +4782,10 @@ packages:
       - supports-color
     dev: true
 
+  /electron-log@4.4.8:
+    resolution: {integrity: sha512-QQ4GvrXO+HkgqqEOYbi+DHL7hj5JM+nHi/j+qrN9zeeXVKy8ZABgbu4CnG+BBqDZ2+tbeq9tUC4DZfIWFU5AZA==}
+    dev: true
+
   /electron-publish@24.5.0:
     resolution: {integrity: sha512-zwo70suH15L15B4ZWNDoEg27HIYoPsGJUF7xevLJLSI7JUPC8l2yLBdLGwqueJ5XkDL7ucYyRZzxJVR8ElV9BA==}
     dependencies:
@@ -4792,6 +4802,21 @@ packages:
 
   /electron-to-chromium@1.4.522:
     resolution: {integrity: sha512-KGKjcafTpOxda0kqwQ72M0tDmX6RsGhUJTy0Hr7slt0+CgHh9Oex8JdjY9Og68dUkTLUlBOJC0A5W5Mw3QSGCg==}
+
+  /electron-updater@6.1.4:
+    resolution: {integrity: sha512-yYAJc6RQjjV4WtInZVn+ZcLyXRhbVXoomKEfUUwDqIk5s2wxzLhWaor7lrNgxODyODhipjg4SVPMhJHi5EnsCA==}
+    dependencies:
+      builder-util-runtime: 9.2.1
+      fs-extra: 10.1.0
+      js-yaml: 4.1.0
+      lazy-val: 1.0.5
+      lodash.escaperegexp: 4.1.2
+      lodash.isequal: 4.5.0
+      semver: 7.5.4
+      tiny-typed-emitter: 2.1.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /electron@25.3.1:
     resolution: {integrity: sha512-t0QXXqgf0/P0OJ9LU3qpcBMK+wL0FRwTQfooBaaG08v5hywPzc1yplfb3l4tS1xC0Ttw8IBaKLBeEoRgxBRHjg==}
@@ -6665,6 +6690,10 @@ packages:
   /lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
     dev: false
+
+  /lodash.escaperegexp@4.1.2:
+    resolution: {integrity: sha512-TM9YBvyC84ZxE3rgfefxUWiQKLilstD6k7PTGt6wfbtXF8ixIJLOL3VYyV/z+ZiPLsVxAsKAFVwWlWeb2Y8Yyw==}
+    dev: true
 
   /lodash.flow@3.5.0:
     resolution: {integrity: sha512-ff3BX/tSioo+XojX4MOsOMhJw0nZoUEF011LX8g8d3gvjVbxd89cCio4BCXronjxcTUIJUoqKEUA+n4CqvvRPw==}
@@ -9022,6 +9051,10 @@ packages:
   /tiny-invariant@1.2.0:
     resolution: {integrity: sha512-1Uhn/aqw5C6RI4KejVeTg6mIS7IqxnLJ8Mv2tV5rTc0qWobay7pDUz6Wi392Cnc8ak1H0F2cjoRzb2/AW4+Fvg==}
     dev: false
+
+  /tiny-typed-emitter@2.1.0:
+    resolution: {integrity: sha512-qVtvMxeXbVej0cQWKqVSSAHmKZEHAvxdF8HEUBFWts8h+xEo5m/lEiPakuyZ3BnCBjOD8i24kzNOiOLLgsSxhA==}
+    dev: true
 
   /tinybench@2.5.1:
     resolution: {integrity: sha512-65NKvSuAVDP/n4CqH+a9w2kTlLReS9vhsAP06MWx+/89nMinJyB2icyl58RIcqCmIggpojIGeuJGhjU1aGMBSg==}
