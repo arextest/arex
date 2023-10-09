@@ -66,6 +66,7 @@
   "agentStatus": "Status",
   "document": "Document",
   "serverError": "Server Error",
+  "searchUsers": "Search for Users",
   "dateRangePreset": {
     "quickPick": "Quick Pick",
     "1d": "1d"

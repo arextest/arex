@@ -2330,7 +2330,7 @@ packages:
     dependencies:
       '@babel/core': 7.22.19
       '@svgr/babel-preset': 8.0.0(@babel/core@7.22.19)
-      '@svgr/core': 8.0.0(typescript@5.0.2)
+      '@svgr/core': 8.0.0(typescript@4.9.3)
       '@svgr/hast-util-to-babel-ast': 8.0.0
       svg-parser: 2.0.4
     transitivePeerDependencies:
@@ -8384,7 +8384,7 @@ packages:
       '@antfu/install-pkg': 0.1.1
       '@antfu/utils': 0.7.6
       '@iconify/utils': 2.1.9
-      '@svgr/core': 8.0.0(typescript@5.0.2)
+      '@svgr/core': 8.0.0(typescript@4.9.3)
       debug: 4.3.4
       kolorist: 1.8.0
       local-pkg: 0.4.3

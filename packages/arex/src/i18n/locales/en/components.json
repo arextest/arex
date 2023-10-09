@@ -254,6 +254,7 @@
     "inclusionTooltip": "Select the paths to record",
     "other": "Other",
     "dangerZone": "Danger Zone",
+    "owners": "Owners",
     "deleteApp": "Delete App",
     "deleteThisApp": "Delete this App",
     "deleteTip": "Once you delete an app, there is no going back. Please be certain.",

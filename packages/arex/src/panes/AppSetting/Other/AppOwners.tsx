@@ -1,0 +1,92 @@
+import { useTranslation } from '@arextest/arex-core';
+import { useRequest } from 'ahooks';
+import { App, Button, Form, Select } from 'antd';
+import React, { FC, useMemo } from 'react';
+
+import { ApplicationService, UserService } from '@/services';
+
+interface AppOwnersProps {
+  appId: string;
+  inline?: boolean;
+}
+
+const AppOwners: FC<AppOwnersProps> = (props) => {
+  const { inline = true, appId } = props;
+  const { message } = App.useApp();
+  const { t } = useTranslation();
+
+  const [form] = Form.useForm<{ owners: string[] }>();
+
+  useRequest(ApplicationService.getAppInfo, {
+    defaultParams: [appId],
+    onSuccess(res) {
+      res.owners?.length && form.setFieldValue('owners', res.owners);
+    },
+  });
+
+  const { run: overwriteAppOwners } = useRequest(
+    (owners) =>
+      ApplicationService.modifyApp({
+        appId,
+        owners,
+      }),
+    {
+      manual: true,
+      onSuccess(success: boolean) {
+        success ? message.success(t('message.success')) : message.error(t('message.error'));
+      },
+    },
+  );
+  const handleAddOwner = (values: { owners: string[] }) => {
+    overwriteAppOwners(values.owners);
+  };
+
+  const { data: usersList = [], run: getUsersByKeyword } = useRequest(
+    UserService.getUsersByKeyword,
+    {
+      manual: true,
+      debounceWait: 300,
+      onSuccess(data) {
+        console.log(data);
+      },
+    },
+  );
+
+  const usersOptions = useMemo(
+    () =>
+      usersList?.map((user) => ({
+        label: user.userName,
+        value: user.userName,
+      })),
+    [usersList],
+  );
+
+  return (
+    <Form
+      name='ownerConfig'
+      form={form}
+      layout={inline ? 'inline' : undefined}
+      onFinish={handleAddOwner}
+      style={{ width: '100%' }}
+    >
+      <Form.Item label={'Owners'} name='owners'>
+        <Select
+          showSearch
+          mode='multiple'
+          placeholder={t('searchUsers')}
+          options={usersOptions}
+          onSearch={getUsersByKeyword}
+          style={{ minWidth: '240px' }}
+        />
+      </Form.Item>
+
+      <Form.Item style={{ textAlign: 'right' }}>
+        <Button type='primary' htmlType='submit'>
+          {t('save')}
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+};
+
+export default AppOwners;

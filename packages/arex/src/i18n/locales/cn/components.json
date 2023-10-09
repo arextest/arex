@@ -252,6 +252,7 @@
     "inclusion": "包含规则",
     "inclusionTooltip": "选择要录制的路径。",
     "other": "其他",
+    "owners": "所有者",
     "dangerZone": "危险区域",
     "deleteApp": "删除应用",
     "deleteThisApp": "删除该应用",

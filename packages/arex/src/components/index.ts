@@ -6,5 +6,6 @@ export { default as KeyboardShortcut } from './KeyboardShortcut';
 export type { MenuSelectProps } from './MenuSelect';
 export { default as MenuSelect } from './MenuSelect';
 export { default as Segmented } from './Segmented';
+export { default as SingleCollapse } from './SingleCollapse';
 export { default as StatusTag } from './StatusTag';
 export { default as WorkspacesMenu } from './WorkspacesMenu';

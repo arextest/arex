@@ -63,6 +63,7 @@
   "agentStatus": "状态",
   "document": "文档",
   "serverError": "服务器错误",
+  "searchUsers": "搜索用户",
   "dateRangePreset": {
     "quickPick": "快速选择",
     "1d": "近一天"
