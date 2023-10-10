@@ -16,7 +16,7 @@ import EnvironmentDrawer, {
 } from './EnvironmentDrawer';
 import { ExtraTabs } from './extra';
 import SaveAs, { SaveAsRef } from './SaveAs';
-import { convertRequest, updateWorkspaceEnvironmentLS } from './utils';
+import { updateWorkspaceEnvironmentLS } from './utils';
 
 export type RequestProps = {
   recordId?: string;
@@ -253,7 +253,6 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         }}
         disableSave={!!props.data?.recordId}
         onSave={handleSave}
-        onBeforeSend={convertRequest}
         onSaveAs={saveAsRef?.current?.open}
       />
 

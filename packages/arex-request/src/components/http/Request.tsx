@@ -1,5 +1,5 @@
-import { SaveOutlined } from '@ant-design/icons';
-import { css, RequestMethod, SpaceBetweenWrapper, styled } from '@arextest/arex-core';
+import { SaveOutlined, SendOutlined, StopOutlined } from '@ant-design/icons';
+import { css, Label, RequestMethod, SpaceBetweenWrapper, styled } from '@arextest/arex-core';
 import { Button, Checkbox, Divider, Dropdown, Select, Space } from 'antd';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +21,11 @@ const HeaderWrapper = styled.div`
 
 export type HttpRequestProps = {
   disableSave?: boolean;
-  onBeforeSend?: (request: ArexRESTRequest, environment?: ArexEnvironment) => ArexRESTRequest;
+  onBeforeRequest?: (request: ArexRESTRequest, environment?: ArexEnvironment) => ArexRESTRequest;
+  onRequest?: (
+    reqData: { request: ArexRESTRequest; environment?: ArexEnvironment },
+    resData: Awaited<ReturnType<typeof sendRequest>>,
+  ) => void;
   onSave?: (request?: ArexRESTRequest, response?: ArexRESTResponse) => void;
   onSaveAs?: () => void;
 } & SmartBreadcrumbProps & {
@@ -32,7 +36,8 @@ const HttpRequest: FC<HttpRequestProps> = () => {
   const {
     onSave,
     onSaveAs,
-    onBeforeSend = (request) => request,
+    onBeforeRequest = (request) => request,
+    onRequest,
     disableSave,
   } = useArexRequestProps();
   const { store, dispatch } = useArexRequestStore();
@@ -51,7 +56,8 @@ const HttpRequest: FC<HttpRequestProps> = () => {
         headers: undefined,
       };
     });
-    const res = await sendRequest?.(onBeforeSend(store.request), store.environment);
+    const res = await sendRequest(onBeforeRequest(store.request), store.environment);
+    onRequest?.({ request: store.request, environment: store.environment }, res);
     dispatch((state) => {
       if (res.response.type === 'success') {
         state.response = res.response;
@@ -128,27 +134,31 @@ const HttpRequest: FC<HttpRequestProps> = () => {
         />
 
         {store.request.inherited && (
-          <Checkbox
-            css={css`
-              margin-top: 5px;
-              margin-right: 5px;
-            `}
-            checked={store.request.inherited}
-            onChange={(val) => {
-              dispatch((state) => {
-                state.request.inherited = val.target.checked;
-              });
-            }}
-          />
+          <div style={{ display: 'flex', alignItems: 'center', marginLeft: '8px' }}>
+            <Label type='secondary'>{t('request.inherit')}</Label>
+            <Checkbox
+              checked={store.request.inherited}
+              onChange={(val) => {
+                dispatch((state) => {
+                  state.request.inherited = val.target.checked;
+                });
+              }}
+            />
+          </div>
         )}
 
         <div style={{ marginLeft: '8px' }}>
           {store.response?.type === 'loading' ? (
-            <Button id={'arex-request-cancel-btn'} onClick={reset}>
+            <Button id='arex-request-cancel-btn' icon={<StopOutlined />} onClick={reset}>
               {t('action.cancel')}
             </Button>
           ) : (
-            <Button id={'arex-request-send-btn'} type='primary' onClick={handleRequest}>
+            <Button
+              id='arex-request-send-btn'
+              type='primary'
+              icon={<SendOutlined />}
+              onClick={handleRequest}
+            >
               {t('action.send')}
             </Button>
           )}

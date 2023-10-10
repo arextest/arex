@@ -48,10 +48,10 @@ export async function sendRequest(
           },
         ],
         request: {
-          method: request.method,
+          method: request.inherited ? request.inheritedMethod : request.method,
           header: request.headers.filter((i) => i.active),
           body: convertToPmBody(request.body),
-          url: sdk.Url.parse(request.endpoint),
+          url: sdk.Url.parse(request.inherited ? request.inheritedEndpoint : request.endpoint),
         },
         response: [],
       },
