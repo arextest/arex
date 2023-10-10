@@ -1,5 +1,5 @@
-import { css, EmptyWrapper, Label, styled } from '@arextest/arex-core';
-import { Empty, Spin, Typography } from 'antd';
+import { css, Label, styled } from '@arextest/arex-core';
+import { Spin } from 'antd';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -39,55 +39,43 @@ const HttpResponseMeta: FC<{ response?: ArexRESTResponse }> = ({ response }) => 
   }, [response]);
 
   return (
-    <>
-      {response ? (
-        <div>
-          {response?.type === 'loading' && (
-            <Spin
-              css={css`
-                margin: 20px 0;
-                padding: 30px 50px;
-                text-align: center;
-                border-radius: 4px;
-                height: 100%;
-              `}
-            />
-          )}
-
-          {response?.type === 'success' && (
-            <>
-              <span>
-                {t('response.status')}:
-                <StatusText type={type}>
-                  {`${response.statusCode}\xA0•\xA0`}
-                  {getStatusCodeReasonPhrase(response.statusCode)}
-                </StatusText>
-              </span>
-
-              <span>
-                {t('response.time')}:
-                <StatusText type={type}>{`${response.meta.responseDuration}ms`}</StatusText>
-              </span>
-
-              <span>
-                <Label>{t('response.size')}</Label>
-                <StatusText type={type}>
-                  {readableResponseSize || `${response.meta.responseSize} B`}
-                </StatusText>
-              </span>
-            </>
-          )}
-        </div>
-      ) : (
-        <EmptyWrapper
-          description={
-            <Typography.Text type='secondary'>
-              Enter the URL and click Send to get a response
-            </Typography.Text>
-          }
+    <div>
+      {response?.type === 'loading' && (
+        <Spin
+          css={css`
+            margin: 20px 0;
+            padding: 30px 50px;
+            text-align: center;
+            border-radius: 4px;
+            height: 100%;
+          `}
         />
       )}
-    </>
+
+      {response?.type === 'success' && (
+        <>
+          <span>
+            {t('response.status')}:
+            <StatusText type={type}>
+              {`${response.statusCode}\xA0•\xA0`}
+              {getStatusCodeReasonPhrase(response.statusCode)}
+            </StatusText>
+          </span>
+
+          <span>
+            {t('response.time')}:
+            <StatusText type={type}>{`${response.meta.responseDuration}ms`}</StatusText>
+          </span>
+
+          <span>
+            <Label>{t('response.size')}</Label>
+            <StatusText type={type}>
+              {readableResponseSize || `${response.meta.responseSize} B`}
+            </StatusText>
+          </span>
+        </>
+      )}
+    </div>
   );
 };
 

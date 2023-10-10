@@ -98,7 +98,8 @@
     "header_list": "Header List",
     "invalid_name": "Please provide a name for the request",
     "method": "Method",
-    "name": "Request name",
+    "name": "Request Name",
+    "description": "Request Description",
     "new": "New Request",
     "override": "Override",
     "override_help": "Set <kbd>Content-Type</kbd> in Headers",
@@ -137,7 +138,8 @@
     "time": "Time",
     "title": "Response",
     "waiting_for_connection": "waiting for connection",
-    "xml": "XML"
+    "xml": "XML",
+    "sendRequestTip": "Enter the URL and click Send to get a Response"
   },
   "tab": {
     "authorization": "Authorization",

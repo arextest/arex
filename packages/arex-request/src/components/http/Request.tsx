@@ -1,8 +1,7 @@
-import { SaveOutlined } from '@ant-design/icons';
-import { css, RequestMethod, styled } from '@arextest/arex-core';
-import { Button, Checkbox, Divider, Select, Space } from 'antd';
-import { cloneDeep } from 'lodash';
-import React, { FC } from 'react';
+import { SaveOutlined, SendOutlined } from '@ant-design/icons';
+import { css, Label, RequestMethod, SpaceBetweenWrapper, styled } from '@arextest/arex-core';
+import { Button, Checkbox, Divider, Dropdown, Select, Space } from 'antd';
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { sendRequest } from '../../helpers';
@@ -22,7 +21,11 @@ const HeaderWrapper = styled.div`
 
 export type HttpRequestProps = {
   disableSave?: boolean;
-  onBeforeSend?: (request: ArexRESTRequest, environment?: ArexEnvironment) => ArexRESTRequest;
+  onBeforeRequest?: (request: ArexRESTRequest, environment?: ArexEnvironment) => ArexRESTRequest;
+  onRequest?: (
+    reqData: { request: ArexRESTRequest; environment?: ArexEnvironment },
+    resData: Awaited<ReturnType<typeof sendRequest>>,
+  ) => void;
   onSave?: (request?: ArexRESTRequest, response?: ArexRESTResponse) => void;
   onSaveAs?: () => void;
 } & SmartBreadcrumbProps & {
@@ -33,17 +36,12 @@ const HttpRequest: FC<HttpRequestProps> = () => {
   const {
     onSave,
     onSaveAs,
-    onBeforeSend = (request) => request,
+    onBeforeRequest = (request) => request,
+    onRequest,
     disableSave,
   } = useArexRequestProps();
   const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
-
-  const reset = () => {
-    dispatch((state) => {
-      state.response = undefined;
-    });
-  };
 
   const handleRequest = async () => {
     dispatch((state) => {
@@ -52,7 +50,8 @@ const HttpRequest: FC<HttpRequestProps> = () => {
         headers: undefined,
       };
     });
-    const res = await sendRequest?.(onBeforeSend(store.request), store.environment);
+    const res = await sendRequest(onBeforeRequest(store.request), store.environment);
+    onRequest?.({ request: store.request, environment: store.environment }, res);
     dispatch((state) => {
       if (res.response.type === 'success') {
         state.response = res.response;
@@ -62,58 +61,43 @@ const HttpRequest: FC<HttpRequestProps> = () => {
       }
     });
   };
+
+  const buttonsItems = useMemo(
+    () => [
+      {
+        key: 'saveAs',
+        label: t('request.save_as'),
+        icon: <SaveOutlined />,
+      },
+    ],
+    [t],
+  );
+
+  const onMenuClick = ({ key }: { key: string }) => {
+    key === 'saveAs' && onSaveAs?.();
+  };
+
   return (
     <div>
-      <div
-        css={css`
-          display: flex;
-          flex-flow: row nowrap;
-          justify-content: space-between;
-        `}
-      >
-        <div
-          style={{
-            width: '100%',
-            marginLeft: '8px',
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
+      <SpaceBetweenWrapper>
+        <SpaceBetweenWrapper style={{ marginLeft: '8px', flex: 1 }}>
           <SmartBreadcrumb />
 
-          <Space style={{ float: 'right', marginRight: '8px' }}>
-            <Button
-              id={'arex-request-save-btn'}
+          <Space size='middle' style={{ float: 'right', marginRight: '8px' }}>
+            <Dropdown.Button
               size='small'
               disabled={disableSave}
-              icon={<SaveOutlined />}
-              onClick={() => {
-                const request = cloneDeep(store.request);
-                // if (request?.body?.contentType === '0') {
-                //   request.body.body = '';
-                // }
-                onSave?.(request, store.response);
-              }}
+              menu={{ items: buttonsItems, onClick: onMenuClick }}
+              onClick={() => onSave?.(store.request, store.response)}
             >
-              {t('action.save')}
-            </Button>
-
-            {store.request.id?.length === 12 && (
-              <Button
-                id={'arex-request-saveas-btn'}
-                size='small'
-                type='primary'
-                disabled={disableSave}
-                onClick={onSaveAs}
-              >
-                Save As
-              </Button>
-            )}
+              <SaveOutlined />
+              {t('request.save')}
+            </Dropdown.Button>
           </Space>
-        </div>
+        </SpaceBetweenWrapper>
 
         <EnvironmentSelect />
-      </div>
+      </SpaceBetweenWrapper>
 
       <Divider style={{ width: '100%', margin: '0 0 8px 0' }} />
 
@@ -144,30 +128,29 @@ const HttpRequest: FC<HttpRequestProps> = () => {
         />
 
         {store.request.inherited && (
-          <Checkbox
-            css={css`
-              margin-top: 5px;
-              margin-right: 5px;
-            `}
-            checked={store.request.inherited}
-            onChange={(val) => {
-              dispatch((state) => {
-                state.request.inherited = val.target.checked;
-              });
-            }}
-          />
+          <div style={{ display: 'flex', alignItems: 'center', marginLeft: '8px' }}>
+            <Label type='secondary'>{t('request.inherit')}</Label>
+            <Checkbox
+              checked={store.request.inherited}
+              onChange={(val) => {
+                dispatch((state) => {
+                  state.request.inherited = val.target.checked;
+                });
+              }}
+            />
+          </div>
         )}
 
         <div style={{ marginLeft: '8px' }}>
-          {store.response?.type === 'loading' ? (
-            <Button id={'arex-request-cancel-btn'} onClick={reset}>
-              {t('action.cancel')}
-            </Button>
-          ) : (
-            <Button id={'arex-request-send-btn'} type='primary' onClick={handleRequest}>
-              {t('action.send')}
-            </Button>
-          )}
+          <Button
+            id='arex-request-send-btn'
+            type='primary'
+            loading={store.response?.type === 'loading'}
+            icon={<SendOutlined />}
+            onClick={handleRequest}
+          >
+            {t('action.send')}
+          </Button>
         </div>
       </HeaderWrapper>
     </div>
