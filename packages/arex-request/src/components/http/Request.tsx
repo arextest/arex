@@ -53,7 +53,6 @@ const HttpRequest: FC<HttpRequestProps> = () => {
     const res = await sendRequest(onBeforeRequest(store.request), store.environment);
 
     onRequest?.({ request: store.request, environment: store.environment }, res);
-
     dispatch((state) => {
       state.response = res.response;
       state.consoles = res.consoles;
