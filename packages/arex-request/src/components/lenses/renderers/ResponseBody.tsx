@@ -50,7 +50,7 @@ const ResponseBody: FC<{ response?: ArexRESTResponse }> = ({ response }) => {
           size='small'
           value={displayMode}
           options={['Pretty', 'Raw', 'Preview']}
-          onChange={(value: string) => setDisplayMode(value as DisplayMode)}
+          onChange={(value) => setDisplayMode(value as DisplayMode)}
         />
         <TooltipButton
           placement='left'
