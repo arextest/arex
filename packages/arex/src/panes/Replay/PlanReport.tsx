@@ -124,6 +124,7 @@ const PlanReport: FC<PlanReportProps> = (props) => {
     },
   ];
 
+  const [pollingInterval, setPollingInterval] = useState(true);
   const {
     data: { list: planStatistics } = { list: [] },
     pagination,
@@ -148,14 +149,22 @@ const PlanReport: FC<PlanReportProps> = (props) => {
           list.length && onSelectedPlanChange(list[parseInt(searchParams.get('row') || '0')]);
           setInit(false); // 设置第一次初始化标识);
         }
-        list.every((record) => record.status !== 1) && cancelPollingInterval();
+        if (list.every((record) => record.status !== 1)) {
+          setPollingInterval(false);
+          cancelPollingInterval();
+        }
       },
     },
   );
-
   // optimize: cancel polling interval when pane is not active
   useEffect(() => {
-    activePane?.id !== props.appId ? cancelPollingInterval() : refresh();
+    if (activePane?.id !== props.appId && pollingInterval) {
+      setPollingInterval(false);
+      cancelPollingInterval();
+    } else if (activePane?.id === props.appId && !pollingInterval) {
+      setPollingInterval(true);
+      refresh();
+    }
   }, [activePane, props.appId]);
 
   const handleRowClick: HighlightRowTableProps<PlanStatistics>['onRowClick'] = (record, index) => {

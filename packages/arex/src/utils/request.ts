@@ -24,13 +24,9 @@ export class Request {
 
     // 全局请求拦截
     this.instance.interceptors.request.use(
-      (config) => {
-        // @ts-ignore
-        config.headers = {
-          'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
-        };
-
-        return config;
+      (request) => {
+        request.headers.set('access-token', getLocalStorage<string>(ACCESS_TOKEN_KEY));
+        return request;
       },
       (error) => Promise.reject(error),
     );

@@ -25,13 +25,11 @@ import {
   Button,
   Card,
   Col,
-  Dropdown,
   Input,
   InputRef,
   Popconfirm,
   Row,
   Space,
-  Spin,
   Statistic,
   Table,
   theme,
@@ -49,7 +47,7 @@ import { EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanItemStatistics, PlanStatistics } from '@/services/ReportService';
-import { CreatePlanReq, MessageMap } from '@/services/ScheduleService';
+import { MessageMap } from '@/services/ScheduleService';
 import { useMenusPanes } from '@/store';
 import IconLog from '~icons/octicon/log-24';
 
@@ -85,6 +83,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const navPane = useNavPane();
   const { token } = theme.useToken();
 
+  const [pollingInterval, setPollingInterval] = useState(true);
   const {
     data: planItemData = [],
     loading: loadingData,
@@ -101,17 +100,27 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       loadingDelay: 200,
       pollingInterval: 6000,
       onSuccess(res) {
-        if (res)
-          res.every((record) => record.status !== 1) &&
-            selectedPlan?.status !== 1 &&
+        if (res) {
+          if (res?.every((record) => record.status !== 1) && selectedPlan?.status !== 1) {
+            setPollingInterval(false);
             cancelPollingInterval();
-        else cancelPollingInterval();
+          }
+        } else {
+          setPollingInterval(false);
+          cancelPollingInterval();
+        }
       },
     },
   );
   // optimize: cancel polling interval when pane is not active
   useEffect(() => {
-    activePane?.id !== props.appId ? cancelPollingInterval() : refresh();
+    if (activePane?.id !== props.appId && pollingInterval) {
+      setPollingInterval(false);
+      cancelPollingInterval();
+    } else if (activePane?.id === props.appId && !pollingInterval) {
+      setPollingInterval(true);
+      refresh();
+    }
   }, [activePane, props.appId]);
 
   const planItemDataFiltered = useMemo(
