@@ -136,7 +136,8 @@
     "time": "时间",
     "title": "响应",
     "waiting_for_connection": "等待连接",
-    "xml": "XML"
+    "xml": "XML",
+    "sendRequestTip": "输入 URL 并点击发送以获取响应"
   },
   "tab": {
     "authorization": "授权",

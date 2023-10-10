@@ -23,7 +23,7 @@ export interface FullHeightSpinProps extends SpinProps {
 const FullHeightSpin: FC<FullHeightSpinProps> = (props) => {
   const { minHeight, wrapperClassName, mountOnFirstLoading = true, children, ...restProps } = props;
   return (
-    <FullHeightSpinWrapper minHeight={minHeight}>
+    <FullHeightSpinWrapper className={props.className} minHeight={minHeight}>
       <Spin
         wrapperClassName={`full-height-spin ${wrapperClassName ? wrapperClassName : ''}`}
         {...restProps}

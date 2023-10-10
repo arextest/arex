@@ -7,12 +7,13 @@ import { FullHeightSpin } from './index';
 export type EmptyWrapperProps = {
   empty?: boolean;
   loading?: boolean;
+  loadingTip?: React.ReactNode;
 } & EmptyProps;
 
 const EmptyWrapper: FC<EmptyWrapperProps> = (props) => {
-  const { empty = true, loading = false, children, ...emptyProps } = props;
+  const { empty = true, loading = false, loadingTip, children, ...emptyProps } = props;
   return (
-    <FullHeightSpin spinning={loading}>
+    <FullHeightSpin spinning={loading} tip={loadingTip} className={props.className}>
       {empty ? (
         <FlexCenterWrapper>
           <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} {...emptyProps} />

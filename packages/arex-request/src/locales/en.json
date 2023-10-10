@@ -138,7 +138,8 @@
     "time": "Time",
     "title": "Response",
     "waiting_for_connection": "waiting for connection",
-    "xml": "XML"
+    "xml": "XML",
+    "sendRequestTip": "Enter the URL and click Send to get a Response"
   },
   "tab": {
     "authorization": "Authorization",

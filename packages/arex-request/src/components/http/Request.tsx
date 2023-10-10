@@ -1,4 +1,4 @@
-import { SaveOutlined, SendOutlined, StopOutlined } from '@ant-design/icons';
+import { SaveOutlined, SendOutlined } from '@ant-design/icons';
 import { css, Label, RequestMethod, SpaceBetweenWrapper, styled } from '@arextest/arex-core';
 import { Button, Checkbox, Divider, Dropdown, Select, Space } from 'antd';
 import React, { FC, useMemo } from 'react';
@@ -42,12 +42,6 @@ const HttpRequest: FC<HttpRequestProps> = () => {
   } = useArexRequestProps();
   const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
-
-  const reset = () => {
-    dispatch((state) => {
-      state.response = undefined;
-    });
-  };
 
   const handleRequest = async () => {
     dispatch((state) => {
@@ -148,20 +142,15 @@ const HttpRequest: FC<HttpRequestProps> = () => {
         )}
 
         <div style={{ marginLeft: '8px' }}>
-          {store.response?.type === 'loading' ? (
-            <Button id='arex-request-cancel-btn' icon={<StopOutlined />} onClick={reset}>
-              {t('action.cancel')}
-            </Button>
-          ) : (
-            <Button
-              id='arex-request-send-btn'
-              type='primary'
-              icon={<SendOutlined />}
-              onClick={handleRequest}
-            >
-              {t('action.send')}
-            </Button>
-          )}
+          <Button
+            id='arex-request-send-btn'
+            type='primary'
+            loading={store.response?.type === 'loading'}
+            icon={<SendOutlined />}
+            onClick={handleRequest}
+          >
+            {t('action.send')}
+          </Button>
         </div>
       </HeaderWrapper>
     </div>
