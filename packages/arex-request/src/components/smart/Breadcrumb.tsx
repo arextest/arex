@@ -1,7 +1,8 @@
-import { EditOutlined } from '@ant-design/icons';
-import { css, TagsGroup } from '@arextest/arex-core';
-import { Breadcrumb, Input, InputProps, Space, Typography } from 'antd';
+import { CheckOutlined, CloseOutlined, EditOutlined } from '@ant-design/icons';
+import { css, Label, TagsGroup } from '@arextest/arex-core';
+import { Breadcrumb, Button, Input, Space, Typography } from 'antd';
 import React, { FC, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useArexRequestProps } from '../../hooks';
 
@@ -35,105 +36,115 @@ export interface SmartBreadcrumbProps {
   descriptionProps?: DescriptionProps;
 }
 
+const HoverEditorIconCSS = css`
+  display: flex;
+  align-items: center;
+  transition: opacity 0.3s ease;
+  &:hover {
+    .editor-icon {
+      opacity: 100% !important;
+    }
+  }
+`;
+
 const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
+  const { t } = useTranslation();
   const { breadcrumb, titleProps, descriptionProps, tagsProps } = useArexRequestProps();
   const [mode, setMode] = useState(Mode.normal);
 
-  const [title, setTitle] = useState<string>();
-  const [titleStatus, setTitleStatus] = useState<InputProps['status']>();
+  const [editValue, setEditValue] = useState<string>();
 
+  const [titleValue, setTitleValue] = useState<string>();
+  const [descriptionValue, setDescriptionValue] = useState<string>();
   const [tagsValue, setTagsValue] = useState<string[]>();
-  const [descriptionValue, setDescriptionValue] = useState('');
 
   useEffect(() => {
-    setTitle(titleProps?.value);
-    setDescriptionValue(descriptionValue);
+    setTitleValue(titleProps?.value);
+  }, [titleProps?.value]);
+
+  useEffect(() => {
+    setDescriptionValue(descriptionProps?.value);
+  }, [descriptionProps?.value]);
+
+  useEffect(() => {
     setTagsValue(tagsProps?.value);
-  }, [descriptionValue, tagsProps?.value, titleProps?.value]);
+  }, [tagsProps?.value]);
 
   const breadcrumbItems = useMemo(
-    () => breadcrumb?.map((title) => ({ title })).concat({ title: title || '' }),
-    [breadcrumb, title],
+    () =>
+      breadcrumb
+        ?.map((title) => ({ title }))
+        .concat({ title: titleValue || t('request.name') || 'Untitled' }),
+    [breadcrumb, titleValue],
   );
 
-  // TODO REFACTOR
+  const handleEditSave = () => {
+    if (mode === Mode.title) {
+      setTitleValue(editValue);
+      titleProps?.onChange?.(editValue);
+    } else if (mode === Mode.description) {
+      setDescriptionValue(editValue);
+      descriptionProps?.onChange?.(editValue);
+    }
+
+    setMode(Mode.normal);
+  };
+
   return (
     <div
       css={css`
         display: flex;
         align-items: center;
+        margin-left: 4px;
         width: 100%;
       `}
     >
       {mode === Mode.normal ? (
         <Space>
-          <div
-            css={css`
-              display: flex;
-              align-items: center;
-              &:hover {
-                .editor-icon {
-                  visibility: unset !important;
-                }
-              }
-            `}
-          >
+          <div css={HoverEditorIconCSS}>
             <Breadcrumb items={breadcrumbItems} />
-            <div
+
+            <Button
+              type='link'
+              size='small'
               className={'editor-icon'}
-              css={css`
-                visibility: hidden;
-                cursor: pointer;
-              `}
-            >
-              <EditOutlined
-                onClick={() => {
-                  setMode(Mode.title);
-                }}
-              />
-            </div>
+              icon={<EditOutlined />}
+              onClick={() => {
+                setEditValue(titleValue);
+                setMode(Mode.title);
+              }}
+              style={{ opacity: 0 }}
+            />
           </div>
 
           <div style={{ display: 'flex' }}>
-            <div
-              css={css`
-                display: flex;
-                align-items: center;
-                &:hover {
-                  .editor-icon {
-                    visibility: unset !important;
-                  }
-                }
-              `}
-            >
+            <div css={HoverEditorIconCSS}>
               <Text
                 type='secondary'
                 css={css`
                   font-size: 12px;
                 `}
               >
-                {descriptionValue || descriptionProps?.value || 'description'}
+                {descriptionValue || t('request.description')}
               </Text>
 
-              <div
+              <Button
+                type='link'
+                size='small'
                 className={'editor-icon'}
-                css={css`
-                  visibility: hidden;
-                  cursor: pointer;
-                `}
-              >
-                <EditOutlined
-                  onClick={() => {
-                    setMode(Mode.description);
-                  }}
-                />
-              </div>
+                icon={<EditOutlined />}
+                onClick={() => {
+                  setEditValue(descriptionProps?.value);
+                  setMode(Mode.description);
+                }}
+                style={{ opacity: 0 }}
+              />
             </div>
 
             <TagsGroup
               value={tagsValue}
               options={tagsProps?.options}
-              onChange={(value) => {
+              onChange={(value?: string[]) => {
                 setTagsValue(value);
                 tagsProps?.onChange?.(value);
               }}
@@ -141,58 +152,36 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
           </div>
         </Space>
       ) : (
-        <>
-          {mode === Mode.title && (
+        [Mode.title, Mode.description].includes(mode) && (
+          <Space size='middle' style={{ width: '100%' }}>
+            <Label type='secondary' offset={-8}>
+              {t(mode === Mode.title ? 'request.name' : 'request.description')}
+            </Label>
             <Input
               size='small'
-              value={title}
-              status={titleStatus}
-              onChange={(val) => {
-                titleStatus === 'error' && title && setTitleStatus(undefined);
-                setTitle(val.target.value);
-              }}
-              onBlur={(e) => {
-                const title = e.target.value;
-                if (!title) {
-                  setTitleStatus('error');
-                } else {
-                  setMode(Mode.normal);
-                  titleProps?.onChange?.(title);
-                }
-              }}
-              onKeyUp={(e) => {
-                if (e.keyCode === 13) {
-                  if (!title) {
-                    setTitleStatus('error');
-                  } else {
-                    setMode(Mode.normal);
-                    titleProps?.onChange?.(title);
-                  }
-                }
-              }}
-              style={{ width: '80%', maxWidth: '320px' }}
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              onKeyUp={(e) => e.code === 'Enter' && handleEditSave()}
+              style={{ width: '80%', minWidth: '200px', maxWidth: '320px' }}
             />
-          )}
 
-          {mode === Mode.description && (
-            <Input
-              defaultValue={descriptionValue}
-              onChange={(val) => {
-                setDescriptionValue(val.target.value);
-              }}
-              onBlur={() => {
+            <Button
+              size='small'
+              icon={<CloseOutlined />}
+              onClick={() => {
                 setMode(Mode.normal);
-                descriptionProps?.onChange?.(descriptionValue);
-              }}
-              onKeyUp={(e) => {
-                if (e.code === 'Enter') {
-                  setMode(Mode.normal);
-                  descriptionProps?.onChange?.(descriptionValue);
-                }
+                setEditValue(undefined);
               }}
             />
-          )}
-        </>
+            <Button
+              ghost
+              type='primary'
+              size='small'
+              icon={<CheckOutlined />}
+              onClick={handleEditSave}
+            />
+          </Space>
+        )
       )}
     </div>
   );

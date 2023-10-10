@@ -99,6 +99,7 @@
     "invalid_name": "请提供请求名称",
     "method": "方法",
     "name": "请求名称",
+    "description": "请求描述",
     "new": "新请求",
     "override": "覆盖",
     "overriden": "覆盖",

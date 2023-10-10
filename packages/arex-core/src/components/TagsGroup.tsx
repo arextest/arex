@@ -71,12 +71,6 @@ const TagsGroup: FC<TagsGroupProps> = (props) => {
     [props.value],
   );
 
-  const tagPlusStyle: React.CSSProperties = {
-    height: '20px',
-    background: token.colorBgContainer,
-    borderStyle: 'dashed',
-  };
-
   return (
     <div style={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
       <div ref={parent}>{tagChild}</div>
@@ -93,7 +87,15 @@ const TagsGroup: FC<TagsGroupProps> = (props) => {
           onBlur={handleInputConfirm}
         />
       ) : (
-        <Tag onClick={showInput} style={tagPlusStyle}>
+        <Tag
+          onClick={showInput}
+          style={{
+            height: '20px',
+            cursor: 'pointer',
+            background: token.colorBgContainer,
+            borderStyle: 'dashed',
+          }}
+        >
           <PlusOutlined /> {t('newTag')}
         </Tag>
       )}
