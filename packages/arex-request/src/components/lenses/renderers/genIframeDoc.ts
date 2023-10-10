@@ -9,7 +9,7 @@ export function htmlDecode(str: string) {
   s = s.replace(/&quot;/g, '"');
   return s;
 }
-export const genIframeDoc = (processedTemplate: string, dataMap: string) => `<html>
+export const genIframeDoc = (processedTemplate?: string, dataMap?: string) => `<html>
             <head>
               <meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; script-src http: https: 'unsafe-inline'; style-src http: https: 'unsafe-inline' ; img-src http: https: data:; font-src http: https:; connect-src http: https:; media-src http: https:; object-src 'none'; child-src 'none'; frame-src 'none'&quot;>
               <style>

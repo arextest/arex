@@ -5,12 +5,14 @@ import {
   Segmented,
   SpaceBetweenWrapper,
   Theme,
+  TooltipButton,
   tryPrettierJsonString,
   useArexCoreConfig,
 } from '@arextest/arex-core';
 import { Editor } from '@arextest/monaco-react';
-import { App, Tooltip } from 'antd';
+import { App } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { ArexRESTResponse } from '../../../types';
 
@@ -22,6 +24,7 @@ enum DisplayMode {
 
 const ResponseBody: FC<{ response?: ArexRESTResponse }> = ({ response }) => {
   const { message } = App.useApp();
+  const { t } = useTranslation();
   const { theme } = useArexCoreConfig();
 
   const [displayMode, setDisplayMode] = useState(DisplayMode.Pretty);
@@ -49,20 +52,16 @@ const ResponseBody: FC<{ response?: ArexRESTResponse }> = ({ response }) => {
           options={['Pretty', 'Raw', 'Preview']}
           onChange={(value: string) => setDisplayMode(value as DisplayMode)}
         />
-        <Tooltip title='Copy' placement='left'>
-          <a
-            css={css`
-              padding-bottom: 8px;
-              display: block;
-            `}
-            onClick={() => {
-              copyToClipboard(bodyVaglue || '');
-              message.success('copy success');
-            }}
-          >
-            <CopyOutlined />
-          </a>
-        </Tooltip>
+        <TooltipButton
+          placement='left'
+          color='primary'
+          title={t('action.copy')}
+          icon={<CopyOutlined />}
+          onClick={() => {
+            copyToClipboard(bodyValue || '');
+            message.success('copy success');
+          }}
+        />
       </SpaceBetweenWrapper>
 
       <div
@@ -71,22 +70,26 @@ const ResponseBody: FC<{ response?: ArexRESTResponse }> = ({ response }) => {
           overflow-y: auto;
         `}
       >
-        <Editor
-          language={displayMode === DisplayMode.Pretty ? 'json' : 'text'}
-          theme={theme === Theme.dark ? 'vs-dark' : 'light'}
-          options={{
-            minimap: {
-              enabled: false,
-            },
-            fontSize: 12,
-            wordWrap: 'on',
-            automaticLayout: true,
-            fontFamily: 'IBMPlexMono, "Courier New", monospace',
-            scrollBeyondLastLine: false,
-            readOnly: true,
-          }}
-          value={bodyValue}
-        />
+        {displayMode !== DisplayMode.Preview ? (
+          <Editor
+            language={displayMode === DisplayMode.Pretty ? 'json' : 'text'}
+            theme={theme === Theme.dark ? 'vs-dark' : 'light'}
+            value={bodyValue}
+            options={{
+              minimap: {
+                enabled: false,
+              },
+              fontSize: 12,
+              wordWrap: 'on',
+              automaticLayout: true,
+              fontFamily: 'IBMPlexMono, "Courier New", monospace',
+              scrollBeyondLastLine: false,
+              readOnly: true,
+            }}
+          />
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: bodyValue }} />
+        )}
       </div>
     </div>
   );
