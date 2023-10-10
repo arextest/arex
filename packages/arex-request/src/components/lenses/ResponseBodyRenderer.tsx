@@ -1,13 +1,13 @@
-import { css } from '@arextest/arex-core';
-import { Badge, Tabs, Tag } from 'antd';
+import { SmallBadge } from '@arextest/arex-core';
+import { Tabs } from 'antd';
 import React, { FC, useMemo } from 'react';
 
 import { ArexRESTResponse, ArexTestResult } from '../../types';
 import Console from '../http/Console';
+import HttpResponseMeta from '../http/ResponseMeta';
 import TestResult from '../http/TestResult';
 import LensesHeadersRenderer from './HeadersRenderer';
-import JSONLensRenderer from './renderers/JSONLensRenderer';
-import RawLensRenderer from './renderers/RawLensRenderer';
+import ResponseBody from './renderers/ResponseBody';
 
 export type LensesResponseBodyRendererProps = {
   response?: ArexRESTResponse;
@@ -23,60 +23,43 @@ const LensesResponseBodyRenderer: FC<LensesResponseBodyRendererProps> = ({
 
   const items = [
     {
-      label: 'JSON',
-      key: '0',
-      children: <JSONLensRenderer response={response} />,
-    },
-    // {
-    //   label: 'Body',
-    //   key: 'Body',
-    //   children: <BodySegmented response={response} />,
-    // },
-    {
-      label: 'Raw',
-      key: '1',
-      children: <RawLensRenderer response={response} />,
+      label: 'Body',
+      key: 'body',
+      children: <ResponseBody response={response} />,
     },
     {
-      label: (
-        <div>
-          {'Headers'} {headers.length ? <Tag>{headers.length}</Tag> : null}
-        </div>
-      ),
-      key: '2',
+      key: 'headers',
+      label: <SmallBadge count={headers.length}>Headers</SmallBadge>,
       children: <LensesHeadersRenderer headers={headers} />,
     },
     {
-      label: (
-        <div>
-          {'Result'} {testResult?.length ? <Badge color='blue' /> : null}
-        </div>
-      ),
-      key: '3',
+      key: 'result',
+      label: <SmallBadge dot={!!testResult?.length}>Result</SmallBadge>,
       children: <TestResult testResult={testResult} />,
     },
     {
-      label: (
-        <div>
-          {'Console'} {consoles?.length ? <Badge color='blue' /> : null}
-        </div>
-      ),
-      key: '4',
+      key: 'console',
+      label: <SmallBadge dot={!!consoles?.length}>Console</SmallBadge>,
       children: <Console logs={consoles} />,
     },
   ];
 
   return (
     <div
-      css={css`
-        flex: 1;
-        .ant-tabs-content-holder {
-          height: 100px;
-        }
-        padding-bottom: 6px;
-      `}
+      style={{
+        flex: 1,
+        padding: '0 12px',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+      }}
     >
-      <Tabs style={{ height: '100%' }} items={items} />
+      <Tabs
+        defaultValue='body'
+        items={items}
+        tabBarExtraContent={<HttpResponseMeta response={response} />}
+        style={{ height: '100%' }}
+      />
     </div>
   );
 };

@@ -51,14 +51,14 @@ const HttpRequest: FC<HttpRequestProps> = () => {
       };
     });
     const res = await sendRequest(onBeforeRequest(store.request), store.environment);
+
     onRequest?.({ request: store.request, environment: store.environment }, res);
+
     dispatch((state) => {
-      if (res.response.type === 'success') {
-        state.response = res.response;
-        state.consoles = res.consoles;
-        state.visualizer = res.visualizer;
-        state.testResult = res.testResult;
-      }
+      state.response = res.response;
+      state.consoles = res.consoles;
+      state.visualizer = res.visualizer;
+      state.testResult = res.testResult;
     });
   };
 

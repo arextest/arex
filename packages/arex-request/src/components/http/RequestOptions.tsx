@@ -1,5 +1,5 @@
-import { css, styled } from '@arextest/arex-core';
-import { Badge, Tabs, theme } from 'antd';
+import { css, SmallBadge, styled } from '@arextest/arex-core';
+import { Tabs, theme } from 'antd';
 import { FC, useMemo, useState } from 'react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -31,52 +31,28 @@ const HttpRequestOptions: FC<HttpRequestOptionsProps> = () => {
   const { config } = useArexRequestProps();
   const { store } = useArexRequestStore();
 
-  const { token } = theme.useToken();
   const { t } = useTranslation();
   const [activeKey, setActiveKey] = useState('body');
 
   const items = useMemo(() => {
     const _items: Tab[] = [
       {
-        label: (
-          <Badge
-            size='small'
-            color={token.colorPrimary}
-            offset={[6, 0]}
-            count={store.request.params?.length}
-          >
-            {t('tab.parameters')}
-          </Badge>
-        ),
+        label: <SmallBadge count={store.request.params?.length}>{t('tab.parameters')}</SmallBadge>,
         key: 'parameters',
         children: <HttpParameters />,
         forceRender: true,
       },
       {
-        label: (
-          <Badge
-            size='small'
-            color={token.colorPrimary}
-            offset={[6, 0]}
-            count={store.request.headers?.length}
-          >
-            {t('tab.headers')}
-          </Badge>
-        ),
+        label: <SmallBadge count={store.request.headers?.length}>{t('tab.headers')}</SmallBadge>,
         key: 'headers',
         children: <HttpHeaders />,
         // forceRender: true,
       },
       {
         label: (
-          <Badge
-            size='small'
-            color={token.colorPrimary}
-            offset={[4, 2]}
-            dot={!!store.request?.body?.body?.length}
-          >
+          <SmallBadge offset={[4, 2]} dot={!!store.request?.body?.body?.length}>
             {t('tab.body')}
-          </Badge>
+          </SmallBadge>
         ),
         key: 'body',
         children: <HttpBody />,
@@ -84,14 +60,9 @@ const HttpRequestOptions: FC<HttpRequestOptionsProps> = () => {
       },
       {
         label: (
-          <Badge
-            size='small'
-            color={token.colorPrimary}
-            offset={[4, 2]}
-            dot={!!store.request?.preRequestScript?.length}
-          >
+          <SmallBadge offset={[4, 2]} dot={!!store.request?.preRequestScript?.length}>
             {t('tab.pre_request_script')}
-          </Badge>
+          </SmallBadge>
         ),
         key: 'pre_request_script',
         children: <HttpPreRequestScript />,
@@ -99,14 +70,9 @@ const HttpRequestOptions: FC<HttpRequestOptionsProps> = () => {
       },
       {
         label: (
-          <Badge
-            size='small'
-            color={token.colorPrimary}
-            offset={[4, 2]}
-            dot={!!store.request.testScript?.length}
-          >
+          <SmallBadge offset={[4, 2]} dot={!!store.request.testScript?.length}>
             {t('tab.tests')}
-          </Badge>
+          </SmallBadge>
         ),
         key: 'tests',
         children: <HttpTests />,

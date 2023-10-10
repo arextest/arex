@@ -6,14 +6,6 @@ import { useTranslation } from 'react-i18next';
 
 import { useArexRequestStore } from '../../hooks';
 import LensesResponseBodyRenderer from '../lenses/ResponseBodyRenderer';
-import HttpResponseMeta from './ResponseMeta';
-
-const HttpResponseWrapper = styled.div`
-  padding: 8px 12px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
 
 const HttpResponse = () => {
   const { store, dispatch } = useArexRequestStore();
@@ -55,14 +47,11 @@ const HttpResponse = () => {
         </Button>
       }
     >
-      <HttpResponseWrapper>
-        <HttpResponseMeta response={store.response} />
-        <LensesResponseBodyRenderer
-          response={store.response}
-          testResult={store.testResult}
-          consoles={store.consoles}
-        />
-      </HttpResponseWrapper>
+      <LensesResponseBodyRenderer
+        response={store.response}
+        testResult={store.testResult}
+        consoles={store.consoles}
+      />
     </EmptyWrapper>
   );
 };

@@ -1,19 +1,18 @@
 import type { ArexRESTRequest } from '@arextest/arex-request';
 
+import { CollectionNodeType } from '@/constant';
 import { request } from '@/utils';
 
 export async function saveRequest(
   workspaceId: string,
-  params: ArexRESTRequest & { inherited?: boolean } & any,
+  params: ArexRESTRequest & { inherited?: boolean; tags: string[] },
   nodeType: number,
 ) {
   const saveParams = {
-    address: params.endpoint
-      ? {
-          method: params.method,
-          endpoint: params.endpoint,
-        }
-      : undefined,
+    address: {
+      method: params.method,
+      endpoint: params.endpoint,
+    },
     params: params.params,
     headers: params.headers,
     testScripts: params.testScript
@@ -47,7 +46,9 @@ export async function saveRequest(
     labelIds: params.tags,
   };
   const res = await request.post<{ success: boolean }>(
-    `/report/filesystem/${nodeType === 1 ? 'saveInterface' : 'saveCase'}`,
+    `/report/filesystem/${
+      nodeType === CollectionNodeType.interface ? 'saveInterface' : 'saveCase'
+    }`,
     saveParams,
   );
   return res.body.success;
