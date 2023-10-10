@@ -1,8 +1,7 @@
 import { SaveOutlined } from '@ant-design/icons';
-import { css, RequestMethod, styled } from '@arextest/arex-core';
-import { Button, Checkbox, Divider, Select, Space } from 'antd';
-import { cloneDeep } from 'lodash';
-import React, { FC } from 'react';
+import { css, RequestMethod, SpaceBetweenWrapper, styled } from '@arextest/arex-core';
+import { Button, Checkbox, Divider, Dropdown, Select, Space } from 'antd';
+import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { sendRequest } from '../../helpers';
@@ -62,58 +61,43 @@ const HttpRequest: FC<HttpRequestProps> = () => {
       }
     });
   };
+
+  const buttonsItems = useMemo(
+    () => [
+      {
+        key: 'saveAs',
+        label: t('request.save_as'),
+        icon: <SaveOutlined />,
+      },
+    ],
+    [t],
+  );
+
+  const onMenuClick = ({ key }: { key: string }) => {
+    key === 'saveAs' && onSaveAs?.();
+  };
+
   return (
     <div>
-      <div
-        css={css`
-          display: flex;
-          flex-flow: row nowrap;
-          justify-content: space-between;
-        `}
-      >
-        <div
-          style={{
-            width: '100%',
-            marginLeft: '8px',
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
+      <SpaceBetweenWrapper>
+        <SpaceBetweenWrapper style={{ marginLeft: '8px', flex: 1 }}>
           <SmartBreadcrumb />
 
-          <Space style={{ float: 'right', marginRight: '8px' }}>
-            <Button
-              id={'arex-request-save-btn'}
+          <Space size='middle' style={{ float: 'right', marginRight: '8px' }}>
+            <Dropdown.Button
               size='small'
               disabled={disableSave}
-              icon={<SaveOutlined />}
-              onClick={() => {
-                const request = cloneDeep(store.request);
-                // if (request?.body?.contentType === '0') {
-                //   request.body.body = '';
-                // }
-                onSave?.(request, store.response);
-              }}
+              menu={{ items: buttonsItems, onClick: onMenuClick }}
+              onClick={() => onSave?.(store.request, store.response)}
             >
-              {t('action.save')}
-            </Button>
-
-            {store.request.id?.length === 12 && (
-              <Button
-                id={'arex-request-saveas-btn'}
-                size='small'
-                type='primary'
-                disabled={disableSave}
-                onClick={onSaveAs}
-              >
-                Save As
-              </Button>
-            )}
+              <SaveOutlined />
+              {t('request.save')}
+            </Dropdown.Button>
           </Space>
-        </div>
+        </SpaceBetweenWrapper>
 
         <EnvironmentSelect />
-      </div>
+      </SpaceBetweenWrapper>
 
       <Divider style={{ width: '100%', margin: '0 0 8px 0' }} />
 
