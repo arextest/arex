@@ -186,7 +186,7 @@ const ArexPanesContainer = (props: ArexPanesContainerProps) => {
                     id={`arex-pane-wrapper-${pane.key}`}
                     style={{
                       padding: Pane.noPadding ? 0 : '8px 16px',
-                      height: 'calc(100vh - 106px)',
+                      height: 'calc(100vh - 116px)',
                     }}
                   >
                     {React.createElement(Pane, paneProps)}

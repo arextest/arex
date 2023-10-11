@@ -132,7 +132,7 @@ const KeyboardShortcut = React.memo(() => {
         if (type === PanesType.REQUEST) {
           (
             document.querySelector(
-              `#arex-pane-wrapper-${activePaneKey} #arex-request-saveas-btn`,
+              `#arex-pane-wrapper-${activePaneKey} #arex-request-save-as-btn`,
             ) as HTMLElement
           )?.click?.();
         }

@@ -48,10 +48,10 @@ export async function sendRequest(
           },
         ],
         request: {
-          method: request.method,
+          method: request.inherited ? request.inheritedMethod : request.method,
           header: request.headers.filter((i) => i.active),
           body: convertToPmBody(request.body),
-          url: sdk.Url.parse(request.endpoint),
+          url: sdk.Url.parse(request.inherited ? request.inheritedEndpoint : request.endpoint),
         },
         response: [],
       },
@@ -141,12 +141,12 @@ export async function sendRequest(
             history: any,
           ) {
             res = {
-              type: 'success',
-              headers: response.headers.members,
-              statusCode: response.code,
-              body: response.stream,
+              type: 'success', // TODO check response status
+              headers: response?.headers.members,
+              statusCode: response?.code,
+              body: String(response?.stream),
               meta: {
-                responseSize: response.stream.length, // in bytes
+                responseSize: response.responseSize, // in bytes
                 responseDuration: response.responseTime, // in millis
               },
             };
