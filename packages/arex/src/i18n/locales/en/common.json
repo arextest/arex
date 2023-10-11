@@ -15,6 +15,7 @@
   "logout": "Logout",
   "invite": "Invite",
   "search": "Search",
+  "refresh": "刷新",
   "key": "Key",
   "value": "Value",
   "invalidJSON": "Invalid JSON",

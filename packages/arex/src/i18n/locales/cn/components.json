@@ -42,6 +42,9 @@
     "newCreate": "新建"
   },
   "applicationsMenu": {
+    "appName": "应用名称",
+    "appNameEmptyTip": "应用名称不能为空",
+    "createApp": "新建应用",
     "filterFavoriteApps": "收藏应用列表",
     "appFilterPlaceholder": "搜索应用"
   },

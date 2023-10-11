@@ -4,6 +4,7 @@ import {
   ArexMenuFC,
   CategoryKey,
   EmptyWrapper,
+  FlexCenterWrapper,
   getLocalStorage,
   Operator,
   RequestMethodEnum,
@@ -392,7 +393,15 @@ const Collection: ArexMenuFC = (props) => {
             className={'collection-header-search'}
             showSearchButton={false}
             prefix={
-              <div style={{ marginRight: '8px' }}>
+              <div
+                style={{
+                  height: '27px',
+                  marginRight: '8px',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  alignContent: 'center',
+                }}
+              >
                 <TooltipButton
                   icon={<PlusOutlined />}
                   type='text'

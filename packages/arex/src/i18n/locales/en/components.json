@@ -42,6 +42,9 @@
     "newCreate": "New"
   },
   "applicationsMenu": {
+    "appName": "App Name",
+    "appNameEmptyTip": "The application name cannot be empty",
+    "createApp": "Create Application",
     "filterFavoriteApps": "Filter Favorite Apps",
     "appFilterPlaceholder": "Search Applications"
   },
