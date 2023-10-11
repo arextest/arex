@@ -6,7 +6,7 @@ import { cloneDeep } from 'lodash';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { ArexRESTHeader } from '../../types';
+import { ArexRESTHeader } from '../types';
 
 export interface HeaderData extends ArexRESTHeader {
   id?: string;
@@ -27,7 +27,7 @@ const HeaderTableWrapper = styled.div<{ showHeader?: boolean; editable?: boolean
   }
 `;
 
-const HeaderTable: FC<HeaderTableProps> = (props) => {
+const HeadersTable: FC<HeaderTableProps> = (props) => {
   const { editable, showHeader, dataSource, ...restProps } = props;
 
   const { token } = theme.useToken();
@@ -130,4 +130,4 @@ const HeaderTable: FC<HeaderTableProps> = (props) => {
   );
 };
 
-export default HeaderTable;
+export default HeadersTable;

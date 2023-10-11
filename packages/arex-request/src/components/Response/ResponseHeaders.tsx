@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
 
 import { ArexRESTHeader } from '../../types';
-import HeaderTable from '../http/HeaderTable';
+import HeadersTable from '../HeadersTable';
 
 const ResponseHeaders: FC<{ headers: ArexRESTHeader[] }> = (props) => {
   return (
-    <HeaderTable
+    <HeadersTable
       size='small'
       pagination={false}
       dataSource={props.headers}

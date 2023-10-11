@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 
 import { useArexRequestStore } from '../../hooks';
 import { ArexContentTypes } from '../../types';
-import BinaryBody from './BinaryBody';
-import RawBody, { HttpRawBodyRef } from './RawBody';
+import RequestBinaryBody from './RequestBinaryBody';
+import RequestRawBody, { RequestRawBodyRef } from './RequestRawBody';
 
 const genContentType = (contentType?: string) =>
   contentType?.includes('application/json') ? 'raw' : 'binary';
@@ -21,11 +21,11 @@ const rawSmallCateOptions = [
   },
 ];
 
-const HttpBody = () => {
+const RequestBody = () => {
   const { t } = useTranslation();
   const { store, dispatch } = useArexRequestStore();
 
-  const rawBodyRef = useRef<HttpRawBodyRef>(null);
+  const rawBodyRef = useRef<RequestRawBodyRef>(null);
 
   const isJsonContentType = useMemo(() => {
     return ['application/json'].includes(store.request.body.contentType || '');
@@ -103,9 +103,9 @@ const HttpBody = () => {
         )}
       </div>
 
-      {isJsonContentType ? <RawBody ref={rawBodyRef} /> : <BinaryBody />}
+      {isJsonContentType ? <RequestRawBody ref={rawBodyRef} /> : <RequestBinaryBody />}
     </div>
   );
 };
 
-export default HttpBody;
+export default RequestBody;

@@ -5,8 +5,8 @@ import Icon, {
   PlusOutlined,
   StopOutlined,
 } from '@ant-design/icons';
-import { copyToClipboard, css, TooltipButton } from '@arextest/arex-core';
-import { Button, Empty, Input, message, theme, Tooltip } from 'antd';
+import { copyToClipboard, css, SpaceBetweenWrapper, TooltipButton } from '@arextest/arex-core';
+import { Empty, Input, message, theme, Typography } from 'antd';
 import { cloneDeep } from 'lodash';
 import PM from 'postman-collection';
 import React, { FC, useEffect, useMemo } from 'react';
@@ -15,14 +15,12 @@ import { ReactSortable } from 'react-sortablejs';
 
 import IconGripVertical from '~icons/lucide/grip-vertical';
 
+import { converToUrl } from '../../helpers/utils/converToUrl';
+import { removePMParams } from '../../helpers/utils/removePMParams';
 import { useArexRequestStore } from '../../hooks';
-import { FormHeaderWrapper } from './HeaderActionBar';
-import { converToUrl, removePMparams } from './helpers';
 
-const { useToken } = theme;
-
-const HttpParameters: FC = () => {
-  const { token } = useToken();
+const RequestParameters: FC = () => {
+  const { token } = theme.useToken();
   const { t } = useTranslation();
   const { store, dispatch } = useArexRequestStore();
   const { endpoint } = store.request;
@@ -64,7 +62,7 @@ const HttpParameters: FC = () => {
 
   useEffect(() => {
     const endpointParse = PM.Url.parse(endpoint);
-    const endpointParseCopy = removePMparams(endpointParse);
+    const endpointParseCopy = removePMParams(endpointParse);
     if (params.length > 0) {
       setEndpoint(endpointParseCopy.toString() + converToUrl(params));
     }
@@ -72,43 +70,40 @@ const HttpParameters: FC = () => {
 
   return (
     <div>
-      <FormHeaderWrapper>
-        <span>{t('request.parameter_list')}</span>
+      <SpaceBetweenWrapper>
+        <Typography.Text type='secondary'>{t('request.parameter_list')}</Typography.Text>
         <div>
-          <Tooltip title={'Copy'}>
-            <Button
-              type='text'
-              icon={<CopyOutlined />}
-              onClick={() => {
-                copyToClipboard(
-                  JSON.stringify(handledParams.map((i) => ({ key: i.key, value: i.value }))),
-                );
-                message.success('copy success🎉');
-              }}
-            />
-          </Tooltip>
-          <Tooltip title={t('action.clear_all')}>
-            <Button
-              type='text'
-              icon={<DeleteOutlined />}
-              onClick={() => {
-                setParams([]);
-              }}
-            />
-          </Tooltip>
-          <Tooltip title={t('add.new')}>
-            <Button
-              type='text'
-              icon={<PlusOutlined />}
-              onClick={() => {
-                setParams(
-                  handledParams.concat([{ value: '', key: '', id: params.length, active: true }]),
-                );
-              }}
-            />
-          </Tooltip>
+          <TooltipButton
+            title={t('action.copy')}
+            icon={<CopyOutlined />}
+            onClick={() => {
+              copyToClipboard(
+                JSON.stringify(handledParams.map((i) => ({ key: i.key, value: i.value }))),
+              );
+              message.success('copy success🎉');
+            }}
+          />
+
+          <TooltipButton
+            title={t('action.clear_all')}
+            icon={<DeleteOutlined />}
+            onClick={() => {
+              setParams([]);
+            }}
+          />
+
+          <TooltipButton
+            title={t('add.new')}
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setParams(
+                handledParams.concat([{ value: '', key: '', id: params.length, active: true }]),
+              );
+            }}
+          />
         </div>
-      </FormHeaderWrapper>
+      </SpaceBetweenWrapper>
+
       {handledParams.length > 0 ? (
         <ReactSortable
           animation={250}
@@ -220,7 +215,7 @@ const HttpParameters: FC = () => {
                         params.splice(index, 1);
                         setParams(params);
                         const endpointParse = PM.Url.parse(endpoint);
-                        const endpointParseCopy = removePMparams(endpointParse);
+                        const endpointParseCopy = removePMParams(endpointParse);
                         setEndpoint(endpointParseCopy.toString());
                       }
                       // paramsUpdater?.((params) => {
@@ -240,4 +235,4 @@ const HttpParameters: FC = () => {
   );
 };
 
-export default HttpParameters;
+export default RequestParameters;

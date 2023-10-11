@@ -8,7 +8,7 @@ import { useArexRequestStore } from '../../hooks';
 import { testCodeSnippet } from './snippets';
 
 const { Text } = Typography;
-export const ResponseTestHeader = styled.div`
+export const RequestTestHeader = styled.div`
   display: flex;
   justify-content: space-between;
   & > span:first-of-type {
@@ -19,7 +19,7 @@ export const ResponseTestHeader = styled.div`
   }
 `;
 
-export const ResponseTestWrapper = styled.div`
+export const RequestTestWrapper = styled.div`
   overflow-y: auto;
   display: flex;
   justify-content: space-between;
@@ -43,7 +43,7 @@ const editorOptions = {
   scrollBeyondLastLine: false,
 } as const;
 
-const HttpTests = () => {
+const RequestTests = () => {
   const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
   const { theme } = useArexCoreConfig();
@@ -66,11 +66,11 @@ const HttpTests = () => {
         flex-direction: column;
       `}
     >
-      <ResponseTestHeader>
+      <RequestTestHeader>
         <span>{t('preRequest.javascript_code')}</span>
-      </ResponseTestHeader>
+      </RequestTestHeader>
 
-      <ResponseTestWrapper>
+      <RequestTestWrapper>
         <div
           css={css`
             min-width: 0;
@@ -144,9 +144,9 @@ const HttpTests = () => {
             ))}
           </div>
         </div>
-      </ResponseTestWrapper>
+      </RequestTestWrapper>
     </div>
   );
 };
 
-export default HttpTests;
+export default RequestTests;

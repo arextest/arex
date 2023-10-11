@@ -4,7 +4,7 @@ import { Typography } from 'antd';
 import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { HeaderData } from './HeaderTable';
+import { HeaderData } from '../HeadersTable';
 
 export interface HeaderActionBarProps {
   onCopy?: () => void;

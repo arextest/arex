@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useArexRequestStore } from '../../hooks';
 import ResponseOptions from './ResponseOptions';
 
-const HttpResponse = () => {
+const Response = () => {
   const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
 
@@ -56,4 +56,4 @@ const HttpResponse = () => {
   );
 };
 
-export default HttpResponse;
+export default Response;

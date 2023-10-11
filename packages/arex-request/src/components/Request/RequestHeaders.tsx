@@ -3,10 +3,10 @@ import { App } from 'antd';
 import React from 'react';
 
 import { useArexRequestStore } from '../../hooks';
+import HeadersTable, { HeaderData } from '../HeadersTable';
 import HeaderActionBar from './HeaderActionBar';
-import HeaderTable, { HeaderData } from './HeaderTable';
 
-const HttpHeaders = () => {
+const RequestHeaders = () => {
   const { message } = App.useApp();
   const { store, dispatch } = useArexRequestStore();
 
@@ -34,7 +34,7 @@ const HttpHeaders = () => {
     <>
       <HeaderActionBar onCopy={copyUrl} onInsert={handleEditHeader} onClearAll={handleEditHeader} />
 
-      <HeaderTable
+      <HeadersTable
         editable
         size='small'
         rowKey='id'
@@ -46,4 +46,4 @@ const HttpHeaders = () => {
   );
 };
 
-export default HttpHeaders;
+export default RequestHeaders;
