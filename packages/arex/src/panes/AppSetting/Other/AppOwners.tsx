@@ -8,6 +8,7 @@ import { ApplicationService, UserService } from '@/services';
 interface AppOwnersProps {
   appId: string;
   inline?: boolean;
+  onAddOwner?: (owners: string[]) => void;
 }
 
 const AppOwners: FC<AppOwnersProps> = (props) => {
@@ -32,8 +33,13 @@ const AppOwners: FC<AppOwnersProps> = (props) => {
       }),
     {
       manual: true,
-      onSuccess(success: boolean) {
-        success ? message.success(t('message.success')) : message.error(t('message.error'));
+      onSuccess(success: boolean, [owners]) {
+        if (success) {
+          owners && props.onAddOwner?.(owners);
+          message.success(t('message.success'));
+        } else {
+          message.error(t('message.error'));
+        }
       },
     },
   );
@@ -69,7 +75,7 @@ const AppOwners: FC<AppOwnersProps> = (props) => {
       onFinish={handleAddOwner}
       style={{ width: '100%' }}
     >
-      <Form.Item label={'Owners'} name='owners'>
+      <Form.Item label={t('appSetting.owners', { ns: 'components' })} name='owners'>
         <Select
           showSearch
           mode='multiple'

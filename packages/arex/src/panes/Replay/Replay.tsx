@@ -45,7 +45,9 @@ const ReplayPage: ArexPaneFC = (props) => {
   const { data: appInfo, refresh: getAppInfo } = useRequest(ApplicationService.getAppInfo, {
     defaultParams: [appId],
     onSuccess(res) {
-      setIsOwner(!!res.owners?.includes?.(email as string));
+      const isOwner = !!res.owners?.includes?.(email as string);
+      setIsOwner(isOwner);
+      !isOwner && appOwnerConfigRef?.current?.open();
     },
   });
 
@@ -88,7 +90,7 @@ const ReplayPage: ArexPaneFC = (props) => {
         }
       />
 
-      <AppOwnersConfig ref={appOwnerConfigRef} appId={appId} onClose={getAppInfo} />
+      <AppOwnersConfig ref={appOwnerConfigRef} appId={appId} onAddOwner={getAppInfo} />
     </div>
   );
 };

@@ -1,4 +1,5 @@
-import { PaneDrawer, useTranslation } from '@arextest/arex-core';
+import { useTranslation } from '@arextest/arex-core';
+import { Modal } from 'antd';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
 import AppOwners from '@/panes/AppSetting/Other/AppOwners';
@@ -6,6 +7,7 @@ import AppOwners from '@/panes/AppSetting/Other/AppOwners';
 export type AppOwnerConfigProps = {
   appId: string;
   onClose?: () => void;
+  onAddOwner?: (owners: string[]) => void;
 };
 
 export type AppOwnerConfigRef = {
@@ -17,9 +19,10 @@ const AppOwnersConfig = forwardRef<AppOwnerConfigRef, AppOwnerConfigProps>((prop
 
   const [open, setOpen] = useState(false);
 
-  const handleClose = () => {
+  const handleClose = (owners?: string[]) => {
     setOpen(false);
     props.onClose?.();
+    Array.isArray(owners) && props.onAddOwner?.(owners);
   };
 
   useImperativeHandle(ref, () => ({
@@ -27,9 +30,15 @@ const AppOwnersConfig = forwardRef<AppOwnerConfigRef, AppOwnerConfigProps>((prop
   }));
 
   return (
-    <PaneDrawer title={t('replay.addOwner')} open={open} onClose={handleClose}>
-      <AppOwners appId={props.appId} inline={false} />
-    </PaneDrawer>
+    <Modal
+      title={t('replay.addOwner')}
+      footer={false}
+      open={open}
+      style={{ top: 160 }}
+      onCancel={() => handleClose()}
+    >
+      <AppOwners appId={props.appId} inline={false} onAddOwner={handleClose} />
+    </Modal>
   );
 });
 
