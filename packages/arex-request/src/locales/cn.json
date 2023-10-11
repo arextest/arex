@@ -95,7 +95,7 @@
     "enter_curl": "输入 cURL",
     "generate_code": "生成代码",
     "generated_code": "已生成代码",
-    "header_list": "请求头列表",
+    "headers": "请求头列表",
     "invalid_name": "请提供请求名称",
     "method": "方法",
     "name": "请求名称",

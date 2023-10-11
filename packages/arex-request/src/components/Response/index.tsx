@@ -1,21 +1,13 @@
 import { StopOutlined } from '@ant-design/icons';
-import { EmptyWrapper, styled } from '@arextest/arex-core';
+import { EmptyWrapper } from '@arextest/arex-core';
 import { Button, Typography } from 'antd';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexRequestStore } from '../../hooks';
-import LensesResponseBodyRenderer from '../lenses/ResponseBodyRenderer';
-import HttpResponseMeta from './ResponseMeta';
+import ResponseOptions from './ResponseOptions';
 
-const HttpResponseWrapper = styled.div`
-  padding: 8px 12px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
-const HttpResponse = () => {
+const Response = () => {
   const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
 
@@ -55,16 +47,13 @@ const HttpResponse = () => {
         </Button>
       }
     >
-      <HttpResponseWrapper>
-        <HttpResponseMeta response={store.response} />
-        <LensesResponseBodyRenderer
-          response={store.response}
-          testResult={store.testResult}
-          consoles={store.consoles}
-        />
-      </HttpResponseWrapper>
+      <ResponseOptions
+        response={store.response}
+        testResult={store.testResult}
+        consoles={store.consoles}
+      />
     </EmptyWrapper>
   );
 };
 
-export default HttpResponse;
+export default Response;

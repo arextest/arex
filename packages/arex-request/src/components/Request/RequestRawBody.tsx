@@ -1,25 +1,26 @@
-import { css, Theme, useArexCoreConfig } from '@arextest/arex-core';
+import { css, Theme, tryPrettierJsonString, useArexCoreConfig } from '@arextest/arex-core';
 import { Editor } from '@arextest/monaco-react';
-import { message } from 'antd';
+import { App } from 'antd';
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexRequestStore } from '../../hooks';
 
-export type HttpRawBodyRef = {
+export type RequestRawBodyRef = {
   prettifyRequestBody: () => void;
 };
 
-const HttpRawBody = forwardRef<HttpRawBodyRef>((props, ref) => {
+const RequestRawBody = forwardRef<RequestRawBodyRef>((props, ref) => {
   const { theme } = useArexCoreConfig();
   const { store, dispatch } = useArexRequestStore();
+
+  const { message } = App.useApp();
   const { t } = useTranslation();
 
   const prettifyRequestBody = () => {
     try {
-      const jsonObj = JSON.parse(store.request.body.body as string);
       dispatch((state) => {
-        state.request.body.body = JSON.stringify(jsonObj, null, 4);
+        state.request.body.body = tryPrettierJsonString(store?.request?.body?.body as string);
       });
     } catch (e) {
       message.error(t('error.json_prettify_invalid_body'));
@@ -35,6 +36,7 @@ const HttpRawBody = forwardRef<HttpRawBodyRef>((props, ref) => {
   return (
     <div
       css={css`
+        height: 100%;
         flex: 1;
         overflow-y: auto;
       `}
@@ -65,4 +67,4 @@ const HttpRawBody = forwardRef<HttpRawBodyRef>((props, ref) => {
   );
 });
 
-export default HttpRawBody;
+export default RequestRawBody;

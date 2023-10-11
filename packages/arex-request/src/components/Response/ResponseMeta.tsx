@@ -18,7 +18,7 @@ const StatusText = styled.span<{ type?: 'success' | 'error' }>`
   margin-left: 4px;
 `;
 
-const HttpResponseMeta: FC<{ response?: ArexRESTResponse }> = ({ response }) => {
+const ResponseMeta: FC<{ response?: ArexRESTResponse }> = ({ response }) => {
   const { t } = useTranslation();
 
   const type = useMemo(() => {
@@ -79,4 +79,4 @@ const HttpResponseMeta: FC<{ response?: ArexRESTResponse }> = ({ response }) => 
   );
 };
 
-export default HttpResponseMeta;
+export default ResponseMeta;

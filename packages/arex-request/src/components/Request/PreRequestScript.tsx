@@ -31,7 +31,7 @@ export const ResponseTestWrapper = styled.div`
     padding-left: 20px;
   }
 `;
-const HttpPreRequestScript = () => {
+const PreRequestScript = () => {
   const { theme } = useArexCoreConfig();
   const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
@@ -136,4 +136,4 @@ const HttpPreRequestScript = () => {
   );
 };
 
-export default HttpPreRequestScript;
+export default PreRequestScript;

@@ -13,7 +13,7 @@ const toBase64 = (file: File): Promise<string> =>
     reader.onerror = reject;
   });
 
-const BinaryBody = () => {
+const RequestBinaryBody = () => {
   const [base64String, setBase64String] = useState('');
   const { dispatch } = useArexRequestStore();
   return (
@@ -46,4 +46,4 @@ const BinaryBody = () => {
   );
 };
 
-export default BinaryBody;
+export default RequestBinaryBody;

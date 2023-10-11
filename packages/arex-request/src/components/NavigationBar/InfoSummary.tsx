@@ -29,7 +29,7 @@ export type DescriptionProps = {
   onChange?: (description?: string) => void;
 };
 
-export interface SmartBreadcrumbProps {
+export interface InfoSummaryProps {
   breadcrumb?: string[];
   titleProps?: TitleProps;
   tagsProps?: TagsProps;
@@ -47,7 +47,7 @@ const HoverEditorIconCSS = css`
   }
 `;
 
-const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
+const InfoSummary: FC<InfoSummaryProps> = (props) => {
   const { t } = useTranslation();
   const { breadcrumb, titleProps, descriptionProps, tagsProps } = useArexRequestProps();
   const [mode, setMode] = useState(Mode.normal);
@@ -73,7 +73,7 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
   const breadcrumbItems = useMemo(
     () =>
       breadcrumb
-        ?.map((title) => ({ title }))
+        ?.map((title: string) => ({ title }))
         .concat({ title: titleValue || t('request.name') || 'Untitled' }),
     [breadcrumb, titleValue],
   );
@@ -187,4 +187,4 @@ const SmartBreadcrumb: FC<SmartBreadcrumbProps> = (props) => {
   );
 };
 
-export default SmartBreadcrumb;
+export default InfoSummary;

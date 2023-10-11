@@ -31,6 +31,8 @@ export { default as PaneDrawer } from './PaneDrawer';
 export type { PanesTitleProps } from './PanesTitle';
 export { default as PanesTitle } from './PanesTitle';
 export { default as SceneCode, SceneCodeMap } from './SceneCode';
+export { default as Segmented } from './Segmented';
+export { default as SmallBadge } from './SmallBadge';
 export { default as SmallTextButton } from './SmallTextButton';
 export { default as SpaceBetweenWrapper } from './SpaceBetweenWrapper';
 export type { SearchDataType } from './StructuredFilter';

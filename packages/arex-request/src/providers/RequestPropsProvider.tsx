@@ -1,11 +1,11 @@
 import { isEqual, omit } from 'lodash';
 import React, { createContext, FC, PropsWithChildren, useMemo, useRef } from 'react';
 
-import { RequestProps } from '../components/Request';
+import { ArexRequestProps } from '../ArexRequest';
 
-export const RequestPropsContext = createContext<RequestProps>({});
+export const RequestPropsContext = createContext<ArexRequestProps>({});
 
-const RequestPropsProvider: FC<PropsWithChildren<RequestProps>> = (props) => {
+const RequestPropsProvider: FC<PropsWithChildren<ArexRequestProps>> = (props) => {
   const value = omit(props, 'children');
   const valueRef = useRef(value);
 

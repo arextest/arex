@@ -141,12 +141,12 @@ export async function sendRequest(
             history: any,
           ) {
             res = {
-              type: 'success',
-              headers: response.headers.members,
-              statusCode: response.code,
-              body: response.stream,
+              type: 'success', // TODO check response status
+              headers: response?.headers.members,
+              statusCode: response?.code,
+              body: String(response?.stream),
               meta: {
-                responseSize: response.stream.length, // in bytes
+                responseSize: response.responseSize, // in bytes
                 responseDuration: response.responseTime, // in millis
               },
             };

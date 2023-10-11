@@ -1,15 +1,16 @@
-import { SaveOutlined, SendOutlined } from '@ant-design/icons';
-import { css, Label, RequestMethod, SpaceBetweenWrapper, styled } from '@arextest/arex-core';
-import { Button, Checkbox, Divider, Dropdown, Select, Space } from 'antd';
-import React, { FC, useMemo } from 'react';
+import { SendOutlined } from '@ant-design/icons';
+import { css, Label, RequestMethod, styled } from '@arextest/arex-core';
+import { Button, Checkbox, Select } from 'antd';
+import React, { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { sendRequest } from '../../helpers';
 import { useArexRequestProps, useArexRequestStore } from '../../hooks';
 import { ArexEnvironment, ArexRESTRequest, ArexRESTResponse } from '../../types';
-import SmartBreadcrumb, { SmartBreadcrumbProps } from '../smart/Breadcrumb';
-import EnvInput from '../smart/EnvInput';
-import EnvironmentSelect, { EnvironmentSelectProps } from './EnvironmentSelect';
+import { EnvironmentSelectProps } from '../NavigationBar/EnvironmentSelect';
+import { InfoSummaryProps } from '../NavigationBar/InfoSummary';
+import EnvInput from './EnvInput';
+import HttpRequestOptions from './RequestOptions';
 
 const HeaderWrapper = styled.div`
   padding: 0 8px;
@@ -19,7 +20,7 @@ const HeaderWrapper = styled.div`
   }
 `;
 
-export type HttpRequestProps = {
+export type RequestProps = {
   disableSave?: boolean;
   onBeforeRequest?: (request: ArexRESTRequest, environment?: ArexEnvironment) => ArexRESTRequest;
   onRequest?: (
@@ -28,18 +29,13 @@ export type HttpRequestProps = {
   ) => void;
   onSave?: (request?: ArexRESTRequest, response?: ArexRESTResponse) => void;
   onSaveAs?: () => void;
-} & SmartBreadcrumbProps & {
+} & InfoSummaryProps & {
     environmentProps?: EnvironmentSelectProps;
   };
 
-const HttpRequest: FC<HttpRequestProps> = () => {
-  const {
-    onSave,
-    onSaveAs,
-    onBeforeRequest = (request) => request,
-    onRequest,
-    disableSave,
-  } = useArexRequestProps();
+const Request: FC<RequestProps> = () => {
+  const { onBeforeRequest = (request: ArexRESTRequest) => request, onRequest } =
+    useArexRequestProps();
   const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
 
@@ -51,56 +47,18 @@ const HttpRequest: FC<HttpRequestProps> = () => {
       };
     });
     const res = await sendRequest(onBeforeRequest(store.request), store.environment);
+
     onRequest?.({ request: store.request, environment: store.environment }, res);
     dispatch((state) => {
-      if (res.response.type === 'success') {
-        state.response = res.response;
-        state.consoles = res.consoles;
-        state.visualizer = res.visualizer;
-        state.testResult = res.testResult;
-      }
+      state.response = res.response;
+      state.consoles = res.consoles;
+      state.visualizer = res.visualizer;
+      state.testResult = res.testResult;
     });
   };
 
-  const buttonsItems = useMemo(
-    () => [
-      {
-        key: 'saveAs',
-        label: t('request.save_as'),
-        icon: <SaveOutlined />,
-      },
-    ],
-    [t],
-  );
-
-  const onMenuClick = ({ key }: { key: string }) => {
-    key === 'saveAs' && onSaveAs?.();
-  };
-
   return (
-    <div>
-      <SpaceBetweenWrapper>
-        <SpaceBetweenWrapper style={{ marginLeft: '8px', flex: 1 }}>
-          <SmartBreadcrumb />
-
-          <Space size='middle' style={{ float: 'right', marginRight: '8px' }}>
-            <Dropdown.Button
-              size='small'
-              disabled={disableSave}
-              menu={{ items: buttonsItems, onClick: onMenuClick }}
-              onClick={() => onSave?.(store.request, store.response)}
-            >
-              <SaveOutlined />
-              {t('request.save')}
-            </Dropdown.Button>
-          </Space>
-        </SpaceBetweenWrapper>
-
-        <EnvironmentSelect />
-      </SpaceBetweenWrapper>
-
-      <Divider style={{ width: '100%', margin: '0 0 8px 0' }} />
-
+    <div style={{ height: '100%' }}>
       <HeaderWrapper>
         <Select
           disabled={store?.request?.inherited}
@@ -153,8 +111,10 @@ const HttpRequest: FC<HttpRequestProps> = () => {
           </Button>
         </div>
       </HeaderWrapper>
+
+      <HttpRequestOptions />
     </div>
   );
 };
 
-export default HttpRequest;
+export default Request;
