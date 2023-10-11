@@ -95,7 +95,7 @@
     "enter_curl": "Enter cURL command",
     "generate_code": "Generate code",
     "generated_code": "Generated code",
-    "header_list": "Header List",
+    "headers": "Request Headers",
     "invalid_name": "Please provide a name for the request",
     "method": "Method",
     "name": "Request Name",

@@ -1,7 +1,7 @@
 import { css } from '@arextest/arex-core';
 import { useRef } from 'react';
 
-import { useArexRequestStore } from '../../../hooks';
+import { useArexRequestStore } from '../../hooks';
 import { genIframeDoc, htmlDecode } from './genIframeDoc';
 
 const VisualizeLensRender = () => {

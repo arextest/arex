@@ -14,7 +14,7 @@ import { App } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { ArexRESTResponse } from '../../../types';
+import { ArexRESTResponse } from '../../types';
 
 enum DisplayMode {
   'Pretty' = 'Pretty',

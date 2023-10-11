@@ -1,11 +1,11 @@
 import { StopOutlined } from '@ant-design/icons';
-import { EmptyWrapper, styled } from '@arextest/arex-core';
+import { EmptyWrapper } from '@arextest/arex-core';
 import { Button, Typography } from 'antd';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexRequestStore } from '../../hooks';
-import LensesResponseBodyRenderer from '../lenses/ResponseBodyRenderer';
+import ResponseOptions from './ResponseOptions';
 
 const HttpResponse = () => {
   const { store, dispatch } = useArexRequestStore();
@@ -47,7 +47,7 @@ const HttpResponse = () => {
         </Button>
       }
     >
-      <LensesResponseBodyRenderer
+      <ResponseOptions
         response={store.response}
         testResult={store.testResult}
         consoles={store.consoles}

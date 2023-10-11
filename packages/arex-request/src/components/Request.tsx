@@ -7,7 +7,7 @@ import { useArexRequestStore } from '../hooks';
 import { ArexRESTRequest } from '../types';
 import HttpRequest, { HttpRequestProps } from './http/Request';
 import HttpRequestOptions from './http/RequestOptions';
-import HttpResponse from './http/Response';
+import HttpResponse from './response/Response';
 export interface Tab extends Omit<TabPaneProps, 'tab'> {
   key: string;
   label: React.ReactNode;

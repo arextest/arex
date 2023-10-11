@@ -1,48 +1,48 @@
-import { useEffect } from 'react';
+import { copyToClipboard } from '@arextest/arex-core';
+import { App } from 'antd';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useImmer } from 'use-immer';
 
 import { useArexRequestStore } from '../../hooks';
-import FormHeader from './FormHeader';
-import FormTable, { useColumns } from './FormTable';
+import HeaderActionBar from './HeaderActionBar';
+import HeaderTable, { HeaderData } from './HeaderTable';
 
 const HttpHeaders = () => {
-  const { t } = useTranslation();
+  const { message } = App.useApp();
   const { store, dispatch } = useArexRequestStore();
-  const [requestHeaders, setRequestHeaders] = useImmer<any>(store.request.headers);
 
-  useEffect(() => {
-    setRequestHeaders(
-      store.request.headers.map((i) => ({
-        ...i,
-        id: String(Math.random()),
-      })),
-    );
-  }, []);
-
-  useEffect(() => {
+  const handleEditHeader = (header: HeaderData | HeaderData[] | undefined = []) => {
     dispatch((state) => {
-      state.request.headers = requestHeaders;
+      if (Array.isArray(header)) state.request.headers = header;
+      else state.request.headers.push(header);
     });
-  }, [requestHeaders]);
+  };
+
+  const copyUrl = () => {
+    copyToClipboard(
+      JSON.stringify(
+        store.request.headers
+          .filter((header) => header.active)
+          .map(({ key, value }) => ({ key, value })),
+        null,
+        2,
+      ),
+    );
+    message.success('copy success🎉');
+  };
 
   return (
-    <div>
-      <FormHeader
-        dataSource={requestHeaders}
-        update={setRequestHeaders}
-        title={t('request.header_list')}
-      />
-      <FormTable
+    <>
+      <HeaderActionBar onCopy={copyUrl} onInsert={handleEditHeader} onClearAll={handleEditHeader} />
+
+      <HeaderTable
+        editable
         size='small'
-        rowKey={'id'} // TODO wrong rowKey
+        rowKey='id'
         pagination={false}
-        dataSource={requestHeaders}
-        // @ts-ignore
-        columns={useColumns(setRequestHeaders, true)}
+        dataSource={store.request.headers}
+        onEdit={handleEditHeader}
       />
-    </div>
+    </>
   );
 };
 

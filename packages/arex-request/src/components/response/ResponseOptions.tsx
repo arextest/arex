@@ -3,18 +3,18 @@ import { Tabs } from 'antd';
 import React, { FC, useMemo } from 'react';
 
 import { ArexRESTResponse, ArexTestResult } from '../../types';
-import Console from '../http/Console';
-import HttpResponseMeta from '../http/ResponseMeta';
-import TestResult from '../http/TestResult';
-import LensesHeadersRenderer from './HeadersRenderer';
-import ResponseBody from './renderers/ResponseBody';
+import Console from './Console';
+import ResponseBody from './ResponseBody';
+import ResponseHeaders from './ResponseHeaders';
+import ResponseMeta from './ResponseMeta';
+import TestResult from './TestResult';
 
 export type LensesResponseBodyRendererProps = {
   response?: ArexRESTResponse;
   testResult?: ArexTestResult[];
   consoles?: any[];
 };
-const LensesResponseBodyRenderer: FC<LensesResponseBodyRendererProps> = ({
+const ResponseOptions: FC<LensesResponseBodyRendererProps> = ({
   response,
   testResult,
   consoles,
@@ -30,7 +30,7 @@ const LensesResponseBodyRenderer: FC<LensesResponseBodyRendererProps> = ({
     {
       key: 'headers',
       label: <SmallBadge count={headers.length}>Headers</SmallBadge>,
-      children: <LensesHeadersRenderer headers={headers} />,
+      children: <ResponseHeaders headers={headers} />,
     },
     {
       key: 'result',
@@ -57,11 +57,11 @@ const LensesResponseBodyRenderer: FC<LensesResponseBodyRendererProps> = ({
       <Tabs
         defaultValue='body'
         items={items}
-        tabBarExtraContent={<HttpResponseMeta response={response} />}
+        tabBarExtraContent={<ResponseMeta response={response} />}
         style={{ height: '100%' }}
       />
     </div>
   );
 };
 
-export default LensesResponseBodyRenderer;
+export default ResponseOptions;

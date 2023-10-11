@@ -16,7 +16,7 @@ import { ReactSortable } from 'react-sortablejs';
 import IconGripVertical from '~icons/lucide/grip-vertical';
 
 import { useArexRequestStore } from '../../hooks';
-import { FormHeaderWrapper } from './FormHeader';
+import { FormHeaderWrapper } from './HeaderActionBar';
 import { converToUrl, removePMparams } from './helpers';
 
 const { useToken } = theme;
