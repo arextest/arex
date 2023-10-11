@@ -1,10 +1,11 @@
-import { copyToClipboard } from '@arextest/arex-core';
-import { App } from 'antd';
+import { CopyOutlined, DeleteOutlined, FieldTimeOutlined, PlusOutlined } from '@ant-design/icons';
+import { copyToClipboard, SpaceBetweenWrapper, TooltipButton } from '@arextest/arex-core';
+import { App, Typography } from 'antd';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useArexRequestStore } from '../../hooks';
 import HeadersTable, { HeaderData } from '../HeadersTable';
-import HeaderActionBar from './HeaderActionBar';
 
 const RequestHeaders = () => {
   const { message } = App.useApp();
@@ -15,6 +16,28 @@ const RequestHeaders = () => {
       if (Array.isArray(header)) state.request.headers = header;
       else state.request.headers.push(header);
     });
+  };
+
+  const { t } = useTranslation();
+
+  const handleAddParam = () => {
+    const record: HeaderData = {
+      id: String(Math.random()),
+      key: '',
+      value: '',
+      active: true,
+    };
+    handleEditHeader(record);
+  };
+
+  const handleAddRecord = () => {
+    const record: HeaderData = {
+      id: String(Math.random()),
+      key: 'arex-force-record',
+      value: 'true',
+      active: true,
+    };
+    handleEditHeader(record);
   };
 
   const copyUrl = () => {
@@ -32,7 +55,23 @@ const RequestHeaders = () => {
 
   return (
     <>
-      <HeaderActionBar onCopy={copyUrl} onInsert={handleEditHeader} onClearAll={handleEditHeader} />
+      <SpaceBetweenWrapper>
+        <Typography.Text type='secondary'> {t('request.headers')}</Typography.Text>
+        <div>
+          <TooltipButton title={'Copy'} icon={<CopyOutlined />} onClick={copyUrl} />
+          <TooltipButton
+            title={t('record')}
+            icon={<FieldTimeOutlined />}
+            onClick={handleAddRecord}
+          />
+          <TooltipButton
+            title={t('action.clear_all')}
+            icon={<DeleteOutlined />}
+            onClick={() => handleEditHeader()}
+          />
+          <TooltipButton title={t('add.new')} icon={<PlusOutlined />} onClick={handleAddParam} />
+        </div>
+      </SpaceBetweenWrapper>
 
       <HeadersTable
         editable

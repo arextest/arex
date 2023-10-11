@@ -219,7 +219,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       <ArexRequest
         ref={httpRef}
         loading={!data}
-        height='calc(100vh - 110px)'
+        height='calc(100vh - 160px)'
         data={data}
         config={httpConfig}
         breadcrumb={parentPath}
