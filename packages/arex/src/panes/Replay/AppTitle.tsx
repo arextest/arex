@@ -43,6 +43,7 @@ import { MessageMap } from '@/services/ScheduleService';
 type AppTitleProps = {
   appId: string;
   appName?: string;
+  readOnly?: boolean;
   onRefresh?: () => void;
 };
 
@@ -117,7 +118,7 @@ const InitialValues = {
   ],
 };
 
-const AppTitle: FC<AppTitleProps> = ({ appId, appName, onRefresh }) => {
+const AppTitle: FC<AppTitleProps> = ({ appId, appName, readOnly, onRefresh }) => {
   const { notification } = App.useApp();
   const { token } = theme.useToken();
   const navPane = useNavPane();
@@ -137,6 +138,11 @@ const AppTitle: FC<AppTitleProps> = ({ appId, appName, onRefresh }) => {
   }>(TARGET_HOST_AUTOCOMPLETE_KEY, {
     defaultValue: {},
   });
+
+  const appTitle = useMemo(
+    () => appName && `${readOnly ? `[${t('readOnly', { ns: 'common' })}] ` : ''}${appName}`,
+    [readOnly, t, appName],
+  );
 
   const webhook = useMemo(
     () => `${location.origin}/schedule/createPlan?appId=${appId}&targetEnv=${targetEnv?.trim()}`,
@@ -230,7 +236,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, appName, onRefresh }) => {
         });
       })
       .catch((info) => {
-        console.log('Validate Failed:', info);
+        console.error('Validate Failed:', info);
       });
   };
 
@@ -295,7 +301,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, appName, onRefresh }) => {
       <PanesTitle
         title={
           <TitleWrapper
-            title={appName}
+            title={appTitle}
             count={recordedCase}
             onClickTitle={handleClickTitle}
             onRefresh={handleRefresh}
@@ -307,6 +313,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, appName, onRefresh }) => {
             id='arex-replay-create-plan-btn'
             size='small'
             type='primary'
+            disabled={readOnly}
             icon={<PlayCircleOutlined />}
             onClick={() => setOpen(true)}
           >

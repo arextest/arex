@@ -20,6 +20,7 @@
   "invalidJSON": "无效JSON",
   "prettier": "格式化",
   "edit": "修改",
+  "readOnly": "只读",
   "yes": "是",
   "no": "否",
   "action": "操作",

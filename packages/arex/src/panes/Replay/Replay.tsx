@@ -41,19 +41,22 @@ const ReplayPage: ArexPaneFC = (props) => {
 
   const email = getLocalStorage<string>(EMAIL_KEY);
   const [isOwner, setIsOwner] = useState(true);
+  const [hasOwner, setHasOwner] = useState(true);
   const appOwnerConfigRef = useRef<AppOwnerConfigRef>(null);
+
   const { data: appInfo, refresh: getAppInfo } = useRequest(ApplicationService.getAppInfo, {
     defaultParams: [appId],
     onSuccess(res) {
       const isOwner = !!res.owners?.includes?.(email as string);
       setIsOwner(isOwner);
-      !isOwner && appOwnerConfigRef?.current?.open();
+      setHasOwner(!!res.owners?.length);
+      !hasOwner && appOwnerConfigRef?.current?.open();
     },
   });
 
   return (
     <div ref={replayWrapperRef}>
-      {!isOwner && (
+      {!hasOwner && (
         <Alert
           banner
           closable
@@ -69,7 +72,12 @@ const ReplayPage: ArexPaneFC = (props) => {
         />
       )}
 
-      <AppTitle appId={appId} appName={appInfo?.appName} onRefresh={handleRefreshDep} />
+      <AppTitle
+        appId={appId}
+        appName={appInfo?.appName}
+        readOnly={!isOwner}
+        onRefresh={handleRefreshDep}
+      />
 
       <CollapseTable
         active={!!selectedPlan}
@@ -84,6 +92,7 @@ const ReplayPage: ArexPaneFC = (props) => {
           <PlanItem
             appId={appId}
             selectedPlan={selectedPlan}
+            readOnly={!isOwner}
             filter={(record) => !!record.totalCaseCount}
             onRefresh={handleRefreshDep}
           />

@@ -21,6 +21,7 @@
   "invalidJSON": "Invalid JSON",
   "prettier": "Prettier",
   "edit": "Edit",
+  "readOnly": "ReadOnly",
   "yes": "Yes",
   "no": "No",
   "action": "Actions",
