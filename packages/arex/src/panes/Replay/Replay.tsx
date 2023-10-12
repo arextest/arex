@@ -50,7 +50,7 @@ const ReplayPage: ArexPaneFC = (props) => {
       const isOwner = !!res.owners?.includes?.(email as string);
       setIsOwner(isOwner);
       setHasOwner(!!res.owners?.length);
-      !hasOwner && appOwnerConfigRef?.current?.open();
+      !res.owners?.length && appOwnerConfigRef?.current?.open();
     },
   });
 

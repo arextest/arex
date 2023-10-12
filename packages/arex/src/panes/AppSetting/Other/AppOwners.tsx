@@ -69,7 +69,7 @@ const AppOwners: FC<AppOwnersProps> = (props) => {
 
   return (
     <Form
-      name='ownerConfig'
+      name={'ownerConfig' + props.appId}
       form={form}
       layout={inline ? 'inline' : undefined}
       onFinish={handleAddOwner}
