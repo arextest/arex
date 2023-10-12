@@ -13,5 +13,8 @@
     "compare_results": "比对结果",
     "result": "结果",
     "error.count": "错误数量"
+  },
+  "replay": {
+    "saveto": "保存到"
   }
 }

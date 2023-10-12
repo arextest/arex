@@ -38,7 +38,8 @@ const useUserProfile = create<UserProfile & UserProfileAction>((set) => {
         message.error(i18n.t('serverError'));
       }
     }
-
+    console.log(profile,'profile')
+    window.__locale__ = profile?.language || 'en';
     profile && set(profile);
   }
 

@@ -13,5 +13,8 @@
     "compare_results": "Compare results",
     "result": "Result",
     "error.count": "Error Count"
+  },
+  "replay": {
+    "saveto": "Save To"
   }
 }
