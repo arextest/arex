@@ -279,8 +279,8 @@ importers:
         specifier: ^5.2.6
         version: 5.2.6(react-dom@18.2.0)(react@18.2.0)
       '@arextest/vanilla-jsoneditor':
-        specifier: 0.17.23
-        version: 0.17.23
+        specifier: 0.17.24
+        version: 0.17.24
       '@dnd-kit/core':
         specifier: ^6.0.8
         version: 6.0.8(react-dom@18.2.0)(react@18.2.0)
@@ -487,9 +487,6 @@ importers:
       antd:
         specifier: ^5.9.1
         version: 5.9.1(react-dom@18.2.0)(react@18.2.0)
-      copy-to-clipboard:
-        specifier: ^3.3.3
-        version: 3.3.3
       i18next:
         specifier: ^22.4.11
         version: 22.4.11
@@ -517,12 +514,6 @@ importers:
       react-json-view:
         specifier: ^1.21.3
         version: 1.21.3(@types/react@18.2.0)(react-dom@18.2.0)(react@18.2.0)
-      react-sortablejs:
-        specifier: ^6.1.4
-        version: 6.1.4(@types/sortablejs@1.15.2)(react-dom@18.2.0)(react@18.2.0)(sortablejs@1.15.0)
-      sortablejs:
-        specifier: ^1.15.0
-        version: 1.15.0
       use-immer:
         specifier: ^0.9.0
         version: 0.9.0(immer@9.0.21)(react@18.2.0)
@@ -560,9 +551,6 @@ importers:
       '@types/react-dom':
         specifier: ^18.0.11
         version: 18.2.0
-      '@types/sortablejs':
-        specifier: ^1.15.1
-        version: 1.15.2
       '@types/testing-library__jest-dom':
         specifier: ^5.14.5
         version: 5.14.5
@@ -720,8 +708,8 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@arextest/vanilla-jsoneditor@0.17.23:
-    resolution: {integrity: sha512-WmR38mOEAFa3DCSydTrl/BSVlTX62e2YgDhBCw56yTZmqvpd+ARI2A/WQc08k6Hqu5Yxt1DHcwbWJf71Adgzkg==}
+  /@arextest/vanilla-jsoneditor@0.17.24:
+    resolution: {integrity: sha512-VCwnpWywtKkPo/VmZ1Ze25WSm/aAWCY62KiyyYRpfJdN+lcdpGOq6opKOlWkIGcoW6l7UDd5G1NG9ov/1aZTxg==}
     dev: false
 
   /@babel/code-frame@7.22.13:
@@ -2330,7 +2318,7 @@ packages:
     dependencies:
       '@babel/core': 7.22.19
       '@svgr/babel-preset': 8.0.0(@babel/core@7.22.19)
-      '@svgr/core': 8.0.0(typescript@4.9.3)
+      '@svgr/core': 8.0.0(typescript@5.0.2)
       '@svgr/hast-util-to-babel-ast': 8.0.0
       svg-parser: 2.0.4
     transitivePeerDependencies:
@@ -2677,9 +2665,6 @@ packages:
   /@types/semver@7.5.2:
     resolution: {integrity: sha512-7aqorHYgdNO4DM36stTiGO3DvKoex9TQRwsJU6vMaFGyqpBA1MNZkz+PG3gaNUPpTAOYhT1WR7M1JyA3fbS9Cw==}
     dev: true
-
-  /@types/sortablejs@1.15.2:
-    resolution: {integrity: sha512-mOIv/EnPMzAZAVbuh9uGjOZ1BBdimP9Y6IPGntsvQJtko5yapSDKB7GwB3AOlF5N3bkpk4sBwQRpS3aEkiUbaA==}
 
   /@types/stack-utils@2.0.1:
     resolution: {integrity: sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==}
@@ -3646,10 +3631,6 @@ packages:
     resolution: {integrity: sha512-eXTggHWSooYhq49F2opQhuHWgzucfF2YgODK4e1566GQs5BIfP30B0oenwBJHfWxAs2fyPB1s7Mg949zLf61Yw==}
     engines: {node: '>=8'}
     dev: true
-
-  /classnames@2.3.1:
-    resolution: {integrity: sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==}
-    dev: false
 
   /classnames@2.3.2:
     resolution: {integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==}
@@ -7422,22 +7403,6 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-sortablejs@6.1.4(@types/sortablejs@1.15.2)(react-dom@18.2.0)(react@18.2.0)(sortablejs@1.15.0):
-    resolution: {integrity: sha512-fc7cBosfhnbh53Mbm6a45W+F735jwZ1UFIYSrIqcO/gRIFoDyZeMtgKlpV4DdyQfbCzdh5LoALLTDRxhMpTyXQ==}
-    peerDependencies:
-      '@types/sortablejs': '1'
-      react: '>=16.9.0'
-      react-dom: '>=16.9.0'
-      sortablejs: '1'
-    dependencies:
-      '@types/sortablejs': 1.15.2
-      classnames: 2.3.1
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      sortablejs: 1.15.0
-      tiny-invariant: 1.2.0
-    dev: false
-
   /react-textarea-autosize@8.5.3(@types/react@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-XT1024o2pqCuZSuBt9FwHlaDeNtVrtCXu0Rnz88t1jUGheCLa3PhjE1GH8Ctm2axEtvdCl5SUHYschyQ0L5QHQ==}
     engines: {node: '>=10'}
@@ -7828,10 +7793,6 @@ packages:
       tslib: 2.6.2
     dev: true
 
-  /sortablejs@1.15.0:
-    resolution: {integrity: sha512-bv9qgVMjUMf89wAvM6AxVvS/4MX3sPeN0+agqShejLU5z5GX4C75ow1O2e5k4L6XItUyAK3gH6AxSbXrOM5e8w==}
-    dev: false
-
   /source-map-js@1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
     engines: {node: '>=0.10.0'}
@@ -8091,10 +8052,6 @@ packages:
     resolution: {integrity: sha512-TIsDdtKo6+XrPtiTm1ssmMngN1sAhyKnTO2kunQWqNPWIVvCm15Wmw4SWInwTVgJ5u/Tr04+8Ei9TNcw4x4ONA==}
     engines: {node: '>=4'}
     dev: true
-
-  /tiny-invariant@1.2.0:
-    resolution: {integrity: sha512-1Uhn/aqw5C6RI4KejVeTg6mIS7IqxnLJ8Mv2tV5rTc0qWobay7pDUz6Wi392Cnc8ak1H0F2cjoRzb2/AW4+Fvg==}
-    dev: false
 
   /tinybench@2.5.1:
     resolution: {integrity: sha512-65NKvSuAVDP/n4CqH+a9w2kTlLReS9vhsAP06MWx+/89nMinJyB2icyl58RIcqCmIggpojIGeuJGhjU1aGMBSg==}
@@ -8384,7 +8341,7 @@ packages:
       '@antfu/install-pkg': 0.1.1
       '@antfu/utils': 0.7.6
       '@iconify/utils': 2.1.9
-      '@svgr/core': 8.0.0(typescript@4.9.3)
+      '@svgr/core': 8.0.0(typescript@5.0.2)
       debug: 4.3.4
       kolorist: 1.8.0
       local-pkg: 0.4.3

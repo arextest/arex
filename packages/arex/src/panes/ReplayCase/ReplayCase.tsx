@@ -12,20 +12,20 @@ import {
   PaneDrawer,
   PanesTitle,
   PathHandler,
-  SmallTextButton,
   TargetEditor,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Modal } from 'antd';
+import dayjs from 'dayjs';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
-import { DependencyParams } from '@/services/ComparisonService';
+import { DependencyParams, ExpirationType } from '@/services/ComparisonService';
 import { InfoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
 import { MessageMap } from '@/services/ScheduleService';
 
@@ -117,20 +117,30 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   });
 
   const { run: insertIgnoreNode } = useRequest(
-    (path: string[], global?: boolean) => {
+    (path: string[], type?: string) => {
+      const isGlobal = type === 'global';
+      const isTemporary = type === 'temporary';
+
       const dependencyParams: DependencyParams =
-        global || selectedDependency?.isEntry
+        isGlobal || selectedDependency?.isEntry
           ? ({} as DependencyParams)
           : {
               operationType: selectedDependency?.categoryName || selectedDependency?.operationType,
               operationName: selectedDependency?.operationName,
             };
+      const temporaryParams = isTemporary
+        ? {
+            expirationType: ExpirationType.temporary,
+            expirationDate: dayjs().add(7, 'day').valueOf(),
+          }
+        : {};
 
       return ComparisonService.insertIgnoreNode({
-        operationId: global ? undefined : props.data.operationId,
+        operationId: isGlobal ? undefined : props.data.operationId,
         appId: props.data.appId,
         exclusions: path,
         ...dependencyParams,
+        ...temporaryParams,
       });
     },
     {
@@ -157,7 +167,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   const handleIgnoreKey = useCallback<PathHandler>(
     ({ path, type, targetEditor, jsonString }) => {
       const filteredPath = jsonIndexPathFilter(path, jsonString![targetEditor]);
-      filteredPath && insertIgnoreNode(filteredPath, type === 'global');
+      filteredPath && insertIgnoreNode(filteredPath, type);
     },
     [insertIgnoreNode],
   );

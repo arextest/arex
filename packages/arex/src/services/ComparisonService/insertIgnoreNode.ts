@@ -2,11 +2,21 @@ import { IgnoreNodeBase } from '@/services/ComparisonService/queryIgnoreNode';
 import { request } from '@/utils';
 
 export type DependencyParams = Pick<IgnoreNodeBase, 'operationType' | 'operationName'> | false;
+export enum ExpirationType {
+  permanent,
+  temporary,
+}
 
-export interface InterfaceIgnoreNode extends IgnoreNodeBase {
+export type IgnoreExpiration = {
+  expirationType: ExpirationType;
+  expirationDate: number;
+};
+
+export type InterfaceIgnoreNode = {
   compareConfigType: number | null;
   fsInterfaceId: string | null;
-}
+} & IgnoreNodeBase &
+  Partial<IgnoreExpiration>;
 
 export async function insertIgnoreNode(params: IgnoreNodeBase | InterfaceIgnoreNode) {
   const res = await request.post<boolean>(

@@ -1,6 +1,8 @@
 import { OperationId, OperationType } from '@/services/ApplicationService';
 import { request } from '@/utils';
 
+import { IgnoreExpiration } from './insertIgnoreNode';
+
 export interface QueryNodeReq<T extends OperationType> {
   appId: string;
   operationId?: OperationId<T>;
@@ -18,12 +20,11 @@ export interface IgnoreNodeBase {
   path?: string;
 }
 
-export interface QueryIgnoreNode extends IgnoreNodeBase {
+export type QueryIgnoreNode = {
   modifiedTime: string;
   id: string;
-  expirationType: number;
-  expirationDate: string;
-}
+} & IgnoreNodeBase &
+  IgnoreExpiration;
 
 export async function queryIgnoreNode(params: QueryNodeReq<'Global'>) {
   const res = await request.post<QueryIgnoreNode[]>(

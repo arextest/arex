@@ -16,11 +16,11 @@
     "dist/*"
   ],
   "dependencies": {
+    "@arextest/vanilla-jsoneditor": "0.17.24",
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/sortable": "^7.0.2",
     "@dnd-kit/utilities": "^3.2.1",
     "@ant-design/icons": "^5.2.6",
-    "@arextest/vanilla-jsoneditor": "0.17.23",
     "@emotion/serialize": "^1.1.1",
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",

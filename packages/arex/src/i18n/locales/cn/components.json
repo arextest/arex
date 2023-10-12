@@ -241,6 +241,8 @@
     "arrayTree": "数组节点",
     "sortTree": "关键标识节点",
     "emptyKey": "请输入忽略节点",
+    "expireOn": "过期时间",
+    "expired": "已过期",
     "noIgnoredNodes": "忽略节点为空",
     "noEncryptionNodes": "加密节点为空",
     "emptyFullClassName": "请输入全类名",

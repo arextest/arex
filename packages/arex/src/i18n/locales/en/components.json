@@ -242,6 +242,8 @@
     "arrayTree": "ArrayTree",
     "sortTree": "SortTree",
     "emptyKey": "Please enter ignored key",
+    "expireOn": "Expire on",
+    "expired": "Expired",
     "noIgnoredNodes": "No Ignored Nodes",
     "noDesensitizationNodes": "No Desensitization Nodes",
     "emptyFullClassName": "Please enter full class name",
