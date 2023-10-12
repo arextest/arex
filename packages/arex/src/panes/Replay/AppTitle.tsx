@@ -152,7 +152,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, appName, readOnly, onRefresh }) =>
   /**
    * 请求 InterfacesList
    */
-  useRequest(() => ApplicationService.queryInterfacesList<'Global'>({ id: appId }), {
+  useRequest(() => ApplicationService.queryInterfacesList<'Global'>({ appId }), {
     ready: open,
     onSuccess(res) {
       setInterfacesOptions(res.map((item) => ({ label: item.operationName, value: item.id })));

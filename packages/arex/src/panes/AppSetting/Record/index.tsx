@@ -66,14 +66,14 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
    * 请求 InterfacesList
    */
   const { data: operationList = [] } = useRequest(
-    () => ApplicationService.queryInterfacesList<'Global'>({ id: props.appId as string }),
+    () => ApplicationService.queryInterfacesList<'Global'>({ appId: props.appId as string }),
     {
       ready: !!props.appId,
     },
   );
 
   useRequest(ConfigService.queryRecordSetting, {
-    defaultParams: [{ id: props.appId }],
+    defaultParams: [{ appId: props.appId }],
     onBefore() {
       setLoading(true);
     },

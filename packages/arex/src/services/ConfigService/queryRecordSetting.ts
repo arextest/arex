@@ -1,7 +1,7 @@
 import { request } from '@/utils';
 
 export interface QueryRecordSettingReq {
-  id: string;
+  appId: string;
 }
 
 export type SerializeSkipInfo = {
@@ -25,10 +25,10 @@ export interface QueryRecordSettingRes {
 
 export async function queryRecordSetting(params: QueryRecordSettingReq) {
   const res = await request.get<QueryRecordSettingRes>(
-    '/report/config/serviceCollect/useResult/appId/' + params.id,
+    '/report/config/serviceCollect/useResult/appId/' + params.appId,
     undefined,
     {
-      headers: { 'App-Id': params.id },
+      headers: { 'App-Id': params.appId },
     },
   );
   return res.body;

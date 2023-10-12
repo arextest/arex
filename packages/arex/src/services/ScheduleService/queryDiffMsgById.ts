@@ -2,7 +2,7 @@ import { CompareResultDetail } from '@/services/ReportService';
 import { request } from '@/utils';
 
 export interface QueryDiffMsgByIdReq {
-  id: string;
+  appId: string;
 }
 
 export interface QueryDiffMsgByIdRes {
@@ -11,6 +11,6 @@ export interface QueryDiffMsgByIdRes {
 
 export async function queryDiffMsgById(params: QueryDiffMsgByIdReq) {
   return request
-    .get<QueryDiffMsgByIdRes>(`/schedule/report/queryDiffMsgById/${params.id}`)
+    .get<QueryDiffMsgByIdRes>(`/schedule/report/queryDiffMsgById/${params.appId}`)
     .then((res) => Promise.resolve(res.body.compareResultDetail));
 }
