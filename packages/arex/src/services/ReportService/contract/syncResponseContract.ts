@@ -24,6 +24,9 @@ export async function syncResponseContract(params: SyncResponseContractReq) {
   const res = await request.post<SyncResponseContractRes | null>(
     '/report/report/syncResponseContract',
     params,
+    {
+      headers: { 'App-Id': params.appId },
+    },
   );
 
   return res.body;

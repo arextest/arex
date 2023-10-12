@@ -25,6 +25,8 @@ export interface QueryAggCountRes {
 
 export async function queryAggCount(params: QueryAggCountReq) {
   return request
-    .post<QueryAggCountRes>('/report/report/aggCount', params)
+    .post<QueryAggCountRes>('/report/report/aggCount', params, {
+      headers: { 'App-Id': params.appId },
+    })
     .then((res) => Promise.resolve(res.body.operationList));
 }

@@ -9,6 +9,8 @@ export type UpdateSettingReqInsert = {
 };
 
 export async function updateDynamicClass(params: UpdateSettingReqInsert) {
-  const res = await request.post<boolean>('/report/config/dynamicClass/modify/UPDATE', params);
+  const res = await request.post<boolean>('/report/config/dynamicClass/modify/UPDATE', params, {
+    headers: { 'App-Id': params.appId },
+  });
   return res.body;
 }

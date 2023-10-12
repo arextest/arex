@@ -35,6 +35,9 @@ export async function querySortNode(params: QueryNodeReq<'Interface'>) {
       ...params,
       operationId: params.operationId || undefined,
     },
+    {
+      headers: { 'App-Id': params.appId },
+    },
   );
   return res.body
     .map<SortNode>((item) => ({

@@ -60,7 +60,9 @@ export async function queryPlanStatistics(
     pageSize,
   };
   return request
-    .post<QueryPlanStatisticsRes>('/report/report/queryPlanStatistics', requestParams)
+    .post<QueryPlanStatisticsRes>('/report/report/queryPlanStatistics', requestParams, {
+      headers: { 'App-Id': params.appId },
+    })
     .then((res) =>
       Promise.resolve({
         total: res.body.totalCount,

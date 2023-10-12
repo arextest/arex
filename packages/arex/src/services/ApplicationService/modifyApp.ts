@@ -7,6 +7,8 @@ export interface ModifyAppReq {
 }
 
 export async function modifyApp(params: ModifyAppReq) {
-  const res = await request.post<boolean>('/storage/config/app/modify', params);
+  const res = await request.post<boolean>('/storage/config/app/modify', params, {
+    headers: { 'App-Id': params.appId },
+  });
   return res.body;
 }
