@@ -1,11 +1,11 @@
-import { ArexPaneFC, CollapseTable, getLocalStorage, useTranslation } from '@arextest/arex-core';
+import { ArexPaneFC, CollapseTable, useTranslation } from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { Alert } from 'antd';
 import { merge } from 'lodash';
 import React, { useMemo, useRef, useState } from 'react';
 
-import { EMAIL_KEY, PanesType } from '@/constant';
+import { PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ApplicationService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
@@ -39,16 +39,12 @@ const ReplayPage: ArexPaneFC = (props) => {
     setRefreshDep(new Date().getTime()); // 触发 ReplayTable 组件请求更新
   };
 
-  const email = getLocalStorage<string>(EMAIL_KEY);
-  const [isOwner, setIsOwner] = useState(true);
   const [hasOwner, setHasOwner] = useState(true);
   const appOwnerConfigRef = useRef<AppOwnerConfigRef>(null);
 
   const { data: appInfo, refresh: getAppInfo } = useRequest(ApplicationService.getAppInfo, {
     defaultParams: [appId],
     onSuccess(res) {
-      const isOwner = !!res.owners?.includes?.(email as string);
-      setIsOwner(isOwner);
       setHasOwner(!!res.owners?.length);
       !res.owners?.length && appOwnerConfigRef?.current?.open();
     },
@@ -75,7 +71,7 @@ const ReplayPage: ArexPaneFC = (props) => {
       <AppTitle
         appId={appId}
         appName={appInfo?.appName}
-        readOnly={!isOwner}
+        readOnly={!hasOwner}
         onRefresh={handleRefreshDep}
       />
 
@@ -92,7 +88,7 @@ const ReplayPage: ArexPaneFC = (props) => {
           <PlanItem
             appId={appId}
             selectedPlan={selectedPlan}
-            readOnly={!isOwner}
+            readOnly={!hasOwner}
             filter={(record) => !!record.totalCaseCount}
             onRefresh={handleRefreshDep}
           />
