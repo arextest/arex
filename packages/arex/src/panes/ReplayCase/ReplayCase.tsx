@@ -31,7 +31,6 @@ import { InfoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportS
 import { MessageMap } from '@/services/ScheduleService';
 
 import Case, { CaseProps } from './Case';
-import treeData from './mock.json';
 import SaveCase, { SaveCaseRef } from './SaveCase';
 
 const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
