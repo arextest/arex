@@ -2,41 +2,17 @@ import { DownOutlined } from '@ant-design/icons';
 import { getLocalStorage, useTranslation } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import {
-  App,
-  Button,
-  ConfigProvider,
-  Form,
-  FormProps,
-  Input,
-  Modal,
-  Tooltip,
-  TreeSelect,
-  Typography,
-} from 'antd';
+import { App, Button, Form, Input, Modal, Tooltip, Typography } from 'antd';
 import { CollectionsSaveRequest } from 'arex-common';
-import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
-import { CollectionNodeType, EMAIL_KEY } from '@/constant';
-import treeData from '@/panes/ReplayCase/mock.json';
+import { EMAIL_KEY } from '@/constant';
 import { FileSystemService } from '@/services';
-import {
-  AddItemFromRecordByDefaultReq,
-  AddItemFromRecordReq,
-  CollectionType,
-  dddItemFromRecordByDefault,
-} from '@/services/FileSystemService';
+import { AddItemFromRecordByDefaultReq, AddItemFromRecordReq } from '@/services/FileSystemService';
 import { ReplayCaseType } from '@/services/ReportService';
 import { useCollections, useWorkspaces } from '@/store';
 
 const { Text } = Typography;
-
-type OptionType = {
-  label: string;
-  value: string;
-  disabled?: boolean;
-  children?: OptionType[];
-};
 
 export type SaveCaseRef = {
   openModal: (record: ReplayCaseType) => void;
@@ -53,17 +29,14 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
   const { notification } = App.useApp();
   const { t } = useTranslation(['components', 'common', 'page']);
   const userName = getLocalStorage(EMAIL_KEY) as string;
-
-  // appName > interfaceName
   const { collectionsTreeData, getPath, getCollections } = useCollections();
   const { activeWorkspaceId: workspaceId } = useWorkspaces();
 
   const [form] = Form.useForm();
   const [open, setOpen] = useState<boolean>(false);
-  const [open1, setOpen1] = useState<boolean>(false);
+  // const [open1, setOpen1] = useState<boolean>(false);
 
   const [title, setTitle] = useState('');
-  const [pathTo, setPathTo] = useState('');
 
   useImperativeHandle(ref, () => ({
     openModal: (record) => {
@@ -75,22 +48,6 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
       });
     },
   }));
-
-  const collectionTreeSelectData = useMemo(() => {
-    const mapTree = (tree: CollectionType[]) => {
-      const result: OptionType[] = [];
-      for (const node of tree) {
-        result.push({
-          label: node.nodeName,
-          value: node.infoId,
-          disabled: node.nodeType !== CollectionNodeType.interface,
-          children: node.nodeType === CollectionNodeType.folder ? mapTree(node.children || []) : [],
-        });
-      }
-      return result;
-    };
-    return mapTree(collectionsTreeData);
-  }, [collectionsTreeData]);
 
   const { run: addItemFromRecord, loading } = useRequest(
     (values: Pick<AddItemFromRecordReq, 'parentPath' | 'nodeName' | 'recordId'>) =>
@@ -145,22 +102,40 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
     });
   };
 
-  const handleValuesChange: FormProps['onValuesChange'] = (value, values) => {
-    const touched = Object.prototype.hasOwnProperty.call(value, 'savePath');
-
-    touched &&
-      setPathTo(
-        getPath(values.savePath)
-          .map((path) => path.name)
-          .join('/'),
-      );
-  };
-
   const handleClose = () => {
     setOpen(false);
     form.resetFields();
-    setPathTo('');
   };
+
+  // function addData(tree) {
+  //   return tree.map((item) => {
+  //     if (item.children && item.children.length > 0) {
+  //       return {
+  //         type: item.nodeType,
+  //         name: item.nodeName,
+  //         key: item.infoId,
+  //         item: addData(item.children),
+  //         request: item.method
+  //           ? {
+  //               method: item.method,
+  //             }
+  //           : undefined,
+  //       };
+  //     } else {
+  //       return {
+  //         type: item.nodeType,
+  //         name: item.nodeName,
+  //         key: item.infoId,
+  //         item: [],
+  //         request: item.method
+  //           ? {
+  //               method: item.method,
+  //             }
+  //           : undefined,
+  //       };
+  //     }
+  //   });
+  // }
 
   return (
     <>
@@ -173,12 +148,7 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
         onOk={handleSubmit}
         confirmLoading={loading}
       >
-        <Form
-          form={form}
-          onValuesChange={handleValuesChange}
-          layout='vertical'
-          name='form_in_modal'
-        >
+        <Form form={form} layout='vertical' name='form_in_modal'>
           <Form.Item hidden name='recordId' label='recordId'>
             <Input />
           </Form.Item>
@@ -209,52 +179,40 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
               </span>{' '}
               {props.operationName}
             </Text>
-            <Tooltip title={t('replay.saveto', { ns: 'page' })}>
-              <Button
-                onClick={() => {
-                  setOpen1(true);
-                }}
-                size={'small'}
-                css={css`
-                  padding: 0 4px !important;
-                  margin-left: 10px;
-                `}
-              >
-                <DownOutlined />
-              </Button>
-            </Tooltip>
+            {/*<Tooltip title={t('replay.saveto', { ns: 'page' })}>*/}
+            {/*  <Button*/}
+            {/*    onClick={() => {*/}
+            {/*      setOpen1(true);*/}
+            {/*    }}*/}
+            {/*    size={'small'}*/}
+            {/*    css={css`*/}
+            {/*      padding: 0 4px !important;*/}
+            {/*      margin-left: 10px;*/}
+            {/*    `}*/}
+            {/*  >*/}
+            {/*    <DownOutlined />*/}
+            {/*  </Button>*/}
+            {/*</Tooltip>*/}
           </div>
         </Form>
       </Modal>
 
-      <CollectionsSaveRequest
-        title={t('replay.saveCase')}
-        // @ts-ignore
-        treeData={treeData}
-        open={open1}
-        requestName={form.getFieldsValue().recordId}
-        onCreateFolder={(newFolderName, parentFolderKey) => {
-          console.log(newFolderName, parentFolderKey);
-          return new Promise((resolve) => {});
-        }}
-        onSave={(folderKey, requestName) => {
-          console.log(folderKey, requestName);
-
-          console.log({
-            parentPath: getPath(folderKey).map((path) => path.id),
-            nodeName: requestName,
-            recordId: form.getFieldsValue().recordId,
-          });
-          // addItemFromRecord({
-          //   parentPath: getPath(folderKey).map((path) => path.id),
-          //   nodeName: requestName,
-          //   recordId: form.getFieldsValue().recordId,
-          // });
-        }}
-        onClose={() => {
-          setOpen1(false);
-        }}
-      />
+      {/*<CollectionsSaveRequest*/}
+      {/*  title={t('replay.saveCase')}*/}
+      {/*  treeData={addData(collectionsTreeData)}*/}
+      {/*  open={open1}*/}
+      {/*  requestName={form.getFieldsValue().recordId}*/}
+      {/*  onSave={(folderKey, requestName) => {*/}
+      {/*    addItemFromRecord({*/}
+      {/*      parentPath: getPath(folderKey).map((path) => path.id),*/}
+      {/*      nodeName: requestName,*/}
+      {/*      recordId: form.getFieldsValue().recordId,*/}
+      {/*    });*/}
+      {/*  }}*/}
+      {/*  onClose={() => {*/}
+      {/*    setOpen1(false);*/}
+      {/*  }}*/}
+      {/*/>*/}
     </>
   );
 });

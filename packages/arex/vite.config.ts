@@ -37,22 +37,22 @@ export default defineConfig({
     port: 16888,
     proxy: {
       '/report': {
-        target: 'http://10.5.153.151:8090',
+        target: 'http://10.5.153.1:8090',
         changeOrigin: true,
         rewrite: (path) => path.replace('/report', '/api'),
       },
       '/schedule': {
-        target: 'http://10.5.153.151:8092',
+        target: 'http://10.5.153.1:8092',
         changeOrigin: true,
         rewrite: (path) => path.replace('/schedule', '/api'),
       },
       '/storage': {
-        target: 'http://10.5.153.151:8093',
+        target: 'http://10.5.153.1:8093',
         changeOrigin: true,
         rewrite: (path) => path.replace('/storage', '/api'),
       },
       '^/node/.*': {
-        target: 'http://10.5.153.151:10001',
+        target: 'http://10.5.153.1:10001',
         changeOrigin: true,
         rewrite: (path) => path.replace('/node', '/'),
       },
