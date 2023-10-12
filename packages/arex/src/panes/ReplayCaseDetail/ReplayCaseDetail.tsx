@@ -7,9 +7,9 @@ import React, { ReactNode, useEffect, useState } from 'react';
 
 import { APP_ID_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
-import { StorageService } from '@/services';
-import { ReplayCaseType } from '@/services/ReportService';
-import { RecordResult } from '@/services/StorageService';
+import { ReportService } from '@/services';
+import { RecordResult, ReplayCaseType } from '@/services/ReportService';
+import { useMenusPanes } from '@/store';
 
 import CaseDetailTab from './CaseDetailTab';
 
@@ -18,11 +18,17 @@ type TagType = { label: ReactNode; key: string; children: ReactNode };
 const ReplayCaseDetail: ArexPaneFC<ReplayCaseType & { appId: string }> = (props) => {
   const { token } = theme.useToken();
   const { t } = useTranslation(['components']);
+  const { activePane } = useMenusPanes();
   const navPane = useNavPane();
 
   const [tabItems, setTabItems] = useState<TagType[]>([]);
 
-  useRequest(StorageService.viewRecord, {
+  useEffect(() => {
+    activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, props.data.appId);
+    return () => clearLocalStorage(APP_ID_KEY);
+  }, [activePane?.id]);
+
+  useRequest(ReportService.viewRecord, {
     defaultParams: [
       {
         recordId: props.data.recordId,
@@ -61,8 +67,6 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseType & { appId: string }> = (props)
       );
     },
   });
-
-  activePane?.id;
 
   return (
     <>
