@@ -6,8 +6,6 @@ export interface RemoveDynamicClassSettingReq {
 }
 
 export async function removeDynamicClass(params: RemoveDynamicClassSettingReq) {
-  const res = await request.post<boolean>('/report/config/dynamicClass/modify/REMOVE', params, {
-    headers: { 'App-Id': params.appId },
-  });
+  const res = await request.post<boolean>('/report/config/dynamicClass/modify/REMOVE', params);
   return res.body;
 }

@@ -18,10 +18,6 @@ export type QueryRecordDynamicClassRes = DynamicClass[] | null;
 export async function queryDynamicClass(params: QueryRecordDynamicClassReq) {
   const res = await request.get<QueryRecordDynamicClassRes | undefined>(
     '/report/config/dynamicClass/useResultAsList/appId/' + params.appId,
-    undefined,
-    {
-      headers: { 'App-Id': params.appId },
-    },
   );
   return res.body;
 }

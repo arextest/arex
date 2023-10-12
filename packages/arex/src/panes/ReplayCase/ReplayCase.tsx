@@ -9,31 +9,36 @@ import {
   i18n,
   I18nextLng,
   jsonIndexPathFilter,
+  Label,
   PaneDrawer,
   PanesTitle,
   PathHandler,
+  setLocalStorage,
   TargetEditor,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
+import { clearLocalStorage } from '@arextest/arex-core/src';
 import { useRequest } from 'ahooks';
 import { App, Button, Modal } from 'antd';
 import dayjs from 'dayjs';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { EMAIL_KEY, PanesType } from '@/constant';
+import { APP_ID_KEY, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
 import { DependencyParams, ExpirationType } from '@/services/ComparisonService';
 import { InfoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
 import { MessageMap } from '@/services/ScheduleService';
+import { useMenusPanes } from '@/store';
 
 import Case, { CaseProps } from './Case';
 import SaveCase, { SaveCaseRef } from './SaveCase';
 
 const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
   const { message, notification } = App.useApp();
+  const { activePane } = useMenusPanes();
   const email = getLocalStorage<string>(EMAIL_KEY);
   const { t } = useTranslation(['components']);
   const navPane = useNavPane();
@@ -49,6 +54,11 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   const [selectedDependency, setSelectedDependency] = useState<InfoItem>();
 
   const saveCaseRef = useRef<SaveCaseRef>(null);
+
+  useEffect(() => {
+    activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, props.data.appId);
+    return () => clearLocalStorage(APP_ID_KEY);
+  }, [activePane?.id]);
 
   const {
     data: fullLinkInfo,
@@ -201,7 +211,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
       <PanesTitle
         title={
           <span>
-            {t('replay.caseServiceAPI')}:{' '}
+            <Label>{t('replay.caseServiceAPI')}</Label>
             {decodeURIComponent(props.data.operationName || 'unknown')}
           </span>
         }

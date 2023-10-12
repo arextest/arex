@@ -52,9 +52,7 @@ export type CreatePlanRes = {
 export function createPlan(params: CreatePlanReq) {
   return new Promise<CreatePlanRes>((resolve, reject) => {
     return axios
-      .post<CreatePlanRes>('/schedule/createPlan', params, {
-        headers: { 'App-Id': params.appId },
-      })
+      .post<CreatePlanRes>('/schedule/createPlan', params)
       .then((res) => resolve(res.data))
       .catch((err) => reject(err));
   });

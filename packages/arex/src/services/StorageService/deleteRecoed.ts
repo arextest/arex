@@ -18,9 +18,6 @@ export async function deleteRecord(params: DeleteRecordReq): Promise<boolean> {
   const res = await axios.post<{ responseStatusType: ResponseStatusType }>(
     '/storage/storage/edit/removeBy/',
     params,
-    {
-      headers: { 'App-Id': params.appId },
-    },
   );
 
   return res.data.responseStatusType.responseCode === 0;

@@ -15,10 +15,6 @@ export type QueryReplaySettingRes = {
 export async function queryReplaySetting(params: { appId: string }) {
   const res = await request.get<QueryReplaySettingRes>(
     '/report/config/schedule/useResult/appId/' + params.appId,
-    undefined,
-    {
-      headers: { 'App-Id': params.appId },
-    },
   );
   return res.body;
 }

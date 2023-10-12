@@ -12,8 +12,6 @@ export interface QueryCountRecordRes {
 
 export async function queryCountRecord(params: QueryCountRecordReq) {
   return request
-    .post<QueryCountRecordRes>('/report/report/countRecord', params, {
-      headers: { 'App-Id': params.appId },
-    })
+    .post<QueryCountRecordRes>('/report/report/countRecord', params)
     .then((res) => Promise.resolve(res.body.recordedCaseCount));
 }

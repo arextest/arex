@@ -22,9 +22,7 @@ export interface QueryContractRes {
 }
 
 export async function queryContract(params: QueryContractReq) {
-  const res = await request.post<QueryContractRes>('/report/report/queryContract', params, {
-    headers: { 'App-Id': params.appId },
-  });
+  const res = await request.post<QueryContractRes>('/report/report/queryContract', params);
 
   return res.body;
 }

@@ -15,8 +15,6 @@ export interface UpdateRecordSettingReq {
 }
 
 export async function updateRecordSetting(params: UpdateRecordSettingReq) {
-  const res = await request.post<boolean>('/report/config/serviceCollect/modify/UPDATE', params, {
-    headers: { 'App-Id': params.appId },
-  });
+  const res = await request.post<boolean>('/report/config/serviceCollect/modify/UPDATE', params);
   return res.body;
 }

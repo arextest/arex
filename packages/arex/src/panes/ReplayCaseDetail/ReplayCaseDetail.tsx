@@ -1,10 +1,11 @@
 import { HomeOutlined } from '@ant-design/icons';
-import { ArexPaneFC, PanesTitle, useTranslation } from '@arextest/arex-core';
+import { ArexPaneFC, PanesTitle, setLocalStorage, useTranslation } from '@arextest/arex-core';
+import { clearLocalStorage } from '@arextest/arex-core/src';
 import { useRequest } from 'ahooks';
 import { Badge, Button, Tabs, theme } from 'antd';
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 
-import { PanesType } from '@/constant';
+import { APP_ID_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { StorageService } from '@/services';
 import { ReplayCaseType } from '@/services/ReportService';
@@ -60,6 +61,8 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseType & { appId: string }> = (props)
       );
     },
   });
+
+  activePane?.id;
 
   return (
     <>

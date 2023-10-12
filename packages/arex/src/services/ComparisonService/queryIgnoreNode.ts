@@ -30,9 +30,6 @@ export async function queryIgnoreNode(params: QueryNodeReq<'Global'>) {
   const res = await request.post<QueryIgnoreNode[]>(
     '/report/config/comparison/exclusions/queryComparisonConfig',
     { ...params, operationId: params.operationId || undefined },
-    {
-      headers: { 'App-Id': params.appId },
-    },
   );
   return res.body
     .map<QueryIgnoreNode>((item) => ({

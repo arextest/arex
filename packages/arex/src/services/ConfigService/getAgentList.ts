@@ -13,10 +13,6 @@ export interface AgentData {
 export async function getAgentList(appId: string) {
   const res = await request.get<AgentData[]>(
     '/report/config/applicationInstances/useResultAsList/appId/' + appId,
-    undefined,
-    {
-      headers: { 'App-Id': appId },
-    },
   );
   return res.body;
 }

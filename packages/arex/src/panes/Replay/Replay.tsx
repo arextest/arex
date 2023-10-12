@@ -1,14 +1,16 @@
-import { ArexPaneFC, CollapseTable, useTranslation } from '@arextest/arex-core';
+import { ArexPaneFC, CollapseTable, setLocalStorage, useTranslation } from '@arextest/arex-core';
+import { clearLocalStorage } from '@arextest/arex-core/src';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { Alert } from 'antd';
 import { merge } from 'lodash';
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import { PanesType } from '@/constant';
+import { APP_ID_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ApplicationService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
+import { useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
 import AppOwnersConfig, { AppOwnerConfigRef } from './AppOwnersConfig';
@@ -18,12 +20,18 @@ import PlanReport, { PlanReportProps } from './PlanReport';
 
 const ReplayPage: ArexPaneFC = (props) => {
   const navPane = useNavPane();
+  const { activePane } = useMenusPanes();
   const { t } = useTranslation('components');
 
   const [replayWrapperRef] = useAutoAnimate();
 
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
   const { id: appId } = useMemo(() => decodePaneKey(props.paneKey), [props.paneKey]);
+
+  useEffect(() => {
+    activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, appId);
+    return () => clearLocalStorage(APP_ID_KEY);
+  }, [activePane?.id]);
 
   const handleSelectPlan: PlanReportProps['onSelectedPlanChange'] = (plan, current, row) => {
     plan.planId === selectedPlan?.planId ? setSelectedPlan(undefined) : setSelectedPlan(plan);
@@ -39,7 +47,7 @@ const ReplayPage: ArexPaneFC = (props) => {
     setRefreshDep(new Date().getTime()); // 触发 ReplayTable 组件请求更新
   };
 
-  const [hasOwner, setHasOwner] = useState(true);
+  const [hasOwner, setHasOwner] = useState<boolean>(false);
   const appOwnerConfigRef = useRef<AppOwnerConfigRef>(null);
 
   const { data: appInfo, refresh: getAppInfo } = useRequest(ApplicationService.getAppInfo, {

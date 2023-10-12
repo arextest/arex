@@ -8,8 +8,6 @@ export type UpdateReplaySettingReq = {
 };
 
 export async function updateReplaySetting(params: UpdateReplaySettingReq) {
-  const res = await request.post<boolean>('/report/config/schedule/modify/UPDATE', params, {
-    headers: { 'App-Id': params.appId },
-  });
+  const res = await request.post<boolean>('/report/config/schedule/modify/UPDATE', params);
   return res.body;
 }

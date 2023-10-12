@@ -1,9 +1,12 @@
-import { ArexPaneFC, css, useTranslation } from '@arextest/arex-core';
+import { ArexPaneFC, css, setLocalStorage, useTranslation } from '@arextest/arex-core';
+import { clearLocalStorage } from '@arextest/arex-core/src';
 import { Tabs } from 'antd';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
+import { APP_ID_KEY } from '@/constant';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ApplicationDataType } from '@/services/ApplicationService';
+import { useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
 import SettingImportYaml from './ImportYaml';
@@ -13,7 +16,8 @@ import SettingReplay from './Replay';
 
 const AppSetting: ArexPaneFC<ApplicationDataType> = (props) => {
   const { paneKey } = props;
-  const { id: appId } = decodePaneKey(paneKey);
+  const { activePane } = useMenusPanes();
+  const { id: appId } = useMemo(() => decodePaneKey(paneKey), [paneKey]);
   const { t } = useTranslation(['components']);
 
   const TabsItems = useMemo(
@@ -46,6 +50,11 @@ const AppSetting: ArexPaneFC<ApplicationDataType> = (props) => {
     ],
     [appId, t],
   );
+
+  useEffect(() => {
+    activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, appId);
+    return () => clearLocalStorage(APP_ID_KEY);
+  }, [activePane?.id]);
 
   return (
     <Tabs

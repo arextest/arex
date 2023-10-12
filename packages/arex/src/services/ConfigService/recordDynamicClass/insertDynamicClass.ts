@@ -8,8 +8,6 @@ export interface InsertDynamicClassReq {
   configType: number;
 }
 export async function insertDynamicClass(params: InsertDynamicClassReq) {
-  const res = await request.post<boolean>('/report/config/dynamicClass/modify/INSERT', params, {
-    headers: { 'App-Id': params.appId },
-  });
+  const res = await request.post<boolean>('/report/config/dynamicClass/modify/INSERT', params);
   return res.body;
 }

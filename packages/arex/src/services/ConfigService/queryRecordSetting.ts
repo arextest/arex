@@ -26,10 +26,6 @@ export interface QueryRecordSettingRes {
 export async function queryRecordSetting(params: QueryRecordSettingReq) {
   const res = await request.get<QueryRecordSettingRes>(
     '/report/config/serviceCollect/useResult/appId/' + params.appId,
-    undefined,
-    {
-      headers: { 'App-Id': params.appId },
-    },
   );
   return res.body;
 }
