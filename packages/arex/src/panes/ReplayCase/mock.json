@@ -1,0 +1,1853 @@
+[
+  {
+    "type": 3,
+    "name": "report",
+    "key": "64539fa9b8aea30806cdcc97",
+    "item": [
+      {
+        "type": 3,
+        "name": "environment",
+        "key": "650d3fbf49270d7732c26a4a",
+        "item": [
+          {
+            "type": 1,
+            "name": "/api/environment/saveEnvironment",
+            "key": "650d3fd349270d7732c26a54",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          }
+        ]
+      },
+      {
+        "type": 3,
+        "name": "Desensitization",
+        "key": "64e31f00160cc73cab6617bb",
+        "item": [
+          {
+            "type": 1,
+            "name": "saveJar",
+            "key": "64e31f25160cc73cab6617bc",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "listJar",
+            "key": "64e71038f005a82d567b2acc",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "deleteJar",
+            "key": "64e7103af005a82d567b2acd",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          }
+        ]
+      },
+      {
+        "type": 3,
+        "name": "login",
+        "key": "64dc620198a374766835e350",
+        "item": [
+          {
+            "type": 1,
+            "name": "listVerifiedUser",
+            "key": "652102696e1282198246319b",
+            "item": [],
+            "request": {
+              "method": "GET"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/api/login/userProfile",
+            "key": "64f93c47f5ec181d2fe5193d",
+            "item": [],
+            "request": {
+              "method": "GET"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/api/login/loginAsGuest",
+            "key": "651162b9933ad65e8394ef8b",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/api/login/oauthLogin",
+            "key": "64dc621498a374766835e351",
+            "item": [
+              {
+                "type": 2,
+                "name": "GithubOauth",
+                "key": "64dccd1398a374766835e366",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "GoogleOauth",
+                "key": "64dccd2a98a374766835e368",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "GitlabOauth",
+                "key": "64e2d708e8279b6214c8f8cb",
+                "item": []
+              }
+            ],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/api/login/oauthClientId/{oauthType}",
+            "key": "64ddbc48c3680b4dc763c51d",
+            "item": [
+              {
+                "type": 2,
+                "name": "GithubOauth",
+                "key": "64ddbdf6c3680b4dc763c528",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "GoogleOauth",
+                "key": "64ddbe05c3680b4dc763c52a",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "GitlabOauth",
+                "key": "64e42192adb6af21348822e3",
+                "item": []
+              }
+            ],
+            "request": {
+              "method": "GET"
+            }
+          }
+        ]
+      },
+      {
+        "type": 3,
+        "name": "record",
+        "key": "6488174a632978127d0bc97a",
+        "item": [
+          {
+            "type": 1,
+            "name": "listRecord",
+            "key": "64881768632978127d0bc9a7",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "aggCount",
+            "key": "64882b1988269b4f166c6c3c",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "countRecord",
+            "key": "6488176c632978127d0bc9b0",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          }
+        ]
+      },
+      {
+        "type": 3,
+        "name": "replay",
+        "key": "64803eefd7520735fd9621ea",
+        "item": [
+          {
+            "type": 1,
+            "name": "queryPlanStatistics",
+            "key": "65016dce1fcad3493250522e",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          }
+        ]
+      },
+      {
+        "type": 1,
+        "name": "analyzeCompareResults",
+        "key": "64803effd7520735fd9621f8",
+        "item": [],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "syncResponseContract",
+        "key": "64abe9b5f7c24a6e7f7206cf",
+        "item": [],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "/vi/health",
+        "key": "64ec45276f939b0324f145ff",
+        "item": [],
+        "request": {
+          "method": "GET"
+        }
+      },
+      {
+        "type": 3,
+        "name": "contract",
+        "key": "64abe984f7c24a6e7f720698",
+        "item": [
+          {
+            "type": 1,
+            "name": "queryContract",
+            "key": "64abea69f7c24a6e7f720762",
+            "item": [
+              {
+                "type": 2,
+                "name": "查询appid",
+                "key": "64b4fa8e472c8417cf3f509f",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "查询接口",
+                "key": "64b4faa5472c8417cf3f50bb",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "查询外部依赖",
+                "key": "64b4fab3472c8417cf3f50ce",
+                "item": []
+              }
+            ],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "overwriteContract",
+            "key": "64abea93f7c24a6e7f720786",
+            "item": [
+              {
+                "type": 2,
+                "name": "应用",
+                "key": "64b4fbec472c8417cf3f518c",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "接口",
+                "key": "64b4fbea472c8417cf3f5181",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "外部依赖",
+                "key": "64b4fbe7472c8417cf3f5178",
+                "item": []
+              }
+            ],
+            "request": {
+              "method": "POST"
+            }
+          }
+        ]
+      },
+      {
+        "type": 3,
+        "name": "config",
+        "key": "646b5c1f2fb2fb45595e4fa2",
+        "item": [
+          {
+            "type": 3,
+            "name": "ignoreCategory",
+            "key": "64ed8d2b938d151cc005cf13",
+            "item": [
+              {
+                "type": 1,
+                "name": "listCategoryType",
+                "key": "64ed91d479887145f73678dd",
+                "item": [],
+                "request": {
+                  "method": "GET"
+                }
+              },
+              {
+                "type": 1,
+                "name": "modify",
+                "key": "64ed8d3d938d151cc005cf2c",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              },
+              {
+                "type": 1,
+                "name": "queryIgnoreCategory",
+                "key": "64ef40d29479752b606b16bd",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              }
+            ]
+          },
+          {
+            "type": 3,
+            "name": "summary",
+            "key": "64d5e80b0c098656341ce318",
+            "item": [
+              {
+                "type": 1,
+                "name": "/config/comparison/summary/queryByAppId/{appId}",
+                "key": "649adc57af7ee71408134638",
+                "item": [],
+                "request": {
+                  "method": "GET"
+                }
+              },
+              {
+                "type": 1,
+                "name": "/config/comparison/summary/queryByAppId/{appId}_copy",
+                "key": "65139575dcb972595e5ad51c",
+                "item": [],
+                "request": {
+                  "method": "GET"
+                }
+              }
+            ]
+          },
+          {
+            "type": 3,
+            "name": "reference",
+            "key": "64d375e755829e3920b06f7f",
+            "item": [
+              {
+                "type": 1,
+                "name": "/comparison/reference/modify/INSERT",
+                "key": "64d3761155829e3920b06fa2",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              },
+              {
+                "type": 1,
+                "name": "/comparison/reference/modify/UPDATE",
+                "key": "64d47eea64e8ce078c0d0eeb",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              }
+            ]
+          },
+          {
+            "type": 3,
+            "name": "listkey",
+            "key": "64d49af6a873466bf6aa1cd5",
+            "item": [
+              {
+                "type": 1,
+                "name": "/comparison/listsort/modify/INSERT",
+                "key": "64d49af6a873466bf6aa1cd6",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              },
+              {
+                "type": 1,
+                "name": "/comparison/listsort/modify/UPDATE",
+                "key": "64d49af6a873466bf6aa1cd7",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              }
+            ]
+          },
+          {
+            "type": 3,
+            "name": "encryption",
+            "key": "64cc78b8778cb3009d7e821d",
+            "item": [
+              {
+                "type": 1,
+                "name": "/comparison/encryption/queryComparisonConfig",
+                "key": "64cc78c7778cb3009d7e822b",
+                "item": [
+                  {
+                    "type": 2,
+                    "name": "查询app全局",
+                    "key": "64cc935e9104317c92894ed9",
+                    "item": []
+                  },
+                  {
+                    "type": 2,
+                    "name": "查询接口",
+                    "key": "64cc935b9104317c92894ed0",
+                    "item": []
+                  },
+                  {
+                    "type": 2,
+                    "name": "查询依赖",
+                    "key": "64cc93589104317c92894ec7",
+                    "item": []
+                  }
+                ],
+                "request": {
+                  "method": "POST"
+                }
+              },
+              {
+                "type": 1,
+                "name": "/comparison/exclusions/modify/{Modified_type}",
+                "key": "64cc78c1778cb3009d7e8222",
+                "item": [
+                  {
+                    "type": 2,
+                    "name": "INSERT",
+                    "key": "64ccb60fe83cbb4be8935cd0",
+                    "item": []
+                  },
+                  {
+                    "type": 2,
+                    "name": "DELETE",
+                    "key": "64ccb60be83cbb4be8935cc7",
+                    "item": []
+                  },
+                  {
+                    "type": 2,
+                    "name": "UPDATE",
+                    "key": "64ccb608e83cbb4be8935cbe",
+                    "item": []
+                  }
+                ],
+                "request": {
+                  "method": "POST"
+                }
+              }
+            ]
+          },
+          {
+            "type": 3,
+            "name": "agent",
+            "key": "64b74cc121c89f5eb1b42c51",
+            "item": [
+              {
+                "type": 1,
+                "name": "/dynamicClass/useResultAsList/appId/",
+                "key": "64af5c8e82513b2cff2be290",
+                "item": [],
+                "request": {
+                  "method": "GET"
+                }
+              },
+              {
+                "type": 1,
+                "name": "/config/agent/agentStatus",
+                "key": "64b74cce21c89f5eb1b42c60",
+                "item": [
+                  {
+                    "type": 2,
+                    "name": "SHUTDOWN逻辑",
+                    "key": "64f8189b47151d5a7a01aeb0",
+                    "item": []
+                  },
+                  {
+                    "type": 2,
+                    "name": "时间不一致",
+                    "key": "64b74d1921c89f5eb1b42c8f",
+                    "item": []
+                  },
+                  {
+                    "type": 2,
+                    "name": "时间一致",
+                    "key": "64f818b647151d5a7a01aec1",
+                    "item": []
+                  }
+                ],
+                "request": {
+                  "method": "POST"
+                }
+              }
+            ]
+          },
+          {
+            "type": 3,
+            "name": "dynamic",
+            "key": "64af5f9d82513b2cff2be42a",
+            "item": [
+              {
+                "type": 1,
+                "name": "删除",
+                "key": "64b77f7625518c3f1ae02191",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              },
+              {
+                "type": 1,
+                "name": "修改",
+                "key": "64b77f6625518c3f1ae02186",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              },
+              {
+                "type": 1,
+                "name": "新增",
+                "key": "64b77f5525518c3f1ae02175",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              }
+            ]
+          },
+          {
+            "type": 3,
+            "name": "operation",
+            "key": "64abec92f7c24a6e7f720915",
+            "item": [
+              {
+                "type": 1,
+                "name": "applicationOperation",
+                "key": "64abeca3f7c24a6e7f72091e",
+                "item": [],
+                "request": {
+                  "method": "GET"
+                }
+              }
+            ]
+          },
+          {
+            "type": 3,
+            "name": "application",
+            "key": "649820f26b54c526b0de2018",
+            "item": [
+              {
+                "type": 1,
+                "name": "/useResult/operationId/{operationId}",
+                "key": "64a6a8a32648c2511f7eabce",
+                "item": [],
+                "request": {
+                  "method": "GET"
+                }
+              },
+              {
+                "type": 1,
+                "name": "/modify/REMOVE",
+                "key": "649821006b54c526b0de2025",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              },
+              {
+                "type": 1,
+                "name": "/regressionList_copy",
+                "key": "649828986b54c526b0de2379",
+                "item": [
+                  {
+                    "type": 2,
+                    "name": "case",
+                    "key": "64faca3a5421ea59dcc85a9f",
+                    "item": []
+                  }
+                ],
+                "request": {
+                  "method": "GET"
+                }
+              }
+            ]
+          },
+          {
+            "type": 3,
+            "name": "schedule",
+            "key": "648c2031309b740a44911b7a",
+            "item": [
+              {
+                "type": 1,
+                "name": "/modify/UPDATE",
+                "key": "648c2052309b740a44911b90",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              },
+              {
+                "type": 1,
+                "name": "/useResult/appId/{appId}",
+                "key": "6498ff416b54c526b0de7b3f",
+                "item": [],
+                "request": {
+                  "method": "GET"
+                }
+              }
+            ]
+          },
+          {
+            "type": 3,
+            "name": "exclusions",
+            "key": "647ff8c8eab91f2a064d92fa",
+            "item": [
+              {
+                "type": 1,
+                "name": "/comparison/exclusions//queryComparisonConfig",
+                "key": "64a68e5c11296a64006e4955",
+                "item": [
+                  {
+                    "type": 2,
+                    "name": "查询app全局",
+                    "key": "64a6a3042648c2511f7ea6d5",
+                    "item": []
+                  },
+                  {
+                    "type": 2,
+                    "name": "查询接口",
+                    "key": "64a6a31c2648c2511f7ea6f6",
+                    "item": []
+                  },
+                  {
+                    "type": 2,
+                    "name": "查询依赖",
+                    "key": "64a6a32c2648c2511f7ea70d",
+                    "item": []
+                  }
+                ],
+                "request": {
+                  "method": "POST"
+                }
+              },
+              {
+                "type": 1,
+                "name": "/comparison/exclusions/modify/INSERT",
+                "key": "647ff8d8eab91f2a064d9312",
+                "item": [
+                  {
+                    "type": 2,
+                    "name": "case",
+                    "key": "6502a9a2cad0e11cf31c9509",
+                    "item": []
+                  },
+                  {
+                    "type": 2,
+                    "name": "全局配置添加",
+                    "key": "64eeae0b7d1fa01a37de88e8",
+                    "item": []
+                  },
+                  {
+                    "type": 2,
+                    "name": "添加dependency配置byName",
+                    "key": "64b0fd614153e772c2a11065",
+                    "item": []
+                  }
+                ],
+                "request": {
+                  "method": "POST"
+                }
+              }
+            ]
+          },
+          {
+            "type": 3,
+            "name": "yamltemplate",
+            "key": "6475ed876a473801032c1e03",
+            "item": [
+              {
+                "type": 1,
+                "name": "queryConfigTemplate",
+                "key": "6475ee086a473801032c1ebb",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              },
+              {
+                "type": 1,
+                "name": "pushConfigTemplate",
+                "key": "649a5862b10d123a5d6640d6",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              }
+            ]
+          },
+          {
+            "type": 3,
+            "name": "serviceCollect",
+            "key": "64880b6c8c6bdd591eac6bb5",
+            "item": [
+              {
+                "type": 1,
+                "name": "/api/config/serviceCollect/updateCustomConfig",
+                "key": "64ffd0a13837bf3906c9277e",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              },
+              {
+                "type": 1,
+                "name": "/api/config/serviceCollect/useResult/appId/",
+                "key": "64af5dfc82513b2cff2be350",
+                "item": [],
+                "request": {
+                  "method": "GET"
+                }
+              },
+              {
+                "type": 1,
+                "name": "/api/config/serviceCollect/modify/UPDATE",
+                "key": "64880c2d8c6bdd591eac6c4f",
+                "item": [
+                  {
+                    "type": 2,
+                    "name": "测试sampleReate=0保存失败问题",
+                    "key": "64ec5abd71ca007ef8df95a3",
+                    "item": []
+                  }
+                ],
+                "request": {
+                  "method": "POST"
+                }
+              }
+            ]
+          },
+          {
+            "type": 3,
+            "name": "applicationServiceConfig",
+            "key": "646b5c5e2fb2fb45595e4ffa",
+            "item": [
+              {
+                "type": 1,
+                "name": "/useResult/appId/{appId}",
+                "key": "646b5d9a2fb2fb45595e5125",
+                "item": [],
+                "request": {
+                  "method": "GET"
+                }
+              },
+              {
+                "type": 1,
+                "name": "/useResultAsList/appId/{appId}",
+                "key": "646b5c512fb2fb45595e4feb",
+                "item": [],
+                "request": {
+                  "method": "GET"
+                }
+              }
+            ]
+          },
+          {
+            "type": 3,
+            "name": "applicationInstances",
+            "key": "64881e0329bce2482d633fba",
+            "item": [
+              {
+                "type": 1,
+                "name": "/api/config/applicationInstances/modify/REMOVE",
+                "key": "64df01c5fe7a5276e2650e0e",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              },
+              {
+                "type": 1,
+                "name": "/api/config/applicationInstances/useResultAsList/appId/{appId}",
+                "key": "64881e4929bce2482d634016",
+                "item": [],
+                "request": {
+                  "method": "GET"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": 3,
+        "name": "logs",
+        "key": "644b2eb670696648544d31ef",
+        "item": [
+          {
+            "type": 1,
+            "name": "/api/logs/query",
+            "key": "644b2ebb70696648544d31f4",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          }
+        ]
+      },
+      {
+        "type": 3,
+        "name": "label",
+        "key": "644b33b570696648544d32b8",
+        "item": [
+          {
+            "type": 1,
+            "name": "/api/label/queryLabelsByWorkspaceId",
+            "key": "644b33c970696648544d32c1",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          }
+        ]
+      },
+      {
+        "type": 3,
+        "name": "reportPage",
+        "key": "64539a31b8aea30806cdc6f2",
+        "item": [
+          {
+            "type": 1,
+            "name": "updateReportInfo",
+            "key": "6479ae4148ec6433e3388e5c",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/querySceneInfo/{planId}/{planItemId}",
+            "key": "64661b091dd9f9225914cdd1",
+            "item": [],
+            "request": {
+              "method": "GET"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/queryPlanFailCase",
+            "key": "6458b09f09c1e2364c196a07",
+            "item": [
+              {
+                "type": 2,
+                "name": "case失败重试",
+                "key": "6458b5c60bf7aa3a5079dd4b",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "接口失败重试",
+                "key": "6458b5aa0bf7aa3a5079dd32",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "plan失败重试",
+                "key": "6458b5990bf7aa3a5079dd22",
+                "item": []
+              }
+            ],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "queryReplayCase",
+            "key": "6455f96109c1e2364c189f15",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/api/report/queryLogEntity",
+            "key": "6453a2acb8aea30806cdcec9",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/queryDiffMsgById/{id}",
+            "key": "64539cd4b8aea30806cdc907",
+            "item": [],
+            "request": {
+              "method": "GET"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/queryFullLinkInfo/{planItemId}/{recordId}",
+            "key": "64539bbbb8aea30806cdc830",
+            "item": [],
+            "request": {
+              "method": "GET"
+            }
+          }
+        ]
+      },
+      {
+        "type": 3,
+        "name": "filesystem",
+        "key": "644a7c2870696648544d1c76",
+        "item": [
+          {
+            "type": 1,
+            "name": "/api/filesystem/addItem",
+            "key": "644a7c4770696648544d1c7f",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/api/filesystem/inviteToWorkspace",
+            "key": "64d4da0556c4de3960cbfedf",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/api/filesystem/queryCase",
+            "key": "644b354570696648544d32fc",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/api/filesystem/move",
+            "key": "651244571b327e1a7e0c2d9e",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/api/filesystem/queryInterface",
+            "key": "65123e211b327e1a7e0c2cbf",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/api/filesystem/queryDebuggingCase",
+            "key": "64e70895f005a82d567b2ac6",
+            "item": [],
+            "request": {
+              "method": "GET"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/api/filesystem/addItemFromRecord",
+            "key": "64538f6da79d52663af7a064",
+            "item": [
+              {
+                "type": 2,
+                "name": "开源测试2问题",
+                "key": "64b10d97a5969c38289d8376",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "开源测试2问题_正常情况",
+                "key": "64b10fc7a5969c38289d8497",
+                "item": []
+              }
+            ],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/api/filesystem/removeUserFromWorkspace",
+            "key": "6455e21909c1e2364c186f58",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/api/filesystem/leaveWorkspace",
+            "key": "6455e2aa09c1e2364c186f9c",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/api/filesystem/changeRole",
+            "key": "6455ea6809c1e2364c1871cd",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/api/filesystem/renameWorkspace",
+            "key": "6458a29109c1e2364c196030",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": 3,
+    "name": "storage",
+    "key": "644a28343867983e29d1b8fd",
+    "item": [
+      {
+        "type": 1,
+        "name": "/api/storage/record/saveTest10000",
+        "key": "64f7e6fc47151d5a7a01ac00",
+        "item": [],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "/api/storage/edit/removeby/",
+        "key": "64f02b85e11b55797bba6e76",
+        "item": [
+          {
+            "type": 2,
+            "name": "remove by appId",
+            "key": "64f02d07e11b55797bba701e",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "remove by appId and operationName",
+            "key": "64f02d04e11b55797bba7014",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "remove by recordId",
+            "key": "64f02d02e11b55797bba7007",
+            "item": []
+          }
+        ],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "listRecord",
+        "key": "645b57ddbdc38b28f122bb0e",
+        "item": [],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "countByRange",
+        "key": "64ed933050fb203aa2e1c282",
+        "item": [],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "query",
+        "key": "64d1aed9b518e31077dd7950",
+        "item": [],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "replayCase",
+        "key": "648ab1c15611ac0583139471",
+        "item": [],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "countRecord",
+        "key": "645b578bbdc38b28f122bae7",
+        "item": [],
+        "request": {
+          "method": "GET"
+        }
+      },
+      {
+        "type": 1,
+        "name": "/api/storage/replay/query/viewRecord",
+        "key": "644a289d3867983e29d1b91d",
+        "item": [],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "/api/storage/replay/query/replayResult",
+        "key": "64637ef59e734a35882436e3",
+        "item": [],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "/api/storage/record/saveTest",
+        "key": "646b17362fb2fb45595e10be",
+        "item": [],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "/api/storage/edit/pinned/{srcRecordId}/{targetRecordId}/",
+        "key": "650be1e76852233ca5adb3de",
+        "item": [
+          {
+            "type": 2,
+            "name": "case",
+            "key": "650be2286852233ca5adb3f6",
+            "item": []
+          }
+        ],
+        "request": {
+          "method": "GET"
+        }
+      },
+      {
+        "type": 1,
+        "name": "/api/config/agent/load",
+        "key": "6463728e9e734a35882423bc",
+        "item": [
+          {
+            "type": 2,
+            "name": "community-0509_1",
+            "key": "646f3dc46aa2280dff950a03",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "community-0529",
+            "key": "648801589cbf03658b11da17",
+            "item": []
+          }
+        ],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "/api/config/agent/agentStatus",
+        "key": "64be37cd11d5d86b33330dfd",
+        "item": [],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "/api/config/agent/Rolling",
+        "key": "64e83eecf18027154c9aca01",
+        "item": [],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "/api/storage/edit/removeAllBy/{removeType}",
+        "key": "64e851f5b0d081788f4a6a21",
+        "item": [],
+        "request": {
+          "method": "POST"
+        }
+      }
+    ]
+  },
+  {
+    "type": 3,
+    "name": "schedule",
+    "key": "6453476a3b487144d527330a",
+    "item": [
+      {
+        "type": 1,
+        "name": "rerunPlan",
+        "key": "64de0f38fe7a5276e2650e06",
+        "item": [],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "/api/createPlan",
+        "key": "645356303b487144d5274add",
+        "item": [
+          {
+            "type": 2,
+            "name": "cory_test",
+            "key": "6512c363dcb972595e5abf44",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "community-0828",
+            "key": "649ad0a59a4ebe755b05d701",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "启动dubbo3",
+            "key": "64648731d595a6467c821bc8",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "启动dubbo2",
+            "key": "6465fd055e9a203d9892c637",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "用例重试",
+            "key": "6453631a3b487144d5275e0a",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "用例重试_copy",
+            "key": "6461e99c0d1ccf15a2d79519",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "普通启动plan用例",
+            "key": "645356a13b487144d5274b81",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "重跑单独接口用例",
+            "key": "645356b73b487144d5274c00",
+            "item": []
+          }
+        ],
+        "request": {
+          "method": "POST"
+        }
+      }
+    ]
+  },
+  {
+    "type": 3,
+    "name": "others",
+    "key": "644b8dedc0b1ef64a7c50939",
+    "item": [
+      {
+        "type": 1,
+        "name": "DubboCustomProtocol",
+        "key": "645623d309c1e2364c18ed81",
+        "item": [],
+        "request": {
+          "method": "GET"
+        }
+      },
+      {
+        "type": 1,
+        "name": "New Request",
+        "key": "64534bda3b487144d5273ca0",
+        "item": [
+          {
+            "type": 2,
+            "name": "saveFromRecord",
+            "key": "64b111d617a2fc197b8f44f1",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "saveFromRecord",
+            "key": "64b111aa17a2fc197b8f44ef",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "saveFromRecord",
+            "key": "64b1118b17a2fc197b8f44eb",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "saveFromRecord",
+            "key": "64abe03197ab561accd07305",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "AREX-172-18-0-4-74551422881159",
+            "key": "64780fbdc3f7ef7a7cb24345",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "AREX-172-18-0-4-7455140111359",
+            "key": "64780e85c3f7ef7a7cb2420c",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "AREX-192-168-96-4-743868562408573",
+            "key": "647807ddc3f7ef7a7cb23452",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "AREX-192-168-96-4-7431217019477",
+            "key": "647708535b759736893e56f3",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "saveFromRecord",
+            "key": "6475b7c03e054f24fe49679f",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "saveFromRecord",
+            "key": "6475aed620145e497fe499a0",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "saveFromRecord",
+            "key": "6475ade28f3b7f68402ad5bf",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "AREX-192-168-64-4-732704540617",
+            "key": "6466129c1dd9f9225914ad3f",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "AREX-192-168-32-4-72590251623185",
+            "key": "645a2240730ec757cc087a88",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "AREX-192-168-32-4-72590255678224",
+            "key": "645a2154730ec757cc087858",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "zcq-case-0504",
+            "key": "6454eca309c1e2364c184367",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "zcq-case",
+            "key": "6454ebd709c1e2364c1842bc",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "saveFromRecord",
+            "key": "6453ab6f63fe9215b4f0d650",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "saveFromRecord",
+            "key": "6453aac752037c2f9eb95151",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "saveFromRecord",
+            "key": "6453a9e698de8111056c2fa6",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "saveFromRecord",
+            "key": "6453a895ace8032908db7463",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "saveFromRecord",
+            "key": "6453937face8032908db745e",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "saveFromRecord",
+            "key": "645392f5ace8032908db7458",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "saveFromRecord",
+            "key": "64539261b8aea30806cdc113",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "AREX-172-20-0-4-72143375775255",
+            "key": "645352923b487144d527463c",
+            "item": []
+          },
+          {
+            "type": 2,
+            "name": "AREX-172-20-0-4-715404184599",
+            "key": "64534c103b487144d5273dce",
+            "item": []
+          }
+        ],
+        "request": {
+          "method": "POST"
+        }
+      },
+      {
+        "type": 1,
+        "name": "/vi/puttest",
+        "key": "644b8dfac0b1ef64a7c50944",
+        "item": [],
+        "request": {
+          "method": "PUT"
+        }
+      },
+      {
+        "type": 3,
+        "name": "report",
+        "key": "6482d67e4b283d645a1a35f3",
+        "item": [
+          {
+            "type": 1,
+            "name": "New Request",
+            "key": "6513bd74958f4835d73e8431",
+            "item": [],
+            "request": {
+              "method": "GET"
+            }
+          },
+          {
+            "type": 3,
+            "name": "New Folder",
+            "key": "6482d67e4b283d645a1a35f4",
+            "item": [
+              {
+                "type": 3,
+                "name": "New Folder",
+                "key": "6482d67e4b283d645a1a35f5",
+                "item": []
+              },
+              {
+                "type": 1,
+                "name": "New Request",
+                "key": "6482d67e4b283d645a1a35f6",
+                "item": [
+                  {
+                    "type": 2,
+                    "name": "case",
+                    "key": "6482d67e4b283d645a1a35f7",
+                    "item": []
+                  }
+                ],
+                "request": {
+                  "method": "GET"
+                }
+              }
+            ]
+          },
+          {
+            "type": 1,
+            "name": "http://127.0.0.1:8081/api/report/listRecord",
+            "key": "6482d6da4b283d645a1a35f8",
+            "item": [
+              {
+                "type": 2,
+                "name": "case",
+                "key": "6482d6da4b283d645a1a35f9",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "case",
+                "key": "6482d6da4b283d645a1a35fa",
+                "item": []
+              }
+            ],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "http://127.0.0.1:8081/api/report/countRecord/community-0509_2",
+            "key": "6482d6da4b283d645a1a35fb",
+            "item": [],
+            "request": {
+              "method": "GET"
+            }
+          },
+          {
+            "type": 1,
+            "name": "http://127.0.0.1:8080/api/filesystem/export",
+            "key": "6482d6da4b283d645a1a35fc",
+            "item": [],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "http://127.0.0.1:8080/api/filesystem/import",
+            "key": "6482d6da4b283d645a1a35fd",
+            "item": [
+              {
+                "type": 2,
+                "name": "case",
+                "key": "6482d6da4b283d645a1a35fe",
+                "item": []
+              }
+            ],
+            "request": {
+              "method": "POST"
+            }
+          }
+        ]
+      },
+      {
+        "type": 3,
+        "name": "others",
+        "key": "6486d2188fac43117da973da",
+        "item": [
+          {
+            "type": 1,
+            "name": "DubboCustomProtocol",
+            "key": "6486d2188fac43117da973db",
+            "item": [],
+            "request": {
+              "method": "GET"
+            }
+          },
+          {
+            "type": 1,
+            "name": "New Request",
+            "key": "6486d2188fac43117da973dc",
+            "item": [
+              {
+                "type": 2,
+                "name": "AREX-172-18-0-4-74551422881159",
+                "key": "6486d2188fac43117da973dd",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "AREX-172-18-0-4-7455140111359",
+                "key": "6486d2188fac43117da973de",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "AREX-192-168-96-4-743868562408573",
+                "key": "6486d2188fac43117da973df",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "AREX-192-168-96-4-7431217019477",
+                "key": "6486d2188fac43117da973e0",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "saveFromRecord",
+                "key": "6486d2188fac43117da973e1",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "saveFromRecord",
+                "key": "6486d2188fac43117da973e2",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "saveFromRecord",
+                "key": "6486d2188fac43117da973e3",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "saveFromRecord",
+                "key": "6486d2188fac43117da973e4",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "AREX-192-168-64-4-732704540617",
+                "key": "6486d2188fac43117da973e5",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "AREX-192-168-32-4-72590251623185",
+                "key": "6486d2188fac43117da973e6",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "AREX-192-168-32-4-72590255678224",
+                "key": "6486d2188fac43117da973e7",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "zcq-case-0504",
+                "key": "6486d2188fac43117da973e8",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "zcq-case",
+                "key": "6486d2188fac43117da973e9",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "saveFromRecord",
+                "key": "6486d2198fac43117da973ea",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "saveFromRecord",
+                "key": "6486d2198fac43117da973eb",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "saveFromRecord",
+                "key": "6486d2198fac43117da973ec",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "saveFromRecord",
+                "key": "6486d2198fac43117da973ed",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "saveFromRecord",
+                "key": "6486d2198fac43117da973ee",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "saveFromRecord",
+                "key": "6486d2198fac43117da973ef",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "saveFromRecord",
+                "key": "6486d2198fac43117da973f0",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "AREX-172-20-0-4-72143375775255",
+                "key": "6486d2198fac43117da973f1",
+                "item": []
+              },
+              {
+                "type": 2,
+                "name": "AREX-172-20-0-4-715404184599",
+                "key": "6486d2198fac43117da973f2",
+                "item": []
+              }
+            ],
+            "request": {
+              "method": "POST"
+            }
+          },
+          {
+            "type": 1,
+            "name": "/vi/puttest",
+            "key": "6486d2198fac43117da973f3",
+            "item": [],
+            "request": {
+              "method": "PUT"
+            }
+          },
+          {
+            "type": 3,
+            "name": "report",
+            "key": "6486d2198fac43117da973f4",
+            "item": [
+              {
+                "type": 3,
+                "name": "New Folder",
+                "key": "6486d2198fac43117da973f5",
+                "item": [
+                  {
+                    "type": 3,
+                    "name": "New Folder",
+                    "key": "6486d2198fac43117da973f6",
+                    "item": []
+                  },
+                  {
+                    "type": 1,
+                    "name": "New Request",
+                    "key": "6486d2198fac43117da973f7",
+                    "item": [
+                      {
+                        "type": 2,
+                        "name": "AREX-172-27-0-4-80599449427770",
+                        "key": "64d4cacd56c4de3960cbfea7",
+                        "item": []
+                      },
+                      {
+                        "type": 2,
+                        "name": "case",
+                        "key": "6486d2198fac43117da973f8",
+                        "item": []
+                      }
+                    ],
+                    "request": {
+                      "method": "GET"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": 1,
+                "name": "http://127.0.0.1:8081/api/report/listRecord",
+                "key": "6486d2198fac43117da973f9",
+                "item": [
+                  {
+                    "type": 2,
+                    "name": "case",
+                    "key": "6486d2198fac43117da973fa",
+                    "item": []
+                  },
+                  {
+                    "type": 2,
+                    "name": "case",
+                    "key": "6486d2198fac43117da973fb",
+                    "item": []
+                  }
+                ],
+                "request": {
+                  "method": "POST"
+                }
+              },
+              {
+                "type": 1,
+                "name": "http://127.0.0.1:8081/api/report/countRecord/community-0509_2",
+                "key": "6486d2198fac43117da973fc",
+                "item": [],
+                "request": {
+                  "method": "GET"
+                }
+              },
+              {
+                "type": 1,
+                "name": "http://127.0.0.1:8080/api/filesystem/export",
+                "key": "6486d2198fac43117da973fd",
+                "item": [],
+                "request": {
+                  "method": "POST"
+                }
+              },
+              {
+                "type": 1,
+                "name": "http://127.0.0.1:8080/api/filesystem/import",
+                "key": "6486d2198fac43117da973fe",
+                "item": [
+                  {
+                    "type": 2,
+                    "name": "case",
+                    "key": "6486d2198fac43117da973ff",
+                    "item": []
+                  }
+                ],
+                "request": {
+                  "method": "POST"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

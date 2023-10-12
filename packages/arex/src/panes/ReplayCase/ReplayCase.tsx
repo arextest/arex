@@ -19,6 +19,7 @@ import {
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Modal } from 'antd';
+import { CollectionsSaveRequest } from 'arex-common';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { EMAIL_KEY, PanesType } from '@/constant';
@@ -30,6 +31,7 @@ import { InfoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportS
 import { MessageMap } from '@/services/ScheduleService';
 
 import Case, { CaseProps } from './Case';
+import treeData from './mock.json';
 import SaveCase, { SaveCaseRef } from './SaveCase';
 
 const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
@@ -81,6 +83,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
 
   function handleClickSaveCase(record: ReplayCaseType) {
     saveCaseRef.current?.openModal(record);
+    //   setOpen(true)
   }
 
   const { run: queryPlanFailCase } = useRequest(ReportService.queryPlanFailCase, {
@@ -140,7 +143,6 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
       },
     },
   );
-
   function handleClickRerunCase(recordId: string) {
     queryPlanFailCase({
       planId: props.data.planId,
@@ -258,7 +260,13 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         }
       />
 
-      <SaveCase planId={props.data.planId} operationId={props.data.operationId} ref={saveCaseRef} />
+      <SaveCase
+        planId={props.data.planId}
+        operationId={props.data.operationId}
+        ref={saveCaseRef}
+        appId={props.data.appId}
+        operationName={props.data.operationName || ''}
+      />
 
       {/* JsonDiffMathModal */}
       {contextHolder}
