@@ -1,4 +1,4 @@
-import { css, Theme, tryPrettierJsonString, useArexCoreConfig } from '@arextest/arex-core';
+import { css, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import { Editor } from '@arextest/monaco-react';
 import { App } from 'antd';
 import React, { forwardRef, useImperativeHandle } from 'react';
@@ -18,20 +18,25 @@ const RequestRawBody = forwardRef<RequestRawBodyRef>((props, ref) => {
   const { t } = useTranslation();
 
   const prettifyRequestBody = () => {
-    try {
-      dispatch((state) => {
-        state.request.body.body = tryPrettierJsonString(store?.request?.body?.body as string);
-      });
-    } catch (e) {
-      message.error(t('error.json_prettify_invalid_body'));
-    }
+    dispatch((state) => {
+      let body = state?.request?.body?.body as string;
+      try {
+        body = JSON.stringify(JSON.parse(body), null, 2);
+      } catch (e) {
+        message.error(t('error.json_prettify_invalid_body'));
+        return;
+      }
+      state.request.body.body = body;
+    });
   };
 
-  useImperativeHandle(ref, () => {
-    return {
+  useImperativeHandle(
+    ref,
+    () => ({
       prettifyRequestBody,
-    };
-  });
+    }),
+    [],
+  );
 
   return (
     <div
