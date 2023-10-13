@@ -5,15 +5,11 @@ import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 import Icons from 'unplugin-icons/vite';
 import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
 
 export default defineConfig({
   plugins: [
     react({
       jsxImportSource: '@emotion/react',
-    }),
-    dts({
-      insertTypesEntry: true,
     }),
     Icons({ compiler: 'jsx', jsx: 'react' }),
   ],
@@ -25,11 +21,13 @@ export default defineConfig({
 
   build: {
     outDir: './dist',
+    sourcemap: true,
     emptyOutDir: true,
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'ArexRequest',
       fileName: 'arex-request',
+      formats: ['es'],
     },
     rollupOptions: {
       external: [

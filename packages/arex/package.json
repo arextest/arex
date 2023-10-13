@@ -10,9 +10,9 @@
     "do-build": "node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build"
   },
   "dependencies": {
-    "@arextest/arex-core": "workspace:^",
-    "@arextest/arex-common": "workspace:^",
-    "@arextest/arex-request": "workspace:^",
+    "@arextest/arex-core": "*",
+    "@arextest/arex-common": "*",
+    "@arextest/arex-request": "*",
     "@arextest/monaco-react": "^4.5.1",
     "@ant-design/icons": "^5.2.6",
     "@emotion/react": "^11.10.6",

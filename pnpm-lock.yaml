@@ -70,13 +70,13 @@ importers:
         specifier: ^5.2.6
         version: 5.2.6(react-dom@18.2.0)(react@18.2.0)
       '@arextest/arex-common':
-        specifier: workspace:^
+        specifier: '*'
         version: link:../arex-common
       '@arextest/arex-core':
-        specifier: workspace:^
+        specifier: '*'
         version: link:../arex-core
       '@arextest/arex-request':
-        specifier: workspace:^
+        specifier: '*'
         version: link:../arex-request
       '@arextest/monaco-react':
         specifier: ^4.5.1
@@ -470,7 +470,7 @@ importers:
         specifier: ^5.2.6
         version: 5.2.6(react-dom@18.2.0)(react@18.2.0)
       '@arextest/arex-core':
-        specifier: workspace:latest
+        specifier: '*'
         version: link:../arex-core
       '@arextest/monaco-react':
         specifier: ^4.5.1

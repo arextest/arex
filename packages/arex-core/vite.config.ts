@@ -19,6 +19,7 @@ export default defineConfig({
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'ArexCore',
       fileName: 'arex-core',
+      formats: ['es'],
     },
     rollupOptions: {
       external: ['react', 'react-dom', 'antd', '@emotion/react', '@emotion/styled'],

@@ -16,6 +16,7 @@ export default defineConfig({
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'ArexCommon',
       fileName: 'arex-common',
+      formats: ['es'],
     },
     rollupOptions: {
       external: [
