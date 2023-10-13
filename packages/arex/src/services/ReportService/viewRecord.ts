@@ -1,4 +1,7 @@
+import { getLocalStorage } from '@arextest/arex-core';
 import axios from 'axios';
+
+import { ACCESS_TOKEN_KEY, APP_ID_KEY } from '@/constant';
 
 export type ViewRecordReq = {
   recordId: string;
@@ -49,6 +52,11 @@ export interface ViewRecordRes {
 }
 
 export async function viewRecord(params: ViewRecordReq) {
-  const res = await axios.post<ViewRecordRes>('/report/replay/query/viewRecord', params);
+  const res = await axios.post<ViewRecordRes>('/report/replay/query/viewRecord', params, {
+    headers: {
+      'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
+      appId: getLocalStorage<string>(APP_ID_KEY),
+    },
+  });
   return res.data.recordResult;
 }

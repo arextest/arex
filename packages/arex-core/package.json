@@ -8,7 +8,7 @@
   "scripts": {
     "build:code": "vite build",
     "build:decl": "tsc --project tsconfig.decl.json",
-    "do-build": "pnpm run build:code"
+    "do-build": "pnpm run build:code && pnpm run build:decl"
   },
   "types": "dist/index.d.ts",
   "files": [
