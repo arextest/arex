@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-request",
-  "version": "0.2.0-beta.2",
+  "version": "0.2.0",
   "type": "module",
   "main": "dist/arex-request.js",
   "module": "dist/arex-request.js",
