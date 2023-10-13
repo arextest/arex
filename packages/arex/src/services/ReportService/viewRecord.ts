@@ -49,6 +49,6 @@ export interface ViewRecordRes {
 }
 
 export async function viewRecord(params: ViewRecordReq) {
-  const res = await axios.post<ViewRecordRes>('/replay/replay/query/viewRecord', params);
+  const res = await axios.post<ViewRecordRes>('/replay/query/viewRecord', params);
   return res.data.recordResult;
 }
