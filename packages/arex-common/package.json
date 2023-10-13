@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-common",
-  "version": "0.2.0-beta.1",
+  "version": "0.2.0-beta.2",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-common.umd.cjs",
   "module": "dist/arex-common.js",
@@ -8,8 +8,7 @@
   "scripts": {
     "build:code": "vite build",
     "build:decl": "tsc --project tsconfig.decl.json",
-    "do-build": "pnpm run build:code",
-    "do-build-core": "pnpm run build:code"
+    "do-build": "pnpm run build:code"
   },
   "types": "./dist/index.d.ts",
   "files": [
