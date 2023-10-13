@@ -499,10 +499,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             color={'primary'}
             loading={creatingPlan === 0}
             onClick={() =>
-              handleRerun(
-                1,
-                planItemData?.map((item) => ({ operationId: item.operationId })),
-              )
+              handleRerun(1, planItemData?.map((item) => ({ operationId: item.operationId })))
             }
           />
         </Space>
