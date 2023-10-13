@@ -12,14 +12,14 @@ const DiffMatch: FC<DiffMatchProps> = (props) => {
 
   const getBackgroundColor = useCallback(
     (type: number) =>
-      ({ '-1': token.colorErrorBorder, '0': undefined, '1': token.colorSuccessBorder })[
+      ({ '-1': token.colorErrorBorder, '0': undefined, '1': token.colorSuccessBorder }[
         type.toString()
-      ],
+      ]),
     [token],
   );
 
   const getTextDecoration = (type: number) =>
-    ({ '-1': 'line-through', '0': undefined, '1': 'underline' })[type.toString()];
+    ({ '-1': 'line-through', '0': undefined, '1': 'underline' }[type.toString()]);
 
   return (
     <>
