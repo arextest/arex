@@ -1,12 +1,11 @@
 {
   "name": "@arextest/arex-request",
-  "version": "0.2.0-beta.1",
+  "version": "0.2.0-beta.2",
   "type": "module",
   "main": "dist/arex-request.js",
   "module": "dist/arex-request.js",
   "homepage": "https://github.com/arextest/arex-request",
   "scripts": {
-    "preinstall": "pnpm -w run build:core",
     "do-build": "vite build",
     "do-test": "vitest",
     "coverage": "vitest run --coverage"
