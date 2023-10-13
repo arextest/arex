@@ -1,5 +1,10 @@
-import { ArexPaneFC, css, setLocalStorage, useTranslation } from '@arextest/arex-core';
-import { clearLocalStorage } from '@arextest/arex-core/src';
+import {
+  ArexPaneFC,
+  clearLocalStorage,
+  css,
+  setLocalStorage,
+  useTranslation,
+} from '@arextest/arex-core';
 import { Tabs } from 'antd';
 import React, { useEffect, useMemo } from 'react';
 

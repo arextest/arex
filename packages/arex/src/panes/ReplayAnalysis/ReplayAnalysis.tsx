@@ -1,5 +1,6 @@
 import {
   ArexPaneFC,
+  clearLocalStorage,
   CollapseTable,
   DiffJsonViewDrawer,
   DiffJsonViewProps,
@@ -7,7 +8,6 @@ import {
   setLocalStorage,
   useTranslation,
 } from '@arextest/arex-core';
-import { clearLocalStorage } from '@arextest/arex-core/src';
 import { useRequest } from 'ahooks';
 import { Collapse, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';

@@ -2,6 +2,7 @@ import { HomeOutlined, SettingOutlined } from '@ant-design/icons';
 import { DiffPath } from '@arextest/arex-common';
 import {
   ArexPaneFC,
+  clearLocalStorage,
   CollapseTable,
   DiffMatch,
   getJsonValueByPath,
@@ -18,7 +19,6 @@ import {
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
-import { clearLocalStorage } from '@arextest/arex-core/src';
 import { useRequest } from 'ahooks';
 import { App, Button, Modal } from 'antd';
 import dayjs from 'dayjs';

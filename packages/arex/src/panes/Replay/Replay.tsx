@@ -1,5 +1,10 @@
-import { ArexPaneFC, CollapseTable, setLocalStorage, useTranslation } from '@arextest/arex-core';
-import { clearLocalStorage } from '@arextest/arex-core/src';
+import {
+  ArexPaneFC,
+  clearLocalStorage,
+  CollapseTable,
+  setLocalStorage,
+  useTranslation,
+} from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { Alert } from 'antd';

@@ -1,6 +1,11 @@
 import { HomeOutlined } from '@ant-design/icons';
-import { ArexPaneFC, PanesTitle, setLocalStorage, useTranslation } from '@arextest/arex-core';
-import { clearLocalStorage } from '@arextest/arex-core/src';
+import {
+  ArexPaneFC,
+  clearLocalStorage,
+  PanesTitle,
+  setLocalStorage,
+  useTranslation,
+} from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { Badge, Button, Tabs, theme } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';

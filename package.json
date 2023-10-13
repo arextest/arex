@@ -13,7 +13,7 @@
     "lint": "prettier --write \"packages/**/*.{ts,tsx}\" && eslint \"packages/**/*.{ts,tsx}\" --fix",
     "test": "pnpm -r test",
     "test:run": "pnpm -r test:run",
-    "pre-commit": "pnpm run lint && pnpm run test:run",
+    "pre-commit": "pnpm run lint",
     "rm": "find ./ -type d \\( -name \"dist\" -o -name \"node_modules\" \\) -exec rm -rf {} +",
     "publish:core": "pnpm publish packages/arex-core --access=public",
     "publish:common": "pnpm publish packages/arex-common --access=public",

@@ -32,27 +32,6 @@ exports[`getArrayNode > object with nest array and sortNodeList 1`] = `
 ]
 `;
 
-exports[`getArrayNode > object with simple array 1`] = `
-[
-  {
-    "children": [],
-    "disabled": true,
-    "icon": undefined,
-    "key": "responsestatustype/",
-    "title": "responsestatustype",
-  },
-  {
-    "children": [],
-    "disabled": false,
-    "icon": <Badge
-      color="green"
-    />,
-    "key": "body/",
-    "title": "body",
-  },
-]
-`;
-
 exports[`getArrayNode > object with simple array and sortNodeList 1`] = `
 [
   {

@@ -1,4 +1,4 @@
-import { tryParseJsonString } from '@arextest/arex-core/src/utils/json';
+import { tryParseJsonString } from '@arextest/arex-core';
 import { describe, expect, test } from 'vitest';
 
 import { getIgnoreNodes } from './getIgnoreNodes';
