@@ -68,7 +68,7 @@ export default function SvelteJSONEditor(props: JSONEditorProps) {
         refEditor.current = null;
       }
     };
-  }, []);
+  }, [encrypted]);
 
   // update props
   useEffect(() => {
