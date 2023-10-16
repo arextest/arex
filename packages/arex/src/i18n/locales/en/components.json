@@ -343,6 +343,8 @@
     "language": "Language",
     "avatar": "Avatar",
     "dataDesensitization": "DataDesensitization",
-    "jarFileUrl": "JarFileUrl"
+    "jarFileUrl": "JarFileUrl",
+    "replayCallback": "ReplayCallback",
+    "replayCallbackUrl": "ReplayCallbackUrl"
   }
 }
