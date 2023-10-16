@@ -1,3 +1,4 @@
+import { WarningOutlined } from '@ant-design/icons';
 import {
   ArexPaneFC,
   clearLocalStorage,
@@ -7,13 +8,13 @@ import {
 } from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
-import { Alert, Spin } from 'antd';
+import { Alert, Card, Spin, Typography } from 'antd';
 import { merge } from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { APP_ID_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
-import { ApplicationService } from '@/services';
+import { ApplicationService, ReportService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
 import { useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
@@ -52,6 +53,21 @@ const ReplayPage: ArexPaneFC = (props) => {
     setRefreshDep(new Date().getTime()); // 触发 ReplayTable 组件请求更新
   };
 
+  const [firstQueryRecordCount, setFirstQueryRecordCount] = useState(true);
+  const { data: recordCount = 0, refresh: queryRecordCount } = useRequest(
+    ReportService.queryRecordCount,
+    {
+      defaultParams: [
+        {
+          appId,
+        },
+      ],
+      onSuccess() {
+        firstQueryRecordCount && setFirstQueryRecordCount(false);
+      },
+    },
+  );
+
   const [hasOwner, setHasOwner] = useState<boolean>();
   const appOwnerConfigRef = useRef<AppOwnerConfigRef>(null);
 
@@ -65,7 +81,7 @@ const ReplayPage: ArexPaneFC = (props) => {
 
   return (
     <div ref={replayWrapperRef}>
-      {hasOwner === undefined ? (
+      {hasOwner === undefined && firstQueryRecordCount ? (
         <Spin spinning />
       ) : (
         <>
@@ -91,28 +107,41 @@ const ReplayPage: ArexPaneFC = (props) => {
             appId={appId}
             appName={appInfo?.appName}
             readOnly={!hasOwner}
+            recordCount={recordCount}
             onRefresh={handleRefreshDep}
+            onQueryRecordCount={queryRecordCount}
           />
 
-          <CollapseTable
-            active={!!selectedPlan}
-            table={
-              <PlanReport
-                appId={appId}
-                refreshDep={refreshDep}
-                onSelectedPlanChange={handleSelectPlan}
-              />
-            }
-            panel={
-              <PlanItem
-                appId={appId}
-                selectedPlan={selectedPlan}
-                readOnly={!hasOwner}
-                filter={(record) => !!record.totalCaseCount}
-                onRefresh={handleRefreshDep}
-              />
-            }
-          />
+          {recordCount ? (
+            <CollapseTable
+              active={!!selectedPlan}
+              table={
+                <PlanReport
+                  appId={appId}
+                  refreshDep={refreshDep}
+                  onSelectedPlanChange={handleSelectPlan}
+                />
+              }
+              panel={
+                <PlanItem
+                  appId={appId}
+                  selectedPlan={selectedPlan}
+                  readOnly={!hasOwner}
+                  filter={(record) => !!record.totalCaseCount}
+                  onRefresh={handleRefreshDep}
+                />
+              }
+            />
+          ) : (
+            <Card>
+              <Typography.Title level={5}>
+                <WarningOutlined /> {t('replay.noRecordCountTip')}
+              </Typography.Title>
+              <Typography.Text code copyable>
+                {`java -javaagent:</path/to/arex-agent.jar> -Darex.service.name=${appId} -Darex.storage.service.host=<storage.service.host:port> -jar <your-application.jar>`}
+              </Typography.Text>
+            </Card>
+          )}
         </>
       )}
       <AppOwnersConfig ref={appOwnerConfigRef} appId={appId} onAddOwner={getAppInfo} />

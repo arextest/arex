@@ -184,7 +184,8 @@
     "operationType": "Operation Type",
     "re-calculateReport": "Re-calculate Report",
     "noAppOwnerAlert":"There is no owners of this application, some operation privileges will be disabled, please ",
-    "addOwner": "Add application owner"
+    "addOwner": "Add application owner",
+    "noRecordCountTip": "No recording data is available at this time, try starting Agent recording with the following command"
   },
   "appSetting": {
     "record": "Record",

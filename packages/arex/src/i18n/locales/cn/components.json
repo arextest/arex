@@ -184,7 +184,8 @@
     "operationType": "接口类型",
     "re-calculateReport": "重算报告",
     "noAppOwnerAlert":"当前应用无 Owner，一些操作权限将被禁用，请",
-    "addOwner": "添加应用 Owner"
+    "addOwner": "添加应用 Owner",
+    "noRecordCountTip": "暂无录制数据，请尝试使用以下命令启动 Agent 录制"
   },
   "appSetting": {
     "record": "录制",

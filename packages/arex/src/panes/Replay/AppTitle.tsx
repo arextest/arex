@@ -37,14 +37,16 @@ import React, { createElement, FC, ReactNode, useCallback, useMemo, useRef, useS
 import { EMAIL_KEY, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
 import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCaseList';
-import { ApplicationService, ReportService, ScheduleService } from '@/services';
+import { ApplicationService, ScheduleService } from '@/services';
 import { MessageMap } from '@/services/ScheduleService';
 
 type AppTitleProps = {
   appId: string;
   appName?: string;
   readOnly?: boolean;
+  recordCount?: number;
   onRefresh?: () => void;
+  onQueryRecordCount?: () => void;
 };
 
 type CreatePlanForm = {
@@ -118,7 +120,14 @@ const InitialValues = {
   ],
 };
 
-const AppTitle: FC<AppTitleProps> = ({ appId, appName, readOnly, onRefresh }) => {
+const AppTitle: FC<AppTitleProps> = ({
+  appId,
+  appName,
+  readOnly,
+  recordCount = 0,
+  onRefresh,
+  onQueryRecordCount,
+}) => {
   const { notification } = App.useApp();
   const { token } = theme.useToken();
   const navPane = useNavPane();
@@ -158,18 +167,6 @@ const AppTitle: FC<AppTitleProps> = ({ appId, appName, readOnly, onRefresh }) =>
       setInterfacesOptions(res.map((item) => ({ label: item.operationName, value: item.id })));
     },
   });
-
-  const { data: recordedCase = 0, refresh: queryCountRecord } = useRequest(
-    ReportService.queryCountRecord,
-    {
-      defaultParams: [
-        {
-          appId,
-        },
-      ],
-      ready: !!appId,
-    },
-  );
 
   /**
    * 创建回放
@@ -280,7 +277,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, appName, readOnly, onRefresh }) =>
   const handleClickTitle = useCallback(() => caseListRef.current?.open(), [caseListRef]);
 
   const handleRefresh = useCallback(() => {
-    queryCountRecord();
+    onQueryRecordCount?.();
     onRefresh?.();
   }, []);
 
@@ -302,7 +299,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, appName, readOnly, onRefresh }) =>
         title={
           <TitleWrapper
             title={appTitle}
-            count={recordedCase}
+            count={recordCount}
             onClickTitle={handleClickTitle}
             onRefresh={handleRefresh}
             onSetting={handleSetting}
@@ -412,7 +409,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, appName, readOnly, onRefresh }) =>
         </Form>
       </Modal>
 
-      <RecordedCaseList ref={caseListRef} appId={appId} onChange={queryCountRecord} />
+      <RecordedCaseList ref={caseListRef} appId={appId} onChange={onQueryRecordCount} />
     </div>
   );
 };
