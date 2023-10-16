@@ -1,7 +1,11 @@
-import { JSONEditor, JSONEditorPropsOptional, ReadonlyValue } from '@arextest/vanilla-jsoneditor';
+import {
+  JSONEditor,
+  JSONEditorPropsOptional,
+  ReadonlyPassword,
+  ReadonlyValue,
+} from '@arextest/vanilla-jsoneditor';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { theme } from 'antd';
 import { parse, stringify } from 'lossless-json';
 import React, { useEffect, useRef } from 'react';
 
@@ -33,10 +37,14 @@ const EditorWaterMark = styled.div<{
   }
 `;
 
-export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
+export interface JSONEditorProps extends SvelteJSONEditorProps {
+  encrypted?: boolean;
+}
+
+export default function SvelteJSONEditor(props: JSONEditorProps) {
+  const { encrypted } = props;
   const refContainer = useRef<HTMLDivElement>(null);
   const refEditor = useRef<any>(null);
-  const { token } = theme.useToken();
 
   useEffect(() => {
     refEditor.current = new JSONEditor({
@@ -44,7 +52,9 @@ export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
       props: {
         // @ts-ignore
         // disable build-in render component
-        onRenderValue: (props) => [{ component: ReadonlyValue, props }],
+        onRenderValue: (props) => [
+          { component: encrypted ? ReadonlyPassword : ReadonlyValue, props },
+        ],
         // parse bigInt
         // @ts-ignore
         parser: LosslessJSONParser,

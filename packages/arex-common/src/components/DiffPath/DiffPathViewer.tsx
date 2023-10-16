@@ -52,7 +52,10 @@ export interface DiffPathViewerProps extends DiffJsonViewProps {
   height?: string;
   defaultActiveFirst?: boolean;
   onChange?: (record?: InfoItem, data?: CompareResultDetail) => void;
-  requestDiffMsg: (params: any, record?: InfoItem) => Promise<CompareResultDetail>;
+  requestDiffMsg: (
+    params: any,
+    record?: InfoItem,
+  ) => Promise<{ data: CompareResultDetail; encrypted: boolean }>;
   requestQueryLogEntity: (params: {
     compareResultId: string;
     logIndex: number;
@@ -63,7 +66,22 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const { data: diffMsg, loading: loadingDiffMsg } = useRequest(props.requestDiffMsg, {
+  const {
+    data: { data: diffMsg, encrypted } = {
+      data: {
+        id: '',
+        categoryName: '',
+        operationName: '',
+        diffResultCode: 0,
+        logInfos: null,
+        exceptionMsg: null,
+        baseMsg: '',
+        testMsg: '',
+      },
+      encrypted: true,
+    },
+    loading: loadingDiffMsg,
+  } = useRequest(props.requestDiffMsg, {
     defaultParams: [{ id: props.data.id }],
     onSuccess: (data) => {
       props.onChange?.(props.data);
@@ -176,6 +194,7 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
               <DiffJsonView
                 hiddenTooltip
                 readOnly={props.contextMenuDisabled}
+                encrypted={encrypted}
                 diffJson={{
                   left: diffMsg?.baseMsg || '',
                   right: diffMsg?.testMsg || '',

@@ -211,7 +211,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
       <PanesTitle
         title={
           <span>
-            <Label>{t('replay.caseServiceAPI')}</Label>
+            <Label style={{ font: 'inherit' }}>{t('replay.caseServiceAPI')}</Label>
             {decodeURIComponent(props.data.operationName || 'unknown')}
           </span>
         }
