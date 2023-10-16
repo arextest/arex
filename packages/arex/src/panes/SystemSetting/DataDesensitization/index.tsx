@@ -39,6 +39,7 @@ const DataDesensitization = () => {
   });
 
   const handleUploadJar: FormProps<DesensitizationFormType>['onFinish'] = (value) => {
+    console.log(value);
     if (value.id && !value.jarUrl) {
       deleteDesensitization({ id: value.id });
     }
