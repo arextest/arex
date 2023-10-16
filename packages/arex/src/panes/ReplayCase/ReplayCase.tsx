@@ -91,6 +91,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
 
   function handleClickSaveCase(record: ReplayCaseType) {
     saveCaseRef.current?.openModal(record);
+    //   setOpen(true)
   }
 
   const { run: queryPlanFailCase } = useRequest(ReportService.queryPlanFailCase, {
@@ -160,7 +161,6 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
       },
     },
   );
-
   function handleClickRerunCase(recordId: string) {
     queryPlanFailCase({
       planId: props.data.planId,
@@ -278,7 +278,13 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         }
       />
 
-      <SaveCase planId={props.data.planId} operationId={props.data.operationId} ref={saveCaseRef} />
+      <SaveCase
+        planId={props.data.planId}
+        operationId={props.data.operationId}
+        ref={saveCaseRef}
+        appId={props.data.appId}
+        operationName={props.data.operationName || ''}
+      />
 
       {/* JsonDiffMathModal */}
       {contextHolder}

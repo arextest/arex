@@ -165,8 +165,11 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
           {
             label: 'Mock',
             key: 'mock',
-            hidden: !data?.recordId,
-            children: <ExtraTabs.RequestTabs.Mock recordId={data?.recordId} />,
+            // 这里判断是否有recordId，如果有则隐藏，因为recordId是mock的唯一标识
+            hidden: !(data?.recordId || props.data?.recordId),
+            children: (
+              <ExtraTabs.RequestTabs.Mock recordId={data?.recordId || props.data?.recordId} />
+            ),
           },
         ],
       },
