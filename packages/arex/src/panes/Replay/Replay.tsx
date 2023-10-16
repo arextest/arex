@@ -7,7 +7,7 @@ import {
 } from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
-import { Alert } from 'antd';
+import { Alert, Spin } from 'antd';
 import { merge } from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -52,7 +52,7 @@ const ReplayPage: ArexPaneFC = (props) => {
     setRefreshDep(new Date().getTime()); // 触发 ReplayTable 组件请求更新
   };
 
-  const [hasOwner, setHasOwner] = useState<boolean>(false);
+  const [hasOwner, setHasOwner] = useState<boolean>();
   const appOwnerConfigRef = useRef<AppOwnerConfigRef>(null);
 
   const { data: appInfo, refresh: getAppInfo } = useRequest(ApplicationService.getAppInfo, {
@@ -65,49 +65,56 @@ const ReplayPage: ArexPaneFC = (props) => {
 
   return (
     <div ref={replayWrapperRef}>
-      {!hasOwner && (
-        <Alert
-          banner
-          closable
-          type='warning'
-          message={
-            <span>
-              {t('replay.noAppOwnerAlert')}
-              <a onClick={appOwnerConfigRef?.current?.open}>{t('replay.addOwner').toLowerCase()}</a>
-              .
-            </span>
-          }
-          style={{ margin: '-8px -16px 8px -16px' }}
-        />
-      )}
+      {hasOwner === undefined ? (
+        <Spin spinning />
+      ) : (
+        <>
+          {!hasOwner && (
+            <Alert
+              banner
+              closable
+              type='warning'
+              message={
+                <span>
+                  {t('replay.noAppOwnerAlert')}
+                  <a onClick={appOwnerConfigRef?.current?.open}>
+                    {t('replay.addOwner').toLowerCase()}
+                  </a>
+                  .
+                </span>
+              }
+              style={{ margin: '-8px -16px 8px -16px' }}
+            />
+          )}
 
-      <AppTitle
-        appId={appId}
-        appName={appInfo?.appName}
-        readOnly={!hasOwner}
-        onRefresh={handleRefreshDep}
-      />
-
-      <CollapseTable
-        active={!!selectedPlan}
-        table={
-          <PlanReport
+          <AppTitle
             appId={appId}
-            refreshDep={refreshDep}
-            onSelectedPlanChange={handleSelectPlan}
-          />
-        }
-        panel={
-          <PlanItem
-            appId={appId}
-            selectedPlan={selectedPlan}
+            appName={appInfo?.appName}
             readOnly={!hasOwner}
-            filter={(record) => !!record.totalCaseCount}
             onRefresh={handleRefreshDep}
           />
-        }
-      />
 
+          <CollapseTable
+            active={!!selectedPlan}
+            table={
+              <PlanReport
+                appId={appId}
+                refreshDep={refreshDep}
+                onSelectedPlanChange={handleSelectPlan}
+              />
+            }
+            panel={
+              <PlanItem
+                appId={appId}
+                selectedPlan={selectedPlan}
+                readOnly={!hasOwner}
+                filter={(record) => !!record.totalCaseCount}
+                onRefresh={handleRefreshDep}
+              />
+            }
+          />
+        </>
+      )}
       <AppOwnersConfig ref={appOwnerConfigRef} appId={appId} onAddOwner={getAppInfo} />
     </div>
   );
