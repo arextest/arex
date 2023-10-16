@@ -1,7 +1,7 @@
 {
   "name": "arex",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "",
   "homepage": "https://github.com/arextest/arex",
   "main": "index.js",
