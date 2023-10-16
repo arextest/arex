@@ -1,4 +1,7 @@
+import { getLocalStorage } from '@arextest/arex-core';
 import axios from 'axios';
+
+import { ACCESS_TOKEN_KEY, APP_ID_KEY } from '@/constant';
 export enum BizLogLevel {
   INFO,
   WARN,
@@ -75,7 +78,12 @@ export type BizLog = {
 export async function queryLogs(req: QueryPlanLogsReq) {
   return new Promise<QueryPlanLogsRes>((resolve, reject) => {
     return axios
-      .post('/schedule/queryPlanLogs', req)
+      .post('/schedule/queryPlanLogs', req, {
+        headers: {
+          'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
+          appId: getLocalStorage<string>(APP_ID_KEY),
+        },
+      })
       .then((res) => resolve(res.data.data))
       .catch((err) => reject(err));
   });

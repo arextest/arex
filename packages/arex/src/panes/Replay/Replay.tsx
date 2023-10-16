@@ -1,20 +1,43 @@
-import { ArexPaneFC, CollapseTable } from '@arextest/arex-core';
+import { WarningOutlined } from '@ant-design/icons';
+import {
+  ArexPaneFC,
+  clearLocalStorage,
+  CollapseTable,
+  setLocalStorage,
+  useTranslation,
+} from '@arextest/arex-core';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { useRequest } from 'ahooks';
+import { Alert, Card, Spin, Typography } from 'antd';
 import { merge } from 'lodash';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import { PanesType } from '@/constant';
+import { APP_ID_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
+import { ApplicationService, ReportService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
+import { useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
+import AppOwnersConfig, { AppOwnerConfigRef } from './AppOwnersConfig';
 import AppTitle from './AppTitle';
 import PlanItem from './PlanItem';
 import PlanReport, { PlanReportProps } from './PlanReport';
 
 const ReplayPage: ArexPaneFC = (props) => {
   const navPane = useNavPane();
+  const { activePane } = useMenusPanes();
+  const { t } = useTranslation('components');
+
+  const [replayWrapperRef] = useAutoAnimate();
+
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
   const { id: appId } = useMemo(() => decodePaneKey(props.paneKey), [props.paneKey]);
+
+  useEffect(() => {
+    activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, appId);
+    return () => clearLocalStorage(APP_ID_KEY);
+  }, [activePane?.id]);
 
   const handleSelectPlan: PlanReportProps['onSelectedPlanChange'] = (plan, current, row) => {
     plan.planId === selectedPlan?.planId ? setSelectedPlan(undefined) : setSelectedPlan(plan);
@@ -30,28 +53,99 @@ const ReplayPage: ArexPaneFC = (props) => {
     setRefreshDep(new Date().getTime()); // 触发 ReplayTable 组件请求更新
   };
 
+  const [firstQueryRecordCount, setFirstQueryRecordCount] = useState(true);
+  const { data: recordCount = 0, refresh: queryRecordCount } = useRequest(
+    ReportService.queryRecordCount,
+    {
+      defaultParams: [
+        {
+          appId,
+        },
+      ],
+      onSuccess() {
+        firstQueryRecordCount && setFirstQueryRecordCount(false);
+      },
+    },
+  );
+
+  const [hasOwner, setHasOwner] = useState<boolean>();
+  const appOwnerConfigRef = useRef<AppOwnerConfigRef>(null);
+
+  const { data: appInfo, refresh: getAppInfo } = useRequest(ApplicationService.getAppInfo, {
+    defaultParams: [appId],
+    onSuccess(res) {
+      setHasOwner(!!res.owners?.length);
+      !res.owners?.length && appOwnerConfigRef?.current?.open();
+    },
+  });
+
   return (
-    <>
-      <AppTitle appId={appId} onRefresh={handleRefreshDep} />
-      <CollapseTable
-        active={!!selectedPlan}
-        table={
-          <PlanReport
+    <div ref={replayWrapperRef}>
+      {hasOwner === undefined && firstQueryRecordCount ? (
+        <Spin spinning />
+      ) : (
+        <>
+          {!hasOwner && (
+            <Alert
+              banner
+              closable
+              type='warning'
+              message={
+                <span>
+                  {t('replay.noAppOwnerAlert')}
+                  <a onClick={appOwnerConfigRef?.current?.open}>
+                    {t('replay.addOwner').toLowerCase()}
+                  </a>
+                  .
+                </span>
+              }
+              style={{ margin: '-8px -16px 8px -16px' }}
+            />
+          )}
+
+          <AppTitle
             appId={appId}
-            refreshDep={refreshDep}
-            onSelectedPlanChange={handleSelectPlan}
-          />
-        }
-        panel={
-          <PlanItem
-            appId={appId}
-            selectedPlan={selectedPlan}
-            filter={(record) => !!record.totalCaseCount}
+            appName={appInfo?.appName}
+            readOnly={!hasOwner}
+            recordCount={recordCount}
             onRefresh={handleRefreshDep}
+            onQueryRecordCount={queryRecordCount}
           />
-        }
-      />
-    </>
+
+          {recordCount ? (
+            <CollapseTable
+              active={!!selectedPlan}
+              table={
+                <PlanReport
+                  appId={appId}
+                  refreshDep={refreshDep}
+                  onSelectedPlanChange={handleSelectPlan}
+                />
+              }
+              panel={
+                <PlanItem
+                  appId={appId}
+                  selectedPlan={selectedPlan}
+                  readOnly={!hasOwner}
+                  filter={(record) => !!record.totalCaseCount}
+                  onRefresh={handleRefreshDep}
+                />
+              }
+            />
+          ) : (
+            <Card>
+              <Typography.Title level={5}>
+                <WarningOutlined /> {t('replay.noRecordCountTip')}
+              </Typography.Title>
+              <Typography.Text code copyable>
+                {`java -javaagent:</path/to/arex-agent.jar> -Darex.service.name=${appId} -Darex.storage.service.host=<storage.service.host:port> -jar <your-application.jar>`}
+              </Typography.Text>
+            </Card>
+          )}
+        </>
+      )}
+      <AppOwnersConfig ref={appOwnerConfigRef} appId={appId} onAddOwner={getAppInfo} />
+    </div>
   );
 };
 

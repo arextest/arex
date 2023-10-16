@@ -14,6 +14,7 @@ export type ApplicationDataType = {
   description: string;
   category: string;
   owner: string;
+  owners?: string[];
   organizationName: string;
   recordedCaseCount: number;
 };

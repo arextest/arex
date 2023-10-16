@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useArexCoreConfig } from '../../hooks';
 import DiffJsonTooltip from './DiffJsonTooltip';
 import { genAllDiffByType, LogEntity } from './helper';
-import VanillaJSONEditor from './VanillaJSONEditor';
+import VanillaJSONEditor from './JSONEditor';
 
 export enum TargetEditor {
   'left' = 'left',
@@ -24,6 +24,7 @@ export type PathHandler = (params: {
 }) => void;
 export type DiffJsonViewProps = {
   readOnly?: boolean;
+  encrypted?: boolean;
   height?: string | number;
   hiddenTooltip?: boolean;
   diffJson?: { left: string; right: string };
@@ -39,6 +40,7 @@ export type DiffJsonViewProps = {
 const { useToken } = theme;
 const DiffJsonView: FC<DiffJsonViewProps> = ({
   readOnly,
+  encrypted,
   diffJson,
   diffPath,
   hiddenTooltip,
@@ -142,6 +144,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
         >
           <VanillaJSONEditor
             readOnly={readOnly}
+            encrypted={encrypted}
             height={height}
             language={language}
             remark={remark?.[0] || (t('benchmark') as string)}
@@ -183,6 +186,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
         >
           <VanillaJSONEditor
             readOnly={readOnly}
+            encrypted={encrypted}
             height={height}
             language={language}
             remark={remark?.[1] || (t('test') as string)}

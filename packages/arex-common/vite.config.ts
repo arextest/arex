@@ -9,13 +9,14 @@ export default defineConfig({
     }),
   ],
   build: {
-    sourcemap: true,
+    // sourcemap: true,
     outDir: './dist',
     emptyOutDir: true,
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'ArexCommon',
       fileName: 'arex-common',
+      formats: ['es'],
     },
     rollupOptions: {
       external: [

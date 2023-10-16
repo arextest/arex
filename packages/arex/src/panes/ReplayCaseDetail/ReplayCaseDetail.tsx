@@ -1,14 +1,20 @@
 import { HomeOutlined } from '@ant-design/icons';
-import { ArexPaneFC, PanesTitle, useTranslation } from '@arextest/arex-core';
+import {
+  ArexPaneFC,
+  clearLocalStorage,
+  PanesTitle,
+  setLocalStorage,
+  useTranslation,
+} from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { Badge, Button, Tabs, theme } from 'antd';
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 
-import { PanesType } from '@/constant';
+import { APP_ID_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
-import { StorageService } from '@/services';
-import { ReplayCaseType } from '@/services/ReportService';
-import { RecordResult } from '@/services/StorageService';
+import { ReportService } from '@/services';
+import { RecordResult, ReplayCaseType } from '@/services/ReportService';
+import { useMenusPanes } from '@/store';
 
 import CaseDetailTab from './CaseDetailTab';
 
@@ -17,11 +23,17 @@ type TagType = { label: ReactNode; key: string; children: ReactNode };
 const ReplayCaseDetail: ArexPaneFC<ReplayCaseType & { appId: string }> = (props) => {
   const { token } = theme.useToken();
   const { t } = useTranslation(['components']);
+  const { activePane } = useMenusPanes();
   const navPane = useNavPane();
 
   const [tabItems, setTabItems] = useState<TagType[]>([]);
 
-  useRequest(StorageService.viewRecord, {
+  useEffect(() => {
+    activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, props.data.appId);
+    return () => clearLocalStorage(APP_ID_KEY);
+  }, [activePane?.id]);
+
+  useRequest(ReportService.viewRecord, {
     defaultParams: [
       {
         recordId: props.data.recordId,

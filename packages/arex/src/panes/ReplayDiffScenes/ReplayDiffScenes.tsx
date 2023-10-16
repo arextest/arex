@@ -2,6 +2,7 @@ import { SettingOutlined } from '@ant-design/icons';
 import { DiffPath } from '@arextest/arex-common';
 import {
   ArexPaneFC,
+  clearLocalStorage,
   css,
   DiffMatch,
   getJsonValueByPath,
@@ -10,18 +11,21 @@ import {
   PaneDrawer,
   PathHandler,
   SceneCode,
+  setLocalStorage,
   TargetEditor,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest, useSize } from 'ahooks';
 import { App, Card, Collapse, Modal, Space, Typography } from 'antd';
-import React, { ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { APP_ID_KEY } from '@/constant';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
 import { DependencyParams } from '@/services/ComparisonService';
 import { InfoItem, PlanItemStatistics, SubScene } from '@/services/ReportService';
+import { useMenusPanes } from '@/store';
 
 import FlowTree, { FlowTreeData } from './FlowTree';
 import SubScenesMenu, { SubSceneMenuProps } from './SubScenesMenu';
@@ -50,6 +54,8 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
     data: { planId, planItemId },
   } = props;
   const { t } = useTranslation(['components']);
+  const { activePane } = useMenusPanes();
+
   const wrapperRef = useRef(null);
   const size = useSize(wrapperRef);
   const { message } = App.useApp();
@@ -66,6 +72,11 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
   // undefined 未指定 DependencyId，显示所有 Dependency 配置
   // string 指定 DependencyId，显示指定 Dependency 配置
   const [selectedDependency, setSelectedDependency] = useState<InfoItem>();
+
+  useEffect(() => {
+    activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, props.data.appId);
+    return () => clearLocalStorage(APP_ID_KEY);
+  }, [activePane?.id]);
 
   const { data: sceneInfo = [] } = useRequest(() =>
     ReportService.querySceneInfo({

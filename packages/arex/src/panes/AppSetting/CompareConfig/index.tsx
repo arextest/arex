@@ -133,7 +133,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
    * 请求 InterfacesList
    */
   const { data: operationList = [] } = useRequest(
-    () => ApplicationService.queryInterfacesList<'Interface'>({ id: props.appId as string }),
+    () => ApplicationService.queryInterfacesList<'Interface'>({ appId: props.appId as string }),
     {
       ready: !!props.appId,
       onSuccess(res) {

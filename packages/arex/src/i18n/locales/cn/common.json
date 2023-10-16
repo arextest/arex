@@ -14,11 +14,13 @@
   "logout": "登出",
   "invite": "邀请",
   "search": "搜索",
+  "refresh": "刷新",
   "key": "参数",
   "value": "值",
   "invalidJSON": "无效JSON",
   "prettier": "格式化",
   "edit": "修改",
+  "readOnly": "只读",
   "yes": "是",
   "no": "否",
   "action": "操作",
@@ -40,9 +42,9 @@
     "updateSuccess": "更新成功",
     "updateFailed": "更新失败",
     "saveSuccess": "保存成功",
-      "saveFailed": "保存失败",
-      "createSuccess": "创建成功",
-      "createFailed": "创建失败"
+    "saveFailed": "保存失败",
+    "createSuccess": "创建成功",
+    "createFailed": "创建失败"
   },
   "collection": "集合",
   "replay": "回放",
@@ -63,6 +65,7 @@
   "agentStatus": "状态",
   "document": "文档",
   "serverError": "服务器错误",
+  "searchUsers": "搜索用户",
   "dateRangePreset": {
     "quickPick": "快速选择",
     "1d": "近一天"

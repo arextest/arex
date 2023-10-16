@@ -31,7 +31,7 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
   const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
 
   const { loading } = useRequest(ConfigService.queryReplaySetting, {
-    defaultParams: [{ id: appId }],
+    defaultParams: [{ appId }],
     onSuccess(res) {
       setInitialValues({
         offsetDays: res.offsetDays,

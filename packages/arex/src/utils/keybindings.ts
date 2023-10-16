@@ -134,7 +134,7 @@ function generateKeybindingString(ev: KeyboardEvent): ShortcutKey | null {
 }
 
 function getPressedKey(ev: KeyboardEvent): Key | null {
-  const val = ev.key.toLowerCase();
+  const val = ev.key?.toLowerCase();
   // Check arrow keys
   if (val === 'arrowup') return 'up';
   else if (val === 'arrowdown') return 'down';
@@ -142,11 +142,11 @@ function getPressedKey(ev: KeyboardEvent): Key | null {
   else if (val === 'arrowright') return 'right';
 
   // Check letter keys
-  const isLetter = ev.code.toLowerCase().startsWith('key');
+  const isLetter = ev.code?.toLowerCase().startsWith('key');
   if (isLetter) return ev.code.toLowerCase().substring(3) as Key;
 
   // Check if number keys
-  if (val.length === 1 && !isNaN(val as any)) return val as Key;
+  if (val?.length === 1 && !isNaN(val as any)) return val as Key;
 
   // Check if question mark
   if (val === '?') return '?';

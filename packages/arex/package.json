@@ -1,7 +1,7 @@
 {
   "name": "arex",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.6.0",
   "type": "module",
   "scripts": {
     "test": "vitest",
@@ -10,11 +10,11 @@
     "do-build": "node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.2.6",
-    "@arextest/arex-common": "workspace:^",
-    "@arextest/arex-core": "workspace:^",
-    "@arextest/arex-request": "workspace:^",
+    "@arextest/arex-common": "*",
+    "@arextest/arex-core": "*",
+    "@arextest/arex-request": "*",
     "@arextest/monaco-react": "^4.5.1",
+    "@ant-design/icons": "^5.2.6",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@formkit/auto-animate": "^0.7.0",

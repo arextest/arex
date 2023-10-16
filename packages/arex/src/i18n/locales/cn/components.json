@@ -42,6 +42,9 @@
     "newCreate": "新建"
   },
   "applicationsMenu": {
+    "appName": "应用名称",
+    "appNameEmptyTip": "应用名称不能为空",
+    "createApp": "新建应用",
     "filterFavoriteApps": "收藏应用列表",
     "appFilterPlaceholder": "搜索应用"
   },
@@ -179,7 +182,10 @@
     "recordedCaseCount": "用例数",
     "recordTime": "录制时间",
     "operationType": "接口类型",
-    "re-calculateReport": "重算报告"
+    "re-calculateReport": "重算报告",
+    "noAppOwnerAlert":"当前应用无 Owner，一些操作权限将被禁用，请",
+    "addOwner": "添加应用 Owner",
+    "noRecordCountTip": "暂无录制数据，请尝试使用以下命令启动 Agent 录制"
   },
   "appSetting": {
     "record": "录制",
@@ -236,6 +242,8 @@
     "arrayTree": "数组节点",
     "sortTree": "关键标识节点",
     "emptyKey": "请输入忽略节点",
+    "expireOn": "过期时间",
+    "expired": "已过期",
     "noIgnoredNodes": "忽略节点为空",
     "noEncryptionNodes": "加密节点为空",
     "emptyFullClassName": "请输入全类名",
@@ -250,6 +258,7 @@
     "inclusion": "包含规则",
     "inclusionTooltip": "选择要录制的路径。",
     "other": "其他",
+    "owners": "所有者",
     "dangerZone": "危险区域",
     "deleteApp": "删除应用",
     "deleteThisApp": "删除该应用",

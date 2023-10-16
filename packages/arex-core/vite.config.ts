@@ -12,13 +12,14 @@ export default defineConfig({
     }),
   ],
   build: {
-    sourcemap: true,
+    // sourcemap: true,
     outDir: './dist',
     emptyOutDir: true,
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'ArexCore',
       fileName: 'arex-core',
+      formats: ['es'],
     },
     rollupOptions: {
       external: ['react', 'react-dom', 'antd', '@emotion/react', '@emotion/styled'],

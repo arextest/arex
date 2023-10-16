@@ -12,7 +12,7 @@ import { MenuProps } from 'antd';
 import React, { FC } from 'react';
 
 import { EmptyPanePlaceholder, HeaderMenu, KeyboardShortcut } from '@/components';
-import { PanesType } from '@/constant';
+import { CollectionNodeType, PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
 import { useMenusPanes, useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
@@ -82,7 +82,7 @@ const Home: FC = () => {
   const handlePaneAdd: ArexPanesContainerProps['onAdd'] = () => {
     navPane({
       type: PanesType.REQUEST,
-      id: `${activeWorkspaceId}-${generateId(12)}`,
+      id: `${activeWorkspaceId}-${CollectionNodeType.interface}-${generateId(12)}`,
       icon: 'Get',
       name: 'Untitled',
     });

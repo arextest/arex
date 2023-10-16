@@ -1,26 +1,25 @@
 {
   "name": "@arextest/arex-core",
-  "version": "0.1.0",
+  "version": "0.2.5",
   "homepage": "https://github.com/arextest/arex",
-  "main": "dist/arex-core.umd.cjs",
+  "main": "dist/arex-core.js",
   "module": "dist/arex-core.js",
   "type": "module",
   "scripts": {
     "build:code": "vite build",
     "build:decl": "tsc --project tsconfig.decl.json",
-    "do-build": "pnpm run build:code && pnpm run build:decl",
-    "do-build-core": "pnpm run build:code && pnpm run build:decl"
+    "do-build": "pnpm run build:code && pnpm run build:decl"
   },
   "types": "dist/index.d.ts",
   "files": [
     "dist/*"
   ],
   "dependencies": {
+    "@arextest/vanilla-jsoneditor": "0.17.25",
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/sortable": "^7.0.2",
     "@dnd-kit/utilities": "^3.2.1",
     "@ant-design/icons": "^5.2.6",
-    "@arextest/vanilla-jsoneditor": "0.17.23",
     "@emotion/serialize": "^1.1.1",
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",

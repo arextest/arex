@@ -1,4 +1,4 @@
-import { HeartFilled, HeartOutlined, HistoryOutlined } from '@ant-design/icons';
+import { HeartFilled, HeartOutlined, HistoryOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   ArexMenuFC,
   createArexMenu,
@@ -9,7 +9,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest, useSize, useToggle } from 'ahooks';
-import { theme } from 'antd';
+import { App, Button, Form, FormProps, Input, Modal, theme } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { MenuSelect, MenuSelectProps } from '@/components';
@@ -50,7 +50,7 @@ const MenuItem = styled((props: MenuItemProps) => {
 
   return (
     <SpaceBetweenWrapper {...restProps}>
-      <span>{app.appId}</span>
+      <span>{app.appName}</span>
       <span className='menu-item-heart' onClick={(e) => e.stopPropagation()}>
         {favoriteApps.includes(app.id) ? (
           <HeartFilled onClick={unFavoriteApp} style={{ color: token.colorError }} />
@@ -77,6 +77,7 @@ const MenuItem = styled((props: MenuItemProps) => {
 `;
 
 const ReplayMenu: ArexMenuFC = (props) => {
+  const { message } = App.useApp();
   const { t } = useTranslation(['components']);
   const { activePane } = useMenusPanes();
   const size = useSize(() => document.getElementById('arex-menu-wrapper'));
@@ -85,7 +86,7 @@ const ReplayMenu: ArexMenuFC = (props) => {
 
   const { token } = theme.useToken();
   const email = getLocalStorage<string>(EMAIL_KEY) as string;
-  const { timestamp } = useApplication();
+  const { timestamp, setTimestamp } = useApplication();
 
   const [favoriteFilter, { toggle: toggleFavoriteFilter, setRight: disableFavoriteFilter }] =
     useToggle(false);
@@ -110,8 +111,9 @@ const ReplayMenu: ArexMenuFC = (props) => {
 
   const filter = useCallback(
     (keyword: string, app: ApplicationDataType) => {
-      return keyword
-        ? app.appName.includes(keyword) || app.appId.includes(keyword)
+      const lowCaseKeyword = keyword.toLowerCase();
+      return lowCaseKeyword
+        ? app.appName.toLowerCase().includes(lowCaseKeyword) || app.appId.includes(lowCaseKeyword)
         : favoriteFilter
         ? !!favoriteApps?.includes(app.id)
         : true;
@@ -138,6 +140,35 @@ const ReplayMenu: ArexMenuFC = (props) => {
     props.onSelect?.(value); // to streamline the params, remove the types from onSelect handler
   };
 
+  const [open, setOpen] = useState(false);
+  const { run: createApp } = useRequest(ApplicationService.createApp, {
+    manual: true,
+    onSuccess(res) {
+      if (res.success) {
+        setOpen(false);
+        setTimestamp(Date.now());
+        message.success(
+          t('message.createSuccess', {
+            ns: 'common',
+          }),
+        );
+      } else {
+        message.error(
+          t('message.createFailed', {
+            ns: 'common',
+          }),
+        );
+      }
+    },
+  });
+
+  const handleAddApp: FormProps<{ appName: string }>['onFinish'] = (value) => {
+    createApp({
+      appName: value.appName,
+      owners: [email],
+    });
+  };
+
   return (
     <div style={{ padding: '8px' }}>
       <MenuSelect<ApplicationDataType>
@@ -149,17 +180,26 @@ const ReplayMenu: ArexMenuFC = (props) => {
         initValue={props.value}
         selectedKeys={selectedKeys}
         prefix={
-          <TooltipButton
-            title={t('applicationsMenu.filterFavoriteApps')}
-            icon={
-              favoriteFilter ? (
-                <HeartFilled style={{ color: token.colorError }} />
-              ) : (
-                <HeartOutlined />
-              )
-            }
-            onClick={toggleFavoriteFilter}
-          />
+          <>
+            <TooltipButton
+              type='text'
+              size='small'
+              title={t('applicationsMenu.createApp')}
+              icon={<PlusOutlined />}
+              onClick={() => setOpen(true)}
+            />
+            <TooltipButton
+              title={t('applicationsMenu.filterFavoriteApps')}
+              icon={
+                favoriteFilter ? (
+                  <HeartFilled style={{ color: token.colorError }} />
+                ) : (
+                  <HeartOutlined />
+                )
+              }
+              onClick={toggleFavoriteFilter}
+            />
+          </>
         }
         onSelect={handleSelect}
         placeholder={t('applicationsMenu.appFilterPlaceholder') as string}
@@ -189,6 +229,36 @@ const ReplayMenu: ArexMenuFC = (props) => {
           },
         }}
       />
+
+      <Modal
+        destroyOnClose
+        title={t('applicationsMenu.createApp')}
+        open={open}
+        footer={null}
+        onCancel={() => setOpen(false)}
+      >
+        <Form name='create-app' onFinish={handleAddApp}>
+          <Form.Item
+            label={t('applicationsMenu.appName')}
+            name='appName'
+            rules={[
+              {
+                required: true,
+                type: 'string',
+                message: t('applicationsMenu.appNameEmptyTip') as string,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item style={{ textAlign: 'right' }}>
+            <Button type='primary' htmlType='submit'>
+              {t('create', { ns: 'common' })}
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };

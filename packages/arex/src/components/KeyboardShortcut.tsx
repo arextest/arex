@@ -7,7 +7,7 @@ import {
 import { App, Collapse, Drawer, Input, InputProps, List, Typography } from 'antd';
 import React, { CompositionEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 
-import { MenusType, PanesType } from '@/constant';
+import { CollectionNodeType, MenusType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { useMenusPanes, useWorkspaces } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
@@ -238,7 +238,7 @@ const KeyboardShortcut = React.memo(() => {
       case 'pane.new': {
         navPane({
           type: PanesType.REQUEST,
-          id: generateId(12),
+          id: `${activeWorkspaceId}-${CollectionNodeType.interface}-${generateId(12)}`,
           icon: 'Get',
           name: 'Untitled',
         });

@@ -12,9 +12,9 @@ export type QueryReplaySettingRes = {
   sendMaxQps: number;
 };
 
-export async function queryReplaySetting(params: { id: string }) {
+export async function queryReplaySetting(params: { appId: string }) {
   const res = await request.get<QueryReplaySettingRes>(
-    '/report/config/schedule/useResult/appId/' + params.id,
+    '/report/config/schedule/useResult/appId/' + params.appId,
   );
   return res.body;
 }
