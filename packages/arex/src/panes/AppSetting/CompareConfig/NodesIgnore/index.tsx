@@ -7,6 +7,7 @@ import {
 } from '@ant-design/icons';
 import {
   css,
+  Label,
   PaneDrawer,
   SmallTextButton,
   SpaceBetweenWrapper,
@@ -24,10 +25,12 @@ import {
   InputRef,
   List,
   Space,
+  Tag,
   Typography,
 } from 'antd';
 import { TreeProps } from 'antd/es';
 import { DataNode } from 'antd/lib/tree';
+import dayjs from 'dayjs';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
@@ -36,7 +39,12 @@ import { CONFIG_TARGET } from '@/panes/AppSetting/CompareConfig';
 import CompareConfigTitle from '@/panes/AppSetting/CompareConfig/CompareConfigTitle';
 import { ComparisonService } from '@/services';
 import { OperationId } from '@/services/ApplicationService';
-import { DependencyParams, IgnoreNodeBase, QueryIgnoreNode } from '@/services/ComparisonService';
+import {
+  DependencyParams,
+  ExpirationType,
+  IgnoreNodeBase,
+  QueryIgnoreNode,
+} from '@/services/ComparisonService';
 
 import IgnoreTree from './IgnoreTree';
 import { getIgnoreNodes } from './utils';
@@ -115,7 +123,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
   function convertIgnoreNode(data: QueryIgnoreNode[]) {
     setCheckedNodesData((state) => {
       state.operationId = props.operationId;
-      state.exclusionsList = data.map((item) => item.path);
+      state.exclusionsList = data.map((item) => item.path || '');
     });
   }
 
@@ -255,7 +263,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
 
   const handleIgnoreSave = () => {
     const { operationId = null, exclusionsList } = checkedNodesData;
-    const exclusionsListPrev = ignoreNodeList.map((item) => item.path);
+    const exclusionsListPrev = ignoreNodeList.map((item) => item.path as string);
 
     const add: string[] = [],
       remove: string[] = [];
@@ -363,6 +371,19 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
                     <List.Item>
                       <SpaceBetweenWrapper width={'100%'}>
                         <Typography.Text ellipsis>{node.exclusions.join('/')}</Typography.Text>
+                        {node.expirationType === ExpirationType.temporary && (
+                          <Tag>
+                            {node.expirationDate > Date.now() ? (
+                              <>
+                                <Label>{t('appSetting.expireOn')}</Label>
+                                {dayjs(node.expirationDate).format('YYYY/MM/DD HH:mm')}
+                              </>
+                            ) : (
+                              t('appSetting.expired')
+                            )}
+                          </Tag>
+                        )}
+
                         {!props.readOnly && (
                           <SmallTextButton
                             icon={<DeleteOutlined />}

@@ -2,7 +2,6 @@ import sdk from 'postman-collection';
 
 import {
   ArexEnvironment,
-  ArexRESTParam,
   ArexRESTRequest,
   ArexRESTResponse,
   ArexTestResult,
@@ -10,16 +9,6 @@ import {
 } from '../../types';
 import { convertToPmBody } from './convertToPmBody';
 
-const convertToUrl = (requestParams: ArexRESTParam[]) => {
-  const params: string[] = [];
-  requestParams.forEach(({ key, value }) => {
-    const param = key + '=' + value;
-    params.push(param);
-  });
-  return '?' + params.join('&');
-};
-
-// 发送一个request
 export async function sendRequest(
   request: ArexRESTRequest,
   environment?: ArexEnvironment,
@@ -59,12 +48,10 @@ export async function sendRequest(
           },
         ],
         request: {
-          method: request.method,
+          method: request.inherited ? request.inheritedMethod : request.method,
           header: request.headers.filter((i) => i.active),
           body: convertToPmBody(request.body),
-          url: sdk.Url.parse(
-            request.endpoint + convertToUrl(request.params.filter((i) => i.active)),
-          ),
+          url: sdk.Url.parse(request.inherited ? request.inheritedEndpoint : request.endpoint),
         },
         response: [],
       },
@@ -154,12 +141,12 @@ export async function sendRequest(
             history: any,
           ) {
             res = {
-              type: 'success',
-              headers: response.headers.members,
-              statusCode: response.code,
-              body: response.stream,
+              type: 'success', // TODO check response status
+              headers: response?.headers.members,
+              statusCode: response?.code,
+              body: String(response?.stream),
               meta: {
-                responseSize: response.stream.length, // in bytes
+                responseSize: response.responseSize, // in bytes
                 responseDuration: response.responseTime, // in millis
               },
             };

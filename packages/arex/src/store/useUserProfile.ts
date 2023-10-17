@@ -1,5 +1,4 @@
 import { getLocalStorage, i18n, I18nextLng, setLocalStorage, Theme } from '@arextest/arex-core';
-import { message } from 'antd';
 import { create } from 'zustand';
 
 import { DEFAULT_COLOR_PRIMARY, DEFAULT_THEME, EMAIL_KEY, THEME_KEY } from '@/constant';
@@ -35,10 +34,11 @@ const useUserProfile = create<UserProfile & UserProfileAction>((set) => {
         window.message.error(i18n.t('loginInformationExpired'));
         globalStoreReset();
       } else {
-        message.error(i18n.t('serverError'));
+        window.message.error(i18n.t('serverError'));
       }
     }
-
+    console.log(profile, 'profile');
+    window.__locale__ = profile?.language || 'en';
     profile && set(profile);
   }
 

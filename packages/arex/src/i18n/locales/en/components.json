@@ -42,6 +42,9 @@
     "newCreate": "New"
   },
   "applicationsMenu": {
+    "appName": "App Name",
+    "appNameEmptyTip": "The application name cannot be empty",
+    "createApp": "Create Application",
     "filterFavoriteApps": "Filter Favorite Apps",
     "appFilterPlaceholder": "Search Applications"
   },
@@ -179,7 +182,10 @@
     "recordedCaseCount": "Case Count",
     "recordTime": "Record Time",
     "operationType": "Operation Type",
-    "re-calculateReport": "Re-calculate Report"
+    "re-calculateReport": "Re-calculate Report",
+    "noAppOwnerAlert":"There is no owners of this application, some operation privileges will be disabled, please ",
+    "addOwner": "Add application owner",
+    "noRecordCountTip": "No recording data is available at this time, try starting Agent recording with the following command"
   },
   "appSetting": {
     "record": "Record",
@@ -237,6 +243,8 @@
     "arrayTree": "ArrayTree",
     "sortTree": "SortTree",
     "emptyKey": "Please enter ignored key",
+    "expireOn": "Expire on",
+    "expired": "Expired",
     "noIgnoredNodes": "No Ignored Nodes",
     "noDesensitizationNodes": "No Desensitization Nodes",
     "emptyFullClassName": "Please enter full class name",
@@ -252,6 +260,7 @@
     "inclusionTooltip": "Select the paths to record",
     "other": "Other",
     "dangerZone": "Danger Zone",
+    "owners": "Owners",
     "deleteApp": "Delete App",
     "deleteThisApp": "Delete this App",
     "deleteTip": "Once you delete an app, there is no going back. Please be certain.",
@@ -343,6 +352,8 @@
     "language": "Language",
     "avatar": "Avatar",
     "dataDesensitization": "DataDesensitization",
-    "jarFileUrl": "JarFileUrl"
+    "jarFileUrl": "JarFileUrl",
+    "replayCallback": "ReplayCallback",
+    "replayCallbackUrl": "ReplayCallbackUrl"
   }
 }

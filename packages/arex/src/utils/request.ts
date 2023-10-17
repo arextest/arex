@@ -2,7 +2,7 @@ import { getLocalStorage } from '@arextest/arex-core';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import proxy from '@/config/proxy';
-import { ACCESS_TOKEN_KEY } from '@/constant';
+import { ACCESS_TOKEN_KEY, APP_ID_KEY } from '@/constant';
 
 type IRequestConfig<T = AxiosResponse> = AxiosRequestConfig;
 
@@ -27,11 +27,9 @@ export class Request {
 
     // 全局请求拦截
     this.instance.interceptors.request.use(
-      (config) => {
-        // @ts-ignore
-        config.headers = {
-          'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
-        };
+      (request) => {
+        request.headers.set('access-token', getLocalStorage<string>(ACCESS_TOKEN_KEY));
+        request.headers.set('appId', getLocalStorage<string>(APP_ID_KEY));
 
         if (import.meta.env.MODE === 'electron' && !process.env['VITE_DEV_SERVER_URL']) {
           let path: string | undefined = undefined;
@@ -41,7 +39,7 @@ export class Request {
           }
         }
 
-        return config;
+        return request;
       },
       (error) => Promise.reject(error),
     );
@@ -50,6 +48,7 @@ export class Request {
     this.instance.interceptors.response.use(
       (response) => {
         if (response.data.responseStatusType?.responseCode === 4) {
+          window.message.error(response.data.responseStatusType.responseDesc);
           return Promise.reject(response.data.responseStatusType);
         }
         return Promise.resolve(response.data);
@@ -119,7 +118,7 @@ export class Request {
 }
 
 const request = new Request({
-  timeout: 300000,
+  timeout: 30000,
 });
 
 export default request;

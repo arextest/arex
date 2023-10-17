@@ -1,5 +1,5 @@
 import { SearchOutlined, SyncOutlined } from '@ant-design/icons';
-import { css, styled, useTranslation } from '@arextest/arex-core';
+import { css, styled, TooltipButton, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { Options } from 'ahooks/lib/useRequest/src/types';
 import { Button, Input, Menu, Spin, Typography } from 'antd';
@@ -66,12 +66,18 @@ type MenuFilterProps = {
   className?: string;
 };
 const MenuFilter = styled((props: MenuFilterProps) => {
+  const { t } = useTranslation();
   return (
     <div className={props.className}>
       <span className='button-group'>
         {props.prefix}
         {props.refresh && (
-          <Button type='text' size={props.size} icon={<SyncOutlined />} onClick={props.onFresh} />
+          <TooltipButton
+            title={t('refresh')}
+            size={props.size}
+            icon={<SyncOutlined />}
+            onClick={props.onFresh}
+          />
         )}
       </span>
 
@@ -92,9 +98,6 @@ const MenuFilter = styled((props: MenuFilterProps) => {
     margin-right: 2px;
     .ant-btn-icon-only {
       color: ${(props) => props.theme.colorTextSecondary} !important;
-      .anticon > svg {
-        transform: scale(0.8);
-      }
     }
   }
 `;

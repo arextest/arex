@@ -2,6 +2,7 @@ import { HomeOutlined, SettingOutlined } from '@ant-design/icons';
 import { DiffPath } from '@arextest/arex-common';
 import {
   ArexPaneFC,
+  clearLocalStorage,
   CollapseTable,
   DiffMatch,
   getJsonValueByPath,
@@ -9,31 +10,35 @@ import {
   i18n,
   I18nextLng,
   jsonIndexPathFilter,
+  Label,
   PaneDrawer,
   PanesTitle,
   PathHandler,
-  SmallTextButton,
+  setLocalStorage,
   TargetEditor,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Modal } from 'antd';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import dayjs from 'dayjs';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { EMAIL_KEY, PanesType } from '@/constant';
+import { APP_ID_KEY, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
-import { DependencyParams } from '@/services/ComparisonService';
+import { DependencyParams, ExpirationType } from '@/services/ComparisonService';
 import { InfoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
 import { MessageMap } from '@/services/ScheduleService';
+import { useMenusPanes } from '@/store';
 
 import Case, { CaseProps } from './Case';
 import SaveCase, { SaveCaseRef } from './SaveCase';
 
 const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
   const { message, notification } = App.useApp();
+  const { activePane } = useMenusPanes();
   const email = getLocalStorage<string>(EMAIL_KEY);
   const { t } = useTranslation(['components']);
   const navPane = useNavPane();
@@ -49,6 +54,11 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   const [selectedDependency, setSelectedDependency] = useState<InfoItem>();
 
   const saveCaseRef = useRef<SaveCaseRef>(null);
+
+  useEffect(() => {
+    activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, props.data.appId);
+    return () => clearLocalStorage(APP_ID_KEY);
+  }, [activePane?.id]);
 
   const {
     data: fullLinkInfo,
@@ -81,6 +91,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
 
   function handleClickSaveCase(record: ReplayCaseType) {
     saveCaseRef.current?.openModal(record);
+    //   setOpen(true)
   }
 
   const { run: queryPlanFailCase } = useRequest(ReportService.queryPlanFailCase, {
@@ -117,20 +128,30 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   });
 
   const { run: insertIgnoreNode } = useRequest(
-    (path: string[], global?: boolean) => {
+    (path: string[], type?: string) => {
+      const isGlobal = type === 'global';
+      const isTemporary = type === 'temporary';
+
       const dependencyParams: DependencyParams =
-        global || selectedDependency?.isEntry
+        isGlobal || selectedDependency?.isEntry
           ? ({} as DependencyParams)
           : {
               operationType: selectedDependency?.categoryName || selectedDependency?.operationType,
               operationName: selectedDependency?.operationName,
             };
+      const temporaryParams = isTemporary
+        ? {
+            expirationType: ExpirationType.temporary,
+            expirationDate: dayjs().add(7, 'day').valueOf(),
+          }
+        : {};
 
       return ComparisonService.insertIgnoreNode({
-        operationId: global ? undefined : props.data.operationId,
+        operationId: isGlobal ? undefined : props.data.operationId,
         appId: props.data.appId,
         exclusions: path,
         ...dependencyParams,
+        ...temporaryParams,
       });
     },
     {
@@ -140,7 +161,6 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
       },
     },
   );
-
   function handleClickRerunCase(recordId: string) {
     queryPlanFailCase({
       planId: props.data.planId,
@@ -157,7 +177,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   const handleIgnoreKey = useCallback<PathHandler>(
     ({ path, type, targetEditor, jsonString }) => {
       const filteredPath = jsonIndexPathFilter(path, jsonString![targetEditor]);
-      filteredPath && insertIgnoreNode(filteredPath, type === 'global');
+      filteredPath && insertIgnoreNode(filteredPath, type);
     },
     [insertIgnoreNode],
   );
@@ -191,7 +211,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
       <PanesTitle
         title={
           <span>
-            {t('replay.caseServiceAPI')}:{' '}
+            <Label style={{ font: 'inherit' }}>{t('replay.caseServiceAPI')}</Label>
             {decodeURIComponent(props.data.operationName || 'unknown')}
           </span>
         }
@@ -258,7 +278,13 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         }
       />
 
-      <SaveCase planId={props.data.planId} operationId={props.data.operationId} ref={saveCaseRef} />
+      <SaveCase
+        planId={props.data.planId}
+        operationId={props.data.operationId}
+        ref={saveCaseRef}
+        appId={props.data.appId}
+        operationName={props.data.operationName || ''}
+      />
 
       {/* JsonDiffMathModal */}
       {contextHolder}

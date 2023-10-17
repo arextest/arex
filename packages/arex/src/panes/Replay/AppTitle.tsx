@@ -27,6 +27,7 @@ import {
   Form,
   Modal,
   Select,
+  Skeleton,
   theme,
   Typography,
 } from 'antd';
@@ -36,12 +37,16 @@ import React, { createElement, FC, ReactNode, useCallback, useMemo, useRef, useS
 import { EMAIL_KEY, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
 import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCaseList';
-import { ApplicationService, ReportService, ScheduleService } from '@/services';
+import { ApplicationService, ScheduleService } from '@/services';
 import { MessageMap } from '@/services/ScheduleService';
 
 type AppTitleProps = {
   appId: string;
+  appName?: string;
+  readOnly?: boolean;
+  recordCount?: number;
   onRefresh?: () => void;
+  onQueryRecordCount?: () => void;
 };
 
 type CreatePlanForm = {
@@ -63,32 +68,38 @@ const TitleWrapper = styled(
 
     return (
       <div id='arex-replay-record-detail-btn' className={props.className}>
-        {createElement(
-          props.count ? Button : 'div',
-          props.count ? { type: 'text', onClick: props.onClickTitle } : {},
-          <Badge size='small' count={props.count} offset={[10, 2]}>
-            <span style={{ fontSize: '20px', fontWeight: 600 }}> {props.title}</span>
-          </Badge>,
-        )}
-        {props.onRefresh && (
-          <TooltipButton
-            id='arex-replay-refresh-report-btn'
-            size='small'
-            type='text'
-            title={t('replay.refresh')}
-            icon={<SyncOutlined />}
-            onClick={props.onRefresh}
-          />
-        )}
-        {props.onSetting && (
-          <TooltipButton
-            id='arex-replay-app-setting-btn'
-            size='small'
-            type='text'
-            title={t('replay.appSetting')}
-            icon={<SettingOutlined />}
-            onClick={props.onSetting}
-          />
+        {props.title ? (
+          <>
+            {createElement(
+              props.count ? Button : 'div',
+              props.count ? { type: 'text', onClick: props.onClickTitle } : {},
+              <Badge size='small' count={props.count} offset={[10, 2]}>
+                <span style={{ fontSize: '20px', fontWeight: 600 }}>{props.title}</span>
+              </Badge>,
+            )}
+            {props.onRefresh && (
+              <TooltipButton
+                id='arex-replay-refresh-report-btn'
+                size='small'
+                type='text'
+                title={t('replay.refresh')}
+                icon={<SyncOutlined />}
+                onClick={props.onRefresh}
+              />
+            )}
+            {props.onSetting && (
+              <TooltipButton
+                id='arex-replay-app-setting-btn'
+                size='small'
+                type='text'
+                title={t('replay.appSetting')}
+                icon={<SettingOutlined />}
+                onClick={props.onSetting}
+              />
+            )}
+          </>
+        ) : (
+          <Skeleton.Input active size='small' style={{ width: '200px' }} />
         )}
       </div>
     );
@@ -109,7 +120,14 @@ const InitialValues = {
   ],
 };
 
-const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
+const AppTitle: FC<AppTitleProps> = ({
+  appId,
+  appName,
+  readOnly,
+  recordCount = 0,
+  onRefresh,
+  onQueryRecordCount,
+}) => {
   const { notification } = App.useApp();
   const { token } = theme.useToken();
   const navPane = useNavPane();
@@ -130,6 +148,11 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
     defaultValue: {},
   });
 
+  const appTitle = useMemo(
+    () => appName && `${readOnly ? `[${t('readOnly', { ns: 'common' })}] ` : ''}${appName}`,
+    [readOnly, t, appName],
+  );
+
   const webhook = useMemo(
     () => `${location.origin}/schedule/createPlan?appId=${appId}&targetEnv=${targetEnv?.trim()}`,
     [appId, targetEnv],
@@ -138,24 +161,12 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
   /**
    * 请求 InterfacesList
    */
-  useRequest(() => ApplicationService.queryInterfacesList<'Global'>({ id: appId }), {
+  useRequest(() => ApplicationService.queryInterfacesList<'Global'>({ appId }), {
     ready: open,
     onSuccess(res) {
       setInterfacesOptions(res.map((item) => ({ label: item.operationName, value: item.id })));
     },
   });
-
-  const { data: recordedCase = 0, refresh: queryCountRecord } = useRequest(
-    ReportService.queryCountRecord,
-    {
-      defaultParams: [
-        {
-          appId,
-        },
-      ],
-      ready: !!appId,
-    },
-  );
 
   /**
    * 创建回放
@@ -222,7 +233,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
         });
       })
       .catch((info) => {
-        console.log('Validate Failed:', info);
+        console.error('Validate Failed:', info);
       });
   };
 
@@ -266,7 +277,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
   const handleClickTitle = useCallback(() => caseListRef.current?.open(), [caseListRef]);
 
   const handleRefresh = useCallback(() => {
-    queryCountRecord();
+    onQueryRecordCount?.();
     onRefresh?.();
   }, []);
 
@@ -287,8 +298,8 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
       <PanesTitle
         title={
           <TitleWrapper
-            title={appId}
-            count={recordedCase}
+            title={appTitle}
+            count={recordCount}
             onClickTitle={handleClickTitle}
             onRefresh={handleRefresh}
             onSetting={handleSetting}
@@ -299,6 +310,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
             id='arex-replay-create-plan-btn'
             size='small'
             type='primary'
+            disabled={readOnly}
             icon={<PlayCircleOutlined />}
             onClick={() => setOpen(true)}
           >
@@ -397,7 +409,7 @@ const AppTitle: FC<AppTitleProps> = ({ appId, onRefresh }) => {
         </Form>
       </Modal>
 
-      <RecordedCaseList ref={caseListRef} appId={appId} onChange={queryCountRecord} />
+      <RecordedCaseList ref={caseListRef} appId={appId} onChange={onQueryRecordCount} />
     </div>
   );
 };

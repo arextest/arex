@@ -1,4 +1,3 @@
-import { RecordResult } from '@/services/StorageService';
 import { request } from '@/utils';
 
 export interface QueryRecordListReq {
@@ -11,9 +10,14 @@ export interface QueryRecordListReq {
   endTime?: number;
 }
 
+export type RecordType = {
+  createTime: number;
+  operationType: string;
+  recordId: string;
+};
 export interface QueryRecordListRes {
   totalCount: number;
-  recordList: RecordResult[];
+  recordList: RecordType[];
 }
 
 export async function queryRecordList(params: QueryRecordListReq) {

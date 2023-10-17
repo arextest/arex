@@ -16,7 +16,7 @@ import EnvironmentDrawer, {
 } from './EnvironmentDrawer';
 import { ExtraTabs } from './extra';
 import SaveAs, { SaveAsRef } from './SaveAs';
-import { convertRequest, updateWorkspaceEnvironmentLS } from './utils';
+import { updateWorkspaceEnvironmentLS } from './utils';
 
 export type RequestProps = {
   recordId?: string;
@@ -165,8 +165,11 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
           {
             label: 'Mock',
             key: 'mock',
-            hidden: !data?.recordId,
-            children: <ExtraTabs.RequestTabs.Mock recordId={data?.recordId} />,
+            // 这里判断是否有recordId，如果有则隐藏，因为recordId是mock的唯一标识
+            hidden: !(data?.recordId || props.data?.recordId),
+            children: (
+              <ExtraTabs.RequestTabs.Mock recordId={data?.recordId || props.data?.recordId} />
+            ),
           },
         ],
       },
@@ -219,7 +222,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       <ArexRequest
         ref={httpRef}
         loading={!data}
-        height='calc(100vh - 110px)'
+        height='calc(100vh - 160px)'
         data={data}
         config={httpConfig}
         breadcrumb={parentPath}
@@ -253,7 +256,6 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         }}
         disableSave={!!props.data?.recordId}
         onSave={handleSave}
-        onBeforeSend={convertRequest}
         onSaveAs={saveAsRef?.current?.open}
       />
 

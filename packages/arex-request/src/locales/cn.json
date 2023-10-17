@@ -95,10 +95,11 @@
     "enter_curl": "输入 cURL",
     "generate_code": "生成代码",
     "generated_code": "已生成代码",
-    "header_list": "请求头列表",
+    "headers": "请求头列表",
     "invalid_name": "请提供请求名称",
     "method": "方法",
     "name": "请求名称",
+    "description": "请求描述",
     "new": "新请求",
     "override": "覆盖",
     "overriden": "覆盖",
@@ -135,7 +136,8 @@
     "time": "时间",
     "title": "响应",
     "waiting_for_connection": "等待连接",
-    "xml": "XML"
+    "xml": "XML",
+    "sendRequestTip": "输入 URL 并点击发送以获取响应"
   },
   "tab": {
     "authorization": "授权",

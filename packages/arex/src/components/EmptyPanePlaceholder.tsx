@@ -2,8 +2,9 @@ import { useTranslation } from '@arextest/arex-core';
 import { Button, Space, Typography } from 'antd';
 import React, { FC, useMemo } from 'react';
 
-import { PanesType } from '@/constant';
+import { CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
+import { useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
 import { shortcuts } from '@/utils/keybindings';
 
@@ -12,11 +13,12 @@ const shortcutsTipList = ['general.keybindings.toggle', 'navigation.help'];
 const EmptyPanePlaceholder: FC = () => {
   const { t } = useTranslation(['components', 'shortcuts']);
   const navPane = useNavPane();
+  const { activeWorkspaceId } = useWorkspaces();
 
   const handlePaneAdd = () => {
     navPane({
       type: PanesType.REQUEST,
-      id: generateId(12),
+      id: `${activeWorkspaceId}-${CollectionNodeType.interface}-${generateId(12)}`,
       icon: 'Get',
       name: 'Untitled',
     });

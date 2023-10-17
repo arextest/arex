@@ -25,13 +25,11 @@ import {
   Button,
   Card,
   Col,
-  Dropdown,
   Input,
   InputRef,
   Popconfirm,
   Row,
   Space,
-  Spin,
   Statistic,
   Table,
   theme,
@@ -49,7 +47,7 @@ import { EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanItemStatistics, PlanStatistics } from '@/services/ReportService';
-import { CreatePlanReq, MessageMap } from '@/services/ScheduleService';
+import { MessageMap } from '@/services/ScheduleService';
 import { useMenusPanes } from '@/store';
 import IconLog from '~icons/octicon/log-24';
 
@@ -71,6 +69,7 @@ const chartOptions = {
 export type ReplayPlanItemProps = {
   appId: string;
   selectedPlan?: PlanStatistics;
+  readOnly?: boolean;
   filter?: (record: PlanItemStatistics) => boolean;
   onRefresh?: () => void;
 };
@@ -85,6 +84,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const navPane = useNavPane();
   const { token } = theme.useToken();
 
+  const [pollingInterval, setPollingInterval] = useState(true);
   const {
     data: planItemData = [],
     loading: loadingData,
@@ -101,17 +101,27 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       loadingDelay: 200,
       pollingInterval: 6000,
       onSuccess(res) {
-        if (res)
-          res.every((record) => record.status !== 1) &&
-            selectedPlan?.status !== 1 &&
+        if (res) {
+          if (res?.every((record) => record.status !== 1) && selectedPlan?.status !== 1) {
+            setPollingInterval(false);
             cancelPollingInterval();
-        else cancelPollingInterval();
+          }
+        } else {
+          setPollingInterval(false);
+          cancelPollingInterval();
+        }
       },
     },
   );
   // optimize: cancel polling interval when pane is not active
   useEffect(() => {
-    activePane?.id !== props.appId ? cancelPollingInterval() : refresh();
+    if (activePane?.id !== props.appId && pollingInterval) {
+      setPollingInterval(false);
+      cancelPollingInterval();
+    } else if (activePane?.id === props.appId && !pollingInterval) {
+      setPollingInterval(true);
+      refresh();
+    }
   }, [activePane, props.appId]);
 
   const planItemDataFiltered = useMemo(
@@ -153,18 +163,22 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   );
 
   const CaseCountRender = useCallback(
-    (count: number, record: PlanItemStatistics, status?: 0 | 1 | 2) => (
-      <Button
-        type='link'
-        size='small'
-        onClick={() => {
-          navPane({
-            type: PanesType.REPLAY_CASE,
-            id: record.planItemId,
-            data: { ...record, filter: status },
-          });
-        }}
-      >
+    (count: number, record: PlanItemStatistics, status?: 0 | 1 | 2, readOnly: boolean = false) =>
+      React.createElement(
+        readOnly ? 'div' : Button,
+        readOnly
+          ? undefined
+          : {
+              type: 'link',
+              size: 'small',
+              onClick: () => {
+                navPane({
+                  type: PanesType.REPLAY_CASE,
+                  id: record.planItemId,
+                  data: { ...record, filter: status },
+                });
+              },
+            },
         <CountUp
           preserveValue
           duration={0.3}
@@ -175,166 +189,171 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
                 ? token.colorText
                 : [token.colorSuccessText, token.colorErrorText, token.colorInfoText][status],
           }}
-        />
-      </Button>
-    ),
+        />,
+      ),
     [token],
   );
 
   const searchInput = useRef<InputRef>(null);
-  const columns: ColumnsType<PlanItemStatistics> = [
-    {
-      title: t('replay.planItemID'),
-      dataIndex: 'planItemId',
-      key: 'planItemId',
-      ellipsis: { showTitle: false },
-      render: (value) => (
-        <Tooltip placement='topLeft' title={value}>
-          {value}
-        </Tooltip>
-      ),
-    },
-    {
-      title: t('replay.api'),
-      dataIndex: 'operationName',
-      key: 'operationName',
-      ellipsis: { showTitle: false },
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
-        <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-          <Input.Search
-            allowClear
-            enterButton
-            size='small'
-            ref={searchInput}
-            placeholder={`${t('search', { ns: 'common' })} ${t('replay.api')}`}
-            value={selectedKeys[0]}
-            onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-            onSearch={(value, event) => {
-              // @ts-ignore
-              if (event.target?.localName === 'input') return;
-              confirm();
-            }}
-            onPressEnter={() => confirm()}
-          />
-        </div>
-      ),
-      filterIcon: (filtered: boolean) => (
-        <SearchOutlined style={{ color: filtered ? token.colorPrimaryActive : undefined }} />
-      ),
-      onFilter: (value, record) =>
-        (record.operationName || '')
-          .toString()
-          .toLowerCase()
-          .includes((value as string).toLowerCase()),
-      onFilterDropdownOpenChange: (visible) => {
-        visible && setTimeout(() => searchInput.current?.select(), 100);
+  const columns = useMemo<ColumnsType<PlanItemStatistics>>(() => {
+    const _columns: ColumnsType<PlanItemStatistics> = [
+      {
+        title: t('replay.planItemID'),
+        dataIndex: 'planItemId',
+        key: 'planItemId',
+        ellipsis: { showTitle: false },
+        render: (value) => (
+          <Tooltip placement='topLeft' title={value}>
+            {value}
+          </Tooltip>
+        ),
       },
-      render: (value) => (
-        <Tooltip placement='topLeft' title={value}>
-          {'/' + (value ?? '').split('/').at(-1)}
-        </Tooltip>
-      ),
-    },
-    {
-      title: t('replay.state'),
-      render: (_, record) => (
-        <div style={{ overflow: 'hidden' }}>
-          <StatusTag
-            status={record.status}
-            caseCount={record.successCaseCount + record.failCaseCount + record.errorCaseCount}
-            totalCaseCount={record.totalCaseCount}
-            message={record.errorMessage}
+      {
+        title: t('replay.api'),
+        dataIndex: 'operationName',
+        key: 'operationName',
+        ellipsis: { showTitle: false },
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+          <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+            <Input.Search
+              allowClear
+              enterButton
+              size='small'
+              ref={searchInput}
+              placeholder={`${t('search', { ns: 'common' })} ${t('replay.api')}`}
+              value={selectedKeys[0]}
+              onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+              onSearch={(value, event) => {
+                // @ts-ignore
+                if (event.target?.localName === 'input') return;
+                confirm();
+              }}
+              onPressEnter={() => confirm()}
+            />
+          </div>
+        ),
+        filterIcon: (filtered: boolean) => (
+          <SearchOutlined style={{ color: filtered ? token.colorPrimaryActive : undefined }} />
+        ),
+        onFilter: (value, record) =>
+          (record.operationName || '')
+            .toString()
+            .toLowerCase()
+            .includes((value as string).toLowerCase()),
+        onFilterDropdownOpenChange: (visible) => {
+          visible && setTimeout(() => searchInput.current?.select(), 100);
+        },
+        render: (value) => (
+          <Tooltip placement='topLeft' title={value}>
+            {'/' + (value ?? '').split('/').at(-1)}
+          </Tooltip>
+        ),
+      },
+      {
+        title: t('replay.state'),
+        render: (_, record) => (
+          <div style={{ overflow: 'hidden' }}>
+            <StatusTag
+              status={record.status}
+              caseCount={record.successCaseCount + record.failCaseCount + record.errorCaseCount}
+              totalCaseCount={record.totalCaseCount}
+              message={record.errorMessage}
+            />
+          </div>
+        ),
+      },
+      {
+        title: t('replay.timeConsumed'),
+        render: (_, record) =>
+          record.replayEndTime && record.replayStartTime
+            ? (record.replayEndTime - record.replayStartTime) / 1000
+            : '-',
+      },
+      {
+        title: t('replay.cases'),
+        dataIndex: 'totalCaseCount',
+        width: 72,
+        render: (count, record) => CaseCountRender(count, record, undefined, props.readOnly),
+      },
+      {
+        title: t('replay.passed'),
+        dataIndex: 'successCaseCount',
+        width: 72,
+        render: (count, record) => CaseCountRender(count, record, 0, props.readOnly),
+      },
+      {
+        title: t('replay.failed'),
+        dataIndex: 'failCaseCount',
+        width: 72,
+        render: (count, record) => CaseCountRender(count, record, 1, props.readOnly),
+      },
+      {
+        title: t('replay.invalid'),
+        dataIndex: 'errorCaseCount',
+        width: 72,
+        render: (count, record) => CaseCountRender(count, record, 2, props.readOnly),
+      },
+      {
+        title: t('replay.blocked'),
+        dataIndex: 'waitCaseCount',
+        width: 72,
+        render: (text) => (
+          <CountUp
+            preserveValue
+            duration={0.3}
+            end={text}
+            style={{ color: token.colorWarningText }}
           />
-        </div>
-      ),
-    },
-    {
-      title: t('replay.timeConsumed'),
-      render: (_, record) =>
-        record.replayEndTime && record.replayStartTime
-          ? (record.replayEndTime - record.replayStartTime) / 1000
-          : '-',
-    },
-    {
-      title: t('replay.cases'),
-      dataIndex: 'totalCaseCount',
-      width: 72,
-      render: (count, record) => CaseCountRender(count, record),
-    },
-    {
-      title: t('replay.passed'),
-      dataIndex: 'successCaseCount',
-      width: 72,
-      render: (count, record) => CaseCountRender(count, record, 0),
-    },
-    {
-      title: t('replay.failed'),
-      dataIndex: 'failCaseCount',
-      width: 72,
-      render: (count, record) => CaseCountRender(count, record, 1),
-    },
-    {
-      title: t('replay.invalid'),
-      dataIndex: 'errorCaseCount',
-      width: 72,
-      render: (count, record) => CaseCountRender(count, record, 2),
-    },
-    {
-      title: t('replay.blocked'),
-      dataIndex: 'waitCaseCount',
-      width: 72,
-      render: (text) => (
-        <CountUp
-          preserveValue
-          duration={0.3}
-          end={text}
-          style={{ color: token.colorWarningText }}
-        />
-      ),
-    },
-    {
-      title: t('replay.action'),
-      align: 'center',
-      render: (_, record) => (
-        <>
-          <TooltipButton
-            icon={<ContainerOutlined />}
-            title={t('replay.diffScenes')}
-            breakpoint='xxl'
-            disabled={!record.failCaseCount}
-            color={record.failCaseCount ? 'primary' : 'disabled'}
-            onClick={() => {
-              navPane({
-                type: PanesType.DIFF_SCENES,
-                id: record.planItemId,
-                data: record,
-              });
-            }}
-          />
-          <TooltipButton
-            icon={<FileTextOutlined />}
-            title={t('replay.case')}
-            breakpoint='xxl'
-            color='primary'
-            onClick={() => {
-              navPane({
-                type: PanesType.REPLAY_CASE,
-                id: record.planItemId,
-                data: record,
-              });
-            }}
-          />
-          <TooltipButton
-            icon={<RedoOutlined />}
-            title={t('replay.rerun')}
-            breakpoint='xxl'
-            color='primary'
-            onClick={() => handleRerun(1, [{ operationId: record.operationId }])}
-          />
-        </>
-      ),
-    },
-  ];
+        ),
+      },
+    ];
+
+    if (!props.readOnly) {
+      _columns.push({
+        title: t('replay.action'),
+        align: 'center',
+        render: (_, record) => (
+          <>
+            <TooltipButton
+              icon={<ContainerOutlined />}
+              title={t('replay.diffScenes')}
+              breakpoint='xxl'
+              disabled={!record.failCaseCount}
+              color={record.failCaseCount ? 'primary' : 'disabled'}
+              onClick={() => {
+                navPane({
+                  type: PanesType.DIFF_SCENES,
+                  id: record.planItemId,
+                  data: record,
+                });
+              }}
+            />
+            <TooltipButton
+              icon={<FileTextOutlined />}
+              title={t('replay.case')}
+              breakpoint='xxl'
+              color='primary'
+              onClick={() => {
+                navPane({
+                  type: PanesType.REPLAY_CASE,
+                  id: record.planItemId,
+                  data: record,
+                });
+              }}
+            />
+            <TooltipButton
+              icon={<RedoOutlined />}
+              title={t('replay.rerun')}
+              breakpoint='xxl'
+              color='primary'
+              onClick={() => handleRerun(1, [{ operationId: record.operationId }])}
+            />
+          </>
+        ),
+      });
+    }
+    return _columns;
+  }, [props.readOnly]);
 
   const { run: stopPlan } = useRequest(ScheduleService.stopPlan, {
     manual: true,
@@ -433,9 +452,10 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             onConfirm={() => stopPlan(selectedPlan!.planId)}
           >
             <SmallTextButton
-              color={'primary'}
-              icon={<StopOutlined />}
               title={t('replay.terminate') as string}
+              icon={<StopOutlined />}
+              color={'primary'}
+              disabled={props.readOnly}
             />
           </Popconfirm>
 
@@ -445,26 +465,29 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             onConfirm={() => deleteReport(selectedPlan!.planId)}
           >
             <SmallTextButton
-              color={'primary'}
-              icon={<DeleteOutlined />}
               title={t('replay.delete') as string}
+              icon={<DeleteOutlined />}
+              color={'primary'}
+              disabled={props.readOnly}
             />
           </Popconfirm>
 
           {/*logs*/}
           <SmallTextButton
+            title={t('replay.logs') as string}
+            icon={<Icon component={IconLog} />}
+            color={'primary'}
+            disabled={props.readOnly}
             onClick={() => {
               setReplayLogsDrawerOpen(true);
             }}
-            color={'primary'}
-            icon={<Icon component={IconLog} />}
-            title={t('replay.logs') as string}
           />
 
           <SmallTextButton
             title={t('replay.retry') as string}
             icon={<RedoOutlined />}
             color={'primary'}
+            disabled={props.readOnly}
             loading={retrying}
             onClick={() => retryPlan({ planId: selectedPlan!.planId })}
           />
@@ -472,6 +495,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
           <SmallTextButton
             title={t('replay.rerun') as string}
             icon={<RedoOutlined />}
+            disabled={props.readOnly}
             color={'primary'}
             loading={creatingPlan === 0}
             onClick={() =>

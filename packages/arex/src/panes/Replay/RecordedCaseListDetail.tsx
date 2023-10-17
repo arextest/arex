@@ -8,8 +8,7 @@ import React, { FC, useMemo, useState } from 'react';
 import { PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
-import { AggOperation } from '@/services/ReportService';
-import { RecordResult } from '@/services/StorageService';
+import { AggOperation, RecordType } from '@/services/ReportService';
 
 export type RecordedCaseListProps = {
   onClick?: () => void;
@@ -26,7 +25,7 @@ const RecordedCaseListItem: FC<RecordedCaseListProps> = (props) => {
     [props.operationTypes],
   );
 
-  const columns: ColumnsType<RecordResult> = [
+  const columns: ColumnsType<RecordType> = [
     {
       title: t('replay.recordId'),
       dataIndex: 'recordId',
@@ -35,7 +34,11 @@ const RecordedCaseListItem: FC<RecordedCaseListProps> = (props) => {
         <a
           onClick={() => {
             props.onClick?.();
-            navPane({ type: PanesType.CASE_DETAIL, id: record.recordId, data: record });
+            navPane({
+              type: PanesType.CASE_DETAIL,
+              id: record.recordId,
+              data: { ...record, appId: props.appId },
+            });
           }}
         >
           {recordId}
@@ -86,7 +89,7 @@ const RecordedCaseListItem: FC<RecordedCaseListProps> = (props) => {
   );
 
   return (
-    <Table<RecordResult>
+    <Table<RecordType>
       size='small'
       rowKey='recordId'
       columns={columns}

@@ -1,5 +1,6 @@
 import {
   Label,
+  Segmented,
   tryParseJsonString,
   tryPrettierJsonString,
   useTranslation,
@@ -9,7 +10,6 @@ import { useRequest } from 'ahooks';
 import { App, Select, SelectProps, Space, Typography } from 'antd';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Segmented } from '@/components';
 import { ApplicationService, ReportService } from '@/services';
 import { DependencyParams } from '@/services/ComparisonService';
 
@@ -133,7 +133,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
    * 请求 InterfacesList
    */
   const { data: operationList = [] } = useRequest(
-    () => ApplicationService.queryInterfacesList<'Interface'>({ id: props.appId as string }),
+    () => ApplicationService.queryInterfacesList<'Interface'>({ appId: props.appId as string }),
     {
       ready: !!props.appId,
       onSuccess(res) {

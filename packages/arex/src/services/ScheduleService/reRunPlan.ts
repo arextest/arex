@@ -1,4 +1,7 @@
+import { getLocalStorage } from '@arextest/arex-core';
 import axios from 'axios';
+
+import { ACCESS_TOKEN_KEY, APP_ID_KEY } from '@/constant';
 
 export type ReRunPlanRes = {
   desc: string;
@@ -9,7 +12,12 @@ export type ReRunPlanRes = {
 export function reRunPlan(params: { planId: string }) {
   return new Promise<ReRunPlanRes>((resolve, reject) => {
     return axios
-      .post<ReRunPlanRes>('/schedule/reRunPlan', params)
+      .post<ReRunPlanRes>('/schedule/reRunPlan', params, {
+        headers: {
+          'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
+          appId: getLocalStorage<string>(APP_ID_KEY),
+        },
+      })
       .then((res) => resolve(res.data))
       .catch((err) => reject(err));
   });

@@ -1,22 +1,21 @@
 {
   "name": "@arextest/arex-common",
-  "version": "0.0.20",
+  "version": "0.2.5",
   "homepage": "https://github.com/arextest/arex",
-  "main": "dist/arex-common.umd.cjs",
+  "main": "dist/arex-common.js",
   "module": "dist/arex-common.js",
   "type": "module",
   "scripts": {
     "build:code": "vite build",
     "build:decl": "tsc --project tsconfig.decl.json",
-    "do-build": "pnpm run build:code && pnpm run build:decl",
-    "do-build-core": "pnpm run build:code && pnpm run build:decl"
+    "do-build": "pnpm run build:code && pnpm run build:decl"
   },
   "types": "./dist/index.d.ts",
   "files": [
     "dist/*"
   ],
   "dependencies": {
-    "@arextest/arex-core": "workspace:latest",
+    "@arextest/arex-core": "*",
     "@ant-design/icons": "^5.2.6",
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",
