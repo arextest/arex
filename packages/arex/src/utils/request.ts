@@ -3,6 +3,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import proxy from '@/config/proxy';
 import { ACCESS_TOKEN_KEY, APP_ID_KEY } from '@/constant';
+import { isClientProd } from '@/utils';
 
 type IRequestConfig<T = AxiosResponse> = AxiosRequestConfig;
 
@@ -31,11 +32,11 @@ export class Request {
         request.headers.set('access-token', getLocalStorage<string>(ACCESS_TOKEN_KEY));
         request.headers.set('appId', getLocalStorage<string>(APP_ID_KEY));
 
-        if (import.meta.env.MODE === 'electron' && !process.env['VITE_DEV_SERVER_URL']) {
+        if (isClientProd) {
           let path: string | undefined = undefined;
-          if ((path = this.proxyPath.find((path) => config.url?.startsWith(path)))) {
-            config.baseURL = proxy.find((item) => item.path === path)?.target;
-            config.url = config.url?.match(new RegExp(`(?<=${path}).*`))?.[0];
+          if ((path = this.proxyPath.find((path) => request.url?.startsWith(path)))) {
+            request.baseURL = proxy.find((item) => item.path === path)?.target;
+            request.url = request.url?.match(new RegExp(`(?<=${path}).*`))?.[0];
           }
         }
 

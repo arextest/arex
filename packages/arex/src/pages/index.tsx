@@ -15,7 +15,7 @@ import { EmptyPanePlaceholder, HeaderMenu, KeyboardShortcut } from '@/components
 import { CollectionNodeType, PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
 import { useMenusPanes, useWorkspaces } from '@/store';
-import { generateId } from '@/utils';
+import { generateId, isClient } from '@/utils';
 
 const Home: FC = () => {
   useInit();
@@ -154,7 +154,7 @@ const Home: FC = () => {
           />
         }
       />
-      <ArexFooter />
+      <ArexFooter agent={!isClient} />
 
       <KeyboardShortcut />
     </>

@@ -1,7 +1,6 @@
 import { app, BrowserWindow, session, globalShortcut } from 'electron';
 import { autoUpdateInit } from './autoUpdater';
 import path from 'node:path';
-import logger from 'electron-log';
 
 // The built directory structure
 //
@@ -17,34 +16,8 @@ process.env.PUBLIC = app.isPackaged ? process.env.DIST : path.join(process.env.D
 
 let win: BrowserWindow | null;
 // 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
-const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL'];
-
-function registerShortcut() {
-  globalShortcut.register('Command+T', () => {
-    // 向渲染进程发送事件
-    win.webContents.sendInputEvent({
-      type: 'keyDown',
-      keyCode: 't',
-      modifiers: ['command'],
-    });
-  });
-  globalShortcut.register('Command+W', () => {
-    // 向渲染进程发送事件
-    win.webContents.sendInputEvent({
-      type: 'keyDown',
-      keyCode: 'w',
-      modifiers: ['command'],
-    });
-  });
-  globalShortcut.register('Command+Shift+W', () => {
-    // 向渲染进程发送事件
-    win.webContents.sendInputEvent({
-      type: 'keyDown',
-      keyCode: 'w',
-      modifiers: ['command', 'shift'],
-    });
-  });
-}
+const isDev = !!process.env['VITE_DEV_SERVER_URL'];
+console.log('isDev', isDev);
 
 function createWindow() {
   win = new BrowserWindow({
@@ -66,8 +39,8 @@ function createWindow() {
     win.webContents.openDevTools();
   }
 
-  if (VITE_DEV_SERVER_URL) {
-    win.loadURL(VITE_DEV_SERVER_URL);
+  if (isDev) {
+    win.loadURL(process.env['VITE_DEV_SERVER_URL']);
   } else {
     // win.loadFile('dist/index.html')
     win.loadFile(path.join(process.env.DIST, 'index.html'));
@@ -80,7 +53,7 @@ function createWindow() {
   });
 
   // 监听主窗口获得焦点事件
-  win.on('focus', registerShortcut);
+  // win.on('focus', registerShortcut);
 }
 
 app.on('window-all-closed', () => {
@@ -88,7 +61,22 @@ app.on('window-all-closed', () => {
   app.quit();
 });
 
-app.whenReady().then(() => {
-  createWindow();
-  autoUpdateInit();
-});
+app
+  .whenReady()
+  .then(() => {
+    createWindow();
+    autoUpdateInit();
+  })
+  .then(() => {
+    // disable reload on prod
+    if (!isDev) {
+      globalShortcut.register('f5', function () {
+        console.log('f5 is pressed');
+        //win.reload()
+      });
+      globalShortcut.register('CommandOrControl+R', function () {
+        console.log('CommandOrControl+R is pressed');
+        // win.reload();
+      });
+    }
+  });

@@ -31,11 +31,14 @@ const FooterWrapper = styled.div`
 `;
 
 export type ArexFooterProps = {
+  console?: boolean;
+  agent?: boolean;
   left?: React.ReactNode;
   right?: React.ReactNode;
 };
 
 const ArexFooter: FC<ArexFooterProps> = (props) => {
+  const { console = true, agent = true } = props;
   const { theme } = useArexCoreConfig();
   const { t } = useTranslation();
   const vConsole = useRef<VConsole>();
@@ -60,27 +63,31 @@ const ArexFooter: FC<ArexFooterProps> = (props) => {
     <FooterWrapper>
       {/* left */}
       <div>
-        <Button
-          id='arex-console-btn'
-          type='link'
-          size='small'
-          onClick={() => vConsole.current?.show()}
-        >
-          <Typography.Text type='secondary'>
-            <CodeOutlined /> {t('console')}
-          </Typography.Text>
-        </Button>
+        {console && (
+          <Button
+            id='arex-console-btn'
+            type='link'
+            size='small'
+            onClick={() => vConsole.current?.show()}
+          >
+            <Typography.Text type='secondary'>
+              <CodeOutlined /> {t('console')}
+            </Typography.Text>
+          </Button>
+        )}
         {props.left}
       </div>
 
       {/* right */}
       <div>
         {props.right}
-        <span>
-          {/* @ts-ignore */}
-          <CheckOrCloseIcon size={12} checked={window.__AREX_EXTENSION_INSTALLED__} />
-          <Typography.Text type='secondary'>{t('browserAgent')}</Typography.Text>
-        </span>
+
+        {agent && (
+          <span>
+            <CheckOrCloseIcon size={12} checked={window.__AREX_EXTENSION_INSTALLED__} />
+            <Typography.Text type='secondary'>{t('browserAgent')}</Typography.Text>
+          </span>
+        )}
       </div>
     </FooterWrapper>
   );

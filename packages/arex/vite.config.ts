@@ -49,8 +49,8 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': path.resolve('./src'),
-      // '@arextest/arex-core/dist': path.resolve('../arex-core/dist'),
-      // '@arextest/arex-core': path.resolve('../arex-core/src'),
+      '@arextest/arex-core/dist': path.resolve('../arex-core/dist'),
+      '@arextest/arex-core': path.resolve('../arex-core/src'),
       // '@arextest/arex-common': path.resolve('../arex-common/src'),
       // '@arextest/arex-request': path.resolve('../arex-request/src'),
     },
@@ -73,11 +73,6 @@ export default defineConfig(({ mode }) => ({
         target: 'http://10.5.153.1:8093',
         changeOrigin: true,
         rewrite: (path) => path.replace('/storage', '/api'),
-      },
-      '^/node/.*': {
-        target: 'http://10.5.153.1:10001',
-        changeOrigin: true,
-        rewrite: (path) => path.replace('/node', '/'),
       },
     },
   },
