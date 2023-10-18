@@ -8,7 +8,7 @@ export async function autoUpdateInit() {
   //打印log到本地
   logger.transports.file.maxSize = 1002430; // 10M
   logger.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}]{scope} {text}';
-  // logger.transports.file.resolvePath = () => join(app.getPath('appData'), 'logs/main.log');
+  logger.transports.file.resolvePath = () => join(app.getPath('appData'), 'logs/main.log');
 
   setLocalData({
     path: join(app.getPath('appData'), 'logs/main.log'),

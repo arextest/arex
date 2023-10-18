@@ -3,7 +3,9 @@
  */
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
-  "appId": "arex",
+  "appId": "arextest.arex",
+  "productName": "Arex",
+  "copyright": "Copyright © 2023 ${author}",
   "asar": true,
   "directories": {
     "output": "release/${version}"
@@ -17,6 +19,9 @@
     icon: "public/logo.png"
   },
   "win": {
+    "executableName": "Arex",
+    "publisherName": "arextest",
+    "verifyUpdateCodeSignature": false,
     "target": [
       {
         "target": "nsis",
@@ -29,7 +34,8 @@
   },
   "nsis": {
     "oneClick": false,
-    "perMachine": false,
+    "createDesktopShortcut": "always",
+    "perMachine": true,
     "allowToChangeInstallationDirectory": true,
     "deleteAppDataOnUninstall": false
   },
