@@ -6,7 +6,6 @@ import {
 } from '@ant-design/icons';
 import {
   EllipsisTooltip,
-  Label,
   SceneCode,
   SpaceBetweenWrapper,
   TooltipButton,
@@ -118,11 +117,7 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
                     type='link'
                     size='small'
                     icon={<BugOutlined />}
-                    title={
-                      <>
-                        <Label>{t('replay.re-calculateReport')}</Label>Bug
-                      </>
-                    }
+                    title={`${t('replay.re-calculateReport')}: Bug`}
                     onClick={(e) => {
                       e.stopPropagation();
                       feedbackScene(subScene.recordId, FeedbackType.Bug);
@@ -132,11 +127,7 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
                     type='link'
                     size='small'
                     icon={<SketchOutlined />}
-                    title={
-                      <>
-                        <Label>{t('replay.re-calculateReport')}</Label>ByDesign
-                      </>
-                    }
+                    title={`${t('replay.re-calculateReport')}: ByDesign`}
                     onClick={(e) => {
                       e.stopPropagation();
                       feedbackScene(subScene.recordId, FeedbackType.ByDesign);
@@ -146,11 +137,7 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
                     type='link'
                     size='small'
                     icon={<FontColorsOutlined />}
-                    title={
-                      <>
-                        <Label>{t('replay.re-calculateReport')}</Label>ArexProblem
-                      </>
-                    }
+                    title={`${t('replay.re-calculateReport')}: ArexProblem`}
                     onClick={(e) => {
                       e.stopPropagation();
                       feedbackScene(subScene.recordId, FeedbackType.ArexProblem);
