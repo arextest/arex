@@ -1,7 +1,7 @@
 import { useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Form, Select } from 'antd';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 
 import { ApplicationService, UserService } from '@/services';
 
@@ -67,6 +67,12 @@ const AppOwners: FC<AppOwnersProps> = (props) => {
     [usersList],
   );
 
+  const [open, setOpen] = useState(false);
+  const handleSearch = (value: string) => {
+    setOpen(!!value);
+    value && getUsersByKeyword(value);
+  };
+
   return (
     <Form
       name={'ownerConfig' + props.appId}
@@ -79,9 +85,10 @@ const AppOwners: FC<AppOwnersProps> = (props) => {
         <Select
           showSearch
           mode='multiple'
+          open={open}
           placeholder={t('searchUsers')}
           options={usersOptions}
-          onSearch={getUsersByKeyword}
+          onSearch={handleSearch}
           style={{ minWidth: '240px' }}
         />
       </Form.Item>
