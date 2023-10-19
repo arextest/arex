@@ -8,7 +8,6 @@ const CheckOrCloseIcon = styled((props: { checked: boolean }) =>
   font-size: ${(props) => (props.size ? props.size + 'px' : ' 16px')};
   color: ${(props) =>
     props.checked ? props.theme.colorSuccess : props.theme.colorError}!important;
-  margin-right: 8px;
 `;
 
 export default CheckOrCloseIcon;

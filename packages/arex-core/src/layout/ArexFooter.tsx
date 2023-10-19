@@ -1,11 +1,11 @@
 import { CodeOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Button, Typography } from 'antd';
-import React, { FC, useEffect, useRef } from 'react';
+import { Typography } from 'antd';
+import React, { FC, ReactNode, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import VConsole from 'vconsole';
 
-import { CheckOrCloseIcon } from '../components';
+import { CheckOrCloseIcon, SmallTextButton } from '../components';
 import { useArexCoreConfig } from '../hooks';
 
 const FooterWrapper = styled.div`
@@ -20,6 +20,10 @@ const FooterWrapper = styled.div`
     line-height: 24px;
     font-size: 12px;
   }
+  .ant-btn-icon {
+    font-size: 12px;
+    margin-inline-end: 6px;
+  }
   .ant-btn-link {
     .ant-typography-secondary {
       transition: color 0.25s ease;
@@ -30,18 +34,10 @@ const FooterWrapper = styled.div`
   }
 `;
 
-export type ArexFooterProps = {
-  console?: boolean;
-  agent?: boolean;
-  left?: React.ReactNode;
-  right?: React.ReactNode;
-};
-
-const ArexFooter: FC<ArexFooterProps> = (props) => {
-  const { console = true, agent = true } = props;
+const Console: FC = styled(() => {
+  const vConsole = useRef<VConsole>();
   const { theme } = useArexCoreConfig();
   const { t } = useTranslation();
-  const vConsole = useRef<VConsole>();
 
   useEffect(() => {
     if (process.env.NODE_ENV === 'production') {
@@ -60,35 +56,49 @@ const ArexFooter: FC<ArexFooterProps> = (props) => {
   }, []);
 
   return (
+    <SmallTextButton
+      id='arex-console-btn'
+      type='link'
+      color='secondary'
+      icon={<CodeOutlined />}
+      title={t('console')}
+      onClick={() => vConsole.current?.show()}
+    />
+  );
+})`
+  root > #__vconsole {
+    font-size: 12px !important;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
+  }
+`;
+
+const Agent: FC = () => {
+  const { t } = useTranslation();
+  return (
+    <SmallTextButton
+      type='link'
+      color='secondary'
+      icon={<CheckOrCloseIcon size={12} checked={window.__AREX_EXTENSION_INSTALLED__} />}
+      title={<Typography.Text type='secondary'>{t('browserAgent')}</Typography.Text>}
+    />
+  );
+};
+
+export type ArexFooterProps = {
+  leftRender?: (console: React.ReactNode) => React.ReactNode;
+  rightRender?: (agent: React.ReactNode) => React.ReactNode;
+};
+
+const ArexFooter: FC<ArexFooterProps> = (props) => {
+  const { leftRender = (console) => console, rightRender = (agent) => agent } = props;
+
+  return (
     <FooterWrapper>
       {/* left */}
-      <div>
-        {console && (
-          <Button
-            id='arex-console-btn'
-            type='link'
-            size='small'
-            onClick={() => vConsole.current?.show()}
-          >
-            <Typography.Text type='secondary'>
-              <CodeOutlined /> {t('console')}
-            </Typography.Text>
-          </Button>
-        )}
-        {props.left}
-      </div>
+      <div>{leftRender(<Console />)}</div>
 
       {/* right */}
-      <div>
-        {props.right}
-
-        {agent && (
-          <span>
-            <CheckOrCloseIcon size={12} checked={window.__AREX_EXTENSION_INSTALLED__} />
-            <Typography.Text type='secondary'>{t('browserAgent')}</Typography.Text>
-          </span>
-        )}
-      </div>
+      <div>{rightRender(<Agent />)}</div>
     </FooterWrapper>
   );
 };

@@ -1,11 +1,8 @@
-import './useWork';
-import 'allotment/dist/style.css';
-import 'antd/dist/reset.css';
 import '@arextest/arex-core/dist/style.css';
-import './style/style.css';
+import '@/utils/electrionOverride';
 import 'dayjs/locale/zh-cn';
-// import './helpers/axiosGuard';
-import './assets/css/index.css';
+import './style/style.css';
+import './useWork';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';

@@ -1,5 +1,3 @@
-import '@arextest/vanilla-jsoneditor/themes/jse-theme-dark.css';
-
 import { CompareConfigType } from '@arextest/vanilla-jsoneditor';
 import { css } from '@emotion/react';
 import { theme } from 'antd';

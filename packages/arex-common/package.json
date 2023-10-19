@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-common",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-common.js",
   "module": "dist/arex-common.js",

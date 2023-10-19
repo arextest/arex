@@ -13,7 +13,6 @@ import {
   getLocalStorage,
   i18n,
   I18nextLng,
-  SmallTextButton,
   SpaceBetweenWrapper,
   TooltipButton,
   useTranslation,
@@ -25,9 +24,9 @@ import {
   Button,
   Card,
   Col,
+  Dropdown,
   Input,
   InputRef,
-  Popconfirm,
   Row,
   Space,
   Statistic,
@@ -375,12 +374,8 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
     },
   });
 
-  const [creatingPlan, setCreatingPlan] = useState<number>();
   const { run: rerun } = useRequest(ScheduleService.createPlan, {
     manual: true,
-    onBefore([param]) {
-      setCreatingPlan(param.replayPlanType);
-    },
     onSuccess(res) {
       if (res.result === 1) {
         onRefresh?.();
@@ -399,9 +394,6 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         message: t('replay.startFailed'),
         description: e.message,
       });
-    },
-    onFinally() {
-      setCreatingPlan(undefined);
     },
   });
 
@@ -439,72 +431,84 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
 
   const [ReplayLogsDrawerOpen, setReplayLogsDrawerOpen] = useState(false);
 
-  return selectedPlan ? (
+  const extraMenuItems = useMemo(
+    () => [
+      {
+        key: 'rerun',
+        label: t('replay.rerun'),
+        icon: <RedoOutlined />,
+      },
+      {
+        key: 'terminateReplay',
+        label: t('replay.terminateTheReplay'),
+        icon: <StopOutlined />,
+      },
+      {
+        key: 'deleteReport',
+        label: t('replay.deleteTheReport'),
+        icon: <DeleteOutlined />,
+      },
+    ],
+    [t],
+  );
+
+  const extraMenuHandler = useCallback(
+    ({ key }: { key: string }) => {
+      switch (key) {
+        case 'rerun': {
+          handleRerun(
+            1,
+            planItemData?.map((item) => ({ operationId: item.operationId })),
+          );
+          break;
+        }
+        case 'terminateReplay': {
+          stopPlan(selectedPlan!.planId);
+          break;
+        }
+        case 'deleteReport': {
+          deleteReport(selectedPlan!.planId);
+          break;
+        }
+      }
+    },
+    [planItemData, selectedPlan],
+  );
+
+  if (!selectedPlan) return null;
+
+  return (
     <Card
       bordered={false}
       size='small'
       title={`${t('replay.report')}: ${selectedPlan.planName}`}
       extra={
         <Space>
-          <Popconfirm
-            title={t('replay.terminateTheReplay')}
-            description={t('replay.confirmTerminateReplay')}
-            onConfirm={() => stopPlan(selectedPlan!.planId)}
-          >
-            <SmallTextButton
-              title={t('replay.terminate') as string}
-              icon={<StopOutlined />}
-              color={'primary'}
-              disabled={props.readOnly}
-            />
-          </Popconfirm>
-
-          <Popconfirm
-            title={t('replay.deleteTheReport')}
-            description={t('replay.confirmDeleteReport')}
-            onConfirm={() => deleteReport(selectedPlan!.planId)}
-          >
-            <SmallTextButton
-              title={t('replay.delete') as string}
-              icon={<DeleteOutlined />}
-              color={'primary'}
-              disabled={props.readOnly}
-            />
-          </Popconfirm>
-
-          {/*logs*/}
-          <SmallTextButton
-            title={t('replay.logs') as string}
+          <Button
+            type='link'
+            size='small'
             icon={<Icon component={IconLog} />}
-            color={'primary'}
             disabled={props.readOnly}
-            onClick={() => {
-              setReplayLogsDrawerOpen(true);
-            }}
-          />
+            onClick={() => setReplayLogsDrawerOpen(true)}
+          >
+            {t('replay.logs')}
+          </Button>
 
-          <SmallTextButton
-            title={t('replay.retry') as string}
-            icon={<RedoOutlined />}
-            color={'primary'}
+          <Dropdown.Button
+            size='small'
+            type='link'
             disabled={props.readOnly}
             loading={retrying}
+            trigger={['click']}
+            menu={{
+              items: extraMenuItems,
+              onClick: extraMenuHandler,
+            }}
             onClick={() => retryPlan({ planId: selectedPlan!.planId })}
-          />
-
-          <SmallTextButton
-            title={t('replay.rerun') as string}
-            icon={<RedoOutlined />}
-            disabled={props.readOnly}
-            color={'primary'}
-            loading={creatingPlan === 0}
-            onClick={() =>
-              handleRerun(
-                1,
-                planItemData?.map((item) => ({ operationId: item.operationId })),
-              )
-            }
-          />
+          >
+            <RedoOutlined />
+            {t('replay.retry')}
+          </Dropdown.Button>
         </Space>
       }
     >
@@ -613,7 +617,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         }}
       />
     </Card>
-  ) : null;
+  );
 };
 
 export default PlanItem;

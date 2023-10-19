@@ -3,6 +3,7 @@
   "environment": "Environment",
   "replay": "Replay",
   "replayCase": "ReplayCase",
+  "diffScenes": "DiffScenes",
   "caseDetail": "CaseDetail",
   "appSetting": "AppSetting",
   "workspace": "Workspace",

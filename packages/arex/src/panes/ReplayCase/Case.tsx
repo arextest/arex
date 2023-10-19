@@ -1,11 +1,7 @@
-import {
-  HighlightRowTable,
-  SmallTextButton,
-  useArexPaneProps,
-  useTranslation,
-} from '@arextest/arex-core';
+import { BugOutlined, RedoOutlined, SaveOutlined, SearchOutlined } from '@ant-design/icons';
+import { HighlightRowTable, useArexPaneProps, useTranslation } from '@arextest/arex-core';
 import { usePagination } from 'ahooks';
-import { TableProps, Tag } from 'antd';
+import { Button, Dropdown, TableProps, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, Key, useMemo } from 'react';
 
@@ -54,6 +50,7 @@ const Case: FC<CaseProps> = (props) => {
     },
     {
       title: t('replay.status'),
+      width: 100,
       defaultFilteredValue: props.filter !== undefined ? [props.filter.toString()] : undefined,
       filterMultiple: false,
       filters: filterMap,
@@ -66,53 +63,83 @@ const Case: FC<CaseProps> = (props) => {
     },
     {
       title: t('replay.action'),
-      render: (_, record) => [
-        <SmallTextButton
-          key='save'
-          color={'primary'}
-          title={t('replay.save') as string}
-          onClick={(e) => {
-            e.stopPropagation();
-            props.onClickSaveCase?.(record);
-          }}
-        />,
-        <SmallTextButton
-          color='primary'
-          key='caseDebug'
-          title={t('replay.debug') as string}
-          onClick={() => {
-            navPane({
-              type: PanesType.REQUEST,
-              id: `${activeWorkspaceId}-${CollectionNodeType.case}-${generateId(12)}`,
-              icon: 'Get',
-              name: record.recordId,
-              data: {
-                recordId: record.recordId,
-                planId: props.planId,
+      width: 200,
+      render: (_, record) => (
+        <div style={{ display: 'flex' }}>
+          <Button
+            key='caseDetail'
+            type='link'
+            size='small'
+            icon={<SearchOutlined />}
+            onClick={(e) => {
+              e.stopPropagation();
+              navPane({
+                type: PanesType.CASE_DETAIL,
+                id: record.recordId,
+                data: { ...record, appId: data?.appId },
+              });
+            }}
+          >
+            {t('replay.recordDetail')}
+          </Button>
+          <Dropdown.Button
+            key='case'
+            size='small'
+            type='link'
+            trigger={['click']}
+            destroyPopupOnHide
+            buttonsRender={(buttons) => [
+              <span key='primaryAction'>{buttons[0]}</span>,
+              <span key='extraAction' onClick={(e) => e.stopPropagation()}>
+                {buttons[1]}
+              </span>,
+            ]}
+            menu={{
+              items: [
+                {
+                  label: t('replay.debug'),
+                  key: 'debug',
+                  icon: <BugOutlined />,
+                },
+                {
+                  label: t('replay.rerun'),
+                  key: 'rerun',
+                  icon: <RedoOutlined />,
+                },
+              ],
+
+              onClick: (e) => {
+                switch (e.key) {
+                  case 'debug': {
+                    navPane({
+                      type: PanesType.REQUEST,
+                      id: `${activeWorkspaceId}-${CollectionNodeType.case}-${generateId(12)}`,
+                      icon: 'Get',
+                      name: record.recordId,
+                      data: {
+                        recordId: record.recordId,
+                        planId: props.planId,
+                      },
+                    });
+                    break;
+                  }
+                  case 'rerun': {
+                    props.onClickRerunCase?.(record.recordId);
+                    break;
+                  }
+                }
               },
-            });
-          }}
-        />,
-        <SmallTextButton
-          color='primary'
-          key='caseDetail'
-          title={t('replay.recordDetail') as string}
-          onClick={(e) => {
-            e.stopPropagation();
-            navPane({
-              type: PanesType.CASE_DETAIL,
-              id: record.recordId,
-              data: { ...record, appId: data?.appId },
-            });
-          }}
-        />,
-        <SmallTextButton
-          key='rerun'
-          color={'primary'}
-          title={t('replay.rerun') as string}
-          onClick={() => props.onClickRerunCase?.(record.recordId)}
-        />,
-      ],
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              props.onClickSaveCase?.(record);
+            }}
+          >
+            <SaveOutlined />
+            {t('replay.saveCase')}
+          </Dropdown.Button>
+        </div>
+      ),
     },
   ];
 

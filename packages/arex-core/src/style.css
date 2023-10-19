@@ -1,0 +1,8 @@
+@import 'antd/dist/reset.css';
+@import 'allotment/dist/style.css';
+@import '@arextest/vanilla-jsoneditor/themes/jse-theme-dark.css';
+
+#__vconsole {
+    font-size: 12px!important;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
+}

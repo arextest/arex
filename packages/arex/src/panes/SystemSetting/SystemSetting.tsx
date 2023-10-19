@@ -1,5 +1,5 @@
-import { ArexPaneFC, useTranslation } from '@arextest/arex-core';
-import { Divider } from 'antd';
+import { ArexPaneFC, Label, useTranslation } from '@arextest/arex-core';
+import { Divider, Typography } from 'antd';
 import React from 'react';
 
 import CallbackUrl from '@/panes/SystemSetting/CallbackUrl';
@@ -20,6 +20,11 @@ const SystemSetting: ArexPaneFC = () => {
 
       <Divider orientation='left'> {t('systemSetting.replayCallback')}</Divider>
       <CallbackUrl />
+
+      <Typography.Text type='secondary' style={{ position: 'absolute', bottom: 0, right: '16px' }}>
+        <Label type='secondary'>{t('systemSetting.version')}</Label>
+        {__APP_VERSION__}
+      </Typography.Text>
     </div>
   );
 };

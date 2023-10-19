@@ -11,11 +11,11 @@ import {
 import { MenuProps } from 'antd';
 import React, { FC } from 'react';
 
-import { EmptyPanePlaceholder, HeaderMenu, KeyboardShortcut } from '@/components';
-import { CollectionNodeType, PanesType } from '@/constant';
+import { EmptyPanePlaceholder, FooterExtraMenu, KeyboardShortcut, UserMenu } from '@/components';
+import { CollectionNodeType, isClient, PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
 import { useMenusPanes, useWorkspaces } from '@/store';
-import { generateId, isClient } from '@/utils';
+import { generateId } from '@/utils';
 
 const Home: FC = () => {
   useInit();
@@ -125,7 +125,8 @@ const Home: FC = () => {
 
   return (
     <>
-      <ArexHeader githubStar extra={<HeaderMenu />} />
+      <ArexHeader githubStar extra={<UserMenu />} />
+
       <ArexMainContainer
         collapsed={menuCollapsed}
         arexMenus={
@@ -154,7 +155,15 @@ const Home: FC = () => {
           />
         }
       />
-      <ArexFooter agent={!isClient} />
+
+      <ArexFooter
+        rightRender={(agent) => (
+          <>
+            {!isClient && agent}
+            <FooterExtraMenu />
+          </>
+        )}
+      />
 
       <KeyboardShortcut />
     </>

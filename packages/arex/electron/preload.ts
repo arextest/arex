@@ -1,3 +1,8 @@
+import { contextBridge, ipcRenderer, shell, ipcMain } from 'electron';
+
+contextBridge.exposeInMainWorld('ipcMain', ipcMain);
+contextBridge.exposeInMainWorld('shell', shell);
+
 function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
   return new Promise((resolve) => {
     if (condition.includes(document.readyState)) {

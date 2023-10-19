@@ -17,14 +17,13 @@ process.env.PUBLIC = app.isPackaged ? process.env.DIST : path.join(process.env.D
 let win: BrowserWindow | null;
 // 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 const isDev = !!process.env['VITE_DEV_SERVER_URL'];
-console.log('isDev', isDev);
 
 function createWindow() {
   win = new BrowserWindow({
     icon: path.join(process.env.PUBLIC, 'electron-vite.svg'),
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
       webSecurity: false,
     },

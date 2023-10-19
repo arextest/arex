@@ -1,4 +1,5 @@
 import { ArexVersionKey, ArexVersionValue } from '@/constant';
+
 export { default as globalStoreInit } from './globalStoreInit';
 export { default as globalStoreReset } from './globalStoreReset';
 export { default as request } from './request';
@@ -63,9 +64,3 @@ export function generateId(len: number) {
   }
   return id;
 }
-
-export const isClient = import.meta.env.MODE === 'electron';
-export const isClientDev =
-  import.meta.env.MODE === 'electron' && process.env['VITE_DEV_SERVER_URL'];
-export const isClientProd =
-  import.meta.env.MODE === 'electron' && !process.env['VITE_DEV_SERVER_URL'];

@@ -1,9 +1,9 @@
 import { getLocalStorage } from '@arextest/arex-core';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-import proxy from '@/config/proxy';
-import { ACCESS_TOKEN_KEY, APP_ID_KEY } from '@/constant';
-import { isClientProd } from '@/utils';
+import { ACCESS_TOKEN_KEY, APP_ID_KEY, isClientProd } from '@/constant';
+
+import proxy from '../../config/proxy.json';
 
 type IRequestConfig<T = AxiosResponse> = AxiosRequestConfig;
 
