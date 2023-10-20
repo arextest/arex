@@ -1,4 +1,4 @@
-import { app, BrowserWindow, session, globalShortcut } from 'electron';
+import { app, BrowserWindow, session, globalShortcut, ipcMain, shell } from 'electron';
 import { autoUpdateInit } from './autoUpdater';
 import path from 'node:path';
 
@@ -20,6 +20,10 @@ const isDev = !!process.env['VITE_DEV_SERVER_URL'];
 
 function createWindow() {
   win = new BrowserWindow({
+    titleBarStyle: 'customButtonsOnHover',
+    frame: false,
+    width: 1080,
+    height: 720,
     icon: path.join(process.env.PUBLIC, 'electron-vite.svg'),
     webPreferences: {
       nodeIntegration: true,

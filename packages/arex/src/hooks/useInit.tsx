@@ -70,6 +70,17 @@ const useInit = () => {
       },
     );
 
+    const handleAClick = (e: Event, link: Element) => {
+      const url = link.getAttribute('href');
+      e.preventDefault();
+      url && window.open(url, '_blank');
+    };
+
+    const links = document.querySelectorAll('a[href]');
+    links.forEach((link) => {
+      link.addEventListener('click', (e) => handleAClick(e, link));
+    });
+
     console.log(`
    ____   __   ____ _   ______   ___   ___  _____  __
   /  _/  / /  / __ \\ | / / __/  / _ | / _ \\/ __/ |/_/
@@ -79,6 +90,9 @@ const useInit = () => {
 
     return () => {
       unSubscribeMenusPane();
+      links.forEach((link) => {
+        link.removeEventListener('click', (e) => handleAClick(e, link));
+      });
     };
   }, []);
 };

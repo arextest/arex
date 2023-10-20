@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer, shell, ipcMain } from 'electron';
 
 contextBridge.exposeInMainWorld('ipcMain', ipcMain);
 contextBridge.exposeInMainWorld('shell', shell);
+contextBridge.exposeInMainWorld('platform', process.platform);
 
 function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
   return new Promise((resolve) => {

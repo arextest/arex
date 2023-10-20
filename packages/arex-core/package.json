@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-core",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-core.js",
   "module": "dist/arex-core.js",
@@ -31,7 +31,6 @@
     "lossless-json": "^2.0.8",
     "path-to-regexp": "^6.2.1",
     "qs": "^6.11.1",
-    "react-github-btn": "^1.4.0",
     "react-i18next": "^12.2.0",
     "react-transition-group": "^4.4.5",
     "@formkit/auto-animate": "^0.7.0",
