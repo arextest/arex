@@ -1,7 +1,7 @@
 import { CheckOutlined, CloseOutlined, EditOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { Input, Space, theme, Typography } from 'antd';
-import React, { HTMLProps, ReactNode, useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 
 import { SmallTextButton } from './index';
 

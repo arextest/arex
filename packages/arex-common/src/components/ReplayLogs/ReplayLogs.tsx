@@ -66,7 +66,7 @@ const ReplayLogs: FC<ReplayLogsProps> = (props) => {
 
   return (
     <>
-      <Space style={{ marginBottom: '8px' }}>
+      <Space size='middle' style={{ marginBottom: '8px' }}>
         <Select
           showSearch
           optionFilterProp='label'

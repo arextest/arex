@@ -7,6 +7,7 @@
     "addIgnoreSuccess": "添加忽略成功"
   },
   "replayLogs": {
+    "logs": "执行日志",
     "levelFilterPlaceholder": "请选择日志等级",
     "typeFilterPlaceholder": "请选择日志类型"
   }

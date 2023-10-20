@@ -1,4 +1,5 @@
 import { ArexVersionKey, ArexVersionValue } from '@/constant';
+
 export { default as globalStoreInit } from './globalStoreInit';
 export { default as globalStoreReset } from './globalStoreReset';
 export { default as request } from './request';

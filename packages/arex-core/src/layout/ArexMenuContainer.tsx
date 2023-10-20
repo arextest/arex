@@ -109,7 +109,7 @@ const StyledMenu = styled(Menu)`
   .ant-menu-item,
   .ant-menu-submenu-title {
     height: auto !important;
-    min-width: 59px;
+    min-width: 64px;
     flex-direction: column;
     padding-top: ${(props) => (props.inlineCollapsed ? 0 : '12px')};
     padding-left: ${(props) => (props.inlineCollapsed ? '24px' : '12px')}!important;

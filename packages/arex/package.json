@@ -1,13 +1,21 @@
 {
   "name": "arex",
   "private": true,
-  "version": "0.6.0",
-  "type": "module",
+  "version": "0.6.1",
+  "author": "arextest",
+  "main": "dist-electron/main.js",
+  "files": [
+    "./build/**/*",
+    "./public/electron.js"
+  ],
   "scripts": {
     "test": "vitest",
     "test:run": "vitest --run",
     "do-dev": "vite",
-    "do-build": "node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build"
+    "dev:ele": "vite --mode electron",
+    "do-build": "node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build",
+    "build:ele": "vite build --mode electron && electron-builder",
+    "publish": "vite build --mode electron && electron-builder --mac --win -p always"
   },
   "dependencies": {
     "@arextest/arex-common": "*",
@@ -50,9 +58,15 @@
     "@types/react-color": "^3.0.6",
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react-swc": "^3.3.0",
+    "electron": "^25.3.1",
+    "electron-builder": "^24.6.3",
+    "electron-log": "^4.4.8",
+    "electron-updater": "^6.1.4",
     "typescript": "^5.0.2",
     "unplugin-icons": "^0.16.3",
     "vite": "^4.2.0",
+    "vite-plugin-electron": "^0.12.0",
+    "vite-plugin-electron-renderer": "^0.14.5",
     "vite-plugin-svgr": "^3.2.0"
   }
 }

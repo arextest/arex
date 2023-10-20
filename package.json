@@ -1,13 +1,14 @@
 {
   "name": "arex",
   "private": true,
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "",
   "homepage": "https://github.com/arextest/arex",
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",
     "dev": "pnpm --filter=arex do-dev",
+    "dev:ele": "pnpm --filter=arex dev:ele",
     "dev:lite": "pnpm --filter=arex-lite do-dev",
     "build": "pnpm run -r do-build",
     "server": "pnpm -r do-server",

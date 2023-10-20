@@ -1,0 +1,48 @@
+/**
+ * @see https://www.electron.build/configuration/configuration
+ */
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "arextest.arex",
+  "productName": "Arex",
+  "copyright": "Copyright © 2023 ${author}",
+  "asar": true,
+  "directories": {
+    "output": "release/${version}"
+  },
+  "files": [
+    "dist-electron",
+    "dist"
+  ],
+  "mac": {
+    "artifactName": "${productName}_${version}.${ext}",
+    icon: "public/logo.png"
+  },
+  "win": {
+    "executableName": "Arex",
+    "publisherName": "arextest",
+    "verifyUpdateCodeSignature": false,
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "artifactName": "${productName}_${version}.${ext}"
+  },
+  "nsis": {
+    "oneClick": false,
+    "createDesktopShortcut": "always",
+    "perMachine": true,
+    "allowToChangeInstallationDirectory": true,
+    "deleteAppDataOnUninstall": false
+  },
+  "publish": {
+    provider: "github",
+    owner: "1pone",
+    repo: "arex-release"
+    //    url: "http://localhost:3000/"
+  }
+}

@@ -133,9 +133,8 @@
     "caseloaded": "Case 加载完成",
     "cancelled": "取消",
     "unknownState": "未知",
-    "diffScenes": "差异对比",
-    "diffScenesNew": "DiffScenes(新)",
-    "case": "全量 Case",
+    "diffScenes": "差异场景",
+    "case": "回放 Case",
     "recordId": "录制 ID",
     "replayId": "回放 ID",
     "status": "状态",
@@ -147,7 +146,7 @@
     "caseServiceAPI": "接口名称",
     "replayReport": "回放报告",
     "viewFailedOnly": "只展示失败",
-    "saveCase": "保存",
+    "saveCase": "保存用例",
     "cancel": "关闭",
     "create": "保存",
     "saveTo": "保存至 ",
@@ -353,6 +352,7 @@
     "dataDesensitization": "数据加密",
     "jarFileUrl": "Jar 包地址",
     "replayCallback": "回放回调",
-    "replayCallbackUrl": "回放回调地址"
+    "replayCallbackUrl": "回放回调地址",
+    "version": "版本"
   }
 }

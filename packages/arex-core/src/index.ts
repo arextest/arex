@@ -1,4 +1,5 @@
 import './i18n';
+import './style.css';
 
 export * from './components';
 export * from './constant';

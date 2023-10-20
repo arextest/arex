@@ -1,32 +1,35 @@
-import styled from '@emotion/styled';
-import { Button, ButtonProps } from 'antd';
+import { Button, ButtonProps, Typography } from 'antd';
+import { TextProps } from 'antd/es/typography/Text';
 import React, { ReactNode } from 'react';
 
-const SmallTextButton = styled(
-  React.forwardRef<HTMLElement, ButtonProps & { color?: 'primary' | 'text' | string }>(
-    (props, ref) => (
-      <Button
-        type='text'
-        size='small'
-        {...props}
-        onClick={(e) => {
-          e.stopPropagation();
-          // @ts-ignore
-          props.onClick?.(e);
-        }}
-        ref={ref}
+const SmallTextButton = React.forwardRef<
+  HTMLElement,
+  Omit<ButtonProps, 'title'> & {
+    color?: TextProps['color'];
+    title?: ReactNode;
+  }
+>((props, ref) => {
+  const { title, icon, ...restProps } = props;
+  return (
+    <Button
+      ref={ref}
+      type={'text'}
+      size='small'
+      {...restProps}
+      onClick={(e) => {
+        e.stopPropagation();
+        props.onClick?.(e);
+      }}
+    >
+      <Typography.Text
+        color={props.color}
+        type={props.color === 'secondary' ? 'secondary' : undefined}
       >
-        {props.title}
-      </Button>
-    ),
-  ),
-)<{ title?: ReactNode } & ButtonProps>`
-  color: ${(props) =>
-    props.color === 'primary'
-      ? props.theme.colorPrimary
-      : props.color === 'text'
-      ? props.theme.colorText
-      : props.color};
-`;
+        <span style={{ marginRight: '6px' }}>{icon}</span>
+        {title}
+      </Typography.Text>
+    </Button>
+  );
+});
 
 export default SmallTextButton;

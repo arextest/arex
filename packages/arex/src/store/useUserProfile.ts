@@ -14,7 +14,7 @@ export type UserProfileAction = {
 
 const initialState: UserProfile = {
   theme: DEFAULT_THEME,
-  compact: false,
+  compact: true,
   colorPrimary: DEFAULT_COLOR_PRIMARY,
   language: I18nextLng.en,
   avatar: '',
@@ -37,7 +37,6 @@ const useUserProfile = create<UserProfile & UserProfileAction>((set) => {
         window.message.error(i18n.t('serverError'));
       }
     }
-    console.log(profile, 'profile');
     window.__locale__ = profile?.language || 'en';
     profile && set(profile);
   }
