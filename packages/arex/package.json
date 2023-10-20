@@ -15,7 +15,7 @@
     "dev:ele": "vite --mode electron",
     "do-build": "node --max_old_space_size=16384 ./node_modules/vite/bin/vite.js build",
     "build:ele": "vite build --mode electron && electron-builder",
-    "publish": "vite build --mode electron && electron-builder --mac --win -p always"
+    "publish": "vite build --mode electron && electron-builder --mac --win"
   },
   "dependencies": {
     "@arextest/arex-common": "*",
