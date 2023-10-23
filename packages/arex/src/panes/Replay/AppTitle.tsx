@@ -1,5 +1,6 @@
 import {
   CloseCircleOutlined,
+  CodeOutlined,
   PlayCircleOutlined,
   SettingOutlined,
   SyncOutlined,
@@ -57,6 +58,7 @@ type CreatePlanForm = {
 
 const TitleWrapper = styled(
   (props: {
+    appId: string;
     className?: string;
     title: ReactNode;
     count?: number;
@@ -87,6 +89,21 @@ const TitleWrapper = styled(
                 onClick={props.onRefresh}
               />
             )}
+
+            <TooltipButton
+              title={
+                <div style={{ padding: '8px' }}>
+                  <Typography.Text strong style={{ display: 'block' }}>
+                    Agent Script :
+                  </Typography.Text>
+                  <Typography.Text code copyable>
+                    {`java -javaagent:</path/to/arex-agent.jar> -Darex.service.name=${props.appId} -Darex.storage.service.host=<storage.service.host:port> -jar <your-application.jar>`}
+                  </Typography.Text>
+                </div>
+              }
+              icon={<CodeOutlined />}
+            />
+
             {props.onSetting && (
               <TooltipButton
                 id='arex-replay-app-setting-btn'
@@ -298,6 +315,7 @@ const AppTitle: FC<AppTitleProps> = ({
       <PanesTitle
         title={
           <TitleWrapper
+            appId={appId}
             title={appTitle}
             count={recordCount}
             onClickTitle={handleClickTitle}
