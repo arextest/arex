@@ -1,12 +1,11 @@
 import Icon, { UserOutlined } from '@ant-design/icons';
 import { FlexCenterWrapper, getLocalStorage, setLocalStorage, styled } from '@arextest/arex-core';
-import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { App, Button, Card, Divider, Form, Input, Space, Tooltip, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ACCESS_TOKEN_KEY, EMAIL_KEY, REFRESH_TOKEN_KEY } from '@/constant';
+import { ACCESS_TOKEN_KEY, EMAIL_KEY, isClient, REFRESH_TOKEN_KEY } from '@/constant';
 import { LoginService, UserService } from '@/services';
 import { loginVerifyReq } from '@/services/LoginService';
 import gitlablogo from '~icons/logos/gitlab';
@@ -96,7 +95,10 @@ const Login: FC = () => {
     count <= 0 && clearInterval(timer);
   }, [count]);
 
-  const { data: oauthClientId } = useRequest(LoginService.getOauthClientId);
+  const { data: oauthClientId } = useRequest(LoginService.getOauthClientId, {
+    ready: !isClient,
+  });
+
   return (
     <FlexCenterWrapper>
       <Card style={{ marginTop: '20vh' }}>
