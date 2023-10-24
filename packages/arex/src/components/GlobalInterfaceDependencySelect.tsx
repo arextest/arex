@@ -28,8 +28,9 @@ export interface GlobalInterfaceDependencySelectProps {
   appId: string; // 限定应用，用于展示特定应用下所有接口的对比配置
   operationId?: string | false; // 限定接口，用于展示特定接口的对比配置, false 时不展示 operationType
   dependency?: DependencyParams; // 限定依赖，用于展示特定依赖的对比配置, undefined 时展示所有 dependency 选项, false 时不展示 dependency 选项
+  style?: React.CSSProperties;
   onTargetChange?: (target: CONFIG_TARGET) => void;
-  onOperationChange?: (operationId: string) => void;
+  onOperationChange?: (operation: { id: string; operationName: string }) => void;
   onDependencyChange?: (dependency: DependencyParams) => void;
 }
 
@@ -102,7 +103,7 @@ const GlobalInterfaceDependencySelect = forwardRef<
       onSuccess(res) {
         if (!props.operationId) {
           setOperationValue(res?.[0]?.id);
-          props.onOperationChange?.(res?.[0]?.id);
+          props.onOperationChange?.(res?.[0]);
         }
       },
     },
@@ -160,7 +161,11 @@ const GlobalInterfaceDependencySelect = forwardRef<
   );
 
   return (
-    <Space key='config-menu' ref={menuAnimateParent} style={{ display: 'flex', flexWrap: 'wrap' }}>
+    <Space
+      key='config-menu'
+      ref={menuAnimateParent}
+      style={{ display: 'flex', flexWrap: 'wrap', ...props.style }}
+    >
       <div key='config-target'>
         <div>
           <Label type='secondary'>{t('appSetting.configTarget')} </Label>
@@ -187,7 +192,11 @@ const GlobalInterfaceDependencySelect = forwardRef<
             value={operationValue}
             onChange={(value) => {
               setOperationValue(value);
-              props.onOperationChange?.(value);
+              props.onOperationChange?.({
+                id: value,
+                operationName: interfaceOptions.find((option) => option.value === value)
+                  ?.label as string,
+              });
             }}
             style={{ width: '160px' }}
           />

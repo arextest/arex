@@ -1,6 +1,6 @@
 import { request } from '@/utils';
 
-export interface QueryExpectationReq {
+export interface ExpectationScript {
   /**
    * app id
    */
@@ -12,7 +12,7 @@ export interface QueryExpectationReq {
   /**
    * Script content
    */
-  content: string;
+  content?: string;
   /**
    * Script is valid
    */
@@ -26,9 +26,11 @@ export interface QueryExpectationReq {
    * 1 global: for all operation
    */
   scope?: 0 | 1;
+  dataChangeCreateBy?: string;
+  dataChangeUpdateBy?: string;
 }
 
-export async function queryExpectation(params: QueryExpectationReq) {
-  const res = await request.post('/report/config/expectation/query', params);
+export async function queryExpectation(params: { appId: string }) {
+  const res = await request.post<ExpectationScript[]>('/report/config/expectation/query', params);
   return res.body;
 }

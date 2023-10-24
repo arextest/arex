@@ -202,7 +202,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
           operationId={props.operationId}
           dependency={props.dependency}
           onTargetChange={handleTargetChange}
-          onOperationChange={setActiveOperationId}
+          onOperationChange={(operation) => setActiveOperationId(operation.id)}
           onDependencyChange={setActiveDependency}
         />
 

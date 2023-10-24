@@ -1,5 +1,6 @@
 export * from './getAgentList';
 export * from './queryConfigTemplate';
+export * from './queryExpectation';
 export * from './queryInterfaceResponse';
 export * from './queryRecordSetting';
 export * from './queryReplaySetting';
@@ -8,6 +9,7 @@ export * from './recordDynamicClass/queryDynamicClass';
 export * from './recordDynamicClass/removeDynamicClass';
 export * from './recordDynamicClass/updateDynamicClass';
 export * from './updateConfigTemplate';
+export * from './updateExpectation';
 export * from './updateInterfaceResponse';
 export * from './updateRecordSetting';
 export * from './updateReplaySetting';
