@@ -3,7 +3,7 @@ import { useRequest } from 'ahooks';
 import { App, Button, Card, Select, SelectProps } from 'antd';
 import React, { FC, useState } from 'react';
 
-import { CONFIG_TARGET } from '@/panes/AppSetting/CompareConfig';
+import { CONFIG_TARGET } from '@/components';
 import { ComparisonService } from '@/services';
 
 export type CategoryIgnoreProps = {

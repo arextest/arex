@@ -34,8 +34,7 @@ import dayjs from 'dayjs';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { EditAreaPlaceholder } from '@/components';
-import { CONFIG_TARGET } from '@/panes/AppSetting/CompareConfig';
+import { CONFIG_TARGET, EditAreaPlaceholder } from '@/components';
 import CompareConfigTitle from '@/panes/AppSetting/CompareConfig/CompareConfigTitle';
 import { ComparisonService } from '@/services';
 import { OperationId } from '@/services/ApplicationService';
