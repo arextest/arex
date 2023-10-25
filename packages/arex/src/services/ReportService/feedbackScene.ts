@@ -11,6 +11,7 @@ export interface FeedbackSceneReq {
   planItemId: string;
   feedbackType: FeedbackType;
   recordId: string;
+  remark?: string;
 }
 
 export async function feedbackScene(params: FeedbackSceneReq) {
