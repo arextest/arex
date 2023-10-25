@@ -1,4 +1,3 @@
-import { WarningOutlined } from '@ant-design/icons';
 import {
   ArexPaneFC,
   clearLocalStorage,
@@ -8,7 +7,7 @@ import {
 } from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
-import { Alert, Card, Spin, Typography } from 'antd';
+import { Alert, Spin } from 'antd';
 import { merge } from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -112,36 +111,25 @@ const ReplayPage: ArexPaneFC = (props) => {
             onQueryRecordCount={queryRecordCount}
           />
 
-          {recordCount ? (
-            <CollapseTable
-              active={!!selectedPlan}
-              table={
-                <PlanReport
-                  appId={appId}
-                  refreshDep={refreshDep}
-                  onSelectedPlanChange={handleSelectPlan}
-                />
-              }
-              panel={
-                <PlanItem
-                  appId={appId}
-                  selectedPlan={selectedPlan}
-                  readOnly={!hasOwner}
-                  filter={(record) => !!record.totalCaseCount}
-                  onRefresh={handleRefreshDep}
-                />
-              }
-            />
-          ) : (
-            <Card>
-              <Typography.Title level={5}>
-                <WarningOutlined /> {t('replay.noRecordCountTip')}
-              </Typography.Title>
-              <Typography.Text code copyable>
-                {`java -javaagent:</path/to/arex-agent.jar> -Darex.service.name=${appId} -Darex.storage.service.host=<storage.service.host:port> -jar <your-application.jar>`}
-              </Typography.Text>
-            </Card>
-          )}
+          <CollapseTable
+            active={!!selectedPlan}
+            table={
+              <PlanReport
+                appId={appId}
+                refreshDep={refreshDep}
+                onSelectedPlanChange={handleSelectPlan}
+              />
+            }
+            panel={
+              <PlanItem
+                appId={appId}
+                selectedPlan={selectedPlan}
+                readOnly={!hasOwner}
+                filter={(record) => !!record.totalCaseCount}
+                onRefresh={handleRefreshDep}
+              />
+            }
+          />
         </>
       )}
       <AppOwnersConfig ref={appOwnerConfigRef} appId={appId} onAddOwner={getAppInfo} />
