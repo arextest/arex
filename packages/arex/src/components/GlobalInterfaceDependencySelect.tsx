@@ -123,7 +123,7 @@ const GlobalInterfaceDependencySelect = forwardRef<
   const { loading: loadingDependency } = useRequest(
     () => ApplicationService.getDependencyList({ operationId: operationValue as string }),
     {
-      ready: !!operationValue,
+      ready: !!operationValue && targetValue === CONFIG_TARGET.DEPENDENCY,
       refreshDeps: [operationValue],
       onSuccess(res) {
         const dependencyList = res.dependencyList;

@@ -8,7 +8,7 @@ import {
 } from '@arextest/arex-core';
 import { Editor } from '@arextest/monaco-react';
 import { useRequest } from 'ahooks';
-import { Button, Divider, Space, Switch, Table, Typography } from 'antd';
+import { Button, DatePicker, Divider, Space, Switch, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import * as monaco from 'monaco-editor';
@@ -70,7 +70,13 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
       title: 'Valid',
       dataIndex: 'valid',
       width: '20%',
-      render: (valid) => <Switch size='small' checked={valid} />,
+      render: (valid, record) => (
+        <Switch
+          size='small'
+          checked={valid}
+          onChange={(checked) => handleToggleValid(checked, record)}
+        />
+      ),
     },
     {
       title: 'ExpirationTime',
@@ -101,13 +107,21 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
   };
 
   const handleSaveExpirationScript = () => {
-    console.log(editExpirationScript);
     const expectation: ExpectationScript = {
       ...editExpirationScript,
-      dataChangeCreateBy: email,
+      valid: true,
+      [MODAL_OPEN_TYPE.Create ? 'dataChangeCreateBy' : 'dataChangeUpdateBy']: email,
       appId: open === MODAL_OPEN_TYPE.Create ? props.appId : undefined,
     };
     updateExpectation(expectation);
+  };
+
+  const handleToggleValid = (checked: boolean, expiration: ExpectationScript) => {
+    updateExpectation({
+      ...expiration,
+      valid: checked,
+      dataChangeUpdateBy: email,
+    });
   };
 
   const handleCloseModal = () => {
@@ -146,6 +160,7 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
     <UndertoneWrapper>
       <Table
         size='small'
+        rowKey='id'
         pagination={false}
         columns={columns}
         dataSource={expectationScripts}
@@ -160,6 +175,7 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
       />
 
       <PaneDrawer
+        destroyOnClose
         open={!!open}
         title={
           open === MODAL_OPEN_TYPE.Create ? 'Create Expiration Script' : editExpirationScript?.title
@@ -180,35 +196,48 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
         bodyStyle={{ padding: '8px 16px' }}
         onClose={handleCloseModal}
       >
-        {open === MODAL_OPEN_TYPE.Create && (
-          <GlobalInterfaceDependencySelect
-            appId={props.appId}
-            onOperationChange={(operation) =>
+        <Space direction='vertical' size='middle' style={{ width: '100%' }}>
+          {open === MODAL_OPEN_TYPE.Create && (
+            <GlobalInterfaceDependencySelect
+              appId={props.appId}
+              onOperationChange={(operation) =>
+                setEditExpirationScript((state) => {
+                  state.title = operation.operationName;
+                })
+              }
+              onDependencyChange={(dependency) => {
+                setEditExpirationScript((state) => {
+                  dependency && (state.title = dependency.operationName);
+                });
+              }}
+            />
+          )}
+
+          <div>
+            <Label type='secondary'>ExpirationTime</Label>
+            <DatePicker
+              value={dayjs(editExpirationScript?.expirationTime)}
+              onChange={(value) =>
+                setEditExpirationScript((state) => {
+                  state.expirationTime = value?.valueOf();
+                })
+              }
+            />
+          </div>
+
+          <Label type='secondary'>Script</Label>
+          <Editor
+            theme={theme === 'dark' ? 'vs-dark' : 'light'}
+            value={editExpirationScript?.content}
+            language={language}
+            height={'400px'}
+            onChange={(value) => {
               setEditExpirationScript((state) => {
-                state.title = operation.operationName;
-              })
-            }
-            onDependencyChange={(dependency) => {
-              setEditExpirationScript((state) => {
-                dependency && (state.title = dependency.operationName);
+                state.content = value;
               });
             }}
-            style={{ marginBottom: '8px' }}
           />
-        )}
-
-        <Label type='secondary'>Script</Label>
-        <Editor
-          theme={theme === 'dark' ? 'vs-dark' : 'light'}
-          value={editExpirationScript?.content}
-          language={language}
-          height={'400px'}
-          onChange={(value) => {
-            setEditExpirationScript((state) => {
-              state.content = value;
-            });
-          }}
-        />
+        </Space>
 
         {(editExpirationScript?.dataChangeUpdateBy || editExpirationScript?.dataChangeCreateBy) && (
           <Divider style={{ marginBottom: '8px' }} />

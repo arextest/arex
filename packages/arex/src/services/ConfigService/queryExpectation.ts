@@ -1,6 +1,7 @@
 import { request } from '@/utils';
 
 export interface ExpectationScript {
+  id?: string;
   /**
    * app id
    */
