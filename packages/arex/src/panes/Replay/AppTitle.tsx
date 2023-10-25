@@ -91,6 +91,7 @@ const TitleWrapper = styled(
             )}
 
             <TooltipButton
+              tooltipProps={{ trigger: ['click'] }}
               title={
                 <div style={{ padding: '8px' }}>
                   <Typography.Text strong style={{ display: 'block' }}>
