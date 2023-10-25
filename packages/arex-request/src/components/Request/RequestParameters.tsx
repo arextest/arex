@@ -13,14 +13,7 @@ const RequestParameters: FC = () => {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { store, dispatch } = useArexRequestStore();
-  const { endpoint } = store.request;
-  const { params } = store.request;
-
-  const setEndpoint = (endpoint: string) => {
-    dispatch((state) => {
-      state.request.endpoint = endpoint;
-    });
-  };
+  const { endpoint, params } = store.request;
 
   const setParams = (params: ArexRESTParam[]) => {
     dispatch((state) => {
@@ -30,30 +23,31 @@ const RequestParameters: FC = () => {
 
   // TODO: Optimize dependency change
   useEffect(() => {
-    const query = PM.Url.parse(endpoint).query || [];
-    if (
-      JSON.stringify(query) !== JSON.stringify(params.map(({ key, value }) => ({ key, value })))
-    ) {
-      if (typeof query !== 'string') {
-        // @ts-ignore
-        const params = query.map(({ id, key, value }, index) => ({
-          key,
-          value: value || '',
-          active: true,
-          id: id || String(Math.random()),
-        }));
-        setParams(params);
+    dispatch((state) => {
+      const query = PM.Url.parse(state.request.endpoint).query || [];
+      if (
+        JSON.stringify(query) !== JSON.stringify(params.map(({ key, value }) => ({ key, value })))
+      ) {
+        if (typeof query !== 'string') {
+          // @ts-ignore
+          state.request.params = query.map(({ id, key, value }, index) => ({
+            key,
+            value: value || '',
+            active: true,
+            id: id || String(Math.random()),
+          }));
+        }
       }
-    }
+    });
   }, [endpoint]);
 
   useEffect(() => {
-    setEndpoint(
-      new PM.Url({
+    dispatch((state) => {
+      state.request.endpoint = new PM.Url({
         ...PM.Url.parse(endpoint),
-        query: params,
-      }).toString(),
-    );
+        query: state.request.params,
+      }).toString();
+    });
   }, [params]);
 
   const handleCopyParameters = () => {
