@@ -1,9 +1,10 @@
-import { EditOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import {
   getLocalStorage,
   Label,
   PaneDrawer,
   SmallTextButton,
+  TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { Editor } from '@arextest/monaco-react';
@@ -60,6 +61,10 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
     },
   );
 
+  const { run: deleteExpectation } = useRequest(ConfigService.deleteExpectation, {
+    manual: true,
+  });
+
   const columns: ColumnsType<ExpectationScript> = [
     {
       title: 'Name',
@@ -87,24 +92,29 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
 
     {
       title: 'Action',
-      width: '20%',
+      width: '300px',
       render: (text, record) => (
-        <Button
-          size='small'
-          type='link'
-          icon={<EditOutlined />}
-          onClick={() => handleEditExpirationScript(record)}
-        >
-          edit
-        </Button>
+        <>
+          <TooltipButton
+            icon={<EditOutlined />}
+            title={t('edit')}
+            breakpoint='xl'
+            color='primary'
+            onClick={() => handleEditExpirationScript(record)}
+          />
+
+          <TooltipButton
+            danger
+            icon={<DeleteOutlined />}
+            color={'error'}
+            title={t('delete')}
+            breakpoint='xl'
+            onClick={() => handleDeleteExpirationScript(record)}
+          />
+        </>
       ),
     },
   ];
-
-  const handleEditExpirationScript = (expiration: ExpectationScript) => {
-    setEditExpirationScript(expiration);
-    setOpen(MODAL_OPEN_TYPE.Edit);
-  };
 
   const handleSaveExpirationScript = () => {
     const expectation: ExpectationScript = {
@@ -114,6 +124,18 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
       appId: open === MODAL_OPEN_TYPE.Create ? props.appId : undefined,
     };
     updateExpectation(expectation);
+  };
+
+  const handleEditExpirationScript = (expiration: ExpectationScript) => {
+    setEditExpirationScript(expiration);
+    setOpen(MODAL_OPEN_TYPE.Edit);
+  };
+
+  const handleDeleteExpirationScript = (expiration: ExpectationScript) => {
+    deleteExpectation({
+      id: expiration.id,
+      appId: expiration.appId,
+    });
   };
 
   const handleToggleValid = (checked: boolean, expiration: ExpectationScript) => {

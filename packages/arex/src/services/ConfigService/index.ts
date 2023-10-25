@@ -1,3 +1,4 @@
+export * from './deleteExpectation';
 export * from './getAgentList';
 export * from './queryConfigTemplate';
 export * from './queryExpectation';
