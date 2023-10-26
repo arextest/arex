@@ -1,3 +1,4 @@
+import { WarningOutlined } from '@ant-design/icons';
 import {
   FullHeightSpin,
   HighlightRowTable,
@@ -5,7 +6,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { usePagination } from 'ahooks';
-import { theme, Tooltip } from 'antd';
+import { Card, theme, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useEffect, useState } from 'react';
 import CountUp from 'react-countup';
@@ -178,22 +179,33 @@ const PlanReport: FC<PlanReportProps> = (props) => {
       // 为了 defaultCurrent 和 defaultRow 生效，需在初次获取到数据后再挂载子组件
       mountOnFirstLoading={false}
     >
-      <HighlightRowTable<PlanStatistics>
-        rowKey='planId'
-        size='small'
-        loading={loading}
-        columns={columns}
-        pagination={pagination}
-        onRowClick={handleRowClick}
-        dataSource={planStatistics}
-        defaultCurrent={defaultPagination.defaultCurrent}
-        defaultRow={defaultPagination.defaultRow}
-        sx={{
-          '.ant-table-cell-ellipsis': {
-            color: token.colorPrimary,
-          },
-        }}
-      />
+      {!init && !loading && !planStatistics.length ? (
+        <Card>
+          <Typography.Title level={5}>
+            <WarningOutlined /> {t('replay.noRecordCountTip')}
+          </Typography.Title>
+          <Typography.Text code copyable>
+            {`java -javaagent:</path/to/arex-agent.jar> -Darex.service.name=${appId} -Darex.storage.service.host=<storage.service.host:port> -jar <your-application.jar>`}
+          </Typography.Text>
+        </Card>
+      ) : (
+        <HighlightRowTable<PlanStatistics>
+          rowKey='planId'
+          size='small'
+          loading={loading}
+          columns={columns}
+          pagination={pagination}
+          onRowClick={handleRowClick}
+          dataSource={planStatistics}
+          defaultCurrent={defaultPagination.defaultCurrent}
+          defaultRow={defaultPagination.defaultRow}
+          sx={{
+            '.ant-table-cell-ellipsis': {
+              color: token.colorPrimary,
+            },
+          }}
+        />
+      )}
     </FullHeightSpin>
   );
 };
