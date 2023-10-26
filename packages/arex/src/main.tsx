@@ -3,6 +3,7 @@ import '@/utils/electrionOverride';
 import 'dayjs/locale/zh-cn';
 import './style/style.css';
 import './useWork';
+import './utils/axiosGuard';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
