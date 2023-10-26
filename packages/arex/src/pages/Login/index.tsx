@@ -5,6 +5,7 @@ import { App, Button, Card, Divider, Form, Input, Space, Tooltip, Typography } f
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { MacDraggableArea } from '@/components';
 import { ACCESS_TOKEN_KEY, EMAIL_KEY, isClient, REFRESH_TOKEN_KEY } from '@/constant';
 import { LoginService, UserService } from '@/services';
 import { loginVerifyReq } from '@/services/LoginService';
@@ -101,6 +102,8 @@ const Login: FC = () => {
 
   return (
     <FlexCenterWrapper>
+      <MacDraggableArea />
+
       <Card style={{ marginTop: '20vh' }}>
         <Space size={26} direction='vertical'>
           <Form<loginVerifyReq> name='login' autoComplete='off' form={form} onFinish={loginVerify}>
