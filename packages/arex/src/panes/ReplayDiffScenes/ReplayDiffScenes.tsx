@@ -5,6 +5,7 @@ import {
   clearLocalStorage,
   css,
   DiffMatch,
+  EmptyWrapper,
   getJsonValueByPath,
   jsonIndexPathFilter,
   PaneDrawer,
@@ -80,7 +81,11 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
     return () => clearLocalStorage(APP_ID_KEY);
   }, [activePane?.id]);
 
-  const { data: sceneInfo = [], refresh: querySceneInfo } = useRequest(() =>
+  const {
+    data: sceneInfo = [],
+    loading: loadingSceneInfo,
+    refresh: querySceneInfo,
+  } = useRequest(() =>
     ReportService.querySceneInfo({
       planId,
       planItemId,
@@ -139,7 +144,6 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
     useState<MarkExclusionModalProps>();
 
   const handleMarkExclusion = (params: MarkExclusionModalProps) => {
-    console.log(params);
     setMarkExclusionOpen(true);
     setActiveMarkExclusionParams(params);
   };
@@ -253,89 +257,92 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
 
   return (
     <div ref={wrapperRef}>
-      <Space direction='vertical' style={{ width: '100%' }}>
-        {/*<Space style={{ marginBottom: '4px' }}>*/}
-        {/*  <Typography.Text type='secondary'>*/}
-        {/*    <Label>planId</Label>*/}
-        {/*    {planId}*/}
-        {/*  </Typography.Text>*/}
-        {/*  <Typography.Text type='secondary'>*/}
-        {/*    <Label>planItemId</Label>*/}
-        {/*    {planItemId}*/}
-        {/*  </Typography.Text>*/}
-        {/*</Space>*/}
+      <EmptyWrapper loading={loadingSceneInfo} empty={!sceneInfo.length}>
+        <Space direction='vertical' style={{ width: '100%' }}>
+          {/*<Space style={{ marginBottom: '4px' }}>*/}
+          {/*  <Typography.Text type='secondary'>*/}
+          {/*    <Label>planId</Label>*/}
+          {/*    {planId}*/}
+          {/*  </Typography.Text>*/}
+          {/*  <Typography.Text type='secondary'>*/}
+          {/*    <Label>planItemId</Label>*/}
+          {/*    {planItemId}*/}
+          {/*  </Typography.Text>*/}
+          {/*</Space>*/}
 
-        {/* 一级: 第一个subScenes details.map(item => item.categoryName + decode(item.code)) */}
-        {/* 二级: details.categoryName + decode(item.code) + item.operationName */}
+          {/* 一级: 第一个subScenes details.map(item => item.categoryName + decode(item.code)) */}
+          {/* 二级: details.categoryName + decode(item.code) + item.operationName */}
 
-        <Collapse
-          accordion
-          destroyInactivePanel
-          items={collapseItems}
-          onChange={([index]) => {
-            setSubSceneIndex(index === undefined ? -1 : parseInt(index));
-            // if (index !== undefined) setSubSceneList(sceneInfo[parseInt(index)].subScenes);
-            // else setFullLinkInfo(undefined);
-          }}
-          css={css`
-            .ant-collapse-content-box {
-              padding: 8px !important;
-            }
-          `}
-        />
-
-        {treeData && (
-          <FlowTree
-            bordered
-            width={size?.width && size.width - 32}
-            data={treeData}
-            onClick={(data) => {
-              setModalData([data]);
-              setModalOpen(1);
+          <Collapse
+            accordion
+            destroyInactivePanel
+            items={collapseItems}
+            onChange={([index]) => {
+              setSubSceneIndex(index === undefined ? -1 : parseInt(index));
+              // if (index !== undefined) setSubSceneList(sceneInfo[parseInt(index)].subScenes);
+              // else setFullLinkInfo(undefined);
             }}
+            css={css`
+              .ant-collapse-content-box {
+                padding: 8px !important;
+              }
+            `}
           />
-        )}
 
-        <PaneDrawer
-          destroyOnClose
-          width='80%'
-          open={!!modalOpen}
-          title={modalTitle}
-          bodyStyle={{ padding: 0 }}
-          onClose={() => setModalOpen(0)}
-        >
-          <Card bordered={false} bodyStyle={{ padding: '0 16px' }} style={{ minHeight: '100%' }}>
-            {/* force destroyOnClose */}
-            {modalOpen && (
-              <DiffPath
-                // contextMenuDisabled
-                mode={modalOpen === 2 ? 'multiple' : 'single'} // TODO extra render on single mode
-                defaultOnlyFailed={modalOpen === 2}
-                operationId={props.data.operationId}
-                itemsExtraRender={(data) => (
-                  <TooltipButton
-                    icon={<SettingOutlined />}
-                    title={t('appSetting.compareConfig')}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleClickCompareConfigSetting(data);
-                    }}
-                    style={{ marginRight: '6px' }}
-                  />
-                )}
-                loading={loadingFullLinkInfo}
-                data={modalData}
-                onChange={setSelectedDependency}
-                onIgnoreKey={handleIgnoreKey}
-                onSortKey={handleSortKey}
-                onDiffMatch={handleDiffMatch}
-                requestDiffMsg={ScheduleService.queryDiffMsgById}
-                requestQueryLogEntity={ScheduleService.queryLogEntity}
-              />
-            )}
-          </Card>
-        </PaneDrawer>
-      </Space>
+          {treeData && (
+            <FlowTree
+              bordered
+              width={size?.width && size.width - 32}
+              data={treeData}
+              onClick={(data) => {
+                setModalData([data]);
+                setModalOpen(1);
+              }}
+            />
+          )}
+        </Space>
+      </EmptyWrapper>
+
+      {/* CompareConfig */}
+      <PaneDrawer
+        destroyOnClose
+        width='80%'
+        open={!!modalOpen}
+        title={modalTitle}
+        bodyStyle={{ padding: 0 }}
+        onClose={() => setModalOpen(0)}
+      >
+        <Card bordered={false} bodyStyle={{ padding: '0 16px' }} style={{ minHeight: '100%' }}>
+          {/* force destroyOnClose */}
+          {modalOpen && (
+            <DiffPath
+              // contextMenuDisabled
+              mode={modalOpen === 2 ? 'multiple' : 'single'} // TODO extra render on single mode
+              defaultOnlyFailed={modalOpen === 2}
+              operationId={props.data.operationId}
+              itemsExtraRender={(data) => (
+                <TooltipButton
+                  icon={<SettingOutlined />}
+                  title={t('appSetting.compareConfig')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleClickCompareConfigSetting(data);
+                  }}
+                  style={{ marginRight: '6px' }}
+                />
+              )}
+              loading={loadingFullLinkInfo}
+              data={modalData}
+              onChange={setSelectedDependency}
+              onIgnoreKey={handleIgnoreKey}
+              onSortKey={handleSortKey}
+              onDiffMatch={handleDiffMatch}
+              requestDiffMsg={ScheduleService.queryDiffMsgById}
+              requestQueryLogEntity={ScheduleService.queryLogEntity}
+            />
+          )}
+        </Card>
+      </PaneDrawer>
 
       {/* JsonDiffMathModal */}
       {contextHolder}

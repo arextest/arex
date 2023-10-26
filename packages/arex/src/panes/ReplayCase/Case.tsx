@@ -97,9 +97,9 @@ const Case: FC<CaseProps> = (props) => {
             menu={{
               items: [
                 {
-                  label: t('replay.debug'),
-                  key: 'debug',
-                  icon: <BugOutlined />,
+                  label: t('replay.save'),
+                  key: 'save',
+                  icon: <SaveOutlined />,
                 },
                 {
                   label: t('replay.rerun'),
@@ -108,19 +108,11 @@ const Case: FC<CaseProps> = (props) => {
                 },
               ],
 
-              onClick: (e) => {
-                switch (e.key) {
-                  case 'debug': {
-                    navPane({
-                      type: PanesType.REQUEST,
-                      id: `${activeWorkspaceId}-${CollectionNodeType.case}-${generateId(12)}`,
-                      icon: 'Get',
-                      name: record.recordId,
-                      data: {
-                        recordId: record.recordId,
-                        planId: props.planId,
-                      },
-                    });
+              onClick: (menuInfo) => {
+                menuInfo.domEvent.stopPropagation();
+                switch (menuInfo.key) {
+                  case 'save': {
+                    props.onClickSaveCase?.(record);
                     break;
                   }
                   case 'rerun': {
@@ -132,11 +124,20 @@ const Case: FC<CaseProps> = (props) => {
             }}
             onClick={(e) => {
               e.stopPropagation();
-              props.onClickSaveCase?.(record);
+              navPane({
+                type: PanesType.REQUEST,
+                id: `${activeWorkspaceId}-${CollectionNodeType.case}-${generateId(12)}`,
+                icon: 'Get',
+                name: record.recordId,
+                data: {
+                  recordId: record.recordId,
+                  planId: props.planId,
+                },
+              });
             }}
           >
-            <SaveOutlined />
-            {t('replay.saveCase')}
+            <BugOutlined />
+            {t('replay.debug')}
           </Dropdown.Button>
         </div>
       ),

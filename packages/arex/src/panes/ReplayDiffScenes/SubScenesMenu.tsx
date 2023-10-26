@@ -1,10 +1,11 @@
-import { ClusterOutlined, HighlightOutlined } from '@ant-design/icons';
+import Icon, { ClusterOutlined, HighlightOutlined } from '@ant-design/icons';
 import {
   EllipsisTooltip,
   SceneCode,
   SpaceBetweenWrapper,
   TooltipButton,
   useArexPaneProps,
+  useTranslation,
 } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { Badge, Menu, Space, theme } from 'antd';
@@ -12,7 +13,7 @@ import React, { FC, ReactNode, useEffect, useState } from 'react';
 
 import { PlanItemStatistics, SubScene } from '@/services/ReportService';
 
-import { MarkExclusionModalProps } from './MarkExclusionModal';
+import { FeedbackIconMap, MarkExclusionModalProps } from './MarkExclusionModal';
 
 export interface SubSceneMenuProps {
   data: SubScene[];
@@ -24,6 +25,7 @@ export interface SubSceneMenuProps {
 const Connector = '%_%';
 const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
   const { token } = theme.useToken();
+  const { t } = useTranslation('components');
 
   const { data: plan } = useArexPaneProps<PlanItemStatistics>();
 
@@ -83,6 +85,20 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
           label: (
             <>
               <SpaceBetweenWrapper>
+                {subScene?.feedbackType && (
+                  <Icon
+                    component={FeedbackIconMap[subScene.feedbackType]}
+                    css={css`
+                      color: ${token.colorTextQuaternary};
+                      position: absolute;
+                      left: 8px;
+                      top: 4px;
+                      & > span {
+                        font-size: 28px !important;
+                      }
+                    `}
+                  />
+                )}
                 <div style={{ overflow: 'hidden' }}>{fullPath}</div>
 
                 <div>
@@ -90,7 +106,7 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
                     type='link'
                     size='small'
                     icon={<HighlightOutlined />}
-                    title={'MarkExclusion'}
+                    title={t('replay.markExclusion')}
                     onClick={(e) => {
                       e.stopPropagation();
                       props.onMarkExclusion?.({
@@ -107,7 +123,7 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
                     type='link'
                     size='small'
                     icon={<ClusterOutlined />}
-                    title={'view all'}
+                    title={t('replay.viewAll')}
                     onClick={(e) => {
                       e.stopPropagation();
                       props.onClickAllDiff?.(subScene.recordId, fullPath);

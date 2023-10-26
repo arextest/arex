@@ -196,17 +196,17 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const searchInput = useRef<InputRef>(null);
   const columns = useMemo<ColumnsType<PlanItemStatistics>>(() => {
     const _columns: ColumnsType<PlanItemStatistics> = [
-      {
-        title: t('replay.planItemID'),
-        dataIndex: 'planItemId',
-        key: 'planItemId',
-        ellipsis: { showTitle: false },
-        render: (value) => (
-          <Tooltip placement='topLeft' title={value}>
-            {value}
-          </Tooltip>
-        ),
-      },
+      // {
+      //   title: t('replay.planItemID'),
+      //   dataIndex: 'planItemId',
+      //   key: 'planItemId',
+      //   ellipsis: { showTitle: false },
+      //   render: (value) => (
+      //     <Tooltip placement='topLeft' title={value}>
+      //       {value}
+      //     </Tooltip>
+      //   ),
+      // },
       {
         title: t('replay.api'),
         dataIndex: 'operationName',
@@ -317,7 +317,8 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
               icon={<ContainerOutlined />}
               title={t('replay.diffScenes')}
               breakpoint='xxl'
-              color='primary'
+              disabled={!record.failCaseCount}
+              color={record.failCaseCount ? 'primary' : 'disabled'}
               onClick={() => {
                 navPane({
                   type: PanesType.DIFF_SCENES,
