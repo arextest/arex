@@ -9,7 +9,7 @@ import { FeedbackType } from '@/services/ReportService';
 
 export const FeedbackIconMap: { [key in FeedbackType]: FC } = {
   [FeedbackType.Bug]: BugOutlined,
-  [FeedbackType.Design]: SketchOutlined,
+  [FeedbackType.Expectation]: SketchOutlined,
   [FeedbackType.ArexProblem]: FontColorsOutlined,
 };
 
@@ -53,11 +53,11 @@ const MarkExclusionModal = (props: MarkExclusionModalProps) => {
       {
         label: (
           <Space>
-            <Icon component={FeedbackIconMap[FeedbackType.Design]} />
-            {t('replay.design')}
+            <Icon component={FeedbackIconMap[FeedbackType.Expectation]} />
+            {t('replay.meetExpectation')}
           </Space>
         ),
-        value: FeedbackType.Design,
+        value: FeedbackType.Expectation,
       },
       {
         label: (
@@ -81,6 +81,8 @@ const MarkExclusionModal = (props: MarkExclusionModalProps) => {
       onCancel={props.onClose}
     >
       <Form
+        labelCol={{ span: 5 }}
+        wrapperCol={{ span: 19 }}
         initialValues={{
           planId: props.planId,
           planItemId: props.planItemId,
@@ -89,6 +91,7 @@ const MarkExclusionModal = (props: MarkExclusionModalProps) => {
           remark: props.remark,
         }}
         onFinish={feedbackScene}
+        style={{ paddingBottom: '24px' }}
       >
         <Form.Item hidden name='planId'>
           <Input />
@@ -106,9 +109,9 @@ const MarkExclusionModal = (props: MarkExclusionModalProps) => {
           <Input.TextArea />
         </Form.Item>
 
-        <Form.Item>
-          <Button type='primary' htmlType='submit' style={{ float: 'right' }}>
-            {t('ok', { ns: 'common' })}
+        <Form.Item style={{ float: 'right' }}>
+          <Button type='primary' htmlType='submit'>
+            {t('save', { ns: 'common' })}
           </Button>
         </Form.Item>
       </Form>

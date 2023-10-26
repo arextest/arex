@@ -188,8 +188,8 @@
     "viewAll": "查看全部",
     "markExclusion": "标记排除",
     "exclusionType": "排除类型",
-    "bug": "Bug",
-    "design": "设计",
+    "bug": "代码漏洞",
+    "meetExpectation": "符合预期",
     "arexProblem": "AREX 问题",
     "remark": "备注"
   },

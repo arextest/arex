@@ -189,8 +189,8 @@
     "markExclusion": "Mark Exclusion",
     "exclusionType": "ExclusionType",
     "bug": "Bug",
-    "design":  "Design",
-    "arexProblem": "ArexProblem",
+    "meetExpectation":  "Meet Expectation",
+    "arexProblem": "Arex Problem",
     "remark":  "Remark"
   },
   "appSetting": {

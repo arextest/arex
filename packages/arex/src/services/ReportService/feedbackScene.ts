@@ -2,7 +2,7 @@ import { request } from '@/utils';
 
 export enum FeedbackType {
   Bug = 1,
-  Design = 2,
+  Expectation = 2,
   ArexProblem = 3,
 }
 
