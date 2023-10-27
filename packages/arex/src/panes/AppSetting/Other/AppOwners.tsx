@@ -89,6 +89,7 @@ const AppOwners: FC<AppOwnersProps> = (props) => {
           placeholder={t('searchUsers')}
           options={usersOptions}
           onSearch={handleSearch}
+          onSelect={() => setOpen(false)}
           style={{ minWidth: '240px' }}
         />
       </Form.Item>
