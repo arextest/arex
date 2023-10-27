@@ -196,17 +196,17 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const searchInput = useRef<InputRef>(null);
   const columns = useMemo<ColumnsType<PlanItemStatistics>>(() => {
     const _columns: ColumnsType<PlanItemStatistics> = [
-      {
-        title: t('replay.planItemID'),
-        dataIndex: 'planItemId',
-        key: 'planItemId',
-        ellipsis: { showTitle: false },
-        render: (value) => (
-          <Tooltip placement='topLeft' title={value}>
-            {value}
-          </Tooltip>
-        ),
-      },
+      // {
+      //   title: t('replay.planItemID'),
+      //   dataIndex: 'planItemId',
+      //   key: 'planItemId',
+      //   ellipsis: { showTitle: false },
+      //   render: (value) => (
+      //     <Tooltip placement='topLeft' title={value}>
+      //       {value}
+      //     </Tooltip>
+      //   ),
+      // },
       {
         title: t('replay.api'),
         dataIndex: 'operationName',

@@ -1,5 +1,7 @@
 import { request } from '@/utils';
 
+import { FeedbackType } from './feedbackScene';
+
 export interface QuerySceneInfoReq {
   planId: string;
   planItemId: string;
@@ -16,6 +18,8 @@ export interface SubScene {
   recordId: string;
   replayId: string;
   details: Detail[];
+  feedbackType?: FeedbackType;
+  remark?: string;
 }
 
 export interface SceneInfo {

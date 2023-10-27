@@ -2,7 +2,7 @@ import { request } from '@/utils';
 
 export enum FeedbackType {
   Bug = 1,
-  ByDesign = 2,
+  Expectation = 2,
   ArexProblem = 3,
 }
 
@@ -11,6 +11,7 @@ export interface FeedbackSceneReq {
   planItemId: string;
   feedbackType: FeedbackType;
   recordId: string;
+  remark?: string;
 }
 
 export async function feedbackScene(params: FeedbackSceneReq) {

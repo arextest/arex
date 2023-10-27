@@ -184,7 +184,14 @@
     "re-calculateReport": "Re-calculate Report",
     "noAppOwnerAlert":"There is no owners of this application, some operation privileges will be disabled, please ",
     "addOwner": "Add application owner",
-    "noRecordCountTip": "No recording data is available at this time, try starting Agent recording with the following command"
+    "noRecordCountTip": "No recording data is available at this time, try starting Agent recording with the following command",
+    "viewAll": "View All",
+    "markExclusion": "Mark Exclusion",
+    "exclusionType": "ExclusionType",
+    "bug": "Bug",
+    "meetExpectation":  "Meet Expectation",
+    "arexProblem": "Arex Problem",
+    "remark":  "Remark"
   },
   "appSetting": {
     "record": "Record",
