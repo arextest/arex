@@ -11,7 +11,13 @@ import {
 import { MenuProps } from 'antd';
 import React, { FC } from 'react';
 
-import { EmptyPanePlaceholder, FooterExtraMenu, KeyboardShortcut, UserMenu } from '@/components';
+import {
+  EmptyPanePlaceholder,
+  FooterExtraMenu,
+  KeyboardShortcut,
+  MacTrafficLightBackground,
+  UserMenu,
+} from '@/components';
 import { CollectionNodeType, isClient, PanesType } from '@/constant';
 import { useInit, useNavPane } from '@/hooks';
 import { useMenusPanes, useWorkspaces } from '@/store';
@@ -125,7 +131,7 @@ const Home: FC = () => {
 
   return (
     <>
-      <ArexHeader githubStar extra={<UserMenu />} />
+      <ArexHeader extra={<UserMenu />} />
 
       <ArexMainContainer
         collapsed={menuCollapsed}
@@ -165,6 +171,7 @@ const Home: FC = () => {
         )}
       />
 
+      <MacTrafficLightBackground />
       <KeyboardShortcut />
     </>
   );

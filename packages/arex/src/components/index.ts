@@ -3,6 +3,8 @@ export { default as EmptyPanePlaceholder } from './EmptyPanePlaceholder';
 export { default as FlexRowReverseWrapper } from './FlexRowReverseWrapper';
 export { default as FooterExtraMenu } from './FooterExtraMenu';
 export { default as KeyboardShortcut } from './KeyboardShortcut';
+export { default as MacDraggableArea } from './MacDraggableArea';
+export { default as MacTrafficLightBackground } from './MacTrafficLightBackground';
 export type { MenuSelectProps } from './MenuSelect';
 export { default as MenuSelect } from './MenuSelect';
 export { default as SingleCollapse } from './SingleCollapse';

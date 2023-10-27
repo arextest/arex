@@ -52,7 +52,7 @@ const UserMenu: FC = () => {
 
   return (
     <Space size='small'>
-      <Dropdown menu={userMenu}>
+      <Dropdown menu={userMenu} trigger={['click']}>
         <Avatar src={avatar} size={24} style={{ marginLeft: '0px', cursor: 'pointer' }}>
           {email?.slice(0, 1).toUpperCase() || 'G'}
         </Avatar>

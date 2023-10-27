@@ -1,5 +1,6 @@
 /// <reference types="vite-plugin-svgr/client" />
 import styled from '@emotion/styled';
+import { useSize } from 'ahooks';
 import { Typography } from 'antd';
 import React, { FC } from 'react';
 
@@ -8,7 +9,8 @@ import { ReactComponent as LogoIconLight } from '../../assets/svg/logo_light.svg
 import { GithubStarButton } from '../components';
 import { useArexCoreConfig } from '../hooks';
 
-export interface AppHeaderProps {
+export interface AppHeaderProps extends HTMLDivElement {
+  logo?: boolean;
   githubStar?: boolean;
   menu?: React.ReactNode;
   extra?: React.ReactNode;
@@ -20,46 +22,51 @@ const HeaderWrapper = styled.div`
   padding: 7px;
   display: flex;
   justify-content: space-between;
+  -webkit-app-region: drag;
   border-bottom: 1px solid ${(props) => props.theme.colorBorder}};
-
     .left,
     .right {
       display: flex;
       align-items: center;
+      -webkit-app-region: no-drag;
     }
     .logo {
-      width: 100px;
-      text-align: center;
-      font-weight: 600;
-      display: inline-block;
-      border-radius: 0.25rem;
-      font-size: 14px;
-      color: ${(props) => props.theme.colorText};
-    }
-    .logo:hover {
-      color: ${(props) => props.theme.colorTextSecondary};
-    }
+      margin-top: 2px ;
+      display: flex;
+      flex-flow: column;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
   `;
 
 const ArexHeader: FC<AppHeaderProps> = (props) => {
+  const { logo = true, githubStar = true } = props;
   const { theme } = useArexCoreConfig();
 
+  const size = useSize(document.getElementById('arex-menu'));
+
   return (
-    <HeaderWrapper>
+    <HeaderWrapper className={props.className}>
       <div className={'left'}>
         <a
           className={'logo'}
           target='_blank'
           href={'http://arextest.com'}
           rel='noreferrer'
-          style={{ display: 'flex' }}
+          style={{ opacity: logo ? 100 : 0, width: (size?.width || 72) - 14 }}
         >
           {React.createElement(theme === 'dark' ? LogoIconDark : LogoIconLight, {
-            style: { height: '20px' },
+            style: { height: '18px' },
           })}
-          <Typography.Text style={{ lineHeight: '24px', fontSize: '12px' }}>AREX</Typography.Text>
+
+          <Typography.Text
+            strong
+            style={{ lineHeight: '14px', fontSize: '8px', paddingLeft: '2px' }}
+          >
+            AREX
+          </Typography.Text>
         </a>
-        {props.githubStar && <GithubStarButton theme={theme} />}
+        {githubStar && <GithubStarButton />}
         {props.menu}
       </div>
 

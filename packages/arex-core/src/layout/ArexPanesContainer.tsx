@@ -224,6 +224,7 @@ const ArexPanesContainer = (props: ArexPanesContainerProps) => {
               margin-bottom: 0;
             }
           `}
+          popupClassName='arex-pane-popup'
           renderTabBar={(tabBarProps, DefaultTabBar) => (
             <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
               <SortableContext

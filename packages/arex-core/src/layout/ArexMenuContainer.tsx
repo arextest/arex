@@ -81,6 +81,7 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
       <div style={{ display: 'flex', flex: '1', minHeight: '0' }}>
         <StyledMenu
           mode='inline'
+          id='arex-menu'
           selectedKeys={props.activeKey ? [props.activeKey] : []}
           inlineCollapsed={props.collapsed}
           items={tabsItems}
@@ -90,6 +91,7 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
         <Tabs
           activeKey={props.activeKey}
           items={items}
+          popupClassName={''}
           css={css`
             width: 100%;
             overflow-y: hidden;
@@ -109,7 +111,7 @@ const StyledMenu = styled(Menu)`
   .ant-menu-item,
   .ant-menu-submenu-title {
     height: auto !important;
-    min-width: 64px;
+    //min-width: 64px;
     flex-direction: column;
     padding-top: ${(props) => (props.inlineCollapsed ? 0 : '12px')};
     padding-left: ${(props) => (props.inlineCollapsed ? '24px' : '12px')}!important;
