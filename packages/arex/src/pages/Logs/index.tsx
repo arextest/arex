@@ -11,7 +11,7 @@ import { Log as LogType } from '@/services/ReportService';
 
 import Log from './Log';
 export const LogLevel = ['DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL', 'TRACE'] as const;
-export const AppType = ['all', 'arex-web-api', 'arex-schedule', 'arex-storage'] as const;
+export const AppType = ['all', 'arex-api', 'arex-schedule', 'arex-storage'] as const;
 
 const LogsWrapper = styled.div`
   height: 100vh;
