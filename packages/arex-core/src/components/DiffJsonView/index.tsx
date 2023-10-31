@@ -1,12 +1,20 @@
-import { CompareConfigType } from '@arextest/vanilla-jsoneditor';
+import { CompareConfigType, JSONPath, NodeDecodeType } from '@arextest/vanilla-jsoneditor';
 import { css } from '@emotion/react';
-import { theme } from 'antd';
-import React, { FC, useCallback } from 'react';
+import { App, message, theme } from 'antd';
+import React, { FC, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useImmer } from 'use-immer';
 
 import { useArexCoreConfig } from '../../hooks';
+import {
+  base64Decode,
+  tryParseJsonString,
+  tryPrettierJsonString,
+  tryStringifyJson,
+  zstdDecode,
+} from '../../utils';
 import DiffJsonTooltip from './DiffJsonTooltip';
-import { genAllDiffByType, LogEntity } from './helper';
+import { genAllDiffByType, getJsonValueByPath, LogEntity, setJsonValueByPath } from './helper';
 import VanillaJSONEditor from './JSONEditor';
 
 export enum TargetEditor {
@@ -14,31 +22,34 @@ export enum TargetEditor {
   'right' = 'right',
 }
 
-export type PathHandler = (params: {
-  type?: CompareConfigType;
+export type PathHandler<P> = (params: {
+  type?: P;
   path: string[];
   jsonString: { [targetEditor in TargetEditor]: string };
   targetEditor: TargetEditor;
 }) => void;
+
 export type DiffJsonViewProps = {
   readOnly?: boolean;
   encrypted?: boolean;
+  nodeDecode?: boolean;
   height?: string | number;
   hiddenTooltip?: boolean;
   diffJson?: { left: string; right: string };
   diffPath?: LogEntity[];
   remark?: [string, string];
-  onIgnoreKey?: PathHandler;
-  onSortKey?: PathHandler;
-  onReferenceKey?: PathHandler;
-  onCompressKey?: PathHandler;
-  onDiffMatch?: PathHandler;
+  onIgnoreKey?: PathHandler<CompareConfigType>;
+  onSortKey?: PathHandler<CompareConfigType>;
+  onReferenceKey?: PathHandler<CompareConfigType>;
+  onCompressKey?: PathHandler<CompareConfigType>;
+  onDiffMatch?: PathHandler<CompareConfigType>;
 };
 
 const { useToken } = theme;
 const DiffJsonView: FC<DiffJsonViewProps> = ({
   readOnly,
   encrypted,
+  nodeDecode,
   diffJson,
   diffPath,
   hiddenTooltip,
@@ -50,10 +61,18 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
   onCompressKey,
   onDiffMatch,
 }) => {
+  const { message } = App.useApp();
   const { t } = useTranslation();
   const { theme, language } = useArexCoreConfig();
   const allLeftDiffByType = genAllDiffByType(TargetEditor.left, diffPath);
   const allRightDiffByType = genAllDiffByType(TargetEditor.right, diffPath);
+
+  // for store decode value
+  const [json, setJson] = useImmer(diffJson);
+  useEffect(() => {
+    setJson(diffJson);
+  }, [diffJson]);
+
   const onClassNameLeft = (path: string[]) => {
     const pathStr = path.map((p) => (isNaN(Number(p)) ? p : Number(p)));
     if (pathStr.length === 0) {
@@ -97,12 +116,44 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
   const { token: emotionTheme } = useToken();
 
   const rightClickHandler = useCallback(
-    (fn: PathHandler, path: string[], targetEditor: TargetEditor, type?: CompareConfigType) => {
+    (
+      fn: PathHandler<CompareConfigType>,
+      path: string[],
+      targetEditor: TargetEditor,
+      type?: CompareConfigType,
+    ) => {
       fn({
         type,
         path,
         jsonString: diffJson!,
         targetEditor,
+      });
+    },
+    [diffJson],
+  );
+
+  const nodeDecodeHandler = useCallback(
+    async (path: JSONPath, targetEditor: TargetEditor, type?: NodeDecodeType) => {
+      let value = getJsonValueByPath(diffJson![targetEditor], path);
+
+      try {
+        if (type === 'zstd') {
+          value = await zstdDecode(value);
+        } else if (type === 'base64') {
+          value = base64Decode(value);
+        }
+        value = tryParseJsonString(value);
+      } catch (e) {
+        message.error('fail to decode');
+      }
+
+      setJson((state) => {
+        const newJson = tryStringifyJson(
+          setJsonValueByPath(state![targetEditor], path, value),
+          undefined,
+          true,
+        );
+        newJson && (state![targetEditor] = newJson);
       });
     },
     [diffJson],
@@ -147,7 +198,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             language={language}
             remark={remark?.[0] || (t('benchmark') as string)}
             content={{
-              text: String(diffJson?.left), // stringify falsy value
+              text: String(json?.left), // stringify falsy value
               json: undefined,
             }}
             mainMenuBar={false}
@@ -173,6 +224,11 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
               onDiffMatch &&
               ((path, type) => rightClickHandler(onDiffMatch, path, TargetEditor.left, type))
             }
+            onNodeDecode={
+              nodeDecode
+                ? (path, type) => nodeDecodeHandler(path, TargetEditor.left, type)
+                : undefined
+            }
           />
         </div>
 
@@ -189,7 +245,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             language={language}
             remark={remark?.[1] || (t('test') as string)}
             content={{
-              text: String(diffJson?.right), // stringify falsy value
+              text: String(json?.right), // stringify falsy value
               json: undefined,
             }}
             mainMenuBar={false}
@@ -214,6 +270,11 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             onDiffMatch={
               onDiffMatch &&
               ((path, type) => rightClickHandler(onDiffMatch, path, TargetEditor.right, type))
+            }
+            onNodeDecode={
+              nodeDecode
+                ? (path, type) => nodeDecodeHandler(path, TargetEditor.right, type)
+                : undefined
             }
           />
         </div>

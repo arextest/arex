@@ -291,8 +291,8 @@ importers:
         specifier: ^5.2.6
         version: 5.2.6(react-dom@18.2.0)(react@18.2.0)
       '@arextest/vanilla-jsoneditor':
-        specifier: 0.17.25
-        version: 0.17.25
+        specifier: 0.17.28
+        version: 0.17.28
       '@dnd-kit/core':
         specifier: ^6.0.8
         version: 6.0.8(react-dom@18.2.0)(react@18.2.0)
@@ -314,6 +314,9 @@ importers:
       '@formkit/auto-animate':
         specifier: ^0.7.0
         version: 0.7.0
+      '@hpcc-js/wasm':
+        specifier: ^2.14.1
+        version: 2.14.1
       ahooks:
         specifier: ^3.7.5
         version: 3.7.5(react@18.2.0)
@@ -335,6 +338,9 @@ importers:
       immer:
         specifier: ^9.0.19
         version: 9.0.19
+      js-base64:
+        specifier: ^3.7.5
+        version: 3.7.5
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -721,8 +727,8 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@arextest/vanilla-jsoneditor@0.17.25:
-    resolution: {integrity: sha512-6KeqjQW8SJ4o+4/Pz0EPuX9Rno+U1aCEPHePquXfgtvGzi9Jrh318HrupShrCbDq+T6SvDuQ1WerZf1roRf1Ow==}
+  /@arextest/vanilla-jsoneditor@0.17.28:
+    resolution: {integrity: sha512-syDVL8WUi9rJOfPvKuo/K6XKOd7RJaM6hG/VqSkUR9nZCkiEnZXsyDhaejPJMsy00F+Ry+qBX1xXWt3fHqyVwg==}
     dev: false
 
   /@babel/code-frame@7.22.13:
@@ -1840,6 +1846,13 @@ packages:
 
   /@formkit/auto-animate@0.7.0:
     resolution: {integrity: sha512-RczHUr0AhRPssREoNdRjLfk2b/id9/DFnbIq18QM8L7E4zNV3XH+WO480EZ46BQHDEsv76YPJ0JbG2Y2i3GfXw==}
+    dev: false
+
+  /@hpcc-js/wasm@2.14.1:
+    resolution: {integrity: sha512-ncPvj0dEjoye8jD1NAwdThXlZ5mpuGRyRwaNWU6JVBgyT8TewVDmG+RAOXPysyaP1Ui8Lm7562W4KawZtPwa1A==}
+    hasBin: true
+    dependencies:
+      yargs: 17.7.2
     dev: false
 
   /@humanwhocodes/config-array@0.9.5:
@@ -6329,6 +6342,10 @@ packages:
   /jju@1.4.0:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
     dev: true
+
+  /js-base64@3.7.5:
+    resolution: {integrity: sha512-3MEt5DTINKqfScXKfJFrRbxkrnk2AxPWGBL/ycjz4dK8iqiSJ06UxD8jh8xuh6p10TX4t2+7FsBYVxxQbMg+qA==}
+    dev: false
 
   /js-cookie@2.2.1:
     resolution: {integrity: sha512-HvdH2LzI/EAZcUwA8+0nKNtWHqS+ZmijLA30RwZA0bo7ToCckjK5MkGhjED9KoRcXO6BaGI3I9UIzSA1FKFPOQ==}
