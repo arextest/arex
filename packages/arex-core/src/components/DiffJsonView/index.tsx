@@ -1,20 +1,13 @@
-import { CompareConfigType, JSONPath, NodeDecodeType } from '@arextest/vanilla-jsoneditor';
+import { CompareConfigType, JSONPath } from '@arextest/vanilla-jsoneditor';
 import { css } from '@emotion/react';
-import { App, message, theme } from 'antd';
-import React, { FC, useCallback, useEffect } from 'react';
+import { App, Modal, theme } from 'antd';
+import React, { FC, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useImmer } from 'use-immer';
 
 import { useArexCoreConfig } from '../../hooks';
-import {
-  base64Decode,
-  tryParseJsonString,
-  tryPrettierJsonString,
-  tryStringifyJson,
-  zstdDecode,
-} from '../../utils';
+import { base64Decode } from '../../utils';
 import DiffJsonTooltip from './DiffJsonTooltip';
-import { genAllDiffByType, getJsonValueByPath, LogEntity, setJsonValueByPath } from './helper';
+import { genAllDiffByType, getJsonValueByPath, LogEntity } from './helper';
 import VanillaJSONEditor from './JSONEditor';
 
 export enum TargetEditor {
@@ -64,14 +57,11 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
   const { message } = App.useApp();
   const { t } = useTranslation();
   const { theme, language } = useArexCoreConfig();
+  const [open, setOpen] = useState(false);
+  const [decodeData, setDecodeData] = useState<string>();
+
   const allLeftDiffByType = genAllDiffByType(TargetEditor.left, diffPath);
   const allRightDiffByType = genAllDiffByType(TargetEditor.right, diffPath);
-
-  // for store decode value
-  const [json, setJson] = useImmer(diffJson);
-  useEffect(() => {
-    setJson(diffJson);
-  }, [diffJson]);
 
   const onClassNameLeft = (path: string[]) => {
     const pathStr = path.map((p) => (isNaN(Number(p)) ? p : Number(p)));
@@ -133,30 +123,20 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
   );
 
   const nodeDecodeHandler = useCallback(
-    async (path: JSONPath, targetEditor: TargetEditor, type?: NodeDecodeType) => {
+    async (path: JSONPath, targetEditor: TargetEditor) => {
       let value = getJsonValueByPath(diffJson![targetEditor], path);
 
       try {
-        if (type === 'zstd') {
-          value = await zstdDecode(value);
-        } else if (type === 'base64') {
-          value = base64Decode(value);
-        }
-        value = tryParseJsonString(value);
+        value = base64Decode(value);
       } catch (e) {
-        message.error('fail to decode');
+        console.error(e);
+        message.error(t('failedToDecodeBase64'));
+        return;
       }
-
-      setJson((state) => {
-        const newJson = tryStringifyJson(
-          setJsonValueByPath(state![targetEditor], path, value),
-          undefined,
-          true,
-        );
-        newJson && (state![targetEditor] = newJson);
-      });
+      setOpen(true);
+      setDecodeData(value);
     },
-    [diffJson],
+    [diffJson, t],
   );
 
   if (!diffJson) return null;
@@ -198,7 +178,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             language={language}
             remark={remark?.[0] || (t('benchmark') as string)}
             content={{
-              text: String(json?.left), // stringify falsy value
+              text: String(diffJson?.left), // stringify falsy value
               json: undefined,
             }}
             mainMenuBar={false}
@@ -225,9 +205,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
               ((path, type) => rightClickHandler(onDiffMatch, path, TargetEditor.left, type))
             }
             onNodeDecode={
-              nodeDecode
-                ? (path, type) => nodeDecodeHandler(path, TargetEditor.left, type)
-                : undefined
+              nodeDecode ? (path) => nodeDecodeHandler(path, TargetEditor.left) : undefined
             }
           />
         </div>
@@ -245,7 +223,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
             language={language}
             remark={remark?.[1] || (t('test') as string)}
             content={{
-              text: String(json?.right), // stringify falsy value
+              text: String(diffJson?.right), // stringify falsy value
               json: undefined,
             }}
             mainMenuBar={false}
@@ -272,12 +250,30 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
               ((path, type) => rightClickHandler(onDiffMatch, path, TargetEditor.right, type))
             }
             onNodeDecode={
-              nodeDecode
-                ? (path, type) => nodeDecodeHandler(path, TargetEditor.right, type)
-                : undefined
+              nodeDecode ? (path) => nodeDecodeHandler(path, TargetEditor.right) : undefined
             }
           />
         </div>
+
+        <Modal
+          destroyOnClose
+          title={t('base64DecodeContent')}
+          open={open}
+          getContainer={false}
+          onCancel={() => setOpen(false)}
+        >
+          <VanillaJSONEditor
+            readOnly
+            encrypted={false}
+            height={height}
+            language={language}
+            content={{
+              text: String(decodeData), // stringify falsy value
+              json: undefined,
+            }}
+            mainMenuBar={false}
+          />
+        </Modal>
       </div>
     </>
   );
