@@ -1,7 +1,7 @@
+import { DeleteOutlined } from '@ant-design/icons';
 import { HelpTooltip, useTranslation } from '@arextest/arex-core';
-import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { Popconfirm, Table, Typography } from 'antd';
+import { Badge, Button, Popconfirm, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import React, { FC } from 'react';
@@ -13,6 +13,38 @@ import { deleteAgent } from '@/services/ConfigService/deleteAgent';
 export interface RunningStatusProps {
   appId: string;
 }
+
+const AgentStatusMap: {
+  [status: string]: {
+    code: number;
+    badgeStatus: 'default' | 'success' | 'warning' | 'processing' | 'error' | undefined;
+  };
+} = {
+  NONE: {
+    code: 0, // NONE
+    badgeStatus: 'default',
+  },
+  START: {
+    code: 1, // Arex first load the config
+    badgeStatus: 'success',
+  },
+  UN_START: {
+    code: 2, // AREX just to load the config
+    badgeStatus: 'warning',
+  },
+  WORKING: {
+    code: 3, // AREX is up and recording
+    badgeStatus: 'processing',
+  },
+  SLEEPING: {
+    code: 4, // AREX is up, but not recording maybe rate=0 or allowDayOfWeeks is not match
+    badgeStatus: 'error',
+  },
+  SHUTDOWN: {
+    code: 5, // AREX is shutdown, need to restart
+    badgeStatus: 'default',
+  },
+};
 
 const RunningStatus: FC<RunningStatusProps> = (props) => {
   const { t } = useTranslation(['components', 'common']);
@@ -46,7 +78,15 @@ const RunningStatus: FC<RunningStatusProps> = (props) => {
       ),
       dataIndex: 'agentStatus',
       align: 'center',
-      render: (text) => <Typography.Text>{text || '-'}</Typography.Text>,
+      render: (status: string) => (
+        <Typography.Text>
+          <Badge
+            status={AgentStatusMap[status]?.badgeStatus || 'default'}
+            style={{ marginRight: '8px' }}
+          />
+          {status || '-'}
+        </Typography.Text>
+      ),
     },
     {
       title: t('replay.action', { ns: 'components' }),
@@ -57,19 +97,12 @@ const RunningStatus: FC<RunningStatusProps> = (props) => {
           onConfirm={() => {
             confirm(record);
           }}
-          okText='Yes'
-          cancelText='No'
+          okText={t('yes', { ns: 'common' })}
+          cancelText={t('no', { ns: 'common' })}
         >
-          <a
-            css={css`
-              color: red;
-              &:hover {
-                color: red;
-              }
-            `}
-          >
+          <Button danger type='link' size='small' icon={<DeleteOutlined />}>
             {t('replay.delete', { ns: 'components' })}
-          </a>
+          </Button>
         </Popconfirm>
       ),
     },
