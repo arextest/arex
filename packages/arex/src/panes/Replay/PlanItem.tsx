@@ -11,6 +11,7 @@ import Icon, {
 import { ReplayLogsDrawer } from '@arextest/arex-common';
 import {
   getLocalStorage,
+  HighlightRowTable,
   i18n,
   I18nextLng,
   SpaceBetweenWrapper,
@@ -601,9 +602,10 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
 
       <br />
 
-      <Table
+      <HighlightRowTable
         size='small'
         rowKey='planItemId'
+        restHighlight={false}
         loading={loadingData}
         columns={columns}
         dataSource={planItemDataFiltered}
