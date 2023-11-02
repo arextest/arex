@@ -259,6 +259,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
           destroyOnClose
           title={t('base64DecodeContent')}
           open={open}
+          footer={false}
           getContainer={false}
           onCancel={() => setOpen(false)}
         >
