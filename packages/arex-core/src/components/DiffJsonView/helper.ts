@@ -88,6 +88,24 @@ export function getJsonValueByPath(object: any, path: string[]) {
 }
 
 /**
+ * 根据 path 设置 json 的 value
+ * @param object
+ * @param path
+ * @param value
+ */
+export function setJsonValueByPath(object: any, path: string[], value: any) {
+  if (!path.length) return value;
+  const json = typeof object === 'string' ? tryParseJsonString(object) : object;
+
+  const pathList = path.slice(0, path.length - 1);
+  const lastPath = path[path.length - 1];
+
+  pathList.reduce((value, object) => value[object], json)[lastPath] = value;
+  console.log([json]);
+  return json;
+}
+
+/**
  *  过滤 path[] 中的的数组 index 类型元素
  * @param path
  * @param jsonString

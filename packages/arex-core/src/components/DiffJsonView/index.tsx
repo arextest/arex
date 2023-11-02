@@ -1,12 +1,13 @@
-import { CompareConfigType } from '@arextest/vanilla-jsoneditor';
+import { CompareConfigType, JSONPath } from '@arextest/vanilla-jsoneditor';
 import { css } from '@emotion/react';
-import { theme } from 'antd';
-import React, { FC, useCallback } from 'react';
+import { App, Modal, theme } from 'antd';
+import React, { FC, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexCoreConfig } from '../../hooks';
+import { base64Decode } from '../../utils';
 import DiffJsonTooltip from './DiffJsonTooltip';
-import { genAllDiffByType, LogEntity } from './helper';
+import { genAllDiffByType, getJsonValueByPath, LogEntity } from './helper';
 import VanillaJSONEditor from './JSONEditor';
 
 export enum TargetEditor {
@@ -14,31 +15,34 @@ export enum TargetEditor {
   'right' = 'right',
 }
 
-export type PathHandler = (params: {
-  type?: CompareConfigType;
+export type PathHandler<P> = (params: {
+  type?: P;
   path: string[];
   jsonString: { [targetEditor in TargetEditor]: string };
   targetEditor: TargetEditor;
 }) => void;
+
 export type DiffJsonViewProps = {
   readOnly?: boolean;
   encrypted?: boolean;
+  nodeDecode?: boolean;
   height?: string | number;
   hiddenTooltip?: boolean;
   diffJson?: { left: string; right: string };
   diffPath?: LogEntity[];
   remark?: [string, string];
-  onIgnoreKey?: PathHandler;
-  onSortKey?: PathHandler;
-  onReferenceKey?: PathHandler;
-  onCompressKey?: PathHandler;
-  onDiffMatch?: PathHandler;
+  onIgnoreKey?: PathHandler<CompareConfigType>;
+  onSortKey?: PathHandler<CompareConfigType>;
+  onReferenceKey?: PathHandler<CompareConfigType>;
+  onCompressKey?: PathHandler<CompareConfigType>;
+  onDiffMatch?: PathHandler<CompareConfigType>;
 };
 
 const { useToken } = theme;
 const DiffJsonView: FC<DiffJsonViewProps> = ({
   readOnly,
   encrypted,
+  nodeDecode,
   diffJson,
   diffPath,
   hiddenTooltip,
@@ -50,10 +54,15 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
   onCompressKey,
   onDiffMatch,
 }) => {
+  const { message } = App.useApp();
   const { t } = useTranslation();
   const { theme, language } = useArexCoreConfig();
+  const [open, setOpen] = useState(false);
+  const [decodeData, setDecodeData] = useState<string>();
+
   const allLeftDiffByType = genAllDiffByType(TargetEditor.left, diffPath);
   const allRightDiffByType = genAllDiffByType(TargetEditor.right, diffPath);
+
   const onClassNameLeft = (path: string[]) => {
     const pathStr = path.map((p) => (isNaN(Number(p)) ? p : Number(p)));
     if (pathStr.length === 0) {
@@ -97,7 +106,12 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
   const { token: emotionTheme } = useToken();
 
   const rightClickHandler = useCallback(
-    (fn: PathHandler, path: string[], targetEditor: TargetEditor, type?: CompareConfigType) => {
+    (
+      fn: PathHandler<CompareConfigType>,
+      path: string[],
+      targetEditor: TargetEditor,
+      type?: CompareConfigType,
+    ) => {
       fn({
         type,
         path,
@@ -106,6 +120,23 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
       });
     },
     [diffJson],
+  );
+
+  const nodeDecodeHandler = useCallback(
+    async (path: JSONPath, targetEditor: TargetEditor) => {
+      let value = getJsonValueByPath(diffJson![targetEditor], path);
+
+      try {
+        value = base64Decode(value);
+      } catch (e) {
+        console.error(e);
+        message.error(t('failedToDecodeBase64'));
+        return;
+      }
+      setOpen(true);
+      setDecodeData(value);
+    },
+    [diffJson, t],
   );
 
   if (!diffJson) return null;
@@ -173,6 +204,9 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
               onDiffMatch &&
               ((path, type) => rightClickHandler(onDiffMatch, path, TargetEditor.left, type))
             }
+            onNodeDecode={
+              nodeDecode ? (path) => nodeDecodeHandler(path, TargetEditor.left) : undefined
+            }
           />
         </div>
 
@@ -215,8 +249,32 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
               onDiffMatch &&
               ((path, type) => rightClickHandler(onDiffMatch, path, TargetEditor.right, type))
             }
+            onNodeDecode={
+              nodeDecode ? (path) => nodeDecodeHandler(path, TargetEditor.right) : undefined
+            }
           />
         </div>
+
+        <Modal
+          destroyOnClose
+          title={t('base64DecodeContent')}
+          open={open}
+          footer={false}
+          getContainer={false}
+          onCancel={() => setOpen(false)}
+        >
+          <VanillaJSONEditor
+            readOnly
+            encrypted={false}
+            height={height}
+            language={language}
+            content={{
+              text: String(decodeData), // stringify falsy value
+              json: undefined,
+            }}
+            mainMenuBar={false}
+          />
+        </Modal>
       </div>
     </>
   );
