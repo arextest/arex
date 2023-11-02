@@ -11,6 +11,7 @@ export type PlanItemStatistics = {
   operationName: string | null;
   serviceName: string;
   appId: string;
+  appName: string;
   status: number;
   replayStartTime: number;
   replayEndTime: number;
