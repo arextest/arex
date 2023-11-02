@@ -75,17 +75,19 @@ const SerializeSkip: FC<FormItemProps<SerializeSkipInfo[]>> = (props) => {
         align: 'center',
         width: '15%',
         render: (value, record, index) => (
-          <Space>
-            <SmallTextButton
-              danger
-              icon={<DeleteOutlined />}
-              onClick={() =>
-                setDataSource((state) => {
-                  state.splice(index, 1);
-                })
-              }
-            />
-          </Space>
+          <Button
+            danger
+            type='link'
+            size='small'
+            icon={<DeleteOutlined />}
+            onClick={() =>
+              setDataSource((state) => {
+                state.splice(index, 1);
+              })
+            }
+          >
+            {t('replay.delete', { ns: 'components' })}
+          </Button>
         ),
       },
     ],

@@ -14,6 +14,7 @@ import { generateId } from '@/utils';
 
 export type CaseProps = {
   planItemId: string;
+  operationName: string | null;
   planId: string;
   filter?: Key;
   onClick?: (record: ReplayCaseType) => void;
@@ -76,7 +77,12 @@ const Case: FC<CaseProps> = (props) => {
               navPane({
                 type: PanesType.CASE_DETAIL,
                 id: record.recordId,
-                data: { ...record, appId: data?.appId },
+                data: {
+                  ...record,
+                  appId: data?.appId,
+                  planItemId: props.planItemId,
+                  operationName: props.operationName,
+                },
               });
             }}
           >

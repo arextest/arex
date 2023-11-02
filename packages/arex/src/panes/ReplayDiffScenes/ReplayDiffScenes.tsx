@@ -8,7 +8,9 @@ import {
   EmptyWrapper,
   getJsonValueByPath,
   jsonIndexPathFilter,
+  Label,
   PaneDrawer,
+  PanesTitle,
   PathHandler,
   SceneCode,
   setLocalStorage,
@@ -17,10 +19,11 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest, useSize } from 'ahooks';
-import { App, Card, Collapse, Modal, Space } from 'antd';
+import { App, Breadcrumb, Card, Collapse, Modal, Space } from 'antd';
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { APP_ID_KEY } from '@/constant';
+import { APP_ID_KEY, PanesType } from '@/constant';
+import { useNavPane } from '@/hooks';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
 import { DependencyParams } from '@/services/ComparisonService';
@@ -31,29 +34,11 @@ import FlowTree, { FlowTreeData } from './FlowTree';
 import MarkExclusionModal, { MarkExclusionModalProps } from './MarkExclusionModal';
 import SubScenesMenu, { SubSceneMenuProps } from './SubScenesMenu';
 
-export const SummaryCodeMap: { [key: string]: { color: string; message: string } } = {
-  '0': {
-    color: 'success',
-    message: 'SUCCESS', // 'COMPARED_WITHOUT_DIFFERENCE'
-  },
-  '1': {
-    color: 'magenta',
-    message: 'COMPARED_WITH_DIFFERENCE',
-  },
-  '2': {
-    color: 'error',
-    message: 'EXCEPTION', // 'COMPARED_INTERNAL_EXCEPTION'
-  },
-  '3': {
-    color: 'orange',
-    message: 'SEND_FAILED_NOT_COMPARE',
-  },
-};
-
 const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
   const {
     data: { planId, planItemId },
   } = props;
+  const navPane = useNavPane();
   const { t } = useTranslation(['components']);
   const { activePane } = useMenusPanes();
 
@@ -256,140 +241,169 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
   );
 
   return (
-    <div ref={wrapperRef}>
-      <EmptyWrapper loading={loadingSceneInfo} empty={!sceneInfo.length}>
-        <Space direction='vertical' style={{ width: '100%' }}>
-          {/*<Space style={{ marginBottom: '4px' }}>*/}
-          {/*  <Typography.Text type='secondary'>*/}
-          {/*    <Label>planId</Label>*/}
-          {/*    {planId}*/}
-          {/*  </Typography.Text>*/}
-          {/*  <Typography.Text type='secondary'>*/}
-          {/*    <Label>planItemId</Label>*/}
-          {/*    {planItemId}*/}
-          {/*  </Typography.Text>*/}
-          {/*</Space>*/}
-
-          {/* 一级: 第一个subScenes details.map(item => item.categoryName + decode(item.code)) */}
-          {/* 二级: details.categoryName + decode(item.code) + item.operationName */}
-
-          <Collapse
-            accordion
-            destroyInactivePanel
-            items={collapseItems}
-            onChange={([index]) => {
-              setSubSceneIndex(index === undefined ? -1 : parseInt(index));
-              // if (index !== undefined) setSubSceneList(sceneInfo[parseInt(index)].subScenes);
-              // else setFullLinkInfo(undefined);
-            }}
-            css={css`
-              .ant-collapse-content-box {
-                padding: 8px !important;
-              }
-            `}
-          />
-
-          {treeData && (
-            <FlowTree
-              bordered
-              width={size?.width && size.width - 32}
-              data={treeData}
-              onClick={(data) => {
-                setModalData([data]);
-                setModalOpen(1);
-              }}
-            />
-          )}
-        </Space>
-      </EmptyWrapper>
-
-      {/* CompareConfig */}
-      <PaneDrawer
-        destroyOnClose
-        width='80%'
-        open={!!modalOpen}
-        title={modalTitle}
-        bodyStyle={{ padding: 0 }}
-        onClose={() => setModalOpen(0)}
-      >
-        <Card bordered={false} bodyStyle={{ padding: '0 16px' }} style={{ minHeight: '100%' }}>
-          {/* force destroyOnClose */}
-          {modalOpen && (
-            <DiffPath
-              // contextMenuDisabled
-              mode={modalOpen === 2 ? 'multiple' : 'single'} // TODO extra render on single mode
-              defaultOnlyFailed={modalOpen === 2}
-              operationId={props.data.operationId}
-              itemsExtraRender={(data) => (
-                <TooltipButton
-                  icon={<SettingOutlined />}
-                  title={t('appSetting.compareConfig')}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleClickCompareConfigSetting(data);
-                  }}
-                  style={{ marginRight: '6px' }}
-                />
-              )}
-              loading={loadingFullLinkInfo}
-              data={modalData}
-              onChange={setSelectedDependency}
-              onIgnoreKey={handleIgnoreKey}
-              onSortKey={handleSortKey}
-              onDiffMatch={handleDiffMatch}
-              requestDiffMsg={ScheduleService.queryDiffMsgById}
-              requestQueryLogEntity={ScheduleService.queryLogEntity}
-            />
-          )}
-        </Card>
-      </PaneDrawer>
-
-      {/* JsonDiffMathModal */}
-      {contextHolder}
-
-      {/* MarkExclusion */}
-
-      <MarkExclusionModal
-        {...activeMarkExclusionParams}
-        open={markExclusionOpen}
-        onClose={() => {
-          setMarkExclusionOpen(false);
-          setActiveMarkExclusionParams(undefined);
-        }}
-        onSuccess={querySceneInfo}
+    <>
+      <Breadcrumb
+        separator='>'
+        items={[
+          {
+            key: props.data.appId,
+            title: <a>{props.data.appId}</a>,
+            onClick: () =>
+              navPane({
+                type: PanesType.REPLAY,
+                id: props.data.appId,
+              }),
+          },
+          {
+            key: props.data.planItemId,
+            title: props.data.operationName || 'unknown',
+          },
+        ]}
+      />
+      <PanesTitle
+        title={
+          <span>
+            <Label style={{ font: 'inherit' }}>{t('replay.caseServiceAPI')}</Label>
+            {decodeURIComponent(props.data.operationName || 'unknown')}
+          </span>
+        }
       />
 
-      {/* CompareConfigModal */}
-      <PaneDrawer
-        destroyOnClose
-        width='70%'
-        footer={false}
-        title={`${t('appSetting.compareConfig')} - ${props.data.operationName}`}
-        open={compareConfigOpen}
-        onClose={() => {
-          setCompareConfigOpen(false);
-          setTargetNodePath(undefined);
-        }}
-      >
-        <CompareConfig
-          appId={props.data.appId}
-          operationId={props.data.operationId || false}
-          dependency={
-            selectedDependency
-              ? selectedDependency.isEntry
-                ? false
-                : {
-                    operationName: selectedDependency.operationName,
-                    operationType:
-                      selectedDependency.categoryName || selectedDependency.operationType,
-                  }
-              : undefined
-          }
-          sortArrayPath={targetNodePath}
-          onSortDrawerClose={() => setTargetNodePath(undefined)}
+      <div ref={wrapperRef}>
+        <EmptyWrapper loading={loadingSceneInfo} empty={!sceneInfo.length}>
+          <Space direction='vertical' style={{ width: '100%' }}>
+            {/*<Space style={{ marginBottom: '4px' }}>*/}
+            {/*  <Typography.Text type='secondary'>*/}
+            {/*    <Label>planId</Label>*/}
+            {/*    {planId}*/}
+            {/*  </Typography.Text>*/}
+            {/*  <Typography.Text type='secondary'>*/}
+            {/*    <Label>planItemId</Label>*/}
+            {/*    {planItemId}*/}
+            {/*  </Typography.Text>*/}
+            {/*</Space>*/}
+
+            {/* 一级: 第一个subScenes details.map(item => item.categoryName + decode(item.code)) */}
+            {/* 二级: details.categoryName + decode(item.code) + item.operationName */}
+
+            <Collapse
+              accordion
+              destroyInactivePanel
+              items={collapseItems}
+              onChange={([index]) => {
+                setSubSceneIndex(index === undefined ? -1 : parseInt(index));
+                // if (index !== undefined) setSubSceneList(sceneInfo[parseInt(index)].subScenes);
+                // else setFullLinkInfo(undefined);
+              }}
+              css={css`
+                .ant-collapse-content-box {
+                  padding: 8px !important;
+                }
+              `}
+            />
+
+            {treeData && (
+              <FlowTree
+                bordered
+                width={size?.width && size.width - 32}
+                data={treeData}
+                onClick={(data) => {
+                  setModalData([data]);
+                  setModalOpen(1);
+                }}
+              />
+            )}
+          </Space>
+        </EmptyWrapper>
+
+        {/* CompareConfig */}
+        <PaneDrawer
+          destroyOnClose
+          width='80%'
+          open={!!modalOpen}
+          title={modalTitle}
+          bodyStyle={{ padding: 0 }}
+          onClose={() => setModalOpen(0)}
+        >
+          <Card bordered={false} bodyStyle={{ padding: '0 16px' }} style={{ minHeight: '100%' }}>
+            {/* force destroyOnClose */}
+            {modalOpen && (
+              <DiffPath
+                // contextMenuDisabled
+                mode={modalOpen === 2 ? 'multiple' : 'single'} // TODO extra render on single mode
+                defaultOnlyFailed={modalOpen === 2}
+                operationId={props.data.operationId}
+                itemsExtraRender={(data) => (
+                  <TooltipButton
+                    icon={<SettingOutlined />}
+                    title={t('appSetting.compareConfig')}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleClickCompareConfigSetting(data);
+                    }}
+                    style={{ marginRight: '6px' }}
+                  />
+                )}
+                loading={loadingFullLinkInfo}
+                data={modalData}
+                onChange={setSelectedDependency}
+                onIgnoreKey={handleIgnoreKey}
+                onSortKey={handleSortKey}
+                onDiffMatch={handleDiffMatch}
+                requestDiffMsg={ScheduleService.queryDiffMsgById}
+                requestQueryLogEntity={ScheduleService.queryLogEntity}
+              />
+            )}
+          </Card>
+        </PaneDrawer>
+
+        {/* JsonDiffMathModal */}
+        {contextHolder}
+
+        {/* MarkExclusion */}
+
+        <MarkExclusionModal
+          {...activeMarkExclusionParams}
+          open={markExclusionOpen}
+          onClose={() => {
+            setMarkExclusionOpen(false);
+            setActiveMarkExclusionParams(undefined);
+          }}
+          onSuccess={querySceneInfo}
         />
-      </PaneDrawer>
-    </div>
+
+        {/* CompareConfigModal */}
+        <PaneDrawer
+          destroyOnClose
+          width='70%'
+          footer={false}
+          title={`${t('appSetting.compareConfig')} - ${props.data.operationName}`}
+          open={compareConfigOpen}
+          onClose={() => {
+            setCompareConfigOpen(false);
+            setTargetNodePath(undefined);
+          }}
+        >
+          <CompareConfig
+            appId={props.data.appId}
+            operationId={props.data.operationId || false}
+            dependency={
+              selectedDependency
+                ? selectedDependency.isEntry
+                  ? false
+                  : {
+                      operationName: selectedDependency.operationName,
+                      operationType:
+                        selectedDependency.categoryName || selectedDependency.operationType,
+                    }
+                : undefined
+            }
+            sortArrayPath={targetNodePath}
+            onSortDrawerClose={() => setTargetNodePath(undefined)}
+          />
+        </PaneDrawer>
+      </div>
+    </>
   );
 };
 

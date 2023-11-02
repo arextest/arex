@@ -1,4 +1,4 @@
-import { HomeOutlined, SettingOutlined } from '@ant-design/icons';
+import { SettingOutlined } from '@ant-design/icons';
 import { DiffPath } from '@arextest/arex-common';
 import {
   ArexPaneFC,
@@ -20,7 +20,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Modal } from 'antd';
+import { App, Breadcrumb, Modal } from 'antd';
 import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -38,7 +38,7 @@ import SaveCase, { SaveCaseRef } from './SaveCase';
 
 const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
   const { message, notification } = App.useApp();
-  const { activePane } = useMenusPanes();
+  const { activePane, removePane } = useMenusPanes();
   const email = getLocalStorage<string>(EMAIL_KEY);
   const { t } = useTranslation(['components']);
   const navPane = useNavPane();
@@ -206,29 +206,37 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     [t],
   );
 
+  if (!props.data) {
+    removePane(undefined);
+    return null;
+  }
+
   return (
     <>
+      <Breadcrumb
+        separator='>'
+        items={[
+          {
+            key: props.data.appId,
+            title: <a>{props.data.appId}</a>,
+            onClick: () =>
+              navPane({
+                type: PanesType.REPLAY,
+                id: props.data.appId,
+              }),
+          },
+          {
+            key: props.data.planItemId,
+            title: props.data.operationName || 'unknown',
+          },
+        ]}
+      />
       <PanesTitle
         title={
           <span>
             <Label style={{ font: 'inherit' }}>{t('replay.caseServiceAPI')}</Label>
             {decodeURIComponent(props.data.operationName || 'unknown')}
           </span>
-        }
-        extra={
-          <Button
-            id='arex-replay-case-replay-report-btn'
-            size='small'
-            icon={<HomeOutlined />}
-            onClick={() =>
-              navPane({
-                type: PanesType.REPLAY,
-                id: props.data.appId,
-              })
-            }
-          >
-            {t('replay.replayReport')}
-          </Button>
         }
       />
 
@@ -237,6 +245,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         table={
           <Case
             planId={props.data.planId}
+            operationName={props.data.operationName}
             planItemId={props.data.planItemId}
             filter={props.data.filter}
             onClick={handleClickRecord}
