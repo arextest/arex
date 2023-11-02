@@ -7,6 +7,7 @@ export { default as MacDraggableArea } from './MacDraggableArea';
 export { default as MacTrafficLightBackground } from './MacTrafficLightBackground';
 export type { MenuSelectProps } from './MenuSelect';
 export { default as MenuSelect } from './MenuSelect';
+export { default as NextInterfaceButton } from './PlanItemNavigation';
 export { default as SingleCollapse } from './SingleCollapse';
 export { default as StatusTag } from './StatusTag';
 export { default as UserMenu } from './UserMenu';

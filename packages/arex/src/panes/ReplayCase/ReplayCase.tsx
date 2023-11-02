@@ -21,16 +21,16 @@ import {
 } from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
-import { App, Breadcrumb, Modal, Spin } from 'antd';
+import { App, Modal } from 'antd';
 import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { NextInterfaceButton } from '@/components';
 import { APP_ID_KEY, EMAIL_KEY, PanesType } from '@/constant';
-import { useNavPane } from '@/hooks';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
 import { DependencyParams, ExpirationType } from '@/services/ComparisonService';
-import { InfoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
+import { InfoItem, PlanItemStatistic, ReplayCaseType } from '@/services/ReportService';
 import { MessageMap } from '@/services/ScheduleService';
 import { useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
@@ -38,18 +38,15 @@ import { decodePaneKey } from '@/store/useMenusPanes';
 import Case, { CaseProps } from './Case';
 import SaveCase, { SaveCaseRef } from './SaveCase';
 
-const ReplayCasePage: ArexPaneFC<(PlanItemStatistics & { filter?: number }) | undefined> = (
-  props,
-) => {
+const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
   const { message, notification } = App.useApp();
-  const navPane = useNavPane();
   const { activePane } = useMenusPanes();
   const email = getLocalStorage<string>(EMAIL_KEY);
   const { t } = useTranslation(['components']);
 
   const [wrapperRef] = useAutoAnimate();
 
-  const [propsData, setPropsData] = useState(props.data);
+  const [planItemData, setPlanItemData] = useState<PlanItemStatistic>();
   const { id: planItemId } = useMemo(() => decodePaneKey(props.paneKey), [props.paneKey]);
 
   const [compareConfigOpen, setCompareConfigOpen] = useState<boolean>(false);
@@ -65,15 +62,15 @@ const ReplayCasePage: ArexPaneFC<(PlanItemStatistics & { filter?: number }) | un
   const saveCaseRef = useRef<SaveCaseRef>(null);
 
   useEffect(() => {
-    activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, propsData?.appId);
+    activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, planItemData?.appId);
     return () => clearLocalStorage(APP_ID_KEY);
-  }, [propsData, activePane?.id]);
+  }, [planItemData, activePane?.id]);
 
   // fetch initial data
   useRequest(ReportService.queryPlanItemStatistic, {
-    ready: !propsData?.planItemId,
+    ready: !planItemData?.planItemId,
     defaultParams: [planItemId],
-    onSuccess: setPropsData,
+    onSuccess: setPlanItemData,
   });
 
   const {
@@ -114,14 +111,14 @@ const ReplayCasePage: ArexPaneFC<(PlanItemStatistics & { filter?: number }) | un
     manual: true,
     onSuccess(operationCaseInfoList) {
       rerun({
-        caseSourceFrom: +propsData!.caseStartTime,
-        caseSourceTo: +propsData!.caseEndTime,
-        appId: propsData!.appId,
+        caseSourceFrom: +planItemData!.caseStartTime,
+        caseSourceTo: +planItemData!.caseEndTime,
+        appId: planItemData!.appId,
         operationCaseInfoList,
         operator: email as string,
         replayPlanType: 3,
         sourceEnv: 'pro',
-        targetEnv: decodeURIComponent(propsData!.targetEnv || ''),
+        targetEnv: decodeURIComponent(planItemData!.targetEnv || ''),
       });
     },
   });
@@ -163,8 +160,8 @@ const ReplayCasePage: ArexPaneFC<(PlanItemStatistics & { filter?: number }) | un
         : {};
 
       return ComparisonService.insertIgnoreNode({
-        operationId: isGlobal ? undefined : propsData!.operationId,
-        appId: propsData!.appId,
+        operationId: isGlobal ? undefined : planItemData!.operationId,
+        appId: planItemData!.appId,
         exclusions: path,
         ...dependencyParams,
         ...temporaryParams,
@@ -179,7 +176,7 @@ const ReplayCasePage: ArexPaneFC<(PlanItemStatistics & { filter?: number }) | un
   );
   function handleClickRerunCase(recordId: string) {
     queryPlanFailCase({
-      planId: propsData!.planId,
+      planId: planItemData!.planId,
       planItemIdList: [planItemId],
       recordIdList: [recordId],
     });
@@ -224,33 +221,19 @@ const ReplayCasePage: ArexPaneFC<(PlanItemStatistics & { filter?: number }) | un
 
   return (
     <div ref={wrapperRef}>
-      {!propsData?.planItemId ? (
-        <Spin />
-      ) : (
+      <NextInterfaceButton
+        type={PanesType.REPLAY_CASE}
+        planItemId={planItemId}
+        onGetPlanItemData={setPlanItemData}
+      />
+
+      {planItemData && (
         <>
-          <Breadcrumb
-            separator='>'
-            items={[
-              {
-                key: propsData.appId,
-                title: <a>{propsData.appName}</a>,
-                onClick: () =>
-                  navPane({
-                    type: PanesType.REPLAY,
-                    id: propsData.appId,
-                  }),
-              },
-              {
-                key: planItemId,
-                title: propsData.operationName || 'unknown',
-              },
-            ]}
-          />
           <PanesTitle
             title={
-              <span>
+              <span key={'caseServiceAPI'}>
                 <Label style={{ font: 'inherit' }}>{t('replay.caseServiceAPI')}</Label>
-                {decodeURIComponent(propsData.operationName || 'unknown')}
+                {decodeURIComponent(planItemData.operationName || 'unknown')}
               </span>
             }
           />
@@ -259,12 +242,12 @@ const ReplayCasePage: ArexPaneFC<(PlanItemStatistics & { filter?: number }) | un
             active={!!selectedRecord}
             table={
               <Case
-                appId={propsData.appId}
-                appName={propsData.appName}
-                planId={propsData.planId}
-                operationName={propsData.operationName}
+                appId={planItemData.appId}
+                appName={planItemData.appName}
+                planId={planItemData.planId}
+                operationName={planItemData.operationName}
                 planItemId={planItemId}
-                filter={propsData.filter}
+                filter={props.data?.filter}
                 onClick={handleClickRecord}
                 onChange={handleCaseTableChange}
                 onClickSaveCase={handleClickSaveCase}
@@ -273,7 +256,7 @@ const ReplayCasePage: ArexPaneFC<(PlanItemStatistics & { filter?: number }) | un
             }
             panel={
               <DiffPath
-                operationId={propsData.operationId}
+                operationId={planItemData.operationId}
                 extra={
                   <TooltipButton
                     icon={<SettingOutlined />}
@@ -305,11 +288,11 @@ const ReplayCasePage: ArexPaneFC<(PlanItemStatistics & { filter?: number }) | un
           />
 
           <SaveCase
-            planId={propsData.planId}
-            operationId={propsData.operationId}
+            planId={planItemData.planId}
+            operationId={planItemData.operationId}
             ref={saveCaseRef}
-            appId={propsData.appId}
-            operationName={propsData.operationName || ''}
+            appId={planItemData.appId}
+            operationName={planItemData.operationName || ''}
           />
 
           {/* JsonDiffMathModal */}
@@ -320,7 +303,7 @@ const ReplayCasePage: ArexPaneFC<(PlanItemStatistics & { filter?: number }) | un
             destroyOnClose
             width='70%'
             footer={false}
-            title={`${t('appSetting.compareConfig')} - ${propsData.operationName}`}
+            title={`${t('appSetting.compareConfig')} - ${planItemData.operationName}`}
             open={compareConfigOpen}
             onClose={() => {
               setCompareConfigOpen(false);
@@ -328,8 +311,8 @@ const ReplayCasePage: ArexPaneFC<(PlanItemStatistics & { filter?: number }) | un
             }}
           >
             <CompareConfig
-              appId={propsData.appId}
-              operationId={propsData.operationId || false}
+              appId={planItemData.appId}
+              operationId={planItemData.operationId || false}
               dependency={
                 selectedDependency
                   ? selectedDependency.isEntry

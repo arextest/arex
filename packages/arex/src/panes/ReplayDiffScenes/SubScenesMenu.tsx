@@ -11,7 +11,7 @@ import { css } from '@emotion/react';
 import { Badge, Menu, Space, theme } from 'antd';
 import React, { FC, ReactNode, useEffect, useState } from 'react';
 
-import { PlanItemStatistics, SubScene } from '@/services/ReportService';
+import { PlanItemStatistic, SubScene } from '@/services/ReportService';
 
 import { FeedbackIconMap, MarkExclusionModalProps } from './MarkExclusionModal';
 
@@ -27,7 +27,7 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
   const { token } = theme.useToken();
   const { t } = useTranslation('components');
 
-  const { data: plan } = useArexPaneProps<PlanItemStatistics>();
+  const { data: plan } = useArexPaneProps<PlanItemStatistic>();
 
   const [selectedKeys, setSelectedKeys] = useState('');
 
