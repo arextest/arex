@@ -175,7 +175,8 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
                 navPane({
                   type: PanesType.REPLAY_CASE,
                   id: record.planItemId,
-                  data: { ...record, filter: status },
+                  // data: { ...record, filter: status },
+                  data: { filter: status }, // fetch PlanItemStatistic data in ReplayCase instead of passing it
                 });
               },
             },

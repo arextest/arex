@@ -1,5 +1,5 @@
 import { BugOutlined, RedoOutlined, SaveOutlined, SearchOutlined } from '@ant-design/icons';
-import { HighlightRowTable, useArexPaneProps, useTranslation } from '@arextest/arex-core';
+import { HighlightRowTable, useTranslation } from '@arextest/arex-core';
 import { usePagination } from 'ahooks';
 import { Button, Dropdown, TableProps, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -8,11 +8,13 @@ import React, { FC, Key, useMemo } from 'react';
 import { CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
-import { PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
+import { ReplayCaseType } from '@/services/ReportService';
 import { useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
 
 export type CaseProps = {
+  appId: string;
+  appName: string;
   planItemId: string;
   operationName: string | null;
   planId: string;
@@ -24,7 +26,6 @@ export type CaseProps = {
 };
 
 const Case: FC<CaseProps> = (props) => {
-  const { data } = useArexPaneProps<PlanItemStatistics>();
   const { activeWorkspaceId } = useWorkspaces();
   const { t } = useTranslation(['components']);
 
@@ -79,7 +80,8 @@ const Case: FC<CaseProps> = (props) => {
                 id: record.recordId,
                 data: {
                   ...record,
-                  appId: data?.appId,
+                  appId: props.appId,
+                  appName: props.appName,
                   planItemId: props.planItemId,
                   operationName: props.operationName,
                 },

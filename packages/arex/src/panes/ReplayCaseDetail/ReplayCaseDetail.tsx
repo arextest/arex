@@ -18,14 +18,18 @@ import { useMenusPanes } from '@/store';
 import CaseDetailTab from './CaseDetailTab';
 
 type TagType = { label: ReactNode; key: string; children: ReactNode };
+type ReplayCaseDetailData = ReplayCaseType & {
+  appId: string;
+  appName: string;
+  planItemId: string;
+  operationName: string | null;
+};
 
-const ReplayCaseDetail: ArexPaneFC<
-  ReplayCaseType & { appId: string; planItemId: string; operationName: string | null }
-> = (props) => {
-  const { token } = theme.useToken();
-  const { t } = useTranslation(['components']);
-  const { activePane } = useMenusPanes();
+const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
   const navPane = useNavPane();
+  const { token } = theme.useToken();
+  const { activePane } = useMenusPanes();
+  const { t } = useTranslation('components');
 
   const [tabItems, setTabItems] = useState<TagType[]>([]);
 
@@ -81,7 +85,7 @@ const ReplayCaseDetail: ArexPaneFC<
         items={[
           {
             key: props.data.appId,
-            title: <a>{props.data.appId}</a>,
+            title: <a>{props.data.appName}</a>,
             onClick: () =>
               navPane({
                 type: PanesType.REPLAY,
@@ -103,7 +107,7 @@ const ReplayCaseDetail: ArexPaneFC<
           },
         ]}
       />
-      <PanesTitle title={`RecordId: ${props.data.recordId}`} />
+      <PanesTitle title={`${t('replay.recordId')}: ${props.data.recordId}`} />
       <Spin spinning={loading}>
         <Tabs items={tabItems} />
       </Spin>

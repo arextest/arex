@@ -1,9 +1,7 @@
-import { DownOutlined } from '@ant-design/icons';
 import { getLocalStorage, useTranslation } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Form, Input, Modal, Tooltip, Typography } from 'antd';
-import { CollectionsSaveRequest } from 'arex-common';
+import { App, Form, Input, Modal, Typography } from 'antd';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { EMAIL_KEY } from '@/constant';
@@ -29,13 +27,12 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
   const { notification } = App.useApp();
   const { t } = useTranslation(['components', 'common', 'page']);
   const userName = getLocalStorage(EMAIL_KEY) as string;
-  const { collectionsTreeData, getPath, getCollections } = useCollections();
+  const { getCollections } = useCollections();
   const { activeWorkspaceId: workspaceId } = useWorkspaces();
 
   const [form] = Form.useForm();
-  const [open, setOpen] = useState<boolean>(false);
-  // const [open1, setOpen1] = useState<boolean>(false);
 
+  const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState('');
 
   useImperativeHandle(ref, () => ({
