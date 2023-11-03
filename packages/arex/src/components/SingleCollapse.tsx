@@ -4,6 +4,7 @@ import React, { FC, ReactNode } from 'react';
 
 const SingleCollapse: FC<
   Omit<CollapseProps, 'items'> & {
+    defaultActive?: boolean;
     item: {
       key: string;
       label: ReactNode;
@@ -13,6 +14,7 @@ const SingleCollapse: FC<
 > = (props) => (
   <Collapse
     bordered={false}
+    defaultActiveKey={props.defaultActive ? [props.item.key] : undefined}
     items={[props.item]}
     css={css`
       .ant-collapse-header-text {

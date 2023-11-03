@@ -42,11 +42,6 @@
     "newCreate": "New"
   },
   "applicationsMenu": {
-    "appName": "App Name",
-    "appNameEmptyTip": "The application name cannot be empty",
-    "visibilityLevel": "Level",
-    "public": "Public",
-    "private": "Private",
     "createApp": "Create Application",
     "filterFavoriteApps": "Filter Favorite Apps",
     "appFilterPlaceholder": "Search Applications"
@@ -270,6 +265,12 @@
     "other": "Other",
     "dangerZone": "Danger Zone",
     "owners": "Owners",
+    "appBasicSetup": "App Basic Setup",
+    "appName": "App Name",
+    "appNameEmptyTip": "The application name cannot be empty",
+    "visibilityLevel": "Level",
+    "public": "Public",
+    "private": "Private",
     "deleteApp": "Delete App",
     "deleteThisApp": "Delete this App",
     "deleteTip": "Once you delete an app, there is no going back. Please be certain.",
