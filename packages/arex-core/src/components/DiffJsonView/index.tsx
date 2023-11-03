@@ -15,8 +15,8 @@ export enum TargetEditor {
   'right' = 'right',
 }
 
-export type PathHandler<P> = (params: {
-  type?: P;
+export type PathHandler = (params: {
+  type?: CompareConfigType;
   path: string[];
   jsonString: { [targetEditor in TargetEditor]: string };
   targetEditor: TargetEditor;
@@ -31,11 +31,11 @@ export type DiffJsonViewProps = {
   diffJson?: { left: string; right: string };
   diffPath?: LogEntity[];
   remark?: [string, string];
-  onIgnoreKey?: PathHandler<CompareConfigType>;
-  onSortKey?: PathHandler<CompareConfigType>;
-  onReferenceKey?: PathHandler<CompareConfigType>;
-  onCompressKey?: PathHandler<CompareConfigType>;
-  onDiffMatch?: PathHandler<CompareConfigType>;
+  onIgnoreKey?: PathHandler;
+  onSortKey?: PathHandler;
+  onReferenceKey?: PathHandler;
+  onCompressKey?: PathHandler;
+  onDiffMatch?: PathHandler;
 };
 
 const { useToken } = theme;
@@ -106,12 +106,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
   const { token: emotionTheme } = useToken();
 
   const rightClickHandler = useCallback(
-    (
-      fn: PathHandler<CompareConfigType>,
-      path: string[],
-      targetEditor: TargetEditor,
-      type?: CompareConfigType,
-    ) => {
+    (fn: PathHandler, path: string[], targetEditor: TargetEditor, type?: CompareConfigType) => {
       fn({
         type,
         path,

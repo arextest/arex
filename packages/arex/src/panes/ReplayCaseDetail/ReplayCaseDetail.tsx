@@ -85,7 +85,7 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
         items={[
           {
             key: props.data.appId,
-            title: <a>{props.data.appName}</a>,
+            title: <a>{props.data.appName || props.data.appId}</a>,
             onClick: () =>
               navPane({
                 type: PanesType.REPLAY,

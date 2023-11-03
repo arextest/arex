@@ -19,26 +19,26 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest, useSize } from 'ahooks';
-import { App, Breadcrumb, Card, Collapse, Modal, Space } from 'antd';
+import { App, Card, Collapse, Modal, Progress, Space, Spin } from 'antd';
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { APP_ID_KEY, PanesType } from '@/constant';
-import { useNavPane } from '@/hooks';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
 import { DependencyParams } from '@/services/ComparisonService';
-import { InfoItem, PlanItemStatistics } from '@/services/ReportService';
+import { InfoItem, PlanItemStatistic } from '@/services/ReportService';
 import { useMenusPanes } from '@/store';
+import { decodePaneKey } from '@/store/useMenusPanes';
 
+import PlanItemNavigation from '../../components/PlanItemNavigation';
 import FlowTree, { FlowTreeData } from './FlowTree';
 import MarkExclusionModal, { MarkExclusionModalProps } from './MarkExclusionModal';
 import SubScenesMenu, { SubSceneMenuProps } from './SubScenesMenu';
 
-const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
-  const {
-    data: { planId, planItemId },
-  } = props;
-  const navPane = useNavPane();
+const ReplayDiffScenes: ArexPaneFC = (props) => {
+  const { id: planItemId } = useMemo(() => decodePaneKey(props.paneKey), []);
+  const [planItemData, setPlanItemData] = useState<PlanItemStatistic>();
+
   const { t } = useTranslation(['components']);
   const { activePane } = useMenusPanes();
 
@@ -62,7 +62,7 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
   const [selectedDependency, setSelectedDependency] = useState<InfoItem>();
 
   useEffect(() => {
-    activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, props.data.appId);
+    activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, planItemData?.appId);
     return () => clearLocalStorage(APP_ID_KEY);
   }, [activePane?.id]);
 
@@ -70,14 +70,18 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
     data: sceneInfo = [],
     loading: loadingSceneInfo,
     refresh: querySceneInfo,
-  } = useRequest(() =>
-    ReportService.querySceneInfo({
-      planId,
-      planItemId,
-    }),
+  } = useRequest(
+    () =>
+      ReportService.querySceneInfo({
+        planId: planItemData!.planId,
+        planItemId,
+      }),
+    {
+      ready: !!planItemData?.planId,
+    },
   );
   const subSceneList = useMemo(
-    () => sceneInfo[subSceneIndex]?.subScenes,
+    () => sceneInfo[subSceneIndex]?.subScenes || [],
     [sceneInfo, subSceneIndex],
   );
 
@@ -144,8 +148,8 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
             };
 
       return ComparisonService.insertIgnoreNode({
-        operationId: global ? undefined : props.data.operationId,
-        appId: props.data.appId,
+        operationId: global ? undefined : planItemData?.operationId,
+        appId: planItemData?.appId,
         exclusions: path,
         ...dependencyParams,
       });
@@ -199,6 +203,10 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
   const collapseItems = useMemo(
     () =>
       sceneInfo.map((scene, index) => {
+        const checkedCount = scene.subScenes.filter((item) => item.feedbackType).length;
+        const allCount = scene.subScenes.length;
+        const feedbackProgress = (checkedCount * 100) / allCount;
+
         const firstSubScene = scene.subScenes[0];
         const { fullPath } = firstSubScene.details.reduce<{
           fullPath: ReactNode[];
@@ -221,7 +229,23 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
             path.fullPath.push(title);
             return path;
           },
-          { fullPath: [], pathKeyList: [] },
+          {
+            fullPath: [
+              <Progress
+                key='progress'
+                type='circle'
+                format={(percent) =>
+                  percent === 100
+                    ? '✓ ' + t('replay.allMarked')
+                    : `${t('replay.marked')}: ${checkedCount}/${allCount}`
+                }
+                percent={feedbackProgress}
+                size={14}
+                style={{ marginRight: '4px' }}
+              />,
+            ],
+            pathKeyList: [],
+          },
         );
 
         return {
@@ -229,7 +253,9 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
           label: fullPath,
           children: (
             <SubScenesMenu
-              data={subSceneList || []}
+              planId={planItemData!.planId}
+              planItemId={planItemData!.planItemId}
+              data={subSceneList}
               onClick={getQueryFullLinkInfo}
               onClickAllDiff={handleClickAllDiff}
               onMarkExclusion={handleMarkExclusion}
@@ -242,32 +268,22 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
 
   return (
     <>
-      <Breadcrumb
-        separator='>'
-        items={[
-          {
-            key: props.data.appId,
-            title: <a>{props.data.appId}</a>,
-            onClick: () =>
-              navPane({
-                type: PanesType.REPLAY,
-                id: props.data.appId,
-              }),
-          },
-          {
-            key: props.data.planItemId,
-            title: props.data.operationName || 'unknown',
-          },
-        ]}
+      <PlanItemNavigation
+        type={PanesType.DIFF_SCENES}
+        planItemId={planItemId}
+        onGetPlanItemData={setPlanItemData}
       />
-      <PanesTitle
-        title={
-          <span>
-            <Label style={{ font: 'inherit' }}>{t('replay.caseServiceAPI')}</Label>
-            {decodeURIComponent(props.data.operationName || 'unknown')}
-          </span>
-        }
-      />
+
+      {planItemData && (
+        <PanesTitle
+          title={
+            <span>
+              <Label style={{ font: 'inherit' }}>{t('replay.caseServiceAPI')}</Label>
+              {decodeURIComponent(planItemData?.operationName || 'unknown')}
+            </span>
+          }
+        />
+      )}
 
       <div ref={wrapperRef}>
         <EmptyWrapper loading={loadingSceneInfo} empty={!sceneInfo.length}>
@@ -302,7 +318,7 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
               `}
             />
 
-            {treeData && (
+            {treeData && subSceneIndex > -1 && (
               <FlowTree
                 bordered
                 width={size?.width && size.width - 32}
@@ -332,7 +348,7 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
                 // contextMenuDisabled
                 mode={modalOpen === 2 ? 'multiple' : 'single'} // TODO extra render on single mode
                 defaultOnlyFailed={modalOpen === 2}
-                operationId={props.data.operationId}
+                operationId={planItemData!.operationId}
                 itemsExtraRender={(data) => (
                   <TooltipButton
                     icon={<SettingOutlined />}
@@ -377,7 +393,7 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
           destroyOnClose
           width='70%'
           footer={false}
-          title={`${t('appSetting.compareConfig')} - ${props.data.operationName}`}
+          title={`${t('appSetting.compareConfig')} - ${planItemData?.operationName}`}
           open={compareConfigOpen}
           onClose={() => {
             setCompareConfigOpen(false);
@@ -385,8 +401,8 @@ const ReplayDiffScenes: ArexPaneFC<PlanItemStatistics> = (props) => {
           }}
         >
           <CompareConfig
-            appId={props.data.appId}
-            operationId={props.data.operationId || false}
+            appId={planItemData?.appId}
+            operationId={planItemData?.operationId || false}
             dependency={
               selectedDependency
                 ? selectedDependency.isEntry

@@ -4,7 +4,7 @@ export interface QueryPlanItemStatisticsReq {
   planId: string;
 }
 
-export type PlanItemStatistics = {
+export type PlanItemStatistic = {
   planItemId: string;
   planId: string;
   operationId: string;
@@ -32,7 +32,7 @@ export type PlanItemStatistics = {
 };
 
 export interface QueryPlanItemStatisticsRes {
-  planItemStatisticList: PlanItemStatistics[] | null;
+  planItemStatisticList: PlanItemStatistic[] | null;
 }
 
 export async function queryPlanItemStatistics(params: QueryPlanItemStatisticsReq) {

@@ -54,7 +54,7 @@ const MarkExclusionModal = (props: MarkExclusionModalProps) => {
         label: (
           <Space>
             <Icon component={FeedbackIconMap[FeedbackType.Expectation]} />
-            {t('replay.meetExpectation')}
+            {t('replay.asExpectation')}
           </Space>
         ),
         value: FeedbackType.Expectation,
