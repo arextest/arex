@@ -1,6 +1,7 @@
 import Icon, { ClusterOutlined, HighlightOutlined } from '@ant-design/icons';
 import {
   EllipsisTooltip,
+  Label,
   SceneCode,
   SpaceBetweenWrapper,
   TooltipButton,
@@ -8,14 +9,16 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { css } from '@emotion/react';
-import { Badge, Menu, Space, theme } from 'antd';
-import React, { FC, ReactNode, useEffect, useState } from 'react';
+import { Badge, Menu, Space, theme, Tooltip, Typography } from 'antd';
+import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { PlanItemStatistic, SubScene } from '@/services/ReportService';
 
 import { FeedbackIconMap, MarkExclusionModalProps } from './MarkExclusionModal';
 
 export interface SubSceneMenuProps {
+  planId: string;
+  planItemId: string;
   data: SubScene[];
   onClick?: (recordId: string) => void;
   onMarkExclusion?: (params: MarkExclusionModalProps) => void;
@@ -27,9 +30,12 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
   const { token } = theme.useToken();
   const { t } = useTranslation('components');
 
-  const { data: plan } = useArexPaneProps<PlanItemStatistic>();
-
   const [selectedKeys, setSelectedKeys] = useState('');
+
+  const feedBackLabel = useMemo(
+    () => ['UnknownType', t('replay.bug'), t('replay.asExpectation'), t('replay.arexProblem')],
+    [t],
+  );
 
   useEffect(() => {
     if (props.data.length) {
@@ -76,62 +82,83 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
               count={subScene.count}
               color={token.colorPrimary}
               offset={[0, -2]}
-              style={{ marginRight: '8px' }}
+              style={{ marginRight: '4px' }}
             />,
           ],
         );
 
         return {
           label: (
-            <>
-              <SpaceBetweenWrapper>
+            <SpaceBetweenWrapper style={{ position: 'relative' }}>
+              <div
+                style={{
+                  position: 'absolute',
+                  left: -token.marginMD + 1,
+                  top: -token.marginMD + 5,
+                  zIndex: '10',
+                }}
+              >
                 {subScene?.feedbackType && (
-                  <Icon
-                    component={FeedbackIconMap[subScene.feedbackType]}
-                    css={css`
-                      color: ${token.colorTextQuaternary};
-                      position: absolute;
-                      left: 8px;
-                      top: 4px;
-                      & > span {
-                        font-size: 28px !important;
-                      }
-                    `}
-                  />
+                  <Tooltip
+                    title={
+                      <>
+                        <Typography.Text strong style={{ display: 'block' }}>
+                          <Label>{t('replay.markExclusion')}</Label>
+                          <Icon component={FeedbackIconMap[subScene.feedbackType]} />{' '}
+                          {feedBackLabel[subScene.feedbackType]}
+                        </Typography.Text>
+                        <Typography.Text>
+                          <Label>{t('replay.remark')}</Label> {subScene.remark}
+                        </Typography.Text>
+                      </>
+                    }
+                  >
+                    <Icon
+                      key='feedbackType'
+                      component={FeedbackIconMap[subScene.feedbackType]}
+                      css={css`
+                        color: ${token.colorTextDescription};
+                        & > span {
+                          font-size: ${token.fontSizeLG}px !important;
+                        }
+                      `}
+                    />
+                  </Tooltip>
                 )}
-                <div style={{ overflow: 'hidden' }}>{fullPath}</div>
+              </div>
 
-                <div>
-                  <TooltipButton
-                    type='link'
-                    size='small'
-                    icon={<HighlightOutlined />}
-                    title={t('replay.markExclusion')}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      props.onMarkExclusion?.({
-                        planId: plan!.planId,
-                        planItemId: plan!.planItemId,
-                        recordId: subScene.recordId,
-                        feedbackType: subScene.feedbackType,
-                        remark: subScene.remark,
-                      });
-                    }}
-                  />
+              <div style={{ overflow: 'hidden' }}>{fullPath}</div>
 
-                  <TooltipButton
-                    type='link'
-                    size='small'
-                    icon={<ClusterOutlined />}
-                    title={t('replay.viewAll')}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      props.onClickAllDiff?.(subScene.recordId, fullPath);
-                    }}
-                  />
-                </div>
-              </SpaceBetweenWrapper>
-            </>
+              <div>
+                <TooltipButton
+                  type='link'
+                  size='small'
+                  icon={<HighlightOutlined />}
+                  title={t('replay.markExclusion')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    props.onMarkExclusion?.({
+                      planId: props.planId,
+                      planItemId: props.planItemId,
+                      recordId: subScene.recordId,
+                      feedbackType: subScene.feedbackType,
+                      remark: subScene.remark,
+                    });
+                  }}
+                />
+
+                <TooltipButton
+                  type='link'
+                  size='small'
+                  icon={<ClusterOutlined />}
+                  title={t('replay.viewAll')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    props.onClickAllDiff?.(subScene.recordId, fullPath);
+                  }}
+                />
+              </div>
+            </SpaceBetweenWrapper>
           ),
           key: subScene.recordId + Connector + subScene.replayId,
         };
@@ -139,6 +166,9 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
       onClick={handleClick}
       css={css`
         border-inline-end: none !important;
+        .ant-menu-item {
+          overflow: visible;
+        }
       `}
     />
   );

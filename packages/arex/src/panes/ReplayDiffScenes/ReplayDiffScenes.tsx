@@ -19,7 +19,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest, useSize } from 'ahooks';
-import { App, Card, Collapse, Modal, Space, Spin } from 'antd';
+import { App, Card, Collapse, Modal, Progress, Space, Spin } from 'antd';
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { APP_ID_KEY, PanesType } from '@/constant';
@@ -81,7 +81,7 @@ const ReplayDiffScenes: ArexPaneFC = (props) => {
     },
   );
   const subSceneList = useMemo(
-    () => sceneInfo[subSceneIndex]?.subScenes,
+    () => sceneInfo[subSceneIndex]?.subScenes || [],
     [sceneInfo, subSceneIndex],
   );
 
@@ -203,6 +203,10 @@ const ReplayDiffScenes: ArexPaneFC = (props) => {
   const collapseItems = useMemo(
     () =>
       sceneInfo.map((scene, index) => {
+        const checkedCount = scene.subScenes.filter((item) => item.feedbackType).length;
+        const allCount = scene.subScenes.length;
+        const feedbackProgress = (checkedCount * 100) / allCount;
+
         const firstSubScene = scene.subScenes[0];
         const { fullPath } = firstSubScene.details.reduce<{
           fullPath: ReactNode[];
@@ -225,7 +229,23 @@ const ReplayDiffScenes: ArexPaneFC = (props) => {
             path.fullPath.push(title);
             return path;
           },
-          { fullPath: [], pathKeyList: [] },
+          {
+            fullPath: [
+              <Progress
+                key='progress'
+                type='circle'
+                format={(percent) =>
+                  percent === 100
+                    ? '✓ ' + t('replay.allMarked')
+                    : `${t('replay.marked')}: ${checkedCount}/${allCount}`
+                }
+                percent={feedbackProgress}
+                size={14}
+                style={{ marginRight: '4px' }}
+              />,
+            ],
+            pathKeyList: [],
+          },
         );
 
         return {
@@ -233,7 +253,9 @@ const ReplayDiffScenes: ArexPaneFC = (props) => {
           label: fullPath,
           children: (
             <SubScenesMenu
-              data={subSceneList || []}
+              planId={planItemData!.planId}
+              planItemId={planItemData!.planItemId}
+              data={subSceneList}
               onClick={getQueryFullLinkInfo}
               onClickAllDiff={handleClickAllDiff}
               onMarkExclusion={handleMarkExclusion}
@@ -296,7 +318,7 @@ const ReplayDiffScenes: ArexPaneFC = (props) => {
               `}
             />
 
-            {treeData && (
+            {treeData && subSceneIndex > -1 && (
               <FlowTree
                 bordered
                 width={size?.width && size.width - 32}
