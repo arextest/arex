@@ -6,7 +6,7 @@ import {
 } from '@arextest/arex-core';
 import { ArexEnvironment, EnvironmentSelect } from '@arextest/arex-request';
 import { useRequest } from 'ahooks';
-import { Button, Divider, TreeSelect, Typography } from 'antd';
+import { Button, Divider, Progress, TreeSelect, Typography } from 'antd';
 import { cloneDeep } from 'lodash';
 import React, { Key, useCallback, useMemo, useState } from 'react';
 
@@ -27,6 +27,8 @@ const BatchRun: ArexPaneFC = (props) => {
 
   const [activeEnvironment, setActiveEnvironment] = useState<ArexEnvironment>();
   const [checkValue, setCheckValue] = useState<Key[]>([]);
+
+  const [successCount, setSuccessCount] = useState(0);
 
   const treeData = useMemo(
     () =>
@@ -66,13 +68,19 @@ const BatchRun: ArexPaneFC = (props) => {
 
   const [casesResults, setCasesResults] = useState<React.ReactNode>(null);
   const handleBatchRun = () => {
+    setSuccessCount(0);
     queryCases().then((cases) => setCasesResults(getCasesResults(cases)));
   };
 
   const getCasesResults = useCallback(
     (cases: Awaited<ReturnType<typeof FileSystemService.queryRequest>>[]) =>
       cases.map((caseItem) => (
-        <BatchRunResultItem key={caseItem.id} environment={activeEnvironment} data={caseItem} />
+        <BatchRunResultItem
+          key={caseItem.id}
+          environment={activeEnvironment}
+          data={caseItem}
+          onSuccess={() => setSuccessCount((count) => count + 1)}
+        />
       )),
     [activeEnvironment],
   );
@@ -89,6 +97,7 @@ const BatchRun: ArexPaneFC = (props) => {
           onChange={setActiveEnvironment}
         />
       </SpaceBetweenWrapper>
+
       <Divider style={{ margin: 0 }} />
 
       <div style={{ display: 'flex', padding: '8px 16px' }}>
@@ -109,6 +118,15 @@ const BatchRun: ArexPaneFC = (props) => {
           Run
         </Button>
       </div>
+
+      {!!cases.length && (
+        <Progress
+          status={successCount !== cases.length ? 'active' : undefined}
+          format={() => `${successCount}/${cases.length}`}
+          percent={(successCount * 100) / cases.length}
+          style={{ padding: '0 24px', margin: 0 }}
+        />
+      )}
 
       <EmptyWrapper loading={loading} empty={!cases.length}>
         {casesResults}
