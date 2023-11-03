@@ -8,6 +8,7 @@ import { ACCESS_TOKEN_KEY, EMAIL_KEY, REFRESH_TOKEN_KEY } from '@/constant';
 
 import request from '../../utils/request';
 
+export const redirectUri = window.location.origin + '/auth';
 function getValue(search: string, key: string) {
   //找出key第一次出现的位置
   const start = search.indexOf(key);
@@ -22,8 +23,7 @@ function getValue(search: string, key: string) {
   //取出键值对
   const str = search.substring(start, end);
   //获取getValue
-  const arr = str.split('=');
-  return arr;
+  return str.split('=');
 }
 const Auth = () => {
   const location = useLocation();
@@ -39,6 +39,7 @@ const Auth = () => {
       }>('/report/login/oauthLogin', {
         oauthType: 'GitlabOauth',
         code: getValue(location.search || '?code=test', 'code')[1],
+        redirectUri,
       });
     },
     {
