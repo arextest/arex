@@ -3,6 +3,7 @@ import {
   FullHeightSpin,
   HighlightRowTable,
   HighlightRowTableProps,
+  useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
 import { usePagination } from 'ahooks';
@@ -22,11 +23,12 @@ const defaultPageSize = 5 as const;
 export type PlanReportProps = {
   appId?: string;
   refreshDep?: React.Key;
+  recordCount?: number;
   onSelectedPlanChange: (selectedPlan: PlanStatistics, current?: number, row?: number) => void;
 };
 
 const PlanReport: FC<PlanReportProps> = (props) => {
-  const { appId, refreshDep, onSelectedPlanChange } = props;
+  const { appId, refreshDep, recordCount, onSelectedPlanChange } = props;
   const { activePane } = useMenusPanes();
 
   const { token } = theme.useToken();
@@ -34,9 +36,13 @@ const PlanReport: FC<PlanReportProps> = (props) => {
   const [searchParams] = useSearchParams();
   const [init, setInit] = useState(true);
 
+  const { data: { current, row } = { current: '1', row: '0' } } = useArexPaneProps<{
+    current: string;
+    row: string;
+  }>();
   const defaultPagination = {
-    defaultCurrent: parseInt(searchParams.get('current') || '1'),
-    defaultRow: parseInt(searchParams.get('row') || '0'),
+    defaultCurrent: parseInt(current),
+    defaultRow: parseInt(row),
   };
 
   const columns: ColumnsType<PlanStatistics> = [
@@ -179,7 +185,8 @@ const PlanReport: FC<PlanReportProps> = (props) => {
       // 为了 defaultCurrent 和 defaultRow 生效，需在初次获取到数据后再挂载子组件
       mountOnFirstLoading={false}
     >
-      {!init && !loading && !planStatistics.length ? (
+      {/* display agentScript only when recordCount and planStatistics is empty */}
+      {!init && !loading && !planStatistics.length && !recordCount ? (
         <Card>
           <Typography.Title level={5}>
             <WarningOutlined /> {t('replay.noRecordCountTip')}
