@@ -117,6 +117,7 @@ const ReplayPage: ArexPaneFC = (props) => {
               <PlanReport
                 appId={appId}
                 refreshDep={refreshDep}
+                recordCount={recordCount}
                 onSelectedPlanChange={handleSelectPlan}
               />
             }
