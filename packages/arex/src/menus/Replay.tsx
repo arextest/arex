@@ -9,14 +9,16 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest, useSize, useToggle } from 'ahooks';
-import { App, Button, Form, FormProps, Input, Modal, theme } from 'antd';
+import { App, Button, Form, FormProps, Input, Modal, Radio, theme } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { MenuSelect, MenuSelectProps } from '@/components';
 import { EMAIL_KEY, MenusType, PanesType } from '@/constant';
 import { ApplicationService, UserService } from '@/services';
-import { ApplicationDataType } from '@/services/ApplicationService';
+import { ApplicationDataType, CreateAppReq } from '@/services/ApplicationService';
 import { useApplication, useMenusPanes } from '@/store';
+
+type CreateAppFormType = Omit<CreateAppReq, 'owners'>;
 
 type MenuItemProps = {
   app: ApplicationDataType;
@@ -162,10 +164,11 @@ const ReplayMenu: ArexMenuFC = (props) => {
     },
   });
 
-  const handleAddApp: FormProps<{ appName: string }>['onFinish'] = (value) => {
+  const handleAddApp: FormProps<CreateAppFormType>['onFinish'] = (value) => {
     createApp({
       appName: value.appName,
       owners: [email],
+      visibilityLevel: value.visibilityLevel,
     });
   };
 
@@ -237,7 +240,13 @@ const ReplayMenu: ArexMenuFC = (props) => {
         footer={null}
         onCancel={() => setOpen(false)}
       >
-        <Form name='create-app' onFinish={handleAddApp}>
+        <Form<CreateAppFormType>
+          name='create-app'
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 20 }}
+          initialValues={{ visibilityLevel: 0 }}
+          onFinish={handleAddApp}
+        >
           <Form.Item
             label={t('applicationsMenu.appName')}
             name='appName'
@@ -252,7 +261,14 @@ const ReplayMenu: ArexMenuFC = (props) => {
             <Input />
           </Form.Item>
 
-          <Form.Item style={{ textAlign: 'right' }}>
+          <Form.Item label={t('applicationsMenu.visibilityLevel')} name='visibilityLevel'>
+            <Radio.Group>
+              <Radio value={0}>{t('applicationsMenu.public')}</Radio>
+              <Radio value={1}>{t('applicationsMenu.private')}</Radio>
+            </Radio.Group>
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ span: 24 }} style={{ textAlign: 'right' }}>
             <Button type='primary' htmlType='submit'>
               {t('create', { ns: 'common' })}
             </Button>

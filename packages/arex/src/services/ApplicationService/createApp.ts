@@ -3,6 +3,7 @@ import { request } from '@/utils';
 export interface CreateAppReq {
   appName: string;
   owners: string[];
+  visibilityLevel: number;
 }
 
 export interface CreateAppRes {

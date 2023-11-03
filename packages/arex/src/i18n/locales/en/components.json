@@ -44,6 +44,9 @@
   "applicationsMenu": {
     "appName": "App Name",
     "appNameEmptyTip": "The application name cannot be empty",
+    "visibilityLevel": "Level",
+    "public": "Public",
+    "private": "Private",
     "createApp": "Create Application",
     "filterFavoriteApps": "Filter Favorite Apps",
     "appFilterPlaceholder": "Search Applications"
