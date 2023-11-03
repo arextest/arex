@@ -1,9 +1,9 @@
 import { request } from '@/utils';
 
-export interface ModifyAppReq {
+import { CreateAppReq } from './createApp';
+
+export interface ModifyAppReq extends Partial<CreateAppReq> {
   appId: string;
-  appName?: string;
-  owners?: string[];
 }
 
 export async function modifyApp(params: ModifyAppReq) {

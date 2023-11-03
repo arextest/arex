@@ -1,8 +1,14 @@
 import { request } from '@/utils';
 
+export enum AppVisibilityLevel {
+  PUBLIC,
+  PRIVATE,
+}
+
 export interface CreateAppReq {
   appName: string;
   owners: string[];
+  visibilityLevel: AppVisibilityLevel;
 }
 
 export interface CreateAppRes {

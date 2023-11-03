@@ -42,8 +42,6 @@
     "newCreate": "新建"
   },
   "applicationsMenu": {
-    "appName": "应用名称",
-    "appNameEmptyTip": "应用名称不能为空",
     "createApp": "新建应用",
     "filterFavoriteApps": "收藏应用列表",
     "appFilterPlaceholder": "搜索应用"
@@ -265,6 +263,12 @@
     "inclusionTooltip": "选择要录制的路径。",
     "other": "其他",
     "owners": "所有者",
+    "appBasicSetup": "应用基础配置",
+    "appName": "应用名称",
+    "appNameEmptyTip": "应用名称不能为空",
+    "visibilityLevel": "可见性",
+    "public": "公开",
+    "private": "私有",
     "dangerZone": "危险区域",
     "deleteApp": "删除应用",
     "deleteThisApp": "删除该应用",
