@@ -68,6 +68,7 @@
     "selectApplication": "Please select an application",
     "appSetting": "AppSetting",
     "refresh": "refresh",
+    "searchForPlanId" :"Search for planId",
     "startSuccess": "Started Successfully",
     "startFailed": "Start Failed",
     "startButton": "Start replay",

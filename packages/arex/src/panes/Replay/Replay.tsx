@@ -8,11 +8,9 @@ import {
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { Alert, Spin } from 'antd';
-import { merge } from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import { APP_ID_KEY, PanesType } from '@/constant';
-import { useNavPane } from '@/hooks';
+import { APP_ID_KEY } from '@/constant';
 import { ApplicationService, ReportService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
 import { useMenusPanes } from '@/store';
@@ -24,7 +22,6 @@ import PlanItem from './PlanItem';
 import PlanReport, { PlanReportProps } from './PlanReport';
 
 const ReplayPage: ArexPaneFC = (props) => {
-  const navPane = useNavPane();
   const { activePane } = useMenusPanes();
   const { t } = useTranslation('components');
 
@@ -37,15 +34,6 @@ const ReplayPage: ArexPaneFC = (props) => {
     activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, appId);
     return () => clearLocalStorage(APP_ID_KEY);
   }, [activePane?.id]);
-
-  const handleSelectPlan: PlanReportProps['onSelectedPlanChange'] = (plan, current, row) => {
-    plan.planId === selectedPlan?.planId ? setSelectedPlan(undefined) : setSelectedPlan(plan);
-    navPane({
-      id: appId,
-      type: PanesType.REPLAY,
-      data: merge({ ...props.data }, { current, row }), // 同步当前选中的页码好行数
-    });
-  };
 
   const [refreshDep, setRefreshDep] = useState<number>();
   const handleRefreshDep = () => {
@@ -118,7 +106,7 @@ const ReplayPage: ArexPaneFC = (props) => {
                 appId={appId}
                 refreshDep={refreshDep}
                 recordCount={recordCount}
-                onSelectedPlanChange={handleSelectPlan}
+                onSelectedPlanChange={setSelectedPlan}
               />
             }
             panel={

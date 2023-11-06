@@ -21,23 +21,8 @@ const useInit = () => {
     const match = decodeUrl();
     const { paneType, menuType, id } = (match.params as StandardPathParams) || {};
 
-    // if workspaceId is not empty and not equal to activeWorkspaceId, switch workspace
-    // this scenario occurs especially when opening a shared link
-    const needAuthorization = paneType === PanesType.REQUEST;
-    if (needAuthorization) {
-      const [workspaceId] = id.split('-');
-      const authorized = workspaces.map((ws) => ws.id).includes(workspaceId);
-
-      if (workspaceId !== activeWorkspaceId) {
-        if (authorized) {
-          setActiveWorkspaceId(workspaceId);
-          getCollections(workspaceId);
-        } else {
-          message.error('No target workspace permissions');
-        }
-      }
-
-      if (authorized && paneType && id) {
+    const openPane = () => {
+      if (paneType && id) {
         setActiveMenu(menuType);
         setPanes({
           id,
@@ -45,6 +30,26 @@ const useInit = () => {
           data: match.query,
         });
       }
+    };
+
+    // if workspaceId is not empty and not equal to activeWorkspaceId, switch workspace
+    // this scenario occurs especially when opening a shared link
+    const needAuthorization = paneType === PanesType.REQUEST;
+    const [workspaceId] = id.split('-');
+    const authorized = workspaces.map((ws) => ws.id).includes(workspaceId);
+
+    if (needAuthorization) {
+      if (workspaceId !== activeWorkspaceId) {
+        if (authorized) {
+          setActiveWorkspaceId(workspaceId);
+          getCollections(workspaceId);
+          openPane();
+        } else {
+          message.error('No target workspace permissions');
+        }
+      }
+    } else {
+      openPane();
     }
 
     // Trigger rerender after resources loaded

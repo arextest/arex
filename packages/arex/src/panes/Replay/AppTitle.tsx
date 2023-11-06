@@ -16,6 +16,7 @@ import {
   SpaceBetweenWrapper,
   styled,
   TooltipButton,
+  useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
 import { useLocalStorageState, useRequest } from 'ahooks';
@@ -26,6 +27,7 @@ import {
   Button,
   DatePicker,
   Form,
+  Input,
   Modal,
   Select,
   Skeleton,
@@ -33,7 +35,16 @@ import {
   Typography,
 } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { createElement, FC, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  createElement,
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { EMAIL_KEY, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
@@ -159,6 +170,12 @@ const AppTitle: FC<AppTitleProps> = ({
 
   const [open, setOpen] = useState(false);
   const [interfacesOptions, setInterfacesOptions] = useState<any[]>([]);
+  const [planId, setPlanId] = useState<string>();
+
+  const { data } = useArexPaneProps<{ planId: string }>();
+  useEffect(() => {
+    setPlanId(data?.planId);
+  }, [data?.planId]);
 
   const [targetHostSource, setTargetHostSource] = useLocalStorageState<{
     [appId: string]: string[];
@@ -315,14 +332,38 @@ const AppTitle: FC<AppTitleProps> = ({
     <div>
       <PanesTitle
         title={
-          <TitleWrapper
-            appId={appId}
-            title={appTitle}
-            count={recordCount}
-            onClickTitle={handleClickTitle}
-            onRefresh={handleRefresh}
-            onSetting={handleSetting}
-          />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <TitleWrapper
+              appId={appId}
+              title={appTitle}
+              count={recordCount}
+              onClickTitle={handleClickTitle}
+              onRefresh={handleRefresh}
+              onSetting={handleSetting}
+            />
+            <Input.Search
+              allowClear
+              size='small'
+              value={planId}
+              placeholder={t('replay.searchForPlanId') as string}
+              onChange={(e) => {
+                setPlanId(e.target.value);
+                !e.target.value &&
+                  navPane({
+                    id: appId,
+                    type: PanesType.REPLAY,
+                  });
+              }}
+              onSearch={(planId) => {
+                navPane({
+                  id: appId,
+                  type: PanesType.REPLAY,
+                  data: { planId: planId || undefined }, // set '' to undefined
+                });
+              }}
+              style={{ display: 'inline', width: '160px', marginLeft: '8px' }}
+            />
+          </div>
         }
         extra={
           <Button
@@ -343,7 +384,9 @@ const AppTitle: FC<AppTitleProps> = ({
         open={open}
         onOk={handleStartReplay}
         onCancel={handleCloseModal}
-        bodyStyle={{ paddingBottom: '12px' }}
+        styles={{
+          body: { paddingBottom: '12px' },
+        }}
         confirmLoading={confirmLoading}
       >
         <Form

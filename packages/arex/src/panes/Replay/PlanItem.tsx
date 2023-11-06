@@ -6,14 +6,17 @@ import Icon, {
   FileTextOutlined,
   RedoOutlined,
   SearchOutlined,
+  ShareAltOutlined,
   StopOutlined,
 } from '@ant-design/icons';
 import { ReplayLogsDrawer } from '@arextest/arex-common';
 import {
+  copyToClipboard,
   getLocalStorage,
   HighlightRowTable,
   i18n,
   I18nextLng,
+  SmallTextButton,
   SpaceBetweenWrapper,
   TooltipButton,
   useTranslation,
@@ -478,12 +481,33 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   );
 
   if (!selectedPlan) return null;
-
+  ``;
   return (
     <Card
       bordered={false}
       size='small'
-      title={`${t('replay.report')}: ${selectedPlan.planName}`}
+      title={
+        <>
+          {`${t('replay.report')}: ${selectedPlan.planName}`}
+          <Button
+            size='small'
+            type='link'
+            icon={<ShareAltOutlined />}
+            onClick={() => {
+              if (props.selectedPlan?.planId) {
+                copyToClipboard(
+                  window.location.origin +
+                    window.location.pathname +
+                    `?planId=${props.selectedPlan?.planId}`,
+                );
+                message.success(t('message.copySuccess', { ns: 'common' }));
+              } else {
+                message.warning(t('message.copyFailed', { ns: 'common' }));
+              }
+            }}
+          />
+        </>
+      }
       extra={
         <Space>
           <Button

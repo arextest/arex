@@ -20,6 +20,7 @@ import CaseDetailTab from './CaseDetailTab';
 type TagType = { label: ReactNode; key: string; children: ReactNode };
 type ReplayCaseDetailData = ReplayCaseType & {
   appId: string;
+  planId: string;
   appName: string;
   planItemId: string;
   operationName: string | null;
@@ -90,6 +91,9 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
               navPane({
                 type: PanesType.REPLAY,
                 id: props.data.appId,
+                data: {
+                  planId: props.data.planId,
+                },
               }),
           },
           {

@@ -82,6 +82,7 @@ const Case: FC<CaseProps> = (props) => {
                   ...record,
                   appId: props.appId,
                   appName: props.appName,
+                  planId: props.planId,
                   planItemId: props.planItemId,
                   operationName: props.operationName,
                 },

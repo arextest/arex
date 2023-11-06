@@ -19,6 +19,7 @@ import { PlanStatistics } from '@/services/ReportService';
 import { useMenusPanes } from '@/store';
 
 const defaultPageSize = 5 as const;
+const defaultCurrent = 1 as const;
 
 export type PlanReportProps = {
   appId?: string;
@@ -36,14 +37,9 @@ const PlanReport: FC<PlanReportProps> = (props) => {
   const [searchParams] = useSearchParams();
   const [init, setInit] = useState(true);
 
-  const { data: { current, row } = { current: '1', row: '0' } } = useArexPaneProps<{
-    current: string;
-    row: string;
+  const { data } = useArexPaneProps<{
+    planId: string;
   }>();
-  const defaultPagination = {
-    defaultCurrent: parseInt(current),
-    defaultRow: parseInt(row),
-  };
 
   const columns: ColumnsType<PlanStatistics> = [
     {
@@ -142,6 +138,7 @@ const PlanReport: FC<PlanReportProps> = (props) => {
     (params) =>
       ReportService.queryPlanStatistics({
         appId,
+        planId: data?.planId || undefined,
         ...params,
       }),
     {
@@ -149,17 +146,20 @@ const PlanReport: FC<PlanReportProps> = (props) => {
       loadingDelay: 200,
       pollingInterval: 6000,
       defaultPageSize,
-      defaultCurrent: defaultPagination.defaultCurrent,
-      refreshDeps: [appId, refreshDep],
+      defaultCurrent,
+      refreshDeps: [appId, refreshDep, data?.planId],
       onSuccess({ list }) {
         if (init) {
           list.length && onSelectedPlanChange(list[parseInt(searchParams.get('row') || '0')]);
           setInit(false); // 设置第一次初始化标识);
         }
+
         if (list.every((record) => record.status !== 1)) {
           setPollingInterval(false);
           cancelPollingInterval();
         }
+
+        handleRowClick?.(list[0], 1);
       },
     },
   );
@@ -174,7 +174,9 @@ const PlanReport: FC<PlanReportProps> = (props) => {
     }
   }, [activePane, props.appId]);
 
+  const [selectKey, setSelectKey] = useState<string>();
   const handleRowClick: HighlightRowTableProps<PlanStatistics>['onRowClick'] = (record, index) => {
+    setSelectKey(record.planId);
     onSelectedPlanChange(record, pagination.current, index);
   };
 
@@ -201,11 +203,10 @@ const PlanReport: FC<PlanReportProps> = (props) => {
           size='small'
           loading={loading}
           columns={columns}
+          selectKey={selectKey}
           pagination={pagination}
           onRowClick={handleRowClick}
           dataSource={planStatistics}
-          defaultCurrent={defaultPagination.defaultCurrent}
-          defaultRow={defaultPagination.defaultRow}
           sx={{
             '.ant-table-cell-ellipsis': {
               color: token.colorPrimary,
