@@ -35,10 +35,10 @@ const useInit = () => {
     // if workspaceId is not empty and not equal to activeWorkspaceId, switch workspace
     // this scenario occurs especially when opening a shared link
     const needAuthorization = paneType === PanesType.REQUEST;
-    const [workspaceId] = id.split('-');
-    const authorized = workspaces.map((ws) => ws.id).includes(workspaceId);
 
     if (needAuthorization) {
+      const [workspaceId] = id.split('-');
+      const authorized = workspaces.map((ws) => ws.id).includes(workspaceId);
       if (workspaceId !== activeWorkspaceId) {
         if (authorized) {
           setActiveWorkspaceId(workspaceId);
