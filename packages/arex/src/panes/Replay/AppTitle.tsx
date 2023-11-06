@@ -243,12 +243,8 @@ const AppTitle: FC<AppTitleProps> = ({
           appId,
           sourceEnv: 'pro',
           targetEnv,
-          caseSourceFrom: values.caseSourceRange[0].startOf('day').valueOf(),
-          caseSourceTo: values.caseSourceRange[1]
-            .add(1, 'day')
-            .startOf('day')
-            .subtract(1, 'second')
-            .valueOf(),
+          caseSourceFrom: values.caseSourceRange[0].valueOf(),
+          caseSourceTo: values.caseSourceRange[1].valueOf(),
           operationCaseInfoList: values.operationList?.map((operationId) => ({
             operationId,
           })),
