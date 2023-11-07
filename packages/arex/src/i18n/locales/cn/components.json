@@ -68,6 +68,7 @@
     "selectApplication": "请选择一个应用",
     "appSetting": "应用设置",
     "refresh": "刷新",
+    "searchForPlanId" :"搜索 planId",
     "startSuccess": "启动成功",
     "startFailed": "启动失败",
     "startButton": "启动回放",

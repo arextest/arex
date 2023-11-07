@@ -74,6 +74,10 @@ const PlanItemNavigation: FC<PlanItemNavigationProps> = (props) => {
                   navPane({
                     type: PanesType.REPLAY,
                     id: planItemData.appId,
+                    data: {
+                      planId: planItemData.planId,
+                      planItemId: planItemData.planItemId,
+                    },
                   }),
               },
               {
