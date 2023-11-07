@@ -74,3 +74,5 @@ export const isClientDev =
   import.meta.env.MODE === 'electron' && import.meta.env['VITE_DEV_SERVER_URL'];
 export const isClientProd =
   import.meta.env.MODE === 'electron' && !import.meta.env['VITE_DEV_SERVER_URL'];
+
+export const isMac = window.platform === 'darwin';

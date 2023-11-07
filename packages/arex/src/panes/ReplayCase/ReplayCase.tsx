@@ -1,4 +1,4 @@
-import { HomeOutlined, SettingOutlined } from '@ant-design/icons';
+import { SettingOutlined } from '@ant-design/icons';
 import { DiffPath } from '@arextest/arex-common';
 import {
   ArexPaneFC,
@@ -19,29 +19,35 @@ import {
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Modal } from 'antd';
+import { App, Modal } from 'antd';
 import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { NextInterfaceButton } from '@/components';
 import { APP_ID_KEY, EMAIL_KEY, PanesType } from '@/constant';
-import { useNavPane } from '@/hooks';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
 import { DependencyParams, ExpirationType } from '@/services/ComparisonService';
-import { InfoItem, PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
+import { InfoItem, PlanItemStatistic, ReplayCaseType } from '@/services/ReportService';
 import { MessageMap } from '@/services/ScheduleService';
 import { useMenusPanes } from '@/store';
+import { decodePaneKey } from '@/store/useMenusPanes';
 
 import Case, { CaseProps } from './Case';
 import SaveCase, { SaveCaseRef } from './SaveCase';
 
-const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (props) => {
+const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
   const { message, notification } = App.useApp();
   const { activePane } = useMenusPanes();
   const email = getLocalStorage<string>(EMAIL_KEY);
   const { t } = useTranslation(['components']);
-  const navPane = useNavPane();
+
+  const [wrapperRef] = useAutoAnimate();
+
+  const [planItemData, setPlanItemData] = useState<PlanItemStatistic>();
+  const { id: planItemId } = useMemo(() => decodePaneKey(props.paneKey), [props.paneKey]);
 
   const [compareConfigOpen, setCompareConfigOpen] = useState<boolean>(false);
 
@@ -56,9 +62,16 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   const saveCaseRef = useRef<SaveCaseRef>(null);
 
   useEffect(() => {
-    activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, props.data.appId);
+    activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, planItemData?.appId);
     return () => clearLocalStorage(APP_ID_KEY);
-  }, [activePane?.id]);
+  }, [planItemData, activePane?.id]);
+
+  // fetch initial data
+  useRequest(ReportService.queryPlanItemStatistic, {
+    ready: !planItemData?.planItemId,
+    defaultParams: [planItemId],
+    onSuccess: setPlanItemData,
+  });
 
   const {
     data: fullLinkInfo,
@@ -80,7 +93,7 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     if (selected) {
       getQueryFullLinkInfo({
         recordId: record.recordId,
-        planItemId: props.data.planItemId,
+        planItemId: planItemId,
       });
     }
   };
@@ -98,14 +111,14 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
     manual: true,
     onSuccess(operationCaseInfoList) {
       rerun({
-        caseSourceFrom: +props.data.caseStartTime,
-        caseSourceTo: +props.data.caseEndTime,
-        appId: props.data.appId,
+        caseSourceFrom: +planItemData!.caseStartTime,
+        caseSourceTo: +planItemData!.caseEndTime,
+        appId: planItemData!.appId,
         operationCaseInfoList,
         operator: email as string,
         replayPlanType: 3,
         sourceEnv: 'pro',
-        targetEnv: decodeURIComponent(props.data.targetEnv || ''),
+        targetEnv: decodeURIComponent(planItemData!.targetEnv || ''),
       });
     },
   });
@@ -147,8 +160,8 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
         : {};
 
       return ComparisonService.insertIgnoreNode({
-        operationId: isGlobal ? undefined : props.data.operationId,
-        appId: props.data.appId,
+        operationId: isGlobal ? undefined : planItemData!.operationId,
+        appId: planItemData!.appId,
         exclusions: path,
         ...dependencyParams,
         ...temporaryParams,
@@ -163,8 +176,8 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   );
   function handleClickRerunCase(recordId: string) {
     queryPlanFailCase({
-      planId: props.data.planId,
-      planItemIdList: [props.data.planItemId],
+      planId: planItemData!.planId,
+      planItemIdList: [planItemId],
       recordIdList: [recordId],
     });
   }
@@ -207,119 +220,117 @@ const ReplayCasePage: ArexPaneFC<PlanItemStatistics & { filter: number }> = (pro
   );
 
   return (
-    <>
-      <PanesTitle
-        title={
-          <span>
-            <Label style={{ font: 'inherit' }}>{t('replay.caseServiceAPI')}</Label>
-            {decodeURIComponent(props.data.operationName || 'unknown')}
-          </span>
-        }
-        extra={
-          <Button
-            id='arex-replay-case-replay-report-btn'
-            size='small'
-            icon={<HomeOutlined />}
-            onClick={() =>
-              navPane({
-                type: PanesType.REPLAY,
-                id: props.data.appId,
-              })
+    <div ref={wrapperRef}>
+      <NextInterfaceButton
+        type={PanesType.REPLAY_CASE}
+        planItemId={planItemId}
+        onGetPlanItemData={setPlanItemData}
+      />
+
+      {planItemData && (
+        <>
+          <PanesTitle
+            title={
+              <span key={'caseServiceAPI'}>
+                <Label style={{ font: 'inherit' }}>{t('replay.caseServiceAPI')}</Label>
+                {decodeURIComponent(planItemData.operationName || 'unknown')}
+              </span>
             }
+          />
+
+          <CollapseTable
+            active={!!selectedRecord}
+            table={
+              <Case
+                appId={planItemData.appId}
+                appName={planItemData.appName}
+                planId={planItemData.planId}
+                operationName={planItemData.operationName}
+                planItemId={planItemId}
+                filter={props.data?.filter}
+                onClick={handleClickRecord}
+                onChange={handleCaseTableChange}
+                onClickSaveCase={handleClickSaveCase}
+                onClickRerunCase={handleClickRerunCase}
+              />
+            }
+            panel={
+              <DiffPath
+                operationId={planItemData.operationId}
+                extra={
+                  <TooltipButton
+                    icon={<SettingOutlined />}
+                    title={t('appSetting.compareConfig')}
+                    onClick={() => handleClickCompareConfigSetting()}
+                  />
+                }
+                itemsExtraRender={(data) => (
+                  <TooltipButton
+                    icon={<SettingOutlined />}
+                    title={t('appSetting.compareConfig')}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleClickCompareConfigSetting(data);
+                    }}
+                    style={{ marginRight: '6px' }}
+                  />
+                )}
+                loading={loadingFullLinkInfo}
+                data={fullLinkInfoMerged}
+                onChange={setSelectedDependency}
+                onIgnoreKey={handleIgnoreKey}
+                onSortKey={handleSortKey}
+                onDiffMatch={handleDiffMatch}
+                requestDiffMsg={ScheduleService.queryDiffMsgById}
+                requestQueryLogEntity={ScheduleService.queryLogEntity}
+              />
+            }
+          />
+
+          <SaveCase
+            planId={planItemData.planId}
+            operationId={planItemData.operationId}
+            ref={saveCaseRef}
+            appId={planItemData.appId}
+            operationName={planItemData.operationName || ''}
+          />
+
+          {/* JsonDiffMathModal */}
+          {contextHolder}
+
+          {/* CompareConfigModal */}
+          <PaneDrawer
+            destroyOnClose
+            width='70%'
+            footer={false}
+            title={`${t('appSetting.compareConfig')} - ${planItemData.operationName}`}
+            open={compareConfigOpen}
+            onClose={() => {
+              setCompareConfigOpen(false);
+              setTargetNodePath(undefined);
+            }}
           >
-            {t('replay.replayReport')}
-          </Button>
-        }
-      />
-
-      <CollapseTable
-        active={!!selectedRecord}
-        table={
-          <Case
-            planId={props.data.planId}
-            planItemId={props.data.planItemId}
-            filter={props.data.filter}
-            onClick={handleClickRecord}
-            onChange={handleCaseTableChange}
-            onClickSaveCase={handleClickSaveCase}
-            onClickRerunCase={handleClickRerunCase}
-          />
-        }
-        panel={
-          <DiffPath
-            operationId={props.data.operationId}
-            extra={
-              <TooltipButton
-                icon={<SettingOutlined />}
-                title={t('appSetting.compareConfig')}
-                onClick={() => handleClickCompareConfigSetting()}
-              />
-            }
-            itemsExtraRender={(data) => (
-              <TooltipButton
-                icon={<SettingOutlined />}
-                title={t('appSetting.compareConfig')}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleClickCompareConfigSetting(data);
-                }}
-                style={{ marginRight: '6px' }}
-              />
-            )}
-            loading={loadingFullLinkInfo}
-            data={fullLinkInfoMerged}
-            onChange={setSelectedDependency}
-            onIgnoreKey={handleIgnoreKey}
-            onSortKey={handleSortKey}
-            onDiffMatch={handleDiffMatch}
-            requestDiffMsg={ScheduleService.queryDiffMsgById}
-            requestQueryLogEntity={ScheduleService.queryLogEntity}
-          />
-        }
-      />
-
-      <SaveCase
-        planId={props.data.planId}
-        operationId={props.data.operationId}
-        ref={saveCaseRef}
-        appId={props.data.appId}
-        operationName={props.data.operationName || ''}
-      />
-
-      {/* JsonDiffMathModal */}
-      {contextHolder}
-
-      {/* CompareConfigModal */}
-      <PaneDrawer
-        destroyOnClose
-        width='70%'
-        footer={false}
-        title={`${t('appSetting.compareConfig')} - ${props.data.operationName}`}
-        open={compareConfigOpen}
-        onClose={() => {
-          setCompareConfigOpen(false);
-          setTargetNodePath(undefined);
-        }}
-      >
-        <CompareConfig
-          appId={props.data.appId}
-          operationId={props.data.operationId || false}
-          dependency={
-            selectedDependency
-              ? selectedDependency.isEntry
-                ? false
-                : {
-                    operationName: selectedDependency.operationName,
-                    operationType:
-                      selectedDependency.categoryName || selectedDependency.operationType,
-                  }
-              : undefined
-          }
-          sortArrayPath={targetNodePath}
-          onSortDrawerClose={() => setTargetNodePath(undefined)}
-        />
-      </PaneDrawer>
-    </>
+            <CompareConfig
+              appId={planItemData.appId}
+              operationId={planItemData.operationId || false}
+              dependency={
+                selectedDependency
+                  ? selectedDependency.isEntry
+                    ? false
+                    : {
+                        operationName: selectedDependency.operationName,
+                        operationType:
+                          selectedDependency.categoryName || selectedDependency.operationType,
+                      }
+                  : undefined
+              }
+              sortArrayPath={targetNodePath}
+              onSortDrawerClose={() => setTargetNodePath(undefined)}
+            />
+          </PaneDrawer>
+        </>
+      )}
+    </div>
   );
 };
 

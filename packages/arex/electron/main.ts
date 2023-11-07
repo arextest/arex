@@ -1,4 +1,4 @@
-import { app, BrowserWindow, session, globalShortcut } from 'electron';
+import { app, BrowserWindow, session, globalShortcut, ipcMain, shell, Menu } from 'electron';
 import { autoUpdateInit } from './autoUpdater';
 import path from 'node:path';
 
@@ -18,14 +18,21 @@ let win: BrowserWindow | null;
 // 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 const isDev = !!process.env['VITE_DEV_SERVER_URL'];
 
+Menu.setApplicationMenu(null);
+
 function createWindow() {
   win = new BrowserWindow({
+    titleBarStyle: process.platform === 'darwin' ? 'customButtonsOnHover' : 'default',
+    frame: process.platform !== 'darwin',
+    width: 1080,
+    height: 720,
     icon: path.join(process.env.PUBLIC, 'electron-vite.svg'),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
       webSecurity: false,
+      webviewTag: true,
     },
   });
 

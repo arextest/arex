@@ -9,11 +9,12 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest, useSize, useToggle } from 'ahooks';
-import { App, Button, Form, FormProps, Input, Modal, theme } from 'antd';
+import { Modal, theme } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { MenuSelect, MenuSelectProps } from '@/components';
 import { EMAIL_KEY, MenusType, PanesType } from '@/constant';
+import AppBasicSetup from '@/panes/AppSetting/Other/AppBasicSetup';
 import { ApplicationService, UserService } from '@/services';
 import { ApplicationDataType } from '@/services/ApplicationService';
 import { useApplication, useMenusPanes } from '@/store';
@@ -77,7 +78,6 @@ const MenuItem = styled((props: MenuItemProps) => {
 `;
 
 const ReplayMenu: ArexMenuFC = (props) => {
-  const { message } = App.useApp();
   const { t } = useTranslation(['components']);
   const { activePane } = useMenusPanes();
   const size = useSize(() => document.getElementById('arex-menu-wrapper'));
@@ -86,7 +86,7 @@ const ReplayMenu: ArexMenuFC = (props) => {
 
   const { token } = theme.useToken();
   const email = getLocalStorage<string>(EMAIL_KEY) as string;
-  const { timestamp, setTimestamp } = useApplication();
+  const { timestamp } = useApplication();
 
   const [favoriteFilter, { toggle: toggleFavoriteFilter, setRight: disableFavoriteFilter }] =
     useToggle(false);
@@ -141,33 +141,6 @@ const ReplayMenu: ArexMenuFC = (props) => {
   };
 
   const [open, setOpen] = useState(false);
-  const { run: createApp } = useRequest(ApplicationService.createApp, {
-    manual: true,
-    onSuccess(res) {
-      if (res.success) {
-        setOpen(false);
-        setTimestamp(Date.now());
-        message.success(
-          t('message.createSuccess', {
-            ns: 'common',
-          }),
-        );
-      } else {
-        message.error(
-          t('message.createFailed', {
-            ns: 'common',
-          }),
-        );
-      }
-    },
-  });
-
-  const handleAddApp: FormProps<{ appName: string }>['onFinish'] = (value) => {
-    createApp({
-      appName: value.appName,
-      owners: [email],
-    });
-  };
 
   return (
     <div style={{ padding: '8px' }}>
@@ -237,27 +210,7 @@ const ReplayMenu: ArexMenuFC = (props) => {
         footer={null}
         onCancel={() => setOpen(false)}
       >
-        <Form name='create-app' onFinish={handleAddApp}>
-          <Form.Item
-            label={t('applicationsMenu.appName')}
-            name='appName'
-            rules={[
-              {
-                required: true,
-                type: 'string',
-                message: t('applicationsMenu.appNameEmptyTip') as string,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item style={{ textAlign: 'right' }}>
-            <Button type='primary' htmlType='submit'>
-              {t('create', { ns: 'common' })}
-            </Button>
-          </Form.Item>
-        </Form>
+        <AppBasicSetup hidden={{ owners: true }} onCreate={() => setOpen(false)} />
       </Modal>
     </div>
   );

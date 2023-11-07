@@ -4,7 +4,7 @@ import React, { FC } from 'react';
 
 import { SingleCollapse } from '@/components';
 
-import AppOwners from './AppOwners';
+import AppBasicSetup from './AppBasicSetup';
 import DangerZone from './DangerZone';
 
 export interface SettingOtherProps {
@@ -17,10 +17,11 @@ const SettingOther: FC<SettingOtherProps> = (props) => {
   return (
     <Space direction='vertical' size='large' style={{ width: '100%', marginTop: '8px' }}>
       <SingleCollapse
+        defaultActive
         item={{
           key: 'owners',
-          label: t('appSetting.owners'),
-          children: <AppOwners appId={props.appId} />,
+          label: t('appSetting.appBasicSetup'),
+          children: <AppBasicSetup appId={props.appId} />,
         }}
       />
 

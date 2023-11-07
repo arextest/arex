@@ -1,7 +1,9 @@
-FROM node:20-slim AS pnpm-base
+FROM node:18.14.2-alpine3.17 AS pnpm-base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+
+RUN npm i -g pnpm
+# RUN pnpm config set electron_mirror "https://npm.taobao.org/mirrors/electron/"
 
 FROM pnpm-base AS base
 COPY . /app

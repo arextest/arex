@@ -89,7 +89,9 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
         excludeServiceOperationSet: res.excludeServiceOperationSet?.filter(Boolean),
         recordMachineCountLimit:
           res?.recordMachineCountLimit == undefined ? 1 : res?.recordMachineCountLimit,
-        includeServiceOperationSet: res.extendField?.includeServiceOperations.split(','),
+        includeServiceOperationSet: res.extendField?.includeServiceOperations
+          .split(',')
+          .filter(Boolean),
         serializeSkipInfoList: res.serializeSkipInfoList ? res.serializeSkipInfoList : undefined,
       });
 
@@ -121,11 +123,9 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       timeMock: values.timeMock,
       excludeServiceOperationSet: values.excludeServiceOperationSet?.filter(Boolean),
       recordMachineCountLimit: values.recordMachineCountLimit,
-      extendField: values.includeServiceOperationSet?.length
-        ? {
-            includeServiceOperations: values.includeServiceOperationSet?.join(','),
-          }
-        : null,
+      extendField: {
+        includeServiceOperations: values.includeServiceOperationSet?.join(','),
+      },
       serializeSkipInfoList: values.serializeSkipInfoList,
     };
     update(params);

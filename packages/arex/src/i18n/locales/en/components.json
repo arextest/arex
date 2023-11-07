@@ -42,8 +42,6 @@
     "newCreate": "New"
   },
   "applicationsMenu": {
-    "appName": "App Name",
-    "appNameEmptyTip": "The application name cannot be empty",
     "createApp": "Create Application",
     "filterFavoriteApps": "Filter Favorite Apps",
     "appFilterPlaceholder": "Search Applications"
@@ -184,7 +182,16 @@
     "re-calculateReport": "Re-calculate Report",
     "noAppOwnerAlert":"There is no owners of this application, some operation privileges will be disabled, please ",
     "addOwner": "Add application owner",
-    "noRecordCountTip": "No recording data is available at this time, try starting Agent recording with the following command"
+    "noRecordCountTip": "No recording data is available at this time, try starting Agent recording with the following command",
+    "viewAll": "View All",
+    "markExclusion": "Check Exclusion",
+    "marked": "Checked",
+    "allMarked": "All Checked",
+    "exclusionType": "ExclusionType",
+    "bug": "Bug",
+    "asExpectation":  "As Expectation",
+    "arexProblem": "Arex Problem",
+    "remark":  "Remark"
   },
   "appSetting": {
     "record": "Record",
@@ -260,6 +267,12 @@
     "other": "Other",
     "dangerZone": "Danger Zone",
     "owners": "Owners",
+    "appBasicSetup": "App Basic Setup",
+    "appName": "App Name",
+    "appNameEmptyTip": "The application name cannot be empty",
+    "visibilityLevel": "Level",
+    "public": "Public",
+    "private": "Private",
     "deleteApp": "Delete App",
     "deleteThisApp": "Delete this App",
     "deleteTip": "Once you delete an app, there is no going back. Please be certain.",

@@ -4,13 +4,14 @@ export interface QueryPlanItemStatisticsReq {
   planId: string;
 }
 
-export type PlanItemStatistics = {
+export type PlanItemStatistic = {
   planItemId: string;
   planId: string;
   operationId: string;
   operationName: string | null;
   serviceName: string;
   appId: string;
+  appName: string;
   status: number;
   replayStartTime: number;
   replayEndTime: number;
@@ -31,7 +32,7 @@ export type PlanItemStatistics = {
 };
 
 export interface QueryPlanItemStatisticsRes {
-  planItemStatisticList: PlanItemStatistics[] | null;
+  planItemStatisticList: PlanItemStatistic[] | null;
 }
 
 export async function queryPlanItemStatistics(params: QueryPlanItemStatisticsReq) {

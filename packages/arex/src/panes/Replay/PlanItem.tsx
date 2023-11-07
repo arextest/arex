@@ -11,6 +11,7 @@ import Icon, {
 import { ReplayLogsDrawer } from '@arextest/arex-common';
 import {
   getLocalStorage,
+  HighlightRowTable,
   i18n,
   I18nextLng,
   SpaceBetweenWrapper,
@@ -45,7 +46,7 @@ import { StatusTag } from '@/components';
 import { EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService, ScheduleService } from '@/services';
-import { PlanItemStatistics, PlanStatistics } from '@/services/ReportService';
+import { PlanItemStatistic, PlanStatistics } from '@/services/ReportService';
 import { MessageMap } from '@/services/ScheduleService';
 import { useMenusPanes } from '@/store';
 import IconLog from '~icons/octicon/log-24';
@@ -69,7 +70,7 @@ export type ReplayPlanItemProps = {
   appId: string;
   selectedPlan?: PlanStatistics;
   readOnly?: boolean;
-  filter?: (record: PlanItemStatistics) => boolean;
+  filter?: (record: PlanItemStatistic) => boolean;
   onRefresh?: () => void;
 };
 
@@ -162,7 +163,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   );
 
   const CaseCountRender = useCallback(
-    (count: number, record: PlanItemStatistics, status?: 0 | 1 | 2, readOnly: boolean = false) =>
+    (count: number, record: PlanItemStatistic, status?: 0 | 1 | 2, readOnly: boolean = false) =>
       React.createElement(
         readOnly ? 'div' : Button,
         readOnly
@@ -174,7 +175,8 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
                 navPane({
                   type: PanesType.REPLAY_CASE,
                   id: record.planItemId,
-                  data: { ...record, filter: status },
+                  // data: { ...record, filter: status },
+                  data: { filter: status }, // fetch PlanItemStatistic data in ReplayCase instead of passing it
                 });
               },
             },
@@ -194,19 +196,19 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   );
 
   const searchInput = useRef<InputRef>(null);
-  const columns = useMemo<ColumnsType<PlanItemStatistics>>(() => {
-    const _columns: ColumnsType<PlanItemStatistics> = [
-      {
-        title: t('replay.planItemID'),
-        dataIndex: 'planItemId',
-        key: 'planItemId',
-        ellipsis: { showTitle: false },
-        render: (value) => (
-          <Tooltip placement='topLeft' title={value}>
-            {value}
-          </Tooltip>
-        ),
-      },
+  const columns = useMemo<ColumnsType<PlanItemStatistic>>(() => {
+    const _columns: ColumnsType<PlanItemStatistic> = [
+      // {
+      //   title: t('replay.planItemID'),
+      //   dataIndex: 'planItemId',
+      //   key: 'planItemId',
+      //   ellipsis: { showTitle: false },
+      //   render: (value) => (
+      //     <Tooltip placement='topLeft' title={value}>
+      //       {value}
+      //     </Tooltip>
+      //   ),
+      // },
       {
         title: t('replay.api'),
         dataIndex: 'operationName',
@@ -336,7 +338,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
                 navPane({
                   type: PanesType.REPLAY_CASE,
                   id: record.planItemId,
-                  data: record,
+                  // data: record,
                 });
               }}
             />
@@ -601,9 +603,10 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
 
       <br />
 
-      <Table
+      <HighlightRowTable
         size='small'
         rowKey='planItemId'
+        restHighlight={false}
         loading={loadingData}
         columns={columns}
         dataSource={planItemDataFiltered}

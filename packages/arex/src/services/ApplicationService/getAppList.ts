@@ -1,3 +1,4 @@
+import { AppVisibilityLevel } from '@/services/ApplicationService/createApp';
 import { request } from '@/utils';
 
 export type ApplicationDataType = {
@@ -17,6 +18,7 @@ export type ApplicationDataType = {
   owners?: string[];
   organizationName: string;
   recordedCaseCount: number;
+  visibilityLevel: AppVisibilityLevel;
 };
 
 export type RegressionListRes = Array<{

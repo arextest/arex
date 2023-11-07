@@ -1,5 +1,5 @@
 import { BugOutlined, RedoOutlined, SaveOutlined, SearchOutlined } from '@ant-design/icons';
-import { HighlightRowTable, useArexPaneProps, useTranslation } from '@arextest/arex-core';
+import { HighlightRowTable, useTranslation } from '@arextest/arex-core';
 import { usePagination } from 'ahooks';
 import { Button, Dropdown, TableProps, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -8,12 +8,15 @@ import React, { FC, Key, useMemo } from 'react';
 import { CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
-import { PlanItemStatistics, ReplayCaseType } from '@/services/ReportService';
+import { ReplayCaseType } from '@/services/ReportService';
 import { useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
 
 export type CaseProps = {
+  appId: string;
+  appName: string;
   planItemId: string;
+  operationName: string | null;
   planId: string;
   filter?: Key;
   onClick?: (record: ReplayCaseType) => void;
@@ -23,7 +26,6 @@ export type CaseProps = {
 };
 
 const Case: FC<CaseProps> = (props) => {
-  const { data } = useArexPaneProps<PlanItemStatistics>();
   const { activeWorkspaceId } = useWorkspaces();
   const { t } = useTranslation(['components']);
 
@@ -76,7 +78,13 @@ const Case: FC<CaseProps> = (props) => {
               navPane({
                 type: PanesType.CASE_DETAIL,
                 id: record.recordId,
-                data: { ...record, appId: data?.appId },
+                data: {
+                  ...record,
+                  appId: props.appId,
+                  appName: props.appName,
+                  planItemId: props.planItemId,
+                  operationName: props.operationName,
+                },
               });
             }}
           >
@@ -97,9 +105,9 @@ const Case: FC<CaseProps> = (props) => {
             menu={{
               items: [
                 {
-                  label: t('replay.debug'),
-                  key: 'debug',
-                  icon: <BugOutlined />,
+                  label: t('replay.save'),
+                  key: 'save',
+                  icon: <SaveOutlined />,
                 },
                 {
                   label: t('replay.rerun'),
@@ -108,19 +116,11 @@ const Case: FC<CaseProps> = (props) => {
                 },
               ],
 
-              onClick: (e) => {
-                switch (e.key) {
-                  case 'debug': {
-                    navPane({
-                      type: PanesType.REQUEST,
-                      id: `${activeWorkspaceId}-${CollectionNodeType.case}-${generateId(12)}`,
-                      icon: 'Get',
-                      name: record.recordId,
-                      data: {
-                        recordId: record.recordId,
-                        planId: props.planId,
-                      },
-                    });
+              onClick: (menuInfo) => {
+                menuInfo.domEvent.stopPropagation();
+                switch (menuInfo.key) {
+                  case 'save': {
+                    props.onClickSaveCase?.(record);
                     break;
                   }
                   case 'rerun': {
@@ -132,11 +132,20 @@ const Case: FC<CaseProps> = (props) => {
             }}
             onClick={(e) => {
               e.stopPropagation();
-              props.onClickSaveCase?.(record);
+              navPane({
+                type: PanesType.REQUEST,
+                id: `${activeWorkspaceId}-${CollectionNodeType.case}-${generateId(12)}`,
+                icon: 'Get',
+                name: record.recordId,
+                data: {
+                  recordId: record.recordId,
+                  planId: props.planId,
+                },
+              });
             }}
           >
-            <SaveOutlined />
-            {t('replay.saveCase')}
+            <BugOutlined />
+            {t('replay.debug')}
           </Dropdown.Button>
         </div>
       ),

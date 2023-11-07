@@ -22,6 +22,7 @@ export type HighlightRowTableProps<T> = {
   defaultCurrent?: number; // should be defined at the same time as defaultRow
   defaultRow?: number; // should be defined at the same time as defaultCurrent
   defaultSelectFirst?: boolean;
+  restHighlight?: boolean; // reset highlight when click the same row
   onRowClick?: (record: T, index?: number) => void;
 } & TableProps<T>;
 
@@ -31,6 +32,7 @@ function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
     defaultSelectFirst,
     defaultRow = 0,
     defaultCurrent = 1,
+    restHighlight = true,
     onRowClick,
     onChange,
     ...restProps
@@ -58,7 +60,8 @@ function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
             onClick: () => {
               setSelectRow(
                 ((props.pagination as TablePaginationConfig)?.current || page) === selectRow.page &&
-                  index === selectRow.row
+                  index === selectRow.row &&
+                  restHighlight
                   ? invalidSelectRow
                   : {
                       row: index,

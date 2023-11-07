@@ -1,11 +1,7 @@
-import {
-  BugOutlined,
-  ClusterOutlined,
-  FontColorsOutlined,
-  SketchOutlined,
-} from '@ant-design/icons';
+import Icon, { ClusterOutlined, HighlightOutlined } from '@ant-design/icons';
 import {
   EllipsisTooltip,
+  Label,
   SceneCode,
   SpaceBetweenWrapper,
   TooltipButton,
@@ -13,28 +9,33 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { css } from '@emotion/react';
-import { useRequest } from 'ahooks';
-import { App, Badge, Divider, Menu, Space, theme } from 'antd';
-import React, { FC, ReactNode, useEffect, useState } from 'react';
+import { Badge, Menu, Space, theme, Tooltip, Typography } from 'antd';
+import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react';
 
-import { ReportService } from '@/services';
-import { FeedbackType, PlanItemStatistics, SubScene } from '@/services/ReportService';
+import { PlanItemStatistic, SubScene } from '@/services/ReportService';
+
+import { FeedbackIconMap, MarkExclusionModalProps } from './MarkExclusionModal';
 
 export interface SubSceneMenuProps {
+  planId: string;
+  planItemId: string;
   data: SubScene[];
   onClick?: (recordId: string) => void;
+  onMarkExclusion?: (params: MarkExclusionModalProps) => void;
   onClickAllDiff?: (recordId: string, label: React.ReactNode[]) => void;
 }
 
 const Connector = '%_%';
 const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
   const { token } = theme.useToken();
-  const { message } = App.useApp();
   const { t } = useTranslation('components');
 
-  const { data: plan } = useArexPaneProps<PlanItemStatistics>();
-
   const [selectedKeys, setSelectedKeys] = useState('');
+
+  const feedBackLabel = useMemo(
+    () => ['UnknownType', t('replay.bug'), t('replay.asExpectation'), t('replay.arexProblem')],
+    [t],
+  );
 
   useEffect(() => {
     if (props.data.length) {
@@ -46,25 +47,6 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
       props.onClick?.(props.data[0].recordId);
     }
   }, [props.data]);
-
-  const { run: feedbackScene } = useRequest(
-    (recordId, feedbackType) =>
-      ReportService.feedbackScene({
-        recordId,
-        feedbackType,
-        planId: plan!.planId,
-        planItemId: plan!.planItemId,
-      }),
-    {
-      manual: true,
-      ready: !!plan,
-      onSuccess(success) {
-        success
-          ? message.success(t('message.success', { ns: 'common' }))
-          : message.error(t('message.error', { ns: 'common' }));
-      },
-    },
-  );
 
   const handleClick = ({ key }: { key: string }) => {
     setSelectedKeys(key);
@@ -100,59 +82,80 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
               count={subScene.count}
               color={token.colorPrimary}
               offset={[0, -2]}
-              style={{ marginRight: '8px' }}
+              style={{ marginRight: '4px' }}
             />,
           ],
         );
 
         return {
           label: (
-            <SpaceBetweenWrapper>
+            <SpaceBetweenWrapper style={{ position: 'relative' }}>
+              <div
+                style={{
+                  position: 'absolute',
+                  left: -token.marginMD + 1,
+                  top: -token.marginMD + 5,
+                  zIndex: '10',
+                }}
+              >
+                {subScene?.feedbackType && (
+                  <Tooltip
+                    title={
+                      <>
+                        <Typography.Text strong style={{ display: 'block' }}>
+                          <Label>{t('replay.markExclusion')}</Label>
+                          <Icon component={FeedbackIconMap[subScene.feedbackType]} />{' '}
+                          {feedBackLabel[subScene.feedbackType]}
+                        </Typography.Text>
+                        <Typography.Text>
+                          <Label>{t('replay.remark')}</Label> {subScene.remark}
+                        </Typography.Text>
+                      </>
+                    }
+                  >
+                    <Icon
+                      key='feedbackType'
+                      component={FeedbackIconMap[subScene.feedbackType]}
+                      css={css`
+                        color: ${token.colorTextDescription};
+                        & > span {
+                          font-size: ${token.fontSizeLG}px !important;
+                        }
+                      `}
+                    />
+                  </Tooltip>
+                )}
+              </div>
+
               <div style={{ overflow: 'hidden' }}>{fullPath}</div>
 
               <div>
-                <Divider type='vertical' />
-                <Space.Compact>
-                  <TooltipButton
-                    type='link'
-                    size='small'
-                    icon={<BugOutlined />}
-                    title={`${t('replay.re-calculateReport')}: Bug`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      feedbackScene(subScene.recordId, FeedbackType.Bug);
-                    }}
-                  />
-                  <TooltipButton
-                    type='link'
-                    size='small'
-                    icon={<SketchOutlined />}
-                    title={`${t('replay.re-calculateReport')}: ByDesign`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      feedbackScene(subScene.recordId, FeedbackType.ByDesign);
-                    }}
-                  />
-                  <TooltipButton
-                    type='link'
-                    size='small'
-                    icon={<FontColorsOutlined />}
-                    title={`${t('replay.re-calculateReport')}: ArexProblem`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      feedbackScene(subScene.recordId, FeedbackType.ArexProblem);
-                    }}
-                  />
-                </Space.Compact>
-
-                <Divider type='vertical' />
+                <TooltipButton
+                  type='link'
+                  size='small'
+                  icon={<HighlightOutlined />}
+                  title={t('replay.markExclusion')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    props.onMarkExclusion?.({
+                      planId: props.planId,
+                      planItemId: props.planItemId,
+                      recordId: subScene.recordId,
+                      feedbackType: subScene.feedbackType,
+                      remark: subScene.remark,
+                    });
+                  }}
+                />
 
                 <TooltipButton
                   type='link'
                   size='small'
                   icon={<ClusterOutlined />}
-                  title={'view all'}
-                  onClick={() => props.onClickAllDiff?.(subScene.recordId, fullPath)}
+                  title={t('replay.viewAll')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    props.onClickAllDiff?.(subScene.recordId, fullPath);
+                  }}
                 />
               </div>
             </SpaceBetweenWrapper>
@@ -163,6 +166,9 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
       onClick={handleClick}
       css={css`
         border-inline-end: none !important;
+        .ant-menu-item {
+          overflow: visible;
+        }
       `}
     />
   );
