@@ -1,7 +1,7 @@
 {
   "name": "arex",
   "private": true,
-  "version": "0.6.2",
+  "version": "0.6.3",
   "author": "arextest",
   "main": "dist-electron/main.js",
   "files": [
@@ -28,7 +28,7 @@
     "@formkit/auto-animate": "^0.7.0",
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",
-    "antd": "^5.9.1",
+    "antd": "^5.11.0",
     "antd-img-crop": "^4.12.2",
     "arex-common": "0.0.1-beta.7",
     "axios": "^1.3.6",

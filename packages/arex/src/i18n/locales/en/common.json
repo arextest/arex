@@ -52,7 +52,9 @@
     "saveSuccess": "Save successfully",
     "saveFailed": "Save failed",
     "createSuccess": "Create success",
-    "createFailed": "Create failed"
+    "createFailed": "Create failed",
+    "copySuccess": "Copy success",
+    "copyFailed": "Copy failed"
   },
   "collection": "Collection",
   "replay": "Replay",

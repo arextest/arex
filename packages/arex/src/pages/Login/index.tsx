@@ -6,7 +6,7 @@ import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { MacDraggableArea } from '@/components';
-import { ACCESS_TOKEN_KEY, EMAIL_KEY, isClient, REFRESH_TOKEN_KEY } from '@/constant';
+import { ACCESS_TOKEN_KEY, EMAIL_KEY, REFRESH_TOKEN_KEY } from '@/constant';
 import { redirectUri } from '@/pages/Auth';
 import { LoginService, UserService } from '@/services';
 import { loginVerifyReq } from '@/services/LoginService';
@@ -97,9 +97,7 @@ const Login: FC = () => {
     count <= 0 && clearInterval(timer);
   }, [count]);
 
-  const { data: oauthClientId } = useRequest(LoginService.getOauthClientId, {
-    ready: !isClient,
-  });
+  const { data: oauthClientId } = useRequest(LoginService.getOauthClientId);
 
   return (
     <FlexCenterWrapper>

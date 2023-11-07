@@ -64,7 +64,10 @@ const DiffPath: FC<DiffPathProps> = (props) => {
             label: (
               <Typography.Text strong>
                 <SceneCode code={data.code} />
-                <EllipsisTooltip title={data.operationName} />
+                <EllipsisTooltip title={data.operationName} />{' '}
+                <Typography.Text strong type='secondary'>
+                  [{data.categoryName}]
+                </Typography.Text>
               </Typography.Text>
             ),
             extra: itemsExtraRender?.(data),

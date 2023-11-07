@@ -1,4 +1,4 @@
-import {
+import Icon, {
   CloseCircleOutlined,
   CodeOutlined,
   PlayCircleOutlined,
@@ -13,9 +13,11 @@ import {
   I18nextLng,
   Label,
   PanesTitle,
+  SmallTextButton,
   SpaceBetweenWrapper,
   styled,
   TooltipButton,
+  useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
 import { useLocalStorageState, useRequest } from 'ahooks';
@@ -26,14 +28,26 @@ import {
   Button,
   DatePicker,
   Form,
+  Input,
   Modal,
+  Popconfirm,
+  Popover,
   Select,
   Skeleton,
   theme,
   Typography,
 } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { createElement, FC, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  createElement,
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { EMAIL_KEY, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
@@ -59,6 +73,7 @@ type CreatePlanForm = {
 const TitleWrapper = styled(
   (props: {
     appId: string;
+    planId?: string;
     className?: string;
     title: ReactNode;
     count?: number;
@@ -66,7 +81,13 @@ const TitleWrapper = styled(
     onRefresh?: () => void;
     onSetting?: () => void;
   }) => {
+    const navPane = useNavPane();
     const { t } = useTranslation(['components']);
+    const [planId, setPlanId] = useState<string>();
+
+    useEffect(() => {
+      setPlanId(props.planId);
+    }, [props.planId]);
 
     return (
       <div id='arex-replay-record-detail-btn' className={props.className}>
@@ -90,8 +111,10 @@ const TitleWrapper = styled(
               />
             )}
 
-            <TooltipButton
-              tooltipProps={{ trigger: ['click'] }}
+            <Popover
+              trigger={['click']}
+              overlayStyle={{ width: '320px' }}
+              overlayInnerStyle={{ padding: '8px' }}
               title={
                 <div style={{ padding: '8px' }}>
                   <Typography.Text strong style={{ display: 'block' }}>
@@ -102,8 +125,9 @@ const TitleWrapper = styled(
                   </Typography.Text>
                 </div>
               }
-              icon={<CodeOutlined />}
-            />
+            >
+              <Button size='small' type='text' icon={<CodeOutlined />} />
+            </Popover>
 
             {props.onSetting && (
               <TooltipButton
@@ -115,6 +139,29 @@ const TitleWrapper = styled(
                 onClick={props.onSetting}
               />
             )}
+
+            <Input.Search
+              allowClear
+              size='small'
+              value={planId}
+              placeholder={t('replay.searchForPlanId') as string}
+              onChange={(e) => {
+                setPlanId(e.target.value);
+                !e.target.value &&
+                  navPane({
+                    id: props.appId,
+                    type: PanesType.REPLAY,
+                  });
+              }}
+              onSearch={(planId) => {
+                navPane({
+                  id: props.appId,
+                  type: PanesType.REPLAY,
+                  data: { planId: planId || undefined }, // set '' to undefined
+                });
+              }}
+              style={{ display: 'inline', width: '160px', marginLeft: '8px' }}
+            />
           </>
         ) : (
           <Skeleton.Input active size='small' style={{ width: '200px' }} />
@@ -151,6 +198,7 @@ const AppTitle: FC<AppTitleProps> = ({
   const navPane = useNavPane();
   const { t } = useTranslation(['components']);
   const email = getLocalStorage<string>(EMAIL_KEY);
+  const { data } = useArexPaneProps<{ planId: string }>();
 
   const caseListRef = useRef<RecordedCaseListRef>(null);
 
@@ -311,14 +359,17 @@ const AppTitle: FC<AppTitleProps> = ({
     <div>
       <PanesTitle
         title={
-          <TitleWrapper
-            appId={appId}
-            title={appTitle}
-            count={recordCount}
-            onClickTitle={handleClickTitle}
-            onRefresh={handleRefresh}
-            onSetting={handleSetting}
-          />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <TitleWrapper
+              appId={appId}
+              planId={data?.planId}
+              title={appTitle}
+              count={recordCount}
+              onClickTitle={handleClickTitle}
+              onRefresh={handleRefresh}
+              onSetting={handleSetting}
+            />
+          </div>
         }
         extra={
           <Button
@@ -339,7 +390,9 @@ const AppTitle: FC<AppTitleProps> = ({
         open={open}
         onOk={handleStartReplay}
         onCancel={handleCloseModal}
-        bodyStyle={{ paddingBottom: '12px' }}
+        styles={{
+          body: { paddingBottom: '12px' },
+        }}
         confirmLoading={confirmLoading}
       >
         <Form

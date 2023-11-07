@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-core",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-core.js",
   "module": "dist/arex-core.js",
@@ -54,7 +54,7 @@
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "antd": "^5.9.1",
+    "antd": "^5.11.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6"
   }
