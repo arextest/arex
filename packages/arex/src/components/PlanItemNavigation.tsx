@@ -46,9 +46,12 @@ const PlanItemNavigation: FC<PlanItemNavigationProps> = (props) => {
     () => planData?.filter((item) => item.failCaseCount).map((item) => item.planItemId) || [],
     [planData],
   );
+  const index = useMemo(
+    () => planItemList.findIndex((item) => item === props.planItemId),
+    [planItemList, props.planItemId],
+  );
 
   const handleClickNav = (target: 'prev' | 'next') => {
-    const index = planItemList.findIndex((item) => item === props.planItemId);
     const nextPlanItemId =
       target === 'prev'
         ? planItemList[index - 1] || planItemList[planItemList.length - 1]
@@ -89,7 +92,7 @@ const PlanItemNavigation: FC<PlanItemNavigationProps> = (props) => {
 
           <span ref={titleRef}>
             {planItemList.length > 1 && (
-              <Space.Compact>
+              <Space>
                 <Button
                   size='small'
                   type='text'
@@ -101,12 +104,16 @@ const PlanItemNavigation: FC<PlanItemNavigationProps> = (props) => {
                   </Typography.Text>
                 </Button>
 
+                <Typography.Text type='secondary'>
+                  {index + 1} / {planItemList.length}
+                </Typography.Text>
+
                 <Button size='small' type='text' onClick={() => handleClickNav('next')}>
                   <Typography.Text type='secondary'>
                     Next <RightOutlined />
                   </Typography.Text>
                 </Button>
-              </Space.Compact>
+              </Space>
             )}
           </span>
         </Space>
