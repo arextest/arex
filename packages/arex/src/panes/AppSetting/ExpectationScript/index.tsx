@@ -13,12 +13,13 @@ import { Button, DatePicker, Divider, Space, Switch, Table, Typography } from 'a
 import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import * as monaco from 'monaco-editor';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { GlobalInterfaceDependencySelect } from '@/components';
+import { CONFIG_TARGET, GlobalInterfaceDependencySelect } from '@/components';
 import { EMAIL_KEY } from '@/constant';
-import { ConfigService } from '@/services';
+import { ConfigService, ReportService } from '@/services';
+import { DependencyParams } from '@/services/ComparisonService';
 import { ExpectationScript } from '@/services/ConfigService';
 import { useUserProfile } from '@/store';
 
@@ -49,6 +50,9 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
       defaultParams: [{ appId: props.appId }],
     },
   );
+  const [targetValue, setTargetValue] = useState<CONFIG_TARGET>(CONFIG_TARGET.INTERFACE);
+  const [activeOperationId, setActiveOperationId] = useState<string | undefined>();
+  const [activeDependency, setActiveDependency] = useState<DependencyParams | undefined>();
 
   const { run: updateExpectation, loading: updatingExpectation } = useRequest(
     ConfigService.updateExpectation,
@@ -132,10 +136,12 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
   };
 
   const handleDeleteExpirationScript = (expiration: ExpectationScript) => {
-    deleteExpectation({
-      id: expiration.id,
-      appId: expiration.appId,
-    });
+    expiration.id &&
+      expiration.appId &&
+      deleteExpectation({
+        id: expiration.id,
+        appId: expiration.appId,
+      });
   };
 
   const handleToggleValid = (checked: boolean, expiration: ExpectationScript) => {
@@ -151,32 +157,61 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
     setEditExpirationScript({});
   };
 
-  useEffect(() => {
-    monaco.languages.register({ id: props.appId });
-    monaco.languages.setMonarchTokensProvider(props.appId, {
-      tokenizer: {
-        root: [
-          [new RegExp(`\\b(${[props.appId].join('|')})\\b`), 'keyword'], // 自定义变量高亮
-          [/\b(function|var|let|const)\b/, 'keyword'], // JavaScript 关键字高亮
-          [/\b[0-9]+\b/, 'number'], // 数字高亮
-          [/"(.*?)"/, 'string'], // 字符串高亮
-          [/'(.*?)'/, 'string'], // 字符串高亮
-        ],
+  useRequest(
+    () =>
+      ReportService.queryFlatContract({
+        appId: props.appId,
+        operationId: activeOperationId,
+        ...(targetValue === CONFIG_TARGET.DEPENDENCY ? activeDependency : {}),
+      }),
+    {
+      ready: !!props.appId,
+      refreshDeps: [targetValue, activeOperationId],
+      onSuccess(list) {
+        // generate languageId by params
+
+        const languageId = btoa(
+          JSON.stringify({
+            appId: props.appId,
+            operationId: activeOperationId,
+            ...(targetValue === CONFIG_TARGET.DEPENDENCY ? activeDependency : {}),
+          })
+            .split('')
+            .filter((str) => str !== '=') // filter languageId unsupported character
+            .join(''),
+        );
+
+        const languages = monaco.languages.getLanguages();
+
+        if (languages.some((lang) => lang.id === languageId)) return setLanguage(languageId);
+
+        monaco.languages.register({ id: languageId });
+        monaco.languages.setMonarchTokensProvider(languageId, {
+          tokenizer: {
+            root: [
+              [new RegExp(`\\b(${list.join('|')})\\b`), 'keyword'], // 自定义变量高亮
+              [/\b(function|var|let|const)\b/, 'keyword'], // JavaScript 关键字高亮
+              [/\b[0-9]+\b/, 'number'], // 数字高亮
+              [/"(.*?)"/, 'string'], // 字符串高亮
+              [/'(.*?)'/, 'string'], // 字符串高亮
+            ],
+          },
+        });
+        monaco.languages.registerCompletionItemProvider(languageId, {
+          // @ts-ignore
+          provideCompletionItems: (model, position) => {
+            const suggestions = list.map((k) => ({
+              label: k,
+              kind: monaco.languages.CompletionItemKind.Variable,
+              insertText: k,
+            }));
+            return { suggestions };
+          },
+        });
+        setLanguage(languageId);
       },
-    });
-    monaco.languages.registerCompletionItemProvider(props.appId, {
-      // @ts-ignore
-      provideCompletionItems: (model, position) => {
-        const suggestions = [props.appId].map((k) => ({
-          label: k,
-          kind: monaco.languages.CompletionItemKind.Variable,
-          insertText: k,
-        }));
-        return { suggestions };
-      },
-    });
-    setLanguage(props.appId);
-  }, []);
+    },
+  );
 
   return (
     <UndertoneWrapper>
@@ -222,12 +257,15 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
           {open === MODAL_OPEN_TYPE.Create && (
             <GlobalInterfaceDependencySelect
               appId={props.appId}
-              onOperationChange={(operation) =>
+              onTargetChange={setTargetValue}
+              onOperationChange={(operation) => {
+                setActiveOperationId(operation.id);
                 setEditExpirationScript((state) => {
                   state.title = operation.operationName;
-                })
-              }
+                });
+              }}
               onDependencyChange={(dependency) => {
+                setActiveDependency(dependency);
                 setEditExpirationScript((state) => {
                   dependency && (state.title = dependency.operationName);
                 });
