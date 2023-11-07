@@ -93,6 +93,7 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
                 id: props.data.appId,
                 data: {
                   planId: props.data.planId,
+                  planItemId: props.data.planItemId,
                 },
               }),
           },

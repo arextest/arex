@@ -16,9 +16,9 @@ import {
   HighlightRowTable,
   i18n,
   I18nextLng,
-  SmallTextButton,
   SpaceBetweenWrapper,
   TooltipButton,
+  useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
 import { css } from '@emotion/react';
@@ -34,7 +34,6 @@ import {
   Row,
   Space,
   Statistic,
-  Table,
   theme,
   Tooltip,
   Typography,
@@ -480,8 +479,22 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
     [planItemData, selectedPlan],
   );
 
+  const [selectPlanItemKey, setSelectPlanItemKey] = useState<string>();
+  const { data } = useArexPaneProps<{ planId: string; planItemId: string }>();
+
+  useEffect(() => {
+    setSelectPlanItemKey(undefined);
+  }, [data?.planId]);
+  useEffect(() => {
+    data?.planItemId && setSelectPlanItemKey(data?.planItemId);
+  }, [data?.planItemId]);
+
+  const handleSelectPlanItem = (record: PlanItemStatistic) => {
+    setSelectPlanItemKey(record.planItemId);
+  };
+
   if (!selectedPlan) return null;
-  ``;
+
   return (
     <Card
       bordered={false}
@@ -498,7 +511,8 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
                 copyToClipboard(
                   window.location.origin +
                     window.location.pathname +
-                    `?planId=${props.selectedPlan?.planId}`,
+                    `?planId=${props.selectedPlan?.planId}` +
+                    (selectPlanItemKey ? `&planItemId=${selectPlanItemKey}` : ''),
                 );
                 message.success(t('message.copySuccess', { ns: 'common' }));
               } else {
@@ -633,7 +647,9 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         restHighlight={false}
         loading={loadingData}
         columns={columns}
+        selectKey={selectPlanItemKey}
         dataSource={planItemDataFiltered}
+        onRowClick={handleSelectPlanItem}
       />
       <ReplayLogsDrawer
         planId={selectedPlan?.planId}

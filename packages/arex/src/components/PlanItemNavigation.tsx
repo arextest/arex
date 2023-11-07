@@ -76,6 +76,7 @@ const PlanItemNavigation: FC<PlanItemNavigationProps> = (props) => {
                     id: planItemData.appId,
                     data: {
                       planId: planItemData.planId,
+                      planItemId: planItemData.planItemId,
                     },
                   }),
               },

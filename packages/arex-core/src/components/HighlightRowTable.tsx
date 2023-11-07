@@ -48,7 +48,7 @@ function HighlightRowTable<T extends object>(props: HighlightRowTableProps<T>) {
           return {
             onClick: () => {
               const key = record[props.rowKey as keyof T] as React.Key;
-              setSelectKey((key === _selectKey ?? selectKey) && restHighlight ? undefined : key);
+              setSelectKey(key === (_selectKey ?? selectKey) && restHighlight ? undefined : key);
               onRowClick?.(record, index);
             },
           };
