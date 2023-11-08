@@ -47,6 +47,7 @@ import CountUp from 'react-countup';
 import { StatusTag } from '@/components';
 import { EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
+import CompareNoise from '@/panes/Replay/CompareNoise';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanItemStatistic, PlanStatistics } from '@/services/ReportService';
 import { MessageMap } from '@/services/ScheduleService';
@@ -493,6 +494,20 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
     setSelectPlanItemKey(record.planItemId);
   };
 
+  const handleSharePlan = () => {
+    if (props.selectedPlan?.planId) {
+      copyToClipboard(
+        window.location.origin +
+          window.location.pathname +
+          `?planId=${props.selectedPlan?.planId}` +
+          (selectPlanItemKey ? `&planItemId=${selectPlanItemKey}` : ''),
+      );
+      message.success(t('message.copySuccess', { ns: 'common' }));
+    } else {
+      message.warning(t('message.copyFailed', { ns: 'common' }));
+    }
+  };
+
   if (!selectedPlan) return null;
 
   return (
@@ -502,28 +517,17 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       title={
         <>
           {`${t('replay.report')}: ${selectedPlan.planName}`}
-          <Button
-            size='small'
-            type='link'
-            icon={<ShareAltOutlined />}
-            onClick={() => {
-              if (props.selectedPlan?.planId) {
-                copyToClipboard(
-                  window.location.origin +
-                    window.location.pathname +
-                    `?planId=${props.selectedPlan?.planId}` +
-                    (selectPlanItemKey ? `&planItemId=${selectPlanItemKey}` : ''),
-                );
-                message.success(t('message.copySuccess', { ns: 'common' }));
-              } else {
-                message.warning(t('message.copyFailed', { ns: 'common' }));
-              }
-            }}
-          />
+          <Button size='small' type='link' icon={<ShareAltOutlined />} onClick={handleSharePlan} />
         </>
       }
       extra={
         <Space>
+          <CompareNoise
+            appId={props.appId}
+            planId={selectedPlan.planId}
+            readOnly={props.readOnly}
+          />
+
           <Button
             type='link'
             size='small'

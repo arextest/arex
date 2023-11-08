@@ -3,8 +3,8 @@ import { App } from 'antd';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ExtensionVersion } from '../constant';
-import { checkArexVersion, getChromeVersion, versionStringCompare } from '../utils';
+import { ExtensionVersion } from '@/constant';
+import { getChromeVersion, versionStringCompare } from '@/utils';
 
 const useCheckChrome = () => {
   const nav = useNavigate();
@@ -16,10 +16,6 @@ const useCheckChrome = () => {
       if (getChromeVersion() < 0) {
         localStorage.clear();
         nav('/upgradebrowser');
-      } else if (!checkArexVersion()) {
-        // 检查是否更新过arex
-        localStorage.clear();
-        window.location.href = '/login';
       } else if (!window.__AREX_EXTENSION_INSTALLED__) {
         message.info(
           <div>

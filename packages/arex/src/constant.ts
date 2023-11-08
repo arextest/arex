@@ -43,6 +43,8 @@ export const ExtensionVersion = '1.0.4';
 export const ArexVersionKey = 'arexVersion';
 export const ArexVersionValue = '0.4.1';
 
+export const Connector = '-_-';
+
 // localStorage key
 export const THEME_KEY = 'theme';
 export const USER_PROFILE_KEY = 'userProfile';
