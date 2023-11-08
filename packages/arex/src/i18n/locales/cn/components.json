@@ -109,6 +109,7 @@
     "timeConsumed": "耗时(秒)",
     "cases": "case 数",
     "action": "操作",
+    "denoise": "差异降噪",
     "logs": "执行日志",
     "retry": "重新计算",
     "rerun": "重新执行",

@@ -109,6 +109,7 @@
     "timeConsumed": "Time consumed(s)",
     "cases": "Cases",
     "action": "Action",
+    "denoise": "Diff Denoise",
     "logs": "Execution Logs",
     "retry": "Retry",
     "rerun": "Rerun",

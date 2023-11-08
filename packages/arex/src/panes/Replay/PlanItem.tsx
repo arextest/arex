@@ -434,7 +434,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
     },
   });
 
-  const [ReplayLogsDrawerOpen, setReplayLogsDrawerOpen] = useState(false);
+  const [replayLogsDrawerOpen, setReplayLogsDrawerOpen] = useState(false);
 
   const extraMenuItems = useMemo(
     () => [
@@ -655,9 +655,10 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         dataSource={planItemDataFiltered}
         onRowClick={handleSelectPlanItem}
       />
+
       <ReplayLogsDrawer
         planId={selectedPlan?.planId}
-        open={ReplayLogsDrawerOpen}
+        open={replayLogsDrawerOpen}
         request={ScheduleService.queryLogs}
         onClose={() => {
           setReplayLogsDrawerOpen(false);
