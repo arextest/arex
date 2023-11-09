@@ -1,6 +1,8 @@
 import { Buffer } from 'buffer';
 import xspy from 'xspy';
 
+import { isClient } from '@/constant';
+
 // chrome插件代理
 function AgentAxios<T>(params: any) {
   return new Promise<T>((resolve, reject) => {
@@ -33,36 +35,38 @@ function AgentAxios<T>(params: any) {
   });
 }
 
-xspy.onRequest(async (request: any, sendResponse: any) => {
-  // 判断是否是pm发的
-  if (request.headers['postman-token']) {
-    const agentData: any = await AgentAxios({
-      method: request.method,
-      url: request.url,
-      headers: request.headers,
-      body: ['GET'].includes(request.method) ? undefined : request.body,
-    }).catch((err) => {
-      console.log(err);
-      return {
-        status: 400,
-        headers: [],
-        data: '',
-      };
-    });
-    const dummyResponse = {
-      status: agentData.status,
-      headers: agentData.headers.reduce((p: any, c: { key: any; value: any }) => {
+if (!isClient) {
+  xspy.onRequest(async (request: any, sendResponse: any) => {
+    // 判断是否是pm发的
+    if (request.headers['postman-token']) {
+      const agentData: any = await AgentAxios({
+        method: request.method,
+        url: request.url,
+        headers: request.headers,
+        body: ['GET'].includes(request.method) ? undefined : request.body,
+      }).catch((err) => {
+        console.log(err);
         return {
-          ...p,
-          [c.key]: c.value,
+          status: 400,
+          headers: [],
+          data: '',
         };
-      }, {}),
-      ajaxType: 'xhr',
-      responseType: 'arraybuffer',
-      response: new Buffer(agentData.data),
-    };
-    sendResponse(dummyResponse);
-  } else {
-    sendResponse();
-  }
-});
+      });
+      const dummyResponse = {
+        status: agentData.status,
+        headers: agentData.headers.reduce((p: any, c: { key: any; value: any }) => {
+          return {
+            ...p,
+            [c.key]: c.value,
+          };
+        }, {}),
+        ajaxType: 'xhr',
+        responseType: 'arraybuffer',
+        response: new Buffer(agentData.data),
+      };
+      sendResponse(dummyResponse);
+    } else {
+      sendResponse();
+    }
+  });
+}

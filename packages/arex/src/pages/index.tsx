@@ -160,7 +160,6 @@ const Home: FC = () => {
           />
         }
       />
-
       <ArexFooter
         rightRender={(agent) => (
           <>
@@ -169,7 +168,6 @@ const Home: FC = () => {
           </>
         )}
       />
-
       <MacTrafficLightBackground />
       <KeyboardShortcut />
     </>
