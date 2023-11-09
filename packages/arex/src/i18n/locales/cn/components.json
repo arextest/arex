@@ -368,6 +368,11 @@
     "jarFileUrl": "Jar 包地址",
     "replayCallback": "回放回调",
     "replayCallbackUrl": "回放回调地址",
-    "version": "版本"
+    "application": "应用",
+    "version": "版本",
+    "checkUpdate": "检查更新",
+    "isLatest": "已经是最新版本",
+    "newVersionDetected": "检测到新版本，下载即将开始...",
+    "checkFailed": "检查更新失败，请重试"
   }
 }

@@ -369,6 +369,11 @@
     "jarFileUrl": "JarFileUrl",
     "replayCallback": "ReplayCallback",
     "replayCallbackUrl": "ReplayCallbackUrl",
-    "version": "Version"
+    "application": "Application",
+    "version": "Version",
+    "checkUpdate": "Check for updates",
+    "isLatest": "It's already the latest version",
+    "newVersionDetected": "New version detected, download will start soon...",
+    "checkFailed": "Check for updates failed, please try again"
   }
 }
