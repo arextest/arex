@@ -18,7 +18,6 @@ const AppVersion: FC<{ value?: string }> = (props) => {
       manual: true,
       onSuccess(res) {
         const version = res.data.name;
-        console.log(res);
         if (versionStringCompare(__APP_VERSION__, version) === -1) {
           const suffix = isMac ? '.dmg' : '.exe';
           const downloadUrl = res.data.assets.find((asset: { name: string }) =>
