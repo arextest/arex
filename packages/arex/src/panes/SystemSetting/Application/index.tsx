@@ -1,19 +1,25 @@
 import { CloudDownloadOutlined } from '@ant-design/icons';
 import { useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Form, Input } from 'antd';
+import { App, Button, Form, Input, Space } from 'antd';
 import axios from 'axios';
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 
 import { isClient, isMac } from '@/constant';
+import { useMessageQueue } from '@/store';
 import { versionStringCompare } from '@/utils';
 
 const AppVersion: FC<{ value?: string }> = (props) => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components']);
+  const { messageQueue } = useMessageQueue();
+  const versionDetected = useMemo(
+    () => messageQueue.find((message) => message.type === 'update'),
+    [messageQueue],
+  );
 
   const { run: getLatestRelease } = useRequest(
-    () => axios.get('https://api.github.com/repos/1pone/arex-release/releases/latest', {}),
+    () => axios.get('https://api.github.com/repos/1pone/arex-release/releases/latest'),
     {
       manual: true,
       onSuccess(res) {
@@ -24,7 +30,7 @@ const AppVersion: FC<{ value?: string }> = (props) => {
             asset.name.endsWith(suffix),
           )?.browser_download_url;
           if (downloadUrl) {
-            message.info(t('systemSetting.newVersionDetected'));
+            message.info(t('systemSetting.startDownload'));
             window.open(downloadUrl);
           } else {
             message.info(t('systemSetting.checkFailed'));
@@ -38,16 +44,20 @@ const AppVersion: FC<{ value?: string }> = (props) => {
 
   return (
     <>
-      <Input readOnly value={props.value} bordered={false} style={{ width: '64px' }} />
+      <Input readOnly value={props.value} bordered={false} style={{ width: '48px' }} />
+
       {isClient && (
-        <Button
-          size='small'
-          type='primary'
-          icon={<CloudDownloadOutlined />}
-          onClick={getLatestRelease}
-        >
-          {t('systemSetting.checkUpdate')}
-        </Button>
+        <Space size='middle'>
+          <Button
+            size='small'
+            type='primary'
+            icon={<CloudDownloadOutlined />}
+            onClick={getLatestRelease}
+          >
+            {t('systemSetting.checkUpdate')}
+          </Button>
+          {versionDetected && <span>{t('systemSetting.newVersionDetected')}</span>}
+        </Space>
       )}
     </>
   );

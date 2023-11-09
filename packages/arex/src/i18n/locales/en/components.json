@@ -373,7 +373,8 @@
     "version": "Version",
     "checkUpdate": "Check for updates",
     "isLatest": "It's already the latest version",
-    "newVersionDetected": "New version detected, download will start soon...",
+    "newVersionDetected": "New version detected",
+    "startDownload": "Download about to start...",
     "checkFailed": "Check for updates failed, please try again"
   }
 }
