@@ -1,24 +1,15 @@
-import { app, BrowserWindow, session, globalShortcut, ipcMain, shell, Menu } from 'electron';
+import { app, BrowserWindow, globalShortcut, Menu } from 'electron';
 import { autoUpdateInit } from './autoUpdater';
 import path from 'node:path';
+import { oauth } from './oauthServer';
 
-// The built directory structure
-//
-// ├─┬─┬ dist
-// │ │ └── index.html
-// │ │
-// │ ├─┬ dist-electron
-// │ │ ├── main.js
-// │ │ └── preload.js
-// │
 process.env.DIST = path.join(__dirname, '../dist');
 process.env.PUBLIC = app.isPackaged ? process.env.DIST : path.join(process.env.DIST, '../public');
 
 let win: BrowserWindow | null;
-// 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 const isDev = !!process.env['VITE_DEV_SERVER_URL'];
 
-Menu.setApplicationMenu(null);
+// Menu.setApplicationMenu(null);
 
 function createWindow() {
   win = new BrowserWindow({
@@ -48,18 +39,9 @@ function createWindow() {
   if (isDev) {
     win.loadURL(process.env['VITE_DEV_SERVER_URL']);
   } else {
-    // win.loadFile('dist/index.html')
+    // win.loadFile('dist/index.html');
     win.loadFile(path.join(process.env.DIST, 'index.html'));
   }
-
-  // 监听主窗口失去焦点事件
-  win.on('blur', () => {
-    // 取消已注册的所有全局快捷键
-    globalShortcut.unregisterAll();
-  });
-
-  // 监听主窗口获得焦点事件
-  // win.on('focus', registerShortcut);
 }
 
 app.on('window-all-closed', () => {
@@ -72,6 +54,11 @@ app
   .then(() => {
     createWindow();
     autoUpdateInit();
+    oauth((pathname, code) => {
+      win.loadFile(path.join(process.env.DIST, `index.html`), {
+        hash: `${pathname}?code=${code}`,
+      });
+    });
   })
   .then(() => {
     // disable reload on prod

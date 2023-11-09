@@ -29,7 +29,13 @@ export class Request {
     // 全局请求拦截
     this.instance.interceptors.request.use(
       (request) => {
-        request.headers.set('access-token', getLocalStorage<string>(ACCESS_TOKEN_KEY));
+        const accessToken = getLocalStorage<string>(ACCESS_TOKEN_KEY);
+        // if (!accessToken && request.headers.get('access-token') !== 'no')
+        //   return Promise.reject(
+        //     'Required request header "access-token" for method parameter type String is not present',
+        //   );
+
+        request.headers.set('access-token', accessToken);
         request.headers.set('appId', getLocalStorage<string>(APP_ID_KEY));
 
         if (isClientProd) {

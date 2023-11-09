@@ -34,7 +34,7 @@ const useUserProfile = create<UserProfile & UserProfileAction>((set) => {
         window.message.error(i18n.t('loginInformationExpired'));
         globalStoreReset();
       } else {
-        window.message.error(i18n.t('serverError'));
+        window.message.error(e);
       }
     }
     window.__locale__ = profile?.language || 'en';

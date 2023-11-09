@@ -25,7 +25,6 @@ import { generateId } from '@/utils';
 
 const Home: FC = () => {
   useInit();
-
   const {
     menuCollapsed,
     toggleMenuCollapse,

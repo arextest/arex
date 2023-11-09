@@ -20,7 +20,7 @@ export async function autoUpdateInit() {
 
   autoUpdater.logger = logger;
   autoUpdater.disableWebInstaller = false;
-  autoUpdater.autoDownload = false; //这个必须写成false，写成true时，我这会报没权限更新，也没清楚什么原因
+  autoUpdater.autoDownload = false;
   autoUpdater.on('error', (error) => {
     logger.error(['检查更新失败', error]);
   });
