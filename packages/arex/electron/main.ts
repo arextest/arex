@@ -42,6 +42,19 @@ function createWindow() {
     // win.loadFile('dist/index.html');
     win.loadFile(path.join(process.env.DIST, 'index.html'));
   }
+
+  // 监听主窗口失去焦点事件
+  win.on('blur', () => {
+    // 取消已注册的所有全局快捷键
+    globalShortcut.unregisterAll();
+  });
+
+  // 监听主窗口获得焦点事件
+  win.on('focus', () => {
+    globalShortcut.registerAll(['f5', 'CommandOrControl+R'], () => {
+      //win.reload()
+    });
+  });
 }
 
 app.on('window-all-closed', () => {
@@ -49,27 +62,12 @@ app.on('window-all-closed', () => {
   app.quit();
 });
 
-app
-  .whenReady()
-  .then(() => {
-    createWindow();
-    autoUpdateInit();
-    oauth((pathname, code) => {
-      win.loadFile(path.join(process.env.DIST, `index.html`), {
-        hash: `${pathname}?code=${code}`,
-      });
+app.whenReady().then(() => {
+  createWindow();
+  autoUpdateInit();
+  oauth((pathname, code) => {
+    win.loadFile(path.join(process.env.DIST, `index.html`), {
+      hash: `${pathname}?code=${code}`,
     });
-  })
-  .then(() => {
-    // disable reload on prod
-    if (!isDev) {
-      globalShortcut.register('f5', function () {
-        console.log('f5 is pressed');
-        //win.reload()
-      });
-      globalShortcut.register('CommandOrControl+R', function () {
-        console.log('CommandOrControl+R is pressed');
-        // win.reload();
-      });
-    }
   });
+});
