@@ -58,7 +58,7 @@ const useInit = () => {
     if (isClient) {
       axios.get('https://api.github.com/repos/1pone/arex-release/releases/latest').then((res) => {
         const version = res.data.name;
-        if (versionStringCompare('0.6', version) === -1) {
+        if (versionStringCompare(__APP_VERSION__, version) === -1) {
           pushMessage({
             type: 'update',
             message: 'newVersionDetected',
