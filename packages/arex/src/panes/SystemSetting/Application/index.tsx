@@ -19,7 +19,7 @@ const AppVersion: FC<{ value?: string }> = (props) => {
   );
 
   const { run: getLatestRelease } = useRequest(
-    () => axios.get('https://api.github.com/repos/1pone/arex-release/releases/latest'),
+    () => axios.get('https://api.github.com/repos/arextest/releases/releases/latest'),
     {
       manual: true,
       onSuccess(res) {
