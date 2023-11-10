@@ -10,6 +10,7 @@ export type NoiseItem = {
   }[];
   logIndexes: number[];
   compareResultId: string;
+  status?: 1; // 1: already exclude
 };
 
 export type RandomNoise = {
@@ -39,5 +40,17 @@ export async function queryNoise(planId: string) {
       appId: getLocalStorage<string>(APP_ID_KEY),
     },
   });
-  return res.data.data.interfaceNoiseItemList;
+
+  // filter excluded nodeEntity
+  return res.data.data.interfaceNoiseItemList
+    .map((operation) => {
+      const randomNoise = operation.randomNoise
+        .map((noise) => ({
+          ...noise,
+          noiseItemList: noise.noiseItemList.filter((noiseItem) => noiseItem.status !== 1),
+        }))
+        .filter((noise) => noise.noiseItemList.length);
+      return { ...operation, randomNoise };
+    })
+    .filter((operation) => operation.randomNoise.length);
 }
