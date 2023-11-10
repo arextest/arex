@@ -1,7 +1,7 @@
 import { getLocalStorage } from '@arextest/arex-core';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-import { ACCESS_TOKEN_KEY, APP_ID_KEY, isClientProd } from '@/constant';
+import { ACCESS_TOKEN_KEY, APP_ID_KEY } from '@/constant';
 
 import proxy from '../../config/proxy.json';
 
@@ -29,15 +29,19 @@ export class Request {
     // 全局请求拦截
     this.instance.interceptors.request.use(
       (request) => {
-        request.headers.set('access-token', getLocalStorage<string>(ACCESS_TOKEN_KEY));
+        const accessToken = getLocalStorage<string>(ACCESS_TOKEN_KEY);
+        // if (!accessToken && request.headers.get('access-token') !== 'no')
+        //   return Promise.reject(
+        //     'Required request header "access-token" for method parameter type String is not present',
+        //   );
+
+        request.headers.set('access-token', accessToken);
         request.headers.set('appId', getLocalStorage<string>(APP_ID_KEY));
 
-        if (isClientProd) {
-          let path: string | undefined = undefined;
-          if ((path = this.proxyPath.find((path) => request.url?.startsWith(path)))) {
-            request.baseURL = proxy.find((item) => item.path === path)?.target;
-            request.url = request.url?.match(new RegExp(`(?<=${path}).*`))?.[0];
-          }
+        let path: string | undefined = undefined;
+        if ((path = this.proxyPath.find((path) => request.url?.startsWith(path)))) {
+          request.baseURL = proxy.find((item) => item.path === path)?.target;
+          request.url = request.url?.match(new RegExp(`(?<=${path}).*`))?.[0];
         }
 
         return request;

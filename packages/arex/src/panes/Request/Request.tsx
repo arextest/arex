@@ -258,9 +258,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         onSave={handleSave}
         onSaveAs={saveAsRef?.current?.open}
       />
-
       <SaveAs ref={saveAsRef} workspaceId={workspaceId} />
-
       <EnvironmentDrawer
         ref={environmentDrawerRef}
         workspaceId={workspaceId}

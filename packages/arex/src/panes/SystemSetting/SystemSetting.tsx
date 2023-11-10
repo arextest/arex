@@ -4,6 +4,7 @@ import React from 'react';
 
 import CallbackUrl from '@/panes/SystemSetting/CallbackUrl';
 
+import Application from './Application';
 import DataDesensitization from './DataDesensitization';
 import UserInterface from './UserInterface';
 
@@ -21,10 +22,8 @@ const SystemSetting: ArexPaneFC = () => {
       <Divider orientation='left'> {t('systemSetting.replayCallback')}</Divider>
       <CallbackUrl />
 
-      <Typography.Text type='secondary' style={{ position: 'absolute', bottom: 0, right: '16px' }}>
-        <Label type='secondary'>{t('systemSetting.version')}</Label>
-        {__APP_VERSION__}
-      </Typography.Text>
+      <Divider orientation='left'> {t('systemSetting.application')}</Divider>
+      <Application />
     </div>
   );
 };
