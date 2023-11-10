@@ -47,33 +47,31 @@ const CallbackUrl: FC = () => {
   };
 
   return (
-    <div>
-      <Form<SystemConfig>
-        name='system-setting-callbackUrl-form'
-        form={form}
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 20 }}
-        onFinish={handleUploadJar}
+    <Form<SystemConfig>
+      name='system-setting-callbackUrl-form'
+      form={form}
+      labelCol={{ span: 4 }}
+      wrapperCol={{ span: 20 }}
+      onFinish={handleUploadJar}
+    >
+      <Form.Item hidden name='operator'>
+        <Input />
+      </Form.Item>
+
+      <Form.Item
+        label={t('systemSetting.replayCallbackUrl', { ns: 'components' })}
+        name='callbackUrl'
       >
-        <Form.Item hidden name='operator'>
-          <Input />
-        </Form.Item>
+        <Input allowClear style={{ width: '400px' }} />
+      </Form.Item>
 
-        <Form.Item
-          label={t('systemSetting.replayCallbackUrl', { ns: 'components' })}
-          name='callbackUrl'
-        >
-          <Input allowClear style={{ width: '400px' }} />
-        </Form.Item>
-
-        {/* form submit button */}
-        <Form.Item wrapperCol={{ span: 14, offset: 4 }}>
-          <Button type='primary' htmlType='submit'>
-            Save
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+      {/* form submit button */}
+      <Form.Item wrapperCol={{ span: 14, offset: 4 }}>
+        <Button type='primary' htmlType='submit'>
+          Save
+        </Button>
+      </Form.Item>
+    </Form>
   );
 };
 

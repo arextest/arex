@@ -6,6 +6,7 @@ import { AREX_OPEN_NEW_PANEL } from '@/constant';
 
 declare global {
   const __APP_VERSION__: string;
+  const __AUTH_PORT__: string;
   interface Window {
     monaco: any;
     message: MessageInstance;

@@ -20,8 +20,8 @@ const routes: Routes[] = Object.values(RouterPath)
   }))
   .concat([
     {
-      path: '/auth',
-      component: lazy(() => import('../pages/Auth')),
+      path: '/oauth/:provider',
+      component: lazy(() => import('../pages/Oauth')),
     },
     {
       path: '/login',

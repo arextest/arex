@@ -77,5 +77,6 @@
   "dateRangePreset": {
     "quickPick": "快速选择",
     "1d": "近一天"
-  }
+  },
+  "checkAll": "选择全部"
 }

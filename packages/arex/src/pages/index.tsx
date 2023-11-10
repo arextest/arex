@@ -25,7 +25,6 @@ import { generateId } from '@/utils';
 
 const Home: FC = () => {
   useInit();
-
   const {
     menuCollapsed,
     toggleMenuCollapse,
@@ -161,7 +160,6 @@ const Home: FC = () => {
           />
         }
       />
-
       <ArexFooter
         rightRender={(agent) => (
           <>
@@ -170,7 +168,6 @@ const Home: FC = () => {
           </>
         )}
       />
-
       <MacTrafficLightBackground />
       <KeyboardShortcut />
     </>

@@ -36,11 +36,6 @@ export const versionStringCompare = (preVersion = '', lastVersion = '') => {
   return result;
 };
 
-// 检查 Arex 版本号
-export function checkArexVersion() {
-  return localStorage.getItem(ArexVersionKey) === ArexVersionValue;
-}
-
 // 检查 Chrome 版本号
 export function getChromeVersion() {
   let v: any = '';

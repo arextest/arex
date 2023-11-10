@@ -5,11 +5,13 @@ import { defineConfig } from 'vite';
 import electron from 'vite-plugin-electron';
 import svgr from 'vite-plugin-svgr';
 
+import port from './config/port.json';
 import proxy from './config/proxy.json';
 
 export default defineConfig(async ({ mode }) => ({
   define: {
     __APP_VERSION__: await import('./package.json').then((pkg) => JSON.stringify(pkg.version)),
+    __AUTH_PORT__: port.authPort,
   },
   plugins: [
     svgr(),
@@ -49,7 +51,7 @@ export default defineConfig(async ({ mode }) => ({
   },
   server: {
     host: '0.0.0.0',
-    port: 16888,
+    port: port.vitePort,
     proxy: proxy.reduce((proxyMap, item) => {
       proxyMap[item.path] = {
         target: item.target,
