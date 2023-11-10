@@ -1,7 +1,10 @@
+import axios from 'axios';
 import { Buffer } from 'buffer';
 import xspy from 'xspy';
 
-import { isClient } from '@/constant';
+import { isClient, isClientProd } from '@/constant';
+
+import proxy from '../../config/proxy.json';
 
 // chrome插件代理
 function AgentAxios<T>(params: any) {
@@ -33,6 +36,24 @@ function AgentAxios<T>(params: any) {
       }
     }
   });
+}
+
+if (isClientProd) {
+  const proxyPath = proxy.map((item) => item.path);
+  axios.interceptors.request.use(
+    (request) => {
+      // 给请求头加键值对
+      let path: string | undefined = undefined;
+      if ((path = proxyPath.find((path) => request.url?.startsWith(path)))) {
+        request.baseURL = proxy.find((item) => item.path === path)?.target;
+        request.url = request.url?.match(new RegExp(`(?<=${path}).*`))?.[0];
+      }
+      return request;
+    },
+    (error) => {
+      return Promise.reject(error.response);
+    },
+  );
 }
 
 if (!isClient) {
