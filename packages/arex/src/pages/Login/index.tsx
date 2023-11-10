@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { MacDraggableArea } from '@/components';
 import { ACCESS_TOKEN_KEY, EMAIL_KEY, REFRESH_TOKEN_KEY } from '@/constant';
-import { redirectUri } from '@/pages/Auth';
+import { redirectUri } from '@/pages/Oauth';
 import { LoginService, UserService } from '@/services';
 import { loginVerifyReq } from '@/services/LoginService';
 import gitlablogo from '~icons/logos/gitlab';
@@ -155,7 +155,8 @@ const Login: FC = () => {
                   <>
                     <Divider type={'vertical'} />
                     <a
-                      href={`${oauthClientId?.oauthUri}/oauth/authorize?response_type=code&state=STATE&scope=api&client_id=${oauthClientId?.clientId}&redirect_uri=${redirectUri}`}
+                      href={`${oauthClientId?.oauthUri}/oauth/authorize?response_type=code&state=STATE&scope=api&client_id=${oauthClientId?.clientId}&redirect_uri=${redirectUri}gitlab`}
+                      rel='noreferrer'
                     >
                       <Tooltip title={'Login with gitlab'}>
                         <Icon component={gitlablogo} />

@@ -16,5 +16,9 @@
   },
   "replay": {
     "saveto": "Save To"
+  },
+  "oauth": {
+    "authenticating": "Authenticating",
+    "redirectedTip": "You will be redirected to the home page in a few seconds ..."
   }
 }

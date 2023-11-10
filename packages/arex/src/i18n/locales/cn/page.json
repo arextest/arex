@@ -16,5 +16,9 @@
   },
   "replay": {
     "saveto": "保存到"
+  },
+  "oauth": {
+    "authenticating": "正在验证",
+    "redirectedTip": "你将于几秒之后被重定向至主页..."
   }
 }

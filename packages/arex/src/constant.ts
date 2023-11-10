@@ -72,9 +72,7 @@ export const AREX_OPEN_NEW_PANEL = 'arexOpenNewPanel';
 
 // electron client
 export const isClient = import.meta.env.MODE === 'electron';
-export const isClientDev =
-  import.meta.env.MODE === 'electron' && import.meta.env['VITE_DEV_SERVER_URL'];
-export const isClientProd =
-  import.meta.env.MODE === 'electron' && !import.meta.env['VITE_DEV_SERVER_URL'];
+export const isClientDev = isClient && import.meta.env.DEV;
+export const isClientProd = isClient && import.meta.env.PROD;
 
 export const isMac = window.platform === 'darwin';

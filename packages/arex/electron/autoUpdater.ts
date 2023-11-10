@@ -1,26 +1,16 @@
 import { app, dialog } from 'electron';
-import { join } from 'path';
 import { autoUpdater } from 'electron-updater';
 import logger from 'electron-log';
 import { getLocalData, setLocalData, sleep } from './helper';
 
 export async function autoUpdateInit() {
-  //打印log到本地
-  logger.transports.file.maxSize = 1002430; // 10M
-  logger.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}]{scope} {text}';
-  logger.transports.file.resolvePath = () => join(app.getPath('appData'), 'logs/main.log');
-
-  setLocalData({
-    path: join(app.getPath('appData'), 'logs/main.log'),
-  });
-
   await sleep(5000);
   //每次启动自动更新检查 更新版本 --可以根据自己方式更新，定时或者什么
   autoUpdater.checkForUpdates();
 
   autoUpdater.logger = logger;
   autoUpdater.disableWebInstaller = false;
-  autoUpdater.autoDownload = false; //这个必须写成false，写成true时，我这会报没权限更新，也没清楚什么原因
+  autoUpdater.autoDownload = false;
   autoUpdater.on('error', (error) => {
     logger.error(['检查更新失败', error]);
   });
@@ -64,7 +54,7 @@ async function askUpdate(version) {
   logger.info(
     JSON.stringify({
       ...updater,
-      ver: ver,
+      ver,
     }),
   );
   if (skip && version === ver) return;
