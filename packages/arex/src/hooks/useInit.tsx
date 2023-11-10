@@ -39,14 +39,12 @@ const useInit = () => {
     if (needAuthorization) {
       const [workspaceId] = id.split('-');
       const authorized = workspaces.map((ws) => ws.id).includes(workspaceId);
-      if (workspaceId !== activeWorkspaceId) {
-        if (authorized) {
-          setActiveWorkspaceId(workspaceId);
-          getCollections(workspaceId);
-          openPane();
-        } else {
-          message.error('No target workspace permissions');
-        }
+      if (workspaceId === activeWorkspaceId || (workspaceId !== activeWorkspaceId && authorized)) {
+        setActiveWorkspaceId(workspaceId);
+        getCollections(workspaceId);
+        openPane();
+      } else {
+        message.error('No target workspace permissions');
       }
     } else {
       openPane();
