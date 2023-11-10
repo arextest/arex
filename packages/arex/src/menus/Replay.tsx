@@ -96,18 +96,17 @@ const ReplayMenu: ArexMenuFC = (props) => {
     [activePane?.type, props.value],
   );
 
-  const {
-    data: favoriteApps,
-    loading: loadingFavoriteApp,
-    run: getFavoriteApps,
-  } = useRequest(() => UserService.getFavoriteApp(email), {
-    onSuccess(favoriteApps) {
-      if (!favoriteAppsInitialized) {
-        favoriteApps.length && disableFavoriteFilter();
-        setFavoriteAppsInitialized(true);
-      }
+  const { data: favoriteApps, run: getFavoriteApps } = useRequest(
+    () => UserService.getFavoriteApp(email),
+    {
+      onSuccess(favoriteApps) {
+        if (!favoriteAppsInitialized) {
+          favoriteApps.length && disableFavoriteFilter();
+          setFavoriteAppsInitialized(true);
+        }
+      },
     },
-  });
+  );
 
   const filter = useCallback(
     (keyword: string, app: ApplicationDataType) => {
@@ -120,21 +119,6 @@ const ReplayMenu: ArexMenuFC = (props) => {
     },
     [favoriteFilter, favoriteApps],
   );
-
-  /**
-   * 无效的 FavoriteApp 回收策略
-   * 1. 当 regressionList 接口响应慢于 getFavoriteApp 接口: 概率触发
-   * 2. 当手动刷新 regressionList 接口: 稳定触发
-   * @param apps
-   */
-  const recycleDiscard = (apps: ApplicationDataType[]) => {
-    const discard = favoriteApps?.filter((id) => apps.findIndex((app) => app.id === id) < 0);
-    if (discard?.length) {
-      Promise.all(
-        discard.map((id) => UserService.setUnFavoriteApp({ userName: email, favoriteApp: id })),
-      ).then((res) => res.length && getFavoriteApps());
-    }
-  };
 
   const handleSelect: MenuSelectProps<ApplicationDataType, any[]>['onSelect'] = (value) => {
     props.onSelect?.(value); // to streamline the params, remove the types from onSelect handler
@@ -179,9 +163,6 @@ const ReplayMenu: ArexMenuFC = (props) => {
         request={ApplicationService.getAppList}
         requestOptions={{
           refreshDeps: [timestamp], // refresh when delete app
-          onSuccess(res) {
-            !loadingFavoriteApp && recycleDiscard(res);
-          },
         }}
         filter={filter}
         itemRender={(app) => ({
