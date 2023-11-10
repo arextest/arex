@@ -56,7 +56,7 @@ const useInit = () => {
     i18n.changeLanguage(localStorage.getItem(I18_KEY) || DEFAULT_LANGUAGE);
 
     if (isClient) {
-      axios.get('https://api.github.com/repos/1pone/arex-release/releases/latest').then((res) => {
+      axios.get('https://api.github.com/repos/arextest/releases/releases/latest').then((res) => {
         const version = res.data.name;
         if (versionStringCompare(__APP_VERSION__, version) === -1) {
           pushMessage({

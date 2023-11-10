@@ -1,7 +1,7 @@
 import express from 'express';
 import logger from 'electron-log';
 
-import port from '../config/port.json'
+import port from '../config/port.json';
 
 const authServer = express();
 
