@@ -9,7 +9,7 @@ import { ACCESS_TOKEN_KEY, EMAIL_KEY, isClient, REFRESH_TOKEN_KEY } from '@/cons
 import request from '@/utils/request';
 
 export const redirectUri = isClient
-  ? `http://localhost:16887/oauth/`
+  ? `http://localhost:${__AUTH_PORT__}/oauth/`
   : window.location.origin + '/oauth/';
 
 const Auth = () => {

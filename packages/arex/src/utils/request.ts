@@ -38,6 +38,12 @@ export class Request {
         request.headers.set('access-token', accessToken);
         request.headers.set('appId', getLocalStorage<string>(APP_ID_KEY));
 
+        let path: string | undefined = undefined;
+        if ((path = this.proxyPath.find((path) => request.url?.startsWith(path)))) {
+          request.baseURL = proxy.find((item) => item.path === path)?.target;
+          request.url = request.url?.match(new RegExp(`(?<=${path}).*`))?.[0];
+        }
+
         return request;
       },
       (error) => Promise.reject(error),

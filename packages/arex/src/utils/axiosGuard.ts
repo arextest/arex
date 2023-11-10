@@ -42,7 +42,6 @@ if (isClientProd) {
   const proxyPath = proxy.map((item) => item.path);
   axios.interceptors.request.use(
     (request) => {
-      // 给请求头加键值对
       let path: string | undefined = undefined;
       if ((path = proxyPath.find((path) => request.url?.startsWith(path)))) {
         request.baseURL = proxy.find((item) => item.path === path)?.target;

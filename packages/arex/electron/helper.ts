@@ -1,9 +1,10 @@
 import { join } from 'path';
 import fs from 'fs';
-import { app } from 'electron';
+import { app, BrowserWindow } from 'electron';
+import path from 'node:path';
 const dataPath = join(app.getPath('userData'), 'data.json');
 
-export function getLocalData(key) {
+export function getLocalData(key?: string) {
   if (!fs.existsSync(dataPath)) {
     fs.writeFileSync(dataPath, JSON.stringify({}), { encoding: 'utf-8' });
   }
@@ -12,7 +13,7 @@ export function getLocalData(key) {
   return key ? json[key] : json;
 }
 
-export function setLocalData(key, value) {
+export function setLocalData(key: string | object, value?: any) {
   let args = [...arguments];
   let data = fs.readFileSync(dataPath, { encoding: 'utf-8' });
   let json = JSON.parse(data);
@@ -23,17 +24,29 @@ export function setLocalData(key, value) {
       ...json,
       ...args[0],
     };
-  } else {
+  } else if (typeof key === 'string') {
     json[key] = value;
   }
   fs.writeFileSync(dataPath, JSON.stringify(json), { encoding: 'utf-8' });
 }
 
-export async function sleep(ms) {
+export async function sleep(ms: number) {
   return new Promise((resolve) => {
     const timer = setTimeout(() => {
-      resolve();
+      resolve(undefined);
       clearTimeout(timer);
     }, ms);
   });
+}
+
+export function openWindow(win: BrowserWindow, pathname?: string) {
+  const devServerUrl = process.env.VITE_DEV_SERVER_URL?.slice(0, -1);
+  if (!!devServerUrl) {
+    win.loadURL(`${devServerUrl}${pathname ?? ''}`);
+  } else {
+    // win.loadFile('dist/index.html');
+    win.loadFile(path.join(process.env.DIST, `index.html`), {
+      hash: pathname,
+    });
+  }
 }

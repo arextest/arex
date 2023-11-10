@@ -1,13 +1,17 @@
+import 'dotenv/config';
+import './logger';
+
 import { app, BrowserWindow, globalShortcut, Menu } from 'electron';
 import { autoUpdateInit } from './autoUpdater';
 import path from 'node:path';
 import { oauth } from './oauthServer';
+import { openWindow } from './helper';
+import process from 'process';
 
 process.env.DIST = path.join(__dirname, '../dist');
 process.env.PUBLIC = app.isPackaged ? process.env.DIST : path.join(process.env.DIST, '../public');
 
 let win: BrowserWindow | null;
-const isDev = !!process.env['VITE_DEV_SERVER_URL'];
 
 // Menu.setApplicationMenu(null);
 
@@ -17,7 +21,7 @@ function createWindow() {
     frame: process.platform !== 'darwin',
     width: 1080,
     height: 720,
-    icon: path.join(process.env.PUBLIC, 'electron-vite.svg'),
+    icon: path.join(process.env.PUBLIC, 'logo.png'),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
@@ -36,12 +40,7 @@ function createWindow() {
     win.webContents.openDevTools();
   }
 
-  if (isDev) {
-    win.loadURL(process.env['VITE_DEV_SERVER_URL']);
-  } else {
-    // win.loadFile('dist/index.html');
-    win.loadFile(path.join(process.env.DIST, 'index.html'));
-  }
+  openWindow(win);
 
   // 监听主窗口失去焦点事件
   win.on('blur', () => {
@@ -66,8 +65,6 @@ app.whenReady().then(() => {
   createWindow();
   autoUpdateInit();
   oauth((pathname, code) => {
-    win.loadFile(path.join(process.env.DIST, `index.html`), {
-      hash: `${pathname}?code=${code}`,
-    });
+    openWindow(win, `${pathname}?code=${code}`);
   });
 });
