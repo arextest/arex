@@ -47,7 +47,7 @@ export async function queryNoise(planId: string) {
       const randomNoise = operation.randomNoise
         .map((noise) => ({
           ...noise,
-          // noiseItemList: noise.noiseItemList.filter((noiseItem) => noiseItem.status !== 1),
+          noiseItemList: noise.noiseItemList.filter((noiseItem) => noiseItem.status !== 1),
         }))
         .filter((noise) => noise.noiseItemList.length);
       return { ...operation, randomNoise };
