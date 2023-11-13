@@ -11,7 +11,7 @@ import proxy from './config/proxy.json';
 export default defineConfig(async ({ mode }) => ({
   define: {
     __APP_VERSION__: await import('./package.json').then((pkg) => JSON.stringify(pkg.version)),
-    __AUTH_PORT__: port.authPort,
+    __AUTH_PORT__: port.electronPort,
   },
   plugins: [
     svgr(),
