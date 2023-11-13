@@ -4,7 +4,7 @@ import xspy from 'xspy';
 
 import { isClient, isClientProd } from '@/constant';
 
-import proxy from '../../config/proxy.json';
+import port from '../../config/port.json';
 
 // chrome插件代理
 function AgentAxios<T>(params: any) {
@@ -39,20 +39,7 @@ function AgentAxios<T>(params: any) {
 }
 
 if (isClientProd) {
-  const proxyPath = proxy.map((item) => item.path);
-  axios.interceptors.request.use(
-    (request) => {
-      let path: string | undefined = undefined;
-      if ((path = proxyPath.find((path) => request.url?.startsWith(path)))) {
-        request.baseURL = proxy.find((item) => item.path === path)?.target;
-        request.url = request.url?.match(new RegExp(`(?<=${path}).*`))?.[0];
-      }
-      return request;
-    },
-    (error) => {
-      return Promise.reject(error.response);
-    },
-  );
+  axios.defaults.baseURL = 'http://localhost:' + port.electronPort;
 }
 
 if (!isClient) {

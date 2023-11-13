@@ -130,22 +130,22 @@ const SubScenesMenu: FC<SubSceneMenuProps> = (props) => {
               <div style={{ overflow: 'hidden' }}>{fullPath}</div>
 
               <div>
-                <TooltipButton
-                  type='link'
-                  size='small'
-                  icon={<HighlightOutlined />}
-                  title={t('replay.markExclusion')}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    props.onMarkExclusion?.({
-                      planId: props.planId,
-                      planItemId: props.planItemId,
-                      recordId: subScene.recordId,
-                      feedbackType: subScene.feedbackType,
-                      remark: subScene.remark,
-                    });
-                  }}
-                />
+                {/*<TooltipButton*/}
+                {/*  type='link'*/}
+                {/*  size='small'*/}
+                {/*  icon={<HighlightOutlined />}*/}
+                {/*  title={t('replay.markExclusion')}*/}
+                {/*  onClick={(e) => {*/}
+                {/*    e.stopPropagation();*/}
+                {/*    props.onMarkExclusion?.({*/}
+                {/*      planId: props.planId,*/}
+                {/*      planItemId: props.planItemId,*/}
+                {/*      recordId: subScene.recordId,*/}
+                {/*      feedbackType: subScene.feedbackType,*/}
+                {/*      remark: subScene.remark,*/}
+                {/*    });*/}
+                {/*  }}*/}
+                {/*/>*/}
 
                 <TooltipButton
                   type='link'
