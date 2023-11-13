@@ -7,7 +7,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Checkbox, Space, Spin } from 'antd';
+import { App, Button, Checkbox, Space } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
@@ -40,7 +40,10 @@ const CompareNoise: FC<CompareNoiseProps> = (props) => {
 
   const allChecked = useMemo(() => {
     const checkedCount = Object.values(selectNoise).reduce((count, noise) => {
-      count += noise.length;
+      count += noise.reduce((count, n) => {
+        count += n.noiseItemList.length;
+        return count;
+      }, 0);
       return count;
     }, 0);
     const allCount = noiseData.reduce((count, operationNoise) => {
@@ -50,12 +53,13 @@ const CompareNoise: FC<CompareNoiseProps> = (props) => {
       }, 0);
       return count + operationCount;
     }, 0);
-
     return !!allCount && checkedCount === allCount;
   }, [selectNoise, noiseData]);
 
   const indeterminate = useMemo(
-    () => !allChecked && Object.values(selectNoise).some((item) => item.length),
+    () =>
+      !allChecked &&
+      Object.values(selectNoise).some((item) => item.some((n) => n.noiseItemList.length)),
     [selectNoise, allChecked],
   );
 
@@ -81,29 +85,40 @@ const CompareNoise: FC<CompareNoiseProps> = (props) => {
   );
 
   const handleChecked = (value: string[], noise: InterfaceNoiseItem) => {
-    const checkedOperationNoise = value.map((item) => {
+    // 先根据 value 中的 index 进行聚合
+    const valueMap = value.reduce<{ [index: number]: string[] }>((map, item) => {
       const [path, indexStr] = item.split(Connector);
       const index = parseInt(indexStr);
-      return noise.randomNoise[index];
-    });
+      map[index] = map[index] || [];
+      map[index].push(path);
+      return map;
+    }, {});
 
+    // 再根据 valueMap 生成 checkedOperationNoise
+    const checkedOperationNoise = noise.randomNoise.map((randomNoise, index) => {
+      const noiseItemList = randomNoise.noiseItemList.filter((item) => {
+        const entityPath = item.nodeEntity.map((entityItem) => entityItem.nodeName).join('/');
+        return valueMap[index]?.includes(entityPath);
+      });
+      return {
+        ...randomNoise,
+        noiseItemList,
+      };
+    });
     setSelectNoise((state) => {
       state[noise.operationId] = checkedOperationNoise;
     });
   };
 
   const handleToggleCheckAll = () => {
-    Array.from(document.getElementsByClassName(`denoise-checkbox-${props.appId}`)).forEach(
-      (checkbox) => {
-        indeterminate
-          ? // @ts-ignore
-            !checkbox.getElementsByClassName('ant-checkbox-input')?.[0]?.checked &&
-            // @ts-ignore
-            checkbox.click?.()
-          : // @ts-ignore
-            checkbox.click?.();
-      },
-    );
+    !allChecked
+      ? setSelectNoise(
+          noiseData.reduce<{ [operationId: string]: RandomNoise[] }>((map, data) => {
+            map[data.operationId] = data.randomNoise;
+            return map;
+          }, {}),
+        )
+      : setSelectNoise({});
   };
 
   const handleSave = () => {
@@ -119,7 +134,14 @@ const CompareNoise: FC<CompareNoiseProps> = (props) => {
       [],
     );
 
-    interfaceNoiseItemList.length && excludeNoise(interfaceNoiseItemList);
+    // 过滤 interfaceNoiseItemList 中 noiseItemList 为空的项
+    const interfaceNoiseItemListFilter = interfaceNoiseItemList
+      .map((item) => ({
+        ...item,
+        randomNoise: item.randomNoise.filter((noise) => noise.noiseItemList.length),
+      }))
+      .filter((item) => item.randomNoise.length);
+    interfaceNoiseItemListFilter.length && excludeNoise(interfaceNoiseItemListFilter);
   };
 
   const handleClose = () => {
@@ -175,6 +197,7 @@ const CompareNoise: FC<CompareNoiseProps> = (props) => {
             {noiseData.map((noise) => (
               <CompareNoiseOperationItem
                 key={noise.operationId}
+                value={selectNoise[noise.operationId]}
                 appId={props.appId}
                 noise={noise}
                 onChange={(value) => handleChecked(value, noise)}
