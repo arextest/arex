@@ -1,4 +1,4 @@
 {
-  "authPort": 16887,
+  "electronPort": 16887,
   "vitePort": 16888
 }
