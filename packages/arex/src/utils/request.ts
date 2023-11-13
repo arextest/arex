@@ -3,8 +3,8 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { ACCESS_TOKEN_KEY, APP_ID_KEY, isClientProd } from '@/constant';
 
-import proxy from '../../config/proxy.json';
 import port from '../../config/port.json';
+import proxy from '../../config/proxy.json';
 
 type IRequestConfig<T = AxiosResponse> = AxiosRequestConfig;
 
