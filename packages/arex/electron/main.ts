@@ -1,10 +1,9 @@
-import 'dotenv/config';
 import './logger';
 
 import { app, BrowserWindow, globalShortcut, Menu } from 'electron';
 import { autoUpdateInit } from './autoUpdater';
 import path from 'node:path';
-import { oauth } from './oauthServer';
+import { oauth } from './server';
 import { openWindow } from './helper';
 import process from 'process';
 
