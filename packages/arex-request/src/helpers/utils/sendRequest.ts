@@ -1,23 +1,13 @@
 import sdk from 'postman-collection';
 
-import {
-  ArexEnvironment,
-  ArexRESTRequest,
-  ArexRESTResponse,
-  ArexTestResult,
-  ArexVisualizer,
-} from '../../types';
+import { ArexEnvironment, ArexRESTRequest } from '../../types';
+import { ArexResponse } from '../../types/ArexResponse';
 import { convertToPmBody } from './convertToPmBody';
 
 export async function sendRequest(
   request: ArexRESTRequest,
   environment?: ArexEnvironment,
-): Promise<{
-  response: ArexRESTResponse;
-  testResult: ArexTestResult[];
-  consoles: any[];
-  visualizer: ArexVisualizer;
-}> {
+): Promise<ArexResponse> {
   // @ts-ignore
   const runner = new window.PostmanRuntime.Runner();
   // arex数据接口转postman数据结构
