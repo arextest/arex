@@ -20,7 +20,7 @@ export interface QueryRecordSettingRes {
   excludeServiceOperationSet: string[];
   recordMachineCountLimit?: number;
   serializeSkipInfoList?: SerializeSkipInfo[] | null;
-  extendField?: { includeServiceOperations: string } | null;
+  extendField?: { includeServiceOperations?: string } | null;
 }
 
 export async function queryRecordSetting(params: QueryRecordSettingReq) {
