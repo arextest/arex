@@ -2,6 +2,7 @@ import { request } from '@/utils';
 
 export type QueryPlanStatisticsReq = {
   appId?: string;
+  planId?: string;
   needTotal: boolean;
   pageIndex: number;
   pageSize: number;
@@ -50,11 +51,15 @@ export type QueryPlanStatisticsRes = {
 };
 
 export async function queryPlanStatistics(
-  params: { current?: number; pageSize?: number } & Pick<QueryPlanStatisticsReq, 'appId'>,
+  params: { current?: number; pageSize?: number } & Pick<
+    QueryPlanStatisticsReq,
+    'appId' | 'planId'
+  >,
 ) {
-  const { current, pageSize, appId } = params; // current, pageSize is used for usePagination hook
+  const { current, pageSize, appId, planId } = params; // current, pageSize is used for usePagination hook
   const requestParams = {
     appId,
+    planId,
     needTotal: true,
     pageIndex: current,
     pageSize,

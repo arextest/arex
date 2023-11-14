@@ -13,6 +13,7 @@ const GitHubStarButton: FC = () => {
         <Button
           size='small'
           icon={<GithubOutlined />}
+          target='_blank'
           href={'https://github.com/arextest/arex-agent-java'}
           style={data && { borderBottomRightRadius: 0, borderTopRightRadius: 0 }}
         >
@@ -22,6 +23,7 @@ const GitHubStarButton: FC = () => {
         {data && (
           <Button
             size='small'
+            target='_blank'
             href={'https://github.com/arextest/arex-agent-java/stargazers'}
             style={{ borderBottomLeftRadius: 0, borderTopLeftRadius: 0, left: -1 }}
           >

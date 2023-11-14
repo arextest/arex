@@ -7,5 +7,7 @@
   "browserAgent": "Browser Agent",
   "moreNode": "Additional node",
   "differenceNode": "Difference node",
-  "newTag": "New Tag"
+  "newTag": "New Tag",
+  "base64DecodeContent": "Base64 decode content",
+  "failedToDecodeBase64": "Failed to decode Base64"
 }

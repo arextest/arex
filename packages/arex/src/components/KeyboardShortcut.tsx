@@ -323,7 +323,9 @@ const KeyboardShortcut = React.memo(() => {
       open={openKeyboardShortcut}
       title={t('shortcuts')}
       onClose={handleClose}
-      headerStyle={{ height: '46px', padding: '7px', flex: 'none' }}
+      styles={{
+        header: { height: '46px', padding: '7px', flex: 'none' },
+      }}
     >
       <Input
         onChange={handleChange}

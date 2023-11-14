@@ -192,6 +192,7 @@ const DiffPathViewer: FC<DiffPathViewerProps> = (props) => {
           ) : (
             <div style={{ position: 'relative', margin: `${token.marginXS}px`, height: '100%' }}>
               <DiffJsonView
+                nodeDecode
                 hiddenTooltip
                 readOnly={props.contextMenuDisabled}
                 encrypted={encrypted}

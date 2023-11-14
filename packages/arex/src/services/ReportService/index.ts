@@ -9,6 +9,7 @@ export * from './queryFullLinkInfo';
 export * from './queryLogs';
 export * from './queryMsgWithDiff';
 export * from './queryPlanFailCase';
+export * from './queryPlanItemStatistic';
 export * from './queryPlanItemStatistics';
 export * from './queryPlanStatistics';
 export * from './queryRecordCount';

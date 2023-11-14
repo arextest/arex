@@ -2,7 +2,8 @@ import { useTranslation } from '@arextest/arex-core';
 import { Modal } from 'antd';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
-import AppOwners from '@/panes/AppSetting/Other/AppOwners';
+import AppBasicSetup from '@/panes/AppSetting/Other/AppBasicSetup';
+import { CreateAppReq } from '@/services/ApplicationService';
 
 export type AppOwnerConfigProps = {
   appId: string;
@@ -19,10 +20,10 @@ const AppOwnersConfig = forwardRef<AppOwnerConfigRef, AppOwnerConfigProps>((prop
 
   const [open, setOpen] = useState(false);
 
-  const handleClose = (owners?: string[]) => {
+  const handleClose = (params?: Partial<CreateAppReq>) => {
     setOpen(false);
     props.onClose?.();
-    Array.isArray(owners) && props.onAddOwner?.(owners);
+    Array.isArray(params?.owners) && props.onAddOwner?.(params!.owners);
   };
 
   useImperativeHandle(ref, () => ({
@@ -37,7 +38,11 @@ const AppOwnersConfig = forwardRef<AppOwnerConfigRef, AppOwnerConfigProps>((prop
       style={{ top: 160 }}
       onCancel={() => handleClose()}
     >
-      <AppOwners appId={props.appId} inline={false} onAddOwner={handleClose} />
+      <AppBasicSetup
+        appId={props.appId}
+        hidden={{ appName: true, visibilityLevel: true }}
+        onModify={handleClose}
+      />
     </Modal>
   );
 });

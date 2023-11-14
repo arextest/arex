@@ -1,4 +1,3 @@
-import { HomeOutlined } from '@ant-design/icons';
 import {
   ArexPaneFC,
   clearLocalStorage,
@@ -7,7 +6,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { Badge, Button, Tabs, theme } from 'antd';
+import { Badge, Breadcrumb, Spin, Tabs, theme } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
 
 import { APP_ID_KEY, PanesType } from '@/constant';
@@ -19,12 +18,19 @@ import { useMenusPanes } from '@/store';
 import CaseDetailTab from './CaseDetailTab';
 
 type TagType = { label: ReactNode; key: string; children: ReactNode };
+type ReplayCaseDetailData = ReplayCaseType & {
+  appId: string;
+  planId: string;
+  appName: string;
+  planItemId: string;
+  operationName: string | null;
+};
 
-const ReplayCaseDetail: ArexPaneFC<ReplayCaseType & { appId: string }> = (props) => {
-  const { token } = theme.useToken();
-  const { t } = useTranslation(['components']);
-  const { activePane } = useMenusPanes();
+const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
   const navPane = useNavPane();
+  const { token } = theme.useToken();
+  const { activePane } = useMenusPanes();
+  const { t } = useTranslation('components');
 
   const [tabItems, setTabItems] = useState<TagType[]>([]);
 
@@ -33,7 +39,7 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseType & { appId: string }> = (props)
     return () => clearLocalStorage(APP_ID_KEY);
   }, [activePane?.id]);
 
-  useRequest(ReportService.viewRecord, {
+  const { loading } = useRequest(ReportService.viewRecord, {
     defaultParams: [
       {
         recordId: props.data.recordId,
@@ -75,24 +81,41 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseType & { appId: string }> = (props)
 
   return (
     <>
-      <PanesTitle
-        title={`RecordId: ${props.data.recordId}`}
-        extra={
-          <Button
-            size='small'
-            icon={<HomeOutlined />}
-            onClick={() =>
+      <Breadcrumb
+        separator='>'
+        items={[
+          {
+            key: props.data.appId,
+            title: <a>{props.data.appName || props.data.appId}</a>,
+            onClick: () =>
               navPane({
                 type: PanesType.REPLAY,
                 id: props.data.appId,
-              })
-            }
-          >
-            {t('replay.replayReport')}
-          </Button>
-        }
+                data: {
+                  planId: props.data.planId,
+                  planItemId: props.data.planItemId,
+                },
+              }),
+          },
+          {
+            key: props.data.planItemId,
+            title: <a>{props.data.operationName || 'unknown'}</a>,
+            onClick: () =>
+              navPane({
+                type: PanesType.REPLAY_CASE,
+                id: props.data.planItemId,
+              }),
+          },
+          {
+            key: props.data.recordId,
+            title: props.data.recordId,
+          },
+        ]}
       />
-      <Tabs items={tabItems} />
+      <PanesTitle title={`${t('replay.recordId')}: ${props.data.recordId}`} />
+      <Spin spinning={loading}>
+        <Tabs items={tabItems} />
+      </Spin>
     </>
   );
 };

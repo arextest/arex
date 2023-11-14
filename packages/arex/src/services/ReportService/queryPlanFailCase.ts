@@ -1,4 +1,4 @@
-import { PlanItemStatistics } from '@/services/ReportService/queryPlanItemStatistics';
+import { PlanItemStatistic } from '@/services/ReportService/queryPlanItemStatistics';
 import { request } from '@/utils';
 
 export type QueryPlanFailCaseReq = {
@@ -19,7 +19,7 @@ export type QueryPlanFailCaseRes = {
 
 export async function queryPlanFailCase(
   params: Omit<QueryPlanFailCaseReq, 'diffResultCodeList'>,
-  operationName?: PlanItemStatistics['operationName'],
+  operationName?: PlanItemStatistic['operationName'],
 ) {
   return request
     .post<QueryPlanFailCaseRes>('/report/report/queryPlanFailCase', {

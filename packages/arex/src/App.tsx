@@ -1,4 +1,6 @@
+import { LoadingOutlined } from '@ant-design/icons';
 import { ArexCoreProvider, ArexMenuManager, ArexPaneManager } from '@arextest/arex-core';
+import { Spin } from 'antd';
 import React from 'react';
 
 import { useAuthentication, useTrace } from './hooks';
@@ -8,6 +10,9 @@ import Panes from './panes';
 import Routes from './router';
 import { useUserProfile } from './store';
 import GlobalStyle from './style/GlobalStyle';
+
+// set default loading indicator
+Spin.setDefaultIndicator(<LoadingOutlined spin />);
 
 // register menus and panes
 ArexPaneManager.registerPanes(Panes);

@@ -9,11 +9,12 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest, useSize, useToggle } from 'ahooks';
-import { App, Button, Form, FormProps, Input, Modal, theme } from 'antd';
+import { Modal, theme } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { MenuSelect, MenuSelectProps } from '@/components';
 import { EMAIL_KEY, MenusType, PanesType } from '@/constant';
+import AppBasicSetup from '@/panes/AppSetting/Other/AppBasicSetup';
 import { ApplicationService, UserService } from '@/services';
 import { ApplicationDataType } from '@/services/ApplicationService';
 import { useApplication, useMenusPanes } from '@/store';
@@ -77,7 +78,6 @@ const MenuItem = styled((props: MenuItemProps) => {
 `;
 
 const ReplayMenu: ArexMenuFC = (props) => {
-  const { message } = App.useApp();
   const { t } = useTranslation(['components']);
   const { activePane } = useMenusPanes();
   const size = useSize(() => document.getElementById('arex-menu-wrapper'));
@@ -86,7 +86,7 @@ const ReplayMenu: ArexMenuFC = (props) => {
 
   const { token } = theme.useToken();
   const email = getLocalStorage<string>(EMAIL_KEY) as string;
-  const { timestamp, setTimestamp } = useApplication();
+  const { timestamp } = useApplication();
 
   const [favoriteFilter, { toggle: toggleFavoriteFilter, setRight: disableFavoriteFilter }] =
     useToggle(false);
@@ -96,18 +96,17 @@ const ReplayMenu: ArexMenuFC = (props) => {
     [activePane?.type, props.value],
   );
 
-  const {
-    data: favoriteApps,
-    loading: loadingFavoriteApp,
-    run: getFavoriteApps,
-  } = useRequest(() => UserService.getFavoriteApp(email), {
-    onSuccess(favoriteApps) {
-      if (!favoriteAppsInitialized) {
-        favoriteApps.length && disableFavoriteFilter();
-        setFavoriteAppsInitialized(true);
-      }
+  const { data: favoriteApps, run: getFavoriteApps } = useRequest(
+    () => UserService.getFavoriteApp(email),
+    {
+      onSuccess(favoriteApps) {
+        if (!favoriteAppsInitialized) {
+          favoriteApps.length && disableFavoriteFilter();
+          setFavoriteAppsInitialized(true);
+        }
+      },
     },
-  });
+  );
 
   const filter = useCallback(
     (keyword: string, app: ApplicationDataType) => {
@@ -121,53 +120,11 @@ const ReplayMenu: ArexMenuFC = (props) => {
     [favoriteFilter, favoriteApps],
   );
 
-  /**
-   * 无效的 FavoriteApp 回收策略
-   * 1. 当 regressionList 接口响应慢于 getFavoriteApp 接口: 概率触发
-   * 2. 当手动刷新 regressionList 接口: 稳定触发
-   * @param apps
-   */
-  const recycleDiscard = (apps: ApplicationDataType[]) => {
-    const discard = favoriteApps?.filter((id) => apps.findIndex((app) => app.id === id) < 0);
-    if (discard?.length) {
-      Promise.all(
-        discard.map((id) => UserService.setUnFavoriteApp({ userName: email, favoriteApp: id })),
-      ).then((res) => res.length && getFavoriteApps());
-    }
-  };
-
   const handleSelect: MenuSelectProps<ApplicationDataType, any[]>['onSelect'] = (value) => {
     props.onSelect?.(value); // to streamline the params, remove the types from onSelect handler
   };
 
   const [open, setOpen] = useState(false);
-  const { run: createApp } = useRequest(ApplicationService.createApp, {
-    manual: true,
-    onSuccess(res) {
-      if (res.success) {
-        setOpen(false);
-        setTimestamp(Date.now());
-        message.success(
-          t('message.createSuccess', {
-            ns: 'common',
-          }),
-        );
-      } else {
-        message.error(
-          t('message.createFailed', {
-            ns: 'common',
-          }),
-        );
-      }
-    },
-  });
-
-  const handleAddApp: FormProps<{ appName: string }>['onFinish'] = (value) => {
-    createApp({
-      appName: value.appName,
-      owners: [email],
-    });
-  };
 
   return (
     <div style={{ padding: '8px' }}>
@@ -206,9 +163,6 @@ const ReplayMenu: ArexMenuFC = (props) => {
         request={ApplicationService.getAppList}
         requestOptions={{
           refreshDeps: [timestamp], // refresh when delete app
-          onSuccess(res) {
-            !loadingFavoriteApp && recycleDiscard(res);
-          },
         }}
         filter={filter}
         itemRender={(app) => ({
@@ -237,27 +191,7 @@ const ReplayMenu: ArexMenuFC = (props) => {
         footer={null}
         onCancel={() => setOpen(false)}
       >
-        <Form name='create-app' onFinish={handleAddApp}>
-          <Form.Item
-            label={t('applicationsMenu.appName')}
-            name='appName'
-            rules={[
-              {
-                required: true,
-                type: 'string',
-                message: t('applicationsMenu.appNameEmptyTip') as string,
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item style={{ textAlign: 'right' }}>
-            <Button type='primary' htmlType='submit'>
-              {t('create', { ns: 'common' })}
-            </Button>
-          </Form.Item>
-        </Form>
+        <AppBasicSetup hidden={{ owners: true }} onCreate={() => setOpen(false)} />
       </Modal>
     </div>
   );

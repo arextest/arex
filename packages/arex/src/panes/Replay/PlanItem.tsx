@@ -6,15 +6,19 @@ import Icon, {
   FileTextOutlined,
   RedoOutlined,
   SearchOutlined,
+  ShareAltOutlined,
   StopOutlined,
 } from '@ant-design/icons';
 import { ReplayLogsDrawer } from '@arextest/arex-common';
 import {
+  copyToClipboard,
   getLocalStorage,
+  HighlightRowTable,
   i18n,
   I18nextLng,
   SpaceBetweenWrapper,
   TooltipButton,
+  useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
 import { css } from '@emotion/react';
@@ -30,7 +34,6 @@ import {
   Row,
   Space,
   Statistic,
-  Table,
   theme,
   Tooltip,
   Typography,
@@ -44,8 +47,9 @@ import CountUp from 'react-countup';
 import { StatusTag } from '@/components';
 import { EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
+import CompareNoise from '@/panes/Replay/CompareNoise';
 import { ReportService, ScheduleService } from '@/services';
-import { PlanItemStatistics, PlanStatistics } from '@/services/ReportService';
+import { PlanItemStatistic, PlanStatistics } from '@/services/ReportService';
 import { MessageMap } from '@/services/ScheduleService';
 import { useMenusPanes } from '@/store';
 import IconLog from '~icons/octicon/log-24';
@@ -69,7 +73,7 @@ export type ReplayPlanItemProps = {
   appId: string;
   selectedPlan?: PlanStatistics;
   readOnly?: boolean;
-  filter?: (record: PlanItemStatistics) => boolean;
+  filter?: (record: PlanItemStatistic) => boolean;
   onRefresh?: () => void;
 };
 
@@ -162,7 +166,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   );
 
   const CaseCountRender = useCallback(
-    (count: number, record: PlanItemStatistics, status?: 0 | 1 | 2, readOnly: boolean = false) =>
+    (count: number, record: PlanItemStatistic, status?: 0 | 1 | 2, readOnly: boolean = false) =>
       React.createElement(
         readOnly ? 'div' : Button,
         readOnly
@@ -174,7 +178,8 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
                 navPane({
                   type: PanesType.REPLAY_CASE,
                   id: record.planItemId,
-                  data: { ...record, filter: status },
+                  // data: { ...record, filter: status },
+                  data: { filter: status }, // fetch PlanItemStatistic data in ReplayCase instead of passing it
                 });
               },
             },
@@ -194,8 +199,8 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   );
 
   const searchInput = useRef<InputRef>(null);
-  const columns = useMemo<ColumnsType<PlanItemStatistics>>(() => {
-    const _columns: ColumnsType<PlanItemStatistics> = [
+  const columns = useMemo<ColumnsType<PlanItemStatistic>>(() => {
+    const _columns: ColumnsType<PlanItemStatistic> = [
       // {
       //   title: t('replay.planItemID'),
       //   dataIndex: 'planItemId',
@@ -336,7 +341,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
                 navPane({
                   type: PanesType.REPLAY_CASE,
                   id: record.planItemId,
-                  data: record,
+                  // data: record,
                 });
               }}
             />
@@ -429,7 +434,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
     },
   });
 
-  const [ReplayLogsDrawerOpen, setReplayLogsDrawerOpen] = useState(false);
+  const [replayLogsDrawerOpen, setReplayLogsDrawerOpen] = useState(false);
 
   const extraMenuItems = useMemo(
     () => [
@@ -475,15 +480,54 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
     [planItemData, selectedPlan],
   );
 
+  const [selectPlanItemKey, setSelectPlanItemKey] = useState<string>();
+  const { data } = useArexPaneProps<{ planId: string; planItemId: string }>();
+
+  useEffect(() => {
+    setSelectPlanItemKey(undefined);
+  }, [data?.planId]);
+  useEffect(() => {
+    data?.planItemId && setSelectPlanItemKey(data?.planItemId);
+  }, [data?.planItemId]);
+
+  const handleSelectPlanItem = (record: PlanItemStatistic) => {
+    setSelectPlanItemKey(record.planItemId);
+  };
+
+  const handleSharePlan = () => {
+    if (props.selectedPlan?.planId) {
+      copyToClipboard(
+        window.location.origin +
+          window.location.pathname +
+          `?planId=${props.selectedPlan?.planId}` +
+          (selectPlanItemKey ? `&planItemId=${selectPlanItemKey}` : ''),
+      );
+      message.success(t('message.copySuccess', { ns: 'common' }));
+    } else {
+      message.warning(t('message.copyFailed', { ns: 'common' }));
+    }
+  };
+
   if (!selectedPlan) return null;
 
   return (
     <Card
       bordered={false}
       size='small'
-      title={`${t('replay.report')}: ${selectedPlan.planName}`}
+      title={
+        <>
+          {`${t('replay.report')}: ${selectedPlan.planName}`}
+          <Button size='small' type='link' icon={<ShareAltOutlined />} onClick={handleSharePlan} />
+        </>
+      }
       extra={
         <Space>
+          <CompareNoise
+            appId={props.appId}
+            planId={selectedPlan.planId}
+            readOnly={props.readOnly}
+          />
+
           <Button
             type='link'
             size='small'
@@ -601,16 +645,20 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
 
       <br />
 
-      <Table
+      <HighlightRowTable
         size='small'
         rowKey='planItemId'
+        restHighlight={false}
         loading={loadingData}
         columns={columns}
+        selectKey={selectPlanItemKey}
         dataSource={planItemDataFiltered}
+        onRowClick={handleSelectPlanItem}
       />
+
       <ReplayLogsDrawer
         planId={selectedPlan?.planId}
-        open={ReplayLogsDrawerOpen}
+        open={replayLogsDrawerOpen}
         request={ScheduleService.queryLogs}
         onClose={() => {
           setReplayLogsDrawerOpen(false);

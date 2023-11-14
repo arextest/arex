@@ -43,6 +43,8 @@ export const ExtensionVersion = '1.0.4';
 export const ArexVersionKey = 'arexVersion';
 export const ArexVersionValue = '0.4.1';
 
+export const Connector = '-_-';
+
 // localStorage key
 export const THEME_KEY = 'theme';
 export const USER_PROFILE_KEY = 'userProfile';
@@ -70,9 +72,7 @@ export const AREX_OPEN_NEW_PANEL = 'arexOpenNewPanel';
 
 // electron client
 export const isClient = import.meta.env.MODE === 'electron';
-export const isClientDev =
-  import.meta.env.MODE === 'electron' && import.meta.env['VITE_DEV_SERVER_URL'];
-export const isClientProd =
-  import.meta.env.MODE === 'electron' && !import.meta.env['VITE_DEV_SERVER_URL'];
+export const isClientDev = isClient && import.meta.env.DEV;
+export const isClientProd = isClient && import.meta.env.PROD;
 
 export const isMac = window.platform === 'darwin';

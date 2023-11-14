@@ -1,3 +1,4 @@
+import { AppVisibilityLevel } from '@/services/ApplicationService/createApp';
 import { request } from '@/utils';
 
 export type ApplicationDataType = {
@@ -17,6 +18,7 @@ export type ApplicationDataType = {
   owners?: string[];
   organizationName: string;
   recordedCaseCount: number;
+  visibilityLevel: AppVisibilityLevel;
 };
 
 export type RegressionListRes = Array<{
@@ -32,5 +34,5 @@ export type RegressionListRes = Array<{
 export async function getAppList() {
   return request
     .get<RegressionListRes>('/report/config/application/regressionList')
-    .then((res) => Promise.resolve(res.body.map((item) => item.application)));
+    .then((res) => Promise.resolve(res.body?.map((item) => item.application) || []));
 }

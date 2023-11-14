@@ -16,7 +16,7 @@ const MacDraggableArea: FC<MacDraggableAreaProps> = (props) => {
         background: debug ? 'red' : 'transparent',
         width: '100%',
         height,
-        '-webkit-app-region': 'drag',
+        WebkitAppRegion: 'drag',
         zIndex: -1,
       }}
     />

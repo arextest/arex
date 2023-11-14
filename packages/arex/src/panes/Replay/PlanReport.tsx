@@ -3,6 +3,7 @@ import {
   FullHeightSpin,
   HighlightRowTable,
   HighlightRowTableProps,
+  useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
 import { usePagination } from 'ahooks';
@@ -18,15 +19,17 @@ import { PlanStatistics } from '@/services/ReportService';
 import { useMenusPanes } from '@/store';
 
 const defaultPageSize = 5 as const;
+const defaultCurrent = 1 as const;
 
 export type PlanReportProps = {
   appId?: string;
   refreshDep?: React.Key;
+  recordCount?: number;
   onSelectedPlanChange: (selectedPlan: PlanStatistics, current?: number, row?: number) => void;
 };
 
 const PlanReport: FC<PlanReportProps> = (props) => {
-  const { appId, refreshDep, onSelectedPlanChange } = props;
+  const { appId, refreshDep, recordCount, onSelectedPlanChange } = props;
   const { activePane } = useMenusPanes();
 
   const { token } = theme.useToken();
@@ -34,10 +37,9 @@ const PlanReport: FC<PlanReportProps> = (props) => {
   const [searchParams] = useSearchParams();
   const [init, setInit] = useState(true);
 
-  const defaultPagination = {
-    defaultCurrent: parseInt(searchParams.get('current') || '1'),
-    defaultRow: parseInt(searchParams.get('row') || '0'),
-  };
+  const { data } = useArexPaneProps<{
+    planId: string;
+  }>();
 
   const columns: ColumnsType<PlanStatistics> = [
     {
@@ -136,6 +138,7 @@ const PlanReport: FC<PlanReportProps> = (props) => {
     (params) =>
       ReportService.queryPlanStatistics({
         appId,
+        planId: data?.planId || undefined,
         ...params,
       }),
     {
@@ -143,17 +146,20 @@ const PlanReport: FC<PlanReportProps> = (props) => {
       loadingDelay: 200,
       pollingInterval: 6000,
       defaultPageSize,
-      defaultCurrent: defaultPagination.defaultCurrent,
-      refreshDeps: [appId, refreshDep],
+      defaultCurrent,
+      refreshDeps: [appId, refreshDep, data?.planId],
       onSuccess({ list }) {
         if (init) {
           list.length && onSelectedPlanChange(list[parseInt(searchParams.get('row') || '0')]);
           setInit(false); // 设置第一次初始化标识);
         }
+
         if (list.every((record) => record.status !== 1)) {
           setPollingInterval(false);
           cancelPollingInterval();
         }
+
+        handleRowClick?.(list[0], 1);
       },
     },
   );
@@ -168,7 +174,9 @@ const PlanReport: FC<PlanReportProps> = (props) => {
     }
   }, [activePane, props.appId]);
 
+  const [selectKey, setSelectKey] = useState<string>();
   const handleRowClick: HighlightRowTableProps<PlanStatistics>['onRowClick'] = (record, index) => {
+    setSelectKey(record.planId);
     onSelectedPlanChange(record, pagination.current, index);
   };
 
@@ -179,7 +187,8 @@ const PlanReport: FC<PlanReportProps> = (props) => {
       // 为了 defaultCurrent 和 defaultRow 生效，需在初次获取到数据后再挂载子组件
       mountOnFirstLoading={false}
     >
-      {!init && !loading && !planStatistics.length ? (
+      {/* display agentScript only when recordCount and planStatistics is empty */}
+      {!init && !loading && !planStatistics.length && !recordCount ? (
         <Card>
           <Typography.Title level={5}>
             <WarningOutlined /> {t('replay.noRecordCountTip')}
@@ -194,11 +203,10 @@ const PlanReport: FC<PlanReportProps> = (props) => {
           size='small'
           loading={loading}
           columns={columns}
+          selectKey={selectKey}
           pagination={pagination}
           onRowClick={handleRowClick}
           dataSource={planStatistics}
-          defaultCurrent={defaultPagination.defaultCurrent}
-          defaultRow={defaultPagination.defaultRow}
           sx={{
             '.ant-table-cell-ellipsis': {
               color: token.colorPrimary,

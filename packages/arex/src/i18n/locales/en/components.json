@@ -42,8 +42,6 @@
     "newCreate": "New"
   },
   "applicationsMenu": {
-    "appName": "App Name",
-    "appNameEmptyTip": "The application name cannot be empty",
     "createApp": "Create Application",
     "filterFavoriteApps": "Filter Favorite Apps",
     "appFilterPlaceholder": "Search Applications"
@@ -70,6 +68,7 @@
     "selectApplication": "Please select an application",
     "appSetting": "AppSetting",
     "refresh": "refresh",
+    "searchForPlanId" :"Search for planId",
     "startSuccess": "Started Successfully",
     "startFailed": "Start Failed",
     "startButton": "Start replay",
@@ -110,6 +109,7 @@
     "timeConsumed": "Time consumed(s)",
     "cases": "Cases",
     "action": "Action",
+    "denoise": "Diff Denoise",
     "logs": "Execution Logs",
     "retry": "Retry",
     "rerun": "Rerun",
@@ -186,10 +186,12 @@
     "addOwner": "Add application owner",
     "noRecordCountTip": "No recording data is available at this time, try starting Agent recording with the following command",
     "viewAll": "View All",
-    "markExclusion": "Mark Exclusion",
+    "markExclusion": "Check Exclusion",
+    "marked": "Checked",
+    "allMarked": "All Checked",
     "exclusionType": "ExclusionType",
     "bug": "Bug",
-    "meetExpectation":  "Meet Expectation",
+    "asExpectation":  "As Expectation",
     "arexProblem": "Arex Problem",
     "remark":  "Remark"
   },
@@ -267,6 +269,12 @@
     "other": "Other",
     "dangerZone": "Danger Zone",
     "owners": "Owners",
+    "appBasicSetup": "App Basic Setup",
+    "appName": "App Name",
+    "appNameEmptyTip": "The application name cannot be empty",
+    "visibilityLevel": "Level",
+    "public": "Public",
+    "private": "Private",
     "deleteApp": "Delete App",
     "deleteThisApp": "Delete this App",
     "deleteTip": "Once you delete an app, there is no going back. Please be certain.",
@@ -361,6 +369,12 @@
     "jarFileUrl": "JarFileUrl",
     "replayCallback": "ReplayCallback",
     "replayCallbackUrl": "ReplayCallbackUrl",
-    "version": "Version"
+    "application": "Application",
+    "version": "Version",
+    "checkUpdate": "Check for updates",
+    "isLatest": "It's already the latest version",
+    "newVersionDetected": "New version detected",
+    "startDownload": "Download about to start...",
+    "checkFailed": "Check for updates failed, please try again"
   }
 }

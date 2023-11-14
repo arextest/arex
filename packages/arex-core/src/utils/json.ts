@@ -6,18 +6,20 @@ export function tryParseJsonString<T>(jsonString?: any, errorTip?: string) {
   } catch (e) {
     console.error(e);
     errorTip && window.message.warning(errorTip);
+    return jsonString;
   }
 }
 
 export const tryStringifyJson = (
-  jsonString: object | null | undefined,
+  json: object | null | undefined,
   errorTip?: string,
   prettier?: boolean,
 ) => {
   try {
-    return stringify(jsonString, undefined, prettier ? 2 : undefined);
+    return stringify(json, undefined, prettier ? 2 : undefined);
   } catch (e) {
     errorTip && window.message.warning(errorTip);
+    return String(json);
   }
 };
 

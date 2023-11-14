@@ -49,7 +49,9 @@
     "saveSuccess": "保存成功",
     "saveFailed": "保存失败",
     "createSuccess": "创建成功",
-    "createFailed": "创建失败"
+    "createFailed": "创建失败",
+    "copySuccess": "复制成功",
+    "copyFailed": "复制失败"
   },
   "collection": "集合",
   "replay": "回放",
@@ -75,5 +77,6 @@
   "dateRangePreset": {
     "quickPick": "快速选择",
     "1d": "近一天"
-  }
+  },
+  "checkAll": "选择全部"
 }

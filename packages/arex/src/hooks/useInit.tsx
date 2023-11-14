@@ -1,11 +1,12 @@
 import { decodeUrl, encodeUrl, I18_KEY, i18n, StandardPathParams } from '@arextest/arex-core';
 import { App } from 'antd';
+import axios from 'axios';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { DEFAULT_LANGUAGE, PanesType } from '@/constant';
-import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
-import { globalStoreInit } from '@/utils';
+import { DEFAULT_LANGUAGE, isClient, PanesType } from '@/constant';
+import { useCollections, useMenusPanes, useMessageQueue, useWorkspaces } from '@/store';
+import { globalStoreInit, versionStringCompare } from '@/utils';
 
 const useInit = () => {
   const { message } = App.useApp();
@@ -13,6 +14,7 @@ const useInit = () => {
   const { getCollections } = useCollections();
   const { workspaces, activeWorkspaceId, setActiveWorkspaceId } = useWorkspaces();
   const nav = useNavigate();
+  const { pushMessage } = useMessageQueue();
 
   useEffect(() => {
     globalStoreInit();
@@ -21,23 +23,8 @@ const useInit = () => {
     const match = decodeUrl();
     const { paneType, menuType, id } = (match.params as StandardPathParams) || {};
 
-    // if workspaceId is not empty and not equal to activeWorkspaceId, switch workspace
-    // this scenario occurs especially when opening a shared link
-    const needAuthorization = paneType === PanesType.REQUEST;
-    if (needAuthorization) {
-      const [workspaceId] = id.split('-');
-      const authorized = workspaces.map((ws) => ws.id).includes(workspaceId);
-
-      if (workspaceId !== activeWorkspaceId) {
-        if (authorized) {
-          setActiveWorkspaceId(workspaceId);
-          getCollections(workspaceId);
-        } else {
-          message.error('No target workspace permissions');
-        }
-      }
-
-      if (authorized && paneType && id) {
+    const openPane = () => {
+      if (paneType && id) {
         setActiveMenu(menuType);
         setPanes({
           id,
@@ -45,10 +32,40 @@ const useInit = () => {
           data: match.query,
         });
       }
+    };
+
+    // if workspaceId is not empty and not equal to activeWorkspaceId, switch workspace
+    // this scenario occurs especially when opening a shared link
+    const needAuthorization = paneType === PanesType.REQUEST;
+
+    if (needAuthorization) {
+      const [workspaceId] = id.split('-');
+      const authorized = workspaces.map((ws) => ws.id).includes(workspaceId);
+      if (workspaceId === activeWorkspaceId || (workspaceId !== activeWorkspaceId && authorized)) {
+        setActiveWorkspaceId(workspaceId);
+        getCollections(workspaceId);
+        openPane();
+      } else {
+        message.error('No target workspace permissions');
+      }
+    } else {
+      openPane();
     }
 
     // Trigger rerender after resources loaded
     i18n.changeLanguage(localStorage.getItem(I18_KEY) || DEFAULT_LANGUAGE);
+
+    if (isClient) {
+      axios.get('https://api.github.com/repos/arextest/releases/releases/latest').then((res) => {
+        const version = res.data.name;
+        if (versionStringCompare(__APP_VERSION__, version) === -1) {
+          pushMessage({
+            type: 'update',
+            message: 'newVersionDetected',
+          });
+        }
+      });
+    }
 
     // subscribe active menu/pane change and update url
     const unSubscribeMenusPane = useMenusPanes.subscribe(

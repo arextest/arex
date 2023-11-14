@@ -7,6 +7,8 @@ import { useParams } from 'react-router-dom';
 import { exportCollection } from '@/services/FileSystemService/collection/exportCollection';
 import { importCollection } from '@/services/FileSystemService/collection/importCollection';
 import { useCollections } from '@/store';
+
+import useWorkspaces from '../../store/useWorkspaces';
 interface CollectionsImportExportProps {
   show: boolean;
   onHideModal: () => void;
@@ -30,13 +32,13 @@ function download(content: string, filename: string) {
   document.body.removeChild(eleLink);
 }
 const CollectionsImportExport: FC<CollectionsImportExportProps> = ({ show, onHideModal }) => {
-  const pam = useParams();
   const { getCollections } = useCollections();
+  const { activeWorkspaceId } = useWorkspaces();
   const [fileString, setFileString] = useState('');
   const { t } = useTranslation(['components']);
   const submit = () => {
     importCollection({
-      workspaceId: pam.workspaceId as string,
+      workspaceId: activeWorkspaceId,
       type: importType,
       path: [],
       importString: fileString,
@@ -56,7 +58,6 @@ const CollectionsImportExport: FC<CollectionsImportExportProps> = ({ show, onHid
   const [importType, setImportType] = useState(1);
 
   const onChange = (e: RadioChangeEvent) => {
-    console.log('radio checked', e.target.value);
     setImportType(e.target.value);
   };
   return (
@@ -114,12 +115,11 @@ const CollectionsImportExport: FC<CollectionsImportExportProps> = ({ show, onHid
           onClick={() => {
             // 暂只支持arex导出
             exportCollection({
-              workspaceId: pam.workspaceId as string,
-              type: 1,
+              workspaceId: activeWorkspaceId,
+              type: importType,
               path: [],
             }).then((res) => {
-              console.log(res);
-              download(res, `${pam.workspaceId}.json`);
+              download(res, `${activeWorkspaceId}.json`);
             });
           }}
         >
