@@ -227,6 +227,8 @@
     "methodNameTooltip": "需要 Mock 的方法名",
     "parameterTypes": "参数类型",
     "parameterTypesTooltip": "所有参数的类型，需为全类名，多以“@”分隔。如 java.lang.String@java.lang.Integer。",
+    "keyFormulaTooltip": "非必填，参数组合，多个用’,‘隔开，支持 SpEL 表达式。",
+    "keyFormula": "参数组合表达式",
     "delConfirmText": "是否删除这条记录？",
     "caseRange": "Case 数量上限",
     "caseRangeTooltip": "常规的回放任务可以在左侧菜单栏的 Replay 中通过手动开启，这里是为 CI (continuous integration) 设置用例自动回放范围，单位为 “days”。",

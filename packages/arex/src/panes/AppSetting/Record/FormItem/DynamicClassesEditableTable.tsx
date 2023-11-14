@@ -24,6 +24,7 @@ const InitRowData = {
   id: EDIT_ROW_KEY,
   fullClassName: '',
   methodName: '',
+  keyFormula: '',
   parameterTypes: '',
 };
 
@@ -111,6 +112,34 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
           ),
       },
       {
+        title: (
+          <HelpTooltip
+            title={
+              <>
+                {t('appSetting.keyFormulaTooltip', { ns: 'components' })}{' '}
+                <a
+                  href='https://docs.spring.io/spring-framework/reference/core/expressions.html'
+                  target='_blank'
+                  rel='noreferrer'
+                >
+                  SpEL
+                </a>
+              </>
+            }
+          >
+            {t('appSetting.keyFormula', { ns: 'components' })}
+          </HelpTooltip>
+        ),
+        dataIndex: 'keyFormula',
+        key: 'keyFormula',
+        render: (text, record) =>
+          isEditableRow(record.id) ? (
+            <Input value={text} onChange={(e) => handleChange('keyFormula', e.target.value)} />
+          ) : (
+            text
+          ),
+      },
+      {
         title: t('action'),
         key: 'actions',
         width: 72,
@@ -186,6 +215,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
           appId: props.appId,
           fullClassName: record.fullClassName,
           methodName: record.methodName,
+          keyFormula: record.keyFormula,
           parameterTypes: record.parameterTypes,
         });
   };
