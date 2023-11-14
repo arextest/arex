@@ -1,3 +1,4 @@
+import { SendOutlined } from '@ant-design/icons';
 import {
   ArexPaneFC,
   EmptyWrapper,
@@ -5,10 +6,13 @@ import {
   SpaceBetweenWrapper,
 } from '@arextest/arex-core';
 import { ArexEnvironment, EnvironmentSelect } from '@arextest/arex-request';
+import { ArexRESTResponse } from '@arextest/arex-request/src';
+import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { Button, Divider, Progress, TreeSelect, Typography } from 'antd';
+import { Button, Divider, theme, TreeSelect, Typography } from 'antd';
 import { cloneDeep } from 'lodash';
-import React, { Key, useCallback, useMemo, useState } from 'react';
+import React, { Key, useCallback, useEffect, useMemo, useState } from 'react';
+import { useImmer } from 'use-immer';
 
 import { CollectionNodeType, WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
 import BatchRunResultItem from '@/panes/BatchRun/BatchRunResultItem';
@@ -21,6 +25,7 @@ import disabledNonCaseNode from './utils/disabledNonCaseNode';
 
 const BatchRun: ArexPaneFC = (props) => {
   const { paneKey } = props;
+  const { token } = theme.useToken();
   const [workspaceId, id] = useMemo(() => decodePaneKey(paneKey).id.split('-'), [paneKey]);
 
   const { collectionsTreeData, collectionsFlatData } = useCollections();
@@ -28,7 +33,7 @@ const BatchRun: ArexPaneFC = (props) => {
   const [activeEnvironment, setActiveEnvironment] = useState<ArexEnvironment>();
   const [checkValue, setCheckValue] = useState<Key[]>([]);
 
-  const [successCount, setSuccessCount] = useState(0);
+  const [responseList, setResponseList] = useImmer<ArexRESTResponse[]>([]);
 
   const treeData = useMemo(
     () =>
@@ -68,18 +73,34 @@ const BatchRun: ArexPaneFC = (props) => {
 
   const [casesResults, setCasesResults] = useState<React.ReactNode>(null);
   const handleBatchRun = () => {
-    setSuccessCount(0);
+    setResponseList(
+      [...Array(checkValue.length)].map((item) => ({ type: 'loading', headers: undefined })),
+    );
     queryCases().then((cases) => setCasesResults(getCasesResults(cases)));
   };
 
+  useEffect(() => {
+    console.log(responseList);
+  }, [responseList]);
+
   const getCasesResults = useCallback(
     (cases: Awaited<ReturnType<typeof FileSystemService.queryRequest>>[]) =>
-      cases.map((caseItem) => (
+      cases.map((caseItem, index) => (
         <BatchRunResultItem
+          id={`batch-run-result-item-${index}`}
           key={caseItem.id}
           environment={activeEnvironment}
           data={caseItem}
-          onSuccess={() => setSuccessCount((count) => count + 1)}
+          onResponse={(response) => {
+            setSuccessCount((count) => count + 1);
+            // setResponseCount((count) => {
+            //   if (response?.type === 'success') count.success += 1;
+            //   else count.fail += 1;
+            // });
+            setResponseList((res) => {
+              res[index] = response;
+            });
+          }}
         />
       )),
     [activeEnvironment],
@@ -114,21 +135,54 @@ const BatchRun: ArexPaneFC = (props) => {
           style={{ flex: 1 }}
         />
 
-        <Button type='primary' size='large' onClick={handleBatchRun} style={{ marginLeft: '16px' }}>
+        <Button
+          type='primary'
+          size='large'
+          icon={<SendOutlined />}
+          onClick={handleBatchRun}
+          style={{ marginLeft: '16px' }}
+        >
           Run
         </Button>
       </div>
 
       {!!cases.length && (
-        <Progress
-          status={successCount !== cases.length ? 'active' : undefined}
-          format={() => `${successCount}/${cases.length}`}
-          percent={(successCount * 100) / cases.length}
-          style={{ padding: '0 24px', margin: 0 }}
-        />
+        <div style={{ padding: '0 16px 4px' }}>
+          <div style={{ display: 'flex' }}>
+            {responseList.map((response, index) => (
+              <div
+                key={index}
+                onClick={() => {
+                  const element = document.getElementById(`batch-run-result-item-${index}`);
+                  element?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                style={{
+                  width: '14px',
+                  height: '8px',
+                  margin: '6px 2px',
+                  cursor: 'pointer',
+                  backgroundColor:
+                    response.type === 'loading'
+                      ? token.colorFillSecondary
+                      : // @ts-ignore
+                      response?.statusCode >= 400
+                      ? token.colorError
+                      : token.colorSuccess,
+                }}
+              ></div>
+            ))}
+          </div>
+        </div>
       )}
 
-      <EmptyWrapper loading={loading} empty={!cases.length}>
+      <EmptyWrapper
+        loading={loading}
+        empty={!cases.length}
+        css={css`
+          height: calc(100vh - 226px);
+          overflow: auto;
+        `}
+      >
         {casesResults}
       </EmptyWrapper>
     </div>
