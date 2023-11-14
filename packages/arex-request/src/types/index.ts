@@ -1,5 +1,6 @@
 export type { ArexContentTypes } from './ArexContentTypes';
 export type { ArexEnvironment } from './ArexEnvironment';
+export type { ArexResponse } from './ArexResponse';
 export type { ArexRESTAuth } from './ArexRESTAuth';
 export type { ArexRESTHeader } from './ArexRESTHeader';
 export type { ArexRESTParam } from './ArexRESTParam';

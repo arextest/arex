@@ -160,10 +160,10 @@
     "websocket": "WebSocket"
   },
   "test": {
-    "failed": "测试失败",
+    "passed": "通过",
+    "failed": "失败",
     "javascript_code": "JavaScript 代码",
     "learn": "阅读文档",
-    "passed": "测试通过",
     "report": "测试报告",
     "results": "测试结果",
     "script": "脚本",

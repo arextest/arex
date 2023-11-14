@@ -10,6 +10,7 @@ export type DynamicClass = {
   appId?: string;
   fullClassName: string;
   methodName?: string;
+  keyFormula?: string;
   parameterTypes?: string;
   configType?: number;
 };

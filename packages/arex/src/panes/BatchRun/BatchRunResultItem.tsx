@@ -1,6 +1,7 @@
 import { RequestMethodIcon } from '@arextest/arex-core';
-import type { ArexEnvironment, ArexRESTRequest } from '@arextest/arex-request';
-import { ResponseMeta, sendRequest, TestResult } from '@arextest/arex-request';
+import type { ArexEnvironment, ArexRESTRequest, ArexRESTResponse } from '@arextest/arex-request';
+import { ArexResponse, ResponseMeta, sendRequest, TestResult } from '@arextest/arex-request';
+import { ArexTestResult, ArexVisualizer } from '@arextest/arex-request/src';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Card, Divider, Space, Spin, Typography } from 'antd';
@@ -9,18 +10,26 @@ import React, { FC } from 'react';
 const { Text } = Typography;
 
 export type BatchRunResultItemProps = {
+  id: string;
   environment?: ArexEnvironment;
   data: ArexRESTRequest;
+  onResponse?: (data: ArexRESTResponse) => void;
 };
 const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
   const { method, name, endpoint } = props.data;
 
-  const { data, loading } = useRequest(() => sendRequest(props.data, props.environment), {
-    refreshDeps: [props.data, props.environment],
-  });
+  const { data, loading } = useRequest<ArexResponse, any>(
+    () => sendRequest(props.data, props.environment),
+    {
+      refreshDeps: [props.data, props.environment],
+      onSuccess: (res) => {
+        props.onResponse?.(res);
+      },
+    },
+  );
 
   return (
-    <div style={{ padding: '0 16px' }}>
+    <div id={props.id} style={{ padding: '0 16px' }}>
       <Divider style={{ margin: '8px 0' }} />
 
       <Card size='small'>
