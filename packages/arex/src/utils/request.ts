@@ -3,6 +3,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { ACCESS_TOKEN_KEY, APP_ID_KEY, isClientProd } from '@/constant';
 
+import port from '../../config/port.json';
 import proxy from '../../config/proxy.json';
 
 type IRequestConfig<T = AxiosResponse> = AxiosRequestConfig;
@@ -29,16 +30,14 @@ export class Request {
     // 全局请求拦截
     this.instance.interceptors.request.use(
       (request) => {
-        request.headers.set('access-token', getLocalStorage<string>(ACCESS_TOKEN_KEY));
-        request.headers.set('appId', getLocalStorage<string>(APP_ID_KEY));
+        const accessToken = getLocalStorage<string>(ACCESS_TOKEN_KEY);
+        // if (!accessToken && request.headers.get('access-token') !== 'no')
+        //   return Promise.reject(
+        //     'Required request header "access-token" for method parameter type String is not present',
+        //   );
 
-        if (isClientProd) {
-          let path: string | undefined = undefined;
-          if ((path = this.proxyPath.find((path) => request.url?.startsWith(path)))) {
-            request.baseURL = proxy.find((item) => item.path === path)?.target;
-            request.url = request.url?.match(new RegExp(`(?<=${path}).*`))?.[0];
-          }
-        }
+        request.headers.set('access-token', accessToken);
+        request.headers.set('appId', getLocalStorage<string>(APP_ID_KEY));
 
         return request;
       },
@@ -120,6 +119,7 @@ export class Request {
 
 const request = new Request({
   timeout: 30000,
+  baseURL: isClientProd ? 'http://localhost:' + port.electronPort : undefined,
 });
 
 export default request;

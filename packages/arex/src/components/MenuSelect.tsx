@@ -149,7 +149,7 @@ function MenuSelect<D extends { [key: string]: any }, P extends any[] = []>(
           props.onSelect?.(record[props.rowKey], record);
         }
       }
-      props.requestOptions?.onSuccess?.(res, _params);
+      props.requestOptions?.onSuccess?.(_params);
     },
   });
 

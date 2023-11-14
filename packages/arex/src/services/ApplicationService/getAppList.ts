@@ -34,5 +34,5 @@ export type RegressionListRes = Array<{
 export async function getAppList() {
   return request
     .get<RegressionListRes>('/report/config/application/regressionList')
-    .then((res) => Promise.resolve(res.body.map((item) => item.application)));
+    .then((res) => Promise.resolve(res.body?.map((item) => item.application) || []));
 }

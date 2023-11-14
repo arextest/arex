@@ -109,6 +109,7 @@
     "timeConsumed": "耗时(秒)",
     "cases": "case 数",
     "action": "操作",
+    "denoise": "差异降噪",
     "logs": "执行日志",
     "retry": "重新计算",
     "rerun": "重新执行",
@@ -368,6 +369,12 @@
     "jarFileUrl": "Jar 包地址",
     "replayCallback": "回放回调",
     "replayCallbackUrl": "回放回调地址",
-    "version": "版本"
+    "application": "应用",
+    "version": "版本",
+    "checkUpdate": "检查更新",
+    "isLatest": "已经是最新版本",
+    "newVersionDetected": "检测到新版本",
+    "startDownload": "下载即将开始...",
+    "checkFailed": "检查更新失败，请重试"
   }
 }

@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { AREX_OPEN_NEW_PANEL, DEFAULT_ACTIVE_MENU, MAX_PANES_COUNT } from '@/constant';
+import { AREX_OPEN_NEW_PANEL, Connector, DEFAULT_ACTIVE_MENU, MAX_PANES_COUNT } from '@/constant';
 
 export type MenusPanesState = {
   menuCollapsed: boolean;
@@ -34,8 +34,6 @@ const initialState: MenusPanesState = {
   paneMaxIndex: 0,
   openKeyboardShortcut: false,
 };
-
-const Connector = '-_-';
 
 export function encodePaneKey(pane?: Pane) {
   return pane && pane.type + Connector + pane.id;

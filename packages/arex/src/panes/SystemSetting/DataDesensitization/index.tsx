@@ -39,7 +39,6 @@ const DataDesensitization = () => {
   });
 
   const handleUploadJar: FormProps<DesensitizationFormType>['onFinish'] = (value) => {
-    console.log(value);
     if (value.id && !value.jarUrl) {
       deleteDesensitization({ id: value.id });
     }
@@ -71,7 +70,7 @@ const DataDesensitization = () => {
         {/* form submit button */}
         <Form.Item wrapperCol={{ span: 14, offset: 4 }}>
           <Button type='primary' htmlType='submit'>
-            Save
+            {t('save')}
           </Button>
         </Form.Item>
       </Form>

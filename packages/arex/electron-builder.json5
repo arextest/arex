@@ -41,8 +41,7 @@
   },
   "publish": {
     provider: "github",
-    owner: "1pone",
-    repo: "arex-release"
-    //    url: "http://localhost:3000/"
+    owner: "arextest",
+    repo: "releases"
   }
 }
