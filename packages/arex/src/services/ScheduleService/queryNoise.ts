@@ -49,7 +49,13 @@ export async function queryNoise(planId: string) {
           ...noise,
           noiseItemList: noise.noiseItemList.filter((noiseItem) => noiseItem.status !== 1),
         }))
-        .filter((noise) => noise.noiseItemList.length);
+        .filter((noise) => noise.noiseItemList.length)
+        // sort randomNoise by whether is entryPoint
+        .sort((a, b) => {
+          if (a.mockCategoryType.entryPoint === b.mockCategoryType.entryPoint) return 0;
+          if (a.mockCategoryType.entryPoint) return -1;
+          return 1;
+        });
       return { ...operation, randomNoise };
     })
     .filter((operation) => operation.randomNoise.length);

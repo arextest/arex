@@ -1,5 +1,6 @@
+import { CodeSandboxOutlined, StarOutlined } from '@ant-design/icons';
 import { SpaceBetweenWrapper } from '@arextest/arex-core';
-import { Card, Checkbox, List, Typography } from 'antd';
+import { Card, Checkbox, List, Tooltip } from 'antd';
 import React, { FC, useMemo } from 'react';
 
 import { Connector } from '@/constant';
@@ -43,9 +44,17 @@ const CompareNoiseOperationItem: FC<CompareNoiseOperationItemProps> = (props) =>
               <List.Item style={{ display: 'block' }}>
                 <SpaceBetweenWrapper>
                   <span>
-                    {operation.mockCategoryType.entryPoint && (
-                      <Typography.Text type='secondary'>[EntryPoint]</Typography.Text>
-                    )}{' '}
+                    <Tooltip
+                      title={operation.mockCategoryType.entryPoint ? 'EntryPoint' : 'Dependency'}
+                    >
+                      <span style={{ marginRight: '4px' }}>
+                        {operation.mockCategoryType.entryPoint ? (
+                          <StarOutlined />
+                        ) : (
+                          <CodeSandboxOutlined />
+                        )}
+                      </span>
+                    </Tooltip>
                     {operation.operationName}
                   </span>
                 </SpaceBetweenWrapper>
@@ -67,6 +76,9 @@ const CompareNoiseOperationItem: FC<CompareNoiseOperationItemProps> = (props) =>
                         </SpaceBetweenWrapper>
                       </List.Item>
                     );
+                  }}
+                  style={{
+                    marginLeft: '16px',
                   }}
                 />
               </List.Item>
