@@ -3,9 +3,18 @@
     "tests": "Tests"
   },
   "batchRunPage": {
-    "select_need_test_case": "Select cases to run",
-    "start_arex_replay_compare": "Start Arex replay compare",
-    "run_case": "Run Cases"
+    "selectCaseTip": "Select cases for batch execution",
+    "batchSend": "Batch Send",
+    "statusBlockStructure":"Status Block Structure",
+    "requestStatus":"Request Status",
+    "testStatus":"Test Status",
+    "loading":"Loading",
+    "requestSuccess":"Request Success",
+    "requestFailed":"Request Failed",
+    "noTestScript":"No Test Script",
+    "allPassed":"All test scripts passed",
+    "SomeFailed":"Some failed test scripts exist",
+    "allFailed":"None of the test scripts passed"
   },
   "batchComparePage": {
     "select_need_compare_case": "Select comparison cases to runssss",

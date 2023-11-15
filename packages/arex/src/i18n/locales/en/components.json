@@ -227,6 +227,8 @@
     "methodNameTooltip": "The method name to be mocked.",
     "parameterTypes": "Parameter Types",
     "parameterTypesTooltip": "Parameter list (Multiple separated by '@', e.g.: java.lang.String@java.lang.Integer)",
+    "keyFormulaTooltip": "Not required, parameter combination, multiple separated by ',' , support SpEL expression.",
+    "keyFormula": "Key Formula",
     "action": "Action",
     "delConfirmText": "Are you sure to delete this record?",
     "caseRange": "Case range",

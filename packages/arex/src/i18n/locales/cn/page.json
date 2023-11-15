@@ -3,9 +3,18 @@
     "tests": "测试"
   },
   "batchRunPage": {
-    "select_need_test_case": "请选择测试用例",
-    "start_arex_replay_compare": "开始Arex回放比对",
-    "run_case": "运行"
+    "selectCaseTip": "请选择测试用例",
+    "batchSend": "批量发送",
+    "statusBlockStructure":"状态块组成",
+    "requestStatus":"请求状态",
+    "testStatus":"测试状态",
+    "loading":"等待中",
+    "requestSuccess":"请求成功",
+    "requestFailed":"请求失败",
+    "noTestScript":"无测试脚本",
+    "allPassed":"所有测试脚本均通过",
+    "SomeFailed":"存在失败测试脚本",
+    "allFailed":"所有测试脚本均不通过"
   },
   "batchComparePage": {
     "select_need_compare_case": "请选择比对用例",

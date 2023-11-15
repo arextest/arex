@@ -90,7 +90,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
         recordMachineCountLimit:
           res?.recordMachineCountLimit == undefined ? 1 : res?.recordMachineCountLimit,
         includeServiceOperationSet: res.extendField?.includeServiceOperations
-          .split(',')
+          ?.split(',')
           .filter(Boolean),
         serializeSkipInfoList: res.serializeSkipInfoList ? res.serializeSkipInfoList : undefined,
       });

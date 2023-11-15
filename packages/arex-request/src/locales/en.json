@@ -162,10 +162,10 @@
     "websocket": "WebSocket"
   },
   "test": {
-    "failed": "test failed",
+    "passed": "Passed",
+    "failed": "Failed",
     "javascript_code": "JavaScript Code",
     "learn": "Read documentation",
-    "passed": "test passed",
     "report": "Test Report",
     "results": "Test Results",
     "script": "Script",
