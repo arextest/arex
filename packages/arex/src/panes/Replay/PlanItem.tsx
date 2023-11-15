@@ -247,11 +247,14 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         onFilterDropdownOpenChange: (visible) => {
           visible && setTimeout(() => searchInput.current?.select(), 100);
         },
-        render: (value) => (
-          <Tooltip placement='topLeft' title={value}>
-            {'/' + (value ?? '').split('/').at(-1)}
-          </Tooltip>
-        ),
+        render: (value) => {
+          const split = (value ?? '').split('/');
+          return (
+            <Tooltip placement='topLeft' title={value}>
+              {'/' + split[split.length - 1]}
+            </Tooltip>
+          );
+        },
       },
       {
         title: t('replay.state'),
