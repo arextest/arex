@@ -1,5 +1,5 @@
 import { CodeSandboxOutlined, StarOutlined } from '@ant-design/icons';
-import { SpaceBetweenWrapper } from '@arextest/arex-core';
+import { SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
 import { Card, Checkbox, List, Tooltip } from 'antd';
 import React, { FC, useMemo } from 'react';
 
@@ -14,6 +14,7 @@ export interface CompareNoiseOperationItemProps {
 }
 
 const CompareNoiseOperationItem: FC<CompareNoiseOperationItemProps> = (props) => {
+  const { t } = useTranslation('components');
   const value = useMemo(
     () =>
       props.value?.reduce<string[]>((value, cur, index) => {
@@ -45,7 +46,11 @@ const CompareNoiseOperationItem: FC<CompareNoiseOperationItemProps> = (props) =>
                 <SpaceBetweenWrapper>
                   <span>
                     <Tooltip
-                      title={operation.mockCategoryType.entryPoint ? 'EntryPoint' : 'Dependency'}
+                      title={t(
+                        operation.mockCategoryType.entryPoint
+                          ? 'appSetting.entryPoint'
+                          : 'appSetting.dependency',
+                      )}
                     >
                       <span style={{ marginRight: '4px' }}>
                         {operation.mockCategoryType.entryPoint ? (

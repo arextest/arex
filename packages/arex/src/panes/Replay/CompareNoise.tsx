@@ -1,41 +1,67 @@
-import { ClearOutlined, SaveOutlined } from '@ant-design/icons';
+import { ReconciliationOutlined, SaveOutlined } from '@ant-design/icons';
 import {
   EmptyWrapper,
   Label,
   PaneDrawer,
+  Segmented,
   SpaceBetweenWrapper,
+  TooltipButton,
+  useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
-import { useRequest } from 'ahooks';
+import { usePagination, useRequest } from 'ahooks';
 import { App, Button, Checkbox, Space } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { Connector } from '@/constant';
 import CompareNoiseOperationItem from '@/panes/Replay/CompareNoiseOperationItem';
-import { ScheduleService } from '@/services';
+import { ReportService, ScheduleService } from '@/services';
 import { InterfaceNoiseItem, RandomNoise } from '@/services/ScheduleService';
 
 export interface CompareNoiseProps {
   appId: string;
-  planId?: string;
   readOnly?: boolean;
 }
 
 const CompareNoise: FC<CompareNoiseProps> = (props) => {
   const { t } = useTranslation('components');
   const { message } = App.useApp();
-
+  const { data } = useArexPaneProps<{ planId: string }>();
   const [open, setOpen] = useState(false);
   const [selectNoise, setSelectNoise] = useImmer<{ [operationId: string]: RandomNoise[] }>({});
+
+  const { data: { list: planStatistics } = { list: [] }, refresh: queryPlanStatistics } =
+    usePagination(
+      (params) =>
+        ReportService.queryPlanStatistics({
+          appId: props.appId,
+          planId: data?.planId || undefined,
+          ...params,
+        }),
+      {
+        ready: !!props.appId,
+        defaultPageSize: 1,
+        defaultCurrent: 1,
+        refreshDeps: [props.appId, data?.planId],
+        onSuccess: () => {
+          queryNoise();
+        },
+      },
+    );
 
   const {
     data: noiseData = [],
     loading,
     refresh: queryNoise,
-  } = useRequest(() => ScheduleService.queryNoise(props.planId!), {
-    manual: true,
-    ready: !!props.planId,
+  } = useRequest(() => ScheduleService.queryNoise(planStatistics[0].planId), {
+    ready: !!planStatistics.length,
+    onBefore() {
+      setSelectNoise({});
+    },
+    onSuccess: () => {
+      handleToggleCheckAll();
+    },
   });
 
   const allChecked = useMemo(() => {
@@ -67,12 +93,12 @@ const CompareNoise: FC<CompareNoiseProps> = (props) => {
     (interfaceNoiseItemList: InterfaceNoiseItem[]) =>
       ScheduleService.excludeNoise({
         appId: props.appId,
-        planId: props.planId!,
+        planId: planStatistics[0].planId!,
         interfaceNoiseItemList,
       }),
     {
       manual: true,
-      ready: !!props.planId,
+      ready: !!planStatistics.length,
       onSuccess(success) {
         if (success) {
           setOpen(false);
@@ -151,18 +177,16 @@ const CompareNoise: FC<CompareNoiseProps> = (props) => {
 
   return (
     <>
-      <Button
-        type='link'
+      <TooltipButton
         size='small'
-        icon={<ClearOutlined />}
+        icon={<ReconciliationOutlined />}
+        title={t('replay.denoise')}
         disabled={props.readOnly}
         onClick={() => {
           setOpen(true);
-          queryNoise();
+          queryPlanStatistics();
         }}
-      >
-        {t('replay.denoise')}
-      </Button>
+      />
 
       <PaneDrawer
         destroyOnClose
@@ -170,7 +194,18 @@ const CompareNoise: FC<CompareNoiseProps> = (props) => {
         open={open}
         title={
           <SpaceBetweenWrapper>
-            {t('replay.denoise')}
+            <Space size='middle'>
+              {t('replay.denoise')}
+
+              <Segmented
+                size='small'
+                options={[
+                  { label: t('appSetting.nodesIgnore'), value: 'nodesIgnore' },
+                  { label: t('appSetting.nodesSort'), value: 'nodesSort', disabled: true },
+                ]}
+                defaultValue='nodesIgnore'
+              />
+            </Space>
             <span style={{ marginRight: '16px' }}>
               <Label type='secondary'>{t('checkAll', { ns: 'common' })}</Label>
               <Checkbox
@@ -183,12 +218,21 @@ const CompareNoise: FC<CompareNoiseProps> = (props) => {
         }
         extra={
           <Button size='small' type='primary' icon={<SaveOutlined />} onClick={handleSave}>
-            {t('save')}
+            {t('save', { ns: 'common' })}
           </Button>
         }
+        styles={{
+          body: {
+            padding: '8px 16px',
+          },
+        }}
         onClose={handleClose}
       >
-        <EmptyWrapper loading={loading} empty={!noiseData.length}>
+        <EmptyWrapper
+          loading={loading}
+          empty={!noiseData.length}
+          description={t('replay.noDenoiseRecommended')}
+        >
           <Space
             size='middle'
             direction='vertical'

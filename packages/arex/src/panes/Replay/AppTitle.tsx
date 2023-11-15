@@ -1,4 +1,4 @@
-import Icon, {
+import {
   CloseCircleOutlined,
   CodeOutlined,
   PlayCircleOutlined,
@@ -13,7 +13,6 @@ import {
   I18nextLng,
   Label,
   PanesTitle,
-  SmallTextButton,
   SpaceBetweenWrapper,
   styled,
   TooltipButton,
@@ -30,7 +29,6 @@ import {
   Form,
   Input,
   Modal,
-  Popconfirm,
   Popover,
   Select,
   Skeleton,
@@ -51,6 +49,7 @@ import React, {
 
 import { EMAIL_KEY, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
+import CompareNoise from '@/panes/Replay/CompareNoise';
 import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCaseList';
 import { ApplicationService, ScheduleService } from '@/services';
 import { MessageMap } from '@/services/ScheduleService';
@@ -77,6 +76,7 @@ const TitleWrapper = styled(
     className?: string;
     title: ReactNode;
     count?: number;
+    readOnly?: boolean;
     onClickTitle?: () => void;
     onRefresh?: () => void;
     onSetting?: () => void;
@@ -128,6 +128,8 @@ const TitleWrapper = styled(
             >
               <Button size='small' type='text' icon={<CodeOutlined />} />
             </Popover>
+
+            <CompareNoise appId={props.appId} readOnly={props.readOnly} />
 
             {props.onSetting && (
               <TooltipButton
@@ -364,6 +366,7 @@ const AppTitle: FC<AppTitleProps> = ({
               appId={appId}
               planId={data?.planId}
               title={appTitle}
+              readOnly={readOnly}
               count={recordCount}
               onClickTitle={handleClickTitle}
               onRefresh={handleRefresh}
