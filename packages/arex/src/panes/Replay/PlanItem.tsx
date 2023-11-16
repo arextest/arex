@@ -360,7 +360,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       });
     }
     return _columns;
-  }, [props.readOnly]);
+  }, [props.readOnly, selectedPlan]);
 
   const { run: stopPlan } = useRequest(ScheduleService.stopPlan, {
     manual: true,
