@@ -138,13 +138,16 @@ const ReplayMenu: ArexMenuFC = (props) => {
         selectedKeys={selectedKeys}
         prefix={
           <>
-            <TooltipButton
-              type='text'
-              size='small'
-              title={t('applicationsMenu.createApp')}
-              icon={<PlusOutlined />}
-              onClick={() => setOpen(true)}
-            />
+            {!email.startsWith('GUEST') && (
+              <TooltipButton
+                type='text'
+                size='small'
+                title={t('applicationsMenu.createApp')}
+                icon={<PlusOutlined />}
+                onClick={() => setOpen(true)}
+              />
+            )}
+
             <TooltipButton
               title={t('applicationsMenu.filterFavoriteApps')}
               icon={
