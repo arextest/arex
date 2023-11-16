@@ -525,12 +525,6 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       }
       extra={
         <Space>
-          <CompareNoise
-            appId={props.appId}
-            planId={selectedPlan.planId}
-            readOnly={props.readOnly}
-          />
-
           <Button
             type='link'
             size='small'

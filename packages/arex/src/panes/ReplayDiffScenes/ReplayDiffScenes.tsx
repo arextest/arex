@@ -19,7 +19,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest, useSize } from 'ahooks';
-import { App, Card, Collapse, Modal, Progress, Space, Spin } from 'antd';
+import { App, Card, Collapse, Modal, Progress, Space } from 'antd';
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { APP_ID_KEY, PanesType } from '@/constant';
@@ -64,7 +64,7 @@ const ReplayDiffScenes: ArexPaneFC = (props) => {
   useEffect(() => {
     activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, planItemData?.appId);
     return () => clearLocalStorage(APP_ID_KEY);
-  }, [activePane?.id]);
+  }, [activePane?.id, planItemData?.appId]);
 
   const {
     data: sceneInfo = [],

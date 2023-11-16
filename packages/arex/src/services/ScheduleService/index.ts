@@ -1,4 +1,5 @@
 export * from './createPlan';
+export * from './excludeNoise';
 export * from './queryDiffMsgById';
 export * from './queryLogEntity';
 export * from './queryLogs';
