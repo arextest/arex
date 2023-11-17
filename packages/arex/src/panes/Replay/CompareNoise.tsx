@@ -10,7 +10,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { usePagination, useRequest } from 'ahooks';
-import { App, Button, Checkbox, Space } from 'antd';
+import { App, Badge, Button, Checkbox, Space } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
@@ -177,16 +177,18 @@ const CompareNoise: FC<CompareNoiseProps> = (props) => {
 
   return (
     <>
-      <TooltipButton
-        size='small'
-        icon={<ReconciliationOutlined />}
-        title={t('replay.denoise')}
-        disabled={props.readOnly}
-        onClick={() => {
-          setOpen(true);
-          queryPlanStatistics();
-        }}
-      />
+      <Badge dot={!!noiseData.length} offset={[-4, 4]}>
+        <TooltipButton
+          size='small'
+          icon={<ReconciliationOutlined />}
+          title={t('replay.denoise')}
+          disabled={props.readOnly}
+          onClick={() => {
+            setOpen(true);
+            queryPlanStatistics();
+          }}
+        />
+      </Badge>
 
       <PaneDrawer
         destroyOnClose
