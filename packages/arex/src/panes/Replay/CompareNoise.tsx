@@ -10,7 +10,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { usePagination, useRequest } from 'ahooks';
-import { App, Button, Checkbox, Space } from 'antd';
+import { App, Badge, Button, Checkbox, Space, Typography } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
@@ -177,16 +177,18 @@ const CompareNoise: FC<CompareNoiseProps> = (props) => {
 
   return (
     <>
-      <TooltipButton
-        size='small'
-        icon={<ReconciliationOutlined />}
-        title={t('replay.denoise')}
-        disabled={props.readOnly}
-        onClick={() => {
-          setOpen(true);
-          queryPlanStatistics();
-        }}
-      />
+      <Badge dot={!!noiseData.length} offset={[-4, 4]}>
+        <TooltipButton
+          size='small'
+          icon={<ReconciliationOutlined />}
+          title={t('replay.denoise')}
+          disabled={props.readOnly}
+          onClick={() => {
+            setOpen(true);
+            queryPlanStatistics();
+          }}
+        />
+      </Badge>
 
       <PaneDrawer
         destroyOnClose
@@ -194,8 +196,10 @@ const CompareNoise: FC<CompareNoiseProps> = (props) => {
         open={open}
         title={
           <SpaceBetweenWrapper>
-            <Space size='middle'>
-              {t('replay.denoise')}
+            <div>
+              <Typography.Text ellipsis style={{ maxWidth: '60%' }}>
+                {t('replay.denoise')}
+              </Typography.Text>
 
               <Segmented
                 size='small'
@@ -204,16 +208,26 @@ const CompareNoise: FC<CompareNoiseProps> = (props) => {
                   { label: t('appSetting.nodesSort'), value: 'nodesSort', disabled: true },
                 ]}
                 defaultValue='nodesIgnore'
+                style={{ marginLeft: '8px' }}
               />
-            </Space>
-            <span style={{ marginRight: '16px' }}>
-              <Label type='secondary'>{t('checkAll', { ns: 'common' })}</Label>
+            </div>
+
+            <div
+              style={{
+                display: 'flex',
+                flexShrink: 0,
+                marginRight: '8px',
+              }}
+            >
+              <Label type='secondary' style={{ wordBreak: 'keep-all' }}>
+                {t('checkAll', { ns: 'common' })}
+              </Label>
               <Checkbox
                 indeterminate={indeterminate}
                 checked={allChecked}
                 onChange={handleToggleCheckAll}
               />
-            </span>
+            </div>
           </SpaceBetweenWrapper>
         }
         extra={
@@ -236,7 +250,7 @@ const CompareNoise: FC<CompareNoiseProps> = (props) => {
           <Space
             size='middle'
             direction='vertical'
-            style={{ width: '100%', maxHeight: '75vh', overflow: 'auto' }}
+            style={{ width: '100%', maxHeight: 'calc(100vh - 200px)', overflow: 'auto' }}
           >
             {noiseData.map((noise) => (
               <CompareNoiseOperationItem

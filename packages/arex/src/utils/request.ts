@@ -4,7 +4,6 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ACCESS_TOKEN_KEY, APP_ID_KEY, isClientProd } from '@/constant';
 
 import port from '../../config/port.json';
-import proxy from '../../config/proxy.json';
 
 type IRequestConfig<T = AxiosResponse> = AxiosRequestConfig;
 
@@ -21,11 +20,9 @@ export type IAxiosResponse<T> = {
 
 export class Request {
   instance: AxiosInstance;
-  proxyPath: string[];
 
   constructor(config: IRequestConfig) {
     this.instance = axios.create(config);
-    this.proxyPath = proxy.map((item) => item.path);
 
     // 全局请求拦截
     this.instance.interceptors.request.use(

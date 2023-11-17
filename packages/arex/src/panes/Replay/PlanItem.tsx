@@ -47,7 +47,6 @@ import CountUp from 'react-countup';
 import { StatusTag } from '@/components';
 import { EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
-import CompareNoise from '@/panes/Replay/CompareNoise';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanItemStatistic, PlanStatistics } from '@/services/ReportService';
 import { MessageMap } from '@/services/ScheduleService';

@@ -43,8 +43,8 @@ export default defineConfig(async ({ mode }) => ({
   resolve: {
     alias: {
       '@': path.resolve('./src'),
-      '@arextest/arex-core/dist': path.resolve('../arex-core/src'),
-      '@arextest/arex-core': path.resolve('../arex-core/src'),
+      // '@arextest/arex-core/dist': path.resolve('../arex-core/src'),
+      // '@arextest/arex-core': path.resolve('../arex-core/src'),
       // '@arextest/arex-common': path.resolve('../arex-common/src'),
       // '@arextest/arex-request': path.resolve('../arex-request/src'),
     },
@@ -52,11 +52,23 @@ export default defineConfig(async ({ mode }) => ({
   server: {
     host: '0.0.0.0',
     port: port.vitePort,
-    proxy: proxy.reduce((proxyMap, item) => {
+    proxy: proxy.reduce<{
+      [key: string]: {
+        target: string;
+        changeOrigin: boolean;
+        rewrite: (path: string) => string;
+      };
+    }>((proxyMap, item) => {
       proxyMap[item.path] = {
         target: item.target,
         changeOrigin: true,
-        rewrite: (path) => path.replace(item.path, '/'),
+        rewrite: (path) => path.replace(item.path, '/api'),
+      };
+      // health check
+      proxyMap['/version' + item.path] = {
+        target: item.target,
+        changeOrigin: true,
+        rewrite: () => item.target + '/vi/health',
       };
       return proxyMap;
     }, {}),
