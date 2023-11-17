@@ -1,12 +1,12 @@
-import { ArexPaneFC, Label, useTranslation } from '@arextest/arex-core';
-import { Divider, Typography } from 'antd';
+import { ArexPaneFC, useTranslation } from '@arextest/arex-core';
+import { Divider } from 'antd';
 import React from 'react';
 
 import CallbackUrl from '@/panes/SystemSetting/CallbackUrl';
 
-import Application from './Application';
 import DataDesensitization from './DataDesensitization';
 import UserInterface from './UserInterface';
+import Version from './Version';
 
 const SystemSetting: ArexPaneFC = () => {
   const { t } = useTranslation(['components']);
@@ -22,8 +22,8 @@ const SystemSetting: ArexPaneFC = () => {
       <Divider orientation='left'> {t('systemSetting.replayCallback')}</Divider>
       <CallbackUrl />
 
-      <Divider orientation='left'> {t('systemSetting.application')}</Divider>
-      <Application />
+      <Divider orientation='left'> {t('systemSetting.version')}</Divider>
+      <Version />
     </div>
   );
 };

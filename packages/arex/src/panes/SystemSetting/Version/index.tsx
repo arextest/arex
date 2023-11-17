@@ -6,10 +6,11 @@ import axios from 'axios';
 import React, { FC, useMemo } from 'react';
 
 import { isClient, isMac } from '@/constant';
+import { ReportService, ScheduleService, StorageService } from '@/services';
 import { useMessageQueue } from '@/store';
 import { versionStringCompare } from '@/utils';
 
-const AppVersion: FC<{ value?: string }> = (props) => {
+const AppVersion: FC<{ value?: string }> = () => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components']);
   const { messageQueue } = useMessageQueue();
@@ -44,7 +45,7 @@ const AppVersion: FC<{ value?: string }> = (props) => {
 
   return (
     <>
-      <Input readOnly value={props.value} bordered={false} style={{ width: '48px' }} />
+      <Input readOnly value={__APP_VERSION__} bordered={false} style={{ width: '48px' }} />
 
       {isClient && (
         <Space size='middle'>
@@ -63,25 +64,57 @@ const AppVersion: FC<{ value?: string }> = (props) => {
   );
 };
 
-const Application: FC = () => {
-  const { t } = useTranslation(['components']);
+const Version: FC = () => {
+  const [form] = Form.useForm<{
+    report?: string;
+    schedule?: string;
+    storage?: string;
+  }>();
+
+  useRequest(ReportService.getReportServiceVersion, {
+    onSuccess(version) {
+      version && form.setFieldValue('report', version);
+    },
+  });
+
+  useRequest(ScheduleService.getScheduleServiceVersion, {
+    onSuccess(version) {
+      version && form.setFieldValue('schedule', version);
+    },
+  });
+
+  useRequest(StorageService.getStorageServiceVersion, {
+    onSuccess(version) {
+      version && form.setFieldValue('storage', version);
+    },
+  });
 
   return (
     <>
       <Form
         name='system-setting-application-form'
+        form={form}
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 20 }}
         initialValues={{
           version: __APP_VERSION__,
         }}
       >
-        <Form.Item label={t('systemSetting.version')} name='version'>
+        <Form.Item label={'UI'} style={{ marginBottom: '-4px' }}>
           <AppVersion />
+        </Form.Item>
+        <Form.Item label={'REPORT'} name='report' style={{ marginBottom: '-4px' }}>
+          <Input readOnly bordered={false} />
+        </Form.Item>
+        <Form.Item label={'SCHEDULE'} name='schedule' style={{ marginBottom: '-4px' }}>
+          <Input readOnly bordered={false} />
+        </Form.Item>
+        <Form.Item label={'STORAGE'} name='storage' style={{ marginBottom: '-4px' }}>
+          <Input readOnly bordered={false} />
         </Form.Item>
       </Form>
     </>
   );
 };
 
-export default Application;
+export default Version;
