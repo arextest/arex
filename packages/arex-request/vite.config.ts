@@ -38,6 +38,7 @@ export default defineConfig({
         '@emotion/react',
         '@emotion/styled',
         'monaco-editor',
+        '@monaco-editor/react',
       ],
       output: {
         globals: {
@@ -48,6 +49,7 @@ export default defineConfig({
           '@emotion/react': '@emotion/react',
           '@emotion/styled': '@emotion/styled',
           'monaco-editor': 'monaco-editor',
+          '@monaco-editor/react': '@monaco-editor/react',
         },
       },
     },
