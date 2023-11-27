@@ -22,7 +22,6 @@
     "@arextest/arex-common": "*",
     "@arextest/arex-core": "*",
     "@arextest/arex-request": "*",
-    "@arextest/monaco-react": "^4.5.1",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@formkit/auto-animate": "^0.7.0",
@@ -36,9 +35,12 @@
     "chart.js": "^4.2.1",
     "dayjs": "^1.11.7",
     "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6",
     "immer": "^9.0.19",
     "lodash": "^4.17.21",
     "monaco-editor": "^0.39.0",
+    "@monaco-editor/react": "^4.6.0",
+    "path-to-regexp": "^6.2.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-color": "^2.19.3",
@@ -48,9 +50,7 @@
     "react-router-dom": "^6.9.0",
     "use-immer": "^0.8.1",
     "xspy": "^0.0.4",
-    "zustand": "^4.3.7",
-    "path-to-regexp": "^6.2.1",
-    "http-proxy-middleware": "^2.0.6"
+    "zustand": "^4.3.7"
   },
   "devDependencies": {
     "@iconify/json": "^2.2.76",

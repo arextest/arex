@@ -1,5 +1,5 @@
 import { styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
-import Editor from '@arextest/monaco-react';
+import Editor from '@monaco-editor/react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import React, { FC, useEffect, useRef, useState } from 'react';
 

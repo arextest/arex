@@ -2,7 +2,7 @@ import '@arextest/arex-core/dist/style.css';
 import '@/utils/electrionOverride';
 import 'dayjs/locale/zh-cn';
 import './style/style.css';
-import './useWork';
+import './useWorker';
 import './utils/axiosGuard';
 
 import React from 'react';

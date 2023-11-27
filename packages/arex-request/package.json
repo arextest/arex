@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-request",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "type": "module",
   "main": "dist/arex-request.js",
   "module": "dist/arex-request.js",
@@ -16,11 +16,9 @@
   ],
   "dependencies": {
     "@arextest/arex-core": "*",
-    "@arextest/monaco-react": "^4.5.1",
     "@ant-design/icons": "^5.2.6",
     "allotment": "^1.18.1",
     "immer": "^9.0.21",
-    "monaco-editor": "^0.38.0",
     "postman-collection": "^4.1.7",
     "react-json-view": "^1.21.3",
     "use-immer": "^0.9.0",
@@ -55,6 +53,7 @@
     "i18next": "^22.4.11",
     "react-i18next": "^12.2.0",
     "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6"
+    "@emotion/styled": "^11.10.6",
+    "monaco-editor": "^0.39.0"
   }
 }

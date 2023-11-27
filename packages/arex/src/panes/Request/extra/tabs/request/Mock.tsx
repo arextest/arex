@@ -1,6 +1,6 @@
 import { SaveOutlined } from '@ant-design/icons';
 import { EmptyWrapper, TooltipButton, tryPrettierJsonString } from '@arextest/arex-core';
-import { Editor } from '@arextest/monaco-react';
+import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { App, Col, Collapse, Row, Space } from 'antd';
 import axios from 'axios';
