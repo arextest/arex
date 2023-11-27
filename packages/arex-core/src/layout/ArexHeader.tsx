@@ -61,7 +61,7 @@ const ArexHeader: FC<AppHeaderProps> = (props) => {
 
           <Typography.Text
             strong
-            style={{ lineHeight: '14px', fontSize: '8px', paddingLeft: '2px' }}
+            style={{ lineHeight: '14px', paddingLeft: '2px', transform: 'scale(0.7)' }}
           >
             AREX
           </Typography.Text>

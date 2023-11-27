@@ -89,7 +89,8 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
       onSuccess: (res, [{ caseSourceType, nodeType }]) => {
         if (res.success) {
           getCollections().then(() => props.onAddNode?.(res.infoId, nodeType));
-          if (caseSourceType === 2) queryInterface({ id: nodePath.at(-1) as string }, res.infoId);
+          if (caseSourceType === 2)
+            queryInterface({ id: nodePath[nodePath.length - 1] as string }, res.infoId);
         }
       },
     },

@@ -70,7 +70,7 @@ const Logs: FC = () => {
   };
 
   const handleLoadMoreLogs = () => {
-    queryLogs(logsData.at(-1)?.id);
+    queryLogs(logsData[logsData.length - 1]?.id);
   };
 
   return (

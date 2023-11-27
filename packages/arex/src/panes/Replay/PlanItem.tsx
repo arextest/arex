@@ -47,7 +47,6 @@ import CountUp from 'react-countup';
 import { StatusTag } from '@/components';
 import { EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
-import CompareNoise from '@/panes/Replay/CompareNoise';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanItemStatistic, PlanStatistics } from '@/services/ReportService';
 import { MessageMap } from '@/services/ScheduleService';
@@ -247,11 +246,14 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         onFilterDropdownOpenChange: (visible) => {
           visible && setTimeout(() => searchInput.current?.select(), 100);
         },
-        render: (value) => (
-          <Tooltip placement='topLeft' title={value}>
-            {'/' + (value ?? '').split('/').at(-1)}
-          </Tooltip>
-        ),
+        render: (value) => {
+          const split = (value ?? '').split('/');
+          return (
+            <Tooltip placement='topLeft' title={value}>
+              {'/' + split[split.length - 1]}
+            </Tooltip>
+          );
+        },
       },
       {
         title: t('replay.state'),
@@ -357,7 +359,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       });
     }
     return _columns;
-  }, [props.readOnly]);
+  }, [props.readOnly, selectedPlan]);
 
   const { run: stopPlan } = useRequest(ScheduleService.stopPlan, {
     manual: true,
@@ -522,12 +524,6 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       }
       extra={
         <Space>
-          <CompareNoise
-            appId={props.appId}
-            planId={selectedPlan.planId}
-            readOnly={props.readOnly}
-          />
-
           <Button
             type='link'
             size='small'

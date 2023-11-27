@@ -28,9 +28,17 @@ proxy.forEach((item) => {
   server.use(
     item.path,
     createProxyMiddleware({
-      target: process.env.SERVICE_REPORT_URL || item.target,
+      target: item.target,
       changeOrigin: true,
-      pathRewrite: { [item.path]: '/' },
+      pathRewrite: { [item.path]: '/api' },
+    }),
+  );
+  server.use(
+    '/version' + item.path,
+    createProxyMiddleware({
+      target: item.target,
+      changeOrigin: true,
+      pathRewrite: () => item.target + '/vi/health',
     }),
   );
 });
@@ -41,9 +49,5 @@ server.get('/vi/health', (req, res) => {
 });
 
 server.get('/env', (req, res) => {
-  res.send({
-    SERVICE_REPORT_URL: process.env.SERVICE_REPORT_URL,
-    SERVICE_SCHEDULE_URL: process.env.SERVICE_SCHEDULE_URL,
-    SERVICE_STORAGE_URL: process.env.SERVICE_STORAGE_URL,
-  });
+  res.send(proxy);
 });

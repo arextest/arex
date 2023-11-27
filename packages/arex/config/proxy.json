@@ -1,14 +1,14 @@
 [
   {
     "path": "/report",
-    "target": "http://10.5.153.1:8090/api"
+    "target": "http://10.5.153.1:8090"
   },
   {
     "path": "/schedule",
-    "target": "http://10.5.153.1:8092/api"
+    "target": "http://10.5.153.1:8092"
   },
   {
     "path": "/storage",
-    "target": "http://10.5.153.1:8093/api"
+    "target": "http://10.5.153.1:8093"
   }
 ]
