@@ -54,6 +54,7 @@
     "react-i18next": "^12.2.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
-    "monaco-editor": "^0.39.0"
+    "monaco-editor": "^0.39.0",
+    "@monaco-editor/react": "^4.6.0"
   }
 }
