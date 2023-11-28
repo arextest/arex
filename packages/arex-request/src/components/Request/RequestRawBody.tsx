@@ -1,5 +1,5 @@
 import { css, Theme, useArexCoreConfig } from '@arextest/arex-core';
-import { Editor } from '@arextest/monaco-react';
+import { Editor } from '@monaco-editor/react';
 import { App } from 'antd';
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { useTranslation } from 'react-i18next';
