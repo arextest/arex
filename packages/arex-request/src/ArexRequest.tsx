@@ -73,10 +73,10 @@ const ArexRequest = forwardRef<RequestRef, ArexRequestProps>((props, ref) => {
           <Divider style={{ width: '100%', margin: '0 0 8px 0' }} />
 
           <Allotment vertical css={AllotmentCSS}>
-            <Allotment.Pane preferredSize='60%'>
+            <Allotment.Pane minSize={96} preferredSize='60%'>
               <Request />
             </Allotment.Pane>
-            <Allotment.Pane>
+            <Allotment.Pane snap>
               <Response />
             </Allotment.Pane>
           </Allotment>

@@ -7,7 +7,7 @@ import {
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
-import { Editor } from '@arextest/monaco-react';
+import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { Button, DatePicker, Divider, Space, Switch, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';

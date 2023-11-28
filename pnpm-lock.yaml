@@ -326,9 +326,6 @@ importers:
       '@formkit/auto-animate':
         specifier: ^0.7.0
         version: 0.7.0
-      '@hpcc-js/wasm':
-        specifier: ^2.14.1
-        version: 2.14.1
       ahooks:
         specifier: ^3.7.5
         version: 3.7.5(react@18.2.0)
@@ -1838,13 +1835,6 @@ packages:
 
   /@formkit/auto-animate@0.7.0:
     resolution: {integrity: sha512-RczHUr0AhRPssREoNdRjLfk2b/id9/DFnbIq18QM8L7E4zNV3XH+WO480EZ46BQHDEsv76YPJ0JbG2Y2i3GfXw==}
-    dev: false
-
-  /@hpcc-js/wasm@2.14.1:
-    resolution: {integrity: sha512-ncPvj0dEjoye8jD1NAwdThXlZ5mpuGRyRwaNWU6JVBgyT8TewVDmG+RAOXPysyaP1Ui8Lm7562W4KawZtPwa1A==}
-    hasBin: true
-    dependencies:
-      yargs: 17.7.2
     dev: false
 
   /@humanwhocodes/config-array@0.9.5:

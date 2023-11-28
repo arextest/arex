@@ -1,7 +1,9 @@
 import { css, styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
-import { Editor } from '@monaco-editor/react';
+import { Editor, OnMount } from '@monaco-editor/react';
 import { Button, Typography } from 'antd';
-import React from 'react';
+import * as monaco from 'monaco-editor';
+import { editor } from 'monaco-editor';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexRequestStore } from '../../hooks';
@@ -32,7 +34,7 @@ export const RequestTestWrapper = styled.div`
   }
 `;
 
-const editorOptions = {
+const editorOptions: editor.IStandaloneEditorConstructionOptions = {
   minimap: {
     enabled: false,
   },
@@ -41,12 +43,93 @@ const editorOptions = {
   automaticLayout: true,
   fontFamily: 'IBMPlexMono, "Courier New", monospace',
   scrollBeyondLastLine: false,
-} as const;
+};
 
 const RequestTests = () => {
   const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
   const { theme } = useArexCoreConfig();
+
+  const arexData = [
+    {
+      name: 'com.xx.xxxxx.xxxx.1',
+      category: 'soa',
+      requestSchema: {
+        requestKey1: {
+          requestSubKey1: 'subValue1',
+          requestSubKey2: 'subValue2',
+        },
+        requestKey2: 'value2',
+        requestKey3: 'value3',
+      },
+      responseSchema: {
+        responseKey1: {
+          responseSubKey1: 'subValue1',
+          responseSubKey2: 'subValue2',
+        },
+        responseKey2: 'value2',
+        responseKey3: 'value3',
+      },
+    },
+    {
+      name: 'com.xx.xxxxx.xxxx.2',
+      category: 'db',
+      requestSchema: {
+        requestKey1: {
+          requestSubKey1: 'subValue1',
+          requestSubKey2: 'subValue2',
+        },
+        requestKey2: 'value2',
+        requestKey3: 'value3',
+      },
+      responseSchema: {
+        responseKey1: {
+          responseSubKey1: 'subValue1',
+          responseSubKey2: 'subValue2',
+        },
+        responseKey2: 'value2',
+        responseKey3: 'value3',
+      },
+    },
+  ];
+
+  const handleEditorDidMount: OnMount = (editor, monaco) => {
+    // here is the editor instance
+    // you can store it in `useRef` for further usage
+    if (!store.request.testScript.includes('const AREX')) {
+      const AREX = arexData.reduce<Record<string, any>>((arex, item) => {
+        if (!arex[item.category]) {
+          arex[item.category] = {
+            [item.name]: {
+              requestSchema: item.requestSchema,
+              responseSchema: item.responseSchema,
+            },
+          };
+        } else {
+          arex[item.category][item.name] = {
+            requestSchema: item.requestSchema,
+            responseSchema: item.responseSchema,
+          };
+        }
+
+        return arex;
+      }, {});
+
+      dispatch((state) => {
+        state.request.testScript =
+          `//#AREX Definition
+const AREX = ${JSON.stringify(AREX, null, 2)}
+//#End AREX Definition
+
+` + state.request.testScript;
+      });
+    }
+
+    editor.trigger('fold', 'editor.foldAll', {
+      levels: 1,
+      direction: 'down',
+    });
+  };
 
   const ThemeColorPrimaryButton = styled(Button)`
     color: ${(props) => props.theme.colorPrimary} !important;
@@ -58,6 +141,23 @@ const RequestTests = () => {
       state.request.testScript = state.request.testScript += text;
     });
   };
+
+  useEffect(() => {
+    monaco.languages.setLanguageConfiguration('javascript', {
+      comments: {
+        lineComment: '//',
+        blockComment: ['/*', '*/'],
+      },
+      brackets: [['{', '}']],
+      folding: {
+        markers: {
+          start: new RegExp('\\s*//\\s*#AREX Definition\\b'),
+          end: new RegExp('\\s*//\\s*#End AREX Definition\\b'),
+        },
+      },
+    });
+  }, []);
+
   return (
     <div
       css={css`
@@ -75,7 +175,7 @@ const RequestTests = () => {
           css={css`
             min-width: 0;
             flex: 1;
-            //width: 100%;
+            padding-bottom: 8px;
           `}
         >
           <Editor
@@ -83,6 +183,7 @@ const RequestTests = () => {
             options={editorOptions}
             language={'javascript'}
             value={store.request.testScript}
+            onMount={handleEditorDidMount}
             onChange={(value) => {
               dispatch((state) => {
                 if (value !== undefined) {

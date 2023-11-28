@@ -13,7 +13,7 @@ import RequestParameters from './RequestParameters';
 import RequestTests from './RequestTests';
 
 const HttpRequestOptionsWrapper = styled.div`
-  height: calc(100% - 100px);
+  height: calc(100% - 36px);
   padding: 0 16px;
   flex: 1;
   display: flex;
@@ -76,7 +76,6 @@ const HttpRequestOptions: FC<HttpRequestOptionsProps> = () => {
         ),
         key: 'tests',
         children: <RequestTests />,
-        forceRender: true,
       },
     ];
 
