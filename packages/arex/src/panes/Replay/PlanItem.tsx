@@ -54,7 +54,7 @@ import { useMenusPanes } from '@/store';
 import IconLog from '~icons/octicon/log-24';
 
 function getPercent(num: number, den: number, showPercentSign = true) {
-  const value = num && den ? parseFloat(((num / den) * 100).toFixed(0)) : 0;
+  const value = num && den ? Math.floor((num / den) * 1000) / 10 : 0;
   return showPercentSign ? value + '%' : value;
 }
 
