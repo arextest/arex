@@ -8,9 +8,9 @@ import {
 import { Tabs } from 'antd';
 import React, { useEffect, useMemo } from 'react';
 
-import { APP_ID_KEY } from '@/constant';
+import { APP_ID_KEY, PanesType } from '@/constant';
+import { useNavPane } from '@/hooks';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
-import { ApplicationDataType } from '@/services/ApplicationService';
 import { useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
@@ -20,8 +20,9 @@ import SettingOther from './Other';
 import SettingRecord from './Record';
 import SettingReplay from './Replay';
 
-const AppSetting: ArexPaneFC<ApplicationDataType> = (props) => {
-  const { paneKey } = props;
+const AppSetting: ArexPaneFC<{ key: string }> = (props) => {
+  const { paneKey, data } = props;
+  const navPane = useNavPane();
   const { activePane } = useMenusPanes();
   const { id: appId } = useMemo(() => decodePaneKey(paneKey), [paneKey]);
   const { t } = useTranslation(['components']);
@@ -67,11 +68,23 @@ const AppSetting: ArexPaneFC<ApplicationDataType> = (props) => {
     return () => clearLocalStorage(APP_ID_KEY);
   }, [activePane?.id]);
 
+  const handleChange = (key: string) => {
+    navPane({
+      id: appId,
+      type: PanesType.APP_SETTING,
+      data: {
+        key,
+      },
+    });
+  };
+
   return (
     <Tabs
       size='small'
       tabPosition='left'
+      defaultActiveKey={data?.key}
       items={TabsItems}
+      onChange={handleChange}
       css={css`
         height: 100%;
         .ant-tabs-nav-list > .ant-tabs-tab {
