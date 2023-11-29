@@ -37,6 +37,8 @@ export default defineConfig({
         '@arextest/arex-core',
         '@emotion/react',
         '@emotion/styled',
+        'monaco-editor',
+        '@monaco-editor/react',
       ],
       output: {
         globals: {
@@ -46,6 +48,8 @@ export default defineConfig({
           '@arextest/arex-core': '@arextest/arex-core',
           '@emotion/react': '@emotion/react',
           '@emotion/styled': '@emotion/styled',
+          'monaco-editor': 'monaco-editor',
+          '@monaco-editor/react': '@monaco-editor/react',
         },
       },
     },

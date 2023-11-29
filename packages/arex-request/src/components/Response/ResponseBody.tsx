@@ -9,7 +9,7 @@ import {
   tryPrettierJsonString,
   useArexCoreConfig,
 } from '@arextest/arex-core';
-import { Editor } from '@arextest/monaco-react';
+import { Editor } from '@monaco-editor/react';
 import { App } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

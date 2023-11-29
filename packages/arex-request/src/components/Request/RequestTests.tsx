@@ -1,5 +1,5 @@
 import { css, styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
-import { Editor } from '@arextest/monaco-react';
+import { Editor } from '@monaco-editor/react';
 import { Button, Typography } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

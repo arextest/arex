@@ -1,5 +1,5 @@
 import { useTranslation } from '@arextest/arex-core';
-import { Editor } from '@arextest/monaco-react';
+import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { App, Button } from 'antd';
 import React, { FC, useState } from 'react';
