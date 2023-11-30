@@ -349,10 +349,12 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             />
             <TooltipButton
               icon={<RedoOutlined />}
-              title={t('replay.rerun')}
+              title={t('replay.retry')}
               breakpoint='xxl'
               color='primary'
-              onClick={() => handleRerun(1, [{ operationId: record.operationId }])}
+              onClick={() =>
+                retryPlan({ planId: selectedPlan!.planId, planItemId: record.planItemId })
+              }
             />
           </>
         ),
@@ -381,49 +383,6 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
     },
   });
 
-  const { run: rerun } = useRequest(ScheduleService.createPlan, {
-    manual: true,
-    onSuccess(res) {
-      if (res.result === 1) {
-        onRefresh?.();
-        notification.success({
-          message: t('replay.startSuccess'),
-        });
-      } else {
-        notification.error({
-          message: t('message.error', { ns: 'common' }),
-          description: MessageMap[i18n.language as I18nextLng][res.data.reasonCode],
-        });
-      }
-    },
-    onError(e) {
-      notification.error({
-        message: t('replay.startFailed'),
-        description: e.message,
-      });
-    },
-  });
-
-  const handleRerun = (
-    replayPlanType: number,
-    operationCaseInfoList?: { operationId: string; replayIdList?: string[] }[],
-  ) => {
-    if (selectedPlan?.caseStartTime && selectedPlan?.caseEndTime) {
-      rerun({
-        caseSourceFrom: selectedPlan.caseStartTime,
-        caseSourceTo: selectedPlan.caseEndTime,
-        appId: selectedPlan.appId,
-        operator: email,
-        sourceEnv: 'pro',
-        targetEnv: selectedPlan!.targetEnv,
-        operationCaseInfoList,
-        replayPlanType,
-      });
-    } else {
-      message.error(t('replay.parameterError'));
-    }
-  };
-
   const { run: retryPlan, loading: retrying } = useRequest(ScheduleService.reRunPlan, {
     manual: true,
     onSuccess(res) {
@@ -441,11 +400,6 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const extraMenuItems = useMemo(
     () => [
       {
-        key: 'rerun',
-        label: t('replay.rerun'),
-        icon: <RedoOutlined />,
-      },
-      {
         key: 'terminateReplay',
         label: t('replay.terminateTheReplay'),
         icon: <StopOutlined />,
@@ -462,13 +416,6 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const extraMenuHandler = useCallback(
     ({ key }: { key: string }) => {
       switch (key) {
-        case 'rerun': {
-          handleRerun(
-            1,
-            planItemData?.map((item) => ({ operationId: item.operationId })),
-          );
-          break;
-        }
         case 'terminateReplay': {
           stopPlan(selectedPlan!.planId);
           break;
