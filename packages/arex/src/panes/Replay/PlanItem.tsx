@@ -12,10 +12,7 @@ import Icon, {
 import { ReplayLogsDrawer } from '@arextest/arex-common';
 import {
   copyToClipboard,
-  getLocalStorage,
   HighlightRowTable,
-  i18n,
-  I18nextLng,
   SpaceBetweenWrapper,
   TooltipButton,
   useArexPaneProps,
@@ -45,11 +42,11 @@ import { Pie } from 'react-chartjs-2';
 import CountUp from 'react-countup';
 
 import { StatusTag } from '@/components';
-import { EMAIL_KEY, PanesType } from '@/constant';
+import { ResultsState } from '@/components/StatusTag';
+import { PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanItemStatistic, PlanStatistics } from '@/services/ReportService';
-import { MessageMap } from '@/services/ScheduleService';
 import { useMenusPanes } from '@/store';
 import IconLog from '~icons/octicon/log-24';
 
@@ -78,11 +75,10 @@ export type ReplayPlanItemProps = {
 
 const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const { selectedPlan, filter, onRefresh } = props;
-  const { message, notification } = App.useApp();
+  const { message } = App.useApp();
   const { activePane } = useMenusPanes();
 
   const { t } = useTranslation(['components', 'common']);
-  const email = getLocalStorage<string>(EMAIL_KEY) as string;
   const navPane = useNavPane();
   const { token } = theme.useToken();
 
@@ -104,7 +100,13 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       pollingInterval: 6000,
       onSuccess(res) {
         if (res) {
-          if (res?.every((record) => record.status !== 1) && selectedPlan?.status !== 1) {
+          if (
+            res?.every(
+              (record) => ![ResultsState.RUNNING, ResultsState.RERUNNING].includes(record.status),
+            ) ||
+            (selectedPlan &&
+              ![ResultsState.RUNNING, ResultsState.RERUNNING].includes(selectedPlan.status))
+          ) {
             setPollingInterval(false);
             cancelPollingInterval();
           }
