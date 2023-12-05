@@ -303,8 +303,8 @@ importers:
         specifier: ^5.2.6
         version: 5.2.6(react-dom@18.2.0)(react@18.2.0)
       '@arextest/vanilla-jsoneditor':
-        specifier: 0.17.37
-        version: 0.17.37
+        specifier: 0.17.38
+        version: 0.17.38
       '@dnd-kit/core':
         specifier: ^6.0.8
         version: 6.0.8(react-dom@18.2.0)(react@18.2.0)
@@ -712,8 +712,8 @@ packages:
     resolution: {integrity: sha512-pvFiLP2BeOKA/ZOS6jxx4XhKzdVLHDhGlFEaZ2flWWYf2xOqVniqpk38I04DFRyz+L0ASggl7SkItTc+ZLju4w==}
     dev: true
 
-  /@arextest/vanilla-jsoneditor@0.17.37:
-    resolution: {integrity: sha512-zvSvPcEdnD1NBjezqU3fw6LGrmFDhtSEXR1GwICxQhYU+iuzhcgLvYiOHSuTQChCFAmUOWVLYkhdR88k9Iyvrg==}
+  /@arextest/vanilla-jsoneditor@0.17.38:
+    resolution: {integrity: sha512-6Ad3lw+2YMhdRWeqXO6QkfrHmszy7b1DD93XME/2hdqodHRLLr4w8Hz2V+xODY9kAUww0mJr52R0EjdpIhkEgw==}
     dev: false
 
   /@babel/code-frame@7.22.13:
