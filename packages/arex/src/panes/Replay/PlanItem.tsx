@@ -565,8 +565,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
           >
             <Statistic
               title={t('replay.passRate')}
-              value={getPercent(selectedPlan.successCaseCount,
-                selectedPlan.totalCaseCount)}
+              value={getPercent(selectedPlan.successCaseCount, selectedPlan.totalCaseCount)}
             />
             <Statistic
               title={t('replay.apiPassRate')}
