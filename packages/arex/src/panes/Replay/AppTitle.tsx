@@ -47,7 +47,7 @@ import React, {
   useState,
 } from 'react';
 
-import { EMAIL_KEY, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
+import { EMAIL_KEY, isClient, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
 import CompareNoise from '@/panes/Replay/CompareNoise';
 import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCaseList';
@@ -239,39 +239,43 @@ const AppTitle: FC<AppTitleProps> = ({
   /**
    * 创建回放
    */
-  const { run: createPlan, loading: confirmLoading } = useRequest(ScheduleService.createPlan, {
-    manual: true,
-    onSuccess(res) {
-      if (res.result === 1) {
-        notification.success({
-          message: t('replay.startSuccess'),
-        });
-        onRefresh?.();
-      } else {
-        console.error(res.desc);
+  const { run: createPlan, loading: confirmLoading } = useRequest(
+    isClient ? ScheduleService.createPlanLocal : ScheduleService.createPlan,
+    {
+      manual: true,
+      onSuccess(res) {
+        if (res.result === 1) {
+          notification.success({
+            message: t('replay.startSuccess'),
+          });
+          onRefresh?.();
+        } else {
+          console.error(res.desc);
+          notification.error({
+            message: t('replay.startFailed'),
+            description: MessageMap[i18n.language as I18nextLng][res.data.reasonCode],
+          });
+        }
+      },
+      onError(e) {
         notification.error({
           message: t('replay.startFailed'),
-          description: MessageMap[i18n.language as I18nextLng][res.data.reasonCode],
+          description: e.message,
         });
-      }
+      },
+      onFinally() {
+        setOpen(false);
+        form.resetFields();
+      },
     },
-    onError(e) {
-      notification.error({
-        message: t('replay.startFailed'),
-        description: e.message,
-      });
-    },
-    onFinally() {
-      setOpen(false);
-      form.resetFields();
-    },
-  });
+  );
 
   const handleStartReplay = () => {
     form
       .validateFields()
       .then((values) => {
         const targetEnv = values.targetEnv.trim();
+
         createPlan({
           appId,
           sourceEnv: 'pro',
