@@ -6,7 +6,7 @@ import {
   useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
-import { usePagination } from 'ahooks';
+import { usePagination, useRequest } from 'ahooks';
 import { Card, theme, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useEffect, useState } from 'react';
@@ -129,28 +129,35 @@ const PlanReport: FC<PlanReportProps> = (props) => {
 
   const [pollingInterval, setPollingInterval] = useState(true);
   const {
-    data: { list: planStatistics } = { list: [] },
-    pagination,
+    data: { list: planStatistics, pagination } = {
+      list: [],
+      pagination: {
+        current: defaultCurrent,
+        pageSize: defaultPageSize,
+        total: 0,
+      },
+    },
+    runAsync: queryPlanStatistics,
     loading,
     refresh,
     cancel: cancelPollingInterval,
-  } = usePagination(
+  } = useRequest(
     (params) =>
       ReportService.queryPlanStatistics({
         appId,
         planId: data?.planId || undefined,
+        current: defaultCurrent,
+        pageSize: defaultPageSize,
         ...params,
       }),
     {
       ready: !!appId,
       loadingDelay: 200,
       pollingInterval: 6000,
-      defaultPageSize,
-      defaultCurrent,
       refreshDeps: [appId, refreshDep, data?.planId],
       onSuccess({ list }) {
         if (init) {
-          list.length && onSelectedPlanChange(list[parseInt(searchParams.get('row') || '0')]);
+          list.length && handleRowClick?.(list[0], 1);
           setInit(false); // 设置第一次初始化标识);
         }
 
@@ -158,8 +165,6 @@ const PlanReport: FC<PlanReportProps> = (props) => {
           setPollingInterval(false);
           cancelPollingInterval();
         }
-
-        handleRowClick?.(list[0], 1);
       },
     },
   );
@@ -205,6 +210,14 @@ const PlanReport: FC<PlanReportProps> = (props) => {
           columns={columns}
           selectKey={selectKey}
           pagination={pagination}
+          onChange={(pagination) => {
+            if (Object.keys(pagination).length) {
+              queryPlanStatistics({
+                current: pagination.current,
+                pageSize: pagination.pageSize,
+              }).then(({ list }) => handleRowClick?.(list[0], 1));
+            }
+          }}
           onRowClick={handleRowClick}
           dataSource={planStatistics}
           sx={{
