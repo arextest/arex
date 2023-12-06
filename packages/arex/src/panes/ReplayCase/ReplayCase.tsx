@@ -107,35 +107,13 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
     //   setOpen(true)
   }
 
-  const { run: queryPlanFailCase } = useRequest(ReportService.queryPlanFailCase, {
+  const { run: retryPlan } = useRequest(ScheduleService.reRunPlan, {
     manual: true,
-    onSuccess(operationCaseInfoList) {
-      rerun({
-        caseSourceFrom: +planItemData!.caseStartTime,
-        caseSourceTo: +planItemData!.caseEndTime,
-        appId: planItemData!.appId,
-        operationCaseInfoList,
-        operator: email as string,
-        replayPlanType: 3,
-        sourceEnv: 'pro',
-        targetEnv: decodeURIComponent(planItemData!.targetEnv || ''),
-      });
-    },
-  });
-
-  const { run: rerun } = useRequest(ScheduleService.createPlan, {
-    manual: true,
-
     onSuccess(res) {
       if (res.result === 1) {
-        notification.success({
-          message: t('replay.startSuccess'),
-        });
+        message.success(t('message.success', { ns: 'common' }));
       } else {
-        notification.error({
-          message: t('message.error', { ns: 'common' }),
-          description: MessageMap[i18n.language as I18nextLng][res.data.reasonCode],
-        });
+        message.error(res.desc);
       }
     },
   });
@@ -174,13 +152,6 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
       },
     },
   );
-  function handleClickRerunCase(recordId: string) {
-    queryPlanFailCase({
-      planId: planItemData!.planId,
-      planItemIdList: [planItemId],
-      recordIdList: [recordId],
-    });
-  }
 
   function handleClickCompareConfigSetting(data?: InfoItem) {
     setSelectedDependency(data);
@@ -251,7 +222,12 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
                 onClick={handleClickRecord}
                 onChange={handleCaseTableChange}
                 onClickSaveCase={handleClickSaveCase}
-                onClickRerunCase={handleClickRerunCase}
+                onClickRetryCase={() =>
+                  retryPlan({
+                    planId: planItemData!.planId,
+                    planItemId,
+                  })
+                }
               />
             }
             panel={

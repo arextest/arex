@@ -14,6 +14,7 @@ import CountUp from 'react-countup';
 import { useSearchParams } from 'react-router-dom';
 
 import { StatusTag } from '@/components';
+import { ResultsState } from '@/components/StatusTag';
 import { ReportService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
 import { useMenusPanes } from '@/store';
@@ -161,7 +162,11 @@ const PlanReport: FC<PlanReportProps> = (props) => {
           setInit(false); // 设置第一次初始化标识);
         }
 
-        if (list.every((record) => record.status !== 1)) {
+        if (
+          list.every(
+            (record) => ![ResultsState.RUNNING, ResultsState.RERUNNING].includes(record.status),
+          )
+        ) {
           setPollingInterval(false);
           cancelPollingInterval();
         }
