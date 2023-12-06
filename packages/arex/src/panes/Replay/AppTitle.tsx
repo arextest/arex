@@ -64,6 +64,7 @@ type AppTitleProps = {
 };
 
 type CreatePlanForm = {
+  planName?: string;
   targetEnv: string;
   caseSourceRange: [Dayjs, Dayjs];
   operationList?: string[];
@@ -276,6 +277,7 @@ const AppTitle: FC<AppTitleProps> = ({
           appId,
           sourceEnv: 'pro',
           targetEnv,
+          planName: values.planName,
           caseSourceFrom: values.caseSourceRange[0].valueOf(),
           caseSourceTo: values.caseSourceRange[1].valueOf(),
           operationCaseInfoList: values.operationList?.map((operationId) => ({
@@ -462,6 +464,10 @@ const AppTitle: FC<AppTitleProps> = ({
             />
           </Form.Item>
 
+          <Form.Item label={t('replay.planName')} name='planName'>
+            <Input allowClear placeholder={t('replay.planNamePlaceholder') as string} />
+          </Form.Item>
+
           <Form.Item
             label={<HelpTooltip title={t('replay.pathsTooltip')}>{t('replay.paths')}</HelpTooltip>}
             name='operationList'
@@ -469,6 +475,7 @@ const AppTitle: FC<AppTitleProps> = ({
             <Select
               mode='multiple'
               maxTagCount={3}
+              placeholder={t('replay.pathsPlaceholder')}
               options={interfacesOptions}
               optionFilterProp='label'
             />
