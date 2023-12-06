@@ -197,6 +197,7 @@
     "remark":  "Remark"
   },
   "caseDetail": {
+    "more": "More",
     "caseDetail": "Case Detail",
     "recordId": "Record ID",
     "operationName": "Operation Name",

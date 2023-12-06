@@ -197,6 +197,7 @@
     "remark": "备注"
   },
   "caseDetail": {
+    "more": "详情",
     "caseDetail": "录制详情",
     "recordId": "录制ID",
     "operationName": "接口名",
