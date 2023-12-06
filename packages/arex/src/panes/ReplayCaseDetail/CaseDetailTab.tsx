@@ -35,7 +35,7 @@ const CaseDetailTab: FC<CaseDetailTabProps> = (props) => {
                   setCurrent(result);
                 }}
               >
-                More
+                {t('caseDetail.caseDetail')}
               </Button>
             </div>
           ),
