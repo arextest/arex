@@ -9,14 +9,48 @@ import { useTranslation } from '@arextest/arex-core';
 import { Progress, Tag, Tooltip } from 'antd';
 import React, { FC, useMemo } from 'react';
 
+export enum ResultsState {
+  INIT,
+  RUNNING,
+  DONE,
+  INTERRUPTED,
+  CANCELLED,
+  CASE_LOADED,
+  RERUNNING,
+}
 export const resultsStates = [
-  { label: 'init', color: 'default', value: 0, icon: <ClockCircleOutlined /> },
-  { label: 'running', color: 'processing', value: 1, icon: <SyncOutlined spin /> },
-  { label: 'done', color: 'success', value: 2, icon: <CheckCircleOutlined /> },
-  { label: 'interrupted', color: 'warning', value: 3, icon: <ExclamationCircleOutlined /> },
-  { label: 'cancelled', color: 'error', value: 4, icon: <MinusCircleOutlined /> },
-  { label: 'caseloaded', color: 'default', value: 5, icon: <ClockCircleOutlined /> },
-  { label: 'rerunning', color: 'processing', value: 6, icon: <SyncOutlined spin /> },
+  { label: 'init', color: 'default', value: ResultsState.INIT, icon: <ClockCircleOutlined /> },
+  {
+    label: 'running',
+    color: 'processing',
+    value: ResultsState.RUNNING,
+    icon: <SyncOutlined spin />,
+  },
+  { label: 'done', color: 'success', value: ResultsState.DONE, icon: <CheckCircleOutlined /> },
+  {
+    label: 'interrupted',
+    color: 'warning',
+    value: ResultsState.INTERRUPTED,
+    icon: <ExclamationCircleOutlined />,
+  },
+  {
+    label: 'cancelled',
+    color: 'error',
+    value: ResultsState.CANCELLED,
+    icon: <MinusCircleOutlined />,
+  },
+  {
+    label: 'caseLoaded',
+    color: 'default',
+    value: ResultsState.CASE_LOADED,
+    icon: <ClockCircleOutlined />,
+  },
+  {
+    label: 'rerunning',
+    color: 'processing',
+    value: ResultsState.RERUNNING,
+    icon: <SyncOutlined spin />,
+  },
 ] as const;
 
 export type StatusTagProps = {
