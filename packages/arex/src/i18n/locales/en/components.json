@@ -196,6 +196,18 @@
     "arexProblem": "Arex Problem",
     "remark":  "Remark"
   },
+  "caseDetail": {
+    "more": "More",
+    "caseDetail": "Case Detail",
+    "recordId": "Record ID",
+    "operationName": "Operation Name",
+    "categoryType": "Operation Type",
+    "recordVersion": "Recording Agent Version",
+    "requestAttributes": "Request Extra Attributes",
+    "requestBodyType": "Request Body Type",
+    "responseAttributes": "Response Extra Attributes",
+    "responseBodyType": "Response Body Type"
+  },
   "appSetting": {
     "record": "Record",
     "replay": "Replay",
