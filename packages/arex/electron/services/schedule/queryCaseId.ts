@@ -17,8 +17,10 @@ export interface QueryCaseIdRes {
   desc: string;
   data: {
     planId: string;
-    batchCaseIdsMap: Record<string, string[]>;
-    batchWarmUpCaseIdMap: Record<string, string>;
+    replayCaseBatchInfos: {
+      caseIds: string[];
+      warmUpId?: string;
+    }[];
   };
 }
 

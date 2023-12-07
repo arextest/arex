@@ -15,6 +15,7 @@ import preSend from './services/schedule/preSend';
 import axios, { AxiosResponse } from 'axios';
 import postSend from './services/schedule/postSend';
 import { SendStatusType } from './services/schedule/type';
+import { zstdDecompress } from './helper';
 
 // 解析提交的json参数
 let jsonParser = bodyParser.json();
@@ -67,36 +68,40 @@ server.get('/env', (req, res) => {
   res.send(proxy);
 });
 
+// server.post('/api/zstd', jsonParser, async (req, res) => {
+//   try {
+//     const data = req.body.data;
+//     const decodeString = await zstdDecompress(data);
+//
+//     res.send({ decode: JSON.parse(decodeString) });
+//   } catch (e) {
+//     res.send({ error: String(e) });
+//   }
+// });
+
 // local Schedule createPlan
 server.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
   logger.log('[request:/api/createPlan] ', req.body);
 
-  const startTime = Date.now();
   try {
     const caseResponse = await queryCaseId(req.body);
     const { result, desc, data } = caseResponse;
-    if (result !== 1) throw Error(desc);
+    if (result !== 1) {
+      res.send({ desc, statusCode: 2, data: { reasonCode: 200 } });
+      throw Error(desc);
+    }
 
-    const {
-      batchCaseIdsMap: batchCaseIdsList,
-      batchWarmUpCaseIdMap: batchWarmUpCaseIdList,
-      planId,
-    } = caseResponse.data;
+    const { replayCaseBatchInfos, planId } = caseResponse.data;
 
-    logger.log(`[planId: ${planId}]`);
+    logger.log(`[planId: ${planId}]`, JSON.stringify(caseResponse.data));
     res.send({ desc: 'success', result: 1, data: { reasonCode: 1, replayPlanId: planId } });
 
-    const batchCaseIdsMap = new Map(Object.entries(batchCaseIdsList));
-    const batchWarmUpCaseIdMap = new Map(Object.entries(batchWarmUpCaseIdList));
-    for (const [batchId, caseIds] of batchCaseIdsMap) {
-      const {
-        data: { replaySenderParametersMap: caseParametersList },
-      } = await queryReplaySenderParameters({
+    for (const { warmUpId, caseIds } of replayCaseBatchInfos) {
+      const caseParametersList = await queryReplaySenderParameters({
         planId,
         replayPlanType: 0,
         caseIds,
       });
-
       const caseParametersMap = new Map(Object.entries(caseParametersList));
 
       // case query Parameters failed (in caseIds but not in key of caseParametersMap)
@@ -116,18 +121,13 @@ server.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
         logger.log('All CaseIds valid');
       }
 
-      const warmUpCaseId = batchWarmUpCaseIdMap.get(batchId);
-      const warmUpCaseParameter = caseParametersMap.get(warmUpCaseId);
-      caseParametersMap.delete(warmUpCaseId);
-
-      // warmUpCase -> commonCase
-      await sendCaseFlow(warmUpCaseParameter, planId, warmUpCaseId, batchId);
+      logger.log(`[caseIds]:`, caseIds);
       for (const [caseId, caseParameter] of caseParametersMap) {
-        await sendCaseFlow(caseParameter, planId, caseId);
+        await sendCaseFlow(caseParameter, planId, caseId, warmUpId);
       }
     }
   } catch (err) {
-    res.send({ desc: String(err), statusCode: 2, data: { reasonCode: 200 } });
+    logger.error(err);
   }
 });
 
@@ -136,13 +136,13 @@ server.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
  * @param params
  * @param planId
  * @param caseId
- * @param batchId required for warmUp case
+ * @param warmUpId required for warmUp case
  */
 async function sendCaseFlow(
   params: ReplaySenderParameters,
   planId: string,
   caseId: string,
-  batchId?: string,
+  warmUpId?: string,
 ) {
   // preSend
   try {
@@ -171,10 +171,11 @@ async function sendCaseFlow(
           }
         : {};
 
+    // logger.log(`[send]`, params);
     caseResponse = await axios.request({
       baseURL: params.url,
       url: params.operation,
-      headers: { ...params.headers, arex_replay_prepare_dependency: batchId },
+      headers: { ...params.headers, arex_replay_prepare_dependency: warmUpId },
       method: params.method,
       ...data,
     });
@@ -190,13 +191,14 @@ async function sendCaseFlow(
       }));
   } catch (e) {
     const replayId = caseResponse?.headers['arex-replay-id'];
+    logger.error(String(e));
     logger.error(
       '[postSend]',
       `[caseId: ${caseId}]`,
       `[replayId: ${replayId}]`,
       `[sendStatusType: 100]`,
     );
-    await postSend({
+    return await postSend({
       caseId,
       planId,
       replayId,

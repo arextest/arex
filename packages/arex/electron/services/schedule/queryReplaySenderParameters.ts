@@ -1,5 +1,6 @@
-import { AxiosResponse } from 'axios/index';
+import { AxiosResponse } from 'axios';
 
+import { zstdDecompress } from '../../helper';
 import { ScheduleAxios } from './index';
 
 export interface QueryReplaySenderParametersReq {
@@ -23,8 +24,20 @@ export interface QueryReplaySenderParametersRes {
   result: number;
   desc: string;
   data: {
-    replaySenderParametersMap: Record<string, ReplaySenderParameters>;
+    replaySenderParametersMap: Record<string, string>;
   };
+}
+// 异步处理每个键值对
+async function convertData<T>(data: Record<string, string>): Promise<Record<string, T>> {
+  const result = {};
+  for (const [key, compressedString] of Object.entries(data)) {
+    // logger.log([key, compressedString]);
+    const decompressedString = await zstdDecompress(compressedString);
+    // logger.log(decompressedString);
+    result[key] = JSON.parse(decompressedString);
+  }
+
+  return result;
 }
 
 export default async function queryReplaySenderParameters(params: QueryReplaySenderParametersReq) {
@@ -32,5 +45,6 @@ export default async function queryReplaySenderParameters(params: QueryReplaySen
     QueryReplaySenderParametersReq,
     AxiosResponse<QueryReplaySenderParametersRes>
   >('/api/replay/local/queryReplaySenderParameters', params);
-  return res.data;
+  const parametersMap = res.data.data.replaySenderParametersMap;
+  return await convertData<ReplaySenderParameters>(parametersMap);
 }

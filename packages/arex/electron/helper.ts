@@ -2,6 +2,8 @@ import { join } from 'path';
 import fs from 'fs';
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
+import * as fzstd from 'fzstd';
+
 const dataPath = join(app.getPath('userData'), 'data.json');
 
 export function getLocalData(key?: string) {
@@ -49,4 +51,19 @@ export function openWindow(win: BrowserWindow, pathname?: string) {
       hash: pathname,
     });
   }
+}
+
+export function base64ToBytes(base64: string): Uint8Array {
+  const binString: ArrayLike<string> = atob(base64);
+  return Uint8Array.from<string>(binString, (m: string) => m.codePointAt(0)!);
+}
+
+export function bytesToBase64(bytes: Uint8Array) {
+  const binString = Array.from(bytes, (x) => String.fromCodePoint(x)).join('');
+  return btoa(binString);
+}
+
+export async function zstdDecompress(str: string) {
+  const decompressed_data = fzstd.decompress(base64ToBytes(str));
+  return new TextDecoder().decode(decompressed_data);
 }

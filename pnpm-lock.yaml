@@ -77,7 +77,7 @@ importers:
         version: 0.3.2(@emotion/react@11.10.6)(@emotion/styled@11.10.6)(antd@5.11.0)(react-dom@18.2.0)(react@18.2.0)
       '@arextest/arex-request':
         specifier: '*'
-        version: link:../arex-request
+        version: 0.3.4(@emotion/react@11.10.6)(@emotion/styled@11.10.6)(@monaco-editor/react@4.6.0)(@types/react@18.2.0)(antd@5.11.0)(i18next@22.4.11)(monaco-editor@0.39.0)(react-dom@18.2.0)(react-i18next@12.2.0)(react@18.2.0)
       '@emotion/react':
         specifier: ^11.10.6
         version: 11.10.6(@types/react@18.2.0)(react@18.2.0)
@@ -126,6 +126,9 @@ importers:
       express:
         specifier: ^4.18.2
         version: 4.18.2
+      fzstd:
+        specifier: ^0.1.0
+        version: 0.1.0
       http-proxy-middleware:
         specifier: ^2.0.6
         version: 2.0.6(@types/express@4.17.21)
@@ -787,6 +790,42 @@ packages:
       use-immer: 0.8.1(immer@9.0.21)(react@18.2.0)
       vconsole: 3.15.0
     transitivePeerDependencies:
+      - react-native
+    dev: false
+
+  /@arextest/arex-request@0.3.4(@emotion/react@11.10.6)(@emotion/styled@11.10.6)(@monaco-editor/react@4.6.0)(@types/react@18.2.0)(antd@5.11.0)(i18next@22.4.11)(monaco-editor@0.39.0)(react-dom@18.2.0)(react-i18next@12.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-mLEEuJc7p37jWperJiwfEwTRKhW2/bQhAY3uEiVxQWdBs/BWuAFPL5ji0nK0tXYmWJXcWFqme/CMS93VVaqHBw==}
+    peerDependencies:
+      '@emotion/react': ^11.10.6
+      '@emotion/styled': ^11.10.6
+      '@monaco-editor/react': ^4.6.0
+      antd: ^5.11.0
+      i18next: ^22.4.11
+      monaco-editor: ^0.39.0
+      react: ^18.2.0
+      react-dom: ^18.2.0
+      react-i18next: ^12.2.0
+    dependencies:
+      '@ant-design/icons': 5.2.6(react-dom@18.2.0)(react@18.2.0)
+      '@arextest/arex-core': 0.3.2(@emotion/react@11.10.6)(@emotion/styled@11.10.6)(antd@5.11.0)(react-dom@18.2.0)(react@18.2.0)
+      '@emotion/react': 11.10.6(@types/react@18.2.0)(react@18.2.0)
+      '@emotion/styled': 11.10.6(@emotion/react@11.10.6)(@types/react@18.2.0)(react@18.2.0)
+      '@monaco-editor/react': 4.6.0(monaco-editor@0.39.0)(react-dom@18.2.0)(react@18.2.0)
+      allotment: 1.19.3(react-dom@18.2.0)(react@18.2.0)
+      antd: 5.11.0(react-dom@18.2.0)(react@18.2.0)
+      i18next: 22.4.11
+      immer: 9.0.21
+      lodash: 4.17.21
+      monaco-editor: 0.39.0
+      postman-collection: 4.1.7
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-i18next: 12.2.0(i18next@22.4.11)(react-dom@18.2.0)(react@18.2.0)
+      react-json-view: 1.21.3(@types/react@18.2.0)(react-dom@18.2.0)(react@18.2.0)
+      use-immer: 0.9.0(immer@9.0.21)(react@18.2.0)
+    transitivePeerDependencies:
+      - '@types/react'
+      - encoding
       - react-native
     dev: false
 
@@ -5997,6 +6036,10 @@ packages:
   /functions-have-names@1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
     dev: true
+
+  /fzstd@0.1.0:
+    resolution: {integrity: sha512-TTvznnpde1rTv/3FOmZMbPCh75gqkJ9dKJdsKmcNiXh4olLJl3eRahHJcGzyPZjuVaytffP02Or4z5avDvqKQA==}
+    dev: false
 
   /gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
