@@ -196,6 +196,18 @@
     "arexProblem": "AREX 问题",
     "remark": "备注"
   },
+  "caseDetail": {
+    "more": "详情",
+    "caseDetail": "录制详情",
+    "recordId": "录制ID",
+    "operationName": "接口名",
+    "categoryType": "接口类型",
+    "recordVersion": "录制Agent版本",
+    "requestAttributes": "请求额外参数",
+    "requestBodyType": "请求体类型",
+    "responseAttributes": "返回额外参数",
+    "responseBodyType": "返回体类型"
+  },
   "appSetting": {
     "record": "录制",
     "replay": "回放",

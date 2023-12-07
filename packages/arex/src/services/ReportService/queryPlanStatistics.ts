@@ -68,7 +68,11 @@ export async function queryPlanStatistics(
     .post<QueryPlanStatisticsRes>('/report/report/queryPlanStatistics', requestParams)
     .then((res) =>
       Promise.resolve({
-        total: res.body.totalCount,
+        pagination: {
+          current,
+          pageSize,
+          total: res.body.totalCount,
+        },
         list: res.body.planStatisticList.sort((a, b) => b.replayStartTime - a.replayStartTime),
       }),
     );
