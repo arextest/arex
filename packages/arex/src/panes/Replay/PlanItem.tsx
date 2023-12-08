@@ -272,7 +272,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         render: (count, record) => CaseCountRender(count, record, 2, props.readOnly),
       },
       {
-        title: t('replay.blocked'),
+        title: t('replay.queued'),
         dataIndex: 'waitCaseCount',
         width: 72,
         render: (text) => (

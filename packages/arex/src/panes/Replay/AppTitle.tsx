@@ -37,16 +37,7 @@ import {
   Typography,
 } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import React, {
-  createElement,
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { createElement, FC, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
 import { EMAIL_KEY, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
@@ -83,13 +74,7 @@ const TitleWrapper = styled(
     onRefresh?: () => void;
     onSetting?: () => void;
   }) => {
-    const navPane = useNavPane();
     const { t } = useTranslation(['components']);
-    const [planId, setPlanId] = useState<string>();
-
-    useEffect(() => {
-      setPlanId(props.planId);
-    }, [props.planId]);
 
     return (
       <div id='arex-replay-record-detail-btn' className={props.className}>
@@ -143,29 +128,6 @@ const TitleWrapper = styled(
                 onClick={props.onSetting}
               />
             )}
-
-            <Input.Search
-              allowClear
-              size='small'
-              value={planId}
-              placeholder={t('replay.searchForPlanId') as string}
-              onChange={(e) => {
-                setPlanId(e.target.value);
-                !e.target.value &&
-                  navPane({
-                    id: props.appId,
-                    type: PanesType.REPLAY,
-                  });
-              }}
-              onSearch={(planId) => {
-                navPane({
-                  id: props.appId,
-                  type: PanesType.REPLAY,
-                  data: { planId: planId || undefined }, // set '' to undefined
-                });
-              }}
-              style={{ display: 'inline', width: '160px', marginLeft: '8px' }}
-            />
           </>
         ) : (
           <Skeleton.Input active size='small' style={{ width: '200px' }} />

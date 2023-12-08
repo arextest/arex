@@ -82,5 +82,7 @@
     "1d": "1d"
   },
   "checkAll": "Check All",
-  "advancedOptions": "Advanced Options"
+  "advancedOptions": "Advanced Options",
+  "and": " and",
+  "or": " or"
 }
