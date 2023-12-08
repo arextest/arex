@@ -181,7 +181,7 @@
     "escExit": "Press Esc to exit",
     "addIgnoreSuccess": "Ignore node successfully",
     "diffMatch": "Diff Match",
-    "replayEndTime": "ReplayEndTime",
+    "replayEndTime": "Replay End Time",
     "operationName": "Operation Name",
     "recordedCaseCount": "Case Count",
     "recordTime": "Record Time",
