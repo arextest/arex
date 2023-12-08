@@ -289,6 +289,7 @@
     "maxQPS": "最大QPS",
     "QPSTips": "有效范围 1 - 20",
     "emptyQPS": "请输入最大QPS",
+    "skipMock": "不Mock依赖",
     "sync": "同步",
     "emptyContractTip": "无报文契约，请尝试同步更新契约",
     "contract": "契约",

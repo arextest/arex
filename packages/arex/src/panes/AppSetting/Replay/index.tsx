@@ -99,7 +99,7 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
         <Form.Item
           label={
             <HelpTooltip title={t('appSetting.exclusionTooltip')}>
-              {t('appSetting.exclusion')}
+              {t('appSetting.skipMock')}
             </HelpTooltip>
           }
           name='excludeOperationMap'
