@@ -25,6 +25,7 @@ import {
   AutoComplete,
   Badge,
   Button,
+  Collapse,
   DatePicker,
   Form,
   Input,
@@ -396,7 +397,7 @@ const AppTitle: FC<AppTitleProps> = ({
         onOk={handleStartReplay}
         onCancel={handleCloseModal}
         styles={{
-          body: { paddingBottom: '12px' },
+          body: { padding: '8px 0' },
         }}
         confirmLoading={confirmLoading}
       >
@@ -464,26 +465,56 @@ const AppTitle: FC<AppTitleProps> = ({
             />
           </Form.Item>
 
-          <Form.Item label={t('replay.planName')} name='planName'>
-            <Input allowClear placeholder={t('replay.planNamePlaceholder') as string} />
-          </Form.Item>
+          <Collapse
+            css={css`
+              margin-top: -8px;
+              background-color: transparent;
+              .ant-collapse-content-box {
+                padding: 0 !important;
+              }
+            `}
+            bordered={false}
+            items={[
+              {
+                key: 'advancedOptions',
+                label: (
+                  <Typography.Text>
+                    {t('advancedOptions', {
+                      ns: 'common',
+                    })}
+                  </Typography.Text>
+                ),
+                children: (
+                  <>
+                    <Form.Item label={t('replay.planName')} name='planName'>
+                      <Input allowClear placeholder={t('replay.planNamePlaceholder') as string} />
+                    </Form.Item>
 
-          <Form.Item
-            label={<HelpTooltip title={t('replay.pathsTooltip')}>{t('replay.paths')}</HelpTooltip>}
-            name='operationList'
-          >
-            <Select
-              mode='multiple'
-              maxTagCount={3}
-              placeholder={t('replay.pathsPlaceholder')}
-              options={interfacesOptions}
-              optionFilterProp='label'
-            />
-          </Form.Item>
+                    <Form.Item
+                      label={
+                        <HelpTooltip title={t('replay.pathsTooltip')}>
+                          {t('replay.paths')}
+                        </HelpTooltip>
+                      }
+                      name='operationList'
+                    >
+                      <Select
+                        mode='multiple'
+                        maxTagCount={3}
+                        placeholder={t('replay.pathsPlaceholder')}
+                        options={interfacesOptions}
+                        optionFilterProp='label'
+                      />
+                    </Form.Item>
 
-          <Form.Item label={'Webhook'}>
-            <Typography.Text copyable>{webhook}</Typography.Text>
-          </Form.Item>
+                    <Form.Item label={'Webhook'}>
+                      <Typography.Text copyable>{webhook}</Typography.Text>
+                    </Form.Item>
+                  </>
+                ),
+              },
+            ]}
+          />
         </Form>
       </Modal>
 

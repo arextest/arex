@@ -78,5 +78,6 @@
     "quickPick": "快速选择",
     "1d": "近一天"
   },
-  "checkAll": "选择全部"
+  "checkAll": "选择全部",
+  "advancedOptions": "高级选项"
 }

@@ -81,5 +81,6 @@
     "quickPick": "Quick Pick",
     "1d": "1d"
   },
-  "checkAll": "Check All"
+  "checkAll": "Check All",
+  "advancedOptions": "Advanced Options"
 }
