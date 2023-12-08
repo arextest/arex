@@ -86,18 +86,6 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
 
         <Form.Item
           label={
-            <HelpTooltip title={t('appSetting.caseRangeTooltip')}>
-              {t('appSetting.caseRange')}
-            </HelpTooltip>
-          }
-          name='offsetDays'
-          rules={[{ required: true, message: t('appSetting.emptyCaseRange') as string }]}
-        >
-          <InputNumber min={1} />
-        </Form.Item>
-
-        <Form.Item
-          label={
             <HelpTooltip title={t('appSetting.exclusionTooltip')}>
               {t('appSetting.skipMock')}
             </HelpTooltip>
