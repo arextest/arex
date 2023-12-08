@@ -6,12 +6,11 @@ import {
   useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
-import { usePagination, useRequest } from 'ahooks';
+import { useRequest } from 'ahooks';
 import { Card, theme, Tooltip, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useEffect, useState } from 'react';
 import CountUp from 'react-countup';
-import { useSearchParams } from 'react-router-dom';
 
 import { StatusTag } from '@/components';
 import { ResultsState } from '@/components/StatusTag';
@@ -35,7 +34,6 @@ const PlanReport: FC<PlanReportProps> = (props) => {
 
   const { token } = theme.useToken();
   const { t } = useTranslation(['components']);
-  const [searchParams] = useSearchParams();
   const [init, setInit] = useState(true);
 
   const { data } = useArexPaneProps<{
@@ -47,11 +45,6 @@ const PlanReport: FC<PlanReportProps> = (props) => {
       title: t('replay.replayReportName'),
       dataIndex: 'planName',
       ellipsis: { showTitle: false },
-      render: (text) => (
-        <Tooltip title={text} placement='topLeft'>
-          <a>{text}</a>
-        </Tooltip>
-      ),
     },
     {
       title: t('replay.state'),
@@ -225,11 +218,6 @@ const PlanReport: FC<PlanReportProps> = (props) => {
           }}
           onRowClick={handleRowClick}
           dataSource={planStatistics}
-          sx={{
-            '.ant-table-cell-ellipsis': {
-              color: token.colorPrimary,
-            },
-          }}
         />
       )}
     </FullHeightSpin>

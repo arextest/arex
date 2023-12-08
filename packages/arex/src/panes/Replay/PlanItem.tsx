@@ -13,6 +13,7 @@ import { ReplayLogsDrawer } from '@arextest/arex-common';
 import {
   copyToClipboard,
   HighlightRowTable,
+  Label,
   SpaceBetweenWrapper,
   TooltipButton,
   useArexPaneProps,
@@ -202,17 +203,6 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const searchInput = useRef<InputRef>(null);
   const columns = useMemo<ColumnsType<PlanItemStatistic>>(() => {
     const _columns: ColumnsType<PlanItemStatistic> = [
-      // {
-      //   title: t('replay.planItemID'),
-      //   dataIndex: 'planItemId',
-      //   key: 'planItemId',
-      //   ellipsis: { showTitle: false },
-      //   render: (value) => (
-      //     <Tooltip placement='topLeft' title={value}>
-      //       {value}
-      //     </Tooltip>
-      //   ),
-      // },
       {
         title: t('replay.api'),
         dataIndex: 'operationName',
@@ -256,26 +246,6 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             </Tooltip>
           );
         },
-      },
-      {
-        title: t('replay.state'),
-        render: (_, record) => (
-          <div style={{ overflow: 'hidden' }}>
-            <StatusTag
-              status={record.status}
-              caseCount={record.successCaseCount + record.failCaseCount + record.errorCaseCount}
-              totalCaseCount={record.totalCaseCount}
-              message={record.errorMessage}
-            />
-          </div>
-        ),
-      },
-      {
-        title: t('replay.timeConsumed'),
-        render: (_, record) =>
-          record.replayEndTime && record.replayStartTime
-            ? (record.replayEndTime - record.replayStartTime) / 1000
-            : '-',
       },
       {
         title: t('replay.cases'),
@@ -325,7 +295,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             <TooltipButton
               icon={<ContainerOutlined />}
               title={t('replay.diffScenes')}
-              breakpoint='xxl'
+              breakpoint='lg'
               disabled={!record.failCaseCount}
               color={record.failCaseCount ? 'primary' : 'disabled'}
               onClick={() => {
@@ -339,7 +309,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             <TooltipButton
               icon={<FileTextOutlined />}
               title={t('replay.case')}
-              breakpoint='xxl'
+              breakpoint='lg'
               color='primary'
               onClick={() => {
                 navPane({
@@ -352,7 +322,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             <TooltipButton
               icon={<RedoOutlined />}
               title={t('replay.retry')}
-              breakpoint='xxl'
+              breakpoint='lg'
               color='primary'
               onClick={() =>
                 retryPlan({ planId: selectedPlan!.planId, planItemId: record.planItemId })
@@ -503,48 +473,34 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
     >
       <Row gutter={12}>
         <Col span={12}>
-          <Typography.Text type='secondary'>{t('replay.basicInfo')}</Typography.Text>
-          <div
-            css={css`
-              display: flex;
-              & > * {
-                flex: 1;
-              }
-            `}
-          >
-            <Statistic
-              title={t('replay.passRate')}
-              value={getPercent(selectedPlan.successCaseCount, selectedPlan.totalCaseCount)}
-            />
-            <Statistic
-              title={t('replay.apiPassRate')}
-              value={getPercent(
-                selectedPlan.successOperationCount,
-                selectedPlan.totalOperationCount,
-              )}
-            />
+          <Statistic
+            title={t('replay.passRate')}
+            value={getPercent(selectedPlan.successCaseCount, selectedPlan.totalCaseCount)}
+          />
+          <div>
+            <Label>{t('replay.reportId')}</Label>
+            {selectedPlan.planId}
           </div>
           <div>
-            {t('replay.reportId')}: {selectedPlan.planId}
+            <Label>{t('replay.reportName')}</Label>
+            {selectedPlan.planName}
           </div>
           <div>
-            {t('replay.reportName')}: {selectedPlan.planName}
-          </div>
-          <div>
-            {t('replay.caseRange')}:{' '}
+            <Label>{t('replay.caseRange')}</Label>
             {dayjs(new Date(selectedPlan.caseStartTime || '')).format('YYYY/MM/DD')} -{' '}
             {dayjs(new Date(selectedPlan.caseEndTime || '')).format('YYYY/MM/DD')}
           </div>
           <div>
-            {t('replay.targetHost')}: {selectedPlan.targetEnv}
+            <Label>{t('replay.targetHost')}</Label>
+            {selectedPlan.targetEnv}
           </div>
           <div>
-            {t('replay.executor')}: {selectedPlan.creator}
+            <Label>{t('replay.executor')}</Label>
+            {selectedPlan.creator}
           </div>
           <div>
-            <span>
-              {t('replay.recordVersion')}: {selectedPlan.caseRecordVersion || '-'}
-            </span>
+            <Label>{t('replay.recordVersion')}</Label>
+            {selectedPlan.caseRecordVersion || '-'}
             &nbsp;
             <span>
               {t('replay.replayVersion')}: {selectedPlan.coreVersion || '-'}
