@@ -9,7 +9,7 @@ import {
 import { useRequest } from 'ahooks';
 import { Card, Tag, theme, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import CountUp from 'react-countup';
 
 import { StatusTag } from '@/components';
@@ -27,10 +27,13 @@ export type PlanReportProps = {
   appId?: string;
   refreshDep?: React.Key;
   recordCount?: number;
-  onSelectedPlanChange: (selectedPlan: PlanStatistics, current?: number, row?: number) => void;
+  onSelectedPlanChange: (selectedPlan?: PlanStatistics) => void;
 };
 
-const PlanReport: FC<PlanReportProps> = (props) => {
+export type PlanReportRef = {
+  select: (index: number) => void;
+};
+const PlanReport = forwardRef<PlanReportRef, PlanReportProps>((props, ref) => {
   const { appId, refreshDep, recordCount, onSelectedPlanChange } = props;
   const { activePane } = useMenusPanes();
 
@@ -182,10 +185,20 @@ const PlanReport: FC<PlanReportProps> = (props) => {
   }, [activePane, props.appId]);
 
   const [selectKey, setSelectKey] = useState<string>();
-  const handleRowClick: HighlightRowTableProps<PlanStatistics>['onRowClick'] = (record, index) => {
-    setSelectKey(record.planId);
-    onSelectedPlanChange(record, pagination.current, index);
+  const handleRowClick: HighlightRowTableProps<PlanStatistics>['onRowClick'] = (record) => {
+    const selected = record.planId === selectKey;
+    const selectedRecord = selected ? undefined : record;
+    setSelectKey(selectedRecord?.planId);
+    onSelectedPlanChange(selectedRecord);
   };
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      select: (index) => handleRowClick?.(planStatistics[index]),
+    }),
+    [planStatistics],
+  );
 
   return (
     <FullHeightSpin
@@ -245,6 +258,6 @@ const PlanReport: FC<PlanReportProps> = (props) => {
       )}
     </FullHeightSpin>
   );
-};
+});
 
 export default PlanReport;

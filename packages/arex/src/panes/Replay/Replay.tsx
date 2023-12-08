@@ -62,7 +62,6 @@ const ReplayPage: ArexPaneFC = (props) => {
     defaultParams: [appId],
     onSuccess(res) {
       setHasOwner(!!res.owners?.length);
-      // !res.owners?.length && appOwnerConfigRef?.current?.open();
     },
   });
 
@@ -116,6 +115,7 @@ const ReplayPage: ArexPaneFC = (props) => {
                 readOnly={!hasOwner}
                 filter={(record) => !!record.totalCaseCount}
                 onRefresh={handleRefreshDep}
+                onDelete={() => setSelectedPlan(undefined)}
               />
             }
           />

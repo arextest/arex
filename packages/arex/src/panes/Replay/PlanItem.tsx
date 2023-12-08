@@ -3,6 +3,7 @@ import 'chart.js/auto';
 import Icon, {
   ContainerOutlined,
   DeleteOutlined,
+  ExclamationCircleFilled,
   FileTextOutlined,
   RedoOutlined,
   SearchOutlined,
@@ -19,7 +20,6 @@ import {
   useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
-import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import {
   App,
@@ -42,7 +42,6 @@ import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 're
 import { Pie } from 'react-chartjs-2';
 import CountUp from 'react-countup';
 
-import { StatusTag } from '@/components';
 import { ResultsState } from '@/components/StatusTag';
 import { PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
@@ -72,11 +71,12 @@ export type ReplayPlanItemProps = {
   readOnly?: boolean;
   filter?: (record: PlanItemStatistic) => boolean;
   onRefresh?: () => void;
+  onDelete?: (planId: string) => void;
 };
 
 const PlanItem: FC<ReplayPlanItemProps> = (props) => {
-  const { selectedPlan, filter, onRefresh } = props;
-  const { message } = App.useApp();
+  const { selectedPlan, filter, onRefresh, onDelete } = props;
+  const { message, modal } = App.useApp();
   const { activePane } = useMenusPanes();
 
   const { t } = useTranslation(['components', 'common']);
@@ -348,10 +348,14 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const { run: deleteReport } = useRequest(ReportService.deleteReport, {
     manual: true,
     ready: !!selectedPlan?.planId,
-    onSuccess(success) {
-      success
-        ? message.success(t('message.success', { ns: 'common' }))
-        : message.error(t('message.error', { ns: 'common' }));
+    onSuccess(success, [planId]) {
+      if (success) {
+        message.success(t('message.success', { ns: 'common' }));
+        onRefresh?.();
+        onDelete?.(planId);
+      } else {
+        message.error(t('message.error', { ns: 'common' }));
+      }
     },
   });
 
@@ -393,7 +397,16 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
           break;
         }
         case 'deleteReport': {
-          deleteReport(selectedPlan!.planId);
+          modal.confirm({
+            maskClosable: true,
+            title: t('replay.confirmDeleteReport'),
+            icon: <ExclamationCircleFilled />,
+            okType: 'danger',
+            onOk() {
+              deleteReport(selectedPlan!.planId);
+            },
+          });
+
           break;
         }
       }
