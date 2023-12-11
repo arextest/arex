@@ -44,7 +44,6 @@ const Case: FC<CaseProps> = (props) => {
     {
       title: t('replay.recordId'),
       dataIndex: 'recordId',
-      render: (recordId, record) => <a onClick={() => props.onClick?.(record)}>{recordId}</a>,
     },
     {
       title: t('replay.replayId'),

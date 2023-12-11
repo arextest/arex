@@ -9,17 +9,6 @@ import { preTestCodeSnippet } from './snippets';
 
 const { Text } = Typography;
 
-export const ResponseTestHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  & > span:first-of-type {
-    font-size: 13px;
-    line-height: 32px;
-    font-weight: 500;
-    color: #9d9d9d;
-  }
-`;
-
 export const ResponseTestWrapper = styled.div`
   overflow-y: auto;
   display: flex;
@@ -56,9 +45,8 @@ const PreRequestScript = () => {
         flex-direction: column;
       `}
     >
-      <ResponseTestHeader>
-        <span>{t('preRequest.javascript_code')}</span>
-      </ResponseTestHeader>
+      <Typography.Text type='secondary'>{t('preRequest.javascript_code')}</Typography.Text>
+
       <ResponseTestWrapper>
         <div
           css={css`

@@ -25,6 +25,7 @@ import {
   AutoComplete,
   Badge,
   Button,
+  Collapse,
   DatePicker,
   Form,
   Input,
@@ -36,16 +37,7 @@ import {
   Typography,
 } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import React, {
-  createElement,
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { createElement, FC, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
 import { EMAIL_KEY, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
@@ -64,6 +56,7 @@ type AppTitleProps = {
 };
 
 type CreatePlanForm = {
+  planName?: string;
   targetEnv: string;
   caseSourceRange: [Dayjs, Dayjs];
   operationList?: string[];
@@ -81,13 +74,7 @@ const TitleWrapper = styled(
     onRefresh?: () => void;
     onSetting?: () => void;
   }) => {
-    const navPane = useNavPane();
     const { t } = useTranslation(['components']);
-    const [planId, setPlanId] = useState<string>();
-
-    useEffect(() => {
-      setPlanId(props.planId);
-    }, [props.planId]);
 
     return (
       <div id='arex-replay-record-detail-btn' className={props.className}>
@@ -141,29 +128,6 @@ const TitleWrapper = styled(
                 onClick={props.onSetting}
               />
             )}
-
-            <Input.Search
-              allowClear
-              size='small'
-              value={planId}
-              placeholder={t('replay.searchForPlanId') as string}
-              onChange={(e) => {
-                setPlanId(e.target.value);
-                !e.target.value &&
-                  navPane({
-                    id: props.appId,
-                    type: PanesType.REPLAY,
-                  });
-              }}
-              onSearch={(planId) => {
-                navPane({
-                  id: props.appId,
-                  type: PanesType.REPLAY,
-                  data: { planId: planId || undefined }, // set '' to undefined
-                });
-              }}
-              style={{ display: 'inline', width: '160px', marginLeft: '8px' }}
-            />
           </>
         ) : (
           <Skeleton.Input active size='small' style={{ width: '200px' }} />
@@ -276,6 +240,7 @@ const AppTitle: FC<AppTitleProps> = ({
           appId,
           sourceEnv: 'pro',
           targetEnv,
+          planName: values.planName,
           caseSourceFrom: values.caseSourceRange[0].valueOf(),
           caseSourceTo: values.caseSourceRange[1].valueOf(),
           operationCaseInfoList: values.operationList?.map((operationId) => ({
@@ -394,7 +359,7 @@ const AppTitle: FC<AppTitleProps> = ({
         onOk={handleStartReplay}
         onCancel={handleCloseModal}
         styles={{
-          body: { paddingBottom: '12px' },
+          body: { padding: '8px 0' },
         }}
         confirmLoading={confirmLoading}
       >
@@ -462,21 +427,56 @@ const AppTitle: FC<AppTitleProps> = ({
             />
           </Form.Item>
 
-          <Form.Item
-            label={<HelpTooltip title={t('replay.pathsTooltip')}>{t('replay.paths')}</HelpTooltip>}
-            name='operationList'
-          >
-            <Select
-              mode='multiple'
-              maxTagCount={3}
-              options={interfacesOptions}
-              optionFilterProp='label'
-            />
-          </Form.Item>
+          <Collapse
+            css={css`
+              margin-top: -8px;
+              background-color: transparent;
+              .ant-collapse-content-box {
+                padding: 0 !important;
+              }
+            `}
+            bordered={false}
+            items={[
+              {
+                key: 'advancedOptions',
+                label: (
+                  <Typography.Text>
+                    {t('advancedOptions', {
+                      ns: 'common',
+                    })}
+                  </Typography.Text>
+                ),
+                children: (
+                  <>
+                    <Form.Item label={t('replay.planName')} name='planName'>
+                      <Input allowClear placeholder={t('replay.planNamePlaceholder') as string} />
+                    </Form.Item>
 
-          <Form.Item label={'Webhook'}>
-            <Typography.Text copyable>{webhook}</Typography.Text>
-          </Form.Item>
+                    <Form.Item
+                      label={
+                        <HelpTooltip title={t('replay.pathsTooltip')}>
+                          {t('replay.paths')}
+                        </HelpTooltip>
+                      }
+                      name='operationList'
+                    >
+                      <Select
+                        mode='multiple'
+                        maxTagCount={3}
+                        placeholder={t('replay.pathsPlaceholder')}
+                        options={interfacesOptions}
+                        optionFilterProp='label'
+                      />
+                    </Form.Item>
+
+                    <Form.Item label={'Webhook'}>
+                      <Typography.Text copyable>{webhook}</Typography.Text>
+                    </Form.Item>
+                  </>
+                ),
+              },
+            ]}
+          />
         </Form>
       </Modal>
 

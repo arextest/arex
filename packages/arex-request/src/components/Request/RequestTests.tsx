@@ -8,27 +8,17 @@ import { useArexRequestStore } from '../../hooks';
 import { testCodeSnippet } from './snippets';
 
 const { Text } = Typography;
-export const RequestTestHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  & > span:first-of-type {
-    font-size: 13px;
-    line-height: 32px;
-    font-weight: 500;
-    color: #9d9d9d;
-  }
-`;
 
 export const RequestTestWrapper = styled.div`
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   justify-content: space-between;
   flex: 1;
   & > div:last-of-type {
     width: 35%;
     text-align: left;
-    //border-left: 1px solid #eee;
-    padding-left: 20px;
+    padding-left: 8px;
   }
 `;
 
@@ -66,16 +56,13 @@ const RequestTests = () => {
         flex-direction: column;
       `}
     >
-      <RequestTestHeader>
-        <span>{t('preRequest.javascript_code')}</span>
-      </RequestTestHeader>
+      <Typography.Text type='secondary'>{t('preRequest.javascript_code')}</Typography.Text>
 
       <RequestTestWrapper>
         <div
           css={css`
             min-width: 0;
             flex: 1;
-            //width: 100%;
           `}
         >
           <Editor
@@ -99,47 +86,31 @@ const RequestTests = () => {
             flex-direction: column;
           `}
         >
-          <Text
-            type={'secondary'}
-            css={css`
-              margin-bottom: 4px;
-            `}
-          >
+          <Text type={'secondary'}>
             Test scripts are written in JavaScript, and are run after the response is received.
           </Text>
+          <a
+            type='text'
+            rel='noreferrer'
+            target={'_blank'}
+            href={'https://learning.postman.com/docs/writing-scripts/test-scripts/'}
+            style={{ marginLeft: '8px' }}
+          >
+            Read documentation
+          </a>
+
+          <br />
+
+          <Text type={'secondary'}>Snippets</Text>
           <div>
-            <a
-              type='text'
-              onClick={() =>
-                window.open('https://learning.postman.com/docs/writing-scripts/test-scripts/')
-              }
-              style={{ marginLeft: '8px' }}
-            >
-              Read documentation
-            </a>
-          </div>
-          <Text
-            type={'secondary'}
-            css={css`
-              padding: 16px 0;
-            `}
-          >
-            Snippets
-          </Text>
-          <div
-            css={css`
-              overflow: auto;
-              flex: 1;
-            `}
-          >
-            {codeSnippet.map((e, i) => (
+            {codeSnippet.map((snippet, i) => (
               <ThemeColorPrimaryButton
                 key={i}
                 size='small'
                 type='text'
-                onClick={() => addTest(e.text)}
+                onClick={() => addTest(snippet.text)}
               >
-                {e.name}
+                {snippet.name}
               </ThemeColorPrimaryButton>
             ))}
           </div>

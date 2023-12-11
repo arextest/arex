@@ -1,4 +1,4 @@
-import { WarningOutlined } from '@ant-design/icons';
+import { FilterOutlined, WarningOutlined } from '@ant-design/icons';
 import {
   FullHeightSpin,
   HighlightRowTable,
@@ -6,15 +6,16 @@ import {
   useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
-import { usePagination, useRequest } from 'ahooks';
-import { Card, theme, Tooltip, Typography } from 'antd';
+import { useRequest } from 'ahooks';
+import { Card, Tag, theme, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import CountUp from 'react-countup';
-import { useSearchParams } from 'react-router-dom';
 
 import { StatusTag } from '@/components';
 import { ResultsState } from '@/components/StatusTag';
+import { PanesType } from '@/constant';
+import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
 import { useMenusPanes } from '@/store';
@@ -26,16 +27,20 @@ export type PlanReportProps = {
   appId?: string;
   refreshDep?: React.Key;
   recordCount?: number;
-  onSelectedPlanChange: (selectedPlan: PlanStatistics, current?: number, row?: number) => void;
+  onSelectedPlanChange: (selectedPlan?: PlanStatistics) => void;
 };
 
-const PlanReport: FC<PlanReportProps> = (props) => {
+export type PlanReportRef = {
+  select: (index: number) => void;
+};
+const PlanReport = forwardRef<PlanReportRef, PlanReportProps>((props, ref) => {
   const { appId, refreshDep, recordCount, onSelectedPlanChange } = props;
   const { activePane } = useMenusPanes();
 
   const { token } = theme.useToken();
   const { t } = useTranslation(['components']);
-  const [searchParams] = useSearchParams();
+  const navPane = useNavPane();
+
   const [init, setInit] = useState(true);
 
   const { data } = useArexPaneProps<{
@@ -44,14 +49,9 @@ const PlanReport: FC<PlanReportProps> = (props) => {
 
   const columns: ColumnsType<PlanStatistics> = [
     {
-      title: t('replay.replayReportName'),
+      title: t('replay.reportName'),
       dataIndex: 'planName',
       ellipsis: { showTitle: false },
-      render: (text) => (
-        <Tooltip title={text} placement='topLeft'>
-          <a>{text}</a>
-        </Tooltip>
-      ),
     },
     {
       title: t('replay.state'),
@@ -96,7 +96,7 @@ const PlanReport: FC<PlanReportProps> = (props) => {
       ),
     },
     {
-      title: t('replay.blocked'),
+      title: t('replay.queued'),
       width: 80,
       dataIndex: 'waitCaseCount',
       render: (text) => (
@@ -185,15 +185,24 @@ const PlanReport: FC<PlanReportProps> = (props) => {
   }, [activePane, props.appId]);
 
   const [selectKey, setSelectKey] = useState<string>();
-  const handleRowClick: HighlightRowTableProps<PlanStatistics>['onRowClick'] = (record, index) => {
-    setSelectKey(record.planId);
-    onSelectedPlanChange(record, pagination.current, index);
+  const handleRowClick: HighlightRowTableProps<PlanStatistics>['onRowClick'] = (record) => {
+    const selected = record.planId === selectKey;
+    const selectedRecord = selected ? undefined : record;
+    setSelectKey(selectedRecord?.planId);
+    onSelectedPlanChange(selectedRecord);
   };
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      select: (index) => handleRowClick?.(planStatistics[index]),
+    }),
+    [planStatistics],
+  );
 
   return (
     <FullHeightSpin
       spinning={init}
-      minHeight={240}
       // 为了 defaultCurrent 和 defaultRow 生效，需在初次获取到数据后再挂载子组件
       mountOnFirstLoading={false}
     >
@@ -208,32 +217,47 @@ const PlanReport: FC<PlanReportProps> = (props) => {
           </Typography.Text>
         </Card>
       ) : (
-        <HighlightRowTable<PlanStatistics>
-          rowKey='planId'
-          size='small'
-          loading={loading}
-          columns={columns}
-          selectKey={selectKey}
-          pagination={pagination}
-          onChange={(pagination) => {
-            if (Object.keys(pagination).length) {
-              queryPlanStatistics({
-                current: pagination.current,
-                pageSize: pagination.pageSize,
-              }).then(({ list }) => handleRowClick?.(list[0], 1));
-            }
-          }}
-          onRowClick={handleRowClick}
-          dataSource={planStatistics}
-          sx={{
-            '.ant-table-cell-ellipsis': {
-              color: token.colorPrimary,
-            },
-          }}
-        />
+        <>
+          <HighlightRowTable<PlanStatistics>
+            rowKey='planId'
+            size='small'
+            loading={loading}
+            columns={columns}
+            selectKey={selectKey}
+            pagination={pagination}
+            onChange={(pagination) => {
+              if (Object.keys(pagination).length) {
+                queryPlanStatistics({
+                  current: pagination.current,
+                  pageSize: pagination.pageSize,
+                }).then(({ list }) => handleRowClick?.(list[0], 1));
+              }
+            }}
+            onRowClick={handleRowClick}
+            dataSource={planStatistics}
+          />
+          {data?.planId && (
+            <div style={{ position: 'absolute', bottom: token.margin }}>
+              <FilterOutlined style={{ marginRight: '8px' }} />
+              <Tag
+                closable
+                onClose={() => {
+                  console.log('close');
+                  navPane({
+                    id: appId!,
+                    type: PanesType.REPLAY,
+                    data: { planId: undefined },
+                  });
+                }}
+              >
+                {data.planId}
+              </Tag>
+            </div>
+          )}
+        </>
       )}
     </FullHeightSpin>
   );
-};
+});
 
 export default PlanReport;
