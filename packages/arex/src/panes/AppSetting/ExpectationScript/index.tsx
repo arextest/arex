@@ -7,19 +7,19 @@ import {
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
-import { Editor } from '@monaco-editor/react';
+import { Editor, OnMount } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { Button, DatePicker, Divider, Space, Switch, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
+import { editor } from 'monaco-editor';
 import * as monaco from 'monaco-editor';
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { CONFIG_TARGET, GlobalInterfaceDependencySelect } from '@/components';
+import { GlobalInterfaceDependencySelect } from '@/components';
 import { EMAIL_KEY } from '@/constant';
 import { ConfigService, ReportService } from '@/services';
-import { DependencyParams } from '@/services/ComparisonService';
 import { ExpectationScript } from '@/services/ConfigService';
 import { useUserProfile } from '@/store';
 
@@ -35,14 +35,21 @@ enum MODAL_OPEN_TYPE {
   Edit,
 }
 
+const initialExpirationScript: ExpectationScript = {
+  content: '',
+};
+
+const AREXDefinitionAnnotationStart = '//#AREX Definition';
+const AREXDefinitionAnnotationEnd = '//#End AREX Definition';
 const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
   const { t } = useTranslation();
   const { theme } = useUserProfile();
   const email = getLocalStorage(EMAIL_KEY) as string;
 
+  const editorRef = useRef<editor.IStandaloneCodeEditor>();
   const [open, setOpen] = useState(MODAL_OPEN_TYPE.Close);
-  const [language, setLanguage] = useState<string>();
-  const [editExpirationScript, setEditExpirationScript] = useImmer<ExpectationScript>({});
+  const [editExpirationScript, setEditExpirationScript] =
+    useImmer<ExpectationScript>(initialExpirationScript);
 
   const { data: expectationScripts = [], refresh: refreshExpectation } = useRequest(
     ConfigService.queryExpectation,
@@ -50,9 +57,7 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
       defaultParams: [{ appId: props.appId }],
     },
   );
-  const [targetValue, setTargetValue] = useState<CONFIG_TARGET>(CONFIG_TARGET.INTERFACE);
   const [activeOperationId, setActiveOperationId] = useState<string | undefined>();
-  const [activeDependency, setActiveDependency] = useState<DependencyParams | undefined>();
 
   const { run: updateExpectation, loading: updatingExpectation } = useRequest(
     ConfigService.updateExpectation,
@@ -121,8 +126,11 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
   ];
 
   const handleSaveExpirationScript = () => {
+    const script = (editExpirationScript.content || '').split(AREXDefinitionAnnotationEnd);
+    const content = script[script.length - 1].trim();
     const expectation: ExpectationScript = {
       ...editExpirationScript,
+      content,
       valid: true,
       [MODAL_OPEN_TYPE.Create ? 'dataChangeCreateBy' : 'dataChangeUpdateBy']: email,
       appId: open === MODAL_OPEN_TYPE.Create ? props.appId : undefined,
@@ -154,64 +162,77 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
 
   const handleCloseModal = () => {
     setOpen(MODAL_OPEN_TYPE.Close);
-    setEditExpirationScript({});
+    setEditExpirationScript(initialExpirationScript);
   };
 
   useRequest(
     () =>
-      ReportService.queryFlatContract({
+      ReportService.queryAllContracts({
         appId: props.appId,
         operationId: activeOperationId,
-        ...(targetValue === CONFIG_TARGET.DEPENDENCY ? activeDependency : {}),
       }),
     {
-      ready: !!props.appId,
-      refreshDeps: [targetValue, activeOperationId],
-      onSuccess(list) {
-        // generate languageId by params
+      ready: !!open && !!props.appId && !!activeOperationId,
+      refreshDeps: [open, activeOperationId],
+      onSuccess(allContracts) {
+        const AREXDefinition = allContracts.reduce<Record<string, any>>((contracts, contract) => {
+          contract.operationType = contract.operationType || 'entry';
+          contract.operationName = contract.operationName || 'root';
 
-        const languageId = btoa(
-          JSON.stringify({
-            appId: props.appId,
-            operationId: activeOperationId,
-            ...(targetValue === CONFIG_TARGET.DEPENDENCY ? activeDependency : {}),
-          })
-            .split('')
-            .filter((str) => str !== '=') // filter languageId unsupported character
-            .join(''),
+          if (!contracts[contract.operationType]) {
+            contracts[contract.operationType] = {
+              [contract.operationName]: {
+                response: JSON.parse(contract.contract || '{}'),
+              },
+            };
+          } else {
+            contracts[contract.operationType][contract.operationName] = {
+              response: JSON.parse(contract.contract || '{}'),
+            };
+          }
+          return contracts;
+        }, {});
+
+        setEditExpirationScript((state) => {
+          const script = (state.content || '').split(AREXDefinitionAnnotationEnd);
+          state.content =
+            `${AREXDefinitionAnnotationStart}
+const AREX = ${JSON.stringify(AREXDefinition, null, 2)}
+${AREXDefinitionAnnotationEnd}
+` + script[script.length - 1];
+        });
+
+        setTimeout(
+          () =>
+            editorRef.current?.trigger('fold', 'editor.foldAll', {
+              levels: 1,
+              direction: 'down',
+            }),
+          100,
         );
-
-        const languages = monaco.languages.getLanguages();
-
-        if (languages.some((lang) => lang.id === languageId)) return setLanguage(languageId);
-
-        monaco.languages.register({ id: languageId });
-        monaco.languages.setMonarchTokensProvider(languageId, {
-          tokenizer: {
-            root: [
-              [new RegExp(`\\b(${list.join('|')})\\b`), 'keyword'], // 自定义变量高亮
-              [/\b(function|var|let|const)\b/, 'keyword'], // JavaScript 关键字高亮
-              [/\b[0-9]+\b/, 'number'], // 数字高亮
-              [/"(.*?)"/, 'string'], // 字符串高亮
-              [/'(.*?)'/, 'string'], // 字符串高亮
-            ],
-          },
-        });
-        monaco.languages.registerCompletionItemProvider(languageId, {
-          // @ts-ignore
-          provideCompletionItems: (model, position) => {
-            const suggestions = list.map((k) => ({
-              label: k,
-              kind: monaco.languages.CompletionItemKind.Variable,
-              insertText: k,
-            }));
-            return { suggestions };
-          },
-        });
-        setLanguage(languageId);
       },
     },
   );
+
+  const handleEditorDidMount: OnMount = (editor) => {
+    editorRef.current = editor;
+  };
+
+  useEffect(() => {
+    monaco.languages.setLanguageConfiguration('javascript', {
+      comments: {
+        lineComment: '//',
+        blockComment: ['/*', '*/'],
+      },
+      brackets: [['{', '}']],
+      folding: {
+        markers: {
+          start: new RegExp('\\s*//\\s*#AREX Definition\\b'),
+          end: new RegExp('\\s*//\\s*#End AREX Definition\\b'),
+        },
+      },
+    });
+  }, []);
 
   return (
     <UndertoneWrapper>
@@ -254,43 +275,43 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
         onClose={handleCloseModal}
       >
         <Space direction='vertical' size='middle' style={{ width: '100%' }}>
-          {open === MODAL_OPEN_TYPE.Create && (
-            <GlobalInterfaceDependencySelect
-              appId={props.appId}
-              onTargetChange={setTargetValue}
-              onOperationChange={(operation) => {
-                setActiveOperationId(operation.id);
-                setEditExpirationScript((state) => {
-                  state.title = operation.operationName;
-                });
-              }}
-              onDependencyChange={(dependency) => {
-                setActiveDependency(dependency);
-                setEditExpirationScript((state) => {
-                  dependency && (state.title = dependency.operationName);
-                });
-              }}
-            />
-          )}
+          <Space>
+            {open === MODAL_OPEN_TYPE.Create && (
+              <GlobalInterfaceDependencySelect
+                appId={props.appId}
+                dependency={false}
+                // onTargetChange={setTargetValue}
+                onOperationChange={(operation) => {
+                  setActiveOperationId(operation.id);
+                  setEditExpirationScript((state) => {
+                    state.title = operation.operationName;
+                  });
+                }}
+              />
+            )}
 
-          <div>
-            <Label type='secondary'>ExpirationTime</Label>
-            <DatePicker
-              value={dayjs(editExpirationScript?.expirationTime)}
-              onChange={(value) =>
-                setEditExpirationScript((state) => {
-                  state.expirationTime = value?.valueOf();
-                })
-              }
-            />
-          </div>
+            <div>
+              <div>
+                <Label type='secondary'>ExpirationTime</Label>
+              </div>
+              <DatePicker
+                value={dayjs(editExpirationScript?.expirationTime)}
+                onChange={(value) =>
+                  setEditExpirationScript((state) => {
+                    state.expirationTime = value?.valueOf();
+                  })
+                }
+              />
+            </div>
+          </Space>
 
           <Label type='secondary'>Script</Label>
           <Editor
             theme={theme === 'dark' ? 'vs-dark' : 'light'}
             value={editExpirationScript?.content}
-            language={language}
+            language='javascript'
             height={'400px'}
+            onMount={handleEditorDidMount}
             onChange={(value) => {
               setEditExpirationScript((state) => {
                 state.content = value;
