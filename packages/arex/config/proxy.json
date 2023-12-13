@@ -1,11 +1,11 @@
 [
   {
     "path": "/report",
-    "target": "http://10.5.153.1:8090"
+    "target": "http://10.5.153.1:10000"
   },
   {
     "path": "/schedule",
-    "target": "http://10.5.153.1:8092"
+    "target": "http://10.5.153.1:10002"
   },
   {
     "path": "/storage",

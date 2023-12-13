@@ -32,6 +32,7 @@ import {
   Row,
   Space,
   Statistic,
+  Tag,
   theme,
   Tooltip,
   Typography,
@@ -511,14 +512,18 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             <Label>{t('replay.executor')}</Label>
             {selectedPlan.creator}
           </div>
-          <div>
-            <Label>{t('replay.recordVersion')}</Label>
-            {selectedPlan.caseRecordVersion || '-'}
-            &nbsp;
-            <span>
-              {t('replay.replayVersion')}: {selectedPlan.coreVersion || '-'}
-            </span>
-          </div>
+          {selectedPlan.caseTags && (
+            <div style={{ marginTop: '2px' }}>
+              <Label>{t('replay.caseTags')}</Label>
+              <Space>
+                {Object.entries(selectedPlan.caseTags || {}).map(([key, value]) => (
+                  <Tag key={key}>
+                    {key}:{value}
+                  </Tag>
+                ))}
+              </Space>
+            </div>
+          )}
         </Col>
 
         <Col span={12}>
