@@ -22,7 +22,7 @@ export type CaseProps = {
   onClick?: (record: ReplayCaseType) => void;
   onChange?: TableProps<ReplayCaseType>['onChange'];
   onClickSaveCase?: (record: ReplayCaseType) => void;
-  onClickRerunCase?: (recordId: string) => void;
+  onClickRetryCase?: (recordId: string) => void;
 };
 
 const Case: FC<CaseProps> = (props) => {
@@ -44,7 +44,6 @@ const Case: FC<CaseProps> = (props) => {
     {
       title: t('replay.recordId'),
       dataIndex: 'recordId',
-      render: (recordId, record) => <a onClick={() => props.onClick?.(record)}>{recordId}</a>,
     },
     {
       title: t('replay.replayId'),
@@ -111,8 +110,8 @@ const Case: FC<CaseProps> = (props) => {
                   icon: <SaveOutlined />,
                 },
                 {
-                  label: t('replay.rerun'),
-                  key: 'rerun',
+                  label: t('replay.retry'),
+                  key: 'retry',
                   icon: <RedoOutlined />,
                 },
               ],
@@ -124,8 +123,8 @@ const Case: FC<CaseProps> = (props) => {
                     props.onClickSaveCase?.(record);
                     break;
                   }
-                  case 'rerun': {
-                    props.onClickRerunCase?.(record.recordId);
+                  case 'retry': {
+                    props.onClickRetryCase?.(record.recordId);
                     break;
                   }
                 }

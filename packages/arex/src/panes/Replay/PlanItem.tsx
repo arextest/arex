@@ -3,6 +3,7 @@ import 'chart.js/auto';
 import Icon, {
   ContainerOutlined,
   DeleteOutlined,
+  ExclamationCircleFilled,
   FileTextOutlined,
   RedoOutlined,
   SearchOutlined,
@@ -12,16 +13,13 @@ import Icon, {
 import { ReplayLogsDrawer } from '@arextest/arex-common';
 import {
   copyToClipboard,
-  getLocalStorage,
   HighlightRowTable,
-  i18n,
-  I18nextLng,
+  Label,
   SpaceBetweenWrapper,
   TooltipButton,
   useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
-import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import {
   App,
@@ -44,12 +42,11 @@ import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 're
 import { Pie } from 'react-chartjs-2';
 import CountUp from 'react-countup';
 
-import { StatusTag } from '@/components';
-import { EMAIL_KEY, PanesType } from '@/constant';
+import { ResultsState } from '@/components/StatusTag';
+import { PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanItemStatistic, PlanStatistics } from '@/services/ReportService';
-import { MessageMap } from '@/services/ScheduleService';
 import { useMenusPanes } from '@/store';
 import IconLog from '~icons/octicon/log-24';
 
@@ -74,15 +71,15 @@ export type ReplayPlanItemProps = {
   readOnly?: boolean;
   filter?: (record: PlanItemStatistic) => boolean;
   onRefresh?: () => void;
+  onDelete?: (planId: string) => void;
 };
 
 const PlanItem: FC<ReplayPlanItemProps> = (props) => {
-  const { selectedPlan, filter, onRefresh } = props;
-  const { message, notification } = App.useApp();
+  const { selectedPlan, filter, onRefresh, onDelete } = props;
+  const { message, modal } = App.useApp();
   const { activePane } = useMenusPanes();
 
   const { t } = useTranslation(['components', 'common']);
-  const email = getLocalStorage<string>(EMAIL_KEY) as string;
   const navPane = useNavPane();
   const { token } = theme.useToken();
 
@@ -104,7 +101,13 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       pollingInterval: 6000,
       onSuccess(res) {
         if (res) {
-          if (res?.every((record) => record.status !== 1) && selectedPlan?.status !== 1) {
+          if (
+            res?.every(
+              (record) => ![ResultsState.RUNNING, ResultsState.RERUNNING].includes(record.status),
+            ) ||
+            (selectedPlan &&
+              ![ResultsState.RUNNING, ResultsState.RERUNNING].includes(selectedPlan.status))
+          ) {
             setPollingInterval(false);
             cancelPollingInterval();
           }
@@ -200,17 +203,6 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const searchInput = useRef<InputRef>(null);
   const columns = useMemo<ColumnsType<PlanItemStatistic>>(() => {
     const _columns: ColumnsType<PlanItemStatistic> = [
-      // {
-      //   title: t('replay.planItemID'),
-      //   dataIndex: 'planItemId',
-      //   key: 'planItemId',
-      //   ellipsis: { showTitle: false },
-      //   render: (value) => (
-      //     <Tooltip placement='topLeft' title={value}>
-      //       {value}
-      //     </Tooltip>
-      //   ),
-      // },
       {
         title: t('replay.api'),
         dataIndex: 'operationName',
@@ -256,26 +248,6 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         },
       },
       {
-        title: t('replay.state'),
-        render: (_, record) => (
-          <div style={{ overflow: 'hidden' }}>
-            <StatusTag
-              status={record.status}
-              caseCount={record.successCaseCount + record.failCaseCount + record.errorCaseCount}
-              totalCaseCount={record.totalCaseCount}
-              message={record.errorMessage}
-            />
-          </div>
-        ),
-      },
-      {
-        title: t('replay.timeConsumed'),
-        render: (_, record) =>
-          record.replayEndTime && record.replayStartTime
-            ? (record.replayEndTime - record.replayStartTime) / 1000
-            : '-',
-      },
-      {
         title: t('replay.cases'),
         dataIndex: 'totalCaseCount',
         width: 72,
@@ -300,7 +272,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
         render: (count, record) => CaseCountRender(count, record, 2, props.readOnly),
       },
       {
-        title: t('replay.blocked'),
+        title: t('replay.queued'),
         dataIndex: 'waitCaseCount',
         width: 72,
         render: (text) => (
@@ -323,7 +295,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             <TooltipButton
               icon={<ContainerOutlined />}
               title={t('replay.diffScenes')}
-              breakpoint='xxl'
+              breakpoint='lg'
               disabled={!record.failCaseCount}
               color={record.failCaseCount ? 'primary' : 'disabled'}
               onClick={() => {
@@ -337,7 +309,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             <TooltipButton
               icon={<FileTextOutlined />}
               title={t('replay.case')}
-              breakpoint='xxl'
+              breakpoint='lg'
               color='primary'
               onClick={() => {
                 navPane({
@@ -349,10 +321,12 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             />
             <TooltipButton
               icon={<RedoOutlined />}
-              title={t('replay.rerun')}
-              breakpoint='xxl'
+              title={t('replay.retry')}
+              breakpoint='lg'
               color='primary'
-              onClick={() => handleRerun(1, [{ operationId: record.operationId }])}
+              onClick={() =>
+                retryPlan({ planId: selectedPlan!.planId, planItemId: record.planItemId })
+              }
             />
           </>
         ),
@@ -374,55 +348,16 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const { run: deleteReport } = useRequest(ReportService.deleteReport, {
     manual: true,
     ready: !!selectedPlan?.planId,
-    onSuccess(success) {
-      success
-        ? message.success(t('message.success', { ns: 'common' }))
-        : message.error(t('message.error', { ns: 'common' }));
-    },
-  });
-
-  const { run: rerun } = useRequest(ScheduleService.createPlan, {
-    manual: true,
-    onSuccess(res) {
-      if (res.result === 1) {
+    onSuccess(success, [planId]) {
+      if (success) {
+        message.success(t('message.success', { ns: 'common' }));
         onRefresh?.();
-        notification.success({
-          message: t('replay.startSuccess'),
-        });
+        onDelete?.(planId);
       } else {
-        notification.error({
-          message: t('message.error', { ns: 'common' }),
-          description: MessageMap[i18n.language as I18nextLng][res.data.reasonCode],
-        });
+        message.error(t('message.error', { ns: 'common' }));
       }
     },
-    onError(e) {
-      notification.error({
-        message: t('replay.startFailed'),
-        description: e.message,
-      });
-    },
   });
-
-  const handleRerun = (
-    replayPlanType: number,
-    operationCaseInfoList?: { operationId: string; replayIdList?: string[] }[],
-  ) => {
-    if (selectedPlan?.caseStartTime && selectedPlan?.caseEndTime) {
-      rerun({
-        caseSourceFrom: selectedPlan.caseStartTime,
-        caseSourceTo: selectedPlan.caseEndTime,
-        appId: selectedPlan.appId,
-        operator: email,
-        sourceEnv: 'pro',
-        targetEnv: selectedPlan!.targetEnv,
-        operationCaseInfoList,
-        replayPlanType,
-      });
-    } else {
-      message.error(t('replay.parameterError'));
-    }
-  };
 
   const { run: retryPlan, loading: retrying } = useRequest(ScheduleService.reRunPlan, {
     manual: true,
@@ -441,11 +376,6 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const extraMenuItems = useMemo(
     () => [
       {
-        key: 'rerun',
-        label: t('replay.rerun'),
-        icon: <RedoOutlined />,
-      },
-      {
         key: 'terminateReplay',
         label: t('replay.terminateTheReplay'),
         icon: <StopOutlined />,
@@ -462,19 +392,21 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
   const extraMenuHandler = useCallback(
     ({ key }: { key: string }) => {
       switch (key) {
-        case 'rerun': {
-          handleRerun(
-            1,
-            planItemData?.map((item) => ({ operationId: item.operationId })),
-          );
-          break;
-        }
         case 'terminateReplay': {
           stopPlan(selectedPlan!.planId);
           break;
         }
         case 'deleteReport': {
-          deleteReport(selectedPlan!.planId);
+          modal.confirm({
+            maskClosable: true,
+            title: t('replay.confirmDeleteReport'),
+            icon: <ExclamationCircleFilled />,
+            okType: 'danger',
+            onOk() {
+              deleteReport(selectedPlan!.planId);
+            },
+          });
+
           break;
         }
       }
@@ -554,48 +486,34 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
     >
       <Row gutter={12}>
         <Col span={12}>
-          <Typography.Text type='secondary'>{t('replay.basicInfo')}</Typography.Text>
-          <div
-            css={css`
-              display: flex;
-              & > * {
-                flex: 1;
-              }
-            `}
-          >
-            <Statistic
-              title={t('replay.passRate')}
-              value={getPercent(selectedPlan.successCaseCount, selectedPlan.totalCaseCount)}
-            />
-            <Statistic
-              title={t('replay.apiPassRate')}
-              value={getPercent(
-                selectedPlan.successOperationCount,
-                selectedPlan.totalOperationCount,
-              )}
-            />
+          <Statistic
+            title={t('replay.passRate')}
+            value={getPercent(selectedPlan.successCaseCount, selectedPlan.totalCaseCount)}
+          />
+          <div>
+            <Label>{t('replay.reportId')}</Label>
+            {selectedPlan.planId}
           </div>
           <div>
-            {t('replay.reportId')}: {selectedPlan.planId}
+            <Label>{t('replay.reportName')}</Label>
+            {selectedPlan.planName}
           </div>
           <div>
-            {t('replay.reportName')}: {selectedPlan.planName}
-          </div>
-          <div>
-            {t('replay.caseRange')}:{' '}
+            <Label>{t('replay.caseRange')}</Label>
             {dayjs(new Date(selectedPlan.caseStartTime || '')).format('YYYY/MM/DD')} -{' '}
             {dayjs(new Date(selectedPlan.caseEndTime || '')).format('YYYY/MM/DD')}
           </div>
           <div>
-            {t('replay.targetHost')}: {selectedPlan.targetEnv}
+            <Label>{t('replay.targetHost')}</Label>
+            {selectedPlan.targetEnv}
           </div>
           <div>
-            {t('replay.executor')}: {selectedPlan.creator}
+            <Label>{t('replay.executor')}</Label>
+            {selectedPlan.creator}
           </div>
           <div>
-            <span>
-              {t('replay.recordVersion')}: {selectedPlan.caseRecordVersion || '-'}
-            </span>
+            <Label>{t('replay.recordVersion')}</Label>
+            {selectedPlan.caseRecordVersion || '-'}
             &nbsp;
             <span>
               {t('replay.replayVersion')}: {selectedPlan.coreVersion || '-'}

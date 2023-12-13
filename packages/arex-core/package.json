@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-core",
-  "version": "0.3.2-beta.0",
+  "version": "0.3.4",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-core.js",
   "module": "dist/arex-core.js",
@@ -15,7 +15,7 @@
     "dist/*"
   ],
   "dependencies": {
-    "@arextest/vanilla-jsoneditor": "0.17.29",
+    "@arextest/vanilla-jsoneditor": "0.17.38",
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/sortable": "^7.0.2",
     "@dnd-kit/utilities": "^3.2.1",

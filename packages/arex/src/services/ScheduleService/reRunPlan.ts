@@ -3,13 +3,15 @@ import axios from 'axios';
 
 import { ACCESS_TOKEN_KEY, APP_ID_KEY } from '@/constant';
 
+export type ReRunPlanReq = { planId: string; planItemId?: string };
+
 export type ReRunPlanRes = {
   desc: string;
   result: number;
   data: { reasonCode: number; replayPlanId: string };
 };
 
-export function reRunPlan(params: { planId: string }) {
+export function reRunPlan(params: ReRunPlanReq) {
   return new Promise<ReRunPlanRes>((resolve, reject) => {
     return axios
       .post<ReRunPlanRes>('/schedule/reRunPlan', params, {

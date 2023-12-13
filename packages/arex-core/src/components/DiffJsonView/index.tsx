@@ -32,6 +32,7 @@ export type DiffJsonViewProps = {
   diffPath?: LogEntity[];
   remark?: [string, string];
   onIgnoreKey?: PathHandler;
+  onIgnoreKeyMono?: PathHandler;
   onSortKey?: PathHandler;
   onReferenceKey?: PathHandler;
   onCompressKey?: PathHandler;
@@ -49,6 +50,7 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
   height,
   remark,
   onIgnoreKey,
+  onIgnoreKeyMono,
   onSortKey,
   onReferenceKey,
   onCompressKey,
@@ -183,21 +185,22 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
               onIgnoreKey &&
               ((path, type) => rightClickHandler(onIgnoreKey, path, TargetEditor.left, type))
             }
+            onIgnoreKeyMono={
+              onIgnoreKeyMono &&
+              ((path) => rightClickHandler(onIgnoreKeyMono, path, TargetEditor.left))
+            }
             onSortKey={
-              onSortKey &&
-              ((path, type) => rightClickHandler(onSortKey, path, TargetEditor.left, type))
+              onSortKey && ((path) => rightClickHandler(onSortKey, path, TargetEditor.left))
             }
             onReferenceKey={
               onReferenceKey &&
-              ((path, type) => rightClickHandler(onReferenceKey, path, TargetEditor.left, type))
+              ((path) => rightClickHandler(onReferenceKey, path, TargetEditor.left))
             }
             onCompressKey={
-              onCompressKey &&
-              ((path, type) => rightClickHandler(onCompressKey, path, TargetEditor.left, type))
+              onCompressKey && ((path) => rightClickHandler(onCompressKey, path, TargetEditor.left))
             }
             onDiffMatch={
-              onDiffMatch &&
-              ((path, type) => rightClickHandler(onDiffMatch, path, TargetEditor.left, type))
+              onDiffMatch && ((path) => rightClickHandler(onDiffMatch, path, TargetEditor.left))
             }
             onNodeDecode={
               nodeDecode ? (path) => nodeDecodeHandler(path, TargetEditor.left) : undefined
@@ -228,21 +231,23 @@ const DiffJsonView: FC<DiffJsonViewProps> = ({
               onIgnoreKey &&
               ((path, type) => rightClickHandler(onIgnoreKey, path, TargetEditor.right, type))
             }
+            onIgnoreKeyMono={
+              onIgnoreKeyMono &&
+              ((path) => rightClickHandler(onIgnoreKeyMono, path, TargetEditor.right))
+            }
             onSortKey={
-              onSortKey &&
-              ((path, type) => rightClickHandler(onSortKey, path, TargetEditor.right, type))
+              onSortKey && ((path) => rightClickHandler(onSortKey, path, TargetEditor.right))
             }
             onReferenceKey={
               onReferenceKey &&
-              ((path, type) => rightClickHandler(onReferenceKey, path, TargetEditor.right, type))
+              ((path) => rightClickHandler(onReferenceKey, path, TargetEditor.right))
             }
             onCompressKey={
               onCompressKey &&
-              ((path, type) => rightClickHandler(onCompressKey, path, TargetEditor.right, type))
+              ((path) => rightClickHandler(onCompressKey, path, TargetEditor.right))
             }
             onDiffMatch={
-              onDiffMatch &&
-              ((path, type) => rightClickHandler(onDiffMatch, path, TargetEditor.right, type))
+              onDiffMatch && ((path) => rightClickHandler(onDiffMatch, path, TargetEditor.right))
             }
             onNodeDecode={
               nodeDecode ? (path) => nodeDecodeHandler(path, TargetEditor.right) : undefined
