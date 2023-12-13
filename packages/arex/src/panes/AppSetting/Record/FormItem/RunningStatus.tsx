@@ -1,7 +1,7 @@
 import { DeleteOutlined } from '@ant-design/icons';
 import { HelpTooltip, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { Badge, Button, Popconfirm, Table, Typography } from 'antd';
+import { Badge, Button, Popconfirm, Table, Tag, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import React, { FC } from 'react';
@@ -87,6 +87,19 @@ const RunningStatus: FC<RunningStatusProps> = (props) => {
           {status || '-'}
         </Typography.Text>
       ),
+    },
+    {
+      title: t('replay.caseTags'),
+      dataIndex: 'tags',
+      align: 'center',
+      render: (_, record) =>
+        _
+          ? Object.entries(record.tags || {}).map(([key, value], index) => (
+              <Tag key={index}>
+                {key}:{value}
+              </Tag>
+            ))
+          : '-',
     },
     {
       title: t('replay.action', { ns: 'components' }),
