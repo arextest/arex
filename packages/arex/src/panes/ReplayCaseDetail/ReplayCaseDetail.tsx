@@ -1,3 +1,4 @@
+import { BugOutlined } from '@ant-design/icons';
 import {
   ArexPaneFC,
   clearLocalStorage,
@@ -6,14 +7,15 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { Badge, Breadcrumb, Spin, Tabs, theme } from 'antd';
+import { Badge, Breadcrumb, Button, Spin, Tabs, theme } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
 
-import { APP_ID_KEY, PanesType } from '@/constant';
+import { APP_ID_KEY, CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
 import { RecordResult, ReplayCaseType } from '@/services/ReportService';
-import { useMenusPanes } from '@/store';
+import { useMenusPanes, useWorkspaces } from '@/store';
+import { generateId } from '@/utils';
 
 import CaseDetailTab from './CaseDetailTab';
 
@@ -30,6 +32,7 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
   const navPane = useNavPane();
   const { token } = theme.useToken();
   const { activePane } = useMenusPanes();
+  const { activeWorkspaceId } = useWorkspaces();
   const { t } = useTranslation('components');
 
   const [tabItems, setTabItems] = useState<TagType[]>([]);
@@ -112,7 +115,30 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
           },
         ]}
       />
-      <PanesTitle title={`${t('replay.recordId')}: ${props.data.recordId}`} />
+      <PanesTitle
+        title={`${t('replay.recordId')}: ${props.data.recordId}`}
+        extra={
+          <Button
+            size='small'
+            onClick={(e) => {
+              e.stopPropagation();
+              navPane({
+                type: PanesType.REQUEST,
+                id: `${activeWorkspaceId}-${CollectionNodeType.case}-${generateId(12)}`,
+                // icon: "Get",
+                name: `Debug - ${props.data.recordId}`,
+                data: {
+                  recordId: props.data.recordId,
+                  planId: props.data.planId,
+                },
+              });
+            }}
+          >
+            <BugOutlined />
+            {t('replay.debug')}
+          </Button>
+        }
+      />
       <Spin spinning={loading}>
         <Tabs items={tabItems} />
       </Spin>
