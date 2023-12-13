@@ -2,6 +2,7 @@ export { default as EditAreaPlaceholder } from './EditAreaPlaceholder';
 export { default as EmptyPanePlaceholder } from './EmptyPanePlaceholder';
 export { default as FlexRowReverseWrapper } from './FlexRowReverseWrapper';
 export { default as FooterExtraMenu } from './FooterExtraMenu';
+export { default as InterfaceSelect } from './InterfaceSelect';
 export { default as KeyboardShortcut } from './KeyboardShortcut';
 export { default as MacDraggableArea } from './MacDraggableArea';
 export { default as MacTrafficLightBackground } from './MacTrafficLightBackground';

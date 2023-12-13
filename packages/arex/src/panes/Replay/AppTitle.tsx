@@ -25,20 +25,25 @@ import {
   AutoComplete,
   Badge,
   Button,
+  Checkbox,
   Collapse,
   DatePicker,
+  Divider,
   Form,
   Input,
+  Menu,
   Modal,
   Popover,
   Select,
   Skeleton,
+  Space,
   theme,
   Typography,
 } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { createElement, FC, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
+import { InterfaceSelect } from '@/components';
 import { EMAIL_KEY, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
 import CompareNoise from '@/panes/Replay/CompareNoise';
@@ -172,7 +177,6 @@ const AppTitle: FC<AppTitleProps> = ({
   const targetEnv = Form.useWatch('targetEnv', form);
 
   const [open, setOpen] = useState(false);
-  const [interfacesOptions, setInterfacesOptions] = useState<any[]>([]);
 
   const [targetHostSource, setTargetHostSource] = useLocalStorageState<{
     [appId: string]: string[];
@@ -189,16 +193,6 @@ const AppTitle: FC<AppTitleProps> = ({
     () => `${location.origin}/schedule/createPlan?appId=${appId}&targetEnv=${targetEnv?.trim()}`,
     [appId, targetEnv],
   );
-
-  /**
-   * 请求 InterfacesList
-   */
-  useRequest(() => ApplicationService.queryInterfacesList<'Global'>({ appId }), {
-    ready: open,
-    onSuccess(res) {
-      setInterfacesOptions(res.map((item) => ({ label: item.operationName, value: item.id })));
-    },
-  });
 
   /**
    * 创建回放
@@ -460,12 +454,10 @@ const AppTitle: FC<AppTitleProps> = ({
                       }
                       name='operationList'
                     >
-                      <Select
-                        mode='multiple'
-                        maxTagCount={3}
+                      <InterfaceSelect
+                        appId={appId}
+                        open={open}
                         placeholder={t('replay.pathsPlaceholder')}
-                        options={interfacesOptions}
-                        optionFilterProp='label'
                       />
                     </Form.Item>
 
