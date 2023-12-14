@@ -1,7 +1,7 @@
 [
   {
     "path": "/report",
-    "target": "http://10.5.153.1:8090"
+    "target": "http://10.5.153.1:11000"
   },
   {
     "path": "/schedule",

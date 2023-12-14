@@ -161,11 +161,7 @@ const GlobalInterfaceDependencySelect = forwardRef<
   );
 
   return (
-    <Space
-      key='config-menu'
-      ref={menuAnimateParent}
-      style={{ display: 'flex', flexWrap: 'wrap', ...props.style }}
-    >
+    <Space key='config-menu' ref={menuAnimateParent} style={{ display: 'flex', ...props.style }}>
       <div key='config-target'>
         <div>
           <Label type='secondary'>{t('appSetting.configTarget')} </Label>

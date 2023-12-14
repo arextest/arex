@@ -7,9 +7,13 @@ export interface ExpectationScript {
    */
   appId?: string;
   /**
-   * Script title, eg: classA.methodB
+   * operation id
    */
-  title?: string;
+  operationId?: string;
+  /**
+   * Script alias
+   */
+  alias?: string;
   /**
    * Script content
    */
@@ -28,7 +32,9 @@ export interface ExpectationScript {
    */
   scope?: 0 | 1;
   dataChangeCreateBy?: string;
+  dataChangeCreateTime?: number;
   dataChangeUpdateBy?: string;
+  dataChangeUpdateTime?: number;
 }
 
 export async function queryExpectation(params: { appId: string }) {

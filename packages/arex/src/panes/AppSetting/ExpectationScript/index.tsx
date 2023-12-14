@@ -9,17 +9,17 @@ import {
 } from '@arextest/arex-core';
 import { Editor, OnMount } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
-import { Button, DatePicker, Divider, Space, Switch, Table, Typography } from 'antd';
+import { App, Button, DatePicker, Divider, Input, Space, Switch, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { editor } from 'monaco-editor';
 import * as monaco from 'monaco-editor';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { GlobalInterfaceDependencySelect } from '@/components';
 import { EMAIL_KEY } from '@/constant';
-import { ConfigService, ReportService } from '@/services';
+import { ApplicationService, ConfigService, ReportService } from '@/services';
 import { ExpectationScript } from '@/services/ConfigService';
 import { useUserProfile } from '@/store';
 
@@ -37,13 +37,17 @@ enum MODAL_OPEN_TYPE {
 
 const initialExpirationScript: ExpectationScript = {
   content: '',
+  alias: '',
+  expirationTime: Date.now() + 1000 * 60 * 60 * 24 * 7,
 };
 
 const AREXDefinitionAnnotationStart = '//#AREX Definition';
-const AREXDefinitionAnnotationEnd = '//#End AREX Definition';
+const AREXDefinitionAnnotationEnd = `//#End AREX Definition
+`; // keep this line break
 const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
   const { t } = useTranslation();
   const { theme } = useUserProfile();
+  const { message } = App.useApp();
   const email = getLocalStorage(EMAIL_KEY) as string;
 
   const editorRef = useRef<editor.IStandaloneCodeEditor>();
@@ -57,7 +61,7 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
       defaultParams: [{ appId: props.appId }],
     },
   );
-  const [activeOperationId, setActiveOperationId] = useState<string | undefined>();
+  const [activeOperation, setActiveOperation] = useState<{ id: string; operationName: string }>();
 
   const { run: updateExpectation, loading: updatingExpectation } = useRequest(
     ConfigService.updateExpectation,
@@ -76,14 +80,16 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
 
   const columns: ColumnsType<ExpectationScript> = [
     {
-      title: 'Name',
-      dataIndex: 'title',
-      width: '40%',
+      title: 'OperationId',
+      dataIndex: 'operationId',
+    },
+    {
+      title: 'Alias',
+      dataIndex: 'alias',
     },
     {
       title: 'Valid',
       dataIndex: 'valid',
-      width: '20%',
       render: (valid, record) => (
         <Switch
           size='small'
@@ -95,13 +101,11 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
     {
       title: 'ExpirationTime',
       dataIndex: 'expirationTime',
-      width: '20%',
       render: (expirationTime) => <span>{dayjs(expirationTime).format('YYYY-MM-DD')}</span>,
     },
 
     {
       title: 'Action',
-      width: '300px',
       render: (text, record) => (
         <>
           <TooltipButton
@@ -128,18 +132,28 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
   const handleSaveExpirationScript = () => {
     const script = (editExpirationScript.content || '').split(AREXDefinitionAnnotationEnd);
     const content = script[script.length - 1].trim();
+    if (!activeOperation?.id) {
+      return message.error('Please select operation');
+    }
     const expectation: ExpectationScript = {
-      ...editExpirationScript,
-      content,
+      dataChangeCreateTime: open === MODAL_OPEN_TYPE.Create ? Date.now() : undefined,
+      appId: open === MODAL_OPEN_TYPE.Create ? props.appId : undefined,
+      operationId: activeOperation?.id,
       valid: true,
       [MODAL_OPEN_TYPE.Create ? 'dataChangeCreateBy' : 'dataChangeUpdateBy']: email,
-      appId: open === MODAL_OPEN_TYPE.Create ? props.appId : undefined,
+      ...editExpirationScript,
+      content,
+      alias: editExpirationScript.alias || activeOperation?.operationName,
     };
     updateExpectation(expectation);
   };
 
   const handleEditExpirationScript = (expiration: ExpectationScript) => {
     setEditExpirationScript(expiration);
+    setActiveOperation({
+      id: expiration.operationId as string,
+      operationName: getOperationInfo(expiration.operationId)?.operationName as string,
+    });
     setOpen(MODAL_OPEN_TYPE.Edit);
   };
 
@@ -162,6 +176,7 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
 
   const handleCloseModal = () => {
     setOpen(MODAL_OPEN_TYPE.Close);
+    setActiveOperation(undefined);
     setEditExpirationScript(initialExpirationScript);
   };
 
@@ -169,11 +184,11 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
     () =>
       ReportService.queryAllContracts({
         appId: props.appId,
-        operationId: activeOperationId,
+        operationId: activeOperation?.id,
       }),
     {
-      ready: !!open && !!props.appId && !!activeOperationId,
-      refreshDeps: [open, activeOperationId],
+      ready: !!open && !!props.appId && !!activeOperation?.id,
+      refreshDeps: [open, activeOperation?.id],
       onSuccess(allContracts) {
         const AREXDefinition = allContracts.reduce<Record<string, any>>((contracts, contract) => {
           contract.operationType = contract.operationType || 'entry';
@@ -198,8 +213,7 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
           state.content =
             `${AREXDefinitionAnnotationStart}
 const AREX = ${JSON.stringify(AREXDefinition, null, 2)}
-${AREXDefinitionAnnotationEnd}
-` + script[script.length - 1];
+${AREXDefinitionAnnotationEnd}` + script[script.length - 1];
         });
 
         setTimeout(
@@ -212,6 +226,21 @@ ${AREXDefinitionAnnotationEnd}
         );
       },
     },
+  );
+
+  /**
+   * 请求 InterfacesList
+   */
+  const { data: operationList = [] } = useRequest(
+    () => ApplicationService.queryInterfacesList<'Interface'>({ appId: props.appId as string }),
+    {
+      ready: !!props.appId,
+    },
+  );
+
+  const getOperationInfo = useCallback(
+    (operationId?: string) => operationList.find((item) => item.id === operationId),
+    [operationList],
   );
 
   const handleEditorDidMount: OnMount = (editor) => {
@@ -256,7 +285,10 @@ ${AREXDefinitionAnnotationEnd}
         destroyOnClose
         open={!!open}
         title={
-          open === MODAL_OPEN_TYPE.Create ? 'Create Expiration Script' : editExpirationScript?.title
+          open === MODAL_OPEN_TYPE.Create
+            ? 'Create Expiration Script'
+            : 'Edit Expiration Script - ' +
+              getOperationInfo(editExpirationScript?.operationId)?.operationName
         }
         extra={
           <Button
@@ -271,7 +303,11 @@ ${AREXDefinitionAnnotationEnd}
           </Button>
         }
         width={'65%'}
-        bodyStyle={{ padding: '8px 16px' }}
+        styles={{
+          body: {
+            padding: '8px 16px',
+          },
+        }}
         onClose={handleCloseModal}
       >
         <Space direction='vertical' size='middle' style={{ width: '100%' }}>
@@ -280,12 +316,8 @@ ${AREXDefinitionAnnotationEnd}
               <GlobalInterfaceDependencySelect
                 appId={props.appId}
                 dependency={false}
-                // onTargetChange={setTargetValue}
                 onOperationChange={(operation) => {
-                  setActiveOperationId(operation.id);
-                  setEditExpirationScript((state) => {
-                    state.title = operation.operationName;
-                  });
+                  setActiveOperation(operation);
                 }}
               />
             )}
@@ -301,6 +333,19 @@ ${AREXDefinitionAnnotationEnd}
                     state.expirationTime = value?.valueOf();
                   })
                 }
+              />
+            </div>
+
+            <div>
+              <Label type='secondary'>Alias</Label>
+              <Input
+                value={editExpirationScript?.alias}
+                placeholder={activeOperation?.operationName}
+                onChange={(e) => {
+                  setEditExpirationScript((state) => {
+                    state.alias = e.target.value;
+                  });
+                }}
               />
             </div>
           </Space>
