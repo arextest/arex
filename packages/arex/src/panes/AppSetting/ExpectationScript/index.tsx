@@ -232,8 +232,8 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
           return contracts;
         }, {});
         AREXDefinition.assert = {};
-        let AREXDefinitionString = JSON.stringify(AREXDefinition, null, 2);
-        AREXDefinitionString = AREXDefinitionString.replace(
+        let arexDefinitionString = JSON.stringify(AREXDefinition, null, 2);
+        arexDefinitionString = arexDefinitionString.replace(
           `  "assert": {}`,
           `
   "assert": {
@@ -241,12 +241,11 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
   },`,
         );
 
-        console.log(AREXDefinitionString);
         setEditExpirationScript((state) => {
           const script = (state.content || '').split(AREXDefinitionAnnotationEnd);
           state.content =
             `${AREXDefinitionAnnotationStart}
-const arex = ${AREXDefinitionString}
+const arex = ${arexDefinitionString}
 ${AREXDefinitionAnnotationEnd}` + script[script.length - 1];
         });
 
