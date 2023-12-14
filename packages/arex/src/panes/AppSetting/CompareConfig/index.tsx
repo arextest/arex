@@ -146,7 +146,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
       Object.entries(
         operationList.reduce<Record<string, { label: string; value?: string | null }[]>>(
           (options, item) => {
-            item.operationTypes.forEach((operation) => {
+            item.operationTypes?.forEach((operation) => {
               if (options[operation]) {
                 options[operation].push({
                   label: item.operationName,
