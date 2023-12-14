@@ -24,7 +24,7 @@ const InterfaceSelect = (props: SelectProps & { appId: string; open?: boolean })
     () =>
       Object.entries(
         data.reduce<Record<string, { label: string; value?: string | null }[]>>((options, item) => {
-          item.operationTypes.forEach((operation) => {
+          item.operationTypes?.forEach((operation) => {
             if (options[operation]) {
               options[operation].push({
                 label: item.operationName,
