@@ -126,6 +126,9 @@ importers:
       immer:
         specifier: ^9.0.19
         version: 9.0.19
+      json5:
+        specifier: ^2.2.3
+        version: 2.2.3
       lodash:
         specifier: ^4.17.21
         version: 4.17.21

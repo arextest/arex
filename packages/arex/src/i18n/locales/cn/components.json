@@ -309,7 +309,9 @@
     "chooseEncryptionMethodName": "请选择选择加密方法",
     "categoryType": "忽略类型",
     "chooseCategoryType": "请选择忽略类型（可多选）",
-    "expectationScript": "预期管理"
+    "expectationScript": "预期管理",
+    "expirationTime": "过期时间",
+    "alias": "别名"
   },
   "env": {
     "searchEnvironment": "搜索环境",

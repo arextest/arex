@@ -9,7 +9,18 @@ import {
 } from '@arextest/arex-core';
 import { Editor, OnMount } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
-import { App, Button, DatePicker, Divider, Input, Space, Switch, Table, Typography } from 'antd';
+import {
+  App,
+  Button,
+  DatePicker,
+  Divider,
+  Input,
+  Popconfirm,
+  Space,
+  Switch,
+  Table,
+  Typography,
+} from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { editor } from 'monaco-editor';
@@ -76,6 +87,14 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
 
   const { run: deleteExpectation } = useRequest(ConfigService.deleteExpectation, {
     manual: true,
+    onSuccess(success) {
+      if (success) {
+        message.success(t('message.delSuccess'));
+        refreshExpectation();
+      } else {
+        message.error(t('message.delFailed'));
+      }
+    },
   });
 
   const columns: ColumnsType<ExpectationScript> = [
@@ -116,14 +135,19 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
             onClick={() => handleEditExpirationScript(record)}
           />
 
-          <TooltipButton
-            danger
-            icon={<DeleteOutlined />}
-            color={'error'}
-            title={t('delete')}
-            breakpoint='xl'
-            onClick={() => handleDeleteExpirationScript(record)}
-          />
+          <Popconfirm
+            title={t('appSetting.confirmDelete', { ns: 'components' })}
+            placement={'bottomLeft'}
+            onConfirm={() => handleDeleteExpirationScript(record)}
+          >
+            <TooltipButton
+              danger
+              icon={<DeleteOutlined />}
+              color={'error'}
+              title={t('delete')}
+              breakpoint='xl'
+            />
+          </Popconfirm>
         </>
       ),
     },
@@ -207,12 +231,22 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
           }
           return contracts;
         }, {});
+        AREXDefinition.assert = {};
+        let AREXDefinitionString = JSON.stringify(AREXDefinition, null, 2);
+        AREXDefinitionString = AREXDefinitionString.replace(
+          `  "assert": {}`,
+          `
+  "assert": {
+    "equal": function (service: string, path: string, expected?: any, actual?: any) {},
+  },`,
+        );
 
+        console.log(AREXDefinitionString);
         setEditExpirationScript((state) => {
           const script = (state.content || '').split(AREXDefinitionAnnotationEnd);
           state.content =
             `${AREXDefinitionAnnotationStart}
-const AREX = ${JSON.stringify(AREXDefinition, null, 2)}
+const arex = ${AREXDefinitionString}
 ${AREXDefinitionAnnotationEnd}` + script[script.length - 1];
         });
 
@@ -302,7 +336,7 @@ ${AREXDefinitionAnnotationEnd}` + script[script.length - 1];
             {t('save')}
           </Button>
         }
-        width={'65%'}
+        width={'75%'}
         styles={{
           body: {
             padding: '8px 16px',
@@ -324,7 +358,9 @@ ${AREXDefinitionAnnotationEnd}` + script[script.length - 1];
 
             <div>
               <div>
-                <Label type='secondary'>ExpirationTime</Label>
+                <Label type='secondary'>
+                  {t('appSetting.expirationTime', { ns: 'components' })}
+                </Label>
               </div>
               <DatePicker
                 value={dayjs(editExpirationScript?.expirationTime)}
@@ -337,7 +373,7 @@ ${AREXDefinitionAnnotationEnd}` + script[script.length - 1];
             </div>
 
             <div>
-              <Label type='secondary'>Alias</Label>
+              <Label type='secondary'>{t('appSetting.alias', { ns: 'components' })}</Label>
               <Input
                 value={editExpirationScript?.alias}
                 placeholder={activeOperation?.operationName}
@@ -354,7 +390,7 @@ ${AREXDefinitionAnnotationEnd}` + script[script.length - 1];
           <Editor
             theme={theme === 'dark' ? 'vs-dark' : 'light'}
             value={editExpirationScript?.content}
-            language='javascript'
+            language='typescript'
             height={'400px'}
             onMount={handleEditorDidMount}
             onChange={(value) => {

@@ -311,7 +311,9 @@
     "chooseEncryptionMethodName": "Please choose encryption method name",
     "categoryType": "Category Type",
     "chooseCategoryType": "Please select the type of ignore (multiple)",
-    "expectationScript": "Expectation Script"
+    "expectationScript": "Expectation Script",
+    "expirationTime": "Expiration Time",
+    "alias": "Alias"
   },
   "env": {
     "searchEnvironment": "Search Environment",
