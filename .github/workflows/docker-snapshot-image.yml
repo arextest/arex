@@ -1,6 +1,8 @@
 name: Docker SNAPSHOT Image CI
 
-on: push
+on:
+  workflow_dispatch:
+  
 jobs:
   tag:
     runs-on: ubuntu-latest
