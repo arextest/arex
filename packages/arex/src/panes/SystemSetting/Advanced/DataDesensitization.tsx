@@ -55,16 +55,22 @@ const DataDesensitization = () => {
       <Form<DesensitizationFormType>
         name='data-desensitization-form'
         form={form}
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 20 }}
+        layout='inline'
         onFinish={handleUploadJar}
       >
         <Form.Item hidden name='id'>
           <Input />
         </Form.Item>
 
-        <Form.Item label={t('systemSetting.jarFileUrl', { ns: 'components' })} name='jarUrl'>
-          <Input allowClear style={{ width: '400px' }} />
+        <Form.Item
+          label={t('systemSetting.dataDesensitization', { ns: 'components' })}
+          name='jarUrl'
+        >
+          <Input
+            allowClear
+            placeholder={t('systemSetting.jarFileUrlPlaceholder', { ns: 'components' }) as string}
+            style={{ width: '400px' }}
+          />
         </Form.Item>
 
         {/* form submit button */}
