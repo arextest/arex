@@ -50,25 +50,25 @@ const CallbackUrl: FC = () => {
     <Form<SystemConfig>
       name='system-setting-callbackUrl-form'
       form={form}
-      labelCol={{ span: 4 }}
-      wrapperCol={{ span: 20 }}
+      layout='inline'
       onFinish={handleUploadJar}
     >
       <Form.Item hidden name='operator'>
         <Input />
       </Form.Item>
 
-      <Form.Item
-        label={t('systemSetting.replayCallbackUrl', { ns: 'components' })}
-        name='callbackUrl'
-      >
-        <Input allowClear style={{ width: '400px' }} />
+      <Form.Item label={t('systemSetting.replayCallback', { ns: 'components' })} name='callbackUrl'>
+        <Input
+          allowClear
+          placeholder={t('systemSetting.replayCallbackPlaceholder', { ns: 'components' }) as string}
+          style={{ width: '400px' }}
+        />
       </Form.Item>
 
       {/* form submit button */}
       <Form.Item wrapperCol={{ span: 14, offset: 4 }}>
         <Button type='primary' htmlType='submit'>
-          Save
+          {t('save')}
         </Button>
       </Form.Item>
     </Form>
