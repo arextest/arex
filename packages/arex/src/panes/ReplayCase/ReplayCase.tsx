@@ -6,9 +6,6 @@ import {
   CollapseTable,
   DiffMatch,
   getJsonValueByPath,
-  getLocalStorage,
-  i18n,
-  I18nextLng,
   jsonIndexPathFilter,
   Label,
   PaneDrawer,
@@ -26,12 +23,11 @@ import dayjs from 'dayjs';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { NextInterfaceButton } from '@/components';
-import { APP_ID_KEY, EMAIL_KEY, PanesType } from '@/constant';
+import { APP_ID_KEY, PanesType } from '@/constant';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
 import { DependencyParams, ExpirationType } from '@/services/ComparisonService';
 import { InfoItem, PlanItemStatistic, ReplayCaseType } from '@/services/ReportService';
-import { MessageMap } from '@/services/ScheduleService';
 import { useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
@@ -39,9 +35,8 @@ import Case, { CaseProps } from './Case';
 import SaveCase, { SaveCaseRef } from './SaveCase';
 
 const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
-  const { message, notification } = App.useApp();
+  const { message } = App.useApp();
   const { activePane } = useMenusPanes();
-  const email = getLocalStorage<string>(EMAIL_KEY);
   const { t } = useTranslation(['components']);
 
   const [wrapperRef] = useAutoAnimate();

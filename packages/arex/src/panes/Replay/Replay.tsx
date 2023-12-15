@@ -19,7 +19,7 @@ import { decodePaneKey } from '@/store/useMenusPanes';
 import AppOwnersConfig, { AppOwnerConfigRef } from './AppOwnersConfig';
 import AppTitle from './AppTitle';
 import PlanItem from './PlanItem';
-import PlanReport, { PlanReportProps } from './PlanReport';
+import PlanReport from './PlanReport';
 
 const ReplayPage: ArexPaneFC = (props) => {
   const { activePane } = useMenusPanes();
@@ -62,7 +62,6 @@ const ReplayPage: ArexPaneFC = (props) => {
     defaultParams: [appId],
     onSuccess(res) {
       setHasOwner(!!res.owners?.length);
-      !res.owners?.length && appOwnerConfigRef?.current?.open();
     },
   });
 
@@ -95,6 +94,7 @@ const ReplayPage: ArexPaneFC = (props) => {
             appName={appInfo?.appName}
             readOnly={!hasOwner}
             recordCount={recordCount}
+            tags={appInfo?.tags}
             onRefresh={handleRefreshDep}
             onQueryRecordCount={queryRecordCount}
           />
@@ -116,6 +116,7 @@ const ReplayPage: ArexPaneFC = (props) => {
                 readOnly={!hasOwner}
                 filter={(record) => !!record.totalCaseCount}
                 onRefresh={handleRefreshDep}
+                onDelete={() => setSelectedPlan(undefined)}
               />
             }
           />

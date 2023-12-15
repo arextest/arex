@@ -1,12 +1,13 @@
 import { HelpTooltip, useTranslation } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Checkbox, Collapse, Form, InputNumber, Select, TimePicker } from 'antd';
+import { App, Button, Checkbox, Collapse, Form, InputNumber, TimePicker } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { ApplicationService, ConfigService } from '@/services';
+import { InterfaceSelect } from '@/components';
+import { ConfigService } from '@/services';
 import { QueryRecordSettingRes, SerializeSkipInfo } from '@/services/ConfigService';
 
 import SettingForm from '../SettingForm';
@@ -61,16 +62,6 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
 
   const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
   const [loading, setLoading] = useState(false);
-
-  /**
-   * 请求 InterfacesList
-   */
-  const { data: operationList = [] } = useRequest(
-    () => ApplicationService.queryInterfacesList<'Global'>({ appId: props.appId as string }),
-    {
-      ready: !!props.appId,
-    },
-  );
 
   useRequest(ConfigService.queryRecordSetting, {
     defaultParams: [{ appId: props.appId }],
@@ -199,15 +190,10 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
                   }
                   name='includeServiceOperationSet'
                 >
-                  <Select
-                    allowClear
-                    mode='tags'
-                    options={[...new Set(operationList.map((item) => item.operationName))]
-                      .filter(Boolean)
-                      .map((name) => ({
-                        label: name,
-                        value: name,
-                      }))}
+                  <InterfaceSelect
+                    appId={props.appId}
+                    open={!!props.appId}
+                    placeholder={t('appSetting.inclusionTooltip')}
                   />
                 </Form.Item>
 
@@ -219,15 +205,10 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
                   }
                   name='excludeServiceOperationSet'
                 >
-                  <Select
-                    allowClear
-                    mode='tags'
-                    options={[...new Set(operationList.map((item) => item.operationName))]
-                      .filter(Boolean)
-                      .map((name) => ({
-                        label: name,
-                        value: name,
-                      }))}
+                  <InterfaceSelect
+                    appId={props.appId}
+                    open={!!props.appId}
+                    placeholder={t('appSetting.exclusionTooltip')}
                   />
                 </Form.Item>
               </>

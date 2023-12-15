@@ -1,3 +1,4 @@
+import { CaseTags } from '@/services/ScheduleService';
 import { request } from '@/utils';
 
 export interface AgentData {
@@ -8,6 +9,8 @@ export interface AgentData {
   recordVersion: string | null;
   host: string;
   dataUpdateTime: number;
+  systemProperties?: CaseTags;
+  tags?: CaseTags;
 }
 
 export async function getAgentList(appId: string) {

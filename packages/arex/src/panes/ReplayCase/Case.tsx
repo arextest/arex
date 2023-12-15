@@ -44,7 +44,6 @@ const Case: FC<CaseProps> = (props) => {
     {
       title: t('replay.recordId'),
       dataIndex: 'recordId',
-      render: (recordId, record) => <a onClick={() => props.onClick?.(record)}>{recordId}</a>,
     },
     {
       title: t('replay.replayId'),
@@ -136,8 +135,8 @@ const Case: FC<CaseProps> = (props) => {
               navPane({
                 type: PanesType.REQUEST,
                 id: `${activeWorkspaceId}-${CollectionNodeType.case}-${generateId(12)}`,
-                icon: 'Get',
-                name: record.recordId,
+                // icon: 'Get',
+                name: `Debug - ${record.recordId}`,
                 data: {
                   recordId: record.recordId,
                   planId: props.planId,

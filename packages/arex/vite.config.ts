@@ -13,6 +13,15 @@ export default defineConfig(async ({ mode }) => ({
     __APP_VERSION__: await import('./package.json').then((pkg) => JSON.stringify(pkg.version)),
     __AUTH_PORT__: port.electronPort,
   },
+  resolve: {
+    alias: {
+      '@': path.resolve('./src'),
+      // '@arextest/arex-core/dist': path.resolve('../arex-core/src'),
+      // '@arextest/arex-core': path.resolve('../arex-core/src'),
+      // '@arextest/arex-common': path.resolve('../arex-common/src'),
+      // '@arextest/arex-request': path.resolve('../arex-request/src'),
+    },
+  },
   plugins: [
     svgr(),
     react({
@@ -40,15 +49,6 @@ export default defineConfig(async ({ mode }) => ({
         : [],
     ],
   ],
-  resolve: {
-    alias: {
-      '@': path.resolve('./src'),
-      // '@arextest/arex-core/dist': path.resolve('../arex-core/src'),
-      // '@arextest/arex-core': path.resolve('../arex-core/src'),
-      // '@arextest/arex-common': path.resolve('../arex-common/src'),
-      // '@arextest/arex-request': path.resolve('../arex-request/src'),
-    },
-  },
   server: {
     host: '0.0.0.0',
     port: port.vitePort,

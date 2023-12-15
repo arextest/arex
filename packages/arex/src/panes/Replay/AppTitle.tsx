@@ -25,48 +25,43 @@ import {
   AutoComplete,
   Badge,
   Button,
+  Collapse,
   DatePicker,
   Form,
   Input,
   Modal,
   Popover,
-  Select,
   Skeleton,
   theme,
   Typography,
 } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import React, {
-  createElement,
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { createElement, FC, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
+import { InterfaceSelect, TagSelect } from '@/components';
 import { EMAIL_KEY, isClient, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
 import CompareNoise from '@/panes/Replay/CompareNoise';
 import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCaseList';
-import { ApplicationService, ScheduleService } from '@/services';
-import { MessageMap } from '@/services/ScheduleService';
+import { ScheduleService } from '@/services';
+import { CaseTags, MessageMap } from '@/services/ScheduleService';
 
 type AppTitleProps = {
   appId: string;
   appName?: string;
   readOnly?: boolean;
   recordCount?: number;
+  tags?: Record<string, string[]>;
   onRefresh?: () => void;
   onQueryRecordCount?: () => void;
 };
 
 type CreatePlanForm = {
+  planName?: string;
   targetEnv: string;
   caseSourceRange: [Dayjs, Dayjs];
   operationList?: string[];
+  caseTags?: CaseTags;
 };
 
 const TitleWrapper = styled(
@@ -81,13 +76,7 @@ const TitleWrapper = styled(
     onRefresh?: () => void;
     onSetting?: () => void;
   }) => {
-    const navPane = useNavPane();
     const { t } = useTranslation(['components']);
-    const [planId, setPlanId] = useState<string>();
-
-    useEffect(() => {
-      setPlanId(props.planId);
-    }, [props.planId]);
 
     return (
       <div id='arex-replay-record-detail-btn' className={props.className}>
@@ -141,29 +130,6 @@ const TitleWrapper = styled(
                 onClick={props.onSetting}
               />
             )}
-
-            <Input.Search
-              allowClear
-              size='small'
-              value={planId}
-              placeholder={t('replay.searchForPlanId') as string}
-              onChange={(e) => {
-                setPlanId(e.target.value);
-                !e.target.value &&
-                  navPane({
-                    id: props.appId,
-                    type: PanesType.REPLAY,
-                  });
-              }}
-              onSearch={(planId) => {
-                navPane({
-                  id: props.appId,
-                  type: PanesType.REPLAY,
-                  data: { planId: planId || undefined }, // set '' to undefined
-                });
-              }}
-              style={{ display: 'inline', width: '160px', marginLeft: '8px' }}
-            />
           </>
         ) : (
           <Skeleton.Input active size='small' style={{ width: '200px' }} />
@@ -192,6 +158,7 @@ const AppTitle: FC<AppTitleProps> = ({
   appName,
   readOnly,
   recordCount = 0,
+  tags,
   onRefresh,
   onQueryRecordCount,
 }) => {
@@ -207,8 +174,7 @@ const AppTitle: FC<AppTitleProps> = ({
   const [form] = Form.useForm<CreatePlanForm>();
   const targetEnv = Form.useWatch('targetEnv', form);
 
-  const [open, setOpen] = useState(false);
-  const [interfacesOptions, setInterfacesOptions] = useState<any[]>([]);
+  const [openPathDropdown, setOpenPathDropdown] = useState(false);
 
   const [targetHostSource, setTargetHostSource] = useLocalStorageState<{
     [appId: string]: string[];
@@ -225,16 +191,6 @@ const AppTitle: FC<AppTitleProps> = ({
     () => `${location.origin}/schedule/createPlan?appId=${appId}&targetEnv=${targetEnv?.trim()}`,
     [appId, targetEnv],
   );
-
-  /**
-   * 请求 InterfacesList
-   */
-  useRequest(() => ApplicationService.queryInterfacesList<'Global'>({ appId }), {
-    ready: open,
-    onSuccess(res) {
-      setInterfacesOptions(res.map((item) => ({ label: item.operationName, value: item.id })));
-    },
-  });
 
   /**
    * 创建回放
@@ -264,7 +220,7 @@ const AppTitle: FC<AppTitleProps> = ({
         });
       },
       onFinally() {
-        setOpen(false);
+        setOpenPathDropdown(false);
         form.resetFields();
       },
     },
@@ -280,6 +236,7 @@ const AppTitle: FC<AppTitleProps> = ({
           appId,
           sourceEnv: 'pro',
           targetEnv,
+          planName: values.planName,
           caseSourceFrom: values.caseSourceRange[0].valueOf(),
           caseSourceTo: values.caseSourceRange[1].valueOf(),
           operationCaseInfoList: values.operationList?.map((operationId) => ({
@@ -287,6 +244,7 @@ const AppTitle: FC<AppTitleProps> = ({
           })),
           operator: email as string,
           replayPlanType: Number(Boolean(values.operationList?.length)),
+          caseTags: values.caseTags,
         });
 
         // update targetHostSource
@@ -339,7 +297,7 @@ const AppTitle: FC<AppTitleProps> = ({
         ),
         value: item,
       })) || [],
-    [appId, targetHostSource, open],
+    [appId, targetHostSource, openPathDropdown],
   );
 
   const handleClickTitle = useCallback(() => caseListRef.current?.open(), [caseListRef]);
@@ -357,7 +315,7 @@ const AppTitle: FC<AppTitleProps> = ({
   }, [appId]);
 
   const handleCloseModal = useCallback(() => {
-    setOpen(false);
+    setOpenPathDropdown(false);
     form.resetFields();
   }, [form]);
 
@@ -385,7 +343,7 @@ const AppTitle: FC<AppTitleProps> = ({
             type='primary'
             disabled={readOnly}
             icon={<PlayCircleOutlined />}
-            onClick={() => setOpen(true)}
+            onClick={() => setOpenPathDropdown(true)}
           >
             {t('replay.startButton')}
           </Button>
@@ -394,11 +352,11 @@ const AppTitle: FC<AppTitleProps> = ({
 
       <Modal
         title={`${t('replay.startButton')} - ${appId}`}
-        open={open}
+        open={openPathDropdown}
         onOk={handleStartReplay}
         onCancel={handleCloseModal}
         styles={{
-          body: { paddingBottom: '12px' },
+          body: { padding: '8px 0' },
         }}
         confirmLoading={confirmLoading}
       >
@@ -466,21 +424,58 @@ const AppTitle: FC<AppTitleProps> = ({
             />
           </Form.Item>
 
-          <Form.Item
-            label={<HelpTooltip title={t('replay.pathsTooltip')}>{t('replay.paths')}</HelpTooltip>}
-            name='operationList'
-          >
-            <Select
-              mode='multiple'
-              maxTagCount={3}
-              options={interfacesOptions}
-              optionFilterProp='label'
-            />
-          </Form.Item>
+          <Collapse
+            css={css`
+              margin-top: -8px;
+              background-color: transparent;
+              .ant-collapse-content-box {
+                padding: 0 !important;
+              }
+            `}
+            bordered={false}
+            items={[
+              {
+                key: 'advancedOptions',
+                label: (
+                  <Typography.Text>
+                    {t('advancedOptions', {
+                      ns: 'common',
+                    })}
+                  </Typography.Text>
+                ),
+                children: (
+                  <>
+                    <Form.Item label={t('replay.planName')} name='planName'>
+                      <Input allowClear placeholder={t('replay.planNamePlaceholder') as string} />
+                    </Form.Item>
 
-          <Form.Item label={'Webhook'}>
-            <Typography.Text copyable>{webhook}</Typography.Text>
-          </Form.Item>
+                    <Form.Item
+                      label={
+                        <HelpTooltip title={t('replay.pathsTooltip')}>
+                          {t('replay.paths')}
+                        </HelpTooltip>
+                      }
+                      name='operationList'
+                    >
+                      <InterfaceSelect
+                        appId={appId}
+                        open={openPathDropdown}
+                        placeholder={t('replay.pathsPlaceholder')}
+                      />
+                    </Form.Item>
+
+                    <Form.Item label={t('replay.caseTags')} name='caseTags'>
+                      <TagSelect tags={tags} />
+                    </Form.Item>
+
+                    <Form.Item label={'Webhook'}>
+                      <Typography.Text copyable>{webhook}</Typography.Text>
+                    </Form.Item>
+                  </>
+                ),
+              },
+            ]}
+          />
         </Form>
       </Modal>
 
