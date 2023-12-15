@@ -39,8 +39,8 @@ const LogHeader: FC<{ log: Log }> = (props) => {
           {`${props.log.source.className} - ${props.log.source.fileName} : ${props.log.source.lineNumber}`}
         </Typography.Text>
 
-        {Object.values(props.log.contextMap).map((context, index) => (
-          <Tag key={index}>{context}</Tag>
+        {Object.entries(props.log.contextMap).map(([key, value], index) => (
+          <Tag key={index}>{`${key}=${value}`}</Tag>
         ))}
       </div>
     </LogHeaderWrapper>

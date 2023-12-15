@@ -1,6 +1,6 @@
 import { ColorPrimaryPalette, getLocalStorage, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Form, Switch } from 'antd';
+import { App, Divider, Form, Switch } from 'antd';
 import React, { useEffect } from 'react';
 
 import { EMAIL_KEY } from '@/constant';
@@ -75,33 +75,37 @@ const UserInterface = () => {
   });
 
   return (
-    <Form
-      name='setting-form'
-      form={form}
-      labelCol={{ span: 4 }}
-      wrapperCol={{ span: 20 }}
-      onValuesChange={handleFormChange}
-    >
-      <Form.Item label={t('systemSetting.compactMode')} name='compact' valuePropName='checked'>
-        <Switch />
-      </Form.Item>
+    <>
+      <Divider orientation='left'>{t('systemSetting.userInterface')} </Divider>
 
-      <Form.Item label={t('systemSetting.darkMode')} name='theme'>
-        <ThemeSwitch />
-      </Form.Item>
+      <Form
+        name='setting-form'
+        form={form}
+        labelCol={{ span: 4 }}
+        wrapperCol={{ span: 20 }}
+        onValuesChange={handleFormChange}
+      >
+        <Form.Item label={t('systemSetting.compactMode')} name='compact' valuePropName='checked'>
+          <Switch />
+        </Form.Item>
 
-      <Form.Item label={t('systemSetting.primaryColor')} name='colorPrimary'>
-        <ColorPicker />
-      </Form.Item>
+        <Form.Item label={t('systemSetting.darkMode')} name='theme'>
+          <ThemeSwitch />
+        </Form.Item>
 
-      <Form.Item label={t('systemSetting.language')} name='language'>
-        <LanguageSelect />
-      </Form.Item>
+        <Form.Item label={t('systemSetting.primaryColor')} name='colorPrimary'>
+          <ColorPicker />
+        </Form.Item>
 
-      <Form.Item label={t('systemSetting.avatar')} name='avatar'>
-        <AvatarUpload />
-      </Form.Item>
-    </Form>
+        <Form.Item label={t('systemSetting.language')} name='language'>
+          <LanguageSelect />
+        </Form.Item>
+
+        <Form.Item label={t('systemSetting.avatar')} name='avatar'>
+          <AvatarUpload />
+        </Form.Item>
+      </Form>
+    </>
   );
 };
 
