@@ -1,0 +1,59 @@
+name: Docker SNAPSHOT Image CI
+
+on: push
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get current time
+        uses: josStorer/get-current-time@v2
+        id: time
+        with:
+          format: YYYYMMDD-HHmmss
+          utcOffset: "+08:00"
+      - name: Get Branch Name
+        id: tag
+        run: |
+          FULL_BRANCH_NAME=$GITHUB_REF_NAME
+          BRANCH_NAME="${FULL_BRANCH_NAME//\//_}"
+          TAG_NAME=${BRANCH_NAME}-${{ steps.time.outputs.formattedTime }}
+          echo ${TAG_NAME}
+          echo "tag=${TAG_NAME}" >> $GITHUB_OUTPUT
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+
+  docker:
+    needs: tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_SNAPSHOT_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_SNAPSHOT_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ secrets.DOCKERHUB_SNAPSHOT_USERNAME }}/arex:${{ needs.tag.outputs.tag }}
+
+      - name: Send mail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{secrets.MAIL_USERNAME}}
+          password: ${{secrets.MAIL_PASSWORD}}
+          subject: Arex Snapshot Image Build Job Completed
+          to: ${{ vars.ACTION_RESULT_MAIL }}
+          from: ArexAdmin02
+          body: Build job of ${{github.repository}} completed successfully! Image tag ${{ needs.tag.outputs.tag }}
