@@ -94,6 +94,7 @@ const ReplayPage: ArexPaneFC = (props) => {
             appName={appInfo?.appName}
             readOnly={!hasOwner}
             recordCount={recordCount}
+            tags={appInfo?.tags}
             onRefresh={handleRefreshDep}
             onQueryRecordCount={queryRecordCount}
           />

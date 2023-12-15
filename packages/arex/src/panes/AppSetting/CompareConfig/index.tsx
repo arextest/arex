@@ -143,9 +143,31 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   );
   const interfaceOptions = useMemo(
     () =>
-      operationList.map((operation) => ({
-        label: operation.operationName,
-        value: operation.id,
+      Object.entries(
+        operationList.reduce<Record<string, { label: string; value?: string | null }[]>>(
+          (options, item) => {
+            item.operationTypes?.forEach((operation) => {
+              if (options[operation]) {
+                options[operation].push({
+                  label: item.operationName,
+                  value: item.id,
+                });
+              } else {
+                options[operation] = [
+                  {
+                    label: item.operationName,
+                    value: item.id,
+                  },
+                ];
+              }
+            });
+            return options;
+          },
+          {},
+        ),
+      ).map(([label, options]) => ({
+        label,
+        options,
       })),
     [operationList],
   );

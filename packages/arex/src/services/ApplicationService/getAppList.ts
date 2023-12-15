@@ -17,8 +17,10 @@ export type ApplicationDataType = {
   owner: string;
   owners?: string[];
   organizationName: string;
+  organizationId: string;
   recordedCaseCount: number;
   visibilityLevel: AppVisibilityLevel;
+  tags: Record<string, string[]>;
 };
 
 export type RegressionListRes = Array<{

@@ -89,6 +89,7 @@
     "pathsTooltip": "Select the paths for which cases will be replayed. If not specified, all paths will be replayed by default.",
     "pathsPlaceholder": "Optional, all paths are selected by default",
     "replayReportName": " Report Name",
+    "caseTags": "Tags",
     "state": "State",
     "all": "All",
     "passed": "Passed",
