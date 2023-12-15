@@ -237,7 +237,7 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
           `  "assert": {}`,
           `
   "assert": {
-    "equal": function (service: string, path: string, expected?: any, actual?: any) {},
+    "equal": function (service: string, path: any, expected?: any, actual?: any) {},
   },`,
         );
 
