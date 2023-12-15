@@ -18,7 +18,7 @@ export type OperationInterface<T extends OperationType = 'Global'> = {
   dependencyList?: string[] | null;
   serviceId?: string;
   operationName: string;
-  operationTypes: string[];
+  operationTypes: string[] | null;
   operationResponse?: string | null;
   recordedCaseCount?: number | null;
 };

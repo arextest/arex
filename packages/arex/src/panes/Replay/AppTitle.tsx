@@ -25,37 +25,33 @@ import {
   AutoComplete,
   Badge,
   Button,
-  Checkbox,
   Collapse,
   DatePicker,
-  Divider,
   Form,
   Input,
-  Menu,
   Modal,
   Popover,
-  Select,
   Skeleton,
-  Space,
   theme,
   Typography,
 } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { createElement, FC, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
-import { InterfaceSelect } from '@/components';
+import { InterfaceSelect, TagSelect } from '@/components';
 import { EMAIL_KEY, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
 import CompareNoise from '@/panes/Replay/CompareNoise';
 import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCaseList';
-import { ApplicationService, ScheduleService } from '@/services';
-import { MessageMap } from '@/services/ScheduleService';
+import { ScheduleService } from '@/services';
+import { CaseTags, MessageMap } from '@/services/ScheduleService';
 
 type AppTitleProps = {
   appId: string;
   appName?: string;
   readOnly?: boolean;
   recordCount?: number;
+  tags?: Record<string, string[]>;
   onRefresh?: () => void;
   onQueryRecordCount?: () => void;
 };
@@ -65,6 +61,7 @@ type CreatePlanForm = {
   targetEnv: string;
   caseSourceRange: [Dayjs, Dayjs];
   operationList?: string[];
+  caseTags?: CaseTags;
 };
 
 const TitleWrapper = styled(
@@ -161,6 +158,7 @@ const AppTitle: FC<AppTitleProps> = ({
   appName,
   readOnly,
   recordCount = 0,
+  tags,
   onRefresh,
   onQueryRecordCount,
 }) => {
@@ -176,7 +174,7 @@ const AppTitle: FC<AppTitleProps> = ({
   const [form] = Form.useForm<CreatePlanForm>();
   const targetEnv = Form.useWatch('targetEnv', form);
 
-  const [open, setOpen] = useState(false);
+  const [openPathDropdown, setOpenPathDropdown] = useState(false);
 
   const [targetHostSource, setTargetHostSource] = useLocalStorageState<{
     [appId: string]: string[];
@@ -220,7 +218,7 @@ const AppTitle: FC<AppTitleProps> = ({
       });
     },
     onFinally() {
-      setOpen(false);
+      setOpenPathDropdown(false);
       form.resetFields();
     },
   });
@@ -242,6 +240,7 @@ const AppTitle: FC<AppTitleProps> = ({
           })),
           operator: email as string,
           replayPlanType: Number(Boolean(values.operationList?.length)),
+          caseTags: values.caseTags,
         });
 
         // update targetHostSource
@@ -294,7 +293,7 @@ const AppTitle: FC<AppTitleProps> = ({
         ),
         value: item,
       })) || [],
-    [appId, targetHostSource, open],
+    [appId, targetHostSource, openPathDropdown],
   );
 
   const handleClickTitle = useCallback(() => caseListRef.current?.open(), [caseListRef]);
@@ -312,7 +311,7 @@ const AppTitle: FC<AppTitleProps> = ({
   }, [appId]);
 
   const handleCloseModal = useCallback(() => {
-    setOpen(false);
+    setOpenPathDropdown(false);
     form.resetFields();
   }, [form]);
 
@@ -340,7 +339,7 @@ const AppTitle: FC<AppTitleProps> = ({
             type='primary'
             disabled={readOnly}
             icon={<PlayCircleOutlined />}
-            onClick={() => setOpen(true)}
+            onClick={() => setOpenPathDropdown(true)}
           >
             {t('replay.startButton')}
           </Button>
@@ -349,7 +348,7 @@ const AppTitle: FC<AppTitleProps> = ({
 
       <Modal
         title={`${t('replay.startButton')} - ${appId}`}
-        open={open}
+        open={openPathDropdown}
         onOk={handleStartReplay}
         onCancel={handleCloseModal}
         styles={{
@@ -456,9 +455,13 @@ const AppTitle: FC<AppTitleProps> = ({
                     >
                       <InterfaceSelect
                         appId={appId}
-                        open={open}
+                        open={openPathDropdown}
                         placeholder={t('replay.pathsPlaceholder')}
                       />
+                    </Form.Item>
+
+                    <Form.Item label={t('replay.caseTags')} name='caseTags'>
+                      <TagSelect tags={tags} />
                     </Form.Item>
 
                     <Form.Item label={'Webhook'}>

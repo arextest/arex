@@ -39,7 +39,6 @@ const AppBasicSetup: FC<AppBasicSetupProps> = (props) => {
     ready: !!appId,
     defaultParams: [appId as string],
     onSuccess(res) {
-      console.log(res);
       form.setFieldsValue({
         appName: res.appName,
         owners: res.owners ?? undefined, // set null to undefined
