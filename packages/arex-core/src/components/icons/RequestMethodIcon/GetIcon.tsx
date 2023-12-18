@@ -1,9 +1,11 @@
 import { Typography } from 'antd';
-import React from 'react';
+import { TextProps } from 'antd/es/typography/Text';
+import React, { FC } from 'react';
 
-const GetIcon = () => {
+const GetIcon: FC<TextProps> = (props) => {
+  const { style, ...restProps } = props;
   return (
-    <Typography.Text type='success' style={{ marginRight: '8px' }}>
+    <Typography.Text type='success' style={{ marginRight: '8px', ...style }} {...restProps}>
       GET
     </Typography.Text>
   );

@@ -1,9 +1,11 @@
 import { Typography } from 'antd';
-import React from 'react';
+import { TextProps } from 'antd/es/typography/Text';
+import React, { FC } from 'react';
 
-const PutIcon = () => {
+const PutIcon: FC<TextProps> = (props) => {
+  const { style, ...restProps } = props;
   return (
-    <Typography.Text type='secondary' style={{ marginRight: '8px' }}>
+    <Typography.Text type='secondary' style={{ marginRight: '8px', ...style }} {...restProps}>
       PUT
     </Typography.Text>
   );
