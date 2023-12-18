@@ -61,6 +61,7 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
             size='small'
             type='text'
             color='primary'
+            disabled={loading}
             icon={<BugOutlined />}
             onClick={handleDebugCase}
           />
