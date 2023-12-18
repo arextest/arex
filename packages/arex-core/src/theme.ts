@@ -9,16 +9,24 @@ export enum Theme {
 }
 
 export enum ColorPrimary {
-  purple = 'purple',
   red = 'red',
+  orange = 'orange',
+  yellow = 'yellow',
   green = 'green',
+  blue = 'blue',
+  purple = 'purple',
+  stone = 'stone',
 }
 
 export type ColorPrimaryPalette = { key: string; name: ColorPrimary };
 export const colorPrimaryPalette: ColorPrimaryPalette[] = [
+  { key: '#dc2626', name: ColorPrimary.red },
+  { key: '#f97316', name: ColorPrimary.orange },
+  { key: '#ca8a04', name: ColorPrimary.yellow },
+  { key: '#65a30d', name: ColorPrimary.green },
+  { key: '#2563eb', name: ColorPrimary.blue },
   { key: '#955cf4', name: ColorPrimary.purple },
-  { key: '#ff4d4f', name: ColorPrimary.red },
-  { key: '#7cb305', name: ColorPrimary.green },
+  { key: '#a8a29e', name: ColorPrimary.stone },
 ];
 
 export const lightToken: Partial<AliasToken> = {
