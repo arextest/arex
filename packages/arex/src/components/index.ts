@@ -10,6 +10,7 @@ export {
   CONFIG_TARGET,
   default as GlobalInterfaceDependencySelect,
 } from './GlobalInterfaceDependencySelect';
+export { default as InterfaceSelect } from './InterfaceSelect';
 export { default as KeyboardShortcut } from './KeyboardShortcut';
 export { default as MacDraggableArea } from './MacDraggableArea';
 export { default as MacTrafficLightBackground } from './MacTrafficLightBackground';
