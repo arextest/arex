@@ -237,7 +237,7 @@ const ExpectationScript: FC<ExpectationScriptProps> = (props) => {
           `  "assert": {}`,
           `
   "assert": {
-    "equal": function (service: string, path: any, expected?: any, actual?: any) {},
+    "equals": function (expected?: any, actual?: any) {},
   },`,
         );
 
@@ -391,6 +391,11 @@ ${AREXDefinitionAnnotationEnd}` + script[script.length - 1];
             value={editExpirationScript?.content}
             language='typescript'
             height={'400px'}
+            options={{
+              minimap: {
+                enabled: false,
+              },
+            }}
             onMount={handleEditorDidMount}
             onChange={(value) => {
               setEditExpirationScript((state) => {
