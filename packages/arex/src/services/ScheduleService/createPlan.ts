@@ -32,6 +32,8 @@ export const MessageMap: {
   },
 };
 
+export type CaseTags = Record<string, string> | null;
+
 export type CreatePlanReq = {
   appId: string;
   sourceEnv: string | null;
@@ -43,6 +45,7 @@ export type CreatePlanReq = {
   caseSourceFrom: number;
   caseSourceTo: number;
   operationCaseInfoList?: { operationId: string; replayIdList?: string[] }[];
+  caseTags?: CaseTags;
 };
 
 export type CreatePlanRes = {

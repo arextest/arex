@@ -15,9 +15,10 @@ export type OperationInterface<T extends OperationType = 'Global'> = {
   modifiedTime?: number;
   id: OperationId<T>;
   appId?: string;
+  dependencyList?: string[] | null;
   serviceId?: string;
   operationName: string;
-  operationType?: number;
+  operationTypes: string[] | null;
   operationResponse?: string | null;
   recordedCaseCount?: number | null;
 };

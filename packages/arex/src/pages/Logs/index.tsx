@@ -4,6 +4,7 @@ import { useRequest } from 'ahooks';
 import { Badge, Button, DatePicker, Divider, Empty, Select, Space, theme, Typography } from 'antd';
 import { RangePickerProps } from 'antd/es/date-picker';
 import dayjs from 'dayjs';
+import { capitalize } from 'lodash';
 import React, { FC, useState } from 'react';
 
 import { ReportService } from '@/services';
@@ -95,9 +96,9 @@ const Logs: FC = () => {
             <Label>AppType</Label>
             <Select
               value={appType}
-              options={AppType.map((value) => ({ value }))}
+              options={AppType.map((value) => ({ label: capitalize(value), value }))}
               onChange={setAppType}
-              style={{ width: '200px' }}
+              style={{ width: '120px' }}
             />
           </div>
 

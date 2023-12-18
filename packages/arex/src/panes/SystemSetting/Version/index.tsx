@@ -1,7 +1,7 @@
 import { CloudDownloadOutlined } from '@ant-design/icons';
 import { useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Form, Input, Space } from 'antd';
+import { App, Button, Divider, Form, Input, Space } from 'antd';
 import axios from 'axios';
 import React, { FC, useMemo } from 'react';
 
@@ -65,6 +65,8 @@ const AppVersion: FC<{ value?: string }> = () => {
 };
 
 const Version: FC = () => {
+  const { t } = useTranslation(['components']);
+
   const [form] = Form.useForm<{
     report?: string;
     schedule?: string;
@@ -91,6 +93,8 @@ const Version: FC = () => {
 
   return (
     <>
+      <Divider orientation='left'> {t('systemSetting.version')}</Divider>
+
       <Form
         name='system-setting-application-form'
         form={form}

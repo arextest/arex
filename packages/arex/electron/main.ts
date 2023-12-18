@@ -1,6 +1,6 @@
 import './logger';
 
-import { app, BrowserWindow, globalShortcut, Menu } from 'electron';
+import { app, BrowserWindow, dialog, globalShortcut, Menu } from 'electron';
 import { autoUpdateInit } from './autoUpdater';
 import path from 'node:path';
 import { oauth } from './server';
@@ -57,6 +57,7 @@ function createWindow() {
 
 app.on('window-all-closed', () => {
   win = null;
+  // if (process.platform !== 'darwin')
   app.quit();
 });
 

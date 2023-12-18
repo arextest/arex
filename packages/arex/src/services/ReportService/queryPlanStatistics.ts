@@ -1,3 +1,4 @@
+import { CaseTags } from '@/services/ScheduleService';
 import { request } from '@/utils';
 
 export type QueryPlanStatisticsReq = {
@@ -44,7 +45,9 @@ export type PlanStatistics = {
   waitOperationCount: number | null;
   totalServiceCount: number | null;
   percent?: number;
+  caseTags?: CaseTags;
 };
+
 export type QueryPlanStatisticsRes = {
   totalCount: number;
   planStatisticList: PlanStatistics[];

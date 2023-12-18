@@ -18,5 +18,6 @@ export { default as MenuSelect } from './MenuSelect';
 export { default as NextInterfaceButton } from './PlanItemNavigation';
 export { default as SingleCollapse } from './SingleCollapse';
 export { default as StatusTag } from './StatusTag';
+export { default as TagSelect } from './TagSelect';
 export { default as UserMenu } from './UserMenu';
 export { default as WorkspacesMenu } from './WorkspacesMenu';

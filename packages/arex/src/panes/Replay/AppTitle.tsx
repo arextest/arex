@@ -31,7 +31,6 @@ import {
   Input,
   Modal,
   Popover,
-  Select,
   Skeleton,
   theme,
   Typography,
@@ -39,18 +38,20 @@ import {
 import dayjs, { Dayjs } from 'dayjs';
 import React, { createElement, FC, ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 
-import { EMAIL_KEY, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
+import { InterfaceSelect, TagSelect } from '@/components';
+import { EMAIL_KEY, isClient, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
 import CompareNoise from '@/panes/Replay/CompareNoise';
 import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCaseList';
-import { ApplicationService, ScheduleService } from '@/services';
-import { MessageMap } from '@/services/ScheduleService';
+import { ScheduleService } from '@/services';
+import { CaseTags, MessageMap } from '@/services/ScheduleService';
 
 type AppTitleProps = {
   appId: string;
   appName?: string;
   readOnly?: boolean;
   recordCount?: number;
+  tags?: Record<string, string[]>;
   onRefresh?: () => void;
   onQueryRecordCount?: () => void;
 };
@@ -60,6 +61,7 @@ type CreatePlanForm = {
   targetEnv: string;
   caseSourceRange: [Dayjs, Dayjs];
   operationList?: string[];
+  caseTags?: CaseTags;
 };
 
 const TitleWrapper = styled(
@@ -156,6 +158,7 @@ const AppTitle: FC<AppTitleProps> = ({
   appName,
   readOnly,
   recordCount = 0,
+  tags,
   onRefresh,
   onQueryRecordCount,
 }) => {
@@ -171,8 +174,7 @@ const AppTitle: FC<AppTitleProps> = ({
   const [form] = Form.useForm<CreatePlanForm>();
   const targetEnv = Form.useWatch('targetEnv', form);
 
-  const [open, setOpen] = useState(false);
-  const [interfacesOptions, setInterfacesOptions] = useState<any[]>([]);
+  const [openPathDropdown, setOpenPathDropdown] = useState(false);
 
   const [targetHostSource, setTargetHostSource] = useLocalStorageState<{
     [appId: string]: string[];
@@ -191,51 +193,45 @@ const AppTitle: FC<AppTitleProps> = ({
   );
 
   /**
-   * 请求 InterfacesList
-   */
-  useRequest(() => ApplicationService.queryInterfacesList<'Global'>({ appId }), {
-    ready: open,
-    onSuccess(res) {
-      setInterfacesOptions(res.map((item) => ({ label: item.operationName, value: item.id })));
-    },
-  });
-
-  /**
    * 创建回放
    */
-  const { run: createPlan, loading: confirmLoading } = useRequest(ScheduleService.createPlan, {
-    manual: true,
-    onSuccess(res) {
-      if (res.result === 1) {
-        notification.success({
-          message: t('replay.startSuccess'),
-        });
-        onRefresh?.();
-      } else {
-        console.error(res.desc);
+  const { run: createPlan, loading: confirmLoading } = useRequest(
+    isClient ? ScheduleService.createPlanLocal : ScheduleService.createPlan,
+    {
+      manual: true,
+      onSuccess(res) {
+        if (res.result === 1) {
+          notification.success({
+            message: t('replay.startSuccess'),
+          });
+          onRefresh?.();
+        } else {
+          console.error(res.desc);
+          notification.error({
+            message: t('replay.startFailed'),
+            description: MessageMap[i18n.language as I18nextLng][res.data.reasonCode],
+          });
+        }
+      },
+      onError(e) {
         notification.error({
           message: t('replay.startFailed'),
-          description: MessageMap[i18n.language as I18nextLng][res.data.reasonCode],
+          description: e.message,
         });
-      }
+      },
+      onFinally() {
+        setOpenPathDropdown(false);
+        form.resetFields();
+      },
     },
-    onError(e) {
-      notification.error({
-        message: t('replay.startFailed'),
-        description: e.message,
-      });
-    },
-    onFinally() {
-      setOpen(false);
-      form.resetFields();
-    },
-  });
+  );
 
   const handleStartReplay = () => {
     form
       .validateFields()
       .then((values) => {
         const targetEnv = values.targetEnv.trim();
+
         createPlan({
           appId,
           sourceEnv: 'pro',
@@ -248,6 +244,7 @@ const AppTitle: FC<AppTitleProps> = ({
           })),
           operator: email as string,
           replayPlanType: Number(Boolean(values.operationList?.length)),
+          caseTags: values.caseTags,
         });
 
         // update targetHostSource
@@ -300,7 +297,7 @@ const AppTitle: FC<AppTitleProps> = ({
         ),
         value: item,
       })) || [],
-    [appId, targetHostSource, open],
+    [appId, targetHostSource, openPathDropdown],
   );
 
   const handleClickTitle = useCallback(() => caseListRef.current?.open(), [caseListRef]);
@@ -318,7 +315,7 @@ const AppTitle: FC<AppTitleProps> = ({
   }, [appId]);
 
   const handleCloseModal = useCallback(() => {
-    setOpen(false);
+    setOpenPathDropdown(false);
     form.resetFields();
   }, [form]);
 
@@ -346,7 +343,7 @@ const AppTitle: FC<AppTitleProps> = ({
             type='primary'
             disabled={readOnly}
             icon={<PlayCircleOutlined />}
-            onClick={() => setOpen(true)}
+            onClick={() => setOpenPathDropdown(true)}
           >
             {t('replay.startButton')}
           </Button>
@@ -355,7 +352,7 @@ const AppTitle: FC<AppTitleProps> = ({
 
       <Modal
         title={`${t('replay.startButton')} - ${appId}`}
-        open={open}
+        open={openPathDropdown}
         onOk={handleStartReplay}
         onCancel={handleCloseModal}
         styles={{
@@ -460,13 +457,15 @@ const AppTitle: FC<AppTitleProps> = ({
                       }
                       name='operationList'
                     >
-                      <Select
-                        mode='multiple'
-                        maxTagCount={3}
+                      <InterfaceSelect
+                        appId={appId}
+                        open={openPathDropdown}
                         placeholder={t('replay.pathsPlaceholder')}
-                        options={interfacesOptions}
-                        optionFilterProp='label'
                       />
+                    </Form.Item>
+
+                    <Form.Item label={t('replay.caseTags')} name='caseTags'>
+                      <TagSelect tags={tags} />
                     </Form.Item>
 
                     <Form.Item label={'Webhook'}>
