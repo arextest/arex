@@ -1,11 +1,15 @@
-import { RequestMethodIcon } from '@arextest/arex-core';
+import { BugOutlined } from '@ant-design/icons';
+import { RequestMethodIcon, SpaceBetweenWrapper, TooltipButton } from '@arextest/arex-core';
 import type { ArexEnvironment, ArexRESTRequest, ArexRESTResponse } from '@arextest/arex-request';
 import { ArexResponse, ResponseMeta, sendRequest, TestResult } from '@arextest/arex-request';
-import { ArexTestResult, ArexVisualizer } from '@arextest/arex-request/src';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Card, Divider, Space, Spin, Typography } from 'antd';
 import React, { FC } from 'react';
+
+import { CollectionNodeType, PanesType } from '@/constant';
+import { useNavPane } from '@/hooks';
+import { useWorkspaces } from '@/store';
 
 const { Text } = Typography;
 
@@ -17,6 +21,8 @@ export type BatchRunResultItemProps = {
 };
 const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
   const { method, name, endpoint } = props.data;
+  const navPane = useNavPane();
+  const { activeWorkspaceId } = useWorkspaces();
 
   const { data, loading } = useRequest<ArexResponse, any>(
     () => sendRequest(props.data, props.environment),
@@ -28,16 +34,37 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
     },
   );
 
+  const handleDebugCase = () => {
+    navPane({
+      type: PanesType.REQUEST,
+      id: `${activeWorkspaceId}-${CollectionNodeType.case}-${props.data.id}`,
+      name: `Debug-${props.data.name}`,
+      icon: props.data.method,
+    });
+  };
+
   return (
     <div id={props.id} style={{ padding: '0 16px' }}>
       <Divider style={{ margin: '8px 0' }} />
 
       <Card size='small'>
-        <Space size='large'>
-          {React.createElement(RequestMethodIcon[method])}
-          <Text>{name}</Text>
-          <Text type='secondary'>{endpoint}</Text>
-        </Space>
+        <SpaceBetweenWrapper>
+          <Space>
+            {React.createElement(RequestMethodIcon[method], {
+              style: { display: 'flex', width: 'max-content' },
+            })}
+            <Text style={{ marginRight: '8px' }}>{name}</Text>
+            <Text type='secondary'>{endpoint}</Text>
+          </Space>
+          <TooltipButton
+            title='Debug'
+            size='small'
+            type='text'
+            color='primary'
+            icon={<BugOutlined />}
+            onClick={handleDebugCase}
+          />
+        </SpaceBetweenWrapper>
 
         <ResponseMeta response={data?.response} />
 
