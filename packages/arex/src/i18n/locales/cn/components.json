@@ -89,6 +89,7 @@
     "pathsTooltip": "选择需要回放的路径。如果不指定，默认情况下，所有路径下的用例都将被回放。",
     "pathsPlaceholder": "可选，默认选择所有路径",
     "caseTags": "标签",
+    "noCaseTagsFound": "暂无标签",
     "state": "状态",
     "all": "全部",
     "passed": "成功",

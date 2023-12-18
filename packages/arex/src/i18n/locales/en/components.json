@@ -90,6 +90,7 @@
     "pathsPlaceholder": "Optional, all paths are selected by default",
     "replayReportName": " Report Name",
     "caseTags": "Tags",
+    "noCaseTagsFound": "No Tags Found",
     "state": "State",
     "all": "All",
     "passed": "Passed",
