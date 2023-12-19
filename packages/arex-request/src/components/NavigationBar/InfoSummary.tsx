@@ -1,5 +1,5 @@
 import { CheckOutlined, CloseOutlined, EditOutlined } from '@ant-design/icons';
-import { css, Label, TagsGroup } from '@arextest/arex-core';
+import { css, Label, LabelsGroup } from '@arextest/arex-core';
 import { Breadcrumb, Button, Input, Space, Typography } from 'antd';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,10 +18,11 @@ export type TitleProps = {
   onChange?: (title?: string) => void;
 };
 
-export type TagsProps = {
+export type LabelsProps = {
   value?: string[];
   options?: { color: string; label: string; value: string }[];
   onChange?: (tags?: string[]) => void;
+  onEditLabels?: () => void;
 };
 
 export type DescriptionProps = {
@@ -32,7 +33,7 @@ export type DescriptionProps = {
 export interface InfoSummaryProps {
   breadcrumb?: string[];
   titleProps?: TitleProps;
-  tagsProps?: TagsProps;
+  labelsProps?: LabelsProps;
   descriptionProps?: DescriptionProps;
 }
 
@@ -49,14 +50,14 @@ const HoverEditorIconCSS = css`
 
 const InfoSummary: FC<InfoSummaryProps> = (props) => {
   const { t } = useTranslation();
-  const { breadcrumb, titleProps, descriptionProps, tagsProps } = useArexRequestProps();
+  const { breadcrumb, titleProps, descriptionProps, labelsProps } = useArexRequestProps();
   const [mode, setMode] = useState(Mode.normal);
 
   const [editValue, setEditValue] = useState<string>();
 
   const [titleValue, setTitleValue] = useState<string>();
   const [descriptionValue, setDescriptionValue] = useState<string>();
-  const [tagsValue, setTagsValue] = useState<string[]>();
+  const [labelsValue, setLabelsValue] = useState<string[]>();
 
   useEffect(() => {
     setTitleValue(titleProps?.value);
@@ -67,8 +68,8 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
   }, [descriptionProps?.value]);
 
   useEffect(() => {
-    setTagsValue(tagsProps?.value);
-  }, [tagsProps?.value]);
+    setLabelsValue(labelsProps?.value);
+  }, [labelsProps?.value]);
 
   const breadcrumbItems = useMemo(
     () =>
@@ -100,7 +101,7 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
       `}
     >
       {mode === Mode.normal ? (
-        <Space>
+        <>
           <div css={HoverEditorIconCSS}>
             <Breadcrumb items={breadcrumbItems} />
 
@@ -141,16 +142,19 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
               />
             </div>
 
-            <TagsGroup
-              value={tagsValue}
-              options={tagsProps?.options}
+            <LabelsGroup
+              value={labelsValue}
+              options={labelsProps?.options}
               onChange={(value?: string[]) => {
-                setTagsValue(value);
-                tagsProps?.onChange?.(value);
+                setLabelsValue(value);
+                labelsProps?.onChange?.(value);
+              }}
+              onEditLabels={() => {
+                labelsProps?.onEditLabels?.();
               }}
             />
           </div>
-        </Space>
+        </>
       ) : (
         [Mode.title, Mode.description].includes(mode) && (
           <Space size='middle' style={{ width: '100%' }}>

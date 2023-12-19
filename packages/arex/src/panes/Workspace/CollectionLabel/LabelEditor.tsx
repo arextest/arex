@@ -13,6 +13,7 @@ type LabelFormType = {
 };
 
 export type LabelEditorProps = {
+  hiddenButton?: boolean;
   onSave: (value: LabelFormType) => void;
 };
 
@@ -58,11 +59,13 @@ const LabelEditor = forwardRef<LabelEditorRef, LabelEditorProps>((props, ref) =>
 
   return (
     <>
-      <FlexRowReverseWrapper style={{ marginBottom: '8px' }}>
-        <Button size='small' type='primary' onClick={() => showModal()}>
-          {t('workSpace.addLabelButton')}
-        </Button>
-      </FlexRowReverseWrapper>
+      {!props.hiddenButton && (
+        <FlexRowReverseWrapper style={{ marginBottom: '8px' }}>
+          <Button size='small' type='primary' onClick={() => showModal()}>
+            {t('workSpace.addLabelButton')}
+          </Button>
+        </FlexRowReverseWrapper>
+      )}
 
       <Modal
         title={t('workSpace.labels')}

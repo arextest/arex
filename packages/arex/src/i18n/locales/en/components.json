@@ -159,6 +159,7 @@
     "caseName": "Case name",
     "emptyCaseName": "Please input case name!",
     "emptyTitle": "Please input the title of collection!",
+    "caseLabels": "Case Labels",
     "selectTree": "Please select",
     "benchmark": "Benchmark",
     "test": "Test",
