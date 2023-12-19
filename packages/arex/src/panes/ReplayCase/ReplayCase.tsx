@@ -1,32 +1,26 @@
-import { SettingOutlined } from '@ant-design/icons';
-import { DiffPath } from '@arextest/arex-common';
 import {
   ArexPaneFC,
   clearLocalStorage,
   CollapseTable,
-  DiffMatch,
-  getJsonValueByPath,
   jsonIndexPathFilter,
   Label,
   PaneDrawer,
   PanesTitle,
   PathHandler,
   setLocalStorage,
-  TargetEditor,
-  TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
-import { App, Modal } from 'antd';
-import dayjs from 'dayjs';
+import { App, Badge, Tabs } from 'antd';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { NextInterfaceButton } from '@/components';
 import { APP_ID_KEY, PanesType } from '@/constant';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
-import { ComparisonService, ReportService, ScheduleService } from '@/services';
-import { DependencyParams, ExpirationType } from '@/services/ComparisonService';
+import DiffCompare from '@/panes/ReplayCase/DiffCompare';
+import ExpectationResult from '@/panes/ReplayCase/ExpectationResult';
+import { ConfigService, ReportService, ScheduleService } from '@/services';
 import { InfoItem, PlanItemStatistic, ReplayCaseType } from '@/services/ReportService';
 import { useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
@@ -68,39 +62,41 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
     onSuccess: setPlanItemData,
   });
 
-  const {
-    data: fullLinkInfo,
-    loading: loadingFullLinkInfo,
-    run: getQueryFullLinkInfo,
-  } = useRequest(ReportService.queryFullLinkInfo, {
-    manual: true,
-  });
-  const fullLinkInfoMerged = useMemo<InfoItem[]>(() => {
-    const { entrance, infoItemList } = fullLinkInfo || {};
+  const { data: diffCompareData, loading: diffCompareLoading } = useRequest(
+    () =>
+      ReportService.queryFullLinkInfo({
+        recordId: selectedRecord!.recordId,
+        planItemId,
+      }),
+    {
+      ready: !!selectedRecord?.recordId && !!planItemId,
+      refreshDeps: [selectedRecord?.recordId, planItemId],
+    },
+  );
+
+  const diffCompareDataSource = useMemo<InfoItem[]>(() => {
+    const { entrance, infoItemList } = diffCompareData || {};
     return ([{ ...entrance, isEntry: true }, ...(infoItemList || [])] as InfoItem[]).filter(
       (item) => item.id,
     );
-  }, [fullLinkInfo]);
+  }, [diffCompareData]);
+
+  const { data: expectationResultDataSource = [], run: queryExpectationResult } = useRequest(
+    () => ConfigService.queryExpectationResult(selectedRecord!.caseId),
+    // () => ConfigService.queryExpectationResult('65801415bb7cd51da453c9ba'),
+    {
+      ready: !!selectedRecord?.caseId,
+    },
+  );
 
   const handleClickRecord = (record: ReplayCaseType) => {
     const selected = selectedRecord?.recordId === record.recordId ? undefined : record;
     setSelectedRecord(selected);
-    if (selected) {
-      getQueryFullLinkInfo({
-        recordId: record.recordId,
-        planItemId: planItemId,
-      });
-    }
   };
 
   const handleCaseTableChange: CaseProps['onChange'] = () => {
     setSelectedRecord(undefined);
   };
-
-  function handleClickSaveCase(record: ReplayCaseType) {
-    saveCaseRef.current?.openModal(record);
-    //   setOpen(true)
-  }
 
   const { run: retryPlan } = useRequest(ScheduleService.reRunPlan, {
     manual: true,
@@ -113,77 +109,16 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
     },
   });
 
-  const { run: insertIgnoreNode } = useRequest(
-    (path: string[], type?: string) => {
-      const isGlobal = type === 'global';
-      const isTemporary = type === 'temporary';
-
-      const dependencyParams: DependencyParams =
-        isGlobal || selectedDependency?.isEntry
-          ? ({} as DependencyParams)
-          : {
-              operationType: selectedDependency?.categoryName || selectedDependency?.operationType,
-              operationName: selectedDependency?.operationName,
-            };
-      const temporaryParams = isTemporary
-        ? {
-            expirationType: ExpirationType.temporary,
-            expirationDate: dayjs().add(7, 'day').valueOf(),
-          }
-        : {};
-
-      return ComparisonService.insertIgnoreNode({
-        operationId: isGlobal ? undefined : planItemData!.operationId,
-        appId: planItemData!.appId,
-        exclusions: path,
-        ...dependencyParams,
-        ...temporaryParams,
-      });
-    },
-    {
-      manual: true,
-      onSuccess(success) {
-        success && message.success(t('message.success', { ns: 'common' }));
-      },
-    },
-  );
-
-  function handleClickCompareConfigSetting(data?: InfoItem) {
+  function handleClickCompareConfig(data?: InfoItem) {
     setSelectedDependency(data);
     setCompareConfigOpen(true);
   }
-
-  const handleIgnoreKey = useCallback<PathHandler>(
-    ({ path, type, targetEditor, jsonString }) => {
-      const filteredPath = jsonIndexPathFilter(path, jsonString![targetEditor]);
-      filteredPath && insertIgnoreNode(filteredPath, type);
-    },
-    [insertIgnoreNode],
-  );
 
   const handleSortKey = useCallback<PathHandler>(({ path, type, targetEditor, jsonString }) => {
     const filteredPath = jsonIndexPathFilter(path, jsonString![targetEditor]);
     filteredPath && setTargetNodePath(filteredPath);
     setCompareConfigOpen(true);
   }, []);
-
-  const [modal, contextHolder] = Modal.useModal();
-  const handleDiffMatch = useCallback<PathHandler>(
-    ({ path, targetEditor, jsonString }) => {
-      const another = targetEditor === TargetEditor.left ? TargetEditor.right : TargetEditor.left;
-      const text1 = getJsonValueByPath(jsonString[targetEditor], path);
-      const text2 = getJsonValueByPath(jsonString[another], path);
-
-      modal.info({
-        title: t('replay.diffMatch'),
-        width: 800,
-        maskClosable: true,
-        content: <DiffMatch text1={text1} text2={text2} />,
-        footer: false,
-      });
-    },
-    [t],
-  );
 
   return (
     <div ref={wrapperRef}>
@@ -216,7 +151,7 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
                 filter={props.data?.filter}
                 onClick={handleClickRecord}
                 onChange={handleCaseTableChange}
-                onClickSaveCase={handleClickSaveCase}
+                onClickSaveCase={saveCaseRef.current?.openModal}
                 onClickRetryCase={() =>
                   retryPlan({
                     planId: planItemData!.planId,
@@ -226,34 +161,43 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
               />
             }
             panel={
-              <DiffPath
-                operationId={planItemData.operationId}
-                extra={
-                  <TooltipButton
-                    icon={<SettingOutlined />}
-                    title={t('appSetting.compareConfig')}
-                    onClick={() => handleClickCompareConfigSetting()}
-                  />
-                }
-                itemsExtraRender={(data) => (
-                  <TooltipButton
-                    icon={<SettingOutlined />}
-                    title={t('appSetting.compareConfig')}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleClickCompareConfigSetting(data);
-                    }}
-                    style={{ marginRight: '6px' }}
-                  />
-                )}
-                loading={loadingFullLinkInfo}
-                data={fullLinkInfoMerged}
-                onChange={setSelectedDependency}
-                onIgnoreKey={handleIgnoreKey}
-                onSortKey={handleSortKey}
-                onDiffMatch={handleDiffMatch}
-                requestDiffMsg={ScheduleService.queryDiffMsgById}
-                requestQueryLogEntity={ScheduleService.queryLogEntity}
+              <Tabs
+                size='small'
+                items={[
+                  {
+                    key: 'diffCompare',
+                    label: (
+                      <Badge size='small' offset={[4, 2]} count={diffCompareDataSource.length}>
+                        {t('replay.diffCompare')}
+                      </Badge>
+                    ),
+                    children: (
+                      <DiffCompare
+                        appId={planItemData.appId}
+                        operationId={planItemData.operationId}
+                        loading={diffCompareLoading}
+                        dataSource={diffCompareDataSource}
+                        onSortKey={handleSortKey}
+                        onDependencyChange={setSelectedDependency}
+                        onClickCompareConfig={handleClickCompareConfig}
+                      />
+                    ),
+                  },
+                  {
+                    key: 'expectationResult',
+                    label: (
+                      <Badge
+                        size='small'
+                        offset={[4, 2]}
+                        count={expectationResultDataSource.length}
+                      >
+                        {t('replay.expectationResult')}
+                      </Badge>
+                    ),
+                    children: <ExpectationResult dataSource={expectationResultDataSource} />,
+                  },
+                ]}
+                tabBarStyle={{ paddingLeft: '16px' }}
               />
             }
           />
@@ -265,9 +209,6 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
             appId={planItemData.appId}
             operationName={planItemData.operationName || ''}
           />
-
-          {/* JsonDiffMathModal */}
-          {contextHolder}
 
           {/* CompareConfigModal */}
           <PaneDrawer

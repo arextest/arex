@@ -11,6 +11,7 @@ export interface QueryReplayCaseReq {
 export type ReplayCaseType = {
   replayId: string;
   recordId: string;
+  caseId: string;
   diffResultCode: number;
 };
 

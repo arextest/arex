@@ -7,7 +7,7 @@ import React, { FC, useState } from 'react';
 import { useTranslation } from '../../hooks';
 
 export interface DiffPathTooltipProps {
-  count?: number;
+  count?: number | boolean;
   bordered?: boolean;
   defaultOnlyFailed?: boolean;
   mode?: 'multiple' | 'single';
@@ -41,7 +41,7 @@ const DiffPathTooltip: FC<DiffPathTooltipProps> = (props) => {
     <>
       <SpaceBetweenWrapper style={{ margin: '4px 16px' }}>
         <Space size='large' className='diff-path-tooltip-title'>
-          {mode === 'multiple' && (
+          {mode === 'multiple' && count && (
             <div>
               <Label strong>{t('diffPath.sceneCount')}</Label>
               {count}

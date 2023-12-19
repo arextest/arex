@@ -15,6 +15,7 @@ export interface DiffPathProps extends Omit<DiffPathViewerProps, 'data' | 'id'> 
   itemsExtraRender?: (data: InfoItem) => React.ReactNode;
   defaultOnlyFailed?: boolean;
   data: InfoItem[];
+  count?: boolean;
 }
 
 const DiffPath: FC<DiffPathProps> = (props) => {
@@ -23,6 +24,7 @@ const DiffPath: FC<DiffPathProps> = (props) => {
     loading,
     mode = 'multiple',
     defaultOnlyFailed = true,
+    count = true,
     extra,
     itemsExtraRender,
     ...restProps
@@ -48,7 +50,7 @@ const DiffPath: FC<DiffPathProps> = (props) => {
       <DiffPathTooltip
         mode={mode}
         extra={extra}
-        count={diffListFiltered.length}
+        count={count && diffListFiltered.length}
         onFilterChange={setOnlyFailed}
         onSearch={setSearchOperationName}
       />

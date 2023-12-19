@@ -5,10 +5,10 @@
   },
   {
     "path": "/schedule",
-    "target": "http://10.5.153.1:8092"
+    "target": "http://10.5.153.1:11002"
   },
   {
     "path": "/storage",
-    "target": "http://10.5.153.1:8093"
+    "target": "http://10.5.153.1:11003"
   }
 ]

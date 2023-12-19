@@ -160,6 +160,8 @@
     "emptyCaseName": "请输入 Case 名称!",
     "emptyTitle": "请输入 Collection 名称!",
     "selectTree": "请选择保存路径",
+    "diffCompare": "差异对比",
+    "expectationResult": "预期结果",
     "benchmark": "录制",
     "test": "回放",
     "pointOfDifference": "差异点",
