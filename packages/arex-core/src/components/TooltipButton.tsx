@@ -33,12 +33,18 @@ const TooltipButton: FC<TooltipButtonProps> = (props) => {
     <Button
       type='text'
       size='small'
-      style={{ color: props.color && colorMap[props.color], ...style }}
+      style={{
+        color: props.color && !props.disabled ? colorMap[props.color] : undefined,
+        ...style,
+      }}
       {...restProps}
     >
       <Typography.Text
         {...textProps}
-        style={{ color: props.color && colorMap[props.color], ...style }}
+        style={{
+          color: props.color && !props.disabled ? colorMap[props.color] : undefined,
+          ...style,
+        }}
       >
         {title}
       </Typography.Text>
@@ -48,7 +54,10 @@ const TooltipButton: FC<TooltipButtonProps> = (props) => {
       <Button
         type='text'
         size='small'
-        style={{ color: props.color && colorMap[props.color], ...style }}
+        style={{
+          color: props.color && !props.disabled ? colorMap[props.color] : undefined,
+          ...style,
+        }}
         {...restProps}
       />
     </Tooltip>
