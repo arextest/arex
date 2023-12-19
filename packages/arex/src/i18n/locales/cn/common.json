@@ -82,5 +82,7 @@
   "advanced": "高级",
   "advancedOptions": "高级选项",
   "and": "和",
-  "or": "或"
+  "or": "或",
+  "selectAll": "全选",
+  "selectInvert": "反选"
 }

@@ -8,7 +8,6 @@ export * from './json';
 export * from './localStorage';
 export * from './platformutils';
 export * from './url';
-export { zstdCompressed, zstdDecode } from './zstd';
 export { arrayMove } from '@dnd-kit/sortable';
 export { css, useTheme } from '@emotion/react';
 export { default as styled } from '@emotion/styled';

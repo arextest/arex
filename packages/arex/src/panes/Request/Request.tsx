@@ -34,6 +34,8 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const { id: paneId, type } = decodePaneKey(props.paneKey);
   // requestId structure: workspaceId-nodeTypeStr-id
   const [workspaceId, nodeTypeStr, id] = useMemo(() => paneId.split('-'), [paneId]);
+  const validId = useMemo(() => id.length === 24, [id]);
+
   const nodeType = useMemo(() => parseInt(nodeTypeStr), [nodeTypeStr]);
 
   const httpRef = useRef(null);
@@ -104,13 +106,17 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     saveRequest(request, true);
   };
 
-  const { data, run } = useRequest(() =>
-    FileSystemService.queryRequest({
-      id,
-      nodeType,
-      recordId: props.data?.recordId,
-      planId: props.data?.planId,
-    }),
+  const { data, run, loading } = useRequest(
+    () =>
+      FileSystemService.queryRequest({
+        id,
+        nodeType,
+        recordId: props.data?.recordId,
+        planId: props.data?.planId,
+      }),
+    {
+      ready: validId,
+    },
   );
 
   const parentPath = useMemo(() => data?.parentPath?.map((path) => path.name), [data]);
@@ -125,7 +131,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       }),
     {
       manual: true,
-      ready: !!workspaceId,
+      ready: !!workspaceId && validId,
       onSuccess: (success) => {
         if (success) {
           message.success('pin success');
@@ -221,7 +227,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     <>
       <ArexRequest
         ref={httpRef}
-        loading={!data}
+        loading={loading}
         height='calc(100vh - 160px)'
         data={data}
         config={httpConfig}

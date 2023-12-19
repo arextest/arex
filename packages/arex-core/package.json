@@ -36,7 +36,6 @@
     "@formkit/auto-animate": "^0.7.0",
     "use-immer": "^0.8.1",
     "vconsole": "^3.15.0",
-    "@hpcc-js/wasm": "^2.14.1",
     "js-base64": "^3.7.5"
   },
   "devDependencies": {

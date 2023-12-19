@@ -14,7 +14,7 @@ export interface QueryContractRes {
   dataChangeCreateTime: number;
   dataChangeUpdateTime: number;
   appId: string;
-  isEntry: boolean;
+  contractType: number;
   operationId: string;
   operationName: string;
   operationType: string;

@@ -25,7 +25,7 @@ import { CarouselRef } from 'antd/lib/carousel';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { CONFIG_TARGET } from '@/panes/AppSetting/CompareConfig';
+import { CONFIG_TARGET } from '@/components';
 import { ComparisonService } from '@/services';
 import { DependencyParams, SortNode } from '@/services/ComparisonService';
 

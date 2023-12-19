@@ -85,5 +85,7 @@
   "advanced": "Advanced",
   "advancedOptions": "Advanced Options",
   "and": " and",
-  "or": " or"
+  "or": " or",
+  "selectAll": "Select All",
+  "selectInvert": "Select Invert"
 }

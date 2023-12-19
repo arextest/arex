@@ -102,7 +102,7 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
       {mode === Mode.normal ? (
         <Space>
           <div css={HoverEditorIconCSS}>
-            <Breadcrumb items={breadcrumbItems} />
+            {titleValue ? <Breadcrumb items={breadcrumbItems} /> : 'Untitled'}
 
             <Button
               type='link'
@@ -160,6 +160,11 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
             <Input
               size='small'
               value={editValue}
+              placeholder={
+                mode === Mode.title
+                  ? titleValue || (t('request.namePlaceholder') as string)
+                  : descriptionValue || (t('request.descriptionPlaceholder') as string)
+              }
               onChange={(e) => setEditValue(e.target.value)}
               onKeyUp={(e) => e.code === 'Enter' && handleEditSave()}
               style={{ width: '80%', minWidth: '200px', maxWidth: '320px' }}

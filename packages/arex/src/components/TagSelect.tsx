@@ -1,8 +1,9 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { css, useTranslation } from '@arextest/arex-core';
+import { css, FlexCenterWrapper, useTranslation } from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { Button, Cascader, Space, Tag } from 'antd';
-import React, { FC, useMemo, useState } from 'react';
+import { Button, Cascader, Empty, Space, Tag } from 'antd';
+import { CascaderRef } from 'antd/es/cascader';
+import React, { FC, useMemo, useRef, useState } from 'react';
 
 import { CaseTags } from '@/services/ScheduleService';
 
@@ -22,6 +23,8 @@ const TagSelect: FC<TagSelectProps> = (props) => {
   const { t } = useTranslation('common');
 
   const [wrapperRef] = useAutoAnimate();
+  const cascadeRef = useRef<CascaderRef>(null);
+
   const [addTagModalVisible, setAddTagModalVisible] = useState(false);
 
   const options = useMemo<Option[]>(
@@ -58,6 +61,7 @@ const TagSelect: FC<TagSelectProps> = (props) => {
           `}
         >
           <Cascader
+            ref={cascadeRef}
             allowClear
             value={[]}
             size='small'
@@ -65,6 +69,12 @@ const TagSelect: FC<TagSelectProps> = (props) => {
             style={{ width: '64px' }}
             open={addTagModalVisible}
             getPopupContainer={(triggerNode) => triggerNode.parentElement}
+            notFoundContent={
+              <FlexCenterWrapper>
+                {Empty.PRESENTED_IMAGE_SIMPLE}
+                <span>{t('replay.noCaseTagsFound', { ns: 'components' })}</span>
+              </FlexCenterWrapper>
+            }
             onBlur={() => {
               setAddTagModalVisible(false);
             }}
@@ -83,6 +93,7 @@ const TagSelect: FC<TagSelectProps> = (props) => {
           style={{ width: '64px', fontSize: '10px' }}
           onClick={() => {
             setAddTagModalVisible(true);
+            setTimeout(() => cascadeRef.current?.focus());
           }}
         >
           {t('add')}
