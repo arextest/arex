@@ -191,6 +191,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
                   name='includeServiceOperationSet'
                 >
                   <InterfaceSelect
+                    labelAsValue
                     appId={props.appId}
                     open={!!props.appId}
                     placeholder={t('appSetting.inclusionTooltip')}
@@ -206,6 +207,7 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
                   name='excludeServiceOperationSet'
                 >
                   <InterfaceSelect
+                    labelAsValue
                     appId={props.appId}
                     open={!!props.appId}
                     placeholder={t('appSetting.exclusionTooltip')}
