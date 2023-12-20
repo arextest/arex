@@ -1,34 +1,31 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { Select, SelectProps, Tag, theme } from 'antd';
+import { Button, Divider, Select, SelectProps, Tag, theme } from 'antd';
 import { RefSelectProps } from 'antd/es/select';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export type TagsValue = {
-  label: string;
-  value: string;
-  color: string;
-};
-
-export type TagsGroupProps = {
+export type LabelsGroupProps = {
   value?: string[];
   onChange?: (value?: string[]) => void;
+  onEditLabels?: React.MouseEventHandler<HTMLElement>;
   options?: SelectProps['options'];
 };
 
-const TagsGroup: FC<TagsGroupProps> = (props) => {
+const LabelsGroup: FC<LabelsGroupProps> = (props) => {
   const { token } = theme.useToken();
   const { t } = useTranslation();
   const [parent] = useAutoAnimate();
 
   const [inputVisible, setInputVisible] = useState(false);
   const [inputValue, setInputValue] = useState<string[]>();
-  const selectRef = useRef<RefSelectProps>(null);
 
+  const [open, setOpen] = useState(false);
+  const selectRef = useRef<RefSelectProps>(null);
   useEffect(() => {
     if (inputVisible) {
       selectRef.current?.focus();
+      setOpen(true);
     }
   }, [inputVisible]);
 
@@ -41,8 +38,10 @@ const TagsGroup: FC<TagsGroupProps> = (props) => {
     setInputVisible(true);
   };
 
-  const handleInputConfirm = () => {
+  const handleInputConfirm: React.FocusEventHandler<HTMLElement> = (e) => {
+    if (e.relatedTarget?.id === 'edit-labels-button') return;
     inputValue && props.onChange?.([...new Set(inputValue?.concat(props.value || []))]);
+    setOpen(false);
     setInputVisible(false);
     setInputValue(undefined);
   };
@@ -79,10 +78,30 @@ const TagsGroup: FC<TagsGroupProps> = (props) => {
           showSearch
           mode='multiple'
           size='small'
+          open={open}
           ref={selectRef}
           style={{ width: 78 }}
           value={inputValue}
           options={props.options}
+          dropdownRender={(menu) => (
+            <>
+              {menu}
+              <Divider style={{ margin: '4px 0' }} />
+              <Button
+                block
+                size='small'
+                type='text'
+                id='edit-labels-button'
+                icon={<EditOutlined />}
+                onClick={(e) => {
+                  setOpen(false);
+                  props.onEditLabels?.(e);
+                }}
+              >
+                {t('edit')}
+              </Button>
+            </>
+          )}
           onChange={setInputValue}
           onBlur={handleInputConfirm}
         />
@@ -103,4 +122,4 @@ const TagsGroup: FC<TagsGroupProps> = (props) => {
   );
 };
 
-export default TagsGroup;
+export default LabelsGroup;

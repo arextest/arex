@@ -18,23 +18,23 @@ const TooltipButton: FC<TooltipButtonProps> = (props) => {
   const breakpoint = useBreakpoint();
 
   const { token } = theme.useToken();
-  const colorMap = useMemo<{ [color: string]: string }>(
-    () => ({
+  const color = useMemo(() => {
+    const colorMap: Record<string, string> = {
       primary: token.colorPrimary,
       text: token.colorText,
       secondary: token.colorTextSecondary,
       disabled: token.colorTextDisabled,
       error: token.colorError,
-    }),
-    [token],
-  );
+    };
+    return props.disabled ? colorMap['disabled'] : props.color ? colorMap[props.color] : undefined;
+  }, [token, props.color, props.disabled]);
 
   return props.breakpoint && breakpoint[props.breakpoint] ? (
     <Button
       type='text'
       size='small'
       style={{
-        color: props.color && !props.disabled ? colorMap[props.color] : undefined,
+        color,
         ...style,
       }}
       {...restProps}
@@ -42,7 +42,7 @@ const TooltipButton: FC<TooltipButtonProps> = (props) => {
       <Typography.Text
         {...textProps}
         style={{
-          color: props.color && !props.disabled ? colorMap[props.color] : undefined,
+          color,
           ...style,
         }}
       >
@@ -55,7 +55,7 @@ const TooltipButton: FC<TooltipButtonProps> = (props) => {
         type='text'
         size='small'
         style={{
-          color: props.color && !props.disabled ? colorMap[props.color] : undefined,
+          color,
           ...style,
         }}
         {...restProps}

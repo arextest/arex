@@ -159,6 +159,7 @@
     "caseName": "Case 名称",
     "emptyCaseName": "请输入 Case 名称!",
     "emptyTitle": "请输入 Collection 名称!",
+    "caseLabels": "Case 标签",
     "selectTree": "请选择保存路径",
     "diffCompare": "差异对比",
     "expectationResult": "预期结果",

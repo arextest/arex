@@ -6,12 +6,19 @@ import PaneNotFound from './PaneNotFound';
 import WebView from './WebView';
 
 export type Pane<D extends PanesData = PanesData> = {
-  id: string; // PaneId
-  type: string; // PaneType
-  key?: string; // unique, generate by id and types
-  name?: string; // PaneName
-  icon?: string; // antd icon name
-  index?: number; // 越新的 pane, index 越大
+  // PaneId
+  id: string;
+  // PaneType
+  type: string;
+  // unique, generate by id and types
+  key?: string;
+  // PaneName
+  name?: string | false;
+  // antd icon name
+  icon?: string;
+  // The newer the pane, the larger the index
+  index?: number;
+  // TODO: pane edit detection
   dirty?: boolean;
   data?: D;
 };

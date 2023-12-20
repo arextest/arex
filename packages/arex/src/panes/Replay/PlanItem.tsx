@@ -298,7 +298,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
               title={t('replay.diffScenes')}
               breakpoint='lg'
               disabled={!record.failCaseCount}
-              color={record.failCaseCount ? 'primary' : 'disabled'}
+              color='primary'
               onClick={() => {
                 navPane({
                   type: PanesType.DIFF_SCENES,

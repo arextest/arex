@@ -9,5 +9,6 @@
   "differenceNode": "Difference node",
   "newTag": "New Tag",
   "base64DecodeContent": "Base64 decode content",
-  "failedToDecodeBase64": "Failed to decode Base64"
+  "failedToDecodeBase64": "Failed to decode Base64",
+  "edit": "Edit"
 }

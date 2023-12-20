@@ -7,6 +7,7 @@ import { useArexRequestProps } from '../../hooks';
 import { ArexEnvironment } from '../../types';
 
 const EnvironmentSelectWrapper = styled.div`
+  width: 216px;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;

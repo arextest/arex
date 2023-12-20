@@ -1,12 +1,17 @@
 import { SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { Button, ConfigProvider, Select, SelectProps, Space, Typography } from 'antd';
-import React, { useMemo, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 
 import { ApplicationService } from '@/services';
 
-const InterfaceSelect = (props: SelectProps & { appId: string; open?: boolean }) => {
-  const { appId, open, ...restProps } = props;
+export interface InterfaceSelectProps extends SelectProps {
+  appId: string;
+  open?: boolean;
+  labelAsValue?: boolean;
+}
+const InterfaceSelect: FC<InterfaceSelectProps> = (props) => {
+  const { appId, open, labelAsValue, ...restProps } = props;
   const { t } = useTranslation();
 
   const [value, setValue] = useState(props.value);
@@ -29,13 +34,13 @@ const InterfaceSelect = (props: SelectProps & { appId: string; open?: boolean })
             if (options[operation]) {
               options[operation].push({
                 label: item.operationName,
-                value: item.id,
+                value: labelAsValue ? item.operationName : item.id,
               });
             } else {
               options[operation] = [
                 {
                   label: item.operationName,
-                  value: item.id,
+                  value: labelAsValue ? item.operationName : item.id,
                 },
               ];
             }
@@ -55,8 +60,15 @@ const InterfaceSelect = (props: SelectProps & { appId: string; open?: boolean })
                       new Set([...(props.value || []), ...options.map((item) => item.value)]),
                     );
 
-                    // @ts-ignore
-                    props.onChange?.(newValue);
+                    props.onChange?.(
+                      newValue,
+                      data
+                        .filter((item) => newValue.includes(item.id || ''))
+                        .map((item) => ({
+                          label: item.operationName,
+                          value: labelAsValue ? item.operationName : item.id,
+                        })),
+                    );
                     setValue(newValue);
                   }}
                 >
