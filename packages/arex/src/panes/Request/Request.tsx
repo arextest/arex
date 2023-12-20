@@ -4,10 +4,10 @@ import { useRequest } from 'ahooks';
 import { App } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
 
-import { EMAIL_KEY, WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
+import { EMAIL_KEY, PanesType, WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { EnvironmentService, FileSystemService, ReportService } from '@/services';
-import { useCollections } from '@/store';
+import { useCollections, useWorkspaces } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
 import EnvironmentDrawer, {
@@ -34,6 +34,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const { id: paneId, type } = decodePaneKey(props.paneKey);
   // requestId structure: workspaceId-nodeTypeStr-id
   const [workspaceId, nodeTypeStr, id] = useMemo(() => paneId.split('-'), [paneId]);
+  const { workspaces } = useWorkspaces();
   const nodeType = useMemo(() => parseInt(nodeTypeStr), [nodeTypeStr]);
 
   const httpRef = useRef(null);
@@ -222,7 +223,6 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       <ArexRequest
         ref={httpRef}
         loading={!data}
-        height='calc(100vh - 160px)'
         data={data}
         config={httpConfig}
         breadcrumb={parentPath}
@@ -230,14 +230,28 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
           value: data?.name,
           onChange: rename,
         }}
-        tagsProps={{
+        labelsProps={{
           value: data?.tags,
           options: tagOptions,
-          onChange: (tags) =>
+          onChange: (tags) => {
+            console.log({ tags });
             saveRequest({
               id: data?.id,
               tags,
-            }),
+            });
+          },
+          onEditLabels: () => {
+            navPane({
+              type: PanesType.WORKSPACE,
+              id: workspaceId,
+              name:
+                workspaces.find((workspace) => workspace.id === workspaceId)?.workspaceName ||
+                workspaceId,
+              data: {
+                key: 'labels',
+              },
+            });
+          },
         }}
         descriptionProps={{
           value: data?.description,

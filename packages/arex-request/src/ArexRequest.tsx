@@ -53,7 +53,7 @@ const ArexRequest = forwardRef<RequestRef, ArexRequestProps>((props, ref) => {
 
   const AllotmentCSS = useMemo(
     () => css`
-      height: ${height};
+      height: 100%;
       .ant-tabs-content {
         height: 100%;
       }
@@ -68,7 +68,8 @@ const ArexRequest = forwardRef<RequestRef, ArexRequestProps>((props, ref) => {
   return (
     <RequestPropsProvider {...props}>
       <RequestStoreProvider>
-        <Spin spinning={loading}>
+        <Spin spinning={loading} style={{ position: 'absolute', left: '8px', top: '8px' }} />
+        <div style={{ height: '100%', display: 'flex', flexFlow: 'column', overflowX: 'hidden' }}>
           <NavigationBar />
           <Divider style={{ width: '100%', margin: '0 0 8px 0' }} />
 
@@ -80,7 +81,7 @@ const ArexRequest = forwardRef<RequestRef, ArexRequestProps>((props, ref) => {
               <Response />
             </Allotment.Pane>
           </Allotment>
-        </Spin>
+        </div>
       </RequestStoreProvider>
     </RequestPropsProvider>
   );

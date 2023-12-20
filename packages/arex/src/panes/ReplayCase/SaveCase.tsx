@@ -1,12 +1,10 @@
-import { getLocalStorage, useTranslation } from '@arextest/arex-core';
-import { css } from '@emotion/react';
+import { LabelsGroup, RequestMethodIcon, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Form, Input, Modal, Typography } from 'antd';
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 
-import { EMAIL_KEY } from '@/constant';
-import { FileSystemService } from '@/services';
-import { AddItemFromRecordByDefaultReq, AddItemFromRecordReq } from '@/services/FileSystemService';
+import { FileSystemService, ReportService } from '@/services';
+import { AddItemFromRecordByDefaultReq } from '@/services/FileSystemService';
 import { ReplayCaseType } from '@/services/ReportService';
 import { useCollections, useWorkspaces } from '@/store';
 
@@ -26,7 +24,6 @@ export type SaveCaseProps = {
 const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
   const { notification } = App.useApp();
   const { t } = useTranslation(['components', 'common', 'page']);
-  const userName = getLocalStorage(EMAIL_KEY) as string;
   const { getCollections } = useCollections();
   const { activeWorkspaceId: workspaceId } = useWorkspaces();
 
@@ -46,40 +43,20 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
     },
   }));
 
-  const { run: addItemFromRecord, loading } = useRequest(
-    (values: Pick<AddItemFromRecordReq, 'parentPath' | 'nodeName' | 'recordId'>) =>
-      FileSystemService.addItemFromRecord({
-        workspaceId: workspaceId as string,
-        userName,
-        planId: props.planId,
-        operationId: props.operationId,
-        ...values,
-      }),
+  const { run: dddItemFromRecordByDefault, loading } = useRequest(
+    (values: AddItemFromRecordByDefaultReq) => FileSystemService.addItemFromRecordByDefault(values),
     {
       manual: true,
-      onSuccess: (success) => {
-        if (success) {
+      onSuccess: (res) => {
+        if (res.body?.success) {
           notification.success({ message: t('message.saveSuccess', { ns: 'common' }) });
           handleClose();
           getCollections();
         } else {
-          notification.error({ message: t('message.saveFailed', { ns: 'common' }) });
-        }
-      },
-    },
-  );
-
-  const { run: dddItemFromRecordByDefault, loading: l1 } = useRequest(
-    (values: AddItemFromRecordByDefaultReq) => FileSystemService.dddItemFromRecordByDefault(values),
-    {
-      manual: true,
-      onSuccess: (success) => {
-        if (success) {
-          notification.success({ message: t('message.saveSuccess', { ns: 'common' }) });
-          handleClose();
-          getCollections();
-        } else {
-          notification.error({ message: t('message.saveFailed', { ns: 'common' }) });
+          notification.error({
+            message: t('message.saveFailed', { ns: 'common' }),
+            description: res.responseStatusType.responseDesc,
+          });
         }
       },
     },
@@ -95,6 +72,7 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
         planId: props.planId,
         operationId: props.operationId,
         recordId: values.recordId,
+        labelIds: values.labelIds,
       });
     });
   };
@@ -104,35 +82,16 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
     form.resetFields();
   };
 
-  // function addData(tree) {
-  //   return tree.map((item) => {
-  //     if (item.children && item.children.length > 0) {
-  //       return {
-  //         type: item.nodeType,
-  //         name: item.nodeName,
-  //         key: item.infoId,
-  //         item: addData(item.children),
-  //         request: item.method
-  //           ? {
-  //               method: item.method,
-  //             }
-  //           : undefined,
-  //       };
-  //     } else {
-  //       return {
-  //         type: item.nodeType,
-  //         name: item.nodeName,
-  //         key: item.infoId,
-  //         item: [],
-  //         request: item.method
-  //           ? {
-  //               method: item.method,
-  //             }
-  //           : undefined,
-  //       };
-  //     }
-  //   });
-  // }
+  const { data: labelData = [] } = useRequest(() => ReportService.queryLabels({ workspaceId }));
+  const tagOptions = useMemo(
+    () =>
+      labelData.map((i) => ({
+        label: i.labelName,
+        value: i.id,
+        color: i.color,
+      })),
+    [labelData],
+  );
 
   return (
     <>
@@ -163,53 +122,19 @@ const SaveCase = forwardRef<SaveCaseRef, SaveCaseProps>((props, ref) => {
             <Input />
           </Form.Item>
 
+          <Form.Item name='labelIds' label={t('replay.caseLabels')}>
+            <LabelsGroup options={tagOptions} />
+          </Form.Item>
           <div>
-            <span>{t('replay.saveTo')}</span>{' '}
+            <span>{t('replay.saveTo')}</span>
             <Text type='secondary'>
-              {props.appId} &gt;{' '}
-              <span
-                css={css`
-                  color: #66bb6a;
-                `}
-              >
-                GET
-              </span>{' '}
+              {props.appId} &gt;
+              <RequestMethodIcon.Get style={{ marginLeft: '8px' }} />
               {props.operationName}
             </Text>
-            {/*<Tooltip title={t('replay.saveto', { ns: 'page' })}>*/}
-            {/*  <Button*/}
-            {/*    onClick={() => {*/}
-            {/*      setOpen1(true);*/}
-            {/*    }}*/}
-            {/*    size={'small'}*/}
-            {/*    css={css`*/}
-            {/*      padding: 0 4px !important;*/}
-            {/*      margin-left: 10px;*/}
-            {/*    `}*/}
-            {/*  >*/}
-            {/*    <DownOutlined />*/}
-            {/*  </Button>*/}
-            {/*</Tooltip>*/}
           </div>
         </Form>
       </Modal>
-
-      {/*<CollectionsSaveRequest*/}
-      {/*  title={t('replay.saveCase')}*/}
-      {/*  treeData={addData(collectionsTreeData)}*/}
-      {/*  open={open1}*/}
-      {/*  requestName={form.getFieldsValue().recordId}*/}
-      {/*  onSave={(folderKey, requestName) => {*/}
-      {/*    addItemFromRecord({*/}
-      {/*      parentPath: getPath(folderKey).map((path) => path.id),*/}
-      {/*      nodeName: requestName,*/}
-      {/*      recordId: form.getFieldsValue().recordId,*/}
-      {/*    });*/}
-      {/*  }}*/}
-      {/*  onClose={() => {*/}
-      {/*    setOpen1(false);*/}
-      {/*  }}*/}
-      {/*/>*/}
     </>
   );
 });

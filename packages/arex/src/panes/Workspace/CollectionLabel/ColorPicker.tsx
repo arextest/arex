@@ -18,7 +18,7 @@ const ColorPicker: FC<ColorPickerProps> = (props) => {
           type={props.value === color ? 'primary' : 'text'}
           key={color}
           onClick={() => props.onChange?.(color)}
-          style={{ marginBottom: '8px' }}
+          style={{ marginBottom: '8px', height: 'auto', padding: '2px 4px', margin: '2px' }}
         >
           <Tag color={color} style={{ margin: 0 }}>
             {color}

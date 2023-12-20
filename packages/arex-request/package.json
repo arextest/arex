@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-request",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "type": "module",
   "main": "dist/arex-request.js",
   "module": "dist/arex-request.js",
@@ -15,14 +15,14 @@
     "dist/*"
   ],
   "dependencies": {
-    "@arextest/arex-core": "*",
     "@ant-design/icons": "^5.2.6",
+    "@arextest/arex-core": "*",
     "allotment": "^1.18.1",
     "immer": "^9.0.21",
+    "lodash": "^4.17.15",
     "postman-collection": "^4.1.7",
     "react-json-view": "^1.21.3",
-    "use-immer": "^0.9.0",
-    "lodash": "^4.17.15"
+    "use-immer": "^0.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.21.4",
@@ -32,6 +32,7 @@
     "@svgr/plugin-jsx": "^8.0.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
+    "@types/lodash": "^4.14.198",
     "@types/postman-collection": "^3.5.7",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
@@ -39,22 +40,21 @@
     "@vitejs/plugin-react-swc": "^3.3.1",
     "@vitest/coverage-c8": "^0.31.0",
     "jsdom": "^22.0.0",
-    "typescript": "^4.9.3",
+    "typescript": "^5.3.3",
     "unplugin-icons": "^0.16.3",
     "vite": "^4.2.0",
     "vite-plugin-dts": "^3.4.0",
-    "vitest": "^0.31.0",
-    "@types/lodash": "^4.14.198"
+    "vitest": "^0.31.0"
   },
   "peerDependencies": {
-    "antd": "^5.11.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "i18next": "^22.4.11",
-    "react-i18next": "^12.2.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@monaco-editor/react": "^4.6.0",
+    "antd": "^5.11.0",
+    "i18next": "^22.4.11",
     "monaco-editor": "^0.39.0",
-    "@monaco-editor/react": "^4.6.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^12.2.0"
   }
 }

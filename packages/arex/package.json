@@ -1,7 +1,7 @@
 {
   "name": "arex",
   "private": true,
-  "version": "0.6.11",
+  "version": "0.6.12",
   "author": "arextest",
   "main": "dist-electron/main.js",
   "files": [
@@ -69,7 +69,7 @@
     "electron-builder": "^24.6.3",
     "electron-log": "^4.4.8",
     "electron-updater": "^6.1.4",
-    "typescript": "^5.0.2",
+    "typescript": "^5.3.3",
     "unplugin-icons": "^0.16.3",
     "vite": "^4.2.0",
     "vite-plugin-electron": "^0.12.0",

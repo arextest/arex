@@ -8,10 +8,12 @@ export type AddItemFromRecordByDefaultReq = {
   planId: string;
   operationId: string;
   recordId: string;
+  labelIds?: string[];
 };
 
-export async function dddItemFromRecordByDefault(params: AddItemFromRecordByDefaultReq) {
-  return request
-    .post<{ success: boolean }>('/report/filesystem/addItemFromRecordByDefault', params)
-    .then((res) => res.body);
+export async function addItemFromRecordByDefault(params: AddItemFromRecordByDefaultReq) {
+  return request.post<{ success: boolean }>(
+    '/report/filesystem/addItemFromRecordByDefault',
+    params,
+  );
 }

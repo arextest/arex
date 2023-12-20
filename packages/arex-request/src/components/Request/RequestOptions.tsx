@@ -13,8 +13,8 @@ import RequestParameters from './RequestParameters';
 import RequestTests from './RequestTests';
 
 const HttpRequestOptionsWrapper = styled.div`
-  height: calc(100% - 100px);
-  padding: 0 16px;
+  height: 100%;
+  padding: 0 16px 40px;
   flex: 1;
   display: flex;
   flex-direction: column;

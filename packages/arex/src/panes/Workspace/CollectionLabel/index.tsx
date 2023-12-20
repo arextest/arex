@@ -1,3 +1,4 @@
+import { PlusOutlined } from '@ant-design/icons';
 import { useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Popconfirm, Space, Table, Tag } from 'antd';
@@ -27,15 +28,12 @@ const CollectionLabel: FC = () => {
       },
     },
     {
-      title: t('workSpace.color', { ns: 'components' }),
-      dataIndex: 'color',
-      key: 'color',
-    },
-    {
       title: t('action'),
+      width: 120,
+      align: 'right',
       render(_, record) {
         return (
-          <Space>
+          <Space size='middle'>
             <Button size='small' onClick={() => createAndUpdateRef.current?.showModal(record)}>
               {t('edit')}
             </Button>
@@ -99,8 +97,25 @@ const CollectionLabel: FC = () => {
 
   return (
     <>
-      <LabelEditor onSave={handleSave} ref={createAndUpdateRef} />
-      <Table size='small' rowKey='id' dataSource={labelData} columns={columns} />
+      <LabelEditor hiddenButton ref={createAndUpdateRef} onSave={handleSave} />
+      <Table
+        size='small'
+        rowKey='id'
+        pagination={false}
+        dataSource={labelData}
+        columns={columns}
+        footer={() => (
+          <Button
+            block
+            size='small'
+            type='text'
+            icon={<PlusOutlined />}
+            onClick={() => createAndUpdateRef.current?.showModal()}
+          >
+            {t('workSpace.addLabelButton', { ns: 'components' })}
+          </Button>
+        )}
+      />
     </>
   );
 };

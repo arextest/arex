@@ -1,6 +1,6 @@
 import { SaveOutlined } from '@ant-design/icons';
-import { SpaceBetweenWrapper } from '@arextest/arex-core';
-import { Dropdown, Space } from 'antd';
+import { css, SpaceBetweenWrapper } from '@arextest/arex-core';
+import { Dropdown } from 'antd';
 import React, { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -31,23 +31,31 @@ const NavigationBar: FC = () => {
 
   return (
     <SpaceBetweenWrapper>
-      <SpaceBetweenWrapper style={{ marginLeft: '8px', flex: 1 }}>
+      <div
+        css={css`
+          ::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+          }
+        `}
+        style={{ width: '100%', marginLeft: '8px', overflow: 'overlay' }}
+      >
         <InfoSummary />
+      </div>
 
-        <Space size='middle' style={{ float: 'right', marginRight: '8px' }}>
-          <Dropdown.Button
-            size='small'
-            disabled={disableSave}
-            menu={{ items: buttonsItems, onClick: onMenuClick }}
-            onClick={() => onSave?.(store.request, store.response)}
-          >
-            <SaveOutlined />
-            {t('request.save')}
-          </Dropdown.Button>
-        </Space>
-      </SpaceBetweenWrapper>
-
-      <EnvironmentSelect />
+      <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+        <Dropdown.Button
+          size='small'
+          disabled={disableSave}
+          menu={{ items: buttonsItems, onClick: onMenuClick }}
+          onClick={() => onSave?.(store.request, store.response)}
+          style={{ marginRight: '8px' }}
+        >
+          <SaveOutlined />
+          {t('request.save')}
+        </Dropdown.Button>
+        <EnvironmentSelect />
+      </div>
     </SpaceBetweenWrapper>
   );
 };
