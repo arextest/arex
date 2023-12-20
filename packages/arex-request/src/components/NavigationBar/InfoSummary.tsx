@@ -94,16 +94,30 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
   return (
     <div
       css={css`
+        width: 100%;
         display: flex;
         align-items: center;
         margin-left: 4px;
-        width: 100%;
       `}
     >
       {mode === Mode.normal ? (
         <>
-          <div css={HoverEditorIconCSS}>
-            <Breadcrumb items={breadcrumbItems} />
+          <div css={HoverEditorIconCSS} style={{ maxWidth: '50%' }}>
+            <Breadcrumb
+              items={breadcrumbItems}
+              css={css`
+                width: 100%;
+                ol {
+                  flex-wrap: nowrap;
+                  flex-shrink: 1;
+                  li {
+                    white-space: nowrap;
+                    overflow-x: hidden;
+                    text-overflow: ellipsis;
+                  }
+                }
+              `}
+            />
 
             <Button
               type='link'
@@ -118,9 +132,10 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
             />
           </div>
 
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', flexShrink: 0 }}>
             <div css={HoverEditorIconCSS}>
               <Text
+                ellipsis
                 type='secondary'
                 css={css`
                   font-size: 12px;
@@ -142,17 +157,19 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
               />
             </div>
 
-            <LabelsGroup
-              value={labelsValue}
-              options={labelsProps?.options}
-              onChange={(value?: string[]) => {
-                setLabelsValue(value);
-                labelsProps?.onChange?.(value);
-              }}
-              onEditLabels={() => {
-                labelsProps?.onEditLabels?.();
-              }}
-            />
+            <div>
+              <LabelsGroup
+                value={labelsValue}
+                options={labelsProps?.options}
+                onChange={(value?: string[]) => {
+                  setLabelsValue(value);
+                  labelsProps?.onChange?.(value);
+                }}
+                onEditLabels={() => {
+                  labelsProps?.onEditLabels?.();
+                }}
+              />
+            </div>
           </div>
         </>
       ) : (

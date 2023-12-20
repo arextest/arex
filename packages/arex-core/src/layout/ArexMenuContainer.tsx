@@ -108,10 +108,15 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
 const StyledMenu = styled(Menu)`
   width: auto;
   position: relative;
+  .ant-menu-root,
+  :not(.ant-menu-inline-collapsed) {
+    .ant-menu-item {
+      min-width: 64px;
+    }
+  }
   .ant-menu-item,
   .ant-menu-submenu-title {
     height: auto !important;
-    min-width: 64px;
     flex-direction: column;
     padding-top: ${(props) => (props.inlineCollapsed ? 0 : '12px')};
     padding-left: ${(props) => (props.inlineCollapsed ? '24px' : '12px')}!important;
