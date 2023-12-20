@@ -1,6 +1,7 @@
 {
   "collection": "Collection",
   "environment": "Environment",
+  "request": "Request",
   "replay": "Replay",
   "replayCase": "ReplayCase",
   "diffScenes": "DiffScenes",

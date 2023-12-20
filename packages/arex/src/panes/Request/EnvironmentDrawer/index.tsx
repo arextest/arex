@@ -150,12 +150,12 @@ const EnvironmentDrawer = forwardRef<EnvironmentDrawerRef, EnvironmentDrawerProp
             </Space>
           }
           onSave={handleSave}
-          // @ts-ignore
-          style={{ marginBottom: 0 }}
         />
       }
-      headerStyle={{
-        padding: '1px 16px',
+      styles={{
+        header: {
+          padding: '1px 16px',
+        },
       }}
     >
       <EditableKeyValueTable

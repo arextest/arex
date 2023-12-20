@@ -7,7 +7,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { EMAIL_KEY, PanesType, WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { EnvironmentService, FileSystemService, ReportService } from '@/services';
-import { useCollections } from '@/store';
+import { useCollections, useWorkspaces } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
 import EnvironmentDrawer, {
@@ -34,6 +34,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const { id: paneId, type } = decodePaneKey(props.paneKey);
   // requestId structure: workspaceId-nodeTypeStr-id
   const [workspaceId, nodeTypeStr, id] = useMemo(() => paneId.split('-'), [paneId]);
+  const { workspaces } = useWorkspaces();
   const nodeType = useMemo(() => parseInt(nodeTypeStr), [nodeTypeStr]);
 
   const httpRef = useRef(null);
@@ -240,11 +241,12 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
             });
           },
           onEditLabels: () => {
-            console.log('onEditLabels');
-            // TODO labelIds tags
             navPane({
               type: PanesType.WORKSPACE,
               id: workspaceId,
+              name:
+                workspaces.find((workspace) => workspace.id === workspaceId)?.workspaceName ||
+                workspaceId,
               data: {
                 key: 'labels',
               },

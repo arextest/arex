@@ -4,7 +4,7 @@ import React, { ReactNode } from 'react';
 export const BorderIcon = styled((props: { icon: ReactNode }) => (
   <span {...props}>{props.icon}</span>
 ))`
-  margin-right: 6px;
+  margin-right: ${(props) => props.theme.marginXS};
   border: 1px solid;
   font-size: 12px;
   line-height: 12px;
