@@ -292,7 +292,7 @@ const KeyboardShortcut = React.memo(() => {
       }
       // 'alt-r: 'menu.replay'
       case 'menu.replay': {
-        setActiveMenu(MenusType.REPLAY);
+        setActiveMenu(MenusType.APP);
         break;
       }
       // 'alt-e: 'menu.environment'

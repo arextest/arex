@@ -1,5 +1,4 @@
-import Icon, { DownOutlined, PlayCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { IconComponentProps } from '@ant-design/icons/lib/components/Icon';
+import { DownOutlined, PlayCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   ArexMenuFC,
   CategoryKey,
@@ -19,7 +18,7 @@ import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import { cloneDeep } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { WorkspacesMenu } from '@/components';
+import { Icon, WorkspacesMenu } from '@/components';
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import CollectionNodeTitle, {
@@ -31,7 +30,6 @@ import { CollectionType } from '@/services/FileSystemService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { negate } from '@/utils';
 import treeFilter from '@/utils/treeFilter';
-import IconArchive from '~icons/lucide/archive';
 
 const CollectionWrapper = styled.div`
   width: 100%;
@@ -410,7 +408,7 @@ const Collection: ArexMenuFC = (props) => {
                 />
 
                 <TooltipButton
-                  icon={<Icon component={IconArchive as IconComponentProps['component']} />}
+                  icon={<Icon name='ArchiveRestore' />}
                   title={t('collection.import_export')}
                   onClick={() => {
                     setShowModalImportExport(true);

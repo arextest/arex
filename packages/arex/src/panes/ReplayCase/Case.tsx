@@ -110,8 +110,8 @@ const Case: FC<CaseProps> = (props) => {
                   icon: <SaveOutlined />,
                 },
                 {
-                  label: t('replay.retry'),
-                  key: 'retry',
+                  label: t('replay.rerun'),
+                  key: 'rerun',
                   icon: <RedoOutlined />,
                 },
               ],
@@ -123,7 +123,7 @@ const Case: FC<CaseProps> = (props) => {
                     props.onClickSaveCase?.(record);
                     break;
                   }
-                  case 'retry': {
+                  case 'rerun': {
                     props.onClickRetryCase?.(record.recordId);
                     break;
                   }

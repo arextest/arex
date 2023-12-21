@@ -22,8 +22,6 @@
     "@arextest/arex-common": "*",
     "@arextest/arex-core": "*",
     "@arextest/arex-request": "*",
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
     "@formkit/auto-animate": "^0.7.0",
     "@monaco-editor/react": "^4.6.0",
     "ahooks": "^3.7.5",
@@ -42,6 +40,7 @@
     "http-proxy-middleware": "^2.0.6",
     "immer": "^9.0.19",
     "lodash": "^4.17.21",
+    "lucide-react": "^0.299.0",
     "monaco-editor": "^0.39.0",
     "path-to-regexp": "^6.2.1",
     "react": "^18.2.0",
@@ -56,7 +55,6 @@
     "zustand": "^4.3.7"
   },
   "devDependencies": {
-    "@iconify/json": "^2.2.76",
     "@svgr/core": "^8.0.0",
     "@svgr/plugin-jsx": "^8.0.1",
     "@types/express": "^4.17.21",
@@ -70,10 +68,13 @@
     "electron-log": "^4.4.8",
     "electron-updater": "^6.1.4",
     "typescript": "^5.3.3",
-    "unplugin-icons": "^0.16.3",
     "vite": "^4.2.0",
     "vite-plugin-electron": "^0.12.0",
     "vite-plugin-electron-renderer": "^0.14.5",
     "vite-plugin-svgr": "^3.2.0"
+  },
+  "peerDependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6"
   }
 }

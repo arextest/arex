@@ -44,23 +44,22 @@ const AppVersion: FC<{ value?: string }> = () => {
   );
 
   return (
-    <>
-      <Input readOnly value={__APP_VERSION__} bordered={false} style={{ width: '48px' }} />
+    <Space size='middle'>
+      <Input readOnly value={__APP_VERSION__} bordered={false} />
 
       {isClient && (
-        <Space size='middle'>
-          <Button
-            size='small'
-            type='primary'
-            icon={<CloudDownloadOutlined />}
-            onClick={getLatestRelease}
-          >
-            {t('systemSetting.checkUpdate')}
-          </Button>
-          {versionDetected && <span>{t('systemSetting.newVersionDetected')}</span>}
-        </Space>
+        <Button
+          size='small'
+          type='primary'
+          icon={<CloudDownloadOutlined />}
+          onClick={getLatestRelease}
+        >
+          {t('systemSetting.checkUpdate')}
+        </Button>
       )}
-    </>
+
+      {isClient && versionDetected && <span>{t('systemSetting.newVersionDetected')}</span>}
+    </Space>
   );
 };
 
@@ -73,22 +72,25 @@ const Version: FC = () => {
     storage?: string;
   }>();
 
-  useRequest(ReportService.getReportServiceVersion, {
-    onSuccess(version) {
-      version && form.setFieldValue('report', version);
+  const serviceVersionHandler = (serviceName: string) => ({
+    onSuccess(version: string) {
+      version && form.setFieldValue(serviceName, version);
     },
+    onError() {
+      form.setFieldValue(serviceName, 'N/A');
+    },
+  });
+
+  useRequest(ReportService.getReportServiceVersion, {
+    ...serviceVersionHandler('report'),
   });
 
   useRequest(ScheduleService.getScheduleServiceVersion, {
-    onSuccess(version) {
-      version && form.setFieldValue('schedule', version);
-    },
+    ...serviceVersionHandler('schedule'),
   });
 
   useRequest(StorageService.getStorageServiceVersion, {
-    onSuccess(version) {
-      version && form.setFieldValue('storage', version);
-    },
+    ...serviceVersionHandler('storage'),
   });
 
   return (

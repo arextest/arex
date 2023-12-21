@@ -1,16 +1,15 @@
-import Icon, { UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { FlexCenterWrapper, getLocalStorage, setLocalStorage, styled } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Card, Divider, Form, Input, Space, Tooltip, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { MacDraggableArea } from '@/components';
+import { Icon, MacDraggableArea } from '@/components';
 import { ACCESS_TOKEN_KEY, EMAIL_KEY, REFRESH_TOKEN_KEY } from '@/constant';
 import { redirectUri } from '@/pages/Oauth';
 import { LoginService, UserService } from '@/services';
 import { loginVerifyReq } from '@/services/LoginService';
-import gitlablogo from '~icons/logos/gitlab';
 
 import VerificationCode from './VerificationCode';
 
@@ -159,7 +158,7 @@ const Login: FC = () => {
                       rel='noreferrer'
                     >
                       <Tooltip title={'Login with gitlab'}>
-                        <Icon component={gitlablogo} />
+                        <Icon name='Gitlab' />
                       </Tooltip>
                     </a>
                   </>

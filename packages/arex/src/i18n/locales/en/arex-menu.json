@@ -1,6 +1,7 @@
 {
   "collection": "Collection",
   "replay": "Replay",
+  "app": "App",
   "environment": "Environment",
   "appSetting": "Setting"
 }

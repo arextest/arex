@@ -1,4 +1,3 @@
-import { LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { getLocalStorage, useTranslation } from '@arextest/arex-core';
 import { Avatar, Badge, Dropdown, DropdownProps, Space } from 'antd';
 import React, { FC, useMemo } from 'react';
@@ -9,6 +8,7 @@ import { useNavPane } from '@/hooks';
 import { useMessageQueue, useUserProfile } from '@/store';
 
 import globalStoreReset from '../utils/globalStoreReset';
+import Icon from './Icon';
 
 const UserMenu: FC = () => {
   const { avatar } = useUserProfile();
@@ -33,12 +33,12 @@ const UserMenu: FC = () => {
               {t('setting')}
             </Badge>
           ),
-          icon: <SettingOutlined />,
+          icon: <Icon name='Settings' />,
         },
         {
           key: 'logout',
           label: t('logout'),
-          icon: <LogoutOutlined />,
+          icon: <Icon name='LogOut' />,
         },
       ],
       onClick: (e) => {
