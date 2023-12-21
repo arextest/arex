@@ -6,7 +6,6 @@ export type CompactMode = boolean;
 export enum Theme {
   dark = 'dark',
   light = 'light',
-  system = 'system',
 }
 
 export enum ColorPrimary {

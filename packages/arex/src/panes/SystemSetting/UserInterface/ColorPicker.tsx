@@ -1,8 +1,9 @@
-import { ColorPrimaryPalette, colorPrimaryPalette, Theme } from '@arextest/arex-core';
+import { ColorPrimaryPalette, colorPrimaryPalette } from '@arextest/arex-core';
 import { theme } from 'antd';
 import React, { FC, useMemo } from 'react';
 import { CirclePicker } from 'react-color';
 
+import { Theme } from '@/constant';
 import useUserProfile from '@/store/useUserProfile';
 
 const { defaultSeed, darkAlgorithm, defaultAlgorithm } = theme;

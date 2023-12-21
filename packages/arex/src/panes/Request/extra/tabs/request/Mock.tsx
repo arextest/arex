@@ -1,7 +1,6 @@
 import { SaveOutlined } from '@ant-design/icons';
 import {
   EmptyWrapper,
-  Theme,
   TooltipButton,
   tryPrettierJsonString,
   useArexCoreConfig,
@@ -14,6 +13,7 @@ import { cloneDeep } from 'lodash';
 import React, { FC } from 'react';
 import { useImmer } from 'use-immer';
 
+import { Theme } from '@/constant';
 import request from '@/utils/request';
 
 type MockTarget = {

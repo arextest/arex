@@ -1,6 +1,5 @@
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
-import Icons from 'unplugin-icons/vite';
 import { defineConfig } from 'vite';
 import electron from 'vite-plugin-electron';
 import svgr from 'vite-plugin-svgr';
@@ -27,7 +26,6 @@ export default defineConfig(async ({ mode }) => ({
     react({
       jsxImportSource: '@emotion/react',
     }),
-    Icons({ compiler: 'jsx', jsx: 'react' }),
     ...[
       mode === 'electron'
         ? [

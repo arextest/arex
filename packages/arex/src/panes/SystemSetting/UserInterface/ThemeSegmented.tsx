@@ -1,8 +1,9 @@
-import { Segmented, Theme } from '@arextest/arex-core';
+import { Segmented } from '@arextest/arex-core';
 import { Tooltip } from 'antd';
 import React, { FC } from 'react';
 
 import { Icon } from '@/components';
+import { Theme } from '@/constant';
 
 const ThemeSegmented: FC = (props) => {
   return (
