@@ -1,5 +1,5 @@
 import { ColorPrimary, getLocalStorage, I18nextLng } from '@arextest/arex-core';
-import { I18_KEY } from '@arextest/arex-core/src';
+import { I18_KEY } from '@arextest/arex-core';
 
 export enum Theme {
   dark = 'dark',
