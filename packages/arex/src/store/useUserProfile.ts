@@ -1,7 +1,14 @@
-import { getLocalStorage, i18n, I18nextLng, setLocalStorage, Theme } from '@arextest/arex-core';
+import { getLocalStorage, i18n, setLocalStorage, Theme } from '@arextest/arex-core';
 import { create } from 'zustand';
 
-import { DEFAULT_COLOR_PRIMARY, DEFAULT_THEME, EMAIL_KEY, THEME_KEY } from '@/constant';
+import {
+  DEFAULT_COLOR_PRIMARY,
+  DEFAULT_COMPACT,
+  DEFAULT_LANGUAGE,
+  DEFAULT_THEME,
+  EMAIL_KEY,
+  THEME_KEY,
+} from '@/constant';
 import { UserService } from '@/services';
 import { UserProfile } from '@/services/UserService';
 import globalStoreReset from '@/utils/globalStoreReset';
@@ -14,9 +21,9 @@ export type UserProfileAction = {
 
 const initialState: UserProfile = {
   theme: DEFAULT_THEME,
-  compact: true,
+  compact: DEFAULT_COMPACT,
   colorPrimary: DEFAULT_COLOR_PRIMARY,
-  language: I18nextLng.en,
+  language: DEFAULT_LANGUAGE,
   avatar: '',
 };
 

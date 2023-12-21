@@ -9,7 +9,7 @@ import {
 import { useRequest } from 'ahooks';
 import { Card, Tag, theme, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
-import React, { FC, forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import CountUp from 'react-countup';
 
 import { StatusTag } from '@/components';
@@ -49,9 +49,8 @@ const PlanReport = forwardRef<PlanReportRef, PlanReportProps>((props, ref) => {
 
   const columns: ColumnsType<PlanStatistics> = [
     {
-      title: t('replay.reportName'),
+      title: t('replay.results'),
       dataIndex: 'planName',
-      ellipsis: { showTitle: false },
     },
     {
       title: t('replay.state'),
@@ -68,7 +67,6 @@ const PlanReport = forwardRef<PlanReportRef, PlanReportProps>((props, ref) => {
     },
     {
       title: t('replay.passed'),
-      width: 80,
       dataIndex: 'successCaseCount',
       render: (text) => (
         <CountUp
@@ -81,7 +79,6 @@ const PlanReport = forwardRef<PlanReportRef, PlanReportProps>((props, ref) => {
     },
     {
       title: t('replay.failed'),
-      width: 80,
       dataIndex: 'failCaseCount',
       render: (text) => (
         <CountUp preserveValue duration={0.3} end={text} style={{ color: token.colorErrorText }} />
@@ -89,7 +86,6 @@ const PlanReport = forwardRef<PlanReportRef, PlanReportProps>((props, ref) => {
     },
     {
       title: t('replay.invalid'),
-      width: 80,
       dataIndex: 'errorCaseCount',
       render: (text) => (
         <CountUp preserveValue duration={0.3} end={text} style={{ color: token.colorInfoText }} />
@@ -97,7 +93,6 @@ const PlanReport = forwardRef<PlanReportRef, PlanReportProps>((props, ref) => {
     },
     {
       title: t('replay.queued'),
-      width: 80,
       dataIndex: 'waitCaseCount',
       render: (text) => (
         <CountUp
@@ -111,10 +106,12 @@ const PlanReport = forwardRef<PlanReportRef, PlanReportProps>((props, ref) => {
     {
       title: t('replay.executor'),
       dataIndex: 'creator',
+      width: 160,
     },
     {
       title: t('replay.replayStartTime'),
       dataIndex: 'replayStartTime',
+      width: 140,
       render(text) {
         return text ? new Date(text).toLocaleString() : '-';
       },
@@ -122,6 +119,7 @@ const PlanReport = forwardRef<PlanReportRef, PlanReportProps>((props, ref) => {
     {
       title: t('replay.replayEndTime'),
       dataIndex: 'replayEndTime',
+      width: 140,
       render(text) {
         return text ? new Date(text).toLocaleString() : '-';
       },

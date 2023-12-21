@@ -16,7 +16,6 @@ export interface QueryRecordSettingRes {
   appId: string;
   modifiedTime: string;
   sampleRate: number;
-  timeMock: boolean;
   excludeServiceOperationSet: string[];
   recordMachineCountLimit?: number;
   serializeSkipInfoList?: SerializeSkipInfo[] | null;

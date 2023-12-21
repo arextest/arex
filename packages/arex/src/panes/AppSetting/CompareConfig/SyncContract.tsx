@@ -4,13 +4,12 @@ import {
   SmallTextButton,
   SpaceBetweenWrapper,
   Theme,
+  useArexCoreConfig,
   useTranslation,
 } from '@arextest/arex-core';
 import { Editor, EditorProps } from '@monaco-editor/react';
 import { App, ButtonProps, Dropdown, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
-
-import { useUserProfile } from '@/store';
 
 export type ButtonsDisabled = { leftButton?: boolean; rightButton?: boolean };
 export type SyncContractProps = {
@@ -25,7 +24,7 @@ const SyncContract: FC<SyncContractProps> = (props) => {
   const { value: _value, syncing = false, onSync, onSave, ...restProps } = props;
   const { t } = useTranslation('components');
   const { message } = App.useApp();
-  const { theme } = useUserProfile();
+  const { theme } = useArexCoreConfig();
 
   const [value, setValue] = useState(_value);
   const [open, setOpen] = useState(false);
@@ -108,7 +107,9 @@ const SyncContract: FC<SyncContractProps> = (props) => {
           </SpaceBetweenWrapper>
         }
         onClose={handleClose}
-        bodyStyle={{ padding: '8px 0' }}
+        styles={{
+          body: { padding: '8px 0' },
+        }}
       >
         <Editor
           {...restProps}

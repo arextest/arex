@@ -12,7 +12,7 @@ import { useRequest, useSize, useToggle } from 'ahooks';
 import { Modal, theme } from 'antd';
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { MenuSelect, MenuSelectProps } from '@/components';
+import { Icon, MenuSelect, MenuSelectProps } from '@/components';
 import { EMAIL_KEY, MenusType, PanesType } from '@/constant';
 import AppBasicSetup from '@/panes/AppSetting/Other/AppBasicSetup';
 import { ApplicationService, UserService } from '@/services';
@@ -201,7 +201,7 @@ const ReplayMenu: ArexMenuFC = (props) => {
 };
 
 export default createArexMenu(ReplayMenu, {
-  type: MenusType.REPLAY,
+  type: MenusType.APP,
   paneType: PanesType.REPLAY,
-  icon: <HistoryOutlined />,
+  icon: <Icon name='AppWindow' />,
 });

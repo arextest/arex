@@ -1,7 +1,7 @@
 import { HelpTooltip, useTranslation } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Checkbox, Collapse, Form, InputNumber, TimePicker } from 'antd';
+import { App, Button, Collapse, Form, InputNumber, TimePicker } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { FC, useState } from 'react';
 import { useImmer } from 'use-immer';
@@ -28,7 +28,6 @@ type SettingFormType = {
   allowDayOfWeeks: number[];
   sampleRate: number;
   period: Dayjs[];
-  timeMock: boolean;
   excludeServiceOperationSet: string[];
   recordMachineCountLimit?: number;
   includeServiceOperationSet: string[] | undefined;
@@ -49,7 +48,6 @@ const defaultValues: Omit<
   allowDayOfWeeks: [],
   sampleRate: 1,
   period: [dayjs('00:01', format), dayjs('23:59', format)],
-  timeMock: false,
   excludeServiceOperationSet: [],
   recordMachineCountLimit: 1,
   includeServiceOperationSet: [],
@@ -76,7 +74,6 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
         ],
         sampleRate: res.sampleRate,
         allowDayOfWeeks: [],
-        timeMock: res.timeMock,
         excludeServiceOperationSet: res.excludeServiceOperationSet?.filter(Boolean),
         recordMachineCountLimit:
           res?.recordMachineCountLimit == undefined ? 1 : res?.recordMachineCountLimit,
@@ -111,7 +108,6 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
       allowTimeOfDayTo,
       appId: props.appId,
       sampleRate: values.sampleRate,
-      timeMock: values.timeMock,
       excludeServiceOperationSet: values.excludeServiceOperationSet?.filter(Boolean),
       recordMachineCountLimit: values.recordMachineCountLimit,
       extendField: {
@@ -168,10 +164,6 @@ const SettingRecord: FC<SettingRecordProps> = (props) => {
             forceRender: true,
             children: (
               <>
-                <Form.Item label={t('appSetting.timeMock')} name='timeMock' valuePropName='checked'>
-                  <Checkbox />
-                </Form.Item>
-
                 <Form.Item
                   label={
                     <HelpTooltip title={t('appSetting.dynamicClassesTooltip')}>

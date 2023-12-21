@@ -1,5 +1,11 @@
 import { SaveOutlined } from '@ant-design/icons';
-import { EmptyWrapper, TooltipButton, tryPrettierJsonString } from '@arextest/arex-core';
+import {
+  EmptyWrapper,
+  Theme,
+  TooltipButton,
+  tryPrettierJsonString,
+  useArexCoreConfig,
+} from '@arextest/arex-core';
 import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { App, Col, Collapse, Row, Space } from 'antd';
@@ -8,7 +14,6 @@ import { cloneDeep } from 'lodash';
 import React, { FC } from 'react';
 import { useImmer } from 'use-immer';
 
-import useUserProfile from '@/store/useUserProfile';
 import request from '@/utils/request';
 
 type MockTarget = {
@@ -44,7 +49,7 @@ type MockDataParse = Omit<MockData, 'targetRequest' | 'targetResponse'> & {
 
 const Mock: FC<{ recordId?: string }> = ({ recordId }) => {
   const { message } = App.useApp();
-  const { theme } = useUserProfile();
+  const { theme } = useArexCoreConfig();
   const [mockData, setMockData] = useImmer<MockDataParse[]>([]);
 
   const { run: getMockData, loading } = useRequest<MockDataParse[], []>(
@@ -128,7 +133,7 @@ const Mock: FC<{ recordId?: string }> = ({ recordId }) => {
                         fontFamily: 'IBMPlexMono, "Courier New", monospace',
                         scrollBeyondLastLine: false,
                       }}
-                      theme={theme === 'dark' ? 'vs-dark' : 'light'}
+                      theme={theme === Theme.dark ? 'vs-dark' : 'light'}
                       height={'260px'}
                       value={mock.targetRequest.body || ''}
                       onChange={(value) => {
@@ -152,7 +157,7 @@ const Mock: FC<{ recordId?: string }> = ({ recordId }) => {
                         fontFamily: 'IBMPlexMono, "Courier New", monospace',
                         scrollBeyondLastLine: false,
                       }}
-                      theme={theme === 'dark' ? 'vs-dark' : 'light'}
+                      theme={theme === Theme.dark ? 'vs-dark' : 'light'}
                       height={'260px'}
                       value={mock.targetResponse.body || ''}
                       onChange={(value) => {

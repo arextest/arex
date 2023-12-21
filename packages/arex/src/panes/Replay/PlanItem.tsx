@@ -1,6 +1,6 @@
 import 'chart.js/auto';
 
-import Icon, {
+import {
   ContainerOutlined,
   DeleteOutlined,
   ExclamationCircleFilled,
@@ -43,13 +43,13 @@ import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 're
 import { Pie } from 'react-chartjs-2';
 import CountUp from 'react-countup';
 
+import { Icon } from '@/components';
 import { ResultsState } from '@/components/StatusTag';
 import { PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanItemStatistic, PlanStatistics } from '@/services/ReportService';
 import { useMenusPanes } from '@/store';
-import IconLog from '~icons/octicon/log-24';
 
 function getPercent(num: number, den: number, showPercentSign = true) {
   const value = num && den ? Math.floor((num / den) * 1000) / 10 : 0;
@@ -322,7 +322,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             />
             <TooltipButton
               icon={<RedoOutlined />}
-              title={t('replay.retry')}
+              title={t('replay.rerun')}
               breakpoint='lg'
               color='primary'
               onClick={() =>
@@ -451,7 +451,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
       size='small'
       title={
         <>
-          {`${t('replay.report')}: ${selectedPlan.planName}`}
+          {`${t('replay.results')}: ${selectedPlan.planName}`}
           <Button size='small' type='link' icon={<ShareAltOutlined />} onClick={handleSharePlan} />
         </>
       }
@@ -460,7 +460,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
           <Button
             type='link'
             size='small'
-            icon={<Icon component={IconLog} />}
+            icon={<Icon name='ScrollText' />}
             disabled={props.readOnly}
             onClick={() => setReplayLogsDrawerOpen(true)}
           >
@@ -480,7 +480,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             onClick={() => retryPlan({ planId: selectedPlan!.planId })}
           >
             <RedoOutlined />
-            {t('replay.retry')}
+            {t('replay.rerun')}
           </Dropdown.Button>
         </Space>
       }
@@ -496,7 +496,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
             {selectedPlan.planId}
           </div>
           <div>
-            <Label>{t('replay.reportName')}</Label>
+            <Label>{t('replay.results')}</Label>
             {selectedPlan.planName}
           </div>
           <div>
