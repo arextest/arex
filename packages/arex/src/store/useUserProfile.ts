@@ -1,4 +1,4 @@
-import { getLocalStorage, i18n, setLocalStorage, Theme } from '@arextest/arex-core';
+import { getLocalStorage, i18n, setLocalStorage } from '@arextest/arex-core';
 import { create } from 'zustand';
 
 import {
@@ -7,6 +7,7 @@ import {
   DEFAULT_LANGUAGE,
   DEFAULT_THEME,
   EMAIL_KEY,
+  Theme,
   THEME_KEY,
 } from '@/constant';
 import { UserService } from '@/services';

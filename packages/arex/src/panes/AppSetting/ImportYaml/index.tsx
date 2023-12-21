@@ -1,9 +1,10 @@
-import { Theme, useArexCoreConfig, useTranslation } from '@arextest/arex-core';
+import { useArexCoreConfig, useTranslation } from '@arextest/arex-core';
 import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { App, Button } from 'antd';
 import React, { FC, useState } from 'react';
 
+import { Theme } from '@/constant';
 import UndertoneWrapper from '@/panes/AppSetting/UndertoneWrapper';
 import { ConfigService } from '@/services';
 

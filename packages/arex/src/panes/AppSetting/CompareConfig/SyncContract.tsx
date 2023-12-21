@@ -3,13 +3,14 @@ import {
   PaneDrawer,
   SmallTextButton,
   SpaceBetweenWrapper,
-  Theme,
   useArexCoreConfig,
   useTranslation,
 } from '@arextest/arex-core';
 import { Editor, EditorProps } from '@monaco-editor/react';
 import { App, ButtonProps, Dropdown, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
+
+import { Theme } from '@/constant';
 
 export type ButtonsDisabled = { leftButton?: boolean; rightButton?: boolean };
 export type SyncContractProps = {

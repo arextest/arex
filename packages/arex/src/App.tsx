@@ -1,9 +1,9 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { ArexCoreProvider, ArexMenuManager, ArexPaneManager, Theme } from '@arextest/arex-core';
+import { ArexCoreProvider, ArexMenuManager, ArexPaneManager } from '@arextest/arex-core';
 import { Spin } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { getThemeByDark, SYSTEM_THEME } from '@/constant';
+import { getThemeByDark, SYSTEM_THEME, Theme } from '@/constant';
 
 import { useAuthentication, useTrace } from './hooks';
 import resources from './i18n';
