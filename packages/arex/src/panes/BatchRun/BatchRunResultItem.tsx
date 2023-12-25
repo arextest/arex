@@ -1,8 +1,7 @@
 import { BugOutlined } from '@ant-design/icons';
-import { RequestMethodIcon, SpaceBetweenWrapper, TooltipButton } from '@arextest/arex-core';
+import { css, RequestMethodIcon, SpaceBetweenWrapper, TooltipButton } from '@arextest/arex-core';
 import type { ArexEnvironment, ArexRESTRequest, ArexRESTResponse } from '@arextest/arex-request';
 import { ArexResponse, ResponseMeta, sendRequest, TestResult } from '@arextest/arex-request';
-import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Card, Divider, Space, Spin, Typography } from 'antd';
 import React, { FC } from 'react';

@@ -1,18 +1,17 @@
-import Icon, { ClusterOutlined, HighlightOutlined } from '@ant-design/icons';
+import Icon, { ClusterOutlined } from '@ant-design/icons';
 import {
+  css,
   EllipsisTooltip,
   Label,
   SceneCode,
   SpaceBetweenWrapper,
   TooltipButton,
-  useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
-import { css } from '@emotion/react';
 import { Badge, Menu, Space, theme, Tooltip, Typography } from 'antd';
 import React, { FC, ReactNode, useEffect, useMemo, useState } from 'react';
 
-import { PlanItemStatistic, SubScene } from '@/services/ReportService';
+import { SubScene } from '@/services/ReportService';
 
 import { FeedbackIconMap, MarkExclusionModalProps } from './MarkExclusionModal';
 

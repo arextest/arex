@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css } from '@arextest/arex-core';
 import { useHover } from 'ahooks';
 import { theme } from 'antd';
 import { FC, useRef } from 'react';
