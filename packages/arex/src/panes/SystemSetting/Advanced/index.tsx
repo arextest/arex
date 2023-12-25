@@ -1,6 +1,5 @@
 import { CaretUpOutlined } from '@ant-design/icons';
-import { useTranslation } from '@arextest/arex-core';
-import { css } from '@emotion/react';
+import { css, useTranslation } from '@arextest/arex-core';
 import { Collapse, Divider, Space } from 'antd';
 import React, { FC, useState } from 'react';
 

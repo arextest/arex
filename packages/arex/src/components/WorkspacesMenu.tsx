@@ -5,10 +5,9 @@ import {
   GlobalOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { TooltipButton, useTranslation } from '@arextest/arex-core';
-import styled from '@emotion/styled';
+import { styled, TooltipButton, useTranslation } from '@arextest/arex-core';
 import { App, Input, Select } from 'antd';
-import React, { FC, ReactNode, useMemo, useState } from 'react';
+import React, { FC, ReactNode, useState } from 'react';
 
 import { RoleEnum, RoleMap } from '@/constant';
 
@@ -47,11 +46,6 @@ const WorkspacesMenu: FC<WorkspacesMenuProps> = (props) => {
   const [editMode, setEditMode] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [status, setStatus] = useState<'' | 'error'>('');
-
-  const workspaceName = useMemo(() => {
-    const workspace = props.options?.find((ws) => ws.value === props.value);
-    return workspace?.label;
-  }, [props.value, props.options]);
 
   const handleAddWorkspace = () => {
     if (newWorkspaceName === '') {

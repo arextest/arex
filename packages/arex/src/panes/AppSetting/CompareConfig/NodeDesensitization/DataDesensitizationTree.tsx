@@ -1,5 +1,4 @@
-import { EmptyWrapper, useTranslation } from '@arextest/arex-core';
-import { css } from '@emotion/react';
+import { css, EmptyWrapper, useTranslation } from '@arextest/arex-core';
 import { Card, Tree, Typography } from 'antd';
 import { TreeProps } from 'antd/es';
 import React, { FC, useMemo } from 'react';

@@ -24,6 +24,8 @@
     "@arextest/arex-request": "*",
     "@formkit/auto-animate": "^0.7.0",
     "@monaco-editor/react": "^4.6.0",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",
     "antd": "^5.11.0",
@@ -72,9 +74,5 @@
     "vite-plugin-electron": "^0.12.0",
     "vite-plugin-electron-renderer": "^0.14.5",
     "vite-plugin-svgr": "^3.2.0"
-  },
-  "peerDependencies": {
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6"
   }
 }
