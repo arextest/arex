@@ -1,10 +1,10 @@
 import './logger';
 
-import { app, BrowserWindow, dialog, globalShortcut, Menu } from 'electron';
+import { app, BrowserWindow, globalShortcut } from 'electron';
 import { autoUpdateInit } from './autoUpdater';
 import path from 'node:path';
-import { oauth } from './server';
 import { openWindow } from './helper';
+import { oauth } from './server';
 import process from 'process';
 
 process.env.DIST = path.join(__dirname, '../dist');

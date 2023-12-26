@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
 import port from '../config/port.json';
-import proxy from '../config/proxy.json';
+import proxy from '../config/proxy-electron-sass.json';
 import queryCaseId, { QueryCaseIdReq } from './services/schedule/queryCaseId';
 import queryReplaySenderParameters, {
   ReplaySenderParameters,
@@ -15,10 +15,16 @@ import preSend from './services/schedule/preSend';
 import axios, { AxiosResponse } from 'axios';
 import postSend from './services/schedule/postSend';
 import { SendStatusType } from './services/schedule/type';
-import { zstdDecompress } from './helper';
+import { getConfigData } from './helper';
+import process from 'process';
+
+const companyName =
+  process.env.NODE_ENV === 'development'
+    ? process.env.VITE_COMPANY_NAME
+    : getConfigData('companyName');
 
 // 解析提交的json参数
-let jsonParser = bodyParser.json();
+const jsonParser = bodyParser.json();
 
 const server = express();
 server.use(cors());
@@ -44,19 +50,23 @@ proxy.forEach((item) => {
   server.use(
     item.path,
     createProxyMiddleware({
-      target: item.target,
+      target: item.target.replace('{{companyDomainName}}', companyName),
       changeOrigin: true,
-      pathRewrite: { [item.path]: '/api' },
+      // pathRewrite: { [item.path]: '/api' },
     }),
   );
   server.use(
     '/version' + item.path,
     createProxyMiddleware({
-      target: item.target,
+      target: item.target.replace('{{companyDomainName}}', companyName),
       changeOrigin: true,
-      pathRewrite: () => item.target + '/vi/health',
+      // pathRewrite: () => item.target + '/vi/health',
     }),
   );
+});
+
+server.get('/api/companyName', (req, res) => {
+  res.send({ companyName });
 });
 
 // 健康检查
@@ -68,17 +78,6 @@ server.get('/env', (req, res) => {
   res.send(proxy);
 });
 
-// server.post('/api/zstd', jsonParser, async (req, res) => {
-//   try {
-//     const data = req.body.data;
-//     const decodeString = await zstdDecompress(data);
-//
-//     res.send({ decode: JSON.parse(decodeString) });
-//   } catch (e) {
-//     res.send({ error: String(e) });
-//   }
-// });
-
 // local Schedule createPlan
 server.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
   logger.log('[request:/api/createPlan] ', req.body);
@@ -87,7 +86,6 @@ server.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
     const caseResponse = await queryCaseId(req.body);
     const { result, desc, data } = caseResponse;
     if (result !== 1) {
-      res.send({ desc, statusCode: 2, data: { reasonCode: 200 } });
       throw Error(desc);
     }
 
@@ -128,6 +126,7 @@ server.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
     }
   } catch (err) {
     logger.error(err);
+    res.send({ desc: err, statusCode: 2, data: { reasonCode: 200 } });
   }
 });
 

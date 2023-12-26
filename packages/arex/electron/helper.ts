@@ -5,6 +5,7 @@ import path from 'node:path';
 import * as fzstd from 'fzstd';
 
 const dataPath = join(app.getPath('userData'), 'data.json');
+const configPath = join(app.getPath('userData'), 'config.json');
 
 export function getLocalData(key?: string) {
   if (!fs.existsSync(dataPath)) {
@@ -15,7 +16,19 @@ export function getLocalData(key?: string) {
   return key ? json[key] : json;
 }
 
+export function getConfigData(key?: string) {
+  if (!fs.existsSync(configPath)) {
+    fs.writeFileSync(configPath, JSON.stringify({}), { encoding: 'utf-8' });
+  }
+  let data = fs.readFileSync(configPath, { encoding: 'utf-8' });
+  let json = JSON.parse(data);
+  return key ? json[key] : json;
+}
+
 export function setLocalData(key: string | object, value?: any) {
+  if (!fs.existsSync(dataPath)) {
+    fs.writeFileSync(dataPath, JSON.stringify({}), { encoding: 'utf-8' });
+  }
   let args = [...arguments];
   let data = fs.readFileSync(dataPath, { encoding: 'utf-8' });
   let json = JSON.parse(data);

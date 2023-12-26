@@ -53,6 +53,7 @@ export const COMPACT_KEY = 'compact';
 
 export const USER_PROFILE_KEY = 'userProfile';
 export const EMAIL_KEY = 'email'; // 初始化接口相关的 email 请使用该 key 而非 UserInfo
+export const COMPANY_KEY = 'company';
 export const ACCESS_TOKEN_KEY = 'accessToken';
 export const APP_ID_KEY = 'appId';
 export const REFRESH_TOKEN_KEY = 'refreshToken';
