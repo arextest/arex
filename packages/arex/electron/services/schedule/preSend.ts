@@ -17,7 +17,7 @@ export interface PreSendRes {
 
 export default async function preSend(params: PreSendReq) {
   const res = await ScheduleAxios.post<PreSendReq, AxiosResponse<PreSendRes>>(
-    '/api/replay/local/preSend',
+    '/schedule/replay/local/preSend',
     params,
   );
   return res.data;
