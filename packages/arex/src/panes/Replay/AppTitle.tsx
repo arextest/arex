@@ -173,6 +173,9 @@ const AppTitle: FC<AppTitleProps> = ({
 
   const [form] = Form.useForm<CreatePlanForm>();
   const targetEnv = Form.useWatch('targetEnv', form);
+  const planName = Form.useWatch('planName', form);
+  const caseSourceRange = Form.useWatch('caseSourceRange', form);
+  const operationList = Form.useWatch('operationList', form);
 
   const [openPathDropdown, setOpenPathDropdown] = useState(false);
 
@@ -187,10 +190,19 @@ const AppTitle: FC<AppTitleProps> = ({
     [readOnly, t, appName],
   );
 
-  const webhook = useMemo(
-    () => `${location.origin}/schedule/createPlan?appId=${appId}&targetEnv=${targetEnv?.trim()}`,
-    [appId, targetEnv],
-  );
+  const webhook = useMemo(() => {
+    const url = new URL(`${location.origin}/schedule/createPlan`);
+
+    url.searchParams.append('appId', appId);
+    targetEnv && url.searchParams.append('targetEnv', targetEnv.trim());
+    planName && url.searchParams.append('planName', planName.trim());
+    if (caseSourceRange && caseSourceRange?.length === 2) {
+      url.searchParams.append('caseSourceFrom', caseSourceRange[0].valueOf().toString());
+      url.searchParams.append('caseSourceTo', caseSourceRange[1].valueOf().toString());
+    }
+    operationList?.length && url.searchParams.append('operationIds', operationList.join(','));
+    return url.toString();
+  }, [appId, targetEnv, planName, caseSourceRange, operationList]);
 
   /**
    * 创建回放
@@ -469,7 +481,9 @@ const AppTitle: FC<AppTitleProps> = ({
                     </Form.Item>
 
                     <Form.Item label={'Webhook'}>
-                      <Typography.Text copyable>{webhook}</Typography.Text>
+                      <Typography.Text copyable ellipsis>
+                        {webhook}
+                      </Typography.Text>
                     </Form.Item>
                   </>
                 ),
