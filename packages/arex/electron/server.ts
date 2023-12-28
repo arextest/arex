@@ -15,13 +15,13 @@ import preSend from './services/schedule/preSend';
 import axios, { AxiosResponse } from 'axios';
 import postSend from './services/schedule/postSend';
 import { SendStatusType } from './services/schedule/type';
-import { getConfigData } from './helper';
+import { getLocalConfig } from './helper';
 import process from 'process';
 
-const companyName =
-  process.env.NODE_ENV === 'development'
-    ? process.env.VITE_COMPANY_NAME
-    : getConfigData('companyName');
+const companyName = getLocalConfig('companyName');
+// process.env.NODE_ENV === 'development'
+//   ? process.env.VITE_COMPANY_NAME
+//   : getLocalConfig('companyName');
 
 // 解析提交的json参数
 const jsonParser = bodyParser.json();

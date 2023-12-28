@@ -2,12 +2,12 @@ import axios from 'axios';
 import process from 'process';
 
 import proxy from '../../../config/proxy-electron-sass.json';
-import { getConfigData } from '../../helper';
+import { getLocalConfig } from '../../helper';
 
-const companyName =
-  process.env.NODE_ENV === 'development'
-    ? process.env.VITE_COMPANY_NAME
-    : getConfigData('companyName');
+const companyName = getLocalConfig('companyName');
+// process.env.NODE_ENV === 'development'
+//   ? process.env.VITE_COMPANY_NAME
+//   : getLocalConfig('companyName');
 
 const baseURL: string = proxy
   .find((item) => item.path === '/schedule')
