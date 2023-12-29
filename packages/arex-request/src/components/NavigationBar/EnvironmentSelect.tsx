@@ -1,7 +1,8 @@
 import { DeploymentUnitOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { styled } from '@arextest/arex-core';
+import { styled, TooltipButton } from '@arextest/arex-core';
 import { Button, Divider, Input, Select, SelectProps, Space, Tooltip } from 'antd';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useArexRequestProps } from '../../hooks';
 import { ArexEnvironment } from '../../types';
@@ -39,7 +40,17 @@ const EnvironmentSelect: FC<EnvironmentSelectProps> = (_props) => {
   const { environmentProps } = useArexRequestProps();
   const props = Object.keys(_props).length ? _props : environmentProps;
 
+  const { t } = useTranslation();
   const [newEnvironmentName, setNewEnvironmentName] = useState<string>();
+  const [selectErrorStatus, setSelectErrorStatus] = useState(false);
+  const [inputErrorStatus, setInputErrorStatus] = useState(false);
+
+  useEffect(() => {
+    selectErrorStatus && setTimeout(() => setSelectErrorStatus(false), 1000);
+  }, [selectErrorStatus]);
+  useEffect(() => {
+    inputErrorStatus && setTimeout(() => setInputErrorStatus(false), 1000);
+  }, [inputErrorStatus]);
 
   const environmentOptions = useMemo<SelectProps['options']>(
     () =>
@@ -56,21 +67,25 @@ const EnvironmentSelect: FC<EnvironmentSelectProps> = (_props) => {
   };
 
   const handleEnvironmentEdit = (environmentId?: string) => {
-    if (!environmentId) return;
+    if (!environmentId) {
+      setSelectErrorStatus(true);
+      return;
+    }
     const newEnv = props?.options?.find((env) => env.id === environmentId);
     newEnv && props?.onEdit?.(newEnv);
   };
 
   return (
     <EnvironmentSelectWrapper>
-      <Tooltip title={'Environment'} placement='left'>
+      <Tooltip title={t('env.environment')} placement='left'>
         <DeploymentUnitOutlined />
       </Tooltip>
 
       <Select
-        bordered={false}
-        placeholder='Please select environment'
+        bordered={selectErrorStatus}
+        placeholder={t('env.selectEnv')}
         value={props?.value}
+        status={selectErrorStatus ? 'error' : undefined}
         popupMatchSelectWidth={210}
         dropdownStyle={{
           right: 4,
@@ -84,16 +99,25 @@ const EnvironmentSelect: FC<EnvironmentSelectProps> = (_props) => {
                 <Space style={{ padding: '0 8px 4px' }}>
                   <Input
                     size='small'
-                    placeholder='Enter new environment'
+                    placeholder={t('env.enterEnv') as string}
+                    status={inputErrorStatus ? 'error' : undefined}
                     value={newEnvironmentName}
                     onChange={(e) => setNewEnvironmentName(e.target.value)}
                     style={{ width: '162px', marginRight: '4px' }}
                   />
-                  <Button
+                  <TooltipButton
                     type='text'
                     size='small'
                     icon={<PlusOutlined />}
-                    onClick={() => props?.onAdd?.(newEnvironmentName)}
+                    title={t('add.env')}
+                    placement='bottomLeft'
+                    onClick={() => {
+                      if (newEnvironmentName) {
+                        props?.onAdd?.(newEnvironmentName);
+                      } else {
+                        setInputErrorStatus(true);
+                      }
+                    }}
                   />
                 </Space>
               </>
@@ -102,14 +126,20 @@ const EnvironmentSelect: FC<EnvironmentSelectProps> = (_props) => {
         )}
         options={environmentOptions}
         onChange={handleEnvironmentChange}
-        onDropdownVisibleChange={(open) => !open && setNewEnvironmentName(undefined)}
+        onDropdownVisibleChange={(open) => {
+          if (!open) {
+            setNewEnvironmentName(undefined);
+            setInputErrorStatus(false);
+          }
+        }}
       />
 
       {props?.onEdit && (
-        <Tooltip title={'Edit'}>
+        <Tooltip title={t('edit')}>
           <Button
-            icon={<EditOutlined />}
             type='text'
+            size='small'
+            icon={<EditOutlined />}
             onClick={() => handleEnvironmentEdit?.(props?.value)}
           />
         </Tooltip>

@@ -9,7 +9,7 @@ const SmallTextButton = React.forwardRef<
     title?: ReactNode;
   }
 >((props, ref) => {
-  const { title, icon, ...restProps } = props;
+  const { title, ...restProps } = props;
   return (
     <Button
       ref={ref}
@@ -21,13 +21,14 @@ const SmallTextButton = React.forwardRef<
         props.onClick?.(e);
       }}
     >
-      <Typography.Text
-        color={props.color}
-        type={props.color === 'secondary' ? 'secondary' : undefined}
-      >
-        <span style={{ marginRight: '6px' }}>{icon}</span>
-        {title}
-      </Typography.Text>
+      {title && (
+        <Typography.Text
+          color={props.color}
+          type={props.color === 'secondary' ? 'secondary' : undefined}
+        >
+          {title}
+        </Typography.Text>
+      )}
     </Button>
   );
 });

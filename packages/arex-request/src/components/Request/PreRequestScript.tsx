@@ -9,7 +9,7 @@ import { preTestCodeSnippet } from './snippets';
 
 const { Text } = Typography;
 
-export const ResponseTestWrapper = styled.div`
+const ResponseTestWrapper = styled.div`
   overflow-y: auto;
   display: flex;
   justify-content: space-between;

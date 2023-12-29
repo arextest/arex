@@ -1,6 +1,7 @@
 {
   "send": "发送",
   "save": "保存",
+  "noSave": "不保存",
   "help": "帮助",
   "feedback": "反馈",
   "scanWithQQ":"QQ 扫一扫",

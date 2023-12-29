@@ -35,6 +35,7 @@ export type SaveAsRef = {
 const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   const navPane = useNavPane();
   const userName = getLocalStorage<string>(EMAIL_KEY);
+  const { collectionsFlatData } = useCollections();
 
   const [open, setOpen] = useState(false);
   useImperativeHandle(
@@ -55,7 +56,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   );
 
   const [form] = Form.useForm();
-  const [value, setValue] = useState<string>();
+  const savePath = Form.useWatch('savePath', form);
 
   const { run: addCollectionItem } = useRequest(
     (params: {
@@ -71,14 +72,14 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
       }),
     {
       manual: true,
-      onSuccess: (res) => {
+      onSuccess: (res, [params]) => {
         if (res.success) {
           setOpen(false);
           // 保存完跳转
           // httpRef.current?.onSave({ id: res.infoId });
           setTimeout(() => {
             navPane({
-              id: res.infoId,
+              id: `${props.workspaceId}-${params.nodeType}-${res.infoId}`,
               type: PanesType.REQUEST,
             });
           }, 300);
@@ -87,12 +88,14 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
     },
   );
 
-  const handleSaveAs = ({ savePath }: { savePath: string }) => {
+  const handleSaveAs = (value) => {
+    console.log(value, collectionsFlatData.get(value.savePath));
+
     // 先添加，再触发 save ！
     addCollectionItem({
       nodeName: 'Untitled',
       nodeType: CollectionNodeType.interface,
-      parentPath: getPath(savePath).map((i) => i.id),
+      parentPath: getPath(value.savePath).map((i) => i.id),
     });
   };
 
@@ -117,7 +120,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
         <p>
           <span>Save to </span>
           <Text type='secondary'>
-            {getPath(value || '')
+            {getPath(savePath || '')
               .map((path) => path.name)
               .join('/')}
           </Text>
@@ -135,10 +138,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
           <TreeSelect
             treeDefaultExpandAll
             placeholder='Please select'
-            value={value}
             treeData={collection}
-            // fieldNames={{ label: 'title', value: 'key' }}
-            onChange={setValue}
             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
             style={{ width: '100%' }}
           />
