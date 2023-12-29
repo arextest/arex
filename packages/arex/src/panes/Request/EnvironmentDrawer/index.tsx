@@ -1,4 +1,4 @@
-import { DeleteOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import { CopyOutlined, DeleteOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { PaneDrawer, PanesTitle, TooltipButton, useTranslation } from '@arextest/arex-core';
 import { ArexEnvironment } from '@arextest/arex-request';
 import { useRequest } from 'ahooks';
@@ -8,13 +8,14 @@ import { useImmer } from 'use-immer';
 
 import { FlexRowReverseWrapper } from '@/components';
 import { EnvironmentService } from '@/services';
-import { EnvironmentKeyValues } from '@/services/EnvironmentService/getEnvironments';
+import { Environment, EnvironmentKeyValues } from '@/services/EnvironmentService/getEnvironments';
 
 import EditableKeyValueTable, { useColumns } from './EditableKeyValueTable';
 
 export type EnvironmentDrawerProps = {
   workspaceId: string;
   onUpdate?: () => void;
+  onDuplicate?: (environment: Environment) => void;
   onDelete?: () => void;
 };
 
@@ -59,7 +60,18 @@ const EnvironmentDrawer = forwardRef<EnvironmentDrawerRef, EnvironmentDrawerProp
         message.success(t('message.saveSuccess', { ns: 'common' }));
         updateState({ id: env.id as string, name: env.envName, variables: env.keyValues });
         props.onUpdate?.();
-      }
+      } else message.error(t('message.saveFailed', { ns: 'common' }));
+    },
+  });
+
+  const { run: duplicateEnvironment } = useRequest(EnvironmentService.duplicateEnvironment, {
+    manual: true,
+    onSuccess(environments) {
+      if (environments?.length) {
+        message.success(t('message.createSuccess', { ns: 'common' }));
+        setOpen(false);
+        props.onDuplicate?.(environments[0]); // TODO get duplicated env id from response
+      } else message.error(t('message.createFailed', { ns: 'common' }));
     },
   });
 
@@ -150,6 +162,13 @@ const EnvironmentDrawer = forwardRef<EnvironmentDrawerRef, EnvironmentDrawerProp
     });
   };
 
+  const handleDuplicateEnv = () => {
+    duplicateEnvironment({
+      workspaceId: props.workspaceId,
+      id: envId!,
+    });
+  };
+
   const handleEnvSave = () => {
     setEdited(false);
     handleSave();
@@ -173,6 +192,12 @@ const EnvironmentDrawer = forwardRef<EnvironmentDrawerRef, EnvironmentDrawerProp
                 icon={<PlusOutlined />}
                 title={t('env.createEnvVariable')}
                 onClick={handleCreateEnvVariable}
+              />
+
+              <TooltipButton
+                icon={<CopyOutlined />}
+                title={t('env.duplicateEnv')}
+                onClick={handleDuplicateEnv}
               />
 
               <Tooltip title={t('env.deleteEnv')}>

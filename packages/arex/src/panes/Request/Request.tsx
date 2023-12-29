@@ -7,6 +7,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { EMAIL_KEY, PanesType, WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { EnvironmentService, FileSystemService, ReportService } from '@/services';
+import { Environment } from '@/services/EnvironmentService/getEnvironments';
 import { useCollections, useWorkspaces } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
@@ -65,7 +66,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         const initialEnvId = props.data?.environmentId || workspaceEnvironmentPair?.[workspaceId];
         if (!activeEnvironment && initialEnvId) {
           const env = res.find((env) => env.id === initialEnvId);
-          setActiveEnvironment(env);
+          handleEnvironmentChange(env);
         }
       },
     },
@@ -198,7 +199,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
             id: environmentId,
             variables: [],
           };
-          setActiveEnvironment(newEnv);
+          handleEnvironmentChange(newEnv);
           environmentDrawerRef?.current?.open(newEnv);
           refreshEnvironments();
         } else {
@@ -218,6 +219,22 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     });
     setActiveEnvironment(environment);
     environment && updateWorkspaceEnvironmentLS(workspaceId, environment.id);
+  };
+
+  const handleDuplicateEnvironment = (environment: Environment) => {
+    refreshEnvironments();
+    const env: ArexEnvironment = {
+      id: environment.id,
+      name: environment.envName,
+      variables: environment.keyValues,
+    };
+    handleEnvironmentChange(env);
+    environmentDrawerRef?.current?.open(env);
+  };
+
+  const handleDeleteEnvironment = () => {
+    handleEnvironmentChange(undefined);
+    refreshEnvironments();
   };
 
   return (
@@ -282,10 +299,8 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         ref={environmentDrawerRef}
         workspaceId={workspaceId}
         onUpdate={refreshEnvironments}
-        onDelete={() => {
-          setActiveEnvironment(undefined);
-          refreshEnvironments();
-        }}
+        onDuplicate={handleDuplicateEnvironment}
+        onDelete={handleDeleteEnvironment}
       />
     </>
   );

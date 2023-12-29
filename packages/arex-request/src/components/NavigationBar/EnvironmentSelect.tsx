@@ -1,7 +1,6 @@
 import { DeploymentUnitOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { styled, TooltipButton } from '@arextest/arex-core';
 import { Button, Divider, Input, Select, SelectProps, Space, Tooltip } from 'antd';
-import { InputStatus } from 'antd/es/_util/statusUtils';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -130,7 +129,7 @@ const EnvironmentSelect: FC<EnvironmentSelectProps> = (_props) => {
         onDropdownVisibleChange={(open) => {
           if (!open) {
             setNewEnvironmentName(undefined);
-            setInputErrorStatus(undefined);
+            setInputErrorStatus(false);
           }
         }}
       />

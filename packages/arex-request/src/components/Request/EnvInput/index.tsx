@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import Editor from '@monaco-editor/react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';

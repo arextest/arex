@@ -321,6 +321,7 @@
     "setCurrentEnv": "Set as current environment",
     "duplicateCurrentEnv": "Duplicate current environment",
     "createEnvVariable": "Create environment variable",
+    "duplicateEnv": "Duplicate environment",
     "deleteEnv": "Delete environment",
     "delConfirmText": "Deleting this environment might cause any monitors or mock servers using it to stop functioning properly. Are you sure you want to continue?",
     "variable": "Variable",
