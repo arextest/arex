@@ -1,7 +1,8 @@
 import { SaveOutlined } from '@ant-design/icons';
 import { css, SpaceBetweenWrapper } from '@arextest/arex-core';
-import { Dropdown } from 'antd';
-import React, { FC, useMemo } from 'react';
+import { Button, Dropdown } from 'antd';
+import { DropdownButtonProps } from 'antd/es/dropdown';
+import React, { FC, FunctionComponent, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexRequestProps, useArexRequestStore } from '../../hooks';
@@ -44,16 +45,21 @@ const NavigationBar: FC = () => {
       </div>
 
       <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-        <Dropdown.Button
-          size='small'
-          disabled={disableSave}
-          menu={{ items: buttonsItems, onClick: onMenuClick }}
-          onClick={() => onSave?.(store.request, store.response)}
-          style={{ marginRight: '8px' }}
-        >
-          <SaveOutlined />
-          {t('request.save')}
-        </Dropdown.Button>
+        {React.createElement<DropdownButtonProps>(
+          onSaveAs ? Dropdown.Button : (Button as FunctionComponent),
+          {
+            size: 'small',
+            disabled: disableSave,
+            menu: onSaveAs && { items: buttonsItems, onClick: onMenuClick },
+            onClick: () => onSave?.(store.request, store.response),
+            style: { marginRight: '8px' },
+          },
+          <>
+            <SaveOutlined style={{ marginRight: '4px' }} />
+            {t('request.save')}
+          </>,
+        )}
+
         <EnvironmentSelect />
       </div>
     </SpaceBetweenWrapper>

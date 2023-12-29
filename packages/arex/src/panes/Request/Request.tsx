@@ -1,4 +1,4 @@
-import { ArexPaneFC, getLocalStorage, useTranslation } from '@arextest/arex-core';
+import { ArexPaneFC, getLocalStorage, i18n, useTranslation } from '@arextest/arex-core';
 import { ArexEnvironment, ArexRequest, ArexRequestProps } from '@arextest/arex-request';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
@@ -63,7 +63,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
           WORKSPACE_ENVIRONMENT_PAIR_KEY,
         );
         const initialEnvId = props.data?.environmentId || workspaceEnvironmentPair?.[workspaceId];
-        if (initialEnvId) {
+        if (!activeEnvironment && initialEnvId) {
           const env = res.find((env) => env.id === initialEnvId);
           setActiveEnvironment(env);
         }
@@ -193,11 +193,13 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       manual: true,
       onSuccess({ success, environmentId }, [envName]) {
         if (success) {
-          environmentDrawerRef?.current?.open({
+          const newEnv = {
             name: envName,
             id: environmentId,
             variables: [],
-          });
+          };
+          setActiveEnvironment(newEnv);
+          environmentDrawerRef?.current?.open(newEnv);
           refreshEnvironments();
         } else {
           message.error(t('message.createFailed', { ns: 'common' }));
@@ -224,6 +226,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         ref={httpRef}
         loading={!data}
         data={data}
+        language={i18n.language}
         config={httpConfig}
         breadcrumb={parentPath}
         titleProps={{
@@ -270,13 +273,19 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         }}
         disableSave={!!props.data?.recordId}
         onSave={handleSave}
-        onSaveAs={saveAsRef?.current?.open}
+        // onSaveAs={saveAsRef?.current?.open}
       />
+
       <SaveAs ref={saveAsRef} workspaceId={workspaceId} />
+
       <EnvironmentDrawer
         ref={environmentDrawerRef}
         workspaceId={workspaceId}
         onUpdate={refreshEnvironments}
+        onDelete={() => {
+          setActiveEnvironment(undefined);
+          refreshEnvironments();
+        }}
       />
     </>
   );

@@ -2,10 +2,11 @@ import { DeleteOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { PaneDrawer, PanesTitle, TooltipButton, useTranslation } from '@arextest/arex-core';
 import { ArexEnvironment } from '@arextest/arex-request';
 import { useRequest } from 'ahooks';
-import { App, Button, Divider, Popconfirm, Space } from 'antd';
+import { App, Button, Divider, Modal, Popconfirm, Space, Tooltip } from 'antd';
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import { useImmer } from 'use-immer';
 
+import { FlexRowReverseWrapper } from '@/components';
 import { EnvironmentService } from '@/services';
 import { EnvironmentKeyValues } from '@/services/EnvironmentService/getEnvironments';
 
@@ -14,6 +15,7 @@ import EditableKeyValueTable, { useColumns } from './EditableKeyValueTable';
 export type EnvironmentDrawerProps = {
   workspaceId: string;
   onUpdate?: () => void;
+  onDelete?: () => void;
 };
 
 export type EnvironmentDrawerRef = {
@@ -25,13 +27,19 @@ export type WorkspaceEnvironmentPair = { [workspaceId: string]: string };
 const EnvironmentDrawer = forwardRef<EnvironmentDrawerRef, EnvironmentDrawerProps>((props, ref) => {
   const [open, setOpen] = useState(false);
 
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
 
   const [envId, setEnvId] = useState<string>();
   const [envName, setEnvName] = useState<string>();
   const [keyValues, setKeyValues] = useImmer<(EnvironmentKeyValues & { id: string })[]>([]);
-  const columns = useColumns(setKeyValues, true);
+  const [edited, setEdited] = useState(false);
+
+  const handleKeyValuesChange: typeof setKeyValues = (...params) => {
+    !edited && setEdited(true);
+    setKeyValues(...params);
+  };
+  const columns = useColumns(handleKeyValuesChange, true);
 
   const updateState = (env: ArexEnvironment) => {
     setEnvId(env.id);
@@ -67,14 +75,46 @@ const EnvironmentDrawer = forwardRef<EnvironmentDrawerRef, EnvironmentDrawerProp
       onSuccess(success) {
         if (success) {
           setOpen(false);
-          props.onUpdate?.();
+          props.onDelete?.();
         }
       },
     },
   );
 
   const handleClose = () => {
-    setOpen(false);
+    if (edited) {
+      const handleClose = () => {
+        Modal.destroyAll();
+        setOpen(false);
+        setEdited(false);
+      };
+
+      modal.info({
+        width: 340,
+        title: <div style={{ paddingRight: '16px' }}>{t('http.env.closeConfirm')}</div>,
+        closable: true,
+        footer: (
+          <FlexRowReverseWrapper style={{ marginTop: '8px' }}>
+            <Space size='middle'>
+              <Button
+                key='save'
+                type='primary'
+                onClick={() => {
+                  handleSave();
+                  handleClose();
+                }}
+                style={{ marginBottom: 0 }}
+              >
+                {t('save', { ns: 'common' })}
+              </Button>
+              <Button key='noSave' onClick={handleClose}>
+                {t('noSave', { ns: 'common' })}
+              </Button>
+            </Space>
+          </FlexRowReverseWrapper>
+        ),
+      });
+    } else setOpen(false);
   };
 
   const handleSave = (name?: string) => {
@@ -99,6 +139,22 @@ const EnvironmentDrawer = forwardRef<EnvironmentDrawerRef, EnvironmentDrawerProp
     [],
   );
 
+  const handleCreateEnvVariable = () => {
+    setKeyValues((state) => {
+      state.push({
+        key: '',
+        value: '',
+        active: true,
+        id: (Math.random() * 10e12).toFixed(),
+      });
+    });
+  };
+
+  const handleEnvSave = () => {
+    setEdited(false);
+    handleSave();
+  };
+
   return (
     <PaneDrawer
       destroyOnClose
@@ -115,41 +171,35 @@ const EnvironmentDrawer = forwardRef<EnvironmentDrawerRef, EnvironmentDrawerProp
 
               <TooltipButton
                 icon={<PlusOutlined />}
-                title={t('env.createEnvKeyValue')}
-                onClick={() =>
-                  setKeyValues((state) => {
-                    state.push({
-                      key: '',
-                      value: '',
-                      active: true,
-                      id: (Math.random() * 10e12).toFixed(),
-                    });
-                  })
-                }
+                title={t('env.createEnvVariable')}
+                onClick={handleCreateEnvVariable}
               />
 
-              <Popconfirm
-                title={
-                  <span style={{ display: 'block', maxWidth: '256px' }}>
-                    {t('env.delConfirmText')}
-                  </span>
-                }
-                onConfirm={deleteEnvironment}
-                okText={t('yes', { ns: 'common' })}
-                cancelText={t('no', { ns: 'common' })}
-              >
-                <Button size='small' type='text' icon={<DeleteOutlined />} />
-              </Popconfirm>
+              <Tooltip title={t('env.deleteEnv')}>
+                <Popconfirm
+                  title={
+                    <span style={{ display: 'block', maxWidth: '256px' }}>
+                      {t('env.delConfirmText')}
+                    </span>
+                  }
+                  onConfirm={deleteEnvironment}
+                  okText={t('yes', { ns: 'common' })}
+                  cancelText={t('no', { ns: 'common' })}
+                >
+                  <Button size='small' type='text' icon={<DeleteOutlined />} />
+                </Popconfirm>
+              </Tooltip>
 
               <TooltipButton
                 color='primary'
                 icon={<SaveOutlined />}
                 title={t('save', { ns: 'common' })}
-                onClick={() => handleSave()}
+                onClick={handleEnvSave}
               />
             </Space>
           }
           onSave={handleSave}
+          style={{ margin: 0 }}
         />
       }
       styles={{

@@ -28,7 +28,10 @@
     "javaScriptCode": "JavaScript Code",
     "add_script_block": "Add Script Block",
     "compare_config": "CompareConfig",
-    "add_tag": "Add Tag"
+    "add_tag": "Add Tag",
+    "env": {
+      "closeConfirm": "Current environment configuration changes are not saved"
+    }
   },
   "authorization": {
     "type": "Type",
@@ -317,7 +320,8 @@
     "searchEnvironment": "Search Environment",
     "setCurrentEnv": "Set as current environment",
     "duplicateCurrentEnv": "Duplicate current environment",
-    "createEnvKeyValue": "Create environment keyValue",
+    "createEnvVariable": "Create environment variable",
+    "deleteEnv": "Delete environment",
     "delConfirmText": "Deleting this environment might cause any monitors or mock servers using it to stop functioning properly. Are you sure you want to continue?",
     "variable": "Variable",
     "key": "Key",

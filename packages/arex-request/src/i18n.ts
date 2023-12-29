@@ -16,7 +16,7 @@ const resources = {
 i18n.use(initReactI18next).init({
   // 初始化
   resources,
-  lng: localStorage.getItem('locale') || 'en',
+  lng: localStorage.getItem('i18nextLng') || 'en',
   fallbackLng: 'en',
 });
 
