@@ -49,7 +49,8 @@
   },
   "add": {
     "new": "新增",
-    "star": "添加星标"
+    "star": "添加星标",
+    "env": "新增环境"
   },
   "error": {
     "browser_support_sse": "该浏览器似乎不支持 SSE。",
@@ -120,6 +121,11 @@
     "url": "URL",
     "variables": "变量",
     "view_my_links": "View my links"
+  },
+  "env": {
+    "environment": "环境",
+    "selectEnv": "请选择环境",
+    "enterEnv":"请输入新环境名称"
   },
   "response": {
     "body": "响应体",

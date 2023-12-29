@@ -1,12 +1,13 @@
 import { css } from '@arextest/arex-core';
 import { Allotment } from 'allotment';
 import { Divider, Spin, TabPaneProps } from 'antd';
-import React, { forwardRef, useImperativeHandle, useMemo } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo } from 'react';
 
 import NavigationBar from './components/NavigationBar';
 import Request, { RequestProps } from './components/Request';
 import Response from './components/Response';
 import { useArexRequestStore } from './hooks';
+import i18n from './i18n';
 import { RequestPropsProvider, RequestStoreProvider } from './providers';
 import { ArexRESTRequest } from './types';
 
@@ -29,6 +30,7 @@ export type HttpConfig = {
 export interface ArexRequestProps extends RequestProps {
   loading?: boolean;
   height?: string;
+  language?: string;
   data?: ArexRESTRequest;
   config?: HttpConfig;
 }
@@ -50,6 +52,10 @@ const ArexRequest = forwardRef<RequestRef, ArexRequestProps>((props, ref) => {
     }),
     [props, store.request, store.response],
   );
+
+  useEffect(() => {
+    i18n.changeLanguage(props.language);
+  }, [props.language]);
 
   const AllotmentCSS = useMemo(
     () => css`

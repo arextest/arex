@@ -49,7 +49,8 @@
   },
   "add": {
     "new": "Add new",
-    "star": "Add star"
+    "star": "Add star",
+    "env": "Add Env"
   },
   "error": {
     "browser_support_sse": "This browser doesn't seems to have Server Sent Events support.",
@@ -122,6 +123,11 @@
     "url": "URL",
     "variables": "Variables",
     "view_my_links": "View my links"
+  },
+  "env": {
+    "environment": "Environment",
+    "selectEnv": "Please select environment",
+    "enterEnv":"Enter new environment"
   },
   "response": {
     "body": "Response Body",

@@ -1,10 +1,11 @@
-import { CheckCircleOutlined, DeleteOutlined, StopOutlined } from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import { styled, useTranslation } from '@arextest/arex-core';
 import { Button, Input, Space, Table, TableProps, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React from 'react';
 import { Updater } from 'use-immer';
 
+import { Icon } from '@/components';
 import { EnvironmentKeyValues } from '@/services/EnvironmentService/getEnvironments';
 
 const EditableKeyValueTable = styled(Table)<
@@ -88,7 +89,7 @@ export const useColumns = (
                 <Button
                   type='text'
                   size='small'
-                  icon={record.active ? <StopOutlined /> : <CheckCircleOutlined />}
+                  icon={<Icon name={record.active ? 'Unlock' : 'Lock'} />}
                   onClick={() => handleDisable(i)}
                 />
               </Tooltip>

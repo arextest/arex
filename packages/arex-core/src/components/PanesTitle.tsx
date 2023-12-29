@@ -5,7 +5,7 @@ import React, { ReactNode, useState } from 'react';
 
 import { SmallTextButton } from './index';
 
-export type PanesTitleProps = {
+export type PanesTitleProps = HTMLDivElement & {
   title: ReactNode;
   extra?: ReactNode;
   editable?: boolean; // when title types is string take effect
@@ -13,7 +13,7 @@ export type PanesTitleProps = {
 };
 
 const PanesTitle = styled((props: PanesTitleProps) => {
-  const { title, extra, editable, onSave, ...extraProps } = props;
+  const { title, extra, editable, onSave, style, ...extraProps } = props;
   const { token } = theme.useToken();
 
   const [editableTitle, setEditableTitle] = useState<string>(
@@ -32,10 +32,15 @@ const PanesTitle = styled((props: PanesTitleProps) => {
   };
 
   return (
-    <div style={{ marginBottom: `${token.margin}px` }} {...extraProps}>
+    // @ts-ignore
+    <div style={{ marginBottom: `${token.margin}px`, ...style }} {...extraProps}>
       <Space className='title'>
         {edit ? (
-          <Input value={editableTitle} onChange={(e) => setEditableTitle(e.target.value)} />
+          <Input
+            size='small'
+            value={editableTitle}
+            onChange={(e) => setEditableTitle(e.target.value)}
+          />
         ) : (
           <Typography.Title ellipsis level={3} style={{ marginBottom: 0 }}>
             {title}
@@ -60,6 +65,7 @@ const PanesTitle = styled((props: PanesTitleProps) => {
               color={'primary'}
               icon={<EditOutlined />}
               onClick={() => setEdit(true)}
+              style={{ marginLeft: '4px' }}
             />
           ))}
       </Space>
