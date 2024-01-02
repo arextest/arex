@@ -5,7 +5,7 @@
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
   "appId": "arextest.arex",
   "productName": "Arex",
-  "copyright": "Copyright © 2023 ${author}",
+  "copyright": "Copyright © 2024 ${author}",
   "asar": true,
   "directories": {
     "output": "release/${version}"
@@ -16,7 +16,7 @@
   ],
   "mac": {
     "artifactName": "${productName}_${version}.${ext}",
-    icon: "public/logo.png"
+    icon: "build/logo.png"
   },
   "win": {
     "executableName": "Arex",
@@ -30,6 +30,7 @@
         ]
       }
     ],
+    icon: "build/logo.ico",
     "artifactName": "${productName}_${version}.${ext}"
   },
   "nsis": {

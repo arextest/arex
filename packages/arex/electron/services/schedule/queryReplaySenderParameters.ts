@@ -44,7 +44,7 @@ export default async function queryReplaySenderParameters(params: QueryReplaySen
   const res = await ScheduleAxios.post<
     QueryReplaySenderParametersReq,
     AxiosResponse<QueryReplaySenderParametersRes>
-  >('/api/replay/local/queryReplaySenderParameters', params);
+  >('/schedule/replay/local/queryReplaySenderParameters', params);
   const parametersMap = res.data.data.replaySenderParametersMap;
   return await convertData<ReplaySenderParameters>(parametersMap);
 }

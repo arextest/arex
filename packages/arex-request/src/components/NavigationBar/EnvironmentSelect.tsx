@@ -1,6 +1,16 @@
 import { DeploymentUnitOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { styled, TooltipButton } from '@arextest/arex-core';
-import { Button, Divider, Input, Select, SelectProps, Space, Tooltip } from 'antd';
+import { FlexCenterWrapper, styled, TooltipButton } from '@arextest/arex-core';
+import {
+  Button,
+  Divider,
+  Empty,
+  Input,
+  Select,
+  SelectProps,
+  Space,
+  Tooltip,
+  Typography,
+} from 'antd';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -90,6 +100,14 @@ const EnvironmentSelect: FC<EnvironmentSelectProps> = (_props) => {
         dropdownStyle={{
           right: 4,
         }}
+        notFoundContent={
+          <FlexCenterWrapper style={{ padding: '12px' }}>
+            {Empty.PRESENTED_IMAGE_SIMPLE}
+            <Typography.Text type='secondary' style={{ paddingTop: '8px' }}>
+              {t('env.noEnv')}
+            </Typography.Text>
+          </FlexCenterWrapper>
+        }
         dropdownRender={(menu) => (
           <>
             {menu}

@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer, shell, ipcMain } from 'electron';
+import { contextBridge, shell, ipcMain, app } from 'electron';
 
 contextBridge.exposeInMainWorld('ipcMain', ipcMain);
 contextBridge.exposeInMainWorld('shell', shell);

@@ -125,6 +125,7 @@
   "env": {
     "environment": "环境",
     "selectEnv": "请选择环境",
+    "noEnv": "无环境",
     "enterEnv":"请输入新环境名称"
   },
   "response": {
