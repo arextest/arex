@@ -233,6 +233,7 @@
     "entryPoint": "EntryPoint",
     "agentVersion": "Agent Version",
     "agentHost": "Agent Host",
+    "debugTooltip": "Whether Agent outputs debug logs",
     "basic": "Basic",
     "duration": "Duration",
     "period": "Period",
