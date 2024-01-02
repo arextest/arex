@@ -11,10 +11,11 @@ export interface AgentData {
   dataUpdateTime: number;
   systemProperties?: CaseTags;
   tags?: CaseTags;
+  extendField: Record<string, string>;
 }
 
 export async function getAgentList(appId: string) {
-  const res = await request.get<AgentData[]>(
+  const res = await request.get<AgentData[] | null>(
     '/report/config/applicationInstances/useResultAsList/appId/' + appId,
   );
   return res.body;

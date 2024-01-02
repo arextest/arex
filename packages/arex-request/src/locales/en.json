@@ -127,6 +127,7 @@
   "env": {
     "environment": "Environment",
     "selectEnv": "Please select environment",
+    "noEnv": "No environment",
     "enterEnv":"Enter new environment"
   },
   "response": {

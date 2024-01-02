@@ -13,6 +13,7 @@ declare global {
     ipcMain: import('electron').IpcMain;
     shell: import('electron').Shell;
     platform: 'darwin' | 'win32' | 'linux' | undefined;
+    company: string;
     __locale__: string;
     __AREX_EXTENSION_INSTALLED__: boolean; // 是否安装了arex-chrome-extension
     __AREX_EXTENSION_VERSION__: string; // arex-chrome-extension 最新版本号

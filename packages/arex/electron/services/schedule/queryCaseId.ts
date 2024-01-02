@@ -26,7 +26,7 @@ export interface QueryCaseIdRes {
 
 export default async function queryCaseId(params: QueryCaseIdReq) {
   const res = await ScheduleAxios.post<QueryCaseIdReq, AxiosResponse<QueryCaseIdRes>>(
-    '/api/replay/local/queryCaseId',
+    '/schedule/replay/local/queryCaseId',
     params,
   );
   return res.data;

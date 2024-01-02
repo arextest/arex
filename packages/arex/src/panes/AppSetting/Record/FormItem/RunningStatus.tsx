@@ -1,14 +1,13 @@
 import { DeleteOutlined } from '@ant-design/icons';
 import { HelpTooltip, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { Badge, Button, Popconfirm, Table, Tag, Typography } from 'antd';
+import { App, Badge, Button, Popconfirm, Switch, Table, Tag, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import React, { FC } from 'react';
 
 import { ConfigService } from '@/services';
 import { AgentData } from '@/services/ConfigService';
-import { deleteAgent } from '@/services/ConfigService/deleteAgent';
 
 export interface RunningStatusProps {
   appId: string;
@@ -47,6 +46,7 @@ const AgentStatusMap: {
 };
 
 const RunningStatus: FC<RunningStatusProps> = (props) => {
+  const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
 
   const agentColumns: ColumnsType<AgentData> = [
@@ -102,14 +102,35 @@ const RunningStatus: FC<RunningStatusProps> = (props) => {
           : '-',
     },
     {
+      title: <HelpTooltip title={t('appSetting.debugTooltip')}>{t('replay.debug')}</HelpTooltip>,
+      align: 'center',
+      render: (_, record) => {
+        const debug = record.extendField?.['arex.enable.debug'] === 'true';
+        return (
+          <Switch
+            size='small'
+            checked={debug}
+            onChange={(value) => {
+              updateAgent({
+                appId: record.appId,
+                host: record.host,
+                extendField: {
+                  ...record.extendField,
+                  'arex.enable.debug': value ? 'true' : 'false',
+                },
+              });
+            }}
+          />
+        );
+      },
+    },
+    {
       title: t('replay.action', { ns: 'components' }),
       align: 'center',
       render: (_, record) => (
         <Popconfirm
           title={t('appSetting.confirmDelete', { ns: 'components' })}
-          onConfirm={() => {
-            confirm(record);
-          }}
+          onConfirm={() => deleteAgent({ appId: record.appId, id: record.id })}
           okText={t('yes', { ns: 'common' })}
           cancelText={t('no', { ns: 'common' })}
         >
@@ -124,22 +145,43 @@ const RunningStatus: FC<RunningStatusProps> = (props) => {
   const {
     data: agentData,
     loading: loadingAgentList,
+    refresh,
     run,
   } = useRequest(ConfigService.getAgentList, {
     defaultParams: [props.appId],
   });
-  const confirm = ({ appId, id }: AgentData) => {
-    deleteAgent({ appId, id }).then(() => {
-      run(props.appId);
-    });
-  };
+
+  const { run: updateAgent } = useRequest(ConfigService.updateAgent, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        message.success(t('message.updateSuccess', { ns: 'common' }));
+        refresh();
+      } else {
+        message.error(t('message.updateFailed', { ns: 'common' }));
+      }
+    },
+  });
+
+  const { run: deleteAgent } = useRequest(ConfigService.deleteAgent, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
+        message.success(t('message.delSuccess', { ns: 'common' }));
+        run(props.appId);
+      } else {
+        message.error(t('message.delFailed', { ns: 'common' }));
+      }
+    },
+  });
+
   return (
     <Table
       bordered
-      loading={loadingAgentList}
-      pagination={false}
       size='small'
-      dataSource={agentData}
+      pagination={false}
+      loading={loadingAgentList}
+      dataSource={agentData || []}
       columns={agentColumns}
     />
   );
