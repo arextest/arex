@@ -232,6 +232,7 @@
     "entryPoint": "主入口",
     "agentVersion": "Agent 版本",
     "agentHost": "Agent 地址",
+    "debugTooltip": "Agent 是否输出 debug 日志",
     "basic": "基础",
     "duration": "录制周期",
     "period": "录制时间",
