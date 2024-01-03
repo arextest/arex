@@ -178,6 +178,7 @@ const AppTitle: FC<AppTitleProps> = ({
   const planName = Form.useWatch('planName', form);
   const caseSourceRange = Form.useWatch('caseSourceRange', form);
   const operationList = Form.useWatch('operationList', form);
+  const caseCountLimit = Form.useWatch('caseCountLimit', form);
 
   const [openPathDropdown, setOpenPathDropdown] = useState(false);
 
@@ -203,6 +204,8 @@ const AppTitle: FC<AppTitleProps> = ({
       url.searchParams.append('caseSourceTo', caseSourceRange[1].valueOf().toString());
     }
     operationList?.length && url.searchParams.append('operationIds', operationList.join(','));
+    typeof caseCountLimit === 'number' &&
+      url.searchParams.append('caseCountLimit', caseCountLimit.toString());
     return url.toString();
   }, [appId, targetEnv, planName, caseSourceRange, operationList]);
 
