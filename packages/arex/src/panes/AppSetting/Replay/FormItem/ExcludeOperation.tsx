@@ -1,5 +1,5 @@
 import { DeleteOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
-import { styled, TooltipButton, useTranslation } from '@arextest/arex-core';
+import { css, styled, TooltipButton, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Input, Select, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
@@ -46,7 +46,6 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
       title: t('appSetting.path'),
       dataIndex: 'key',
       key: 'key',
-      width: '50%',
       render: (text, record, i) => (
         <Input
           value={text}
@@ -59,7 +58,6 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
       title: t('appSetting.value'),
       dataIndex: 'value',
       key: 'value',
-      width: '50%',
       render: (text, record, i) => (
         <Select
           mode='tags'
@@ -72,21 +70,9 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
       ),
     },
     {
-      title: (
-        <Button
-          size='small'
-          icon={<PlusOutlined />}
-          onClick={() => {
-            setValue((state) => {
-              state.push({ id: '', key: '', value: [] });
-            });
-          }}
-        >
-          {t('add', { ns: 'common' })}
-        </Button>
-      ),
+      title: t('action', { ns: 'common' }),
       key: 'actions',
-      width: 72,
+      width: 80,
       align: 'center',
       className: 'actions',
       render: (text, record, i) => (
@@ -164,6 +150,26 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
         pagination={false}
         showHeader={true}
         columns={columns}
+        footer={() => (
+          <Button
+            block
+            type='text'
+            size='small'
+            icon={<PlusOutlined />}
+            onClick={() => {
+              setValue((state) => {
+                state.push({ id: '', key: '', value: [] });
+              });
+            }}
+          >
+            {t('add', { ns: 'common' })}
+          </Button>
+        )}
+        css={css`
+          .ant-table-footer {
+            padding: 4px;
+          }
+        `}
       />
     </ExcludeOperationWrapper>
   );

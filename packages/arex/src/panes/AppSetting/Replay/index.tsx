@@ -86,7 +86,32 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
 
         <Form.Item
           label={
-            <HelpTooltip title={t('appSetting.exclusionTooltip')}>
+            <HelpTooltip
+              maxWidth='360px'
+              title={
+                <>
+                  <div>{t('appSetting.skipMockTooltip')}</div>
+                  <div style={{ marginTop: '4px' }}>DB:</div>
+                  <div>
+                    {`Path: <DB dbName> `}
+                    <strong>demoDb</strong>
+                  </div>
+                  <div>
+                    {`Value: <Operation type> `}
+                    <strong>query,insert</strong>
+                  </div>
+                  <div style={{ marginTop: '4px' }}>Http client:</div>
+                  <div>
+                    {`Path: <Class fullName> `}
+                    <strong>com.company.demoClass</strong>
+                  </div>
+                  <div>
+                    {`Value: <Method Name> `}
+                    <strong>DemoMethod</strong>
+                  </div>
+                </>
+              }
+            >
               {t('appSetting.skipMock')}
             </HelpTooltip>
           }
