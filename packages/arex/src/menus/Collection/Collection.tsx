@@ -362,6 +362,7 @@ const Collection: ArexMenuFC = (props) => {
     navPane({
       type: PanesType.WORKSPACE,
       id: workspaceId,
+      name: workspaces.find((w) => w.id === workspaceId)?.workspaceName,
     });
   };
 

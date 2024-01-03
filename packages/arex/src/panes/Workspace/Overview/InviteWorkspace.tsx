@@ -1,14 +1,14 @@
 import { UserAddOutlined } from '@ant-design/icons';
-import { getLocalStorage, useTranslation } from '@arextest/arex-core';
+import { getLocalStorage, useArexPaneProps, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Form, Modal, Select, Space, Typography } from 'antd';
 import React, { FC, useState } from 'react';
 
 import { EMAIL_KEY, RoleEnum } from '@/constant';
 import { FileSystemService } from '@/services';
-import { useWorkspaces } from '@/store';
-const { Text } = Typography;
+import { decodePaneKey } from '@/store/useMenusPanes';
 
+const { Text } = Typography;
 const { Option } = Select;
 
 export type InviteWorkspaceProps = {
@@ -19,7 +19,8 @@ const InviteWorkspace: FC<InviteWorkspaceProps> = (props) => {
   const { message } = App.useApp();
   const { t } = useTranslation('components');
   const email = getLocalStorage<string>(EMAIL_KEY);
-  const { activeWorkspaceId } = useWorkspaces();
+  const { paneKey } = useArexPaneProps();
+  const { id: workspaceId } = decodePaneKey(paneKey);
 
   const [open, setOpen] = useState<boolean>(false);
 
@@ -56,7 +57,7 @@ const InviteWorkspace: FC<InviteWorkspaceProps> = (props) => {
       invitor: email as string,
       role: values.role,
       userNames: values.email,
-      workspaceId: activeWorkspaceId,
+      workspaceId,
       arexUiUrl: `${window.location.protocol}/${window.location.host}`,
     };
     inviteToWorkspace(params);
