@@ -45,6 +45,7 @@ export type CreatePlanReq = {
   caseSourceFrom: number;
   caseSourceTo: number;
   operationCaseInfoList?: { operationId: string; replayIdList?: string[] }[];
+  caseCountLimit?: number;
   caseTags?: CaseTags;
 };
 

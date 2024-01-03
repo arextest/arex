@@ -5,7 +5,7 @@ import React, { ReactNode, useState } from 'react';
 
 import { SmallTextButton } from './index';
 
-export type PanesTitleProps = HTMLDivElement & {
+export type PanesTitleProps = Omit<HTMLDivElement, 'title'> & {
   title: ReactNode;
   extra?: ReactNode;
   editable?: boolean; // when title types is string take effect

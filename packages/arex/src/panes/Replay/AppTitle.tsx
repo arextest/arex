@@ -29,6 +29,7 @@ import {
   DatePicker,
   Form,
   Input,
+  InputNumber,
   Modal,
   Popover,
   Skeleton,
@@ -61,6 +62,7 @@ type CreatePlanForm = {
   targetEnv: string;
   caseSourceRange: [Dayjs, Dayjs];
   operationList?: string[];
+  caseCountLimit?: number;
   caseTags?: CaseTags;
 };
 
@@ -176,6 +178,7 @@ const AppTitle: FC<AppTitleProps> = ({
   const planName = Form.useWatch('planName', form);
   const caseSourceRange = Form.useWatch('caseSourceRange', form);
   const operationList = Form.useWatch('operationList', form);
+  const caseCountLimit = Form.useWatch('caseCountLimit', form);
 
   const [openPathDropdown, setOpenPathDropdown] = useState(false);
 
@@ -201,8 +204,10 @@ const AppTitle: FC<AppTitleProps> = ({
       url.searchParams.append('caseSourceTo', caseSourceRange[1].valueOf().toString());
     }
     operationList?.length && url.searchParams.append('operationIds', operationList.join(','));
+    typeof caseCountLimit === 'number' &&
+      url.searchParams.append('caseCountLimit', caseCountLimit.toString());
     return url.toString();
-  }, [appId, targetEnv, planName, caseSourceRange, operationList]);
+  }, [appId, targetEnv, planName, caseSourceRange, operationList, caseCountLimit]);
 
   /**
    * 创建回放
@@ -256,6 +261,7 @@ const AppTitle: FC<AppTitleProps> = ({
           })),
           operator: email as string,
           replayPlanType: Number(Boolean(values.operationList?.length)),
+          caseCountLimit: values.caseCountLimit,
           caseTags: values.caseTags,
         });
 
@@ -460,7 +466,6 @@ const AppTitle: FC<AppTitleProps> = ({
                     <Form.Item label={t('replay.planName')} name='planName'>
                       <Input allowClear placeholder={t('replay.planNamePlaceholder') as string} />
                     </Form.Item>
-
                     <Form.Item
                       label={
                         <HelpTooltip title={t('replay.pathsTooltip')}>
@@ -473,6 +478,16 @@ const AppTitle: FC<AppTitleProps> = ({
                         appId={appId}
                         open={openPathDropdown}
                         placeholder={t('replay.pathsPlaceholder')}
+                      />
+                    </Form.Item>
+
+                    <Form.Item label={t('replay.caseCountLimit')} name='caseCountLimit'>
+                      <InputNumber
+                        precision={0}
+                        min={0}
+                        addonAfter={t('replay.caseCountUnit')}
+                        placeholder={t('replay.caseCountLimitPlaceholder') as string}
+                        style={{ width: '100%' }}
                       />
                     </Form.Item>
 
