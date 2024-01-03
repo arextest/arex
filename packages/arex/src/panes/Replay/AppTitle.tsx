@@ -329,6 +329,7 @@ const AppTitle: FC<AppTitleProps> = ({
     navPane({
       id: appId,
       type: PanesType.APP_SETTING,
+      name: appName,
     });
   }, [appId]);
 
