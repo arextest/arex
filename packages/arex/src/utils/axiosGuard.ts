@@ -51,7 +51,7 @@ if (!isClient) {
         url: request.url,
         headers: {
           ...request.headers,
-          'content-type': (request.headers['content-type']||'').includes('application/json')
+          'content-type': (request.headers['content-type'] || '').includes('application/json')
             ? 'application/json'
             : request.headers['content-type'],
         },

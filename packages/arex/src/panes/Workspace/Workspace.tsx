@@ -1,15 +1,19 @@
-import { ArexPaneFC, useTranslation } from '@arextest/arex-core';
+import { ArexPaneFC, useArexPaneProps, useTranslation } from '@arextest/arex-core';
 import { Tabs } from 'antd';
 import React from 'react';
 
 import { PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
+import { decodePaneKey } from '@/store/useMenusPanes';
 
 import CollectionLabel from './CollectionLabel';
 import Overview from './Overview';
 
 const WorkspaceOverview: ArexPaneFC<{ key?: string } | undefined> = (props) => {
   const { data } = props;
+  const { paneKey } = useArexPaneProps();
+  const { id: workspaceId } = decodePaneKey(paneKey);
+
   const { t } = useTranslation('components');
   const navPane = useNavPane();
 
@@ -30,6 +34,9 @@ const WorkspaceOverview: ArexPaneFC<{ key?: string } | undefined> = (props) => {
     navPane({
       type: PanesType.WORKSPACE,
       id: workspaceId,
+      data: {
+        key,
+      },
     });
   };
 
@@ -38,9 +45,7 @@ const WorkspaceOverview: ArexPaneFC<{ key?: string } | undefined> = (props) => {
       tabPosition={'left'}
       defaultActiveKey={data?.key}
       items={item}
-      onChange={(activeKey) => {
-        console.log(activeKey);
-      }}
+      onChange={handleTabChange}
     />
   );
 };

@@ -1,5 +1,5 @@
 import { DeleteOutlined, LogoutOutlined, SyncOutlined, UserOutlined } from '@ant-design/icons';
-import { getLocalStorage, useTranslation } from '@arextest/arex-core';
+import { getLocalStorage, useArexPaneProps, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import {
   App,
@@ -19,7 +19,8 @@ import { FC } from 'react';
 
 import { EMAIL_KEY, RoleEnum } from '@/constant';
 import { FileSystemService } from '@/services';
-import { useMenusPanes, useWorkspaces } from '@/store';
+import { useWorkspaces } from '@/store';
+import { decodePaneKey } from '@/store/useMenusPanes';
 
 import InviteWorkspace from './InviteWorkspace';
 
@@ -28,10 +29,10 @@ const { Text } = Typography;
 const WorkspaceSetting: FC = () => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
-
+  const { paneKey } = useArexPaneProps();
+  const { id: workspaceId } = decodePaneKey(paneKey);
   const { workspaces, activeWorkspaceId, getWorkspaces } = useWorkspaces();
 
-  const { reset: resetPane } = useMenusPanes();
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
   const roleOptions = useMemo(
@@ -55,7 +56,7 @@ const WorkspaceSetting: FC = () => {
   const { run: renameWorkspace } = useRequest(
     (workspaceName) =>
       FileSystemService.renameWorkspace({
-        id: activeWorkspaceId as string,
+        id: workspaceId as string,
         workspaceName,
         userName,
       }),
@@ -75,9 +76,9 @@ const WorkspaceSetting: FC = () => {
   };
 
   const { data: workspaceUsers = [], run: queryUsersByWorkspace } = useRequest(
-    () => FileSystemService.queryUsersByWorkspace({ workspaceId: activeWorkspaceId as string }),
+    () => FileSystemService.queryUsersByWorkspace({ workspaceId }),
     {
-      ready: !!activeWorkspaceId,
+      ready: !!workspaceId,
     },
   );
 
@@ -90,11 +91,11 @@ const WorkspaceSetting: FC = () => {
     (params: { userName: string; role: number }) =>
       FileSystemService.changeRole({
         ...params,
-        workspaceId: activeWorkspaceId as string,
+        workspaceId,
       }),
     {
       manual: true,
-      ready: !!activeWorkspaceId,
+      ready: !!workspaceId,
       onSuccess(res) {
         if (!res.responseCode) {
           queryUsersByWorkspace();
@@ -110,11 +111,11 @@ const WorkspaceSetting: FC = () => {
     (params: { userName: string }) =>
       FileSystemService.removeUserFromWorkspace({
         ...params,
-        workspaceId: activeWorkspaceId as string,
+        workspaceId,
       }),
     {
       manual: true,
-      ready: !!activeWorkspaceId,
+      ready: !!workspaceId,
       onSuccess(res) {
         if (!res.responseCode) {
           queryUsersByWorkspace();
@@ -127,19 +128,23 @@ const WorkspaceSetting: FC = () => {
   );
 
   const resetWorkspaces = () => {
-    // TODO workspaces[0] 可能无效
-    getWorkspaces(workspaces[0].id);
-    resetPane();
+    if (workspaceId === activeWorkspaceId) {
+      // TODO workspaces[0] 可能无效
+      getWorkspaces(workspaces[0].id);
+      // resetPane(); // 目前可能存在不同的 workspace pane，所以不能全部关闭
+    } else {
+      getWorkspaces();
+    }
   };
 
   const { run: leaveWorkspace } = useRequest(
     () =>
       FileSystemService.leaveWorkspace({
-        workspaceId: activeWorkspaceId as string,
+        workspaceId,
       }),
     {
       manual: true,
-      ready: !!activeWorkspaceId,
+      ready: !!workspaceId,
       onSuccess(success) {
         if (success) {
           message.success(t('message.leaveSuccess', { ns: 'common' }));
@@ -154,12 +159,12 @@ const WorkspaceSetting: FC = () => {
   const { run: deleteWorkspace } = useRequest(
     () =>
       FileSystemService.deleteWorkspace({
-        workspaceId: activeWorkspaceId as string,
+        workspaceId,
         userName: userName as string,
       }),
     {
       manual: true,
-      ready: !!activeWorkspaceId,
+      ready: !!workspaceId,
       onSuccess(success) {
         if (success) {
           message.success(t('message.delSuccess', { ns: 'common' }));
@@ -179,7 +184,7 @@ const WorkspaceSetting: FC = () => {
           layout='inline'
           name='basic'
           initialValues={{
-            workspaceName: workspaces.find((workspace) => workspace.id === activeWorkspaceId)
+            workspaceName: workspaces.find((workspace) => workspace.id === workspaceId)
               ?.workspaceName,
           }}
           onFinish={onFinish}
@@ -201,10 +206,10 @@ const WorkspaceSetting: FC = () => {
         </Form>
         <Divider />
 
-        <Space>
-          <Text>{t('workSpace.inviteTitle')}</Text>
+        <div>
+          <Text style={{ marginRight: '8px' }}>{t('workSpace.inviteTitle')}</Text>
           <InviteWorkspace onInvite={queryUsersByWorkspace} />
-        </Space>
+        </div>
 
         <Divider />
 
