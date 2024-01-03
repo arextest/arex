@@ -310,6 +310,7 @@
     "QPSTips": "有效范围 1 - 20",
     "emptyQPS": "请输入最大QPS",
     "skipMock": "不Mock依赖",
+    "skipMockTooltip": "设置不需要回放的接口，多个值使用','分隔。",
     "sync": "同步",
     "emptyContractTip": "无报文契约，请尝试同步更新契约",
     "contract": "契约",
