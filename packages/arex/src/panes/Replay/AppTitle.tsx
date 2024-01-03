@@ -207,7 +207,7 @@ const AppTitle: FC<AppTitleProps> = ({
     typeof caseCountLimit === 'number' &&
       url.searchParams.append('caseCountLimit', caseCountLimit.toString());
     return url.toString();
-  }, [appId, targetEnv, planName, caseSourceRange, operationList]);
+  }, [appId, targetEnv, planName, caseSourceRange, operationList, caseCountLimit]);
 
   /**
    * 创建回放
