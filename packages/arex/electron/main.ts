@@ -63,7 +63,7 @@ app.on('window-all-closed', () => {
 
 app.whenReady().then(() => {
   createWindow();
-  autoUpdateInit();
+  autoUpdateInit(win);
   oauth((pathname, code) => {
     openWindow(win, `${pathname}?code=${code}`);
   });
