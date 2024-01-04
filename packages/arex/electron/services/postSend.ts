@@ -9,7 +9,7 @@ export interface PostSendReq {
   sendStatusType: SendStatusType;
 }
 
-export default async function postSend(params: PostSendReq) {
+export async function postSend(params: PostSendReq) {
   const res = await ScheduleAxios.post('/schedule/replay/local/postSend', params);
   return res.data;
 }
