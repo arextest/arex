@@ -4,7 +4,7 @@ import { zstdDecompress } from '../../helper';
 import { ScheduleAxios } from './index';
 
 export interface QueryReplaySenderParametersReq {
-  caseIds: string[];
+  caseIds: string[]; // case 最大数为 100
   planId: string;
   replayPlanType: number; // TODO enum
 }

@@ -15,7 +15,7 @@ import preSend from './services/schedule/preSend';
 import axios, { AxiosResponse } from 'axios';
 import postSend from './services/schedule/postSend';
 import { SendStatusType } from './services/schedule/type';
-import { getLocalConfig } from './helper';
+import { chunkArray, getLocalConfig } from './helper';
 import process from 'process';
 
 const companyName =
@@ -95,11 +95,16 @@ server.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
     res.send({ desc: 'success', result: 1, data: { reasonCode: 1, replayPlanId: planId } });
 
     for (const { warmUpId, caseIds } of replayCaseBatchInfos) {
-      const caseParametersList = await queryReplaySenderParameters({
-        planId,
-        replayPlanType: 0,
-        caseIds,
-      });
+      const chunkCaseIds = chunkArray(caseIds, 100);
+      const chunkPromises = chunkCaseIds.map((caseIds) =>
+        queryReplaySenderParameters({ planId, replayPlanType: 0, caseIds }),
+      );
+      const chunkCaseParametersList = await Promise.all(chunkPromises);
+
+      const caseParametersList = chunkCaseParametersList.reduce((acc, cur) => {
+        return { ...acc, ...cur };
+      }, {});
+
       const caseParametersMap = new Map(Object.entries(caseParametersList));
 
       // case query Parameters failed (in caseIds but not in key of caseParametersMap)
