@@ -1,10 +1,10 @@
 import { AxiosResponse } from 'axios';
 
-import { zstdDecompress } from '../../helper';
+import { zstdDecompress } from '../helper';
 import { ScheduleAxios } from './index';
 
 export interface QueryReplaySenderParametersReq {
-  caseIds: string[];
+  caseIds: string[]; // case 最大数为 100
   planId: string;
   replayPlanType: number; // TODO enum
 }
@@ -40,7 +40,7 @@ async function convertData<T>(data: Record<string, string>): Promise<Record<stri
   return result;
 }
 
-export default async function queryReplaySenderParameters(params: QueryReplaySenderParametersReq) {
+export async function queryReplaySenderParameters(params: QueryReplaySenderParametersReq) {
   const res = await ScheduleAxios.post<
     QueryReplaySenderParametersReq,
     AxiosResponse<QueryReplaySenderParametersRes>

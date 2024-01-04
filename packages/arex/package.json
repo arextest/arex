@@ -1,7 +1,7 @@
 {
   "name": "arex",
   "private": true,
-  "version": "0.6.14",
+  "version": "0.6.15",
   "author": "arextest",
   "main": "dist-electron/main.js",
   "files": [
@@ -22,10 +22,10 @@
     "@arextest/arex-common": "*",
     "@arextest/arex-core": "*",
     "@arextest/arex-request": "*",
-    "@formkit/auto-animate": "^0.7.0",
-    "@monaco-editor/react": "^4.6.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@formkit/auto-animate": "^0.7.0",
+    "@monaco-editor/react": "^4.6.0",
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",
     "antd": "^5.11.0",

@@ -340,9 +340,12 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
     manual: true,
     ready: !!selectedPlan?.planId,
     onSuccess(success) {
-      success
-        ? message.success(t('message.success', { ns: 'common' }))
-        : message.error(t('message.error', { ns: 'common' }));
+      if (success) {
+        message.success(t('message.success', { ns: 'common' }));
+        onRefresh?.();
+      } else {
+        message.error(t('message.error', { ns: 'common' }));
+      }
     },
   });
 

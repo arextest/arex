@@ -104,3 +104,16 @@ export async function zstdDecompress(str: string) {
   const decompressed_data = fzstd.decompress(base64ToBytes(str));
   return new TextDecoder().decode(decompressed_data);
 }
+
+export function chunkArray<T>(inputArray: T[], chunkSize: number) {
+  if (chunkSize <= 0) {
+    throw new Error('Chunk size should be greater than 0');
+  }
+
+  const result: T[][] = [];
+  for (let i = 0; i < inputArray.length; i += chunkSize) {
+    result.push(inputArray.slice(i, i + chunkSize));
+  }
+
+  return result;
+}

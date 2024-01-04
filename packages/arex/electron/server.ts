@@ -2,26 +2,28 @@ import express from 'express';
 import logger from 'electron-log';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-
+import process from 'process';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import axios, { AxiosResponse } from 'axios';
+
+import { chunkArray, getLocalConfig } from './helper';
+import { SendStatusType } from './services/type';
+import type { QueryCaseIdReq, ReplaySenderParameters } from './services';
+import {
+  queryReplaySenderParameters,
+  queryCaseId,
+  preSend,
+  postSend,
+  queryReplayMaxQps,
+} from './services';
 
 import port from '../config/port.json';
 import proxy from '../config/proxy-electron-sass.json';
-import queryCaseId, { QueryCaseIdReq } from './services/schedule/queryCaseId';
-import queryReplaySenderParameters, {
-  ReplaySenderParameters,
-} from './services/schedule/queryReplaySenderParameters';
-import preSend from './services/schedule/preSend';
-import axios, { AxiosResponse } from 'axios';
-import postSend from './services/schedule/postSend';
-import { SendStatusType } from './services/schedule/type';
-import { getLocalConfig } from './helper';
-import process from 'process';
 
-const companyName = getLocalConfig('companyName');
-// process.env.NODE_ENV === 'development'
-//   ? process.env.VITE_COMPANY_NAME
-//   : getLocalConfig('companyName');
+const companyName =
+  process.env.NODE_ENV === 'development'
+    ? process.env.VITE_COMPANY_NAME
+    : getLocalConfig('companyName');
 
 // 解析提交的json参数
 const jsonParser = bodyParser.json();
@@ -79,27 +81,64 @@ server.get('/env', (req, res) => {
 });
 
 // local Schedule createPlan
+const parallelSendCases = async (
+  caseParametersMap: Map<string, ReplaySenderParameters>,
+  planId: string,
+  warmUpId: string,
+  maxQps: number,
+) => {
+  const caseEntries = Array.from(caseParametersMap.entries());
+  const totalCases = caseEntries.length;
+  let currentIndex = 0;
+
+  async function processBatch() {
+    const batch = caseEntries.slice(currentIndex, currentIndex + maxQps);
+    currentIndex += maxQps;
+
+    const batchPromises = batch.map(([caseId, caseParameter]) =>
+      sendCaseFlow(caseParameter, planId, caseId, warmUpId),
+    );
+
+    await Promise.all(batchPromises);
+
+    if (currentIndex < totalCases) {
+      await processBatch(); // Continue processing the next batch
+    }
+  }
+
+  await processBatch();
+  logger.log('All cases sent successfully.');
+};
+
 server.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
   logger.log('[request:/api/createPlan] ', req.body);
 
   try {
-    const caseResponse = await queryCaseId(req.body);
-    const { result, desc, data } = caseResponse;
+    const caseResponse = await Promise.all([
+      queryCaseId(req.body),
+      queryReplayMaxQps({ appId: req.body.appId }),
+    ]);
+    const [{ result, desc, data }, maxQps = 20] = caseResponse;
     if (result !== 1) {
       throw Error(desc);
     }
 
-    const { replayCaseBatchInfos, planId } = caseResponse.data;
+    const { replayCaseBatchInfos, planId } = data;
 
-    logger.log(`[planId: ${planId}]`, JSON.stringify(caseResponse.data));
+    logger.log(`[planId: ${planId}]`, JSON.stringify(data));
     res.send({ desc: 'success', result: 1, data: { reasonCode: 1, replayPlanId: planId } });
 
     for (const { warmUpId, caseIds } of replayCaseBatchInfos) {
-      const caseParametersList = await queryReplaySenderParameters({
-        planId,
-        replayPlanType: 0,
-        caseIds,
-      });
+      const chunkCaseIds = chunkArray(caseIds, 100);
+      const chunkPromises = chunkCaseIds.map((caseIds) =>
+        queryReplaySenderParameters({ planId, replayPlanType: 0, caseIds }),
+      );
+      const chunkCaseParametersList = await Promise.all(chunkPromises);
+
+      const caseParametersList = chunkCaseParametersList.reduce((acc, cur) => {
+        return { ...acc, ...cur };
+      }, {});
+
       const caseParametersMap = new Map(Object.entries(caseParametersList));
 
       // case query Parameters failed (in caseIds but not in key of caseParametersMap)
@@ -120,9 +159,11 @@ server.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
       }
 
       logger.log(`[caseIds]:`, caseIds);
-      for (const [caseId, caseParameter] of caseParametersMap) {
-        await sendCaseFlow(caseParameter, planId, caseId, warmUpId);
-      }
+      // for (const [caseId, caseParameter] of caseParametersMap) {
+      //   await sendCaseFlow(caseParameter, planId, caseId, warmUpId);
+      // }
+
+      parallelSendCases(caseParametersMap, planId, warmUpId, maxQps);
     }
   } catch (err) {
     logger.error(err);

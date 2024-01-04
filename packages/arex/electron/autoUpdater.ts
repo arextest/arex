@@ -1,9 +1,9 @@
-import { app, dialog } from 'electron';
+import { app, BrowserWindow, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import logger from 'electron-log';
 import { getLocalData, setLocalData, sleep } from './helper';
 
-export async function autoUpdateInit() {
+export async function autoUpdateInit(win: BrowserWindow) {
   await sleep(5000);
   //每次启动自动更新检查 更新版本 --可以根据自己方式更新，定时或者什么
   autoUpdater.checkForUpdates();
@@ -28,9 +28,12 @@ export async function autoUpdateInit() {
   // 在应用程序启动时设置差分下载逻辑
   autoUpdater.on('download-progress', async (progress) => {
     logger.info(progress);
+    win.setProgressBar(progress.percent / 100);
   });
+
   //在更新下载完成的时候触发。
   autoUpdater.on('update-downloaded', (res) => {
+    win.setProgressBar(-1);
     logger.info('下载完毕！提示安装更新');
     logger.info(res);
     //dialog 想要使用，必须在BrowserWindow创建之后
