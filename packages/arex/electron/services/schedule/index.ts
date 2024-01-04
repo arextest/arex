@@ -4,10 +4,10 @@ import process from 'process';
 import proxy from '../../../config/proxy-electron-sass.json';
 import { getLocalConfig } from '../../helper';
 
-const companyName = getLocalConfig('companyName');
-// process.env.NODE_ENV === 'development'
-//   ? process.env.VITE_COMPANY_NAME
-//   : getLocalConfig('companyName');
+const companyName =
+  process.env.NODE_ENV === 'development'
+    ? process.env.VITE_COMPANY_NAME
+    : getLocalConfig('companyName');
 
 const baseURL: string = proxy
   .find((item) => item.path === '/schedule')

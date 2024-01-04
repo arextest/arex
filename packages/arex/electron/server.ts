@@ -18,10 +18,10 @@ import { SendStatusType } from './services/schedule/type';
 import { getLocalConfig } from './helper';
 import process from 'process';
 
-const companyName = getLocalConfig('companyName');
-// process.env.NODE_ENV === 'development'
-//   ? process.env.VITE_COMPANY_NAME
-//   : getLocalConfig('companyName');
+const companyName =
+  process.env.NODE_ENV === 'development'
+    ? process.env.VITE_COMPANY_NAME
+    : getLocalConfig('companyName');
 
 // 解析提交的json参数
 const jsonParser = bodyParser.json();
