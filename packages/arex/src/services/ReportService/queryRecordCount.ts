@@ -12,6 +12,6 @@ export interface QueryRecordCountRes {
 
 export async function queryRecordCount(params: QueryRecordCountReq) {
   return request
-    .post<QueryRecordCountRes>('/report/report/countRecord', params)
+    .post<QueryRecordCountRes>('/webApi/report/countRecord', params)
     .then((res) => Promise.resolve(res.body.recordedCaseCount));
 }

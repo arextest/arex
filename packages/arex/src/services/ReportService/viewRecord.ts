@@ -52,7 +52,7 @@ export interface ViewRecordRes {
 }
 
 export async function viewRecord(params: ViewRecordReq) {
-  const res = await axios.post<ViewRecordRes>('/report/replay/query/viewRecord', params, {
+  const res = await axios.post<ViewRecordRes>('/webApi/replay/query/viewRecord', params, {
     headers: {
       'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
       appId: getLocalStorage<string>(APP_ID_KEY),

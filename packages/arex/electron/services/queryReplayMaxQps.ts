@@ -6,6 +6,6 @@ export async function queryReplayMaxQps(params: { appId: string }) {
       appId: string;
       sendMaxQps: number;
     };
-  }>('/report/config/schedule/useResult/appId/' + params.appId);
+  }>('/webApi/config/schedule/useResult/appId/' + params.appId);
   return res.data.body.sendMaxQps;
 }

@@ -37,6 +37,6 @@ export interface QueryPlanItemStatisticsRes {
 
 export async function queryPlanItemStatistics(params: QueryPlanItemStatisticsReq) {
   return request
-    .post<QueryPlanItemStatisticsRes>('/report/report/queryPlanItemStatistics', params)
+    .post<QueryPlanItemStatisticsRes>('/webApi/report/queryPlanItemStatistics', params)
     .then((res) => Promise.resolve(res.body.planItemStatisticList));
 }

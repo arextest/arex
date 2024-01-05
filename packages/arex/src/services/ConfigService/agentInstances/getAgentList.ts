@@ -16,7 +16,7 @@ export interface AgentData {
 
 export async function getAgentList(appId: string) {
   const res = await request.get<AgentData[] | null>(
-    '/report/config/applicationInstances/useResultAsList/appId/' + appId,
+    '/webApi/config/applicationInstances/useResultAsList/appId/' + appId,
   );
   return res.body;
 }

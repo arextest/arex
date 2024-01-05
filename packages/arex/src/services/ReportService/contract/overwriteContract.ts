@@ -10,7 +10,7 @@ export interface OverwriteContractReq {
 }
 
 export async function overwriteContract(params: OverwriteContractReq) {
-  const res = await request.post<boolean>('/report/report/overwriteContract', params);
+  const res = await request.post<boolean>('/webApi/report/overwriteContract', params);
 
   return res.body;
 }

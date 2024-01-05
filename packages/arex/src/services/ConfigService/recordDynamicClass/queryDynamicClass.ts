@@ -18,7 +18,7 @@ export type QueryRecordDynamicClassRes = DynamicClass[] | null;
 
 export async function queryDynamicClass(params: QueryRecordDynamicClassReq) {
   const res = await request.get<QueryRecordDynamicClassRes | undefined>(
-    '/report/config/dynamicClass/useResultAsList/appId/' + params.appId,
+    '/webApi/config/dynamicClass/useResultAsList/appId/' + params.appId,
   );
   return res.body;
 }

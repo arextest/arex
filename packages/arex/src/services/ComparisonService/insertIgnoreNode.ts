@@ -20,7 +20,7 @@ export type InterfaceIgnoreNode = {
 
 export async function insertIgnoreNode(params: IgnoreNodeBase | InterfaceIgnoreNode) {
   const res = await request.post<boolean>(
-    '/report/config/comparison/exclusions/modify/INSERT',
+    '/webApi/config/comparison/exclusions/modify/INSERT',
     params,
   );
   return res.body;

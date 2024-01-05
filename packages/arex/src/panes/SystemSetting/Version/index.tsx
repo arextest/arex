@@ -67,7 +67,7 @@ const Version: FC = () => {
   const { t } = useTranslation(['components']);
 
   const [form] = Form.useForm<{
-    report?: string;
+    api?: string;
     schedule?: string;
     storage?: string;
   }>();
@@ -82,7 +82,7 @@ const Version: FC = () => {
   });
 
   useRequest(ReportService.getReportServiceVersion, {
-    ...serviceVersionHandler('report'),
+    ...serviceVersionHandler('api'),
   });
 
   useRequest(ScheduleService.getScheduleServiceVersion, {
@@ -109,7 +109,7 @@ const Version: FC = () => {
         <Form.Item label={'UI'} style={{ marginBottom: '-4px' }}>
           <AppVersion />
         </Form.Item>
-        <Form.Item label={'REPORT'} name='report' style={{ marginBottom: '-4px' }}>
+        <Form.Item label={'API'} name='api' style={{ marginBottom: '-4px' }}>
           <Input readOnly bordered={false} />
         </Form.Item>
         <Form.Item label={'SCHEDULE'} name='schedule' style={{ marginBottom: '-4px' }}>

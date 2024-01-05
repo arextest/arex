@@ -7,7 +7,7 @@ export interface UpdateSortNodeReq extends SortNodePathKey {
 
 export async function updateSortNode(params: UpdateSortNodeReq) {
   const res = await request.post<boolean>(
-    '/report/config/comparison/listsort/modify/UPDATE',
+    '/webApi/config/comparison/listsort/modify/UPDATE',
     params,
   );
   return res.body;

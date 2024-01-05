@@ -12,6 +12,6 @@ export type SaveEnvironmentRes = {
 
 export default async function saveEnvironment(params: SaveEnvironmentReq) {
   return request
-    .post<SaveEnvironmentRes>(`/report/environment/saveEnvironment`, params)
+    .post<SaveEnvironmentRes>(`/webApi/environment/saveEnvironment`, params)
     .then((res) => res.body);
 }

@@ -7,6 +7,6 @@ export type DeleteWorkspaceReq = {
 
 export async function deleteWorkspace(params: DeleteWorkspaceReq) {
   return request
-    .post<boolean>(`/report/filesystem/deleteWorkspace`, params)
+    .post<boolean>(`/webApi/filesystem/deleteWorkspace`, params)
     .then((res) => res.body);
 }

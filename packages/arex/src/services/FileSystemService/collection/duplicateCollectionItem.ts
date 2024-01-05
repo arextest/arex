@@ -7,5 +7,5 @@ export type DuplicateCollectionItemReq = {
 };
 
 export async function duplicateCollectionItem(params: DuplicateCollectionItemReq) {
-  return request.post(`/report/filesystem/duplicate`, params);
+  return request.post(`/webApi/filesystem/duplicate`, params);
 }

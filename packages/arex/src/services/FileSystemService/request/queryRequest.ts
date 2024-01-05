@@ -18,7 +18,7 @@ export async function queryRequest(params: {
   }
 > {
   const res = await request.post<any>(
-    `/report/filesystem/query${
+    `/webApi/filesystem/query${
       params.nodeType === CollectionNodeType.interface ? 'Interface' : 'Case'
     }`,
     params,
