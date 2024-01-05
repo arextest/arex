@@ -18,7 +18,7 @@ RUN pnpm run build
 
 FROM pnpm-base AS arex
 # runtime server
-COPY --from=build /app/arex-server/ /app/
+COPY --from=build /app/packages/arex-server/ /app/
 
 # frontend build product
 COPY --from=build /app/packages/arex/dist /app/dist
