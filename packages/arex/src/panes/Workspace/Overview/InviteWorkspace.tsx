@@ -9,7 +9,6 @@ import { FileSystemService } from '@/services';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
 const { Text } = Typography;
-const { Option } = Select;
 
 export type InviteWorkspaceProps = {
   onInvite?: () => void;
@@ -101,26 +100,31 @@ const InviteWorkspace: FC<InviteWorkspaceProps> = (props) => {
           </Form.Item>
 
           <Form.Item name='role' label={t('workSpace.role')}>
-            <Select>
-              <Option value={RoleEnum.Admin}>
+            <Select
+              options={[
+                {
+                  label: t('workSpace.admin'),
+                  value: RoleEnum.Admin,
+                  desc: t('workSpace.adminPermission'),
+                },
+                {
+                  label: t('workSpace.editor'),
+                  value: RoleEnum.Editor,
+                  desc: t('workSpace.editorPermission'),
+                },
+                {
+                  label: t('workSpace.viewer'),
+                  value: RoleEnum.Viewer,
+                  desc: t('workSpace.viewerPermission'),
+                },
+              ]}
+              optionRender={(option) => (
                 <Space direction='vertical'>
-                  <Text>{t('workSpace.admin')}</Text>
-                  <Text type='secondary'>{t('workSpace.adminPermission')}</Text>
+                  <Text>{option.label}</Text>
+                  <Text type='secondary'>{option.data.desc}</Text>
                 </Space>
-              </Option>
-              <Option value={RoleEnum.Editor}>
-                <Space direction='vertical'>
-                  <Text>{t('workSpace.editor')}</Text>
-                  <Text type='secondary'>{t('workSpace.editorPermission')}</Text>
-                </Space>
-              </Option>
-              <Option value={RoleEnum.Viewer}>
-                <Space direction='vertical'>
-                  <Text>{t('workSpace.viewer')}</Text>
-                  <Text type='secondary'>{t('workSpace.viewerPermission')}</Text>
-                </Space>
-              </Option>
-            </Select>
+              )}
+            />
           </Form.Item>
 
           <Form.Item>
