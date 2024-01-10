@@ -1,4 +1,11 @@
-import { decodeUrl, encodeUrl, I18_KEY, i18n, StandardPathParams } from '@arextest/arex-core';
+import {
+  decodeUrl,
+  encodeUrl,
+  getLocalStorage,
+  I18_KEY,
+  i18n,
+  StandardPathParams,
+} from '@arextest/arex-core';
 import { App } from 'antd';
 import axios from 'axios';
 import { useEffect } from 'react';
@@ -53,7 +60,7 @@ const useInit = () => {
     }
 
     // Trigger rerender after resources loaded
-    i18n.changeLanguage(localStorage.getItem(I18_KEY) || DEFAULT_LANGUAGE);
+    i18n.changeLanguage(DEFAULT_LANGUAGE);
 
     if (isClient) {
       axios.get('https://api.github.com/repos/arextest/releases/releases/latest').then((res) => {
