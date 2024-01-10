@@ -6,6 +6,6 @@ export interface SystemConfig {
 }
 
 export async function saveSystemConfig(params: { systemConfig: SystemConfig }) {
-  const res = await request.post<boolean>(`/report/system/config/save`, params);
+  const res = await request.post<boolean>(`/webApi/system/config/save`, params);
   return res.body;
 }

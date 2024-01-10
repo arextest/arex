@@ -8,6 +8,6 @@ export type ExportCollectionReq = {
 
 export async function exportCollection(params: ExportCollectionReq) {
   return request
-    .post<{ exportString: string }>(`/report/filesystem/export`, params)
+    .post<{ exportString: string }>(`/webApi/filesystem/export`, params)
     .then((res) => res.body.exportString);
 }

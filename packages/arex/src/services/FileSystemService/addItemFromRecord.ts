@@ -12,6 +12,6 @@ export type AddItemFromRecordReq = {
 
 export async function addItemFromRecord(params: AddItemFromRecordReq) {
   return request
-    .post<{ success: boolean }>('/report/filesystem/addItemFromRecord', params)
+    .post<{ success: boolean }>('/webApi/filesystem/addItemFromRecord', params)
     .then((res) => res.body);
 }

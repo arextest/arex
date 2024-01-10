@@ -25,7 +25,7 @@ export type QueryFullLinkInfoRes = {
 export async function queryFullLinkInfo(params: QueryFullLinkInfoReq) {
   return request
     .get<QueryFullLinkInfoRes>(
-      `/report/report/queryFullLinkInfo/${params.planItemId}/${params.recordId}`,
+      `/webApi/report/queryFullLinkInfo/${params.planItemId}/${params.recordId}`,
     )
     .then((res) => res.body);
 }

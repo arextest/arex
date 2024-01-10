@@ -37,7 +37,7 @@ export type BaseInterface = {
 };
 
 export async function queryInterface(params: { id: string }, infoId?: string) {
-  const res = await request.post<BaseInterface>(`/report/filesystem/queryInterface`, params);
+  const res = await request.post<BaseInterface>(`/webApi/filesystem/queryInterface`, params);
   const {
     body: { address, testAddress, ...rest },
   } = res;

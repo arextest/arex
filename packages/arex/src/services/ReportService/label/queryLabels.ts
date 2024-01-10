@@ -12,6 +12,6 @@ export interface QueryLabelsRes {
 }
 
 export async function queryLabels(params: { workspaceId: string }) {
-  const res = await request.post<QueryLabelsRes>(`/report/label/queryLabelsByWorkspaceId`, params);
+  const res = await request.post<QueryLabelsRes>(`/webApi/label/queryLabelsByWorkspaceId`, params);
   return res.body.labels;
 }

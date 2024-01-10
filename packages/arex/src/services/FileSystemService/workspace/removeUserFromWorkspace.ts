@@ -7,6 +7,6 @@ export type RemoveUserFromWorkspaceReq = {
 
 export async function removeUserFromWorkspace(params: RemoveUserFromWorkspaceReq) {
   return request
-    .post(`/report/filesystem/removeUserFromWorkspace`, params)
+    .post(`/webApi/filesystem/removeUserFromWorkspace`, params)
     .then((res) => res.responseStatusType);
 }

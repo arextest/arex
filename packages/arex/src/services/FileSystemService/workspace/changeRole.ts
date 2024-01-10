@@ -10,6 +10,6 @@ export type ChangeRoleReq = {
 
 export async function changeRole(params: ChangeRoleReq) {
   return request
-    .post(`/report/filesystem/changeRole`, params)
+    .post(`/webApi/filesystem/changeRole`, params)
     .then((res) => res.responseStatusType);
 }

@@ -7,6 +7,6 @@ export type DeleteEnvironmentReq = {
 
 export default async function deleteEnvironment(params: DeleteEnvironmentReq) {
   return request
-    .post<{ success: boolean }>(`/report/environment/removeEnvironment`, params)
+    .post<{ success: boolean }>(`/webApi/environment/removeEnvironment`, params)
     .then((res) => res.body.success);
 }

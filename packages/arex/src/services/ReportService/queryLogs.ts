@@ -38,6 +38,6 @@ export async function queryLogs(params: {
   startTime?: number;
   endTime?: number;
 }) {
-  const res = await request.post<QueryLogsRes>(`/report/logs/query`, params);
+  const res = await request.post<QueryLogsRes>(`/webApi/logs/query`, params);
   return res.body.logs;
 }

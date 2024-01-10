@@ -8,7 +8,7 @@ export type UpdateInterfaceResponseReq = {
 
 export async function updateInterfaceResponse(params: UpdateInterfaceResponseReq) {
   const res = await request.post<boolean>(
-    '/report/config/applicationOperation/modify/UPDATE',
+    '/webApi/config/applicationOperation/modify/UPDATE',
     params,
   );
   return res.body;

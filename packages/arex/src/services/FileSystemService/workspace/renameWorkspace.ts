@@ -6,6 +6,6 @@ export async function renameWorkspace(params: {
   userName: string;
 }) {
   return request
-    .post<{ success: boolean }>(`/report/filesystem/renameWorkspace`, params)
+    .post<{ success: boolean }>(`/webApi/filesystem/renameWorkspace`, params)
     .then((res) => res.body.success);
 }

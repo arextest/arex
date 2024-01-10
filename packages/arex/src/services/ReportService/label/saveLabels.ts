@@ -8,6 +8,6 @@ export type SaveLabelsReq = {
 };
 
 export async function saveLabels(params: SaveLabelsReq) {
-  const res = await request.post<{ success: boolean }>(`/report/label/save`, params);
+  const res = await request.post<{ success: boolean }>(`/webApi/label/save`, params);
   return res.body.success ? Promise.resolve(res.body) : Promise.reject({ success: false });
 }

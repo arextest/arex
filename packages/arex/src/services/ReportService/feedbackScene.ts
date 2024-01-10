@@ -15,6 +15,6 @@ export interface FeedbackSceneReq {
 }
 
 export async function feedbackScene(params: FeedbackSceneReq) {
-  const res = await request.post<boolean>('/report/report/feedbackScene', params);
+  const res = await request.post<boolean>('/webApi/report/feedbackScene', params);
   return res.body;
 }

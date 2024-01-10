@@ -9,6 +9,6 @@ export type ImportCollectionReq = {
 
 export async function importCollection(params: ImportCollectionReq) {
   return request
-    .post<{ success: boolean }>(`/report/filesystem/import`, params)
+    .post<{ success: boolean }>(`/webApi/filesystem/import`, params)
     .then((res) => res.body.success);
 }

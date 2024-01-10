@@ -1,6 +1,6 @@
 [
   {
-    "path": "/report",
+    "path": "/webApi",
     "target": "http://{{companyDomainName}}.arextest.com"
   },
   {

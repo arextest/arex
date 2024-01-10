@@ -13,7 +13,7 @@ export type AddItemFromRecordByDefaultReq = {
 
 export async function addItemFromRecordByDefault(params: AddItemFromRecordByDefaultReq) {
   return request.post<{ success: boolean }>(
-    '/report/filesystem/addItemFromRecordByDefault',
+    '/webApi/filesystem/addItemFromRecordByDefault',
     params,
   );
 }

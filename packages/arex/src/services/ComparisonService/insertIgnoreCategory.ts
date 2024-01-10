@@ -7,7 +7,7 @@ export interface InsertIgnoreCategoryReq extends QueryNodeReq<'Interface'> {
 
 export async function insertIgnoreCategory(params: InsertIgnoreCategoryReq) {
   const res = await request.post<boolean>(
-    '/report/config/comparison/ignoreCategory/modify/INSERT',
+    '/webApi/config/comparison/ignoreCategory/modify/INSERT',
     params,
   );
   return res.body;

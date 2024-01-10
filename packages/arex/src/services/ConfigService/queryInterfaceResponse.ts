@@ -3,7 +3,7 @@ import { request } from '@/utils';
 
 export async function queryInterfaceResponse(params: { appId: OperationId<'Interface'> }) {
   const res = await request.get<OperationInterface>(
-    '/report/config/applicationOperation/useResult/operationId/' + params.appId,
+    '/webApi/config/applicationOperation/useResult/operationId/' + params.appId,
   );
   return res.body;
 }

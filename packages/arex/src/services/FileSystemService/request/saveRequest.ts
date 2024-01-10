@@ -46,7 +46,7 @@ export async function saveRequest(
     labelIds: params.tags,
   };
   const res = await request.post<{ success: boolean }>(
-    `/report/filesystem/${
+    `/webApi/filesystem/${
       nodeType === CollectionNodeType.interface ? 'saveInterface' : 'saveCase'
     }`,
     saveParams,

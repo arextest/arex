@@ -18,7 +18,7 @@ export type InviteToWorkspaceRes = {
 
 export async function inviteToWorkspace(params: InviteToWorkspaceReq) {
   const res = await request.post<InviteToWorkspaceRes>(
-    `/report/filesystem/inviteToWorkspace`,
+    `/webApi/filesystem/inviteToWorkspace`,
     params,
   );
   return res.body;

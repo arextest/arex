@@ -19,6 +19,6 @@ export type QueryScenesRes = {
 
 export async function queryScenes(params: QueryScenesReq) {
   return request
-    .post<QueryScenesRes>('/report/report/queryScenes', params)
+    .post<QueryScenesRes>('/webApi/report/queryScenes', params)
     .then((res) => Promise.resolve(res.body.scenes));
 }

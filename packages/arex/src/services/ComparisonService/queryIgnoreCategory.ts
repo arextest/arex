@@ -18,7 +18,7 @@ export type IgnoreCategoryData = {
 };
 export async function queryIgnoreCategory(params: QueryNodeReq<'Interface'>) {
   const res = await request.post<IgnoreCategoryData[]>(
-    '/report/config/comparison/ignoreCategory/queryComparisonConfig',
+    '/webApi/config/comparison/ignoreCategory/queryComparisonConfig',
     params,
   );
   /**

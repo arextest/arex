@@ -9,6 +9,6 @@ export type RenameCollectionItemReq = {
 
 export async function renameCollectionItem(params: RenameCollectionItemReq) {
   return request
-    .post<{ success: boolean }>(`/report/filesystem/rename`, params)
+    .post<{ success: boolean }>(`/webApi/filesystem/rename`, params)
     .then((res) => res.body.success);
 }

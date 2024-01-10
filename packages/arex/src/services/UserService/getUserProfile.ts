@@ -17,6 +17,6 @@ export type UserProfile = {
 };
 
 export async function getUserProfile(email: string) {
-  const res = await request.get<{ profile: string }>(`/report/login/userProfile/${email}`);
+  const res = await request.get<{ profile: string }>(`/webApi/login/userProfile/${email}`);
   return tryParseJsonString<UserProfile>(res.body.profile);
 }
