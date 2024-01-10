@@ -56,13 +56,11 @@ function getPercent(num: number, den: number, showPercentSign = true) {
   return showPercentSign ? value + '%' : value;
 }
 
-const chartOptions = {
+const pieOptions = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: {
-      position: 'left',
-    },
+    legend: { display: false },
   },
 } as const;
 
@@ -137,35 +135,49 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
 
   const countData = useMemo(
     () => [
-      selectedPlan?.successCaseCount,
-      selectedPlan?.failCaseCount,
-      selectedPlan?.errorCaseCount,
-      selectedPlan?.waitCaseCount,
+      selectedPlan?.successCaseCount || 0,
+      selectedPlan?.failCaseCount || 0,
+      selectedPlan?.errorCaseCount || 0,
+      selectedPlan?.waitCaseCount || 0,
     ],
     [selectedPlan],
   );
 
   const countSum = useMemo(() => countData.reduce((a, b) => (a || 0) + (b || 0), 0), [countData]);
 
-  const pieProps = useMemo(
+  const pieData = useMemo(
     () => ({
-      data: {
-        labels: [t('replay.passed'), t('replay.failed'), t('replay.invalid'), t('replay.blocked')],
-        datasets: [
-          {
-            data: countData,
-            backgroundColor: [
-              token.colorSuccessTextHover,
-              token.colorErrorTextHover,
-              token.colorInfoTextHover,
-              token.colorWarningTextHover,
-            ],
-          },
-        ],
-      },
-      options: chartOptions,
+      labels: [t('replay.passed'), t('replay.failed'), t('replay.invalid'), t('replay.blocked')],
+      datasets: [
+        {
+          data: countData,
+          backgroundColor: [
+            token.colorSuccessTextHover,
+            token.colorErrorTextHover,
+            token.colorInfoTextHover,
+            token.colorWarningTextHover,
+          ],
+        },
+      ],
     }),
     [countData],
+  );
+
+  const LegendBlock = ({ color, text }: { color: string; text: string }) => (
+    <div>
+      <div
+        style={{
+          width: '32px',
+          height: '14px',
+          display: 'inline-block',
+          border: '2px solid #fff',
+          marginRight: '8px',
+          verticalAlign: 'text-bottom',
+          backgroundColor: color,
+        }}
+      ></div>
+      <Typography.Text style={{ color }}>{text}</Typography.Text>
+    </div>
   );
 
   const CaseCountRender = useCallback(
@@ -533,7 +545,7 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
           <Typography.Text type='secondary'>{t('replay.replayPassRate')}</Typography.Text>
           <SpaceBetweenWrapper>
             <div style={{ height: '180px', width: 'calc(100% - 160px)', padding: '16px 0' }}>
-              <Pie {...pieProps} />
+              <Pie data={pieData} options={pieOptions} />
             </div>
 
             <div
@@ -542,24 +554,29 @@ const PlanItem: FC<ReplayPlanItemProps> = (props) => {
                 flexDirection: 'column',
                 justifyContent: 'space-around',
                 width: '160px',
-                padding: '16px 16px 16px 0',
+                padding: '16px',
+                marginTop: '24px',
               }}
             >
-              <div>
+              <LegendBlock
+                text={`${t('replay.passed')}: ${countData[0]}`}
+                color={token.colorSuccessTextHover}
+              />
+              <LegendBlock
+                text={`${t('replay.failed')}: ${countData[1]}`}
+                color={token.colorErrorTextHover}
+              />
+              <LegendBlock
+                text={`${t('replay.invalid')}: ${countData[2]}`}
+                color={token.colorInfoTextHover}
+              />
+              <LegendBlock
+                text={`${t('replay.blocked')}: ${countData[3]}`}
+                color={token.colorWarningTextHover}
+              />
+              <Typography.Text strong type='secondary' style={{ marginTop: '8px' }}>
                 {t('replay.totalCases')}: {countSum}
-              </div>
-              <div>
-                {t('replay.passed')}: {countData[0]}
-              </div>
-              <div>
-                {t('replay.failed')}: {countData[1]}
-              </div>
-              <div>
-                {t('replay.invalid')}: {countData[2]}
-              </div>
-              <div>
-                {t('replay.blocked')}: {countData[3]}
-              </div>
+              </Typography.Text>
             </div>
           </SpaceBetweenWrapper>
         </Col>
