@@ -1,11 +1,10 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { ArexCoreProvider, ArexMenuManager, ArexPaneManager } from '@arextest/arex-core';
+import { ArexCoreProvider, ArexMenuManager, ArexPaneManager, Theme } from '@arextest/arex-core';
 import { Spin } from 'antd';
-import React, { useEffect, useMemo, useState } from 'react';
-
-import { getThemeByDark, SYSTEM_THEME, Theme } from '@/constant';
+import React from 'react';
 
 import { useAuthentication, useTrace } from './hooks';
+import useDarkMode from './hooks/useDarkMode';
 import resources from './i18n';
 import Menus from './menus';
 import Panes from './panes';
@@ -25,20 +24,8 @@ const App = () => {
   useAuthentication();
 
   const { theme: _theme, compact, colorPrimary, language } = useUserProfile();
-  const [systemDarkTheme, setSystemDarkTheme] = useState(SYSTEM_THEME);
-  const theme = useMemo(
-    () => (_theme === Theme.system ? systemDarkTheme : _theme),
-    [_theme, systemDarkTheme],
-  );
-
-  useEffect(() => {
-    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const updateTheme = (e: MediaQueryListEvent) => {
-      setSystemDarkTheme(getThemeByDark(e.matches));
-    };
-    darkModeMediaQuery.addEventListener('change', updateTheme);
-    return () => darkModeMediaQuery.removeEventListener('change', updateTheme);
-  }, []);
+  const darkMode = useDarkMode();
+  const theme = darkMode ? Theme.dark : Theme.light;
 
   return (
     <ArexCoreProvider

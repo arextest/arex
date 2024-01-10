@@ -1,11 +1,4 @@
-import {
-  decodeUrl,
-  encodeUrl,
-  getLocalStorage,
-  I18_KEY,
-  i18n,
-  StandardPathParams,
-} from '@arextest/arex-core';
+import { decodeUrl, encodeUrl, i18n, StandardPathParams } from '@arextest/arex-core';
 import { App } from 'antd';
 import axios from 'axios';
 import { useEffect } from 'react';

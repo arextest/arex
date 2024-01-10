@@ -1,5 +1,6 @@
 import { ColorPrimaryPalette } from '@arextest/arex-core';
 import { theme } from 'antd';
+import { useMemo } from 'react';
 
 import useUserProfile from '../store/useUserProfile';
 
@@ -9,10 +10,13 @@ const useColorPrimary = (): ColorPrimaryPalette => {
     token: { colorPrimary: key },
   } = theme.useToken();
 
-  return {
-    key,
-    name,
-  };
+  return useMemo(
+    () => ({
+      key,
+      name,
+    }),
+    [key, name],
+  );
 };
 
 export default useColorPrimary;
