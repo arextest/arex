@@ -1,5 +1,4 @@
 @import 'antd/dist/reset.css';
-@import 'allotment/dist/style.css';
 @import '@arextest/vanilla-jsoneditor/themes/jse-theme-dark.css';
 
 .arex-pane-popup span.anticon {

@@ -395,6 +395,7 @@
     "darkMode": "深色模式",
     "primaryColor": "主题色",
     "language": "语言",
+    "zen": "禅模式",
     "avatar": "头像",
     "dataDesensitization": "数据加密",
     "jarFileUrlPlaceholder": "请输入 Jar 包地址",

@@ -16,6 +16,7 @@ import globalStoreReset from '@/utils/globalStoreReset';
 
 export type UserProfileAction = {
   setTheme: (theme: Theme) => void;
+  setZen: (zen?: boolean) => void;
   getUserProfile: () => void;
   reset: () => void;
 };
@@ -25,10 +26,11 @@ const initialState: UserProfile = {
   compact: DEFAULT_COMPACT,
   colorPrimary: DEFAULT_COLOR_PRIMARY,
   language: DEFAULT_LANGUAGE,
+  zen: false,
   avatar: '',
 };
 
-const useUserProfile = create<UserProfile & UserProfileAction>((set) => {
+const useUserProfile = create<UserProfile & UserProfileAction>((set, get) => {
   async function getUserProfile(email?: string) {
     const _email = email || getLocalStorage<string>(EMAIL_KEY);
     if (!_email) return;
@@ -54,6 +56,10 @@ const useUserProfile = create<UserProfile & UserProfileAction>((set) => {
     setTheme: (theme: Theme) => {
       setLocalStorage(THEME_KEY, theme);
       set({ theme });
+    },
+    setZen: (zen: boolean) => {
+      if (zen === undefined) set({ zen: !get().zen });
+      else set({ zen });
     },
     getUserProfile,
     reset: () => set(initialState),

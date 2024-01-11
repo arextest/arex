@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-core",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-core.js",
   "module": "dist/arex-core.js",
@@ -24,7 +24,6 @@
     "@formkit/auto-animate": "^0.7.0",
     "@hpcc-js/wasm": "^2.14.1",
     "ahooks": "^3.7.5",
-    "allotment": "^1.18.1",
     "dayjs": "^1.11.7",
     "diff-match-patch": "^1.0.5",
     "i18next": "^22.4.11",

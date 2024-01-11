@@ -397,6 +397,7 @@
     "darkMode": "Dark Mode",
     "primaryColor": "Primary Color",
     "language": "Language",
+    "zen": "Zen mode",
     "avatar": "Avatar",
     "dataDesensitization": "Data Desensitization",
     "jarFileUrlPlaceholder": "Please enter Jar file Url",

@@ -8,6 +8,7 @@ export type UserProfile = {
   compact: CompactMode;
   colorPrimary: ColorPrimary;
   language: I18nextLng;
+  zen?: boolean;
   avatar?: string;
 };
 

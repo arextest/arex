@@ -43,6 +43,7 @@ export const bindings: {
   // 'ctrl-k': 'general.search.toggle',
   'ctrl-/': 'general.keybindings.toggle',
   'ctrl-shift-.': 'general.console',
+  'ctrl-shift-z': 'general.zen',
 
   // Request
   'ctrl-enter': 'request.send',

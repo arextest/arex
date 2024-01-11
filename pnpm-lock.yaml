@@ -335,9 +335,6 @@ importers:
       ahooks:
         specifier: ^3.7.5
         version: 3.7.5(react@18.2.0)
-      allotment:
-        specifier: ^1.18.1
-        version: 1.18.1(react-dom@18.2.0)(react@18.2.0)
       antd:
         specifier: ^5.11.0
         version: 5.11.0(react-dom@18.2.0)(react@18.2.0)
