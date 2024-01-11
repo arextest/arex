@@ -59,6 +59,7 @@ export const PaneContext = createContext<{
 });
 
 export interface ArexPanesContainerProps extends Omit<TabsProps, 'items' | 'onDragEnd'> {
+  height?: string;
   emptyNode: React.ReactNode;
   panes?: Pane[];
   onAdd?: () => void;
@@ -186,7 +187,7 @@ const ArexPanesContainer = (props: ArexPanesContainerProps) => {
                     id={`arex-pane-wrapper-${pane.key}`}
                     style={{
                       padding: Pane.noPadding ? 0 : '8px 16px',
-                      height: 'calc(100vh - 116px)',
+                      height: props.height || '100%',
                     }}
                   >
                     {React.createElement(Pane, paneProps)}

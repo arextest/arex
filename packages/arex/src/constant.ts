@@ -1,9 +1,14 @@
-import { ColorPrimary, getLocalStorage, I18nextLng } from '@arextest/arex-core';
-import { I18_KEY } from '@arextest/arex-core';
+import {
+  ColorPrimary,
+  getLocalStorage,
+  I18_KEY,
+  I18nextLng,
+  Theme as ArexTheme,
+} from '@arextest/arex-core';
 
 export enum Theme {
-  dark = 'dark',
-  light = 'light',
+  dark = ArexTheme.dark,
+  light = ArexTheme.light,
   system = 'system',
 }
 
@@ -36,13 +41,16 @@ export enum RoleEnum {
   Viewer = 3,
 }
 
+export enum MessageType {
+  update,
+  extension,
+}
+
 export const RoleMap = {
   [RoleEnum.Admin]: 'Admin',
   [RoleEnum.Editor]: 'Editor',
   [RoleEnum.Viewer]: 'Viewer',
 };
-
-export const ExtensionVersion = '1.0.4';
 
 export const Connector = '-_-';
 
@@ -63,16 +71,19 @@ export const WORKSPACE_ENVIRONMENT_PAIR_KEY = 'workspaceEnvironmentPair';
 export const TARGET_HOST_AUTOCOMPLETE_KEY = 'targetHostAutocomplete';
 
 // Default value
-export const DEFAULT_LANGUAGE = getLocalStorage(I18_KEY) || I18nextLng.en;
+export const DEFAULT_LANGUAGE = getLocalStorage<I18nextLng>(I18_KEY) || I18nextLng.en;
 export const DEFAULT_ACTIVE_MENU = MenusType.APP;
 
 export const isDarkSystemTheme = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-export const getThemeByDark = (dark?: boolean) => (dark ? Theme.dark : Theme.light);
+export function getThemeByDark(dark?: boolean) {
+  return ArexTheme[dark ? 'dark' : 'light'];
+}
 
 export const SYSTEM_THEME = getThemeByDark(isDarkSystemTheme);
 export const DEFAULT_THEME = getLocalStorage<Theme>(THEME_KEY) || SYSTEM_THEME;
-export const DEFAULT_COLOR_PRIMARY = getLocalStorage(PRIMARY_COLOR_KEY) || ColorPrimary.green;
-export const DEFAULT_COMPACT = getLocalStorage<boolean>(COMPACT_KEY) || ColorPrimary.green;
+export const DEFAULT_COLOR_PRIMARY =
+  getLocalStorage<ColorPrimary>(PRIMARY_COLOR_KEY) || ColorPrimary.green;
+export const DEFAULT_COMPACT = getLocalStorage<boolean>(COMPACT_KEY) || true;
 
 export const MAX_PANES_COUNT = 8;
 

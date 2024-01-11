@@ -9,7 +9,7 @@ import React, { CompositionEventHandler, useEffect, useMemo, useRef, useState } 
 
 import { CollectionNodeType, MenusType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
-import { useMenusPanes, useWorkspaces } from '@/store';
+import { useMenusPanes, useUserProfile, useWorkspaces } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 import { generateId } from '@/utils';
 import { handleKeyDown, shortcuts, ShortcutsMap } from '@/utils/keybindings';
@@ -30,6 +30,8 @@ const KeyboardShortcut = React.memo(() => {
     toggleMenuCollapse,
   } = useMenusPanes();
   const { activeWorkspaceId } = useWorkspaces();
+  const { setZen } = useUserProfile();
+
   const latestActivePaneKey = useRef(activePane?.key);
   useEffect(() => {
     latestActivePaneKey.current = activePane?.key;
@@ -86,6 +88,11 @@ const KeyboardShortcut = React.memo(() => {
       // 'ctrl-shift-.': 'general.console',
       case 'general.console': {
         (document.querySelector(`#arex-console-btn`) as HTMLElement)?.click?.();
+        break;
+      }
+      // 'ctrl-shift-z': 'general.zen',
+      case 'general.zen': {
+        setZen();
         break;
       }
 
@@ -285,19 +292,14 @@ const KeyboardShortcut = React.memo(() => {
         });
         break;
       }
-      // 'alt-c: 'menu.collection'
+      // 'alt-shift-c: 'menu.collection'
       case 'menu.collection': {
         setActiveMenu(MenusType.COLLECTION);
         break;
       }
-      // 'alt-r: 'menu.replay'
-      case 'menu.replay': {
+      // 'alt-shift-a: 'menu.app'
+      case 'menu.app': {
         setActiveMenu(MenusType.APP);
-        break;
-      }
-      // 'alt-e: 'menu.environment'
-      case 'menu.environment': {
-        setActiveMenu(MenusType.ENVIRONMENT);
         break;
       }
     }

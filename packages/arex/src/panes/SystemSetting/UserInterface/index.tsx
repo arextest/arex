@@ -6,7 +6,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Divider, Form, FormProps } from 'antd';
+import { App, Divider, Form, FormProps, Switch } from 'antd';
 import React, { useEffect } from 'react';
 
 import { COMPACT_KEY, EMAIL_KEY, PRIMARY_COLOR_KEY, THEME_KEY } from '@/constant';
@@ -28,7 +28,7 @@ const UserInterface = () => {
   const email = getLocalStorage<string>(EMAIL_KEY) as string;
   const { t } = useTranslation(['components']);
   const colorPrimary = useColorPrimary();
-  const { avatar, theme, compact, language, getUserProfile } = useUserProfile();
+  const { avatar, theme, compact, language, zen, setZen, getUserProfile } = useUserProfile();
 
   const [form] = Form.useForm<SettingForm>();
 
@@ -39,8 +39,9 @@ const UserInterface = () => {
       theme,
       compact,
       language,
+      zen,
     });
-  }, [avatar, compact, language, theme]);
+  }, [avatar, compact, language, theme, zen]);
 
   useEffect(() => {
     form.setFieldsValue({
@@ -129,6 +130,10 @@ const UserInterface = () => {
 
         <Form.Item label={t('systemSetting.language')} name='language'>
           <LanguageSelect />
+        </Form.Item>
+
+        <Form.Item label={t('systemSetting.zen')} name={'zen'} valuePropName='checked'>
+          <Switch size='small' onChange={setZen} />
         </Form.Item>
 
         <Form.Item label={t('systemSetting.avatar')} name='avatar'>

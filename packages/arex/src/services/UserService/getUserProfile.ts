@@ -1,11 +1,6 @@
-import {
-  ColorPrimary,
-  CompactMode,
-  I18nextLng,
-  Theme,
-  tryParseJsonString,
-} from '@arextest/arex-core';
+import { ColorPrimary, CompactMode, I18nextLng, tryParseJsonString } from '@arextest/arex-core';
 
+import { Theme } from '@/constant';
 import { request } from '@/utils';
 
 export type UserProfile = {
@@ -13,6 +8,7 @@ export type UserProfile = {
   compact: CompactMode;
   colorPrimary: ColorPrimary;
   language: I18nextLng;
+  zen?: boolean;
   avatar?: string;
 };
 

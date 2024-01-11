@@ -1,13 +1,15 @@
 import {
   ArexFooter,
   ArexHeader,
-  ArexMainContainer,
   ArexMenuContainer,
   ArexMenuContainerProps,
   ArexPanesContainer,
   ArexPanesContainerProps,
   useTranslation,
 } from '@arextest/arex-core';
+import { css } from '@emotion/react';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { Allotment } from 'allotment';
 import { MenuProps } from 'antd';
 import React, { FC } from 'react';
 
@@ -19,12 +21,14 @@ import {
   UserMenu,
 } from '@/components';
 import { CollectionNodeType, isClient, PanesType } from '@/constant';
-import { useInit, useNavPane } from '@/hooks';
-import { useMenusPanes, useWorkspaces } from '@/store';
+import { useCheckChrome, useInit, useNavPane } from '@/hooks';
+import { useMenusPanes, useUserProfile, useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
 
 const Home: FC = () => {
+  useCheckChrome();
   useInit();
+
   const {
     menuCollapsed,
     toggleMenuCollapse,
@@ -40,8 +44,11 @@ const Home: FC = () => {
     removePane,
   } = useMenusPanes();
   const { activeWorkspaceId } = useWorkspaces();
+  const { zen } = useUserProfile();
 
   const navPane = useNavPane();
+  const [arexMainWrapperRef] = useAutoAnimate();
+
   const { t } = useTranslation(['components', 'common']);
 
   const dropdownItems: MenuProps['items'] = [
@@ -129,12 +136,19 @@ const Home: FC = () => {
   };
 
   return (
-    <>
-      <ArexHeader extra={<UserMenu />} />
+    <div ref={arexMainWrapperRef}>
+      {!zen && <ArexHeader extra={<UserMenu />} />}
 
-      <ArexMainContainer
-        collapsed={menuCollapsed}
-        arexMenus={
+      <Allotment
+        css={css`
+          height: ${zen ? '100vh' : 'calc(100vh - 73px)'};
+        `}
+      >
+        <Allotment.Pane
+          preferredSize={300}
+          minSize={zen ? 0 : menuCollapsed ? 70 : 300}
+          maxSize={zen ? 0 : menuCollapsed ? 70 : 600}
+        >
           <ArexMenuContainer
             value={activePane?.id}
             activeKey={activeMenu}
@@ -143,9 +157,11 @@ const Home: FC = () => {
             onChange={handleMenuChange}
             onSelect={handleMenuSelect}
           />
-        }
-        arexPanes={
+        </Allotment.Pane>
+
+        <Allotment.Pane>
           <ArexPanesContainer
+            height={`calc(100vh - ${zen ? 43 : 116}px)`}
             activeKey={activePane?.key}
             panes={panes}
             emptyNode={<EmptyPanePlaceholder />}
@@ -158,19 +174,22 @@ const Home: FC = () => {
             onAdd={handlePaneAdd}
             onRemove={removePane}
           />
-        }
-      />
-      <ArexFooter
-        rightRender={(agent) => (
-          <>
-            {!isClient && agent}
-            <FooterExtraMenu />
-          </>
-        )}
-      />
+        </Allotment.Pane>
+      </Allotment>
+
+      {!zen && (
+        <ArexFooter
+          rightRender={(agent) => (
+            <>
+              {!isClient && agent}
+              <FooterExtraMenu />
+            </>
+          )}
+        />
+      )}
       <MacTrafficLightBackground />
       <KeyboardShortcut />
-    </>
+    </div>
   );
 };
 

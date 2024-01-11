@@ -6,7 +6,7 @@ export function tryParseJsonString<T>(jsonString?: any, errorTip?: string) {
   } catch (e) {
     console.error(e);
     errorTip && window.message.warning(errorTip);
-    return jsonString;
+    return jsonString as T;
   }
 }
 
