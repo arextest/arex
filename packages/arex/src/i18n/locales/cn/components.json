@@ -409,6 +409,7 @@
     "isLatest": "已经是最新版本",
     "newVersionDetected": "检测到新版本",
     "startDownload": "下载即将开始...",
-    "checkFailed": "检查更新失败，请重试"
+    "checkFailed": "检查更新失败，请重试",
+    "downloadExtension": "下载插件"
   }
 }

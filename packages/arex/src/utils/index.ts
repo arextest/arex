@@ -1,3 +1,5 @@
+import { i18n } from '@arextest/arex-core';
+
 export { default as globalStoreInit } from './globalStoreInit';
 export { default as request } from './request';
 export { default as treeToMap } from './treeToMap';
@@ -33,8 +35,15 @@ export const versionStringCompare = (preVersion = '', lastVersion = '') => {
   return result;
 };
 
+export function isChrome() {
+  return /Chrome/.test(navigator.userAgent);
+}
+
 // 检查 Chrome 版本号
 export function getChromeVersion() {
+  if (!isChrome()) {
+    return window.message.info(i18n.t('notChrome'));
+  }
   let v: any = '';
   try {
     v = navigator.userAgent
@@ -42,7 +51,7 @@ export function getChromeVersion() {
       .match(/chrome\/[\d.]+/gi)?.[0]
       .split('/')[1];
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
   return versionStringCompare(v, '89.00.00');
 }

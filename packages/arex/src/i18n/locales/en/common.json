@@ -86,5 +86,6 @@
   "advanced": "Advanced",
   "advancedOptions": "Advanced Options",
   "and": " and",
-  "or": " or"
+  "or": " or",
+  "notChrome": "The current browser is not Chrome, and some functions may not work properly"
 }

@@ -411,6 +411,7 @@
     "isLatest": "It's already the latest version",
     "newVersionDetected": "New version detected",
     "startDownload": "Download about to start...",
-    "checkFailed": "Check for updates failed, please try again"
+    "checkFailed": "Check for updates failed, please try again",
+    "downloadExtension": "Download Extension"
   }
 }

@@ -83,5 +83,6 @@
   "advanced": "高级",
   "advancedOptions": "高级选项",
   "and": "和",
-  "or": "或"
+  "or": "或",
+  "notChrome": "当前浏览器不是Chrome，部分功能可能无法正常使用"
 }

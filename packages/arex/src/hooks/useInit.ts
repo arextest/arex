@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { DEFAULT_LANGUAGE, isClient, PanesType } from '@/constant';
+import { DEFAULT_LANGUAGE, isClient, MessageType, PanesType } from '@/constant';
 import { useCollections, useMenusPanes, useMessageQueue, useWorkspaces } from '@/store';
 import { globalStoreInit, versionStringCompare } from '@/utils';
 
@@ -55,15 +55,23 @@ const useInit = () => {
     // Trigger rerender after resources loaded
     i18n.changeLanguage(DEFAULT_LANGUAGE);
 
+    // check if the client version is the latest
     if (isClient) {
       axios.get('https://api.github.com/repos/arextest/releases/releases/latest').then((res) => {
         const version = res.data.name;
         if (versionStringCompare(__APP_VERSION__, version) === -1) {
           pushMessage({
-            type: 'update',
-            message: 'newVersionDetected',
+            type: MessageType.update,
+            message: 'new version detected',
           });
         }
+      });
+    }
+
+    if (!window.__AREX_EXTENSION_INSTALLED__) {
+      pushMessage({
+        type: MessageType.extension,
+        message: 'extension not installed',
       });
     }
 

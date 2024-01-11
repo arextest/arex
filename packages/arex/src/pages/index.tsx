@@ -1,7 +1,6 @@
 import {
   ArexFooter,
   ArexHeader,
-  ArexMainContainer,
   ArexMenuContainer,
   ArexMenuContainerProps,
   ArexPanesContainer,
@@ -22,12 +21,14 @@ import {
   UserMenu,
 } from '@/components';
 import { CollectionNodeType, isClient, PanesType } from '@/constant';
-import { useInit, useNavPane } from '@/hooks';
+import { useCheckChrome, useInit, useNavPane } from '@/hooks';
 import { useMenusPanes, useUserProfile, useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
 
 const Home: FC = () => {
+  useCheckChrome();
   useInit();
+
   const {
     menuCollapsed,
     toggleMenuCollapse,

@@ -41,13 +41,16 @@ export enum RoleEnum {
   Viewer = 3,
 }
 
+export enum MessageType {
+  update,
+  extension,
+}
+
 export const RoleMap = {
   [RoleEnum.Admin]: 'Admin',
   [RoleEnum.Editor]: 'Editor',
   [RoleEnum.Viewer]: 'Viewer',
 };
-
-export const ExtensionVersion = '1.0.4';
 
 export const Connector = '-_-';
 
