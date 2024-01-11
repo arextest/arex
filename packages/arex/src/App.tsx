@@ -4,6 +4,7 @@ import { Spin } from 'antd';
 import React from 'react';
 
 import { useAuthentication, useTrace } from './hooks';
+import useCheckChrome from './hooks/useCheckChrome';
 import useDarkMode from './hooks/useDarkMode';
 import resources from './i18n';
 import Menus from './menus';

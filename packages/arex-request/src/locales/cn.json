@@ -57,6 +57,7 @@
     "check_console_details": "检查控制台日志以获悉详情",
     "curl_invalid_format": "cURL 格式不正确",
     "empty_req_name": "空请求名称",
+    "emptyEndpoint": "请求路径不能为空",
     "f12_details": "（F12 详情）",
     "gql_prettify_invalid_query": "无法美化无效的查询，处理查询语法错误并重试",
     "incomplete_config_urls": "配置文件中的 URL 无效",
@@ -72,7 +73,9 @@
     "page_not_found": "This page could not be found",
     "script_fail": "无法执行预请求脚本",
     "something_went_wrong": "发生了一些错误",
-    "test_script_fail": "无法执行请求脚本"
+    "test_script_fail": "无法执行请求脚本",
+    "extensionNotInstalled": "Arex Chrome 插件未安装, 请至谷歌网页商店下载安装插件.",
+    "downloadExtension": "下载插件"
   },
   "preRequest": {
     "javascript_code": "JavaScript 代码",
