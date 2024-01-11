@@ -87,5 +87,6 @@
   "advancedOptions": "Advanced Options",
   "and": " and",
   "or": " or",
-  "notChrome": "The current browser is not Chrome, and some functions may not work properly"
+  "notChrome": "The current browser is not Chrome, and some functions may not work properly",
+  "chromeVersionTooLow" : "Chrome version is too low, and some functions may not work properly, please upgrade to the latest version"
 }

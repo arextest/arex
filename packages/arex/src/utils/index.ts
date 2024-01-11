@@ -53,7 +53,9 @@ export function getChromeVersion() {
   } catch (e) {
     console.error(e);
   }
-  return versionStringCompare(v, '89.00.00');
+  if (versionStringCompare(v, '89.00.00') < 0) {
+    return window.message.info(i18n.t('chromeVersionTooLow'));
+  }
 }
 
 export function generateId(len: number) {
