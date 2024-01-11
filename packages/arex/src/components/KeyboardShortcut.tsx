@@ -292,19 +292,14 @@ const KeyboardShortcut = React.memo(() => {
         });
         break;
       }
-      // 'alt-c: 'menu.collection'
+      // 'alt-shift-c: 'menu.collection'
       case 'menu.collection': {
         setActiveMenu(MenusType.COLLECTION);
         break;
       }
-      // 'alt-r: 'menu.replay'
-      case 'menu.replay': {
+      // 'alt-shift-a: 'menu.app'
+      case 'menu.app': {
         setActiveMenu(MenusType.APP);
-        break;
-      }
-      // 'alt-e: 'menu.environment'
-      case 'menu.environment': {
-        setActiveMenu(MenusType.ENVIRONMENT);
         break;
       }
     }

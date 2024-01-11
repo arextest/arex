@@ -1,4 +1,4 @@
-import { getLocalStorage, i18n, setLocalStorage } from '@arextest/arex-core';
+import { getLocalStorage, i18n, setLocalStorage, transformPlatformKey } from '@arextest/arex-core';
 import { create } from 'zustand';
 
 import {
@@ -13,6 +13,7 @@ import {
 import { UserService } from '@/services';
 import { UserProfile } from '@/services/UserService';
 import globalStoreReset from '@/utils/globalStoreReset';
+import { bindings } from '@/utils/keybindings';
 
 export type UserProfileAction = {
   setTheme: (theme: Theme) => void;
@@ -30,6 +31,10 @@ const initialState: UserProfile = {
   avatar: '',
 };
 
+const ZenModeKeys = Object.keys(bindings)
+  .find((key) => bindings[key as keyof typeof bindings] === 'general.zen')
+  ?.split('-')
+  .map(transformPlatformKey);
 const useUserProfile = create<UserProfile & UserProfileAction>((set, get) => {
   async function getUserProfile(email?: string) {
     const _email = email || getLocalStorage<string>(EMAIL_KEY);
@@ -57,7 +62,13 @@ const useUserProfile = create<UserProfile & UserProfileAction>((set, get) => {
       setLocalStorage(THEME_KEY, theme);
       set({ theme });
     },
-    setZen: (zen: boolean) => {
+    setZen: (zen) => {
+      if (zen === true || (zen === undefined && get().zen === false)) {
+        window.message.info(
+          i18n.t('general.exitZenTip', { ns: 'shortcuts', exitZenKeys: ZenModeKeys?.join('-') }),
+        );
+      }
+
       if (zen === undefined) set({ zen: !get().zen });
       else set({ zen });
     },
