@@ -5,6 +5,7 @@ import { ArexRESTHeader } from './ArexRESTHeader';
 
 export type ArexRESTResponse =
   | { type: 'loading'; headers: undefined }
+  | { type: 'extensionNotInstalled'; headers: undefined }
   | {
       type: 'fail';
       headers: ArexRESTHeader[];

@@ -6,6 +6,6 @@ export type FavoriteAppReq = {
 };
 
 export async function setFavoriteApp(params: FavoriteAppReq) {
-  const res = await request.post<boolean>(`/report/login/userFavoriteApp/modify/INSERT`, params);
+  const res = await request.post<boolean>(`/webApi/login/userFavoriteApp/modify/INSERT`, params);
   return res.body;
 }

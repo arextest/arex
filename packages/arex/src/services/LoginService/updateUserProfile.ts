@@ -5,5 +5,5 @@ export type UpdateUserProfileReq = {
   userName: string;
 };
 export async function updateUserProfile(params: UpdateUserProfileReq) {
-  return request.post<{ success: boolean }>(`/report/login/updateUserProfile`, params);
+  return request.post<{ success: boolean }>(`/webApi/login/updateUserProfile`, params);
 }

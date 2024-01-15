@@ -25,6 +25,6 @@ export type QueryWorkspaceByIdRes = {
 
 export async function queryWorkspaceById(params: { id: string }) {
   return request
-    .post<QueryWorkspaceByIdRes>(`/report/filesystem/queryWorkspaceById`, params)
+    .post<QueryWorkspaceByIdRes>(`/webApi/filesystem/queryWorkspaceById`, params)
     .then((res) => res.body.fsTree);
 }

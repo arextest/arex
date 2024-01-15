@@ -1,7 +1,7 @@
-import { SendOutlined } from '@ant-design/icons';
+import { ExclamationOutlined, SendOutlined } from '@ant-design/icons';
 import { css, Label, RequestMethod, styled } from '@arextest/arex-core';
 import { Button, Checkbox, Select } from 'antd';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { sendRequest } from '../../helpers';
@@ -39,13 +39,26 @@ const Request: FC<RequestProps> = () => {
   const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
 
+  const [endpointStatus, setEndpointStatus] = useState<'error'>();
+
   const handleRequest = async () => {
+    if (!store.request.endpoint) {
+      setEndpointStatus('error');
+      setTimeout(() => {
+        setEndpointStatus(undefined);
+      }, 3000);
+      window.message.error(t('error.emptyEndpoint'));
+      return;
+    }
     dispatch((state) => {
       state.response = {
-        type: 'loading',
+        type: window.__AREX_EXTENSION_INSTALLED__ ? 'loading' : 'extensionNotInstalled',
         headers: undefined,
       };
     });
+
+    if (!window.__AREX_EXTENSION_INSTALLED__) return;
+
     const res = await sendRequest(onBeforeRequest(store.request), store.environment);
 
     onRequest?.({ request: store.request, environment: store.environment }, res);
@@ -77,6 +90,7 @@ const Request: FC<RequestProps> = () => {
 
         <EnvInput
           disabled={store.request.inherited}
+          status={endpointStatus}
           value={store.request.inherited ? store.request.inheritedEndpoint : store.request.endpoint}
           onChange={(v) => {
             dispatch((state) => {
@@ -104,7 +118,14 @@ const Request: FC<RequestProps> = () => {
             id='arex-request-send-btn'
             type='primary'
             loading={store.response?.type === 'loading'}
-            icon={<SendOutlined />}
+            disabled={store.response?.type === 'extensionNotInstalled'}
+            icon={
+              store.response?.type === 'extensionNotInstalled' ? (
+                <ExclamationOutlined />
+              ) : (
+                <SendOutlined />
+              )
+            }
             onClick={handleRequest}
           >
             {t('action.send')}

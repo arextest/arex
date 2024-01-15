@@ -9,16 +9,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
-const SERVICE_REPORT_URL = process.env.SERVICE_REPORT_URL || 'http://10.144.62.53:8090';
-const SERVICE_SCHEDULE_URL = process.env.SERVICE_SCHEDULE_URL || 'http://10.144.62.53:8092';
-const SERVICE_STORAGE_URL = process.env.SERVICE_STORAGE_URL || 'http://10.144.62.53:8093';
+const SERVICE_API_URL = process.env.SERVICE_API_URL;
+const SERVICE_SCHEDULE_URL = process.env.SERVICE_SCHEDULE_URL;
+const SERVICE_STORAGE_URL = process.env.SERVICE_STORAGE_URL;
 
 app.use(
-  '/report',
+  '/webApi',
   createProxyMiddleware({
-    target: SERVICE_REPORT_URL,
+    target: SERVICE_API_URL,
     changeOrigin: true,
-    pathRewrite: { '/report': '/api' },
+    pathRewrite: { '/webApi': '/api' },
   }),
 );
 
@@ -42,11 +42,11 @@ app.use(
 
 // version check
 app.use(
-  '/version/report',
+  '/version/webApi',
   createProxyMiddleware({
-    target: SERVICE_REPORT_URL,
+    target: SERVICE_API_URL,
     changeOrigin: true,
-    pathRewrite: () => SERVICE_REPORT_URL + '/vi/health',
+    pathRewrite: () => SERVICE_API_URL + '/vi/health',
   }),
 );
 app.use(
@@ -73,7 +73,7 @@ app.get('/vi/health', (req, res) => {
 // storage
 app.get('/env', (req, res) => {
   res.send({
-    SERVICE_REPORT_URL,
+    SERVICE_API_URL,
     SERVICE_SCHEDULE_URL,
     SERVICE_STORAGE_URL,
   });
@@ -83,7 +83,7 @@ app.use(history()); // 这里千万要注意，要在static静态资源上面
 // 托管静态文件
 app.use(express.static(__dirname + '/dist'));
 
-// 监听8080端口
+// 监听 8080 端口
 app.listen(8080, function () {
   console.log('hi');
 });

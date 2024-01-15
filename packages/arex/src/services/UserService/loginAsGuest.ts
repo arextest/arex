@@ -13,6 +13,6 @@ export interface LoginAsGuestRes {
 
 export function loginAsGuest(params: LoginAsGuestReq) {
   return request
-    .post<LoginAsGuestRes>(`/report/login/loginAsGuest`, params)
+    .post<LoginAsGuestRes>(`/webApi/login/loginAsGuest`, params)
     .then((res) => res.body);
 }

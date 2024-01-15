@@ -28,7 +28,7 @@ export type QueryIgnoreNode = {
 
 export async function queryIgnoreNode(params: QueryNodeReq<'Global'>) {
   const res = await request.post<QueryIgnoreNode[]>(
-    '/report/config/comparison/exclusions/queryComparisonConfig',
+    '/webApi/config/comparison/exclusions/queryComparisonConfig',
     { ...params, operationId: params.operationId || undefined },
   );
   return res.body

@@ -8,7 +8,7 @@ export interface UpdateAgentReq {
 
 export async function updateAgent(params: UpdateAgentReq) {
   const res = await request.post<boolean>(
-    `/report/config/applicationInstances/modify/UPDATE`,
+    `/webApi/config/applicationInstances/modify/UPDATE`,
     params,
   );
   return res.body;

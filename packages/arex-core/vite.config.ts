@@ -22,14 +22,18 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'antd', '@emotion/react', '@emotion/styled'],
+      external: [
+        'react',
+        'react-dom',
+        'antd',
+        // '@emotion/react', '@emotion/styled'
+      ],
       output: {
         globals: {
           react: 'react',
           antd: 'antd',
           'react-dom': 'react-dom',
-          '@emotion/react': '@emotion/react',
-          '@emotion/styled': '@emotion/styled',
+          // '@emotion/react': '@emotion/react', '@emotion/styled': '@emotion/styled',
         },
       },
     },

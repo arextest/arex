@@ -1,8 +1,10 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
+import { MessageType } from '@/constant';
+
 export type Message = {
-  type: string;
+  type: MessageType;
   message: string;
 };
 

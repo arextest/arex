@@ -26,7 +26,7 @@ const Auth = () => {
         accessToken: string;
         refreshToken: string;
       }>(
-        '/report/login/oauthLogin',
+        '/webApi/login/oauthLogin',
         {
           oauthType: 'GitlabOauth',
           code: searchParams.get('code'),

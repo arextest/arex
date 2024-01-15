@@ -6,6 +6,6 @@ export type CategoryType = {
   skipComparison: boolean;
 };
 export async function queryCategoryType() {
-  const res = await request.get<CategoryType[]>('/report/report/listCategoryType');
+  const res = await request.get<CategoryType[]>('/webApi/report/listCategoryType');
   return res.body;
 }

@@ -17,6 +17,6 @@ export interface QueryResponseTypeStatisticRes {
 
 export async function queryResponseTypeStatistic(params: QueryResponseTypeStatisticReq) {
   return request
-    .post<QueryResponseTypeStatisticRes>('/report/report/queryResponseTypeStatistic', params)
+    .post<QueryResponseTypeStatisticRes>('/webApi/report/queryResponseTypeStatistic', params)
     .then((res) => Promise.resolve(res.body.categoryStatisticList || []));
 }

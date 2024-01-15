@@ -16,7 +16,7 @@ export type CreateWorkspaceRes = {
 export async function createWorkspace(params: CreateWorkspaceReq) {
   const { nodeName = 'New Collection', nodeType = '3', ...restParams } = params;
   return request
-    .post<CreateWorkspaceRes>(`/report/filesystem/addItem`, {
+    .post<CreateWorkspaceRes>(`/webApi/filesystem/addItem`, {
       nodeName,
       nodeType,
       ...restParams,

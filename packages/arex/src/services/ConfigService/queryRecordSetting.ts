@@ -24,7 +24,7 @@ export interface QueryRecordSettingRes {
 
 export async function queryRecordSetting(params: QueryRecordSettingReq) {
   const res = await request.get<QueryRecordSettingRes>(
-    '/report/config/serviceCollect/useResult/appId/' + params.appId,
+    '/webApi/config/serviceCollect/useResult/appId/' + params.appId,
   );
   return res.body;
 }

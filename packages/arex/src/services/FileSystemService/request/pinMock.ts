@@ -9,6 +9,6 @@ export interface PinMockReq {
 }
 
 export async function pinMock(params: PinMockReq) {
-  const res = await request.post<{ success: boolean }>(`/report/filesystem/pinMock`, params);
+  const res = await request.post<{ success: boolean }>(`/webApi/filesystem/pinMock`, params);
   return res.body.success;
 }

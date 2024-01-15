@@ -11,6 +11,6 @@ export type DuplicateEnvironmentRes = { environments: Environment[] | null };
 
 export default async function duplicateEnvironment(params: DuplicateEnvironmentReq) {
   return request
-    .post<DuplicateEnvironmentRes>(`/report/environment/duplicateEnvironment`, params)
+    .post<DuplicateEnvironmentRes>(`/webApi/environment/duplicateEnvironment`, params)
     .then((res) => res.body.environments);
 }

@@ -7,7 +7,7 @@ export interface UpdateIgnoreCategoryReq {
 
 export async function updateIgnoreCategory(params: UpdateIgnoreCategoryReq) {
   const res = await request.post<boolean>(
-    '/report/config/comparison/ignoreCategory/modify/UPDATE',
+    '/webApi/config/comparison/ignoreCategory/modify/UPDATE',
     params,
   );
   return res.body;

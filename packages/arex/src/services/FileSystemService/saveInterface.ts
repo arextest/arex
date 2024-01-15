@@ -6,6 +6,6 @@ export interface SaveInterfaceReq extends Partial<BaseInterface> {
 }
 
 export async function saveInterface(params: SaveInterfaceReq) {
-  const res = await request.post<{ success: boolean }>(`/report/filesystem/saveInterface`, params);
+  const res = await request.post<{ success: boolean }>(`/webApi/filesystem/saveInterface`, params);
   return res.body.success;
 }

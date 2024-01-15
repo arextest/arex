@@ -9,7 +9,8 @@ import { ReactComponent as LogoIconLight } from '../../assets/svg/logo_light.svg
 import { GithubStarButton } from '../components';
 import { useArexCoreConfig } from '../hooks';
 
-export interface AppHeaderProps extends HTMLDivElement {
+export interface AppHeaderProps {
+  className?: string;
   logo?: boolean;
   githubStar?: boolean;
   menu?: React.ReactNode;

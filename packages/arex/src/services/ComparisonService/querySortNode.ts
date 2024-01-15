@@ -30,7 +30,7 @@ export interface SortNode extends SortNodeBase {
 
 export async function querySortNode(params: QueryNodeReq<'Interface'>) {
   const res = await request.post<SortNode[]>(
-    '/report/config/comparison/listsort/queryComparisonConfig',
+    '/webApi/config/comparison/listsort/queryComparisonConfig',
     {
       ...params,
       operationId: params.operationId || undefined,

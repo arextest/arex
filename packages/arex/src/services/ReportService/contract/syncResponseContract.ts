@@ -22,7 +22,7 @@ export interface SyncResponseContractRes {
 
 export async function syncResponseContract(params: SyncResponseContractReq) {
   const res = await request.post<SyncResponseContractRes | null>(
-    '/report/report/syncResponseContract',
+    '/webApi/report/syncResponseContract',
     params,
   );
 

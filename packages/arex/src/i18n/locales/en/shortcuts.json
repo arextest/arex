@@ -3,6 +3,8 @@
   "searchPlaceholder":"Search Shortcuts",
   "copiedToClipboard": "Link copied to clipboard",
   "general.console": "Console",
+  "general.zen": "Zen Mode",
+  "general.exitZenTip": "Press {{exitZenKeys}} or refresh to exit Zen Mode",
 
   "general": "General",
   "general.copy-link": "Copy Link",
@@ -41,6 +43,5 @@
   "menu.prev":"Select previous Menu",
   "menu.next": "Select next Menu",
   "menu.collection":"Select Collection Menu",
-  "menu.replay": "Select Replay Menu",
-  "menu.environment":"Select Environment Menu"
+  "menu.app": "Select App Menu"
 }

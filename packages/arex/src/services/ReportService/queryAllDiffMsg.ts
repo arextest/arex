@@ -36,6 +36,6 @@ export interface QueryAllDiffMsgRes {
 }
 export async function queryAllDiffMsg(params: QueryAllDiffMsgReq) {
   return request
-    .post<QueryAllDiffMsgRes>('/report/report/queryAllDiffMsg', params)
+    .post<QueryAllDiffMsgRes>('/webApi/report/queryAllDiffMsg', params)
     .then((res) => Promise.resolve(res.body));
 }

@@ -17,7 +17,7 @@ export const ScheduleAxios = axios.create({
 
 export const ReportAxios = axios.create({
   baseURL: proxy
-    .find((item) => item.path === '/report')
+    .find((item) => item.path === '/webApi')
     ?.target.replace('{{companyDomainName}}', companyName),
 });
 

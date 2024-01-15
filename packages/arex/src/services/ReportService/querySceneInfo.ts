@@ -33,6 +33,6 @@ export interface QuerySceneInfoRes {
 
 export async function querySceneInfo(params: QuerySceneInfoReq) {
   return request
-    .get<QuerySceneInfoRes>(`/report/report/querySceneInfo/${params.planId}/${params.planItemId}`)
+    .get<QuerySceneInfoRes>(`/webApi/report/querySceneInfo/${params.planId}/${params.planItemId}`)
     .then((res) => Promise.resolve(res.body.sceneInfos.filter((scene) => scene.subScenes))); //  subScenes could be null;
 }

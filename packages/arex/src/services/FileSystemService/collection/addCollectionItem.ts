@@ -19,7 +19,7 @@ export type AddCollectionRes = {
 export async function addCollectionItem(params: AddCollectionReq) {
   const { nodeName = 'New Collection', nodeType = 3, parentPath = [], ...restParams } = params;
   return request
-    .post<AddCollectionRes>(`/report/filesystem/addItem`, {
+    .post<AddCollectionRes>(`/webApi/filesystem/addItem`, {
       nodeName,
       nodeType,
       parentPath,
