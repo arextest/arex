@@ -106,6 +106,8 @@
     "executor": "Executor",
     "replayStartTime": "Replay Start Time",
     "report": "Report",
+    "moreReport": "More Report",
+    "latest": "Latest",
     "basicInfo": "Basic Information",
     "replayPassRate": "Replay Pass Rate",
     "passRate": "Pass Rate",

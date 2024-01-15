@@ -9,18 +9,18 @@ import { ReportService, StorageService } from '@/services';
 import { AggOperation } from '@/services/ReportService';
 import { DeleteRecordType } from '@/services/StorageService';
 
-import RecordedCaseListDetail from './RecordedCaseListDetail';
+import RecordedCaseListDetail from './RecordedCaseDetail';
 
-export type RecordedCaseListRef = {
+export type RecordedCaseRef = {
   open: () => void;
 };
 
-export type RecordedCaseListProps = {
+export type RecordedCaseProps = {
   appId: string;
   onChange?: () => void;
 };
 
-const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>((props, ref) => {
+const RecordedCase = forwardRef<RecordedCaseRef, RecordedCaseProps>((props, ref) => {
   const { t } = useTranslation(['components']);
   const { token } = theme.useToken();
   const { message } = App.useApp();
@@ -174,4 +174,4 @@ const RecordedCaseList = forwardRef<RecordedCaseListRef, RecordedCaseListProps>(
   );
 });
 
-export default RecordedCaseList;
+export default RecordedCase;

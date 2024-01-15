@@ -42,10 +42,11 @@ import React, { createElement, FC, ReactNode, useCallback, useMemo, useRef, useS
 import { InterfaceSelect, TagSelect } from '@/components';
 import { EMAIL_KEY, isClient, PanesType, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
-import CompareNoise from '@/panes/Replay/CompareNoise';
-import RecordedCaseList, { RecordedCaseListRef } from '@/panes/Replay/RecordedCaseList';
 import { ScheduleService } from '@/services';
 import { CaseTags, MessageMap } from '@/services/ScheduleService';
+
+import CompareNoise from './CompareNoise';
+import RecordedCaseList, { RecordedCaseRef } from './RecordedCase';
 
 type AppTitleProps = {
   appId: string;
@@ -87,8 +88,10 @@ const TitleWrapper = styled(
             {createElement(
               props.count ? Button : 'div',
               props.count ? { type: 'text', onClick: props.onClickTitle } : {},
-              <Badge size='small' count={props.count} offset={[10, 2]}>
-                <span style={{ fontSize: '20px', fontWeight: 600 }}>{props.title}</span>
+              <Badge size='small' count={props.count} offset={[8, 2]}>
+                <span style={{ fontSize: '16px', lineHeight: '20px', fontWeight: 500 }}>
+                  {props.title}
+                </span>
               </Badge>,
             )}
             {props.onRefresh && (
@@ -171,7 +174,7 @@ const AppTitle: FC<AppTitleProps> = ({
   const email = getLocalStorage<string>(EMAIL_KEY);
   const { data } = useArexPaneProps<{ planId: string }>();
 
-  const caseListRef = useRef<RecordedCaseListRef>(null);
+  const caseListRef = useRef<RecordedCaseRef>(null);
 
   const [form] = Form.useForm<CreatePlanForm>();
   const targetEnv = Form.useWatch('targetEnv', form);

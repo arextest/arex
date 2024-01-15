@@ -85,5 +85,6 @@
   "and": "和",
   "or": "或",
   "notChrome": "当前浏览器不是Chrome，部分功能可能无法正常使用, 建议使用 Chrome 浏览器",
-  "chromeVersionTooLow" : "当前Chrome版本过低，部分功能可能无法正常使用， 建议升级至最新版本"
+  "chromeVersionTooLow" : "当前Chrome版本过低，部分功能可能无法正常使用， 建议升级至最新版本",
+  "share": "分享"
 }
