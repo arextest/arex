@@ -209,7 +209,7 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
                     totalCaseCount={item.totalCaseCount}
                     message={item.errorMessage}
                   />
-                  {index === 0 && (
+                  {!data?.planId && index === 0 && (
                     <Tag icon={<Icon name='Sparkles' size={10} style={{ marginRight: '6px' }} />}>
                       {t('replay.latest')}
                     </Tag>
