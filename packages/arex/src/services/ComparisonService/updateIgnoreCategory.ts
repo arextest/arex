@@ -1,8 +1,10 @@
 import { request } from '@/utils';
 
+import { IgnoreCategory } from './insertIgnoreCategory';
+
 export interface UpdateIgnoreCategoryReq {
   id: string;
-  ignoreCategory: string[];
+  ignoreCategories: IgnoreCategory[];
 }
 
 export async function updateIgnoreCategory(params: UpdateIgnoreCategoryReq) {
