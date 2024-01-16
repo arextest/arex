@@ -1,4 +1,4 @@
-import {
+import Icon, {
   DeleteOutlined,
   DownOutlined,
   ExclamationCircleFilled,
@@ -15,14 +15,16 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Card, Dropdown, Select, Space, Tag } from 'antd';
+import { App, Badge, Button, Card, Dropdown, Select, Space, theme } from 'antd';
 import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react';
 
-import { Icon, StatusTag } from '@/components';
+import { StatusTag } from '@/components';
 import { ResultsState } from '@/components/StatusTag';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
 import { ReRunPlanReq } from '@/services/ScheduleService';
+
+import ProportionBarChart from './ProportionBarChart';
 
 export interface ReportCardProps {
   appId: string;
@@ -41,9 +43,10 @@ export interface ReportCardRef {
   create: (req: ReRunPlanReq) => void;
 }
 const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
+  const { data } = useArexPaneProps<{ planId?: string }>();
   const { t } = useTranslation('components');
   const { modal, message } = App.useApp();
-  const { data } = useArexPaneProps<{ planId?: string }>();
+  const { token } = theme.useToken();
 
   const [init, setInit] = useState(true);
 
@@ -201,20 +204,38 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
             value={props.planId}
             options={planStatistics.map((item, index) => ({
               label: (
-                <Space>
-                  <span style={{ marginRight: '8px' }}>{item.planName}</span>
+                <div
+                  css={css`
+                    display: flex;
+                    flex-flow: row nowrap;
+                    align-items: center;
+                  `}
+                >
+                  <span style={{ marginRight: '12px' }}>
+                    {!data?.planId && index === 0 ? (
+                      <Badge
+                        offset={[0, -1]}
+                        count={
+                          <Icon
+                            component={() => <>New</>}
+                            style={{ color: token.colorPrimaryText, fontSize: 8, zIndex: 10 }}
+                          />
+                        }
+                      >
+                        <span style={{ marginRight: '8px' }}>{item.planName}</span>
+                      </Badge>
+                    ) : (
+                      <span style={{ marginRight: '8px' }}>{item.planName}</span>
+                    )}
+                  </span>
+
                   <StatusTag
                     status={item.status}
                     caseCount={item.successCaseCount + item.failCaseCount + item.errorCaseCount}
                     totalCaseCount={item.totalCaseCount}
                     message={item.errorMessage}
                   />
-                  {!data?.planId && index === 0 && (
-                    <Tag icon={<Icon name='Sparkles' size={10} style={{ marginRight: '6px' }} />}>
-                      {t('replay.latest')}
-                    </Tag>
-                  )}
-                </Space>
+                </div>
               ),
               value: item.planId,
               record: item,
@@ -224,6 +245,19 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
               const selected = planStatistics.find((item) => item.planId === value);
               if (selected) props.onReportChange?.(selected);
             }}
+            optionRender={(item) => (
+              <Space>
+                {item.label}
+                <ProportionBarChart
+                  data={[
+                    item.data.record.successCaseCount || 0,
+                    item.data.record.failCaseCount || 0,
+                    item.data.record.errorCaseCount || 0,
+                    item.data.record.waitCaseCount || 0,
+                  ]}
+                />
+              </Space>
+            )}
             css={css`
               .ant-select-selection-item {
                 font-weight: 600;
