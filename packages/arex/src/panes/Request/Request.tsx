@@ -214,6 +214,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       id: paneId,
       type,
       data: {
+        ...props.data,
         environmentId: environment?.id,
       },
     });
@@ -254,7 +255,6 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
           value: data?.tags,
           options: tagOptions,
           onChange: (tags) => {
-            console.log({ tags });
             saveRequest({
               id: data?.id,
               tags,

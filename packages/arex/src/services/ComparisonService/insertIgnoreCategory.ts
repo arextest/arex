@@ -1,8 +1,12 @@
 import { QueryNodeReq } from '@/services/ComparisonService/queryIgnoreNode';
 import { request } from '@/utils';
 
+export type IgnoreCategory = {
+  operationType: string;
+  operationName: string;
+};
 export interface InsertIgnoreCategoryReq extends QueryNodeReq<'Interface'> {
-  ignoreCategory: string[];
+  ignoreCategories: IgnoreCategory[];
 }
 
 export async function insertIgnoreCategory(params: InsertIgnoreCategoryReq) {
