@@ -1,15 +1,18 @@
 import { css } from '@arextest/arex-core';
-import { theme } from 'antd';
+import { theme, Typography } from 'antd';
 import React, { FC, useMemo } from 'react';
+
+import { getPercent } from '@/panes/Replay/ReplayReport/ReportOverview';
 
 interface ProportionBarChartProps {
   width?: number;
   height?: number;
+  percent?: boolean;
   data: [number, number, number, number];
 }
 
 const ProportionBarChart: FC<ProportionBarChartProps> = (props) => {
-  const { width = 32, height = 12, data } = props;
+  const { width = 36, height = 12, percent, data } = props;
   const { token } = theme.useToken();
   const total = useMemo(() => data[0] + data[1] + data[2] + data[3], [data]);
   return (
@@ -50,6 +53,23 @@ const ProportionBarChart: FC<ProportionBarChartProps> = (props) => {
           backgroundColor: token.colorWarningTextHover,
         }}
       />
+
+      {percent && (
+        <div
+          style={{
+            position: 'absolute',
+            width: width + 'px',
+            height: height + 'px',
+            textAlign: 'center',
+            top: 0,
+            lineHeight: height * 2 + 2 + 'px',
+          }}
+        >
+          <Typography.Text style={{ color: '#fff', fontSize: '10px' }}>
+            {getPercent(data[0], data[0] + data[1] + data[2] + data[3])}
+          </Typography.Text>
+        </div>
+      )}
     </div>
   );
 };

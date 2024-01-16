@@ -9,7 +9,7 @@ import { PlanStatistics } from '@/services/ReportService';
 
 import LegendBlock from './LegendBlock';
 
-function getPercent(num: number, den: number, showPercentSign = true) {
+export function getPercent(num: number, den: number, showPercentSign = true) {
   const value = num && den ? Math.floor((num / den) * 1000) / 10 : 0;
   return showPercentSign ? value + '%' : value;
 }

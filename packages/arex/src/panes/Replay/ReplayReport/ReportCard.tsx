@@ -9,13 +9,12 @@ import Icon, {
 import {
   copyToClipboard,
   css,
-  Label,
-  TooltipButton,
+  SmallTextButton,
   useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Badge, Button, Card, Dropdown, Select, Space, theme } from 'antd';
+import { App, Badge, Button, Card, Dropdown, Flex, Select, Space, theme, Typography } from 'antd';
 import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react';
 
 import { StatusTag } from '@/components';
@@ -48,8 +47,10 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
   const { modal, message } = App.useApp();
   const { token } = theme.useToken();
 
-  const [init, setInit] = useState(true);
+  const [selectedReport, setSelectedReport] = useState<PlanStatistics>();
 
+  const [init, setInit] = useState(true);
+  const [pageSize, setPageSize] = useState(8);
   const {
     data: { list: planStatistics } = {
       list: [],
@@ -62,15 +63,16 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
         appId: props.appId,
         planId: data?.planId || undefined,
         current: 1,
-        pageSize: 8,
+        pageSize,
       }),
     {
       ready: !!props.appId,
       pollingInterval: 6000,
-      refreshDeps: [props.appId, data?.planId],
+      refreshDeps: [props.appId, data?.planId, pageSize],
       onSuccess({ list }, [selectFirst]) {
         if (init || selectFirst) {
           list.length && props.onReportChange?.(list[0]);
+          setSelectedReport(list[0]);
           setInit(false); // 设置第一次初始化标识);
         }
         if (
@@ -144,6 +146,11 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
         label: t('replay.deleteTheReport'),
         icon: <DeleteOutlined />,
       },
+      {
+        key: 'shareReport',
+        label: t('replay.shareReport'),
+        icon: <ShareAltOutlined />,
+      },
     ],
     [t],
   );
@@ -165,7 +172,10 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
               if (props.planId) deleteReport(props.planId);
             },
           });
-
+          break;
+        }
+        case 'shareReport': {
+          handleSharePlan();
           break;
         }
       }
@@ -190,89 +200,113 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
   return (
     <Card
       // size='small'
-      // bordered={false}
       title={
-        <>
-          <Label>{t('replay.report')}</Label>
+        <Flex align='center'>
           <Select
+            bordered={false}
             suffixIcon={
               <span>
                 {t('replay.moreReport')} <DownOutlined />
               </span>
             }
-            bordered={false}
             value={props.planId}
             options={planStatistics.map((item, index) => ({
-              label: (
-                <div
-                  css={css`
-                    display: flex;
-                    flex-flow: row nowrap;
-                    align-items: center;
-                  `}
-                >
-                  <span style={{ marginRight: '12px' }}>
-                    {!data?.planId && index === 0 ? (
-                      <Badge
-                        offset={[0, -1]}
-                        count={
-                          <Icon
-                            component={() => <>New</>}
-                            style={{ color: token.colorPrimaryText, fontSize: 8, zIndex: 10 }}
-                          />
-                        }
-                      >
-                        <span style={{ marginRight: '8px' }}>{item.planName}</span>
-                      </Badge>
-                    ) : (
-                      <span style={{ marginRight: '8px' }}>{item.planName}</span>
-                    )}
-                  </span>
-
-                  <StatusTag
-                    status={item.status}
-                    caseCount={item.successCaseCount + item.failCaseCount + item.errorCaseCount}
-                    totalCaseCount={item.totalCaseCount}
-                    message={item.errorMessage}
-                  />
-                </div>
-              ),
+              label:
+                !data?.planId && index === 0 ? (
+                  <Badge
+                    offset={[0, -1]}
+                    count={
+                      <Icon
+                        component={() => <>{t('new', { ns: 'common' })}</>}
+                        style={{ color: token.colorPrimaryText, fontSize: 8, zIndex: 10 }}
+                      />
+                    }
+                  >
+                    <span style={{ marginRight: '8px' }}>{item.planName}</span>
+                  </Badge>
+                ) : (
+                  item.planName
+                ),
               value: item.planId,
               record: item,
             }))}
             popupMatchSelectWidth={false}
-            onChange={(value) => {
-              const selected = planStatistics.find((item) => item.planId === value);
-              if (selected) props.onReportChange?.(selected);
-            }}
             optionRender={(item) => (
-              <Space>
-                {item.label}
-                <ProportionBarChart
-                  data={[
-                    item.data.record.successCaseCount || 0,
-                    item.data.record.failCaseCount || 0,
-                    item.data.record.errorCaseCount || 0,
-                    item.data.record.waitCaseCount || 0,
-                  ]}
+              <Space
+                css={css`
+                  width: 100%;
+                  .ant-space-item:last-of-type {
+                    margin-left: auto;
+                  }
+                `}
+              >
+                <Typography.Text ellipsis style={{ width: '220px' }}>
+                  {item.label}
+                </Typography.Text>
+
+                <StatusTag
+                  status={item.data.record.status}
+                  caseCount={
+                    item.data.record.successCaseCount +
+                    item.data.record.failCaseCount +
+                    item.data.record.errorCaseCount
+                  }
+                  totalCaseCount={item.data.record.totalCaseCount}
+                  message={item.data.record.errorMessage}
                 />
+
+                <div style={{ marginLeft: 'auto' }}>
+                  <ProportionBarChart
+                    // percent
+                    data={[
+                      item.data.record.successCaseCount || 0,
+                      item.data.record.failCaseCount || 0,
+                      item.data.record.errorCaseCount || 0,
+                      item.data.record.waitCaseCount || 0,
+                    ]}
+                  />
+                </div>
               </Space>
             )}
+            dropdownRender={(menu) => (
+              <>
+                {menu}
+                <SmallTextButton
+                  block
+                  color='secondary'
+                  title={t('more', { ns: 'common' })}
+                  onClick={() => setPageSize((prev) => prev + 8)}
+                />
+              </>
+            )}
+            onChange={(value) => {
+              const selected = planStatistics.find((item) => item.planId === value);
+              setSelectedReport(selected);
+              if (selected) props.onReportChange?.(selected);
+            }}
             css={css`
               .ant-select-selection-item {
                 font-weight: 600;
-                padding-inline-end: 72px !important;
+                padding-inline-end: 84px !important;
               }
             `}
           />
-          <TooltipButton
-            size='small'
-            type='link'
-            title={t('share', { ns: 'common' })}
-            icon={<ShareAltOutlined />}
-            onClick={handleSharePlan}
-          />
-        </>
+
+          {selectedReport && (
+            <div style={{ marginLeft: '4px' }}>
+              <StatusTag
+                status={selectedReport.status}
+                caseCount={
+                  selectedReport.successCaseCount +
+                  selectedReport.failCaseCount +
+                  selectedReport.errorCaseCount
+                }
+                totalCaseCount={selectedReport.totalCaseCount}
+                message={selectedReport.errorMessage}
+              />
+            </div>
+          )}
+        </Flex>
       }
       extra={
         <Space>

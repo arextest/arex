@@ -138,6 +138,7 @@
     "delete": "删除",
     "deleteTheReport": "删除报告",
     "confirmDeleteReport": "确定删除该报告?",
+    "shareReport": "分享报告",
     "running": "进行中",
     "done": "完成",
     "interrupted": "异常终止",
