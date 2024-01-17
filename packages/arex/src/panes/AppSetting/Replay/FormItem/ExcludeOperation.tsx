@@ -8,7 +8,7 @@ import { useImmer } from 'use-immer';
 
 import { ConfigService } from '@/services';
 
-import { FormItemProps } from '../../Record/FormItem';
+import { FormItemProps } from '../../Record/Standard/FormItem';
 
 const ExcludeOperationWrapper = styled.div`
   .ant-table-cell {
