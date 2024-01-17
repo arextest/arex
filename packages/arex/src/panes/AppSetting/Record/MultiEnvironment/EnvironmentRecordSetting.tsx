@@ -29,6 +29,7 @@ const EnvironmentRecordSetting: FC<EnvironmentRecordSettingProps> = (props) => {
               <>
                 <Label>Environment</Label>
                 <TagSelect
+                  multiple
                   value={tagValue}
                   tags={tags}
                   onChange={(value) => {
