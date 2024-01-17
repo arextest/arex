@@ -287,7 +287,7 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
             css={css`
               .ant-select-selection-item {
                 font-weight: 600;
-                padding-inline-end: 84px !important;
+                padding-inline-end: 64px !important;
               }
             `}
           />
