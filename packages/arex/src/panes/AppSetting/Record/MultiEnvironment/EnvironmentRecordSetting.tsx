@@ -1,20 +1,26 @@
 import { Label, useTranslation } from '@arextest/arex-core';
 import { Collapse, Form, InputNumber, TimePicker } from 'antd';
+import dayjs from 'dayjs';
 import React, { FC, useState } from 'react';
 
 import { TagSelect } from '@/components';
 import { DurationInput, IntegerStepSlider } from '@/panes/AppSetting/Record/Standard/FormItem';
-import { CaseTags } from '@/services/ScheduleService';
+import { decodeWeekCode, encodeWeekCode } from '@/panes/AppSetting/Record/Standard/utils';
+import { MultiEnvironmentConfig } from '@/services/ConfigService';
 
 interface EnvironmentRecordSettingProps {
-  tags?: Record<string, string[]>;
+  tagOptions?: Record<string, string[]>;
+  config: MultiEnvironmentConfig;
+  onChange: (_: MultiEnvironmentConfig) => void;
 }
+const format = 'HH:mm';
+
 const EnvironmentRecordSetting: FC<EnvironmentRecordSettingProps> = (props) => {
-  const { tags = {} } = props;
+  const { tagOptions = {}, config, onChange } = props;
   const { t } = useTranslation('components');
 
-  const [tagValue, setTagValue] = useState<CaseTags>();
   const [activeKey, setActiveKey] = useState<string | string[]>();
+  console.log(config);
   return (
     <div style={{ marginBottom: '8px' }}>
       <Collapse
@@ -30,18 +36,40 @@ const EnvironmentRecordSetting: FC<EnvironmentRecordSettingProps> = (props) => {
                 <Label>Environment</Label>
                 <TagSelect
                   multiple
-                  value={tagValue}
-                  tags={tags}
+                  value={flattenTags(config.envTags ?? {})}
+                  tags={tagOptions}
                   onChange={(value) => {
                     setActiveKey(Object.keys(value || {}).length ? 'environment' : undefined);
-                    setTagValue(value);
+                    onChange({ ...config, envTags: extractTags(value ?? {}) });
                   }}
                 />
               </>
             ),
             children: (
               <>
-                <Form style={{ padding: '8px 16px' }}>
+                <Form
+                  style={{ padding: '8px 16px' }}
+                  onValuesChange={(_, all) => {
+                    console.log(all);
+                    onChange({
+                      ...config,
+                      recordMachineCountLimit: all.recordMachineCountLimit,
+                      sampleRate: all.sampleRate,
+                      allowDayOfWeeks: encodeWeekCode(all.allowDayOfWeeks ?? []),
+                      allowTimeOfDayFrom: all.period?.[0]?.format(format),
+                      allowTimeOfDayTo: all.period?.[1]?.format(format),
+                    });
+                  }}
+                  initialValues={{
+                    recordMachineCountLimit: config.recordMachineCountLimit,
+                    allowDayOfWeeks: decodeWeekCode(config.allowDayOfWeeks),
+                    period: [
+                      dayjs(config.allowTimeOfDayFrom || '00:00', format),
+                      dayjs(config.allowTimeOfDayTo || '23:59', format),
+                    ],
+                    sampleRate: config.sampleRate,
+                  }}
+                >
                   <Form.Item
                     label={t('appSetting.recordMachineNum')}
                     name='recordMachineCountLimit'
@@ -54,7 +82,7 @@ const EnvironmentRecordSetting: FC<EnvironmentRecordSettingProps> = (props) => {
                   </Form.Item>
 
                   <Form.Item label={t('appSetting.period')} name='period'>
-                    <TimePicker.RangePicker format={'HH:mm'} />
+                    <TimePicker.RangePicker format={format} />
                   </Form.Item>
 
                   <Form.Item label={t('appSetting.frequency')} name='sampleRate'>
@@ -69,5 +97,22 @@ const EnvironmentRecordSetting: FC<EnvironmentRecordSettingProps> = (props) => {
     </div>
   );
 };
+
+// TODO support multi tags for one key here
+function flattenTags(source: Record<string, string[]>): Record<string, string> {
+  const res: Record<string, string> = {};
+  Object.keys(source).forEach((key) => {
+    res[key] = source[key][0];
+  });
+  return res;
+}
+
+function extractTags(source: Record<string, string>): Record<string, string[]> {
+  const res: Record<string, string[]> = {};
+  Object.keys(source).forEach((key) => {
+    res[key] = [source[key]];
+  });
+  return res;
+}
 
 export default EnvironmentRecordSetting;

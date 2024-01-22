@@ -8,3 +8,5 @@ export * from './updateConfigTemplate';
 export * from './updateInterfaceResponse';
 export * from './updateRecordSetting';
 export * from './updateReplaySetting';
+export * from './updateMultiEnvCollectSetting';
+

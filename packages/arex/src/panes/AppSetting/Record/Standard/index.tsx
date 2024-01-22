@@ -7,7 +7,7 @@ import { useImmer } from 'use-immer';
 
 import { InterfaceSelect } from '@/components';
 import { ConfigService } from '@/services';
-import { QueryRecordSettingRes, SerializeSkipInfo } from '@/services/ConfigService';
+import { ServiceCollectConfig, SerializeSkipInfo } from '@/services/ConfigService';
 
 import SettingForm from '../../SettingForm';
 import {
@@ -36,7 +36,7 @@ type SettingFormType = {
 const format = 'HH:mm';
 
 const defaultValues: Omit<
-  QueryRecordSettingRes,
+  ServiceCollectConfig,
   'appId' | 'modifiedTime' | 'allowDayOfWeeks' | 'allowTimeOfDayFrom' | 'allowTimeOfDayTo'
 > & {
   allowDayOfWeeks: number[];
