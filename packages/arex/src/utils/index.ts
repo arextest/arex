@@ -67,7 +67,7 @@ export function wrapWithIds<T>(data: T[]) {
   return data.map((i) => wrapWithId(i));
 }
 
-export function wrapWithId<T>(data: T): (T & WithId) {
+export function wrapWithId<T>(data: T): T & WithId {
   if (!data) return data as T & WithId;
   return {
     ...data,

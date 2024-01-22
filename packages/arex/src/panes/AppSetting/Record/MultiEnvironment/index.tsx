@@ -8,7 +8,7 @@ import React, { FC, useState } from 'react';
 import EnvironmentRecordSetting from '@/panes/AppSetting/Record/MultiEnvironment/EnvironmentRecordSetting';
 import { ApplicationService, ConfigService } from '@/services';
 import { DEFAULT_MULTI_ENV_CONFIG, MultiEnvironmentConfig } from '@/services/ConfigService';
-import { wrapWithId, WithId, wrapWithIds } from '@/utils';
+import { WithId, wrapWithId, wrapWithIds } from '@/utils';
 
 interface MultiEnvironmentProps {
   appId: string;
