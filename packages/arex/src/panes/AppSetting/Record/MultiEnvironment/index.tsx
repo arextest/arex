@@ -64,7 +64,7 @@ const MultiEnvironment: FC<MultiEnvironmentProps> = (props) => {
         type='dashed'
         icon={<PlusOutlined />}
         onClick={() => {
-          setData([...data, wrapWithId({ ...DEFAULT_MULTI_ENV_CONFIG })]);
+          setData([...data, wrapWithId({ ...DEFAULT_MULTI_ENV_CONFIG, appId: props.appId })]);
         }}
         style={{ height: 'auto', padding: '16px', marginTop: '8px' }}
       >

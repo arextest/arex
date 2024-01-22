@@ -14,6 +14,7 @@ export type MultiEnvironmentConfig = Pick<
   | 'allowTimeOfDayFrom'
   | 'allowTimeOfDayTo'
   | 'envTags'
+  | 'appId'
 >;
 
 export const DEFAULT_MULTI_ENV_CONFIG = {
