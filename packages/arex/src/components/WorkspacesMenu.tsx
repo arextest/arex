@@ -85,7 +85,7 @@ const WorkspacesMenu: FC<WorkspacesMenuProps> = (props) => {
       ) : (
         <Select
           size='small'
-          bordered={false}
+          variant='borderless'
           value={props.value}
           options={props.options?.map((ws) => ({
             value: ws.value,

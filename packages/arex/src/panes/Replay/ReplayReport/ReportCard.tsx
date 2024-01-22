@@ -9,6 +9,7 @@ import Icon, {
 import {
   copyToClipboard,
   css,
+  EmptyWrapper,
   SmallTextButton,
   useArexPaneProps,
   useTranslation,
@@ -55,6 +56,7 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
     data: { list: planStatistics } = {
       list: [],
     },
+    loading,
     run: queryPlanStatistics,
     cancel: cancelPollingInterval,
   } = useRequest(
@@ -198,150 +200,153 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
   };
 
   return (
-    <Card
-      // size='small'
-      title={
-        <Flex align='center'>
-          <Select
-            bordered={false}
-            suffixIcon={
-              <span>
-                {t('replay.moreReport')} <DownOutlined />
-              </span>
-            }
-            value={props.planId}
-            options={planStatistics.map((item, index) => ({
-              label:
-                !data?.planId && index === 0 ? (
-                  <Badge
-                    offset={[0, -1]}
-                    count={
-                      <Icon
-                        component={() => <>{t('new', { ns: 'common' })}</>}
-                        style={{ color: token.colorPrimaryText, fontSize: 8, zIndex: 10 }}
-                      />
-                    }
-                  >
-                    <span style={{ marginRight: '8px' }}>{item.planName}</span>
-                  </Badge>
-                ) : (
-                  item.planName
-                ),
-              value: item.planId,
-              record: item,
-            }))}
-            popupMatchSelectWidth={false}
-            optionRender={(item) => (
-              <Space
-                css={css`
-                  width: 100%;
-                  .ant-space-item:last-of-type {
-                    margin-left: auto;
-                  }
-                `}
-              >
-                <Typography.Text ellipsis style={{ width: '220px' }}>
-                  {item.label}
-                </Typography.Text>
-
-                <StatusTag
-                  status={item.data.record.status}
-                  caseCount={
-                    item.data.record.successCaseCount +
-                    item.data.record.failCaseCount +
-                    item.data.record.errorCaseCount
-                  }
-                  totalCaseCount={item.data.record.totalCaseCount}
-                  message={item.data.record.errorMessage}
-                />
-
-                <div style={{ marginLeft: 'auto' }}>
-                  <ProportionBarChart
-                    // percent
-                    data={[
-                      item.data.record.successCaseCount || 0,
-                      item.data.record.failCaseCount || 0,
-                      item.data.record.errorCaseCount || 0,
-                      item.data.record.waitCaseCount || 0,
-                    ]}
-                  />
-                </div>
-              </Space>
-            )}
-            dropdownRender={(menu) => (
-              <>
-                {menu}
-                <SmallTextButton
-                  block
-                  color='secondary'
-                  title={t('more', { ns: 'common' })}
-                  onClick={() => setPageSize((prev) => prev + 8)}
-                />
-              </>
-            )}
-            onChange={(value) => {
-              const selected = planStatistics.find((item) => item.planId === value);
-              setSelectedReport(selected);
-              if (selected) props.onReportChange?.(selected);
-            }}
-            css={css`
-              .ant-select-selection-item {
-                font-weight: 600;
-                padding-inline-end: 64px !important;
+    <EmptyWrapper bordered loading={init} empty={!planStatistics.length}>
+      <Card
+        // size='small'
+        title={
+          <Flex align='center'>
+            <Select
+              variant='borderless'
+              suffixIcon={
+                <span>
+                  {t('replay.moreReport')} <DownOutlined />
+                </span>
               }
-            `}
-          />
+              value={props.planId}
+              options={planStatistics.map((item, index) => ({
+                label:
+                  !data?.planId && index === 0 ? (
+                    <Badge
+                      offset={[0, -1]}
+                      count={
+                        <Icon
+                          component={() => <>{t('new', { ns: 'common' })}</>}
+                          style={{ color: token.colorPrimaryText, fontSize: 8, zIndex: 10 }}
+                        />
+                      }
+                    >
+                      <span style={{ marginRight: '8px' }}>{item.planName}</span>
+                    </Badge>
+                  ) : (
+                    item.planName
+                  ),
+                value: item.planId,
+                record: item,
+              }))}
+              popupMatchSelectWidth={false}
+              optionRender={(item) => (
+                <Space
+                  css={css`
+                    width: 100%;
+                    .ant-space-item:last-of-type {
+                      margin-left: auto;
+                    }
+                  `}
+                >
+                  <Typography.Text ellipsis style={{ width: '220px' }}>
+                    {item.label}
+                  </Typography.Text>
 
-          {selectedReport && (
-            <div style={{ marginLeft: '4px' }}>
-              <StatusTag
-                status={selectedReport.status}
-                caseCount={
-                  selectedReport.successCaseCount +
-                  selectedReport.failCaseCount +
-                  selectedReport.errorCaseCount
+                  <StatusTag
+                    status={item.data.record.status}
+                    caseCount={
+                      item.data.record.successCaseCount +
+                      item.data.record.failCaseCount +
+                      item.data.record.errorCaseCount
+                    }
+                    totalCaseCount={item.data.record.totalCaseCount}
+                    message={item.data.record.errorMessage}
+                  />
+
+                  <div style={{ marginLeft: 'auto' }}>
+                    <ProportionBarChart
+                      // percent
+                      data={[
+                        item.data.record.successCaseCount || 0,
+                        item.data.record.failCaseCount || 0,
+                        item.data.record.errorCaseCount || 0,
+                        item.data.record.waitCaseCount || 0,
+                      ]}
+                    />
+                  </div>
+                </Space>
+              )}
+              dropdownRender={(menu) => (
+                <>
+                  {menu}
+                  <SmallTextButton
+                    block
+                    color='secondary'
+                    title={t('more', { ns: 'common' })}
+                    onClick={() => setPageSize((prev) => prev + 8)}
+                  />
+                </>
+              )}
+              onChange={(value) => {
+                const selected = planStatistics.find((item) => item.planId === value);
+                setSelectedReport(selected);
+                if (selected) props.onReportChange?.(selected);
+              }}
+              css={css`
+                .ant-select-selection-item {
+                  font-weight: 600;
+                  padding-inline-end: 64px !important;
                 }
-                totalCaseCount={selectedReport.totalCaseCount}
-                message={selectedReport.errorMessage}
-              />
-            </div>
-          )}
-        </Flex>
-      }
-      extra={
-        <Space>
-          <Button
-            type='link'
-            size='small'
-            icon={<Icon name='ScrollText' />}
-            disabled={props.readOnly}
-            onClick={props.onLogsClick}
-          >
-            {t('replay.logs')}
-          </Button>
+              `}
+            />
 
-          <Dropdown.Button
-            size='small'
-            type='link'
-            disabled={props.readOnly}
-            loading={retrying}
-            trigger={['click']}
-            menu={{
-              items: extraMenuItems,
-              onClick: extraMenuHandler,
-            }}
-            onClick={() => {
-              if (props.planId) reRunPlan({ planId: props.planId });
-            }}
-          >
-            <RedoOutlined />
-            {t('replay.rerun')}
-          </Dropdown.Button>
-        </Space>
-      }
-    >
-      {props.children}
-    </Card>
+            {selectedReport && (
+              <div style={{ marginLeft: '4px' }}>
+                <StatusTag
+                  status={selectedReport.status}
+                  caseCount={
+                    selectedReport.successCaseCount +
+                    selectedReport.failCaseCount +
+                    selectedReport.errorCaseCount
+                  }
+                  totalCaseCount={selectedReport.totalCaseCount}
+                  message={selectedReport.errorMessage}
+                />
+              </div>
+            )}
+          </Flex>
+        }
+        headStyle={{ padding: '0 9px' }}
+        extra={
+          <Space>
+            <Button
+              type='link'
+              size='small'
+              icon={<Icon name='ScrollText' />}
+              disabled={props.readOnly}
+              onClick={props.onLogsClick}
+            >
+              {t('replay.logs')}
+            </Button>
+
+            <Dropdown.Button
+              size='small'
+              type='link'
+              disabled={props.readOnly}
+              loading={retrying}
+              trigger={['click']}
+              menu={{
+                items: extraMenuItems,
+                onClick: extraMenuHandler,
+              }}
+              onClick={() => {
+                if (props.planId) reRunPlan({ planId: props.planId });
+              }}
+            >
+              <RedoOutlined />
+              {t('replay.rerun')}
+            </Dropdown.Button>
+          </Space>
+        }
+      >
+        {props.children}
+      </Card>
+    </EmptyWrapper>
   );
 });
 

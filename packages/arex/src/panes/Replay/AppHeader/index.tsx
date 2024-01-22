@@ -82,16 +82,20 @@ const TitleWrapper = styled(
     const { t } = useTranslation(['components']);
 
     return (
-      <div id='arex-replay-record-detail-btn' className={props.className}>
+      <div
+        id='arex-replay-record-detail-btn'
+        className={props.className}
+        style={{ paddingLeft: '4px' }}
+      >
         {props.title ? (
           <>
             {createElement(
               props.count ? Button : 'div',
-              props.count ? { type: 'text', onClick: props.onClickTitle } : {},
+              props.count
+                ? { type: 'text', onClick: props.onClickTitle }
+                : { style: { padding: '6px 12px 0' } },
               <Badge size='small' count={props.count} offset={[8, 2]}>
-                <span style={{ fontSize: '16px', lineHeight: '20px', fontWeight: 500 }}>
-                  {props.title}
-                </span>
+                <Typography.Title level={4}>{props.title}</Typography.Title>
               </Badge>,
             )}
             {props.onRefresh && (

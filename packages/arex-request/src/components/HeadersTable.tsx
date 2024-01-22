@@ -56,7 +56,7 @@ const HeadersTable: FC<HeaderTableProps> = (props) => {
           ? (text, record, i) => (
               <Input
                 value={text}
-                bordered={false}
+                variant='borderless'
                 placeholder={'key'}
                 disabled={!record.active}
                 onChange={(e) => handleChange(i, 'key', e.target.value)}
@@ -73,7 +73,7 @@ const HeadersTable: FC<HeaderTableProps> = (props) => {
           ? (text, record, i) => (
               <Input
                 value={text}
-                bordered={false}
+                variant='borderless'
                 placeholder={'value'}
                 disabled={!record.active}
                 onChange={(e) => handleChange(i, 'value', e.target.value)}
