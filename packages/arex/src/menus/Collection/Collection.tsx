@@ -13,7 +13,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest, useSize } from 'ahooks';
-import { App, Button, Tag, Tree } from 'antd';
+import { App, Button, ConfigProvider, Tag, Tree } from 'antd';
 import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import { cloneDeep } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -437,28 +437,30 @@ const Collection: ArexMenuFC = (props) => {
             placeholder={'Search for Name or Id'}
             onChange={handleChange}
           />
-          <CollectionTree
-            showLine
-            blockNode
-            height={size?.height && size.height - 100}
-            selectedKeys={selectedKeys}
-            expandedKeys={expandedKeys}
-            autoExpandParent={autoExpandParent}
-            switcherIcon={<DownOutlined />}
-            treeData={filterTreeData}
-            fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
-            onDrop={onDrop}
-            onExpand={onExpand}
-            onSelect={handleSelect}
-            draggable={{ icon: false }}
-            titleRender={(data) => (
-              <CollectionNodeTitle
-                data={data}
-                keyword={searchValue?.keyword}
-                onAddNode={handleAddNode}
-              />
-            )}
-          />
+          <ConfigProvider theme={{ token: { motion: false } }}>
+            <CollectionTree
+              showLine
+              blockNode
+              height={size?.height && size.height - 100}
+              selectedKeys={selectedKeys}
+              expandedKeys={expandedKeys}
+              autoExpandParent={autoExpandParent}
+              switcherIcon={<DownOutlined />}
+              treeData={filterTreeData}
+              fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
+              onDrop={onDrop}
+              onExpand={onExpand}
+              onSelect={handleSelect}
+              draggable={{ icon: false }}
+              titleRender={(data) => (
+                <CollectionNodeTitle
+                  data={data}
+                  keyword={searchValue?.keyword}
+                  onAddNode={handleAddNode}
+                />
+              )}
+            />
+          </ConfigProvider>
           {/*弹框*/}
           <CollectionsImportExport
             show={showModalImportExport}
