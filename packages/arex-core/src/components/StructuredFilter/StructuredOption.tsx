@@ -96,7 +96,7 @@ const StructuredOption: ForwardRefRenderFunction<StructuredOptionRef, Structured
 
     if (option?.length && ['number', 'string'].includes(typeof option[0]))
       return option.map<ItemType>((value) => ({
-        label: value as React.Key,
+        label: value as React.ReactNode,
         key: value as React.Key,
       }));
     else return (option as ItemType[]) || [];
