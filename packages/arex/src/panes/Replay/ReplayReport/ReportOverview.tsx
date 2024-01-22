@@ -1,6 +1,7 @@
 import 'chart.js/auto';
 
 import { Label, SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
+import { css } from '@emotion/react';
 import { Col, Row, Space, Statistic, Tag, theme, Typography } from 'antd';
 import React, { FC, useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
@@ -77,8 +78,24 @@ const ReportOverview: FC<ReportOverViewProps> = (props) => {
           {props.data?.planName}
         </div>
         <div>
-          <Label>{t('replay.targetHost')}</Label>
-          {props.data?.targetEnv}
+          <Label style={{ flex: 1, flexShrink: 1 }}>{t('replay.targetHost')}</Label>
+          <Typography.Text
+            ellipsis
+            copyable
+            css={css`
+              .ant-typography-copy {
+                opacity: 0;
+                transition: opacity 200ms ease-in-out;
+              }
+              &:hover {
+                .ant-typography-copy {
+                  opacity: 1;
+                }
+              }
+            `}
+          >
+            {props.data?.targetEnv}
+          </Typography.Text>
         </div>
         <div>
           <Label>{t('replay.replayStartTime')}</Label>
