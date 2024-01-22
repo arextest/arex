@@ -2,7 +2,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { useTranslation } from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
-import { Button } from 'antd';
+import { App, Button } from 'antd';
 import React, { FC, useState } from 'react';
 
 import EnvironmentRecordSetting from '@/panes/AppSetting/Record/MultiEnvironment/EnvironmentRecordSetting';
@@ -17,6 +17,7 @@ interface MultiEnvironmentProps {
 const MultiEnvironment: FC<MultiEnvironmentProps> = (props) => {
   const [settingWrapper] = useAutoAnimate();
   const { t } = useTranslation(['common']);
+  const { message } = App.useApp();
 
   const { data: appInfo } = useRequest(ApplicationService.getAppInfo, {
     defaultParams: [props.appId],
@@ -30,7 +31,21 @@ const MultiEnvironment: FC<MultiEnvironmentProps> = (props) => {
     },
   });
 
-  const { run: submit } = useRequest(ConfigService.updateMultiEnvCollectSetting, { manual: true });
+  const { run: submit, loading: saving } = useRequest(ConfigService.updateMultiEnvCollectSetting, {
+    manual: true,
+    onSuccess: () => {
+      message.open({
+        type: 'success',
+        content: t('message.updateSuccess', { ns: 'common' }),
+      });
+    },
+    onError: (error) => {
+      message.open({
+        type: 'error',
+        content: t('message.updateFailed', { ns: 'common' }),
+      });
+    },
+  });
 
   const [data, setData] = useState<(MultiEnvironmentConfig & WithId)[]>([]);
   return (
@@ -72,6 +87,7 @@ const MultiEnvironment: FC<MultiEnvironmentProps> = (props) => {
       </Button>
       <div style={{ float: 'right', margin: '16px 0' }}>
         <Button
+          loading={saving}
           type='primary'
           htmlType='submit'
           onClick={() => submit({ appId: props.appId, multiEnvConfigs: data })}
