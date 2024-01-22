@@ -1,7 +1,7 @@
 import sdk from 'postman-collection';
 
 import { ArexEnvironment, ArexRESTRequest } from '../../types';
-import { ArexResponse } from '../../types/ArexResponse';
+import { ArexResponse } from '../../types';
 import { convertToPmBody } from './convertToPmBody';
 
 export async function sendRequest(
@@ -9,7 +9,7 @@ export async function sendRequest(
   environment?: ArexEnvironment,
 ): Promise<ArexResponse> {
   // @ts-ignore
-  const runner = new window.PostmanRuntime.Runner();
+  const runner = new window.ArexRuntime.Runner();
   // arex数据接口转postman数据结构
   const rawCollection = {
     info: {

@@ -20,7 +20,7 @@ ArexPaneManager.registerPanes(Panes);
 ArexMenuManager.registerMenus(Menus);
 
 const App = () => {
-  useTrace('http://trace.arextest.com:8080/graphql');
+  useTrace('http://trace.arextest.com/graphql');
   useAuthentication();
 
   const { theme: _theme, compact, colorPrimary, language } = useUserProfile();
