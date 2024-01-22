@@ -17,6 +17,9 @@ export type MultiEnvironmentConfig = Pick<
 >;
 
 export async function updateMultiEnvCollectSetting(params: UpdateMultiEnvCollectSettingReq) {
-  const res = await request.post<boolean>('/webApi/config/serviceCollect/modify/UPDATE_MULTI_ENV', params);
+  const res = await request.post<boolean>(
+    '/webApi/config/serviceCollect/modify/UPDATE_MULTI_ENV',
+    params,
+  );
   return res.body;
 }

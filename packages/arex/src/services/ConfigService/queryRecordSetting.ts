@@ -1,5 +1,5 @@
-import { request } from '@/utils';
 import { MultiEnvironmentConfig } from '@/services/ConfigService/updateMultiEnvCollectSetting';
+import { request } from '@/utils';
 
 export interface QueryRecordSettingReq {
   appId: string;

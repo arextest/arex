@@ -7,7 +7,7 @@ import { useImmer } from 'use-immer';
 
 import { InterfaceSelect } from '@/components';
 import { ConfigService } from '@/services';
-import { ServiceCollectConfig, SerializeSkipInfo } from '@/services/ConfigService';
+import { SerializeSkipInfo, ServiceCollectConfig } from '@/services/ConfigService';
 
 import SettingForm from '../../SettingForm';
 import {
