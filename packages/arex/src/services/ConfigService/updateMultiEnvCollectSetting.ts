@@ -22,7 +22,7 @@ export const DEFAULT_MULTI_ENV_CONFIG = {
   sampleRate: 1,
   allowTimeOfDayFrom: '00:01',
   allowTimeOfDayTo: '23:59',
-}
+};
 
 export async function updateMultiEnvCollectSetting(params: UpdateMultiEnvCollectSettingReq) {
   const res = await request.post<boolean>(
