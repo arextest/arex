@@ -1,5 +1,5 @@
 import { Label, useTranslation } from '@arextest/arex-core';
-import { Collapse, Form, InputNumber, TimePicker } from 'antd';
+import { Button, Collapse, Form, InputNumber, TimePicker } from 'antd';
 import dayjs from 'dayjs';
 import React, { FC, useState } from 'react';
 
@@ -12,15 +12,16 @@ interface EnvironmentRecordSettingProps {
   tagOptions?: Record<string, string[]>;
   config: MultiEnvironmentConfig;
   onChange: (_: MultiEnvironmentConfig) => void;
+  onDelete: () => void;
 }
 const format = 'HH:mm';
 
 const EnvironmentRecordSetting: FC<EnvironmentRecordSettingProps> = (props) => {
-  const { tagOptions = {}, config, onChange } = props;
-  const { t } = useTranslation('components');
+  const { tagOptions = {}, config, onChange, onDelete } = props;
+  const { t } = useTranslation(['components', 'common']);
 
   const [activeKey, setActiveKey] = useState<string | string[]>();
-  console.log(config);
+  // console.log(config);
   return (
     <div style={{ marginBottom: '8px' }}>
       <Collapse
@@ -31,6 +32,11 @@ const EnvironmentRecordSetting: FC<EnvironmentRecordSettingProps> = (props) => {
         items={[
           {
             key: 'environment',
+            extra: (
+              <Button onClick={() => onDelete()} type='text' danger size='small'>
+                {t('remove', { ns: 'common' })}
+              </Button>
+            ),
             label: (
               <>
                 <Label>Environment</Label>

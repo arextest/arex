@@ -7,7 +7,7 @@ import React, { FC, useState } from 'react';
 
 import EnvironmentRecordSetting from '@/panes/AppSetting/Record/MultiEnvironment/EnvironmentRecordSetting';
 import { ApplicationService, ConfigService } from '@/services';
-import { MultiEnvironmentConfig } from '@/services/ConfigService';
+import { DEFAULT_MULTI_ENV_CONFIG, MultiEnvironmentConfig } from '@/services/ConfigService';
 
 interface MultiEnvironmentProps {
   appId: string;
@@ -39,6 +39,13 @@ const MultiEnvironment: FC<MultiEnvironmentProps> = (props) => {
             key={index}
             tagOptions={appInfo?.tags}
             config={item}
+            onDelete={() => {
+              setData((data) => {
+                const newData = [...data];
+                newData.splice(index, 1);
+                return newData;
+              });
+            }}
             onChange={(newConfig) => {
               setData((data) => {
                 // console.log(newConfig)
@@ -55,8 +62,7 @@ const MultiEnvironment: FC<MultiEnvironmentProps> = (props) => {
         type='dashed'
         icon={<PlusOutlined />}
         onClick={() => {
-          // todo set default value
-          setData([...data, {} as MultiEnvironmentConfig]);
+          setData([...data, { ...DEFAULT_MULTI_ENV_CONFIG } as MultiEnvironmentConfig]);
         }}
         style={{ height: 'auto', padding: '16px', marginTop: '8px' }}
       >
