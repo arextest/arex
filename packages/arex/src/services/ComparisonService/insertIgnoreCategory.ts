@@ -6,7 +6,7 @@ export type IgnoreCategory = {
   operationName: string;
 };
 export interface InsertIgnoreCategoryReq extends QueryNodeReq<'Interface'> {
-  ignoreCategories: IgnoreCategory[];
+  ignoreCategoryDetail: IgnoreCategory;
 }
 
 export async function insertIgnoreCategory(params: InsertIgnoreCategoryReq) {

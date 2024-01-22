@@ -14,5 +14,4 @@ export * from './queryIgnoreCategory';
 export * from './queryIgnoreNode';
 export * from './querySortNode';
 export * from './updateEncryptionNode';
-export * from './updateIgnoreCategory';
 export * from './updateSortNode';
