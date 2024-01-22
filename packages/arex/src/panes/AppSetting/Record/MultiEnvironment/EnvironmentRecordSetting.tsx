@@ -7,11 +7,12 @@ import { TagSelect } from '@/components';
 import { DurationInput, IntegerStepSlider } from '@/panes/AppSetting/Record/Standard/FormItem';
 import { decodeWeekCode, encodeWeekCode } from '@/panes/AppSetting/Record/Standard/utils';
 import { MultiEnvironmentConfig } from '@/services/ConfigService';
+import { WithId } from '@/utils';
 
 interface EnvironmentRecordSettingProps {
   tagOptions?: Record<string, string[]>;
-  config: MultiEnvironmentConfig;
-  onChange: (_: MultiEnvironmentConfig) => void;
+  config: MultiEnvironmentConfig & WithId;
+  onChange: (_: MultiEnvironmentConfig & WithId) => void;
   onDelete: () => void;
 }
 const format = 'HH:mm';
@@ -56,7 +57,7 @@ const EnvironmentRecordSetting: FC<EnvironmentRecordSettingProps> = (props) => {
                 <Form
                   style={{ padding: '8px 16px' }}
                   onValuesChange={(_, all) => {
-                    console.log(all);
+                    // console.log(all);
                     onChange({
                       ...config,
                       recordMachineCountLimit: all.recordMachineCountLimit,

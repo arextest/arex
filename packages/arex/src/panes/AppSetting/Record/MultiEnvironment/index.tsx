@@ -8,6 +8,7 @@ import React, { FC, useState } from 'react';
 import EnvironmentRecordSetting from '@/panes/AppSetting/Record/MultiEnvironment/EnvironmentRecordSetting';
 import { ApplicationService, ConfigService } from '@/services';
 import { DEFAULT_MULTI_ENV_CONFIG, MultiEnvironmentConfig } from '@/services/ConfigService';
+import { wrapWithId, WithId, wrapWithIds } from '@/utils';
 
 interface MultiEnvironmentProps {
   appId: string;
@@ -17,26 +18,27 @@ const MultiEnvironment: FC<MultiEnvironmentProps> = (props) => {
   const [settingWrapper] = useAutoAnimate();
   const { t } = useTranslation(['common']);
 
-  const { data: appInfo, refresh: getAppInfo } = useRequest(ApplicationService.getAppInfo, {
+  const { data: appInfo } = useRequest(ApplicationService.getAppInfo, {
     defaultParams: [props.appId],
+    refreshDeps: [props.appId],
   });
 
   useRequest(ConfigService.queryRecordSetting, {
     defaultParams: [{ appId: props.appId }],
     onSuccess: (data) => {
-      setData(data?.multiEnvConfigs ?? []);
+      setData(wrapWithIds(data?.multiEnvConfigs ?? []));
     },
   });
 
   const { run: submit } = useRequest(ConfigService.updateMultiEnvCollectSetting, { manual: true });
 
-  const [data, setData] = useState<MultiEnvironmentConfig[]>([]);
+  const [data, setData] = useState<(MultiEnvironmentConfig & WithId)[]>([]);
   return (
     <>
       <div ref={settingWrapper}>
         {data.map((item, index) => (
           <EnvironmentRecordSetting
-            key={index}
+            key={item.__INNER_ID__}
             tagOptions={appInfo?.tags}
             config={item}
             onDelete={() => {
@@ -62,7 +64,7 @@ const MultiEnvironment: FC<MultiEnvironmentProps> = (props) => {
         type='dashed'
         icon={<PlusOutlined />}
         onClick={() => {
-          setData([...data, { ...DEFAULT_MULTI_ENV_CONFIG } as MultiEnvironmentConfig]);
+          setData([...data, wrapWithId({ ...DEFAULT_MULTI_ENV_CONFIG })]);
         }}
         style={{ height: 'auto', padding: '16px', marginTop: '8px' }}
       >
