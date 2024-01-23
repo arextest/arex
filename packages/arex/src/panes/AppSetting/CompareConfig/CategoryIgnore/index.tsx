@@ -3,7 +3,7 @@ import { useTranslation } from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { App, Button, Flex, Select, SelectProps, Space, Table } from 'antd';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 
 import { CONFIG_TARGET } from '@/panes/AppSetting/CompareConfig';
 import { ApplicationService, ComparisonService } from '@/services';
@@ -15,12 +15,17 @@ export type CategoryIgnoreProps = {
   configTarget: CONFIG_TARGET;
 };
 
+enum Mode {
+  READ,
+  ADD,
+  DELETE,
+}
 const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
   const { message } = App.useApp();
   const { t } = useTranslation();
   const [footerRef] = useAutoAnimate();
 
-  const [mode, setMode] = useState<'read' | 'add' | 'delete'>('read');
+  const [mode, setMode] = useState<Mode>(Mode.READ);
 
   const [operationTypeValue, setOperationTypeValue] = useState<string>();
   const [operationNameValue, setOperationNameValue] = useState<string>();
@@ -29,7 +34,7 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
     setOperationNameValue(undefined);
   }, [props.operationId, props.configTarget]);
 
-  const [selectedRowKey, setSelectedRowKey] = useState<string>();
+  const [selectedRowKey, setSelectedRowKey] = useState<string>('');
 
   const [optionsGroupMap, setOptionsGroupMap] = useState<Map<string, Set<string>>>(new Map());
 
@@ -47,6 +52,13 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
       setCategoryOptions(options);
     },
   });
+
+  const reset = () => {
+    setMode(Mode.READ);
+    setSelectedRowKey('');
+    setOperationNameValue(undefined);
+    setOperationTypeValue(undefined);
+  };
 
   // 获取接口依赖并聚合
   const { data: interfacesList = [] } = useRequest(
@@ -87,10 +99,7 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
       ),
       refreshDeps: [props.operationId, props.configTarget],
       onSuccess(res) {
-        setMode('read');
-        setSelectedRowKey(undefined);
-        setOperationNameValue(undefined);
-        setOperationTypeValue(undefined);
+        reset();
       },
     },
   );
@@ -134,104 +143,118 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
 
   const handleDelete = () => {
     if (selectedRowKey) deleteIgnoreCategory({ id: selectedRowKey });
-    else message.error(t('message.selectRow'));
+    else message.error(t('message.selectRowWarning'));
   };
+
+  const columns = useMemo(
+    () => [
+      {
+        title: t('appSetting.categoryType', { ns: 'components' }),
+        dataIndex: ['ignoreCategoryDetail', 'operationType'],
+      },
+      {
+        title: t('appSetting.categoryName', { ns: 'components' }),
+        dataIndex: ['ignoreCategoryDetail', 'operationName'],
+      },
+    ],
+    [t],
+  );
+
+  const footerRender = () => (
+    <div ref={footerRef}>
+      {mode === Mode.READ ? (
+        <Flex key='read' justify={'end'}>
+          <Button type='text' icon={<PlusOutlined />} onClick={() => setMode(Mode.ADD)}>
+            {t('add')}
+          </Button>
+          <Button type='text' icon={<DeleteOutlined />} onClick={() => setMode(Mode.DELETE)}>
+            {t('delete')}
+          </Button>
+        </Flex>
+      ) : mode === Mode.ADD ? (
+        <div key='add'>
+          <Space>
+            <Select
+              value={operationTypeValue}
+              options={categoryTypeOptions}
+              onSelect={(value) => {
+                setOperationTypeValue(value);
+                setOperationNameValue(undefined);
+
+                setOperationNameOptions(
+                  props.configTarget === CONFIG_TARGET.GLOBAL
+                    ? // GLOBAL: set all dependency
+                      Array.from(optionsGroupMap.get(value) || [])?.map((value) => ({
+                        label: value,
+                        value,
+                      }))
+                    : // INTERFACE: set dependency of current interface
+                      interfacesList
+                        ?.find((item) => item.id === props.operationId)
+                        ?.dependencyList?.filter((item) => item.operationType === value)
+                        .map((item) => ({
+                          label: item.operationName,
+                          value: item.operationName,
+                        })) || [],
+                );
+              }}
+              placeholder={t('appSetting.categoryTypePlaceholder', { ns: 'components' })}
+              style={{ flex: 1 }}
+            />
+
+            <Select
+              value={operationNameValue}
+              options={operationNameOptions}
+              onSelect={setOperationNameValue}
+              placeholder={t('appSetting.categoryNamePlaceholder', { ns: 'components' })}
+              style={{ flex: 1 }}
+            />
+          </Space>
+          <Space style={{ marginLeft: 'auto', float: 'right' }}>
+            <Button type='text' icon={<CloseOutlined />} onClick={reset}>
+              {t('cancel')}
+            </Button>
+
+            <Button type='primary' icon={<PlusOutlined />} onClick={handleAdd}>
+              {t('add')}
+            </Button>
+          </Space>
+        </div>
+      ) : (
+        <Flex key='delete' justify='end'>
+          <Button type='text' icon={<CloseOutlined />} onClick={reset}>
+            {t('cancel')}
+          </Button>
+          <Button danger type='text' icon={<DeleteOutlined />} onClick={handleDelete}>
+            {t('delete')}
+          </Button>
+        </Flex>
+      )}
+    </div>
+  );
 
   return (
     <div>
       <Table
         bordered
-        dataSource={ignoreCategoryData}
+        size='small'
         rowKey='id'
         pagination={false}
-        columns={[
-          {
-            title: t('appSetting.categoryType', { ns: 'components' }),
-            dataIndex: ['ignoreCategoryDetail', 'operationType'],
-          },
-          {
-            title: t('appSetting.categoryName', { ns: 'components' }),
-            dataIndex: ['ignoreCategoryDetail', 'operationName'],
-          },
-        ]}
+        columns={columns}
+        dataSource={ignoreCategoryData}
         rowSelection={
-          mode === 'delete'
+          mode === Mode.DELETE
             ? {
                 type: 'radio',
+                selectedRowKeys: [selectedRowKey],
                 onChange: (id) => setSelectedRowKey(id[0] as string),
               }
             : undefined
         }
-        footer={() => (
-          <div ref={footerRef}>
-            {mode === 'read' ? (
-              <Flex key='read' justify={'end'}>
-                <Button type='text' icon={<PlusOutlined />} onClick={() => setMode('add')}>
-                  {t('add')}
-                </Button>
-                <Button type='text' icon={<DeleteOutlined />} onClick={() => setMode('delete')}>
-                  {t('delete')}
-                </Button>
-              </Flex>
-            ) : mode === 'add' ? (
-              <div key='add'>
-                <Space>
-                  <Select
-                    value={operationTypeValue}
-                    options={categoryTypeOptions}
-                    onSelect={(value) => {
-                      setOperationTypeValue(value);
-                      setOperationNameValue(undefined);
-
-                      setOperationNameOptions(
-                        props.configTarget === CONFIG_TARGET.GLOBAL
-                          ? Array.from(optionsGroupMap.get(value) || [])?.map((value) => ({
-                              label: value,
-                              value,
-                            }))
-                          : interfacesList
-                              ?.find((item) => item.id === props.operationId)
-                              ?.dependencyList?.filter((item) => item.operationType === value)
-                              .map((item) => ({
-                                label: item.operationName,
-                                value: item.operationName,
-                              })) || [],
-                      );
-                    }}
-                    placeholder={t('appSetting.categoryTypePlaceholder', { ns: 'components' })}
-                    style={{ flex: 1 }}
-                  />
-
-                  <Select
-                    value={operationNameValue}
-                    options={operationNameOptions}
-                    onSelect={setOperationNameValue}
-                    placeholder={t('appSetting.categoryNamePlaceholder', { ns: 'components' })}
-                    style={{ flex: 1 }}
-                  />
-                </Space>
-                <Space style={{ marginLeft: 'auto', float: 'right' }}>
-                  <Button type='text' icon={<CloseOutlined />} onClick={() => setMode('read')}>
-                    {t('cancel')}
-                  </Button>
-
-                  <Button type='primary' icon={<PlusOutlined />} onClick={handleAdd}>
-                    {t('add')}
-                  </Button>
-                </Space>
-              </div>
-            ) : (
-              <Flex key='delete' justify={'end'}>
-                <Button type='text' icon={<CloseOutlined />} onClick={() => setMode('read')}>
-                  {t('cancel')}
-                </Button>
-                <Button danger type='text' icon={<DeleteOutlined />} onClick={handleDelete}>
-                  {t('delete')}
-                </Button>
-              </Flex>
-            )}
-          </div>
-        )}
+        onRow={(record) => ({
+          onClick: () => mode === Mode.DELETE && setSelectedRowKey(record.id),
+        })}
+        footer={footerRender}
         style={{ marginTop: '8px' }}
       />
     </div>

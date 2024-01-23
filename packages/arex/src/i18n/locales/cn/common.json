@@ -52,7 +52,8 @@
     "createSuccess": "创建成功",
     "createFailed": "创建失败",
     "copySuccess": "复制成功",
-    "copyFailed": "复制失败"
+    "copyFailed": "复制失败",
+    "selectRowWarning": "请选择一行"
   },
   "collection": "集合",
   "replay": "回放",
