@@ -17,13 +17,13 @@ const RecordSetting: FC<RecordSettingProps> = (props) => {
     {
       key: 'standard',
       value: 'standard',
-      label: '标准',
+      label: t('env.standardEnv', { ns: 'components' }),
       children: <Standard key='standard' appId={props.appId} />,
     },
     {
       key: 'multiEnvironment',
       value: 'multiEnvironment',
-      label: '多环境',
+      label: t('env.multiEnv', { ns: 'components' }),
       children: <MultiEnvironment key='multiEnvironment' appId={props.appId} />,
     },
   ];

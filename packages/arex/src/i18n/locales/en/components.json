@@ -334,7 +334,10 @@
     "delConfirmText": "Deleting this environment might cause any monitors or mock servers using it to stop functioning properly. Are you sure you want to continue?",
     "variable": "Variable",
     "key": "Key",
-    "value": "Value"
+    "value": "Value",
+    "addEnvConfig": "Add Environment Config",
+    "standardEnv": "Standard",
+    "multiEnv": "Multi Environment"
   },
   "workSpace": {
     "workSpace": "Workspace",

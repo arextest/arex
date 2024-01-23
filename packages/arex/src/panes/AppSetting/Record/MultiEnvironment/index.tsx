@@ -16,7 +16,7 @@ interface MultiEnvironmentProps {
 
 const MultiEnvironment: FC<MultiEnvironmentProps> = (props) => {
   const [settingWrapper] = useAutoAnimate();
-  const { t } = useTranslation(['common']);
+  const { t } = useTranslation(['common', 'components']);
   const { message } = App.useApp();
 
   const { data: appInfo } = useRequest(ApplicationService.getAppInfo, {
@@ -83,7 +83,7 @@ const MultiEnvironment: FC<MultiEnvironmentProps> = (props) => {
         }}
         style={{ height: 'auto', padding: '16px', marginTop: '8px' }}
       >
-        <span style={{ padding: '0 8px' }}>添加环境配置</span>
+        <span style={{ padding: '0 8px' }}>{t('env.addEnvConfig', { ns: 'components' })}</span>
       </Button>
       <div style={{ float: 'right', margin: '16px 0' }}>
         <Button
