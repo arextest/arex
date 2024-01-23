@@ -68,15 +68,15 @@ const Version: FC = () => {
         )}
 
         <Form.Item label={'API_SERVICE'} name='api' style={{ marginBottom: '-4px' }}>
-          <Input readOnly bordered={false} />
+          <Input readOnly variant='borderless' />
         </Form.Item>
 
         <Form.Item label={'SCHEDULE_SERVICE'} name='schedule' style={{ marginBottom: '-4px' }}>
-          <Input readOnly bordered={false} />
+          <Input readOnly variant='borderless' />
         </Form.Item>
 
         <Form.Item label={'STORAGE_SERVICE'} name='storage' style={{ marginBottom: '-4px' }}>
-          <Input readOnly bordered={false} />
+          <Input readOnly variant='borderless' />
         </Form.Item>
       </Form>
     </>
