@@ -42,7 +42,7 @@ const MultiEnvironment: FC<MultiEnvironmentProps> = (props) => {
     onError: (error) => {
       message.open({
         type: 'error',
-        content: t('message.updateFailed', { ns: 'common' }),
+        content: error.message ?? t('message.updateFailed', { ns: 'common' }),
       });
     },
   });

@@ -30,5 +30,8 @@ export async function updateMultiEnvCollectSetting(params: UpdateMultiEnvCollect
     '/webApi/config/serviceCollect/modify/UPDATE_MULTI_ENV',
     params,
   );
+  if (!res.body) {
+    throw new Error(res?.responseStatusType?.responseDesc ?? 'Update failed with unexpected err');
+  }
   return res.body;
 }
