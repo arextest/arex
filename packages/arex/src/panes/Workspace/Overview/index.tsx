@@ -221,7 +221,7 @@ const WorkspaceSetting: FC = () => {
             <List.Item
               actions={[
                 <Select
-                  bordered={false}
+                  variant='borderless'
                   key='userRole'
                   disabled={!isAdmin}
                   value={item.role}

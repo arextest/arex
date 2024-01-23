@@ -89,7 +89,7 @@ const RequestBody = () => {
           {isJsonContentType && (
             <Select
               value={store.request.body.contentType}
-              bordered={false}
+              variant='borderless'
               size={'small'}
               options={rawSmallCateOptions}
               optionLabelProp={'test'}

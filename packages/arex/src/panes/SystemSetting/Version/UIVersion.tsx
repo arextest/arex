@@ -44,7 +44,7 @@ const UIVersion: FC<{ value?: string }> = () => {
 
   return (
     <Space size='middle'>
-      <Input readOnly value={__APP_VERSION__} bordered={false} />
+      <Input readOnly value={__APP_VERSION__} variant='borderless' />
 
       {isClient && (
         <Button

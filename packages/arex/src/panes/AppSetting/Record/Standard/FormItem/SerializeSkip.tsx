@@ -44,7 +44,7 @@ const SerializeSkip: FC<FormItemProps<SerializeSkipInfo[]>> = (props) => {
         render: (value, record, index) => (
           <Input
             css={inputCssObject}
-            bordered={false}
+            variant='borderless'
             value={value}
             onChange={(e) =>
               setDataSource((state) => {
@@ -60,7 +60,7 @@ const SerializeSkip: FC<FormItemProps<SerializeSkipInfo[]>> = (props) => {
         render: (value, record, index) => (
           <Input
             css={inputCssObject}
-            bordered={false}
+            variant='borderless'
             value={value}
             onChange={(e) =>
               setDataSource((state) => {

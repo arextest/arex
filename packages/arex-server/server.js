@@ -9,9 +9,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
-const SERVICE_API_URL = process.env.SERVICE_API_URL;
-const SERVICE_SCHEDULE_URL = process.env.SERVICE_SCHEDULE_URL;
-const SERVICE_STORAGE_URL = process.env.SERVICE_STORAGE_URL;
+const SERVICE_API_URL = process.env.SERVICE_API_URL || 'http://10.144.62.53:8090';
+const SERVICE_SCHEDULE_URL = process.env.SERVICE_SCHEDULE_URL || 'http://10.144.62.53:8092';
+const SERVICE_STORAGE_URL = process.env.SERVICE_STORAGE_URL || 'http://10.144.62.53:8093';
 
 app.use(
   '/webApi',

@@ -15,7 +15,7 @@ const ExtensionVersion: FC<InputProps> = (props) => {
   );
   return (
     <Space size='middle'>
-      <Input readOnly bordered={false} {...props} />
+      <Input readOnly variant='borderless' {...props} />
       {!isClient && messageDetected && (
         <Button
           size='small'

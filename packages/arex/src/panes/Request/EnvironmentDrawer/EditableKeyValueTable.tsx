@@ -48,7 +48,7 @@ export const useColumns = (
         ? (text, record, i) => (
             <Input
               value={text}
-              bordered={false}
+              variant='borderless'
               placeholder={`${t('env.key', { ns: 'components' })} ${i + 1}`}
               disabled={!record.active}
               onChange={(e) => handleChange(i, 'key', e.target.value)}
@@ -64,7 +64,7 @@ export const useColumns = (
         ? (text, record, i) => (
             <Input
               value={text}
-              bordered={false}
+              variant='borderless'
               placeholder={`${t('env.value', { ns: 'components' })} ${i + 1}`}
               disabled={!record.active}
               onChange={(e) => handleChange(i, 'value', e.target.value)}

@@ -33,7 +33,7 @@ const PanesTitle = styled((props: PanesTitleProps) => {
 
   return (
     // @ts-ignore
-    <div style={{ marginBottom: `${token.margin}px`, ...style }} {...extraProps}>
+    <div style={{ marginBottom: `${token.marginXS}px`, ...style }} {...extraProps}>
       <Space className='title'>
         {edit ? (
           <Input

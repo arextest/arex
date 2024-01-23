@@ -7,5 +7,5 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["electron","vite.config.ts","./package.json", "config/*.json" ],
+  "include": ["electron","vite.config.ts","./package.json", "config/*.json", "copyFilePlugin.ts" ],
 }
