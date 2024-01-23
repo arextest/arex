@@ -500,7 +500,7 @@ const AppTitle: FC<AppTitleProps> = ({
                     </Form.Item>
 
                     <Form.Item label={t('replay.caseTags')} name='caseTags'>
-                      <TagSelect tags={tags} />
+                      <TagSelect multiple tags={tags} />
                     </Form.Item>
 
                     <Form.Item label={'Webhook'}>

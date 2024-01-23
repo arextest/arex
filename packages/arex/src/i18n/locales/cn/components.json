@@ -332,7 +332,10 @@
     "delConfirmText": "删除此环境可能会导致使用它的任何监视器或 MOCK 服务停止工作。你确定要继续吗？",
     "variable": "变量名称",
     "key": "键",
-    "value": "值"
+    "value": "值",
+    "addEnvConfig": "添加环境配置",
+    "standardEnv": "标准",
+    "multiEnv": "多环境"
   },
   "workSpace": {
     "workSpace": "工作空间",

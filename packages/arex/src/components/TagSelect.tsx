@@ -7,6 +7,7 @@ import React, { FC, useMemo, useState } from 'react';
 import { CaseTags } from '@/services/ScheduleService';
 
 export interface TagSelectProps {
+  multiple?: boolean;
   tags?: Record<string, string[]>;
   value?: CaseTags;
   onChange?: (value: CaseTags) => void;
@@ -18,7 +19,7 @@ interface Option {
   children?: Option[];
 }
 const TagSelect: FC<TagSelectProps> = (props) => {
-  const { tags, value, onChange } = props;
+  const { multiple, tags, value, onChange } = props;
   const { t } = useTranslation('common');
 
   const [wrapperRef] = useAutoAnimate();
@@ -48,7 +49,7 @@ const TagSelect: FC<TagSelectProps> = (props) => {
         >{`${tagKey}:${tagValue}`}</Tag>
       ))}
 
-      {addTagModalVisible ? (
+      {!multiple && Object.keys(value || {}).length ? null : addTagModalVisible ? (
         <div
           key='add-tag-input'
           css={css`
@@ -64,7 +65,7 @@ const TagSelect: FC<TagSelectProps> = (props) => {
             options={options}
             style={{ width: '64px' }}
             open={addTagModalVisible}
-            getPopupContainer={(triggerNode) => triggerNode.parentElement}
+            // getPopupContainer={(triggerNode) => triggerNode.parentElement}
             onBlur={() => {
               setAddTagModalVisible(false);
             }}
