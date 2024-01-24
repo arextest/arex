@@ -5,11 +5,12 @@ import React, { ReactNode, useState } from 'react';
 
 import { SmallTextButton } from './index';
 
-export type PanesTitleProps = Omit<HTMLDivElement, 'title'> & {
+export type PanesTitleProps = {
   title: ReactNode;
   extra?: ReactNode;
   editable?: boolean; // when title types is string take effect
   onSave?: (title: string) => void;
+  style?: React.CSSProperties;
 };
 
 const PanesTitle = styled((props: PanesTitleProps) => {

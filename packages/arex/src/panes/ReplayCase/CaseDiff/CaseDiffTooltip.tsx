@@ -1,10 +1,8 @@
 import { FilterOutlined } from '@ant-design/icons';
-import { DiffJsonTooltip, Label, SpaceBetweenWrapper, TooltipButton } from '@arextest/arex-core';
-import { Divider, Input, Space, Switch, theme } from 'antd';
+import { DiffJsonTooltip, Label, SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
+import { Divider, Flex, Input, Space, Switch, theme, Tooltip } from 'antd';
 import { TextProps } from 'antd/es/typography/Text';
 import React, { FC, useState } from 'react';
-
-import { useTranslation } from '../../hooks';
 
 export interface DiffPathTooltipProps {
   count?: number;
@@ -17,7 +15,7 @@ export interface DiffPathTooltipProps {
   onSearch?: (value: string) => void;
 }
 
-const DiffPathTooltip: FC<DiffPathTooltipProps> = (props) => {
+const CaseDiffTooltip: FC<DiffPathTooltipProps> = (props) => {
   const {
     count = 0,
     bordered = false,
@@ -28,7 +26,7 @@ const DiffPathTooltip: FC<DiffPathTooltipProps> = (props) => {
     onFilterChange,
     onSearch,
   } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation('components');
   const { token } = theme.useToken();
 
   const [failedOnly, setFailedOnly] = useState(defaultOnlyFailed);
@@ -39,11 +37,11 @@ const DiffPathTooltip: FC<DiffPathTooltipProps> = (props) => {
 
   return (
     <>
-      <SpaceBetweenWrapper style={{ margin: '4px 16px' }}>
+      <SpaceBetweenWrapper style={{ margin: '8px 16px' }}>
         <Space size='large' className='diff-path-tooltip-title'>
           {mode === 'multiple' && (
             <div>
-              <Label strong>{t('diffPath.sceneCount')}</Label>
+              <Label strong>{t('replay.sceneCount')}</Label>
               {count}
             </div>
           )}
@@ -58,17 +56,23 @@ const DiffPathTooltip: FC<DiffPathTooltipProps> = (props) => {
         <Space className='diff-path-tooltip-extra'>
           {mode === 'multiple' && (
             <>
-              <TooltipButton
-                tooltipProps={{ trigger: 'click' }}
-                icon={<FilterOutlined />}
-                title={
-                  <Space>
-                    {t('diffPath.viewFailedOnly')}
-                    <Switch size='small' checked={failedOnly} onChange={handleFilterChange} />
-                  </Space>
-                }
-                style={{ color: failedOnly ? token.colorPrimaryActive : undefined }}
-              />
+              <Tooltip title={<Space>{t('replay.viewFailedOnly')}</Space>}>
+                <Flex
+                  style={{
+                    border: `1px solid ${token.colorBorder}`,
+                    borderRadius: '12px',
+                    padding: '2px',
+                  }}
+                >
+                  <FilterOutlined
+                    style={{
+                      margin: '0 4px',
+                      color: failedOnly ? token.colorPrimaryActive : undefined,
+                    }}
+                  />
+                  <Switch size='small' checked={failedOnly} onChange={handleFilterChange} />
+                </Flex>
+              </Tooltip>
               {extra}
             </>
           )}
@@ -80,4 +84,4 @@ const DiffPathTooltip: FC<DiffPathTooltipProps> = (props) => {
   );
 };
 
-export default DiffPathTooltip;
+export default CaseDiffTooltip;

@@ -57,7 +57,7 @@ type CheckedNodesData = {
 };
 
 export type NodesIgnoreProps = {
-  appId: string;
+  appId?: string;
   operationId?: string;
   dependency?: DependencyParams;
   readOnly?: boolean;
@@ -100,7 +100,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
   } = useRequest(
     () =>
       ComparisonService.queryIgnoreNode({
-        appId: props.appId,
+        appId: props.appId!,
         operationId: props.configTarget === CONFIG_TARGET.GLOBAL ? undefined : props.operationId,
         ...(props.configTarget === CONFIG_TARGET.DEPENDENCY ? props.dependency : {}),
       }),

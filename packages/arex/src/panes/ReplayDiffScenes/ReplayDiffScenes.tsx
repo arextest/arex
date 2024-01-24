@@ -1,36 +1,33 @@
 import { SettingOutlined } from '@ant-design/icons';
-import { DiffPath } from '@arextest/arex-common';
 import {
   ArexPaneFC,
   clearLocalStorage,
   css,
-  DiffMatch,
   EmptyWrapper,
-  getJsonValueByPath,
-  jsonIndexPathFilter,
   Label,
   PaneDrawer,
   PanesTitle,
-  PathHandler,
   SceneCode,
   setLocalStorage,
-  TargetEditor,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest, useSize } from 'ahooks';
-import { App, Card, Collapse, Modal, Progress, Space } from 'antd';
-import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { App, Card, Collapse, Progress, Space } from 'antd';
+import dayjs from 'dayjs';
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
 import { APP_ID_KEY, PanesType } from '@/constant';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
-import { ComparisonService, ReportService, ScheduleService } from '@/services';
-import { DependencyParams } from '@/services/ComparisonService';
+import { IgnoreType } from '@/panes/ReplayCase/CaseDiff/CaseDiffViewer';
+import { ComparisonService, ReportService } from '@/services';
+import { DependencyParams, ExpirationType } from '@/services/ComparisonService';
 import { InfoItem, PlanItemStatistic } from '@/services/ReportService';
 import { useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
 import PlanItemNavigation from '../../components/PlanItemNavigation';
+import CaseDiff from '../ReplayCase/CaseDiff';
 import FlowTree, { FlowTreeData } from './FlowTree';
 import MarkExclusionModal, { MarkExclusionModalProps } from './MarkExclusionModal';
 import SubScenesMenu, { SubSceneMenuProps } from './SubScenesMenu';
@@ -138,20 +135,30 @@ const ReplayDiffScenes: ArexPaneFC = (props) => {
   };
 
   const { run: insertIgnoreNode } = useRequest(
-    (path: string[], global?: boolean) => {
+    (path: string[], type?: IgnoreType) => {
+      const isGlobal = type === IgnoreType.Global;
+      const isTemporary = type === IgnoreType.Temporary;
+
       const dependencyParams: DependencyParams =
-        global || selectedDependency?.isEntry
+        isGlobal || selectedDependency?.isEntry
           ? ({} as DependencyParams)
           : {
               operationType: selectedDependency?.categoryName || selectedDependency?.operationType,
               operationName: selectedDependency?.operationName,
             };
+      const temporaryParams = isTemporary
+        ? {
+            expirationType: ExpirationType.temporary,
+            expirationDate: dayjs().add(7, 'day').valueOf(),
+          }
+        : {};
 
       return ComparisonService.insertIgnoreNode({
-        operationId: global ? undefined : planItemData?.operationId,
-        appId: planItemData?.appId,
+        operationId: isGlobal ? undefined : planItemData!.operationId,
+        appId: planItemData!.appId,
         exclusions: path,
         ...dependencyParams,
+        ...temporaryParams,
       });
     },
     {
@@ -160,44 +167,6 @@ const ReplayDiffScenes: ArexPaneFC = (props) => {
         success && message.success(t('message.success', { ns: 'common' }));
       },
     },
-  );
-
-  function handleClickCompareConfigSetting(data?: InfoItem) {
-    setSelectedDependency(data);
-    setCompareConfigOpen(true);
-  }
-
-  const handleIgnoreKey = useCallback<PathHandler>(
-    ({ path, type, targetEditor, jsonString }) => {
-      const filteredPath = jsonIndexPathFilter(path, jsonString![targetEditor]);
-      filteredPath && insertIgnoreNode(filteredPath, type === 'global');
-    },
-    [insertIgnoreNode],
-  );
-
-  const handleSortKey = useCallback<PathHandler>(({ path, type, targetEditor, jsonString }) => {
-    const filteredPath = jsonIndexPathFilter(path, jsonString![targetEditor]);
-    filteredPath && setTargetNodePath(filteredPath);
-
-    setCompareConfigOpen(true);
-  }, []);
-
-  const [modal, contextHolder] = Modal.useModal();
-  const handleDiffMatch = useCallback<PathHandler>(
-    ({ path, targetEditor, jsonString }) => {
-      const another = targetEditor === TargetEditor.left ? TargetEditor.right : TargetEditor.left;
-      const text1 = getJsonValueByPath(jsonString[targetEditor], path);
-      const text2 = getJsonValueByPath(jsonString[another], path);
-
-      modal.info({
-        title: t('replay.diffMatch'),
-        width: 800,
-        maskClosable: true,
-        content: <DiffMatch text1={text1} text2={text2} />,
-        footer: false,
-      });
-    },
-    [t],
   );
 
   const collapseItems = useMemo(
@@ -265,6 +234,11 @@ const ReplayDiffScenes: ArexPaneFC = (props) => {
       }),
     [getQueryFullLinkInfo, handleClickAllDiff, sceneInfo, subSceneList],
   );
+
+  function handleClickCompareConfigSetting(data?: InfoItem) {
+    setSelectedDependency(data);
+    setCompareConfigOpen(true);
+  }
 
   return (
     <>
@@ -344,11 +318,10 @@ const ReplayDiffScenes: ArexPaneFC = (props) => {
           <Card bordered={false} bodyStyle={{ padding: '0 16px' }} style={{ minHeight: '100%' }}>
             {/* force destroyOnClose */}
             {modalOpen && (
-              <DiffPath
+              <CaseDiff
                 // contextMenuDisabled
                 mode={modalOpen === 2 ? 'multiple' : 'single'} // TODO extra render on single mode
                 defaultOnlyFailed={modalOpen === 2}
-                operationId={planItemData!.operationId}
                 itemsExtraRender={(data) => (
                   <TooltipButton
                     icon={<SettingOutlined />}
@@ -363,18 +336,15 @@ const ReplayDiffScenes: ArexPaneFC = (props) => {
                 loading={loadingFullLinkInfo}
                 data={modalData}
                 onChange={setSelectedDependency}
-                onIgnoreKey={handleIgnoreKey}
-                onSortKey={handleSortKey}
-                onDiffMatch={handleDiffMatch}
-                requestDiffMsg={ScheduleService.queryDiffMsgById}
-                requestQueryLogEntity={ScheduleService.queryLogEntity}
+                onIgnoreKey={insertIgnoreNode}
+                onSortKey={(path) => {
+                  setTargetNodePath(path);
+                  setCompareConfigOpen(true);
+                }}
               />
             )}
           </Card>
         </PaneDrawer>
-
-        {/* JsonDiffMathModal */}
-        {contextHolder}
 
         {/* MarkExclusion */}
 

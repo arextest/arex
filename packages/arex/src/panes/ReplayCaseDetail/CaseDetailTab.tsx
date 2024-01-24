@@ -41,9 +41,7 @@ const CaseDetailTab: FC<CaseDetailTabProps> = (props) => {
           ),
           children: (
             <DiffJsonView
-              hiddenTooltip
               height='400px'
-              remark={['Request', 'Response']}
               diffJson={{
                 left: JSON.stringify(result.targetRequest?.body, null, 2),
                 right: JSON.stringify(result.targetResponse?.body, null, 2),
