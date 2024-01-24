@@ -10,7 +10,7 @@ export interface QueryAllDiffMsgReq {
 }
 
 export interface NodePath {
-  nodeName: string;
+  nodeName?: string;
   index: number;
 }
 

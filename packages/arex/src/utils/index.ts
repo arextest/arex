@@ -67,3 +67,11 @@ export function generateId(len: number) {
   }
   return id;
 }
+
+export function isObjectOrArray(value: unknown): value is object | Array<unknown> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    (value.constructor === Object || value.constructor === Array)
+  );
+}

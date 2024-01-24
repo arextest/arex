@@ -9,7 +9,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
     "@arextest/arex-core": "workspace:^",
-    "@arextest/arex-common": "workspace:^",
+    "@arextest/arex-common": "latest",
     "@arextest/arex-request": "workspace:^",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",

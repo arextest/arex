@@ -208,7 +208,19 @@
     "bug": "Bug",
     "asExpectation":  "As Expectation",
     "arexProblem": "Arex Problem",
-    "remark":  "Remark"
+    "remark":  "Remark",
+    "executionLogs": "Execution logs"
+  },
+  "jsonDiff":{
+    "ignore": "Ignore Key",
+    "ignoreToGlobal": "Ignore to Global",
+    "ignoreToInterfaceOrDependency": "Ignore to Interface / Dependency",
+    "ignoreTemporary": "Temporary Ignore(7d)",
+    "sort": "Sort Key",
+    "diffMatch": "Diff Match",
+    "decode": "Node Decode",
+    "base64DecodeContent": "Base64 decode content",
+    "failedToDecodeBase64": "Failed to decode Base64"
   },
   "caseDetail": {
     "more": "More",
