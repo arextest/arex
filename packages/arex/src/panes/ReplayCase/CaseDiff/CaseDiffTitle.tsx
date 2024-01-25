@@ -1,9 +1,8 @@
-import { SpaceBetweenWrapper } from '@arextest/arex-core';
-import styled from '@emotion/styled';
+import { SpaceBetweenWrapper, styled } from '@arextest/arex-core';
 import { Typography } from 'antd';
 import React, { useCallback } from 'react';
 
-import { DiffLog } from './type';
+import { DiffLog } from '@/services/ReportService';
 
 const defaultPath = 'root';
 

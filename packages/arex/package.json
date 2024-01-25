@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
-    "@arextest/arex-common": "*",
     "@arextest/arex-core": "*",
     "@arextest/arex-request": "*",
     "@arextest/arex-request-runtime": "^1.0.2",

@@ -2,14 +2,14 @@ import { css, EllipsisTooltip, EmptyWrapper, SceneCode } from '@arextest/arex-co
 import { Collapse, Typography } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 
-import DiffPathTooltip, { DiffPathTooltipProps } from './DiffPathTooltip';
-import { DiffPathViewerProps } from './DiffPathViewer';
-import DiffPathViewer from './DiffPathViewer';
-import { InfoItem } from './type';
+import { InfoItem } from '@/services/ReportService';
+
+import CaseDiffTooltip, { DiffPathTooltipProps } from './CaseDiffTooltip';
+import { DiffPathViewerProps } from './CaseDiffViewer';
+import CaseDiffViewer from './CaseDiffViewer';
 
 export interface DiffPathProps extends Omit<DiffPathViewerProps, 'data' | 'id'> {
   mode?: DiffPathTooltipProps['mode'];
-  operationId: string;
   loading?: boolean;
   extra?: React.ReactNode;
   itemsExtraRender?: (data: InfoItem) => React.ReactNode;
@@ -17,7 +17,7 @@ export interface DiffPathProps extends Omit<DiffPathViewerProps, 'data' | 'id'> 
   data: InfoItem[];
 }
 
-const DiffPath: FC<DiffPathProps> = (props) => {
+const CaseDiff: FC<DiffPathProps> = (props) => {
   const {
     data,
     loading,
@@ -45,7 +45,7 @@ const DiffPath: FC<DiffPathProps> = (props) => {
 
   return (
     <>
-      <DiffPathTooltip
+      <CaseDiffTooltip
         mode={mode}
         extra={extra}
         count={diffListFiltered.length}
@@ -72,7 +72,7 @@ const DiffPath: FC<DiffPathProps> = (props) => {
             ),
             extra: itemsExtraRender?.(data),
             children: (
-              <DiffPathViewer {...restProps} defaultActiveFirst data={data} height='400px' />
+              <CaseDiffViewer {...restProps} defaultActiveFirst data={data} height='400px' />
             ),
           }))}
           css={css`
@@ -86,4 +86,4 @@ const DiffPath: FC<DiffPathProps> = (props) => {
   );
 };
 
-export default DiffPath;
+export default CaseDiff;
