@@ -7,9 +7,12 @@ import {
   EmptyWrapper,
   FlexCenterWrapper,
   getJsonValueByPath,
+  JSONEditor,
   jsonIndexPathFilter,
+  Label,
   OnRenderContextMenu,
   SpaceBetweenWrapper,
+  TagBlock,
   TargetEditor,
   tryStringifyJson,
   useTranslation,
@@ -17,12 +20,13 @@ import {
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
-import { App, Input, Menu, Modal, Spin, theme, Typography } from 'antd';
+import { App, Flex, Input, Menu, Modal, Spin, theme, Typography } from 'antd';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 
 import { ScheduleService } from '@/services';
 import { DiffLog, InfoItem } from '@/services/ReportService';
 import { DIFF_TYPE } from '@/services/ScheduleService';
+import { isObjectOrArray } from '@/utils';
 
 import PathTitle from './CaseDiffTitle';
 
@@ -77,6 +81,15 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
   const { message } = App.useApp();
 
   const [decodeData, setDecodeData] = useState('');
+
+  const [arrayElement, setArrayElement] = useState<{
+    element: any;
+    basePath: string[];
+    relativePath: string[];
+  }>();
+  const [openPreciseIgnore, setOpenPreciseIgnore] = useState(false);
+
+  const [referencePath, setReference] = useState<{ path: string[]; value: string }>();
 
   const jsonDiffViewRef = useRef<DiffJsonViewRef>(null);
 
@@ -144,6 +157,46 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
     filteredPath && props.onIgnoreKey?.(filteredPath, type);
   };
 
+  const handlePreciseIgnoreKey = (path: string[], value: unknown, target: TargetEditor) => {
+    const json = target === 'left' ? diffMsg?.baseMsg : diffMsg?.testMsg;
+    let arrayElement: any = undefined;
+    const basePath: string[] = [];
+    const relativePath: string[] = [];
+
+    for (let index = path.length - 1; index > 0; index--) {
+      const slicedPath = path.slice(0, index);
+      const node = getJsonValueByPath(json, slicedPath);
+
+      if (Array.isArray(node)) {
+        arrayElement = (node as Array<any>)[Number(path[index])];
+        basePath.push(...slicedPath);
+        relativePath.push(...path.slice(index + 1));
+        break;
+      }
+    }
+
+    setArrayElement({ element: arrayElement, basePath, relativePath });
+    setOpenPreciseIgnore(true);
+  };
+
+  const handleCreatePreciseIgnoreKey = () => {
+    if (referencePath?.path.length) {
+      const fullPath = arrayElement?.basePath
+        .concat(`[${referencePath.path.join('/')}=${referencePath.value}]`)
+        .concat(arrayElement?.relativePath);
+
+      fullPath && props.onIgnoreKey?.(fullPath, IgnoreType.Interface);
+      resetPreciseIgnoreModal();
+    } else {
+      message.error(t('replayCase.selectReferenceNode'));
+    }
+  };
+
+  const resetPreciseIgnoreModal = () => {
+    setOpenPreciseIgnore(false);
+    setReference(undefined);
+  };
+
   const handleSortKey = (path: string[], value: unknown, target: TargetEditor) => {
     const filteredPath = jsonIndexPathFilter(
       path,
@@ -191,7 +244,7 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
               main: {
                 type: 'button',
                 text: t('jsonDiff.ignore')!,
-                // disabled: isObjectOrArray(getJsonValueByPath(diffJson.left, context.selection.path)),
+                // disabled: isObjectOrArray(value),
                 onClick: () => handleIgnoreKey(path, value, target, IgnoreType.Global),
               },
               items: [
@@ -209,6 +262,11 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
                   type: 'button',
                   text: t('jsonDiff.ignoreTemporary')!,
                   onClick: () => handleIgnoreKey(path, value, target, IgnoreType.Temporary),
+                },
+                {
+                  type: 'button',
+                  text: t('jsonDiff.ignorePrecisely')!,
+                  onClick: () => handlePreciseIgnoreKey(path, value, target),
                 },
               ],
             },
@@ -350,6 +408,88 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
         onCancel={() => setDecodeData('')}
       >
         <Input.TextArea readOnly value={decodeData} />
+      </Modal>
+
+      {/* PreciseIgnoreKeyModal */}
+      <Modal
+        destroyOnClose
+        open={openPreciseIgnore}
+        width='60%'
+        title={t('replayCase.preciseIgnore')}
+        onOk={handleCreatePreciseIgnoreKey}
+        onCancel={resetPreciseIgnoreModal}
+      >
+        <div
+          css={css`
+            .json-ignore-precisely-node {
+              background-color: ${token.colorErrorBgHover};
+            }
+            .json-ignore-reference-node {
+              background-color: ${token.colorSuccessBgHover};
+            }
+            .json-ignore-precisely-node.json-ignore-reference-node {
+              background: linear-gradient(
+                to bottom,
+                ${token.colorErrorBgHover} 0%,
+                ${token.colorErrorBgHover} 50%,
+                ${token.colorSuccessBgHover} 50%,
+                ${token.colorSuccessBgHover} 100%
+              );
+            }
+          `}
+        >
+          <Flex style={{ marginBottom: '8px' }}>
+            <TagBlock color={token.colorErrorBgHover} title={t('replayCase.preciseIgnoreNode')} />
+            <TagBlock color={token.colorSuccessBgHover} title={t('replayCase.referenceNode')} />
+          </Flex>
+
+          <JSONEditor
+            readOnly
+            forceContextMenu
+            height='400px'
+            content={{ json: arrayElement?.element }}
+            onClassName={(path) => {
+              if (
+                path.join(',') === arrayElement?.relativePath.join(',') &&
+                path.join(',') === referencePath?.path.join(',')
+              )
+                return 'json-ignore-precisely-node json-ignore-reference-node';
+              if (path.join(',') === arrayElement?.relativePath.join(','))
+                return 'json-ignore-precisely-node';
+              if (referencePath?.path.join(',') === path.join(','))
+                return 'json-ignore-reference-node';
+            }}
+            onRenderContextMenu={(items, selection) =>
+              isObjectOrArray(selection.value)
+                ? []
+                : [
+                    {
+                      type: 'button',
+                      text: t('replayCase.setAsReferenceNode') as string,
+                      onClick: () => setReference({ path: selection.path, value: selection.value }),
+                    },
+                  ]
+            }
+          />
+        </div>
+
+        <Flex justify='space-between' align={'center'} style={{ marginTop: '12px' }}>
+          <div style={{ flex: 1 }}>
+            <Label>{t('replayCase.referenceNodePath')}</Label>
+            <Input
+              allowClear
+              value={referencePath?.path.join('/')}
+              onChange={(e) => {
+                !e.target.value && setReference(undefined);
+              }}
+              style={{ width: '60%' }}
+            />
+          </div>
+
+          <Typography.Text type='secondary'>
+            {t('replayCase.selectReferenceNodeTip')}
+          </Typography.Text>
+        </Flex>
       </Modal>
     </EmptyWrapper>
   );

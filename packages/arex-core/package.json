@@ -30,7 +30,7 @@
     "immer": "^9.0.19",
     "js-base64": "^3.7.5",
     "lodash": "^4.17.21",
-    "lossless-json": "^2.0.8",
+    "lossless-json": "^4.0.1",
     "path-to-regexp": "^6.2.1",
     "qs": "^6.11.1",
     "react-i18next": "^12.2.0",

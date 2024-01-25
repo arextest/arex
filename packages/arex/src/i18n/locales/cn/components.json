@@ -210,11 +210,21 @@
     "remark": "备注",
     "executionLogs": "执行日志"
   },
+  "replayCase": {
+    "preciseIgnore": "精准忽略",
+    "selectReferenceNode": "请选择参考节点",
+    "preciseIgnoreNode":"精准忽略节点",
+    "referenceNode": "参考节点",
+    "setAsReferenceNode": "设置为参考节点",
+    "referenceNodePath": "参考节点路径",
+    "selectReferenceNodeTip": "Tips: 选择参考子节点并点击右键进行精准忽略"
+  },
   "jsonDiff":{
     "ignore": "添加忽略",
     "ignoreToGlobal": "忽略至全局",
     "ignoreToInterfaceOrDependency": "忽略至接口 / 依赖",
     "ignoreTemporary": "临时忽略(7天)",
+    "ignorePrecisely": "精准忽略",
     "sort": "添加排序",
     "diffMatch": "显示差异",
     "decode": "节点解析",

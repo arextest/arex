@@ -135,6 +135,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      lossless-json:
+        specifier: ^4.0.1
+        version: 4.0.1
       lucide-react:
         specifier: ^0.299.0
         version: 0.299.0(react@18.2.0)
@@ -284,8 +287,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       lossless-json:
-        specifier: ^2.0.8
-        version: 2.0.11
+        specifier: ^4.0.1
+        version: 4.0.1
       path-to-regexp:
         specifier: ^6.2.1
         version: 6.2.1
@@ -6722,6 +6725,10 @@ packages:
 
   /lossless-json@2.0.11:
     resolution: {integrity: sha512-BP0vn+NGYvzDielvBZaFain/wgeJ1hTvURCqtKvhr1SCPePdaaTanmmcplrHfEJSJOUql7hk4FHwToNJjWRY3g==}
+    dev: false
+
+  /lossless-json@4.0.1:
+    resolution: {integrity: sha512-l0L+ppmgPDnb+JGxNLndPtJZGNf6+ZmVaQzoxQm3u6TXmhdnsA+YtdVR8DjzZd/em58686CQhOFDPewfJ4l7MA==}
     dev: false
 
   /loupe@2.3.7:
