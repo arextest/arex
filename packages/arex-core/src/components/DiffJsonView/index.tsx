@@ -86,7 +86,7 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
             onRenderContextMenu={(items, context) => {
               const path = (context.selection as KeySelection)?.path;
               const value = getJsonValueByPath(props.diffJson?.left, path);
-              return props.onRenderContextMenu?.(path, value, TargetEditor.RIGHT) || items;
+              return props.onRenderContextMenu?.(path, value, TargetEditor.LEFT) || items;
             }}
           />
         </div>
