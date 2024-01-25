@@ -1,5 +1,6 @@
 import {
   base64Decode,
+  ContextMenuItem,
   DiffJsonView,
   DiffJsonViewProps,
   DiffJsonViewRef,
@@ -11,6 +12,7 @@ import {
   jsonIndexPathFilter,
   Label,
   OnRenderContextMenu,
+  removeAllArrayInObject,
   SpaceBetweenWrapper,
   TagBlock,
   TargetEditor,
@@ -21,7 +23,7 @@ import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
 import { App, Flex, Input, Menu, Modal, Spin, theme, Typography } from 'antd';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ScheduleService } from '@/services';
 import { DiffLog, InfoItem } from '@/services/ReportService';
@@ -80,16 +82,26 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
   const { token } = theme.useToken();
   const { message } = App.useApp();
 
+  const [openPreciseIgnore, setOpenPreciseIgnore] = useState(false);
+
   const [decodeData, setDecodeData] = useState('');
 
   const [arrayElement, setArrayElement] = useState<{
-    element: any;
-    basePath: string[];
-    relativePath: string[];
+    json: string; // Json string
+    element: any; // Nearest superior array element to the ignored node
+    basePath: string[]; // Element path in json
+    relativePath: string[]; // Path relative to the elements
   }>();
-  const [openPreciseIgnore, setOpenPreciseIgnore] = useState(false);
-
   const [referencePath, setReference] = useState<{ path: string[]; value: string }>();
+  const fullPath = useMemo(
+    () =>
+      referencePath?.path.length
+        ? jsonIndexPathFilter(arrayElement?.basePath, arrayElement?.json)
+            .concat(`[${referencePath.path.join('/')}=${referencePath.value}]`)
+            .concat(jsonIndexPathFilter(arrayElement?.relativePath, arrayElement?.element))
+        : [],
+    [arrayElement, referencePath],
+  );
 
   const jsonDiffViewRef = useRef<DiffJsonViewRef>(null);
 
@@ -168,24 +180,21 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
       const node = getJsonValueByPath(json, slicedPath);
 
       if (Array.isArray(node)) {
-        arrayElement = (node as Array<any>)[Number(path[index])];
+        arrayElement = removeAllArrayInObject((node as Array<any>)[Number(path[index])]); // TODO filter Array
         basePath.push(...slicedPath);
         relativePath.push(...path.slice(index + 1));
         break;
       }
     }
 
-    setArrayElement({ element: arrayElement, basePath, relativePath });
+    if (arrayElement === undefined) return message.error(t('jsonDiff.preciseIgnoreError'));
+    setArrayElement({ json, element: arrayElement, basePath, relativePath });
     setOpenPreciseIgnore(true);
   };
 
   const handleCreatePreciseIgnoreKey = () => {
     if (referencePath?.path.length) {
-      const fullPath = arrayElement?.basePath
-        .concat(`[${referencePath.path.join('/')}=${referencePath.value}]`)
-        .concat(arrayElement?.relativePath);
-
-      fullPath && props.onIgnoreKey?.(fullPath, IgnoreType.Interface);
+      fullPath.length && props.onIgnoreKey?.(fullPath, IgnoreType.Interface);
       resetPreciseIgnoreModal();
     } else {
       message.error(t('replayCase.selectReferenceNode'));
@@ -231,65 +240,90 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
     }
   };
 
-  const contextMenuRender: OnRenderContextMenu = (path, value, target) => [
-    {
-      type: 'row',
-      items: [
-        {
-          type: 'column',
-          items: [
-            {
-              type: 'dropdown-button',
-              width: '10em',
-              main: {
-                type: 'button',
-                text: t('jsonDiff.ignore')!,
-                // disabled: isObjectOrArray(value),
-                onClick: () => handleIgnoreKey(path, value, target, IgnoreType.Global),
-              },
-              items: [
-                {
-                  type: 'button',
-                  text: t('jsonDiff.ignoreToGlobal')!,
-                  onClick: () => handleIgnoreKey(path, value, target, IgnoreType.Global),
-                },
-                {
-                  type: 'button',
-                  text: t('jsonDiff.ignoreToInterfaceOrDependency')!,
-                  onClick: () => handleIgnoreKey(path, value, target, IgnoreType.Interface),
-                },
-                {
-                  type: 'button',
-                  text: t('jsonDiff.ignoreTemporary')!,
-                  onClick: () => handleIgnoreKey(path, value, target, IgnoreType.Temporary),
-                },
-                {
-                  type: 'button',
-                  text: t('jsonDiff.ignorePrecisely')!,
-                  onClick: () => handlePreciseIgnoreKey(path, value, target),
-                },
-              ],
-            },
-            {
-              type: 'button',
-              text: t('jsonDiff.sort')!,
-              onClick: () => handleSortKey(path, value, target),
-            },
-            {
-              type: 'button',
-              text: t('jsonDiff.diffMatch')!,
-              onClick: () => handleDiffMatch(path),
-            },
-            {
-              type: 'button',
-              text: t('jsonDiff.decode')!,
-              onClick: () => handleNodeDecode(value as string),
-            },
-          ],
-        },
-      ],
-    },
-  ];
+  const contextMenuRender: OnRenderContextMenu = (path, value, target) => {
+    const isArrayNode = Array.isArray(value);
+    const isLeafNode = !!value && !isObjectOrArray(value);
+    const isRootNode = !path?.length;
+
+    return [
+      {
+        type: 'row',
+        items: [
+          {
+            type: 'column',
+            items: ([] as ContextMenuItem[])
+              .concat(
+                isRootNode
+                  ? []
+                  : [
+                      {
+                        type: 'dropdown-button',
+                        width: 'max-content',
+                        main: {
+                          type: 'button',
+                          text: t('jsonDiff.ignore')!,
+                          onClick: () => handleIgnoreKey(path, value, target, IgnoreType.Global),
+                        },
+                        items: [
+                          {
+                            type: 'button',
+                            text: t('jsonDiff.ignoreToGlobal')!,
+                            onClick: () => handleIgnoreKey(path, value, target, IgnoreType.Global),
+                          },
+                          {
+                            type: 'button',
+                            text: t('jsonDiff.ignoreToInterfaceOrDependency')!,
+                            onClick: () =>
+                              handleIgnoreKey(path, value, target, IgnoreType.Interface),
+                          },
+                          {
+                            type: 'button',
+                            text: t('jsonDiff.ignoreTemporary')!,
+                            onClick: () =>
+                              handleIgnoreKey(path, value, target, IgnoreType.Temporary),
+                          },
+                          {
+                            type: 'button',
+                            text: t('jsonDiff.ignorePrecisely')!,
+                            disabled: Array.isArray(value), // TODO disabled when not in array
+                            onClick: () => handlePreciseIgnoreKey(path, value, target),
+                          },
+                        ],
+                      },
+                    ],
+              )
+              .concat(
+                isArrayNode
+                  ? [
+                      {
+                        type: 'button',
+                        text: t('jsonDiff.sort')!,
+                        onClick: () => handleSortKey(path, value, target),
+                      },
+                    ]
+                  : [],
+              )
+              .concat(
+                isLeafNode
+                  ? [
+                      {
+                        type: 'button',
+                        text: t('jsonDiff.diffMatch')!,
+                        onClick: () => handleDiffMatch(path),
+                      },
+                      {
+                        type: 'button',
+                        text: t('jsonDiff.decode')!,
+                        onClick: () => handleNodeDecode(value as string),
+                      },
+                    ]
+                  : [],
+              ),
+          },
+        ],
+      },
+    ] as ContextMenuItem[];
+  };
 
   return (
     <EmptyWrapper loading={loadingDiffMsg} empty={!diffMsg}>
@@ -438,58 +472,47 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
             }
           `}
         >
-          <Flex style={{ marginBottom: '8px' }}>
-            <TagBlock color={token.colorErrorBgHover} title={t('replayCase.preciseIgnoreNode')} />
-            <TagBlock color={token.colorSuccessBgHover} title={t('replayCase.referenceNode')} />
+          <Flex justify='space-between' align={'center'} style={{ marginBottom: '8px' }}>
+            <Flex>
+              <TagBlock color={token.colorErrorBgHover} title={t('replayCase.preciseIgnoreNode')} />
+              <TagBlock color={token.colorSuccessBgHover} title={t('replayCase.referenceNode')} />
+            </Flex>
           </Flex>
 
           <JSONEditor
             readOnly
-            forceContextMenu
             height='400px'
             content={{ json: arrayElement?.element }}
             onClassName={(path) => {
               if (
-                path.join(',') === arrayElement?.relativePath.join(',') &&
-                path.join(',') === referencePath?.path.join(',')
+                path?.join(',') === arrayElement?.relativePath.join(',') &&
+                path?.join(',') === referencePath?.path.join(',')
               )
                 return 'json-ignore-precisely-node json-ignore-reference-node';
-              if (path.join(',') === arrayElement?.relativePath.join(','))
+              if (path?.join(',') === arrayElement?.relativePath.join(','))
                 return 'json-ignore-precisely-node';
-              if (referencePath?.path.join(',') === path.join(','))
+              if (referencePath?.path.join(',') === path?.join(','))
                 return 'json-ignore-reference-node';
             }}
-            onRenderContextMenu={(items, selection) =>
-              isObjectOrArray(selection.value)
-                ? []
-                : [
-                    {
-                      type: 'button',
-                      text: t('replayCase.setAsReferenceNode') as string,
-                      onClick: () => setReference({ path: selection.path, value: selection.value }),
-                    },
-                  ]
-            }
+            onSelect={(selection) => {
+              const isLeafNode = !!selection.value && !isObjectOrArray(selection.value);
+              setReference(() =>
+                isLeafNode ? { path: selection.path, value: String(selection.value) } : undefined,
+              );
+            }}
           />
         </div>
 
-        <Flex justify='space-between' align={'center'} style={{ marginTop: '12px' }}>
-          <div style={{ flex: 1 }}>
-            <Label>{t('replayCase.referenceNodePath')}</Label>
-            <Input
-              allowClear
-              value={referencePath?.path.join('/')}
-              onChange={(e) => {
-                !e.target.value && setReference(undefined);
-              }}
-              style={{ width: '60%' }}
-            />
-          </div>
-
-          <Typography.Text type='secondary'>
-            {t('replayCase.selectReferenceNodeTip')}
-          </Typography.Text>
-        </Flex>
+        <div style={{ flex: 1, marginTop: '12px' }}>
+          <Label>{t('replayCase.ignorePath')}</Label>
+          {fullPath.length ? (
+            <Typography.Text>{fullPath.join('/')}</Typography.Text>
+          ) : (
+            <Typography.Text type='secondary'>
+              {t('replayCase.selectReferenceNodeTip')}
+            </Typography.Text>
+          )}
+        </div>
       </Modal>
     </EmptyWrapper>
   );

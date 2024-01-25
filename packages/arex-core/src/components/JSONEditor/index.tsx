@@ -34,6 +34,7 @@ export interface VanillaJSONEditorProps extends JSONEditorPropsOptional {
 
 export interface JSONEditorProps extends VanillaJSONEditorProps {
   hiddenValue?: boolean;
+  onSelect?: (selection: KeySelectionWithValue) => void;
   onRenderContextMenu?: OnRenderContextMenu;
 }
 
@@ -41,7 +42,7 @@ export interface JSONEditorRef {
   scrollTo: (path: (string | number)[]) => void;
 }
 const JSONEditor = forwardRef<JSONEditorRef, JSONEditorProps>((props, ref) => {
-  const { hiddenValue = false, onRenderContextMenu, ...restProps } = props;
+  const { hiddenValue = false, onSelect, onRenderContextMenu, ...restProps } = props;
 
   const { token } = antdTheme.useToken();
   const { theme } = useArexCoreConfig();
@@ -65,6 +66,21 @@ const JSONEditor = forwardRef<JSONEditorRef, JSONEditorProps>((props, ref) => {
         parser: LosslessJSONParser,
         navigationBar: false,
         mainMenuBar: false,
+        onSelect: (selection) => {
+          // disable multi type selection
+          if (!['key', 'value'].includes(selection?.type || '')) return [];
+
+          const path = (selection as KeySelection)?.path;
+          const value = getJsonValueByPath(
+            (props.content as TextContent)?.text || (props.content as JSONContent)?.json,
+            path,
+          );
+          const selectionWithValue: KeySelectionWithValue = {
+            ...(selection as KeySelection),
+            value,
+          };
+          return onSelect?.(selectionWithValue);
+        },
         onRenderContextMenu: (items, context) => {
           // disable multi type selection
           if (!['key', 'value'].includes(context.selection?.type || '')) return [];
@@ -93,7 +109,7 @@ const JSONEditor = forwardRef<JSONEditorRef, JSONEditorProps>((props, ref) => {
     };
   }, [hiddenValue]);
 
-  // update props // TODO onRenderContextMenu update
+  // update props // TODO onSelect/onRenderContextMenu update
   useEffect(() => {
     refEditor.current?.updateProps(restProps);
   }, [restProps]);

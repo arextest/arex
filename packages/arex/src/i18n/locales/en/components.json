@@ -217,8 +217,8 @@
     "preciseIgnoreNode":"Precise Ignore Node",
     "referenceNode": "Reference Node",
     "setAsReferenceNode": "Set as Reference Node",
-    "referenceNodePath": "Reference Node Path",
-    "selectReferenceNodeTip": "Tips: Select the leaf node and right-click for Precise Ignore"
+    "ignorePath": "Ignore Path",
+    "selectReferenceNodeTip": "Please select the leaf node for Precise Ignore"
   },
   "jsonDiff":{
     "ignore": "Ignore Key",

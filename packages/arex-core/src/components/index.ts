@@ -49,3 +49,4 @@ export { default as StructuredFilter } from './StructuredFilter';
 export { CategoryKey, Operator } from './StructuredFilter/keyword';
 export type { TooltipButtonProps } from './TooltipButton';
 export { default as TooltipButton } from './TooltipButton';
+export type { ContextMenuItem } from '@arextest/vanilla-jsoneditor';

@@ -216,8 +216,8 @@
     "preciseIgnoreNode":"精准忽略节点",
     "referenceNode": "参考节点",
     "setAsReferenceNode": "设置为参考节点",
-    "referenceNodePath": "参考节点路径",
-    "selectReferenceNodeTip": "Tips: 选择参考子节点并点击右键进行精准忽略"
+    "ignorePath": "忽略路径",
+    "selectReferenceNodeTip": "请选择参考子节点进行精准忽略"
   },
   "jsonDiff":{
     "ignore": "添加忽略",

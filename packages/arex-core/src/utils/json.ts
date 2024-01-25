@@ -87,7 +87,9 @@ export function setJsonValueByPath(object: any, path: string[], value: any, pars
  * @param path
  * @param jsonString
  */
-export function jsonIndexPathFilter(path: string[], jsonString: string, parser?: Parser) {
+export function jsonIndexPathFilter(path?: string[], jsonString?: string, parser?: Parser) {
+  if (!path?.length || !jsonString) return [];
+
   try {
     const json = tryParseJsonString(jsonString, { parser });
     const { pathList } = path.reduce<{ json: any; pathList: string[] }>(
@@ -105,6 +107,6 @@ export function jsonIndexPathFilter(path: string[], jsonString: string, parser?:
     return pathList;
   } catch (error) {
     console.error(error);
-    return false;
+    return [];
   }
 }
