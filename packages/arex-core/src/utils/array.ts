@@ -7,3 +7,11 @@ export function objectArrayFilter<T extends { [key: string]: any }>(arr: T[], ke
   const res = new Map<keyof T, number>();
   return arr.filter((item) => !res.has(item[key]) && res.set(item[key], 1));
 }
+
+export function isObjectOrArray(value: unknown): value is object | Array<unknown> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    (value.constructor === Object || value.constructor === Array)
+  );
+}

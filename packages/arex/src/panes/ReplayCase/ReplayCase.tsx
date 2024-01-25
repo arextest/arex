@@ -139,7 +139,8 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
     {
       manual: true,
       onSuccess(success) {
-        success && message.success(t('message.success', { ns: 'common' }));
+        if (success) message.success(t('message.createSuccess', { ns: 'common' }));
+        else message.error(t('message.createFailed', { ns: 'common' }));
       },
     },
   );

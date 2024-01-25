@@ -211,11 +211,21 @@
     "remark":  "Remark",
     "executionLogs": "Execution logs"
   },
+  "replayCase": {
+    "preciseIgnore": "Precise Ignore",
+    "selectReferenceNode": "Please select reference node",
+    "preciseIgnoreNode":"Precise Ignore Node",
+    "referenceNode": "Reference Node",
+    "setAsReferenceNode": "Set as Reference Node",
+    "referenceNodePath": "Reference Node Path",
+    "selectReferenceNodeTip": "Tips: Select the leaf node and right-click for Precise Ignore"
+  },
   "jsonDiff":{
     "ignore": "Ignore Key",
     "ignoreToGlobal": "Ignore to Global",
     "ignoreToInterfaceOrDependency": "Ignore to Interface / Dependency",
     "ignoreTemporary": "Temporary Ignore(7d)",
+    "ignorePrecisely": "Precise Ignore",
     "sort": "Sort Key",
     "diffMatch": "Diff Match",
     "decode": "Node Decode",
