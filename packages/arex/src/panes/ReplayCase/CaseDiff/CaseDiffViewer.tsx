@@ -1,5 +1,6 @@
 import {
   base64Decode,
+  ContextMenuItem,
   DiffJsonView,
   DiffJsonViewProps,
   DiffJsonViewRef,
@@ -7,9 +8,13 @@ import {
   EmptyWrapper,
   FlexCenterWrapper,
   getJsonValueByPath,
+  JSONEditor,
   jsonIndexPathFilter,
+  Label,
   OnRenderContextMenu,
+  removeAllArrayInObject,
   SpaceBetweenWrapper,
+  TagBlock,
   TargetEditor,
   tryStringifyJson,
   useTranslation,
@@ -17,12 +22,13 @@ import {
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
-import { App, Input, Menu, Modal, Spin, theme, Typography } from 'antd';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { App, Flex, Input, Menu, Modal, Spin, theme, Typography } from 'antd';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ScheduleService } from '@/services';
 import { DiffLog, InfoItem } from '@/services/ReportService';
 import { DIFF_TYPE } from '@/services/ScheduleService';
+import { isObjectOrArray } from '@/utils';
 
 import PathTitle from './CaseDiffTitle';
 
@@ -76,7 +82,26 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
   const { token } = theme.useToken();
   const { message } = App.useApp();
 
+  const [openConditionalIgnore, setOpenConditionalIgnore] = useState(false);
+
   const [decodeData, setDecodeData] = useState('');
+
+  const [arrayElement, setArrayElement] = useState<{
+    json: string; // Json string
+    element: any; // Nearest superior array element to the ignored node
+    basePath: string[]; // Element path in json
+    relativePath: string[]; // Path relative to the elements
+  }>();
+  const [referencePath, setReference] = useState<{ path: string[]; value: string }>();
+  const fullPath = useMemo(
+    () =>
+      referencePath?.path.length
+        ? jsonIndexPathFilter(arrayElement?.basePath, arrayElement?.json)
+            .concat(`[${referencePath.path.join('/')}=${referencePath.value}]`)
+            .concat(jsonIndexPathFilter(arrayElement?.relativePath, arrayElement?.element))
+        : [],
+    [arrayElement, referencePath],
+  );
 
   const jsonDiffViewRef = useRef<DiffJsonViewRef>(null);
 
@@ -144,6 +169,43 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
     filteredPath && props.onIgnoreKey?.(filteredPath, type);
   };
 
+  const handleConditionalIgnoreKey = (path: string[], value: unknown, target: TargetEditor) => {
+    const json = target === 'left' ? diffMsg?.baseMsg : diffMsg?.testMsg;
+    let arrayElement: any = undefined;
+    const basePath: string[] = [];
+    const relativePath: string[] = [];
+
+    for (let index = path.length - 1; index > 0; index--) {
+      const slicedPath = path.slice(0, index);
+      const node = getJsonValueByPath(json, slicedPath);
+
+      if (Array.isArray(node)) {
+        arrayElement = removeAllArrayInObject((node as Array<any>)[Number(path[index])]); // TODO filter Array
+        basePath.push(...slicedPath);
+        relativePath.push(...path.slice(index + 1));
+        break;
+      }
+    }
+
+    if (arrayElement === undefined) return message.error(t('replayCase.preciseIgnoreError'));
+    setArrayElement({ json, element: arrayElement, basePath, relativePath });
+    setOpenConditionalIgnore(true);
+  };
+
+  const handleCreateConditionalIgnoreKey = () => {
+    if (referencePath?.path.length) {
+      fullPath.length && props.onIgnoreKey?.(fullPath, IgnoreType.Interface);
+      resetConditionalIgnoreModal();
+    } else {
+      message.error(t('replayCase.selectConditionNode'));
+    }
+  };
+
+  const resetConditionalIgnoreModal = () => {
+    setOpenConditionalIgnore(false);
+    setReference(undefined);
+  };
+
   const handleSortKey = (path: string[], value: unknown, target: TargetEditor) => {
     const filteredPath = jsonIndexPathFilter(
       path,
@@ -178,60 +240,90 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
     }
   };
 
-  const contextMenuRender: OnRenderContextMenu = (path, value, target) => [
-    {
-      type: 'row',
-      items: [
-        {
-          type: 'column',
-          items: [
-            {
-              type: 'dropdown-button',
-              width: '10em',
-              main: {
-                type: 'button',
-                text: t('jsonDiff.ignore')!,
-                // disabled: isObjectOrArray(getJsonValueByPath(diffJson.left, context.selection.path)),
-                onClick: () => handleIgnoreKey(path, value, target, IgnoreType.Global),
-              },
-              items: [
-                {
-                  type: 'button',
-                  text: t('jsonDiff.ignoreToGlobal')!,
-                  onClick: () => handleIgnoreKey(path, value, target, IgnoreType.Global),
-                },
-                {
-                  type: 'button',
-                  text: t('jsonDiff.ignoreToInterfaceOrDependency')!,
-                  onClick: () => handleIgnoreKey(path, value, target, IgnoreType.Interface),
-                },
-                {
-                  type: 'button',
-                  text: t('jsonDiff.ignoreTemporary')!,
-                  onClick: () => handleIgnoreKey(path, value, target, IgnoreType.Temporary),
-                },
-              ],
-            },
-            {
-              type: 'button',
-              text: t('jsonDiff.sort')!,
-              onClick: () => handleSortKey(path, value, target),
-            },
-            {
-              type: 'button',
-              text: t('jsonDiff.diffMatch')!,
-              onClick: () => handleDiffMatch(path),
-            },
-            {
-              type: 'button',
-              text: t('jsonDiff.decode')!,
-              onClick: () => handleNodeDecode(value as string),
-            },
-          ],
-        },
-      ],
-    },
-  ];
+  const contextMenuRender: OnRenderContextMenu = (path, value, target) => {
+    const isArrayNode = Array.isArray(value);
+    const isLeafNode = !!value && !isObjectOrArray(value);
+    const isRootNode = !path?.length;
+
+    return [
+      {
+        type: 'row',
+        items: [
+          {
+            type: 'column',
+            items: ([] as ContextMenuItem[])
+              .concat(
+                isRootNode
+                  ? []
+                  : [
+                      {
+                        type: 'dropdown-button',
+                        width: 'max-content',
+                        main: {
+                          type: 'button',
+                          text: t('jsonDiff.ignore')!,
+                          onClick: () => handleIgnoreKey(path, value, target, IgnoreType.Global),
+                        },
+                        items: [
+                          {
+                            type: 'button',
+                            text: t('jsonDiff.ignoreToGlobal')!,
+                            onClick: () => handleIgnoreKey(path, value, target, IgnoreType.Global),
+                          },
+                          {
+                            type: 'button',
+                            text: t('jsonDiff.ignoreToInterfaceOrDependency')!,
+                            onClick: () =>
+                              handleIgnoreKey(path, value, target, IgnoreType.Interface),
+                          },
+                          {
+                            type: 'button',
+                            text: t('jsonDiff.temporaryIgnore')!,
+                            onClick: () =>
+                              handleIgnoreKey(path, value, target, IgnoreType.Temporary),
+                          },
+                          {
+                            type: 'button',
+                            text: t('jsonDiff.conditionalIgnore')!,
+                            disabled: Array.isArray(value), // TODO disabled when not in array
+                            onClick: () => handleConditionalIgnoreKey(path, value, target),
+                          },
+                        ],
+                      },
+                    ],
+              )
+              .concat(
+                isArrayNode
+                  ? [
+                      {
+                        type: 'button',
+                        text: t('jsonDiff.sort')!,
+                        onClick: () => handleSortKey(path, value, target),
+                      },
+                    ]
+                  : [],
+              )
+              .concat(
+                isLeafNode
+                  ? [
+                      {
+                        type: 'button',
+                        text: t('jsonDiff.diffMatch')!,
+                        onClick: () => handleDiffMatch(path),
+                      },
+                      {
+                        type: 'button',
+                        text: t('jsonDiff.decode')!,
+                        onClick: () => handleNodeDecode(value as string),
+                      },
+                    ]
+                  : [],
+              ),
+          },
+        ],
+      },
+    ] as ContextMenuItem[];
+  };
 
   return (
     <EmptyWrapper loading={loadingDiffMsg} empty={!diffMsg}>
@@ -350,6 +442,90 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
         onCancel={() => setDecodeData('')}
       >
         <Input.TextArea readOnly value={decodeData} />
+      </Modal>
+
+      {/* ConditionalIgnoreKeyModal */}
+      <Modal
+        destroyOnClose
+        open={openConditionalIgnore}
+        width='60%'
+        title={t('replayCase.conditionalIgnore')}
+        onOk={handleCreateConditionalIgnoreKey}
+        onCancel={resetConditionalIgnoreModal}
+      >
+        <div
+          css={css`
+            .json-conditional-ignore-node {
+              background-color: ${token.colorErrorBgHover};
+            }
+            .json-ignore-reference-node {
+              background-color: ${token.colorSuccessBgHover};
+            }
+            .json-conditional-ignore-node.json-ignore-reference-node {
+              background: linear-gradient(
+                to bottom,
+                ${token.colorErrorBgHover} 0%,
+                ${token.colorErrorBgHover} 50%,
+                ${token.colorSuccessBgHover} 50%,
+                ${token.colorSuccessBgHover} 100%
+              );
+            }
+          `}
+        >
+          <Flex justify='space-between' align={'center'} style={{ marginBottom: '8px' }}>
+            <Flex>
+              <TagBlock color={token.colorErrorBgHover} title={t('replayCase.ignoreNode')} />
+              <TagBlock color={token.colorSuccessBgHover} title={t('replayCase.conditionNode')} />
+            </Flex>
+          </Flex>
+
+          <JSONEditor
+            readOnly
+            height='400px'
+            content={{ json: arrayElement?.element }}
+            onClassName={(path) => {
+              if (
+                path?.join(',') === arrayElement?.relativePath.join(',') &&
+                path?.join(',') === referencePath?.path.join(',')
+              )
+                return 'json-conditional-ignore-node json-ignore-reference-node';
+              if (path?.join(',') === arrayElement?.relativePath.join(','))
+                return 'json-conditional-ignore-node';
+              if (referencePath?.path.join(',') === path?.join(','))
+                return 'json-ignore-reference-node';
+            }}
+            onSelect={(selection) => {
+              const isLeafNode = !!selection.value && !isObjectOrArray(selection.value);
+              setReference(() =>
+                isLeafNode ? { path: selection.path, value: String(selection.value) } : undefined,
+              );
+            }}
+          />
+        </div>
+        <div style={{ flex: 1, marginTop: '12px' }}>
+          <Label>{t('replayCase.ignorePath')}</Label>
+          {fullPath.length ? (
+            <Typography.Text>{fullPath.join('/')}</Typography.Text>
+          ) : (
+            <Typography.Text type='secondary'>
+              {t('replayCase.selectConditionNodeTip')}
+            </Typography.Text>
+          )}
+        </div>
+
+        <Label style={{ opacity: 0 }}>{t('replayCase.ignorePath')}</Label>
+        {!!fullPath.length && (
+          <Typography.Text type='secondary'>
+            {'IGNORE '}
+            <Typography.Text code>
+              {jsonIndexPathFilter(arrayElement?.relativePath, arrayElement?.element).join('/')}
+            </Typography.Text>
+            {' WHEN '}
+            <Typography.Text code>
+              {`${referencePath?.path.join('/')} = ${referencePath?.value}`}
+            </Typography.Text>
+          </Typography.Text>
+        )}
       </Modal>
     </EmptyWrapper>
   );

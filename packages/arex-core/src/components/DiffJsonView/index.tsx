@@ -1,11 +1,10 @@
-import { ContextMenuItem, KeySelection } from '@arextest/vanilla-jsoneditor';
+import { ContextMenuItem } from '@arextest/vanilla-jsoneditor';
 import { css } from '@emotion/react';
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import JSONEditor, { JSONEditorRef } from '../JSONEditor';
 import DiffJsonTooltip from './DiffJsonTooltip';
-import { getJsonValueByPath } from './helper';
-import JSONEditor, { JSONEditorRef } from './JSONEditor';
 
 export enum TargetEditor {
   LEFT = 'left',
@@ -83,11 +82,10 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
               json: undefined,
             }}
             onClassName={(...params) => props.onClassName?.(...params, TargetEditor.LEFT)}
-            onRenderContextMenu={(items, context) => {
-              const path = (context.selection as KeySelection)?.path;
-              const value = getJsonValueByPath(props.diffJson?.left, path);
-              return props.onRenderContextMenu?.(path, value, TargetEditor.LEFT) || items;
-            }}
+            onRenderContextMenu={(items, selection) =>
+              props.onRenderContextMenu?.(selection.path, selection.value, TargetEditor.LEFT) ||
+              items
+            }
           />
         </div>
 
@@ -104,11 +102,10 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
               json: undefined,
             }}
             onClassName={(...params) => props.onClassName?.(...params, TargetEditor.RIGHT)}
-            onRenderContextMenu={(items, context) => {
-              const path = (context.selection as KeySelection)?.path;
-              const value = getJsonValueByPath(props.diffJson?.right, path);
-              return props.onRenderContextMenu?.(path, value, TargetEditor.RIGHT) || items;
-            }}
+            onRenderContextMenu={(items, selection) =>
+              props.onRenderContextMenu?.(selection.path, selection.value, TargetEditor.RIGHT) ||
+              items
+            }
           />
         </div>
       </div>

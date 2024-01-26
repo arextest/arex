@@ -211,11 +211,21 @@
     "remark":  "Remark",
     "executionLogs": "Execution logs"
   },
+  "replayCase": {
+    "conditionalIgnore": "Conditional Ignore",
+    "selectConditionNode": "Please select condition node",
+    "ignoreNode":"Ignore Node",
+    "conditionNode": "Condition Node",
+    "ignorePath": "Ignore Path",
+    "selectConditionNodeTip": "Please select the leaf node for Condition Ignore",
+    "conditionIgnoreError": "Condition Ignore Error"
+  },
   "jsonDiff":{
     "ignore": "Ignore Key",
     "ignoreToGlobal": "Ignore to Global",
     "ignoreToInterfaceOrDependency": "Ignore to Interface / Dependency",
-    "ignoreTemporary": "Temporary Ignore(7d)",
+    "temporaryIgnore": "Temporary Ignore(7d)",
+    "conditionalIgnore": "Conditional Ignore",
     "sort": "Sort Key",
     "diffMatch": "Diff Match",
     "decode": "Node Decode",
