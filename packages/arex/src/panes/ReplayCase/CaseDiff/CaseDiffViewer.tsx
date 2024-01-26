@@ -82,7 +82,7 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
   const { token } = theme.useToken();
   const { message } = App.useApp();
 
-  const [openPreciseIgnore, setOpenPreciseIgnore] = useState(false);
+  const [openConditionalIgnore, setOpenConditionalIgnore] = useState(false);
 
   const [decodeData, setDecodeData] = useState('');
 
@@ -169,7 +169,7 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
     filteredPath && props.onIgnoreKey?.(filteredPath, type);
   };
 
-  const handlePreciseIgnoreKey = (path: string[], value: unknown, target: TargetEditor) => {
+  const handleConditionalIgnoreKey = (path: string[], value: unknown, target: TargetEditor) => {
     const json = target === 'left' ? diffMsg?.baseMsg : diffMsg?.testMsg;
     let arrayElement: any = undefined;
     const basePath: string[] = [];
@@ -187,22 +187,22 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
       }
     }
 
-    if (arrayElement === undefined) return message.error(t('jsonDiff.preciseIgnoreError'));
+    if (arrayElement === undefined) return message.error(t('replayCase.preciseIgnoreError'));
     setArrayElement({ json, element: arrayElement, basePath, relativePath });
-    setOpenPreciseIgnore(true);
+    setOpenConditionalIgnore(true);
   };
 
-  const handleCreatePreciseIgnoreKey = () => {
+  const handleCreateConditionalIgnoreKey = () => {
     if (referencePath?.path.length) {
       fullPath.length && props.onIgnoreKey?.(fullPath, IgnoreType.Interface);
-      resetPreciseIgnoreModal();
+      resetConditionalIgnoreModal();
     } else {
-      message.error(t('replayCase.selectReferenceNode'));
+      message.error(t('replayCase.selectConditionNode'));
     }
   };
 
-  const resetPreciseIgnoreModal = () => {
-    setOpenPreciseIgnore(false);
+  const resetConditionalIgnoreModal = () => {
+    setOpenConditionalIgnore(false);
     setReference(undefined);
   };
 
@@ -278,15 +278,15 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
                           },
                           {
                             type: 'button',
-                            text: t('jsonDiff.ignoreTemporary')!,
+                            text: t('jsonDiff.temporaryIgnore')!,
                             onClick: () =>
                               handleIgnoreKey(path, value, target, IgnoreType.Temporary),
                           },
                           {
                             type: 'button',
-                            text: t('jsonDiff.ignorePrecisely')!,
+                            text: t('jsonDiff.conditionalIgnore')!,
                             disabled: Array.isArray(value), // TODO disabled when not in array
-                            onClick: () => handlePreciseIgnoreKey(path, value, target),
+                            onClick: () => handleConditionalIgnoreKey(path, value, target),
                           },
                         ],
                       },
@@ -444,24 +444,24 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
         <Input.TextArea readOnly value={decodeData} />
       </Modal>
 
-      {/* PreciseIgnoreKeyModal */}
+      {/* ConditionalIgnoreKeyModal */}
       <Modal
         destroyOnClose
-        open={openPreciseIgnore}
+        open={openConditionalIgnore}
         width='60%'
-        title={t('replayCase.preciseIgnore')}
-        onOk={handleCreatePreciseIgnoreKey}
-        onCancel={resetPreciseIgnoreModal}
+        title={t('replayCase.conditionalIgnore')}
+        onOk={handleCreateConditionalIgnoreKey}
+        onCancel={resetConditionalIgnoreModal}
       >
         <div
           css={css`
-            .json-ignore-precisely-node {
+            .json-conditional-ignore-node {
               background-color: ${token.colorErrorBgHover};
             }
             .json-ignore-reference-node {
               background-color: ${token.colorSuccessBgHover};
             }
-            .json-ignore-precisely-node.json-ignore-reference-node {
+            .json-conditional-ignore-node.json-ignore-reference-node {
               background: linear-gradient(
                 to bottom,
                 ${token.colorErrorBgHover} 0%,
@@ -474,8 +474,8 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
         >
           <Flex justify='space-between' align={'center'} style={{ marginBottom: '8px' }}>
             <Flex>
-              <TagBlock color={token.colorErrorBgHover} title={t('replayCase.preciseIgnoreNode')} />
-              <TagBlock color={token.colorSuccessBgHover} title={t('replayCase.referenceNode')} />
+              <TagBlock color={token.colorErrorBgHover} title={t('replayCase.ignoreNode')} />
+              <TagBlock color={token.colorSuccessBgHover} title={t('replayCase.conditionNode')} />
             </Flex>
           </Flex>
 
@@ -488,9 +488,9 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
                 path?.join(',') === arrayElement?.relativePath.join(',') &&
                 path?.join(',') === referencePath?.path.join(',')
               )
-                return 'json-ignore-precisely-node json-ignore-reference-node';
+                return 'json-conditional-ignore-node json-ignore-reference-node';
               if (path?.join(',') === arrayElement?.relativePath.join(','))
-                return 'json-ignore-precisely-node';
+                return 'json-conditional-ignore-node';
               if (referencePath?.path.join(',') === path?.join(','))
                 return 'json-ignore-reference-node';
             }}
@@ -502,17 +502,30 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
             }}
           />
         </div>
-
         <div style={{ flex: 1, marginTop: '12px' }}>
           <Label>{t('replayCase.ignorePath')}</Label>
           {fullPath.length ? (
             <Typography.Text>{fullPath.join('/')}</Typography.Text>
           ) : (
             <Typography.Text type='secondary'>
-              {t('replayCase.selectReferenceNodeTip')}
+              {t('replayCase.selectConditionNodeTip')}
             </Typography.Text>
           )}
         </div>
+
+        <Label style={{ opacity: 0 }}>{t('replayCase.ignorePath')}</Label>
+        {!!fullPath.length && (
+          <Typography.Text type='secondary'>
+            {'IGNORE '}
+            <Typography.Text code>
+              {jsonIndexPathFilter(arrayElement?.relativePath, arrayElement?.element).join('/')}
+            </Typography.Text>
+            {' WHEN '}
+            <Typography.Text code>
+              {`${referencePath?.path.join('/')} = ${referencePath?.value}`}
+            </Typography.Text>
+          </Typography.Text>
+        )}
       </Modal>
     </EmptyWrapper>
   );

@@ -212,20 +212,20 @@
     "executionLogs": "Execution logs"
   },
   "replayCase": {
-    "preciseIgnore": "Precise Ignore",
-    "selectReferenceNode": "Please select reference node",
-    "preciseIgnoreNode":"Precise Ignore Node",
-    "referenceNode": "Reference Node",
-    "setAsReferenceNode": "Set as Reference Node",
+    "conditionalIgnore": "Conditional Ignore",
+    "selectConditionNode": "Please select condition node",
+    "ignoreNode":"Ignore Node",
+    "conditionNode": "Condition Node",
     "ignorePath": "Ignore Path",
-    "selectReferenceNodeTip": "Please select the leaf node for Precise Ignore"
+    "selectConditionNodeTip": "Please select the leaf node for Condition Ignore",
+    "conditionIgnoreError": "Condition Ignore Error"
   },
   "jsonDiff":{
     "ignore": "Ignore Key",
     "ignoreToGlobal": "Ignore to Global",
     "ignoreToInterfaceOrDependency": "Ignore to Interface / Dependency",
-    "ignoreTemporary": "Temporary Ignore(7d)",
-    "ignorePrecisely": "Precise Ignore",
+    "temporaryIgnore": "Temporary Ignore(7d)",
+    "conditionalIgnore": "Conditional Ignore",
     "sort": "Sort Key",
     "diffMatch": "Diff Match",
     "decode": "Node Decode",

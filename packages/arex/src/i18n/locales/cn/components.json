@@ -211,20 +211,20 @@
     "executionLogs": "执行日志"
   },
   "replayCase": {
-    "preciseIgnore": "精准忽略",
-    "selectReferenceNode": "请选择参考节点",
-    "preciseIgnoreNode":"精准忽略节点",
-    "referenceNode": "参考节点",
-    "setAsReferenceNode": "设置为参考节点",
+    "conditionalIgnore": "条件忽略",
+    "selectConditionNode": "请选择条件节点",
+    "ignoreNode":"忽略节点",
+    "conditionNode": "条件节点",
     "ignorePath": "忽略路径",
-    "selectReferenceNodeTip": "请选择参考子节点进行精准忽略"
+    "selectConditionNodeTip": "请选择参考子节点进行条件忽略",
+    "conditionIgnoreError": "条件忽略错误"
   },
   "jsonDiff":{
     "ignore": "添加忽略",
     "ignoreToGlobal": "忽略至全局",
     "ignoreToInterfaceOrDependency": "忽略至接口 / 依赖",
-    "ignoreTemporary": "临时忽略(7天)",
-    "ignorePrecisely": "精准忽略",
+    "temporaryIgnore": "临时忽略(7天)",
+    "conditionalIgnore": "条件忽略",
     "sort": "添加排序",
     "diffMatch": "显示差异",
     "decode": "节点解析",
