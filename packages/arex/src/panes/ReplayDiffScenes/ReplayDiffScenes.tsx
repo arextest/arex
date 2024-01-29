@@ -26,7 +26,7 @@ import { InfoItem, PlanItemStatistic } from '@/services/ReportService';
 import { useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
-import PlanItemNavigation from '../../components/PlanItemNavigation';
+import PlanItemBreadcrumb from '../../components/PlanItemBreadcrumb';
 import CaseDiff from '../ReplayCase/CaseDiff';
 import FlowTree, { FlowTreeData } from './FlowTree';
 import MarkExclusionModal, { MarkExclusionModalProps } from './MarkExclusionModal';
@@ -242,7 +242,8 @@ const ReplayDiffScenes: ArexPaneFC = (props) => {
 
   return (
     <>
-      <PlanItemNavigation
+      <PlanItemBreadcrumb
+        navigation
         type={PanesType.DIFF_SCENES}
         planItemId={planItemId}
         onGetPlanItemData={setPlanItemData}

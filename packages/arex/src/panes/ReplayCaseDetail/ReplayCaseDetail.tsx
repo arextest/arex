@@ -7,9 +7,10 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { Badge, Breadcrumb, Button, Spin, Tabs, theme } from 'antd';
+import { Badge, Button, Spin, Tabs } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
 
+import { PlanItemBreadcrumb } from '@/components';
 import { APP_ID_KEY, CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
@@ -30,7 +31,6 @@ type ReplayCaseDetailData = ReplayCaseType & {
 
 const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
   const navPane = useNavPane();
-  const { token } = theme.useToken();
   const { activePane } = useMenusPanes();
   const { activeWorkspaceId } = useWorkspaces();
   const { t } = useTranslation('components');
@@ -65,12 +65,7 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
           const caseDetailList = resultMap.get(categoryName);
           return {
             label: (
-              <Badge
-                size='small'
-                color={token.colorPrimary}
-                offset={[5, -5]}
-                count={caseDetailList?.length}
-              >
+              <Badge size='small' offset={[5, -5]} count={caseDetailList?.length}>
                 <span>{categoryName}</span>
               </Badge>
             ),
@@ -84,37 +79,12 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
 
   return (
     <>
-      <Breadcrumb
-        separator='>'
-        items={[
-          {
-            key: props.data.appId,
-            title: <a>{props.data.appName || props.data.appId}</a>,
-            onClick: () =>
-              navPane({
-                type: PanesType.REPLAY,
-                id: props.data.appId,
-                data: {
-                  planId: props.data.planId,
-                  planItemId: props.data.planItemId,
-                },
-              }),
-          },
-          {
-            key: props.data.planItemId,
-            title: <a>{props.data.operationName || 'unknown'}</a>,
-            onClick: () =>
-              navPane({
-                type: PanesType.REPLAY_CASE,
-                id: props.data.planItemId,
-              }),
-          },
-          {
-            key: props.data.recordId,
-            title: props.data.recordId,
-          },
-        ]}
+      <PlanItemBreadcrumb
+        type={PanesType.REPLAY_CASE}
+        planItemId={props.data.planItemId}
+        recordId={props.data.recordId}
       />
+
       <PanesTitle
         title={`${t('replay.recordId')}: ${props.data.recordId}`}
         extra={
