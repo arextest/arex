@@ -211,6 +211,7 @@
     "executionLogs": "执行日志"
   },
   "replayCase": {
+    "ignore": "忽略",
     "conditionalIgnore": "条件忽略",
     "selectConditionNode": "请选择条件节点",
     "ignoreNode":"忽略节点",

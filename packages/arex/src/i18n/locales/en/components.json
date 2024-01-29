@@ -212,6 +212,7 @@
     "executionLogs": "Execution logs"
   },
   "replayCase": {
+    "ignore": "Ignore",
     "conditionalIgnore": "Conditional Ignore",
     "selectConditionNode": "Please select condition node",
     "ignoreNode":"Ignore Node",
