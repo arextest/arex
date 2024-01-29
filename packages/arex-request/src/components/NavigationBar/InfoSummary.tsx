@@ -72,10 +72,7 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
   }, [labelsProps?.value]);
 
   const breadcrumbItems = useMemo(
-    () =>
-      breadcrumb
-        ?.map((title: string) => ({ title }))
-        .concat({ title: titleValue || t('request.name') || 'Untitled' }),
+    () => breadcrumb?.map((title: string) => ({ title })),
     [breadcrumb, titleValue],
   );
 

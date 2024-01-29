@@ -240,7 +240,7 @@ const Collection: ArexMenuFC = (props) => {
     },
   );
 
-  const { run: remove } = useRequest(FileSystemService.moveCollectionItem, {
+  const { run: move } = useRequest(FileSystemService.moveCollectionItem, {
     manual: true,
     onSuccess(success) {
       success && getCollections();
@@ -316,14 +316,21 @@ const Collection: ArexMenuFC = (props) => {
         }
       } else toIndex = 0;
 
-      remove({
+      console.log({
+        id: activeWorkspaceId,
+        fromNodePath,
+        toParentPath,
+        toIndex: toIndex < 0 ? 0 : toIndex,
+      });
+
+      move({
         id: activeWorkspaceId,
         fromNodePath,
         toParentPath,
         toIndex: toIndex < 0 ? 0 : toIndex,
       });
     },
-    [activeWorkspaceId, collectionsTreeData, remove],
+    [activeWorkspaceId, collectionsTreeData, move],
   );
 
   const onExpand = (newExpandedKeys: React.Key[]) => {

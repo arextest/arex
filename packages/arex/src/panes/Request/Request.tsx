@@ -30,7 +30,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const navPane = useNavPane({ inherit: true });
   const { message } = App.useApp();
 
-  const { getCollections } = useCollections();
+  const { collectionsTreeData, getCollections, getPath } = useCollections();
   const userName = getLocalStorage<string>(EMAIL_KEY);
   const { id: paneId, type } = decodePaneKey(props.paneKey);
   // requestId structure: workspaceId-nodeTypeStr-id
@@ -115,7 +115,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     }),
   );
 
-  const parentPath = useMemo(() => data?.parentPath?.map((path) => path.name), [data]);
+  const parentPath = useMemo(() => getPath(id), [collectionsTreeData]);
 
   const { run: runPinMock } = useRequest(
     (recordId) =>
@@ -142,7 +142,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       FileSystemService.renameCollectionItem({
         id: workspaceId,
         newName,
-        path: data!.parentPath!.map((path) => path.id).concat(data!.id),
+        path: parentPath.map((path) => path.id),
         userName: userName as string,
       }),
     {
@@ -245,7 +245,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         data={data}
         language={i18n.language}
         config={httpConfig}
-        breadcrumb={parentPath}
+        breadcrumb={parentPath.map((path) => path.name)}
         titleProps={{
           value: data?.name,
           onChange: rename,
