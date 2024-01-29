@@ -16,7 +16,7 @@ import { App } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import { NextInterfaceButton } from '@/components';
+import { PlanItemBreadcrumb } from '@/components';
 import { APP_ID_KEY, PanesType } from '@/constant';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import CaseDiff from '@/panes/ReplayCase/CaseDiff';
@@ -152,7 +152,8 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
 
   return (
     <div ref={wrapperRef}>
-      <NextInterfaceButton
+      <PlanItemBreadcrumb
+        navigation
         type={PanesType.REPLAY_CASE}
         planItemId={planItemId}
         onGetPlanItemData={setPlanItemData}

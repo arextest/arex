@@ -24,6 +24,7 @@ export type OnRenderContextMenu = (
 ) => ContextMenuItem[] | undefined;
 
 export type DiffJsonViewProps = {
+  readOnly?: boolean;
   hiddenValue?: boolean;
   height?: string | number;
   tooltip?: boolean;
@@ -73,7 +74,7 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
           <JSONEditor
             readOnly
             ref={leftEditorRef}
-            forceContextMenu={!props.hiddenValue}
+            forceContextMenu={!props.readOnly}
             hiddenValue={props.hiddenValue}
             height={props.height}
             remark={t('record') as string}
@@ -93,7 +94,7 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
           <JSONEditor
             readOnly
             ref={rightEditorRef}
-            forceContextMenu={!props.hiddenValue}
+            forceContextMenu={!props.readOnly}
             hiddenValue={props.hiddenValue}
             height={props.height}
             remark={t('replay') as string}
