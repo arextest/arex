@@ -253,13 +253,11 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         labelsProps={{
           value: data?.tags,
           options: tagOptions,
-          onChange: (tags) => {
-            console.log({ tags });
+          onChange: (tags) =>
             saveRequest({
               id: data?.id,
               tags,
-            });
-          },
+            }),
           onEditLabels: () => {
             navPane({
               type: PanesType.WORKSPACE,

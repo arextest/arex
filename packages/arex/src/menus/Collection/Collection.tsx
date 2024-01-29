@@ -316,13 +316,6 @@ const Collection: ArexMenuFC = (props) => {
         }
       } else toIndex = 0;
 
-      console.log({
-        id: activeWorkspaceId,
-        fromNodePath,
-        toParentPath,
-        toIndex: toIndex < 0 ? 0 : toIndex,
-      });
-
       move({
         id: activeWorkspaceId,
         fromNodePath,
