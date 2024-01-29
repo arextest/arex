@@ -58,6 +58,26 @@ export function getChromeVersion() {
   }
 }
 
+export type WithId = {
+  __INNER_ID__: string;
+};
+
+export function wrapWithIds<T>(data: T[]) {
+  if (!data) return data;
+  return data.map((i) => wrapWithId(i));
+}
+
+export function wrapWithId<T>(data: T): T & WithId {
+  if (!data) return data as T & WithId;
+  return {
+    ...data,
+    __INNER_ID__: genDefaultId(),
+  };
+}
+
+export function genDefaultId() {
+  return generateId(10);
+}
 export function generateId(len: number) {
   let id = '';
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -66,4 +86,12 @@ export function generateId(len: number) {
     id += chars.charAt(Math.floor(Math.random() * length));
   }
   return id;
+}
+
+export function isObjectOrArray(value: unknown): value is object | Array<unknown> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    (value.constructor === Object || value.constructor === Array)
+  );
 }

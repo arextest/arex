@@ -25,7 +25,7 @@ export type CaseProps = {
   onClickRetryCase?: (recordId: string) => void;
 };
 
-const Case: FC<CaseProps> = (props) => {
+const CaseList: FC<CaseProps> = (props) => {
   const { activeWorkspaceId } = useWorkspaces();
   const { t } = useTranslation(['components']);
 
@@ -186,4 +186,4 @@ const Case: FC<CaseProps> = (props) => {
   );
 };
 
-export default Case;
+export default CaseList;

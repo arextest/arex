@@ -33,7 +33,7 @@ export enum CONFIG_TYPE {
 
 // TODO 类型定义抽离封装
 export type CompareConfigProps = {
-  appId: string; // 限定应用，用于展示特定应用下所有接口的对比配置
+  appId?: string; // 限定应用，用于展示特定应用下所有接口的对比配置
   operationId?: string | false; // 限定接口，用于展示特定接口的对比配置, false 时不展示 operationType
   dependency?: DependencyParams; // 限定依赖，用于展示特定依赖的对比配置, undefined 时展示所有 dependency 选项, false 时不展示 dependency 选项
   readOnly?: boolean; // 只读模式，用于展示接口的对比配置
@@ -246,7 +246,7 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
   } = useRequest(
     () =>
       ReportService.queryContract({
-        appId: props.appId,
+        appId: props.appId!,
         operationId: activeOperationId,
         ...(configTargetValue === CONFIG_TARGET.DEPENDENCY ? activeDependency : {}),
       }),

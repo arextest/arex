@@ -4,7 +4,6 @@ import {
   RedoOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { ReplayLogsDrawer } from '@arextest/arex-common';
 import {
   HighlightRowTable,
   TooltipButton,
@@ -30,9 +29,11 @@ import { PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import ReportCard, { ReportCardRef } from '@/panes/Replay/ReplayReport/ReportCard';
 import ReportOverview from '@/panes/Replay/ReplayReport/ReportOverview';
-import { ReportService, ScheduleService } from '@/services';
+import { ReportService } from '@/services';
 import { PlanItemStatistic, PlanStatistics } from '@/services/ReportService';
 import { useMenusPanes } from '@/store';
+
+import ReplayLogs from './ReplayLogs';
 
 export type ReplayReportProps = {
   appId: string;
@@ -329,10 +330,9 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
       />
 
       {selectedPlan && (
-        <ReplayLogsDrawer
+        <ReplayLogs
           planId={selectedPlan?.planId}
           open={replayLogsDrawerOpen}
-          request={ScheduleService.queryLogs}
           onClose={() => {
             setReplayLogsDrawerOpen(false);
           }}

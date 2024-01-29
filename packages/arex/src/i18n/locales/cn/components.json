@@ -207,7 +207,29 @@
     "bug": "代码漏洞",
     "asExpectation": "符合预期",
     "arexProblem": "AREX 问题",
-    "remark": "备注"
+    "remark": "备注",
+    "executionLogs": "执行日志"
+  },
+  "replayCase": {
+    "conditionalIgnore": "条件忽略",
+    "selectConditionNode": "请选择条件节点",
+    "ignoreNode":"忽略节点",
+    "conditionNode": "条件节点",
+    "ignorePath": "忽略路径",
+    "selectConditionNodeTip": "请选择参考子节点进行条件忽略",
+    "conditionIgnoreError": "条件忽略错误"
+  },
+  "jsonDiff":{
+    "ignore": "添加忽略",
+    "ignoreToGlobal": "忽略至全局",
+    "ignoreToInterfaceOrDependency": "忽略至接口 / 依赖",
+    "temporaryIgnore": "临时忽略(7天)",
+    "conditionalIgnore": "条件忽略",
+    "sort": "添加排序",
+    "diffMatch": "显示差异",
+    "decode": "节点解析",
+    "base64DecodeContent": "Base64 解码内容",
+    "failedToDecodeBase64": "Base64 解码失败"
   },
   "caseDetail": {
     "more": "详情",
@@ -336,7 +358,10 @@
     "delConfirmText": "删除此环境可能会导致使用它的任何监视器或 MOCK 服务停止工作。你确定要继续吗？",
     "variable": "变量名称",
     "key": "键",
-    "value": "值"
+    "value": "值",
+    "addEnvConfig": "添加环境配置",
+    "standardEnv": "标准",
+    "multiEnv": "多环境"
   },
   "workSpace": {
     "workSpace": "工作空间",

@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-core",
-  "version": "0.3.9",
+  "version": "0.4.0",
   "homepage": "https://github.com/arextest/arex",
   "main": "dist/arex-core.js",
   "module": "dist/arex-core.js",
@@ -16,7 +16,7 @@
   ],
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
-    "@arextest/vanilla-jsoneditor": "0.17.40",
+    "@arextest/vanilla-jsoneditor": "0.21.4-beta.0",
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/sortable": "^7.0.2",
     "@dnd-kit/utilities": "^3.2.1",
@@ -30,7 +30,7 @@
     "immer": "^9.0.19",
     "js-base64": "^3.7.5",
     "lodash": "^4.17.21",
-    "lossless-json": "^2.0.8",
+    "lossless-json": "^4.0.1",
     "path-to-regexp": "^6.2.1",
     "qs": "^6.11.1",
     "react-i18next": "^12.2.0",

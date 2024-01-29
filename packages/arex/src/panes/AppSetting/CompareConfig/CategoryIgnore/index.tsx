@@ -10,7 +10,7 @@ import { ApplicationService, ComparisonService } from '@/services';
 import { IgnoreCategory } from '@/services/ComparisonService';
 
 export type CategoryIgnoreProps = {
-  appId: string;
+  appId?: string;
   operationId?: string;
   configTarget: CONFIG_TARGET;
 };
@@ -87,7 +87,7 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
   const { data: ignoreCategoryData = [], run: queryIgnoreCategory } = useRequest(
     () =>
       ComparisonService.queryIgnoreCategory({
-        appId: props.appId,
+        appId: props.appId!,
         operationId: props.configTarget === CONFIG_TARGET.GLOBAL ? undefined : props.operationId,
       }),
     {
@@ -107,12 +107,13 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
   const { run: insertIgnoreCategory } = useRequest(
     (ignoreCategoryDetail: IgnoreCategory) =>
       ComparisonService.insertIgnoreCategory({
-        appId: props.appId,
+        appId: props.appId!,
         operationId: props.configTarget === CONFIG_TARGET.GLOBAL ? undefined : props.operationId,
         ignoreCategoryDetail,
       }),
     {
       manual: true,
+      ready: !!props.appId,
       onSuccess(success) {
         if (success) {
           message.success(t('message.updateSuccess'));

@@ -8,7 +8,5 @@
   "moreNode": "新增节点",
   "differenceNode": "差异节点",
   "newTag": "新增标签",
-  "base64DecodeContent": "Base64 解码内容",
-  "failedToDecodeBase64": "Base64 解码失败",
   "edit": "编辑"
 }

@@ -208,7 +208,29 @@
     "bug": "Bug",
     "asExpectation":  "As Expectation",
     "arexProblem": "Arex Problem",
-    "remark":  "Remark"
+    "remark":  "Remark",
+    "executionLogs": "Execution logs"
+  },
+  "replayCase": {
+    "conditionalIgnore": "Conditional Ignore",
+    "selectConditionNode": "Please select condition node",
+    "ignoreNode":"Ignore Node",
+    "conditionNode": "Condition Node",
+    "ignorePath": "Ignore Path",
+    "selectConditionNodeTip": "Please select the leaf node for Condition Ignore",
+    "conditionIgnoreError": "Condition Ignore Error"
+  },
+  "jsonDiff":{
+    "ignore": "Ignore Key",
+    "ignoreToGlobal": "Ignore to Global",
+    "ignoreToInterfaceOrDependency": "Ignore to Interface / Dependency",
+    "temporaryIgnore": "Temporary Ignore(7d)",
+    "conditionalIgnore": "Conditional Ignore",
+    "sort": "Sort Key",
+    "diffMatch": "Diff Match",
+    "decode": "Node Decode",
+    "base64DecodeContent": "Base64 decode content",
+    "failedToDecodeBase64": "Failed to decode Base64"
   },
   "caseDetail": {
     "more": "More",
@@ -337,7 +359,10 @@
     "delConfirmText": "Deleting this environment might cause any monitors or mock servers using it to stop functioning properly. Are you sure you want to continue?",
     "variable": "Variable",
     "key": "Key",
-    "value": "Value"
+    "value": "Value",
+    "addEnvConfig": "Add Environment Config",
+    "standardEnv": "Standard",
+    "multiEnv": "Multi Environment"
   },
   "workSpace": {
     "workSpace": "Workspace",

@@ -1,37 +1,33 @@
 import { SettingOutlined } from '@ant-design/icons';
-import { DiffPath } from '@arextest/arex-common';
 import {
   ArexPaneFC,
   clearLocalStorage,
   CollapseTable,
-  DiffMatch,
-  getJsonValueByPath,
-  jsonIndexPathFilter,
   Label,
   PaneDrawer,
   PanesTitle,
-  PathHandler,
   setLocalStorage,
-  TargetEditor,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
-import { App, Modal } from 'antd';
+import { App } from 'antd';
 import dayjs from 'dayjs';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { NextInterfaceButton } from '@/components';
 import { APP_ID_KEY, PanesType } from '@/constant';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
+import CaseDiff from '@/panes/ReplayCase/CaseDiff';
+import { IgnoreType } from '@/panes/ReplayCase/CaseDiff/CaseDiffViewer';
 import { ComparisonService, ReportService, ScheduleService } from '@/services';
 import { DependencyParams, ExpirationType } from '@/services/ComparisonService';
 import { InfoItem, PlanItemStatistic, ReplayCaseType } from '@/services/ReportService';
 import { useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
-import Case, { CaseProps } from './Case';
+import CaseList, { CaseProps } from './CaseList';
 import SaveCase, { SaveCaseRef } from './SaveCase';
 
 const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
@@ -114,9 +110,9 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
   });
 
   const { run: insertIgnoreNode } = useRequest(
-    (path: string[], type?: string) => {
-      const isGlobal = type === 'global';
-      const isTemporary = type === 'temporary';
+    (path: string[], type?: IgnoreType) => {
+      const isGlobal = type === IgnoreType.Global;
+      const isTemporary = type === IgnoreType.Temporary;
 
       const dependencyParams: DependencyParams =
         isGlobal || selectedDependency?.isEntry
@@ -143,7 +139,8 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
     {
       manual: true,
       onSuccess(success) {
-        success && message.success(t('message.success', { ns: 'common' }));
+        if (success) message.success(t('message.createSuccess', { ns: 'common' }));
+        else message.error(t('message.createFailed', { ns: 'common' }));
       },
     },
   );
@@ -152,38 +149,6 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
     setSelectedDependency(data);
     setCompareConfigOpen(true);
   }
-
-  const handleIgnoreKey = useCallback<PathHandler>(
-    ({ path, type, targetEditor, jsonString }) => {
-      const filteredPath = jsonIndexPathFilter(path, jsonString![targetEditor]);
-      filteredPath && insertIgnoreNode(filteredPath, type);
-    },
-    [insertIgnoreNode],
-  );
-
-  const handleSortKey = useCallback<PathHandler>(({ path, type, targetEditor, jsonString }) => {
-    const filteredPath = jsonIndexPathFilter(path, jsonString![targetEditor]);
-    filteredPath && setTargetNodePath(filteredPath);
-    setCompareConfigOpen(true);
-  }, []);
-
-  const [modal, contextHolder] = Modal.useModal();
-  const handleDiffMatch = useCallback<PathHandler>(
-    ({ path, targetEditor, jsonString }) => {
-      const another = targetEditor === TargetEditor.left ? TargetEditor.right : TargetEditor.left;
-      const text1 = getJsonValueByPath(jsonString[targetEditor], path);
-      const text2 = getJsonValueByPath(jsonString[another], path);
-
-      modal.info({
-        title: t('replay.diffMatch'),
-        width: 800,
-        maskClosable: true,
-        content: <DiffMatch text1={text1} text2={text2} />,
-        footer: false,
-      });
-    },
-    [t],
-  );
 
   return (
     <div ref={wrapperRef}>
@@ -207,7 +172,7 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
           <CollapseTable
             active={!!selectedRecord}
             table={
-              <Case
+              <CaseList
                 appId={planItemData.appId}
                 appName={planItemData.appName}
                 planId={planItemData.planId}
@@ -226,8 +191,9 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
               />
             }
             panel={
-              <DiffPath
-                operationId={planItemData.operationId}
+              <CaseDiff
+                loading={loadingFullLinkInfo}
+                data={fullLinkInfoMerged}
                 extra={
                   <TooltipButton
                     icon={<SettingOutlined />}
@@ -246,14 +212,12 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
                     style={{ marginRight: '6px' }}
                   />
                 )}
-                loading={loadingFullLinkInfo}
-                data={fullLinkInfoMerged}
                 onChange={setSelectedDependency}
-                onIgnoreKey={handleIgnoreKey}
-                onSortKey={handleSortKey}
-                onDiffMatch={handleDiffMatch}
-                requestDiffMsg={ScheduleService.queryDiffMsgById}
-                requestQueryLogEntity={ScheduleService.queryLogEntity}
+                onIgnoreKey={insertIgnoreNode}
+                onSortKey={(path) => {
+                  setTargetNodePath(path);
+                  setCompareConfigOpen(true);
+                }}
               />
             }
           />
@@ -265,9 +229,6 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
             appId={planItemData.appId}
             operationName={planItemData.operationName || ''}
           />
-
-          {/* JsonDiffMathModal */}
-          {contextHolder}
 
           {/* CompareConfigModal */}
           <PaneDrawer

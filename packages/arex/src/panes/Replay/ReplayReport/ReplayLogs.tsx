@@ -1,11 +1,19 @@
+import { PaneDrawer, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { Table, TablePaginationConfig } from 'antd';
+import { DrawerProps, Table, TablePaginationConfig } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import React, { FC, useState } from 'react';
 
-import { BizLogLevel } from './constant';
-import { BizLog, QueryPlanLogsReq, QueryPlanLogsRes } from './type';
+import { ScheduleService } from '@/services';
+import { BizLog } from '@/services/ScheduleService';
+
+const BizLogLevel = {
+  INFO: 0,
+  WARN: 1,
+  ERROR: 2,
+  // DEBUG: 3,
+} as const;
 
 const bizLogLevelOption = Object.entries(BizLogLevel).map(([label, value]) => ({ label, value }));
 
@@ -44,10 +52,13 @@ const columns: ColumnsType<BizLog> = [
 
 export type ReplayLogsProps = {
   planId: string;
-  request: (params: QueryPlanLogsReq) => Promise<QueryPlanLogsRes>;
-};
+} & DrawerProps;
 
 const ReplayLogs: FC<ReplayLogsProps> = (props) => {
+  const { planId, ...restProps } = props;
+
+  const { t } = useTranslation('components');
+
   const [pagination, setPagination] = useState<TablePaginationConfig>({
     current: 1,
     pageSize: 15,
@@ -56,8 +67,8 @@ const ReplayLogs: FC<ReplayLogsProps> = (props) => {
 
   const { data, loading } = useRequest(
     () =>
-      props.request({
-        planId: props.planId,
+      ScheduleService.queryLogs({
+        planId,
         condition: {
           levels: [BizLogLevel.INFO, BizLogLevel.WARN, BizLogLevel.ERROR],
           pageNum: pagination.current as number,
@@ -68,22 +79,24 @@ const ReplayLogs: FC<ReplayLogsProps> = (props) => {
       onSuccess(res) {
         setTotal(res?.total || 0);
       },
-      refreshDeps: [pagination, props.planId],
+      refreshDeps: [pagination, planId],
     },
   );
 
   return (
-    <Table
-      size='small'
-      pagination={{
-        total,
-        ...pagination,
-      }}
-      loading={loading}
-      columns={columns}
-      dataSource={data?.logs || []}
-      onChange={setPagination}
-    />
+    <PaneDrawer destroyOnClose title={t('replay.executionLogs')} width={'75%'} {...restProps}>
+      <Table
+        size='small'
+        pagination={{
+          total,
+          ...pagination,
+        }}
+        loading={loading}
+        columns={columns}
+        dataSource={data?.logs || []}
+        onChange={setPagination}
+      />
+    </PaneDrawer>
   );
 };
 

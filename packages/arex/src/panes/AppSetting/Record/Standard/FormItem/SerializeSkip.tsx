@@ -5,7 +5,7 @@ import { ColumnsType } from 'antd/es/table';
 import React, { FC, useEffect, useMemo } from 'react';
 import { useImmer } from 'use-immer';
 
-import { FormItemProps } from '@/panes/AppSetting/Record/FormItem/index';
+import { FormItemProps } from '@/panes/AppSetting/Record/Standard/FormItem/index';
 import { SerializeSkipInfo } from '@/services/ConfigService';
 
 const SerializeSkip: FC<FormItemProps<SerializeSkipInfo[]>> = (props) => {

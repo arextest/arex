@@ -11,23 +11,29 @@ export interface Trace {
   currentTraceRight?: any;
 }
 
+export enum DIFF_TYPE {
+  LEFT_MISSING = 1,
+  RIGHT_MISSING = 2,
+  UNMATCHED = 3,
+}
+
 export interface PathPair {
-  unmatchedType: number;
+  unmatchedType: DIFF_TYPE;
   leftUnmatchedPath: NodePath[];
   rightUnmatchedPath: NodePath[];
-  listKeys: any[];
-  listKeyPath: any[];
+  listKeys?: any[];
+  listKeyPath?: any[];
   trace: Trace;
 }
 
 export type LogEntity = {
-  addRefPkNodePathLeft: null;
-  addRefPkNodePathRight: null;
+  addRefPkNodePathLeft?: null;
+  addRefPkNodePathRight?: null;
   baseValue: string | boolean | null;
   testValue: string | boolean | null;
   logInfo: string;
   logTag: Record<string, string | number>;
-  path: string | null;
+  path?: string | null;
   pathPair: PathPair;
   warn: number;
 };
@@ -40,5 +46,5 @@ export interface QueryLogEntityRes {
 export async function queryLogEntity(params: QueryLogEntityReq) {
   return request
     .post<QueryLogEntityRes>('/schedule/report/queryLogEntity', params)
-    .then((res) => Promise.resolve([res.body.logEntity]));
+    .then((res) => Promise.resolve(res.body.logEntity));
 }

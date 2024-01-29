@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
-    "@arextest/arex-common": "*",
     "@arextest/arex-core": "*",
     "@arextest/arex-request": "*",
     "@arextest/arex-request-runtime": "^1.0.2",
@@ -42,6 +41,7 @@
     "http-proxy-middleware": "^2.0.6",
     "immer": "^9.0.19",
     "lodash": "^4.17.21",
+    "lossless-json": "^4.0.1",
     "lucide-react": "^0.299.0",
     "monaco-editor": "^0.39.0",
     "path-to-regexp": "^6.2.1",

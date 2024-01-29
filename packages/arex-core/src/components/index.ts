@@ -1,12 +1,18 @@
 export { default as CheckOrCloseIcon } from './CheckOrCloseIcon';
 export type { CollapseTableProps } from './CollapseTable';
 export { default as CollapseTable } from './CollapseTable';
-export type { DiffJsonViewProps, PathHandler } from './DiffJsonView';
-export { default as DiffJsonView, TargetEditor } from './DiffJsonView';
+export type {
+  DiffJsonViewProps,
+  DiffJsonViewRef,
+  OnClassName,
+  OnRenderContextMenu,
+  TargetEditor,
+} from './DiffJsonView';
+export { default as DiffJsonView } from './DiffJsonView';
 export { default as DiffJsonTooltip } from './DiffJsonView/DiffJsonTooltip';
 export type { DiffJsonViewDrawerProps } from './DiffJsonView/DiffJsonViewDrawer';
 export { default as DiffJsonViewDrawer } from './DiffJsonView/DiffJsonViewDrawer';
-export { getJsonValueByPath, jsonIndexPathFilter } from './DiffJsonView/helper';
+export { default as TagBlock } from './DiffJsonView/TagBlock';
 export type { DiffMatchProps } from './DiffMatch';
 export { default as DiffMatch } from './DiffMatch';
 export type { EditAreaPlaceholderProps } from './EditAreaPlaceholder';
@@ -26,6 +32,7 @@ export { default as HighlightRowTable } from './HighlightRowTable';
 export type { HoveredActionButtonProps } from './HoveredActionButton';
 export { default as HoveredActionButton } from './HoveredActionButton';
 export * from './icons';
+export { default as JSONEditor } from './JSONEditor';
 export { default as Label } from './Label';
 export type { LabelsGroupProps } from './LabelsGroup';
 export { default as LabelsGroup } from './LabelsGroup';
@@ -42,3 +49,4 @@ export { default as StructuredFilter } from './StructuredFilter';
 export { CategoryKey, Operator } from './StructuredFilter/keyword';
 export type { TooltipButtonProps } from './TooltipButton';
 export { default as TooltipButton } from './TooltipButton';
+export type { ContextMenuItem } from '@arextest/vanilla-jsoneditor';
