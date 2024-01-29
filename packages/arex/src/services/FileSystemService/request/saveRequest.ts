@@ -9,10 +9,13 @@ export async function saveRequest(
   nodeType: number,
 ) {
   const saveParams = {
-    address: {
-      method: params.method,
-      endpoint: params.endpoint,
-    },
+    address:
+      params.method || params.endpoint
+        ? {
+            method: params.method,
+            endpoint: params.endpoint,
+          }
+        : undefined,
     params: params.params,
     headers: params.headers,
     testScripts: params.testScript
