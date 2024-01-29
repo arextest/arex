@@ -1,6 +1,6 @@
 import { CodeOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
-import { Typography } from 'antd';
+import { Button, Tooltip, Typography } from 'antd';
 import React, { FC, ReactNode, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import VConsole from 'vconsole';
@@ -34,43 +34,38 @@ const FooterWrapper = styled.div`
   }
 `;
 
-const Console: FC = styled(() => {
+const Console: FC = () => {
   const vConsole = useRef<VConsole>();
   const { theme } = useArexCoreConfig();
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'production') {
-      vConsole.current = new VConsole({
-        theme,
-        log: {
-          showTimestamps: true,
-        },
-        defaultPlugins: [],
-        pluginOrder: ['logs'],
-      });
-      vConsole.current.hideSwitch();
+    vConsole.current = new VConsole({
+      theme,
+      log: {
+        showTimestamps: true,
+      },
+      defaultPlugins: [],
+      pluginOrder: ['logs'],
+    });
+    vConsole.current.hideSwitch();
 
-      return () => vConsole.current?.destroy();
-    }
+    return () => vConsole.current?.destroy();
   }, []);
 
   return (
-    <SmallTextButton
-      id='arex-console-btn'
-      type='link'
-      color='secondary'
-      icon={<CodeOutlined />}
-      title={t('console')}
-      onClick={() => vConsole.current?.show()}
-    />
+    <Tooltip title={t('console')}>
+      <Button
+        id='arex-console-btn'
+        size='small'
+        type='link'
+        onClick={() => vConsole.current?.show()}
+      >
+        <CodeOutlined />
+      </Button>
+    </Tooltip>
   );
-})`
-  root > #__vconsole {
-    font-size: 12px !important;
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace !important;
-  }
-`;
+};
 
 const Agent: FC = () => {
   const { t } = useTranslation();

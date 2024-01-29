@@ -10,12 +10,13 @@ import {
 import { css } from '@emotion/react';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Allotment } from 'allotment';
-import { MenuProps } from 'antd';
+import { Button, Flex, MenuProps, Tooltip } from 'antd';
 import React, { FC } from 'react';
 
 import {
   EmptyPanePlaceholder,
   FooterExtraMenu,
+  Icon,
   KeyboardShortcut,
   MacTrafficLightBackground,
   UserMenu,
@@ -153,7 +154,6 @@ const Home: FC = () => {
             value={activePane?.id}
             activeKey={activeMenu}
             collapsed={menuCollapsed}
-            onCollapsed={toggleMenuCollapse}
             onChange={handleMenuChange}
             onSelect={handleMenuSelect}
           />
@@ -176,9 +176,24 @@ const Home: FC = () => {
           />
         </Allotment.Pane>
       </Allotment>
-
       {!zen && (
         <ArexFooter
+          leftRender={(console) => (
+            <Flex align='center' style={{ height: '100%' }}>
+              <Tooltip
+                placement={'topLeft'}
+                title={t(menuCollapsed ? 'expandSidebar' : 'collapseSidebar', { ns: 'arex-menu' })}
+              >
+                <Button size='small' type='link' onClick={() => toggleMenuCollapse()}>
+                  <Icon
+                    name='PanelLeft'
+                    style={{ transform: `rotate(${menuCollapsed ? 180 : 0}deg)` }}
+                  />
+                </Button>
+              </Tooltip>
+              {process.env.NODE_ENV === 'production' && console}
+            </Flex>
+          )}
           rightRender={(agent) => (
             <>
               {!isClient && agent}

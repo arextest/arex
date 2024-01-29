@@ -1,4 +1,6 @@
 {
+  "collapseSidebar": "Collapse Sidebar",
+  "expandSidebar": "Expand Sidebar",
   "collection": "Collection",
   "replay": "Replay",
   "app": "App",
