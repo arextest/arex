@@ -166,7 +166,7 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
       {mode === Mode.READ ? (
         <Flex key='read' justify={'end'}>
           <Button type='text' icon={<PlusOutlined />} onClick={() => setMode(Mode.ADD)}>
-            {t('add')}
+            {t('add', { ns: 'common' })}
           </Button>
           <Button type='text' icon={<DeleteOutlined />} onClick={() => setMode(Mode.DELETE)}>
             {t('delete')}
@@ -217,7 +217,7 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
             </Button>
 
             <Button type='primary' icon={<PlusOutlined />} onClick={handleAdd}>
-              {t('add')}
+              {t('add', { ns: 'common' })}
             </Button>
           </Space>
         </div>
