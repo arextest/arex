@@ -1,4 +1,4 @@
-import { Label, useTranslation } from '@arextest/arex-core';
+import { Label, SmallTextButton, useTranslation } from '@arextest/arex-core';
 import { Button, Collapse, Form, InputNumber, TimePicker } from 'antd';
 import dayjs from 'dayjs';
 import React, { FC, useState } from 'react';
@@ -34,13 +34,13 @@ const EnvironmentRecordSetting: FC<EnvironmentRecordSettingProps> = (props) => {
           {
             key: 'environment',
             extra: (
-              <Button onClick={() => onDelete()} type='text' danger size='small'>
-                {t('remove', { ns: 'common' })}
-              </Button>
+              <SmallTextButton onClick={() => onDelete()} danger>
+                {t('delete', { ns: 'common' })}
+              </SmallTextButton>
             ),
             label: (
               <>
-                <Label>Environment</Label>
+                <Label>{t('appSetting.environment')}</Label>
                 <TagSelect
                   multiple
                   value={flattenTags(config.envTags ?? {})}

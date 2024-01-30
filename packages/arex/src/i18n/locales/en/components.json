@@ -348,7 +348,8 @@
     "categoryName": "Category Name",
     "chooseCategoryType": "Please select the type of ignore (multiple)",
     "categoryTypePlaceholder": "Please select the type of category",
-    "categoryNamePlaceholder" : "Please select the name of category"
+    "categoryNamePlaceholder" : "Please select the name of category",
+    "environment": "Environment"
   },
   "env": {
     "searchEnvironment": "Search Environment",
