@@ -1,4 +1,4 @@
-import Icon, {
+import AntdIcon, {
   DeleteOutlined,
   DownOutlined,
   ExclamationCircleFilled,
@@ -15,10 +15,10 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Badge, Button, Card, Dropdown, Flex, Select, Space, theme, Typography } from 'antd';
+import { App, Badge, Card, Dropdown, Flex, Select, Space, theme, Typography } from 'antd';
 import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react';
 
-import { StatusTag } from '@/components';
+import { Icon, StatusTag } from '@/components';
 import { ResultsState } from '@/components/StatusTag';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
@@ -32,14 +32,17 @@ export interface ReportCardProps {
   planItemId?: string;
   readOnly?: boolean;
   children: React.ReactNode;
-  onReportChange?: (plan: PlanStatistics) => void;
-  onTerminateReplay?: (planId: string) => void;
-  onDeleteReport?: (planId: string) => void;
-  onLogsClick?: () => void;
+  onChange?: (plan: PlanStatistics) => void;
+  onTerminate?: (planId: string) => void;
+  onDelete?: (planId: string) => void;
+  onQueryPlan?: (planId: string) => void;
+  onClickLogs?: () => void;
 }
 
 export interface ReportCardRef {
-  query: (selectFirst?: boolean) => void;
+  query: (
+    planId?: true | string, // true: select first, string: select by planId
+  ) => void;
   create: (req: ReRunPlanReq) => void;
 }
 const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
@@ -60,7 +63,9 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
     run: queryPlanStatistics,
     cancel: cancelPollingInterval,
   } = useRequest(
-    (selectFirst?: boolean) =>
+    (
+      planId?: true | string, // true: select first, string: select by planId
+    ) =>
       ReportService.queryPlanStatistics({
         appId: props.appId,
         planId: data?.planId || undefined,
@@ -71,11 +76,16 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
       ready: !!props.appId,
       pollingInterval: 6000,
       refreshDeps: [props.appId, data?.planId, pageSize],
-      onSuccess({ list }, [selectFirst]) {
-        if (init || selectFirst) {
-          list.length && props.onReportChange?.(list[0]);
+      onSuccess({ list }, [planId]) {
+        if (init || planId === true) {
+          list.length && props.onChange?.(list[0]);
           setSelectedReport(list[0]);
           setInit(false); // 设置第一次初始化标识);
+        }
+        if (typeof planId === 'string') {
+          const selected = list.find((item) => item.planId === planId);
+          setSelectedReport(selected);
+          selected && props.onChange?.(selected);
         }
         if (
           list.every(
@@ -85,16 +95,17 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
           // setPollingInterval(false);
           cancelPollingInterval();
         }
+        props.onQueryPlan?.(typeof planId === 'string' ? planId : list[0]?.planId);
       },
     },
   );
 
   const { run: reRunPlan, loading: retrying } = useRequest(ScheduleService.reRunPlan, {
     manual: true,
-    onSuccess(res) {
+    onSuccess(res, [{ planId }]) {
       if (res.result === 1) {
         message.success(t('message.success', { ns: 'common' }));
-        queryPlanStatistics();
+        queryPlanStatistics(planId);
       } else {
         message.error(res.desc);
       }
@@ -113,10 +124,11 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
   const { run: terminateReplay } = useRequest(ScheduleService.stopPlan, {
     manual: true,
     ready: !!props.planId,
-    onSuccess(success) {
+    onSuccess(success, [planId]) {
       if (success) {
         message.success(t('message.success', { ns: 'common' }));
         queryPlanStatistics();
+        props.onTerminate?.(planId);
       } else {
         message.error(t('message.error', { ns: 'common' }));
       }
@@ -130,6 +142,7 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
       if (success) {
         message.success(t('message.success', { ns: 'common' }));
         queryPlanStatistics(true);
+        props.onDelete?.(planId);
       } else {
         message.error(t('message.error', { ns: 'common' }));
       }
@@ -219,7 +232,7 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
                     <Badge
                       offset={[0, -1]}
                       count={
-                        <Icon
+                        <AntdIcon
                           component={() => <>{t('new', { ns: 'common' })}</>}
                           style={{ color: token.colorPrimaryText, fontSize: 8, zIndex: 10 }}
                         />
@@ -285,7 +298,7 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
               onChange={(value) => {
                 const selected = planStatistics.find((item) => item.planId === value);
                 setSelectedReport(selected);
-                if (selected) props.onReportChange?.(selected);
+                if (selected) props.onChange?.(selected);
               }}
               css={css`
                 .ant-select-selection-item {
@@ -314,19 +327,18 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
         headStyle={{ padding: '0 9px' }}
         extra={
           <Space>
-            <Button
-              type='link'
+            <SmallTextButton
+              type='text'
               size='small'
+              title={t('replay.logs')}
               icon={<Icon name='ScrollText' />}
               disabled={props.readOnly}
-              onClick={props.onLogsClick}
-            >
-              {t('replay.logs')}
-            </Button>
+              onClick={props.onClickLogs}
+            />
 
             <Dropdown.Button
               size='small'
-              type='link'
+              type='text'
               disabled={props.readOnly}
               loading={retrying}
               trigger={['click']}
@@ -334,9 +346,7 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
                 items: extraMenuItems,
                 onClick: extraMenuHandler,
               }}
-              onClick={() => {
-                if (props.planId) reRunPlan({ planId: props.planId });
-              }}
+              onClick={() => props.planId && reRunPlan({ planId: props.planId })}
             >
               <RedoOutlined />
               {t('replay.rerun')}

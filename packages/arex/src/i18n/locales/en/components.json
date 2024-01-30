@@ -344,7 +344,8 @@
     "editContract": "Edit Contract",
     "chooseEncryptionMethodName": "Please choose encryption method name",
     "categoryType": "Category Type",
-    "chooseCategoryType": "Please select the type of ignore (multiple)"
+    "chooseCategoryType": "Please select the type of ignore (multiple)",
+    "environment": "Environment"
   },
   "env": {
     "searchEnvironment": "Search Environment",
