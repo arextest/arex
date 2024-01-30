@@ -102,7 +102,7 @@ const CaseDiff: FC<DiffPathProps> = (props) => {
                       onClick={(e) => {
                         e.stopPropagation();
                         insertIgnoreCategory({
-                          operationType: data.operationType,
+                          operationType: data.categoryName,
                           operationName: data.operationName,
                         });
                       }}
