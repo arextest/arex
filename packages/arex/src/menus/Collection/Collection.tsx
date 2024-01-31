@@ -19,7 +19,7 @@ import { cloneDeep } from 'lodash';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Icon, WorkspacesMenu } from '@/components';
-import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
+import { CollectionNodeType, EMAIL_KEY, MenusType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import CollectionNodeTitle, {
   CollectionNodeTitleProps,
@@ -85,8 +85,9 @@ const Collection: ArexMenuFC = (props) => {
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
   const { activeWorkspaceId, workspaces, getWorkspaces, setActiveWorkspaceId } = useWorkspaces();
-  const { activePane, reset: resetPane } = useMenusPanes();
-  const { loading, collectionsTreeData, collectionsFlatData, getCollections } = useCollections();
+  const { activePane, setActiveMenu, reset: resetPane } = useMenusPanes();
+  const { loading, collectionsTreeData, collectionsFlatData, getCollections, getPath } =
+    useCollections();
 
   const [searchValue, setSearchValue] = useState<SearchDataType>();
   const [autoExpandParent, setAutoExpandParent] = useState(true);
@@ -97,7 +98,7 @@ const Collection: ArexMenuFC = (props) => {
     return id ? [id] : undefined;
   }, [props.value]);
 
-  const [expandedKeys, setExpandedKeys] = useState<string[]>([]); // TODO 初始化展开的节点
+  const [expandedKeys, setExpandedKeys] = useState<string[]>(); // TODO 初始化展开的节点
   const [showModalImportExport, setShowModalImportExport] = useState(false);
 
   useEffect(() => {
@@ -106,9 +107,12 @@ const Collection: ArexMenuFC = (props) => {
 
   // auto expand by active pane id
   useEffect(() => {
-    activePane &&
-      activePane.type === PanesType.REQUEST &&
-      setExpandedKeys((expandedKeys) => Array.from(new Set([...expandedKeys, activePane.id])));
+    if (activePane && activePane.type === PanesType.REQUEST) {
+      const [workspaceId, nodeTypeStr, id] = activePane.id.split('-');
+      const path = getPath(id).map((item) => item.id);
+      setActiveMenu(MenusType.COLLECTION);
+      setExpandedKeys(path);
+    }
   }, [activePane]);
 
   const { data: labelData = [] } = useRequest(
@@ -163,7 +167,13 @@ const Collection: ArexMenuFC = (props) => {
   );
 
   const handleSelect: DirectoryTreeProps<CollectionTreeType>['onSelect'] = (keys, info) => {
-    if (info.node.nodeType !== CollectionNodeType.folder) {
+    if (info.node.nodeType === CollectionNodeType.folder) {
+      setExpandedKeys((expandedKeys) => {
+        return expandedKeys?.includes(info.node.infoId)
+          ? expandedKeys.filter((key) => key !== info.node.infoId)
+          : [...(expandedKeys || []), info.node.infoId];
+      });
+    } else {
       const icon =
         info.node.nodeType === CollectionNodeType.interface
           ? info.node.method || undefined
@@ -340,7 +350,7 @@ const Collection: ArexMenuFC = (props) => {
         method: RequestMethodEnum.GET,
       },
     });
-    setExpandedKeys([...expandedKeys, infoId]);
+    setExpandedKeys([...(expandedKeys || []), infoId]);
   };
 
   const { run: createWorkspace } = useRequest(FileSystemService.createWorkspace, {
@@ -437,7 +447,7 @@ const Collection: ArexMenuFC = (props) => {
             placeholder={'Search for Name or Id'}
             onChange={handleChange}
           />
-          <ConfigProvider theme={{ token: { motion: false } }}>
+          <ConfigProvider theme={{ token: { motion: true } }}>
             <CollectionTree
               showLine
               blockNode
