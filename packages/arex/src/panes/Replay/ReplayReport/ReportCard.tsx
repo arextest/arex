@@ -78,24 +78,26 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
       refreshDeps: [props.appId, data?.planId, pageSize],
       onSuccess({ list }, [planId]) {
         if (init || planId === true) {
-          list.length && props.onChange?.(list[0]);
           setSelectedReport(list[0]);
-          setInit(false); // 设置第一次初始化标识);
+          setInit(false); // 设置第一次初始化标识
+          list.length && props.onChange?.(list[0]);
+        } else {
+          props.onQueryPlan?.(typeof planId === 'string' ? planId : list[0]?.planId);
         }
+
         if (typeof planId === 'string') {
           const selected = list.find((item) => item.planId === planId);
           setSelectedReport(selected);
-          selected && props.onChange?.(selected);
+          // selected && props.onChange?.(selected);
         }
+
         if (
           list.every(
             (record) => ![ResultsState.RUNNING, ResultsState.RERUNNING].includes(record.status),
           )
         ) {
-          // setPollingInterval(false);
           cancelPollingInterval();
         }
-        props.onQueryPlan?.(typeof planId === 'string' ? planId : list[0]?.planId);
       },
     },
   );
