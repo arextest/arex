@@ -1,4 +1,4 @@
-import { SpaceBetweenWrapper } from '@arextest/arex-core';
+import { SpaceBetweenWrapper, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { Button, ConfigProvider, Select, SelectProps, Space, Typography } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
@@ -12,6 +12,7 @@ export interface InterfaceSelectProps extends SelectProps {
 }
 const InterfaceSelect: FC<InterfaceSelectProps> = (props) => {
   const { appId, open, labelAsValue, ...restProps } = props;
+  const { t } = useTranslation();
 
   const [value, setValue] = useState(props.value);
 
@@ -71,7 +72,7 @@ const InterfaceSelect: FC<InterfaceSelectProps> = (props) => {
                     setValue(newValue);
                   }}
                 >
-                  <Typography.Text type='secondary'>全选</Typography.Text>
+                  <Typography.Text type='secondary'>{t('selectAll')}</Typography.Text>
                 </Button>
               </ConfigProvider>
             </Space>
@@ -79,7 +80,7 @@ const InterfaceSelect: FC<InterfaceSelectProps> = (props) => {
         ),
         options,
       })),
-    [data, props.value],
+    [data, props.value, t],
   );
 
   return (
