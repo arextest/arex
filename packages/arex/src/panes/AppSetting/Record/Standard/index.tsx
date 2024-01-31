@@ -183,6 +183,7 @@ const Standard: FC<StandardProps> = (props) => {
                 >
                   <InterfaceSelect
                     labelAsValue
+                    mode='tags'
                     appId={props.appId}
                     open={!!props.appId}
                     placeholder={t('appSetting.inclusionTooltip')}
@@ -199,6 +200,7 @@ const Standard: FC<StandardProps> = (props) => {
                 >
                   <InterfaceSelect
                     labelAsValue
+                    mode='tags'
                     appId={props.appId}
                     open={!!props.appId}
                     placeholder={t('appSetting.exclusionTooltip')}
