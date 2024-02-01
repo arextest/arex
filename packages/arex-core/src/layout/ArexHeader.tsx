@@ -52,7 +52,7 @@ const ArexHeader: FC<AppHeaderProps> = (props) => {
         <a
           className={'logo'}
           target='_blank'
-          href={'http://arextest.com'}
+          href={'https://docs.arextest.com'}
           rel='noreferrer'
           style={{ opacity: logo ? 100 : 0, width: (size?.width || 72) - 14 }}
         >
