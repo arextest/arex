@@ -1,5 +1,7 @@
 import { i18n } from '@arextest/arex-core';
 
+import CollectionsImportExport from '@/menus/Collection/ImportExport';
+
 export { default as globalStoreInit } from './globalStoreInit';
 export { default as request } from './request';
 export { default as treeToMap } from './treeToMap';
@@ -94,4 +96,23 @@ export function isObjectOrArray(value: unknown): value is object | Array<unknown
     value !== null &&
     (value.constructor === Object || value.constructor === Array)
   );
+}
+
+export function download(content: string, filename: string) {
+  // 创建a标签
+  const eleLink = document.createElement('a');
+  // 设置a标签 download 属性，以及文件名
+  eleLink.download = filename;
+  // a标签不显示
+  eleLink.style.display = 'none';
+  // 获取字符内容，转为blob地址
+  const blob = new Blob([content]);
+  // blob地址转为URL
+  eleLink.href = URL.createObjectURL(blob);
+  // a标签添加到body
+  document.body.appendChild(eleLink);
+  // 触发a标签点击事件，触发下载
+  eleLink.click();
+  // a标签从body移除
+  document.body.removeChild(eleLink);
 }

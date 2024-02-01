@@ -23,6 +23,12 @@ export type CollectionAction = {
   reset: () => void;
 };
 
+export enum CaseSourceType {
+  CASE_DEPRECATED = 0,
+  AREX,
+  CASE,
+}
+
 export type Collection = {
   id: string;
   pid: string; //父节点id
@@ -30,7 +36,7 @@ export type Collection = {
   nodeType: number;
   method: string;
   labelIds: string[];
-  caseSourceType: number;
+  caseSourceType: CaseSourceType;
 };
 
 const initialState: CollectionState = {

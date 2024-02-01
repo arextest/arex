@@ -25,5 +25,5 @@ export async function addCollectionItem(params: AddCollectionReq) {
       parentPath,
       ...restParams,
     })
-    .then((res) => Promise.resolve(res.body));
+    .then((res) => (res.body.success ? Promise.resolve(res.body) : Promise.reject(res.body)));
 }

@@ -64,6 +64,7 @@
     "duplicate": "拷贝",
     "delete": "删除",
     "import_export": "导入/导出",
+    "import": "导入",
     "export": "导出",
     "from_postman_description": "从 Postman 集合中导入"
   },

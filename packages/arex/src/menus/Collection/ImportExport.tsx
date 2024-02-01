@@ -1,132 +1,168 @@
-import { useTranslation } from '@arextest/arex-core';
-import { css } from '@arextest/arex-core';
-import { Button, Divider, message, Modal, Radio, RadioChangeEvent } from 'antd';
-import { FC, useState } from 'react';
+import { InboxOutlined } from '@ant-design/icons';
+import { Segmented, useTranslation } from '@arextest/arex-core';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { useRequest } from 'ahooks';
+import { Button, message, Modal, Radio, RadioChangeEvent, Upload } from 'antd';
+import React, { forwardRef, useImperativeHandle, useState } from 'react';
 
-import { exportCollection } from '@/services/FileSystemService/collection/exportCollection';
-import { importCollection } from '@/services/FileSystemService/collection/importCollection';
+import { FileSystemService } from '@/services';
 import { useCollections } from '@/store';
+import { download } from '@/utils';
 
 import useWorkspaces from '../../store/useWorkspaces';
-interface CollectionsImportExportProps {
-  show: boolean;
-  onHideModal: () => void;
+
+export interface CollectionsImportExportProps {
+  onCancel?: () => void;
 }
-function download(content: string, filename: string) {
-  // 创建a标签
-  const eleLink = document.createElement('a');
-  // 设置a标签 download 属性，以及文件名
-  eleLink.download = filename;
-  // a标签不显示
-  eleLink.style.display = 'none';
-  // 获取字符内容，转为blob地址
-  const blob = new Blob([content]);
-  // blob地址转为URL
-  eleLink.href = URL.createObjectURL(blob);
-  // a标签添加到body
-  document.body.appendChild(eleLink);
-  // 触发a标签点击事件，触发下载
-  eleLink.click();
-  // a标签从body移除
-  document.body.removeChild(eleLink);
+
+export interface CollectionsImportExportRef {
+  open: () => void;
 }
-const CollectionsImportExport: FC<CollectionsImportExportProps> = ({ show, onHideModal }) => {
+
+enum Format {
+  AREX = 1,
+  POSTMAN = 2,
+}
+
+enum Type {
+  IMPORT,
+  EXPORT,
+}
+
+const CollectionsImportExport = forwardRef<
+  CollectionsImportExportRef,
+  CollectionsImportExportProps
+>(({ onCancel }, ref) => {
   const { getCollections } = useCollections();
   const { activeWorkspaceId } = useWorkspaces();
-  const [fileString, setFileString] = useState('');
   const { t } = useTranslation(['components']);
-  const submit = () => {
-    importCollection({
-      workspaceId: activeWorkspaceId,
-      type: importType,
-      path: [],
-      importString: fileString,
-    })
-      .then((res) => {
-        if (res) {
-          message.success(t('workSpace.importSuccess'));
-          getCollections();
-        } else {
-          message.error(t('workSpace.importFailed'));
-        }
-      })
-      .catch((err) => {
+
+  const [wrapperRef] = useAutoAnimate();
+
+  const [open, setOpen] = useState(false);
+  useImperativeHandle(ref, () => ({ open: () => setOpen(true) }), []);
+
+  const [type, setType] = useState<Type>(Type.IMPORT);
+  const [format, setFormat] = useState<Format>(Format.AREX);
+
+  const [fileString, setFileString] = useState('');
+
+  const { run: importCollection } = useRequest(
+    () =>
+      FileSystemService.importCollection({
+        workspaceId: activeWorkspaceId,
+        type: format,
+        path: [],
+        importString: fileString,
+      }),
+    {
+      manual: true,
+      onSuccess() {
+        message.success(t('workSpace.importSuccess'));
+        setOpen(false);
+        getCollections();
+      },
+      onError() {
         message.error(t('workSpace.importFailed'));
-      });
-  };
-  const [importType, setImportType] = useState(1);
+      },
+    },
+  );
 
   const onChange = (e: RadioChangeEvent) => {
-    setImportType(e.target.value);
+    setFormat(e.target.value);
   };
+
+  const { run: exportCollection } = useRequest(
+    () =>
+      FileSystemService.exportCollection({
+        workspaceId: activeWorkspaceId,
+        type: format,
+        path: [],
+      }),
+    {
+      manual: true,
+      onSuccess(res) {
+        download(res, `${activeWorkspaceId}.json`);
+        setOpen(false);
+      },
+    },
+  );
+
   return (
     <Modal
-      title={t('collection.import_export')}
+      destroyOnClose
+      title={
+        <Segmented
+          value={type}
+          options={[
+            {
+              label: t('collection.import'),
+              value: Type.IMPORT,
+            },
+            {
+              label: t('collection.export'),
+              value: Type.EXPORT,
+            },
+          ]}
+          onChange={(type) => {
+            setType(type as Type);
+            if (format === Format.POSTMAN) setFormat(Format.AREX);
+          }}
+        />
+      }
       width={400}
-      open={show}
-      onCancel={onHideModal}
+      open={open}
+      onCancel={() => {
+        setOpen(false);
+        onCancel?.();
+      }}
       footer={false}
     >
-      <div
-        css={css`
-          display: flex;
-          flex-direction: column;
-          padding-top: 10px;
-        `}
-      >
+      <div ref={wrapperRef}>
         <Radio.Group
+          key='importExportType'
           onChange={onChange}
-          value={importType}
-          css={css`
-            margin-bottom: 10px;
-          `}
-        >
-          <Radio value={1}>AREX</Radio>
-          <Radio value={2}>Postman</Radio>
-        </Radio.Group>
-        <input
-          css={css`
-            margin-bottom: 20px;
-          `}
-          type={'file'}
-          onChange={(event) => {
-            if (event.target.files !== null) {
-              event.target.files[0].text().then((res) => {
-                setFileString(res);
-              });
-            }
-          }}
+          value={format}
+          options={[
+            {
+              label: 'AREX',
+              value: Format.AREX,
+            },
+            {
+              label: 'Postman',
+              value: Format.POSTMAN,
+              disabled: type === Type.EXPORT, // 暂只支持 arex 导出
+            },
+          ]}
+          style={{ margin: '8px 0' }}
         />
+
+        {type === Type.IMPORT && (
+          <Upload.Dragger
+            key='upload'
+            listType={'text'}
+            maxCount={1}
+            beforeUpload={async (file) => file.text().then((text) => setFileString(text))}
+          >
+            <p className='ant-upload-drag-icon'>
+              <InboxOutlined />
+            </p>
+            <p className='ant-upload-text'>Click or drag file to upload</p>
+          </Upload.Dragger>
+        )}
+
         <Button
+          block
+          key='action'
           type={'primary'}
-          onClick={() => {
-            submit();
-          }}
+          onClick={type === Type.IMPORT ? importCollection : exportCollection}
+          style={{ marginTop: '16px' }}
         >
-          {t('workSpace.import')}
-        </Button>
-        <Divider
-          css={css`
-            margin: 10px 0;
-          `}
-        />
-        <Button
-          onClick={() => {
-            // 暂只支持arex导出
-            exportCollection({
-              workspaceId: activeWorkspaceId,
-              type: importType,
-              path: [],
-            }).then((res) => {
-              download(res, `${activeWorkspaceId}.json`);
-            });
-          }}
-        >
-          {t('collection.export')}
+          {type === Type.IMPORT ? t('collection.import') : t('collection.export')}
         </Button>
       </div>
     </Modal>
   );
-};
+});
 
 export default CollectionsImportExport;

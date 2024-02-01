@@ -1,12 +1,11 @@
 import { css } from '@arextest/arex-core';
 import { Allotment } from 'allotment';
 import { Divider, Spin, TabPaneProps } from 'antd';
-import React, { forwardRef, useEffect, useImperativeHandle, useMemo } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 
-import NavigationBar from './components/NavigationBar';
+import NavigationBar, { NavigationBarRef } from './components/NavigationBar';
 import Request, { RequestProps } from './components/Request';
 import Response from './components/Response';
-import { useArexRequestStore } from './hooks';
 import i18n from './i18n';
 import { RequestPropsProvider, RequestStoreProvider } from './providers';
 import { ArexRESTRequest } from './types';
@@ -35,22 +34,18 @@ export interface ArexRequestProps extends RequestProps {
   config?: HttpConfig;
 }
 
-export type RequestRef = {
-  onSave: () => void;
-  onSaveAs: () => void;
-};
+export interface ArexRequestRef extends NavigationBarRef {}
 
-const ArexRequest = forwardRef<RequestRef, ArexRequestProps>((props, ref) => {
+const ArexRequest = forwardRef<ArexRequestRef, ArexRequestProps>((props, ref) => {
   const { loading = false, height } = props;
-  const { store } = useArexRequestStore();
 
+  const navigationBarRef = useRef<NavigationBarRef>(null);
   useImperativeHandle(
     ref,
     () => ({
-      onSave: () => props.onSave?.(store.request, store.response),
-      onSaveAs: () => props.onSaveAs?.(),
+      save: (key?: string) => navigationBarRef.current?.save(key),
     }),
-    [props, store.request, store.response],
+    [navigationBarRef],
   );
 
   useEffect(() => {
@@ -76,7 +71,7 @@ const ArexRequest = forwardRef<RequestRef, ArexRequestProps>((props, ref) => {
       <RequestStoreProvider>
         <Spin spinning={loading} style={{ position: 'absolute', left: '8px', top: '8px' }} />
         <div style={{ height: '100%', display: 'flex', flexFlow: 'column', overflowX: 'hidden' }}>
-          <NavigationBar />
+          <NavigationBar ref={navigationBarRef} />
           <Divider style={{ width: '100%', margin: '0 0 8px 0' }} />
 
           <Allotment vertical css={AllotmentCSS}>

@@ -20,11 +20,14 @@ import { useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
 import { useCollections, useWorkspaces } from '@/store';
+import { CaseSourceType } from '@/store/useCollections';
 
-import SearchHighLight from './SearchHighLight';
+import SearchHighLight from '../SearchHighLight';
 
-const CollectionNodeTitleWrapper = styled.div`
+const CollectionNodeTitleWrapper = styled.div<{ disabled?: boolean }>`
+  cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
   color: ${(props) => props.theme.colorTextSecondary};
+  filter: ${(props) => (props.disabled ? 'grayscale(100%) opacity(35%)' : 'none')};
   display: flex;
   .right {
     float: right;
@@ -55,10 +58,15 @@ const CollectionNodeTitleWrapper = styled.div`
 export type CollectionNodeTitleProps = {
   data: CollectionType;
   keyword?: string;
+  readOnly?: boolean;
+  selectable?: CollectionNodeType[];
   onAddNode?: (info: string, nodeType: CollectionNodeType) => void;
 };
 
 const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
+  const {
+    selectable = [CollectionNodeType.folder, CollectionNodeType.interface, CollectionNodeType.case],
+  } = props;
   const { modal } = App.useApp();
   const confirm = modal.confirm;
   const { t } = useTranslation(['common', 'components']);
@@ -87,11 +95,9 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     {
       manual: true,
       onSuccess: (res, [{ caseSourceType, nodeType }]) => {
-        if (res.success) {
-          getCollections().then(() => props.onAddNode?.(res.infoId, nodeType));
-          if (caseSourceType === 2)
-            queryInterface({ id: nodePath[nodePath.length - 1] as string }, res.infoId);
-        }
+        getCollections().then(() => props.onAddNode?.(res.infoId, nodeType));
+        if (caseSourceType !== CaseSourceType.AREX)
+          queryInterface({ id: nodePath[nodePath.length - 1] as string }, res.infoId);
       },
     },
   );
@@ -231,7 +237,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
                         addCollectionItem({
                           nodeName: 'case',
                           nodeType: CollectionNodeType.case,
-                          caseSourceType: 2,
+                          caseSourceType: CaseSourceType.CASE_DEPRECATED,
                         });
                       }}
                     >
@@ -293,14 +299,29 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         ? React.createElement(RequestMethodIcon[props.data.method || ''] || 'div')
         : props.data.nodeType === CollectionNodeType.case
         ? React.createElement(
-            RequestMethodIcon[props.data.caseSourceType === 1 ? 'arex' : 'case'] || 'div',
+            RequestMethodIcon[
+              props.data.caseSourceType === CaseSourceType.AREX ? 'arex' : 'case'
+            ] || 'div',
           )
         : null,
     [props.data],
   );
 
+  const disabled = useMemo(
+    () => !selectable?.includes(props.data.nodeType),
+    [props.data.nodeType, selectable],
+  );
+
   return (
-    <CollectionNodeTitleWrapper>
+    <CollectionNodeTitleWrapper
+      disabled={disabled}
+      className={'ant-tree-treenode-disabled'}
+      onClick={(e) => {
+        if (!disabled) return;
+        e.stopPropagation();
+        e.preventDefault();
+      }}
+    >
       <div className={'left'}>
         {prefix}
         <div className={'content'}>
@@ -327,16 +348,18 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         </div>
       </div>
 
-      <div className='right'>
-        <Dropdown menu={menu} trigger={['click']}>
-          <Button
-            type='text'
-            size='small'
-            icon={<MoreOutlined style={{ fontSize: '14px' }} />}
-            onClick={(e) => e.stopPropagation()}
-          />
-        </Dropdown>
-      </div>
+      {!props.readOnly && (
+        <div className='right'>
+          <Dropdown menu={menu} trigger={['click']}>
+            <Button
+              type='text'
+              size='small'
+              icon={<MoreOutlined style={{ fontSize: '14px' }} />}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </Dropdown>
+        </div>
+      )}
     </CollectionNodeTitleWrapper>
   );
 };

@@ -63,7 +63,8 @@
     "rename": "Rename",
     "duplicate": "Duplicate",
     "delete": "Delete",
-    "import_export": "Import/Export",
+    "import_export": "Import / Export",
+    "import": "Import",
     "export": "Export",
     "from_postman_description": "Import from Postman collection file"
   },
