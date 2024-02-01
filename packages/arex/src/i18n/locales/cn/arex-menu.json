@@ -1,4 +1,6 @@
 {
+  "collapseSidebar": "隐藏侧边栏",
+  "expandSidebar": "展开侧边栏",
   "collection": "集合",
   "replay": "回放",
   "app": "应用",
