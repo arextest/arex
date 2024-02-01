@@ -1,11 +1,14 @@
 import { useSize } from 'ahooks';
 import { Typography } from 'antd';
-import React from 'react';
+import React, { FC } from 'react';
 
 import { useArexCoreConfig } from '../hooks';
 import { Theme } from '../theme';
 
-const ArexLogo = () => {
+export type ArexLogoProps = {
+  href?: string;
+};
+const ArexLogo: FC<ArexLogoProps> = (props) => {
   const { theme } = useArexCoreConfig();
   const size = useSize(document.getElementById('arex-menu'));
 
@@ -13,9 +16,9 @@ const ArexLogo = () => {
     <a
       className={'logo'}
       target='_blank'
-      href={'http://arextest.com'}
+      href={props.href}
       rel='noreferrer'
-      style={{ width: (size?.width || 72) - 14 }}
+      style={{ cursor: props.href ? 'pointer' : 'default', width: (size?.width || 72) - 14 }}
     >
       <svg
         version='1.1'

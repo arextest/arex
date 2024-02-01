@@ -1,4 +1,4 @@
-import { SettingOutlined } from '@ant-design/icons';
+import { RedoOutlined, SettingOutlined } from '@ant-design/icons';
 import {
   ArexPaneFC,
   clearLocalStorage,
@@ -7,6 +7,7 @@ import {
   PaneDrawer,
   PanesTitle,
   setLocalStorage,
+  SmallTextButton,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
@@ -168,6 +169,18 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
                 {decodeURIComponent(planItemData.operationName || 'unknown')}
               </span>
             }
+            extra={
+              <SmallTextButton
+                title={t('replay.rerun')}
+                icon={<RedoOutlined />}
+                onClick={() =>
+                  retryPlan({
+                    planId: planItemData!.planId,
+                    planItemId,
+                  })
+                }
+              />
+            }
           />
 
           <CollapseTable
@@ -183,16 +196,12 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
                 onClick={handleClickRecord}
                 onChange={handleCaseTableChange}
                 onClickSaveCase={handleClickSaveCase}
-                onClickRetryCase={() =>
-                  retryPlan({
-                    planId: planItemData!.planId,
-                    planItemId,
-                  })
-                }
               />
             }
             panel={
               <CaseDiff
+                appId={planItemData.appId}
+                operationId={planItemData.operationId}
                 loading={loadingFullLinkInfo}
                 data={fullLinkInfoMerged}
                 extra={

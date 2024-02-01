@@ -214,6 +214,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       id: paneId,
       type,
       data: {
+        ...props.data,
         environmentId: environment?.id,
       },
     });
@@ -253,11 +254,12 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         labelsProps={{
           value: data?.tags,
           options: tagOptions,
-          onChange: (tags) =>
+          onChange: (tags) => {
             saveRequest({
               id: data?.id,
               tags,
-            }),
+            });
+          },
           onEditLabels: () => {
             navPane({
               type: PanesType.WORKSPACE,

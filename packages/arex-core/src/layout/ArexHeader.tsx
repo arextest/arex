@@ -6,7 +6,11 @@ import ArexLogo from '../components/ArexLogo';
 
 export interface AppHeaderProps {
   className?: string;
-  logo?: boolean;
+  logo?:
+    | boolean
+    | {
+        href?: string;
+      };
   githubStar?: boolean;
   menu?: React.ReactNode;
   extra?: React.ReactNode;
@@ -41,7 +45,7 @@ const ArexHeader: FC<AppHeaderProps> = (props) => {
   return (
     <HeaderWrapper className={props.className}>
       <div className={'left'}>
-        {logo && <ArexLogo />}
+        {logo && <ArexLogo href={typeof logo === 'boolean' ? undefined : logo.href} />}
         {githubStar && <GithubStarButton />}
         {props.menu}
       </div>

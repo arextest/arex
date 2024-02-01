@@ -138,7 +138,7 @@ const Home: FC = () => {
 
   return (
     <div ref={arexMainWrapperRef}>
-      {!zen && <ArexHeader extra={<UserMenu />} />}
+      {!zen && <ArexHeader logo={{ href: 'https://docs.arextest.com/' }} extra={<UserMenu />} />}
 
       <Allotment
         css={css`
