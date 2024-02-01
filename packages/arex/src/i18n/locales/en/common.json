@@ -55,7 +55,8 @@
     "createSuccess": "Create success",
     "createFailed": "Create failed",
     "copySuccess": "Copy success",
-    "copyFailed": "Copy failed"
+    "copyFailed": "Copy failed",
+    "selectRowWarning": "Please select a row"
   },
   "collection": "Collection",
   "replay": "Replay",
@@ -84,6 +85,7 @@
   },
   "checkAll": "Check All",
   "deleteAll": "Delete All",
+  "selectAll": "Select All",
   "advanced": "Advanced",
   "advancedOptions": "Advanced Options",
   "and": " and",

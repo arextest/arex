@@ -1,5 +1,6 @@
 import { objectArrayFilter } from '@arextest/arex-core';
 
+import { DependencyInfo } from '@/services/ReportService';
 import { request } from '@/utils';
 
 export type OperationType = 'Global' | 'Interface';
@@ -15,7 +16,7 @@ export type OperationInterface<T extends OperationType = 'Global'> = {
   modifiedTime?: number;
   id: OperationId<T>;
   appId?: string;
-  dependencyList?: string[] | null;
+  dependencyList?: DependencyInfo[] | null;
   serviceId?: string;
   operationName: string;
   operationTypes: string[] | null;

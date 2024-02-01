@@ -200,6 +200,8 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
             }
             panel={
               <CaseDiff
+                appId={planItemData.appId}
+                operationId={planItemData.operationId}
                 loading={loadingFullLinkInfo}
                 data={fullLinkInfoMerged}
                 extra={
