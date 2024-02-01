@@ -39,11 +39,15 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
           label: t(`${Menu.type}`),
           key: Menu.type,
         }))
-        .concat({
-          label: '',
-          key: ICON_KEY,
-          icon: <CollapseButton collapsed={props.collapsed} />,
-        }),
+        .concat(
+          props.onCollapsed
+            ? {
+                label: '',
+                key: ICON_KEY,
+                icon: <CollapseButton collapsed={props.collapsed} />,
+              }
+            : [],
+        ),
     [props.collapsed, t],
   );
 

@@ -212,6 +212,7 @@
     "executionLogs": "执行日志"
   },
   "replayCase": {
+    "ignore": "忽略",
     "conditionalIgnore": "条件忽略",
     "selectConditionNode": "请选择条件节点",
     "ignoreNode":"忽略节点",
@@ -342,8 +343,11 @@
     "contract": "契约",
     "editContract": "编辑契约",
     "chooseEncryptionMethodName": "请选择选择加密方法",
-    "categoryType": "忽略类型",
+    "categoryType": "依赖类型",
+    "categoryName": "依赖名称",
     "chooseCategoryType": "请选择忽略类型（可多选）",
+    "categoryTypePlaceholder": "请选择依赖类型",
+    "categoryNamePlaceholder" : "请输入依赖名称",
     "environment": "环境"
   },
   "env": {

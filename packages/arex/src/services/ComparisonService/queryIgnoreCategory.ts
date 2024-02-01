@@ -1,3 +1,4 @@
+import { IgnoreCategory } from '@/services/ComparisonService/insertIgnoreCategory';
 import { QueryNodeReq } from '@/services/ComparisonService/queryIgnoreNode';
 import { request } from '@/utils';
 
@@ -9,7 +10,7 @@ export type IgnoreCategoryData = {
   expirationType: number;
   fsInterfaceId: string | null;
   id: string;
-  ignoreCategory: string[];
+  ignoreCategoryDetail: IgnoreCategory;
   modifiedTime: number;
   operationId: string | null;
   operationName: string | null;
@@ -21,11 +22,5 @@ export async function queryIgnoreCategory(params: QueryNodeReq<'Interface'>) {
     '/webApi/config/comparison/ignoreCategory/queryComparisonConfig',
     params,
   );
-  /**
-   * For consistency design reasons,
-   * the valid information of the interface is placed in an array,
-   * and the length of the array is guaranteed to be
-   * only 1 or 0 by reasonable calls to the interface.
-   */
-  return res.body?.[0];
+  return res.body;
 }

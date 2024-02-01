@@ -213,6 +213,7 @@
     "executionLogs": "Execution logs"
   },
   "replayCase": {
+    "ignore": "Ignore",
     "conditionalIgnore": "Conditional Ignore",
     "selectConditionNode": "Please select condition node",
     "ignoreNode":"Ignore Node",
@@ -345,7 +346,10 @@
     "editContract": "Edit Contract",
     "chooseEncryptionMethodName": "Please choose encryption method name",
     "categoryType": "Category Type",
+    "categoryName": "Category Name",
     "chooseCategoryType": "Please select the type of ignore (multiple)",
+    "categoryTypePlaceholder": "Please select the type of category",
+    "categoryNamePlaceholder" : "Please select the name of category",
     "environment": "Environment"
   },
   "env": {

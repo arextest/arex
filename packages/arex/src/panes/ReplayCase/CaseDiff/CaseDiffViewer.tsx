@@ -304,7 +304,7 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
                   : [],
               )
               .concat(
-                isLeafNode
+                isLeafNode || isRootNode
                   ? [
                       {
                         type: 'button',

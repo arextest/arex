@@ -52,7 +52,8 @@
     "createSuccess": "创建成功",
     "createFailed": "创建失败",
     "copySuccess": "复制成功",
-    "copyFailed": "复制失败"
+    "copyFailed": "复制失败",
+    "selectRowWarning": "请选择一行"
   },
   "collection": "集合",
   "replay": "回放",
@@ -81,6 +82,7 @@
   },
   "checkAll": "选择全部",
   "deleteAll": "删除全部",
+  "selectAll": "全选",
   "advanced": "高级",
   "advancedOptions": "高级选项",
   "and": "和",
