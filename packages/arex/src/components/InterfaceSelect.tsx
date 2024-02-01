@@ -85,7 +85,6 @@ const InterfaceSelect: FC<InterfaceSelectProps> = (props) => {
 
   return (
     <Select
-      {...restProps}
       allowClear
       value={value}
       mode='multiple'
@@ -96,6 +95,7 @@ const InterfaceSelect: FC<InterfaceSelectProps> = (props) => {
         setValue(value);
       }}
       optionFilterProp='label'
+      {...restProps}
     />
   );
 };
