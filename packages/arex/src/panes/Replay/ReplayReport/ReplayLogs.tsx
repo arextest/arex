@@ -80,6 +80,7 @@ const ReplayLogs: FC<ReplayLogsProps> = (props) => {
         setTotal(res?.total || 0);
       },
       refreshDeps: [pagination, planId],
+      ready: props.open,
     },
   );
 
