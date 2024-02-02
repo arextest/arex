@@ -31,7 +31,12 @@
     "add_tag": "Add Tag",
     "env": {
       "closeConfirm": "Current environment configuration changes are not saved"
-    }
+    },
+    "selectSaveLocation": "Please select the save location",
+    "selectInterface": "Please select an interface collection",
+    "title": "Title",
+    "selectLocation": "Select Location",
+    "saveTo": "Save To"
   },
   "authorization": {
     "type": "Type",

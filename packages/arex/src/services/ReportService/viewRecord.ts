@@ -49,6 +49,7 @@ export type RecordResult = {
 
 export interface ViewRecordRes {
   recordResult: RecordResult[];
+  desensitized: boolean;
 }
 
 export async function viewRecord(params: ViewRecordReq) {
@@ -58,5 +59,5 @@ export async function viewRecord(params: ViewRecordReq) {
       appId: getLocalStorage<string>(APP_ID_KEY),
     },
   });
-  return res.data.recordResult;
+  return Promise.resolve(res.data);
 }

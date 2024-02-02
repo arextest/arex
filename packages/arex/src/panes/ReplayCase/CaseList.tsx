@@ -77,12 +77,10 @@ const CaseList: FC<CaseProps> = (props) => {
                 type: PanesType.CASE_DETAIL,
                 id: record.recordId,
                 data: {
-                  ...record,
                   appId: props.appId,
-                  appName: props.appName,
                   planId: props.planId,
+                  recordId: record.recordId,
                   planItemId: props.planItemId,
-                  operationName: props.operationName,
                 },
               });
             }}

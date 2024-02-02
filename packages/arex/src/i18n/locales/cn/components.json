@@ -31,7 +31,12 @@
     "add_tag": "添加标签",
     "env": {
       "closeConfirm": "当前环境配置修改未保存"
-    }
+    },
+    "selectSaveLocation": "请选择保存位置",
+    "selectInterface": "请选择接口集合",
+    "title": "名称",
+    "selectLocation": "选择位置",
+    "saveTo": "保存至"
   },
   "authorization": {
     "type": "类型",

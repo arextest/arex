@@ -69,7 +69,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
       const [workspaceId, nodeTypeStr, id] = activePane.id.split('-');
       const path = getPath(id).map((item) => item.id);
       setActiveMenu(MenusType.COLLECTION);
-      setExpandedKeys(path);
+      setExpandedKeys((expand) => [...(expand || []), ...path]);
     }
   }, [activePane]);
 

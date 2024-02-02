@@ -1,13 +1,12 @@
 import { getLocalStorage, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { Input, Modal, Typography } from 'antd';
+import { App, Input, Modal, Typography } from 'antd';
 import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
 
 import { CollectionSelect } from '@/components';
 import { CollectionNodeType, EMAIL_KEY } from '@/constant';
 import { FileSystemService } from '@/services';
 import { useCollections } from '@/store';
-const { Text } = Typography;
 
 export type SaveAsProps = {
   title?: string;
@@ -21,13 +20,14 @@ export type SaveAsRef = {
 };
 
 const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
-  const { t } = useTranslation('collection');
+  const { t } = useTranslation('components');
+  const { message } = App.useApp();
   const userName = getLocalStorage<string>(EMAIL_KEY);
 
   const [value, setValue] = useState(props.title);
 
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
-  const { getPath } = useCollections();
+  const { collectionsFlatData, getPath } = useCollections();
   const collectionPath = useMemo(
     () => (selectedKeys.length ? getPath(selectedKeys[0].toString()) : []),
     [getPath, selectedKeys],
@@ -64,14 +64,18 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   );
 
   const handleSaveAs = () => {
-    if (selectedKeys?.length) {
-      // 先添加，再触发 save ！
-      addCollectionItem({
-        nodeName: value || props.title || 'Untitled',
-        nodeType: props.nodeType,
-        parentPath: collectionPath.map((i) => i.id),
-      });
-    }
+    if (!selectedKeys?.length) return message.info(t('http.selectSaveLocation'));
+
+    const node = collectionsFlatData.get(selectedKeys[selectedKeys.length - 1].toString());
+    if (!node) return;
+    if (props.nodeType === CollectionNodeType.case && node.nodeType === CollectionNodeType.folder)
+      return message.info(t('http.selectInterface'));
+
+    addCollectionItem({
+      nodeName: value || props.title || t('untitled', { ns: 'common' }),
+      nodeType: props.nodeType,
+      parentPath: collectionPath.map((i) => i.id),
+    });
   };
 
   return (
@@ -83,7 +87,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
       onOk={handleSaveAs}
     >
       <div style={{ marginBottom: '12px' }}>
-        <Typography.Text type='secondary'>名称</Typography.Text>
+        <Typography.Text type='secondary'>{t('http.title')}</Typography.Text>
         <Input
           defaultValue={props.title}
           placeholder={props.title}
@@ -92,11 +96,14 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
       </div>
 
       <div>
-        <Typography.Text type='secondary'>选择位置</Typography.Text>
-        <p>
-          <span>Save to </span>
-          <Text type='secondary'>{collectionPath.map((path) => path.name).join('/')}</Text>
-        </p>
+        <Typography.Text type='secondary'>{t('http.selectLocation')}</Typography.Text>
+        <div style={{ marginBottom: '8px' }}>
+          <span style={{ marginRight: '4px' }}>{t('http.saveTo')}</span>
+          <Typography.Text type='secondary'>
+            {collectionPath.map((path) => path.name).join(' / ')}
+          </Typography.Text>
+        </div>
+
         <CollectionSelect
           // readOnly
           height={560}

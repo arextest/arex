@@ -37,7 +37,10 @@ const RecordedCaseListItem: FC<RecordedCaseListProps> = (props) => {
             navPane({
               type: PanesType.CASE_DETAIL,
               id: record.recordId,
-              data: { ...record, appId: props.appId },
+              data: {
+                appId: props.appId,
+                recordId: record.recordId,
+              },
             });
           }}
         >
