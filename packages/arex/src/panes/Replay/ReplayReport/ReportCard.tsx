@@ -59,7 +59,6 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
     data: { list: planStatistics } = {
       list: [],
     },
-    loading,
     run: queryPlanStatistics,
     cancel: cancelPollingInterval,
   } = useRequest(

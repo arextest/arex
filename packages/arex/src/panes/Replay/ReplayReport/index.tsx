@@ -260,7 +260,7 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
         setSelectedPlan(plan);
         queryPlanItemStatistics(plan.planId);
       }}
-      onQueryPlan={queryPlanItemStatistics}
+      onQueryPlan={() => queryPlanItemStatistics(selectedPlan?.planId)}
       onClickLogs={() => setReplayLogsDrawerOpen(true)}
     >
       <ReportOverview data={selectedPlan} />
