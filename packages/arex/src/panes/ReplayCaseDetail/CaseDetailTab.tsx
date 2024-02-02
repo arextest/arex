@@ -1,5 +1,6 @@
-import { DiffJsonView, useTranslation } from '@arextest/arex-core';
-import { Button, Collapse, Descriptions, Modal } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
+import { DiffJsonView, tryStringifyJson, useTranslation } from '@arextest/arex-core';
+import { Button, Collapse, Descriptions, Input, Modal } from 'antd';
 import React, { FC, useState } from 'react';
 
 import { RecordResult } from '@/services/ReportService';
@@ -28,6 +29,7 @@ const CaseDetailTab: FC<CaseDetailTabProps> = (props) => {
               <Button
                 size='small'
                 type='text'
+                icon={<SearchOutlined />}
                 onClick={(e) => {
                   // avoid triggering collapse
                   e.stopPropagation();
@@ -41,10 +43,11 @@ const CaseDetailTab: FC<CaseDetailTabProps> = (props) => {
           ),
           children: (
             <DiffJsonView
+              readOnly
               height='400px'
               diffJson={{
-                left: JSON.stringify(result.targetRequest?.body, null, 2),
-                right: JSON.stringify(result.targetResponse?.body, null, 2),
+                left: tryStringifyJson(result.targetRequest?.body),
+                right: tryStringifyJson(result.targetResponse?.body),
               }}
             />
           ),
@@ -52,9 +55,10 @@ const CaseDetailTab: FC<CaseDetailTabProps> = (props) => {
         style={{ marginTop: '8px' }}
       />
       <Modal
-        width='70vw'
+        width='70%'
         title={t('caseDetail.caseDetail')}
         open={detailOpen}
+        style={{ top: 72 }}
         footer={null}
         onCancel={handleClose}
       >
@@ -62,9 +66,11 @@ const CaseDetailTab: FC<CaseDetailTabProps> = (props) => {
           <Descriptions.Item span={4} label={t('caseDetail.recordId')}>
             {currentDetail?.recordId}
           </Descriptions.Item>
+
           <Descriptions.Item span={4} label={t('caseDetail.operationName')}>
             {currentDetail?.operationName}
           </Descriptions.Item>
+
           <Descriptions.Item span={4} label={t('caseDetail.categoryType')}>
             {currentDetail?.categoryType.name}
           </Descriptions.Item>
@@ -74,15 +80,29 @@ const CaseDetailTab: FC<CaseDetailTabProps> = (props) => {
           </Descriptions.Item>
 
           <Descriptions.Item span={4} label={t('caseDetail.requestAttributes')}>
-            <pre>{JSON.stringify(currentDetail?.targetRequest?.attributes, null, 2)}</pre>
+            <Input.TextArea
+              readOnly
+              autoSize={{ maxRows: 10 }}
+              variant='borderless'
+              value={tryStringifyJson(currentDetail?.targetRequest?.attributes, { prettier: true })}
+            />
           </Descriptions.Item>
+
           <Descriptions.Item span={4} label={t('caseDetail.requestBodyType')}>
             {currentDetail?.targetRequest?.type}
           </Descriptions.Item>
 
           <Descriptions.Item span={4} label={t('caseDetail.responseAttributes')}>
-            <pre>{JSON.stringify(currentDetail?.targetResponse?.attributes, null, 2)}</pre>
+            <Input.TextArea
+              readOnly
+              autoSize={{ maxRows: 10 }}
+              variant='borderless'
+              value={tryStringifyJson(currentDetail?.targetResponse?.attributes, {
+                prettier: true,
+              })}
+            />
           </Descriptions.Item>
+
           <Descriptions.Item span={4} label={t('caseDetail.responseBodyType')}>
             {currentDetail?.targetResponse?.type}
           </Descriptions.Item>

@@ -1,10 +1,13 @@
-import { Label, useTranslation } from '@arextest/arex-core';
+import { CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { useTranslation } from '@arextest/arex-core';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Card, Select, SelectProps } from 'antd';
-import React, { FC, useState } from 'react';
+import { App, Button, Flex, Select, SelectProps, Space, Table } from 'antd';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 
 import { CONFIG_TARGET } from '@/panes/AppSetting/CompareConfig';
-import { ComparisonService } from '@/services';
+import { ApplicationService, ComparisonService } from '@/services';
+import { IgnoreCategory } from '@/services/ComparisonService';
 
 export type CategoryIgnoreProps = {
   appId?: string;
@@ -12,9 +15,30 @@ export type CategoryIgnoreProps = {
   configTarget: CONFIG_TARGET;
 };
 
+enum Mode {
+  READ,
+  ADD,
+  DELETE,
+}
 const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
   const { message } = App.useApp();
   const { t } = useTranslation();
+  const [footerRef] = useAutoAnimate();
+
+  const [mode, setMode] = useState<Mode>(Mode.READ);
+
+  const [operationTypeValue, setOperationTypeValue] = useState<string>();
+  const [operationNameValue, setOperationNameValue] = useState<string>();
+
+  useEffect(() => {
+    setOperationNameValue(undefined);
+  }, [props.operationId, props.configTarget]);
+
+  const [selectedRowKey, setSelectedRowKey] = useState<string>('');
+
+  const [optionsGroupMap, setOptionsGroupMap] = useState<Map<string, Set<string>>>(new Map());
+
+  const [operationNameOptions, setOperationNameOptions] = useState<SelectProps['options']>([]);
 
   const [categoryTypeOptions, setCategoryOptions] = useState<SelectProps['options']>([]);
   useRequest(ComparisonService.queryCategoryType, {
@@ -29,8 +53,38 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
     },
   });
 
-  const [ignoreCategoryValue, setIgnoreCategoryValue] = useState<string[]>();
-  const { data: ignoreCategoryData, run: queryIgnoreCategory } = useRequest(
+  const reset = () => {
+    setMode(Mode.READ);
+    setSelectedRowKey('');
+    setOperationNameValue(undefined);
+    setOperationTypeValue(undefined);
+  };
+
+  // 获取接口依赖并聚合
+  const { data: interfacesList = [] } = useRequest(
+    () => ApplicationService.queryInterfacesList<'Interface'>({ appId: props.appId as string }),
+    {
+      ready: !!props.appId,
+      onSuccess(res) {
+        const groupMap = res.reduce((group, item) => {
+          if (!item.dependencyList) return group;
+
+          item.dependencyList?.forEach((dependency) => {
+            if (group.has(dependency.operationType)) {
+              group.get(dependency.operationType)?.add(dependency.operationName);
+            } else {
+              group.set(dependency.operationType, new Set([dependency.operationName]));
+            }
+          });
+          return group;
+        }, new Map<string, Set<string>>());
+
+        setOptionsGroupMap(groupMap);
+      },
+    },
+  );
+
+  const { data: ignoreCategoryData = [], run: queryIgnoreCategory } = useRequest(
     () =>
       ComparisonService.queryIgnoreCategory({
         appId: props.appId!,
@@ -45,77 +99,165 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
       ),
       refreshDeps: [props.operationId, props.configTarget],
       onSuccess(res) {
-        setIgnoreCategoryValue(res?.ignoreCategory);
+        reset();
       },
     },
   );
 
   const { run: insertIgnoreCategory } = useRequest(
-    (ignoreCategory: string[]) =>
+    (ignoreCategoryDetail: IgnoreCategory) =>
       ComparisonService.insertIgnoreCategory({
         appId: props.appId!,
         operationId: props.configTarget === CONFIG_TARGET.GLOBAL ? undefined : props.operationId,
-        ignoreCategory,
+        ignoreCategoryDetail,
       }),
     {
       manual: true,
       ready: !!props.appId,
       onSuccess(success) {
-        success
-          ? message.success(t('message.updateSuccess'))
-          : message.error(t('message.updateFailed'));
-        queryIgnoreCategory();
+        if (success) {
+          message.success(t('message.updateSuccess'));
+          queryIgnoreCategory();
+        } else message.error(t('message.updateFailed'));
       },
     },
   );
 
-  const { run: updateIgnoreCategory } = useRequest(ComparisonService.updateIgnoreCategory, {
-    manual: true,
-    onSuccess(success) {
-      success
-        ? message.success(t('message.updateSuccess'))
-        : message.error(t('message.updateFailed'));
-      queryIgnoreCategory();
-    },
-  });
-
   const { run: deleteIgnoreCategory } = useRequest(ComparisonService.deleteIgnoreCategory, {
     manual: true,
     onSuccess(success) {
-      success ? message.success(t('message.delSuccess')) : message.error(t('message.delFailed'));
-      queryIgnoreCategory();
+      if (success) {
+        message.success(t('message.delSuccess'));
+        queryIgnoreCategory();
+      } else message.error(t('message.delFailed'));
     },
   });
 
-  const handleSave = () => {
-    if (ignoreCategoryData && ignoreCategoryValue?.length) {
-      // update when ignoreCategoryData and ignoreCategoryValue is both not empty
-      updateIgnoreCategory({ id: ignoreCategoryData.id, ignoreCategory: ignoreCategoryValue });
-    } else {
-      // delete when ignoreCategoryValue is empty
-      ignoreCategoryData && deleteIgnoreCategory({ id: ignoreCategoryData.id });
-      // insert when ignoreCategoryData is empty
-      ignoreCategoryValue?.length && insertIgnoreCategory(ignoreCategoryValue);
+  const handleAdd = () => {
+    if (operationTypeValue && operationNameValue) {
+      insertIgnoreCategory({
+        operationType: operationTypeValue,
+        operationName: operationNameValue,
+      });
     }
   };
 
+  const handleDelete = () => {
+    if (selectedRowKey) deleteIgnoreCategory({ id: selectedRowKey });
+    else message.error(t('message.selectRowWarning'));
+  };
+
+  const columns = useMemo(
+    () => [
+      {
+        title: t('appSetting.categoryType', { ns: 'components' }),
+        dataIndex: ['ignoreCategoryDetail', 'operationType'],
+      },
+      {
+        title: t('appSetting.categoryName', { ns: 'components' }),
+        dataIndex: ['ignoreCategoryDetail', 'operationName'],
+      },
+    ],
+    [t],
+  );
+
+  const footerRender = () => (
+    <div ref={footerRef}>
+      {mode === Mode.READ ? (
+        <Flex key='read' justify={'end'}>
+          <Button type='text' icon={<PlusOutlined />} onClick={() => setMode(Mode.ADD)}>
+            {t('add', { ns: 'common' })}
+          </Button>
+          <Button type='text' icon={<DeleteOutlined />} onClick={() => setMode(Mode.DELETE)}>
+            {t('delete')}
+          </Button>
+        </Flex>
+      ) : mode === Mode.ADD ? (
+        <div key='add'>
+          <Space>
+            <Select
+              value={operationTypeValue}
+              options={categoryTypeOptions}
+              onSelect={(value) => {
+                setOperationTypeValue(value);
+                setOperationNameValue(undefined);
+
+                setOperationNameOptions(
+                  props.configTarget === CONFIG_TARGET.GLOBAL
+                    ? // GLOBAL: set all dependency
+                      Array.from(optionsGroupMap.get(value) || [])?.map((value) => ({
+                        label: value,
+                        value,
+                      }))
+                    : // INTERFACE: set dependency of current interface
+                      interfacesList
+                        ?.find((item) => item.id === props.operationId)
+                        ?.dependencyList?.filter((item) => item.operationType === value)
+                        .map((item) => ({
+                          label: item.operationName,
+                          value: item.operationName,
+                        })) || [],
+                );
+              }}
+              placeholder={t('appSetting.categoryTypePlaceholder', { ns: 'components' })}
+              style={{ flex: 1 }}
+            />
+
+            <Select
+              value={operationNameValue}
+              options={operationNameOptions}
+              onSelect={setOperationNameValue}
+              placeholder={t('appSetting.categoryNamePlaceholder', { ns: 'components' })}
+              style={{ flex: 1 }}
+            />
+          </Space>
+          <Space style={{ marginLeft: 'auto', float: 'right' }}>
+            <Button type='text' icon={<CloseOutlined />} onClick={reset}>
+              {t('cancel')}
+            </Button>
+
+            <Button type='primary' icon={<PlusOutlined />} onClick={handleAdd}>
+              {t('add', { ns: 'common' })}
+            </Button>
+          </Space>
+        </div>
+      ) : (
+        <Flex key='delete' justify='end'>
+          <Button type='text' icon={<CloseOutlined />} onClick={reset}>
+            {t('cancel')}
+          </Button>
+          <Button danger type='text' icon={<DeleteOutlined />} onClick={handleDelete}>
+            {t('delete')}
+          </Button>
+        </Flex>
+      )}
+    </div>
+  );
+
   return (
     <div>
-      <Card size='small'>
-        <Label>{t('appSetting.categoryType', { ns: 'components' })}</Label>
-        <Select
-          allowClear
-          mode='tags'
-          value={ignoreCategoryValue}
-          options={categoryTypeOptions}
-          placeholder={t('appSetting.chooseCategoryType', { ns: 'components' })}
-          onChange={setIgnoreCategoryValue}
-          style={{ width: '400px' }}
-        />
-        <Button type='primary' style={{ marginLeft: '16px' }} onClick={handleSave}>
-          {t('save')}
-        </Button>
-      </Card>
+      <Table
+        bordered
+        size='small'
+        rowKey='id'
+        pagination={false}
+        columns={columns}
+        dataSource={ignoreCategoryData}
+        rowSelection={
+          mode === Mode.DELETE
+            ? {
+                type: 'radio',
+                selectedRowKeys: [selectedRowKey],
+                onChange: (id) => setSelectedRowKey(id[0] as string),
+              }
+            : undefined
+        }
+        onRow={(record) => ({
+          onClick: () => mode === Mode.DELETE && setSelectedRowKey(record.id),
+        })}
+        footer={footerRender}
+        style={{ marginTop: '8px' }}
+      />
     </div>
   );
 };

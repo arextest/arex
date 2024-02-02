@@ -1,10 +1,11 @@
-import { BugOutlined, RedoOutlined, SaveOutlined, SearchOutlined } from '@ant-design/icons';
-import { HighlightRowTable, useTranslation } from '@arextest/arex-core';
+import { BugOutlined, SaveOutlined, SearchOutlined } from '@ant-design/icons';
+import { HighlightRowTable, SmallTextButton, useTranslation } from '@arextest/arex-core';
 import { usePagination } from 'ahooks';
-import { Button, Dropdown, TableProps, Tag } from 'antd';
+import { Dropdown, TableProps, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, Key, useMemo } from 'react';
 
+import { Icon } from '@/components';
 import { CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
@@ -22,7 +23,6 @@ export type CaseProps = {
   onClick?: (record: ReplayCaseType) => void;
   onChange?: TableProps<ReplayCaseType>['onChange'];
   onClickSaveCase?: (record: ReplayCaseType) => void;
-  onClickRetryCase?: (recordId: string) => void;
 };
 
 const CaseList: FC<CaseProps> = (props) => {
@@ -67,11 +67,10 @@ const CaseList: FC<CaseProps> = (props) => {
       width: 200,
       render: (_, record) => (
         <div style={{ display: 'flex' }}>
-          <Button
+          <SmallTextButton
             key='caseDetail'
-            type='link'
-            size='small'
             icon={<SearchOutlined />}
+            title={t('replay.recordDetail')}
             onClick={(e) => {
               e.stopPropagation();
               navPane({
@@ -87,15 +86,14 @@ const CaseList: FC<CaseProps> = (props) => {
                 },
               });
             }}
-          >
-            {t('replay.recordDetail')}
-          </Button>
+          />
           <Dropdown.Button
+            destroyPopupOnHide
             key='case'
             size='small'
-            type='link'
+            type='text'
             trigger={['click']}
-            destroyPopupOnHide
+            icon={<Icon name='ChevronDown' />}
             buttonsRender={(buttons) => [
               <span key='primaryAction'>{buttons[0]}</span>,
               <span key='extraAction' onClick={(e) => e.stopPropagation()}>
@@ -109,22 +107,12 @@ const CaseList: FC<CaseProps> = (props) => {
                   key: 'save',
                   icon: <SaveOutlined />,
                 },
-                {
-                  label: t('replay.rerun'),
-                  key: 'rerun',
-                  icon: <RedoOutlined />,
-                },
               ],
-
               onClick: (menuInfo) => {
                 menuInfo.domEvent.stopPropagation();
                 switch (menuInfo.key) {
                   case 'save': {
                     props.onClickSaveCase?.(record);
-                    break;
-                  }
-                  case 'rerun': {
-                    props.onClickRetryCase?.(record.recordId);
                     break;
                   }
                 }

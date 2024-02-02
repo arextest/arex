@@ -1,4 +1,4 @@
-import { SettingOutlined } from '@ant-design/icons';
+import { RedoOutlined, SettingOutlined } from '@ant-design/icons';
 import {
   ArexPaneFC,
   clearLocalStorage,
@@ -7,6 +7,7 @@ import {
   PaneDrawer,
   PanesTitle,
   setLocalStorage,
+  SmallTextButton,
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
@@ -16,7 +17,7 @@ import { App } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import { NextInterfaceButton } from '@/components';
+import { PlanItemBreadcrumb } from '@/components';
 import { APP_ID_KEY, PanesType } from '@/constant';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import CaseDiff from '@/panes/ReplayCase/CaseDiff';
@@ -152,7 +153,8 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
 
   return (
     <div ref={wrapperRef}>
-      <NextInterfaceButton
+      <PlanItemBreadcrumb
+        navigation
         type={PanesType.REPLAY_CASE}
         planItemId={planItemId}
         onGetPlanItemData={setPlanItemData}
@@ -166,6 +168,18 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
                 <Label style={{ font: 'inherit' }}>{t('replay.caseServiceAPI')}</Label>
                 {decodeURIComponent(planItemData.operationName || 'unknown')}
               </span>
+            }
+            extra={
+              <SmallTextButton
+                title={t('replay.rerun')}
+                icon={<RedoOutlined />}
+                onClick={() =>
+                  retryPlan({
+                    planId: planItemData!.planId,
+                    planItemId,
+                  })
+                }
+              />
             }
           />
 
@@ -182,16 +196,12 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
                 onClick={handleClickRecord}
                 onChange={handleCaseTableChange}
                 onClickSaveCase={handleClickSaveCase}
-                onClickRetryCase={() =>
-                  retryPlan({
-                    planId: planItemData!.planId,
-                    planItemId,
-                  })
-                }
               />
             }
             panel={
               <CaseDiff
+                appId={planItemData.appId}
+                operationId={planItemData.operationId}
                 loading={loadingFullLinkInfo}
                 data={fullLinkInfoMerged}
                 extra={

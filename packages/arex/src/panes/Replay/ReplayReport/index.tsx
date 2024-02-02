@@ -1,9 +1,4 @@
-import {
-  ContainerOutlined,
-  FileTextOutlined,
-  RedoOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
+import { ContainerOutlined, FileTextOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   HighlightRowTable,
   TooltipButton,
@@ -24,14 +19,12 @@ import React, {
 } from 'react';
 import CountUp from 'react-countup';
 
-import { ResultsState } from '@/components/StatusTag';
 import { PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import ReportCard, { ReportCardRef } from '@/panes/Replay/ReplayReport/ReportCard';
 import ReportOverview from '@/panes/Replay/ReplayReport/ReportOverview';
 import { ReportService } from '@/services';
 import { PlanItemStatistic, PlanStatistics } from '@/services/ReportService';
-import { useMenusPanes } from '@/store';
 
 import ReplayLogs from './ReplayLogs';
 
@@ -42,12 +35,11 @@ export type ReplayReportProps = {
 };
 
 export type ReplayReportRef = {
-  getReportList: (selectFirst?: boolean) => void;
+  refreshReportList?: (planId?: true | string) => void;
 };
 
 const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref) => {
   const { data } = useArexPaneProps<{ planId: string; planItemId: string }>();
-  const { activePane } = useMenusPanes();
 
   const { t } = useTranslation(['components', 'common']);
   const navPane = useNavPane();
@@ -55,64 +47,29 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
 
   const reportCardRef = useRef<ReportCardRef>(null);
-  const [pollingInterval, setPollingInterval] = useState(true);
 
   const {
     data: planItemData = [],
     loading: loadingData,
-    refresh,
-    cancel: cancelPollingInterval,
+    run: queryPlanItemStatistics,
   } = useRequest(
-    () =>
+    (planId?: string) =>
       ReportService.queryPlanItemStatistics({
-        planId: selectedPlan!.planId,
+        planId: planId || selectedPlan?.planId || '',
       }),
     {
-      ready: !!selectedPlan?.planId,
-      refreshDeps: [selectedPlan?.planId],
+      manual: true,
       loadingDelay: 200,
-      pollingInterval: 6000,
-      onSuccess(res) {
-        if (res) {
-          if (
-            res?.every(
-              (record) => ![ResultsState.RUNNING, ResultsState.RERUNNING].includes(record.status),
-            ) ||
-            (selectedPlan &&
-              ![ResultsState.RUNNING, ResultsState.RERUNNING].includes(selectedPlan.status))
-          ) {
-            setPollingInterval(false);
-            cancelPollingInterval();
-          }
-        } else {
-          setPollingInterval(false);
-          cancelPollingInterval();
-        }
-      },
     },
   );
 
   useImperativeHandle(
     ref,
     () => ({
-      getReportList: (selectFirst) => {
-        console.log('replay report getReportList');
-        reportCardRef.current?.query(selectFirst);
-      },
+      refreshReportList: reportCardRef.current?.query,
     }),
-    [reportCardRef.current],
+    [reportCardRef.current, selectedPlan],
   );
-
-  // optimize: cancel polling interval when pane is not active
-  useEffect(() => {
-    if (activePane?.id !== props.appId && pollingInterval) {
-      setPollingInterval(false);
-      cancelPollingInterval();
-    } else if (activePane?.id === props.appId && !pollingInterval) {
-      setPollingInterval(true);
-      refresh();
-    }
-  }, [activePane, props.appId]);
 
   const planItemDataFiltered = useMemo(
     () => planItemData?.filter((record) => !!record.totalCaseCount) || [],
@@ -245,11 +202,11 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
         render: (_, record) => (
           <>
             <TooltipButton
-              icon={<ContainerOutlined />}
-              title={t('replay.diffScenes')}
+              // color='primary'
               breakpoint='lg'
+              title={t('replay.diffScenes')}
+              icon={<ContainerOutlined />}
               disabled={!record.failCaseCount}
-              color='primary'
               onClick={() => {
                 navPane({
                   type: PanesType.DIFF_SCENES,
@@ -259,10 +216,10 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
               }}
             />
             <TooltipButton
-              icon={<FileTextOutlined />}
-              title={t('replay.case')}
+              // color='primary'
               breakpoint='lg'
-              color='primary'
+              title={t('replay.case')}
+              icon={<FileTextOutlined />}
               onClick={() => {
                 navPane({
                   type: PanesType.REPLAY_CASE,
@@ -270,18 +227,6 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
                   // data: record,
                 });
               }}
-            />
-            <TooltipButton
-              icon={<RedoOutlined />}
-              title={t('replay.rerun')}
-              breakpoint='lg'
-              color='primary'
-              onClick={() =>
-                reportCardRef.current?.create({
-                  planId: selectedPlan!.planId,
-                  planItemId: record.planItemId,
-                })
-              }
             />
           </>
         ),
@@ -291,7 +236,6 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
   }, [props.readOnly, selectedPlan]);
 
   const [replayLogsDrawerOpen, setReplayLogsDrawerOpen] = useState(false);
-
   const [selectPlanItemKey, setSelectPlanItemKey] = useState<string>();
 
   useEffect(() => {
@@ -312,8 +256,12 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
       planId={selectedPlan?.planId}
       planItemId={selectPlanItemKey}
       readOnly={props.readOnly}
-      onReportChange={setSelectedPlan}
-      onLogsClick={() => setReplayLogsDrawerOpen(true)}
+      onChange={(plan) => {
+        setSelectedPlan(plan);
+        queryPlanItemStatistics(plan.planId);
+      }}
+      onQueryPlan={queryPlanItemStatistics}
+      onClickLogs={() => setReplayLogsDrawerOpen(true)}
     >
       <ReportOverview data={selectedPlan} />
       <br />

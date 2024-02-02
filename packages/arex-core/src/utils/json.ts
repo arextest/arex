@@ -17,7 +17,7 @@ export function tryParseJsonString<T>(
 }
 
 export const tryStringifyJson = (
-  json: object | null | undefined,
+  json: object | string | null | undefined,
   options?: { errorTip?: string; prettier?: boolean; parser?: Parser },
 ) => {
   const { errorTip, prettier, parser = lossless } = options || {};

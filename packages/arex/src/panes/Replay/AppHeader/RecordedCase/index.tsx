@@ -1,8 +1,8 @@
 import { DeleteOutlined, SearchOutlined } from '@ant-design/icons';
-import { PaneDrawer, useTranslation } from '@arextest/arex-core';
+import { PaneDrawer, SmallTextButton, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import type { TableColumnsType } from 'antd';
-import { App, Button, Input, InputRef, Table, theme } from 'antd';
+import { App, Input, InputRef, Table, theme } from 'antd';
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 
 import { ReportService, StorageService } from '@/services';
@@ -108,10 +108,12 @@ const RecordedCase = forwardRef<RecordedCaseRef, RecordedCaseProps>((props, ref)
     },
     {
       title: t('action', { ns: 'common' }),
+      align: 'center',
       render: (value, { operationName }) => (
-        <Button
+        <SmallTextButton
           size='small'
           icon={<DeleteOutlined />}
+          title={t('delete', { ns: 'common' })}
           onClick={() => {
             deleteRecord({
               appId: props.appId,
@@ -119,9 +121,7 @@ const RecordedCase = forwardRef<RecordedCaseRef, RecordedCaseProps>((props, ref)
               type: DeleteRecordType.ByAppIdAndOperationName,
             });
           }}
-        >
-          Delete
-        </Button>
+        />
       ),
     },
   ];
@@ -130,12 +130,12 @@ const RecordedCase = forwardRef<RecordedCaseRef, RecordedCaseProps>((props, ref)
     <PaneDrawer
       destroyOnClose
       width='75%'
-      title={'Recorded detail: ' + props.appId}
+      title={t('replay.recordDetail')}
       footer={null}
       extra={
-        <Button
+        <SmallTextButton
           danger
-          size='small'
+          title={t('deleteAll', { ns: 'common' })}
           icon={<DeleteOutlined />}
           onClick={() => {
             deleteRecord({
@@ -144,9 +144,7 @@ const RecordedCase = forwardRef<RecordedCaseRef, RecordedCaseProps>((props, ref)
             });
           }}
           style={{ marginRight: '8px' }}
-        >
-          Delete All
-        </Button>
+        />
       }
       open={open}
       onClose={() => setOpen(false)}

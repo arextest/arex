@@ -30,6 +30,8 @@ export interface HoveredActionButtonProps {
   hoveredNode?: React.ReactNode;
   children?: React.ReactNode;
   onHover?: () => void;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 const HoveredActionButton: FC<HoveredActionButtonProps> = (props) => {
@@ -40,7 +42,11 @@ const HoveredActionButton: FC<HoveredActionButtonProps> = (props) => {
   const hovered = useHover(hoveredActionButtonRef);
 
   return (
-    <HoveredActionButtonWrapper ref={hoveredActionButtonRef}>
+    <HoveredActionButtonWrapper
+      ref={hoveredActionButtonRef}
+      className={props.className}
+      style={props.style}
+    >
       <CSSTransition
         nodeRef={unhoverRef}
         in={!hovered}
