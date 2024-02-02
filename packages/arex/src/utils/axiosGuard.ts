@@ -8,77 +8,79 @@ import port from '../../config/port.json';
 
 // chrome插件代理
 function AgentAxios<T>(params: any) {
-  return new Promise<T>((resolve, reject) => {
-    const tid = String(Math.random());
-    window.postMessage(
-      {
-        type: '__AREX_EXTENSION_REQUEST__',
-        tid: tid,
-        payload: params,
-        v: '0.3.0',
-      },
-      '*',
-    );
-    window.addEventListener('message', receiveMessage);
-    function receiveMessage(ev: any) {
-      if (ev.data.type === '__AREX_EXTENSION_RES__' && ev.data.tid == tid) {
-        window.removeEventListener('message', receiveMessage, false);
-        // 这边的err类型是真正的error，而不是401、404这种
-        if (ev.data.res.type === 'error') {
-          const err = new Error();
-          err.message = ev.data.res.message;
-          err.name = ev.data.res.name;
-          err.stack = ev.data.res.stack;
-          reject(err);
-        } else {
-          resolve(ev.data.res);
+  if (!isClient){
+    return new Promise<T>((resolve, reject) => {
+      const tid = String(Math.random());
+      window.postMessage(
+        {
+          type: '__AREX_EXTENSION_REQUEST__',
+          tid: tid,
+          payload: params,
+          v: '0.3.0',
+        },
+        '*',
+      );
+      window.addEventListener('message', receiveMessage);
+      function receiveMessage(ev: any) {
+        if (ev.data.type === '__AREX_EXTENSION_RES__' && ev.data.tid == tid) {
+          window.removeEventListener('message', receiveMessage, false);
+          // 这边的err类型是真正的error，而不是401、404这种
+          if (ev.data.res.type === 'error') {
+            const err = new Error();
+            err.message = ev.data.res.message;
+            err.name = ev.data.res.name;
+            err.stack = ev.data.res.stack;
+            reject(err);
+          } else {
+            resolve(ev.data.res);
+          }
         }
       }
-    }
-  });
+    });
+  } else {
+    return window.electron.proxyRequest(params);
+  }
 }
 
 if (isClientProd) {
   axios.defaults.baseURL = 'http://localhost:' + port.electronPort;
 }
 
-if (!isClient) {
-  xspy.onRequest(async (request: any, sendResponse: any) => {
-    // 判断是否是pm发的
-    if (request.headers['postman-token']) {
-      const agentData: any = await AgentAxios({
-        method: request.method,
-        url: request.url,
-        headers: {
-          ...request.headers,
-          'content-type': (request.headers['content-type'] || '').includes('application/json')
-            ? 'application/json'
-            : request.headers['content-type'],
-        },
-        body: ['GET'].includes(request.method) ? undefined : request.body,
-      }).catch((err) => {
-        console.log(err);
-        return {
-          status: 400,
-          headers: [],
-          data: '',
-        };
-      });
-      const dummyResponse = {
-        status: agentData.status,
-        headers: agentData.headers.reduce((p: any, c: { key: any; value: any }) => {
-          return {
-            ...p,
-            [c.key]: c.value,
-          };
-        }, {}),
-        ajaxType: 'xhr',
-        responseType: 'arraybuffer',
-        response: new Buffer(agentData.data),
+xspy.onRequest(async (request: any, sendResponse: any) => {
+  // 判断是否是pm发的
+  if (request.headers['postman-token']) {
+    const agentData: any = await AgentAxios({
+      method: request.method,
+      url: request.url,
+      headers: {
+        ...request.headers,
+        'content-type': (request.headers['content-type'] || '').includes('application/json')
+          ? 'application/json'
+          : request.headers['content-type'],
+      },
+      body: ['GET'].includes(request.method) ? undefined : request.body,
+    }).catch((err) => {
+      console.log(err);
+      return {
+        status: 400,
+        headers: [],
+        data: '',
       };
-      sendResponse(dummyResponse);
-    } else {
-      sendResponse();
-    }
-  });
-}
+    });
+    const dummyResponse = {
+      status: agentData.status,
+      headers: agentData.headers.reduce((p: any, c: { key: any; value: any }) => {
+        return {
+          ...p,
+          [c.key]: c.value,
+        };
+      }, {}),
+      ajaxType: 'xhr',
+      responseType: 'arraybuffer',
+      response: new Buffer(agentData.data),
+    };
+    sendResponse(dummyResponse);
+  } else {
+    sendResponse();
+  }
+});

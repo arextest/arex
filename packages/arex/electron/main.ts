@@ -1,11 +1,12 @@
 import './logger';
 
-import { app, BrowserWindow, globalShortcut } from 'electron';
+import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
 import { autoUpdateInit } from './autoUpdater';
 import path from 'node:path';
 import { openWindow } from './helper';
 import { oauth } from './server';
 import process from 'process';
+import axios from 'axios';
 
 process.env.DIST = path.join(__dirname, '../dist');
 process.env.PUBLIC = app.isPackaged ? process.env.DIST : path.join(process.env.DIST, '../public');
@@ -38,6 +39,21 @@ function createWindow() {
   if (process.env.NODE_ENV === 'development') {
     win.webContents.openDevTools();
   }
+
+  ipcMain.handle('proxy-request', async (event, payload) => {
+    const result = axios({
+      method: payload.method,
+      url: payload.url,
+      data: JSON.stringify(payload.data),
+      headers: payload.headers.reduce((p: any, c: { key: any; value: any }) => {
+        return {
+          ...p,
+          [c.key]: c.value,
+        };
+      }, {}),
+    })
+    return result
+  })
 
   openWindow(win);
 

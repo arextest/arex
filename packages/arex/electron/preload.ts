@@ -1,8 +1,12 @@
-import { contextBridge, shell, ipcMain, app } from 'electron';
+import { contextBridge, shell, ipcMain, app, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('ipcMain', ipcMain);
 contextBridge.exposeInMainWorld('shell', shell);
 contextBridge.exposeInMainWorld('platform', process.platform);
+
+contextBridge.exposeInMainWorld('electron',{
+  proxyRequest: (val) => ipcRenderer.invoke('proxy-request',val),
+})
 
 function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
   return new Promise((resolve) => {
