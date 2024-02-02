@@ -4,7 +4,7 @@ import type { ArexEnvironment, ArexRESTRequest, ArexRESTResponse } from '@arexte
 import { ArexResponse, ResponseMeta, sendRequest, TestResult } from '@arextest/arex-request';
 import { useRequest } from 'ahooks';
 import { Card, Divider, Space, Spin, Typography } from 'antd';
-import React, { FC } from 'react';
+import React, { createElement, FC } from 'react';
 
 import { CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
@@ -16,6 +16,7 @@ export type BatchRunResultItemProps = {
   id: string;
   environment?: ArexEnvironment;
   data: ArexRESTRequest;
+  caseType: CollectionNodeType;
   onResponse?: (data: ArexRESTResponse) => void;
 };
 const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
@@ -43,10 +44,18 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
   };
 
   return (
-    <div id={props.id} style={{ padding: '0 16px' }}>
-      <Divider style={{ margin: '8px 0' }} />
+    <div
+      id={props.id}
+      style={{
+        marginLeft: props.caseType === CollectionNodeType.case ? '24px' : 0,
+        padding: '0 16px',
+      }}
+    >
+      {createElement(props.caseType === CollectionNodeType.case ? 'div' : Divider, {
+        style: { margin: '8px 0' },
+      })}
 
-      <Card size='small'>
+      <Card size={props.caseType === CollectionNodeType.case ? 'small' : undefined}>
         <SpaceBetweenWrapper>
           <Space>
             {React.createElement(RequestMethodIcon[method], {
@@ -60,7 +69,6 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
             size='small'
             type='text'
             color='primary'
-            disabled={loading}
             icon={<BugOutlined />}
             onClick={handleDebugCase}
           />

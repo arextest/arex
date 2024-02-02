@@ -11,7 +11,6 @@ import {
 import { ArexEnvironment, ArexResponse, EnvironmentSelect } from '@arextest/arex-request';
 import { useRequest } from 'ahooks';
 import { Button, Divider, Popover, theme, TreeSelect, Typography } from 'antd';
-import { cloneDeep } from 'lodash';
 import React, { FC, Key, useCallback, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
@@ -21,8 +20,6 @@ import { WorkspaceEnvironmentPair } from '@/panes/Request/EnvironmentDrawer';
 import { EnvironmentService, FileSystemService } from '@/services';
 import { useCollections } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
-
-import disabledNonCaseNode from './utils/disabledNonCaseNode';
 
 const StatusBlock: FC<{
   color: string;
@@ -61,13 +58,8 @@ const BatchRun: ArexPaneFC = (props) => {
   const [responseList, setResponseList] = useImmer<ArexResponse[]>([]);
 
   const treeData = useMemo(
-    () =>
-      disabledNonCaseNode(
-        cloneDeep(
-          id ? collectionsFlatData.get(id)?.children || [] : collectionsTreeData, // collection right click folder to batch run
-        ),
-      ),
-    [collectionsTreeData],
+    () => (id ? collectionsFlatData.get(id)?.children || [] : collectionsTreeData), // collection right click folder to batch run
+    [collectionsFlatData, collectionsTreeData, id],
   );
 
   const { data: environments } = useRequest(EnvironmentService.getEnvironments, {
@@ -90,9 +82,10 @@ const BatchRun: ArexPaneFC = (props) => {
     runAsync: queryCases,
   } = useRequest(() =>
     Promise.all(
-      checkValue.map((key) =>
-        FileSystemService.queryRequest({ id: String(key), nodeType: CollectionNodeType.case }),
-      ),
+      checkValue.map((key) => {
+        const nodeType = collectionsFlatData.get(key.toString())!.nodeType;
+        return FileSystemService.queryRequest({ id: String(key), nodeType });
+      }),
     ),
   );
 
@@ -103,7 +96,10 @@ const BatchRun: ArexPaneFC = (props) => {
         response: { type: 'loading', headers: undefined },
       })) as ArexResponse[],
     );
-    queryCases().then((cases) => setCasesResults(getCasesResults(cases)));
+    queryCases().then((cases) => {
+      console.log('cases', cases);
+      setCasesResults(getCasesResults(cases));
+    });
   };
 
   const getCasesResults = useCallback(
@@ -112,6 +108,7 @@ const BatchRun: ArexPaneFC = (props) => {
         <BatchRunResultItem
           id={`batch-run-result-item-${index}`}
           key={caseItem.id}
+          caseType={caseItem.nodeType}
           environment={activeEnvironment}
           data={caseItem}
           onResponse={(response) => {
@@ -142,18 +139,28 @@ const BatchRun: ArexPaneFC = (props) => {
           multiple
           allowClear
           treeCheckable
-          maxTagCount={3}
+          // maxTagCount={3}
+          size='small'
           placeholder={'Please select case'}
           fieldNames={{ label: 'nodeName', value: 'infoId', children: 'children' }}
           value={checkValue}
-          treeData={treeData.nodeData}
-          onChange={setCheckValue}
+          treeData={treeData}
+          showCheckedStrategy={TreeSelect.SHOW_ALL}
+          onChange={(value) => {
+            const filtered = value.filter((v) => {
+              const nodeType = collectionsFlatData.get(v.toString())?.nodeType;
+              return (
+                !!nodeType &&
+                [CollectionNodeType.interface, CollectionNodeType.case].includes(nodeType)
+              );
+            });
+            setCheckValue(filtered); // TODO sort
+          }}
           style={{ flex: 1 }}
         />
 
         <Button
           type='primary'
-          size='large'
           icon={<SendOutlined />}
           onClick={handleBatchRun}
           style={{ marginLeft: '16px' }}

@@ -173,131 +173,126 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     },
   });
 
-  const menu: MenuProps = useMemo(
-    () => ({
-      items: (
-        [] as {
-          key: string;
-          label: ReactNode;
-        }[]
+  const menu: MenuProps = {
+    items: (
+      [] as {
+        key: string;
+        label: ReactNode;
+      }[]
+    )
+      .concat(
+        props.data.nodeType === CollectionNodeType.folder
+          ? [
+              {
+                key: 'batchRun',
+                label: (
+                  <a
+                    onClick={() => {
+                      navPane({
+                        type: PanesType.BATCH_RUN,
+                        id: `${activeWorkspaceId}-${props.data.infoId}`,
+                      });
+                    }}
+                  >
+                    {t('collection.batch_run', { ns: 'components' })}
+                  </a>
+                ),
+              },
+              {
+                key: 'addFolder',
+                label: (
+                  <a
+                    onClick={() =>
+                      addCollectionItem({
+                        nodeName: 'New Collection',
+                        nodeType: CollectionNodeType.folder,
+                      })
+                    }
+                  >
+                    {t('collection.add_folder', { ns: 'components' })}
+                  </a>
+                ),
+              },
+              {
+                key: 'addRequest',
+                label: (
+                  <a
+                    onClick={() =>
+                      addCollectionItem({
+                        nodeName: 'New Request',
+                        nodeType: CollectionNodeType.interface,
+                      })
+                    }
+                  >
+                    {t('collection.add_request', { ns: 'components' })}
+                  </a>
+                ),
+              },
+            ]
+          : [],
       )
-        .concat(
-          props.data.nodeType === CollectionNodeType.folder
-            ? [
-                {
-                  key: 'batchRun',
-                  label: (
-                    <a
-                      onClick={() => {
-                        navPane({
-                          type: PanesType.BATCH_RUN,
-                          id: `${activeWorkspaceId}-${props.data.infoId}`,
-                        });
-                      }}
-                    >
-                      {t('collection.batch_run', { ns: 'components' })}
-                    </a>
-                  ),
-                },
-                {
-                  key: 'addFolder',
-                  label: (
-                    <a
-                      onClick={() =>
-                        addCollectionItem({
-                          nodeName: 'New Collection',
-                          nodeType: CollectionNodeType.folder,
-                        })
-                      }
-                    >
-                      {t('collection.add_folder', { ns: 'components' })}
-                    </a>
-                  ),
-                },
-                {
-                  key: 'addRequest',
-                  label: (
-                    <a
-                      onClick={() =>
-                        addCollectionItem({
-                          nodeName: 'New Request',
-                          nodeType: CollectionNodeType.interface,
-                        })
-                      }
-                    >
-                      {t('collection.add_request', { ns: 'components' })}
-                    </a>
-                  ),
-                },
-              ]
-            : [],
-        )
-        .concat(
-          props.data.nodeType === CollectionNodeType.interface
-            ? [
-                {
-                  key: 'addCase',
-                  label: (
-                    <a
-                      onClick={() => {
-                        addCollectionItem({
-                          nodeName: 'case',
-                          nodeType: CollectionNodeType.case,
-                          caseSourceType: CaseSourceType.CASE_DEPRECATED,
-                        });
-                      }}
-                    >
-                      {t('collection.add_case', { ns: 'components' })}
-                    </a>
-                  ),
-                },
-              ]
-            : [],
-        )
-        .concat([
-          {
-            key: 'rename',
-            label: (
-              <a onClick={() => setEditMode(true)}>
-                {t('collection.rename', { ns: 'components' })}
-              </a>
-            ),
-          },
-          {
-            key: 'duplicate',
-            label: (
-              <a onClick={() => duplicateCollectionItem()}>
-                {t('collection.duplicate', { ns: 'components' })}
-              </a>
-            ),
-          },
-          {
-            key: 'delete',
-            label: (
-              <a
-                style={{ color: 'red' }}
-                onClick={() => {
-                  confirm({
-                    title: t('are_you_sure'),
-                    icon: <ExclamationCircleFilled />,
-                    okText: 'Yes',
-                    okType: 'danger',
-                    cancelText: 'No',
-                    onOk: removeCollectionItem,
-                  });
-                }}
-              >
-                {t('collection.delete', { ns: 'components' })}
-              </a>
-            ),
-          },
-        ]),
-      onClick(e) {
-        e.domEvent.stopPropagation();
-      },
-    }),
-    [],
-  );
+      .concat(
+        props.data.nodeType === CollectionNodeType.interface
+          ? [
+              {
+                key: 'addCase',
+                label: (
+                  <a
+                    onClick={() => {
+                      addCollectionItem({
+                        nodeName: 'case',
+                        nodeType: CollectionNodeType.case,
+                        caseSourceType: CaseSourceType.CASE,
+                      });
+                    }}
+                  >
+                    {t('collection.add_case', { ns: 'components' })}
+                  </a>
+                ),
+              },
+            ]
+          : [],
+      )
+      .concat([
+        {
+          key: 'rename',
+          label: (
+            <a onClick={() => setEditMode(true)}>{t('collection.rename', { ns: 'components' })}</a>
+          ),
+        },
+        {
+          key: 'duplicate',
+          label: (
+            <a onClick={() => duplicateCollectionItem()}>
+              {t('collection.duplicate', { ns: 'components' })}
+            </a>
+          ),
+        },
+        {
+          key: 'delete',
+          label: (
+            <a
+              style={{ color: 'red' }}
+              onClick={() => {
+                confirm({
+                  title: t('are_you_sure'),
+                  icon: <ExclamationCircleFilled />,
+                  okText: 'Yes',
+                  okType: 'danger',
+                  cancelText: 'No',
+                  onOk: removeCollectionItem,
+                });
+              }}
+            >
+              {t('collection.delete', { ns: 'components' })}
+            </a>
+          ),
+        },
+      ]),
+    onClick(e) {
+      e.domEvent.stopPropagation();
+    },
+  };
 
   const prefix = useMemo(
     () =>
