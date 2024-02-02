@@ -18,7 +18,7 @@ import {
 import { useNavPane } from '@/hooks';
 import { EnvironmentService, FileSystemService, ReportService } from '@/services';
 import { Environment } from '@/services/EnvironmentService/getEnvironments';
-import { useCollections, useWorkspaces } from '@/store';
+import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
 import EnvironmentDrawer, {
@@ -30,6 +30,7 @@ import SaveAs, { SaveAsRef } from './SaveAs';
 import { updateWorkspaceEnvironmentLS } from './utils';
 
 export type RequestProps = {
+  title?: string;
   recordId?: string;
   planId?: string;
   environmentId?: string;
@@ -41,6 +42,8 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const { message } = App.useApp();
 
   const { collectionsTreeData, getCollections, getPath } = useCollections();
+  const { removePane } = useMenusPanes();
+
   const userName = getLocalStorage<string>(EMAIL_KEY);
   const { id: paneId, type } = decodePaneKey(props.paneKey);
   // requestId structure: workspaceId-nodeTypeStr-id
@@ -83,7 +86,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   );
 
   const { run: saveRequest } = useRequest(
-    (params, needRefresh?: boolean) =>
+    (params, options?: { refresh?: boolean; close?: boolean }) =>
       FileSystemService.saveRequest(
         workspaceId,
         {
@@ -95,21 +98,24 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       ),
     {
       manual: true,
-      onSuccess(res, [params, needRefresh]) {
+      onSuccess(res, [params, options]) {
         res && message.success(t('message.saveSuccess', { ns: 'common' }));
-        needRefresh &&
-          getCollections().then(() =>
+        options?.refresh &&
+          getCollections().then(() => {
             navPane({
               id: `${workspaceId}-${nodeType}-${params.id || id}`,
               type,
               icon: nodeType === CollectionNodeType.interface ? params.method : undefined,
-            }),
-          );
+            });
+            params.id !== id && removePane(props.paneKey); // remove old pane when save as
+          });
       },
     },
   );
 
   const handleSave: ArexRequestProps['onSave'] = (request, response) => {
+    if (request?.id?.length !== 24) return saveAsRef?.current?.open();
+
     if (
       !request?.headers.find((header) => header.key === 'arex-record-id') &&
       (response?.type === 'success' ? response.headers : []).find(
@@ -124,7 +130,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
 
       runPinMock(recordId);
     }
-    saveRequest(request, true);
+    saveRequest(request, { refresh: true });
   };
 
   const { data, run } = useRequest(() =>
@@ -134,6 +140,10 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       recordId: props.data?.recordId,
       planId: props.data?.planId,
     }),
+  );
+  const title = useMemo(
+    () => data?.name || decodeURIComponent(props.data?.title || t('untitled', { ns: 'common' })),
+    [data?.name, props.data?.title, t],
   );
 
   const parentPath = useMemo(() => getPath(id), [collectionsTreeData]);
@@ -266,9 +276,9 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         data={data}
         language={i18n.language}
         config={httpConfig}
-        breadcrumb={parentPath.map((path) => path.name)}
+        breadcrumb={parentPath?.length ? parentPath.map((path) => path.name) : [title]}
         titleProps={{
-          value: data?.name,
+          value: title,
           onChange: rename,
         }}
         labelsProps={{
@@ -308,16 +318,13 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
           onAdd: createNewEnvironment,
           onEdit: environmentDrawerRef?.current?.open,
         }}
-        disableSave={!!props.data?.recordId}
         onSave={handleSave}
         onSaveAs={saveAsRef?.current?.open}
       />
 
-      {/*tags*/}
-      {/*description*/}
       <SaveAs
         ref={saveAsRef}
-        title={data?.name}
+        title={title}
         nodeType={nodeType}
         workspaceId={workspaceId}
         onCreate={requestRef.current?.save}

@@ -15,7 +15,7 @@ import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
 import dayjs from 'dayjs';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { PlanItemBreadcrumb } from '@/components';
 import { APP_ID_KEY, PanesType } from '@/constant';
@@ -29,7 +29,6 @@ import { useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
 import CaseList, { CaseProps } from './CaseList';
-import SaveCase, { SaveCaseRef } from './SaveCase';
 
 const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
   const { message } = App.useApp();
@@ -50,8 +49,6 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
   // undefined 未指定 DependencyId，显示所有 Dependency 配置
   // string 指定 DependencyId，显示指定 Dependency 配置
   const [selectedDependency, setSelectedDependency] = useState<InfoItem>();
-
-  const saveCaseRef = useRef<SaveCaseRef>(null);
 
   useEffect(() => {
     activePane?.key === props.paneKey && setLocalStorage(APP_ID_KEY, planItemData?.appId);
@@ -93,11 +90,6 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
   const handleCaseTableChange: CaseProps['onChange'] = () => {
     setSelectedRecord(undefined);
   };
-
-  function handleClickSaveCase(record: ReplayCaseType) {
-    saveCaseRef.current?.openModal(record);
-    //   setOpen(true)
-  }
 
   const { run: retryPlan } = useRequest(ScheduleService.reRunPlan, {
     manual: true,
@@ -195,7 +187,6 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
                 filter={props.data?.filter}
                 onClick={handleClickRecord}
                 onChange={handleCaseTableChange}
-                onClickSaveCase={handleClickSaveCase}
               />
             }
             panel={
@@ -230,14 +221,6 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
                 }}
               />
             }
-          />
-
-          <SaveCase
-            planId={planItemData.planId}
-            operationId={planItemData.operationId}
-            ref={saveCaseRef}
-            appId={planItemData.appId}
-            operationName={planItemData.operationName || ''}
           />
 
           {/* CompareConfigModal */}

@@ -1,11 +1,10 @@
-import { BugOutlined, SaveOutlined, SearchOutlined } from '@ant-design/icons';
+import { BugOutlined, SearchOutlined } from '@ant-design/icons';
 import { HighlightRowTable, SmallTextButton, useTranslation } from '@arextest/arex-core';
 import { usePagination } from 'ahooks';
-import { Dropdown, TableProps, Tag } from 'antd';
+import { TableProps, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, Key, useMemo } from 'react';
 
-import { Icon } from '@/components';
 import { CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
@@ -22,7 +21,6 @@ export type CaseProps = {
   filter?: Key;
   onClick?: (record: ReplayCaseType) => void;
   onChange?: TableProps<ReplayCaseType>['onChange'];
-  onClickSaveCase?: (record: ReplayCaseType) => void;
 };
 
 const CaseList: FC<CaseProps> = (props) => {
@@ -66,7 +64,7 @@ const CaseList: FC<CaseProps> = (props) => {
       title: t('replay.action'),
       width: 200,
       render: (_, record) => (
-        <div style={{ display: 'flex' }}>
+        <>
           <SmallTextButton
             key='caseDetail'
             icon={<SearchOutlined />}
@@ -85,37 +83,10 @@ const CaseList: FC<CaseProps> = (props) => {
               });
             }}
           />
-          <Dropdown.Button
-            destroyPopupOnHide
+          <SmallTextButton
             key='case'
-            size='small'
-            type='text'
-            trigger={['click']}
-            icon={<Icon name='ChevronDown' />}
-            buttonsRender={(buttons) => [
-              <span key='primaryAction'>{buttons[0]}</span>,
-              <span key='extraAction' onClick={(e) => e.stopPropagation()}>
-                {buttons[1]}
-              </span>,
-            ]}
-            menu={{
-              items: [
-                {
-                  label: t('replay.save'),
-                  key: 'save',
-                  icon: <SaveOutlined />,
-                },
-              ],
-              onClick: (menuInfo) => {
-                menuInfo.domEvent.stopPropagation();
-                switch (menuInfo.key) {
-                  case 'save': {
-                    props.onClickSaveCase?.(record);
-                    break;
-                  }
-                }
-              },
-            }}
+            icon={<BugOutlined />}
+            title={t('replay.debug')}
             onClick={(e) => {
               e.stopPropagation();
               navPane({
@@ -124,16 +95,14 @@ const CaseList: FC<CaseProps> = (props) => {
                 // icon: 'Get',
                 name: `Debug - ${record.recordId}`,
                 data: {
+                  title: props.operationName,
                   recordId: record.recordId,
                   planId: props.planId,
                 },
               });
             }}
-          >
-            <BugOutlined />
-            {t('replay.debug')}
-          </Dropdown.Button>
-        </div>
+          />
+        </>
       ),
     },
   ];

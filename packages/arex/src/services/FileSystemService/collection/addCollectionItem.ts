@@ -18,12 +18,12 @@ export type AddCollectionRes = {
 
 export async function addCollectionItem(params: AddCollectionReq) {
   const { nodeName = 'New Collection', nodeType = 3, parentPath = [], ...restParams } = params;
-  return request
-    .post<AddCollectionRes>(`/webApi/filesystem/addItem`, {
-      nodeName,
-      nodeType,
-      parentPath,
-      ...restParams,
-    })
-    .then((res) => (res.body.success ? Promise.resolve(res.body) : Promise.reject(res.body)));
+  const res = await request.post<AddCollectionRes>(`/webApi/filesystem/addItem`, {
+    nodeName,
+    nodeType,
+    parentPath,
+    ...restParams,
+  });
+
+  return res.body;
 }

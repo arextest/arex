@@ -19,8 +19,9 @@ import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
-import { useCollections, useWorkspaces } from '@/store';
+import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { CaseSourceType } from '@/store/useCollections';
+import { encodePaneKey } from '@/store/useMenusPanes';
 
 import SearchHighLight from '../SearchHighLight';
 
@@ -67,12 +68,14 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   const {
     selectable = [CollectionNodeType.folder, CollectionNodeType.interface, CollectionNodeType.case],
   } = props;
+  const { activeWorkspaceId } = useWorkspaces();
+  const { getCollections, getPath } = useCollections();
+  const { removePane } = useMenusPanes();
+
   const { modal } = App.useApp();
   const confirm = modal.confirm;
   const { t } = useTranslation(['common', 'components']);
   const navPane = useNavPane();
-  const { activeWorkspaceId } = useWorkspaces();
-  const { getCollections, getPath } = useCollections();
 
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
@@ -144,6 +147,9 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     {
       manual: true,
       onSuccess: () => {
+        const id = `${activeWorkspaceId}-${props.data.nodeType}-${props.data.infoId}`;
+        const paneKey = encodePaneKey({ id, type: PanesType.REQUEST });
+        removePane(paneKey);
         getCollections();
       },
     },

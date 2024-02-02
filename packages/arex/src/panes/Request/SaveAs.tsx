@@ -56,7 +56,8 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
       }),
     {
       manual: true,
-      onSuccess: (res, [params]) => {
+      onSuccess: (res) => {
+        console.log('ok');
         setOpen(false);
         props.onCreate?.(res.infoId);
       },
