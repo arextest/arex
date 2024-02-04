@@ -1,4 +1,4 @@
-import { getLocalStorage } from '@arextest/arex-core';
+import { getLocalStorage, tryParseJsonString, tryStringifyJson } from '@arextest/arex-core';
 import axios from 'axios';
 
 import { ACCESS_TOKEN_KEY, APP_ID_KEY } from '@/constant';
@@ -58,6 +58,7 @@ export async function viewRecord(params: ViewRecordReq) {
       'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
       appId: getLocalStorage<string>(APP_ID_KEY),
     },
+    transformResponse: (res) => tryParseJsonString(res),
   });
   return Promise.resolve(res.data);
 }
