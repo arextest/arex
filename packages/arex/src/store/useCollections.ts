@@ -62,7 +62,13 @@ const useCollections = create<CollectionState & CollectionAction>((set, get) => 
       key: '__root__', //
       children: data.roots,
     });
-    set({ collectionsFlatData, collectionsTreeData: data.roots, loading: false });
+    set({
+      collectionsFlatData,
+      collectionsTreeData: data.roots,
+      loading: false,
+    });
+
+    useWorkspaces.setState({ activeWorkspaceId: id });
   }
 
   /**

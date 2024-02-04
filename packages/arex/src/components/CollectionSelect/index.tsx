@@ -50,7 +50,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
   const { activeWorkspaceId } = useWorkspaces();
-  const { activePane, setActiveMenu, reset: resetPane } = useMenusPanes();
+  const { activePane, setActiveMenu } = useMenusPanes();
   const { loading, collectionsTreeData, collectionsFlatData, getCollections, getPath } =
     useCollections();
 
@@ -59,17 +59,22 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
 
   const [expandedKeys, setExpandedKeys] = useState<string[]>(); // TODO 初始化展开的节点
 
-  useEffect(() => {
-    getCollections();
-  }, []);
+  useEffect(() => {}, []);
 
   // auto expand by active pane id
   useEffect(() => {
     if (activePane && activePane.type === PanesType.REQUEST) {
       const [workspaceId, nodeTypeStr, id] = activePane.id.split('-');
-      const path = getPath(id).map((item) => item.id);
       setActiveMenu(MenusType.COLLECTION);
-      setExpandedKeys((expand) => [...(expand || []), ...path]);
+
+      if (workspaceId !== activeWorkspaceId) {
+        getCollections(workspaceId).then(() =>
+          setExpandedKeys([...getPath(id).map((item) => item.id)]),
+        );
+      } else {
+        const path = getPath(id).map((item) => item.id);
+        setExpandedKeys((expand) => [...(expand || []), ...path]);
+      }
     }
   }, [activePane]);
 

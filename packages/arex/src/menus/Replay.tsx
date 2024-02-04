@@ -17,7 +17,7 @@ import { EMAIL_KEY, MenusType, PanesType } from '@/constant';
 import AppBasicSetup from '@/panes/AppSetting/Other/AppBasicSetup';
 import { ApplicationService, UserService } from '@/services';
 import { ApplicationDataType } from '@/services/ApplicationService';
-import { useApplication, useCollections, useMenusPanes } from '@/store';
+import { useApplication, useMenusPanes } from '@/store';
 
 type MenuItemProps = {
   app: ApplicationDataType;
@@ -27,7 +27,6 @@ type MenuItemProps = {
 const MenuItem = styled((props: MenuItemProps) => {
   const { app, favoriteApps = [], onFavoriteAppsChange, ...restProps } = props;
   const { activePane, setActiveMenu } = useMenusPanes();
-  const { collectionsFlatData } = useCollections();
 
   const { token } = theme.useToken();
   const email = getLocalStorage<string>(EMAIL_KEY) as string;
@@ -56,7 +55,7 @@ const MenuItem = styled((props: MenuItemProps) => {
     if (activePane && activePane.type === PanesType.REPLAY) {
       setActiveMenu(MenusType.APP);
     }
-  }, [activePane, collectionsFlatData]);
+  }, [activePane]);
 
   return (
     <SpaceBetweenWrapper {...restProps}>
