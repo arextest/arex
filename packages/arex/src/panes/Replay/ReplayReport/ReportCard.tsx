@@ -41,7 +41,7 @@ export interface ReportCardProps {
 
 export interface ReportCardRef {
   query: (
-    planId?: true | string, // true: select first, string: select by planId
+    planId: true | string, // true: select first, string: select by planId
   ) => void;
   create: (req: ReRunPlanReq) => void;
 }
@@ -63,7 +63,7 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
     cancel: cancelPollingInterval,
   } = useRequest(
     (
-      planId?: true | string, // true: select first, string: select by planId
+      planId: true | string, // true: select first, string: select by planId
     ) =>
       ReportService.queryPlanStatistics({
         appId: props.appId,
@@ -73,30 +73,32 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
       }),
     {
       ready: !!props.appId,
-      pollingInterval: 6000,
+      pollingInterval: 3000,
       refreshDeps: [props.appId, data?.planId, pageSize],
       onSuccess({ list }, [planId]) {
         if (init || planId === true) {
-          setSelectedReport(list[0]);
           setInit(false); // 设置第一次初始化标识
-          list.length && props.onChange?.(list[0]);
         } else {
           props.onQueryPlan?.(typeof planId === 'string' ? planId : list[0]?.planId);
         }
 
+        let plan = undefined;
+
         if (typeof planId === 'string') {
-          const selected = list.find((item) => item.planId === planId);
-          setSelectedReport(selected);
-          // selected && props.onChange?.(selected);
+          plan = list.find((item) => item.planId === planId);
+        } else {
+          plan = list[0];
+          list.length && props.onChange?.(plan);
         }
 
+        setSelectedReport(plan);
+
         if (
-          list.every(
-            (record) => ![ResultsState.RUNNING, ResultsState.RERUNNING].includes(record.status),
+          ![ResultsState.INIT, ResultsState.RUNNING, ResultsState.RERUNNING].includes(
+            plan?.status || selectedReport?.status || ResultsState.DONE,
           )
-        ) {
+        )
           cancelPollingInterval();
-        }
       },
     },
   );
@@ -128,7 +130,7 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
     onSuccess(success, [planId]) {
       if (success) {
         message.success(t('message.success', { ns: 'common' }));
-        queryPlanStatistics();
+        queryPlanStatistics(planId);
         props.onTerminate?.(planId);
       } else {
         message.error(t('message.error', { ns: 'common' }));
@@ -299,7 +301,16 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
               onChange={(value) => {
                 const selected = planStatistics.find((item) => item.planId === value);
                 setSelectedReport(selected);
-                if (selected) props.onChange?.(selected);
+                if (selected) {
+                  props.onChange?.(selected);
+                  if (
+                    [ResultsState.INIT, ResultsState.RUNNING, ResultsState.RERUNNING].includes(
+                      selected.status,
+                    )
+                  )
+                    queryPlanStatistics(selected.planId);
+                  else cancelPollingInterval();
+                }
               }}
               css={css`
                 .ant-select-selection-item {

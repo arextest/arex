@@ -35,7 +35,7 @@ export type ReplayReportProps = {
 };
 
 export type ReplayReportRef = {
-  refreshReportList?: (planId?: true | string) => void;
+  refreshReportList: (planId?: true | string) => void;
 };
 
 const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref) => {

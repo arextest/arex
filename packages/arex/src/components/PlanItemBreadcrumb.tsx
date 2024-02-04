@@ -14,6 +14,7 @@ import { useMenusPanes } from '@/store';
 export type PlanItemBreadcrumbProps = {
   navigation?: boolean;
   type: PanesType;
+  appId?: string;
   planItemId?: string;
   recordId?: string;
   onGetPlanItemData?: (planItem: PlanItemStatistic) => void;
@@ -66,7 +67,26 @@ const PlanItemBreadcrumb: FC<PlanItemBreadcrumbProps> = (props) => {
     });
   };
 
-  if (!props.planItemId) return;
+  if (!props.planItemId && props.appId)
+    return (
+      <Breadcrumb
+        separator='>'
+        items={
+          [
+            {
+              key: props.appId,
+              title: <a>{props.appId}</a>,
+              onClick: () =>
+                navPane({
+                  type: PanesType.REPLAY,
+                  id: props.appId!,
+                }),
+            },
+            { key: props.recordId, title: props.recordId },
+          ] as BreadcrumbItemType[]
+        }
+      />
+    );
 
   return (
     <>
