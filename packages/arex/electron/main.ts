@@ -1,6 +1,6 @@
 import './logger';
 
-import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
+import { app, BrowserWindow, globalShortcut, ipcMain, session } from 'electron';
 import { autoUpdateInit } from './autoUpdater';
 import path from 'node:path';
 import { openWindow } from './helper';
@@ -41,18 +41,20 @@ function createWindow() {
   }
 
   ipcMain.handle('proxy-request', async (event, payload) => {
-    const result = axios({
+    const result = await axios({
       method: payload.method,
       url: payload.url,
-      data: JSON.stringify(payload.data),
-      headers: payload.headers.reduce((p: any, c: { key: any; value: any }) => {
-        return {
-          ...p,
-          [c.key]: c.value,
-        };
-      }, {}),
+      headers: {
+        ...payload.headers,
+        cookie:payload.headers.__clonecookie__
+      },
+      data: JSON.parse(payload.body||'{}'),
     })
-    return result
+    return {
+      status: result.status,
+      headers: Object.entries(result.headers).map(([key, value]) => ({ key, value })),
+      data: JSON.stringify(result.data),
+    }
   })
 
   openWindow(win);

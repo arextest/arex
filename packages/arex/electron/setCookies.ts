@@ -1,6 +1,6 @@
 import { session } from 'electron'
 function parseCookies(cookieString) {
-  const cookies = cookieString.split('; ');
+  const cookies = cookieString.split(';');
   return cookies.map(cookie => {
     const [name, value] = cookie.split('=');
     return { name, value };
