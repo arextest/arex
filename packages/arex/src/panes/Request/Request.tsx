@@ -133,13 +133,19 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     saveRequest(request, { refresh: true });
   };
 
-  const { data, run } = useRequest(() =>
-    FileSystemService.queryRequest({
-      id,
-      nodeType,
-      recordId: props.data?.recordId,
-      planId: props.data?.planId,
-    }),
+  const { data, loading, run } = useRequest(
+    () =>
+      FileSystemService.queryRequest({
+        id,
+        nodeType,
+        recordId: props.data?.recordId,
+        planId: props.data?.planId,
+      }),
+    {
+      onError(error) {
+        message.error(error.toString());
+      },
+    },
   );
   const title = useMemo(
     () => data?.name || decodeURIComponent(props.data?.title || t('untitled', { ns: 'common' })),
@@ -272,7 +278,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     <>
       <ArexRequest
         ref={requestRef}
-        loading={!data}
+        loading={loading}
         data={data}
         language={i18n.language}
         config={httpConfig}

@@ -30,7 +30,9 @@ export async function queryRequest(params: {
       const res = await queryDebuggingCase({
         recordId: params.recordId,
         planId: params.planId,
-      }).then((res) => res);
+      });
+      if (!res.body) return Promise.reject(res.responseStatusType.responseDesc);
+
       const {
         body: { address, testAddress, ...rest },
       } = res;
