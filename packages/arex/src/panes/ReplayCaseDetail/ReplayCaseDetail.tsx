@@ -92,6 +92,7 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
   return (
     <>
       <PlanItemBreadcrumb
+        appId={props.data.appId}
         type={PanesType.REPLAY_CASE}
         planItemId={props.data.planItemId}
         recordId={props.data.recordId}
