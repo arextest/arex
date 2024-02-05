@@ -108,7 +108,6 @@ const BatchRun: ArexPaneFC = (props) => {
         <BatchRunResultItem
           id={`batch-run-result-item-${index}`}
           key={caseItem.id}
-          caseType={caseItem.nodeType}
           environment={activeEnvironment}
           data={caseItem}
           onResponse={(response) => {
