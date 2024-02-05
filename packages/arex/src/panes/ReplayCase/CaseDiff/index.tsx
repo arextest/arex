@@ -7,7 +7,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Collapse, CollapseProps, Flex, Typography } from 'antd';
+import { App, Button, Collapse, CollapseProps, Flex, Tooltip, Typography } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 
 import { ComparisonService } from '@/services';
@@ -89,10 +89,12 @@ const CaseDiff: FC<DiffPathProps> = (props) => {
             </Typography.Text>
 
             <div style={{ marginLeft: '8px' }}>
-              {data.isEntry ? (
-                <Typography.Text strong type='secondary'>
-                  {`[${data.categoryName}]`}
-                </Typography.Text>
+              {data.isEntry || data.ignore ? (
+                <Tooltip title={data.ignore ? t('replayCase.ignored') : undefined}>
+                  <Typography.Text strong delete={!!data.ignore} type='secondary'>
+                    {`[${data.categoryName}]`}
+                  </Typography.Text>
+                </Tooltip>
               ) : (
                 <HoveredActionButton
                   hoveredNode={

@@ -15,6 +15,7 @@ export type InfoItem = {
   operationId: string;
   operationName: string;
   isEntry?: boolean;
+  ignore?: boolean | null;
 };
 
 export type QueryFullLinkInfoRes = {
