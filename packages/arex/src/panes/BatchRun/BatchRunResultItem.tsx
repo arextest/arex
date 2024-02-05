@@ -47,13 +47,11 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
     <div
       id={props.id}
       style={{
-        marginLeft: props.caseType === CollectionNodeType.case ? '24px' : 0,
+        // marginLeft: props.caseType === CollectionNodeType.case ? '24px' : 0,
         padding: '0 16px',
       }}
     >
-      {createElement(props.caseType === CollectionNodeType.case ? 'div' : Divider, {
-        style: { margin: '8px 0' },
-      })}
+      <Divider style={{ margin: '8px 0' }} />
 
       <Card size={props.caseType === CollectionNodeType.case ? 'small' : undefined}>
         <SpaceBetweenWrapper>
