@@ -7,7 +7,7 @@ import {
 import { App, Collapse, Drawer, Input, InputProps, List, Typography } from 'antd';
 import React, { CompositionEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 
-import { CollectionNodeType, MenusType, PanesType } from '@/constant';
+import { CollectionNodeType, MenusType, PanesType, URL_DOCUMENT_GET_STARTED } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { useMenusPanes, useUserProfile, useWorkspaces } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
@@ -226,7 +226,7 @@ const KeyboardShortcut = React.memo(() => {
           type: ArexPanesType.WEB_VIEW,
           name: t('document') as string,
           data: {
-            url: `http://www.arextest.com/docs/chapter1/get-started`,
+            url: URL_DOCUMENT_GET_STARTED,
           },
         });
         break;
