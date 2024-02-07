@@ -10,6 +10,7 @@ export async function queryRecord(recordId: string) {
     '/storage/storage/replay/query/viewRecord',
     {
       recordId,
+      splitMergeRecord: true,
       sourceProvider: 'Pinned',
     },
     {

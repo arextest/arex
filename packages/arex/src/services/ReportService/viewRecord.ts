@@ -1,11 +1,8 @@
-import { getLocalStorage, tryParseJsonString, tryStringifyJson } from '@arextest/arex-core';
+import { getLocalStorage, tryParseJsonString } from '@arextest/arex-core';
 import axios from 'axios';
 
 import { ACCESS_TOKEN_KEY, APP_ID_KEY } from '@/constant';
 
-export type ViewRecordReq = {
-  recordId: string;
-};
 export interface CategoryType {
   name: string;
   entryPoint: boolean;
@@ -52,13 +49,20 @@ export interface ViewRecordRes {
   desensitized: boolean;
 }
 
-export async function viewRecord(params: ViewRecordReq) {
-  const res = await axios.post<ViewRecordRes>('/webApi/replay/query/viewRecord', params, {
-    headers: {
-      'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
-      appId: getLocalStorage<string>(APP_ID_KEY),
+export async function viewRecord(recordId: string) {
+  const res = await axios.post<ViewRecordRes>(
+    '/webApi/replay/query/viewRecord',
+    {
+      recordId,
+      splitMergeRecord: true,
     },
-    transformResponse: (res) => tryParseJsonString(res),
-  });
+    {
+      headers: {
+        'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
+        appId: getLocalStorage<string>(APP_ID_KEY),
+      },
+      transformResponse: (res) => tryParseJsonString(res),
+    },
+  );
   return Promise.resolve(res.data);
 }

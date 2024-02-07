@@ -48,11 +48,7 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
   }, [activePane?.id]);
 
   const { loading } = useRequest(ReportService.viewRecord, {
-    defaultParams: [
-      {
-        recordId: props.data.recordId,
-      },
-    ],
+    defaultParams: [props.data.recordId],
     onSuccess(res) {
       const resultMap = res.recordResult.reduce<Map<string, RecordResult[]>>((map, cur) => {
         const { categoryType } = cur;
