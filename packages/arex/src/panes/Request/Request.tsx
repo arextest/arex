@@ -30,10 +30,13 @@ import SaveAs, { SaveAsRef } from './SaveAs';
 import { updateWorkspaceEnvironmentLS } from './utils';
 
 export type RequestProps = {
-  title?: string;
-  recordId?: string;
-  planId?: string;
   environmentId?: string;
+  // case save
+  planId?: string;
+  recordId?: string;
+  appName?: string;
+  interfaceName?: string;
+  operationId?: string;
 };
 
 const Request: ArexPaneFC<RequestProps> = (props) => {
@@ -86,7 +89,12 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   );
 
   const { run: saveRequest } = useRequest(
-    (params, options?: { refresh?: boolean; close?: boolean }) =>
+    (
+      params,
+      options?: {
+        pinMock?: { infoId: string; recordId: string };
+      },
+    ) =>
       FileSystemService.saveRequest(
         workspaceId,
         {
@@ -100,37 +108,35 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       manual: true,
       onSuccess(res, [params, options]) {
         res && message.success(t('message.saveSuccess', { ns: 'common' }));
-        options?.refresh &&
-          getCollections().then(() => {
-            navPane({
-              id: `${workspaceId}-${nodeType}-${params.id || id}`,
-              type,
-              icon: nodeType === CollectionNodeType.interface ? params.method : undefined,
-            });
-            params.id !== id && removePane(props.paneKey); // remove old pane when save as
-          });
+
+        options?.pinMock && runPinMock(options?.pinMock);
+        reloadCollection(params.id);
       },
     },
   );
 
   const handleSave: ArexRequestProps['onSave'] = (request, response) => {
-    if (request?.id?.length !== 24) return saveAsRef?.current?.open();
+    if (request?.id?.length !== 24)
+      return saveAsRef?.current?.open(title, { defaultPath: !!props.data?.recordId });
 
-    if (
-      !request?.headers.find((header) => header.key === 'arex-record-id') &&
-      (response?.type === 'success' ? response.headers : []).find(
-        (header) => header.key === 'arex-record-id',
-      ) &&
-      request?.headers.find((header) => header.key === 'arex-force-record')?.active
-    ) {
-      const recordId =
-        response?.type === 'success'
-          ? response.headers.find((header) => header.key === 'arex-record-id')?.value
-          : '';
+    if (!request.id) return;
 
-      runPinMock(recordId);
+    let pinMock = undefined;
+
+    // case debug save runPinMock
+    if (props.data?.recordId && request.id && request.id !== id) {
+      pinMock = { infoId: request.id, recordId: props.data.recordId };
     }
-    saveRequest(request, { refresh: true });
+
+    // force record runPinMock
+    const forceRecord = request?.headers.find(
+      (header) => header.key === 'arex-force-record',
+    )?.active;
+    const recordId = response?.headers?.find((header) => header.key === 'arex-record-id')?.value;
+    if (forceRecord && recordId) {
+      pinMock = { infoId: request.id, recordId };
+    }
+    saveRequest(request, { pinMock });
   };
 
   const { data, loading, run } = useRequest(
@@ -148,27 +154,26 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     },
   );
   const title = useMemo(
-    () => data?.name || decodeURIComponent(props.data?.title || t('untitled', { ns: 'common' })),
-    [data?.name, props.data?.title, t],
+    () => data?.name || decodeURIComponent(props.data?.recordId || t('untitled', { ns: 'common' })),
+    [data?.name, props.data?.recordId, t],
   );
 
   const parentPath = useMemo(() => getPath(id), [collectionsTreeData]);
 
   const { run: runPinMock } = useRequest(
-    (recordId) =>
+    ({ infoId, recordId }: { infoId: string; recordId: string }) =>
       FileSystemService.pinMock({
-        workspaceId: workspaceId as string,
-        infoId: id,
+        workspaceId,
+        infoId,
         recordId,
-        nodeType,
+        nodeType: CollectionNodeType.case,
       }),
     {
       manual: true,
       ready: !!workspaceId,
-      onSuccess: (success) => {
+      onSuccess: (success, [{ infoId }]) => {
         if (success) {
-          message.success('pin success');
-          run();
+          reloadCollection(infoId);
         }
       },
     },
@@ -204,10 +209,8 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
             label: 'Mock',
             key: 'mock',
             // 这里判断是否有recordId，如果有则隐藏，因为recordId是mock的唯一标识
-            hidden: !(data?.recordId || props.data?.recordId),
-            children: (
-              <ExtraTabs.RequestTabs.Mock recordId={data?.recordId || props.data?.recordId} />
-            ),
+            hidden: !data?.recordId,
+            children: <ExtraTabs.RequestTabs.Mock recordId={data?.recordId} />,
           },
         ],
       },
@@ -274,6 +277,17 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     refreshEnvironments();
   };
 
+  const reloadCollection = (infoId: string) => {
+    getCollections().then(() => {
+      navPane({
+        id: `${workspaceId}-${nodeType}-${infoId}`,
+        type,
+        icon: 'arex',
+      });
+      infoId !== id && removePane(props.paneKey); // remove old pane when save as
+    });
+  };
+
   return (
     <>
       <ArexRequest
@@ -325,7 +339,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
           onEdit: environmentDrawerRef?.current?.open,
         }}
         onSave={handleSave}
-        onSaveAs={saveAsRef?.current?.open}
+        onSaveAs={() => saveAsRef?.current?.open(title)}
       />
 
       <SaveAs
@@ -333,6 +347,11 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         title={title}
         nodeType={nodeType}
         workspaceId={workspaceId}
+        // debug case save params
+        appName={decodeURIComponent(props.data?.appName || '')}
+        interfaceName={decodeURIComponent(props.data?.interfaceName || '')}
+        operationId={decodeURIComponent(props.data?.operationId || '')}
+        recordId={decodeURIComponent(props.data?.recordId || '')}
         onCreate={requestRef.current?.save}
       />
 

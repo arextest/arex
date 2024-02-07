@@ -1,4 +1,7 @@
 export * from './addCollectionItem';
+export * from './addItemFromRecord';
+export * from './addItemFromRecordByDefault';
+export * from './addItemsByAppNameAndInterfaceName';
 export * from './case';
 export * from './duplicateCollectionItem';
 export * from './exportCollection';

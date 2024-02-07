@@ -35,8 +35,9 @@
     "selectSaveLocation": "Please select the save location",
     "selectInterface": "Please select an interface collection",
     "title": "Title",
-    "selectLocation": "Select Location",
-    "saveTo": "Save To"
+    "saveLocation": "Save Location",
+    "saveTo": "Save To",
+    "saveError": "Save Error"
   },
   "authorization": {
     "type": "Type",

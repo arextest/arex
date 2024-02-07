@@ -35,8 +35,9 @@
     "selectSaveLocation": "请选择保存位置",
     "selectInterface": "请选择接口集合",
     "title": "名称",
-    "selectLocation": "选择位置",
-    "saveTo": "保存至"
+    "saveLocation": "保存位置",
+    "saveTo": "保存至",
+    "saveError": "保存失败"
   },
   "authorization": {
     "type": "类型",
