@@ -29,6 +29,7 @@ export type DiffJsonViewProps = {
   height?: string | number;
   tooltip?: boolean;
   diffJson?: { left: string; right: string };
+  remarks?: { left: string; right: string };
   onRenderContextMenu?: OnRenderContextMenu;
   onClassName?: OnClassName;
 };
@@ -77,7 +78,7 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
             forceContextMenu={!props.readOnly}
             hiddenValue={props.hiddenValue}
             height={props.height}
-            remark={t('record') as string}
+            remark={props.remarks?.left || (t('record') as string)}
             content={{
               text: String(props.diffJson?.left), // stringify falsy value
               json: undefined,
@@ -97,7 +98,7 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
             forceContextMenu={!props.readOnly}
             hiddenValue={props.hiddenValue}
             height={props.height}
-            remark={t('replay') as string}
+            remark={props.remarks?.right || (t('replay') as string)}
             content={{
               text: String(props.diffJson?.right), // stringify falsy value
               json: undefined,

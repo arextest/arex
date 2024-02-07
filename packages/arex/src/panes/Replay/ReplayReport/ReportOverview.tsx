@@ -68,7 +68,9 @@ const ReportOverview: FC<ReportOverViewProps> = (props) => {
           value={
             props.data ? getPercent(props.data.successCaseCount, props.data.totalCaseCount) : 0
           }
+          style={{ marginBottom: '12px' }}
         />
+
         <div>
           <Label>{t('replay.reportId')}</Label>
           {props.data?.planId}
@@ -98,11 +100,9 @@ const ReportOverview: FC<ReportOverViewProps> = (props) => {
           </Typography.Text>
         </div>
         <div>
-          <Label>{t('replay.replayStartTime')}</Label>
+          <Label>{t('replay.caseRange')}</Label>
           {new Date(props.data?.caseStartTime || '').toLocaleString() || '-'}
-        </div>
-        <div>
-          <Label>{t('replay.replayEndTime')}</Label>
+          {' ~ '}
           {new Date(props.data?.caseEndTime || '').toLocaleString() || '-'}
         </div>
         <div>

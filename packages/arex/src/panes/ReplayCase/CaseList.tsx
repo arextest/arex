@@ -1,11 +1,10 @@
-import { BugOutlined, SaveOutlined, SearchOutlined } from '@ant-design/icons';
+import { BugOutlined, SearchOutlined } from '@ant-design/icons';
 import { HighlightRowTable, SmallTextButton, useTranslation } from '@arextest/arex-core';
 import { usePagination } from 'ahooks';
-import { Dropdown, TableProps, Tag } from 'antd';
+import { TableProps, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, Key, useMemo } from 'react';
 
-import { Icon } from '@/components';
 import { CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
@@ -17,12 +16,12 @@ export type CaseProps = {
   appId: string;
   appName: string;
   planItemId: string;
+  operationId: string;
   operationName: string | null;
   planId: string;
   filter?: Key;
   onClick?: (record: ReplayCaseType) => void;
   onChange?: TableProps<ReplayCaseType>['onChange'];
-  onClickSaveCase?: (record: ReplayCaseType) => void;
 };
 
 const CaseList: FC<CaseProps> = (props) => {
@@ -66,7 +65,7 @@ const CaseList: FC<CaseProps> = (props) => {
       title: t('replay.action'),
       width: 200,
       render: (_, record) => (
-        <div style={{ display: 'flex' }}>
+        <>
           <SmallTextButton
             key='caseDetail'
             icon={<SearchOutlined />}
@@ -77,47 +76,21 @@ const CaseList: FC<CaseProps> = (props) => {
                 type: PanesType.CASE_DETAIL,
                 id: record.recordId,
                 data: {
-                  ...record,
                   appId: props.appId,
-                  appName: props.appName,
                   planId: props.planId,
+                  recordId: record.recordId,
                   planItemId: props.planItemId,
+                  appName: props.appName,
                   operationName: props.operationName,
+                  operationId: props.operationId,
                 },
               });
             }}
           />
-          <Dropdown.Button
-            destroyPopupOnHide
+          <SmallTextButton
             key='case'
-            size='small'
-            type='text'
-            trigger={['click']}
-            icon={<Icon name='ChevronDown' />}
-            buttonsRender={(buttons) => [
-              <span key='primaryAction'>{buttons[0]}</span>,
-              <span key='extraAction' onClick={(e) => e.stopPropagation()}>
-                {buttons[1]}
-              </span>,
-            ]}
-            menu={{
-              items: [
-                {
-                  label: t('replay.save'),
-                  key: 'save',
-                  icon: <SaveOutlined />,
-                },
-              ],
-              onClick: (menuInfo) => {
-                menuInfo.domEvent.stopPropagation();
-                switch (menuInfo.key) {
-                  case 'save': {
-                    props.onClickSaveCase?.(record);
-                    break;
-                  }
-                }
-              },
-            }}
+            icon={<BugOutlined />}
+            title={t('replay.debug')}
             onClick={(e) => {
               e.stopPropagation();
               navPane({
@@ -128,14 +101,14 @@ const CaseList: FC<CaseProps> = (props) => {
                 data: {
                   recordId: record.recordId,
                   planId: props.planId,
+                  appName: props.appName,
+                  interfaceName: props.operationName,
+                  operationId: props.operationId,
                 },
               });
             }}
-          >
-            <BugOutlined />
-            {t('replay.debug')}
-          </Dropdown.Button>
-        </div>
+          />
+        </>
       ),
     },
   ];

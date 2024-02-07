@@ -1,3 +1,4 @@
+export { default as CollectionSelect } from './CollectionSelect';
 export { default as EditAreaPlaceholder } from './EditAreaPlaceholder';
 export { default as EmptyPanePlaceholder } from './EmptyPanePlaceholder';
 export { default as FlexRowReverseWrapper } from './FlexRowReverseWrapper';
@@ -11,6 +12,7 @@ export { default as MacTrafficLightBackground } from './MacTrafficLightBackgroun
 export type { MenuSelectProps } from './MenuSelect';
 export { default as MenuSelect } from './MenuSelect';
 export { default as PlanItemBreadcrumb } from './PlanItemBreadcrumb';
+export { default as SearchHighLight } from './SearchHighLight';
 export { default as SingleCollapse } from './SingleCollapse';
 export { default as StatusTag } from './StatusTag';
 export { default as TagSelect } from './TagSelect';

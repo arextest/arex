@@ -17,6 +17,7 @@ export type RecordedCaseRef = {
 
 export type RecordedCaseProps = {
   appId: string;
+  appName?: string;
   onChange?: () => void;
 };
 
@@ -160,6 +161,8 @@ const RecordedCase = forwardRef<RecordedCaseRef, RecordedCaseProps>((props, ref)
           expandedRowRender: (record) => (
             <RecordedCaseListDetail
               appId={record.appId}
+              appName={props.appName}
+              operationId={record.id}
               operationName={record.operationName}
               operationTypes={record.operationTypes}
               onClick={() => setOpen(false)}

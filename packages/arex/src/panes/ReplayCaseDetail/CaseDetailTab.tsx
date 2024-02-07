@@ -7,6 +7,7 @@ import { RecordResult } from '@/services/ReportService';
 
 type CaseDetailTabProps = {
   type: string;
+  hiddenValue?: boolean;
   compareResults?: RecordResult[];
 };
 
@@ -45,9 +46,14 @@ const CaseDetailTab: FC<CaseDetailTabProps> = (props) => {
             <DiffJsonView
               readOnly
               height='400px'
+              hiddenValue={props.hiddenValue}
               diffJson={{
                 left: tryStringifyJson(result.targetRequest?.body),
                 right: tryStringifyJson(result.targetResponse?.body),
+              }}
+              remarks={{
+                left: t('request', { ns: 'common' }),
+                right: t('response', { ns: 'common' }),
               }}
             />
           ),

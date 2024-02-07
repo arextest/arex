@@ -28,6 +28,9 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
   const [mode, setMode] = useState<Mode>(Mode.READ);
 
   const [operationTypeValue, setOperationTypeValue] = useState<string>();
+  const [operationTypeSelectStatus, setOperationTypeSelectStatus] =
+    useState<SelectProps['status']>();
+
   const [operationNameValue, setOperationNameValue] = useState<string>();
 
   useEffect(() => {
@@ -134,11 +137,14 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
   });
 
   const handleAdd = () => {
-    if (operationTypeValue && operationNameValue) {
+    if (operationTypeValue) {
       insertIgnoreCategory({
         operationType: operationTypeValue,
         operationName: operationNameValue,
       });
+    } else {
+      setOperationTypeSelectStatus('error');
+      setTimeout(() => setOperationTypeSelectStatus(undefined), 1000);
     }
   };
 
@@ -156,6 +162,7 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
       {
         title: t('appSetting.categoryName', { ns: 'components' }),
         dataIndex: ['ignoreCategoryDetail', 'operationName'],
+        render: (text: string) => text || '*',
       },
     ],
     [t],
@@ -178,7 +185,8 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
             <Select
               value={operationTypeValue}
               options={categoryTypeOptions}
-              onSelect={(value) => {
+              status={operationTypeSelectStatus}
+              onChange={(value) => {
                 setOperationTypeValue(value);
                 setOperationNameValue(undefined);
 
@@ -204,9 +212,10 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
             />
 
             <Select
+              allowClear
               value={operationNameValue}
               options={operationNameOptions}
-              onSelect={setOperationNameValue}
+              onChange={setOperationNameValue}
               placeholder={t('appSetting.categoryNamePlaceholder', { ns: 'components' })}
               style={{ flex: 1 }}
             />

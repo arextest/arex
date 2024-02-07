@@ -1,4 +1,4 @@
-import { HeartFilled, HeartOutlined, HistoryOutlined, PlusOutlined } from '@ant-design/icons';
+import { HeartFilled, HeartOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   ArexMenuFC,
   createArexMenu,
@@ -10,7 +10,7 @@ import {
 } from '@arextest/arex-core';
 import { useRequest, useSize, useToggle } from 'ahooks';
 import { Modal, theme } from 'antd';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Icon, MenuSelect, MenuSelectProps } from '@/components';
 import { EMAIL_KEY, MenusType, PanesType } from '@/constant';
@@ -26,6 +26,8 @@ type MenuItemProps = {
 };
 const MenuItem = styled((props: MenuItemProps) => {
   const { app, favoriteApps = [], onFavoriteAppsChange, ...restProps } = props;
+  const { activePane, setActiveMenu } = useMenusPanes();
+
   const { token } = theme.useToken();
   const email = getLocalStorage<string>(EMAIL_KEY) as string;
 
@@ -48,6 +50,12 @@ const MenuItem = styled((props: MenuItemProps) => {
       },
     },
   );
+
+  useEffect(() => {
+    if (activePane && activePane.type === PanesType.REPLAY) {
+      setActiveMenu(MenusType.APP);
+    }
+  }, [activePane]);
 
   return (
     <SpaceBetweenWrapper {...restProps}>

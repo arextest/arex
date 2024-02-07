@@ -7,7 +7,7 @@ import {
 import { App, Collapse, Drawer, Input, InputProps, List, Typography } from 'antd';
 import React, { CompositionEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 
-import { CollectionNodeType, MenusType, PanesType } from '@/constant';
+import { CollectionNodeType, MenusType, PanesType, URL_DOCUMENT_GET_STARTED } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { useMenusPanes, useUserProfile, useWorkspaces } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
@@ -125,15 +125,24 @@ const KeyboardShortcut = React.memo(() => {
       case 'request.save': {
         const { type } = decodePaneKey(activePaneKey);
         if (type === PanesType.REQUEST) {
-          (
-            document.querySelector(
-              `#arex-pane-wrapper-${activePaneKey} #arex-request-save-btn`,
-            ) as HTMLElement
-          )?.click?.();
+          const button = document.querySelector(
+            `#arex-pane-wrapper-${activePaneKey} #arex-request-save-btn`,
+          ) as HTMLElement;
+          const length = button?.children.length;
+          if (length) {
+            if (length === 1) {
+              // Single Button
+              button?.click?.();
+            } else if (length === 2) {
+              // Dropdown Button
+              (button.children[0] as HTMLButtonElement)?.click?.();
+            }
+          }
         }
         break;
       }
       // 'ctrl-shift-s': 'request.save-as',
+      // TODO
       case 'request.save-as': {
         const { type } = decodePaneKey(activePaneKey);
         if (type === PanesType.REQUEST) {
@@ -226,7 +235,7 @@ const KeyboardShortcut = React.memo(() => {
           type: ArexPanesType.WEB_VIEW,
           name: t('document') as string,
           data: {
-            url: `http://www.arextest.com/docs/chapter1/get-started`,
+            url: URL_DOCUMENT_GET_STARTED,
           },
         });
         break;

@@ -31,7 +31,13 @@
     "add_tag": "添加标签",
     "env": {
       "closeConfirm": "当前环境配置修改未保存"
-    }
+    },
+    "selectSaveLocation": "请选择保存位置",
+    "selectInterface": "请选择接口集合",
+    "title": "名称",
+    "saveLocation": "保存位置",
+    "saveTo": "保存至",
+    "saveError": "保存失败"
   },
   "authorization": {
     "type": "类型",
@@ -64,6 +70,7 @@
     "duplicate": "拷贝",
     "delete": "删除",
     "import_export": "导入/导出",
+    "import": "导入",
     "export": "导出",
     "from_postman_description": "从 Postman 集合中导入"
   },
@@ -212,6 +219,7 @@
   },
   "replayCase": {
     "ignore": "忽略",
+    "ignored": "已忽略",
     "conditionalIgnore": "条件忽略",
     "selectConditionNode": "请选择条件节点",
     "ignoreNode":"忽略节点",

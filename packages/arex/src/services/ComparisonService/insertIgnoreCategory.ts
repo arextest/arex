@@ -3,7 +3,7 @@ import { request } from '@/utils';
 
 export type IgnoreCategory = {
   operationType: string;
-  operationName: string;
+  operationName?: string;
 };
 export interface InsertIgnoreCategoryReq extends QueryNodeReq<'Interface'> {
   ignoreCategoryDetail: IgnoreCategory;

@@ -4,35 +4,40 @@ import {
   clearLocalStorage,
   PanesTitle,
   setLocalStorage,
+  SmallTextButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { Badge, Button, Spin, Tabs } from 'antd';
+import { Badge, Spin, Tabs, theme } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
 
 import { PlanItemBreadcrumb } from '@/components';
 import { APP_ID_KEY, CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
-import { RecordResult, ReplayCaseType } from '@/services/ReportService';
+import { RecordResult } from '@/services/ReportService';
 import { useMenusPanes, useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
 
 import CaseDetailTab from './CaseDetailTab';
 
 type TagType = { label: ReactNode; key: string; children: ReactNode };
-type ReplayCaseDetailData = ReplayCaseType & {
+type ReplayCaseDetailData = {
   appId: string;
-  planId: string;
-  appName: string;
-  planItemId: string;
-  operationName: string | null;
+  recordId: string;
+  planId?: string;
+  planItemId?: string;
+  // case debug case params
+  appName?: string;
+  operationName?: string;
+  operationId?: string;
 };
 
 const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
   const navPane = useNavPane();
   const { activePane } = useMenusPanes();
   const { activeWorkspaceId } = useWorkspaces();
+  const { token } = theme.useToken();
   const { t } = useTranslation('components');
 
   const [tabItems, setTabItems] = useState<TagType[]>([]);
@@ -49,7 +54,7 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
       },
     ],
     onSuccess(res) {
-      const resultMap = res.reduce<Map<string, RecordResult[]>>((map, cur) => {
+      const resultMap = res.recordResult.reduce<Map<string, RecordResult[]>>((map, cur) => {
         const { categoryType } = cur;
         const { name } = categoryType;
         if (map.has(name)) {
@@ -65,12 +70,23 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
           const caseDetailList = resultMap.get(categoryName);
           return {
             label: (
-              <Badge size='small' offset={[5, -5]} count={caseDetailList?.length}>
+              <Badge
+                size='small'
+                color={token.colorPrimary}
+                offset={[5, -5]}
+                count={caseDetailList?.length}
+              >
                 <span>{categoryName}</span>
               </Badge>
             ),
             key: categoryName,
-            children: <CaseDetailTab type={categoryName} compareResults={caseDetailList} />,
+            children: (
+              <CaseDetailTab
+                type={categoryName}
+                hiddenValue={res.desensitized}
+                compareResults={caseDetailList}
+              />
+            ),
           };
         }) || [],
       );
@@ -80,6 +96,7 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
   return (
     <>
       <PlanItemBreadcrumb
+        appId={props.data.appId}
         type={PanesType.REPLAY_CASE}
         planItemId={props.data.planItemId}
         recordId={props.data.recordId}
@@ -88,8 +105,9 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
       <PanesTitle
         title={`${t('replay.recordId')}: ${props.data.recordId}`}
         extra={
-          <Button
-            size='small'
+          <SmallTextButton
+            icon={<BugOutlined />}
+            title={t('replay.debug')}
             onClick={(e) => {
               e.stopPropagation();
               navPane({
@@ -100,13 +118,13 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
                 data: {
                   recordId: props.data.recordId,
                   planId: props.data.planId,
+                  appName: props.data.appName,
+                  interfaceName: props.data.operationName,
+                  operationId: props.data.operationId,
                 },
               });
             }}
-          >
-            <BugOutlined />
-            {t('replay.debug')}
-          </Button>
+          />
         }
       />
       <Spin spinning={loading}>

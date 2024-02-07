@@ -31,7 +31,13 @@
     "add_tag": "Add Tag",
     "env": {
       "closeConfirm": "Current environment configuration changes are not saved"
-    }
+    },
+    "selectSaveLocation": "Please select the save location",
+    "selectInterface": "Please select an interface collection",
+    "title": "Title",
+    "saveLocation": "Save Location",
+    "saveTo": "Save To",
+    "saveError": "Save Error"
   },
   "authorization": {
     "type": "Type",
@@ -63,7 +69,8 @@
     "rename": "Rename",
     "duplicate": "Duplicate",
     "delete": "Delete",
-    "import_export": "Import/Export",
+    "import_export": "Import / Export",
+    "import": "Import",
     "export": "Export",
     "from_postman_description": "Import from Postman collection file"
   },
@@ -213,6 +220,7 @@
   },
   "replayCase": {
     "ignore": "Ignore",
+    "ignored": "Ignored",
     "conditionalIgnore": "Conditional Ignore",
     "selectConditionNode": "Please select condition node",
     "ignoreNode":"Ignore Node",

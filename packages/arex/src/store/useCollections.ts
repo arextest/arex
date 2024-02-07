@@ -23,6 +23,12 @@ export type CollectionAction = {
   reset: () => void;
 };
 
+export enum CaseSourceType {
+  CASE_DEPRECATED = 0,
+  AREX,
+  CASE,
+}
+
 export type Collection = {
   id: string;
   pid: string; //父节点id
@@ -30,7 +36,7 @@ export type Collection = {
   nodeType: number;
   method: string;
   labelIds: string[];
-  caseSourceType: number;
+  caseSourceType: CaseSourceType;
 };
 
 const initialState: CollectionState = {
@@ -56,7 +62,13 @@ const useCollections = create<CollectionState & CollectionAction>((set, get) => 
       key: '__root__', //
       children: data.roots,
     });
-    set({ collectionsFlatData, collectionsTreeData: data.roots, loading: false });
+    set({
+      collectionsFlatData,
+      collectionsTreeData: data.roots,
+      loading: false,
+    });
+
+    useWorkspaces.setState({ activeWorkspaceId: id });
   }
 
   /**

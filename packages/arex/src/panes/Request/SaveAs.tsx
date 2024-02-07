@@ -1,62 +1,73 @@
-import { getLocalStorage } from '@arextest/arex-core';
+import { getLocalStorage, useTranslation } from '@arextest/arex-core';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
-import { Form, Modal, TreeSelect, Typography } from 'antd';
-import React, { forwardRef, useImperativeHandle, useMemo, useState } from 'react';
+import { App, Button, Flex, Input, Modal, theme, Typography } from 'antd';
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 
-import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
-import { useNavPane } from '@/hooks';
+import { CollectionSelect, Icon } from '@/components';
+import { CollectionNodeType, EMAIL_KEY } from '@/constant';
 import { FileSystemService } from '@/services';
-import { CollectionType } from '@/services/FileSystemService';
 import { useCollections } from '@/store';
-const { Text } = Typography;
-
-function processTreeData(treeData: CollectionType[], depthLimit = 10, currentDepth = 0) {
-  if (currentDepth >= depthLimit) {
-    // 达到递归深度上限，停止递归
-    return treeData;
-  }
-  return treeData.map((c) => ({
-    title: c.nodeName,
-    value: c.infoId,
-    disabled: c.nodeType !== CollectionNodeType.folder,
-    nodeType: c.nodeType,
-    children: processTreeData(c.children || [], depthLimit, currentDepth + 1), // 递归调用，增加当前深度
-  }));
-}
+import { CaseSourceType } from '@/store/useCollections';
 
 export type SaveAsProps = {
   workspaceId: string;
+  nodeType: CollectionNodeType;
+  title?: string;
+  appName?: string;
+  interfaceName?: string;
+  operationId?: string;
+  recordId?: string;
+  defaultPath?: boolean;
+  onCreate?: (id: string) => void;
 };
 
 export type SaveAsRef = {
-  open: () => void;
+  open: (title?: string, options?: Pick<SaveAsProps, 'defaultPath'>) => void;
 };
 
 const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
-  const navPane = useNavPane();
+  const { t } = useTranslation('components');
+  const { token } = theme.useToken();
+  const { message } = App.useApp();
   const userName = getLocalStorage<string>(EMAIL_KEY);
-  const { collectionsFlatData } = useCollections();
+
+  const { collectionsFlatData, getPath } = useCollections();
+
+  const [selectLocationRef] = useAutoAnimate();
+
+  const [defaultPath, setDefaultPath] = useState<boolean | undefined>(props.defaultPath);
+  const [value, setValue] = useState(props.title);
+  useEffect(() => {
+    setValue(props.title);
+  }, [props.title]);
+
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+  const collectionPath = useMemo(
+    () => (selectedKeys.length ? getPath(selectedKeys[0].toString()) : []),
+    [getPath, selectedKeys],
+  );
+
+  const pathValue = useMemo(
+    () =>
+      defaultPath
+        ? `${props.appName} / ${props.interfaceName} / ${props.title}`
+        : collectionPath.map((i) => i.name).join(' / ') || 'Please select a location',
+    [collectionPath, defaultPath, props.appName, props.interfaceName, props.title],
+  );
 
   const [open, setOpen] = useState(false);
   useImperativeHandle(
     ref,
     () => ({
-      open: () => setOpen(true),
+      open: (title, options) => {
+        setDefaultPath(options?.defaultPath);
+        title && setValue(title);
+        setOpen(true);
+      },
     }),
     [],
   );
-
-  const { collectionsTreeData, getPath } = useCollections();
-  const collection = useMemo(
-    () =>
-      processTreeData(
-        collectionsTreeData.filter((item) => item.nodeType !== CollectionNodeType.interface),
-      ),
-    [collectionsTreeData],
-  );
-
-  const [form] = Form.useForm();
-  const savePath = Form.useWatch('savePath', form);
 
   const { run: addCollectionItem } = useRequest(
     (params: {
@@ -72,78 +83,135 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
       }),
     {
       manual: true,
-      onSuccess: (res, [params]) => {
+      onSuccess: (res) => {
+        setOpen(false);
+        props.onCreate?.(res.infoId);
+      },
+    },
+  );
+
+  const { run: addItemsByAppNameAndInterfaceName } = useRequest(
+    FileSystemService.addItemsByAppNameAndInterfaceName,
+    {
+      manual: true,
+      onSuccess(res, [{ nodeName }]) {
         if (res.success) {
-          setOpen(false);
-          // 保存完跳转
-          // httpRef.current?.onSave({ id: res.infoId });
-          setTimeout(() => {
-            navPane({
-              id: `${props.workspaceId}-${params.nodeType}-${res.infoId}`,
-              type: PanesType.REQUEST,
-            });
-          }, 300);
+          addCollectionItem({
+            nodeName: nodeName!,
+            nodeType: props.nodeType,
+            caseSourceType: CaseSourceType.AREX,
+            parentPath: res.path,
+          });
         }
       },
     },
   );
 
-  const handleSaveAs = (value) => {
-    console.log(value, collectionsFlatData.get(value.savePath));
+  const handleSaveAs = () => {
+    if (typeof defaultPath === 'boolean') {
+      if (props.operationId && props.recordId) {
+        if (!defaultPath && !selectedKeys?.length)
+          return message.info(t('http.selectSaveLocation'));
+        const params = defaultPath
+          ? { appName: props.appName, interfaceName: props.interfaceName, nodeName: props.title }
+          : { path: collectionPath.map((i) => i.id) };
 
-    // 先添加，再触发 save ！
+        addItemsByAppNameAndInterfaceName({
+          recordId: props.recordId,
+          workspaceId: props.workspaceId,
+          operationId: props.operationId,
+          ...params,
+        });
+      } else {
+        message.error(t('http.saveError'));
+      }
+      return;
+    }
+
+    // manual select location to save normal case (not arex case)
+    if (!selectedKeys?.length) return message.info(t('http.selectSaveLocation'));
+
+    const node = collectionsFlatData.get(selectedKeys[selectedKeys.length - 1].toString());
+    if (!node) return;
+    if (props.nodeType === CollectionNodeType.case && node.nodeType === CollectionNodeType.folder)
+      return message.info(t('http.selectInterface'));
+
+    const nodeName = value || props.title || (t('untitled', { ns: 'common' }) as string);
+
+    console.log(' props.nodeType', props.nodeType);
     addCollectionItem({
-      nodeName: 'Untitled',
-      nodeType: CollectionNodeType.interface,
-      parentPath: getPath(value.savePath).map((i) => i.id),
+      nodeName,
+      nodeType: props.nodeType,
+      caseSourceType: props.recordId ? CaseSourceType.AREX : CaseSourceType.CASE,
+      parentPath: collectionPath.map((i) => i.id),
     });
   };
 
   return (
     <Modal
+      destroyOnClose
+      title={t('http.saveAs')}
       open={open}
-      onCancel={() => setOpen(false)}
-      title={'SAVE REQUEST'}
-      onOk={() => {
-        handleSaveAs(form.getFieldsValue());
+      onCancel={() => {
+        setOpen(false);
+        setValue(undefined);
+        setSelectedKeys([]);
       }}
+      onOk={handleSaveAs}
     >
-      <Form
-        form={form}
-        layout='vertical'
-        name='form_in_modal'
-        initialValues={{
-          modifier: 'public',
-          nodeType: '1',
-        }}
-      >
-        <p>
-          <span>Save to </span>
-          <Text type='secondary'>
-            {getPath(savePath || '')
-              .map((path) => path.name)
-              .join('/')}
-          </Text>
-        </p>
-        <Form.Item
-          name='savePath'
-          label=''
-          rules={[
-            {
-              required: true,
-              message: 'Please input the title of collection!',
-            },
-          ]}
+      <Typography.Text type='secondary'>{t('http.saveLocation')}</Typography.Text>
+      <Flex align='center' style={{ marginBottom: '8px' }}>
+        <Typography.Text
+          ellipsis
+          type={!defaultPath && !selectedKeys.length ? 'secondary' : undefined}
+          style={{ flex: 1, borderBottom: `1px solid ${token.colorBorder}` }}
         >
-          <TreeSelect
-            treeDefaultExpandAll
-            placeholder='Please select'
-            treeData={collection}
-            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-            style={{ width: '100%' }}
+          {pathValue}
+        </Typography.Text>
+        {typeof defaultPath === 'boolean' && (
+          <Button
+            icon={
+              <Icon
+                name='ChevronDown'
+                style={{ transform: `rotate(${defaultPath ? 0 : 180}deg)` }}
+              />
+            }
+            onClick={() => {
+              setDefaultPath(!defaultPath);
+            }}
+            style={{ marginLeft: '12px' }}
           />
-        </Form.Item>
-      </Form>
+        )}
+      </Flex>
+
+      <div ref={selectLocationRef}>
+        {!defaultPath && (
+          <>
+            <div style={{ marginBottom: '12px' }}>
+              <Typography.Text type='secondary'>{t('http.title')}</Typography.Text>
+              <Input
+                placeholder={props.title}
+                value={value}
+                onChange={(e) => setValue(e.currentTarget.value)}
+              />
+            </div>
+            <CollectionSelect
+              // readOnly
+              key='collectionSelect'
+              height={560}
+              expandable={[CollectionNodeType.folder, CollectionNodeType.interface]}
+              selectable={[
+                CollectionNodeType.folder,
+                props.nodeType === CollectionNodeType.interface
+                  ? CollectionNodeType.folder
+                  : CollectionNodeType.interface, // props.nodeType === CollectionNodeType.case
+              ]}
+              selectedKeys={selectedKeys}
+              onSelect={(keys) => setSelectedKeys(keys as string[])}
+            />
+          </>
+        )}
+      </div>
     </Modal>
   );
 });
