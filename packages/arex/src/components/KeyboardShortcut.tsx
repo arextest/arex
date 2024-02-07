@@ -125,15 +125,24 @@ const KeyboardShortcut = React.memo(() => {
       case 'request.save': {
         const { type } = decodePaneKey(activePaneKey);
         if (type === PanesType.REQUEST) {
-          (
-            document.querySelector(
-              `#arex-pane-wrapper-${activePaneKey} #arex-request-save-btn`,
-            ) as HTMLElement
-          )?.click?.();
+          const button = document.querySelector(
+            `#arex-pane-wrapper-${activePaneKey} #arex-request-save-btn`,
+          ) as HTMLElement;
+          const length = button?.children.length;
+          if (length) {
+            if (length === 1) {
+              // Single Button
+              button?.click?.();
+            } else if (length === 2) {
+              // Dropdown Button
+              (button.children[0] as HTMLButtonElement)?.click?.();
+            }
+          }
         }
         break;
       }
       // 'ctrl-shift-s': 'request.save-as',
+      // TODO
       case 'request.save-as': {
         const { type } = decodePaneKey(activePaneKey);
         if (type === PanesType.REQUEST) {
