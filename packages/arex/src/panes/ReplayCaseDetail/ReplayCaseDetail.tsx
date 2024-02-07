@@ -8,7 +8,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { Badge, Button, Spin, Tabs, theme } from 'antd';
+import { Badge, Spin, Tabs, theme } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
 
 import { PlanItemBreadcrumb } from '@/components';
@@ -27,6 +27,10 @@ type ReplayCaseDetailData = {
   recordId: string;
   planId?: string;
   planItemId?: string;
+  // case debug case params
+  appName?: string;
+  operationName?: string;
+  operationId?: string;
 };
 
 const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
@@ -114,6 +118,9 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
                 data: {
                   recordId: props.data.recordId,
                   planId: props.data.planId,
+                  appName: props.data.appName,
+                  interfaceName: props.data.operationName,
+                  operationId: props.data.operationId,
                 },
               });
             }}

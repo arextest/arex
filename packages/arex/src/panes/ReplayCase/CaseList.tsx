@@ -80,6 +80,9 @@ const CaseList: FC<CaseProps> = (props) => {
                   planId: props.planId,
                   recordId: record.recordId,
                   planItemId: props.planItemId,
+                  appName: props.appName,
+                  operationName: props.operationName,
+                  operationId: props.operationId,
                 },
               });
             }}

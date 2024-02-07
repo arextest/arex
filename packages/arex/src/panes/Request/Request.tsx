@@ -117,7 +117,10 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
 
   const handleSave: ArexRequestProps['onSave'] = (request, response) => {
     if (request?.id?.length !== 24)
-      return saveAsRef?.current?.open(title, { defaultPath: !!props.data?.recordId });
+      return saveAsRef?.current?.open(
+        title,
+        props.data?.recordId ? { defaultPath: !!props.data?.recordId } : undefined,
+      );
 
     if (!request.id) return;
 
@@ -284,7 +287,8 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         type,
         icon: 'arex',
       });
-      infoId !== id && removePane(props.paneKey); // remove old pane when save as
+      if (infoId !== id) removePane(props.paneKey); // remove old pane when save as
+      else run();
     });
   };
 
