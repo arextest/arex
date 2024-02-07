@@ -62,6 +62,7 @@ const NavigationBar = forwardRef<NavigationBarRef>((_, ref) => {
             onSaveAs ? Dropdown.Button : (Button as FunctionComponent),
             {
               size: 'small',
+              // @ts-ignore
               id: 'arex-request-save-btn',
               disabled: disableSave,
               menu: onSaveAs && { items: buttonsItems, onClick: onMenuClick },
