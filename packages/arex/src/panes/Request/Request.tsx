@@ -18,6 +18,7 @@ import {
 import { useNavPane } from '@/hooks';
 import { EnvironmentService, FileSystemService, ReportService } from '@/services';
 import { Environment } from '@/services/EnvironmentService/getEnvironments';
+import { GetCollectionItemTreeReq } from '@/services/FileSystemService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
@@ -108,9 +109,10 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       manual: true,
       onSuccess(res, [params, options]) {
         res && message.success(t('message.saveSuccess', { ns: 'common' }));
-
         options?.pinMock && runPinMock(options?.pinMock);
-        reloadCollection(params.id);
+        params.id &&
+          params.nodeType &&
+          reloadCollection({ workspaceId, infoId: params.id, nodeType: params.nodeType });
       },
     },
   );
@@ -176,7 +178,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       ready: !!workspaceId,
       onSuccess: (success, [{ infoId }]) => {
         if (success) {
-          reloadCollection(infoId);
+          reloadCollection({ workspaceId, infoId, nodeType: CollectionNodeType.case });
         }
       },
     },
@@ -194,7 +196,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       ready: !!data,
       onSuccess(success, [name]) {
         if (success) {
-          getCollections(workspaceId);
+          getCollections({ workspaceId });
           navPane({
             id: paneId,
             type,
@@ -280,14 +282,14 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     refreshEnvironments();
   };
 
-  const reloadCollection = (infoId: string) => {
-    getCollections().then(() => {
+  const reloadCollection = (params: GetCollectionItemTreeReq) => {
+    getCollections(params).then(() => {
       navPane({
-        id: `${workspaceId}-${nodeType}-${infoId}`,
+        id: `${workspaceId}-${nodeType}-${params.infoId}`,
         type,
         icon: 'arex',
       });
-      if (infoId !== id) removePane(props.paneKey); // remove old pane when save as
+      if (params.infoId !== id) removePane(props.paneKey); // remove old pane when save as
       else run();
     });
   };
