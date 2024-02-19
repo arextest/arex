@@ -1,17 +1,17 @@
 import { CollectionType } from '@/services/FileSystemService';
 import { request } from '@/utils';
 
-export type GetWorkspaceItemReq = {
+export type GetCollectionItemReq = {
   workspaceId: string;
   parentIds?: string[];
 };
 
-export type GetWorkspaceItemRes = {
+export type GetCollectionItemRes = {
   node: CollectionType;
 };
 
-export async function getCollectionItem(params: GetWorkspaceItemReq) {
-  const res = await request.post<GetWorkspaceItemRes>(
+export async function getCollectionItem(params: GetCollectionItemReq) {
+  const res = await request.post<GetCollectionItemRes>(
     `/webApi/filesystem/getWorkspaceItem`,
     params,
   );

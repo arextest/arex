@@ -1,4 +1,5 @@
 export * from './addCollectionItem';
+export * from './addItemsByAppNameAndInterfaceName';
 export * from './case';
 export * from './duplicateCollectionItem';
 export * from './exportCollection';

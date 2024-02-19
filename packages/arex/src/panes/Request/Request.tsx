@@ -196,7 +196,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       ready: !!data,
       onSuccess(success, [name]) {
         if (success) {
-          getCollections({ workspaceId });
+          getCollections({ workspaceId, infoId: id, nodeType });
           navPane({
             id: paneId,
             type,

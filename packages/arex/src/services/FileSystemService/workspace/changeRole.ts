@@ -1,5 +1,4 @@
-import { RoleEnum } from '@arextest/arex-core';
-
+import { RoleEnum } from '@/constant';
 import { request } from '@/utils';
 
 export type ChangeRoleReq = {
