@@ -16,6 +16,7 @@ export type CaseProps = {
   appId: string;
   appName: string;
   planItemId: string;
+  operationId: string;
   operationName: string | null;
   planId: string;
   filter?: Key;
@@ -79,6 +80,9 @@ const CaseList: FC<CaseProps> = (props) => {
                   planId: props.planId,
                   recordId: record.recordId,
                   planItemId: props.planItemId,
+                  appName: props.appName,
+                  operationName: props.operationName,
+                  operationId: props.operationId,
                 },
               });
             }}
@@ -95,9 +99,11 @@ const CaseList: FC<CaseProps> = (props) => {
                 // icon: 'Get',
                 name: `Debug - ${record.recordId}`,
                 data: {
-                  title: props.operationName,
                   recordId: record.recordId,
                   planId: props.planId,
+                  appName: props.appName,
+                  interfaceName: props.operationName,
+                  operationId: props.operationId,
                 },
               });
             }}

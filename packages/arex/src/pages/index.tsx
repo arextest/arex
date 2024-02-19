@@ -21,7 +21,7 @@ import {
   MacTrafficLightBackground,
   UserMenu,
 } from '@/components';
-import { CollectionNodeType, isClient, PanesType } from '@/constant';
+import { CollectionNodeType, isClient, PanesType, URL_AREX } from '@/constant';
 import { useCheckChrome, useInit, useNavPane } from '@/hooks';
 import { useMenusPanes, useUserProfile, useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
@@ -138,7 +138,7 @@ const Home: FC = () => {
 
   return (
     <div ref={arexMainWrapperRef}>
-      {!zen && <ArexHeader logo={{ href: 'https://docs.arextest.com/' }} extra={<UserMenu />} />}
+      {!zen && <ArexHeader logo={{ href: URL_AREX }} extra={<UserMenu />} />}
 
       <Allotment
         css={css`

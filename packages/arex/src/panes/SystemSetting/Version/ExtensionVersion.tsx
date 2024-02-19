@@ -3,7 +3,7 @@ import { useTranslation } from '@arextest/arex-core';
 import { Button, Input, InputProps, Space } from 'antd';
 import React, { FC, useMemo } from 'react';
 
-import { isClient, MessageType } from '@/constant';
+import { isClient, MessageType, URL_CHROME_EXTENSION } from '@/constant';
 import { useMessageQueue } from '@/store';
 
 const ExtensionVersion: FC<InputProps> = (props) => {
@@ -20,7 +20,7 @@ const ExtensionVersion: FC<InputProps> = (props) => {
         <Button
           size='small'
           type='primary'
-          href='https://chromewebstore.google.com/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj'
+          href={URL_CHROME_EXTENSION}
           target='_blank'
           icon={<DownloadOutlined />}
         >

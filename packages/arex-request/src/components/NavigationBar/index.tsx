@@ -57,11 +57,13 @@ const NavigationBar = forwardRef<NavigationBarRef>((_, ref) => {
       </div>
 
       <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-        <div id='arex-request-save-button'>
+        <div>
           {React.createElement<DropdownButtonProps>(
             onSaveAs ? Dropdown.Button : (Button as FunctionComponent),
             {
               size: 'small',
+              // @ts-ignore
+              id: 'arex-request-save-btn',
               disabled: disableSave,
               menu: onSaveAs && { items: buttonsItems, onClick: onMenuClick },
               onClick: () => onSave?.(store.request, store.response),

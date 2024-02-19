@@ -12,20 +12,25 @@ import Icon, {
 import {
   ArexPanesType,
   FlexCenterWrapper,
-  I18nextLng,
   SmallTextButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { Dropdown, MenuProps, Modal, Typography } from 'antd';
 import React, { FC } from 'react';
 
+import {
+  URL_AREX,
+  URL_DOCUMENT_GET_STARTED,
+  URL_GITHUB_ISSUES,
+  URL_SLACK,
+  URL_X,
+} from '@/constant';
 import { useNavPane } from '@/hooks';
-import { useMenusPanes, useUserProfile } from '@/store';
+import { useMenusPanes } from '@/store';
 
 const FooterExtraMenu: FC = () => {
   const navPane = useNavPane();
   const { toggleOpenKeyboardShortcut } = useMenusPanes();
-  const { language } = useUserProfile();
   const { t } = useTranslation();
   const [modal, contextHolder] = Modal.useModal();
 
@@ -50,7 +55,7 @@ const FooterExtraMenu: FC = () => {
   const helpMenuHandler: MenuProps['onClick'] = (e) => {
     switch (e.key) {
       case 'website': {
-        window.open('http://www.arextest.com');
+        window.open(URL_AREX);
         break;
       }
       case 'document': {
@@ -59,9 +64,7 @@ const FooterExtraMenu: FC = () => {
           type: ArexPanesType.WEB_VIEW,
           name: t('document') as string,
           data: {
-            url: `http://www.arextest.com/${
-              language === I18nextLng.cn ? 'zh-Hans/' : ''
-            }docs/chapter1/get-started`,
+            url: URL_DOCUMENT_GET_STARTED,
           },
         });
         break;
@@ -104,17 +107,15 @@ const FooterExtraMenu: FC = () => {
   const feedbackMenuHandler: MenuProps['onClick'] = (e) => {
     switch (e.key) {
       case 'github': {
-        window.open('https://github.com/arextest/arex/issues');
+        window.open(URL_GITHUB_ISSUES);
         break;
       }
       case 'x': {
-        window.open('https://x.com/AREX_Test');
+        window.open(URL_X);
         break;
       }
       case 'slack': {
-        window.open(
-          'https://join.slack.com/t/arexcommunity/shared_invite/zt-1pb0qukhd-tnLVZN3aisHfIo5SzBjj0Q',
-        );
+        window.open(URL_SLACK);
         break;
       }
       case 'qq': {

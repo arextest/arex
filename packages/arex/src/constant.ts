@@ -96,3 +96,14 @@ export const isClientDev = isClient && import.meta.env.DEV;
 export const isClientProd = isClient && import.meta.env.PROD;
 
 export const isMac = window.platform === 'darwin';
+
+// LINK_URL
+
+export const URL_AREX = 'https://docs.arextest.com';
+export const URL_DOCUMENT_GET_STARTED = 'https://docs.arextest.com/docs/category/get-started';
+export const URL_GITHUB_ISSUES = 'https://github.com/arextest/arex/issues';
+export const URL_X = 'https://x.com/AREX_Test';
+export const URL_SLACK =
+  'https://join.slack.com/t/arexcommunity/shared_invite/zt-1pb0qukhd-tnLVZN3aisHfIo5SzBjj0Q';
+export const URL_CHROME_EXTENSION =
+  'https://chromewebstore.google.com/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj';

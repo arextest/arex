@@ -182,6 +182,7 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
                 appId={planItemData.appId}
                 appName={planItemData.appName}
                 planId={planItemData.planId}
+                operationId={planItemData.operationId}
                 operationName={planItemData.operationName}
                 planItemId={planItemId}
                 filter={props.data?.filter}

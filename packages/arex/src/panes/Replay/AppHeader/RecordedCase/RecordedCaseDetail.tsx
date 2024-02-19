@@ -11,6 +11,8 @@ import { ReportService } from '@/services';
 import { AggOperation, RecordType } from '@/services/ReportService';
 
 export type RecordedCaseListProps = {
+  appName: string;
+  operationId: string;
   onClick?: () => void;
 } & Pick<AggOperation, 'appId' | 'operationName' | 'operationTypes'>;
 
@@ -40,6 +42,9 @@ const RecordedCaseListItem: FC<RecordedCaseListProps> = (props) => {
               data: {
                 appId: props.appId,
                 recordId: record.recordId,
+                appName: props.appName,
+                operationName: props.operationName,
+                operationId: props.operationId,
               },
             });
           }}
