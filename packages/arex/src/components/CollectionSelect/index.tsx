@@ -10,18 +10,20 @@ import {
   styled,
   useTranslation,
 } from '@arextest/arex-core';
+import { StructuredFilterRef } from '@arextest/arex-core/src/components/StructuredFilter';
 import { useRequest } from 'ahooks';
 import { Button, ConfigProvider, Tag, Tree } from 'antd';
+import { TreeProps } from 'antd/es';
 import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import { cloneDeep } from 'lodash';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import CollectionSearchedList from '@/components/CollectionSelect/CollectionSearchedList';
 import { CollectionNodeType, EMAIL_KEY, MenusType, PanesType } from '@/constant';
 import { FileSystemService, ReportService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { negate } from '@/utils';
-import treeFilter from '@/utils/treeFilter';
 
 import CollectionNodeTitle, { CollectionNodeTitleProps } from './CollectionNodeTitle';
 
@@ -39,7 +41,7 @@ export interface CollectionSelectProps {
   menu?: React.ReactNode;
   expandable?: CollectionNodeType[];
   selectable?: CollectionNodeType[];
-  onSelect?: DirectoryTreeProps<CollectionTreeType>['onSelect'];
+  onSelect?: (key: React.Key[], node: CollectionTreeType) => void;
 }
 const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   const {
@@ -53,6 +55,8 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   const { activePane, setActiveMenu } = useMenusPanes();
   const { loading, collectionsTreeData, collectionsFlatData, getCollections, getPath } =
     useCollections();
+
+  const searchRef = useRef<StructuredFilterRef>(null);
 
   const [searchValue, setSearchValue] = useState<SearchDataType>();
   const [autoExpandParent, setAutoExpandParent] = useState(true);
@@ -68,7 +72,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
       setActiveMenu(MenusType.COLLECTION);
 
       if (workspaceId !== activeWorkspaceId) {
-        getCollections(workspaceId).then(() =>
+        getCollections({ workspaceId }).then(() =>
           setExpandedKeys([...getPath(id).map((item) => item.id)]),
         );
       } else {
@@ -86,15 +90,22 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     },
   );
 
-  const filterTreeData = useMemo(
-    // filter nodeType === 3 是为了隐藏第一层级只显示文件夹类型（由于新增请求时会新增一个临时的request到树形目录的第一层）
-    // TODO filter 逻辑待优化
-    () =>
-      searchValue?.keyword
-        ? treeFilter(searchValue.keyword, cloneDeep(collectionsTreeData), 'nodeName')
-        : collectionsTreeData,
-    [collectionsTreeData, searchValue?.keyword],
-  );
+  const handleLoadData: TreeProps<CollectionType>['loadData'] = (treeNode) => {
+    return new Promise<void>((resolve) => {
+      const pathIndex = treeNode.pos.split('-');
+      pathIndex.shift(); // remove root index 0
+
+      let innerTree = collectionsTreeData;
+      const path: string[] = [];
+
+      pathIndex.forEach((p) => {
+        const index = Number(p);
+        path.push(innerTree[index].infoId);
+        innerTree = innerTree[index].children;
+      });
+      resolve(getCollections({ workspaceId: activeWorkspaceId, parentIds: path }));
+    });
+  };
 
   const dataList: { key: string; title: string; labelIds: string | null }[] = useMemo(
     () =>
@@ -128,7 +139,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
           : [...(expandedKeys || []), info.node.infoId];
       });
     }
-    props.onSelect?.(keys, info);
+    props.onSelect?.(keys, info.node);
   };
 
   const handleChange = (value: SearchDataType) => {
@@ -296,7 +307,6 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     <div className='collection-content-wrapper'>
       <EmptyWrapper
         empty={!loading && !collectionsTreeData.length}
-        loading={loading}
         description={
           <Button type='primary' onClick={createCollection}>
             {t('collection.create_new')}
@@ -305,7 +315,9 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
       >
         <StructuredFilter
           size='small'
-          className={'collection-header-search'}
+          className='collection-header-search'
+          // @ts-ignore
+          ref={searchRef}
           showSearchButton={false}
           prefix={props.menu}
           labelDataSource={labelData.map((item) => ({
@@ -318,30 +330,48 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
           onChange={handleChange}
         />
         <ConfigProvider theme={{ token: { motion: false } }}>
-          <CollectionTree
-            showLine
-            blockNode
-            height={props.height}
-            selectedKeys={props.selectedKeys}
-            expandedKeys={expandedKeys}
-            autoExpandParent={autoExpandParent}
-            switcherIcon={<DownOutlined />}
-            treeData={filterTreeData}
-            fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
-            onDrop={onDrop}
-            onExpand={onExpand}
-            onSelect={handleSelect}
-            draggable={!props.readOnly && { icon: false }}
-            titleRender={(data) => (
-              <CollectionNodeTitle
-                data={data}
-                readOnly={props.readOnly}
-                keyword={searchValue?.keyword}
-                onAddNode={handleAddNode}
-                selectable={props.selectable}
-              />
-            )}
-          />
+          {searchValue?.keyword ? (
+            <CollectionSearchedList
+              height={props.height}
+              workspaceId={activeWorkspaceId}
+              keywords={searchValue.keyword}
+              onSelect={(keys, data) => {
+                getCollections({
+                  workspaceId: activeWorkspaceId,
+                  infoId: keys[0].toString(),
+                  nodeType: data.node.nodeType,
+                }).then(() => {
+                  handleSelect(keys, data);
+                });
+              }}
+            />
+          ) : (
+            <CollectionTree
+              showLine
+              blockNode
+              height={props.height}
+              selectedKeys={props.selectedKeys}
+              expandedKeys={expandedKeys}
+              autoExpandParent={autoExpandParent}
+              switcherIcon={<DownOutlined />}
+              treeData={collectionsTreeData}
+              loadData={handleLoadData}
+              fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
+              onDrop={onDrop}
+              onExpand={onExpand}
+              onSelect={handleSelect}
+              draggable={!props.readOnly && { icon: false }}
+              titleRender={(data) => (
+                <CollectionNodeTitle
+                  data={data}
+                  readOnly={props.readOnly}
+                  keyword={searchValue?.keyword}
+                  onAddNode={handleAddNode}
+                  selectable={props.selectable}
+                />
+              )}
+            />
+          )}
         </ConfigProvider>
       </EmptyWrapper>
     </div>

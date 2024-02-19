@@ -3,8 +3,17 @@ import styled from '@emotion/styled';
 import { useKeyPress } from 'ahooks';
 import { Button, Select, SelectProps } from 'antd';
 import { SizeType } from 'antd/es/config-provider/SizeContext';
+import { RefSelectProps } from 'antd/es/select';
 import { isEqual } from 'lodash';
-import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import React, {
+  FC,
+  forwardRef,
+  ReactNode,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
@@ -34,6 +43,10 @@ export type StructuredFilterProps = {
   options: StructuredOptionType[];
 } & Omit<SelectProps, 'options' | 'onSearch'>;
 
+export type StructuredFilterRef = {
+  clear: () => void;
+};
+
 const StructuredFilterWrapper = styled.div<{ size: SizeType }>`
   display: flex;
   .prefix {
@@ -61,11 +74,11 @@ const StructuredFilterWrapper = styled.div<{ size: SizeType }>`
   }
 `;
 
-const StructuredFilter: FC<StructuredFilterProps> = (props) => {
+const StructuredFilter = forwardRef<StructuredFilterRef, StructuredFilterProps>((props, ref) => {
   const { showSearchButton = true, size, options, labelDataSource, ...restProps } = props;
   const { t } = useTranslation(['common']);
 
-  const selectRef = useRef<any>(null); // BaseSelectRef
+  const selectRef = useRef<RefSelectProps>(null);
   const structuredOptionRef = useRef<StructuredOptionRef>(null);
 
   const [focus, setFocus] = useState(false);
@@ -74,6 +87,16 @@ const StructuredFilter: FC<StructuredFilterProps> = (props) => {
   const [keyword, setKeyword] = useState<string>();
   const [filterData, setFilterData] = useImmer<StructuredValue[]>([]);
 
+  useImperativeHandle(
+    ref,
+    () => ({
+      clear: () => {
+        setKeyword('');
+        setFilterData([]);
+      },
+    }),
+    [setFilterData],
+  );
   useKeyPress(['Backspace', 'Enter'], (e) => {
     if (focus) {
       if (e.key === 'Enter') return handleSearch();
@@ -185,6 +208,6 @@ const StructuredFilter: FC<StructuredFilterProps> = (props) => {
       </div>
     </StructuredFilterWrapper>
   );
-};
+});
 
 export default StructuredFilter;

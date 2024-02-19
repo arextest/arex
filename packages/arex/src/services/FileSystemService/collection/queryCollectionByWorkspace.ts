@@ -12,6 +12,8 @@ export interface CollectionType extends DataNode {
   method: RequestMethodEnum | null;
   nodeName: string;
   nodeType: CollectionNodeType;
+  existChildren?: boolean | null;
+  isLeaf?: boolean;
 }
 
 export type QueryWorkspaceByIdRes = {
@@ -23,7 +25,7 @@ export type QueryWorkspaceByIdRes = {
   };
 };
 
-export async function queryWorkspaceById(params: { id: string }) {
+export async function queryCollectionByWorkspace(params: { id: string }) {
   return request
     .post<QueryWorkspaceByIdRes>(`/webApi/filesystem/queryWorkspaceById`, params)
     .then((res) => res.body.fsTree);

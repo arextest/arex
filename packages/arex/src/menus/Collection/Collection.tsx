@@ -8,10 +8,11 @@ import {
 } from '@arextest/arex-core';
 import { useRequest, useSize } from 'ahooks';
 import { App } from 'antd';
-import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
+import type { DataNode } from 'antd/lib/tree';
 import React, { useMemo, useRef } from 'react';
 
 import { CollectionSelect, Icon, WorkspacesMenu } from '@/components';
+import { CollectionSelectProps } from '@/components/CollectionSelect';
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import CollectionsImportExport, {
@@ -78,21 +79,21 @@ const Collection: ArexMenuFC = (props) => {
     return id ? [id] : undefined;
   }, [props.value]);
 
-  const handleSelect: DirectoryTreeProps<CollectionTreeType>['onSelect'] = (keys, info) => {
-    if (info.node.nodeType !== CollectionNodeType.folder) {
+  const handleSelect: CollectionSelectProps['onSelect'] = (keys, node) => {
+    if (node.nodeType !== CollectionNodeType.folder) {
       const icon =
-        info.node.nodeType === CollectionNodeType.interface
-          ? info.node.method || undefined
-          : info.node.nodeType === CollectionNodeType.case
-          ? info.node.caseSourceType === CaseSourceType.AREX
+        node.nodeType === CollectionNodeType.interface
+          ? node.method || undefined
+          : node.nodeType === CollectionNodeType.case
+          ? node.caseSourceType === CaseSourceType.AREX
             ? 'arex'
             : 'case'
           : undefined;
 
       navPane({
         type: PanesType.REQUEST,
-        id: `${activeWorkspaceId}-${info.node.nodeType}-${info.node.infoId}`,
-        name: info.node.nodeName,
+        id: `${activeWorkspaceId}-${node.nodeType}-${node.infoId}`,
+        name: node.nodeName,
         icon,
       });
     }

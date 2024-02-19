@@ -1,7 +1,12 @@
+import React from 'react';
 import { create } from 'zustand';
 
 import { CollectionNodeType } from '@/constant';
-import { CollectionType, queryWorkspaceById } from '@/services/FileSystemService';
+import {
+  CollectionType,
+  getCollectionItem,
+  getCollectionItemTree,
+} from '@/services/FileSystemService';
 import { treeToMap } from '@/utils';
 
 import useWorkspaces from './useWorkspaces';
@@ -18,7 +23,12 @@ export type CollectionState = {
 export type CollectionPath = { name: string; id: string };
 
 export type CollectionAction = {
-  getCollections: (workspaceId?: string) => Promise<void>;
+  getCollections: (params?: {
+    workspaceId?: string;
+    parentIds?: string[];
+    infoId?: string;
+    nodeType?: CollectionNodeType;
+  }) => Promise<void>;
   getPath: (infoId: string) => CollectionPath[];
   reset: () => void;
 };
@@ -45,13 +55,66 @@ const initialState: CollectionState = {
   collectionsTreeData: [],
 };
 
+const updateTreeData = (
+  list: CollectionType[],
+  key: React.Key,
+  children: CollectionType[],
+): CollectionType[] =>
+  list.map((node) => {
+    if (node.infoId === key) {
+      return {
+        ...node,
+        children,
+      };
+    }
+    if (node.children) {
+      return {
+        ...node,
+        children: updateTreeData(node.children, key, children),
+      };
+    }
+    return node;
+  });
+
+const isLeafNest = (obj: CollectionType[]) => {
+  obj.map((item) => {
+    item.isLeaf = !item.existChildren;
+    if (item.children) {
+      isLeafNest(item.children);
+    }
+  });
+  return obj;
+};
 const useCollections = create<CollectionState & CollectionAction>((set, get) => {
-  async function getCollections(workspaceId?: string) {
+  const getCollections: CollectionAction['getCollections'] = async ({
+    workspaceId,
+    parentIds,
+    infoId,
+    nodeType,
+  } = {}) => {
     const id = workspaceId || useWorkspaces.getState().activeWorkspaceId;
     if (!id) return;
 
     set({ loading: true });
-    const data = await queryWorkspaceById({ id });
+
+    let data;
+    if (!!infoId && !!nodeType) {
+      // click search
+      data = (await getCollectionItemTree({ workspaceId: id, infoId, nodeType })).roots;
+    } else if (typeof parentIds !== 'string') {
+      // click collection
+      data = (await getCollectionItem({ workspaceId: id, parentIds })).children;
+    }
+
+    if (!data) return;
+
+    const treeData = useCollections.getState().collectionsTreeData;
+
+    let mergedData = isLeafNest(data);
+    if (parentIds) {
+      mergedData = updateTreeData(treeData, parentIds[parentIds.length - 1], mergedData);
+    }
+
     const collectionsFlatData = treeToMap({
       caseSourceType: 0,
       labelIds: null,
@@ -60,16 +123,16 @@ const useCollections = create<CollectionState & CollectionAction>((set, get) => 
       nodeType: CollectionNodeType.folder,
       infoId: '', // types.id,
       key: '__root__', //
-      children: data.roots,
+      children: mergedData,
     });
     set({
       collectionsFlatData,
-      collectionsTreeData: data.roots,
+      collectionsTreeData: mergedData,
       loading: false,
     });
 
     useWorkspaces.setState({ activeWorkspaceId: id });
-  }
+  };
 
   /**
    * 获取路径

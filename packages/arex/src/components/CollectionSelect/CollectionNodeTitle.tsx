@@ -2,6 +2,7 @@ import {
   CheckOutlined,
   CloseOutlined,
   ExclamationCircleFilled,
+  FolderOutlined,
   MoreOutlined,
 } from '@ant-design/icons';
 import {
@@ -12,7 +13,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Dropdown, Input, MenuProps, Space } from 'antd';
+import { App, Button, Dropdown, Input, MenuProps, Space, theme } from 'antd';
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
@@ -73,6 +74,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   const { removePane } = useMenusPanes();
 
   const { modal } = App.useApp();
+  const { token } = theme.useToken();
   const confirm = modal.confirm;
   const { t } = useTranslation(['common', 'components']);
   const navPane = useNavPane();
@@ -132,7 +134,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
       manual: true,
       onSuccess(success) {
         setEditMode(false);
-        getCollections(activeWorkspaceId);
+        getCollections({ workspaceId: activeWorkspaceId });
       },
     },
   );
@@ -296,15 +298,16 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
 
   const prefix = useMemo(
     () =>
-      props.data.nodeType === CollectionNodeType.interface
-        ? React.createElement(RequestMethodIcon[props.data.method || ''] || 'div')
-        : props.data.nodeType === CollectionNodeType.case
-        ? React.createElement(
-            RequestMethodIcon[
-              props.data.caseSourceType === CaseSourceType.AREX ? 'arex' : 'case'
-            ] || 'div',
-          )
-        : null,
+      props.data.nodeType === CollectionNodeType.folder ? (
+        <FolderOutlined style={{ marginRight: token.marginXS }} />
+      ) : props.data.nodeType === CollectionNodeType.interface ? (
+        React.createElement(RequestMethodIcon[props.data.method || ''] || 'div')
+      ) : props.data.nodeType === CollectionNodeType.case ? (
+        React.createElement(
+          RequestMethodIcon[props.data.caseSourceType === CaseSourceType.AREX ? 'arex' : 'case'] ||
+            'div',
+        )
+      ) : null,
     [props.data],
   );
 
