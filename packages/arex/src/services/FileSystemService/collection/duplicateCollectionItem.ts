@@ -6,6 +6,12 @@ export type DuplicateCollectionItemReq = {
   userName: string;
 };
 
+export type DuplicateCollectionItemRes = {
+  infoId: string;
+  workspaceId: string;
+  success: boolean;
+};
+
 export async function duplicateCollectionItem(params: DuplicateCollectionItemReq) {
-  return request.post(`/webApi/filesystem/duplicate`, params);
+  return request.post<DuplicateCollectionItemRes>(`/webApi/filesystem/duplicate`, params);
 }

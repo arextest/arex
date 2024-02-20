@@ -144,7 +144,11 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     saveRequest(request, { pinMock });
   };
 
-  const { data, loading, run } = useRequest(
+  const {
+    data,
+    loading,
+    run: queryRequest,
+  } = useRequest(
     () =>
       FileSystemService.queryRequest({
         id,
@@ -290,7 +294,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         icon: 'arex',
       });
       if (params.infoId !== id) removePane(props.paneKey); // remove old pane when save as
-      else run();
+      else queryRequest();
     });
   };
 

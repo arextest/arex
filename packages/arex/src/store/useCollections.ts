@@ -23,6 +23,10 @@ export type CollectionState = {
 export type CollectionPath = { name: string; id: string };
 
 export type CollectionAction = {
+  // 不传参数或只传 workspaceId 时默认获取当前 workspace 下的根节点
+  // 传递 parentIds 时获取指定路径下的节点
+  // 传递 infoId 和 nodeType 时获取指定 infoId 节点
+  // 当 params 不为空时 workspaceId 必传
   getCollections: (params?: {
     workspaceId?: string;
     parentIds?: string[];
@@ -111,7 +115,7 @@ const useCollections = create<CollectionState & CollectionAction>((set, get) => 
     const treeData = useCollections.getState().collectionsTreeData;
 
     let mergedData = isLeafNest(data);
-    if (parentIds) {
+    if (parentIds?.length) {
       mergedData = updateTreeData(treeData, parentIds[parentIds.length - 1], mergedData);
     }
 

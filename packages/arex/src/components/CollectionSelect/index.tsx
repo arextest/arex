@@ -72,7 +72,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
       setActiveMenu(MenusType.COLLECTION);
 
       if (workspaceId !== activeWorkspaceId) {
-        getCollections({ workspaceId }).then(() =>
+        getCollections({ workspaceId, infoId: id, nodeType: parseInt(nodeTypeStr) }).then(() =>
           setExpandedKeys([...getPath(id).map((item) => item.id)]),
         );
       } else {
@@ -202,8 +202,17 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
 
   const { run: move } = useRequest(FileSystemService.moveCollectionItem, {
     manual: true,
-    onSuccess(success) {
-      success && getCollections();
+    onSuccess(success, [{ fromNodePath, toParentPath }]) {
+      if (success) {
+        getCollections({
+          workspaceId: activeWorkspaceId,
+          parentIds: fromNodePath.slice(0, -1),
+        });
+        getCollections({
+          workspaceId: activeWorkspaceId,
+          parentIds: toParentPath,
+        });
+      }
     },
   });
 

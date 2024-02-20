@@ -7,8 +7,14 @@ export type RenameCollectionItemReq = {
   userName: string;
 };
 
+export type RenameCollectionItemRes = {
+  infoId: string;
+  workspaceId: string;
+  success: boolean;
+};
+
 export async function renameCollectionItem(params: RenameCollectionItemReq) {
   return request
-    .post<{ success: boolean }>(`/webApi/filesystem/rename`, params)
+    .post<RenameCollectionItemRes>(`/webApi/filesystem/rename`, params)
     .then((res) => res.body.success);
 }

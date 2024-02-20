@@ -100,7 +100,9 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     {
       manual: true,
       onSuccess: (res, [{ caseSourceType, nodeType }]) => {
-        getCollections().then(() => props.onAddNode?.(res.infoId, nodeType));
+        getCollections({ workspaceId: activeWorkspaceId, infoId: res.infoId, nodeType }).then(() =>
+          props.onAddNode?.(res.infoId, nodeType),
+        );
         if (caseSourceType !== CaseSourceType.AREX)
           queryInterface({ id: nodePath[nodePath.length - 1] as string }, res.infoId);
       },
@@ -108,59 +110,69 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   );
 
   const { run: duplicateCollectionItem } = useRequest(
-    () =>
+    (path: string[]) =>
       FileSystemService.duplicateCollectionItem({
         id: activeWorkspaceId,
-        path: nodePath,
+        path,
         userName,
       }),
     {
       manual: true,
-      onSuccess: () => {
-        getCollections();
+      onSuccess: (res, [path]) => {
+        getCollections({
+          workspaceId: activeWorkspaceId,
+          parentIds: path.slice(0, -1),
+        });
       },
     },
   );
 
   const { run: rename } = useRequest(
-    () =>
+    (path: string[]) =>
       FileSystemService.renameCollectionItem({
-        id: activeWorkspaceId,
-        newName: nodeName,
-        path: nodePath,
+        path,
         userName,
+        newName: nodeName,
+        id: activeWorkspaceId,
       }),
     {
       manual: true,
-      onSuccess(success) {
-        setEditMode(false);
-        getCollections({ workspaceId: activeWorkspaceId });
+      onSuccess(success, [path]) {
+        if (success) {
+          setEditMode(false);
+          getCollections({ workspaceId: activeWorkspaceId, parentIds: path.slice(0, -1) });
+        }
       },
     },
   );
 
   const { run: removeCollectionItem } = useRequest(
-    () =>
+    (removeNodePath) =>
       FileSystemService.removeCollectionItem({
         id: activeWorkspaceId,
-        removeNodePath: nodePath,
+        removeNodePath,
         userName,
       }),
     {
       manual: true,
-      onSuccess: () => {
+      onSuccess: (_, [removeNodePath]) => {
         const id = `${activeWorkspaceId}-${props.data.nodeType}-${props.data.infoId}`;
         const paneKey = encodePaneKey({ id, type: PanesType.REQUEST });
         removePane(paneKey);
-        getCollections();
+        const parentIds = removeNodePath.slice(0, -1);
+        getCollections({ workspaceId: activeWorkspaceId, parentIds });
       },
     },
   );
 
   const { run: saveCase } = useRequest(FileSystemService.saveCase, {
     manual: true,
-    onSuccess: () => {
-      getCollections();
+    onSuccess: (_, [{ id }]) => {
+      getCollections({
+        workspaceId: activeWorkspaceId,
+        infoId: id,
+        nodeType: CollectionNodeType.case,
+      });
     },
   });
 
@@ -265,7 +277,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         {
           key: 'duplicate',
           label: (
-            <a onClick={() => duplicateCollectionItem()}>
+            <a onClick={() => duplicateCollectionItem(nodePath)}>
               {t('collection.duplicate', { ns: 'components' })}
             </a>
           ),
@@ -282,7 +294,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
                   okText: 'Yes',
                   okType: 'danger',
                   cancelText: 'No',
-                  onOk: removeCollectionItem,
+                  onOk: () => removeCollectionItem(nodePath),
                 });
               }}
             >
@@ -333,7 +345,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
             <Space style={{ display: 'flex' }}>
               <Input
                 value={nodeName}
-                onPressEnter={rename}
+                onPressEnter={() => rename(nodePath)}
                 onChange={(e) => setNodeName(e.currentTarget.value)}
                 style={{ padding: '0 4px' }}
               />
@@ -344,7 +356,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
                   setNodeName(props.data.nodeName);
                 }}
               />
-              <SmallTextButton icon={<CheckOutlined />} onClick={rename} />
+              <SmallTextButton icon={<CheckOutlined />} onClick={() => rename(nodePath)} />
             </Space>
           ) : (
             <SearchHighLight text={props.data.nodeName} keyword={props.keyword} />
