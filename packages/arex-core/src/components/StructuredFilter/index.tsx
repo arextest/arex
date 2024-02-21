@@ -1,12 +1,11 @@
 import { SearchOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useKeyPress } from 'ahooks';
-import { Button, Select, SelectProps } from 'antd';
+import { Button, Flex, Select, SelectProps } from 'antd';
 import { SizeType } from 'antd/es/config-provider/SizeContext';
 import { RefSelectProps } from 'antd/es/select';
 import { isEqual } from 'lodash';
 import React, {
-  FC,
   forwardRef,
   ReactNode,
   useEffect,
@@ -49,26 +48,26 @@ export type StructuredFilterRef = {
 
 const StructuredFilterWrapper = styled.div<{ size: SizeType }>`
   display: flex;
-  .prefix {
-  }
   .search-wrapper {
     flex-grow: 1;
   }
   .search-content {
     position: relative;
     display: flex;
-    ${(props) =>
-      props.size === 'small'
-        ? `width: 133.33%;
-    transform: scale(0.75);`
-        : ''}
-    transform-origin: top left;
+    width: 133.33%;
+    transform: scale(0.75);
+    transform-origin: left center;
     .search-inner {
       flex-grow: 1;
-      margin-right: 8px;
+      margin-right: 4px;
       position: relative;
       .ant-select-selector {
-        height: 36px;
+        height: 28px;
+        padding-inline-end: 0;
+        .ant-select-selection-overflow {
+          display: flex;
+          flex-flow: row nowrap;
+        }
       }
     }
   }
@@ -158,7 +157,9 @@ const StructuredFilter = forwardRef<StructuredFilterRef, StructuredFilterProps>(
 
   return (
     <StructuredFilterWrapper size={size}>
-      <div className='prefix'>{props.prefix}</div>
+      <Flex justify='center' align='center' className='prefix'>
+        {props.prefix}
+      </Flex>
 
       <div className='search-wrapper'>
         <div className='search-content'>

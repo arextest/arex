@@ -100,10 +100,11 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     {
       manual: true,
       onSuccess: (res, [{ caseSourceType, nodeType }]) => {
-        getCollections({ workspaceId: activeWorkspaceId, infoId: res.infoId, nodeType }).then(() =>
+        getCollections({ workspaceId: activeWorkspaceId, parentIds: nodePath }).then(() =>
           props.onAddNode?.(res.infoId, nodeType),
         );
-        if (caseSourceType !== CaseSourceType.AREX)
+        // case inherit interface
+        if (caseSourceType === CaseSourceType.CASE)
           queryInterface({ id: nodePath[nodePath.length - 1] as string }, res.infoId);
       },
     },
@@ -167,13 +168,6 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
 
   const { run: saveCase } = useRequest(FileSystemService.saveCase, {
     manual: true,
-    onSuccess: (_, [{ id }]) => {
-      getCollections({
-        workspaceId: activeWorkspaceId,
-        infoId: id,
-        nodeType: CollectionNodeType.case,
-      });
-    },
   });
 
   const { run: queryInterface } = useRequest(FileSystemService.queryInterface, {

@@ -1,6 +1,7 @@
 import { DownOutlined } from '@ant-design/icons';
 import {
   CategoryKey,
+  css,
   EmptyWrapper,
   getLocalStorage,
   Operator,
@@ -90,22 +91,15 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     },
   );
 
-  const handleLoadData: TreeProps<CollectionType>['loadData'] = (treeNode) => {
-    return new Promise<void>((resolve) => {
-      const pathIndex = treeNode.pos.split('-');
-      pathIndex.shift(); // remove root index 0
-
-      let innerTree = collectionsTreeData;
-      const path: string[] = [];
-
-      pathIndex.forEach((p) => {
-        const index = Number(p);
-        path.push(innerTree[index].infoId);
-        innerTree = innerTree[index].children;
-      });
-      resolve(getCollections({ workspaceId: activeWorkspaceId, parentIds: path }));
-    });
-  };
+  const handleLoadData: TreeProps<CollectionType>['loadData'] = (treeNode) =>
+    new Promise<void>((resolve) =>
+      resolve(
+        getCollections({
+          workspaceId: activeWorkspaceId,
+          parentIds: getPath(treeNode.infoId).map((item) => item.id),
+        }),
+      ),
+    );
 
   const dataList: { key: string; title: string; labelIds: string | null }[] = useMemo(
     () =>
@@ -123,7 +117,17 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
         category: CategoryKey.Label,
         operator: [Operator.EQ, Operator.NE],
         value: labelData.map((label) => ({
-          label: <Tag color={label.color}>{label.labelName}</Tag>,
+          label: (
+            <Tag
+              color={label.color}
+              css={css`
+                height: 16px;
+                line-height: 16px;
+              `}
+            >
+              {label.labelName}
+            </Tag>
+          ),
           key: label.id,
         })),
       },
@@ -335,15 +339,15 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
             color: item.color,
           }))}
           options={options}
-          placeholder={'Search for Name or Id'}
+          // placeholder={'Search for Name'}
           onChange={handleChange}
         />
         <ConfigProvider theme={{ token: { motion: false } }}>
-          {searchValue?.keyword ? (
+          {searchValue?.keyword || searchValue?.structuredValue?.length ? (
             <CollectionSearchedList
               height={props.height}
               workspaceId={activeWorkspaceId}
-              keywords={searchValue.keyword}
+              searchValue={searchValue}
               onSelect={(keys, data) => {
                 getCollections({
                   workspaceId: activeWorkspaceId,

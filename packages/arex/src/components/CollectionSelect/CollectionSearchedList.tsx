@@ -1,5 +1,11 @@
 import { FolderOutlined } from '@ant-design/icons';
-import { css, EmptyWrapper, RequestMethodIcon } from '@arextest/arex-core';
+import {
+  css,
+  EmptyWrapper,
+  OperatorType,
+  RequestMethodIcon,
+  SearchDataType,
+} from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { Menu, MenuProps, theme } from 'antd';
 import { DirectoryTreeProps } from 'antd/lib/tree';
@@ -14,7 +20,7 @@ import { CaseSourceType } from '@/store/useCollections';
 export type CollectionSearchedListProps = {
   height?: number;
   workspaceId: string;
-  keywords: string;
+  searchValue?: SearchDataType;
   onSelect?: DirectoryTreeProps<CollectionTreeType>['onSelect'];
 };
 
@@ -26,11 +32,17 @@ const CollectionSearchedList = (props: CollectionSearchedListProps) => {
       FileSystemService.searchCollectionItems({
         workspaceId: props.workspaceId,
         pageSize: 10,
-        keywords: props.keywords,
+        keywords: props.searchValue?.keyword,
+        labels: props.searchValue?.structuredValue?.map((item) => ({
+          key: item.category!,
+          operator: item.operator as OperatorType,
+          value: item.value!,
+        })),
       }),
     {
-      refreshDeps: [props.workspaceId, props.keywords],
+      refreshDeps: [props.workspaceId, props.searchValue],
       debounceWait: 300,
+      ready: !!props.searchValue,
     },
   );
   const handleSelect: MenuProps['onClick'] = ({ key }) => {

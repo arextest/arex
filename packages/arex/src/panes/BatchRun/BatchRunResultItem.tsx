@@ -80,7 +80,6 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
     <div
       id={props.id}
       style={{
-        // marginLeft: props.caseType === CollectionNodeType.case ? '24px' : 0,
         padding: '0 16px',
       }}
     >

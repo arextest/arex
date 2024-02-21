@@ -10,14 +10,15 @@ import {
 } from '@arextest/arex-core';
 import { ArexEnvironment, ArexResponse, EnvironmentSelect } from '@arextest/arex-request';
 import { useRequest } from 'ahooks';
-import { Button, Divider, Popover, theme, TreeSelect, Typography } from 'antd';
+import { Button, Divider, Popover, theme, TreeSelect, TreeSelectProps, Typography } from 'antd';
 import React, { FC, Key, useCallback, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { CollectionNodeType, WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
+import { WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
 import BatchRunResultItem from '@/panes/BatchRun/BatchRunResultItem';
 import { WorkspaceEnvironmentPair } from '@/panes/Request/EnvironmentDrawer';
 import { EnvironmentService, FileSystemService } from '@/services';
+import { CollectionType } from '@/services/FileSystemService';
 import { useCollections } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
@@ -49,6 +50,7 @@ const BatchRun: ArexPaneFC = (props) => {
   const { token } = theme.useToken();
   const { t } = useTranslation('page');
   const [workspaceId, id] = useMemo(() => decodePaneKey(paneKey).id.split('-'), [paneKey]);
+  const { getCollections, getPath } = useCollections();
 
   const { collectionsTreeData, collectionsFlatData } = useCollections();
 
@@ -96,10 +98,10 @@ const BatchRun: ArexPaneFC = (props) => {
         response: { type: 'loading', headers: undefined },
       })) as ArexResponse[],
     );
-    queryCases().then((cases) => {
-      console.log('cases', cases);
-      setCasesResults(getCasesResults(cases));
-    });
+    // TODO 使用新接口查询所有case详情
+    // queryCases().then((cases) => {
+    //   setCasesResults(getCasesResults(cases));
+    // });
   };
 
   const getCasesResults = useCallback(
@@ -108,7 +110,6 @@ const BatchRun: ArexPaneFC = (props) => {
         <BatchRunResultItem
           id={`batch-run-result-item-${index}`}
           key={caseItem.id}
-          caseType={caseItem.nodeType}
           environment={activeEnvironment}
           data={caseItem}
           onResponse={(response) => {
@@ -120,6 +121,13 @@ const BatchRun: ArexPaneFC = (props) => {
       )),
     [activeEnvironment],
   );
+
+  const handleTreeLoad: TreeSelectProps<CollectionType>['loadData'] = (treeNode) =>
+    new Promise<void>((resolve) =>
+      resolve(
+        getCollections({ workspaceId, parentIds: getPath(treeNode.infoId).map((item) => item.id) }),
+      ),
+    );
 
   return (
     <div>
@@ -141,20 +149,21 @@ const BatchRun: ArexPaneFC = (props) => {
           treeCheckable
           // maxTagCount={3}
           size='small'
-          placeholder={'Please select case'}
           fieldNames={{ label: 'nodeName', value: 'infoId', children: 'children' }}
-          value={checkValue}
+          // value={checkValue}
           treeData={treeData}
-          showCheckedStrategy={TreeSelect.SHOW_ALL}
-          onChange={(value) => {
-            const filtered = value.filter((v) => {
-              const nodeType = collectionsFlatData.get(v.toString())?.nodeType;
-              return (
-                !!nodeType &&
-                [CollectionNodeType.interface, CollectionNodeType.case].includes(nodeType)
-              );
-            });
-            setCheckValue(filtered); // TODO sort
+          showCheckedStrategy={TreeSelect.SHOW_PARENT}
+          loadData={handleTreeLoad}
+          onChange={(value, label, extra) => {
+            console.log(value, label, extra);
+            // const filtered = value.filter((v) => {
+            //   const nodeType = collectionsFlatData.get(v.toString())?.nodeType;
+            //   return (
+            //     !!nodeType &&
+            //     [CollectionNodeType.interface, CollectionNodeType.case].includes(nodeType)
+            //   );
+            // });
+            // setCheckValue(filtered); // TODO sort
           }}
           style={{ flex: 1 }}
         />

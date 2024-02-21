@@ -45,7 +45,6 @@ const StructuredTagWrapper = styled.div`
     opacity: 0;
     transition: opacity 200ms;
   }
-
   .ant-tag {
     position: relative;
     cursor: pointer;
@@ -78,7 +77,7 @@ const StructuredTag = (props: StructuredTagProps) => {
 
   return (
     <StructuredTagWrapper>
-      <Space.Compact block size='small' style={{ margin: '4px' }}>
+      <Space.Compact block size='small' style={{ margin: '2px' }}>
         <Button ref={categoryRef} onClick={() => props.onDelete?.(data)}>
           <CSSTransition
             nodeRef={categoryNodeRef}

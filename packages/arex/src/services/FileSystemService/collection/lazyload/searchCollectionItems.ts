@@ -1,3 +1,6 @@
+import { OperatorType } from '@arextest/arex-core';
+import React from 'react';
+
 import { request } from '@/utils';
 
 import { CollectionType } from '../queryCollectionByWorkspace';
@@ -5,7 +8,12 @@ import { CollectionType } from '../queryCollectionByWorkspace';
 export interface SearchCollectionItemsReq {
   workspaceId: string;
   pageSize: number;
-  keywords: string;
+  keywords?: string;
+  labels?: {
+    key: string;
+    operator: OperatorType;
+    value: React.Key;
+  }[];
 }
 
 export interface SearchCollectionItemsRes {

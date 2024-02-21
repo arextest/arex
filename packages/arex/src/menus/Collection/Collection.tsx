@@ -56,8 +56,11 @@ const Collection: ArexMenuFC = (props) => {
       }),
     {
       manual: true,
-      onSuccess() {
-        getCollections();
+      onSuccess(res) {
+        if (res.success) {
+          // TODO 折叠优化
+          getCollections();
+        }
       },
     },
   );
@@ -128,10 +131,10 @@ const Collection: ArexMenuFC = (props) => {
         menu={
           <div
             style={{
-              height: '27px',
-              marginRight: '8px',
+              height: '21px',
+              marginRight: '4px',
               display: 'flex',
-              flexWrap: 'wrap',
+              flexFlow: 'row nowrap',
               alignContent: 'center',
             }}
           >
@@ -172,9 +175,8 @@ const Collection: ArexMenuFC = (props) => {
 const CollectionWrapper = styled.div`
   width: 100%;
   overflow: hidden;
-
   .collection-content-wrapper {
-    padding: 8px 8px;
+    padding: 4px 4px;
   }
 
   .ant-spin-nested-loading,

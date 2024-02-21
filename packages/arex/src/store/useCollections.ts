@@ -60,21 +60,21 @@ const initialState: CollectionState = {
 };
 
 const updateTreeData = (
-  list: CollectionType[],
+  treeArray1: CollectionType[],
+  treeArray2: CollectionType[],
   key: React.Key,
-  children: CollectionType[],
 ): CollectionType[] =>
-  list.map((node) => {
+  treeArray1.map((node) => {
     if (node.infoId === key) {
       return {
         ...node,
-        children,
+        children: treeArray2,
       };
     }
     if (node.children) {
       return {
         ...node,
-        children: updateTreeData(node.children, key, children),
+        children: updateTreeData(node.children, treeArray2, key),
       };
     }
     return node;
@@ -116,7 +116,7 @@ const useCollections = create<CollectionState & CollectionAction>((set, get) => 
 
     let mergedData = isLeafNest(data);
     if (parentIds?.length) {
-      mergedData = updateTreeData(treeData, parentIds[parentIds.length - 1], mergedData);
+      mergedData = updateTreeData(treeData, mergedData, parentIds[parentIds.length - 1]);
     }
 
     const collectionsFlatData = treeToMap({
