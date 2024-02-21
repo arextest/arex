@@ -1,4 +1,4 @@
-import { QuestionCircleOutlined, SendOutlined } from '@ant-design/icons';
+import { SendOutlined } from '@ant-design/icons';
 import {
   ArexPaneFC,
   css,
@@ -10,44 +10,21 @@ import {
 } from '@arextest/arex-core';
 import { ArexEnvironment, ArexResponse, EnvironmentSelect } from '@arextest/arex-request';
 import { useRequest } from 'ahooks';
-import { Button, Divider, Popover, theme, TreeSelect, TreeSelectProps, Typography } from 'antd';
-import React, { FC, Key, useCallback, useMemo, useState } from 'react';
+import { Button, Divider, Flex, Slider, TreeSelect, TreeSelectProps, Typography } from 'antd';
+import React, { Key, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
 import BatchRunResultItem from '@/panes/BatchRun/BatchRunResultItem';
+import StatusBlockStructure from '@/panes/BatchRun/StatusBlockStructure';
 import { WorkspaceEnvironmentPair } from '@/panes/Request/EnvironmentDrawer';
 import { EnvironmentService, FileSystemService } from '@/services';
 import { BatchGetInterfaceCaseReq, CollectionType } from '@/services/FileSystemService';
 import { useCollections } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
-const StatusBlock: FC<{
-  color: string;
-  text?: React.ReactNode;
-  children?: React.ReactNode;
-}> = (props) => {
-  return (
-    <span style={{ marginRight: '4px' }}>
-      <div
-        style={{
-          display: 'inline-block',
-          height: '6px',
-          width: '16px',
-          margin: '2px 4px',
-          backgroundColor: props.color,
-        }}
-      >
-        {props.children}
-      </div>
-      <Typography.Text type='secondary'>{props.text}</Typography.Text>
-    </span>
-  );
-};
-
 const BatchRun: ArexPaneFC = (props) => {
   const { paneKey } = props;
-  const { token } = theme.useToken();
   const { t } = useTranslation('page');
   const [workspaceId, id] = useMemo(() => decodePaneKey(paneKey).id.split('-'), [paneKey]);
   const { getCollections, getPath } = useCollections();
@@ -57,7 +34,16 @@ const BatchRun: ArexPaneFC = (props) => {
   const [activeEnvironment, setActiveEnvironment] = useState<ArexEnvironment>();
   const [checkValue, setCheckValue] = useState<Key[]>([]);
 
-  const [responseList, setResponseList] = useImmer<ArexResponse[]>([]);
+  const [casesResults, setCasesResults] = useImmer<React.ReactNode[]>([]);
+  const [responseList, setResponseList] = useImmer<Record<string, ArexResponse>>([]);
+
+  const [qps, setQps] = useState<number>(10);
+
+  const [timestamp, setTimestamp] = useState<number>();
+  const timestampRef = useRef<number>();
+  useEffect(() => {
+    timestampRef.current = timestamp;
+  }, [timestamp]);
 
   const treeData = useMemo(
     () => (id ? collectionsFlatData.get(id)?.children || [] : collectionsTreeData), // collection right click folder to batch run
@@ -78,24 +64,60 @@ const BatchRun: ArexPaneFC = (props) => {
     },
   });
 
+  const batchGetInterfaceCaseCallback = useCallback(
+    async (
+      res: Awaited<ReturnType<typeof FileSystemService.batchGetInterfaceCase>>,
+      _timestamp?: number,
+    ) => {
+      const list = res.reduce<Record<string, ArexResponse>>((acc, item) => {
+        acc[item.id] = { response: { type: 'loading', headers: undefined } };
+        return acc;
+      }, {});
+      setResponseList(list);
+
+      async function processPromiseArray(promiseArray: typeof res, batchSize: number) {
+        for (let i = 0; i < promiseArray.length; i += batchSize) {
+          console.log(timestampRef.current, _timestamp);
+          if (timestampRef.current !== _timestamp) {
+            console.log('timestamp changed, stop batch run');
+            break;
+          }
+
+          const batch = promiseArray.slice(i, i + batchSize);
+
+          setCasesResults((result) => {
+            result.push(getCasesResults(batch));
+          });
+
+          if (i + batchSize < promiseArray.length) {
+            // 等待指定的时间间隔
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          }
+        }
+      }
+
+      processPromiseArray(res, qps).then(() => {
+        console.log('batch run finished');
+      });
+    },
+    [timestamp],
+  );
+
   const {
     data: cases = [],
     loading,
     run: batchGetInterfaceCase,
   } = useRequest(FileSystemService.batchGetInterfaceCase, {
     manual: true,
-    onSuccess: (res) => {
-      setResponseList(
-        res.map(() => ({
-          response: { type: 'loading', headers: undefined },
-        })) as ArexResponse[],
-      );
-      console.log(res);
-      setCasesResults(getCasesResults(res));
+    onBefore: () => {
+      setCasesResults([]);
+      setResponseList({});
+    },
+    onSuccess: (res, [params, _timestamp]) => {
+      batchGetInterfaceCaseCallback(res, _timestamp);
     },
   });
 
-  const [casesResults, setCasesResults] = useState<React.ReactNode>(null);
   const handleBatchRun = () => {
     const nodes = checkValue
       .map((item) => {
@@ -108,21 +130,22 @@ const BatchRun: ArexPaneFC = (props) => {
         };
       })
       .filter(Boolean) as BatchGetInterfaceCaseReq['nodes'];
-    batchGetInterfaceCase({ workspaceId, nodes });
+    const timestamp = Date.now();
+    setTimestamp(timestamp);
+    batchGetInterfaceCase({ workspaceId, nodes }, timestamp);
   };
 
   const getCasesResults = useCallback(
     (cases: Awaited<ReturnType<typeof FileSystemService.queryRequest>>[]) =>
-      cases.map((caseItem, index) => (
+      cases.map((caseItem) => (
         <BatchRunResultItem
-          id={`batch-run-result-item-${index}`}
+          id={`batch-run-result-item-${caseItem.id}`}
           key={caseItem.id}
           environment={activeEnvironment}
           data={caseItem}
           onResponse={(response) => {
-            console.log(response);
             setResponseList((res) => {
-              res[index] = response;
+              res[caseItem.id] = response;
             });
           }}
         />
@@ -162,11 +185,14 @@ const BatchRun: ArexPaneFC = (props) => {
           treeData={treeData}
           showCheckedStrategy={TreeSelect.SHOW_PARENT}
           loadData={handleTreeLoad}
-          onChange={(value, label, extra) => {
-            setCheckValue(value); // TODO sort
-          }}
-          style={{ flex: 1 }}
+          onChange={setCheckValue}
+          style={{ flex: 1, marginRight: '16px' }}
         />
+
+        <Flex align='center'>
+          <Label>QPS</Label>
+          <Slider min={1} max={100} value={qps} onChange={setQps} style={{ width: '64px' }} />
+        </Flex>
 
         <Button
           type='primary'
@@ -178,125 +204,11 @@ const BatchRun: ArexPaneFC = (props) => {
         </Button>
       </div>
 
-      {!!cases.length && (
-        <div style={{ padding: '0 16px 4px', marginBottom: '4px' }}>
-          <div style={{ display: 'flex' }}>
-            {responseList.map((item, index) => {
-              const testAllSuccess = item.testResult?.every((test) => test.passed) ?? true;
-              const testAllFail = item.testResult?.every((test) => !test.passed) ?? false;
+      <StatusBlockStructure
+        key={checkValue.length} // Add key to force re-render
+        data={responseList}
+      />
 
-              const requestStatusColor =
-                item.response.type === 'loading'
-                  ? token.colorFillSecondary
-                  : item.response?.statusCode < 300
-                  ? token.colorSuccess
-                  : item.response?.statusCode < 400
-                  ? token.colorWarning
-                  : token.colorError;
-
-              const testResultStatusColor = item.testResult?.length
-                ? testAllSuccess
-                  ? token.colorSuccess
-                  : testAllFail
-                  ? token.colorError
-                  : token.colorWarning
-                : token.colorFillSecondary;
-
-              return (
-                <div
-                  key={index}
-                  onClick={() => {
-                    const element = document.getElementById(`batch-run-result-item-${index}`);
-                    element?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  style={{
-                    width: '16px',
-                    cursor: 'pointer',
-                    margin: `0 ${
-                      responseList.length > 100 ? 2 : responseList.length > 50 ? 3 : 4
-                    }px `,
-                  }}
-                >
-                  <div
-                    style={{
-                      height: '6px',
-                      backgroundColor: requestStatusColor,
-                    }}
-                  />
-                  <div
-                    style={{
-                      height: '6px',
-                      backgroundColor: testResultStatusColor,
-                    }}
-                  />
-                </div>
-              );
-            })}
-
-            <Popover
-              title={
-                <>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <Label>{t('batchRunPage.statusBlockStructure')}</Label>
-                    <div style={{ display: 'inline-block' }}>
-                      <div
-                        style={{
-                          textAlign: 'center',
-                          backgroundColor: token.colorSuccess,
-                          fontSize: '10px',
-                          padding: '0 4px',
-                          color: token.colorWhite,
-                        }}
-                      >
-                        {t('batchRunPage.requestStatus')}
-                      </div>
-                      <div
-                        style={{
-                          textAlign: 'center',
-                          backgroundColor: token.colorError,
-                          fontSize: '10px',
-                          padding: '0 4px',
-                          color: token.colorWhite,
-                        }}
-                      >
-                        {t('batchRunPage.testStatus')}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label>{t('batchRunPage.requestStatus')}</Label>
-                    <StatusBlock
-                      color={token.colorFillSecondary}
-                      text={t('batchRunPage.loading')}
-                    />
-                    <StatusBlock
-                      color={token.colorSuccess}
-                      text={t('batchRunPage.requestSuccess')}
-                    />
-                    <StatusBlock color={token.colorError} text={t('batchRunPage.requestFailed')} />
-                  </div>
-                  <div>
-                    <Label>{t('batchRunPage.testStatus')}</Label>
-                    <StatusBlock
-                      color={token.colorFillSecondary}
-                      text={t('batchRunPage.noTestScript')}
-                    />
-                    <StatusBlock color={token.colorSuccess} text={t('batchRunPage.allPassed')} />
-                    <br />
-                    <StatusBlock color={token.colorWarning} text={t('batchRunPage.SomeFailed')} />
-                    <StatusBlock color={token.colorError} text={t('batchRunPage.allFailed')} />
-                  </div>
-                </>
-              }
-              placement='bottomRight'
-              overlayStyle={{ maxWidth: '500px' }}
-            >
-              <QuestionCircleOutlined style={{ margin: '0 4px' }} />
-            </Popover>
-          </div>
-        </div>
-      )}
       <EmptyWrapper
         loading={loading}
         empty={!cases.length}
@@ -305,6 +217,7 @@ const BatchRun: ArexPaneFC = (props) => {
           overflow: auto;
         `}
       >
+        {/* TODO：虚拟列表 */}
         {casesResults}
       </EmptyWrapper>
     </div>

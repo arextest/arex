@@ -17,7 +17,7 @@ import {
 } from '@arextest/arex-request';
 import { useRequest } from 'ahooks';
 import { Card, Divider, Space, Spin, Typography } from 'antd';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 
 import { CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
@@ -57,15 +57,23 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
     return url;
   }, [endpoint, props.environment]);
 
-  const { data, loading } = useRequest<ArexResponse, any>(
+  const { data, loading, run, cancel } = useRequest<ArexResponse, any>(
     () => sendRequest(props.data, props.environment),
     {
-      refreshDeps: [props.data, props.environment],
+      manual: true,
       onSuccess: (res) => {
         props.onResponse?.(res);
       },
     },
   );
+
+  useEffect(() => {
+    run();
+    return () => {
+      console.log('cancel');
+      cancel();
+    };
+  }, []);
 
   const handleDebugCase = () => {
     navPane({

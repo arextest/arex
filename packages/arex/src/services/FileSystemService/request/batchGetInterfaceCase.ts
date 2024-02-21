@@ -15,7 +15,7 @@ export interface BatchGetInterfaceCaseRes {
   nodes: interfaceCaseNode[];
 }
 
-export async function batchGetInterfaceCase(params: BatchGetInterfaceCaseReq) {
+export async function batchGetInterfaceCase(params: BatchGetInterfaceCaseReq, timestamp?: number) {
   const res = await request.post<BatchGetInterfaceCaseRes>(
     '/webApi/filesystem/batchGetInterfaceCase',
     params,
