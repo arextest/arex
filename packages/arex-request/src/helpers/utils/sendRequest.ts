@@ -136,8 +136,8 @@ export async function sendRequest(
               statusCode: response?.code,
               body: String(response?.stream),
               meta: {
-                responseSize: response.responseSize, // in bytes
-                responseDuration: response.responseTime, // in millis
+                responseSize: response?.responseSize, // in bytes
+                responseDuration: response?.responseTime, // in millis
               },
             };
           },

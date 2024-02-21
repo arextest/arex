@@ -18,7 +18,7 @@ import { WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
 import BatchRunResultItem from '@/panes/BatchRun/BatchRunResultItem';
 import { WorkspaceEnvironmentPair } from '@/panes/Request/EnvironmentDrawer';
 import { EnvironmentService, FileSystemService } from '@/services';
-import { CollectionType } from '@/services/FileSystemService';
+import { BatchGetInterfaceCaseReq, CollectionType } from '@/services/FileSystemService';
 import { useCollections } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
@@ -81,27 +81,34 @@ const BatchRun: ArexPaneFC = (props) => {
   const {
     data: cases = [],
     loading,
-    runAsync: queryCases,
-  } = useRequest(() =>
-    Promise.all(
-      checkValue.map((key) => {
-        const nodeType = collectionsFlatData.get(key.toString())!.nodeType;
-        return FileSystemService.queryRequest({ id: String(key), nodeType });
-      }),
-    ),
-  );
+    run: batchGetInterfaceCase,
+  } = useRequest(FileSystemService.batchGetInterfaceCase, {
+    manual: true,
+    onSuccess: (res) => {
+      setResponseList(
+        res.map(() => ({
+          response: { type: 'loading', headers: undefined },
+        })) as ArexResponse[],
+      );
+      console.log(res);
+      setCasesResults(getCasesResults(res));
+    },
+  });
 
   const [casesResults, setCasesResults] = useState<React.ReactNode>(null);
   const handleBatchRun = () => {
-    setResponseList(
-      [...Array(checkValue.length)].map(() => ({
-        response: { type: 'loading', headers: undefined },
-      })) as ArexResponse[],
-    );
-    // TODO 使用新接口查询所有case详情
-    // queryCases().then((cases) => {
-    //   setCasesResults(getCasesResults(cases));
-    // });
+    const nodes = checkValue
+      .map((item) => {
+        const infoId = item.toString();
+        const node = collectionsFlatData.get(infoId);
+        if (!node) return;
+        return {
+          infoId,
+          nodeType: node.nodeType,
+        };
+      })
+      .filter(Boolean) as BatchGetInterfaceCaseReq['nodes'];
+    batchGetInterfaceCase({ workspaceId, nodes });
   };
 
   const getCasesResults = useCallback(
@@ -113,6 +120,7 @@ const BatchRun: ArexPaneFC = (props) => {
           environment={activeEnvironment}
           data={caseItem}
           onResponse={(response) => {
+            console.log(response);
             setResponseList((res) => {
               res[index] = response;
             });
@@ -150,20 +158,12 @@ const BatchRun: ArexPaneFC = (props) => {
           // maxTagCount={3}
           size='small'
           fieldNames={{ label: 'nodeName', value: 'infoId', children: 'children' }}
-          // value={checkValue}
+          value={checkValue}
           treeData={treeData}
           showCheckedStrategy={TreeSelect.SHOW_PARENT}
           loadData={handleTreeLoad}
           onChange={(value, label, extra) => {
-            console.log(value, label, extra);
-            // const filtered = value.filter((v) => {
-            //   const nodeType = collectionsFlatData.get(v.toString())?.nodeType;
-            //   return (
-            //     !!nodeType &&
-            //     [CollectionNodeType.interface, CollectionNodeType.case].includes(nodeType)
-            //   );
-            // });
-            // setCheckValue(filtered); // TODO sort
+            setCheckValue(value); // TODO sort
           }}
           style={{ flex: 1 }}
         />
