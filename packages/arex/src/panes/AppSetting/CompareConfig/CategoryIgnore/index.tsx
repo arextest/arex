@@ -160,7 +160,7 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
         dataIndex: ['ignoreCategoryDetail', 'operationType'],
       },
       {
-        title: t('appSetting.categoryName', { ns: 'components' }),
+        title: t('appSetting.operationName', { ns: 'components' }),
         dataIndex: ['ignoreCategoryDetail', 'operationName'],
         render: (text: string) => text || '*',
       },
@@ -216,7 +216,7 @@ const CategoryIgnore: FC<CategoryIgnoreProps> = (props) => {
               value={operationNameValue}
               options={operationNameOptions}
               onChange={setOperationNameValue}
-              placeholder={t('appSetting.categoryNamePlaceholder', { ns: 'components' })}
+              placeholder={t('appSetting.operationNamePlaceholder', { ns: 'components' })}
               style={{ flex: 1 }}
             />
           </Space>
