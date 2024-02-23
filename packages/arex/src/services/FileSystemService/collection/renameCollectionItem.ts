@@ -8,8 +8,6 @@ export type RenameCollectionItemReq = {
 };
 
 export type RenameCollectionItemRes = {
-  infoId: string;
-  workspaceId: string;
   success: boolean;
 };
 

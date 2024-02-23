@@ -54,8 +54,14 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
 
   const { activeWorkspaceId } = useWorkspaces();
   const { activePane, setActiveMenu } = useMenusPanes();
-  const { loading, collectionsTreeData, collectionsFlatData, getCollections, getPath } =
-    useCollections();
+  const {
+    loading,
+    collectionsTreeData,
+    collectionsFlatData,
+    getCollections,
+    getPath,
+    moveCollectionNode,
+  } = useCollections();
 
   const searchRef = useRef<StructuredFilterRef>(null);
 
@@ -63,8 +69,6 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   const [autoExpandParent, setAutoExpandParent] = useState(true);
 
   const [expandedKeys, setExpandedKeys] = useState<string[]>(); // TODO 初始化展开的节点
-
-  useEffect(() => {}, []);
 
   // auto expand by active pane id
   useEffect(() => {
@@ -204,99 +208,45 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     },
   );
 
-  const { run: move } = useRequest(FileSystemService.moveCollectionItem, {
-    manual: true,
-    onSuccess(success, [{ fromNodePath, toParentPath }]) {
-      if (success) {
-        getCollections({
-          workspaceId: activeWorkspaceId,
-          parentIds: fromNodePath.slice(0, -1),
-        });
-        getCollections({
-          workspaceId: activeWorkspaceId,
-          parentIds: toParentPath,
-        });
-      }
-    },
-  });
-
   const onDrop = useCallback<NonNullable<DirectoryTreeProps<CollectionTreeType>['onDrop']>>(
-    (value) => {
+    (info) => {
+      const dragKey = info.dragNode.infoId;
+      const dropKey = info.node.infoId;
+      const dropPos = info.node.pos.split('-');
+      const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]); // the drop position relative to the drop node, inside 0, top -1, bottom 1
+
+      const dragNodeType = info.dragNode.nodeType;
+      let dropNodeType = CollectionNodeType.folder;
+      // let dragTree = cloneDeep(collectionsTreeData);
+      let nodeTree = cloneDeep(collectionsTreeData);
+
+      dropPos.slice(1, info.dropToGap ? -1 : undefined).forEach((p) => {
+        const index = Number(p);
+        dropNodeType = nodeTree[index].nodeType;
+        nodeTree = nodeTree[index].children;
+      });
+
       /**
+       * 校验拖拽节点是否合规
        * 节点拖动规则:
        * 1. CollectionNodeType.folder 只能直属于 CollectionNodeType.folder
-       * 2. CollectionNodeType.request 只能直属于 CollectionNodeType.folder
-       * 3. CollectionNodeType.case 只能直属于 CollectionNodeType.request
+       * 2. CollectionNodeType.interface 只能直属于 CollectionNodeType.folder
+       * 3. CollectionNodeType.case 只能直属于 CollectionNodeType.interface
        */
-      const dragNodeType = value.dragNode.nodeType;
-      let parentNodeType = CollectionNodeType.folder;
-
-      const dragPos = value.dragNode.pos
-        .split('-')
-        .slice(1) // remove root node
-        .map((p) => Number(p));
-      const nodePos = value.node.pos
-        .split('-')
-        .slice(1) // remove root node
-        .map((p) => Number(p));
-
-      let dragTree = cloneDeep(collectionsTreeData);
-      let nodeTree = cloneDeep(collectionsTreeData);
-      const fromNodePath: string[] = [];
-      const toParentPath: string[] = [];
-      let toIndex = value.dropPosition;
-
-      dragPos.forEach((p) => {
-        fromNodePath.push(dragTree[p].infoId);
-        dragTree = dragTree[p].children;
-      });
-
-      nodePos.forEach((p) => {
-        toParentPath.push(nodeTree[p].infoId);
-        parentNodeType = nodeTree[p].nodeType;
-        nodeTree = nodeTree[p].children;
-      });
-
-      // console.log(value);
-      // console.log(dragNodeType, parentNodeType);
-      // 校验拖拽节点是否合规: 3,3 || 1,3 || 2,1
-
       if (
         (dragNodeType === CollectionNodeType.folder &&
-          parentNodeType !== CollectionNodeType.folder) ||
+          dropNodeType !== CollectionNodeType.folder) ||
         (dragNodeType === CollectionNodeType.interface &&
           // @ts-ignore
-          parentNodeType === CollectionNodeType.case) ||
-        (dragNodeType === CollectionNodeType.case &&
-          (parentNodeType as CollectionNodeType) === CollectionNodeType.folder)
+          dropNodeType !== CollectionNodeType.folder) ||
+        // @ts-ignore
+        (dragNodeType === CollectionNodeType.case && dropNodeType !== CollectionNodeType.interface)
       )
-        return console.error('拖拽节点不合规');
+        return console.error('Dragging nodes is not compliant');
 
-      // 同类型拖拽，层级自动提升
-      if (dragNodeType === parentNodeType) {
-        // 文件夹拖动的情况
-        if (dragNodeType === CollectionNodeType.folder) {
-          if (dragPos.length === nodePos.length && value.dropToGap) {
-            // console.log('文件夹平级的情况');
-            toParentPath.pop();
-          } else {
-            // console.log('文件夹嵌套拖进的情况');
-            value.dropToGap && toParentPath.pop();
-          }
-        } else {
-          toIndex++;
-          toParentPath.pop();
-        }
-      } else toIndex = 0;
-
-      move({
-        id: activeWorkspaceId,
-        fromNodePath,
-        toParentPath,
-        toIndex: toIndex < 0 ? 0 : toIndex,
-      });
+      moveCollectionNode(dragKey, dropKey, info.dropToGap, dropPosition);
     },
-    [activeWorkspaceId, collectionsTreeData, move],
+    [collectionsTreeData, moveCollectionNode],
   );
 
   const onExpand = (newExpandedKeys: React.Key[]) => {

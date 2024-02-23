@@ -70,7 +70,13 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     selectable = [CollectionNodeType.folder, CollectionNodeType.interface, CollectionNodeType.case],
   } = props;
   const { activeWorkspaceId } = useWorkspaces();
-  const { getCollections, getPath } = useCollections();
+  const {
+    getCollections,
+    getPath,
+    renameCollectionNode,
+    removeCollectionNode,
+    duplicateCollectionNode,
+  } = useCollections();
   const { removePane } = useMenusPanes();
 
   const { modal } = App.useApp();
@@ -119,11 +125,8 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
       }),
     {
       manual: true,
-      onSuccess: (res, [path]) => {
-        getCollections({
-          workspaceId: activeWorkspaceId,
-          parentIds: path.slice(0, -1),
-        });
+      onSuccess: (res) => {
+        duplicateCollectionNode(props.data.infoId, res.infoId);
       },
     },
   );
@@ -138,17 +141,17 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
       }),
     {
       manual: true,
-      onSuccess(success, [path]) {
+      onSuccess(success) {
         if (success) {
           setEditMode(false);
-          getCollections({ workspaceId: activeWorkspaceId, parentIds: path.slice(0, -1) });
+          renameCollectionNode(props.data.infoId, nodeName);
         }
       },
     },
   );
 
   const { run: removeCollectionItem } = useRequest(
-    (removeNodePath) =>
+    (removeNodePath: string[]) =>
       FileSystemService.removeCollectionItem({
         id: activeWorkspaceId,
         removeNodePath,
@@ -156,12 +159,13 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
       }),
     {
       manual: true,
-      onSuccess: (_, [removeNodePath]) => {
-        const id = `${activeWorkspaceId}-${props.data.nodeType}-${props.data.infoId}`;
-        const paneKey = encodePaneKey({ id, type: PanesType.REQUEST });
-        removePane(paneKey);
-        const parentIds = removeNodePath.slice(0, -1);
-        getCollections({ workspaceId: activeWorkspaceId, parentIds });
+      onSuccess: (success) => {
+        if (success) {
+          const id = `${activeWorkspaceId}-${props.data.nodeType}-${props.data.infoId}`;
+          const paneKey = encodePaneKey({ id, type: PanesType.REQUEST });
+          removePane(paneKey);
+          removeCollectionNode(props.data.infoId);
+        }
       },
     },
   );

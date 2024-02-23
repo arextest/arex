@@ -8,7 +8,6 @@ import {
 } from '@arextest/arex-core';
 import { useRequest, useSize } from 'ahooks';
 import { App } from 'antd';
-import type { DataNode } from 'antd/lib/tree';
 import React, { useMemo, useRef } from 'react';
 
 import { CollectionSelect, Icon, WorkspacesMenu } from '@/components';
@@ -19,11 +18,8 @@ import CollectionsImportExport, {
   CollectionsImportExportRef,
 } from '@/menus/Collection/ImportExport';
 import { FileSystemService } from '@/services';
-import { CollectionType } from '@/services/FileSystemService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { CaseSourceType } from '@/store/useCollections';
-
-export type CollectionTreeType = CollectionType & DataNode;
 
 const Collection: ArexMenuFC = (props) => {
   const { t } = useTranslation(['components']);
@@ -35,7 +31,7 @@ const Collection: ArexMenuFC = (props) => {
 
   const { activeWorkspaceId, workspaces, getWorkspaces, setActiveWorkspaceId } = useWorkspaces();
   const { reset: resetPane } = useMenusPanes();
-  const { getCollections } = useCollections();
+  const { createRootCollectionNode } = useCollections();
 
   const collectionsImportExportRef = useRef<CollectionsImportExportRef>(null);
 
@@ -58,8 +54,7 @@ const Collection: ArexMenuFC = (props) => {
       manual: true,
       onSuccess(res) {
         if (res.success) {
-          // TODO 折叠优化
-          getCollections();
+          createRootCollectionNode(res.infoId);
         }
       },
     },

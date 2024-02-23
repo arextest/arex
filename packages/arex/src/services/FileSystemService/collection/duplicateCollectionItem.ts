@@ -13,5 +13,9 @@ export type DuplicateCollectionItemRes = {
 };
 
 export async function duplicateCollectionItem(params: DuplicateCollectionItemReq) {
-  return request.post<DuplicateCollectionItemRes>(`/webApi/filesystem/duplicate`, params);
+  const res = await request.post<DuplicateCollectionItemRes>(
+    `/webApi/filesystem/duplicate`,
+    params,
+  );
+  return res.body;
 }
