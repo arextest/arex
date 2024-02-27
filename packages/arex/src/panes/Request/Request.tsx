@@ -291,7 +291,6 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       navPane({
         id: `${workspaceId}-${nodeType}-${params.infoId}`,
         type,
-        icon: 'arex',
       });
       if (params.infoId !== id) removePane(props.paneKey); // remove old pane when save as
       else queryRequest();
