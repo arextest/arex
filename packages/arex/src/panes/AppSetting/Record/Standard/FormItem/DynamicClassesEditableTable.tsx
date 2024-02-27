@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import { HelpTooltip, TooltipButton, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Input, Popconfirm, Space, Table } from 'antd';
+import { App, Button, Checkbox, Input, Popconfirm, Space, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { FC, useCallback, useState } from 'react';
 import { Updater, useImmer } from 'use-immer';
@@ -28,6 +28,8 @@ const InitRowData = {
   parameterTypes: '',
 };
 
+const hiddenAc = (text: string) => (text.startsWith('ac:') ? text.substring(3) : text);
+
 const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props) => {
   const { message } = App.useApp();
   const { t } = useTranslation(['common', 'components']);
@@ -44,7 +46,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
   const [dataSource, setDataSource] = useImmer<DynamicClass[]>([]);
 
   const columns = (paramsUpdater: Updater<DynamicClass[]>): ColumnsType<DynamicClass> => {
-    const handleChange = (attr: keyof DynamicClass, value: string) => {
+    const handleChange = (attr: keyof DynamicClass, value: string | boolean) => {
       paramsUpdater((params) => {
         const index = params.findIndex((item) => isEditableRow(item.id));
         // @ts-ignore
@@ -67,10 +69,10 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
         ),
         dataIndex: 'fullClassName',
         key: 'fullClassName',
-        render: (text, record) =>
-          isEditableRow(record.id) ? (
+        render: (text, record) => {
+          return isEditableRow(record.id) ? (
             <Input
-              value={text}
+              value={hiddenAc(text)}
               status={fullClassNameInputStatus}
               onChange={(e) => {
                 setFullClassNameInputStatus('');
@@ -78,8 +80,25 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
               }}
             />
           ) : (
-            text
-          ),
+            hiddenAc(text)
+          );
+        },
+      },
+      {
+        title: (
+          <HelpTooltip title={t('appSetting.baseTooltip', { ns: 'components' })}>
+            {t('appSetting.base', { ns: 'components' })}
+          </HelpTooltip>
+        ),
+        key: 'base',
+        dataIndex: 'base',
+        render: (checked, record) => (
+          <Checkbox
+            checked={checked}
+            disabled={!isEditableRow(record.id)}
+            onChange={(e) => handleChange('base', e.target.checked)}
+          />
+        ),
       },
       {
         title: (
@@ -208,15 +227,20 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
       message.warning(t('appSetting.emptyFullClassName', { ns: 'components' }));
       return;
     }
+
+    const params = {
+      fullClassName: (record.base ? 'ac:' : '') + hiddenAc(record.fullClassName),
+      methodName: record.methodName,
+      keyFormula: record.keyFormula,
+      parameterTypes: record.parameterTypes,
+    };
+
     record.id === EDIT_ROW_KEY
-      ? insert({ ...record, appId: props.appId, configType: 0 })
+      ? insert({ ...params, appId: props.appId, configType: 0 })
       : update({
+          ...params,
           id: record.id,
           appId: props.appId,
-          fullClassName: record.fullClassName,
-          methodName: record.methodName,
-          keyFormula: record.keyFormula,
-          parameterTypes: record.parameterTypes,
         });
   };
 
