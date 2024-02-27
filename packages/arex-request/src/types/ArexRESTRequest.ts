@@ -20,4 +20,5 @@ export interface ArexRESTRequest {
   inheritedEndpoint: string;
   inheritedMethod: string;
   description: string;
+  parentPath: { id: string; name: string; nodeType: number }[];
 }

@@ -19,7 +19,7 @@ import React, { FC, useMemo } from 'react';
 
 import { CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
-import { useCollections, useWorkspaces } from '@/store';
+import { useWorkspaces } from '@/store';
 
 const { Text } = Typography;
 
@@ -37,14 +37,17 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
   const { method, name, endpoint } = props.request;
   const navPane = useNavPane();
   const { activeWorkspaceId } = useWorkspaces();
-  const { collectionsFlatData } = useCollections();
 
   const { t } = useTranslation('page');
 
-  const nodeType = useMemo(
-    () => collectionsFlatData.get(props.request.id)?.nodeType || CollectionNodeType.case,
-    [props.request.id],
-  );
+  const nodeType = useMemo(() => {
+    const length = props.request.parentPath.length;
+    const parent = props.request.parentPath[length - 1];
+    return parent?.nodeType === CollectionNodeType.interface
+      ? CollectionNodeType.case
+      : CollectionNodeType.interface;
+  }, [props.request]);
+
   const realEndpoint = useMemo(() => {
     const parse = getMarkFromToArr(endpoint, REGEX_ENV_VAR, props.environment);
     let url = endpoint;
@@ -75,12 +78,12 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
     >
       <Divider style={{ margin: '8px 0' }} />
 
-      <Card size={nodeType === CollectionNodeType.case ? 'small' : undefined}>
+      <Card size='small'>
         <SpaceBetweenWrapper>
           <Space>
             {nodeType === CollectionNodeType.case && <RequestMethodIcon.case />}
-
             {React.createElement(RequestMethodIcon[method], {
+              // @ts-ignore
               style: { display: 'flex', width: 'max-content' },
             })}
             <Text style={{ marginRight: '8px' }}>{name}</Text>

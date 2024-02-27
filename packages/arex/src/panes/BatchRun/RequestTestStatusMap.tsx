@@ -1,4 +1,5 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { useTranslation } from '@arextest/arex-core';
 import { ArexEnvironment } from '@arextest/arex-request';
 import { ArexRESTRequest } from '@arextest/arex-request/src';
 import { Button, Flex, Popover, Typography } from 'antd';
@@ -15,6 +16,7 @@ export type RequestTestStatusMapProps = {
   onClick?: RequestTestStatusBlockProps['onClick'];
 };
 const RequestTestStatusMap: FC<RequestTestStatusMapProps> = (props) => {
+  const { t } = useTranslation('page');
   if (!props.data || !Object.values(props.data).length) return null;
   return (
     <div style={{ padding: '0 16px 4px', marginBottom: '4px' }}>
@@ -30,7 +32,7 @@ const RequestTestStatusMap: FC<RequestTestStatusMapProps> = (props) => {
       </div>
       <Flex justify='space-between'>
         <Flex>
-          <Typography.Text type='secondary'>点击状态块查看请求详情</Typography.Text>
+          <Typography.Text type='secondary'>{t('batchRunPage.checkRequestDetail')}</Typography.Text>
           <Popover title={<StatusBlockTooltip />} overlayStyle={{ maxWidth: '500px' }}>
             <QuestionCircleOutlined
               style={{

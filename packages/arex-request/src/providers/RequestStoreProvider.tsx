@@ -44,6 +44,7 @@ const defaultState: RequestStore = {
     inheritedEndpoint: '',
     inheritedMethod: '',
     description: '',
+    parentPath: [],
   },
   edited: false,
   response: undefined,

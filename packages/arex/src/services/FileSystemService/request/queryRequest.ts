@@ -4,7 +4,7 @@ import { CollectionNodeType } from '@/constant';
 import { queryDebuggingCase } from '@/services/FileSystemService';
 import { request } from '@/utils';
 
-export type QueryRequestReq = ArexRESTRequest & {
+export type ArexRequest = ArexRESTRequest & {
   recordId: string;
   inherited: boolean;
   nodeType: CollectionNodeType;
@@ -17,7 +17,7 @@ export async function queryRequest(params: {
   nodeType: CollectionNodeType;
   recordId?: string;
   planId?: string;
-}): Promise<QueryRequestReq> {
+}): Promise<ArexRequest> {
   const res = await request.post<any>(
     `/webApi/filesystem/query${
       params.nodeType === CollectionNodeType.interface ? 'Interface' : 'Case'
