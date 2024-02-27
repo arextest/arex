@@ -9,14 +9,15 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { ArexEnvironment, ArexResponse, EnvironmentSelect } from '@arextest/arex-request';
-import { useRequest } from 'ahooks';
+import { ArexRESTRequest } from '@arextest/arex-request/src';
+import { useLocalStorageState, useRequest } from 'ahooks';
 import { Button, Divider, Flex, Slider, TreeSelect, TreeSelectProps, Typography } from 'antd';
 import React, { Key, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
+import { BATCH_RUN_QPS_KEY, WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
 import BatchRunResultItem from '@/panes/BatchRun/BatchRunResultItem';
-import StatusBlockStructure from '@/panes/BatchRun/StatusBlockStructure';
+import RequestTestStatusMap from '@/panes/BatchRun/RequestTestStatusMap';
 import { WorkspaceEnvironmentPair } from '@/panes/Request/EnvironmentDrawer';
 import { EnvironmentService, FileSystemService } from '@/services';
 import { BatchGetInterfaceCaseReq, CollectionType } from '@/services/FileSystemService';
@@ -32,23 +33,25 @@ const BatchRun: ArexPaneFC = (props) => {
   const { collectionsTreeData, collectionsFlatData } = useCollections();
 
   const [activeEnvironment, setActiveEnvironment] = useState<ArexEnvironment>();
-  const [checkValue, setCheckValue] = useState<Key[]>([]);
+  const [checkValue, setCheckValue] = useState<Key[]>(id ? [id] : []);
 
-  const [casesResults, setCasesResults] = useImmer<React.ReactNode[]>([]);
-  const [responseList, setResponseList] = useImmer<Record<string, ArexResponse>>([]);
+  const [processing, setProcessing] = useState(false);
 
-  const [qps, setQps] = useState<number>(10);
+  const [casesResults, setCasesResults] = useImmer<ArexRESTRequest[]>([]);
+  const [runResult, setRunResult] = useState<{
+    request: ArexRESTRequest;
+    response?: ArexResponse;
+  }>();
+
+  const [qps, setQps] = useLocalStorageState(BATCH_RUN_QPS_KEY, {
+    defaultValue: 10,
+  });
 
   const [timestamp, setTimestamp] = useState<number>();
   const timestampRef = useRef<number>();
   useEffect(() => {
     timestampRef.current = timestamp;
   }, [timestamp]);
-
-  const treeData = useMemo(
-    () => (id ? collectionsFlatData.get(id)?.children || [] : collectionsTreeData), // collection right click folder to batch run
-    [collectionsFlatData, collectionsTreeData, id],
-  );
 
   const { data: environments } = useRequest(EnvironmentService.getEnvironments, {
     defaultParams: [{ workspaceId }],
@@ -65,40 +68,34 @@ const BatchRun: ArexPaneFC = (props) => {
   });
 
   const batchGetInterfaceCaseCallback = useCallback(
-    async (
-      res: Awaited<ReturnType<typeof FileSystemService.batchGetInterfaceCase>>,
-      _timestamp?: number,
-    ) => {
-      const list = res.reduce<Record<string, ArexResponse>>((acc, item) => {
-        acc[item.id] = { response: { type: 'loading', headers: undefined } };
-        return acc;
-      }, {});
-      setResponseList(list);
-
-      async function processPromiseArray(promiseArray: typeof res, batchSize: number) {
-        for (let i = 0; i < promiseArray.length; i += batchSize) {
-          console.log(timestampRef.current, _timestamp);
+    async (res: ArexRESTRequest[], _timestamp?: number) => {
+      async function processPromiseArray(promiseArray: typeof res, qps: number) {
+        for (let i = 0; i < promiseArray.length; i++) {
           if (timestampRef.current !== _timestamp) {
             console.log('timestamp changed, stop batch run');
+            setProcessing(false);
             break;
           }
 
-          const batch = promiseArray.slice(i, i + batchSize);
+          const batch = promiseArray.slice(i, i + 1);
 
           setCasesResults((result) => {
-            result.push(getCasesResults(batch));
+            result.push(...batch);
           });
 
-          if (i + batchSize < promiseArray.length) {
-            // 等待指定的时间间隔
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+          if (i + 1 < promiseArray.length) {
+            await new Promise((resolve) => setTimeout(resolve, 1000 / qps));
           }
         }
       }
 
-      processPromiseArray(res, qps).then(() => {
+      setProcessing(true);
+      processPromiseArray(res, qps || 10).then(() => {
+        setProcessing(false);
         console.log('batch run finished');
       });
+      setRunResult(undefined);
+      // setCasesResults(res);
     },
     [timestamp],
   );
@@ -111,7 +108,6 @@ const BatchRun: ArexPaneFC = (props) => {
     manual: true,
     onBefore: () => {
       setCasesResults([]);
-      setResponseList({});
     },
     onSuccess: (res, [params, _timestamp]) => {
       batchGetInterfaceCaseCallback(res, _timestamp);
@@ -134,24 +130,6 @@ const BatchRun: ArexPaneFC = (props) => {
     setTimestamp(timestamp);
     batchGetInterfaceCase({ workspaceId, nodes }, timestamp);
   };
-
-  const getCasesResults = useCallback(
-    (cases: Awaited<ReturnType<typeof FileSystemService.queryRequest>>[]) =>
-      cases.map((caseItem) => (
-        <BatchRunResultItem
-          id={`batch-run-result-item-${caseItem.id}`}
-          key={caseItem.id}
-          environment={activeEnvironment}
-          data={caseItem}
-          onResponse={(response) => {
-            setResponseList((res) => {
-              res[caseItem.id] = response;
-            });
-          }}
-        />
-      )),
-    [activeEnvironment],
-  );
 
   const handleTreeLoad: TreeSelectProps<CollectionType>['loadData'] = (treeNode) =>
     new Promise<void>((resolve) =>
@@ -182,7 +160,7 @@ const BatchRun: ArexPaneFC = (props) => {
           size='small'
           fieldNames={{ label: 'nodeName', value: 'infoId', children: 'children' }}
           value={checkValue}
-          treeData={treeData}
+          treeData={collectionsTreeData}
           showCheckedStrategy={TreeSelect.SHOW_PARENT}
           loadData={handleTreeLoad}
           onChange={setCheckValue}
@@ -191,12 +169,13 @@ const BatchRun: ArexPaneFC = (props) => {
 
         <Flex align='center'>
           <Label>QPS</Label>
-          <Slider min={1} max={100} value={qps} onChange={setQps} style={{ width: '64px' }} />
+          <Slider min={1} max={20} value={qps} onChange={setQps} style={{ width: '64px' }} />
         </Flex>
 
         <Button
           type='primary'
           icon={<SendOutlined />}
+          loading={processing}
           onClick={handleBatchRun}
           style={{ marginLeft: '16px' }}
         >
@@ -204,21 +183,27 @@ const BatchRun: ArexPaneFC = (props) => {
         </Button>
       </div>
 
-      <StatusBlockStructure
+      <RequestTestStatusMap
         key={checkValue.length} // Add key to force re-render
-        data={responseList}
+        data={casesResults}
+        environment={activeEnvironment}
+        onClick={setRunResult}
       />
 
       <EmptyWrapper
         loading={loading}
         empty={!cases.length}
         css={css`
-          height: calc(100vh - 226px);
           overflow: auto;
         `}
       >
-        {/* TODO：虚拟列表 */}
-        {casesResults}
+        {runResult && (
+          <BatchRunResultItem
+            environment={activeEnvironment}
+            request={runResult.request}
+            response={runResult.response}
+          />
+        )}
       </EmptyWrapper>
     </div>
   );

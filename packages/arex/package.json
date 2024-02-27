@@ -21,7 +21,7 @@
     "@ant-design/icons": "^5.2.6",
     "@arextest/arex-core": "*",
     "@arextest/arex-request": "*",
-    "@arextest/arex-request-runtime": "^1.0.2",
+    "@arextest/arex-request-runtime": "^7.36.3",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@formkit/auto-animate": "^0.7.0",

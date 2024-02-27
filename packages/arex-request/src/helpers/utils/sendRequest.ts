@@ -141,6 +141,13 @@ export async function sendRequest(
               },
             };
           },
+          done: function (err) {
+            if (err) {
+              console.log(err);
+              reject(err);
+            }
+            run.dispose();
+          },
         });
       },
     );

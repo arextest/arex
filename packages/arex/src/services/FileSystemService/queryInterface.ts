@@ -10,7 +10,7 @@ export type Address = {
 export type KeyValueType = {
   key: string;
   value: string;
-  active?: boolean;
+  active: boolean;
 };
 
 export type BaseInterface = {

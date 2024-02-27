@@ -6,31 +6,27 @@ import {
   TooltipButton,
   useTranslation,
 } from '@arextest/arex-core';
-import type { ArexEnvironment, ArexRESTResponse } from '@arextest/arex-request';
+import type { ArexEnvironment, ArexRESTRequest } from '@arextest/arex-request';
 import {
   ArexResponse,
   getMarkFromToArr,
   REGEX_ENV_VAR,
   ResponseMeta,
-  sendRequest,
   TestResult,
 } from '@arextest/arex-request';
-import { useRequest } from 'ahooks';
-import { Card, Divider, Space, Spin, Typography } from 'antd';
-import React, { FC, useEffect, useMemo } from 'react';
+import { Card, Divider, Space, Typography } from 'antd';
+import React, { FC, useMemo } from 'react';
 
 import { CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
-import { FileSystemService } from '@/services';
-import { useWorkspaces } from '@/store';
+import { useCollections, useWorkspaces } from '@/store';
 
 const { Text } = Typography;
 
 export type BatchRunResultItemProps = {
-  id: string;
   environment?: ArexEnvironment;
-  data: Awaited<ReturnType<typeof FileSystemService.queryRequest>>;
-  onResponse?: (data: ArexRESTResponse) => void;
+  request: ArexRESTRequest;
+  response?: ArexResponse;
 };
 
 function replaceBetween(string: string, start: number, end: number, what: string) {
@@ -38,12 +34,17 @@ function replaceBetween(string: string, start: number, end: number, what: string
 }
 
 const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
-  const { method, name, endpoint } = props.data;
+  const { method, name, endpoint } = props.request;
   const navPane = useNavPane();
   const { activeWorkspaceId } = useWorkspaces();
+  const { collectionsFlatData } = useCollections();
 
   const { t } = useTranslation('page');
 
+  const nodeType = useMemo(
+    () => collectionsFlatData.get(props.request.id)?.nodeType || CollectionNodeType.case,
+    [props.request.id],
+  );
   const realEndpoint = useMemo(() => {
     const parse = getMarkFromToArr(endpoint, REGEX_ENV_VAR, props.environment);
     let url = endpoint;
@@ -57,46 +58,27 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
     return url;
   }, [endpoint, props.environment]);
 
-  const { data, loading, run, cancel } = useRequest<ArexResponse, any>(
-    () => sendRequest(props.data, props.environment),
-    {
-      manual: true,
-      onSuccess: (res) => {
-        props.onResponse?.(res);
-      },
-    },
-  );
-
-  useEffect(() => {
-    run();
-    return () => {
-      console.log('cancel');
-      cancel();
-    };
-  }, []);
-
   const handleDebugCase = () => {
     navPane({
       type: PanesType.REQUEST,
-      id: `${activeWorkspaceId}-${CollectionNodeType.case}-${props.data.id}`,
-      name: `Debug-${props.data.name}`,
-      icon: props.data.method,
+      id: `${activeWorkspaceId}-${nodeType}-${props.request.id}`,
+      name: `Debug-${props.request.name}`,
+      icon: props.request.method,
     });
   };
 
   return (
     <div
-      id={props.id}
       style={{
         padding: '0 16px',
       }}
     >
       <Divider style={{ margin: '8px 0' }} />
 
-      <Card size={props.data.nodeType === CollectionNodeType.case ? 'small' : undefined}>
+      <Card size={nodeType === CollectionNodeType.case ? 'small' : undefined}>
         <SpaceBetweenWrapper>
           <Space>
-            {props.data.nodeType === CollectionNodeType.case && <RequestMethodIcon.case />}
+            {nodeType === CollectionNodeType.case && <RequestMethodIcon.case />}
 
             {React.createElement(RequestMethodIcon[method], {
               style: { display: 'flex', width: 'max-content' },
@@ -114,28 +96,24 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
           />
         </SpaceBetweenWrapper>
 
-        <ResponseMeta response={data?.response} />
+        <ResponseMeta response={props.response?.response} />
 
         <div style={{ minHeight: '32px' }}>
-          <Spin spinning={loading}>
-            {!loading && (
-              <div>
-                {data?.testResult?.length ? (
-                  <TestResult testResult={data.testResult} />
-                ) : (
-                  <Text
-                    css={css`
-                      display: block;
-                      margin: 16px;
-                    `}
-                    type='secondary'
-                  >
-                    {t('batchRunPage.noTestScript')}
-                  </Text>
-                )}
-              </div>
+          <div>
+            {props.response?.testResult?.length ? (
+              <TestResult testResult={props.response.testResult} />
+            ) : (
+              <Text
+                css={css`
+                  display: block;
+                  margin: 16px;
+                `}
+                type='secondary'
+              >
+                {t('batchRunPage.noTestScript')}
+              </Text>
             )}
-          </Spin>
+          </div>
         </div>
       </Card>
     </div>

@@ -1,3 +1,5 @@
+import { ArexRESTRequest } from '@arextest/arex-request/src';
+
 import { CollectionNodeType } from '@/constant';
 import { BaseInterface } from '@/services/FileSystemService';
 import { request } from '@/utils';
@@ -23,9 +25,9 @@ export async function batchGetInterfaceCase(params: BatchGetInterfaceCaseReq, ti
   return res.body.nodes.map((node) => {
     const { address, ...rest } = node;
 
-    return {
+    const data: ArexRESTRequest = {
       id: rest.id,
-      name: rest.name,
+      name: rest.name || 'Untitled',
       method: address?.method || 'GET',
       endpoint: address?.endpoint || '',
       headers: rest.headers || [],
@@ -40,8 +42,9 @@ export async function batchGetInterfaceCase(params: BatchGetInterfaceCaseReq, ti
       inheritedEndpoint: '',
       // nodeType: params.nodeType,
       tags: rest.labelIds || [],
-      description: rest.description,
+      description: rest.description || '',
       parentPath: rest?.parentPath,
     };
+    return data;
   });
 }
