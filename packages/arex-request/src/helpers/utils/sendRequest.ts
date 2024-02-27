@@ -141,7 +141,7 @@ export async function sendRequest(
               },
             };
           },
-          done: function (err) {
+          done: function (err: any) {
             if (err) {
               console.log(err);
               reject(err);
