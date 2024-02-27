@@ -99,7 +99,7 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
     >
       {mode === Mode.normal ? (
         <>
-          <div css={HoverEditorIconCSS} style={{ maxWidth: '50%' }}>
+          <div css={HoverEditorIconCSS}>
             <Breadcrumb
               items={breadcrumbItems}
               css={css`
@@ -129,7 +129,7 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
             />
           </div>
 
-          <div style={{ display: 'flex', flexShrink: 0 }}>
+          <div style={{ display: 'flex' }}>
             <div css={HoverEditorIconCSS}>
               <Text
                 ellipsis
@@ -150,7 +150,7 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
                   setEditValue(descriptionProps?.value);
                   setMode(Mode.description);
                 }}
-                style={{ opacity: 0 }}
+                style={{ opacity: 0, marginRight: '8px' }}
               />
             </div>
 
