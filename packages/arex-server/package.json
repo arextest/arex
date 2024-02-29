@@ -4,13 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "init": "node server-init.js"
   },
   "dependencies": {
+    "connect-history-api-fallback": "^2.0.0",
+    "dotenv": "^16.4.5",
     "express": "^4.18.2",
-    "http-proxy-middleware": "^2.0.6",
-    "connect-history-api-fallback": "^2.0.0"
-  },
-  "devDependencies": {
+    "http-proxy-middleware": "^2.0.6"
   }
 }
