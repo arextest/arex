@@ -11,7 +11,7 @@
     "dev:ele": "pnpm --filter=arex dev:ele",
     "dev:lite": "pnpm --filter=arex-lite do-dev",
     "build": "pnpm run -r do-build",
-    "server": "cp -r packages/arex/dist packages/arex-server && pnpm --filter=arex-server start",
+    "server": "pnpm run --filter=arex-server init",
     "lint": "prettier --write \"packages/**/*.{ts,tsx}\" && eslint \"packages/**/*.{ts,tsx}\" --fix",
     "test": "pnpm -r test",
     "test:run": "pnpm -r test:run",
