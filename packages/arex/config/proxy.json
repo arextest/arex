@@ -1,14 +1,14 @@
 [
   {
     "path": "/report",
-    "target": "http://10.144.62.53:11000"
+    "target": "http://10.144.62.53:8090"
   },
   {
     "path": "/schedule",
-    "target": "http://10.144.62.53:11002"
+    "target": "http://10.144.62.53:8092"
   },
   {
     "path": "/storage",
-    "target": "http://10.144.62.53:11003"
+    "target": "http://10.144.62.53:8093"
   }
 ]
