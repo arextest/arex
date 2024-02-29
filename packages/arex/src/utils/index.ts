@@ -1,7 +1,5 @@
 import { i18n } from '@arextest/arex-core';
 
-import CollectionsImportExport from '@/menus/Collection/ImportExport';
-
 export { default as globalStoreInit } from './globalStoreInit';
 export { default as request } from './request';
 export { default as treeToMap } from './treeToMap';

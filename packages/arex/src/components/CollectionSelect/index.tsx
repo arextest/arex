@@ -1,6 +1,7 @@
 import { DownOutlined } from '@ant-design/icons';
 import {
   CategoryKey,
+  css,
   EmptyWrapper,
   getLocalStorage,
   Operator,
@@ -10,18 +11,20 @@ import {
   styled,
   useTranslation,
 } from '@arextest/arex-core';
+import { StructuredFilterRef } from '@arextest/arex-core/src/components/StructuredFilter';
 import { useRequest } from 'ahooks';
 import { Button, ConfigProvider, Tag, Tree } from 'antd';
+import { TreeProps } from 'antd/es';
 import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import { cloneDeep } from 'lodash';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import CollectionSearchedList from '@/components/CollectionSelect/CollectionSearchedList';
 import { CollectionNodeType, EMAIL_KEY, MenusType, PanesType } from '@/constant';
 import { FileSystemService, ReportService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { negate } from '@/utils';
-import treeFilter from '@/utils/treeFilter';
 
 import CollectionNodeTitle, { CollectionNodeTitleProps } from './CollectionNodeTitle';
 
@@ -39,7 +42,7 @@ export interface CollectionSelectProps {
   menu?: React.ReactNode;
   expandable?: CollectionNodeType[];
   selectable?: CollectionNodeType[];
-  onSelect?: DirectoryTreeProps<CollectionTreeType>['onSelect'];
+  onSelect?: (key: React.Key[], node: CollectionTreeType) => void;
 }
 const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   const {
@@ -51,15 +54,21 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
 
   const { activeWorkspaceId } = useWorkspaces();
   const { activePane, setActiveMenu } = useMenusPanes();
-  const { loading, collectionsTreeData, collectionsFlatData, getCollections, getPath } =
-    useCollections();
+  const {
+    loading,
+    collectionsTreeData,
+    collectionsFlatData,
+    getCollections,
+    getPath,
+    moveCollectionNode,
+  } = useCollections();
+
+  const searchRef = useRef<StructuredFilterRef>(null);
 
   const [searchValue, setSearchValue] = useState<SearchDataType>();
   const [autoExpandParent, setAutoExpandParent] = useState(true);
 
   const [expandedKeys, setExpandedKeys] = useState<string[]>(); // TODO 初始化展开的节点
-
-  useEffect(() => {}, []);
 
   // auto expand by active pane id
   useEffect(() => {
@@ -68,7 +77,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
       setActiveMenu(MenusType.COLLECTION);
 
       if (workspaceId !== activeWorkspaceId) {
-        getCollections(workspaceId).then(() =>
+        getCollections({ workspaceId, infoId: id, nodeType: parseInt(nodeTypeStr) }).then(() =>
           setExpandedKeys([...getPath(id).map((item) => item.id)]),
         );
       } else {
@@ -86,15 +95,15 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     },
   );
 
-  const filterTreeData = useMemo(
-    // filter nodeType === 3 是为了隐藏第一层级只显示文件夹类型（由于新增请求时会新增一个临时的request到树形目录的第一层）
-    // TODO filter 逻辑待优化
-    () =>
-      searchValue?.keyword
-        ? treeFilter(searchValue.keyword, cloneDeep(collectionsTreeData), 'nodeName')
-        : collectionsTreeData,
-    [collectionsTreeData, searchValue?.keyword],
-  );
+  const handleLoadData: TreeProps<CollectionType>['loadData'] = (treeNode) =>
+    new Promise<void>((resolve) =>
+      resolve(
+        getCollections({
+          workspaceId: activeWorkspaceId,
+          parentIds: getPath(treeNode.infoId).map((item) => item.id),
+        }),
+      ),
+    );
 
   const dataList: { key: string; title: string; labelIds: string | null }[] = useMemo(
     () =>
@@ -112,7 +121,17 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
         category: CategoryKey.Label,
         operator: [Operator.EQ, Operator.NE],
         value: labelData.map((label) => ({
-          label: <Tag color={label.color}>{label.labelName}</Tag>,
+          label: (
+            <Tag
+              color={label.color}
+              css={css`
+                height: 16px;
+                line-height: 16px;
+              `}
+            >
+              {label.labelName}
+            </Tag>
+          ),
           key: label.id,
         })),
       },
@@ -128,7 +147,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
           : [...(expandedKeys || []), info.node.infoId];
       });
     }
-    props.onSelect?.(keys, info);
+    props.onSelect?.(keys, info.node);
   };
 
   const handleChange = (value: SearchDataType) => {
@@ -189,90 +208,45 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     },
   );
 
-  const { run: move } = useRequest(FileSystemService.moveCollectionItem, {
-    manual: true,
-    onSuccess(success) {
-      success && getCollections();
-    },
-  });
-
   const onDrop = useCallback<NonNullable<DirectoryTreeProps<CollectionTreeType>['onDrop']>>(
-    (value) => {
+    (info) => {
+      const dragKey = info.dragNode.infoId;
+      const dropKey = info.node.infoId;
+      const dropPos = info.node.pos.split('-');
+      const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]); // the drop position relative to the drop node, inside 0, top -1, bottom 1
+
+      const dragNodeType = info.dragNode.nodeType;
+      let dropNodeType = CollectionNodeType.folder;
+      // let dragTree = cloneDeep(collectionsTreeData);
+      let nodeTree = cloneDeep(collectionsTreeData);
+
+      dropPos.slice(1, info.dropToGap ? -1 : undefined).forEach((p) => {
+        const index = Number(p);
+        dropNodeType = nodeTree[index].nodeType;
+        nodeTree = nodeTree[index].children;
+      });
+
       /**
+       * 校验拖拽节点是否合规
        * 节点拖动规则:
        * 1. CollectionNodeType.folder 只能直属于 CollectionNodeType.folder
-       * 2. CollectionNodeType.request 只能直属于 CollectionNodeType.folder
-       * 3. CollectionNodeType.case 只能直属于 CollectionNodeType.request
+       * 2. CollectionNodeType.interface 只能直属于 CollectionNodeType.folder
+       * 3. CollectionNodeType.case 只能直属于 CollectionNodeType.interface
        */
-      const dragNodeType = value.dragNode.nodeType;
-      let parentNodeType = CollectionNodeType.folder;
-
-      const dragPos = value.dragNode.pos
-        .split('-')
-        .slice(1) // remove root node
-        .map((p) => Number(p));
-      const nodePos = value.node.pos
-        .split('-')
-        .slice(1) // remove root node
-        .map((p) => Number(p));
-
-      let dragTree = cloneDeep(collectionsTreeData);
-      let nodeTree = cloneDeep(collectionsTreeData);
-      const fromNodePath: string[] = [];
-      const toParentPath: string[] = [];
-      let toIndex = value.dropPosition;
-
-      dragPos.forEach((p) => {
-        fromNodePath.push(dragTree[p].infoId);
-        dragTree = dragTree[p].children;
-      });
-
-      nodePos.forEach((p) => {
-        toParentPath.push(nodeTree[p].infoId);
-        parentNodeType = nodeTree[p].nodeType;
-        nodeTree = nodeTree[p].children;
-      });
-
-      // console.log(value);
-      // console.log(dragNodeType, parentNodeType);
-      // 校验拖拽节点是否合规: 3,3 || 1,3 || 2,1
-
       if (
         (dragNodeType === CollectionNodeType.folder &&
-          parentNodeType !== CollectionNodeType.folder) ||
+          dropNodeType !== CollectionNodeType.folder) ||
         (dragNodeType === CollectionNodeType.interface &&
           // @ts-ignore
-          parentNodeType === CollectionNodeType.case) ||
-        (dragNodeType === CollectionNodeType.case &&
-          (parentNodeType as CollectionNodeType) === CollectionNodeType.folder)
+          dropNodeType !== CollectionNodeType.folder) ||
+        // @ts-ignore
+        (dragNodeType === CollectionNodeType.case && dropNodeType !== CollectionNodeType.interface)
       )
-        return console.error('拖拽节点不合规');
+        return console.error('Dragging nodes is not compliant');
 
-      // 同类型拖拽，层级自动提升
-      if (dragNodeType === parentNodeType) {
-        // 文件夹拖动的情况
-        if (dragNodeType === CollectionNodeType.folder) {
-          if (dragPos.length === nodePos.length && value.dropToGap) {
-            // console.log('文件夹平级的情况');
-            toParentPath.pop();
-          } else {
-            // console.log('文件夹嵌套拖进的情况');
-            value.dropToGap && toParentPath.pop();
-          }
-        } else {
-          toIndex++;
-          toParentPath.pop();
-        }
-      } else toIndex = 0;
-
-      move({
-        id: activeWorkspaceId,
-        fromNodePath,
-        toParentPath,
-        toIndex: toIndex < 0 ? 0 : toIndex,
-      });
+      moveCollectionNode(dragKey, dropKey, info.dropToGap, dropPosition);
     },
-    [activeWorkspaceId, collectionsTreeData, move],
+    [collectionsTreeData, moveCollectionNode],
   );
 
   const onExpand = (newExpandedKeys: React.Key[]) => {
@@ -296,7 +270,6 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     <div className='collection-content-wrapper'>
       <EmptyWrapper
         empty={!loading && !collectionsTreeData.length}
-        loading={loading}
         description={
           <Button type='primary' onClick={createCollection}>
             {t('collection.create_new')}
@@ -305,7 +278,9 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
       >
         <StructuredFilter
           size='small'
-          className={'collection-header-search'}
+          className='collection-header-search'
+          // @ts-ignore
+          ref={searchRef}
           showSearchButton={false}
           prefix={props.menu}
           labelDataSource={labelData.map((item) => ({
@@ -314,34 +289,52 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
             color: item.color,
           }))}
           options={options}
-          placeholder={'Search for Name or Id'}
+          // placeholder={'Search for Name'}
           onChange={handleChange}
         />
         <ConfigProvider theme={{ token: { motion: false } }}>
-          <CollectionTree
-            showLine
-            blockNode
-            height={props.height}
-            selectedKeys={props.selectedKeys}
-            expandedKeys={expandedKeys}
-            autoExpandParent={autoExpandParent}
-            switcherIcon={<DownOutlined />}
-            treeData={filterTreeData}
-            fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
-            onDrop={onDrop}
-            onExpand={onExpand}
-            onSelect={handleSelect}
-            draggable={!props.readOnly && { icon: false }}
-            titleRender={(data) => (
-              <CollectionNodeTitle
-                data={data}
-                readOnly={props.readOnly}
-                keyword={searchValue?.keyword}
-                onAddNode={handleAddNode}
-                selectable={props.selectable}
-              />
-            )}
-          />
+          {searchValue?.keyword || searchValue?.structuredValue?.length ? (
+            <CollectionSearchedList
+              height={props.height}
+              workspaceId={activeWorkspaceId}
+              searchValue={searchValue}
+              onSelect={(keys, data) => {
+                getCollections({
+                  workspaceId: activeWorkspaceId,
+                  infoId: keys[0].toString(),
+                  nodeType: data.node.nodeType,
+                }).then(() => {
+                  handleSelect(keys, data);
+                });
+              }}
+            />
+          ) : (
+            <CollectionTree
+              showLine
+              blockNode
+              height={props.height}
+              selectedKeys={props.selectedKeys}
+              expandedKeys={expandedKeys}
+              autoExpandParent={autoExpandParent}
+              switcherIcon={<DownOutlined />}
+              treeData={collectionsTreeData}
+              loadData={handleLoadData}
+              fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
+              onDrop={onDrop}
+              onExpand={onExpand}
+              onSelect={handleSelect}
+              draggable={!props.readOnly && { icon: false }}
+              titleRender={(data) => (
+                <CollectionNodeTitle
+                  data={data}
+                  readOnly={props.readOnly}
+                  keyword={searchValue?.keyword}
+                  onAddNode={handleAddNode}
+                  selectable={props.selectable}
+                />
+              )}
+            />
+          )}
         </ConfigProvider>
       </EmptyWrapper>
     </div>

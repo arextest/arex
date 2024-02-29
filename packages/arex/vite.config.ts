@@ -27,9 +27,9 @@ export default defineConfig(async ({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve('./src'),
-        // '@arextest/arex-core/dist': path.resolve('../arex-core/src'),
-        // '@arextest/arex-core': path.resolve('../arex-core/src'),
-        // '@arextest/arex-request': path.resolve('../arex-request/src'),
+        '@arextest/arex-core/dist': path.resolve('../arex-core/src'),
+        '@arextest/arex-core': path.resolve('../arex-core/src'),
+        '@arextest/arex-request': path.resolve('../arex-request/src'),
       },
     },
     plugins: [
@@ -39,7 +39,7 @@ export default defineConfig(async ({ mode }) => {
       }),
       // Copy plugins: copy arex-request-runtime.js to dist folder on dev and build
       copyFilePlugin({
-        src: './node_modules/@arextest/arex-request-runtime/index.js',
+        src: './node_modules/@arextest/arex-request-runtime/dist/index.js',
         dest: 'dist/',
         rename: 'arex-request-runtime.js',
       }),

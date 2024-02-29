@@ -2,6 +2,7 @@ import {
   CheckOutlined,
   CloseOutlined,
   ExclamationCircleFilled,
+  FolderOutlined,
   MoreOutlined,
 } from '@ant-design/icons';
 import {
@@ -12,7 +13,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Dropdown, Input, MenuProps, Space } from 'antd';
+import { App, Button, Dropdown, Input, MenuProps, Space, theme } from 'antd';
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
@@ -69,10 +70,17 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     selectable = [CollectionNodeType.folder, CollectionNodeType.interface, CollectionNodeType.case],
   } = props;
   const { activeWorkspaceId } = useWorkspaces();
-  const { getCollections, getPath } = useCollections();
+  const {
+    getCollections,
+    getPath,
+    renameCollectionNode,
+    removeCollectionNode,
+    duplicateCollectionNode,
+  } = useCollections();
   const { removePane } = useMenusPanes();
 
   const { modal } = App.useApp();
+  const { token } = theme.useToken();
   const confirm = modal.confirm;
   const { t } = useTranslation(['common', 'components']);
   const navPane = useNavPane();
@@ -98,68 +106,72 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     {
       manual: true,
       onSuccess: (res, [{ caseSourceType, nodeType }]) => {
-        getCollections().then(() => props.onAddNode?.(res.infoId, nodeType));
-        if (caseSourceType !== CaseSourceType.AREX)
+        getCollections({ workspaceId: activeWorkspaceId, parentIds: nodePath }).then(() =>
+          props.onAddNode?.(res.infoId, nodeType),
+        );
+        // case inherit interface
+        if (caseSourceType === CaseSourceType.CASE)
           queryInterface({ id: nodePath[nodePath.length - 1] as string }, res.infoId);
       },
     },
   );
 
   const { run: duplicateCollectionItem } = useRequest(
-    () =>
+    (path: string[]) =>
       FileSystemService.duplicateCollectionItem({
         id: activeWorkspaceId,
-        path: nodePath,
+        path,
         userName,
       }),
     {
       manual: true,
-      onSuccess: () => {
-        getCollections();
+      onSuccess: (res) => {
+        duplicateCollectionNode(props.data.infoId, res.infoId);
       },
     },
   );
 
   const { run: rename } = useRequest(
-    () =>
+    (path: string[]) =>
       FileSystemService.renameCollectionItem({
-        id: activeWorkspaceId,
-        newName: nodeName,
-        path: nodePath,
+        path,
         userName,
+        newName: nodeName,
+        id: activeWorkspaceId,
       }),
     {
       manual: true,
       onSuccess(success) {
-        setEditMode(false);
-        getCollections(activeWorkspaceId);
+        if (success) {
+          setEditMode(false);
+          renameCollectionNode(props.data.infoId, nodeName);
+        }
       },
     },
   );
 
   const { run: removeCollectionItem } = useRequest(
-    () =>
+    (removeNodePath: string[]) =>
       FileSystemService.removeCollectionItem({
         id: activeWorkspaceId,
-        removeNodePath: nodePath,
+        removeNodePath,
         userName,
       }),
     {
       manual: true,
-      onSuccess: () => {
-        const id = `${activeWorkspaceId}-${props.data.nodeType}-${props.data.infoId}`;
-        const paneKey = encodePaneKey({ id, type: PanesType.REQUEST });
-        removePane(paneKey);
-        getCollections();
+      onSuccess: (success) => {
+        if (success) {
+          const id = `${activeWorkspaceId}-${props.data.nodeType}-${props.data.infoId}`;
+          const paneKey = encodePaneKey({ id, type: PanesType.REQUEST });
+          removePane(paneKey);
+          removeCollectionNode(props.data.infoId);
+        }
       },
     },
   );
 
   const { run: saveCase } = useRequest(FileSystemService.saveCase, {
     manual: true,
-    onSuccess: () => {
-      getCollections();
-    },
   });
 
   const { run: queryInterface } = useRequest(FileSystemService.queryInterface, {
@@ -263,7 +275,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         {
           key: 'duplicate',
           label: (
-            <a onClick={() => duplicateCollectionItem()}>
+            <a onClick={() => duplicateCollectionItem(nodePath)}>
               {t('collection.duplicate', { ns: 'components' })}
             </a>
           ),
@@ -280,7 +292,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
                   okText: 'Yes',
                   okType: 'danger',
                   cancelText: 'No',
-                  onOk: removeCollectionItem,
+                  onOk: () => removeCollectionItem(nodePath),
                 });
               }}
             >
@@ -296,15 +308,16 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
 
   const prefix = useMemo(
     () =>
-      props.data.nodeType === CollectionNodeType.interface
-        ? React.createElement(RequestMethodIcon[props.data.method || ''] || 'div')
-        : props.data.nodeType === CollectionNodeType.case
-        ? React.createElement(
-            RequestMethodIcon[
-              props.data.caseSourceType === CaseSourceType.AREX ? 'arex' : 'case'
-            ] || 'div',
-          )
-        : null,
+      props.data.nodeType === CollectionNodeType.folder ? (
+        <FolderOutlined style={{ marginRight: token.marginXS }} />
+      ) : props.data.nodeType === CollectionNodeType.interface ? (
+        React.createElement(RequestMethodIcon[props.data.method || ''] || 'div')
+      ) : props.data.nodeType === CollectionNodeType.case ? (
+        React.createElement(
+          RequestMethodIcon[props.data.caseSourceType === CaseSourceType.AREX ? 'arex' : 'case'] ||
+            'div',
+        )
+      ) : null,
     [props.data],
   );
 
@@ -330,7 +343,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
             <Space style={{ display: 'flex' }}>
               <Input
                 value={nodeName}
-                onPressEnter={rename}
+                onPressEnter={() => rename(nodePath)}
                 onChange={(e) => setNodeName(e.currentTarget.value)}
                 style={{ padding: '0 4px' }}
               />
@@ -341,7 +354,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
                   setNodeName(props.data.nodeName);
                 }}
               />
-              <SmallTextButton icon={<CheckOutlined />} onClick={rename} />
+              <SmallTextButton icon={<CheckOutlined />} onClick={() => rename(nodePath)} />
             </Space>
           ) : (
             <SearchHighLight text={props.data.nodeName} keyword={props.keyword} />

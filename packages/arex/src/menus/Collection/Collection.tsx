@@ -8,21 +8,18 @@ import {
 } from '@arextest/arex-core';
 import { useRequest, useSize } from 'ahooks';
 import { App } from 'antd';
-import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import React, { useMemo, useRef } from 'react';
 
 import { CollectionSelect, Icon, WorkspacesMenu } from '@/components';
+import { CollectionSelectProps } from '@/components/CollectionSelect';
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import CollectionsImportExport, {
   CollectionsImportExportRef,
 } from '@/menus/Collection/ImportExport';
 import { FileSystemService } from '@/services';
-import { CollectionType } from '@/services/FileSystemService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { CaseSourceType } from '@/store/useCollections';
-
-export type CollectionTreeType = CollectionType & DataNode;
 
 const Collection: ArexMenuFC = (props) => {
   const { t } = useTranslation(['components']);
@@ -34,7 +31,7 @@ const Collection: ArexMenuFC = (props) => {
 
   const { activeWorkspaceId, workspaces, getWorkspaces, setActiveWorkspaceId } = useWorkspaces();
   const { reset: resetPane } = useMenusPanes();
-  const { getCollections } = useCollections();
+  const { createRootCollectionNode } = useCollections();
 
   const collectionsImportExportRef = useRef<CollectionsImportExportRef>(null);
 
@@ -55,8 +52,10 @@ const Collection: ArexMenuFC = (props) => {
       }),
     {
       manual: true,
-      onSuccess() {
-        getCollections();
+      onSuccess(res) {
+        if (res.success) {
+          createRootCollectionNode(res.infoId);
+        }
       },
     },
   );
@@ -78,21 +77,21 @@ const Collection: ArexMenuFC = (props) => {
     return id ? [id] : undefined;
   }, [props.value]);
 
-  const handleSelect: DirectoryTreeProps<CollectionTreeType>['onSelect'] = (keys, info) => {
-    if (info.node.nodeType !== CollectionNodeType.folder) {
+  const handleSelect: CollectionSelectProps['onSelect'] = (keys, node) => {
+    if (node.nodeType !== CollectionNodeType.folder) {
       const icon =
-        info.node.nodeType === CollectionNodeType.interface
-          ? info.node.method || undefined
-          : info.node.nodeType === CollectionNodeType.case
-          ? info.node.caseSourceType === CaseSourceType.AREX
+        node.nodeType === CollectionNodeType.interface
+          ? node.method || undefined
+          : node.nodeType === CollectionNodeType.case
+          ? node.caseSourceType === CaseSourceType.AREX
             ? 'arex'
             : 'case'
           : undefined;
 
       navPane({
         type: PanesType.REQUEST,
-        id: `${activeWorkspaceId}-${info.node.nodeType}-${info.node.infoId}`,
-        name: info.node.nodeName,
+        id: `${activeWorkspaceId}-${node.nodeType}-${node.infoId}`,
+        name: node.nodeName,
         icon,
       });
     }
@@ -127,10 +126,10 @@ const Collection: ArexMenuFC = (props) => {
         menu={
           <div
             style={{
-              height: '27px',
-              marginRight: '8px',
+              height: '21px',
+              marginRight: '4px',
               display: 'flex',
-              flexWrap: 'wrap',
+              flexFlow: 'row nowrap',
               alignContent: 'center',
             }}
           >
@@ -171,9 +170,8 @@ const Collection: ArexMenuFC = (props) => {
 const CollectionWrapper = styled.div`
   width: 100%;
   overflow: hidden;
-
   .collection-content-wrapper {
-    padding: 8px 8px;
+    padding: 4px 4px;
   }
 
   .ant-spin-nested-loading,

@@ -14,10 +14,10 @@
     "noTestScript":"No Test Script",
     "allPassed":"All test scripts passed",
     "SomeFailed":"Some failed test scripts exist",
-    "allFailed":"None of the test scripts passed"
+    "allFailed":"None of the test scripts passed",
+    "checkRequestDetail": "Click status block for detail"
   },
   "batchComparePage": {
-    "select_need_compare_case": "Select comparison cases to runssss",
     "run_compare": "Run Comparison Cases",
     "compare_results": "Compare results",
     "result": "Result",

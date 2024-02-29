@@ -14,7 +14,8 @@
     "noTestScript":"无测试脚本",
     "allPassed":"所有测试脚本均通过",
     "SomeFailed":"存在失败测试脚本",
-    "allFailed":"所有测试脚本均不通过"
+    "allFailed":"所有测试脚本均不通过",
+    "checkRequestDetail": "点击状态块查看请求详情"
   },
   "batchComparePage": {
     "select_need_compare_case": "请选择比对用例",

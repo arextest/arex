@@ -59,8 +59,8 @@ const InitialValue = {
 const MenuList = styled(Menu)<{ size?: SizeType }>`
   border-inline-end: none !important;
   .ant-menu-item {
-    height: ${(props) => (props.size === 'small' ? '24px' : '28px')};
-    line-height: ${(props) => (props.size === 'small' ? '24px' : '28px')};
+    height: ${(props) => (props.size === 'small' ? '16px' : '24px')};
+    line-height: ${(props) => (props.size === 'small' ? '16px' : '24px')};
   }
 `;
 

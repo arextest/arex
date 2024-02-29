@@ -4,7 +4,6 @@ export * from './deleteWorkspace';
 export * from './inviteToWorkspace';
 export * from './leaveWorkspace';
 export * from './queryUsersByWorkspace';
-export * from './queryWorkspaceById';
 export * from './queryWorkspacesByUser';
 export * from './removeUserFromWorkspace';
 export * from './renameWorkspace';
