@@ -32,7 +32,7 @@ const CollectionSearchedList = (props: CollectionSearchedListProps) => {
       FileSystemService.searchCollectionItems({
         workspaceId: props.workspaceId,
         pageSize: 10,
-        keywords: props.searchValue?.keyword,
+        keywords: props.searchValue?.keyword?.trim(),
         labels: props.searchValue?.structuredValue?.map((item) => ({
           key: item.category!,
           operator: item.operator as OperatorType,

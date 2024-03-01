@@ -64,11 +64,23 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   } = useCollections();
 
   const searchRef = useRef<StructuredFilterRef>(null);
+  const treeRef = useRef<{
+    scrollTo: (params: {
+      key: string | number;
+      align?: 'top' | 'bottom' | 'auto';
+      offset?: number;
+    }) => void;
+  }>(null);
 
   const [searchValue, setSearchValue] = useState<SearchDataType>();
   const [autoExpandParent, setAutoExpandParent] = useState(true);
-
   const [expandedKeys, setExpandedKeys] = useState<string[]>(); // TODO 初始化展开的节点
+  const [activeKey, setActiveKey] = useState<string>();
+
+  const searching = useMemo(
+    () => !!searchValue?.keyword || !!searchValue?.structuredValue?.length,
+    [searchValue],
+  );
 
   // auto expand by active pane id
   useEffect(() => {
@@ -147,6 +159,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
           : [...(expandedKeys || []), info.node.infoId];
       });
     }
+    setActiveKey(info.node.infoId);
     props.onSelect?.(keys, info.node);
   };
 
@@ -154,7 +167,11 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     const { keyword, structuredValue = [] } = value;
     let newExpandedKeys;
     if (!structuredValue?.length && !keyword) {
-      // newExpandedKeys = dataList.map((item) => item.title);
+      // TODO: 以事件驱动滚动，防止滚动到未加载的节点
+      setTimeout(
+        () => activeKey && treeRef.current?.scrollTo({ key: activeKey, align: 'top', offset: 64 }),
+        200,
+      );
     } else {
       newExpandedKeys = dataList
         .map((item) => {
@@ -293,15 +310,16 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
           onChange={handleChange}
         />
         <ConfigProvider theme={{ token: { motion: false } }}>
-          {searchValue?.keyword || searchValue?.structuredValue?.length ? (
+          {searching ? (
             <CollectionSearchedList
               height={props.height}
               workspaceId={activeWorkspaceId}
               searchValue={searchValue}
               onSelect={(keys, data) => {
+                const infoId = keys[0].toString();
                 getCollections({
                   workspaceId: activeWorkspaceId,
-                  infoId: keys[0].toString(),
+                  infoId,
                   nodeType: data.node.nodeType,
                 }).then(() => {
                   handleSelect(keys, data);
@@ -312,6 +330,8 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
             <CollectionTree
               showLine
               blockNode
+              // @ts-ignore
+              ref={treeRef}
               height={props.height}
               selectedKeys={props.selectedKeys}
               expandedKeys={expandedKeys}
@@ -333,6 +353,14 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
                   selectable={props.selectable}
                 />
               )}
+              onDragLeave={({ event, node }) => {
+                // auto scroll when drag leave
+                if (event.clientY < 120) {
+                  treeRef.current?.scrollTo({ key: node.infoId, align: 'top', offset: 48 });
+                } else if (event.clientY > (props.height || 0) + 100) {
+                  treeRef.current?.scrollTo({ key: node.infoId, align: 'bottom', offset: 48 });
+                }
+              }}
             />
           )}
         </ConfigProvider>
