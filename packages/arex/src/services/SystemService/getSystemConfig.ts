@@ -4,7 +4,7 @@ export interface SystemConfig {
   desensitizationJar: {
     jarUrl?: string;
     remark?: null;
-  };
+  } | null;
   callbackUrl: string;
   // The following is not currently in use
   refreshTaskMark: {

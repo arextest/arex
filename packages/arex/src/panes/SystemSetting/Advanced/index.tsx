@@ -26,11 +26,13 @@ const Advanced: FC = () => {
       if (res) {
         form.setFieldsValue({
           callbackUrl: res.callbackUrl,
-          jarUrl: res.desensitizationJar.jarUrl,
+          jarUrl: res.desensitizationJar?.jarUrl,
         });
       }
     },
   });
+
+  useRequest(() => SystemService.querySystemConfig('auth_switch'));
 
   const { run: saveSystemConfig } = useRequest(SystemService.saveSystemConfig, {
     manual: true,
