@@ -1,4 +1,4 @@
-import { useCollections, useUserProfile, useWorkspaces } from '@/store';
+import { useCollections, useSystemConfig, useUserProfile, useWorkspaces } from '@/store';
 
 /**
  * TODO 可行性待验证
@@ -11,6 +11,7 @@ const globalStoreInit = () => {
   useCollections.getState().getCollections();
   useUserProfile.getState().getUserProfile();
   useWorkspaces.getState().getWorkspaces();
+  useSystemConfig.getState().getAppAuth();
 };
 
 export default globalStoreInit;

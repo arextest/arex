@@ -11,7 +11,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { APP_ID_KEY } from '@/constant';
 import { ApplicationService, ReportService } from '@/services';
-import { useMenusPanes } from '@/store';
+import { useMenusPanes, useSystemConfig } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
 import AppHeader from './AppHeader';
@@ -20,6 +20,7 @@ import ReplayReport, { ReplayReportRef } from './ReplayReport';
 
 const ReplayPage: ArexPaneFC = (props) => {
   const { activePane } = useMenusPanes();
+  const { appAuth } = useSystemConfig();
   const { t } = useTranslation('components');
 
   const [replayWrapperRef] = useAutoAnimate();
@@ -57,7 +58,7 @@ const ReplayPage: ArexPaneFC = (props) => {
   const { data: appInfo, refresh: getAppInfo } = useRequest(ApplicationService.getAppInfo, {
     defaultParams: [appId],
     onSuccess(res) {
-      setHasOwner(!!res.owners?.length);
+      setHasOwner(!appAuth || !!res.owners?.length);
     },
   });
 

@@ -354,7 +354,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
                 />
               )}
               onDragLeave={({ event, node }) => {
-                // auto scroll when drag leave
+                // auto scroll when drag to edge
                 if (event.clientY < 120) {
                   treeRef.current?.scrollTo({ key: node.infoId, align: 'top', offset: 48 });
                 } else if (event.clientY > (props.height || 0) + 100) {
