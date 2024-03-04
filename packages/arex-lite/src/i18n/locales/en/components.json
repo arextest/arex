@@ -70,6 +70,7 @@
     "caseStartTime": "Start Time",
     "caseEndTime": "End Time",
     "emptyHost": "Target Host can't be empty",
+    "invalidHost": "Target Host format is invalid",
     "emptyStartTime": "Start Time can't be empty",
     "emptyEndTime": "End Time can't be empty",
     "operation": "operation",

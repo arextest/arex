@@ -401,7 +401,22 @@ const AppTitle: FC<AppTitleProps> = ({
               </HelpTooltip>
             }
             name='targetEnv'
-            rules={[{ required: true, message: t('replay.emptyHost') as string }]}
+            rules={[
+              { required: true, message: t('replay.emptyHost') as string },
+              {
+                validator: (_, value) => {
+                  try {
+                    if (value && value.split('://').length === 2) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject();
+                  } catch (_) {
+                    return Promise.reject();
+                  }
+                },
+                message: t('replay.invalidHost') as string,
+              },
+            ]}
           >
             <AutoComplete
               allowClear
