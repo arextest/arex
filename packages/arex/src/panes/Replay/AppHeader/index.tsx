@@ -67,6 +67,8 @@ type CreatePlanForm = {
   caseTags?: CaseTags;
 };
 
+const TargetHostPattern = new RegExp(/^(http|https|dubbo):\/\/(\S+)$/)
+
 const TitleWrapper = styled(
   (props: {
     appId: string;
@@ -404,16 +406,7 @@ const AppTitle: FC<AppTitleProps> = ({
             rules={[
               { required: true, message: t('replay.emptyHost') as string },
               {
-                validator: (_, value) => {
-                  try {
-                    if (value && value.split('://').length === 2) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject();
-                  } catch (_) {
-                    return Promise.reject();
-                  }
-                },
+                pattern: TargetHostPattern,
                 message: t('replay.invalidHost') as string,
               },
             ]}
