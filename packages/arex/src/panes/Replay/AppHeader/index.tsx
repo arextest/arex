@@ -293,7 +293,7 @@ const AppTitle: FC<AppTitleProps> = ({
       targetHostSource?.[appId]?.map((item) => ({
         label: (
           <SpaceBetweenWrapper>
-            <Typography.Text>{item}</Typography.Text>
+            <Typography.Text ellipsis>{item}</Typography.Text>
             <Button
               size='small'
               type='text'
