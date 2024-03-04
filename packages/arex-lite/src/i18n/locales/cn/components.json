@@ -70,6 +70,7 @@
     "caseStartTime": "Case 开始时间",
     "caseEndTime": "Case 结束时间",
     "emptyHost": "目标回放环境不能为空",
+    "invalidHost": "目标回放环境格式错误",
     "emptyStartTime": "Case 开始时间不能为空",
     "emptyEndTime": "Case 结束时间不能为空",
     "operation": "operation",
