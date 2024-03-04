@@ -67,7 +67,7 @@ type CreatePlanForm = {
   caseTags?: CaseTags;
 };
 
-const TargetHostPattern = new RegExp(/^(http|https|dubbo):\/\/(\S+)$/)
+const TargetHostPattern = new RegExp(/^(http|https|dubbo):\/\/(\S+)$/);
 
 const TitleWrapper = styled(
   (props: {
