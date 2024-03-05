@@ -233,7 +233,7 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
       });
     }
     return _columns;
-  }, [props.readOnly, selectedPlan]);
+  }, [props.readOnly, selectedPlan, token]);
 
   const [replayLogsDrawerOpen, setReplayLogsDrawerOpen] = useState(false);
   const [selectPlanItemKey, setSelectPlanItemKey] = useState<string>();
