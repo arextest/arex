@@ -31,7 +31,7 @@ export interface KeySelectionWithValue extends Selection {
 export type OnRenderContextMenu = (
   items: ContextMenuItem[],
   selection: KeySelectionWithValue,
-) => ContextMenuItem[] | undefined;
+) => ContextMenuItem[] | false | undefined;
 
 export interface VanillaJSONEditorProps extends JSONEditorPropsOptional {
   height?: string | number;
