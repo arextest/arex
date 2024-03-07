@@ -265,6 +265,7 @@
     "nodesSort": "数组节点",
     "nodesDesensitization": "加密节点",
     "categoryIgnore": "类型忽略",
+    "nodesTransform": "转换节点",
     "global": "全局",
     "interface": "接口",
     "dependency": "依赖",
@@ -359,7 +360,16 @@
     "chooseCategoryType": "请选择忽略类型（可多选）",
     "categoryTypePlaceholder": "请选择依赖类型",
     "operationNamePlaceholder" : "请输入依赖名称",
-    "environment": "环境"
+    "environment": "环境",
+    "originalNode":"原始节点",
+    "transformedNode":"转换节点",
+    "addTransformNode":"添加转换节点",
+    "transformNodePath": "节点路径",
+    "transformMethodName":"方法名称",
+    "transformMethodArgs":"方法参数",
+    "selectNodePath": "选择节点路径",
+    "clickToSelectNodePath": "点击选择转换节点路径",
+    "deleteTransformConfirm": "确定删除该转换节点?"
   },
   "env": {
     "searchEnvironment": "搜索环境",
