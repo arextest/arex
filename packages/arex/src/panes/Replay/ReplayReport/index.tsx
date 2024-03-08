@@ -89,8 +89,7 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
                 navPane({
                   type: PanesType.REPLAY_CASE,
                   id: record.planItemId,
-                  // data: { ...record, filter: status },
-                  data: { filter: status }, // fetch PlanItemStatistic data in ReplayCase instead of passing it
+                  data: { filter: status },
                 });
               },
             },
