@@ -6,7 +6,7 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { Button, Input, InputRef, theme, Tooltip } from 'antd';
+import { Button, Input, InputRef, Switch, theme, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, {
   forwardRef,
@@ -45,6 +45,7 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
   const navPane = useNavPane();
   const { token } = theme.useToken();
   const [selectedPlan, setSelectedPlan] = useState<PlanStatistics>();
+  const [fullApiName, setFullApiName] = useState(false);
 
   const reportCardRef = useRef<ReportCardRef>(null);
 
@@ -112,7 +113,19 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
   const columns = useMemo<ColumnsType<PlanItemStatistic>>(() => {
     const _columns: ColumnsType<PlanItemStatistic> = [
       {
-        title: t('replay.api'),
+        title: (
+          <div>
+            <span>{t('replay.api')}</span>
+            <Tooltip title={t('replay.fullAPIPath')}>
+              <Switch
+                size='small'
+                checked={fullApiName}
+                onChange={setFullApiName}
+                style={{ float: 'right', margin: '3px 0' }}
+              />
+            </Tooltip>
+          </div>
+        ),
         dataIndex: 'operationName',
         key: 'operationName',
         ellipsis: { showTitle: false },
@@ -148,7 +161,10 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
         },
         render: (value) => {
           const split = (value ?? '').split('/');
-          return (
+
+          return fullApiName ? (
+            value
+          ) : (
             <Tooltip placement='topLeft' title={value}>
               {'/' + split[split.length - 1]}
             </Tooltip>
@@ -232,7 +248,7 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
       });
     }
     return _columns;
-  }, [props.readOnly, selectedPlan, token]);
+  }, [props.readOnly, selectedPlan, token, fullApiName]);
 
   const [replayLogsDrawerOpen, setReplayLogsDrawerOpen] = useState(false);
   const [selectPlanItemKey, setSelectPlanItemKey] = useState<string>();

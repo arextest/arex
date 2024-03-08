@@ -125,6 +125,7 @@
     "totalCases": "Case 数",
     "planItemID": "子任务 ID",
     "api": "API",
+    "fullAPIPath": "Full API Path",
     "timeConsumed": "耗时(秒)",
     "cases": "case 数",
     "action": "操作",

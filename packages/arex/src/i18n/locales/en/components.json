@@ -126,6 +126,7 @@
     "totalCases": "Total Cases",
     "planItemID": "Plan Item ID",
     "api": "API",
+    "fullAPIPath": "Full API Path",
     "timeConsumed": "Time consumed(s)",
     "cases": "Cases",
     "action": "Action",
