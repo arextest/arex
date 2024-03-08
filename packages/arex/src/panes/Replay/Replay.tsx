@@ -14,8 +14,8 @@ import { ApplicationService, ReportService } from '@/services';
 import { useMenusPanes, useSystemConfig } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
-import AppHeader from './AppHeader';
 import AppOwnersConfig, { AppOwnerConfigRef } from './AppOwnersConfig';
+import AppTopBar from './AppTopBar';
 import ReplayReport, { ReplayReportRef } from './ReplayReport';
 
 const ReplayPage: ArexPaneFC = (props) => {
@@ -86,7 +86,7 @@ const ReplayPage: ArexPaneFC = (props) => {
             />
           )}
 
-          <AppHeader
+          <AppTopBar
             appId={appId}
             appName={appInfo?.appName}
             readOnly={!hasOwner}
