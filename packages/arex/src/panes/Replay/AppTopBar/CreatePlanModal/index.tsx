@@ -1,4 +1,3 @@
-import { CloseCircleOutlined } from '@ant-design/icons';
 import {
   css,
   getLocalStorage,
@@ -6,13 +5,11 @@ import {
   i18n,
   I18nextLng,
   Label,
-  SpaceBetweenWrapper,
   useTranslation,
 } from '@arextest/arex-core';
 import { useLocalStorageState, useRequest } from 'ahooks';
 import {
   App,
-  AutoComplete,
   Button,
   Collapse,
   DatePicker,
@@ -20,7 +17,6 @@ import {
   Input,
   InputNumber,
   Modal,
-  theme,
   Typography,
 } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
@@ -28,24 +24,20 @@ import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useState 
 
 import { InterfaceSelect, TagSelect } from '@/components';
 import { EMAIL_KEY, isClient, TARGET_HOST_AUTOCOMPLETE_KEY } from '@/constant';
+import Record from '@/panes/AppSetting/Record';
+import TargetUrlInput, {
+  TargetUrlValue,
+} from '@/panes/Replay/AppTopBar/CreatePlanModal/TargetUrlInput';
 import { ScheduleService } from '@/services';
 import { CaseTags, MessageMap } from '@/services/ScheduleService';
 
 type CreatePlanForm = {
   planName?: string;
-  targetEnv: string;
+  targetUrl?: TargetUrlValue;
   caseSourceRange: [Dayjs, Dayjs];
   operationList?: string[];
   caseCountLimit?: number;
   caseTags?: CaseTags;
-};
-
-const InitialValues = {
-  targetEnv: '',
-  caseSourceRange: [
-    dayjs().subtract(1, 'day').startOf('day'), // 前一天零点
-    dayjs().add(1, 'day').startOf('day').subtract(1, 'second'), // 当天最后一秒
-  ],
 };
 
 export type CreatePlanModalRef = {
@@ -58,10 +50,16 @@ export type CreatePlanModalProps = {
   onCreated?: () => void;
 };
 
+const DefaultProtocol = 'http';
+const ProtocolOptions = [
+  { label: 'http://', value: 'http://' },
+  { label: 'https://', value: 'https://' },
+  { label: 'dubbo://', value: 'dubbo://' },
+];
+
 const CreatePlanModal = forwardRef<CreatePlanModalRef, CreatePlanModalProps>(
   ({ appId, tags, onCreated }, ref) => {
     const { notification } = App.useApp();
-    const { token } = theme.useToken();
     const email = getLocalStorage<string>(EMAIL_KEY);
 
     const { t } = useTranslation(['components']);
@@ -77,23 +75,36 @@ const CreatePlanModal = forwardRef<CreatePlanModalRef, CreatePlanModalProps>(
 
     const [form] = Form.useForm<CreatePlanForm>();
 
-    const targetEnv = Form.useWatch('targetEnv', form);
+    const targetUrl = Form.useWatch('targetUrl', form);
     const planName = Form.useWatch('planName', form);
     const caseSourceRange = Form.useWatch('caseSourceRange', form);
     const operationList = Form.useWatch('operationList', form);
     const caseCountLimit = Form.useWatch('caseCountLimit', form);
 
-    const [targetHostSource, setTargetHostSource] = useLocalStorageState<{
-      [appId: string]: string[];
-    }>(TARGET_HOST_AUTOCOMPLETE_KEY, {
-      defaultValue: {},
-    });
+    const [targetUrlSource, setTargetUrlSource] = useLocalStorageState<Record<string, string>>(
+      TARGET_HOST_AUTOCOMPLETE_KEY,
+      {
+        defaultValue: {},
+      },
+    );
+
+    const InitialValues = {
+      targetUrl: {
+        protocol: (targetUrlSource?.[appId]?.split?.('://')[0] || DefaultProtocol) + '://',
+        host: targetUrlSource?.[appId]?.split?.('://')[1],
+      },
+      caseSourceRange: [
+        dayjs().subtract(1, 'day').startOf('day'), // 前一天零点
+        dayjs().add(1, 'day').startOf('day').subtract(1, 'second'), // 当天最后一秒
+      ],
+    };
 
     const webhook = useMemo(() => {
       const url = new URL(`${location.origin}/schedule/createPlan`);
 
       url.searchParams.append('appId', appId);
-      targetEnv && url.searchParams.append('targetEnv', targetEnv.trim());
+      targetUrl &&
+        url.searchParams.append('targetEnv', targetUrl.protocol + (targetUrl.host?.trim() || ''));
       planName && url.searchParams.append('planName', planName.trim());
       if (caseSourceRange && caseSourceRange?.length === 2) {
         url.searchParams.append('caseSourceFrom', caseSourceRange[0].valueOf().toString());
@@ -103,7 +114,7 @@ const CreatePlanModal = forwardRef<CreatePlanModalRef, CreatePlanModalProps>(
       typeof caseCountLimit === 'number' &&
         url.searchParams.append('caseCountLimit', caseCountLimit.toString());
       return url.toString();
-    }, [appId, targetEnv, planName, caseSourceRange, operationList, caseCountLimit]);
+    }, [appId, planName, caseSourceRange, operationList, caseCountLimit]);
 
     /**
      * 创建回放
@@ -139,48 +150,11 @@ const CreatePlanModal = forwardRef<CreatePlanModalRef, CreatePlanModalProps>(
       },
     );
 
-    const targetHostOptions = useMemo(
-      () =>
-        targetHostSource?.[appId]?.map((item) => ({
-          label: (
-            <SpaceBetweenWrapper>
-              <Typography.Text ellipsis>{item}</Typography.Text>
-              <Button
-                size='small'
-                type='text'
-                icon={
-                  <CloseCircleOutlined
-                    style={{ fontSize: '10px', color: token.colorTextSecondary }}
-                  />
-                }
-                onClick={(e) => {
-                  e.stopPropagation();
-
-                  setTargetHostSource((source) => {
-                    const targetHostList = source?.[appId] || [];
-                    const index = targetHostList.indexOf(item);
-                    if (index > -1) {
-                      targetHostList.splice(index, 1);
-                    }
-                    return {
-                      ...source,
-                      [appId]: targetHostList,
-                    };
-                  });
-                }}
-              />
-            </SpaceBetweenWrapper>
-          ),
-          value: item,
-        })) || [],
-      [appId, targetHostSource, open],
-    );
     const handleStartReplay = () => {
       form
         .validateFields()
         .then((values) => {
-          const targetEnv = values.targetEnv.trim();
-
+          const targetEnv = values.targetUrl!.protocol! + values.targetUrl!.host!.trim();
           createPlan({
             appId,
             sourceEnv: 'pro',
@@ -198,13 +172,9 @@ const CreatePlanModal = forwardRef<CreatePlanModalRef, CreatePlanModalProps>(
           });
 
           // update targetHostSource
-          setTargetHostSource((source) => {
+          setTargetUrlSource((source) => {
             !source && (source = {});
-
-            if (source?.[appId] && !source?.[appId].includes(targetEnv))
-              source[appId].push(targetEnv);
-            else if (!source?.[appId]) source[appId] = [targetEnv];
-
+            source[appId] = targetEnv;
             return source;
           });
         })
@@ -243,14 +213,23 @@ const CreatePlanModal = forwardRef<CreatePlanModalRef, CreatePlanModalProps>(
                 {t('replay.targetHost')}
               </HelpTooltip>
             }
-            name='targetEnv'
-            rules={[{ required: true, message: t('replay.emptyHost') as string }]}
+            name='targetUrl'
+            rules={[
+              {
+                validator: (rule, value) => {
+                  try {
+                    if (!value?.protocol?.match(/^([a-zA-Z]+):\/\/$/))
+                      return Promise.reject(t('replay.illegalProtocol'));
+                    else if (!value?.host?.trim()) return Promise.reject(t('replay.emptyHost'));
+                    else return Promise.resolve();
+                  } catch (error) {
+                    return Promise.reject(error);
+                  }
+                },
+              },
+            ]}
           >
-            <AutoComplete
-              allowClear
-              options={targetHostOptions}
-              placeholder='e.g., https://<ip>:<port>'
-            />
+            <TargetUrlInput options={ProtocolOptions} />
           </Form.Item>
 
           <Form.Item

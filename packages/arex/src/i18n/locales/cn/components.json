@@ -89,6 +89,7 @@
     "caseEndTime": "Case 结束时间",
     "caseRange": "回放范围",
     "caseRangeTooltip": "选择用例的录制时间范围，回放该时间段内录制到的用例。",
+    "illegalProtocol": "协议不能为空或存在格式错误",
     "emptyHost": "目标回放环境不能为空",
     "emptyCaseRange": "回放范围不能为空",
     "emptyStartTime": "Case 开始时间不能为空",
