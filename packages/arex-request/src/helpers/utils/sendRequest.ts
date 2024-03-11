@@ -39,7 +39,16 @@ export async function sendRequest(
         ],
         request: {
           method: request.inherited ? request.inheritedMethod : request.method,
-          header: request.headers.filter((i) => i.active),
+          header: request.headers
+            .filter((i) => i.active)
+            .map((item) => {
+              if (item.key === 'cookie' || item.key === 'Cookie') {
+                return {
+                  key: '__clonecookie__',
+                  value: item.value,
+                };
+              }
+            }),
           body: convertToPmBody(request.body),
           url: sdk.Url.parse(request.inherited ? request.inheritedEndpoint : request.endpoint),
         },

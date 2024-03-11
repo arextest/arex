@@ -155,6 +155,7 @@
     "collections": "集合",
     "documentation": "帮助文档",
     "headers": "请求头",
+    "cookie_tip": "Cookie只有在客户端生效",
     "history": "历史记录",
     "mqtt": "MQTT",
     "parameters": "参数",

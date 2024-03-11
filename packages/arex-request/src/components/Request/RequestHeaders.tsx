@@ -1,6 +1,6 @@
 import { CopyOutlined, DeleteOutlined, FieldTimeOutlined, PlusOutlined } from '@ant-design/icons';
 import { copyToClipboard, SpaceBetweenWrapper, TooltipButton } from '@arextest/arex-core';
-import { App, Typography } from 'antd';
+import { Alert, App, Typography } from 'antd';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -72,7 +72,9 @@ const RequestHeaders = () => {
           <TooltipButton title={t('add.new')} icon={<PlusOutlined />} onClick={handleAddParam} />
         </div>
       </SpaceBetweenWrapper>
-
+      {store.request.headers.map(({ key }) => key.toLowerCase()).includes('cookie') ? (
+        <Alert message={t('tab.cookie_tip')} type='warning' showIcon closable />
+      ) : null}
       <HeadersTable
         editable
         size='small'
