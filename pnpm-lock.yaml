@@ -236,8 +236,8 @@ importers:
         specifier: ^5.2.6
         version: 5.2.6(react-dom@18.2.0)(react@18.2.0)
       '@arextest/vanilla-jsoneditor':
-        specifier: 0.22.0-beta.1
-        version: 0.22.0-beta.1(@lezer/common@1.2.1)
+        specifier: 0.23.0
+        version: 0.23.0(@lezer/common@1.2.1)
       '@dnd-kit/core':
         specifier: ^6.0.8
         version: 6.1.0(react-dom@18.2.0)(react@18.2.0)
@@ -745,8 +745,8 @@ packages:
     resolution: {integrity: sha512-Pw+5ppTau+cL4PJWi1d+itE5MQrtzaTXQFuOJcc0L6znfhiG7Tr6ObjBPOWN3M93oxluoIRu44u8BdAkSIqkew==}
     dev: false
 
-  /@arextest/vanilla-jsoneditor@0.22.0-beta.1(@lezer/common@1.2.1):
-    resolution: {integrity: sha512-8R0xOZwECQobme/fMu0/C7rAoZF7unNMZp69sYn7LbyUYSxvSYDYJx/3QAfqRSlXENCP02NfDQKESZSn3AFNRQ==}
+  /@arextest/vanilla-jsoneditor@0.23.0(@lezer/common@1.2.1):
+    resolution: {integrity: sha512-IEnZt5mUatq3jwQZXZ+4l9RGAIQt/MyJJLZYAga+VNADWyTui541sP5/VG1DZGC4xwHUt5NZHuUFTBFW4GWOXw==}
     dependencies:
       '@codemirror/autocomplete': 6.13.0(@codemirror/language@6.10.1)(@codemirror/state@6.4.1)(@codemirror/view@6.25.0)(@lezer/common@1.2.1)
       '@codemirror/commands': 6.3.3

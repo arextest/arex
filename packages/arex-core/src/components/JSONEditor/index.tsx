@@ -23,14 +23,14 @@ import { PasswordAction } from './PasswordAction';
 
 const LosslessJSONParser = { parse, stringify };
 
-type Selection = RenderMenuContext & { selection: JSONKeySelection };
-export interface KeySelectionWithValue extends Selection {
+type Context = RenderMenuContext & { selection: JSONKeySelection };
+export interface ContextWithValue extends Context {
   value: any;
 }
 
 export type OnRenderContextMenu = (
   items: ContextMenuItem[],
-  selection: KeySelectionWithValue,
+  context: ContextWithValue,
 ) => ContextMenuItem[] | false | undefined;
 
 export interface VanillaJSONEditorProps extends JSONEditorPropsOptional {
@@ -41,7 +41,7 @@ export interface VanillaJSONEditorProps extends JSONEditorPropsOptional {
 export interface JSONEditorProps
   extends Omit<VanillaJSONEditorProps, 'onSelect' | 'onRenderContextMenu'> {
   hiddenValue?: boolean;
-  onSelect?: (selection: KeySelectionWithValue) => void;
+  onSelect?: (selection: ContextWithValue) => void;
   onRenderContextMenu?: OnRenderContextMenu;
 }
 
@@ -106,7 +106,7 @@ const JSONEditor = forwardRef<JSONEditorRef, JSONEditorProps>((props, ref) => {
           ...selection,
           value,
         };
-        return onSelect?.(selectionWithValue as unknown as KeySelectionWithValue);
+        return onSelect?.(selectionWithValue as unknown as ContextWithValue);
       }) as OnSelect,
       onRenderContextMenu: ((items, context) => {
         // disable multi type selection
@@ -117,12 +117,12 @@ const JSONEditor = forwardRef<JSONEditorRef, JSONEditorProps>((props, ref) => {
           (props.content as TextContent)?.text || (props.content as JSONContent)?.json,
           path,
         );
-        const selection: KeySelectionWithValue = {
+        const selectionWithValue: ContextWithValue = {
           ...context,
           value,
         };
 
-        return onRenderContextMenu?.(items, selection);
+        return onRenderContextMenu?.(items, selectionWithValue);
       }) as OnRenderContextMenu,
       ...restProps,
     });

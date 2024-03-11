@@ -83,10 +83,10 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
               json: undefined,
             }}
             onClassName={(...params) => props.onClassName?.(...params, TargetEditor.LEFT)}
-            onRenderContextMenu={(items, selection) =>
+            onRenderContextMenu={(items, context) =>
               props.onRenderContextMenu?.(
-                selection.selection.path,
-                selection.value,
+                context.selection.path,
+                context.value,
                 TargetEditor.LEFT,
               ) || items
             }
@@ -105,10 +105,10 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
               json: undefined,
             }}
             onClassName={(...params) => props.onClassName?.(...params, TargetEditor.RIGHT)}
-            onRenderContextMenu={(items, selection) =>
+            onRenderContextMenu={(items, context) =>
               props.onRenderContextMenu?.(
-                selection.selection.path,
-                selection.value,
+                context.selection.path,
+                context.value,
                 TargetEditor.RIGHT,
               ) || items
             }

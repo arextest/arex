@@ -242,7 +242,7 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
 
   const contextMenuRender: OnRenderContextMenu = (path, value, target) => {
     const isArrayNode = Array.isArray(value);
-    const isLeafNode = !!value && !isObjectOrArray(value);
+    const isLeafNode = value !== undefined && !isObjectOrArray(value);
     const isRootNode = !path?.length;
 
     return [
@@ -494,10 +494,12 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
               if (referencePath?.path.join(',') === path?.join(','))
                 return 'json-ignore-reference-node';
             }}
-            onSelect={(selection) => {
-              const isLeafNode = !!selection.value && !isObjectOrArray(selection.value);
+            onSelect={(context) => {
+              const isLeafNode = !!context.value && !isObjectOrArray(context.value);
               setReference(() =>
-                isLeafNode ? { path: selection.path, value: String(selection.value) } : undefined,
+                isLeafNode
+                  ? { path: context.selection.path, value: String(context.value) }
+                  : undefined,
               );
             }}
           />
