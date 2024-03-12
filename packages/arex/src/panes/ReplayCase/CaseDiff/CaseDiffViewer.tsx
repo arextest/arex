@@ -494,13 +494,9 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
               if (referencePath?.path.join(',') === path?.join(','))
                 return 'json-ignore-reference-node';
             }}
-            onSelect={(context) => {
-              const isLeafNode = !!context.value && !isObjectOrArray(context.value);
-              setReference(() =>
-                isLeafNode
-                  ? { path: context.selection.path, value: String(context.value) }
-                  : undefined,
-              );
+            onSelect={({ value, path }) => {
+              const isLeafNode = !!value && !isObjectOrArray(value);
+              setReference(() => (isLeafNode ? { path, value: String(value) } : undefined));
             }}
           />
         </div>

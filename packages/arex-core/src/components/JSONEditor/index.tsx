@@ -28,6 +28,10 @@ export interface ContextWithValue extends Context {
   value: any;
 }
 
+export interface SelectionWithValue extends JSONKeySelection {
+  value: any;
+}
+
 export type OnRenderContextMenu = (
   items: ContextMenuItem[],
   context: ContextWithValue,
@@ -41,7 +45,7 @@ export interface VanillaJSONEditorProps extends JSONEditorPropsOptional {
 export interface JSONEditorProps
   extends Omit<VanillaJSONEditorProps, 'onSelect' | 'onRenderContextMenu'> {
   hiddenValue?: boolean;
-  onSelect?: (selection: ContextWithValue) => void;
+  onSelect?: (selection: SelectionWithValue) => void;
   onRenderContextMenu?: OnRenderContextMenu;
 }
 
@@ -102,11 +106,12 @@ const JSONEditor = forwardRef<JSONEditorRef, JSONEditorProps>((props, ref) => {
           (props.content as TextContent)?.text || (props.content as JSONContent)?.json,
           path,
         );
+
         const selectionWithValue = {
           ...selection,
           value,
         };
-        return onSelect?.(selectionWithValue as unknown as ContextWithValue);
+        return onSelect?.(selectionWithValue as unknown as SelectionWithValue);
       }) as OnSelect,
       onRenderContextMenu: ((items, context) => {
         // disable multi type selection
