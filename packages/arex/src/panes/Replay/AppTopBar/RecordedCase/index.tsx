@@ -165,7 +165,7 @@ const RecordedCase = forwardRef<RecordedCaseRef, RecordedCaseProps>((props, ref)
               operationId={record.id}
               operationName={record.operationName}
               operationTypes={record.operationTypes}
-              onClick={() => setOpen(false)}
+              // onClick={() => setOpen(false)}
             />
           ),
           onExpand: (expanded, record) => setExpandedRowKeys(expanded ? [record.id] : undefined),
