@@ -97,5 +97,6 @@
   "chromeVersionTooLow" : "Chrome version is too low, and some functions may not work properly, please upgrade to the latest version",
   "share": "Share",
   "new": "New",
-  "more": "More..."
+  "more": "More...",
+  "email": "Email"
 }

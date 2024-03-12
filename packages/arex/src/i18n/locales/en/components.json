@@ -436,6 +436,7 @@
     "closeRight":"Close Tabs to the Right"
   },
   "systemSetting": {
+    "userInfo": "User Info",
     "userInterface": "User Interface",
     "compact": "Compact",
     "theme": "Theme",

@@ -434,6 +434,7 @@
     "closeRight":"关闭右侧标签页"
   },
   "systemSetting": {
+    "userInfo": "用户信息",
     "userInterface": "用户界面",
     "compact": "紧凑",
     "theme": "主题",
