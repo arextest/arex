@@ -217,8 +217,8 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
   const [modal, contextHolder] = Modal.useModal();
   const handleDiffMatch = useCallback(
     (path: string[]) => {
-      const text1 = tryStringifyJson(getJsonValueByPath(diffMsg?.baseMsg, path));
-      const text2 = tryStringifyJson(getJsonValueByPath(diffMsg?.testMsg, path));
+      const text1 = getJsonValueByPath(diffMsg?.baseMsg, path)?.toString();
+      const text2 = getJsonValueByPath(diffMsg?.testMsg, path)?.toString();
 
       modal.info({
         footer: false,
