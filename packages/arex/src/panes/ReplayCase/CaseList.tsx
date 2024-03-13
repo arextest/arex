@@ -51,7 +51,7 @@ const CaseList: FC<CaseProps> = (props) => {
     {
       title: t('replay.status'),
       width: 100,
-      defaultFilteredValue: props.filter !== undefined ? [props.filter.toString()] : undefined,
+      filteredValue: props.filter !== undefined ? [props.filter.toString()] : undefined,
       filterMultiple: false,
       filters: filterMap,
       onFilter: (value, record) => record.diffResultCode === value,
@@ -128,7 +128,7 @@ const CaseList: FC<CaseProps> = (props) => {
       }),
     {
       ready: !!props.planItemId,
-      refreshDeps: [props.planItemId],
+      refreshDeps: [props.planItemId, props.filter], // TODO: diffResultCode 变更会触发两次请求
       defaultPageSize: 5,
     },
   );
@@ -142,7 +142,17 @@ const CaseList: FC<CaseProps> = (props) => {
       dataSource={caseData}
       pagination={pagination}
       onRowClick={props.onClick}
-      onChange={props.onChange}
+      onChange={(pagination, filters, sorter, extra) => {
+        const filter = filters['2']?.[0];
+        if (typeof filter === 'number' && filter !== props.filter) {
+          navPane({
+            type: PanesType.REPLAY_CASE,
+            id: props.planItemId,
+            data: { filter },
+          });
+        }
+        props.onChange?.(pagination, filters, sorter, extra);
+      }}
     />
   );
 };

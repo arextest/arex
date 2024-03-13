@@ -8,9 +8,13 @@ import { useCollections, useSystemConfig, useUserProfile, useWorkspaces } from '
  * 故这些方法提取出来，提供给工作页面初始化时调用
  */
 const globalStoreInit = () => {
-  useCollections.getState().getCollections();
+  useWorkspaces
+    .getState()
+    .getWorkspaces()
+    .then(() => {
+      useCollections.getState().getCollections();
+    });
   useUserProfile.getState().getUserProfile();
-  useWorkspaces.getState().getWorkspaces();
   useSystemConfig.getState().getAppAuth();
 };
 

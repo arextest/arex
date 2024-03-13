@@ -294,10 +294,12 @@ const useCollections = create(
           flatData.set(newId, duplicateFlatNode);
         });
       },
+
       createRootCollectionNode: (infoId) => {
         set((state) => {
-          const treeData = state.collectionsTreeData;
-          treeData.unshift(generateNewFolder(infoId));
+          const newCollection = generateNewFolder(infoId);
+          state.collectionsTreeData.unshift(newCollection);
+          state.collectionsFlatData.set(infoId, newCollection);
         });
       },
       moveCollectionNode: (dragKey, dropKey, dropToGap, dropPosition) => {

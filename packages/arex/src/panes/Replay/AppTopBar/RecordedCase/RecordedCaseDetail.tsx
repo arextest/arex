@@ -11,7 +11,7 @@ import { ReportService } from '@/services';
 import { AggOperation, RecordType } from '@/services/ReportService';
 
 export type RecordedCaseListProps = {
-  appName: string;
+  appName?: string;
   operationId: string;
   onClick?: () => void;
 } & Pick<AggOperation, 'appId' | 'operationName' | 'operationTypes'>;

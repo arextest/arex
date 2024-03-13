@@ -15,7 +15,7 @@ import React, { FC, useMemo, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { Connector } from '@/constant';
-import CompareNoiseOperationItem from '@/panes/Replay/AppHeader/CompareNoise/CompareNoiseOperationItem';
+import CompareNoiseOperationItem from '@/panes/Replay/AppTopBar/CompareNoise/CompareNoiseOperationItem';
 import { ReportService, ScheduleService } from '@/services';
 import { InterfaceNoiseItem, RandomNoise } from '@/services/ScheduleService';
 

@@ -89,6 +89,7 @@
     "caseEndTime": "End Time",
     "caseRange": "Case range",
     "caseRangeTooltip": "Select the time range for the recorded cases, and the cases recorded within this time period will be replayed.",
+    "illegalProtocol": "Protocol cannot be empty or have a formatting error",
     "emptyHost": "Target Host can't be empty",
     "emptyCaseRange": "Case range can't be empty",
     "emptyStartTime": "Start Time can't be empty",
@@ -126,6 +127,7 @@
     "totalCases": "Total Cases",
     "planItemID": "Plan Item ID",
     "api": "API",
+    "fullAPIPath": "Full API Path",
     "timeConsumed": "Time consumed(s)",
     "cases": "Cases",
     "action": "Action",
@@ -434,6 +436,7 @@
     "closeRight":"Close Tabs to the Right"
   },
   "systemSetting": {
+    "userInfo": "User Info",
     "userInterface": "User Interface",
     "compact": "Compact",
     "theme": "Theme",

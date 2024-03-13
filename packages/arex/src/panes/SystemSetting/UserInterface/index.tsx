@@ -21,7 +21,9 @@ import ColorPicker from './ColorPicker';
 import CompactSegmented from './CompactSegmented';
 import LanguageSelect from './LanguageSelect';
 
-type SettingForm = Omit<UserProfile, 'colorPrimary'> & { colorPrimary: ColorPrimaryPalette };
+type UserInterfaceForm = Omit<UserProfile, 'colorPrimary' | 'avatar'> & {
+  colorPrimary: ColorPrimaryPalette;
+};
 
 const UserInterface = () => {
   const { message } = App.useApp();
@@ -30,12 +32,11 @@ const UserInterface = () => {
   const colorPrimary = useColorPrimary();
   const { avatar, theme, compact, language, zen, setZen, getUserProfile } = useUserProfile();
 
-  const [form] = Form.useForm<SettingForm>();
+  const [form] = Form.useForm<UserInterfaceForm>();
 
   useEffect(() => {
     // init form value
     form.setFieldsValue({
-      avatar,
       theme,
       compact,
       language,
@@ -58,7 +59,6 @@ const UserInterface = () => {
           theme: values.theme,
           compact: values.compact,
           language: values.language,
-          avatar: values.avatar,
         };
 
         updateUserProfileRequestRun({
@@ -110,7 +110,7 @@ const UserInterface = () => {
       <Divider orientation='left'>{t('systemSetting.userInterface')} </Divider>
 
       <Form
-        name='setting-form'
+        name='user-interface-form'
         form={form}
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 20 }}
@@ -134,10 +134,6 @@ const UserInterface = () => {
 
         <Form.Item label={t('systemSetting.zen')} name={'zen'} valuePropName='checked'>
           <Switch size='small' onChange={setZen} />
-        </Form.Item>
-
-        <Form.Item label={t('systemSetting.avatar')} name='avatar'>
-          <AvatarUpload />
         </Form.Item>
       </Form>
     </>

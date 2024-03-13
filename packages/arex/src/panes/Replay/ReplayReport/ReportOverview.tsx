@@ -81,6 +81,7 @@ const ReportOverview: FC<ReportOverViewProps> = (props) => {
         </div>
         <div>
           <Label style={{ flex: 1, flexShrink: 1 }}>{t('replay.targetHost')}</Label>
+          <Typography.Text>{props.data?.targetEnv?.split('://')[0] + '://'}</Typography.Text>
           <Typography.Text
             ellipsis
             copyable
@@ -96,7 +97,7 @@ const ReportOverview: FC<ReportOverViewProps> = (props) => {
               }
             `}
           >
-            {props.data?.targetEnv}
+            {props.data?.targetEnv?.split('://')[1]}
           </Typography.Text>
         </div>
         <div>
