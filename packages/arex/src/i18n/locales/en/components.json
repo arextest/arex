@@ -229,7 +229,7 @@
     "conditionNode": "Condition Node",
     "ignorePath": "Ignore Path",
     "selectConditionNodeTip": "Please select the leaf node for Condition Ignore",
-    "conditionIgnoreError": "Condition Ignore Error"
+    "conditionalIgnoreError": "The current node cannot be configured for conditional ignore"
   },
   "jsonDiff":{
     "ignore": "Ignore Key",

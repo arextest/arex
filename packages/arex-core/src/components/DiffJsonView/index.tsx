@@ -1,7 +1,7 @@
-import { ContextMenuItem } from '@arextest/vanilla-jsoneditor';
 import { css } from '@emotion/react';
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ContextMenuItem } from 'vanilla-jsoneditor';
 
 import JSONEditor, { JSONEditorRef } from '../JSONEditor';
 import DiffJsonTooltip from './DiffJsonTooltip';
@@ -75,7 +75,6 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
           <JSONEditor
             readOnly
             ref={leftEditorRef}
-            forceContextMenu={!props.readOnly}
             hiddenValue={props.hiddenValue}
             height={props.height}
             remark={props.remarks?.left || (t('record') as string)}
@@ -84,9 +83,12 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
               json: undefined,
             }}
             onClassName={(...params) => props.onClassName?.(...params, TargetEditor.LEFT)}
-            onRenderContextMenu={(items, selection) =>
-              props.onRenderContextMenu?.(selection.path, selection.value, TargetEditor.LEFT) ||
-              items
+            onRenderContextMenu={(items, context) =>
+              props.onRenderContextMenu?.(
+                context.selection.path,
+                context.value,
+                TargetEditor.LEFT,
+              ) || items
             }
           />
         </div>
@@ -95,7 +97,6 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
           <JSONEditor
             readOnly
             ref={rightEditorRef}
-            forceContextMenu={!props.readOnly}
             hiddenValue={props.hiddenValue}
             height={props.height}
             remark={props.remarks?.right || (t('replay') as string)}
@@ -104,9 +105,12 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
               json: undefined,
             }}
             onClassName={(...params) => props.onClassName?.(...params, TargetEditor.RIGHT)}
-            onRenderContextMenu={(items, selection) =>
-              props.onRenderContextMenu?.(selection.path, selection.value, TargetEditor.RIGHT) ||
-              items
+            onRenderContextMenu={(items, context) =>
+              props.onRenderContextMenu?.(
+                context.selection.path,
+                context.value,
+                TargetEditor.RIGHT,
+              ) || items
             }
           />
         </div>

@@ -1,40 +1,51 @@
-import {
-  ContextMenuItem,
-  HiddenValue,
-  JSONContent,
-  JSONEditor as VanillaJSONEditor,
-  JSONEditorPropsOptional,
-  KeySelection,
-  ReadonlyValue,
-  TextContent,
-} from '@arextest/vanilla-jsoneditor';
 import { css } from '@emotion/react';
 import { theme as antdTheme } from 'antd';
 import { parse, stringify } from 'lossless-json';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import {
+  ContextMenuItem,
+  JSONContent,
+  JSONEditor as VanillaJSONEditor,
+  JSONEditorPropsOptional,
+  KeySelection as JSONKeySelection,
+  KeySelection,
+  OnRenderValue,
+  OnSelect,
+  ReadonlyValue,
+  RenderMenuContext,
+  TextContent,
+} from 'vanilla-jsoneditor';
 
 import { useArexCoreConfig } from '../../hooks';
 import { getJsonValueByPath } from '../../utils';
 import EditorWaterMark from './EditorWaterMark';
+import { PasswordAction } from './PasswordAction';
 
 const LosslessJSONParser = { parse, stringify };
 
-export interface KeySelectionWithValue extends KeySelection {
+type Context = RenderMenuContext & { selection: JSONKeySelection };
+export interface ContextWithValue extends Context {
   value: any;
 }
+
+export interface SelectionWithValue extends JSONKeySelection {
+  value: any;
+}
+
 export type OnRenderContextMenu = (
   items: ContextMenuItem[],
-  selection: KeySelectionWithValue,
-) => ContextMenuItem[] | undefined;
+  context: ContextWithValue,
+) => ContextMenuItem[] | false | undefined;
 
 export interface VanillaJSONEditorProps extends JSONEditorPropsOptional {
   height?: string | number;
   remark?: string;
 }
 
-export interface JSONEditorProps extends VanillaJSONEditorProps {
+export interface JSONEditorProps
+  extends Omit<VanillaJSONEditorProps, 'onSelect' | 'onRenderContextMenu'> {
   hiddenValue?: boolean;
-  onSelect?: (selection: KeySelectionWithValue) => void;
+  onSelect?: (selection: SelectionWithValue) => void;
   onRenderContextMenu?: OnRenderContextMenu;
 }
 
@@ -54,49 +65,9 @@ const JSONEditor = forwardRef<JSONEditorRef, JSONEditorProps>((props, ref) => {
     refEditor.current = new VanillaJSONEditor({
       target: refContainer.current!,
       props: {
-        // @ts-ignore
-        // disable build-in render component
-        onRenderValue: (props) => [
-          {
-            component: hiddenValue ? HiddenValue : ReadonlyValue,
-            props,
-          },
-        ],
-        // @ts-ignore
         parser: LosslessJSONParser,
         navigationBar: false,
         mainMenuBar: false,
-        onSelect: (selection) => {
-          // disable multi type selection
-          if (!['key', 'value'].includes(selection?.type || '')) return [];
-
-          const path = (selection as KeySelection)?.path;
-          const value = getJsonValueByPath(
-            (props.content as TextContent)?.text || (props.content as JSONContent)?.json,
-            path,
-          );
-          const selectionWithValue: KeySelectionWithValue = {
-            ...(selection as KeySelection),
-            value,
-          };
-          return onSelect?.(selectionWithValue);
-        },
-        onRenderContextMenu: (items, context) => {
-          // disable multi type selection
-          if (!['key', 'value'].includes(context.selection?.type || '')) return [];
-
-          const path = (context.selection as KeySelection)?.path;
-          const value = getJsonValueByPath(
-            (props.content as TextContent)?.text || (props.content as JSONContent)?.json,
-            path,
-          );
-          const selection: KeySelectionWithValue = {
-            ...(context.selection as KeySelection),
-            value,
-          };
-
-          return onRenderContextMenu?.(items, selection);
-        },
         ...restProps,
       },
     });
@@ -107,12 +78,60 @@ const JSONEditor = forwardRef<JSONEditorRef, JSONEditorProps>((props, ref) => {
         refEditor.current = null;
       }
     };
-  }, [hiddenValue]);
+  }, []);
 
-  // update props // TODO onSelect/onRenderContextMenu update
+  // update props
   useEffect(() => {
-    refEditor.current?.updateProps(restProps);
-  }, [restProps]);
+    refEditor.current?.updateProps({
+      onRenderValue: ((props) =>
+        hiddenValue
+          ? [
+              {
+                action: PasswordAction,
+                props: props as Record<string, any>,
+              },
+            ]
+          : [
+              {
+                component: ReadonlyValue,
+                props: props as Record<string, any>,
+              },
+            ]) as OnRenderValue,
+      onSelect: ((selection) => {
+        // disable multi type selection
+        if (!['key', 'value'].includes(selection?.type || '')) return [];
+
+        const path = (selection as KeySelection)?.path;
+        const value = getJsonValueByPath(
+          (props.content as TextContent)?.text || (props.content as JSONContent)?.json,
+          path,
+        );
+
+        const selectionWithValue = {
+          ...selection,
+          value,
+        };
+        return onSelect?.(selectionWithValue as unknown as SelectionWithValue);
+      }) as OnSelect,
+      onRenderContextMenu: ((items, context) => {
+        // disable multi type selection
+        if (hiddenValue || !['key', 'value'].includes(context?.selection?.type || '')) return false;
+
+        const path = context?.selection?.path;
+        const value = getJsonValueByPath(
+          (props.content as TextContent)?.text || (props.content as JSONContent)?.json,
+          path,
+        );
+        const selectionWithValue: ContextWithValue = {
+          ...context,
+          value,
+        };
+
+        return onRenderContextMenu?.(items, selectionWithValue);
+      }) as OnRenderContextMenu,
+      ...restProps,
+    });
+  }, [hiddenValue, onRenderContextMenu, onSelect, props, restProps]);
 
   useImperativeHandle(
     ref,

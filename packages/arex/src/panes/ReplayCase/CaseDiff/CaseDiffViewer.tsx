@@ -187,7 +187,7 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
       }
     }
 
-    if (arrayElement === undefined) return message.error(t('replayCase.preciseIgnoreError'));
+    if (arrayElement === undefined) return message.error(t('replayCase.conditionalIgnoreError'));
     setArrayElement({ json, element: arrayElement, basePath, relativePath });
     setOpenConditionalIgnore(true);
   };
@@ -242,7 +242,7 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
 
   const contextMenuRender: OnRenderContextMenu = (path, value, target) => {
     const isArrayNode = Array.isArray(value);
-    const isLeafNode = !!value && !isObjectOrArray(value);
+    const isLeafNode = value !== undefined && !isObjectOrArray(value);
     const isRootNode = !path?.length;
 
     return [
@@ -494,11 +494,9 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
               if (referencePath?.path.join(',') === path?.join(','))
                 return 'json-ignore-reference-node';
             }}
-            onSelect={(selection) => {
-              const isLeafNode = !!selection.value && !isObjectOrArray(selection.value);
-              setReference(() =>
-                isLeafNode ? { path: selection.path, value: String(selection.value) } : undefined,
-              );
+            onSelect={({ value, path }) => {
+              const isLeafNode = !!value && !isObjectOrArray(value);
+              setReference(() => (isLeafNode ? { path, value: String(value) } : undefined));
             }}
           />
         </div>
