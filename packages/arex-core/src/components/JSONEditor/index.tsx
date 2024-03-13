@@ -1,3 +1,7 @@
+import { css } from '@emotion/react';
+import { theme as antdTheme } from 'antd';
+import { parse, stringify } from 'lossless-json';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import {
   ContextMenuItem,
   JSONContent,
@@ -10,11 +14,7 @@ import {
   ReadonlyValue,
   RenderMenuContext,
   TextContent,
-} from '@arextest/vanilla-jsoneditor';
-import { css } from '@emotion/react';
-import { theme as antdTheme } from 'antd';
-import { parse, stringify } from 'lossless-json';
-import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+} from 'vanilla-jsoneditor';
 
 import { useArexCoreConfig } from '../../hooks';
 import { getJsonValueByPath } from '../../utils';

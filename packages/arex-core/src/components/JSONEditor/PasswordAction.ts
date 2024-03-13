@@ -1,5 +1,5 @@
-import { type OnJSONSelect } from '@arextest/vanilla-jsoneditor';
 import type { Action } from 'svelte/action';
+import { type OnJSONSelect } from 'vanilla-jsoneditor';
 
 export interface PasswordActionProps {
   value: string | number;

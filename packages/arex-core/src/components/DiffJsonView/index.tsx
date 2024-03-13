@@ -1,7 +1,7 @@
-import { ContextMenuItem } from '@arextest/vanilla-jsoneditor';
 import { css } from '@emotion/react';
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ContextMenuItem } from 'vanilla-jsoneditor';
 
 import JSONEditor, { JSONEditorRef } from '../JSONEditor';
 import DiffJsonTooltip from './DiffJsonTooltip';

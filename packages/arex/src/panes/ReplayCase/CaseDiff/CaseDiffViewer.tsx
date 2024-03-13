@@ -187,7 +187,7 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
       }
     }
 
-    if (arrayElement === undefined) return message.error(t('replayCase.preciseIgnoreError'));
+    if (arrayElement === undefined) return message.error(t('replayCase.conditionalIgnoreError'));
     setArrayElement({ json, element: arrayElement, basePath, relativePath });
     setOpenConditionalIgnore(true);
   };
