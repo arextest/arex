@@ -158,7 +158,7 @@ const CreatePlanModal = forwardRef<CreatePlanModalRef, CreatePlanModalProps>(
           createPlan({
             appId,
             sourceEnv: 'pro',
-            targetEnv,
+            targetEnv: targetEnv.endsWith('/') ? targetEnv.slice(0, -1) : targetEnv,
             planName: values.planName,
             caseSourceFrom: values.caseSourceRange[0].valueOf(),
             caseSourceTo: values.caseSourceRange[1].valueOf(),
