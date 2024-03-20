@@ -1,5 +1,6 @@
 import sdk from 'postman-collection';
 
+import { TIMEOUT_REQUEST, TIMEOUT_SCRIPT } from '../../constant';
 import { ArexEnvironment, ArexRESTRequest } from '../../types';
 import { ArexResponse } from '../../types';
 import { convertToPmBody } from './convertToPmBody';
@@ -56,6 +57,10 @@ export async function sendRequest(
     runner.run(
       collection,
       {
+        timeout: {
+          request: TIMEOUT_REQUEST,
+          script: TIMEOUT_SCRIPT,
+        },
         environment: new sdk.VariableScope({
           name: environment?.name,
           values: environment?.variables,
@@ -130,6 +135,9 @@ export async function sendRequest(
             cookies: any,
             history: any,
           ) {
+            if (err) {
+              reject(err);
+            }
             res = {
               type: 'success', // TODO check response status
               headers: response?.headers.members,
@@ -146,7 +154,7 @@ export async function sendRequest(
               console.log(err);
               reject(err);
             }
-            run.dispose();
+            run.host.dispose();
           },
         });
       },

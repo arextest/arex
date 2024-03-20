@@ -79,13 +79,19 @@ const ReportOverview: FC<ReportOverViewProps> = (props) => {
           <Label>{t('replay.results')}</Label>
           {props.data?.planName}
         </div>
-        <div>
-          <Label style={{ flex: 1, flexShrink: 1 }}>{t('replay.targetHost')}</Label>
+        <div
+          style={{
+            display: 'flex',
+          }}
+        >
+          <Label>{t('replay.targetHost')}</Label>
           <Typography.Text>{props.data?.targetEnv?.split('://')[0] + '://'}</Typography.Text>
           <Typography.Text
             ellipsis
             copyable
             css={css`
+              flex: 1;
+              overflow-x: hidden;
               .ant-typography-copy {
                 opacity: 0;
                 transition: opacity 200ms ease-in-out;
@@ -102,9 +108,11 @@ const ReportOverview: FC<ReportOverViewProps> = (props) => {
         </div>
         <div>
           <Label>{t('replay.caseRange')}</Label>
-          {new Date(props.data?.caseStartTime || '').toLocaleString() || '-'}
-          {' ~ '}
-          {new Date(props.data?.caseEndTime || '').toLocaleString() || '-'}
+          <Typography.Text>
+            {new Date(props.data?.caseStartTime || '').toLocaleString() || '-'}
+            {' ~ '}
+            {new Date(props.data?.caseEndTime || '').toLocaleString() || '-'}
+          </Typography.Text>
         </div>
         <div>
           <Label>{t('replay.executor')}</Label>

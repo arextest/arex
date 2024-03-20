@@ -29,7 +29,7 @@ const ResponseOptions: FC<LensesResponseBodyRendererProps> = ({
     },
     {
       key: 'headers',
-      label: <SmallBadge count={headers.length}>Headers</SmallBadge>,
+      label: <SmallBadge count={headers?.length}>Headers</SmallBadge>,
       children: <ResponseHeaders headers={headers} />,
     },
     {
@@ -48,10 +48,10 @@ const ResponseOptions: FC<LensesResponseBodyRendererProps> = ({
     <div
       style={{
         flex: 1,
-        padding: '0 12px',
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
+        margin: '-8px 0',
       }}
     >
       <Tabs

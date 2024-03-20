@@ -24,8 +24,9 @@ export type RequestProps = {
   disableSave?: boolean;
   onBeforeRequest?: (request: ArexRESTRequest, environment?: ArexEnvironment) => ArexRESTRequest;
   onRequest?: (
+    error: Error | null,
     reqData: { request: ArexRESTRequest; environment?: ArexEnvironment },
-    resData: Awaited<ReturnType<typeof sendRequest>>,
+    resData: Awaited<ReturnType<typeof sendRequest>> | null,
   ) => void;
   onSave?: (request?: ArexRESTRequest, response?: ArexRESTResponse) => void;
   onSaveAs?: () => void;
@@ -38,36 +39,50 @@ const Request: FC<RequestProps> = () => {
     useArexRequestProps();
   const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout>();
 
   const [endpointStatus, setEndpointStatus] = useState<'error'>();
 
   const handleRequest = async () => {
     if (!store.request.endpoint) {
       setEndpointStatus('error');
-      setTimeout(() => {
-        setEndpointStatus(undefined);
-      }, 3000);
+      if (timeoutId) clearTimeout(timeoutId);
+      setTimeoutId(
+        setTimeout(() => {
+          setEndpointStatus(undefined);
+        }, 3000),
+      );
       window.message.error(t('error.emptyEndpoint'));
       return;
     }
     dispatch((state) => {
       state.response = {
-        type: window.__AREX_EXTENSION_INSTALLED__ ? 'loading' : 'extensionNotInstalled',
+        type: window.__AREX_EXTENSION_INSTALLED__ ? 'loading' : 'EXTENSION_NOT_INSTALLED',
         headers: undefined,
       };
     });
 
     if (!window.__AREX_EXTENSION_INSTALLED__) return;
 
-    const res = await sendRequest(onBeforeRequest(store.request), store.environment);
-
-    onRequest?.({ request: store.request, environment: store.environment }, res);
-    dispatch((state) => {
-      state.response = res.response;
-      state.consoles = res.consoles;
-      state.visualizer = res.visualizer;
-      state.testResult = res.testResult;
-    });
+    sendRequest(onBeforeRequest(store.request), store.environment)
+      .then((res) => {
+        onRequest?.(null, { request: store.request, environment: store.environment }, res);
+        dispatch((state) => {
+          state.response = res.response;
+          state.consoles = res.consoles;
+          state.visualizer = res.visualizer;
+          state.testResult = res.testResult;
+        });
+      })
+      .catch((err) => {
+        onRequest?.(err, { request: store.request, environment: store.environment }, null);
+        dispatch((state) => {
+          state.response = {
+            type: err.code,
+            error: err,
+          };
+        });
+      });
   };
 
   return (
@@ -118,9 +133,9 @@ const Request: FC<RequestProps> = () => {
             id='arex-request-send-btn'
             type='primary'
             loading={store.response?.type === 'loading'}
-            disabled={store.response?.type === 'extensionNotInstalled'}
+            disabled={store.response?.type === 'EXTENSION_NOT_INSTALLED'}
             icon={
-              store.response?.type === 'extensionNotInstalled' ? (
+              store.response?.type === 'EXTENSION_NOT_INSTALLED' ? (
                 <ExclamationOutlined />
               ) : (
                 <SendOutlined />

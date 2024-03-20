@@ -39,7 +39,7 @@ export default defineConfig(async ({ mode }) => {
       }),
       // Copy plugins: copy arex-request-runtime.js to dist folder on dev and build
       copyFilePlugin({
-        src: './node_modules/@arextest/arex-request-runtime/dist/index.js',
+        src: './node_modules/@arextest/arex-request-runtime/index.js',
         dest: 'dist/',
         rename: 'arex-request-runtime.js',
       }),
