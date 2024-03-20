@@ -68,6 +68,7 @@
     "json_prettify_invalid_body": "Couldn't prettify an invalid body, solve json syntax errors and try again",
     "network_error": "There seems to be a network error. Please try again.",
     "network_fail": "Could not send request",
+    "e_timeout": "Request timed out. Please try again.",
     "no_duration": "No duration",
     "no_results_found": "No matches found",
     "page_not_found": "This page could not be found",
