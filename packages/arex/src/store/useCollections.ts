@@ -169,9 +169,7 @@ function mergeRootLevel(tree: CollectionType[], rootLevel: CollectionType[]) {
     const node = tree.find((root) => root.infoId === item.infoId);
     if (!node) return item;
     else {
-      const res = { ...item, children: node.children } as CollectionType;
-      console.log(node, res);
-      return res;
+      return { ...item, children: node.children } as CollectionType;
     }
   });
 }

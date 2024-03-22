@@ -51,7 +51,7 @@ const CaseList: FC<CaseProps> = (props) => {
     {
       title: t('replay.status'),
       width: 100,
-      filteredValue: props.filter !== undefined ? [props.filter.toString()] : undefined,
+      filteredValue: props.filter !== undefined ? [props.filter.toString()] : null,
       filterMultiple: false,
       filters: filterMap,
       onFilter: (value, record) => record.diffResultCode === value,
@@ -123,7 +123,8 @@ const CaseList: FC<CaseProps> = (props) => {
         pageIndex: params.current,
         pageSize: params.pageSize,
         planItemId: props.planItemId,
-        diffResultCode: Number(props.filter),
+        // @ts-ignore
+        diffResultCode: props.filter,
         needTotal: true,
       }),
     {
