@@ -17,13 +17,13 @@ import { Button, ConfigProvider, Tag, Tree } from 'antd';
 import { TreeProps } from 'antd/es';
 import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import { cloneDeep } from 'lodash';
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 
 import CollectionSearchedList from '@/components/CollectionSelect/CollectionSearchedList';
-import { CollectionNodeType, EMAIL_KEY, MenusType, PanesType } from '@/constant';
+import { CollectionNodeType, EMAIL_KEY } from '@/constant';
 import { FileSystemService, ReportService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
-import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
+import { useCollections, useWorkspaces } from '@/store';
 import { negate } from '@/utils';
 
 import CollectionNodeTitle, { CollectionNodeTitleProps } from './CollectionNodeTitle';
@@ -53,11 +53,14 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
   const { activeWorkspaceId } = useWorkspaces();
-  const { activePane, setActiveMenu } = useMenusPanes();
   const {
     loading,
+    expandedKeys,
+    loadedKeys,
     collectionsTreeData,
     collectionsFlatData,
+    setExpandedKeys,
+    setLoadedKeys,
     getCollections,
     getPath,
     moveCollectionNode,
@@ -74,30 +77,12 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
 
   const [searchValue, setSearchValue] = useState<SearchDataType>();
   const [autoExpandParent, setAutoExpandParent] = useState(true);
-  const [expandedKeys, setExpandedKeys] = useState<string[]>(); // TODO 初始化展开的节点
   const [activeKey, setActiveKey] = useState<string>();
 
   const searching = useMemo(
     () => !!searchValue?.keyword || !!searchValue?.structuredValue?.length,
     [searchValue],
   );
-
-  // auto expand by active pane id
-  useEffect(() => {
-    if (activePane && activePane.type === PanesType.REQUEST) {
-      const [workspaceId, nodeTypeStr, id] = activePane.id.split('-');
-      setActiveMenu(MenusType.COLLECTION);
-
-      if (workspaceId !== activeWorkspaceId) {
-        getCollections({ workspaceId, infoId: id, nodeType: parseInt(nodeTypeStr) }).then(() =>
-          setExpandedKeys([...getPath(id).map((item) => item.id)]),
-        );
-      } else {
-        const path = getPath(id).map((item) => item.id);
-        setExpandedKeys((expand) => [...(expand || []), ...path]);
-      }
-    }
-  }, [activePane]);
 
   const { data: labelData = [] } = useRequest(
     () => ReportService.queryLabels({ workspaceId: activeWorkspaceId }),
@@ -119,7 +104,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
 
   const dataList: { key: string; title: string; labelIds: string | null }[] = useMemo(
     () =>
-      Array.from(collectionsFlatData).map(([key, value]) => ({
+      Object.entries(collectionsFlatData).map(([key, value]) => ({
         key,
         title: value.nodeName,
         labelIds: value.labelIds,
@@ -152,14 +137,15 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   );
 
   const handleSelect: DirectoryTreeProps<CollectionTreeType>['onSelect'] = (keys, info) => {
+    const infoId = info.node.infoId;
     if (expandable?.includes(info.node.nodeType)) {
-      setExpandedKeys((expandedKeys) => {
-        return expandedKeys?.includes(info.node.infoId)
-          ? expandedKeys.filter((key) => key !== info.node.infoId)
-          : [...(expandedKeys || []), info.node.infoId];
-      });
+      setExpandedKeys(
+        expandedKeys?.includes(infoId)
+          ? expandedKeys.filter((key) => key !== infoId)
+          : [...expandedKeys, infoId],
+      );
     }
-    setActiveKey(info.node.infoId);
+    setActiveKey(infoId);
     props.onSelect?.(keys, info.node);
   };
 
@@ -172,6 +158,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
         () => activeKey && treeRef.current?.scrollTo({ key: activeKey, align: 'top', offset: 64 }),
         200,
       );
+      activeKey && setExpandedKeys([...expandedKeys, ...getPath(activeKey).map((item) => item.id)]);
     } else {
       newExpandedKeys = dataList
         .map((item) => {
@@ -199,13 +186,10 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
               }
             }
           }
-
-          return keywordFiltered && structuredFiltered
-            ? collectionsFlatData.get(item.key)?.pid
-            : null;
+          return keywordFiltered && structuredFiltered ? collectionsFlatData[item.key]?.pid : null;
         })
         .filter((item, i, self) => item && self.indexOf(item) === i);
-      setExpandedKeys(newExpandedKeys as string[]);
+      setExpandedKeys([...expandedKeys, ...(newExpandedKeys as string[])]);
     }
     setSearchValue(value);
     setAutoExpandParent(true);
@@ -286,7 +270,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   return (
     <div className='collection-content-wrapper'>
       <EmptyWrapper
-        empty={!loading && !collectionsTreeData.length}
+        empty={!loading && !collectionsTreeData?.length}
         description={
           <Button type='primary' onClick={createCollection}>
             {t('collection.create_new')}
@@ -334,11 +318,15 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
               ref={treeRef}
               height={props.height}
               selectedKeys={props.selectedKeys}
+              loadedKeys={loadedKeys}
               expandedKeys={expandedKeys}
               autoExpandParent={autoExpandParent}
               switcherIcon={<DownOutlined />}
               treeData={collectionsTreeData}
               loadData={handleLoadData}
+              onLoad={(keys) => {
+                setLoadedKeys([...loadedKeys, ...(keys as string[])]);
+              }}
               fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
               onDrop={onDrop}
               onExpand={onExpand}
