@@ -144,7 +144,7 @@ const CaseList: FC<CaseProps> = (props) => {
       onRowClick={props.onClick}
       onChange={(pagination, filters, sorter, extra) => {
         const filter = filters['2']?.[0];
-        if (typeof filter === 'number' && filter !== props.filter) {
+        if (filter !== props.filter) {
           navPane({
             type: PanesType.REPLAY_CASE,
             id: props.planItemId,
