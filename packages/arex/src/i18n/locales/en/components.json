@@ -72,6 +72,7 @@
     "import_export": "Import / Export",
     "import": "Import",
     "export": "Export",
+    "locate": "Locate",
     "from_postman_description": "Import from Postman collection file"
   },
   "replay": {

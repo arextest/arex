@@ -72,6 +72,7 @@
     "import_export": "导入/导出",
     "import": "导入",
     "export": "导出",
+    "locate": "定位",
     "from_postman_description": "从 Postman 集合中导入"
   },
   "replay": {
