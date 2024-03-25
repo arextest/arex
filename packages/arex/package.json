@@ -18,7 +18,7 @@
     "publish": "vite build --mode electron && electron-builder --mac --win -p always"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.2.6",
+    "@ant-design/icons": "^5.3.4",
     "@arextest/arex-core": "*",
     "@arextest/arex-request": "*",
     "@arextest/arex-request-runtime": "^1.0.2",
