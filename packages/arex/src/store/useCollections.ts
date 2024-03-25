@@ -481,6 +481,4 @@ const useCollections = create(
   ),
 );
 
-useCollections.getState().getCollections();
-
 export default useCollections;
