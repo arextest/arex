@@ -1,6 +1,7 @@
 import { CloseOutlined, OpenAIOutlined, SendOutlined } from '@ant-design/icons';
 import { css, styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import { Editor } from '@monaco-editor/react';
+import { useRequest } from 'ahooks';
 import { Button, Card, Divider, Drawer, FloatButton, Skeleton, Space, Typography } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import React, { useCallback, useState } from 'react';
@@ -8,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 
 import { useArexRequestProps, useArexRequestStore } from '../../hooks';
 import { testCodeSnippet } from './snippets';
-import { useRequest } from 'ahooks';
 
 const { Text } = Typography;
 
@@ -65,7 +65,7 @@ const RequestTests = () => {
     // this param is used in OnSuccess
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async (historyIdx: number, input: string) => {
-      console.log(historyIdx, input)
+      // console.log(historyIdx, input);
       return gptProvider!({
         apiRes: store.response?.type === 'success' ? store.response.body : undefined,
         currentScript: store.request.testScript,
@@ -88,7 +88,7 @@ const RequestTests = () => {
   const sendAiMessage = useCallback(
     (input?: string) => {
       let newIdx = 0;
-      const finalInput = input ?? 'Generate basic tests.'
+      const finalInput = input ?? 'Generate basic tests.';
       setHistory((old) => {
         newIdx = old.length;
         return [...old, { userMsg: finalInput! }];
