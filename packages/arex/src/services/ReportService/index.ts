@@ -1,6 +1,7 @@
 export * from './contract';
 export * from './deleteReport';
 export * from './feedbackScene';
+export * from './generateTestScripts';
 export * from './getReportServiceVersion';
 export * from './label';
 export * from './queryAggCount';
@@ -21,3 +22,4 @@ export * from './querySceneInfo';
 export * from './queryScenes';
 export * from './validInvitation';
 export * from './viewRecord';
+
