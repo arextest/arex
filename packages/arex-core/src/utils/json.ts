@@ -53,9 +53,8 @@ export const tryPrettierJsonString = (
  * @param parser
  */
 export function getJsonValueByPath(object?: any, path?: string[], parser?: Parser) {
-  if (!object || !path || !path?.length) return undefined;
-
   const json = tryParseJsonString<Record<string, any>>(object, { parser });
+  if (!object || !path || !path?.length) return json;
 
   return path?.reduce(
     (value, object) =>
