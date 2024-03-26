@@ -19,6 +19,7 @@ import { useNavPane } from '@/hooks';
 import { EnvironmentService, FileSystemService, ReportService } from '@/services';
 import { Environment } from '@/services/EnvironmentService/getEnvironments';
 import { GetCollectionItemTreeReq } from '@/services/FileSystemService';
+import { generateTestScripts } from '@/services/ReportService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
@@ -29,7 +30,6 @@ import EnvironmentDrawer, {
 import { ExtraTabs } from './extra';
 import SaveAs, { SaveAsRef } from './SaveAs';
 import { updateWorkspaceEnvironmentLS } from './utils';
-import {generateTestScripts} from "@/services/ReportService";
 
 export type RequestProps = {
   environmentId?: string;
