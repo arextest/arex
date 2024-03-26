@@ -13,6 +13,10 @@ export interface SystemConfig {
     missingComparisonIgnoreCategory: number;
     missingRecordConfig: number;
   };
+  comparePluginInfo: {
+    comparePluginUrl: string | null;
+    transMethodList?: string[];
+  };
   compareIgnoreTimePrecisionMillis: number;
   compareNameToLower: boolean;
   compareNullEqualsEmpty: boolean;

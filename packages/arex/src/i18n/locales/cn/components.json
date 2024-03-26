@@ -457,6 +457,8 @@
     "jarFileUrlPlaceholder": "请输入 Jar 包地址",
     "replayCallback": "回放回调",
     "replayCallbackPlaceholder": "请输入回放回调地址",
+    "comparePlugin": "对比插件",
+    "comparePluginPlaceholder": "请输入对比插件 Jar 包地址",
     "systemLogs": "系统日志",
     "openSystemLogs": "打开系统日志",
     "application": "应用",

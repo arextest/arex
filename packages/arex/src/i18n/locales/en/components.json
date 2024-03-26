@@ -459,6 +459,8 @@
     "jarFileUrlPlaceholder": "Please enter Jar file Url",
     "replayCallback": "Replay Callback",
     "replayCallbackPlaceholder": "Please enter replay callback Url",
+    "comparePlugin": "Compare Plugin",
+    "comparePluginPlaceholder": "Please enter compare plugin Jar file Url",
     "systemLogs": "System Logs",
     "openSystemLogs": "Open System Logs",
     "application": "Application",
