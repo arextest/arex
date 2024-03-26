@@ -26,12 +26,23 @@ export type HttpConfig = {
   responseTabs?: TabConfig;
 };
 
+export type GenReq = {
+  apiRes?: string;
+  currentScript?: string;
+  requirement?: string;
+};
+
+export type GenRes = {
+  code: string;
+  explanation: string;
+};
 export interface ArexRequestProps extends RequestProps {
   loading?: boolean;
   height?: string;
   language?: string;
   data?: ArexRESTRequest;
   config?: HttpConfig;
+  gptProvider?: (r: GenReq) => Promise<GenRes>;
 }
 
 export interface ArexRequestRef extends NavigationBarRef {}

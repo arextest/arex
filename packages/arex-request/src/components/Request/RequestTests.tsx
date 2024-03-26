@@ -1,13 +1,14 @@
-import { CloseOutlined, OpenAIOutlined } from '@ant-design/icons';
+import { CloseOutlined, OpenAIOutlined, SendOutlined } from '@ant-design/icons';
 import { css, styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import { Editor } from '@monaco-editor/react';
-import { Button, Drawer, FloatButton, Typography } from 'antd';
-import React, { useState } from 'react';
+import { Button, Card, Divider, Drawer, FloatButton, Skeleton, Space, Typography } from 'antd';
+import TextArea from 'antd/es/input/TextArea';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useArexRequestStore } from '../../hooks';
+import { useArexRequestProps, useArexRequestStore } from '../../hooks';
 import { testCodeSnippet } from './snippets';
-import TextArea from 'antd/es/input/TextArea';
+import { useRequest } from 'ahooks';
 
 const { Text } = Typography;
 
@@ -35,23 +36,69 @@ const editorOptions = {
   scrollBeyondLastLine: false,
 } as const;
 
+type ChatHistory = {
+  userMsg: string;
+  botMsg?: string;
+};
+
 const RequestTests = () => {
   const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
-  const { theme } = useArexCoreConfig();
-
-  const [aiDrawerOpen, setOpen] = useState<boolean>();
-
+  const { theme, colorPrimary } = useArexCoreConfig();
+  const { gptProvider } = useArexRequestProps();
   const ThemeColorPrimaryButton = styled(Button)`
     color: ${(props) => props.theme.colorPrimary} !important;
   `;
   const codeSnippet = testCodeSnippet;
-
   const addTest = (text: string) => {
     dispatch((state) => {
-      state.request.testScript = state.request.testScript += text;
+      state.request.testScript = state.request.testScript += '\n' + text;
     });
   };
+
+  const [AIDrawerOpen, setOpen] = useState<boolean>();
+  const [currentInput, setInput] = useState<string>();
+  const [chatHistory, setHistory] = useState<ChatHistory[]>([]);
+
+  // todo extract to props
+  const { loading: gptLoading, run: gptRun } = useRequest(
+    // this param is used in OnSuccess
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async (historyIdx: number, input: string) => {
+      console.log(historyIdx, input)
+      return gptProvider!({
+        apiRes: store.response?.type === 'success' ? store.response.body : undefined,
+        currentScript: store.request.testScript,
+        requirement: input,
+      });
+    },
+    {
+      manual: true,
+      onSuccess: (data, params) => {
+        addTest(data?.code ?? '');
+        setHistory((old) => {
+          const newHistory = [...old];
+          newHistory[params[0]].botMsg = data?.explanation ?? '';
+          return newHistory;
+        });
+      },
+    },
+  );
+
+  const sendAiMessage = useCallback(
+    (input?: string) => {
+      let newIdx = 0;
+      const finalInput = input ?? 'Generate basic tests.'
+      setHistory((old) => {
+        newIdx = old.length;
+        return [...old, { userMsg: finalInput! }];
+      });
+      setInput('');
+      gptRun(newIdx, finalInput);
+    },
+    [gptRun],
+  );
+
   return (
     <div
       css={css`
@@ -100,7 +147,7 @@ const RequestTests = () => {
           <Drawer
             title='Arex Bot'
             placement='right'
-            open={aiDrawerOpen}
+            open={AIDrawerOpen}
             mask={false}
             getContainer={false}
             onClose={() => setOpen(false)}
@@ -108,11 +155,52 @@ const RequestTests = () => {
             extra={<Button onClick={() => setOpen(false)} type='link' icon={<CloseOutlined />} />}
           >
             <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-              <div style={{ height: '90%' }}></div>
-              <TextArea
-                placeholder='Autosize height based on content lines'
-                autoSize={{ minRows: 2 }}
-              />
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '90%',
+                  overflowY: 'scroll',
+                  paddingTop: 8,
+                  paddingBottom: 8,
+                }}
+              >
+                {chatHistory.map((chat, i) => (
+                  <Card
+                    key={i}
+                    style={{ width: '100%', marginBottom: 16 }}
+                    bodyStyle={{ padding: 8 }}
+                  >
+                    <div>
+                      <Typography>{chat.userMsg}</Typography>
+                    </div>
+                    <Divider />
+                    {chat.botMsg ? (
+                      <Typography style={{ color: colorPrimary }}>{chat.botMsg}</Typography>
+                    ) : (
+                      <Skeleton active />
+                    )}
+                  </Card>
+                ))}
+              </div>
+
+              {/*chat message input*/}
+              <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                <TextArea
+                  placeholder='Enter your test requirements here...'
+                  autoSize={{ minRows: 2, maxRows: 6 }}
+                  onChange={(e) => setInput(e.target.value)}
+                  value={currentInput}
+                />
+                <Button
+                  style={{ marginLeft: 4 }}
+                  icon={<SendOutlined />}
+                  disabled={gptLoading}
+                  onClick={() => {
+                    sendAiMessage(currentInput);
+                  }}
+                />
+              </div>
             </div>
           </Drawer>
 

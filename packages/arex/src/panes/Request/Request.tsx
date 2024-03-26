@@ -29,6 +29,7 @@ import EnvironmentDrawer, {
 import { ExtraTabs } from './extra';
 import SaveAs, { SaveAsRef } from './SaveAs';
 import { updateWorkspaceEnvironmentLS } from './utils';
+import {generateTestScripts} from "@/services/ReportService";
 
 export type RequestProps = {
   environmentId?: string;
@@ -302,6 +303,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         ref={requestRef}
         loading={loading}
         data={data}
+        gptProvider={ReportService.generateTestScripts}
         language={i18n.language}
         config={httpConfig}
         breadcrumb={parentPath?.length ? parentPath.map((path) => path.name) : [title]}

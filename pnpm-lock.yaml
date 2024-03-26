@@ -435,6 +435,9 @@ importers:
       '@monaco-editor/react':
         specifier: ^4.6.0
         version: 4.6.0(monaco-editor@0.39.0)(react-dom@18.2.0)(react@18.2.0)
+      ahooks:
+        specifier: ^3.7.5
+        version: 3.7.8(react@18.2.0)
       allotment:
         specifier: ^1.18.1
         version: 1.20.0(react-dom@18.2.0)(react@18.2.0)
