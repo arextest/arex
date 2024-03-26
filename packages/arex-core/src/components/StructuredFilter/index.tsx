@@ -1,7 +1,7 @@
-import { SearchOutlined } from '@ant-design/icons';
+import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useKeyPress } from 'ahooks';
-import { Button, Flex, Select, SelectProps } from 'antd';
+import { Button, Flex, Select, SelectProps, Typography } from 'antd';
 import { SizeType } from 'antd/es/config-provider/SizeContext';
 import { RefSelectProps } from 'antd/es/select';
 import { isEqual } from 'lodash';
@@ -37,9 +37,10 @@ export type StructuredFilterProps = {
   prefix?: ReactNode;
   labelDataSource?: Label[];
   showSearchButton?: boolean | 'simple';
+  options: StructuredOptionType[];
   onSearch?: (value: SearchDataType) => void;
   onChange?: (value: SearchDataType) => void;
-  options: StructuredOptionType[];
+  onCancel?: () => void;
 } & Omit<SelectProps, 'options' | 'onSearch'>;
 
 export type StructuredFilterRef = {
@@ -52,6 +53,7 @@ const StructuredFilterWrapper = styled.div<{ size: SizeType }>`
     flex-grow: 1;
   }
   .search-content {
+    padding-left: 8px;
     position: relative;
     display: flex;
     width: 133.33%;
@@ -171,7 +173,6 @@ const StructuredFilter = forwardRef<StructuredFilterRef, StructuredFilterProps>(
             mode='multiple'
             size={size}
             open={!keyword && open}
-            suffixIcon={<SearchOutlined />}
             tagRender={(tagProps) => (
               <StructuredTag
                 {...tagProps}
@@ -201,8 +202,30 @@ const StructuredFilter = forwardRef<StructuredFilterRef, StructuredFilterProps>(
           />
 
           {showSearchButton && (
-            <Button icon={<SearchOutlined />} onClick={handleSearch} style={{ height: '36px' }}>
-              {showSearchButton !== 'simple' && t('search')}
+            <Button
+              type='text'
+              size={size}
+              icon={<CloseOutlined />}
+              onClick={props.onCancel}
+              style={{ height: '28px', width: '28px' }}
+            >
+              {showSearchButton !== 'simple' && (
+                <Typography.Text style={{ padding: '0 4px' }}>{t('cancel')}</Typography.Text>
+              )}
+            </Button>
+          )}
+
+          {showSearchButton && (
+            <Button
+              type='text'
+              size={size}
+              icon={<SearchOutlined />}
+              onClick={handleSearch}
+              style={{ height: '28px', width: '28px' }}
+            >
+              {showSearchButton !== 'simple' && (
+                <Typography.Text style={{ padding: '0 4px' }}>{t('search')}</Typography.Text>
+              )}
             </Button>
           )}
         </div>

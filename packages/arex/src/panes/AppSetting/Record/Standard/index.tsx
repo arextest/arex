@@ -6,6 +6,7 @@ import React, { FC, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { InterfaceSelect } from '@/components';
+import { URL_DOCUMENT_MOCK_CONFIG } from '@/constant';
 import { ConfigService } from '@/services';
 import { SerializeSkipInfo, ServiceCollectConfig } from '@/services/ConfigService';
 
@@ -165,7 +166,16 @@ const Standard: FC<StandardProps> = (props) => {
               <>
                 <Form.Item
                   label={
-                    <HelpTooltip title={t('appSetting.dynamicClassesTooltip')}>
+                    <HelpTooltip
+                      title={
+                        <>
+                          {t('appSetting.dynamicClassesTooltip')}
+                          <a target='_blank' rel='noreferrer' href={URL_DOCUMENT_MOCK_CONFIG}>
+                            {t('document', { ns: 'common' }).toLocaleLowerCase()}
+                          </a>
+                        </>
+                      }
+                    >
                       {t('appSetting.dynamicClasses')}
                     </HelpTooltip>
                   }

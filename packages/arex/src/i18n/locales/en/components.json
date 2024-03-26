@@ -72,6 +72,7 @@
     "import_export": "Import / Export",
     "import": "Import",
     "export": "Export",
+    "locate": "Locate",
     "from_postman_description": "Import from Postman collection file"
   },
   "replay": {
@@ -283,7 +284,7 @@
     "advanced": "Advanced",
     "timeMock": "Time Mock",
     "dynamicClasses": "Dynamic Classes",
-    "dynamicClassesTooltip": "To ensure consistent execution results despite cache data differences, AREX collects and mocks local cache data. This is achieved by configuring the access method of the local cache as a dynamic class, allowing custom mocking of the method. It records the data from the dynamically configured class method in the production environment and replays the corresponding matched data. In addition to cache data, various memory data can also be mocked.",
+    "dynamicClassesTooltip": "Customized method in Mock projects, usually used to solve scenarios with inconsistent local caching. For details, refer to ",
     "fullClassName": "Full Class Name",
     "fullClassNameTooltip": "The full class name of the local cache, e.g.:\ninfix: io.arex.inst.dynamic.*namicTest* \nsuffix: io.arex.inst.dynamic.*namicTestClass\nprefix: io.arex.inst.dynamic.DynamicTest*\nequals: io.arex.inst.dynamic.DynamicTestClass\nabstract class or interface: ac:io.arex.inst.dynamic.AbstractDynamicTestClass",
     "baseTooltip": "Mark as base class or interface, check this will take effect for this class and all subclass.",

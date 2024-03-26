@@ -5,14 +5,15 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { DEFAULT_LANGUAGE, isClient, MessageType, PanesType } from '@/constant';
-import { useCollections, useMenusPanes, useMessageQueue, useWorkspaces } from '@/store';
-import { globalStoreInit, versionStringCompare } from '@/utils';
+import { useMenusPanes, useMessageQueue, useWorkspaces } from '@/store';
+import { versionStringCompare } from '@/utils';
+
+import globalStoreInit from '../utils/globalStoreInit';
 
 const useInit = () => {
   const { message } = App.useApp();
   const { setPanes, setActiveMenu } = useMenusPanes();
-  const { getCollections } = useCollections();
-  const { workspaces, activeWorkspaceId, setActiveWorkspaceId } = useWorkspaces();
+  const { workspaces, activeWorkspaceId, changeActiveWorkspaceId } = useWorkspaces();
   const nav = useNavigate();
   const { pushMessage } = useMessageQueue();
 
@@ -41,9 +42,10 @@ const useInit = () => {
     if (needAuthorization) {
       const [workspaceId] = id.split('-');
       const authorized = workspaces.map((ws) => ws.id).includes(workspaceId);
-      if (workspaceId === activeWorkspaceId || (workspaceId !== activeWorkspaceId && authorized)) {
-        setActiveWorkspaceId(workspaceId);
-        getCollections({ workspaceId });
+      if (workspaceId === activeWorkspaceId) {
+        openPane();
+      } else if (workspaceId !== activeWorkspaceId && authorized) {
+        changeActiveWorkspaceId(workspaceId);
         openPane();
       } else {
         message.error('No target workspace permissions');
