@@ -27,7 +27,11 @@ export type CollectionSearchedListProps = {
 const CollectionSearchedList = (props: CollectionSearchedListProps) => {
   const { token } = theme.useToken();
 
-  const { data, loading } = useRequest(
+  const {
+    data,
+    loading,
+    run: search,
+  } = useRequest(
     () =>
       FileSystemService.searchCollectionItems({
         workspaceId: props.workspaceId,
@@ -40,7 +44,6 @@ const CollectionSearchedList = (props: CollectionSearchedListProps) => {
         })),
       }),
     {
-      refreshDeps: [props.workspaceId, props.searchValue],
       debounceWait: 300,
       ready: !!props.searchValue,
     },

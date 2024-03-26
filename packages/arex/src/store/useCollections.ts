@@ -257,8 +257,6 @@ const useCollections = create(
             }
           }
 
-          console.log(mergedData);
-
           const collectionsFlatData = treeToMap(generateRootNode(mergedData));
           set({
             collectionsFlatData,
@@ -451,12 +449,6 @@ const useCollections = create(
 
             const toIndex = parentChildren.findIndex((item) => item.infoId === id);
 
-            console.log({
-              id: workspaceId,
-              fromNodePath,
-              toParentPath,
-              toIndex,
-            });
             FileSystemService.moveCollectionItem({
               id: workspaceId,
               fromNodePath,

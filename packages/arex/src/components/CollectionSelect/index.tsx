@@ -1,4 +1,4 @@
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   CategoryKey,
   css,
@@ -7,6 +7,7 @@ import {
   Operator,
   RequestMethodEnum,
   SearchDataType,
+  SpaceBetweenWrapper,
   StructuredFilter,
   styled,
   useTranslation,
@@ -78,6 +79,8 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   const [searchValue, setSearchValue] = useState<SearchDataType>();
   const [autoExpandParent, setAutoExpandParent] = useState(true);
   const [activeKey, setActiveKey] = useState<string>();
+
+  const [showSearchInput, setShowSearchInput] = useState(false);
 
   const searching = useMemo(
     () => !!searchValue?.keyword || !!searchValue?.structuredValue?.length,
@@ -154,10 +157,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     let newExpandedKeys;
     if (!structuredValue?.length && !keyword) {
       // TODO: 以事件驱动滚动，防止滚动到未加载的节点
-      setTimeout(
-        () => activeKey && treeRef.current?.scrollTo({ key: activeKey, align: 'top', offset: 64 }),
-        200,
-      );
+      activeKey && treeRef.current?.scrollTo({ key: activeKey, align: 'top', offset: 64 });
       activeKey && setExpandedKeys([...expandedKeys, ...getPath(activeKey).map((item) => item.id)]);
     } else {
       newExpandedKeys = dataList
@@ -277,22 +277,42 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
           </Button>
         }
       >
-        <StructuredFilter
-          size='small'
-          className='collection-header-search'
-          // @ts-ignore
-          ref={searchRef}
-          showSearchButton={false}
-          prefix={props.menu}
-          labelDataSource={labelData.map((item) => ({
-            id: item.id,
-            name: item.labelName,
-            color: item.color,
-          }))}
-          options={options}
-          // placeholder={'Search for Name'}
-          onChange={handleChange}
-        />
+        <div>
+          {!props.menu || showSearchInput ? (
+            <StructuredFilter
+              size='small'
+              className='collection-header-search'
+              key='search-input'
+              // @ts-ignore
+              ref={searchRef}
+              showSearchButton={'simple'}
+              labelDataSource={labelData.map((item) => ({
+                id: item.id,
+                name: item.labelName,
+                color: item.color,
+              }))}
+              options={options}
+              // placeholder={'Search for Name'}
+              onChange={handleChange}
+              onCancel={() => {
+                setSearchValue(undefined);
+                setShowSearchInput(false);
+              }}
+            />
+          ) : (
+            <SpaceBetweenWrapper style={{ margin: '3.5px 0' }}>
+              <div>{props.menu}</div>
+              <Button
+                type='text'
+                size='small'
+                key='menus'
+                icon={<SearchOutlined />}
+                onClick={() => setShowSearchInput(true)}
+              />
+            </SpaceBetweenWrapper>
+          )}
+        </div>
+
         <ConfigProvider theme={{ token: { motion: false } }}>
           {searching ? (
             <CollectionSearchedList
