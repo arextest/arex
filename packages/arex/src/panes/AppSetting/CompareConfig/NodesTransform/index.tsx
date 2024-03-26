@@ -39,6 +39,11 @@ const NodesTransform: FC<NodesTransformProps> = (props) => {
   const [openIndex, setOpenIndex] = useState<number>(-1);
   const [nodePath, setNodePath] = useState<string>();
 
+  const { data: transformOptions = [] } = useRequest(ComparisonService.getTransformMethod, {
+    ready: !!props.appId,
+    defaultParams: [props.appId!],
+  });
+
   const { data = [], run: queryTransformNode } = useRequest(
     () =>
       ComparisonService.queryTransformNode({
@@ -106,6 +111,7 @@ const NodesTransform: FC<NodesTransformProps> = (props) => {
               key={item.id}
               edit={edit === item.id}
               data={item}
+              options={transformOptions?.map((method) => ({ label: method, value: method }))}
               onNodePathChange={(path) =>
                 setTransformData((draft) => {
                   draft[dataIndex].transformDetail!.nodePath = path;

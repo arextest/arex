@@ -5,6 +5,7 @@ export * from './deleteIgnoreCategory';
 export * from './deleteIgnoreNode';
 export * from './deleteSortNode';
 export * from './deleteTransformNode';
+export * from './getTransformMethod';
 export * from './insertEncryptionNode';
 export * from './insertIgnoreCategory';
 export * from './insertIgnoreNode';
