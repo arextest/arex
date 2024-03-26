@@ -239,7 +239,7 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
                 navPane({
                   type: PanesType.REPLAY_CASE,
                   id: record.planItemId,
-                  // data: record,
+                  data: { filter: undefined },
                 });
               }}
             />

@@ -102,6 +102,7 @@ export const isMac = window.platform === 'darwin';
 
 export const URL_AREX = 'https://docs.arextest.com';
 export const URL_DOCUMENT_GET_STARTED = 'https://docs.arextest.com/docs/category/get-started';
+export const URL_DOCUMENT_MOCK_CONFIG = 'https://docs.arextest.com/docs/chapter3/Mock%20Config/';
 export const URL_GITHUB_ISSUES = 'https://github.com/arextest/arex/issues';
 export const URL_X = 'https://x.com/AREX_Test';
 export const URL_SLACK =

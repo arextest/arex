@@ -29,9 +29,10 @@ const Collection: ArexMenuFC = (props) => {
 
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
-  const { activeWorkspaceId, workspaces, getWorkspaces, setActiveWorkspaceId } = useWorkspaces();
   const { reset: resetPane } = useMenusPanes();
-  const { createRootCollectionNode } = useCollections();
+  const { activeWorkspaceId, workspaces, getWorkspaces, changeActiveWorkspaceId } = useWorkspaces();
+  const { createRootCollectionNode, getCollections, setExpandedKeys, setLoadedKeys, getPath } =
+    useCollections();
 
   const collectionsImportExportRef = useRef<CollectionsImportExportRef>(null);
 
@@ -72,10 +73,13 @@ const Collection: ArexMenuFC = (props) => {
   });
 
   // requestId structure: workspaceId-nodeTypeStr-id
+  const [workspaceId, nodeTypeStr, value] = useMemo(
+    () => props.value?.split('-') || [],
+    [props.value],
+  );
   const selectedKeys = useMemo(() => {
-    const id = props.value?.split('-')?.[2];
-    return id ? [id] : undefined;
-  }, [props.value]);
+    return value ? [value] : undefined;
+  }, [value]);
 
   const handleSelect: CollectionSelectProps['onSelect'] = (keys, node) => {
     if (node.nodeType !== CollectionNodeType.folder) {
@@ -109,16 +113,27 @@ const Collection: ArexMenuFC = (props) => {
     });
   };
 
+  const handleLocate = () => {
+    getCollections(
+      { workspaceId: activeWorkspaceId, infoId: value, nodeType: parseInt(nodeTypeStr) },
+      { merge: false },
+    ).then(() => {
+      const path = getPath(value).map((node) => node.id);
+      const infoId = path.pop();
+      setExpandedKeys([...path, infoId!]);
+      setLoadedKeys(path);
+    });
+  };
+
   return (
     <CollectionWrapper>
       <WorkspacesMenu
         value={activeWorkspaceId}
         options={workspacesOptions}
-        onChange={setActiveWorkspaceId}
+        onChange={changeActiveWorkspaceId}
         onAdd={handleAddWorkspace}
         onEdit={handleEditWorkspace}
       />
-
       <CollectionSelect
         height={size?.height && size.height - 100}
         selectedKeys={selectedKeys}
@@ -157,11 +172,16 @@ const Collection: ArexMenuFC = (props) => {
                 });
               }}
             />
+
+            <TooltipButton
+              icon={<Icon name='Crosshair' />}
+              title={t('collection.locate')}
+              onClick={handleLocate}
+            />
           </div>
         }
         onSelect={handleSelect}
       />
-
       <CollectionsImportExport ref={collectionsImportExportRef} />
     </CollectionWrapper>
   );

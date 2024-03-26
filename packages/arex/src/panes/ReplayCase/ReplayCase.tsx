@@ -91,6 +91,10 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
     setSelectedRecord(undefined);
   };
 
+  useEffect(() => {
+    setSelectedRecord(undefined);
+  }, [props.data?.filter]);
+
   const { run: retryPlan } = useRequest(ScheduleService.reRunPlan, {
     manual: true,
     onSuccess(res) {
