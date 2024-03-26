@@ -7,31 +7,31 @@
     "do-dev": "vite"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.1.4",
-    "@arextest/arex-core": "workspace:^",
+    "@ant-design/icons": "^5.3.5",
     "@arextest/arex-common": "latest",
+    "@arextest/arex-core": "workspace:^",
     "@arextest/arex-request": "workspace:^",
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
-    "ahooks": "^3.7.5",
-    "allotment": "^1.18.1",
-    "antd": "^5.6.4",
-    "dayjs": "^1.11.7",
-    "immer": "^9.0.19",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
+    "ahooks": "^3.7.10",
+    "allotment": "^1.20.0",
+    "antd": "^5.15.4",
+    "dayjs": "^1.11.10",
+    "immer": "^9.0.21",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.9.0",
-    "zustand": "^4.3.7"
+    "react-router-dom": "^6.22.3",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.194",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "@vitejs/plugin-react-swc": "^3.3.0",
-    "vite-plugin-svgr": "^3.2.0",
-    "typescript": "^5.0.2",
-    "vite": "^4.2.0",
-    "unplugin-icons": "^0.16.3"
+    "@types/lodash": "^4.17.0",
+    "@types/react": "^18.2.71",
+    "@types/react-dom": "^18.2.22",
+    "@vitejs/plugin-react-swc": "^3.6.0",
+    "typescript": "^5.4.3",
+    "unplugin-icons": "^0.16.6",
+    "vite": "^4.5.3",
+    "vite-plugin-svgr": "^3.3.0"
   }
 }
