@@ -8,7 +8,19 @@ import {
   VerticalAlignTopOutlined,
 } from '@ant-design/icons';
 import { SmallTextButton, TooltipButton, useTranslation } from '@arextest/arex-core';
-import { Button, Card, Flex, Input, InputRef, Popconfirm, Select, Space, Steps, theme } from 'antd';
+import {
+  Button,
+  Card,
+  Flex,
+  Input,
+  InputRef,
+  Popconfirm,
+  Select,
+  SelectProps,
+  Space,
+  Steps,
+  theme,
+} from 'antd';
 import React, { FC, ReactNode, useEffect, useRef } from 'react';
 
 import { Icon } from '@/components';
@@ -17,6 +29,7 @@ import { TransformNode } from '@/services/ComparisonService';
 export interface TransformCardProps {
   edit?: boolean;
   data: Partial<TransformNode>;
+  options?: SelectProps<string>['options'];
   onNodePathChange?: (path: string[]) => void;
   onPathLocationClick?: () => void;
   onMethodNameChange?: (value: string, methodIndex: number) => void;
@@ -31,21 +44,6 @@ export interface TransformCardProps {
   onDelete?: (id: string) => void;
 }
 
-const TransformOptions: { value: string; label: string; allowKey?: boolean }[] = [
-  { label: 'Snappy', value: 'Snappy' },
-  { label: 'ZSTD', value: 'ZSTD' },
-  { label: 'Base64', value: 'Base64' },
-  { label: 'Gzip', value: 'Gzip' },
-  { label: 'Aes(Crypto)', allowKey: true, value: 'Aes_Crypto' },
-  { label: 'PayToken', value: 'PayToken' },
-  // { label: 'URL', value: 'URL' },
-  { label: 'Lz4', value: 'Lz4' },
-  { label: 'Gzip_1F8B08', value: 'Gzip_1F8B08' },
-  { label: 'Url_Params', value: 'Url_Params' },
-  { label: 'Xml_To_Json', value: 'Xml_To_Json' },
-  { label: 'Html_To_Json', value: 'Html_To_Json' },
-  { label: 'Time_Format', value: 'Time_Format' },
-];
 const TransformCard: FC<TransformCardProps> = (props) => {
   const { t } = useTranslation('components');
   const { token } = theme.useToken();
@@ -98,7 +96,7 @@ const TransformCard: FC<TransformCardProps> = (props) => {
           variant={props.edit ? 'outlined' : 'borderless'}
           placeholder={t('appSetting.transformMethodName')}
           value={method.methodName}
-          options={TransformOptions}
+          options={props.options}
           onChange={(value) => props.onMethodNameChange?.(value, methodIndex)}
           style={{ width: '112px' }}
         />
