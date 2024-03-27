@@ -21,7 +21,7 @@ export type OnRenderContextMenu = (
   path: string[],
   value: unknown,
   target: TargetEditor,
-) => ContextMenuItem[] | undefined;
+) => ContextMenuItem[] | false | undefined;
 
 export type DiffJsonViewProps = {
   readOnly?: boolean;
@@ -88,7 +88,7 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
                 context.selection.path,
                 context.value,
                 TargetEditor.LEFT,
-              ) || items
+              ) ?? items
             }
           />
         </div>
@@ -110,7 +110,7 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
                 context.selection.path,
                 context.value,
                 TargetEditor.RIGHT,
-              ) || items
+              ) ?? items
             }
           />
         </div>
