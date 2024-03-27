@@ -1,6 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { App, theme, Upload, UploadFile, UploadProps } from 'antd';
-import { RcFile, UploadChangeParam } from 'antd/es/upload';
+import { App, theme, Upload } from 'antd';
+import { RcFile } from 'antd/es/upload';
 import ImgCrop from 'antd-img-crop';
 import React, { FC } from 'react';
 
@@ -14,32 +14,28 @@ const AvatarUpload: FC<{ value?: string; onChange?: (value: string) => void }> =
   const { token } = theme.useToken();
   const { message } = App.useApp();
 
-  const beforeUpload = (file: RcFile) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('You can only upload JPG/PNG file!');
+  const handleUpload = (file: RcFile) => {
+    const isLegalSuffix = ['image/jpeg', 'image/png', 'image/gif'].includes(file.type);
+    if (!isLegalSuffix) {
+      return message.error('You can only upload JPG/PNG file!');
     }
     const isLt1M = file.size / 1024 / 1024 < 1;
     if (!isLt1M) {
-      message.error('Image must smaller than 1Mb!');
+      return message.error('Image must smaller than 1Mb!');
     }
-    return isJpgOrPng && isLt1M;
-  };
-  const handleChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
-    getBase64(info.file.originFileObj as RcFile, (url) => {
+    getBase64(file, (url) => {
       props.onChange?.(url);
     });
   };
 
   return (
-    <ImgCrop>
+    <ImgCrop showGrid quality={0.8} onModalOk={(file) => handleUpload(file as RcFile)}>
       <Upload
         name='avatar'
         listType='picture-card'
         className='avatar-uploader'
         showUploadList={false}
-        beforeUpload={beforeUpload}
-        onChange={handleChange}
+        customRequest={() => {}}
       >
         {props.value ? (
           <img

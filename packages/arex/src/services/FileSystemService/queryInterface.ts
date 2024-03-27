@@ -36,8 +36,8 @@ export type BaseInterface = {
   inherited: boolean;
 };
 
-export async function queryInterface(params: { id: string }, infoId?: string) {
-  const res = await request.post<BaseInterface>(`/webApi/filesystem/queryInterface`, params);
+export async function queryInterface(id: string, infoId?: string) {
+  const res = await request.post<BaseInterface>(`/webApi/filesystem/queryInterface`, { id });
   const {
     body: { address, testAddress, ...rest },
   } = res;

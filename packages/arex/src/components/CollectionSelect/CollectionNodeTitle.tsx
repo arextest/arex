@@ -105,13 +105,13 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
       }),
     {
       manual: true,
-      onSuccess: (res, [{ caseSourceType, nodeType }]) => {
-        getCollections({ workspaceId: activeWorkspaceId, parentIds: nodePath }).then(() =>
-          props.onAddNode?.(res.infoId, nodeType),
-        );
+      onSuccess: async (res, [{ caseSourceType, nodeType }]) => {
         // case inherit interface
         if (caseSourceType === CaseSourceType.CASE)
-          queryInterface({ id: nodePath[nodePath.length - 1] as string }, res.infoId);
+          await createCaseInheritInterface(nodePath[nodePath.length - 1] as string, res.infoId);
+
+        await getCollections({ workspaceId: activeWorkspaceId, parentIds: nodePath });
+        props.onAddNode?.(res.infoId, nodeType);
       },
     },
   );
@@ -170,20 +170,23 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     },
   );
 
-  const { run: saveCase } = useRequest(FileSystemService.saveCase, {
-    manual: true,
-  });
-
-  const { run: queryInterface } = useRequest(FileSystemService.queryInterface, {
-    manual: true,
-    onSuccess: (parentInterface, params) => {
-      saveCase({
-        workspaceId: activeWorkspaceId as string,
-        ...parentInterface,
-        id: params[1],
-      });
+  const { runAsync: createCaseInheritInterface } = useRequest(
+    (id: string, infoId: string) =>
+      new Promise((resolve, reject) => {
+        FileSystemService.queryInterface(id).then((res) => {
+          FileSystemService.saveCase({
+            workspaceId: activeWorkspaceId as string,
+            ...res,
+            id: infoId,
+          })
+            .then(resolve)
+            .catch(reject);
+        });
+      }),
+    {
+      manual: true,
     },
-  });
+  );
 
   const menu: MenuProps = {
     items: (

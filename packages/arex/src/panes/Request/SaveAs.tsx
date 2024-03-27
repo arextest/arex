@@ -131,7 +131,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
     // manual select location to save normal case (not arex case)
     if (!selectedKeys?.length) return message.info(t('http.selectSaveLocation'));
 
-    const node = collectionsFlatData.get(selectedKeys[selectedKeys.length - 1].toString());
+    const node = collectionsFlatData[selectedKeys[selectedKeys.length - 1].toString()];
     if (!node) return;
     if (props.nodeType === CollectionNodeType.case && node.nodeType === CollectionNodeType.folder)
       return message.info(t('http.selectInterface'));

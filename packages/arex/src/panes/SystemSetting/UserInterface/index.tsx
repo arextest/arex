@@ -16,7 +16,6 @@ import { LoginService } from '@/services';
 import { UserProfile } from '@/services/UserService';
 import { useUserProfile } from '@/store';
 
-import AvatarUpload from './AvatarUpload';
 import ColorPicker from './ColorPicker';
 import CompactSegmented from './CompactSegmented';
 import LanguageSelect from './LanguageSelect';

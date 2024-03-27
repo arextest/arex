@@ -72,6 +72,7 @@
     "import_export": "导入/导出",
     "import": "导入",
     "export": "导出",
+    "locate": "定位",
     "from_postman_description": "从 Postman 集合中导入"
   },
   "replay": {
@@ -265,6 +266,7 @@
     "nodesSort": "数组节点",
     "nodesDesensitization": "加密节点",
     "categoryIgnore": "类型忽略",
+    "nodesTransform": "转换节点",
     "global": "全局",
     "interface": "接口",
     "dependency": "依赖",
@@ -281,7 +283,7 @@
     "advanced": "高级",
     "timeMock": "Mock 时间",
     "dynamicClasses": "动态类",
-    "dynamicClassesTooltip": "实际应用中会使用各式缓存来提升运行时的性能，为了避免由于缓存数据的差异导致的执行结果不一致的问题，AREX 也支持了本地缓存数据的采集和 Mock 功能。实现方法是将访问本地缓存的方法配置成动态类，相当于你自定义了这个方法进行 Mock，会在生产环境录制你配置的这个动态类方法的数据，回放相应的匹配出数据返回。除了缓存数据，也可以 Mock 各种内存数据。",
+    "dynamicClassesTooltip": "Mock项目中自定义的方法，通常用于解决本地缓存不一致的场景。详情参考",
     "fullClassName": "全类名",
     "fullClassNameTooltip": "本地缓存的类名，必须为全类名, 如\n中缀: io.arex.inst.dynamic.*namicTest*\n后缀: io.arex.inst.dynamic.*namicTestClass\n前缀: io.arex.inst.dynamic.DynamicTest*\n等于: io.arex.inst.dynamic.DynamicTestClass\n抽象类或接口: ac:io.arex.inst.dynamic.AbstractDynamicTestClass",
     "baseTooltip": "标记为基类或接口，勾选后此配置对当前类以及所有子类生效",
@@ -359,7 +361,16 @@
     "chooseCategoryType": "请选择忽略类型（可多选）",
     "categoryTypePlaceholder": "请选择依赖类型",
     "operationNamePlaceholder" : "请输入依赖名称",
-    "environment": "环境"
+    "environment": "环境",
+    "originalNode":"原始节点",
+    "transformedNode":"转换节点",
+    "addTransformNode":"添加转换节点",
+    "transformNodePath": "节点路径",
+    "transformMethodName":"方法名称",
+    "transformMethodArgs":"方法参数",
+    "selectNodePath": "选择节点路径",
+    "clickToSelectNodePath": "点击选择转换节点路径",
+    "deleteTransformConfirm": "确定删除该转换节点?"
   },
   "env": {
     "searchEnvironment": "搜索环境",
@@ -447,6 +458,8 @@
     "jarFileUrlPlaceholder": "请输入 Jar 包地址",
     "replayCallback": "回放回调",
     "replayCallbackPlaceholder": "请输入回放回调地址",
+    "comparePlugin": "对比插件",
+    "comparePluginPlaceholder": "请输入对比插件 Jar 包地址",
     "systemLogs": "系统日志",
     "openSystemLogs": "打开系统日志",
     "application": "应用",

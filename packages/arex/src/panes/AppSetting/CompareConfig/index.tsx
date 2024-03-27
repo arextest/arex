@@ -16,6 +16,7 @@ import { DependencyParams } from '@/services/ComparisonService';
 import CategoryIgnore from './CategoryIgnore';
 import NodesIgnore from './NodesIgnore';
 import NodesSort from './NodesSort';
+import NodesTransform from './NodesTransform';
 import SyncContract from './SyncContract';
 
 export enum CONFIG_TARGET {
@@ -29,6 +30,7 @@ export enum CONFIG_TYPE {
   NODE_SORT,
   // NODE_Desensitization, // TODO
   CATEGORY_IGNORE,
+  NODE_TRANSFORM,
 }
 
 // TODO 类型定义抽离封装
@@ -104,6 +106,12 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
       });
     }
 
+    if (configTargetValue !== CONFIG_TARGET.GLOBAL) {
+      options.push({
+        label: t('appSetting.nodesTransform'),
+        value: CONFIG_TYPE.NODE_TRANSFORM,
+      });
+    }
     return options;
   }, [t, configTargetValue]);
   const [configTypeValue, setConfigTypeValue] = useState<CONFIG_TYPE>(
@@ -459,6 +467,20 @@ const CompareConfig: FC<CompareConfigProps> = (props) => {
             appId={props.appId}
             operationId={activeOperationId}
             configTarget={configTargetValue}
+          />
+        )}
+
+        {configTypeValue === CONFIG_TYPE.NODE_TRANSFORM && (
+          <NodesTransform
+            key='category-ignore'
+            appId={props.appId}
+            operationId={activeOperationId}
+            configTarget={configTargetValue}
+            dependency={activeDependency}
+            contractParsed={contractParsed}
+            syncing={syncing}
+            onSync={handleSync}
+            loadingContract={loadingContract}
           />
         )}
       </div>

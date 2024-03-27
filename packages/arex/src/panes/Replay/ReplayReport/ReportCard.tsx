@@ -1,6 +1,5 @@
 import AntdIcon, {
   DeleteOutlined,
-  DownOutlined,
   ExclamationCircleFilled,
   RedoOutlined,
   ShareAltOutlined,
@@ -225,7 +224,9 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
               variant='borderless'
               suffixIcon={
                 <span>
-                  {t('replay.moreReport')} <DownOutlined />
+                  {t('replay.moreReport')}
+                  {/* <DownOutlined /> // Icon unable to propagation */}
+                  <span style={{ fontSize: '8px', marginLeft: '2px' }}>ᐯ</span>
                 </span>
               }
               value={props.planId}

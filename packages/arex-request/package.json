@@ -52,7 +52,7 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@monaco-editor/react": "^4.6.0",
-    "antd": "^5.11.0",
+    "antd": "^5.13.0",
     "i18next": "^22.4.11",
     "monaco-editor": "^0.39.0",
     "react": "^18.2.0",

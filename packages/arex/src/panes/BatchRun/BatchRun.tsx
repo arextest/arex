@@ -118,7 +118,7 @@ const BatchRun: ArexPaneFC = (props) => {
     const nodes = checkValue
       .map((item) => {
         const infoId = item.toString();
-        const node = collectionsFlatData.get(infoId);
+        const node = collectionsFlatData[infoId];
         if (!node) return;
         return {
           infoId,

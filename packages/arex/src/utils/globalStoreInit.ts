@@ -1,4 +1,6 @@
-import { useCollections, useSystemConfig, useUserProfile, useWorkspaces } from '@/store';
+import { useSystemConfig, useUserProfile, useWorkspaces } from '@/store';
+
+import useCollections from '../store/useCollections';
 
 /**
  * TODO 可行性待验证
