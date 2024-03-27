@@ -447,7 +447,9 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
         >
           <IgnoreTree
             // TODO auto expand failed
+            lineThrough
             defaultExpandAll
+            title={t('appSetting.clickToIgnore')}
             loading={props.loadingContract}
             treeData={props.contractParsed}
             selectedKeys={checkedNodesData.exclusionsList}

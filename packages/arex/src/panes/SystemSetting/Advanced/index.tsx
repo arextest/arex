@@ -11,6 +11,7 @@ import SystemLogs from './SystemLogs';
 type SystemConfigForm = {
   callbackUrl: string;
   jarUrl: string;
+  comparePluginUrl?: string;
 };
 
 const Advanced: FC = () => {
@@ -27,6 +28,7 @@ const Advanced: FC = () => {
         form.setFieldsValue({
           callbackUrl: res.callbackUrl,
           jarUrl: res.desensitizationJar?.jarUrl,
+          comparePluginUrl: res.comparePluginInfo?.comparePluginUrl || '',
         });
       }
     },
@@ -49,6 +51,9 @@ const Advanced: FC = () => {
         callbackUrl: value.callbackUrl,
         desensitizationJar: {
           jarUrl: value.jarUrl,
+        },
+        comparePluginInfo: {
+          comparePluginUrl: value.comparePluginUrl || '',
         },
       },
     });
@@ -101,6 +106,19 @@ const Advanced: FC = () => {
                     allowClear
                     placeholder={
                       t('systemSetting.jarFileUrlPlaceholder', { ns: 'components' }) as string
+                    }
+                    style={{ width: '400px' }}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  label={t('systemSetting.comparePlugin', { ns: 'components' })}
+                  name='comparePluginUrl'
+                >
+                  <Input
+                    allowClear
+                    placeholder={
+                      t('systemSetting.comparePluginPlaceholder', { ns: 'components' }) as string
                     }
                     style={{ width: '400px' }}
                   />
