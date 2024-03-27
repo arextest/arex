@@ -2,13 +2,14 @@ import { CloseOutlined, OpenAIOutlined, SendOutlined } from '@ant-design/icons';
 import { css, styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
-import { Button, Card, Divider, Drawer, FloatButton, Skeleton, Space, Typography } from 'antd';
+import { Button, Card, Divider, Drawer, Skeleton, Typography } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexRequestProps, useArexRequestStore } from '../../hooks';
 import { testCodeSnippet } from './snippets';
+import { ArexLogoIcon } from '@arextest/arex-core/src/components/icons/ArexLogoIcon';
 
 const { Text } = Typography;
 
@@ -88,7 +89,7 @@ const RequestTests = () => {
   const sendAiMessage = useCallback(
     (input?: string) => {
       let newIdx = 0;
-      const finalInput = input ?? 'Generate basic tests.';
+      const finalInput = input ? input : 'Generate basic tests.';
       setHistory((old) => {
         newIdx = old.length;
         return [...old, { userMsg: finalInput! }];
@@ -145,7 +146,12 @@ const RequestTests = () => {
           `}
         >
           <Drawer
-            title='Arex Bot'
+            title={
+              <div style={{ display: 'flex', alignItems: "center" }}>
+                <ArexLogoIcon width={48} />
+                <span>Arex Bot</span>
+              </div>
+            }
             placement='right'
             open={AIDrawerOpen}
             mask={false}
@@ -169,7 +175,7 @@ const RequestTests = () => {
                   <Card
                     key={i}
                     style={{ width: '100%', marginBottom: 16 }}
-                    bodyStyle={{ padding: 8 }}
+                    styles={{ body: { padding: 8 } }}
                   >
                     <div>
                       <Typography>{chat.userMsg}</Typography>
