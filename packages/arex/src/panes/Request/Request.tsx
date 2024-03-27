@@ -293,7 +293,8 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         id: `${workspaceId}-${nodeType}-${params.infoId}`,
         type,
       });
-      if (params.infoId !== id) removePane(props.paneKey); // remove old pane when save as
+      if (params.infoId !== id)
+        removePane(props.paneKey); // remove old pane when save as
       else queryRequest();
     });
   };

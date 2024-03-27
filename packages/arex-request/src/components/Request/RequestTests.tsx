@@ -1,5 +1,5 @@
 import { CloseOutlined, OpenAIOutlined, SendOutlined } from '@ant-design/icons';
-import { css, styled, Theme, useArexCoreConfig, ArexLogoIcon } from '@arextest/arex-core';
+import { ArexLogoIcon, css, styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { Button, Card, Divider, Drawer, Skeleton, Typography } from 'antd';
@@ -91,10 +91,10 @@ const RequestTests = () => {
       onError: (error, params) => {
         setHistory((old) => {
           const newHistory = [...old];
-          newHistory[params[0]].botMsg = 'Something went wrong, please try again...'
+          newHistory[params[0]].botMsg = 'Something went wrong, please try again...';
           return newHistory;
         });
-      }
+      },
     },
   );
 

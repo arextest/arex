@@ -87,10 +87,10 @@ const Collection: ArexMenuFC = (props) => {
         node.nodeType === CollectionNodeType.interface
           ? node.method || undefined
           : node.nodeType === CollectionNodeType.case
-          ? node.caseSourceType === CaseSourceType.AREX
-            ? 'arex'
-            : 'case'
-          : undefined;
+            ? node.caseSourceType === CaseSourceType.AREX
+              ? 'arex'
+              : 'case'
+            : undefined;
 
       navPane({
         type: PanesType.REQUEST,

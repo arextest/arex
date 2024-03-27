@@ -30,7 +30,7 @@ export const DEFAULT_PROMPTS = [
       {
         buttonText: 'Response Schema',
         promptText: 'Check if the response schema is correct',
-      }
+      },
     ],
   },
 ];
