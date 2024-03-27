@@ -256,9 +256,6 @@ importers:
       '@formkit/auto-animate':
         specifier: ^0.7.0
         version: 0.7.0
-      '@hpcc-js/wasm':
-        specifier: ^2.14.1
-        version: 2.16.0
       ahooks:
         specifier: ^3.7.5
         version: 3.7.10(react@18.2.0)
