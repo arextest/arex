@@ -2,8 +2,7 @@ import React from 'react';
 
 import { useArexCoreConfig } from '../../hooks';
 import { Theme } from '../../theme';
-
-export const ArexLogoIcon = (props: { width?: number }) => {
+export default function ArexLogoIcon(props: { width?: number }) {
   const { theme } = useArexCoreConfig();
   const { width = 64 } = props
   return (
