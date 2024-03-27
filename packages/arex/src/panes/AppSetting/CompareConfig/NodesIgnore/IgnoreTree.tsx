@@ -6,13 +6,15 @@ import React, { FC, useMemo } from 'react';
 import { getIgnoreNodes } from './utils';
 
 type IgnoreTreeProps = Omit<TreeProps, 'treeData'> & {
+  title?: React.ReactNode;
   loading?: boolean;
   treeData: object;
+  lineThrough?: boolean;
 };
 
-const IgnoreTreeWrapper = styled.div`
+const IgnoreTreeWrapper = styled.div<{ lineThrough?: boolean }>`
   .ant-tree-node-selected {
-    text-decoration: line-through;
+    text-decoration: ${(props) => (props.lineThrough ? 'line-through' : 'none')};
   }
 `;
 
@@ -21,8 +23,8 @@ const IgnoreTree: FC<IgnoreTreeProps> = (props) => {
   const treeData = useMemo(() => getIgnoreNodes(props.treeData, ''), [props.treeData]);
 
   return (
-    <IgnoreTreeWrapper>
-      <Card size='small' title={t('appSetting.clickToIgnore')}>
+    <IgnoreTreeWrapper lineThrough={props.lineThrough}>
+      <Card size='small' title={props.title}>
         <EmptyWrapper
           loading={props.loading}
           empty={!Object.keys(props.treeData).length}
