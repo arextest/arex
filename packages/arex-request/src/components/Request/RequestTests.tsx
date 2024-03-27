@@ -212,7 +212,7 @@ const RequestTests = () => {
                 {/*chat message input*/}
                 <div style={{ display: 'flex', alignItems: 'flex-end', marginTop: 8 }}>
                   <TextArea
-                    variant="borderless"
+                    variant='borderless'
                     placeholder='Enter your test requirements here...'
                     autoSize={{ minRows: 1, maxRows: 6 }}
                     onChange={(e) => setInput(e.target.value)}
