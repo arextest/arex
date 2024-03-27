@@ -1,5 +1,5 @@
 import { CloseOutlined, OpenAIOutlined, SendOutlined } from '@ant-design/icons';
-import { css, styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
+import { css, styled, Theme, useArexCoreConfig, ArexLogoIcon } from '@arextest/arex-core';
 import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { Button, Card, Divider, Drawer, Skeleton, Typography } from 'antd';
@@ -8,8 +8,8 @@ import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexRequestProps, useArexRequestStore } from '../../hooks';
+import { RequestTestPrompts } from './RequestTestPrompts';
 import { testCodeSnippet } from './snippets';
-import { ArexLogoIcon } from '@arextest/arex-core/src/components/icons/ArexLogoIcon';
 
 const { Text } = Typography;
 
@@ -50,6 +50,11 @@ const RequestTests = () => {
   const ThemeColorPrimaryButton = styled(Button)`
     color: ${(props) => props.theme.colorPrimary} !important;
   `;
+
+  const ThemeColorPrimaryTypo = styled(Typography)`
+    color: ${(props) => props.theme.colorPrimary} !important;
+  `;
+
   const codeSnippet = testCodeSnippet;
   const addTest = (text: string) => {
     dispatch((state) => {
@@ -83,6 +88,13 @@ const RequestTests = () => {
           return newHistory;
         });
       },
+      onError: (error, params) => {
+        setHistory((old) => {
+          const newHistory = [...old];
+          newHistory[params[0]].botMsg = 'Something went wrong, please try again...'
+          return newHistory;
+        });
+      }
     },
   );
 
@@ -147,7 +159,7 @@ const RequestTests = () => {
         >
           <Drawer
             title={
-              <div style={{ display: 'flex', alignItems: "center" }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
                 <ArexLogoIcon width={48} />
                 <span>Arex Bot</span>
               </div>
@@ -182,7 +194,7 @@ const RequestTests = () => {
                     </div>
                     <Divider />
                     {chat.botMsg ? (
-                      <Typography style={{ color: colorPrimary }}>{chat.botMsg}</Typography>
+                      <ThemeColorPrimaryTypo>{chat.botMsg}</ThemeColorPrimaryTypo>
                     ) : (
                       <Skeleton active />
                     )}
@@ -190,22 +202,32 @@ const RequestTests = () => {
                 ))}
               </div>
 
-              {/*chat message input*/}
-              <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-                <TextArea
-                  placeholder='Enter your test requirements here...'
-                  autoSize={{ minRows: 2, maxRows: 6 }}
-                  onChange={(e) => setInput(e.target.value)}
-                  value={currentInput}
-                />
-                <Button
-                  style={{ marginLeft: 4 }}
-                  icon={<SendOutlined />}
+              <div>
+                <RequestTestPrompts
                   disabled={gptLoading}
-                  onClick={() => {
-                    sendAiMessage(currentInput);
+                  onSelect={(prompt) => {
+                    sendAiMessage(prompt.promptText);
                   }}
                 />
+                {/*chat message input*/}
+                <div style={{ display: 'flex', alignItems: 'flex-end', marginTop: 8 }}>
+                  <TextArea
+                    bordered={false}
+                    placeholder='Enter your test requirements here...'
+                    autoSize={{ minRows: 1, maxRows: 6 }}
+                    onChange={(e) => setInput(e.target.value)}
+                    value={currentInput}
+                  />
+                  <Button
+                    type='primary'
+                    style={{ marginLeft: 4 }}
+                    icon={<SendOutlined />}
+                    disabled={gptLoading}
+                    onClick={() => {
+                      sendAiMessage(currentInput);
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </Drawer>
