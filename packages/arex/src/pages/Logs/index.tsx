@@ -37,7 +37,7 @@ const Logs: FC = () => {
       ERROR: colorError,
       FATAL: colorError,
       TRACE: colorError,
-    }[level]);
+    })[level];
 
   const [level, setLevel] = useState<(typeof LogLevel)[number]>('INFO');
   const [appType, setAppType] = useState<(typeof AppType)[number]>('all');

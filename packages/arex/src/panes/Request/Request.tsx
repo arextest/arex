@@ -46,7 +46,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const navPane = useNavPane({ inherit: true });
   const { message } = App.useApp();
 
-  const { collectionsTreeData, getPath, renameCollectionNode } = useCollections();
+  const { collectionsTreeData, getCollections, getPath, renameCollectionNode } = useCollections();
   const { removePane } = useMenusPanes();
 
   const userName = getLocalStorage<string>(EMAIL_KEY);

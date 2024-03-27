@@ -11,8 +11,8 @@ const StatusText = styled.span<{ type?: 'success' | 'error' }>`
     props.type === 'success'
       ? props.theme.colorSuccess
       : props.type === 'error'
-      ? props.theme.colorError
-      : undefined};
+        ? props.theme.colorError
+        : undefined};
   font-weight: bolder;
   margin-right: 14px;
   margin-left: 4px;

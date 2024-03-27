@@ -127,8 +127,8 @@ export const ReplayMenu: ArexMenuFC<{ paneType: PanesType }> = (props) => {
       return lowCaseKeyword
         ? app.appName.toLowerCase().includes(lowCaseKeyword) || app.appId.includes(lowCaseKeyword)
         : favoriteFilter
-        ? !!favoriteApps?.includes(app.id)
-        : true;
+          ? !!favoriteApps?.includes(app.id)
+          : true;
     },
     [favoriteFilter, favoriteApps],
   );

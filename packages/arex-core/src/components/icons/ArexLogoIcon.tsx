@@ -4,7 +4,7 @@ import { useArexCoreConfig } from '../../hooks';
 import { Theme } from '../../theme';
 export default function ArexLogoIcon(props: { width?: number }) {
   const { theme } = useArexCoreConfig();
-  const { width = 64 } = props
+  const { width = 64 } = props;
   return (
     <svg
       version='1.1'
@@ -68,4 +68,4 @@ export default function ArexLogoIcon(props: { width?: number }) {
       </g>
     </svg>
   );
-};
+}

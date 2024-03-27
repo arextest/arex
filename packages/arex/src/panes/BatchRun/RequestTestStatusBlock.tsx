@@ -38,19 +38,19 @@ const RequestTestStatusBlock = (props: RequestTestStatusBlockProps) => {
     init || loading
       ? token.colorFillSecondary
       : // @ts-ignore
-      data?.response?.statusCode < 300
-      ? token.colorSuccess
-      : // @ts-ignore
-      data?.response?.statusCode < 400
-      ? token.colorWarning
-      : token.colorError;
+        data?.response?.statusCode < 300
+        ? token.colorSuccess
+        : // @ts-ignore
+          data?.response?.statusCode < 400
+          ? token.colorWarning
+          : token.colorError;
 
   const testResultStatusColor = data?.testResult?.length
     ? testAllSuccess
       ? token.colorSuccess
       : testAllFail
-      ? token.colorError
-      : token.colorWarning
+        ? token.colorError
+        : token.colorWarning
     : token.colorFillSecondary;
 
   return (
