@@ -11,6 +11,7 @@ import RequestBody from './RequestBody';
 import RequestHeaders from './RequestHeaders';
 import RequestParameters from './RequestParameters';
 import RequestTests from './RequestTests';
+import {ArexResponse} from "../../types";
 
 const HttpRequestOptionsWrapper = styled.div`
   height: 100%;
@@ -23,11 +24,7 @@ const HttpRequestOptionsWrapper = styled.div`
   }
 `;
 
-export interface HttpRequestOptionsProps {
-  config?: TabConfig;
-}
-
-const HttpRequestOptions: FC<HttpRequestOptionsProps> = () => {
+const HttpRequestOptions = () => {
   const { config } = useArexRequestProps();
   const { store } = useArexRequestStore();
 
