@@ -131,11 +131,11 @@ export function AIChatDrawer(props: Props) {
               <div>
                 <Typography>{chat.userMsg}</Typography>
               </div>
-              <Divider />
+              <Divider style={{ marginTop: 4, marginBottom: 4 }} />
               {!chat.botMsg && !chat.needSend && <Skeleton active />}
               {chat.botMsg && <ThemeColorPrimaryTypo>{chat.botMsg}</ThemeColorPrimaryTypo>}
               {chat.needSend && (
-                <Space>
+                <Space direction='vertical'>
                   <ThemeColorPrimaryTypo>I need a response to continue.</ThemeColorPrimaryTypo>
                   <Button
                     block
@@ -155,7 +155,7 @@ export function AIChatDrawer(props: Props) {
                       );
                     }}
                   >
-                    Send
+                    Send request and retry...
                   </Button>
                 </Space>
               )}
