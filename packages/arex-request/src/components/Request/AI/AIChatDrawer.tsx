@@ -85,12 +85,11 @@ export function AIChatDrawer(props: Props) {
         ];
       });
     } else {
-      let newIdx = 0;
       setHistory((old) => {
-        newIdx = old.length;
+        const newIdx = old.length;
+        gptRun(newIdx, finalInput);
         return [...old, { selfIdx: newIdx, userMsg: finalInput! }];
       });
-      gptRun(newIdx, finalInput);
     }
   };
 
