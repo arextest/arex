@@ -4,10 +4,9 @@ import { Button, Checkbox, Select } from 'antd';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { isClient } from '../../constant';
 import { sendRequest } from '../../helpers';
 import { useArexRequestProps, useArexRequestStore } from '../../hooks';
-import { ArexEnvironment, ArexRESTRequest, ArexRESTResponse } from '../../types';
+import { ArexEnvironment, ArexResponse, ArexRESTRequest, ArexRESTResponse } from '../../types';
 import { EnvironmentSelectProps } from '../NavigationBar/EnvironmentSelect';
 import { InfoSummaryProps } from '../NavigationBar/InfoSummary';
 import EnvInput from './EnvInput';
@@ -56,7 +55,6 @@ const Request: FC<RequestProps> = () => {
       window.message.error(t('error.emptyEndpoint'));
       return;
     }
-
     const ready = isClient || window.__AREX_EXTENSION_INSTALLED__;
     dispatch((state) => {
       state.response = {
@@ -66,26 +64,7 @@ const Request: FC<RequestProps> = () => {
     });
 
     if (!ready) return;
-
-    sendRequest(onBeforeRequest(store.request), store.environment)
-      .then((res) => {
-        onRequest?.(null, { request: store.request, environment: store.environment }, res);
-        dispatch((state) => {
-          state.response = res.response;
-          state.consoles = res.consoles;
-          state.visualizer = res.visualizer;
-          state.testResult = res.testResult;
-        });
-      })
-      .catch((err) => {
-        onRequest?.(err, { request: store.request, environment: store.environment }, null);
-        dispatch((state) => {
-          state.response = {
-            type: err.code,
-            error: err,
-          };
-        });
-      });
+    request();
   };
 
   return (

@@ -1,17 +1,13 @@
-import { CloseOutlined, OpenAIOutlined, SendOutlined } from '@ant-design/icons';
-import { ArexLogoIcon, css, styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
+import { OpenAIOutlined } from '@ant-design/icons';
+import { css, styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import { Editor } from '@monaco-editor/react';
-import { useRequest } from 'ahooks';
-import { Button, Card, Divider, Drawer, Skeleton, Space, Typography } from 'antd';
-import TextArea from 'antd/es/input/TextArea';
-import React, { ReactNode, useCallback, useState } from 'react';
+import { Button, Typography } from 'antd';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useArexRequestProps, useArexRequestStore } from '../../hooks';
-import { AIPromptsPreset } from './AI/AIPromptsPreset';
-import { testCodeSnippet } from './snippets';
+import { useArexRequestStore } from '../../hooks';
 import { AIChatDrawer } from './AI/AIChatDrawer';
-import {ArexResponse} from "../../types";
+import { testCodeSnippet } from './snippets';
 
 const { Text } = Typography;
 
@@ -101,11 +97,7 @@ const RequestTests = () => {
             flex-direction: column;
           `}
         >
-          <AIChatDrawer
-            AIDrawerOpen={AIDrawerOpen}
-            setOpen={setOpen}
-            addTest={addTest}
-          />
+          <AIChatDrawer AIDrawerOpen={AIDrawerOpen} setOpen={setOpen} addTest={addTest} />
           <Text type={'secondary'}>
             Test scripts are written in JavaScript, and are run after the response is received.
           </Text>
