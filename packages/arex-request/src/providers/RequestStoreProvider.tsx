@@ -4,11 +4,13 @@ import { useImmer } from 'use-immer';
 import { useArexRequestProps } from '../hooks';
 import {
   ArexEnvironment,
+  ArexResponse,
   ArexRESTRequest,
   ArexRESTResponse,
   ArexTestResult,
   ArexVisualizer,
 } from '../types';
+import { sendRequest } from '../helpers';
 
 export interface RequestStore {
   request: ArexRESTRequest;
@@ -61,11 +63,14 @@ const defaultState: RequestStore = {
 export const RequestStoreContext = createContext<{
   store: RequestStore;
   dispatch: Dispatch<(state: RequestStore) => void>;
-}>({ store: defaultState, dispatch: () => {} });
+  request: () => Promise<ArexResponse | void>;
+}>({ store: defaultState, dispatch: () => {}, request: () => Promise.resolve() });
 
 const RequestStoreProvider: FC<PropsWithChildren> = (props) => {
   const { data, environmentProps } = useArexRequestProps();
   const [store, dispatch] = useImmer(defaultState);
+  const { onBeforeRequest = (request: ArexRESTRequest) => request, onRequest } =
+    useArexRequestProps();
 
   useEffect(() => {
     data &&
@@ -82,11 +87,44 @@ const RequestStoreProvider: FC<PropsWithChildren> = (props) => {
     });
   }, [environmentProps]);
 
+  const request = async (): Promise<ArexResponse | void> => {
+    dispatch((state) => {
+      state.response = {
+        type: window.__AREX_EXTENSION_INSTALLED__ ? 'loading' : 'EXTENSION_NOT_INSTALLED',
+        headers: undefined,
+      };
+    });
+
+    if (!window.__AREX_EXTENSION_INSTALLED__) return;
+
+    return sendRequest(onBeforeRequest(store.request), store.environment)
+      .then((res) => {
+        onRequest?.(null, { request: store.request, environment: store.environment }, res);
+        dispatch((state) => {
+          state.response = res.response;
+          state.consoles = res.consoles;
+          state.visualizer = res.visualizer;
+          state.testResult = res.testResult;
+        });
+        return res;
+      })
+      .catch((err) => {
+        onRequest?.(err, { request: store.request, environment: store.environment }, null);
+        dispatch((state) => {
+          state.response = {
+            type: err.code,
+            error: err,
+          };
+        });
+      });
+  };
+
   return (
     <RequestStoreContext.Provider
       value={{
         store,
         dispatch,
+        request,
       }}
     >
       {props.children}

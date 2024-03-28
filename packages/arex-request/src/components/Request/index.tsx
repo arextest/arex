@@ -1,12 +1,12 @@
 import { ExclamationOutlined, SendOutlined } from '@ant-design/icons';
 import { css, Label, RequestMethod, styled } from '@arextest/arex-core';
 import { Button, Checkbox, Select } from 'antd';
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { sendRequest } from '../../helpers';
 import { useArexRequestProps, useArexRequestStore } from '../../hooks';
-import { ArexEnvironment, ArexRESTRequest, ArexRESTResponse } from '../../types';
+import { ArexEnvironment, ArexResponse, ArexRESTRequest, ArexRESTResponse } from '../../types';
 import { EnvironmentSelectProps } from '../NavigationBar/EnvironmentSelect';
 import { InfoSummaryProps } from '../NavigationBar/InfoSummary';
 import EnvInput from './EnvInput';
@@ -35,9 +35,7 @@ export type RequestProps = {
   };
 
 const Request: FC<RequestProps> = () => {
-  const { onBeforeRequest = (request: ArexRESTRequest) => request, onRequest } =
-    useArexRequestProps();
-  const { store, dispatch } = useArexRequestStore();
+  const { store, dispatch, request } = useArexRequestStore();
   const { t } = useTranslation();
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout>();
 
@@ -55,34 +53,7 @@ const Request: FC<RequestProps> = () => {
       window.message.error(t('error.emptyEndpoint'));
       return;
     }
-    dispatch((state) => {
-      state.response = {
-        type: window.__AREX_EXTENSION_INSTALLED__ ? 'loading' : 'EXTENSION_NOT_INSTALLED',
-        headers: undefined,
-      };
-    });
-
-    if (!window.__AREX_EXTENSION_INSTALLED__) return;
-
-    sendRequest(onBeforeRequest(store.request), store.environment)
-      .then((res) => {
-        onRequest?.(null, { request: store.request, environment: store.environment }, res);
-        dispatch((state) => {
-          state.response = res.response;
-          state.consoles = res.consoles;
-          state.visualizer = res.visualizer;
-          state.testResult = res.testResult;
-        });
-      })
-      .catch((err) => {
-        onRequest?.(err, { request: store.request, environment: store.environment }, null);
-        dispatch((state) => {
-          state.response = {
-            type: err.code,
-            error: err,
-          };
-        });
-      });
+    request();
   };
 
   return (
