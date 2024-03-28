@@ -16,7 +16,8 @@ export const DEFAULT_PROMPTS = [
   },
   {
     buttonText: 'Test for response',
-    promptText: 'Test for response.',
+    promptText:
+      'Add tests for the response body, focus on the schema and business correctness of fields.',
   },
   {
     buttonText: 'Add more tests',
