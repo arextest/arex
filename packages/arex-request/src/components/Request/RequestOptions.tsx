@@ -11,7 +11,7 @@ import RequestBody from './RequestBody';
 import RequestHeaders from './RequestHeaders';
 import RequestParameters from './RequestParameters';
 import RequestTests from './RequestTests';
-import {ArexResponse} from "../../types";
+import { ArexResponse } from '../../types';
 
 const HttpRequestOptionsWrapper = styled.div`
   height: 100%;

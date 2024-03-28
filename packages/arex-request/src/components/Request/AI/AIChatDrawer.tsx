@@ -1,6 +1,6 @@
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { ArexLogoIcon } from '@arextest/arex-core';
-import { styled } from '@arextest/arex-core/dist/utils';
+import { styled } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { Button, Card, Divider, Drawer, Skeleton, Space, Typography } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
@@ -8,7 +8,6 @@ import * as React from 'react';
 import { useState } from 'react';
 
 import { useArexRequestProps, useArexRequestStore } from '../../../hooks';
-import { ArexResponse } from '../../../types';
 import { AIPromptsPreset } from './AIPromptsPreset';
 
 type Props = {

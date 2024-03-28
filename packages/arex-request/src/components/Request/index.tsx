@@ -1,12 +1,12 @@
 import { ExclamationOutlined, SendOutlined } from '@ant-design/icons';
 import { css, Label, RequestMethod, styled } from '@arextest/arex-core';
 import { Button, Checkbox, Select } from 'antd';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { sendRequest } from '../../helpers';
-import { useArexRequestProps, useArexRequestStore } from '../../hooks';
-import { ArexEnvironment, ArexResponse, ArexRESTRequest, ArexRESTResponse } from '../../types';
+import { useArexRequestStore } from '../../hooks';
+import { ArexEnvironment, ArexRESTRequest, ArexRESTResponse } from '../../types';
 import { EnvironmentSelectProps } from '../NavigationBar/EnvironmentSelect';
 import { InfoSummaryProps } from '../NavigationBar/InfoSummary';
 import EnvInput from './EnvInput';
