@@ -238,6 +238,9 @@ const useCollections = create(
 
           if (merge) {
             if (infoId) {
+              const path = getPathInFlatArray(infoId, treeToMap(generateRootNode(mergedData))).map(
+                (item) => item.id,
+              );
               // mergedData = mergeTreeData(
               //   treeData,
               //   mergedData,
@@ -245,6 +248,8 @@ const useCollections = create(
               //     (item) => item.id,
               //   ),
               // );
+              get().setLoadedKeys(path);
+              get().setExpandedKeys(path);
             } else if (parentIds?.length) {
               const parentId = parentIds[parentIds.length - 1];
               mergedData = appendChildrenByParent(

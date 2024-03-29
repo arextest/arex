@@ -34,9 +34,9 @@ const EnvironmentRecordSetting: FC<EnvironmentRecordSettingProps> = (props) => {
           {
             key: 'environment',
             extra: (
-              <SmallTextButton onClick={() => onDelete()} danger>
+              <Button type='text' size='small' onClick={() => onDelete()} danger>
                 {t('delete', { ns: 'common' })}
-              </SmallTextButton>
+              </Button>
             ),
             label: (
               <>
