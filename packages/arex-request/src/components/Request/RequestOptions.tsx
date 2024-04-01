@@ -6,12 +6,12 @@ import { useTranslation } from 'react-i18next';
 
 import { Tab, TabConfig } from '../../ArexRequest';
 import { useArexRequestProps, useArexRequestStore } from '../../hooks';
+import { ArexResponse } from '../../types';
 import PreRequestScript from './PreRequestScript';
 import RequestBody from './RequestBody';
 import RequestHeaders from './RequestHeaders';
 import RequestParameters from './RequestParameters';
 import RequestTests from './RequestTests';
-import { ArexResponse } from '../../types';
 
 const HttpRequestOptionsWrapper = styled.div`
   height: 100%;
