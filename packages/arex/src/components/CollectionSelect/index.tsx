@@ -20,7 +20,9 @@ import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import { cloneDeep } from 'lodash';
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 
-import CollectionSearchedList from '@/components/CollectionSelect/CollectionSearchedList';
+import CollectionSearchedList, {
+  CollectionSearchedListRef,
+} from '@/components/CollectionSelect/CollectionSearchedList';
 import { CollectionNodeType, EMAIL_KEY } from '@/constant';
 import { FileSystemService, ReportService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
@@ -68,6 +70,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   } = useCollections();
 
   const searchRef = useRef<StructuredFilterRef>(null);
+  const collectionSearchedListRef = useRef<CollectionSearchedListRef>(null);
   const treeRef = useRef<{
     scrollTo: (params: {
       key: string | number;
@@ -292,8 +295,9 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
                 color: item.color,
               }))}
               options={options}
-              // placeholder={'Search for Name'}
+              placeholder={'Search for Name'}
               onChange={handleChange}
+              onSearch={collectionSearchedListRef.current?.search}
               onCancel={() => {
                 setSearchValue(undefined);
                 setShowSearchInput(false);
@@ -316,6 +320,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
         <ConfigProvider theme={{ token: { motion: false } }}>
           {searching ? (
             <CollectionSearchedList
+              ref={collectionSearchedListRef}
               height={props.height}
               workspaceId={activeWorkspaceId}
               searchValue={searchValue}

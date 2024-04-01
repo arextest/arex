@@ -220,7 +220,8 @@ const NodesTransform: FC<NodesTransformProps> = (props) => {
               icon={<Icon name='Crosshair' />}
               onClick={() => {
                 setTransformData((draft) => {
-                  draft[openIndex].transformDetail!.nodePath = nodePath?.split('/') || [];
+                  draft[openIndex].transformDetail!.nodePath =
+                    nodePath?.split('/').filter(Boolean) || [];
                 });
                 setOpenIndex(-1);
                 setNodePath(undefined);

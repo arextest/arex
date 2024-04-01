@@ -55,6 +55,7 @@ const CaseDetailTab: FC<CaseDetailTabProps> = (props) => {
                 left: t('request', { ns: 'common' }),
                 right: t('response', { ns: 'common' }),
               }}
+              onRenderContextMenu={() => false}
             />
           ),
         }))}
