@@ -1,6 +1,7 @@
 import React, { createContext, Dispatch, FC, PropsWithChildren, useEffect } from 'react';
 import { useImmer } from 'use-immer';
 
+import { sendRequest } from '../helpers';
 import { useArexRequestProps } from '../hooks';
 import {
   ArexEnvironment,
@@ -10,7 +11,6 @@ import {
   ArexTestResult,
   ArexVisualizer,
 } from '../types';
-import { sendRequest } from '../helpers';
 
 export interface RequestStore {
   request: ArexRESTRequest;

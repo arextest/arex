@@ -115,7 +115,7 @@ export class Request {
 }
 
 const request = new Request({
-  timeout: 60000,
+  timeout: 300000,
   baseURL: isClientProd ? 'http://localhost:' + port.electronPort : undefined,
 });
 
