@@ -76,7 +76,7 @@ const ReplayPage: ArexPaneFC = (props) => {
               message={
                 <span>
                   {t('replay.noAppOwnerAlert')}
-                  <a onClick={appOwnerConfigRef?.current?.open}>
+                  <a onClick={() => appOwnerConfigRef?.current?.open()}>
                     {t('replay.addOwner').toLowerCase()}
                   </a>
                   .
