@@ -65,7 +65,9 @@ const AppTopBar: FC<AppTopBarProps> = ({
               title={appTitle}
               readOnly={readOnly}
               count={recordCount}
-              onClickTitle={caseListRef.current?.open}
+              onClickTitle={() => {
+                caseListRef.current?.open();
+              }}
               onRefresh={handleRefresh}
               onSetting={handleSetting}
             />
@@ -78,7 +80,9 @@ const AppTopBar: FC<AppTopBarProps> = ({
             type='primary'
             disabled={readOnly}
             icon={<PlayCircleOutlined />}
-            onClick={createPlanModalRef.current?.open}
+            onClick={() => {
+              createPlanModalRef.current?.open();
+            }}
           >
             {t('replay.startButton')}
           </Button>

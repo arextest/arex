@@ -297,7 +297,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
               options={options}
               placeholder={'Search for Name'}
               onChange={handleChange}
-              onSearch={collectionSearchedListRef.current?.search}
+              onSearch={() => collectionSearchedListRef.current?.search()}
               onCancel={() => {
                 setSearchValue(undefined);
                 setShowSearchInput(false);

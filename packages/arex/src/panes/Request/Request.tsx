@@ -361,7 +361,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         interfaceName={decodeURIComponent(props.data?.interfaceName || '')}
         operationId={decodeURIComponent(props.data?.operationId || '')}
         recordId={decodeURIComponent(props.data?.recordId || '')}
-        onCreate={requestRef.current?.save}
+        onCreate={(id) => requestRef.current?.save(id)}
       />
 
       <EnvironmentDrawer

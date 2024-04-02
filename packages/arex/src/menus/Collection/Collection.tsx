@@ -159,7 +159,7 @@ const Collection: ArexMenuFC = (props) => {
             <TooltipButton
               icon={<Icon name='ArchiveRestore' />}
               title={t('collection.import_export')}
-              onClick={collectionsImportExportRef.current?.open}
+              onClick={() => collectionsImportExportRef.current?.open()}
             />
 
             <TooltipButton
