@@ -350,7 +350,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
               treeData={collectionsTreeData}
               loadData={handleLoadData}
               onLoad={(keys) => {
-                setLoadedKeys([...loadedKeys, ...(keys as string[])]);
+                setLoadedKeys([...new Set([...loadedKeys, ...(keys as string[])])]);
               }}
               fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
               onDrop={onDrop}
