@@ -1,8 +1,7 @@
-import { enableMapSet } from 'immer';
+import { RequestMethodEnum } from '@arextest/arex-core';
 import { cloneDeep } from 'lodash';
 import React from 'react';
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { CollectionNodeType } from '@/constant';
@@ -48,6 +47,13 @@ export type CollectionAction = {
   setExpandedKeys: (keys: string[]) => void;
   setLoadedKeys: (keys: string[]) => void;
   getPath: (infoId: string) => CollectionPath[];
+  addCollectionNode: (params: {
+    infoId: string;
+    nodeName: string;
+    parentIds?: string[];
+    nodeType: CollectionNodeType;
+    caseSourceType?: CaseSourceType;
+  }) => void;
   removeCollectionNode: (infoId: string) => void;
   renameCollectionNode: (infoId: string, newName: string) => void;
   duplicateCollectionNode: (infoId: string, newId: string) => void;
@@ -78,12 +84,14 @@ export type Collection = {
 };
 
 const initialState: CollectionState = {
-  loading: false,
+  loading: true,
   expandedKeys: [],
   loadedKeys: [],
   collectionsFlatData: {},
   collectionsTreeData: [],
 };
+
+const ROOT_KEY = '__root__';
 
 const generateRootNode = (children: CollectionType[]) => ({
   caseSourceType: 0,
@@ -92,7 +100,7 @@ const generateRootNode = (children: CollectionType[]) => ({
   nodeName: 'root',
   nodeType: CollectionNodeType.folder,
   infoId: '', // types.id,
-  key: '__root__', //
+  key: ROOT_KEY, //
   children,
 });
 
@@ -111,58 +119,32 @@ const generateNewFolder = (infoId: string, nodeName = 'New Collection') => ({
 
 const appendChildrenByParent = (
   tree: CollectionType[],
-  children: CollectionType[],
+  children: CollectionType | CollectionType[],
   parentPath: string[],
 ): CollectionType[] => {
+  const _tree = cloneDeep(tree);
   parentPath.reduce<CollectionType[]>((treeArray, path, index) => {
     const node = treeArray.find((item) => item.infoId === path);
     if (!node) return treeArray;
     if (index === parentPath.length - 1) {
-      node.children = children;
-      node.existChildren = true;
-      node.isLeaf = false;
+      if (Array.isArray(children)) {
+        node.children = children;
+        node.existChildren = !!children.length;
+        node.isLeaf = !children.length;
+      } else {
+        if (node.children?.length) node.children.unshift(children);
+        else node.children = [children];
+        node.existChildren = true;
+        node.isLeaf = false;
+      }
     } else {
       treeArray = node.children || [];
     }
     return treeArray;
-  }, tree);
+  }, _tree);
 
-  return cloneDeep(tree);
+  return _tree;
 };
-
-// TODO: 存在问题
-function mergeTreeData(
-  rootTree: CollectionType[],
-  childrenTree: CollectionType[],
-  nodePath: string[],
-): CollectionType[] {
-  console.log(rootTree, childrenTree, nodePath);
-
-  let currentRoot = rootTree;
-  let currentChildren = childrenTree;
-
-  nodePath.forEach((path, index) => {
-    const rootNode = currentRoot.find((item) => item.infoId === path);
-    const childrenNode = currentChildren.find((item) => item.infoId === path);
-    console.log(index);
-    if (!childrenNode) {
-      console.error(currentChildren, path);
-      return;
-      // throw new Error('childrenNode not found, infoId: ' + path + 'index: ' + index);
-    }
-
-    if (!rootNode) {
-      console.log('rootNode not found, infoId: ' + index + path);
-      currentRoot.push(...currentChildren);
-      return;
-    }
-
-    currentRoot = rootNode.children || [];
-    currentChildren = childrenNode.children || [];
-  });
-
-  return cloneDeep(rootTree);
-}
 
 function mergeRootLevel(tree: CollectionType[], rootLevel: CollectionType[]) {
   return rootLevel.map((item) => {
@@ -183,8 +165,6 @@ const isLeafNest = (obj: CollectionType[]) => {
   });
   return obj;
 };
-
-enableMapSet();
 
 const useCollections = create(
   immer<CollectionState & CollectionAction>((set, get) => {
@@ -231,22 +211,15 @@ const useCollections = create(
 
         if (!data) return;
 
-        const treeData = get().collectionsTreeData;
-
         let mergedData = isLeafNest(data);
+
+        const treeData = get().collectionsTreeData;
 
         if (merge) {
           if (infoId) {
             const path = getPathInFlatArray(infoId, treeToMap(generateRootNode(mergedData))).map(
               (item) => item.id,
             );
-            // mergedData = mergeTreeData(
-            //   treeData,
-            //   mergedData,
-            //   getPathInFlatArray(infoId, treeToMap(generateRootNode(mergedData))).map(
-            //     (item) => item.id,
-            //   ),
-            // );
             get().setLoadedKeys(path);
             get().setExpandedKeys(path);
           } else if (parentIds?.length) {
@@ -277,6 +250,38 @@ const useCollections = create(
         set({ loadedKeys: keys });
       },
       getPath: (infoId) => getPathInFlatArray(infoId, get().collectionsFlatData),
+
+      addCollectionNode: ({ infoId, nodeName, nodeType, parentIds, caseSourceType }) => {
+        function createNode(params: {
+          infoId: string;
+          nodeName: string;
+          nodeType: CollectionNodeType;
+          caseSourceType?: CaseSourceType;
+        }): CollectionType {
+          return params.nodeType === CollectionNodeType.folder
+            ? generateNewFolder(params.infoId, params.nodeName)
+            : {
+                key: infoId,
+                nodeName,
+                nodeType: params.nodeType,
+                infoId,
+                method: RequestMethodEnum.GET,
+                caseSourceType: params.caseSourceType || CaseSourceType.CASE,
+                labelIds: null,
+                children: [],
+                existChildren: false,
+                isLeaf: true,
+              };
+        }
+
+        set((state) => {
+          const treeData = state.collectionsTreeData;
+          const flatData = state.collectionsFlatData;
+          const node = createNode({ infoId, nodeName, nodeType, caseSourceType });
+          state.collectionsTreeData = appendChildrenByParent(treeData, node, parentIds || []);
+          flatData[infoId] = { pid: parentIds?.[parentIds.length - 1] || ROOT_KEY, ...node };
+        });
+      },
       removeCollectionNode: (infoId) => {
         set((state) => {
           const treeData = state.collectionsTreeData;
@@ -474,3 +479,8 @@ const useCollections = create(
 );
 
 export default useCollections;
+
+import { mountStoreDevtool } from 'simple-zustand-devtools';
+if (process.env.NODE_ENV === 'development') {
+  mountStoreDevtool('useCollection', useCollections);
+}

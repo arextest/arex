@@ -45,7 +45,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const navPane = useNavPane({ inherit: true });
   const { message } = App.useApp();
 
-  const { collectionsTreeData, getCollections, getPath } = useCollections();
+  const { collectionsTreeData, getPath, renameCollectionNode } = useCollections();
   const { removePane } = useMenusPanes();
 
   const userName = getLocalStorage<string>(EMAIL_KEY);
@@ -137,6 +137,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     const forceRecord = request?.headers.find(
       (header) => header.key === 'arex-force-record',
     )?.active;
+    // @ts-ignore
     const recordId = response?.headers?.find((header) => header.key === 'arex-record-id')?.value;
     if (forceRecord && recordId) {
       pinMock = { infoId: request.id, recordId };
@@ -200,7 +201,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       ready: !!data,
       onSuccess(success, [name]) {
         if (success) {
-          getCollections({ workspaceId, infoId: id, nodeType });
+          renameCollectionNode(id, name);
           navPane({
             id: paneId,
             type,
@@ -287,14 +288,12 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   };
 
   const reloadCollection = (params: GetCollectionItemTreeReq) => {
-    getCollections(params).then(() => {
-      navPane({
-        id: `${workspaceId}-${nodeType}-${params.infoId}`,
-        type,
-      });
-      if (params.infoId !== id) removePane(props.paneKey); // remove old pane when save as
-      else queryRequest();
+    navPane({
+      id: `${workspaceId}-${nodeType}-${params.infoId}`,
+      type,
     });
+    if (params.infoId !== id) removePane(props.paneKey); // remove old pane when save as
+    else queryRequest();
   };
 
   return (

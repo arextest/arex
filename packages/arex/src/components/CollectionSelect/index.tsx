@@ -66,6 +66,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     setLoadedKeys,
     getCollections,
     getPath,
+    addCollectionNode,
     moveCollectionNode,
   } = useCollections();
 
@@ -98,15 +99,18 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     },
   );
 
-  const handleLoadData: TreeProps<CollectionType>['loadData'] = (treeNode) =>
-    new Promise<void>((resolve) =>
+  const handleLoadData: TreeProps<CollectionType>['loadData'] = (treeNode) => {
+    const parentIds = getPath(treeNode.infoId).map((item) => item.id);
+
+    return new Promise<void>((resolve) =>
       resolve(
         getCollections({
           workspaceId: activeWorkspaceId,
-          parentIds: getPath(treeNode.infoId).map((item) => item.id),
+          parentIds,
         }),
       ),
-    );
+    ).catch((e) => console.error(e));
+  };
 
   const dataList: { key: string; title: string; labelIds: string | null }[] = useMemo(
     () =>
@@ -206,8 +210,12 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
       }),
     {
       manual: true,
-      onSuccess() {
-        getCollections();
+      onSuccess(res) {
+        addCollectionNode({
+          infoId: res.infoId,
+          nodeType: CollectionNodeType.folder,
+          nodeName: 'New Folder',
+        });
       },
     },
   );
@@ -343,11 +351,11 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
               ref={treeRef}
               height={props.height}
               selectedKeys={props.selectedKeys}
-              loadedKeys={loadedKeys}
               expandedKeys={expandedKeys}
               autoExpandParent={autoExpandParent}
               switcherIcon={<DownOutlined />}
-              treeData={collectionsTreeData}
+              treeData={cloneDeep(collectionsTreeData)}
+              loadedKeys={loadedKeys}
               loadData={handleLoadData}
               onLoad={(keys) => {
                 setLoadedKeys([...new Set([...loadedKeys, ...(keys as string[])])]);
