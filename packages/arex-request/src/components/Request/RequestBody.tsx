@@ -99,7 +99,7 @@ const RequestBody = () => {
         </div>
 
         {isJsonContentType && (
-          <a onClick={rawBodyRef?.current?.prettifyRequestBody}>{t('action.prettify')}</a>
+          <a onClick={() => rawBodyRef?.current?.prettifyRequestBody()}>{t('action.prettify')}</a>
         )}
       </div>
 
