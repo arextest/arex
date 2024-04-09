@@ -1,7 +1,7 @@
 {
   "name": "arex",
   "private": true,
-  "version": "0.6.20",
+  "version": "0.6.21",
   "author": "arextest",
   "main": "dist-electron/main",
   "files": [
@@ -52,9 +52,10 @@
     "react-d3-tree": "^3.5.2",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.9.0",
+    "simple-zustand-devtools": "^1.1.0",
     "use-immer": "^0.8.1",
     "xspy": "^0.0.4",
-    "zustand": "^4.3.7"
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@svgr/core": "^8.0.0",

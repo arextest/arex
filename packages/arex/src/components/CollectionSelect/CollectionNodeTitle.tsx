@@ -71,8 +71,8 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   } = props;
   const { activeWorkspaceId } = useWorkspaces();
   const {
-    getCollections,
     getPath,
+    addCollectionNode,
     renameCollectionNode,
     removeCollectionNode,
     duplicateCollectionNode,
@@ -105,12 +105,19 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
       }),
     {
       manual: true,
-      onSuccess: async (res, [{ caseSourceType, nodeType }]) => {
+      onSuccess: async (res, [{ caseSourceType, nodeName, nodeType }]) => {
         // case inherit interface
+        const parentId = nodePath[nodePath.length - 1] as string;
         if (caseSourceType === CaseSourceType.CASE)
-          await createCaseInheritInterface(nodePath[nodePath.length - 1] as string, res.infoId);
+          await createCaseInheritInterface(parentId, res.infoId);
 
-        await getCollections({ workspaceId: activeWorkspaceId, parentIds: nodePath });
+        addCollectionNode({
+          infoId: res.infoId,
+          nodeName,
+          nodeType,
+          parentIds: nodePath,
+          caseSourceType,
+        });
         props.onAddNode?.(res.infoId, nodeType);
       },
     },

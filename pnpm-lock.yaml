@@ -168,6 +168,9 @@ importers:
       react-router-dom:
         specifier: ^6.9.0
         version: 6.22.3(react-dom@18.2.0)(react@18.2.0)
+      simple-zustand-devtools:
+        specifier: ^1.1.0
+        version: 1.1.0(@types/react-dom@18.2.22)(@types/react@18.2.71)(react-dom@18.2.0)(react@18.2.0)(zustand@4.5.2)
       use-immer:
         specifier: ^0.8.1
         version: 0.8.1(immer@9.0.21)(react@18.2.0)
@@ -175,7 +178,7 @@ importers:
         specifier: ^0.0.4
         version: 0.0.4
       zustand:
-        specifier: ^4.3.7
+        specifier: ^4.5.2
         version: 4.5.2(@types/react@18.2.71)(immer@9.0.21)(react@18.2.0)
     devDependencies:
       '@svgr/core':
@@ -2638,7 +2641,6 @@ packages:
     resolution: {integrity: sha512-fHkBXPeNtfvri6gdsMYyW+dW7RXFo6Ad09nLFK0VQWR7yGLai/Cyvyj696gbwYvBnhGtevUG9cET0pmUbMtoPQ==}
     dependencies:
       '@types/react': 18.2.71
-    dev: true
 
   /@types/react-transition-group@4.4.10:
     resolution: {integrity: sha512-hT/+s0VQs2ojCX823m60m5f0sL5idt9SO6Tj6Dg+rdphGPIeJbJ6CxvBYkgkGKrYeDjvIpKTR38UzmtHJOGW3Q==}
@@ -8919,6 +8921,22 @@ packages:
     dependencies:
       semver: 7.6.0
     dev: true
+
+  /simple-zustand-devtools@1.1.0(@types/react-dom@18.2.22)(@types/react@18.2.71)(react-dom@18.2.0)(react@18.2.0)(zustand@4.5.2):
+    resolution: {integrity: sha512-Axfcfr9L3YL3kto7aschCQLY2VUlXXMnIVtaTe9Y0qWbNmPsX/y7KsNprmxBZoB0pww5ZGs1u/ohcrvQ3tE6jA==}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      '@types/react-dom': '>=18.0.0'
+      react: '>=18.0.0'
+      react-dom: '>=18.0.0'
+      zustand: '>=1.0.2'
+    dependencies:
+      '@types/react': 18.2.71
+      '@types/react-dom': 18.2.22
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      zustand: 4.5.2(@types/react@18.2.71)(immer@9.0.21)(react@18.2.0)
+    dev: false
 
   /slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
