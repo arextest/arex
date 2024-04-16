@@ -217,9 +217,9 @@ const useCollections = create(
 
         if (merge) {
           if (infoId) {
-            const path = getPathInFlatArray(infoId, treeToMap(generateRootNode(mergedData))).map(
-              (item) => item.id,
-            );
+            const path = getPathInFlatArray(infoId, treeToMap(generateRootNode(mergedData)))
+              .map((item) => item.id)
+              .filter((item) => item !== infoId);
             get().setLoadedKeys(path);
             get().setExpandedKeys(path);
           } else if (parentIds?.length) {

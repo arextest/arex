@@ -3,7 +3,7 @@ import { request } from '@/utils';
 
 export type UpdateReplaySettingReq = {
   appId: string;
-  offsetDays?: number;
+  sendMaxQps?: number;
   excludeOperationMap?: ExcludeOperationMap;
 };
 
