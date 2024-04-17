@@ -1,7 +1,7 @@
 name: Bug report
 title: "[Bug] "
 description: File a bug/issue of AREX
-labels: ["bug :lady_beetle:"]
+labels: ["bug"]
 body:
   - type: markdown
     attributes:
