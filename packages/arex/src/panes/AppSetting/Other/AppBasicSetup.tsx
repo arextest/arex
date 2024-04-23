@@ -140,7 +140,7 @@ const AppBasicSetup: FC<AppBasicSetupProps> = (props) => {
           {
             required: true,
             type: 'string',
-            message: t('appSetting.appNameEmptyTip') as string,
+            message: t('appSetting.appNameEmptyTip'),
           },
         ]}
       >

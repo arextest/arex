@@ -233,7 +233,7 @@ const KeyboardShortcut = React.memo(() => {
         navPane({
           id: 'document',
           type: ArexPanesType.WEB_VIEW,
-          name: t('document') as string,
+          name: t('document'),
           data: {
             url: URL_DOCUMENT_GET_STARTED,
           },
@@ -342,7 +342,7 @@ const KeyboardShortcut = React.memo(() => {
         onChange={handleChange}
         onCompositionStart={handleComposition}
         onCompositionEnd={handleComposition}
-        placeholder={t('searchPlaceholder') as string}
+        placeholder={t('searchPlaceholder')}
         style={{ marginRight: '8px' }}
       />
 

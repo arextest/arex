@@ -64,7 +64,7 @@ const TransformCard: FC<TransformCardProps> = (props) => {
             variant={props.edit ? 'outlined' : 'borderless'}
             value={props.data.transformDetail?.nodePath.join('/')}
             onChange={(e) => props.onNodePathChange?.(e.target.value.split('/'))}
-            placeholder={t('appSetting.transformNodePath') as string}
+            placeholder={t('appSetting.transformNodePath')}
             style={{
               display: 'inline-block',
               textAlign: 'center',
@@ -113,7 +113,7 @@ const TransformCard: FC<TransformCardProps> = (props) => {
           size='small'
           readOnly={!props.edit}
           variant={props.edit ? 'outlined' : 'borderless'}
-          placeholder={t('appSetting.transformMethodArgs') as string}
+          placeholder={t('appSetting.transformMethodArgs')}
           value={method.methodArgs}
           onChange={(e) => props.onMethodArgsChange?.(e.target.value, methodIndex)}
           style={{

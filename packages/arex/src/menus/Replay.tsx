@@ -170,7 +170,7 @@ const ReplayMenu: ArexMenuFC = (props) => {
           </>
         }
         onSelect={handleSelect}
-        placeholder={t('applicationsMenu.appFilterPlaceholder') as string}
+        placeholder={t('applicationsMenu.appFilterPlaceholder')}
         request={ApplicationService.getAppList}
         requestOptions={{
           refreshDeps: [timestamp], // refresh when delete app
