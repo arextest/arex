@@ -239,7 +239,7 @@ const CreatePlanModal = forwardRef<CreatePlanModalRef, CreatePlanModalProps>(
               </HelpTooltip>
             }
             name='caseSourceRange'
-            rules={[{ required: true, message: t('replay.emptyCaseRange') as string }]}
+            rules={[{ required: true, message: t('replay.emptyCaseRange') }]}
             css={css`
               .ant-picker-dropdown .ant-picker-footer-extra {
                 position: absolute;
@@ -294,7 +294,7 @@ const CreatePlanModal = forwardRef<CreatePlanModalRef, CreatePlanModalProps>(
                 children: (
                   <>
                     <Form.Item label={t('replay.planName')} name='planName'>
-                      <Input allowClear placeholder={t('replay.planNamePlaceholder') as string} />
+                      <Input allowClear placeholder={t('replay.planNamePlaceholder')} />
                     </Form.Item>
                     <Form.Item
                       label={
@@ -316,7 +316,7 @@ const CreatePlanModal = forwardRef<CreatePlanModalRef, CreatePlanModalProps>(
                         precision={0}
                         min={0}
                         addonAfter={t('replay.caseCountUnit')}
-                        placeholder={t('replay.caseCountLimitPlaceholder') as string}
+                        placeholder={t('replay.caseCountLimitPlaceholder')}
                         style={{ width: '100%' }}
                       />
                     </Form.Item>

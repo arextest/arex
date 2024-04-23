@@ -1,12 +1,12 @@
 {
+  "appSetting": "AppSetting",
+  "caseDetail": "CaseDetail",
   "collection": "Collection",
+  "diffScenes": "DiffScenes",
   "environment": "Environment",
-  "request": "Request",
   "replay": "Replay",
   "replayCase": "ReplayCase",
-  "diffScenes": "DiffScenes",
-  "caseDetail": "CaseDetail",
-  "appSetting": "AppSetting",
-  "workspace": "Workspace",
-  "systemSetting": "SystemSetting"
+  "request": "Request",
+  "systemSetting": "SystemSetting",
+  "workspace": "Workspace"
 }

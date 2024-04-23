@@ -1,33 +1,33 @@
 {
-  "folderPage": {
-    "tests": "Tests"
+  "batchComparePage": {
+    "compare_results": "Compare results",
+    "error.count": "Error Count",
+    "result": "Result",
+    "run_compare": "Run Comparison Cases"
   },
   "batchRunPage": {
-    "selectCaseTip": "Select cases for batch execution",
+    "SomeFailed": "Some failed test scripts exist",
+    "allFailed": "None of the test scripts passed",
+    "allPassed": "All test scripts passed",
     "batchSend": "Batch Send",
-    "statusBlockStructure":"Status Block Structure",
-    "requestStatus":"Request Status",
-    "testStatus":"Test Status",
-    "loading":"Loading",
-    "requestSuccess":"Request Success",
-    "requestFailed":"Request Failed",
-    "noTestScript":"No Test Script",
-    "allPassed":"All test scripts passed",
-    "SomeFailed":"Some failed test scripts exist",
-    "allFailed":"None of the test scripts passed",
-    "checkRequestDetail": "Click status block for detail"
+    "checkRequestDetail": "Click status block for detail",
+    "loading": "Loading",
+    "noTestScript": "No Test Script",
+    "requestFailed": "Request Failed",
+    "requestStatus": "Request Status",
+    "requestSuccess": "Request Success",
+    "selectCaseTip": "Select cases for batch execution",
+    "statusBlockStructure": "Status Block Structure",
+    "testStatus": "Test Status"
   },
-  "batchComparePage": {
-    "run_compare": "Run Comparison Cases",
-    "compare_results": "Compare results",
-    "result": "Result",
-    "error.count": "Error Count"
-  },
-  "replay": {
-    "saveto": "Save To"
+  "folderPage": {
+    "tests": "Tests"
   },
   "oauth": {
     "authenticating": "Authenticating",
     "redirectedTip": "You will be redirected to the home page in a few seconds ..."
+  },
+  "replay": {
+    "saveto": "Save To"
   }
 }

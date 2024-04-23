@@ -193,7 +193,7 @@ const WorkspaceSetting: FC = () => {
           <Form.Item
             label={t('workSpace.name')}
             name='workspaceName'
-            rules={[{ required: true, message: t('workSpace.emptyName') as string }]}
+            rules={[{ required: true, message: t('workSpace.emptyName') }]}
           >
             <Input />
           </Form.Item>

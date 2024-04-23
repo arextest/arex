@@ -1,4 +1,10 @@
 import i18n from 'i18next';
+declare module 'i18next' {
+  interface CustomTypeOptions {
+    returnNull: false;
+  }
+}
+
 import { initReactI18next } from 'react-i18next';
 
 import { ArexMenuNamespace, ArexPaneNamespace, I18_KEY } from '../constant';
@@ -28,6 +34,7 @@ export enum I18nextLng {
 }
 
 i18n.use(initReactI18next).init({
+  returnNull: false,
   resources,
   partialBundledLanguages: true,
   lng: localStorage.getItem(I18_KEY) || I18nextLng.en,
