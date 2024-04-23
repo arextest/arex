@@ -32,7 +32,9 @@ export type ArexPaneOptions = {
 
 export type ArexPane<D extends PanesData = PanesData> = ArexPaneFC<D> & ArexPaneOptions;
 
-export type ArexPaneFC<D extends PanesData = PanesData> = React.FC<{ data: D; paneKey: string }>;
+export type ArexPaneFC<D extends PanesData = PanesData, P = unknown> = React.FC<
+  { data: D; paneKey: string } & P
+>;
 
 export type PanesData = any;
 

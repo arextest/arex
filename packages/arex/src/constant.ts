@@ -22,11 +22,13 @@ export enum PanesType {
   SYSTEM_SETTING = 'systemSetting',
   WORKSPACE = 'workspace',
   BATCH_RUN = 'batchRun',
+  Traffic = 'traffic',
 }
 
 export enum MenusType {
   COLLECTION = 'collection',
   APP = 'app',
+  Traffic = 'traffic',
 }
 
 export enum CollectionNodeType {

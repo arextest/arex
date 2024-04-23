@@ -85,7 +85,7 @@ const MenuItem = styled((props: MenuItemProps) => {
   }
 `;
 
-const ReplayMenu: ArexMenuFC = (props) => {
+export const ReplayMenu: ArexMenuFC<{ paneType: PanesType }> = (props) => {
   const { t } = useTranslation(['components']);
   const { activePane } = useMenusPanes();
   const size = useSize(() => document.getElementById('arex-menu-wrapper'));
@@ -100,7 +100,7 @@ const ReplayMenu: ArexMenuFC = (props) => {
     useToggle(false);
   const [favoriteAppsInitialized, setFavoriteAppsInitialized] = useState(false);
   const selectedKeys = useMemo(
-    () => (activePane?.type === PanesType.REPLAY && props.value ? [props.value] : []),
+    () => (activePane?.type === props.paneType && props.value ? [props.value] : []),
     [activePane?.type, props.value],
   );
 
@@ -208,8 +208,11 @@ const ReplayMenu: ArexMenuFC = (props) => {
   );
 };
 
-export default createArexMenu(ReplayMenu, {
-  type: MenusType.APP,
-  paneType: PanesType.REPLAY,
-  icon: <Icon name='AppWindow' />,
-});
+export default createArexMenu(
+  (props) => <ReplayMenu {...props} paneType={PanesType.REPLAY}></ReplayMenu>,
+  {
+    type: MenusType.APP,
+    paneType: PanesType.REPLAY,
+    icon: <Icon name='AppWindow' />,
+  },
+);

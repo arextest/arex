@@ -9,7 +9,7 @@ import {
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { Badge, Spin, Tabs, theme } from 'antd';
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { FC, ReactNode, useEffect, useState } from 'react';
 
 import { PlanItemBreadcrumb } from '@/components';
 import { APP_ID_KEY, CollectionNodeType, PanesType } from '@/constant';
@@ -33,7 +33,8 @@ type ReplayCaseDetailData = {
   operationId?: string;
 };
 
-const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
+const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData, { navigation?: boolean }> = (props) => {
+  const { navigation = true } = props;
   const navPane = useNavPane();
   const { activePane } = useMenusPanes();
   const { activeWorkspaceId } = useWorkspaces();
@@ -91,12 +92,14 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
 
   return (
     <>
-      <PlanItemBreadcrumb
-        appId={props.data.appId}
-        type={PanesType.REPLAY_CASE}
-        planItemId={props.data.planItemId}
-        recordId={props.data.recordId}
-      />
+      {navigation && (
+        <PlanItemBreadcrumb
+          appId={props.data.appId}
+          type={PanesType.REPLAY_CASE}
+          planItemId={props.data.planItemId}
+          recordId={props.data.recordId}
+        />
+      )}
 
       <PanesTitle
         title={`${t('replay.recordId')}: ${props.data.recordId}`}
