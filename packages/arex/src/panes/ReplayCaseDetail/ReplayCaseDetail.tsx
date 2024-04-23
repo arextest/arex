@@ -9,7 +9,7 @@ import {
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { Badge, Spin, Tabs, theme } from 'antd';
-import React, { FC, ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 
 import { PlanItemBreadcrumb } from '@/components';
 import { APP_ID_KEY, CollectionNodeType, PanesType } from '@/constant';
@@ -33,8 +33,19 @@ type ReplayCaseDetailData = {
   operationId?: string;
 };
 
-const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData, { navigation?: boolean }> = (props) => {
-  const { navigation = true } = props;
+const ReplayCaseDetail: ArexPaneFC<
+  ReplayCaseDetailData,
+  {
+    navigation?: boolean;
+    renderTitle?: (recordId: string) => ReactNode;
+    renderContent?: (children: ReactNode) => ReactNode;
+  }
+> = (props) => {
+  const {
+    navigation = true,
+    renderTitle = (recordId) => `${t('replay.recordId')}: ${recordId}`,
+    renderContent = (children) => children,
+  } = props;
   const navPane = useNavPane();
   const { activePane } = useMenusPanes();
   const { activeWorkspaceId } = useWorkspaces();
@@ -102,7 +113,7 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData, { navigation?: boolean 
       )}
 
       <PanesTitle
-        title={`${t('replay.recordId')}: ${props.data.recordId}`}
+        title={renderTitle(props.data.recordId)}
         extra={
           <SmallTextButton
             icon={<BugOutlined />}
@@ -126,9 +137,11 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData, { navigation?: boolean 
           />
         }
       />
-      <Spin spinning={loading}>
-        <Tabs items={tabItems} />
-      </Spin>
+      {renderContent(
+        <Spin spinning={loading}>
+          <Tabs items={tabItems} />
+        </Spin>,
+      )}
     </>
   );
 };

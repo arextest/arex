@@ -1,33 +1,30 @@
-import { css, useArexPaneProps } from '@arextest/arex-core';
+import { css } from '@arextest/arex-core';
 import { Card, theme } from 'antd';
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import Tree from 'react-d3-tree';
 
-import { decodePaneKey } from '@/store/useMenusPanes';
-
-const CallChain: FC = () => {
+const CallChain: FC<{ endpoint?: string }> = (props) => {
   const { token } = theme.useToken();
-  const { paneKey } = useArexPaneProps();
-  const { id: appId } = useMemo(() => decodePaneKey(paneKey), [paneKey]);
 
   const mockData = [
     {
-      name: appId,
+      name: props.endpoint || '',
       children: [
         {
-          name: '[Servlet] /dbTest/mybatis/query',
+          name: 'java.lang.System.currentTime',
+          type: 'DynamicClass',
         },
         {
-          name: '[DynamicClass] java.lang.System.currentTimeMillis',
+          name: 'java.lang.System.currentTimeMillis',
+          type: 'DynamicClass',
         },
         {
-          name: '[DynamicClass] java.lang.System.currentTime',
+          name: 'query',
+          type: 'Database',
         },
         {
-          name: '[Database] query',
-        },
-        {
-          name: '[Database] query1',
+          name: 'query1',
+          type: 'Database',
         },
       ],
     },
@@ -59,28 +56,48 @@ const CallChain: FC = () => {
           x: 200,
           y: 64,
         }}
-        renderCustomNodeElement={(rd3tProps) => (
-          <g onClick={rd3tProps.toggleNode}>
-            <rect
-              fill={token.colorBgLayout}
-              stroke={token.colorBorder}
-              width={rd3tProps.nodeDatum.__rd3t.depth === 0 ? 100 : 200}
-              height={48}
-              rx={6}
-              y={-24}
-            />
-            <text
-              stroke='none'
-              textAnchor='middle'
-              dominantBaseline='middle'
-              height={24}
-              fill={token.colorText}
-              x={rd3tProps.nodeDatum.__rd3t.depth === 0 ? 50 : 100}
-            >
-              {rd3tProps.nodeDatum.name}
-            </text>
-          </g>
-        )}
+        renderCustomNodeElement={(rd3tProps) => {
+          const height = 48;
+          const width = rd3tProps.nodeDatum.__rd3t.depth === 0 ? 120 : 240;
+          return (
+            <g onClick={rd3tProps.toggleNode}>
+              <rect
+                fill={token.colorBgLayout}
+                stroke={token.colorBorder}
+                width={width}
+                height={height}
+                rx={6}
+                y={-24}
+              />
+              <foreignObject
+                stroke='none'
+                height='100%'
+                width='100%'
+                y={rd3tProps.nodeDatum.__rd3t.depth === 0 ? -12 : -20}
+                x={12}
+              >
+                <div
+                  style={{
+                    color: token.colorText,
+                  }}
+                >
+                  <div
+                    style={
+                      rd3tProps.nodeDatum.__rd3t.depth === 0
+                        ? { fontSize: token.fontSizeLG, fontWeight: 500 }
+                        : undefined
+                    }
+                  >
+                    {rd3tProps.nodeDatum.name}
+                  </div>
+                  <div style={{ color: token.colorTextSecondary, fontWeight: 500 }}>
+                    {rd3tProps.nodeDatum.type}
+                  </div>
+                </div>
+              </foreignObject>
+            </g>
+          );
+        }}
       />
     </Card>
   );
