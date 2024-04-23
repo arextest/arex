@@ -27,7 +27,7 @@ export enum PanesType {
 
 export enum MenusType {
   COLLECTION = 'collection',
-  APP = 'app',
+  REPORT = 'report',
   Traffic = 'traffic',
 }
 

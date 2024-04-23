@@ -82,12 +82,14 @@ const TrafficList: FC = (props) => {
         expandable={{
           expandRowByClick: true,
           expandedRowRender: (record) => (
-            // MOCK DATA
-            <ReplayCaseDetail
-              paneKey={paneKey}
-              navigation={false}
-              data={{ appId, recordId: 'AREX-172-19-0-4-565959669171' }}
-            />
+            <div style={{ padding: '0 8px' }}>
+              {/* MOCK DATA */}
+              <ReplayCaseDetail
+                paneKey={paneKey}
+                navigation={false}
+                data={{ appId, recordId: 'AREX-172-19-0-4-565959669171' }}
+              />
+            </div>
           ),
         }}
         css={css`

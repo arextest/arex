@@ -1,4 +1,9 @@
-import { HeartFilled, HeartOutlined, PlusOutlined } from '@ant-design/icons';
+import {
+  HeartFilled,
+  HeartOutlined,
+  PlusOutlined,
+  ReconciliationOutlined,
+} from '@ant-design/icons';
 import {
   ArexMenuFC,
   createArexMenu,
@@ -12,7 +17,7 @@ import { useRequest, useSize, useToggle } from 'ahooks';
 import { Modal, theme } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Icon, MenuSelect, MenuSelectProps } from '@/components';
+import { MenuSelect, MenuSelectProps } from '@/components';
 import { EMAIL_KEY, MenusType, PanesType } from '@/constant';
 import AppBasicSetup from '@/panes/AppSetting/Other/AppBasicSetup';
 import { ApplicationService, UserService } from '@/services';
@@ -53,7 +58,7 @@ const MenuItem = styled((props: MenuItemProps) => {
 
   useEffect(() => {
     if (activePane && activePane.type === PanesType.REPLAY) {
-      setActiveMenu(MenusType.APP);
+      setActiveMenu(MenusType.REPORT);
     }
   }, [activePane]);
 
@@ -211,8 +216,8 @@ export const ReplayMenu: ArexMenuFC<{ paneType: PanesType }> = (props) => {
 export default createArexMenu(
   (props) => <ReplayMenu {...props} paneType={PanesType.REPLAY}></ReplayMenu>,
   {
-    type: MenusType.APP,
+    type: MenusType.REPORT,
     paneType: PanesType.REPLAY,
-    icon: <Icon name='AppWindow' />,
+    icon: <ReconciliationOutlined />,
   },
 );
