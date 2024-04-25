@@ -4,7 +4,6 @@ import {
   useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
-import segmented from '@arextest/arex-core/src/components/Segmented';
 import { css } from '@emotion/react';
 import { Card, Input, Space, Tag } from 'antd';
 import { ColumnType } from 'antd/es/table';
@@ -100,7 +99,7 @@ const TrafficList: FC = (props) => {
                 navigation={false}
                 renderTitle={(recordId) => (
                   <Space size='middle'>
-                    {t('replay.recordId')}: ${recordId}
+                    {t('replay.recordId')}: {recordId}
                     <Segmented
                       value={viewMode}
                       options={[
@@ -118,7 +117,11 @@ const TrafficList: FC = (props) => {
                   </Space>
                 )}
                 renderContent={(children) =>
-                  viewMode === 'table' ? children : <CallChain endpoint={record.endpoint} />
+                  viewMode === 'table' ? (
+                    children
+                  ) : (
+                    <CallChain key='callChain' endpoint={record.endpoint} />
+                  )
                 }
                 data={{ appId, recordId: 'AREX-172-19-0-4-565959669171' }}
               />

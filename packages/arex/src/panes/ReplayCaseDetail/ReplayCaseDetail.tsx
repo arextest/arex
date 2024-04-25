@@ -7,6 +7,7 @@ import {
   SmallTextButton,
   useTranslation,
 } from '@arextest/arex-core';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { Badge, Spin, Tabs, theme } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
@@ -51,6 +52,8 @@ const ReplayCaseDetail: ArexPaneFC<
   const { activeWorkspaceId } = useWorkspaces();
   const { token } = theme.useToken();
   const { t } = useTranslation('components');
+
+  const [contentRef] = useAutoAnimate();
 
   const [tabItems, setTabItems] = useState<TagType[]>([]);
 
@@ -137,11 +140,13 @@ const ReplayCaseDetail: ArexPaneFC<
           />
         }
       />
-      {renderContent(
-        <Spin spinning={loading}>
-          <Tabs items={tabItems} />
-        </Spin>,
-      )}
+      <div ref={contentRef}>
+        {renderContent(
+          <Spin key='_default_children' spinning={loading}>
+            <Tabs items={tabItems} />
+          </Spin>,
+        )}
+      </div>
     </>
   );
 };
