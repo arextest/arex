@@ -6,6 +6,8 @@
   "homepage": "https://github.com/arextest/arex",
   "main": "index.js",
   "scripts": {
+    "i": "pnpm install",
+    "v": "pnpm -v",
     "prepare": "husky install",
     "dev": "pnpm --filter=arex do-dev",
     "dev:ele": "pnpm --filter=arex dev:ele",
@@ -46,6 +48,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^13.2.0",
     "prettier": "^2.8.8",
-    "vitest": "^0.33.0"
+    "vitest": "^0.33.0",
+    "pnpm": "^8.0.0"
   }
 }
