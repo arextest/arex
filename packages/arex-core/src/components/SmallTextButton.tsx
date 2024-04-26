@@ -1,21 +1,20 @@
-import { Button, ButtonProps, theme, Typography } from 'antd';
+import { Button, ButtonProps, Typography } from 'antd';
 import { TextProps } from 'antd/es/typography/Text';
 import React, { ReactNode } from 'react';
 
 const SmallTextButton = React.forwardRef<
-  HTMLElement,
+  HTMLButtonElement,
   Omit<ButtonProps, 'title'> & {
     color?: TextProps['color'];
     title?: ReactNode;
   }
 >((props, ref) => {
   const { title, ...restProps } = props;
-  const { token } = theme.useToken();
 
   return (
     <Button
       ref={ref}
-      type={'text'}
+      type='text'
       size='small'
       {...restProps}
       onClick={(e) => {

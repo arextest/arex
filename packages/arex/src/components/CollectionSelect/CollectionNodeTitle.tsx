@@ -1,21 +1,10 @@
-import {
-  CheckOutlined,
-  CloseOutlined,
-  ExclamationCircleFilled,
-  FolderOutlined,
-  MoreOutlined,
-} from '@ant-design/icons';
-import {
-  getLocalStorage,
-  RequestMethodIcon,
-  SmallTextButton,
-  styled,
-  useTranslation,
-} from '@arextest/arex-core';
+import { ExclamationCircleFilled, FolderOutlined, MoreOutlined } from '@ant-design/icons';
+import { getLocalStorage, RequestMethodIcon, styled, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Dropdown, Input, MenuProps, Space, theme } from 'antd';
+import { App, Button, Dropdown, MenuProps, theme } from 'antd';
 import React, { FC, ReactNode, useMemo, useState } from 'react';
 
+import NodeNameInput from '@/components/CollectionSelect/NodeNameInput';
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
@@ -23,8 +12,6 @@ import { CollectionType } from '@/services/FileSystemService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { CaseSourceType } from '@/store/useCollections';
 import { encodePaneKey } from '@/store/useMenusPanes';
-
-import SearchHighLight from '../SearchHighLight';
 
 const CollectionNodeTitleWrapper = styled.div<{ disabled?: boolean }>`
   cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
@@ -88,7 +75,6 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
   const [editMode, setEditMode] = useState(false);
-  const [nodeName, setNodeName] = useState(props.data.nodeName);
 
   const nodePath = useMemo(
     () => getPath(props.data.infoId).map((path) => path.id),
@@ -139,19 +125,19 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   );
 
   const { run: rename } = useRequest(
-    (path: string[]) =>
+    (newName: string) =>
       FileSystemService.renameCollectionItem({
-        path,
+        path: nodePath,
         userName,
-        newName: nodeName,
+        newName,
         id: activeWorkspaceId,
       }),
     {
       manual: true,
-      onSuccess(success) {
+      onSuccess(success, [newName]) {
         if (success) {
           setEditMode(false);
-          renameCollectionNode(props.data.infoId, nodeName);
+          renameCollectionNode(props.data.infoId, newName);
         }
       },
     },
@@ -350,24 +336,13 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         {prefix}
         <div className={'content'}>
           {editMode ? (
-            <Space style={{ display: 'flex' }}>
-              <Input
-                value={nodeName}
-                onPressEnter={() => rename(nodePath)}
-                onChange={(e) => setNodeName(e.currentTarget.value)}
-                style={{ padding: '0 4px' }}
-              />
-              <SmallTextButton
-                icon={<CloseOutlined />}
-                onClick={() => {
-                  setEditMode(false);
-                  setNodeName(props.data.nodeName);
-                }}
-              />
-              <SmallTextButton icon={<CheckOutlined />} onClick={() => rename(nodePath)} />
-            </Space>
+            <NodeNameInput
+              initialValue={props.data.nodeName}
+              onSave={rename}
+              onCancel={() => setEditMode(false)}
+            />
           ) : (
-            <SearchHighLight text={props.data.nodeName} keyword={props.keyword} />
+            props.data.nodeName
           )}
         </div>
       </div>
