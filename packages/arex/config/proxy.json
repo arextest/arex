@@ -1,14 +1,14 @@
 [
   {
     "path": "/webApi",
-    "target": "http://arex-web-api-find.arex-namesapce:8080"
+    "target": "http://10.144.62.53:8090"
   },
   {
     "path": "/schedule",
-    "target": "http://arex-schedule-discovery.arex-namesapce:8080"
+    "target": "http://10.144.62.53:8092"
   },
   {
     "path": "/storage",
-    "target": "http://arex-storage-discovery.arex-namesapce:8080"
+    "target": "http://10.144.62.53:8093"
   }
 ]
