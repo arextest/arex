@@ -5,7 +5,7 @@ import { request } from '@/utils';
 
 export async function saveRequest(
   workspaceId: string,
-  params: ArexRESTRequest & { inherited?: boolean; tags: string[] },
+  params: Partial<ArexRESTRequest & { inherited: boolean; tags: string[] }>,
   nodeType: number,
 ) {
   const saveParams = {

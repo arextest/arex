@@ -32,7 +32,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   const { message } = App.useApp();
   const userName = getLocalStorage<string>(EMAIL_KEY);
 
-  const { collectionsFlatData, getPath } = useCollections();
+  const { collectionsFlatData, getPath, getCollections } = useCollections();
 
   const [selectLocationRef] = useAutoAnimate();
 
@@ -86,6 +86,11 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
       onSuccess: (res) => {
         setOpen(false);
         props.onCreate?.(res.infoId);
+        getCollections({
+          workspaceId: props.workspaceId,
+          infoId: res.infoId,
+          nodeType: props.nodeType,
+        });
       },
     },
   );
@@ -138,7 +143,6 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
 
     const nodeName = value || props.title || (t('untitled', { ns: 'common' }) as string);
 
-    console.log(' props.nodeType', props.nodeType);
     addCollectionItem({
       nodeName,
       nodeType: props.nodeType,

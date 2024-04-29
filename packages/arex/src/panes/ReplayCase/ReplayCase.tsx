@@ -13,7 +13,7 @@ import {
 } from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
-import { App } from 'antd';
+import { App, Button } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useMemo, useState } from 'react';
 
@@ -147,6 +147,22 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
     setCompareConfigOpen(true);
   }
 
+  const { run: runPinMock } = useRequest(
+    () =>
+      new Promise((resolve) => {
+        setTimeout(() => {
+          console.log('timeout 1000');
+          resolve(true);
+        }, 1000);
+      }),
+    {
+      manual: true,
+      onSuccess: (success, parmas) => {
+        console.log('success', parmas);
+      },
+    },
+  );
+
   return (
     <div ref={wrapperRef}>
       <PlanItemBreadcrumb
@@ -260,6 +276,7 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
           </PaneDrawer>
         </>
       )}
+      <Button onClick={runPinMock}>runPinMock</Button>
     </div>
   );
 };

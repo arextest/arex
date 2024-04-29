@@ -4,6 +4,7 @@ import {
   ArexRequest,
   ArexRequestProps,
   ArexRequestRef,
+  ArexRESTRequest,
 } from '@arextest/arex-request';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
@@ -45,7 +46,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const navPane = useNavPane({ inherit: true });
   const { message } = App.useApp();
 
-  const { collectionsTreeData, getPath, renameCollectionNode } = useCollections();
+  const { collectionsTreeData, getPath, renameCollectionNode, getCollections } = useCollections();
   const { removePane } = useMenusPanes();
 
   const userName = getLocalStorage<string>(EMAIL_KEY);
@@ -89,9 +90,23 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     },
   );
 
+  const runPinMock = (params: { infoId: string; recordId: string }) =>
+    FileSystemService.pinMock({
+      workspaceId,
+      infoId: params.infoId,
+      recordId: params.recordId,
+      nodeType: CollectionNodeType.case,
+    }).then((success) => {
+      console.log('pinMock success', success, params);
+      if (success) {
+        getCollections({ workspaceId, infoId: params.infoId, nodeType: CollectionNodeType.case });
+        reloadCollection({ workspaceId, infoId: params.infoId, nodeType: CollectionNodeType.case });
+      }
+    });
+
   const { run: saveRequest } = useRequest(
     (
-      params,
+      params: Partial<ArexRESTRequest> & { inherited?: boolean; tags?: string[] },
       options?: {
         pinMock?: { infoId: string; recordId: string };
       },
@@ -100,19 +115,26 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         workspaceId,
         {
           ...params,
-          description: params.description || data?.description,
-          tags: params.tags || data?.tags,
+          description: params.description || data?.description || '',
+          tags: params?.tags || data?.tags || [],
         },
         nodeType,
       ),
     {
       manual: true,
       onSuccess(res, [params, options]) {
+        console.log(params);
         res && message.success(t('message.saveSuccess', { ns: 'common' }));
-        options?.pinMock && runPinMock(options?.pinMock);
-        params.id &&
-          params.nodeType &&
-          reloadCollection({ workspaceId, infoId: params.id, nodeType: params.nodeType });
+        if (options?.pinMock) {
+          runPinMock(options?.pinMock);
+        } else if (params.id !== id) {
+          // 另存为新增时，刷新collection
+          reloadCollection({
+            workspaceId,
+            infoId: params.id!,
+            nodeType: CollectionNodeType.case,
+          });
+        }
       },
     },
   );
@@ -129,7 +151,11 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     let pinMock = undefined;
 
     // case debug save runPinMock
-    if (props.data?.recordId && request.id && request.id !== id) {
+    if (
+      props.data?.recordId &&
+      request.id
+      // && request.id !== id
+    ) {
       pinMock = { infoId: request.id, recordId: props.data.recordId };
     }
 
@@ -150,14 +176,17 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     loading,
     run: queryRequest,
   } = useRequest(
-    () =>
+    (recordId?: string) =>
       FileSystemService.queryRequest({
         id,
         nodeType,
-        recordId: props.data?.recordId,
+        recordId: recordId || props.data?.recordId,
         planId: props.data?.planId,
       }),
     {
+      onBefore([recordId]) {
+        console.log('recordId', recordId);
+      },
       onError(error) {
         message.error(error.toString());
       },
@@ -170,24 +199,6 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
 
   const parentPath = useMemo(() => getPath(id), [collectionsTreeData]);
 
-  const { run: runPinMock } = useRequest(
-    ({ infoId, recordId }: { infoId: string; recordId: string }) =>
-      FileSystemService.pinMock({
-        workspaceId,
-        infoId,
-        recordId,
-        nodeType: CollectionNodeType.case,
-      }),
-    {
-      manual: true,
-      ready: !!workspaceId,
-      onSuccess: (success, [{ infoId }]) => {
-        if (success) {
-          reloadCollection({ workspaceId, infoId, nodeType: CollectionNodeType.case });
-        }
-      },
-    },
-  );
   const { run: rename } = useRequest(
     (newName) =>
       FileSystemService.renameCollectionItem({
@@ -292,8 +303,8 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       id: `${workspaceId}-${nodeType}-${params.infoId}`,
       type,
     });
-    if (params.infoId !== id) removePane(props.paneKey); // remove old pane when save as
-    else queryRequest();
+    removePane(props.paneKey); // remove old pane when save as
+    queryRequest();
   };
 
   return (
