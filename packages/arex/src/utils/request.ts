@@ -114,6 +114,8 @@ export class Request {
   }
 }
 
+axios.defaults.headers.common.org = location.hostname.split('.')[0];
+
 const request = new Request({
   timeout: 30000,
   baseURL: isClientProd ? 'http://localhost:' + port.electronPort : undefined,
