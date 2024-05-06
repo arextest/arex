@@ -8,7 +8,7 @@ import { useNavPane } from '@/hooks';
 
 import AppTitle from './AppTitle';
 import CreatePlanModal, { CreatePlanModalRef } from './CreatePlanModal';
-import RecordedCaseList, { RecordedCaseRef } from './RecordedCase';
+import RecordedCaseList, { RecordedCaseDrawerRef } from './RecordedCase';
 
 type AppTopBarProps = {
   appId: string;
@@ -34,7 +34,7 @@ const AppTopBar: FC<AppTopBarProps> = ({
   const { data } = useArexPaneProps<{ planId: string }>();
 
   const createPlanModalRef = useRef<CreatePlanModalRef>(null);
-  const caseListRef = useRef<RecordedCaseRef>(null);
+  const caseListRef = useRef<RecordedCaseDrawerRef>(null);
 
   const appTitle = useMemo(
     () => appName && `${readOnly ? `[${t('readOnly', { ns: 'common' })}] ` : ''}${appName}`,
