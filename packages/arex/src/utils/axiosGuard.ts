@@ -8,6 +8,7 @@ import port from '../../config/port.json';
 
 // chrome插件代理
 function AgentAxios<T>(params: any) {
+  console.log(params,'params')
   return new Promise<T>((resolve, reject) => {
     const tid = String(Math.random());
     window.postMessage(
