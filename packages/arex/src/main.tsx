@@ -13,6 +13,10 @@ import { isClientProd } from '@/constant';
 
 import App from './App';
 
+import { initSentry } from '@/utils/sentry';
+
+initSentry()
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   React.createElement(isClientProd ? HashRouter : BrowserRouter, {}, <App />),
 );
