@@ -2,7 +2,6 @@ import { UserOutlined } from '@ant-design/icons';
 import { setLocalStorage } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Form, Input } from 'antd';
-import axios from 'axios';
 import React, { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,14 +11,21 @@ import OauthLogin from '@/pages/Login/OauthLogin';
 import VerificationCode from '@/pages/Login/VerificationCode';
 import { LoginService } from '@/services';
 import { loginVerifyReq } from '@/services/LoginService';
+import { useClientStore } from '@/store';
 
-let timer: NodeJS.Timer;
+let timer: NodeJS.Timeout;
 
 const EmailForm: FC = () => {
   const nav = useNavigate();
   const { message } = App.useApp();
 
   const [form] = Form.useForm();
+
+  const { companyName } = useClientStore();
+  useEffect(() => {
+    form.setFieldValue('companyName', companyName);
+  }, [companyName]);
+
   const [count, setCount] = useState<number>(0);
 
   const { run: sendVerifyCode } = useRequest(LoginService.sendVerifyCodeByEmail, {
@@ -70,12 +76,6 @@ const EmailForm: FC = () => {
     },
   });
 
-  useRequest(() => axios.get('/api/companyName').then((res) => res.data.companyName), {
-    ready: isClient,
-    onSuccess: (companyName) => {
-      form.setFieldValue('companyName', companyName);
-    },
-  });
   useEffect(() => {
     count <= 0 && clearInterval(timer);
   }, [count]);

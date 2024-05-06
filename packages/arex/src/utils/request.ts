@@ -2,6 +2,7 @@ import { getLocalStorage } from '@arextest/arex-core';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { ACCESS_TOKEN_KEY, APP_ID_KEY, isClientProd } from '@/constant';
+import { useClientStore } from '@/store';
 
 import port from '../../config/port.json';
 
@@ -32,6 +33,9 @@ export class Request {
         //   return Promise.reject(
         //     'Required request header "access-token" for method parameter type String is not present',
         //   );
+
+        request.headers.set('org', useClientStore.getState().companyName);
+        request.headers.set('tenant', useClientStore.getState().companyName);
 
         request.headers.set('access-token', accessToken);
         request.headers.set('appId', getLocalStorage<string>(APP_ID_KEY));
@@ -113,8 +117,6 @@ export class Request {
     });
   }
 }
-
-axios.defaults.headers.common.org = location.hostname.split('.')[0];
 
 const request = new Request({
   timeout: 30000,
