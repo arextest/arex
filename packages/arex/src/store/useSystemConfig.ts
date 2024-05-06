@@ -15,7 +15,7 @@ const useSystemConfig = create<SystemConfig & Action>((set) => {
     appAuth: false,
     getAppAuth: async () => {
       const res = await SystemService.querySystemConfig('auth_switch');
-      set({ appAuth: !!res.authSwitch });
+      set({ appAuth: !!res?.authSwitch });
     },
   };
 });

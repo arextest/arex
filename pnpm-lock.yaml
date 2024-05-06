@@ -75,9 +75,6 @@ importers:
       '@arextest/arex-request':
         specifier: '*'
         version: link:../arex-request
-      '@arextest/arex-request-runtime':
-        specifier: ^1.0.2
-        version: 1.0.2
       '@emotion/react':
         specifier: ^11.10.6
         version: 11.11.4(@types/react@18.2.71)(react@18.2.0)
@@ -141,9 +138,6 @@ importers:
       lucide-react:
         specifier: ^0.299.0
         version: 0.299.0(react@18.2.0)
-      monaco-editor:
-        specifier: ^0.39.0
-        version: 0.39.0
       path-to-regexp:
         specifier: ^6.2.1
         version: 6.2.1

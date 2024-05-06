@@ -6,7 +6,6 @@ import svgr from 'vite-plugin-svgr';
 
 import port from './config/port.json';
 import proxy from './config/proxy.json';
-import copyFilePlugin from './copyFilePlugin';
 
 export default defineConfig(async ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
@@ -20,9 +19,6 @@ export default defineConfig(async ({ mode }) => {
     define: {
       __APP_VERSION__: await import('./package.json').then((pkg) => JSON.stringify(pkg.version)),
       __AUTH_PORT__: port.electronPort,
-      'import.meta.env.AREX_REQUEST_RUNTIME': JSON.stringify(
-        isProduction ? '/arex-request-runtime.js' : '/dist/arex-request-runtime.js',
-      ),
     },
     resolve: {
       alias: {
@@ -36,12 +32,6 @@ export default defineConfig(async ({ mode }) => {
       svgr(),
       react({
         jsxImportSource: '@emotion/react',
-      }),
-      // Copy plugins: copy arex-request-runtime.js to dist folder on dev and build
-      copyFilePlugin({
-        src: './node_modules/@arextest/arex-request-runtime/index.js',
-        dest: 'dist/',
-        rename: 'arex-request-runtime.js',
       }),
     ].concat(
       isElectron
