@@ -1,4 +1,4 @@
-import { AxiosRequestConfig, AxiosResponse, options } from 'axios';
+import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { ScheduleAxios } from './index';
 
