@@ -4,7 +4,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import process from 'process';
 import { createProxyMiddleware } from 'http-proxy-middleware';
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { chunkArray, getLocalConfig } from './helper';
 import { SendStatusType } from './services/type';
@@ -86,6 +86,7 @@ const parallelSendCases = async (
   planId: string,
   warmUpId: string,
   maxQps: number,
+  axiosConfig?: AxiosRequestConfig,
 ) => {
   const caseEntries = Array.from(caseParametersMap.entries());
   const totalCases = caseEntries.length;
@@ -96,7 +97,7 @@ const parallelSendCases = async (
     currentIndex += maxQps;
 
     const batchPromises = batch.map(([caseId, caseParameter]) =>
-      sendCaseFlow(caseParameter, planId, caseId, warmUpId),
+      sendCaseFlow(caseParameter, planId, caseId, warmUpId, axiosConfig),
     );
 
     await Promise.all(batchPromises);
@@ -171,7 +172,7 @@ server.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
       //   await sendCaseFlow(caseParameter, planId, caseId, warmUpId);
       // }
 
-      parallelSendCases(caseParametersMap, planId, warmUpId, maxQps);
+      parallelSendCases(caseParametersMap, planId, warmUpId, maxQps, axiosConfig);
     }
   } catch (err) {
     logger.error(err);
@@ -185,21 +186,26 @@ server.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
  * @param planId
  * @param caseId
  * @param warmUpId required for warmUp case
+ * @param axiosConfig
  */
 async function sendCaseFlow(
   params: ReplaySenderParameters,
   planId: string,
   caseId: string,
   warmUpId?: string,
+  axiosConfig?: AxiosRequestConfig,
 ) {
   // preSend
   try {
-    await preSend({
-      planId,
-      caseId,
-      recordId: params.recordId,
-      replayPlanType: 1,
-    });
+    await preSend(
+      {
+        planId,
+        caseId,
+        recordId: params.recordId,
+        replayPlanType: 1,
+      },
+      axiosConfig,
+    );
   } catch (e) {
     const error =
       String(e) + `params: [planId: ${planId}] [caseId: ${caseId}] [recordId: ${params.recordId}]`;
@@ -231,12 +237,15 @@ async function sendCaseFlow(
 
     // no replayId
     !replayId &&
-      (await postSend({
-        caseId,
-        planId,
-        sendStatusType: SendStatusType.REPLAY_RESULT_NOT_FOUND,
-        errorMsg: 'Replay result not found',
-      }));
+      (await postSend(
+        {
+          caseId,
+          planId,
+          sendStatusType: SendStatusType.REPLAY_RESULT_NOT_FOUND,
+          errorMsg: 'Replay result not found',
+        },
+        axiosConfig,
+      ));
   } catch (e) {
     const replayId = caseResponse?.headers['arex-replay-id'];
     logger.error(String(e));
@@ -246,23 +255,29 @@ async function sendCaseFlow(
       `[replayId: ${replayId}]`,
       `[sendStatusType: 100]`,
     );
-    return await postSend({
-      caseId,
-      planId,
-      replayId,
-      sendStatusType: SendStatusType.EXCEPTION_FAILED,
-      errorMsg: String(e),
-    });
+    return await postSend(
+      {
+        caseId,
+        planId,
+        replayId,
+        sendStatusType: SendStatusType.EXCEPTION_FAILED,
+        errorMsg: String(e),
+      },
+      axiosConfig,
+    );
   }
 
   // postSend: success status
   const replayId = caseResponse?.headers['arex-replay-id'];
   logger.log('[postSend]', `[caseId: ${caseId}]`, `[replayId: ${replayId}]`, `[sendStatusType: 1]`);
-  await postSend({
-    caseId,
-    planId,
-    replayId,
-    sendStatusType: SendStatusType.SUCCESS,
-    errorMsg: '',
-  });
+  await postSend(
+    {
+      caseId,
+      planId,
+      replayId,
+      sendStatusType: SendStatusType.SUCCESS,
+      errorMsg: '',
+    },
+    axiosConfig,
+  );
 }
