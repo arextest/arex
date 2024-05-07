@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios';
+import { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { zstdDecompress } from '../helper';
 import { ScheduleAxios } from './index';
@@ -40,11 +40,14 @@ async function convertData<T>(data: Record<string, string>): Promise<Record<stri
   return result;
 }
 
-export async function queryReplaySenderParameters(params: QueryReplaySenderParametersReq) {
+export async function queryReplaySenderParameters(
+  params: QueryReplaySenderParametersReq,
+  config?: AxiosRequestConfig,
+) {
   const res = await ScheduleAxios.post<
     QueryReplaySenderParametersReq,
     AxiosResponse<QueryReplaySenderParametersRes>
-  >('/schedule/replay/local/queryReplaySenderParameters', params);
+  >('/schedule/replay/local/queryReplaySenderParameters', params, config);
   const parametersMap = res.data.data.replaySenderParametersMap;
   return await convertData<ReplaySenderParameters>(parametersMap);
 }

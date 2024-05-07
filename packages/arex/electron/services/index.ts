@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { log } from 'electron-log';
 import process from 'process';
 
 import proxy from '../../config/proxy-electron-sass.json';

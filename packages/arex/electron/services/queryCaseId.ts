@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios';
+import { AxiosRequestConfig, AxiosResponse, options } from 'axios';
 
 import { ScheduleAxios } from './index';
 
@@ -24,10 +24,11 @@ export interface QueryCaseIdRes {
   };
 }
 
-export async function queryCaseId(params: QueryCaseIdReq) {
+export async function queryCaseId(params: QueryCaseIdReq, config?: AxiosRequestConfig) {
   const res = await ScheduleAxios.post<QueryCaseIdReq, AxiosResponse<QueryCaseIdRes>>(
     '/schedule/replay/local/queryCaseId',
     params,
+    config,
   );
   return res.data;
 }

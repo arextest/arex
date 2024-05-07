@@ -1,5 +1,5 @@
 import express from 'express';
-import logger from 'electron-log';
+import logger, { log } from 'electron-log';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import process from 'process';
@@ -112,11 +112,16 @@ const parallelSendCases = async (
 
 server.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
   logger.log('[request:/api/createPlan] ', req.body);
+  const axiosConfig = {
+    headers: {
+      'access-token': req.headers['access-token'],
+    },
+  };
 
   try {
     const caseResponse = await Promise.all([
-      queryCaseId(req.body),
-      queryReplayMaxQps({ appId: req.body.appId }),
+      queryCaseId(req.body, axiosConfig),
+      queryReplayMaxQps({ appId: req.body.appId }, axiosConfig),
     ]);
     const [{ result, desc, data }, maxQps = 20] = caseResponse;
     if (result !== 1) {
@@ -131,7 +136,7 @@ server.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
     for (const { warmUpId, caseIds } of replayCaseBatchInfos) {
       const chunkCaseIds = chunkArray(caseIds, 100);
       const chunkPromises = chunkCaseIds.map((caseIds) =>
-        queryReplaySenderParameters({ planId, replayPlanType: 0, caseIds }),
+        queryReplaySenderParameters({ planId, replayPlanType: 0, caseIds }, axiosConfig),
       );
       const chunkCaseParametersList = await Promise.all(chunkPromises);
 
@@ -147,12 +152,15 @@ server.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
       if (invalidCaseIds.length) {
         logger.error('Has invalid CaseIds', invalidCaseIds);
         for (const caseId of invalidCaseIds) {
-          await postSend({
-            caseId,
-            planId,
-            sendStatusType: SendStatusType.REPLAY_CASE_NOT_FOUND,
-            errorMsg: 'Replay case not found',
-          });
+          await postSend(
+            {
+              caseId,
+              planId,
+              sendStatusType: SendStatusType.REPLAY_CASE_NOT_FOUND,
+              errorMsg: 'Replay case not found',
+            },
+            axiosConfig,
+          );
         }
       } else {
         logger.log('All CaseIds valid');
