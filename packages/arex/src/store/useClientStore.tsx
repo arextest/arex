@@ -8,7 +8,7 @@ export type ClientState = {
 };
 
 export type ClientAction = {
-  getCompanyName: () => Promise<void>;
+  getCompanyName: () => Promise<string>;
 };
 
 const useClientStore = create<ClientState & ClientAction>((set) => ({
@@ -19,9 +19,8 @@ const useClientStore = create<ClientState & ClientAction>((set) => ({
       : location.hostname.split('.')[0];
 
     set({ companyName });
+    return Promise.resolve(companyName);
   },
 }));
-
-useClientStore.getState().getCompanyName();
 
 export default useClientStore;

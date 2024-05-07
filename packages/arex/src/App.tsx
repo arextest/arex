@@ -1,7 +1,7 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { ArexCoreProvider, ArexMenuManager, ArexPaneManager, Theme } from '@arextest/arex-core';
 import { Spin } from 'antd';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { useAuthentication, useTrace } from './hooks';
 import useDarkMode from './hooks/useDarkMode';
@@ -10,6 +10,7 @@ import Menus from './menus';
 import Panes from './panes';
 import Routes from './router';
 import { useUserProfile } from './store';
+import useClientStore from './store/useClientStore';
 import GlobalStyle from './style/GlobalStyle';
 
 // set default loading indicator
@@ -20,12 +21,22 @@ ArexPaneManager.registerPanes(Panes);
 ArexMenuManager.registerMenus(Menus);
 
 const App = () => {
+  const [ready, setReady] = React.useState(false);
+
   useTrace('http://trace.arextest.com/graphql');
   useAuthentication();
 
   const { theme: _theme, compact, colorPrimary, language } = useUserProfile();
   const darkMode = useDarkMode();
   const theme = darkMode ? Theme.dark : Theme.light;
+
+  useEffect(() => {
+    useClientStore
+      .getState()
+      .getCompanyName()
+      .then(() => setReady(true));
+  }, []);
+  if (!ready) return <Spin spinning />;
 
   return (
     <ArexCoreProvider
