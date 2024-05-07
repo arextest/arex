@@ -14,7 +14,7 @@ export const ScheduleAxios = axios.create({
     .find((item) => item.path === '/schedule')
     ?.target.replace('{{companyDomainName}}', companyName),
   headers: {
-    tenant: companyName,
+    'arex-tenant-code': companyName,
   },
 });
 
@@ -23,7 +23,7 @@ export const ReportAxios = axios.create({
     .find((item) => item.path === '/webApi')
     ?.target.replace('{{companyDomainName}}', companyName),
   headers: {
-    tenant: companyName,
+    'arex-tenant-code': companyName,
   },
 });
 
