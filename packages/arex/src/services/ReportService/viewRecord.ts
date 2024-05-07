@@ -2,6 +2,7 @@ import { getLocalStorage, tryParseJsonString } from '@arextest/arex-core';
 import axios from 'axios';
 
 import { ACCESS_TOKEN_KEY, APP_ID_KEY } from '@/constant';
+import { useClientStore } from '@/store';
 
 export interface CategoryType {
   name: string;
@@ -60,6 +61,7 @@ export async function viewRecord(recordId: string) {
       headers: {
         'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
         appId: getLocalStorage<string>(APP_ID_KEY),
+        org: useClientStore.getState().companyName,
       },
       transformResponse: (res) => tryParseJsonString(res),
     },

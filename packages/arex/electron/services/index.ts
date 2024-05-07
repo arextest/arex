@@ -13,12 +13,18 @@ export const ScheduleAxios = axios.create({
   baseURL: proxy
     .find((item) => item.path === '/schedule')
     ?.target.replace('{{companyDomainName}}', companyName),
+  headers: {
+    tenant: companyName,
+  },
 });
 
 export const ReportAxios = axios.create({
   baseURL: proxy
     .find((item) => item.path === '/webApi')
     ?.target.replace('{{companyDomainName}}', companyName),
+  headers: {
+    tenant: companyName,
+  },
 });
 
 export * from './postSend';
