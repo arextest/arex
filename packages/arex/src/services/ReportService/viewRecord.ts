@@ -61,7 +61,7 @@ export async function viewRecord(recordId: string) {
       headers: {
         'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
         appId: getLocalStorage<string>(APP_ID_KEY),
-        'arex-tenant-code': useClientStore.getState().companyName,
+        'arex-tenant-code': useClientStore.getState().organization,
       },
       transformResponse: (res) => tryParseJsonString(res),
     },

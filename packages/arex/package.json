@@ -1,7 +1,7 @@
 {
   "name": "arex",
   "private": true,
-  "version": "0.6.23",
+  "version": "0.6.24",
   "author": "arextest",
   "main": "dist-electron/main.js",
   "files": [
@@ -27,7 +27,7 @@
     "@monaco-editor/react": "^4.6.0",
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",
-    "antd": "^5.16.1",
+    "antd": "^5.17.0",
     "antd-img-crop": "^4.12.2",
     "axios": "^1.3.6",
     "body-parser": "^1.20.2",

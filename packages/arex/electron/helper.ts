@@ -4,7 +4,7 @@ import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 import * as fzstd from 'fzstd';
 
-const dataPath = join(app.getPath('userData'), 'data.json');
+const dataPath = join(app.getPath('userData'), 'data');
 const configPath = join(app.getPath('userData'), 'config');
 
 export function getLocalData(key?: string) {
@@ -31,22 +31,30 @@ export function getLocalConfig(key?: string) {
 
 export function setLocalConfig(key: string, value: string) {
   if (!fs.existsSync(configPath)) {
-    fs.writeFileSync(configPath, '', { encoding: 'utf-8' });
-  }
-  const lines = fs.readFileSync(configPath, 'utf-8').split('\n').filter(Boolean);
-  let updatedContent = '';
+    fs.writeFileSync(configPath, `${key}=${value}\n`, { encoding: 'utf-8' });
+  } else {
+    const lines = fs.readFileSync(configPath, 'utf-8').split('\n').filter(Boolean);
+    let updatedContent = '';
 
-  for (let line of lines) {
-    const [existingKey, existingValue] = line.split('=');
+    let keyExists = false;
 
-    if (existingKey.trim() === key) {
-      updatedContent += `${key}=${value}\n`;
-    } else {
-      updatedContent += `${existingKey}=${existingValue}\n`;
+    for (let line of lines) {
+      const [existingKey, existingValue] = line.split('=');
+
+      if (existingKey.trim() === key) {
+        updatedContent += `${key}=${value}\n`;
+        keyExists = true;
+      } else {
+        updatedContent += `${existingKey}=${existingValue}\n`;
+      }
     }
-  }
 
-  fs.writeFileSync(configPath, updatedContent.trim());
+    if (!keyExists) {
+      updatedContent += `${key}=${value}\n`;
+    }
+
+    fs.writeFileSync(configPath, updatedContent.trim());
+  }
 }
 
 export function setLocalData(key: string | object, value?: any) {

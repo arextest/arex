@@ -1,4 +1,3 @@
-import { UserOutlined } from '@ant-design/icons';
 import { setLocalStorage } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Form, Input } from 'antd';
@@ -21,10 +20,10 @@ const EmailForm: FC = () => {
 
   const [form] = Form.useForm();
 
-  const { companyName } = useClientStore();
+  const { organization } = useClientStore();
   useEffect(() => {
-    form.setFieldValue('companyName', companyName);
-  }, [companyName]);
+    form.setFieldValue('organization', organization);
+  }, [organization]);
 
   const [count, setCount] = useState<number>(0);
 
@@ -84,7 +83,7 @@ const EmailForm: FC = () => {
     <div key='login-form'>
       <Form<loginVerifyReq> name='login' autoComplete='off' form={form} onFinish={loginVerify}>
         {isClient && (
-          <Form.Item name='companyName'>
+          <Form.Item name='organization'>
             <Input disabled prefix={<Icon name='Building2' />} />
           </Form.Item>
         )}
@@ -102,7 +101,7 @@ const EmailForm: FC = () => {
           <Input
             size='large'
             placeholder='Please enter your email'
-            prefix={<UserOutlined />}
+            prefix={<Icon name='Mail' />}
             allowClear
           />
         </Form.Item>

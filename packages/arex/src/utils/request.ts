@@ -34,7 +34,7 @@ export class Request {
         //     'Required request header "access-token" for method parameter type String is not present',
         //   );
 
-        request.headers.set('arex-tenant-code', useClientStore.getState().companyName);
+        request.headers.set('arex-tenant-code', useClientStore.getState().organization);
 
         request.headers.set('access-token', accessToken);
         request.headers.set('appId', getLocalStorage<string>(APP_ID_KEY));

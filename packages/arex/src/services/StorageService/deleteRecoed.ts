@@ -25,7 +25,7 @@ export async function deleteRecord(params: DeleteRecordReq): Promise<boolean> {
       headers: {
         'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
         appId: params.appId,
-        'arex-tenant-code': useClientStore.getState().companyName,
+        'arex-tenant-code': useClientStore.getState().organization,
       },
     },
   );

@@ -2,6 +2,7 @@ import { getLocalStorage } from '@arextest/arex-core';
 import axios from 'axios';
 
 import { ACCESS_TOKEN_KEY, APP_ID_KEY } from '@/constant';
+import { useClientStore } from '@/store';
 export enum BizLogLevel {
   INFO,
   WARN,
@@ -82,6 +83,7 @@ export async function queryLogs(req: QueryPlanLogsReq) {
         headers: {
           'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
           appId: getLocalStorage<string>(APP_ID_KEY),
+          'arex-tenant-code': useClientStore.getState().organization,
         },
       })
       .then((res) => resolve(res.data.data))

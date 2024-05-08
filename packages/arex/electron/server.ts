@@ -1,12 +1,11 @@
-import express from 'express';
+import express, { Router } from 'express';
 import logger, { log } from 'electron-log';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import process from 'process';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
-import { chunkArray, getLocalConfig } from './helper';
+import { chunkArray, getLocalConfig, setLocalConfig, setLocalData } from './helper';
 import { SendStatusType } from './services/type';
 import type { QueryCaseIdReq, ReplaySenderParameters } from './services';
 import {
@@ -20,16 +19,136 @@ import {
 import port from '../config/port.json';
 import proxy from '../config/proxy-electron-sass.json';
 
-const companyName =
-  process.env.NODE_ENV === 'development'
-    ? process.env.VITE_COMPANY_NAME
-    : getLocalConfig('companyName');
-
 // 解析提交的json参数
 const jsonParser = bodyParser.json();
 
+// router is designed to be redefined, for different organization
+// https://github.com/expressjs/express/issues/2596
+let router: Router = undefined;
+
 const server = express();
 server.use(cors());
+server.use((req, res, next) => {
+  router(req, res, next);
+});
+
+defineRouter(getLocalConfig('organization'));
+
+server.get('/api/organization', (req, res) => {
+  res.send({ organization: getLocalConfig('organization') });
+});
+
+server.post<{ organization: string }>('/api/organization', jsonParser, async (req, res) => {
+  const organization = req.body.organization;
+  defineRouter(organization);
+  setLocalConfig('organization', organization);
+  res.send({ organization });
+});
+
+server.listen(port.electronPort, () => {
+  logger.log(`Electron server running at http://localhost:${port.electronPort}`);
+});
+
+function defineRouter(organization: string) {
+  router = express.Router();
+
+  proxy.forEach((item) => {
+    router.use(
+      item.path,
+      createProxyMiddleware({
+        target: item.target.replace('{{companyDomainName}}', organization),
+        changeOrigin: true,
+        // pathRewrite: { [item.path]: '/api' },
+      }),
+    );
+    router.use(
+      '/version' + item.path,
+      createProxyMiddleware({
+        target: item.target.replace('{{companyDomainName}}', organization),
+        changeOrigin: true,
+        // pathRewrite: () => item.target + '/vi/health',
+      }),
+    );
+  });
+
+  router.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
+    logger.log('[request:/api/createPlan] ', req.body);
+    const axiosConfig = {
+      headers: {
+        'access-token': req.headers['access-token'],
+      },
+    };
+
+    try {
+      const caseResponse = await Promise.all([
+        queryCaseId(req.body, axiosConfig),
+        queryReplayMaxQps({ appId: req.body.appId }, axiosConfig),
+      ]);
+      const [{ result, desc, data }, maxQps = 20] = caseResponse;
+      if (result !== 1) {
+        throw Error(desc);
+      }
+
+      const { replayCaseBatchInfos, planId } = data;
+
+      logger.log(`[planId: ${planId}]`, JSON.stringify(data));
+      res.send({ desc: 'success', result: 1, data: { reasonCode: 1, replayPlanId: planId } });
+
+      for (const { warmUpId, caseIds } of replayCaseBatchInfos) {
+        const chunkCaseIds = chunkArray(caseIds, 100);
+        const chunkPromises = chunkCaseIds.map((caseIds) =>
+          queryReplaySenderParameters({ planId, replayPlanType: 0, caseIds }, axiosConfig),
+        );
+        const chunkCaseParametersList = await Promise.all(chunkPromises);
+
+        const caseParametersList = chunkCaseParametersList.reduce((acc, cur) => {
+          return { ...acc, ...cur };
+        }, {});
+
+        const caseParametersMap = new Map(Object.entries(caseParametersList));
+
+        // case query Parameters failed (in caseIds but not in key of caseParametersMap)
+        const caseParametersKeys = Object.keys(caseParametersList);
+        const invalidCaseIds = caseIds.filter((id) => !caseParametersKeys.includes(id));
+        if (invalidCaseIds.length) {
+          logger.error('Has invalid CaseIds', invalidCaseIds);
+          for (const caseId of invalidCaseIds) {
+            await postSend(
+              {
+                caseId,
+                planId,
+                sendStatusType: SendStatusType.REPLAY_CASE_NOT_FOUND,
+                errorMsg: 'Replay case not found',
+              },
+              axiosConfig,
+            );
+          }
+        } else {
+          logger.log('All CaseIds valid');
+        }
+
+        logger.log(`[caseIds]:`, caseIds);
+        // for (const [caseId, caseParameter] of caseParametersMap) {
+        //   await sendCaseFlow(caseParameter, planId, caseId, warmUpId);
+        // }
+
+        parallelSendCases(caseParametersMap, planId, warmUpId, maxQps, axiosConfig);
+      }
+    } catch (err) {
+      logger.error(err);
+      res.send({ desc: err, statusCode: 2, data: { reasonCode: 200 } });
+    }
+  });
+}
+
+// 健康检查
+router.get('/vi/health', (req, res) => {
+  res.end(`365ms`);
+});
+
+router.get('/env', (req, res) => {
+  res.send(proxy);
+});
 
 export function oauth(callback: (path: string, code: string) => void) {
   server.get('/oauth/*', async (req, res) => {
@@ -43,142 +162,6 @@ export function oauth(callback: (path: string, code: string) => void) {
     }
   });
 }
-
-server.listen(port.electronPort, () => {
-  logger.log(`Electron server running at http://localhost:${port.electronPort}`);
-});
-
-proxy.forEach((item) => {
-  server.use(
-    item.path,
-    createProxyMiddleware({
-      target: item.target.replace('{{companyDomainName}}', companyName),
-      changeOrigin: true,
-      // pathRewrite: { [item.path]: '/api' },
-    }),
-  );
-  server.use(
-    '/version' + item.path,
-    createProxyMiddleware({
-      target: item.target.replace('{{companyDomainName}}', companyName),
-      changeOrigin: true,
-      // pathRewrite: () => item.target + '/vi/health',
-    }),
-  );
-});
-
-server.get('/api/companyName', (req, res) => {
-  res.send({ companyName });
-});
-
-// 健康检查
-server.get('/vi/health', (req, res) => {
-  res.end(`365ms`);
-});
-
-server.get('/env', (req, res) => {
-  res.send(proxy);
-});
-
-// local Schedule createPlan
-const parallelSendCases = async (
-  caseParametersMap: Map<string, ReplaySenderParameters>,
-  planId: string,
-  warmUpId: string,
-  maxQps: number,
-  axiosConfig?: AxiosRequestConfig,
-) => {
-  const caseEntries = Array.from(caseParametersMap.entries());
-  const totalCases = caseEntries.length;
-  let currentIndex = 0;
-
-  async function processBatch() {
-    const batch = caseEntries.slice(currentIndex, currentIndex + maxQps);
-    currentIndex += maxQps;
-
-    const batchPromises = batch.map(([caseId, caseParameter]) =>
-      sendCaseFlow(caseParameter, planId, caseId, warmUpId, axiosConfig),
-    );
-
-    await Promise.all(batchPromises);
-
-    if (currentIndex < totalCases) {
-      await processBatch(); // Continue processing the next batch
-    }
-  }
-
-  await processBatch();
-  logger.log('All cases sent successfully.');
-};
-
-server.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
-  logger.log('[request:/api/createPlan] ', req.body);
-  const axiosConfig = {
-    headers: {
-      'access-token': req.headers['access-token'],
-    },
-  };
-
-  try {
-    const caseResponse = await Promise.all([
-      queryCaseId(req.body, axiosConfig),
-      queryReplayMaxQps({ appId: req.body.appId }, axiosConfig),
-    ]);
-    const [{ result, desc, data }, maxQps = 20] = caseResponse;
-    if (result !== 1) {
-      throw Error(desc);
-    }
-
-    const { replayCaseBatchInfos, planId } = data;
-
-    logger.log(`[planId: ${planId}]`, JSON.stringify(data));
-    res.send({ desc: 'success', result: 1, data: { reasonCode: 1, replayPlanId: planId } });
-
-    for (const { warmUpId, caseIds } of replayCaseBatchInfos) {
-      const chunkCaseIds = chunkArray(caseIds, 100);
-      const chunkPromises = chunkCaseIds.map((caseIds) =>
-        queryReplaySenderParameters({ planId, replayPlanType: 0, caseIds }, axiosConfig),
-      );
-      const chunkCaseParametersList = await Promise.all(chunkPromises);
-
-      const caseParametersList = chunkCaseParametersList.reduce((acc, cur) => {
-        return { ...acc, ...cur };
-      }, {});
-
-      const caseParametersMap = new Map(Object.entries(caseParametersList));
-
-      // case query Parameters failed (in caseIds but not in key of caseParametersMap)
-      const caseParametersKeys = Object.keys(caseParametersList);
-      const invalidCaseIds = caseIds.filter((id) => !caseParametersKeys.includes(id));
-      if (invalidCaseIds.length) {
-        logger.error('Has invalid CaseIds', invalidCaseIds);
-        for (const caseId of invalidCaseIds) {
-          await postSend(
-            {
-              caseId,
-              planId,
-              sendStatusType: SendStatusType.REPLAY_CASE_NOT_FOUND,
-              errorMsg: 'Replay case not found',
-            },
-            axiosConfig,
-          );
-        }
-      } else {
-        logger.log('All CaseIds valid');
-      }
-
-      logger.log(`[caseIds]:`, caseIds);
-      // for (const [caseId, caseParameter] of caseParametersMap) {
-      //   await sendCaseFlow(caseParameter, planId, caseId, warmUpId);
-      // }
-
-      parallelSendCases(caseParametersMap, planId, warmUpId, maxQps, axiosConfig);
-    }
-  } catch (err) {
-    logger.error(err);
-    res.send({ desc: err, statusCode: 2, data: { reasonCode: 200 } });
-  }
-});
 
 /**
  * sendCaseFlow: preSend -> send -> postSend
@@ -281,3 +264,34 @@ async function sendCaseFlow(
     axiosConfig,
   );
 }
+
+// local Schedule createPlan
+const parallelSendCases = async (
+  caseParametersMap: Map<string, ReplaySenderParameters>,
+  planId: string,
+  warmUpId: string,
+  maxQps: number,
+  axiosConfig?: AxiosRequestConfig,
+) => {
+  const caseEntries = Array.from(caseParametersMap.entries());
+  const totalCases = caseEntries.length;
+  let currentIndex = 0;
+
+  async function processBatch() {
+    const batch = caseEntries.slice(currentIndex, currentIndex + maxQps);
+    currentIndex += maxQps;
+
+    const batchPromises = batch.map(([caseId, caseParameter]) =>
+      sendCaseFlow(caseParameter, planId, caseId, warmUpId, axiosConfig),
+    );
+
+    await Promise.all(batchPromises);
+
+    if (currentIndex < totalCases) {
+      await processBatch(); // Continue processing the next batch
+    }
+  }
+
+  await processBatch();
+  logger.log('All cases sent successfully.');
+};

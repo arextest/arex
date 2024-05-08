@@ -4,23 +4,25 @@ import { create } from 'zustand';
 import { isClient } from '@/constant';
 
 export type ClientState = {
-  companyName: string;
+  organization: string;
 };
 
 export type ClientAction = {
-  getCompanyName: () => Promise<string>;
+  getOrganization: () => Promise<string>;
+  setOrganization: (organization: string) => void;
 };
 
 const useClientStore = create<ClientState & ClientAction>((set) => ({
-  companyName: '',
-  getCompanyName: async () => {
-    const companyName = isClient
-      ? (await axios.get<{ companyName: string }>('/api/companyName')).data.companyName
+  organization: '',
+  getOrganization: async () => {
+    const organization = isClient
+      ? (await axios.get<{ organization: string }>('/api/organization')).data.organization
       : location.hostname.split('.')[0];
 
-    set({ companyName });
-    return Promise.resolve(companyName);
+    set({ organization });
+    return Promise.resolve(organization);
   },
+  setOrganization: (organization) => set({ organization }),
 }));
 
 export default useClientStore;

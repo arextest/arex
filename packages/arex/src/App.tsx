@@ -33,7 +33,7 @@ const App = () => {
   useEffect(() => {
     useClientStore
       .getState()
-      .getCompanyName()
+      .getOrganization()
       .then(() => setReady(true));
   }, []);
   if (!ready) return <Spin spinning />;
