@@ -1,7 +1,7 @@
 import { FlexCenterWrapper, Label, setLocalStorage, styled } from '@arextest/arex-core';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
-import { App, Button, Card, Carousel, Input, Select, Spin, theme, Typography } from 'antd';
+import { App, Button, Card, Carousel, Input, Select, theme, Typography } from 'antd';
 import { CarouselRef } from 'antd/lib/carousel';
 import axios from 'axios';
 import React, { FC, useMemo, useRef, useState } from 'react';
@@ -9,18 +9,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { Icon, MacDraggableArea } from '@/components';
 import { ACCESS_TOKEN_KEY, EMAIL_KEY, isClient, REFRESH_TOKEN_KEY } from '@/constant';
-import EmailForm from '@/pages/Login/EmailForm';
-import VerificationCode from '@/pages/Login/VerificationCode';
 import { LoginService } from '@/services';
-import { loginVerify } from '@/services/LoginService';
 import { useClientStore } from '@/store';
-
-const contentStyle: React.CSSProperties = {
-  height: '64px',
-  color: '#fff',
-  lineHeight: '64px',
-  textAlign: 'center',
-};
 
 const Logo = styled(Typography.Text)`
   height: 64px;
@@ -52,6 +42,17 @@ const Login: FC = () => {
   const [errorStatus, setErrorStatus] = useState();
 
   const [loginVerifyCode, setLoginVerifyCode] = useState<string>();
+
+  const {
+    data: organizationList = [],
+    loading: loadingOrganizationList,
+    runAsync: getOrganizationByEmail,
+  } = useRequest(LoginService.getOrganizationByEmail, {
+    manual: true,
+    onSuccess(res) {
+      console.log(res);
+    },
+  });
 
   const { runAsync: sendVerifyCode, loading: sendingCode } = useRequest(
     LoginService.sendVerifyCodeByEmail,
@@ -106,8 +107,16 @@ const Login: FC = () => {
         setLoginStep((step) => (step + loginStep === LoginStep.Organization ? 1 : 2));
       });
     } else if (loginStep === LoginStep.Email) {
-      carouselRef.current?.next();
-      setLoginStep((step) => step + 1);
+      if (!email) return; //TODO ERROR Status
+
+      getOrganizationByEmail(email as string).then((res) => {
+        if (res?.length) {
+          carouselRef.current?.next();
+          setLoginStep((step) => step + 1);
+        } else {
+          message.error('No organization found'); //TODO ERROR Status
+        }
+      });
     } else if (loginStep === LoginStep.VerificationCode) {
       if (!loginVerifyCode || loginVerifyCode.length !== 6) return; //TODO ERROR Status
       loginVerify({ userName: email as string, verificationCode: loginVerifyCode });
@@ -161,16 +170,10 @@ const Login: FC = () => {
                       {label.label}
                     </>
                   )}
-                  options={[
-                    {
-                      label: 'ctrip',
-                      value: 'ctrip',
-                    },
-                    {
-                      label: 'binyu1',
-                      value: 'binyu1',
-                    },
-                  ]}
+                  options={organizationList.map((org) => ({
+                    label: org,
+                    value: org,
+                  }))}
                   onChange={setOrganization}
                   css={css`
                     width: 100%;
@@ -197,7 +200,12 @@ const Login: FC = () => {
           </Carousel>
         </div>
 
-        <Button block type='primary' loading={sendingCode} onClick={handleNext}>
+        <Button
+          block
+          type='primary'
+          loading={sendingCode || loadingOrganizationList}
+          onClick={handleNext}
+        >
           {readySendCode
             ? 'Send code'
             : loginStep === LoginStep.VerificationCode
