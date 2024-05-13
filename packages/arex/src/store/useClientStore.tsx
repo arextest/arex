@@ -10,6 +10,7 @@ export type ClientState = {
 export type ClientAction = {
   getOrganization: () => Promise<string>;
   setOrganization: (organization: string) => void;
+  clearOrganization: () => void;
 };
 
 const useClientStore = create<ClientState & ClientAction>((set) => ({
@@ -23,6 +24,10 @@ const useClientStore = create<ClientState & ClientAction>((set) => ({
     return Promise.resolve(organization);
   },
   setOrganization: (organization) => set({ organization }),
+  clearOrganization: async () => {
+    set({ organization: '' });
+    return (await axios.delete<{ organization: string }>('/api/organization')).data.organization;
+  },
 }));
 
 export default useClientStore;

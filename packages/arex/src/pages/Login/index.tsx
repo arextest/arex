@@ -49,8 +49,8 @@ const Login: FC = () => {
     runAsync: getOrganizationByEmail,
   } = useRequest(LoginService.getOrganizationByEmail, {
     manual: true,
-    onSuccess(res) {
-      console.log(res);
+    onSuccess(orgList) {
+      orgList.length && setOrganization(orgList[0]);
     },
   });
 

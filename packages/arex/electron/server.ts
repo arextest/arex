@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
-import { chunkArray, getLocalConfig, setLocalConfig, setLocalData } from './helper';
+import { chunkArray, getLocalConfig, setLocalConfig } from './helper';
 import { SendStatusType } from './services/type';
 import type { QueryCaseIdReq, ReplaySenderParameters } from './services';
 import {
@@ -43,6 +43,12 @@ server.post<{ organization: string }>('/api/organization', jsonParser, async (re
   defineRouter(organization);
   setLocalConfig('organization', organization);
   res.send({ organization });
+});
+
+server.delete('/api/organization', (req, res) => {
+  logger.log('Delete organization');
+  setLocalConfig('organization', '');
+  res.send(true);
 });
 
 server.listen(port.electronPort, () => {
