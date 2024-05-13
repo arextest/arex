@@ -31,7 +31,7 @@ import { TreeProps } from 'antd/es';
 import { CarouselRef } from 'antd/lib/carousel';
 import React, { FC, useMemo, useRef, useState } from 'react';
 
-import { CONFIG_TARGET } from '@/components';
+import { CONFIG_TARGET } from '@/panes/AppSetting/CompareConfig';
 import { ComparisonService } from '@/services';
 import { DependencyParams, QueryEncryptionNode } from '@/services/ComparisonService';
 

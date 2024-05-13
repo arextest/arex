@@ -10,7 +10,7 @@ import { testCodeSnippet } from './snippets';
 
 const { Text } = Typography;
 
-export const RequestTestWrapper = styled.div`
+const RequestTestWrapper = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;

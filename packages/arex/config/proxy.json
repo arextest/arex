@@ -1,6 +1,6 @@
 [
   {
-    "path": "/report",
+    "path": "/webApi",
     "target": "http://10.144.62.53:8090"
   },
   {

@@ -1,0 +1,14 @@
+[
+  {
+    "path": "/webApi",
+    "target": "http://{{companyDomainName}}.arextest.com"
+  },
+  {
+    "path": "/schedule",
+    "target": "http://{{companyDomainName}}.arextest.com"
+  },
+  {
+    "path": "/storage",
+    "target": "http://{{companyDomainName}}.arextest.com"
+  }
+]

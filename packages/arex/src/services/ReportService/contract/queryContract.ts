@@ -22,7 +22,7 @@ export interface QueryContractRes {
 }
 
 export async function queryContract(params: QueryContractReq) {
-  const res = await request.post<QueryContractRes>('/report/report/queryContract', params);
+  const res = await request.post<QueryContractRes>('/webApi/report/queryContract', params);
 
   return res.body;
 }

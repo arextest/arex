@@ -15,6 +15,7 @@ const InterfaceSelect: FC<InterfaceSelectProps> = (props) => {
   const { t } = useTranslation();
 
   const [value, setValue] = useState(props.value);
+  const [searchValue, setSearchValue] = useState<string>();
 
   /**
    * 请求 InterfacesList
@@ -56,8 +57,14 @@ const InterfaceSelect: FC<InterfaceSelectProps> = (props) => {
                 <Button
                   size='small'
                   onClick={(e) => {
+                    const filtered = searchValue
+                      ? options.filter((item) =>
+                          item.label.toLowerCase().includes(searchValue?.toLowerCase() || ''),
+                        )
+                      : options;
+
                     const newValue: string[] = Array.from(
-                      new Set([...(props.value || []), ...options.map((item) => item.value)]),
+                      new Set([...(props.value || []), ...filtered.map((item) => item.value)]),
                     );
 
                     props.onChange?.(
@@ -70,6 +77,7 @@ const InterfaceSelect: FC<InterfaceSelectProps> = (props) => {
                         })),
                     );
                     setValue(newValue);
+                    setSearchValue(undefined);
                   }}
                 >
                   <Typography.Text type='secondary'>{t('selectAll')}</Typography.Text>
@@ -80,22 +88,24 @@ const InterfaceSelect: FC<InterfaceSelectProps> = (props) => {
         ),
         options,
       })),
-    [data, props.value, t],
+    [data, props.value, t, searchValue],
   );
 
   return (
     <Select
-      {...restProps}
       allowClear
       value={value}
-      mode='multiple'
       maxTagCount={3}
+      mode='multiple'
+      optionFilterProp='label'
       options={interfacesOptions}
       onChange={(value, option) => {
-        props.onChange?.(value, option);
         setValue(value);
+        props.onChange?.(value, option);
       }}
-      optionFilterProp='label'
+      searchValue={searchValue}
+      onSearch={setSearchValue}
+      {...restProps}
     />
   );
 };

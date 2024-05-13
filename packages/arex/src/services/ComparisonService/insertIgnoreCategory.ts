@@ -1,13 +1,17 @@
 import { QueryNodeReq } from '@/services/ComparisonService/queryIgnoreNode';
 import { request } from '@/utils';
 
+export type IgnoreCategory = {
+  operationType: string;
+  operationName?: string;
+};
 export interface InsertIgnoreCategoryReq extends QueryNodeReq<'Interface'> {
-  ignoreCategory: string[];
+  ignoreCategoryDetail: IgnoreCategory;
 }
 
 export async function insertIgnoreCategory(params: InsertIgnoreCategoryReq) {
   const res = await request.post<boolean>(
-    '/report/config/comparison/ignoreCategory/modify/INSERT',
+    '/webApi/config/comparison/ignoreCategory/modify/INSERT',
     params,
   );
   return res.body;

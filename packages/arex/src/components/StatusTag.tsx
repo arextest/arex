@@ -87,7 +87,11 @@ const StatusTag: FC<StatusTagProps> = (props) => {
   return React.createElement(
     props.message ? Tooltip : 'div',
     { title: props.message },
-    <Tag color={state?.color} icon={icon}>
+    <Tag
+      color={state?.color}
+      icon={icon}
+      style={{ fontSize: '10px', lineHeight: '18px', height: '18px', paddingInline: '5px' }}
+    >
       {state ? t('replay.' + state?.label) : t('replay.unknownState')}
     </Tag>,
   );

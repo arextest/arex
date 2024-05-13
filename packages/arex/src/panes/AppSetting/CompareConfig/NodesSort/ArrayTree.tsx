@@ -21,11 +21,10 @@ const ArrayTree: FC<ResponseTreeProps> = (props) => {
 
   const color = useColorPrimary();
 
-  const treeData = useMemo(() => {
-    const nodesData = getArrayNodes(props.treeData || {}, '', props.sortNodeList, color.name);
-    console.log('props.treeData', nodesData, props.sortNodeList);
-    return nodesData;
-  }, [props.treeData, props.sortNodeList, color.name]);
+  const treeData = useMemo(
+    () => getArrayNodes(props.treeData || {}, '', props.sortNodeList, color.name),
+    [props.treeData, props.sortNodeList, color.name],
+  );
 
   return (
     <Card

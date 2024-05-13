@@ -1,3 +1,10 @@
+@import 'allotment/dist/style.css';
+
+:root{
+  --jse-font-size: 14px;
+  --jse-padding: 4px 8px;
+}
+
 body {
   overflow: hidden;
 }

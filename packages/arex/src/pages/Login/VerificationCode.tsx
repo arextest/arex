@@ -1,5 +1,5 @@
 import { LockOutlined } from '@ant-design/icons';
-import { Button, Input, Space } from 'antd';
+import { Button, Input } from 'antd';
 import React, { ChangeEventHandler, FC } from 'react';
 
 const VerificationCode: FC<{
@@ -9,13 +9,14 @@ const VerificationCode: FC<{
   onChange?: ChangeEventHandler<HTMLInputElement>;
 }> = (props) => {
   return (
-    <Space>
+    <div style={{ display: 'flex' }}>
       <Input
         allowClear
         size='large'
         placeholder='Please enter a verification code'
         prefix={<LockOutlined />}
         onChange={props.onChange}
+        style={{ flex: 1, marginRight: '8px' }}
       />
       <Button
         size='large'
@@ -25,7 +26,7 @@ const VerificationCode: FC<{
       >
         {props.count ? props.count + 's' : 'Send code'}
       </Button>
-    </Space>
+    </div>
   );
 };
 

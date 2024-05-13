@@ -1,10 +1,10 @@
 import './logger';
 
-import { app, BrowserWindow, dialog, globalShortcut, Menu } from 'electron';
+import { app, BrowserWindow, globalShortcut } from 'electron';
 import { autoUpdateInit } from './autoUpdater';
 import path from 'node:path';
-import { oauth } from './server';
 import { openWindow } from './helper';
+import { oauth } from './server';
 import process from 'process';
 
 process.env.DIST = path.join(__dirname, '../dist');
@@ -63,7 +63,7 @@ app.on('window-all-closed', () => {
 
 app.whenReady().then(() => {
   createWindow();
-  autoUpdateInit();
+  autoUpdateInit(win);
   oauth((pathname, code) => {
     openWindow(win, `${pathname}?code=${code}`);
   });

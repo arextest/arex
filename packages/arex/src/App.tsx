@@ -1,9 +1,10 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { ArexCoreProvider, ArexMenuManager, ArexPaneManager } from '@arextest/arex-core';
+import { ArexCoreProvider, ArexMenuManager, ArexPaneManager, Theme } from '@arextest/arex-core';
 import { Spin } from 'antd';
 import React from 'react';
 
 import { useAuthentication, useTrace } from './hooks';
+import useDarkMode from './hooks/useDarkMode';
 import resources from './i18n';
 import Menus from './menus';
 import Panes from './panes';
@@ -19,10 +20,12 @@ ArexPaneManager.registerPanes(Panes);
 ArexMenuManager.registerMenus(Menus);
 
 const App = () => {
-  useTrace('http://trace.arextest.com:8080/graphql');
+  useTrace('http://trace.arextest.com/graphql');
   useAuthentication();
 
-  const { theme, compact, colorPrimary, language } = useUserProfile();
+  const { theme: _theme, compact, colorPrimary, language } = useUserProfile();
+  const darkMode = useDarkMode();
+  const theme = darkMode ? Theme.dark : Theme.light;
 
   return (
     <ArexCoreProvider

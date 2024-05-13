@@ -4,32 +4,35 @@ import { CollectionNodeType } from '@/constant';
 import { queryDebuggingCase } from '@/services/FileSystemService';
 import { request } from '@/utils';
 
+export type ArexRequest = ArexRESTRequest & {
+  recordId: string;
+  inherited: boolean;
+  nodeType: CollectionNodeType;
+  tags: string[];
+  parentPath: { id: string; name: string; nodeType: CollectionNodeType }[];
+};
+
 export async function queryRequest(params: {
   id: string;
-  nodeType: number;
+  nodeType: CollectionNodeType;
   recordId?: string;
   planId?: string;
-}): Promise<
-  ArexRESTRequest & {
-    recordId: string;
-    inherited: boolean;
-    tags: string[];
-    parentPath: { id: string; name: string; nodeType: CollectionNodeType }[];
-  }
-> {
+}): Promise<ArexRequest> {
   const res = await request.post<any>(
-    `/report/filesystem/query${
+    `/webApi/filesystem/query${
       params.nodeType === CollectionNodeType.interface ? 'Interface' : 'Case'
     }`,
     params,
   );
   if (params.id.length !== 24) {
     // 如果有recordId是从调试页面进来的
-    if (params.recordId && params.planId) {
+    if (params.recordId) {
       const res = await queryDebuggingCase({
         recordId: params.recordId,
         planId: params.planId,
-      }).then((res) => res);
+      });
+      if (!res.body) return Promise.reject(res.responseStatusType.responseDesc);
+
       const {
         body: { address, testAddress, ...rest },
       } = res;
@@ -48,6 +51,7 @@ export async function queryRequest(params: {
         inherited: undefined,
         inheritedMethod: '',
         inheritedEndpoint: '',
+        nodeType: params.nodeType,
         tags: rest.labelIds || [],
         description: rest.description,
         parentPath: rest?.parentPath,
@@ -70,6 +74,7 @@ export async function queryRequest(params: {
       inherited: undefined,
       inheritedMethod: '',
       inheritedEndpoint: '',
+      nodeType: params.nodeType,
       tags: [],
       description: '',
       parentPath: [],
@@ -94,6 +99,7 @@ export async function queryRequest(params: {
     inherited: undefined,
     inheritedMethod: '',
     inheritedEndpoint: '',
+    nodeType: params.nodeType,
     tags: rest.labelIds || [],
     description: rest.description,
     parentPath: rest?.parentPath,

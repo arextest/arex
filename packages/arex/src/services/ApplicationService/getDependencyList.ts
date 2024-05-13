@@ -24,7 +24,7 @@ export type GetDependencyList = {
 
 export async function getDependencyList(params: { operationId: string }) {
   const res = await request.get<GetDependencyList>(
-    '/report/config/applicationOperation/useResult/operationId/' + params.operationId,
+    '/webApi/config/applicationOperation/useResult/operationId/' + params.operationId,
   );
   return res.body;
 }

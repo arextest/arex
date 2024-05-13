@@ -21,7 +21,7 @@ export type GetEnvironmentRes = {
 
 export default async function getEnvironments(params: GetEnvironmentReq) {
   return request
-    .post<GetEnvironmentRes>(`/report/environment/queryEnvsByWorkspace`, params)
+    .post<GetEnvironmentRes>(`/webApi/environment/queryEnvsByWorkspace`, params)
     .then((res) =>
       Promise.resolve<ArexEnvironment[]>(
         res.body.environments.map((env) => ({

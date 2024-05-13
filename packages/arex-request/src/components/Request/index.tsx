@@ -1,7 +1,7 @@
-import { SendOutlined } from '@ant-design/icons';
+import { ExclamationOutlined, SendOutlined } from '@ant-design/icons';
 import { css, Label, RequestMethod, styled } from '@arextest/arex-core';
 import { Button, Checkbox, Select } from 'antd';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { sendRequest } from '../../helpers';
@@ -24,8 +24,9 @@ export type RequestProps = {
   disableSave?: boolean;
   onBeforeRequest?: (request: ArexRESTRequest, environment?: ArexEnvironment) => ArexRESTRequest;
   onRequest?: (
+    error: Error | null,
     reqData: { request: ArexRESTRequest; environment?: ArexEnvironment },
-    resData: Awaited<ReturnType<typeof sendRequest>>,
+    resData: Awaited<ReturnType<typeof sendRequest>> | null,
   ) => void;
   onSave?: (request?: ArexRESTRequest, response?: ArexRESTResponse) => void;
   onSaveAs?: () => void;
@@ -38,23 +39,50 @@ const Request: FC<RequestProps> = () => {
     useArexRequestProps();
   const { store, dispatch } = useArexRequestStore();
   const { t } = useTranslation();
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout>();
+
+  const [endpointStatus, setEndpointStatus] = useState<'error'>();
 
   const handleRequest = async () => {
+    if (!store.request.endpoint) {
+      setEndpointStatus('error');
+      if (timeoutId) clearTimeout(timeoutId);
+      setTimeoutId(
+        setTimeout(() => {
+          setEndpointStatus(undefined);
+        }, 3000),
+      );
+      window.message.error(t('error.emptyEndpoint'));
+      return;
+    }
     dispatch((state) => {
       state.response = {
-        type: 'loading',
+        type: window.__AREX_EXTENSION_INSTALLED__ ? 'loading' : 'EXTENSION_NOT_INSTALLED',
         headers: undefined,
       };
     });
-    const res = await sendRequest(onBeforeRequest(store.request), store.environment);
 
-    onRequest?.({ request: store.request, environment: store.environment }, res);
-    dispatch((state) => {
-      state.response = res.response;
-      state.consoles = res.consoles;
-      state.visualizer = res.visualizer;
-      state.testResult = res.testResult;
-    });
+    if (!window.__AREX_EXTENSION_INSTALLED__) return;
+
+    sendRequest(onBeforeRequest(store.request), store.environment)
+      .then((res) => {
+        onRequest?.(null, { request: store.request, environment: store.environment }, res);
+        dispatch((state) => {
+          state.response = res.response;
+          state.consoles = res.consoles;
+          state.visualizer = res.visualizer;
+          state.testResult = res.testResult;
+        });
+      })
+      .catch((err) => {
+        onRequest?.(err, { request: store.request, environment: store.environment }, null);
+        dispatch((state) => {
+          state.response = {
+            type: err.code,
+            error: err,
+          };
+        });
+      });
   };
 
   return (
@@ -77,6 +105,7 @@ const Request: FC<RequestProps> = () => {
 
         <EnvInput
           disabled={store.request.inherited}
+          status={endpointStatus}
           value={store.request.inherited ? store.request.inheritedEndpoint : store.request.endpoint}
           onChange={(v) => {
             dispatch((state) => {
@@ -104,7 +133,14 @@ const Request: FC<RequestProps> = () => {
             id='arex-request-send-btn'
             type='primary'
             loading={store.response?.type === 'loading'}
-            icon={<SendOutlined />}
+            disabled={store.response?.type === 'EXTENSION_NOT_INSTALLED'}
+            icon={
+              store.response?.type === 'EXTENSION_NOT_INSTALLED' ? (
+                <ExclamationOutlined />
+              ) : (
+                <SendOutlined />
+              )
+            }
             onClick={handleRequest}
           >
             {t('action.send')}

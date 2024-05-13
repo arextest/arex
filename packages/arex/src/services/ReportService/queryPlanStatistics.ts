@@ -68,7 +68,7 @@ export async function queryPlanStatistics(
     pageSize,
   };
   return request
-    .post<QueryPlanStatisticsRes>('/report/report/queryPlanStatistics', requestParams)
+    .post<QueryPlanStatisticsRes>('/webApi/report/queryPlanStatistics', requestParams)
     .then((res) =>
       Promise.resolve({
         pagination: {

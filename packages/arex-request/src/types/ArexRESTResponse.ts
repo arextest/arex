@@ -5,6 +5,7 @@ import { ArexRESTHeader } from './ArexRESTHeader';
 
 export type ArexRESTResponse =
   | { type: 'loading'; headers: undefined }
+  | { type: 'EXTENSION_NOT_INSTALLED'; headers: undefined }
   | {
       type: 'fail';
       headers: ArexRESTHeader[];
@@ -14,6 +15,10 @@ export type ArexRESTResponse =
         responseSize: number; // in bytes
         responseDuration: number; // in millis
       };
+    }
+  | {
+      type: 'ETIMEDOUT';
+      error: Error;
     }
   | {
       type: 'network_fail';

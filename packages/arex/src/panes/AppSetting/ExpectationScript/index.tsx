@@ -28,10 +28,10 @@ import * as monaco from 'monaco-editor';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { GlobalInterfaceDependencySelect } from '@/components';
+import GlobalInterfaceDependencySelect from '@/components/GlobalInterfaceDependencySelect';
 import { EMAIL_KEY } from '@/constant';
 import { ApplicationService, ConfigService, ReportService } from '@/services';
-import { ExpectationScript } from '@/services/ConfigService';
+import type { ExpectationScript } from '@/services/ConfigService';
 import { useUserProfile } from '@/store';
 
 import UndertoneWrapper from '../UndertoneWrapper';

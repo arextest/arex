@@ -1,30 +1,35 @@
 import {
   ArexFooter,
   ArexHeader,
-  ArexMainContainer,
   ArexMenuContainer,
   ArexMenuContainerProps,
   ArexPanesContainer,
   ArexPanesContainerProps,
   useTranslation,
 } from '@arextest/arex-core';
-import { MenuProps } from 'antd';
+import { css } from '@emotion/react';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { Allotment } from 'allotment';
+import { Button, Flex, MenuProps, Tooltip } from 'antd';
 import React, { FC } from 'react';
 
 import {
   EmptyPanePlaceholder,
   FooterExtraMenu,
+  Icon,
   KeyboardShortcut,
   MacTrafficLightBackground,
   UserMenu,
 } from '@/components';
-import { CollectionNodeType, isClient, PanesType } from '@/constant';
-import { useInit, useNavPane } from '@/hooks';
-import { useMenusPanes, useWorkspaces } from '@/store';
+import { CollectionNodeType, isClient, PanesType, URL_AREX } from '@/constant';
+import { useCheckChrome, useInit, useNavPane } from '@/hooks';
+import { useMenusPanes, useUserProfile, useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
 
 const Home: FC = () => {
+  useCheckChrome();
   useInit();
+
   const {
     menuCollapsed,
     toggleMenuCollapse,
@@ -40,8 +45,11 @@ const Home: FC = () => {
     removePane,
   } = useMenusPanes();
   const { activeWorkspaceId } = useWorkspaces();
+  const { zen } = useUserProfile();
 
   const navPane = useNavPane();
+  const [arexMainWrapperRef] = useAutoAnimate();
+
   const { t } = useTranslation(['components', 'common']);
 
   const dropdownItems: MenuProps['items'] = [
@@ -129,23 +137,31 @@ const Home: FC = () => {
   };
 
   return (
-    <>
-      <ArexHeader extra={<UserMenu />} />
+    <div ref={arexMainWrapperRef}>
+      {!zen && <ArexHeader logo={{ href: URL_AREX }} extra={<UserMenu />} />}
 
-      <ArexMainContainer
-        collapsed={menuCollapsed}
-        arexMenus={
+      <Allotment
+        css={css`
+          height: ${zen ? '100vh' : 'calc(100vh - 73px)'};
+        `}
+      >
+        <Allotment.Pane
+          preferredSize={300}
+          minSize={zen ? 0 : menuCollapsed ? 70 : 300}
+          maxSize={zen ? 0 : menuCollapsed ? 70 : 600}
+        >
           <ArexMenuContainer
             value={activePane?.id}
             activeKey={activeMenu}
             collapsed={menuCollapsed}
-            onCollapsed={toggleMenuCollapse}
             onChange={handleMenuChange}
             onSelect={handleMenuSelect}
           />
-        }
-        arexPanes={
+        </Allotment.Pane>
+
+        <Allotment.Pane>
           <ArexPanesContainer
+            height={`calc(100vh - ${zen ? 43 : 116}px)`}
             activeKey={activePane?.key}
             panes={panes}
             emptyNode={<EmptyPanePlaceholder />}
@@ -158,19 +174,37 @@ const Home: FC = () => {
             onAdd={handlePaneAdd}
             onRemove={removePane}
           />
-        }
-      />
-      <ArexFooter
-        rightRender={(agent) => (
-          <>
-            {!isClient && agent}
-            <FooterExtraMenu />
-          </>
-        )}
-      />
+        </Allotment.Pane>
+      </Allotment>
+      {!zen && (
+        <ArexFooter
+          leftRender={(console) => (
+            <Flex align='center' style={{ height: '100%' }}>
+              <Tooltip
+                placement={'topLeft'}
+                title={t(menuCollapsed ? 'expandSidebar' : 'collapseSidebar', { ns: 'arex-menu' })}
+              >
+                <Button size='small' type='link' onClick={() => toggleMenuCollapse()}>
+                  <Icon
+                    name='PanelLeft'
+                    style={{ transform: `rotate(${menuCollapsed ? 180 : 0}deg)` }}
+                  />
+                </Button>
+              </Tooltip>
+              {process.env.NODE_ENV === 'production' && console}
+            </Flex>
+          )}
+          rightRender={(agent) => (
+            <>
+              {!isClient && agent}
+              <FooterExtraMenu />
+            </>
+          )}
+        />
+      )}
       <MacTrafficLightBackground />
       <KeyboardShortcut />
-    </>
+    </div>
   );
 };
 

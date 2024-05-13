@@ -1,12 +1,12 @@
-import { useTranslation } from '@arextest/arex-core';
+import { useArexCoreConfig, useTranslation } from '@arextest/arex-core';
 import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { App, Button } from 'antd';
 import React, { FC, useState } from 'react';
 
+import { Theme } from '@/constant';
 import UndertoneWrapper from '@/panes/AppSetting/UndertoneWrapper';
 import { ConfigService } from '@/services';
-import { useUserProfile } from '@/store';
 
 type ImportYamlProps = {
   appId: string;
@@ -14,7 +14,7 @@ type ImportYamlProps = {
 
 const ImportYaml: FC<ImportYamlProps> = (props) => {
   const { message } = App.useApp();
-  const { theme } = useUserProfile();
+  const { theme } = useArexCoreConfig();
   const { t } = useTranslation(['common', 'components']);
   const [value, setValue] = useState('');
 
@@ -44,7 +44,7 @@ const ImportYaml: FC<ImportYamlProps> = (props) => {
     <>
       <UndertoneWrapper>
         <Editor
-          theme={theme === 'dark' ? 'vs-dark' : 'light'}
+          theme={theme === Theme.dark ? 'vs-dark' : 'light'}
           value={value}
           language={'yaml'}
           height={'400px'}

@@ -12,5 +12,5 @@ export type loginVerifyRes = {
 };
 
 export function loginVerify(params: loginVerifyReq) {
-  return request.post<loginVerifyRes>(`/report/login/verify`, params).then((res) => res.body);
+  return request.post<loginVerifyRes>(`/webApi/login/verify`, params).then((res) => res.body);
 }

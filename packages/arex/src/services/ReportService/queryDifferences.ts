@@ -18,6 +18,6 @@ export type QueryDifferencesRes = {
 
 export async function queryDifferences(params: QueryDifferencesReq) {
   return request
-    .post<QueryDifferencesRes>('/report/report/queryDifferences', params)
+    .post<QueryDifferencesRes>('/webApi/report/queryDifferences', params)
     .then((res) => Promise.resolve(res.body.differences));
 }

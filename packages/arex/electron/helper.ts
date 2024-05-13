@@ -5,6 +5,7 @@ import path from 'node:path';
 import * as fzstd from 'fzstd';
 
 const dataPath = join(app.getPath('userData'), 'data.json');
+const configPath = join(app.getPath('userData'), 'config');
 
 export function getLocalData(key?: string) {
   if (!fs.existsSync(dataPath)) {
@@ -15,7 +16,43 @@ export function getLocalData(key?: string) {
   return key ? json[key] : json;
 }
 
+export function getLocalConfig(key?: string) {
+  if (!fs.existsSync(configPath)) {
+    fs.writeFileSync(configPath, '', { encoding: 'utf-8' });
+  }
+  const config = {};
+  let lines = fs.readFileSync(configPath, { encoding: 'utf-8' }).split('\n').filter(Boolean);
+  for (let line of lines) {
+    const [key, value] = line.split('=');
+    config[key.trim()] = value.trim();
+  }
+  return key ? config[key] : config;
+}
+
+export function setLocalConfig(key: string, value: string) {
+  if (!fs.existsSync(configPath)) {
+    fs.writeFileSync(configPath, '', { encoding: 'utf-8' });
+  }
+  const lines = fs.readFileSync(configPath, 'utf-8').split('\n').filter(Boolean);
+  let updatedContent = '';
+
+  for (let line of lines) {
+    const [existingKey, existingValue] = line.split('=');
+
+    if (existingKey.trim() === key) {
+      updatedContent += `${key}=${value}\n`;
+    } else {
+      updatedContent += `${existingKey}=${existingValue}\n`;
+    }
+  }
+
+  fs.writeFileSync(configPath, updatedContent.trim());
+}
+
 export function setLocalData(key: string | object, value?: any) {
+  if (!fs.existsSync(dataPath)) {
+    fs.writeFileSync(dataPath, JSON.stringify({}), { encoding: 'utf-8' });
+  }
   let args = [...arguments];
   let data = fs.readFileSync(dataPath, { encoding: 'utf-8' });
   let json = JSON.parse(data);
@@ -66,4 +103,17 @@ export function bytesToBase64(bytes: Uint8Array) {
 export async function zstdDecompress(str: string) {
   const decompressed_data = fzstd.decompress(base64ToBytes(str));
   return new TextDecoder().decode(decompressed_data);
+}
+
+export function chunkArray<T>(inputArray: T[], chunkSize: number) {
+  if (chunkSize <= 0) {
+    throw new Error('Chunk size should be greater than 0');
+  }
+
+  const result: T[][] = [];
+  for (let i = 0; i < inputArray.length; i += chunkSize) {
+    result.push(inputArray.slice(i, i + chunkSize));
+  }
+
+  return result;
 }

@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { useTranslation } from '@arextest/arex-core';
+import { useArexPaneProps, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Popconfirm, Space, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
@@ -7,7 +7,7 @@ import React, { FC, useRef } from 'react';
 import { Label } from 'src/services/ReportService/label';
 
 import { ReportService } from '@/services';
-import { useWorkspaces } from '@/store';
+import { decodePaneKey } from '@/store/useMenusPanes';
 
 import LabelEditor, { LabelEditorProps, LabelEditorRef } from './LabelEditor';
 
@@ -15,7 +15,8 @@ const CollectionLabel: FC = () => {
   const { message } = App.useApp();
   const { t } = useTranslation(['common', 'components']);
 
-  const { activeWorkspaceId } = useWorkspaces();
+  const { paneKey } = useArexPaneProps();
+  const { id: workspaceId } = decodePaneKey(paneKey);
   const createAndUpdateRef = useRef<LabelEditorRef>(null);
 
   const columns: ColumnsType<Label> = [
@@ -42,7 +43,7 @@ const CollectionLabel: FC = () => {
               title={t('workSpace.delLabelConfirmText', { ns: 'components' })}
               onConfirm={() => {
                 labelRemoveRun({
-                  workspaceId: activeWorkspaceId as string,
+                  workspaceId,
                   id: record.id,
                 });
               }}
@@ -60,13 +61,13 @@ const CollectionLabel: FC = () => {
   ];
 
   const { data: labelData, run: queryLabels } = useRequest(
-    () => ReportService.queryLabels({ workspaceId: activeWorkspaceId as string }),
-    { ready: !!activeWorkspaceId },
+    () => ReportService.queryLabels({ workspaceId }),
+    { ready: !!workspaceId },
   );
 
   const { run: labelRemoveRun } = useRequest(ReportService.removeLabels, {
     manual: true,
-    ready: !!activeWorkspaceId,
+    ready: !!workspaceId,
     onSuccess() {
       queryLabels();
     },
@@ -77,7 +78,7 @@ const CollectionLabel: FC = () => {
 
   const { run: labelSaveRun } = useRequest(ReportService.saveLabels, {
     manual: true,
-    ready: !!activeWorkspaceId,
+    ready: !!workspaceId,
     onSuccess() {
       message.success(t('updateSuccess'));
       queryLabels();
@@ -92,7 +93,7 @@ const CollectionLabel: FC = () => {
       id,
       color,
       labelName,
-      workspaceId: activeWorkspaceId as string,
+      workspaceId,
     });
 
   return (

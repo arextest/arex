@@ -4,7 +4,7 @@ import { horizontalListSortingStrategy, SortableContext, useSortable } from '@dn
 import { CSS } from '@dnd-kit/utilities';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Dropdown, MenuProps, Tabs, TabsProps, Typography } from 'antd';
+import { Dropdown, MenuProps, Tabs, TabsProps, theme, Typography } from 'antd';
 import React, { createContext, Key, PropsWithChildren, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -59,6 +59,7 @@ export const PaneContext = createContext<{
 });
 
 export interface ArexPanesContainerProps extends Omit<TabsProps, 'items' | 'onDragEnd'> {
+  height?: string;
   emptyNode: React.ReactNode;
   panes?: Pane[];
   onAdd?: () => void;
@@ -154,6 +155,8 @@ const ArexPanesContainer = (props: ArexPanesContainerProps) => {
   // 规定: ArexMenu 翻译文本需要配置在 locales/[lang]/arex-menu.json 下, 且 key 为 Menu.types
   const { t } = useTranslation([ArexPaneNamespace]);
 
+  const { token } = theme.useToken();
+
   const panesItems = useMemo(
     () =>
       (panes
@@ -186,7 +189,7 @@ const ArexPanesContainer = (props: ArexPanesContainerProps) => {
                     id={`arex-pane-wrapper-${pane.key}`}
                     style={{
                       padding: Pane.noPadding ? 0 : '8px 16px',
-                      height: 'calc(100vh - 106px)',
+                      height: props.height || '100%',
                     }}
                   >
                     {React.createElement(Pane, paneProps)}
@@ -222,6 +225,9 @@ const ArexPanesContainer = (props: ArexPanesContainerProps) => {
           css={css`
             .ant-tabs-nav {
               margin-bottom: 0;
+            }
+            .ant-tabs-tab .anticon {
+              margin-right: ${token.marginXXS}px;
             }
           `}
           popupClassName='arex-pane-popup'

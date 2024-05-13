@@ -4,35 +4,40 @@ import {
   clearLocalStorage,
   PanesTitle,
   setLocalStorage,
+  SmallTextButton,
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { Badge, Breadcrumb, Button, Spin, Tabs, theme } from 'antd';
+import { Badge, Spin, Tabs, theme } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
 
+import { PlanItemBreadcrumb } from '@/components';
 import { APP_ID_KEY, CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { ReportService } from '@/services';
-import { RecordResult, ReplayCaseType } from '@/services/ReportService';
+import { RecordResult } from '@/services/ReportService';
 import { useMenusPanes, useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
 
 import CaseDetailTab from './CaseDetailTab';
 
 type TagType = { label: ReactNode; key: string; children: ReactNode };
-type ReplayCaseDetailData = ReplayCaseType & {
+type ReplayCaseDetailData = {
   appId: string;
-  planId: string;
-  appName: string;
-  planItemId: string;
-  operationName: string | null;
+  recordId: string;
+  planId?: string;
+  planItemId?: string;
+  // case debug case params
+  appName?: string;
+  operationName?: string;
+  operationId?: string;
 };
 
 const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
   const navPane = useNavPane();
-  const { token } = theme.useToken();
   const { activePane } = useMenusPanes();
   const { activeWorkspaceId } = useWorkspaces();
+  const { token } = theme.useToken();
   const { t } = useTranslation('components');
 
   const [tabItems, setTabItems] = useState<TagType[]>([]);
@@ -43,13 +48,9 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
   }, [activePane?.id]);
 
   const { loading } = useRequest(ReportService.viewRecord, {
-    defaultParams: [
-      {
-        recordId: props.data.recordId,
-      },
-    ],
+    defaultParams: [props.data.recordId],
     onSuccess(res) {
-      const resultMap = res.reduce<Map<string, RecordResult[]>>((map, cur) => {
+      const resultMap = res.recordResult.reduce<Map<string, RecordResult[]>>((map, cur) => {
         const { categoryType } = cur;
         const { name } = categoryType;
         if (map.has(name)) {
@@ -75,7 +76,13 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
               </Badge>
             ),
             key: categoryName,
-            children: <CaseDetailTab type={categoryName} compareResults={caseDetailList} />,
+            children: (
+              <CaseDetailTab
+                type={categoryName}
+                hiddenValue={res.desensitized}
+                compareResults={caseDetailList}
+              />
+            ),
           };
         }) || [],
       );
@@ -84,42 +91,19 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
 
   return (
     <>
-      <Breadcrumb
-        separator='>'
-        items={[
-          {
-            key: props.data.appId,
-            title: <a>{props.data.appName || props.data.appId}</a>,
-            onClick: () =>
-              navPane({
-                type: PanesType.REPLAY,
-                id: props.data.appId,
-                data: {
-                  planId: props.data.planId,
-                  planItemId: props.data.planItemId,
-                },
-              }),
-          },
-          {
-            key: props.data.planItemId,
-            title: <a>{props.data.operationName || 'unknown'}</a>,
-            onClick: () =>
-              navPane({
-                type: PanesType.REPLAY_CASE,
-                id: props.data.planItemId,
-              }),
-          },
-          {
-            key: props.data.recordId,
-            title: props.data.recordId,
-          },
-        ]}
+      <PlanItemBreadcrumb
+        appId={props.data.appId}
+        type={PanesType.REPLAY_CASE}
+        planItemId={props.data.planItemId}
+        recordId={props.data.recordId}
       />
+
       <PanesTitle
         title={`${t('replay.recordId')}: ${props.data.recordId}`}
         extra={
-          <Button
-            size='small'
+          <SmallTextButton
+            icon={<BugOutlined />}
+            title={t('replay.debug')}
             onClick={(e) => {
               e.stopPropagation();
               navPane({
@@ -130,13 +114,13 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
                 data: {
                   recordId: props.data.recordId,
                   planId: props.data.planId,
+                  appName: props.data.appName,
+                  interfaceName: props.data.operationName,
+                  operationId: props.data.operationId,
                 },
               });
             }}
-          >
-            <BugOutlined />
-            {t('replay.debug')}
-          </Button>
+          />
         }
       />
       <Spin spinning={loading}>

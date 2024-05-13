@@ -8,7 +8,7 @@ export interface QueryEncryptionNode extends Omit<QueryIgnoreNode, 'path'> {
 
 export async function queryEncryptionNode(params: QueryNodeReq<'Global'>) {
   const res = await request.post<QueryEncryptionNode[]>(
-    '/report/config/comparison/encryption/queryComparisonConfig',
+    '/webApi/config/comparison/encryption/queryComparisonConfig',
     params,
   );
   return res.body;

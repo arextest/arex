@@ -1,8 +1,33 @@
 import { request } from '@/utils';
 
-import { SystemConfig } from './saveSystemConfig';
+export interface SystemConfig {
+  desensitizationJar: {
+    jarUrl?: string;
+    remark?: null;
+  } | null;
+  callbackUrl: string;
+  // The following is not currently in use
+  refreshTaskMark: {
+    transferSystemConfig: number;
+    cleanConfigComparisonIgnoreCategory: number;
+    missingComparisonIgnoreCategory: number;
+    missingRecordConfig: number;
+  };
+  comparePluginInfo: {
+    comparePluginUrl: string | null;
+    transMethodList?: string[];
+  };
+  compareIgnoreTimePrecisionMillis: number;
+  compareNameToLower: boolean;
+  compareNullEqualsEmpty: boolean;
+  ignoreNodeSet: boolean;
+  selectIgnoreCompare: boolean;
+  onlyCompareCoincidentColumn: boolean;
+  uuidIgnore: boolean;
+  ipIgnore: boolean;
+}
 
 export async function getSystemConfig() {
-  const res = await request.get<SystemConfig>(`/report/system/config/list`);
+  const res = await request.get<SystemConfig>(`/webApi/system/config/list`);
   return res.body;
 }

@@ -1,4 +1,6 @@
-import { useCollections, useUserProfile, useWorkspaces } from '@/store';
+import { useSystemConfig, useUserProfile, useWorkspaces } from '@/store';
+
+import useCollections from '../store/useCollections';
 
 /**
  * TODO 可行性待验证
@@ -8,9 +10,14 @@ import { useCollections, useUserProfile, useWorkspaces } from '@/store';
  * 故这些方法提取出来，提供给工作页面初始化时调用
  */
 const globalStoreInit = () => {
-  useCollections.getState().getCollections();
+  useWorkspaces
+    .getState()
+    .getWorkspaces()
+    .then(() => {
+      useCollections.getState().getCollections();
+    });
   useUserProfile.getState().getUserProfile();
-  useWorkspaces.getState().getWorkspaces();
+  useSystemConfig.getState().getAppAuth();
 };
 
 export default globalStoreInit;

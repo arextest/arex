@@ -1,10 +1,12 @@
-import { StopOutlined } from '@ant-design/icons';
-import { EmptyWrapper } from '@arextest/arex-core';
+import Icon, { StopOutlined, WarningOutlined } from '@ant-design/icons';
+import { EmptyWrapper, FlexCenterWrapper } from '@arextest/arex-core';
 import { Button, Typography } from 'antd';
-import React, { useCallback, useMemo } from 'react';
+import React, { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexRequestStore } from '../../hooks';
+import ETimeout from './ResponseError/ETimeout';
+import ExtensionNotInstalled from './ResponseError/ExtensionNotInstalled';
 import ResponseOptions from './ResponseOptions';
 
 const Response = () => {
@@ -19,20 +21,48 @@ const Response = () => {
     [],
   );
 
-  const hasResponse = useMemo(
-    () => store.response?.type === 'success' || store.response?.type === 'fail',
-    [store.response],
-  );
-
   const loading = useMemo(
     () => store.response === null || store?.response?.type === 'loading',
     [store.response],
   );
 
+  const response = useMemo(() => {
+    let res: ReactNode;
+    switch (store.response?.type) {
+      case 'loading': {
+        res = (
+          <Typography.Text strong type='secondary'>
+            Response
+          </Typography.Text>
+        );
+        break;
+      }
+      case 'EXTENSION_NOT_INSTALLED': {
+        res = <ExtensionNotInstalled />;
+        break;
+      }
+      case 'ETIMEDOUT': {
+        res = <ETimeout />;
+        break;
+      }
+      default: {
+        res = (
+          <ResponseOptions
+            response={store.response}
+            testResult={store.testResult}
+            consoles={store.consoles}
+          />
+        );
+        break;
+      }
+    }
+    return res;
+  }, [store]);
+
   return (
     <EmptyWrapper
       loading={loading}
-      empty={!hasResponse}
+      empty={!store.response?.type}
       description={
         <Typography.Text type='secondary'>{t('response.sendRequestTip')}</Typography.Text>
       }
@@ -47,11 +77,14 @@ const Response = () => {
         </Button>
       }
     >
-      <ResponseOptions
-        response={store.response}
-        testResult={store.testResult}
-        consoles={store.consoles}
-      />
+      <div
+        style={{
+          padding: '8px 12px',
+          height: '100%',
+        }}
+      >
+        {response}
+      </div>
     </EmptyWrapper>
   );
 };

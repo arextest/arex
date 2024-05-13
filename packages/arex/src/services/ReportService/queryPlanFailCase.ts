@@ -22,7 +22,7 @@ export async function queryPlanFailCase(
   operationName?: PlanItemStatistic['operationName'],
 ) {
   return request
-    .post<QueryPlanFailCaseRes>('/report/report/queryPlanFailCase', {
+    .post<QueryPlanFailCaseRes>('/webApi/report/queryPlanFailCase', {
       ...params,
       diffResultCodeList: [1, 2],
     })

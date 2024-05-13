@@ -79,14 +79,39 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
             <HelpTooltip title={t('appSetting.QPSTips')}>{t('appSetting.maxQPS')}</HelpTooltip>
           }
           name='sendMaxQps'
-          rules={[{ required: true, message: t('appSetting.emptyQPS') as string }]}
+          rules={[{ required: true, message: t('appSetting.emptyQPS') }]}
         >
           <InputNumber min={1} max={20} precision={0} />
         </Form.Item>
 
         <Form.Item
           label={
-            <HelpTooltip title={t('appSetting.exclusionTooltip')}>
+            <HelpTooltip
+              maxWidth='360px'
+              title={
+                <>
+                  <div>{t('appSetting.skipMockTooltip')}</div>
+                  <div style={{ marginTop: '4px' }}>DB:</div>
+                  <div>
+                    {`Path: <DB dbName> `}
+                    <strong>demoDb</strong>
+                  </div>
+                  <div>
+                    {`Value: <Operation type> `}
+                    <strong>query,insert</strong>
+                  </div>
+                  <div style={{ marginTop: '4px' }}>Http client:</div>
+                  <div>
+                    {`Path: <Class fullName> `}
+                    <strong>com.company.demoClass</strong>
+                  </div>
+                  <div>
+                    {`Value: <Method Name> `}
+                    <strong>DemoMethod</strong>
+                  </div>
+                </>
+              }
+            >
               {t('appSetting.skipMock')}
             </HelpTooltip>
           }

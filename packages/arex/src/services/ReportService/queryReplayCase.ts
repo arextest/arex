@@ -21,7 +21,7 @@ export interface QueryReplayCaseRes {
 }
 
 export async function queryReplayCase(params: QueryReplayCaseReq) {
-  return request.post<QueryReplayCaseRes>('/report/report/queryReplayCase', params).then((res) =>
+  return request.post<QueryReplayCaseRes>('/webApi/report/queryReplayCase', params).then((res) =>
     Promise.resolve({
       total: res.body.totalCount,
       list: res.body.result,

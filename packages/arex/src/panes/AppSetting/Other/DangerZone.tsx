@@ -40,7 +40,7 @@ const DangerZone: FC<DangerZoneProps> = (props) => {
   }
 
   function handleConfirmDelete() {
-    const valid = confirmAppIdValue.trim() === props.appId;
+    const valid = confirmAppIdValue.trim() === (appInfo?.appName || appInfo?.appId);
     if (valid) {
       deleteApplication({ appId: props.appId });
     } else {
@@ -53,6 +53,13 @@ const DangerZone: FC<DangerZoneProps> = (props) => {
     confirmInputStatus && setConfirmInputStatus(undefined);
   }
 
+  const { data: appInfo, run: getAppInfo } = useRequest(ApplicationService.getAppInfo, {
+    manual: true,
+    onSuccess() {
+      setConfirmDeleteOpen(true);
+    },
+  });
+
   return (
     <SpaceBetweenWrapper>
       <div>
@@ -62,21 +69,21 @@ const DangerZone: FC<DangerZoneProps> = (props) => {
         <Typography.Text type='secondary'>{t('appSetting.deleteTip')}</Typography.Text>
       </div>
 
-      <Button danger onClick={() => setConfirmDeleteOpen(true)}>
+      <Button danger onClick={() => getAppInfo(props.appId)}>
         {t('appSetting.deleteApp')}
       </Button>
 
       <Modal
         destroyOnClose
         open={confirmDeleteOpen}
-        title={`${t('appSetting.confirmDelete')} ${props.appId}`}
+        title={`${t('appSetting.confirmDelete')} ${appInfo?.appName || appInfo?.appId}`}
         onCancel={handleCancelDelete}
         onOk={handleConfirmDelete}
       >
         <Typography.Text type='secondary'>{t('appSetting.deleteConfirmTip')}</Typography.Text>
         <Input
           value={confirmAppIdValue}
-          placeholder={props.appId}
+          placeholder={appInfo?.appName || appInfo?.appId}
           status={confirmInputStatus}
           onChange={handleConfirmChange}
           style={{ marginTop: '8px' }}

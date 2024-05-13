@@ -10,10 +10,11 @@ export type PanesTitleProps = {
   extra?: ReactNode;
   editable?: boolean; // when title types is string take effect
   onSave?: (title: string) => void;
+  style?: React.CSSProperties;
 };
 
 const PanesTitle = styled((props: PanesTitleProps) => {
-  const { title, extra, editable, onSave, ...extraProps } = props;
+  const { title, extra, editable, onSave, style, ...extraProps } = props;
   const { token } = theme.useToken();
 
   const [editableTitle, setEditableTitle] = useState<string>(
@@ -32,12 +33,17 @@ const PanesTitle = styled((props: PanesTitleProps) => {
   };
 
   return (
-    <div style={{ marginBottom: `${token.margin}px` }} {...extraProps}>
+    // @ts-ignore
+    <div style={{ marginBottom: `${token.marginXS}px`, ...style }} {...extraProps}>
       <Space className='title'>
         {edit ? (
-          <Input value={editableTitle} onChange={(e) => setEditableTitle(e.target.value)} />
+          <Input
+            size='small'
+            value={editableTitle}
+            onChange={(e) => setEditableTitle(e.target.value)}
+          />
         ) : (
-          <Typography.Title ellipsis level={3} style={{ marginBottom: 0 }}>
+          <Typography.Title ellipsis level={4} style={{ marginBottom: 0 }}>
             {title}
           </Typography.Title>
         )}
@@ -60,6 +66,7 @@ const PanesTitle = styled((props: PanesTitleProps) => {
               color={'primary'}
               icon={<EditOutlined />}
               onClick={() => setEdit(true)}
+              style={{ marginLeft: '4px' }}
             />
           ))}
       </Space>

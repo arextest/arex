@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import Editor from '@monaco-editor/react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
@@ -8,12 +10,13 @@ import { useArexRequestStore } from '../../../hooks';
 import EnvTooltip from './EnvTooltip';
 
 interface SmartEnvInputProps {
+  status?: 'error';
   disabled?: boolean;
   value?: string;
   onChange?: (value?: string) => void;
 }
 
-const EditorWrapper = styled.div`
+const EditorWrapper = styled.div<Pick<SmartEnvInputProps, 'status'>>`
   .content-class-no-found {
     background: ${(props) => props.theme.colorError};
     color: white !important;
@@ -25,8 +28,11 @@ const EditorWrapper = styled.div`
     color: white !important;
     border-radius: 2px;
   }
-  border: 1px solid ${(props) => props.theme.colorBorder};
+  border: 1px solid
+    ${(props) =>
+      props.status === 'error' ? props.theme.colorErrorBorder : props.theme.colorBorder};
   border-radius: 0 6px 6px 0;
+  z-index: 1;
   flex: 1;
   //添加 min-width: 0 的原因: https://juejin.cn/post/6974356682574921765
   min-width: 0;
@@ -58,7 +64,7 @@ const editOptions = {
   folding: false,
 } as const;
 
-const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange, disabled }) => {
+const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, status, onChange, disabled }) => {
   const { store } = useArexRequestStore();
   const { theme } = useArexCoreConfig();
   const [open, setOpen] = useState(false);
@@ -153,7 +159,7 @@ const SmartEnvInput: FC<SmartEnvInputProps> = ({ value, onChange, disabled }) =>
   }
 
   return (
-    <EditorWrapper ref={smartEnvInputRef}>
+    <EditorWrapper ref={smartEnvInputRef} status={status}>
       <EnvTooltip
         offset={[left, -2]}
         open={open}

@@ -7,9 +7,9 @@ import {
 import { App, Collapse, Drawer, Input, InputProps, List, Typography } from 'antd';
 import React, { CompositionEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 
-import { CollectionNodeType, MenusType, PanesType } from '@/constant';
+import { CollectionNodeType, MenusType, PanesType, URL_DOCUMENT_GET_STARTED } from '@/constant';
 import { useNavPane } from '@/hooks';
-import { useMenusPanes, useWorkspaces } from '@/store';
+import { useMenusPanes, useUserProfile, useWorkspaces } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 import { generateId } from '@/utils';
 import { handleKeyDown, shortcuts, ShortcutsMap } from '@/utils/keybindings';
@@ -30,6 +30,8 @@ const KeyboardShortcut = React.memo(() => {
     toggleMenuCollapse,
   } = useMenusPanes();
   const { activeWorkspaceId } = useWorkspaces();
+  const { setZen } = useUserProfile();
+
   const latestActivePaneKey = useRef(activePane?.key);
   useEffect(() => {
     latestActivePaneKey.current = activePane?.key;
@@ -88,6 +90,11 @@ const KeyboardShortcut = React.memo(() => {
         (document.querySelector(`#arex-console-btn`) as HTMLElement)?.click?.();
         break;
       }
+      // 'ctrl-shift-z': 'general.zen',
+      case 'general.zen': {
+        setZen();
+        break;
+      }
 
       // Request
       // 'ctrl-enter': 'request.send',
@@ -118,15 +125,24 @@ const KeyboardShortcut = React.memo(() => {
       case 'request.save': {
         const { type } = decodePaneKey(activePaneKey);
         if (type === PanesType.REQUEST) {
-          (
-            document.querySelector(
-              `#arex-pane-wrapper-${activePaneKey} #arex-request-save-btn`,
-            ) as HTMLElement
-          )?.click?.();
+          const button = document.querySelector(
+            `#arex-pane-wrapper-${activePaneKey} #arex-request-save-btn`,
+          ) as HTMLElement;
+          const length = button?.children.length;
+          if (length) {
+            if (length === 1) {
+              // Single Button
+              button?.click?.();
+            } else if (length === 2) {
+              // Dropdown Button
+              (button.children[0] as HTMLButtonElement)?.click?.();
+            }
+          }
         }
         break;
       }
       // 'ctrl-shift-s': 'request.save-as',
+      // TODO
       case 'request.save-as': {
         const { type } = decodePaneKey(activePaneKey);
         if (type === PanesType.REQUEST) {
@@ -217,9 +233,9 @@ const KeyboardShortcut = React.memo(() => {
         navPane({
           id: 'document',
           type: ArexPanesType.WEB_VIEW,
-          name: t('document') as string,
+          name: t('document'),
           data: {
-            url: `http://www.arextest.com/docs/chapter1/get-started`,
+            url: URL_DOCUMENT_GET_STARTED,
           },
         });
         break;
@@ -285,19 +301,14 @@ const KeyboardShortcut = React.memo(() => {
         });
         break;
       }
-      // 'alt-c: 'menu.collection'
+      // 'alt-shift-c: 'menu.collection'
       case 'menu.collection': {
         setActiveMenu(MenusType.COLLECTION);
         break;
       }
-      // 'alt-r: 'menu.replay'
-      case 'menu.replay': {
-        setActiveMenu(MenusType.REPLAY);
-        break;
-      }
-      // 'alt-e: 'menu.environment'
-      case 'menu.environment': {
-        setActiveMenu(MenusType.ENVIRONMENT);
+      // 'alt-shift-a: 'menu.app'
+      case 'menu.app': {
+        setActiveMenu(MenusType.APP);
         break;
       }
     }
@@ -331,7 +342,7 @@ const KeyboardShortcut = React.memo(() => {
         onChange={handleChange}
         onCompositionStart={handleComposition}
         onCompositionEnd={handleComposition}
-        placeholder={t('searchPlaceholder') as string}
+        placeholder={t('searchPlaceholder')}
         style={{ marginRight: '8px' }}
       />
 

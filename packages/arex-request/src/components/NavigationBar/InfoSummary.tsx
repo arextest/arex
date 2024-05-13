@@ -72,10 +72,7 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
   }, [labelsProps?.value]);
 
   const breadcrumbItems = useMemo(
-    () =>
-      breadcrumb
-        ?.map((title: string) => ({ title }))
-        .concat({ title: titleValue || t('request.name') || 'Untitled' }),
+    () => breadcrumb?.map((title: string) => ({ title })),
     [breadcrumb, titleValue],
   );
 
@@ -102,26 +99,22 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
     >
       {mode === Mode.normal ? (
         <>
-          <div css={HoverEditorIconCSS} style={{ maxWidth: '50%' }}>
-            {titleValue ? (
-              <Breadcrumb
-                items={breadcrumbItems}
-                css={css`
-                  width: 100%;
-                  ol {
-                    flex-wrap: nowrap;
-                    flex-shrink: 1;
-                    li {
-                      white-space: nowrap;
-                      overflow-x: hidden;
-                      text-overflow: ellipsis;
-                    }
+          <div css={HoverEditorIconCSS}>
+            <Breadcrumb
+              items={breadcrumbItems}
+              css={css`
+                width: 100%;
+                ol {
+                  flex-wrap: nowrap;
+                  flex-shrink: 1;
+                  li {
+                    white-space: nowrap;
+                    overflow-x: hidden;
+                    text-overflow: ellipsis;
                   }
-                `}
-              />
-            ) : (
-              'Untitled'
-            )}
+                }
+              `}
+            />
 
             <Button
               type='link'
@@ -136,7 +129,7 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
             />
           </div>
 
-          <div style={{ display: 'flex', flexShrink: 0 }}>
+          <div style={{ display: 'flex' }}>
             <div css={HoverEditorIconCSS}>
               <Text
                 ellipsis
@@ -157,7 +150,7 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
                   setEditValue(descriptionProps?.value);
                   setMode(Mode.description);
                 }}
-                style={{ opacity: 0 }}
+                style={{ opacity: 0, marginRight: '8px' }}
               />
             </div>
 
@@ -185,11 +178,6 @@ const InfoSummary: FC<InfoSummaryProps> = (props) => {
             <Input
               size='small'
               value={editValue}
-              placeholder={
-                mode === Mode.title
-                  ? titleValue || (t('request.namePlaceholder') as string)
-                  : descriptionValue || (t('request.descriptionPlaceholder') as string)
-              }
               onChange={(e) => setEditValue(e.target.value)}
               onKeyUp={(e) => e.code === 'Enter' && handleEditSave()}
               style={{ width: '80%', minWidth: '200px', maxWidth: '320px' }}

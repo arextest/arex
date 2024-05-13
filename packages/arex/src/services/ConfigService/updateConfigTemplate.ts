@@ -6,6 +6,6 @@ export interface UpdateConfigTemplateReq {
 }
 
 export async function updateConfigTemplate(params: UpdateConfigTemplateReq) {
-  const res = await request.post<boolean>('/report/config/yamlTemplate/pushConfigTemplate', params);
+  const res = await request.post<boolean>('/webApi/config/yamlTemplate/pushConfigTemplate', params);
   return res.body;
 }

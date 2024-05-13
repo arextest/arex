@@ -49,7 +49,12 @@ if (!isClient) {
       const agentData: any = await AgentAxios({
         method: request.method,
         url: request.url,
-        headers: request.headers,
+        headers: {
+          ...request.headers,
+          'content-type': (request.headers['content-type'] || '').includes('application/json')
+            ? 'application/json'
+            : request.headers['content-type'],
+        },
         body: ['GET'].includes(request.method) ? undefined : request.body,
       }).catch((err) => {
         console.log(err);

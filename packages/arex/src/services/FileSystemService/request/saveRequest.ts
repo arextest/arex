@@ -9,10 +9,13 @@ export async function saveRequest(
   nodeType: number,
 ) {
   const saveParams = {
-    address: {
-      method: params.method,
-      endpoint: params.endpoint,
-    },
+    address:
+      params.method || params.endpoint
+        ? {
+            method: params.method,
+            endpoint: params.endpoint,
+          }
+        : undefined,
     params: params.params,
     headers: params.headers,
     testScripts: params.testScript
@@ -46,7 +49,7 @@ export async function saveRequest(
     labelIds: params.tags,
   };
   const res = await request.post<{ success: boolean }>(
-    `/report/filesystem/${
+    `/webApi/filesystem/${
       nodeType === CollectionNodeType.interface ? 'saveInterface' : 'saveCase'
     }`,
     saveParams,

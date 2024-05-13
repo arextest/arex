@@ -1,6 +1,11 @@
 import { FilterOutlined } from '@ant-design/icons';
-import { EllipsisTooltip, SceneCodeMap, TooltipButton, useTranslation } from '@arextest/arex-core';
-import { css } from '@emotion/react';
+import {
+  css,
+  EllipsisTooltip,
+  SceneCodeMap,
+  TooltipButton,
+  useTranslation,
+} from '@arextest/arex-core';
 import { Badge, Space, Switch, theme, Typography } from 'antd';
 import { cloneDeep } from 'lodash';
 import React, { FC, useCallback, useMemo, useState } from 'react';

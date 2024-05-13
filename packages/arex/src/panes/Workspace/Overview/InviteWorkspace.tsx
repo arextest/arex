@@ -1,15 +1,14 @@
 import { UserAddOutlined } from '@ant-design/icons';
-import { getLocalStorage, useTranslation } from '@arextest/arex-core';
+import { getLocalStorage, useArexPaneProps, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Form, Modal, Select, Space, Typography } from 'antd';
 import React, { FC, useState } from 'react';
 
 import { EMAIL_KEY, RoleEnum } from '@/constant';
 import { FileSystemService } from '@/services';
-import { useWorkspaces } from '@/store';
-const { Text } = Typography;
+import { decodePaneKey } from '@/store/useMenusPanes';
 
-const { Option } = Select;
+const { Text } = Typography;
 
 export type InviteWorkspaceProps = {
   onInvite?: () => void;
@@ -19,7 +18,8 @@ const InviteWorkspace: FC<InviteWorkspaceProps> = (props) => {
   const { message } = App.useApp();
   const { t } = useTranslation('components');
   const email = getLocalStorage<string>(EMAIL_KEY);
-  const { activeWorkspaceId } = useWorkspaces();
+  const { paneKey } = useArexPaneProps();
+  const { id: workspaceId } = decodePaneKey(paneKey);
 
   const [open, setOpen] = useState<boolean>(false);
 
@@ -56,7 +56,7 @@ const InviteWorkspace: FC<InviteWorkspaceProps> = (props) => {
       invitor: email as string,
       role: values.role,
       userNames: values.email,
-      workspaceId: activeWorkspaceId,
+      workspaceId,
       arexUiUrl: `${window.location.protocol}/${window.location.host}`,
     };
     inviteToWorkspace(params);
@@ -100,26 +100,31 @@ const InviteWorkspace: FC<InviteWorkspaceProps> = (props) => {
           </Form.Item>
 
           <Form.Item name='role' label={t('workSpace.role')}>
-            <Select>
-              <Option value={RoleEnum.Admin}>
+            <Select
+              options={[
+                {
+                  label: t('workSpace.admin'),
+                  value: RoleEnum.Admin,
+                  desc: t('workSpace.adminPermission'),
+                },
+                {
+                  label: t('workSpace.editor'),
+                  value: RoleEnum.Editor,
+                  desc: t('workSpace.editorPermission'),
+                },
+                {
+                  label: t('workSpace.viewer'),
+                  value: RoleEnum.Viewer,
+                  desc: t('workSpace.viewerPermission'),
+                },
+              ]}
+              optionRender={(option) => (
                 <Space direction='vertical'>
-                  <Text>{t('workSpace.admin')}</Text>
-                  <Text type='secondary'>{t('workSpace.adminPermission')}</Text>
+                  <Text>{option.label}</Text>
+                  <Text type='secondary'>{option.data.desc}</Text>
                 </Space>
-              </Option>
-              <Option value={RoleEnum.Editor}>
-                <Space direction='vertical'>
-                  <Text>{t('workSpace.editor')}</Text>
-                  <Text type='secondary'>{t('workSpace.editorPermission')}</Text>
-                </Space>
-              </Option>
-              <Option value={RoleEnum.Viewer}>
-                <Space direction='vertical'>
-                  <Text>{t('workSpace.viewer')}</Text>
-                  <Text type='secondary'>{t('workSpace.viewerPermission')}</Text>
-                </Space>
-              </Option>
-            </Select>
+              )}
+            />
           </Form.Item>
 
           <Form.Item>

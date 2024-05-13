@@ -1,6 +1,9 @@
 {
+  "app": "App",
+  "appSetting": "Setting",
+  "collapseSidebar": "Collapse Sidebar",
   "collection": "Collection",
-  "replay": "Replay",
   "environment": "Environment",
-  "appSetting": "Setting"
+  "expandSidebar": "Expand Sidebar",
+  "replay": "Replay"
 }

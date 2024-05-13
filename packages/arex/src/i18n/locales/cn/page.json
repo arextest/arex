@@ -1,33 +1,34 @@
 {
-  "folderPage": {
-    "tests": "测试"
+  "batchComparePage": {
+    "compare_results": "比对结果",
+    "error.count": "错误数量",
+    "result": "结果",
+    "run_compare": "执行比对",
+    "select_need_compare_case": "请选择比对用例"
   },
   "batchRunPage": {
-    "selectCaseTip": "请选择测试用例",
+    "SomeFailed": "存在失败测试脚本",
+    "allFailed": "所有测试脚本均不通过",
+    "allPassed": "所有测试脚本均通过",
     "batchSend": "批量发送",
-    "statusBlockStructure":"状态块组成",
-    "requestStatus":"请求状态",
-    "testStatus":"测试状态",
-    "loading":"等待中",
-    "requestSuccess":"请求成功",
-    "requestFailed":"请求失败",
-    "noTestScript":"无测试脚本",
-    "allPassed":"所有测试脚本均通过",
-    "SomeFailed":"存在失败测试脚本",
-    "allFailed":"所有测试脚本均不通过"
+    "checkRequestDetail": "点击状态块查看请求详情",
+    "loading": "等待中",
+    "noTestScript": "无测试脚本",
+    "requestFailed": "请求失败",
+    "requestStatus": "请求状态",
+    "requestSuccess": "请求成功",
+    "selectCaseTip": "请选择测试用例",
+    "statusBlockStructure": "状态块组成",
+    "testStatus": "测试状态"
   },
-  "batchComparePage": {
-    "select_need_compare_case": "请选择比对用例",
-    "run_compare": "执行比对",
-    "compare_results": "比对结果",
-    "result": "结果",
-    "error.count": "错误数量"
-  },
-  "replay": {
-    "saveto": "保存到"
+  "folderPage": {
+    "tests": "测试"
   },
   "oauth": {
     "authenticating": "正在验证",
     "redirectedTip": "你将于几秒之后被重定向至主页..."
+  },
+  "replay": {
+    "saveto": "保存到"
   }
 }

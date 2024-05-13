@@ -20,6 +20,7 @@ export type WorkspaceState = {
 export type WorkspaceAction = {
   getWorkspaces: (id?: string) => Promise<Workspace[] | undefined>;
   setActiveWorkspaceId: (id: string) => void;
+  changeActiveWorkspaceId: (id: string) => void;
   reset: () => void;
 };
 
@@ -66,7 +67,11 @@ const useWorkspaces = create(
           getWorkspaces,
           setActiveWorkspaceId: (id) => {
             set({ activeWorkspaceId: id });
-            useCollections.getState().getCollections();
+            useCollections.getState().getCollections({ workspaceId: id });
+          },
+          changeActiveWorkspaceId: (id) => {
+            useCollections.getState().reset();
+            get().setActiveWorkspaceId(id);
           },
           reset: () => set(initialState),
         };

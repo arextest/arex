@@ -1,4 +1,4 @@
-import { Button, ButtonProps, Typography } from 'antd';
+import { Button, ButtonProps, theme, Typography } from 'antd';
 import { TextProps } from 'antd/es/typography/Text';
 import React, { ReactNode } from 'react';
 
@@ -9,7 +9,9 @@ const SmallTextButton = React.forwardRef<
     title?: ReactNode;
   }
 >((props, ref) => {
-  const { title, icon, ...restProps } = props;
+  const { title, ...restProps } = props;
+  const { token } = theme.useToken();
+
   return (
     <Button
       ref={ref}
@@ -21,13 +23,13 @@ const SmallTextButton = React.forwardRef<
         props.onClick?.(e);
       }}
     >
-      <Typography.Text
-        color={props.color}
-        type={props.color === 'secondary' ? 'secondary' : undefined}
-      >
-        <span style={{ marginRight: '6px' }}>{icon}</span>
-        {title}
-      </Typography.Text>
+      {title && (
+        <Typography.Text
+          type={props.danger ? 'danger' : props.color === 'secondary' ? 'secondary' : undefined}
+        >
+          {title}
+        </Typography.Text>
+      )}
     </Button>
   );
 });

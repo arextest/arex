@@ -1,90 +1,47 @@
 import { SaveOutlined } from '@ant-design/icons';
-import { EmptyWrapper, TooltipButton, tryPrettierJsonString } from '@arextest/arex-core';
+import {
+  EmptyWrapper,
+  TooltipButton,
+  tryPrettierJsonString,
+  useArexCoreConfig,
+} from '@arextest/arex-core';
 import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { App, Col, Collapse, Row, Space } from 'antd';
-import axios from 'axios';
 import { cloneDeep } from 'lodash';
 import React, { FC } from 'react';
 import { useImmer } from 'use-immer';
 
-import useUserProfile from '@/store/useUserProfile';
-import request from '@/utils/request';
-
-type MockTarget = {
-  body: string | null;
-  bodyParsed?: Record<string, any> | null;
-  attributes: Record<string, any> | null;
-  type: string | null;
-};
-
-type MockTargetParsed = { body?: string | null } & Omit<MockTarget, 'body'>;
-
-type MockData = {
-  id: string;
-  categoryType: {
-    name: string;
-    entryPoint: boolean;
-    skipComparison: boolean;
-  };
-  replayId: string | null;
-  recordId: string;
-  appId: string;
-  recordEnvironment: number;
-  creationTime: number;
-  targetRequest: MockTarget;
-  targetResponse: MockTarget;
-  operationName: string;
-};
-
-type MockDataParse = Omit<MockData, 'targetRequest' | 'targetResponse'> & {
-  targetRequest: MockTargetParsed;
-  targetResponse: MockTargetParsed;
-};
+import { Theme } from '@/constant';
+import { StorageService } from '@/services';
+import { RecordResult } from '@/services/ReportService';
 
 const Mock: FC<{ recordId?: string }> = ({ recordId }) => {
   const { message } = App.useApp();
-  const { theme } = useUserProfile();
-  const [mockData, setMockData] = useImmer<MockDataParse[]>([]);
+  const { theme } = useArexCoreConfig();
+  const [mockData, setMockData] = useImmer<RecordResult[]>([]);
 
-  const { run: getMockData, loading } = useRequest<MockDataParse[], []>(
-    () =>
-      axios
-        .post<{ recordResult: MockData[] }>(`/storage/storage/replay/query/viewRecord`, {
-          recordId,
-          sourceProvider: 'Pinned',
-        })
-        .then((res) => res.data.recordResult),
-    {
-      onSuccess(res) {
-        res.map((item) => {
-          item.targetRequest.body = tryPrettierJsonString(item.targetRequest.body || '');
-          item.targetResponse.body = tryPrettierJsonString(item.targetResponse.body || '');
-        });
-        setMockData(res);
-      },
+  const { refresh: getMockData, loading } = useRequest(StorageService.queryRecord, {
+    defaultParams: [recordId!],
+    ready: !!recordId,
+    onSuccess(res) {
+      res.map((item) => {
+        item.targetRequest.body = tryPrettierJsonString(item.targetRequest.body || '');
+        item.targetResponse.body = tryPrettierJsonString(item.targetResponse.body || '');
+      });
+      setMockData(res);
     },
-  );
+  });
 
-  const { run: updateMockData } = useRequest(
-    (params) =>
-      request.post<{
-        responseStatusType: {
-          responseCode: number;
-          responseDesc: string;
-          timestamp: number;
-        };
-      }>(`/storage/storage/edit/pinned/update/`, params),
-    {
-      manual: true,
-      onSuccess(res) {
+  const { run: updateMockData } = useRequest(StorageService.updateRecord, {
+    manual: true,
+    onSuccess(success) {
+      if (success) {
         message.success('Update successfully');
-        if (!res.responseStatusType.responseCode) {
-          getMockData();
-        }
-      },
+        getMockData();
+      }
     },
-  );
+  });
 
   const handleSave = (id: string) => {
     const data = mockData.find((item) => item.id === id);
@@ -118,6 +75,9 @@ const Mock: FC<{ recordId?: string }> = ({ recordId }) => {
                 <Row gutter={16}>
                   <Col span={12} style={{ display: 'flex', flexDirection: 'column' }}>
                     <Editor
+                      language='json'
+                      height='240px'
+                      theme={theme === Theme.dark ? 'vs-dark' : 'light'}
                       options={{
                         minimap: {
                           enabled: false,
@@ -125,23 +85,22 @@ const Mock: FC<{ recordId?: string }> = ({ recordId }) => {
                         fontSize: 12,
                         wordWrap: 'wordWrapColumn',
                         automaticLayout: true,
-                        fontFamily: 'IBMPlexMono, "Courier New", monospace',
                         scrollBeyondLastLine: false,
                       }}
-                      theme={theme === 'dark' ? 'vs-dark' : 'light'}
-                      height={'260px'}
                       value={mock.targetRequest.body || ''}
                       onChange={(value) => {
                         setMockData((state) => {
                           const data = state.find((item) => item.id === mock.id);
-                          data && (data.targetRequest.body = value);
+                          data && (data.targetRequest.body = value || '');
                         });
                       }}
-                      language={'json'}
                     />
                   </Col>
                   <Col span={12}>
                     <Editor
+                      height='240px'
+                      language='json'
+                      theme={theme === Theme.dark ? 'vs-dark' : 'light'}
                       options={{
                         minimap: {
                           enabled: false,
@@ -149,19 +108,15 @@ const Mock: FC<{ recordId?: string }> = ({ recordId }) => {
                         fontSize: 12,
                         wordWrap: 'wordWrapColumn',
                         automaticLayout: true,
-                        fontFamily: 'IBMPlexMono, "Courier New", monospace',
                         scrollBeyondLastLine: false,
                       }}
-                      theme={theme === 'dark' ? 'vs-dark' : 'light'}
-                      height={'260px'}
                       value={mock.targetResponse.body || ''}
                       onChange={(value) => {
                         setMockData((state) => {
                           const data = state.find((item) => item.id === mock.id);
-                          data && (data.targetResponse.body = value);
+                          data && (data.targetResponse.body = value || '');
                         });
                       }}
-                      language={'json'}
                     />
                   </Col>
                 </Row>

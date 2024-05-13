@@ -34,7 +34,8 @@ import dayjs from 'dayjs';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { CONFIG_TARGET, EditAreaPlaceholder } from '@/components';
+import { EditAreaPlaceholder } from '@/components';
+import { CONFIG_TARGET } from '@/panes/AppSetting/CompareConfig';
 import CompareConfigTitle from '@/panes/AppSetting/CompareConfig/CompareConfigTitle';
 import { ComparisonService } from '@/services';
 import { OperationId } from '@/services/ApplicationService';
@@ -56,7 +57,7 @@ type CheckedNodesData = {
 };
 
 export type NodesIgnoreProps = {
-  appId: string;
+  appId?: string;
   operationId?: string;
   dependency?: DependencyParams;
   readOnly?: boolean;
@@ -99,7 +100,7 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
   } = useRequest(
     () =>
       ComparisonService.queryIgnoreNode({
-        appId: props.appId,
+        appId: props.appId!,
         operationId: props.configTarget === CONFIG_TARGET.GLOBAL ? undefined : props.operationId,
         ...(props.configTarget === CONFIG_TARGET.DEPENDENCY ? props.dependency : {}),
       }),
@@ -446,7 +447,9 @@ const NodesIgnore: FC<NodesIgnoreProps> = (props) => {
         >
           <IgnoreTree
             // TODO auto expand failed
+            lineThrough
             defaultExpandAll
+            title={t('appSetting.clickToIgnore')}
             loading={props.loadingContract}
             treeData={props.contractParsed}
             selectedKeys={checkedNodesData.exclusionsList}

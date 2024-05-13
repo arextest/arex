@@ -1,11 +1,8 @@
 import { request } from '@/utils';
 
-export interface SystemConfig {
-  operator: string;
-  callbackUrl: string;
-}
+import { SystemConfig } from './getSystemConfig';
 
-export async function saveSystemConfig(params: { systemConfig: SystemConfig }) {
-  const res = await request.post<boolean>(`/report/system/config/save`, params);
+export async function saveSystemConfig(params: { systemConfig: Partial<SystemConfig> }) {
+  const res = await request.post<boolean>(`/webApi/system/config/save`, params);
   return res.body;
 }

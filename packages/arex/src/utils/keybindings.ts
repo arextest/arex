@@ -43,6 +43,7 @@ export const bindings: {
   // 'ctrl-k': 'general.search.toggle',
   'ctrl-/': 'general.keybindings.toggle',
   'ctrl-shift-.': 'general.console',
+  'ctrl-shift-z': 'general.zen',
 
   // Request
   'ctrl-enter': 'request.send',
@@ -76,8 +77,7 @@ export const bindings: {
   'alt-up': 'menu.prev',
   'alt-down': 'menu.next',
   'alt-shift-c': 'menu.collection',
-  'alt-shift-r': 'menu.replay',
-  'alt-shift-e': 'menu.environment',
+  'alt-shift-a': 'menu.app',
 };
 
 export type ShortcutDef = {

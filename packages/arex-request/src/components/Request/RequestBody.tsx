@@ -89,7 +89,7 @@ const RequestBody = () => {
           {isJsonContentType && (
             <Select
               value={store.request.body.contentType}
-              bordered={false}
+              variant='borderless'
               size={'small'}
               options={rawSmallCateOptions}
               optionLabelProp={'test'}
@@ -99,7 +99,7 @@ const RequestBody = () => {
         </div>
 
         {isJsonContentType && (
-          <a onClick={rawBodyRef?.current?.prettifyRequestBody}>{t('action.prettify')}</a>
+          <a onClick={() => rawBodyRef?.current?.prettifyRequestBody()}>{t('action.prettify')}</a>
         )}
       </div>
 

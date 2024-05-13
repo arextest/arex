@@ -9,6 +9,6 @@ export type MoveCollectionItemReq = {
 
 export async function moveCollectionItem(params: MoveCollectionItemReq) {
   return request
-    .post<{ success: boolean }>(`/report/filesystem/move`, params)
+    .post<{ success: boolean }>(`/webApi/filesystem/move`, params)
     .then((res) => res.body.success);
 }

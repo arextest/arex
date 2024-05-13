@@ -7,5 +7,6 @@ export type RemoveCollectionItemReq = {
 };
 
 export async function removeCollectionItem(params: RemoveCollectionItemReq) {
-  return request.post('/report/filesystem/removeItem', params);
+  const res = await request.post<{ success: boolean }>('/webApi/filesystem/removeItem', params);
+  return res.body.success;
 }

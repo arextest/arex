@@ -8,6 +8,6 @@ import Replay from './Replay';
 
 export default createArexPane(Replay, {
   type: PanesType.REPLAY,
-  menuType: MenusType.REPLAY,
+  menuType: MenusType.APP,
   icon: <HistoryOutlined />,
 });

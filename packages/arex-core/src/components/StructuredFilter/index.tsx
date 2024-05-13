@@ -1,10 +1,18 @@
-import { SearchOutlined } from '@ant-design/icons';
+import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
 import styled from '@emotion/styled';
 import { useKeyPress } from 'ahooks';
-import { Button, Select, SelectProps } from 'antd';
+import { Button, Flex, Select, SelectProps, Typography } from 'antd';
 import { SizeType } from 'antd/es/config-provider/SizeContext';
+import { RefSelectProps } from 'antd/es/select';
 import { isEqual } from 'lodash';
-import React, { FC, ReactNode, useEffect, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  ReactNode,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useImmer } from 'use-immer';
 
@@ -29,43 +37,49 @@ export type StructuredFilterProps = {
   prefix?: ReactNode;
   labelDataSource?: Label[];
   showSearchButton?: boolean | 'simple';
+  options: StructuredOptionType[];
   onSearch?: (value: SearchDataType) => void;
   onChange?: (value: SearchDataType) => void;
-  options: StructuredOptionType[];
+  onCancel?: () => void;
 } & Omit<SelectProps, 'options' | 'onSearch'>;
+
+export type StructuredFilterRef = {
+  clear: () => void;
+};
 
 const StructuredFilterWrapper = styled.div<{ size: SizeType }>`
   display: flex;
-  .prefix {
-  }
   .search-wrapper {
     flex-grow: 1;
   }
   .search-content {
+    padding-left: 8px;
     position: relative;
     display: flex;
-    ${(props) =>
-      props.size === 'small'
-        ? `width: 133.33%;
-    transform: scale(0.75);`
-        : ''}
-    transform-origin: top left;
+    width: 133.33%;
+    transform: scale(0.75);
+    transform-origin: left center;
     .search-inner {
       flex-grow: 1;
-      margin-right: 8px;
+      margin-right: 4px;
       position: relative;
       .ant-select-selector {
-        height: 36px;
+        height: 28px;
+        padding-inline-end: 0;
+        .ant-select-selection-overflow {
+          display: flex;
+          flex-flow: row nowrap;
+        }
       }
     }
   }
 `;
 
-const StructuredFilter: FC<StructuredFilterProps> = (props) => {
+const StructuredFilter = forwardRef<StructuredFilterRef, StructuredFilterProps>((props, ref) => {
   const { showSearchButton = true, size, options, labelDataSource, ...restProps } = props;
   const { t } = useTranslation(['common']);
 
-  const selectRef = useRef<any>(null); // BaseSelectRef
+  const selectRef = useRef<RefSelectProps>(null);
   const structuredOptionRef = useRef<StructuredOptionRef>(null);
 
   const [focus, setFocus] = useState(false);
@@ -74,6 +88,16 @@ const StructuredFilter: FC<StructuredFilterProps> = (props) => {
   const [keyword, setKeyword] = useState<string>();
   const [filterData, setFilterData] = useImmer<StructuredValue[]>([]);
 
+  useImperativeHandle(
+    ref,
+    () => ({
+      clear: () => {
+        setKeyword('');
+        setFilterData([]);
+      },
+    }),
+    [setFilterData],
+  );
   useKeyPress(['Backspace', 'Enter'], (e) => {
     if (focus) {
       if (e.key === 'Enter') return handleSearch();
@@ -135,7 +159,9 @@ const StructuredFilter: FC<StructuredFilterProps> = (props) => {
 
   return (
     <StructuredFilterWrapper size={size}>
-      <div className='prefix'>{props.prefix}</div>
+      <Flex justify='center' align='center' className='prefix'>
+        {props.prefix}
+      </Flex>
 
       <div className='search-wrapper'>
         <div className='search-content'>
@@ -147,7 +173,6 @@ const StructuredFilter: FC<StructuredFilterProps> = (props) => {
             mode='multiple'
             size={size}
             open={!keyword && open}
-            suffixIcon={<SearchOutlined />}
             tagRender={(tagProps) => (
               <StructuredTag
                 {...tagProps}
@@ -177,14 +202,36 @@ const StructuredFilter: FC<StructuredFilterProps> = (props) => {
           />
 
           {showSearchButton && (
-            <Button icon={<SearchOutlined />} onClick={handleSearch} style={{ height: '36px' }}>
-              {showSearchButton !== 'simple' && t('search')}
+            <Button
+              type='text'
+              size={size}
+              icon={<CloseOutlined />}
+              onClick={props.onCancel}
+              style={{ height: '28px', width: '28px' }}
+            >
+              {showSearchButton !== 'simple' && (
+                <Typography.Text style={{ padding: '0 4px' }}>{t('cancel')}</Typography.Text>
+              )}
+            </Button>
+          )}
+
+          {showSearchButton && (
+            <Button
+              type='text'
+              size={size}
+              icon={<SearchOutlined />}
+              onClick={handleSearch}
+              style={{ height: '28px', width: '28px' }}
+            >
+              {showSearchButton !== 'simple' && (
+                <Typography.Text style={{ padding: '0 4px' }}>{t('search')}</Typography.Text>
+              )}
             </Button>
           )}
         </div>
       </div>
     </StructuredFilterWrapper>
   );
-};
+});
 
 export default StructuredFilter;

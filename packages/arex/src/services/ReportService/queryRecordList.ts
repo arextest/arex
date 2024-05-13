@@ -21,7 +21,7 @@ export interface QueryRecordListRes {
 }
 
 export async function queryRecordList(params: QueryRecordListReq) {
-  return request.post<QueryRecordListRes>('/report/report/listRecord', params).then((res) =>
+  return request.post<QueryRecordListRes>('/webApi/report/listRecord', params).then((res) =>
     Promise.resolve({
       total: res.body.totalCount,
       list: res.body.recordList,

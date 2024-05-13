@@ -59,8 +59,8 @@ const InitialValue = {
 const MenuList = styled(Menu)<{ size?: SizeType }>`
   border-inline-end: none !important;
   .ant-menu-item {
-    height: ${(props) => (props.size === 'small' ? '24px' : '28px')};
-    line-height: ${(props) => (props.size === 'small' ? '24px' : '28px')};
+    height: ${(props) => (props.size === 'small' ? '16px' : '24px')};
+    line-height: ${(props) => (props.size === 'small' ? '16px' : '24px')};
   }
 `;
 
@@ -96,7 +96,7 @@ const StructuredOption: ForwardRefRenderFunction<StructuredOptionRef, Structured
 
     if (option?.length && ['number', 'string'].includes(typeof option[0]))
       return option.map<ItemType>((value) => ({
-        label: value as React.Key,
+        label: value as React.ReactNode,
         key: value as React.Key,
       }));
     else return (option as ItemType[]) || [];

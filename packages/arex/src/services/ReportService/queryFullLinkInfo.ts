@@ -15,6 +15,7 @@ export type InfoItem = {
   operationId: string;
   operationName: string;
   isEntry?: boolean;
+  ignore?: boolean | null;
 };
 
 export type QueryFullLinkInfoRes = {
@@ -25,7 +26,7 @@ export type QueryFullLinkInfoRes = {
 export async function queryFullLinkInfo(params: QueryFullLinkInfoReq) {
   return request
     .get<QueryFullLinkInfoRes>(
-      `/report/report/queryFullLinkInfo/${params.planItemId}/${params.recordId}`,
+      `/webApi/report/queryFullLinkInfo/${params.planItemId}/${params.recordId}`,
     )
     .then((res) => res.body);
 }

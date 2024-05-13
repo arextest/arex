@@ -13,5 +13,5 @@ export interface ValidInvitationRes {
 }
 
 export async function validInvitation(params: ValidInvitationReq) {
-  return request.post<ValidInvitationRes>(`/report/filesystem/validInvitation`, params);
+  return request.post<ValidInvitationRes>(`/webApi/filesystem/validInvitation`, params);
 }

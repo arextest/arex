@@ -1,5 +1,6 @@
 import { objectArrayFilter } from '@arextest/arex-core';
 
+import { DependencyInfo } from '@/services/ReportService';
 import { request } from '@/utils';
 
 export type OperationType = 'Global' | 'Interface';
@@ -15,7 +16,7 @@ export type OperationInterface<T extends OperationType = 'Global'> = {
   modifiedTime?: number;
   id: OperationId<T>;
   appId?: string;
-  dependencyList?: string[] | null;
+  dependencyList?: DependencyInfo[] | null;
   serviceId?: string;
   operationName: string;
   operationTypes: string[] | null;
@@ -37,7 +38,7 @@ export type QueryInterfacesListRes<T extends OperationType> = OperationData<T>[]
 
 export async function queryInterfacesList<T extends OperationType>(params: { appId: string }) {
   const res = await request.get<QueryInterfacesListRes<T>>(
-    '/report/config/applicationService/useResultAsList/appId/' + params.appId,
+    '/webApi/config/applicationService/useResultAsList/appId/' + params.appId,
   );
   return objectArrayFilter<OperationInterface<T>>(
     res.body.reduce<OperationInterface<T>[]>((list, cur) => {

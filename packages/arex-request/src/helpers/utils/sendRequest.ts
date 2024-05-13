@@ -1,7 +1,8 @@
 import sdk from 'postman-collection';
 
+import { TIMEOUT_REQUEST, TIMEOUT_SCRIPT } from '../../constant';
 import { ArexEnvironment, ArexRESTRequest } from '../../types';
-import { ArexResponse } from '../../types/ArexResponse';
+import { ArexResponse } from '../../types';
 import { convertToPmBody } from './convertToPmBody';
 
 export async function sendRequest(
@@ -9,7 +10,7 @@ export async function sendRequest(
   environment?: ArexEnvironment,
 ): Promise<ArexResponse> {
   // @ts-ignore
-  const runner = new window.PostmanRuntime.Runner();
+  const runner = new window.ArexRuntime.Runner();
   // arex数据接口转postman数据结构
   const rawCollection = {
     info: {
@@ -56,6 +57,10 @@ export async function sendRequest(
     runner.run(
       collection,
       {
+        timeout: {
+          request: TIMEOUT_REQUEST,
+          script: TIMEOUT_SCRIPT,
+        },
         environment: new sdk.VariableScope({
           name: environment?.name,
           values: environment?.variables,
@@ -130,16 +135,26 @@ export async function sendRequest(
             cookies: any,
             history: any,
           ) {
+            if (err) {
+              reject(err);
+            }
             res = {
               type: 'success', // TODO check response status
               headers: response?.headers.members,
               statusCode: response?.code,
               body: String(response?.stream),
               meta: {
-                responseSize: response.responseSize, // in bytes
-                responseDuration: response.responseTime, // in millis
+                responseSize: response?.responseSize, // in bytes
+                responseDuration: response?.responseTime, // in millis
               },
             };
+          },
+          done: function (err: any) {
+            if (err) {
+              console.log(err);
+              reject(err);
+            }
+            run.host.dispose();
           },
         });
       },

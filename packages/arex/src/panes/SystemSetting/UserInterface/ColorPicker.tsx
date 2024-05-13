@@ -1,9 +1,9 @@
-import { ColorPrimaryPalette, colorPrimaryPalette, Theme } from '@arextest/arex-core';
+import { ColorPrimaryPalette, colorPrimaryPalette } from '@arextest/arex-core';
 import { theme } from 'antd';
 import React, { FC, useMemo } from 'react';
 import { CirclePicker } from 'react-color';
 
-import useUserProfile from '@/store/useUserProfile';
+import { useDarkMode } from '@/hooks';
 
 const { defaultSeed, darkAlgorithm, defaultAlgorithm } = theme;
 
@@ -12,15 +12,15 @@ type ColorPickerProps = {
   onChange?: (color: ColorPrimaryPalette) => void;
 };
 const ColorPicker: FC<ColorPickerProps> = ({ value, onChange }) => {
-  const { theme } = useUserProfile();
+  const darkMode = useDarkMode();
 
   const colors = useMemo(() => {
-    const algorithm = theme === Theme.dark ? darkAlgorithm : defaultAlgorithm;
+    const algorithm = darkMode ? darkAlgorithm : defaultAlgorithm;
 
     return colorPrimaryPalette.map(
       (color) => algorithm(Object.assign(defaultSeed, { colorPrimary: color.key })).colorPrimary,
     );
-  }, [theme]);
+  }, [darkMode]);
 
   return (
     <div style={{ padding: '8px 0 0 0' }}>

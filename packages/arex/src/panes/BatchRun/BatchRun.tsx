@@ -1,6 +1,7 @@
-import { QuestionCircleOutlined, SendOutlined } from '@ant-design/icons';
+import { SendOutlined } from '@ant-design/icons';
 import {
   ArexPaneFC,
+  css,
   EmptyWrapper,
   getLocalStorage,
   Label,
@@ -8,67 +9,49 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { ArexEnvironment, ArexResponse, EnvironmentSelect } from '@arextest/arex-request';
-import { css } from '@emotion/react';
-import { useRequest } from 'ahooks';
-import { Button, Divider, Popover, theme, TreeSelect, Typography } from 'antd';
-import { cloneDeep } from 'lodash';
-import React, { FC, Key, useCallback, useMemo, useState } from 'react';
+import { ArexRESTRequest } from '@arextest/arex-request/src';
+import { useLocalStorageState, useRequest } from 'ahooks';
+import { Button, Divider, Flex, Slider, TreeSelect, TreeSelectProps, Typography } from 'antd';
+import React, { Key, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
-import { CollectionNodeType, WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
+import { BATCH_RUN_QPS_KEY, WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
 import BatchRunResultItem from '@/panes/BatchRun/BatchRunResultItem';
+import RequestTestStatusMap from '@/panes/BatchRun/RequestTestStatusMap';
 import { WorkspaceEnvironmentPair } from '@/panes/Request/EnvironmentDrawer';
 import { EnvironmentService, FileSystemService } from '@/services';
+import { BatchGetInterfaceCaseReq, CollectionType } from '@/services/FileSystemService';
 import { useCollections } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
-import disabledNonCaseNode from './utils/disabledNonCaseNode';
-
-const StatusBlock: FC<{
-  color: string;
-  text?: React.ReactNode;
-  children?: React.ReactNode;
-}> = (props) => {
-  return (
-    <span style={{ marginRight: '4px' }}>
-      <div
-        style={{
-          display: 'inline-block',
-          height: '6px',
-          width: '16px',
-          margin: '2px 4px',
-          backgroundColor: props.color,
-        }}
-      >
-        {props.children}
-      </div>
-      <Typography.Text type='secondary'>{props.text}</Typography.Text>
-    </span>
-  );
-};
-
 const BatchRun: ArexPaneFC = (props) => {
   const { paneKey } = props;
-  const { token } = theme.useToken();
   const { t } = useTranslation('page');
   const [workspaceId, id] = useMemo(() => decodePaneKey(paneKey).id.split('-'), [paneKey]);
+  const { getCollections, getPath } = useCollections();
 
   const { collectionsTreeData, collectionsFlatData } = useCollections();
 
   const [activeEnvironment, setActiveEnvironment] = useState<ArexEnvironment>();
-  const [checkValue, setCheckValue] = useState<Key[]>([]);
+  const [checkValue, setCheckValue] = useState<Key[]>(id ? [id] : []);
 
-  const [responseList, setResponseList] = useImmer<ArexResponse[]>([]);
+  const [processing, setProcessing] = useState(false);
 
-  const treeData = useMemo(
-    () =>
-      disabledNonCaseNode(
-        cloneDeep(
-          id ? collectionsFlatData.get(id)?.children || [] : collectionsTreeData, // collection right click folder to batch run
-        ),
-      ),
-    [collectionsTreeData],
-  );
+  const [casesResults, setCasesResults] = useImmer<ArexRESTRequest[]>([]);
+  const [runResult, setRunResult] = useState<{
+    request: ArexRESTRequest;
+    response?: ArexResponse;
+  }>();
+
+  const [qps, setQps] = useLocalStorageState(BATCH_RUN_QPS_KEY, {
+    defaultValue: 10,
+  });
+
+  const [timestamp, setTimestamp] = useState<number>();
+  const timestampRef = useRef<number>();
+  useEffect(() => {
+    timestampRef.current = timestamp;
+  }, [timestamp]);
 
   const { data: environments } = useRequest(EnvironmentService.getEnvironments, {
     defaultParams: [{ workspaceId }],
@@ -84,45 +67,76 @@ const BatchRun: ArexPaneFC = (props) => {
     },
   });
 
+  const batchGetInterfaceCaseCallback = useCallback(
+    async (res: ArexRESTRequest[], _timestamp?: number) => {
+      async function processPromiseArray(promiseArray: typeof res, qps: number) {
+        for (let i = 0; i < promiseArray.length; i++) {
+          if (timestampRef.current !== _timestamp) {
+            console.log('timestamp changed, stop batch run');
+            setProcessing(false);
+            break;
+          }
+
+          const batch = promiseArray.slice(i, i + 1);
+
+          setCasesResults((result) => {
+            result.push(...batch);
+          });
+
+          if (i + 1 < promiseArray.length) {
+            await new Promise((resolve) => setTimeout(resolve, 1000 / qps));
+          }
+        }
+      }
+
+      setProcessing(true);
+      processPromiseArray(res, qps || 10).then(() => {
+        setProcessing(false);
+        console.log('batch run finished');
+      });
+      setRunResult(undefined);
+      // setCasesResults(res);
+    },
+    [timestamp],
+  );
+
   const {
     data: cases = [],
     loading,
-    runAsync: queryCases,
-  } = useRequest(() =>
-    Promise.all(
-      checkValue.map((key) =>
-        FileSystemService.queryRequest({ id: String(key), nodeType: CollectionNodeType.case }),
-      ),
-    ),
-  );
+    run: batchGetInterfaceCase,
+  } = useRequest(FileSystemService.batchGetInterfaceCase, {
+    manual: true,
+    onBefore: () => {
+      setCasesResults([]);
+    },
+    onSuccess: (res, [params, _timestamp]) => {
+      batchGetInterfaceCaseCallback(res, _timestamp);
+    },
+  });
 
-  const [casesResults, setCasesResults] = useState<React.ReactNode>(null);
   const handleBatchRun = () => {
-    setResponseList(
-      [...Array(checkValue.length)].map(() => ({
-        response: { type: 'loading', headers: undefined },
-      })) as ArexResponse[],
-    );
-    queryCases().then((cases) => setCasesResults(getCasesResults(cases)));
+    const nodes = checkValue
+      .map((item) => {
+        const infoId = item.toString();
+        const node = collectionsFlatData[infoId];
+        if (!node) return;
+        return {
+          infoId,
+          nodeType: node.nodeType,
+        };
+      })
+      .filter(Boolean) as BatchGetInterfaceCaseReq['nodes'];
+    const timestamp = Date.now();
+    setTimestamp(timestamp);
+    batchGetInterfaceCase({ workspaceId, nodes }, timestamp);
   };
 
-  const getCasesResults = useCallback(
-    (cases: Awaited<ReturnType<typeof FileSystemService.queryRequest>>[]) =>
-      cases.map((caseItem, index) => (
-        <BatchRunResultItem
-          id={`batch-run-result-item-${index}`}
-          key={caseItem.id}
-          environment={activeEnvironment}
-          data={caseItem}
-          onResponse={(response) => {
-            setResponseList((res) => {
-              res[index] = response;
-            });
-          }}
-        />
-      )),
-    [activeEnvironment],
-  );
+  const handleTreeLoad: TreeSelectProps<CollectionType>['loadData'] = (treeNode) =>
+    new Promise<void>((resolve) =>
+      resolve(
+        getCollections({ workspaceId, parentIds: getPath(treeNode.infoId).map((item) => item.id) }),
+      ),
+    );
 
   return (
     <div>
@@ -142,19 +156,26 @@ const BatchRun: ArexPaneFC = (props) => {
           multiple
           allowClear
           treeCheckable
-          maxTagCount={3}
-          placeholder={'Please select case'}
+          // maxTagCount={3}
+          size='small'
           fieldNames={{ label: 'nodeName', value: 'infoId', children: 'children' }}
           value={checkValue}
-          treeData={treeData.nodeData}
+          treeData={collectionsTreeData}
+          showCheckedStrategy={TreeSelect.SHOW_PARENT}
+          loadData={handleTreeLoad}
           onChange={setCheckValue}
-          style={{ flex: 1 }}
+          style={{ flex: 1, marginRight: '16px' }}
         />
+
+        <Flex align='center'>
+          <Label>QPS</Label>
+          <Slider min={1} max={20} value={qps} onChange={setQps} style={{ width: '64px' }} />
+        </Flex>
 
         <Button
           type='primary'
-          size='large'
           icon={<SendOutlined />}
+          loading={processing}
           onClick={handleBatchRun}
           style={{ marginLeft: '16px' }}
         >
@@ -162,134 +183,27 @@ const BatchRun: ArexPaneFC = (props) => {
         </Button>
       </div>
 
-      {!!cases.length && (
-        <div style={{ padding: '0 16px 4px', marginBottom: '4px' }}>
-          <div style={{ display: 'flex' }}>
-            {responseList.map((item, index) => {
-              const testAllSuccess = item.testResult?.every((test) => test.passed) ?? true;
-              const testAllFail = item.testResult?.every((test) => !test.passed) ?? false;
+      <RequestTestStatusMap
+        key={checkValue.length} // Add key to force re-render
+        data={casesResults}
+        environment={activeEnvironment}
+        onClick={setRunResult}
+      />
 
-              const requestStatusColor =
-                item.response.type === 'loading'
-                  ? token.colorFillSecondary
-                  : item.response?.statusCode < 300
-                  ? token.colorSuccess
-                  : item.response?.statusCode < 400
-                  ? token.colorWarning
-                  : token.colorError;
-
-              const testResultStatusColor = item.testResult?.length
-                ? testAllSuccess
-                  ? token.colorSuccess
-                  : testAllFail
-                  ? token.colorError
-                  : token.colorWarning
-                : token.colorFillSecondary;
-
-              return (
-                <div
-                  key={index}
-                  onClick={() => {
-                    const element = document.getElementById(`batch-run-result-item-${index}`);
-                    element?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  style={{
-                    width: '16px',
-                    cursor: 'pointer',
-                    margin: `0 ${
-                      responseList.length > 100 ? 2 : responseList.length > 50 ? 3 : 4
-                    }px `,
-                  }}
-                >
-                  <div
-                    style={{
-                      height: '6px',
-                      backgroundColor: requestStatusColor,
-                    }}
-                  />
-                  <div
-                    style={{
-                      height: '6px',
-                      backgroundColor: testResultStatusColor,
-                    }}
-                  />
-                </div>
-              );
-            })}
-
-            <Popover
-              title={
-                <>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <Label>{t('batchRunPage.statusBlockStructure')}</Label>
-                    <div style={{ display: 'inline-block' }}>
-                      <div
-                        style={{
-                          textAlign: 'center',
-                          backgroundColor: token.colorSuccess,
-                          fontSize: '10px',
-                          padding: '0 4px',
-                          color: token.colorWhite,
-                        }}
-                      >
-                        {t('batchRunPage.requestStatus')}
-                      </div>
-                      <div
-                        style={{
-                          textAlign: 'center',
-                          backgroundColor: token.colorError,
-                          fontSize: '10px',
-                          padding: '0 4px',
-                          color: token.colorWhite,
-                        }}
-                      >
-                        {t('batchRunPage.testStatus')}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label>{t('batchRunPage.requestStatus')}</Label>
-                    <StatusBlock
-                      color={token.colorFillSecondary}
-                      text={t('batchRunPage.loading')}
-                    />
-                    <StatusBlock
-                      color={token.colorSuccess}
-                      text={t('batchRunPage.requestSuccess')}
-                    />
-                    <StatusBlock color={token.colorError} text={t('batchRunPage.requestFailed')} />
-                  </div>
-                  <div>
-                    <Label>{t('batchRunPage.testStatus')}</Label>
-                    <StatusBlock
-                      color={token.colorFillSecondary}
-                      text={t('batchRunPage.noTestScript')}
-                    />
-                    <StatusBlock color={token.colorSuccess} text={t('batchRunPage.allPassed')} />
-                    <br />
-                    <StatusBlock color={token.colorWarning} text={t('batchRunPage.SomeFailed')} />
-                    <StatusBlock color={token.colorError} text={t('batchRunPage.allFailed')} />
-                  </div>
-                </>
-              }
-              placement='bottomRight'
-              overlayStyle={{ maxWidth: '500px' }}
-            >
-              <QuestionCircleOutlined style={{ margin: '0 4px' }} />
-            </Popover>
-          </div>
-        </div>
-      )}
       <EmptyWrapper
         loading={loading}
         empty={!cases.length}
         css={css`
-          height: calc(100vh - 226px);
           overflow: auto;
         `}
       >
-        {casesResults}
+        {runResult && (
+          <BatchRunResultItem
+            environment={activeEnvironment}
+            request={runResult.request}
+            response={runResult.response}
+          />
+        )}
       </EmptyWrapper>
     </div>
   );

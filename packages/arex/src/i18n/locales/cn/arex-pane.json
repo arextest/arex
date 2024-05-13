@@ -1,12 +1,13 @@
 {
+  "appSetting": "应用设置",
+  "caseDetail": "Case 详情",
   "collection": "集合",
+  "diffScenes": "差异场景",
   "environment": "环境变量",
   "request": "请求",
   "replay": "回放",
   "replayCase": "回放 Case",
-  "diffScenes": "差异场景",
-  "caseDetail": "Case 详情",
-  "appSetting": "应用设置",
-  "workspace": "工作空间",
-  "systemSetting": "系统设置"
+  "request": "请求",
+  "systemSetting": "系统设置",
+  "workspace": "工作空间"
 }

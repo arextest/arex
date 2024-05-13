@@ -15,7 +15,7 @@ export interface QueryUsersByWorkspaceRes {
 
 export async function queryUsersByWorkspace(params: { workspaceId: string }) {
   return request
-    .post<QueryUsersByWorkspaceRes>(`/report/filesystem/queryUsersByWorkspace`, params)
+    .post<QueryUsersByWorkspaceRes>(`/webApi/filesystem/queryUsersByWorkspace`, params)
     .then((res) =>
       // 排序规则 userName为当前用户 大于 role 大于 userName 首字母
       res.body.users.sort((a, b) => {

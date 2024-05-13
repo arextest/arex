@@ -24,7 +24,6 @@ const TooltipButton: FC<TooltipButtonProps> = (props) => {
       text: token.colorText,
       secondary: token.colorTextSecondary,
       disabled: token.colorTextDisabled,
-      error: token.colorError,
     };
     return props.disabled ? colorMap['disabled'] : props.color ? colorMap[props.color] : undefined;
   }, [token, props.color, props.disabled]);
