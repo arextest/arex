@@ -18,6 +18,7 @@ import {
 
 import port from '../config/port.json';
 import proxy from '../config/proxy-electron-sass.json';
+import { formatRequestLog } from './logger';
 
 // 解析提交的json参数
 const jsonParser = bodyParser.json();
@@ -78,7 +79,7 @@ function defineRouter(organization: string) {
   });
 
   router.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
-    logger.log('[request:/api/createPlan] ', req.body);
+    logger.log('[request:/api/createPlan] ', formatRequestLog(req));
     const axiosConfig = {
       headers: {
         'access-token': req.headers['access-token'],
