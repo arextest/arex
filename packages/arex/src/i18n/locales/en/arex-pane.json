@@ -4,6 +4,7 @@
   "collection": "Collection",
   "diffScenes": "DiffScenes",
   "environment": "Environment",
+  "request": "Request",
   "replay": "Replay",
   "replayCase": "ReplayCase",
   "request": "Request",

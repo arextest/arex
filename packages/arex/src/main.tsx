@@ -10,12 +10,11 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, HashRouter } from 'react-router-dom';
 
 import { isClientProd } from '@/constant';
+import { initSentry } from '@/utils/sentry';
 
 import App from './App';
 
-import { initSentry } from '@/utils/sentry';
-
-initSentry()
+initSentry();
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   React.createElement(isClientProd ? HashRouter : BrowserRouter, {}, <App />),

@@ -1,6 +1,7 @@
 import { css, styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import { Editor } from '@monaco-editor/react';
 import { Button, Typography } from 'antd';
+import { editor } from 'monaco-editor';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -22,7 +23,7 @@ const RequestTestWrapper = styled.div`
   }
 `;
 
-const editorOptions = {
+const editorOptions: editor.IStandaloneEditorConstructionOptions = {
   minimap: {
     enabled: false,
   },
@@ -31,7 +32,7 @@ const editorOptions = {
   automaticLayout: true,
   fontFamily: 'IBMPlexMono, "Courier New", monospace',
   scrollBeyondLastLine: false,
-} as const;
+};
 
 const RequestTests = () => {
   const { store, dispatch } = useArexRequestStore();
@@ -48,6 +49,7 @@ const RequestTests = () => {
       state.request.testScript = state.request.testScript += text;
     });
   };
+
   return (
     <div
       css={css`
@@ -63,6 +65,7 @@ const RequestTests = () => {
           css={css`
             min-width: 0;
             flex: 1;
+            padding-bottom: 8px;
           `}
         >
           <Editor

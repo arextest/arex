@@ -1,4 +1,5 @@
 export * from './agentInstances';
+export * from './expectation';
 export * from './queryConfigTemplate';
 export * from './queryInterfaceResponse';
 export * from './queryRecordSetting';

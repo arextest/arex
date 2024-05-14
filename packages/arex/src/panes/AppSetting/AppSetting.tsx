@@ -14,6 +14,7 @@ import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
+import ExpectationScript from './ExpectationScript';
 import SettingImportYaml from './ImportYaml';
 import SettingOther from './Other';
 import SettingRecord from './Record';
@@ -42,6 +43,11 @@ const AppSetting: ArexPaneFC<{ key: string }> = (props) => {
         key: 'compareConfig',
         label: t('appSetting.compareConfig'),
         children: <CompareConfig appId={appId} />,
+      },
+      {
+        key: 'expectationScript',
+        label: t('appSetting.expectationScript'),
+        children: <ExpectationScript appId={appId} />,
       },
       {
         key: 'importYaml',

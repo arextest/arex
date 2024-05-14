@@ -5,7 +5,7 @@ import { TextProps } from 'antd/es/typography/Text';
 import React, { FC, useState } from 'react';
 
 export interface DiffPathTooltipProps {
-  count?: number;
+  count?: number | boolean;
   bordered?: boolean;
   defaultOnlyFailed?: boolean;
   mode?: 'multiple' | 'single';
@@ -39,7 +39,7 @@ const CaseDiffTooltip: FC<DiffPathTooltipProps> = (props) => {
     <>
       <SpaceBetweenWrapper style={{ margin: '8px 16px' }}>
         <Space size='large' className='diff-path-tooltip-title'>
-          {mode === 'multiple' && (
+          {mode === 'multiple' && count && (
             <div>
               <Label strong>{t('replay.sceneCount')}</Label>
               {count}

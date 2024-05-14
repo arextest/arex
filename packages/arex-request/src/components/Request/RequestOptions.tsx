@@ -76,7 +76,6 @@ const HttpRequestOptions: FC<HttpRequestOptionsProps> = () => {
         ),
         key: 'tests',
         children: <RequestTests />,
-        forceRender: true,
       },
     ];
 
