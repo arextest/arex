@@ -12,8 +12,6 @@ export type ExpectationResult = {
 };
 
 export async function queryExpectationResult(caseId: string) {
-  const res = await request.get<ExpectationResult[]>(
-    '/schedule/report/expectation/result/' + caseId,
-  );
+  const res = await request.get<ExpectationResult[]>('/schedule/expectation/result/' + caseId);
   return res.body;
 }

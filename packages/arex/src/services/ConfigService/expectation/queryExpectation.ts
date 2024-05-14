@@ -38,6 +38,6 @@ export interface ExpectationScript {
 }
 
 export async function queryExpectation(params: { appId: string }) {
-  const res = await request.post<ExpectationScript[]>('/report/config/expectation/query', params);
+  const res = await request.post<ExpectationScript[]>('/webApi/expectation/query', params);
   return res.body;
 }
