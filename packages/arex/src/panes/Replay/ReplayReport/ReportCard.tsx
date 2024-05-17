@@ -19,9 +19,10 @@ import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useState 
 
 import { Icon, StatusTag } from '@/components';
 import { ResultsState } from '@/components/StatusTag';
+import { isClient } from '@/constant';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
-import { ReRunPlanReq } from '@/services/ScheduleService';
+import { ReRunPlanReq, ReRunPlanRes } from '@/services/ScheduleService';
 
 import ProportionBarChart from './ProportionBarChart';
 
@@ -102,17 +103,20 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
     },
   );
 
-  const { run: reRunPlan, loading: retrying } = useRequest(ScheduleService.reRunPlan, {
-    manual: true,
-    onSuccess(res, [{ planId }]) {
-      if (res.result === 1) {
-        message.success(t('message.success', { ns: 'common' }));
-        queryPlanStatistics(planId);
-      } else {
-        message.error(res.desc);
-      }
+  const { run: reRunPlan, loading: retrying } = useRequest(
+    isClient ? ScheduleService.rerunPlanLocal : ScheduleService.rerunPlan,
+    {
+      manual: true,
+      onSuccess(res, [{ planId }]) {
+        if (res.result === 1) {
+          message.success(t('message.success', { ns: 'common' }));
+          queryPlanStatistics(planId);
+        } else {
+          message.error(res.desc);
+        }
+      },
     },
-  });
+  );
 
   useImperativeHandle(
     ref,

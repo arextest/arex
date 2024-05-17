@@ -48,3 +48,4 @@ export * from './preSend';
 export * from './queryCaseId';
 export * from './queryReplayMaxQps';
 export * from './queryReplaySenderParameters';
+export * from './queryRerunCaseId';

@@ -4,10 +4,16 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import type { Request } from 'express';
 
 import { chunkArray, getLocalConfig, setLocalConfig } from './helper';
 import { SendStatusType } from './services/type';
-import type { QueryCaseIdReq, ReplaySenderParameters } from './services';
+import {
+  QueryCaseIdReq,
+  queryReRunCaseId,
+  QueryRerunCaseIdReq,
+  ReplaySenderParameters,
+} from './services';
 import {
   queryReplaySenderParameters,
   queryCaseId,
@@ -78,17 +84,19 @@ function defineRouter(organization: string) {
     );
   });
 
-  router.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
-    logger.log('[request:/api/createPlan] ', formatRequestLog(req));
+  async function handleCreateOrRerunPlan(
+    rerun = false,
+    req: Request<QueryCaseIdReq> | Request<QueryRerunCaseIdReq>,
+    res,
+  ) {
     const axiosConfig = {
       headers: {
         'access-token': req.headers['access-token'],
       },
     };
-
     try {
       const caseResponse = await Promise.all([
-        queryCaseId(req.body, axiosConfig),
+        rerun ? queryReRunCaseId(req.body, axiosConfig) : queryCaseId(req.body, axiosConfig),
         queryReplayMaxQps({ appId: req.body.appId }, axiosConfig),
       ]);
       const [{ result, desc, data }, maxQps = 20] = caseResponse;
@@ -145,6 +153,16 @@ function defineRouter(organization: string) {
       logger.error(err);
       res.send({ desc: err, statusCode: 2, data: { reasonCode: 200 } });
     }
+  }
+
+  router.post<QueryCaseIdReq>('/api/createPlan', jsonParser, async (req, res) => {
+    logger.log('[request:/api/createPlan] ', formatRequestLog(req));
+    await handleCreateOrRerunPlan(false, req, res);
+  });
+
+  router.post<QueryRerunCaseIdReq>('/api/rerunPlan', jsonParser, async (req, res) => {
+    logger.log('[request:/api/rerunPlan] ', formatRequestLog(req));
+    await handleCreateOrRerunPlan(true, req, res);
   });
 }
 

@@ -12,7 +12,7 @@ export type ReRunPlanRes = {
   data: { reasonCode: number; replayPlanId: string };
 };
 
-export function reRunPlan(params: ReRunPlanReq) {
+export function rerunPlan(params: ReRunPlanReq) {
   return new Promise<ReRunPlanRes>((resolve, reject) => {
     return axios
       .post<ReRunPlanRes>('/schedule/reRunPlan', params, {
