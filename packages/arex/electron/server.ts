@@ -39,7 +39,7 @@ server.use((req, res, next) => {
   router(req, res, next);
 });
 
-defineRouter(getLocalConfig('organization'));
+getLocalConfig('organization') && defineRouter(getLocalConfig('organization'));
 
 server.get('/api/organization', (req, res) => {
   res.send({ organization: getLocalConfig('organization') });

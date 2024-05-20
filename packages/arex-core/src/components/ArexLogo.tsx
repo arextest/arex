@@ -7,6 +7,7 @@ import { Theme } from '../theme';
 
 export type ArexLogoProps = {
   href?: string;
+  title?: string;
 };
 const ArexLogo: FC<ArexLogoProps> = (props) => {
   const { theme } = useArexCoreConfig();
@@ -85,7 +86,7 @@ const ArexLogo: FC<ArexLogoProps> = (props) => {
         strong
         style={{ lineHeight: '14px', paddingLeft: '2px', transform: 'scale(0.7)' }}
       >
-        AREX
+        {props.title || 'AREX'}
       </Typography.Text>
     </a>
   );

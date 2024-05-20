@@ -10,6 +10,7 @@ export interface AppHeaderProps {
     | boolean
     | {
         href?: string;
+        title?: string;
       };
   githubStar?: boolean;
   menu?: React.ReactNode;
@@ -45,7 +46,12 @@ const ArexHeader: FC<AppHeaderProps> = (props) => {
   return (
     <HeaderWrapper className={props.className}>
       <div className={'left'}>
-        {logo && <ArexLogo href={typeof logo === 'boolean' ? undefined : logo.href} />}
+        {logo && (
+          <ArexLogo
+            title={typeof logo === 'boolean' ? undefined : logo.title}
+            href={typeof logo === 'boolean' ? undefined : logo.href}
+          />
+        )}
         {githubStar && <GithubStarButton />}
         {props.menu}
       </div>

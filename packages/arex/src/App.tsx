@@ -1,6 +1,6 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { ArexCoreProvider, ArexMenuManager, ArexPaneManager, Theme } from '@arextest/arex-core';
-import { Spin } from 'antd';
+import { message, Spin } from 'antd';
 import React, { useEffect } from 'react';
 
 import { useAuthentication, useTrace } from './hooks';
@@ -12,6 +12,12 @@ import Routes from './router';
 import { useUserProfile } from './store';
 import useClientStore from './store/useClientStore';
 import GlobalStyle from './style/GlobalStyle';
+
+//  global message config
+message.config({
+  duration: 2,
+  maxCount: 1,
+});
 
 // set default loading indicator
 Spin.setDefaultIndicator(<LoadingOutlined spin />);
