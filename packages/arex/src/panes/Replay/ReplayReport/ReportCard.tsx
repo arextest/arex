@@ -14,12 +14,13 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Badge, Card, Dropdown, Flex, Select, Space, theme, Typography } from 'antd';
+import { App, Badge, Card, Divider, Dropdown, Flex, Select, Space, theme, Typography } from 'antd';
 import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react';
 
 import { Icon, StatusTag } from '@/components';
 import { ResultsState } from '@/components/StatusTag';
 import { isClient } from '@/constant';
+import AgentScript from '@/panes/Replay/ReplayReport/AgentScript';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
 import { ReRunPlanReq, ReRunPlanRes } from '@/services/ScheduleService';
@@ -219,7 +220,22 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
   };
 
   return (
-    <EmptyWrapper bordered loading={init} empty={!planStatistics.length}>
+    <EmptyWrapper
+      bordered
+      loading={init}
+      empty={!planStatistics.length}
+      description={
+        <>
+          <Typography.Text
+            strong
+            style={{ display: 'block', fontSize: token.fontSizeLG, margin: '16px 0' }}
+          >
+            No report found, please mount the agent and run a test.
+          </Typography.Text>
+          <AgentScript appId={props.appId} />
+        </>
+      }
+    >
       <Card
         // size='small'
         title={

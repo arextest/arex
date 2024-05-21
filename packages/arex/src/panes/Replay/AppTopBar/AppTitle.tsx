@@ -3,6 +3,8 @@ import { styled, TooltipButton, useTranslation } from '@arextest/arex-core';
 import { Badge, Button, Popover, Skeleton, Typography } from 'antd';
 import React, { createElement, ReactNode } from 'react';
 
+import AgentScript from '@/panes/Replay/ReplayReport/AgentScript';
+
 import CompareNoise from './CompareNoise';
 
 const AppTitle = styled(
@@ -51,16 +53,7 @@ const AppTitle = styled(
               trigger={['click']}
               overlayStyle={{ width: '320px' }}
               overlayInnerStyle={{ padding: '8px' }}
-              title={
-                <div style={{ padding: '8px' }}>
-                  <Typography.Text strong style={{ display: 'block' }}>
-                    Agent Script :
-                  </Typography.Text>
-                  <Typography.Text code copyable>
-                    {`java -javaagent:</path/to/arex-agent.jar> -Darex.service.name=${props.appId} -Darex.storage.service.host=<storage.service.host:port> -jar <your-application.jar>`}
-                  </Typography.Text>
-                </div>
-              }
+              title={<AgentScript appId={props.appId} />}
             >
               <Button size='small' type='text' icon={<CodeOutlined />} />
             </Popover>

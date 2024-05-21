@@ -5,25 +5,14 @@ import proxy from '../../config/proxy-electron-sass.json';
 import { getLocalConfig } from '../helper';
 import { formatRequestLog, formatResponseLog } from '../logger';
 
-export const ScheduleAxios = axios.create({
-  baseURL: proxy
-    .find((item) => item.path === '/schedule')
-    ?.target.replace('{{companyDomainName}}', getLocalConfig('organization')),
-  headers: {
-    'arex-tenant-code': getLocalConfig('organization'),
-  },
-});
-
-export const ReportAxios = axios.create({
-  baseURL: proxy
-    .find((item) => item.path === '/webApi')
-    ?.target.replace('{{companyDomainName}}', getLocalConfig('organization')),
-  headers: {
-    'arex-tenant-code': getLocalConfig('organization'),
-  },
-});
+export const ScheduleAxios = axios.create();
+export const ReportAxios = axios.create();
 
 ScheduleAxios.interceptors.request.use((request) => {
+  request.baseURL = proxy
+    .find((item) => item.path === '/schedule')
+    ?.target.replace('{{companyDomainName}}', getLocalConfig('organization'));
+  request.headers.set('arex-tenant-code', getLocalConfig('organization'));
   logger.log('[ScheduleAxios request]', formatRequestLog(request));
   return request;
 });
@@ -34,6 +23,10 @@ ScheduleAxios.interceptors.response.use((response) => {
 });
 
 ReportAxios.interceptors.request.use((request) => {
+  request.baseURL = proxy
+    .find((item) => item.path === '/webApi')
+    ?.target.replace('{{companyDomainName}}', getLocalConfig('organization'));
+  request.headers.set('arex-tenant-code', getLocalConfig('organization'));
   logger.log('[ScheduleAxios request]', formatRequestLog(request));
   return request;
 });

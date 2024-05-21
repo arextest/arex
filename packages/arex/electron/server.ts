@@ -39,7 +39,8 @@ server.use((req, res, next) => {
   router(req, res, next);
 });
 
-getLocalConfig('organization') && defineRouter(getLocalConfig('organization'));
+const initialOrganization = getLocalConfig('organization');
+initialOrganization && defineRouter(initialOrganization);
 
 server.get('/api/organization', (req, res) => {
   res.send({ organization: getLocalConfig('organization') });
@@ -71,7 +72,6 @@ function defineRouter(organization: string) {
       createProxyMiddleware({
         target: item.target.replace('{{companyDomainName}}', organization),
         changeOrigin: true,
-        // pathRewrite: { [item.path]: '/api' },
       }),
     );
     router.use(
@@ -79,7 +79,6 @@ function defineRouter(organization: string) {
       createProxyMiddleware({
         target: item.target.replace('{{companyDomainName}}', organization),
         changeOrigin: true,
-        // pathRewrite: () => item.target + '/vi/health',
       }),
     );
   });
