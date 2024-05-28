@@ -2,8 +2,12 @@ import { BugOutlined } from '@ant-design/icons';
 import {
   css,
   RequestMethodIcon,
+  Segmented,
   SpaceBetweenWrapper,
+  Theme,
   TooltipButton,
+  tryParseJsonString,
+  tryStringifyJson,
   useTranslation,
 } from '@arextest/arex-core';
 import type { ArexEnvironment, ArexRESTRequest } from '@arextest/arex-request';
@@ -14,12 +18,16 @@ import {
   ResponseMeta,
   TestResult,
 } from '@arextest/arex-request';
+import { Editor } from '@monaco-editor/react';
 import { Card, Divider, Space, Typography } from 'antd';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 
 import { CollectionNodeType, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
-import { useWorkspaces } from '@/store';
+import EditableKeyValueTable, {
+  useColumns,
+} from '@/panes/Request/EnvironmentDrawer/EditableKeyValueTable';
+import { useUserProfile, useWorkspaces } from '@/store';
 
 const { Text } = Typography;
 
@@ -36,9 +44,16 @@ function replaceBetween(string: string, start: number, end: number, what: string
 const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
   const { method, name, endpoint } = props.request;
   const navPane = useNavPane();
+
+  const { theme } = useUserProfile();
   const { activeWorkspaceId } = useWorkspaces();
 
   const { t } = useTranslation('page');
+
+  const [requestSegmentValue, setRequestSegmentValue] = useState('body');
+  const [responseSegmentValue, setResponseSegmentValue] = useState('body');
+
+  const columns = useColumns(undefined, false);
 
   const nodeType = useMemo(() => {
     const length = props.request.parentPath.length;
@@ -90,7 +105,7 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
             <Text type='secondary'>{realEndpoint}</Text>
           </Space>
           <TooltipButton
-            title='Debug'
+            title={t('components:replay.debug')}
             size='small'
             type='text'
             color='primary'
@@ -101,7 +116,78 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
 
         <ResponseMeta response={props.response?.response} />
 
-        <div style={{ minHeight: '32px' }}>
+        <div style={{ padding: '8px 0' }}>
+          <div style={{ margin: '4px' }}>
+            <Typography.Title level={5} style={{ display: 'inline', marginRight: '8px' }}>
+              {t('common:request')}
+            </Typography.Title>
+            <Segmented
+              value={requestSegmentValue}
+              options={['body', 'header']}
+              onChange={(value) => setRequestSegmentValue(value.toString())}
+            />
+          </div>
+
+          {requestSegmentValue === 'body' ? (
+            <Editor
+              height={200}
+              language='json'
+              theme={theme === Theme.dark ? 'vs-dark' : 'light'}
+              value={
+                props.request.body.body &&
+                tryStringifyJson(tryParseJsonString(props.request.body.body), { prettier: true })
+              }
+            />
+          ) : (
+            <EditableKeyValueTable
+              showHeader
+              pagination={false}
+              dataSource={props.request.headers}
+              columns={columns as any}
+            />
+          )}
+        </div>
+
+        <div style={{ padding: '8px 0' }}>
+          <div style={{ margin: '4px' }}>
+            <Typography.Title level={5} style={{ display: 'inline', marginRight: '8px' }}>
+              {t('common:response')}
+            </Typography.Title>
+            <Segmented
+              value={responseSegmentValue}
+              options={['body', 'header']}
+              onChange={(value) => setResponseSegmentValue(value.toString())}
+            />
+          </div>
+          {responseSegmentValue === 'body' ? (
+            <Editor
+              height={200}
+              language='json'
+              theme={theme === Theme.dark ? 'vs-dark' : 'light'}
+              value={
+                // @ts-ignore
+                props.response?.response?.body &&
+                // @ts-ignore
+                tryStringifyJson(tryParseJsonString(props.response?.response?.body), {
+                  prettier: true,
+                })
+              }
+            />
+          ) : (
+            <EditableKeyValueTable
+              showHeader
+              pagination={false}
+              // @ts-ignore
+              dataSource={props.response?.response?.headers}
+              columns={columns as any}
+            />
+          )}
+        </div>
+
+        <div style={{ padding: '8px 0', minHeight: '32px' }}>
+          <Typography.Title level={5} style={{ display: 'inline' }}>
+            {t('components:http.test')}
+          </Typography.Title>
           <div>
             {props.response?.testResult?.length ? (
               <TestResult testResult={props.response.testResult} />
