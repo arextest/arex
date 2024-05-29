@@ -80,6 +80,7 @@ const CreatePlanModal = forwardRef<CreatePlanModalRef, CreatePlanModalProps>(
     const caseSourceRange = Form.useWatch('caseSourceRange', form);
     const operationList = Form.useWatch('operationList', form);
     const caseCountLimit = Form.useWatch('caseCountLimit', form);
+    const caseTags = Form.useWatch('caseTags', form);
 
     const [targetUrlSource, setTargetUrlSource] = useLocalStorageState<Record<string, string>>(
       TARGET_HOST_AUTOCOMPLETE_KEY,
@@ -113,8 +114,12 @@ const CreatePlanModal = forwardRef<CreatePlanModalRef, CreatePlanModalProps>(
       operationList?.length && url.searchParams.append('operationIds', operationList.join(','));
       typeof caseCountLimit === 'number' &&
         url.searchParams.append('caseCountLimit', caseCountLimit.toString());
+
+      Object.keys(caseTags || {}).length &&
+        url.searchParams.append('caseTags', JSON.stringify(caseTags));
+
       return url.toString();
-    }, [appId, planName, caseSourceRange, operationList, caseCountLimit]);
+    }, [appId, planName, caseSourceRange, operationList, caseCountLimit, caseTags]);
 
     /**
      * 创建回放
