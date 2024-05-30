@@ -84,7 +84,12 @@ const ArexLogo: FC<ArexLogoProps> = (props) => {
       </svg>
       <Typography.Text
         strong
-        style={{ lineHeight: '14px', paddingLeft: '2px', transform: 'scale(0.7)' }}
+        style={{
+          lineHeight: '14px',
+          textWrap: 'nowrap',
+          paddingLeft: '2px',
+          transform: 'scale(0.7)',
+        }}
       >
         {props.title || 'AREX'}
       </Typography.Text>

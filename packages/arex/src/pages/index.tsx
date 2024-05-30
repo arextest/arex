@@ -141,6 +141,7 @@ const Home: FC = () => {
     <div ref={arexMainWrapperRef}>
       {!zen && (
         <ArexHeader
+          githubStar={!organization}
           logo={{ href: URL_AREX, title: organization ? `AREX.${organization}` : 'AREX' }}
           extra={<UserMenu />}
         />
