@@ -77,7 +77,7 @@
     "keys": "节点",
     "maxQPS": "最大QPS",
     "methodName": "方法名",
-    "methodNameTooltip": "需要 Mock 的方法名",
+    "methodNameTooltip": "需要 Mock 的方法名，不配置则mock该类中全部Public有参方法，不建议为空，",
     "mockTips": "\"body\"为json字符串时会自动转换成json对象，保存时还原。",
     "noEncryptionNodes": "加密节点为空",
     "noIgnoredNodes": "忽略节点为空",

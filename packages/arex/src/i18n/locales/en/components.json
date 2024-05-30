@@ -78,7 +78,7 @@
     "keys": "keys",
     "maxQPS": "Max QPS",
     "methodName": "Method Name",
-    "methodNameTooltip": "The method name to be mocked.",
+    "methodNameTooltip": "The method name to be mocked, if not fill will mock all public and has parameter method in this class. Not recommended to be empty.",
     "mockTips": "When \"body\" is a json string, it will be automatically converted into a json object, and restored when saving.",
     "noDesensitizationNodes": "No Desensitization Nodes",
     "noIgnoredNodes": "No Ignored Nodes",

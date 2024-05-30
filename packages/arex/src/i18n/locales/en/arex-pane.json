@@ -8,6 +8,6 @@
   "replayCase": "ReplayCase",
   "request": "Request",
   "systemSetting": "SystemSetting",
-  "workspace": "Workspace",
-  "traffic": "Traffic"
+  "traffic": "Traffic",
+  "workspace": "Workspace"
 }
