@@ -36,11 +36,11 @@ let router: Router = undefined;
 const server = express();
 server.use(cors());
 server.use((req, res, next) => {
-  router(req, res, next);
+  router?.(req, res, next);
 });
 
-const initialOrganization = getLocalConfig('organization');
-initialOrganization && defineRouter(initialOrganization);
+const initialOrganization = getLocalConfig('organization') || 'arex';
+defineRouter(initialOrganization);
 
 server.get('/api/organization', (req, res) => {
   res.send({ organization: getLocalConfig('organization') });
@@ -166,11 +166,11 @@ function defineRouter(organization: string) {
 }
 
 // 健康检查
-router.get('/vi/health', (req, res) => {
+router?.get('/vi/health', (req, res) => {
   res.end(`365ms`);
 });
 
-router.get('/env', (req, res) => {
+router?.get('/env', (req, res) => {
   res.send(proxy);
 });
 

@@ -111,3 +111,5 @@ export const URL_SLACK =
   'https://join.slack.com/t/arexcommunity/shared_invite/zt-1pb0qukhd-tnLVZN3aisHfIo5SzBjj0Q';
 export const URL_CHROME_EXTENSION =
   'https://chromewebstore.google.com/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj';
+
+export const STORAGE_SERVER_URL = 'arex-storage-alb-1475960894.us-west-2.elb.amazonaws.com';
