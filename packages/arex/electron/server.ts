@@ -150,7 +150,7 @@ function defineRouter(organization: string) {
       }
     } catch (err) {
       logger.error(err);
-      res.send({ desc: err, statusCode: 2, data: { reasonCode: 200 } });
+      res.send({ desc: err?.message, statusCode: 2, data: { reasonCode: 200 } });
     }
   }
 

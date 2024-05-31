@@ -53,7 +53,7 @@ export type CreatePlanReq = {
 export type CreatePlanRes = {
   desc: string;
   result: number;
-  data: { reasonCode: number; replayPlanId: string };
+  data: { reasonCode: number; replayPlanId?: string };
 };
 
 export function createPlan(params: CreatePlanReq) {

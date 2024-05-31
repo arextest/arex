@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ACCESS_TOKEN_KEY, APP_ID_KEY } from '@/constant';
 import { useClientStore } from '@/store';
 
-export type ReRunPlanReq = { planId: string; planItemId?: string };
+export type ReRunPlanReq = { appId: string; planId: string; planItemId?: string };
 
 export type ReRunPlanRes = {
   desc: string;

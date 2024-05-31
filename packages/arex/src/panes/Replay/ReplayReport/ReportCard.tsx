@@ -379,7 +379,9 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
                 items: extraMenuItems,
                 onClick: extraMenuHandler,
               }}
-              onClick={() => props.planId && reRunPlan({ planId: props.planId })}
+              onClick={() =>
+                props.planId && reRunPlan({ appId: props.appId, planId: props.planId })
+              }
             >
               <RedoOutlined />
               {t('replay.rerun')}
