@@ -36,11 +36,11 @@ export type CollectionAction = {
   getCollections: (
     params?: {
       workspaceId?: string;
-      parentIds?: string[];
       infoId?: string;
       nodeType?: CollectionNodeType;
     },
     options?: {
+      mode?: 'search' | 'click';
       merge?: boolean;
     },
   ) => Promise<void>;
@@ -50,7 +50,7 @@ export type CollectionAction = {
   addCollectionNode: (params: {
     infoId: string;
     nodeName: string;
-    parentIds?: string[];
+    parentId?: string;
     nodeType: CollectionNodeType;
     caseSourceType?: CaseSourceType;
   }) => void;
@@ -173,10 +173,11 @@ const useCollections = create(
      * @param id
      * @param flatArray
      */
-    function getPathInFlatArray(id: string, flatArray: CollectionFlatMapType) {
-      let node: CollectionFlatType | undefined = flatArray[id];
-
+    function getPathInFlatArray(id: string | undefined, flatArray: CollectionFlatMapType) {
       const path: CollectionPath[] = [];
+      if (!id) return path;
+
+      let node: CollectionFlatType | undefined = flatArray[id];
 
       while (node) {
         path.unshift({ name: node.nodeName, id: node.infoId });
@@ -192,8 +193,8 @@ const useCollections = create(
 
       // Action
       getCollections: async (
-        { workspaceId, parentIds, infoId, nodeType } = {},
-        { merge = true } = {},
+        { workspaceId, infoId, nodeType } = {},
+        { merge = true, mode = 'click' } = {},
       ) => {
         const id = workspaceId || useWorkspaces.getState().activeWorkspaceId;
         if (!id) return;
@@ -201,12 +202,18 @@ const useCollections = create(
         if (!get().loading) set({ loading: true });
 
         let data;
-        if (!!infoId && !!nodeType) {
+        if (mode === 'click') {
+          // click collection
+          data = (
+            await getCollectionItem({
+              workspaceId: id,
+              parentInfoId: infoId,
+              parentNodeType: nodeType,
+            })
+          ).children;
+        } else if (mode === 'search' && infoId && nodeType) {
           // click search
           data = (await getCollectionItemTree({ workspaceId: id, infoId, nodeType })).roots;
-        } else if (typeof parentIds !== 'string') {
-          // click collection
-          data = (await getCollectionItem({ workspaceId: id, parentIds })).children;
         }
 
         if (!data) return;
@@ -216,21 +223,20 @@ const useCollections = create(
         const treeData = get().collectionsTreeData;
 
         if (merge) {
-          if (infoId) {
+          if (!infoId || !nodeType) {
+            mergedData = mergeRootLevel(treeData, mergedData);
+          } else if (mode === 'click') {
+            mergedData = appendChildrenByParent(
+              treeData,
+              mergedData,
+              getPathInFlatArray(infoId, get().collectionsFlatData).map((item) => item.id),
+            );
+          } else {
             const path = getPathInFlatArray(infoId, treeToMap(generateRootNode(mergedData)))
               .map((item) => item.id)
               .filter((item) => item !== infoId);
             get().setLoadedKeys(path);
             get().setExpandedKeys(path);
-          } else if (parentIds?.length) {
-            const parentId = parentIds[parentIds.length - 1];
-            mergedData = appendChildrenByParent(
-              treeData,
-              mergedData,
-              getPathInFlatArray(parentId, get().collectionsFlatData).map((item) => item.id),
-            );
-          } else {
-            mergedData = mergeRootLevel(treeData, mergedData);
           }
         }
 
@@ -251,7 +257,7 @@ const useCollections = create(
       },
       getPath: (infoId) => getPathInFlatArray(infoId, get().collectionsFlatData),
 
-      addCollectionNode: ({ infoId, nodeName, nodeType, parentIds, caseSourceType }) => {
+      addCollectionNode: ({ infoId, nodeName, nodeType, parentId, caseSourceType }) => {
         function createNode(params: {
           infoId: string;
           nodeName: string;
@@ -278,8 +284,12 @@ const useCollections = create(
           const treeData = state.collectionsTreeData;
           const flatData = state.collectionsFlatData;
           const node = createNode({ infoId, nodeName, nodeType, caseSourceType });
-          state.collectionsTreeData = appendChildrenByParent(treeData, node, parentIds || []);
-          flatData[infoId] = { pid: parentIds?.[parentIds.length - 1] || ROOT_KEY, ...node };
+          state.collectionsTreeData = appendChildrenByParent(
+            treeData,
+            node,
+            getPathInFlatArray(parentId, get().collectionsFlatData).map((item) => item.id),
+          );
+          flatData[infoId] = { pid: parentId || ROOT_KEY, ...node };
         });
       },
       removeCollectionNode: (infoId) => {
@@ -450,9 +460,6 @@ const useCollections = create(
           const id = path.pop();
           const parentId = path.pop();
 
-          const toParentPath = parentId
-            ? getPathInFlatArray(parentId, flatData).map((item) => item.id)
-            : [];
           const parentChildren = parentId ? flatData[parentId]?.children : treeData;
           if (!parentChildren) return;
 
@@ -460,9 +467,11 @@ const useCollections = create(
 
           FileSystemService.moveCollectionItem({
             id: workspaceId,
-            fromNodePath,
-            toParentPath,
             toIndex,
+            fromInfoId: dragKey.toString(),
+            fromNodeType: dragObj!.nodeType,
+            toParentInfoId: parentId,
+            toParentNodeType: parentId ? flatData[parentId]?.nodeType : undefined,
           }).then((success) => {
             if (!success) {
               // move failed, reset state

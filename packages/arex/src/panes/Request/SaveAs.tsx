@@ -32,7 +32,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   const { message } = App.useApp();
   const userName = getLocalStorage<string>(EMAIL_KEY);
 
-  const { collectionsFlatData, getPath } = useCollections();
+  const { collectionsFlatData, addCollectionNode, getPath } = useCollections();
 
   const [selectLocationRef] = useAutoAnimate();
 
@@ -70,21 +70,27 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   );
 
   const { run: addCollectionItem } = useRequest(
-    (params: {
-      nodeName: string;
-      nodeType: CollectionNodeType;
-      caseSourceType?: number;
-      parentPath: string[];
-    }) =>
+    (params: { nodeName: string; nodeType: CollectionNodeType; caseSourceType?: number }) =>
       FileSystemService.addCollectionItem({
         ...params,
         userName: userName as string,
         id: props.workspaceId,
+        parentInfoId: selectedKeys[0],
+        parentNodeType: collectionsFlatData[selectedKeys[0]]?.nodeType,
       }),
     {
       manual: true,
-      onSuccess: (res) => {
+      onSuccess: (res, [{ nodeName, nodeType, caseSourceType }]) => {
         setOpen(false);
+
+        addCollectionNode({
+          infoId: res.infoId,
+          nodeName,
+          nodeType,
+          parentId: selectedKeys[0],
+          caseSourceType,
+        });
+
         props.onCreate?.(res.infoId);
       },
     },
@@ -100,7 +106,6 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
             nodeName: nodeName!,
             nodeType: props.nodeType,
             caseSourceType: CaseSourceType.AREX,
-            parentPath: res.path,
           });
         }
       },
@@ -114,7 +119,10 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
           return message.info(t('http.selectSaveLocation'));
         const params = defaultPath
           ? { appName: props.appName, interfaceName: props.interfaceName, nodeName: props.title }
-          : { path: collectionPath.map((i) => i.id) };
+          : {
+              parentInfoId: selectedKeys[0],
+              parentNodeType: collectionsFlatData[selectedKeys[0]]?.nodeType,
+            };
 
         addItemsByAppNameAndInterfaceName({
           recordId: props.recordId,
@@ -143,7 +151,6 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
       nodeName,
       nodeType: props.nodeType,
       caseSourceType: props.recordId ? CaseSourceType.AREX : CaseSourceType.CASE,
-      parentPath: collectionPath.map((i) => i.id),
     });
   };
 

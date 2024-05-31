@@ -70,13 +70,8 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     selectable = [CollectionNodeType.folder, CollectionNodeType.interface, CollectionNodeType.case],
   } = props;
   const { activeWorkspaceId } = useWorkspaces();
-  const {
-    getPath,
-    addCollectionNode,
-    renameCollectionNode,
-    removeCollectionNode,
-    duplicateCollectionNode,
-  } = useCollections();
+  const { addCollectionNode, renameCollectionNode, removeCollectionNode, duplicateCollectionNode } =
+    useCollections();
   const { removePane } = useMenusPanes();
 
   const { modal } = App.useApp();
@@ -90,32 +85,27 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   const [editMode, setEditMode] = useState(false);
   const [nodeName, setNodeName] = useState(props.data.nodeName);
 
-  const nodePath = useMemo(
-    () => getPath(props.data.infoId).map((path) => path.id),
-    [getPath, props.data.infoId],
-  );
-
   const { run: addCollectionItem } = useRequest(
     (params: { nodeName: string; nodeType: CollectionNodeType; caseSourceType?: number }) =>
       FileSystemService.addCollectionItem({
         ...params,
         userName,
         id: activeWorkspaceId,
-        parentPath: nodePath,
+        parentInfoId: props.data.infoId,
+        parentNodeType: props.data.nodeType,
       }),
     {
       manual: true,
       onSuccess: async (res, [{ caseSourceType, nodeName, nodeType }]) => {
         // case inherit interface
-        const parentId = nodePath[nodePath.length - 1] as string;
         if (caseSourceType === CaseSourceType.CASE)
-          await createCaseInheritInterface(parentId, res.infoId);
+          await createCaseInheritInterface(props.data.infoId, res.infoId);
 
         addCollectionNode({
           infoId: res.infoId,
           nodeName,
           nodeType,
-          parentIds: nodePath,
+          parentId: props.data.infoId,
           caseSourceType,
         });
         props.onAddNode?.(res.infoId, nodeType);
@@ -124,11 +114,11 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   );
 
   const { run: duplicateCollectionItem } = useRequest(
-    (path: string[]) =>
+    () =>
       FileSystemService.duplicateCollectionItem({
         id: activeWorkspaceId,
-        path,
-        userName,
+        infoId: props.data.infoId,
+        nodeType: props.data.nodeType,
       }),
     {
       manual: true,
@@ -139,12 +129,12 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   );
 
   const { run: rename } = useRequest(
-    (path: string[]) =>
+    () =>
       FileSystemService.renameCollectionItem({
-        path,
-        userName,
-        newName: nodeName,
         id: activeWorkspaceId,
+        infoId: props.data.infoId,
+        nodeType: props.data.nodeType,
+        newName: nodeName,
       }),
     {
       manual: true,
@@ -157,25 +147,17 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     },
   );
 
-  const { run: removeCollectionItem } = useRequest(
-    (removeNodePath: string[]) =>
-      FileSystemService.removeCollectionItem({
-        id: activeWorkspaceId,
-        removeNodePath,
-        userName,
-      }),
-    {
-      manual: true,
-      onSuccess: (success) => {
-        if (success) {
-          const id = `${activeWorkspaceId}-${props.data.nodeType}-${props.data.infoId}`;
-          const paneKey = encodePaneKey({ id, type: PanesType.REQUEST });
-          removePane(paneKey);
-          removeCollectionNode(props.data.infoId);
-        }
-      },
+  const { run: removeCollectionItem } = useRequest(FileSystemService.removeCollectionItem, {
+    manual: true,
+    onSuccess: (success) => {
+      if (success) {
+        const id = `${activeWorkspaceId}-${props.data.nodeType}-${props.data.infoId}`;
+        const paneKey = encodePaneKey({ id, type: PanesType.REQUEST });
+        removePane(paneKey);
+        removeCollectionNode(props.data.infoId);
+      }
     },
-  );
+  });
 
   const { runAsync: createCaseInheritInterface } = useRequest(
     (id: string, infoId: string) =>
@@ -285,7 +267,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         {
           key: 'duplicate',
           label: (
-            <a onClick={() => duplicateCollectionItem(nodePath)}>
+            <a onClick={duplicateCollectionItem}>
               {t('collection.duplicate', { ns: 'components' })}
             </a>
           ),
@@ -302,7 +284,12 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
                   okText: 'Yes',
                   okType: 'danger',
                   cancelText: 'No',
-                  onOk: () => removeCollectionItem(nodePath),
+                  onOk: () =>
+                    removeCollectionItem({
+                      id: activeWorkspaceId,
+                      infoId: props.data.infoId,
+                      nodeType: props.data.nodeType,
+                    }),
                 });
               }}
             >
@@ -353,7 +340,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
             <Space style={{ display: 'flex' }}>
               <Input
                 value={nodeName}
-                onPressEnter={() => rename(nodePath)}
+                onPressEnter={rename}
                 onChange={(e) => setNodeName(e.currentTarget.value)}
                 style={{ padding: '0 4px' }}
               />
@@ -364,7 +351,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
                   setNodeName(props.data.nodeName);
                 }}
               />
-              <SmallTextButton icon={<CheckOutlined />} onClick={() => rename(nodePath)} />
+              <SmallTextButton icon={<CheckOutlined />} onClick={rename} />
             </Space>
           ) : (
             <SearchHighLight text={props.data.nodeName} keyword={props.keyword} />

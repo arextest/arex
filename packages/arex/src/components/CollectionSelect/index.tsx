@@ -99,18 +99,16 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     },
   );
 
-  const handleLoadData: TreeProps<CollectionType>['loadData'] = (treeNode) => {
-    const parentIds = getPath(treeNode.infoId).map((item) => item.id);
-
-    return new Promise<void>((resolve) =>
+  const handleLoadData: TreeProps<CollectionType>['loadData'] = (treeNode) =>
+    new Promise<void>((resolve) =>
       resolve(
         getCollections({
           workspaceId: activeWorkspaceId,
-          parentIds,
+          infoId: treeNode.infoId,
+          nodeType: treeNode.nodeType,
         }),
       ),
     ).catch((e) => console.error(e));
-  };
 
   const dataList: { key: string; title: string; labelIds: string | null }[] = useMemo(
     () =>
