@@ -9,6 +9,7 @@ import Response from './components/Response';
 import i18n from './i18n';
 import { RequestPropsProvider, RequestStoreProvider } from './providers';
 import { ArexRESTRequest } from './types';
+import {GenReq, GenRes} from "./types/ArexAITypes";
 
 export interface Tab extends Omit<TabPaneProps, 'tab'> {
   key: string;
@@ -32,6 +33,7 @@ export interface ArexRequestProps extends RequestProps {
   language?: string;
   data?: ArexRESTRequest;
   config?: HttpConfig;
+  gptProvider?: (r: GenReq) => Promise<GenRes>;
 }
 
 export interface ArexRequestRef extends NavigationBarRef {}

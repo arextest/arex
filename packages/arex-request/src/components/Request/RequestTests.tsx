@@ -1,10 +1,11 @@
+import { OpenAIOutlined } from '@ant-design/icons';
 import { css, styled, Theme, useArexCoreConfig } from '@arextest/arex-core';
 import { Editor } from '@monaco-editor/react';
 import { Button, Typography } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-import { useArexRequestStore } from '../../hooks';
+import { AIChatDrawer } from './AI/AIChatDrawer';
+import {useArexRequestProps, useArexRequestStore} from '../../hooks';
 import { testCodeSnippet } from './snippets';
 
 const { Text } = Typography;
@@ -35,6 +36,7 @@ const editorOptions = {
 
 const RequestTests = () => {
   const { store, dispatch } = useArexRequestStore();
+  const { gptProvider } = useArexRequestProps();
   const { t } = useTranslation();
   const { theme } = useArexCoreConfig();
 
@@ -45,9 +47,12 @@ const RequestTests = () => {
 
   const addTest = (text: string) => {
     dispatch((state) => {
-      state.request.testScript = state.request.testScript += text;
+      state.request.testScript = state.request.testScript += '\n' + text;
     });
   };
+
+  const [AIDrawerOpen, setOpen] = useState<boolean>(false);
+
   return (
     <div
       css={css`
@@ -63,8 +68,17 @@ const RequestTests = () => {
           css={css`
             min-width: 0;
             flex: 1;
+            position: relative;
           `}
         >
+          { gptProvider &&
+            <Button
+              icon={<OpenAIOutlined/>}
+              onClick={() => setOpen(true)}
+              type='primary'
+              style={{position: 'absolute', right: 24, top: 24, zIndex: 999}}
+            />
+          }
           <Editor
             theme={theme === Theme.dark ? 'vs-dark' : 'light'}
             options={editorOptions}
@@ -86,6 +100,7 @@ const RequestTests = () => {
             flex-direction: column;
           `}
         >
+          <AIChatDrawer AIDrawerOpen={AIDrawerOpen} setOpen={setOpen} addTest={addTest} />
           <Text type={'secondary'}>
             Test scripts are written in JavaScript, and are run after the response is received.
           </Text>

@@ -80,6 +80,13 @@ export default defineConfig(async ({ mode }) => {
             changeOrigin: true,
             rewrite: isElectron ? undefined : () => item.target + '/vi/health',
           };
+
+          // feature check
+          proxyMap['/checkFeature' + item.path] = {
+            target: isElectron ? electronServerUrl : item.target,
+            changeOrigin: true,
+            rewrite: isElectron ? undefined : () => item.target + '/vi/checkFeature',
+          };
           return proxyMap;
         }, {}),
         isElectron

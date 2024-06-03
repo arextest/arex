@@ -21,3 +21,5 @@ export * from './querySceneInfo';
 export * from './queryScenes';
 export * from './validInvitation';
 export * from './viewRecord';
+export * from './generateTestScripts';
+export * from './aiEnabled';
