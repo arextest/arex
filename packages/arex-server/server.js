@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
-const PORT = process.env.SERVER_PORT ? parseInt(process.env.SERVER_PORT) : 8080
+const PORT = process.env.SERVER_PORT ? parseInt(process.env.SERVER_PORT) : 8080;
 const SERVICE_API_URL = process.env.SERVICE_API_URL;
 const SERVICE_SCHEDULE_URL = process.env.SERVICE_SCHEDULE_URL;
 const SERVICE_STORAGE_URL = process.env.SERVICE_STORAGE_URL;
@@ -66,6 +66,31 @@ app.use(
     target: SERVICE_STORAGE_URL,
     changeOrigin: true,
     pathRewrite: () => SERVICE_STORAGE_URL + '/vi/health',
+  }),
+);
+
+app.use(
+  '/checkFeature/webApi',
+  createProxyMiddleware({
+    target: SERVICE_API_URL,
+    changeOrigin: true,
+    pathRewrite: () => SERVICE_API_URL + '/vi/checkFeature',
+  }),
+);
+app.use(
+  '/checkFeature/schedule',
+  createProxyMiddleware({
+    target: SERVICE_SCHEDULE_URL,
+    changeOrigin: true,
+    pathRewrite: () => SERVICE_SCHEDULE_URL + '/vi/checkFeature',
+  }),
+);
+app.use(
+  '/checkFeature/storage',
+  createProxyMiddleware({
+    target: SERVICE_STORAGE_URL,
+    changeOrigin: true,
+    pathRewrite: () => SERVICE_STORAGE_URL + '/vi/checkFeature',
   }),
 );
 
