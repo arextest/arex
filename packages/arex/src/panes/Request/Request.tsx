@@ -297,7 +297,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     else queryRequest();
   };
 
-  const {data: aiEnabled} = useRequest(() => ReportService.aiEnabled())
+  const { data: aiEnabled } = useRequest(() => ReportService.aiEnabled());
 
   return (
     <>

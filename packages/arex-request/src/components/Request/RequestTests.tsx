@@ -4,8 +4,9 @@ import { Editor } from '@monaco-editor/react';
 import { Button, Typography } from 'antd';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { useArexRequestProps, useArexRequestStore } from '../../hooks';
 import { AIChatDrawer } from './AI/AIChatDrawer';
-import {useArexRequestProps, useArexRequestStore} from '../../hooks';
 import { testCodeSnippet } from './snippets';
 
 const { Text } = Typography;
@@ -71,14 +72,14 @@ const RequestTests = () => {
             position: relative;
           `}
         >
-          { gptProvider &&
+          {gptProvider && (
             <Button
-              icon={<OpenAIOutlined/>}
+              icon={<OpenAIOutlined />}
               onClick={() => setOpen(true)}
               type='primary'
-              style={{position: 'absolute', right: 24, top: 24, zIndex: 999}}
+              style={{ position: 'absolute', right: 24, top: 24, zIndex: 999 }}
             />
-          }
+          )}
           <Editor
             theme={theme === Theme.dark ? 'vs-dark' : 'light'}
             options={editorOptions}

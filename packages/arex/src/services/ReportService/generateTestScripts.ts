@@ -1,4 +1,4 @@
-import { GenReq, GenRes } from "@arextest/arex-request/src/types/ArexAITypes";
+import { GenReq, GenRes } from '@arextest/arex-request/src/types/ArexAITypes';
 
 import { request } from '@/utils';
 

@@ -9,7 +9,7 @@ import Response from './components/Response';
 import i18n from './i18n';
 import { RequestPropsProvider, RequestStoreProvider } from './providers';
 import { ArexRESTRequest } from './types';
-import {GenReq, GenRes} from "./types/ArexAITypes";
+import { GenReq, GenRes } from './types/ArexAITypes';
 
 export interface Tab extends Omit<TabPaneProps, 'tab'> {
   key: string;
