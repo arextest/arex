@@ -25,6 +25,7 @@
     "@emotion/styled": "^11.10.6",
     "@formkit/auto-animate": "^0.7.0",
     "@monaco-editor/react": "^4.6.0",
+    "@sentry/react": "^7.113.0",
     "ahooks": "^3.7.5",
     "allotment": "^1.18.1",
     "antd": "^5.17.0",
