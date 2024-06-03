@@ -46,6 +46,14 @@ export enum MessageType {
   extension,
 }
 
+export enum ResponseCode {
+  SUCCESS,
+  REQUESTED_PARAMETER_INVALID,
+  REQUESTED_HANDLE_EXCEPTION,
+  REQUESTED_RESOURCE_NOT_FOUND,
+  AUTHENTICATION_FAILED,
+}
+
 export const RoleMap = {
   [RoleEnum.Admin]: 'Admin',
   [RoleEnum.Editor]: 'Editor',

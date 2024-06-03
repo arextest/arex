@@ -3,6 +3,8 @@ import { ArexCoreProvider, ArexMenuManager, ArexPaneManager, Theme } from '@arex
 import { Spin } from 'antd';
 import React from 'react';
 
+import { NavigationProvider } from '@/router/NavigationContext';
+
 import { useAuthentication, useTrace } from './hooks';
 import useDarkMode from './hooks/useDarkMode';
 import resources from './i18n';
@@ -36,7 +38,9 @@ const App = () => {
       colorPrimary={colorPrimary}
     >
       <GlobalStyle>
-        <Routes />
+        <NavigationProvider>
+          <Routes />
+        </NavigationProvider>
       </GlobalStyle>
     </ArexCoreProvider>
   );
