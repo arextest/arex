@@ -158,7 +158,6 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         planId: props.data?.planId,
       }),
     {
-      ready: !!id && id.length === 24,
       onError(error) {
         message.error(error.toString());
       },

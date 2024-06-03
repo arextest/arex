@@ -44,10 +44,10 @@ export class Request {
     // 全局响应拦截
     this.instance.interceptors.response.use(
       (response) => {
-        if (response.data.responseStatusType?.responseCode !== 0) {
-          // window.message.error(response.data.responseStatusType.responseDesc);
-          return Promise.reject(new Error(response.data.responseStatusType.responseDesc));
-        }
+        // if (response.data.responseStatusType?.responseCode !== 0) {
+        //   // window.message.error(response.data.responseStatusType.responseDesc);
+        //   return Promise.reject(new Error(response.data.responseStatusType.responseDesc));
+        // }
         return Promise.resolve(response.data);
       },
       (error) => {
