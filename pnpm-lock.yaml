@@ -441,6 +441,9 @@ importers:
       '@monaco-editor/react':
         specifier: ^4.6.0
         version: 4.6.0(monaco-editor@0.39.0)(react-dom@18.2.0)(react@18.2.0)
+      ahooks:
+        specifier: ^3.7.5
+        version: 3.7.10
       allotment:
         specifier: ^1.18.1
         version: 1.20.0(react-dom@18.2.0)(react@18.2.0)
@@ -476,10 +479,10 @@ importers:
         version: 12.3.1(i18next@22.5.1)(react-dom@18.2.0)(react@18.2.0)
       react-json-view:
         specifier: ^1.21.3
-        version: 1.21.3(@types/react@18.2.71)(react-dom@18.2.0)(react@18.2.0)
+        version: 1.21.3(@types/react@18.2.71)
       use-immer:
         specifier: ^0.9.0
-        version: 0.9.0(immer@9.0.21)(react@18.2.0)
+        version: 0.9.0(immer@9.0.21)
     devDependencies:
       '@babel/core':
         specifier: ^7.21.4
@@ -498,7 +501,7 @@ importers:
         version: 5.17.0
       '@testing-library/react':
         specifier: ^14.0.0
-        version: 14.2.2(react-dom@18.2.0)(react@18.2.0)
+        version: 14.2.2
       '@types/lodash':
         specifier: ^4.14.198
         version: 4.17.0
@@ -2446,7 +2449,7 @@ packages:
       redent: 3.0.0
     dev: true
 
-  /@testing-library/react@14.2.2(react-dom@18.2.0)(react@18.2.0):
+  /@testing-library/react@14.2.2:
     resolution: {integrity: sha512-SOUuM2ysCvjUWBXTNfQ/ztmnKDmqaiPV3SvoIuyxMUca45rbSWWAT/qB8CUs/JQ/ux/8JFs9DNdFQ3f6jH3crA==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -2456,8 +2459,6 @@ packages:
       '@babel/runtime': 7.24.1
       '@testing-library/dom': 9.3.4
       '@types/react-dom': 18.2.22
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
     dev: true
 
   /@tootallnate/once@2.0.0:
@@ -3103,6 +3104,22 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /ahooks@3.7.10:
+    resolution: {integrity: sha512-/HLYif7sFA/5qSuWKrwvjDbf3bq+sdaMrUWS7XGCDRWdC2FrG/i+u5LZdakMYc6UIgJTMQ7tGiJCV7sdU4kSIw==}
+    engines: {node: '>=8.0.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@babel/runtime': 7.24.5
+      dayjs: 1.11.10
+      intersection-observer: 0.12.2
+      js-cookie: 2.2.1
+      lodash: 4.17.21
+      resize-observer-polyfill: 1.5.1
+      screenfull: 5.2.0
+      tslib: 2.6.2
+    dev: false
 
   /ahooks@3.7.10(react@18.2.0):
     resolution: {integrity: sha512-/HLYif7sFA/5qSuWKrwvjDbf3bq+sdaMrUWS7XGCDRWdC2FrG/i+u5LZdakMYc6UIgJTMQ7tGiJCV7sdU4kSIw==}
@@ -5656,14 +5673,13 @@ packages:
     resolution: {integrity: sha512-X8cqMLLie7KsNUDSdzeN8FYK9rEt4Dt67OsG/DNGnYTSDBG4uFAJFBnUeiV+zCVAvwFy56IjM9sH51jVaEhNxw==}
     dev: true
 
-  /flux@4.0.4(react@18.2.0):
+  /flux@4.0.4:
     resolution: {integrity: sha512-NCj3XlayA2UsapRpM7va6wU1+9rE5FIL7qoMcmxWHRzbp0yujihMBm9BBHZ1MDIk5h5o2Bl6eGiCe8rYELAmYw==}
     peerDependencies:
       react: ^15.0.2 || ^16.0.0 || ^17.0.0
     dependencies:
       fbemitter: 3.0.0
       fbjs: 3.0.5
-      react: 18.2.0
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -8510,6 +8526,7 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
+    dev: false
 
   /react-easy-crop@5.0.6(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-LV8te8NGC72k3l8uAqPAw73D2i9AbRlZqyo1Xz8VetwiMfkSKYgyqE3IFEwf5h+1g7AS1nMxBKk6ZPdhvLw6MQ==}
@@ -8553,18 +8570,16 @@ packages:
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
 
-  /react-json-view@1.21.3(@types/react@18.2.71)(react-dom@18.2.0)(react@18.2.0):
+  /react-json-view@1.21.3(@types/react@18.2.71):
     resolution: {integrity: sha512-13p8IREj9/x/Ye4WI/JpjhoIwuzEgUAtgJZNBJckfzJt1qyh24BdTm6UQNGnyTq9dapQdrqvquZTo3dz1X6Cjw==}
     peerDependencies:
       react: ^17.0.0 || ^16.3.0 || ^15.5.4
       react-dom: ^17.0.0 || ^16.3.0 || ^15.5.4
     dependencies:
-      flux: 4.0.4(react@18.2.0)
-      react: 18.2.0
+      flux: 4.0.4
       react-base16-styling: 0.6.0
-      react-dom: 18.2.0(react@18.2.0)
       react-lifecycles-compat: 3.0.4
-      react-textarea-autosize: 8.5.3(@types/react@18.2.71)(react@18.2.0)
+      react-textarea-autosize: 8.5.3(@types/react@18.2.71)
     transitivePeerDependencies:
       - '@types/react'
       - encoding
@@ -8597,16 +8612,15 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-textarea-autosize@8.5.3(@types/react@18.2.71)(react@18.2.0):
+  /react-textarea-autosize@8.5.3(@types/react@18.2.71):
     resolution: {integrity: sha512-XT1024o2pqCuZSuBt9FwHlaDeNtVrtCXu0Rnz88t1jUGheCLa3PhjE1GH8Ctm2axEtvdCl5SUHYschyQ0L5QHQ==}
     engines: {node: '>=10'}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@babel/runtime': 7.24.1
-      react: 18.2.0
-      use-composed-ref: 1.3.0(react@18.2.0)
-      use-latest: 1.2.1(@types/react@18.2.71)(react@18.2.0)
+      use-composed-ref: 1.3.0
+      use-latest: 1.2.1(@types/react@18.2.71)
     transitivePeerDependencies:
       - '@types/react'
     dev: false
@@ -8630,6 +8644,7 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       loose-envify: 1.4.0
+    dev: false
 
   /reactcss@1.2.3(react@18.2.0):
     resolution: {integrity: sha512-KiwVUcFu1RErkI97ywr8nvx8dNOpT03rbnma0SSalTYjkrPYaEajR4a/MRt6DZ46K6arDRbWMNHF+xH7G7n/8A==}
@@ -8928,6 +8943,7 @@ packages:
     resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
     dependencies:
       loose-envify: 1.4.0
+    dev: false
 
   /screenfull@5.2.0:
     resolution: {integrity: sha512-9BakfsO2aUQN2K9Fdbj87RJIEZ82Q9IGim7FqM5OsebfoFC6ZHXgDq/KvniuLTPdeM8wY2o6Dj3WQ7KeQCj3cA==}
@@ -9841,12 +9857,10 @@ packages:
       requires-port: 1.0.0
     dev: true
 
-  /use-composed-ref@1.3.0(react@18.2.0):
+  /use-composed-ref@1.3.0:
     resolution: {integrity: sha512-GLMG0Jc/jiKov/3Ulid1wbv3r54K9HlMW29IWcDFPEqFkSO2nS0MuefWgMJpeHQ9YJeXDL3ZUF+P3jdXlZX/cQ==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 18.2.0
     dev: false
 
   /use-immer@0.8.1(immer@9.0.21)(react@18.2.0):
@@ -9859,17 +9873,16 @@ packages:
       react: 18.2.0
     dev: false
 
-  /use-immer@0.9.0(immer@9.0.21)(react@18.2.0):
+  /use-immer@0.9.0(immer@9.0.21):
     resolution: {integrity: sha512-/L+enLi0nvuZ6j4WlyK0US9/ECUtV5v9RUbtxnn5+WbtaXYUaOBoKHDNL9I5AETdurQ4rIFIj/s+Z5X80ATyKw==}
     peerDependencies:
       immer: '>=2.0.0'
       react: ^16.8.0 || ^17.0.1 || ^18.0.0
     dependencies:
       immer: 9.0.21
-      react: 18.2.0
     dev: false
 
-  /use-isomorphic-layout-effect@1.1.2(@types/react@18.2.71)(react@18.2.0):
+  /use-isomorphic-layout-effect@1.1.2(@types/react@18.2.71):
     resolution: {integrity: sha512-49L8yCO3iGT/ZF9QttjwLF/ZD9Iwto5LnH5LmEdk/6cFmXddqi2ulF0edxTwjj+7mqvpVVGQWvbXZdn32wRSHA==}
     peerDependencies:
       '@types/react': '*'
@@ -9879,10 +9892,9 @@ packages:
         optional: true
     dependencies:
       '@types/react': 18.2.71
-      react: 18.2.0
     dev: false
 
-  /use-latest@1.2.1(@types/react@18.2.71)(react@18.2.0):
+  /use-latest@1.2.1(@types/react@18.2.71):
     resolution: {integrity: sha512-xA+AVm/Wlg3e2P/JiItTziwS7FK92LWrDB0p+hgXloIMuVCeJJ8v6f0eeHyPZaJrM+usM1FkFfbNCrJGs8A/zw==}
     peerDependencies:
       '@types/react': '*'
@@ -9892,8 +9904,7 @@ packages:
         optional: true
     dependencies:
       '@types/react': 18.2.71
-      react: 18.2.0
-      use-isomorphic-layout-effect: 1.1.2(@types/react@18.2.71)(react@18.2.0)
+      use-isomorphic-layout-effect: 1.1.2(@types/react@18.2.71)
     dev: false
 
   /use-resize-observer@9.1.0(react-dom@18.2.0)(react@18.2.0):

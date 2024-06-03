@@ -19,6 +19,7 @@ import { useNavPane } from '@/hooks';
 import { EnvironmentService, FileSystemService, ReportService } from '@/services';
 import { Environment } from '@/services/EnvironmentService/getEnvironments';
 import { GetCollectionItemTreeReq } from '@/services/FileSystemService';
+import { generateTestScripts } from '@/services/ReportService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
@@ -296,6 +297,8 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     else queryRequest();
   };
 
+  const { data: aiEnabled } = useRequest(() => ReportService.aiEnabled());
+
   return (
     <>
       <ArexRequest
@@ -304,6 +307,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         data={data}
         language={i18n.language}
         config={httpConfig}
+        gptProvider={aiEnabled ? ReportService.generateTestScripts : undefined}
         breadcrumb={parentPath?.length ? parentPath.map((path) => path.name) : [title]}
         titleProps={{
           value: title,
