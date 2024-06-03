@@ -8,7 +8,7 @@ import { useNavPane } from '@/hooks';
 
 import AppTitle from './AppTitle';
 import CreatePlanModal, { CreatePlanModalRef } from './CreatePlanModal';
-import RecordedCaseList, { RecordedCaseRef } from './RecordedCase';
+import RecordedCaseList, { RecordedCaseDrawerRef } from './RecordedCase';
 
 type AppTopBarProps = {
   appId: string;
@@ -34,7 +34,7 @@ const AppTopBar: FC<AppTopBarProps> = ({
   const { data } = useArexPaneProps<{ planId: string }>();
 
   const createPlanModalRef = useRef<CreatePlanModalRef>(null);
-  const caseListRef = useRef<RecordedCaseRef>(null);
+  const caseListRef = useRef<RecordedCaseDrawerRef>(null);
 
   const appTitle = useMemo(
     () => appName && `${readOnly ? `[${t('readOnly', { ns: 'common' })}] ` : ''}${appName}`,
@@ -65,7 +65,9 @@ const AppTopBar: FC<AppTopBarProps> = ({
               title={appTitle}
               readOnly={readOnly}
               count={recordCount}
-              onClickTitle={caseListRef.current?.open}
+              onClickTitle={() => {
+                caseListRef.current?.open();
+              }}
               onRefresh={handleRefresh}
               onSetting={handleSetting}
             />
@@ -78,7 +80,9 @@ const AppTopBar: FC<AppTopBarProps> = ({
             type='primary'
             disabled={readOnly}
             icon={<PlayCircleOutlined />}
-            onClick={createPlanModalRef.current?.open}
+            onClick={() => {
+              createPlanModalRef.current?.open();
+            }}
           >
             {t('replay.startButton')}
           </Button>

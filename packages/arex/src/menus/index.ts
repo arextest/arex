@@ -8,5 +8,6 @@
 
 import Collection from './Collection';
 import Replay from './Replay';
+import Traffic from './Traffic';
 
-export default { Collection, Replay };
+export default { Collection, Traffic, Replay };

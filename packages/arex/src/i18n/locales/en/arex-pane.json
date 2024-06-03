@@ -1,12 +1,13 @@
 {
-  "collection": "Collection",
-  "environment": "Environment",
-  "request": "Request",
-  "replay": "Replay",
-  "replayCase": "ReplayCase",
-  "diffScenes": "DiffScenes",
-  "caseDetail": "CaseDetail",
   "appSetting": "AppSetting",
-  "workspace": "Workspace",
-  "systemSetting": "SystemSetting"
+  "caseDetail": "CaseDetail",
+  "collection": "Collection",
+  "diffScenes": "DiffScenes",
+  "environment": "Environment",
+  "replay": "Report",
+  "replayCase": "ReplayCase",
+  "request": "Request",
+  "systemSetting": "SystemSetting",
+  "traffic": "Traffic",
+  "workspace": "Workspace"
 }

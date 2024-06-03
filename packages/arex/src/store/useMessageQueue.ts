@@ -22,7 +22,7 @@ const initialState: MessageQueueState = {
 };
 
 const useMessageQueue = create(
-  immer<MessageQueueState & MessageQueueAction>((set, get) => ({
+  immer<MessageQueueState & MessageQueueAction>((set) => ({
     ...initialState,
     pushMessage: (message) => {
       set((state) => {

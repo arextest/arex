@@ -62,7 +62,7 @@ const FooterExtraMenu: FC = () => {
         navPane({
           id: 'document',
           type: ArexPanesType.WEB_VIEW,
-          name: t('document') as string,
+          name: t('document'),
           data: {
             url: URL_DOCUMENT_GET_STARTED,
           },

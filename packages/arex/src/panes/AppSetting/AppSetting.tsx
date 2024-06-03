@@ -14,7 +14,7 @@ import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import { useMenusPanes } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
-import SettingImportYaml from './ImportYaml';
+// import SettingImportYaml from './ImportYaml';
 import SettingOther from './Other';
 import SettingRecord from './Record';
 import SettingReplay from './Replay';
@@ -43,11 +43,11 @@ const AppSetting: ArexPaneFC<{ key: string }> = (props) => {
         label: t('appSetting.compareConfig'),
         children: <CompareConfig appId={appId} />,
       },
-      {
-        key: 'importYaml',
-        label: t('appSetting.importYaml'),
-        children: <SettingImportYaml appId={appId} />,
-      },
+      // {
+      //   key: 'importYaml',
+      //   label: t('appSetting.importYaml'),
+      //   children: <SettingImportYaml appId={appId} />,
+      // },
       {
         key: 'other',
         label: t('appSetting.other'),

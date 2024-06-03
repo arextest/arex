@@ -68,9 +68,7 @@ const useInit = () => {
           });
         }
       });
-    }
-
-    if (!window.__AREX_EXTENSION_INSTALLED__) {
+    } else if (!window.__AREX_EXTENSION_INSTALLED__) {
       pushMessage({
         type: MessageType.extension,
         message: 'extension not installed',

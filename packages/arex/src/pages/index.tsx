@@ -23,7 +23,7 @@ import {
 } from '@/components';
 import { CollectionNodeType, isClient, PanesType, URL_AREX } from '@/constant';
 import { useCheckChrome, useInit, useNavPane } from '@/hooks';
-import { useMenusPanes, useUserProfile, useWorkspaces } from '@/store';
+import { useClientStore, useMenusPanes, useUserProfile, useWorkspaces } from '@/store';
 import { generateId } from '@/utils';
 
 const Home: FC = () => {
@@ -44,6 +44,7 @@ const Home: FC = () => {
     reset: resetPane,
     removePane,
   } = useMenusPanes();
+  const { organization } = useClientStore();
   const { activeWorkspaceId } = useWorkspaces();
   const { zen } = useUserProfile();
 
@@ -138,7 +139,13 @@ const Home: FC = () => {
 
   return (
     <div ref={arexMainWrapperRef}>
-      {!zen && <ArexHeader logo={{ href: URL_AREX }} extra={<UserMenu />} />}
+      {!zen && (
+        <ArexHeader
+          githubStar={!organization}
+          logo={{ href: URL_AREX, title: organization ? `AREX.${organization}` : 'AREX' }}
+          extra={<UserMenu />}
+        />
+      )}
 
       <Allotment
         css={css`

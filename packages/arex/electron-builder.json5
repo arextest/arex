@@ -37,8 +37,8 @@
     "oneClick": false,
     "createDesktopShortcut": "always",
     "perMachine": true,
-    "allowToChangeInstallationDirectory": true,
-    "deleteAppDataOnUninstall": false
+    "allowToChangeInstallationDirectory": false,
+    "deleteAppDataOnUninstall": true
   },
   "publish": {
     provider: "github",

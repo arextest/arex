@@ -1,7 +1,7 @@
 import { getLocalStorage, setLocalStorage } from '@arextest/arex-core';
 
 import { EMAIL_KEY } from '@/constant';
-import { useMenusPanes, useUserProfile, useWorkspaces } from '@/store';
+import { useClientStore, useMenusPanes, useUserProfile, useWorkspaces } from '@/store';
 
 import useCollections from '../store/useCollections';
 
@@ -15,6 +15,7 @@ const globalStoreReset = () => {
 
   localStorage.clear();
   email?.startsWith('GUEST') && setLocalStorage(EMAIL_KEY, email);
+  useClientStore.getState().clearOrganization();
 };
 
 export default globalStoreReset;

@@ -14,14 +14,16 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Badge, Card, Dropdown, Flex, Select, Space, theme, Typography } from 'antd';
+import { App, Badge, Card, Divider, Dropdown, Flex, Select, Space, theme, Typography } from 'antd';
 import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react';
 
 import { Icon, StatusTag } from '@/components';
 import { ResultsState } from '@/components/StatusTag';
+import { isClient } from '@/constant';
+import AgentScript from '@/panes/Replay/ReplayReport/AgentScript';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
-import { ReRunPlanReq } from '@/services/ScheduleService';
+import { ReRunPlanReq, ReRunPlanRes } from '@/services/ScheduleService';
 
 import ProportionBarChart from './ProportionBarChart';
 
@@ -102,17 +104,20 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
     },
   );
 
-  const { run: reRunPlan, loading: retrying } = useRequest(ScheduleService.reRunPlan, {
-    manual: true,
-    onSuccess(res, [{ planId }]) {
-      if (res.result === 1) {
-        message.success(t('message.success', { ns: 'common' }));
-        queryPlanStatistics(planId);
-      } else {
-        message.error(res.desc);
-      }
+  const { run: reRunPlan, loading: retrying } = useRequest(
+    isClient ? ScheduleService.rerunPlanLocal : ScheduleService.rerunPlan,
+    {
+      manual: true,
+      onSuccess(res, [{ planId }]) {
+        if (res.result === 1) {
+          message.success(t('message.success', { ns: 'common' }));
+          queryPlanStatistics(planId);
+        } else {
+          message.error(res.desc);
+        }
+      },
     },
-  });
+  );
 
   useImperativeHandle(
     ref,
@@ -215,7 +220,22 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
   };
 
   return (
-    <EmptyWrapper bordered loading={init} empty={!planStatistics.length}>
+    <EmptyWrapper
+      bordered
+      loading={init}
+      empty={!planStatistics.length}
+      description={
+        <>
+          <Typography.Text
+            strong
+            style={{ display: 'block', fontSize: token.fontSizeLG, margin: '16px 0' }}
+          >
+            No report found, please mount the agent and run a test.
+          </Typography.Text>
+          <AgentScript appId={props.appId} />
+        </>
+      }
+    >
       <Card
         // size='small'
         title={
@@ -359,7 +379,9 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
                 items: extraMenuItems,
                 onClick: extraMenuHandler,
               }}
-              onClick={() => props.planId && reRunPlan({ planId: props.planId })}
+              onClick={() =>
+                props.planId && reRunPlan({ appId: props.appId, planId: props.planId })
+              }
             >
               <RedoOutlined />
               {t('replay.rerun')}

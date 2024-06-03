@@ -1,9 +1,11 @@
 {
-  "collapseSidebar": "Collapse Sidebar",
-  "expandSidebar": "Expand Sidebar",
-  "collection": "Collection",
-  "replay": "Replay",
   "app": "App",
+  "appSetting": "Setting",
+  "collapseSidebar": "Collapse Sidebar",
+  "collection": "Collection",
   "environment": "Environment",
-  "appSetting": "Setting"
+  "expandSidebar": "Expand Sidebar",
+  "replay": "Replay",
+  "report": "Report",
+  "traffic": "Traffic"
 }

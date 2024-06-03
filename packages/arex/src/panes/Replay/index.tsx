@@ -1,4 +1,4 @@
-import { HistoryOutlined } from '@ant-design/icons';
+import { ReconciliationOutlined } from '@ant-design/icons';
 import { createArexPane } from '@arextest/arex-core';
 import React from 'react';
 
@@ -8,6 +8,6 @@ import Replay from './Replay';
 
 export default createArexPane(Replay, {
   type: PanesType.REPLAY,
-  menuType: MenusType.APP,
-  icon: <HistoryOutlined />,
+  menuType: MenusType.REPORT,
+  icon: <ReconciliationOutlined />,
 });

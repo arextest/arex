@@ -1,24 +1,39 @@
 import axios from 'axios';
-import process from 'process';
+import logger from 'electron-log';
 
 import proxy from '../../config/proxy-electron-sass.json';
 import { getLocalConfig } from '../helper';
+import { formatRequestLog, formatResponseLog } from '../logger';
 
-const companyName =
-  process.env.NODE_ENV === 'development'
-    ? process.env.VITE_COMPANY_NAME
-    : getLocalConfig('companyName');
+export const ScheduleAxios = axios.create();
+export const ReportAxios = axios.create();
 
-export const ScheduleAxios = axios.create({
-  baseURL: proxy
+ScheduleAxios.interceptors.request.use((request) => {
+  request.baseURL = proxy
     .find((item) => item.path === '/schedule')
-    ?.target.replace('{{companyDomainName}}', companyName),
+    ?.target.replace('{{companyDomainName}}', getLocalConfig('organization'));
+  request.headers.set('arex-tenant-code', getLocalConfig('organization'));
+  logger.log('[ScheduleAxios request]', formatRequestLog(request));
+  return request;
 });
 
-export const ReportAxios = axios.create({
-  baseURL: proxy
+ScheduleAxios.interceptors.response.use((response) => {
+  logger.log('[ScheduleAxios response]', formatResponseLog(response));
+  return response;
+});
+
+ReportAxios.interceptors.request.use((request) => {
+  request.baseURL = proxy
     .find((item) => item.path === '/webApi')
-    ?.target.replace('{{companyDomainName}}', companyName),
+    ?.target.replace('{{companyDomainName}}', getLocalConfig('organization'));
+  request.headers.set('arex-tenant-code', getLocalConfig('organization'));
+  logger.log('[ScheduleAxios request]', formatRequestLog(request));
+  return request;
+});
+
+ReportAxios.interceptors.response.use((response) => {
+  logger.log('[ScheduleAxios response]', formatResponseLog(response));
+  return response;
 });
 
 export * from './postSend';
@@ -26,3 +41,4 @@ export * from './preSend';
 export * from './queryCaseId';
 export * from './queryReplayMaxQps';
 export * from './queryReplaySenderParameters';
+export * from './queryRerunCaseId';

@@ -1,5 +1,5 @@
-import Icon, { StopOutlined, WarningOutlined } from '@ant-design/icons';
-import { EmptyWrapper, FlexCenterWrapper } from '@arextest/arex-core';
+import { StopOutlined } from '@ant-design/icons';
+import { EmptyWrapper } from '@arextest/arex-core';
 import { Button, Typography } from 'antd';
 import React, { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

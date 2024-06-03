@@ -18,7 +18,7 @@ import dayjs from 'dayjs';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { PlanItemBreadcrumb } from '@/components';
-import { APP_ID_KEY, PanesType } from '@/constant';
+import { APP_ID_KEY, isClient, PanesType } from '@/constant';
 import CompareConfig from '@/panes/AppSetting/CompareConfig';
 import CaseDiff from '@/panes/ReplayCase/CaseDiff';
 import { IgnoreType } from '@/panes/ReplayCase/CaseDiff/CaseDiffViewer';
@@ -95,16 +95,19 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
     setSelectedRecord(undefined);
   }, [props.data?.filter]);
 
-  const { run: retryPlan } = useRequest(ScheduleService.reRunPlan, {
-    manual: true,
-    onSuccess(res) {
-      if (res.result === 1) {
-        message.success(t('message.success', { ns: 'common' }));
-      } else {
-        message.error(res.desc);
-      }
+  const { run: retryPlan } = useRequest(
+    isClient ? ScheduleService.rerunPlanLocal : ScheduleService.rerunPlan,
+    {
+      manual: true,
+      onSuccess(res) {
+        if (res.result === 1) {
+          message.success(t('message.success', { ns: 'common' }));
+        } else {
+          message.error(res.desc);
+        }
+      },
     },
-  });
+  );
 
   const { run: insertIgnoreNode } = useRequest(
     (path: string[], type?: IgnoreType) => {

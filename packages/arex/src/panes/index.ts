@@ -14,6 +14,7 @@ import ReplayCaseDetail from './ReplayCaseDetail';
 import ReplayDiffScenes from './ReplayDiffScenes';
 import Request from './Request';
 import SystemSetting from './SystemSetting';
+import Traffic from './Traffic';
 import Workspace from './Workspace';
 
 export default {
@@ -26,4 +27,5 @@ export default {
   SystemSetting,
   Workspace,
   BatchRun,
+  Traffic,
 };

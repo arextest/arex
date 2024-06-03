@@ -1,3 +1,5 @@
+import { AxiosRequestConfig } from 'axios';
+
 import { ScheduleAxios } from './index';
 import { SendStatusType } from './type';
 
@@ -9,7 +11,7 @@ export interface PostSendReq {
   sendStatusType: SendStatusType;
 }
 
-export async function postSend(params: PostSendReq) {
-  const res = await ScheduleAxios.post('/schedule/replay/local/postSend', params);
+export async function postSend(params: PostSendReq, config?: AxiosRequestConfig) {
+  const res = await ScheduleAxios.post('/schedule/replay/local/postSend', params, config);
   return res.data;
 }

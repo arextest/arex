@@ -84,7 +84,6 @@ const ArexRequest = forwardRef<ArexRequestRef, ArexRequestProps>((props, ref) =>
         <div style={{ height: '100%', display: 'flex', flexFlow: 'column', overflowX: 'hidden' }}>
           <NavigationBar ref={navigationBarRef} />
           <Divider style={{ width: '100%', margin: '0 0 8px 0' }} />
-
           <Allotment vertical css={AllotmentCSS}>
             <Allotment.Pane preferredSize='60%'>
               <Request />

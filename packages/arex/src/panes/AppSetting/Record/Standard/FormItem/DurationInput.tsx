@@ -19,7 +19,7 @@ const DurationInput: FC<FormItemProps<number[]>> = (props) => {
       { label: t('saturday'), value: 5 },
       { label: t('sunday'), value: 6 },
     ];
-  }, []);
+  }, [t]);
 
   const [value, setValue] = useState<number[]>(props.value || []);
   const [checkAll, setCheckAll] = useState(props.value?.length === durationOptions.length);
@@ -41,7 +41,11 @@ const DurationInput: FC<FormItemProps<number[]>> = (props) => {
 
   return (
     <div style={{ marginTop: '4px', overflow: 'hidden' }}>
-      <Checkbox checked={checkAll} onChange={onCheckAllChange}>
+      <Checkbox
+        checked={checkAll}
+        indeterminate={!!value.length && value.length < durationOptions.length}
+        onChange={onCheckAllChange}
+      >
         {t('everyDay')}
       </Checkbox>
       <Divider style={{ margin: '12px 0', width: '500px' }} />

@@ -2,6 +2,7 @@ import { getLocalStorage } from '@arextest/arex-core';
 import axios from 'axios';
 
 import { ACCESS_TOKEN_KEY } from '@/constant';
+import { useClientStore } from '@/store';
 import { ResponseStatusType } from '@/utils/request';
 
 export enum DeleteRecordType {
@@ -24,6 +25,7 @@ export async function deleteRecord(params: DeleteRecordReq): Promise<boolean> {
       headers: {
         'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
         appId: params.appId,
+        'arex-tenant-code': useClientStore.getState().organization,
       },
     },
   );

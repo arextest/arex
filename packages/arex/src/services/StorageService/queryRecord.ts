@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import { ACCESS_TOKEN_KEY } from '@/constant';
 import { ViewRecordRes } from '@/services/ReportService';
+import { useClientStore } from '@/store';
 import { ResponseStatusType } from '@/utils/request';
 
 export async function queryRecord(recordId: string) {
@@ -16,6 +17,7 @@ export async function queryRecord(recordId: string) {
     {
       headers: {
         'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
+        'arex-tenant-code': useClientStore.getState().organization,
       },
     },
   );

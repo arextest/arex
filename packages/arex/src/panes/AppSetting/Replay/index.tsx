@@ -79,7 +79,7 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
             <HelpTooltip title={t('appSetting.QPSTips')}>{t('appSetting.maxQPS')}</HelpTooltip>
           }
           name='sendMaxQps'
-          rules={[{ required: true, message: t('appSetting.emptyQPS') as string }]}
+          rules={[{ required: true, message: t('appSetting.emptyQPS') }]}
         >
           <InputNumber min={1} max={20} precision={0} />
         </Form.Item>

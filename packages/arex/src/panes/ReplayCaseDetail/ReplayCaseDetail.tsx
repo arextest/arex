@@ -7,6 +7,7 @@ import {
   SmallTextButton,
   useTranslation,
 } from '@arextest/arex-core';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { Badge, Spin, Tabs, theme } from 'antd';
 import React, { ReactNode, useEffect, useState } from 'react';
@@ -33,12 +34,26 @@ type ReplayCaseDetailData = {
   operationId?: string;
 };
 
-const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
+const ReplayCaseDetail: ArexPaneFC<
+  ReplayCaseDetailData,
+  {
+    navigation?: boolean;
+    renderTitle?: (recordId: string) => ReactNode;
+    renderContent?: (children: ReactNode) => ReactNode;
+  }
+> = (props) => {
+  const {
+    navigation = true,
+    renderTitle = (recordId) => `${t('replay.recordId')}: ${recordId}`,
+    renderContent = (children) => children,
+  } = props;
   const navPane = useNavPane();
   const { activePane } = useMenusPanes();
   const { activeWorkspaceId } = useWorkspaces();
   const { token } = theme.useToken();
   const { t } = useTranslation('components');
+
+  const [contentRef] = useAutoAnimate();
 
   const [tabItems, setTabItems] = useState<TagType[]>([]);
 
@@ -91,15 +106,17 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
 
   return (
     <>
-      <PlanItemBreadcrumb
-        appId={props.data.appId}
-        type={PanesType.REPLAY_CASE}
-        planItemId={props.data.planItemId}
-        recordId={props.data.recordId}
-      />
+      {navigation && (
+        <PlanItemBreadcrumb
+          appId={props.data.appId}
+          type={PanesType.REPLAY_CASE}
+          planItemId={props.data.planItemId}
+          recordId={props.data.recordId}
+        />
+      )}
 
       <PanesTitle
-        title={`${t('replay.recordId')}: ${props.data.recordId}`}
+        title={renderTitle(props.data.recordId)}
         extra={
           <SmallTextButton
             icon={<BugOutlined />}
@@ -123,9 +140,13 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
           />
         }
       />
-      <Spin spinning={loading}>
-        <Tabs items={tabItems} />
-      </Spin>
+      <div ref={contentRef}>
+        {renderContent(
+          <Spin key='_default_children' spinning={loading}>
+            <Tabs items={tabItems} />
+          </Spin>,
+        )}
+      </div>
     </>
   );
 };

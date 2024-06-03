@@ -2,6 +2,7 @@ import { getLocalStorage } from '@arextest/arex-core';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { ACCESS_TOKEN_KEY, APP_ID_KEY, isClientProd } from '@/constant';
+import { useClientStore } from '@/store';
 
 import port from '../../config/port.json';
 
@@ -33,6 +34,8 @@ export class Request {
         //     'Required request header "access-token" for method parameter type String is not present',
         //   );
 
+        request.headers.set('arex-tenant-code', useClientStore.getState().organization);
+
         request.headers.set('access-token', accessToken);
         request.headers.set('appId', getLocalStorage<string>(APP_ID_KEY));
 
@@ -44,14 +47,16 @@ export class Request {
     // 全局响应拦截
     this.instance.interceptors.response.use(
       (response) => {
-        if (response.data.responseStatusType?.responseCode === 4) {
-          window.message.error(response.data.responseStatusType.responseDesc);
-          return Promise.reject(response.data.responseStatusType);
+        if (response.data.responseStatusType?.responseCode !== 0) {
+          // window.message.error(response.data.responseStatusType.responseDesc);
+          return Promise.reject(new Error(response.data.responseStatusType.responseDesc));
         }
         return Promise.resolve(response.data);
       },
       (error) => {
-        return Promise.reject(error);
+        console.error(error.message);
+        window.message.error(error.message);
+        // console.log(error.message);
       },
     );
   }

@@ -2,6 +2,7 @@ import { getLocalStorage, I18nextLng } from '@arextest/arex-core';
 import axios from 'axios';
 
 import { ACCESS_TOKEN_KEY } from '@/constant';
+import { useClientStore } from '@/store';
 
 export const MessageMap: {
   [lang in I18nextLng]: {
@@ -52,7 +53,7 @@ export type CreatePlanReq = {
 export type CreatePlanRes = {
   desc: string;
   result: number;
-  data: { reasonCode: number; replayPlanId: string };
+  data: { reasonCode: number; replayPlanId?: string };
 };
 
 export function createPlan(params: CreatePlanReq) {
@@ -62,6 +63,7 @@ export function createPlan(params: CreatePlanReq) {
         headers: {
           'access-token': getLocalStorage<string>(ACCESS_TOKEN_KEY),
           appId: params.appId,
+          'arex-tenant-code': useClientStore.getState().organization,
         },
       })
       .then((res) => resolve(res.data))

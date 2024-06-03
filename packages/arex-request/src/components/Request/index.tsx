@@ -4,6 +4,7 @@ import { Button, Checkbox, Select } from 'antd';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { isClient } from '../../constant';
 import { sendRequest } from '../../helpers';
 import { useArexRequestStore } from '../../hooks';
 import { ArexEnvironment, ArexRESTRequest, ArexRESTResponse } from '../../types';
@@ -53,6 +54,16 @@ const Request: FC<RequestProps> = () => {
       window.message.error(t('error.emptyEndpoint'));
       return;
     }
+    const ready = isClient || window.__AREX_EXTENSION_INSTALLED__;
+    dispatch((state) => {
+      state.response = {
+        type: ready ? 'loading' : 'EXTENSION_NOT_INSTALLED',
+        headers: undefined,
+      };
+    });
+
+    if (!ready) return;
+
     request();
   };
 

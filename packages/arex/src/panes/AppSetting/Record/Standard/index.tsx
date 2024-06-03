@@ -15,9 +15,9 @@ import {
   DurationInput,
   DynamicClassesEditableTable,
   IntegerStepSlider,
-  SerializeSkip,
+  // SerializeSkip,
 } from './FormItem';
-import RunningStatus from './FormItem/RunningStatus';
+// import RunningStatus from './FormItem/RunningStatus';
 import { decodeWeekCode, encodeWeekCode } from './utils';
 
 export type StandardProps = {
@@ -131,7 +131,7 @@ const Standard: FC<StandardProps> = (props) => {
                 <Form.Item label={t('appSetting.recordMachineNum')} name='recordMachineCountLimit'>
                   <InputNumber size='small' min={0} max={10} precision={0} />
                 </Form.Item>
-                <RunningStatus appId={props.appId} />
+                {/*<RunningStatus appId={props.appId} />*/}
               </>
             ),
           },
@@ -152,9 +152,9 @@ const Standard: FC<StandardProps> = (props) => {
                   <IntegerStepSlider />
                 </Form.Item>
 
-                <Form.Item label={t('appSetting.serializeSkip')} name='serializeSkipInfoList'>
-                  <SerializeSkip />
-                </Form.Item>
+                {/*<Form.Item label={t('appSetting.serializeSkip')} name='serializeSkipInfoList'>*/}
+                {/*  <SerializeSkip />*/}
+                {/*</Form.Item>*/}
               </>
             ),
           },
