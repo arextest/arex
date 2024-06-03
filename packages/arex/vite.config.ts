@@ -29,7 +29,7 @@ export default defineConfig(async ({ mode }) => {
         '@': path.resolve('./src'),
         // '@arextest/arex-core/dist': path.resolve('../arex-core/src'),
         // '@arextest/arex-core': path.resolve('../arex-core/src'),
-        // '@arextest/arex-request': path.resolve('../arex-request/src'),
+        '@arextest/arex-request': path.resolve('../arex-request/src'),
       },
     },
     plugins: [
@@ -79,6 +79,13 @@ export default defineConfig(async ({ mode }) => {
             target: isElectron ? electronServerUrl : item.target,
             changeOrigin: true,
             rewrite: isElectron ? undefined : () => item.target + '/vi/health',
+          };
+
+          // feature check
+          proxyMap['/checkFeature' + item.path] = {
+            target: isElectron ? electronServerUrl : item.target,
+            changeOrigin: true,
+            rewrite: isElectron ? undefined : () => item.target + '/vi/checkFeature',
           };
           return proxyMap;
         }, {}),

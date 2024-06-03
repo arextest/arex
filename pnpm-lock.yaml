@@ -90,6 +90,9 @@ importers:
       '@monaco-editor/react':
         specifier: ^4.6.0
         version: 4.6.0(monaco-editor@0.39.0)(react-dom@18.2.0)(react@18.2.0)
+      '@sentry/react':
+        specifier: ^7.113.0
+        version: 7.116.0(react@18.2.0)
       ahooks:
         specifier: ^3.7.5
         version: 3.7.10(react@18.2.0)
@@ -441,6 +444,9 @@ importers:
       '@monaco-editor/react':
         specifier: ^4.6.0
         version: 4.6.0(monaco-editor@0.39.0)(react-dom@18.2.0)(react@18.2.0)
+      ahooks:
+        specifier: ^3.7.5
+        version: 3.7.10(react@18.2.0)
       allotment:
         specifier: ^1.18.1
         version: 1.20.0(react-dom@18.2.0)(react@18.2.0)
@@ -637,7 +643,7 @@ packages:
     peerDependencies:
       react: '>=16.9.0'
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       classnames: 2.5.1
       json2mq: 0.2.0
       react: 18.2.0
@@ -908,7 +914,6 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.1
-    dev: false
 
   /@babel/template@7.24.0:
     resolution: {integrity: sha512-Bkf2q8lMB0AFpX0NFEqSbx1OkTHf0f+0j82mkw+ZpzBnkk7e9Ql0891vlfgi+kHwOk8tQjiQHpqh4LaSa0fKEA==}
@@ -2007,7 +2012,7 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       rc-util: 5.39.1(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -2017,7 +2022,7 @@ packages:
     resolution: {integrity: sha512-jS4E7T9Li2GuYwI6PyiVXmxTiM6b07rlD9Ge8uGZSCz3WlzcG5ZK7g5bbuKNeZ9pgUuPK/5guV781ujdVpm4HQ==}
     engines: {node: '>=8.x'}
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
     dev: false
 
   /@rc-component/mutate-observer@1.1.0(react-dom@18.2.0)(react@18.2.0):
@@ -2041,7 +2046,7 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       classnames: 2.5.1
       rc-util: 5.39.1(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
@@ -2071,7 +2076,7 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       '@rc-component/portal': 1.1.2(react-dom@18.2.0)(react@18.2.0)
       classnames: 2.5.1
       rc-motion: 2.9.0(react-dom@18.2.0)(react@18.2.0)
@@ -2145,6 +2150,102 @@ packages:
       colors: 1.2.5
       string-argv: 0.3.2
     dev: true
+
+  /@sentry-internal/feedback@7.116.0:
+    resolution: {integrity: sha512-tmfO+RTCrhIWMs3yg8X0axhbjWRZLsldSfoXBgfjNCk/XwkYiVGp7WnYVbb+IO+01mHCsis9uaYOBggLgFRB5Q==}
+    engines: {node: '>=12'}
+    dependencies:
+      '@sentry/core': 7.116.0
+      '@sentry/types': 7.116.0
+      '@sentry/utils': 7.116.0
+    dev: false
+
+  /@sentry-internal/replay-canvas@7.116.0:
+    resolution: {integrity: sha512-Sy0ydY7A97JY/IFTIj8U25kHqR5rL9oBk3HFE5EK9Phw56irVhHzEwLWae0jlFeCQEWoBYqpPgO5vXsaYzrWvw==}
+    engines: {node: '>=12'}
+    dependencies:
+      '@sentry/core': 7.116.0
+      '@sentry/replay': 7.116.0
+      '@sentry/types': 7.116.0
+      '@sentry/utils': 7.116.0
+    dev: false
+
+  /@sentry-internal/tracing@7.116.0:
+    resolution: {integrity: sha512-y5ppEmoOlfr77c/HqsEXR72092qmGYS4QE5gSz5UZFn9CiinEwGfEorcg2xIrrCuU7Ry/ZU2VLz9q3xd04drRA==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry/core': 7.116.0
+      '@sentry/types': 7.116.0
+      '@sentry/utils': 7.116.0
+    dev: false
+
+  /@sentry/browser@7.116.0:
+    resolution: {integrity: sha512-2aosATT5qE+QLKgTmyF9t5Emsluy1MBczYNuPmLhDxGNfB+MA86S8u7Hb0CpxdwjS0nt14gmbiOtJHoeAF3uTw==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry-internal/feedback': 7.116.0
+      '@sentry-internal/replay-canvas': 7.116.0
+      '@sentry-internal/tracing': 7.116.0
+      '@sentry/core': 7.116.0
+      '@sentry/integrations': 7.116.0
+      '@sentry/replay': 7.116.0
+      '@sentry/types': 7.116.0
+      '@sentry/utils': 7.116.0
+    dev: false
+
+  /@sentry/core@7.116.0:
+    resolution: {integrity: sha512-J6Wmjjx+o7RwST0weTU1KaKUAlzbc8MGkJV1rcHM9xjNTWTva+nrcCM3vFBagnk2Gm/zhwv3h0PvWEqVyp3U1Q==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry/types': 7.116.0
+      '@sentry/utils': 7.116.0
+    dev: false
+
+  /@sentry/integrations@7.116.0:
+    resolution: {integrity: sha512-UZb60gaF+7veh1Yv79RiGvgGYOnU6xA97H+hI6tKgc1uT20YpItO4X56Vhp0lvyEyUGFZzBRRH1jpMDPNGPkqw==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry/core': 7.116.0
+      '@sentry/types': 7.116.0
+      '@sentry/utils': 7.116.0
+      localforage: 1.10.0
+    dev: false
+
+  /@sentry/react@7.116.0(react@18.2.0):
+    resolution: {integrity: sha512-b7sYSIewK/h3dGzm7Rx6tBUzA6w7zw6m5rVIO3fWCy7T3xEUDggUaqklrFVHXUYx2yjzEgTFPg/Dd2NrSzua4w==}
+    engines: {node: '>=8'}
+    peerDependencies:
+      react: 15.x || 16.x || 17.x || 18.x
+    dependencies:
+      '@sentry/browser': 7.116.0
+      '@sentry/core': 7.116.0
+      '@sentry/types': 7.116.0
+      '@sentry/utils': 7.116.0
+      hoist-non-react-statics: 3.3.2
+      react: 18.2.0
+    dev: false
+
+  /@sentry/replay@7.116.0:
+    resolution: {integrity: sha512-OrpDtV54pmwZuKp3g7PDiJg6ruRMJKOCzK08TF7IPsKrr4x4UQn56rzMOiABVuTjuS8lNfAWDar6c6vxXFz5KA==}
+    engines: {node: '>=12'}
+    dependencies:
+      '@sentry-internal/tracing': 7.116.0
+      '@sentry/core': 7.116.0
+      '@sentry/types': 7.116.0
+      '@sentry/utils': 7.116.0
+    dev: false
+
+  /@sentry/types@7.116.0:
+    resolution: {integrity: sha512-QCCvG5QuQrwgKzV11lolNQPP2k67Q6HHD9vllZ/C4dkxkjoIym8Gy+1OgAN3wjsR0f/kG9o5iZyglgNpUVRapQ==}
+    engines: {node: '>=8'}
+    dev: false
+
+  /@sentry/utils@7.116.0:
+    resolution: {integrity: sha512-Vn9fcvwTq91wJvCd7WTMWozimqMi+dEZ3ie3EICELC2diONcN16ADFdzn65CQQbYwmUzRjN9EjDN2k41pKZWhQ==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@sentry/types': 7.116.0
+    dev: false
 
   /@sinclair/typebox@0.27.8:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
@@ -2422,7 +2523,7 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       '@babel/code-frame': 7.24.2
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       '@types/aria-query': 5.0.4
       aria-query: 5.1.3
       chalk: 4.1.2
@@ -3110,7 +3211,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       dayjs: 1.11.10
       intersection-observer: 0.12.2
       js-cookie: 2.2.1
@@ -3668,7 +3769,7 @@ packages:
     resolution: {integrity: sha512-Cg7TFGpIr01vOQNODXOOaGz2NpCU5gl8x1qJFbb6hbZxR7XrcE2vtbAsTAbJ7/xwJtUuJEw8K8Zr/AE0LHlesg==}
     engines: {node: '>=10', npm: '>=6'}
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       cosmiconfig: 7.1.0
       resolve: 1.22.8
 
@@ -4760,13 +4861,13 @@ packages:
   /dom-helpers@3.4.0:
     resolution: {integrity: sha512-LnuPJ+dwqKDIyotW1VzmOZ5TONUN7CwkCR5hrgawTUbkBGYdeoNLZo6nNfGkCrjtE1nXXaj7iMMpDa8/d9WoIA==}
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
     dev: false
 
   /dom-helpers@5.2.1:
     resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       csstype: 3.1.3
     dev: false
 
@@ -6195,6 +6296,10 @@ packages:
     engines: {node: '>= 4'}
     dev: true
 
+  /immediate@3.0.6:
+    resolution: {integrity: sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ==}
+    dev: false
+
   /immer@9.0.21:
     resolution: {integrity: sha512-bc4NBHqOqSfRW7POMkHd51LvClaeMXpm8dx0e8oE2GORbq5aRK7Bxl4FyzVLdGtLmvLKL7BTDBG5ACQm4HWjTA==}
     dev: false
@@ -6821,6 +6926,12 @@ packages:
       type-check: 0.4.0
     dev: true
 
+  /lie@3.1.1:
+    resolution: {integrity: sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==}
+    dependencies:
+      immediate: 3.0.6
+    dev: false
+
   /lilconfig@2.1.0:
     resolution: {integrity: sha512-utWOt/GHzuUxnLKxB6dk81RoOeoNeHgbrXiuGk4yyF5qlRz+iIVWu56E2fqGHFrXz0QNUhLB/8nKqvRH66JKGQ==}
     engines: {node: '>=10'}
@@ -6883,6 +6994,12 @@ packages:
       mlly: 1.6.1
       pkg-types: 1.0.3
     dev: true
+
+  /localforage@1.10.0:
+    resolution: {integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==}
+    dependencies:
+      lie: 3.1.1
+    dev: false
 
   /locate-character@3.0.0:
     resolution: {integrity: sha512-SW13ws7BjaeJ6p7Q6CO2nchbYEc3X3J6WrmTTDto7yMPqVSZTUyY5Tjbid+Ab8gLnATtygYtiDIJGQRRn2ZOiA==}
@@ -7963,7 +8080,7 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       async-validator: 4.2.5
       rc-util: 5.39.1(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
@@ -8051,7 +8168,7 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       '@rc-component/trigger': 2.0.0(react-dom@18.2.0)(react@18.2.0)
       classnames: 2.5.1
       rc-motion: 2.9.0(react-dom@18.2.0)(react@18.2.0)
@@ -8081,7 +8198,7 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       classnames: 2.5.1
       rc-motion: 2.9.0(react-dom@18.2.0)(react@18.2.0)
       rc-util: 5.39.1(react-dom@18.2.0)(react@18.2.0)
@@ -8110,7 +8227,7 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       classnames: 2.5.1
       rc-resize-observer: 1.4.0(react-dom@18.2.0)(react@18.2.0)
       rc-util: 5.39.1(react-dom@18.2.0)(react@18.2.0)
@@ -8168,7 +8285,7 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       classnames: 2.5.1
       rc-util: 5.39.1(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
@@ -8237,7 +8354,7 @@ packages:
       react: '*'
       react-dom: '*'
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       '@rc-component/trigger': 2.0.0(react-dom@18.2.0)(react@18.2.0)
       classnames: 2.5.1
       rc-motion: 2.9.0(react-dom@18.2.0)(react@18.2.0)
@@ -8296,7 +8413,7 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       '@rc-component/context': 1.4.0(react-dom@18.2.0)(react@18.2.0)
       classnames: 2.5.1
       rc-resize-observer: 1.4.0(react-dom@18.2.0)(react@18.2.0)
@@ -8347,7 +8464,7 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       classnames: 2.5.1
       rc-input: 1.4.5(react-dom@18.2.0)(react@18.2.0)
       rc-resize-observer: 1.4.0(react-dom@18.2.0)(react@18.2.0)
@@ -8391,7 +8508,7 @@ packages:
       react: '*'
       react-dom: '*'
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       classnames: 2.5.1
       rc-motion: 2.9.0(react-dom@18.2.0)(react@18.2.0)
       rc-util: 5.39.1(react-dom@18.2.0)(react@18.2.0)
@@ -8432,7 +8549,7 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       classnames: 2.5.1
       rc-resize-observer: 1.4.0(react-dom@18.2.0)(react@18.2.0)
       rc-util: 5.39.1(react-dom@18.2.0)(react@18.2.0)
@@ -8603,7 +8720,7 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.24.4
       react: 18.2.0
       use-composed-ref: 1.3.0(react@18.2.0)
       use-latest: 1.2.1(@types/react@18.2.71)(react@18.2.0)
