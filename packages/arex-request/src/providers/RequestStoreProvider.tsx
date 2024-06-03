@@ -1,5 +1,7 @@
 import React, { createContext, Dispatch, FC, PropsWithChildren, useEffect } from 'react';
 import { useImmer } from 'use-immer';
+
+import { isClient } from '../constant';
 import { sendRequest } from '../helpers';
 import { useArexRequestProps } from '../hooks';
 import {
@@ -10,7 +12,6 @@ import {
   ArexTestResult,
   ArexVisualizer,
 } from '../types';
-import {isClient} from "../constant";
 
 export interface RequestStore {
   request: ArexRESTRequest;
@@ -125,7 +126,7 @@ const RequestStoreProvider: FC<PropsWithChildren> = (props) => {
       value={{
         store,
         dispatch,
-        request
+        request,
       }}
     >
       {props.children}

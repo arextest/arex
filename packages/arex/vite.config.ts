@@ -29,7 +29,7 @@ export default defineConfig(async ({ mode }) => {
         '@': path.resolve('./src'),
         // '@arextest/arex-core/dist': path.resolve('../arex-core/src'),
         // '@arextest/arex-core': path.resolve('../arex-core/src'),
-        // '@arextest/arex-request': path.resolve('../arex-request/src'),
+        '@arextest/arex-request': path.resolve('../arex-request/src'),
       },
     },
     plugins: [
