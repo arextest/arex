@@ -32,7 +32,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   const { message } = App.useApp();
   const userName = getLocalStorage<string>(EMAIL_KEY);
 
-  const { collectionsFlatData, addCollectionNode, getPath } = useCollections();
+  const { collectionsFlatData, addCollectionNode, getCollections, getPath } = useCollections();
 
   const [selectLocationRef] = useAutoAnimate();
 
@@ -70,13 +70,18 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   );
 
   const { run: addCollectionItem } = useRequest(
-    (params: {
-      nodeName: string;
-      nodeType: CollectionNodeType;
-      caseSourceType?: number;
-      parentInfoId?: string;
-      parentNodeType?: CollectionNodeType;
-    }) =>
+    (
+      params: {
+        nodeName: string;
+        nodeType: CollectionNodeType;
+        caseSourceType?: number;
+        parentInfoId?: string;
+        parentNodeType?: CollectionNodeType;
+      },
+      options?: {
+        reset?: boolean;
+      },
+    ) =>
       FileSystemService.addCollectionItem({
         ...params,
         userName: userName as string,
@@ -86,16 +91,26 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
       }),
     {
       manual: true,
-      onSuccess: (res, [{ nodeName, nodeType, parentInfoId, caseSourceType }]) => {
+      onSuccess: (res, [{ nodeName, nodeType, parentInfoId, caseSourceType }, options]) => {
         setOpen(false);
-
-        addCollectionNode({
-          infoId: res.infoId,
-          nodeName,
-          nodeType,
-          parentId: parentInfoId || selectedKeys[0],
-          caseSourceType,
-        });
+        options?.reset
+          ? getCollections(
+              {
+                workspaceId: props.workspaceId,
+                infoId: res.infoId,
+                nodeType,
+              },
+              {
+                mode: 'search',
+              },
+            )
+          : addCollectionNode({
+              infoId: res.infoId,
+              nodeName,
+              nodeType,
+              parentId: parentInfoId || selectedKeys[0],
+              caseSourceType,
+            });
 
         props.onCreate?.(res.infoId);
       },
@@ -108,13 +123,18 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
       manual: true,
       onSuccess(res, [{ nodeName }]) {
         if (res.success) {
-          addCollectionItem({
-            nodeName: nodeName!,
-            nodeType: props.nodeType,
-            caseSourceType: CaseSourceType.AREX,
-            parentInfoId: res.path[res.path.length - 1],
-            parentNodeType: CollectionNodeType.interface,
-          });
+          addCollectionItem(
+            {
+              nodeName: nodeName!,
+              nodeType: props.nodeType,
+              caseSourceType: CaseSourceType.AREX,
+              parentInfoId: res.path[res.path.length - 1],
+              parentNodeType: CollectionNodeType.interface,
+            },
+            {
+              reset: true,
+            },
+          );
         }
       },
     },
