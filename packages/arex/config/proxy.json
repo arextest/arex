@@ -1,14 +1,14 @@
 [
   {
     "path": "/webApi",
-    "target": "http://10.118.1.217:8090"
+    "target": "http://10.144.62.53:8090"
   },
   {
     "path": "/schedule",
-    "target": "http://10.118.1.217:8092"
+    "target": "http://10.144.62.53:8092"
   },
   {
     "path": "/storage",
-    "target": "http://10.118.1.217:8093"
+    "target": "http://10.144.62.53:8093"
   }
 ]

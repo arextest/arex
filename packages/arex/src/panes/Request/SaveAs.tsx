@@ -70,24 +70,30 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   );
 
   const { run: addCollectionItem } = useRequest(
-    (params: { nodeName: string; nodeType: CollectionNodeType; caseSourceType?: number }) =>
+    (params: {
+      nodeName: string;
+      nodeType: CollectionNodeType;
+      caseSourceType?: number;
+      parentInfoId?: string;
+      parentNodeType?: CollectionNodeType;
+    }) =>
       FileSystemService.addCollectionItem({
         ...params,
         userName: userName as string,
         id: props.workspaceId,
-        parentInfoId: selectedKeys[0],
-        parentNodeType: collectionsFlatData[selectedKeys[0]]?.nodeType,
+        parentInfoId: params.parentInfoId || selectedKeys[0],
+        parentNodeType: params.parentNodeType || collectionsFlatData[selectedKeys[0]]?.nodeType,
       }),
     {
       manual: true,
-      onSuccess: (res, [{ nodeName, nodeType, caseSourceType }]) => {
+      onSuccess: (res, [{ nodeName, nodeType, parentInfoId, caseSourceType }]) => {
         setOpen(false);
 
         addCollectionNode({
           infoId: res.infoId,
           nodeName,
           nodeType,
-          parentId: selectedKeys[0],
+          parentId: parentInfoId || selectedKeys[0],
           caseSourceType,
         });
 
@@ -106,6 +112,8 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
             nodeName: nodeName!,
             nodeType: props.nodeType,
             caseSourceType: CaseSourceType.AREX,
+            parentInfoId: res.path[res.path.length - 1],
+            parentNodeType: CollectionNodeType.interface,
           });
         }
       },
@@ -146,7 +154,6 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
 
     const nodeName = value || props.title || (t('untitled', { ns: 'common' }) as string);
 
-    console.log(' props.nodeType', props.nodeType);
     addCollectionItem({
       nodeName,
       nodeType: props.nodeType,
@@ -184,7 +191,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
               />
             }
             onClick={() => {
-              setDefaultPath(!defaultPath);
+              setDefaultPath(!defaultPath || undefined); // convert false to undefined
             }}
             style={{ marginLeft: '12px' }}
           />
