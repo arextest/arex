@@ -7,9 +7,9 @@ import {
   Theme,
   TooltipButton,
   tryParseJsonString,
+  tryStringifyJson,
   useTranslation,
 } from '@arextest/arex-core';
-import { tryStringifyJson } from '@arextest/arex-core/src';
 import type { ArexEnvironment, ArexRESTRequest } from '@arextest/arex-request';
 import {
   ArexResponse,
