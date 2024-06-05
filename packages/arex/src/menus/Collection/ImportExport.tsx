@@ -52,7 +52,6 @@ const CollectionsImportExport = forwardRef<
       FileSystemService.importCollection({
         workspaceId: activeWorkspaceId,
         type: format,
-        path: [],
         importString: fileString,
       }),
     {
@@ -77,7 +76,6 @@ const CollectionsImportExport = forwardRef<
       FileSystemService.exportCollection({
         workspaceId: activeWorkspaceId,
         type: format,
-        path: [],
       }),
     {
       manual: true,

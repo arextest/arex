@@ -1,9 +1,10 @@
-import { CollectionType } from '@/services/FileSystemService';
+import { CollectionNodeType } from '@/constant';
 import { request } from '@/utils';
 
 export type GetCollectionItemReq = {
   workspaceId: string;
-  parentIds?: string[];
+  parentInfoId?: string;
+  parentNodeType?: CollectionNodeType;
 };
 
 export type GetCollectionItemRes = {

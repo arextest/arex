@@ -1,9 +1,11 @@
+import { CollectionNodeType } from '@/constant';
 import { request } from '@/utils';
 
 export type ExportCollectionReq = {
   workspaceId: string;
   type: number;
-  path: string[];
+  infoId?: string;
+  nodeType?: CollectionNodeType;
 };
 
 export async function exportCollection(params: ExportCollectionReq) {

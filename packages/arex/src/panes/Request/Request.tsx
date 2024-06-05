@@ -49,7 +49,6 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const { collectionsTreeData, getPath, renameCollectionNode } = useCollections();
   const { removePane } = useMenusPanes();
 
-  const userName = getLocalStorage<string>(EMAIL_KEY);
   const { id: paneId, type } = decodePaneKey(props.paneKey);
   // requestId structure: workspaceId-nodeTypeStr-id
   const [workspaceId, nodeTypeStr, id] = useMemo(() => paneId.split('-'), [paneId]);
@@ -194,8 +193,8 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       FileSystemService.renameCollectionItem({
         id: workspaceId,
         newName,
-        path: parentPath.map((path) => path.id),
-        userName: userName as string,
+        infoId: id,
+        nodeType,
       }),
     {
       manual: true,

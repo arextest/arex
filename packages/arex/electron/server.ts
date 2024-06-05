@@ -65,6 +65,13 @@ proxy.forEach((item) => {
       // pathRewrite: () => item.target + '/vi/health',
     }),
   );
+  server.use(
+    '/checkFeature' + item.path,
+    createProxyMiddleware({
+      target: item.target.replace('{{companyDomainName}}', companyName),
+      changeOrigin: true,
+    }),
+  );
 });
 
 server.get('/api/companyName', (req, res) => {

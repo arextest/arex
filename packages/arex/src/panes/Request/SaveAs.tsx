@@ -32,7 +32,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   const { message } = App.useApp();
   const userName = getLocalStorage<string>(EMAIL_KEY);
 
-  const { collectionsFlatData, getPath } = useCollections();
+  const { collectionsFlatData, addCollectionNode, getCollections, getPath } = useCollections();
 
   const [selectLocationRef] = useAutoAnimate();
 
@@ -70,21 +70,48 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   );
 
   const { run: addCollectionItem } = useRequest(
-    (params: {
-      nodeName: string;
-      nodeType: CollectionNodeType;
-      caseSourceType?: number;
-      parentPath: string[];
-    }) =>
+    (
+      params: {
+        nodeName: string;
+        nodeType: CollectionNodeType;
+        caseSourceType?: number;
+        parentInfoId?: string;
+        parentNodeType?: CollectionNodeType;
+      },
+      options?: {
+        reset?: boolean;
+      },
+    ) =>
       FileSystemService.addCollectionItem({
         ...params,
         userName: userName as string,
         id: props.workspaceId,
+        parentInfoId: params.parentInfoId || selectedKeys[0],
+        parentNodeType: params.parentNodeType || collectionsFlatData[selectedKeys[0]]?.nodeType,
       }),
     {
       manual: true,
-      onSuccess: (res) => {
+      onSuccess: (res, [{ nodeName, nodeType, parentInfoId, caseSourceType }, options]) => {
         setOpen(false);
+        options?.reset
+          ? getCollections(
+              {
+                workspaceId: props.workspaceId,
+                infoId: res.infoId,
+                nodeType,
+              },
+              {
+                mode: 'search',
+              },
+            )
+          : addCollectionNode({
+              infoId: res.infoId,
+              nodeName,
+              nodeType,
+              parentId: parentInfoId || selectedKeys[0],
+              caseSourceType,
+            });
+
         props.onCreate?.(res.infoId);
       },
     },
@@ -96,12 +123,18 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
       manual: true,
       onSuccess(res, [{ nodeName }]) {
         if (res.success) {
-          addCollectionItem({
-            nodeName: nodeName!,
-            nodeType: props.nodeType,
-            caseSourceType: CaseSourceType.AREX,
-            parentPath: res.path,
-          });
+          addCollectionItem(
+            {
+              nodeName: nodeName!,
+              nodeType: props.nodeType,
+              caseSourceType: CaseSourceType.AREX,
+              parentInfoId: res.path[res.path.length - 1],
+              parentNodeType: CollectionNodeType.interface,
+            },
+            {
+              reset: true,
+            },
+          );
         }
       },
     },
@@ -114,7 +147,10 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
           return message.info(t('http.selectSaveLocation'));
         const params = defaultPath
           ? { appName: props.appName, interfaceName: props.interfaceName, nodeName: props.title }
-          : { path: collectionPath.map((i) => i.id) };
+          : {
+              parentInfoId: selectedKeys[0],
+              parentNodeType: collectionsFlatData[selectedKeys[0]]?.nodeType,
+            };
 
         addItemsByAppNameAndInterfaceName({
           recordId: props.recordId,
@@ -138,12 +174,10 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
 
     const nodeName = value || props.title || (t('untitled', { ns: 'common' }) as string);
 
-    console.log(' props.nodeType', props.nodeType);
     addCollectionItem({
       nodeName,
       nodeType: props.nodeType,
       caseSourceType: props.recordId ? CaseSourceType.AREX : CaseSourceType.CASE,
-      parentPath: collectionPath.map((i) => i.id),
     });
   };
 
@@ -177,7 +211,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
               />
             }
             onClick={() => {
-              setDefaultPath(!defaultPath);
+              setDefaultPath(!defaultPath || undefined); // convert false to undefined
             }}
             style={{ marginLeft: '12px' }}
           />

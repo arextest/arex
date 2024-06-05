@@ -6,7 +6,8 @@ export type AddCollectionReq = {
   userName: string;
   nodeName?: string;
   nodeType?: CollectionNodeType;
-  parentPath?: string[];
+  parentInfoId?: string;
+  parentNodeType?: CollectionNodeType;
   caseSourceType?: number;
 };
 
@@ -17,11 +18,10 @@ export type AddCollectionRes = {
 };
 
 export async function addCollectionItem(params: AddCollectionReq) {
-  const { nodeName = 'New Collection', nodeType = 3, parentPath = [], ...restParams } = params;
+  const { nodeName = 'New Collection', nodeType = 3, ...restParams } = params;
   const res = await request.post<AddCollectionRes>(`/webApi/filesystem/addItem`, {
     nodeName,
     nodeType,
-    parentPath,
     ...restParams,
   });
 

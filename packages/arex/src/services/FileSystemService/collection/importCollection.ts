@@ -1,9 +1,11 @@
+import { CollectionNodeType } from '@/constant';
 import { request } from '@/utils';
 
 export type ImportCollectionReq = {
   workspaceId: string;
   type: number;
-  path: string[];
+  infoId?: string;
+  nodeType?: CollectionNodeType;
   importString: string;
 };
 
