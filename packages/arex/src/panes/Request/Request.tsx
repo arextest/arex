@@ -9,17 +9,11 @@ import { useRequest } from 'ahooks';
 import { App } from 'antd';
 import React, { useMemo, useRef, useState } from 'react';
 
-import {
-  CollectionNodeType,
-  EMAIL_KEY,
-  PanesType,
-  WORKSPACE_ENVIRONMENT_PAIR_KEY,
-} from '@/constant';
+import { CollectionNodeType, PanesType, WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
 import { EnvironmentService, FileSystemService, ReportService } from '@/services';
 import { Environment } from '@/services/EnvironmentService/getEnvironments';
 import { GetCollectionItemTreeReq } from '@/services/FileSystemService';
-import { generateTestScripts } from '@/services/ReportService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
@@ -46,7 +40,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const navPane = useNavPane({ inherit: true });
   const { message } = App.useApp();
 
-  const { collectionsTreeData, getPath, renameCollectionNode } = useCollections();
+  const { renameCollectionNode } = useCollections();
   const { removePane } = useMenusPanes();
 
   const { id: paneId, type } = decodePaneKey(props.paneKey);
@@ -168,7 +162,9 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     [data?.name, props.data?.recordId, t],
   );
 
-  const parentPath = useMemo(() => getPath(id), [collectionsTreeData]);
+  const { data: pathInfo = [] } = useRequest(FileSystemService.queryPathInfo, {
+    defaultParams: [{ infoId: id, nodeType }],
+  });
 
   const { run: runPinMock } = useRequest(
     ({ infoId, recordId }: { infoId: string; recordId: string }) =>
@@ -201,7 +197,10 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       ready: !!data,
       onSuccess(success, [name]) {
         if (success) {
-          renameCollectionNode(id, name);
+          renameCollectionNode(
+            pathInfo.map((path) => path.id),
+            name,
+          );
           navPane({
             id: paneId,
             type,
@@ -307,7 +306,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         language={i18n.language}
         config={httpConfig}
         gptProvider={aiEnabled ? ReportService.generateTestScripts : undefined}
-        breadcrumb={parentPath?.length ? parentPath.map((path) => path.name) : [title]}
+        breadcrumb={pathInfo?.length ? pathInfo.map((path) => path.name) : [title]}
         titleProps={{
           value: title,
           onChange: rename,
@@ -358,6 +357,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         title={title}
         nodeType={nodeType}
         workspaceId={workspaceId}
+        pathInfo={pathInfo}
         // debug case save params
         appName={decodeURIComponent(props.data?.appName || '')}
         interfaceName={decodeURIComponent(props.data?.interfaceName || '')}

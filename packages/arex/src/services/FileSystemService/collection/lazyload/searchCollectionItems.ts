@@ -1,9 +1,8 @@
 import { OperatorType } from '@arextest/arex-core';
 import React from 'react';
 
+import { CollectionType } from '@/services/FileSystemService';
 import { request } from '@/utils';
-
-import { CollectionType } from '../queryCollectionByWorkspace';
 
 export interface SearchCollectionItemsReq {
   workspaceId: string;

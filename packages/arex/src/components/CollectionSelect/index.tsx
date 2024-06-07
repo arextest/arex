@@ -27,7 +27,6 @@ import { CollectionNodeType, EMAIL_KEY } from '@/constant';
 import { FileSystemService, ReportService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
 import { useCollections, useWorkspaces } from '@/store';
-import { negate } from '@/utils';
 
 import CollectionNodeTitle, { CollectionNodeTitleProps } from './CollectionNodeTitle';
 
@@ -61,15 +60,14 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     expandedKeys,
     loadedKeys,
     collectionsTreeData,
-    collectionsFlatData,
     setExpandedKeys,
     setLoadedKeys,
     getCollections,
-    getPath,
     addCollectionNode,
     moveCollectionNode,
   } = useCollections();
 
+  const [activePose, setActivePos] = useState<number[]>([]);
   const searchRef = useRef<StructuredFilterRef>(null);
   const collectionSearchedListRef = useRef<CollectionSearchedListRef>(null);
   const treeRef = useRef<{
@@ -81,7 +79,6 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   }>(null);
 
   const [searchValue, setSearchValue] = useState<SearchDataType>();
-  const [autoExpandParent, setAutoExpandParent] = useState(true);
   const [activeKey, setActiveKey] = useState<string>();
 
   const [showSearchInput, setShowSearchInput] = useState(false);
@@ -110,16 +107,6 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
       ),
     ).catch((e) => console.error(e));
 
-  const dataList: { key: string; title: string; labelIds: string | null }[] = useMemo(
-    () =>
-      Object.entries(collectionsFlatData).map(([key, value]) => ({
-        key,
-        title: value.nodeName,
-        labelIds: value.labelIds,
-      })),
-    [collectionsFlatData],
-  );
-
   const options = useMemo(
     () => [
       {
@@ -145,7 +132,21 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   );
 
   const handleSelect: DirectoryTreeProps<CollectionTreeType>['onSelect'] = (keys, info) => {
+    setActivePos(
+      info.node.pos
+        ?.split('-')
+        .slice(1)
+        .map((pos) => Number(pos)),
+    );
+
+    const classList = ((info.nativeEvent?.target as HTMLElement)?.parentNode as HTMLElement)
+      ?.classList as DOMTokenList;
+    const clickFromMenu = classList?.contains('node-menu-icon') || classList?.contains('node-menu');
+    if (clickFromMenu) return;
+
     const infoId = info.node.infoId;
+    setActiveKey(infoId);
+
     if (expandable?.includes(info.node.nodeType)) {
       setExpandedKeys(
         expandedKeys?.includes(infoId)
@@ -153,51 +154,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
           : [...expandedKeys, infoId],
       );
     }
-    setActiveKey(infoId);
     props.onSelect?.(keys, info.node);
-  };
-
-  const handleChange = (value: SearchDataType) => {
-    const { keyword, structuredValue = [] } = value;
-    let newExpandedKeys;
-    if (!structuredValue?.length && !keyword) {
-      // TODO: 以事件驱动滚动，防止滚动到未加载的节点
-      activeKey && treeRef.current?.scrollTo({ key: activeKey, align: 'top', offset: 64 });
-      activeKey && setExpandedKeys([...expandedKeys, ...getPath(activeKey).map((item) => item.id)]);
-    } else {
-      newExpandedKeys = dataList
-        .map((item) => {
-          const lowerCaseKeyword = keyword?.toLowerCase() || '';
-          const keywordFiltered =
-            !keyword ||
-            (lowerCaseKeyword &&
-              (item.title.toLowerCase().includes(lowerCaseKeyword) ||
-                item.key.toLowerCase().includes(lowerCaseKeyword)));
-          let structuredFiltered = true;
-
-          for (let i = 0; i < structuredValue.length; i++) {
-            const structured = structuredValue[i];
-
-            if (structured.category === CategoryKey.Label) {
-              // search for labelIds
-              const include = negate(
-                item.labelIds?.includes(structured.value as string),
-                structured.operator === Operator.NE,
-              );
-
-              if (!include) {
-                structuredFiltered = false;
-                break;
-              }
-            }
-          }
-          return keywordFiltered && structuredFiltered ? collectionsFlatData[item.key]?.pid : null;
-        })
-        .filter((item, i, self) => item && self.indexOf(item) === i);
-      setExpandedKeys([...expandedKeys, ...(newExpandedKeys as string[])]);
-    }
-    setSearchValue(value);
-    setAutoExpandParent(true);
   };
 
   const { run: createCollection } = useRequest(
@@ -213,6 +170,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
           infoId: res.infoId,
           nodeType: CollectionNodeType.folder,
           nodeName: 'New Folder',
+          pathOrIndex: [0],
         });
       },
     },
@@ -228,12 +186,12 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
       const dragNodeType = info.dragNode.nodeType;
       let dropNodeType = CollectionNodeType.folder;
       // let dragTree = cloneDeep(collectionsTreeData);
-      let nodeTree = cloneDeep(collectionsTreeData);
+      let dropNode = cloneDeep(collectionsTreeData);
 
       dropPos.slice(1, info.dropToGap ? -1 : undefined).forEach((p) => {
         const index = Number(p);
-        dropNodeType = nodeTree[index].nodeType;
-        nodeTree = nodeTree[index].children;
+        dropNodeType = dropNode[index].nodeType;
+        dropNode = dropNode[index].children;
       });
 
       /**
@@ -254,14 +212,13 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
       )
         return console.error('Dragging nodes is not compliant');
 
-      moveCollectionNode(dragKey, dropKey, info.dropToGap, dropPosition);
+      moveCollectionNode(dragKey, dropKey, info.dropToGap, dropPosition, dropNodeType);
     },
     [collectionsTreeData, moveCollectionNode],
   );
 
   const onExpand = (newExpandedKeys: React.Key[]) => {
     setExpandedKeys(newExpandedKeys as string[]);
-    setAutoExpandParent(false);
   };
 
   const handleAddNode: CollectionNodeTitleProps['onAddNode'] = (infoId, nodeType) => {
@@ -302,11 +259,15 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
               }))}
               options={options}
               placeholder={'Search for Name'}
-              onChange={handleChange}
+              onChange={setSearchValue}
               onSearch={() => collectionSearchedListRef.current?.search()}
               onCancel={() => {
                 setSearchValue(undefined);
                 setShowSearchInput(false);
+                activeKey &&
+                  setTimeout(() =>
+                    treeRef.current?.scrollTo({ key: activeKey, align: 'top', offset: 64 }),
+                  );
               }}
             />
           ) : (
@@ -332,11 +293,17 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
               searchValue={searchValue}
               onSelect={(keys, data) => {
                 const infoId = keys[0].toString();
-                getCollections({
-                  workspaceId: activeWorkspaceId,
-                  infoId,
-                  nodeType: data.node.nodeType,
-                }).then(() => {
+                getCollections(
+                  {
+                    workspaceId: activeWorkspaceId,
+                    infoId,
+                    nodeType: data.node.nodeType,
+                  },
+                  {
+                    mode: 'search',
+                  },
+                ).then(() => {
+                  console.log(keys, data);
                   handleSelect(keys, data);
                 });
               }}
@@ -345,14 +312,14 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
             <CollectionTree
               showLine
               blockNode
+              autoExpandParent
               // @ts-ignore
               ref={treeRef}
               height={props.height}
               selectedKeys={props.selectedKeys}
               expandedKeys={expandedKeys}
-              autoExpandParent={autoExpandParent}
               switcherIcon={<DownOutlined />}
-              treeData={cloneDeep(collectionsTreeData)}
+              treeData={collectionsTreeData}
               loadedKeys={loadedKeys}
               loadData={handleLoadData}
               onLoad={(keys) => {
@@ -366,6 +333,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
               titleRender={(data) => (
                 <CollectionNodeTitle
                   data={data}
+                  pos={activePose}
                   readOnly={props.readOnly}
                   keyword={searchValue?.keyword}
                   onAddNode={handleAddNode}

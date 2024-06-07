@@ -11,58 +11,50 @@ import {
   getCollectionItem,
   getCollectionItemTree,
 } from '@/services/FileSystemService';
-import { treeToMap } from '@/utils';
 
 import useWorkspaces from './useWorkspaces';
-
-export type CollectionFlatType = CollectionType & { pid?: string };
-export type CollectionFlatMapType = Record<string, CollectionFlatType>;
 
 export type CollectionState = {
   loading: boolean;
   expandedKeys: string[];
   loadedKeys: string[];
   collectionsTreeData: CollectionType[];
-  collectionsFlatData: CollectionFlatMapType;
 };
 
-export type CollectionPath = { name: string; id: string };
+export type PathOrIndex = string[] | number[];
 
 export type CollectionAction = {
-  // 不传参数或只传 workspaceId 时默认获取当前 workspace 下的根节点
-  // 传递 parentIds 时获取指定路径下的节点
-  // 传递 infoId 和 nodeType 时获取指定 infoId 节点
-  // 当 params 不为空时 workspaceId 必传
   getCollections: (
     params?: {
-      workspaceId?: string;
-      infoId?: string;
+      workspaceId?: string; // 不传参数或只传 workspaceId 时默认获取当前 workspace 下的根节点
+      infoId?: string; // infoId 需要与 nodeType 一起传递
       nodeType?: CollectionNodeType;
     },
     options?: {
+      // search 搜索模式: 以 infoId 逐层向上构建出相关的父层级
+      // click: 点击模式: 以 infoId 为父节点展开
       mode?: 'search' | 'click';
-      merge?: boolean;
     },
   ) => Promise<void>;
   setExpandedKeys: (keys: string[]) => void;
   setLoadedKeys: (keys: string[]) => void;
-  getPath: (infoId: string) => CollectionPath[];
   addCollectionNode: (params: {
     infoId: string;
     nodeName: string;
-    parentId?: string;
     nodeType: CollectionNodeType;
     caseSourceType?: CaseSourceType;
+    pathOrIndex: PathOrIndex;
   }) => void;
-  removeCollectionNode: (infoId: string) => void;
-  renameCollectionNode: (infoId: string, newName: string) => void;
-  duplicateCollectionNode: (infoId: string, newId: string) => void;
+  removeCollectionNode: (pathOrIndex: PathOrIndex) => void;
+  renameCollectionNode: (pathOrIndex: PathOrIndex, nodeName: string) => void;
+  duplicateCollectionNode: (pathOrIndex: PathOrIndex, newId: string) => void;
   createRootCollectionNode: (infoId: string) => void;
   moveCollectionNode: (
     dragKey: React.Key,
     dropKey: React.Key,
     dropToGap: boolean,
     dropPosition: number, // the drop position relative to the drop node, inside 0, top -1, bottom 1
+    dropNodeType: CollectionNodeType,
   ) => void;
   reset: () => void;
 };
@@ -87,22 +79,8 @@ const initialState: CollectionState = {
   loading: true,
   expandedKeys: [],
   loadedKeys: [],
-  collectionsFlatData: {},
   collectionsTreeData: [],
 };
-
-const ROOT_KEY = '__root__';
-
-const generateRootNode = (children: CollectionType[]) => ({
-  caseSourceType: 0,
-  labelIds: null,
-  method: null,
-  nodeName: 'root',
-  nodeType: CollectionNodeType.folder,
-  infoId: '', // types.id,
-  key: ROOT_KEY, //
-  children,
-});
 
 const generateNewFolder = (infoId: string, nodeName = 'New Collection') => ({
   key: infoId,
@@ -120,13 +98,16 @@ const generateNewFolder = (infoId: string, nodeName = 'New Collection') => ({
 const appendChildrenByParent = (
   tree: CollectionType[],
   children: CollectionType | CollectionType[],
-  parentPath: string[],
+  parentPathOrIndex: PathOrIndex, // path: string[], index: number[]
 ): CollectionType[] => {
   const _tree = cloneDeep(tree);
-  parentPath.reduce<CollectionType[]>((treeArray, path, index) => {
-    const node = treeArray.find((item) => item.infoId === path);
+  parentPathOrIndex.reduce<CollectionType[]>((treeArray, pathOrIndex, index) => {
+    const node =
+      typeof pathOrIndex === 'string'
+        ? treeArray.find((item) => item.infoId === pathOrIndex)
+        : treeArray[pathOrIndex];
     if (!node) return treeArray;
-    if (index === parentPath.length - 1) {
+    if (index === parentPathOrIndex.length - 1) {
       if (Array.isArray(children)) {
         node.children = children;
         node.existChildren = !!children.length;
@@ -166,54 +147,54 @@ const isLeafNest = (obj: CollectionType[]) => {
   return obj;
 };
 
+function reduceNodeByPos(
+  tree: WritableDraft<CollectionType[]>,
+  pathOrIndex: PathOrIndex,
+  callback: (node: WritableDraft<CollectionType>, index: number) => void,
+) {
+  const isPath = typeof pathOrIndex[0] === 'string';
+  let node = isPath
+    ? tree.find((node) => node.infoId === pathOrIndex[0])
+    : tree[pathOrIndex[0] as number];
+  callback(node!, 0);
+
+  for (let i = 1; i < pathOrIndex.length; i++) {
+    node = isPath
+      ? node!.children!.find((node) => node.infoId === pathOrIndex[i])
+      : node!.children![pathOrIndex[i] as number];
+    callback(node!, i);
+  }
+}
+
 const useCollections = create(
   immer<CollectionState & CollectionAction>((set, get) => {
-    /**
-     * 获取路径
-     * @param id
-     * @param flatArray
-     */
-    function getPathInFlatArray(id: string | undefined, flatArray: CollectionFlatMapType) {
-      const path: CollectionPath[] = [];
-      if (!id) return path;
-
-      let node: CollectionFlatType | undefined = flatArray[id];
-
-      while (node) {
-        path.unshift({ name: node.nodeName, id: node.infoId });
-        node = node.pid ? flatArray[node.pid] : undefined;
-      }
-
-      return path;
-    }
-
     return {
       // State,
       ...initialState,
 
       // Action
-      getCollections: async (
-        { workspaceId, infoId, nodeType } = {},
-        { merge = true, mode = 'click' } = {},
-      ) => {
+      getCollections: async ({ workspaceId, infoId, nodeType } = {}, { mode = 'click' } = {}) => {
         const id = workspaceId || useWorkspaces.getState().activeWorkspaceId;
         if (!id) return;
 
         if (!get().loading) set({ loading: true });
 
         let data;
+        let parentPath: string[] = [];
         if (mode === 'click') {
           // click collection
-          data = (
-            await getCollectionItem({
-              workspaceId: id,
-              parentInfoId: infoId,
-              parentNodeType: nodeType,
-            })
-          ).children;
+          const res = await getCollectionItem({
+            workspaceId: id,
+            parentInfoId: infoId,
+            parentNodeType: nodeType,
+          });
+          data = res.node.children;
+          parentPath = res.path;
         } else if (mode === 'search' && infoId && nodeType) {
           // click search
-          data = (await getCollectionItemTree({ workspaceId: id, infoId, nodeType })).roots;
+          const res = await getCollectionItemTree({ workspaceId: id, infoId, nodeType });
+          data = res.fsTree.roots;
+          parentPath = res.path;
         }
 
         if (!data) return;
@@ -222,27 +203,16 @@ const useCollections = create(
 
         const treeData = get().collectionsTreeData;
 
-        if (merge) {
-          if (!infoId || !nodeType) {
-            mergedData = mergeRootLevel(treeData, mergedData);
-          } else if (mode === 'click') {
-            mergedData = appendChildrenByParent(
-              treeData,
-              mergedData,
-              getPathInFlatArray(infoId, get().collectionsFlatData).map((item) => item.id),
-            );
-          } else {
-            const path = getPathInFlatArray(infoId, treeToMap(generateRootNode(mergedData)))
-              .map((item) => item.id)
-              .filter((item) => item !== infoId);
-            get().setLoadedKeys(path);
-            get().setExpandedKeys(path);
-          }
+        if (!infoId || !nodeType) {
+          mergedData = mergeRootLevel(treeData, mergedData);
+        } else if (mode === 'click') {
+          mergedData = appendChildrenByParent(treeData, mergedData, parentPath);
+        } else {
+          get().setLoadedKeys(parentPath);
+          get().setExpandedKeys(parentPath);
         }
 
-        const collectionsFlatData = treeToMap(generateRootNode(mergedData));
         set({
-          collectionsFlatData,
           collectionsTreeData: mergedData,
           loading: false,
         });
@@ -255,9 +225,7 @@ const useCollections = create(
       setLoadedKeys: (keys) => {
         set({ loadedKeys: keys });
       },
-      getPath: (infoId) => getPathInFlatArray(infoId, get().collectionsFlatData),
-
-      addCollectionNode: ({ infoId, nodeName, nodeType, parentId, caseSourceType }) => {
+      addCollectionNode: ({ infoId, nodeName, nodeType, caseSourceType, pathOrIndex }) => {
         function createNode(params: {
           infoId: string;
           nodeName: string;
@@ -280,114 +248,106 @@ const useCollections = create(
               };
         }
 
-        set((state) => {
-          const treeData = state.collectionsTreeData;
-          const flatData = state.collectionsFlatData;
-          const node = createNode({ infoId, nodeName, nodeType, caseSourceType });
-          state.collectionsTreeData = appendChildrenByParent(
-            treeData,
-            node,
-            getPathInFlatArray(parentId, get().collectionsFlatData).map((item) => item.id),
-          );
-          flatData[infoId] = { pid: parentId || ROOT_KEY, ...node };
-        });
+        try {
+          set((state) => {
+            const treeData = state.collectionsTreeData;
+            const node = createNode({ infoId, nodeName, nodeType, caseSourceType });
+            const parentPath = pathOrIndex;
+            state.collectionsTreeData = appendChildrenByParent(treeData, node, parentPath);
+            const isPath = typeof parentPath[0] === 'string';
+            const path = isPath ? (parentPath as string[]) : [];
+            if (!isPath) {
+              // convert index array to string array
+              reduceNodeByPos(state.collectionsTreeData, parentPath as number[], (node, i) => {
+                path.push(node.infoId);
+              });
+            }
+            state.expandedKeys = path;
+            state.loadedKeys = path;
+          });
+        } catch (error) {
+          return console.error('failed to add collection node.', error);
+        }
       },
-      removeCollectionNode: (infoId) => {
+      removeCollectionNode: (pathOrIndex) => {
         set((state) => {
-          const treeData = state.collectionsTreeData;
-          const flatData = state.collectionsFlatData;
-
-          // delete node from treeData
-          const parentPath = get().getPath(infoId).slice(0, -1);
-          if (parentPath.length) {
-            // delete sub node
-            parentPath.reduce((value, object, index) => {
-              const data = value.find((item) => item.infoId === object.id)!;
-              if (index === parentPath.length - 1) {
-                const i = data.children.findIndex((item) => item.infoId === infoId);
-                data.children.splice(i, 1);
-                if (!data.children.length) {
-                  data.isLeaf = true;
-                  data.existChildren = false;
+          try {
+            reduceNodeByPos(state.collectionsTreeData, pathOrIndex, (parent, i) => {
+              const isPath = typeof pathOrIndex[0] === 'string';
+              if (!pathOrIndex.length) return;
+              else if (pathOrIndex.length === 1) {
+                // delete root node
+                const index = isPath
+                  ? state.collectionsTreeData.findIndex((node) => node.infoId === pathOrIndex[0])
+                  : (pathOrIndex[0] as number);
+                state.collectionsTreeData.splice(index, 1);
+              } else if (i === pathOrIndex.length - 2 && parent) {
+                const index = isPath
+                  ? state.collectionsTreeData.findIndex(
+                      (node) => node.infoId === pathOrIndex[pathOrIndex.length - 1],
+                    )
+                  : (pathOrIndex[pathOrIndex.length - 1] as number);
+                parent.children.splice(index, 1);
+                if (!parent.children.length) {
+                  parent.isLeaf = true;
+                  parent.existChildren = false;
                 }
               }
-
-              return data.children;
-            }, treeData);
-          } else {
-            // delete root node
-            const i = treeData.findIndex((item) => item.infoId === infoId);
-            treeData.splice(i, 1);
+            });
+          } catch (error) {
+            return console.error('failed to remove collection node.', error);
           }
-
-          // delete node from flatData
-          const flatNode = flatData[infoId];
-          const flatParent = flatData[flatNode?.pid || ''];
-          if (!flatNode || !flatParent) return;
-          const i = flatParent.children?.findIndex((item) => item.infoId === infoId);
-          flatParent.children.splice(i, 1);
-
-          delete flatData[infoId];
         });
       },
-      renameCollectionNode: (infoId, newName) => {
-        set((state) => {
-          const treeData = state.collectionsTreeData;
-          const flatData = state.collectionsFlatData;
-
-          // rename node from treeData
-          const path = get().getPath(infoId);
-          path.reduce((value, object, index) => {
-            const data = value.find((item) => item.infoId === object.id)!;
-            if (index === path.length - 1) {
-              data.nodeName = newName;
-            }
-            return data.children;
-          }, treeData);
-
-          // rename node from flatData
-          const flatNode = flatData[infoId];
-          if (!flatNode) return;
-          flatNode.nodeName = newName;
-        });
+      renameCollectionNode: (pathOrIndex, nodeName) => {
+        if (!pathOrIndex.length) return;
+        try {
+          set((state) => {
+            reduceNodeByPos(state.collectionsTreeData, pathOrIndex, (node, i) => {
+              i === pathOrIndex.length - 1 && (node.nodeName = nodeName);
+            });
+          });
+        } catch (error) {
+          return console.error('failed to rename collection node.', error);
+        }
       },
-      duplicateCollectionNode: (infoId, newId) => {
+      duplicateCollectionNode: (pathOrIndex, newId) => {
         set((state) => {
           const treeData = state.collectionsTreeData;
-          const flatData = state.collectionsFlatData;
 
           // duplicate node from treeData
-          const parentPath = get().getPath(infoId).slice(0, -1);
-          if (parentPath.length) {
-            // duplicate sub node
-            parentPath.reduce((value, object, index) => {
-              const data = value.find((item) => item.infoId === object.id)!;
-              if (index === parentPath.length - 1) {
-                const i = data.children.findIndex((item) => item.infoId === infoId);
-                const duplicateNode = cloneDeep(data.children[i]);
-                duplicateNode.infoId = newId;
-                duplicateNode.nodeName = duplicateNode.nodeName + '_copy';
-                data.children.splice(i + 1, 0, duplicateNode);
-              }
-
-              return data.children;
-            }, treeData);
+          const parentPathOrIndex = pathOrIndex.slice(0, -1);
+          const childrenPathOrIndex = pathOrIndex[pathOrIndex.length - 1];
+          if (parentPathOrIndex.length) {
+            try {
+              // duplicate sub node
+              reduceNodeByPos(treeData, parentPathOrIndex, (parent, i) => {
+                if (i === parentPathOrIndex.length - 1) {
+                  const childrenIndex =
+                    typeof childrenPathOrIndex === 'string'
+                      ? parent.children!.findIndex((node) => node.infoId === childrenPathOrIndex)
+                      : childrenPathOrIndex;
+                  const node = parent.children![childrenIndex];
+                  const duplicateNode = cloneDeep(node);
+                  duplicateNode.infoId = newId;
+                  duplicateNode.nodeName = duplicateNode.nodeName + '_copy';
+                  parent.children!.splice(childrenIndex + 1, 0, duplicateNode);
+                }
+              });
+            } catch (error) {
+              return console.error('failed to duplicate collection node.', error);
+            }
           } else {
             // duplicate root node
-            const i = treeData.findIndex((item) => item.infoId === infoId);
-            const duplicateTreeNode = cloneDeep(treeData[i]);
+            const childrenIndex =
+              typeof childrenPathOrIndex === 'string'
+                ? treeData.findIndex((node) => node.infoId === childrenPathOrIndex)
+                : childrenPathOrIndex;
+            const duplicateTreeNode = cloneDeep(treeData[childrenIndex]);
             duplicateTreeNode.infoId = newId;
             duplicateTreeNode.nodeName = duplicateTreeNode.nodeName + '_copy';
-            treeData.splice(i + 1, 0, duplicateTreeNode);
+            treeData.splice(childrenIndex + 1, 0, duplicateTreeNode);
           }
-
-          // duplicate node from flatData
-          const flatNode = flatData[infoId];
-          if (!flatNode) return;
-          const duplicateFlatNode = cloneDeep(flatNode);
-          duplicateFlatNode.infoId = newId;
-          duplicateFlatNode.nodeName = duplicateFlatNode.nodeName + '_copy';
-          flatData[newId] = duplicateFlatNode;
         });
       },
 
@@ -395,19 +355,15 @@ const useCollections = create(
         set((state) => {
           const newCollection = generateNewFolder(infoId);
           state.collectionsTreeData.unshift(newCollection);
-          state.collectionsFlatData[infoId] = newCollection;
         });
       },
-      moveCollectionNode: (dragKey, dropKey, dropToGap, dropPosition) => {
+      moveCollectionNode: (dragKey, dropKey, dropToGap, dropPosition, dropNodeType) => {
         const workspaceId = useWorkspaces.getState().activeWorkspaceId;
-        const fromNodePath = get()
-          .getPath(dragKey.toString())
-          .map((path) => path.id);
 
         set((state) => {
           const treeData = state.collectionsTreeData;
 
-          // Find dragObject
+          // Find dragObject TODO refactor
           let dragObj: CollectionType;
           const loop = (
             data: CollectionType[],
@@ -427,6 +383,7 @@ const useCollections = create(
           loop(treeData, dragKey, (item, index, arr) => {
             arr.splice(index, 1);
             dragObj = item;
+            // TODO 检查更新 parent 的 isLeaf
           });
 
           if (!dropToGap) {
@@ -452,26 +409,14 @@ const useCollections = create(
             }
           }
 
-          const flatData = treeToMap(generateRootNode(treeData));
-          state.collectionsFlatData = flatData;
-
           // update backend data
-          const path = getPathInFlatArray(dragKey.toString(), flatData).map((item) => item.id);
-          const id = path.pop();
-          const parentId = path.pop();
-
-          const parentChildren = parentId ? flatData[parentId]?.children : treeData;
-          if (!parentChildren) return;
-
-          const toIndex = parentChildren.findIndex((item) => item.infoId === id);
-
           FileSystemService.moveCollectionItem({
             id: workspaceId,
-            toIndex,
+            toIndex: dropPosition, // TODO 待验证
             fromInfoId: dragKey.toString(),
             fromNodeType: dragObj!.nodeType,
-            toParentInfoId: parentId,
-            toParentNodeType: parentId ? flatData[parentId]?.nodeType : undefined,
+            toParentInfoId: dropKey.toString(),
+            toParentNodeType: dropNodeType,
           }).then((success) => {
             if (!success) {
               // move failed, reset state
@@ -489,6 +434,7 @@ const useCollections = create(
 
 export default useCollections;
 
+import { WritableDraft } from 'immer/dist/types/types-external';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
 if (process.env.NODE_ENV === 'development') {
   mountStoreDevtool('useCollection', useCollections);
