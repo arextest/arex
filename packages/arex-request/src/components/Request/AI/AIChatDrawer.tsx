@@ -52,6 +52,8 @@ export function AIChatDrawer(props: Props) {
     color: ${(props) => props.theme.colorPrimary} !important;
   `;
 
+  const { token } = theme.useToken();
+
   const [model, setModel] = useState<string | undefined>();
 
   useEffect(() => {
@@ -189,6 +191,7 @@ export function AIChatDrawer(props: Props) {
                           const target = newHistory[chat.selfIdx];
                           target.needSend = false;
                           target.start = new Date().getTime();
+                          target.modelName = model;
                           return newHistory;
                         });
                         gptRun(
@@ -208,8 +211,16 @@ export function AIChatDrawer(props: Props) {
                   <>
                     <Divider style={{ marginTop: 4, marginBottom: 4 }} />
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Tag>{chat.modelName}</Tag>
-                      <Tag>{`${((chat.end - chat.start) / 1000).toFixed(2)}s`}</Tag>
+                      <Tag
+                        color={token.colorFillSecondary}
+                        style={{ color: token.colorTextSecondary }}
+                      >
+                        {chat.modelName}
+                      </Tag>
+                      <Tag
+                        color={token.colorFillSecondary}
+                        style={{ color: token.colorTextSecondary }}
+                      >{`${((chat.end - chat.start) / 1000).toFixed(2)}s`}</Tag>
                     </div>
                   </>
                 )}
