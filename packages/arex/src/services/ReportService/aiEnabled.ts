@@ -1,5 +1,14 @@
 import { request } from '@/utils';
 
-export async function aiEnabled(): Promise<boolean> {
-  return (await request.get<{ aiEnabled: boolean }>('/checkFeature/webApi')).body.aiEnabled;
+export type AIFeatureCheck = {
+  aiEnabled: boolean;
+  modelInfos: ModelInfo[];
+};
+
+export type ModelInfo = {
+  modelName: string;
+};
+
+export async function aiEnabled(): Promise<AIFeatureCheck> {
+  return (await request.get<AIFeatureCheck>('/checkFeature/webApi')).body;
 }

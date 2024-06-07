@@ -27,6 +27,10 @@ export type HttpConfig = {
   responseTabs?: TabConfig;
 };
 
+export type ModelInfo = {
+  modelName: string;
+};
+
 export interface ArexRequestProps extends RequestProps {
   loading?: boolean;
   height?: string;
@@ -34,6 +38,7 @@ export interface ArexRequestProps extends RequestProps {
   data?: ArexRESTRequest;
   config?: HttpConfig;
   gptProvider?: (r: GenReq) => Promise<GenRes>;
+  modelInfos?: ModelInfo[];
 }
 
 export interface ArexRequestRef extends NavigationBarRef {}
