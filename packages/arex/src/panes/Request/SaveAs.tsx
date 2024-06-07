@@ -5,8 +5,10 @@ import { App, Button, Flex, Input, Modal, theme, Typography } from 'antd';
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 
 import { CollectionSelect, Icon } from '@/components';
+import { CollectionTreeType } from '@/components/CollectionSelect';
 import { CollectionNodeType, EMAIL_KEY } from '@/constant';
 import { FileSystemService } from '@/services';
+import { PathInfo } from '@/services/FileSystemService';
 import { useCollections } from '@/store';
 import { CaseSourceType } from '@/store/useCollections';
 
@@ -19,6 +21,7 @@ export type SaveAsProps = {
   operationId?: string;
   recordId?: string;
   defaultPath?: boolean;
+  pathInfo?: PathInfo[];
   onCreate?: (id: string) => void;
 };
 
@@ -32,7 +35,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   const { message } = App.useApp();
   const userName = getLocalStorage<string>(EMAIL_KEY);
 
-  const { collectionsFlatData, addCollectionNode, getCollections, getPath } = useCollections();
+  const { addCollectionNode, getCollections } = useCollections();
 
   const [selectLocationRef] = useAutoAnimate();
 
@@ -42,17 +45,17 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
     setValue(props.title);
   }, [props.title]);
 
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+  const [selectedKey, setSelectedKey] = useState<CollectionTreeType>();
   const collectionPath = useMemo(
-    () => (selectedKeys.length ? getPath(selectedKeys[0].toString()) : []),
-    [getPath, selectedKeys],
+    () => (selectedKey ? props.pathInfo : []),
+    [selectedKey, props.pathInfo],
   );
 
   const pathValue = useMemo(
     () =>
       defaultPath
         ? `${props.appName} / ${props.interfaceName} / ${props.title}`
-        : collectionPath.map((i) => i.name).join(' / ') || 'Please select a location',
+        : collectionPath?.map((i) => i.name).join(' / ') || 'Please select a location',
     [collectionPath, defaultPath, props.appName, props.interfaceName, props.title],
   );
 
@@ -86,8 +89,8 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
         ...params,
         userName: userName as string,
         id: props.workspaceId,
-        parentInfoId: params.parentInfoId || selectedKeys[0],
-        parentNodeType: params.parentNodeType || collectionsFlatData[selectedKeys[0]]?.nodeType,
+        parentInfoId: params.parentInfoId || (selectedKey?.infoId as string),
+        parentNodeType: params.parentNodeType || (selectedKey?.nodeType as CollectionNodeType),
       }),
     {
       manual: true,
@@ -105,10 +108,10 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
               },
             )
           : addCollectionNode({
+              pathOrIndex: res.path,
               infoId: res.infoId,
               nodeName,
               nodeType,
-              parentId: parentInfoId || selectedKeys[0],
               caseSourceType,
             });
 
@@ -143,13 +146,12 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   const handleSaveAs = () => {
     if (typeof defaultPath === 'boolean') {
       if (props.operationId && props.recordId) {
-        if (!defaultPath && !selectedKeys?.length)
-          return message.info(t('http.selectSaveLocation'));
+        if (!defaultPath && !selectedKey) return message.info(t('http.selectSaveLocation'));
         const params = defaultPath
           ? { appName: props.appName, interfaceName: props.interfaceName, nodeName: props.title }
           : {
-              parentInfoId: selectedKeys[0],
-              parentNodeType: collectionsFlatData[selectedKeys[0]]?.nodeType,
+              parentInfoId: selectedKey!.infoId,
+              parentNodeType: CollectionNodeType.interface,
             };
 
         addItemsByAppNameAndInterfaceName({
@@ -165,11 +167,12 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
     }
 
     // manual select location to save normal case (not arex case)
-    if (!selectedKeys?.length) return message.info(t('http.selectSaveLocation'));
+    if (!selectedKey) return message.info(t('http.selectSaveLocation'));
 
-    const node = collectionsFlatData[selectedKeys[selectedKeys.length - 1].toString()];
-    if (!node) return;
-    if (props.nodeType === CollectionNodeType.case && node.nodeType === CollectionNodeType.folder)
+    if (
+      props.nodeType === CollectionNodeType.case &&
+      selectedKey.nodeType === CollectionNodeType.folder
+    )
       return message.info(t('http.selectInterface'));
 
     const nodeName = value || props.title || (t('untitled', { ns: 'common' }) as string);
@@ -189,7 +192,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
       onCancel={() => {
         setOpen(false);
         setValue(undefined);
-        setSelectedKeys([]);
+        setSelectedKey(undefined);
       }}
       onOk={handleSaveAs}
     >
@@ -197,7 +200,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
       <Flex align='center' style={{ marginBottom: '8px' }}>
         <Typography.Text
           ellipsis
-          type={!defaultPath && !selectedKeys.length ? 'secondary' : undefined}
+          type={!defaultPath && !selectedKey ? 'secondary' : undefined}
           style={{ flex: 1, borderBottom: `1px solid ${token.colorBorder}` }}
         >
           {pathValue}
@@ -240,8 +243,8 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
                   ? CollectionNodeType.folder
                   : CollectionNodeType.interface, // props.nodeType === CollectionNodeType.case
               ]}
-              selectedKeys={selectedKeys}
-              onSelect={(keys) => setSelectedKeys(keys as string[])}
+              selectedKeys={selectedKey?.infoId ? [selectedKey.infoId] : undefined}
+              onSelect={(keys, data) => setSelectedKey(data)}
             />
           </>
         )}

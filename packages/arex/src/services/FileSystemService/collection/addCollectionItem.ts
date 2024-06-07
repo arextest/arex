@@ -14,6 +14,7 @@ export type AddCollectionReq = {
 export type AddCollectionRes = {
   infoId: string;
   workspaceId: string;
+  path: string[];
   success: boolean;
 };
 

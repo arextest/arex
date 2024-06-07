@@ -61,6 +61,7 @@ export type CollectionNodeTitleProps = {
   data: CollectionType;
   keyword?: string;
   readOnly?: boolean;
+  pos?: number[];
   selectable?: CollectionNodeType[];
   onAddNode?: (info: string, nodeType: CollectionNodeType) => void;
 };
@@ -100,13 +101,12 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         // case inherit interface
         if (caseSourceType === CaseSourceType.CASE)
           await createCaseInheritInterface(props.data.infoId, res.infoId);
-
         addCollectionNode({
           infoId: res.infoId,
           nodeName,
           nodeType,
-          parentId: props.data.infoId,
           caseSourceType,
+          pathOrIndex: props.pos || [],
         });
         props.onAddNode?.(res.infoId, nodeType);
       },
@@ -123,7 +123,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     {
       manual: true,
       onSuccess: (res) => {
-        duplicateCollectionNode(props.data.infoId, res.infoId);
+        duplicateCollectionNode(props.pos || [], res.infoId);
       },
     },
   );
@@ -141,7 +141,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
       onSuccess(success) {
         if (success) {
           setEditMode(false);
-          renameCollectionNode(props.data.infoId, nodeName);
+          renameCollectionNode(props.pos || [], nodeName);
         }
       },
     },
@@ -154,7 +154,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         const id = `${activeWorkspaceId}-${props.data.nodeType}-${props.data.infoId}`;
         const paneKey = encodePaneKey({ id, type: PanesType.REQUEST });
         removePane(paneKey);
-        removeCollectionNode(props.data.infoId);
+        removeCollectionNode(props.pos || []);
       }
     },
   });
@@ -365,8 +365,12 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
             <Button
               type='text'
               size='small'
-              icon={<MoreOutlined style={{ fontSize: '14px' }} />}
-              onClick={(e) => e.stopPropagation()}
+              className='node-menu'
+              icon={<MoreOutlined className='node-menu-icon' style={{ fontSize: '14px' }} />}
+              onClick={(e) => {
+                // e.stopPropagation();
+                // 此处传递冒泡，在Tree onSelect 事件中会阻止冒泡，目的为了更新点击节点的 pos
+              }}
             />
           </Dropdown>
         </div>

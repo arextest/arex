@@ -2,7 +2,6 @@ import { i18n } from '@arextest/arex-core';
 
 export { default as globalStoreInit } from './globalStoreInit';
 export { default as request } from './request';
-export { default as treeToMap } from './treeToMap';
 
 /**
  * 取反函数
