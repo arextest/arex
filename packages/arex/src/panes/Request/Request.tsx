@@ -307,7 +307,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         language={i18n.language}
         config={httpConfig}
         ai={
-          aiFeatureCheck
+          aiFeatureCheck?.aiEnabled
             ? {
                 gptProvider: ReportService.generateTestScripts,
                 modelInfos: aiFeatureCheck?.modelInfos ?? [],
