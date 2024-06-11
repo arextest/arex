@@ -31,14 +31,18 @@ export type ModelInfo = {
   modelName: string;
 };
 
+export type AIConfig = {
+  gptProvider: (r: GenReq) => Promise<GenRes>;
+  modelInfos: ModelInfo[];
+};
+
 export interface ArexRequestProps extends RequestProps {
   loading?: boolean;
   height?: string;
   language?: string;
   data?: ArexRESTRequest;
   config?: HttpConfig;
-  gptProvider?: (r: GenReq) => Promise<GenRes>;
-  modelInfos?: ModelInfo[];
+  ai?: AIConfig;
 }
 
 export interface ArexRequestRef extends NavigationBarRef {}

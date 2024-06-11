@@ -306,8 +306,14 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         data={data}
         language={i18n.language}
         config={httpConfig}
-        gptProvider={aiFeatureCheck?.aiEnabled ? ReportService.generateTestScripts : undefined}
-        modelInfos={aiFeatureCheck?.aiEnabled ? aiFeatureCheck.modelInfos ?? [] : []}
+        ai={
+          aiFeatureCheck
+            ? {
+                gptProvider: ReportService.generateTestScripts,
+                modelInfos: aiFeatureCheck?.modelInfos ?? [],
+              }
+            : undefined
+        }
         breadcrumb={parentPath?.length ? parentPath.map((path) => path.name) : [title]}
         titleProps={{
           value: title,

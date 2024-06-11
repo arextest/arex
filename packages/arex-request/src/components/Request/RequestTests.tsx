@@ -37,7 +37,7 @@ const editorOptions = {
 
 const RequestTests = () => {
   const { store, dispatch } = useArexRequestStore();
-  const { gptProvider } = useArexRequestProps();
+  const { ai } = useArexRequestProps();
   const { t } = useTranslation();
   const { theme } = useArexCoreConfig();
 
@@ -72,7 +72,7 @@ const RequestTests = () => {
             position: relative;
           `}
         >
-          {gptProvider && (
+          {ai && (
             <Button
               icon={<OpenAIOutlined />}
               onClick={() => setOpen(true)}
@@ -101,7 +101,7 @@ const RequestTests = () => {
             flex-direction: column;
           `}
         >
-          <AIChatDrawer AIDrawerOpen={AIDrawerOpen} setOpen={setOpen} addTest={addTest} />
+          {ai && <AIChatDrawer AIDrawerOpen={AIDrawerOpen} setOpen={setOpen} addTest={addTest} />}
           <Text type={'secondary'}>
             Test scripts are written in JavaScript, and are run after the response is received.
           </Text>

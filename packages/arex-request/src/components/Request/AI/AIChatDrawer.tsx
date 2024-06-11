@@ -43,7 +43,9 @@ export function AIChatDrawer(props: Props) {
   const { AIDrawerOpen, setOpen, addTest } = props;
 
   const { store, request } = useArexRequestStore();
-  const { gptProvider, modelInfos } = useArexRequestProps();
+  const { ai } = useArexRequestProps();
+  const modelInfos = ai?.modelInfos ?? [];
+  const gptProvider = ai?.gptProvider;
 
   const [currentInput, setInput] = useState<string>();
   const [chatHistory, setHistory] = useState<ChatHistory[]>([]);
