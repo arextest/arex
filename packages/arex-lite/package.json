@@ -28,10 +28,6 @@
     "@types/lodash": "^4.14.194",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "@vitejs/plugin-react-swc": "^3.3.0",
-    "vite-plugin-svgr": "^3.2.0",
-    "typescript": "^5.0.2",
-    "vite": "^4.2.0",
     "unplugin-icons": "^0.16.3"
   }
 }

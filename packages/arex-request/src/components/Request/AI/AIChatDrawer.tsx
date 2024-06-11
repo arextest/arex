@@ -2,10 +2,21 @@ import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { ArexLogoIcon } from '@arextest/arex-core';
 import { styled } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { Button, Card, Divider, Drawer, Skeleton, Space, Typography } from 'antd';
+import {
+  Button,
+  Card,
+  Divider,
+  Drawer,
+  Select,
+  Skeleton,
+  Space,
+  Tag,
+  theme,
+  Typography,
+} from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useArexRequestProps, useArexRequestStore } from '../../../hooks';
 import { AIPromptsPreset } from './AIPromptsPreset';
@@ -21,13 +32,20 @@ type ChatHistory = {
   botMsg?: string;
   needSend?: boolean;
   selfIdx: number;
+
+  modelName?: string;
+
+  start?: number;
+  end?: number;
 };
 
 export function AIChatDrawer(props: Props) {
   const { AIDrawerOpen, setOpen, addTest } = props;
 
   const { store, request } = useArexRequestStore();
-  const { gptProvider } = useArexRequestProps();
+  const { ai } = useArexRequestProps();
+  const modelInfos = ai?.modelInfos ?? [];
+  const gptProvider = ai?.gptProvider;
 
   const [currentInput, setInput] = useState<string>();
   const [chatHistory, setHistory] = useState<ChatHistory[]>([]);
@@ -35,6 +53,14 @@ export function AIChatDrawer(props: Props) {
   const ThemeColorPrimaryTypo = styled(Typography)`
     color: ${(props) => props.theme.colorPrimary} !important;
   `;
+
+  const { token } = theme.useToken();
+
+  const [model, setModel] = useState<string | undefined>();
+
+  useEffect(() => {
+    setModel(modelInfos?.[0]?.modelName);
+  }, [modelInfos]);
 
   // todo extract to props
   const { loading: gptLoading, run: gptRun } = useRequest(
@@ -46,6 +72,7 @@ export function AIChatDrawer(props: Props) {
         apiRes: apiRes ?? (store.response?.type === 'success' ? store.response?.body : ''),
         currentScript: store.request.testScript,
         requirement: input,
+        modelName: model,
       });
     },
     {
@@ -54,14 +81,18 @@ export function AIChatDrawer(props: Props) {
         addTest(data?.code ?? '');
         setHistory((old) => {
           const newHistory = [...old];
-          newHistory[params[0]].botMsg = data?.explanation ?? '';
+          const target = newHistory[params[0]];
+          target.botMsg = data?.explanation ?? '';
+          target.end = new Date().getTime();
           return newHistory;
         });
       },
       onError: (error, params) => {
         setHistory((old) => {
           const newHistory = [...old];
-          newHistory[params[0]].botMsg = 'Something went wrong, please try again...';
+          const target = newHistory[params[0]];
+          target.botMsg = 'Something went wrong, please try again...';
+          target.end = new Date().getTime();
           return newHistory;
         });
       },
@@ -88,7 +119,10 @@ export function AIChatDrawer(props: Props) {
       setHistory((old) => {
         const newIdx = old.length;
         gptRun(newIdx, finalInput);
-        return [...old, { selfIdx: newIdx, userMsg: finalInput! }];
+        return [
+          ...old,
+          { selfIdx: newIdx, userMsg: finalInput!, modelName: model, start: new Date().getTime() },
+        ];
       });
     }
   };
@@ -96,9 +130,22 @@ export function AIChatDrawer(props: Props) {
   return (
     <Drawer
       title={
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <ArexLogoIcon width={48} />
-          <span>Arex Bot</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <ArexLogoIcon width={48} />
+            <span>Arex Bot</span>
+          </div>
+          {(modelInfos?.length ?? 0) > 0 && (
+            <Select
+              value={model}
+              onChange={(v) => setModel(v)}
+              style={{ width: 150 }}
+              options={modelInfos?.map((model) => ({
+                label: model.modelName,
+                value: model.modelName,
+              }))}
+            />
+          )}
         </div>
       }
       placement='right'
@@ -120,45 +167,68 @@ export function AIChatDrawer(props: Props) {
             paddingBottom: 8,
           }}
         >
-          {chatHistory.map((chat, i) => (
-            <Card
-              key={i}
-              style={{ width: '100%', marginBottom: 16 }}
-              styles={{ body: { padding: 8 } }}
-            >
-              <div>
-                <Typography>{chat.userMsg}</Typography>
-              </div>
-              <Divider style={{ marginTop: 4, marginBottom: 4 }} />
-              {!chat.botMsg && !chat.needSend && <Skeleton active />}
-              {chat.botMsg && <ThemeColorPrimaryTypo>{chat.botMsg}</ThemeColorPrimaryTypo>}
-              {chat.needSend && (
-                <Space direction='vertical'>
-                  <ThemeColorPrimaryTypo>I need a response to continue.</ThemeColorPrimaryTypo>
-                  <Button
-                    block
-                    onClick={async () => {
-                      const res = await request();
-                      setHistory((old) => {
-                        const newHistory = [...old];
-                        newHistory[chat.selfIdx].needSend = false;
-                        return newHistory;
-                      });
-                      gptRun(
-                        chat.selfIdx,
-                        chat.userMsg,
-                        res?.response?.type === 'success'
-                          ? res.response.body
-                          : 'Something went wrong with LLMs, please try later...',
-                      );
-                    }}
-                  >
-                    Send request and retry...
-                  </Button>
-                </Space>
-              )}
-            </Card>
-          ))}
+          {chatHistory.map((chat, i) => {
+            // console.log(chat);
+            return (
+              <Card
+                key={i}
+                style={{ width: '100%', marginBottom: 16 }}
+                styles={{ body: { padding: 8 } }}
+              >
+                <div>
+                  <Typography>{chat.userMsg}</Typography>
+                </div>
+                <Divider style={{ marginTop: 4, marginBottom: 4 }} />
+                {!chat.botMsg && !chat.needSend && <Skeleton active />}
+                {chat.botMsg && <ThemeColorPrimaryTypo>{chat.botMsg}</ThemeColorPrimaryTypo>}
+                {chat.needSend && (
+                  <Space direction='vertical'>
+                    <ThemeColorPrimaryTypo>I need a response to continue.</ThemeColorPrimaryTypo>
+                    <Button
+                      block
+                      onClick={async () => {
+                        const res = await request();
+                        setHistory((old) => {
+                          const newHistory = [...old];
+                          const target = newHistory[chat.selfIdx];
+                          target.needSend = false;
+                          target.start = new Date().getTime();
+                          target.modelName = model;
+                          return newHistory;
+                        });
+                        gptRun(
+                          chat.selfIdx,
+                          chat.userMsg,
+                          res?.response?.type === 'success'
+                            ? res.response.body
+                            : 'Something went wrong with LLMs, please try later...',
+                        );
+                      }}
+                    >
+                      Send request and retry...
+                    </Button>
+                  </Space>
+                )}
+                {chat.start && chat.end && (
+                  <>
+                    <Divider style={{ marginTop: 4, marginBottom: 4 }} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Tag
+                        color={token.colorFillSecondary}
+                        style={{ color: token.colorTextSecondary }}
+                      >
+                        {chat.modelName}
+                      </Tag>
+                      <Tag
+                        color={token.colorFillSecondary}
+                        style={{ color: token.colorTextSecondary }}
+                      >{`${((chat.end - chat.start) / 1000).toFixed(2)}s`}</Tag>
+                    </div>
+                  </>
+                )}
+              </Card>
+            );
+          })}
         </div>
 
         <div>
