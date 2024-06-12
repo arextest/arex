@@ -158,6 +158,7 @@
     "collections": "Collections",
     "documentation": "Documentation",
     "headers": "Headers",
+    "cookie_tip": "Cookies only work on the client side",
     "history": "History",
     "mqtt": "MQTT",
     "parameters": "Parameters",
