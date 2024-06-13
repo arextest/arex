@@ -14,10 +14,8 @@ import {
 } from '@arextest/arex-core';
 import { StructuredFilterRef } from '@arextest/arex-core/src/components/StructuredFilter';
 import { useRequest } from 'ahooks';
-import { Button, ConfigProvider, Tag, Tree } from 'antd';
-import { TreeProps } from 'antd/es';
-import type { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
-import { cloneDeep } from 'lodash';
+import { Button, ConfigProvider, Tag, Tree, TreeProps } from 'antd';
+import { type DataNode, type DirectoryTreeProps } from 'antd/lib/tree';
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 
 import CollectionSearchedList, {
@@ -177,42 +175,63 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   );
 
   const onDrop = useCallback<NonNullable<DirectoryTreeProps<CollectionTreeType>['onDrop']>>(
-    (info) => {
-      const dragKey = info.dragNode.infoId;
-      const dropKey = info.node.infoId;
-      const dropPos = info.node.pos.split('-');
-      const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]); // the drop position relative to the drop node, inside 0, top -1, bottom 1
-
-      const dragNodeType = info.dragNode.nodeType;
-      let dropNodeType = CollectionNodeType.folder;
-      // let dragTree = cloneDeep(collectionsTreeData);
-      let dropNode = cloneDeep(collectionsTreeData);
-
-      dropPos.slice(1, info.dropToGap ? -1 : undefined).forEach((p) => {
-        const index = Number(p);
-        dropNodeType = dropNode[index].nodeType;
-        dropNode = dropNode[index].children;
-      });
+    ({
+      dragNode,
+      node,
+      dropPosition,
+      /**
+       * dropToGap 是一个布尔值，指示是否将拖拽节点放置在目标节点的 "间隙" 中。
+       * 如果 dropToGap 为 true，表示将节点放置在目标节点的前或后。
+       * 如果 dropToGap 为 false，表示将节点放置为目标节点的子节点。
+       */
+      dropToGap,
+    }) => {
+      const dragKey = dragNode.infoId;
+      const dropKey = node.infoId;
+      const dragPos = dragNode.pos.split('-').map(Number);
+      const dropPos = node.pos.split('-').map(Number);
 
       /**
-       * 校验拖拽节点是否合规
-       * 节点拖动规则:
-       * 1. CollectionNodeType.folder 只能直属于 CollectionNodeType.folder
-       * 2. CollectionNodeType.interface 只能直属于 CollectionNodeType.folder
-       * 3. CollectionNodeType.case 只能直属于 CollectionNodeType.interface
+       * calculatedDropPosition 是一个数值，指示拖拽节点相对于目标节点的位置。
+       * -1：放置在目标节点之前。
+       * 0：放置为目标节点的子节点。
+       * 1：放置在目标节点之后。
        */
-      if (
-        (dragNodeType === CollectionNodeType.folder &&
-          dropNodeType !== CollectionNodeType.folder) ||
-        (dragNodeType === CollectionNodeType.interface &&
-          // @ts-ignore
-          dropNodeType !== CollectionNodeType.folder) ||
-        // @ts-ignore
-        (dragNodeType === CollectionNodeType.case && dropNodeType !== CollectionNodeType.interface)
-      )
-        return console.error('Dragging nodes is not compliant');
+      const calculatedDropPosition = dropPosition - dropPos[dropPos.length - 1];
 
-      moveCollectionNode(dragKey, dropKey, info.dropToGap, dropPosition, dropNodeType);
+      // console.log('原始：', dragPos, dropPos, dropToGap, calculatedDropPosition);
+
+      // 修正 dropPosition
+      const realDropPos = [...dropPos];
+      if (!dropToGap) {
+        if (realDropPos.length >= dragPos.length && realDropPos > dragPos) {
+          // 跨层级向下拖拽，考虑到 dragNode 的占位, 与 drag 对齐的末尾 - 1
+          realDropPos[dragPos.length - 1] = Math.max(realDropPos[dragPos.length - 1] - 1, 0);
+        }
+
+        realDropPos.push(0);
+      } else if (calculatedDropPosition !== -1) {
+        const dragPosCopy = [...dragPos];
+        const dropPosCopy = [...dropPos];
+        const lastDragPos = dragPosCopy.pop() || 0;
+        const lastDropPos = dropPosCopy.pop() || 0;
+        if (
+          (dragPosCopy.join('-') === dropPosCopy.join('-') && lastDropPos < lastDragPos) ||
+          dragPosCopy.join('-') !== dropPosCopy.join('-')
+        ) {
+          const lastDropPos = realDropPos.pop() || 0;
+          realDropPos.push(lastDropPos + 1);
+        }
+      }
+
+      // console.log('修正', dragPos, realDropPos);
+
+      moveCollectionNode({
+        dragKey,
+        dragPos,
+        dropKey,
+        dropPos: realDropPos,
+      });
     },
     [collectionsTreeData, moveCollectionNode],
   );

@@ -1,6 +1,5 @@
 import { RequestMethodEnum } from '@arextest/arex-core';
 import { cloneDeep } from 'lodash';
-import React from 'react';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
@@ -49,13 +48,12 @@ export type CollectionAction = {
   renameCollectionNode: (pathOrIndex: PathOrIndex, nodeName: string) => void;
   duplicateCollectionNode: (pathOrIndex: PathOrIndex, newId: string) => void;
   createRootCollectionNode: (infoId: string) => void;
-  moveCollectionNode: (
-    dragKey: React.Key,
-    dropKey: React.Key,
-    dropToGap: boolean,
-    dropPosition: number, // the drop position relative to the drop node, inside 0, top -1, bottom 1
-    dropNodeType: CollectionNodeType,
-  ) => void;
+  moveCollectionNode: (pramas: {
+    dragKey: string;
+    dragPos: number[];
+    dropKey: string;
+    dropPos: number[];
+  }) => void;
   reset: () => void;
 };
 
@@ -109,7 +107,7 @@ const appendChildrenByParent = (
     if (!node) return treeArray;
     if (index === parentPathOrIndex.length - 1) {
       if (Array.isArray(children)) {
-        node.children = children;
+        node.children = children; // TODO deep merge
         node.existChildren = !!children.length;
         node.isLeaf = !children.length;
       } else {
@@ -207,9 +205,28 @@ const useCollections = create(
           mergedData = mergeRootLevel(treeData, mergedData);
         } else if (mode === 'click') {
           mergedData = appendChildrenByParent(treeData, mergedData, parentPath);
+          /**
+           * TODO: 已知 BUG
+           * 拖动一个已经 loaded node 成为一个未 loaded node 的子节点，
+           * 然后点击加载未 loaded node，之前拖拽的节点 children 会被覆盖，
+           * 但是仍然被标记为 loaded，导致 children 无法重新加载
+           * 解决方案:
+           * I. 从 loadedKeys 中移除点击节点所有的 children infoId
+           * II. appendChildrenByParent 方法在添加 children 时进行 merge 操作
+           *
+           * 注意: 目前还有部分 setLoadedKeys 逻辑在 onLoad 中
+           */
+          // set({
+          //   loadedKeys: [...new Set(...get().loadedKeys, ...parentPath)].filter(
+          //     (key) => key,
+          //     // TODO: exclude the key all of the parentPath children
+          //   ),
+          // });
         } else {
-          get().setLoadedKeys(parentPath);
-          get().setExpandedKeys(parentPath);
+          set({
+            loadedKeys: parentPath,
+            expandedKeys: parentPath,
+          });
         }
 
         set({
@@ -217,7 +234,8 @@ const useCollections = create(
           loading: false,
         });
 
-        useWorkspaces.setState({ activeWorkspaceId: id });
+        id !== useWorkspaces.getState().activeWorkspaceId &&
+          useWorkspaces.setState({ activeWorkspaceId: id });
       },
       setExpandedKeys: (keys) => {
         set({ expandedKeys: keys });
@@ -357,72 +375,89 @@ const useCollections = create(
           state.collectionsTreeData.unshift(newCollection);
         });
       },
-      moveCollectionNode: (dragKey, dropKey, dropToGap, dropPosition, dropNodeType) => {
-        const workspaceId = useWorkspaces.getState().activeWorkspaceId;
-
-        set((state) => {
-          const treeData = state.collectionsTreeData;
-
-          // Find dragObject TODO refactor
-          let dragObj: CollectionType;
-          const loop = (
-            data: CollectionType[],
-            key: React.Key,
-            callback: (node: CollectionType, i: number, data: CollectionType[]) => void,
-          ) => {
-            for (let i = 0; i < data.length; i++) {
-              if (data[i].infoId === key) {
-                return callback(data[i], i, data);
-              }
-              if (data[i].children) {
-                loop(data[i].children!, key, callback);
-              }
-            }
-          };
-
-          loop(treeData, dragKey, (item, index, arr) => {
-            arr.splice(index, 1);
-            dragObj = item;
-            // TODO 检查更新 parent 的 isLeaf
-          });
-
-          if (!dropToGap) {
-            // Drop on the content
-            loop(treeData, dropKey, (item) => {
-              item.children = item.children || [];
-              // where to insert. New item was inserted to the start of the array in this example, but can be anywhere
-              item.children.unshift(dragObj);
-            });
-          } else {
-            let ar: CollectionType[] = [];
-            let i: number;
-            loop(treeData, dropKey, (_item, index, arr) => {
-              ar = arr;
-              i = index;
-            });
-            if (dropPosition === -1) {
-              // Drop on the top of the drop node
-              ar.splice(i!, 0, dragObj!);
-            } else {
-              // Drop on the bottom of the drop node
-              ar.splice(i! + 1, 0, dragObj!);
-            }
+      moveCollectionNode: ({ dragKey, dragPos, dropKey, dropPos }) => {
+        const getNodeByPos = (
+          data: CollectionType[],
+          pos: number[],
+        ): CollectionType | CollectionType[] => {
+          let node: CollectionType | CollectionType[] = data as CollectionType[];
+          for (let i = 1; i < pos.length; i++) {
+            node = Array.isArray(node) ? node[pos[i]] : node;
+            if (i !== pos.length - 1) node = node?.children || [];
           }
+          // return type CollectionType[] when pos is [0]
+          // else return type CollectionType
+          return node;
+        };
 
-          // update backend data
-          FileSystemService.moveCollectionItem({
-            id: workspaceId,
-            toIndex: dropPosition, // TODO 待验证
-            fromInfoId: dragKey.toString(),
-            fromNodeType: dragObj!.nodeType,
-            toParentInfoId: dropKey.toString(),
-            toParentNodeType: dropNodeType,
-          }).then((success) => {
-            if (!success) {
-              // move failed, reset state
-              get().getCollections();
-            }
-          });
+        const treeData = cloneDeep(get().collectionsTreeData);
+
+        const dragParentNode = getNodeByPos(treeData, dragPos.slice(0, -1));
+        const dragNode = (
+          Array.isArray(dragParentNode) ? dragParentNode : dragParentNode.children
+        ).splice(dragPos[dragPos.length - 1], 1)[0];
+
+        const dropParentNode = getNodeByPos(treeData, dropPos.slice(0, -1));
+
+        if (!Array.isArray(dragParentNode) && !dragParentNode.children?.length) {
+          dragParentNode.isLeaf = true;
+          dragParentNode.existChildren = false;
+        }
+
+        if (!Array.isArray(dropParentNode) && !dropParentNode.existChildren) {
+          dropParentNode.isLeaf = false;
+          dropParentNode.existChildren = true;
+        }
+
+        // 校验拖拽节点是否合规
+        const fromNodeType = dragNode.nodeType;
+        const toParentNodeType = Array.isArray(dropParentNode)
+          ? CollectionNodeType.folder
+          : dropParentNode.nodeType;
+
+        if (
+          Array.isArray(dropParentNode) // drop 到根节点
+        ) {
+          // 根节点只允许存在 folder 类型
+          if (fromNodeType !== CollectionNodeType.folder)
+            return console.error('Dragging nodes is not compliant');
+        } else if (
+          //  folder 只能防置于 folder 或者根节点
+          (fromNodeType === CollectionNodeType.folder &&
+            toParentNodeType !== CollectionNodeType.folder) ||
+          // interface 只能放置于 folder 中
+          (fromNodeType === CollectionNodeType.interface &&
+            toParentNodeType !== CollectionNodeType.folder) ||
+          // case 只能放置于 interface 中
+          (fromNodeType === CollectionNodeType.case &&
+            toParentNodeType !== CollectionNodeType.interface)
+        )
+          return console.error('Dragging nodes is not compliant');
+
+        const toIndex = dropPos[dropPos.length - 1];
+        (Array.isArray(dropParentNode) ? dropParentNode : dropParentNode.children)?.splice?.(
+          toIndex,
+          0,
+          dragNode,
+        ) || ((dropParentNode as CollectionType).children = [dragNode]);
+
+        set({
+          collectionsTreeData: treeData,
+        });
+
+        // update backend data
+        FileSystemService.moveCollectionItem({
+          id: useWorkspaces.getState().activeWorkspaceId,
+          toIndex,
+          fromInfoId: dragKey,
+          fromNodeType,
+          toParentInfoId: dropKey,
+          toParentNodeType,
+        }).then((success) => {
+          if (!success) {
+            // move failed, reset state
+            get().getCollections();
+          }
         });
       },
       reset: () => {

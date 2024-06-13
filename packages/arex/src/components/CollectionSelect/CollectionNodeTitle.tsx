@@ -13,8 +13,8 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Dropdown, Input, MenuProps, Space, theme } from 'antd';
-import React, { FC, ReactNode, useMemo, useState } from 'react';
+import { App, Button, Dropdown, Input, InputRef, MenuProps, Space, theme } from 'antd';
+import React, { FC, ReactNode, useMemo, useRef, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
@@ -82,6 +82,8 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   const navPane = useNavPane();
 
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
+
+  const editInputRef = useRef<InputRef>(null);
 
   const [editMode, setEditMode] = useState(false);
   const [nodeName, setNodeName] = useState(props.data.nodeName);
@@ -261,7 +263,14 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         {
           key: 'rename',
           label: (
-            <a onClick={() => setEditMode(true)}>{t('collection.rename', { ns: 'components' })}</a>
+            <a
+              onClick={() => {
+                setEditMode(true);
+                setTimeout(() => editInputRef?.current?.focus());
+              }}
+            >
+              {t('collection.rename', { ns: 'components' })}
+            </a>
           ),
         },
         {
@@ -339,6 +348,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
           {editMode ? (
             <Space style={{ display: 'flex' }}>
               <Input
+                ref={editInputRef}
                 value={nodeName}
                 onPressEnter={rename}
                 onChange={(e) => setNodeName(e.currentTarget.value)}
