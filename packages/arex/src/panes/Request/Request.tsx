@@ -4,6 +4,7 @@ import {
   ArexRequest,
   ArexRequestProps,
   ArexRequestRef,
+  ArexRESTHeader,
 } from '@arextest/arex-request';
 import { useRequest } from 'ahooks';
 import { App } from 'antd';
@@ -103,9 +104,8 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       manual: true,
       onSuccess(res, [params, options]) {
         res && message.success(t('message.saveSuccess', { ns: 'common' }));
-        options?.pinMock && runPinMock(options?.pinMock);
-        params.id &&
-          params.nodeType &&
+        if (options?.pinMock) runPinMock(options?.pinMock);
+        else if (params.id && params.nodeType)
           reloadCollection({ workspaceId, infoId: params.id, nodeType: params.nodeType });
       },
     },
@@ -122,20 +122,15 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
 
     let pinMock = undefined;
 
+    // @ts-ignore
+    const responseRecordId = response?.headers?.find(
+      (header: ArexRESTHeader) => header.key === 'arex-record-id',
+    )?.value;
     // case debug save runPinMock
-    if (props.data?.recordId && request.id && request.id !== id) {
-      pinMock = { infoId: request.id, recordId: props.data.recordId };
+    if (request.id && (props.data?.recordId || responseRecordId)) {
+      pinMock = { infoId: request.id, recordId: responseRecordId || props.data.recordId };
     }
 
-    // force record runPinMock
-    const forceRecord = request?.headers.find(
-      (header) => header.key === 'arex-force-record',
-    )?.active;
-    // @ts-ignore
-    const recordId = response?.headers?.find((header) => header.key === 'arex-record-id')?.value;
-    if (forceRecord && recordId) {
-      pinMock = { infoId: request.id, recordId };
-    }
     saveRequest(request, { pinMock });
   };
 
@@ -177,7 +172,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     {
       manual: true,
       ready: !!workspaceId,
-      onSuccess: (success, [{ infoId }]) => {
+      onSuccess: (success, [{ infoId, recordId }]) => {
         if (success) {
           reloadCollection({ workspaceId, infoId, nodeType: CollectionNodeType.case });
         }
