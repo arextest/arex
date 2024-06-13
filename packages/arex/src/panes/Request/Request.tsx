@@ -295,7 +295,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     else queryRequest();
   };
 
-  const { data: aiEnabled } = useRequest(() => ReportService.aiEnabled());
+  const { data: aiFeatureCheck } = useRequest(() => ReportService.aiEnabled());
 
   return (
     <>
@@ -305,7 +305,14 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         data={data}
         language={i18n.language}
         config={httpConfig}
-        gptProvider={aiEnabled ? ReportService.generateTestScripts : undefined}
+        ai={
+          aiFeatureCheck?.aiEnabled
+            ? {
+                gptProvider: ReportService.generateTestScripts,
+                modelInfos: aiFeatureCheck?.modelInfos ?? [],
+              }
+            : undefined
+        }
         breadcrumb={pathInfo?.length ? pathInfo.map((path) => path.name) : [title]}
         titleProps={{
           value: title,
