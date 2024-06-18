@@ -20,7 +20,7 @@ export type PathOrIndex = string[] | number[];
 
 export type CollectionAction = {
   getCollections: (workspaceId?: string) => Promise<CollectionTreeType[]>;
-  getPathByIndexOrPath: (pathOrIndex?: PathOrIndex) => string[];
+  getPathByIndex: (index?: number[]) => string[];
   setExpandedKeys: (keys: string[]) => void;
   setLoadedKeys: (keys: string[]) => void;
   addCollectionNode: (params: {
@@ -135,10 +135,10 @@ function reduceNodeByPos(
   }
 }
 
-const convertPathOrIndexToId = (treeData: CollectionTreeType[], pathOrIndex: PathOrIndex) => {
+const convertIndexToId = (treeData: CollectionTreeType[], index: number[]) => {
   const idList: string[] = [];
-  if (!pathOrIndex.length) return idList;
-  reduceNodeByPos(treeData, pathOrIndex, (node, i) => {
+  if (!index.length) return idList;
+  reduceNodeByPos(treeData, index, (node) => {
     idList.push(node.infoId);
   });
 
@@ -165,8 +165,8 @@ const useCollections = create(
 
         return fsTree.roots;
       },
-      getPathByIndexOrPath: (pathOrIndex) => {
-        return pathOrIndex ? convertPathOrIndexToId(get().collectionsTreeData, pathOrIndex) : [];
+      getPathByIndex: (pathOrIndex) => {
+        return pathOrIndex ? convertIndexToId(get().collectionsTreeData, pathOrIndex) : [];
       },
       setExpandedKeys: (keys) => {
         set({ expandedKeys: keys });
@@ -325,7 +325,7 @@ const useCollections = create(
         const treeData = cloneDeep(get().collectionsTreeData);
 
         console.log(dragPos);
-        const fromNodePath = convertPathOrIndexToId(treeData, dragPos.slice(1));
+        const fromNodePath = convertIndexToId(treeData, dragPos.slice(1));
 
         const dragParentNode = getNodeByPos(treeData, dragPos.slice(0, -1));
         const dragNode = (
@@ -376,7 +376,7 @@ const useCollections = create(
           dragNode,
         ) || ((dropParentNode as CollectionType).children = [dragNode]);
 
-        const toParentPath = convertPathOrIndexToId(treeData, dropPos.slice(1));
+        const toParentPath = convertIndexToId(treeData, dropPos.slice(1));
 
         set({
           collectionsTreeData: treeData,

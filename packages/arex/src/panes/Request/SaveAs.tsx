@@ -35,13 +35,9 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   const { message } = App.useApp();
   const userName = getLocalStorage<string>(EMAIL_KEY);
 
-  const { addCollectionNode, getCollections, setExpandedKeys, getPathByIndexOrPath } =
-    useCollections();
+  const { addCollectionNode, getCollections, setExpandedKeys } = useCollections();
 
-  const parentPath = useMemo(
-    () => getPathByIndexOrPath(props.pathInfo?.map((path) => path.id)),
-    [props.pathInfo],
-  );
+  const parentPath = useMemo(() => props.pathInfo?.map((path) => path.id), [props.pathInfo]);
 
   const [selectLocationRef] = useAutoAnimate();
 

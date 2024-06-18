@@ -247,8 +247,8 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
             children: (
               <ExtraTabs.ResponseTabs.Compare
                 getResponse={requestRef.current?.getResponse}
-                mockBody={
-                  mockData.find((mock) => mock.categoryType.entryPoint)?.targetResponse.body // get entryPoint mock
+                entryMock={
+                  mockData.find((mock) => mock.categoryType.entryPoint) // get entryPoint mock
                 }
               />
             ),

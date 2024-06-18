@@ -72,7 +72,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   } = props;
   const { activeWorkspaceId } = useWorkspaces();
   const {
-    getPathByIndexOrPath,
+    getPathByIndex,
     addCollectionNode,
     renameCollectionNode,
     removeCollectionNode,
@@ -93,7 +93,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   const [editMode, setEditMode] = useState(false);
   const [nodeName, setNodeName] = useState(props.data.nodeName);
 
-  const path = useMemo(() => getPathByIndexOrPath(props.pos), [props.pos]);
+  const path = useMemo(() => getPathByIndex(props.pos), [props.pos]);
 
   const { run: addCollectionItem } = useRequest(
     (params: { nodeName: string; nodeType: CollectionNodeType; caseSourceType?: number }) =>

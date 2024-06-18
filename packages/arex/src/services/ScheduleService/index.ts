@@ -1,3 +1,4 @@
+export * from './compareMsg';
 export * from './createPlan';
 export * from './createPlanLocal';
 export * from './excludeNoise';
