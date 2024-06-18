@@ -1,4 +1,4 @@
-import { getLocalStorage } from '@arextest/arex-core';
+import { getLocalStorage, tryPrettierJsonString } from '@arextest/arex-core';
 import axios from 'axios';
 
 import { ACCESS_TOKEN_KEY } from '@/constant';
@@ -20,5 +20,9 @@ export async function queryRecord(recordId: string) {
     },
   );
 
-  return res.data.recordResult;
+  return res.data.recordResult.map((item) => {
+    item.targetRequest.body = tryPrettierJsonString(item.targetRequest.body || '');
+    item.targetResponse.body = tryPrettierJsonString(item.targetResponse.body || '');
+    return item;
+  });
 }

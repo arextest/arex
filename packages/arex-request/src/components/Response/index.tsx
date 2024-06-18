@@ -1,16 +1,25 @@
-import Icon, { StopOutlined, WarningOutlined } from '@ant-design/icons';
-import { EmptyWrapper, FlexCenterWrapper } from '@arextest/arex-core';
+import { StopOutlined } from '@ant-design/icons';
+import { EmptyWrapper } from '@arextest/arex-core';
 import { Button, Typography } from 'antd';
-import React, { ReactNode, useCallback, useMemo } from 'react';
+import React, { forwardRef, ReactNode, useCallback, useImperativeHandle, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexRequestStore } from '../../hooks';
+import { ArexRESTResponse } from '../../types';
 import ETimeout from './ResponseError/ETimeout';
 import ExtensionNotInstalled from './ResponseError/ExtensionNotInstalled';
 import ResponseOptions from './ResponseOptions';
 
-const Response = () => {
+export type ResponseRef = {
+  getResponse: () => ArexRESTResponse | undefined;
+};
+
+const Response = forwardRef<ResponseRef>((props, ref) => {
   const { store, dispatch } = useArexRequestStore();
+  useImperativeHandle(ref, () => ({
+    getResponse: () => store.response,
+  }));
+
   const { t } = useTranslation();
 
   const handleCancelRequest = useCallback(
@@ -87,6 +96,6 @@ const Response = () => {
       </div>
     </EmptyWrapper>
   );
-};
+});
 
 export default Response;

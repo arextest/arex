@@ -12,7 +12,7 @@ import React, { useMemo, useRef, useState } from 'react';
 
 import { CollectionNodeType, PanesType, WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
-import { EnvironmentService, FileSystemService, ReportService } from '@/services';
+import { EnvironmentService, FileSystemService, ReportService, StorageService } from '@/services';
 import { Environment } from '@/services/EnvironmentService/getEnvironments';
 import { GetCollectionItemTreeReq } from '@/services/FileSystemService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
@@ -104,7 +104,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       manual: true,
       onSuccess(res, [params, options]) {
         res && message.success(t('message.saveSuccess', { ns: 'common' }));
-        if (options?.pinMock) runPinMock(options?.pinMock);
+        if (options?.pinMock) runPinMock(options.pinMock);
         else if (params.id && params.nodeType)
           reloadCollection({ workspaceId, infoId: params.id, nodeType: params.nodeType });
       },
@@ -128,7 +128,10 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     )?.value;
     // case debug save runPinMock
     if (request.id && (props.data?.recordId || responseRecordId)) {
-      pinMock = { infoId: request.id, recordId: responseRecordId || props.data.recordId };
+      pinMock = {
+        infoId: request.id,
+        recordId: (responseRecordId || props.data.recordId) as string,
+      };
     }
 
     saveRequest(request, { pinMock });
@@ -204,24 +207,56 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       },
     },
   );
+
+  const {
+    data: mockData = [],
+    mutate: setMockData,
+    refresh: getMockData,
+    loading: loadingMockData,
+  } = useRequest(StorageService.queryRecord, {
+    defaultParams: [data?.recordId as string],
+    ready: !!data?.recordId,
+  });
+
   const httpConfig = useMemo(() => {
     return {
       requestTabs: {
         extra: [
           {
-            label: 'Mock',
             key: 'mock',
+            label: 'Mock',
             // 这里判断是否有recordId，如果有则隐藏，因为recordId是mock的唯一标识
             hidden: !data?.recordId,
-            children: <ExtraTabs.RequestTabs.Mock recordId={data?.recordId} />,
+            children: (
+              <ExtraTabs.RequestTabs.Mock
+                data={mockData}
+                loading={loadingMockData}
+                onChange={setMockData}
+                onRefresh={getMockData}
+              />
+            ),
           },
         ],
       },
       responseTabs: {
-        extra: [],
+        extra: [
+          {
+            key: 'compare',
+            label: t('components:http.compare'),
+            hidden: !data?.recordId,
+            children: (
+              <ExtraTabs.ResponseTabs.Compare
+                getResponse={requestRef.current?.getResponse}
+                mockBody={
+                  mockData.find((mock) => mock.categoryType.entryPoint)?.targetResponse.body // get entryPoint mock
+                }
+              />
+            ),
+          },
+        ],
       },
     };
-  }, [data]);
+  }, [data, mockData, loadingMockData]);
 
   const { run: createNewEnvironment } = useRequest(
     (envName) =>

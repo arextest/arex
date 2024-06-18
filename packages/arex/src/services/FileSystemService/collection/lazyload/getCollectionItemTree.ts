@@ -8,6 +8,10 @@ export interface GetCollectionItemTreeReq {
   nodeType: CollectionNodeType;
 }
 
+/**
+ * @deprecated 懒加载模式已废弃
+ * @param params
+ */
 export async function getCollectionItemTree(params: GetCollectionItemTreeReq) {
   const res = await request.post<QueryWorkspaceByIdRes>(
     `/webApi/filesystem/getWorkspaceItemTree`,

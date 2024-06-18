@@ -8,57 +8,48 @@ import {
 import { Editor } from '@monaco-editor/react';
 import { useRequest } from 'ahooks';
 import { App, Col, Collapse, Row, Space } from 'antd';
-import { cloneDeep } from 'lodash';
 import React, { FC } from 'react';
-import { useImmer } from 'use-immer';
 
 import { Theme } from '@/constant';
 import { StorageService } from '@/services';
 import { RecordResult } from '@/services/ReportService';
 
-const Mock: FC<{ recordId?: string }> = ({ recordId }) => {
+export interface MockProps {
+  data: RecordResult[];
+  loading?: boolean;
+  onChange?: (data: RecordResult[]) => void;
+  onRefresh?: () => void;
+}
+
+const Mock: FC<MockProps> = (props) => {
   const { message } = App.useApp();
   const { theme } = useArexCoreConfig();
-  const [mockData, setMockData] = useImmer<RecordResult[]>([]);
-
-  const { refresh: getMockData, loading } = useRequest(StorageService.queryRecord, {
-    defaultParams: [recordId!],
-    ready: !!recordId,
-    onSuccess(res) {
-      res.map((item) => {
-        item.targetRequest.body = tryPrettierJsonString(item.targetRequest.body || '');
-        item.targetResponse.body = tryPrettierJsonString(item.targetResponse.body || '');
-      });
-      setMockData(res);
-    },
-  });
 
   const { run: updateMockData } = useRequest(StorageService.updateRecord, {
     manual: true,
     onSuccess(success) {
       if (success) {
         message.success('Update successfully');
-        getMockData();
+        props.onRefresh?.();
       }
     },
   });
 
   const handleSave = (id: string) => {
-    const data = mockData.find((item) => item.id === id);
+    const data = props.data.find((item) => item.id === id);
     if (!data) return;
-    const params = cloneDeep(data);
-    params.targetRequest.body = tryPrettierJsonString(params.targetRequest.body || '');
-    params.targetResponse.body = tryPrettierJsonString(params.targetResponse.body || '');
-    updateMockData(params);
+    data.targetRequest.body = tryPrettierJsonString(data.targetRequest.body || '');
+    data.targetResponse.body = tryPrettierJsonString(data.targetResponse.body || '');
+    updateMockData(data);
   };
 
   return (
     <Space direction='vertical' style={{ width: '100%' }}>
-      <EmptyWrapper loading={loading} empty={!mockData.length}>
+      <EmptyWrapper loading={props.loading} empty={!props.data.length}>
         <Space direction='vertical' style={{ width: '100%' }}>
           <Collapse
-            defaultActiveKey={mockData.map((mock) => mock.id)}
-            items={mockData.map((mock) => ({
+            defaultActiveKey={props.data.map((mock) => mock.id)}
+            items={props.data.map((mock) => ({
               key: mock.id,
               label: mock.operationName,
               extra: (
@@ -89,10 +80,9 @@ const Mock: FC<{ recordId?: string }> = ({ recordId }) => {
                       }}
                       value={mock.targetRequest.body || ''}
                       onChange={(value) => {
-                        setMockData((state) => {
-                          const data = state.find((item) => item.id === mock.id);
-                          data && (data.targetRequest.body = value || '');
-                        });
+                        const data = props.data.find((item) => item.id === mock.id);
+                        data && (data.targetRequest.body = value || '');
+                        props.onChange?.(props.data);
                       }}
                     />
                   </Col>
@@ -112,10 +102,9 @@ const Mock: FC<{ recordId?: string }> = ({ recordId }) => {
                       }}
                       value={mock.targetResponse.body || ''}
                       onChange={(value) => {
-                        setMockData((state) => {
-                          const data = state.find((item) => item.id === mock.id);
-                          data && (data.targetResponse.body = value || '');
-                        });
+                        const data = props.data.find((item) => item.id === mock.id);
+                        data && (data.targetResponse.body = value || '');
+                        props.onChange?.(props.data);
                       }}
                     />
                   </Col>
