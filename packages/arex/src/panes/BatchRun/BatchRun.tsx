@@ -11,7 +11,7 @@ import {
 import { ArexEnvironment, ArexResponse, EnvironmentSelect } from '@arextest/arex-request';
 import { ArexRESTRequest } from '@arextest/arex-request/src';
 import { useLocalStorageState, useRequest } from 'ahooks';
-import { Button, Divider, Flex, Slider, TreeSelect, TreeSelectProps, Typography } from 'antd';
+import { Button, Divider, Flex, Slider, TreeSelect, Typography } from 'antd';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
@@ -20,7 +20,6 @@ import BatchRunResultItem from '@/panes/BatchRun/BatchRunResultItem';
 import RequestTestStatusMap from '@/panes/BatchRun/RequestTestStatusMap';
 import { WorkspaceEnvironmentPair } from '@/panes/Request/EnvironmentDrawer';
 import { EnvironmentService, FileSystemService } from '@/services';
-import { CollectionType } from '@/services/FileSystemService';
 import { useCollections } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
@@ -28,8 +27,6 @@ const BatchRun: ArexPaneFC = (props) => {
   const { paneKey } = props;
   const { t } = useTranslation('page');
   const [workspaceId, id] = useMemo(() => decodePaneKey(paneKey).id.split('-'), [paneKey]);
-  const { getCollections } = useCollections();
-
   const { collectionsTreeData } = useCollections();
 
   const [activeEnvironment, setActiveEnvironment] = useState<ArexEnvironment>();
@@ -123,13 +120,6 @@ const BatchRun: ArexPaneFC = (props) => {
     batchGetInterfaceCase({ workspaceId, nodes: selectNodes }, timestamp);
   };
 
-  const handleTreeLoad: TreeSelectProps<CollectionType>['loadData'] = (treeNode) =>
-    new Promise<void>((resolve) =>
-      resolve(
-        getCollections({ workspaceId, infoId: treeNode.infoId, nodeType: treeNode.nodeType }),
-      ),
-    );
-
   return (
     <div>
       <SpaceBetweenWrapper>
@@ -158,7 +148,6 @@ const BatchRun: ArexPaneFC = (props) => {
           value={selectNodesInfoId}
           treeData={collectionsTreeData}
           showCheckedStrategy={TreeSelect.SHOW_PARENT}
-          loadData={handleTreeLoad}
           onChange={(id, labelList, extra) => {
             setSelectNodes(
               extra.allCheckedNodes.map((item) => ({

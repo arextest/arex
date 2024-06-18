@@ -35,7 +35,13 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   const { message } = App.useApp();
   const userName = getLocalStorage<string>(EMAIL_KEY);
 
-  const { addCollectionNode, getCollections } = useCollections();
+  const { addCollectionNode, getCollections, setExpandedKeys, getPathByIndexOrPath } =
+    useCollections();
+
+  const parentPath = useMemo(
+    () => getPathByIndexOrPath(props.pathInfo?.map((path) => path.id)),
+    [props.pathInfo],
+  );
 
   const [selectLocationRef] = useAutoAnimate();
 
@@ -89,26 +95,17 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
         ...params,
         userName: userName as string,
         id: props.workspaceId,
-        parentInfoId: params.parentInfoId || (selectedKey?.infoId as string),
-        parentNodeType: params.parentNodeType || (selectedKey?.nodeType as CollectionNodeType),
+        parentPath,
       }),
     {
       manual: true,
-      onSuccess: (res, [{ nodeName, nodeType, parentInfoId, caseSourceType }, options]) => {
+      onSuccess: (res, [{ nodeName, nodeType, caseSourceType }, options]) => {
         setOpen(false);
+        const path = props.pathInfo?.map((path) => path.id) || [];
         options?.reset
-          ? getCollections(
-              {
-                workspaceId: props.workspaceId,
-                infoId: res.infoId,
-                nodeType,
-              },
-              {
-                mode: 'search',
-              },
-            )
+          ? getCollections(props.workspaceId).then(() => setExpandedKeys(path))
           : addCollectionNode({
-              pathOrIndex: res.path,
+              pathOrIndex: path,
               infoId: res.infoId,
               nodeName,
               nodeType,
@@ -150,8 +147,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
         const params = defaultPath
           ? { appName: props.appName, interfaceName: props.interfaceName, nodeName: props.title }
           : {
-              parentInfoId: selectedKey!.infoId,
-              parentNodeType: CollectionNodeType.interface,
+              parentPath,
             };
 
         addItemsByAppNameAndInterfaceName({

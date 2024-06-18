@@ -1,10 +1,8 @@
-import { CollectionNodeType } from '@/constant';
 import { request } from '@/utils';
 
 export type RemoveCollectionItemReq = {
   id: string;
-  infoId: string;
-  nodeType: CollectionNodeType;
+  removeNodePath: string[];
 };
 
 export async function removeCollectionItem(params: RemoveCollectionItemReq) {

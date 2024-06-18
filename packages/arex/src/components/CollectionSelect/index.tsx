@@ -14,8 +14,8 @@ import {
 } from '@arextest/arex-core';
 import { StructuredFilterRef } from '@arextest/arex-core/src/components/StructuredFilter';
 import { useRequest } from 'ahooks';
-import { Button, ConfigProvider, Tag, Tree, TreeProps } from 'antd';
-import { type DataNode, type DirectoryTreeProps } from 'antd/lib/tree';
+import { Button, ConfigProvider, Tag, Tree } from 'antd';
+import { type DirectoryTreeProps, EventDataNode } from 'antd/lib/tree';
 import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 
 import CollectionSearchedList, {
@@ -23,7 +23,7 @@ import CollectionSearchedList, {
 } from '@/components/CollectionSelect/CollectionSearchedList';
 import { CollectionNodeType, EMAIL_KEY } from '@/constant';
 import { FileSystemService, ReportService } from '@/services';
-import { CollectionType } from '@/services/FileSystemService';
+import { CollectionType, PathInfo } from '@/services/FileSystemService';
 import { useCollections, useWorkspaces } from '@/store';
 
 import CollectionNodeTitle, { CollectionNodeTitleProps } from './CollectionNodeTitle';
@@ -34,7 +34,9 @@ const CollectionTree = styled(Tree<CollectionType>)`
   }
 `;
 
-export type CollectionTreeType = CollectionType & DataNode;
+export type CollectionTreeType = CollectionType<
+  Partial<EventDataNode<CollectionType> & { pathInfo: PathInfo[] }>
+>;
 export interface CollectionSelectProps {
   readOnly?: boolean;
   height?: number;
@@ -42,7 +44,7 @@ export interface CollectionSelectProps {
   menu?: React.ReactNode;
   expandable?: CollectionNodeType[];
   selectable?: CollectionNodeType[];
-  onSelect?: (key: React.Key[], node: CollectionTreeType) => void;
+  onSelect?: (key: React.Key, node: CollectionTreeType) => void;
 }
 const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   const {
@@ -56,16 +58,13 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   const {
     loading,
     expandedKeys,
-    loadedKeys,
     collectionsTreeData,
     setExpandedKeys,
-    setLoadedKeys,
-    getCollections,
     addCollectionNode,
     moveCollectionNode,
   } = useCollections();
 
-  const [activePose, setActivePos] = useState<number[]>([]);
+  const [activePose, setActivePos] = useState<number[] | string[]>([]);
   const searchRef = useRef<StructuredFilterRef>(null);
   const collectionSearchedListRef = useRef<CollectionSearchedListRef>(null);
   const treeRef = useRef<{
@@ -94,17 +93,6 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     },
   );
 
-  const handleLoadData: TreeProps<CollectionType>['loadData'] = (treeNode) =>
-    new Promise<void>((resolve) =>
-      resolve(
-        getCollections({
-          workspaceId: activeWorkspaceId,
-          infoId: treeNode.infoId,
-          nodeType: treeNode.nodeType,
-        }),
-      ),
-    ).catch((e) => console.error(e));
-
   const options = useMemo(
     () => [
       {
@@ -129,30 +117,32 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     [labelData],
   );
 
-  const handleSelect: DirectoryTreeProps<CollectionTreeType>['onSelect'] = (keys, info) => {
-    setActivePos(
-      info.node.pos
-        ?.split('-')
-        .slice(1)
-        .map((pos) => Number(pos)),
-    );
+  const handleSelect = (keys: string, node: CollectionTreeType) => {
+    node.pos &&
+      setActivePos(
+        node.pos
+          .split('-')
+          .map((pos) => Number(pos))
+          .slice(1) || [],
+      );
 
-    const classList = ((info.nativeEvent?.target as HTMLElement)?.parentNode as HTMLElement)
+    // @ts-ignore
+    const classList = ((node.nativeEvent?.target as HTMLElement)?.parentNode as HTMLElement)
       ?.classList as DOMTokenList;
     const clickFromMenu = classList?.contains('node-menu-icon') || classList?.contains('node-menu');
     if (clickFromMenu) return;
 
-    const infoId = info.node.infoId;
+    const infoId = node.infoId;
     setActiveKey(infoId);
 
-    if (expandable?.includes(info.node.nodeType)) {
+    if (expandable?.includes(node.nodeType)) {
       setExpandedKeys(
         expandedKeys?.includes(infoId)
           ? expandedKeys.filter((key) => key !== infoId)
           : [...expandedKeys, infoId],
       );
     }
-    props.onSelect?.(keys, info.node);
+    props.onSelect?.(keys, node);
   };
 
   const { run: createCollection } = useRequest(
@@ -227,9 +217,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
       // console.log('修正', dragPos, realDropPos);
 
       moveCollectionNode({
-        dragKey,
         dragPos,
-        dropKey,
         dropPos: realDropPos,
       });
     },
@@ -237,11 +225,11 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   );
 
   const onExpand = (newExpandedKeys: React.Key[]) => {
-    setExpandedKeys(newExpandedKeys as string[]);
+    setExpandedKeys(newExpandedKeys as string[]); // bugfix: 当子节点展开时，父节点无法关闭
   };
 
   const handleAddNode: CollectionNodeTitleProps['onAddNode'] = (infoId, nodeType) => {
-    handleSelect([infoId], {
+    handleSelect(infoId, {
       // @ts-ignore
       node: {
         infoId,
@@ -255,6 +243,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   return (
     <div className='collection-content-wrapper'>
       <EmptyWrapper
+        loading={loading}
         empty={!loading && !collectionsTreeData?.length}
         description={
           <Button type='primary' onClick={createCollection}>
@@ -297,7 +286,10 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
                 size='small'
                 key='menus'
                 icon={<SearchOutlined />}
-                onClick={() => setShowSearchInput(true)}
+                onClick={() => {
+                  setShowSearchInput(true);
+                  setTimeout(() => searchRef.current?.focus());
+                }}
               />
             </SpaceBetweenWrapper>
           )}
@@ -310,21 +302,9 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
               height={props.height}
               workspaceId={activeWorkspaceId}
               searchValue={searchValue}
-              onSelect={(keys, data) => {
-                const infoId = keys[0].toString();
-                getCollections(
-                  {
-                    workspaceId: activeWorkspaceId,
-                    infoId,
-                    nodeType: data.node.nodeType,
-                  },
-                  {
-                    mode: 'search',
-                  },
-                ).then(() => {
-                  console.log(keys, data);
-                  handleSelect(keys, data);
-                });
+              onSelect={async (key, data) => {
+                // TODO setExpandedKeys
+                handleSelect(key, data);
               }}
             />
           ) : (
@@ -339,15 +319,10 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
               expandedKeys={expandedKeys}
               switcherIcon={<DownOutlined />}
               treeData={collectionsTreeData}
-              loadedKeys={loadedKeys}
-              loadData={handleLoadData}
-              onLoad={(keys) => {
-                setLoadedKeys([...new Set([...loadedKeys, ...(keys as string[])])]);
-              }}
               fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
               onDrop={onDrop}
               onExpand={onExpand}
-              onSelect={handleSelect}
+              onSelect={(keys, { node }) => handleSelect(keys[0].toString(), node)}
               draggable={!props.readOnly && { icon: false }}
               titleRender={(data) => (
                 <CollectionNodeTitle

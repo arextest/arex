@@ -5,11 +5,7 @@ import { immer } from 'zustand/middleware/immer';
 
 import { CollectionNodeType } from '@/constant';
 import { FileSystemService } from '@/services';
-import {
-  CollectionType,
-  getCollectionItem,
-  getCollectionItemTree,
-} from '@/services/FileSystemService';
+import { CollectionType, queryWorkspaceById } from '@/services/FileSystemService';
 
 import useWorkspaces from './useWorkspaces';
 
@@ -23,18 +19,8 @@ export type CollectionState = {
 export type PathOrIndex = string[] | number[];
 
 export type CollectionAction = {
-  getCollections: (
-    params?: {
-      workspaceId?: string; // 不传参数或只传 workspaceId 时默认获取当前 workspace 下的根节点
-      infoId?: string; // infoId 需要与 nodeType 一起传递
-      nodeType?: CollectionNodeType;
-    },
-    options?: {
-      // search 搜索模式: 以 infoId 逐层向上构建出相关的父层级
-      // click: 点击模式: 以 infoId 为父节点展开
-      mode?: 'search' | 'click';
-    },
-  ) => Promise<void>;
+  getCollections: (workspaceId?: string) => Promise<CollectionTreeType[]>;
+  getPathByIndexOrPath: (pathOrIndex?: PathOrIndex) => string[];
   setExpandedKeys: (keys: string[]) => void;
   setLoadedKeys: (keys: string[]) => void;
   addCollectionNode: (params: {
@@ -48,12 +34,7 @@ export type CollectionAction = {
   renameCollectionNode: (pathOrIndex: PathOrIndex, nodeName: string) => void;
   duplicateCollectionNode: (pathOrIndex: PathOrIndex, newId: string) => void;
   createRootCollectionNode: (infoId: string) => void;
-  moveCollectionNode: (pramas: {
-    dragKey: string;
-    dragPos: number[];
-    dropKey: string;
-    dropPos: number[];
-  }) => void;
+  moveCollectionNode: (params: { dragPos: number[]; dropPos: number[] }) => void;
   reset: () => void;
 };
 
@@ -80,7 +61,7 @@ const initialState: CollectionState = {
   collectionsTreeData: [],
 };
 
-const generateNewFolder = (infoId: string, nodeName = 'New Collection') => ({
+const generateNewFolder = (infoId: string, nodeName = 'New Collection'): CollectionTreeType => ({
   key: infoId,
   nodeName,
   nodeType: CollectionNodeType.folder,
@@ -125,16 +106,6 @@ const appendChildrenByParent = (
   return _tree;
 };
 
-function mergeRootLevel(tree: CollectionType[], rootLevel: CollectionType[]) {
-  return rootLevel.map((item) => {
-    const node = tree.find((root) => root.infoId === item.infoId);
-    if (!node) return item;
-    else {
-      return { ...item, children: node.children } as CollectionType;
-    }
-  });
-}
-
 const isLeafNest = (obj: CollectionType[]) => {
   obj.map((item) => {
     item.isLeaf = !item.existChildren;
@@ -164,6 +135,16 @@ function reduceNodeByPos(
   }
 }
 
+const convertPathOrIndexToId = (treeData: CollectionTreeType[], pathOrIndex: PathOrIndex) => {
+  const idList: string[] = [];
+  if (!pathOrIndex.length) return idList;
+  reduceNodeByPos(treeData, pathOrIndex, (node, i) => {
+    idList.push(node.infoId);
+  });
+
+  return idList;
+};
+
 const useCollections = create(
   immer<CollectionState & CollectionAction>((set, get) => {
     return {
@@ -171,71 +152,21 @@ const useCollections = create(
       ...initialState,
 
       // Action
-      getCollections: async ({ workspaceId, infoId, nodeType } = {}, { mode = 'click' } = {}) => {
+      getCollections: async (workspaceId) => {
         const id = workspaceId || useWorkspaces.getState().activeWorkspaceId;
-        if (!id) return;
-
-        if (!get().loading) set({ loading: true });
-
-        let data;
-        let parentPath: string[] = [];
-        if (mode === 'click') {
-          // click collection
-          const res = await getCollectionItem({
-            workspaceId: id,
-            parentInfoId: infoId,
-            parentNodeType: nodeType,
-          });
-          data = res.node.children;
-          parentPath = res.path;
-        } else if (mode === 'search' && infoId && nodeType) {
-          // click search
-          const res = await getCollectionItemTree({ workspaceId: id, infoId, nodeType });
-          data = res.fsTree.roots;
-          parentPath = res.path;
-        }
-
-        if (!data) return;
-
-        let mergedData = isLeafNest(data);
-
-        const treeData = get().collectionsTreeData;
-
-        if (!infoId || !nodeType) {
-          mergedData = mergeRootLevel(treeData, mergedData);
-        } else if (mode === 'click') {
-          mergedData = appendChildrenByParent(treeData, mergedData, parentPath);
-          /**
-           * TODO: 已知 BUG
-           * 拖动一个已经 loaded node 成为一个未 loaded node 的子节点，
-           * 然后点击加载未 loaded node，之前拖拽的节点 children 会被覆盖，
-           * 但是仍然被标记为 loaded，导致 children 无法重新加载
-           * 解决方案:
-           * I. 从 loadedKeys 中移除点击节点所有的 children infoId
-           * II. appendChildrenByParent 方法在添加 children 时进行 merge 操作
-           *
-           * 注意: 目前还有部分 setLoadedKeys 逻辑在 onLoad 中
-           */
-          // set({
-          //   loadedKeys: [...new Set(...get().loadedKeys, ...parentPath)].filter(
-          //     (key) => key,
-          //     // TODO: exclude the key all of the parentPath children
-          //   ),
-          // });
-        } else {
-          set({
-            loadedKeys: parentPath,
-            expandedKeys: parentPath,
-          });
-        }
-
         set({
-          collectionsTreeData: mergedData,
+          loading: true,
+        });
+        const fsTree = await queryWorkspaceById({ id });
+        set({
           loading: false,
+          collectionsTreeData: fsTree.roots,
         });
 
-        id !== useWorkspaces.getState().activeWorkspaceId &&
-          useWorkspaces.setState({ activeWorkspaceId: id });
+        return fsTree.roots;
+      },
+      getPathByIndexOrPath: (pathOrIndex) => {
+        return pathOrIndex ? convertPathOrIndexToId(get().collectionsTreeData, pathOrIndex) : [];
       },
       setExpandedKeys: (keys) => {
         set({ expandedKeys: keys });
@@ -249,7 +180,7 @@ const useCollections = create(
           nodeName: string;
           nodeType: CollectionNodeType;
           caseSourceType?: CaseSourceType;
-        }): CollectionType {
+        }): CollectionTreeType {
           return params.nodeType === CollectionNodeType.folder
             ? generateNewFolder(params.infoId, params.nodeName)
             : {
@@ -319,6 +250,7 @@ const useCollections = create(
       },
       renameCollectionNode: (pathOrIndex, nodeName) => {
         if (!pathOrIndex.length) return;
+
         try {
           set((state) => {
             reduceNodeByPos(state.collectionsTreeData, pathOrIndex, (node, i) => {
@@ -375,7 +307,7 @@ const useCollections = create(
           state.collectionsTreeData.unshift(newCollection);
         });
       },
-      moveCollectionNode: ({ dragKey, dragPos, dropKey, dropPos }) => {
+      moveCollectionNode: ({ dragPos, dropPos }) => {
         const getNodeByPos = (
           data: CollectionType[],
           pos: number[],
@@ -391,6 +323,9 @@ const useCollections = create(
         };
 
         const treeData = cloneDeep(get().collectionsTreeData);
+
+        console.log(dragPos);
+        const fromNodePath = convertPathOrIndexToId(treeData, dragPos.slice(1));
 
         const dragParentNode = getNodeByPos(treeData, dragPos.slice(0, -1));
         const dragNode = (
@@ -441,6 +376,8 @@ const useCollections = create(
           dragNode,
         ) || ((dropParentNode as CollectionType).children = [dragNode]);
 
+        const toParentPath = convertPathOrIndexToId(treeData, dropPos.slice(1));
+
         set({
           collectionsTreeData: treeData,
         });
@@ -449,10 +386,8 @@ const useCollections = create(
         FileSystemService.moveCollectionItem({
           id: useWorkspaces.getState().activeWorkspaceId,
           toIndex,
-          fromInfoId: dragKey,
-          fromNodeType,
-          toParentInfoId: dropKey,
-          toParentNodeType,
+          fromNodePath,
+          toParentPath,
         }).then((success) => {
           if (!success) {
             // move failed, reset state
@@ -471,6 +406,8 @@ export default useCollections;
 
 import { WritableDraft } from 'immer/dist/types/types-external';
 import { mountStoreDevtool } from 'simple-zustand-devtools';
+
+import { CollectionTreeType } from '@/components/CollectionSelect';
 if (process.env.NODE_ENV === 'development') {
   mountStoreDevtool('useCollection', useCollections);
 }

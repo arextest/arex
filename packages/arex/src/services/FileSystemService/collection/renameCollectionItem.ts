@@ -1,11 +1,9 @@
-import { CollectionNodeType } from '@/constant';
 import { request } from '@/utils';
 
 export type RenameCollectionItemReq = {
   id: string;
-  infoId: string;
-  nodeType: CollectionNodeType;
   newName: string;
+  path: string[];
 };
 
 export type RenameCollectionItemRes = {

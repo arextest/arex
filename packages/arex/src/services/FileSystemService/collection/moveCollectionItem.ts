@@ -1,13 +1,10 @@
-import { CollectionNodeType } from '@/constant';
 import { request } from '@/utils';
 
 export type MoveCollectionItemReq = {
   id: string; //workspaceId
+  toParentPath: string[];
+  fromNodePath: string[];
   toIndex: number;
-  fromInfoId: string;
-  fromNodeType: CollectionNodeType;
-  toParentInfoId?: string;
-  toParentNodeType?: CollectionNodeType;
 };
 
 export async function moveCollectionItem(params: MoveCollectionItemReq) {

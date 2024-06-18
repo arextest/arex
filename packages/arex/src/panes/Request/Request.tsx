@@ -184,8 +184,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       FileSystemService.renameCollectionItem({
         id: workspaceId,
         newName,
-        infoId: id,
-        nodeType,
+        path: pathInfo.map((path) => path.id),
       }),
     {
       manual: true,

@@ -61,7 +61,7 @@ export type CollectionNodeTitleProps = {
   data: CollectionType;
   keyword?: string;
   readOnly?: boolean;
-  pos?: number[];
+  pos?: number[] | string[];
   selectable?: CollectionNodeType[];
   onAddNode?: (info: string, nodeType: CollectionNodeType) => void;
 };
@@ -71,8 +71,13 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     selectable = [CollectionNodeType.folder, CollectionNodeType.interface, CollectionNodeType.case],
   } = props;
   const { activeWorkspaceId } = useWorkspaces();
-  const { addCollectionNode, renameCollectionNode, removeCollectionNode, duplicateCollectionNode } =
-    useCollections();
+  const {
+    getPathByIndexOrPath,
+    addCollectionNode,
+    renameCollectionNode,
+    removeCollectionNode,
+    duplicateCollectionNode,
+  } = useCollections();
   const { removePane } = useMenusPanes();
 
   const { modal } = App.useApp();
@@ -88,14 +93,15 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   const [editMode, setEditMode] = useState(false);
   const [nodeName, setNodeName] = useState(props.data.nodeName);
 
+  const path = useMemo(() => getPathByIndexOrPath(props.pos), [props.pos]);
+
   const { run: addCollectionItem } = useRequest(
     (params: { nodeName: string; nodeType: CollectionNodeType; caseSourceType?: number }) =>
       FileSystemService.addCollectionItem({
         ...params,
         userName,
         id: activeWorkspaceId,
-        parentInfoId: props.data.infoId,
-        parentNodeType: props.data.nodeType,
+        parentPath: path,
       }),
     {
       manual: true,
@@ -119,8 +125,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     () =>
       FileSystemService.duplicateCollectionItem({
         id: activeWorkspaceId,
-        infoId: props.data.infoId,
-        nodeType: props.data.nodeType,
+        path,
       }),
     {
       manual: true,
@@ -134,9 +139,8 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     () =>
       FileSystemService.renameCollectionItem({
         id: activeWorkspaceId,
-        infoId: props.data.infoId,
-        nodeType: props.data.nodeType,
         newName: nodeName,
+        path,
       }),
     {
       manual: true,
@@ -296,8 +300,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
                   onOk: () =>
                     removeCollectionItem({
                       id: activeWorkspaceId,
-                      infoId: props.data.infoId,
-                      nodeType: props.data.nodeType,
+                      removeNodePath: path,
                     }),
                 });
               }}
