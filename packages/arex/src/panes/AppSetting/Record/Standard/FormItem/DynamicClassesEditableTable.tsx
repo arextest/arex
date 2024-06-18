@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import { HelpTooltip, TooltipButton, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Checkbox, Input, Popconfirm, Space, Table } from 'antd';
+import { App, Button, Checkbox, Input, Popconfirm, Space, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { FC, useCallback, useState } from 'react';
 import { Updater, useImmer } from 'use-immer';
@@ -69,6 +69,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
         ),
         dataIndex: 'fullClassName',
         key: 'fullClassName',
+        ellipsis: true,
         render: (text, record) => {
           return isEditableRow(record.id) ? (
             <Input
@@ -87,11 +88,12 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
       {
         title: (
           <HelpTooltip title={t('appSetting.baseTooltip', { ns: 'components' })}>
-            {t('appSetting.base', { ns: 'components' })}
+            <Typography.Text ellipsis>{t('appSetting.base', { ns: 'components' })}</Typography.Text>
           </HelpTooltip>
         ),
         key: 'base',
         dataIndex: 'base',
+        width: 64,
         render: (checked, record) => (
           <Checkbox
             checked={checked}
@@ -108,6 +110,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
         ),
         dataIndex: 'methodName',
         key: 'methodName',
+        ellipsis: true,
         render: (text, record) =>
           isEditableRow(record.id) ? (
             <Input value={text} onChange={(e) => handleChange('methodName', e.target.value)} />
@@ -151,6 +154,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
         ),
         dataIndex: 'keyFormula',
         key: 'keyFormula',
+        ellipsis: true,
         render: (text, record) =>
           isEditableRow(record.id) ? (
             <Input value={text} onChange={(e) => handleChange('keyFormula', e.target.value)} />
@@ -297,16 +301,19 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
         dataSource={dataSource}
         columns={columns(setDataSource)}
         pagination={false}
+        footer={() => (
+          <Button
+            block
+            type='text'
+            size='small'
+            icon={<PlusOutlined />}
+            disabled={!!editableRow}
+            onClick={handleAddRecord}
+          >
+            {t('add')}
+          </Button>
+        )}
       />
-
-      <Button
-        icon={<PlusOutlined />}
-        disabled={!!editableRow}
-        onClick={handleAddRecord}
-        style={{ marginTop: '8px' }}
-      >
-        {t('add')}
-      </Button>
     </div>
   );
 };

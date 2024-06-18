@@ -1,6 +1,6 @@
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { css, FlexCenterWrapper, SmallTextButton, useTranslation } from '@arextest/arex-core';
-import { Button, Input, Space, Table, theme } from 'antd';
+import { css, useTranslation } from '@arextest/arex-core';
+import { Button, Input, Table, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import React, { FC, useEffect, useMemo } from 'react';
 import { useImmer } from 'use-immer';
@@ -109,17 +109,10 @@ const SerializeSkip: FC<FormItemProps<SerializeSkipInfo[]>> = (props) => {
       columns={columns}
       dataSource={dataSource}
       footer={() => (
-        <FlexCenterWrapper>
-          <Button block size='small' type='text' icon={<PlusOutlined />} onClick={handleAddItem}>
-            {t('add', { ns: 'common' })}
-          </Button>
-        </FlexCenterWrapper>
+        <Button block size='small' type='text' icon={<PlusOutlined />} onClick={handleAddItem}>
+          {t('add', { ns: 'common' })}
+        </Button>
       )}
-      css={css`
-        .ant-table-footer {
-          padding: 4px;
-        }
-      `}
     />
   );
 };
