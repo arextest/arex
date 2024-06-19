@@ -51,7 +51,7 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
       leftScrollTo: (path) => leftEditorRef.current?.scrollTo(path),
       rightScrollTo: (path) => rightEditorRef.current?.scrollTo(path),
     }),
-    [leftEditorRef.current, rightEditorRef.current],
+    [],
   );
 
   if (!props.diffJson) return null;

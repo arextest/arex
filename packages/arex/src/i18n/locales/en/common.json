@@ -71,6 +71,7 @@
   "prettier": "Prettier",
   "raw": "Raw",
   "readOnly": "ReadOnly",
+  "realtime": "Realtime",
   "record": "Record",
   "refresh": "refresh",
   "remove": "Remove",

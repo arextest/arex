@@ -17,7 +17,7 @@ import PathTitle from '@/panes/ReplayCase/CaseDiff/CaseDiffTitle';
 import { SummaryCodeMap } from '@/panes/ReplayCase/CaseDiff/CaseDiffViewer';
 import { ScheduleService } from '@/services';
 import { RecordResult } from '@/services/ReportService';
-import { DIFF_TYPE } from '@/services/ScheduleService';
+import { CompareMsgRes, DIFF_TYPE } from '@/services/ScheduleService';
 
 export interface CompareProps {
   getResponse?: () => ArexRESTResponse | undefined;
@@ -25,7 +25,7 @@ export interface CompareProps {
 }
 
 const Compare: FC<CompareProps> = (props) => {
-  const { t } = useTranslation('components');
+  const { t } = useTranslation();
   const { token } = theme.useToken();
 
   const jsonDiffViewRef = useRef<DiffJsonViewRef>(null);
@@ -41,13 +41,27 @@ const Compare: FC<CompareProps> = (props) => {
       }),
     {
       ready: !!props.getResponse && !!props.getResponse,
+      onSuccess(diffMsg) {
+        setTimeout(() => scrollToIndex(0, diffMsg));
+      },
     },
   );
 
   const logEntity = useMemo(
-    () => diffMsg?.logInfos?.[activeIndex]?.logEntity,
+    () => diffMsg?.logDetails?.[activeIndex]?.logEntity,
     [diffMsg, activeIndex],
   );
+
+  const scrollToIndex = (index: number, diffMsg?: CompareMsgRes) => {
+    setActiveIndex(index);
+    const pathPair = diffMsg?.logDetails?.[index]?.logEntity?.pathPair;
+    if (!pathPair) return;
+
+    const leftPath = pathPair.leftUnmatchedPath.map((item) => item.nodeName || item.index);
+    const rightPath = pathPair.rightUnmatchedPath.map((item) => item.nodeName || item.index);
+    jsonDiffViewRef.current?.leftScrollTo(leftPath);
+    jsonDiffViewRef.current?.rightScrollTo(rightPath);
+  };
 
   return (
     <>
@@ -79,13 +93,13 @@ const Compare: FC<CompareProps> = (props) => {
                       margin: `${token.marginSM}px 0 0 ${token.margin}px`,
                     }}
                   >
-                    {t('replay.pointOfDifference')}
+                    {t('components:replay.pointOfDifference')}
                   </Typography.Text>
                 </SpaceBetweenWrapper>
 
                 <Menu
                   defaultSelectedKeys={['0']}
-                  items={diffMsg?.logInfos.map((log, index) => {
+                  items={diffMsg?.logDetails?.map((log, index) => {
                     return {
                       label: <PathTitle diffLog={log} />,
                       key: index,
@@ -101,20 +115,7 @@ const Compare: FC<CompareProps> = (props) => {
                     }
                     border-inline-end: none !important;
                   `}
-                  onClick={({ key }) => {
-                    setActiveIndex(Number(key));
-                    const pathPair = diffMsg?.logInfos?.[Number(key)]?.logEntity?.pathPair;
-                    if (!pathPair) return;
-
-                    const leftPath = pathPair.leftUnmatchedPath.map(
-                      (item) => item.nodeName || item.index,
-                    );
-                    const rightPath = pathPair.rightUnmatchedPath.map(
-                      (item) => item.nodeName || item.index,
-                    );
-                    jsonDiffViewRef.current?.leftScrollTo(leftPath);
-                    jsonDiffViewRef.current?.rightScrollTo(rightPath);
-                  }}
+                  onClick={({ key }) => scrollToIndex(Number(key), diffMsg)}
                 />
               </>
             )}
@@ -139,6 +140,10 @@ const Compare: FC<CompareProps> = (props) => {
                   diffJson={{
                     left: diffMsg?.baseMsg || '',
                     right: diffMsg?.testMsg || '',
+                  }}
+                  remarks={{
+                    left: t('common:realtime'),
+                    right: t('common:record'),
                   }}
                   onClassName={(path, value, target) =>
                     logEntity?.pathPair[`${target}UnmatchedPath`]

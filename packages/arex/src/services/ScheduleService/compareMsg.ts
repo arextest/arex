@@ -10,7 +10,7 @@ export interface CompareMsgReq {
 }
 
 export interface CompareMsgRes {
-  logInfos: (DiffLog & { logEntity: LogEntity })[];
+  logDetails: (DiffLog & { logEntity: LogEntity })[];
   baseMsg: string;
   testMsg: string;
   diffResultCode: number;

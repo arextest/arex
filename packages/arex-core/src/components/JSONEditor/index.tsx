@@ -136,9 +136,9 @@ const JSONEditor = forwardRef<JSONEditorRef, JSONEditorProps>((props, ref) => {
   useImperativeHandle(
     ref,
     () => ({
-      scrollTo: refEditor.current?.scrollTo,
+      scrollTo: (to) => refEditor.current?.scrollTo(to),
     }),
-    [refEditor.current],
+    [],
   );
 
   return (

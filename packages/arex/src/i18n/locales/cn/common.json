@@ -68,6 +68,7 @@
   "prettier": "格式化",
   "raw": "报文",
   "readOnly": "只读",
+  "realtime": "实时",
   "record": "录制",
   "refresh": "刷新",
   "remove": "移除",
