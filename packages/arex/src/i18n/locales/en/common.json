@@ -52,6 +52,7 @@
     "delFailed": "Delete failed",
     "delSuccess": "Delete successfully",
     "error": "Error",
+    "renameFailed": "Rename failed",
     "saveFailed": "Save failed",
     "saveSuccess": "Save successfully",
     "selectRowWarning": "Please select a row",

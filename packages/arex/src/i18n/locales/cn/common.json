@@ -50,6 +50,7 @@
     "delFailed": "删除失败",
     "delSuccess": "删除成功",
     "error": "异常",
+    "renameFailed": "重命名失败",
     "saveFailed": "保存失败",
     "saveSuccess": "保存成功",
     "selectRowWarning": "请选择一行",

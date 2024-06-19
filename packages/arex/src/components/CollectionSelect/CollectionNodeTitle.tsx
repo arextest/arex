@@ -61,7 +61,7 @@ export type CollectionNodeTitleProps = {
   data: CollectionType;
   keyword?: string;
   readOnly?: boolean;
-  pos?: number[] | string[];
+  pos?: number[];
   selectable?: CollectionNodeType[];
   onAddNode?: (info: string, nodeType: CollectionNodeType) => void;
 };
@@ -80,7 +80,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
   } = useCollections();
   const { removePane } = useMenusPanes();
 
-  const { modal } = App.useApp();
+  const { message, modal } = App.useApp();
   const { token } = theme.useToken();
   const confirm = modal.confirm;
   const { t } = useTranslation(['common', 'components']);
@@ -148,6 +148,8 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         if (success) {
           setEditMode(false);
           renameCollectionNode(props.pos || [], nodeName);
+        } else {
+          message.error(t('message.renameFailed', { ns: 'common' }));
         }
       },
     },
