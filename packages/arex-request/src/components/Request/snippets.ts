@@ -43,4 +43,9 @@ export const testCodeSnippet = [
 });
 `,
   },
+  {
+    name: 'Enable record compare',
+    text: `pm.globals.set('arex_compare', true)
+`,
+  },
 ];

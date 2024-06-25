@@ -1,4 +1,4 @@
-import { ArexPaneFC, getLocalStorage, i18n, useTranslation } from '@arextest/arex-core';
+import { ArexPaneFC, getLocalStorage, i18n, SmallBadge, useTranslation } from '@arextest/arex-core';
 import {
   ArexEnvironment,
   ArexRequest,
@@ -54,7 +54,10 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const saveAsRef = useRef<SaveAsRef>(null);
   const environmentDrawerRef = useRef<EnvironmentDrawerRef>(null);
 
+  const [enableCompare, setEnableCompare] = useState(false);
+
   const [activeEnvironment, setActiveEnvironment] = useState<ArexEnvironment>();
+  const [compareDiffCount, setCompareDiffCount] = useState(0);
 
   const { data: labelData = [] } = useRequest(() => ReportService.queryLabels({ workspaceId }));
   const tagOptions = useMemo(
@@ -242,21 +245,23 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         extra: [
           {
             key: 'compare',
-            label: t('components:http.compare'),
-            hidden: !data?.recordId,
+            label: <SmallBadge count={compareDiffCount}>{t('components:http.compare')}</SmallBadge>,
+            hidden: !enableCompare,
+            forceRender: true,
             children: (
               <ExtraTabs.ResponseTabs.Compare
                 getResponse={requestRef.current?.getResponse}
                 entryMock={
                   mockData.find((mock) => mock.categoryType.entryPoint) // get entryPoint mock
                 }
+                onGetDiff={(diffs) => setCompareDiffCount(diffs.length)}
               />
             ),
           },
         ],
       },
     };
-  }, [data, mockData, loadingMockData]);
+  }, [data, mockData, loadingMockData, enableCompare, compareDiffCount]);
 
   const { run: createNewEnvironment } = useRequest(
     (envName) =>
@@ -385,6 +390,9 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
           onEdit: environmentDrawerRef?.current?.open,
         }}
         onSave={handleSave}
+        onRequest={(error, reqData, resData) => {
+          setEnableCompare(!!resData?.arexConfig?.compare);
+        }}
         onSaveAs={() => saveAsRef?.current?.open(title)}
       />
 

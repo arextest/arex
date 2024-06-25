@@ -53,6 +53,7 @@ export async function sendRequest(
   let assertionsBox: any = [];
   const consolesBox: any = [];
   let res: any = {};
+  let arexCompare = false;
   return new Promise((resolve, reject) => {
     runner.run(
       collection,
@@ -94,6 +95,12 @@ export async function sendRequest(
             // console.log('');
           },
           test: function (err: any, cursor: any, results: any, item: any) {
+            arexCompare = !!Array.from(results[0].result.globals.values.members).find((item) => {
+              // @ts-ignore
+              return item?.key === 'arex_compare';
+              // @ts-ignore
+            })?.value;
+
             // results: Array of objects. Each object looks like this:
             //  {
             //      error: Error,
@@ -118,11 +125,15 @@ export async function sendRequest(
             //  }
           },
           item: function (err: any, cursor: any, item: any, visualizer: any) {
+            console.log('item');
             resolve({
               response: res,
               testResult: assertionsBox,
               consoles: consolesBox,
               visualizer: visualizer,
+              arexConfig: {
+                compare: arexCompare,
+              },
             });
           },
           //调用一次，并对集合中的每个请求进行响应
@@ -138,6 +149,7 @@ export async function sendRequest(
             if (err) {
               reject(err);
             }
+            console.log('response', cursor, response, request, item, cookies, history);
             res = {
               type: 'success', // TODO check response status
               headers: response?.headers.members,

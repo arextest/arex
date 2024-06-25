@@ -43,7 +43,9 @@ const ArexCoreProvider: FC<PropsWithChildren<Partial<ArexCoreProviderProps>>> = 
     componentsConfig: components,
   } = props;
 
-  const [messageApi, contextHolder] = message.useMessage();
+  const [messageApi, contextHolder] = message.useMessage({
+    maxCount: 1,
+  });
 
   useEffect(() => {
     // add locale resources
@@ -74,7 +76,7 @@ const ArexCoreProvider: FC<PropsWithChildren<Partial<ArexCoreProviderProps>>> = 
       renderEmpty={() => Empty.PRESENTED_IMAGE_SIMPLE}
     >
       <EmotionThemeProvider>
-        <App>
+        <App message={{ maxCount: 1 }}>
           {contextHolder}
           <Layout>
             <Content>

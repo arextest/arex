@@ -22,6 +22,7 @@ import { CompareMsgRes, DIFF_TYPE } from '@/services/ScheduleService';
 export interface CompareProps {
   getResponse?: () => ArexRESTResponse | undefined;
   entryMock?: RecordResult;
+  onGetDiff?: (diffs: CompareMsgRes['logDetails']) => void;
 }
 
 const Compare: FC<CompareProps> = (props) => {
@@ -40,8 +41,9 @@ const Compare: FC<CompareProps> = (props) => {
         testMsg: props?.entryMock?.targetResponse.body as string,
       }),
     {
-      ready: !!props.getResponse && !!props.getResponse,
+      ready: !!props.getResponse,
       onSuccess(diffMsg) {
+        props.onGetDiff(diffMsg.logDetails);
         setTimeout(() => scrollToIndex(0, diffMsg));
       },
     },

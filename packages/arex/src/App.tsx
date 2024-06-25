@@ -1,6 +1,6 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { ArexCoreProvider, ArexMenuManager, ArexPaneManager, Theme } from '@arextest/arex-core';
-import { Spin } from 'antd';
+import { message, Spin } from 'antd';
 import React from 'react';
 
 import { NavigationProvider } from '@/router/NavigationContext';
