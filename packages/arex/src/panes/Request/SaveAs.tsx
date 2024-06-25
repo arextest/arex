@@ -93,13 +93,12 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
       }),
     {
       manual: true,
-      onSuccess: (res, [{ nodeName, nodeType, caseSourceType }, options]) => {
+      onSuccess: (res, [{ nodeName, nodeType, caseSourceType, parentPath }, options]) => {
         setOpen(false);
-        const path = parentPath.map((path) => path.infoId);
         options?.reset
-          ? getCollections(props.workspaceId).then(() => setExpandedKeys(path))
+          ? getCollections(props.workspaceId).then(() => setExpandedKeys(parentPath))
           : addCollectionNode({
-              pathOrIndex: path,
+              pathOrIndex: parentPath,
               infoId: res.infoId,
               nodeName,
               nodeType,
