@@ -80,6 +80,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
         nodeName: string;
         nodeType: CollectionNodeType;
         caseSourceType?: number;
+        parentPath: string[];
       },
       options?: {
         reset?: boolean;
@@ -89,7 +90,6 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
         ...params,
         userName: userName as string,
         id: props.workspaceId,
-        parentPath: parentPath.map((path) => path.infoId),
       }),
     {
       manual: true,
@@ -122,6 +122,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
               nodeName: nodeName!,
               nodeType: props.nodeType,
               caseSourceType: CaseSourceType.AREX,
+              parentPath: res.path,
             },
             {
               reset: true,
@@ -169,6 +170,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
       nodeName,
       nodeType: props.nodeType,
       caseSourceType: props.recordId ? CaseSourceType.AREX : CaseSourceType.CASE,
+      parentPath: parentPath.map((path) => path.infoId),
     });
   };
 
