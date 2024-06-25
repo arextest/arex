@@ -17,6 +17,7 @@ import { RecordResult } from '@/services/ReportService';
 export interface MockProps {
   data: RecordResult[];
   loading?: boolean;
+  readOnly?: boolean;
   onChange?: (data: RecordResult[]) => void;
   onRefresh?: () => void;
 }
@@ -52,7 +53,7 @@ const Mock: FC<MockProps> = (props) => {
             items={props.data.map((mock) => ({
               key: mock.id,
               label: mock.operationName,
-              extra: (
+              extra: !props.readOnly && (
                 <TooltipButton
                   title={'Save'}
                   icon={<SaveOutlined />}
@@ -70,6 +71,7 @@ const Mock: FC<MockProps> = (props) => {
                       height='240px'
                       theme={theme === Theme.dark ? 'vs-dark' : 'light'}
                       options={{
+                        readOnly: props.readOnly,
                         minimap: {
                           enabled: false,
                         },
@@ -92,6 +94,7 @@ const Mock: FC<MockProps> = (props) => {
                       language='json'
                       theme={theme === Theme.dark ? 'vs-dark' : 'light'}
                       options={{
+                        readOnly: props.readOnly,
                         minimap: {
                           enabled: false,
                         },

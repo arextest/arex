@@ -5,13 +5,15 @@ import { ACCESS_TOKEN_KEY } from '@/constant';
 import { ViewRecordRes } from '@/services/ReportService';
 import { ResponseStatusType } from '@/utils/request';
 
-export async function queryRecord(recordId: string) {
+export async function queryRecord(params: {
+  recordId: string;
+  sourceProvider: 'Pinned' | 'Rolling';
+}) {
   const res = await axios.post<ViewRecordRes & { responseStatusType: ResponseStatusType }>(
     '/storage/storage/replay/query/viewRecord',
     {
-      recordId,
+      ...params,
       splitMergeRecord: true,
-      sourceProvider: 'Pinned',
     },
     {
       headers: {

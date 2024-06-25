@@ -205,6 +205,7 @@
     "extensionNotInstalled": "Extension not installed",
     "importUrl": "Import URL",
     "javaScriptCode": "JavaScript Code",
+    "noCompareDiffMsg": "No difference in comparison information, probably because the current case is not recorded",
     "params": "Params",
     "pre-requestScript": "Pre-request Script",
     "queryParams": "QueryParams",

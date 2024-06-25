@@ -217,8 +217,13 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     refresh: getMockData,
     loading: loadingMockData,
   } = useRequest(StorageService.queryRecord, {
-    defaultParams: [data?.recordId as string],
-    ready: !!data?.recordId,
+    defaultParams: [
+      {
+        recordId: (data?.recordId || props.data?.recordId) as string,
+        sourceProvider: data?.recordId ? 'Pinned' : 'Rolling',
+      },
+    ],
+    ready: !!data?.recordId || !!props.data?.recordId,
   });
 
   const httpConfig = useMemo(() => {
@@ -228,11 +233,11 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
           {
             key: 'mock',
             label: 'Mock',
-            // 这里判断是否有recordId，如果有则隐藏，因为recordId是mock的唯一标识
-            hidden: !data?.recordId,
+            hidden: !data?.recordId && !props.data?.recordId,
             children: (
               <ExtraTabs.RequestTabs.Mock
                 data={mockData}
+                readOnly={!data?.recordId} // debug case 的 mock 为只读
                 loading={loadingMockData}
                 onChange={setMockData}
                 onRefresh={getMockData}
@@ -245,7 +250,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         extra: [
           {
             key: 'compare',
-            label: <SmallBadge count={compareDiffCount}>{t('components:http.compare')}</SmallBadge>,
+            label: <SmallBadge dot={!!compareDiffCount}>{t('components:http.compare')}</SmallBadge>,
             hidden: !enableCompare,
             forceRender: true,
             children: (

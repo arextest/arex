@@ -41,9 +41,9 @@ const Compare: FC<CompareProps> = (props) => {
         testMsg: props?.entryMock?.targetResponse.body as string,
       }),
     {
-      ready: !!props.getResponse,
+      ready: !!props.getResponse && !!props?.entryMock?.targetResponse.body,
       onSuccess(diffMsg) {
-        props.onGetDiff(diffMsg.logDetails);
+        props.onGetDiff?.(diffMsg.logDetails);
         setTimeout(() => scrollToIndex(0, diffMsg));
       },
     },
@@ -67,7 +67,12 @@ const Compare: FC<CompareProps> = (props) => {
 
   return (
     <>
-      <EmptyWrapper loading={loading} empty={!diffMsg} css={{ overflow: 'hidden' }}>
+      <EmptyWrapper
+        loading={loading}
+        empty={!diffMsg && !props?.entryMock?.targetResponse.body}
+        description={t('components:http.noCompareDiffMsg')}
+        css={{ overflow: 'hidden' }}
+      >
         <Allotment
           css={css`
             height: 100%;

@@ -45,7 +45,8 @@ export const testCodeSnippet = [
   },
   {
     name: 'Enable record compare',
-    text: `pm.globals.set('arex_compare', true)
+    text: `// Used to activate comparison of real-time response with recorded response
+pm.globals.set('AREX_COMPARE', true)
 `,
   },
 ];

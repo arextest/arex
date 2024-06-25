@@ -1,4 +1,4 @@
-import request from '../../utils/request';
+import request, { ResponseStatusType } from '../../utils/request';
 import { RecordResult } from '../ReportService';
 
 export async function updateRecord(params: RecordResult): Promise<boolean> {

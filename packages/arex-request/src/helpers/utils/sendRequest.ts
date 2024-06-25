@@ -97,7 +97,7 @@ export async function sendRequest(
           test: function (err: any, cursor: any, results: any, item: any) {
             arexCompare = !!Array.from(results[0].result.globals.values.members).find((item) => {
               // @ts-ignore
-              return item?.key === 'arex_compare';
+              return item?.key === 'AREX_COMPARE';
               // @ts-ignore
             })?.value;
 

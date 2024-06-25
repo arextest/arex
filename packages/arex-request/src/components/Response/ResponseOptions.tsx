@@ -41,11 +41,11 @@ const ResponseOptions: FC<LensesResponseBodyRendererProps> = ({
         label: <SmallBadge dot={!!testResult?.length}>Result</SmallBadge>,
         children: <TestResult testResult={testResult} />,
       },
-      {
-        key: 'console',
-        label: <SmallBadge dot={!!consoles?.length}>Console</SmallBadge>,
-        children: <Console logs={consoles} />,
-      },
+      // {
+      //   key: 'console',
+      //   label: <SmallBadge dot={!!consoles?.length}>Console</SmallBadge>,
+      //   children: <Console logs={consoles} />,
+      // },
     ];
 
     return _items.concat(config?.responseTabs?.extra?.filter((tab) => !tab.hidden) || []);
