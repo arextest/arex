@@ -1,3 +1,4 @@
+import { css } from '@arextest/arex-core';
 import { ArexEnvironment, ArexResponse, sendRequest } from '@arextest/arex-request';
 import { ArexRESTRequest } from '@arextest/arex-request/src';
 import { useRequest } from 'ahooks';
@@ -7,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 export type RequestTestStatusBlockProps = {
   environment?: ArexEnvironment;
   data: ArexRESTRequest;
+  selected?: boolean;
   onClick?: (data: { request: ArexRESTRequest; response?: ArexResponse }) => void;
 };
 
@@ -56,8 +58,6 @@ const RequestTestStatusBlock = (props: RequestTestStatusBlockProps) => {
   return (
     <div
       onClick={() => {
-        // !loading &&
-        // data &&
         props.onClick?.({
           request: props.data,
           response: data,
@@ -65,10 +65,17 @@ const RequestTestStatusBlock = (props: RequestTestStatusBlockProps) => {
       }}
       style={{
         width: '12px',
-        // cursor: !loading && data ? 'pointer' : 'default',
         cursor: 'pointer',
         margin: '2px',
       }}
+      css={css`
+        // 添加hover 动效，放大、加主题色边框阴影
+        transition: transform 0.2s;
+        &:hover {
+          transform: scale(1.2);
+        }
+        ${props.selected ? `box-shadow: 0 0 0 1px ${token.colorPrimaryHover};` : ''}
+      `}
     >
       <div
         style={{
