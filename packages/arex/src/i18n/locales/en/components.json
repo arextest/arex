@@ -102,6 +102,7 @@
     "recordMachineNum": "Record Machine Count",
     "replay": "Replay",
     "runningStatus": "Running Status",
+    "selectMethodTip": "Please select a method to save",
     "selectNodePath": "Select Node Path",
     "serializeSkip": "SerializeSkip",
     "skipMock": "Skip Mock",

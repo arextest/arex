@@ -1,22 +1,7 @@
 import { request } from '@/utils';
 
 import { QueryNodeReq } from './queryIgnoreNode';
-
-export type TransformNode = {
-  status: null | number;
-  modifiedTime: number;
-  id: string;
-  appId: string;
-  operationId: string;
-  expirationType: number;
-  expirationDate: number;
-  compareConfigType: number;
-  fsInterfaceId: string | null;
-  dependencyId: string | null;
-  operationType: string | null;
-  operationName: string | null;
-  transformDetail: TransformDetail;
-};
+import { TransformNode } from '@/services/ComparisonService/transformRootNode/queryTransformRootNode';
 
 export type TransformDetail = {
   nodePath: string[];
@@ -26,8 +11,14 @@ export type TransformDetail = {
   }[];
 };
 
+export type TransformFlowNode = TransformNode<{ transformDetail: TransformDetail }>;
+
+/**
+ * @deprecated flow design is deprecated, use queryTransformRootNode
+ * @param params
+ */
 export async function queryTransformNode(params: QueryNodeReq<'Global'>) {
-  const res = await request.post<TransformNode[]>(
+  const res = await request.post<TransformFlowNode[]>(
     '/webApi/config/comparison/transform/queryComparisonConfig',
     params,
   );

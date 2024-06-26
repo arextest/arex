@@ -8,7 +8,6 @@ import UndertoneWrapper from '@/panes/AppSetting/UndertoneWrapper';
 import { ConfigService } from '@/services';
 import { KeyValueType } from '@/services/FileSystemService';
 
-import { SettingRecordProps } from '../Record';
 import SettingForm from '../SettingForm';
 import { ExcludeOperation } from './FormItem';
 
@@ -24,7 +23,11 @@ const defaultValues: SettingFormType = {
   sendMaxQps: 0,
 };
 
-const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
+interface SettingReplayProps {
+  appId: string;
+}
+
+const SettingReplay: React.FC<SettingReplayProps> = ({ appId }) => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
 

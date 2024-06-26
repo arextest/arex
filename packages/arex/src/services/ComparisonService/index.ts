@@ -1,3 +1,4 @@
+export * from './transformRootNode';
 export * from './batchDeleteIgnoreNode';
 export * from './batchInsertIgnoreNode';
 export * from './deleteEncryptionNode';
