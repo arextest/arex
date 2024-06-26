@@ -1,7 +1,7 @@
+import { TransformNode } from '@/services/ComparisonService/transformRootNode/queryTransformRootNode';
 import { request } from '@/utils';
 
 import { QueryNodeReq } from './queryIgnoreNode';
-import { TransformNode } from '@/services/ComparisonService/transformRootNode/queryTransformRootNode';
 
 export type TransformDetail = {
   nodePath: string[];

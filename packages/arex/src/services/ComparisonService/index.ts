@@ -1,4 +1,3 @@
-export * from './transformRootNode';
 export * from './batchDeleteIgnoreNode';
 export * from './batchInsertIgnoreNode';
 export * from './deleteEncryptionNode';
@@ -18,6 +17,7 @@ export * from './queryIgnoreCategory';
 export * from './queryIgnoreNode';
 export * from './querySortNode';
 export * from './queryTransformNode';
+export * from './transformRootNode';
 export * from './updateEncryptionNode';
 export * from './updateSortNode';
 export * from './updateTransformNode';

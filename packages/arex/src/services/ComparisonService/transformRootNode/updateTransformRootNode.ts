@@ -1,5 +1,6 @@
-import { request } from '@/utils';
 import { QueryNodeReq } from '@/services/ComparisonService';
+import { request } from '@/utils';
+
 import { TransformRootNodeParams } from './queryTransformRootNode';
 
 interface UpdateTransformRootNodeReq extends QueryNodeReq<'Global'>, TransformRootNodeParams {}

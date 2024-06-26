@@ -1,13 +1,12 @@
 import { Label, useTranslation } from '@arextest/arex-core';
-
+import { useRequest } from 'ahooks';
 import { App, Button, Card, Select } from 'antd';
 import React, { FC, useState } from 'react';
 
+import { ComparisonService } from '@/services';
 import { DependencyParams } from '@/services/ComparisonService';
 
 import { CONFIG_TARGET } from '../index';
-import { useRequest } from 'ahooks';
-import { ComparisonService } from '@/services';
 
 export type NodesTransformProps = {
   appId?: string;

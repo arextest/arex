@@ -1,5 +1,5 @@
-import { request } from '@/utils';
 import { QueryNodeReq } from '@/services/ComparisonService';
+import { request } from '@/utils';
 
 export type TransformNode<T> = {
   status: null | number;
