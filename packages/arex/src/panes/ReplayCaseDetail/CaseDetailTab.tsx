@@ -26,7 +26,11 @@ const CaseDetailTab: FC<CaseDetailTabProps> = (props) => {
           key: index,
           label: (
             <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
-              <span>{result.operationName}</span>
+              <span>
+                {props.type === 'Servlet'
+                  ? result.targetRequest.attributes.RequestPath
+                  : result.operationName}
+              </span>
               <Button
                 size='small'
                 type='text'
