@@ -1,10 +1,8 @@
-import { CollectionNodeType } from '@/constant';
 import { request } from '@/utils';
 
 export type DuplicateCollectionItemReq = {
   id: string;
-  infoId: string;
-  nodeType: CollectionNodeType;
+  path: string[];
 };
 
 export type DuplicateCollectionItemRes = {

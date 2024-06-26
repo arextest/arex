@@ -1,12 +1,11 @@
 import { RequestMethodEnum } from '@arextest/arex-core';
-import { DataNode } from 'antd/lib/tree';
 
 import { CollectionNodeType } from '@/constant';
 import { request } from '@/utils';
 
-export interface CollectionType extends DataNode {
+export type CollectionType<T = NonNullable<unknown>> = {
   caseSourceType: number; // 0, 1
-  children: CollectionType[];
+  children: CollectionType<T>[];
   infoId: string;
   labelIds: string | null;
   method: RequestMethodEnum | null;
@@ -14,7 +13,7 @@ export interface CollectionType extends DataNode {
   nodeType: CollectionNodeType;
   existChildren?: boolean | null;
   isLeaf?: boolean;
-}
+} & T;
 
 export type QueryWorkspaceByIdRes = {
   fsTree: {
@@ -25,7 +24,7 @@ export type QueryWorkspaceByIdRes = {
   };
 };
 
-export async function queryCollectionByWorkspace(params: { id: string }) {
+export async function queryWorkspaceById(params: { id: string }) {
   return request
     .post<QueryWorkspaceByIdRes>(`/webApi/filesystem/queryWorkspaceById`, params)
     .then((res) => res.body.fsTree);

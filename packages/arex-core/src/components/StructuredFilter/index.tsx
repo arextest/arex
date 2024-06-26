@@ -44,6 +44,7 @@ export type StructuredFilterProps = {
 } & Omit<SelectProps, 'options' | 'onSearch'>;
 
 export type StructuredFilterRef = {
+  focus: () => void;
   clear: () => void;
 };
 
@@ -91,6 +92,9 @@ const StructuredFilter = forwardRef<StructuredFilterRef, StructuredFilterProps>(
   useImperativeHandle(
     ref,
     () => ({
+      focus: () => {
+        selectRef.current?.focus();
+      },
       clear: () => {
         setKeyword('');
         setFilterData([]);

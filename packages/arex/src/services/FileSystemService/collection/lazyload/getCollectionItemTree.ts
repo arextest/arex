@@ -1,7 +1,6 @@
 import { CollectionNodeType } from '@/constant';
+import { QueryWorkspaceByIdRes } from '@/services/FileSystemService';
 import { request } from '@/utils';
-
-import { QueryWorkspaceByIdRes } from '../queryCollectionByWorkspace';
 
 export interface GetCollectionItemTreeReq {
   workspaceId: string;
@@ -14,5 +13,5 @@ export async function getCollectionItemTree(params: GetCollectionItemTreeReq) {
     `/webApi/filesystem/getWorkspaceItemTree`,
     params,
   );
-  return res.body.fsTree;
+  return res.body;
 }

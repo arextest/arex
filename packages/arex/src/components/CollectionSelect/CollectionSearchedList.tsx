@@ -8,20 +8,20 @@ import {
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { Menu, MenuProps, theme } from 'antd';
-import { DirectoryTreeProps } from 'antd/lib/tree';
 import React, { forwardRef, useImperativeHandle } from 'react';
 
 import { CollectionTreeType } from '@/components/CollectionSelect/index';
 import { CollectionNodeType } from '@/constant';
 import { FileSystemService } from '@/services';
 import { CollectionType } from '@/services/FileSystemService';
+import { useCollections } from '@/store';
 import { CaseSourceType } from '@/store/useCollections';
 
 export type CollectionSearchedListProps = {
   height?: number;
   workspaceId: string;
   searchValue?: SearchDataType;
-  onSelect?: DirectoryTreeProps<CollectionTreeType>['onSelect'];
+  onSelect?: (id: string, node: CollectionTreeType) => void;
 };
 
 export type CollectionSearchedListRef = {
@@ -31,6 +31,8 @@ export type CollectionSearchedListRef = {
 const CollectionSearchedList = forwardRef<CollectionSearchedListRef, CollectionSearchedListProps>(
   (props, ref) => {
     const { token } = theme.useToken();
+
+    const { setExpandedKeys } = useCollections();
 
     const {
       data,
@@ -63,7 +65,7 @@ const CollectionSearchedList = forwardRef<CollectionSearchedListRef, CollectionS
       [],
     );
 
-    const handleSelect: MenuProps['onClick'] = ({ key }) => {
+    const handleSelect: MenuProps['onClick'] = async ({ key }) => {
       const [nodeType, id] = key.split('-');
 
       let nodes: CollectionType[] | undefined = [];
@@ -75,9 +77,16 @@ const CollectionSearchedList = forwardRef<CollectionSearchedListRef, CollectionS
         nodes = data?.caseNodes;
       }
       const node = nodes?.find((item) => item.infoId === id);
+      if (!node) return;
 
+      const pathInfo = await FileSystemService.queryPathInfo({
+        infoId: node.infoId,
+        nodeType: node.nodeType,
+      });
+
+      setExpandedKeys(pathInfo.map((item) => item.id));
       // @ts-ignore
-      node && props.onSelect?.([id], { node });
+      node && props.onSelect?.(id, { ...node, pathInfo });
     };
 
     return (

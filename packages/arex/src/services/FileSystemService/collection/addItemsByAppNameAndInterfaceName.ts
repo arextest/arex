@@ -1,4 +1,3 @@
-import { CollectionNodeType } from '@/constant';
 import request from '@/utils/request';
 
 export interface AddItemsByAppNameAndInterfaceNameReq {
@@ -10,8 +9,7 @@ export interface AddItemsByAppNameAndInterfaceNameReq {
   interfaceName?: string;
   nodeName?: string;
   // manual select path
-  parentInfoId?: string;
-  parentNodeType?: CollectionNodeType;
+  parentPath?: string[];
 }
 
 export interface AddItemsByAppNameAndInterfaceNameRes {

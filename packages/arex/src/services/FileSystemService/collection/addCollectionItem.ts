@@ -6,8 +6,7 @@ export type AddCollectionReq = {
   userName: string;
   nodeName?: string;
   nodeType?: CollectionNodeType;
-  parentInfoId?: string;
-  parentNodeType?: CollectionNodeType;
+  parentPath?: string[];
   caseSourceType?: number;
 };
 

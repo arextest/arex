@@ -13,8 +13,8 @@ import {
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Dropdown, Input, MenuProps, Space, theme } from 'antd';
-import React, { FC, ReactNode, useMemo, useState } from 'react';
+import { App, Button, Dropdown, Input, InputRef, MenuProps, Space, theme } from 'antd';
+import React, { FC, ReactNode, useMemo, useRef, useState } from 'react';
 
 import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
 import { useNavPane } from '@/hooks';
@@ -61,6 +61,7 @@ export type CollectionNodeTitleProps = {
   data: CollectionType;
   keyword?: string;
   readOnly?: boolean;
+  pos?: number[] | string[];
   selectable?: CollectionNodeType[];
   onAddNode?: (info: string, nodeType: CollectionNodeType) => void;
 };
@@ -70,8 +71,13 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     selectable = [CollectionNodeType.folder, CollectionNodeType.interface, CollectionNodeType.case],
   } = props;
   const { activeWorkspaceId } = useWorkspaces();
-  const { addCollectionNode, renameCollectionNode, removeCollectionNode, duplicateCollectionNode } =
-    useCollections();
+  const {
+    getPathByIndexOrPath,
+    addCollectionNode,
+    renameCollectionNode,
+    removeCollectionNode,
+    duplicateCollectionNode,
+  } = useCollections();
   const { removePane } = useMenusPanes();
 
   const { modal } = App.useApp();
@@ -82,8 +88,12 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
 
   const userName = getLocalStorage<string>(EMAIL_KEY) as string;
 
+  const editInputRef = useRef<InputRef>(null);
+
   const [editMode, setEditMode] = useState(false);
   const [nodeName, setNodeName] = useState(props.data.nodeName);
+
+  const path = useMemo(() => getPathByIndexOrPath(props.pos), [props.pos]);
 
   const { run: addCollectionItem } = useRequest(
     (params: { nodeName: string; nodeType: CollectionNodeType; caseSourceType?: number }) =>
@@ -91,8 +101,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         ...params,
         userName,
         id: activeWorkspaceId,
-        parentInfoId: props.data.infoId,
-        parentNodeType: props.data.nodeType,
+        parentPath: path,
       }),
     {
       manual: true,
@@ -100,13 +109,12 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         // case inherit interface
         if (caseSourceType === CaseSourceType.CASE)
           await createCaseInheritInterface(props.data.infoId, res.infoId);
-
         addCollectionNode({
           infoId: res.infoId,
           nodeName,
           nodeType,
-          parentId: props.data.infoId,
           caseSourceType,
+          pathOrIndex: props.pos || [],
         });
         props.onAddNode?.(res.infoId, nodeType);
       },
@@ -117,13 +125,12 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     () =>
       FileSystemService.duplicateCollectionItem({
         id: activeWorkspaceId,
-        infoId: props.data.infoId,
-        nodeType: props.data.nodeType,
+        path,
       }),
     {
       manual: true,
       onSuccess: (res) => {
-        duplicateCollectionNode(props.data.infoId, res.infoId);
+        duplicateCollectionNode(props.pos || [], res.infoId);
       },
     },
   );
@@ -132,16 +139,15 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
     () =>
       FileSystemService.renameCollectionItem({
         id: activeWorkspaceId,
-        infoId: props.data.infoId,
-        nodeType: props.data.nodeType,
         newName: nodeName,
+        path,
       }),
     {
       manual: true,
       onSuccess(success) {
         if (success) {
           setEditMode(false);
-          renameCollectionNode(props.data.infoId, nodeName);
+          renameCollectionNode(props.pos || [], nodeName);
         }
       },
     },
@@ -154,7 +160,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         const id = `${activeWorkspaceId}-${props.data.nodeType}-${props.data.infoId}`;
         const paneKey = encodePaneKey({ id, type: PanesType.REQUEST });
         removePane(paneKey);
-        removeCollectionNode(props.data.infoId);
+        removeCollectionNode(props.pos || []);
       }
     },
   });
@@ -261,7 +267,14 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
         {
           key: 'rename',
           label: (
-            <a onClick={() => setEditMode(true)}>{t('collection.rename', { ns: 'components' })}</a>
+            <a
+              onClick={() => {
+                setEditMode(true);
+                setTimeout(() => editInputRef?.current?.focus());
+              }}
+            >
+              {t('collection.rename', { ns: 'components' })}
+            </a>
           ),
         },
         {
@@ -287,8 +300,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
                   onOk: () =>
                     removeCollectionItem({
                       id: activeWorkspaceId,
-                      infoId: props.data.infoId,
-                      nodeType: props.data.nodeType,
+                      removeNodePath: path,
                     }),
                 });
               }}
@@ -339,6 +351,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
           {editMode ? (
             <Space style={{ display: 'flex' }}>
               <Input
+                ref={editInputRef}
                 value={nodeName}
                 onPressEnter={rename}
                 onChange={(e) => setNodeName(e.currentTarget.value)}
@@ -365,8 +378,12 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
             <Button
               type='text'
               size='small'
-              icon={<MoreOutlined style={{ fontSize: '14px' }} />}
-              onClick={(e) => e.stopPropagation()}
+              className='node-menu'
+              icon={<MoreOutlined className='node-menu-icon' style={{ fontSize: '14px' }} />}
+              onClick={(e) => {
+                // e.stopPropagation();
+                // 此处传递冒泡，在Tree onSelect 事件中会阻止冒泡，目的为了更新点击节点的 pos
+              }}
             />
           </Dropdown>
         </div>

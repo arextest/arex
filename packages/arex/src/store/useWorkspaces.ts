@@ -67,7 +67,7 @@ const useWorkspaces = create(
           getWorkspaces,
           setActiveWorkspaceId: (id) => {
             set({ activeWorkspaceId: id });
-            useCollections.getState().getCollections({ workspaceId: id });
+            useCollections.getState().getCollections(id);
           },
           changeActiveWorkspaceId: (id) => {
             useCollections.getState().reset();

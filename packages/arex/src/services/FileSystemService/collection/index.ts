@@ -8,6 +8,7 @@ export * from './lazyload/getCollectionItem';
 export * from './lazyload/getCollectionItemTree';
 export * from './lazyload/searchCollectionItems';
 export * from './moveCollectionItem';
-export * from './queryCollectionByWorkspace';
+export * from './queryPathInfo';
+export * from './queryWorkspaceById';
 export * from './removeCollectionItem';
 export * from './renameCollectionItem';

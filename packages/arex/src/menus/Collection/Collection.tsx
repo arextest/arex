@@ -31,8 +31,7 @@ const Collection: ArexMenuFC = (props) => {
 
   const { reset: resetPane } = useMenusPanes();
   const { activeWorkspaceId, workspaces, getWorkspaces, changeActiveWorkspaceId } = useWorkspaces();
-  const { createRootCollectionNode, getCollections, setExpandedKeys, setLoadedKeys, getPath } =
-    useCollections();
+  const { createRootCollectionNode, setExpandedKeys } = useCollections();
 
   const collectionsImportExportRef = useRef<CollectionsImportExportRef>(null);
 
@@ -113,16 +112,12 @@ const Collection: ArexMenuFC = (props) => {
     });
   };
 
-  const handleLocate = () => {
-    getCollections(
-      { workspaceId: activeWorkspaceId, infoId: value, nodeType: parseInt(nodeTypeStr) },
-      { merge: false, mode: 'search' },
-    ).then(() => {
-      const path = getPath(value).map((node) => node.id);
-      const infoId = path.pop();
-      setExpandedKeys([...path, infoId!]);
-      setLoadedKeys(path);
+  const handleLocate = async () => {
+    const pathInfo = await FileSystemService.queryPathInfo({
+      infoId: value,
+      nodeType: parseInt(nodeTypeStr),
     });
+    setExpandedKeys(pathInfo.map((path) => path.id));
   };
 
   return (

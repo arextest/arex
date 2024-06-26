@@ -1,4 +1,5 @@
 import { CollectionNodeType } from '@/constant';
+import { CollectionType } from '@/services/FileSystemService';
 import { request } from '@/utils';
 
 export type GetCollectionItemReq = {
@@ -9,6 +10,7 @@ export type GetCollectionItemReq = {
 
 export type GetCollectionItemRes = {
   node: CollectionType;
+  path: string[];
 };
 
 export async function getCollectionItem(params: GetCollectionItemReq) {
@@ -16,5 +18,5 @@ export async function getCollectionItem(params: GetCollectionItemReq) {
     `/webApi/filesystem/getWorkspaceItem`,
     params,
   );
-  return res.body.node;
+  return res.body;
 }
