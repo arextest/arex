@@ -109,8 +109,8 @@ importers:
         specifier: ^3.7.5
         version: 3.7.10(react@18.2.0)
       allotment:
-        specifier: ^1.18.1
-        version: 1.20.0(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^1.20.2
+        version: 1.20.2(react-dom@18.2.0)(react@18.2.0)
       antd:
         specifier: ^5.16.1
         version: 5.16.1(react-dom@18.2.0)(react@18.2.0)
@@ -360,8 +360,8 @@ importers:
         specifier: ^3.7.5
         version: 3.7.10(react@18.2.0)
       allotment:
-        specifier: ^1.18.1
-        version: 1.20.0(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^1.20.2
+        version: 1.20.2(react-dom@18.2.0)(react@18.2.0)
       antd:
         specifier: ^5.6.4
         version: 5.15.4(react-dom@18.2.0)(react@18.2.0)
@@ -424,8 +424,8 @@ importers:
         specifier: ^3.7.5
         version: 3.7.10(react@18.2.0)
       allotment:
-        specifier: ^1.18.1
-        version: 1.20.0(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^1.20.2
+        version: 1.20.2(react-dom@18.2.0)(react@18.2.0)
       antd:
         specifier: ^5.16.1
         version: 5.16.1(react-dom@18.2.0)(react@18.2.0)
@@ -655,7 +655,7 @@ packages:
       '@emotion/react': 11.11.4(@types/react@18.2.71)(react@18.2.0)
       '@emotion/styled': 11.11.0(@emotion/react@11.11.4)(@types/react@18.2.71)(react@18.2.0)
       ahooks: 3.7.10(react@18.2.0)
-      allotment: 1.20.0(react-dom@18.2.0)(react@18.2.0)
+      allotment: 1.20.2(react-dom@18.2.0)(react@18.2.0)
       antd: 5.15.4(react-dom@18.2.0)(react@18.2.0)
       dayjs: 1.11.10
       i18next: 22.5.1
@@ -3508,8 +3508,8 @@ packages:
       uri-js: 4.4.1
     dev: false
 
-  /allotment@1.20.0(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-G02sKgkSCIMpQozuuEkBHblv4aWVGrHQJuOgfCZn3YtHrvmfzS5+mu1N5eWUkpucu/JMl/0FmeCta662RtyaAw==}
+  /allotment@1.20.2(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-TaCuHfYNcsJS9EPk04M7TlG5Rl3vbAdHeAyrTE9D5vbpzV+wxnRoUrulDbfnzaQcPIZKpHJNixDOoZNuzliKEA==}
     peerDependencies:
       react: ^17.0.0 || ^18.0.0
       react-dom: ^17.0.0 || ^18.0.0

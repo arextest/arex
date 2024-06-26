@@ -18,29 +18,25 @@ export async function saveRequest(
         : undefined,
     params: params.params,
     headers: params.headers,
-    testScripts: params.testScript
-      ? [
-          {
-            type: '0',
-            icon: null,
-            label: 'CustomScript',
-            value: params.testScript,
-            disabled: false,
-          },
-        ]
-      : undefined,
+    testScripts: [
+      {
+        type: '0',
+        icon: null,
+        label: 'CustomScript',
+        value: params.testScript,
+        disabled: false,
+      },
+    ],
     body: params.body,
-    preRequestScripts: params.preRequestScript
-      ? [
-          {
-            type: '0',
-            icon: null,
-            label: 'CustomScript',
-            value: params.preRequestScript,
-            disabled: false,
-          },
-        ]
-      : undefined,
+    preRequestScripts: [
+      {
+        type: '0',
+        icon: null,
+        label: 'CustomScript',
+        value: params.preRequestScript,
+        disabled: false,
+      },
+    ],
     // id
     workspaceId: workspaceId,
     id: params.id,

@@ -20,6 +20,7 @@ export type SaveAsProps = {
   interfaceName?: string;
   operationId?: string;
   recordId?: string;
+  caseSourceType?: CaseSourceType;
   defaultPath?: boolean;
   pathInfo?: PathInfo[];
   onCreate?: (id: string) => void;
@@ -35,13 +36,8 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   const { message } = App.useApp();
   const userName = getLocalStorage<string>(EMAIL_KEY);
 
-  const { addCollectionNode, getCollections, setExpandedKeys, getPathByIndexOrPath } =
+  const { addCollectionNode, getCollections, getNodePathByIndex, setExpandedKeys } =
     useCollections();
-
-  const parentPath = useMemo(
-    () => getPathByIndexOrPath(props.pathInfo?.map((path) => path.id)),
-    [props.pathInfo],
-  );
 
   const [selectLocationRef] = useAutoAnimate();
 
@@ -52,17 +48,17 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   }, [props.title]);
 
   const [selectedKey, setSelectedKey] = useState<CollectionTreeType>();
-  const collectionPath = useMemo(
-    () => (selectedKey ? props.pathInfo : []),
-    [selectedKey, props.pathInfo],
+  const parentPath = useMemo(
+    () => getNodePathByIndex(selectedKey?.pos?.split('-').slice(1).map(Number)),
+    [getNodePathByIndex, selectedKey?.pos],
   );
 
   const pathValue = useMemo(
     () =>
       defaultPath
         ? `${props.appName} / ${props.interfaceName} / ${props.title}`
-        : collectionPath?.map((i) => i.name).join(' / ') || 'Please select a location',
-    [collectionPath, defaultPath, props.appName, props.interfaceName, props.title],
+        : parentPath?.map((i) => i?.nodeName).join(' / ') || 'Please select a location',
+    [parentPath, defaultPath, props.appName, props.interfaceName, props.title],
   );
 
   const [open, setOpen] = useState(false);
@@ -84,8 +80,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
         nodeName: string;
         nodeType: CollectionNodeType;
         caseSourceType?: number;
-        parentInfoId?: string;
-        parentNodeType?: CollectionNodeType;
+        parentPath: string[];
       },
       options?: {
         reset?: boolean;
@@ -95,17 +90,15 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
         ...params,
         userName: userName as string,
         id: props.workspaceId,
-        parentPath,
       }),
     {
       manual: true,
-      onSuccess: (res, [{ nodeName, nodeType, caseSourceType }, options]) => {
+      onSuccess: (res, [{ nodeName, nodeType, caseSourceType, parentPath }, options]) => {
         setOpen(false);
-        const path = props.pathInfo?.map((path) => path.id) || [];
         options?.reset
-          ? getCollections(props.workspaceId).then(() => setExpandedKeys(path))
+          ? getCollections(props.workspaceId).then(() => setExpandedKeys(parentPath))
           : addCollectionNode({
-              pathOrIndex: path,
+              pathOrIndex: parentPath,
               infoId: res.infoId,
               nodeName,
               nodeType,
@@ -128,8 +121,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
               nodeName: nodeName!,
               nodeType: props.nodeType,
               caseSourceType: CaseSourceType.AREX,
-              parentInfoId: res.path[res.path.length - 1],
-              parentNodeType: CollectionNodeType.interface,
+              parentPath: res.path,
             },
             {
               reset: true,
@@ -147,7 +139,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
         const params = defaultPath
           ? { appName: props.appName, interfaceName: props.interfaceName, nodeName: props.title }
           : {
-              parentPath,
+              parentPath: parentPath.map((path) => path.infoId),
             };
 
         addItemsByAppNameAndInterfaceName({
@@ -177,6 +169,7 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
       nodeName,
       nodeType: props.nodeType,
       caseSourceType: props.recordId ? CaseSourceType.AREX : CaseSourceType.CASE,
+      parentPath: parentPath.map((path) => path.infoId),
     });
   };
 

@@ -1,6 +1,7 @@
 const statusCodes: {
   [key: number]: string;
 } = {
+  0: 'Unknown',
   // 1xx Informational
   // Request received, continuing process.[2]
   // This class of status code indicates a provisional response, consisting only of the Status-Line and optional headers, and is terminated by an empty line. Since HTTP/1.0 did not define any 1xx status codes, servers must not send a 1xx response to an HTTP/1.0 client except under experimental conditions.
@@ -85,6 +86,6 @@ const statusCodes: {
   599: 'Network connect timeout error', // (Unknown) This status code is not specified in any RFCs, but is used by Microsoft Corp. HTTP proxies to signal a network connect timeout behind the proxy to a client in front of the proxy.
 };
 
-export function getStatusCodeReasonPhrase(code: number): string {
-  return statusCodes[code] ?? 'Unknown';
+export function getStatusCodeReasonPhrase(code?: number): string {
+  return statusCodes[code ?? 0];
 }

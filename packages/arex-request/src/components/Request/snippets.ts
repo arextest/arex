@@ -43,4 +43,10 @@ export const testCodeSnippet = [
 });
 `,
   },
+  {
+    name: 'Enable record compare',
+    text: `// Used to activate comparison of real-time response with recorded response
+pm.globals.set('AREX_COMPARE', true)
+`,
+  },
 ];

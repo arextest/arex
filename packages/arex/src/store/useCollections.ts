@@ -20,7 +20,9 @@ export type PathOrIndex = string[] | number[];
 
 export type CollectionAction = {
   getCollections: (workspaceId?: string) => Promise<CollectionTreeType[]>;
-  getPathByIndexOrPath: (pathOrIndex?: PathOrIndex) => string[];
+  getPathByIndex: (index?: number[]) => string[];
+  getNodePathByIndex: (index?: number[]) => CollectionTreeType[];
+  getNodeByPath: (path: string[]) => CollectionType | undefined;
   setExpandedKeys: (keys: string[]) => void;
   setLoadedKeys: (keys: string[]) => void;
   addCollectionNode: (params: {
@@ -135,11 +137,11 @@ function reduceNodeByPos(
   }
 }
 
-const convertPathOrIndexToId = (treeData: CollectionTreeType[], pathOrIndex: PathOrIndex) => {
+const convertIndexToId = (treeData: CollectionTreeType[], index: number[]) => {
   const idList: string[] = [];
-  if (!pathOrIndex.length) return idList;
-  reduceNodeByPos(treeData, pathOrIndex, (node, i) => {
-    idList.push(node.infoId);
+  if (!index.length) return idList;
+  reduceNodeByPos(treeData, index, (node) => {
+    node && idList.push(node.infoId);
   });
 
   return idList;
@@ -165,8 +167,25 @@ const useCollections = create(
 
         return fsTree.roots;
       },
-      getPathByIndexOrPath: (pathOrIndex) => {
-        return pathOrIndex ? convertPathOrIndexToId(get().collectionsTreeData, pathOrIndex) : [];
+      getPathByIndex: (index) => {
+        return index ? convertIndexToId(get().collectionsTreeData, index) : [];
+      },
+      getNodePathByIndex: (index) => {
+        const nodeList: CollectionTreeType[] = [];
+        if (!index) return nodeList;
+        reduceNodeByPos(get().collectionsTreeData, index, (node) => {
+          node && nodeList.push(node);
+        });
+        return nodeList;
+      },
+      getNodeByPath: (path) => {
+        let node: CollectionTreeType | undefined = undefined;
+
+        reduceNodeByPos(get().collectionsTreeData, path, (n, index) => {
+          index === path.length - 1 && (node = n);
+        });
+
+        return node;
       },
       setExpandedKeys: (keys) => {
         set({ expandedKeys: keys });
@@ -325,7 +344,7 @@ const useCollections = create(
         const treeData = cloneDeep(get().collectionsTreeData);
 
         console.log(dragPos);
-        const fromNodePath = convertPathOrIndexToId(treeData, dragPos.slice(1));
+        const fromNodePath = convertIndexToId(treeData, dragPos.slice(1));
 
         const dragParentNode = getNodeByPos(treeData, dragPos.slice(0, -1));
         const dragNode = (
@@ -376,7 +395,7 @@ const useCollections = create(
           dragNode,
         ) || ((dropParentNode as CollectionType).children = [dragNode]);
 
-        const toParentPath = convertPathOrIndexToId(treeData, dropPos.slice(1));
+        const toParentPath = convertIndexToId(treeData, dropPos.slice(1, -1));
 
         set({
           collectionsTreeData: treeData,

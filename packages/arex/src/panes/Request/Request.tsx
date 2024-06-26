@@ -1,4 +1,4 @@
-import { ArexPaneFC, getLocalStorage, i18n, useTranslation } from '@arextest/arex-core';
+import { ArexPaneFC, getLocalStorage, i18n, SmallBadge, useTranslation } from '@arextest/arex-core';
 import {
   ArexEnvironment,
   ArexRequest,
@@ -12,7 +12,7 @@ import React, { useMemo, useRef, useState } from 'react';
 
 import { CollectionNodeType, PanesType, WORKSPACE_ENVIRONMENT_PAIR_KEY } from '@/constant';
 import { useNavPane } from '@/hooks';
-import { EnvironmentService, FileSystemService, ReportService } from '@/services';
+import { EnvironmentService, FileSystemService, ReportService, StorageService } from '@/services';
 import { Environment } from '@/services/EnvironmentService/getEnvironments';
 import { GetCollectionItemTreeReq } from '@/services/FileSystemService';
 import { useCollections, useMenusPanes, useWorkspaces } from '@/store';
@@ -54,7 +54,10 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const saveAsRef = useRef<SaveAsRef>(null);
   const environmentDrawerRef = useRef<EnvironmentDrawerRef>(null);
 
+  const [enableCompare, setEnableCompare] = useState(false);
+
   const [activeEnvironment, setActiveEnvironment] = useState<ArexEnvironment>();
+  const [compareDiffCount, setCompareDiffCount] = useState(0);
 
   const { data: labelData = [] } = useRequest(() => ReportService.queryLabels({ workspaceId }));
   const tagOptions = useMemo(
@@ -104,7 +107,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       manual: true,
       onSuccess(res, [params, options]) {
         res && message.success(t('message.saveSuccess', { ns: 'common' }));
-        if (options?.pinMock) runPinMock(options?.pinMock);
+        if (options?.pinMock) runPinMock(options.pinMock);
         else if (params.id && params.nodeType)
           reloadCollection({ workspaceId, infoId: params.id, nodeType: params.nodeType });
       },
@@ -128,7 +131,10 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     )?.value;
     // case debug save runPinMock
     if (request.id && (props.data?.recordId || responseRecordId)) {
-      pinMock = { infoId: request.id, recordId: responseRecordId || props.data.recordId };
+      pinMock = {
+        infoId: request.id,
+        recordId: (responseRecordId || props.data.recordId) as string,
+      };
     }
 
     saveRequest(request, { pinMock });
@@ -204,24 +210,63 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       },
     },
   );
+
+  const {
+    data: mockData = [],
+    mutate: setMockData,
+    refresh: getMockData,
+    loading: loadingMockData,
+  } = useRequest(StorageService.queryRecord, {
+    defaultParams: [
+      {
+        recordId: (data?.recordId || props.data?.recordId) as string,
+        sourceProvider: data?.recordId ? 'Pinned' : 'Rolling',
+      },
+    ],
+    ready: !!data?.recordId || !!props.data?.recordId,
+  });
+
   const httpConfig = useMemo(() => {
     return {
       requestTabs: {
         extra: [
           {
-            label: 'Mock',
             key: 'mock',
-            // 这里判断是否有recordId，如果有则隐藏，因为recordId是mock的唯一标识
-            hidden: !data?.recordId,
-            children: <ExtraTabs.RequestTabs.Mock recordId={data?.recordId} />,
+            label: 'Mock',
+            hidden: !data?.recordId && !props.data?.recordId,
+            children: (
+              <ExtraTabs.RequestTabs.Mock
+                data={mockData}
+                readOnly={!data?.recordId} // debug case 的 mock 为只读
+                loading={loadingMockData}
+                onChange={setMockData}
+                onRefresh={getMockData}
+              />
+            ),
           },
         ],
       },
       responseTabs: {
-        extra: [],
+        extra: [
+          {
+            key: 'compare',
+            label: <SmallBadge dot={!!compareDiffCount}>{t('components:http.compare')}</SmallBadge>,
+            hidden: !enableCompare,
+            forceRender: true,
+            children: (
+              <ExtraTabs.ResponseTabs.Compare
+                getResponse={requestRef.current?.getResponse}
+                entryMock={
+                  mockData.find((mock) => mock.categoryType.entryPoint) // get entryPoint mock
+                }
+                onGetDiff={(diffs) => setCompareDiffCount(diffs.length)}
+              />
+            ),
+          },
+        ],
       },
     };
-  }, [data]);
+  }, [data, mockData, loadingMockData, enableCompare, compareDiffCount]);
 
   const { run: createNewEnvironment } = useRequest(
     (envName) =>
@@ -350,6 +395,9 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
           onEdit: environmentDrawerRef?.current?.open,
         }}
         onSave={handleSave}
+        onRequest={(error, reqData, resData) => {
+          setEnableCompare(!!resData?.arexConfig?.compare);
+        }}
         onSaveAs={() => saveAsRef?.current?.open(title)}
       />
 

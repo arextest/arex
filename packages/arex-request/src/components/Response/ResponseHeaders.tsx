@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 import { ArexRESTHeader } from '../../types';
 import HeadersTable from '../HeadersTable';
 
-const ResponseHeaders: FC<{ headers: ArexRESTHeader[] }> = (props) => {
+const ResponseHeaders: FC<{ headers?: ArexRESTHeader[] }> = (props) => {
   return (
     <HeadersTable
       size='small'

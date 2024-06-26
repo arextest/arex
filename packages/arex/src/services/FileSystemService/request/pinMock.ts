@@ -3,7 +3,7 @@ import { request } from '@/utils';
 
 export interface PinMockReq {
   workspaceId: string;
-  infoId: string;
+  infoId?: string;
   recordId: string;
   nodeType: CollectionNodeType;
 }

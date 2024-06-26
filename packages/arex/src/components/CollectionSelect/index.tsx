@@ -64,7 +64,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
     moveCollectionNode,
   } = useCollections();
 
-  const [activePose, setActivePos] = useState<number[] | string[]>([]);
+  const [activePose, setActivePos] = useState<number[]>([]);
   const searchRef = useRef<StructuredFilterRef>(null);
   const collectionSearchedListRef = useRef<CollectionSearchedListRef>(null);
   const treeRef = useRef<{
@@ -118,20 +118,6 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
   );
 
   const handleSelect = (keys: string, node: CollectionTreeType) => {
-    node.pos &&
-      setActivePos(
-        node.pos
-          .split('-')
-          .map((pos) => Number(pos))
-          .slice(1) || [],
-      );
-
-    // @ts-ignore
-    const classList = ((node.nativeEvent?.target as HTMLElement)?.parentNode as HTMLElement)
-      ?.classList as DOMTokenList;
-    const clickFromMenu = classList?.contains('node-menu-icon') || classList?.contains('node-menu');
-    if (clickFromMenu) return;
-
     const infoId = node.infoId;
     setActiveKey(infoId);
 
@@ -143,6 +129,16 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
       );
     }
     props.onSelect?.(keys, node);
+  };
+
+  const handleClick = (node: CollectionTreeType) => {
+    node.pos &&
+      setActivePos(
+        node.pos
+          .split('-')
+          .map((pos) => Number(pos))
+          .slice(1) || [],
+      );
   };
 
   const { run: createCollection } = useRequest(
@@ -302,10 +298,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
               height={props.height}
               workspaceId={activeWorkspaceId}
               searchValue={searchValue}
-              onSelect={async (key, data) => {
-                // TODO setExpandedKeys
-                handleSelect(key, data);
-              }}
+              onSelect={handleSelect}
             />
           ) : (
             <CollectionTree
@@ -322,7 +315,17 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
               fieldNames={{ title: 'nodeName', key: 'infoId', children: 'children' }}
               onDrop={onDrop}
               onExpand={onExpand}
-              onSelect={(keys, { node }) => handleSelect(keys[0].toString(), node)}
+              onSelect={(keys, data) => {
+                const classList = (
+                  (data.nativeEvent?.target as HTMLElement)?.parentNode as HTMLElement
+                )?.classList as DOMTokenList;
+                const clickFromMenu =
+                  classList?.contains('node-menu-icon') || classList?.contains('node-menu');
+                if (clickFromMenu) return;
+
+                keys.length && handleSelect(keys[0].toString(), data.node);
+              }}
+              onClick={(e, node) => handleClick(node)}
               draggable={!props.readOnly && { icon: false }}
               titleRender={(data) => (
                 <CollectionNodeTitle

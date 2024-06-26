@@ -7,4 +7,7 @@ export type ArexResponse = {
   testResult: ArexTestResult[];
   consoles: any[];
   visualizer: ArexVisualizer;
+  arexConfig?: {
+    compare?: boolean;
+  };
 };

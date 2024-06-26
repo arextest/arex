@@ -19,7 +19,7 @@
     "@ant-design/icons": "^5.2.6",
     "@arextest/arex-core": "*",
     "ahooks": "^3.7.5",
-    "allotment": "^1.18.1",
+    "allotment": "^1.20.2",
     "arex-request-runtime": "^1.0.2",
     "immer": "^9.0.21",
     "lodash": "^4.17.15",

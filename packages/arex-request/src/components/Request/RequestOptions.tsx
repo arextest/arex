@@ -82,7 +82,7 @@ const HttpRequestOptions: FC<HttpRequestOptionsProps> = () => {
 
     // concat extra request tabs
     return _items.concat(config?.requestTabs?.extra?.filter((tab) => !tab.hidden) || []);
-  }, [store.request, t]);
+  }, [store.request, t, config?.requestTabs?.extra]);
 
   return (
     <HttpRequestOptionsWrapper>

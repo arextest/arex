@@ -13,6 +13,11 @@ export type GetCollectionItemRes = {
   path: string[];
 };
 
+/**
+ * @deprecated 懒加载模式已废弃
+ * @param params
+ */
+
 export async function getCollectionItem(params: GetCollectionItemReq) {
   const res = await request.post<GetCollectionItemRes>(
     `/webApi/filesystem/getWorkspaceItem`,
