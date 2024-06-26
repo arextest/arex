@@ -304,7 +304,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
             <CollectionTree
               showLine
               blockNode
-              autoExpandParent
+              autoExpandParent={false}
               // @ts-ignore
               ref={treeRef}
               height={props.height}
