@@ -5,6 +5,7 @@ export type UpdateReplaySettingReq = {
   appId: string;
   sendMaxQps?: number;
   excludeOperationMap?: ExcludeOperationMap;
+  mockHandlerJarUrl?: string;
 };
 
 export async function updateReplaySetting(params: UpdateReplaySettingReq) {

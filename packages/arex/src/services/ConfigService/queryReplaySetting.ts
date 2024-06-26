@@ -7,6 +7,7 @@ export type QueryReplaySettingRes = {
   modifiedTime: number;
   appId: string;
   excludeOperationMap: ExcludeOperationMap;
+  mockHandlerJarUrl: string | null;
   offsetDays: number;
   targetEnv: string[];
   sendMaxQps: number;

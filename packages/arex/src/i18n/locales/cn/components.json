@@ -78,6 +78,8 @@
     "maxQPS": "最大QPS",
     "methodName": "方法名",
     "methodNameTooltip": "需要 Mock 的方法名",
+    "mockHandlerJarUrl": "数据转换插件",
+    "mockHandlerJarUrlTip": "请输入数据转换插件 Jar 包地址",
     "mockTips": "\"body\"为json字符串时会自动转换成json对象，保存时还原。",
     "noEncryptionNodes": "加密节点为空",
     "noIgnoredNodes": "忽略节点为空",
