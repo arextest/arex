@@ -79,6 +79,8 @@
     "maxQPS": "Max QPS",
     "methodName": "Method Name",
     "methodNameTooltip": "The method name to be mocked.",
+    "mockHandlerJarUrl": "Mock Handler Plugin",
+    "mockHandlerJarUrlTip": "Please enter mock handler plugin Jar file Url",
     "mockTips": "When \"body\" is a json string, it will be automatically converted into a json object, and restored when saving.",
     "noDesensitizationNodes": "No Desensitization Nodes",
     "noIgnoredNodes": "No Ignored Nodes",

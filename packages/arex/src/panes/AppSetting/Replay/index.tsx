@@ -1,6 +1,6 @@
 import { HelpTooltip, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Form, InputNumber } from 'antd';
+import { App, Button, Form, Input, InputNumber } from 'antd';
 import React from 'react';
 import { useImmer } from 'use-immer';
 
@@ -8,7 +8,6 @@ import UndertoneWrapper from '@/panes/AppSetting/UndertoneWrapper';
 import { ConfigService } from '@/services';
 import { KeyValueType } from '@/services/FileSystemService';
 
-import { SettingRecordProps } from '../Record';
 import SettingForm from '../SettingForm';
 import { ExcludeOperation } from './FormItem';
 
@@ -16,15 +15,21 @@ type SettingFormType = {
   offsetDays: number;
   excludeOperationMap: KeyValueType[];
   sendMaxQps: number;
+  mockHandlerJarUrl: string;
 };
 
 const defaultValues: SettingFormType = {
   offsetDays: 0,
   excludeOperationMap: [],
   sendMaxQps: 0,
+  mockHandlerJarUrl: '',
 };
 
-const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
+interface SettingReplayProps {
+  appId: string;
+}
+
+const SettingReplay: React.FC<SettingReplayProps> = ({ appId }) => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
 
@@ -43,6 +48,7 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
             }))
           : [],
         sendMaxQps: res.sendMaxQps,
+        mockHandlerJarUrl: res.mockHandlerJarUrl || '',
       });
     },
   });
@@ -67,6 +73,7 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
         {},
       ),
       sendMaxQps: values.sendMaxQps,
+      mockHandlerJarUrl: values.mockHandlerJarUrl,
     };
     updateReplaySetting(params);
   };
@@ -118,6 +125,10 @@ const SettingReplay: React.FC<SettingRecordProps> = ({ appId }) => {
           name='excludeOperationMap'
         >
           <ExcludeOperation appId={appId} />
+        </Form.Item>
+
+        <Form.Item name='mockHandlerJarUrl' label={t('appSetting.mockHandlerJarUrl')}>
+          <Input placeholder={t('appSetting.mockHandlerJarUrlTip')} />
         </Form.Item>
       </UndertoneWrapper>
 
