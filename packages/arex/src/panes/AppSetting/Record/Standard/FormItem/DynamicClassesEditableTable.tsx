@@ -1,56 +1,53 @@
-import {
-  CloseOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  PlusOutlined,
-  SaveOutlined,
-} from '@ant-design/icons';
-import { HelpTooltip, TooltipButton, useTranslation } from '@arextest/arex-core';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { HelpTooltip, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Checkbox, Input, Popconfirm, Space, Table } from 'antd';
+import { App, Button, Checkbox, Input, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import React, { FC, useCallback, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { Updater, useImmer } from 'use-immer';
 
 import { ConfigService } from '@/services';
 import { DynamicClass } from '@/services/ConfigService';
+import { focusNewLineInput } from '@/utils/table';
 
 export type DynamicClassesEditableTableProps = {
   appId: string;
 };
 
+export type DynamicClassesEditableTableRef = {
+  save: () => void;
+};
+
 const EDIT_ROW_KEY = '__edit_row__';
-const InitRowData = {
-  id: EDIT_ROW_KEY,
+const generateInitRowData = () => ({
+  id: EDIT_ROW_KEY + (Math.random() * 10e12).toFixed(),
   fullClassName: '',
   methodName: '',
   keyFormula: '',
   parameterTypes: '',
-};
+});
 
 const hiddenAc = (text: string) => (text.startsWith('ac:') ? text.substring(3) : text);
 
-const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props) => {
+const DynamicClassesEditableTable = forwardRef<
+  DynamicClassesEditableTableRef,
+  DynamicClassesEditableTableProps
+>((props, ref) => {
   const { message } = App.useApp();
   const { t } = useTranslation(['common', 'components']);
 
-  const [editableRow, setEditableRow] = useState<string>();
   const [fullClassNameInputStatus, setFullClassNameInputStatus] = useState<
     '' | 'error' | 'warning'
   >('');
-  const isEditableRow = useCallback<(id?: string) => boolean>(
-    (id) => id === editableRow || id === EDIT_ROW_KEY,
-    [editableRow],
-  );
 
+  const tableRef = useRef<HTMLDivElement>(null);
   const [dataSource, setDataSource] = useImmer<DynamicClass[]>([]);
 
   const columns = (paramsUpdater: Updater<DynamicClass[]>): ColumnsType<DynamicClass> => {
-    const handleChange = (attr: keyof DynamicClass, value: string | boolean) => {
-      paramsUpdater((params) => {
-        const index = params.findIndex((item) => isEditableRow(item.id));
-        // @ts-ignore
-        params[index][attr] = value;
+    const handleChange = (id: string, attr: keyof DynamicClass, value: string | boolean) => {
+      paramsUpdater((draft) => {
+        const index = draft.findIndex((item) => item.id === id);
+        draft[index] = { ...draft[index], [attr]: value };
       });
     };
 
@@ -58,6 +55,7 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
       {
         title: (
           <HelpTooltip
+            maxWidth='320px'
             title={
               <div style={{ whiteSpace: 'pre-line' }}>
                 {t('appSetting.fullClassNameTooltip', { ns: 'components' })}
@@ -69,20 +67,17 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
         ),
         dataIndex: 'fullClassName',
         key: 'fullClassName',
-        render: (text, record) => {
-          return isEditableRow(record.id) ? (
-            <Input
-              value={hiddenAc(text)}
-              status={fullClassNameInputStatus}
-              onChange={(e) => {
-                setFullClassNameInputStatus('');
-                handleChange('fullClassName', e.target.value);
-              }}
-            />
-          ) : (
-            hiddenAc(text)
-          );
-        },
+        render: (text, record) => (
+          <Input
+            value={hiddenAc(text)}
+            status={fullClassNameInputStatus}
+            onChange={(e) => {
+              setFullClassNameInputStatus('');
+              handleChange(record.id, 'fullClassName', e.target.value);
+            }}
+            style={{ borderColor: 'transparent' }}
+          />
+        ),
       },
       {
         title: (
@@ -92,11 +87,11 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
         ),
         key: 'base',
         dataIndex: 'base',
+        align: 'center',
         render: (checked, record) => (
           <Checkbox
             checked={checked}
-            disabled={!isEditableRow(record.id)}
-            onChange={(e) => handleChange('base', e.target.checked)}
+            onChange={(e) => handleChange(record.id, 'base', e.target.checked)}
           />
         ),
       },
@@ -108,27 +103,32 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
         ),
         dataIndex: 'methodName',
         key: 'methodName',
-        render: (text, record) =>
-          isEditableRow(record.id) ? (
-            <Input value={text} onChange={(e) => handleChange('methodName', e.target.value)} />
-          ) : (
-            text
-          ),
+        render: (text, record) => (
+          <Input
+            value={text}
+            onChange={(e) => handleChange(record.id, 'methodName', e.target.value)}
+            style={{ borderColor: 'transparent' }}
+          />
+        ),
       },
       {
         title: (
-          <HelpTooltip title={t('appSetting.parameterTypesTooltip', { ns: 'components' })}>
+          <HelpTooltip
+            maxWidth='224px'
+            title={t('appSetting.parameterTypesTooltip', { ns: 'components' })}
+          >
             {t('appSetting.parameterTypes', { ns: 'components' })}
           </HelpTooltip>
         ),
         dataIndex: 'parameterTypes',
         key: 'parameterTypes',
-        render: (text, record) =>
-          isEditableRow(record.id) ? (
-            <Input value={text} onChange={(e) => handleChange('parameterTypes', e.target.value)} />
-          ) : (
-            text
-          ),
+        render: (text, record) => (
+          <Input
+            value={text}
+            onChange={(e) => handleChange(record.id, 'parameterTypes', e.target.value)}
+            style={{ borderColor: 'transparent' }}
+          />
+        ),
       },
       {
         title: (
@@ -151,12 +151,13 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
         ),
         dataIndex: 'keyFormula',
         key: 'keyFormula',
-        render: (text, record) =>
-          isEditableRow(record.id) ? (
-            <Input value={text} onChange={(e) => handleChange('keyFormula', e.target.value)} />
-          ) : (
-            text
-          ),
+        render: (text, record) => (
+          <Input
+            value={text}
+            onChange={(e) => handleChange(record.id, 'keyFormula', e.target.value)}
+            style={{ borderColor: 'transparent' }}
+          />
+        ),
       },
       {
         title: t('action'),
@@ -165,150 +166,83 @@ const DynamicClassesEditableTable: FC<DynamicClassesEditableTableProps> = (props
         align: 'center',
         className: 'actions',
         render: (text, record) => (
-          <Space>
-            {isEditableRow(record.id) ? (
-              <TooltipButton
-                title={t('cancel')}
-                icon={<CloseOutlined />}
-                onClick={() => reload({ appId: props.appId })}
-              />
-            ) : (
-              <TooltipButton
-                title={t('edit')}
-                icon={<EditOutlined />}
-                onClick={() => {
-                  // 防止某一行在编辑未保存状态下意外开始编辑新的一行数据，导致夹带未保存的数据
-                  reload({ appId: props.appId });
-                  setEditableRow(record.id);
-                }}
-              />
-            )}
-
-            {isEditableRow(record.id) ? (
-              <TooltipButton
-                title={t('save')}
-                icon={<SaveOutlined />}
-                onClick={() => handleSave(record)}
-              />
-            ) : (
-              <Popconfirm
-                title={t('appSetting.delConfirmText', { ns: 'components' })}
-                onConfirm={() => {
-                  if (record.id === EDIT_ROW_KEY) {
-                    setDataSource((state) => {
-                      state.shift();
-                    });
-                  } else if (record.id) {
-                    remove({ appId: props.appId, id: record.id as string });
-                  }
-                }}
-                okText={t('yes')}
-                cancelText={t('no')}
-              >
-                <Button type='text' size='small' icon={<DeleteOutlined />} />
-              </Popconfirm>
-            )}
-          </Space>
+          <Button
+            danger
+            type='link'
+            size='small'
+            icon={<DeleteOutlined />}
+            onClick={() => setDataSource((state) => state.filter((item) => item.id !== record.id))}
+          >
+            {t('replay.delete', { ns: 'components' })}
+          </Button>
         ),
       },
     ];
   };
 
   const handleAddRecord = () => {
-    setEditableRow(EDIT_ROW_KEY);
     setDataSource((state) => {
-      state.unshift(InitRowData);
+      state.push(generateInitRowData());
     });
+    focusNewLineInput(tableRef);
   };
 
-  const handleSave = (record: DynamicClass) => {
-    if (!record.fullClassName) {
-      setFullClassNameInputStatus('error');
-      message.warning(t('appSetting.emptyFullClassName', { ns: 'components' }));
-      return;
-    }
+  const handleSave = () => {
+    // verify fullClassName
+    // if (!record.fullClassName) {
+    //   setFullClassNameInputStatus('error');
+    //   message.warning(t('appSetting.emptyFullClassName', { ns: 'components' }));
+    //   return;
+    // }
 
-    const params = {
-      fullClassName: (record.base ? 'ac:' : '') + hiddenAc(record.fullClassName),
-      methodName: record.methodName,
-      keyFormula: record.keyFormula,
-      parameterTypes: record.parameterTypes,
-    };
+    const params = dataSource.map((data) => ({
+      id: data.id.startsWith(EDIT_ROW_KEY) ? undefined : data.id,
+      appId: props.appId,
+      fullClassName: (data.base ? 'ac:' : '') + hiddenAc(data.fullClassName),
+      methodName: data.methodName,
+      keyFormula: data.keyFormula,
+      parameterTypes: data.parameterTypes,
+    }));
 
-    record.id === EDIT_ROW_KEY
-      ? insert({ ...params, appId: props.appId, configType: 0 })
-      : update({
-          ...params,
-          id: record.id,
-          appId: props.appId,
-        });
+    replace(props.appId, params);
   };
 
-  const { run: reload, loading } = useRequest(ConfigService.queryDynamicClass, {
+  useImperativeHandle(ref, () => ({ save: handleSave }), [handleSave]);
+
+  const { refresh: reload, loading } = useRequest(ConfigService.queryDynamicClass, {
     defaultParams: [{ appId: props.appId }],
-    onBefore() {
-      setEditableRow(undefined);
-    },
     onSuccess(res) {
       setDataSource(res || []);
     },
     loadingDelay: 100,
   });
 
-  const { run: insert } = useRequest(ConfigService.insertDynamicClass, {
+  const { run: replace } = useRequest(ConfigService.replaceDynamicClass, {
     manual: true,
-    onSuccess(res) {
-      res ? reload({ appId: props.appId }) : message.error(t('message.saveFailed'));
-    },
     onError(e) {
       console.error(e);
       message.error(t('message.saveFailed'));
-    },
-  });
-
-  const { run: update } = useRequest(ConfigService.updateDynamicClass, {
-    manual: true,
-    onSuccess(res) {
-      res ? reload({ appId: props.appId }) : message.error(t('message.saveFailed'));
-    },
-    onError(e) {
-      console.error(e);
-      message.error(t('message.saveFailed'));
-    },
-  });
-
-  const { run: remove } = useRequest(ConfigService.removeDynamicClass, {
-    manual: true,
-    onSuccess(res) {
-      res ? reload({ appId: props.appId }) : message.error(t('message.delFailed'));
-    },
-    onError(e) {
-      console.error(e);
-      message.error(t('message.delFailed'));
+      reload();
     },
   });
 
   return (
-    <div>
-      <Table
-        rowKey='id'
-        size='small'
-        loading={loading}
-        dataSource={dataSource}
-        columns={columns(setDataSource)}
-        pagination={false}
-      />
-
-      <Button
-        icon={<PlusOutlined />}
-        disabled={!!editableRow}
-        onClick={handleAddRecord}
-        style={{ marginTop: '8px' }}
-      >
-        {t('add')}
-      </Button>
-    </div>
+    <Table
+      // @ts-ignore
+      ref={tableRef}
+      rowKey='id'
+      size='small'
+      loading={loading}
+      dataSource={dataSource}
+      columns={columns(setDataSource)}
+      footer={() => (
+        <Button block type='text' icon={<PlusOutlined />} onClick={handleAddRecord}>
+          {t('add')}
+        </Button>
+      )}
+      pagination={false}
+    />
   );
-};
+});
 
 export default DynamicClassesEditableTable;

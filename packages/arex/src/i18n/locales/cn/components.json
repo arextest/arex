@@ -103,6 +103,7 @@
     "recordMachineNum": "录制机器数量",
     "replay": "回放",
     "runningStatus": "运行状态",
+    "selectMethodTip": "请选择一个方法以保存",
     "selectNodePath": "选择节点路径",
     "serializeSkip": "序列化忽略",
     "skipMock": "不Mock依赖",

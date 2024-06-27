@@ -2,7 +2,7 @@ import { css, HelpTooltip, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Collapse, Form, InputNumber, TimePicker } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { FC, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 import { InterfaceSelect } from '@/components';
@@ -17,6 +17,7 @@ import {
   IntegerStepSlider,
   SerializeSkip,
 } from './FormItem';
+import { DynamicClassesEditableTableRef } from './FormItem/DynamicClassesEditableTable';
 import RunningStatus from './FormItem/RunningStatus';
 import { decodeWeekCode, encodeWeekCode } from './utils';
 
@@ -57,6 +58,8 @@ const defaultValues: Omit<
 const Standard: FC<StandardProps> = (props) => {
   const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
+
+  const dynamicClassesEditableTableRef = useRef<DynamicClassesEditableTableRef>(null);
 
   const [initialValues, setInitialValues] = useImmer<SettingFormType>(defaultValues);
   const [loading, setLoading] = useState(false);
@@ -116,6 +119,8 @@ const Standard: FC<StandardProps> = (props) => {
       serializeSkipInfoList: values.serializeSkipInfoList,
     };
     update(params);
+
+    dynamicClassesEditableTableRef?.current?.save();
   };
   return (
     <SettingForm loading={loading} initialValues={initialValues} onFinish={onFinish}>
@@ -180,7 +185,10 @@ const Standard: FC<StandardProps> = (props) => {
                     </HelpTooltip>
                   }
                 >
-                  <DynamicClassesEditableTable appId={props.appId} />
+                  <DynamicClassesEditableTable
+                    appId={props.appId}
+                    ref={dynamicClassesEditableTableRef}
+                  />
                 </Form.Item>
 
                 <Form.Item

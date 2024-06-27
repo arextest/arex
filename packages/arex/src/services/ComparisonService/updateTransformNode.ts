@@ -7,6 +7,10 @@ export interface UpdateTransformNodeReq {
   transformDetail: TransformDetail;
 }
 
+/**
+ * @deprecated flow design is deprecated, use queryComparisonConfig
+ * @param params
+ */
 export async function updateTransformNode(params: UpdateTransformNodeReq) {
   const res = await request.post<boolean>(
     '/webApi/config/comparison/transform/modify/UPDATE',
