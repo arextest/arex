@@ -112,7 +112,7 @@ const RequestBody = () => {
 
           {(isJsonContentType || isDormDataContentType) && (
             <Select
-              value={store.request.body.contentType}
+              value={store.request.body.contentType as any}
               variant='borderless'
               size={'small'}
               options={rawSmallCateOptions}
