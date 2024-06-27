@@ -5,11 +5,13 @@ import { useTranslation } from 'react-i18next';
 
 import { useArexRequestStore } from '../../hooks';
 import { ArexContentTypes } from '../../types';
-import RequestBinaryBody from './RequestBinaryBody';
+import RequestBodyFormData from './RequestBodyFormData';
 import RequestRawBody, { RequestRawBodyRef } from './RequestRawBody';
 
 const genContentType = (contentType?: string) =>
-  contentType?.includes('application/json') ? 'raw' : 'binary';
+  contentType?.includes('application/json') || contentType?.includes('multipart/form-data')
+    ? 'raw'
+    : 'binary';
 
 const bigCateOptions = ['raw', 'binary'];
 
@@ -18,6 +20,11 @@ const rawSmallCateOptions = [
     label: 'JSON',
     value: 'application/json',
     test: <a>JSON</a>,
+  },
+  {
+    label: 'FormData',
+    value: 'multipart/form-data',
+    test: <a>FormData</a>,
   },
 ];
 
@@ -29,6 +36,23 @@ const RequestBody = () => {
 
   const isJsonContentType = useMemo(() => {
     return ['application/json'].includes(store.request.body.contentType || '');
+  }, [store.request.body.contentType]);
+
+  const isDormDataContentType = useMemo(() => {
+    if (['multipart/form-data'].includes(store.request.body.contentType || '')) {
+      if (!store.request.headers.some((header) => header.key === 'content-type')) {
+        dispatch((state) => {
+          state.request.headers.push({
+            key: 'content-type',
+            value: 'multipart/form-data',
+            active: true,
+          });
+        });
+      }
+      return true;
+    } else {
+      return false;
+    }
   }, [store.request.body.contentType]);
 
   const onChange = (value: ArexContentTypes) => {
@@ -86,7 +110,7 @@ const RequestBody = () => {
             onChange={handleContentTypeChange}
           />
 
-          {isJsonContentType && (
+          {(isJsonContentType || isDormDataContentType) && (
             <Select
               value={store.request.body.contentType}
               variant='borderless'
@@ -103,7 +127,8 @@ const RequestBody = () => {
         )}
       </div>
 
-      {isJsonContentType ? <RequestRawBody ref={rawBodyRef} /> : <RequestBinaryBody />}
+      {isJsonContentType && <RequestRawBody ref={rawBodyRef} />}
+      {isDormDataContentType && <RequestBodyFormData />}
     </div>
   );
 };
