@@ -1,4 +1,6 @@
-export function convertToPmBody({ body, contentType, formData }) {
+import { ArexRESTReqBody } from '../../types';
+
+export function convertToPmBody({ body, contentType, formData }: ArexRESTReqBody) {
   if (contentType === '0') {
     // 如果是0就是binary
     return {
