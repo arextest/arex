@@ -115,11 +115,6 @@ const SerializeSkip: FC<FormItemProps<SerializeSkipInfo[]>> = (props) => {
           </Button>
         </FlexCenterWrapper>
       )}
-      css={css`
-        .ant-table-footer {
-          padding: 4px;
-        }
-      `}
     />
   );
 };
