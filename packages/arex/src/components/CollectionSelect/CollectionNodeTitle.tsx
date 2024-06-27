@@ -116,7 +116,7 @@ const CollectionNodeTitle: FC<CollectionNodeTitleProps> = (props) => {
           caseSourceType,
           pathOrIndex: props.pos || [],
         });
-        props.onAddNode?.(res.infoId, nodeType);
+        nodeType !== CollectionNodeType.folder && props.onAddNode?.(res.infoId, nodeType);
       },
     },
   );

@@ -2,6 +2,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from '@arextest/arex-core';
 import { ArexEnvironment } from '@arextest/arex-request';
 import { ArexRESTRequest } from '@arextest/arex-request/src';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Button, Flex, Popover, Typography } from 'antd';
 import React, { FC } from 'react';
 
@@ -13,10 +14,12 @@ import StatusBlockTooltip from '@/panes/BatchRun/StatusBlockTooltip';
 export type RequestTestStatusMapProps = {
   environment?: ArexEnvironment;
   data: ArexRESTRequest[];
+  selectedKey?: React.Key;
   onClick?: RequestTestStatusBlockProps['onClick'];
 };
 const RequestTestStatusMap: FC<RequestTestStatusMapProps> = (props) => {
   const { t } = useTranslation('page');
+
   if (!props.data || !Object.values(props.data).length) return null;
   return (
     <div style={{ padding: '0 16px 4px', marginBottom: '4px' }}>
@@ -25,6 +28,7 @@ const RequestTestStatusMap: FC<RequestTestStatusMapProps> = (props) => {
           <RequestTestStatusBlock
             key={data.id}
             data={data}
+            selected={props.selectedKey === data.id}
             environment={props.environment}
             onClick={props.onClick}
           />
@@ -42,7 +46,6 @@ const RequestTestStatusMap: FC<RequestTestStatusMapProps> = (props) => {
             />
           </Popover>
         </Flex>
-        {/*<Button size='small'>查看所有失败请求</Button>*/}
       </Flex>
     </div>
   );

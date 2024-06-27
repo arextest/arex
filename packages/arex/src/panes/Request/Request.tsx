@@ -1,4 +1,11 @@
-import { ArexPaneFC, getLocalStorage, i18n, SmallBadge, useTranslation } from '@arextest/arex-core';
+import {
+  ArexPaneFC,
+  getLocalStorage,
+  i18n,
+  RequestMethodEnum,
+  SmallBadge,
+  useTranslation,
+} from '@arextest/arex-core';
 import {
   ArexEnvironment,
   ArexRequest,
@@ -41,7 +48,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
   const navPane = useNavPane({ inherit: true });
   const { message } = App.useApp();
 
-  const { renameCollectionNode } = useCollections();
+  const { renameCollectionNode, setMethodByPath } = useCollections();
   const { removePane } = useMenusPanes();
 
   const { id: paneId, type } = decodePaneKey(props.paneKey);
@@ -109,7 +116,12 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         res && message.success(t('message.saveSuccess', { ns: 'common' }));
         if (options?.pinMock) runPinMock(options.pinMock);
         else if (params.id && params.nodeType)
-          reloadCollection({ workspaceId, infoId: params.id, nodeType: params.nodeType });
+          reloadCollection({
+            workspaceId,
+            infoId: params.id,
+            nodeType: params.nodeType,
+            method: params.method,
+          });
       },
     },
   );
@@ -163,9 +175,14 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     [data?.name, props.data?.recordId, t],
   );
 
-  const { data: pathInfo = [] } = useRequest(FileSystemService.queryPathInfo, {
-    defaultParams: [{ infoId: id, nodeType }],
-  });
+  const { data: pathInfo = [], refresh: refreshRequestName } = useRequest(
+    FileSystemService.queryPathInfo,
+    {
+      defaultParams: [{ infoId: id, nodeType }],
+    },
+  );
+
+  const path = useMemo(() => pathInfo.map((path) => path.id), [pathInfo]);
 
   const { run: runPinMock } = useRequest(
     ({ infoId, recordId }: { infoId: string; recordId: string }) =>
@@ -190,7 +207,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
       FileSystemService.renameCollectionItem({
         id: workspaceId,
         newName,
-        path: pathInfo.map((path) => path.id),
+        path,
       }),
     {
       manual: true,
@@ -201,6 +218,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
             pathInfo.map((path) => path.id),
             name,
           );
+          refreshRequestName();
           navPane({
             id: paneId,
             type,
@@ -325,10 +343,14 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
     refreshEnvironments();
   };
 
-  const reloadCollection = (params: GetCollectionItemTreeReq) => {
+  const reloadCollection = (params: GetCollectionItemTreeReq & { method?: string }) => {
+    const methodChanged = data?.method !== params.method;
+    methodChanged && setMethodByPath(path, params.method as RequestMethodEnum);
+
     navPane({
       id: `${workspaceId}-${nodeType}-${params.infoId}`,
       type,
+      icon: params.method,
     });
     if (params.infoId !== id) removePane(props.paneKey); // remove old pane when save as
     else queryRequest();

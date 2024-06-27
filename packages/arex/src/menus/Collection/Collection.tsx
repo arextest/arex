@@ -8,7 +8,7 @@ import {
 } from '@arextest/arex-core';
 import { useRequest, useSize } from 'ahooks';
 import { App } from 'antd';
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 
 import { CollectionSelect, Icon, WorkspacesMenu } from '@/components';
 import { CollectionSelectProps } from '@/components/CollectionSelect';
@@ -119,6 +119,10 @@ const Collection: ArexMenuFC = (props) => {
     });
     setExpandedKeys(pathInfo.map((path) => path.id));
   };
+
+  useEffect(() => {
+    if (nodeTypeStr) handleLocate();
+  }, []);
 
   return (
     <CollectionWrapper>

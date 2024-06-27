@@ -255,7 +255,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
               key='search-input'
               // @ts-ignore
               ref={searchRef}
-              showSearchButton={'simple'}
+              showSearchButton='simple'
               labelDataSource={labelData.map((item) => ({
                 id: item.id,
                 name: item.labelName,
@@ -304,7 +304,7 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
             <CollectionTree
               showLine
               blockNode
-              autoExpandParent
+              autoExpandParent={false}
               // @ts-ignore
               ref={treeRef}
               height={props.height}

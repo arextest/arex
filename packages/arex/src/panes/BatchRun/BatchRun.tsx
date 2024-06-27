@@ -11,7 +11,7 @@ import {
 import { ArexEnvironment, ArexResponse, EnvironmentSelect } from '@arextest/arex-request';
 import { ArexRESTRequest } from '@arextest/arex-request/src';
 import { useLocalStorageState, useRequest } from 'ahooks';
-import { Button, Divider, Flex, Slider, TreeSelect, Typography } from 'antd';
+import { App, Button, Divider, Flex, Slider, TreeSelect, Typography } from 'antd';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useImmer } from 'use-immer';
 
@@ -26,6 +26,7 @@ import { decodePaneKey } from '@/store/useMenusPanes';
 const BatchRun: ArexPaneFC = (props) => {
   const { paneKey } = props;
   const { t } = useTranslation('page');
+  const { message } = App.useApp();
   const [workspaceId, id] = useMemo(() => decodePaneKey(paneKey).id.split('-'), [paneKey]);
   const { collectionsTreeData } = useCollections();
 
@@ -95,7 +96,6 @@ const BatchRun: ArexPaneFC = (props) => {
         console.log('batch run finished');
       });
       setRunResult(undefined);
-      // setCasesResults(res);
     },
     [timestamp],
   );
@@ -135,6 +135,7 @@ const BatchRun: ArexPaneFC = (props) => {
       <Divider style={{ margin: 0 }} />
       <div style={{ display: 'flex', padding: '8px 16px' }}>
         <TreeSelect
+          disabled={processing}
           multiple
           allowClear
           treeCheckable
@@ -149,12 +150,20 @@ const BatchRun: ArexPaneFC = (props) => {
           treeData={collectionsTreeData}
           showCheckedStrategy={TreeSelect.SHOW_PARENT}
           onChange={(id, labelList, extra) => {
-            setSelectNodes(
-              extra.allCheckedNodes.map((item) => ({
-                infoId: item.node.props.infoId,
-                nodeType: item.node.props.nodeType,
-              })),
-            );
+            casesResults.length && setCasesResults([]); // reset cases results
+            runResult && setRunResult(undefined);
+            try {
+              setSelectNodes(
+                extra.allCheckedNodes.map((item) => ({
+                  // @ts-ignore
+                  infoId: item.node?.props.infoId || item?.props?.infoId,
+                  // @ts-ignore
+                  nodeType: item.node?.props.nodeType || item?.props?.nodeType,
+                })),
+              );
+            } catch (e) {
+              message.error(String(e));
+            }
           }}
           style={{ flex: 1, marginRight: '16px' }}
         />
@@ -178,6 +187,7 @@ const BatchRun: ArexPaneFC = (props) => {
       <RequestTestStatusMap
         key={selectNodes.length} // Add key to force re-render
         data={casesResults}
+        selectedKey={runResult?.request.id}
         environment={activeEnvironment}
         onClick={setRunResult}
       />

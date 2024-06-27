@@ -23,6 +23,7 @@ export type CollectionAction = {
   getPathByIndex: (index?: number[]) => string[];
   getNodePathByIndex: (index?: number[]) => CollectionTreeType[];
   getNodeByPath: (path: string[]) => CollectionType | undefined;
+  setMethodByPath: (path: string[], method: RequestMethodEnum) => void;
   setExpandedKeys: (keys: string[]) => void;
   setLoadedKeys: (keys: string[]) => void;
   addCollectionNode: (params: {
@@ -186,6 +187,13 @@ const useCollections = create(
         });
 
         return node;
+      },
+      setMethodByPath: (path, method) => {
+        set((draft) => {
+          reduceNodeByPos(draft.collectionsTreeData, path, (node, index) => {
+            if (index === path.length - 1) node.method = method;
+          });
+        });
       },
       setExpandedKeys: (keys) => {
         set({ expandedKeys: keys });

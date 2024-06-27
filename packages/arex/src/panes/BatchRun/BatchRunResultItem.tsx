@@ -19,6 +19,7 @@ import {
   TestResult,
 } from '@arextest/arex-request';
 import { Editor } from '@monaco-editor/react';
+import { Allotment } from 'allotment';
 import { Card, Divider, Space, Typography } from 'antd';
 import React, { FC, useMemo, useState } from 'react';
 
@@ -116,73 +117,101 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
 
         <ResponseMeta response={props.response?.response} />
 
-        <div style={{ padding: '8px 0' }}>
-          <div style={{ margin: '4px' }}>
-            <Typography.Title level={5} style={{ display: 'inline', marginRight: '8px' }}>
-              {t('common:request')}
-            </Typography.Title>
-            <Segmented
-              value={requestSegmentValue}
-              options={['body', 'header']}
-              onChange={(value) => setRequestSegmentValue(value.toString())}
-            />
-          </div>
+        <Divider style={{ margin: '8px 0' }} />
 
-          {requestSegmentValue === 'body' ? (
-            <Editor
-              height={200}
-              language='json'
-              theme={theme === Theme.dark ? 'vs-dark' : 'light'}
-              value={
-                props.request.body.body &&
-                tryStringifyJson(tryParseJsonString(props.request.body.body), { prettier: true })
-              }
-            />
-          ) : (
-            <EditableKeyValueTable
-              showHeader
-              pagination={false}
-              dataSource={props.request.headers}
-              columns={columns as any}
-            />
-          )}
-        </div>
+        <Allotment css={{ height: '400px' }}>
+          <Allotment.Pane minSize={220}>
+            <div style={{ padding: '0 8px 8px 0' }}>
+              <div style={{ marginBottom: '4px' }}>
+                <Typography.Title level={5} style={{ display: 'inline', marginRight: '8px' }}>
+                  {t('common:request')}
+                </Typography.Title>
+                <Segmented
+                  value={requestSegmentValue}
+                  options={['body', 'header']}
+                  onChange={(value) => setRequestSegmentValue(value.toString())}
+                />
+              </div>
 
-        <div style={{ padding: '8px 0' }}>
-          <div style={{ margin: '4px' }}>
-            <Typography.Title level={5} style={{ display: 'inline', marginRight: '8px' }}>
-              {t('common:response')}
-            </Typography.Title>
-            <Segmented
-              value={responseSegmentValue}
-              options={['body', 'header']}
-              onChange={(value) => setResponseSegmentValue(value.toString())}
-            />
-          </div>
-          {responseSegmentValue === 'body' ? (
-            <Editor
-              height={200}
-              language='json'
-              theme={theme === Theme.dark ? 'vs-dark' : 'light'}
-              value={
-                // @ts-ignore
-                props.response?.response?.body &&
-                // @ts-ignore
-                tryStringifyJson(tryParseJsonString(props.response?.response?.body), {
-                  prettier: true,
-                })
-              }
-            />
-          ) : (
-            <EditableKeyValueTable
-              showHeader
-              pagination={false}
-              // @ts-ignore
-              dataSource={props.response?.response?.headers}
-              columns={columns as any}
-            />
-          )}
-        </div>
+              {requestSegmentValue === 'body' ? (
+                <Editor
+                  height={368}
+                  language='json'
+                  theme={theme === Theme.dark ? 'vs-dark' : 'light'}
+                  options={{
+                    minimap: {
+                      enabled: false,
+                    },
+                    contextmenu: false,
+                  }}
+                  value={
+                    props.request.body.body &&
+                    tryStringifyJson(tryParseJsonString(props.request.body.body), {
+                      prettier: true,
+                    })
+                  }
+                />
+              ) : (
+                <div style={{ height: '368px', overflowY: 'auto' }}>
+                  <EditableKeyValueTable
+                    showHeader
+                    pagination={false}
+                    dataSource={props.request.headers}
+                    columns={columns as any}
+                  />
+                </div>
+              )}
+            </div>
+          </Allotment.Pane>
+
+          <Allotment.Pane minSize={220}>
+            <div style={{ padding: '0 0 8px 12px' }}>
+              <div style={{ marginBottom: '4px' }}>
+                <Typography.Title level={5} style={{ display: 'inline', marginRight: '8px' }}>
+                  {t('common:response')}
+                </Typography.Title>
+                <Segmented
+                  value={responseSegmentValue}
+                  options={['body', 'header']}
+                  onChange={(value) => setResponseSegmentValue(value.toString())}
+                />
+              </div>
+              {responseSegmentValue === 'body' ? (
+                <Editor
+                  height={368}
+                  language='json'
+                  theme={theme === Theme.dark ? 'vs-dark' : 'light'}
+                  options={{
+                    minimap: {
+                      enabled: false,
+                    },
+                    contextmenu: false,
+                  }}
+                  value={
+                    // @ts-ignore
+                    props.response?.response?.body &&
+                    // @ts-ignore
+                    tryStringifyJson(tryParseJsonString(props.response?.response?.body), {
+                      prettier: true,
+                    })
+                  }
+                />
+              ) : (
+                <div style={{ height: '368px', overflowY: 'auto' }}>
+                  <EditableKeyValueTable
+                    showHeader
+                    pagination={false}
+                    // @ts-ignore
+                    dataSource={props.response?.response?.headers}
+                    columns={columns as any}
+                  />
+                </div>
+              )}
+            </div>
+          </Allotment.Pane>
+        </Allotment>
+
+        <Divider style={{ margin: '8px 0' }} />
 
         <div style={{ padding: '8px 0', minHeight: '32px' }}>
           <Typography.Title level={5} style={{ display: 'inline' }}>
