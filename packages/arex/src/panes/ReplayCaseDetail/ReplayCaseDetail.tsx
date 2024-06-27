@@ -50,16 +50,18 @@ const ReplayCaseDetail: ArexPaneFC<ReplayCaseDetailData> = (props) => {
   const { loading } = useRequest(ReportService.viewRecord, {
     defaultParams: [props.data.recordId],
     onSuccess(res) {
-      const resultMap = res.recordResult.reduce<Map<string, RecordResult[]>>((map, cur) => {
-        const { categoryType } = cur;
-        const { name } = categoryType;
-        if (map.has(name)) {
-          map.get(name)?.push(cur);
-        } else {
-          map.set(name, [cur]);
-        }
-        return map;
-      }, new Map());
+      const resultMap = res.recordResult
+        .sort((a, b) => Number(b.categoryType.entryPoint) - Number(a.categoryType.entryPoint)) // sort servlet entryPoint to first
+        .reduce<Map<string, RecordResult[]>>((map, cur) => {
+          const { categoryType } = cur;
+          const { name } = categoryType;
+          if (map.has(name)) {
+            map.get(name)?.push(cur);
+          } else {
+            map.set(name, [cur]);
+          }
+          return map;
+        }, new Map());
 
       setTabItems(
         Array.from(resultMap.keys()).map((categoryName) => {

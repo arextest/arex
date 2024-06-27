@@ -1,4 +1,4 @@
-import { getLocalStorage, tryParseJsonString } from '@arextest/arex-core';
+import { getLocalStorage, RequestMethodEnum, tryParseJsonString } from '@arextest/arex-core';
 import axios from 'axios';
 
 import { ACCESS_TOKEN_KEY, APP_ID_KEY } from '@/constant';
@@ -10,10 +10,11 @@ export interface CategoryType {
 }
 
 export interface Attribute {
-  requestPath: string;
+  RequestPath: string;
   catId: string;
   format: string;
-  headers: Record<string, string>;
+  HttpMethod: RequestMethodEnum;
+  Headers: Record<string, string>;
   cookies: Record<string, string>;
   configBatchNo: string;
 }
