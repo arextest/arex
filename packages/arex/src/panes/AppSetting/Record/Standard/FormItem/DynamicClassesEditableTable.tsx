@@ -1,13 +1,14 @@
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { HelpTooltip, TooltipButton, useTranslation } from '@arextest/arex-core';
+import { HelpTooltip, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Button, Checkbox, Input, Space, Table } from 'antd';
+import { App, Button, Checkbox, Input, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import React, { forwardRef, useImperativeHandle, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { Updater, useImmer } from 'use-immer';
 
 import { ConfigService } from '@/services';
 import { DynamicClass } from '@/services/ConfigService';
+import { focusNewLineInput } from '@/utils/table';
 
 export type DynamicClassesEditableTableProps = {
   appId: string;
@@ -39,6 +40,7 @@ const DynamicClassesEditableTable = forwardRef<
     '' | 'error' | 'warning'
   >('');
 
+  const tableRef = useRef<HTMLDivElement>(null);
   const [dataSource, setDataSource] = useImmer<DynamicClass[]>([]);
 
   const columns = (paramsUpdater: Updater<DynamicClass[]>): ColumnsType<DynamicClass> => {
@@ -164,24 +166,26 @@ const DynamicClassesEditableTable = forwardRef<
         align: 'center',
         className: 'actions',
         render: (text, record) => (
-          <Space>
-            <TooltipButton
-              title={t('cancel')}
-              icon={<DeleteOutlined />}
-              onClick={() =>
-                setDataSource((state) => state.filter((item) => item.id !== record.id))
-              }
-            />
-          </Space>
+          <Button
+            danger
+            type='link'
+            size='small'
+            icon={<DeleteOutlined />}
+            onClick={() => setDataSource((state) => state.filter((item) => item.id !== record.id))}
+          >
+            {t('replay.delete', { ns: 'components' })}
+          </Button>
         ),
       },
     ];
   };
 
-  const handleAddRecord = () =>
+  const handleAddRecord = () => {
     setDataSource((state) => {
       state.push(generateInitRowData());
     });
+    focusNewLineInput(tableRef);
+  };
 
   const handleSave = () => {
     // verify fullClassName
@@ -224,6 +228,8 @@ const DynamicClassesEditableTable = forwardRef<
 
   return (
     <Table
+      // @ts-ignore
+      ref={tableRef}
       rowKey='id'
       size='small'
       loading={loading}

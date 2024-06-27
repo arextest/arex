@@ -1,12 +1,11 @@
-import { DeleteOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
-import { css, styled, TooltipButton, useTranslation } from '@arextest/arex-core';
-import { useRequest } from 'ahooks';
-import { App, Button, Input, Select, Space, Table } from 'antd';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { css, styled, useTranslation } from '@arextest/arex-core';
+import { Button, Input, Select, Table } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useEffect, useRef } from 'react';
 import { useImmer } from 'use-immer';
 
-import { ConfigService } from '@/services';
+import { focusNewLineInput } from '@/utils/table';
 
 import { FormItemProps } from '../../Record/Standard/FormItem';
 
@@ -20,10 +19,8 @@ type ExcludeOperationFormItem = { id: string; key: string; value: string[] };
 type ExcludeOperationProps = FormItemProps<ExcludeOperationFormItem[]> & { appId: string };
 
 const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
-  const { message } = App.useApp();
   const { t } = useTranslation(['components', 'common']);
 
-  const tableRowCount = useRef(0);
   const tableRef = useRef<HTMLDivElement>(null);
   const [value, setValue] = useImmer<ExcludeOperationFormItem[]>(
     props.value || [{ id: Date.now().toString(), key: '', value: [] }],
@@ -76,74 +73,31 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
       align: 'center',
       className: 'actions',
       render: (text, record, i) => (
-        <Space>
-          <TooltipButton
-            key='save'
-            type='text'
-            size='small'
-            icon={<SaveOutlined />}
-            title={t('save', { ns: 'common' })}
-            onClick={onSave}
-          />
-          <TooltipButton
-            key='remove'
-            type='text'
-            size='small'
-            title={t('remove', { ns: 'common' })}
-            icon={<DeleteOutlined />}
-            onClick={() =>
-              setValue?.((params) => {
-                params.splice(i, 1);
-              })
-            }
-          />
-        </Space>
+        <Button
+          danger
+          type='link'
+          size='small'
+          icon={<DeleteOutlined />}
+          onClick={() =>
+            setValue?.((params) => {
+              params.splice(i, 1);
+            })
+          }
+        >
+          {t('replay.delete', { ns: 'components' })}
+        </Button>
       ),
     },
   ];
 
-  const { run: updateReplaySetting } = useRequest(ConfigService.updateReplaySetting, {
-    manual: true,
-    onSuccess(res) {
-      res && message.success(t('message.updateSuccess', { ns: 'common' }));
-    },
-  });
-
-  const onSave = () => {
-    const params = {
-      appId: props.appId,
-      excludeOperationMap: value.reduce<{ [key: string]: string[] }>((map, cur) => {
-        map[cur['key']] = cur['value'];
-        return map;
-      }, {}),
-    };
-    updateReplaySetting(params);
-  };
-
   useEffect(() => {
     props.onChange?.(value);
-    if (tableRowCount.current !== value.length) {
-      // focus last row key input
-      const path = [6, 2, 2];
-      let inputRef: ChildNode | null | undefined = tableRef?.current;
-      path.forEach((level, i) => {
-        for (let x = level; x > 0; x--) {
-          if (!inputRef) break;
-          inputRef = inputRef?.[i % 2 ? 'lastChild' : 'firstChild'];
-        }
-      });
-      // @ts-ignore
-      inputRef?.focus?.({
-        cursor: 'start',
-      });
-
-      tableRowCount.current = value.length;
-    }
   }, [value]);
 
   return (
     <ExcludeOperationWrapper>
       <Table<ExcludeOperationFormItem>
+        // @ts-ignore
         ref={tableRef}
         rowKey='id'
         dataSource={value}
@@ -160,6 +114,7 @@ const ExcludeOperation: FC<ExcludeOperationProps> = (props) => {
               setValue((state) => {
                 state.push({ id: '', key: '', value: [] });
               });
+              focusNewLineInput(tableRef);
             }}
           >
             {t('add', { ns: 'common' })}

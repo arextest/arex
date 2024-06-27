@@ -1,17 +1,20 @@
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { css, FlexCenterWrapper, SmallTextButton, useTranslation } from '@arextest/arex-core';
-import { Button, Input, Space, Table, theme } from 'antd';
+import { css, FlexCenterWrapper, useTranslation } from '@arextest/arex-core';
+import { Button, Input, Table, theme } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useEffect, useMemo, useRef } from 'react';
 import { useImmer } from 'use-immer';
 
 import { FormItemProps } from '@/panes/AppSetting/Record/Standard/FormItem/index';
 import { SerializeSkipInfo } from '@/services/ConfigService';
+import { focusNewLineInput } from '@/utils/table';
 
 const SerializeSkip: FC<FormItemProps<SerializeSkipInfo[]>> = (props) => {
   const { token } = theme.useToken();
   const { t } = useTranslation('components');
   const [dataSource, setDataSource] = useImmer(props.value || []);
+
+  const tableRef = useRef<HTMLDivElement>(null);
 
   const inputCssObject = useMemo(
     () => css`
@@ -101,10 +104,13 @@ const SerializeSkip: FC<FormItemProps<SerializeSkipInfo[]>> = (props) => {
         fieldName: '',
       });
     });
+    focusNewLineInput(tableRef);
   };
 
   return (
     <Table
+      // @ts-ignore
+      ref={tableRef}
       size='small'
       columns={columns}
       dataSource={dataSource}
