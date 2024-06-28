@@ -1,6 +1,7 @@
+import { BaseInterface } from '@/services/FileSystemService';
 import request from '@/utils/request';
 
-export interface AddItemsByAppNameAndInterfaceNameReq {
+export interface AddItemsByAppNameAndInterfaceNameReq extends Partial<BaseInterface> {
   recordId: string;
   workspaceId: string;
   operationId: string;
