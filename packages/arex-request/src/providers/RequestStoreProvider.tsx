@@ -34,7 +34,7 @@ const defaultState: RequestStore = {
     body: {
       contentType: 'application/json',
       body: '',
-      formData:[]
+      formData: [],
     },
     auth: {
       authActive: false,

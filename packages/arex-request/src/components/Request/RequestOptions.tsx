@@ -50,7 +50,10 @@ const HttpRequestOptions: FC<HttpRequestOptionsProps> = () => {
       },
       {
         label: (
-          <SmallBadge offset={[4, 2]} dot={!!store.request?.body?.body?.length}>
+          <SmallBadge
+            offset={[4, 2]}
+            dot={!!store.request?.body?.body?.length || !!store.request?.body?.formData}
+          >
             {t('tab.body')}
           </SmallBadge>
         ),

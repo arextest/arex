@@ -1,30 +1,27 @@
+import { ReloadOutlined } from '@ant-design/icons';
 import { css } from '@arextest/arex-core';
-import { Radio, RadioChangeEvent, Select } from 'antd';
-import React, { useEffect, useMemo, useRef } from 'react';
+import { Button, Select, Tooltip, Typography } from 'antd';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useArexRequestStore } from '../../hooks';
 import { ArexContentTypes } from '../../types';
+import RequestBinaryBody from './RequestBinaryBody';
 import RequestBodyFormData from './RequestBodyFormData';
 import RequestRawBody, { RequestRawBodyRef } from './RequestRawBody';
 
-const genContentType = (contentType?: string) =>
-  contentType?.includes('application/json') || contentType?.includes('multipart/form-data')
-    ? 'raw'
-    : 'binary';
-
-const bigCateOptions = ['raw', 'binary'];
-
 const rawSmallCateOptions = [
   {
-    label: 'JSON',
+    label: 'application/json',
     value: 'application/json',
-    test: <a>JSON</a>,
   },
   {
-    label: 'FormData',
+    label: 'multipart/form-data',
     value: 'multipart/form-data',
-    test: <a>FormData</a>,
+  },
+  {
+    label: 'application/octet-stream',
+    value: 'application/octet-stream',
   },
 ];
 
@@ -34,47 +31,23 @@ const RequestBody = () => {
 
   const rawBodyRef = useRef<RequestRawBodyRef>(null);
 
-  const isJsonContentType = useMemo(() => {
-    return ['application/json'].includes(store.request.body.contentType || '');
-  }, [store.request.body.contentType]);
-
-  const isDormDataContentType = useMemo(() => {
-    if (['multipart/form-data'].includes(store.request.body.contentType || '')) {
-      if (!store.request.headers.some((header) => header.key === 'content-type')) {
-        dispatch((state) => {
-          state.request.headers.push({
-            key: 'content-type',
-            value: 'multipart/form-data',
-            active: true,
-          });
-        });
-      }
-      return true;
-    } else {
-      return false;
-    }
-  }, [store.request.body.contentType]);
-
-  const onChange = (value: ArexContentTypes) => {
+  const handleContentTypeChange = (value: ArexContentTypes) => {
     dispatch((state) => {
       state.request.body.contentType = value;
     });
   };
 
-  const handleContentTypeChange = (val: RadioChangeEvent) => {
-    if (val.target.value === 'binary') {
-      dispatch((state) => {
-        // @ts-ignore
-        state.request.body.contentType = '0';
-        // state.request.body.body = '';
-      });
-    }
-    if (val.target.value === 'raw') {
-      dispatch((state) => {
-        state.request.body.contentType = 'application/json';
-        // state.request.body.body = '';
-      });
-    }
+  const handleOverrideContentType = () => {
+    dispatch((state) => {
+      const index = state.request.headers.findIndex((header) => header.key === 'content-type');
+      if (index >= 0) state.request.headers[index].value = store.request.body.contentType;
+      else
+        state.request.headers.push({
+          key: 'content-type',
+          value: store.request.body.contentType,
+          active: true,
+        });
+    });
   };
 
   useEffect(() => {
@@ -104,31 +77,49 @@ const RequestBody = () => {
         `}
       >
         <div>
-          <Radio.Group
-            options={bigCateOptions}
-            value={genContentType(store.request.body.contentType)}
+          <Typography.Text strong type='secondary'>
+            Content Type
+          </Typography.Text>
+          <Select
+            size='small'
+            variant='borderless'
+            popupMatchSelectWidth={false}
+            value={store.request.body.contentType}
+            options={rawSmallCateOptions}
             onChange={handleContentTypeChange}
+            style={{ width: 'auto' }}
           />
 
-          {(isJsonContentType || isDormDataContentType) && (
-            <Select
-              value={store.request.body.contentType as any}
-              variant='borderless'
-              size={'small'}
-              options={rawSmallCateOptions}
-              optionLabelProp={'test'}
-              onChange={onChange}
-            />
-          )}
+          <Tooltip
+            title={
+              <Typography.Text>
+                Set <Typography.Text code>Content-Type</Typography.Text> in Headers
+              </Typography.Text>
+            }
+          >
+            <Button
+              size='small'
+              icon={<ReloadOutlined />}
+              onClick={handleOverrideContentType}
+              style={{ marginLeft: '8px' }}
+            >
+              {t('components:http.override')}
+            </Button>
+          </Tooltip>
         </div>
 
-        {isJsonContentType && (
+        {store.request.body.contentType.startsWith('application/json') && (
           <a onClick={() => rawBodyRef?.current?.prettifyRequestBody()}>{t('action.prettify')}</a>
         )}
       </div>
 
-      {isJsonContentType && <RequestRawBody ref={rawBodyRef} />}
-      {isDormDataContentType && <RequestBodyFormData />}
+      {store.request.body.contentType.startsWith('application/json') ? (
+        <RequestRawBody ref={rawBodyRef} />
+      ) : store.request.body.contentType.startsWith('multipart/form-data') ? (
+        <RequestBodyFormData />
+      ) : store.request.body.contentType.startsWith('application/octet-stream') ? (
+        <RequestBinaryBody />
+      ) : null}
     </div>
   );
 };
