@@ -224,6 +224,7 @@
     "saveTo": "保存至",
     "selectInterface": "请选择接口集合",
     "selectSaveLocation": "请选择保存位置",
+    "setContentTypeInHeaders": "在请求头中添加 <0>Content-Type</0>",
     "showCode": "显示代码",
     "test": "测试",
     "testFailed": "测试失败",

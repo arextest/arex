@@ -225,6 +225,7 @@
     "saveTo": "Save To",
     "selectInterface": "Please select an interface collection",
     "selectSaveLocation": "Please select the save location",
+    "setContentTypeInHeaders": "Set <0>Content-Type</0> in Headers",
     "showCode": "Show Code",
     "test": "Test",
     "testFailed": "test failed",

@@ -1,8 +1,8 @@
 import { ReloadOutlined } from '@ant-design/icons';
 import { css } from '@arextest/arex-core';
-import { Button, Select, Tooltip, Typography } from 'antd';
+import { Button, Popover, Select, Typography } from 'antd';
 import React, { useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { useArexRequestStore } from '../../hooks';
 import { ArexContentTypes } from '../../types';
@@ -90,11 +90,16 @@ const RequestBody = () => {
             style={{ width: 'auto' }}
           />
 
-          <Tooltip
+          <Popover
             title={
-              <Typography.Text>
-                Set <Typography.Text code>Content-Type</Typography.Text> in Headers
-              </Typography.Text>
+              <Trans
+                i18nKey='components:http.setContentTypeInHeaders'
+                components={[
+                  <Typography.Text key={0} code>
+                    Content-Type
+                  </Typography.Text>,
+                ]}
+              ></Trans>
             }
           >
             <Button
@@ -105,7 +110,7 @@ const RequestBody = () => {
             >
               {t('components:http.override')}
             </Button>
-          </Tooltip>
+          </Popover>
         </div>
 
         {store.request.body.contentType.startsWith('application/json') && (
