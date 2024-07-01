@@ -42,6 +42,16 @@ if (isClientProd) {
   axios.defaults.baseURL = 'http://localhost:' + port.electronPort;
 }
 
+const preHandlerHeaders = (request: any) => {
+  if ((request.headers['content-type'] || '').includes('application/json')) {
+    return 'application/json';
+  } else if ((request.headers['content-type'] || '').includes('multipart/form-data')) {
+    return 'multipart/form-data';
+  } else {
+    return request.headers['content-type'];
+  }
+};
+
 if (!isClient) {
   xspy.onRequest(async (request: any, sendResponse: any) => {
     // 判断是否是pm发的
@@ -51,9 +61,7 @@ if (!isClient) {
         url: request.url,
         headers: {
           ...request.headers,
-          'content-type': (request.headers['content-type'] || '').includes('application/json')
-            ? 'application/json'
-            : request.headers['content-type'],
+          'content-type': preHandlerHeaders(request),
         },
         body: ['GET'].includes(request.method) ? undefined : request.body,
       }).catch((err) => {
