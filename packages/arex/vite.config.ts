@@ -32,7 +32,6 @@ export default defineConfig(async ({ mode }) => {
         '@arextest/arex-request': path.resolve('../arex-request/src'),
       },
     },
-    build: { sourcemap: true },
     plugins: [
       svgr(),
       react({
