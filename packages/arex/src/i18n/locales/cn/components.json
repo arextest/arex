@@ -208,6 +208,7 @@
     "importUrl": "导入 URL",
     "javaScriptCode": "JavaScript 代码",
     "noCompareDiffMsg": "无差异对比信息，可能是由于当前 case 未录制",
+    "override": "覆盖",
     "params": "参数",
     "pre-requestScript": "预请求脚本",
     "queryParams": "查询参数",

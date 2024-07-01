@@ -1,6 +1,7 @@
-export function convertToPmBody({ body, contentType }: any) {
-  if (contentType === '0') {
-    // 如果是0就是binary
+import { ArexRESTReqBody } from '../../types';
+
+export function convertToPmBody({ body, contentType, formData }: ArexRESTReqBody) {
+  if (contentType === 'application/octet-stream') {
     return {
       mode: 'file',
       file: {
@@ -11,6 +12,16 @@ export function convertToPmBody({ body, contentType }: any) {
     return {
       mode: 'raw',
       raw: body,
+      options: {
+        raw: {
+          language: 'json',
+        },
+      },
+    };
+  } else if (contentType === 'multipart/form-data') {
+    return {
+      mode: 'raw',
+      raw: formData,
       options: {
         raw: {
           language: 'json',

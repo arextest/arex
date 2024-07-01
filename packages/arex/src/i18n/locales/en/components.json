@@ -209,6 +209,7 @@
     "importUrl": "Import URL",
     "javaScriptCode": "JavaScript Code",
     "noCompareDiffMsg": "No difference in comparison information, probably because the current case is not recorded",
+    "override": "Override",
     "params": "Params",
     "pre-requestScript": "Pre-request Script",
     "queryParams": "QueryParams",
