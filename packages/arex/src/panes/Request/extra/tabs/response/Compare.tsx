@@ -145,12 +145,12 @@ const Compare: FC<CompareProps> = (props) => {
                   ref={jsonDiffViewRef}
                   height={`calc(100% - 4px)`}
                   diffJson={{
-                    left: diffMsg?.baseMsg || '',
-                    right: diffMsg?.testMsg || '',
+                    left: diffMsg?.testMsg || '',
+                    right: diffMsg?.baseMsg || '',
                   }}
                   remarks={{
-                    left: t('common:realtime'),
-                    right: t('common:record'),
+                    left: t('common:record'),
+                    right: t('common:realtime'),
                   }}
                   onClassName={(path, value, target) =>
                     logEntity?.pathPair[`${target}UnmatchedPath`]

@@ -226,12 +226,13 @@ const CollectionSelect: FC<CollectionSelectProps> = (props) => {
 
   const handleAddNode: CollectionNodeTitleProps['onAddNode'] = (infoId, nodeType) => {
     handleSelect(infoId, {
-      // @ts-ignore
-      node: {
-        infoId,
-        nodeType,
-        method: RequestMethodEnum.GET,
-      },
+      infoId,
+      nodeType,
+      method: RequestMethodEnum.GET,
+      nodeName: nodeType === CollectionNodeType.interface ? 'New Request' : 'case',
+      caseSourceType: CollectionNodeType.case,
+      labelIds: null,
+      children: [],
     });
     setExpandedKeys([...(expandedKeys || []), infoId]);
   };

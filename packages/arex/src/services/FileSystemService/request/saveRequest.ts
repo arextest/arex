@@ -3,12 +3,10 @@ import type { ArexRESTRequest } from '@arextest/arex-request';
 import { CollectionNodeType } from '@/constant';
 import { request } from '@/utils';
 
-export async function saveRequest(
-  workspaceId: string,
-  params: ArexRESTRequest & { inherited?: boolean; tags: string[] },
-  nodeType: number,
+export function convertRequestParams(
+  params: ArexRESTRequest & { workspaceId: string; inherited?: boolean; tags: string[] },
 ) {
-  const saveParams = {
+  return {
     address:
       params.method || params.endpoint
         ? {
@@ -38,12 +36,20 @@ export async function saveRequest(
       },
     ],
     // id
-    workspaceId: workspaceId,
+    workspaceId: params.workspaceId,
     id: params.id,
     inherited: params.inherited,
     description: params.description,
     labelIds: params.tags,
   };
+}
+
+export async function saveRequest(
+  workspaceId: string,
+  params: ArexRESTRequest & { inherited?: boolean; tags: string[] },
+  nodeType: number,
+) {
+  const saveParams = convertRequestParams({ ...params, workspaceId });
   const res = await request.post<{ success: boolean }>(
     `/webApi/filesystem/${
       nodeType === CollectionNodeType.interface ? 'saveInterface' : 'saveCase'

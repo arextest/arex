@@ -4,7 +4,7 @@ import { ArexRESTParam } from './ArexRESTParam';
 import { ArexRESTReqBody } from './ArexRESTReqBody';
 
 export interface ArexRESTRequest {
-  v: string;
+  v?: string;
   id: string; // Firebase Firestore ID
   name: string;
   method: string;

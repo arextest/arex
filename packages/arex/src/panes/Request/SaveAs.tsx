@@ -1,4 +1,4 @@
-import { getLocalStorage, useTranslation } from '@arextest/arex-core';
+import { getLocalStorage, useArexPaneProps, useTranslation } from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { useRequest } from 'ahooks';
 import { App, Button, Flex, Input, Modal, theme, Typography } from 'antd';
@@ -6,10 +6,11 @@ import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useState } 
 
 import { CollectionSelect, Icon } from '@/components';
 import { CollectionTreeType } from '@/components/CollectionSelect';
-import { CollectionNodeType, EMAIL_KEY } from '@/constant';
+import { CollectionNodeType, EMAIL_KEY, PanesType } from '@/constant';
+import { useNavPane } from '@/hooks';
 import { FileSystemService } from '@/services';
-import { PathInfo } from '@/services/FileSystemService';
-import { useCollections } from '@/store';
+import { ArexRequest, convertRequestParams, PathInfo } from '@/services/FileSystemService';
+import { useCollections, useMenusPanes } from '@/store';
 import { CaseSourceType } from '@/store/useCollections';
 
 export type SaveAsProps = {
@@ -20,6 +21,7 @@ export type SaveAsProps = {
   interfaceName?: string;
   operationId?: string;
   recordId?: string;
+  data?: ArexRequest;
   caseSourceType?: CaseSourceType;
   defaultPath?: boolean;
   pathInfo?: PathInfo[];
@@ -34,7 +36,10 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
   const { t } = useTranslation('components');
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const navPane = useNavPane();
   const userName = getLocalStorage<string>(EMAIL_KEY);
+  const { removePane } = useMenusPanes();
+  const { paneKey } = useArexPaneProps();
 
   const { addCollectionNode, getCollections, getNodePathByIndex, setExpandedKeys } =
     useCollections();
@@ -110,23 +115,23 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
     },
   );
 
+  // only use for arex case
   const { run: addItemsByAppNameAndInterfaceName } = useRequest(
     FileSystemService.addItemsByAppNameAndInterfaceName,
     {
       manual: true,
-      onSuccess(res, [{ nodeName }]) {
+      onSuccess(res, [{ address }]) {
         if (res.success) {
-          addCollectionItem(
-            {
-              nodeName: nodeName!,
-              nodeType: props.nodeType,
-              caseSourceType: CaseSourceType.AREX,
-              parentPath: res.path,
-            },
-            {
-              reset: true,
-            },
-          );
+          setOpen(false);
+          getCollections(props.workspaceId).then(() => setExpandedKeys(res.path));
+          const infoId = res.path[res.path.length - 1];
+          navPane({
+            id: `${props.workspaceId}-${CollectionNodeType.case}-${infoId}`,
+            type: PanesType.REQUEST,
+            icon: address?.method,
+          });
+          removePane(paneKey);
+          message.success(t('common:message.saveSuccess'));
         }
       },
     },
@@ -142,11 +147,14 @@ const SaveAs = forwardRef<SaveAsRef, SaveAsProps>((props, ref) => {
               parentPath: parentPath.map((path) => path.infoId),
             };
 
+        // @ts-ignore
         addItemsByAppNameAndInterfaceName({
+          // @ts-ignore
+          ...convertRequestParams({ ...props.data, workspaceId: props.workspaceId }),
           recordId: props.recordId,
-          workspaceId: props.workspaceId,
           operationId: props.operationId,
           ...params,
+          id: undefined,
         });
       } else {
         message.error(t('http.saveError'));

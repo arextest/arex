@@ -429,6 +429,7 @@ const Request: ArexPaneFC<RequestProps> = (props) => {
         nodeType={nodeType}
         workspaceId={workspaceId}
         pathInfo={pathInfo}
+        data={data}
         // debug case save params
         appName={decodeURIComponent(props.data?.appName || '')}
         interfaceName={decodeURIComponent(props.data?.interfaceName || '')}
