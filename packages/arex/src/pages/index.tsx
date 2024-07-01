@@ -21,6 +21,7 @@ import {
   MacTrafficLightBackground,
   UserMenu,
 } from '@/components';
+import QuickTour from '@/components/QuickTour';
 import { CollectionNodeType, isClient, PanesType, URL_AREX } from '@/constant';
 import { useCheckChrome, useInit, useNavPane } from '@/hooks';
 import { useMenusPanes, useUserProfile, useWorkspaces } from '@/store';
@@ -139,7 +140,7 @@ const Home: FC = () => {
   return (
     <div ref={arexMainWrapperRef}>
       {!zen && <ArexHeader logo={{ href: URL_AREX }} extra={<UserMenu />} />}
-
+      <QuickTour />
       <Allotment
         css={css`
           height: ${zen ? '100vh' : 'calc(100vh - 73px)'};
