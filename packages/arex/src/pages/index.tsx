@@ -140,7 +140,7 @@ const Home: FC = () => {
   return (
     <div ref={arexMainWrapperRef}>
       {!zen && <ArexHeader logo={{ href: URL_AREX }} extra={<UserMenu />} />}
-      <QuickTour />
+      {/*<QuickTour />*/}
       <Allotment
         css={css`
           height: ${zen ? '100vh' : 'calc(100vh - 73px)'};
