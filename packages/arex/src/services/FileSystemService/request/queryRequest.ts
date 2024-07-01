@@ -1,8 +1,25 @@
-import type { ArexRESTRequest } from '@arextest/arex-request';
+import type { ArexRESTReqBody, ArexRESTRequest } from '@arextest/arex-request';
 
 import { CollectionNodeType } from '@/constant';
 import { queryDebuggingCase } from '@/services/FileSystemService';
 import { request } from '@/utils';
+
+// case debug时预处理请求头，返回 ‘application/json’ 或 ‘multipart/form-data’
+const preHandlerBody = (
+  body: null | {
+    contentType: string;
+    body: string;
+    formData: { key: string; value: string; type: string }[];
+  },
+) => {
+  if (!body) return { contentType: 'application/json', body: '', formData: [] } as ArexRESTReqBody;
+  if (body.contentType.includes('application/json')) {
+    body.contentType = 'application/json';
+  } else if (body.contentType.includes('multipart/form-data')) {
+    body.contentType = 'multipart/form-data';
+  }
+  return body as ArexRESTReqBody;
+};
 
 export type ArexRequest = ArexRESTRequest & {
   recordId: string;
@@ -43,7 +60,7 @@ export async function queryRequest(params: {
         endpoint: address?.endpoint || '',
         headers: rest.headers || [],
         params: rest.params || [],
-        body: rest.body || { contentType: 'application/json', body: '' },
+        body: preHandlerBody(rest.body),
         testScript: rest.testScripts?.length > 0 ? rest.testScripts[0].value : '',
         preRequestScript: rest.preRequestScripts?.length > 0 ? rest.preRequestScripts[0].value : '',
         recordId: rest.recordId,
@@ -65,7 +82,7 @@ export async function queryRequest(params: {
       endpoint: '',
       headers: [],
       params: [],
-      body: { contentType: 'application/json', body: '' },
+      body: { contentType: 'application/json', body: '', formData: [] },
       testScript: '',
       preRequestScript: '',
       // @ts-ignore

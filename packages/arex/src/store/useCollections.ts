@@ -132,8 +132,8 @@ function reduceNodeByPos(
 
   for (let i = 1; i < pathOrIndex.length; i++) {
     node = isPath
-      ? node!.children!.find((node) => node.infoId === pathOrIndex[i])
-      : node!.children![pathOrIndex[i] as number];
+      ? node?.children.find((node) => node.infoId === pathOrIndex[i])
+      : node?.children[pathOrIndex[i] as number];
     callback(node!, i);
   }
 }
