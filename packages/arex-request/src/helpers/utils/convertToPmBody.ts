@@ -20,13 +20,8 @@ export function convertToPmBody({ body, contentType, formData }: ArexRESTReqBody
     };
   } else if (contentType === 'multipart/form-data') {
     return {
-      mode: 'raw',
-      raw: formData,
-      options: {
-        raw: {
-          language: 'json',
-        },
-      },
+      mode: 'formdata',
+      formdata: formData,
     };
   }
   return '';

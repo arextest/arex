@@ -42,6 +42,21 @@ if (isClientProd) {
   axios.defaults.baseURL = 'http://localhost:' + port.electronPort;
 }
 
+const handleBody = (request: any) => {
+  // 判断如果是FormData的话，需要转换成数组
+  if (Object.prototype.toString.call(request.body) === '[object FormData]') {
+    const body = [];
+    for (const [key, value] of request.body.entries()) {
+      body.push({
+        key,
+        value,
+      });
+    }
+    return JSON.stringify(body);
+  }
+  return request.body;
+};
+
 if (!isClient) {
   xspy.onRequest(async (request: any, sendResponse: any) => {
     // 判断是否是pm发的
@@ -55,7 +70,7 @@ if (!isClient) {
             ? 'application/json'
             : request.headers['content-type'],
         },
-        body: ['GET'].includes(request.method) ? undefined : request.body,
+        body: ['GET'].includes(request.method) ? undefined : handleBody(request),
       }).catch((err) => {
         console.log(err);
         return {
