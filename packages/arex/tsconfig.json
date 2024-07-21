@@ -20,6 +20,7 @@
     "paths": {
       "@": ["src"],
       "@/*": ["src/*"],
+      "@arextest/arex-core": ["../arex-core/src"]
     }
   },
   "include": ["src", "electron"],
