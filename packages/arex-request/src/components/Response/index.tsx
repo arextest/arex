@@ -88,7 +88,7 @@ const Response = forwardRef<ResponseRef>((props, ref) => {
     >
       <div
         style={{
-          padding: '8px 12px',
+          padding: '8px 12px 0 12px',
           height: '100%',
         }}
       >

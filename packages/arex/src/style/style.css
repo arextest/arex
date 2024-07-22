@@ -1,6 +1,6 @@
 @import 'allotment/dist/style.css';
 
-:root{
+:root {
   --jse-font-size: 14px;
   --jse-padding: 4px 8px;
 }
@@ -9,12 +9,10 @@ body {
   overflow: hidden;
 }
 
-
-
 #root,
-#root > .ant-app,
-#root > .ant-app > .ant-layout,
-#root > .ant-app > .ant-layout > .ant-layout-content {
+.ant-app,
+.ant-layout,
+.ant-layout-content {
   height: 100vh;
 }
 
@@ -32,4 +30,3 @@ body {
 ::-webkit-scrollbar-corner {
   background-color: transparent !important;
 }
-

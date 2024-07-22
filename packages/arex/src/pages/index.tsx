@@ -21,7 +21,6 @@ import {
   MacTrafficLightBackground,
   UserMenu,
 } from '@/components';
-import QuickTour from '@/components/QuickTour';
 import { CollectionNodeType, isClient, PanesType, URL_AREX } from '@/constant';
 import { useCheckChrome, useInit, useNavPane } from '@/hooks';
 import { useMenusPanes, useUserProfile, useWorkspaces } from '@/store';

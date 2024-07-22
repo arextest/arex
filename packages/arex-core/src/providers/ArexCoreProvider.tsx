@@ -1,4 +1,5 @@
-import { App, ConfigProvider, Empty, Layout, message, theme } from 'antd';
+import { App, ConfigProvider, Empty, message, theme } from 'antd';
+import { AppProps } from 'antd/es/app';
 import { ThemeConfig } from 'antd/es/config-provider/context';
 import { MappingAlgorithm } from 'antd/lib/theme/interface';
 import enUS from 'antd/locale/en_US';
@@ -10,7 +11,6 @@ import { I18nextLng } from '../i18n';
 import { ColorPrimary, generateToken, Theme } from '../theme';
 import EmotionThemeProvider from './EmotionThemeProvider';
 
-const { Content } = Layout;
 const { darkAlgorithm, compactAlgorithm, defaultAlgorithm } = theme;
 const localeMap = {
   [I18nextLng.en]: enUS,
@@ -23,6 +23,7 @@ export type ArexCoreProviderProps = {
   compact: boolean;
   colorPrimary: ColorPrimary;
   language: I18nextLng;
+  appProps?: AppProps;
   localeResources?: Record<I18nextLng, { [ns: string]: object }>;
 };
 
@@ -76,15 +77,11 @@ const ArexCoreProvider: FC<PropsWithChildren<Partial<ArexCoreProviderProps>>> = 
       renderEmpty={() => Empty.PRESENTED_IMAGE_SIMPLE}
     >
       <EmotionThemeProvider>
-        <App message={{ maxCount: 1 }}>
+        <App {...props.appProps}>
           {contextHolder}
-          <Layout>
-            <Content>
-              <ArexCoreContext.Provider value={{ theme, compact, colorPrimary, language }}>
-                {props.children}
-              </ArexCoreContext.Provider>
-            </Content>
-          </Layout>
+          <ArexCoreContext.Provider value={{ theme, compact, colorPrimary, language }}>
+            {props.children}
+          </ArexCoreContext.Provider>
         </App>
       </EmotionThemeProvider>
     </ConfigProvider>

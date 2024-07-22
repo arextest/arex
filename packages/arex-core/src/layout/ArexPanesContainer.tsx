@@ -71,6 +71,7 @@ export interface ArexPanesContainerProps extends Omit<TabsProps, 'items' | 'onDr
 
 const ArexPanesContainerWrapper = styled.div`
   height: 100%;
+  background-color: ${(props) => props.theme.colorBgContainer};
   // 工作区 Tabs 全局样式调整
   .ant-tabs-tab {
     .ant-tabs-tab-btn {
@@ -112,24 +113,24 @@ const ArexPanesContainerWrapper = styled.div`
     padding: 0 16px;
   }
 
-  .ant-tabs-nav-operations {
+  .ant-tabs-nav {
     margin-bottom: 0 !important;
-    .ant-tabs-nav-more {
-      padding: 8px 12px;
-      border: 1px solid ${(props) => props.theme.colorBorderSecondary};
-      border-bottom-color: ${(props) => props.theme.colorBorder};
-      border-radius: ${(props) => props.theme.borderRadius}px
-        ${(props) => props.theme.borderRadius}px 0 0;
+    .ant-tabs-nav-operations {
+      margin-bottom: 0 !important;
+      .ant-tabs-nav-more {
+        height: 36px;
+        border-left: #000c17 1px solid;
+        padding: 8px 12px;
+        border: 1px solid ${(props) => props.theme.colorBorderSecondary};
+        border-bottom-color: ${(props) => props.theme.colorBorder};
+        border-radius: ${(props) => props.theme.borderRadius}px
+          ${(props) => props.theme.borderRadius}px 0 0;
+      }
+      .ant-tabs-nav-add {
+        margin-left: -1px;
+        border-bottom-color: ${(props) => props.theme.colorBorderSecondary};
+      }
     }
-    .ant-tabs-nav-add {
-      margin-left: -1px;
-      border-bottom-color: ${(props) => props.theme.colorBorderSecondary};
-    }
-  }
-
-  .ant-tabs-nav-more {
-    height: 36px;
-    border-left: #000c17 1px solid;
   }
 
   .ant-tabs-content {
@@ -226,38 +227,52 @@ const ArexPanesContainer = (props: ArexPanesContainerProps) => {
             .ant-tabs-nav {
               margin-bottom: 0;
             }
-            .ant-tabs-tab .anticon {
-              margin-right: ${token.marginXXS}px;
+            .ant-tabs-tab {
+              height: 36px;
+              .anticon {
+                margin-right: ${token.marginXXS}px;
+              }
             }
           `}
           popupClassName='arex-pane-popup'
           renderTabBar={(tabBarProps, DefaultTabBar) => (
-            <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
-              <SortableContext
-                items={panesItems?.map((i) => i.key) || []}
-                strategy={horizontalListSortingStrategy}
-              >
-                <DefaultTabBar {...tabBarProps}>
-                  {(node) => (
-                    <DraggableTabNode {...node.props} key={node.key}>
-                      <div>
-                        {React.createElement(
-                          dropdownMenu ? Dropdown : 'div',
-                          {
-                            menu: {
-                              ...dropdownMenu,
-                              onClick: (e) => dropdownMenu?.onClick?.(e, node.key),
+            <div
+              css={css`
+                -webkit-app-region: drag;
+                .ant-tabs-nav-list,
+                .ant-tabs-nav-operations {
+                  height: 36px !important;
+                  -webkit-app-region: no-drag;
+                }
+              `}
+            >
+              <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
+                <SortableContext
+                  items={panesItems?.map((i) => i.key) || []}
+                  strategy={horizontalListSortingStrategy}
+                >
+                  <DefaultTabBar {...tabBarProps}>
+                    {(node) => (
+                      <DraggableTabNode {...node.props} key={node.key}>
+                        <div>
+                          {React.createElement(
+                            dropdownMenu ? Dropdown : 'div',
+                            {
+                              menu: {
+                                ...dropdownMenu,
+                                onClick: (e) => dropdownMenu?.onClick?.(e, node.key),
+                              },
+                              trigger: ['contextMenu'],
                             },
-                            trigger: ['contextMenu'],
-                          },
-                          node,
-                        )}
-                      </div>
-                    </DraggableTabNode>
-                  )}
-                </DefaultTabBar>
-              </SortableContext>
-            </DndContext>
+                            node,
+                          )}
+                        </div>
+                      </DraggableTabNode>
+                    )}
+                  </DefaultTabBar>
+                </SortableContext>
+              </DndContext>
+            </div>
           )}
           size='small'
           type='editable-card'

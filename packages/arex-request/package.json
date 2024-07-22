@@ -1,6 +1,6 @@
 {
   "name": "@arextest/arex-request",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "type": "module",
   "main": "dist/arex-request.js",
   "module": "dist/arex-request.js",
@@ -48,7 +48,7 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@monaco-editor/react": "^4.6.0",
-    "antd": "^5.16.1",
+    "antd": "^5.19.0",
     "i18next": "^22.4.11",
     "monaco-editor": "^0.39.0",
     "react": "^18.2.0",

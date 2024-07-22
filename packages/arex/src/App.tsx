@@ -1,6 +1,6 @@
 import { LoadingOutlined } from '@ant-design/icons';
 import { ArexCoreProvider, ArexMenuManager, ArexPaneManager, Theme } from '@arextest/arex-core';
-import { message, Spin } from 'antd';
+import { Layout, Spin } from 'antd';
 import React from 'react';
 
 import { NavigationProvider } from '@/router/NavigationContext';
@@ -36,10 +36,20 @@ const App = () => {
       localeResources={resources}
       compact={compact}
       colorPrimary={colorPrimary}
+      appProps={{
+        message: {
+          duration: 2,
+          maxCount: 1,
+        },
+      }}
     >
       <GlobalStyle>
         <NavigationProvider>
-          <Routes />
+          <Layout>
+            <Layout.Content>
+              <Routes />
+            </Layout.Content>
+          </Layout>
         </NavigationProvider>
       </GlobalStyle>
     </ArexCoreProvider>

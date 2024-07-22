@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { Carousel, Menu } from 'antd';
 import { CarouselRef } from 'antd/es/carousel';
 import { SizeType } from 'antd/es/config-provider/SizeContext';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
+import { ItemType } from 'antd/es/menu/interface';
 import React, {
   forwardRef,
   ForwardRefRenderFunction,
