@@ -4,6 +4,6 @@ export const AREX_EXTENSION_CHROME_STORE_UEL =
   'https://chromewebstore.google.com/detail/arex-chrome-extension/jmmficadjneeekafmnheppeoehlgjdjj';
 
 // electron client
-export const isClient = !!window.electron;
-export const isClientDev = isClient && import.meta.env.DEV;
-export const isClientProd = isClient && import.meta.env.PROD;
+export const isClient = () => !!window.electron;
+export const isClientDev = isClient() && import.meta.env.DEV;
+export const isClientProd = isClient() && import.meta.env.PROD;

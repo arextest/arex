@@ -90,7 +90,7 @@ const RequestStoreProvider: FC<PropsWithChildren> = (props) => {
   }, [environmentProps]);
 
   const request = async (): Promise<ArexResponse | void> => {
-    const ready = isClient || window.__AREX_EXTENSION_INSTALLED__;
+    const ready = isClient() || window.__AREX_EXTENSION_INSTALLED__;
 
     dispatch((state) => {
       state.response = {
