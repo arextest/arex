@@ -57,7 +57,7 @@ const StructuredTagWrapper = styled.div`
 const StructuredTag = (props: StructuredTagProps) => {
   const { token } = theme.useToken();
 
-  const categoryRef = useRef<HTMLDivElement>(null);
+  const categoryRef = useRef<HTMLButtonElement>(null);
   const closeIconRef = useRef<HTMLDivElement>(null);
   const categoryNodeRef = useRef(null);
 

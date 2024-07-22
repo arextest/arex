@@ -127,7 +127,7 @@ function reduceNodeByPos(
   const isPath = typeof pathOrIndex[0] === 'string';
   let node = isPath
     ? tree.find((node) => node.infoId === pathOrIndex[0])
-    : tree[pathOrIndex[0] as number];
+    : tree?.[pathOrIndex[0] as number];
   callback(node!, 0);
 
   for (let i = 1; i < pathOrIndex.length; i++) {
@@ -156,7 +156,8 @@ const useCollections = create(
 
       // Action
       getCollections: async (workspaceId) => {
-        const id = workspaceId || useWorkspaces.getState().activeWorkspaceId;
+        const id: string | undefined = workspaceId || useWorkspaces.getState().activeWorkspaceId;
+        if (!id) return [];
         set({
           loading: true,
         });

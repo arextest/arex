@@ -45,6 +45,7 @@ export { default as SmallBadge } from './SmallBadge';
 export { default as SmallTextButton } from './SmallTextButton';
 export { default as SpaceBetweenWrapper } from './SpaceBetweenWrapper';
 export type { SearchDataType } from './StructuredFilter';
+export type { StructuredFilterRef } from './StructuredFilter';
 export { default as StructuredFilter } from './StructuredFilter';
 export { CategoryKey, Operator } from './StructuredFilter/keyword';
 export * from './StructuredFilter/keyword';

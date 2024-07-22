@@ -19,7 +19,7 @@ const Login: FC = () => {
     <FlexCenterWrapper>
       <MacDraggableArea />
 
-      <Card style={{ marginTop: '20vh' }}>
+      <Card>
         <Logo>AREX</Logo>
         <EmailForm />
       </Card>

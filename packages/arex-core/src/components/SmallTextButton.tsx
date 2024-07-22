@@ -3,14 +3,13 @@ import { TextProps } from 'antd/es/typography/Text';
 import React, { ReactNode } from 'react';
 
 const SmallTextButton = React.forwardRef<
-  HTMLElement,
+  HTMLButtonElement,
   Omit<ButtonProps, 'title'> & {
     color?: TextProps['color'];
     title?: ReactNode;
   }
 >((props, ref) => {
   const { title, ...restProps } = props;
-  const { token } = theme.useToken();
 
   return (
     <Button

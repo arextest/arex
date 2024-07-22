@@ -1,8 +1,9 @@
 import { LeftOutlined } from '@ant-design/icons';
 import { css } from '@emotion/react';
+import { SerializedStyles } from '@emotion/serialize';
 import styled from '@emotion/styled';
-import { Menu, MenuProps, Tabs, TabsProps } from 'antd';
-import React, { FC, ReactNode, useMemo } from 'react';
+import { Menu, MenuProps, Tabs, TabsProps, theme } from 'antd';
+import React, { CSSProperties, FC, ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { ErrorBoundary } from '../components';
@@ -13,9 +14,12 @@ export type ArexMenuContainerProps = {
   value?: string;
   activeKey?: string;
   collapsed?: boolean;
+  extraMenu?: ReactNode;
   onChange?: (menuType: string) => void;
   onCollapsed?: (collapse: boolean) => void;
   onSelect?: (paneType: string, id: string, data: unknown) => void;
+  style?: CSSProperties;
+  sx?: SerializedStyles;
 };
 
 export type MenuItemType = {
@@ -30,6 +34,7 @@ const ICON_KEY = '__ExpandIcon';
 const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
   // 规定: ArexMenu 翻译文本需要配置在 locales/[lang]/arex-menu.json 下, 且 key 为 Menu.types
   const { t } = useTranslation([ArexMenuNamespace]);
+  const { token } = theme.useToken();
 
   const tabsItems = useMemo<MenuItemType[]>(
     () =>
@@ -80,25 +85,44 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
   return (
     <div
       id='arex-menu-wrapper'
-      style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+      className='sidebar'
+      css={props.sx}
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        paddingLeft: '1.5px',
+        ...props.style,
+      }}
     >
       <div style={{ display: 'flex', flex: '1', minHeight: '0' }}>
-        <StyledMenu
-          mode='inline'
-          id='arex-menu'
-          selectedKeys={props.activeKey ? [props.activeKey] : []}
-          inlineCollapsed={props.collapsed}
-          items={tabsItems}
-          onClick={handleMenuClick}
-        />
+        <div
+          style={{
+            // @ts-ignore
+            '-webkit-app-region': 'drag',
+          }}
+        >
+          <StyledMenu
+            mode='inline'
+            id='arex-menu'
+            selectedKeys={props.activeKey ? [props.activeKey] : []}
+            inlineCollapsed={props.collapsed}
+            items={tabsItems}
+            onClick={handleMenuClick}
+            style={{ backgroundColor: 'transparent' }}
+          />
+
+          {props.extraMenu}
+        </div>
+
         {/* 此处利用 Tabs 做组件缓存 */}
         <Tabs
           activeKey={props.activeKey}
           items={items}
-          popupClassName={''}
           css={css`
             width: 100%;
             overflow-y: hidden;
+            background-color: ${token.colorBgLayout};
             .ant-tabs-nav {
               display: none; // 隐藏 Tabs 的导航栏
             }
@@ -111,6 +135,7 @@ const ArexMenuContainer: FC<ArexMenuContainerProps> = (props) => {
 
 const StyledMenu = styled(Menu)`
   width: auto;
+  height: 100%;
   position: relative;
   .ant-menu-root,
   :not(.ant-menu-inline-collapsed) {
@@ -120,6 +145,7 @@ const StyledMenu = styled(Menu)`
   }
   .ant-menu-item,
   .ant-menu-submenu-title {
+    -webkit-app-region: no-drag;
     height: auto !important;
     flex-direction: column;
     padding-top: ${(props) => (props.inlineCollapsed ? 0 : '12px')};
@@ -138,7 +164,7 @@ const StyledMenu = styled(Menu)`
 
     &[data-menu-id$=${ICON_KEY}] {
       position: absolute;
-      bottom: 36px;
+      bottom: 48px;
       left: 0;
     }
     span {
