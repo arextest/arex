@@ -4,7 +4,6 @@ import { Button, Checkbox, Select } from 'antd';
 import React, { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { isClient } from '../../constant';
 import { sendRequest } from '../../helpers';
 import { useArexRequestProps, useArexRequestStore } from '../../hooks';
 import { ArexEnvironment, ArexRESTRequest, ArexRESTResponse } from '../../types';
