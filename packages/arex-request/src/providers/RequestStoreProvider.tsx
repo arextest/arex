@@ -90,13 +90,14 @@ const RequestStoreProvider: FC<PropsWithChildren> = (props) => {
   }, [environmentProps]);
 
   const request = async (): Promise<ArexResponse | void> => {
+    const ready = isClient() || window.__AREX_EXTENSION_INSTALLED__;
+
     dispatch((state) => {
       state.response = {
-        type: window.__AREX_EXTENSION_INSTALLED__ ? 'loading' : 'EXTENSION_NOT_INSTALLED',
+        type: ready ? 'loading' : 'EXTENSION_NOT_INSTALLED',
         headers: undefined,
       };
     });
-    const ready = isClient || window.__AREX_EXTENSION_INSTALLED__;
 
     if (!ready) return;
 
