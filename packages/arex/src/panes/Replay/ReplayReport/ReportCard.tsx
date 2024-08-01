@@ -9,6 +9,7 @@ import {
   copyToClipboard,
   css,
   EmptyWrapper,
+  getLocalStorage,
   SmallTextButton,
   useArexPaneProps,
   useTranslation,
@@ -19,6 +20,7 @@ import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useState 
 
 import { Icon, StatusTag } from '@/components';
 import { ResultsState } from '@/components/StatusTag';
+import { EMAIL_KEY } from '@/constant';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
 import { ReRunPlanReq } from '@/services/ScheduleService';
@@ -49,6 +51,7 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
   const { t } = useTranslation('components');
   const { modal, message } = App.useApp();
   const { token } = theme.useToken();
+  const email = getLocalStorage<string>(EMAIL_KEY);
 
   const [selectedReport, setSelectedReport] = useState<PlanStatistics>();
 
@@ -126,7 +129,7 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
   const { run: terminateReplay } = useRequest(ScheduleService.stopPlan, {
     manual: true,
     ready: !!props.planId,
-    onSuccess(success, [planId]) {
+    onSuccess(success, [{ planId }]) {
       if (success) {
         message.success(t('message.success', { ns: 'common' }));
         queryPlanStatistics(planId);
@@ -176,7 +179,7 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
     ({ key }: { key: string }) => {
       switch (key) {
         case 'terminateReplay': {
-          if (props.planId) terminateReplay(props.planId);
+          if (props.planId) terminateReplay({ planId: props.planId, operator: email });
           break;
         }
         case 'deleteReport': {

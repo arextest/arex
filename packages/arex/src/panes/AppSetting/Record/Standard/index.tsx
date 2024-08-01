@@ -105,7 +105,6 @@ const Standard: FC<StandardProps> = (props) => {
   });
 
   const onFinish = (values: SettingFormType) => {
-    console.log(values);
     const allowDayOfWeeks = encodeWeekCode(values.allowDayOfWeeks);
     const timeRange = values.period?.map((m) => m.format(format));
     if (
