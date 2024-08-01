@@ -1,4 +1,4 @@
-import { css, HelpTooltip, useTranslation } from '@arextest/arex-core';
+import { css, HelpTooltip, test24HourString, useTranslation } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
 import { App, Button, Collapse, Form, InputNumber, TimePicker } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
@@ -72,8 +72,11 @@ const Standard: FC<StandardProps> = (props) => {
     onSuccess(res) {
       setInitialValues({
         period: [
-          dayjs(res.allowTimeOfDayFrom || '00:00', format),
-          dayjs(res.allowTimeOfDayTo || '23:59', format),
+          dayjs(
+            test24HourString(res.allowTimeOfDayFrom) ? res.allowTimeOfDayFrom : '00:00',
+            format,
+          ),
+          dayjs(test24HourString(res.allowTimeOfDayTo) ? res.allowTimeOfDayTo : '23:59', format),
         ],
         sampleRate: res.sampleRate,
         allowDayOfWeeks: [],
@@ -102,13 +105,21 @@ const Standard: FC<StandardProps> = (props) => {
   });
 
   const onFinish = (values: SettingFormType) => {
+    console.log(values);
     const allowDayOfWeeks = encodeWeekCode(values.allowDayOfWeeks);
-    const [allowTimeOfDayFrom, allowTimeOfDayTo] = values.period.map((m: any) => m.format(format));
+    const timeRange = values.period?.map((m) => m.format(format));
+    if (
+      !Array.isArray(timeRange) ||
+      timeRange.length !== 2 ||
+      !test24HourString(timeRange[0]) ||
+      !test24HourString(timeRange[1])
+    )
+      return;
 
     const params = {
       allowDayOfWeeks,
-      allowTimeOfDayFrom,
-      allowTimeOfDayTo,
+      allowTimeOfDayFrom: timeRange[0],
+      allowTimeOfDayTo: timeRange[1],
       appId: props.appId,
       sampleRate: values.sampleRate,
       excludeServiceOperationSet: values.excludeServiceOperationSet?.filter(Boolean),
@@ -149,7 +160,11 @@ const Standard: FC<StandardProps> = (props) => {
                   <DurationInput />
                 </Form.Item>
 
-                <Form.Item label={t('appSetting.period')} name='period'>
+                <Form.Item
+                  label={t('appSetting.period')}
+                  name='period'
+                  rules={[{ required: true, message: t('components:appSetting.selectRangeTip') }]}
+                >
                   <TimePicker.RangePicker format={format} />
                 </Form.Item>
 

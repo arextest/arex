@@ -105,6 +105,7 @@
     "runningStatus": "运行状态",
     "selectMethodTip": "请选择一个方法以保存",
     "selectNodePath": "选择节点路径",
+    "selectRangeTip": "请选择录制时间范围",
     "serializeSkip": "序列化忽略",
     "skipMock": "不Mock依赖",
     "skipMockTooltip": "设置不需要回放的接口，多个值使用','分隔。",
