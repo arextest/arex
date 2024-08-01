@@ -52,6 +52,7 @@ const useUserProfile = create<UserProfile & UserProfileAction>((set, get) => {
         window.message.error(e);
       }
     }
+    i18n.changeLanguage(profile?.language || 'en');
     window.__locale__ = profile?.language || 'en';
     profile && set(profile);
   }
