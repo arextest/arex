@@ -35,7 +35,7 @@ export type ReplayReportProps = {
 };
 
 export type ReplayReportRef = {
-  refreshReportList: (planId: true | string) => void;
+  refreshReportList: () => void;
 };
 
 const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref) => {
@@ -67,9 +67,9 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
   useImperativeHandle(
     ref,
     () => ({
-      refreshReportList: (planId) => reportCardRef.current?.query(planId),
+      refreshReportList: () => reportCardRef.current?.query(),
     }),
-    [reportCardRef.current, selectedPlan],
+    [],
   );
 
   const planItemDataFiltered = useMemo(
