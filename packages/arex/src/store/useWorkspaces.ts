@@ -43,11 +43,11 @@ const useWorkspaces = create(
             workspaces = await FileSystemService.queryWorkspacesByUser({ userName });
             // create default workspace if no workspace
             if (!workspaces.length) {
-              FileSystemService.createWorkspace({ userName, workspaceName: 'default' }).then(
-                (res) => {
-                  get().getWorkspaces(res.workspaceId);
-                },
-              );
+              const res = await FileSystemService.createWorkspace({
+                userName,
+                workspaceName: 'default',
+              });
+              get().getWorkspaces(res.workspaceId);
             }
           } catch (e) {
             window.message.error(i18n.t('workSpace.noPermissionOrInvalid', { ns: 'components' }));

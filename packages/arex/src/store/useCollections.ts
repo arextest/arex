@@ -127,14 +127,14 @@ function reduceNodeByPos(
   const isPath = typeof pathOrIndex[0] === 'string';
   let node = isPath
     ? tree.find((node) => node.infoId === pathOrIndex[0])
-    : tree?.[pathOrIndex[0] as number];
+    : tree[pathOrIndex[0] as number];
   callback(node!, 0);
 
   for (let i = 1; i < pathOrIndex.length; i++) {
     node = isPath
       ? node?.children.find((node) => node.infoId === pathOrIndex[i])
-      : node?.children[pathOrIndex[i] as number];
-    callback(node!, i);
+      : node?.children?.[pathOrIndex[i] as number];
+    node && callback(node, i);
   }
 }
 
