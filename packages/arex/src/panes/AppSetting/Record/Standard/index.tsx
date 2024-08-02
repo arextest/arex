@@ -70,6 +70,10 @@ const Standard: FC<StandardProps> = (props) => {
       setLoading(true);
     },
     onSuccess(res) {
+      console.log(test24HourString(res.allowTimeOfDayFrom), res.allowTimeOfDayFrom, [
+        dayjs(test24HourString(res.allowTimeOfDayFrom) ? res.allowTimeOfDayFrom : '00:00', format),
+        dayjs(test24HourString(res.allowTimeOfDayTo) ? res.allowTimeOfDayTo : '23:59', format),
+      ]);
       setInitialValues({
         period: [
           dayjs(
