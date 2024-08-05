@@ -22,7 +22,6 @@ const ProportionBarChart: FC<ProportionBarChartProps> = (props) => {
         width: ${width}px;
         height: ${height}px;
         margin-left: 8px;
-        background-color: ${token.colorSuccessTextHover};
       `}
     >
       <div
