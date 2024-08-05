@@ -1,7 +1,13 @@
-import { getLocalStorage } from '@arextest/arex-core';
+import { getLocalStorage, i18n } from '@arextest/arex-core';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-import { ACCESS_TOKEN_KEY, APP_ID_KEY, isClientProd, ResponseCode } from '@/constant';
+import {
+  ACCESS_TOKEN_KEY,
+  APP_ID_KEY,
+  ErrorResponseMessage,
+  isClientProd,
+  ResponseCode,
+} from '@/constant';
 import { getNavigate } from '@/router/navigation';
 import globalStoreReset from '@/utils/globalStoreReset';
 
@@ -46,11 +52,16 @@ export class Request {
     // 全局响应拦截
     this.instance.interceptors.response.use(
       (response) => {
-        if (response.data.responseStatusType?.responseCode === ResponseCode.AUTHENTICATION_FAILED) {
-          window.message.error(response.data.responseStatusType.responseDesc);
-          const navigate = getNavigate();
-          globalStoreReset();
-          navigate?.('/login');
+        const responseCode = response.data.responseStatusType?.responseCode;
+        if (Object.keys(ErrorResponseMessage).includes(responseCode.toString())) {
+          window.message.error(i18n.t(ErrorResponseMessage[responseCode]));
+
+          if (responseCode === ResponseCode.AUTHENTICATION_FAILED) {
+            const navigate = getNavigate();
+            globalStoreReset();
+            navigate?.('/login');
+          }
+
           return Promise.reject(response.data.responseStatusType.responseDesc);
         }
         return Promise.resolve(response.data);
