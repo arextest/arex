@@ -54,7 +54,11 @@ const useWorkspaces = create(
           }
           set({ workspaces });
           const activeWorkspaceId = id || get().activeWorkspaceId || workspaces[0]?.id;
-          activeWorkspaceId && set({ activeWorkspaceId: activeWorkspaceId });
+
+          if (activeWorkspaceId) {
+            set({ activeWorkspaceId });
+            useCollections.getState().getCollections(activeWorkspaceId);
+          }
 
           return workspaces;
         }
