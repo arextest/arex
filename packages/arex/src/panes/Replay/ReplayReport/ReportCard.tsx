@@ -9,19 +9,36 @@ import {
   copyToClipboard,
   css,
   EmptyWrapper,
+  getLocalStorage,
+  Label,
   SmallTextButton,
   useArexPaneProps,
   useTranslation,
 } from '@arextest/arex-core';
 import { useRequest } from 'ahooks';
-import { App, Badge, Card, Dropdown, Flex, Select, Space, theme, Typography } from 'antd';
+import {
+  App,
+  Badge,
+  Card,
+  Dropdown,
+  Flex,
+  Pagination,
+  Select,
+  Space,
+  Tag,
+  theme,
+  Typography,
+} from 'antd';
 import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react';
 
 import { Icon, StatusTag } from '@/components';
 import { ResultsState } from '@/components/StatusTag';
+import { EMAIL_KEY } from '@/constant';
+import { useNavPane } from '@/hooks';
 import { ReportService, ScheduleService } from '@/services';
 import { PlanStatistics } from '@/services/ReportService';
 import { ReRunPlanReq } from '@/services/ScheduleService';
+import { decodePaneKey } from '@/store/useMenusPanes';
 
 import ProportionBarChart from './ProportionBarChart';
 
@@ -34,61 +51,62 @@ export interface ReportCardProps {
   onChange?: (plan: PlanStatistics) => void;
   onTerminate?: (planId: string) => void;
   onDelete?: (planId: string) => void;
-  onQueryPlan?: (planId: string) => void;
+  onQueryPlan?: () => void;
   onClickLogs?: () => void;
 }
 
 export interface ReportCardRef {
-  query: (
-    planId: true | string, // true: select first, string: select by planId
-  ) => void;
+  query: () => void;
   create: (req: ReRunPlanReq) => void;
 }
 const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
-  const { data } = useArexPaneProps<{ planId?: string }>();
+  const { data, paneKey } = useArexPaneProps<{ planId?: string }>();
+  const { id, type } = decodePaneKey(paneKey);
   const { t } = useTranslation('components');
   const { modal, message } = App.useApp();
   const { token } = theme.useToken();
+  const navPane = useNavPane();
+  const email = getLocalStorage<string>(EMAIL_KEY);
 
+  const [reportSelectOpen, setReportSelectOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState<PlanStatistics>();
 
   const [init, setInit] = useState(true);
-  const [pageSize, setPageSize] = useState(8);
+  const [current, setCurrent] = useState(1);
+
   const {
-    data: { list: planStatistics } = {
+    data: { list: planStatistics, pagination } = {
       list: [],
+      pagination: {
+        current: 1,
+        pageSize: 8,
+      },
     },
     run: queryPlanStatistics,
     cancel: cancelPollingInterval,
   } = useRequest(
-    (
-      planId: true | string, // true: select first, string: select by planId
-    ) =>
+    () =>
       ReportService.queryPlanStatistics({
         appId: props.appId,
         planId: data?.planId || undefined,
-        current: 1,
-        pageSize,
+        current,
+        pageSize: 8,
       }),
     {
       ready: !!props.appId,
       pollingInterval: 3000,
-      refreshDeps: [props.appId, data?.planId, pageSize],
-      onSuccess({ list }, [planId]) {
-        if (init || planId === true) {
+      refreshDeps: [props.appId, data?.planId, current],
+      onSuccess({ list }) {
+        if (init) {
           setInit(false); // 设置第一次初始化标识
         } else {
-          props.onQueryPlan?.(typeof planId === 'string' ? planId : list[0]?.planId);
+          props.onQueryPlan?.();
         }
 
         let plan = undefined;
 
-        if (typeof planId === 'string') {
-          plan = list.find((item) => item.planId === planId);
-        } else {
-          plan = list[0];
-          list.length && props.onChange?.(plan);
-        }
+        plan = list.find((item) => item.planId === props.planId);
+        list.length && props.onChange?.(plan || list[0]);
 
         setSelectedReport(plan);
 
@@ -104,10 +122,10 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
 
   const { run: reRunPlan, loading: retrying } = useRequest(ScheduleService.reRunPlan, {
     manual: true,
-    onSuccess(res, [{ planId }]) {
+    onSuccess(res) {
       if (res.result === 1) {
         message.success(t('message.success', { ns: 'common' }));
-        queryPlanStatistics(planId);
+        queryPlanStatistics();
       } else {
         message.error(res.desc);
       }
@@ -126,10 +144,10 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
   const { run: terminateReplay } = useRequest(ScheduleService.stopPlan, {
     manual: true,
     ready: !!props.planId,
-    onSuccess(success, [planId]) {
+    onSuccess(success, [{ planId }]) {
       if (success) {
         message.success(t('message.success', { ns: 'common' }));
-        queryPlanStatistics(planId);
+        queryPlanStatistics();
         props.onTerminate?.(planId);
       } else {
         message.error(t('message.error', { ns: 'common' }));
@@ -143,7 +161,7 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
     onSuccess(success, [planId]) {
       if (success) {
         message.success(t('message.success', { ns: 'common' }));
-        queryPlanStatistics(true);
+        queryPlanStatistics();
         props.onDelete?.(planId);
       } else {
         message.error(t('message.error', { ns: 'common' }));
@@ -176,7 +194,7 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
     ({ key }: { key: string }) => {
       switch (key) {
         case 'terminateReplay': {
-          if (props.planId) terminateReplay(props.planId);
+          if (props.planId) terminateReplay({ planId: props.planId, operator: email });
           break;
         }
         case 'deleteReport': {
@@ -214,6 +232,15 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
     }
   };
 
+  const handleResetUrlQuery = () => {
+    // remove query data in the url
+    navPane({
+      id,
+      type,
+      data: {},
+    });
+  };
+
   return (
     <EmptyWrapper bordered loading={init} empty={!planStatistics.length}>
       <Card
@@ -222,17 +249,20 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
           <Flex align='center'>
             <Select
               variant='borderless'
+              open={reportSelectOpen}
               suffixIcon={
                 <span>
                   {t('replay.moreReport')}
                   {/* <DownOutlined /> // Icon unable to propagation */}
-                  <span style={{ fontSize: '8px', marginLeft: '2px' }}>ᐯ</span>
+                  <span style={{ fontSize: '8px', marginLeft: '2px' }}>
+                    {reportSelectOpen ? '▲' : '▼'}
+                  </span>
                 </span>
               }
               value={props.planId}
               options={planStatistics.map((item, index) => ({
                 label:
-                  !data?.planId && index === 0 ? (
+                  !data?.planId && current === 1 && index === 0 ? (
                     <Badge
                       offset={[0, -1]}
                       count={
@@ -291,12 +321,35 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
               dropdownRender={(menu) => (
                 <>
                   {menu}
-                  <SmallTextButton
-                    block
-                    color='secondary'
-                    title={t('more', { ns: 'common' })}
-                    onClick={() => setPageSize((prev) => prev + 8)}
-                  />
+                  <div style={{ padding: '4px', display: 'flex', justifyContent: 'space-between' }}>
+                    <div>
+                      {data?.planId && (
+                        <>
+                          <Label type='secondary'>{t('common:filter')}</Label>
+                          <Tag closable onClose={handleResetUrlQuery}>
+                            {data?.planId}
+                          </Tag>
+                        </>
+                      )}
+                    </div>
+
+                    <Pagination
+                      size='small'
+                      showSizeChanger={false}
+                      showTotal={(total) => `${t('common:total')}: ${total}`}
+                      simple={{ readOnly: true }}
+                      defaultCurrent={1}
+                      total={pagination.total}
+                      onChange={(page) => {
+                        setCurrent(page);
+                      }}
+                      css={css`
+                        li {
+                          line-height: 21px !important;
+                        }
+                      `}
+                    />
+                  </div>
                 </>
               )}
               onChange={(value) => {
@@ -309,11 +362,15 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
                       selected.status,
                     )
                   )
-                    queryPlanStatistics(selected.planId);
+                    queryPlanStatistics();
                   else cancelPollingInterval();
                 }
               }}
+              onDropdownVisibleChange={setReportSelectOpen}
               css={css`
+                .ant-select-selector:hover {
+                  background: ${token.colorBgTextHover};
+                }
                 .ant-select-selection-item {
                   font-weight: 600;
                   padding-inline-end: 64px !important;
@@ -337,7 +394,9 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
             )}
           </Flex>
         }
-        headStyle={{ padding: '0 9px' }}
+        styles={{
+          header: { padding: '0 9px' },
+        }}
         extra={
           <Space>
             <SmallTextButton

@@ -1,4 +1,4 @@
-import { Segmented } from '@arextest/arex-core';
+import { Segmented, useTranslation } from '@arextest/arex-core';
 import { Tooltip } from 'antd';
 import React, { FC } from 'react';
 
@@ -6,12 +6,13 @@ import { Icon } from '@/components';
 import { Theme } from '@/constant';
 
 const ThemeSegmented: FC = (props) => {
+  const { t } = useTranslation();
   return (
     <Segmented
       options={[
         {
           label: (
-            <Tooltip title={'Light'}>
+            <Tooltip title={t('components:systemSetting.theme.light')}>
               <Icon name='Sun' />
             </Tooltip>
           ),
@@ -19,7 +20,7 @@ const ThemeSegmented: FC = (props) => {
         },
         {
           label: (
-            <Tooltip title={'Dark'}>
+            <Tooltip title={t('components:systemSetting.theme.dark')}>
               <Icon name='MoonStar' />
             </Tooltip>
           ),
@@ -27,7 +28,7 @@ const ThemeSegmented: FC = (props) => {
         },
         {
           label: (
-            <Tooltip title={'System'}>
+            <Tooltip title={t('components:systemSetting.theme.system')}>
               <Icon name='Laptop' />
             </Tooltip>
           ),

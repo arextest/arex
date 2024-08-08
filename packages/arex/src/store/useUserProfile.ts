@@ -12,7 +12,6 @@ import {
 } from '@/constant';
 import { UserService } from '@/services';
 import { UserProfile } from '@/services/UserService';
-import globalStoreReset from '@/utils/globalStoreReset';
 import { bindings } from '@/utils/keybindings';
 
 export type UserProfileAction = {
@@ -40,18 +39,8 @@ const useUserProfile = create<UserProfile & UserProfileAction>((set, get) => {
     const _email = email || getLocalStorage<string>(EMAIL_KEY);
     if (!_email) return;
 
-    let profile: UserProfile | undefined;
-    try {
-      profile = await UserService.getUserProfile(_email);
-    } catch (e: any) {
-      // 由于后端没有过期的responseCode，所以单独在这里判断。
-      if (e?.responseCode === 4) {
-        window.message.error(i18n.t('loginInformationExpired'));
-        globalStoreReset();
-      } else {
-        window.message.error(e);
-      }
-    }
+    const profile = await UserService.getUserProfile(_email);
+    i18n.changeLanguage(profile?.language || 'en');
     window.__locale__ = profile?.language || 'en';
     profile && set(profile);
   }

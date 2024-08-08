@@ -119,7 +119,7 @@ const UserInterface = () => {
           <CompactSegmented />
         </Form.Item>
 
-        <Form.Item label={t('systemSetting.theme')} name='theme'>
+        <Form.Item label={t('systemSetting.theme.theme')} name='theme'>
           <ThemeSegmented />
         </Form.Item>
 

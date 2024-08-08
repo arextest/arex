@@ -33,7 +33,9 @@ const AppTitle = styled(
                 ? { type: 'text', onClick: props.onClickTitle }
                 : { style: { padding: '6px 12px 0' } },
               <Badge size='small' count={props.count} offset={[8, 2]}>
-                <Typography.Title level={4}>{props.title}</Typography.Title>
+                <Typography.Title level={4} style={{ marginBottom: 0 }}>
+                  {props.title}
+                </Typography.Title>
               </Badge>,
             )}
             {props.onRefresh && (

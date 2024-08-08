@@ -46,13 +46,24 @@ export enum MessageType {
   extension,
 }
 
-export enum ResponseCode {
-  SUCCESS,
-  REQUESTED_PARAMETER_INVALID,
-  REQUESTED_HANDLE_EXCEPTION,
-  REQUESTED_RESOURCE_NOT_FOUND,
-  AUTHENTICATION_FAILED,
-}
+export const ResponseCode = {
+  SUCCESS: 0,
+  REQUESTED_PARAMETER_INVALID: 1,
+  REQUESTED_HANDLE_EXCEPTION: 2,
+  REQUESTED_RESOURCE_NOT_FOUND: 3,
+  AUTHENTICATION_FAILED: 4,
+
+  APP_AUTH_NO_APP_ID: 105001,
+  APP_AUTH_ERROR_APP_ID: 105002,
+  APP_AUTH_NO_PERMISSION: 105003,
+};
+
+export const ErrorResponseMessage = {
+  [ResponseCode.AUTHENTICATION_FAILED]: 'common:message.authenticationFailed',
+  [ResponseCode.APP_AUTH_NO_APP_ID]: 'common:message.noAppId',
+  [ResponseCode.APP_AUTH_ERROR_APP_ID]: 'common:message.errorAppId',
+  [ResponseCode.APP_AUTH_NO_PERMISSION]: 'common:message.noPermission',
+} as const;
 
 export const RoleMap = {
   [RoleEnum.Admin]: 'Admin',
