@@ -7,6 +7,7 @@ export * from './dom';
 export * from './json';
 export * from './localStorage';
 export * from './platformutils';
+export * from './reg';
 export * from './url';
 export { arrayMove } from '@dnd-kit/sortable';
 export { css, useTheme } from '@emotion/react';

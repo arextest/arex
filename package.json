@@ -1,7 +1,7 @@
 {
   "name": "arex",
   "private": true,
-  "version": "0.7.0",
+  "version": "0.7.2",
   "description": "",
   "homepage": "https://github.com/arextest/arex",
   "main": "index.js",
@@ -23,9 +23,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "workspaces": [
-    "./packages/*"
-  ],
   "dependencies": {
     "@commitlint/cli": "^17.4.4",
     "@commitlint/config-conventional": "^17.4.4"

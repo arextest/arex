@@ -34,7 +34,7 @@ const ReplayPage: ArexPaneFC = (props) => {
   }, [activePane?.id]);
 
   const handleRefreshDep = () => {
-    replayReportRef.current?.refreshReportList?.(true);
+    replayReportRef.current?.refreshReportList?.();
   };
 
   const [firstQueryRecordCount, setFirstQueryRecordCount] = useState(true);

@@ -2,7 +2,7 @@ FROM node:18.14.2-alpine3.17 AS pnpm-base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
-RUN npm i -g pnpm@latest-8
+RUN npm i -g pnpm@latest-9
 # RUN pnpm config set electron_mirror "https://npm.taobao.org/mirrors/electron/"
 
 FROM pnpm-base AS base

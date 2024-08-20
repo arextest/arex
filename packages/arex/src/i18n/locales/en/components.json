@@ -106,6 +106,7 @@
     "runningStatus": "Running Status",
     "selectMethodTip": "Please select a method to save",
     "selectNodePath": "Select Node Path",
+    "selectRangeTip": "Please select record time range",
     "serializeSkip": "SerializeSkip",
     "skipMock": "Skip Mock",
     "skipMockTooltip": "Configure interfaces that do not require mocks, multiple values separated by ','.",
@@ -425,11 +426,18 @@
     "replayCallbackPlaceholder": "Please enter replay callback Url",
     "startDownload": "Download about to start...",
     "systemLogs": "System Logs",
-    "theme": "Theme",
+    "theme": {
+      "dark": "Dark",
+      "light": "Light",
+      "system": "System",
+      "theme": "Theme"
+    },
     "userInfo": "User Info",
     "userInterface": "User Interface",
     "version": "Version",
-    "zen": "Zen mode"
+    "zen": "Zen mode",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out"
   },
   "workSpace": {
     "accepted": "Accepted",
