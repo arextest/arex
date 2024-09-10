@@ -23,11 +23,9 @@ const RequestTestStatusBlock = (props: RequestTestStatusBlockProps) => {
 
   const requestStatusColor = !response
     ? token.colorFillSecondary
-    : // @ts-ignore
-    response?.response?.statusCode < 300
+    : response?.response?.statusCode ?? 0 < 300
     ? token.colorSuccess
-    : // @ts-ignore
-    response?.response?.statusCode < 400
+    : response?.response?.statusCode ?? 0 < 400
     ? token.colorWarning
     : token.colorError;
 
