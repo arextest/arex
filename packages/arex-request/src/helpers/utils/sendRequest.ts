@@ -149,7 +149,7 @@ export async function sendRequest(
             if (err) {
               reject(err);
             }
-            console.log('response', cursor, response, request, item, cookies, history);
+            // console.log('response', cursor, response, request, item, cookies, history);
             res = {
               type: 'success', // TODO check response status
               headers: response?.headers.members,

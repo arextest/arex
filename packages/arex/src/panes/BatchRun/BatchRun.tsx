@@ -8,7 +8,12 @@ import {
   SpaceBetweenWrapper,
   useTranslation,
 } from '@arextest/arex-core';
-import { ArexEnvironment, ArexResponse, EnvironmentSelect } from '@arextest/arex-request';
+import {
+  ArexEnvironment,
+  ArexResponse,
+  EnvironmentSelect,
+  sendRequest,
+} from '@arextest/arex-request';
 import { ArexRESTRequest } from '@arextest/arex-request/src';
 import { useLocalStorageState, useRequest } from 'ahooks';
 import { App, Button, Divider, Flex, Slider, TreeSelect, Typography } from 'antd';
@@ -23,6 +28,10 @@ import { EnvironmentService, FileSystemService } from '@/services';
 import { useCollections } from '@/store';
 import { decodePaneKey } from '@/store/useMenusPanes';
 
+export type RunResult = {
+  request: ArexRESTRequest;
+  response?: ArexResponse;
+};
 const BatchRun: ArexPaneFC = (props) => {
   const { paneKey } = props;
   const { t } = useTranslation('page');
@@ -38,8 +47,8 @@ const BatchRun: ArexPaneFC = (props) => {
 
   const [processing, setProcessing] = useState(false);
 
-  const [casesResults, setCasesResults] = useImmer<ArexRESTRequest[]>([]);
-  const [runResult, setRunResult] = useState<{
+  const [casesResults, setCasesResults] = useImmer<RunResult[]>([]);
+  const [currentResult, setCurrentResult] = useState<{
     request: ArexRESTRequest;
     response?: ArexResponse;
   }>();
@@ -70,21 +79,27 @@ const BatchRun: ArexPaneFC = (props) => {
 
   const batchGetInterfaceCaseCallback = useCallback(
     async (res: ArexRESTRequest[], _timestamp?: number) => {
-      async function processPromiseArray(promiseArray: typeof res, qps: number) {
-        for (let i = 0; i < promiseArray.length; i++) {
+      async function processPromiseArray(requests: typeof res, qps: number) {
+        for (let i = 0; i < requests.length; i++) {
           if (timestampRef.current !== _timestamp) {
-            console.log('timestamp changed, stop batch run');
+            // console.log('timestamp changed, stop batch run');
             setProcessing(false);
             break;
           }
 
-          const batch = promiseArray.slice(i, i + 1);
-
-          setCasesResults((result) => {
-            result.push(...batch);
+          const request = requests[i];
+          setCasesResults((results) => {
+            const idx = results.length;
+            const result: RunResult = { request };
+            results.push(result);
+            sendRequest(request, activeEnvironment).then((response) => {
+              setCasesResults((results) => {
+                results[idx] = { request, response };
+              });
+            });
           });
 
-          if (i + 1 < promiseArray.length) {
+          if (i + 1 < requests.length) {
             await new Promise((resolve) => setTimeout(resolve, 1000 / qps));
           }
         }
@@ -93,9 +108,11 @@ const BatchRun: ArexPaneFC = (props) => {
       setProcessing(true);
       processPromiseArray(res, qps || 10).then(() => {
         setProcessing(false);
-        console.log('batch run finished');
+        // console.log('batch run finished');
       });
-      setRunResult(undefined);
+
+      // reset result to empty
+      setCurrentResult(undefined);
     },
     [timestamp],
   );
@@ -151,7 +168,6 @@ const BatchRun: ArexPaneFC = (props) => {
           showCheckedStrategy={TreeSelect.SHOW_PARENT}
           onChange={(id, labelList, extra) => {
             casesResults.length && setCasesResults([]); // reset cases results
-            runResult && setRunResult(undefined);
             try {
               setSelectNodes(
                 extra.allCheckedNodes.map((item) => ({
@@ -187,9 +203,9 @@ const BatchRun: ArexPaneFC = (props) => {
       <RequestTestStatusMap
         key={selectNodes.length} // Add key to force re-render
         data={casesResults}
-        selectedKey={runResult?.request.id}
+        selectedKey={currentResult?.request.id}
         environment={activeEnvironment}
-        onClick={setRunResult}
+        onClick={setCurrentResult}
       />
 
       <EmptyWrapper
@@ -199,11 +215,11 @@ const BatchRun: ArexPaneFC = (props) => {
           overflow: auto;
         `}
       >
-        {runResult && (
+        {currentResult && (
           <BatchRunResultItem
             environment={activeEnvironment}
-            request={runResult.request}
-            response={runResult.response}
+            request={currentResult.request}
+            response={currentResult.response}
           />
         )}
       </EmptyWrapper>

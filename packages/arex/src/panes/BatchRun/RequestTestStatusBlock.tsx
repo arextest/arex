@@ -1,53 +1,37 @@
 import { css } from '@arextest/arex-core';
-import { ArexEnvironment, ArexResponse, sendRequest } from '@arextest/arex-request';
+import { ArexEnvironment, ArexResponse } from '@arextest/arex-request';
 import { ArexRESTRequest } from '@arextest/arex-request/src';
-import { useRequest } from 'ahooks';
 import { theme } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+
+import { RunResult } from '@/panes/BatchRun/BatchRun';
 
 export type RequestTestStatusBlockProps = {
   environment?: ArexEnvironment;
-  data: ArexRESTRequest;
+  data: RunResult;
   selected?: boolean;
   onClick?: (data: { request: ArexRESTRequest; response?: ArexResponse }) => void;
 };
 
 const RequestTestStatusBlock = (props: RequestTestStatusBlockProps) => {
+  const { data } = props;
   const { token } = theme.useToken();
-  const [init, setInit] = useState(true);
+  const { request, response } = data;
 
-  const { data, loading, run, cancel } = useRequest<ArexResponse, any>(
-    () => sendRequest(props.data, props.environment),
-    {
-      manual: true,
-      onBefore: () => {
-        setInit(false);
-      },
-    },
-  );
+  const testAllSuccess = response?.testResult?.every((test) => test.passed) ?? true;
+  const testAllFail = response?.testResult?.every((test) => !test.passed) ?? false;
 
-  useEffect(() => {
-    run();
-    return () => {
-      cancel();
-    };
-  }, []);
+  const requestStatusColor = !response
+    ? token.colorFillSecondary
+    : // @ts-ignore
+    response?.response?.statusCode < 300
+    ? token.colorSuccess
+    : // @ts-ignore
+    response?.response?.statusCode < 400
+    ? token.colorWarning
+    : token.colorError;
 
-  const testAllSuccess = data?.testResult?.every((test) => test.passed) ?? true;
-  const testAllFail = data?.testResult?.every((test) => !test.passed) ?? false;
-
-  const requestStatusColor =
-    init || loading
-      ? token.colorFillSecondary
-      : // @ts-ignore
-      data?.response?.statusCode < 300
-      ? token.colorSuccess
-      : // @ts-ignore
-      data?.response?.statusCode < 400
-      ? token.colorWarning
-      : token.colorError;
-
-  const testResultStatusColor = data?.testResult?.length
+  const testResultStatusColor = response?.testResult?.length
     ? testAllSuccess
       ? token.colorSuccess
       : testAllFail
@@ -59,8 +43,8 @@ const RequestTestStatusBlock = (props: RequestTestStatusBlockProps) => {
     <div
       onClick={() => {
         props.onClick?.({
-          request: props.data,
-          response: data,
+          request,
+          response,
         });
       }}
       style={{
