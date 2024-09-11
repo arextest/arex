@@ -32,6 +32,7 @@ export type RunResult = {
   request: ArexRESTRequest;
   response?: ArexResponse;
 };
+type FsNode = { infoId: string; nodeType: CollectionNodeType };
 const BatchRun: ArexPaneFC = (props) => {
   const { paneKey } = props;
   const { t } = useTranslation('page');
@@ -40,9 +41,9 @@ const BatchRun: ArexPaneFC = (props) => {
   const { collectionsTreeData } = useCollections();
 
   const [activeEnvironment, setActiveEnvironment] = useState<ArexEnvironment>();
-  const [selectNodes, setSelectNodes] = useState<
-    { infoId: string; nodeType: CollectionNodeType }[]
-  >(id ? [{ infoId: id, nodeType: CollectionNodeType.folder }] : []);
+  const [selectNodes, setSelectNodes] = useState<FsNode[]>(
+    id ? [{ infoId: id, nodeType: CollectionNodeType.folder }] : [],
+  );
   const selectNodesInfoId = useMemo(() => selectNodes.map((node) => node.infoId), [selectNodes]);
 
   const [processing, setProcessing] = useState(false);
@@ -78,12 +79,12 @@ const BatchRun: ArexPaneFC = (props) => {
   });
 
   const batchGetInterfaceCaseCallback = useCallback(
-    async (res: ArexRESTRequest[], _timestamp?: number) => {
-      async function processPromiseArray(requests: typeof res, qps: number) {
+    async (requests: ArexRESTRequest[], _timestamp?: number) => {
+      setProcessing(false);
+      async function processPromiseArray(qps: number) {
         for (let i = 0; i < requests.length; i++) {
           if (timestampRef.current !== _timestamp) {
             // console.log('timestamp changed, stop batch run');
-            setProcessing(false);
             break;
           }
 
@@ -92,9 +93,12 @@ const BatchRun: ArexPaneFC = (props) => {
             const idx = results.length;
             const result: RunResult = { request };
             results.push(result);
+            if (!request.endpoint || !request.endpoint.trim()) {
+              return;
+            }
             sendRequest(request, activeEnvironment).then((response) => {
               setCasesResults((results) => {
-                results[idx] = { request, response };
+                results[idx] = { ...result, response };
               });
             });
           });
@@ -105,11 +109,7 @@ const BatchRun: ArexPaneFC = (props) => {
         }
       }
 
-      setProcessing(true);
-      processPromiseArray(res, qps || 10).then(() => {
-        setProcessing(false);
-        // console.log('batch run finished');
-      });
+      processPromiseArray(qps || 10);
 
       // reset result to empty
       setCurrentResult(undefined);
@@ -124,6 +124,7 @@ const BatchRun: ArexPaneFC = (props) => {
   } = useRequest(FileSystemService.batchGetInterfaceCase, {
     manual: true,
     onBefore: () => {
+      setProcessing(true);
       setCasesResults([]);
     },
     onSuccess: (res, [params, _timestamp]) => {

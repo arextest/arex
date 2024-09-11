@@ -18,7 +18,16 @@
     "requestSuccess": "Request Success",
     "selectCaseTip": "Select cases for batch execution",
     "statusBlockStructure": "Status Block Structure",
-    "testStatus": "Test Status"
+    "testStatus": "Test Status",
+
+    "flatten": "Flatten",
+    "groupByInterface": "Group by Interface",
+    "groupByStatus": "Group by Status",
+
+    "sendNormalTestAbnormal": "Test Failed",
+    "sendAbnormalTestNormal": "HTTP Failed",
+    "sendNormalTestNormal": "Passed",
+    "sendAbnormalTestAbnormal": "HTTP/Test Failed"
   },
   "folderPage": {
     "tests": "Tests"

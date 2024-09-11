@@ -1,10 +1,13 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from '@arextest/arex-core';
-import { ArexEnvironment, ArexRESTRequest } from '@arextest/arex-request';
+import { ArexEnvironment } from '@arextest/arex-request';
 import { Card, Flex, Popover, Radio, Typography } from 'antd';
 import React, { FC, memo, ReactElement, useMemo, useState } from 'react';
 
 import { RunResult } from '@/panes/BatchRun/BatchRun';
+import { ByInterface } from '@/panes/BatchRun/BatchRunResultGroup/ByInterface';
+import { ByStatus } from '@/panes/BatchRun/BatchRunResultGroup/ByStatus';
+import { Flat } from '@/panes/BatchRun/BatchRunResultGroup/Flat';
 import RequestTestStatusBlock, {
   RequestTestStatusBlockProps,
 } from '@/panes/BatchRun/RequestTestStatusBlock';
@@ -42,6 +45,22 @@ const RequestTestStatusMap: FC<RequestTestStatusMapProps> = (props) => {
   const { data } = props;
   const [groupBy, setGroupBy] = useState<GroupBy>('flat');
 
+  const blockMap = useMemo(() => {
+    const result = new Map<RunResult, ReactElement>();
+    data.forEach((item) => {
+      result.set(
+        item,
+        <RequestTestStatusBlock
+          key={item.request.id}
+          data={item}
+          selected={item.request.id === props.selectedKey}
+          onClick={props.onClick}
+        />,
+      );
+    });
+    return result;
+  }, [data, props.selectedKey]);
+
   if (!data || !Object.values(data).length) return null;
 
   return (
@@ -50,24 +69,15 @@ const RequestTestStatusMap: FC<RequestTestStatusMapProps> = (props) => {
         title={<UseGuide />}
         extra={
           <Radio.Group value={groupBy} onChange={(e) => setGroupBy(e.target.value)}>
-            <Radio.Button value='flat'>平铺</Radio.Button>
-            <Radio.Button value='interface'>接口分组</Radio.Button>
-            <Radio.Button value='status'>状态分组</Radio.Button>
-            <Radio.Button value='testResult'>测试结果分组</Radio.Button>
+            <Radio.Button value='flat'>{t('batchRunPage.flatten')}</Radio.Button>
+            <Radio.Button value='interface'>{t('batchRunPage.groupByInterface')}</Radio.Button>
+            <Radio.Button value='status'>{t('batchRunPage.groupByStatus')}</Radio.Button>
           </Radio.Group>
         }
       >
-        <div style={{ display: 'flex', flexFlow: 'row wrap' }}>
-          {data.map((data) => (
-            <RequestTestStatusBlock
-              key={data.request.id}
-              data={data}
-              selected={props.selectedKey === data.request.id}
-              environment={props.environment}
-              onClick={props.onClick}
-            />
-          ))}
-        </div>
+        {groupBy === 'flat' && <Flat blockMap={blockMap} />}
+        {groupBy === 'interface' && <ByInterface blockMap={blockMap} />}
+        {groupBy === 'status' && <ByStatus blockMap={blockMap} />}
       </Card>
     </div>
   );

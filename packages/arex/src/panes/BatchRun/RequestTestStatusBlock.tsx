@@ -7,7 +7,6 @@ import React from 'react';
 import { RunResult } from '@/panes/BatchRun/BatchRun';
 
 export type RequestTestStatusBlockProps = {
-  environment?: ArexEnvironment;
   data: RunResult;
   selected?: boolean;
   onClick?: (data: { request: ArexRESTRequest; response?: ArexResponse }) => void;
@@ -23,9 +22,9 @@ const RequestTestStatusBlock = (props: RequestTestStatusBlockProps) => {
 
   const requestStatusColor = !response
     ? token.colorFillSecondary
-    : response?.response?.statusCode ?? 0 < 300
+    : (response.response?.statusCode ?? 0) < 300
     ? token.colorSuccess
-    : response?.response?.statusCode ?? 0 < 400
+    : (response.response?.statusCode ?? 0) < 400
     ? token.colorWarning
     : token.colorError;
 

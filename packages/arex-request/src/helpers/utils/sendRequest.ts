@@ -125,7 +125,6 @@ export async function sendRequest(
             //  }
           },
           item: function (err: any, cursor: any, item: any, visualizer: any) {
-            console.log('item');
             resolve({
               response: res,
               testResult: assertionsBox,

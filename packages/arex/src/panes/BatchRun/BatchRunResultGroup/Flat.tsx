@@ -1,11 +1,8 @@
 import * as React from 'react';
-import { ReactElement } from 'react';
 
-type Props = {
-  blockMap: Map<string, ReactElement>;
-};
+import { GroupProps } from '@/panes/BatchRun/BatchRunResultGroup/common';
 
-export function Flat(props: Props) {
+export function Flat(props: GroupProps) {
   const { blockMap } = props;
   return (
     <>
