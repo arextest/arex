@@ -97,7 +97,7 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
       <Card size='small'>
         <SpaceBetweenWrapper>
           <Space>
-            {nodeType === CollectionNodeType.case && <RequestMethodIcon.case />}
+            {/*{nodeType === CollectionNodeType.case && <RequestMethodIcon.case />}*/}
             {React.createElement(RequestMethodIcon[method], {
               // @ts-ignore
               style: { display: 'flex', width: 'max-content' },
