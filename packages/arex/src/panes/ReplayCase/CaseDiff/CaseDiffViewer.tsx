@@ -419,6 +419,11 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
                     .join(',') === path.join(',')
                     ? logEntity?.pathPair.unmatchedType === DIFF_TYPE.UNMATCHED
                       ? 'json-difference-node'
+                      : (logEntity?.pathPair.unmatchedType === DIFF_TYPE.LEFT_MISSING &&
+                          target === 'left') ||
+                        (logEntity?.pathPair.unmatchedType === DIFF_TYPE.RIGHT_MISSING &&
+                          target === 'right')
+                      ? 'json-additional-refer-node'
                       : 'json-additional-node'
                     : ''
                 }

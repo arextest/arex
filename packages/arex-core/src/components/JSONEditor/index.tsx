@@ -151,8 +151,20 @@ const JSONEditor = forwardRef<JSONEditorRef, JSONEditorProps>((props, ref) => {
           .json-difference-node {
             background-color: ${token.colorInfoBgHover};
           }
-          .json-additional-node {
+          .json-additional-node,
+          .json-additional-refer-node {
             background-color: ${token.colorWarningBgHover};
+          }
+          .json-additional-refer-node {
+            animation: fadeOut 2s 1s forwards;
+          }
+          @keyframes fadeOut {
+            from {
+              background-color: ${token.colorWarningBgHover};
+            }
+            to {
+              background-color: transparent;
+            }
           }
         `}
       />
