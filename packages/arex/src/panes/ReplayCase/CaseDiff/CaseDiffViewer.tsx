@@ -18,6 +18,7 @@ import {
   TargetEditor,
   useTranslation,
 } from '@arextest/arex-core';
+import { OnClassName } from '@arextest/arex-core/src';
 import { css } from '@emotion/react';
 import { useRequest } from 'ahooks';
 import { Allotment } from 'allotment';
@@ -324,6 +325,26 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
     ] as ContextMenuItem[];
   };
 
+  const handleClassName: OnClassName = (path, value, target) => {
+    const text2 = getJsonValueByPath(diffMsg?.testMsg, path)?.toString();
+    const text1 = getJsonValueByPath(diffMsg?.baseMsg, path)?.toString();
+    const nodeType = {
+      left: logEntity?.logTag.nodeErrorType.baseNodeType,
+      right: logEntity?.logTag.nodeErrorType.testNodeType,
+    };
+
+    return logEntity?.pathPair[`${target}UnmatchedPath`]
+      .map((item) => item.nodeName || item.index.toString())
+      .join(',') === path.join(',')
+      ? logEntity?.pathPair.unmatchedType === DIFF_TYPE.UNMATCHED
+        ? `json-difference-node ${text1 === text2 ? `node-type-${nodeType[target]}` : ''}`
+        : (logEntity?.pathPair.unmatchedType === DIFF_TYPE.LEFT_MISSING && target === 'left') ||
+          (logEntity?.pathPair.unmatchedType === DIFF_TYPE.RIGHT_MISSING && target === 'right')
+        ? 'json-additional-refer-node '
+        : 'json-additional-node '
+      : '';
+  };
+
   return (
     <EmptyWrapper loading={loadingDiffMsg} empty={!diffMsg}>
       <Allotment
@@ -413,20 +434,7 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
                   left: diffMsg?.baseMsg || '',
                   right: diffMsg?.testMsg || '',
                 }}
-                onClassName={(path, value, target) =>
-                  logEntity?.pathPair[`${target}UnmatchedPath`]
-                    .map((item) => item.nodeName || item.index.toString())
-                    .join(',') === path.join(',')
-                    ? logEntity?.pathPair.unmatchedType === DIFF_TYPE.UNMATCHED
-                      ? 'json-difference-node'
-                      : (logEntity?.pathPair.unmatchedType === DIFF_TYPE.LEFT_MISSING &&
-                          target === 'left') ||
-                        (logEntity?.pathPair.unmatchedType === DIFF_TYPE.RIGHT_MISSING &&
-                          target === 'right')
-                      ? 'json-additional-refer-node'
-                      : 'json-additional-node'
-                    : ''
-                }
+                onClassName={handleClassName}
                 onRenderContextMenu={contextMenuRender}
               />
             </div>

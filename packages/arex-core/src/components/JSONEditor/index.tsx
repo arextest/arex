@@ -94,6 +94,7 @@ const JSONEditor = forwardRef<JSONEditorRef, JSONEditorProps>((props, ref) => {
           : [
               {
                 component: ReadonlyValue,
+                // action: TypeAction,
                 props: props as Record<string, any>,
               },
             ]) as OnRenderValue,
@@ -158,6 +159,61 @@ const JSONEditor = forwardRef<JSONEditorRef, JSONEditorProps>((props, ref) => {
           .json-additional-refer-node {
             animation: fadeOut 2s 1s forwards;
           }
+          .node-type-object::after,
+          .node-type-array::after,
+          .node-type-null::after,
+          .node-type-string::after,
+          .node-type-int::after,
+          .node-type-long::after,
+          .node-type-double::after,
+          .node-type-float::after,
+          .node-type-bigInteger::after,
+          .node-type-bigDecimal::after,
+          .node-type-boolean::after,
+          .node-type-simpleClassName::after {
+            color: ${theme === 'dark' ? '#bdbdbd' : '#00000033'};
+            position: absolute;
+            top: 0;
+            right: 8px;
+          }
+
+          .node-type-object::after {
+            content: '[object]';
+          }
+          .node-type-array::after {
+            content: '[array]';
+          }
+          .node-type-null::after {
+            content: '[null]';
+          }
+          .node-type-string::after {
+            content: '[string]';
+          }
+          .node-type-int::after {
+            content: '[int]';
+          }
+          .node-type-long::after {
+            content: '[long]';
+          }
+          .node-type-double::after {
+            content: '[double]';
+          }
+          .node-type-float::after {
+            content: '[float]';
+          }
+          .node-type-bigInteger::after {
+            content: '[bigInteger]';
+          }
+          .node-type-bigDecimal::after {
+            content: '[bigDecimal]';
+          }
+          .node-type-boolean::after {
+            content: '[boolean]';
+          }
+          .node-type-simpleClassName::after {
+            content: '[simpleClassName]';
+          }
+
           @keyframes fadeOut {
             from {
               background-color: ${token.colorWarningBgHover};
