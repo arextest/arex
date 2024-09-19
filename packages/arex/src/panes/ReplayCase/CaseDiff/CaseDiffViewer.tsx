@@ -329,15 +329,19 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
     const text2 = getJsonValueByPath(diffMsg?.testMsg, path)?.toString();
     const text1 = getJsonValueByPath(diffMsg?.baseMsg, path)?.toString();
     const nodeType = {
-      left: logEntity?.logTag.nodeErrorType.baseNodeType,
-      right: logEntity?.logTag.nodeErrorType.testNodeType,
+      left: logEntity?.logTag.nodeErrorType?.baseNodeType,
+      right: logEntity?.logTag.nodeErrorType?.testNodeType,
     };
 
     return logEntity?.pathPair[`${target}UnmatchedPath`]
       .map((item) => item.nodeName || item.index.toString())
       .join(',') === path.join(',')
       ? logEntity?.pathPair.unmatchedType === DIFF_TYPE.UNMATCHED
-        ? `json-difference-node ${text1 === text2 ? `node-type-${nodeType[target]}` : ''}`
+        ? `json-difference-node ${
+            text1 === text2 && nodeType.left !== nodeType.right
+              ? `node-type-${nodeType[target]}`
+              : ''
+          }`
         : (logEntity?.pathPair.unmatchedType === DIFF_TYPE.LEFT_MISSING && target === 'left') ||
           (logEntity?.pathPair.unmatchedType === DIFF_TYPE.RIGHT_MISSING && target === 'right')
         ? 'json-additional-refer-node '

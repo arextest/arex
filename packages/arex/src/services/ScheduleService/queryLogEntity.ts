@@ -35,7 +35,7 @@ export type LogEntity = {
   logTag: {
     // Record<string, string | number>;
     errorType: number;
-    nodeErrorType: { baseNodeType: string | null; testNodeType: string | null };
+    nodeErrorType?: { baseNodeType: string | null; testNodeType: string | null };
   };
   path?: string | null;
   pathPair: PathPair;
