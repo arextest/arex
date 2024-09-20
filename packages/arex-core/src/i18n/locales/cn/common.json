@@ -8,5 +8,7 @@
   "moreNode": "新增节点",
   "differenceNode": "差异节点",
   "newTag": "新增标签",
-  "edit": "编辑"
+  "edit": "编辑",
+  "recordDataType": "录制数据类型",
+  "replayDataType": "回放数据类型"
 }

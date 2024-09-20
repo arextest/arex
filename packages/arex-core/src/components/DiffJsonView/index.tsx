@@ -92,7 +92,6 @@ const DiffJsonView = forwardRef<DiffJsonViewRef, DiffJsonViewProps>((props, ref)
             }
           />
         </div>
-
         <div style={{ flex: 1 }}>
           <JSONEditor
             readOnly

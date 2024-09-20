@@ -8,5 +8,7 @@
   "moreNode": "Additional node",
   "differenceNode": "Difference node",
   "newTag": "New Tag",
-  "edit": "Edit"
+  "edit": "Edit",
+  "recordDataType": "Record Data Type",
+  "replayDataType": "Replay Data Type"
 }

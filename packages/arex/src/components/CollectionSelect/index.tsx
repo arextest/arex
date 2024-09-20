@@ -16,7 +16,7 @@ import { StructuredFilterRef } from '@arextest/arex-core/src/components/Structur
 import { useRequest } from 'ahooks';
 import { Button, ConfigProvider, Tag, Tree } from 'antd';
 import { type DirectoryTreeProps, EventDataNode } from 'antd/lib/tree';
-import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import CollectionSearchedList, {
   CollectionSearchedListRef,

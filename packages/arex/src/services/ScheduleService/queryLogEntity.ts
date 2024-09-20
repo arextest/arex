@@ -32,7 +32,11 @@ export type LogEntity = {
   baseValue: string | boolean | null;
   testValue: string | boolean | null;
   logInfo: string;
-  logTag: Record<string, string | number>;
+  logTag: {
+    // Record<string, string | number>;
+    errorType: number;
+    nodeErrorType?: { baseNodeType: string | null; testNodeType: string | null };
+  };
   path?: string | null;
   pathPair: PathPair;
   warn: number;
