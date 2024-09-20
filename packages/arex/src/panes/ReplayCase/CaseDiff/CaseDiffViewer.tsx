@@ -225,11 +225,23 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
         maskClosable: true,
         width: '50%',
         title: t('replay.diffMatch'),
-        content: <DiffMatch text1={text1} text2={text2} />,
+        content: (
+          <DiffMatch
+            text1={{
+              type: logEntity?.logTag.nodeErrorType?.baseNodeType,
+              value: text1,
+            }}
+            text2={{
+              type: logEntity?.logTag.nodeErrorType?.testNodeType,
+              value: text2,
+            }}
+          />
+        ), // TODO text type
       });
     },
-    [diffMsg, t],
+    [diffMsg, t, logEntity],
   );
+
   const handleNodeDecode = (value: string) => {
     try {
       setDecodeData(base64Decode(value));
