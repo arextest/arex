@@ -236,7 +236,7 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
               value: text2,
             }}
           />
-        ), // TODO text type
+        ),
       });
     },
     [diffMsg, t, logEntity],

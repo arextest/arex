@@ -7,7 +7,7 @@ import Label from '../Label';
 
 type TextValue = string | number | null | undefined;
 type Text = {
-  type: string;
+  type: string | null | undefined;
   value: TextValue;
 };
 

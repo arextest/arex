@@ -94,7 +94,6 @@ const JSONEditor = forwardRef<JSONEditorRef, JSONEditorProps>((props, ref) => {
           : [
               {
                 component: ReadonlyValue,
-                // action: TypeAction,
                 props: props as Record<string, any>,
               },
             ]) as OnRenderValue,
