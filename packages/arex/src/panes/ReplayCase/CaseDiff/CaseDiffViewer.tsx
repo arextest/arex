@@ -338,8 +338,6 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
   };
 
   const handleClassName: OnClassName = (path, value, target) => {
-    const text2 = getJsonValueByPath(diffMsg?.testMsg, path)?.toString();
-    const text1 = getJsonValueByPath(diffMsg?.baseMsg, path)?.toString();
     const nodeType = {
       left: logEntity?.logTag.nodeErrorType?.baseNodeType,
       right: logEntity?.logTag.nodeErrorType?.testNodeType,
@@ -350,9 +348,7 @@ const CaseDiffViewer: FC<DiffPathViewerProps> = (props) => {
       .join(',') === path.join(',')
       ? logEntity?.pathPair.unmatchedType === DIFF_TYPE.UNMATCHED
         ? `json-difference-node ${
-            text1 === text2 && nodeType.left !== nodeType.right
-              ? `node-type-${nodeType[target]}`
-              : ''
+            nodeType.left !== nodeType.right ? `node-type-${nodeType[target]}` : ''
           }`
         : (logEntity?.pathPair.unmatchedType === DIFF_TYPE.LEFT_MISSING && target === 'left') ||
           (logEntity?.pathPair.unmatchedType === DIFF_TYPE.RIGHT_MISSING && target === 'right')
