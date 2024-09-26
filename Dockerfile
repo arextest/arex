@@ -3,7 +3,7 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
 RUN npm i -g pnpm@latest-9
-# RUN pnpm config set electron_mirror "https://npm.taobao.org/mirrors/electron/"
+# RUN pnpm config set electron_mirror "https://npmmirror.com/mirrors/electron/"
 
 FROM pnpm-base AS base
 COPY . /app

@@ -10,7 +10,7 @@ export function tryParseJsonString<T>(
   try {
     return parser.parse(jsonString || '{}') as T;
   } catch (e) {
-    console.error(e);
+    // console.error(e);
     errorTip && window.message.warning(errorTip);
     return jsonString as T;
   }

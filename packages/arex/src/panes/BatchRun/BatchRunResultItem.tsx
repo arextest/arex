@@ -97,7 +97,7 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
       <Card size='small'>
         <SpaceBetweenWrapper>
           <Space>
-            {nodeType === CollectionNodeType.case && <RequestMethodIcon.case />}
+            {/*{nodeType === CollectionNodeType.case && <RequestMethodIcon.case />}*/}
             {React.createElement(RequestMethodIcon[method], {
               // @ts-ignore
               style: { display: 'flex', width: 'max-content' },
@@ -145,10 +145,11 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
                     contextmenu: false,
                   }}
                   value={
-                    props.request.body.body &&
-                    tryStringifyJson(tryParseJsonString(props.request.body.body), {
-                      prettier: true,
-                    })
+                    props.request.body.body
+                      ? tryStringifyJson(tryParseJsonString(props.request.body.body), {
+                          prettier: true,
+                        })
+                      : ''
                   }
                 />
               ) : (
@@ -188,12 +189,11 @@ const BatchRunResultItem: FC<BatchRunResultItemProps> = (props) => {
                     contextmenu: false,
                   }}
                   value={
-                    // @ts-ignore
-                    props.response?.response?.body &&
-                    // @ts-ignore
-                    tryStringifyJson(tryParseJsonString(props.response?.response?.body), {
-                      prettier: true,
-                    })
+                    props.response?.response?.body
+                      ? tryStringifyJson(tryParseJsonString(props.response.response.body), {
+                          prettier: true,
+                        })
+                      : ''
                   }
                 />
               ) : (
