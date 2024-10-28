@@ -2,7 +2,8 @@ import { PlusOutlined } from '@ant-design/icons';
 import { css, useTranslation } from '@arextest/arex-core';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Button, Cascader, Space, Tag } from 'antd';
-import React, { FC, useMemo, useState } from 'react';
+import { CascaderRef, DefaultOptionType } from 'antd/es/cascader';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CaseTags } from '@/services/ScheduleService';
 
@@ -23,6 +24,8 @@ const TagSelect: FC<TagSelectProps> = (props) => {
   const { t } = useTranslation('common');
 
   const [wrapperRef] = useAutoAnimate();
+
+  const cascaderRef = useRef<CascaderRef>(null);
   const [addTagModalVisible, setAddTagModalVisible] = useState(false);
 
   const options = useMemo<Option[]>(
@@ -34,6 +37,33 @@ const TagSelect: FC<TagSelectProps> = (props) => {
       })),
     [tags],
   );
+
+  const filter = (inputValue: string, path: DefaultOptionType[]) =>
+    path
+      .map((option) => option.label)
+      .join(':')
+      .toLowerCase()
+      .includes(inputValue.toLowerCase());
+
+  useEffect(() => {
+    addTagModalVisible && cascaderRef.current?.focus();
+  }, [addTagModalVisible]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.code === 'Enter') {
+      // @ts-ignore
+      const [key, value, ...rest] = e.target.value?.split(':') || [];
+      if (key && value && !rest.length) {
+        onChange?.({ ...props.value, [key]: value });
+        setAddTagModalVisible(false);
+      }
+    }
+  };
+
+  const handleChange = (value: (string | number | null)[]) => {
+    setAddTagModalVisible(false);
+    onChange?.({ ...props.value, [value[0]!.toString()]: value[1] as string });
+  };
 
   return (
     <Space ref={wrapperRef}>
@@ -59,20 +89,18 @@ const TagSelect: FC<TagSelectProps> = (props) => {
           `}
         >
           <Cascader
+            ref={cascaderRef}
             allowClear
             value={[]}
             size='small'
             options={options}
             style={{ width: '64px' }}
             open={addTagModalVisible}
+            onKeyDown={handleKeyDown}
             // getPopupContainer={(triggerNode) => triggerNode.parentElement}
-            onBlur={() => {
-              setAddTagModalVisible(false);
-            }}
-            onChange={(value) => {
-              setAddTagModalVisible(false);
-              onChange?.({ ...props.value, [value[0]]: value[1] as string });
-            }}
+            onBlur={() => setAddTagModalVisible(false)}
+            showSearch={{ filter }}
+            onChange={handleChange}
           />
         </div>
       ) : (
