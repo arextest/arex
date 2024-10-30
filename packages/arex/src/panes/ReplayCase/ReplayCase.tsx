@@ -136,7 +136,7 @@ const ReplayCasePage: ArexPaneFC<{ filter?: number } | undefined> = (props) => {
     {
       manual: true,
       onSuccess(success) {
-        if (success) message.success(t('message.createSuccess', { ns: 'common' }));
+        if (success) message.success(t('replay.compareConfigSuccess'));
         else message.error(t('message.createFailed', { ns: 'common' }));
       },
     },
