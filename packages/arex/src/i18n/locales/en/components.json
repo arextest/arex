@@ -284,6 +284,7 @@
     "caseTags": "Tags",
     "caseloaded": "caseloaded",
     "cases": "Cases",
+    "compareConfigSuccess": "Operation successful! The configuration takes effect on the next replay.",
     "confirmAbortCase": "Are you sure to abort this case?",
     "confirmDeleteReport": "Are you sure to delete this report?",
     "confirmTerminateReplay": "Are you sure to terminate this replay?",

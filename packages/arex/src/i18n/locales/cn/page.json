@@ -12,23 +12,21 @@
     "allPassed": "所有测试脚本均通过",
     "batchSend": "批量发送",
     "checkRequestDetail": "点击状态块查看请求详情",
+    "flatten": "平铺",
+    "groupByInterface": "接口分组",
+    "groupByStatus": "状态分组",
     "loading": "等待中",
     "noTestScript": "无测试脚本",
     "requestFailed": "请求失败",
     "requestStatus": "请求状态",
     "requestSuccess": "请求成功",
     "selectCaseTip": "请选择测试用例",
-    "statusBlockStructure": "状态块组成",
-    "testStatus": "测试状态",
-
-    "flatten": "平铺",
-    "groupByInterface": "接口分组",
-    "groupByStatus": "状态分组",
-
-    "sendNormalTestAbnormal": "测试失败",
+    "sendAbnormalTestAbnormal": "HTTP异常/测试失败",
     "sendAbnormalTestNormal": "HTTP异常",
+    "sendNormalTestAbnormal": "测试失败",
     "sendNormalTestNormal": "正常",
-    "sendAbnormalTestAbnormal": "HTTP异常/测试失败"
+    "statusBlockStructure": "状态块组成",
+    "testStatus": "测试状态"
   },
   "folderPage": {
     "tests": "测试"

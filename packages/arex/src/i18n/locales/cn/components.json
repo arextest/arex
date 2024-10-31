@@ -283,6 +283,7 @@
     "caseTags": "标签",
     "caseloaded": "Case 加载完成",
     "cases": "case 数",
+    "compareConfigSuccess": "操作成功！新配置将在下次回放时生效。",
     "confirmAbortCase": "确定终止该任务?",
     "confirmDeleteReport": "确定删除该报告?",
     "confirmTerminateReplay": "确定终止该回放?",

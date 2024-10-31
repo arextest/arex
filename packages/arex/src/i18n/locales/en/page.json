@@ -11,23 +11,21 @@
     "allPassed": "All test scripts passed",
     "batchSend": "Batch Send",
     "checkRequestDetail": "Click status block for detail",
+    "flatten": "Flatten",
+    "groupByInterface": "Group by Interface",
+    "groupByStatus": "Group by Status",
     "loading": "Loading",
     "noTestScript": "No Test Script",
     "requestFailed": "Request Failed",
     "requestStatus": "Request Status",
     "requestSuccess": "Request Success",
     "selectCaseTip": "Select cases for batch execution",
-    "statusBlockStructure": "Status Block Structure",
-    "testStatus": "Test Status",
-
-    "flatten": "Flatten",
-    "groupByInterface": "Group by Interface",
-    "groupByStatus": "Group by Status",
-
-    "sendNormalTestAbnormal": "Test Failed",
+    "sendAbnormalTestAbnormal": "HTTP/Test Failed",
     "sendAbnormalTestNormal": "HTTP Failed",
+    "sendNormalTestAbnormal": "Test Failed",
     "sendNormalTestNormal": "Passed",
-    "sendAbnormalTestAbnormal": "HTTP/Test Failed"
+    "statusBlockStructure": "Status Block Structure",
+    "testStatus": "Test Status"
   },
   "folderPage": {
     "tests": "Tests"

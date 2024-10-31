@@ -134,7 +134,7 @@ const NodesSort: FC<NodesSortProps> = (props) => {
         setOpenSortModal(false);
         querySortNode();
         treeCarouselRef.current?.goTo(0);
-        message.success('Update successfully');
+        message.success(t('components:replay.compareConfigSuccess'));
       } else {
         message.error('Update failed');
       }
