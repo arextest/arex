@@ -92,6 +92,7 @@ const AppTopBar: FC<AppTopBarProps> = ({
       <CreatePlanModal
         ref={createPlanModalRef}
         appId={appId}
+        appName={appName}
         tags={tags}
         onCreated={() => onRefresh?.(true)}
       />
