@@ -247,6 +247,11 @@
     "sort": "添加排序",
     "temporaryIgnore": "临时忽略(7天)"
   },
+  "record": {
+    "createTagTip": "小提示：输入xxx:xxx格式后按回车键可创建新的标签",
+    "noTagFound": "没有找到匹配项",
+    "searchOrCreateTag": "搜索或创建标签"
+  },
   "replay": {
     "abort": "终止",
     "abortTheCase": "终止任务",
