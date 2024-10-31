@@ -16,7 +16,7 @@ type AppTopBarProps = {
   readOnly?: boolean;
   recordCount?: number;
   tags?: Record<string, string[]>;
-  onRefresh?: () => void;
+  onRefresh?: (reset?: boolean) => void;
   onQueryRecordCount?: () => void;
 };
 
@@ -89,7 +89,12 @@ const AppTopBar: FC<AppTopBarProps> = ({
         }
       />
 
-      <CreatePlanModal ref={createPlanModalRef} appId={appId} tags={tags} onCreated={onRefresh} />
+      <CreatePlanModal
+        ref={createPlanModalRef}
+        appId={appId}
+        tags={tags}
+        onCreated={() => onRefresh?.(true)}
+      />
 
       <RecordedCaseList
         ref={caseListRef}

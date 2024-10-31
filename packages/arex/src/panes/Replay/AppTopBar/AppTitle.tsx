@@ -45,7 +45,7 @@ const AppTitle = styled(
                 type='text'
                 title={t('replay.refresh')}
                 icon={<SyncOutlined />}
-                onClick={props.onRefresh}
+                onClick={() => props.onRefresh?.()}
               />
             )}
 

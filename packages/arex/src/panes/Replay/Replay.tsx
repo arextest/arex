@@ -33,8 +33,8 @@ const ReplayPage: ArexPaneFC = (props) => {
     return () => clearLocalStorage(APP_ID_KEY);
   }, [activePane?.id]);
 
-  const handleRefreshDep = () => {
-    replayReportRef.current?.refreshReportList?.();
+  const handleRefreshDep = (reset?: boolean) => {
+    replayReportRef.current?.refreshReportList?.(reset);
   };
 
   const [firstQueryRecordCount, setFirstQueryRecordCount] = useState(true);
