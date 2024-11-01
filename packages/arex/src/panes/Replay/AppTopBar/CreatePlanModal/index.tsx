@@ -46,6 +46,7 @@ export type CreatePlanModalRef = {
 
 export type CreatePlanModalProps = {
   appId: string;
+  appName?: string;
   tags?: Record<string, string[]>;
   onCreated?: () => void;
 };
@@ -58,7 +59,7 @@ const ProtocolOptions = [
 ];
 
 const CreatePlanModal = forwardRef<CreatePlanModalRef, CreatePlanModalProps>(
-  ({ appId, tags, onCreated }, ref) => {
+  ({ appId, appName, tags, onCreated }, ref) => {
     const { notification } = App.useApp();
     const email = getLocalStorage<string>(EMAIL_KEY);
 
@@ -164,7 +165,11 @@ const CreatePlanModal = forwardRef<CreatePlanModalRef, CreatePlanModalProps>(
             appId,
             sourceEnv: 'pro',
             targetEnv: targetEnv.endsWith('/') ? targetEnv.slice(0, -1) : targetEnv,
-            planName: values.planName,
+            planName:
+              values.planName ||
+              `${
+                appName || appId
+              }-${new Date().toLocaleDateString()}-${new Date().toLocaleTimeString()}`,
             caseSourceFrom: values.caseSourceRange[0].valueOf(),
             caseSourceTo: values.caseSourceRange[1].valueOf(),
             operationCaseInfoList: values.operationList?.map((operationId) => ({

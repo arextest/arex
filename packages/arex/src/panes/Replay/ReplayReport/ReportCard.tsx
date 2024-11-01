@@ -56,7 +56,7 @@ export interface ReportCardProps {
 }
 
 export interface ReportCardRef {
-  query: () => void;
+  query: (reset?: boolean) => void;
   create: (req: ReRunPlanReq) => void;
 }
 const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
@@ -85,29 +85,29 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
     run: queryPlanStatistics,
     cancel: cancelPollingInterval,
   } = useRequest(
-    () =>
+    (reset?: boolean) =>
       ReportService.queryPlanStatistics({
         appId: props.appId,
         planId: data?.planId || undefined,
-        current,
+        current: reset ? 1 : current,
         pageSize: 8,
       }),
     {
       ready: !!props.appId,
       pollingInterval: 3000,
       refreshDeps: [props.appId, data?.planId, current],
-      onSuccess({ list }) {
+      onBefore([reset]) {
+        reset && setCurrent(1);
+      },
+      onSuccess({ list }, [reset]) {
         if (init) {
           setInit(false); // 设置第一次初始化标识
         } else {
           props.onQueryPlan?.();
         }
 
-        let plan = undefined;
-
-        plan = list.find((item) => item.planId === props.planId);
+        const plan = reset ? list[0] : list.find((item) => item.planId === props.planId) || list[0];
         list.length && props.onChange?.(plan || list[0]);
-
         setSelectedReport(plan);
 
         if (
@@ -147,7 +147,7 @@ const ReportCard = forwardRef<ReportCardRef, ReportCardProps>((props, ref) => {
     onSuccess(success, [{ planId }]) {
       if (success) {
         message.success(t('message.success', { ns: 'common' }));
-        queryPlanStatistics();
+        queryPlanStatistics(true);
         props.onTerminate?.(planId);
       } else {
         message.error(t('message.error', { ns: 'common' }));

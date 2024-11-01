@@ -35,7 +35,7 @@ export type ReplayReportProps = {
 };
 
 export type ReplayReportRef = {
-  refreshReportList: () => void;
+  refreshReportList: ReportCardRef['query'];
 };
 
 const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref) => {
@@ -67,7 +67,7 @@ const ReplayReport = forwardRef<ReplayReportRef, ReplayReportProps>((props, ref)
   useImperativeHandle(
     ref,
     () => ({
-      refreshReportList: () => reportCardRef.current?.query(),
+      refreshReportList: (reset?: boolean) => reportCardRef.current?.query(reset),
     }),
     [],
   );

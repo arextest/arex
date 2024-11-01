@@ -248,6 +248,11 @@
     "sort": "Sort Key",
     "temporaryIgnore": "Temporary Ignore(7d)"
   },
+  "record": {
+    "createTagTip": "Tip: Enter xxx:xxx format and press Enter to create a new tag",
+    "noTagFound": "No match tag was found",
+    "searchOrCreateTag": "Search or create tag"
+  },
   "replay": {
     "abort": "Abort",
     "abortTheCase": "Abort the Case",
