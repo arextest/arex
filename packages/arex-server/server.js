@@ -13,7 +13,11 @@ const SERVICE_SCHEDULE_URL = process.env.SERVICE_SCHEDULE_URL;
 const SERVICE_STORAGE_URL = process.env.SERVICE_STORAGE_URL;
 
 if (!SERVICE_API_URL || !SERVICE_SCHEDULE_URL || !SERVICE_STORAGE_URL) {
-  throw new Error('SERVICE_API_URL, SERVICE_SCHEDULE_URL, SERVICE_STORAGE_URL are required');
+  const missingVars = [];
+  if (!SERVICE_API_URL) missingVars.push('SERVICE_API_URL');
+  if (!SERVICE_SCHEDULE_URL) missingVars.push('SERVICE_SCHEDULE_URL');
+  if (!SERVICE_STORAGE_URL) missingVars.push('SERVICE_STORAGE_URL');
+  throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
 }
 
 app.use(

@@ -12,23 +12,16 @@
 ## 技术栈
 
 * React 18
-
 * AntDesign 5
-
 * Zustand
-
 * Emotion
-
 * i18n
-
 * pnpm
-
 * ...
 
   
 
 ## 目录结构
-
 
 ```text
 .
@@ -37,13 +30,11 @@
     ├── arex-core					arex 公共组件包 - 提供面向业务逻辑封装的重型组件
     ├── arex-request			arex 请求包 - 提供浏览器发送 http-rest 请求支持
     └── arex-lite					arex 精简版 - 提供 arex 项目结构及组件 demo 演示
-
 ```
 
 
 
 ## 本地开发
-
 ###  启动项目
 
 `Fork` 并 `git clone` 仓库
@@ -67,3 +58,5 @@ pnpm run test
 pnpm run build
 ```
 
+### 服务接口代理
+本地开发需要修改packages/arex/config/proxy.json文件，指向服务接口地址。

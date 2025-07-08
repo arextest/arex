@@ -9,6 +9,7 @@ import { ArexContentTypes } from '../../types';
 import RequestBinaryBody from './RequestBinaryBody';
 import RequestBodyFormData from './RequestBodyFormData';
 import RequestRawBody, { RequestRawBodyRef } from './RequestRawBody';
+import RequestURLEncodeBody from './RequestURLEncodeBody';
 
 const rawSmallCateOptions = [
   {
@@ -22,6 +23,10 @@ const rawSmallCateOptions = [
   {
     label: 'application/octet-stream',
     value: 'application/octet-stream',
+  },
+  {
+    label: 'application/x-www-form-urlencoded',
+    value: 'application/x-www-form-urlencoded',
   },
 ];
 
@@ -124,6 +129,8 @@ const RequestBody = () => {
         <RequestBodyFormData />
       ) : store.request.body.contentType.startsWith('application/octet-stream') ? (
         <RequestBinaryBody />
+      ) : store.request.body.contentType.startsWith('application/x-www-form-urlencoded') ? (
+        <RequestURLEncodeBody />
       ) : null}
     </div>
   );
